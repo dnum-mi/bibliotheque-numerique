@@ -1,23 +1,31 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+
+import Home from '../views/AppHome.vue'
+import AboutUs from '../views/AboutUs.vue'
+
+const MAIN_TITLE = 'Gabarit de démarrage VueDsfr'
+
+const routes = [
+  {
+    path: '/',
+    name: 'Home',
+    component: Home,
+  },
+  {
+    path: '/a-propos',
+    name: 'About',
+    component: AboutUs,
+  },
+]
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: '/',
-      name: 'home',
-      component: HomeView
-    },
-    {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue')
-    }
-  ]
+  history: createWebHistory(import.meta.env?.BASE_URL || ''),
+  routes,
+})
+
+router.beforeEach((to) => { // Cf. https://github.com/vueuse/head pour des transformations avancées de Head
+  const specificTitle = to.meta.title ? `${to.meta.title} - ` : ''
+  document.title = `${specificTitle}${MAIN_TITLE}`
 })
 
 export default router
