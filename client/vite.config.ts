@@ -14,6 +14,9 @@ export default defineConfig({
     VitePWA({}),
   ],
   base: process.env.BASE_URL || '/',
+  server: {
+    port: 8080,
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

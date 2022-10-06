@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@gouvminint/vue-dsfr": "^1.2.0",
+    "axios": "^1.0.0",
     "focus-trap": "^6.8.1",
     "focus-trap-vue": "^3.2.1",
     "oh-vue-icons": "1.0.0-rc3",

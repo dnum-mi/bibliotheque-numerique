@@ -4,7 +4,7 @@ import { useRegisterSW } from 'virtual:pwa-register/vue'
 
 import ReloadPrompt from '@/components/ReloadPrompt.vue'
 
-const serviceTitle = 'Service'
+const serviceTitle = 'Bibliothéque Numérique'
 const serviceDescription = 'Description du service'
 const logoText = ['Ministère', 'de l’intérieur']
 
@@ -14,6 +14,10 @@ const quickLinks = [
     path: '/',
     icon: 'ri-home-4-line',
     iconAttrs: { color: 'var(--red-marianne-425-625)' },
+  },
+  {
+    label: 'Démarche',
+    path: '/démarche',
   },
   {
     label: 'À propos',
