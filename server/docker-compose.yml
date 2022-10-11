@@ -1,0 +1,30 @@
+services:
+  db:
+    image: postgres:14.5
+    restart: always
+    environment:
+      POSTGRES_DB: biblio-num
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - type: volume
+        source: biblio-num-db-volume
+        target: /var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    ports:
+      - "3010:80"
+    volumes:
+      - type: volume
+        source: biblio-num-pgadmin-volume
+        target: /var/lib/pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: password
+
+volumes:
+  biblio-num-db-volume:
+  biblio-num-pgadmin-volume:
