@@ -35,6 +35,10 @@ $ npm install
 ## Running the app
 
 ```bash
+# set environment
+$ exoprt API_URL=....
+$ exoprt API_TOKEN=....
+
 # development
 $ npm run start
 
@@ -44,7 +48,15 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 ```
+### Running in container docker
+```bash
+# set environment
+$ exoprt API_URL=....
+$ exoprt API_TOKEN=....
 
+# up development
+$ docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+```
 ## Test
 
 ```bash
