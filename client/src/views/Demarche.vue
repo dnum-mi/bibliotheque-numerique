@@ -1,132 +1,113 @@
-<script>
-  import axios from 'axios'
+<script lang="ts" setup>
+import { computed, onMounted, ref, watch } from 'vue'
+import { useDemarcheStore } from '@/stores/demarche'
 
-  export default {
-  data () {
-    return {
-      demarche: {},
-      columns: [],
-      idDemarche: 1,
-    }
-  },
-  watch: {
-    async idDemarche (newValue) {
-      await this.getDemarche(newValue);
-    }
-  },
-  methods: {
-    async getDemarche(id) {
-      const config = {
-        method: 'get',
-        url: `http://localhost:3000/demarche/${id}`,
-        headers: { 
-          'Content-Type': 'application/json'
-          },
-        };
-        const response = await axios(config);
-        this.demarche = response.data.demarche;
-        this.columns = Object.keys(this.demarche);
-    }
-  },
-  async mounted() {
-    await this.getDemarche(this.idDemarche);
-  }
+const demarcheStore = useDemarcheStore()
+
+const title = computed<string>(() => demarcheStore.demarche?.title || '')
+const number = computed<string>(() => demarcheStore.demarche?.number || '')
+const dossiers = computed<any>(() => demarcheStore.demarche?.dossiers?.nodes || [])
+
+const DateToStringFn = (value:any) => {
+  return value
+    ? (new Date(value)).toLocaleDateString('fr-FR')
+    : ''
 }
+
+const headerDossierJson = [
+  {
+    text: 'Numéro',
+    value: 'number',
+  },
+  {
+    text: 'Archivé',
+    value: 'archived',
+    parseFn: (value:any) => value ? 'Oui' : 'Non',
+  },
+  {
+    text: 'Etat',
+    value: 'state',
+    parseFn: (value:any) => {
+      return {
+        accepte: 'Acceptée',
+        en_construction: 'En construction',
+      }[value]
+    },
+  },
+  {
+    text: 'Date de dépot',
+    value: 'dateDepot',
+    parseFn: DateToStringFn,
+  },
+  {
+    text: 'Date de construction',
+    value: 'datePassageEnConstruction',
+    parseFn: DateToStringFn,
+  },
+  {
+    text: "Date d'instruction",
+    value: 'datePassageEnInstruction',
+    parseFn: DateToStringFn,
+  },
+  {
+    text: 'Date de traitement',
+    value: 'dateTraitement',
+    parseFn: DateToStringFn,
+  },
+  {
+    text: 'Détails',
+  },
+]
+const headersDossier = computed<any>(() => headerDossierJson.map(elt => elt.text))
+const idDemarche = ref(1)
+
+watch(idDemarche, async (value: number) => {
+  await demarcheStore.getDemarche(value)
+})
+
+onMounted(async () => {
+  await demarcheStore.getDemarche(idDemarche)
+})
+
 </script>
 
 <template>
-  <div class="greetings">
-    <h1 class="green"> Demarche</h1>
+  <div class="title">
+    <h1>Démarche {{ number }}</h1>
+    <h2>{{ title }}</h2>
+    <input v-model="idDemarche">
+  </div>
 
-    <input v-model="idDemarche"/>
-  </div>
-  <br>
-  <div>
-    <table>
-        <thead>
-          <tr>
-            <th v-for="key in columns">
-              {{ key }}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- <tr v-for="entry in demarche"> -->
-            <tr>
-            <td v-for="key in columns">
-              {{demarche[key]}}
-            </td>
-          </tr>
-        </tbody>
-      </table>    
-    
-  </div>
+  <DsfrTable
+    title="Dossiers"
+  >
+    <template #header>
+      <DsfrTableHeaders :headers="headersDossier" />
+    </template>
+    <tr
+      v-for="dossier in dossiers"
+      :key="dossier[headerDossierJson[0].value]"
+    >
+      <td
+        v-for="headerJson in headerDossierJson"
+        :key="headerJson.value"
+      >
+        {{
+          headerJson.value
+            ? ( headerJson.parseFn
+              ? headerJson.parseFn(dossier[headerJson.value])
+              : dossier[headerJson.value])
+            : ''
+        }}
+      </td>
+    </tr>
+  </DsfrTable>
 </template>
 
 <style scoped>
-h1 {
-  font-weight: 500;
-  font-size: 2.6rem;
-  top: -10px;
-}
-h3 {
-  font-size: 1.2rem;
-}
-.greetings h1,
-.greetings h3 {
-  text-align: center;
-}
-@media (min-width: 1024px) {
-  .greetings h1,
-  .greetings h3 {
-    text-align: left;
+  .title {
+    text-align: center;
+    padding-top: 1em;
   }
-}
-table {
-  border: 2px solid #42b983;
-  border-radius: 3px;
-  background-color: #fff;
-  width: 100%;
-}
-th {
-  background-color: #42b983;
-  color: rgba(255, 255, 255, 0.66);
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-td {
-  background-color: #f9f9f9;
-}
-th,
-td {
-  min-width: 120px;
-  padding: 10px 20px;
-}
-th.active {
-  color: #fff;
-}
-th.active .arrow {
-  opacity: 1;
-}
-.arrow {
-  display: inline-block;
-  vertical-align: middle;
-  width: 0;
-  height: 0;
-  margin-left: 5px;
-  opacity: 0.66;
-}
-.arrow.asc {
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-bottom: 4px solid #fff;
-}
-.arrow.dsc {
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top: 4px solid #fff;
-}
+
 </style>
