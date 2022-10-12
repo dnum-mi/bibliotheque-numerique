@@ -1,6 +1,9 @@
 <script lang="ts" setup>
+import { useRoute } from 'vue-router'
+
 import { computed, onMounted, ref, watch } from 'vue'
 import { useDemarcheStore } from '@/stores/demarche'
+
 
 const demarcheStore = useDemarcheStore()
 
@@ -66,7 +69,10 @@ watch(idDemarche, async (value: number) => {
 })
 
 onMounted(async () => {
-  await demarcheStore.getDemarche(idDemarche)
+  
+  const { id } = useRoute().params
+  idDemarche.value = Number(id)
+  await demarcheStore.getDemarche(idDemarche.value)
 })
 
 </script>

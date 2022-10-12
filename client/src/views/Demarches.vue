@@ -46,6 +46,9 @@ export default {
   methods: {
     async getDemarches () {
     },
+    onClick() {
+      this.$router.push({ name: 'DemarcheDossiers', params: { id: 1 } })
+    }
   },
 }
 </script>
