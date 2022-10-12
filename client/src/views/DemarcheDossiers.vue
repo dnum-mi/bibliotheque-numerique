@@ -4,7 +4,6 @@ import { useRoute } from 'vue-router'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useDemarcheStore } from '@/stores/demarche'
 
-
 const demarcheStore = useDemarcheStore()
 
 const title = computed<string>(() => demarcheStore.demarche?.title || '')
@@ -60,6 +59,20 @@ const headerDossierJson = [
   {
     text: 'Détails',
   },
+  {
+    text: 'Association déclarée cultuelle dans télédéclaration loi CRPR ?',
+    value: 'annotations',
+    parseFn: (value:any) => {
+      return value[0]?.stringValue
+    },
+  },
+  {
+    text: 'Si oui, date d\'entrée en vigueur de la qualité cultuelle',
+    value: 'annotations',
+    parseFn: (value:any) => {
+      return value[1]?.stringValue
+    },
+  },
 ]
 const headersDossier = computed<any>(() => headerDossierJson.map(elt => elt.text))
 const idDemarche = ref(1)
@@ -69,7 +82,6 @@ watch(idDemarche, async (value: number) => {
 })
 
 onMounted(async () => {
-  
   const { id } = useRoute().params
   idDemarche.value = Number(id)
   await demarcheStore.getDemarche(idDemarche.value)

@@ -41,7 +41,7 @@ const headersJson = [
 
   {
     text: 'Created At',
-    value: 'dateAt',
+    value: 'dateCreation',
   },
   {
     text: 'Libelle',
@@ -53,15 +53,20 @@ const headersJson = [
   },
   {
     text: 'Dossiers',
-    value: 'Dossiers',
+    value: 'dossiers',
+    parseFn: (value:any) => {
+      return value?.nodes?.length
+    },
   },
   {
     text: 'Published At',
-    value: 'dateDepublication',
+    value: 'datePublication',
   },
 ]
 
-const rows = computed<any[]>(() => demarcheStore.demarches.map(demarche => headersJson.map(header => `${demarche[header.value] || ''}`)))
+const rows = computed<any[]>(() => demarcheStore.demarches.map(demarche => headersJson.map(header => `${
+  (header.parseFn ? header.parseFn(demarche[header.value]) : demarche[header.value]) || ''
+}`)))
 const headers = computed<string[]>(() => ['Action', ...headersJson.map(header => header.text)])
 
 onMounted(async () => {
