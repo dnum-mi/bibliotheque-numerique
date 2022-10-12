@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/AppHome.vue'
 import AboutUs from '../views/AboutUs.vue'
 import DemarcheVue from '@/views/Demarche.vue'
+import DemarchesVue from '@/views/Demarches.vue'
 
 const MAIN_TITLE = 'Gabarit de démarrage VueDsfr'
 
@@ -21,6 +22,11 @@ const routes = [
     path: '/démarche',
     name: 'Demarche',
     component: DemarcheVue,
+  },
+  {
+    path: '/démarches',
+    name: 'Demarches',
+    component: DemarchesVue,
   },
 ]
 

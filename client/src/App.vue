@@ -20,6 +20,10 @@ const quickLinks = [
     path: '/démarche',
   },
   {
+    label: 'Démarches',
+    path: '/démarches',
+  },
+  {
     label: 'À propos',
     path: '/a-propos',
     class: 'fr-fi-user-line',
