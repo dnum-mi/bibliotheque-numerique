@@ -2,7 +2,7 @@ import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
-import { DemarcheModule } from "./demarche/demarche.module";
+import { DemarchesModule } from "./demarches/demarches.module";
 
 @Module({
   imports: [
@@ -16,7 +16,7 @@ import { DemarcheModule } from "./demarche/demarche.module";
       entities: [],
       synchronize: true,
     }),
-    DemarcheModule,
+    DemarchesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
