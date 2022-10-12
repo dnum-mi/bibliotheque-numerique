@@ -22,6 +22,6 @@ export const apiClient = {
       headers,
     }
     const response = await axios(config)
-    return response.data.demarche
+    return response.data.demarches
   },
 }

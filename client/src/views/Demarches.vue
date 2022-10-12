@@ -19,37 +19,57 @@
         :disabled="disabled"
         :icon="icon"
         :icon-right="iconRight"
-        @click="onClick"
+        @click="getDossiers(rowData)"
       />
     </DsfrTableRow>
   </DsfrTable>
 </template>
 
-<script>
-export default {
-  data () {
-    return {
-      label: 'Voir',
-      rows:
-        [
-          ['1', '11 octobre 2022 09:43', 'Déclaration des FE', 'DLPAJ', '1', '28 septembre 2022 16:23'],
-          ['1', '11 octobre 2022 09:43', 'Déclaration des FE', 'DLPAJ', '1', '28 septembre 2022 16:23'],
-          ['1', '11 octobre 2022 09:43', 'Déclaration des FE', 'DLPAJ', '1', '28 septembre 2022 16:23'],
-        ],
-      headers: ['Action', 'Id', 'Created At', 'Libelle', 'Service', 'Dossiers', 'Published At'],
-    }
+<script lang="ts"  setup>
+import { useDemarcheStore } from '@/stores/demarche'
+import { computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+
+const demarcheStore = useDemarcheStore()
+const router = useRouter()
+const label = 'Voir'
+const headersJson = [
+  {
+    text: 'Id',
+    value: 'number',
   },
-  async mounted () {
-    await this.getDemarches()
-    console.log(this.rows)
+
+  {
+    text: 'Created At',
+    value: 'dateAt',
   },
-  methods: {
-    async getDemarches () {
-    },
-    onClick() {
-      this.$router.push({ name: 'DemarcheDossiers', params: { id: 1 } })
-    }
+  {
+    text: 'Libelle',
+    value: 'title',
   },
+  {
+    text: 'Service',
+    value: 'service',
+  },
+  {
+    text: 'Dossiers',
+    value: 'Dossiers',
+  },
+  {
+    text: 'Published At',
+    value: 'dateDepublication',
+  },
+]
+
+const rows = computed<any[]>(() => demarcheStore.demarches.map(demarche => headersJson.map(header => `${demarche[header.value] || ''}`)))
+const headers = computed<string[]>(() => ['Action', ...headersJson.map(header => header.text)])
+
+onMounted(async () => {
+  await demarcheStore.getDemarches()
+})
+
+function getDossiers (row: any[]) {
+  router.push({ name: 'DemarcheDossiers', params: { id: row[0] } })
 }
 </script>
 
