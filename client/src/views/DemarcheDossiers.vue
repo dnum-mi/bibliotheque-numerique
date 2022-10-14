@@ -63,14 +63,14 @@ const headerDossierJson = [
     text: 'Association déclarée cultuelle dans télédéclaration loi CRPR ?',
     value: 'annotations',
     parseFn: (value:any) => {
-      return value[0]?.stringValue
+      return value ? value[0]?.stringValue : ''
     },
   },
   {
     text: 'Si oui, date d\'entrée en vigueur de la qualité cultuelle',
     value: 'annotations',
     parseFn: (value:any) => {
-      return value[1]?.stringValue
+      return value ? value[0]?.stringValue : ''
     },
   },
 ]
