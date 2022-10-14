@@ -18,7 +18,7 @@
     "format": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
-    "@gouvminint/vue-dsfr": "^1.4.0",
+    "@gouvminint/vue-dsfr": "1.4.0",
     "axios": "^1.0.0",
     "focus-trap": "^6.8.1",
     "focus-trap-vue": "^3.2.1",

@@ -2,7 +2,7 @@ import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
-import { DemarcheModule } from "./demarche/demarche.module";
+import { DemarchesModule } from "./demarches/demarches.module";
 
 const host = process.env.POSTGRES_HOST || "localhost";
 const port = Number(process.env.POSTGRES_PORT) || 5432;
@@ -22,7 +22,7 @@ const database = process.env.POSTGRES_DB || "biblio-num";
       entities: [],
       synchronize: true,
     }),
-    DemarcheModule,
+    DemarchesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

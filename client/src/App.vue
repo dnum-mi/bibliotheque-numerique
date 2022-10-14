@@ -15,9 +15,13 @@ const quickLinks = [
     icon: 'ri-home-4-line',
     iconAttrs: { color: 'var(--red-marianne-425-625)' },
   },
+  // {
+  //   label: 'Démarche Dossiers',
+  //   path: '/demarches/:id/dossiers',
+  // },
   {
-    label: 'Démarche',
-    path: '/démarche',
+    label: 'Démarches',
+    path: '/demarches',
   },
   {
     label: 'À propos',

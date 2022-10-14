@@ -13,8 +13,17 @@ export const useDemarcheStore = defineStore('demarche', () => {
     if (result) demarche.value = result
   }
 
+  const demarches = ref([])
+  const getDemarches = async () => {
+    const result = await apiClient.getDemarches()
+    console.log({ result })
+    if (result) demarches.value = result
+  }
+
   return {
     demarche,
     getDemarche,
+    demarches,
+    getDemarches,
   }
 })
