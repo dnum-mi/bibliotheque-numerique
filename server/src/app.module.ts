@@ -4,15 +4,21 @@ import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { DemarcheModule } from "./demarche/demarche.module";
 
+const host = process.env.POSTGRES_HOST || "localhost";
+const port = Number(process.env.POSTGRES_PORT) || 5432;
+const username = process.env.POSTGRES_USERNAME || "user";
+const password = process.env.POSTGRES_PASSWORD || "password";
+const database = process.env.POSTGRES_DB || "biblio-num";
+
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: "postgres",
-      host: "localhost",
-      port: 5432,
-      username: "user",
-      password: "password",
-      database: "biblio-num",
+      host,
+      port,
+      username,
+      password,
+      database,
       entities: [],
       synchronize: true,
     }),

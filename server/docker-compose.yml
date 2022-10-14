@@ -1,6 +1,7 @@
 services:
   db:
     image: postgres:14.5
+    container_name: biblio-num_db
     restart: always
     environment:
       POSTGRES_DB: biblio-num
@@ -12,9 +13,14 @@ services:
       - type: volume
         source: biblio-num-db-volume
         target: /var/lib/postgresql/data
+    networks:
+      - biblio-num-network
 
   pgadmin:
     image: dpage/pgadmin4
+    container_name: biblio-num_dbadmin
+    depends_on:
+      - db
     ports:
       - "3010:80"
     volumes:
@@ -24,6 +30,15 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: user@gmail.com
       PGADMIN_DEFAULT_PASSWORD: password
+    networks:
+      - biblio-num-network
+      
+networks:
+  biblio-num-network:
+    name: biblio-num-network
+    driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1450
 
 volumes:
   biblio-num-db-volume:
