@@ -1,0 +1,27 @@
+services:
+  client: 
+    build:
+      target: development
+      context: .
+      dockerfile: Dockerfile
+    image: biblio-num/client:dev
+    container_name: biblio-num_client
+    ports:
+      - 8080:8080
+    volumes:
+      - .:/app
+      - biblio-num-client-node_modules:/app/node_modules
+    networks:
+      - biblio-num-network
+    environment:
+      API_URL: 'http://server:3000'
+
+networks:
+  biblio-num-network:
+    name: biblio-num-network
+    driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1450
+
+volumes:
+  biblio-num-client-node_modules:
