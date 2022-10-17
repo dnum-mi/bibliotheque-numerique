@@ -20,6 +20,7 @@ export class DemarchesController {
           (await this.demarcheService.getDemarche(1)).demarche,
           (await this.demarcheService.getDemarche(2)).demarche,
           (await this.demarcheService.getDemarche(3)).demarche,
+          (await this.demarcheService.getDemarche(5)).demarche,
         ],
       };
     } catch (error) {
