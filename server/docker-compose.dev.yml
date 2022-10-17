@@ -1,5 +1,5 @@
 services:
-  server: 
+  server:
     build:
       target: development
       context: .
@@ -10,18 +10,40 @@ services:
       - db
     ports:
       - 3000:3000
+      - 9229:9229
     volumes:
-      - ./:/app
-      - biblio-num-server-node_modules:/app/node_modules
+      - type: bind
+        source: .
+        target: /app
+      - /app/node_modules
     networks:
       - biblio-num-network
+    command: npm run dev
     environment:
       POSTGRES_HOST: db
       POSTGRES_DB: biblio-num
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-      API_URL: ${API_URL}
-      API_TOKEN: ${API_TOKEN}
+      DS_API_URL: ${DS_API_URL}
+      DS_API_TOKEN: ${DS_API_TOKEN}
+      DEBUG: 1
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: biblio-num_dbadmin
+    depends_on:
+      - db
+    ports:
+      - "3010:80"
+    volumes:
+      - type: volume
+        source: biblio-num-pgadmin-volume
+        target: /var/lib/pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    networks:
+      - biblio-num-network
 
 networks:
   biblio-num-network:
@@ -31,4 +53,4 @@ networks:
       com.docker.network.driver.mtu: 1450
 
 volumes:
-  biblio-num-server-node_modules:
+  biblio-num-pgadmin-volume:

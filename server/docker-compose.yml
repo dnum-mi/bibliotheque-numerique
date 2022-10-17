@@ -16,23 +16,6 @@ services:
     networks:
       - biblio-num-network
 
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: biblio-num_dbadmin
-    depends_on:
-      - db
-    ports:
-      - "3010:80"
-    volumes:
-      - type: volume
-        source: biblio-num-pgadmin-volume
-        target: /var/lib/pgadmin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: user@gmail.com
-      PGADMIN_DEFAULT_PASSWORD: password
-    networks:
-      - biblio-num-network
-      
 networks:
   biblio-num-network:
     name: biblio-num-network
@@ -42,4 +25,3 @@ networks:
 
 volumes:
   biblio-num-db-volume:
-  biblio-num-pgadmin-volume:

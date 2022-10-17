@@ -97,17 +97,19 @@ CREATE server/test/jest-e2e.json (183 bytes)
 $ cd server
 $ npm run start
 ```
-Output:
-```
-          Thanks for installing Nest 🙏
- Please consider donating to our open collective
-        to help us maintain this package.
-🍷  Donate: https://opencollective.com/nest
-```
 
+Attention la base de données doit être lancer. Vérifier si les variables dans src/app.module.ts soit correct pour permettre la connection à la BDD.
 
-### La creation du contrôleur `demarche` avec CLI
+### Lancer le serveur avec Docker
 ```
-cd server
-nest g controller demarche
+$ cd server
+$ npm run docker:dev
+```
+#### Si besoin d'attacher les logs
+```
+$ npm run docker:logs
+```
+Pour les logs de la bases de données :
+```
+$ npm run docker:logs:db
 ```
