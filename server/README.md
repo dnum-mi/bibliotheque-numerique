@@ -38,6 +38,9 @@ $ npm install
 # set environment
 $ exoprt API_URL=....
 $ exoprt API_TOKEN=....
+# Or use .env
+cp .env-example .env
+
 
 # development
 $ npm run start
@@ -53,6 +56,8 @@ $ npm run start:prod
 # set environment
 $ exoprt API_URL=....
 $ exoprt API_TOKEN=....
+# Or use .env
+cp .env-example .env
 
 # up development
 $ docker compose -f docker-compose.yml -f docker-compose.dev.yml up
