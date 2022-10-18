@@ -3,12 +3,14 @@ import { useRoute } from 'vue-router'
 
 import { computed, onMounted, ref, watch } from 'vue'
 import { useDemarcheStore } from '@/stores/demarche'
+import GroupInstructeurs from '@/views/DemarcheGrpInstructeurs.vue'
 
 const demarcheStore = useDemarcheStore()
 
 const title = computed<string>(() => demarcheStore.demarche?.title || '')
 const number = computed<string>(() => demarcheStore.demarche?.number || '')
 const dossiers = computed<any>(() => demarcheStore.demarche?.dossiers?.nodes || [])
+const groupInstructeurs = computed<any[]>(() => demarcheStore.demarche?.groupeInstructeurs || '')
 
 const DateToStringFn = (value:any) => {
   return value
@@ -82,8 +84,9 @@ watch(idDemarche, async (value: number) => {
 })
 
 onMounted(async () => {
-  const { id } = useRoute().params
-  idDemarche.value = Number(id)
+  // const { id } = useRoute().params
+  const params = useRoute()?.params
+  if (params && params.id) { idDemarche.value = Number(params.id) }
   await demarcheStore.getDemarche(idDemarche.value)
 })
 
@@ -96,6 +99,8 @@ onMounted(async () => {
     <input v-model="idDemarche">
   </div>
 
+  <GroupInstructeurs :group-instructeurs="groupInstructeurs" />
+  <br>
   <DsfrTable
     title="Dossiers"
   >
