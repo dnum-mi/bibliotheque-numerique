@@ -11,17 +11,17 @@ module.exports = {
   env: {
     'vue/setup-compiler-macros': true,
   },
-
   rules: {
     'jsx-quotes': [2, 'prefer-double'],
     'comma-dangle': [2, 'always-multiline'],
+    'vue/multi-word-component-names': 'off',
   },
   overrides: [
     {
       files: [
         'cypress/support/*.{js,ts,jsx,tsx}',
         'cypress/integration/*.{spec,e2e}.{js,ts,jsx,tsx}',
-        'src/**/*.ct.{js,ts,jsx,tsx}',
+        'src/**/*.cy.{js,ts,jsx,tsx}',
       ],
       extends: [
         'plugin:cypress/recommended',
