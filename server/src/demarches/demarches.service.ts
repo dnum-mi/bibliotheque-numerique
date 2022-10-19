@@ -6,8 +6,8 @@ import { Demarche } from "@lab-mi/ds-api-client/dist/@types/types";
 export class DemarchesService {
   async getDemarche(id: number): Promise<{ demarche: Partial<Demarche> }> {
     const dsApiClient = new DsApiClient(
-      process.env.API_URL,
-      process.env.API_TOKEN,
+      process.env.DS_API_URL,
+      process.env.DS_API_TOKEN,
     );
     return await dsApiClient.demarche(id);
   }

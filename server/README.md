@@ -36,8 +36,11 @@ $ npm install
 
 ```bash
 # set environment
-$ exoprt API_URL=....
-$ exoprt API_TOKEN=....
+$ exoprt DS_API_URL=....
+$ exoprt DS_API_TOKEN=....
+# Or use .env
+cp .env-example .env
+
 
 # development
 $ npm run start
@@ -51,8 +54,10 @@ $ npm run start:prod
 ### Running in container docker
 ```bash
 # set environment
-$ exoprt API_URL=....
-$ exoprt API_TOKEN=....
+$ exoprt DS_API_URL=....
+$ exoprt DS_API_TOKEN=....
+# Or use .env
+cp .env-example .env
 
 # up development
 $ docker compose -f docker-compose.yml -f docker-compose.dev.yml up
