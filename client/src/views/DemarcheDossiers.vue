@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useDemarcheStore } from '@/stores/demarche'
 import GroupInstructeurs from '@/views/DemarcheGrpInstructeurs.vue'
+import DemarcheService from '@/views/DemarcheService.vue'
 
 const demarcheStore = useDemarcheStore()
 
@@ -11,7 +12,7 @@ const title = computed<string>(() => demarcheStore.demarche?.title || '')
 const number = computed<string>(() => demarcheStore.demarche?.number || '')
 const dossiers = computed<any>(() => demarcheStore.demarche?.dossiers?.nodes || [])
 const groupInstructeurs = computed<any[]>(() => demarcheStore.demarche?.groupeInstructeurs || '')
-
+const service = computed<any>(() => demarcheStore.demarche?.service || '')
 const DateToStringFn = (value:any) => {
   return value
     ? (new Date(value)).toLocaleDateString('fr-FR')
@@ -98,7 +99,8 @@ onMounted(async () => {
     <h2>{{ title }}</h2>
     <input v-model="idDemarche">
   </div>
-
+  <DemarcheService :service="service" />
+  <br>
   <GroupInstructeurs :group-instructeurs="groupInstructeurs" />
   <br>
   <DsfrTable
