@@ -11,6 +11,7 @@
   >
     <DsfrTableRow
       v-for="(rowData) in rows"
+      :key="rowData.number"
       :row-data="rowData"
       :row-attrs="rowAttrs"
     >
