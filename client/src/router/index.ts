@@ -4,6 +4,7 @@ import Home from '../views/AppHome.vue'
 import AboutUs from '../views/AboutUs.vue'
 import DemarcheDossiersVue from '@/views/DemarcheDossiers.vue'
 import DemarchesVue from '@/views/Demarches.vue'
+import DossierVue from '@/views/Dossier.vue'
 
 const MAIN_TITLE = 'Gabarit de démarrage VueDsfr'
 
@@ -28,11 +29,11 @@ const routes = [
   //   name: 'DemarcheDossiers',
   //   component: DossiersDemarcheVue,
   // },
-  // {
-  //   path: '/dossiers/:id',
-  //   name: 'DemarcheDossiers',
-  //   component: DossiersDemarcheVue,
-  // },
+  {
+    path: '/dossiers/:id',
+    name: 'Dossier',
+    component: DossierVue,
+  },
   {
     path: '/demarches',
     name: 'Demarches',
