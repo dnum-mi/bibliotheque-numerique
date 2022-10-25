@@ -1,0 +1,43 @@
+import '@gouvminint/vue-dsfr/styles'
+import '../main.css'
+
+import DemarcheInformations from './DemarcheInformations.vue'
+
+import { demarche2 } from './__tests__/demarche-2.js'
+
+describe('<DemarcheDescription />', () => {
+  const labelValues = [
+    'Description',
+    'Etat',
+    'Date de création',
+    'Date de dépublication',
+    'Date de derniére modification',
+    'Date de fermeture',
+    'Date de publication',
+    'Déclarative',
+
+  ]
+  it('renders without props', () => {
+    cy.mount(DemarcheInformations)
+
+    cy.get('label').then(($label) => {
+      labelValues.forEach(labelValue =>
+        cy.wrap($label).should('contain', labelValue),
+      )
+    })
+  })
+
+  it('renders with props', () => {
+    const datas = demarche2.demarche
+    cy.mount(DemarcheInformations, { props: { datas } })
+    cy.get('label').then(($label) => {
+      cy.wrap($label).contains('Description').next().should('contain', datas.description)
+      cy.wrap($label).contains('Etat').next().should('contain', 'Publiée')
+      cy.wrap($label).contains('Date de création').next().should('contain', new Date(datas.dateCreation).toLocaleString())
+      cy.wrap($label).contains('Date de dépublication').next().should('contain', '')
+      cy.wrap($label).contains('Date de derniére modification').next().should('contain', new Date(datas.dateDerniereModification).toLocaleString())
+      cy.wrap($label).contains('Date de fermeture').next().should('contain', '')
+      cy.wrap($label).contains('Date de publication').next().should('contain', new Date(datas.datePublication).toLocaleString())
+    })
+  })
+})
