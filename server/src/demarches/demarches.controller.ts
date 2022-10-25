@@ -4,24 +4,27 @@ import {
   HttpException,
   HttpStatus,
   Param,
+  ParseIntPipe,
 } from "@nestjs/common";
 import { DemarchesService } from "./demarches.service";
 import { Demarche } from "@lab-mi/ds-api-client/dist/@types/types";
+
+type ReturnDemarche = Omit<Demarche, "id"> & { id: number };
 
 @Controller("demarches")
 export class DemarchesController {
   constructor(private readonly demarcheService: DemarchesService) {}
 
   @Get()
-  async getDemarches(): Promise<{ demarches: Partial<Demarche>[] }> {
+  async getDemarches(): Promise<{ demarches: ReturnDemarche[] }> {
     try {
+      const demarches = await this.demarcheService.findAll();
       return {
-        demarches: [
-          (await this.demarcheService.getDemarche(1)).demarche,
-          (await this.demarcheService.getDemarche(2)).demarche,
-          (await this.demarcheService.getDemarche(3)).demarche,
-          (await this.demarcheService.getDemarche(5)).demarche,
-        ],
+        demarches: demarches.map((demarche) => ({
+          ...demarche?.demarcheDS?.dataJson,
+          id: demarche.id,
+          originalId: demarche?.demarcheDS?.id,
+        })),
       };
     } catch (error) {
       throw new HttpException("Demarche not found", HttpStatus.NOT_FOUND);
@@ -30,10 +33,33 @@ export class DemarchesController {
 
   @Get(":id")
   async getDemarcheById(
-    @Param("id") id: string,
-  ): Promise<{ demarche: Partial<any> }> {
+    @Param("id", ParseIntPipe) id: number,
+  ): Promise<{ demarche: ReturnDemarche }> {
     try {
-      return await this.demarcheService.getDemarche(parseInt(id));
+      const demarche = await this.demarcheService.findById(id);
+      return {
+        demarche: {
+          ...demarche?.demarcheDS?.dataJson,
+          id: demarche.id,
+        },
+      };
+    } catch (error) {
+      throw new HttpException("Demarche not found", HttpStatus.NOT_FOUND);
+    }
+  }
+
+  @Get("ds/:id")
+  async getDemarcheByDsId(
+    @Param("id", ParseIntPipe) id: number,
+  ): Promise<{ demarche: ReturnDemarche }> {
+    try {
+      const demarche = await this.demarcheService.findByDsId(id);
+      return {
+        demarche: {
+          ...demarche?.demarcheDS?.dataJson,
+          id: demarche.id,
+        },
+      };
     } catch (error) {
       throw new HttpException("Demarche not found", HttpStatus.NOT_FOUND);
     }
