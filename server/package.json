@@ -10,6 +10,7 @@
     "build": "nest build",
     "start": "nest start",
     "dev": "nest start --debug 0.0.0.0:9229 --watch",
+    "sync:demarches": "ts-node src/scripts/loadDemarcheDs.ts",
     "docker:build": "docker compose -f docker-compose.yml -f docker-compose.dev.yml build server",
     "docker:start": "docker compose -f docker-compose.yml up",
     "docker:dev": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d",

@@ -113,3 +113,8 @@ Pour les logs de la bases de données :
 ```
 $ npm run docker:logs:db
 ```
+### Lancer le script pour récupérer les démarches
+```
+$ cd server
+$ npm run sync:demarches
+```
