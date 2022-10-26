@@ -99,6 +99,7 @@ onMounted(async () => {
   <div class="title">
     <h1>Démarche {{ number }}</h1>
     <h2>{{ title }}</h2>
+    <!--TODO: input a retirer-->
     <input v-model="idDemarche">
   </div>
   <DemarcheService :service="service" />

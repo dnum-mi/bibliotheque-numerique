@@ -1,4 +1,5 @@
 import { apiClient } from '@/utils/api-client'
+import { generateDossiers } from '@/views/__tests__/dossiers'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
@@ -24,10 +25,11 @@ export const useDemarcheStore = defineStore('demarche', () => {
   const getDossiers = async (idDemarche: number) => {
     if (!idDemarche) {
       console.log('idDemarche doit être saisie')
-      return
     }
-    const result = await apiClient.getDossiers(idDemarche)
-    if (result) dossiers.value = result
+    // const result = await apiClient.getDossiers(idDemarche)
+    // if (result) dossiers.value = result
+    // TODO: Bouvchon à retirer
+    dossiers.value = generateDossiers()
   }
 
   return {
@@ -35,7 +37,7 @@ export const useDemarcheStore = defineStore('demarche', () => {
     getDemarche,
     demarches,
     getDemarches,
-    dossiers
+    dossiers,
     getDossiers,
   }
 })
