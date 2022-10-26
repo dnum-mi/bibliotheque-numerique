@@ -20,10 +20,22 @@ export const useDemarcheStore = defineStore('demarche', () => {
     if (result) demarches.value = result
   }
 
+  const dossiers = ref([])
+  const getDossiers = async (idDemarche: number) => {
+    if (!idDemarche) {
+      console.log('idDemarche doit être saisie')
+      return
+    }
+    const result = await apiClient.getDossiers(idDemarche)
+    if (result) dossiers.value = result
+  }
+
   return {
     demarche,
     getDemarche,
     demarches,
     getDemarches,
+    dossiers
+    getDossiers,
   }
 })
