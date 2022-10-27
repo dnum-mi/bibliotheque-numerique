@@ -24,6 +24,15 @@ export const apiClient = {
     const response = await axios(config)
     return response.data.demarches
   },
+  getDossiers: async (id: number) => {
+    const config = {
+      method: 'get',
+      url: `${baseApiUrl}/dossiers/${id}`,
+      headers,
+    }
+    const response = await axios(config)
+    return response.data.dossiers
+  },
   getDossier: async (id: number) => {
     // const config = {
     //   method: 'get',

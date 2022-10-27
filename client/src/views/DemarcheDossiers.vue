@@ -10,7 +10,7 @@ const demarcheStore = useDemarcheStore()
 
 const title = computed<string>(() => demarcheStore.demarche?.title || '')
 const number = computed<string>(() => demarcheStore.demarche?.number || '')
-const dossiers = computed<any>(() => demarcheStore.demarche?.dossiers?.nodes || [])
+const dossiers = computed<any>(() => demarcheStore.dossiers || [])
 const groupInstructeurs = computed<any[]>(() => demarcheStore.demarche?.groupeInstructeurs || '')
 const service = computed<any>(() => demarcheStore.demarche?.service || '')
 const DateToStringFn = (value:any) => {
@@ -82,6 +82,7 @@ const idDemarche = ref(1)
 
 watch(idDemarche, async (value: number) => {
   await demarcheStore.getDemarche(value)
+  await demarcheStore.getDossiers(value)
 })
 
 onMounted(async () => {
@@ -89,6 +90,7 @@ onMounted(async () => {
   const params = useRoute()?.params
   if (params && params.id) { idDemarche.value = Number(params.id) }
   await demarcheStore.getDemarche(idDemarche.value)
+  await demarcheStore.getDossiers(idDemarche.value)
 })
 
 </script>
@@ -97,6 +99,7 @@ onMounted(async () => {
   <div class="title">
     <h1>Démarche {{ number }}</h1>
     <h2>{{ title }}</h2>
+    <!--TODO: input a retirer-->
     <input v-model="idDemarche">
   </div>
   <DemarcheService :service="service" />
