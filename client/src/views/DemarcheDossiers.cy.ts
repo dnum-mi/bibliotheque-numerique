@@ -7,7 +7,7 @@ import { createPinia } from 'pinia'
 import { useDemarcheStore } from '@/stores/demarche'
 import DemarcheDossiers from './DemarcheDossiers.vue'
 
-import { demarche2 } from './__tests__/demarche-2.js'
+import { demarche1 } from './__tests__/demarche.js'
 import { generateDossiers } from './__tests__/dossiers'
 
 describe('<DemarcheDossiers />', () => {
@@ -16,14 +16,14 @@ describe('<DemarcheDossiers />', () => {
 
     const pinia = createPinia()
     const useStore = useDemarcheStore(pinia)
-    const demarche = demarche2.demarche
+    const demarche = demarche1.demarche
     useStore.demarche = demarche
     useStore.getDemarche = async (id: number) => {
       useStore.demarche = demarche
     }
     const dossiers = generateDossiers()
     useStore.dossiers = dossiers
-    console.log({ storeDossier: useStore.dossiers, dossiers: JSON.stringify(dossiers) })
+
     useStore.getDossiers = async (id: number) => {
       useStore.dossiers = dossiers
     }
@@ -43,5 +43,7 @@ describe('<DemarcheDossiers />', () => {
 
     cy.get('h3').should('contain', 'Groupe Instructeurs')
     cy.get('h3').should('contain', 'Service')
+
+    cy.get('h3').should('contain', 'Information')
   })
 })
