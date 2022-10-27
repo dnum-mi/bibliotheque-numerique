@@ -7,7 +7,7 @@ import { createPinia } from 'pinia'
 import { useDemarcheStore } from '@/stores/demarche'
 import DemarcheDossiers from './DemarcheDossiers.vue'
 
-import { demarche1 } from './__tests__/demarche-2.js'
+import { demarche1 } from './__tests__/demarche.js'
 import { generateDossiers } from './__tests__/dossiers'
 
 describe('<DemarcheDossiers />', () => {

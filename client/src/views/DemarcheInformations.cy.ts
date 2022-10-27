@@ -3,7 +3,7 @@ import '../main.css'
 
 import DemarcheInformations from './DemarcheInformations.vue'
 
-import { demarche2 } from './__tests__/demarche-2.js'
+import { demarche2 } from './__tests__/demarche.js'
 
 describe('<DemarcheDescription />', () => {
   const labelValues = [

@@ -1,4 +1,5 @@
-export const demarche2 = {
+
+export const demarche1 = {
   demarche: {
     id: 'UHJvY2VkdXJlLTI=',
     number: 2,
@@ -10,7 +11,7 @@ export const demarche2 = {
     dateDerniereModification: '2022-09-27T16:11:49+02:00',
     dateFermeture: null,
     datePublication: '2022-09-27T16:11:49+02:00',
-    declarative: '',
+    declarative: 'en_instruction',
     draftRevision: {
       id: 'UHJvY2VkdXJlUmV2aXNpb24tNA==',
       champDescriptors: [
@@ -784,7 +785,7 @@ export const demarche2 = {
   },
 }
 
-export const demarche1 = {
+export const demarche2 = {
   demarche: {
     id: 'UHJvY2VkdXJlLTI=',
     number: 2,
@@ -796,7 +797,7 @@ export const demarche1 = {
     dateDerniereModification: '2022-09-27T16:11:49+02:00',
     dateFermeture: null,
     datePublication: '2022-09-27T16:11:49+02:00',
-    declarative: 'en_instruction',
+    declarative: '',
     draftRevision: {
       id: 'UHJvY2VkdXJlUmV2aXNpb24tNA==',
       champDescriptors: [
