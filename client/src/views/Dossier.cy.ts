@@ -10,6 +10,7 @@ import { useDossierStore } from '@/stores/dossier'
 describe('<Dossier />', () => {
   it('renders', () => {
     const pinia = createPinia()
+    // eslint-disable-next-line
     const useStore = useDossierStore(pinia)
     const extensions = {
       use: [
