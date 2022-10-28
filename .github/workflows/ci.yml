@@ -20,3 +20,9 @@ jobs:
             npm ci
             npm run lint
             npm run test:ct:ci
+      - name: run test unit BACK-END
+        run: | 
+            cd server
+            npm ci
+            npm run lint
+            npm run test
