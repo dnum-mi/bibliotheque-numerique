@@ -9,8 +9,6 @@ import { useDossierStore } from '@/stores/dossier'
 
 describe('<Dossier />', () => {
   it('renders', () => {
-    cy.viewport(1280, 1024)
-
     const pinia = createPinia()
     const useStore = useDossierStore(pinia)
     const extensions = {
