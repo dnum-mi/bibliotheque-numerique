@@ -1,0 +1,28 @@
+name: CI of biblio-num
+on: pull_request
+
+jobs:
+  tests:
+    name: Run unit tests 
+    if: ${{ !github.event.pull_request.draft }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checks-out repository
+        uses: actions/checkout@v3
+      - name: Use Node.js 16.x.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+      - name: run test unit FRONT
+        run: | 
+            cd client
+            npm ci
+            npm run lint
+            npm run test:ct:ci
+      - name: run test unit BACK-END
+        run: | 
+            cd server
+            npm ci
+            npm run lint
+            npm run test

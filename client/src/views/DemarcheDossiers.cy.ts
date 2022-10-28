@@ -12,8 +12,6 @@ import { generateDossiers } from './__tests__/dossiers'
 
 describe('<DemarcheDossiers />', () => {
   it('renders', () => {
-    cy.viewport(1280, 1024)
-
     const pinia = createPinia()
     const useStore = useDemarcheStore(pinia)
     const demarche = demarche1.demarche
