@@ -1,15 +1,17 @@
 import {
+  BaseEntity,
   Entity,
   Column,
   PrimaryColumn,
+  PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
 } from "typeorm";
 
 @Entity({ name: "dossiers_ds" })
-export class DossierDSEntity {
-  @PrimaryColumn("varchar", { primaryKeyConstraintName: "pk_dossier_ds_id" })
-  id: string;
+export class DossierDS extends BaseEntity {
+  @PrimaryColumn()
+  id: number;
 
   @Column({ type: "jsonb" })
   dataJson: object;

@@ -8,7 +8,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { DossierDSEntity } from "./dossier_ds.entity";
+import { DossierDS } from "./dossier_ds.entity";
 import { DemarcheEntity } from "./demarche.entity";
 
 @Entity({ name: "dossiers" })
@@ -20,9 +20,9 @@ export class DossierEntity {
   })
   id: number;
 
-  @OneToOne(() => DossierDSEntity)
+  @OneToOne(() => DossierDS)
   @JoinColumn({ name: "idDossierDS", referencedColumnName: "id" })
-  dossierDS: DossierDSEntity;
+  dossierDS: DossierDS;
 
   @ManyToOne(() => DemarcheEntity, (demarche) => demarche.dossiers)
   @JoinColumn({ name: "idDemarche" })
