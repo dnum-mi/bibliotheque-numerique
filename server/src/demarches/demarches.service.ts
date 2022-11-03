@@ -4,7 +4,6 @@ import { DsApiClient } from "@lab-mi/ds-api-client";
 import { Demarche } from "@lab-mi/ds-api-client/dist/@types/types";
 import { InsertResult, Repository } from "typeorm";
 import { DemarcheDSEntity, DemarcheEntity } from "../entities";
-import { DemarchesDSService } from "../demarches_ds/demarches_ds.service";
 
 @Injectable()
 export class DemarchesService {

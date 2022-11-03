@@ -1,28 +1,38 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { CreateDossierDSDto } from "./dto/create-dossier_ds.dto";
-import { UpdateDossierDSDto } from "./dto/update-dossier_ds.dto";
+import { DsApiClient } from "@lab-mi/ds-api-client";
+import { DossierDS } from "../entities";
 
 @Injectable()
 export class DossiersDSService {
   private readonly logger = new Logger(DossiersDSService.name);
+  private dsApiClient = new DsApiClient(
+    process.env.DS_API_URL,
+    process.env.DS_API_TOKEN,
+  );
 
-  create(createDossierDSDto: CreateDossierDSDto) {
-    return "This action adds a new dossiersDS";
+  async upsertDossierDS(dossierNumber: number) {
+    try {
+      const response = await this.dsApiClient.dossier(dossierNumber);
+      const dossier = response?.dossier;
+      await DossierDS.tryUpsertDossierDS(dossier);
+    } catch (e) {
+      this.logger.error(e);
+    }
   }
 
-  findAll() {
-    return `This action returns all dossiersDS`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} dossiersDS`;
-  }
-
-  update(id: number, updateDossierDSDto: UpdateDossierDSDto) {
-    return `This action updates a #${id} dossiersDS`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} dossiersDS`;
+  async upsertDemarcheDossiersDS(demarcheNumber: number) {
+    try {
+      const response = await this.dsApiClient.demarcheDossiers(demarcheNumber);
+      const dossiers = response?.demarche?.dossiers?.nodes;
+      if (dossiers) {
+        await Promise.all(
+          dossiers.map(async (dossier) => {
+            await DossierDS.tryUpsertDossierDS(dossier);
+          }),
+        );
+      }
+    } catch (e) {
+      this.logger.error(e);
+    }
   }
 }

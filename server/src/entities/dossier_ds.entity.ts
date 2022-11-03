@@ -7,6 +7,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { Dossier } from "@lab-mi/ds-api-client/dist/@types/types";
 
 @Entity({ name: "dossiers_ds" })
 export class DossierDS extends BaseEntity {
@@ -24,4 +25,18 @@ export class DossierDS extends BaseEntity {
 
   @UpdateDateColumn({ type: "timestamp" })
   updateAt: Date;
+
+  static async tryUpsertDossierDS(dossier: Partial<Dossier>) {
+    await DossierDS.upsert(
+      {
+        id: dossier.number,
+        dataJson: dossier,
+        dsUpdateAt: dossier.dateDerniereModification,
+      },
+      {
+        conflictPaths: ["id"],
+        skipUpdateIfNoValuesChanged: true,
+      },
+    );
+  }
 }
