@@ -30,6 +30,11 @@ export class DossiersController {
     return this.dossiersService.findOne(+id);
   }
 
+  @Get(":id/detail")
+  findOneWithDetail(@Param("id") id: string) {
+    return this.dossiersService.findOneWithDetail(+id);
+  }
+
   @Patch(":id")
   update(@Param("id") id: string, @Body() updateDossierDto: UpdateDossierDto) {
     return this.dossiersService.update(+id, updateDossierDto);

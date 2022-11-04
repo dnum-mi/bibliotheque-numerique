@@ -21,7 +21,17 @@ export class DossiersService {
     return `This action updates a #${id} dossier`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} dossier`;
+  findOneWithDetail(id: number) {
+    return Dossier.findOne({
+      where: { id: id },
+      relations: { dossierDS: true },
+    });
+  }
+
+  async remove(id: number) {
+    const dossier = await Dossier.findOneBy({ id: id });
+    if (dossier) {
+      return dossier.remove();
+    }
   }
 }
