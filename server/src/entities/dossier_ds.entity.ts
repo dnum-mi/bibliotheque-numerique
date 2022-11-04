@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { Dossier } from "./dossier.entity";
-import { Dossier as ApiDossier } from "@lab-mi/ds-api-client/dist/@types/types";
+import { Dossier as TDossier } from "@lab-mi/ds-api-client/dist/@types/types";
 
 @Entity()
 export class DossierDS extends BaseEntity {
@@ -27,7 +27,7 @@ export class DossierDS extends BaseEntity {
   @UpdateDateColumn({ type: "timestamp" })
   updateAt: Date;
 
-  static async tryUpsertDossierDS(apiDossier: Partial<ApiDossier>) {
+  static async tryUpsertDossierDS(apiDossier: Partial<TDossier>) {
     const dossierDS = await DossierDS.upsert(
       {
         id: apiDossier.number,

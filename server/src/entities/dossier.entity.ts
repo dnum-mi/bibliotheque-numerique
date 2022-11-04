@@ -12,7 +12,7 @@ import {
 } from "typeorm";
 import { DossierDS } from "./dossier_ds.entity";
 import { DemarcheEntity } from "./demarche.entity";
-import { Dossier as ApiDossier } from "@lab-mi/ds-api-client/dist/@types/types";
+import { Dossier as TDossier } from "@lab-mi/ds-api-client/dist/@types/types";
 
 @Entity()
 export class Dossier extends BaseEntity {
@@ -36,8 +36,16 @@ export class Dossier extends BaseEntity {
   @UpdateDateColumn({ type: "timestamp" })
   updateAt: Date;
 
+  static all() {
+    return this.find({
+      relations: {
+        dossierDS: true,
+      },
+    });
+  }
+
   static async upsertByDossierDS(
-    apiDossier: Partial<ApiDossier>,
+    apiDossier: Partial<TDossier>,
     dossierDS: InsertResult,
   ) {
     await Dossier.upsert(

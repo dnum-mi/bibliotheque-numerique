@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { CreateDossierDto } from "./dto/create-dossier.dto";
 import { UpdateDossierDto } from "./dto/update-dossier.dto";
+import { Dossier } from "../entities";
 
 @Injectable()
 export class DossiersService {
@@ -9,11 +10,11 @@ export class DossiersService {
   }
 
   findAll() {
-    return `This action returns all dossiers`;
+    return Dossier.all();
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} dossier`;
+    return Dossier.findOneBy({ id: id });
   }
 
   update(id: number, updateDossierDto: UpdateDossierDto) {
