@@ -6,12 +6,13 @@ import { useDemarcheStore } from '@/stores/demarche'
 import GroupInstructeurs from '@/views/DemarcheGrpInstructeurs.vue'
 import DemarcheService from '@/views/DemarcheService.vue'
 import DemarcheInformations from '@/views/DemarcheInformations.vue'
+import BliblioNumDataTable from '@/components/BliblioNumDataTable.vue'
 
 const demarcheStore = useDemarcheStore()
 
 const title = computed<string>(() => demarcheStore.demarche?.title || '')
 const number = computed<string>(() => demarcheStore.demarche?.number || '')
-const dossiers = computed<any>(() => demarcheStore.dossiers || [])
+const dossiers = computed<any>(() => demarcheStore.dossiers?.map(dossier => ({ idBiblioNum: dossier.id, ...dossier.dossierDS.dataJson })) || [])
 const groupInstructeurs = computed<any[]>(() => demarcheStore.demarche?.groupeInstructeurs || '')
 const service = computed<any>(() => demarcheStore.demarche?.service || '')
 const demarche = computed<any>(() => demarcheStore.demarche || '')
@@ -23,6 +24,9 @@ const DateToStringFn = (value:any) => {
 }
 
 const headerDossierJson = [
+  {
+    value: 'idBiblioNum',
+  },
   {
     text: 'Numéro',
     value: 'number',
@@ -63,9 +67,6 @@ const headerDossierJson = [
     parseFn: DateToStringFn,
   },
   {
-    text: 'Détails',
-  },
-  {
     text: 'Association déclarée cultuelle dans télédéclaration loi CRPR ?',
     value: 'annotations',
     parseFn: (value:any) => {
@@ -80,7 +81,7 @@ const headerDossierJson = [
     },
   },
 ]
-const headersDossier = computed<any>(() => headerDossierJson.map(elt => elt.text))
+// const headersDossier = computed<any>(() => headerDossierJson.map(elt => elt.text))
 const idDemarche = ref(1)
 
 watch(idDemarche, async (value: number) => {
@@ -111,30 +112,11 @@ onMounted(async () => {
   <br>
   <GroupInstructeurs :group-instructeurs="groupInstructeurs" />
   <br>
-  <DsfrTable
+  <BliblioNumDataTable
     title="Dossiers"
-  >
-    <template #header>
-      <DsfrTableHeaders :headers="headersDossier" />
-    </template>
-    <tr
-      v-for="dossier in dossiers"
-      :key="dossier[headerDossierJson[0].value]"
-    >
-      <td
-        v-for="headerJson in headerDossierJson"
-        :key="headerJson.value"
-      >
-        {{
-          headerJson.value
-            ? ( headerJson.parseFn
-              ? headerJson.parseFn(dossier[headerJson.value])
-              : dossier[headerJson.value])
-            : ''
-        }}
-      </td>
-    </tr>
-  </DsfrTable>
+    :headers="headerDossierJson"
+    :datas="dossiers"
+  />
 </template>
 
 <style scoped>
