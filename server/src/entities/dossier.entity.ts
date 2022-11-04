@@ -1,4 +1,5 @@
 import {
+  BaseEntity,
   Entity,
   Column,
   PrimaryGeneratedColumn,
@@ -7,25 +8,23 @@ import {
   JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  InsertResult,
 } from "typeorm";
 import { DossierDS } from "./dossier_ds.entity";
 import { DemarcheEntity } from "./demarche.entity";
+import { Dossier as ApiDossier } from "@lab-mi/ds-api-client/dist/@types/types";
 
-@Entity({ name: "dossiers" })
-export class DossierEntity {
-  @PrimaryGeneratedColumn("increment", {
-    type: "int",
-    unsigned: true,
-    primaryKeyConstraintName: "pk_dossier_id",
-  })
+@Entity()
+export class Dossier extends BaseEntity {
+  @PrimaryGeneratedColumn("increment")
   id: number;
 
   @OneToOne(() => DossierDS)
-  @JoinColumn({ name: "idDossierDS", referencedColumnName: "id" })
+  @JoinColumn()
   dossierDS: DossierDS;
 
   @ManyToOne(() => DemarcheEntity, (demarche) => demarche.dossiers)
-  @JoinColumn({ name: "idDemarche" })
+  @JoinColumn()
   demarche: DemarcheEntity;
 
   @Column({ type: "varchar" })
@@ -36,4 +35,21 @@ export class DossierEntity {
 
   @UpdateDateColumn({ type: "timestamp" })
   updateAt: Date;
+
+  static async upsertByDossierDS(
+    apiDossier: Partial<ApiDossier>,
+    dossierDS: InsertResult,
+  ) {
+    await Dossier.upsert(
+      {
+        dossierDS: dossierDS.identifiers[0].id,
+        // demarche: apiDossier.demarche,
+        state: apiDossier.state,
+      },
+      {
+        conflictPaths: ["dossierDS"],
+        skipUpdateIfNoValuesChanged: true,
+      },
+    );
+  }
 }

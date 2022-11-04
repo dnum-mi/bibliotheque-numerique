@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { DemarcheDSEntity } from "./demarche_ds.entity";
-import { DossierEntity } from "./dossier.entity";
+import { Dossier } from "./dossier.entity";
 
 @Entity({ name: "demarches" })
 export class DemarcheEntity {
@@ -28,8 +28,8 @@ export class DemarcheEntity {
   })
   demarcheDS: DemarcheDSEntity;
 
-  @OneToMany(() => DossierEntity, (dossier) => dossier.demarche)
-  dossiers: DossierEntity[];
+  @OneToMany(() => Dossier, (dossier) => dossier.demarche)
+  dossiers: Dossier[];
 
   @Column()
   state: string;

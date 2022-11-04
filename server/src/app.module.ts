@@ -14,7 +14,7 @@ import {
   DemarcheDSEntity,
   DemarcheEntity,
   DossierDS,
-  DossierEntity,
+  Dossier,
 } from "./entities";
 
 const host = process.env.POSTGRES_HOST || "localhost";
@@ -32,7 +32,7 @@ const database = process.env.POSTGRES_DB || "biblio-num";
       username,
       password,
       database,
-      entities: [DemarcheEntity, DemarcheDSEntity, DossierEntity, DossierDS],
+      entities: [DemarcheEntity, DemarcheDSEntity, Dossier, DossierDS],
       synchronize: true,
     }),
     DemarchesModule,
