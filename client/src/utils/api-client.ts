@@ -6,6 +6,15 @@ const headers = {
 }
 
 export const apiClient = {
+  getDemarcheByDsId: async (id: number) => {
+    const config = {
+      method: 'get',
+      url: `${baseApiUrl}/demarches/ds/${id}`,
+      headers,
+    }
+    const response = await axios(config)
+    return response.data.demarche
+  },
   getDemarche: async (id: number) => {
     const config = {
       method: 'get',
@@ -24,14 +33,16 @@ export const apiClient = {
     const response = await axios(config)
     return response.data.demarches
   },
-  getDossiers: async (id: number) => {
+  getDossiers: async (id?: number) => {
+    const extPath = id ? `/${id}` : ''
     const config = {
       method: 'get',
-      url: `${baseApiUrl}/dossiers/${id}`,
+      url: `${baseApiUrl}/dossiers${extPath}`,
       headers,
     }
     const response = await axios(config)
-    return response.data.dossiers
+    console.log(response)
+    return response.data
   },
   getDossier: async (id: number) => {
     // const config = {

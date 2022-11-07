@@ -10,9 +10,9 @@
     :headers="headers"
   >
     <DsfrTableRow
-      v-for="(rowData) in rows"
+      v-for="rowData in rows"
       :key="rowData.number"
-      :row-data="rowData"
+      :row-data="rowData.slice(1)"
       :row-attrs="rowAttrs"
     >
       <DsfrButton
@@ -36,6 +36,9 @@ const router = useRouter()
 const label = 'Voir'
 const headersJson = [
   {
+    value: 'id',
+  },
+  {
     text: 'Id',
     value: 'number',
   },
@@ -51,6 +54,9 @@ const headersJson = [
   {
     text: 'Service',
     value: 'service',
+    parseFn: (value:any) => {
+      return `${value?.nom} - ${value?.organisme}`
+    },
   },
   {
     text: 'Dossiers',
@@ -68,7 +74,7 @@ const headersJson = [
 const rows = computed<any[]>(() => demarcheStore.demarches.map(demarche => headersJson.map(header => `${
   (header.parseFn ? header.parseFn(demarche[header.value]) : demarche[header.value]) || ''
 }`)))
-const headers = computed<string[]>(() => ['Action', ...headersJson.map(header => header.text)])
+const headers = computed<string[]>(() => ['Action', ...headersJson.filter(header => header.text).map(header => header.text)])
 
 onMounted(async () => {
   await demarcheStore.getDemarches()
