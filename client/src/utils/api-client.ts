@@ -33,6 +33,16 @@ export const apiClient = {
     const response = await axios(config)
     return response.data.demarches
   },
+  getDossiersFromDemarche: async (id: number) => {
+    const config = {
+      method: 'get',
+      url: `${baseApiUrl}/demarches/${id}/dossiers`,
+      headers,
+    }
+    const response = await axios(config)
+    return response.data
+  },
+
   getDossiers: async (id?: number) => {
     const extPath = id ? `/${id}` : ''
     const config = {
