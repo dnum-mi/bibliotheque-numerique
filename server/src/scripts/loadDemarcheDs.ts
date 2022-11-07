@@ -15,7 +15,7 @@ async function bootstrap() {
   const demarchesDSService = application.get(DemarchesDSService);
   const demarchesService = application.get(DemarchesService);
   // TODO:  demarchesNumbers array has to be dynamic
-  const demarchesNumbers: number[] = [1, 2, 3, 4];
+  const demarchesNumbers: number[] = [1, 2, 3, 4, 11];
   const { raw } = await demarchesDSService.updateDemarchesDS(demarchesNumbers);
   await demarchesService.updateDemarches(
     raw.map((r) => ({ ...r.dataJson, id: r.id })),

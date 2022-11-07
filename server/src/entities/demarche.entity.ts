@@ -7,12 +7,13 @@ import {
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
+  BaseEntity,
 } from "typeorm";
 import { DemarcheDSEntity } from "./demarche_ds.entity";
 import { Dossier } from "./dossier.entity";
 
 @Entity({ name: "demarches" })
-export class DemarcheEntity {
+export class DemarcheEntity extends BaseEntity {
   @PrimaryGeneratedColumn("increment", {
     type: "int",
     unsigned: true,

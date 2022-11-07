@@ -47,11 +47,12 @@ export class Dossier extends BaseEntity {
   static async upsertByDossierDS(
     apiDossier: Partial<TDossier>,
     dossierDS: InsertResult,
+    demarcheEntity: DemarcheEntity,
   ) {
     await Dossier.upsert(
       {
         dossierDS: dossierDS.identifiers[0].id,
-        // demarche: apiDossier.demarche,
+        demarche: demarcheEntity,
         state: apiDossier.state,
       },
       {
