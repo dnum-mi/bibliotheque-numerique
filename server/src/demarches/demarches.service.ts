@@ -33,7 +33,7 @@ export class DemarchesService {
   findById(id: number): Promise<DemarcheEntity> {
     return this.demarchesRepository.findOne({
       where: { id },
-      relations: { demarcheDS: true },
+      relations: { demarcheDS: true, dossiers: { dossierDS: true } },
     });
   }
 

@@ -64,4 +64,17 @@ export class DemarchesController {
       throw new HttpException("Demarche not found", HttpStatus.NOT_FOUND);
     }
   }
+
+  @Get(":id/dossiers")
+  async getDemarcheDossiersById(@Param("id") id: number) {
+    try {
+      const demarche = await this.demarcheService.findById(id);
+      return demarche.dossiers;
+    } catch (error) {
+      throw new HttpException(
+        "Demarche dossiers not found",
+        HttpStatus.NOT_FOUND,
+      );
+    }
+  }
 }
