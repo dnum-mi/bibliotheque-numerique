@@ -8,6 +8,7 @@ const serviceTitle = 'Bibliothéque Numérique'
 const serviceDescription = 'Description du service'
 const logoText = ['Ministère', 'de l’intérieur']
 
+const showSearch = false
 const quickLinks = [
   {
     label: 'Home',
@@ -50,7 +51,7 @@ const close = async () => {
     :service-description="serviceDescription"
     :logo-text="logoText"
     :quick-links="quickLinks"
-    show-search
+    :show-search="showSearch"
   />
   <div class="fr-container">
     <router-view />
