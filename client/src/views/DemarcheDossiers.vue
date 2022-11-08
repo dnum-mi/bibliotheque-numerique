@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 import { computed, onMounted, ref, watch } from 'vue'
 import { useDemarcheStore } from '@/stores/demarche'
@@ -8,6 +8,8 @@ import DemarcheService from '@/views/DemarcheService.vue'
 import DemarcheInformations from '@/views/DemarcheInformations.vue'
 import BliblioNumDataTable from '@/components/BliblioNumDataTable.vue'
 
+const route = useRoute()
+const router = useRouter()
 const demarcheStore = useDemarcheStore()
 
 const title = computed<string>(() => demarcheStore.demarche?.title || '')
@@ -81,7 +83,7 @@ const headerDossierJson = [
     },
   },
 ]
-// const headersDossier = computed<any>(() => headerDossierJson.map(elt => elt.text))
+
 const idDemarche = ref(1)
 
 watch(idDemarche, async (value: number) => {
@@ -90,13 +92,15 @@ watch(idDemarche, async (value: number) => {
 })
 
 onMounted(async () => {
-  // const { id } = useRoute().params
-  const params = useRoute()?.params
+  const params = route?.params
   if (params && params.id) { idDemarche.value = Number(params.id) }
   await demarcheStore.getDemarche(idDemarche.value)
   await demarcheStore.getDossiers(idDemarche.value)
 })
 
+const getDossier = data => {
+  router.push({ name: 'Dossier', params: { id: data.idBiblioNum } })
+}
 </script>
 
 <template>
@@ -116,6 +120,7 @@ onMounted(async () => {
     title="Dossiers"
     :headers="headerDossierJson"
     :datas="dossiers"
+    @get-elt="getDossier"
   />
 </template>
 

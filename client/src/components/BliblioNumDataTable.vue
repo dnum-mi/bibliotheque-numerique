@@ -5,7 +5,7 @@
     <template #header>
       <tr>
         <DsfrTableHeader
-          v-for="(header,idx) of headersDisplay"
+          v-for="(header,idx) of headers"
           :key="header.value"
           :header="header.text || ''"
           :icon="icons[idx]"
@@ -17,6 +17,16 @@
       v-for="data in datas"
       :key="data"
     >
+      <td>
+        <DsfrButton
+          :label="label"
+          :disabled="disabled"
+          :icon="icon"
+          :icon-right="iconRight"
+          @click="getElt(data)"
+        />
+      </td>
+
       <td
         v-for="header in headersDisplay"
         :key="header.value"
@@ -36,6 +46,7 @@
 import { computed, reactive } from 'vue'
 import type { TypeHeaderDataTable } from './typeDataTable'
 
+const icon = 'ri-search-line'
 const props = withDefaults(defineProps<{
     title: string,
     datas?: object,
@@ -58,5 +69,10 @@ const onClick = (idx:number, sortable?:boolean) => {
     : iconName === 'ri-sort-asc'
       ? undefined
       : { name: 'ri-sort-desc' }
+}
+
+const emit = defineEmits(['getElt'])
+const getElt = data => {
+  emit('getElt', data)
 }
 </script>
