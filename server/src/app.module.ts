@@ -10,12 +10,7 @@ import { DossiersModule } from "./dossiers/dossiers.module";
 import { DossiersDSModule } from "./dossiers_ds/dossiers_ds.module";
 
 // Load Database Entities
-import {
-  DemarcheDSEntity,
-  DemarcheEntity,
-  DossierDS,
-  Dossier,
-} from "./entities";
+import { DemarcheDS, Demarche, DossierDS, Dossier } from "./entities";
 
 const host = process.env.POSTGRES_HOST || "localhost";
 const port = Number(process.env.POSTGRES_PORT) || 5432;
@@ -32,7 +27,7 @@ const database = process.env.POSTGRES_DB || "biblio-num";
       username,
       password,
       database,
-      entities: [DemarcheEntity, DemarcheDSEntity, Dossier, DossierDS],
+      entities: [Demarche, DemarcheDS, Dossier, DossierDS],
       synchronize: true,
     }),
     DemarchesModule,

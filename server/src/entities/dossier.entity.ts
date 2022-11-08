@@ -10,11 +10,10 @@ import {
   UpdateDateColumn,
   InsertResult,
 } from "typeorm";
-import { DossierDS } from "./dossier_ds.entity";
-import { DemarcheEntity } from "./demarche.entity";
+import { DossierDS, Demarche } from "../entities";
 import { Dossier as TDossier } from "@lab-mi/ds-api-client/dist/@types/types";
 
-@Entity()
+@Entity({ name: "dossiers" })
 export class Dossier extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
@@ -23,9 +22,9 @@ export class Dossier extends BaseEntity {
   @JoinColumn()
   dossierDS: DossierDS;
 
-  @ManyToOne(() => DemarcheEntity, (demarche) => demarche.dossiers)
+  @ManyToOne(() => Demarche, (demarche) => demarche.dossiers)
   @JoinColumn()
-  demarche: DemarcheEntity;
+  demarche: Demarche;
 
   @Column({ type: "varchar" })
   state: string;
@@ -47,7 +46,7 @@ export class Dossier extends BaseEntity {
   static async upsertByDossierDS(
     apiDossier: Partial<TDossier>,
     dossierDS: InsertResult,
-    demarcheEntity: DemarcheEntity,
+    demarcheEntity: Demarche,
   ) {
     await Dossier.upsert(
       {

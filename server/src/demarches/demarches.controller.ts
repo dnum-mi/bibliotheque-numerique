@@ -7,9 +7,9 @@ import {
   ParseIntPipe,
 } from "@nestjs/common";
 import { DemarchesService } from "./demarches.service";
-import { Demarche } from "@lab-mi/ds-api-client/dist/@types/types";
+import { Demarche as TDemarche } from "@lab-mi/ds-api-client/dist/@types/types";
 
-type ReturnDemarche = Omit<Demarche, "id"> & { id: number };
+type ReturnDemarche = Omit<TDemarche, "id"> & { id: number };
 
 @Controller("demarches")
 export class DemarchesController {

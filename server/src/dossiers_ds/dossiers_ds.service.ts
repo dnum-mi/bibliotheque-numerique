@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { DsApiClient } from "@lab-mi/ds-api-client";
-import { DemarcheEntity, DossierDS } from "../entities";
+import { Demarche, DossierDS } from "../entities";
 
 @Injectable()
 export class DossiersDSService {
@@ -14,7 +14,7 @@ export class DossiersDSService {
     try {
       const response = await this.dsApiClient.dossier(dossierNumber);
       const dossier = response?.dossier;
-      const demarcheEntity = await DemarcheEntity.findOneBy({
+      const demarcheEntity = await Demarche.findOneBy({
         demarcheDS: { id: demarcheNumber },
       });
       await DossierDS.tryUpsertDossierDS(dossier, demarcheEntity);
@@ -27,7 +27,7 @@ export class DossiersDSService {
     try {
       const response = await this.dsApiClient.demarcheDossiers(demarcheNumber);
       const dossiers = response?.demarche?.dossiers?.nodes;
-      const demarcheEntity = await DemarcheEntity.findOneBy({
+      const demarcheEntity = await Demarche.findOneBy({
         demarcheDS: { id: demarcheNumber },
       });
       if (dossiers) {

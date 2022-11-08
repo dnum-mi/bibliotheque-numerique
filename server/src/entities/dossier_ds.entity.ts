@@ -7,11 +7,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { Dossier } from "./dossier.entity";
 import { Dossier as TDossier } from "@lab-mi/ds-api-client/dist/@types/types";
-import { DemarcheEntity } from "./demarche.entity";
+import { Dossier, Demarche } from "../entities";
 
-@Entity()
+@Entity({ name: "dossiers_ds" })
 export class DossierDS extends BaseEntity {
   @PrimaryColumn()
   id: number;
@@ -30,7 +29,7 @@ export class DossierDS extends BaseEntity {
 
   static async tryUpsertDossierDS(
     apiDossier: Partial<TDossier>,
-    demarcheEntity: DemarcheEntity,
+    demarcheEntity: Demarche,
   ) {
     const dossierDS = await DossierDS.upsert(
       {
