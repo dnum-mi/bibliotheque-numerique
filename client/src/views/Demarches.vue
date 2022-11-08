@@ -15,13 +15,15 @@
       :row-data="rowData.slice(1)"
       :row-attrs="rowAttrs"
     >
-      <DsfrButton
-        :label="label"
-        :disabled="disabled"
-        :icon="icon"
-        :icon-right="iconRight"
-        @click="getDossiers(rowData)"
-      />
+      <td>
+        <DsfrButton
+          :label="label"
+          :disabled="disabled"
+          :icon="icon"
+          :icon-right="iconRight"
+          @click="getDossiers(rowData)"
+        />
+      </td>
     </DsfrTableRow>
   </DsfrTable>
 </template>
@@ -31,9 +33,16 @@ import { useDemarcheStore } from '@/stores/demarche'
 import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
+const DateToStringFn = (value:any) => {
+  return value
+    ? (new Date(value)).toLocaleString('fr-FR')
+    : ''
+}
+
 const demarcheStore = useDemarcheStore()
 const router = useRouter()
 const label = 'Voir'
+const icon = 'ri-search-line'
 const headersJson = [
   {
     value: 'id',
@@ -46,6 +55,7 @@ const headersJson = [
   {
     text: 'Created At',
     value: 'dateCreation',
+    parseFn: DateToStringFn,
   },
   {
     text: 'Libelle',
@@ -58,16 +68,18 @@ const headersJson = [
       return `${value?.nom} - ${value?.organisme}`
     },
   },
-  {
-    text: 'Dossiers',
-    value: 'dossiers',
-    parseFn: (value:any) => {
-      return value?.nodes?.length
-    },
-  },
+  // TODO: Fontion de recupéreration des nombres de dossiers
+  // {
+  //   text: 'Dossiers',
+  //   value: 'dossiers',
+  //   parseFn: (value:any) => {
+  //     return value?.nodes?.length
+  //   },
+  // },
   {
     text: 'Published At',
     value: 'datePublication',
+    parseFn: DateToStringFn,
   },
 ]
 
