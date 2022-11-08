@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { DsApiClient } from "@lab-mi/ds-api-client";
 import { Demarche as TDemarche } from "@lab-mi/ds-api-client/dist/@types/types";
 import { InsertResult, Repository } from "typeorm";
-import { DemarcheDS, Demarche } from "../entities";
+import { Demarche } from "../entities";
 
 @Injectable()
 export class DemarchesService {
