@@ -29,10 +29,11 @@ interface IField {
 const fields = computed<IField[]>(() => {
   return props.labels.map<IField>((labelElt: TypeLabelData) => {
     const value = props.datas[labelElt?.value as keyOfDatas]
+
     return {
       id: `${props.prefixId}-${labelElt?.value}`,
       label: labelElt?.text,
-      value: value ? (labelElt.parseFn ? labelElt.parseFn(value) : value) : '',
+      value: value !== undefined ? (labelElt.parseFn ? labelElt.parseFn(value) : value) : '',
     }
   },
   )

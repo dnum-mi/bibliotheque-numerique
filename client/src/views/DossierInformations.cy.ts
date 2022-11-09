@@ -1,7 +1,7 @@
 import '@gouvminint/vue-dsfr/styles'
 import '../main.css'
 
-import { generateDossier } from './__tests__/dossiers'
+import { generateDossierDS } from './__tests__/dossiers'
 
 import DossierInformations from './DossierInformations.vue'
 import { stateToFr } from '@/utils/stateToString'
@@ -31,7 +31,7 @@ describe('<DossierInformations />', () => {
   })
 
   it('renders', () => {
-    const datas = generateDossier()
+    const datas = generateDossierDS()
     // see: https://test-utils.vuejs.org/guide/
     cy.mount(DossierInformations, { props: { datas } })
     cy.get('label').then(($label) => {

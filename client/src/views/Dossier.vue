@@ -9,6 +9,7 @@ const dossierStore = useDossierStore()
 const idDossier = ref(1)
 
 const dossier = computed<any>(() => dossierStore.dossier || {})
+const dossierDS = computed<any>(() => dossierStore.dossier.dossierDS.dataJson || {})
 const idD = computed<string>(() => dossierStore.dossier?.id || '')
 const champsD = computed<string>(() => dossierStore.dossier?.champs || '')
 const demandeurD = computed<string>(() => dossierStore.dossier?.demandeur || '')
@@ -27,9 +28,9 @@ onMounted(async () => {
 </script>
 
 <template>
-  <h1>Dossier {{ dossier.number }}</h1>
+  <h1>Dossier {{ dossierDS.number }}</h1>
 
-  <DossierInformations :datas="dossier" />
+  <DossierInformations :datas="dossierDS" />
 
   <h2>
     Identité du demandeur:
