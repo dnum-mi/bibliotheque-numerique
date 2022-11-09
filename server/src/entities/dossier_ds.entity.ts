@@ -43,5 +43,6 @@ export class DossierDS extends BaseEntity {
     );
 
     await Dossier.upsertByDossierDS(apiDossier, dossierDS, demarcheEntity);
+    return dossierDS;
   }
 }

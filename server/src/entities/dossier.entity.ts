@@ -48,7 +48,7 @@ export class Dossier extends BaseEntity {
     dossierDS: InsertResult,
     demarcheEntity: Demarche,
   ) {
-    await Dossier.upsert(
+    return await Dossier.upsert(
       {
         dossierDS: dossierDS.identifiers[0].id,
         demarche: demarcheEntity,

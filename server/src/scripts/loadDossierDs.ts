@@ -11,7 +11,7 @@ async function bootstrap() {
   });
 
   const dossierDSServices = application.get(DossiersDSService);
-  // await dossierDSServices.upsertDossierDS(1, 1);
+  await dossierDSServices.upsertDossierDS(1, 1);
   await dossierDSServices.upsertDemarcheDossiersDS(1);
 
   await application.close();
