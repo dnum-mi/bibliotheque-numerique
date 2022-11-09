@@ -7,12 +7,12 @@ import {
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
+  BaseEntity,
 } from "typeorm";
-import { DemarcheDSEntity } from "./demarche_ds.entity";
-import { DossierEntity } from "./dossier.entity";
+import { Dossier, DemarcheDS } from "../entities";
 
 @Entity({ name: "demarches" })
-export class DemarcheEntity {
+export class Demarche extends BaseEntity {
   @PrimaryGeneratedColumn("increment", {
     type: "int",
     unsigned: true,
@@ -20,16 +20,16 @@ export class DemarcheEntity {
   })
   id: number;
 
-  @OneToOne(() => DemarcheDSEntity)
+  @OneToOne(() => DemarcheDS)
   @JoinColumn({
     name: "idDemarcheDS",
     referencedColumnName: "id",
     foreignKeyConstraintName: "fk_demarche_ds_id",
   })
-  demarcheDS: DemarcheDSEntity;
+  demarcheDS: DemarcheDS;
 
-  @OneToMany(() => DossierEntity, (dossier) => dossier.demarche)
-  dossiers: DossierEntity[];
+  @OneToMany(() => Dossier, (dossier) => dossier.demarche)
+  dossiers: Dossier[];
 
   @Column()
   state: string;

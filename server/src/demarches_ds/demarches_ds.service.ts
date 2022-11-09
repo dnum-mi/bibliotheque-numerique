@@ -3,15 +3,15 @@ import { DsApiClient } from "@lab-mi/ds-api-client";
 import { InjectRepository } from "@nestjs/typeorm";
 import { InsertResult, Repository } from "typeorm";
 
-import { DemarcheDSEntity } from "../entities";
+import { DemarcheDS } from "../entities";
 
 @Injectable()
 export class DemarchesDSService {
   private readonly logger = new Logger(DemarchesDSService.name);
 
   constructor(
-    @InjectRepository(DemarcheDSEntity)
-    private demarcheDSRepository: Repository<DemarcheDSEntity>,
+    @InjectRepository(DemarcheDS)
+    private demarcheDSRepository: Repository<DemarcheDS>,
   ) {}
 
   async updateDemarchesDS(demarcheNumbers?: number[]): Promise<InsertResult> {
@@ -39,7 +39,7 @@ export class DemarchesDSService {
       return this.demarcheDSRepository
         .createQueryBuilder()
         .insert()
-        .into(DemarcheDSEntity)
+        .into(DemarcheDS)
         .values(toUpsert)
         .orUpdate(["dataJson", "updateAt", "dsUpdateAt"], "pk_demarche_ds_id", {
           skipUpdateIfNoValuesChanged: true,

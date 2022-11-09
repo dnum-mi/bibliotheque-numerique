@@ -7,9 +7,9 @@ import {
   ParseIntPipe,
 } from "@nestjs/common";
 import { DemarchesService } from "./demarches.service";
-import { Demarche } from "@lab-mi/ds-api-client/dist/@types/types";
+import { Demarche as TDemarche } from "@lab-mi/ds-api-client/dist/@types/types";
 
-type ReturnDemarche = Omit<Demarche, "id"> & { id: number };
+type ReturnDemarche = Omit<TDemarche, "id"> & { id: number };
 
 @Controller("demarches")
 export class DemarchesController {
@@ -62,6 +62,19 @@ export class DemarchesController {
       };
     } catch (error) {
       throw new HttpException("Demarche not found", HttpStatus.NOT_FOUND);
+    }
+  }
+
+  @Get(":id/dossiers")
+  async getDemarcheDossiersById(@Param("id") id: number) {
+    try {
+      const demarche = await this.demarcheService.findById(id);
+      return demarche.dossiers;
+    } catch (error) {
+      throw new HttpException(
+        "Demarche dossiers not found",
+        HttpStatus.NOT_FOUND,
+      );
     }
   }
 }

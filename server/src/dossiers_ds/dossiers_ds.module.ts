@@ -1,10 +1,7 @@
 import { Module } from "@nestjs/common";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { DossierDSEntity } from "../entities";
+import { DossiersDSService } from "./dossiers_ds.service";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([DossierDSEntity])],
-  controllers: [],
-  providers: [],
+  providers: [DossiersDSService],
 })
 export class DossiersDSModule {}

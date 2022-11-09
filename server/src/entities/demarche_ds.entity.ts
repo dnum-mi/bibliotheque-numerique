@@ -4,16 +4,17 @@ import {
   PrimaryColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  BaseEntity,
 } from "typeorm";
-import { Demarche } from "@lab-mi/ds-api-client/dist/@types/types";
+import { Demarche as TDemarche } from "@lab-mi/ds-api-client/dist/@types/types";
 
 @Entity({ name: "demarches_ds" })
-export class DemarcheDSEntity {
+export class DemarcheDS extends BaseEntity {
   @PrimaryColumn("int", { primaryKeyConstraintName: "pk_demarche_ds_id" })
   id: number;
 
   @Column({ type: "jsonb" })
-  dataJson: Demarche;
+  dataJson: TDemarche;
 
   @Column({ type: "timestamp" })
   dsUpdateAt: Date;
