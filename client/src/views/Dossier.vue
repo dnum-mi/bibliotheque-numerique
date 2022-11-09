@@ -3,10 +3,12 @@ import { useRoute } from 'vue-router'
 
 import { computed, onMounted, ref, watch } from 'vue'
 import { useDossierStore } from '@/stores/dossier'
+import DossierInformations from './DossierInformations.vue'
 
 const dossierStore = useDossierStore()
 const idDossier = ref(1)
-const dossier = computed<string>(() => dossierStore.dossier || '')
+
+const dossier = computed<any>(() => dossierStore.dossier || {})
 const idD = computed<string>(() => dossierStore.dossier?.id || '')
 const champsD = computed<string>(() => dossierStore.dossier?.champs || '')
 const demandeurD = computed<string>(() => dossierStore.dossier?.demandeur || '')
@@ -25,10 +27,9 @@ onMounted(async () => {
 </script>
 
 <template>
-  <h1>Dossier</h1>
+  <h1>Dossier {{ dossier.number }}</h1>
 
-  {{ dossier }}
-  Dossier ID: {{ idD }}
+  <DossierInformations :datas="dossier" />
 
   <h2>
     Identité du demandeur:
@@ -42,6 +43,7 @@ onMounted(async () => {
   <div>
     {{ champsD }}
   </div>
+  {{ dossier }}
 </template>
 
 <style scoped>
