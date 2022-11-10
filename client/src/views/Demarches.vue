@@ -29,13 +29,14 @@
 </template>
 
 <script lang="ts"  setup>
+import { LANG_FOR_DATE_TIME } from '@/config'
 import { useDemarcheStore } from '@/stores/demarche'
 import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 const DateToStringFn = (value:any) => {
   return value
-    ? (new Date(value)).toLocaleString('fr-FR')
+    ? (new Date(value)).toLocaleString(LANG_FOR_DATE_TIME)
     : ''
 }
 

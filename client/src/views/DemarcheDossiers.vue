@@ -7,6 +7,7 @@ import GroupInstructeurs from '@/views/DemarcheGrpInstructeurs.vue'
 import DemarcheService from '@/views/DemarcheService.vue'
 import DemarcheInformations from '@/views/DemarcheInformations.vue'
 import BliblioNumDataTable from '@/components/BliblioNumDataTable.vue'
+import { LANG_FOR_DATE_TIME } from '@/config'
 
 const route = useRoute()
 const router = useRouter()
@@ -21,7 +22,7 @@ const demarche = computed<any>(() => demarcheStore.demarche || '')
 
 const DateToStringFn = (value:any) => {
   return value
-    ? (new Date(value)).toLocaleDateString('fr-FR')
+    ? (new Date(value)).toLocaleDateString(LANG_FOR_DATE_TIME)
     : ''
 }
 
