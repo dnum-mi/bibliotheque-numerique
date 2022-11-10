@@ -1,7 +1,11 @@
 import { Module } from "@nestjs/common";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
+
+// Load Configurations
+import configuration from "./config/configuration";
 
 // Load Modules
 import { DemarchesModule } from "./demarches/demarches.module";
@@ -21,6 +25,11 @@ const database = process.env.POSTGRES_DB || "biblio-num";
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      cache: true,
+      load: [configuration],
+    }),
     LoggerModule,
     TypeOrmModule.forRoot({
       type: "postgres",
