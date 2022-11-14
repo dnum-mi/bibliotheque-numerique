@@ -1,6 +1,7 @@
-import { faker } from '@faker-js/faker'
+import { faker } from '@faker-js/faker/locale/fr'
 
-faker.setLocale('fr')
+// faker.setLocale('fr')
+
 const getStateDossier = () => { return faker.helpers.arrayElement(['accepte', 'en_construction', 'en_instruction']) }
 const getTypeDemandeur = () => { return faker.helpers.arrayElement(['PersonneMorale', 'PersonnePhysique']) }
 const getCivilite = () => { return faker.helpers.arrayElement(['M', 'Mme']) }
@@ -75,71 +76,77 @@ export const getDemandeurPhysique = () => ({
   prenom: faker.name.firstName(),
 })
 
-export const generateDossierDS = () => {
-  const __typename = getTypeDemandeur()
-  const demandeur = __typename === 'PersonneMorale' ? getDemandeurMorale() : getDemandeurPhysique()
-
-  return ({
+export const generateDossierDSByTypeDemandeur = (__typename:string, demandeurTest: any) => ({
+  id: faker.datatype.string(20),
+  number: faker.datatype.number(),
+  archived: faker.datatype.boolean(),
+  state: getStateDossier(),
+  dateDerniereModification: faker.date.past().toISOString(),
+  dateDepot: faker.date.past().toISOString(),
+  datePassageEnConstruction: faker.date.past().toISOString(),
+  datePassageEnInstruction: faker.date.past().toISOString(),
+  dateTraitement: faker.date.past().toISOString(),
+  motivation: faker.lorem.paragraph(),
+  motivationAttachment: {
+    filename: faker.system.fileName(),
+    contentType: 'application/pdf',
+    checksum: 'NuHflNIvs7CL5xm3MQMl6w==',
+    byteSizeBigInt: faker.datatype.number(),
+    url: faker.internet.url(),
+  },
+  attestation: null,
+  pdf: {
+    url: faker.internet.url(),
+  },
+  instructeurs: Array(faker.datatype.number({ min: 1, max: 5 })).map(() => ({
+    email: faker.internet.email(),
+  })),
+  groupeInstructeur: {
     id: faker.datatype.string(20),
     number: faker.datatype.number(),
-    archived: faker.datatype.boolean(),
-    state: getStateDossier(),
-    dateDerniereModification: faker.date.past().toISOString(),
-    dateDepot: faker.date.past().toISOString(),
-    datePassageEnConstruction: faker.date.past().toISOString(),
-    datePassageEnInstruction: faker.date.past().toISOString(),
-    dateTraitement: faker.date.past().toISOString(),
-    motivation: faker.lorem.paragraph(),
-    motivationAttachment: {
-      filename: faker.system.fileName(),
-      contentType: 'application/pdf',
-      checksum: 'NuHflNIvs7CL5xm3MQMl6w==',
-      byteSizeBigInt: faker.datatype.number(),
-      url: faker.internet.url(),
+    label: faker.address.cityName(),
+  },
+  traitements: [
+    {
+      state: getStateDossier(),
+      emailAgentTraitant: null,
+      dateTraitement: faker.date.past().toISOString(),
+      motivation: null,
     },
-    attestation: null,
-    pdf: {
-      url: faker.internet.url(),
-    },
-    instructeurs: Array(faker.datatype.number({ min: 1, max: 5 })).map(() => ({
-      email: faker.internet.email(),
+    ...Array(faker.datatype.number({ min: 1, max: 5 })).map(() => ({
+      state: getStateDossier(),
+      emailAgentTraitant: faker.internet.email(),
+      dateTraitement: faker.date.past().toISOString(),
+      motivation: faker.lorem.paragraph(),
     })),
-    groupeInstructeur: {
-      id: faker.datatype.string(20),
-      number: faker.datatype.number(),
-      label: faker.address.cityName(),
-    },
-    traitements: [
-      {
-        state: getStateDossier(),
-        emailAgentTraitant: null,
-        dateTraitement: faker.date.past().toISOString(),
-        motivation: null,
-      },
-      ...Array(faker.datatype.number({ min: 1, max: 5 })).map(() => ({
-        state: getStateDossier(),
-        emailAgentTraitant: faker.internet.email(),
-        dateTraitement: faker.date.past().toISOString(),
-        motivation: faker.lorem.paragraph(),
-      })),
-    ],
-    champs: getChamps(),
-    annotations: getChamps(),
-    avis: [],
-    mesages: Array(faker.datatype.number({ min: 1, max: 5 })).map(() => ({
-      id: faker.datatype.string(20),
-      email: faker.internet.email(),
-      body: faker.lorem.paragraphs(),
-      createdAt: faker.date.past().toISOString(),
-    })),
-    demandeur: {
-      __typename,
-      id: faker.random.numeric(),
+  ],
+  champs: getChamps(),
+  annotations: getChamps(),
+  avis: [],
+  mesages: Array(faker.datatype.number({ min: 1, max: 5 })).map(() => ({
+    id: faker.datatype.string(20),
+    email: faker.internet.email(),
+    body: faker.lorem.paragraphs(),
+    createdAt: faker.date.past().toISOString(),
+  })),
+  demandeur: {
+    __typename,
+    id: faker.random.numeric(),
 
-      ...demandeur,
-    },
-  })
+    ...demandeurTest,
+  },
+})
+
+export const generateDossierDS = () => {
+  const __typename = getTypeDemandeur()
+  const demandeurTest = __typename === 'PersonneMorale' ? getDemandeurMorale() : getDemandeurPhysique()
+
+  return generateDossierDSByTypeDemandeur(__typename, demandeurTest)
 }
+
+export const generateDossierDSPersonneMorale = () => generateDossierDSByTypeDemandeur('PersonneMorale', getDemandeurMorale())
+export const generateDossierDSPersonnePhysique = () => generateDossierDSByTypeDemandeur('PersonnePhysique', getDemandeurPhysique())
+
 export const generateDossier = () => ({
   id: faker.random.numeric(),
   dossierDS: {
