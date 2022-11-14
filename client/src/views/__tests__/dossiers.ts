@@ -1,6 +1,9 @@
 import { faker } from '@faker-js/faker'
 
+faker.setLocale('fr')
 const getStateDossier = () => { return faker.helpers.arrayElement(['accepte', 'en_construction', 'en_instruction']) }
+const getTypeDemandeur = () => { return faker.helpers.arrayElement(['PersonneMorale', 'PersonnePhysique']) }
+const getCivilite = () => { return faker.helpers.arrayElement(['M', 'Mme']) }
 
 const getChamps = () => {
   return Array(faker.datatype.number({ min: 1, max: 5 })).map(() => ({
@@ -18,98 +21,125 @@ const getTypeAddress = () => {
   ])
 }
 
-export const generateDossierDS = () => ({
-  id: faker.datatype.string(20),
-  number: faker.datatype.number(),
-  archived: faker.datatype.boolean(),
-  state: getStateDossier(),
-  dateDerniereModification: faker.date.past().toISOString(),
-  dateDepot: faker.date.past().toISOString(),
-  datePassageEnConstruction: faker.date.past().toISOString(),
-  datePassageEnInstruction: faker.date.past().toISOString(),
-  dateTraitement: faker.date.past().toISOString(),
-  motivation: faker.lorem.paragraph(),
-  motivationAttachment: {
-    filename: faker.system.fileName(),
-    contentType: 'application/pdf',
-    checksum: 'NuHflNIvs7CL5xm3MQMl6w==',
-    byteSizeBigInt: faker.datatype.number(),
-    url: faker.internet.url(),
+export const getDemandeurMorale = () => ({
+  siret: faker.random.numeric(14),
+  siegeSocial: faker.datatype.boolean(),
+  naf: `${faker.random.numeric(4)}${faker.random.alpha(1)}`,
+  libelleNaf: faker.company.catchPhrase(),
+  address: {
+    label: faker.company.name(),
+    type: getTypeAddress(),
+    streetAddress: faker.address.streetAddress(),
+    streetNumber: faker.address.street(),
+    streetName: faker.address.streetName(),
+    postalCode: faker.address.zipCode(),
+    cityName: faker.address.cityName(),
+    cityCode: faker.address.zipCode(),
+    departmentName: faker.address.state(),
+    departmentCode: faker.address.zipCode(),
+    regionName: faker.address.state(),
+    regionCode: faker.address.zipCode(),
   },
-  attestation: null,
-  pdf: {
-    url: faker.internet.url(),
+  entreprise: {
+    siren: faker.random.numeric(14),
+    capitalSocial: faker.finance.account(),
+    numeroTvaIntracommunautaire: `FR${faker.random.numeric(14)}`,
+    formeJuridique: faker.lorem.word(),
+    formeJuridiqueCode: faker.random.numeric(4),
+    nomCommercial: faker.company.name(),
+    raisonSociale: faker.company.name(),
+    siretSiegeSocial: faker.random.numeric(14),
+    codeEffectifEntreprise: '01',
+    dateCreation: faker.date.past().toISOString(),
+    nom: faker.name.lastName(),
+    prenom: faker.name.firstName(),
+    // TODO: A completer si besoin
+    attestationFiscaleAttachment: null,
+    // TODO: A completer si besoin
+    attestationSocialeAttachment: null,
   },
-  instructeurs: Array(faker.datatype.number({ min: 1, max: 5 })).map(() => ({
-    email: faker.internet.email(),
-  })),
-  groupeInstructeur: {
-    id: faker.datatype.string(20),
-    number: faker.datatype.number(),
-    label: faker.address.cityName(),
-  },
-  traitements: [
-    {
-      state: getStateDossier(),
-      emailAgentTraitant: null,
-      dateTraitement: faker.date.past().toISOString(),
-      motivation: null,
-    },
-    ...Array(faker.datatype.number({ min: 1, max: 5 })).map(() => ({
-      state: getStateDossier(),
-      emailAgentTraitant: faker.internet.email(),
-      dateTraitement: faker.date.past().toISOString(),
-      motivation: faker.lorem.paragraph(),
-    })),
-  ],
-  champs: getChamps(),
-  annotations: getChamps(),
-  avis: [],
-  mesages: Array(faker.datatype.number({ min: 1, max: 5 })).map(() => ({
-    id: faker.datatype.string(20),
-    email: faker.internet.email(),
-    body: faker.lorem.paragraphs(),
-    createdAt: faker.date.past().toISOString(),
-  })),
-  demandeur: {
-    siret: faker.random.numeric(14),
-    siegeSocial: faker.datatype.boolean(),
-    naf: `${faker.random.numeric(4)}${faker.random.alpha(1)}`,
-    libelleNaf: faker.company.catchPhrase(),
-    address: {
-      label: faker.company.name(),
-      type: getTypeAddress(),
-      streetAddress: faker.address.streetAddress(),
-      streetNumber: faker.address.street(),
-      streetName: faker.address.streetName(),
-      postalCode: faker.address.zipCode(),
-      cityName: faker.address.cityName(),
-      cityCode: faker.address.zipCode(),
-      departmentName: null,
-      departmentCode: null,
-      regionName: null,
-      regionCode: null,
-    },
-    entreprise: {
-      siren: faker.random.numeric(14),
-      capitalSocial: '-1',
-      numeroTvaIntracommunautaire: `FR${faker.random.numeric(14)}`,
-      formeJuridique: 'Fondation',
-      formeJuridiqueCode: faker.random.numeric(4),
-      nomCommercial: '',
-      raisonSociale: faker.company.name(),
-      siretSiegeSocial: faker.random.numeric(14),
-      codeEffectifEntreprise: '01',
-      dateCreation: faker.date.past().toISOString(),
-      nom: null,
-      prenom: null,
-      attestationFiscaleAttachment: null,
-      attestationSocialeAttachment: null,
-    },
-    association: null,
+  association: {
+    dateCreation: faker.date.past().toDateString(),
+    dateDeclaration: faker.date.past().toDateString(),
+    datePublication: faker.date.past().toDateString(),
+    objet: faker.company.catchPhrase(),
+    rna: `W${faker.random.numeric(9)}`,
+    titre: faker.company.name(),
   },
 })
 
+export const getDemandeurPhysique = () => ({
+  civilite: faker.name.prefix(), // getCivilite(),
+  dateDeNaissance: faker.date.past().toDateString(),
+  nom: faker.name.lastName(),
+  prenom: faker.name.firstName(),
+})
+
+export const generateDossierDS = () => {
+  const __typename = getTypeDemandeur()
+  const demandeur = __typename === 'PersonneMorale' ? getDemandeurMorale() : getDemandeurPhysique()
+
+  return ({
+    id: faker.datatype.string(20),
+    number: faker.datatype.number(),
+    archived: faker.datatype.boolean(),
+    state: getStateDossier(),
+    dateDerniereModification: faker.date.past().toISOString(),
+    dateDepot: faker.date.past().toISOString(),
+    datePassageEnConstruction: faker.date.past().toISOString(),
+    datePassageEnInstruction: faker.date.past().toISOString(),
+    dateTraitement: faker.date.past().toISOString(),
+    motivation: faker.lorem.paragraph(),
+    motivationAttachment: {
+      filename: faker.system.fileName(),
+      contentType: 'application/pdf',
+      checksum: 'NuHflNIvs7CL5xm3MQMl6w==',
+      byteSizeBigInt: faker.datatype.number(),
+      url: faker.internet.url(),
+    },
+    attestation: null,
+    pdf: {
+      url: faker.internet.url(),
+    },
+    instructeurs: Array(faker.datatype.number({ min: 1, max: 5 })).map(() => ({
+      email: faker.internet.email(),
+    })),
+    groupeInstructeur: {
+      id: faker.datatype.string(20),
+      number: faker.datatype.number(),
+      label: faker.address.cityName(),
+    },
+    traitements: [
+      {
+        state: getStateDossier(),
+        emailAgentTraitant: null,
+        dateTraitement: faker.date.past().toISOString(),
+        motivation: null,
+      },
+      ...Array(faker.datatype.number({ min: 1, max: 5 })).map(() => ({
+        state: getStateDossier(),
+        emailAgentTraitant: faker.internet.email(),
+        dateTraitement: faker.date.past().toISOString(),
+        motivation: faker.lorem.paragraph(),
+      })),
+    ],
+    champs: getChamps(),
+    annotations: getChamps(),
+    avis: [],
+    mesages: Array(faker.datatype.number({ min: 1, max: 5 })).map(() => ({
+      id: faker.datatype.string(20),
+      email: faker.internet.email(),
+      body: faker.lorem.paragraphs(),
+      createdAt: faker.date.past().toISOString(),
+    })),
+    demandeur: {
+      __typename,
+      id: faker.random.numeric(),
+
+      ...demandeur,
+    },
+  })
+}
 export const generateDossier = () => ({
   id: faker.random.numeric(),
   dossierDS: {
