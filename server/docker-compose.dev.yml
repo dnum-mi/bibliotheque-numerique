@@ -26,6 +26,7 @@ services:
       POSTGRES_PASSWORD: password
       DS_API_URL: ${DS_API_URL}
       DS_API_TOKEN: ${DS_API_TOKEN}
+      FORCE_COLOR: 1
       DEBUG: 1
 
   pgadmin:

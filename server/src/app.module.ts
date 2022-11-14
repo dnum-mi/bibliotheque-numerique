@@ -11,6 +11,7 @@ import { DossiersDSModule } from "./dossiers_ds/dossiers_ds.module";
 
 // Load Database Entities
 import { DemarcheDS, Demarche, DossierDS, Dossier } from "./entities";
+import { LoggerModule } from "./logger/logger.module";
 
 const host = process.env.POSTGRES_HOST || "localhost";
 const port = Number(process.env.POSTGRES_PORT) || 5432;
@@ -20,6 +21,7 @@ const database = process.env.POSTGRES_DB || "biblio-num";
 
 @Module({
   imports: [
+    LoggerModule,
     TypeOrmModule.forRoot({
       type: "postgres",
       host,
