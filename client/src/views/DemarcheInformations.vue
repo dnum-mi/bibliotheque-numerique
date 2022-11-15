@@ -3,6 +3,8 @@ import DisplayLabelsValues from '@/components/DisplayLabelsValues.vue'
 import { DemarcheStateMapping } from '@/utils/demarche-mapping'
 import type { KeyDemarcheStateMapping } from '@/types/typesDemarche'
 import { computed } from 'vue'
+import { dateTimeToStringFr } from '@/utils/dateToString'
+import { stateToFr } from '@/utils/stateToString'
 
 const props = withDefaults(defineProps<{
     datas?: object
@@ -12,49 +14,37 @@ const props = withDefaults(defineProps<{
 
 const title = 'Informations'
 
-const DateTimeToStringFn = (value:any) => {
-  return value
-    ? (new Date(value)).toLocaleString()
-    : ''
-}
-
 const labelsDate = [
   {
     text: 'Date de création',
     value: 'dateCreation',
-    parseFn: DateTimeToStringFn,
+    parseFn: dateTimeToStringFr,
   },
   {
     text: 'Date de dépublication',
     value: 'dateDepublication',
-    parseFn: DateTimeToStringFn,
+    parseFn: dateTimeToStringFr,
   },
   {
     text: 'Date de derniére modification',
     value: 'dateDerniereModification',
-    parseFn: DateTimeToStringFn,
+    parseFn: dateTimeToStringFr,
   },
 
   {
     text: 'Date de fermeture',
     value: 'dateFermeture',
-    parseFn: DateTimeToStringFn,
+    parseFn: dateTimeToStringFr,
   },
   {
     text: 'Date de publication',
     value: 'datePublication',
-    parseFn: DateTimeToStringFn,
+    parseFn: dateTimeToStringFr,
   },
 ]
 
-const DossierDeclarativeState2Fr = {
-  en_instruction: 'En instruction',
-  accepte: 'Accepté',
-}
-
 const etat = computed(() => props.datas?.state ? DemarcheStateMapping[props.datas?.state as KeyDemarcheStateMapping] : '')
-type TypeDossierDeclarativeState2Fr = keyof typeof DossierDeclarativeState2Fr
-const declarative = computed(() => props.datas?.declarative ? DossierDeclarativeState2Fr[props.datas?.declarative as TypeDossierDeclarativeState2Fr] : '')
+const declarative = computed(() => stateToFr(props.datas?.declarative))
 
 </script>
 
@@ -76,7 +66,7 @@ const declarative = computed(() => props.datas?.declarative ? DossierDeclarative
         > Description :</label> <span
           id="demarche-description"
           class="fr-text"
-        > {{ datas.description }}</span>
+        > {{ datas?.description }}</span>
       </div>
       <div
         class="fr-col-6"

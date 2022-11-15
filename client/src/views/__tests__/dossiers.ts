@@ -1,10 +1,7 @@
 import { faker } from '@faker-js/faker/locale/fr'
 
-// faker.setLocale('fr')
-
 const getStateDossier = () => { return faker.helpers.arrayElement(['accepte', 'en_construction', 'en_instruction']) }
 const getTypeDemandeur = () => { return faker.helpers.arrayElement(['PersonneMorale', 'PersonnePhysique']) }
-const getCivilite = () => { return faker.helpers.arrayElement(['M', 'Mme']) }
 
 export const getChamps = () => {
   return Array(faker.datatype.number({ min: 1, max: 5 })).fill({}).map(() => ({
@@ -76,7 +73,7 @@ export const getDemandeurPhysique = () => ({
   prenom: faker.name.firstName(),
 })
 
-export const generateDossierDSByTypeDemandeur = (__typename:string, demandeurTest: any) => ({
+export const generateDossierDSByTypeDemandeur = (__typename:string, demandeurTest: object) => ({
   id: faker.datatype.string(20),
   number: faker.datatype.number(),
   archived: faker.datatype.boolean(),

@@ -8,12 +8,7 @@ import DossierDemande from './DossierDemande.vue'
 
 const dossierStore = useDossierStore()
 const idDossier = ref(1)
-
-const dossier = computed<any>(() => { return dossierStore?.dossier || {} })
-const dossierDS = computed<any>(() => dossierStore?.dossier?.dossierDS?.dataJson || {})
-const idD = computed<string>(() => dossierStore?.dossier?.id || '')
-const champsD = computed<string>(() => dossierStore?.dossier?.champs || '')
-const demandeurD = computed<string>(() => dossierStore?.dossier?.demandeur || '')
+const dossierDS = computed<object>(() => dossierStore?.dossier?.dossierDS?.dataJson || {})
 
 const tabTitles = [
   {

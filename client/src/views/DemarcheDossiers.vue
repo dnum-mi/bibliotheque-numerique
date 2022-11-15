@@ -7,7 +7,9 @@ import GroupInstructeurs from '@/views/DemarcheGrpInstructeurs.vue'
 import DemarcheService from '@/views/DemarcheService.vue'
 import DemarcheInformations from '@/views/DemarcheInformations.vue'
 import BliblioNumDataTable from '@/components/BliblioNumDataTable.vue'
-import { LANG_FOR_DATE_TIME } from '@/config'
+import { dateToStringFr } from '@/utils/dateToString'
+import { stateToFr } from '@/utils/stateToString'
+import { booleanToYesNo } from '@/utils/booleanToString'
 
 const route = useRoute()
 const router = useRouter()
@@ -15,16 +17,10 @@ const demarcheStore = useDemarcheStore()
 
 const title = computed<string>(() => demarcheStore.demarche?.title || '')
 const number = computed<string>(() => demarcheStore.demarche?.number || '')
-const dossiers = computed<any>(() => demarcheStore.dossiers?.map(dossier => ({ idBiblioNum: dossier.id, ...dossier.dossierDS.dataJson })) || [])
-const groupInstructeurs = computed<any[]>(() => demarcheStore.demarche?.groupeInstructeurs || '')
-const service = computed<any>(() => demarcheStore.demarche?.service || '')
-const demarche = computed<any>(() => demarcheStore.demarche || '')
-
-const DateToStringFn = (value:any) => {
-  return value
-    ? (new Date(value)).toLocaleDateString(LANG_FOR_DATE_TIME)
-    : ''
-}
+const dossiers = computed<object[]>(() => demarcheStore.dossiers?.map(dossier => ({ idBiblioNum: dossier.id, ...dossier.dossierDS?.dataJson })) || [])
+const groupInstructeurs = computed<object[]>(() => demarcheStore.demarche?.groupeInstructeurs || [])
+const service = computed<object>(() => demarcheStore.demarche?.service || {})
+const demarche = computed<object>(() => demarcheStore.demarche || {})
 
 const headerDossierJson = [
   {
@@ -37,41 +33,37 @@ const headerDossierJson = [
   {
     text: 'Archivé',
     value: 'archived',
-    parseFn: (value:any) => value ? 'Oui' : 'Non',
+    parseFn: booleanToYesNo,
   },
   {
     text: 'Etat',
     value: 'state',
-    parseFn: (value:any) => {
-      return {
-        accepte: 'Acceptée',
-        en_construction: 'En construction',
-      }[value]
-    },
+    parseFn: stateToFr,
   },
   {
     text: 'Date de dépot',
     value: 'dateDepot',
-    parseFn: DateToStringFn,
+    parseFn: dateToStringFr,
   },
   {
     text: 'Date de construction',
     value: 'datePassageEnConstruction',
-    parseFn: DateToStringFn,
+    parseFn: dateToStringFr,
   },
   {
     text: "Date d'instruction",
     value: 'datePassageEnInstruction',
-    parseFn: DateToStringFn,
+    parseFn: dateToStringFr,
   },
   {
     text: 'Date de traitement',
     value: 'dateTraitement',
-    parseFn: DateToStringFn,
+    parseFn: dateToStringFr,
   },
   {
     text: 'Association déclarée cultuelle dans télédéclaration loi CRPR ?',
     value: 'annotations',
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     parseFn: (value:any) => {
       return value ? value[0]?.stringValue : ''
     },
@@ -79,6 +71,7 @@ const headerDossierJson = [
   {
     text: 'Si oui, date d\'entrée en vigueur de la qualité cultuelle',
     value: 'annotations',
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     parseFn: (value:any) => {
       return value ? value[0]?.stringValue : ''
     },

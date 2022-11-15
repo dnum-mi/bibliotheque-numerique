@@ -17,12 +17,13 @@ describe('<DemarcheDossiers />', () => {
     const useStore = useDemarcheStore(pinia)
     const demarche = demarche1.demarche
     useStore.demarche = demarche
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     useStore.getDemarche = async (id: number) => {
       useStore.demarche = demarche
     }
     const dossiers = generateDossiers()
     useStore.dossiers = dossiers
-
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     useStore.getDossiers = async (id: number) => {
       useStore.dossiers = dossiers
     }

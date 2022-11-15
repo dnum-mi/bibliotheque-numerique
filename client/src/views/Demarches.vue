@@ -11,7 +11,7 @@
   >
     <DsfrTableRow
       v-for="rowData in rows"
-      :key="rowData.number"
+      :key="rowData[0]"
       :row-data="rowData.slice(1)"
       :row-attrs="rowAttrs"
     >
@@ -29,16 +29,10 @@
 </template>
 
 <script lang="ts"  setup>
-import { LANG_FOR_DATE_TIME } from '@/config'
 import { useDemarcheStore } from '@/stores/demarche'
+import { dateToStringFr } from '@/utils/dateToString'
 import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-
-const DateToStringFn = (value:any) => {
-  return value
-    ? (new Date(value)).toLocaleString(LANG_FOR_DATE_TIME)
-    : ''
-}
 
 const demarcheStore = useDemarcheStore()
 const router = useRouter()
@@ -56,7 +50,7 @@ const headersJson = [
   {
     text: 'Created At',
     value: 'dateCreation',
-    parseFn: DateToStringFn,
+    parseFn: dateToStringFr,
   },
   {
     text: 'Libelle',
@@ -65,6 +59,7 @@ const headersJson = [
   {
     text: 'Service',
     value: 'service',
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     parseFn: (value:any) => {
       return `${value?.nom} - ${value?.organisme}`
     },
@@ -80,11 +75,11 @@ const headersJson = [
   {
     text: 'Published At',
     value: 'datePublication',
-    parseFn: DateToStringFn,
+    parseFn: dateToStringFr,
   },
 ]
 
-const rows = computed<any[]>(() => demarcheStore.demarches.map(demarche => headersJson.map(header => `${
+const rows = computed<string[]>(() => demarcheStore.demarches.map(demarche => headersJson.map(header => `${
   (header.parseFn ? header.parseFn(demarche[header.value]) : demarche[header.value]) || ''
 }`)))
 const headers = computed<string[]>(() => ['Action', ...headersJson.filter(header => header.text).map(header => header.text)])
@@ -93,7 +88,7 @@ onMounted(async () => {
   await demarcheStore.getDemarches()
 })
 
-function getDossiers (row: any[]) {
+function getDossiers (row: string[]) {
   router.push({ name: 'DemarcheDossiers', params: { id: row[0] } })
 }
 </script>

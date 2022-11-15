@@ -17,6 +17,7 @@ describe('<Dossier />', () => {
     const dossier = generateDossier()
     const dossierDS = dossier.dossierDS.dataJson
     useStore.dossier = dossier
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     useStore.getDossier = async (id: number) => {
       useStore.dossier = dossier
     }

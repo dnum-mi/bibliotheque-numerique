@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 withDefaults(defineProps<{
-    datas?: any[]
+    datas?: object[]
   }>(), {
   datas: () => ([]),
 })
