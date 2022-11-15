@@ -6,8 +6,8 @@ const getStateDossier = () => { return faker.helpers.arrayElement(['accepte', 'e
 const getTypeDemandeur = () => { return faker.helpers.arrayElement(['PersonneMorale', 'PersonnePhysique']) }
 const getCivilite = () => { return faker.helpers.arrayElement(['M', 'Mme']) }
 
-const getChamps = () => {
-  return Array(faker.datatype.number({ min: 1, max: 5 })).map(() => ({
+export const getChamps = () => {
+  return Array(faker.datatype.number({ min: 1, max: 5 })).fill({}).map(() => ({
     id: faker.datatype.string(20),
     label: faker.random.word(),
     stringValue: faker.random.words(),
@@ -98,7 +98,7 @@ export const generateDossierDSByTypeDemandeur = (__typename:string, demandeurTes
   pdf: {
     url: faker.internet.url(),
   },
-  instructeurs: Array(faker.datatype.number({ min: 1, max: 5 })).map(() => ({
+  instructeurs: Array(faker.datatype.number({ min: 1, max: 5 })).fill({}).map(() => ({
     email: faker.internet.email(),
   })),
   groupeInstructeur: {
@@ -113,7 +113,7 @@ export const generateDossierDSByTypeDemandeur = (__typename:string, demandeurTes
       dateTraitement: faker.date.past().toISOString(),
       motivation: null,
     },
-    ...Array(faker.datatype.number({ min: 1, max: 5 })).map(() => ({
+    ...Array(faker.datatype.number({ min: 1, max: 5 })).fill({}).map(() => ({
       state: getStateDossier(),
       emailAgentTraitant: faker.internet.email(),
       dateTraitement: faker.date.past().toISOString(),
@@ -123,7 +123,7 @@ export const generateDossierDSByTypeDemandeur = (__typename:string, demandeurTes
   champs: getChamps(),
   annotations: getChamps(),
   avis: [],
-  mesages: Array(faker.datatype.number({ min: 1, max: 5 })).map(() => ({
+  mesages: Array(faker.datatype.number({ min: 1, max: 5 })).fill({}).map(() => ({
     id: faker.datatype.string(20),
     email: faker.internet.email(),
     body: faker.lorem.paragraphs(),
