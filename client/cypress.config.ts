@@ -8,7 +8,7 @@ export default defineConfig({
     fixturesFolder: 'cypress/fixtures',
     screenshotsFolder: 'cypress/screenshots',
     videosFolder: 'cypress/videos',
-    supportFile: 'cypress/support/index.ts',
+    supportFile: 'cypress/support/e2e.ts',
     baseUrl: 'http://localhost:5050',
     specPattern: 'cypress/e2e/**/*.{cy,e2e}.ts',
   },

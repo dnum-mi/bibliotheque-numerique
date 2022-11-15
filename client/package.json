@@ -5,7 +5,7 @@
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview --port 5050",
-    "test": "run-s test:unit test:ct-ci test:e2e-ci",
+    "test": "run-s test:unit test:ct:ci",
     "test:unit": "vitest --environment jsdom",
     "test:ct": "cypress open --component",
     "test:ct:ci": "cypress run --component",
