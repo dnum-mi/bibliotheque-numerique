@@ -1,28 +1,35 @@
 <script lang="ts" setup>
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 import { computed, onMounted, ref, watch } from 'vue'
 import { useDemarcheStore } from '@/stores/demarche'
 import GroupInstructeurs from '@/views/DemarcheGrpInstructeurs.vue'
 import DemarcheService from '@/views/DemarcheService.vue'
 import DemarcheInformations from '@/views/DemarcheInformations.vue'
+import BliblioNumDataTable from '@/components/BliblioNumDataTable.vue'
+import { LANG_FOR_DATE_TIME } from '@/config'
 
+const route = useRoute()
+const router = useRouter()
 const demarcheStore = useDemarcheStore()
 
 const title = computed<string>(() => demarcheStore.demarche?.title || '')
 const number = computed<string>(() => demarcheStore.demarche?.number || '')
-const dossiers = computed<any>(() => demarcheStore.dossiers || [])
+const dossiers = computed<any>(() => demarcheStore.dossiers?.map(dossier => ({ idBiblioNum: dossier.id, ...dossier.dossierDS.dataJson })) || [])
 const groupInstructeurs = computed<any[]>(() => demarcheStore.demarche?.groupeInstructeurs || '')
 const service = computed<any>(() => demarcheStore.demarche?.service || '')
 const demarche = computed<any>(() => demarcheStore.demarche || '')
 
 const DateToStringFn = (value:any) => {
   return value
-    ? (new Date(value)).toLocaleDateString('fr-FR')
+    ? (new Date(value)).toLocaleDateString(LANG_FOR_DATE_TIME)
     : ''
 }
 
 const headerDossierJson = [
+  {
+    value: 'idBiblioNum',
+  },
   {
     text: 'Numéro',
     value: 'number',
@@ -63,9 +70,6 @@ const headerDossierJson = [
     parseFn: DateToStringFn,
   },
   {
-    text: 'Détails',
-  },
-  {
     text: 'Association déclarée cultuelle dans télédéclaration loi CRPR ?',
     value: 'annotations',
     parseFn: (value:any) => {
@@ -80,7 +84,7 @@ const headerDossierJson = [
     },
   },
 ]
-const headersDossier = computed<any>(() => headerDossierJson.map(elt => elt.text))
+
 const idDemarche = ref(1)
 
 watch(idDemarche, async (value: number) => {
@@ -89,13 +93,15 @@ watch(idDemarche, async (value: number) => {
 })
 
 onMounted(async () => {
-  // const { id } = useRoute().params
-  const params = useRoute()?.params
+  const params = route?.params
   if (params && params.id) { idDemarche.value = Number(params.id) }
   await demarcheStore.getDemarche(idDemarche.value)
   await demarcheStore.getDossiers(idDemarche.value)
 })
 
+const getDossier = data => {
+  router.push({ name: 'Dossier', params: { id: data.idBiblioNum } })
+}
 </script>
 
 <template>
@@ -111,30 +117,12 @@ onMounted(async () => {
   <br>
   <GroupInstructeurs :group-instructeurs="groupInstructeurs" />
   <br>
-  <DsfrTable
+  <BliblioNumDataTable
     title="Dossiers"
-  >
-    <template #header>
-      <DsfrTableHeaders :headers="headersDossier" />
-    </template>
-    <tr
-      v-for="dossier in dossiers"
-      :key="dossier[headerDossierJson[0].value]"
-    >
-      <td
-        v-for="headerJson in headerDossierJson"
-        :key="headerJson.value"
-      >
-        {{
-          headerJson.value
-            ? ( headerJson.parseFn
-              ? headerJson.parseFn(dossier[headerJson.value])
-              : dossier[headerJson.value])
-            : ''
-        }}
-      </td>
-    </tr>
-  </DsfrTable>
+    :headers="headerDossierJson"
+    :datas="dossiers"
+    @get-elt="getDossier"
+  />
 </template>
 
 <style scoped>

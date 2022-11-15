@@ -6,7 +6,7 @@ import { useDossierStore } from '@/stores/dossier'
 
 const dossierStore = useDossierStore()
 const idDossier = ref(1)
-
+const dossier = computed<string>(() => dossierStore.dossier || '')
 const idD = computed<string>(() => dossierStore.dossier?.id || '')
 const champsD = computed<string>(() => dossierStore.dossier?.champs || '')
 const demandeurD = computed<string>(() => dossierStore.dossier?.demandeur || '')
@@ -26,6 +26,8 @@ onMounted(async () => {
 
 <template>
   <h1>Dossier</h1>
+
+  {{ dossier }}
   Dossier ID: {{ idD }}
 
   <h2>

@@ -1,5 +1,6 @@
 import '@gouvminint/vue-dsfr/styles'
 import '../main.css'
+import * as icons from '../icons'
 
 import VueDsfr from '@gouvminint/vue-dsfr'
 
@@ -25,10 +26,17 @@ describe('<DemarcheDossiers />', () => {
     useStore.getDossiers = async (id: number) => {
       useStore.dossiers = dossiers
     }
+
     const extensions = {
       use: [
         pinia,
-        VueDsfr,
+        {
+          install: (app) => {
+            app.use(VueDsfr,
+              { icons: Object.values(icons) },
+            )
+          },
+        },
       ],
     }
     cy.mount(DemarcheDossiers, {

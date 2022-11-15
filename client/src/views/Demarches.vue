@@ -10,31 +10,44 @@
     :headers="headers"
   >
     <DsfrTableRow
-      v-for="(rowData) in rows"
+      v-for="rowData in rows"
       :key="rowData.number"
-      :row-data="rowData"
+      :row-data="rowData.slice(1)"
       :row-attrs="rowAttrs"
     >
-      <DsfrButton
-        :label="label"
-        :disabled="disabled"
-        :icon="icon"
-        :icon-right="iconRight"
-        @click="getDossiers(rowData)"
-      />
+      <td>
+        <DsfrButton
+          :label="label"
+          :disabled="disabled"
+          :icon="icon"
+          :icon-right="iconRight"
+          @click="getDossiers(rowData)"
+        />
+      </td>
     </DsfrTableRow>
   </DsfrTable>
 </template>
 
 <script lang="ts"  setup>
+import { LANG_FOR_DATE_TIME } from '@/config'
 import { useDemarcheStore } from '@/stores/demarche'
 import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
+const DateToStringFn = (value:any) => {
+  return value
+    ? (new Date(value)).toLocaleString(LANG_FOR_DATE_TIME)
+    : ''
+}
+
 const demarcheStore = useDemarcheStore()
 const router = useRouter()
 const label = 'Voir'
+const icon = 'ri-search-line'
 const headersJson = [
+  {
+    value: 'id',
+  },
   {
     text: 'Id',
     value: 'number',
@@ -43,6 +56,7 @@ const headersJson = [
   {
     text: 'Created At',
     value: 'dateCreation',
+    parseFn: DateToStringFn,
   },
   {
     text: 'Libelle',
@@ -51,24 +65,29 @@ const headersJson = [
   {
     text: 'Service',
     value: 'service',
-  },
-  {
-    text: 'Dossiers',
-    value: 'dossiers',
     parseFn: (value:any) => {
-      return value?.nodes?.length
+      return `${value?.nom} - ${value?.organisme}`
     },
   },
+  // TODO: Fontion de recupéreration des nombres de dossiers
+  // {
+  //   text: 'Dossiers',
+  //   value: 'dossiers',
+  //   parseFn: (value:any) => {
+  //     return value?.nodes?.length
+  //   },
+  // },
   {
     text: 'Published At',
     value: 'datePublication',
+    parseFn: DateToStringFn,
   },
 ]
 
 const rows = computed<any[]>(() => demarcheStore.demarches.map(demarche => headersJson.map(header => `${
   (header.parseFn ? header.parseFn(demarche[header.value]) : demarche[header.value]) || ''
 }`)))
-const headers = computed<string[]>(() => ['Action', ...headersJson.map(header => header.text)])
+const headers = computed<string[]>(() => ['Action', ...headersJson.filter(header => header.text).map(header => header.text)])
 
 onMounted(async () => {
   await demarcheStore.getDemarches()

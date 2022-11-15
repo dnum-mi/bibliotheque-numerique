@@ -18,7 +18,7 @@ const getTypeAddress = () => {
   ])
 }
 
-export const generateDossier = () => ({
+export const generateDossierDS = () => ({
   id: faker.datatype.string(20),
   number: faker.datatype.number(),
   archived: faker.datatype.boolean(),
@@ -107,6 +107,13 @@ export const generateDossier = () => ({
       attestationSocialeAttachment: null,
     },
     association: null,
+  },
+})
+
+export const generateDossier = () => ({
+  id: faker.random.numeric(),
+  dossierDS: {
+    dataJson: generateDossierDS(),
   },
 })
 

@@ -6,6 +6,15 @@ const headers = {
 }
 
 export const apiClient = {
+  getDemarcheByDsId: async (id: number) => {
+    const config = {
+      method: 'get',
+      url: `${baseApiUrl}/demarches/ds/${id}`,
+      headers,
+    }
+    const response = await axios(config)
+    return response.data.demarche
+  },
   getDemarche: async (id: number) => {
     const config = {
       method: 'get',
@@ -24,32 +33,33 @@ export const apiClient = {
     const response = await axios(config)
     return response.data.demarches
   },
-  getDossiers: async (id: number) => {
+  getDossiersFromDemarche: async (id: number) => {
     const config = {
       method: 'get',
-      url: `${baseApiUrl}/dossiers/${id}`,
+      url: `${baseApiUrl}/demarches/${id}/dossiers`,
       headers,
     }
     const response = await axios(config)
-    return response.data.dossiers
+    return response.data
+  },
+
+  getDossiers: async (id?: number) => {
+    const extPath = id ? `/${id}` : ''
+    const config = {
+      method: 'get',
+      url: `${baseApiUrl}/dossiers${extPath}`,
+      headers,
+    }
+    const response = await axios(config)
+    return response.data
   },
   getDossier: async (id: number) => {
-    // const config = {
-    //   method: 'get',
-    //   url: `${baseApiUrl}/dossiers/${id}`,
-    //   headers,
-    // }
-    // const response = await axios(config)
-    // return response.data.dossier
-    return {
-      id: 1,
-      champs: [{ id: 123, label: 'nom', stringValue: 'test' }, { id: 124, label: 'prenom', stringValue: 'test' }],
-      demandeur: {
-        civilite: 'M',
-        nom: 'dong',
-        prenom: 'pengfei',
-        dateDeNaissance: null,
-      },
+    const config = {
+      method: 'get',
+      url: `${baseApiUrl}/dossiers/${id}/detail`,
+      headers,
     }
+    const response = await axios(config)
+    return response.data?.dossierDS.dataJson
   },
 }
