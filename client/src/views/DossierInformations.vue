@@ -12,6 +12,7 @@ withDefaults(defineProps<{
 
 const title = 'Informations'
 const labelsData = [
+  // TODO: à regarder
   // {
   //   text: 'Numero de dossier',
   //   value: 'number',
