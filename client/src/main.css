@@ -7,3 +7,10 @@ body,
 .h-full {
   height: 100%;
 }
+
+.ag-theme-alpine {
+  --ag-selected-tab-underline-width: 2px;
+  --ag-selected-tab-underline-transition-speed: 0.5s;
+
+  --ag-side-bar-panel-width: 300px;
+}
