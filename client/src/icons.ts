@@ -6,4 +6,5 @@ export {
   RiRefreshLine,
   RiSortDesc,
   RiSearchLine,
-} from 'oh-vue-icons/icons/ri/index.js'
+  RiEyeFill,
+} from 'oh-vue-icons/icons'

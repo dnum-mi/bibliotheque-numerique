@@ -6,7 +6,7 @@ import { useDemarcheStore } from '@/stores/demarche'
 import GroupInstructeurs from '@/views/DemarcheGrpInstructeurs.vue'
 import DemarcheService from '@/views/DemarcheService.vue'
 import DemarcheInformations from '@/views/DemarcheInformations.vue'
-import BliblioNumDataTable from '@/components/BliblioNumDataTable.vue'
+import BliblioNumDataTable from '@/components/BliblioNumDataTableAgGrid.vue'
 import { dateToStringFr } from '@/utils/dateToString'
 import { stateToFr } from '@/utils/stateToString'
 import { booleanToYesNo } from '@/utils/booleanToString'
@@ -113,7 +113,7 @@ const getDossier = data => {
   <BliblioNumDataTable
     title="Dossiers"
     :headers="headerDossierJson"
-    :datas="dossiers"
+    :row-data="dossiers"
     @get-elt="getDossier"
   />
 </template>

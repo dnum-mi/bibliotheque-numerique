@@ -42,7 +42,7 @@ const fields = computed<IField[]>(() => {
       <div
         v-for="{ id, label, value} in fields"
         :key="id"
-        class="fr-col-6"
+        class="fr-col-6 "
       >
         <label
           :for="id"
