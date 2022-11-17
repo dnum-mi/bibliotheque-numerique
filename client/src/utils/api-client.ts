@@ -60,6 +60,6 @@ export const apiClient = {
       headers,
     }
     const response = await axios(config)
-    return response.data?.dossierDS.dataJson
+    return response.data
   },
 }

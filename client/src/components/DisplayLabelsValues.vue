@@ -4,7 +4,8 @@ import { computed } from 'vue'
 type TypeLabelData = {
   text: string,
   value: string,
-  parseFn: (value: any) => string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  parseFn?: (value: any) => string
 }
 type TypeLabelsData = TypeLabelData[]
 
@@ -29,10 +30,11 @@ interface IField {
 const fields = computed<IField[]>(() => {
   return props.labels.map<IField>((labelElt: TypeLabelData) => {
     const value = props.datas[labelElt?.value as keyOfDatas]
+
     return {
       id: `${props.prefixId}-${labelElt?.value}`,
       label: labelElt?.text,
-      value: value ? (labelElt.parseFn ? labelElt.parseFn(value) : value) : '',
+      value: value !== undefined ? (labelElt.parseFn ? labelElt.parseFn(value) : value) : '',
     }
   },
   )
@@ -52,14 +54,14 @@ const fields = computed<IField[]>(() => {
       <div
         v-for="{ id, label, value} in fields"
         :key="id"
-        class="fr-col-6"
+        class="fr-col-6 fr-grid-row"
       >
         <label
           :for="id"
-          class="fr-text--bold"
+          class="fr-text--bold fr-col-6"
         > {{ label }} :</label> <span
           :id="id"
-          class="fr-text"
+          class="fr-text fr-col-6"
         > {{ value }}</span>
       </div>
     </div>

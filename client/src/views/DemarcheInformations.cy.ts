@@ -1,3 +1,4 @@
+import { LANG_FOR_DATE_TIME } from '@/config'
 import '@gouvminint/vue-dsfr/styles'
 import '../main.css'
 
@@ -33,11 +34,11 @@ describe('<DemarcheDescription />', () => {
     cy.get('label').then(($label) => {
       cy.wrap($label).contains('Description').next().should('contain', datas.description)
       cy.wrap($label).contains('Etat').next().should('contain', 'Publiée')
-      cy.wrap($label).contains('Date de création').next().should('contain', new Date(datas.dateCreation).toLocaleString())
+      cy.wrap($label).contains('Date de création').next().should('contain', new Date(datas.dateCreation).toLocaleString(LANG_FOR_DATE_TIME))
       cy.wrap($label).contains('Date de dépublication').next().should('contain', '')
-      cy.wrap($label).contains('Date de derniére modification').next().should('contain', new Date(datas.dateDerniereModification).toLocaleString())
+      cy.wrap($label).contains('Date de derniére modification').next().should('contain', new Date(datas.dateDerniereModification).toLocaleString(LANG_FOR_DATE_TIME))
       cy.wrap($label).contains('Date de fermeture').next().should('contain', '')
-      cy.wrap($label).contains('Date de publication').next().should('contain', new Date(datas.datePublication).toLocaleString())
+      cy.wrap($label).contains('Date de publication').next().should('contain', new Date(datas.datePublication).toLocaleString(LANG_FOR_DATE_TIME))
     })
   })
 })
