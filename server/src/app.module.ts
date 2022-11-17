@@ -31,11 +31,6 @@ const database = process.env.POSTGRES_DB || "biblio-num";
       load: [configuration],
     }),
     LoggerModule,
-    ConfigModule.forRoot({
-      isGlobal: true,
-      cache: true,
-      load: [configuration],
-    }),
     TypeOrmModule.forRoot({
       type: "postgres",
       host,

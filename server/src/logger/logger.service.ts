@@ -1,4 +1,5 @@
 import { Injectable, LoggerService as LoggerServiceNest } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import * as winston from "winston";
 import * as dayjs from "dayjs";
 import * as colors from "colors";
@@ -25,12 +26,14 @@ type TLoggerObject = {
 @Injectable()
 export class LoggerService implements LoggerServiceNest {
   logger: winston.Logger;
-  constructor() {
+  constructor(private configService: ConfigService) {
     const { printf } = winston.format;
     const customFormat = (colored?: boolean) =>
       printf(({ level, message }) => {
         const { short_message, full_message, _service_name } = message;
-        const initMessage = `${dayjs().format("DD/MM/YYYY HH:mm:ss")} ${
+        const initMessage = `${dayjs().format(
+          this.configService.get<string>("log.date_format"),
+        )} ${
           _service_name &&
           (colored ? colors.yellow(`[${_service_name}]`) : `[${_service_name}]`)
         }`;
