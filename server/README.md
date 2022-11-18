@@ -32,6 +32,21 @@
 $ npm install
 ```
 
+## Migration
+
+```bash
+# Running migrations
+$ npm run typeorm:migration:run
+$ npm run typeorm migration:run -- -d src/db/app-data-source.ts
+
+# Create a migration
+$ npm run typeorm:migration:create -n Dossier
+$ mv 1668775846269-Dossier.ts src/db/migrations
+
+# Generating migrations
+$ npm run typeorm:migration:generate
+```
+
 ## Running the app
 
 ```bash
