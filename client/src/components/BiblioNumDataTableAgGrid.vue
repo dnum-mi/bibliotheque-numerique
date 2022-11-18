@@ -14,6 +14,7 @@
     }"
     :context="context"
     :side-bar="sideBar"
+    :grid-options="gridOptions"
   />
 </template>
 <script lang="ts" setup>
@@ -26,6 +27,13 @@ import 'ag-grid-community/styles/ag-grid.css'
 import 'ag-grid-community/styles/ag-theme-alpine.css'
 import TableCellAction from './TableCellAction.vue'
 import { PAGINATION_PAGE_SIZE } from '@/config'
+
+import { filter2Apply } from './ag-grid/filtersRender'
+import { localeTextAgGrid } from './ag-grid/agGridOptions'
+
+const getFilterAgGrid = (type) => {
+  return (type && filter2Apply[type]) || { }
+}
 
 const props = withDefaults(defineProps<{
     title: string,
@@ -50,11 +58,15 @@ const columnDefs = computed(() => [{
   width: 100,
 },
 ...props.headers.slice(1)
-  .map(header => ({
-    headerName: header.text || '',
-    field: header.value,
-    cellRenderer: header.parseFn ? (params) => header.parseFn(params.value) : undefined,
-  }))])
+  .map(header => {
+    const filter = getFilterAgGrid(header.type)
+    return {
+      headerName: header.text || '',
+      field: header.value,
+      cellRenderer: header.parseFn ? (params) => header.parseFn(params.value) : undefined,
+      ...filter,
+    }
+  })])
 
 const emit = defineEmits(['getElt'])
 const showElt = data => {
@@ -68,8 +80,8 @@ const sideBar = {
     hiddenByDefault: false,
   },
 }
+
+const gridOptions = {
+  localeText: localeTextAgGrid,
+}
 </script>
-
-<style scoped>
-
-</style>
