@@ -3,7 +3,7 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 // Load Database Entities
-import { DemarcheDS, Demarche, DossierDS, Dossier } from "./entities";
+import { DemarcheDS, Demarche, DossierDS, Dossier } from "../entities";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
@@ -12,10 +12,14 @@ export const AppDataSource = new DataSource({
   username: process.env.POSTGRES_USERNAME || "user",
   password: process.env.POSTGRES_PASSWORD || "password",
   database: process.env.POSTGRES_DB || "biblio-num",
-  entities: [Demarche, DemarcheDS, Dossier, DossierDS],
-  //TODO subscribers: ["subscriber/*.ts"],
-  migrations: ["db/migration/*.ts"],
+  logging: false,
+  synchronize: false,
+  name: "default",
   migrationsTableName: "migrations",
+  entities: [Demarche, DemarcheDS, Dossier, DossierDS],
+  //TODO entities: ["../entities/**.entity.ts"],
+  //TODO subscribers: ["subscriber/*.ts"],
+  migrations: [__dirname + "/db/migrations/*.ts"],
 });
 
 AppDataSource.initialize()

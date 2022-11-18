@@ -6,14 +6,14 @@ import { AppService } from "./app.service";
 
 // Load Configurations
 import configuration from "./config/configuration";
-import { LoggerModule } from "./logger/logger.module";
-import { AppDataSource } from "./app-data-source";
+import { AppDataSource } from "./db/app-data-source";
 
 // Load Modules
 import { DemarchesModule } from "./demarches/demarches.module";
 import { DemarchesDSModule } from "./demarches_ds/demarches_ds.module";
 import { DossiersModule } from "./dossiers/dossiers.module";
 import { DossiersDSModule } from "./dossiers_ds/dossiers_ds.module";
+import { LoggerModule } from "./logger/logger.module";
 
 @Module({
   imports: [
