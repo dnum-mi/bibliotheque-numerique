@@ -5,30 +5,17 @@
   >
     <h1>Démarches</h1>
   </div>
-  <DsfrTable
+
+  <BiblioNumDataTableAgGrid
     :title="title"
-    :headers="headers"
-  >
-    <DsfrTableRow
-      v-for="rowData in rows"
-      :key="rowData[0]"
-      :row-data="rowData.slice(1)"
-      :row-attrs="rowAttrs"
-    >
-      <td>
-        <DsfrButton
-          :label="label"
-          :disabled="disabled"
-          :icon="icon"
-          :icon-right="iconRight"
-          @click="getDossiers(rowData)"
-        />
-      </td>
-    </DsfrTableRow>
-  </DsfrTable>
+    :headers="headersJson"
+    :datas="demarches"
+    @get-elt="getDossiers"
+  />
 </template>
 
 <script lang="ts"  setup>
+import BiblioNumDataTableAgGrid from '@/components/BiblioNumDataTableAgGrid.vue'
 import { useDemarcheStore } from '@/stores/demarche'
 import { dateToStringFr } from '@/utils/dateToString'
 import { computed, onMounted } from 'vue'
@@ -36,8 +23,6 @@ import { useRouter } from 'vue-router'
 
 const demarcheStore = useDemarcheStore()
 const router = useRouter()
-const label = 'Voir'
-const icon = 'ri-search-line'
 const headersJson = [
   {
     value: 'id',
@@ -77,19 +62,20 @@ const headersJson = [
     value: 'datePublication',
     parseFn: dateToStringFr,
   },
+  {
+    text: "Type d'organasime",
+    value: 'typeOrganisme',
+  },
 ]
 
-const rows = computed<string[]>(() => demarcheStore.demarches.map(demarche => headersJson.map(header => `${
-  (header.parseFn ? header.parseFn(demarche[header.value]) : demarche[header.value]) || ''
-}`)))
-const headers = computed<string[]>(() => ['Action', ...headersJson.filter(header => header.text).map(header => header.text)])
+const demarches = computed(() => demarcheStore.demarches)
 
 onMounted(async () => {
   await demarcheStore.getDemarches()
 })
 
-function getDossiers (row: string[]) {
-  router.push({ name: 'DemarcheDossiers', params: { id: row[0] } })
+function getDossiers (data) {
+  router.push({ name: 'DemarcheDossiers', params: { id: data.id } })
 }
 </script>
 
