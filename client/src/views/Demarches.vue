@@ -9,7 +9,7 @@
   <BiblioNumDataTableAgGrid
     :title="title"
     :headers="headersJson"
-    :datas="demarches"
+    :row-data="demarches"
     @get-elt="getDossiers"
   />
 </template>
@@ -36,6 +36,7 @@ const headersJson = [
     text: 'Created At',
     value: 'dateCreation',
     parseFn: dateToStringFr,
+    type: 'date',
   },
   {
     text: 'Libelle',
@@ -61,6 +62,7 @@ const headersJson = [
     text: 'Published At',
     value: 'datePublication',
     parseFn: dateToStringFr,
+    type: 'date',
   },
   {
     text: "Type d'organasime",
