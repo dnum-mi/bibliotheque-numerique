@@ -4,7 +4,7 @@ const getStateDossier = () => { return faker.helpers.arrayElement(['accepte', 'e
 const getTypeDemandeur = () => { return faker.helpers.arrayElement(['PersonneMorale', 'PersonnePhysique']) }
 
 export const getChamps = () => {
-  return Array(faker.datatype.number({ min: 1, max: 5 })).fill({}).map(() => ({
+  return Array(faker.datatype.number({ min: 1, max: 20 })).fill({}).map(() => ({
     id: faker.datatype.string(20),
     label: faker.random.word(),
     stringValue: faker.random.words(),
@@ -151,4 +151,4 @@ export const generateDossier = () => ({
   },
 })
 
-export const generateDossiers = () => Array.from({ length: faker.datatype.number({ min: 1, max: 5 }) }, () => generateDossier())
+export const generateDossiers = () => Array.from({ length: faker.datatype.number({ min: 1, max: 20 }) }, () => generateDossier())
