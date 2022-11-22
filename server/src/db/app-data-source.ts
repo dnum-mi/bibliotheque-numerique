@@ -19,7 +19,7 @@ export const AppDataSource = new DataSource({
   entities: [Demarche, DemarcheDS, Dossier, DossierDS],
   //TODO entities: ["../entities/**.entity.ts"],
   //TODO subscribers: ["subscriber/*.ts"],
-  migrations: [__dirname + "/db/migrations/*.ts"],
+  migrations: [__dirname + "/migrations/*.ts"],
 });
 
 AppDataSource.initialize()

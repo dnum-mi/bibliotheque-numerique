@@ -1,7 +1,10 @@
 import {
   Controller,
   Get,
+  Post,
   Param,
+  Body,
+  Query,
   Delete,
   HttpException,
   HttpStatus,
@@ -35,6 +38,27 @@ export class DossiersController {
     if (dossiers.length === 0) {
       throw new HttpException("No dossier found", HttpStatus.NOT_FOUND);
     }
+    return dossiers;
+  }
+
+  @Post("search")
+  async searchDossier(@Body("filter") filter: object) {
+    let dossiers: Dossier[];
+    try {
+      dossiers = await this.dossiersService.findAll(filter);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new HttpException(
+          error.message,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      throw new HttpException(
+        "Internal Server Error",
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
     return dossiers;
   }
 

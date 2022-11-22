@@ -37,6 +37,9 @@ export class Demarche extends BaseEntity {
   @Column()
   title: string;
 
+  @Column({ nullable: true })
+  typeOrganisme: string;
+
   @CreateDateColumn({ type: "timestamp" })
   createAt: Date;
 

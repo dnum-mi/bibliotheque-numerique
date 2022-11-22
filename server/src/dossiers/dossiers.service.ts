@@ -8,9 +8,9 @@ export class DossiersService {
     DossiersService.name,
   ) as unknown as LoggerService;
 
-  async findAll() {
+  async findAll(filter: object = {}) {
     try {
-      return await Dossier.all();
+      return await Dossier.all(filter);
     } catch (error) {
       this.logger.error({
         short_message: "Échec récupération des dossiers",
