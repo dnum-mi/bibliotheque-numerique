@@ -1,11 +1,11 @@
 import '@gouvminint/vue-dsfr/styles'
 import '../main.css'
 
-import BliblioNumDataTable from './BliblioNumDataTableAgGrid.vue'
+import BiblioNumDataTable from './BiblioNumDataTableAgGrid.vue'
 
-describe('<BliblioNumDataTable />', () => {
+describe('<BiblioNumDataTable />', () => {
   it('renders', () => {
-    cy.mount(BliblioNumDataTable, {
+    cy.mount(BiblioNumDataTable, {
       props: {
         title: 'Test',
         rowData: [{

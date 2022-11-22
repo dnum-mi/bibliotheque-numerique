@@ -4,9 +4,9 @@ import * as icons from '../icons'
 
 import VueDsfr from '@gouvminint/vue-dsfr'
 
-import BliblioNumDataTable from './BliblioNumDataTable.vue'
+import BiblioNumDataTable from './BiblioNumDataTable.vue'
 
-describe('<BliblioNumDataTable />', () => {
+describe('<BiblioNumDataTable />', () => {
   it('renders', () => {
     const extensions = {
       use: [
@@ -15,7 +15,7 @@ describe('<BliblioNumDataTable />', () => {
       ],
     }
 
-    cy.mount(BliblioNumDataTable, {
+    cy.mount(BiblioNumDataTable, {
       extensions,
       props: {
         title: 'Test',
