@@ -17,6 +17,17 @@ describe('<BliblioNumDataTable />', () => {
 
     cy.mount(BliblioNumDataTable, {
       extensions,
+      props: {
+        title: 'Test',
+        datas: [{
+          testkey: 'testValue',
+        }],
+        headers: [{
+          text: 'Test-Key',
+          value: 'testkey',
+        }],
+      },
+
     })
   })
 })

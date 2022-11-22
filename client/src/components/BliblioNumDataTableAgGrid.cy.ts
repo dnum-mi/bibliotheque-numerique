@@ -1,10 +1,7 @@
 import '@gouvminint/vue-dsfr/styles'
 import '../main.css'
-import * as icons from '../icons'
 
-import VueDsfr from '@gouvminint/vue-dsfr'
-
-import BliblioNumDataTable from './BliblioNumDataTable.vue'
+import BliblioNumDataTable from './BliblioNumDataTableAgGrid.vue'
 
 describe('<BliblioNumDataTable />', () => {
   it('renders', () => {
