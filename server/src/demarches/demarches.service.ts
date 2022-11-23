@@ -4,6 +4,7 @@ import { Demarche as TDemarche } from "@lab-mi/ds-api-client/dist/@types/types";
 import { InsertResult, Repository } from "typeorm";
 import { Demarche } from "../entities";
 import { LoggerService } from "../logger/logger.service";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class DemarchesService {
@@ -14,18 +15,13 @@ export class DemarchesService {
   constructor(
     @InjectRepository(Demarche)
     private demarchesRepository: Repository<Demarche>,
+    private configService: ConfigService,
   ) {}
 
   private _typeOrganismeFromDemarcheDs(
     demarche: TDemarche,
   ): string | undefined {
-    const TypeOrganisme = {
-      FDD: /^FDD$/,
-      FE: /^FE$/,
-      ARUP: /^ARUP$/,
-      FRUP: /^FRUP$/,
-      W9: /^W\d{9}$/,
-    };
+    const TypeOrganisme = this.configService.get<object>("typeOrganisme");
     const annotationDescriptors =
       demarche.publishedRevision?.annotationDescriptors;
 
@@ -113,7 +109,6 @@ export class DemarchesService {
 
   async findAll(filter: object = {}): Promise<Demarche[]> {
     try {
-      console.log(filter);
       return await this.demarchesRepository.find({
         where: {
           ...filter,

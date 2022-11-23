@@ -14,6 +14,7 @@ import { Demarche as TDemarche } from "@lab-mi/ds-api-client/dist/@types/types";
 
 type ReturnDemarche = Omit<TDemarche, "id"> & {
   id: number;
+  typeOrganisme: string;
   originalId: number;
 };
 
@@ -46,6 +47,7 @@ export class DemarchesController {
       demarches: demarches.map((demarche) => ({
         ...demarche.demarcheDS?.dataJson,
         id: demarche.id,
+        typeOrganisme: demarche.typeOrganisme,
         originalId: demarche.demarcheDS?.id,
       })),
     };
@@ -75,6 +77,7 @@ export class DemarchesController {
       demarches: demarches.map((demarche) => ({
         ...demarche.demarcheDS?.dataJson,
         id: demarche.id,
+        typeOrganisme: demarche.typeOrganisme,
         originalId: demarche.demarcheDS?.id,
       })),
     };
@@ -110,6 +113,7 @@ export class DemarchesController {
       demarche: {
         ...demarche.demarcheDS?.dataJson,
         id: demarche.id,
+        typeOrganisme: demarche.typeOrganisme,
         originalId: demarche.demarcheDS?.id,
       },
     };
@@ -145,6 +149,7 @@ export class DemarchesController {
       demarche: {
         ...demarche.demarcheDS?.dataJson,
         id: demarche.id,
+        typeOrganisme: demarche.typeOrganisme,
         originalId: demarche.demarcheDS?.id,
       },
     };
