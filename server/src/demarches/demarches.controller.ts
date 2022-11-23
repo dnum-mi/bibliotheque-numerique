@@ -8,9 +8,10 @@ import {
   Param,
   ParseIntPipe,
 } from "@nestjs/common";
+import { Demarche as TDemarche } from "@lab-mi/ds-api-client/dist/@types/types";
 import { DemarchesService } from "./demarches.service";
 import { Demarche } from "../entities";
-import { Demarche as TDemarche } from "@lab-mi/ds-api-client/dist/@types/types";
+import { FilterPipe } from "../pipe/filter.pipe";
 
 type ReturnDemarche = Omit<TDemarche, "id"> & {
   id: number;
@@ -55,7 +56,7 @@ export class DemarchesController {
 
   @Post("search")
   async searchDemarches(
-    @Body("filter") filter: object,
+    @Body("filter", FilterPipe) filter: object,
   ): Promise<{ demarches: ReturnDemarche[] }> {
     let demarches: Demarche[];
     try {

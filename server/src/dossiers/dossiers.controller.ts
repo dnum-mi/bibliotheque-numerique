@@ -4,12 +4,12 @@ import {
   Post,
   Param,
   Body,
-  Query,
   Delete,
   HttpException,
   HttpStatus,
   HttpCode,
 } from "@nestjs/common";
+import { FilterPipe } from "../pipe/filter.pipe";
 import { DossiersService } from "./dossiers.service";
 import { Dossier } from "../entities";
 
@@ -42,7 +42,7 @@ export class DossiersController {
   }
 
   @Post("search")
-  async searchDossier(@Body("filter") filter: object) {
+  async searchDossier(@Body("filter", FilterPipe) filter: object) {
     let dossiers: Dossier[];
     try {
       dossiers = await this.dossiersService.findAll(filter);
