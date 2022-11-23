@@ -8,14 +8,14 @@ import { createPinia } from 'pinia'
 import { useDemarcheStore } from '@/stores/demarche'
 import DemarcheDossiers from './DemarcheDossiers.vue'
 
-import { demarche1 } from './__tests__/demarche.js'
 import { generateDossiers } from './__tests__/dossiers'
+import { generateDemarche } from './__tests__/demarches'
 
 describe('<DemarcheDossiers />', () => {
   it('renders', () => {
     const pinia = createPinia()
     const useStore = useDemarcheStore(pinia)
-    const demarche = demarche1.demarche
+    const demarche = generateDemarche()
     useStore.demarche = demarche
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     useStore.getDemarche = async (id: number) => {

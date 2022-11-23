@@ -4,7 +4,7 @@ import '../main.css'
 
 import DemarcheInformations from './DemarcheInformations.vue'
 
-import { demarche2 } from './__tests__/demarche.js'
+import { generateDemarche } from './__tests__/demarches'
 
 describe('<DemarcheDescription />', () => {
   const labelValues = [
@@ -29,7 +29,7 @@ describe('<DemarcheDescription />', () => {
   })
 
   it('renders with props', () => {
-    const datas = demarche2.demarche
+    const datas = generateDemarche()
     cy.mount(DemarcheInformations, { props: { datas } })
     cy.get('label').then(($label) => {
       cy.wrap($label).contains('Description').next().should('contain', datas.description)

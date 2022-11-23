@@ -34,31 +34,37 @@ const headerDossierJson = [
     text: 'Archivé',
     value: 'archived',
     parseFn: booleanToYesNo,
+    type: 'boolean',
   },
   {
     text: 'Etat',
     value: 'state',
     parseFn: stateToFr,
+    type: 'StateDS',
   },
   {
     text: 'Date de dépot',
     value: 'dateDepot',
     parseFn: dateToStringFr,
+    type: 'date',
   },
   {
     text: 'Date de construction',
     value: 'datePassageEnConstruction',
     parseFn: dateToStringFr,
+    type: 'date',
   },
   {
     text: "Date d'instruction",
     value: 'datePassageEnInstruction',
     parseFn: dateToStringFr,
+    type: 'date',
   },
   {
     text: 'Date de traitement',
     value: 'dateTraitement',
     parseFn: dateToStringFr,
+    type: 'date',
   },
   {
     text: 'Association déclarée cultuelle dans télédéclaration loi CRPR ?',
