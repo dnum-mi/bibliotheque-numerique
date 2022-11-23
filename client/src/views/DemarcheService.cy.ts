@@ -2,7 +2,7 @@ import '@gouvminint/vue-dsfr/styles'
 
 import DemarcheService from './DemarcheService.vue'
 
-import { demarche2 } from './__tests__/demarche.js'
+import { generateDemarche } from './__tests__/demarches'
 
 describe('<DemarcheService />', () => {
   it('renders without props', () => {
@@ -16,7 +16,7 @@ describe('<DemarcheService />', () => {
 
   it('renders with props', () => {
     // see: https://test-utils.vuejs.org/guide/
-    const service = demarche2.demarche.service
+    const service = generateDemarche().service
     cy.mount(DemarcheService, { props: { service } })
     cy.get('label').then(($label) => {
       cy.wrap($label).contains('Nom').next().should('contain', service.nom)
