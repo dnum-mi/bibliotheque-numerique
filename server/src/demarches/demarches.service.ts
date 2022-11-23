@@ -4,6 +4,7 @@ import { Demarche as TDemarche } from "@lab-mi/ds-api-client/dist/@types/types";
 import { InsertResult, Repository } from "typeorm";
 import { Demarche } from "../entities";
 import { LoggerService } from "../logger/logger.service";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class DemarchesService {
@@ -14,13 +15,42 @@ export class DemarchesService {
   constructor(
     @InjectRepository(Demarche)
     private demarchesRepository: Repository<Demarche>,
+    private configService: ConfigService,
   ) {}
+
+  private _typeOrganismeFromDemarcheDs(
+    demarche: TDemarche,
+  ): string | undefined {
+    const TypeOrganisme = this.configService.get<object>("typeOrganisme");
+    const annotationDescriptors =
+      demarche.publishedRevision?.annotationDescriptors;
+
+    if (!annotationDescriptors || annotationDescriptors.length === 0)
+      return undefined;
+
+    for (const annotationDescriptor of annotationDescriptors) {
+      for (const typeOrganisme of Object.keys(TypeOrganisme) as Array<
+        keyof typeof TypeOrganisme
+      >) {
+        if (annotationDescriptor.label.includes("organisme")) {
+          const descriptionMatch = annotationDescriptor.description.match(
+            TypeOrganisme[typeOrganisme],
+          );
+          if (descriptionMatch) {
+            return descriptionMatch[0];
+          }
+        }
+      }
+    }
+    return undefined;
+  }
 
   async updateDemarches(demarches: TDemarche[]): Promise<InsertResult> {
     const toUpsert = demarches.map((demarche) => ({
       demarcheDS: demarche.id,
       title: demarche.title,
       state: demarche.state,
+      typeOrganisme: this._typeOrganismeFromDemarcheDs(demarche),
     }));
     try {
       return await this.demarchesRepository
@@ -28,9 +58,13 @@ export class DemarchesService {
         .insert()
         .into(Demarche)
         .values(toUpsert as Partial<Demarche>)
-        .orUpdate(["title", "state", "updateAt"], ["idDemarcheDS"], {
-          skipUpdateIfNoValuesChanged: true,
-        })
+        .orUpdate(
+          ["title", "state", "typeOrganisme", "updateAt"],
+          ["idDemarcheDS"],
+          {
+            skipUpdateIfNoValuesChanged: true,
+          },
+        )
         .execute();
     } catch (error) {
       this.logger.error({
@@ -73,9 +107,12 @@ export class DemarchesService {
     }
   }
 
-  async findAll(): Promise<Demarche[]> {
+  async findAll(filter: object = {}): Promise<Demarche[]> {
     try {
       return await this.demarchesRepository.find({
+        where: {
+          ...filter,
+        },
         relations: {
           demarcheDS: true,
         },

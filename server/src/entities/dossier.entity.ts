@@ -35,8 +35,11 @@ export class Dossier extends BaseEntity {
   @UpdateDateColumn({ type: "timestamp" })
   updateAt: Date;
 
-  static all() {
+  static all(filter: object) {
     return this.find({
+      where: {
+        ...filter,
+      },
       relations: {
         dossierDS: true,
       },
