@@ -1,23 +1,22 @@
 import { Injectable } from "@nestjs/common";
-
-export type User = any;
+import { User } from "../entities";
 
 @Injectable()
 export class UsersService {
-  private readonly users = [
-    {
-      userId: 1,
-      username: "john",
-      password: "changeme",
-    },
-    {
-      userId: 2,
-      username: "maria",
-      password: "guess",
-    },
-  ];
+  async findOne(email: string): Promise<User | undefined> {
+    return User.findOneBy({ email: email });
+  }
 
-  async findOne(username: string): Promise<User | undefined> {
-    return this.users.find((user) => user.username === username);
+  async create(email: string, password): Promise<User> {
+    const userInDb = await this.findOne(email);
+    if (userInDb) {
+      throw new Error("User already exists");
+    }
+
+    const user = new User();
+    user.email = email;
+    user.password = password;
+    await user.save();
+    return user;
   }
 }

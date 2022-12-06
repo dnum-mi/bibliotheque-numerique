@@ -3,7 +3,7 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 // Load Database Entities
-import { DemarcheDS, Demarche, DossierDS, Dossier } from "../entities";
+import { DemarcheDS, Demarche, DossierDS, Dossier, User } from "../entities";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
@@ -16,7 +16,7 @@ export const AppDataSource = new DataSource({
   synchronize: false,
   name: "default",
   migrationsTableName: "migrations",
-  entities: [Demarche, DemarcheDS, Dossier, DossierDS],
+  entities: [Demarche, DemarcheDS, Dossier, DossierDS, User],
   //TODO entities: ["../entities/**.entity.ts"],
   //TODO subscribers: ["subscriber/*.ts"],
   migrations: [__dirname + "/migrations/*.ts"],
