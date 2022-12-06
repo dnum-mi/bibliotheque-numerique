@@ -28,6 +28,8 @@ services:
       DS_API_TOKEN: ${DS_API_TOKEN}
       FORCE_COLOR: 1
       DEBUG: 1
+      SMTP_SERVER: mailhog
+      SMTP_PORT: 1025
 
   pgadmin:
     image: dpage/pgadmin4
@@ -43,6 +45,16 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: user@gmail.com
       PGADMIN_DEFAULT_PASSWORD: password
+    networks:
+      - biblio-num-network
+
+  mailhog:
+    container_name: mailhog
+    image: mailhog/mailhog
+    restart: always
+    ports:
+        - 1025:1025
+        - 8025:8025
     networks:
       - biblio-num-network
 
