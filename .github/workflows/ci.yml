@@ -1,5 +1,11 @@
 name: CI of biblio-num
-on: pull_request
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
 
 jobs:
   tests:
@@ -10,7 +16,7 @@ jobs:
     steps:
       - name: Checks-out repository
         uses: actions/checkout@v3
-      - name: Use Node.js 16.x.x
+      - name: Use Node.js 18.x.x
         uses: actions/setup-node@v3
         with:
           node-version: "18"
