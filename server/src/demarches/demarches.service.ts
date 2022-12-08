@@ -1,8 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Demarche as TDemarche } from "@lab-mi/ds-api-client/dist/@types/types";
-import { InsertResult, Repository } from "typeorm";
-import { Demarche } from "../entities";
+import { InsertResult } from "typeorm";
+import { Demarche, DemarcheDS, TUpsertDemarche } from "../entities";
 import { LoggerService } from "../logger/logger.service";
 import { ConfigService } from "@nestjs/config";
 
@@ -12,18 +10,14 @@ export class DemarchesService {
     DemarchesService.name,
   ) as unknown as LoggerService;
 
-  constructor(
-    @InjectRepository(Demarche)
-    private demarchesRepository: Repository<Demarche>,
-    private configService: ConfigService,
-  ) {}
+  constructor(private configService: ConfigService) {}
 
   private _typeOrganismeFromDemarcheDs(
-    demarche: TDemarche,
+    demarcheDS: DemarcheDS,
   ): string | undefined {
     const TypeOrganisme = this.configService.get<object>("typeOrganisme");
     const annotationDescriptors =
-      demarche.publishedRevision?.annotationDescriptors;
+      demarcheDS.dataJson.publishedRevision?.annotationDescriptors;
 
     if (!annotationDescriptors || annotationDescriptors.length === 0)
       return undefined;
@@ -45,30 +39,18 @@ export class DemarchesService {
     return undefined;
   }
 
-  async updateDemarches(demarches: TDemarche[]): Promise<InsertResult> {
-    const toUpsert = demarches.map((demarche) => ({
-      demarcheDS: demarche.id,
-      title: demarche.title,
-      state: demarche.state,
-      typeOrganisme: this._typeOrganismeFromDemarcheDs(demarche),
+  async updateDemarches(demarchesDS: DemarcheDS[]): Promise<InsertResult> {
+    const toUpsert = demarchesDS.map<TUpsertDemarche>((demarcheDS) => ({
+      demarcheDS: demarcheDS.id,
+      title: demarcheDS.dataJson.title,
+      state: demarcheDS.dataJson.state,
+      typeOrganisme: this._typeOrganismeFromDemarcheDs(demarcheDS),
     }));
     try {
-      return await this.demarchesRepository
-        .createQueryBuilder()
-        .insert()
-        .into(Demarche)
-        .values(toUpsert as Partial<Demarche>)
-        .orUpdate(
-          ["title", "state", "typeOrganisme", "updateAt"],
-          ["idDemarcheDS"],
-          {
-            skipUpdateIfNoValuesChanged: true,
-          },
-        )
-        .execute();
+      return await Demarche.upsertDemarche(toUpsert);
     } catch (error) {
       this.logger.error({
-        short_message: `Erreur pendant la mise à jour des démarches numéros: ${demarches
+        short_message: `Erreur pendant la mise à jour des démarches numéros: ${demarchesDS
           .map((d) => d.id)
           .toString()}`,
         full_message: error.toString(),
@@ -79,10 +61,7 @@ export class DemarchesService {
 
   async findById(id: number): Promise<Demarche> {
     try {
-      return await this.demarchesRepository.findOne({
-        where: { id },
-        relations: { demarcheDS: true, dossiers: { dossierDS: true } },
-      });
+      return await Demarche.findById(id);
     } catch (error) {
       this.logger.error({
         short_message: `Échec récupération de la démarche id: ${id}`,
@@ -94,10 +73,7 @@ export class DemarchesService {
 
   async findByDsId(id: number): Promise<Demarche> {
     try {
-      return await this.demarchesRepository.findOne({
-        where: { demarcheDS: { id } },
-        relations: { demarcheDS: true },
-      });
+      return await Demarche.findByDsId(id);
     } catch (error) {
       this.logger.error({
         short_message: `Échec récupération de la démarche number: ${id}`,
@@ -107,16 +83,9 @@ export class DemarchesService {
     }
   }
 
-  async findAll(filter: object = {}): Promise<Demarche[]> {
+  async findWithFilter(filter: object = {}): Promise<Demarche[]> {
     try {
-      return await this.demarchesRepository.find({
-        where: {
-          ...filter,
-        },
-        relations: {
-          demarcheDS: true,
-        },
-      });
+      return Demarche.findWithFilter(filter);
     } catch (error) {
       this.logger.error({
         short_message: "Échec récupération des démarches",

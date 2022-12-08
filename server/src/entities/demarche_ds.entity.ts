@@ -14,7 +14,7 @@ export class DemarcheDS extends BaseEntity {
   id: number;
 
   @Column({ type: "jsonb" })
-  dataJson: TDemarche;
+  dataJson: Partial<TDemarche>;
 
   @Column({ type: "timestamp" })
   dsUpdateAt: Date;
@@ -24,4 +24,18 @@ export class DemarcheDS extends BaseEntity {
 
   @UpdateDateColumn({ type: "timestamp" })
   updateAt: Date;
+
+  static upsertDemarcheDS(
+    toUpsert: Partial<DemarcheDS> | Partial<DemarcheDS>[],
+  ) {
+    return this.createQueryBuilder()
+      .insert()
+      .into(DemarcheDS)
+      .values(toUpsert)
+      .orUpdate(["dataJson", "updateAt", "dsUpdateAt"], "pk_demarche_ds_id", {
+        skipUpdateIfNoValuesChanged: true,
+      })
+      .returning(["id", "dataJson"])
+      .execute();
+  }
 }

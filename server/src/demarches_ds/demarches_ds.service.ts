@@ -1,11 +1,11 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { DsApiClient } from "@lab-mi/ds-api-client";
-import { InjectRepository } from "@nestjs/typeorm";
-import { InsertResult, Repository } from "typeorm";
+import { InsertResult } from "typeorm";
 import { Demarche as TDemarche } from "@lab-mi/ds-api-client/dist/@types/types";
 
 import { DemarcheDS } from "../entities";
 import { LoggerService } from "../logger/logger.service";
+import { DemarchesService } from "../demarches/demarches.service";
 
 @Injectable()
 export class DemarchesDSService {
@@ -13,10 +13,7 @@ export class DemarchesDSService {
     DemarchesDSService.name,
   ) as unknown as LoggerService;
 
-  constructor(
-    @InjectRepository(DemarcheDS)
-    private demarcheDSRepository: Repository<DemarcheDS>,
-  ) {}
+  constructor(private demarchesService: DemarchesService) {}
 
   async updateDemarchesDS(demarcheNumbers?: number[]): Promise<InsertResult> {
     const dsApiClient = new DsApiClient(
@@ -41,7 +38,7 @@ export class DemarchesDSService {
 
     const toUpsert = demarches
       .filter((demarche: TDemarche) => demarche)
-      .map((demarche) => ({
+      .map<Partial<DemarcheDS>>((demarche) => ({
         id: demarche.number,
         dataJson: demarche,
         dsUpdateAt: demarche.dateDerniereModification
@@ -49,16 +46,9 @@ export class DemarchesDSService {
           : new Date(),
       }));
     try {
-      return await this.demarcheDSRepository
-        .createQueryBuilder()
-        .insert()
-        .into(DemarcheDS)
-        .values(toUpsert)
-        .orUpdate(["dataJson", "updateAt", "dsUpdateAt"], "pk_demarche_ds_id", {
-          skipUpdateIfNoValuesChanged: true,
-        })
-        .returning(["id", "dataJson"])
-        .execute();
+      const insertResult = await DemarcheDS.upsertDemarcheDS(toUpsert);
+      this.demarchesService.updateDemarches(insertResult.raw);
+      return insertResult;
     } catch (error) {
       this.logger.error({
         short_message: "Échec de la mise à jour des demarches_ds",
