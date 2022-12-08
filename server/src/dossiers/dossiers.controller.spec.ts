@@ -33,7 +33,7 @@ describe("DossiersController", () => {
   });
 
   it("findAll: should throw error when there are nothing", async () => {
-    jest.spyOn(service, "findAll").mockImplementation(async () => []);
+    jest.spyOn(service, "findWithFilter").mockImplementation(async () => []);
     await expect(() => controller.findAll()).rejects.toThrow(
       "No dossier found",
     );
@@ -53,7 +53,9 @@ describe("DossiersController", () => {
 
   it("search: should throw error when there are nothing", async () => {
     const result = [];
-    jest.spyOn(service, "findAll").mockImplementation(async () => result);
+    jest
+      .spyOn(service, "findWithFilter")
+      .mockImplementation(async () => result);
     expect(await controller.searchDossier({})).toBe(result);
   });
 

@@ -8,14 +8,18 @@ import {
   JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  InsertResult,
 } from "typeorm";
 import { DossierDS, Demarche } from "../entities";
-import { Dossier as TDossier } from "@lab-mi/ds-api-client/dist/@types/types";
+
+export type TUpsertDossier = Partial<
+  Omit<Dossier, "dossierDS"> & { dossierDS: number }
+>;
 
 @Entity({ name: "dossiers" })
 export class Dossier extends BaseEntity {
-  @PrimaryGeneratedColumn("increment")
+  @PrimaryGeneratedColumn("increment", {
+    primaryKeyConstraintName: "pk_dossier_id",
+  })
   id: number;
 
   @OneToOne(() => DossierDS)
@@ -35,7 +39,7 @@ export class Dossier extends BaseEntity {
   @UpdateDateColumn({ type: "timestamp" })
   updateAt: Date;
 
-  static all(filter: object) {
+  static findWithFilter(filter: object) {
     return this.find({
       where: {
         ...filter,
@@ -46,21 +50,10 @@ export class Dossier extends BaseEntity {
     });
   }
 
-  static upsertByDossierDS(
-    apiDossier: Partial<TDossier>,
-    dossierDS: InsertResult,
-    demarcheEntity: Demarche,
-  ) {
-    return Dossier.upsert(
-      {
-        dossierDS: dossierDS.identifiers[0].id,
-        demarche: demarcheEntity,
-        state: apiDossier.state,
-      },
-      {
-        conflictPaths: ["dossierDS"],
-        skipUpdateIfNoValuesChanged: true,
-      },
-    );
+  static upsertDossier(toUpsert: TUpsertDossier | TUpsertDossier[]) {
+    return Dossier.upsert(toUpsert as any, {
+      conflictPaths: ["dossierDS"],
+      skipUpdateIfNoValuesChanged: true,
+    });
   }
 }

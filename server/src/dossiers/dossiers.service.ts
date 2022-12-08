@@ -1,6 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { Dossier } from "../entities";
+import { Demarche, Dossier, DossierDS, TUpsertDossier } from "../entities";
 import { LoggerService } from "../logger/logger.service";
+import { InsertResult } from "typeorm";
 
 @Injectable()
 export class DossiersService {
@@ -8,9 +9,34 @@ export class DossiersService {
     DossiersService.name,
   ) as unknown as LoggerService;
 
-  async findAll(filter: object = {}) {
+  async updateDossiers(
+    dossiersDS: DossierDS[],
+    demarcheNumber: number,
+  ): Promise<InsertResult> {
+    const demarcheEntity = await Demarche.findOneBy({
+      demarcheDS: { id: demarcheNumber },
+    });
+    const toUpsert = dossiersDS.map<Partial<TUpsertDossier>>((dossierDS) => ({
+      dossierDS: dossierDS.id,
+      state: dossierDS.dataJson.state,
+      demarche: demarcheEntity,
+    }));
     try {
-      return await Dossier.all(filter);
+      return await Dossier.upsertDossier(toUpsert);
+    } catch (error) {
+      this.logger.error({
+        short_message: `Erreur pendant la mise à jour des dossiers numéros: ${dossiersDS
+          .map((d) => d.id)
+          .toString()}`,
+        full_message: error.toString(),
+      });
+      throw new Error("Unable to update dossiers");
+    }
+  }
+
+  async findWithFilter(filter: object = {}) {
+    try {
+      return await Dossier.findWithFilter(filter);
     } catch (error) {
       this.logger.error({
         short_message: "Échec récupération des dossiers",

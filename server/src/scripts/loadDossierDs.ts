@@ -14,7 +14,6 @@ async function bootstrap() {
 
   try {
     await dossierDSServices.upsertDossierDS(1, 1);
-    await dossierDSServices.upsertDemarcheDossiersDS(1);
 
     await app.close();
   } catch (error) {

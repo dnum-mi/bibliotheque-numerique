@@ -1,7 +1,8 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { DsApiClient } from "@lab-mi/ds-api-client";
-import { Demarche, DossierDS } from "../entities";
+import { DossierDS } from "../entities";
 import { LoggerService } from "../logger/logger.service";
+import { DossiersService } from "../dossiers/dossiers.service";
 
 @Injectable()
 export class DossiersDSService {
@@ -14,14 +15,26 @@ export class DossiersDSService {
     process.env.DS_API_TOKEN,
   );
 
+  constructor(private dossiersService: DossiersService) {}
+
   async upsertDossierDS(dossierNumber: number, demarcheNumber: number) {
     try {
       const response = await this.dsApiClient.dossier(dossierNumber);
       const dossier = response?.dossier;
-      const demarcheEntity = await Demarche.findOneBy({
-        demarcheDS: { id: demarcheNumber },
-      });
-      await DossierDS.tryUpsertDossierDS(dossier, demarcheEntity);
+      const toUpsert = {
+        id: dossier.number,
+        dataJson: dossier,
+        dsUpdateAt: dossier.dateDerniereModification,
+      } as Partial<DossierDS>;
+      const insertResultDossiersDS = await DossierDS.upsertDossierDS(toUpsert);
+      const insertResultDossiers = await this.dossiersService.updateDossiers(
+        insertResultDossiersDS.raw,
+        demarcheNumber,
+      );
+      return {
+        dossiersDS: insertResultDossiersDS,
+        dossiers: insertResultDossiers,
+      };
     } catch (error) {
       this.logger.error({
         short_message: "Échec de la mise à jour des dossiers_ds",
@@ -35,15 +48,23 @@ export class DossiersDSService {
     try {
       const response = await this.dsApiClient.demarcheDossiers(demarcheNumber);
       const dossiers = response?.demarche?.dossiers?.nodes;
-      const demarcheEntity = await Demarche.findOneBy({
-        demarcheDS: { id: demarcheNumber },
-      });
       if (dossiers && dossiers.length > 0) {
-        return await Promise.all(
-          dossiers.map(async (dossier) => {
-            await DossierDS.tryUpsertDossierDS(dossier, demarcheEntity);
-          }),
+        const toUpsert = dossiers.map<Partial<DossierDS>>((dossier) => ({
+          id: dossier.number,
+          dataJson: dossier,
+          dsUpdateAt: dossier.dateDerniereModification,
+        }));
+        const insertResultDossiersDS = await DossierDS.upsertDossierDS(
+          toUpsert,
         );
+        const insertResultDossiers = await this.dossiersService.updateDossiers(
+          insertResultDossiersDS.raw,
+          demarcheNumber,
+        );
+        return {
+          dossiersDS: insertResultDossiersDS,
+          dossiers: insertResultDossiers,
+        };
       } else {
         this.logger.warn({
           short_message: "No dossier to upsert",

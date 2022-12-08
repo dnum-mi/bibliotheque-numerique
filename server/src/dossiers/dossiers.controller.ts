@@ -21,7 +21,7 @@ export class DossiersController {
   async findAll() {
     let dossiers: Dossier[];
     try {
-      dossiers = await this.dossiersService.findAll();
+      dossiers = await this.dossiersService.findWithFilter();
     } catch (error) {
       if (error instanceof Error) {
         throw new HttpException(
@@ -45,7 +45,7 @@ export class DossiersController {
   async searchDossier(@Body("filter", FilterPipe) filter: object) {
     let dossiers: Dossier[];
     try {
-      dossiers = await this.dossiersService.findAll(filter);
+      dossiers = await this.dossiersService.findWithFilter(filter);
     } catch (error) {
       if (error instanceof Error) {
         throw new HttpException(
