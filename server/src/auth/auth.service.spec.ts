@@ -18,4 +18,10 @@ describe("AuthService", () => {
   it("should be defined", () => {
     expect(service).toBeDefined();
   });
+
+  // it("should be defined", () => {
+  //   expect(service.validateUser("test@email.com", "password")).toThrowError(
+  //     "User not found",
+  //   );
+  // });
 });
