@@ -17,6 +17,9 @@ const config = {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PWD,
   },
+  jwt: {
+    secret: process.env.JWT_SECRET,
+  },
 };
 
 export type TConfig = typeof config;
