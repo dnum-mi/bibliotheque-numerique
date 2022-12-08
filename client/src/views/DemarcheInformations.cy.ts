@@ -29,8 +29,8 @@ describe('<DemarcheDescription />', () => {
   })
 
   it('renders with props', () => {
-    const datas = generateDemarche()
-    cy.mount(DemarcheInformations, { props: { datas } })
+    const datas = generateDemarche().demarcheDS.dataJson
+    cy.mount(DemarcheInformations, { props: { dataJson: datas } })
     cy.get('label').then(($label) => {
       cy.wrap($label).contains('Description').next().should('contain', datas.description)
       cy.wrap($label).contains('Etat').next().should('contain', 'Publiée')

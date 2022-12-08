@@ -7,9 +7,9 @@ import { dateTimeToStringFr } from '@/utils/dateToString'
 import { stateToFr } from '@/utils/stateToString'
 
 const props = withDefaults(defineProps<{
-    datas?: object
+    dataJson?: object
   }>(), {
-  datas: () => ({}),
+  dataJson: () => ({}),
 })
 
 const title = 'Informations'
@@ -43,8 +43,8 @@ const labelsDate = [
   },
 ]
 
-const etat = computed(() => props.datas?.state ? DemarcheStateMapping[props.datas?.state as KeyDemarcheStateMapping] : '')
-const declarative = computed(() => stateToFr(props.datas?.declarative))
+const etat = computed(() => props.dataJson?.state ? DemarcheStateMapping[props.dataJson?.state as KeyDemarcheStateMapping] : '')
+const declarative = computed(() => stateToFr(props.dataJson?.declarative))
 
 </script>
 
@@ -52,7 +52,7 @@ const declarative = computed(() => stateToFr(props.datas?.declarative))
   <h3> {{ title }} </h3>
 
   <div
-    v-if="datas"
+    v-if="dataJson"
     data-cy="cy-demarche-description"
     class="fr-container fr-pb-3v"
   >
@@ -66,7 +66,7 @@ const declarative = computed(() => stateToFr(props.datas?.declarative))
         > Description :</label> <span
           id="demarche-description"
           class="fr-text"
-        > {{ datas?.description }}</span>
+        > {{ dataJson?.description }}</span>
       </div>
       <div
         class="fr-col-6"
@@ -96,7 +96,7 @@ const declarative = computed(() => stateToFr(props.datas?.declarative))
   <DisplayLabelsValues
     :title="title"
     prefix-id="demarche-description"
-    :datas="datas"
+    :datas="dataJson"
     :labels="labelsDate"
     class="fr-pb-3v"
   />

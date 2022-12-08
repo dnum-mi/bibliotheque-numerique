@@ -21,7 +21,7 @@ interface IField {
   }
 const fields = computed<IField[]>(() => {
   return Object.keys(labelKeys).map<IField>((key) => ({
-    id: `demarache-servie-${key}`,
+    id: `demarche-servie-${key}`,
     label: labelKeys[key as keyOfLabelKeys],
     value: props.service[key as keyOfService] || '',
   }),

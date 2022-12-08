@@ -16,7 +16,7 @@ describe('<DemarcheService />', () => {
 
   it('renders with props', () => {
     // see: https://test-utils.vuejs.org/guide/
-    const service = generateDemarche().service
+    const service = generateDemarche().demarcheDS.dataJson.service
     cy.mount(DemarcheService, { props: { service } })
     cy.get('label').then(($label) => {
       cy.wrap($label).contains('Nom').next().should('contain', service.nom)

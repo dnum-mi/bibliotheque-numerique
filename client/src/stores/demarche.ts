@@ -26,30 +26,9 @@ export const useDemarcheStore = defineStore('demarche', () => {
   const getDemarches = async () => {
     const result = await apiClient.getDemarches()
 
-    // TODO: Bouchon A retier BEGIN
-    const getTypeOrganisme = (demarche) => {
-      // const bouchonTypeOrganisme = {
-      //   1: 'FE',
-      //   2: 'FDD',
-      //   3: 'FRUP',
-      //   4: 'ARUP',
-      //   7: 'FDD',
-      //   8: 'FDD',
-      //   10: 'FDD',
-      //   11: 'FE',
-      //   12: 'FE',
-      //   15: 'FE',
-      //   16: 'FE',
-      //   17: 'FE',
-      // }
-      // return bouchonTypeOrganisme[demarche.number] || ''
-
-      return demarche?.publishedRevision?.annotationDescriptors?.find((annotation:any) => annotation?.label === "Type d'organisme")?.description || ''
-    }
-    // TODO: Bouchon A retier END
     if (result) {
-      demarches.value = result.map((demarche) => {
-        demarche.typeOrganisme = getTypeOrganisme(demarche)
+      demarches.value = result.map((demarche: any) => {
+        demarche.typeOrganisme = demarche.typeOrganisme || ''
         return demarche
       })
     }

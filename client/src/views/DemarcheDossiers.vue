@@ -16,10 +16,10 @@ const router = useRouter()
 const demarcheStore = useDemarcheStore()
 
 const title = computed<string>(() => demarcheStore.demarche?.title || '')
-const number = computed<string>(() => demarcheStore.demarche?.number || '')
+const number = computed<string>(() => demarcheStore.demarche?.demarcheDS?.dataJson?.number || '')
 const dossiers = computed<object[]>(() => demarcheStore.dossiers?.map(dossier => ({ idBiblioNum: dossier.id, ...dossier.dossierDS?.dataJson })) || [])
-const groupInstructeurs = computed<object[]>(() => demarcheStore.demarche?.groupeInstructeurs || [])
-const service = computed<object>(() => demarcheStore.demarche?.service || {})
+const groupInstructeurs = computed<object[]>(() => demarcheStore.demarche?.demarcheDS?.dataJson?.groupeInstructeurs || [])
+const service = computed<object>(() => demarcheStore.demarche?.demarcheDS?.dataJson?.service || {})
 const demarche = computed<object>(() => demarcheStore.demarche || {})
 
 const headerDossierJson = [
@@ -111,7 +111,7 @@ const getDossier = data => {
     <input v-model="idDemarche">
   </div>
 
-  <DemarcheInformations :datas="demarche" />
+  <DemarcheInformations :data-json="demarche?.demarcheDS?.dataJson" />
   <DemarcheService :service="service" />
   <br>
   <GroupInstructeurs :group-instructeurs="groupInstructeurs" />
