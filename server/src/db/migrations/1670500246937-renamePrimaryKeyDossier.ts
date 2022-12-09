@@ -15,5 +15,6 @@ export class RenamePrimaryKeyDossier1670500246937
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   public async down(queryRunner: QueryRunner): Promise<void> {}
 }

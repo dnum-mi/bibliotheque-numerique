@@ -15,7 +15,7 @@ export class DemarchesDSService {
 
   constructor(private demarchesService: DemarchesService) {}
 
-  async updateDemarchesDS(demarcheNumbers?: number[]): Promise<InsertResult> {
+  async updateDemarchesDS(demarcheNumbers?: number[]) {
     const dsApiClient = new DsApiClient(
       process.env.DS_API_URL,
       process.env.DS_API_TOKEN,
@@ -46,9 +46,16 @@ export class DemarchesDSService {
           : new Date(),
       }));
     try {
-      const insertResult = await DemarcheDS.upsertDemarcheDS(toUpsert);
-      this.demarchesService.updateDemarches(insertResult.raw);
-      return insertResult;
+      const insertResultDemarchesDS = await DemarcheDS.upsertDemarcheDS(
+        toUpsert,
+      );
+      const insertResultDemarches = await this.demarchesService.updateDemarches(
+        insertResultDemarchesDS.raw,
+      );
+      return {
+        demarchesDS: insertResultDemarchesDS,
+        demarches: insertResultDemarches,
+      };
     } catch (error) {
       this.logger.error({
         short_message: "Échec de la mise à jour des demarches_ds",
