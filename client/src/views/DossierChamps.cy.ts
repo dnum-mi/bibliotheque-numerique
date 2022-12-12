@@ -8,12 +8,11 @@ import DossierChamps from './DossierChamps.vue'
 describe('<DossierChamps />', () => {
   it('renders', () => {
     const datas = getChamps()
-    console.log(JSON.stringify(datas))
     cy.mount(DossierChamps, { props: { datas } })
 
     cy.get('label').then(($label) => {
-      datas.forEach(({ label, stringValue }) => {
-        cy.wrap($label).contains(label).next().should('contain', stringValue)
+      datas.forEach(({ label, stringValue }, idx) => {
+        cy.wrap($label).eq(idx).contains(new RegExp(`^${label} :$`, 'g')).next().should('contain', stringValue)
       })
     })
   })

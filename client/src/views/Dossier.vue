@@ -5,6 +5,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { useDossierStore } from '@/stores/dossier'
 import DossierInformations from './DossierInformations.vue'
 import DossierDemande from './DossierDemande.vue'
+import DossierAnnotations from './DossierAnnotations.vue'
 
 const dossierStore = useDossierStore()
 const idDossier = ref(1)
@@ -14,10 +15,9 @@ const tabTitles = [
   {
     title: 'Demande',
   },
-  // TODO: A confirmer
-  // {
-  //   title: 'Annotations privé',
-  // },
+  {
+    title: 'Annotations privé',
+  },
   // {
   //   title: 'Avis externes',
   // },
@@ -62,6 +62,14 @@ onMounted(async () => {
       :selected="selectedTabIndex === 0"
     >
       <DossierDemande :datas="dossierDS" />
+    </DsfrTabContent>
+
+    <DsfrTabContent
+      panel-id="tab-content-1"
+      tab-id="tab-1"
+      :selected="(selectedTabIndex === 1)"
+    >
+      <DossierAnnotations :datas="dossierDS" />
     </DsfrTabContent>
   </DsfrTabs>
 </template>
