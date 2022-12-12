@@ -27,7 +27,7 @@ export class DossiersDSService {
         dsUpdateAt: dossier.dateDerniereModification,
       } as Partial<DossierDS>;
       const insertResultDossiersDS = await DossierDS.upsertDossierDS(toUpsert);
-      const insertResultDossiers = await this.dossiersService.updateDossiers(
+      const insertResultDossiers = await this.dossiersService.upsertDossiers(
         insertResultDossiersDS.raw,
         demarcheNumber,
       );
@@ -57,7 +57,7 @@ export class DossiersDSService {
         const insertResultDossiersDS = await DossierDS.upsertDossierDS(
           toUpsert,
         );
-        const insertResultDossiers = await this.dossiersService.updateDossiers(
+        const insertResultDossiers = await this.dossiersService.upsertDossiers(
           insertResultDossiersDS.raw,
           demarcheNumber,
         );

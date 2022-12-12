@@ -9,7 +9,7 @@ export class DossiersService {
     DossiersService.name,
   ) as unknown as LoggerService;
 
-  async updateDossiers(
+  async upsertDossiers(
     dossiersDS: DossierDS[],
     demarcheNumber: number,
   ): Promise<InsertResult> {

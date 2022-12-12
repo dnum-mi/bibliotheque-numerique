@@ -15,7 +15,7 @@ export class DemarchesDSService {
 
   constructor(private demarchesService: DemarchesService) {}
 
-  async updateDemarchesDS(demarcheNumbers?: number[]) {
+  async upsertDemarchesDS(demarcheNumbers?: number[]) {
     const dsApiClient = new DsApiClient(
       process.env.DS_API_URL,
       process.env.DS_API_TOKEN,
@@ -49,7 +49,7 @@ export class DemarchesDSService {
       const insertResultDemarchesDS = await DemarcheDS.upsertDemarcheDS(
         toUpsert,
       );
-      const insertResultDemarches = await this.demarchesService.updateDemarches(
+      const insertResultDemarches = await this.demarchesService.upsertDemarches(
         insertResultDemarchesDS.raw,
       );
       return {

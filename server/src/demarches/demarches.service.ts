@@ -39,7 +39,7 @@ export class DemarchesService {
     return undefined;
   }
 
-  async updateDemarches(demarchesDS: DemarcheDS[]): Promise<InsertResult> {
+  async upsertDemarches(demarchesDS: DemarcheDS[]): Promise<InsertResult> {
     const toUpsert = demarchesDS.map<TUpsertDemarche>((demarcheDS) => ({
       demarcheDS: demarcheDS.id,
       title: demarcheDS.dataJson.title,

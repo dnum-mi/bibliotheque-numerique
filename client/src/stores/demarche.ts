@@ -28,7 +28,7 @@ export const useDemarcheStore = defineStore('demarche', () => {
 
     if (result) {
       demarches.value = result.map((demarche: any) => {
-        demarche.typeOrganisme = demarche.typeOrganisme || ''
+        demarche.typeOrganisme = demarche?.typeOrganisme || ''
         return demarche
       })
     }

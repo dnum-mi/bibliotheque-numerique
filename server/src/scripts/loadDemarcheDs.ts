@@ -17,7 +17,7 @@ async function bootstrap() {
   const demarchesNumbers: number[] = [8];
 
   try {
-    await demarchesDSService.updateDemarchesDS(demarchesNumbers);
+    await demarchesDSService.upsertDemarchesDS(demarchesNumbers);
     const dossierDSServices = app.get(DossiersDSService);
     await Promise.all(
       demarchesNumbers.map(async (demarcheId) => {
