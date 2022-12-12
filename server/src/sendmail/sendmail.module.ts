@@ -3,6 +3,7 @@ import { MailerModule } from "@nestjs-modules/mailer";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { SendMailService } from "./sendmail.service";
 import { TConfig } from "config/configuration";
+import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { TConfig } from "config/configuration";
           host,
           port,
         };
+
         if (user) {
           transport["ignoreTLS"] = true;
           transport["secure"] = false;
@@ -24,14 +26,24 @@ import { TConfig } from "config/configuration";
           };
         }
 
+        const options = {
+          transport,
+          template: {
+            dir: `${__dirname}/templates`,
+            adapter: new EjsAdapter(),
+            options: {
+              strict: true,
+            },
+          },
+        };
+
         if (from) {
-          transport["defaults"] = {
+          options["defaults"] = {
             from,
           };
         }
-        return {
-          transport,
-        };
+
+        return options;
       },
       inject: [ConfigService],
     }),
