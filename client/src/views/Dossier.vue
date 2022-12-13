@@ -6,6 +6,7 @@ import { useDossierStore } from '@/stores/dossier'
 import DossierInformations from './DossierInformations.vue'
 import DossierDemande from './DossierDemande.vue'
 import DossierAnnotations from './DossierAnnotations.vue'
+import DossierMessages from './DossierMessages.vue'
 
 const dossierStore = useDossierStore()
 const idDossier = ref(1)
@@ -21,9 +22,9 @@ const tabTitles = [
   // {
   //   title: 'Avis externes',
   // },
-  // {
-  //   title: 'Messagerie',
-  // },
+  {
+    title: 'Messagerie',
+  },
   // {
   //   title: 'Personnes impliquées',
   // },
@@ -70,6 +71,14 @@ onMounted(async () => {
       :selected="(selectedTabIndex === 1)"
     >
       <DossierAnnotations :datas="dossierDS" />
+    </DsfrTabContent>
+
+    <DsfrTabContent
+      panel-id="tab-content-2"
+      tab-id="tab-2"
+      :selected="(selectedTabIndex === 2)"
+    >
+      <DossierMessages :datas="dossierDS" />
     </DsfrTabContent>
   </DsfrTabs>
 </template>

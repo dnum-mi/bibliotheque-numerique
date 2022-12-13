@@ -120,10 +120,10 @@ export const generateDossierDSByTypeDemandeur = (__typename:string, demandeurTes
   champs: getChamps(),
   annotations: getChamps(),
   avis: [],
-  mesages: Array(faker.datatype.number({ min: 1, max: 5 })).fill({}).map(() => ({
+  messages: Array(faker.datatype.number({ min: 1, max: 5 })).fill({}).map(() => ({
     id: faker.datatype.string(20),
     email: faker.internet.email(),
-    body: faker.lorem.paragraphs(),
+    body: faker.lorem.paragraphs().split(faker.datatype.string(1)).join('<br><br>'),
     createdAt: faker.date.past().toISOString(),
   })),
   demandeur: {
