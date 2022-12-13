@@ -18,6 +18,7 @@
     "docker:stop": "docker compose -f docker-compose.yml -f docker-compose.dev.yml down",
     "docker:logs": "docker logs -f biblio-num_server",
     "docker:logs:db": "docker logs -f biblio-num_db",
+    "docker:smtp:run": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up mailhog -d",
     "typeorm": "typeorm-ts-node-commonjs",
     "typeorm:migration:run": "typeorm-ts-node-commonjs migration:run -d src/db/app-data-source.ts",
     "typeorm:migration:show": "typeorm-ts-node-commonjs migration:show -d src/db/app-data-source.ts",
@@ -36,6 +37,7 @@
   },
   "dependencies": {
     "@lab-mi/ds-api-client": "^1.1.2",
+    "@nestjs-modules/mailer": "^1.8.1",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.0.0",
@@ -45,6 +47,7 @@
     "colors": "^1.4.0",
     "dayjs": "^1.11.6",
     "dotenv": "^16.0.3",
+    "nodemailer": "^6.8.0",
     "pg": "^8.8.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
