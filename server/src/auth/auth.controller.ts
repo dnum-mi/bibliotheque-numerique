@@ -32,6 +32,16 @@ export class AuthController {
     return this.usersService.create(body.email, body.password);
   }
 
+  @Delete("/logout")
+  async logout(@Request() req, @Response() res, next) {
+    req.logout(function (err) {
+      if (err) {
+        return next(err);
+      }
+      res.redirect("/");
+    });
+  }
+
   @UseGuards(JwtAuthGuard)
   @Get("jwt/profile")
   jwtGetProfile(@Request() req) {
