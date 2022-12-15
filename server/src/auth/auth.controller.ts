@@ -32,20 +32,18 @@ export class AuthController {
     return this.usersService.create(body.email, body.password);
   }
 
-  @Delete("/logout")
+  @Delete("/")
   async logout(@Request() req, @Response() res, next) {
     req.logout(function (err) {
       if (err) {
         return next(err);
       }
-      res.redirect("/");
     });
   }
 
   @UseGuards(JwtAuthGuard)
   @Get("jwt/profile")
   jwtGetProfile(@Request() req) {
-    console.log(req.user);
     if (req.user) {
       return req.user;
     } else {
@@ -56,9 +54,8 @@ export class AuthController {
   @UseGuards(AuthenticatedGuard)
   @Get("profile")
   getProfile(@Request() req) {
-    console.log(req.user);
     if (req.user) {
-      return req.user;
+      return this.authService.login(req.user);
     } else {
       return {};
     }
