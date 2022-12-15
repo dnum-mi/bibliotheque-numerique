@@ -17,6 +17,9 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 8080,
+    proxy: {
+      '/auth': 'http://localhost:3000',
+    },
   },
   resolve: {
     alias: {

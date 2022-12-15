@@ -7,4 +7,5 @@ export {
   RiSortDesc,
   RiSearchLine,
   RiEyeFill,
+  RiLogoutBoxRLine,
 } from 'oh-vue-icons/icons'

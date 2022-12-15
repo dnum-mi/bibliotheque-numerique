@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useRegisterSW } from 'virtual:pwa-register/vue'
+import { useUserStore } from '@/stores'
 
 import ReloadPrompt from '@/components/ReloadPrompt.vue'
 
@@ -9,17 +10,13 @@ const serviceDescription = 'Description du service'
 const logoText = ['Ministère', 'de l’intérieur']
 
 const showSearch = false
-const quickLinks = [
+const quickLinksBase = [
   {
     label: 'Home',
     path: '/',
     icon: 'ri-home-4-line',
     iconAttrs: { color: 'var(--red-marianne-425-625)' },
   },
-  // {
-  //   label: 'Démarche Dossiers',
-  //   path: '/demarches/:id/dossiers',
-  // },
   {
     label: 'Démarches',
     path: '/demarches',
@@ -27,9 +24,45 @@ const quickLinks = [
   {
     label: 'À propos',
     path: '/a-propos',
-    class: 'fr-fi-user-line',
   },
 ]
+const quickLinks = ref(quickLinksBase)
+
+const userStore = useUserStore()
+watch(() => userStore.isAuthenticated, () => {
+  if (userStore.isAuthenticated) {
+    quickLinks.value = quickLinksBase.concat(
+      {
+        label: 'Mon profil',
+        path: '/profile',
+        icon: 'ri-account-circle-line',
+        iconAttrs: { color: 'var(--red-marianne-425-625)' },
+      },
+      {
+        label: 'Déconnexion',
+        path: '/logout',
+        icon: 'ri-logout-box-r-line',
+        iconAttrs: { color: 'var(--red-marianne-425-625)' },
+      },
+    )
+  } else if (userStore.isAuthenticated === false) {
+    quickLinks.value = quickLinksBase.concat(
+      {
+        label: 'Se connecter',
+        path: '/sign_in',
+        icon: 'ri-lock-line',
+        iconAttrs: { color: 'var(--red-marianne-425-625)' },
+      },
+      {
+        label: 'S’enregistrer',
+        path: '/sign_up',
+        icon: 'ri-user-line',
+        iconAttrs: { color: 'var(--red-marianne-425-625)' },
+      },
+    )
+  }
+})
+
 const searchQuery = ref('')
 
 const {

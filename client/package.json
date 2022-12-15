@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@gouvminint/vue-dsfr": "1.4.0",
+    "@vee-validate/zod": "^4.7.3",
     "ag-grid-community": "^28.2.1",
     "ag-grid-enterprise": "^28.2.1",
     "ag-grid-vue3": "^28.2.1",
@@ -27,8 +28,10 @@
     "focus-trap-vue": "^3.3.1",
     "oh-vue-icons": "1.0.0-rc3",
     "pinia": "^2.0.23",
+    "vee-validate": "^4.7.3",
     "vue": "^3.2.41",
-    "vue-router": "^4.1.5"
+    "vue-router": "^4.1.5",
+    "zod": "^3.19.1"
   },
   "devDependencies": {
     "@cypress/vue": "^4.2.1",
@@ -56,6 +59,7 @@
     "jsdom": "^20.0.1",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.7.1",
+    "sass": "^1.56.1",
     "start-server-and-test": "^1.14.0",
     "typescript": "~4.8.4",
     "vite": "^3.2.1",
