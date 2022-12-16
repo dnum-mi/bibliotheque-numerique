@@ -18,6 +18,19 @@ import { EjsAdapter } from "@nestjs-modules/mailer/dist/adapters/ejs.adapter";
           },
         };
 
+        if (process.env.NODE_ENV === "test") {
+          return {
+            transport: {
+              host: "localhost",
+              port: 1025,
+            },
+            template,
+            defaults: {
+              from: "defaults@test.com",
+            },
+          };
+        }
+
         const { host, port, from, user, pass } =
           configService.get<TConfig["smtp"]>("smtp");
         const transport = {
