@@ -1,10 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-
-import Home from '../views/AppHome.vue'
-import AboutUs from '../views/AboutUs.vue'
-import DemarcheDossiersVue from '@/views/DemarcheDossiers.vue'
-import DemarchesVue from '@/views/Demarches.vue'
-import DossierVue from '@/views/Dossier.vue'
+import { useUserStore } from '@/stores'
+import { isAuthenticatedGuard, isNotAuthenticatedGuard } from '@/shared/guards'
 
 const MAIN_TITLE = 'Gabarit de démarrage VueDsfr'
 
@@ -12,32 +8,50 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Home,
+    component: () => import('@/views/AppHome.vue'),
   },
   {
     path: '/a-propos',
     name: 'About',
-    component: AboutUs,
+    component: () => import('@/views/AboutUs.vue'),
   },
   {
     path: '/demarches/:id/dossiers',
     name: 'DemarcheDossiers',
-    component: DemarcheDossiersVue,
+    beforeEnter: [isAuthenticatedGuard],
+    component: () => import('@/views/DemarcheDossiers.vue'),
   },
-  // {
-  //   path: '/dossiers&filtre=',
-  //   name: 'DemarcheDossiers',
-  //   component: DossiersDemarcheVue,
-  // },
   {
     path: '/dossiers/:id',
     name: 'Dossier',
-    component: DossierVue,
+    beforeEnter: [isAuthenticatedGuard],
+    component: () => import('@/views/Dossier.vue'),
   },
   {
     path: '/demarches',
     name: 'Demarches',
-    component: DemarchesVue,
+    beforeEnter: [isAuthenticatedGuard],
+    component: () => import('@/views/Demarches.vue'),
+  },
+  {
+    path: '/sign_in',
+    beforeEnter: [isNotAuthenticatedGuard],
+    component: () => import('@/views/Signin.vue'),
+  },
+  {
+    path: '/sign_up',
+    beforeEnter: [isNotAuthenticatedGuard],
+    component: () => import('@/views/Signup.vue'),
+  },
+  {
+    path: '/profile',
+    beforeEnter: [isAuthenticatedGuard],
+    component: () => import('@/views/Profile.vue'),
+  },
+  {
+    path: '/logout',
+    beforeEnter: [isAuthenticatedGuard],
+    component: () => import('@/views/Logout.vue'),
   },
 ]
 
@@ -51,4 +65,10 @@ router.beforeEach((to) => { // Cf. https://github.com/vueuse/head pour des trans
   document.title = `${specificTitle}${MAIN_TITLE}`
 })
 
+router.beforeEach(async () => {
+  const userStore = useUserStore()
+  if (!userStore.loaded) {
+    await userStore.loadCurrentUser()
+  }
+})
 export default router

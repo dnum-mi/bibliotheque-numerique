@@ -17,6 +17,12 @@ const config = {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PWD,
   },
+  jwt: {
+    secret: process.env.JWT_SECRET,
+  },
+  cookie: {
+    maxAge: 3600000,
+  },
 };
 
 export type TConfig = typeof config;

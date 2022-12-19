@@ -14,6 +14,8 @@ import { DemarchesDSModule } from "./demarches_ds/demarches_ds.module";
 import { DossiersModule } from "./dossiers/dossiers.module";
 import { DossiersDSModule } from "./dossiers_ds/dossiers_ds.module";
 import { LoggerModule } from "./logger/logger.module";
+import { AuthModule } from "./auth/auth.module";
+import { UsersModule } from "./users/users.module";
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { LoggerModule } from "./logger/logger.module";
     DemarchesDSModule,
     DossiersModule,
     DossiersDSModule,
+    AuthModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
