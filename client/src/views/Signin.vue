@@ -105,7 +105,7 @@ const { value: passwordValue, errorMessage: passwordError } = useField('password
           </DsfrInput>
         </DsfrInputGroup>
 
-        <DsfrButton>
+        <DsfrButton type="submit">
           Se connecter
         </DsfrButton>
       </form>

@@ -20,6 +20,9 @@ const config = {
   jwt: {
     secret: process.env.JWT_SECRET,
   },
+  cookie: {
+    maxAge: 3600000,
+  },
 };
 
 export type TConfig = typeof config;

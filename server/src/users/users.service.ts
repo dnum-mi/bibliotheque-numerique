@@ -3,12 +3,12 @@ import { User } from "../entities";
 
 @Injectable()
 export class UsersService {
-  async findOne(email: string): Promise<User | undefined> {
+  async findByEmail(email: string): Promise<User | undefined> {
     return User.findOneBy({ email: email });
   }
 
   async create(email: string, password): Promise<User> {
-    const userInDb = await this.findOne(email);
+    const userInDb = await this.findByEmail(email);
     if (userInDb) {
       throw new Error("User already exists");
     }

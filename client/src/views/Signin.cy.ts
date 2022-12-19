@@ -5,9 +5,14 @@ import VueDsfr from '@gouvminint/vue-dsfr'
 
 import Signin from './Signin.vue'
 import { createPinia } from 'pinia'
+import { useUserStore } from '@/stores'
+import { createRandomUser } from '@/views/__tests__/users'
 
 describe('<Signin />', () => {
   const pinia = createPinia()
+  const useStore = useUserStore(pinia)
+  const newUser = createRandomUser()
+  useStore.currentUser = newUser
   const extensions = {
     use: [
       pinia,
@@ -31,8 +36,11 @@ describe('<Signin />', () => {
     cy.mount(Signin, {
       extensions,
     })
+    cy.log(newUser.email)
+    cy.log(newUser.password)
 
-    cy.get('#password').type('xxxxxx')
+    cy.get('#email').type(newUser.email)
+    cy.get('#password').type(newUser.password)
     cy.get('.fr-error-text').should('not.exist')
   })
 })

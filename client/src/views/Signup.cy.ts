@@ -38,7 +38,7 @@ describe('<Signup />', () => {
     cy.get('#firstName').type('dubois')
     cy.get('#lastName').type('louis')
     cy.get('#email').type('louis.dubois@interieur.gouv.fr')
-    cy.get('#password').type('xxxxxx')
+    cy.get('#password').type('IsVeryComplicatedPassword')
     cy.get('.fr-error-text').should('not.exist')
   })
 })

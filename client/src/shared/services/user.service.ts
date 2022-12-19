@@ -22,7 +22,7 @@ export async function createUser (userForm: UserForm) {
   }
 }
 
-export async function login (loginForm: LoginForm): Promise<User> {
+export async function loginUser (loginForm: LoginForm): Promise<User> {
   const response = await fetch(SIGN_IN_URL, {
     method: 'POST',
     body: JSON.stringify(loginForm),
@@ -35,7 +35,7 @@ export async function login (loginForm: LoginForm): Promise<User> {
   }
 }
 
-export async function logout () {
+export async function logoutUser () {
   await fetch(AUTH_BASE_URL, {
     method: 'DELETE',
   })

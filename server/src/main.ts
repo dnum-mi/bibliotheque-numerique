@@ -12,18 +12,18 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     cors: true,
   });
+  const configService = app.get(ConfigService);
   app.use(
     session({
       secret: sessionSecret.secret,
       resave: false,
       saveUninitialized: false,
-      cookie: { maxAge: 3600000 },
+      cookie: { maxAge: configService.get<number>("cookie.maxAge") },
     }),
   );
   app.use(passport.initialize());
   app.use(passport.session());
   app.useLogger(app.get(LoggerService));
-  const configService = app.get(ConfigService);
   await app.listen(configService.get("port"));
 }
 bootstrap();

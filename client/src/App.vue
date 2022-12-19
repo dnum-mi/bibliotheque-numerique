@@ -10,12 +10,13 @@ const serviceDescription = 'Description du service'
 const logoText = ['Ministère', 'de l’intérieur']
 
 const showSearch = false
+const iconColor = { color: 'var(--red-marianne-425-625)' }
 const quickLinksBase = [
   {
     label: 'Home',
     path: '/',
     icon: 'ri-home-4-line',
-    iconAttrs: { color: 'var(--red-marianne-425-625)' },
+    iconAttrs: iconColor,
   },
   {
     label: 'Démarches',
@@ -36,28 +37,28 @@ watch(() => userStore.isAuthenticated, () => {
         label: 'Mon profil',
         path: '/profile',
         icon: 'ri-account-circle-line',
-        iconAttrs: { color: 'var(--red-marianne-425-625)' },
+        iconAttrs: iconColor,
       },
       {
         label: 'Déconnexion',
         path: '/logout',
         icon: 'ri-logout-box-r-line',
-        iconAttrs: { color: 'var(--red-marianne-425-625)' },
+        iconAttrs: iconColor,
       },
     )
-  } else if (userStore.isAuthenticated === false) {
+  } else {
     quickLinks.value = quickLinksBase.concat(
       {
         label: 'Se connecter',
         path: '/sign_in',
         icon: 'ri-lock-line',
-        iconAttrs: { color: 'var(--red-marianne-425-625)' },
+        iconAttrs: iconColor,
       },
       {
         label: 'S’enregistrer',
         path: '/sign_up',
         icon: 'ri-user-line',
-        iconAttrs: { color: 'var(--red-marianne-425-625)' },
+        iconAttrs: iconColor,
       },
     )
   }

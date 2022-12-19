@@ -23,12 +23,12 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post("sign_in")
-  async sign_in(@Body() body) {
+  async signIn(@Body() body) {
     return this.authService.login(body);
   }
 
   @Post("sign_up")
-  async sign_up(@Body() body) {
+  async signUp(@Body() body) {
     return this.usersService.create(body.email, body.password);
   }
 

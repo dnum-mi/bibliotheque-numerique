@@ -8,12 +8,12 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: () => import('@//views/AppHome.vue'),
+    component: () => import('@/views/AppHome.vue'),
   },
   {
     path: '/a-propos',
     name: 'About',
-    component: () => import('@//views/AboutUs.vue'),
+    component: () => import('@/views/AboutUs.vue'),
   },
   {
     path: '/demarches/:id/dossiers',
@@ -68,7 +68,7 @@ router.beforeEach((to) => { // Cf. https://github.com/vueuse/head pour des trans
 router.beforeEach(async () => {
   const userStore = useUserStore()
   if (!userStore.loaded) {
-    await userStore.fetchCurrentUser()
+    await userStore.loadCurrentUser()
   }
 })
 export default router

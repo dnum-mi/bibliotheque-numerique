@@ -10,4 +10,6 @@ router.push('/sign_in')
 
 </script>
 
-<template />
+<template>
+  <h2>Logout...</h2>
+</template>

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import type { LoginForm, User } from '@/shared/interfaces'
-import { fetchCurrentUser, login, logout } from '@/shared/services/user.service'
+import { fetchCurrentUser, loginUser, logoutUser } from '@/shared/services/user.service'
 
 interface UserState {
   currentUser: User | null,
@@ -26,17 +26,17 @@ export const useUserStore = defineStore('user', {
   actions: {
     async login (loginForm: LoginForm) {
       try {
-        this.currentUser = await login(loginForm)
+        this.currentUser = await loginUser(loginForm)
       } catch (e) {
         console.log('Login Error')
         throw e
       }
     },
     async logout () {
-      await logout()
+      await logoutUser()
       this.currentUser = null
     },
-    async fetchCurrentUser () {
+    async loadCurrentUser () {
       this.currentUser = await fetchCurrentUser()
       this.loaded = true
     },
