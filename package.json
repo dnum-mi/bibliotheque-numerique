@@ -1,0 +1,26 @@
+{
+  "name": "biblio-num",
+  "version": "1.0.0",
+  "description": "Projet biblio-num",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LAB-MI/biblio-num.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LAB-MI/biblio-num/issues"
+  },
+  "homepage": "https://github.com/LAB-MI/biblio-num#readme",
+  "devDependencies": {
+    "husky": "8.0.2"
+  }
+}
