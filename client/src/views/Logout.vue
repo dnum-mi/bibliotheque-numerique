@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores'
+import { onMounted } from 'vue'
 
 const userStore = useUserStore()
 const router = useRouter()
 
-await userStore.logout()
-router.push('/sign_in')
+onMounted(async () => {
+  await userStore.logout()
+  router.push('/sign_in')
+})
 
 </script>
 
