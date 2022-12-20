@@ -38,6 +38,8 @@ export class AuthController {
       if (err) {
         return next(err);
       }
+
+      res.send({ success: true });
     });
   }
 
