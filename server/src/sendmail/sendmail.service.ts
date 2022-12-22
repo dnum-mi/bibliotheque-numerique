@@ -10,24 +10,6 @@ export class SendMailService {
     SendMailService.name,
   ) as unknown as LoggerService;
 
-  //TODO: Exemple à modifier
-  public async example() {
-    this.logger.log("test send mail");
-    try {
-      await this.mailerService.sendMail({
-        to: "test@nestjs.com", // list of receivers
-        from: "noreply@nestjs.com", // sender address
-        subject: "Testing Nest MailerModule ✔", // Subject line
-        text: "welcome", // plaintext body
-        html: "<b>welcome</b>", // HTML body content
-      });
-      this.logger.log("Send Mail");
-    } catch (error) {
-      this.logger.error(error);
-      throw error;
-    }
-  }
-
   public async welcome(to: string) {
     try {
       await this.mailerService.sendMail({

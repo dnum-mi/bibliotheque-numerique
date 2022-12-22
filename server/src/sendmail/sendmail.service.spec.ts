@@ -36,39 +36,16 @@ function spyOnSmtpSend(onMail: (mail: MailMessage) => void) {
 
 describe("SendMailService", () => {
   let service: SendMailService;
-  let mailerService: MailerService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [SendMailModule],
     }).compile();
     service = module.get<SendMailService>(SendMailService);
-    mailerService = module.get<MailerService>(MailerService);
   });
 
   it("should be defined", () => {
     expect(service).toBeDefined();
-  });
-
-  it("should be send example mail", async () => {
-    let result;
-    spyOnSmtpSend((obj: MailMessage) => {
-      result = obj;
-    });
-    await service.example();
-    expect(result).toBeDefined();
-    expect(result).toHaveProperty("data");
-    expect(result.data).toHaveProperty("to", "test@nestjs.com");
-    expect(result.data).toHaveProperty("from", "noreply@nestjs.com");
-    expect(result.data).toHaveProperty(
-      "subject",
-      expect.stringMatching(/Testing/),
-    );
-    expect(result.data).toHaveProperty("text", "welcome");
-    expect(result.data).toHaveProperty(
-      "html",
-      expect.stringMatching(/welcome/),
-    );
   });
 
   it("should  get mail from one template", async () => {
