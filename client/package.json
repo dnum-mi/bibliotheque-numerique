@@ -15,7 +15,10 @@
     "test:e2e:ci": "start-server-and-test preview http://127.0.0.1:5050/ 'cypress run'",
     "typecheck": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-path .gitignore",
-    "format": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
+    "format": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
+    "docker:dev:build": "docker compose -f docker-compose.dev.yml build",
+    "docker:dev": "docker compose -f docker-compose.dev.yml up",
+    "docker:dev:stop": "docker compose -f docker-compose.dev.yml down"
   },
   "dependencies": {
     "@gouvminint/vue-dsfr": "1.4.0",
