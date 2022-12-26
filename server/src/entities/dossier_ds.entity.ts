@@ -10,7 +10,7 @@ import { Dossier as TDossier } from "@lab-mi/ds-api-client/dist/@types/types";
 
 @Entity({ name: "dossiers_ds" })
 export class DossierDS extends BaseEntity {
-  @PrimaryColumn("int", { primaryKeyConstraintName: "pk_dossier_ds_id" })
+  @PrimaryColumn()
   id: number;
 
   @Column({ type: "jsonb" })
@@ -30,7 +30,7 @@ export class DossierDS extends BaseEntity {
       .insert()
       .into(DossierDS)
       .values(toUpsert)
-      .orUpdate(["dataJson", "updateAt", "dsUpdateAt"], "pk_dossier_ds_id", {
+      .orUpdate(["dataJson", "updateAt", "dsUpdateAt"], "PK_DOSSIER_DS_ID", {
         skipUpdateIfNoValuesChanged: true,
       })
       .returning(["id", "dataJson"])

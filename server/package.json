@@ -22,7 +22,7 @@
     "typeorm": "typeorm-ts-node-commonjs",
     "typeorm:migration:run": "typeorm-ts-node-commonjs migration:run -d src/db/app-data-source.ts",
     "typeorm:migration:show": "typeorm-ts-node-commonjs migration:show -d src/db/app-data-source.ts",
-    "typeorm:migration:create": "typeorm-ts-node-commonjs migration:create src/db/migrations",
+    "typeorm:migration:create": "typeorm-ts-node-commonjs migration:create",
     "typeorm:migration:generate": "typeorm-ts-node-commonjs migration:generate src/db/migrations -d src/db/app-data-source.ts",
     "stop": "docker compose stop -d",
     "start:prod": "node dist/main",

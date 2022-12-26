@@ -17,16 +17,14 @@ export type TUpsertDemarche = Partial<
 
 @Entity({ name: "demarches" })
 export class Demarche extends BaseEntity {
-  @PrimaryGeneratedColumn("increment", {
-    primaryKeyConstraintName: "pk_demarche_id",
-  })
+  @PrimaryGeneratedColumn("increment")
   id: number;
 
   @OneToOne(() => DemarcheDS)
   @JoinColumn({
     name: "idDemarcheDS",
     referencedColumnName: "id",
-    foreignKeyConstraintName: "fk_demarche_ds_id",
+    foreignKeyConstraintName: "FK_DEMARCHE_DS_ID",
   })
   demarcheDS: DemarcheDS;
 

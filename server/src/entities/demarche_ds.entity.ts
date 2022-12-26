@@ -10,7 +10,7 @@ import { Demarche as TDemarche } from "@lab-mi/ds-api-client/dist/@types/types";
 
 @Entity({ name: "demarches_ds" })
 export class DemarcheDS extends BaseEntity {
-  @PrimaryColumn("int", { primaryKeyConstraintName: "pk_demarche_ds_id" })
+  @PrimaryColumn("int", { primaryKeyConstraintName: "PK_DEMARCHE_DS_ID" })
   id: number;
 
   @Column({ type: "jsonb" })
@@ -32,7 +32,7 @@ export class DemarcheDS extends BaseEntity {
       .insert()
       .into(DemarcheDS)
       .values(toUpsert)
-      .orUpdate(["dataJson", "updateAt", "dsUpdateAt"], "pk_demarche_ds_id", {
+      .orUpdate(["dataJson", "updateAt", "dsUpdateAt"], "PK_DEMARCHE_DS_ID", {
         skipUpdateIfNoValuesChanged: true,
       })
       .returning(["id", "dataJson"])

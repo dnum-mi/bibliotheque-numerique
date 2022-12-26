@@ -17,9 +17,7 @@ export type TUpsertDossier = Partial<
 
 @Entity({ name: "dossiers" })
 export class Dossier extends BaseEntity {
-  @PrimaryGeneratedColumn("increment", {
-    primaryKeyConstraintName: "pk_dossier_id",
-  })
+  @PrimaryGeneratedColumn("increment")
   id: number;
 
   @OneToOne(() => DossierDS)
