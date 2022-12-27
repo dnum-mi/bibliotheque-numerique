@@ -1,9 +1,17 @@
-import { DataSource } from "typeorm";
 import * as dotenv from "dotenv";
 dotenv.config();
 
+import { DataSource } from "typeorm";
+
 // Load Database Entities
-import { DemarcheDS, Demarche, DossierDS, Dossier, User } from "../entities";
+import {
+  DemarcheDS,
+  Demarche,
+  DossierDS,
+  Dossier,
+  User,
+  Role,
+} from "../entities";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
@@ -16,7 +24,7 @@ export const AppDataSource = new DataSource({
   synchronize: false,
   name: "default",
   migrationsTableName: "migrations",
-  entities: [Demarche, DemarcheDS, Dossier, DossierDS, User],
+  entities: [Demarche, DemarcheDS, Dossier, DossierDS, User, Role],
   //TODO entities: ["../entities/**.entity.ts"],
   //TODO subscribers: ["subscriber/*.ts"],
   migrations: [__dirname + "/migrations/*.ts"],
