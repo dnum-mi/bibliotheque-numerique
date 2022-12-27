@@ -13,6 +13,7 @@ import { DemarchesModule } from "./demarches/demarches.module";
 import { DemarchesDSModule } from "./demarches_ds/demarches_ds.module";
 import { DossiersModule } from "./dossiers/dossiers.module";
 import { DossiersDSModule } from "./dossiers_ds/dossiers_ds.module";
+import { RolesModule } from "./roles/roles.module";
 import { LoggerModule } from "./logger/logger.module";
 import { AuthModule } from "./auth/auth.module";
 import { UsersModule } from "./users/users.module";
@@ -32,6 +33,7 @@ import { UsersModule } from "./users/users.module";
     DossiersDSModule,
     AuthModule,
     UsersModule,
+    RolesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
