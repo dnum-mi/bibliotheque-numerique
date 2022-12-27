@@ -1,10 +1,11 @@
+import * as dotenv from "dotenv";
+dotenv.config();
+
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "../app.module";
 import { DossiersDSService } from "../dossiers_ds/dossiers_ds.service";
 
-import * as dotenv from "dotenv";
 import { LoggerService } from "../logger/logger.service";
-dotenv.config();
 
 async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule);

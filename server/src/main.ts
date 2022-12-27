@@ -1,12 +1,13 @@
+import * as dotenv from "dotenv";
+dotenv.config();
+
 import { NestFactory } from "@nestjs/core";
 import { ConfigService } from "@nestjs/config";
 import { AppModule } from "./app.module";
-import * as dotenv from "dotenv";
 import { LoggerService } from "./logger/logger.service";
 import * as session from "express-session";
 import * as passport from "passport";
 import { sessionSecret } from "auth/constants";
-dotenv.config();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
