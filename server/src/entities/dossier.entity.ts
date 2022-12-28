@@ -8,6 +8,7 @@ import {
   JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  EntityManager,
 } from "typeorm";
 import { DossierDS, Demarche } from "../entities";
 
@@ -48,8 +49,11 @@ export class Dossier extends BaseEntity {
     });
   }
 
-  static upsertDossier(toUpsert: TUpsertDossier | TUpsertDossier[]) {
-    return Dossier.upsert(toUpsert as any, {
+  static upsertDossier(
+    toUpsert: TUpsertDossier | TUpsertDossier[],
+    transactionalEntityManager: EntityManager,
+  ) {
+    return transactionalEntityManager.upsert(Dossier, toUpsert as any, {
       conflictPaths: ["dossierDS"],
       skipUpdateIfNoValuesChanged: true,
     });

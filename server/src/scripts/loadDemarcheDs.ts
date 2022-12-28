@@ -14,7 +14,7 @@ async function bootstrap() {
 
   const demarchesDSService = app.get(DemarchesDSService);
   // TODO:  demarchesNumbers array has to be dynamic
-  const demarchesNumbers: number[] = [8];
+  const demarchesNumbers: number[] = [1, 2, 3, 4, 8, 11];
 
   try {
     await demarchesDSService.upsertDemarchesDS(demarchesNumbers);

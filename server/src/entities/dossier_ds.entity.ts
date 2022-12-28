@@ -5,6 +5,7 @@ import {
   PrimaryColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  EntityManager,
 } from "typeorm";
 import { Dossier as TDossier } from "@lab-mi/ds-api-client/dist/@types/types";
 
@@ -25,8 +26,12 @@ export class DossierDS extends BaseEntity {
   @UpdateDateColumn({ type: "timestamp" })
   updateAt: Date;
 
-  static upsertDossierDS(toUpsert: Partial<DossierDS> | Partial<DossierDS>[]) {
-    return this.createQueryBuilder()
+  static upsertDossierDS(
+    toUpsert: Partial<DossierDS> | Partial<DossierDS>[],
+    transactionalEntityManager: EntityManager,
+  ) {
+    return transactionalEntityManager
+      .createQueryBuilder()
       .insert()
       .into(DossierDS)
       .values(toUpsert)
