@@ -13,7 +13,7 @@ export const apiClient = {
       headers,
     }
     const response = await axios(config)
-    return response.data.demarche
+    return response.data
   },
   getDemarche: async (id: number) => {
     const config = {
@@ -22,7 +22,7 @@ export const apiClient = {
       headers,
     }
     const response = await axios(config)
-    return response.data.demarche
+    return response.data
   },
   getDemarches: async () => {
     const config = {
@@ -31,7 +31,7 @@ export const apiClient = {
       headers,
     }
     const response = await axios(config)
-    return response.data.demarches
+    return response.data
   },
   getDossiersFromDemarche: async (id: number) => {
     const config = {

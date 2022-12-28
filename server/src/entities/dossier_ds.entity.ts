@@ -5,9 +5,9 @@ import {
   PrimaryColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  EntityManager,
 } from "typeorm";
 import { Dossier as TDossier } from "@lab-mi/ds-api-client/dist/@types/types";
-import { Dossier, Demarche } from "../entities";
 
 @Entity({ name: "dossiers_ds" })
 export class DossierDS extends BaseEntity {
@@ -15,7 +15,7 @@ export class DossierDS extends BaseEntity {
   id: number;
 
   @Column({ type: "jsonb" })
-  dataJson: object;
+  dataJson: Partial<TDossier>;
 
   @Column({ type: "timestamp" })
   dsUpdateAt: Date;
@@ -26,23 +26,19 @@ export class DossierDS extends BaseEntity {
   @UpdateDateColumn({ type: "timestamp" })
   updateAt: Date;
 
-  static async tryUpsertDossierDS(
-    apiDossier: Partial<TDossier>,
-    demarcheEntity: Demarche,
+  static upsertDossierDS(
+    toUpsert: Partial<DossierDS> | Partial<DossierDS>[],
+    transactionalEntityManager: EntityManager,
   ) {
-    const dossierDS = await DossierDS.upsert(
-      {
-        id: apiDossier.number,
-        dataJson: apiDossier,
-        dsUpdateAt: apiDossier.dateDerniereModification,
-      },
-      {
-        conflictPaths: ["id"],
+    return transactionalEntityManager
+      .createQueryBuilder()
+      .insert()
+      .into(DossierDS)
+      .values(toUpsert)
+      .orUpdate(["dataJson", "updateAt", "dsUpdateAt"], "PK_DOSSIER_DS_ID", {
         skipUpdateIfNoValuesChanged: true,
-      },
-    );
-
-    await Dossier.upsertByDossierDS(apiDossier, dossierDS, demarcheEntity);
-    return dossierDS;
+      })
+      .returning(["id", "dataJson"])
+      .execute();
   }
 }

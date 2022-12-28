@@ -5,5 +5,6 @@ import { DossiersController } from "./dossiers.controller";
 @Module({
   controllers: [DossiersController],
   providers: [DossiersService],
+  exports: [DossiersService],
 })
 export class DossiersModule {}

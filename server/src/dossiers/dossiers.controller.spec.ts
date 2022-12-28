@@ -22,10 +22,10 @@ describe("DossiersController", () => {
 
   it.each`
     name                   | servicefn              | fn
-    ${"findAll"}           | ${"findAll"}           | ${() => controller.findAll()}
+    ${"findAll"}           | ${"findWithFilter"}    | ${() => controller.findAll()}
     ${"findOne"}           | ${"findOne"}           | ${() => controller.findOne("TEST")}
     ${"findOneWithDetail"} | ${"findOneWithDetail"} | ${() => controller.findOneWithDetail("TEST")}
-    ${"search"}            | ${"findAll"}           | ${() => controller.searchDossier({})}
+    ${"search"}            | ${"findWithFilter"}    | ${() => controller.searchDossier({})}
   `("$name: should get dossiers ", async ({ name, servicefn, fn }) => {
     const result = ["dossiers"];
     jest.spyOn(service, servicefn).mockImplementation(() => result);
@@ -33,7 +33,7 @@ describe("DossiersController", () => {
   });
 
   it("findAll: should throw error when there are nothing", async () => {
-    jest.spyOn(service, "findAll").mockImplementation(async () => []);
+    jest.spyOn(service, "findWithFilter").mockImplementation(async () => []);
     await expect(() => controller.findAll()).rejects.toThrow(
       "No dossier found",
     );
@@ -53,16 +53,18 @@ describe("DossiersController", () => {
 
   it("search: should throw error when there are nothing", async () => {
     const result = [];
-    jest.spyOn(service, "findAll").mockImplementation(async () => result);
+    jest
+      .spyOn(service, "findWithFilter")
+      .mockImplementation(async () => result);
     expect(await controller.searchDossier({})).toBe(result);
   });
 
   it.each`
     name                   | servicefn              | fn
-    ${"findAll"}           | ${"findAll"}           | ${() => controller.findAll()}
+    ${"findAll"}           | ${"findWithFilter"}    | ${() => controller.findAll()}
     ${"findOne"}           | ${"findOne"}           | ${() => controller.findOne("TEST")}
     ${"findOneWithDetail"} | ${"findOneWithDetail"} | ${() => controller.findOneWithDetail("TEST")}
-    ${"search"}            | ${"findAll"}           | ${() => controller.searchDossier({})}
+    ${"search"}            | ${"findWithFilter"}    | ${() => controller.searchDossier({})}
   `(
     "$name: should throw error with message of error when there are error",
     async ({ name, servicefn, fn }) => {
@@ -76,10 +78,10 @@ describe("DossiersController", () => {
 
   it.each`
     name                   | servicefn              | fn
-    ${"findAll"}           | ${"findAll"}           | ${() => controller.findAll()}
+    ${"findAll"}           | ${"findWithFilter"}    | ${() => controller.findAll()}
     ${"findOne"}           | ${"findOne"}           | ${() => controller.findOne("TEST")}
     ${"findOneWithDetail"} | ${"findOneWithDetail"} | ${() => controller.findOneWithDetail("TEST")}
-    ${"search"}            | ${"findAll"}           | ${() => controller.searchDossier({})}
+    ${"search"}            | ${"findWithFilter"}    | ${() => controller.searchDossier({})}
   `(
     "$name: should throw error with message 'internal error' when there are unknown error",
     async ({ name, servicefn, fn }) => {

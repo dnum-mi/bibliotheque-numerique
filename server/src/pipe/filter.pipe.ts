@@ -43,7 +43,6 @@ export class FilterPipe implements PipeTransform {
     if (typeof value === "object") {
       this._parseObjectFilter(value);
     }
-    console.log(value);
     return value;
   }
 }

@@ -8,26 +8,19 @@ import {
   Param,
   ParseIntPipe,
 } from "@nestjs/common";
-import { Demarche as TDemarche } from "@lab-mi/ds-api-client/dist/@types/types";
 import { DemarchesService } from "./demarches.service";
-import { Demarche } from "../entities";
+import { Demarche, Dossier } from "../entities";
 import { FilterPipe } from "../pipe/filter.pipe";
-
-type ReturnDemarche = Omit<TDemarche, "id"> & {
-  id: number;
-  typeOrganisme: string;
-  originalId: number;
-};
 
 @Controller("demarches")
 export class DemarchesController {
   constructor(private readonly demarcheService: DemarchesService) {}
 
   @Get()
-  async getDemarches(): Promise<{ demarches: ReturnDemarche[] }> {
+  async getDemarches(): Promise<Demarche[]> {
     let demarches: Demarche[];
     try {
-      demarches = await this.demarcheService.findAll();
+      demarches = await this.demarcheService.findWithFilter();
     } catch (error) {
       if (error instanceof Error) {
         throw new HttpException(
@@ -44,23 +37,16 @@ export class DemarchesController {
     if (demarches.length === 0) {
       throw new HttpException("No demarche found", HttpStatus.NOT_FOUND);
     }
-    return {
-      demarches: demarches.map((demarche) => ({
-        ...demarche.demarcheDS?.dataJson,
-        id: demarche.id,
-        typeOrganisme: demarche.typeOrganisme,
-        originalId: demarche.demarcheDS?.id,
-      })),
-    };
+    return demarches;
   }
 
   @Post("search")
   async searchDemarches(
     @Body("filter", FilterPipe) filter: object,
-  ): Promise<{ demarches: ReturnDemarche[] }> {
+  ): Promise<Demarche[]> {
     let demarches: Demarche[];
     try {
-      demarches = await this.demarcheService.findAll(filter);
+      demarches = await this.demarcheService.findWithFilter(filter);
     } catch (error) {
       if (error instanceof Error) {
         throw new HttpException(
@@ -74,20 +60,13 @@ export class DemarchesController {
       );
     }
 
-    return {
-      demarches: demarches.map((demarche) => ({
-        ...demarche.demarcheDS?.dataJson,
-        id: demarche.id,
-        typeOrganisme: demarche.typeOrganisme,
-        originalId: demarche.demarcheDS?.id,
-      })),
-    };
+    return demarches;
   }
 
   @Get(":id")
   async getDemarcheById(
     @Param("id", ParseIntPipe) id: number,
-  ): Promise<{ demarche: ReturnDemarche }> {
+  ): Promise<Demarche> {
     let demarche: Demarche;
     try {
       demarche = await this.demarcheService.findById(id);
@@ -110,20 +89,13 @@ export class DemarchesController {
         HttpStatus.NOT_FOUND,
       );
     }
-    return {
-      demarche: {
-        ...demarche.demarcheDS?.dataJson,
-        id: demarche.id,
-        typeOrganisme: demarche.typeOrganisme,
-        originalId: demarche.demarcheDS?.id,
-      },
-    };
+    return demarche;
   }
 
   @Get("ds/:id")
   async getDemarcheByDsId(
     @Param("id", ParseIntPipe) id: number,
-  ): Promise<{ demarche: ReturnDemarche }> {
+  ): Promise<Demarche> {
     let demarche: Demarche;
     try {
       demarche = await this.demarcheService.findByDsId(id);
@@ -146,18 +118,13 @@ export class DemarchesController {
         HttpStatus.NOT_FOUND,
       );
     }
-    return {
-      demarche: {
-        ...demarche.demarcheDS?.dataJson,
-        id: demarche.id,
-        typeOrganisme: demarche.typeOrganisme,
-        originalId: demarche.demarcheDS?.id,
-      },
-    };
+    return demarche;
   }
 
   @Get(":id/dossiers")
-  async getDemarcheDossiersById(@Param("id", ParseIntPipe) id: number) {
+  async getDemarcheDossiersById(
+    @Param("id", ParseIntPipe) id: number,
+  ): Promise<Dossier[]> {
     let demarche: Demarche;
     try {
       demarche = await this.demarcheService.findById(id);

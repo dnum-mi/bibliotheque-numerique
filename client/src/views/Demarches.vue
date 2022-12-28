@@ -9,7 +9,7 @@
   <BiblioNumDataTableAgGrid
     :title="title"
     :headers="headersJson"
-    :row-data="demarches"
+    :row-data="rowData"
     @get-elt="getDossiers"
   />
 </template>
@@ -31,7 +31,6 @@ const headersJson = [
     text: 'Id',
     value: 'number',
   },
-
   {
     text: 'Created At',
     value: 'dateCreation',
@@ -70,13 +69,15 @@ const headersJson = [
   },
 ]
 
-const demarches = computed(() => demarcheStore.demarches)
+const rowData = computed(() => demarcheStore.demarches.map(
+  (d: any) => ({ ...d?.demarcheDS?.dataJson, typeOrganisme: d?.typeOrganisme, id: d.id })),
+)
 
 onMounted(async () => {
   await demarcheStore.getDemarches()
 })
 
-function getDossiers (data) {
+function getDossiers (data: any) {
   router.push({ name: 'DemarcheDossiers', params: { id: data.id } })
 }
 </script>

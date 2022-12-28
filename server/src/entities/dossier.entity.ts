@@ -8,10 +8,13 @@ import {
   JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  InsertResult,
+  EntityManager,
 } from "typeorm";
 import { DossierDS, Demarche } from "../entities";
-import { Dossier as TDossier } from "@lab-mi/ds-api-client/dist/@types/types";
+
+export type TUpsertDossier = Partial<
+  Omit<Dossier, "dossierDS"> & { dossierDS: number }
+>;
 
 @Entity({ name: "dossiers" })
 export class Dossier extends BaseEntity {
@@ -35,7 +38,7 @@ export class Dossier extends BaseEntity {
   @UpdateDateColumn({ type: "timestamp" })
   updateAt: Date;
 
-  static all(filter: object) {
+  static findWithFilter(filter: object) {
     return this.find({
       where: {
         ...filter,
@@ -46,21 +49,13 @@ export class Dossier extends BaseEntity {
     });
   }
 
-  static upsertByDossierDS(
-    apiDossier: Partial<TDossier>,
-    dossierDS: InsertResult,
-    demarcheEntity: Demarche,
+  static upsertDossier(
+    toUpsert: TUpsertDossier | TUpsertDossier[],
+    transactionalEntityManager: EntityManager,
   ) {
-    return Dossier.upsert(
-      {
-        dossierDS: dossierDS.identifiers[0].id,
-        demarche: demarcheEntity,
-        state: apiDossier.state,
-      },
-      {
-        conflictPaths: ["dossierDS"],
-        skipUpdateIfNoValuesChanged: true,
-      },
-    );
+    return transactionalEntityManager.upsert(Dossier, toUpsert as any, {
+      conflictPaths: ["dossierDS"],
+      skipUpdateIfNoValuesChanged: true,
+    });
   }
 }

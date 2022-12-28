@@ -1,11 +1,11 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { DsApiClient } from "@lab-mi/ds-api-client";
-import { InjectRepository } from "@nestjs/typeorm";
-import { InsertResult, Repository } from "typeorm";
 import { Demarche as TDemarche } from "@lab-mi/ds-api-client/dist/@types/types";
 
 import { DemarcheDS } from "../entities";
 import { LoggerService } from "../logger/logger.service";
+import { DemarchesService } from "../demarches/demarches.service";
+import { DataSource } from "typeorm";
 
 @Injectable()
 export class DemarchesDSService {
@@ -14,17 +14,17 @@ export class DemarchesDSService {
   ) as unknown as LoggerService;
 
   constructor(
-    @InjectRepository(DemarcheDS)
-    private demarcheDSRepository: Repository<DemarcheDS>,
+    private demarchesService: DemarchesService,
+    private dataSource: DataSource,
   ) {}
 
-  async updateDemarchesDS(demarcheNumbers?: number[]): Promise<InsertResult> {
+  async demarchesByAPI(demarcheNumbers?: number[]) {
     const dsApiClient = new DsApiClient(
       process.env.DS_API_URL,
       process.env.DS_API_TOKEN,
     );
 
-    const demarches = await Promise.all(
+    return await Promise.all(
       demarcheNumbers.map(async (id) => {
         try {
           const response = await dsApiClient.demarche(id);
@@ -38,27 +38,38 @@ export class DemarchesDSService {
         }
       }),
     );
+  }
 
-    const toUpsert = demarches
-      .filter((demarche: TDemarche) => demarche)
-      .map((demarche) => ({
-        id: demarche.number,
-        dataJson: demarche,
-        dsUpdateAt: demarche.dateDerniereModification
-          ? new Date(demarche.dateDerniereModification)
-          : new Date(),
-      }));
+  async upsertDemarchesDSAndDemarches(demarcheNumbers?: number[]) {
+    const demarches = await this.demarchesByAPI(demarcheNumbers);
     try {
-      return await this.demarcheDSRepository
-        .createQueryBuilder()
-        .insert()
-        .into(DemarcheDS)
-        .values(toUpsert)
-        .orUpdate(["dataJson", "updateAt", "dsUpdateAt"], "pk_demarche_ds_id", {
-          skipUpdateIfNoValuesChanged: true,
-        })
-        .returning(["id", "dataJson"])
-        .execute();
+      await this.dataSource.transaction(async (transactionalEntityManager) => {
+        const toUpsert = demarches
+          .filter((demarche: TDemarche) => demarche)
+          .map<Partial<DemarcheDS>>((demarche) => ({
+            id: demarche.number,
+            dataJson: demarche,
+            dsUpdateAt: demarche.dateDerniereModification
+              ? new Date(demarche.dateDerniereModification)
+              : new Date(),
+          }));
+
+        const upsertResultDemarchesDS = await DemarcheDS.upsertDemarcheDS(
+          toUpsert,
+          transactionalEntityManager,
+        );
+
+        const insertResultDemarches =
+          await this.demarchesService.upsertDemarches(
+            upsertResultDemarchesDS.raw,
+            transactionalEntityManager,
+          );
+
+        return {
+          demarchesDS: upsertResultDemarchesDS,
+          demarches: insertResultDemarches,
+        };
+      });
     } catch (error) {
       this.logger.error({
         short_message: "Échec de la mise à jour des demarches_ds",

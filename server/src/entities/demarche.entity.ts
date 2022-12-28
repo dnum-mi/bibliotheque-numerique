@@ -8,23 +8,24 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   BaseEntity,
+  EntityManager,
 } from "typeorm";
 import { Dossier, DemarcheDS } from "../entities";
 
+export type TUpsertDemarche = Partial<
+  Omit<Demarche, "demarcheDS"> & { demarcheDS: number }
+>;
+
 @Entity({ name: "demarches" })
 export class Demarche extends BaseEntity {
-  @PrimaryGeneratedColumn("increment", {
-    type: "int",
-    unsigned: true,
-    primaryKeyConstraintName: "pk_demarche_id",
-  })
+  @PrimaryGeneratedColumn("increment")
   id: number;
 
   @OneToOne(() => DemarcheDS)
   @JoinColumn({
     name: "idDemarcheDS",
     referencedColumnName: "id",
-    foreignKeyConstraintName: "fk_demarche_ds_id",
+    foreignKeyConstraintName: "FK_DEMARCHE_DS_ID",
   })
   demarcheDS: DemarcheDS;
 
@@ -45,4 +46,48 @@ export class Demarche extends BaseEntity {
 
   @UpdateDateColumn({ type: "timestamp" })
   updateAt: Date;
+
+  static findById(id: number) {
+    return this.findOne({
+      where: { id },
+      relations: { demarcheDS: true, dossiers: { dossierDS: true } },
+    });
+  }
+
+  static findByDsId(id: number) {
+    return this.findOne({
+      where: { demarcheDS: { id } },
+      relations: { demarcheDS: true },
+    });
+  }
+
+  static findWithFilter(filter: object) {
+    return this.find({
+      where: {
+        ...filter,
+      },
+      relations: {
+        demarcheDS: true,
+      },
+    });
+  }
+
+  static upsertDemarche(
+    toUpsert: TUpsertDemarche | TUpsertDemarche[],
+    transactionalEntityManager: EntityManager,
+  ) {
+    return transactionalEntityManager
+      .createQueryBuilder()
+      .insert()
+      .into(Demarche)
+      .values(toUpsert as any)
+      .orUpdate(
+        ["title", "state", "typeOrganisme", "updateAt"],
+        ["idDemarcheDS"],
+        {
+          skipUpdateIfNoValuesChanged: true,
+        },
+      )
+      .execute();
+  }
 }
