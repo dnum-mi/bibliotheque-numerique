@@ -1,5 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { InsertResult } from "typeorm";
+import { EntityManager, InsertResult } from "typeorm";
 import { Demarche, DemarcheDS, TUpsertDemarche } from "../entities";
 import { LoggerService } from "../logger/logger.service";
 import { ConfigService } from "@nestjs/config";
@@ -39,7 +39,10 @@ export class DemarchesService {
     return undefined;
   }
 
-  async upsertDemarches(demarchesDS: DemarcheDS[]): Promise<InsertResult> {
+  async upsertDemarches(
+    demarchesDS: DemarcheDS[],
+    transactionalEntityManager: EntityManager,
+  ): Promise<InsertResult> {
     const toUpsert = demarchesDS.map<TUpsertDemarche>((demarcheDS) => ({
       demarcheDS: demarcheDS.id,
       title: demarcheDS.dataJson.title,
@@ -47,7 +50,10 @@ export class DemarchesService {
       typeOrganisme: this._typeOrganismeFromDemarcheDs(demarcheDS),
     }));
     try {
-      return await Demarche.upsertDemarche(toUpsert);
+      return await Demarche.upsertDemarche(
+        toUpsert,
+        transactionalEntityManager,
+      );
     } catch (error) {
       this.logger.error({
         short_message: `Erreur pendant la mise à jour des démarches numéros: ${demarchesDS

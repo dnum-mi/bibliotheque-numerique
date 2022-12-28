@@ -8,6 +8,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   BaseEntity,
+  EntityManager,
 } from "typeorm";
 import { Dossier, DemarcheDS } from "../entities";
 
@@ -71,8 +72,12 @@ export class Demarche extends BaseEntity {
     });
   }
 
-  static upsertDemarche(toUpsert: TUpsertDemarche | TUpsertDemarche[]) {
-    return this.createQueryBuilder()
+  static upsertDemarche(
+    toUpsert: TUpsertDemarche | TUpsertDemarche[],
+    transactionalEntityManager: EntityManager,
+  ) {
+    return transactionalEntityManager
+      .createQueryBuilder()
       .insert()
       .into(Demarche)
       .values(toUpsert as any)

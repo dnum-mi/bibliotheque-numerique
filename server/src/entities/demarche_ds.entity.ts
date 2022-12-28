@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   BaseEntity,
+  EntityManager,
 } from "typeorm";
 import { Demarche as TDemarche } from "@lab-mi/ds-api-client/dist/@types/types";
 
@@ -27,8 +28,10 @@ export class DemarcheDS extends BaseEntity {
 
   static upsertDemarcheDS(
     toUpsert: Partial<DemarcheDS> | Partial<DemarcheDS>[],
+    transactionalEntityManager: EntityManager,
   ) {
-    return this.createQueryBuilder()
+    return transactionalEntityManager
+      .createQueryBuilder()
       .insert()
       .into(DemarcheDS)
       .values(toUpsert)
