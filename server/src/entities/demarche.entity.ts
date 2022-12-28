@@ -25,7 +25,6 @@ export class Demarche extends BaseEntity {
   @JoinColumn({
     name: "idDemarcheDS",
     referencedColumnName: "id",
-    foreignKeyConstraintName: "FK_DEMARCHE_DS_ID",
   })
   demarcheDS: DemarcheDS;
 
