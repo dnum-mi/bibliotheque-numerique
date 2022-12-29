@@ -110,6 +110,10 @@
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
+    "coveragePathIgnorePatterns": [
+      "db",
+      "config"
+    ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   }
