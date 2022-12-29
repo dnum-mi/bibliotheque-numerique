@@ -18,6 +18,8 @@
     "docker:stop": "docker compose -f docker-compose.yml -f docker-compose.dev.yml down",
     "docker:logs": "docker logs -f biblio-num_server",
     "docker:logs:db": "docker logs -f biblio-num_db",
+    "docker:db-test:up": "docker compose -f docker-compose.db.test.yml up -d",
+    "docker:db-test:down": "docker compose -f docker-compose.db.test.yml down",
     "docker:smtp:run": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up mailhog -d",
     "typeorm": "typeorm-ts-node-commonjs",
     "typeorm:migration:run": "typeorm-ts-node-commonjs migration:run -d src/db/app-data-source.ts",
@@ -29,7 +31,9 @@
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "lint:fix": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "pretest": "npm run docker:db-test:up",
     "test": "jest",
+    "posttest": "npm run docker:db-test:down",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
@@ -41,7 +45,7 @@
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.0.0",
-    "@nestjs/jwt": "^9.0.0",
+    "@nestjs/jwt": "^10.0.1",
     "@nestjs/passport": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/schedule": "^2.1.0",
@@ -50,12 +54,12 @@
     "colors": "^1.4.0",
     "dayjs": "^1.11.6",
     "dotenv": "^16.0.3",
+    "ejs": "^3.1.8",
     "express-session": "^1.17.3",
+    "nodemailer": "^6.8.0",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
-    "ejs": "^3.1.8",
-    "nodemailer": "^6.8.0",
     "pg": "^8.8.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
@@ -64,6 +68,7 @@
     "winston": "^3.8.2"
   },
   "devDependencies": {
+    "@faker-js/faker": "^7.6.0",
     "@nestjs/cli": "^9.0.0",
     "@nestjs/schematics": "^9.0.0",
     "@nestjs/testing": "^9.0.0",
@@ -104,6 +109,10 @@
     },
     "collectCoverageFrom": [
       "**/*.(t|j)s"
+    ],
+    "coveragePathIgnorePatterns": [
+      "db",
+      "config"
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
