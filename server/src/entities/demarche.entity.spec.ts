@@ -2,12 +2,12 @@ import { Test } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
 
 import { Demarche, DemarcheDS, Dossier, DossierDS } from ".";
-import { datasourceTest } from "./__tests__/datasources";
 import {
+  datasourceTest,
   createOneDemarcheDs,
   demarche_ds_test,
-} from "./__tests__/demarches_ds";
-import { demarche_test } from "./__tests__/demarche";
+  demarche_test,
+} from "./__tests__";
 
 describe("demarche.entity", () => {
   beforeEach(async () => {

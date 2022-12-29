@@ -2,8 +2,7 @@ import { Test } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
 
 import { User } from ".";
-import { datasourceTest } from "./__tests__/datasources";
-import { user_test, createOneUser } from "./__tests__/user";
+import { datasourceTest, user_test, createOneUser } from "./__tests__";
 import * as bcrypt from "bcrypt";
 
 describe("user.entity", () => {
