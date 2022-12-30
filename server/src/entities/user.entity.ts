@@ -6,8 +6,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   BeforeInsert,
+  ManyToMany,
 } from "typeorm";
 import * as bcrypt from "bcrypt";
+import { Role } from "./role.entity";
 
 @Entity({ name: "users" })
 export class User extends BaseEntity {
@@ -26,6 +28,9 @@ export class User extends BaseEntity {
     nullable: false,
   })
   password: string;
+
+  @ManyToMany(() => Role, (role) => role.users)
+  roles: Role[];
 
   @CreateDateColumn({ type: "timestamp" })
   createAt: Date;

@@ -23,6 +23,10 @@ const config = {
   cookie: {
     maxAge: 3600000,
   },
+  defaultAdmin: {
+    email: process.env.DEFAULT_ADMIN_EMAIL,
+    password: process.env.DEFAULT_ADMIN_PASSWORD,
+  },
 };
 
 export type TConfig = typeof config;
