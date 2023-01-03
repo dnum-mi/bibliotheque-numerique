@@ -12,8 +12,9 @@ import {
   User,
   Role,
 } from "../entities";
+import { pluginsEntities } from "../plugins";
 
-export const AppDataSource = new DataSource({
+const AppDataSource = new DataSource({
   type: "postgres",
   host: process.env.POSTGRES_HOST || "localhost",
   port: Number(process.env.POSTGRES_PORT) || 5432,
@@ -24,7 +25,15 @@ export const AppDataSource = new DataSource({
   synchronize: false,
   name: "default",
   migrationsTableName: "migrations",
-  entities: [Demarche, DemarcheDS, Dossier, DossierDS, User, Role],
+  entities: [
+    Demarche,
+    DemarcheDS,
+    Dossier,
+    DossierDS,
+    User,
+    Role,
+    ...pluginsEntities,
+  ],
   //TODO entities: ["../entities/**.entity.ts"],
   //TODO subscribers: ["subscriber/*.ts"],
   migrations: [__dirname + "/migrations/*.ts"],

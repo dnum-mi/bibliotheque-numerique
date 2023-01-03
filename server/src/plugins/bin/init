@@ -1,0 +1,11 @@
+#!/bin/bash
+
+echo "Enter the plugin name:"
+read newdirname
+if [ -d "$newdirname" ]; then
+echo "Plugin already exists" ;
+else
+`mkdir -p $newdirname/entities`;
+`mkdir -p $newdirname/db/migrations`;
+echo "<$newdirname> plugin is created"
+fi

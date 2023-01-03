@@ -1,0 +1,10 @@
+#!/bin/bash
+
+echo "Enter the plugin name:"
+read pluginname
+if [ -d "$pluginname" ]; then
+`cp $pluginname/db/migrations/* ../db/migrations`;
+echo "<$pluginname> plugin migrations file is copied"
+else
+echo "<$pluginname> plugin not exists" ;
+fi
