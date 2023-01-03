@@ -22,7 +22,7 @@ export class Role extends BaseEntity {
   description: string;
 
   @ManyToMany(() => User, (user) => user.roles)
-  @JoinTable({ name: "user_roles" })
+  @JoinTable({ name: "users_roles" })
   users: User[];
 
   @CreateDateColumn({ type: "timestamp" })
