@@ -53,7 +53,6 @@ describe("SendMailService", () => {
     let result;
     spyOnSmtpSend((obj: MailMessage) => {
       result = obj;
-      console.log(obj);
     });
     await service.welcome(email);
     expect(result).toBeDefined();
