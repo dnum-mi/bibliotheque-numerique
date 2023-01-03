@@ -36,7 +36,9 @@
     "test": "jest",
     "posttest": "npm run docker:db-test:down",
     "test:watch": "jest --watch",
+    "pretest:cov": "npm run docker:db-test:up",
     "test:cov": "jest --coverage",
+    "posttest:cov": "npm run docker:db-test:down",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
