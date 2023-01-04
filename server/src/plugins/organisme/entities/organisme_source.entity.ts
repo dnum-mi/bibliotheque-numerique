@@ -1,16 +1,9 @@
-import {
-  BaseEntity,
-  Column,
-  CreateDateColumn,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { OrganismesData } from "./organisme_data.entity";
+import { ApplicationEntity } from "../../../entities/applicationEntity";
 
 @Entity({ name: "organismes_sources" })
-export class OrganismesSource extends BaseEntity {
+export class OrganismesSource extends ApplicationEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
@@ -37,10 +30,4 @@ export class OrganismesSource extends BaseEntity {
 
   @Column()
   token: string;
-
-  @CreateDateColumn({ type: "timestamp" })
-  createAt: Date;
-
-  @UpdateDateColumn({ type: "timestamp" })
-  updateAt: Date;
 }

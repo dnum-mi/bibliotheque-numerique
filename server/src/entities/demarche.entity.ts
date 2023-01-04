@@ -5,19 +5,17 @@ import {
   OneToOne,
   JoinColumn,
   OneToMany,
-  CreateDateColumn,
-  UpdateDateColumn,
-  BaseEntity,
   EntityManager,
 } from "typeorm";
 import { Dossier, DemarcheDS } from "../entities";
+import { ApplicationEntity } from "./applicationEntity";
 
 export type TUpsertDemarche = Partial<
   Omit<Demarche, "demarcheDS"> & { demarcheDS: number }
 >;
 
 @Entity({ name: "demarches" })
-export class Demarche extends BaseEntity {
+export class Demarche extends ApplicationEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
@@ -39,12 +37,6 @@ export class Demarche extends BaseEntity {
 
   @Column({ nullable: true })
   typeOrganisme: string;
-
-  @CreateDateColumn({ type: "timestamp" })
-  createAt: Date;
-
-  @UpdateDateColumn({ type: "timestamp" })
-  updateAt: Date;
 
   static findById(id: number) {
     return this.findOne({

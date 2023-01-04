@@ -1,17 +1,15 @@
 import {
-  BaseEntity,
   Column,
-  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from "typeorm";
 import { OrganismesSource } from "./organisme_source.entity";
+import { ApplicationEntity } from "../../../entities/applicationEntity";
 
 @Entity({ name: "organismes_datas" })
-export class OrganismesData extends BaseEntity {
+export class OrganismesData extends ApplicationEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
@@ -33,10 +31,4 @@ export class OrganismesData extends BaseEntity {
 
   @Column({ type: "timestamp" })
   dataUpdateAt: Date;
-
-  @CreateDateColumn({ type: "timestamp" })
-  createAt: Date;
-
-  @UpdateDateColumn({ type: "timestamp" })
-  updateAt: Date;
 }

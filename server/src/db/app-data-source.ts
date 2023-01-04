@@ -14,7 +14,7 @@ import {
 } from "../entities";
 import { pluginsEntities } from "../plugins";
 
-const AppDataSource = new DataSource({
+export const AppDataSource = new DataSource({
   type: "postgres",
   host: process.env.POSTGRES_HOST || "localhost",
   port: Number(process.env.POSTGRES_PORT) || 5432,

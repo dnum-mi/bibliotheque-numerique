@@ -1,16 +1,9 @@
-import {
-  Entity,
-  Column,
-  PrimaryColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  BaseEntity,
-  EntityManager,
-} from "typeorm";
+import { Entity, Column, PrimaryColumn, EntityManager } from "typeorm";
 import { Demarche as TDemarche } from "@lab-mi/ds-api-client/dist/@types/types";
+import { ApplicationEntity } from "./applicationEntity";
 
 @Entity({ name: "demarches_ds" })
-export class DemarcheDS extends BaseEntity {
+export class DemarcheDS extends ApplicationEntity {
   @PrimaryColumn("int", { primaryKeyConstraintName: "PK_DEMARCHE_DS_ID" })
   id: number;
 
@@ -19,12 +12,6 @@ export class DemarcheDS extends BaseEntity {
 
   @Column({ type: "timestamp" })
   dsUpdateAt: Date;
-
-  @CreateDateColumn({ type: "timestamp" })
-  createAt: Date;
-
-  @UpdateDateColumn({ type: "timestamp" })
-  updateAt: Date;
 
   static upsertDemarcheDS(
     toUpsert: Partial<DemarcheDS> | Partial<DemarcheDS>[],
