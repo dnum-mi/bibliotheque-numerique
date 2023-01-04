@@ -4,16 +4,23 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { Role, User } from ".";
 import { datasourceTest, user_test, createOneUser } from "./__tests__";
 import * as bcrypt from "bcrypt";
+import { DataSource } from "typeorm";
 
 describe("user.entity", () => {
-  beforeEach(async () => {
-    await Test.createTestingModule({
+  let dataSource: DataSource;
+  beforeAll(async () => {
+    const module = await Test.createTestingModule({
       imports: [TypeOrmModule.forRoot(datasourceTest([User, Role]).options)],
     }).compile();
+    dataSource = module.get<DataSource>(DataSource);
   });
 
   afterEach(async () => {
     await User.delete({});
+  });
+
+  afterAll(() => {
+    dataSource.destroy();
   });
 
   it("create entity", async () => {
