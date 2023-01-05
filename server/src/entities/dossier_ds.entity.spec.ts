@@ -1,5 +1,6 @@
 import { Test } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { DataSource } from "typeorm";
 
 import { DossierDS } from ".";
 import {
@@ -9,14 +10,20 @@ import {
 } from "./__tests__";
 
 describe("dossier_ds.entity", () => {
-  beforeEach(async () => {
-    await Test.createTestingModule({
+  let dataSource: DataSource;
+  beforeAll(async () => {
+    const module = await Test.createTestingModule({
       imports: [TypeOrmModule.forRoot(datasourceTest([DossierDS]).options)],
     }).compile();
+    dataSource = module.get<DataSource>(DataSource);
   });
 
   afterEach(async () => {
     await DossierDS.delete({});
+  });
+
+  afterAll(() => {
+    dataSource.destroy();
   });
 
   it("create entity", async () => {
