@@ -12,6 +12,7 @@ import {
   User,
   Role,
 } from "../entities";
+import { pluginsEntities } from "../plugins";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
@@ -24,10 +25,18 @@ export const AppDataSource = new DataSource({
   synchronize: false,
   name: "default",
   migrationsTableName: "migrations",
-  entities: [Demarche, DemarcheDS, Dossier, DossierDS, User, Role],
+  entities: [
+    Demarche,
+    DemarcheDS,
+    Dossier,
+    DossierDS,
+    User,
+    Role,
+    ...pluginsEntities,
+  ],
   //TODO entities: ["../entities/**.entity.ts"],
   //TODO subscribers: ["subscriber/*.ts"],
-  migrations: [__dirname + "/migrations/*.ts"],
+  migrations: ["**/db/migrations/*.ts"],
 });
 
 AppDataSource.initialize()

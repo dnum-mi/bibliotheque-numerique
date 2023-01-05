@@ -2,16 +2,14 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  BaseEntity,
   JoinTable,
   ManyToMany,
 } from "typeorm";
 import { User } from "./user.entity";
+import { ApplicationEntity } from "./applicationEntity";
 
 @Entity({ name: "roles" })
-export class Role extends BaseEntity {
+export class Role extends ApplicationEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
@@ -24,12 +22,6 @@ export class Role extends BaseEntity {
   @ManyToMany(() => User, (user) => user.roles)
   @JoinTable({ name: "users_roles" })
   users: User[];
-
-  @CreateDateColumn({ type: "timestamp" })
-  createAt: Date;
-
-  @UpdateDateColumn({ type: "timestamp" })
-  updateAt: Date;
 
   static upsertRole(toUpsert: Partial<Role>) {
     return this.createQueryBuilder()

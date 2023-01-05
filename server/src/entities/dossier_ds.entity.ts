@@ -1,16 +1,9 @@
-import {
-  BaseEntity,
-  Entity,
-  Column,
-  PrimaryColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  EntityManager,
-} from "typeorm";
+import { Entity, Column, PrimaryColumn, EntityManager } from "typeorm";
 import { Dossier as TDossier } from "@lab-mi/ds-api-client/dist/@types/types";
+import { ApplicationEntity } from "./applicationEntity";
 
 @Entity({ name: "dossiers_ds" })
-export class DossierDS extends BaseEntity {
+export class DossierDS extends ApplicationEntity {
   @PrimaryColumn()
   id: number;
 
@@ -19,12 +12,6 @@ export class DossierDS extends BaseEntity {
 
   @Column({ type: "timestamp" })
   dsUpdateAt: Date;
-
-  @CreateDateColumn({ type: "timestamp" })
-  createAt: Date;
-
-  @UpdateDateColumn({ type: "timestamp" })
-  updateAt: Date;
 
   static upsertDossierDS(
     toUpsert: Partial<DossierDS> | Partial<DossierDS>[],

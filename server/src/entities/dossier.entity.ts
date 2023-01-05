@@ -1,23 +1,21 @@
 import {
-  BaseEntity,
   Entity,
   Column,
   PrimaryGeneratedColumn,
   OneToOne,
   ManyToOne,
   JoinColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
   EntityManager,
 } from "typeorm";
 import { DossierDS, Demarche } from "../entities";
+import { ApplicationEntity } from "./applicationEntity";
 
 export type TUpsertDossier = Partial<
   Omit<Dossier, "dossierDS"> & { dossierDS: number }
 >;
 
 @Entity({ name: "dossiers" })
-export class Dossier extends BaseEntity {
+export class Dossier extends ApplicationEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
@@ -31,12 +29,6 @@ export class Dossier extends BaseEntity {
 
   @Column({ type: "varchar" })
   state: string;
-
-  @CreateDateColumn({ type: "timestamp" })
-  createAt: Date;
-
-  @UpdateDateColumn({ type: "timestamp" })
-  updateAt: Date;
 
   static findWithFilter(filter: object) {
     return this.find({

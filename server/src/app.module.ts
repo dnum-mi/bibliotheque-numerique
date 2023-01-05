@@ -17,6 +17,7 @@ import { RolesModule } from "./roles/roles.module";
 import { LoggerModule } from "./logger/logger.module";
 import { AuthModule } from "./auth/auth.module";
 import { UsersModule } from "./users/users.module";
+import { pluginsModules } from "./plugins";
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { UsersModule } from "./users/users.module";
     AuthModule,
     UsersModule,
     RolesModule,
+    ...pluginsModules,
   ],
   controllers: [AppController],
   providers: [AppService],

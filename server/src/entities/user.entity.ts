@@ -1,18 +1,16 @@
 import {
-  BaseEntity,
   Entity,
   Column,
   PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
   BeforeInsert,
   ManyToMany,
 } from "typeorm";
 import * as bcrypt from "bcrypt";
 import { Role } from "./role.entity";
+import { ApplicationEntity } from "./applicationEntity";
 
 @Entity({ name: "users" })
-export class User extends BaseEntity {
+export class User extends ApplicationEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
@@ -31,12 +29,6 @@ export class User extends BaseEntity {
 
   @ManyToMany(() => Role, (role) => role.users)
   roles: Role[];
-
-  @CreateDateColumn({ type: "timestamp" })
-  createAt: Date;
-
-  @UpdateDateColumn({ type: "timestamp" })
-  updateAt: Date;
 
   @BeforeInsert() async hashPassword() {
     this.password = await bcrypt.hash(this.password, 10);
