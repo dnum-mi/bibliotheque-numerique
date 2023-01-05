@@ -39,8 +39,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "plugin:init": "cd src/plugins/ && sh bin/init",
-    "plugin:setup": "cd src/plugins/ && sh bin/setup"
+    "plugin:init": "cd src/plugins/ && sh bin/init"
   },
   "dependencies": {
     "@lab-mi/ds-api-client": "^1.1.2",

@@ -34,24 +34,3 @@ Enter the plugin name:
 myPlugin
 myPlugin plugin is created
 ```
-
-
-### Copy migration file of plugin
-```bash
-$ npm run plugin:setup
-
-> biblio-num-server@1.0.0 plugin:setup
-> cd src/plugins/ && sh bin/setup
-
-Enter the plugin name:
-myPlugin
-<myPlugin> plugin migrations file is copied
-```
-OU
-```bash
-$ cd src/plugins && sh bin/setup
-
-Enter the plugin name:
-myPlugin
-<myPlugin> plugin migrations file is copied
-```
