@@ -19,6 +19,7 @@ export class AddOrganismesSourcesTable1672764629524
             name: "name",
             type: "varchar",
             isNullable: false,
+            isUnique: true,
           },
           {
             name: "url",

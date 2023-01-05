@@ -16,6 +16,7 @@ export class OrganismesSource extends ApplicationEntity {
   @Column({
     type: "varchar",
     nullable: false,
+    unique: true,
   })
   name: string;
 
