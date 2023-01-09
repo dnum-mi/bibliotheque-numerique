@@ -13,6 +13,7 @@ import {
   Role,
 } from "../entities";
 import { pluginsEntities } from "../plugins";
+import { resolve } from "path";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
@@ -36,7 +37,10 @@ export const AppDataSource = new DataSource({
   ],
   //TODO entities: ["../entities/**.entity.ts"],
   //TODO subscribers: ["subscriber/*.ts"],
-  migrations: ["**/db/migrations/*.ts"],
+  migrations: [
+    resolve(__dirname, "./migrations/*.ts"),
+    resolve(__dirname, "../plugins/**/db/migrations/*.ts"),
+  ],
 });
 
 AppDataSource.initialize()
