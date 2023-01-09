@@ -7,16 +7,23 @@ import {
   organisme_test,
   createOneOrganisme,
 } from "./__tests__";
+import { DataSource } from "typeorm";
 
 describe("Organisme.entity", () => {
-  beforeEach(async () => {
-    await Test.createTestingModule({
+  let dataSource: DataSource;
+  beforeAll(async () => {
+    const module = await Test.createTestingModule({
       imports: [TypeOrmModule.forRoot(datasourceTest([Organisme]).options)],
     }).compile();
+    dataSource = module.get<DataSource>(DataSource);
   });
 
   afterEach(async () => {
     await Organisme.delete({});
+  });
+
+  afterAll(() => {
+    dataSource.destroy();
   });
 
   it("create entity", async () => {
