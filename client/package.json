@@ -18,7 +18,10 @@
     "format": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "docker:dev:build": "docker compose -f docker-compose.dev.yml build",
     "docker:dev": "docker compose -f docker-compose.dev.yml up",
-    "docker:dev:stop": "docker compose -f docker-compose.dev.yml down"
+    "docker:dev:stop": "docker compose -f docker-compose.dev.yml down",
+    "docker:prod:build": "docker compose -f docker-compose.prod.yml build",
+    "docker:prod": "docker compose -f docker-compose.prod.yml up -d",
+    "docker:prod:stop": "docker compose -f docker-compose.prod.yml down"
   },
   "dependencies": {
     "@gouvminint/vue-dsfr": "1.4.0",
