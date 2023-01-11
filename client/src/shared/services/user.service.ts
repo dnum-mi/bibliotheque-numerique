@@ -28,6 +28,7 @@ export async function loginUser (loginForm: LoginForm): Promise<User> {
       url: SIGN_IN_URL,
       data: JSON.stringify(loginForm),
       headers,
+      withCredentials: true,
     })
     return response.data
   } catch (error) {
