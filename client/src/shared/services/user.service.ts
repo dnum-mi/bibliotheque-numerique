@@ -1,14 +1,11 @@
 import type { LoginForm, User, UserForm } from '../interfaces'
+import { baseApiUrl, headers } from '../../utils/api-client'
 import axios from 'axios'
 
-const API_HOST = import.meta.env?.API_URL || 'http://localhost:3000'
-const AUTH_BASE_URL = `${API_HOST}/auth`
+const AUTH_BASE_URL = `${baseApiUrl}/auth`
 const SIGN_UP_URL = `${AUTH_BASE_URL}/sign_up`
 const SIGN_IN_URL = `${AUTH_BASE_URL}/sign_in`
 const AUTH_PROFIL_URL = `${AUTH_BASE_URL}/profile`
-const HEADERS = {
-  'Content-Type': 'application/json',
-}
 
 export async function createUser (userForm: UserForm) {
   try {
@@ -16,7 +13,7 @@ export async function createUser (userForm: UserForm) {
       method: 'post',
       url: SIGN_UP_URL,
       data: JSON.stringify(userForm),
-      headers: HEADERS,
+      headers,
     })
     return response.data
   } catch (error) {
@@ -30,7 +27,7 @@ export async function loginUser (loginForm: LoginForm): Promise<User> {
       method: 'post',
       url: SIGN_IN_URL,
       data: JSON.stringify(loginForm),
-      headers: HEADERS,
+      headers,
     })
     return response.data
   } catch (error) {
