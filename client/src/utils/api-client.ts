@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-const baseApiUrl = import.meta.env?.API_URL || 'http://localhost:3000'
-const headers = {
+export const baseApiUrl = import.meta.env?.API_URL || 'http://localhost:3000'
+export const headers = {
   'Content-Type': 'application/json',
 }
 
