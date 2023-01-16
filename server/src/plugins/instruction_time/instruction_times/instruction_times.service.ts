@@ -15,7 +15,7 @@ export class InstructionTimesService {
     } catch (error) {
       this.logger.error({
         short_message: "Échec récupération des InstructionTime",
-        full_message: error.toString(),
+        full_message: error.stack,
       });
       throw new Error("Unable to retrieve InstructionTime");
     }
@@ -27,7 +27,7 @@ export class InstructionTimesService {
     } catch (error) {
       this.logger.error({
         short_message: "Échec récupération des InstructionTime",
-        full_message: error.toString(),
+        full_message: error.stack,
       });
       throw new Error("Unable to retrieve InstructionTime");
     }
@@ -39,7 +39,7 @@ export class InstructionTimesService {
     } catch (error) {
       this.logger.error({
         short_message: "Échec récupération des InstructionTime",
-        full_message: error.toString(),
+        full_message: error.stack,
       });
       throw new Error("Unable to retrieve InstructionTime");
     }
