@@ -10,24 +10,11 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - biblio-num-network
-
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: biblio-num_dbadmin
-    depends_on:
-      - db
-    ports:
-      - "3010:80"
-    environment:
-      PGADMIN_DEFAULT_EMAIL: user@gmail.com
-      PGADMIN_DEFAULT_PASSWORD: password
-    networks:
-      - biblio-num-network
+      - biblio-num-test-network
 
 networks:
-  biblio-num-network:
-    name: biblio-num-network
+  biblio-num-test-network:
+    name: biblio-num-test-network
     driver: bridge
     driver_opts:
       com.docker.network.driver.mtu: 1450
