@@ -58,6 +58,28 @@ services:
     networks:
       - biblio-num-network
 
+  keycloak:
+    image: quay.io/keycloak/keycloak:19.0.2
+    container_name: biblio-num_keycloak
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: db
+      DB_DATABASE: keycloak
+      DB_USER: user
+      DB_SCHEMA: public
+      DB_PASSWORD: password
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: Pa55w0rd
+    ports:
+      - 8088:8080
+    depends_on:
+      - db
+    volumes:
+      - ./docker/keycloak/realms:/opt/keycloak/data/import
+    command: start-dev --import-realm
+    networks:
+      - biblio-num-network
+
 networks:
   biblio-num-network:
     name: biblio-num-network
