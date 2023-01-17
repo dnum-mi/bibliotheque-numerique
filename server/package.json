@@ -20,6 +20,8 @@
     "docker:logs": "docker logs -f biblio-num_server",
     "docker:logs:db": "docker logs -f biblio-num_db",
     "docker:smtp:run": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up mailhog -d",
+    "docker:db:up": "docker compose -f docker-compose.yml up -d",
+    "docker:db:down": "docker compose -f docker-compose.yml down",
     "typeorm": "typeorm-ts-node-commonjs",
     "typeorm:migration:run": "typeorm-ts-node-commonjs migration:run -d src/db/app-data-source.ts",
     "typeorm:migration:revert": "typeorm-ts-node-commonjs migration:revert -d src/db/app-data-source.ts",
