@@ -10,6 +10,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
+      - ./docker/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
       - type: volume
         source: biblio-num-db-volume
         target: /var/lib/postgresql/data
