@@ -1,0 +1,79 @@
+services:
+  biblio-num: 
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: biblio-num:prod
+    container_name: biblio-num
+    depends_on:
+      - client
+      - server
+    ports:
+      - "${BIBLIO_NUM_PORT:-80}:8080"
+    networks:
+      - biblio-num-network
+
+  client: 
+    build:
+      target: production
+      context: client
+      dockerfile: Dockerfile
+    image: biblio-num/client:prod
+    container_name: biblio-num_client
+    networks:
+      - biblio-num-network
+
+  server:
+    build:
+      target: production
+      context: server
+      dockerfile: Dockerfile
+    image: biblio-num/server:prod
+    container_name: biblio-num_server
+    depends_on:
+      - db
+    ports:
+      - 3000:3000
+    networks:
+      - biblio-num-network
+    environment:
+      POSTGRES_HOST: ${POSTGRES_HOST:-db}
+      POSTGRES_DB: ${POSTGRES_DB:-biblio-num}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_PASSWORD: ${POSTGRES_USER}
+      DS_API_URL: ${DS_API_URL}
+      DS_API_TOKEN: ${DS_API_TOKEN}
+      SMTP_SERVER: ${SMTP_SERVER:-localhost}
+      SMTP_PORT: ${SMTP_PORT:- 1025}
+      LOG_DATE_FORMAT: "DD/MM/YYYY HH:mm:ss"
+      JWT_SECRET: ${JWT_SECRET:-biblio-num-jwt-secret}
+      SESSION_SECRET: ${SESSION_SECRET:-biblio-num-session-secret}
+
+  db:
+    image: postgres:14.5
+    container_name: biblio-num_db
+    restart: always
+    environment:
+      POSTGRES_DB: biblio-num
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    networks:
+      - biblio-num-network
+    volumes:
+      - type: volume
+        source: biblio-num-db-volume
+        target: /var/lib/postgresql/data
+
+
+networks:
+  biblio-num-network:
+    name: biblio-num-network
+    driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1450
+
+volumes:
+  biblio-num-db-volume:

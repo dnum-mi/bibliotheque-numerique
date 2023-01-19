@@ -8,7 +8,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "husky install",
-    "lint": "lint-staged"
+    "lint": "lint-staged",
+    "docker:prod:build": "docker compose -f docker-compose.prod.yml build",
+    "docker:prod": "docker compose -f docker-compose.prod.yml up -d",
+    "docker:prod:stop": "docker compose -f docker-compose.prod.yml down"
   },
   "repository": {
     "type": "git",
