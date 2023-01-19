@@ -38,7 +38,10 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "plugin:init": "cd src/plugins/ && sh bin/init"
+    "plugin:init": "cd src/plugins/ && sh bin/init",
+    "docker:prod:build": "docker compose -f docker-compose.yml -f docker-compose.prod.yml build",
+    "docker:prod": "docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d",
+    "docker:prod:stop": "docker compose -f docker-compose.yml -f docker-compose.prod.yml down"
   },
   "dependencies": {
     "@lab-mi/ds-api-client": "^1.1.2",
