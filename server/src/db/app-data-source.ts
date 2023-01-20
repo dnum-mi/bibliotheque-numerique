@@ -38,8 +38,8 @@ export const AppDataSource = new DataSource({
   //TODO entities: ["../entities/**.entity.ts"],
   //TODO subscribers: ["subscriber/*.ts"],
   migrations: [
-    resolve(__dirname, "./migrations/*.ts"),
-    resolve(__dirname, "../plugins/**/db/migrations/*.ts"),
+    resolve(__dirname, "./migrations/*.{ts,js}"),
+    resolve(__dirname, "../plugins/**/db/migrations/*.{ts,js}"),
   ],
 });
 
