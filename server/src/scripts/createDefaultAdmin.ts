@@ -31,8 +31,8 @@ async function bootstrap() {
         description: "App administrator, has full rights",
       }),
     ]);
-    if (user && role.raw[0].id)
-      await rolesService.assignRoleToUser(role.raw[0].id, user.id);
+    if (user?.id && role?.id)
+      await rolesService.assignRoleToUser(role.id, user.id);
     else throw new Error("Unable to create default admin");
     await app.close();
   } catch (error) {

@@ -1,17 +1,20 @@
 <template>
-  <div
-    :data-fr-theme="dark ? 'dark' : ''"
-    style="background-color: var(--grey-1000-50); color: var(--g800); padding: 1rem;"
-  >
-    <h1>Démarches</h1>
-  </div>
+  <div class="fr-container">
+    <div
+      :data-fr-theme="dark ? 'dark' : ''"
+      style="background-color: var(--grey-1000-50); color: var(--g800); padding: 1rem;"
+    >
+      <h1>Démarches</h1>
+    </div>
 
-  <BiblioNumDataTableAgGrid
-    :title="title"
-    :headers="headersJson"
-    :row-data="rowData"
-    @get-elt="getDossiers"
-  />
+    <BiblioNumDataTableAgGrid
+      :title="title"
+      :headers="headersJson"
+      :row-data="rowData"
+      with-action="{{true}}"
+      @get-elt="getDossiers"
+    />
+  </div>
 </template>
 
 <script lang="ts"  setup>

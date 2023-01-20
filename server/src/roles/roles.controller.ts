@@ -47,7 +47,7 @@ export class RolesController {
   @Roles("admin")
   async addRole(@Body("role") role: Partial<Role>) {
     try {
-      await this.rolesService.updateRole(role);
+      return await this.rolesService.updateRole(role);
     } catch (error) {
       if (error instanceof Error) {
         throw new HttpException(

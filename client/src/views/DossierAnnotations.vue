@@ -9,5 +9,7 @@ withDefaults(defineProps<{
 
 </script>
 <template>
-  <DossierChamps :datas="datas?.annotations" />
+  <div class="fr-container">
+    <DossierChamps :datas="datas?.annotations" />
+  </div>
 </template>

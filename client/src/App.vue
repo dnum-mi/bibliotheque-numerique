@@ -46,6 +46,14 @@ watch(() => userStore.isAuthenticated, () => {
         iconAttrs: iconColor,
       },
     )
+    if (userStore.hasAdminAccess) {
+      quickLinks.value = quickLinks.value.concat({
+        label: 'Administration',
+        path: '/admin',
+        icon: 'ri-shield-star-line',
+        iconAttrs: iconColor,
+      })
+    }
   } else {
     quickLinks.value = quickLinksBase.concat(
       {
@@ -87,7 +95,7 @@ const close = async () => {
     :quick-links="quickLinks"
     :show-search="showSearch"
   />
-  <div class="fr-container">
+  <div>
     <router-view />
     <VIcon name="ri-flag-line" />
   </div>

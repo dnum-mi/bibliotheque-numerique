@@ -14,5 +14,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <h2>Logout...</h2>
+  <div class="fr-container">
+    <h2>Logout...</h2>
+  </div>
 </template>

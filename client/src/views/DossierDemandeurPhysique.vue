@@ -30,11 +30,13 @@ const labelsDemandeur = [
 
 </script>
 <template>
-  <DisplayLabelsValues
-    :title="title"
-    prefix-id="dossier-demandeur"
-    :datas="datas"
-    :labels="labelsDemandeur"
-    class="fr-pb-3v"
-  />
+  <div class="fr-container">
+    <DisplayLabelsValues
+      :title="title"
+      prefix-id="dossier-demandeur"
+      :datas="datas"
+      :labels="labelsDemandeur"
+      class="fr-pb-3v"
+    />
+  </div>
 </template>

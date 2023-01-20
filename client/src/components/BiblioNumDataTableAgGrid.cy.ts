@@ -40,6 +40,7 @@ describe('<BiblioNumDataTable />', () => {
         title: 'Test',
         rowData: datas,
         headers,
+        withAction: true,
       },
     })
 

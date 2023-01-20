@@ -5,14 +5,11 @@ import VueDsfr from '@gouvminint/vue-dsfr'
 
 import Signin from './Signin.vue'
 import { createPinia } from 'pinia'
-import { useUserStore } from '@/stores'
-import { createRandomUser } from '@/views/__tests__/users'
+import { createRandomUserForm } from '@/views/__tests__/users'
 
 describe('<Signin />', () => {
   const pinia = createPinia()
-  const useStore = useUserStore(pinia)
-  const newUser = createRandomUser()
-  useStore.currentUser = newUser
+  const newUser = createRandomUserForm()
   const extensions = {
     use: [
       pinia,

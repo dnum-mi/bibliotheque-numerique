@@ -1,12 +1,17 @@
+import type { IRole } from './Role.interface'
+
 export interface User {
-  _id: string;
-  firstName: string;
-  lastName: string;
+  id: number;
+  firstName?: string;
+  lastName?: string;
+  email: string;
+  roles: IRole[];
+}
+
+export type UserForm = {
   email: string;
   password: string;
 }
-
-export type UserForm = Partial<User>
 
 export interface LoginForm {
   password: string;

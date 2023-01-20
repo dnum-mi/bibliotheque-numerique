@@ -51,3 +51,31 @@ export async function fetchCurrentUser (): Promise<User | null> {
     return null
   }
 }
+
+export const getUsers = async () => {
+  const config = {
+    method: 'get',
+    url: `${baseApiUrl}/users`,
+    headers,
+  }
+  try {
+    const response = await axios(config)
+    return response.data
+  } catch (error) {
+    throw await error
+  }
+}
+
+export const getUserById = async (id: number) => {
+  const config = {
+    method: 'get',
+    url: `${baseApiUrl}/users/${id}`,
+    headers,
+  }
+  try {
+    const response = await axios(config)
+    return response.data
+  } catch (error) {
+    throw await error
+  }
+}

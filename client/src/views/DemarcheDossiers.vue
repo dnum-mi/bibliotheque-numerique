@@ -104,24 +104,27 @@ const getDossier = data => {
 </script>
 
 <template>
-  <div class="title">
-    <h1>Démarche {{ number }}</h1>
-    <h2>{{ title }}</h2>
-    <!--TODO: input a retirer-->
-    <input v-model="idDemarche">
-  </div>
+  <div class="fr-container">
+    <div class="title">
+      <h1>Démarche {{ number }}</h1>
+      <h2>{{ title }}</h2>
+      <!--TODO: input a retirer-->
+      <input v-model="idDemarche">
+    </div>
 
-  <DemarcheInformations :data-json="demarche?.demarcheDS?.dataJson" />
-  <DemarcheService :service="service" />
-  <br>
-  <GroupInstructeurs :group-instructeurs="groupInstructeurs" />
-  <br>
-  <BiblioNumDataTable
-    title="Dossiers"
-    :headers="headerDossierJson"
-    :row-data="dossiers"
-    @get-elt="getDossier"
-  />
+    <DemarcheInformations :data-json="demarche?.demarcheDS?.dataJson" />
+    <DemarcheService :service="service" />
+    <br>
+    <GroupInstructeurs :group-instructeurs="groupInstructeurs" />
+    <br>
+    <BiblioNumDataTable
+      title="Dossiers"
+      :headers="headerDossierJson"
+      :row-data="dossiers"
+      with-action="{{true}}"
+      @get-elt="getDossier"
+    />
+  </div>
 </template>
 
 <style scoped>

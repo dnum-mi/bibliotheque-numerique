@@ -24,9 +24,7 @@ describe('<Profile />', () => {
     cy.mount(Profile, {
       extensions,
     })
-    cy.contains(newUser.firstName)
-    cy.contains(newUser.lastName)
     cy.contains(newUser.email)
-    cy.contains(newUser._id)
+    cy.contains(newUser.id)
   })
 })
