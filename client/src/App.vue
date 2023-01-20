@@ -95,7 +95,7 @@ const close = async () => {
     :quick-links="quickLinks"
     :show-search="showSearch"
   />
-  <div class="fr-container">
+  <div>
     <router-view />
     <VIcon name="ri-flag-line" />
   </div>

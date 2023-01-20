@@ -47,40 +47,42 @@ onMounted(async () => {
 </script>
 
 <template>
-  <h1>Dossier {{ dossierDS.number }}</h1>
+  <div class="fr-container">
+    <h1>Dossier {{ dossierDS.number }}</h1>
 
-  <DossierInformations :datas="dossierDS" />
+    <DossierInformations :datas="dossierDS" />
 
-  <DsfrTabs
-    tab-list-name="tabs-dossier"
-    :tab-titles="tabTitles"
-    initial-selected-index="0"
-    @select-tab="selectTab"
-  >
-    <DsfrTabContent
-      panel-id="tab-content-0"
-      tab-id="tab-0"
-      :selected="selectedTabIndex === 0"
+    <DsfrTabs
+      tab-list-name="tabs-dossier"
+      :tab-titles="tabTitles"
+      initial-selected-index="0"
+      @select-tab="selectTab"
     >
-      <DossierDemande :datas="dossierDS" />
-    </DsfrTabContent>
+      <DsfrTabContent
+        panel-id="tab-content-0"
+        tab-id="tab-0"
+        :selected="selectedTabIndex === 0"
+      >
+        <DossierDemande :datas="dossierDS" />
+      </DsfrTabContent>
 
-    <DsfrTabContent
-      panel-id="tab-content-1"
-      tab-id="tab-1"
-      :selected="(selectedTabIndex === 1)"
-    >
-      <DossierAnnotations :datas="dossierDS" />
-    </DsfrTabContent>
+      <DsfrTabContent
+        panel-id="tab-content-1"
+        tab-id="tab-1"
+        :selected="(selectedTabIndex === 1)"
+      >
+        <DossierAnnotations :datas="dossierDS" />
+      </DsfrTabContent>
 
-    <DsfrTabContent
-      panel-id="tab-content-2"
-      tab-id="tab-2"
-      :selected="(selectedTabIndex === 2)"
-    >
-      <DossierMessages :datas="dossierDS" />
-    </DsfrTabContent>
-  </DsfrTabs>
+      <DsfrTabContent
+        panel-id="tab-content-2"
+        tab-id="tab-2"
+        :selected="(selectedTabIndex === 2)"
+      >
+        <DossierMessages :datas="dossierDS" />
+      </DsfrTabContent>
+    </DsfrTabs>
+  </div>
 </template>
 
 <style scoped>

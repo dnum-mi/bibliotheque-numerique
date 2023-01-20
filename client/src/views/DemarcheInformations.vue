@@ -49,55 +49,57 @@ const declarative = computed(() => stateToFr(props.dataJson?.declarative))
 </script>
 
 <template>
-  <h3> {{ title }} </h3>
+  <div class="fr-container">
+    <h3> {{ title }} </h3>
 
-  <div
-    v-if="dataJson"
-    data-cy="cy-demarche-description"
-    class="fr-container fr-pb-3v"
-  >
-    <div class="fr-grid-row">
-      <div
-        class="fr-col-12 "
-      >
-        <label
-          for="demarche-description"
-          class="fr-text--bold "
-        > Description :</label> <span
-          id="demarche-description"
-          class="fr-text"
-        > {{ dataJson?.description }}</span>
-      </div>
-      <div
-        class="fr-col-6"
-      >
-        <label
-          for="demarche-state"
-          class="fr-text--bold "
-        > Etat :</label> <span
-          id="demarche-state"
-          class="fr-text"
-        > {{ etat }}</span>
-      </div>
-      <div
-        class="fr-col-6"
-      >
-        <label
-          for="demarche-declarative"
-          class="fr-text--bold "
-        >  Déclarative :</label> <span
-          id="demarche-declarative"
-          class="fr-text"
-        > {{ declarative }}</span>
+    <div
+      v-if="dataJson"
+      data-cy="cy-demarche-description"
+      class="fr-container fr-pb-3v"
+    >
+      <div class="fr-grid-row">
+        <div
+          class="fr-col-12 "
+        >
+          <label
+            for="demarche-description"
+            class="fr-text--bold "
+          > Description :</label> <span
+            id="demarche-description"
+            class="fr-text"
+          > {{ dataJson?.description }}</span>
+        </div>
+        <div
+          class="fr-col-6"
+        >
+          <label
+            for="demarche-state"
+            class="fr-text--bold "
+          > Etat :</label> <span
+            id="demarche-state"
+            class="fr-text"
+          > {{ etat }}</span>
+        </div>
+        <div
+          class="fr-col-6"
+        >
+          <label
+            for="demarche-declarative"
+            class="fr-text--bold "
+          >  Déclarative :</label> <span
+            id="demarche-declarative"
+            class="fr-text"
+          > {{ declarative }}</span>
+        </div>
       </div>
     </div>
-  </div>
 
-  <DisplayLabelsValues
-    :title="title"
-    prefix-id="demarche-description"
-    :datas="dataJson"
-    :labels="labelsDate"
-    class="fr-pb-3v"
-  />
+    <DisplayLabelsValues
+      :title="title"
+      prefix-id="demarche-description"
+      :datas="dataJson"
+      :labels="labelsDate"
+      class="fr-pb-3v"
+    />
+  </div>
 </template>

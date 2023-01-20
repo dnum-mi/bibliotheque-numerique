@@ -10,16 +10,18 @@ defineProps<{
 </script>
 
 <template>
-  <div
-    class="fr-callout"
-    style="width: 100%;"
-  >
-    <p class="fr-callout__title">
-      {{ email }}
-    </p>
-    <p class="fr-callout__text">
-      <span v-html="body" />
-    </p>
-    <p>{{ dateTimeToStringFr(createdAt) }}</p>
+  <div class="fr-container">
+    <div
+      class="fr-callout"
+      style="width: 100%;"
+    >
+      <p class="fr-callout__title">
+        {{ email }}
+      </p>
+      <p class="fr-callout__text">
+        <span v-html="body" />
+      </p>
+      <p>{{ dateTimeToStringFr(createdAt) }}</p>
+    </div>
   </div>
 </template>

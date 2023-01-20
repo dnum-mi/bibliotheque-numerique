@@ -17,21 +17,23 @@ const champs = computed(() => props.datas?.champs || [])
 </script>
 
 <template>
-  <h3>
-    Identité du demandeur:
-  </h3>
-  <DossierDemandeurMoral
-    v-if="isDemandeurMorale"
-    :datas="demandeur"
-  />
-  <DossierDemandeurPhysique
-    v-if="isDemandeurPhysique"
-    :datas="demandeur"
-  />
-  <h3>
-    Formulaire
-  </h3>
-  <div>
-    <DossierChamps :datas="champs " />
+  <div class="fr-container">
+    <h3>
+      Identité du demandeur:
+    </h3>
+    <DossierDemandeurMoral
+      v-if="isDemandeurMorale"
+      :datas="demandeur"
+    />
+    <DossierDemandeurPhysique
+      v-if="isDemandeurPhysique"
+      :datas="demandeur"
+    />
+    <h3>
+      Formulaire
+    </h3>
+    <div>
+      <DossierChamps :datas="champs " />
+    </div>
   </div>
 </template>

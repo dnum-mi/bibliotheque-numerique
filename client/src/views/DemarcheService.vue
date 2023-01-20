@@ -31,26 +31,27 @@ const fields = computed<IField[]>(() => {
 </script>
 
 <template>
-  <h3> Service </h3>
-
-  <div
-    v-if="service"
-    data-cy="cy-service"
-    class="fr-container"
-  >
-    <div class="fr-grid-row">
-      <div
-        v-for="{ id, label, value} in fields"
-        :key="id"
-        class="fr-col-6 "
-      >
-        <label
-          :for="id"
-          class="fr-text--bold"
-        > {{ label }} :</label> <span
-          :id="id"
-          class="fr-text"
-        > {{ value }}</span>
+  <div class="fr-container">
+    <h3> Service </h3>
+    <div
+      v-if="service"
+      data-cy="cy-service"
+      class="fr-container"
+    >
+      <div class="fr-grid-row">
+        <div
+          v-for="{ id, label, value} in fields"
+          :key="id"
+          class="fr-col-6 "
+        >
+          <label
+            :for="id"
+            class="fr-text--bold"
+          > {{ label }} :</label> <span
+            :id="id"
+            class="fr-text"
+          > {{ value }}</span>
+        </div>
       </div>
     </div>
   </div>

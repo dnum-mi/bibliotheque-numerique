@@ -60,20 +60,22 @@ const labelsDate = [
 </script>
 
 <template>
-  <h3> {{ title }} </h3>
-  <DisplayLabelsValues
-    :title="title"
-    prefix-id="dossier-description"
-    :datas="datas"
-    :labels="labelsData"
-    class="fr-pb-3v"
-  />
+  <div class="fr-container">
+    <h3> {{ title }} </h3>
+    <DisplayLabelsValues
+      :title="title"
+      prefix-id="dossier-description"
+      :datas="datas"
+      :labels="labelsData"
+      class="fr-pb-3v"
+    />
 
-  <DisplayLabelsValues
-    :title="title"
-    prefix-id="dossier-description"
-    :datas="datas"
-    :labels="labelsDate"
-    class="fr-pb-3v"
-  />
+    <DisplayLabelsValues
+      :title="title"
+      prefix-id="dossier-description"
+      :datas="datas"
+      :labels="labelsDate"
+      class="fr-pb-3v"
+    />
+  </div>
 </template>
