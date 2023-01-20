@@ -1,0 +1,17 @@
+services:
+  client: 
+    build:
+      target: production
+      context: .
+      dockerfile: Dockerfile
+    image: biblio-num/client:prod
+    container_name: biblio-num_client
+    networks:
+      - biblio-num-network
+    
+networks:
+  biblio-num-network:
+    name: biblio-num-network
+    driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1450

@@ -11,8 +11,11 @@
     "start": "nest start",
     "dev": "nest start --debug 0.0.0.0:9229 --watch",
     "sync:demarches": "ts-node src/scripts/loadDemarcheDs.ts",
+    "sync:demarches:prod": "node dist/scripts/loadDemarcheDs.js",
     "sync:dossiers": "ts-node src/scripts/loadDossierDs.ts",
+    "sync:dossiers:prod": "ts-node src/scripts/loadDossierDs.js",
     "script:create-default-admin": "ts-node src/scripts/createDefaultAdmin.ts",
+    "script:create-default-admin:prod": "node dist/scripts/createDefaultAdmin.js",
     "docker:build": "docker compose -f docker-compose.yml -f docker-compose.dev.yml build server",
     "docker:start": "docker compose -f docker-compose.yml up",
     "docker:dev": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d",
@@ -29,7 +32,7 @@
     "typeorm:migration:create": "typeorm-ts-node-commonjs migration:create",
     "typeorm:migration:generate": "typeorm-ts-node-commonjs migration:generate src/db/migrations -d src/db/app-data-source.ts",
     "stop": "docker compose stop -d",
-    "start:prod": "node dist/main",
+    "start:prod": "typeorm-ts-node-commonjs migration:run -d dist/db/app-data-source.js; node dist/main",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "lint:fix": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
@@ -38,7 +41,10 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "plugin:init": "cd src/plugins/ && sh bin/init"
+    "plugin:init": "cd src/plugins/ && sh bin/init",
+    "docker:prod:build": "docker compose -f docker-compose.yml -f docker-compose.prod.yml build",
+    "docker:prod": "docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d",
+    "docker:prod:stop": "docker compose -f docker-compose.yml -f docker-compose.prod.yml down"
   },
   "dependencies": {
     "@lab-mi/ds-api-client": "^1.1.2",

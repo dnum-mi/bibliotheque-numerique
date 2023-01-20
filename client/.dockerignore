@@ -1,0 +1,14 @@
+#docker
+.dockerignore
+Dockerfile
+
+#npm
+node_modules
+dist
+
+#vscode
+.vscode
+
+#git
+# .gitignore
+.lintstagedrc.json
