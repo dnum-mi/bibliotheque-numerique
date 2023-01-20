@@ -1,11 +1,11 @@
-import type { Role } from './Role.interface'
+import type { IRole } from './Role.interface'
 
 export interface User {
   id: number;
   firstName?: string;
   lastName?: string;
   email: string;
-  roles: Role[];
+  roles: IRole[];
 }
 
 export type UserForm = {
