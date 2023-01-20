@@ -50,23 +50,31 @@ const props = withDefaults(defineProps<{
   withAction: false,
 })
 
-const columnDefs = computed(() => [{
-  headerName: 'Action',
-  field: props.headers[0].value,
-  cellRenderer: TableCellAction,
-  initialPinned: 'left',
-  width: 100,
-},
-...props.headers.slice(1)
-  .map(header => {
+const columnDefs = computed(() => {
+  const headers: TypeHeaderDataTable[] = [...props.headers]
+  const columnDefs: any[] = []
+  if (props.withAction) {
+    columnDefs.unshift({
+      headerName: 'Action',
+      field: headers[0].value,
+      action: headers[0]?.action || undefined,
+      cellRenderer: TableCellAction,
+      initialPinned: 'left',
+      width: 100,
+    })
+    headers.shift()
+  }
+  return columnDefs.concat(headers.map((header) => {
     const filter = getFilterAgGrid(header.type)
     return {
       headerName: header.text || '',
       field: header.value,
-      cellRenderer: header.parseFn ? (params) => header.parseFn(params.value) : undefined,
+      width: header.width || undefined,
+      cellRenderer: header.parseFn ? (params: any) => header.parseFn?.(params.value) : undefined,
       ...filter,
     }
-  })])
+  }))
+})
 
 const emit = defineEmits(['getElt'])
 const showElt = data => {

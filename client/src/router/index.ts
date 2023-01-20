@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useUserStore } from '@/stores'
-import { isAuthenticatedGuard, isNotAuthenticatedGuard } from '@/shared/guards'
+import { hasAdminAccessGuard, isAuthenticatedGuard, isNotAuthenticatedGuard } from '@/shared/guards'
 
 const MAIN_TITLE = 'Gabarit de démarrage VueDsfr'
 
@@ -52,6 +52,11 @@ const routes = [
     path: '/logout',
     beforeEnter: [isAuthenticatedGuard],
     component: () => import('@/views/Logout.vue'),
+  },
+  {
+    path: '/admin',
+    beforeEnter: [hasAdminAccessGuard],
+    component: () => import('@/views/Admin.vue'),
   },
 ]
 

@@ -8,4 +8,8 @@ export {
   RiSearchLine,
   RiEyeFill,
   RiLogoutBoxRLine,
+  RiShieldStarLine,
+  CoTrash,
+  RiAddCircleLine,
+  RiIndeterminateCircleLine,
 } from 'oh-vue-icons/icons'
