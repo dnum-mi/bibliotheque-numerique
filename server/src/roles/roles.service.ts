@@ -22,7 +22,8 @@ export class RolesService {
 
   async updateRole(role: Partial<Role>) {
     try {
-      return await Role.upsertRole(role);
+      const upsertRoleResult = await Role.upsertRole(role);
+      return upsertRoleResult.raw[0];
     } catch (error) {
       this.logger.error({
         short_message: "Échec création du rôle",
@@ -40,7 +41,6 @@ export class RolesService {
         User.findOne({ where: { id: userId }, relations: { roles: true } }),
         Role.findOneBy({ id: roleId }),
       ]);
-      console.log(user, role);
     } catch (error) {
       this.logger.error({
         short_message: `Échec récupération de l'utilisateur: ${userId} et du role: ${roleId}`,
