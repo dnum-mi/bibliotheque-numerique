@@ -58,6 +58,12 @@ const routes = [
     beforeEnter: [hasAdminAccessGuard],
     component: () => import('@/views/Admin.vue'),
   },
+  {
+    path: '/user/:id',
+    name: 'User',
+    beforeEnter: [hasAdminAccessGuard],
+    component: () => import('@/views/User.vue'),
+  },
 ]
 
 const router = createRouter({
