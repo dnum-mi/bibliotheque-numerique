@@ -1,0 +1,10 @@
+{
+  "realm": "Passage2-RIE",
+  "auth-server-url": "http://localhost:8088/",
+  "ssl-required": "external",
+  "resource": "biblio-num",
+  "credentials": {
+    "secret": "laO7YUG0I3oOJ8EeEVGKU8jBd6ySFz8f"
+  },
+  "confidential-port": 0
+}
