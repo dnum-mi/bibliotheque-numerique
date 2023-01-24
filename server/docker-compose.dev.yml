@@ -80,6 +80,23 @@ services:
     networks:
       - biblio-num-network
 
+  s3:
+    image: quay.io/minio/minio:RELEASE.2023-01-20T02-05-44Z
+    container_name: biblio-num_minio
+    environment:
+      MINIO_ROOT_USER: s3_biblio-num_minio # MINIO_ACCESS_KEY = MINIO_ROOT_USER
+      MINIO_ROOT_PASSWORD: s3_biblio-num_minio # MINIO_SECRET_KEY = MINIO_ROOT_PASSWORD
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - type: volume
+        source: biblio-num-s3-volume
+        target: /data
+    command: server --address ":9000" --console-address ":9001" /data
+    networks:
+      - biblio-num-network
+
 networks:
   biblio-num-network:
     name: biblio-num-network
@@ -89,3 +106,4 @@ networks:
 
 volumes:
   biblio-num-pgadmin-volume:
+  biblio-num-s3-volume:
