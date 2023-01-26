@@ -8,6 +8,7 @@ export function organismeData_test(): Partial<OrganismesData> {
     dataUpdateAt: faker.date.past(),
   };
 }
+
 export const createOneOrganismeData = async (data) => {
   const organismeData = OrganismesData.create();
   for (const entry in data) {
@@ -15,3 +16,10 @@ export const createOneOrganismeData = async (data) => {
   }
   return await organismeData.save();
 };
+
+export function updateDataUpdateAt(data: Partial<OrganismesData>) {
+  return {
+    ...data,
+    dataUpdateAt: faker.date.betweens(data.dataUpdateAt, new Date()),
+  };
+}
