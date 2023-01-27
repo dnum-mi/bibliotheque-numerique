@@ -18,8 +18,8 @@ describe("role.entity", () => {
     await Role.delete({});
   });
 
-  afterAll(() => {
-    dataSource.destroy();
+  afterAll(async () => {
+    await dataSource.destroy();
   });
 
   it("create entity", async () => {

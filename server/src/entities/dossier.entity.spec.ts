@@ -27,8 +27,8 @@ describe("dossier_ds.entity", () => {
     await DossierDS.delete({});
   });
 
-  afterAll(() => {
-    dataSource.destroy();
+  afterAll(async () => {
+    await dataSource.destroy();
   });
 
   it("create entity", async () => {

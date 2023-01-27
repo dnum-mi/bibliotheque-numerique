@@ -21,8 +21,8 @@ describe("demarche_ds.entity", () => {
   afterEach(async () => {
     await DemarcheDS.delete({});
   });
-  afterAll(() => {
-    dataSource.destroy();
+  afterAll(async () => {
+    await dataSource.destroy();
   });
 
   it("create entity", async () => {
