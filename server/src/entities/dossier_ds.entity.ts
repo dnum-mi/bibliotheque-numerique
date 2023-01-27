@@ -4,7 +4,7 @@ import { ApplicationEntity } from "./applicationEntity";
 
 @Entity({ name: "dossiers_ds" })
 export class DossierDS extends ApplicationEntity {
-  @PrimaryColumn()
+  @PrimaryColumn({ primaryKeyConstraintName: "PK_DOSSIER_DS_ID" })
   id: number;
 
   @Column({ type: "jsonb" })

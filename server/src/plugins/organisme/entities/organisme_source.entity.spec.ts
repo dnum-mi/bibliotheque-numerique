@@ -26,8 +26,8 @@ describe("OrganismeSource.entity", () => {
     await OrganismesSource.delete({});
   });
 
-  afterAll(() => {
-    dataSource.destroy();
+  afterAll(async () => {
+    await dataSource.destroy();
   });
 
   it("create entity", async () => {

@@ -4,11 +4,13 @@ import {
   PrimaryGeneratedColumn,
   JoinTable,
   ManyToMany,
+  Unique,
 } from "typeorm";
 import { User } from "./user.entity";
 import { ApplicationEntity } from "./applicationEntity";
 
 @Entity({ name: "roles" })
+@Unique("UK_ROLE_NAME", ["name"])
 export class Role extends ApplicationEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
