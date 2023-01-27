@@ -1,9 +1,9 @@
 import { Module } from "@nestjs/common";
-import { Organismes_sourcesService } from "./organismes_sources.service";
+import { OrganismesSourcesService } from "./organismes_sources.service";
 import { OrganismesSourcesController } from "./organismes_sources.controller";
 
 @Module({
   controllers: [OrganismesSourcesController],
-  providers: [Organismes_sourcesService],
+  providers: [OrganismesSourcesService],
 })
 export class OrganismesSourcesModule {}

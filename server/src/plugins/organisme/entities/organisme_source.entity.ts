@@ -1,9 +1,16 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  Unique,
+} from "typeorm";
 import { OrganismesData } from "./organisme_data.entity";
-import { ApplicationEntity } from "../../../entities/applicationEntity";
+import { ConnectorSourceEntity } from "../../../entities/connectorSourceEntity";
 
 @Entity({ name: "organismes_sources" })
-export class OrganismesSource extends ApplicationEntity {
+@Unique("UK_ORGANISMES_SOURCE_NAME", ["sourceName"])
+export class OrganismesSource extends ConnectorSourceEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
@@ -18,17 +25,21 @@ export class OrganismesSource extends ApplicationEntity {
     nullable: false,
     unique: true,
   })
-  name: string;
+  sourceName: string;
 
-  @Column({
-    type: "varchar",
-    nullable: false,
-  })
-  url: string;
-
-  @Column()
-  typeAuth: string;
-
-  @Column()
-  token: string;
+  static upsertOrganismesSource(toUpsert: Partial<OrganismesSource>) {
+    return this.createQueryBuilder()
+      .insert()
+      .into(OrganismesSource)
+      .values(toUpsert)
+      .orUpdate(
+        ["name", "url", "params", "query", "typeAuth", "token", "updateAt"],
+        "UK_ORGANISMES_SOURCE_NAME",
+        {
+          skipUpdateIfNoValuesChanged: true,
+        },
+      )
+      .returning(["id", "name", "url", "params", "query", "typeAuth", "token"])
+      .execute();
+  }
 }
