@@ -15,7 +15,7 @@ export class Role extends ApplicationEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
-  @Column({ unique: true })
+  @Column()
   name: string;
 
   @Column()
