@@ -1,7 +1,8 @@
+import { AxiosResponse } from "axios";
 import { Test, TestingModule } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import exp from "constants";
 import { DataSource } from "typeorm";
+import { HttpModule } from "@nestjs/axios";
 import { ConnectorModule } from "../../connector/connector.module";
 import { ConnectorService } from "../../connector/connector.service";
 import { OrganismesData, OrganismesSource } from "../entities";
@@ -22,7 +23,12 @@ async function createTestAddOrg(
 ) {
   const expected = getDatasFromRNA();
   const idRNA = expected.rna_id;
-  jest.spyOn(connectorService, "getResult").mockResolvedValue(expected);
+  jest.spyOn(connectorService, "getResult").mockResolvedValue({
+    data: {
+      data: expected,
+    },
+  } as AxiosResponse);
+
   const orgSrc = await createNewOrgSrc();
 
   const result = await service.findAndAddByIdRna(idRNA, orgSrc);
@@ -47,6 +53,7 @@ describe("OrganismesDatasService", () => {
         TypeOrmModule.forRoot(
           datasourceTest([OrganismesData, OrganismesSource]).options,
         ),
+        HttpModule,
         ConnectorModule.register(OrganismesSource),
       ],
       providers: [OrganismesDatasService],
@@ -116,7 +123,11 @@ describe("OrganismesDatasService", () => {
     );
     const expected1 = updateOrgFromRNA(expected);
 
-    jest.spyOn(connectorService, "getResult").mockResolvedValue(expected1);
+    jest.spyOn(connectorService, "getResult").mockResolvedValue({
+      data: {
+        data: expected1,
+      },
+    } as AxiosResponse);
     const result = await service.findAndAddByIdRna(idRNA, orgSrc);
     expect(result).toBe(true);
     const orgData = await OrganismesData.find();
@@ -132,7 +143,11 @@ describe("OrganismesDatasService", () => {
       service,
     );
 
-    jest.spyOn(connectorService, "getResult").mockResolvedValue(expected);
+    jest.spyOn(connectorService, "getResult").mockResolvedValue({
+      data: {
+        data: expected,
+      },
+    } as AxiosResponse);
     const orgSrc = await createNewOrgSrc();
     const result = await service.findAndAddByIdRna(idRNA, orgSrc);
     expect(result).toBe(true);
