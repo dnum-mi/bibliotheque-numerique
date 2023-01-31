@@ -1,11 +1,18 @@
 import { faker } from "@faker-js/faker/locale/fr";
 import { OrganismesSource } from "..";
+import { TypeAuth } from "../../../../entities/connectorSourceEntity";
 
 export function organismeSource_test(): Partial<OrganismesSource> {
   return {
-    name: faker.internet.userName(),
+    sourceName: faker.internet.userName(),
+    method: faker.helpers.arrayElement(["GET", "POST"]),
     url: faker.internet.url(),
-    typeAuth: faker.datatype.string(10),
+    params: faker.datatype.array(2).map((a) => a.toString()),
+    query: {
+      query1: faker.datatype.string(5),
+      query2: faker.datatype.string(5),
+    },
+    typeAuth: TypeAuth.BEARER_TOKEN,
     token: faker.internet.password(),
   };
 }
