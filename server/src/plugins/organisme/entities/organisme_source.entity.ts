@@ -11,7 +11,9 @@ import { ConnectorSourceEntity } from "../../../entities/connectorSourceEntity";
 @Entity({ name: "organismes_sources" })
 @Unique("UK_ORGANISMES_SOURCE_NAME", ["sourceName"])
 export class OrganismesSource extends ConnectorSourceEntity {
-  @PrimaryGeneratedColumn("increment")
+  @PrimaryGeneratedColumn("increment", {
+    primaryKeyConstraintName: "PK_ORGANISMES_SOURCE_ID",
+  })
   id: number;
 
   @OneToMany(
@@ -23,7 +25,6 @@ export class OrganismesSource extends ConnectorSourceEntity {
   @Column({
     type: "varchar",
     nullable: false,
-    unique: true,
   })
   sourceName: string;
 
@@ -33,13 +34,31 @@ export class OrganismesSource extends ConnectorSourceEntity {
       .into(OrganismesSource)
       .values(toUpsert)
       .orUpdate(
-        ["name", "url", "params", "query", "typeAuth", "token", "updateAt"],
+        [
+          "sourceName",
+          "method",
+          "url",
+          "params",
+          "query",
+          "typeAuth",
+          "token",
+          "updateAt",
+        ],
         "UK_ORGANISMES_SOURCE_NAME",
         {
           skipUpdateIfNoValuesChanged: true,
         },
       )
-      .returning(["id", "name", "url", "params", "query", "typeAuth", "token"])
+      .returning([
+        "id",
+        "method",
+        "sourceName",
+        "url",
+        "params",
+        "query",
+        "typeAuth",
+        "token",
+      ])
       .execute();
   }
 }
