@@ -4,3 +4,4 @@ export * from "./dossier_ds.entity";
 export * from "./dossier.entity";
 export * from "./user.entity";
 export * from "./role.entity";
+export * from "./connector.entity";

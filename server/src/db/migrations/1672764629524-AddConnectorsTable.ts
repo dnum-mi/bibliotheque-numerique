@@ -1,12 +1,10 @@
 import { MigrationInterface, QueryRunner, Table, TableUnique } from "typeorm";
 
-export class AddOrganismesSourcesTable1672764629524
-  implements MigrationInterface
-{
+export class AddConnectorsTable1672764629524 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: "organismes_sources",
+        name: "connectors",
         columns: [
           {
             name: "id",
@@ -14,10 +12,10 @@ export class AddOrganismesSourcesTable1672764629524
             isPrimary: true,
             isGenerated: true,
             generationStrategy: "increment",
-            primaryKeyConstraintName: "PK_ORGANISMES_SOURCE_ID",
+            primaryKeyConstraintName: "PK_CONNECTOR_ID",
           },
           {
-            name: "sourceName",
+            name: "name",
             type: "varchar",
             isNullable: false,
           },
@@ -67,19 +65,16 @@ export class AddOrganismesSourcesTable1672764629524
     );
 
     await queryRunner.createUniqueConstraint(
-      "organismes_sources",
+      "connectors",
       new TableUnique({
-        name: "UK_ORGANISMES_SOURCE_NAME",
-        columnNames: ["sourceName"],
+        name: "UK_CONNECTOR_NAME",
+        columnNames: ["name"],
       }),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropUniqueConstraint(
-      "organismes_sources",
-      "UK_ORGANISMES_SOURCE_NAME",
-    );
-    await queryRunner.dropTable("organismes_sources");
+    await queryRunner.dropUniqueConstraint("connectors", "UK_CONNECTOR_NAME");
+    await queryRunner.dropTable("connectors");
   }
 }
