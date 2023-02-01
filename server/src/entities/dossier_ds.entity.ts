@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryColumn, EntityManager } from "typeorm";
 import { Dossier as TDossier } from "@lab-mi/ds-api-client/dist/@types/types";
-import { ApplicationEntity } from "./applicationEntity";
+import { ApplicationEntity } from "./application_entity";
 
 @Entity({ name: "dossiers_ds" })
 export class DossierDS extends ApplicationEntity {

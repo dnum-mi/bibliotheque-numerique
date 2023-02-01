@@ -6,7 +6,7 @@ import {
   Unique,
 } from "typeorm";
 import { OrganismesData } from "./organisme_data.entity";
-import { ConnectorSourceEntity } from "../../../entities/connectorSourceEntity";
+import { ConnectorSourceEntity } from "../../../entities/connector_source_entity";
 
 @Entity({ name: "organismes_sources" })
 @Unique("UK_ORGANISMES_SOURCE_NAME", ["sourceName"])

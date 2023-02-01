@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { ApplicationEntity } from "../../../entities/applicationEntity";
+import { ApplicationEntity } from "../../../entities/application_entity";
 
 @Entity({ name: "organismes" })
 export class Organisme extends ApplicationEntity {

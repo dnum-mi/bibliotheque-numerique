@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker/locale/fr";
 import { OrganismesSource } from "..";
-import { TypeAuth } from "../../../../entities/connectorSourceEntity";
+import { TypeAuth } from "../../../../entities/connector_source_entity";
 
 export function organismeSource_test(): Partial<OrganismesSource> {
   return {

@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger } from "@nestjs/common";
 import { LoggerService } from "../../logger/logger.service";
-import { ConnectorSourceEntity } from "../../entities/connectorSourceEntity";
+import { ConnectorSourceEntity } from "../../entities/connector_source_entity";
 import { HttpService } from "@nestjs/axios";
 
 @Injectable()

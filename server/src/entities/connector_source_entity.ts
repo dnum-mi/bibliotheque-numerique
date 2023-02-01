@@ -1,4 +1,4 @@
-import { ApplicationEntity } from "./applicationEntity";
+import { ApplicationEntity } from "./application_entity";
 
 import { Column } from "typeorm";
 
@@ -8,7 +8,7 @@ export enum TypeAuth {
 
 export type TMethod = "GET" | "POST";
 
-export class ConnectorSourceEntity extends ApplicationEntity {
+export abstract class ConnectorSourceEntity extends ApplicationEntity {
   @Column({ type: "varchar", default: "GET" })
   method: TMethod;
 

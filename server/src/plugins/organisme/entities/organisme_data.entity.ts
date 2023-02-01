@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { OrganismesSource } from "./organisme_source.entity";
-import { ApplicationEntity } from "../../../entities/applicationEntity";
+import { ApplicationEntity } from "../../../entities/application_entity";
 
 @Entity({ name: "organismes_datas" })
 export class OrganismesData extends ApplicationEntity {

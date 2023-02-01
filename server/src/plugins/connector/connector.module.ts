@@ -1,6 +1,6 @@
 import { DynamicModule, Module } from "@nestjs/common";
 import { ConnectorService } from "./connector.service";
-import { ConnectorSourceEntity } from "../../entities/connectorSourceEntity";
+import { ConnectorSourceEntity } from "../../entities/connector_source_entity";
 import { HttpModule } from "@nestjs/axios";
 
 @Module({})
