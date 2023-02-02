@@ -68,7 +68,7 @@ export class AddOrganismesDatasTable1672764637216
         columnNames: ["organismesSourceId"],
         name: "FK_ORGANISME_SOURCE_ID",
         referencedColumnNames: ["id"],
-        referencedTableName: "organismes_sources",
+        referencedTableName: "connectors",
         onDelete: "CASCADE",
       }),
     );

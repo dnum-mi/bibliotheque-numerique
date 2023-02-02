@@ -1,7 +1,8 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { ConnectorModule } from "../../connector/connector.module";
-import { OrganismesData, OrganismesSource } from "../entities";
+import { ConnectorModule } from "../../../connector/connector.module";
+import { OrganismesData } from "../entities";
+import { Connector } from "../../../entities";
 import { datasourceTest } from "../entities/__tests__";
 import { OrganismesDatasController } from "./organismes_datas.controller";
 import { OrganismesDatasService } from "./organismes_datas.service";
@@ -13,9 +14,9 @@ describe("OrganismesDatasController", () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
         TypeOrmModule.forRoot(
-          datasourceTest([OrganismesData, OrganismesSource]).options,
+          datasourceTest([OrganismesData, Connector]).options,
         ),
-        ConnectorModule.register(OrganismesSource),
+        ConnectorModule,
       ],
 
       controllers: [OrganismesDatasController],

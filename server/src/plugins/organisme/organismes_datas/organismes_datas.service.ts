@@ -1,8 +1,9 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { LoggerService } from "logger/logger.service";
-import { ConnectorService } from "../../connector/connector.service";
+import { ConnectorService } from "../../../connector/connector.service";
 import { DataSource } from "typeorm";
-import { OrganismesData, OrganismesSource } from "../entities";
+import { OrganismesData } from "../entities";
+import { Connector } from "../../../entities";
 
 @Injectable()
 export class OrganismesDatasService {
@@ -12,7 +13,7 @@ export class OrganismesDatasService {
 
   constructor(
     private dataSource: DataSource,
-    private connectorService: ConnectorService<OrganismesSource>,
+    private connectorService: ConnectorService,
   ) {}
 
   findAll() {
@@ -29,24 +30,29 @@ export class OrganismesDatasService {
 
   async createOrUpdate(
     idRna: string,
-    orgSrc: OrganismesSource,
+    connectorApi: Connector,
     organismeDataFromSource: any,
   ) {
     try {
       let organimseData = await OrganismesData.findOneBy({
         idRef: idRna,
-        organismesSource: { id: orgSrc.id },
+        organismesSource: { id: connectorApi.id },
       });
 
       if (!organimseData) {
         organimseData = new OrganismesData();
         organimseData.idRef = idRna;
-        organimseData.organismesSource = orgSrc;
+        organimseData.organismesSource = connectorApi;
       }
       //Seulement pour RNA
       const dateMiseAJours = new Date(organismeDataFromSource.mise_a_jour);
 
       if (organimseData.dataUpdateAt?.getTime() === dateMiseAJours.getTime()) {
+        const message = `No update or no create organisme data for ${idRna} with ${connectorApi.name}`;
+        this.logger.warn({
+          short_message: message,
+          full_message: message,
+        });
         return false;
       }
       organimseData.dataUpdateAt = dateMiseAJours;
@@ -64,26 +70,21 @@ export class OrganismesDatasService {
       throw new Error("Unable to upsert organisme_data");
     }
   }
-  /**
-   * Recherche les données dans api RNA
-   * Enregistre dans le db
-   * @param idRna
-   * @param orgSrc
-   */
-  async findAndAddByIdRna(idRna: string, orgSrc: OrganismesSource) {
+
+  async findAndAddByIdRna(idRna: string, connectorApi: Connector) {
     let organismeDataFromSource;
     try {
       //TODO: A revoir comment il y a plusieur comment savoir quoi mettre
-      const params = orgSrc?.params?.reduce(
+      const params = connectorApi?.params?.reduce(
         (acc, key) => ({ ...acc, [key]: idRna }),
         {},
       );
 
       const result = await this.connectorService.getResult(
-        orgSrc,
+        connectorApi,
         params,
         //TODO: uniquement pour API entreprise
-        orgSrc.query,
+        connectorApi.query,
       );
 
       //TODO: uniquement pour API entrepris
@@ -91,8 +92,8 @@ export class OrganismesDatasService {
 
       if (!organismeDataFromSource) {
         this.logger.warn({
-          short_message: `No found orgnasition from extern api for ${idRna} with ${orgSrc.sourceName}`,
-          full_message: `No found orgnasition from extern api for ${idRna} with ${orgSrc.sourceName}`,
+          short_message: `No found orgnasition from extern api for ${idRna} with ${connectorApi.name}`,
+          full_message: `No found orgnasition from extern api for ${idRna} with ${connectorApi.name}`,
         });
 
         return false;
@@ -104,15 +105,21 @@ export class OrganismesDatasService {
       });
       throw new Error("Unable to upsert organisme_data");
     }
-    return await this.createOrUpdate(idRna, orgSrc, organismeDataFromSource);
+    return await this.createOrUpdate(
+      idRna,
+      connectorApi,
+      organismeDataFromSource,
+    );
   }
 
   async findAndAddByIdRnaFromAllApi(idRna: string) {
     try {
-      const orgSrcs = await OrganismesSource.find({});
+      const connectorApis = await Connector.find({});
 
       return await Promise.all(
-        orgSrcs.map(async (orgSrc) => this.findAndAddByIdRna(idRna, orgSrc)),
+        connectorApis.map(async (connectorApi) =>
+          this.findAndAddByIdRna(idRna, connectorApi),
+        ),
       );
     } catch (error) {
       this.logger.error({

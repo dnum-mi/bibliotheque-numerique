@@ -2,23 +2,21 @@ import { AxiosResponse } from "axios";
 import { Test, TestingModule } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { DataSource } from "typeorm";
-import { HttpModule } from "@nestjs/axios";
-import { ConnectorModule } from "../../connector/connector.module";
-import { ConnectorService } from "../../connector/connector.service";
-import { OrganismesData, OrganismesSource } from "../entities";
-import {
-  createOneOrganismeSource,
-  datasourceTest,
-  organismeSource_test,
-} from "../entities/__tests__";
+import { ConnectorModule } from "../../../connector/connector.module";
+import { ConnectorService } from "../../../connector/connector.service";
+import { OrganismesData } from "../entities";
+import { Connector } from "../../../entities";
+
+import { datasourceTest } from "../entities/__tests__";
 import { OrganismesDatasService } from "./organismes_datas.service";
 import {
   getDatasFromRNA,
   updateOrgFromRNA,
 } from "./__tests__/organismeFromRNA";
+import { connectorTest, createOneConnector } from "../../../entities/__tests__";
 
 async function createTestAddOrg(
-  connectorService: ConnectorService<OrganismesSource>,
+  connectorService: ConnectorService,
   service: OrganismesDatasService,
 ) {
   const expected = getDatasFromRNA();
@@ -37,37 +35,35 @@ async function createTestAddOrg(
 }
 
 async function createNewOrgSrc() {
-  const orgSrcTestData = organismeSource_test();
-  const orgSrc = await createOneOrganismeSource(orgSrcTestData);
+  const orgSrcTestData = connectorTest();
+  const orgSrc = await createOneConnector(orgSrcTestData);
   return orgSrc;
 }
 
 describe("OrganismesDatasService", () => {
   let service: OrganismesDatasService;
-  let connectorService: ConnectorService<OrganismesSource>;
+  let connectorService: ConnectorService;
   let dataSource: DataSource;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
         TypeOrmModule.forRoot(
-          datasourceTest([OrganismesData, OrganismesSource]).options,
+          datasourceTest([OrganismesData, Connector]).options,
         ),
-        HttpModule,
-        ConnectorModule.register(OrganismesSource),
+        ConnectorModule,
       ],
       providers: [OrganismesDatasService],
     }).compile();
 
     service = module.get<OrganismesDatasService>(OrganismesDatasService);
-    connectorService =
-      module.get<ConnectorService<OrganismesSource>>(ConnectorService);
+    connectorService = module.get<ConnectorService>(ConnectorService);
     dataSource = module.get<DataSource>(DataSource);
   });
 
   afterEach(async () => {
     await OrganismesData.delete({});
-    await OrganismesSource.delete({});
+    await Connector.delete({});
   });
 
   afterAll(async () => {
@@ -92,7 +88,7 @@ describe("OrganismesDatasService", () => {
   it("should no add one data in organisme_data from one connnector", async () => {
     const expected = null;
     jest.spyOn(connectorService, "getResult").mockResolvedValue(expected);
-    const orgSrc = new OrganismesSource();
+    const orgSrc = new Connector();
     orgSrc.url = "https://test.com";
 
     const result = await service.findAndAddByIdRna("test", orgSrc);
