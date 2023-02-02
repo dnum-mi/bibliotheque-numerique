@@ -12,7 +12,7 @@ import { ConnectorService } from "./connector.service";
 import { Roles, RolesGuard } from "../guards/roles.guard";
 import { Connector } from "../entities";
 
-@Controller("organismes-sources")
+@Controller("connector")
 @UseGuards(RolesGuard)
 export class ConnectorController {
   constructor(private readonly connectorService: ConnectorService) {}
@@ -39,9 +39,9 @@ export class ConnectorController {
   @Post()
   create(
     @Body()
-    organismesSource: Partial<Connector>,
+    connector: Partial<Connector>,
   ) {
-    return this.connectorService.upsert(organismesSource);
+    return this.connectorService.upsert(connector);
   }
 
   @Roles("admin")
