@@ -7,7 +7,7 @@ import {
 } from "typeorm";
 import * as bcrypt from "bcrypt";
 import { Role } from "./role.entity";
-import { ApplicationEntity } from "./applicationEntity";
+import { ApplicationEntity } from "./application_entity";
 
 @Entity({ name: "users" })
 export class User extends ApplicationEntity {

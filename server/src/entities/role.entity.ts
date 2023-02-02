@@ -7,7 +7,7 @@ import {
   Unique,
 } from "typeorm";
 import { User } from "./user.entity";
-import { ApplicationEntity } from "./applicationEntity";
+import { ApplicationEntity } from "./application_entity";
 
 @Entity({ name: "roles" })
 @Unique("UK_ROLE_NAME", ["name"])
@@ -15,7 +15,7 @@ export class Role extends ApplicationEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
-  @Column({ unique: true })
+  @Column()
   name: string;
 
   @Column()

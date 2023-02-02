@@ -8,7 +8,7 @@ import {
   EntityManager,
 } from "typeorm";
 import { DossierDS, Demarche } from "../entities";
-import { ApplicationEntity } from "./applicationEntity";
+import { ApplicationEntity } from "./application_entity";
 
 export type TUpsertDossier = Partial<
   Omit<Dossier, "dossierDS"> & { dossierDS: number }

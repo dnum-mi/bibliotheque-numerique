@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryColumn, EntityManager } from "typeorm";
 import { Demarche as TDemarche } from "@lab-mi/ds-api-client/dist/@types/types";
-import { ApplicationEntity } from "./applicationEntity";
+import { ApplicationEntity } from "./application_entity";
 
 @Entity({ name: "demarches_ds" })
 export class DemarcheDS extends ApplicationEntity {

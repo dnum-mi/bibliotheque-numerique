@@ -5,7 +5,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { ApplicationEntity } from "../../../entities/applicationEntity";
+import { ApplicationEntity } from "../../../entities/application_entity";
 import { Dossier } from "../../../entities";
 
 @Entity({ name: "instruction_times" })

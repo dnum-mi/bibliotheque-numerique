@@ -5,20 +5,17 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { OrganismesSource } from "./organisme_source.entity";
-import { ApplicationEntity } from "../../../entities/applicationEntity";
+import { ApplicationEntity } from "../../../entities/application_entity";
+import { Connector } from "../../../entities";
 
 @Entity({ name: "organismes_datas" })
 export class OrganismesData extends ApplicationEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
-  @ManyToOne(
-    () => OrganismesSource,
-    (organismesSource) => organismesSource.organismesDatas,
-  )
+  @ManyToOne(() => Connector)
   @JoinColumn()
-  organismesSource: OrganismesSource;
+  organismesSource: Connector;
 
   @Column({
     type: "varchar",

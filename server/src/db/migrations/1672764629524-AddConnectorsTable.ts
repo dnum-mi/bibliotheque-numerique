@@ -1,12 +1,10 @@
-import { MigrationInterface, QueryRunner, Table, TableIndex } from "typeorm";
+import { MigrationInterface, QueryRunner, Table, TableUnique } from "typeorm";
 
-export class AddOrganismesSourcesTable1672764629524
-  implements MigrationInterface
-{
+export class AddConnectorsTable1672764629524 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: "organismes_sources",
+        name: "connectors",
         columns: [
           {
             name: "id",
@@ -14,26 +12,42 @@ export class AddOrganismesSourcesTable1672764629524
             isPrimary: true,
             isGenerated: true,
             generationStrategy: "increment",
+            primaryKeyConstraintName: "PK_CONNECTOR_ID",
           },
           {
             name: "name",
             type: "varchar",
             isNullable: false,
-            isUnique: true,
+          },
+          {
+            name: "method",
+            type: "varchar",
+            default: "'GET'",
           },
           {
             name: "url",
             type: "varchar",
             isNullable: false,
           },
-
+          {
+            name: "params",
+            type: "jsonb",
+            isNullable: true,
+          },
+          {
+            name: "query",
+            type: "jsonb",
+            isNullable: true,
+          },
           {
             name: "typeAuth",
             type: "varchar",
+            isNullable: true,
           },
           {
             name: "token",
             type: "varchar",
+            isNullable: true,
           },
           {
             name: "createAt",
@@ -50,20 +64,17 @@ export class AddOrganismesSourcesTable1672764629524
       true,
     );
 
-    await queryRunner.createIndex(
-      "organismes_sources",
-      new TableIndex({
-        name: "IDX_ORGANISME_SOURCE_NAME",
+    await queryRunner.createUniqueConstraint(
+      "connectors",
+      new TableUnique({
+        name: "UK_CONNECTOR_NAME",
         columnNames: ["name"],
       }),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropIndex(
-      "organismes_sources",
-      "IDX_ORGANISME_SOURCE_NAME",
-    );
-    await queryRunner.dropTable("organismes_sources");
+    await queryRunner.dropUniqueConstraint("connectors", "UK_CONNECTOR_NAME");
+    await queryRunner.dropTable("connectors");
   }
 }
