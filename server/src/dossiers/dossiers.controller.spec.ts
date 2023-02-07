@@ -26,7 +26,7 @@ describe("DossiersController", () => {
     ${"findOne"}           | ${"findOne"}           | ${() => controller.findOne("TEST")}
     ${"findOneWithDetail"} | ${"findOneWithDetail"} | ${() => controller.findOneWithDetail("TEST")}
     ${"search"}            | ${"findWithFilter"}    | ${() => controller.searchDossier({})}
-  `("$name: should get dossiers ", async ({ name, servicefn, fn }) => {
+  `("$name: should get dossiers ", async ({ servicefn, fn }) => {
     const result = ["dossiers"];
     jest.spyOn(service, servicefn).mockImplementation(() => result);
     expect(await fn()).toBe(result);
@@ -45,7 +45,7 @@ describe("DossiersController", () => {
     ${"findOneWithDetail"} | ${"findOneWithDetail"} | ${() => controller.findOneWithDetail("TEST")}
   `(
     "$name: should throw error when there are nothing",
-    async ({ name, servicefn, fn }) => {
+    async ({ servicefn, fn }) => {
       jest.spyOn(service, servicefn).mockImplementation(() => null);
       await expect(fn).rejects.toThrow("Dossier id: TEST not found");
     },
@@ -84,7 +84,7 @@ describe("DossiersController", () => {
     ${"search"}            | ${"findWithFilter"}    | ${() => controller.searchDossier({})}
   `(
     "$name: should throw error with message 'internal error' when there are unknown error",
-    async ({ name, servicefn, fn }) => {
+    async ({ servicefn, fn }) => {
       jest.spyOn(service, servicefn).mockImplementation(() => {
         throw "Test Error";
       });

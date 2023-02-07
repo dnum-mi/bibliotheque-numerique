@@ -20,4 +20,8 @@ describe("FilesController", () => {
   it("should be defined", () => {
     expect(controller).toBeDefined();
   });
+
+  it("should be defined", () => {
+    expect(service).toBeDefined();
+  });
 });
