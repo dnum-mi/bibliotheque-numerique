@@ -5,7 +5,6 @@ import { JwtService } from "@nestjs/jwt";
 
 describe("AuthService", () => {
   let service: AuthService;
-  let jwtService: JwtService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({

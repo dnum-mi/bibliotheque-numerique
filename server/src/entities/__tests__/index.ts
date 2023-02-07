@@ -6,3 +6,4 @@ export * from "./dossier_ds";
 export * from "./user";
 export * from "./role";
 export * from "./connector";
+export * from "./file_storage";

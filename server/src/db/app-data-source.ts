@@ -12,6 +12,7 @@ import {
   User,
   Role,
   Connector,
+  FileStorage,
 } from "../entities";
 import { pluginsEntities } from "../plugins";
 import { resolve } from "path";
@@ -35,6 +36,7 @@ export const AppDataSource = new DataSource({
     User,
     Role,
     Connector,
+    FileStorage,
     ...pluginsEntities,
   ],
   //TODO entities: ["../entities/**.entity.ts"],
