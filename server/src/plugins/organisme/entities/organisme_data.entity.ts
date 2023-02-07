@@ -8,6 +8,8 @@ import {
 import { ApplicationEntity } from "../../../entities/application_entity";
 import { Connector } from "../../../entities";
 
+export type TUpsertOrganismeData = Partial<OrganismesData>;
+
 @Entity({ name: "organismes_datas" })
 export class OrganismesData extends ApplicationEntity {
   @PrimaryGeneratedColumn("increment")
