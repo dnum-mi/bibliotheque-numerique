@@ -6,6 +6,7 @@ import { AppService } from "./app.service";
 
 // Load Configurations
 import configuration from "./config/configuration";
+import fileConfig from "./config/file.config";
 import { AppDataSource } from "./db/app-data-source";
 
 // Load Modules
@@ -18,6 +19,7 @@ import { LoggerModule } from "./logger/logger.module";
 import { AuthModule } from "./auth/auth.module";
 import { UsersModule } from "./users/users.module";
 import { ConnectorModule } from "./connector/connector.module";
+import { FilesModule } from "./files/files.module";
 import { pluginsModules } from "./plugins";
 
 @Module({
@@ -25,7 +27,7 @@ import { pluginsModules } from "./plugins";
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
-      load: [configuration],
+      load: [configuration, fileConfig],
     }),
     LoggerModule,
     TypeOrmModule.forRoot(AppDataSource.options),
@@ -37,6 +39,7 @@ import { pluginsModules } from "./plugins";
     UsersModule,
     RolesModule,
     ConnectorModule,
+    FilesModule,
     ...pluginsModules,
   ],
   controllers: [AppController],
