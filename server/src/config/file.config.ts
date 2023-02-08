@@ -8,9 +8,9 @@ const config = {
     awsS3Region: process.env.AWS_S3_REGION,
     localStorageDir: process.env.FILE_STORAGE_LOCAL_DIR || "./data/files",
     maxFileSize: process.env.MAX_FILE_STORAGE_SIZE || 5242880, // 5mb
-    authorizedExtensions: process.env.FILE_AUTHORIZED_EXTENSIONS.split("|") || [
-      "*",
-    ],
+    authorizedExtensions: process.env.FILE_AUTHORIZED_EXTENSIONS?.split(
+      "|",
+    ) || ["*"],
   },
 };
 

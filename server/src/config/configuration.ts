@@ -28,6 +28,7 @@ const config = {
   defaultAdmin: {
     email: process.env.DEFAULT_ADMIN_EMAIL,
     password: process.env.DEFAULT_ADMIN_PASSWORD,
+    roleName: "admin",
   },
 };
 

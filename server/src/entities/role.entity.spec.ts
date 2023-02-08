@@ -30,6 +30,7 @@ describe("role.entity", () => {
     expect(role).toHaveProperty("id");
     expect(role.name).toBe(data.name);
     expect(role.description).toBe(data.description);
+    expect(role.permissions).toBe(data.permissions);
     const nowDate = new Date().toDateString();
     expect(role.createAt.toDateString()).toBe(nowDate);
     expect(role.updateAt.toDateString()).toBe(nowDate);
