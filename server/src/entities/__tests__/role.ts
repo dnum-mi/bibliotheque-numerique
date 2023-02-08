@@ -1,10 +1,11 @@
 import { faker } from "@faker-js/faker/locale/fr";
-import { Role } from "..";
+import { PermissionName, Role } from "..";
 
 export function role_test(): Partial<Role> {
   return {
     name: faker.internet.domainName(),
     description: faker.datatype.string(5),
+    permissions: [{ name: PermissionName.CREATE_ROLE }],
   };
 }
 export const createOneRole = async (data) => {

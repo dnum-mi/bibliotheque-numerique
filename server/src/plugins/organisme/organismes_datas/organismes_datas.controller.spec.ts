@@ -6,6 +6,9 @@ import { Connector } from "../../../entities";
 import { datasourceTest } from "../entities/__tests__";
 import { OrganismesDatasController } from "./organismes_datas.controller";
 import { OrganismesDatasService } from "./organismes_datas.service";
+import { ConfigModule } from "@nestjs/config";
+import configuration from "../../../config/configuration";
+import fileConfig from "../../../config/file.config";
 
 describe("OrganismesDatasController", () => {
   let controller: OrganismesDatasController;
@@ -17,6 +20,11 @@ describe("OrganismesDatasController", () => {
           datasourceTest([OrganismesData, Connector]).options,
         ),
         ConnectorModule,
+        ConfigModule.forRoot({
+          isGlobal: true,
+          cache: true,
+          load: [configuration, fileConfig],
+        }),
       ],
 
       controllers: [OrganismesDatasController],

@@ -14,6 +14,9 @@ import {
   updateOrgFromRNA,
 } from "./__tests__/organismeFromRNA";
 import { connectorTest, createOneConnector } from "../../../entities/__tests__";
+import { ConfigModule } from "@nestjs/config";
+import configuration from "../../../config/configuration";
+import fileConfig from "../../../config/file.config";
 
 async function createTestAddOrg(
   connectorService: ConnectorService,
@@ -52,6 +55,11 @@ describe("OrganismesDatasService", () => {
           datasourceTest([OrganismesData, Connector]).options,
         ),
         ConnectorModule,
+        ConfigModule.forRoot({
+          isGlobal: true,
+          cache: true,
+          load: [configuration, fileConfig],
+        }),
       ],
       providers: [OrganismesDatasService],
     }).compile();
