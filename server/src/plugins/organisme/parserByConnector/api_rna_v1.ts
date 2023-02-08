@@ -1,5 +1,5 @@
 import { Logger } from "@nestjs/common";
-import { toDate } from "../../../utils/utilsDate";
+import { toDate } from "@biblio-num/utils";
 import { Organisme } from "../entities";
 import { IParseToOrganisme } from "./parse_to_organisme.interface";
 import { LoggerService } from "../../../logger/logger.service";

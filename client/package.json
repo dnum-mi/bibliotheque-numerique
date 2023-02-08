@@ -1,5 +1,5 @@
 {
-  "name": "biblio-num-client",
+  "name": "@biblio-num/client",
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",

@@ -1,5 +1,5 @@
 {
-  "name": "biblio-num-server",
+  "name": "@biblio-num/server",
   "version": "1.0.0",
   "description": "",
   "author": "",
@@ -48,9 +48,10 @@
     "docker:prod:stop": "docker compose -f docker-compose.yml -f docker-compose.prod.yml down"
   },
   "dependencies": {
+    "@biblio-num/utils": "1.0.0",
     "@dnum-mi/ds-api-client": "^1.1.4",
     "@nestjs-modules/mailer": "^1.8.1",
-    "@nestjs/axios": "^1.0.1",
+    "@nestjs/axios": "1.0.1",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.0.0",
@@ -61,8 +62,10 @@
     "@nestjs/swagger": "^6.1.4",
     "@nestjs/typeorm": "^9.0.1",
     "aws-sdk": "^2.1306.0",
+    "axios": "1.2.1",
     "bcrypt": "^5.1.0",
     "class-transformer": "^0.5.1",
+    "class-validator": "0.14.0",
     "colors": "^1.4.0",
     "dayjs": "^1.11.6",
     "dotenv": "^16.0.3",

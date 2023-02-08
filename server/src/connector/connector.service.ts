@@ -2,6 +2,7 @@ import { Injectable, Logger } from "@nestjs/common";
 import { Connector } from "../entities/";
 import { HttpService } from "@nestjs/axios";
 import { LoggerService } from "../logger/logger.service";
+import { AxiosResponse } from "axios";
 
 @Injectable()
 export class ConnectorService {
@@ -76,7 +77,7 @@ export class ConnectorService {
     entity: Connector,
     params: Record<string, string>,
     query?: Record<string, string>,
-  ) {
+  ): Promise<AxiosResponse<any>> {
     try {
       const url = this.buildUrl(entity.url, params, {
         ...entity.query,
