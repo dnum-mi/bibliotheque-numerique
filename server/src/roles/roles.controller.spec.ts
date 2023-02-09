@@ -1,6 +1,7 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { RolesController } from "./roles.controller";
 import { RolesService } from "./roles.service";
+import { ConfigModule } from "@nestjs/config";
 
 describe("RolesController", () => {
   let controller: RolesController;
@@ -8,6 +9,7 @@ describe("RolesController", () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [ConfigModule],
       controllers: [RolesController],
       providers: [RolesService],
     }).compile();

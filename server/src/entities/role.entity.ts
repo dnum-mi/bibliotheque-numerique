@@ -9,6 +9,16 @@ import {
 import { User } from "./user.entity";
 import { ApplicationEntity } from "./application_entity";
 
+export enum PermissionName {
+  CREATE_ROLE = "CREATE_ROLE",
+}
+
+export type TPermission = {
+  name: PermissionName;
+  write?: boolean;
+  delete?: boolean;
+};
+
 @Entity({ name: "roles" })
 @Unique("UK_ROLE_NAME", ["name"])
 export class Role extends ApplicationEntity {
@@ -21,6 +31,9 @@ export class Role extends ApplicationEntity {
   @Column()
   description: string;
 
+  @Column({ type: "jsonb" })
+  permissions: TPermission[];
+
   @ManyToMany(() => User, (user) => user.roles)
   @JoinTable({ name: "users_roles" })
   users: User[];
@@ -30,10 +43,14 @@ export class Role extends ApplicationEntity {
       .insert()
       .into(Role)
       .values(toUpsert)
-      .orUpdate(["name", "description", "updateAt"], "UK_ROLE_NAME", {
-        skipUpdateIfNoValuesChanged: true,
-      })
-      .returning(["id", "name", "description"])
+      .orUpdate(
+        ["name", "description", "permissions", "updateAt"],
+        "UK_ROLE_NAME",
+        {
+          skipUpdateIfNoValuesChanged: true,
+        },
+      )
+      .returning(["id", "name", "description", "permissions"])
       .execute();
   }
 }

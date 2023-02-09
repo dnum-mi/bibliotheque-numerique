@@ -11,11 +11,15 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { RolesService } from "./roles.service";
-import { Role } from "../entities";
-import { Roles, RolesGuard } from "../guards/roles.guard";
+import { PermissionName, Role } from "../entities";
+import {
+  PermissionsGuard,
+  RequirePermissions,
+} from "../guards/permissions.guard";
 
 @Controller("roles")
-@UseGuards(RolesGuard)
+@UseGuards(PermissionsGuard)
+@RequirePermissions({ name: PermissionName.CREATE_ROLE })
 export class RolesController {
   constructor(private readonly rolesService: RolesService) {}
 
@@ -44,7 +48,6 @@ export class RolesController {
   }
 
   @Post("create")
-  @Roles("admin")
   async addRole(@Body("role") role: Partial<Role>) {
     try {
       return await this.rolesService.updateRole(role);
@@ -63,7 +66,6 @@ export class RolesController {
   }
 
   @Post("assign")
-  @Roles("admin")
   async assignRoleToUser(
     @Body("userId") userId: number,
     @Body("roleId") roleId: number,
@@ -85,7 +87,6 @@ export class RolesController {
   }
 
   @Post("unassign")
-  @Roles("admin")
   async unassignRoleToUser(
     @Body("userId") userId: number,
     @Body("roleId") roleId: number,
@@ -107,7 +108,6 @@ export class RolesController {
   }
 
   @Delete("remove/:id")
-  @Roles("admin")
   async deleteRole(@Param("id", ParseIntPipe) id: number) {
     try {
       await this.rolesService.remove(id);
