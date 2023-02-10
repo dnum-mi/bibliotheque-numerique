@@ -22,7 +22,7 @@ services:
     environment:
       POSTGRES_HOST: db
       POSTGRES_DB: biblio-num
-      POSTGRES_USER: user
+      POSTGRES_USERNAME: user
       POSTGRES_PASSWORD: password
       DS_API_URL: ${DS_API_URL}
       DS_API_TOKEN: ${DS_API_TOKEN}
