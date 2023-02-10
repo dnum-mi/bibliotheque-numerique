@@ -1,17 +1,20 @@
 services:
-  biblio-num: 
+  biblio-num-prod:
     build:
       context: .
       dockerfile: Dockerfile
     image: biblio-num:prod
-    container_name: biblio-num
+    container_name: biblio-num-prod
+    environment:
+      BIBLIO-NUM_SERVER: biblio-num-prod_server
+      BIBLIO-NUM_CLIENT: biblio-num-prod_client
     depends_on:
       - client
       - server
     ports:
       - "${BIBLIO_NUM_PORT:-80}:8080"
     networks:
-      - biblio-num-network
+      - biblio-num-prod-network
 
   client: 
     build:
@@ -19,9 +22,9 @@ services:
       context: client
       dockerfile: Dockerfile
     image: biblio-num/client:prod
-    container_name: biblio-num_client
+    container_name: biblio-num-prod_client
     networks:
-      - biblio-num-network
+      - biblio-num-prod-network
 
   server:
     build:
@@ -29,13 +32,13 @@ services:
       context: server
       dockerfile: Dockerfile
     image: biblio-num/server:prod
-    container_name: biblio-num_server
+    container_name: biblio-num-prod_server
     depends_on:
       - db
     ports:
       - 3000:3000
     networks:
-      - biblio-num-network
+      - biblio-num-prod-network
     environment:
       POSTGRES_HOST: ${POSTGRES_HOST:-db}
       POSTGRES_DB: ${POSTGRES_DB:-biblio-num}
@@ -49,31 +52,32 @@ services:
       LOG_DATE_FORMAT: "DD/MM/YYYY HH:mm:ss"
       JWT_SECRET: ${JWT_SECRET:-biblio-num-jwt-secret}
       SESSION_SECRET: ${SESSION_SECRET:-biblio-num-session-secret}
+      FILE_DRIVER: ${FILE_DRIVER:-local}
 
   db:
     image: postgres:14.5
-    container_name: biblio-num_db
+    container_name: biblio-num-prod_db
     restart: always
     environment:
       POSTGRES_DB: biblio-num
-      POSTGRES_USER: user
+      POSTGRES_USER: biblio-num
       POSTGRES_PASSWORD: password
     ports:
       - "5432:5432"
     networks:
-      - biblio-num-network
+      - biblio-num-prod-network
     volumes:
       - type: volume
-        source: biblio-num-db-volume
+        source: biblio-num-prod-db-volume
         target: /var/lib/postgresql/data
 
 
 networks:
-  biblio-num-network:
-    name: biblio-num-network
+  biblio-num-prod-network:
+    name: biblio-num-prod-network
     driver: bridge
     driver_opts:
       com.docker.network.driver.mtu: 1450
 
 volumes:
-  biblio-num-db-volume:
+  biblio-num-prod-db-volume:
