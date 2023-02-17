@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useRoute } from 'vue-router'
 
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useDossierStore } from '@/stores/dossier'
 import DossierInformations from './DossierInformations.vue'
 import DossierDemande from './DossierDemande.vue'
@@ -9,7 +9,6 @@ import DossierAnnotations from './DossierAnnotations.vue'
 import DossierMessages from './DossierMessages.vue'
 
 const dossierStore = useDossierStore()
-const idDossier = ref(1)
 const dossierDS = computed<object>(() => dossierStore?.dossier?.dossierDS?.dataJson || {})
 
 const tabTitles = [
@@ -33,15 +32,14 @@ const selectedTabIndex = ref(0)
 function selectTab (idx:number) {
   selectedTabIndex.value = idx
 }
-watch(idDossier, async (value: number) => {
-  await dossierStore.getDossier(value)
-})
 
 onMounted(async () => {
   // const { id } = useRoute().params
   const params = useRoute()?.params
-  if (params && params.id) { idDossier.value = Number(params.id) }
-  await dossierStore.getDossier(idDossier.value)
+  const id = Number(params.id)
+  if (id) {
+    await dossierStore.getDossier(id)
+  }
 })
 
 </script>

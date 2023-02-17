@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useRoute, useRouter } from 'vue-router'
 
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useDemarcheStore } from '@/stores/demarche'
 import GroupInstructeurs from '@/views/DemarcheGrpInstructeurs.vue'
 import DemarcheService from '@/views/DemarcheService.vue'
@@ -84,18 +84,13 @@ const headerDossierJson = [
   },
 ]
 
-const idDemarche = ref(1)
-
-watch(idDemarche, async (value: number) => {
-  await demarcheStore.getDemarche(value)
-  await demarcheStore.getDossiers(value)
-})
-
 onMounted(async () => {
   const params = route?.params
-  if (params && params.id) { idDemarche.value = Number(params.id) }
-  await demarcheStore.getDemarche(idDemarche.value)
-  await demarcheStore.getDossiers(idDemarche.value)
+  const id = Number(params.id)
+  if (id) {
+    await demarcheStore.getDemarche(id)
+    await demarcheStore.getDossiers(id)
+  }
 })
 
 const getDossier = data => {
@@ -108,8 +103,6 @@ const getDossier = data => {
     <div class="title">
       <h1>Démarche {{ number }}</h1>
       <h2>{{ title }}</h2>
-      <!--TODO: input a retirer-->
-      <input v-model="idDemarche">
     </div>
 
     <DemarcheInformations :data-json="demarche?.demarcheDS?.dataJson" />
