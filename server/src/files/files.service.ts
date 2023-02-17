@@ -9,11 +9,27 @@ import { FileStorage } from "../entities/file_storage.entity";
 import * as AWS from "aws-sdk";
 import { createReadStream } from "fs";
 import { join } from "path";
-import stream from "stream";
+import stream, { PassThrough } from "stream";
+import { HttpService } from "@nestjs/axios";
+import { AxiosResponse } from "axios";
+import { randomStringGenerator } from "@nestjs/common/utils/random-string-generator.util";
+import { S3 } from "aws-sdk/clients/browser_default";
 
 @Injectable()
 export class FilesService {
-  constructor(private readonly configService: ConfigService) {}
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly httpService: HttpService,
+  ) {}
+
+  private s3 = new AWS.S3({
+    accessKeyId: this.configService.get("file.accessKeyId"),
+    secretAccessKey: this.configService.get("file.secretAccessKey"),
+    endpoint: this.configService.get("file.awsDefaultS3Url"),
+    region: this.configService.get("file.awsS3Region"),
+    s3ForcePathStyle: true,
+    signatureVersion: "v4",
+  });
 
   async uploadFile(file): Promise<FileStorage> {
     if (!file) {
@@ -40,12 +56,10 @@ export class FilesService {
       s3: file.location,
     };
 
-    const new_file = new FileStorage();
-    new_file.name = name[this.configService.get("file.driver")];
-    new_file.path = path[this.configService.get("file.driver")];
-    await new_file.save();
-
-    return new_file;
+    return this.createFileStorage(
+      name[this.configService.get("file.driver")],
+      path[this.configService.get("file.driver")],
+    );
   }
 
   public async findFileStorage(fileStorageId: string): Promise<FileStorage> {
@@ -67,16 +81,7 @@ export class FilesService {
         );
       },
       s3: () => {
-        const s3 = new AWS.S3({
-          accessKeyId: this.configService.get("file.accessKeyId"),
-          secretAccessKey: this.configService.get("file.secretAccessKey"),
-          endpoint: this.configService.get("file.awsDefaultS3Url"),
-          region: this.configService.get("file.awsS3Region"),
-          s3ForcePathStyle: true,
-          signatureVersion: "v4",
-        });
-
-        return s3
+        return this.s3
           .getObject({
             Bucket: this.configService.get("file.awsDefaultS3Bucket"),
             Key: fileStorage.name,
@@ -92,5 +97,100 @@ export class FilesService {
       };
     }
     throw new NotFoundException();
+  }
+
+  async copyRemoteFile(fileUrl, fileName = null): Promise<FileStorage> {
+    fileName = fileName.isNull ? fileUrl.split("/").pop() : fileName;
+
+    const fileExtension = fileName.split(".").pop().toLowerCase();
+    await this.fileFilter(fileExtension);
+
+    const stream = await this.downloadFile(fileUrl);
+
+    const uploadFromStream = (
+      fileResponse: AxiosResponse,
+      fileName: string,
+    ): {
+      passThrough: PassThrough;
+      promise: Promise<S3.ManagedUpload.SendData>;
+    } => {
+      const passThrough = new PassThrough();
+      const promise = this.s3
+        .upload({
+          Bucket: this.configService.get("file.awsDefaultS3Bucket"),
+          Key: fileName,
+          ContentType: fileResponse.headers["content-type"],
+          Body: passThrough,
+        })
+        .promise();
+      return { passThrough, promise };
+    };
+
+    const { passThrough, promise } = uploadFromStream(
+      stream,
+      await this.fileNameGenerator(fileName),
+    );
+
+    stream.data.pipe(passThrough);
+
+    const filePath: string = await promise
+      .then((result) => {
+        return result.Location;
+      })
+      .catch((e) => {
+        throw e;
+      });
+    const fileKey: string = await promise
+      .then((result) => {
+        return result.Key;
+      })
+      .catch((e) => {
+        throw e;
+      });
+
+    return this.createFileStorage(fileKey, filePath);
+  }
+
+  private async createFileStorage(name, path): Promise<FileStorage> {
+    const new_file = new FileStorage();
+    new_file.name = name;
+    new_file.path = path;
+    await new_file.save();
+    return new_file;
+  }
+
+  private async downloadFile(fileUrl) {
+    return await this.httpService.axiosRef({
+      url: fileUrl,
+      method: "GET",
+      responseType: "stream",
+    });
+  }
+
+  private async fileFilter(fileExtension) {
+    const authorizedExtensions = this.configService.get(
+      "file.authorizedExtensions",
+    );
+    if (
+      authorizedExtensions.indexOf("*") === -1 &&
+      authorizedExtensions.indexOf(fileExtension) === -1
+    ) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            file: `cantUploadFileType`,
+          },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+  }
+
+  private async fileNameGenerator(originalName): Promise<string> {
+    return `${randomStringGenerator()}.${originalName
+      .split(".")
+      .pop()
+      .toLowerCase()}`;
   }
 }

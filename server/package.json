@@ -13,7 +13,7 @@
     "sync:demarches": "ts-node src/scripts/loadDemarcheDs.ts",
     "sync:demarches:prod": "node dist/scripts/loadDemarcheDs.js",
     "sync:dossiers": "ts-node src/scripts/loadDossierDs.ts",
-    "sync:dossiers:prod": "ts-node src/scripts/loadDossierDs.js",
+    "sync:dossiers:prod": "ts-node dist/scripts/loadDossierDs.js",
     "script:create-default-admin": "ts-node src/scripts/createDefaultAdmin.ts",
     "script:create-default-admin:prod": "node dist/scripts/createDefaultAdmin.js",
     "script:loadOrganismes": "node dist/scripts/loadOrganismes.js",
