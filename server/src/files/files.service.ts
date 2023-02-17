@@ -133,22 +133,12 @@ export class FilesService {
 
     stream.data.pipe(passThrough);
 
-    const filePath: string = await promise
-      .then((result) => {
-        return result.Location;
-      })
-      .catch((e) => {
-        throw e;
-      });
-    const fileKey: string = await promise
-      .then((result) => {
-        return result.Key;
-      })
-      .catch((e) => {
-        throw e;
-      });
-
-    return this.createFileStorage(fileKey, filePath);
+    try {
+      const { Key, Location } = await promise;
+      return this.createFileStorage(Key, Location);
+    } catch (e) {
+      throw e;
+    }
   }
 
   private async createFileStorage(name, path): Promise<FileStorage> {
