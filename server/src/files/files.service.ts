@@ -31,7 +31,7 @@ export class FilesService {
     signatureVersion: "v4",
   });
 
-  async uploadFile(file): Promise<FileStorage> {
+  async uploadFile(file, checksum = ""): Promise<FileStorage> {
     if (!file) {
       throw new HttpException(
         {
@@ -56,9 +56,18 @@ export class FilesService {
       s3: file.location,
     };
 
+    const mimeType = {
+      local: file.mimetype,
+      s3: file.contentType,
+    };
+
     return this.createFileStorage(
       name[this.configService.get("file.driver")],
       path[this.configService.get("file.driver")],
+      file.originalname,
+      checksum,
+      file.size,
+      mimeType[this.configService.get("file.driver")],
     );
   }
 
@@ -99,7 +108,13 @@ export class FilesService {
     throw new NotFoundException();
   }
 
-  async copyRemoteFile(fileUrl, fileName = null): Promise<FileStorage> {
+  async copyRemoteFile(
+    fileUrl,
+    checksum,
+    byteSize,
+    mimeType,
+    fileName = null,
+  ): Promise<FileStorage> {
     fileName = fileName.isNull ? fileUrl.split("/").pop() : fileName;
 
     const fileExtension = fileName.split(".").pop().toLowerCase();
@@ -135,18 +150,36 @@ export class FilesService {
 
     try {
       const { Key, Location } = await promise;
-      return this.createFileStorage(Key, Location);
+      return this.createFileStorage(
+        Key,
+        Location,
+        fileName,
+        checksum,
+        byteSize,
+        mimeType,
+      );
     } catch (e) {
       throw e;
     }
   }
 
-  private async createFileStorage(name, path): Promise<FileStorage> {
-    const new_file = new FileStorage();
-    new_file.name = name;
-    new_file.path = path;
-    await new_file.save();
-    return new_file;
+  private async createFileStorage(
+    name,
+    path,
+    originalName,
+    checksum,
+    byteSize,
+    mimeType,
+  ): Promise<FileStorage> {
+    const newFile = new FileStorage();
+    newFile.name = name;
+    newFile.path = path;
+    newFile.originalName = originalName;
+    newFile.checksum = checksum;
+    newFile.byteSize = byteSize;
+    newFile.mimeType = mimeType;
+    await newFile.save();
+    return newFile;
   }
 
   private async downloadFile(fileUrl) {

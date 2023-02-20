@@ -31,7 +31,16 @@ export class FilesController {
   async copyFile(
     @Body("fileUrl") fileUrl: string,
     @Body("fileName") fileName: string,
+    @Body("checksum") checksum: string,
+    @Body("mimeType") mimeType: string,
+    @Body("byteSize") byteSize: string,
   ) {
-    return await this.filesService.copyRemoteFile(fileUrl, fileName);
+    return await this.filesService.copyRemoteFile(
+      fileUrl,
+      checksum,
+      byteSize,
+      mimeType,
+      fileName,
+    );
   }
 }
