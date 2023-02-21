@@ -20,10 +20,35 @@ export class RolesService {
     }
   }
 
-  async updateRole(role: Partial<Role>) {
+  async getRoleById(id: number) {
     try {
-      const upsertRoleResult = await Role.upsertRole(role);
+      return await Role.findOneBy({ id });
+    } catch (error) {
+      this.logger.error({
+        short_message: "Échec récupération du rôle",
+        full_message: error.toString(),
+      });
+      throw new Error(`Unable to retrieve role id: ${id}`);
+    }
+  }
+
+  async insertRole(role: Partial<Role>) {
+    try {
+      const upsertRoleResult = await Role.insertRole(role);
       return upsertRoleResult.raw[0];
+    } catch (error) {
+      this.logger.error({
+        short_message: "Échec création du rôle",
+        full_message: error.toString(),
+      });
+      throw new Error("Unable to create role");
+    }
+  }
+
+  async updateRole(id: number, role: Partial<Role>) {
+    try {
+      const updateRoleResult = await Role.updateRole(id, role);
+      return updateRoleResult.raw[0];
     } catch (error) {
       this.logger.error({
         short_message: "Échec création du rôle",

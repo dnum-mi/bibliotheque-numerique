@@ -49,10 +49,55 @@ export class RolesController {
     return roles;
   }
 
-  @Post("create")
-  async addRole(@Body("role") role: Partial<Role>) {
+  @Get(":id")
+  async getRoleById(@Param("id", ParseIntPipe) id: number) {
+    let role: Role;
     try {
-      return await this.rolesService.updateRole(role);
+      role = await this.rolesService.getRoleById(id);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new HttpException(
+          error.message,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      throw new HttpException(
+        "Internal Server Error",
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    if (!role) {
+      throw new HttpException("Role not found", HttpStatus.NOT_FOUND);
+    }
+    return role;
+  }
+
+  @Post()
+  async insertRole(@Body("role") role: Partial<Role>) {
+    try {
+      return await this.rolesService.insertRole(role);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new HttpException(
+          error.message,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      throw new HttpException(
+        "Internal Server Error",
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Put(":id")
+  async updateRole(
+    @Param("id", ParseIntPipe) id: number,
+    @Body("role") role: Partial<Role>,
+  ) {
+    try {
+      return await this.rolesService.updateRole(id, role);
     } catch (error) {
       if (error instanceof Error) {
         throw new HttpException(
