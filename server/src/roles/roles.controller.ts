@@ -3,6 +3,7 @@ import {
   Body,
   Get,
   Post,
+  Put,
   HttpException,
   HttpStatus,
   Delete,
@@ -11,11 +12,12 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { RolesService } from "./roles.service";
-import { PermissionName, Role } from "../entities";
+import { Role } from "../entities";
 import {
   PermissionsGuard,
   RequirePermissions,
 } from "../guards/permissions.guard";
+import { PermissionName } from "../types/permissions";
 
 @Controller("roles")
 @UseGuards(PermissionsGuard)

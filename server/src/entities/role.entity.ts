@@ -8,16 +8,7 @@ import {
 } from "typeorm";
 import { User } from "./user.entity";
 import { ApplicationEntity } from "./application_entity";
-
-export enum PermissionName {
-  CREATE_ROLE = "CREATE_ROLE",
-}
-
-export type TPermission = {
-  name: PermissionName;
-  write?: boolean;
-  delete?: boolean;
-};
+import { TPermission } from "../types/tpermission";
 
 @Entity({ name: "roles" })
 @Unique("UK_ROLE_NAME", ["name"])
@@ -28,28 +19,31 @@ export class Role extends ApplicationEntity {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ nullable: true })
   description: string;
 
-  @Column({ type: "jsonb" })
+  @Column({ type: "jsonb", default: [] })
   permissions: TPermission[];
 
   @ManyToMany(() => User, (user) => user.roles)
   @JoinTable({ name: "users_roles" })
   users: User[];
 
-  static upsertRole(toUpsert: Partial<Role>) {
+  static insertRole(toUpsert: Partial<Role>) {
     return this.createQueryBuilder()
       .insert()
       .into(Role)
       .values(toUpsert)
-      .orUpdate(
-        ["name", "description", "permissions", "updateAt"],
-        "UK_ROLE_NAME",
-        {
-          skipUpdateIfNoValuesChanged: true,
-        },
-      )
+      .returning(["id", "name", "description", "permissions"])
+      .execute();
+  }
+
+  static updateRole(id: number, toUpdate: Partial<Role>) {
+    return this.createQueryBuilder()
+      .insert()
+      .update(Role)
+      .set(toUpdate)
+      .where("id = :id", { id })
       .returning(["id", "name", "description", "permissions"])
       .execute();
   }

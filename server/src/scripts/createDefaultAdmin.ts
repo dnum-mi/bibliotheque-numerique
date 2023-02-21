@@ -26,10 +26,9 @@ async function bootstrap() {
   try {
     const [user, role] = await Promise.all([
       usersService.findOrCreate(email, password),
-      rolesService.updateRole({
+      rolesService.insertRole({
         name: roleName,
         description: "App administrator, has full rights",
-        permissions: [],
       }),
     ]);
     if (user?.id && role?.id)

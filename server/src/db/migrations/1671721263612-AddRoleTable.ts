@@ -31,10 +31,12 @@ export class AddRoleTable1671721263612 implements MigrationInterface {
           {
             name: "description",
             type: "varchar",
+            isNullable: true,
           },
           {
             name: "permissions",
             type: "jsonb",
+            default: "'[]'",
           },
           {
             name: "createAt",
