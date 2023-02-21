@@ -1,5 +1,7 @@
 import { faker } from '@faker-js/faker/locale/fr'
 import type { User, UserForm } from '@/shared/interfaces'
+import { PermissionName } from '@/types/permissions'
+import type { TPermission } from '@/types/tpermission'
 
 export const createRandomUserForm = (): UserForm => ({
   email: faker.internet.email(),
@@ -7,7 +9,7 @@ export const createRandomUserForm = (): UserForm => ({
 })
 
 export const createRandomUser = (id?: number): User => ({
-  id: id || faker.datatype.number(100),
+  id: id || faker.helpers.unique(faker.datatype.number, [1000]),
   firstName: faker.internet.userName(),
   lastName: faker.internet.userName(),
   email: faker.internet.email(),
@@ -23,7 +25,7 @@ export const createRandomUsers = (count: number): User[] => {
 }
 
 export const createRandomAdmin = (): User => ({
-  id: faker.datatype.number(100),
+  id: faker.helpers.unique(faker.datatype.number, [1000]),
   firstName: faker.internet.userName(),
   lastName: faker.internet.userName(),
   email: faker.internet.email(),
@@ -31,6 +33,39 @@ export const createRandomAdmin = (): User => ({
     id: 1,
     name: 'admin',
     description: 'Administrator',
+    permissions: [],
+    createAt: faker.date.past().toISOString(),
+    updateAt: faker.date.past().toISOString(),
+  }],
+})
+
+export const createRandomUserWithoutCreateRole = () => ({
+  id: faker.helpers.unique(faker.datatype.number, [1000]),
+  firstName: faker.internet.userName(),
+  lastName: faker.internet.userName(),
+  email: faker.internet.email(),
+  roles: [{
+    id: 1,
+    name: 'admin_local',
+    description: 'Administrator local',
+    permissions: [],
+    createAt: faker.date.past().toISOString(),
+    updateAt: faker.date.past().toISOString(),
+  }],
+})
+export const PermissionCreateRole: TPermission = {
+  name: PermissionName.CREATE_ROLE,
+}
+export const createRandomUserWithCreateRole = () => ({
+  id: faker.helpers.unique(faker.datatype.number, [1000]),
+  firstName: faker.internet.userName(),
+  lastName: faker.internet.userName(),
+  email: faker.internet.email(),
+  roles: [{
+    id: 1,
+    name: 'admin_local',
+    description: 'Administrator local',
+    permissions: [PermissionCreateRole],
     createAt: faker.date.past().toISOString(),
     updateAt: faker.date.past().toISOString(),
   }],
