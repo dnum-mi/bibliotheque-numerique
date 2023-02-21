@@ -3,7 +3,10 @@
     <h2 class="mb-20">
       Espace administration
     </h2>
-    <div class="role-form">
+    <div
+      v-if="canManageRole"
+      class="role-form"
+    >
       <DsfrInputGroup
         :is-valid="roleNameError"
         :error-message="roleNameError"
@@ -38,9 +41,11 @@
       </DsfrButton>
     </div>
   </div>
-  <div style="display: flex">
+  <div
+    style="display: flex"
+  >
     <div
-      class="fr-col-6"
+      :class="canManageRole?'fr-col-6':'fr-col-12'"
       data-cy="user-list"
     >
       <BiblioNumDataTableAgGrid
@@ -52,17 +57,11 @@
       />
     </div>
     <div
+      v-if="canManageRole"
       class="fr-col-6"
       data-cy="role-list"
     >
-      <BiblioNumDataTableAgGrid
-        title="Roles"
-        component-action=""
-        :headers="rolesHeadersJson"
-        :row-data="rolesRowData"
-        with-action="{{ true }}"
-        @get-elt="deleteRole"
-      />
+      <AdminRoles />
     </div>
   </div>
 </template>
@@ -73,11 +72,12 @@ import { useUserStore, useRoleStore } from '@/stores'
 import { dateToStringFr } from '@/utils/dateToString'
 import { computed, onMounted } from 'vue'
 import { DsfrInputGroup, DsfrInput, DsfrButton } from '@gouvminint/vue-dsfr'
-import type { IRole, IRoleForm, User } from '@/shared/interfaces'
+import type { IRoleForm, User } from '@/shared/interfaces'
 import { toFormValidator } from '@vee-validate/zod'
 import { z } from 'zod'
 import { useField, useForm } from 'vee-validate'
 import router from '@/router'
+import AdminRoles from './AdminRoles.vue'
 
 const userStore = useUserStore()
 const roleStore = useRoleStore()
@@ -114,48 +114,13 @@ const usersHeadersJson = [
   },
 ]
 
-const rolesHeadersJson = [
-  { value: 'id', action: { icon: 'co-trash', condition: (role: IRole) => role.name !== 'admin' } },
-  {
-    text: 'Id',
-    value: 'id',
-    width: 65,
-  },
-  {
-    text: 'Name',
-    value: 'name',
-    width: 200,
-  },
-  {
-    text: 'Description',
-    value: 'description',
-    width: 250,
-  },
-  {
-    text: 'Created At',
-    value: 'createAt',
-    parseFn: dateToStringFr,
-    type: 'date',
-    width: 130,
-  },
-  {
-    text: 'Updated At',
-    value: 'updateAt',
-    parseFn: dateToStringFr,
-    type: 'date',
-    width: 130,
-  },
-]
-
 const usersRowData = computed(() => {
   return [...userStore.users.values()].map((user: User) => ({
     ...user,
     roles: user.roles.map((role) => role.name).join(', '),
   }))
 })
-const rolesRowData = computed(() => {
-  return roleStore.roles
-})
+const canManageRole = computed(() => userStore.canManageRoles)
 
 const validationSchema = toFormValidator(z.object({
   name: z.string({ required_error: 'Vous devez renseigner ce champ' }),
@@ -179,16 +144,12 @@ const createRole = async () => {
   }
 }
 
-const deleteRole = async (data: IRole) => {
-  await roleStore.deleteRole(data.id)
-}
-
 const getUser = (data: { id: number }) => {
   router.push({ name: 'User', params: { id: data.id } })
 }
 
 onMounted(async () => {
-  await Promise.all([userStore.loadUsers(), roleStore.getRoles()])
+  await Promise.all([userStore.loadUsers()])
 })
 
 </script>
