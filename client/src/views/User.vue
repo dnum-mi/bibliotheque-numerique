@@ -23,7 +23,7 @@ const hasRoleId = (id: number) =>
     .includes(id)
 
 const rolesRowData = computed(() => {
-  return roleStore.roles
+  return [...roleStore.roles.values()]
 })
 
 const assignRole = async (roleId: number) => {
@@ -49,7 +49,7 @@ onMounted(async () => {
   if (params && params.id) { idUser.value = Number(params.id) }
   await Promise.all([
     userStore.loadUserById(idUser.value),
-    roleStore.getRoles(),
+    roleStore.fetchRoles(),
   ])
 })
 

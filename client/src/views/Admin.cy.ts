@@ -24,7 +24,7 @@ describe('<Admin />', () => {
     roleStore.roles = createRandomRoles(10)
 
     userStore.loadUsers = () => Promise.resolve()
-    roleStore.getRoles = () => Promise.resolve()
+    roleStore.fetchRoles = () => Promise.resolve()
 
     const extensions = {
       use: [
