@@ -76,9 +76,6 @@ const getRole = async (data: IRole) => {
   router.push({ name: 'Role', params: { id: data.id } })
 }
 
-const onSelectionChanged = (e: any) => {
-  console.log(e)
-}
 onMounted(async () => {
   await Promise.all([roleStore.fetchRoles()])
 })
