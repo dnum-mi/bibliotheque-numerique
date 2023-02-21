@@ -14,6 +14,13 @@ export function hasAdminAccessGuard () {
   }
 }
 
+export function canManageRolesGuard () {
+  const userStore = useUserStore()
+  if (!userStore.canManageRoles) {
+    return '/'
+  }
+}
+
 export function isNotAuthenticatedGuard () {
   const userStore = useUserStore()
   if (userStore.isAuthenticated) {

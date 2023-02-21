@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import type { LoginForm, User } from '@/shared/interfaces'
 import { fetchCurrentUser, getUsers, getUserById, loginUser, logoutUser } from '@/shared/services/user.service'
+import { PermissionName, RoleName } from '@/types/permissions'
 
 interface UserState {
   currentUser: User | null,
@@ -25,11 +26,14 @@ export const useUserStore = defineStore('user', {
       }
     },
     hasAdminAccess (state): boolean {
-      if (state.currentUser?.roles.find(role => role.name === 'admin')) {
+      if (state.currentUser?.roles.find(role => role.name === RoleName.ADMIN)) {
         return true
       } else {
         return false
       }
+    },
+    canManageRoles (state): boolean {
+      return !!state.currentUser?.roles?.find(role => role.name === RoleName.ADMIN || role?.permissions?.find(permission => permission?.name === PermissionName.CREATE_ROLE))
     },
   },
   actions: {
