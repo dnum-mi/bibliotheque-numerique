@@ -100,5 +100,6 @@ import { HttpModule } from "@nestjs/axios";
   ],
   controllers: [FilesController],
   providers: [ConfigModule, ConfigService, FilesService],
+  exports: [FilesService],
 })
 export class FilesModule {}
