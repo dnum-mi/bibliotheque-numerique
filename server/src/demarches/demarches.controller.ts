@@ -11,10 +11,14 @@ import {
 import { DemarchesService } from "./demarches.service";
 import { Demarche, Dossier } from "../entities";
 import { FilterPipe } from "../pipe/filter.pipe";
+import { DemarchesDSService } from "../demarches_ds/demarches_ds.service";
 
 @Controller("demarches")
 export class DemarchesController {
-  constructor(private readonly demarcheService: DemarchesService) {}
+  constructor(
+    private readonly demarcheService: DemarchesService,
+    private readonly dossierDSServices: DemarchesDSService,
+  ) {}
 
   @Get()
   async getDemarches(): Promise<Demarche[]> {
@@ -148,5 +152,31 @@ export class DemarchesController {
       );
     }
     return demarche.dossiers;
+  }
+
+  @Post("create")
+  async create(@Body("idDs", ParseIntPipe) idDs: number) {
+    try {
+      const demarche = await this.demarcheService.findByDsId(idDs);
+
+      if (demarche)
+        return { message: `Demarche id: ${idDs} exists, nothing to do.` };
+
+      // TODO: Run this upsert in a Job
+      await this.dossierDSServices.upsertDemarchesDSAndDemarches([idDs]);
+
+      return { message: `Demarche id: ${idDs} create success!` };
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new HttpException(
+          error.message,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      throw new HttpException(
+        "Internal Server Error",
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }
