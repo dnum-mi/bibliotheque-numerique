@@ -71,6 +71,11 @@ const routes = [
     beforeEnter: [canManageRolesGuard],
     component: () => import('@/views/Role.vue'),
   },
+  {
+    path: '/organismes/:id',
+    name: 'FicheOrganismes',
+    component: () => import('@/views/FicheOrganisme.vue'),
+  },
 ]
 
 const router = createRouter({
