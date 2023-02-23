@@ -78,4 +78,9 @@ export class DemarchesDSService {
       throw new Error("Unable to update demarches_ds");
     }
   }
+
+  async allDemarchesIds() {
+    const allDemarcheEntity = await DemarcheDS.find();
+    return allDemarcheEntity.map((id) => id.id);
+  }
 }
