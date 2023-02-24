@@ -33,7 +33,7 @@ const champs = computed(() => props.datas?.champs || [])
       Formulaire
     </h3>
     <div>
-      <DossierChamps :datas="champs " />
+      <DossierChamps :champs="champs " />
     </div>
   </div>
 </template>
