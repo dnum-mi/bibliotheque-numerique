@@ -18,6 +18,7 @@ import { useRoleStore, useUserStore } from '@/stores'
 import { dateToStringFr } from '@/utils/dateToString'
 import type { IRole } from '@/shared/interfaces'
 import router from '@/router'
+import { RoleName } from '@/types/permissions'
 
 const userStore = useUserStore()
 const roleStore = useRoleStore()
@@ -25,7 +26,7 @@ const roleStore = useRoleStore()
 const rolesHeadersJson = [
   {
     value: 'id',
-    action: { condition: (role: IRole) => canManageRoles.value && (role.name !== 'admin') },
+    action: { condition: (role: IRole) => canManageRoles.value && (role.name !== RoleName.ADMIN) },
   },
   {
     text: 'Id',
@@ -77,7 +78,11 @@ const getRole = async (data: IRole) => {
 }
 
 onMounted(async () => {
-  await Promise.all([roleStore.fetchRoles()])
+  try {
+    await roleStore.fetchRoles()
+  } catch (error) {
+    console.error(error)
+  }
 })
 
 </script>

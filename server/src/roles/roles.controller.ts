@@ -74,9 +74,9 @@ export class RolesController {
   }
 
   @Post()
-  async insertRole(@Body("role") role: Partial<Role>) {
+  async create(@Body("role") role: Partial<Role>) {
     try {
-      return await this.rolesService.insertRole(role);
+      return await this.rolesService.create(role);
     } catch (error) {
       if (error instanceof Error) {
         throw new HttpException(
@@ -92,12 +92,12 @@ export class RolesController {
   }
 
   @Put(":id")
-  async updateRole(
+  async update(
     @Param("id", ParseIntPipe) id: number,
     @Body("role") role: Partial<Role>,
   ) {
     try {
-      return await this.rolesService.updateRole(id, role);
+      return await this.rolesService.update(id, role);
     } catch (error) {
       if (error instanceof Error) {
         throw new HttpException(

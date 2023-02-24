@@ -47,10 +47,14 @@ const getElt = async (data: { id: number }) => {
 onMounted(async () => {
   const params = useRoute()?.params
   if (params && params.id) { idUser.value = Number(params.id) }
-  await Promise.all([
-    userStore.loadUserById(idUser.value),
-    roleStore.fetchRoles(),
-  ])
+  try {
+    await Promise.all([
+      userStore.loadUserById(idUser.value),
+      roleStore.fetchRoles(),
+    ])
+  } catch (error) {
+    console.error(error)
+  }
 })
 
 const rolesHeadersJson = [

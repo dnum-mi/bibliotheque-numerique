@@ -40,7 +40,11 @@ const deleteRole = async () => {
 onMounted(async () => {
   const params = route?.params
   if (params && params.id) {
-    await roleStore.fetchRoleById(Number(params.id))
+    try {
+      await roleStore.fetchRoleById(Number(params.id))
+    } catch (error) {
+      console.error(error)
+    }
   }
 })
 
@@ -57,7 +61,7 @@ watch(() => roleStore.roles.get(Number(route?.params?.id)), () => {
     class="role-page"
   >
     <div class="role-info">
-      <h2 class="mb-20">
+      <h2>
         Role
       </h2>
       <div class="fr-col-12 fr-grid-row">
@@ -77,7 +81,7 @@ watch(() => roleStore.roles.get(Number(route?.params?.id)), () => {
         <span class="fr-text"> {{ roleData.permissions?.map((p) => p.name).join(', ') }}</span>
       </div>
       <DsfrButton
-        style="margin-top: 2rem"
+        class="fr-mt-4w"
         type="button"
         label="Supprimer le rôle"
         secondary="true"
@@ -88,7 +92,7 @@ watch(() => roleStore.roles.get(Number(route?.params?.id)), () => {
       class="permissions-list"
       data-cy="permissions-role-list"
     >
-      <h2 class="mb-20">
+      <h2>
         Permissions
       </h2>
       <DsfrCheckboxSet
@@ -105,24 +109,21 @@ watch(() => roleStore.roles.get(Number(route?.params?.id)), () => {
 </template>
 
 <style lang="scss" scoped>
-div.role-info {
-  padding: 50px 50px;
+.role-info {
+  padding: 3rem 3rem;
 }
 .fr-text--bold {
   padding-right: 10px;
 }
-div.role-page {
+.role-page {
   display: flex;
   flex-direction: row;
 }
-div.role-info {
+.role-info {
   flex: 1;
 }
-div.permissions-list {
-  padding: 50px 50px;
+.permissions-list {
+  padding: 3rem 3rem;
   flex: 2;
-}
-div.permission-checkbox {
-  margin-bottom: 10px;
 }
 </style>

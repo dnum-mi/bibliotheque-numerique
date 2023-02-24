@@ -32,7 +32,7 @@ export class RolesService {
     }
   }
 
-  async insertRole(role: Partial<Role>) {
+  async create(role: Partial<Role>) {
     try {
       const upsertRoleResult = await Role.insertRole(role);
       return upsertRoleResult.raw[0];
@@ -45,7 +45,7 @@ export class RolesService {
     }
   }
 
-  async updateRole(id: number, role: Partial<Role>) {
+  async update(id: number, role: Partial<Role>) {
     try {
       const updateRoleResult = await Role.updateRole(id, role);
       return updateRoleResult.raw[0];
