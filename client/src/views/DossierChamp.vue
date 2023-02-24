@@ -12,6 +12,7 @@ const dataCy = 'dossier-champ'
   <div
     v-if="champ"
     :data-cy="dataCy"
+    class="fr-mb-2w"
   >
     <label
       :for="champ.id"

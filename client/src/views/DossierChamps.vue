@@ -15,13 +15,12 @@ const dataCy = 'dossier-champs'
       :data-cy="dataCy"
     >
       <div class="fr-grid-row">
-        <span
+        <DossierChamp
           v-for="champ in champs"
           :key="champ.id"
+          :champ="champ"
           class="fr-col-12 fr-grid-row"
-        >
-          <DossierChamp :champ="champ" />
-        </span>
+        />
       </div>
     </div>
   </div>

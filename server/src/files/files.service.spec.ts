@@ -4,7 +4,7 @@ import { FilesService } from "./files.service";
 import { ConfigService } from "@nestjs/config";
 import { HttpModule } from "@nestjs/axios";
 
-describe("RolesService", () => {
+describe("FilesService", () => {
   let controller: FilesController;
   let service: FilesService;
 

@@ -118,49 +118,45 @@ export class FilesService {
     fileName = fileName.isNull ? fileUrl.split("/").pop() : fileName;
 
     const fileExtension = fileName.split(".").pop().toLowerCase();
-    await this.fileFilter(fileExtension);
+    this.fileFilter(fileExtension);
 
     const stream = await this.downloadFile(fileUrl);
 
-    const uploadFromStream = (
-      fileResponse: AxiosResponse,
-      fileName: string,
-    ): {
-      passThrough: PassThrough;
-      promise: Promise<S3.ManagedUpload.SendData>;
-    } => {
-      const passThrough = new PassThrough();
-      const promise = this.s3
-        .upload({
-          Bucket: this.configService.get("file.awsDefaultS3Bucket"),
-          Key: fileName,
-          ContentType: fileResponse.headers["content-type"],
-          Body: passThrough,
-        })
-        .promise();
-      return { passThrough, promise };
-    };
-
-    const { passThrough, promise } = uploadFromStream(
+    const { passThrough, promise } = this.uploadFromStream(
       stream,
       await this.fileNameGenerator(fileName),
     );
 
     stream.data.pipe(passThrough);
 
-    try {
-      const { Key, Location } = await promise;
-      return this.createFileStorage(
-        Key,
-        Location,
-        fileName,
-        checksum,
-        byteSize,
-        mimeType,
-      );
-    } catch (e) {
-      throw e;
-    }
+    const { Key, Location } = await promise;
+    return this.createFileStorage(
+      Key,
+      Location,
+      fileName,
+      checksum,
+      byteSize,
+      mimeType,
+    );
+  }
+
+  private uploadFromStream(
+    fileResponse: AxiosResponse,
+    fileName: string,
+  ): {
+    passThrough: PassThrough;
+    promise: Promise<S3.ManagedUpload.SendData>;
+  } {
+    const passThrough = new PassThrough();
+    const promise = this.s3
+      .upload({
+        Bucket: this.configService.get("file.awsDefaultS3Bucket"),
+        Key: fileName,
+        ContentType: fileResponse.headers["content-type"],
+        Body: passThrough,
+      })
+      .promise();
+    return { passThrough, promise };
   }
 
   private async createFileStorage(
@@ -190,7 +186,7 @@ export class FilesService {
     });
   }
 
-  private async fileFilter(fileExtension) {
+  private fileFilter(fileExtension) {
     const authorizedExtensions = this.configService.get(
       "file.authorizedExtensions",
     );
@@ -210,7 +206,7 @@ export class FilesService {
     }
   }
 
-  private async fileNameGenerator(originalName): Promise<string> {
+  private fileNameGenerator(originalName) {
     return `${randomStringGenerator()}.${originalName
       .split(".")
       .pop()

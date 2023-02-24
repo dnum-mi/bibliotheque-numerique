@@ -1,6 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { ApplicationEntity } from "./application_entity";
-import { int } from "aws-sdk/clients/datapipeline";
 
 @Entity({ name: "file_storages" })
 export class FileStorage extends ApplicationEntity {

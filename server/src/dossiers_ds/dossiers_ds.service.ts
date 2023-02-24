@@ -47,6 +47,9 @@ export class DossiersDSService {
     try {
       const response = await this.dsApiClient.demarcheDossiers(demarcheNumber);
       const dossiers = response?.demarche?.dossiers?.nodes;
+      this.logger.log(
+        `For demarche (ID: ${demarcheNumber}), NB dossier to upsert is: ${dossiers.length}`,
+      );
       if (dossiers && dossiers.length > 0) {
         return await Promise.all(
           dossiers.map(async (dossier) => {
@@ -83,9 +86,8 @@ export class DossiersDSService {
         const dossierFound = await DossierDS.findOneBy({ id: dossier.number });
 
         if (dossierFound) {
-          // update Dossier
+          // TODO: update Dossier
         } else {
-          // Create Dossier
           dossier = await this.updateFileUrlInJson(dossier);
         }
 
