@@ -18,7 +18,7 @@ const messages = computed(() => props.datas?.messages || [])
     >
       <div class="fr-grid-row">
         <div
-          v-for="{ id, email, body, createdAt } in messages"
+          v-for="{ id, email, body, createdAt, attachment } in messages"
           :key="id"
           class="fr-col-12 fr-grid-row"
         >
@@ -27,6 +27,7 @@ const messages = computed(() => props.datas?.messages || [])
             :email="email"
             :body="body"
             :created-at="createdAt"
+            :attachment="attachment"
           />
         </div>
       </div>

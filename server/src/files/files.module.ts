@@ -9,9 +9,11 @@ import * as multerS3 from "multer-s3";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { FileStorage } from "../entities/file_storage.entity";
 import { FilesService } from "./files.service";
+import { HttpModule } from "@nestjs/axios";
 
 @Module({
   imports: [
+    HttpModule,
     TypeOrmModule.forFeature([FileStorage]),
     MulterModule.registerAsync({
       imports: [ConfigModule],
@@ -98,5 +100,6 @@ import { FilesService } from "./files.service";
   ],
   controllers: [FilesController],
   providers: [ConfigModule, ConfigService, FilesService],
+  exports: [FilesService],
 })
 export class FilesModule {}

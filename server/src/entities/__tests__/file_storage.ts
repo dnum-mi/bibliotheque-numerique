@@ -6,6 +6,10 @@ export function file_storage_test(): Partial<FileStorage> {
     id: faker.datatype.uuid(),
     name: faker.system.fileName(),
     path: faker.internet.url(),
+    originalName: faker.system.fileName(),
+    checksum: faker.random.alpha(),
+    byteSize: faker.datatype.number(),
+    mimeType: faker.system.mimeType(),
   };
 }
 export const createOneFileStorage = async (data) => {

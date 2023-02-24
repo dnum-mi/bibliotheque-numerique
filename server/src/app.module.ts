@@ -7,6 +7,8 @@ import { AppService } from "./app.service";
 // Load Configurations
 import configuration from "./config/configuration";
 import fileConfig from "./config/file.config";
+import dsConfig from "./config/ds.config";
+
 import { AppDataSource } from "./db/app-data-source";
 
 // Load Modules
@@ -27,7 +29,7 @@ import { pluginsModules } from "./plugins";
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
-      load: [configuration, fileConfig],
+      load: [configuration, fileConfig, dsConfig],
     }),
     LoggerModule,
     TypeOrmModule.forRoot(AppDataSource.options),

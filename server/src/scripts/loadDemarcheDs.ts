@@ -11,17 +11,20 @@ async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule);
   app.useLogger(app.get(LoggerService));
 
-  // TODO:  demarchesNumbers array has to be dynamic
-  const demarchesNumbers: number[] = [1, 2, 3, 4, 8, 11];
-
   try {
     const demarchesDSService = app.get(DemarchesDSService);
     const dossierDSServices = app.get(DossiersDSService);
+    const logger = app.get(LoggerService);
 
+    const demarchesNumbers: number[] =
+      await demarchesDSService.allDemarchesIds();
+
+    logger.log(`Demarches Numbers to upsert: ${demarchesNumbers}`);
     await demarchesDSService.upsertDemarchesDSAndDemarches(demarchesNumbers);
 
     await Promise.all(
       demarchesNumbers.map(async (demarcheId) => {
+        logger.log(`Demarche Number to upsert Dossier: ${demarcheId}`);
         await dossierDSServices.upsertDemarcheDossiersDS(demarcheId);
       }),
     );

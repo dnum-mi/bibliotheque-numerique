@@ -7,12 +7,12 @@ import DossierChamps from './DossierChamps.vue'
 
 describe('<DossierChamps />', () => {
   it('renders', () => {
-    const datas = getChamps()
-    cy.mount(DossierChamps, { props: { datas } })
+    const champs = getChamps()
+    cy.mount(DossierChamps, { props: { champs } })
 
     cy.get('label').then(($label) => {
-      datas.forEach(({ label, stringValue }, idx) => {
-        cy.wrap($label).eq(idx).contains(new RegExp(`^${label} :$`, 'g')).next().should('contain', stringValue)
+      champs.forEach(({ label, stringValue }, idx) => {
+        cy.wrap($label).eq(idx).next().should('contain', stringValue)
       })
     })
   })

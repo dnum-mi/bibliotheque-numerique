@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   Param,
@@ -24,5 +25,22 @@ export class FilesController {
   async download(@Param("id") id: string, @Response() response) {
     const file = await this.filesService.getFile(id);
     file.stream.pipe(response);
+  }
+
+  @Post("copy")
+  async copyFile(
+    @Body("fileUrl") fileUrl: string,
+    @Body("fileName") fileName: string,
+    @Body("checksum") checksum: string,
+    @Body("mimeType") mimeType: string,
+    @Body("byteSize") byteSize: string,
+  ) {
+    return await this.filesService.copyRemoteFile(
+      fileUrl,
+      checksum,
+      byteSize,
+      mimeType,
+      fileName,
+    );
   }
 }

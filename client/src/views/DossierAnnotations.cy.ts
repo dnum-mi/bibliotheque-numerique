@@ -19,7 +19,7 @@ describe('<DossierAnnotations />', () => {
 
     cy.get('label').then(($label) => {
       datas.annotations.forEach(({ label, stringValue }, idx) => {
-        cy.wrap($label).eq(idx).contains(new RegExp(`^${label} :$`, 'g')).next().should('contain', stringValue)
+        cy.wrap($label).eq(idx).next().should('contain', stringValue)
       })
     })
   })

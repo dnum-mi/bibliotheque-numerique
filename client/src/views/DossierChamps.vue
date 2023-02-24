@@ -1,8 +1,9 @@
 <script lang="ts" setup>
+import DossierChamp from './DossierChamp.vue'
 withDefaults(defineProps<{
-    datas?: object[]
+    champs?: object[]
   }>(), {
-  datas: () => ([]),
+  champs: () => ([]),
 })
 
 const dataCy = 'dossier-champs'
@@ -10,25 +11,16 @@ const dataCy = 'dossier-champs'
 <template>
   <div class="fr-container">
     <div
-      v-if="datas"
+      v-if="champs"
       :data-cy="dataCy"
-      class="fr-container"
     >
       <div class="fr-grid-row">
-        <div
-          v-for="{ id, label, stringValue } in datas"
-          :key="id"
+        <DossierChamp
+          v-for="champ in champs"
+          :key="champ.id"
+          :champ="champ"
           class="fr-col-12 fr-grid-row"
-        >
-          <label
-            :for="id"
-            class="fr-text--bold fr-col-6"
-          > {{ label }} :</label>
-          <span
-            :id="id"
-            class="fr-text fr-col-6"
-          > {{ stringValue }}</span>
-        </div>
+        />
       </div>
     </div>
   </div>
