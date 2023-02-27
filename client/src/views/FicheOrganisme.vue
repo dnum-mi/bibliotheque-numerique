@@ -1,116 +1,110 @@
 <template>
-  <div class="fr-container">
-    <div class="fr-grid-row">
-      <div
-        class="bn-fiche-title fr-col-12"
-      >
-        <div>
-          <bn-badge-type-organisme />
-          <span class="fr-text--lead fr-text--bold">{{ numberRNA }} -</span> <span class="fr-text--lead">{{ name }}</span>
-        </div>
-      </div>
-      <div class="bn-fiche-sub-title fr-col-12">
-        <div class="fr-container">
-          <div class="fr-grid-row">
-            <div class="fr-col-2">
-              <label class="bn-fiche-sub-title--label ">SIÈGE SOCIAL</label>
-              <span class="bn-fiche-sub-title--text">{{ siegeSocial }}</span>
-            </div>
-            <div class="fr-col-2">
-              <label class="bn-fiche-sub-title--label">REPRÉSENTANT 1</label>
-              <span class="bn-fiche-sub-title--text">{{ representant1 }}</span>
-            </div>
-            <div class="fr-col-2">
-              <label class="bn-fiche-sub-title--label">PRÉFECTURE</label>
-              <span class="bn-fiche-sub-title--text">{{ prefecture }}</span>
-            </div>
-            <div class="fr-col-2">
-              <label class="bn-fiche-sub-title--label">CRÉATION</label>
-              <span class="bn-fiche-sub-title--text">{{ creation }}</span>
-            </div>
-            <div class="fr-col-2">
-              <label class="bn-fiche-sub-title--label">MODIFICATION</label>
-              <span class="bn-fiche-sub-title--text">{{ modification }}</span>
-            </div>
-            <div class="fr-col-2">
-              <label class="bn-fiche-sub-title--label">DISSOLUTION</label>
-              <span class="bn-fiche-sub-title--text">{{ dissolution }}</span>
-            </div>
+  <LayoutFiche :tab-titles="tabTitles">
+    <template #title>
+      <bn-badge-type-organisme />
+      <span class="fr-text--lead fr-text--bold">{{ numberRNA }} -</span> <span class="fr-text--lead">{{ name }}</span>
+    </template>
+
+    <template #sub-title>
+      <div class="fr-container">
+        <div class="fr-grid-row">
+          <div class="fr-col-2">
+            <label class="bn-fiche-sub-title--label ">SIÈGE SOCIAL</label>
+            <span class="bn-fiche-sub-title--text">{{ siegeSocial }}</span>
+          </div>
+          <div class="fr-col-2">
+            <label class="bn-fiche-sub-title--label">REPRÉSENTANT 1</label>
+            <span class="bn-fiche-sub-title--text">{{ representant1 }}</span>
+          </div>
+          <div class="fr-col-2">
+            <label class="bn-fiche-sub-title--label">PRÉFECTURE</label>
+            <span class="bn-fiche-sub-title--text">{{ prefecture }}</span>
+          </div>
+          <div class="fr-col-2">
+            <label class="bn-fiche-sub-title--label">CRÉATION</label>
+            <span class="bn-fiche-sub-title--text">{{ creation }}</span>
+          </div>
+          <div class="fr-col-2">
+            <label class="bn-fiche-sub-title--label">MODIFICATION</label>
+            <span class="bn-fiche-sub-title--text">{{ modification }}</span>
+          </div>
+          <div class="fr-col-2">
+            <label class="bn-fiche-sub-title--label">DISSOLUTION</label>
+            <span class="bn-fiche-sub-title--text">{{ dissolution }}</span>
           </div>
         </div>
       </div>
-      <div class="bn-fiche-body fr-col-12">
-        <DsfrTabs
-          tab-list-name="tabs-fiche-organisme"
-          :tab-titles="tabTitles"
-          initial-selected-index="0"
-          @select-tab="selectTab"
-        >
-          <DsfrTabContent
-            panel-id="tab-content-0"
-            tab-id="tab-0"
-            :selected="selectedTabIndex === 0"
-            style="width: 100%;"
-          >
-            <div class="bn-list-contact fr-mb-5w">
-              <div class="fr-container">
-                <div class="fr-grid-row">
-                  <div class="fr-col-12 fr-mb-2w">
-                    <div class="fr-mr-2w bn-icon--blue-france-main-525">
-                      <span
-                        class="fr-icon-question-answer-line"
-                        aria-hidden="true"
-                      />
-                    </div>
+    </template>
 
-                    <span class="fr-text fr-text--bold">Adresse et contacts</span>
-                  </div>
-
-                  <info-contact
-                    :e-mail="eMail"
-                    :title="name"
-                    :info="adresse"
-                    :phones="phonesAdresse"
+    <DsfrTabs
+      tab-list-name="tabs-fiche"
+      :tab-titles="tabTitles"
+      initial-selected-index="0"
+      @select-tab="selectTab"
+    >
+      <DsfrTabContent
+        panel-id="tab-content-0"
+        tab-id="tab-0"
+        :selected="selectedTabIndex === 0"
+      >
+        <div class="bn-list-contact fr-mb-5w">
+          <div class="fr-container">
+            <div class="fr-grid-row">
+              <div class="fr-col-12 fr-mb-2w">
+                <div class="fr-mr-2w bn-icon--blue-france-main-525">
+                  <span
+                    class="fr-icon-question-answer-line"
+                    aria-hidden="true"
                   />
                 </div>
-              </div>
-            </div>
-            <div class="bn-list-contact fr-mb-5w">
-              <div class="fr-container">
-                <div class="fr-grid-row">
-                  <div class="fr-col-12 fr-mb-2w">
-                    <div class="fr-mr-2w bn-icon--pink-macaron-950-active">
-                      <span
-                        class="fr-icon-group-line"
-                        aria-hidden="true"
-                      />
-                    </div>
-                    <span class="fr-text fr-text--bold">
-                      Représentant.e.s légaux
-                    </span>
-                  </div>
 
-                  <info-contact
-                    v-for="(representant, index) in representants"
-                    :key="index"
-                    :e-mail="representant.email"
-                    :title="representant.titre"
-                    :info="representant.nomComplet"
-                    :phones="representant.phones"
+                <span class="fr-text fr-text--bold">Adresse et contacts</span>
+              </div>
+
+              <info-contact
+                :e-mail="eMail"
+                :title="name"
+                :info="adresse"
+                :phones="phonesAdresse"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="bn-list-contact fr-mb-5w">
+          <div class="fr-container">
+            <div class="fr-grid-row">
+              <div class="fr-col-12 fr-mb-2w">
+                <div class="fr-mr-2w bn-icon--pink-macaron-950-active">
+                  <span
+                    class="fr-icon-group-line"
+                    aria-hidden="true"
                   />
                 </div>
+                <span class="fr-text fr-text--bold">
+                  Représentant.e.s légaux
+                </span>
               </div>
+
+              <info-contact
+                v-for="(representant, index) in representants"
+                :key="index"
+                :e-mail="representant.email"
+                :title="representant.titre"
+                :info="representant.nomComplet"
+                :phones="representant.phones"
+              />
             </div>
-          </DsfrTabContent>
-        </DsfrTabs>
-      </div>
-    </div>
-  </div>
+          </div>
+        </div>
+      </DsfrTabContent>
+    </DsfrTabs>
+  </LayoutFiche>
 </template>
 
 <script lang="ts" setup>
 import { ref } from 'vue'
 
+import LayoutFiche from '@/components/LayoutFiche.vue'
 import bnBadgeTypeOrganisme from '@/components/BadgeTypeOrganisme.vue'
 import infoContact from '@/components/InfoContact.vue'
 
@@ -143,30 +137,14 @@ const tabTitles = [
 ]
 
 const selectedTabIndex = ref(0)
+
 function selectTab (idx:number) {
   selectedTabIndex.value = idx
 }
 
 </script>
 
-<style>
-.bn-fiche-title {
-  height: 5.25rem;
-  align-items: center;
-  display: flex;
-  background-color: var(--background-alt-grey);
-  margin: 0.125rem;
-}
-.bn-fiche-sub-title {
-  height: 4rem;
-  align-items: center;
-  display: flex;
-  background-color: var(--background-alt-grey);
-  margin: 0.125rem;
-}
-.bn-fiche-body {
-  padding-top: 2rem;
-}
+<style lang="css" scoped>
 .bn-list-contact {
   margin: 0.125rem;
 }
