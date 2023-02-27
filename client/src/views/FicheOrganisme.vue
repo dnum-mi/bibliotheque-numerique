@@ -1,5 +1,5 @@
 <template>
-  <LayoutFiche :tab-titles="tabTitles">
+  <LayoutFiche>
     <template #title>
       <bn-badge-type-organisme />
       <span class="fr-text--lead fr-text--bold">{{ numberRNA }} -</span> <span class="fr-text--lead">{{ name }}</span>
@@ -102,34 +102,29 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 
 import LayoutFiche from '@/components/LayoutFiche.vue'
 import bnBadgeTypeOrganisme from '@/components/BadgeTypeOrganisme.vue'
 import infoContact from '@/components/InfoContact.vue'
+import { useOrganismeStore } from '@/stores/organisme'
+import { useRoute } from 'vue-router'
+import { dateToStringFr } from '@/utils/dateToString'
 
-const numberRNA = ref('Numero RNA')
-const name = ref('Nom')
-const siegeSocial = ref('siege Social')
-const representant1 = ref('representant 1')
-const prefecture = ref('prefecture')
-const creation = ref('creation')
-const modification = ref('Modification')
-const dissolution = ref('Dissolution')
-const phonesAdresse = ref(['phone1', 'phone2'])
-const eMail = ref('eMail')
-const adresse = ref('adresse')
-const representants = ref([{
-  titre: 'titre1',
-  nomComplet: 'nom complet',
-  phones: ['phone1'],
-  email: 'e-mail',
-}, {
-  titre: 'titre2',
-  nomComplet: 'nom complet 2',
-  phones: ['phone2'],
-  email: 'e-mail 2',
-}])
+const organismeStore = useOrganismeStore()
+
+const numberRNA = computed(() => organismeStore.organisme?.rna_id || '')
+const name = computed(() => organismeStore.organisme?.titre || '')
+const siegeSocial = computed(() => `${organismeStore.organisme?.adresse_siege?.code_postal || ''} ${organismeStore.organisme?.adresse_siege?.commune || ''}`)
+const representant1 = computed(() => organismeStore.organisme?.representant_legaux || '')
+const prefecture = computed(() => `${organismeStore.organisme?.adresse_siege?.code_postal?.substring(0, 2) || ''} ${organismeStore.organisme?.adresse_siege?.commune || ''}`)
+const creation = computed(() => dateToStringFr(organismeStore.organisme?.date_creation))
+const modification = computed(() => dateToStringFr(organismeStore.organisme?.mise_a_jour))
+const dissolution = computed(() => dateToStringFr(organismeStore.organisme?.date_dissolution))
+const phonesAdresse = computed(() => organismeStore.organisme?.adresse_siege?.phones || [])
+const eMail = computed(() => organismeStore.organisme?.email || '')
+const adresse = computed(() => `${organismeStore.organisme?.adresse_siege?.complement || ''} ${organismeStore.organisme?.adresse_siege?.numero_voie || ''} ${organismeStore.organisme?.adresse_siege?.type_voie || ''} ${organismeStore.organisme?.adresse_siege?.libelle_voie || ''} ${organismeStore.organisme?.adresse_siege?.code_postal || ''} ${organismeStore.organisme?.adresse_siege?.commune || ''}`)
+const representants = computed(() => organismeStore.organisme?.representant_legaux || [])
 const tabTitles = [
   {
     title: 'Status',
@@ -142,6 +137,14 @@ function selectTab (idx:number) {
   selectedTabIndex.value = idx
 }
 
+onMounted(async () => {
+  const params = useRoute()?.params
+  const id = params.id
+  if (id) {
+    await organismeStore.loadOrganismebyIdRNA(id)
+    console.log(organismeStore.organisme)
+  }
+})
 </script>
 
 <style lang="css" scoped>
@@ -163,7 +166,6 @@ function selectTab (idx:number) {
   font-weight: 700;
   font-size: 0.75rem;
   line-height: 1.25rem;
-  /* color: var(--text-action-high-grey); */
 }
 
 .bn-icon--blue-france-main-525 {
@@ -182,7 +184,6 @@ function selectTab (idx:number) {
 }
 
 .bn-icon--pink-macaron-950-active {
-  /* background-color: var(--pink-macaron-950-100); */
   background-color:rgb(252,176,162);
   border-radius: 100%;
   color: var(--grey-1000-50);
