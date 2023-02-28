@@ -27,5 +27,7 @@ describe('<FicheOrganisme />', () => {
     cy.mount(FicheOrganisme, {
       extensions,
     })
+
+    // TODO: Erreur de visuel à cause de DsfrTabContent dont la valeur de left est -100%
   })
 })
