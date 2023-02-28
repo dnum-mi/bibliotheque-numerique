@@ -17,7 +17,7 @@ export class OrganismesDatasService {
   ) {}
 
   findAll() {
-    return `This action returns all organismesDatas`;
+    return OrganismesData.find();
   }
 
   findOne(id: number) {
@@ -26,6 +26,18 @@ export class OrganismesDatasService {
 
   remove(id: number) {
     return `This action removes a #${id} organismesData`;
+  }
+
+  async findOneByIdRNA(idRef: string) {
+    // return OrganismesData.findOneByOrFail({  idRef  }, { relation });
+    const organismeData = await OrganismesData.findOne({
+      where: { idRef },
+      relations: { organismesSource: true },
+    });
+    return {
+      ...organismeData,
+      organismesSource: organismeData.organismesSource.name,
+    };
   }
 
   async createOrUpdate(
