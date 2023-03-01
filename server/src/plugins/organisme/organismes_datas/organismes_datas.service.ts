@@ -128,7 +128,7 @@ export class OrganismesDatasService {
     try {
       const connectorApis = await Connector.find({});
 
-      return await Promise.all(
+      return await Promise.allSettled(
         connectorApis.map(async (connectorApi) =>
           this.findAndAddByIdRna(idRna, connectorApi),
         ),

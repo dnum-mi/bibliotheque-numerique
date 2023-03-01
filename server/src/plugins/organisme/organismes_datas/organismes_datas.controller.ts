@@ -7,7 +7,9 @@ import {
   Post,
   HttpStatus,
   HttpException,
+  Body,
 } from "@nestjs/common";
+
 import { LoggerService } from "logger/logger.service";
 import { OrganismesDatasService } from "./organismes_datas.service";
 
@@ -58,5 +60,42 @@ export class OrganismesDatasController {
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.organismesDatasService.remove(+id);
+  }
+
+  @Post("rna")
+  async addOrgnaismeDataByIdRNA(@Body("idRNA") idRNA: string) {
+    if (!idRNA) {
+      throw new HttpException(
+        `idRNA ${idRNA} is empty`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    try {
+      const isOks =
+        await this.organismesDatasService.findAndAddByIdRnaFromAllApi(idRNA);
+      const isOK = isOks.reduce(
+        (acc, cur, idx) => {
+          acc.success = acc.success && cur.status === "fulfilled";
+          cur.status === "rejected" && acc.idxError.push(idx);
+          return acc;
+        },
+        { success: true, idxError: [] },
+      );
+
+      if (isOK.success) {
+        return { message: `organimse RNA: ${idRNA} create success!` };
+      }
+    } catch (error) {
+      throw new HttpException(
+        error instanceof Error ? error.message : "Internal Server Error",
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    throw new HttpException(
+      `organimse RNA: ${idRNA} not found`,
+      HttpStatus.NOT_FOUND,
+    );
   }
 }
