@@ -77,17 +77,25 @@ export class ConnectorService {
     params: Record<string, string>,
     query?: Record<string, string>,
   ) {
-    const url = this.buildUrl(entity.url, params, {
-      ...entity.query,
-      ...query,
-    });
-    return await this.httpService.axiosRef({
-      method: entity.method,
-      url,
-      headers: {
-        Authorization: `${entity.typeAuth} ${entity.token}`,
-      },
-    });
+    try {
+      const url = this.buildUrl(entity.url, params, {
+        ...entity.query,
+        ...query,
+      });
+      return await this.httpService.axiosRef({
+        method: entity.method,
+        url,
+        headers: {
+          Authorization: `${entity.typeAuth} ${entity.token}`,
+        },
+      });
+    } catch (error) {
+      this.logger.error({
+        short_message: `Connector ${entity?.name}: ${error.message}`,
+        full_message: error.stack,
+      });
+      throw new error(`Connector ${entity?.name}: ${error.message}`);
+    }
   }
 
   private buildUrl(
