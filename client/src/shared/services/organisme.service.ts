@@ -22,14 +22,14 @@ export async function fetchOrganimseByIdRNA (id: string): Promise<any | null> {
     const config = {
       method: 'get',
       // TODO: A remmettre
-      // url: `${baseApiUrl}/organismes/${id}/detail`,
+      url: `${baseApiUrl}/organismes-datas/rna/${id}`,
       // TODO: Bouchon de test
-      url: `https://entreprise.data.gouv.fr/api/rna/v1/id/${id}`,
+      // url: `https://entreprise.data.gouv.fr/api/rna/v1/id/${id}`,
       headers,
     }
-    // // response.data
     const response = await axios(config)
-    const asso = response.data.association
+
+    // const asso = response.data.association
     // const data = {
     //   organismeData: {
     //     dataJson: {
@@ -61,38 +61,39 @@ export async function fetchOrganimseByIdRNA (id: string): Promise<any | null> {
     //   },
     // }
 
-    const data = {
-      organismeData: {
-        dataJson: {
-          data: {
-            rna_id: asso.id_association,
-            titre: asso.titre,
-            objet: asso.objet,
-            siret: asso.siret,
-            siret_siege_social: '',
-            date_creation: asso.date_creation,
-            date_declaration: asso.date_derniere_declaration,
-            date_publication: asso.date_publication_creation,
-            date_dissolution: asso.date_declaration_dissolution,
-            adresse_siege: {
-              complement: '',
-              numero_voie: asso.adresse_numero_voie,
-              type_voie: asso.adresse_type_voie,
-              libelle_voie: asso.adresse_libelle_voie,
-              distribution: asso.adresse_distribution,
-              code_insee: asso.adresse_code_insee,
-              code_postal: asso.adresse_code_postal,
-              commune: asso.adresse_libelle_commune,
-            },
-            etat: true,
-            groupement: null,
-            mise_a_jour: asso.derniere_maj,
-          },
-        },
-      },
-    }
+    // const data = {
+    //   organismeData: {
+    //     dataJson: {
+    //       data: {
+    //         rna_id: asso.id_association,
+    //         titre: asso.titre,
+    //         objet: asso.objet,
+    //         siret: asso.siret,
+    //         siret_siege_social: '',
+    //         date_creation: asso.date_creation,
+    //         date_declaration: asso.date_derniere_declaration,
+    //         date_publication: asso.date_publication_creation,
+    //         date_dissolution: asso.date_declaration_dissolution,
+    //         adresse_siege: {
+    //           complement: '',
+    //           numero_voie: asso.adresse_numero_voie,
+    //           type_voie: asso.adresse_type_voie,
+    //           libelle_voie: asso.adresse_libelle_voie,
+    //           distribution: asso.adresse_distribution,
+    //           code_insee: asso.adresse_code_insee,
+    //           code_postal: asso.adresse_code_postal,
+    //           commune: asso.adresse_libelle_commune,
+    //         },
+    //         etat: true,
+    //         groupement: null,
+    //         mise_a_jour: asso.derniere_maj,
+    //       },
+    //     },
+    //   },
+    // }
 
-    return data
+    // return data
+    return response.data
   } catch (error) {
     console.log(error)
   }
