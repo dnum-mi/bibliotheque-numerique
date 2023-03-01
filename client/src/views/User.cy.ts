@@ -11,7 +11,7 @@ import { createRandomAdmin, createRandomUser } from './__tests__/users'
 import { createRandomRoles } from '@/views/__tests__/roles'
 import { useRoleStore, useUserStore } from '@/stores'
 
-describe.only('<User />', () => {
+describe('<User />', () => {
   it('Should render because admin', () => {
     const pinia = createPinia()
 
@@ -26,7 +26,7 @@ describe.only('<User />', () => {
       userStore.users.set(id, { ...createRandomUser(), id })
       return Promise.resolve()
     }
-    roleStore.getRoles = () => Promise.resolve()
+    roleStore.fetchRoles = () => Promise.resolve()
 
     const extensions = {
       use: [

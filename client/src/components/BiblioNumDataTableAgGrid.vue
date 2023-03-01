@@ -15,6 +15,8 @@
     :context="context"
     :side-bar="sideBar"
     :grid-options="gridOptions"
+    :row-selection="rowSelection"
+    @selection-changed="onSelectionChanged"
   />
 </template>
 <script lang="ts" setup>
@@ -42,12 +44,15 @@ const props = withDefaults(defineProps<{
     pagination?: boolean,
     paginationPageSize?: number,
     withAction?: boolean,
+    rowSelection?: string,
+
   }>(), {
   rowData: () => [],
   headers: () => [],
   pagination: true,
   paginationPageSize: PAGINATION_PAGE_SIZE,
   withAction: false,
+  rowSelection: undefined,
 })
 
 const columnDefs = computed(() => {
@@ -61,6 +66,9 @@ const columnDefs = computed(() => {
       cellRenderer: TableCellAction,
       initialPinned: 'left',
       width: 100,
+      sortable: false,
+      filter: false,
+      suppressMenu: false,
     })
     headers.shift()
   }
@@ -76,7 +84,7 @@ const columnDefs = computed(() => {
   }))
 })
 
-const emit = defineEmits(['getElt'])
+const emit = defineEmits(['getElt', 'selectionChanged'])
 const showElt = data => {
   emit('getElt', data)
 }
@@ -92,4 +100,9 @@ const sideBar = {
 const gridOptions = {
   localeText: localeTextAgGrid,
 }
+
+const onSelectionChanged = (params) => {
+  emit('selectionChanged', params.api.getSelectedRows())
+}
+
 </script>

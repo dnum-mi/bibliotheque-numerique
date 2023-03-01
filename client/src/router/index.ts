@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useUserStore } from '@/stores'
-import { hasAdminAccessGuard, isAuthenticatedGuard, isNotAuthenticatedGuard } from '@/shared/guards'
+import { hasAdminAccessGuard, canManageRolesGuard, isAuthenticatedGuard, isNotAuthenticatedGuard } from '@/shared/guards'
 
 const MAIN_TITLE = 'Gabarit de démarrage VueDsfr'
 
@@ -55,7 +55,8 @@ const routes = [
   },
   {
     path: '/admin',
-    beforeEnter: [hasAdminAccessGuard],
+    name: 'Admin',
+    beforeEnter: [canManageRolesGuard],
     component: () => import('@/views/Admin.vue'),
   },
   {
@@ -63,6 +64,12 @@ const routes = [
     name: 'User',
     beforeEnter: [hasAdminAccessGuard],
     component: () => import('@/views/User.vue'),
+  },
+  {
+    path: '/role/:id',
+    name: 'Role',
+    beforeEnter: [canManageRolesGuard],
+    component: () => import('@/views/Role.vue'),
   },
 ]
 

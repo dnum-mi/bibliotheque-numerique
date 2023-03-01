@@ -49,12 +49,8 @@ describe("ConnectorService", () => {
     expect(result.data).toHaveProperty("data");
   });
 
-  it("should be defined", () => {
-    expect(service).toBeDefined();
-  });
-
-  it("Should create a connector", async () => {
-    const result = await service.upsert(connectorTest());
+  it("Should create a connector, find it, and remove it", async () => {
+    let result = await service.upsert(connectorTest());
     id = result?.id;
     expect(result).toBeDefined();
     expect(result).toHaveProperty("id");
@@ -62,20 +58,14 @@ describe("ConnectorService", () => {
     expect(result).toHaveProperty("method");
     expect(result).toHaveProperty("params");
     expect(result).toHaveProperty("query");
-  });
-
-  it("Should find one connector", async () => {
-    const result = await service.findOneById(id);
+    result = await service.findOneById(id);
     expect(result).toBeDefined();
     expect(result).toHaveProperty("id");
     expect(result).toHaveProperty("url");
     expect(result).toHaveProperty("method");
     expect(result).toHaveProperty("params");
     expect(result).toHaveProperty("query");
-  });
-
-  it("Should remove one connector", async () => {
-    const result = await service.remove(id);
+    result = await service.remove(id);
     expect(result).toHaveProperty("affected", 1);
   });
 

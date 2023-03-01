@@ -2,7 +2,7 @@ import axios from 'axios'
 import type { IRole, IRoleForm } from '@/shared/interfaces'
 import { baseApiUrl, headers } from '@/utils/api-client'
 
-export const getRoles = async () => {
+export const fetchRoles = async () => {
   const config = {
     method: 'get',
     url: `${baseApiUrl}/roles`,
@@ -15,10 +15,40 @@ export const getRoles = async () => {
     throw await error
   }
 }
-export const createRole = async (role: IRoleForm): Promise<IRole> => {
+export const fetchRoleById = async (id: number) => {
+  const config = {
+    method: 'get',
+    url: `${baseApiUrl}/roles/${id}`,
+    headers,
+  }
+  try {
+    const response = await axios(config)
+    return response.data
+  } catch (error) {
+    throw await error
+  }
+}
+export const upsertRole = async (role: IRoleForm, id?: number): Promise<IRole> => {
+  if (typeof id === 'number') {
+    role.id = id
+  }
   const config = {
     method: 'post',
-    url: `${baseApiUrl}/roles/create`,
+    url: `${baseApiUrl}/roles`,
+    headers,
+    data: { role },
+  }
+  try {
+    const response = await axios(config)
+    return response.data
+  } catch (error) {
+    throw await error
+  }
+}
+export const updateRole = async (id: number, role: Partial<IRoleForm>): Promise<IRole> => {
+  const config = {
+    method: 'put',
+    url: `${baseApiUrl}/roles/${id}`,
     headers,
     data: { role },
   }

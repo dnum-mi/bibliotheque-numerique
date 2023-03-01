@@ -1,18 +1,27 @@
 import { faker } from '@faker-js/faker/locale/fr'
 import type { IRole } from '@/shared/interfaces'
+import { PermissionName } from '@/types/permissions'
+import type { TPermission } from '@/types/tpermission'
 
+const allPermissions = Object.values(PermissionName).map(permisson => ({
+  name: permisson,
+}))
+const getRandomPermission = ():TPermission => faker.helpers.arrayElement(allPermissions)
+const getRandomPermissions = () => Array.from({ length: faker.datatype.number({ min: 1, max: allPermissions.length }) }, () => getRandomPermission())
 export const createRandomRole = (): IRole => ({
-  id: faker.datatype.number(100),
+  id: faker.helpers.unique(faker.datatype.number, [1000]),
   name: faker.word.noun({ length: { min: 6, max: 10 } }),
-  description: faker.word.noun(10),
+  permissions: getRandomPermissions(),
+  description: faker.lorem.lines(10),
   createdAt: faker.date.past().toISOString(),
   updatedAt: faker.date.past().toISOString(),
 })
 
-export const createRandomRoles = (count: number): IRole[] => {
-  const roles = []
+export const createRandomRoles = (count: number): Map<number, IRole> => {
+  const roles = new Map()
   for (let i = 0; i < count; i++) {
-    roles.push(createRandomRole())
+    const role = createRandomRole()
+    roles.set(role.id, role)
   }
   return roles
 }
