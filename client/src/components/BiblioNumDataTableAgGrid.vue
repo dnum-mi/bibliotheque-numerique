@@ -1,5 +1,7 @@
 <template>
-  <h4>{{ title }}</h4>
+  <h4 v-if="title">
+    {{ title }}
+  </h4>
   <ag-grid-vue
     style="max-width: 100%; height: 700px;"
     class="ag-theme-alpine"
@@ -38,7 +40,7 @@ const getFilterAgGrid = (type) => {
 }
 
 const props = withDefaults(defineProps<{
-    title: string,
+    title?: string,
     rowData?: object[],
     headers?: TypeHeaderDataTable[],
     pagination?: boolean,
@@ -47,6 +49,7 @@ const props = withDefaults(defineProps<{
     rowSelection?: string,
 
   }>(), {
+  title: undefined,
   rowData: () => [],
   headers: () => [],
   pagination: false,
