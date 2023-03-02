@@ -36,6 +36,10 @@ describe("ConnectorService", () => {
     service = module.get<ConnectorService>(ConnectorService);
   });
 
+  afterEach(async () => {
+    await Connector.delete({});
+  });
+
   it("should be defined", () => {
     expect(service).toBeDefined();
   });
