@@ -17,6 +17,9 @@ import { connectorTest, createOneConnector } from "../../../entities/__tests__";
 import { ConfigModule } from "@nestjs/config";
 import configuration from "../../../config/configuration";
 import fileConfig from "../../../config/file.config";
+import { Parse2OrganismesModule } from "../parserByConnector/parse2organismes.module";
+import { Parse2OrganismesService } from "../parserByConnector/parse2organismes.service";
+import { IParse2Organisme } from "../parserByConnector/iprase2organisme";
 
 async function createTestAddOrg(
   connectorService: ConnectorService,
@@ -43,10 +46,22 @@ async function createNewOrgSrc() {
   return orgSrc;
 }
 
+class MockParse2Org implements IParse2Organisme<any, any> {
+  dataJson: any;
+  setDataJson(result: any): void {
+    this.dataJson = result?.data?.data;
+  }
+  getDataUpdateAt(): Date {
+    return new Date(this.dataJson.mise_a_jour);
+  }
+}
+
 describe("OrganismesDatasService", () => {
   let service: OrganismesDatasService;
   let connectorService: ConnectorService;
   let dataSource: DataSource;
+  let parserService: Parse2OrganismesService;
+  let parser: MockParse2Org;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -60,6 +75,7 @@ describe("OrganismesDatasService", () => {
           cache: true,
           load: [configuration, fileConfig],
         }),
+        Parse2OrganismesModule,
       ],
       providers: [OrganismesDatasService],
     }).compile();
@@ -67,6 +83,11 @@ describe("OrganismesDatasService", () => {
     service = module.get<OrganismesDatasService>(OrganismesDatasService);
     connectorService = module.get<ConnectorService>(ConnectorService);
     dataSource = module.get<DataSource>(DataSource);
+    parserService = module.get<Parse2OrganismesService>(
+      Parse2OrganismesService,
+    );
+    parser = new MockParse2Org();
+    jest.spyOn(parserService, "getParser").mockReturnValue(() => parser);
   });
 
   afterEach(async () => {
@@ -132,6 +153,7 @@ describe("OrganismesDatasService", () => {
         data: expected1,
       },
     } as AxiosResponse);
+
     const result = await service.findAndAddByIdRna(idRNA, orgSrc);
     expect(result).toBe(true);
     const orgData = await OrganismesData.find();
