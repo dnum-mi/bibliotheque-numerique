@@ -124,12 +124,29 @@ export class OrganismesDatasService {
     return await this.createOrUpdate(idRna, connectorApi, parser);
   }
 
-  async findAndAddByIdRnaFromAllApi(idRna: string) {
+  async findAndAddByIdRnaFromAllApi(idRna: string, source: string) {
+    let connectorApisSelected;
     try {
       const connectorApis = await Connector.find({});
+      connectorApisSelected = source
+        ? connectorApis.filter((connector) => connector.name === source)
+        : connectorApis;
+    } catch (error) {
+      const message = "Error intern to get connectors";
+      this.logger.error({
+        short_message: message,
+        full_message: error.stack,
+      });
+      throw new Error(message);
+    }
 
+    if (!connectorApisSelected || !connectorApisSelected.length) {
+      throw new Error(`Error Connectors not found: ${source}`);
+    }
+
+    try {
       return await Promise.allSettled(
-        connectorApis.map(async (connectorApi) =>
+        connectorApisSelected.map(async (connectorApi) =>
           this.findAndAddByIdRna(idRna, connectorApi),
         ),
       );
