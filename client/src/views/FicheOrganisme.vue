@@ -142,7 +142,6 @@ onMounted(async () => {
   const id = params.id
   if (id) {
     await organismeStore.loadOrganismebyIdRNA(id)
-    console.log(organismeStore.organisme)
   }
 })
 </script>
