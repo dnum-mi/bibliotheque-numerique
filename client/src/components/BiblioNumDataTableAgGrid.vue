@@ -1,7 +1,7 @@
 <template>
   <h4>{{ title }}</h4>
   <ag-grid-vue
-    style="max-width: 100%; height: 450px;"
+    style="max-width: 100%; height: 700px;"
     class="ag-theme-alpine"
     :column-defs="columnDefs"
     :row-data="rowData"
@@ -49,7 +49,7 @@ const props = withDefaults(defineProps<{
   }>(), {
   rowData: () => [],
   headers: () => [],
-  pagination: true,
+  pagination: false,
   paginationPageSize: PAGINATION_PAGE_SIZE,
   withAction: false,
   rowSelection: undefined,
