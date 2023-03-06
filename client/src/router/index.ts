@@ -74,6 +74,7 @@ const routes = [
   {
     path: '/organismes/:id',
     name: 'FicheOrganismes',
+    beforeEnter: [isAuthenticatedGuard],
     component: () => import('@/views/FicheOrganisme.vue'),
   },
 ]
