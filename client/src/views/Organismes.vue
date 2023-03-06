@@ -9,14 +9,39 @@
     <BiblioNumDataTableAgGrid
       class="bn-table-organisme"
       :headers="headerJson"
+      :row-data="rowData"
+      row-selection="single"
+      @selection-changed="onSelect"
     />
-  </LayoutList>
+  </layoutlist>
 </template>
 <script lang="ts" setup>
 
 import BiblioNumDataTableAgGrid from '@/components/BiblioNumDataTableAgGrid.vue'
 import LayoutList from '@/components/LayoutList.vue'
+import { useOrganismeStore } from '@/stores/organisme'
+import { dateToStringFr } from '@/utils/dateToString'
+
+import { onMounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
 // const props = defineProps<{ }>()
+
+const organismeStore = useOrganismeStore()
+const router = useRouter()
+
+const formatData = (dataJson) => {
+  return {
+    titre: dataJson.titre,
+    rna_id: dataJson.rna_id,
+    // type: dataJson.type,
+    prefecture: `${dataJson?.adresse_siege?.code_postal?.substring(0, 2) || ''} ${dataJson?.adresse_siege?.commune || ''}`,
+    creation: dateToStringFr(dataJson?.date_creation),
+    modification: dateToStringFr(dataJson?.mise_a_jour),
+    type: 'CULT',
+  }
+}
+const rowData = computed(() => organismeStore.organismes.map(data => formatData(data.dataJson)))
+
 const headerJson = [
   {
     text: 'Titre',
@@ -32,19 +57,32 @@ const headerJson = [
   },
   {
     text: 'Préfecture',
+    value: 'prefecture',
+
   },
   {
     text: 'Création',
+    value: 'creation',
   },
   {
     text: 'Modification',
+    value: 'modification',
   },
-  {
-    text: 'Représentant',
-  },
+  // {
+  //   text: 'Représentant',
+  // },
 
 ]
 
+const onSelect = (e) => {
+  console.log(e)
+  router.push({ path: `/organismes/${e[0].rna_id}` })
+  // router.push({ name: 'FicheOrganismes', params: { id: e.rna_id } })
+}
+
+onMounted(async () => {
+  await organismeStore.loadOrganismes()
+})
 </script>
 <style lang="css">
 .bn-list-search {

@@ -1,5 +1,7 @@
 <template>
-  <div class="fr-container">
+  <div
+    class="fr-container"
+  >
     <div class="fr-grid-row">
       <div class="bn-list-title fr-col-12">
         <slot name="title" />
