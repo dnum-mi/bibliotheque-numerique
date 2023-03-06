@@ -21,45 +21,10 @@ export async function fetchOrganimseByIdRNA (id: string): Promise<any | null> {
   try {
     const config = {
       method: 'get',
-      // TODO: A remmettre
       url: `${baseApiUrl}/organismes-datas/rna/${id}`,
-      // TODO: Bouchon de test
-      // url: `https://entreprise.data.gouv.fr/api/rna/v1/id/${id}`,
       headers,
     }
     const response = await axios(config)
-
-    // const asso = response.data.association
-    // const data = {
-    //   organismeData: {
-    //     dataJson: {
-    //       data: {
-    //         rna_id: 'W751080001',
-    //         titre: 'LA PRÉVENTION ROUTIERE',
-    //         objet: 'Accroitre la sécurité des usagers en encourageant toutes mesures ou initiatives propres à réduire les accidents',
-    //         siret: null,
-    //         siret_siege_social: '77571979202650',
-    //         date_creation: '1955-01-01',
-    //         date_declaration: '1955-01-01',
-    //         date_publication: null,
-    //         date_dissolution: null,
-    //         adresse_siege: {
-    //           complement: '',
-    //           numero_voie: '33',
-    //           type_voie: 'rue',
-    //           libelle_voie: 'de Modagor',
-    //           distribution: 'string',
-    //           code_insee: '75108',
-    //           code_postal: '75009',
-    //           commune: 'Paris',
-    //         },
-    //         etat: true,
-    //         groupement: null,
-    //         mise_a_jour: '1955-01-01',
-    //       },
-    //     },
-    //   },
-    // }
 
     // const data = {
     //   organismeData: {

@@ -20,7 +20,6 @@ export const useOrganismeStore = defineStore('organisme', () => {
       return
     }
     const result = await fetchOrganimseByIdRNA(id)
-    // if (result) organisme.value = result.organismeData.dataJson.data
     if (result) organisme.value = result?.dataJson
   }
 

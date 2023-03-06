@@ -139,14 +139,9 @@ function selectTab (idx:number) {
 
 onMounted(async () => {
   const params = useRoute()?.params
-<<<<<<< HEAD
-=======
-  // const id = Number(params.id)
->>>>>>> 02874f2 (feat: vue ficheOrganisme avec bouchon)
   const id = params.id
   if (id) {
     await organismeStore.loadOrganismebyIdRNA(id)
-    console.log(organismeStore.organisme)
   }
 })
 </script>
