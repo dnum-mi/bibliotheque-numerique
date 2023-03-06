@@ -14,3 +14,7 @@ body,
 
   --ag-side-bar-panel-width: 300px;
 }
+
+.fr-container {
+  max-width: 100%;
+}
