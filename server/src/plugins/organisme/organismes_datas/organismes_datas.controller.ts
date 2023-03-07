@@ -35,7 +35,6 @@ export class OrganismesDatasController {
     }
   }
 
-
   @Get("rna")
   async getOrgnaismeData() {
     try {
@@ -52,7 +51,6 @@ export class OrganismesDatasController {
       );
     }
   }
-
 
   @Get("rna/:id")
   async getOrgnaismeDataByIdRNA(@Param("id") id: string) {
