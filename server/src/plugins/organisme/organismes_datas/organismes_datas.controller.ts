@@ -63,7 +63,10 @@ export class OrganismesDatasController {
   }
 
   @Post("rna")
-  async addOrgnaismeDataByIdRNA(@Body("idRNA") idRNA: string) {
+  async addOrgnaismeDataByIdRNA(
+    @Body("idRNA") idRNA: string,
+    @Body("source") source: string,
+  ) {
     if (!idRNA) {
       throw new HttpException(
         `idRNA ${idRNA} is empty`,
@@ -73,7 +76,10 @@ export class OrganismesDatasController {
 
     try {
       const isOks =
-        await this.organismesDatasService.findAndAddByIdRnaFromAllApi(idRNA);
+        await this.organismesDatasService.findAndAddByIdRnaFromAllApi(
+          idRNA,
+          source,
+        );
       const isOK = isOks.reduce(
         (acc, cur, idx) => {
           acc.success = acc.success && cur.status === "fulfilled";

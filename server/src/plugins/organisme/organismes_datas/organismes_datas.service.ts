@@ -4,6 +4,10 @@ import { ConnectorService } from "../../../connector/connector.service";
 import { DataSource } from "typeorm";
 import { OrganismesData } from "../entities";
 import { Connector } from "../../../entities";
+import {
+  ParseToOrganismesService,
+  TParseToOrganisme,
+} from "../parserByConnector/parse_to_organismes.service";
 
 @Injectable()
 export class OrganismesDatasService {
@@ -14,6 +18,7 @@ export class OrganismesDatasService {
   constructor(
     private dataSource: DataSource,
     private connectorService: ConnectorService,
+    private parser2Organismes: ParseToOrganismesService,
   ) {}
 
   findAll() {
@@ -29,7 +34,6 @@ export class OrganismesDatasService {
   }
 
   async findOneByIdRNA(idRef: string) {
-    // return OrganismesData.findOneByOrFail({  idRef  }, { relation });
     const organismeData = await OrganismesData.findOne({
       where: { idRef },
       relations: { organismesSource: true },
@@ -43,7 +47,7 @@ export class OrganismesDatasService {
   async createOrUpdate(
     idRna: string,
     connectorApi: Connector,
-    organismeDataFromSource: any,
+    parser: TParseToOrganisme,
   ) {
     try {
       let organimseData = await OrganismesData.findOneBy({
@@ -56,8 +60,8 @@ export class OrganismesDatasService {
         organimseData.idRef = idRna;
         organimseData.organismesSource = connectorApi;
       }
-      //Seulement pour RNA
-      const dateMiseAJours = new Date(organismeDataFromSource.mise_a_jour);
+
+      const dateMiseAJours = parser.getDataUpdateAt();
 
       if (organimseData.dataUpdateAt?.getTime() === dateMiseAJours.getTime()) {
         const message = `No update or no create organisme data for ${idRna} with ${connectorApi.name}`;
@@ -68,7 +72,7 @@ export class OrganismesDatasService {
         return false;
       }
       organimseData.dataUpdateAt = dateMiseAJours;
-      organimseData.dataJson = organismeDataFromSource;
+      organimseData.dataJson = JSON.parse(JSON.stringify(parser.dataJson));
 
       await this.dataSource.transaction(async (transactionalEntityManager) => {
         transactionalEntityManager.save(organimseData);
@@ -84,7 +88,8 @@ export class OrganismesDatasService {
   }
 
   async findAndAddByIdRna(idRna: string, connectorApi: Connector) {
-    let organismeDataFromSource;
+    const parser = this.parser2Organismes.getParser(connectorApi.name)();
+
     try {
       //TODO: A revoir comment il y a plusieur comment savoir quoi mettre
       const params = connectorApi?.params?.reduce(
@@ -99,10 +104,9 @@ export class OrganismesDatasService {
         connectorApi.query,
       );
 
-      //TODO: uniquement pour API entrepris
-      organismeDataFromSource = result?.data?.data;
+      parser.setDataJson(result);
 
-      if (!organismeDataFromSource) {
+      if (!parser.dataJson) {
         this.logger.warn({
           short_message: `No found orgnasition from extern api for ${idRna} with ${connectorApi.name}`,
           full_message: `No found orgnasition from extern api for ${idRna} with ${connectorApi.name}`,
@@ -117,19 +121,32 @@ export class OrganismesDatasService {
       });
       throw new Error("Unable to upsert organisme_data");
     }
-    return await this.createOrUpdate(
-      idRna,
-      connectorApi,
-      organismeDataFromSource,
-    );
+    return await this.createOrUpdate(idRna, connectorApi, parser);
   }
 
-  async findAndAddByIdRnaFromAllApi(idRna: string) {
+  async findAndAddByIdRnaFromAllApi(idRna: string, source: string) {
+    let connectorApisSelected;
     try {
       const connectorApis = await Connector.find({});
+      connectorApisSelected = source
+        ? connectorApis.filter((connector) => connector.name === source)
+        : connectorApis;
+    } catch (error) {
+      const message = "Error intern to get connectors";
+      this.logger.error({
+        short_message: message,
+        full_message: error.stack,
+      });
+      throw new Error(message);
+    }
 
+    if (!connectorApisSelected || !connectorApisSelected.length) {
+      throw new Error(`Error Connectors not found: ${source}`);
+    }
+
+    try {
       return await Promise.allSettled(
-        connectorApis.map(async (connectorApi) =>
+        connectorApisSelected.map(async (connectorApi) =>
           this.findAndAddByIdRna(idRna, connectorApi),
         ),
       );
