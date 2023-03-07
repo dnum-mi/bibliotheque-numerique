@@ -8,12 +8,13 @@
     </template>
     <BiblioNumDataTableAgGrid
       class="bn-table-organisme"
+      pagination="false"
       :headers="headerJson"
       :row-data="rowData"
       row-selection="single"
       @selection-changed="onSelect"
     />
-  </layoutlist>
+  </LayoutList>
 </template>
 <script lang="ts" setup>
 
@@ -37,7 +38,7 @@ const formatData = (dataJson) => {
     prefecture: `${dataJson?.adresse_siege?.code_postal?.substring(0, 2) || ''} ${dataJson?.adresse_siege?.commune || ''}`,
     creation: dateToStringFr(dataJson?.date_creation),
     modification: dateToStringFr(dataJson?.mise_a_jour),
-    type: 'CULT',
+    type: 'CULTES',
   }
 }
 const rowData = computed(() => organismeStore.organismes.map(data => formatData(data.dataJson)))
@@ -104,5 +105,9 @@ onMounted(async () => {
 .bn-list-search > .fr-btn {
   background-color: var(--border-plain-grey);
   align-self: center;
+}
+
+.bn-table-organisme {
+  height: 100%;
 }
 </style>
