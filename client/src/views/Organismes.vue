@@ -10,10 +10,6 @@
           Rechercher un organisme
         </h6>
       </div>
-      <!-- <DsfrSearchBar
-        class="bn-list-search"
-        placeholder="Rechercher un organisme"
-      /> -->
     </template>
     <BiblioNumDataTableAgGrid
       class="bn-table-organisme"
@@ -85,7 +81,6 @@ const headerJson = [
 ]
 
 const onSelect = (e) => {
-  console.log(e)
   router.push({ path: `/organismes/${e[0].rna_id}` })
   // router.push({ name: 'FicheOrganismes', params: { id: e.rna_id } })
 }

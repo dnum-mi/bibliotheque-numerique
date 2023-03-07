@@ -106,8 +106,6 @@ export async function fetchOrganimses (): Promise<any | null> {
       }
       return data
     })
-    console.log(datas)
-    // return data
     return datas
   } catch (error) {
     console.log(error)

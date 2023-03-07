@@ -25,7 +25,6 @@ export const useOrganismeStore = defineStore('organisme', () => {
 
   const loadOrganismes = async () => {
     const result = await fetchOrganimses()
-    console.log(result)
     // if (result) organisme.value = result.organismeData.dataJson.data
     if (result) organismes.value = result
   }
