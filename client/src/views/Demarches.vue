@@ -35,13 +35,13 @@ const headersJson = [
     value: 'number',
   },
   {
-    text: 'Created At',
+    text: 'Création',
     value: 'dateCreation',
     parseFn: dateToStringFr,
     type: 'date',
   },
   {
-    text: 'Libelle',
+    text: 'Le libellé',
     value: 'title',
   },
   {
@@ -61,7 +61,7 @@ const headersJson = [
   //   },
   // },
   {
-    text: 'Published At',
+    text: 'La date publication',
     value: 'datePublication',
     parseFn: dateToStringFr,
     type: 'date',
