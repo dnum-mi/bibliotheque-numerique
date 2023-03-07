@@ -1,10 +1,19 @@
 <template>
   <LayoutList>
     <template #title>
-      <DsfrSearchBar
+      <div class="bn-list-search">
+        <span
+          class="fr-icon-search-line bn-list-search-icon fr-p-1w"
+          aria-hidden="true"
+        />
+        <h6 class="bn-list-search-title fr-p-1w fr-m-0">
+          Rechercher un organisme
+        </h6>
+      </div>
+      <!-- <DsfrSearchBar
         class="bn-list-search"
         placeholder="Rechercher un organisme"
-      />
+      /> -->
     </template>
     <BiblioNumDataTableAgGrid
       class="bn-table-organisme"
@@ -87,26 +96,16 @@ onMounted(async () => {
 </script>
 <style lang="css">
 .bn-list-search {
-  flex-direction: row-reverse;
   background-color: var(--border-plain-grey);
   height: 100%;
-}
-.bn-list-search > .fr-input {
-  background-color: var(--border-plain-grey);
-  color: var(--background-default-grey)
-}
-.bn-list-search > .fr-input::placeholder {
-  color: var(--background-default-grey)
-}
-.bn-list-search > .fr-input:focus {
-  outline: none;
+  display: flex;
+  color: var(--background-default-grey);
+  align-items: center;
 }
 
-.bn-list-search > .fr-btn {
-  background-color: var(--border-plain-grey);
-  align-self: center;
+.bn-list-search-title {
+  color: var(--background-default-grey);
 }
-
 .bn-table-organisme {
   height: 100%;
 }
