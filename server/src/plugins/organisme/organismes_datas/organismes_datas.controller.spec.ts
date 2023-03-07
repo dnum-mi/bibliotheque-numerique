@@ -9,7 +9,7 @@ import { OrganismesDatasService } from "./organismes_datas.service";
 import { ConfigModule } from "@nestjs/config";
 import configuration from "../../../config/configuration";
 import fileConfig from "../../../config/file.config";
-import { Parse2OrganismesModule } from "../parserByConnector/parse2organismes.module";
+import { ParseToOrganismesModule } from "../parserByConnector/parse_to_organismes.module";
 
 describe("OrganismesDatasController", () => {
   let controller: OrganismesDatasController;
@@ -26,7 +26,7 @@ describe("OrganismesDatasController", () => {
           cache: true,
           load: [configuration, fileConfig],
         }),
-        Parse2OrganismesModule,
+        ParseToOrganismesModule,
       ],
 
       controllers: [OrganismesDatasController],

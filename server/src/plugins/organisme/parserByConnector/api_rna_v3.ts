@@ -1,4 +1,4 @@
-import { IParse2Organisme } from "./iprase2organisme";
+import { IParseToOrganisme } from "./iprase_to_organisme";
 export type TDataApiRnaV3 = {
   rna_id: string;
   titre: string;
@@ -31,7 +31,7 @@ export type TResultApiRnaV3 = {
 };
 
 export default class ParseApiRnaV3
-  implements IParse2Organisme<Partial<TDataApiRnaV3>, TResultApiRnaV3>
+  implements IParseToOrganisme<Partial<TDataApiRnaV3>, TResultApiRnaV3>
 {
   dataJson: Partial<TDataApiRnaV3>;
   getDataUpdateAt(): Date {

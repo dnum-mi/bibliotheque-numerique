@@ -1,4 +1,4 @@
-import { IParse2Organisme } from "./iprase2organisme";
+import { IParseToOrganisme } from "./iprase_to_organisme";
 export type TDataApiRnaV1 = {
   id: number;
   is_waldec: string;
@@ -61,7 +61,7 @@ export type TResultApiRnaV1 = {
 };
 
 export default class parseApiRnaV1
-  implements IParse2Organisme<Partial<TDataApiRnaV1>, TResultApiRnaV1>
+  implements IParseToOrganisme<Partial<TDataApiRnaV1>, TResultApiRnaV1>
 {
   dataJson: Partial<TDataApiRnaV1>;
   setDataJson(result: Partial<{ data: Partial<TResultApiRnaV1> }>): void {

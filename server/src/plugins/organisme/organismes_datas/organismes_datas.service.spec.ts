@@ -17,9 +17,9 @@ import { connectorTest, createOneConnector } from "../../../entities/__tests__";
 import { ConfigModule } from "@nestjs/config";
 import configuration from "../../../config/configuration";
 import fileConfig from "../../../config/file.config";
-import { Parse2OrganismesModule } from "../parserByConnector/parse2organismes.module";
-import { Parse2OrganismesService } from "../parserByConnector/parse2organismes.service";
-import { IParse2Organisme } from "../parserByConnector/iprase2organisme";
+import { ParseToOrganismesModule } from "../parserByConnector/parse_to_organismes.module";
+import { ParseToOrganismesService } from "../parserByConnector/parse_to_organismes.service";
+import { IParseToOrganisme } from "../parserByConnector/iprase_to_organisme";
 
 async function createTestAddOrg(
   connectorService: ConnectorService,
@@ -46,7 +46,7 @@ async function createNewOrgSrc() {
   return orgSrc;
 }
 
-class MockParse2Org implements IParse2Organisme<any, any> {
+class MockParse2Org implements IParseToOrganisme<any, any> {
   dataJson: any;
   setDataJson(result: any): void {
     this.dataJson = result?.data?.data;
@@ -60,7 +60,7 @@ describe("OrganismesDatasService", () => {
   let service: OrganismesDatasService;
   let connectorService: ConnectorService;
   let dataSource: DataSource;
-  let parserService: Parse2OrganismesService;
+  let parserService: ParseToOrganismesService;
   let parser: MockParse2Org;
 
   beforeAll(async () => {
@@ -75,7 +75,7 @@ describe("OrganismesDatasService", () => {
           cache: true,
           load: [configuration, fileConfig],
         }),
-        Parse2OrganismesModule,
+        ParseToOrganismesModule,
       ],
       providers: [OrganismesDatasService],
     }).compile();
@@ -83,8 +83,8 @@ describe("OrganismesDatasService", () => {
     service = module.get<OrganismesDatasService>(OrganismesDatasService);
     connectorService = module.get<ConnectorService>(ConnectorService);
     dataSource = module.get<DataSource>(DataSource);
-    parserService = module.get<Parse2OrganismesService>(
-      Parse2OrganismesService,
+    parserService = module.get<ParseToOrganismesService>(
+      ParseToOrganismesService,
     );
     parser = new MockParse2Org();
     jest.spyOn(parserService, "getParser").mockReturnValue(() => parser);

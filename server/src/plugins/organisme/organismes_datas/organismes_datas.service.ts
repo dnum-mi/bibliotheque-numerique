@@ -5,9 +5,9 @@ import { DataSource } from "typeorm";
 import { OrganismesData } from "../entities";
 import { Connector } from "../../../entities";
 import {
-  Parse2OrganismesService,
-  TParse2Organisme,
-} from "../parserByConnector/parse2organismes.service";
+  ParseToOrganismesService,
+  TParseToOrganisme,
+} from "../parserByConnector/parse_to_organismes.service";
 
 @Injectable()
 export class OrganismesDatasService {
@@ -18,7 +18,7 @@ export class OrganismesDatasService {
   constructor(
     private dataSource: DataSource,
     private connectorService: ConnectorService,
-    private parser2Organismes: Parse2OrganismesService,
+    private parser2Organismes: ParseToOrganismesService,
   ) {}
 
   findAll() {
@@ -47,7 +47,7 @@ export class OrganismesDatasService {
   async createOrUpdate(
     idRna: string,
     connectorApi: Connector,
-    parser: TParse2Organisme,
+    parser: TParseToOrganisme,
   ) {
     try {
       let organimseData = await OrganismesData.findOneBy({
