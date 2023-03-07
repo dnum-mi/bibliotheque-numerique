@@ -12,7 +12,10 @@
             <label class="bn-fiche-sub-title--label ">SIÈGE SOCIAL</label>
             <span class="bn-fiche-sub-title--text">{{ siegeSocial }}</span>
           </div>
-          <div class="fr-col-2">
+          <div
+            v-if="representant1"
+            class="fr-col-2"
+          >
             <label class="bn-fiche-sub-title--label">REPRÉSENTANT 1</label>
             <span class="bn-fiche-sub-title--text">{{ representant1 }}</span>
           </div>
@@ -28,7 +31,10 @@
             <label class="bn-fiche-sub-title--label">MODIFICATION</label>
             <span class="bn-fiche-sub-title--text">{{ modification }}</span>
           </div>
-          <div class="fr-col-2">
+          <div
+            v-if="dissolution"
+            class="fr-col-2"
+          >
             <label class="bn-fiche-sub-title--label">DISSOLUTION</label>
             <span class="bn-fiche-sub-title--text">{{ dissolution }}</span>
           </div>
@@ -71,7 +77,10 @@
           </div>
         </div>
         <div class="bn-list-contact fr-mb-5w">
-          <div class="fr-container">
+          <div
+            v-if="representants.length"
+            class="fr-container"
+          >
             <div class="fr-grid-row">
               <div class="fr-col-12 fr-mb-2w">
                 <div class="fr-mr-2w bn-icon--pink-macaron-950-active">
