@@ -13,6 +13,8 @@ export function organisme_test(): Partial<Organisme> {
     dateCreation: faker.datatype.datetime(),
     dateDeclaration: faker.datatype.datetime(),
     datePublication: faker.datatype.datetime(),
+    dateDissolution: faker.datatype.datetime(),
+    dateModification: faker.datatype.datetime(),
   };
 }
 export const createOneOrganisme = async (data) => {
