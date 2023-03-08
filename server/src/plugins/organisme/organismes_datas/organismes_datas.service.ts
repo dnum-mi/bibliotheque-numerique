@@ -130,12 +130,12 @@ export class OrganismesDatasService {
     return await this.createOrUpdate(idRna, connectorApi, parser);
   }
 
-  async findAndAddByIdRnaFromAllApi(idRna: string, source: string) {
+  async findAndAddByIdRnaFromAllApi(idRna: string, sources: string[]) {
     let connectorApisSelected;
     try {
       const connectorApis = await Connector.find({});
-      connectorApisSelected = source
-        ? connectorApis.filter((connector) => connector.name === source)
+      connectorApisSelected = sources?.length
+        ? connectorApis.filter((connector) => sources.includes(connector.name))
         : connectorApis;
     } catch (error) {
       const message = "Error intern to get connectors";

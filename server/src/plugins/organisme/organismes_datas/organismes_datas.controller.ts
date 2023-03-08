@@ -93,10 +93,9 @@ export class OrganismesDatasController {
 
     try {
       const isOks =
-        await this.organismesDatasService.findAndAddByIdRnaFromAllApi(
-          idRNA,
+        await this.organismesDatasService.findAndAddByIdRnaFromAllApi(idRNA, [
           source,
-        );
+        ]);
       const isOK = isOks.reduce(
         (acc, cur, idx) => {
           acc.success = acc.success && cur.status === "fulfilled";
