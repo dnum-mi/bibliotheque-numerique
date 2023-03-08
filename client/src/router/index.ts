@@ -80,6 +80,7 @@ const routes = [
   {
     path: '/organismes',
     name: 'Organismes',
+    beforeEnter: [isAuthenticatedGuard],
     component: () => import('@/views/Organismes.vue'),
   },
 ]
