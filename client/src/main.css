@@ -36,11 +36,20 @@ body,
   color: var(--background-default-grey);
 }
 
+.bn-list-search-dossier {
+  background-color: var(--artwork-minor-blue-france);
+  color: var(--background-default-grey);
+}
+
 .bn-list-search-title-organisme {
   color: var(--background-default-grey);
 }
 
 .bn-list-search-title-demarche {
+  color: var(--background-default-grey);
+}
+
+.bn-list-search-title-dossier {
   color: var(--background-default-grey);
 }
 

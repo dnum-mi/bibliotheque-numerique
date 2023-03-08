@@ -10,6 +10,7 @@ import BiblioNumDataTable from '@/components/BiblioNumDataTableAgGrid.vue'
 import { dateToStringFr } from '@/utils/dateToString'
 import { stateToFr } from '@/utils/stateToString'
 import { booleanToYesNo } from '@/utils/booleanToString'
+import LayoutList from '@/components/LayoutList.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -99,11 +100,14 @@ const getDossier = data => {
 </script>
 
 <template>
-  <div class="fr-container">
-    <div class="title">
-      <h1>Démarche {{ number }}</h1>
-      <h2>{{ title }}</h2>
-    </div>
+  <LayoutList>
+    <template #title>
+      <div class="bn-list-search bn-list-search-dossier">
+        <h6 class="bn-list-search-title-dossier fr-p-1w fr-m-0">
+          {{ title }} - N° {{ number }}
+        </h6>
+      </div>
+    </template>
 
     <DemarcheInformations :data-json="demarche?.demarcheDS?.dataJson" />
     <DemarcheService :service="service" />
@@ -117,7 +121,7 @@ const getDossier = data => {
       with-action="{{true}}"
       @get-elt="getDossier"
     />
-  </div>
+  </LayoutList>
 </template>
 
 <style scoped>
