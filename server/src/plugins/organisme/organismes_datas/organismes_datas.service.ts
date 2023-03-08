@@ -21,8 +21,14 @@ export class OrganismesDatasService {
     private parser2Organismes: ParseToOrganismesService,
   ) {}
 
-  findAll() {
-    return OrganismesData.find();
+  async findAll() {
+    const organismeDatas = await OrganismesData.find({
+      relations: { organismesSource: true },
+    });
+    return organismeDatas.map((organismeData) => ({
+      ...organismeData,
+      organismesSource: organismeData.organismesSource.name,
+    }));
   }
 
   findOne(id: number) {

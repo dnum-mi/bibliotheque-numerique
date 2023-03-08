@@ -35,6 +35,23 @@ export class OrganismesDatasController {
     }
   }
 
+  @Get("rna")
+  async getOrgnaismeData() {
+    try {
+      return await this.organismesDatasService.findAll();
+    } catch (error) {
+      this.logger.error({
+        short_message: error.message,
+        full_message: error.stack,
+      });
+
+      throw new HttpException(
+        error instanceof Error ? error.message : "Internal Server Error",
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
   @Get("rna/:id")
   async getOrgnaismeDataByIdRNA(@Param("id") id: string) {
     try {

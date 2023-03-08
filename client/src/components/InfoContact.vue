@@ -6,7 +6,10 @@
           <label class="bn-info-contact--text-sm fr-text--bold">{{ title }}</label>
           <span class="bn-info-contact--text-sm">{{ info }}</span>
         </div>
-        <div class="fr-col-3">
+        <div
+          v-if="phones.length"
+          class="fr-col-3"
+        >
           <label class="bn-info-contact--text-sm fr-text--bold"> Téléphone </label>
           <span
             v-for="(phone, index) in phones"
@@ -15,7 +18,10 @@
           >
             {{ phone }}</span>
         </div>
-        <div class="fr-col-3">
+        <div
+          v-if="eMail"
+          class="fr-col-3"
+        >
           <label class="bn-info-contact--text-sm fr-text--bold">Courriel</label>
           <span class="bn-info-contact--text-sm">{{ eMail }}</span>
         </div>

@@ -77,6 +77,12 @@ const routes = [
     beforeEnter: [isAuthenticatedGuard],
     component: () => import('@/views/FicheOrganisme.vue'),
   },
+  {
+    path: '/organismes',
+    name: 'Organismes',
+    beforeEnter: [isAuthenticatedGuard],
+    component: () => import('@/views/Organismes.vue'),
+  },
 ]
 
 const router = createRouter({

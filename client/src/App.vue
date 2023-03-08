@@ -23,6 +23,10 @@ const quickLinksBase = [
     path: '/demarches',
   },
   {
+    label: 'Organismes',
+    path: '/organismes',
+  },
+  {
     label: 'À propos',
     path: '/a-propos',
   },
