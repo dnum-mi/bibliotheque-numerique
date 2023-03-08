@@ -30,7 +30,6 @@ import { dateToStringFr } from '@/utils/dateToString'
 
 import { onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
-// const props = defineProps<{ }>()
 
 const organismeStore = useOrganismeStore()
 const router = useRouter()
@@ -39,7 +38,6 @@ const formatData = (dataJson) => {
   return {
     titre: dataJson.titre,
     rna_id: dataJson.rna_id,
-    // type: dataJson.type,
     prefecture: `${dataJson?.adresse_siege?.code_postal?.substring(0, 2) || ''} ${dataJson?.adresse_siege?.commune || ''}`,
     creation: dateToStringFr(dataJson?.date_creation),
     modification: dateToStringFr(dataJson?.mise_a_jour),
@@ -74,15 +72,10 @@ const headerJson = [
     text: 'Modification',
     value: 'modification',
   },
-  // {
-  //   text: 'Représentant',
-  // },
-
 ]
 
 const onSelect = (e) => {
   router.push({ path: `/organismes/${e[0].rna_id}` })
-  // router.push({ name: 'FicheOrganismes', params: { id: e.rna_id } })
 }
 
 onMounted(async () => {
