@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useRoute, useRouter } from 'vue-router'
 
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useDemarcheStore } from '@/stores/demarche'
 import GroupInstructeurs from '@/views/DemarcheGrpInstructeurs.vue'
 import DemarcheService from '@/views/DemarcheService.vue'
@@ -97,6 +97,22 @@ onMounted(async () => {
 const getDossier = data => {
   router.push({ name: 'Dossier', params: { id: data.idBiblioNum } })
 }
+
+const tabTitles = [
+  {
+    title: 'Dossiers',
+  },
+  {
+    title: 'Infos',
+  },
+  {
+    title: 'Guides',
+  },
+]
+const selectedTabIndex = ref(0)
+function selectTab (idx:number) {
+  selectedTabIndex.value = idx
+}
 </script>
 
 <template>
@@ -109,25 +125,54 @@ const getDossier = data => {
       </div>
     </template>
 
-    <DemarcheInformations :data-json="demarche?.demarcheDS?.dataJson" />
-    <DemarcheService :service="service" />
-    <br>
-    <GroupInstructeurs :group-instructeurs="groupInstructeurs" />
-    <br>
-    <BiblioNumDataTable
-      title="Dossiers"
-      :headers="headerDossierJson"
-      :row-data="dossiers"
-      with-action="{{true}}"
-      @get-elt="getDossier"
-    />
+    <DsfrTabs
+      tab-list-name="tabs-dossier"
+      :tab-titles="tabTitles"
+      initial-selected-index="0"
+      class="bn-padding-top-20px"
+      @select-tab="selectTab"
+    >
+      <DsfrTabContent
+        panel-id="tab-content-0"
+        tab-id="tab-0"
+        :selected="selectedTabIndex === 0"
+      >
+        <BiblioNumDataTable
+          :headers="headerDossierJson"
+          :row-data="dossiers"
+          with-action="{{true}}"
+          @get-elt="getDossier"
+        />
+      </DsfrTabContent>
+      <DsfrTabContent
+        panel-id="tab-content-0"
+        tab-id="tab-0"
+        :selected="selectedTabIndex === 1"
+      >
+        <DemarcheInformations
+          :data-json="demarche?.demarcheDS?.dataJson"
+          class="bn-padding-top-20px"
+        />
+        <DemarcheService
+          :service="service"
+          class="bn-padding-top-20px"
+        />
+        <GroupInstructeurs
+          :group-instructeurs="groupInstructeurs"
+          class="bn-padding-top-20px"
+        />
+      </DsfrTabContent>
+      <DsfrTabContent
+        panel-id="tab-content-0"
+        tab-id="tab-0"
+        :selected="selectedTabIndex === 2"
+      />
+    </DsfrTabs>
   </LayoutList>
 </template>
 
 <style scoped>
-  .title {
-    text-align: center;
-    padding-top: 1em;
+  .fr-tabs__panel {
+    padding: 0;
   }
-
 </style>
