@@ -1,12 +1,16 @@
 <template>
-  <div class="fr-container">
-    <div
-      :data-fr-theme="dark ? 'dark' : ''"
-      style="background-color: var(--grey-1000-50); color: var(--g800); padding: 1rem;"
-    >
-      <h1>Démarches</h1>
-    </div>
-
+  <LayoutList>
+    <template #title>
+      <div class="bn-list-search bn-list-search-demarche">
+        <span
+          class="fr-icon-search-line fr-p-1w"
+          aria-hidden="true"
+        />
+        <h6 class="bn-list-search-title-demarche fr-p-1w fr-m-0">
+          Rechercher démarches
+        </h6>
+      </div>
+    </template>
     <BiblioNumDataTableAgGrid
       :title="title"
       :headers="headersJson"
@@ -14,11 +18,12 @@
       with-action="{{true}}"
       @get-elt="getDossiers"
     />
-  </div>
+  </LayoutList>
 </template>
 
 <script lang="ts"  setup>
 import BiblioNumDataTableAgGrid from '@/components/BiblioNumDataTableAgGrid.vue'
+import LayoutList from '@/components/LayoutList.vue'
 import { useDemarcheStore } from '@/stores/demarche'
 import { dateToStringFr } from '@/utils/dateToString'
 import { computed, onMounted } from 'vue'

@@ -18,3 +18,32 @@ body,
 .fr-container {
   max-width: 100%;
 }
+
+/* Style Biblitique Numerique */
+.bn-list-search {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.bn-list-search-organisme {
+  background-color: var(--border-plain-grey);
+  color: var(--background-default-grey);
+}
+
+.bn-list-search-demarche {
+  background-color: var(--artwork-minor-blue-france);
+  color: var(--background-default-grey);
+}
+
+.bn-list-search-title-organisme {
+  color: var(--background-default-grey);
+}
+
+.bn-list-search-title-demarche {
+  color: var(--background-default-grey);
+}
+
+.bn-table-organisme {
+  height: 100%;
+}
