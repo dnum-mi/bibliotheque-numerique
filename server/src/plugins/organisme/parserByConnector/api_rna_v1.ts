@@ -1,4 +1,4 @@
-import { IParseToOrganisme } from "./iprase_to_organisme";
+import { IParseToOrganisme } from "./parse_to_organisme.interface";
 export type TDataApiRnaV1 = {
   id: number;
   is_waldec: string;

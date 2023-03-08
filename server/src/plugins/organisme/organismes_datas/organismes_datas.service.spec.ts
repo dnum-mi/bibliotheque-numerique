@@ -19,7 +19,7 @@ import configuration from "../../../config/configuration";
 import fileConfig from "../../../config/file.config";
 import { ParseToOrganismesModule } from "../parserByConnector/parse_to_organismes.module";
 import { ParseToOrganismesService } from "../parserByConnector/parse_to_organismes.service";
-import { IParseToOrganisme } from "../parserByConnector/iprase_to_organisme";
+import { IParseToOrganisme } from "../parserByConnector/parse_to_organisme.interface";
 
 async function createTestAddOrg(
   connectorService: ConnectorService,
