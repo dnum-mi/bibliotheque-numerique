@@ -41,4 +41,10 @@ export class Organisme extends ApplicationEntity {
 
   @Column({ type: "timestamp" })
   datePublication: Date;
+
+  @Column({ type: "timestamp" })
+  dateModification: Date;
+
+  @Column({ type: "timestamp" })
+  dateDissolution: Date;
 }
