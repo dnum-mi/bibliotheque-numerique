@@ -13,6 +13,10 @@
   </div>
 </template>
 <style lang="css" scoped>
+.fr-container {
+  padding: 0;
+}
+
 .bn-list-title {
   height: 5.5rem;
 }

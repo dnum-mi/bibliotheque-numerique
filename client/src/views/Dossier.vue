@@ -3,6 +3,8 @@ import { useRoute } from 'vue-router'
 
 import { computed, onMounted, ref } from 'vue'
 import { useDossierStore } from '@/stores/dossier'
+import LayoutFiche from '@/components/LayoutFiche.vue'
+import DossierTitle from './DossierTitle.vue'
 import DossierInformations from './DossierInformations.vue'
 import DossierDemande from './DossierDemande.vue'
 import DossierAnnotations from './DossierAnnotations.vue'
@@ -18,15 +20,9 @@ const tabTitles = [
   {
     title: 'Annotations privé',
   },
-  // {
-  //   title: 'Avis externes',
-  // },
   {
     title: 'Messagerie',
   },
-  // {
-  //   title: 'Personnes impliquées',
-  // },
 ]
 const selectedTabIndex = ref(0)
 function selectTab (idx:number) {
@@ -34,21 +30,22 @@ function selectTab (idx:number) {
 }
 
 onMounted(async () => {
-  // const { id } = useRoute().params
   const params = useRoute()?.params
   const id = Number(params.id)
   if (id) {
     await dossierStore.getDossier(id)
   }
 })
-
 </script>
 
 <template>
-  <div class="fr-container">
-    <h1>Dossier {{ dossierDS.number }}</h1>
-
-    <DossierInformations :datas="dossierDS" />
+  <LayoutFiche>
+    <template #title>
+      <DossierTitle :datas="dossierDS" />
+    </template>
+    <template #sub-title>
+      <DossierInformations :datas="dossierDS" />
+    </template>
 
     <DsfrTabs
       tab-list-name="tabs-dossier"
@@ -80,9 +77,5 @@ onMounted(async () => {
         <DossierMessages :datas="dossierDS" />
       </DsfrTabContent>
     </DsfrTabs>
-  </div>
+  </LayoutFiche>
 </template>
-
-<style scoped>
-
-</style>

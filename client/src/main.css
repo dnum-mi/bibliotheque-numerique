@@ -60,3 +60,64 @@ body,
 .bn-padding-top-20px {
   padding-top: 20px
 }
+
+.bn-fiche-space-left {
+  padding-left: 8%
+}
+
+.bn-list-contact {
+  margin: 0.125rem;
+}
+
+.bn-fiche-title--text {
+  font-size: 1.25rem;
+}
+.bn-fiche-title--text-sm {
+  font-size: 0.825rem;
+}
+
+.bn-fiche-sub-title--label {
+  display: block;
+  color: var(--text-mention-grey);
+  font-family: 'Marianne';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 0.625rem;
+  line-height: 1.25rem;
+}
+.bn-fiche-sub-title--text {
+  font-family: 'Marianne';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+}
+
+.bn-icon--blue-france-main-525 {
+  background-color: var(--blue-france-main-525);
+  border-radius: 100%;
+  color: var(--grey-1000-50);
+  width: 2rem;
+  height: 2rem;
+  display: inline-block;
+  text-align: center;
+}
+
+.bn-icon--blue-france-main-525 > span {
+  position: relative;
+  top: 0.25rem
+}
+
+.bn-icon--pink-macaron-950-active {
+  background-color:rgb(252,176,162);
+  border-radius: 100%;
+  color: var(--grey-1000-50);
+  width: 2rem;
+  height: 2rem;
+  display: inline-block;
+  text-align: center;
+}
+.bn-icon--pink-macaron-950-active > span {
+  position: relative;
+  top: 0.25rem
+}
