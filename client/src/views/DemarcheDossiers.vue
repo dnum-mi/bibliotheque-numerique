@@ -129,7 +129,7 @@ function selectTab (idx:number) {
       tab-list-name="tabs-dossier"
       :tab-titles="tabTitles"
       initial-selected-index="0"
-      class="bn-padding-top-20px"
+      class="fr-pt-5w"
       @select-tab="selectTab"
     >
       <DsfrTabContent
@@ -151,15 +151,15 @@ function selectTab (idx:number) {
       >
         <DemarcheInformations
           :data-json="demarche?.demarcheDS?.dataJson"
-          class="bn-padding-top-20px"
+          class="fr-pt-5w"
         />
         <DemarcheService
           :service="service"
-          class="bn-padding-top-20px"
+          class="fr-pt-5w"
         />
         <GroupInstructeurs
           :group-instructeurs="groupInstructeurs"
-          class="bn-padding-top-20px"
+          class="fr-pt-5w"
         />
       </DsfrTabContent>
       <DsfrTabContent

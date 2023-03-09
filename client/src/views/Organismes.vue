@@ -12,7 +12,6 @@
       </div>
     </template>
     <BiblioNumDataTableAgGrid
-      class="bn-table-organisme"
       pagination="false"
       :headers="headerJson"
       :row-data="rowData"

@@ -16,7 +16,7 @@ const idDossier = computed(() => props.datas.number || '')
 </script>
 
 <template>
-  <div class="fr-container">
+  <div class="fr-container fr-mb-4v">
     <div class="fr-grid-row bn-fiche-title">
       <span class="fr-text--bold bn-fiche-title--text"> {{ orgRef }} - </span>
       <span class="bn-fiche-title--text">{{ orgName }}</span>
@@ -32,7 +32,6 @@ const idDossier = computed(() => props.datas.number || '')
 <style scoped>
 .fr-container {
   padding: 0;
-  margin-bottom: 10px
 }
 .bn-fiche-title {
   display: block;
