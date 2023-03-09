@@ -147,7 +147,7 @@ export class OrganismesDatasService {
     }
 
     if (!connectorApisSelected || !connectorApisSelected.length) {
-      throw new Error(`Error Connectors not found: ${source}`);
+      throw new Error(`Error Connectors not found: ${sources}`);
     }
 
     try {

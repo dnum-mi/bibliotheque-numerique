@@ -1,9 +1,16 @@
 import { Module } from "@nestjs/common";
-import { OrganismesService } from "./organismes.service";
+
+import { ConnectorModule } from "../../../connector/connector.module";
+import { ParseToOrganismesModule } from "../parserByConnector/parse_to_organismes.module";
+
 import { OrganismesController } from "./organismes.controller";
 
+import { OrganismesService } from "./organismes.service";
+import { OrganismesDatasService } from "../organismes_datas/organismes_datas.service";
+
 @Module({
+  imports: [ConnectorModule, ParseToOrganismesModule],
   controllers: [OrganismesController],
-  providers: [OrganismesService],
+  providers: [OrganismesService, OrganismesDatasService],
 })
 export class OrganismesModule {}
