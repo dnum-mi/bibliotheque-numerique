@@ -109,6 +109,7 @@ const tabTitles = [
     title: 'Guides',
   },
 ]
+const initialSelectedIndex = 0
 const selectedTabIndex = ref(0)
 function selectTab (idx:number) {
   selectedTabIndex.value = idx
@@ -128,7 +129,7 @@ function selectTab (idx:number) {
     <DsfrTabs
       tab-list-name="tabs-dossier"
       :tab-titles="tabTitles"
-      initial-selected-index="0"
+      :initial-selected-index="initialSelectedIndex"
       class="fr-pt-5w"
       @select-tab="selectTab"
     >
