@@ -1,0 +1,52 @@
+import { getDatasFromRNA } from "../organismes_datas/__tests__/organismeFromRNA";
+import ParseApiRnaV3 from "./api_rna_v3";
+
+describe("Parser API_RNA_V3", () => {
+  it("should have organisme", () => {
+    const dataExpected = getDatasFromRNA();
+    const result = {
+      data: {
+        data: dataExpected,
+      },
+      status: 200,
+      statusText: "Ok",
+      headers: {},
+      config: {},
+    };
+    const parser = new ParseApiRnaV3();
+    // parser.setDataJson(result);
+
+    const organisme = parser.toOrganismeEntity(undefined, dataExpected);
+    expect(organisme).toBeDefined();
+
+    expect(organisme).toHaveProperty("idRef", dataExpected.rna_id);
+    expect(organisme).toHaveProperty("title", dataExpected.titre);
+    expect(organisme.address).toMatch(
+      new RegExp(Object.values(dataExpected.adresse_siege).join(" | ")),
+    );
+
+    expect(organisme).toHaveProperty(
+      "zipCode",
+      dataExpected.adresse_siege.code_postal,
+    );
+    expect(organisme).toHaveProperty(
+      "city",
+      dataExpected.adresse_siege.commune,
+    );
+    expect(organisme.dateCreation.toISOString()).toBe(
+      dataExpected.date_creation,
+    );
+    expect(organisme.dateDeclaration.toISOString()).toBe(
+      dataExpected.date_declaration,
+    );
+    expect(organisme.datePublication.toISOString()).toBe(
+      dataExpected.date_publication,
+    );
+    expect(organisme.dateDissolution.toISOString()).toBe(
+      dataExpected.date_dissolution,
+    );
+    expect(organisme.dateModification.toISOString()).toBe(
+      dataExpected.mise_a_jour,
+    );
+  });
+});
