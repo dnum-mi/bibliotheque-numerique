@@ -7,7 +7,6 @@ import { createPinia } from 'pinia'
 import Dossier from './Dossier.vue'
 import { useDossierStore } from '@/stores/dossier'
 import { generateDossier } from './__tests__/dossiers'
-import { dateToStringFr } from '@/utils/dateToString'
 
 describe('<Dossier />', () => {
   it('renders', () => {
@@ -32,8 +31,7 @@ describe('<Dossier />', () => {
       extensions,
     })
 
-    cy.get('h1').should('contain', `Dossier ${dossierDS.number}`)
-    cy.get('h3').should('contain', 'Informations')
-    cy.get('h3').contains('Informations').parent().contains('Date de dépot').next().should('contain', dateToStringFr(dossierDS.dateDepot))
+    cy.get('.bn-fiche-title').should('contain', `${dossierDS.number}`)
+    cy.get('.bn-fiche-sub-title').should('contain', `${dossierDS.state?.toUpperCase()}`)
   })
 })

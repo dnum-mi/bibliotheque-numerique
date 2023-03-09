@@ -44,8 +44,8 @@ describe('<DemarcheDossiers />', () => {
       extensions,
     })
 
-    cy.get('.title')
-      .should('contain', `Démarche ${demarche.demarcheDS.dataJson.number}`)
+    cy.get('.bn-list-search-title-dossier')
+      .should('contain', `${demarche.demarcheDS.dataJson.number}`)
       .should('contain', demarche.title)
 
     cy.get('h3').should('contain', 'Groupe Instructeurs')

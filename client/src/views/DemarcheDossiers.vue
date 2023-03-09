@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useRoute, useRouter } from 'vue-router'
 
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useDemarcheStore } from '@/stores/demarche'
 import GroupInstructeurs from '@/views/DemarcheGrpInstructeurs.vue'
 import DemarcheService from '@/views/DemarcheService.vue'
@@ -10,6 +10,7 @@ import BiblioNumDataTable from '@/components/BiblioNumDataTableAgGrid.vue'
 import { dateToStringFr } from '@/utils/dateToString'
 import { stateToFr } from '@/utils/stateToString'
 import { booleanToYesNo } from '@/utils/booleanToString'
+import LayoutList from '@/components/LayoutList.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -96,34 +97,82 @@ onMounted(async () => {
 const getDossier = data => {
   router.push({ name: 'Dossier', params: { id: data.idBiblioNum } })
 }
+
+const tabTitles = [
+  {
+    title: 'Dossiers',
+  },
+  {
+    title: 'Infos',
+  },
+  {
+    title: 'Guides',
+  },
+]
+const selectedTabIndex = ref(0)
+function selectTab (idx:number) {
+  selectedTabIndex.value = idx
+}
 </script>
 
 <template>
-  <div class="fr-container">
-    <div class="title">
-      <h1>Démarche {{ number }}</h1>
-      <h2>{{ title }}</h2>
-    </div>
+  <LayoutList>
+    <template #title>
+      <div class="bn-list-search bn-list-search-dossier">
+        <h6 class="bn-list-search-title-dossier fr-p-1w fr-m-0">
+          {{ title }} - N° {{ number }}
+        </h6>
+      </div>
+    </template>
 
-    <DemarcheInformations :data-json="demarche?.demarcheDS?.dataJson" />
-    <DemarcheService :service="service" />
-    <br>
-    <GroupInstructeurs :group-instructeurs="groupInstructeurs" />
-    <br>
-    <BiblioNumDataTable
-      title="Dossiers"
-      :headers="headerDossierJson"
-      :row-data="dossiers"
-      with-action="{{true}}"
-      @get-elt="getDossier"
-    />
-  </div>
+    <DsfrTabs
+      tab-list-name="tabs-dossier"
+      :tab-titles="tabTitles"
+      initial-selected-index="0"
+      class="fr-pt-5w"
+      @select-tab="selectTab"
+    >
+      <DsfrTabContent
+        panel-id="tab-content-0"
+        tab-id="tab-0"
+        :selected="selectedTabIndex === 0"
+      >
+        <BiblioNumDataTable
+          :headers="headerDossierJson"
+          :row-data="dossiers"
+          with-action="{{true}}"
+          @get-elt="getDossier"
+        />
+      </DsfrTabContent>
+      <DsfrTabContent
+        panel-id="tab-content-0"
+        tab-id="tab-0"
+        :selected="selectedTabIndex === 1"
+      >
+        <DemarcheInformations
+          :data-json="demarche?.demarcheDS?.dataJson"
+          class="fr-pt-5w"
+        />
+        <DemarcheService
+          :service="service"
+          class="fr-pt-5w"
+        />
+        <GroupInstructeurs
+          :group-instructeurs="groupInstructeurs"
+          class="fr-pt-5w"
+        />
+      </DsfrTabContent>
+      <DsfrTabContent
+        panel-id="tab-content-0"
+        tab-id="tab-0"
+        :selected="selectedTabIndex === 2"
+      />
+    </DsfrTabs>
+  </LayoutList>
 </template>
 
 <style scoped>
-  .title {
-    text-align: center;
-    padding-top: 1em;
+  .fr-tabs__panel {
+    padding: 0;
   }
-
 </style>

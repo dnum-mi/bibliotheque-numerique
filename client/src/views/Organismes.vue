@@ -1,18 +1,17 @@
 <template>
   <LayoutList>
     <template #title>
-      <div class="bn-list-search">
+      <div class="bn-list-search bn-list-search-organisme">
         <span
-          class="fr-icon-search-line bn-list-search-icon fr-p-1w"
+          class="fr-icon-search-line fr-p-1w"
           aria-hidden="true"
         />
-        <h6 class="bn-list-search-title fr-p-1w fr-m-0">
+        <h6 class="bn-list-search-title-organisme fr-p-1w fr-m-0">
           Rechercher un organisme
         </h6>
       </div>
     </template>
     <BiblioNumDataTableAgGrid
-      class="bn-table-organisme"
       pagination="false"
       :headers="headerJson"
       :row-data="rowData"
@@ -82,19 +81,3 @@ onMounted(async () => {
   await organismeStore.loadOrganismes()
 })
 </script>
-<style lang="css">
-.bn-list-search {
-  background-color: var(--border-plain-grey);
-  height: 100%;
-  display: flex;
-  color: var(--background-default-grey);
-  align-items: center;
-}
-
-.bn-list-search-title {
-  color: var(--background-default-grey);
-}
-.bn-table-organisme {
-  height: 100%;
-}
-</style>

@@ -1,81 +1,49 @@
 <script lang="ts" setup>
-import DisplayLabelsValues from '@/components/DisplayLabelsValues.vue'
 import { dateTimeToStringFr } from '@/utils/dateToString'
-import { booleanToYesNo } from '@/utils/booleanToString'
-import { stateToFr } from '@/utils/stateToString'
+import { computed } from 'vue'
 
-withDefaults(defineProps<{
+const props = withDefaults(defineProps<{
     datas?: object
   }>(), {
   datas: () => ({}),
 })
 
-const title = 'Informations'
-const labelsData = [
-  // TODO: à regarder
-  // {
-  //   text: 'Numero de dossier',
-  //   value: 'number',
-  // },
-  {
-    text: 'Archivé',
-    value: 'archived',
-    parseFn: booleanToYesNo,
-  },
-  {
-    text: 'Etat',
-    value: 'state',
-    parseFn: stateToFr,
-  },
-]
-
-const labelsDate = [
-  {
-    text: 'Date de derniére modification',
-    value: 'dateDerniereModification',
-    parseFn: dateTimeToStringFr,
-  },
-  {
-    text: 'Date de dépot',
-    value: 'dateDepot',
-    parseFn: dateTimeToStringFr,
-  },
-  {
-    text: 'Date de passage en construction',
-    value: 'datePassageEnConstruction',
-    parseFn: dateTimeToStringFr,
-  },
-  {
-    text: 'Date de passage en instruction',
-    value: 'datePassageEnInstruction',
-    parseFn: dateTimeToStringFr,
-  },
-  {
-    text: 'Date de traitement',
-    value: 'dateTraitement',
-    parseFn: dateTimeToStringFr,
-  },
-]
-
+const prefecture = computed(() => props.datas.groupeInstructeur?.label.toUpperCase() || '')
+const depot = computed(() => dateTimeToStringFr(props.datas.dateDepot) || '')
+const intruction = computed(() => dateTimeToStringFr(props.datas.datePassageEnInstruction) || '')
+const publication = computed(() => '')
+const etat = computed(() => props.datas.state?.toUpperCase() || '')
 </script>
 
 <template>
   <div class="fr-container">
-    <h3> {{ title }} </h3>
-    <DisplayLabelsValues
-      :title="title"
-      prefix-id="dossier-description"
-      :datas="datas"
-      :labels="labelsData"
-      class="fr-pb-3v"
-    />
-
-    <DisplayLabelsValues
-      :title="title"
-      prefix-id="dossier-description"
-      :datas="datas"
-      :labels="labelsDate"
-      class="fr-pb-3v"
-    />
+    <div class="fr-grid-row">
+      <div class="fr-col-2">
+        <label class="bn-fiche-sub-title--label">PRÉFECTURE</label>
+        <span class="bn-fiche-sub-title--text">{{ prefecture }}</span>
+      </div>
+      <div class="fr-col-2">
+        <label class="bn-fiche-sub-title--label">DÉPÔT</label>
+        <span class="bn-fiche-sub-title--text">{{ depot }}</span>
+      </div>
+      <div class="fr-col-2">
+        <label class="bn-fiche-sub-title--label">INTRUCTION</label>
+        <span class="bn-fiche-sub-title--text">{{ intruction }}</span>
+      </div>
+      <div class="fr-col-2">
+        <label class="bn-fiche-sub-title--label">PUBLICATION</label>
+        <span class="bn-fiche-sub-title--text">{{ publication }}</span>
+      </div>
+      <div class="fr-col-2">
+        <label class="bn-fiche-sub-title--label">ÉTAT</label>
+        <span class="bn-fiche-sub-title--text fr-badge fr-badge--info fr-badge--no-icon">{{ etat }}</span>
+      </div>
+    </div>
   </div>
 </template>
+
+<style scoped>
+.fr-container {
+  padding: 0;
+}
+</style>
