@@ -85,6 +85,11 @@ body,
   line-height: 1.25rem;
 }
 
+.bn-champ--text {
+  font-family: 'Marianne';
+  font-style: normal;
+}
+
 .bn-icon--blue-france-main-525 {
   background-color: var(--blue-france-main-525);
   border-radius: 100%;
