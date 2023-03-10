@@ -18,21 +18,30 @@ const champs = computed(() => props.datas?.champs || [])
 
 <template>
   <div class="fr-container">
-    <h3>
-      Identité du demandeur:
-    </h3>
-    <DossierDemandeurMoral
-      v-if="isDemandeurMorale"
-      :datas="demandeur"
-    />
-    <DossierDemandeurPhysique
-      v-if="isDemandeurPhysique"
-      :datas="demandeur"
-    />
-    <h3>
-      Formulaire
-    </h3>
-    <div>
+    <div class="fr-grid-row fr-mb-5v">
+      <h5 class="bn-text--shadow">
+        <span
+          class="fr-icon-account-line fr-icon--lg fr-mr-2w bn-ellipse bn-ellipse-account"
+          aria-hidden="true"
+        />Identité du déclarant
+      </h5>
+      <DossierDemandeurMoral
+        v-if="isDemandeurMorale"
+        :datas="demandeur"
+      />
+      <DossierDemandeurPhysique
+        v-if="isDemandeurPhysique"
+        :datas="demandeur"
+      />
+    </div>
+    <hr class="fr-mt-4w">
+    <div class="fr-grid-row fr-mb-5v">
+      <h5>
+        <span
+          class="fr-icon-file-text-line fr-icon--lg fr-mr-2w bn-ellipse bn-ellipse-file-text"
+          aria-hidden="true"
+        />Formulaire
+      </h5>
       <DossierChamps :champs="champs " />
     </div>
   </div>

@@ -58,10 +58,10 @@ const fields = computed<IField[]>(() => {
       >
         <label
           :for="id"
-          class="fr-text--bold fr-col-6"
-        > {{ label }} :</label> <span
+          class="fr-text--bold fr-col-4 bn-text--shadow"
+        > {{ label }} : </label> <span
           :id="id"
-          class="fr-text fr-col-6"
+          class="fr-text fr-col-8 bn-text--shadow"
         > {{ value }}</span>
       </div>
     </div>

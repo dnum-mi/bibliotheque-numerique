@@ -24,6 +24,7 @@ const tabTitles = [
     title: 'Messagerie',
   },
 ]
+const initialSelectedIndex = 0
 const selectedTabIndex = ref(0)
 function selectTab (idx:number) {
   selectedTabIndex.value = idx
@@ -50,7 +51,7 @@ onMounted(async () => {
     <DsfrTabs
       tab-list-name="tabs-dossier"
       :tab-titles="tabTitles"
-      initial-selected-index="0"
+      :initial-selected-index="initialSelectedIndex"
       @select-tab="selectTab"
     >
       <DsfrTabContent
@@ -64,7 +65,7 @@ onMounted(async () => {
       <DsfrTabContent
         panel-id="tab-content-1"
         tab-id="tab-1"
-        :selected="(selectedTabIndex === 1)"
+        :selected="selectedTabIndex === 1"
       >
         <DossierAnnotations :datas="dossierDS" />
       </DsfrTabContent>
@@ -72,7 +73,7 @@ onMounted(async () => {
       <DsfrTabContent
         panel-id="tab-content-2"
         tab-id="tab-2"
-        :selected="(selectedTabIndex === 2)"
+        :selected="selectedTabIndex === 2"
       >
         <DossierMessages :datas="dossierDS" />
       </DsfrTabContent>

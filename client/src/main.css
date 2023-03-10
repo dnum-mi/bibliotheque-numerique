@@ -113,3 +113,24 @@ body,
   position: relative;
   top: 0.25rem
 }
+
+.bn-text--shadow {
+  color: #161616;
+  text-shadow: #818080 0.1em 0.3em 0.34em
+}
+
+.bn-ellipse {
+  box-sizing: border-box; 
+  clip-path: ellipse(50% 50%);
+}
+.bn-ellipse-account {
+  color: white;
+  background: #6A6AF4;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border: 5px solid #6A6AF4;
+}
+.bn-ellipse-file-text {
+  color: white;
+  background: #66673D;
+  border: 5px solid #66673D;
+}
