@@ -168,3 +168,16 @@ body,
   background: #66673D;
   border: 5px solid #66673D;
 }
+.bn-dossier-pj-box {
+  color: #161616;
+  background: #E8EDFF;
+  font-family: 'Marianne';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  padding-right: 1rem;
+}

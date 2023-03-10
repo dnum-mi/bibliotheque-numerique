@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { dateTimeToStringFr } from '@/utils/dateToString'
+import { prettyByteSizeByString } from '../utils/prettyByteSize'
 
 defineProps<{
     email: string,
@@ -40,13 +41,17 @@ defineProps<{
         </p>
         <p
           v-if="attachment"
-          class="fr-callout__text"
+          class="bn-dossier-pj-box"
         >
+          <span
+            class="fr-icon-file-line fr-icon--md fr-p-1w"
+            aria-hidden="true"
+          />
           <a
             :href="attachment.url"
             target="_blank"
             class="fr-link"
-          >{{ attachment.filename }}</a>
+          >{{ attachment.filename }} <span class="fr-text--xs">({{ prettyByteSizeByString(attachment.byteSizeBigInt) }})</span></a>
         </p>
       </div>
     </div>
