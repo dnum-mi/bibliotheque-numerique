@@ -11,7 +11,7 @@ export enum PermissionName {
   ACCESS_DEMARCHE = 'ACCESS_DEMARCHE',
 }
 
-export type TOption = {
+export type TOptionTypes = {
   type: "string" | "number" | "boolean";
   multiple?: boolean;
 };
@@ -21,11 +21,13 @@ type TPermissionBase = {
 };
 
 export type TPermissionDescription = TPermissionBase & {
-  optionsTypes?: Record<string, TOption>;
+  optionsTypes?: Record<string, TOptionTypes>;
 };
 
 export type TPermission = TPermissionBase & {
   options?: any;
+  write?: boolean;
+  delete?: boolean;
 };
 
 export const Permissions: Record<string, TPermissionDescription> = {

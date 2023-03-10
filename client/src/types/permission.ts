@@ -16,13 +16,21 @@ export type TOptionTypes = {
   multiple?: boolean;
 }
 
-export type TPermission = {
+type TPermissionBase = {
   name: string;
-  optionsTypes?: Record<string, TOptionTypes>;
-  options?: any;
 };
 
-export const Permissions: Record<string, TPermission> = {
+export type TPermissionDescription = TPermissionBase & {
+  optionsTypes?: Record<string, TOptionTypes>;
+};
+
+export type TPermission = TPermissionBase & {
+  options?: any;
+  write?: boolean;
+  delete?: boolean;
+};
+
+export const Permissions: Record<string, TPermissionDescription> = {
   CREATE_ROLE: {
     name: 'CREATE_ROLE',
   },
