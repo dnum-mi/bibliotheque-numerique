@@ -21,6 +21,13 @@ export function canManageRolesGuard () {
   }
 }
 
+export function canAccessDemarchesGuard () {
+  const userStore = useUserStore()
+  if (!userStore.canAccessDemarches) {
+    return '/'
+  }
+}
+
 export function isNotAuthenticatedGuard () {
   const userStore = useUserStore()
   if (userStore.isAuthenticated) {

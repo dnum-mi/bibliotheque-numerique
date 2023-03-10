@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useUserStore } from '@/stores'
-import { hasAdminAccessGuard, canManageRolesGuard, isAuthenticatedGuard, isNotAuthenticatedGuard } from '@/shared/guards'
+import { hasAdminAccessGuard, canManageRolesGuard, canAccessDemarchesGuard, isAuthenticatedGuard, isNotAuthenticatedGuard } from '@/shared/guards'
 
 const MAIN_TITLE = 'Bibliothéque Numérique'
 
@@ -30,7 +30,7 @@ const routes = [
   {
     path: '/demarches',
     name: 'Demarches',
-    beforeEnter: [isAuthenticatedGuard],
+    beforeEnter: [canAccessDemarchesGuard],
     component: () => import('@/views/Demarches.vue'),
   },
   {

@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import type { LoginForm, User } from '@/shared/interfaces'
 import { fetchCurrentUser, getUsers, getUserById, loginUser, logoutUser } from '@/shared/services/user.service'
-import { PermissionName, RoleName } from '@/types/permissions'
+import { PermissionName, RoleName } from '@/types/permission'
 
 interface UserState {
   currentUser: User | null,
@@ -34,6 +34,9 @@ export const useUserStore = defineStore('user', {
     },
     canManageRoles (state): boolean {
       return !!state.currentUser?.roles?.find(role => role.name === RoleName.ADMIN || role?.permissions?.find(permission => permission?.name === PermissionName.CREATE_ROLE))
+    },
+    canAccessDemarches (state): boolean {
+      return !!state.currentUser?.roles?.find(role => role.name === RoleName.ADMIN || role?.permissions?.find(permission => permission?.name === PermissionName.ACCESS_DEMARCHE))
     },
   },
   actions: {
