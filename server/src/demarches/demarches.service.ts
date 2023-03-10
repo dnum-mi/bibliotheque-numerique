@@ -1,8 +1,10 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { EntityManager, InsertResult } from "typeorm";
-import { Demarche, DemarcheDS, TUpsertDemarche } from "../entities";
+import { EntityManager, In, InsertResult } from "typeorm";
+import { Demarche, DemarcheDS, TUpsertDemarche, User } from "../entities";
 import { LoggerService } from "../logger/logger.service";
 import { ConfigService } from "@nestjs/config";
+import { PermissionName } from "../types/permission";
+import { TConfig } from "../config/configuration";
 
 @Injectable()
 export class DemarchesService {
@@ -15,7 +17,8 @@ export class DemarchesService {
   private _typeOrganismeFromDemarcheDs(
     demarcheDS: DemarcheDS,
   ): string | undefined {
-    const TypeOrganisme = this.configService.get<object>("typeOrganisme");
+    const TypeOrganisme =
+      this.configService.get<TConfig["typeOrganisme"]>("typeOrganisme");
     const annotationDescriptors =
       demarcheDS.dataJson.publishedRevision?.annotationDescriptors;
 
@@ -89,9 +92,12 @@ export class DemarchesService {
     }
   }
 
-  async findWithFilter(filter: object = {}): Promise<Demarche[]> {
+  async findWithFilter(user: User, filter: object = {}): Promise<Demarche[]> {
     try {
-      return Demarche.findWithFilter(filter);
+      return Demarche.findWithFilter({
+        ...filter,
+        ...this._getFiltersFromUserPermissions(user),
+      });
     } catch (error) {
       this.logger.error({
         short_message: "Échec récupération des démarches",
@@ -99,5 +105,37 @@ export class DemarchesService {
       });
       throw new Error("Unable to retrieve demarches");
     }
+  }
+
+  getRulesFromUserPermissions(user: User): any {
+    const { roles } = user;
+    let demarcheIds: number[] = [];
+    for (const role of roles) {
+      if (
+        role.name ===
+        this.configService.get<TConfig["defaultAdmin"]["roleName"]>(
+          "defaultAdmin.roleName",
+        )
+      ) {
+        return {};
+      }
+      const permissionAccessDemarche = role.permissions.find(
+        (p) => p.name === PermissionName.ACCESS_DEMARCHE,
+      );
+      if (permissionAccessDemarche) {
+        demarcheIds = demarcheIds.concat(
+          permissionAccessDemarche?.options?.demarcheIds || [],
+        );
+      }
+    }
+    return {
+      idDemarcheDS: demarcheIds,
+    };
+  }
+  private _getFiltersFromUserPermissions(user: User): object {
+    const rules = this.getRulesFromUserPermissions(user);
+    return {
+      idDemarcheDS: rules?.idDemarcheDS?.length > 0 ? In(rules?.id) : undefined,
+    };
   }
 }
