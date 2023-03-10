@@ -90,6 +90,17 @@ body,
   font-style: normal;
 }
 
+.bn-message--text{
+  font-family: 'Marianne';
+  font-style: normal;
+}
+.bn-message-date--text{
+  color: #666666;
+}
+.bn-message-body--text{
+  color: #161616;
+}
+
 .bn-icon--blue-france-main-525 {
   background-color: var(--blue-france-main-525);
   border-radius: 100%;
@@ -128,14 +139,32 @@ body,
   box-sizing: border-box; 
   clip-path: ellipse(50% 50%);
 }
+.bn-ellipse-name {
+  font-family: 'Marianne';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  color: #FFFFFF;
+  background: #C2B24C;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.bn-ellipse-img {
+  width: 3rem;
+  height: 3rem;
+}
 .bn-ellipse-account {
-  color: white;
+  color: #FFFFFF;
   background: #6A6AF4;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border: 5px solid #6A6AF4;
 }
 .bn-ellipse-file-text {
-  color: white;
+  color: #FFFFFF;
   background: #66673D;
   border: 5px solid #66673D;
 }

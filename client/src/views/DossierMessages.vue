@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import DossierMessage from './DossierMessage.vue'
+import { nameToInitials } from '@/utils/nameToInitials'
 
 const props = withDefaults(defineProps<{
     datas?: object
@@ -8,6 +9,9 @@ const props = withDefaults(defineProps<{
   datas: () => ({}),
 })
 const messages = computed(() => props.datas?.messages || [])
+// TODO: add demandeur email in objet dossier
+const demandeurEmail = computed(() => props.datas?.demandeur.email || [])
+const demandeInitials = computed(() => nameToInitials(props.datas?.demandeur.nom + ' ' + props.datas?.demandeur.prenom).toUpperCase() || [])
 </script>
 
 <template>
@@ -28,6 +32,7 @@ const messages = computed(() => props.datas?.messages || [])
             :body="body"
             :created-at="createdAt"
             :attachment="attachment"
+            :demandeur="(demandeurEmail === email) ? demandeInitials : false"
           />
         </div>
       </div>

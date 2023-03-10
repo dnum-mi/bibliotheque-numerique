@@ -30,6 +30,7 @@ const dataCy = 'dossier-champ'
       <a
         :href=" champ.file.url"
         target="_blank"
+        class="fr-link"
       >{{ champ.file.filename }} <span class="fr-text--xs">({{ prettyByteSizeByString(champ.file.byteSizeBigInt) }})</span></a>
     </div>
     <DossierChamps
