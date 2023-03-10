@@ -1,42 +1,49 @@
 <script lang="ts" setup>
-import DisplayLabelsValues from '@/components/DisplayLabelsValues.vue'
+import { dateToStringFr } from '@/utils/dateToString'
 
-withDefaults(defineProps<{
+const props = withDefaults(defineProps<{
     datas?: object
   }>(), {
   datas: () => ({}),
 })
 
 const title = 'DemandeurDossier'
-const labelsDemandeur = [
+const fieldsDemandeur = [
   {
-    text: 'Civilité',
-    value: 'civilite',
+    label: 'Civilité',
+    value: props.datas.civilite.toUpperCase(),
   },
   {
-    text: 'Date de naissance',
-    value: 'dateDeNaissance',
+    label: 'Nom',
+    value: props.datas.nom.toUpperCase(),
   },
   {
-    text: 'Nom',
-    value: 'nom',
+    label: 'Prénom',
+    value: props.datas.prenom.toUpperCase(),
   },
   {
-    text: 'Prénom',
-    value: 'prenom',
+    label: 'Date de naissance',
+    value: dateToStringFr(props.datas.dateDeNaissance),
   },
-
 ]
 
 </script>
 <template>
-  <div class="fr-container">
-    <DisplayLabelsValues
-      :title="title"
-      prefix-id="dossier-demandeur"
-      :datas="datas"
-      :labels="labelsDemandeur"
-      class="fr-pb-3v"
-    />
+  <div
+    :data-cy="`cy-${title}`"
+    class="fr-container"
+  >
+    <div class="fr-grid-row">
+      <div
+        v-for="{label, value} in fieldsDemandeur"
+        :key="label"
+        class="fr-col-3"
+      >
+        <label class="fr-text--bold bn-text--shadow"> {{ label }} </label>
+        <div class="fr-text bn-text--shadow fr-mt-4v">
+          {{ value }}
+        </div>
+      </div>
+    </div>
   </div>
 </template>
