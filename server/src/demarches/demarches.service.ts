@@ -3,7 +3,7 @@ import { EntityManager, In, InsertResult } from "typeorm";
 import { Demarche, DemarcheDS, TUpsertDemarche, User } from "../entities";
 import { LoggerService } from "../logger/logger.service";
 import { ConfigService } from "@nestjs/config";
-import { PermissionName } from "../types/permission";
+import { PermissionName } from "../types/Permission.type";
 import { TConfig } from "../config/configuration";
 
 @Injectable()

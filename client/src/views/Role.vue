@@ -4,7 +4,7 @@ import { useRoleStore } from '@/stores'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import type { IRole } from '@/shared/interfaces'
-import { PermissionName, Permissions } from '@/types/permission'
+import { PermissionName, Permissions } from '@/shared/types/Permission.type'
 import PermissionCheckbox from '@/components/PermissionCheckbox.vue'
 import router from '@/router'
 

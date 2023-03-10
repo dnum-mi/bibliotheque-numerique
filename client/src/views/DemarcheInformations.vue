@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import DisplayLabelsValues from '@/components/DisplayLabelsValues.vue'
 import { DemarcheStateMapping } from '@/utils/demarche-mapping'
-import type { KeyDemarcheStateMapping } from '@/types/typesDemarche'
+import type { KeyDemarcheStateMapping } from '@/shared/types/Demarche.type'
 import { computed } from 'vue'
 import { dateTimeToStringFr } from '@/utils/dateToString'
 import { stateToFr } from '@/utils/stateToString'

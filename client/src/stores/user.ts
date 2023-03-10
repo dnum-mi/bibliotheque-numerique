@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import type { LoginForm, User } from '@/shared/interfaces'
 import { fetchCurrentUser, getUsers, getUserById, loginUser, logoutUser } from '@/shared/services/user.service'
-import { PermissionName, RoleName } from '@/types/permission'
+import { PermissionName, RoleName } from '@/shared/types/Permission.type'
 
 interface UserState {
   currentUser: User | null,

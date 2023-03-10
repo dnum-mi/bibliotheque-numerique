@@ -17,7 +17,7 @@ import {
   PermissionsGuard,
   RequirePermissions,
 } from "../guards/permissions.guard";
-import { PermissionName } from "../types/permission";
+import { PermissionName } from "../types/Permission.type";
 
 @Controller("roles")
 @UseGuards(PermissionsGuard)
