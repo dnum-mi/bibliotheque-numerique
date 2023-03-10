@@ -9,7 +9,7 @@ import { Reflector } from "@nestjs/core";
 import { Role, User } from "../entities";
 import { TConfig } from "../config/configuration";
 import { ConfigService } from "@nestjs/config";
-import { TPermission } from "types/tpermission";
+import { TPermission } from "../types/permission";
 
 export const RequirePermissions = (permission: TPermission) =>
   SetMetadata("permission", permission);

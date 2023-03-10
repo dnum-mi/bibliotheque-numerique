@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker/locale/fr'
 import type { IRole } from '@/shared/interfaces'
-import { PermissionName } from '@/types/permissions'
+import { PermissionName } from '@/types/permission'
 import type { TPermission } from '@/types/tpermission'
 
 const allPermissions = Object.values(PermissionName).map(permisson => ({

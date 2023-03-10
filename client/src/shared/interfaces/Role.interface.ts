@@ -1,4 +1,4 @@
-import type { TPermission } from '@/types/tpermission'
+import type { TPermission } from '@/types/permission'
 
 export interface IRole {
   id: number;

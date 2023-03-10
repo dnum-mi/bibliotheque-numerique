@@ -8,7 +8,7 @@ import {
 } from "typeorm";
 import { User } from "./user.entity";
 import { ApplicationEntity } from "./application_entity";
-import { TPermission } from "../types/tpermission";
+import { TPermission } from "../types/permission";
 
 @Entity({ name: "roles" })
 @Unique("UK_ROLE_NAME", ["name"])
