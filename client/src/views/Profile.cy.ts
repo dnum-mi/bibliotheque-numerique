@@ -5,7 +5,7 @@ import VueDsfr from '@gouvminint/vue-dsfr'
 
 import { createPinia } from 'pinia'
 import { useUserStore } from '@/stores'
-import { createRandomUser } from './__tests__/users'
+import { createRandomAdmin } from './__tests__/users'
 
 import Profile from './Profile.vue'
 
@@ -13,8 +13,9 @@ describe('<Profile />', () => {
   it('renders', () => {
     const pinia = createPinia()
     const useStore = useUserStore(pinia)
-    const newUser = createRandomUser()
+    const newUser = createRandomAdmin()
     useStore.currentUser = newUser
+    const userRols = newUser.roles
     const extensions = {
       use: [
         pinia,
@@ -25,6 +26,8 @@ describe('<Profile />', () => {
       extensions,
     })
     cy.contains(newUser.email)
-    cy.contains(newUser.id)
+    cy.contains('La liste des vos rôles')
+    cy.contains(userRols[0].name)
+    cy.contains(userRols[0].description)
   })
 })

@@ -25,6 +25,10 @@ body,
   display: flex;
   align-items: center;
 }
+.bn-list-search-profile {
+  background-color: var(--border-plain-green-bourgeon);
+  color: var(--background-default-grey);
+}
 
 .bn-list-search-organisme {
   background-color: var(--border-plain-grey);
@@ -38,6 +42,10 @@ body,
 
 .bn-list-search-dossier {
   background-color: var(--artwork-minor-blue-france);
+  color: var(--background-default-grey);
+}
+
+.bn-list-search-title-profile {
   color: var(--background-default-grey);
 }
 
