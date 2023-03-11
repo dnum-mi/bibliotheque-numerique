@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { useUserStore } from '@/stores'
 import { hasAdminAccessGuard, canManageRolesGuard, isAuthenticatedGuard, isNotAuthenticatedGuard } from '@/shared/guards'
 
-const MAIN_TITLE = 'Gabarit de démarrage VueDsfr'
+const MAIN_TITLE = 'Bibliothéque Numérique'
 
 const routes = [
   {
