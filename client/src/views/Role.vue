@@ -24,13 +24,6 @@ const roleData = computed<IRole | undefined>(() => {
   return roleStore.roles.get(Number(params?.id))
 })
 
-const changePermissionOption = (permissionName: string, optionName: string, value: any) => {
-  const PermissionArrayElement = PermissionArray.value.find(p => p.name === permissionName)
-  if (PermissionArrayElement) {
-    PermissionArrayElement.options[optionName] = value
-  }
-}
-
 const updatePermission = async () => {
   const activePermissions = PermissionArray.value?.filter(p => p.active)
   await roleStore.updateRole((roleData?.value?.id as number), {
@@ -105,21 +98,17 @@ watch(() => roleStore.roles.get(Number(route?.params?.id)), () => {
         @click="deleteRole"
       />
     </div>
-    <div
-      class="permissions-list"
-      data-cy="permissions-role-list"
-    >
+    <div class="permissions-list">
       <h2>
         Permissions
       </h2>
-      <ul>
+      <ul data-cy="permissions-role-list">
         <li
-          v-for="permission in PermissionArray"
+          v-for="(permission, index) in PermissionArray"
           :key="permission.id"
         >
           <PermissionCheckbox
-            :permission="permission"
-            @change-permission-option="changePermissionOption"
+            v-model:permission="PermissionArray[index]"
           />
         </li>
       </ul>

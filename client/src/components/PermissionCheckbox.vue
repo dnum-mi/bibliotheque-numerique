@@ -7,15 +7,23 @@ interface PermissionElement {
   options: Record<string, any>
   optionsTypes: Record<string, any>
 }
-const props = defineProps<{
-  permission: PermissionElement,
-}>()
-const emit = defineEmits(['changePermissionOption'])
-const permission = props?.permission || {}
-const optionsTypesArray = permission.optionsTypes ? Object.keys(permission.optionsTypes) : []
+const props = withDefaults(defineProps<{
+  permission: PermissionElement | null,
+}>(), {
+  permission: () => null,
+})
+const emit = defineEmits(['update:permission'])
+const optionsTypesArray = props.permission?.optionsTypes ? Object.keys(props.permission.optionsTypes) : []
 
+const onActive = (active: boolean) => {
+  const newPermission = { ...props.permission } as PermissionElement
+  newPermission.active = active
+  emit('update:permission', newPermission)
+}
 const onChange = (optionName: string, value: any) => {
-  emit('changePermissionOption', props.permission.name, optionName, value)
+  const newPermission = { ...props.permission } as PermissionElement
+  newPermission.options[optionName] = value
+  emit('update:permission', newPermission)
 }
 </script>
 
@@ -23,14 +31,15 @@ const onChange = (optionName: string, value: any) => {
   <div v-if="permission">
     <DsfrCheckbox
       :id="permission.id"
-      v-model="permission.active"
+      :model-value="permission.active"
       :name="permission.name"
+      @update:modelValue="onActive"
     >
       <template #label>
         {{ permission.name }}
       </template>
     </DsfrCheckbox>
-    <div v-if="permission.active">
+    <div v-if="permission.active && optionsTypesArray.length > 0">
       <div
         v-for="optionType in optionsTypesArray"
         :key="optionType"
@@ -45,6 +54,3 @@ const onChange = (optionName: string, value: any) => {
     </div>
   </div>
 </template>
-
-<style lang="scss" scoped>
-</style>

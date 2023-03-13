@@ -9,7 +9,7 @@ import { useRoleStore } from '@/stores'
 
 import Role from './Role.vue'
 
-import { createRandomRoles } from './__tests__/roles'
+import { createRandomRoles, getPermissionNumber } from './__tests__/roles'
 import { createMemoryHistory, createRouter } from 'vue-router'
 
 describe('<Role />', () => {
@@ -47,5 +47,6 @@ describe('<Role />', () => {
     cy.mount(Role, {
       extensions,
     })
+    cy.get('[data-cy=permissions-role-list]').find('li').should('have.length', getPermissionNumber())
   })
 })
