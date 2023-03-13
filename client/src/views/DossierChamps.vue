@@ -19,7 +19,6 @@ const dataCy = 'dossier-champs'
           v-for="champ in champs"
           :key="champ.id"
           :champ="champ"
-          class="fr-col-12 fr-grid-row"
         />
       </div>
     </div>

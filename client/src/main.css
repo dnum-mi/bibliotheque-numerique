@@ -25,6 +25,10 @@ body,
   display: flex;
   align-items: center;
 }
+.bn-list-search-profile {
+  background-color: var(--border-plain-green-bourgeon);
+  color: var(--background-default-grey);
+}
 
 .bn-list-search-organisme {
   background-color: var(--border-plain-grey);
@@ -38,6 +42,10 @@ body,
 
 .bn-list-search-dossier {
   background-color: var(--artwork-minor-blue-france);
+  color: var(--background-default-grey);
+}
+
+.bn-list-search-title-profile {
   color: var(--background-default-grey);
 }
 
@@ -85,6 +93,22 @@ body,
   line-height: 1.25rem;
 }
 
+.bn-champ--text {
+  font-family: 'Marianne';
+  font-style: normal;
+}
+
+.bn-message--text{
+  font-family: 'Marianne';
+  font-style: normal;
+}
+.bn-message-date--text{
+  color: #666666;
+}
+.bn-message-body--text{
+  color: #161616;
+}
+
 .bn-icon--blue-france-main-525 {
   background-color: var(--blue-france-main-525);
   border-radius: 100%;
@@ -115,7 +139,7 @@ body,
 }
 
 .bn-text--shadow {
-  color: #161616;
+  color: var(--grey-50-1000);
   text-shadow: #818080 0.1em 0.3em 0.34em
 }
 
@@ -123,14 +147,45 @@ body,
   box-sizing: border-box; 
   clip-path: ellipse(50% 50%);
 }
+.bn-ellipse-name {
+  font-family: 'Marianne';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  color: var(--grey-1000-50);
+  background: #C2B24C;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.bn-ellipse-img {
+  width: 3rem;
+  height: 3rem;
+}
 .bn-ellipse-account {
-  color: white;
-  background: #6A6AF4;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  border: 5px solid #6A6AF4;
+  color: var(--grey-1000-50);
+  background: var(--blue-france-main-525);
+  border: 5px solid var(--blue-france-main-525);
 }
 .bn-ellipse-file-text {
-  color: white;
-  background: #66673D;
-  border: 5px solid #66673D;
+  color: var(--grey-1000-50);
+  background: var(--green-tilleul-verveine-sun-418-moon-817);
+  border: 5px solid var(--green-tilleul-verveine-sun-418-moon-817);
+}
+.bn-dossier-pj-box {
+  color: var(--grey-50-1000);
+  background: var(--info-950-100);
+  font-family: 'Marianne';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  padding-right: 1rem;
 }
