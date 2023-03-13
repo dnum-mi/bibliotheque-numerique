@@ -7,7 +7,7 @@ defineProps<{
     body: string,
     createdAt: string,
     attachment: object,
-    demandeur: boolean,
+    demandeur: string | boolean,
   }>()
 
 </script>

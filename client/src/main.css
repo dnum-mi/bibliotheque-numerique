@@ -139,7 +139,7 @@ body,
 }
 
 .bn-text--shadow {
-  color: #161616;
+  color: var(--grey-50-1000);
   text-shadow: #818080 0.1em 0.3em 0.34em
 }
 
@@ -153,7 +153,7 @@ body,
   font-weight: 400;
   font-size: 1.25rem;
   line-height: 1.75rem;
-  color: #FFFFFF;
+  color: var(--grey-1000-50);
   background: #C2B24C;
   width: 3rem;
   height: 3rem;
@@ -167,18 +167,18 @@ body,
   height: 3rem;
 }
 .bn-ellipse-account {
-  color: #FFFFFF;
-  background: #6A6AF4;
-  border: 5px solid #6A6AF4;
+  color: var(--grey-1000-50);
+  background: var(--blue-france-main-525);
+  border: 5px solid var(--blue-france-main-525);
 }
 .bn-ellipse-file-text {
-  color: #FFFFFF;
-  background: #66673D;
-  border: 5px solid #66673D;
+  color: var(--grey-1000-50);
+  background: var(--green-tilleul-verveine-sun-418-moon-817);
+  border: 5px solid var(--green-tilleul-verveine-sun-418-moon-817);
 }
 .bn-dossier-pj-box {
-  color: #161616;
-  background: #E8EDFF;
+  color: var(--grey-50-1000);
+  background: var(--info-950-100);
   font-family: 'Marianne';
   font-style: normal;
   font-weight: 400;

@@ -23,7 +23,6 @@
       :headers="rolesHeadersJson"
       :row-data="rolesRowData"
       :with-action="false"
-      @selection-changed="onSelectionChanged"
     />
   </LayoutList>
 </template>
