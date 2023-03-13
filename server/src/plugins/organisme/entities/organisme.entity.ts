@@ -18,19 +18,34 @@ export class Organisme extends ApplicationEntity {
   })
   title: string;
 
-  @Column()
+  @Column({
+    type: "varchar",
+    nullable: true,
+  })
   address: string;
 
-  @Column()
+  @Column({
+    type: "varchar",
+    nullable: true,
+  })
   zipCode: string;
 
-  @Column()
+  @Column({
+    type: "varchar",
+    nullable: true,
+  })
   city: string;
 
-  @Column()
+  @Column({
+    type: "varchar",
+    nullable: true,
+  })
   typeStructure: string;
 
-  @Column()
+  @Column({
+    type: "varchar",
+    nullable: true,
+  })
   leaderName: string;
 
   @Column({ type: "timestamp" })
