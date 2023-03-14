@@ -17,15 +17,15 @@ import {
   PermissionsGuard,
   RequirePermissions,
 } from "../guards/permissions.guard";
-import { PermissionName } from "../types/permissions";
+import { PermissionName } from "../types/Permission.type";
 
 @Controller("roles")
 @UseGuards(PermissionsGuard)
-@RequirePermissions({ name: PermissionName.CREATE_ROLE })
 export class RolesController {
   constructor(private readonly rolesService: RolesService) {}
 
   @Get()
+  @RequirePermissions({ name: PermissionName.CREATE_ROLE })
   async listRoles() {
     let roles: Role[];
     try {
@@ -50,6 +50,7 @@ export class RolesController {
   }
 
   @Get(":id")
+  @RequirePermissions({ name: PermissionName.CREATE_ROLE })
   async getRoleById(@Param("id", ParseIntPipe) id: number) {
     let role: Role;
     try {
@@ -74,6 +75,7 @@ export class RolesController {
   }
 
   @Post()
+  @RequirePermissions({ name: PermissionName.CREATE_ROLE })
   async create(@Body("role") role: Partial<Role>) {
     try {
       return await this.rolesService.create(role);
@@ -92,6 +94,7 @@ export class RolesController {
   }
 
   @Put(":id")
+  @RequirePermissions({ name: PermissionName.CREATE_ROLE })
   async update(
     @Param("id", ParseIntPipe) id: number,
     @Body("role") role: Partial<Role>,
@@ -113,6 +116,7 @@ export class RolesController {
   }
 
   @Post("assign")
+  @RequirePermissions({ name: PermissionName.CREATE_ROLE })
   async assignRoleToUser(
     @Body("userId") userId: number,
     @Body("roleId") roleId: number,
@@ -134,6 +138,7 @@ export class RolesController {
   }
 
   @Post("unassign")
+  @RequirePermissions({ name: PermissionName.CREATE_ROLE })
   async unassignRoleToUser(
     @Body("userId") userId: number,
     @Body("roleId") roleId: number,
@@ -155,6 +160,7 @@ export class RolesController {
   }
 
   @Delete("remove/:id")
+  @RequirePermissions({ name: PermissionName.CREATE_ROLE })
   async deleteRole(@Param("id", ParseIntPipe) id: number) {
     try {
       await this.rolesService.remove(id);

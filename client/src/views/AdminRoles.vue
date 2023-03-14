@@ -18,7 +18,7 @@ import { useRoleStore, useUserStore } from '@/stores'
 import { dateToStringFr } from '@/utils/dateToString'
 import type { IRole } from '@/shared/interfaces'
 import router from '@/router'
-import { RoleName } from '@/types/permissions'
+import { RoleName } from '@/shared/types/Permission.type'
 
 const userStore = useUserStore()
 const roleStore = useRoleStore()

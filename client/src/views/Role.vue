@@ -1,14 +1,20 @@
 <script setup lang="ts">
 
 import { useRoleStore } from '@/stores'
-import { computed, onMounted, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import type { IRole } from '@/shared/interfaces'
-import { PermissionName } from '@/types/permissions'
-import { useField } from 'vee-validate'
+import { PermissionName, Permissions } from '@/shared/types/Permission.type'
+import PermissionCheckbox from '@/components/PermissionCheckbox.vue'
 import router from '@/router'
 
-const PermissionNameArray = Object.values(PermissionName).map((p) => ({ label: p, id: p, name: p }))
+const PermissionArray = ref(Object.keys(PermissionName).map((key: string) => ({
+  id: key,
+  name: PermissionName[key as keyof typeof PermissionName],
+  active: false,
+  options: {} as any,
+  optionsTypes: Permissions[key].optionsTypes,
+})))
 const roleStore = useRoleStore()
 const route = useRoute()
 const dataCy = 'role'
@@ -18,15 +24,13 @@ const roleData = computed<IRole | undefined>(() => {
   return roleStore.roles.get(Number(params?.id))
 })
 
-const { value: permissionValue } = useField('permission', {}, {
-  initialValue: roleData?.value?.permissions.map((p) => p.name) || [],
-})
-
 const updatePermission = async () => {
+  const activePermissions = PermissionArray.value?.filter(p => p.active)
   await roleStore.updateRole((roleData?.value?.id as number), {
-    permissions: permissionValue.value?.map(p => (
+    permissions: activePermissions.map(p => (
       {
-        name: p,
+        name: p.name,
+        options: Object.keys(p.options || {}).length > 0 ? p.options : undefined,
       }),
     ) || [],
   })
@@ -49,7 +53,13 @@ onMounted(async () => {
 })
 
 watch(() => roleStore.roles.get(Number(route?.params?.id)), () => {
-  permissionValue.value = roleData?.value?.permissions.map((p) => p.name) || []
+  for (const permission of roleData?.value?.permissions || []) {
+    const PermissionArrayElement = PermissionArray.value.find(p => p.name === permission.name)
+    if (PermissionArrayElement) {
+      PermissionArrayElement.active = true
+      PermissionArrayElement.options = permission.options
+    }
+  }
 })
 </script>
 
@@ -88,17 +98,20 @@ watch(() => roleStore.roles.get(Number(route?.params?.id)), () => {
         @click="deleteRole"
       />
     </div>
-    <div
-      class="permissions-list"
-      data-cy="permissions-role-list"
-    >
+    <div class="permissions-list">
       <h2>
         Permissions
       </h2>
-      <DsfrCheckboxSet
-        v-model="permissionValue"
-        :options="PermissionNameArray"
-      />
+      <ul data-cy="permissions-role-list">
+        <li
+          v-for="(permission, index) in PermissionArray"
+          :key="permission.id"
+        >
+          <PermissionCheckbox
+            v-model:permission="PermissionArray[index]"
+          />
+        </li>
+      </ul>
       <DsfrButton
         label="Mettre à jour les permissions"
         type="button"
@@ -125,5 +138,11 @@ watch(() => roleStore.roles.get(Number(route?.params?.id)), () => {
 .permissions-list {
   padding: 3rem 3rem;
   flex: 2;
+  ul {
+    list-style-type: none;
+    li {
+      margin-bottom: 1rem;
+    }
+  }
 }
 </style>

@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker/locale/fr'
 import type { User, UserForm } from '@/shared/interfaces'
-import { PermissionName } from '@/types/permissions'
-import type { TPermission } from '@/types/tpermission'
+import { PermissionName } from '@/shared/types/Permission.type'
+import type { TPermission } from '@/shared/types/tpermission'
 
 export const createRandomUserForm = (): UserForm => ({
   email: faker.internet.email(),

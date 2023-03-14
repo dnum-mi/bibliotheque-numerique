@@ -19,10 +19,6 @@ const quickLinksBase = [
     iconAttrs: iconColor,
   },
   {
-    label: 'Démarches',
-    path: '/demarches',
-  },
-  {
     label: 'Organismes',
     path: '/organismes',
   },
@@ -35,8 +31,15 @@ const quickLinks = ref(quickLinksBase)
 
 const userStore = useUserStore()
 watch(() => userStore.isAuthenticated, () => {
+  quickLinks.value = quickLinksBase
   if (userStore.isAuthenticated) {
-    quickLinks.value = quickLinksBase.concat(
+    if (userStore.canAccessDemarches) {
+      quickLinks.value = quickLinks.value.concat({
+        label: 'Démarches',
+        path: '/demarches',
+      })
+    }
+    quickLinks.value = quickLinks.value.concat(
       {
         label: 'Mon profil',
         path: '/profile',
@@ -50,7 +53,7 @@ watch(() => userStore.isAuthenticated, () => {
         iconAttrs: iconColor,
       },
     )
-    if (userStore.hasAdminAccess) {
+    if (userStore.canManageRoles) {
       quickLinks.value = quickLinks.value.concat({
         label: 'Administration',
         path: '/admin',

@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker/locale/fr";
-import { PermissionName } from "../../types/permissions";
+import { PermissionName } from "../../types/Permission.type";
 import { Role } from "..";
 
 export function role_test(): Partial<Role> {

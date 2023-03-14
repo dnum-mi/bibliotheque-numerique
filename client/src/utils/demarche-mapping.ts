@@ -1,4 +1,4 @@
-import type { TypeDemarcheStateMapping } from '@/types/typesDemarche'
+import type { TypeDemarcheStateMapping } from '@/shared/types/Demarche.type'
 
 export const DemarcheStateMapping:TypeDemarcheStateMapping = {
   brouillon: 'Brouillon',
