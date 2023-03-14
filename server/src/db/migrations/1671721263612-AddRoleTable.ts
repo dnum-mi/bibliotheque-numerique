@@ -33,10 +33,6 @@ export class AddRoleTable1671721263612 implements MigrationInterface {
             type: "varchar",
           },
           {
-            name: "permissions",
-            type: "jsonb",
-          },
-          {
             name: "createAt",
             type: "timestamp",
             default: "now()",
