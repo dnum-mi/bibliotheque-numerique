@@ -15,6 +15,8 @@ module.exports = {
     'jsx-quotes': [2, 'prefer-double'],
     'comma-dangle': [2, 'always-multiline'],
     'vue/multi-word-component-names': 'off',
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': 'off',
   },
   overrides: [
     {

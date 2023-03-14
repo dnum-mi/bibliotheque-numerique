@@ -1,13 +1,10 @@
 // Note: This line does represent only "special" roles, not all roles.
 export enum RoleName {
-  // eslint-disable-next-line
   ADMIN = 'admin',
 }
 
 export enum PermissionName {
-  // eslint-disable-next-line
   CREATE_ROLE = 'CREATE_ROLE',
-  // eslint-disable-next-line
   ACCESS_DEMARCHE = 'ACCESS_DEMARCHE',
 }
 
