@@ -87,6 +87,16 @@ export default class ParseApiRnaV1
     newOrganisme.zipCode = orgDataDataJson?.adresse_code_postal;
 
     newOrganisme.dateCreation = toDate(orgDataDataJson?.date_creation);
+    newOrganisme.dateModification = orgDataDataJson?.derniere_maj;
+    newOrganisme.dateDissolution = toDate(
+      orgDataDataJson?.date_declaration_dissolution,
+    );
+    newOrganisme.datePublication = toDate(
+      orgDataDataJson?.date_publication_creation,
+    );
+    newOrganisme.dateDeclaration = toDate(
+      orgDataDataJson.date_derniere_declaration,
+    );
 
     return newOrganisme;
   }
