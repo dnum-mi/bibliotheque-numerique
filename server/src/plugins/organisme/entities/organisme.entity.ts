@@ -51,15 +51,27 @@ export class Organisme extends ApplicationEntity {
   @Column({ type: "timestamp" })
   dateCreation: Date;
 
-  @Column({ type: "timestamp" })
+  @Column({
+    type: "timestamp",
+    nullable: true,
+  })
   dateDeclaration: Date;
 
-  @Column({ type: "timestamp" })
+  @Column({
+    type: "timestamp",
+    nullable: true,
+  })
   datePublication: Date;
 
-  @Column({ type: "timestamp" })
+  @Column({
+    type: "timestamp",
+    nullable: true,
+  })
   dateModification: Date;
 
-  @Column({ type: "timestamp" })
+  @Column({
+    type: "timestamp",
+    nullable: true,
+  })
   dateDissolution: Date;
 }
