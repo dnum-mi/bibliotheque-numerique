@@ -129,13 +129,14 @@ export class DemarchesService {
       }
     }
     return {
-      idDemarcheDS: demarcheIds,
+      demarcheDS: demarcheIds,
     };
   }
   private _getFiltersFromUserPermissions(user: User): object {
     const rules = this.getRulesFromUserPermissions(user);
     return {
-      idDemarcheDS: rules?.idDemarcheDS?.length > 0 ? In(rules?.id) : undefined,
+      demarcheDS:
+        rules?.demarcheDS?.length > 0 ? In(rules?.demarcheDS) : undefined,
     };
   }
 }
