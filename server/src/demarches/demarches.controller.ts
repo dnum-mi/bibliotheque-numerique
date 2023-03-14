@@ -159,6 +159,7 @@ export class DemarchesController {
   }
 
   @Get(":id/dossiers")
+  @RequirePermissions({ name: PermissionName.ACCESS_DEMARCHE })
   async getDemarcheDossiersById(
     @Param("id", ParseIntPipe) id: number,
   ): Promise<Dossier[]> {
@@ -188,6 +189,7 @@ export class DemarchesController {
   }
 
   @Post("create")
+  @RequirePermissions()
   async create(@Body("idDs", ParseIntPipe) idDs: number) {
     try {
       const demarche = await this.demarcheService.findByDsId(idDs);
