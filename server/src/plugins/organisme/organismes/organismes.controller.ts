@@ -2,9 +2,7 @@ import {
   Controller,
   Get,
   Body,
-  Patch,
   Param,
-  Delete,
   Post,
   HttpException,
   HttpStatus,
@@ -17,8 +15,15 @@ export class OrganismesController {
   constructor(private readonly organismesService: OrganismesService) {}
 
   @Get()
-  findAll() {
-    return this.organismesService.findAll();
+  async findAll() {
+    try {
+      return await this.organismesService.findAll();
+    } catch (error) {
+      throw new HttpException(
+        error instanceof Error ? error.message : "Internal Server Error",
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   @Get(":id")
