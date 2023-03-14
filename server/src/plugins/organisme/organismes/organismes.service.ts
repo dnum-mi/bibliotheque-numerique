@@ -1,6 +1,7 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { DataSource } from "typeorm";
 import { LoggerService } from "../../../logger/logger.service";
+import { BNError } from "../../../utiles/bn_error.class";
 import { Organisme } from "../entities";
 import { OrganismesDatasService } from "../organismes_datas/organismes_datas.service";
 import { ParseToOrganismesService } from "../parserByConnector/parse_to_organismes.service";
@@ -59,7 +60,7 @@ export class OrganismesService {
     }
 
     if (!organismeDatas) {
-      throw new Error(`No datas for ${idRef}`);
+      throw new BNError(`No datas for ${idRef}`, HttpStatus.NOT_FOUND);
     }
 
     try {
