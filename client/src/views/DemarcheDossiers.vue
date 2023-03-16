@@ -142,6 +142,7 @@ function selectTab (idx:number) {
           :headers="headerDossierJson"
           :row-data="dossiers"
           with-action="{{true}}"
+          floating-filter="{{true}}"
           @get-elt="getDossier"
         />
       </DsfrTabContent>

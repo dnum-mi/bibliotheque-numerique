@@ -47,6 +47,7 @@ const props = withDefaults(defineProps<{
     paginationPageSize?: number,
     withAction?: boolean,
     rowSelection?: string,
+    floatingFilter?: boolean
 
   }>(), {
   title: undefined,
@@ -56,6 +57,7 @@ const props = withDefaults(defineProps<{
   paginationPageSize: PAGINATION_PAGE_SIZE,
   withAction: false,
   rowSelection: undefined,
+  floatingFilter: false,
 })
 
 const columnDefs = computed(() => {
@@ -78,6 +80,7 @@ const columnDefs = computed(() => {
   return columnDefs.concat(headers.map((header) => {
     const filter = getFilterAgGrid(header.type)
     return {
+      floatingFilter: props.floatingFilter,
       headerName: header.text || '',
       field: header.value,
       width: header.width || undefined,
