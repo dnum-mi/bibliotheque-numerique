@@ -16,6 +16,7 @@
       :headers="headerJson"
       :row-data="rowData"
       row-selection="single"
+      :floating-filter="true"
       @selection-changed="onSelect"
     />
   </LayoutList>
