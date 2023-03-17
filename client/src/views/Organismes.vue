@@ -34,7 +34,7 @@ import { useRouter } from 'vue-router'
 const organismeStore = useOrganismeStore()
 const router = useRouter()
 
-const rowData = computed(() => { console.log(organismeStore.organismes); return organismeStore.organismes })
+const rowData = computed(() => organismeStore.organismes)
 
 const headerJson = [
   {
