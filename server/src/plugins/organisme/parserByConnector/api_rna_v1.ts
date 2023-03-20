@@ -72,16 +72,12 @@ export default class ParseApiRnaV1
     const newOrganisme = organisme || new Organisme();
     newOrganisme.idRef = orgDataDataJson.id_association;
     newOrganisme.title = orgDataDataJson.titre;
-    // eslint-disable-next-line prettier/prettier
-    newOrganisme.address = `${orgDataDataJson?.adresse_numero_voie || ""
-      // eslint-disable-next-line prettier/prettier
-      } ${orgDataDataJson?.adresse_type_voie || ""
-      // eslint-disable-next-line prettier/prettier
-      } ${orgDataDataJson?.adresse_libelle_voie || ""
-      // eslint-disable-next-line prettier/prettier
-      } ${orgDataDataJson?.adresse_code_postal || ""
-      // eslint-disable-next-line prettier/prettier
-      } ${orgDataDataJson?.adresse_libelle_commune || ""}`;
+
+    newOrganisme.address = `${orgDataDataJson?.adresse_numero_voie || ""} ${
+      orgDataDataJson?.adresse_type_voie || ""
+    } ${orgDataDataJson?.adresse_libelle_voie || ""} ${
+      orgDataDataJson?.adresse_code_postal || ""
+    } ${orgDataDataJson?.adresse_libelle_commune || ""}`;
 
     newOrganisme.city = orgDataDataJson?.adresse_libelle_commune;
     newOrganisme.zipCode = orgDataDataJson?.adresse_code_postal;

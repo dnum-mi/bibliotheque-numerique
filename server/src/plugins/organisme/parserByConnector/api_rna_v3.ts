@@ -52,18 +52,14 @@ export default class ParseApiRnaV3
     const newOrganisme = organisme || new Organisme();
     newOrganisme.idRef = orgDataDataJson.rna_id;
     newOrganisme.title = orgDataDataJson.titre;
-    // eslint-disable-next-line prettier/prettier
-    newOrganisme.address = `${orgDataDataJson?.adresse_siege?.complement || ""
-      // eslint-disable-next-line prettier/prettier
-      } ${orgDataDataJson?.adresse_siege?.numero_voie || ""
-      // eslint-disable-next-line prettier/prettier
-      } ${orgDataDataJson?.adresse_siege?.type_voie || ""
-      // eslint-disable-next-line prettier/prettier
-      } ${orgDataDataJson?.adresse_siege?.libelle_voie || ""
-      // eslint-disable-next-line prettier/prettier
-      } ${orgDataDataJson?.adresse_siege?.code_postal || ""
-      // eslint-disable-next-line prettier/prettier
-      } ${orgDataDataJson?.adresse_siege?.commune || ""}`;
+
+    newOrganisme.address = `${
+      orgDataDataJson?.adresse_siege?.complement || ""
+    } ${orgDataDataJson?.adresse_siege?.numero_voie || ""} ${
+      orgDataDataJson?.adresse_siege?.type_voie || ""
+    } ${orgDataDataJson?.adresse_siege?.libelle_voie || ""} ${
+      orgDataDataJson?.adresse_siege?.code_postal || ""
+    } ${orgDataDataJson?.adresse_siege?.commune || ""}`;
 
     newOrganisme.city = orgDataDataJson?.adresse_siege?.commune;
     newOrganisme.zipCode = orgDataDataJson.adresse_siege?.code_postal;
