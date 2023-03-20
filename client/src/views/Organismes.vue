@@ -34,48 +34,61 @@ import { useRouter } from 'vue-router'
 const organismeStore = useOrganismeStore()
 const router = useRouter()
 
-const formatData = (dataJson) => {
-  return {
-    titre: dataJson.titre,
-    rna_id: dataJson.rna_id,
-    prefecture: `${dataJson?.adresse_siege?.code_postal?.substring(0, 2) || ''} ${dataJson?.adresse_siege?.commune || ''}`,
-    creation: dateToStringFr(dataJson?.date_creation),
-    modification: dateToStringFr(dataJson?.mise_a_jour),
-    type: 'CULTES',
-  }
-}
-const rowData = computed(() => organismeStore.organismes.map(data => formatData(data.dataJson)))
+const rowData = computed(() => organismeStore.organismes)
 
 const headerJson = [
   {
     text: 'Titre',
-    value: 'titre',
+    value: 'title',
   },
   {
     text: 'N°Org',
-    value: 'rna_id',
+    value: 'idRef',
   },
-  {
-    text: 'Type',
-    value: 'type',
-  },
+  // {
+  //   text: 'Type',
+  //   value: 'type',
+  //   // cellRenderer: BadgeTypeOrganisme,
+  // },
   {
     text: 'Préfecture',
     value: 'prefecture',
-
   },
   {
     text: 'Création',
-    value: 'creation',
+    value: 'dateCreation',
+    parseFn: dateToStringFr,
+    type: 'date',
   },
   {
     text: 'Modification',
-    value: 'modification',
+    value: 'dateModification',
+    parseFn: dateToStringFr,
+    type: 'date',
+  },
+  {
+    text: 'Déclaration',
+    value: 'dateDeclaration',
+    parseFn: dateToStringFr,
+    type: 'date',
+
+  },
+  {
+    text: 'Publication',
+    value: 'datePublication',
+    parseFn: dateToStringFr,
+    type: 'date',
+  },
+  {
+    text: 'Dissolution',
+    value: 'dateDissolution',
+    parseFn: dateToStringFr,
+    type: 'date',
   },
 ]
 
 const onSelect = (e) => {
-  router.push({ path: `/organismes/${e[0].rna_id}` })
+  router.push({ path: `/organismes/${e[0].idRef}` })
 }
 
 onMounted(async () => {

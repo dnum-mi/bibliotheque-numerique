@@ -1,4 +1,6 @@
-import { IParseToOrganisme } from "./iprase_to_organisme";
+import { toDate } from "../../../utiles/utilesDate";
+import { Organisme } from "../entities";
+import { IParseToOrganisme } from "./parse_to_organisme.interface";
 export type TDataApiRnaV1 = {
   id: number;
   is_waldec: string;
@@ -7,10 +9,10 @@ export type TDataApiRnaV1 = {
   siret: string;
   numero_reconnaissance_utilite_publique: string;
   code_gestion: string;
-  date_creation: Date | string;
-  date_derniere_declaration: Date | string;
-  date_publication_creation: Date | string;
-  date_declaration_dissolution: Date | string;
+  date_creation: string;
+  date_derniere_declaration: string;
+  date_publication_creation: string;
+  date_declaration_dissolution: string;
   nature: string;
   groupement: string;
   titre: string;
@@ -60,11 +62,43 @@ export type TResultApiRnaV1 = {
   association: TDataApiRnaV1;
 };
 
-export default class parseApiRnaV1
+export default class ParseApiRnaV1
   implements IParseToOrganisme<Partial<TDataApiRnaV1>, TResultApiRnaV1>
 {
+  toOrganismeEntity(
+    organisme: Organisme,
+    orgDataDataJson: Partial<TDataApiRnaV1>,
+  ): Organisme {
+    const newOrganisme = organisme || new Organisme();
+    newOrganisme.idRef = orgDataDataJson.id_association;
+    newOrganisme.title = orgDataDataJson.titre;
+
+    newOrganisme.address = `${orgDataDataJson?.adresse_numero_voie || ""} ${
+      orgDataDataJson?.adresse_type_voie || ""
+    } ${orgDataDataJson?.adresse_libelle_voie || ""} ${
+      orgDataDataJson?.adresse_code_postal || ""
+    } ${orgDataDataJson?.adresse_libelle_commune || ""}`;
+
+    newOrganisme.city = orgDataDataJson?.adresse_libelle_commune;
+    newOrganisme.zipCode = orgDataDataJson?.adresse_code_postal;
+
+    newOrganisme.dateCreation = toDate(orgDataDataJson?.date_creation);
+    newOrganisme.dateModification = orgDataDataJson?.derniere_maj;
+    newOrganisme.dateDissolution = toDate(
+      orgDataDataJson?.date_declaration_dissolution,
+    );
+    newOrganisme.datePublication = toDate(
+      orgDataDataJson?.date_publication_creation,
+    );
+    newOrganisme.dateDeclaration = toDate(
+      orgDataDataJson.date_derniere_declaration,
+    );
+
+    return newOrganisme;
+  }
+
   dataJson: Partial<TDataApiRnaV1>;
-  setDataJson(result: Partial<{ data: Partial<TResultApiRnaV1> }>): void {
+  setDataJson(result: { data: Partial<TResultApiRnaV1> }): void {
     this.dataJson = result?.data?.association;
   }
   getDataUpdateAt(): Date {

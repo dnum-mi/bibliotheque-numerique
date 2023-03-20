@@ -1,8 +1,10 @@
 import { faker } from "@faker-js/faker/locale/fr";
 
-export function getDatasFromRNA() {
+export const idRNAFake = () => `W${faker.random.numeric(9)}`;
+
+export function getDatasFromRNA(idRNA?: string) {
   return {
-    rna_id: `W${faker.random.numeric(9)}`,
+    rna_id: idRNA || `W${faker.random.numeric(9)}`,
     titre: faker.company.name(),
     objet: faker.company.catchPhrase(),
     siret: faker.random.numeric(14),

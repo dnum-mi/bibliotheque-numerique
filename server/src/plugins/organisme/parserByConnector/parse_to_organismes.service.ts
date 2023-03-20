@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import parseApiRnaV1, { TDataApiRnaV1, TResultApiRnaV1 } from "./api_rna_v1";
 import ParseApiRnaV3, { TDataApiRnaV3, TResultApiRnaV3 } from "./api_rna_v3";
-import { IParseToOrganisme } from "./iprase_to_organisme";
+import { IParseToOrganisme } from "./parse_to_organisme.interface";
 
 type TData = Partial<TDataApiRnaV1 | TDataApiRnaV3>;
 type TResult = TResultApiRnaV1 | TResultApiRnaV3;

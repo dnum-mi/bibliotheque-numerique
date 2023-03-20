@@ -3,8 +3,17 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 export const useOrganismeStore = defineStore('organisme', () => {
+  const formatData = (data: { zipCode: string; city: any }) => {
+    return {
+      ...data,
+      prefecture: `${data?.zipCode?.substring(0, 2) || ''} - ${data?.city || ''}`,
+      // type: 'CULTES',
+    }
+  }
+
   const organisme = ref({})
   const organismes = ref([])
+
   const loadOrganismebyId = async (id: number) => {
     if (!id) {
       console.log(`Pas de valeur id: ${id}`)
@@ -26,7 +35,7 @@ export const useOrganismeStore = defineStore('organisme', () => {
   const loadOrganismes = async () => {
     const result = await fetchOrganimses()
     // if (result) organisme.value = result.organismeData.dataJson.data
-    if (result) organismes.value = result
+    if (result) organismes.value = result?.map((data: any) => { const newData = formatData(data); return newData })
   }
 
   return {

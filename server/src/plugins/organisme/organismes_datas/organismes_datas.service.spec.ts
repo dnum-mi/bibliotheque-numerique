@@ -4,7 +4,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { DataSource } from "typeorm";
 import { ConnectorModule } from "../../../connector/connector.module";
 import { ConnectorService } from "../../../connector/connector.service";
-import { OrganismesData } from "../entities";
+import { Organisme, OrganismesData } from "../entities";
 import { Connector } from "../../../entities";
 
 import { datasourceTest } from "../entities/__tests__";
@@ -19,7 +19,7 @@ import configuration from "../../../config/configuration";
 import fileConfig from "../../../config/file.config";
 import { ParseToOrganismesModule } from "../parserByConnector/parse_to_organismes.module";
 import { ParseToOrganismesService } from "../parserByConnector/parse_to_organismes.service";
-import { IParseToOrganisme } from "../parserByConnector/iprase_to_organisme";
+import { IParseToOrganisme } from "../parserByConnector/parse_to_organisme.interface";
 
 async function createTestAddOrg(
   connectorService: ConnectorService,
@@ -46,7 +46,10 @@ async function createNewOrgSrc() {
   return orgSrc;
 }
 
-class MockParse2Org implements IParseToOrganisme<any, any> {
+class MockParseToOrg implements IParseToOrganisme<any, any> {
+  toOrganismeEntity(organisme: Organisme): Organisme {
+    throw new Error("Method not implemented.");
+  }
   dataJson: any;
   setDataJson(result: any): void {
     this.dataJson = result?.data?.data;
@@ -61,7 +64,7 @@ describe("OrganismesDatasService", () => {
   let connectorService: ConnectorService;
   let dataSource: DataSource;
   let parserService: ParseToOrganismesService;
-  let parser: MockParse2Org;
+  let parser: MockParseToOrg;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -86,7 +89,7 @@ describe("OrganismesDatasService", () => {
     parserService = module.get<ParseToOrganismesService>(
       ParseToOrganismesService,
     );
-    parser = new MockParse2Org();
+    parser = new MockParseToOrg();
     jest.spyOn(parserService, "getParser").mockReturnValue(() => parser);
   });
 
