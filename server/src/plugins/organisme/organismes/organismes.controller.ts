@@ -6,12 +6,17 @@ import {
   Post,
   HttpException,
   HttpStatus,
+  Logger,
 } from "@nestjs/common";
-import { BNError } from "../../../utiles/bn_error.class";
+import { LoggerService } from "../../../logger/logger.service";
 import { OrganismesService } from "./organismes.service";
 
 @Controller("organismes")
 export class OrganismesController {
+  private readonly logger = new Logger(
+    OrganismesController.name,
+  ) as unknown as LoggerService;
+
   constructor(private readonly organismesService: OrganismesService) {}
 
   @Get()
@@ -48,12 +53,17 @@ export class OrganismesController {
 
       return { message: `organimse RNA: ${idRNA} create success!` };
     } catch (error) {
-      if (error instanceof BNError) {
+      if (error.status === HttpStatus.NOT_FOUND) {
         throw new HttpException(
           `organimse RNA: ${idRNA} not found`,
-          HttpStatus.NOT_FOUND,
+          error.statusCode,
         );
       }
+
+      this.logger.error({
+        short_message: error.message,
+        full_message: error.stack,
+      });
 
       throw new HttpException(
         error instanceof Error ? error.message : "Internal Server Error",

@@ -18,6 +18,7 @@ import { OrganismesService } from "./organismes.service";
 
 describe("OrganismesController", () => {
   let controller: OrganismesController;
+  let dataService: OrganismesDatasService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -36,9 +37,23 @@ describe("OrganismesController", () => {
     }).compile();
 
     controller = module.get<OrganismesController>(OrganismesController);
+    dataService = module.get<OrganismesDatasService>(OrganismesDatasService);
   });
 
   it("should be defined", () => {
     expect(controller).toBeDefined();
+  });
+
+  it("should return one message when a organisme is not found in API", async () => {
+    jest
+      .spyOn(dataService, "findAndAddByIdRnaFromAllApi")
+      .mockResolvedValueOnce([{ status: "rejected", reason: "test" }]);
+
+    jest.spyOn(dataService, "findOneByIdRNA").mockResolvedValueOnce(null);
+
+    const idRNA = "Test id RNA";
+    await expect(
+      controller.addOrgnaismeByIdRNA("Test id RNA", "Test organisme source"),
+    ).rejects.toThrow(`organimse RNA: ${idRNA} not found`);
   });
 });
