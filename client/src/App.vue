@@ -104,7 +104,6 @@ const close = async () => {
   />
   <div>
     <router-view />
-    <VIcon name="ri-flag-line" />
   </div>
   <ReloadPrompt
     :offline-ready="offlineReady"
