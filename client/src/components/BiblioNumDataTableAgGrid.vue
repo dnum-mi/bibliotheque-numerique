@@ -61,6 +61,7 @@ const props = withDefaults(defineProps<{
 })
 
 const columnDefs = computed(() => {
+  if (!props.headers.length) { return }
   const headers: TypeHeaderDataTable[] = [...props.headers]
   const columnDefs: any[] = []
   if (props.withAction) {
