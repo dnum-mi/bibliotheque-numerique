@@ -6,7 +6,7 @@ export type Action = {
 }
 
 export type TypeHeaderDataTable = {
-  text: string,
+  text?: string,
   action?: Action;
   value?: string,
   sortable?: boolean,
