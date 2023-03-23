@@ -39,11 +39,12 @@ export class OrganismesDatasService {
     return `This action removes a #${id} organismesData`;
   }
 
-  async findByIdRNA(idRef: string) {
-    return await OrganismesData.find({
+  async findByIdRNA(idRef: string): Promise<OrganismesData[]> {
+    const organismesDatas = await OrganismesData.find({
       where: { idRef },
       relations: { organismesSource: true },
     });
+    return organismesDatas || [];
   }
 
   async createOrUpdate(

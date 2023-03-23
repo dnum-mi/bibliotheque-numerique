@@ -68,10 +68,10 @@
               </div>
 
               <info-contact
+                :name="name"
+                :info="adress"
                 :emails="emails"
-                :title="name"
-                :info="adresse"
-                :phones="phonesAdresse"
+                :phones="phoneNumbers"
               />
             </div>
           </div>
@@ -129,9 +129,9 @@ const prefecture = computed(() => `${organismeStore.organisme?.adresse_siege?.co
 const creation = computed(() => dateToStringFr(organismeStore.organisme?.date_creation))
 const modification = computed(() => dateToStringFr(organismeStore.organisme?.mise_a_jour))
 const dissolution = computed(() => dateToStringFr(organismeStore.organisme?.date_dissolution))
-const phonesAdresse = computed(() => organismeStore.organisme?.phoneNumbers || [])
+const phoneNumbers = computed(() => organismeStore.organisme?.phoneNumbers || [])
 const emails = computed(() => organismeStore.organisme?.emails || [])
-const adresse = computed(() => `${organismeStore.organisme?.adresse_siege?.complement || ''} ${organismeStore.organisme?.adresse_siege?.numero_voie || ''} ${organismeStore.organisme?.adresse_siege?.type_voie || ''} ${organismeStore.organisme?.adresse_siege?.libelle_voie || ''} ${organismeStore.organisme?.adresse_siege?.code_postal || ''} ${organismeStore.organisme?.adresse_siege?.commune || ''}`)
+const adress = computed(() => `${organismeStore.organisme?.adresse_siege?.complement || ''} ${organismeStore.organisme?.adresse_siege?.numero_voie || ''} ${organismeStore.organisme?.adresse_siege?.type_voie || ''} ${organismeStore.organisme?.adresse_siege?.libelle_voie || ''} ${organismeStore.organisme?.adresse_siege?.code_postal || ''} ${organismeStore.organisme?.adresse_siege?.commune || ''}`)
 const representant1 = computed(() => organismeStore.organisme?.representants_legaux?.[0] || '')
 const representants = computed(() => organismeStore.organisme?.representants_legaux || [])
 const tabTitles = [

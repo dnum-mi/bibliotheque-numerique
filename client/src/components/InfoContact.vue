@@ -3,8 +3,8 @@
     <div class="fr-container">
       <div class="fr-grid-row">
         <div class="fr-col-3">
-          <label class="bn-info-contact--text-sm fr-text--bold">{{ title }}</label>
-          <span class="bn-info-contact--text-sm">{{ name }}</span>
+          <label class="bn-info-contact--text-sm fr-text--bold">{{ name }}</label>
+          <span class="bn-info-contact--text-sm">{{ info }}</span>
         </div>
         <div
           v-if="phones.length"
@@ -38,8 +38,8 @@
     setup
   >
 defineProps<{
-    title: string,
     name: string,
+    info: string,
     phones: string[],
     emails: string[],
     }>()

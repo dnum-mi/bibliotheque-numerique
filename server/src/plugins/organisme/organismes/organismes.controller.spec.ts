@@ -5,7 +5,7 @@ import { ConfigModule } from "@nestjs/config";
 import configuration from "../../../config/configuration";
 import fileConfig from "../../../config/file.config";
 
-import { Organisme } from "../entities";
+import { Organisme, OrganismesData } from "../entities";
 import { datasourceTest } from "../entities/__tests__";
 
 import { ConnectorModule } from "../../../connector/connector.module";
@@ -15,6 +15,7 @@ import { OrganismesController } from "./organismes.controller";
 
 import { OrganismesDatasService } from "../organismes_datas/organismes_datas.service";
 import { OrganismesService } from "./organismes.service";
+import { Connector } from "../../../entities";
 
 describe("OrganismesController", () => {
   let controller: OrganismesController;
@@ -23,7 +24,9 @@ describe("OrganismesController", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
-        TypeOrmModule.forRoot(datasourceTest([Organisme]).options),
+        TypeOrmModule.forRoot(
+          datasourceTest([Organisme, OrganismesData, Connector]).options,
+        ),
         ParseToOrganismesModule,
         ConnectorModule,
         ConfigModule.forRoot({
@@ -49,11 +52,11 @@ describe("OrganismesController", () => {
       .spyOn(dataService, "findAndAddByIdRnaFromAllApi")
       .mockResolvedValueOnce([{ status: "rejected", reason: "test" }]);
 
-    jest.spyOn(dataService, "findOneByIdRNA").mockResolvedValueOnce(null);
+    jest.spyOn(dataService, "findByIdRNA").mockResolvedValueOnce([]);
 
     const idRNA = "Test id RNA";
     await expect(
       controller.addOrgnaismeByIdRNA("Test id RNA", "Test organisme source"),
-    ).rejects.toThrow(`organimse RNA: ${idRNA} not found`);
+    ).rejects.toThrow(`organisme RNA: ${idRNA} not found`);
   });
 });

@@ -8,7 +8,10 @@ import { OrganismesData } from "../../entities";
 export function getOrganismesData(): OrganismesData {
   const idRNA = idRNAFake();
   return {
-    organismesSource: "API_ENTREPRISE_RNA_V3",
+    organismesSource: {
+      id: faker.datatype.number(),
+      name: "API_ENTREPRISE_RNA_V3",
+    },
     id: faker.datatype.number(),
     idRef: idRNA,
     dataJson: JSON.parse(JSON.stringify(getDatasFromRNA(idRNA))),

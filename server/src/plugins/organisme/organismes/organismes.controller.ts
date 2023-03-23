@@ -57,11 +57,11 @@ export class OrganismesController {
     try {
       await this.organismesService.upsertOrganisme(idRNA, [source]);
 
-      return { message: `organimse RNA: ${idRNA} create success!` };
+      return { message: `organisme RNA: ${idRNA} create success!` };
     } catch (error) {
       if (error.status === HttpStatus.NOT_FOUND) {
         throw new HttpException(
-          `organimse RNA: ${idRNA} not found`,
+          `organisme RNA: ${idRNA} not found`,
           error.statusCode,
         );
       }

@@ -21,7 +21,6 @@ export class UpdateOrganisme1679562953126 implements MigrationInterface {
       }),
     );
     await Promise.all([addEmails, addPhoneNumbers]);
-    console.log("Update organismes_datas table");
     // TODO: UPDATE TABLES ROWS
     // Update doesn't work
     // const OrganismeSource = AppDataSource.getRepository(Organisme);

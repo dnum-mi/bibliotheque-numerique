@@ -50,7 +50,7 @@ describe("OrganismesService", () => {
     expect(service).toBeDefined();
   });
 
-  it("should create new Orgnisme", async () => {
+  it("should create new Organisme", async () => {
     const fakeOrgData = [getOrganismesData()];
     jest
       .spyOn(dataService, "findAndAddByIdRnaFromAllApi")
@@ -87,7 +87,7 @@ describe("OrganismesService", () => {
       .spyOn(dataService, "findAndAddByIdRnaFromAllApi")
       .mockResolvedValueOnce([{ status: "rejected", reason: "test" }]);
 
-    jest.spyOn(dataService, "findByIdRNA").mockResolvedValueOnce(null);
+    jest.spyOn(dataService, "findByIdRNA").mockResolvedValueOnce([]);
 
     await expect(
       service.upsertOrganisme(fakeOrgData.idRef, [

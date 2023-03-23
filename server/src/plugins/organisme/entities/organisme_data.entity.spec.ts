@@ -1,7 +1,7 @@
 import { Test } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
 
-import { OrganismesData } from ".";
+import { Organisme, OrganismesData } from ".";
 import { Connector } from "../../../entities";
 import {
   datasourceTest,
@@ -16,7 +16,7 @@ describe("OrganismeData.entity", () => {
     const module = await Test.createTestingModule({
       imports: [
         TypeOrmModule.forRoot(
-          datasourceTest([OrganismesData, Connector]).options,
+          datasourceTest([Organisme, OrganismesData, Connector]).options,
         ),
       ],
     }).compile();

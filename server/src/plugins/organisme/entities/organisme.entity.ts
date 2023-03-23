@@ -31,6 +31,7 @@ export class Organisme extends ApplicationEntity {
   })
   address: string;
 
+  // TODO: issue #272 - Mettre en place un table contact?
   @Column({
     type: "jsonb",
     nullable: true,
