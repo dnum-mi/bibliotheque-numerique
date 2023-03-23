@@ -21,11 +21,12 @@ export async function fetchOrganimseByIdRNA (id: string): Promise<any | null> {
   try {
     const config = {
       method: 'get',
-      url: `${baseApiUrl}/organismes-datas/rna/${id}`,
+      url: `${baseApiUrl}/organismes/rna/${id}`,
       headers,
     }
     const response = await axios(config)
     const data = response.data
+    debugger
     if (data.organismesSource === 'API_RNA_V1') {
       const dataJson = {
         rna_id: data.dataJson.id_association,
