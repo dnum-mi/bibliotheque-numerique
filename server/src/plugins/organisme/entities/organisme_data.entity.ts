@@ -3,10 +3,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { ApplicationEntity } from "../../../entities/application_entity";
 import { Connector } from "../../../entities";
+import { Organisme } from "./organisme.entity";
 
 export type TUpsertOrganismeData = Partial<OrganismesData>;
 
@@ -19,6 +21,10 @@ export class OrganismesData extends ApplicationEntity {
   @JoinColumn()
   organismesSource: Connector;
 
+  @ManyToOne(() => Organisme)
+  @JoinColumn()
+  organisme: Organisme;
+
   @Column({
     type: "varchar",
     nullable: false,
@@ -26,7 +32,7 @@ export class OrganismesData extends ApplicationEntity {
   idRef: string;
 
   @Column({ type: "jsonb" })
-  dataJson: JSON;
+  dataJson: any;
 
   @Column({ type: "timestamp" })
   dataUpdateAt: Date;

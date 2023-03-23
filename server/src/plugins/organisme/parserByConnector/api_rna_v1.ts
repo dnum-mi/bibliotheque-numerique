@@ -1,4 +1,4 @@
-import { toDate } from "../../../utiles/utilesDate";
+import { toDate } from "../../../utils/utilsDate";
 import { Organisme } from "../entities";
 import { IParseToOrganisme } from "./parse_to_organisme.interface";
 export type TDataApiRnaV1 = {
@@ -81,6 +81,9 @@ export default class ParseApiRnaV1
 
     newOrganisme.city = orgDataDataJson?.adresse_libelle_commune;
     newOrganisme.zipCode = orgDataDataJson?.adresse_code_postal;
+
+    newOrganisme.emails = [orgDataDataJson?.email] || null;
+    newOrganisme.phoneNumbers = [orgDataDataJson?.telephone] || null;
 
     newOrganisme.dateCreation = toDate(orgDataDataJson?.date_creation);
     newOrganisme.dateModification = orgDataDataJson?.derniere_maj;

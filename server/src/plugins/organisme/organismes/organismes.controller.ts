@@ -7,6 +7,7 @@ import {
   HttpException,
   HttpStatus,
   Logger,
+  ParseIntPipe,
 } from "@nestjs/common";
 import { LoggerService } from "../../../logger/logger.service";
 import { OrganismesService } from "./organismes.service";
@@ -32,8 +33,13 @@ export class OrganismesController {
   }
 
   @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.organismesService.findOne(+id);
+  findOneById(@Param("id", ParseIntPipe) id: number) {
+    return this.organismesService.findOneById(id);
+  }
+
+  @Get("rna/:id")
+  findOneByIdRna(@Param("id") id: string) {
+    return this.organismesService.findOneByIdRef(id);
   }
 
   @Post("rna")

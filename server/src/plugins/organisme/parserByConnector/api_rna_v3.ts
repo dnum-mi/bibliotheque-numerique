@@ -1,6 +1,6 @@
 import { IParseToOrganisme } from "./parse_to_organisme.interface";
 import { Organisme } from "../entities";
-import { toDate } from "../../../utiles/utilesDate";
+import { toDate } from "../../../utils/utilsDate";
 
 export type TDataApiRnaV3 = {
   rna_id: string;

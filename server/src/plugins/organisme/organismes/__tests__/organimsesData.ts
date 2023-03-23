@@ -3,8 +3,9 @@ import {
   getDatasFromRNA,
   idRNAFake,
 } from "../../organismes_datas/__tests__/organismeFromRNA";
+import { OrganismesData } from "../../entities";
 
-export function getOrganismesData() {
+export function getOrganismesData(): OrganismesData {
   const idRNA = idRNAFake();
   return {
     organismesSource: "API_ENTREPRISE_RNA_V3",
@@ -14,5 +15,5 @@ export function getOrganismesData() {
     dataUpdateAt: faker.date.past(),
     createAt: faker.date.past(),
     updateAt: faker.date.past(),
-  };
+  } as unknown as OrganismesData;
 }

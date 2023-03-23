@@ -94,7 +94,7 @@ export class ConnectorService {
         short_message: `Connector ${entity?.name}: ${error.message}`,
         full_message: error.stack,
       });
-      throw new error(`Connector ${entity?.name}: ${error.message}`);
+      throw new Error(`Connector ${entity?.name}: ${error.message}`);
     }
   }
 

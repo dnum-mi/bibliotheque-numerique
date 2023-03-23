@@ -51,32 +51,33 @@ describe("OrganismesService", () => {
   });
 
   it("should create new Orgnisme", async () => {
-    const fakeOrgData = getOrganismesData();
+    const fakeOrgData = [getOrganismesData()];
     jest
       .spyOn(dataService, "findAndAddByIdRnaFromAllApi")
       .mockResolvedValueOnce([{ status: "fulfilled", value: 1 }]);
 
-    jest
-      .spyOn(dataService, "findOneByIdRNA")
-      .mockResolvedValueOnce(fakeOrgData);
+    jest.spyOn(dataService, "findByIdRNA").mockResolvedValueOnce(fakeOrgData);
 
-    const org = await service.upsertOrganisme(fakeOrgData.idRef, [
-      fakeOrgData.organismesSource,
+    const org = await service.upsertOrganisme(fakeOrgData[0].idRef, [
+      fakeOrgData[0].organismesSource as unknown as string,
     ]);
 
     const organismeFound = await Organisme.findOneBy({
-      idRef: fakeOrgData.idRef,
+      idRef: fakeOrgData[0].idRef,
     });
     expect(organismeFound).toBeDefined();
-    expect(organismeFound).toHaveProperty("idRef", fakeOrgData.idRef);
-    expect(organismeFound).toHaveProperty("title", fakeOrgData.dataJson.titre);
+    expect(organismeFound).toHaveProperty("idRef", fakeOrgData[0].idRef);
+    expect(organismeFound).toHaveProperty(
+      "title",
+      fakeOrgData[0].dataJson.titre,
+    );
     expect(organismeFound).toHaveProperty(
       "zipCode",
-      fakeOrgData.dataJson.adresse_siege.code_postal,
+      fakeOrgData[0].dataJson.adresse_siege.code_postal,
     );
     expect(organismeFound).toHaveProperty(
       "city",
-      fakeOrgData.dataJson.adresse_siege.commune,
+      fakeOrgData[0].dataJson.adresse_siege.commune,
     );
   });
 
@@ -86,11 +87,11 @@ describe("OrganismesService", () => {
       .spyOn(dataService, "findAndAddByIdRnaFromAllApi")
       .mockResolvedValueOnce([{ status: "rejected", reason: "test" }]);
 
-    jest.spyOn(dataService, "findOneByIdRNA").mockResolvedValueOnce(null);
+    jest.spyOn(dataService, "findByIdRNA").mockResolvedValueOnce(null);
 
     await expect(
       service.upsertOrganisme(fakeOrgData.idRef, [
-        fakeOrgData.organismesSource,
+        fakeOrgData.organismesSource as unknown as string,
       ]),
     ).rejects.toThrow("No datas for");
   });
