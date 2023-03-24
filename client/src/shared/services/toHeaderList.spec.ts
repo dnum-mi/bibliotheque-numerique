@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { ChampValueTypesKeys } from '../types'
 import { toRowData } from './toHeaderList'
 // import exampleDS from './__tests__/examples.json'
 
@@ -78,7 +79,21 @@ describe('Test HeaderList', () => {
       {
         id: 'testhamps3',
         label: 'champSource3',
-        stringValue: 'test 3 value',
+        address: {
+          type: 'street',
+          label: 'Lotissement Chateau Paille 97280 Le Vauclin',
+          cityCode: '97232',
+          cityName: 'Le Vauclin',
+          postalCode: '97280',
+          regionCode: null,
+          regionName: null,
+          streetName: null,
+          streetNumber: null,
+          streetAddress: 'Lotissement Chateau Paille',
+          departmentCode: '972',
+          departmentName: 'Martinique',
+        },
+        stringValue: 'Lotissement Chateau Paille 97280 Le Vauclin',
       },
       {
         id: 'testChamp4',
@@ -95,6 +110,18 @@ describe('Test HeaderList', () => {
             stringValue: 'test 4-2 value ',
           },
         ],
+        stringValue: '',
+      },
+      {
+        id: 'testChamp5',
+        file: {
+          url: 'testUrl5',
+          checksum: 'checksum5',
+          filename: 'fichier5.doc',
+          contentType: 'application/msword',
+          byteSizeBigInt: '1304064',
+        },
+        label: 'champSource5',
         stringValue: '',
       },
 
@@ -156,7 +183,7 @@ describe('Test HeaderList', () => {
         labelBN: 'label1',
         typeName: 'typeRender1',
         typeData: 'annotation',
-        typeValue: 'Text',
+        typeValue: ChampValueTypesKeys.TEXT,
       },
       {
         id: 'test1000',
@@ -164,7 +191,7 @@ describe('Test HeaderList', () => {
         labelBN: 'label1000',
         typeName: 'typeRender1000',
         typeData: 'annotation',
-        typeValue: 'Text',
+        typeValue: ChampValueTypesKeys.TEXT,
 
       },
     ]
@@ -184,7 +211,7 @@ describe('Test HeaderList', () => {
         labelBN: 'label4-1',
         typeName: 'typeRender4-1',
         typeData: 'champ',
-        typeValue: 'Text',
+        typeValue: ChampValueTypesKeys.TEXT,
       },
       {
         id: 'test4-1000',
@@ -192,7 +219,7 @@ describe('Test HeaderList', () => {
         labelBN: 'label4-1000',
         typeName: 'typeRender4-1000',
         typeData: 'champ',
-        typeValue: 'Text',
+        typeValue: ChampValueTypesKeys.TEXT,
 
       },
     ]
@@ -201,6 +228,24 @@ describe('Test HeaderList', () => {
     expect(result).toMatchObject({
       [mappingColumn[0].id]: dataJson.champs[3].champs[0].stringValue,
       [mappingColumn[1].id]: undefined,
+    })
+  })
+
+  it('should to convert to rowData for child champs type file', () => {
+    const mappingColumn = [
+      {
+        id: 'testhamps5',
+        labelSource: ['champSource5'],
+        labelBN: 'label3',
+        typeName: '',
+        typeData: 'champ',
+        typeValue: ChampValueTypesKeys.PJ,
+      },
+    ]
+    const result = toRowData(dataJson, mappingColumn)
+    expect(result).toBeDefined()
+    expect(result).toMatchObject({
+      [mappingColumn[0].id]: dataJson.champs[4].file,
     })
   })
 })
