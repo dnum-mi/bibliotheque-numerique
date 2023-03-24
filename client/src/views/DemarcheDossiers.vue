@@ -6,6 +6,7 @@ import { useDemarcheStore } from '@/stores/demarche'
 import GroupInstructeurs from '@/views/DemarcheGrpInstructeurs.vue'
 import DemarcheService from '@/views/DemarcheService.vue'
 import DemarcheInformations from '@/views/DemarcheInformations.vue'
+import DemarcheConfigurations from '@/views/DemarcheConfigurations.vue'
 import BiblioNumDataTable from '@/components/BiblioNumDataTableAgGrid.vue'
 import { dateToStringFr } from '@/utils/dateToString'
 import { stateToFr } from '@/utils/stateToString'
@@ -91,6 +92,8 @@ onMounted(async () => {
   if (id) {
     await demarcheStore.getDemarche(id)
     await demarcheStore.getDossiers(id)
+
+    await demarcheStore.getDemarcheConfigurations()
   }
 })
 
@@ -100,13 +103,13 @@ const getDossier = data => {
 
 const tabTitles = [
   {
-    title: 'Dossiers',
+    title: 'Les dossiers',
   },
   {
-    title: 'Infos',
+    title: "L'information",
   },
   {
-    title: 'Guides',
+    title: 'La configuration',
   },
 ]
 const initialSelectedIndex = 0
@@ -168,7 +171,12 @@ function selectTab (idx:number) {
         panel-id="tab-content-0"
         tab-id="tab-0"
         :selected="selectedTabIndex === 2"
-      />
+      >
+        <DemarcheConfigurations
+          :data-json="demarche?.demarcheDS?.dataJson"
+          class="fr-pt-5w"
+        />
+      </DsfrTabContent>
     </DsfrTabs>
   </LayoutList>
 </template>

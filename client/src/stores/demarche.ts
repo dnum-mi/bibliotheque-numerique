@@ -1,6 +1,7 @@
 import { apiClient } from '@/utils/api-client'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { getConfigurations, updateConfigurations } from '@/shared/services'
 
 export const useDemarcheStore = defineStore('demarche', () => {
   const demarche = ref({})
@@ -44,6 +45,19 @@ export const useDemarcheStore = defineStore('demarche', () => {
     if (results) dossiers.value = results
   }
 
+  const demarcheConfigurations = ref([])
+  const getDemarcheConfigurations = async () => {
+    const champDescriptors = demarche.value?.demarcheDS?.dataJson.publishedRevision?.champDescriptors // computed<any[]>(() => props.dataJson?.publishedRevision?.champDescriptors || [])
+    const annotationDescriptors = demarche.value?.demarcheDS?.dataJson.publishedRevision?.annotationDescriptors // computed<any[]>(() => props.dataJson?.publishedRevision?.annotationDescriptors || [])
+
+    demarcheConfigurations.value = await getConfigurations(champDescriptors, annotationDescriptors) as any
+  }
+
+  const updateDemarcheConfigurations = async (configurationsForm: []) => {
+    const idDemarche = demarche.value.id
+    await updateConfigurations(configurationsForm.value, idDemarche)
+  }
+
   return {
     demarche,
     getDemarche,
@@ -52,5 +66,8 @@ export const useDemarcheStore = defineStore('demarche', () => {
     getDemarches,
     dossiers,
     getDossiers,
+    demarcheConfigurations,
+    getDemarcheConfigurations,
+    updateDemarcheConfigurations,
   }
 })
