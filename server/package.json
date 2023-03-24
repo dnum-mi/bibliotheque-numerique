@@ -62,6 +62,7 @@
     "@nestjs/typeorm": "^9.0.1",
     "aws-sdk": "^2.1306.0",
     "bcrypt": "^5.1.0",
+    "class-transformer": "^0.5.1",
     "colors": "^1.4.0",
     "dayjs": "^1.11.6",
     "dotenv": "^16.0.3",

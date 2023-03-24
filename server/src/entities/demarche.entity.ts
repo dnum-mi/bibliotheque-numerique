@@ -38,6 +38,9 @@ export class Demarche extends ApplicationEntity {
   @Column({ nullable: true })
   typeOrganisme: string;
 
+  @Column({ type: "jsonb", default: "[]" })
+  mappingColumns: any[];
+
   static findById(id: number) {
     return this.findOne({
       where: { id },
