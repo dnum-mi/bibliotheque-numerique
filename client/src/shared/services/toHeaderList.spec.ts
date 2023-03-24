@@ -80,6 +80,23 @@ describe('Test HeaderList', () => {
         label: 'champSource3',
         stringValue: 'test 3 value',
       },
+      {
+        id: 'testChamp4',
+        label: 'champSource4',
+        champs: [
+          {
+            id: 'testChamp4-1',
+            label: 'champSource4-1',
+            stringValue: 'test 4-1 value ',
+          },
+          {
+            id: 'testChamp4-2',
+            label: 'champSource4-2',
+            stringValue: 'test 4-2 value ',
+          },
+        ],
+        stringValue: '',
+      },
 
     ],
     annotations: [
@@ -155,6 +172,34 @@ describe('Test HeaderList', () => {
     expect(result).toBeDefined()
     expect(result).toMatchObject({
       [mappingColumn[0].id]: dataJson.annotations[0].stringValue,
+      [mappingColumn[1].id]: undefined,
+    })
+  })
+
+  it('should to convert to rowData for champs type repetition', () => {
+    const mappingColumn = [
+      {
+        id: 'test4-1',
+        labelSource: ['champSource4', 'champSource4-1'],
+        labelBN: 'label4-1',
+        typeName: 'typeRender4-1',
+        typeData: 'champ',
+        typeValue: 'Text',
+      },
+      {
+        id: 'test4-1000',
+        labelSource: ['champSource4-1000'],
+        labelBN: 'label4-1000',
+        typeName: 'typeRender4-1000',
+        typeData: 'champ',
+        typeValue: 'Text',
+
+      },
+    ]
+    const result = toRowData(dataJson, mappingColumn)
+    expect(result).toBeDefined()
+    expect(result).toMatchObject({
+      [mappingColumn[0].id]: dataJson.champs[3].champs[0].stringValue,
       [mappingColumn[1].id]: undefined,
     })
   })
