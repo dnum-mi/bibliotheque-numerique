@@ -11,8 +11,8 @@ export const useOrganismeStore = defineStore('organisme', () => {
     }
   }
 
-  const organisme = ref({})
-  const organismes = ref([])
+  const organisme = ref<any>({})
+  const organismes = ref<any[]>([])
 
   const loadOrganismebyId = async (id: number) => {
     if (!id) {

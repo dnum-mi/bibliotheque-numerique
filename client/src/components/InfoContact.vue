@@ -3,7 +3,7 @@
     <div class="fr-container">
       <div class="fr-grid-row">
         <div class="fr-col-3">
-          <label class="bn-info-contact--text-sm fr-text--bold">{{ title }}</label>
+          <label class="bn-info-contact--text-sm fr-text--bold">{{ name }}</label>
           <span class="bn-info-contact--text-sm">{{ info }}</span>
         </div>
         <div
@@ -19,11 +19,15 @@
             {{ phone }}</span>
         </div>
         <div
-          v-if="eMail"
+          v-if="emails.length"
           class="fr-col-3"
         >
           <label class="bn-info-contact--text-sm fr-text--bold">Courriel</label>
-          <span class="bn-info-contact--text-sm">{{ eMail }}</span>
+          <span
+            v-for="(email, index) in emails"
+            :key="index"
+            class="bn-info-contact--text-sm"
+          >{{ email }}</span>
         </div>
       </div>
     </div>
@@ -34,10 +38,10 @@
     setup
   >
 defineProps<{
-    title: string,
+    name: string,
     info: string,
     phones: string[],
-    eMail: string,
+    emails: string[],
     }>()
 </script>
 

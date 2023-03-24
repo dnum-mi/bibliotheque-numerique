@@ -39,15 +39,12 @@ export class OrganismesDatasService {
     return `This action removes a #${id} organismesData`;
   }
 
-  async findOneByIdRNA(idRef: string) {
-    const organismeData = await OrganismesData.findOne({
+  async findByIdRNA(idRef: string): Promise<OrganismesData[]> {
+    const organismesDatas = await OrganismesData.find({
       where: { idRef },
       relations: { organismesSource: true },
     });
-    return {
-      ...organismeData,
-      organismesSource: organismeData.organismesSource.name,
-    };
+    return organismesDatas || [];
   }
 
   async createOrUpdate(
@@ -56,20 +53,20 @@ export class OrganismesDatasService {
     parser: TParseToOrganisme,
   ) {
     try {
-      let organimseData = await OrganismesData.findOneBy({
+      let organismeData = await OrganismesData.findOneBy({
         idRef: idRna,
         organismesSource: { id: connectorApi.id },
       });
 
-      if (!organimseData) {
-        organimseData = new OrganismesData();
-        organimseData.idRef = idRna;
-        organimseData.organismesSource = connectorApi;
+      if (!organismeData) {
+        organismeData = new OrganismesData();
+        organismeData.idRef = idRna;
+        organismeData.organismesSource = connectorApi;
       }
 
       const dateMiseAJours = parser.getDataUpdateAt();
 
-      if (organimseData.dataUpdateAt?.getTime() === dateMiseAJours.getTime()) {
+      if (organismeData.dataUpdateAt?.getTime() === dateMiseAJours.getTime()) {
         const message = `No update or no create organisme data for ${idRna} with ${connectorApi.name}`;
         this.logger.warn({
           short_message: message,
@@ -77,16 +74,14 @@ export class OrganismesDatasService {
         });
         return false;
       }
-      organimseData.dataUpdateAt = dateMiseAJours;
-      organimseData.dataJson = JSON.parse(JSON.stringify(parser.dataJson));
+      organismeData.dataUpdateAt = dateMiseAJours;
+      organismeData.dataJson = JSON.parse(JSON.stringify(parser.dataJson));
 
-      await this.dataSource.transaction(async (transactionalEntityManager) => {
-        transactionalEntityManager.save(organimseData);
-      });
+      await organismeData.save();
       return true;
     } catch (error) {
       this.logger.error({
-        short_message: "No Orgaisme_data to upsert",
+        short_message: "No organisme_data to upsert",
         full_message: error.stack,
       });
       throw new Error("Unable to upsert organisme_data");
@@ -97,7 +92,7 @@ export class OrganismesDatasService {
     const parser = this.parser2Organismes.getParser(connectorApi.name)();
 
     try {
-      //TODO: A revoir comment il y a plusieur comment savoir quoi mettre
+      //TODO: A revoir quand il y en a plusieurs comment savoir quoi mettre
       const params = connectorApi?.params?.reduce(
         (acc, key) => ({ ...acc, [key]: idRna }),
         {},
@@ -106,7 +101,6 @@ export class OrganismesDatasService {
       const result = await this.connectorService.getResult(
         connectorApi,
         params,
-        //TODO: uniquement pour API entreprise
         connectorApi.query,
       );
 
@@ -114,15 +108,15 @@ export class OrganismesDatasService {
 
       if (!parser.dataJson) {
         this.logger.warn({
-          short_message: `No found orgnasition from extern api for ${idRna} with ${connectorApi.name}`,
-          full_message: `No found orgnasition from extern api for ${idRna} with ${connectorApi.name}`,
+          short_message: `No found organisation from extern api for ${idRna} with ${connectorApi.name}`,
+          full_message: `No found organisation from extern api for ${idRna} with ${connectorApi.name}`,
         });
 
         return false;
       }
     } catch (error) {
       this.logger.error({
-        short_message: "No found orgnasition from extern api",
+        short_message: "No found organisation from extern api",
         full_message: error.stack,
       });
       throw new Error("Unable to upsert organisme_data");
@@ -158,7 +152,7 @@ export class OrganismesDatasService {
       );
     } catch (error) {
       this.logger.error({
-        short_message: "No Orgaisme_data to upsert",
+        short_message: "No organisme_data to upsert",
         full_message: error.stack,
       });
       throw new Error("Unable to upsert organisme_data");

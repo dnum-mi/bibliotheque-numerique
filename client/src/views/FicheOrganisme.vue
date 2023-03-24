@@ -68,10 +68,10 @@
               </div>
 
               <info-contact
-                :e-mail="eMail"
-                :title="name"
-                :info="adresse"
-                :phones="phonesAdresse"
+                :name="name"
+                :info="adress"
+                :emails="emails"
+                :phones="phoneNumbers"
               />
             </div>
           </div>
@@ -125,15 +125,15 @@ const organismeStore = useOrganismeStore()
 const numberRNA = computed(() => organismeStore.organisme?.rna_id || '')
 const name = computed(() => organismeStore.organisme?.titre || '')
 const siegeSocial = computed(() => `${organismeStore.organisme?.adresse_siege?.code_postal || ''} ${organismeStore.organisme?.adresse_siege?.commune || ''}`)
-const representant1 = computed(() => organismeStore.organisme?.representant_legaux || '')
 const prefecture = computed(() => `${organismeStore.organisme?.adresse_siege?.code_postal?.substring(0, 2) || ''} ${organismeStore.organisme?.adresse_siege?.commune || ''}`)
 const creation = computed(() => dateToStringFr(organismeStore.organisme?.date_creation))
 const modification = computed(() => dateToStringFr(organismeStore.organisme?.mise_a_jour))
 const dissolution = computed(() => dateToStringFr(organismeStore.organisme?.date_dissolution))
-const phonesAdresse = computed(() => organismeStore.organisme?.adresse_siege?.phones || [])
-const eMail = computed(() => organismeStore.organisme?.email || '')
-const adresse = computed(() => `${organismeStore.organisme?.adresse_siege?.complement || ''} ${organismeStore.organisme?.adresse_siege?.numero_voie || ''} ${organismeStore.organisme?.adresse_siege?.type_voie || ''} ${organismeStore.organisme?.adresse_siege?.libelle_voie || ''} ${organismeStore.organisme?.adresse_siege?.code_postal || ''} ${organismeStore.organisme?.adresse_siege?.commune || ''}`)
-const representants = computed(() => organismeStore.organisme?.representant_legaux || [])
+const phoneNumbers = computed(() => organismeStore.organisme?.phoneNumbers || [])
+const emails = computed(() => organismeStore.organisme?.emails || [])
+const adress = computed(() => `${organismeStore.organisme?.adresse_siege?.complement || ''} ${organismeStore.organisme?.adresse_siege?.numero_voie || ''} ${organismeStore.organisme?.adresse_siege?.type_voie || ''} ${organismeStore.organisme?.adresse_siege?.libelle_voie || ''} ${organismeStore.organisme?.adresse_siege?.code_postal || ''} ${organismeStore.organisme?.adresse_siege?.commune || ''}`)
+const representant1 = computed(() => organismeStore.organisme?.representants_legaux?.[0] || '')
+const representants = computed(() => organismeStore.organisme?.representants_legaux || [])
 const tabTitles = [
   {
     title: 'Status',
@@ -148,9 +148,8 @@ function selectTab (idx:number) {
 
 onMounted(async () => {
   const params = useRoute()?.params
-  const id = params.id
-  if (id) {
-    await organismeStore.loadOrganismebyIdRNA(id)
+  if (params?.id) {
+    await organismeStore.loadOrganismebyIdRNA(params.id as string)
   }
 })
 </script>

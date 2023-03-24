@@ -1,19 +1,24 @@
 import { Test } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
 
-import { Organisme } from ".";
+import { Organisme, OrganismesData } from ".";
 import {
   datasourceTest,
   organisme_test,
   createOneOrganisme,
 } from "./__tests__";
 import { DataSource } from "typeorm";
+import { Connector } from "../../../entities";
 
 describe("Organisme.entity", () => {
   let dataSource: DataSource;
   beforeAll(async () => {
     const module = await Test.createTestingModule({
-      imports: [TypeOrmModule.forRoot(datasourceTest([Organisme]).options)],
+      imports: [
+        TypeOrmModule.forRoot(
+          datasourceTest([Organisme, OrganismesData, Connector]).options,
+        ),
+      ],
     }).compile();
     dataSource = module.get<DataSource>(DataSource);
   });

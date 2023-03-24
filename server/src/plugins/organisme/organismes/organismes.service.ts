@@ -1,7 +1,7 @@
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { DataSource } from "typeorm";
 import { LoggerService } from "../../../logger/logger.service";
-import { Organisme } from "../entities";
+import { Organisme, OrganismesData } from "../entities";
 import { OrganismesDatasService } from "../organismes_datas/organismes_datas.service";
 import { ParseToOrganismesService } from "../parserByConnector/parse_to_organismes.service";
 
@@ -29,9 +29,26 @@ export class OrganismesService {
     }
   }
 
-  findOne(id: number) {
+  findOneById(id: number) {
     try {
-      return Organisme.findOneById(id);
+      return Organisme.findOne({
+        where: { id },
+        relations: { organismeDatas: true },
+      });
+    } catch (error) {
+      this.logger.error({
+        short_message: "Échec récupération des organismes",
+        full_message: error.toString(),
+      });
+      throw new Error("Unable to retrieve demarches");
+    }
+  }
+
+  findOneByIdRef(idRef: string) {
+    try {
+      return Organisme.findOne({
+        where: { idRef },
+      });
     } catch (error) {
       this.logger.error({
         short_message: "Échec récupération des organismes",
@@ -42,14 +59,14 @@ export class OrganismesService {
   }
 
   async upsertOrganisme(idRef: string, sources: string[]) {
-    let organismeDatas;
+    let organismeDatas: OrganismesData[] = [];
     try {
       await this.organismesDatasService.findAndAddByIdRnaFromAllApi(
         idRef,
         sources,
       );
 
-      organismeDatas = await this.organismesDatasService.findOneByIdRNA(idRef);
+      organismeDatas = await this.organismesDatasService.findByIdRNA(idRef);
     } catch (error) {
       this.logger.error({
         short_message: `Échec de récupération d'un organisme: ${idRef}`,
@@ -58,7 +75,7 @@ export class OrganismesService {
       throw new Error(`Unable to upload organisme ${idRef}`);
     }
 
-    if (!organismeDatas) {
+    if (organismeDatas?.length === 0) {
       const message = `No datas for ${idRef}`;
       this.logger.warn({
         short_message: message,
@@ -73,24 +90,22 @@ export class OrganismesService {
       if (!organisme) {
         organisme = new Organisme();
       }
+      // TODO: Manque une règle pour sélectionner l'organisme datas correcte
       if (
         !organisme.id ||
-        organisme.updateAt?.getTime() < organismeDatas.dataUpdateAt.getTime()
+        organisme.updateAt?.getTime() < organismeDatas[0].dataUpdateAt.getTime()
       ) {
         //TODO: A revoir pour une solution pour instancier 1 fois le parser
         const parser = this.parserToOrganismes.getParser(
-          organismeDatas.organismesSource,
+          organismeDatas[0].organismesSource.name,
         )();
 
         organisme = parser.toOrganismeEntity(
           organisme,
-          organismeDatas.dataJson,
+          organismeDatas[0].dataJson,
         );
-        return await this.dataSource.transaction(
-          (transactionalEntityManager) => {
-            return transactionalEntityManager.save(organisme);
-          },
-        );
+        organisme.organismeDatas = organismeDatas;
+        return await organisme.save();
       }
     } catch (error) {
       this.logger.error({

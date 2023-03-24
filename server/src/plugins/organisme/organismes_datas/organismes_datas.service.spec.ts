@@ -70,7 +70,7 @@ describe("OrganismesDatasService", () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
         TypeOrmModule.forRoot(
-          datasourceTest([OrganismesData, Connector]).options,
+          datasourceTest([Organisme, OrganismesData, Connector]).options,
         ),
         ConnectorModule,
         ConfigModule.forRoot({

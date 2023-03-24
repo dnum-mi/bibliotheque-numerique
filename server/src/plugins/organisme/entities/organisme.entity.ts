@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ApplicationEntity } from "../../../entities/application_entity";
+import { OrganismesData } from "./organisme_data.entity";
 
 @Entity({ name: "organismes" })
 export class Organisme extends ApplicationEntity {
@@ -12,6 +13,12 @@ export class Organisme extends ApplicationEntity {
   })
   idRef: string;
 
+  @OneToMany(
+    () => OrganismesData,
+    (organismesDatas) => organismesDatas.organisme,
+  )
+  organismeDatas: OrganismesData[];
+
   @Column({
     type: "varchar",
     nullable: false,
@@ -23,6 +30,19 @@ export class Organisme extends ApplicationEntity {
     nullable: true,
   })
   address: string;
+
+  // TODO: issue #272 - Mettre en place un table contact?
+  @Column({
+    type: "jsonb",
+    nullable: true,
+  })
+  emails: string[];
+
+  @Column({
+    type: "jsonb",
+    nullable: true,
+  })
+  phoneNumbers: string[];
 
   @Column({
     type: "varchar",
