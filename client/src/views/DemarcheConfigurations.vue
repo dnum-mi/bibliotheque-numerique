@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
+import { useForm } from 'vee-validate'
 import DemarcheConfiguration from '@/views/DemarcheConfiguration.vue'
 import { useDemarcheStore } from '@/stores'
-import { useForm } from 'vee-validate'
 
 const props = withDefaults(defineProps<{
     dataJson?: object
@@ -13,14 +13,19 @@ const title = 'La configuration'
 
 const demarcheStore = useDemarcheStore()
 const demarcheConfigurations = computed<any[]>(() => demarcheStore.demarcheConfigurations)
+const alertType = ref('')
+const alertDescription = ref('')
 
 const { handleSubmit } = useForm()
-
 const submit = handleSubmit(async () => {
   try {
     await demarcheStore.updateDemarcheConfigurations(demarcheConfigurations)
+    alertType.value = 'success'
+    alertDescription.value = 'Mettre à jour succès!'
   } catch (e) {
     console.log('Update demarche configurations Error')
+    alertType.value = 'error'
+    alertDescription.value = 'Mettre à jour erreur!'
   }
 })
 
@@ -28,6 +33,14 @@ const submit = handleSubmit(async () => {
 
 <template>
   <div class="fr-container">
+    <div>
+      <DsfrAlert
+        v-if="!!alertType"
+        :type="alertType"
+        :description="alertDescription"
+        small="small"
+      />
+    </div>
     <h3> {{ title }} </h3>
 
     <div class="fr-container fr-pb-3v">

@@ -12,9 +12,16 @@ export enum ChampType {
   ANNOTATION = 'annotation'
 }
 
-export enum ChampValueTypes {
-  text = 'Texte',
-  number = 'Numéro',
-  date = 'Date',
-  pj = 'Pièce Jointe'
+export enum ChampValueTypesKeys {
+  TEXT = 'text',
+  NUMBER = 'number',
+  DATE = 'date',
+  PJ = 'pj'
+}
+
+export const ChampValueTypes = {
+  [ChampValueTypesKeys.TEXT]: 'Texte',
+  [ChampValueTypesKeys.NUMBER]: 'Numéro',
+  [ChampValueTypesKeys.DATE]: 'Date',
+  [ChampValueTypesKeys.PJ]: 'Pièce Jointe',
 }

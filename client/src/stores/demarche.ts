@@ -1,6 +1,6 @@
-import { apiClient } from '@/utils/api-client'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { apiClient } from '@/utils/api-client'
 import { getConfigurations, updateConfigurations } from '@/shared/services'
 
 export const useDemarcheStore = defineStore('demarche', () => {
@@ -47,15 +47,14 @@ export const useDemarcheStore = defineStore('demarche', () => {
 
   const demarcheConfigurations = ref([])
   const getDemarcheConfigurations = async () => {
-    const champDescriptors = demarche.value?.demarcheDS?.dataJson.publishedRevision?.champDescriptors // computed<any[]>(() => props.dataJson?.publishedRevision?.champDescriptors || [])
-    const annotationDescriptors = demarche.value?.demarcheDS?.dataJson.publishedRevision?.annotationDescriptors // computed<any[]>(() => props.dataJson?.publishedRevision?.annotationDescriptors || [])
+    const champDescriptors = demarche.value?.demarcheDS?.dataJson.publishedRevision?.champDescriptors
+    const annotationDescriptors = demarche.value?.demarcheDS?.dataJson.publishedRevision?.annotationDescriptors
 
-    demarcheConfigurations.value = await getConfigurations(champDescriptors, annotationDescriptors) as any
+    demarcheConfigurations.value = await getConfigurations(demarche.value.id, champDescriptors, annotationDescriptors) as any
   }
 
   const updateDemarcheConfigurations = async (configurationsForm: []) => {
-    const idDemarche = demarche.value.id
-    await updateConfigurations(configurationsForm.value, idDemarche)
+    await updateConfigurations(configurationsForm.value, demarche.value.id)
   }
 
   return {

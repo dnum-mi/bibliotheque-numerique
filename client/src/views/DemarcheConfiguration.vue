@@ -64,7 +64,6 @@ const demarcheMappingColonnes = computed<IDemarcheMappingColumn[]>(() => props.d
             :id="'labelBN-'+mappingColonne.id"
             v-model="mappingColonne.labelBN"
             type="text"
-            label-visible="labelVisible"
             :disabled="!mappingColonne.display"
           />
         </div>

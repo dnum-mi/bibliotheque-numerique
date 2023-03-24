@@ -1,18 +1,17 @@
-import type { IDemarcheMappingColumn } from '../interfaces'
 import { baseApiUrl, headers } from '../../utils/api-client'
 import axios from 'axios'
 import { ChampType } from '@/shared/types'
+import type { IDemarcheMappingColumn } from '../interfaces'
 
 const DEMARCHE_BASE_URL = `${baseApiUrl}/demarches`
-const DEMARCHE_CONFIG_URL = `${DEMARCHE_BASE_URL}/configurations`
 
 export async function updateConfigurations (demarcheMappingColumn: IDemarcheMappingColumn[], idDemarche: string) {
   const chooseColumn = demarcheMappingColumn.filter(item => item.display)
 
   try {
     const response = await axios({
-      method: 'PATCH',
-      url: DEMARCHE_CONFIG_URL + '/' + idDemarche,
+      method: 'PUT',
+      url: DEMARCHE_BASE_URL + '/' + idDemarche + '/update-mapping',
       data: JSON.stringify(chooseColumn),
       headers,
     })
@@ -22,21 +21,27 @@ export async function updateConfigurations (demarcheMappingColumn: IDemarcheMapp
   }
 }
 
-export async function getConfigurations (champDescriptors: any[], annotationDescriptors: any[]): Promise<IDemarcheMappingColumn[]> {
+export async function getConfigurations (idDemarche: string, champDescriptors: any[], annotationDescriptors: any[]): Promise<IDemarcheMappingColumn[]> {
   let configurations: any[] | PromiseLike<IDemarcheMappingColumn[]> = []
-  // try {
-  //   const response = await axios({
-  //     method: 'get',
-  //     url: DEMARCHE_CONFIG_URL,
-  //     headers,
-  //   })
-  //   configurations = response.data
-  // } catch (error) {
-  //   throw await error
-  // }
+
+  try {
+    const response = await axios({
+      method: 'get',
+      url: DEMARCHE_BASE_URL + '/' + idDemarche,
+      headers,
+    })
+    const mappingColumns = response.data.mappingColumns
+    if (Array.isArray(mappingColumns)) configurations = mappingColumns
+  } catch (error) {
+    throw await error
+  }
+
   if (configurations.length === 0) {
     configurations = (toDemarcheConfigurations(champDescriptors, ChampType.CHAMP)).concat(toDemarcheConfigurations(annotationDescriptors, ChampType.ANNOTATION))
+  } else {
+    // TODO: when server return value, fusion value return and list in store.
   }
+
   return configurations
 }
 
