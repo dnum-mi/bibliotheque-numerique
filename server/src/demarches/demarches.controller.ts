@@ -9,6 +9,9 @@ import {
   Param,
   ParseIntPipe,
   UseGuards,
+  Query,
+  ParseArrayPipe,
+  Patch,
 } from "@nestjs/common";
 import { DemarchesService } from "./demarches.service";
 import { Demarche, Dossier } from "../entities";
@@ -19,6 +22,7 @@ import {
   RequirePermissions,
 } from "../guards/permissions.guard";
 import { PermissionName } from "../types/Permission.type";
+import { filterObjectFields } from "../utils/utilsFields";
 
 @UseGuards(PermissionsGuard)
 @Controller("demarches")
@@ -83,7 +87,9 @@ export class DemarchesController {
   async getDemarcheById(
     @Request() req,
     @Param("id", ParseIntPipe) id: number,
-  ): Promise<Demarche> {
+    @Query("fields", new ParseArrayPipe({ separator: ",", optional: true }))
+    fields: string[],
+  ): Promise<Demarche | Partial<Demarche>> {
     const rules = this.demarcheService.getRulesFromUserPermissions(req.user);
     if (rules.id?.length > 0 && !rules.id.find((ruleId) => ruleId === id)) {
       throw new HttpException(
@@ -114,7 +120,7 @@ export class DemarchesController {
         HttpStatus.NOT_FOUND,
       );
     }
-    return demarche;
+    return fields?.length > 0 ? filterObjectFields(fields, demarche) : demarche;
   }
 
   @Get("ds/:id")
@@ -122,7 +128,9 @@ export class DemarchesController {
   async getDemarcheByDsId(
     @Request() req,
     @Param("id", ParseIntPipe) id: number,
-  ): Promise<Demarche> {
+    @Query("fields", new ParseArrayPipe({ separator: ",", optional: true }))
+    fields: string[],
+  ): Promise<Demarche | Partial<Demarche>> {
     const rules = this.demarcheService.getRulesFromUserPermissions(req.user);
     let demarche: Demarche;
     try {
@@ -155,7 +163,7 @@ export class DemarchesController {
         HttpStatus.NOT_FOUND,
       );
     }
-    return demarche;
+    return fields?.length > 0 ? filterObjectFields(fields, demarche) : demarche;
   }
 
   @Get(":id/dossiers")
@@ -202,6 +210,30 @@ export class DemarchesController {
 
       return { message: `Demarche id: ${idDs} create success!` };
     } catch (error) {
+      if (error instanceof Error) {
+        throw new HttpException(
+          error.message,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      throw new HttpException(
+        "Internal Server Error",
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Patch(":id")
+  @RequirePermissions()
+  async updateDemarche(
+    @Param("id", ParseIntPipe) id: number,
+    @Body() demarche: Partial<Demarche>,
+  ) {
+    try {
+      await this.demarcheService.updateDemarche(id, demarche);
+      return;
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
       if (error instanceof Error) {
         throw new HttpException(
           error.message,

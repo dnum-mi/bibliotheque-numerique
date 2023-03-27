@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { EntityManager, In, InsertResult } from "typeorm";
 import { Demarche, DemarcheDS, TUpsertDemarche, User } from "../entities";
 import { LoggerService } from "../logger/logger.service";
@@ -132,6 +132,27 @@ export class DemarchesService {
       demarcheDS: demarcheIds,
     };
   }
+
+  async updateDemarche(id: number, demarche: Partial<Demarche>): Promise<void> {
+    let result;
+    try {
+      result = await Demarche.update(id, demarche);
+    } catch (error) {
+      this.logger.error({
+        short_message: "Échec la mise à jour des mappingColumns pour démarche",
+        full_message: error.toString(),
+      });
+      throw new Error("Unable to retrieve demarches");
+    }
+    if (result.affected === 0) {
+      throw new HttpException(
+        `Demarche id: ${id} not found`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return;
+  }
+
   private _getFiltersFromUserPermissions(user: User): object {
     const rules = this.getRulesFromUserPermissions(user);
     return {
