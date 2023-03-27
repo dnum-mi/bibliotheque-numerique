@@ -3,10 +3,10 @@ import type { IDemarcheMappingColumn } from '../interfaces'
 import { ChampType, ChampValueTypesKeys } from '../types'
 
 const typeForHeader = {
-  // [ChampValueTypesKeys.TEXT]: undefined,
-  // [ChampValueTypesKeys.NUMBER]: 'number',
+  [ChampValueTypesKeys.TEXT]: 'text',
+  [ChampValueTypesKeys.NUMBER]: 'number',
   // [ChampValueTypesKeys.BOOLEAN]: 'boolean',
-  // [ChampValueTypesKeys.DATE]: 'date',
+  [ChampValueTypesKeys.DATE]: 'date',
   [ChampValueTypesKeys.PJ]: 'file',
 }
 export function getTypeForHeader (typeValue: string) {
@@ -38,25 +38,24 @@ export function getKeyToTypeData (typeData: string) {
   return keytoTypeData[typeData as keyof typeof keytoTypeData] || typeData
 }
 
-export function toHeaderList (mappingCol: IDemarcheMappingColumn[]): TypeHeaderDataTable[] {
-  return mappingCol.map((col: IDemarcheMappingColumn) => ({
+export function toHeaderList (mappingCol: Partial<IDemarcheMappingColumn>[]): TypeHeaderDataTable[] {
+  return mappingCol.map((col: Partial<IDemarcheMappingColumn>) => ({
     text: col.labelBN,
     value: col.id,
     type: getTypeForHeader(col.typeValue),
   }))
 }
 
-export function toRowData (dataJson: object, mappingCol: IDemarcheMappingColumn[]) {
+export function toRowData (dataJson: object, mappingCol: Partial<IDemarcheMappingColumn>[]) {
   return mappingCol.reduce((acc, col) => {
-    const typeData = getKeyToTypeData(col.typeData)
-    const lastIndex = col.labelSource.length - 1
+    const typeData = col.typeData && getKeyToTypeData(col.typeData)
+    const lastIndex = col.labelSource ? col.labelSource.length - 1 : 0
     const datas = typeData ? dataJson[typeData] : dataJson
 
-    const value = col.labelSource.reduce((acc1, cur, index) => {
+    const value = col.labelSource?.reduce((acc1, cur, index) => {
       let value
       if (typeData) {
         value = acc1?.find(data => data.label === cur)
-        console.log(cur, value, index, lastIndex, acc1)
         return index < lastIndex ? value?.champs || value : value
       }
       return acc1[cur] || ''

@@ -1,67 +1,7 @@
 import { describe, expect, it } from 'vitest'
+import type { IDemarcheMappingColumn } from '../interfaces'
 import { ChampValueTypesKeys } from '../types'
 import { toRowData } from './toHeaderList'
-// import exampleDS from './__tests__/examples.json'
-
-// const dataJson = exampleDS[0].dossierDS.dataJson
-// const mappingColumn = [
-//   // {
-//   //   id: 'Q2hhbXAtMTE5',
-//   //   labelSource: ['state'],
-//   //   labelBN: 'Déclaration initiale de création',
-//   //   typeName: 'etat',
-//   //   typeData: 'champ',
-//   //   typeValue: 'Text',
-//   // },
-//   {
-//     id: 'Q2hhbXAtMTE6',
-//     labelSource: ['Déclaration initiale de création'],
-//     labelBN: 'Déclaration initiale de création',
-//     typeName: '',
-//     typeData: 'champ',
-//     typeValue: 'Text',
-//   },
-//   {
-//     id: 'Q2hhbXAtMTE7',
-//     labelSource: ['Autorité ayant délivré le récépissé de déclaration de création du fonds de dotation'],
-//     labelBN: 'Préfecture',
-//     typeName: '',
-//     typeData: 'champ',
-//     typeValue: 'Text',
-//   },
-//   {
-//     id: 'Q2hhbXAtMTE8',
-//     labelSource: ['Date du récépissé actant la création du fonds de dotation'],
-//     labelBN: 'Date création',
-//     typeName: '',
-//     typeData: 'champ',
-//     typeValue: 'Text', // Date
-//   },
-//   {
-//     id: 'Q2hhbXAtMTE9',
-//     labelSource: ['Nature des modifications statutaires'],
-//     labelBN: 'Modifications statutaires',
-//     typeName: '',
-//     typeData: 'champ',
-//     typeValue: 'Text', // Array
-//   },
-//   {
-//     id: 'Q2hhbXAtMTEA',
-//     labelSource: ["Membres du conseil d'administration du fonds de dotation"],
-//     labelBN: 'Memnbres',
-//     typeName: '',
-//     typeData: 'champ',
-//     typeValue: 'file',
-//   },
-//   {
-//     id: 'Q2hhbXAtMTEB',
-//     labelSource: ['Adresse du siège social du fonds de dotation'],
-//     labelBN: 'Adresse',
-//     typeName: '',
-//     typeData: 'champ',
-//     typeValue: 'Text', // Adresse
-//   },
-// ]
 
 describe('Test HeaderList', () => {
   const dataJson = {
@@ -147,7 +87,7 @@ describe('Test HeaderList', () => {
   }
 
   it('should to convert to rowData for champ type Text', () => {
-    const mappingColumn = [
+    const mappingColumn:Partial<IDemarcheMappingColumn>[] = [
       {
         id: 'test1',
         labelSource: ['champSource1'],
