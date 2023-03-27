@@ -4,12 +4,13 @@ import { apiClient } from '@/utils/api-client'
 import { getConfigurations, updateConfigurations } from '@/shared/services'
 
 import { toHeaderList, toRowData } from '../shared/services/toHeaderList'
-import { getConfigurations } from '../shared/services/demarche.service'
+import { mappinBouchon } from '../shared/services/demarche.service'
 import { booleanToYesNo } from '../utils/booleanToString'
 import { stateToFr } from '../utils/stateToString'
 import { dateToStringFr } from '../utils/dateToString'
 import type { IDemarcheMappingColonne } from '../shared/interfaces'
 import type { TypeHeaderDataTable } from '../components/typeDataTable'
+import { ChampValueTypesKeys } from '../shared/types'
 
 const headerDossierDefault: TypeHeaderDataTable[] = [
   {
@@ -76,6 +77,14 @@ const headerDossierDefault1: TypeHeaderDataTable[] = [
   },
 ]
 
+const typeToParserFn = {
+  [ChampValueTypesKeys.DATE]: dateToStringFr,
+  boolean: booleanToYesNo,
+  StateDS: stateToFr,
+}
+const getParserFnByType = (type) => {
+  return typeToParserFn[type]
+}
 export const useDemarcheStore = defineStore('demarche', () => {
   let mappingColumn: IDemarcheMappingColonne[]
   const demarche = ref({})
@@ -132,13 +141,26 @@ export const useDemarcheStore = defineStore('demarche', () => {
   const updateDemarcheConfigurations = async (configurationsForm: []) => {
     await updateConfigurations(demarche.value.id, configurationsForm.value)
   }
-  const loadMappingColumn = async (idDemarche: number) => {
+
+  const loadHeaderDossiers = async (idDemarche: number) => {
     if (!idDemarche) {
       console.log('idDemarche doit être saisie')
     }
     // mappingColumn = await getConfigurations()
-    mappingColumn = demarche.value?.mappingColumn || []
-    hearderListDossier.value = [...headerDossierDefault, ...toHeaderList(mappingColumn), ...headerDossierDefault1]
+    mappingColumn = demarche.value?.mappingColumn || mappinBouchon
+
+    const headerMapping = toHeaderList(mappingColumn).map(header => {
+      const parseFn = getParserFnByType(header.type)
+      if (parseFn) {
+        return {
+          ...header,
+          parseFn,
+        }
+      }
+      return header
+    })
+    console.log(headerMapping)
+    hearderListDossier.value = [...headerDossierDefault, ...headerMapping, ...headerDossierDefault1]
   }
 
   const loadRowDatas = async () => {
@@ -160,7 +182,7 @@ export const useDemarcheStore = defineStore('demarche', () => {
     demarcheConfigurations,
     getDemarcheConfigurations,
     updateDemarcheConfigurations,
-    loadMappingColumn,
+    loadHeaderDossiers,
     hearderListDossier,
     rowDatasDossiers,
     loadRowDatas,

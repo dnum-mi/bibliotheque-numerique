@@ -31,7 +31,7 @@ onMounted(async () => {
     await demarcheStore.getDossiers(id)
 
     await demarcheStore.getDemarcheConfigurations()
-    await demarcheStore.loadMappingColumn(id)
+    await demarcheStore.loadHeaderDossiers(id)
     await demarcheStore.loadRowDatas()
   }
 })
@@ -90,8 +90,8 @@ function selectTab (idx:number) {
       </DsfrTabContent>
 
       <DsfrTabContent
-        panel-id="tab-content-0"
-        tab-id="tab-0"
+        panel-id="tab-content-1"
+        tab-id="tab-1"
         :selected="selectedTabIndex === 1"
       >
         <DemarcheInformations
@@ -108,8 +108,8 @@ function selectTab (idx:number) {
         />
       </DsfrTabContent>
       <DsfrTabContent
-        panel-id="tab-content-0"
-        tab-id="tab-0"
+        panel-id="tab-content-2"
+        tab-id="tab-2"
         :selected="selectedTabIndex === 2"
       >
         <DemarcheConfigurations
