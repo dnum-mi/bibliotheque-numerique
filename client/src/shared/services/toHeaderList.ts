@@ -50,11 +50,16 @@ export function toRowData (dataJson: object, mappingCol: IDemarcheMappingColumn[
   return mappingCol.reduce((acc, col) => {
     const typeData = getKeyToTypeData(col.typeData)
     const lastIndex = col.labelSource.length - 1
-    const datas = dataJson[typeData]
+    const datas = typeData ? dataJson[typeData] : dataJson
 
     const value = col.labelSource.reduce((acc1, cur, index) => {
-      const value = acc1?.find(data => data.label === cur)
-      return index < lastIndex ? value.champs || value : value
+      let value
+      if (typeData) {
+        value = acc1?.find(data => data.label === cur)
+        console.log(cur, value, index, lastIndex, acc1)
+        return index < lastIndex ? value?.champs || value : value
+      }
+      return acc1[cur] || ''
     }, datas)
 
     acc[col.id] = getValueBytypeValue(value, col)
