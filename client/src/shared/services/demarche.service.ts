@@ -69,14 +69,14 @@ function toDemarcheConfigurations (datas: any[], typeData: string): IDemarcheMap
   })
 }
 
-const mappinBouchon: IDemarcheMappingColonne[] = [
+export const mappinBouchon: Partial<IDemarcheMappingColumn>[] = [
   {
     id: 'Q2hhbXAtMTE6',
     labelSource: ["Saisir le n°RNA de l'association"],
     labelBN: 'Identifiant',
     typeName: '',
     typeData: 'champ',
-    typeValue: 'Text',
+    typeValue: 'text',
   },
   // {
   //   id: 'Q2hhbXAtMTE7',
@@ -84,7 +84,7 @@ const mappinBouchon: IDemarcheMappingColonne[] = [
   //   labelBN: 'Dépôt',
   //   typeName: '',
   //   typeData: '',
-  //   typeValue: 'Date',
+  //   typeValue: 'date',
   // },
   {
     id: 'Q2hhbXAtMTE8',
@@ -92,7 +92,7 @@ const mappinBouchon: IDemarcheMappingColonne[] = [
     labelBN: "Titre de l'association",
     typeName: '',
     typeData: 'champ',
-    typeValue: 'Text',
+    typeValue: 'text',
   },
   {
     id: 'Q2hhbXAtMTE9',
@@ -100,7 +100,7 @@ const mappinBouchon: IDemarcheMappingColonne[] = [
     labelBN: 'Consentement',
     typeName: '',
     typeData: 'champ',
-    typeValue: 'Boolean',
+    typeValue: 'boolean',
   },
   {
     id: 'Q2hhbXAtMTE10',
@@ -108,7 +108,7 @@ const mappinBouchon: IDemarcheMappingColonne[] = [
     labelBN: 'Montant (> 15300)',
     typeName: '',
     typeData: 'champ',
-    typeValue: 'Number',
+    typeValue: 'number',
   },
   {
     id: 'Q2hhbXAtMTE11',
@@ -116,7 +116,7 @@ const mappinBouchon: IDemarcheMappingColonne[] = [
     labelBN: 'Pays (> 15300)',
     typeName: '',
     typeData: 'champ',
-    typeValue: 'Pays',
+    typeValue: 'pays',
   },
   {
     id: 'Q2hhbXAtMTE12',
@@ -157,6 +157,14 @@ const mappinBouchon: IDemarcheMappingColonne[] = [
     typeName: '',
     typeData: 'champ',
     typeValue: 'text',
+  },
+  {
+    id: 'Q2hhbXAtMTE16',
+    labelSource: ["Déclaration d'un financement supérieur à 15300€", 'Date du financement'],
+    labelBN: 'Date du financement (> 15300)',
+    typeName: '',
+    typeData: 'champ',
+    typeValue: 'date',
   },
 ]
 // TODO: A supprimer Bouchon
@@ -239,20 +247,3 @@ export function fetchMappingColumnDossiers () {
 
   return mappingColumn
 }
-
-// export const fetchDosseirsRowData = async (idDemarche) => {
-//   try {
-//     const config = {
-//       method: 'get',
-//       url: `${baseApiUrl}/demarches/${idDemarche}/dossiers`,
-//       headers,
-//     }
-//     const response = await axios(config)
-
-//     return response.data.map(data => ({
-//         ...data,
-//         ...toRowData(data.dossierDS?.dataJson, mappingColumn)})
-//   } catch (error) {
-//     console.log(error)
-//   }
-// }
