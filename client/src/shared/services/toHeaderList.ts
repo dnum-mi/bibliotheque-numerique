@@ -17,7 +17,7 @@ const valueBytypeValue = {
   // [ChampValueTypesKeys.TEXT]: 'stringValue',
   // [ChampValueTypesKeys.NUMBER]: 'value',
   // [ChampValueTypesKeys.BOOLEAN]: 'value',
-  // [ChampValueTypesKeys.DATE]: 'date',
+  [ChampValueTypesKeys.DATE]: 'date',
   [ChampValueTypesKeys.PJ]: 'file',
 }
 
