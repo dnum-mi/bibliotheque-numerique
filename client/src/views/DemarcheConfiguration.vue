@@ -20,17 +20,17 @@ const demarcheMappingColonnes = computed<IDemarcheMappingColumn[]>(() => props.d
     :key="mappingColonne.id"
   >
     <DsfrInput
-      :id="'id-'+mappingColonne.id"
+      :id="`id-${mappingColonne.id}`"
       v-model="mappingColonne.id"
       type="hidden"
     />
     <DsfrInput
-      :id="'typeName-'+mappingColonne.id"
+      :id="`typeName-${mappingColonne.id}`"
       v-model="mappingColonne.typeName"
       type="hidden"
     />
     <DsfrInput
-      :id="'typeData-'+mappingColonne.id"
+      :id="`typeData-${mappingColonne.id}`"
       v-model="mappingColonne.typeData"
       type="hidden"
     />
@@ -38,14 +38,14 @@ const demarcheMappingColonnes = computed<IDemarcheMappingColumn[]>(() => props.d
       <div class="fr-grid-row bn-center">
         <div class="fr-col-1 fr-p-2v">
           <DsfrCheckbox
-            :id="'display-'+mappingColonne.id"
+            :id="`display-${mappingColonne.id}`"
             v-model="mappingColonne.display"
             :name="mappingColonne.id"
           />
         </div>
         <div class="fr-col-1 fr-p-2v">
           <DsfrBadge
-            :id="'typeData-'+mappingColonne.id"
+            :id="`typeData-${mappingColonne.id}`"
             :label="mappingColonne.typeData.toUpperCase()"
             small="small"
             type="info"
@@ -53,7 +53,7 @@ const demarcheMappingColonnes = computed<IDemarcheMappingColumn[]>(() => props.d
         </div>
         <div class="fr-col-4 fr-p-2v">
           <DsfrInput
-            :id="'labelSource-'+mappingColonne.id"
+            :id="`labelSource-${mappingColonne.id}`"
             v-model="mappingColonne.labelSource"
             type="text"
             disabled="disabled"
@@ -61,7 +61,7 @@ const demarcheMappingColonnes = computed<IDemarcheMappingColumn[]>(() => props.d
         </div>
         <div class="fr-col-4 fr-p-2v">
           <DsfrInput
-            :id="'labelBN-'+mappingColonne.id"
+            :id="`labelBN-${mappingColonne.id}`"
             v-model="mappingColonne.labelBN"
             type="text"
             :disabled="!mappingColonne.display"
@@ -69,7 +69,7 @@ const demarcheMappingColonnes = computed<IDemarcheMappingColumn[]>(() => props.d
         </div>
         <div class="fr-col-2 fr-p-2v">
           <DsfrSelect
-            :id="'typeValue-'+mappingColonne.id"
+            :id="`typeValue-${mappingColonne.id}`"
             v-model="mappingColonne.typeValue"
             label=""
             :options="listType"
