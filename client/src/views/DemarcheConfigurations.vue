@@ -14,6 +14,7 @@ const title = 'La configuration'
 const demarcheStore = useDemarcheStore()
 const demarcheConfigurations = computed<any[]>(() => demarcheStore.demarcheConfigurations)
 const alertType = ref('')
+const alertTitle = ref('')
 const alertDescription = ref('')
 
 const { handleSubmit } = useForm()
@@ -21,11 +22,13 @@ const submit = handleSubmit(async () => {
   try {
     await demarcheStore.updateDemarcheConfigurations(demarcheConfigurations)
     alertType.value = 'success'
-    alertDescription.value = 'Mettre à jour succès!'
+    alertTitle.value = 'Mettre à jour succès!'
+    alertDescription.value = 'Les champs ou les annotations sélectionnées sont bien ajoutés dans la colonne du tableau.'
   } catch (e) {
     console.log('Update demarche configurations Error')
     alertType.value = 'error'
-    alertDescription.value = 'Mettre à jour erreur!'
+    alertTitle.value = 'Mettre à jour erreur!'
+    alertDescription.value = 'Une erreur se produire pendant la mise à jour des données.'
   }
 })
 
@@ -37,28 +40,35 @@ const submit = handleSubmit(async () => {
       <DsfrAlert
         v-if="!!alertType"
         :type="alertType"
+        :title="alertTitle"
         :description="alertDescription"
-        small="small"
+        :small="false"
+        class="fr-mb-2w"
       />
     </div>
-    <h3> {{ title }} </h3>
+    <h3 class="fr-text-title--blue-france">
+      {{ title }}
+    </h3>
+    <div class="fr-text--alt fr-pb-3w">
+      Sélectionnez les champs ou les annotations privées pour s'afficher dans le tableau de liste de dossiers pour cette démarche.
+    </div>
 
     <div class="fr-container fr-pb-3v">
       <div class="fr-grid-row">
         <div class="fr-col-1 fr-p-2v">
-          <label class="fr-text--bold"> Type Champs</label>
+          <label class="fr-text--bold" />
         </div>
         <div class="fr-col-1 fr-p-2v">
-          <label class="fr-text--bold"> L'affiche dans la colonne :</label>
+          <label class="fr-text--bold"> Type Champs</label>
         </div>
-        <div class="fr-col-3 fr-p-2v">
+        <div class="fr-col-4 fr-p-2v">
           <label class="fr-text--bold"> Libellé origine</label>
         </div>
-        <div class="fr-col-3 fr-p-2v">
+        <div class="fr-col-4 fr-p-2v">
           <label class="fr-text--bold"> Libellé personnalisé</label>
         </div>
-        <div class="fr-col-3 fr-p-2v">
-          <label class="fr-text--bold"> Valeur Type :</label>
+        <div class="fr-col-2 fr-p-2v">
+          <label class="fr-text--bold"> Valeur Type</label>
         </div>
       </div>
     </div>
@@ -71,7 +81,7 @@ const submit = handleSubmit(async () => {
         :datas="demarcheConfigurations"
       />
       <hr>
-      <DsfrButton>
+      <DsfrButton class="fr-mb-3w">
         Mettre à jour
       </DsfrButton>
     </form>

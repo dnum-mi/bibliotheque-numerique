@@ -35,7 +35,14 @@ const demarcheMappingColonnes = computed<IDemarcheMappingColumn[]>(() => props.d
       type="hidden"
     />
     <div class="fr-container fr-pb-3v">
-      <div class="fr-grid-row">
+      <div class="fr-grid-row bn-center">
+        <div class="fr-col-1 fr-p-2v">
+          <DsfrCheckbox
+            :id="'display-'+mappingColonne.id"
+            v-model="mappingColonne.display"
+            :name="mappingColonne.id"
+          />
+        </div>
         <div class="fr-col-1 fr-p-2v">
           <DsfrBadge
             :id="'typeData-'+mappingColonne.id"
@@ -44,14 +51,7 @@ const demarcheMappingColonnes = computed<IDemarcheMappingColumn[]>(() => props.d
             type="info"
           />
         </div>
-        <div class="fr-col-1 fr-p-2v">
-          <DsfrCheckbox
-            :id="'display-'+mappingColonne.id"
-            v-model="mappingColonne.display"
-            :name="mappingColonne.id"
-          />
-        </div>
-        <div class="fr-col-3 fr-p-2v">
+        <div class="fr-col-4 fr-p-2v">
           <DsfrInput
             :id="'labelSource-'+mappingColonne.id"
             v-model="mappingColonne.labelSource"
@@ -59,7 +59,7 @@ const demarcheMappingColonnes = computed<IDemarcheMappingColumn[]>(() => props.d
             disabled="disabled"
           />
         </div>
-        <div class="fr-col-3 fr-p-2v">
+        <div class="fr-col-4 fr-p-2v">
           <DsfrInput
             :id="'labelBN-'+mappingColonne.id"
             v-model="mappingColonne.labelBN"
@@ -67,7 +67,7 @@ const demarcheMappingColonnes = computed<IDemarcheMappingColumn[]>(() => props.d
             :disabled="!mappingColonne.display"
           />
         </div>
-        <div class="fr-col-3 fr-p-2v">
+        <div class="fr-col-2 fr-p-2v">
           <DsfrSelect
             :id="'typeValue-'+mappingColonne.id"
             v-model="mappingColonne.typeValue"
@@ -80,3 +80,10 @@ const demarcheMappingColonnes = computed<IDemarcheMappingColumn[]>(() => props.d
     </div>
   </div>
 </template>
+
+<style>
+.bn-center{
+  text-align:center;
+  vertical-align:middle
+}
+</style>

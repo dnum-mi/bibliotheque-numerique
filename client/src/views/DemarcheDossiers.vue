@@ -156,7 +156,7 @@ function selectTab (idx:number) {
       >
         <DemarcheInformations
           :data-json="demarche?.demarcheDS?.dataJson"
-          class="fr-pt-5w"
+          class="fr-pt-3w"
         />
         <DemarcheService
           :service="service"
@@ -174,7 +174,7 @@ function selectTab (idx:number) {
       >
         <DemarcheConfigurations
           :data-json="demarche?.demarcheDS?.dataJson"
-          class="fr-pt-5w"
+          class="fr-pt-3w"
         />
       </DsfrTabContent>
     </DsfrTabs>

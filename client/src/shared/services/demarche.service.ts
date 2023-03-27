@@ -7,12 +7,13 @@ const DEMARCHE_BASE_URL = `${baseApiUrl}/demarches`
 
 export async function updateConfigurations (demarcheMappingColumn: IDemarcheMappingColumn[], idDemarche: string) {
   const chooseColumn = demarcheMappingColumn.filter(item => item.display)
+  const updateAttribute = { mappingColumns: chooseColumn }
 
   try {
     const response = await axios({
-      method: 'PUT',
-      url: DEMARCHE_BASE_URL + '/' + idDemarche + '/update-mapping',
-      data: JSON.stringify(chooseColumn),
+      method: 'patch',
+      url: `${DEMARCHE_BASE_URL}/${idDemarche}`,
+      data: JSON.stringify(updateAttribute),
       headers,
     })
     return response.data
@@ -27,7 +28,7 @@ export async function getConfigurations (idDemarche: string, champDescriptors: a
   try {
     const response = await axios({
       method: 'get',
-      url: DEMARCHE_BASE_URL + '/' + idDemarche,
+      url: `${DEMARCHE_BASE_URL}/${idDemarche}`,
       headers,
     })
     const mappingColumns = response.data.mappingColumns
@@ -36,13 +37,21 @@ export async function getConfigurations (idDemarche: string, champDescriptors: a
     throw await error
   }
 
-  if (configurations.length === 0) {
-    configurations = (toDemarcheConfigurations(champDescriptors, ChampType.CHAMP)).concat(toDemarcheConfigurations(annotationDescriptors, ChampType.ANNOTATION))
-  } else {
-    // TODO: when server return value, fusion value return and list in store.
+  const defaultConfigurations = (toDemarcheConfigurations(champDescriptors, ChampType.CHAMP)).concat(toDemarcheConfigurations(annotationDescriptors, ChampType.ANNOTATION))
+  if (configurations.length !== 0) {
+    configurations.map((objet) => {
+      return replaceInArray(objet, defaultConfigurations)
+    })
   }
-
+  configurations = defaultConfigurations
   return configurations
+}
+
+function replaceInArray (objet: IDemarcheMappingColumn, listObjet: any[]) {
+  const index = listObjet.findIndex(item => item.id === objet.id)
+  if (index !== -1) {
+    listObjet.splice(index, 1, objet)
+  }
 }
 
 function toDemarcheConfigurations (datas: any[], typeData: string): IDemarcheMappingColumn[] {
