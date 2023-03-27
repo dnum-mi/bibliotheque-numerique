@@ -136,7 +136,8 @@ export const useDemarcheStore = defineStore('demarche', () => {
     if (!idDemarche) {
       console.log('idDemarche doit être saisie')
     }
-    mappingColumn = await getConfigurations()
+    // mappingColumn = await getConfigurations()
+    mappingColumn = demarche.value?.mappingColumn || []
     hearderListDossier.value = [...headerDossierDefault, ...toHeaderList(mappingColumn), ...headerDossierDefault1]
   }
 
