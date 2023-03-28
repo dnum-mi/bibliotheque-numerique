@@ -1,0 +1,82 @@
+<script lang="ts" setup>
+import { computed } from 'vue'
+import type { IDemarcheMappingColumn } from '@/shared/interfaces'
+import { ChampValueTypes } from '@/shared/types'
+import { enumToDsfrSelectOptions } from '@/utils/enumToDsfrSelectOptions'
+
+const props = withDefaults(defineProps<{
+    datas: IDemarcheMappingColumn[]
+  }>(), {
+  datas: () => ([]),
+})
+const listType = enumToDsfrSelectOptions(ChampValueTypes)
+const demarcheMappingColumns = computed<IDemarcheMappingColumn[]>(() => props.datas)
+
+</script>
+
+<template>
+  <div
+    v-for="mappingColumn in demarcheMappingColumns"
+    :key="mappingColumn.id"
+  >
+    <DsfrInput
+      :id="`id-${mappingColumn.id}`"
+      v-model="mappingColumn.id"
+      type="hidden"
+    />
+    <DsfrInput
+      :id="`typeName-${mappingColumn.id}`"
+      v-model="mappingColumn.typeName"
+      type="hidden"
+    />
+    <DsfrInput
+      :id="`typeData-${mappingColumn.id}`"
+      v-model="mappingColumn.typeData"
+      type="hidden"
+    />
+    <div class="fr-container fr-pb-3v">
+      <div class="fr-grid-row">
+        <div class="fr-col-1 fr-p-2v fr-mt-3w fr-pl-4w">
+          <DsfrCheckbox
+            :id="`display-${mappingColumn.id}`"
+            v-model="mappingColumn.display"
+            :name="mappingColumn.id"
+          />
+        </div>
+        <div class="fr-col-1 fr-p-2v fr-mt-3w">
+          <DsfrBadge
+            :id="`typeData-${mappingColumn.id}`"
+            :label="mappingColumn.typeData.toUpperCase()"
+            small="small"
+            type="info"
+          />
+        </div>
+        <div class="fr-col-4 fr-p-2v">
+          <DsfrInput
+            :id="`labelSource-${mappingColumn.id}`"
+            v-model="mappingColumn.labelSource"
+            is-textarea="true"
+            disabled="disabled"
+          />
+        </div>
+        <div class="fr-col-4 fr-p-2v">
+          <DsfrInput
+            :id="`labelBN-${mappingColumn.id}`"
+            v-model="mappingColumn.labelBN"
+            is-textarea="true"
+            :disabled="!mappingColumn.display"
+          />
+        </div>
+        <div class="fr-col-2 fr-p-2v">
+          <DsfrSelect
+            :id="`typeValue-${mappingColumn.id}`"
+            v-model="mappingColumn.typeValue"
+            label=""
+            :options="listType"
+            :disabled="!mappingColumn.display"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
