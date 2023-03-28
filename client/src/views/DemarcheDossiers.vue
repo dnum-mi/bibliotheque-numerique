@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useRoute, useRouter } from 'vue-router'
 
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useDemarcheStore } from '@/stores/demarche'
 import GroupInstructeurs from '@/views/DemarcheGrpInstructeurs.vue'
 import DemarcheService from '@/views/DemarcheService.vue'
@@ -16,7 +16,6 @@ const demarcheStore = useDemarcheStore()
 
 const title = computed<string>(() => demarcheStore.demarche?.title || '')
 const number = computed<string>(() => demarcheStore.demarche?.demarcheDS?.dataJson?.number || '')
-// const dossiers = computed<object[]>(() => demarcheStore.dossiers?.map(dossier => ({ idBiblioNum: dossier.id, ...dossier.dossierDS?.dataJson })) || [])
 const groupInstructeurs = computed<object[]>(() => demarcheStore.demarche?.demarcheDS?.dataJson?.groupeInstructeurs || [])
 const service = computed<object>(() => demarcheStore.demarche?.demarcheDS?.dataJson?.service || {})
 const demarche = computed<object>(() => demarcheStore.demarche || {})
@@ -31,13 +30,18 @@ onMounted(async () => {
     await demarcheStore.getDossiers(id)
 
     await demarcheStore.getDemarcheConfigurations()
-    await demarcheStore.loadHeaderDossiers(id)
+    await demarcheStore.loadHeaderDossiers()
     await demarcheStore.loadRowDatas()
   }
 })
 
-const getDossier = data => {
-  router.push({ name: 'Dossier', params: { id: data.idBiblioNum } })
+watch(() => demarcheStore.demarcheConfigurations, async (newValue) => {
+  await demarcheStore.loadHeaderDossiers()
+  await demarcheStore.loadRowDatas()
+}, { deep: true })
+
+const onSelect = (e) => {
+  router.push({ name: 'Dossier', params: { id: e[0].idBiblioNum } })
 }
 
 const tabTitles = [
@@ -83,9 +87,9 @@ function selectTab (idx:number) {
         <BiblioNumDataTable
           :headers="headerDossiers"
           :row-data="rowDatas"
-          :with-action="true"
           :floating-filter="true"
-          @get-elt="getDossier"
+          row-selection="single"
+          @selection-changed="onSelect"
         />
       </DsfrTabContent>
 

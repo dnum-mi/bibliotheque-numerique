@@ -78,7 +78,8 @@ const columnDefs = computed(() => {
     })
     headers.shift()
   }
-  return columnDefs.concat(headers.map((header) => {
+
+  return columnDefs.concat(headers.filter(header => header.type !== 'hidden').map((header) => {
     const filter = getFilterAgGrid(header.type)
     return {
       floatingFilter: props.floatingFilter,

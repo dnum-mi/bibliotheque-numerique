@@ -4,17 +4,17 @@ import { apiClient } from '@/utils/api-client'
 import { getConfigurations, updateConfigurations } from '@/shared/services'
 
 import { toHeaderList, toRowData } from '../shared/services/toHeaderList'
-import { mappinBouchon } from '../shared/services/demarche.service'
 import { booleanToYesNo } from '../utils/booleanToString'
 import { stateToFr } from '../utils/stateToString'
 import { dateToStringFr } from '../utils/dateToString'
-import type { IDemarcheMappingColonne } from '../shared/interfaces'
+import type { IDemarcheMappingColumn } from '../shared/interfaces'
 import type { TypeHeaderDataTable } from '../components/typeDataTable'
 import { ChampValueTypesKeys } from '../shared/types'
 
-const headerDossierDefault: TypeHeaderDataTable[] = [
+const headerDossierIdDefault: TypeHeaderDataTable[] = [
   {
     value: 'idBiblioNum',
+    type: 'hidden',
   },
   {
     text: 'Numéro',
@@ -22,7 +22,7 @@ const headerDossierDefault: TypeHeaderDataTable[] = [
   },
 ]
 
-const headerDossierDefault1: TypeHeaderDataTable[] = [
+const headerDossierDefault: TypeHeaderDataTable[] = [
   {
     text: 'Archivé',
     value: 'archived',
@@ -86,7 +86,7 @@ const getParserFnByType = (type) => {
   return typeToParserFn[type]
 }
 export const useDemarcheStore = defineStore('demarche', () => {
-  let mappingColumn: IDemarcheMappingColonne[]
+  let mappingColumn: IDemarcheMappingColumn[]
   const demarche = ref({})
   const hearderListDossier = ref<TypeHeaderDataTable[]>([])
   const rowDatasDossiers = ref<object[]>([])
@@ -130,7 +130,7 @@ export const useDemarcheStore = defineStore('demarche', () => {
     if (results) dossiers.value = results
   }
 
-  const demarcheConfigurations = ref([])
+  const demarcheConfigurations = ref<IDemarcheMappingColumn[]>([])
   const getDemarcheConfigurations = async () => {
     const champDescriptors = demarche.value?.demarcheDS?.dataJson.publishedRevision?.champDescriptors
     const annotationDescriptors = demarche.value?.demarcheDS?.dataJson.publishedRevision?.annotationDescriptors
@@ -140,14 +140,11 @@ export const useDemarcheStore = defineStore('demarche', () => {
 
   const updateDemarcheConfigurations = async (configurationsForm: []) => {
     await updateConfigurations(demarche.value.id, configurationsForm.value)
+    await getDemarcheConfigurations()
   }
 
-  const loadHeaderDossiers = async (idDemarche: number) => {
-    if (!idDemarche) {
-      console.log('idDemarche doit être saisie')
-    }
-    // mappingColumn = await getConfigurations()
-    mappingColumn = demarche.value?.mappingColumn || mappinBouchon
+  const loadHeaderDossiers = async () => {
+    mappingColumn = demarcheConfigurations.value.filter((mapping: IDemarcheMappingColumn) => mapping.display === true) || []
 
     const headerMapping = toHeaderList(mappingColumn).map(header => {
       const parseFn = getParserFnByType(header.type)
@@ -159,8 +156,8 @@ export const useDemarcheStore = defineStore('demarche', () => {
       }
       return header
     })
-    console.log(headerMapping)
-    hearderListDossier.value = [...headerDossierDefault, ...headerMapping, ...headerDossierDefault1]
+
+    hearderListDossier.value = [...headerDossierIdDefault, ...headerMapping, ...headerDossierDefault]
   }
 
   const loadRowDatas = async () => {

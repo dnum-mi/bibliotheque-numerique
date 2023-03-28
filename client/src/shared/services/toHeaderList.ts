@@ -1,24 +1,9 @@
 import type { TypeHeaderDataTable } from '../../components/typeDataTable'
 import type { IDemarcheMappingColumn } from '../interfaces'
-import { ChampType, ChampValueTypesKeys } from '../types'
+import { ChampType, ChampValueTypesKeys, keytoTypeData, typeForHeader, valueBytypeValue } from '../types'
 
-const typeForHeader = {
-  [ChampValueTypesKeys.TEXT]: 'text',
-  [ChampValueTypesKeys.NUMBER]: 'number',
-  // [ChampValueTypesKeys.BOOLEAN]: 'boolean',
-  [ChampValueTypesKeys.DATE]: 'date',
-  [ChampValueTypesKeys.PJ]: 'file',
-}
 export function getTypeForHeader (typeValue: string) {
   return (typeValue && typeForHeader[typeValue as keyof typeof typeForHeader]) || typeValue
-}
-
-const valueBytypeValue = {
-  // [ChampValueTypesKeys.TEXT]: 'stringValue',
-  // [ChampValueTypesKeys.NUMBER]: 'value',
-  // [ChampValueTypesKeys.BOOLEAN]: 'value',
-  [ChampValueTypesKeys.DATE]: 'date',
-  [ChampValueTypesKeys.PJ]: 'file',
 }
 
 export function getValueBytypeValue (
@@ -29,17 +14,12 @@ export function getValueBytypeValue (
   return value && (value[key] ?? value)
 }
 
-const keytoTypeData = {
-  [ChampType.CHAMP]: 'champs',
-  [ChampType.ANNOTATION]: 'annotations',
-}
-
 export function getKeyToTypeData (typeData: string) {
   return keytoTypeData[typeData as keyof typeof keytoTypeData] || typeData
 }
 
 export function toHeaderList (mappingCol: Partial<IDemarcheMappingColumn>[]): TypeHeaderDataTable[] {
-  return mappingCol.map((col: Partial<IDemarcheMappingColumn>) => ({
+  return mappingCol?.map((col: Partial<IDemarcheMappingColumn>) => ({
     text: col.labelBN,
     value: col.id,
     type: getTypeForHeader(col.typeValue),
