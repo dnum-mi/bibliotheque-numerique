@@ -1,5 +1,6 @@
-import { baseApiUrl, headers } from '../../utils/api-client'
 import axios from 'axios'
+
+import { baseApiUrl, headers } from '../../utils/api-client'
 import { ChampType } from '@/shared/types'
 import type { IDemarcheMappingColumn } from '../interfaces'
 
@@ -9,33 +10,25 @@ export async function updateConfigurations (idDemarche: string, demarcheMappingC
   const chooseColumn = demarcheMappingColumn.filter(item => item.display)
   const updateAttribute = { mappingColumns: chooseColumn }
 
-  try {
-    const response = await axios({
-      method: 'patch',
-      url: `${DEMARCHE_BASE_URL}/${idDemarche}`,
-      data: JSON.stringify(updateAttribute),
-      headers,
-    })
-    return response.data
-  } catch (error) {
-    throw await error
-  }
+  const response = await axios({
+    method: 'patch',
+    url: `${DEMARCHE_BASE_URL}/${idDemarche}`,
+    data: JSON.stringify(updateAttribute),
+    headers,
+  })
+  return response.data
 }
 
 export async function getConfigurations (idDemarche: string, champDescriptors: any[], annotationDescriptors: any[]): Promise<IDemarcheMappingColumn[]> {
   let configurations: any[] | PromiseLike<IDemarcheMappingColumn[]> = []
 
-  try {
-    const response = await axios({
-      method: 'get',
-      url: `${DEMARCHE_BASE_URL}/${idDemarche}`,
-      headers,
-    })
-    const mappingColumns = response.data.mappingColumns
-    if (Array.isArray(mappingColumns)) configurations = mappingColumns
-  } catch (error) {
-    throw await error
-  }
+  const response = await axios({
+    method: 'get',
+    url: `${DEMARCHE_BASE_URL}/${idDemarche}`,
+    headers,
+  })
+  const mappingColumns = response.data.mappingColumns
+  if (Array.isArray(mappingColumns)) configurations = mappingColumns
 
   const defaultConfigurations = (toDemarcheConfigurations(champDescriptors, ChampType.CHAMP)).concat(toDemarcheConfigurations(annotationDescriptors, ChampType.ANNOTATION))
   if (configurations.length !== 0) {
@@ -58,7 +51,7 @@ function toDemarcheConfigurations (datas: any[], typeData: string): IDemarcheMap
   return datas.map((objet) => {
     return {
       id: objet.id,
-      labelSource: objet.label,
+      labelSource: [objet.label],
       labelBN: '',
       typeName: objet.type,
       typeData,

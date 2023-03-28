@@ -61,6 +61,7 @@ const props = withDefaults(defineProps<{
 })
 
 const columnDefs = computed(() => {
+  if (!props.headers.length) { return }
   const headers: TypeHeaderDataTable[] = [...props.headers]
   const columnDefs: any[] = []
   if (props.withAction) {
@@ -77,7 +78,8 @@ const columnDefs = computed(() => {
     })
     headers.shift()
   }
-  return columnDefs.concat(headers.map((header) => {
+
+  return columnDefs.concat(headers.filter(header => header.type !== 'hidden').map((header) => {
     const filter = getFilterAgGrid(header.type)
     return {
       floatingFilter: props.floatingFilter,

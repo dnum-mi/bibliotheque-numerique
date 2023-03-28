@@ -1,16 +1,13 @@
 <script lang="ts" setup>
 import { useRoute, useRouter } from 'vue-router'
 
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useDemarcheStore } from '@/stores/demarche'
 import GroupInstructeurs from '@/views/DemarcheGrpInstructeurs.vue'
 import DemarcheService from '@/views/DemarcheService.vue'
 import DemarcheInformations from '@/views/DemarcheInformations.vue'
 import DemarcheConfigurations from '@/views/DemarcheConfigurations.vue'
 import BiblioNumDataTable from '@/components/BiblioNumDataTableAgGrid.vue'
-import { dateToStringFr } from '@/utils/dateToString'
-import { stateToFr } from '@/utils/stateToString'
-import { booleanToYesNo } from '@/utils/booleanToString'
 import LayoutList from '@/components/LayoutList.vue'
 
 const route = useRoute()
@@ -19,72 +16,11 @@ const demarcheStore = useDemarcheStore()
 
 const title = computed<string>(() => demarcheStore.demarche?.title || '')
 const number = computed<string>(() => demarcheStore.demarche?.demarcheDS?.dataJson?.number || '')
-const dossiers = computed<object[]>(() => demarcheStore.dossiers?.map(dossier => ({ idBiblioNum: dossier.id, ...dossier.dossierDS?.dataJson })) || [])
 const groupInstructeurs = computed<object[]>(() => demarcheStore.demarche?.demarcheDS?.dataJson?.groupeInstructeurs || [])
 const service = computed<object>(() => demarcheStore.demarche?.demarcheDS?.dataJson?.service || {})
 const demarche = computed<object>(() => demarcheStore.demarche || {})
-
-const headerDossierJson = [
-  {
-    value: 'idBiblioNum',
-  },
-  {
-    text: 'Numéro',
-    value: 'number',
-  },
-  {
-    text: 'Archivé',
-    value: 'archived',
-    parseFn: booleanToYesNo,
-    type: 'boolean',
-  },
-  {
-    text: 'Etat',
-    value: 'state',
-    parseFn: stateToFr,
-    type: 'StateDS',
-  },
-  {
-    text: 'Date de dépot',
-    value: 'dateDepot',
-    parseFn: dateToStringFr,
-    type: 'date',
-  },
-  {
-    text: 'Date de construction',
-    value: 'datePassageEnConstruction',
-    parseFn: dateToStringFr,
-    type: 'date',
-  },
-  {
-    text: "Date d'instruction",
-    value: 'datePassageEnInstruction',
-    parseFn: dateToStringFr,
-    type: 'date',
-  },
-  {
-    text: 'Date de traitement',
-    value: 'dateTraitement',
-    parseFn: dateToStringFr,
-    type: 'date',
-  },
-  {
-    text: 'Association déclarée cultuelle dans télédéclaration loi CRPR ?',
-    value: 'annotations',
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    parseFn: (value:any) => {
-      return value ? value[0]?.stringValue : ''
-    },
-  },
-  {
-    text: 'Si oui, date d\'entrée en vigueur de la qualité cultuelle',
-    value: 'annotations',
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    parseFn: (value:any) => {
-      return value ? value[0]?.stringValue : ''
-    },
-  },
-]
+const headerDossiers = computed<object[]>(() => demarcheStore.hearderListDossier || [])
+const rowDatas = computed(() => demarcheStore.rowDatasDossiers || [])
 
 onMounted(async () => {
   const params = route?.params
@@ -94,11 +30,18 @@ onMounted(async () => {
     await demarcheStore.getDossiers(id)
 
     await demarcheStore.getDemarcheConfigurations()
+    await demarcheStore.loadHeaderDossiers()
+    await demarcheStore.loadRowDatas()
   }
 })
 
-const getDossier = data => {
-  router.push({ name: 'Dossier', params: { id: data.idBiblioNum } })
+watch(() => demarcheStore.demarcheConfigurations, async (newValue) => {
+  await demarcheStore.loadHeaderDossiers()
+  await demarcheStore.loadRowDatas()
+}, { deep: true })
+
+const onSelect = (e) => {
+  router.push({ name: 'Dossier', params: { id: e[0].idBiblioNum } })
 }
 
 const tabTitles = [
@@ -142,16 +85,17 @@ function selectTab (idx:number) {
         :selected="selectedTabIndex === 0"
       >
         <BiblioNumDataTable
-          :headers="headerDossierJson"
-          :row-data="dossiers"
-          with-action="{{true}}"
+          :headers="headerDossiers"
+          :row-data="rowDatas"
           :floating-filter="true"
-          @get-elt="getDossier"
+          row-selection="single"
+          @selection-changed="onSelect"
         />
       </DsfrTabContent>
+
       <DsfrTabContent
-        panel-id="tab-content-0"
-        tab-id="tab-0"
+        panel-id="tab-content-1"
+        tab-id="tab-1"
         :selected="selectedTabIndex === 1"
       >
         <DemarcheInformations
@@ -168,8 +112,8 @@ function selectTab (idx:number) {
         />
       </DsfrTabContent>
       <DsfrTabContent
-        panel-id="tab-content-0"
-        tab-id="tab-0"
+        panel-id="tab-content-2"
+        tab-id="tab-2"
         :selected="selectedTabIndex === 2"
       >
         <DemarcheConfigurations
