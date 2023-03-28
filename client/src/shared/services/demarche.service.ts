@@ -5,7 +5,7 @@ import type { IDemarcheMappingColumn } from '../interfaces'
 
 const DEMARCHE_BASE_URL = `${baseApiUrl}/demarches`
 
-export async function updateConfigurations (demarcheMappingColumn: IDemarcheMappingColumn[], idDemarche: string) {
+export async function updateConfigurations (idDemarche: string, demarcheMappingColumn: IDemarcheMappingColumn[]) {
   const chooseColumn = demarcheMappingColumn.filter(item => item.display)
   const updateAttribute = { mappingColumns: chooseColumn }
 

@@ -22,13 +22,13 @@ const submit = handleSubmit(async () => {
   try {
     await demarcheStore.updateDemarcheConfigurations(demarcheConfigurations)
     alertType.value = 'success'
-    alertTitle.value = 'Mettre à jour succès!'
+    alertTitle.value = 'Mise à jour réussi!'
     alertDescription.value = 'Les champs ou les annotations sélectionnées sont bien ajoutés dans la colonne du tableau.'
   } catch (e) {
-    console.log('Update demarche configurations Error')
+    console.error('Update demarche configurations Error')
     alertType.value = 'error'
-    alertTitle.value = 'Mettre à jour erreur!'
-    alertDescription.value = 'Une erreur se produire pendant la mise à jour des données.'
+    alertTitle.value = 'Échec de mise à jour!'
+    alertDescription.value = 'Une erreur s\'est produite pendant la mise à jour des données.'
   }
 })
 
@@ -50,7 +50,7 @@ const submit = handleSubmit(async () => {
       {{ title }}
     </h3>
     <div class="fr-text--alt fr-pb-3w">
-      Sélectionnez les champs ou les annotations privées pour s'afficher dans le tableau de liste de dossiers pour cette démarche.
+      Sélectionnez les champs ou les annotations privés afin de les afficher dans la liste des dossiers de cette démarche.
     </div>
 
     <div class="fr-container fr-pb-3v">

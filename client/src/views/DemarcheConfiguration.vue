@@ -10,80 +10,73 @@ const props = withDefaults(defineProps<{
   datas: () => ([]),
 })
 const listType = enumToDsfrSelectOptions(ChampValueTypes)
-const demarcheMappingColonnes = computed<IDemarcheMappingColumn[]>(() => props.datas)
+const demarcheMappingColumns = computed<IDemarcheMappingColumn[]>(() => props.datas)
 
 </script>
 
 <template>
   <div
-    v-for="mappingColonne in demarcheMappingColonnes"
-    :key="mappingColonne.id"
+    v-for="mappingColumn in demarcheMappingColumns"
+    :key="mappingColumn.id"
   >
     <DsfrInput
-      :id="`id-${mappingColonne.id}`"
-      v-model="mappingColonne.id"
+      :id="`id-${mappingColumn.id}`"
+      v-model="mappingColumn.id"
       type="hidden"
     />
     <DsfrInput
-      :id="`typeName-${mappingColonne.id}`"
-      v-model="mappingColonne.typeName"
+      :id="`typeName-${mappingColumn.id}`"
+      v-model="mappingColumn.typeName"
       type="hidden"
     />
     <DsfrInput
-      :id="`typeData-${mappingColonne.id}`"
-      v-model="mappingColonne.typeData"
+      :id="`typeData-${mappingColumn.id}`"
+      v-model="mappingColumn.typeData"
       type="hidden"
     />
     <div class="fr-container fr-pb-3v">
-      <div class="fr-grid-row bn-center">
-        <div class="fr-col-1 fr-p-2v">
+      <div class="fr-grid-row">
+        <div class="fr-col-1 fr-p-2v fr-mt-3w fr-pl-4w">
           <DsfrCheckbox
-            :id="`display-${mappingColonne.id}`"
-            v-model="mappingColonne.display"
-            :name="mappingColonne.id"
+            :id="`display-${mappingColumn.id}`"
+            v-model="mappingColumn.display"
+            :name="mappingColumn.id"
           />
         </div>
-        <div class="fr-col-1 fr-p-2v">
+        <div class="fr-col-1 fr-p-2v fr-mt-3w">
           <DsfrBadge
-            :id="`typeData-${mappingColonne.id}`"
-            :label="mappingColonne.typeData.toUpperCase()"
+            :id="`typeData-${mappingColumn.id}`"
+            :label="mappingColumn.typeData.toUpperCase()"
             small="small"
             type="info"
           />
         </div>
         <div class="fr-col-4 fr-p-2v">
           <DsfrInput
-            :id="`labelSource-${mappingColonne.id}`"
-            v-model="mappingColonne.labelSource"
-            type="text"
+            :id="`labelSource-${mappingColumn.id}`"
+            v-model="mappingColumn.labelSource"
+            is-textarea="true"
             disabled="disabled"
           />
         </div>
         <div class="fr-col-4 fr-p-2v">
           <DsfrInput
-            :id="`labelBN-${mappingColonne.id}`"
-            v-model="mappingColonne.labelBN"
-            type="text"
-            :disabled="!mappingColonne.display"
+            :id="`labelBN-${mappingColumn.id}`"
+            v-model="mappingColumn.labelBN"
+            is-textarea="true"
+            :disabled="!mappingColumn.display"
           />
         </div>
         <div class="fr-col-2 fr-p-2v">
           <DsfrSelect
-            :id="`typeValue-${mappingColonne.id}`"
-            v-model="mappingColonne.typeValue"
+            :id="`typeValue-${mappingColumn.id}`"
+            v-model="mappingColumn.typeValue"
             label=""
             :options="listType"
-            :disabled="!mappingColonne.display"
+            :disabled="!mappingColumn.display"
           />
         </div>
       </div>
     </div>
   </div>
 </template>
-
-<style>
-.bn-center{
-  text-align:center;
-  vertical-align:middle
-}
-</style>

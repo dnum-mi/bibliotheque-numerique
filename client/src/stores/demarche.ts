@@ -54,7 +54,7 @@ export const useDemarcheStore = defineStore('demarche', () => {
   }
 
   const updateDemarcheConfigurations = async (configurationsForm: []) => {
-    await updateConfigurations(configurationsForm.value, demarche.value.id)
+    await updateConfigurations(demarche.value.id, configurationsForm.value)
   }
 
   return {
