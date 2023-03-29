@@ -5,6 +5,7 @@ export function user_test(): Partial<User> {
   return {
     email: faker.internet.email(),
     password: faker.internet.password(),
+    roles: [],
   };
 }
 export const createOneUser = async (data) => {
