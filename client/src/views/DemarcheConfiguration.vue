@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import type { IDemarcheMappingColumn } from '@/shared/interfaces'
-import { ChampValueTypes } from '@/shared/types'
+import { ChampValueTypes, ChampValueTypesKeys } from '@/shared/types'
 import { enumToDsfrSelectOptions } from '@/utils/enumToDsfrSelectOptions'
 
 const props = withDefaults(defineProps<{
@@ -10,7 +10,10 @@ const props = withDefaults(defineProps<{
   datas: () => ([]),
 })
 const listType = enumToDsfrSelectOptions(ChampValueTypes)
-const demarcheMappingColumns = computed<IDemarcheMappingColumn[]>(() => props.datas)
+const demarcheMappingColumns = computed<IDemarcheMappingColumn[]>(() => props.datas.map(data => {
+  data.typeValue = data.typeValue || ChampValueTypesKeys.TEXT
+  return data
+}))
 
 </script>
 
