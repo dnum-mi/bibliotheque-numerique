@@ -3,6 +3,7 @@ import { useRoute, useRouter } from 'vue-router'
 
 import { computed, onMounted, ref, watch } from 'vue'
 import { useDemarcheStore } from '@/stores/demarche'
+import { useUserStore } from '@/stores'
 import GroupInstructeurs from '@/views/DemarcheGrpInstructeurs.vue'
 import DemarcheService from '@/views/DemarcheService.vue'
 import DemarcheInformations from '@/views/DemarcheInformations.vue'
@@ -13,6 +14,7 @@ import LayoutList from '@/components/LayoutList.vue'
 const route = useRoute()
 const router = useRouter()
 const demarcheStore = useDemarcheStore()
+const userStore = useUserStore()
 
 const title = computed<string>(() => demarcheStore.demarche?.title || '')
 const number = computed<string>(() => demarcheStore.demarche?.demarcheDS?.dataJson?.number || '')
@@ -51,10 +53,10 @@ const tabTitles = [
   {
     title: "L'information",
   },
-  {
-    title: 'La configuration',
-  },
 ]
+
+if (userStore.canManageRoles) tabTitles.push({ title: 'La configuration' })
+
 const initialSelectedIndex = 0
 const selectedTabIndex = ref(0)
 function selectTab (idx:number) {
@@ -112,6 +114,7 @@ function selectTab (idx:number) {
         />
       </DsfrTabContent>
       <DsfrTabContent
+        v-if="userStore.canManageRoles"
         panel-id="tab-content-2"
         tab-id="tab-2"
         :selected="selectedTabIndex === 2"
