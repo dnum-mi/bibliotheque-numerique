@@ -21,4 +21,7 @@ export const filter2Apply = {
     filter: 'agDateColumnFilter',
     filterParams: filterParamsDate,
   },
+  text: {
+    filter: 'agTextColumnFilter',
+  },
 }
