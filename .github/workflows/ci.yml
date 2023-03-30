@@ -6,6 +6,9 @@ on:
       - reopened
       - synchronize
       - ready_for_review
+  push:
+    branches:
+      - 'main'
 
 jobs:
   tests:
@@ -26,6 +29,7 @@ jobs:
             npm ci
             npm run lint
             npm run test:ct:ci
+            npm run build
       - name: run test unit BACK-END
         run: | 
             cd server
@@ -34,3 +38,4 @@ jobs:
             npm run docker:db:up
             npm run test
             npm run docker:db:down
+            npm run build
