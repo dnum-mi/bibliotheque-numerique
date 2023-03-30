@@ -5,12 +5,10 @@ import type { KeyDemarcheStateMapping } from '@/shared/types/Demarche.type'
 import { computed } from 'vue'
 import { dateTimeToStringFr } from '@/utils/dateToString'
 import { stateToFr } from '@/utils/stateToString'
+import { useDemarcheStore } from '@/stores'
 
-const props = withDefaults(defineProps<{
-    dataJson?: object
-  }>(), {
-  dataJson: () => ({}),
-})
+const demarcheStore = useDemarcheStore()
+const dataJson = computed<object>(() => demarcheStore.demarche?.demarcheDS?.dataJson || {})
 
 const title = 'Informations'
 
@@ -43,8 +41,8 @@ const labelsDate = [
   },
 ]
 
-const etat = computed(() => props.dataJson?.state ? DemarcheStateMapping[props.dataJson?.state as KeyDemarcheStateMapping] : '')
-const declarative = computed(() => stateToFr(props.dataJson?.declarative))
+const etat = computed(() => dataJson.value?.state ? DemarcheStateMapping[dataJson.value?.state as KeyDemarcheStateMapping] : '')
+const declarative = computed(() => stateToFr(dataJson.value?.declarative))
 
 </script>
 

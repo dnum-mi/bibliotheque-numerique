@@ -18,8 +18,6 @@ const userStore = useUserStore()
 
 const title = computed<string>(() => demarcheStore.demarche?.title || '')
 const number = computed<string>(() => demarcheStore.demarche?.demarcheDS?.dataJson?.number || '')
-const groupInstructeurs = computed<object[]>(() => demarcheStore.demarche?.demarcheDS?.dataJson?.groupeInstructeurs || [])
-const service = computed<object>(() => demarcheStore.demarche?.demarcheDS?.dataJson?.service || {})
 const demarche = computed<object>(() => demarcheStore.demarche || {})
 const headerDossiers = computed<object[]>(() => demarcheStore.hearderListDossier || [])
 const rowDatas = computed(() => demarcheStore.rowDatasDossiers || [])
@@ -46,16 +44,19 @@ const onSelect = (e) => {
   router.push({ name: 'Dossier', params: { id: e[0].idBiblioNum } })
 }
 
-const tabTitles = [
-  {
-    title: 'Les dossiers',
-  },
-  {
-    title: "L'information",
-  },
-]
-
-if (userStore.canManageRoles) tabTitles.push({ title: 'La configuration' })
+const tabTitles = computed<object[]>(() => {
+  const tab = [
+    {
+      title: 'Dossiers',
+    },
+    {
+      title: 'Information',
+    },
+  ]
+  if (userStore.canManageRoles) tab.push({ title: 'Configuration' })
+  return tab
+},
+)
 
 const initialSelectedIndex = 0
 const selectedTabIndex = ref(0)
@@ -101,15 +102,12 @@ function selectTab (idx:number) {
         :selected="selectedTabIndex === 1"
       >
         <DemarcheInformations
-          :data-json="demarche?.demarcheDS?.dataJson"
           class="fr-pt-3w"
         />
         <DemarcheService
-          :service="service"
           class="fr-pt-5w"
         />
         <GroupInstructeurs
-          :group-instructeurs="groupInstructeurs"
           class="fr-pt-5w"
         />
       </DsfrTabContent>
