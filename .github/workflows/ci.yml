@@ -11,8 +11,8 @@ on:
       - 'main'
 
 jobs:
-  tests:
-    name: Run unit tests 
+  client:
+    name: client - Run unit tests 
     if: ${{ !github.event.pull_request.draft }}
     runs-on: ubuntu-latest
 
@@ -29,7 +29,23 @@ jobs:
             npm ci
             npm run lint
             npm run test:ct:ci
+      - name: run build
+        run: |
+            cd client
             npm run build
+
+  server: 
+    name: server - Run unit tests 
+    if: ${{ !github.event.pull_request.draft }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checks-out repository
+        uses: actions/checkout@v3
+      - name: Use Node.js 18.x.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
       - name: run test unit BACK-END
         run: | 
             cd server
@@ -38,4 +54,7 @@ jobs:
             npm run docker:db:up
             npm run test
             npm run docker:db:down
+      - name: run build
+        run: |
+            cd server
             npm run build
