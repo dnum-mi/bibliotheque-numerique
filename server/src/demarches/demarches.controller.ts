@@ -129,7 +129,7 @@ export class DemarchesController {
     @Request() req,
     @Param("id", ParseIntPipe) id: number,
     @Query("fields", new ParseArrayPipe({ separator: ",", optional: true }))
-    fields: string[],
+    fields?: string[],
   ): Promise<Demarche | Partial<Demarche>> {
     const rules = this.demarcheService.getRulesFromUserPermissions(req.user);
     let demarche: Demarche;
