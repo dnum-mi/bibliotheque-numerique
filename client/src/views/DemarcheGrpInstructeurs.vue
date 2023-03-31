@@ -1,11 +1,10 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import { useDemarcheStore } from '@/stores'
 
-defineProps<{
-    groupInstructeurs?: []
-  }>()
 const expandedId = ref(undefined)
-
+const demarcheStore = useDemarcheStore()
+const groupInstructeurs = computed<object[]>(() => demarcheStore.demarche?.demarcheDS?.dataJson?.groupeInstructeurs || [])
 </script>
 
 <template>

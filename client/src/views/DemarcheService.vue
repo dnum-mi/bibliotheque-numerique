@@ -1,11 +1,9 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
+import { useDemarcheStore } from '@/stores'
 
-const props = withDefaults(defineProps<{
-    service?: object
-  }>(), {
-  service: () => ({}),
-})
+const demarcheStore = useDemarcheStore()
+const service = computed<object>(() => demarcheStore.demarche?.demarcheDS?.dataJson?.service || {})
 const labelKeys = {
   nom: 'Nom',
   organisme: 'Organisme',
@@ -13,7 +11,7 @@ const labelKeys = {
   typeOrganisme: 'Type Organisme',
 }
 type keyOfLabelKeys = keyof typeof labelKeys
-type keyOfService = keyof typeof props.service
+type keyOfService = keyof typeof service.value
 interface IField {
     id: string,
     label: string,
@@ -23,7 +21,7 @@ const fields = computed<IField[]>(() => {
   return Object.keys(labelKeys).map<IField>((key) => ({
     id: `demarche-servie-${key}`,
     label: labelKeys[key as keyOfLabelKeys],
-    value: props.service[key as keyOfService] || '',
+    value: service.value[key as keyOfService] || '',
   }),
   )
 })
