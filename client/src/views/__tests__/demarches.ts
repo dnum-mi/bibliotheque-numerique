@@ -59,7 +59,7 @@ export const generateDemarche = () => ({
       },
       groupeInstructeurs: Array.from({ length: faker.datatype.number({ min: 1, max: 20 }) }, () => ({
         id: faker.datatype.string(29),
-        label: faker.lorem.word(),
+        label: faker.random.words(5),
         number: faker.datatype.number(),
         instructeurs: Array.from({ length: faker.datatype.number({ min: 1, max: 20 }) }, () => ({
           id: faker.datatype.string(29),
