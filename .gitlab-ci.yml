@@ -5,7 +5,7 @@ include:
   - local: "/ci/includes/rules.yml"
 
 default:
-  image: alpine:latest
+  image: node:16
 #  tags:
 #    - ADD_CUSTOM_TAG_HERE
 
