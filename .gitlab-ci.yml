@@ -1,0 +1,72 @@
+include:
+  - local: "/includes/node.yml"
+  - local: "/includes/docker.yml"
+  - local: "/includes/vault.yml"
+  - local: "/includes/rules.yml"
+
+default:
+  image: alpine:latest
+#  tags:
+#    - ADD_CUSTOM_TAG_HERE
+
+cache:
+  paths:
+    - .m2/repository/
+    - node_modules
+
+variables:
+  TAG: "${CI_COMMIT_REF_SLUG}"
+  DOCKERFILE: Dockerfile
+  PROJECT_NAME: bibliotheque_numerique
+  PROJECT_ORGANISATION: dnum-mi
+  PROJECT_PATH: ${PROJECT_ORGANISATION}-${PROJECT_NAME}
+  REGISTRY_URL: "${QUAY_ROOT_URL}/${PROJECT_PATH}"
+
+
+stages:
+  - read-secret
+  - quality-app
+  - build-app
+  - docker-test
+  - docker-build
+
+read_secret:
+  stage: read-secret
+  extends:
+    - .vault:read_secret
+
+
+
+build_front:
+  variables:
+    BUILD_IMAGE_NAME: node:16
+    NODE_INSTALL_COMMAND: npm
+    NODE_BUILD_COMMAND: npm run build
+    WORKING_DIR: package.json
+  stage: build-app
+  extends:
+    - .node:build
+
+test_front:
+  variables:
+    WORKING_DIR: package.json
+  stage: test
+  extends:
+    - .node:sonar
+
+
+docker-test:
+  variables:
+    WORKING_DIR: "."
+    IMAGE_NAME: bibliotheque_numerique
+  stage: docker-test
+  extends:
+    - .buildah:test
+
+docker-build:
+  variables:
+    WORKING_DIR: "."
+    IMAGE_NAME: bibliotheque_numerique
+  stage: docker-build
+  extends:
+    - .buildah:build
