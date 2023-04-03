@@ -17,7 +17,7 @@ cache:
 variables:
   TAG: "${CI_COMMIT_REF_SLUG}"
   DOCKERFILE: Dockerfile
-  PROJECT_NAME: bibliotheque_numerique
+  PROJECT_NAME: bibliotheque-numerique
   PROJECT_ORGANISATION: ministere-interieur
   PROJECT_PATH: ${PROJECT_ORGANISATION}-${PROJECT_NAME}
   REGISTRY_URL: "${QUAY_ROOT_URL}/${PROJECT_PATH}"
