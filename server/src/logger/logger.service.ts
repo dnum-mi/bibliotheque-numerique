@@ -60,13 +60,11 @@ export class LoggerService implements LoggerServiceNest {
       });
     this.logger = winston.createLogger({
       transports: [
-        new winston.transports.File({
-          filename: "logs/error.log",
+        new winston.transports.Console({
           level: "error",
           format: customFormat(),
         }),
-        new winston.transports.File({
-          filename: "logs/warn.log",
+        new winston.transports.Console({
           level: "warn",
           format: customFormat(),
         }),
@@ -76,8 +74,7 @@ export class LoggerService implements LoggerServiceNest {
         }),
       ],
       exceptionHandlers: [
-        new winston.transports.File({
-          filename: "logs/exceptions.log",
+        new winston.transports.Console({
           format: customFormat(),
         }),
       ],

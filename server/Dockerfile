@@ -25,7 +25,7 @@ FROM bitnami/node as production
 
 WORKDIR /app
 
-COPY --chown=node:node package*.json ./
+COPY package*.json ./
 RUN npm ci --production
 COPY --from=build /app/dist /app/dist
 

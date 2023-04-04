@@ -1,0 +1,111 @@
+include:
+  - local: "/ci/includes/node.yml"
+  - local: "/ci/includes/docker.yml"
+  - local: "/ci/includes/vault.yml"
+  - local: "/ci/includes/rules.yml"
+
+default:
+  image: node:16
+
+cache:
+  paths:
+    - .m2/repository/
+    - node_modules
+
+variables:
+  TAG: "${CI_COMMIT_REF_SLUG}"
+  DOCKERFILE: Dockerfile
+  PROJECT_NAME: bibliotheque-numerique
+  PROJECT_ORGANISATION: ministere-interieur
+  PROJECT_PATH: ${PROJECT_ORGANISATION}-${PROJECT_NAME}
+  REGISTRY_URL: "${QUAY_ROOT_URL}/${PROJECT_PATH}"
+  CYPRESS_CACHE_FOLDER: "/tmp"
+
+stages:
+  - read-secret
+  - test-sonar
+  - build-app
+  - docker-test
+  - docker-build
+
+read_secret:
+  stage: read-secret
+  extends:
+    - .vault:read_secret
+
+test_front:
+  variables:
+    WORKING_DIR: client
+  stage: test-sonar
+  allow_failure: true
+  extends:
+    - .node:sonar
+
+test_back:
+  variables:
+    WORKING_DIR: server
+  stage: test-sonar
+  allow_failure: true
+  extends:
+    - .node:sonar
+
+build_app_front:
+  stage: build-app
+  artifacts:
+    paths:
+      - client/dist-*
+  script:
+    - 'cd client'
+    - 'npm ci'
+    - 'npm run build'
+
+build_app_back:
+  stage: build-app
+  artifacts:
+    paths:
+      - server/package-lock.json
+      - server/package.json
+      - server/dist
+  script:
+    - 'cd server'
+    - 'npm ci'
+    - 'npm run build'
+
+test_docker_front:
+  variables:
+    WORKING_DIR: 'client'
+    IMAGE_NAME: 'bibliotheque_numerique-front'
+    DOCKERFILE: 'Dockerfile'
+  stage: docker-test
+  allow_failure: true
+  extends:
+    - .docker:test
+
+test_docker_back:
+  image: docker:stable
+  variables:
+    WORKING_DIR: 'server'
+    IMAGE_NAME: 'bibliotheque_numerique-back'
+    DOCKERFILE: 'Dockerfile'
+  stage: docker-test
+  allow_failure: true
+  extends:
+    - .docker:test
+
+docker_build_front:
+  variables:
+    WORKING_DIR: 'client'
+    IMAGE_NAME: 'bibliotheque_numerique-front'
+    DOCKERFILE: 'Dockerfile'
+  stage: docker-build
+  extends:
+    - .kaniko:build
+
+docker_build_back:
+  variables:
+    WORKING_DIR: 'server'
+    IMAGE_NAME: 'bibliotheque_numerique-back'
+    DOCKERFILE: 'Dockerfile'
+  stage: docker-build
+  extends:
+    - .kaniko:build
