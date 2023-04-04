@@ -6,8 +6,6 @@ include:
 
 default:
   image: node:16
-#  tags:
-#    - ADD_CUSTOM_TAG_HERE
 
 cache:
   paths:
@@ -23,7 +21,6 @@ variables:
   REGISTRY_URL: "${QUAY_ROOT_URL}/${PROJECT_PATH}"
   CYPRESS_CACHE_FOLDER: "/tmp"
 
-
 stages:
   - read-secret
   - test-sonar
@@ -36,7 +33,6 @@ read_secret:
   extends:
     - .vault:read_secret
 
-
 test_front:
   variables:
     WORKING_DIR: client
@@ -45,7 +41,6 @@ test_front:
   extends:
     - .node:sonar
 
-
 test_back:
   variables:
     WORKING_DIR: server
@@ -53,7 +48,6 @@ test_back:
   allow_failure: true
   extends:
     - .node:sonar
-
 
 build_app_front:
   stage: build-app
@@ -64,17 +58,6 @@ build_app_front:
     - 'cd client'
     - 'npm ci'
     - 'npm run build'
-
-#build_front:
-#  variables:
-#    BUILD_IMAGE_NAME: node:16
-#    NODE_INSTALL_COMMAND: npm
-#    NODE_BUILD_COMMAND: npm run build
-#    WORKING_DIR: package.json
-#  stage: build-app
-#  extends:
-#    - .node:build
-
 
 build_app_back:
   stage: build-app
@@ -87,7 +70,6 @@ build_app_back:
     - 'cd server'
     - 'npm ci'
     - 'npm run build'
-
 
 test_docker_front:
   variables:
@@ -109,7 +91,6 @@ test_docker_back:
   allow_failure: true
   extends:
     - .docker:test
-
 
 docker_build_front:
   variables:
