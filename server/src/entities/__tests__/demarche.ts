@@ -6,6 +6,7 @@ export function demarche_test(demarcheDS: DemarcheDS): Partial<Demarche> {
     demarcheDS,
     state: faker.datatype.string(),
     title: faker.datatype.string(),
+    identification: faker.datatype.string(),
     mappingColumns: [JSON.parse(faker.datatype.json())] as any[],
   };
 }
