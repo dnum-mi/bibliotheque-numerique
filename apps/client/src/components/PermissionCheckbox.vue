@@ -33,7 +33,7 @@ const onChange = (optionName: string, value: any) => {
       :id="permission.id"
       :model-value="permission.active"
       :name="permission.name"
-      @update:modelValue="onActive"
+      @update:model-value="onActive"
     >
       <template #label>
         {{ permission.name }}

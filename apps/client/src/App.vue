@@ -9,7 +9,6 @@ const serviceTitle = 'Bibliothèque Numérique'
 const serviceDescription = 'Recherchez une démarche, un dossier, un organisme'
 const logoText = ['Ministère', 'de l’intérieur', 'et des outre-mer']
 
-const showSearch = false
 const iconColor = { color: 'var(--red-marianne-425-625)' }
 const quickLinksBase = [
   {
@@ -100,7 +99,6 @@ const close = async () => {
     :service-description="serviceDescription"
     :logo-text="logoText"
     :quick-links="quickLinks"
-    :show-search="showSearch"
   />
   <div>
     <router-view />

@@ -65,7 +65,7 @@ describe("SendMailService", () => {
     );
     expect(result.data).toHaveProperty(
       "html",
-      expect.stringMatching(/Bibliothéque Numérique/),
+      expect.stringMatching(/Bibliothèque Numérique/),
     );
     expect(result.data).toHaveProperty(
       "html",

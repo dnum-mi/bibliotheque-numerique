@@ -3,11 +3,14 @@ import { z } from 'zod'
 import { toFormValidator } from '@vee-validate/zod'
 import { useField, useForm } from 'vee-validate'
 import type { LoginForm } from '@/shared/interfaces'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores'
 
 const router = useRouter()
 const userStore = useUserStore()
+
+const secure = ref()
 
 const validationSchema = toFormValidator(z.object({
   email: z.string({ required_error: 'Vous devez renseigner ce champ' }).email('Format email incorrect'),

@@ -8,7 +8,6 @@ import { DataSource } from "typeorm";
 import { FilesService } from "../files/files.service";
 import { ConfigService } from "@nestjs/config";
 import { Champ, File, Message } from "@dnum-mi/ds-api-client/src/@types/types";
-import { exceptions } from "winston";
 
 @Injectable()
 export class DossiersDSService {

@@ -1,6 +1,4 @@
 import { MigrationInterface, QueryRunner, TableColumn } from "typeorm";
-import { Organisme, OrganismesData } from "../../plugins/organisme/entities";
-import { AppDataSource } from "../app-data-source";
 
 export class UpdateOrganisme1679562953126 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {

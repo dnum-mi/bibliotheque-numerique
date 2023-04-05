@@ -31,7 +31,7 @@ import 'ag-grid-enterprise'
 import 'ag-grid-community/styles/ag-grid.css'
 import 'ag-grid-community/styles/ag-theme-alpine.css'
 
-import { AgGridTypeFilter, type TypeHeaderDataTable } from '@/shared/types/typeDataTable'
+import { AgGridTypeFilter, type Action, type TypeHeaderDataTable } from '@/shared/types/typeDataTable'
 import TableCellAction from './TableCellAction.vue'
 import { PAGINATION_PAGE_SIZE } from '@/config'
 
@@ -40,6 +40,7 @@ import { localeTextAgGrid } from './ag-grid/agGridOptions'
 
 import AgGridMultiValueCell from './ag-grid/AgGridMultiValueCell.vue'
 import AgGridAttachmentCell from './ag-grid/AgGridAttachmentCell.vue'
+import type { Component } from 'vue'
 
 const getFilterAgGrid = (header) => {
   const { type, filter } = header
@@ -84,10 +85,22 @@ const props = withDefaults(defineProps<{
   floatingFilter: false,
 })
 
+interface AgGridColumnDefs {
+  headerName?: string,
+  field?: string,
+  action?: Action | undefined,
+  cellRenderer: Component,
+  initialPinned?: 'left' | 'right',
+  width?: number,
+  sortable?: boolean,
+  filter?: boolean,
+  suppressMenu?: boolean,
+}
+
 const columnDefs = computed(() => {
   if (!props.headers.length) { return }
   const headers: TypeHeaderDataTable[] = [...props.headers]
-  const columnDefs: any[] = []
+  const columnDefs: AgGridColumnDefs[] = []
   if (props.withAction) {
     columnDefs.unshift({
       headerName: 'Action',

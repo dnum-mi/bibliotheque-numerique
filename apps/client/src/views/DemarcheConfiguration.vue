@@ -52,7 +52,7 @@ const demarcheMappingColumns = computed<IDemarcheMappingColumn[]>(() => props.da
           <DsfrBadge
             :id="`typeData-${mappingColumn.id}`"
             :label="mappingColumn.typeData.toUpperCase()"
-            small="small"
+            small
             type="info"
             class="fr-mr-1w"
           />
@@ -72,17 +72,17 @@ const demarcheMappingColumns = computed<IDemarcheMappingColumn[]>(() => props.da
         <div class="fr-col-4 fr-p-2v">
           <DsfrInput
             :id="`labelSource-${mappingColumn.id}`"
-            v-model="mappingColumn.labelSource"
             :model-value="mappingColumn.labelSource.slice(-1).toString()"
-            :is-textarea="true"
+            is-textarea
             disabled="disabled"
+            @update:model-value="mappingColumn.labelSource = $event"
           />
         </div>
         <div class="fr-col-4 fr-p-2v">
           <DsfrInput
             :id="`labelBN-${mappingColumn.id}`"
             v-model="mappingColumn.labelBN"
-            :is-textarea="true"
+            is-textarea
             :disabled="!mappingColumn.display"
           />
         </div>

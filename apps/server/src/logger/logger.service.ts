@@ -4,16 +4,6 @@ import * as winston from "winston";
 import * as dayjs from "dayjs";
 import * as colors from "colors";
 
-enum LogLevel {
-  error = 0,
-  warn = 1,
-  info = 2,
-  http = 3,
-  verbose = 4,
-  debug = 5,
-  silly = 6,
-}
-
 type TLoggerObject = {
   short_message?: string;
   full_message: string;
@@ -92,37 +82,37 @@ export class LoggerService implements LoggerServiceNest {
     };
   }
 
-  log(message: string | TLoggerObject, ...optionalParams: any[]) {
+  log(message: string | TLoggerObject /* ...optionalParams: any[] */) {
     const loggerObject = this._toCompleteLoggerObject(
       typeof message === "string" ? { full_message: message } : message,
     );
     this.logger.info(loggerObject);
   }
-  error(message: string | TLoggerObject, ...optionalParams: any[]) {
+  error(message: string | TLoggerObject /* ...optionalParams: any[] */) {
     const loggerObject = this._toCompleteLoggerObject(
       typeof message === "string" ? { full_message: message } : message,
     );
     this.logger.error(loggerObject);
   }
-  warn(message: string | TLoggerObject, ...optionalParams: any[]) {
+  warn(message: string | TLoggerObject /* ...optionalParams: any[] */) {
     const loggerObject = this._toCompleteLoggerObject(
       typeof message === "string" ? { full_message: message } : message,
     );
     this.logger.warn(loggerObject);
   }
-  debug(message: string | TLoggerObject, ...optionalParams: any[]) {
+  debug(message: string | TLoggerObject /* ...optionalParams: any[] */) {
     const loggerObject = this._toCompleteLoggerObject(
       typeof message === "string" ? { full_message: message } : message,
     );
     this.logger.debug(loggerObject);
   }
-  verbose(message: string | TLoggerObject, ...optionalParams: any[]) {
+  verbose(message: string | TLoggerObject /* ...optionalParams: any[] */) {
     const loggerObject = this._toCompleteLoggerObject(
       typeof message === "string" ? { full_message: message } : message,
     );
     this.logger.verbose(loggerObject);
   }
-  silly(message: string | TLoggerObject, ...optionalParams: any[]) {
+  silly(message: string | TLoggerObject /* ...optionalParams: any[] */) {
     const loggerObject = this._toCompleteLoggerObject(
       typeof message === "string" ? { full_message: message } : message,
     );
