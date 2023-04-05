@@ -23,7 +23,9 @@ export enum ChampValueTypesKeys {
   TEXT = 'text',
   NUMBER = 'number',
   DATE = 'date',
-  PJ = 'pj'
+  PJ = 'pj',
+  ON_ONE_ROW = 'onOneRow',
+  ON_ONE_OBJECT = 'onOneObject'
 }
 
 export const ChampValueTypes = {
@@ -52,4 +54,10 @@ export const valueBytypeValue = {
 export const keytoTypeData = {
   [ChampType.CHAMP]: 'champs',
   [ChampType.ANNOTATION]: 'annotations',
+}
+
+export enum typeTable {
+  DEFAULT = 'default',
+  GROUP = 'group',
+  MULTILINE = 'multiline'
 }

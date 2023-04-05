@@ -144,7 +144,9 @@ export const useDemarcheStore = defineStore('demarche', () => {
   }
 
   const loadHeaderDossiers = async () => {
-    mappingColumn = demarcheConfigurations.value.filter((mapping: IDemarcheMappingColumn) => mapping.display === true) || []
+    mappingColumn = demarche.value?.mappingColumns || []
+    // TODO: A revoir pour la preview
+    // demarcheConfigurations.value.filter((mapping: IDemarcheMappingColumn) => mapping.display === true) || []
 
     const headerMapping = toHeaderList(mappingColumn).map(header => {
       const parseFn = getParserFnByType(header.type)
@@ -161,11 +163,16 @@ export const useDemarcheStore = defineStore('demarche', () => {
   }
 
   const loadRowDatas = async () => {
-    rowDatasDossiers.value = dossiers.value?.map(data => ({
-      idBiblioNum: data.id,
-      ...data.dossierDS?.dataJson,
-      ...toRowData(data.dossierDS?.dataJson, mappingColumn),
-    }))
+    rowDatasDossiers.value = dossiers.value?.map(data => {
+      const rowDatasFromMapping = toRowData(data.dossierDS?.dataJson, mappingColumn)
+      const row = rowDatasFromMapping.map(rowData => ({
+        idBiblioNum: data.id,
+        ...data.dossierDS?.dataJson,
+        ...rowData,
+      }))
+
+      return row
+    }).flat()
   }
 
   return {
