@@ -3,10 +3,11 @@ on:
   workflow_dispatch:
     branches: 
       - main
-  workflow_run:
-    workflows: ["ci.yml"]
-    types: [completed]
-    branches: ["main"]
+  # TODO: Redéfinir process le workflow de la création de release
+  # workflow_run:
+  #   workflows: ["ci.yml"]
+  #   types: [completed]
+  #   branches: ["main"]
 
 jobs:
   tests:

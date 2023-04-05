@@ -1,8 +1,9 @@
 name: Repo sync with Cloud π Native
 
 on:
-  release:
-    types: [published]
+  # TODO: Redéfinir le process du woirkflow
+  # release:
+  #   types: [published]
   workflow_dispatch:
 
 jobs:
