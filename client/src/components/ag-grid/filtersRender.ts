@@ -24,4 +24,7 @@ export const filter2Apply = {
   text: {
     filter: 'agTextColumnFilter',
   },
+  'multi-value': {
+    filter: 'agSetColumnFilter',
+  },
 }

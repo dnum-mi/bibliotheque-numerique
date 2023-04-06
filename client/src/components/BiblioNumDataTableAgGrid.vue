@@ -20,10 +20,12 @@
     :row-selection="rowSelection"
     dom-layout="autoHeight"
     @selection-changed="onSelectionChanged"
+    @grid-ready="onGridReady"
   />
 </template>
+
 <script lang="ts" setup>
-import { computed } from 'vue'
+import { computed, ref, watchEffect } from 'vue'
 import type { TypeHeaderDataTable } from './typeDataTable'
 
 import { AgGridVue } from 'ag-grid-vue3'
@@ -36,8 +38,21 @@ import { PAGINATION_PAGE_SIZE } from '@/config'
 import { filter2Apply } from './ag-grid/filtersRender'
 import { localeTextAgGrid } from './ag-grid/agGridOptions'
 
+import AgGridMultiValueCell from './ag-grid/AgGridMultiValueCell.vue'
+
 const getFilterAgGrid = (type) => {
   return (type && filter2Apply[type]) || { }
+}
+
+const toRenderer = {
+  'multi-value': {
+    cellRenderer: AgGridMultiValueCell,
+    autoHeight: true,
+  },
+}
+const getRendererAgGrid = (renderer) => {
+  const agRenderer = toRenderer[renderer]
+  return agRenderer
 }
 
 const props = withDefaults(defineProps<{
@@ -80,13 +95,16 @@ const columnDefs = computed(() => {
   }
 
   return columnDefs.concat(headers.filter(header => header.type !== 'hidden').map((header) => {
-    const filter = getFilterAgGrid(header.type)
+    const filter = getFilterAgGrid(header.filter) || getFilterAgGrid(header.type)
+    const renderer = getRendererAgGrid(header.renderer) || {
+      cellRenderer: header.parseFn ? (params: any) => header.parseFn?.(params.value) : undefined,
+    }
     return {
       floatingFilter: props.floatingFilter,
       headerName: header.text || '',
       field: header.value,
       width: header.width || undefined,
-      cellRenderer: header.parseFn ? (params: any) => header.parseFn?.(params.value) : undefined,
+      ...renderer,
       ...filter,
     }
   }))
@@ -113,4 +131,7 @@ const onSelectionChanged = (params) => {
   emit('selectionChanged', params.api.getSelectedRows())
 }
 
+const onGridReady = (params) => {
+  watchEffect(() => { params.api.setRowData(props.rowData) })
+}
 </script>

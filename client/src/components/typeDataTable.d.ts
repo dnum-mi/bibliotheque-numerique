@@ -13,5 +13,7 @@ export type TypeHeaderDataTable = {
   type?: string,
   width?: number,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  parseFn?: (value: any) => string
+  parseFn?: (value: any) => string,
+  filter,
+  renderer,
 }
