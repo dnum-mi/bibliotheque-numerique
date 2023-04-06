@@ -22,9 +22,12 @@ const demarche = computed<object>(() => demarcheStore.demarche || {})
 const headerDossiers = computed<object[]>(() => demarcheStore.hearderListDossier || [])
 const rowDatas = computed(() => demarcheStore.rowDatasDossiers || [])
 
-onMounted(async () => {
+const getIdDemarche = () => {
   const params = route?.params
-  const id = Number(params.id)
+  return Number(params.id)
+}
+onMounted(async () => {
+  const id = getIdDemarche()
   if (id) {
     await demarcheStore.getDemarche(id)
     await demarcheStore.getDossiers(id)
@@ -36,8 +39,12 @@ onMounted(async () => {
 })
 
 watch(() => demarcheStore.demarcheConfigurations, async (newValue) => {
-  await demarcheStore.loadHeaderDossiers()
-  await demarcheStore.loadRowDatas()
+  const id = getIdDemarche()
+  if (id) {
+    await demarcheStore.getDemarche(id)
+    await demarcheStore.loadHeaderDossiers()
+    await demarcheStore.loadRowDatas()
+  }
 }, { deep: true })
 
 const onSelect = (e) => {
