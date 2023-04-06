@@ -8,7 +8,7 @@ import GroupInstructeurs from '@/views/DemarcheGrpInstructeurs.vue'
 import DemarcheService from '@/views/DemarcheService.vue'
 import DemarcheInformations from '@/views/DemarcheInformations.vue'
 import DemarcheConfigurations from '@/views/DemarcheConfigurations.vue'
-import BiblioNumDataTable from '@/components/BiblioNumDataTableAgGrid.vue'
+import BiblioNumDataTableAgGrid from '@/components/BiblioNumDataTableAgGrid.vue'
 import LayoutList from '@/components/LayoutList.vue'
 
 const route = useRoute()
@@ -87,13 +87,15 @@ function selectTab (idx:number) {
         tab-id="tab-0"
         :selected="selectedTabIndex === 0"
       >
-        <BiblioNumDataTable
-          :headers="headerDossiers"
-          :row-data="rowDatas"
-          :floating-filter="true"
-          row-selection="single"
-          @selection-changed="onSelect"
-        />
+        <div :style="{paddingBottom: '2rem'}">
+          <BiblioNumDataTableAgGrid
+            :headers="headerDossiers"
+            :row-data="rowDatas"
+            :floating-filter="true"
+            row-selection="single"
+            @selection-changed="onSelect"
+          />
+        </div>
       </DsfrTabContent>
 
       <DsfrTabContent

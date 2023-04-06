@@ -3,7 +3,7 @@
     {{ title }}
   </h4>
   <ag-grid-vue
-    style="max-width: 100%; height: 650px;"
+    style="max-width: 100%;"
     class="ag-theme-alpine"
     :column-defs="columnDefs"
     :row-data="rowData"
