@@ -41,6 +41,7 @@ const demarcheMappingColumns = computed<IDemarcheMappingColumn[]>(() => props.da
       <div class="fr-grid-row">
         <div class="fr-col-1 fr-p-2v fr-mt-3w fr-pl-4w">
           <DsfrCheckbox
+            v-if="mappingColumn.typeName != TypeDeChampDS.REPETITION"
             :id="`display-${mappingColumn.id}`"
             v-model="mappingColumn.display"
             :name="mappingColumn.id"
