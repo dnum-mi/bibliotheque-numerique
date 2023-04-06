@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 import { baseApiUrl, headers } from '../../utils/api-client'
-import { ChampType } from '@/shared/types'
+import { ChampType, TypeDeChampDS } from '@/shared/types'
 import type { IDemarcheMappingColumn } from '../interfaces'
 
 const DEMARCHE_BASE_URL = `${baseApiUrl}/demarches`
@@ -47,16 +47,26 @@ function replaceInArray (objet: IDemarcheMappingColumn, listObjet: any[]) {
   }
 }
 
-function toDemarcheConfigurations (datas: any[], typeData: string): IDemarcheMappingColumn[] {
-  return datas.map((objet) => {
-    return {
-      id: objet.id,
-      labelSource: [objet.label],
-      labelBN: '',
-      typeName: objet.type,
-      typeData,
-      typeValue: '',
-      display: objet.display,
+function toDemarcheConfigurations (datas: any[], typeData: string, parentLabel: string | null = null): IDemarcheMappingColumn[] {
+  let returnArray: IDemarcheMappingColumn[] = []
+  datas.forEach(objet => {
+    returnArray.push(hashConfiguration(objet, typeData, parentLabel))
+    if (objet.type === TypeDeChampDS.REPETITION) {
+      returnArray = returnArray.concat(toDemarcheConfigurations(objet.champDescriptors, typeData, objet.label))
     }
   })
+  return returnArray
+}
+
+function hashConfiguration (objet: any, typeData: string, parentLabel: string | null) {
+  const labelSource = parentLabel ? [parentLabel, objet.label] : [objet.label]
+  return {
+    id: objet.id,
+    labelSource,
+    labelBN: '',
+    typeName: objet.type,
+    typeData,
+    typeValue: '',
+    display: objet.display,
+  }
 }

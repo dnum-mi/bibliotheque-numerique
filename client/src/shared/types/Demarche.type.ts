@@ -7,6 +7,13 @@ export type TypeDemarcheStateMapping = {
 
 export type KeyDemarcheStateMapping = keyof TypeDemarcheStateMapping
 
+export enum TypeDeChampDS {
+  TEXT = 'text',
+  REPETITION = 'repetition',
+  PIECE_JUSTIFICATIVE = 'piece_justificative',
+  TITRE_IDENTITE = 'titre_identite'
+}
+
 export enum ChampType {
   CHAMP = 'champ',
   ANNOTATION = 'annotation'
