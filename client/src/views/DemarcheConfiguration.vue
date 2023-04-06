@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import type { IDemarcheMappingColumn } from '@/shared/interfaces'
-import { ChampValueTypes, ChampValueTypesKeys } from '@/shared/types'
+import { ChampValueTypes, ChampValueTypesKeys, TypeDeChampDS } from '@/shared/types'
 import { enumToDsfrSelectOptions } from '@/utils/enumToDsfrSelectOptions'
 
 const props = withDefaults(defineProps<{
@@ -52,12 +52,26 @@ const demarcheMappingColumns = computed<IDemarcheMappingColumn[]>(() => props.da
             :label="mappingColumn.typeData.toUpperCase()"
             small="small"
             type="info"
+            class="fr-mr-1w"
+          />
+          <span
+            v-if="mappingColumn.typeName === TypeDeChampDS.REPETITION"
+            class="fr-icon-table-fill fr-icon--sm"
+            aria-hidden="true"
+            title="Type de champ: Bloc Répétable"
+          />
+          <span
+            v-if="mappingColumn.labelSource.length > 1"
+            class="fr-icon-list-unordered fr-icon--sm"
+            aria-hidden="true"
+            title="Le champ dans <Bloc Répétable>"
           />
         </div>
         <div class="fr-col-4 fr-p-2v">
           <DsfrInput
             :id="`labelSource-${mappingColumn.id}`"
             v-model="mappingColumn.labelSource"
+            :model-value="mappingColumn.labelSource.slice(-1).toString()"
             is-textarea="true"
             disabled="disabled"
           />
