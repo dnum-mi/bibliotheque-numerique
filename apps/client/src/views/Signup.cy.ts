@@ -18,16 +18,16 @@ describe('<Signup />', () => {
     })
 
     cy.get('#firstName').type('d')
-    cy.get('.fr-error-text').should('contain.text', 'Trop court')
+    cy.get('.fr-error-text').should('contain.text', 'Ceci ne semble pas être un prénom')
 
     cy.get('#lastName').type('l')
-    cy.get('.fr-error-text').should('contain.text', 'Trop court')
+    cy.get('.fr-error-text').should('contain.text', 'Ceci ne semble pas être un nom')
 
     cy.get('#email').type('louis.dubois')
-    cy.get('.fr-error-text').should('contain.text', 'Format email incorrect')
+    cy.get('.fr-error-text').should('contain.text', 'Ceci semble être une adresse email invalide')
 
     cy.get('#password').type('xx')
-    cy.get('.fr-error-text').should('contain.text', 'Le mot de passe doit faire au moins 6 caractères')
+    cy.get('.fr-error-text').should('contain.text', 'Le mot de passe doit contenir au moins 6 caractères')
   })
 
   it('form is validated', () => {
