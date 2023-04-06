@@ -109,10 +109,10 @@ describe('Test HeaderList', () => {
 
     const result = toRowData(dataJson, mappingColumn)
     expect(result).toBeDefined()
-    expect(result).toMatchObject({
-      [mappingColumn[0].id]: dataJson.champs[0].stringValue,
-      [mappingColumn[1].id]: undefined,
-    })
+    expect(result).toMatchObject([{
+      [mappingColumn[0].id]: [dataJson.champs[0].stringValue],
+      [mappingColumn[1].id]: [],
+    }])
   })
 
   it('should to convert to rowData for annotation type Text', () => {
@@ -137,10 +137,10 @@ describe('Test HeaderList', () => {
     ]
     const result = toRowData(dataJson, mappingColumn)
     expect(result).toBeDefined()
-    expect(result).toMatchObject({
-      [mappingColumn[0].id]: dataJson.annotations[0].stringValue,
-      [mappingColumn[1].id]: undefined,
-    })
+    expect(result).toMatchObject([{
+      [mappingColumn[0].id]: [dataJson.annotations[0].stringValue],
+      [mappingColumn[1].id]: [],
+    }])
   })
 
   it('should to convert to rowData for champs type repetition', () => {
@@ -165,10 +165,10 @@ describe('Test HeaderList', () => {
     ]
     const result = toRowData(dataJson, mappingColumn)
     expect(result).toBeDefined()
-    expect(result).toMatchObject({
-      [mappingColumn[0].id]: dataJson.champs[3].champs[0].stringValue,
-      [mappingColumn[1].id]: undefined,
-    })
+    expect(result).toMatchObject([{
+      [mappingColumn[0].id]: [dataJson.champs[3].champs[0].stringValue],
+      [mappingColumn[1].id]: [],
+    }])
   })
 
   it('should to convert to rowData for child champs type file', () => {
@@ -184,8 +184,8 @@ describe('Test HeaderList', () => {
     ]
     const result = toRowData(dataJson, mappingColumn)
     expect(result).toBeDefined()
-    expect(result).toMatchObject({
-      [mappingColumn[0].id]: dataJson.champs[4].file,
-    })
+    expect(result).toMatchObject([{
+      [mappingColumn[0].id]: [dataJson.champs[4].file],
+    }])
   })
 })
