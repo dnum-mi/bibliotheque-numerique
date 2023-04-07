@@ -36,6 +36,9 @@ export class Demarche extends ApplicationEntity {
   title: string;
 
   @Column({ nullable: true })
+  identification: string;
+
+  @Column({ nullable: true })
   typeOrganisme: string;
 
   @Column({ type: "jsonb", default: "[]" })
