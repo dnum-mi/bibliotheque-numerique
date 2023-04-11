@@ -1,9 +1,17 @@
 import type { TypeHeaderDataTable } from '../../components/typeDataTable'
 import type { IDemarcheMappingColumn } from '../interfaces'
-import { keytoTypeData, typeForHeader, typeTable, valueBytypeValue } from '../types'
+import { ChampType, ChampValueTypesKeys, keytoTypeData, typeForHeader, typeTable, valueBytypeValue } from '../types'
 
 export function getTypeForHeader (typeValue: string | undefined) {
   return (typeValue && typeForHeader[typeValue as keyof typeof typeForHeader]) || typeValue
+}
+
+export function toByType (value, type) {
+  const toByTypeFct = {
+    [ChampValueTypesKeys.NUMBER]: (val) => Number(val),
+  }
+  const fct = toByTypeFct[type]
+  return fct ? fct(value) : value
 }
 
 export function getValueBytypeValue (
@@ -11,7 +19,7 @@ export function getValueBytypeValue (
   infoType: Partial<IDemarcheMappingColumn>,
 ) {
   const key = valueBytypeValue[infoType.typeValue as keyof typeof valueBytypeValue] || 'stringValue'
-  return value && (value[key] === undefined ? value : value[key])
+  return value && (value[key] === undefined ? value : toByType(value[key], infoType.typeValue))
 }
 
 export function getKeyToTypeData (typeData: string) {

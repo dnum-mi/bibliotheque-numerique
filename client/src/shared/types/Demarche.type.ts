@@ -45,7 +45,7 @@ export const typeForHeader = {
 
 export const valueBytypeValue = {
   // [ChampValueTypesKeys.TEXT]: 'stringValue',
-  // [ChampValueTypesKeys.NUMBER]: 'value',
+  [ChampValueTypesKeys.NUMBER]: 'integerNumber',
   // [ChampValueTypesKeys.BOOLEAN]: 'value',
   [ChampValueTypesKeys.DATE]: 'date',
   [ChampValueTypesKeys.PJ]: 'file',
