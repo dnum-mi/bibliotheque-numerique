@@ -3,7 +3,7 @@
     {{ title }}
   </h4>
   <ag-grid-vue
-    style="max-width: 100%;"
+    style="max-width: 100%;height: 690px;"
     class="ag-theme-alpine"
     :column-defs="columnDefs"
     :row-data="rowData"
@@ -18,7 +18,7 @@
     :side-bar="sideBar"
     :grid-options="gridOptions"
     :row-selection="rowSelection"
-    dom-layout="autoHeight"
+
     @selection-changed="onSelectionChanged"
     @grid-ready="onGridReady"
   />
