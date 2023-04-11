@@ -40,7 +40,8 @@ import { localeTextAgGrid } from './ag-grid/agGridOptions'
 
 import AgGridMultiValueCell from './ag-grid/AgGridMultiValueCell.vue'
 
-const getFilterAgGrid = (type) => {
+const getFilterAgGrid = (header) => {
+  const { type } = header
   return (type && filter2Apply[type]) || { }
 }
 
@@ -95,7 +96,7 @@ const columnDefs = computed(() => {
   }
 
   return columnDefs.concat(headers.filter(header => header.type !== 'hidden').map((header) => {
-    const filter = getFilterAgGrid(header.filter) || getFilterAgGrid(header.type)
+    const filter = getFilterAgGrid(header)
     const renderer = getRendererAgGrid(header.renderer) || {
       cellRenderer: header.parseFn ? (params: any) => header.parseFn?.(params.value) : undefined,
     }
