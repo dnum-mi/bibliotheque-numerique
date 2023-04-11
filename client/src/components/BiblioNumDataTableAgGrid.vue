@@ -18,7 +18,6 @@
     :side-bar="sideBar"
     :grid-options="gridOptions"
     :row-selection="rowSelection"
-
     @selection-changed="onSelectionChanged"
     @grid-ready="onGridReady"
   />
@@ -35,14 +34,15 @@ import 'ag-grid-community/styles/ag-theme-alpine.css'
 import TableCellAction from './TableCellAction.vue'
 import { PAGINATION_PAGE_SIZE } from '@/config'
 
-import { filter2Apply } from './ag-grid/filtersRender'
+import { filterToApply } from './ag-grid/filtersRender'
 import { localeTextAgGrid } from './ag-grid/agGridOptions'
 
 import AgGridMultiValueCell from './ag-grid/AgGridMultiValueCell.vue'
 
 const getFilterAgGrid = (header) => {
-  const { type } = header
-  return (type && filter2Apply[type]) || { }
+  const { type, filter } = header
+  const typeFilter = filter === 'multi-value' && type === 'number' ? 'multi-value-number' : type
+  return (typeFilter && filterToApply[typeFilter]) || { }
 }
 
 const toRenderer = {
