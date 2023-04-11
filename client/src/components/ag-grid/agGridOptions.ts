@@ -72,4 +72,5 @@ export const localeTextAgGrid = {
   ctrlC: 'Ctrl-C',
   paste: 'Insérer',
   ctrlV: 'Ctrl-V',
+  blank: 'Vide',
 }
