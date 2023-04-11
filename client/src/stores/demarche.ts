@@ -19,6 +19,7 @@ const headerDossierIdDefault: TypeHeaderDataTable[] = [
   {
     text: 'Numéro',
     value: 'number',
+    type: 'number',
   },
 ]
 
