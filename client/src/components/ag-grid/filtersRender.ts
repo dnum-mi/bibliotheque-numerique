@@ -1,3 +1,4 @@
+import { localeTextAgGrid } from './agGridOptions'
 
 export const filterParamsDate = {
   comparator: (filterLocalDateAtMidnight, cellValue) => {
@@ -16,7 +17,7 @@ export const filterParamsDate = {
   browserDatePicker: true,
 }
 
-export const filter2Apply = {
+export const filterToApply = {
   date: {
     filter: 'agDateColumnFilter',
     filterParams: filterParamsDate,
@@ -29,5 +30,70 @@ export const filter2Apply = {
   },
   'multi-value': {
     filter: 'agSetColumnFilter',
+  },
+  'multi-value-number': {
+    filter: 'agNumberColumnFilter',
+    filterParams: {
+      filterOptions: [
+        {
+          displayKey: 'equalsArray',
+          displayName: localeTextAgGrid.equals,
+          predicate: ([filterValue], cellValues) => {
+            return cellValues?.filter(cellValue => cellValue === filterValue).length > 0
+          },
+        },
+        {
+          displayKey: 'notEqualArray',
+          displayName: localeTextAgGrid.notEqual,
+          predicate: ([filterValue], cellValues) => {
+            return cellValues?.filter(cellValue => cellValue !== filterValue).length > 0
+          },
+        },
+        {
+          displayKey: 'lessThanArray',
+          displayName: localeTextAgGrid.lessThan,
+          predicate: ([filterValue], cellValues) => {
+            return cellValues?.filter(cellValue => cellValue < filterValue).length > 0
+          },
+        },
+        {
+          displayKey: 'lessThanOrEqualArray',
+          displayName: localeTextAgGrid.lessThanOrEqual,
+          predicate: ([filterValue], cellValues) => {
+            return cellValues?.filter(cellValue => cellValue <= filterValue).length > 0
+          },
+        },
+        {
+          displayKey: 'greaterThanArray',
+          displayName: localeTextAgGrid.greaterThan,
+          predicate: ([filterValue], cellValues) => {
+            return cellValues?.filter(cellValue => cellValue > filterValue).length > 0
+          },
+        },
+        {
+          displayKey: 'greaterThanOrEqualArray',
+          displayName: localeTextAgGrid.greaterThanOrEqual,
+          predicate: ([filterValue], cellValues) => {
+            return cellValues?.filter(cellValue => cellValue >= filterValue).length > 0
+          },
+        },
+        {
+          displayKey: 'inRangeArray',
+          displayName: localeTextAgGrid.inRange,
+          predicate: ([filterValue1, filterValue2], cellValues) => {
+            return cellValues?.filter(cellValue => (cellValue >= filterValue1) && (cellValue <= filterValue2)).length > 0
+          },
+          numberOfInputs: 2,
+        },
+        {
+          displayKey: 'blankArray',
+          displayName: localeTextAgGrid.blank,
+          predicate: (filterValues, cellValues) => {
+            return (cellValues === null || cellValues === undefined) || cellValues.length === 0 || cellValues.filter(cellValue => cellValue === null || cellValue === undefined).length > 0
+          },
+          numberOfInputs: 0,
+        },
+      ],
+    },
   },
 }
