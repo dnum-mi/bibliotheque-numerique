@@ -23,13 +23,15 @@ import {
 } from "../guards/permissions.guard";
 import { PermissionName } from "../types/Permission.type";
 import { filterObjectFields } from "../utils/utilsFields";
+import { DossiersDSService } from "../dossiers_ds/dossiers_ds.service";
 
 @UseGuards(PermissionsGuard)
 @Controller("demarches")
 export class DemarchesController {
   constructor(
     private readonly demarcheService: DemarchesService,
-    private readonly dossierDSServices: DemarchesDSService,
+    private readonly demarchesDSServices: DemarchesDSService,
+    private readonly dossierDSServices: DossiersDSService,
   ) {}
 
   @Get()
@@ -206,9 +208,33 @@ export class DemarchesController {
         return { message: `Demarche id: ${idDs} exists, nothing to do.` };
 
       // TODO: Run this upsert in a Job
-      await this.dossierDSServices.upsertDemarchesDSAndDemarches([idDs]);
+      await this.demarchesDSServices.upsertDemarchesDSAndDemarches([idDs]);
 
       return { message: `Demarche id: ${idDs} create success!` };
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new HttpException(
+          error.message,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      throw new HttpException(
+        "Internal Server Error",
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Get(":id/synchro_dossiers")
+  @RequirePermissions()
+  async synchroDossiers(@Param("id", ParseIntPipe) id: number) {
+    try {
+      const demarche = await this.demarcheService.findByDsId(id);
+
+      if (!demarche) return { message: `Demarche id: ${id} n'existe pas.` };
+
+      await this.dossierDSServices.upsertDemarcheDossiersDS(id);
+      return { message: `Les dossier de demarche id: ${id} synchro success!` };
     } catch (error) {
       if (error instanceof Error) {
         throw new HttpException(
