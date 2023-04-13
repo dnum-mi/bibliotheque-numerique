@@ -68,29 +68,29 @@ export class Organisme extends ApplicationEntity {
   })
   leaderName: string;
 
-  @Column({ type: "timestamp" })
+  @Column({ type: "date" })
   dateCreation: Date;
 
   @Column({
-    type: "timestamp",
+    type: "date",
     nullable: true,
   })
   dateDeclaration: Date;
 
   @Column({
-    type: "timestamp",
+    type: "date",
     nullable: true,
   })
   datePublication: Date;
 
   @Column({
-    type: "timestamp",
+    type: "date",
     nullable: true,
   })
   dateModification: Date;
 
   @Column({
-    type: "timestamp",
+    type: "date",
     nullable: true,
   })
   dateDissolution: Date;
