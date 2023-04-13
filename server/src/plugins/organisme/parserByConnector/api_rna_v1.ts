@@ -1,6 +1,8 @@
+import { Logger } from "@nestjs/common";
 import { toDate } from "../../../utils/utilsDate";
 import { Organisme } from "../entities";
 import { IParseToOrganisme } from "./parse_to_organisme.interface";
+import { LoggerService } from "../../../logger/logger.service";
 export type TDataApiRnaV1 = {
   id: number;
   is_waldec: string;
@@ -65,6 +67,10 @@ export type TResultApiRnaV1 = {
 export default class ParseApiRnaV1
   implements IParseToOrganisme<Partial<TDataApiRnaV1>, TResultApiRnaV1>
 {
+  private readonly logger = new Logger(
+    ParseApiRnaV1.name,
+  ) as unknown as LoggerService;
+
   toOrganismeEntity(
     organisme: Organisme,
     orgDataDataJson: Partial<TDataApiRnaV1>,
@@ -85,17 +91,47 @@ export default class ParseApiRnaV1
     newOrganisme.emails = [orgDataDataJson?.email] || null;
     newOrganisme.phoneNumbers = [orgDataDataJson?.telephone] || null;
 
-    newOrganisme.dateCreation = toDate(orgDataDataJson?.date_creation);
+    try {
+      newOrganisme.dateCreation = toDate(orgDataDataJson?.date_creation);
+    } catch (error) {
+      this.logger.warn({
+        short_message: `Error for date_creation of ${newOrganisme.idRef}: ${error.message}`,
+        full_message: `Error for date_creation of ${newOrganisme.idRef}: ${error.stack}`,
+      });
+    }
     newOrganisme.dateModification = orgDataDataJson?.derniere_maj;
-    newOrganisme.dateDissolution = toDate(
-      orgDataDataJson?.date_declaration_dissolution,
-    );
-    newOrganisme.datePublication = toDate(
-      orgDataDataJson?.date_publication_creation,
-    );
-    newOrganisme.dateDeclaration = toDate(
-      orgDataDataJson.date_derniere_declaration,
-    );
+    try {
+      newOrganisme.dateDissolution = toDate(
+        orgDataDataJson?.date_declaration_dissolution,
+      );
+    } catch (error) {
+      this.logger.warn({
+        short_message: `Error for date_declaration_dissolution of ${newOrganisme.idRef}: ${error.message}`,
+        full_message: `Error for date_declaration_dissolution of ${newOrganisme.idRef}: ${error.stack}`,
+      });
+    }
+
+    try {
+      newOrganisme.datePublication = toDate(
+        orgDataDataJson?.date_publication_creation,
+      );
+    } catch (error) {
+      this.logger.warn({
+        short_message: `Error for date_publication_creation of ${newOrganisme.idRef}: ${error.message}`,
+        full_message: `Error for date_publication_creation of ${newOrganisme.idRef}: ${error.stack}`,
+      });
+    }
+
+    try {
+      newOrganisme.dateDeclaration = toDate(
+        orgDataDataJson.date_derniere_declaration,
+      );
+    } catch (error) {
+      this.logger.warn({
+        short_message: `Error for date_derniere_declaration of ${newOrganisme.idRef}: ${error.message}`,
+        full_message: `Error for date_derniere_declaration of ${newOrganisme.idRef}: ${error.stack}`,
+      });
+    }
 
     return newOrganisme;
   }
