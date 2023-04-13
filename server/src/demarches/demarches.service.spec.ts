@@ -11,6 +11,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { datasourceTest, user_test } from "../entities/__tests__";
 import { Demarche, DemarcheDS, Dossier, DossierDS, User } from "../entities";
 import { getDemarche } from "./__tests__/demarches";
+import { DossiersDSModule } from "../dossiers_ds/dossiers_ds.module";
 
 describe("DemarchesService", () => {
   let service: DemarchesService;
@@ -27,6 +28,7 @@ describe("DemarchesService", () => {
           cache: true,
           load: [configuration, fileConfig],
         }),
+        DossiersDSModule,
       ],
       controllers: [DemarchesController],
       providers: [DemarchesService, DemarchesDSService],
