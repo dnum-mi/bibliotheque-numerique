@@ -5,9 +5,9 @@ import { useUserStore } from '@/stores'
 
 import ReloadPrompt from '@/components/ReloadPrompt.vue'
 
-const serviceTitle = 'Bibliothéque Numérique'
+const serviceTitle = 'Bibliothèque Numérique'
 const serviceDescription = 'Recherchez une démarche, un dossier, un organisme'
-const logoText = ['Ministère', 'de l’intérieur']
+const logoText = ['Ministère', 'de l’intérieur', 'et des outre-mer']
 
 const showSearch = false
 const iconColor = { color: 'var(--red-marianne-425-625)' }
