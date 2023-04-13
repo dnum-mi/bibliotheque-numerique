@@ -12,6 +12,7 @@ import {
   Query,
   ParseArrayPipe,
   Patch,
+  Logger,
 } from "@nestjs/common";
 import { DemarchesService } from "./demarches.service";
 import { Demarche, Dossier } from "../entities";
@@ -24,10 +25,15 @@ import {
 import { PermissionName } from "../types/Permission.type";
 import { filterObjectFields } from "../utils/utilsFields";
 import { DossiersDSService } from "../dossiers_ds/dossiers_ds.service";
+import { LoggerService } from "../logger/logger.service";
 
 @UseGuards(PermissionsGuard)
 @Controller("demarches")
 export class DemarchesController {
+  private readonly logger = new Logger(
+    DemarchesController.name,
+  ) as unknown as LoggerService;
+
   constructor(
     private readonly demarcheService: DemarchesService,
     private readonly demarchesDSServices: DemarchesDSService,
@@ -225,25 +231,32 @@ export class DemarchesController {
     }
   }
 
-  @Get(":id/synchro_dossiers")
+  @Post("synchro_dossiers")
   @RequirePermissions()
-  async synchroDossiers(@Param("id", ParseIntPipe) id: number) {
+  async synchroDossiers(@Body("id", ParseIntPipe) id: number) {
     try {
-      const demarche = await this.demarcheService.findByDsId(id);
+      const demarche = await this.demarcheService.findById(id);
 
-      if (!demarche) return { message: `Demarche id: ${id} n'existe pas.` };
+      if (!demarche)
+        throw new HttpException(
+          `Demarche id: ${id} n'existe pas.`,
+          HttpStatus.NOT_FOUND,
+        );
 
-      await this.dossierDSServices.upsertDemarcheDossiersDS(id);
+      await this.dossierDSServices.upsertDemarcheDossiersDS(
+        demarche.demarcheDS.id,
+      );
       return { message: `Les dossier de demarche id: ${id} synchro success!` };
     } catch (error) {
-      if (error instanceof Error) {
-        throw new HttpException(
-          error.message,
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
+      if (error instanceof HttpException) {
+        throw error;
       }
+      this.logger.error({
+        short_message: error?.message || error,
+        full_message: error?.stack,
+      });
       throw new HttpException(
-        "Internal Server Error",
+        error?.message || "Internal Server Error",
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

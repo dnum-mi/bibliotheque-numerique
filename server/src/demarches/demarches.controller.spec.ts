@@ -12,8 +12,6 @@ import { datasourceTest } from "../entities/__tests__";
 import { Demarche, DemarcheDS, Dossier, DossierDS } from "../entities";
 import { getDemarche } from "./__tests__/demarches";
 import { DossiersDSService } from "../dossiers_ds/dossiers_ds.service";
-import { DossiersDSModule } from "../dossiers_ds/dossiers_ds.module";
-import { DossiersModule } from "../dossiers/dossiers.module";
 import { DossiersService } from "../dossiers/dossiers.service";
 import { FilesService } from "../files/files.service";
 describe("DemarchesController", () => {
