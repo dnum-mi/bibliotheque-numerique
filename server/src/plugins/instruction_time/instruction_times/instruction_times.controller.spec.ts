@@ -2,8 +2,17 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { InstructionTimesController } from "./instruction_times.controller";
 import { InstructionTimesService } from "./instruction_times.service";
 import { InstructionTime } from "../entities";
-import { dossier_ds_test, dossier_test } from "../../../entities/__tests__";
+import {
+  datasourceTest,
+  dossier_ds_test,
+  dossier_test,
+} from "../../../entities/__tests__";
 import { instructionTime_test } from "../entities/__tests__";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { Demarche, DemarcheDS, Dossier, DossierDS } from "../../../entities";
+import { ConfigModule } from "@nestjs/config";
+import configuration from "../../../config/configuration";
+import instructionTimeMappingConfig from "../config/instructionTimeMapping.config";
 
 describe("InstructionTimesController", () => {
   let controller: InstructionTimesController;
@@ -11,6 +20,22 @@ describe("InstructionTimesController", () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [
+        TypeOrmModule.forRoot(
+          datasourceTest([
+            InstructionTime,
+            Dossier,
+            DossierDS,
+            Demarche,
+            DemarcheDS,
+          ]).options,
+        ),
+        ConfigModule.forRoot({
+          isGlobal: true,
+          cache: true,
+          load: [configuration, instructionTimeMappingConfig],
+        }),
+      ],
       controllers: [InstructionTimesController],
       providers: [InstructionTimesService],
     }).compile();
