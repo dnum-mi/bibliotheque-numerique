@@ -39,6 +39,7 @@ import { filterToApply } from './ag-grid/filtersRender'
 import { localeTextAgGrid } from './ag-grid/agGridOptions'
 
 import AgGridMultiValueCell from './ag-grid/AgGridMultiValueCell.vue'
+import AgGridAttachmentCell from './ag-grid/AgGridAttachmentCell.vue'
 
 const getFilterAgGrid = (header) => {
   const { type, filter } = header
@@ -47,13 +48,19 @@ const getFilterAgGrid = (header) => {
 }
 
 const toRenderer = {
-  'multi-value': {
+  [ETypeFilter.MULTI_VALUE]: {
     cellRenderer: AgGridMultiValueCell,
     autoHeight: true,
   },
+  [ETypeFilter.FILE]: {
+    cellRenderer: AgGridAttachmentCell,
+  },
 }
-const getRendererAgGrid = (renderer) => {
-  const agRenderer = toRenderer[renderer]
+const getRendererAgGrid = (header) => {
+  const { renderer, type } = header
+
+  const typeRenderder = renderer === ETypeFilter.MULTI_VALUE ? ETypeFilter.MULTI_VALUE : type
+  const agRenderer = toRenderer[typeRenderder]
   return agRenderer
 }
 
@@ -98,7 +105,7 @@ const columnDefs = computed(() => {
 
   return columnDefs.concat(headers.filter(header => header.type !== 'hidden').map((header) => {
     const filter = getFilterAgGrid(header)
-    const renderer = getRendererAgGrid(header.renderer) || {
+    const renderer = getRendererAgGrid(header) || {
       cellRenderer: header.parseFn ? (params: any) => header.parseFn?.(params.value) : undefined,
     }
     return {
