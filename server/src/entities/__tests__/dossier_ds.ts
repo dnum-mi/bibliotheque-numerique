@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker/locale/fr";
-// import { Dossier as TDossier } from "@lab-mi/ds-api-client/dist/@types/types";
+// import { Dossier as TDossier } from "@dnum-mi/ds-api-client/dist/@types/types";
 import { DossierDS } from "..";
 
 export function dossier_ds_test(): Partial<DossierDS> {

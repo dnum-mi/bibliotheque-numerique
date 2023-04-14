@@ -1,13 +1,13 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { DsApiClient } from "@lab-mi/ds-api-client";
-import { Dossier as TDossier } from "@lab-mi/ds-api-client/dist/@types/types";
+import { DsApiClient } from "@dnum-mi/ds-api-client";
+import { Dossier as TDossier } from "@dnum-mi/ds-api-client/dist/@types/types";
 import { DossierDS, FileStorage } from "../entities";
 import { LoggerService } from "../logger/logger.service";
 import { DossiersService } from "../dossiers/dossiers.service";
 import { DataSource } from "typeorm";
 import { FilesService } from "../files/files.service";
 import { ConfigService } from "@nestjs/config";
-import { Champ, File, Message } from "@lab-mi/ds-api-client/src/@types/types";
+import { Champ, File, Message } from "@dnum-mi/ds-api-client/src/@types/types";
 import { exceptions } from "winston";
 
 @Injectable()

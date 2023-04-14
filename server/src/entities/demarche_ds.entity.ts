@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryColumn, EntityManager } from "typeorm";
-import { Demarche as TDemarche } from "@lab-mi/ds-api-client/dist/@types/types";
+import { Demarche as TDemarche } from "@dnum-mi/ds-api-client/dist/@types/types";
 import { ApplicationEntity } from "./application_entity";
 
 @Entity({ name: "demarches_ds" })

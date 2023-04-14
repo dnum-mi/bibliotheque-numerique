@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { DsApiClient } from "@lab-mi/ds-api-client";
-import { Demarche as TDemarche } from "@lab-mi/ds-api-client/dist/@types/types";
+import { DsApiClient } from "@dnum-mi/ds-api-client";
+import { Demarche as TDemarche } from "@dnum-mi/ds-api-client/dist/@types/types";
 
 import { DemarcheDS } from "../entities";
 import { LoggerService } from "../logger/logger.service";

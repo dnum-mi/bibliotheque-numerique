@@ -48,7 +48,7 @@
     "docker:prod:stop": "docker compose -f docker-compose.yml -f docker-compose.prod.yml down"
   },
   "dependencies": {
-    "@lab-mi/ds-api-client": "^1.1.2",
+    "@dnum-mi/ds-api-client": "^1.1.4",
     "@nestjs-modules/mailer": "^1.8.1",
     "@nestjs/axios": "^1.0.1",
     "@nestjs/common": "^9.0.0",
