@@ -12,6 +12,7 @@ import {
   Query,
   ParseArrayPipe,
   Patch,
+  Logger,
 } from "@nestjs/common";
 import { DemarchesService } from "./demarches.service";
 import { Demarche, Dossier } from "../entities";
@@ -23,13 +24,20 @@ import {
 } from "../guards/permissions.guard";
 import { PermissionName } from "../types/Permission.type";
 import { filterObjectFields } from "../utils/utilsFields";
+import { DossiersDSService } from "../dossiers_ds/dossiers_ds.service";
+import { LoggerService } from "../logger/logger.service";
 
 @UseGuards(PermissionsGuard)
 @Controller("demarches")
 export class DemarchesController {
+  private readonly logger = new Logger(
+    DemarchesController.name,
+  ) as unknown as LoggerService;
+
   constructor(
     private readonly demarcheService: DemarchesService,
-    private readonly dossierDSServices: DemarchesDSService,
+    private readonly demarchesDSServices: DemarchesDSService,
+    private readonly dossierDSServices: DossiersDSService,
   ) {}
 
   @Get()
@@ -206,7 +214,7 @@ export class DemarchesController {
         return { message: `Demarche id: ${idDs} exists, nothing to do.` };
 
       // TODO: Run this upsert in a Job
-      await this.dossierDSServices.upsertDemarchesDSAndDemarches([idDs]);
+      await this.demarchesDSServices.upsertDemarchesDSAndDemarches([idDs]);
 
       return { message: `Demarche id: ${idDs} create success!` };
     } catch (error) {
@@ -218,6 +226,39 @@ export class DemarchesController {
       }
       throw new HttpException(
         "Internal Server Error",
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Post("synchro_dossiers")
+  @RequirePermissions()
+  async synchroDossiers(@Body("id", ParseIntPipe) id: number) {
+    try {
+      const demarche = await this.demarcheService.findById(id);
+
+      if (!demarche)
+        throw new HttpException(
+          `Demarche id: ${id} n'existe pas.`,
+          HttpStatus.NOT_FOUND,
+        );
+
+      await this.dossierDSServices.upsertDemarcheDossiersDS(
+        demarche.demarcheDS.id,
+      );
+      return {
+        message: `Les dossiers de la demarche id ${id} sont synchronisés.`,
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      this.logger.error({
+        short_message: error?.message || error,
+        full_message: error?.stack,
+      });
+      throw new HttpException(
+        error?.message || "Internal Server Error",
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

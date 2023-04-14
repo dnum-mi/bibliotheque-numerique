@@ -11,6 +11,9 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { datasourceTest } from "../entities/__tests__";
 import { Demarche, DemarcheDS, Dossier, DossierDS } from "../entities";
 import { getDemarche } from "./__tests__/demarches";
+import { DossiersDSService } from "../dossiers_ds/dossiers_ds.service";
+import { DossiersService } from "../dossiers/dossiers.service";
+import { FilesService } from "../files/files.service";
 describe("DemarchesController", () => {
   let controller: DemarchesController;
   let service: DemarchesService;
@@ -29,7 +32,13 @@ describe("DemarchesController", () => {
         }),
       ],
       controllers: [DemarchesController],
-      providers: [DemarchesService, DemarchesDSService],
+      providers: [
+        DemarchesService,
+        DemarchesDSService,
+        DossiersDSService,
+        DossiersService,
+        FilesService,
+      ],
     }).compile();
 
     controller = module.get<DemarchesController>(DemarchesController);

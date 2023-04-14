@@ -6,5 +6,6 @@ import { FilesModule } from "../files/files.module";
 @Module({
   imports: [DossiersModule, FilesModule],
   providers: [DossiersDSService],
+  exports: [DossiersDSService],
 })
 export class DossiersDSModule {}
