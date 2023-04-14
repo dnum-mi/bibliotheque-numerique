@@ -246,7 +246,9 @@ export class DemarchesController {
       await this.dossierDSServices.upsertDemarcheDossiersDS(
         demarche.demarcheDS.id,
       );
-      return { message: `Les dossier de demarche id: ${id} synchro success!` };
+      return {
+        message: `Les dossiers de la demarche id ${id} sont synchronisés.`,
+      };
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
