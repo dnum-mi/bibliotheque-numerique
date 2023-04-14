@@ -25,7 +25,7 @@
 
 <script lang="ts" setup>
 import { computed, ref, watchEffect } from 'vue'
-import type { TypeHeaderDataTable } from './typeDataTable'
+import { ETypeFilter, type TypeHeaderDataTable } from './typeDataTable'
 
 import { AgGridVue } from 'ag-grid-vue3'
 import 'ag-grid-enterprise'
@@ -41,8 +41,8 @@ import AgGridMultiValueCell from './ag-grid/AgGridMultiValueCell.vue'
 
 const getFilterAgGrid = (header) => {
   const { type, filter } = header
-  const typeFilter = filter === 'multi-value' && type === 'number' ? 'multi-value-number' : type
-  return (typeFilter && filterToApply[typeFilter]) || { }
+  const typeFilter = filter === ETypeFilter.MULTI_VALUE && type === 'number' ? ETypeFilter.MULTI_VALUE_NUMBER : type
+  return (typeFilter && filterToApply[typeFilter as ETypeFilter]) || { }
 }
 
 const toRenderer = {

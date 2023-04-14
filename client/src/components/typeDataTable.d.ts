@@ -17,3 +17,11 @@ export type TypeHeaderDataTable = {
   filter,
   renderer,
 }
+
+export enum ETypeFilter {
+  DATE='date',
+  TEXT='text',
+  NUMBER='number',
+  MULTI_VALUE='multi-value',
+  MULTI_VALUE_NUMBER='multi-value-number',
+}

@@ -1,3 +1,4 @@
+import { ETypeFilter } from '../typeDataTable'
 import { localeTextAgGrid } from './agGridOptions'
 
 export const filterParamsDate = {
@@ -18,20 +19,20 @@ export const filterParamsDate = {
 }
 
 export const filterToApply = {
-  date: {
+  [ETypeFilter.DATE]: {
     filter: 'agDateColumnFilter',
     filterParams: filterParamsDate,
   },
-  text: {
+  [ETypeFilter.TEXT]: {
     filter: 'agTextColumnFilter',
   },
-  number: {
+  [ETypeFilter.NUMBER]: {
     filter: 'agNumberColumnFilter',
   },
-  'multi-value': {
+  [ETypeFilter.MULTI_VALUE]: {
     filter: 'agSetColumnFilter',
   },
-  'multi-value-number': {
+  [ETypeFilter.MULTI_VALUE_NUMBER]: {
     filter: 'agNumberColumnFilter',
     filterParams: {
       filterOptions: [
