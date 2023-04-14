@@ -8,7 +8,7 @@ import { booleanToYesNo } from '../utils/booleanToString'
 import { stateToFr } from '../utils/stateToString'
 import { dateToStringFr } from '../utils/dateToString'
 import type { IDemarcheMappingColumn } from '../shared/interfaces'
-import type { TypeHeaderDataTable } from '../components/typeDataTable'
+import type { TypeHeaderDataTable } from '@/shared/types/typeDataTable'
 import { ChampValueTypesKeys } from '../shared/types'
 
 const headerDossierIdDefault: TypeHeaderDataTable[] = [

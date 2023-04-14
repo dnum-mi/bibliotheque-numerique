@@ -1,4 +1,4 @@
-import type { TypeHeaderDataTable } from '../../components/typeDataTable'
+import type { TypeHeaderDataTable } from '../types/typeDataTable'
 import type { IDemarcheMappingColumn } from '../interfaces'
 import { ChampType, ChampValueTypesKeys, keytoTypeData, typeForHeader, typeTable, valueBytypeValue } from '../types'
 

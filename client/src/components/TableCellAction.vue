@@ -11,7 +11,7 @@
 </template>
 <script lang="ts" setup>
 
-import type { TIconFunction } from '@/components/typeDataTable'
+import type { TIconFunction } from '@/shared/types/typeDataTablele.js'
 import { computed } from 'vue'
 
 const props = withDefaults(defineProps<{

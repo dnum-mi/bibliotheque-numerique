@@ -1,5 +1,5 @@
-import { ETypeFilter } from '../typeDataTable'
 import { localeTextAgGrid } from './agGridOptions'
+import { ETypeFilter } from '@/shared/types/typeDataTable'
 
 export const filterParamsDate = {
   comparator: (filterLocalDateAtMidnight, cellValue) => {

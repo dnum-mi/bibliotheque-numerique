@@ -24,4 +24,5 @@ export enum ETypeFilter {
   NUMBER='number',
   MULTI_VALUE='multi-value',
   MULTI_VALUE_NUMBER='multi-value-number',
+  FILE='file',
 }

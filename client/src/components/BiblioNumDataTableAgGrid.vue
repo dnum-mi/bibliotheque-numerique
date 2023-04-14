@@ -25,12 +25,13 @@
 
 <script lang="ts" setup>
 import { computed, ref, watchEffect } from 'vue'
-import { ETypeFilter, type TypeHeaderDataTable } from './typeDataTable'
 
 import { AgGridVue } from 'ag-grid-vue3'
 import 'ag-grid-enterprise'
 import 'ag-grid-community/styles/ag-grid.css'
 import 'ag-grid-community/styles/ag-theme-alpine.css'
+
+import { ETypeFilter, type TypeHeaderDataTable } from '@/shared/types/typeDataTable'
 import TableCellAction from './TableCellAction.vue'
 import { PAGINATION_PAGE_SIZE } from '@/config'
 
