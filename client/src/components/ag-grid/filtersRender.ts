@@ -97,4 +97,7 @@ export const filterToApply = {
       ],
     },
   },
+  [ETypeFilter.FILE]: {
+    filter: false,
+  },
 }
