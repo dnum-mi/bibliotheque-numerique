@@ -1,0 +1,25 @@
+name: Build and deploy to staging
+
+on:
+  workflow_dispatch:
+
+jobs:
+  mirror:
+    name: Sync repo for build image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checks-out repository
+        uses: actions/checkout@v3
+      - name: Send a sync request to DSO api
+        run: |
+          curl -X POST --fail -F token=${{ secrets.GITLAB_TRIGGER_TOKEN }} -F ref=${{vars.BRANCH_SYNC}} --form "variables[GIT_BRANCH_DEPLOY]=staging" ${{vars.URL_MIRROR}}
+          
+  integration-deploy:
+    name: Sync repo for deploy to staging
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checks-out repository
+        uses: actions/checkout@v3
+      - name: Send a sync request to DSO api
+        run: |
+          curl -X POST --fail -F token=${{ secrets.GITLAB_DEPLOY_TRIGGER_TOKEN }} -F ref=${{vars.BRANCH_SYNC}} --form "variables[GIT_BRANCH_DEPLOY]=staging" ${{vars.DEPLOY_URL_MIRROR}}
