@@ -7,11 +7,6 @@ include:
 default:
   image: node:16
 
-cache:
-  paths:
-    - .m2/repository/
-    - node_modules
-
 variables:
   TAG: "${CI_COMMIT_REF_SLUG}"
   DOCKERFILE: Dockerfile
