@@ -198,8 +198,12 @@ export class DossiersDSService {
   }
 
   private urlFileApi(id) {
+    return `${this.appURL()}/files/${id}`;
+  }
+
+  private appURL() {
     return `${this.configService.get("protocol")}://${this.configService.get(
       "appHost",
-    )}/files/${id}`;
+    )}${this.configService.get("appPath")}`;
   }
 }
