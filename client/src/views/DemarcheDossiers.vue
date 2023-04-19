@@ -31,8 +31,10 @@ onMounted(async () => {
   if (id) {
     await demarcheStore.getDemarche(id)
     await demarcheStore.getDossiers(id)
+    await demarcheStore.loadInstructionTimes()
 
     await demarcheStore.getDemarcheConfigurations()
+
     await demarcheStore.loadHeaderDossiers()
     await demarcheStore.loadRowDatas()
   }

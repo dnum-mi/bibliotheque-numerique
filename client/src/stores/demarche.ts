@@ -3,13 +3,15 @@ import { ref } from 'vue'
 import { apiClient } from '@/utils/api-client'
 import { getConfigurations, updateConfigurations } from '@/shared/services'
 
-import { toHeaderList, toRowData } from '../shared/services/toHeaderList'
-import { booleanToYesNo } from '../utils/booleanToString'
-import { stateToFr } from '../utils/stateToString'
-import { dateToStringFr } from '../utils/dateToString'
-import type { IDemarcheMappingColumn } from '../shared/interfaces'
+import { toHeaderList, toRowData } from '@/shared/services/toHeaderList'
+import { booleanToYesNo } from '@/utils/booleanToString'
+import { stateToFr } from '@/utils/stateToString'
+import { dateToStringFr } from '@/utils/dateToString'
+import type { IDemarcheMappingColumn } from '@/shared/interfaces'
 import type { TypeHeaderDataTable } from '@/shared/types/typeDataTable'
-import { ChampValueTypesKeys } from '../shared/types'
+import { ChampValueTypesKeys, ChampType } from '@/shared/types'
+import { fetchInstructionTimeByDossiers } from '@/shared/services/instructionTimes.service'
+import { EInstructionTimeState, keyInstructionTime } from '../shared/types/instructionTime.type'
 
 const headerDossierIdDefault: TypeHeaderDataTable[] = [
   {
@@ -86,12 +88,14 @@ const typeToParserFn = {
 const getParserFnByType = (type) => {
   return typeToParserFn[type]
 }
+
 export const useDemarcheStore = defineStore('demarche', () => {
   let mappingColumn: IDemarcheMappingColumn[]
   const demarche = ref({})
   const hearderListDossier = ref<TypeHeaderDataTable[]>([])
   const rowDatasDossiers = ref<object[]>([])
   const dossiers = ref([])
+  const instructionTimes = ref({})
 
   const getDemarche = async (idDemarche: number) => {
     if (!idDemarche) {
@@ -144,6 +148,10 @@ export const useDemarcheStore = defineStore('demarche', () => {
     await getDemarcheConfigurations()
   }
 
+  const isDemarcheWithInstructionTime = () => {
+    return demarche.value && demarche.value.identification === 'FE'
+  }
+
   const loadHeaderDossiers = async () => {
     mappingColumn = demarche.value?.mappingColumns || []
     // TODO: A revoir pour la preview
@@ -165,15 +173,50 @@ export const useDemarcheStore = defineStore('demarche', () => {
 
   const loadRowDatas = async () => {
     rowDatasDossiers.value = dossiers.value?.map(data => {
-      const rowDatasFromMapping = toRowData(data.dossierDS?.dataJson, mappingColumn)
+      const { dossierDS, id } = data
+      const { dataJson, id: idDs } = dossierDS || {}
+
+      const jsonForRowData = dataJson && isDemarcheWithInstructionTime()
+        ? {
+            ...dataJson,
+            [ChampType.INSTRUCTION_TIME]: instructionTimes.value[id],
+          }
+        : dataJson
+
+      const rowDatasFromMapping = toRowData(jsonForRowData, mappingColumn)
       const row = rowDatasFromMapping.map(rowData => ({
-        idBiblioNum: data.id,
-        ...data.dossierDS?.dataJson,
+        idBiblioNum: id,
+        ...dataJson,
         ...rowData,
       }))
 
       return row
     }).flat()
+  }
+
+  const translateEtatDelai = {
+    [EInstructionTimeState.IN_PROGRESS]: 'En cours',
+    [EInstructionTimeState.OUT_OF_DATE]: 'Hors délai',
+  }
+
+  const loadInstructionTimes = async () => {
+    // TODO: A voir du besoin d'une condition coté front ou back
+    if (isDemarcheWithInstructionTime()) {
+      const instructionTimesFound = await fetchInstructionTimeByDossiers(dossiers.value.map(dossier => dossier.id))
+      // TODO: A refaire avec des types pour ag-grid
+      const instructionTimesTranslated = {}
+      for (const idDossier in instructionTimesFound) {
+        const instructionTime = instructionTimesFound[idDossier]
+        const etatDelai = translateEtatDelai[instructionTime[keyInstructionTime.ETAT_DELAI]] || ''
+
+        instructionTimesTranslated[idDossier] = {
+          ...instructionTime,
+          [keyInstructionTime.ETAT_DELAI]: etatDelai,
+        }
+      }
+      //   return
+      instructionTimes.value = instructionTimesTranslated
+    }
   }
 
   return {
@@ -191,5 +234,7 @@ export const useDemarcheStore = defineStore('demarche', () => {
     hearderListDossier,
     rowDatasDossiers,
     loadRowDatas,
+    loadInstructionTimes,
+    instructionTimes,
   }
 })
