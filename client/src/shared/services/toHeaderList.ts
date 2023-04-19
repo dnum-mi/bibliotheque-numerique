@@ -1,8 +1,10 @@
 import type { TypeHeaderDataTable } from '../types/typeDataTable'
 import type { IDemarcheMappingColumn } from '../interfaces'
 import { ChampType, ChampValueTypesKeys, keytoTypeData, typeForHeader, typeTable, valueBytypeValue } from '../types'
+import { mappingLabelInstructionToKey } from '../types/instructionTime.type'
 
-export function getTypeForHeader (typeValue: string | undefined) {
+export function getTypeForHeader (mappingColumn: Partial<IDemarcheMappingColumn>) {
+  const { typeValue, typeData } = mappingColumn
   return (typeValue && typeForHeader[typeValue as keyof typeof typeForHeader]) || typeValue
 }
 
@@ -30,7 +32,7 @@ export function toHeaderList (mappingCol: Partial<IDemarcheMappingColumn>[]): Ty
   return mappingCol?.map((col: Partial<IDemarcheMappingColumn>) => ({
     text: col.labelBN,
     value: col.id,
-    type: getTypeForHeader(col.typeValue),
+    type: getTypeForHeader(col),
     filter: getTypeFilter(col),
     renderer: getTypeRenderer(col),
   }))
@@ -57,28 +59,28 @@ const getFctByTypeTable = {
   [typeTable.MULTILINE]: fctMultiRowData,
 }
 
-export function toRowData (dataJson: object, mappingCol: Partial<IDemarcheMappingColumn>[]) {
-  const result = mappingCol.reduce((acc, col) => {
+const getValuesFromChamps = (col, datas) => col.labelSource?.reduce((acc1, cur, index, source) => {
+  const values = acc1?.filter(data => data.label === cur)
+  return index < (source.length - 1) ? values?.map(val => val.champs).flat() || values : values
+}, datas)
+
+const dictCellByTypeData = {
+  [ChampType.CHAMP]: getValuesFromChamps,
+  [ChampType.ANNOTATION]: getValuesFromChamps,
+  [ChampType.INSTRUCTION_TIME]: (col, datas) => (datas && [datas[mappingLabelInstructionToKey[col.labelSource[0]]]]) || [],
+}
+
+export function toRowData (dataJson: object, mappingCols: Partial<IDemarcheMappingColumn>[]) {
+  const result = mappingCols.reduce((acc, col) => {
+    if (!col.labelSource) {
+      return getFctByTypeTable[typeTable.DEFAULT](acc, col.id, [])
+    }
     const typeData = col.typeData && getKeyToTypeData(col.typeData)
-    const lastIndex = col.labelSource ? col.labelSource.length - 1 : 0
     const datas = typeData ? dataJson[typeData] : dataJson
 
-    const values = col.labelSource?.reduce((acc1, cur, index) => {
-      let valuestmp
-
-      if (typeData) {
-        valuestmp = acc1?.filter(data => data.label === cur)
-
-        return index < lastIndex ? valuestmp?.map(val => val.champs).flat() || valuestmp : valuestmp
-      }
-
-      return acc1[cur] || ' '
-    }, datas)
-
-    const valueDatas = values.map(value => getValueBytypeValue(value, col))
-
+    const values = col.typeData ? dictCellByTypeData[col.typeData](col, datas) : [datas[col.labelSource[0]]] || ' '
+    const valueDatas = values.map(value => getValueBytypeValue(value, col)) || [values]
     acc = getFctByTypeTable[typeTable.DEFAULT](acc, col.id, valueDatas)
-
     return acc
   }, [{ }])
 
