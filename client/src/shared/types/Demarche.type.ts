@@ -16,7 +16,8 @@ export enum TypeDeChampDS {
 
 export enum ChampType {
   CHAMP = 'champ',
-  ANNOTATION = 'annotation'
+  ANNOTATION = 'annotation',
+  INSTRUCTION_TIME='instructionTime'
 }
 
 export enum ChampValueTypesKeys {
@@ -54,6 +55,7 @@ export const valueBytypeValue = {
 export const keytoTypeData = {
   [ChampType.CHAMP]: 'champs',
   [ChampType.ANNOTATION]: 'annotations',
+
 }
 
 export enum typeTable {
