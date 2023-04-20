@@ -21,6 +21,8 @@ type TLoggerObject = {
   host?: string;
   timestamp?: number;
   _service_name?: string;
+  error?: Error;
+  datas?: any;
 };
 
 @Injectable()

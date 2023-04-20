@@ -83,6 +83,8 @@ export class OrganismesDatasService {
       this.logger.error({
         short_message: "No organisme_data to upsert",
         full_message: error.stack,
+        error,
+        datas: { idRna, connectorApi, parser },
       });
       throw new Error("Unable to upsert organisme_data");
     }
