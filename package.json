@@ -18,6 +18,8 @@
     "test:only": "turbo test",
     "prepare": "husky install",
     "lint": "turbo lint",
+    "docker:db:up": "docker compose --profile db-only -f apps/server/docker-compose.dev.yml up -d",
+    "docker:db:down": "docker compose --profile db-only -f apps/server/docker-compose.dev.yml down",
     "build:client": "turbo build --filter=client",
     "lint:client": "turbo lint --filter=client",
     "test:client": "turbo test --filter=client",

@@ -1,5 +1,7 @@
 services:
   server:
+    profiles:
+      - dev
     build:
       target: development
       context: ../../
@@ -30,8 +32,46 @@ services:
       DEBUG: 1
       SMTP_SERVER: mailhog
       SMTP_PORT: 1025
+  
+  db:
+    profiles:
+      - dev
+      - simple-dev
+      - db-only
+    image: postgres:14.5
+    container_name: biblio-num_db
+    restart: always
+    environment:
+      POSTGRES_DB: biblio-num
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./docker/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - type: volume
+        source: biblio-num-db-volume
+        target: /var/lib/postgresql/data
+    networks:
+      - biblio-num-network
+  
+  adminer:
+    profiles:
+      - adminer
+    image: adminer
+    restart: always
+    ports:
+      - 8010:8080
+    environment:
+      - ADMINER_DEFAULT_SERVER=db
+      - ADMINER_DEFAULT_SYSTEM=PostgreSQL
+      - ADMINER_DESIGN=lucas-sandery
+    networks:
+      - biblio-num-network
 
   pgadmin:
+    profiles:
+      - dev
     image: dpage/pgadmin4
     container_name: biblio-num_dbadmin
     depends_on:
@@ -49,6 +89,9 @@ services:
       - biblio-num-network
 
   mailhog:
+    profiles:
+      - dev
+      - simple-dev
     container_name: mailhog
     image: mailhog/mailhog
     restart: always
@@ -59,6 +102,9 @@ services:
       - biblio-num-network
 
   keycloak:
+    profiles:
+      - dev
+      - simple-dev
     image: quay.io/keycloak/keycloak:19.0.2
     container_name: biblio-num_keycloak
     environment:
@@ -81,6 +127,9 @@ services:
       - biblio-num-network
 
   s3:
+    profiles:
+      - dev
+      - simple-dev
     image: quay.io/minio/minio:RELEASE.2023-01-20T02-05-44Z
     container_name: biblio-num_minio
     environment:
@@ -107,3 +156,4 @@ networks:
 volumes:
   biblio-num-pgadmin-volume:
   biblio-num-s3-volume:
+  biblio-num-db-volume:
