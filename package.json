@@ -6,14 +6,25 @@
     "doc": "docs"
   },
   "workspaces": [
-    "packages/utils",
-    "client",
-    "server"
+    "packages/*",
+    "apps/*"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "dev:server": "turbo dev --filter=server",
+    "dev:server-in-docker": "turbo dev:in-docker --filter=server",
+    "test": "run-s docker:db:up test:only docker:db:down",
+    "test:only": "turbo test",
     "prepare": "husky install",
-    "lint": "lint-staged",
+    "lint": "turbo lint",
+    "build:client": "turbo build --filter=client",
+    "lint:client": "turbo lint --filter=client",
+    "test:client": "turbo test --filter=client",
+    "build:server": "turbo build --filter=server",
+    "lint:server": "turbo lint --filter=server",
+    "test:server": "turbo test --filter=server",
+    "docker:dev": "docker compose --profile dev -f apps/server/docker-compose.dev.yml up -d",
     "docker:prod:build": "docker compose -f docker-compose.prod.yml build",
     "docker:prod": "docker compose -f docker-compose.prod.yml up -d",
     "docker:prod:stop": "docker compose -f docker-compose.prod.yml down"
@@ -29,7 +40,9 @@
   },
   "homepage": "https://github.com/LAB-MI/biblio-num#readme",
   "devDependencies": {
-    "husky": "8.0.2",
-    "lint-staged": "13.1.0"
+    "husky": "8.0.2"
+  },
+  "dependencies": {
+    "turbo": "1.9.3"
   }
 }

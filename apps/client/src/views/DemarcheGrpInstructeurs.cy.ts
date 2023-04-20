@@ -32,7 +32,7 @@ describe('<DemarcheGrpInstructeurs />', () => {
         cy.wrap($section)
           .contains(grp.label)
           .click()
-          .parents('section')
+        cy.wrap($section)
           .should('contain', grp.instructeurs[0].email)
       }
     })

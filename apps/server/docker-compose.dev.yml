@@ -2,8 +2,8 @@ services:
   server:
     build:
       target: development
-      context: .
-      dockerfile: Dockerfile
+      context: ../../
+      dockerfile: Dockerfile.dev
     image: biblio-num/server:dev
     container_name: biblio-num_server
     depends_on:
@@ -13,12 +13,12 @@ services:
       - 9229:9229
     volumes:
       - type: bind
-        source: .
+        source: ../..
         target: /app
       - /app/node_modules
     networks:
       - biblio-num-network
-    command: npm run dev
+    command: npm run dev:server-in-docker
     environment:
       POSTGRES_HOST: db
       POSTGRES_DB: biblio-num
