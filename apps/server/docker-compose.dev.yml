@@ -92,6 +92,7 @@ services:
     profiles:
       - dev
       - simple-dev
+      - tests-e2e
     container_name: mailhog
     image: mailhog/mailhog
     restart: always
@@ -105,6 +106,7 @@ services:
     profiles:
       - dev
       - simple-dev
+      - tests-e2e
     image: quay.io/keycloak/keycloak:19.0.2
     container_name: biblio-num_keycloak
     environment:
@@ -130,6 +132,7 @@ services:
     profiles:
       - dev
       - simple-dev
+      - tests-e2e
     image: quay.io/minio/minio:RELEASE.2023-01-20T02-05-44Z
     container_name: biblio-num_minio
     environment:

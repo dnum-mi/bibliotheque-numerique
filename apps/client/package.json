@@ -4,6 +4,7 @@
   "scripts": {
     "build": "vue-tsc --noEmit && vite build",
     "dev": "vite --open",
+    "dev:e2e": "start-server-and-test 'vite dev --port 5050' http://127.0.0.1:5050/ 'cypress open --e2e'",
     "docker:dev": "docker compose -f docker-compose.dev.yml up",
     "docker:dev:build": "docker compose -f docker-compose.dev.yml build",
     "docker:dev:stop": "docker compose -f docker-compose.dev.yml down",
@@ -18,8 +19,8 @@
     "test": "run-s test:unit test:ct:ci",
     "test:ct": "cypress open --component",
     "test:ct:ci": "cypress run --component",
-    "test:e2e": "start-server-and-test preview http://127.0.0.1:5050/ 'cypress open'",
-    "test:e2e:ci": "start-server-and-test preview http://127.0.0.1:5050/ 'cypress run'",
+    "test:e2e": "start-server-and-test preview http://127.0.0.1:5050/ 'cypress open --e2e'",
+    "test:e2e:ci": "start-server-and-test preview http://127.0.0.1:5050/ 'cypress run --e2e'",
     "test:unit": "vitest --environment jsdom",
     "typecheck": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false"
   },
