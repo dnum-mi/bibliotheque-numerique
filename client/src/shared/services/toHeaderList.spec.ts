@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import type { IDemarcheMappingColumn } from '../interfaces'
-import { ChampValueTypesKeys } from '../types'
+import { ChampType, ChampValueTypesKeys } from '../types'
 import { toRowData } from './toHeaderList'
+import { EInstructionTimeState, LabelInstructionTime, keyInstructionTime } from '../types/instructionTime.type'
 
 describe('Test HeaderList', () => {
   const dataJson = {
@@ -186,6 +187,41 @@ describe('Test HeaderList', () => {
     expect(result).toBeDefined()
     expect(result).toMatchObject([{
       [mappingColumn[0].id]: [dataJson.champs[4].file],
+    }])
+  })
+
+  it('should get rowData for instructionTime', () => {
+    const mappingColumn = [
+      {
+        id: 'dGVtcHMgcmVzdGFudCAx',
+        labelSource: [LabelInstructionTime.TEMPS_RESTANT],
+        labelBN: 'Temps restant (jours)',
+        typeName: '',
+        typeData: ChampType.INSTRUCTION_TIME,
+        typeValeur: 'number',
+      },
+      {
+        id: 'dGVtcHMgcmVzdGFudCAy',
+        labelSource: [LabelInstructionTime.ETAT_DELAI],
+        labelBN: 'Etat delai',
+        typeName: '',
+        typeData: ChampType.INSTRUCTION_TIME,
+        typeValeur: 'text',
+      },
+    ]
+
+    const dataJsonWithInstructionTimes = {
+      ...dataJson,
+      [ChampType.INSTRUCTION_TIME]: {
+        [keyInstructionTime.TEMPS_RESTANT]: 120,
+        [keyInstructionTime.ETAT_DELAI]: EInstructionTimeState.OUT_OF_DATE,
+      },
+    }
+
+    const result = toRowData(dataJsonWithInstructionTimes, mappingColumn)
+    expect(result).toBeDefined()
+    expect(result).toMatchObject([{
+      [mappingColumn[0].id]: [dataJsonWithInstructionTimes[ChampType.INSTRUCTION_TIME][keyInstructionTime.TEMPS_RESTANT]],
     }])
   })
 })
