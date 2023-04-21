@@ -85,11 +85,6 @@ describe('<BiblioNumDataTable />', () => {
         id: 2,
         testkey: {},
       },
-      // {
-      //   id: 2,
-      //   testkey: undefined,
-      // },
-
     ]
 
     const extensions = {
@@ -116,19 +111,18 @@ describe('<BiblioNumDataTable />', () => {
     cy.get('.ag-header-cell').should('contain', 'Test-Key')
 
     datas.forEach(data => {
-      // eslint-disable-next-line cypress/no-assigning-return-values
-      const row = cy.get('.ag-cell')
+      cy.get('.ag-cell')
         .should('contain', data.id)
         .contains(data.id)
         .parent()
-        .children()
+        .children().as('row')
       if (data.testkey?.url) {
-        row
+        cy.get('@row')
           .find('a')
           .should('have.attr', 'href', data.testkey?.url)
         return
       }
-      row
+      cy.get('@row')
         .find('a')
         .should('not.have.attr', 'href')
     })
