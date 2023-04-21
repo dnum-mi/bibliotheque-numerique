@@ -54,5 +54,5 @@ runs:
         git config user.email "admin@bibliotheque-numerique.fr"
         git config user.name "GitHub Action"
         git add ${{ inputs.path }}
-        git commit -m "Update version to ${{ steps.get_version.outputs.version }}"
+        git commit -m "Update image version to ${{ steps.get_version.outputs.version }}"
         git push origin ${{ inputs.branch }} --force
