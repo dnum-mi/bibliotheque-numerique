@@ -1,0 +1,62 @@
+name: 'Update deploy tag'
+description: 'Update the tag for projet deploy'
+
+inputs:
+  token:
+    description: 'The access token for the private repository'
+    required: true
+  owner:
+    description: 'The owner of the private repository'
+    required: true
+  repo:
+    description: 'The name of the private repository'
+    required: true
+  branch:
+    description: 'The branch to update in the private repository'
+    required: true
+  path:
+    description: 'The path to the YAML file in the private repository'
+    required: true
+outputs:
+  version:
+    description: 'The version retrieved from package.json'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Get Version from package.json
+      id: get_version
+      run: echo "::set-output name=version::$(node -p "require('./package.json').version")"
+
+    - name: Clone the private repository
+      uses: actions/checkout@v3
+      with:
+        repository: ${{ inputs.owner }}/${{ inputs.repo }}
+        ref: ${{ inputs.branch }}
+        token: ${{ inputs.token }}
+
+    - name: Update version in YAML file
+      run: |
+        sed -i "s/@@img_tag@@/'${{ steps.get_version.outputs.version }}'/g" ${{ inputs.path }}
+
+    - name: Commit changes
+      run: |
+        git config user.email "admin@bibliotheque-numerique.fr"
+        git config user.name "GitHub Action"
+        git add ${{ inputs.path }}
+        git commit -m "Update version to ${{ steps.get_version.outputs.version }}"
+
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ inputs.token }}
+        branch: ${{ inputs.branch }}
+        directory: .
+        force: true
+        cleanup: false
+        allow_empty_commit: false
+        commit_message: "Update version to ${{ steps.get_version.outputs.version }}"
+        committer: GitHub Action <admin@bibliotheque-numerique.fr>

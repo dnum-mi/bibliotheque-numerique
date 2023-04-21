@@ -6,9 +6,10 @@ include:
 
 default:
   image: node:16
+  before_script:
+    - export TAG=$(grep -Eo '"version":.*?[^\\]",' package.json | awk -F'"' '{print $4}')
 
 variables:
-  TAG: "${CI_COMMIT_REF_SLUG}"
   DOCKERFILE: Dockerfile
   PROJECT_NAME: bibliotheque-numerique
   PROJECT_ORGANISATION: ministere-interieur
