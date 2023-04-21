@@ -20,6 +20,14 @@ jobs:
     steps:
       - name: Checks-out repository
         uses: actions/checkout@v3
+      - name: Update version
+        uses: ./.github/actions/ci-update-deploy-tag
+        with:
+          token: ${{ secrets.DSO_BIBLIO_NUME_DEPLOY_TOKEN }}
+          owner: dnum-mi
+          repo: dso-bibliotheque-numerique-deploy
+          branch: production
+          path: base/deployment.yaml
       - name: Send a sync request to DSO api
         run: |
           curl -X POST --fail -F token=${{ secrets.GITLAB_DEPLOY_TRIGGER_TOKEN }} -F ref=${{vars.BRANCH_SYNC}} --form "variables[GIT_BRANCH_DEPLOY]=production" ${{vars.DEPLOY_URL_MIRROR}}
