@@ -55,6 +55,7 @@ runs:
         git add ${{ inputs.path }}
         git commit -m "Update version to ${{ steps.get_version.outputs.version }}"
         git push origin ${{ inputs.branch }} --force
+        exit 0
 
 #    - name: Push changes
 #      uses: ad-m/github-push-action@master
