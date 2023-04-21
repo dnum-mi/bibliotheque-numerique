@@ -51,7 +51,7 @@ runs:
         git config user.name "GitHub Action"
         git add ${{ inputs.path }}
         git commit -m "Update version to ${{ steps.get_version.outputs.version }}"
-        git push --force
+        git push origin ${{ inputs.branch }} --force
 
 #    - name: Push changes
 #      uses: ad-m/github-push-action@master
