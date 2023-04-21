@@ -38,13 +38,16 @@ runs:
         repository: ${{ inputs.owner }}/${{ inputs.repo }}
         ref: ${{ inputs.branch }}
         token: ${{ inputs.token }}
+        path: ${{ inputs.repo }}
 
     - name: Update version in YAML file
+      working-directory: ${{ inputs.repo }}
       shell: bash
       run: |
         sed -i "s/@@img_tag@@/'${{ steps.get_version.outputs.version }}'/g" ${{ inputs.path }}
 
     - name: Commit changes
+      working-directory: ${{ inputs.repo }}
       shell: bash
       run: |
         git config user.email "admin@bibliotheque-numerique.fr"
