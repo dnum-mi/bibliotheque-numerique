@@ -29,7 +29,7 @@ runs:
 
     - name: Get Version from package.json
       id: get_version
-      run: echo "::set-output name=version::$(node -p "require('./package.json').version")"
+      run: echo "::set-output name=version::$(grep -Eo '"version":.*?[^\\]",' package.json | awk -F'"' '{print $4}')"
 
     - name: Clone the private repository
       uses: actions/checkout@v3
