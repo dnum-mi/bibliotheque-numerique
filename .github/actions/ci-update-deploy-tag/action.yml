@@ -44,14 +44,8 @@ runs:
       working-directory: ${{ inputs.repo }}
       shell: bash
       run: |
-        sed -i "s/@@img_tag@@/'${{ steps.get_version.outputs.version }}'/g" ${{ inputs.path }}
-
-    - name: Show YAML file
-      working-directory: ${{ inputs.repo }}
-      shell: bash
-      run: |
-        git status
-        cat ${{ inputs.path }}
+        sed -i "s/bibliotheque_numerique-front:.*$/bibliotheque_numerique-front:${{ steps.get_version.outputs.version }}/" ${{ inputs.path }}
+        sed -i "s/bibliotheque_numerique-back:.*$/bibliotheque_numerique-back:${{ steps.get_version.outputs.version }}/" ${{ inputs.path }}
 
     - name: Commit changes
       working-directory: ${{ inputs.repo }}
@@ -59,22 +53,6 @@ runs:
       run: |
         git config user.email "admin@bibliotheque-numerique.fr"
         git config user.name "GitHub Action"
-        git status
-        git diff
         git add ${{ inputs.path }}
         git commit -m "Update version to ${{ steps.get_version.outputs.version }}"
-        git status
         git push origin ${{ inputs.branch }} --force
-        exit 0
-
-#    - name: Push changes
-#      uses: ad-m/github-push-action@master
-#      with:
-#        github_token: ${{ inputs.token }}
-#        branch: ${{ inputs.branch }}
-#        directory: .
-#        force: true
-#        cleanup: false
-#        allow_empty_commit: false
-#        commit_message: "Update version to ${{ steps.get_version.outputs.version }}"
-#        committer: GitHub Action <admin@bibliotheque-numerique.fr>
