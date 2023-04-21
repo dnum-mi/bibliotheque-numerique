@@ -18,7 +18,7 @@ export type TypeHeaderDataTable = {
   renderer,
 }
 
-export enum ETypeFilter {
+export enum AgGridTypeFilter {
   DATE='date',
   TEXT='text',
   NUMBER='number',

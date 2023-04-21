@@ -31,7 +31,7 @@ import 'ag-grid-enterprise'
 import 'ag-grid-community/styles/ag-grid.css'
 import 'ag-grid-community/styles/ag-theme-alpine.css'
 
-import { ETypeFilter, type TypeHeaderDataTable } from '@/shared/types/typeDataTable'
+import { AgGridTypeFilter, type TypeHeaderDataTable } from '@/shared/types/typeDataTable'
 import TableCellAction from './TableCellAction.vue'
 import { PAGINATION_PAGE_SIZE } from '@/config'
 
@@ -43,23 +43,23 @@ import AgGridAttachmentCell from './ag-grid/AgGridAttachmentCell.vue'
 
 const getFilterAgGrid = (header) => {
   const { type, filter } = header
-  const typeFilter = filter === ETypeFilter.MULTI_VALUE && type === 'number' ? ETypeFilter.MULTI_VALUE_NUMBER : type
-  return (typeFilter && filterToApply[typeFilter as ETypeFilter]) || { }
+  const typeFilter = filter === AgGridTypeFilter.MULTI_VALUE && type === 'number' ? AgGridTypeFilter.MULTI_VALUE_NUMBER : type
+  return (typeFilter && filterToApply[typeFilter as AgGridTypeFilter]) || { }
 }
 
 const toRenderer = {
-  [ETypeFilter.MULTI_VALUE]: {
+  [AgGridTypeFilter.MULTI_VALUE]: {
     cellRenderer: AgGridMultiValueCell,
     autoHeight: true,
   },
-  [ETypeFilter.FILE]: {
+  [AgGridTypeFilter.FILE]: {
     cellRenderer: AgGridAttachmentCell,
   },
 }
 const getRendererAgGrid = (header) => {
   const { renderer, type } = header
 
-  const typeRenderder = renderer === ETypeFilter.MULTI_VALUE ? ETypeFilter.MULTI_VALUE : type
+  const typeRenderder = renderer === AgGridTypeFilter.MULTI_VALUE ? AgGridTypeFilter.MULTI_VALUE : type
   const agRenderer = toRenderer[typeRenderder]
   return agRenderer
 }

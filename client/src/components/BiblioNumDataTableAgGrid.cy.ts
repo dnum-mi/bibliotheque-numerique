@@ -8,7 +8,7 @@ import BiblioNumDataTable from './BiblioNumDataTableAgGrid.vue'
 import { getDateISO } from '../utils/__tests__/fake-data'
 import { dateToStringFr } from '@/utils/dateToString'
 import { getFileObjectExample } from '../__test__/ds-type'
-import { ETypeFilter } from '../shared/types/typeDataTable'
+import { AgGridTypeFilter } from '../shared/types/typeDataTable'
 
 describe('<BiblioNumDataTable />', () => {
   it('renders', () => {
@@ -66,12 +66,12 @@ describe('<BiblioNumDataTable />', () => {
       {
         text: 'Test-Key',
         value: 'testkey',
-        type: ETypeFilter.FILE,
+        type: AgGridTypeFilter.FILE,
       },
       {
         text: 'Test-Key1',
         value: 'testkey1',
-        type: ETypeFilter.TEXT,
+        type: AgGridTypeFilter.TEXT,
       },
 
     ]
