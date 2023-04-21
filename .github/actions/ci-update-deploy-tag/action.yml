@@ -29,6 +29,7 @@ runs:
 
     - name: Get Version from package.json
       id: get_version
+      shell: bash
       run: echo "::set-output name=version::$(grep -Eo '"version":.*?[^\\]",' package.json | awk -F'"' '{print $4}')"
 
     - name: Clone the private repository
@@ -39,10 +40,12 @@ runs:
         token: ${{ inputs.token }}
 
     - name: Update version in YAML file
+      shell: bash
       run: |
         sed -i "s/@@img_tag@@/'${{ steps.get_version.outputs.version }}'/g" ${{ inputs.path }}
 
     - name: Commit changes
+      shell: bash
       run: |
         git config user.email "admin@bibliotheque-numerique.fr"
         git config user.name "GitHub Action"
