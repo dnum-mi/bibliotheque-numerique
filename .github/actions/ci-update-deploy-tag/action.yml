@@ -46,6 +46,13 @@ runs:
       run: |
         sed -i "s/@@img_tag@@/'${{ steps.get_version.outputs.version }}'/g" ${{ inputs.path }}
 
+    - name: Show YAML file
+      working-directory: ${{ inputs.repo }}
+      shell: bash
+      run: |
+        git status
+        cat ${{ inputs.path }}
+
     - name: Commit changes
       working-directory: ${{ inputs.repo }}
       shell: bash
