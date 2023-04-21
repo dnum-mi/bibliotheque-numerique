@@ -52,8 +52,11 @@ runs:
       run: |
         git config user.email "admin@bibliotheque-numerique.fr"
         git config user.name "GitHub Action"
+        git status
+        git diff
         git add ${{ inputs.path }}
         git commit -m "Update version to ${{ steps.get_version.outputs.version }}"
+        git status
         git push origin ${{ inputs.branch }} --force
         exit 0
 
