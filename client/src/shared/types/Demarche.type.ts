@@ -30,7 +30,7 @@ export enum ChampValueTypesKeys {
 
 export const ChampValueTypes = {
   [ChampValueTypesKeys.TEXT]: 'Texte',
-  [ChampValueTypesKeys.NUMBER]: 'Numéro',
+  [ChampValueTypesKeys.NUMBER]: 'Nombre',
   [ChampValueTypesKeys.DATE]: 'Date',
   [ChampValueTypesKeys.PJ]: 'Pièce Jointe',
 }
