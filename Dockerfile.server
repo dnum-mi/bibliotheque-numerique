@@ -1,7 +1,6 @@
-FROM node:lts as builder
+FROM node:lts as base
 
 WORKDIR /app
-
 
 RUN npm i -g turbo
 
@@ -11,16 +10,16 @@ USER node
 COPY . .
 RUN turbo prune --scope=@biblio-num/server --docker
 
-FROM node:lts AS development
+
+FROM node:lts AS builder
 
 WORKDIR /app
- 
+
 # First install the dependencies (as they change less often)
 COPY .gitignore .gitignore
-COPY --from=builder /app/out/json/ .
-COPY --from=builder /app/out/package-lock.json ./package-lock.json
-RUN npm i
+COPY --from=base /app/out/json/ .
+COPY --from=base /app/out/package-lock.json ./package-lock.json
+RUN npm ci
+COPY --from=base /app/out/full/ .
 
-# Run the project
-COPY --from=builder /app/out/full/ .
 CMD ["npm", "run", "dev:server-in-docker"]

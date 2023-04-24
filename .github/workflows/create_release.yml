@@ -1,4 +1,4 @@
-name: Release - Bibliothéque numérique
+name: Release - Bibliothèque numérique
 on: 
   workflow_dispatch:
     branches: 
