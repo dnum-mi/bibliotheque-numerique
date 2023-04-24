@@ -5,6 +5,7 @@ import { ChampType, TypeDeChampDS } from '@/shared/types'
 import type { IDemarcheMappingColumn } from '../interfaces'
 
 const DEMARCHE_BASE_URL = `${baseApiUrl}/demarches`
+const IDENTIFICATIONS_INSTRUCTION_TIME = ['FE']
 
 export async function updateConfigurations (idDemarche: string, demarcheMappingColumn: IDemarcheMappingColumn[]) {
   const chooseColumn = demarcheMappingColumn.filter(item => item.display)
@@ -48,8 +49,7 @@ export async function getConfigurations (idDemarche: string, champDescriptors: a
 }
 
 function hasInstructionTime (identification: string) {
-  const identificationInstructionTime: string[] = ['FE']
-  return !!(identificationInstructionTime.includes(identification))
+  return IDENTIFICATIONS_INSTRUCTION_TIME.includes(identification)
 }
 
 function replaceInArray (objet: IDemarcheMappingColumn, listObjet: any[]) {
@@ -77,8 +77,8 @@ function hashConfiguration (objet: any, typeData: string, parentLabel: string | 
 
 function instructionTimeConfigurations (idDemarche: string) {
   return [
-    demarcheMappingColumnBase(btoa(`TEMPSRESTANT${idDemarche}`), ['Temps restant'], '', 'instructionTime', false),
-    demarcheMappingColumnBase(btoa(`ETATDELAI${idDemarche}`), ['État délai'], '', 'instructionTime', false),
+    demarcheMappingColumnBase(btoa(`TEMPSRESTANT${idDemarche}`), ['Temps restant'], '', ChampType.INSTRUCTION_TIME, false),
+    demarcheMappingColumnBase(btoa(`ETATDELAI${idDemarche}`), ['État délai'], '', ChampType.INSTRUCTION_TIME, false),
   ]
 }
 

@@ -29,9 +29,13 @@ export enum ChampValueTypesKeys {
   ON_ONE_OBJECT = 'onOneObject'
 }
 
-export const ChampValueTypes = {
+export const ChampValueBaseTypes = {
   [ChampValueTypesKeys.TEXT]: 'Texte',
   [ChampValueTypesKeys.NUMBER]: 'Nombre',
+}
+
+export const ChampValueTypes = {
+  ...ChampValueBaseTypes,
   [ChampValueTypesKeys.DATE]: 'Date',
   [ChampValueTypesKeys.PJ]: 'Pièce Jointe',
 }
