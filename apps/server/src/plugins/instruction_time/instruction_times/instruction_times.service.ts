@@ -1,12 +1,25 @@
 import { Injectable, Logger } from "@nestjs/common";
+import { Dossier as TDossier } from "@dnum-mi/ds-api-client/dist/@types/types";
 import { InstructionTime } from "../entities";
 import { LoggerService } from "../../../logger/logger.service";
 import { Dossier } from "../../../entities";
-import { TInstructionTimeMappingConfig } from "../config/instructionTimeMapping.config";
+import {
+  TInstructionTimeMappingConfig,
+  keyInstructionTime,
+} from "../config/instructionTimeMapping.config";
 import { ConfigService } from "@nestjs/config";
 import { In } from "typeorm";
 import { EInstructionTimeState } from "../types/IntructionTime.type";
 import { DossierState } from "@dnum-mi/ds-api-client/dist/@types/types";
+
+type TIntructionTime = {
+  [keyInstructionTime.DATE_REQUEST1]?: Date | null;
+  [keyInstructionTime.DATE_RECEIPT1]?: Date | null;
+  [keyInstructionTime.BEGIN_PROROGATION_DATE]?: Date | null;
+  [keyInstructionTime.DURATION_EXTENSION]?: Date | null;
+  [keyInstructionTime.DATE_REQUEST2]?: Date | null;
+  [keyInstructionTime.DATE_RECEIPT2]?: Date | null;
+};
 
 @Injectable()
 export class InstructionTimesService {
@@ -125,5 +138,94 @@ export class InstructionTimesService {
       });
       throw new Error("Unable to calculate InstructionTime");
     }
+  }
+
+  checkAndGetLastDates(
+    date1: { date: Date | undefined | null; message: string },
+    date2: { date: Date | undefined | null; message: string },
+    messageError: string,
+  ) {
+    const dateReceipt = date2?.date;
+    const dateDemand = date1?.date;
+    if (dateReceipt && !dateDemand) {
+      throw new Error(
+        `${messageError} ${date1?.message || "La premiére date"} est manaquant`,
+      );
+    }
+
+    if (!dateDemand) return undefined;
+
+    if (!dateReceipt) return date1;
+
+    if (dateDemand.getTime() <= dateReceipt.getTime()) {
+      return date2;
+    }
+
+    throw new Error(
+      `${messageError} ${
+        date2?.message || "la seconde date"
+      } est plus ancienne que ${date1?.message || "le premiére date"}`,
+    );
+  }
+
+  checkValidity(data: Partial<TDossier>, instructionTime: TIntructionTime) {
+    const messageError = "Erreur dans les déclarations de dates";
+
+    this.checkAndGetLastDates(
+      {
+        date: instructionTime[keyInstructionTime.DATE_REQUEST1],
+        message: "La date de demande de pieces",
+      },
+      {
+        date: instructionTime[keyInstructionTime.DATE_RECEIPT1],
+        message: "La date de reception de pieces",
+      },
+      `${messageError} pour la premiére demande:`,
+    );
+
+    if (data.state !== DossierState.EnInstruction) {
+      return true;
+    }
+
+    if (!data.datePassageEnInstruction) {
+      throw Error(`${messageError}: La date d'instruction est manquante`);
+    }
+
+    const dateInstruction = new Date(data.datePassageEnInstruction);
+
+    const isOk2ndDemand = this.checkAndGetLastDates(
+      {
+        date: instructionTime[keyInstructionTime.DATE_REQUEST2],
+        message: "La date de demande de pieces",
+      },
+      {
+        date: instructionTime[keyInstructionTime.DATE_RECEIPT2],
+        message: "La date de reception de pieces",
+      },
+      `${messageError} pour la deuxiéme demande:`,
+    );
+
+    [
+      {
+        date: dateInstruction,
+        message: "La date d'instruction",
+      },
+      this.checkAndGetLastDates(
+        {
+          date: instructionTime[keyInstructionTime.BEGIN_PROROGATION_DATE],
+          message: "La date de prorogation",
+        },
+        isOk2ndDemand || undefined,
+        `${messageError} pour la date prorogation:`,
+      ),
+      {
+        date: instructionTime[keyInstructionTime.DATE_INTENT_OPPOSITION],
+        message: "La date d'intention opposition",
+      },
+    ].reduce((dateRecent, cur) => {
+      if (!dateRecent) return cur;
+      return this.checkAndGetLastDates(dateRecent, cur, `${messageError}:`);
+    });
+    return true;
   }
 }
