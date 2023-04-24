@@ -1,5 +1,6 @@
 import { faker } from "@faker-js/faker/locale/fr";
 import { Demarche, Dossier, DossierDS } from "..";
+import { DossierState } from "@dnum-mi/ds-api-client/dist/@types/types";
 
 export function dossier_test(
   dossierDS: DossierDS,
@@ -8,6 +9,6 @@ export function dossier_test(
   return {
     dossierDS,
     demarche,
-    state: faker.datatype.string(),
+    state: faker.datatype.string() as unknown as DossierState,
   };
 }

@@ -14,6 +14,8 @@ import {
 import { InstructionTime } from "../entities";
 import { Demarche, DemarcheDS, Dossier, DossierDS } from "../../../entities";
 import { faker } from "@faker-js/faker/locale/fr";
+import { EInstructionTimeState } from "../types/IntructionTime.type";
+import { DossierState } from "@dnum-mi/ds-api-client/dist/@types/types";
 
 describe("InstructionTimesService", () => {
   let service: InstructionTimesService;
@@ -96,6 +98,50 @@ describe("InstructionTimesService", () => {
       DateRequest1: new Date("2021-01-01T00:00:00.000Z"),
       DateRequest2: new Date("2021-03-15T00:00:00.000Z"),
       DurationExtension: new Date("2021-07-01T00:00:00.000Z"),
+    });
+  });
+
+  it("It should return good times instruction for a list a dossiers", async () => {
+    const instructionTimeMappingConfig = configService.get<
+      TInstructionTimeMappingConfig["instructionTimeMappingConfig"]
+    >("instructionTimeMappingConfig");
+
+    const fakeDossiers: Partial<Dossier>[] = [];
+    for (let i = 1; i <= 3; i++) {
+      const fakeDossierDs = dossier_ds_test();
+      const fakeDossier = dossier_test(fakeDossierDs as DossierDS);
+      fakeDossier.id = i;
+      fakeDossiers.push(fakeDossier);
+    }
+
+    jest
+      .spyOn(Dossier, "find")
+      .mockResolvedValueOnce(fakeDossiers as Dossier[]);
+
+    fakeDossiers["1"].dossierDS.dataJson.state = DossierState.EnConstruction;
+    fakeDossiers["1"].dossierDS.dataJson.annotations = [
+      {
+        id: faker.datatype.uuid(),
+        date: "2021-02-01",
+        label: instructionTimeMappingConfig.DateRequest1,
+      },
+    ] as any;
+
+    expect(
+      await service.instructionTimeCalculation(fakeDossiers.map((d) => d.id)),
+    ).toEqual({
+      "1": {
+        remainingTime: null,
+        delayStatus: null,
+      },
+      "2": {
+        remainingTime: null,
+        delayStatus: EInstructionTimeState.FIRST_REQUEST,
+      },
+      "3": {
+        remainingTime: null,
+        delayStatus: null,
+      },
     });
   });
 });
