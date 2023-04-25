@@ -9,7 +9,8 @@ const axiosInstructionTimes = axios.create({
 
 export async function fetchInstructionTimeByDossiers (ids: number[]) :Promise<TypeInstructionTimes> {
   try {
-    const instructionTimes:TypeInstructionTimes = await axiosInstructionTimes.get(`/dossiers/times?ids=${ids}`)
+    const response = await axiosInstructionTimes.get(`/dossiers/times?ids=${ids}`)
+    const instructionTimes:TypeInstructionTimes = response.data
     return instructionTimes
   } catch (error) {
     console.log(error)
