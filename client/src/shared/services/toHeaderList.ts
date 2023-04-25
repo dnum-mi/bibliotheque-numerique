@@ -78,7 +78,7 @@ export function toRowData (dataJson: object, mappingCols: Partial<IDemarcheMappi
     const typeData = col.typeData && getKeyToTypeData(col.typeData)
     const datas = typeData ? dataJson[typeData] : dataJson
 
-    const values = col.typeData ? dictCellByTypeData[col.typeData](col, datas) : [datas[col.labelSource[0]]] || ' '
+    const values = col.typeData && dictCellByTypeData[col.typeData] ? dictCellByTypeData[col.typeData](col, datas) : [datas[col.labelSource[0]]] || ' '
     const valueDatas = values.map(value => getValueBytypeValue(value, col)) || [values]
     acc = getFctByTypeTable[typeTable.DEFAULT](acc, col.id, valueDatas)
     return acc
