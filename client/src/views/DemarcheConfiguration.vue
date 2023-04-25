@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import type { IDemarcheMappingColumn } from '@/shared/interfaces'
-import { ChampValueTypes, ChampValueTypesKeys, TypeDeChampDS } from '@/shared/types'
+import { ChampType, ChampValueBaseTypes, ChampValueTypes, ChampValueTypesKeys, TypeDeChampDS } from '@/shared/types'
 import { enumToDsfrSelectOptions } from '@/utils/enumToDsfrSelectOptions'
 
 const props = withDefaults(defineProps<{
@@ -10,6 +10,7 @@ const props = withDefaults(defineProps<{
   datas: () => ([]),
 })
 const listType = enumToDsfrSelectOptions(ChampValueTypes)
+const listTypeInstructionTime = enumToDsfrSelectOptions(ChampValueBaseTypes)
 const demarcheMappingColumns = computed<IDemarcheMappingColumn[]>(() => props.datas.map(data => {
   data.typeValue = data.typeValue || ChampValueTypesKeys.TEXT
   return data
@@ -73,7 +74,7 @@ const demarcheMappingColumns = computed<IDemarcheMappingColumn[]>(() => props.da
             :id="`labelSource-${mappingColumn.id}`"
             v-model="mappingColumn.labelSource"
             :model-value="mappingColumn.labelSource.slice(-1).toString()"
-            is-textarea="true"
+            :is-textarea="true"
             disabled="disabled"
           />
         </div>
@@ -81,7 +82,7 @@ const demarcheMappingColumns = computed<IDemarcheMappingColumn[]>(() => props.da
           <DsfrInput
             :id="`labelBN-${mappingColumn.id}`"
             v-model="mappingColumn.labelBN"
-            is-textarea="true"
+            :is-textarea="true"
             :disabled="!mappingColumn.display"
           />
         </div>
@@ -90,7 +91,7 @@ const demarcheMappingColumns = computed<IDemarcheMappingColumn[]>(() => props.da
             :id="`typeValue-${mappingColumn.id}`"
             v-model="mappingColumn.typeValue"
             label=""
-            :options="listType"
+            :options="mappingColumn.typeData === ChampType.INSTRUCTION_TIME ? listTypeInstructionTime : listType"
             :disabled="!mappingColumn.display"
           />
         </div>

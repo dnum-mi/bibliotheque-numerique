@@ -5,6 +5,7 @@ import { ChampType, TypeDeChampDS } from '@/shared/types'
 import type { IDemarcheMappingColumn } from '../interfaces'
 
 const DEMARCHE_BASE_URL = `${baseApiUrl}/demarches`
+const IDENTIFICATIONS_INSTRUCTION_TIME = ['FE']
 
 export async function updateConfigurations (idDemarche: string, demarcheMappingColumn: IDemarcheMappingColumn[]) {
   const chooseColumn = demarcheMappingColumn.filter(item => item.display)
@@ -31,6 +32,13 @@ export async function getConfigurations (idDemarche: string, champDescriptors: a
   if (Array.isArray(mappingColumns)) configurations = mappingColumns
 
   const defaultConfigurations = (toDemarcheConfigurations(champDescriptors, ChampType.CHAMP)).concat(toDemarcheConfigurations(annotationDescriptors, ChampType.ANNOTATION))
+
+  const identification = response.data.identification
+  const isInstructionTime = hasInstructionTime(identification)
+  if (isInstructionTime) {
+    defaultConfigurations.push(...instructionTimeConfigurations(idDemarche))
+  }
+
   if (configurations.length !== 0) {
     configurations.map((objet) => {
       return replaceInArray(objet, defaultConfigurations)
@@ -38,6 +46,10 @@ export async function getConfigurations (idDemarche: string, champDescriptors: a
   }
   configurations = defaultConfigurations
   return configurations
+}
+
+function hasInstructionTime (identification: string) {
+  return IDENTIFICATIONS_INSTRUCTION_TIME.includes(identification)
 }
 
 function replaceInArray (objet: IDemarcheMappingColumn, listObjet: any[]) {
@@ -60,13 +72,24 @@ function toDemarcheConfigurations (datas: any[], typeData: string, parentLabel: 
 
 function hashConfiguration (objet: any, typeData: string, parentLabel: string | null) {
   const labelSource = parentLabel ? [parentLabel, objet.label] : [objet.label]
+  return demarcheMappingColumnBase(objet.id, labelSource, objet.type, typeData, objet.display)
+}
+
+function instructionTimeConfigurations (idDemarche: string) {
+  return [
+    demarcheMappingColumnBase(btoa(`TEMPSRESTANT${idDemarche}`), ['Temps restant'], '', ChampType.INSTRUCTION_TIME, false),
+    demarcheMappingColumnBase(btoa(`ETATDELAI${idDemarche}`), ['État délai'], '', ChampType.INSTRUCTION_TIME, false),
+  ]
+}
+
+function demarcheMappingColumnBase (id: string, labelSource: any[], typeName: string, typeData: string, display: boolean) {
   return {
-    id: objet.id,
+    id,
     labelSource,
     labelBN: '',
-    typeName: objet.type,
+    typeName,
     typeData,
     typeValue: '',
-    display: objet.display,
+    display,
   }
 }
