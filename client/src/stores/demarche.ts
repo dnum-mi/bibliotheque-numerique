@@ -195,6 +195,7 @@ export const useDemarcheStore = defineStore('demarche', () => {
   }
 
   const translateEtatDelai = {
+    [EInstructionTimeState.FIRST_REQUEST]: '1ere Demande',
     [EInstructionTimeState.IN_PROGRESS]: 'En cours',
     [EInstructionTimeState.OUT_OF_DATE]: 'Hors délai',
   }
