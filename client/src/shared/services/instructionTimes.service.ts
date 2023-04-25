@@ -3,7 +3,7 @@ import { baseApiUrl, headers } from '@/utils/api-client'
 import type { TypeInstructionTimes } from '../types/instructionTime.type'
 
 const axiosInstructionTimes = axios.create({
-  baseURL: `${baseApiUrl}`,
+  baseURL: `${baseApiUrl}/instruction-times"`,
   headers,
 })
 

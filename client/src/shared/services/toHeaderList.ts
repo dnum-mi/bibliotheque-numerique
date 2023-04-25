@@ -59,9 +59,9 @@ const getFctByTypeTable = {
   [typeTable.MULTILINE]: fctMultiRowData,
 }
 
-const getValuesFromChamps = (col, datas) => col.labelSource?.reduce((acc1, cur, index, source) => {
-  const values = acc1?.filter(data => data.label === cur)
-  return index < (source.length - 1) ? values?.map(val => val.champs).flat() || values : values
+const getValuesFromChamps = (col, datas) => col.labelSource?.reduce((datasFound, labelCur, index, sources) => {
+  const values = datasFound?.filter(data => data.label === labelCur)
+  return index < (sources.length - 1) ? values?.map(val => val.champs).flat() || values : values
 }, datas)
 
 const dictCellByTypeData = {

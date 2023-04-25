@@ -59,7 +59,6 @@ export const valueBytypeValue = {
 export const keytoTypeData = {
   [ChampType.CHAMP]: 'champs',
   [ChampType.ANNOTATION]: 'annotations',
-
 }
 
 export enum typeTable {

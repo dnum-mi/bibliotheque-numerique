@@ -215,7 +215,6 @@ export const useDemarcheStore = defineStore('demarche', () => {
           [keyInstructionTime.ETAT_DELAI]: etatDelai,
         }
       }
-      //   return
       instructionTimes.value = instructionTimesTranslated
     }
   }
