@@ -9,6 +9,7 @@ import {
 } from "typeorm";
 import { DossierDS, Demarche } from "../entities";
 import { ApplicationEntity } from "./application_entity";
+import { DossierState } from "@dnum-mi/ds-api-client/dist/@types/types";
 
 export type TUpsertDossier = Partial<
   Omit<Dossier, "dossierDS"> & { dossierDS: number }
@@ -28,7 +29,7 @@ export class Dossier extends ApplicationEntity {
   demarche: Demarche;
 
   @Column({ type: "varchar" })
-  state: string;
+  state: DossierState;
 
   static findWithFilter(filter: object) {
     return this.find({

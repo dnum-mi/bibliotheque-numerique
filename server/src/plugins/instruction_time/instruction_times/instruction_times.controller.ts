@@ -1,4 +1,11 @@
-import { Controller, Get, Param, Delete } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Param,
+  Delete,
+  Query,
+  ParseArrayPipe,
+} from "@nestjs/common";
 import { InstructionTimesService } from "./instruction_times.service";
 
 @Controller("instruction-times")
@@ -20,5 +27,16 @@ export class InstructionTimesController {
   @Get("/dossier/:id")
   findOneByDossierId(@Param("id") id: string) {
     return this.instructionTimesService.findOneByDossier(+id);
+  }
+
+  @Get("/dossiers/times")
+  getTimesByDossiers(
+    @Query(
+      "ids",
+      new ParseArrayPipe({ separator: ",", optional: true, items: Number }),
+    )
+    idDossiers: number[],
+  ) {
+    return this.instructionTimesService.instructionTimeCalculation(idDossiers);
   }
 }
