@@ -95,6 +95,11 @@ describe("InstructionTimesService", () => {
         datetime: "2021-07-01T00:00:00.000Z",
         label: instructionTimeMappingConfig.DurationExtension,
       },
+      {
+        id: faker.datatype.uuid(),
+        date: "2021-03-15",
+        label: instructionTimeMappingConfig.DateIntentOpposition,
+      },
     ] as any;
 
     expect(
@@ -106,6 +111,7 @@ describe("InstructionTimesService", () => {
       DateRequest1: new Date("2021-01-01T00:00:00.000Z"),
       DateRequest2: new Date("2021-03-15T00:00:00.000Z"),
       DurationExtension: new Date("2021-07-01T00:00:00.000Z"),
+      DateIntentOpposition: new Date("2021-03-15T00:00:00.000Z"),
     });
   });
 
