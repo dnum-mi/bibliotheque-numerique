@@ -6,5 +6,8 @@
   "devDependencies": {},
   "scripts": {},
   "author": "",
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "volta": {
+    "node": "18.16.0"
+  }
 }

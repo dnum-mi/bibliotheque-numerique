@@ -149,5 +149,8 @@
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     }
+  },
+  "volta": {
+    "node": "18.16.0"
   }
 }
