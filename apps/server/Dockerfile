@@ -6,9 +6,10 @@ RUN chown node:node /app
 USER node
 
 COPY --chown=node:node package*.json ./
-RUN npm i
+RUN npm i -g pnpm
+RUN pnpm i
 
-CMD [ "npm", "start" ]
+CMD [ "pnpm", "start" ]
 
 # Build
 ###
@@ -16,8 +17,8 @@ FROM development as build
 
 COPY --chown=node:node . ./
 
-RUN npm ci
-RUN npm run build
+RUN pnpm i --frozen-lockfile
+RUN pnpm run build:server
 
 # Production
 ###
@@ -26,7 +27,7 @@ FROM bitnami/node as production
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci --production
+RUN pnpm i --frozen-lockfile --production
 COPY --from=build /app/dist /app/dist
 
-CMD ["npm","run","start:prod"]
+CMD ["pnpm","run","start:prod"]

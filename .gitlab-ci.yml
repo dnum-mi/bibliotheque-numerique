@@ -51,8 +51,9 @@ build_app_front:
     paths:
       - client/dist-*
   script:
-    - 'npm ci'
-    - 'npm run build:client'
+    - 'npm i -g pnpm'
+    - 'pnpm i --frozen-lockfile'
+    - 'pnpm run build:client'
 
 build_app_back:
   stage: build-app
@@ -62,8 +63,9 @@ build_app_back:
       - apps/server/package.json
       - apps/server/dist
   script:
-    - 'npm ci'
-    - 'npm run build:server'
+    - 'npm i -g pnpm'
+    - 'pnpm i --frozen-lockfile'
+    - 'pnpm run build:server'
 
 test_docker_front:
   variables:

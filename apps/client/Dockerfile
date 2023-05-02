@@ -8,9 +8,10 @@ RUN chown node:node /app
 USER node
 
 COPY --chown=node:node package*.json ./
-RUN npm i
+RUN npm i -g pnpm
+RUN pnpm i
 
-CMD [ "npm", "run", "dev" ]
+CMD [ "pnpm", "run", "dev" ]
 
 # Build
 ###
@@ -18,8 +19,8 @@ FROM dev as build
 
 COPY --chown=node:node . ./
 
-RUN npm ci
-RUN npm run build
+RUN pnpm i --frozen-lockfile
+RUN pnpm run build
 
 # PROD
 ###

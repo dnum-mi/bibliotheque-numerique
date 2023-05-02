@@ -15,11 +15,13 @@ FROM node:lts AS builder
 
 WORKDIR /app
 
+RUN npm i -g pnpm
+
 # First install the dependencies (as they change less often)
 COPY .gitignore .gitignore
 COPY --from=base /app/out/json/ .
 COPY --from=base /app/out/package-lock.json ./package-lock.json
-RUN npm ci
+RUN pnpm install --frozen-lockfile
 COPY --from=base /app/out/full/ .
 
-CMD ["npm", "run", "dev:server-in-docker"]
+CMD ["pnpm", "run", "dev:server-in-docker"]
