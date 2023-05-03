@@ -1,7 +1,7 @@
 {
   "name": "biblio-num",
   "version": "1.0.1",
-  "description": "Projet biblio-num",
+  "description": "Projet Bibliothèque numérique",
   "directories": {
     "doc": "docs"
   },
@@ -14,6 +14,8 @@
     "dev": "turbo dev",
     "dev:server": "turbo dev --filter=server",
     "dev:server-in-docker": "turbo dev:in-docker --filter=server",
+    "dev:client": "turbo dev --filter=client",
+    "dev:client-in-docker": "turbo dev:in-docker --filter=client",
     "test": "run-s docker:db:up test:only docker:db:down",
     "test:only": "turbo test",
     "prepare": "husky install",
@@ -33,14 +35,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/LAB-MI/biblio-num.git"
+    "url": "git+https://github.com/dnum-mi/bibliotheque_numerique.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/LAB-MI/biblio-num/issues"
+    "url": "https://github.com/dnum-mi/bibliotheque_numerique/issues"
   },
-  "homepage": "https://github.com/LAB-MI/biblio-num#readme",
+  "homepage": "https://github.com/dnum-mi/bibliotheque_numerique#readme",
   "devDependencies": {
     "husky": "8.0.2"
   },
