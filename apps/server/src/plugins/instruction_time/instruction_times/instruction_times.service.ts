@@ -19,6 +19,7 @@ type TIntructionTime = {
   [keyInstructionTime.DURATION_EXTENSION]?: Date | null;
   [keyInstructionTime.DATE_REQUEST2]?: Date | null;
   [keyInstructionTime.DATE_RECEIPT2]?: Date | null;
+  [keyInstructionTime.DATE_INTENT_OPPOSITION]?: Date | null;
 };
 
 @Injectable()
@@ -27,7 +28,20 @@ export class InstructionTimesService {
     InstructionTimesService.name,
   ) as unknown as LoggerService;
 
-  constructor(private configService: ConfigService) {}
+  nbJrsAfterInstruction: number;
+  nbJrsAfterExtension: number;
+  nbJrsAfterIntentOpposition: number;
+
+  constructor(private configService: ConfigService) {
+    const jrsInMillisecond = 1000 * 60 * 60 * 24;
+    this.nbJrsAfterInstruction =
+      this.configService.get("NB_JRS_AFTER_INSTRUCTION") * jrsInMillisecond;
+    this.nbJrsAfterExtension =
+      this.configService.get("NB_JRS_AFTER_EXTENSION") * jrsInMillisecond;
+    this.nbJrsAfterIntentOpposition =
+      this.configService.get("NB_JRS_AFTER_INTENT_OPPOSITION") *
+      jrsInMillisecond;
+  }
 
   findAll() {
     try {
@@ -65,7 +79,7 @@ export class InstructionTimesService {
     }
   }
 
-  getMappingInstructionTimeByDossier(dossier: Dossier): any {
+  getMappingInstructionTimeByDossier(dossier: Dossier): TIntructionTime {
     const instructionTimeMapping = this.configService.get<
       TInstructionTimeMappingConfig["instructionTimeMappingConfig"]
     >("instructionTimeMappingConfig");
@@ -229,5 +243,92 @@ export class InstructionTimesService {
       return this.checkAndGetLastDates(dateRecent, cur, `${messageError}:`);
     });
     return true;
+  }
+  
+  proccess(instructionTime: InstructionTime) {
+    ///Hors delai => Pas de calcul
+    if (instructionTime.state === EInstructionTimeState.OUT_OF_DATE)
+      return false;
+
+    const { dossier } = instructionTime;
+    const { state, datePassageEnInstruction } = dossier.dossierDS.dataJson;
+
+    if (
+      ![DossierState.EnConstruction, DossierState.EnInstruction].includes(state)
+    ) {
+      //TODO: faire quelque chose
+      instructionTime.state = undefined;
+      return await instructionTime.save();
+    }
+
+    const datesForInstructionTimes =
+      this.getMappingInstructionTimeByDossier(dossier);
+
+    //TODO: Coherence des dates à ajouter
+
+    //Check state to action
+    if (state === DossierState.EnConstruction) {
+      if (datesForInstructionTimes[keyInstructionTime.DATE_REQUEST1]) {
+        instructionTime.state = EInstructionTimeState.FIRST_REQUEST;
+      }
+      return await instructionTime.save();
+    }
+
+    const delay = {} as {
+      endAt: number;
+      startAt: number;
+      stopAt: number;
+      state: string;
+    };
+
+    if (datesForInstructionTimes.DateIntentOpposition) {
+      delay.endAt =
+        datesForInstructionTimes.DateIntentOpposition.getTime() +
+        this.nbJrsAfterIntentOpposition;
+      delay.startAt = datesForInstructionTimes.DateIntentOpposition.getTime();
+      delay.state = EInstructionTimeState.INTENT_OPPO;
+    }
+
+    //En intruction
+    const dateInstruction = new Date(datePassageEnInstruction);
+    delay.startAt = dateInstruction.getTime();
+    delay.endAt = dateInstruction.getTime() + this.nbJrsAfterInstruction;
+    delay.state = EInstructionTimeState.IN_PROGRESS;
+
+    //En prorogatoin
+    if (datesForInstructionTimes.BeginProrogationDate) {
+      const timeProrogation =
+        datesForInstructionTimes.BeginProrogationDate.getTime();
+      delay.endAt =
+        timeProrogation +
+        this.nbJrsAfterExtension +
+        (timeProrogation - delay.endAt);
+      delay.startAt = timeProrogation;
+      delay.state = EInstructionTimeState.IN_EXTENSION;
+    }
+
+    //2nd demande
+    if (datesForInstructionTimes.DateRequest2) {
+      delay.stopAt = datesForInstructionTimes.DateRequest2.getTime();
+      delay.state = EInstructionTimeState.SECOND_REQUEST;
+    }
+
+    //Receipt 2nd demand
+    if (datesForInstructionTimes.DateReceipt2) {
+      delay.endAt =
+        datesForInstructionTimes.DateReceipt2.getTime() -
+        (delay.stopAt - delay.endAt);
+    }
+
+    instructionTime.startAt = delay.startAt && new Date(delay.startAt);
+    instructionTime.endAt = delay.endAt && new Date(delay.endAt);
+    instructionTime.stopAt = delay.stopAt && new Date(delay.stopAt);
+    instructionTime.state =
+      delay.state === EInstructionTimeState.SECOND_REQUEST ||
+      Date.now() < delay.endAt
+        ? delay.state
+        : EInstructionTimeState.OUT_OF_DATE;
+
+    instructionTime.save();
   }
 }
