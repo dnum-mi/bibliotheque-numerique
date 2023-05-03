@@ -1,3 +1,5 @@
+import type { Component } from 'vue'
+
 export type TIconFunction = (data: any) => string;
 
 export type Action = {
@@ -14,8 +16,8 @@ export type TypeHeaderDataTable = {
   width?: number,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   parseFn?: (value: any) => string,
-  filter,
-  renderer,
+  filter: (value: any) => boolean,
+  renderer?: Component,
 }
 
 export enum AgGridTypeFilter {

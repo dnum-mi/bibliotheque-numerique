@@ -15,8 +15,8 @@
       :title="title"
       :headers="headersJson"
       :row-data="rowData"
-      :with-action="true"
-      :floating-filter="true"
+      with-action
+      floating-filter
       @get-elt="getDossiers"
     />
   </LayoutList>
