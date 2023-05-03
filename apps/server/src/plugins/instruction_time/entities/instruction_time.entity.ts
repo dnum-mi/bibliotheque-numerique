@@ -7,7 +7,7 @@ import {
 } from "typeorm";
 import { ApplicationEntity } from "../../../entities/application_entity";
 import { Dossier } from "../../../entities";
-import { EInstructionTimeState } from "../types/IntructionTime.type";
+import { EInstructionTimeStateKey } from "../types/IntructionTime.type";
 
 @Entity({ name: "instruction_times" })
 export class InstructionTime extends ApplicationEntity {
@@ -28,7 +28,7 @@ export class InstructionTime extends ApplicationEntity {
   endAt: Date;
 
   @Column()
-  state: EInstructionTimeState;
+  state: EInstructionTimeStateKey;
 
   static findByDossierId(id: number) {
     return this.findOne({

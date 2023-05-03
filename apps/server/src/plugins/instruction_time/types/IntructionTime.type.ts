@@ -6,3 +6,6 @@ export const EInstructionTimeState = {
   SECOND_REQUEST: "SECOND_REQUEST",
   INTENT_OPPO: "INTENT_OPPO",
 } as const;
+
+export type EInstructionTimeStateKey =
+  (typeof EInstructionTimeState)[keyof typeof EInstructionTimeState];

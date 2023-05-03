@@ -9,7 +9,10 @@ import {
 } from "../config/instructionTimeMapping.config";
 import { ConfigService } from "@nestjs/config";
 import { In } from "typeorm";
-import { EInstructionTimeState } from "../types/IntructionTime.type";
+import {
+  EInstructionTimeState,
+  EInstructionTimeStateKey,
+} from "../types/IntructionTime.type";
 import { DossierState } from "@dnum-mi/ds-api-client/dist/@types/types";
 
 type TIntructionTime = {
@@ -245,7 +248,7 @@ export class InstructionTimesService {
     return true;
   }
   
-  proccess(instructionTime: InstructionTime) {
+  async proccess(instructionTime: InstructionTime) {
     ///Hors delai => Pas de calcul
     if (instructionTime.state === EInstructionTimeState.OUT_OF_DATE)
       return false;
@@ -278,7 +281,7 @@ export class InstructionTimesService {
       endAt: number;
       startAt: number;
       stopAt: number;
-      state: string;
+      state: EInstructionTimeStateKey;
     };
 
     if (datesForInstructionTimes.DateIntentOpposition) {
