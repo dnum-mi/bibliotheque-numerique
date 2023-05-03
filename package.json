@@ -13,6 +13,7 @@
     "build": "turbo build",
     "dev": "turbo dev",
     "dev:server": "turbo dev --filter=server",
+    "start:server": "turbo start --filter=server",
     "dev:server-in-docker": "turbo dev:in-docker --filter=server",
     "dev:client": "turbo dev --filter=client",
     "dev:client-in-docker": "turbo dev:in-docker --filter=client",
