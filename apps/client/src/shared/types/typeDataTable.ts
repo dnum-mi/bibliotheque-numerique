@@ -1,0 +1,28 @@
+export type TIconFunction = (data: any) => string;
+
+export type Action = {
+  icon: string | TIconFunction;
+  condition?: (row: any) => boolean;
+}
+
+export type TypeHeaderDataTable = {
+  text?: string,
+  action?: Action;
+  value?: string,
+  sortable?: boolean,
+  type?: string,
+  width?: number,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  parseFn?: (value: any) => string,
+  filter,
+  renderer,
+}
+
+export enum AgGridTypeFilter {
+  DATE='date',
+  TEXT='text',
+  NUMBER='number',
+  MULTI_VALUE='multi-value',
+  MULTI_VALUE_NUMBER='multi-value-number',
+  FILE='file',
+}

@@ -1,0 +1,40 @@
+import * as request from "supertest";
+import { Test } from "@nestjs/testing";
+import { UsersModule } from "./users.module";
+import { UsersService } from "./users.service";
+import { HttpStatus, INestApplication } from "@nestjs/common";
+import { UsersController } from "./users.controller";
+
+describe.skip("Users", () => {
+  let app: INestApplication;
+  let controller: UsersController;
+  const usersService = { findAll: () => ["test"] };
+
+  beforeAll(async () => {
+    const module = await Test.createTestingModule({
+      imports: [UsersModule],
+    })
+      .overrideProvider(UsersService)
+      .useValue(usersService)
+      .compile();
+
+    controller = module.get<UsersController>(UsersController);
+    app = module.createNestApplication();
+    await app.init();
+  });
+
+  it(`/GET users`, () => {
+    return request(app.getHttpServer())
+      .get("/users")
+      .expect(HttpStatus.FORBIDDEN);
+  });
+
+  it(`/GET users with admin rights`, async () => {
+    // TODO: Fix this test
+    // expect(await controller.listUsers(fakeReq)).toBe(fakeDemarches);
+  });
+
+  afterAll(async () => {
+    await app?.close();
+  });
+});

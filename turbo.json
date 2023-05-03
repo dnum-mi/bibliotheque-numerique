@@ -1,0 +1,52 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "pipeline": {
+    "build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "dist/**"
+      ]
+    },
+    "dev": {
+      "cache": false,
+      "dependsOn": [
+        "^@biblio-num/utils#build"
+      ]
+    },
+    "dev:in-docker": {
+      "cache": false
+    },
+    "dev:server-in-docker": {
+      "cache": false
+    },
+    "lint": {},
+    "preview": {
+      "dependsOn": [
+        "^preview"
+      ],
+      "outputs": [
+        "dist/**"
+      ]
+    },
+    "start": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "dist/**"
+      ]
+    },
+    "test": {
+      "dependsOn": [
+        "@biblio-num/utils#build"
+      ],
+      "inputs": [
+        "src/**/*.tsx",
+        "src/**/*.ts"
+      ],
+      "outputs": []
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "types",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "devDependencies": {},
+  "scripts": {},
+  "author": "",
+  "license": "UNLICENSED",
+  "volta": {
+    "node": "18.16.0"
+  }
+}

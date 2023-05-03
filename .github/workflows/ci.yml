@@ -25,14 +25,13 @@ jobs:
           node-version: "18"
       - name: run test unit FRONT
         run: | 
-            cd client
-            npm ci
-            npm run lint
-            npm run test:ct:ci
+            npm i -g pnpm
+            pnpm i --frozen-lockfile
+            pnpm run lint:client
+            pnpm run test:client
       - name: run build
         run: |
-            cd client
-            npm run build
+            pnpm run build:client
 
   server: 
     name: server - Run unit tests 
@@ -48,13 +47,12 @@ jobs:
           node-version: "18"
       - name: run test unit BACK-END
         run: | 
-            cd server
-            npm ci
-            npm run lint
-            npm run docker:db:up
-            npm run test
-            npm run docker:db:down
+            npm i -g pnpm
+            pnpm i --frozen-lockfile
+            pnpm run lint:server
+            pnpm run docker:db:up
+            pnpm run test:server
+            pnpm run docker:db:down
       - name: run build
         run: |
-            cd server
-            npm run build
+            pnpm run build:server
