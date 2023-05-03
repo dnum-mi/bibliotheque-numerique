@@ -3,6 +3,7 @@
     name: $BUILD_IMAGE_NAME
   cache:
     paths:
+      - node_modules
       - $WORKING_DIR/node_modules
   script:
     - cd $WORKING_DIR

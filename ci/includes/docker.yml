@@ -23,10 +23,10 @@
     # Build image
     - docker build -t $IMAGE_NAME:$TAG .
     - ./trivy image --security-checks vuln,config --clear-cache
-    - ./trivy image --security-checks vuln,config --exit-code 0 --format template --template "@contrib/html.tpl" -o trivy-${WORKING_DIR}-image.html $IMAGE
-    - ./trivy filesystem --security-checks config,vuln --exit-code 0 --format template --template "@contrib/html.tpl" -o trivy-${WORKING_DIR}-fs.html ./$WORKING_DIR
-    - ./trivy filesystem --severity CRITICAL --security-checks config,vuln --exit-code 1 --format template --template "@contrib/html.tpl" -o trivy-${WORKING_DIR}-fs-critical.html ./$WORKING_DIR
-    - ./trivy image --security-checks vuln,config --severity CRITICAL --exit-code 1 --format template --template "@contrib/html.tpl" -o trivy-${WORKING_DIR}-image-critical.html $IMAGE
+    - ./trivy image --security-checks vuln,config --exit-code 0 --format template --template "@contrib/html.tpl" -o trivy-${IMAGE_NAME}-image.html $IMAGE
+    - ./trivy filesystem --security-checks config,vuln --exit-code 0 --format template --template "@contrib/html.tpl" -o trivy-${IMAGE_NAME}-fs.html ./$WORKING_DIR
+    - ./trivy filesystem --severity CRITICAL --security-checks config,vuln --exit-code 1 --format template --template "@contrib/html.tpl" -o trivy-${IMAGE_NAME}-fs-critical.html ./$WORKING_DIR
+    - ./trivy image --security-checks vuln,config --severity CRITICAL --exit-code 1 --format template --template "@contrib/html.tpl" -o trivy-${IMAGE_NAME}-image-critical.html $IMAGE
     # Combine report
     # - apk update && apk add jq
     # - jq -s 'add' gl-codeclimate-image.json gl-codeclimate-fs.json > gl-codeclimate.json
@@ -62,7 +62,6 @@
     BUILDAH_FORMAT: "docker"
     BUILDAH_ISOLATION: "rootless"
   script:
-    - "cd $WORKING_DIR"
     - buildah login --username "${QUAY_ROBOT_USERNAME}" --password "${QUAY_ROBOT_TOKEN}" "${REGISTRY_URL}"
     - buildah bud -t ${IMAGE_NAME}:${TAG} .
     - buildah push ${IMAGE_NAME}:${TAG} $REGISTRY_URL/$IMAGE_NAME:$TAG
@@ -79,15 +78,14 @@
       BUILDAH_FORMAT: "docker"
       BUILDAH_ISOLATION: "rootless"
   script:
-    - "cd $WORKING_DIR"
     - buildah login --username "${QUAY_ROBOT_USERNAME}" --password "${QUAY_ROBOT_TOKEN}" "${REGISTRY_URL}"
     - buildah bud -t ${IMAGE_NAME}:${TAG} .
     - buildah push --format docker ${IMAGE_NAME}:${TAG} docker-archive:./test-buildah.tar
     - ./trivy image --security-checks vuln,config --clear-cache 
-    - ./trivy image --security-checks vuln,config --exit-code 0 --format template --template "@contrib/html.tpl" -o trivy-${WORKING_DIR}-image.html --input ./test-buildah.tar
-    - ./trivy filesystem --security-checks config,vuln --exit-code 0 --format template --template "@contrib/html.tpl" -o trivy-${WORKING_DIR}-fs.html ./$WORKING_DIR
-    - ./trivy filesystem --severity CRITICAL --security-checks config,vuln --exit-code 1 --format template --template "@contrib/html.tpl" -o trivy-${WORKING_DIR}-fs-critical.html ./$WORKING_DIR
-    - ./trivy image --security-checks vuln,config --severity CRITICAL --exit-code 1 --format template --template "@contrib/html.tpl" -o trivy-${WORKING_DIR}-image-critical.html --input ./test-buildah.tar
+    - ./trivy image --security-checks vuln,config --exit-code 0 --format template --template "@contrib/html.tpl" -o trivy-${IMAGE_NAME}-image.html --input ./test-buildah.tar
+    - ./trivy filesystem --security-checks config,vuln --exit-code 0 --format template --template "@contrib/html.tpl" -o trivy-${IMAGE_NAME}-fs.html ./$WORKING_DIR
+    - ./trivy filesystem --severity CRITICAL --security-checks config,vuln --exit-code 1 --format template --template "@contrib/html.tpl" -o trivy-${IMAGE_NAME}-fs-critical.html ./$WORKING_DIR
+    - ./trivy image --security-checks vuln,config --severity CRITICAL --exit-code 1 --format template --template "@contrib/html.tpl" -o trivy-${IMAGE_NAME}-image-critical.html --input ./test-buildah.tar
 
 .kaniko:build:
   image:
@@ -96,4 +94,4 @@
   script:
     - mkdir -p /kaniko/.docker
     - echo "{\"auths\":{\"$REGISTRY_URL\":{\"username\":\"${QUAY_ROBOT_USERNAME}\",\"password\":\"$QUAY_ROBOT_TOKEN\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --build-arg http_proxy=$http_proxy --build-arg https_proxy=$https_proxy --build-arg no_proxy=$no_proxy --context="$CI_PROJECT_DIR/$WORKING_DIR" --dockerfile="$CI_PROJECT_DIR/$WORKING_DIR/$DOCKERFILE" --destination $REGISTRY_URL/$IMAGE_NAME:$TAG
+    - /kaniko/executor --build-arg http_proxy=$http_proxy --build-arg https_proxy=$https_proxy --build-arg no_proxy=$no_proxy --context="$CI_PROJECT_DIR" --dockerfile="$CI_PROJECT_DIR/$WORKING_DIR/$DOCKERFILE" --destination $REGISTRY_URL/$IMAGE_NAME:$TAG

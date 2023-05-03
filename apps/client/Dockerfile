@@ -1,32 +1,35 @@
-# Developement
-###
-FROM node:lts as dev
+FROM node:lts as base
 
 WORKDIR /app
+
+RUN npm i -g turbo pnpm
 
 RUN chown node:node /app
 USER node
 
-COPY --chown=node:node package*.json ./
+COPY . .
+RUN turbo prune --scope=@biblio-num/client --docker
+
+
+FROM node:lts AS builder
+
+WORKDIR /app
+
 RUN npm i -g pnpm
-RUN pnpm i
 
-CMD [ "pnpm", "run", "dev" ]
-
-# Build
-###
-FROM dev as build
-
-COPY --chown=node:node . ./
-
-RUN pnpm i --frozen-lockfile
-RUN pnpm run build
+# First install the dependencies (as they change less often)
+COPY .gitignore .gitignore
+COPY --from=base /app/out/json/ .
+COPY --from=base /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+RUN pnpm install --frozen-lockfile
+COPY --from=base /app/out/full/ .
+RUN npm run build:client
 
 # PROD
 ###
 # FROM nginx:stable as prod
 FROM bitnami/nginx:latest as production
 
-COPY --from=build /app/dist /app/
+COPY --from=builder /app/apps/client/dist /app
 
 USER 1001
