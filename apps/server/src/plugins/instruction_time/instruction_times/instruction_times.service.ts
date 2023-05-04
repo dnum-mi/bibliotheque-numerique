@@ -268,6 +268,7 @@ export class InstructionTimesService {
       this.getMappingInstructionTimeByDossier(dossier);
 
     //TODO: Coherence des dates à ajouter
+    this.checkValidity(dossier.dossierDS.dataJson, datesForInstructionTimes);
 
     //Check state to action
     if (state === DossierState.EnConstruction) {
