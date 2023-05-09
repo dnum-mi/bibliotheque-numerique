@@ -2,12 +2,15 @@ import { Injectable, Logger } from "@nestjs/common";
 import { Demarche, Dossier, DossierDS } from "../entities";
 import { LoggerService } from "../logger/logger.service";
 import { EntityManager, InsertResult } from "typeorm";
+import { InstructionTimesService } from "../plugins/instruction_time/instruction_times/instruction_times.service";
 
 @Injectable()
 export class DossiersService {
   private readonly logger = new Logger(
     DossiersService.name,
   ) as unknown as LoggerService;
+
+  constructor(private instructionTimeService: InstructionTimesService) {}
 
   async upsertDossier(
     dossierDS: DossierDS,
@@ -23,7 +26,25 @@ export class DossiersService {
       demarche: demarcheEntity,
     };
     try {
-      return await Dossier.upsertDossier(toUpsert, transactionalEntityManager);
+      const result = await Dossier.upsertDossier(
+        toUpsert,
+        transactionalEntityManager,
+      );
+      this.logger.debug({
+        short_message: "debug upsert Dossier",
+        full_message: "debug upsert Dossier",
+        datas: result,
+      });
+      if (result) {
+        await Promise.all(
+          result.identifiers.map((identitier) => {
+            return this.instructionTimeService.proccessByDossierId(
+              identitier.id,
+            );
+          }),
+        );
+      }
+      return result;
     } catch (error) {
       this.logger.error({
         short_message: `Erreur pendant la mise à jour des dossiers numéros: ${dossierDS.id.toString()}`,
