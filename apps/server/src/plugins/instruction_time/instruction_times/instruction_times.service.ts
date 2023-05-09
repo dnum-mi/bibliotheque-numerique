@@ -248,7 +248,25 @@ export class InstructionTimesService {
     });
     return true;
   }
-  
+
+  async proccessByDossierId(id: number) {
+    const dossier = await Dossier.findOneBy({ id });
+    if (!dossier) {
+      // TODO: à revoir
+      return false;
+    }
+
+    let instructionTime = await InstructionTime.findByDossierId(id);
+
+    if (!instructionTime) {
+      instructionTime = new InstructionTime();
+    }
+
+    instructionTime.dossier = dossier;
+    await this.proccess(instructionTime);
+    return true;
+  }
+
   async proccess(instructionTime: InstructionTime) {
     ///Hors delai => Pas de calcul
     if (instructionTime.state === EInstructionTimeState.OUT_OF_DATE)
@@ -336,6 +354,6 @@ export class InstructionTimesService {
         ? delay.state
         : EInstructionTimeState.OUT_OF_DATE;
 
-    instructionTime.save();
+    return await instructionTime.save();
   }
 }
