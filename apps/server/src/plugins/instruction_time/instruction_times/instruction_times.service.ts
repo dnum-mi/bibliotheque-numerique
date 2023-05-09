@@ -1,5 +1,9 @@
 import { Injectable, Logger } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { Dossier as TDossier } from "@dnum-mi/ds-api-client/dist/@types/types";
+import { DossierState } from "@dnum-mi/ds-api-client/dist/@types/types";
+import { In } from "typeorm";
+
 import { InstructionTime } from "../entities";
 import { LoggerService } from "../../../logger/logger.service";
 import { Dossier } from "../../../entities";
@@ -7,13 +11,10 @@ import {
   TInstructionTimeMappingConfig,
   keyInstructionTime,
 } from "../config/instructionTimeMapping.config";
-import { ConfigService } from "@nestjs/config";
-import { In } from "typeorm";
 import {
   EInstructionTimeState,
   EInstructionTimeStateKey,
 } from "../types/IntructionTime.type";
-import { DossierState } from "@dnum-mi/ds-api-client/dist/@types/types";
 
 type TIntructionTime = {
   [keyInstructionTime.DATE_REQUEST1]?: Date | null;
@@ -283,6 +284,7 @@ export class InstructionTimesService {
       startAt: number;
       stopAt: number;
       state: EInstructionTimeStateKey;
+      isStop: boolean;
     };
 
     if (datesForInstructionTimes.DateIntentOpposition) {
@@ -322,6 +324,7 @@ export class InstructionTimesService {
       delay.endAt =
         datesForInstructionTimes.DateReceipt2.getTime() -
         (delay.stopAt - delay.endAt);
+      delay.state = EInstructionTimeState.SECOND_RECEIPT;
     }
 
     instructionTime.startAt = delay.startAt && new Date(delay.startAt);
