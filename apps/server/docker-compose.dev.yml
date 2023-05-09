@@ -3,9 +3,9 @@ services:
     profiles:
       - dev
     build:
-      target: development
+      target: builder
       context: ../../
-      dockerfile: Dockerfile.dev
+      dockerfile: ./apps/server/Dockerfile
     image: biblio-num/server:dev
     container_name: biblio-num_server
     depends_on:
@@ -20,7 +20,7 @@ services:
       - /app/node_modules
     networks:
       - biblio-num-network
-    command: npm run dev:server-in-docker
+    command: pnpm run dev:server-in-docker
     environment:
       POSTGRES_HOST: db
       POSTGRES_DB: biblio-num
@@ -71,7 +71,7 @@ services:
 
   pgadmin:
     profiles:
-      - dev
+      - pgadmin
     image: dpage/pgadmin4
     container_name: biblio-num_dbadmin
     depends_on:
