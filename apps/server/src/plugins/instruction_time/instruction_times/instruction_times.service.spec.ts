@@ -1,12 +1,17 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { InstructionTimesService } from "./instruction_times.service";
+import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule, ConfigService } from "@nestjs/config";
+import { DossierState } from "@dnum-mi/ds-api-client/dist/@types/types";
+import { Dossier as TDossier } from "@dnum-mi/ds-api-client/dist/@types/types";
+import { DataSource } from "typeorm";
+import { faker } from "@faker-js/faker/locale/fr";
+
+import { InstructionTimesService } from "./instruction_times.service";
 import configuration from "../../../config/configuration";
 import instructionTimeMappingConfig, {
   TInstructionTimeMappingConfig,
   keyInstructionTime,
 } from "../config/instructionTimeMapping.config";
-import { TypeOrmModule } from "@nestjs/typeorm";
 import {
   datasourceTest,
   dossier_ds_test,
@@ -14,15 +19,15 @@ import {
 } from "../../../entities/__tests__";
 import { InstructionTime } from "../entities";
 import { Demarche, DemarcheDS, Dossier, DossierDS } from "../../../entities";
-import { faker } from "@faker-js/faker/locale/fr";
 import { EInstructionTimeState } from "../types/IntructionTime.type";
-import { DossierState } from "@dnum-mi/ds-api-client/dist/@types/types";
-import { DataSource } from "typeorm";
+import { type } from "os";
 
 describe("InstructionTimesService", () => {
   let service: InstructionTimesService;
   let configService: ConfigService;
   let dataSource: DataSource;
+  let instructionTimeMappingConfigFound: TInstructionTimeMappingConfig["instructionTimeMappingConfig"];
+  const dataTestInstructionTime = [];
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -48,8 +53,15 @@ describe("InstructionTimesService", () => {
     service = module.get<InstructionTimesService>(InstructionTimesService);
     configService = module.get<ConfigService>(ConfigService);
     dataSource = module.get<DataSource>(DataSource);
+
+    instructionTimeMappingConfigFound = configService.get<
+      TInstructionTimeMappingConfig["instructionTimeMappingConfig"]
+    >("instructionTimeMappingConfig");
   });
 
+  afterEach(async () => {
+    await InstructionTime.delete({});
+  });
   afterAll(async () => {
     await dataSource.destroy();
   });
@@ -65,40 +77,36 @@ describe("InstructionTimesService", () => {
       .spyOn(Dossier, "findOne")
       .mockResolvedValueOnce(fakeDossier as Dossier);
 
-    const instructionTimeMappingConfig = configService.get<
-      TInstructionTimeMappingConfig["instructionTimeMappingConfig"]
-    >("instructionTimeMappingConfig");
-
     fakeDossier.dossierDS.dataJson.annotations = [
       {
         id: faker.datatype.uuid(),
         date: "2021-02-01",
-        label: instructionTimeMappingConfig.DateReceipt1,
+        label: instructionTimeMappingConfigFound.DateReceipt1,
       },
       {
         id: faker.datatype.uuid(),
         date: "2021-04-02",
-        label: instructionTimeMappingConfig.DateReceipt2,
+        label: instructionTimeMappingConfigFound.DateReceipt2,
       },
       {
         id: faker.datatype.uuid(),
         date: "2021-01-01",
-        label: instructionTimeMappingConfig.DateRequest1,
+        label: instructionTimeMappingConfigFound.DateRequest1,
       },
       {
         id: faker.datatype.uuid(),
         date: "2021-03-15",
-        label: instructionTimeMappingConfig.DateRequest2,
+        label: instructionTimeMappingConfigFound.DateRequest2,
       },
       {
         id: faker.datatype.uuid(),
         datetime: "2021-07-01T00:00:00.000Z",
-        label: instructionTimeMappingConfig.DurationExtension,
+        label: instructionTimeMappingConfigFound.DurationExtension,
       },
       {
         id: faker.datatype.uuid(),
         date: "2021-03-15",
-        label: instructionTimeMappingConfig.DateIntentOpposition,
+        label: instructionTimeMappingConfigFound.DateIntentOpposition,
       },
     ] as any;
 
@@ -244,6 +252,654 @@ describe("InstructionTimesService", () => {
       const result = () =>
         service.checkValidity(dossier.dataJson, instuctionTimes);
       expect(result).toThrow("Erreur dans les déclarations de dates");
+    },
+  );
+  const jrsInMillisecond = 24 * 60 * 60 * 1000;
+
+  function getDataTestInstructionTime(idx) {
+    const datas = {
+      //2
+      ["In closure"]: {
+        expected: {},
+        dossier: {
+          state: DossierState.Accepte,
+        },
+      },
+      //3
+      ["In building"]: {
+        expected: {},
+        dossier: {
+          state: DossierState.EnConstruction,
+        },
+      },
+      //4
+      ["In first demand"]: {
+        expected: {
+          state: EInstructionTimeState.FIRST_REQUEST,
+        },
+        dossier: {
+          state: DossierState.EnConstruction,
+          annotations: [
+            {
+              id: faker.datatype.uuid(),
+              date: "2023-01-01",
+              label: instructionTimeMappingConfigFound.DateRequest1,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateReceipt1,
+            },
+            {
+              id: faker.datatype.uuid(),
+              datetime: null,
+              label: instructionTimeMappingConfigFound.BeginProrogationDate,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateRequest2,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateReceipt2,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateIntentOpposition,
+            },
+          ],
+        },
+      },
+      //5
+      ["In first demand 2"]: {
+        expected: {
+          state: EInstructionTimeState.FIRST_REQUEST,
+        },
+        dossier: {
+          state: DossierState.EnConstruction,
+          annotations: [
+            {
+              id: faker.datatype.uuid(),
+              date: "2023-01-01",
+              label: instructionTimeMappingConfigFound.DateRequest1,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: "2023-01-05",
+              label: instructionTimeMappingConfigFound.DateReceipt1,
+            },
+            {
+              id: faker.datatype.uuid(),
+              datetime: null,
+              label: instructionTimeMappingConfigFound.BeginProrogationDate,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateRequest2,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateReceipt2,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateIntentOpposition,
+            },
+          ],
+        },
+      },
+      //6
+      ["In instruction"]: {
+        expected: {
+          state: EInstructionTimeState.IN_PROGRESS,
+          delay: 59,
+          now: "2023-01-06",
+          endAt: new Date(
+            new Date("2023-01-06").getTime() + 59 * jrsInMillisecond,
+          ),
+        },
+        dossier: {
+          state: DossierState.EnInstruction,
+          datePassageEnInstruction: "2023-01-05",
+          annotations: [
+            {
+              id: faker.datatype.uuid(),
+              date: "2023-01-01",
+              label: instructionTimeMappingConfigFound.DateRequest1,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: "2023-01-05",
+              label: instructionTimeMappingConfigFound.DateReceipt1,
+            },
+            {
+              id: faker.datatype.uuid(),
+              datetime: null,
+              label: instructionTimeMappingConfigFound.BeginProrogationDate,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateReceipt2,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateRequest2,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateIntentOpposition,
+            },
+          ],
+        },
+      },
+      //7
+      ["In instruction 2"]: {
+        expected: {
+          state: EInstructionTimeState.IN_PROGRESS,
+          delay: 60,
+          now: "2023-01-06",
+          endAt: new Date(
+            new Date("2023-01-06").getTime() + 60 * jrsInMillisecond,
+          ),
+        },
+        dossier: {
+          state: DossierState.EnInstruction,
+          datePassageEnInstruction: "2023-01-06",
+          annotations: [
+            {
+              id: faker.datatype.uuid(),
+              date: "2023-01-01",
+              label: instructionTimeMappingConfigFound.DateRequest1,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: "2023-01-05",
+              label: instructionTimeMappingConfigFound.DateReceipt1,
+            },
+            {
+              id: faker.datatype.uuid(),
+              datetime: null,
+              label: instructionTimeMappingConfigFound.BeginProrogationDate,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateRequest2,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateReceipt2,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateIntentOpposition,
+            },
+          ],
+        },
+      },
+      //8
+      ["In instruction, out of date"]: {
+        expected: {
+          state: EInstructionTimeState.OUT_OF_DATE,
+          delay: undefined,
+          now: "2023-03-09",
+        },
+        dossier: {
+          state: DossierState.EnInstruction,
+          datePassageEnInstruction: "2023-01-06",
+          annotations: [
+            {
+              id: faker.datatype.uuid(),
+              date: "2023-01-01",
+              label: instructionTimeMappingConfigFound.DateRequest1,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: "2023-01-05",
+              label: instructionTimeMappingConfigFound.DateReceipt1,
+            },
+            {
+              id: faker.datatype.uuid(),
+              datetime: null,
+              label: instructionTimeMappingConfigFound.BeginProrogationDate,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateReceipt2,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateRequest2,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateIntentOpposition,
+            },
+          ],
+        },
+      },
+      //9
+      ["In extention"]: {
+        expected: {
+          state: EInstructionTimeState.IN_EXTENSION,
+          delay: 166,
+          now: "2023-01-20",
+          endAt: new Date(
+            new Date("2023-01-20").getTime() + 166 * jrsInMillisecond,
+          ),
+        },
+        dossier: {
+          state: DossierState.EnInstruction,
+          datePassageEnInstruction: "2023-01-06",
+          annotations: [
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateRequest1,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateReceipt1,
+            },
+            {
+              id: faker.datatype.uuid(),
+              datetime: "2023-01-20",
+              label: instructionTimeMappingConfigFound.BeginProrogationDate,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateRequest2,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateReceipt2,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateIntentOpposition,
+            },
+          ],
+        },
+      },
+      //10
+      ["In extention, out of date"]: {
+        expected: {
+          state: EInstructionTimeState.OUT_OF_DATE,
+          delay: 166,
+          now: "2023-07-06",
+        },
+        dossier: {
+          state: DossierState.EnInstruction,
+          datePassageEnInstruction: "2023-01-06",
+          annotations: [
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateRequest1,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateReceipt1,
+            },
+            {
+              id: faker.datatype.uuid(),
+              datetime: "2023-01-20",
+              label: instructionTimeMappingConfigFound.BeginProrogationDate,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateRequest2,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateReceipt2,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateIntentOpposition,
+            },
+          ],
+        },
+      },
+      //11
+      ["In second demand"]: {
+        expected: {
+          state: EInstructionTimeState.SECOND_REQUEST,
+          delay: 164,
+          now: "2023-01-22",
+        },
+        dossier: {
+          state: DossierState.EnInstruction,
+          datePassageEnInstruction: "2023-01-06",
+          annotations: [
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateRequest1,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateReceipt1,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: "2023-01-20",
+              label: instructionTimeMappingConfigFound.BeginProrogationDate,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: "2023-01-22",
+              label: instructionTimeMappingConfigFound.DateRequest2,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateReceipt2,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateIntentOpposition,
+            },
+          ],
+        },
+      },
+      //12
+      ["In second demand 2"]: {
+        expected: {
+          state: EInstructionTimeState.SECOND_REQUEST,
+          delay: 164,
+          now: "2023-01-24",
+        },
+        dossier: {
+          state: DossierState.EnInstruction,
+          datePassageEnInstruction: "2023-01-06",
+          annotations: [
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateRequest1,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateReceipt1,
+            },
+            {
+              id: faker.datatype.uuid(),
+              datetime: "2023-01-20",
+              label: instructionTimeMappingConfigFound.BeginProrogationDate,
+            },
+            {
+              id: faker.datatype.uuid(),
+              datetime: "2023-01-22",
+              label: instructionTimeMappingConfigFound.DateRequest2,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateReceipt2,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateIntentOpposition,
+            },
+          ],
+        },
+      },
+      //13
+      ["In second reciept"]: {
+        expected: {
+          state: EInstructionTimeState.SECOND_RECEIPT,
+          delay: 164,
+          now: "2023-01-25",
+          endAt: new Date(
+            new Date("2023-01-25").getTime() + 164 * jrsInMillisecond,
+          ),
+        },
+        dossier: {
+          state: DossierState.EnInstruction,
+          datePassageEnInstruction: "2023-01-06",
+          annotations: [
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateRequest1,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateReceipt1,
+            },
+            {
+              id: faker.datatype.uuid(),
+              datetime: "2023-01-20",
+              label: instructionTimeMappingConfigFound.BeginProrogationDate,
+            },
+            {
+              id: faker.datatype.uuid(),
+              datetime: "2023-01-22",
+              label: instructionTimeMappingConfigFound.DateRequest2,
+            },
+            {
+              id: faker.datatype.uuid(),
+              datetime: "2023-01-25",
+              label: instructionTimeMappingConfigFound.DateReceipt2,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateIntentOpposition,
+            },
+          ],
+        },
+      },
+      //14
+      ["In second reciept 2"]: {
+        expected: {
+          state: EInstructionTimeState.SECOND_RECEIPT,
+          delay: 163,
+          now: "2023-01-26",
+          endAt: new Date(
+            new Date("2023-01-26").getTime() + 163 * jrsInMillisecond,
+          ),
+        },
+        dossier: {
+          state: DossierState.EnInstruction,
+          datePassageEnInstruction: "2023-01-06",
+          annotations: [
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateRequest1,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateReceipt1,
+            },
+            {
+              id: faker.datatype.uuid(),
+              datetime: "2023-01-20",
+              label: instructionTimeMappingConfigFound.BeginProrogationDate,
+            },
+            {
+              id: faker.datatype.uuid(),
+              datetime: "2023-01-22",
+              label: instructionTimeMappingConfigFound.DateRequest2,
+            },
+            {
+              id: faker.datatype.uuid(),
+              datetime: "2023-01-25",
+              label: instructionTimeMappingConfigFound.DateReceipt2,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateIntentOpposition,
+            },
+          ],
+        },
+      },
+      //15
+      ["In second reciept, out of date"]: {
+        expected: {
+          state: EInstructionTimeState.OUT_OF_DATE,
+          now: "2023-07-10",
+        },
+        dossier: {
+          state: DossierState.EnInstruction,
+          datePassageEnInstruction: "2023-01-06",
+          annotations: [
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateRequest1,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateReceipt1,
+            },
+            {
+              id: faker.datatype.uuid(),
+              datetime: "2023-01-20",
+              label: instructionTimeMappingConfigFound.BeginProrogationDate,
+            },
+            {
+              id: faker.datatype.uuid(),
+              datetime: "2023-01-22",
+              label: instructionTimeMappingConfigFound.DateRequest2,
+            },
+            {
+              id: faker.datatype.uuid(),
+              datetime: "2023-01-25",
+              label: instructionTimeMappingConfigFound.DateReceipt2,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateIntentOpposition,
+            },
+          ],
+        },
+      },
+      //16
+      ["In opposition"]: {
+        expected: {
+          state: EInstructionTimeState.INTENT_OPPO,
+          // now: "2023-07-10",
+        },
+        dossier: {
+          state: DossierState.EnInstruction,
+          datePassageEnInstruction: "2023-01-06",
+          annotations: [
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateRequest1,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateReceipt1,
+            },
+            {
+              id: faker.datatype.uuid(),
+              datetime: "2023-01-20",
+              label: instructionTimeMappingConfigFound.BeginProrogationDate,
+            },
+            {
+              id: faker.datatype.uuid(),
+              datetime: "2023-01-22",
+              label: instructionTimeMappingConfigFound.DateRequest2,
+            },
+            {
+              id: faker.datatype.uuid(),
+              datetime: "2023-01-25",
+              label: instructionTimeMappingConfigFound.DateReceipt2,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: "2023-01-28",
+              label: instructionTimeMappingConfigFound.DateIntentOpposition,
+            },
+          ],
+        },
+      },
+    };
+    return datas[idx];
+  }
+
+  it.each`
+    cas
+    ${"In closure"}
+    ${"In building"}
+    ${"In first demand"}
+    ${"In first demand 2"}
+    ${"In instruction"}
+    ${"In instruction 2"}
+    ${"In instruction, out of date"}
+    ${"In extention"}
+    ${"In extention, out of date"}
+    ${"In second demand"}
+    ${"In second demand 2"}
+    ${"In second reciept"}
+    ${"In second reciept 2"}
+    ${"In second reciept, out of date"}
+    ${"In opposition"}
+  `(
+    "cas $cas: Should create ou update of instruction time",
+    async ({ cas }) => {
+      const data = getDataTestInstructionTime(cas);
+
+      const instructionTime = new InstructionTime();
+      instructionTime.dossier = new Dossier();
+      instructionTime.dossier.dossierDS = new DossierDS();
+      instructionTime.dossier.dossierDS.dataJson = data.dossier;
+
+      jest
+        .spyOn(Date, "now")
+        .mockReturnValue(new Date(data.expected.now).getTime());
+      const result = await service.proccess(instructionTime);
+      expect(result).toHaveProperty("state", data.expected.state || null);
+
+      if (
+        typeof result !== "boolean" &&
+        [
+          EInstructionTimeState.IN_PROGRESS,
+          EInstructionTimeState.IN_EXTENSION,
+        ].includes(data.expected.state)
+      ) {
+        const recieveDelay =
+          (result?.endAt?.getTime() - new Date(data.expected.now).getTime()) /
+          jrsInMillisecond;
+        expect(recieveDelay).toBe(data.expected.delay);
+      }
     },
   );
 });
