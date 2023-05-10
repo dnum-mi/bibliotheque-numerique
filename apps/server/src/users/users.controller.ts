@@ -1,6 +1,9 @@
 import {
+  Body,
   Controller,
   Get,
+  Post,
+  Patch,
   HttpException,
   HttpStatus,
   Param,
@@ -9,11 +12,23 @@ import {
 import { Roles, RolesGuard } from "../guards/roles.guard";
 import { UsersService } from "./users.service";
 import { User } from "../entities";
+import { CreateUserDto, UpdateUserDto } from "@biblio-num/shared";
 
 @Controller("users")
 @UseGuards(RolesGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @Post("user")
+  async signUp(@Body() body: CreateUserDto) {
+    return this.usersService.create(body.email, body.password);
+  }
+
+  // TODO: Add guards
+  @Patch("user/:id")
+  async updateMyUser(@Body() body: UpdateUserDto) {
+    return this.usersService.create(body.email, body.password);
+  }
 
   @Get()
   @Roles("admin")

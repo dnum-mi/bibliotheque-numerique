@@ -1,14 +1,22 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { User } from "../entities";
 import { LoggerService } from "../logger/logger.service";
+import { FindOneOptions } from "typeorm";
 
 @Injectable()
 export class UsersService {
   private readonly logger = new Logger(
     UsersService.name,
   ) as unknown as LoggerService;
-  async findByEmail(email: string): Promise<User | undefined> {
-    return User.findOne({ where: { email }, relations: { roles: true } });
+  async findByEmail(
+    email: string,
+    select?: FindOneOptions<User>["select"],
+  ): Promise<User | undefined> {
+    return User.findOne({
+      where: { email },
+      relations: { roles: true },
+      select,
+    });
   }
 
   async create(email: string, password): Promise<User> {

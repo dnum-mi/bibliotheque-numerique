@@ -162,6 +162,9 @@ importers:
 
   apps/server:
     dependencies:
+      '@biblio-num/shared':
+        specifier: 1.0.0
+        version: link:../../packages/shared
       '@biblio-num/utils':
         specifier: 1.0.0
         version: link:../../packages/utils
@@ -198,9 +201,6 @@ importers:
       '@nestjs/schedule':
         specifier: ^2.2.1
         version: 2.2.1(@nestjs/common@9.4.0)(@nestjs/core@9.4.0)(reflect-metadata@0.1.13)
-      '@nestjs/swagger':
-        specifier: ^6.3.0
-        version: 6.3.0(@nestjs/common@9.4.0)(@nestjs/core@9.4.0)(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13)
       '@nestjs/typeorm':
         specifier: ^9.0.1
         version: 9.0.1(@nestjs/common@9.4.0)(@nestjs/core@9.4.0)(reflect-metadata@0.1.13)(rxjs@7.8.1)(typeorm@0.3.16)
@@ -280,6 +280,9 @@ importers:
       '@nestjs/schematics':
         specifier: ^9.1.0
         version: 9.1.0(chokidar@3.5.3)(typescript@4.9.5)
+      '@nestjs/swagger':
+        specifier: ^6.3.0
+        version: 6.3.0(@nestjs/common@9.4.0)(@nestjs/core@9.4.0)(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13)
       '@nestjs/testing':
         specifier: ^9.4.0
         version: 9.4.0(@nestjs/common@9.4.0)(@nestjs/core@9.4.0)(@nestjs/platform-express@9.4.0)
@@ -2639,7 +2642,6 @@ packages:
       class-transformer: 0.5.1
       class-validator: 0.14.0
       reflect-metadata: 0.1.13
-    dev: false
 
   /@nestjs/passport@9.0.3(@nestjs/common@9.4.0)(passport@0.6.0):
     resolution: {integrity: sha512-HplSJaimEAz1IOZEu+pdJHHJhQyBOPAYWXYHfAPQvRqWtw4FJF1VXl1Qtk9dcXQX1eKytDtH+qBzNQc19GWNEg==}
@@ -2722,7 +2724,6 @@ packages:
       path-to-regexp: 3.2.0
       reflect-metadata: 0.1.13
       swagger-ui-dist: 4.18.2
-    dev: false
 
   /@nestjs/testing@9.4.0(@nestjs/common@9.4.0)(@nestjs/core@9.4.0)(@nestjs/platform-express@9.4.0):
     resolution: {integrity: sha512-xZWp363P4otcebg++gSjUcdCfTK0RorORzyFq3aLaSAQOlq8kxfFDRIKzEATR4aOUfqTMMsAA8lhnMJWf35N6A==}
@@ -11377,7 +11378,6 @@ packages:
 
   /swagger-ui-dist@4.18.2:
     resolution: {integrity: sha512-oVBoBl9Dg+VJw8uRWDxlyUyHoNEDC0c1ysT6+Boy6CTgr2rUcLcfPon4RvxgS2/taNW6O0+US+Z/dlAsWFjOAQ==}
-    dev: false
 
   /symbol-observable@4.0.0:
     resolution: {integrity: sha512-b19dMThMV4HVFynSAM1++gBHAbk2Tc/osgLIBZMKsyqh34jb2e8Os7T6ZW/Bt3pJFdBTd2JwAnAAEQV7rSNvcQ==}

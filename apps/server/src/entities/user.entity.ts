@@ -24,6 +24,7 @@ export class User extends ApplicationEntity {
   @Column({
     type: "varchar",
     nullable: false,
+    select: false,
   })
   password: string;
 

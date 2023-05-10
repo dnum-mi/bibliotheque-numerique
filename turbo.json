@@ -75,7 +75,8 @@
     },
     "test": {
       "dependsOn": [
-        "@biblio-num/utils#build"
+        "@biblio-num/utils#build",
+        "@biblio-num/shared#build"
       ],
       "inputs": [
         "src/**/*.tsx",
