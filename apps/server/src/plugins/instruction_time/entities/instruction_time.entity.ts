@@ -18,16 +18,16 @@ export class InstructionTime extends ApplicationEntity {
   @JoinColumn()
   dossier: Dossier;
 
-  @Column({ type: "timestamp" })
+  @Column({ nullable: true, type: "timestamp" })
   startAt: Date;
 
-  @Column({ type: "timestamp" })
+  @Column({ nullable: true, type: "timestamp" })
   stopAt: Date;
 
-  @Column({ type: "timestamp" })
+  @Column({ nullable: true, type: "timestamp" })
   endAt: Date;
 
-  @Column()
+  @Column({ nullable: true })
   state: EInstructionTimeStateKey;
 
   static findByDossierId(id: number) {
