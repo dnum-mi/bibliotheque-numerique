@@ -10,7 +10,7 @@ export class CreateUserDto {
   @IsNotEmpty()
     email: string
 
-  @IsNotEmpty({ message: 'Le mot de passe est requis' })
+  @IsNotEmpty({ message: 'Veuillez remplir le mot de passe' })
   @IsPasswordStrongEnough({ message: 'Ce mot de passe n’est pas assez fort' })
     password: string
 }

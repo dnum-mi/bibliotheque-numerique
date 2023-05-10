@@ -10,11 +10,14 @@
   "license": "ISC",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "run-s clean:dist build:types",
+    "build:types": "tsc",
+    "clean:dist": "rimraf dist types",
     "dev": "nodemon --watch src --exec 'pnpm run build'",
     "format": "eslint src/ --ext .ts --ignore-path ../../.gitignore --fix",
     "lint": "eslint src/ --ext .ts --ignore-path ../../.gitignore",
-    "test": "vitest"
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "types": "types/",
   "dependencies": {
@@ -25,7 +28,9 @@
     "@dnum-mi/ds-api-client": "^1.1.4",
     "@nestjs/common": "^9.4.0",
     "nodemon": "2.0.22",
+    "rimraf": "^5.0.0",
     "typescript": "4.9.5",
+    "vite": "^4.3.6",
     "vitest": "^0.30.1"
   },
   "volta": {

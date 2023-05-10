@@ -11,6 +11,7 @@
   ],
   "scripts": {
     "build": "turbo build",
+    "clean:dist": "turbo clean:dist",
     "dev": "turbo dev",
     "dev:server": "turbo dev --filter=server",
     "start:server": "turbo start:prod --no-cache --filter=server",

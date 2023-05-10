@@ -23,3 +23,7 @@ export function IsPasswordStrongEnough (validationOptions?: ValidationOptions) {
     })
   }
 }
+
+function contains (chars: string) {
+  return (value: string) => chars.split('').every(char => value.includes(char))
+}
