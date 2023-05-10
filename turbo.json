@@ -37,7 +37,8 @@
     "dev": {
       "cache": false,
       "dependsOn": [
-        "^@biblio-num/utils#build"
+        "^@biblio-num/utils#build",
+        "^@biblio-num/shared#build"
       ]
     },
     "dev:in-docker": {
