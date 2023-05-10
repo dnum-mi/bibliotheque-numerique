@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
-import type { LoginForm, User } from '@/shared/interfaces'
+import type { User } from '@/shared/interfaces'
 import { fetchCurrentUser, getUsers, getUserById, loginUser, logoutUser } from '@/shared/services/user.service'
 import { PermissionName, RoleName } from '@/shared/types/Permission.type'
-
+import { CreateUserDto } from '@biblio-num/shared'
 interface UserState {
   currentUser: User | null,
   users: Map<number, User>,
@@ -40,7 +40,7 @@ export const useUserStore = defineStore('user', {
     },
   },
   actions: {
-    async login (loginForm: LoginForm) {
+    async login (loginForm: CreateUserDto) {
       try {
         this.currentUser = await loginUser(loginForm)
       } catch (e) {

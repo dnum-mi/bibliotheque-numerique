@@ -7,13 +7,3 @@ export interface User {
   email: string;
   roles: IRole[];
 }
-
-export type UserForm = {
-  email: string;
-  password: string;
-}
-
-export interface LoginForm {
-  password: string;
-  email: string;
-}

@@ -1,13 +1,13 @@
-import type { LoginForm, User, UserForm } from '../interfaces'
 import { baseApiUrl, headers } from '../../utils/api-client'
 import axios from 'axios'
+import { CredentialsDto, CreateUserDto, UpdateUserDto } from '@biblio-num/shared'
 
 const AUTH_BASE_URL = `${baseApiUrl}/auth`
 const SIGN_UP_URL = `${AUTH_BASE_URL}/sign_up`
 const SIGN_IN_URL = `${AUTH_BASE_URL}/sign_in`
 const AUTH_PROFIL_URL = `${AUTH_BASE_URL}/profile`
 
-export async function createUser (userForm: UserForm) {
+export async function createUser (userForm: CreateUserDto) {
   try {
     const response = await axios({
       method: 'post',
@@ -21,7 +21,8 @@ export async function createUser (userForm: UserForm) {
   }
 }
 
-export async function loginUser (loginForm: LoginForm): Promise<User> {
+// TODO: Create a User type in @biblio-num/shared and replace UpdateUserDto with it
+export async function loginUser (loginForm: CredentialsDto): Promise<UpdateUserDto> {
   try {
     const response = await axios({
       method: 'post',
@@ -43,7 +44,8 @@ export async function logoutUser () {
   })
 }
 
-export async function fetchCurrentUser (): Promise<User | null> {
+// TODO: Create a User type in @biblio-num/shared and replace UpdateUserDto with it
+export async function fetchCurrentUser (): Promise<UpdateUserDto | null> {
   try {
     const response = await axios(AUTH_PROFIL_URL)
     return response.data
@@ -52,7 +54,8 @@ export async function fetchCurrentUser (): Promise<User | null> {
   }
 }
 
-export const getUsers = async () => {
+// TODO: Create a User type in @biblio-num/shared and replace UpdateUserDto with it
+export const getUsers = async (): Promise<UpdateUserDto[] | null> => {
   const config = {
     method: 'get',
     url: `${baseApiUrl}/users`,
@@ -66,7 +69,8 @@ export const getUsers = async () => {
   }
 }
 
-export const getUserById = async (id: number) => {
+// TODO: Create a User type in @biblio-num/shared and replace UpdateUserDto with it
+export const getUserById = async (id: number): Promise<UpdateUserDto | null> => {
   const config = {
     method: 'get',
     url: `${baseApiUrl}/users/${id}`,
