@@ -326,8 +326,8 @@ export class InstructionTimesService {
       delay.endAt =
         timeProrogation +
         this.nbJrsAfterExtension +
-        (timeProrogation - delay.endAt);
-      delay.startAt = timeProrogation;
+        (delay.endAt - timeProrogation);
+      // delay.startAt = timeProrogation;
       delay.state = EInstructionTimeState.IN_EXTENSION;
     }
 
@@ -345,12 +345,19 @@ export class InstructionTimesService {
       delay.state = EInstructionTimeState.SECOND_RECEIPT;
     }
 
+    // Intention d'opposition
+    if (datesForInstructionTimes.DateIntentOpposition) {
+      delay.state = EInstructionTimeState.INTENT_OPPO;
+    }
+
     instructionTime.startAt = delay.startAt && new Date(delay.startAt);
     instructionTime.endAt = delay.endAt && new Date(delay.endAt);
     instructionTime.stopAt = delay.stopAt && new Date(delay.stopAt);
     instructionTime.state =
-      delay.state === EInstructionTimeState.SECOND_REQUEST ||
-      Date.now() < delay.endAt
+      [
+        EInstructionTimeState.SECOND_REQUEST,
+        EInstructionTimeState.INTENT_OPPO as EInstructionTimeStateKey,
+      ].includes(delay.state) || Date.now() < delay.endAt
         ? delay.state
         : EInstructionTimeState.OUT_OF_DATE;
 
