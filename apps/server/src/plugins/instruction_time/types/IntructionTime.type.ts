@@ -6,6 +6,7 @@ export const EInstructionTimeState = {
   SECOND_REQUEST: "SECOND_REQUEST",
   SECOND_RECEIPT: "SECOND_RECEIPT",
   INTENT_OPPO: "INTENT_OPPO",
+  IN_ERROR: "ERROR",
 } as const;
 
 export type EInstructionTimeStateKey =

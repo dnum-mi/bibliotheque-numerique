@@ -316,7 +316,12 @@ export class InstructionTimesService {
       this.getMappingInstructionTimeByDossier(dossier);
 
     //TODO: Coherence des dates à ajouter
-    this.checkValidity(dossier.dossierDS.dataJson, datesForInstructionTimes);
+    try {
+      this.checkValidity(dossier.dossierDS.dataJson, datesForInstructionTimes);
+    } catch (error) {
+      instructionTime.state = EInstructionTimeState.IN_ERROR;
+      return await instructionTime.save();
+    }
 
     //Check state to action
     if (state === DossierState.EnConstruction) {
