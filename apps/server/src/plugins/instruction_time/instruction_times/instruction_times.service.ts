@@ -35,16 +35,17 @@ export class InstructionTimesService {
   nbJrsAfterInstruction: number;
   nbJrsAfterExtension: number;
   nbJrsAfterIntentOpposition: number;
+  jrsInMillisecond = 1000 * 60 * 60 * 24;
 
   constructor(private configService: ConfigService) {
-    const jrsInMillisecond = 1000 * 60 * 60 * 24;
     this.nbJrsAfterInstruction =
-      this.configService.get("NB_JRS_AFTER_INSTRUCTION") * jrsInMillisecond;
+      this.configService.get("NB_JRS_AFTER_INSTRUCTION") *
+      this.jrsInMillisecond;
     this.nbJrsAfterExtension =
-      this.configService.get("NB_JRS_AFTER_EXTENSION") * jrsInMillisecond;
+      this.configService.get("NB_JRS_AFTER_EXTENSION") * this.jrsInMillisecond;
     this.nbJrsAfterIntentOpposition =
       this.configService.get("NB_JRS_AFTER_INTENT_OPPOSITION") *
-      jrsInMillisecond;
+      this.jrsInMillisecond;
   }
 
   findAll() {
@@ -128,25 +129,53 @@ export class InstructionTimesService {
 
   async instructionTimeCalculation(idDossiers: number[]) {
     try {
-      const dossiers = await Dossier.find({
-        where: { id: In(idDossiers) },
-        relations: { dossierDS: true },
+      const instructionTimes = await InstructionTime.find({
+        where: {
+          dossier: {
+            id: In(idDossiers),
+          },
+        },
+        relations: { dossier: true },
       });
-      return dossiers.reduce((acc: any, dossier) => {
+
+      return instructionTimes.reduce((acc: any, instructionTime) => {
+        const { dossier } = instructionTime;
+        const now = Date.now();
+        let remainingTime = null;
+        let delayStatus = null;
         if (
-          dossier.dossierDS?.dataJson?.state === DossierState.EnConstruction &&
-          this.getMappingInstructionTimeByDossier(dossier).DateRequest1
+          [
+            EInstructionTimeState.IN_PROGRESS,
+            EInstructionTimeState.SECOND_RECEIPT as EInstructionTimeStateKey,
+          ].includes(instructionTime.state)
         ) {
-          acc[dossier.id] = {
-            remainingTime: null,
-            delayStatus: EInstructionTimeState.FIRST_REQUEST,
-          };
-        } else {
-          acc[dossier.id] = {
-            remainingTime: null,
-            delayStatus: null,
-          };
+          remainingTime =
+            (instructionTime.endAt.getTime() - now) / this.jrsInMillisecond;
+          delayStatus =
+            remainingTime > 0
+              ? instructionTime.state
+              : EInstructionTimeState.OUT_OF_DATE;
         }
+        if (
+          [
+            EInstructionTimeState.SECOND_REQUEST as EInstructionTimeStateKey,
+          ].includes(instructionTime.state)
+        ) {
+          remainingTime =
+            (instructionTime.endAt.getTime() -
+              instructionTime.stopAt.getTime()) /
+            this.jrsInMillisecond;
+          delayStatus =
+            remainingTime > 0
+              ? instructionTime.state
+              : EInstructionTimeState.OUT_OF_DATE;
+        }
+
+        acc[dossier.id] = {
+          remainingTime,
+          delayStatus: delayStatus ?? instructionTime.state ?? null,
+        };
+
         return acc;
       }, {});
     } catch (error) {

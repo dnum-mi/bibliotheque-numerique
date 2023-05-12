@@ -128,29 +128,42 @@ describe("InstructionTimesService", () => {
       TInstructionTimeMappingConfig["instructionTimeMappingConfig"]
     >("instructionTimeMappingConfig");
 
-    const fakeDossiers: Partial<Dossier>[] = [];
-    for (let i = 1; i <= 3; i++) {
-      const fakeDossierDs = dossier_ds_test();
-      const fakeDossier = dossier_test(fakeDossierDs as DossierDS);
-      fakeDossier.id = i;
-      fakeDossiers.push(fakeDossier);
-    }
+    const fakeInstrunctionTime: Partial<InstructionTime>[] = Array.from(
+      { length: 3 },
+      (elt, idx) => {
+        const dossierDs = dossier_ds_test();
+        const dossier = dossier_test(dossierDs as DossierDS);
+        dossier.id = idx + 1;
+
+        if (dossier.id === 2) {
+          dossierDs.dataJson.state = DossierState.EnConstruction;
+          dossierDs.dataJson.annotations = [
+            {
+              id: faker.datatype.uuid(),
+              date: "2021-02-01",
+              label: instructionTimeMappingConfig.DateRequest1,
+            },
+          ] as any;
+
+          return {
+            dossier,
+            state: EInstructionTimeState.FIRST_REQUEST,
+          } as InstructionTime;
+        }
+        return {
+          dossier,
+        } as InstructionTime;
+      },
+    );
 
     jest
-      .spyOn(Dossier, "find")
-      .mockResolvedValueOnce(fakeDossiers as Dossier[]);
-
-    fakeDossiers["1"].dossierDS.dataJson.state = DossierState.EnConstruction;
-    fakeDossiers["1"].dossierDS.dataJson.annotations = [
-      {
-        id: faker.datatype.uuid(),
-        date: "2021-02-01",
-        label: instructionTimeMappingConfig.DateRequest1,
-      },
-    ] as any;
+      .spyOn(InstructionTime, "find")
+      .mockResolvedValueOnce(fakeInstrunctionTime as InstructionTime[]);
 
     expect(
-      await service.instructionTimeCalculation(fakeDossiers.map((d) => d.id)),
+      await service.instructionTimeCalculation(
+        fakeInstrunctionTime.map((d) => d.dossier.id),
+      ),
     ).toEqual({
       "1": {
         remainingTime: null,
