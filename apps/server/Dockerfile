@@ -37,11 +37,14 @@ WORKDIR /app
 
 RUN npm i -g pnpm
 
+RUN chown node:root /app
+
 COPY --from=base /app/out/json/ .
 COPY --from=base /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=base /app/out/pnpm-workspace.yaml ./pnpm-workspace.yaml
 ENV CI=true
 RUN pnpm install --frozen-lockfile --production
+RUN chown node:root /app/node_modules/.cache && chmod -R 777 /app/node_modules/.cache
 COPY --from=builder /app/turbo.json .
 COPY --from=builder /app/packages ./packages
 COPY --from=builder /app/apps ./apps
