@@ -38,6 +38,7 @@
         "dist/**"
       ]
     },
+    "start:prod": {},
     "test": {
       "dependsOn": [
         "@biblio-num/utils#build"
