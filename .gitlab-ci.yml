@@ -39,7 +39,7 @@ test_front:
 
 test_back:
   variables:
-    WORKING_DIR: server
+    WORKING_DIR: apps/server
   stage: test-sonar
   allow_failure: true
   extends:
