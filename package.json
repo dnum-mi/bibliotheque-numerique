@@ -1,6 +1,6 @@
 {
   "name": "biblio-num",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "Projet Bibliothèque numérique",
   "directories": {
     "doc": "docs"
@@ -13,7 +13,7 @@
     "build": "turbo build",
     "dev": "turbo dev",
     "dev:server": "turbo dev --filter=server",
-    "start:server": "turbo start:prod --filter=server",
+    "start:server": "turbo start:prod --no-cache --filter=server",
     "dev:server-in-docker": "turbo dev:in-docker --filter=server",
     "dev:client": "turbo dev --filter=client",
     "dev:client-in-docker": "turbo dev:in-docker --filter=client",
