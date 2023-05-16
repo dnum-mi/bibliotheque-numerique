@@ -8,9 +8,7 @@ import { LoggerService } from "./logger/logger.service";
 import { AppWorkerModule } from "./app-worker.module";
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppWorkerModule, {
-    cors: true,
-  });
+  const app = await NestFactory.create(AppWorkerModule);
   const configService = app.get(ConfigService);
   app.useLogger(app.get(LoggerService));
   await app.listen(configService.get("port"));

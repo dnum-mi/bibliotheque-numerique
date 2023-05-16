@@ -8,25 +8,27 @@ import { DataSource } from "typeorm";
 import { FilesService } from "../files/files.service";
 import { ConfigService } from "@nestjs/config";
 import { Champ, File, Message } from "@dnum-mi/ds-api-client/src/@types/types";
-import { exceptions } from "winston";
 
 @Injectable()
 export class DossiersDSService {
+  // TODO: logger should be injected with nestjs dependency injection
   private readonly logger = new Logger(
     DossiersDSService.name,
   ) as unknown as LoggerService;
 
-  private dsApiClient = new DsApiClient(
-    process.env.DS_API_URL,
-    process.env.DS_API_TOKEN,
-  );
+  private dsApiClient: DsApiClient;
 
   constructor(
     private dossiersService: DossiersService,
     private dataSource: DataSource,
     private readonly filesService: FilesService,
     private readonly configService: ConfigService,
-  ) {}
+  ) {
+    this.dsApiClient = new DsApiClient(
+      this.configService.get("ds").apiUrl,
+      this.configService.get("ds").apiToken,
+    );
+  }
 
   async upsertDossierDS(dossierNumber: number, demarcheNumber: number) {
     try {
