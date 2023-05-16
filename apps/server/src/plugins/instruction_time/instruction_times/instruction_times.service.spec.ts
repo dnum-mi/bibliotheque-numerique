@@ -267,7 +267,7 @@ describe("InstructionTimesService", () => {
       expect(result).toThrow("Erreur dans les déclarations de dates");
     },
   );
-  const jrsInMillisecond = 24 * 60 * 60 * 1000;
+  const millisecondsOfDay = 24 * 60 * 60 * 1000;
 
   function getDataTestInstructionTime(idx) {
     const datas = {
@@ -374,7 +374,7 @@ describe("InstructionTimesService", () => {
           delay: 59,
           now: "2023-01-06",
           endAt: new Date(
-            new Date("2023-01-06").getTime() + 59 * jrsInMillisecond,
+            new Date("2023-01-06").getTime() + 59 * millisecondsOfDay,
           ),
         },
         dossier: {
@@ -421,7 +421,7 @@ describe("InstructionTimesService", () => {
           delay: 60,
           now: "2023-01-06",
           endAt: new Date(
-            new Date("2023-01-06").getTime() + 60 * jrsInMillisecond,
+            new Date("2023-01-06").getTime() + 60 * millisecondsOfDay,
           ),
         },
         dossier: {
@@ -512,7 +512,7 @@ describe("InstructionTimesService", () => {
           delay: 166,
           now: "2023-01-20",
           endAt: new Date(
-            new Date("2023-01-20").getTime() + 166 * jrsInMillisecond,
+            new Date("2023-01-20").getTime() + 166 * millisecondsOfDay,
           ),
         },
         dossier: {
@@ -691,7 +691,7 @@ describe("InstructionTimesService", () => {
           delay: 164,
           now: "2023-01-25",
           endAt: new Date(
-            new Date("2023-01-25").getTime() + 164 * jrsInMillisecond,
+            new Date("2023-01-25").getTime() + 164 * millisecondsOfDay,
           ),
         },
         dossier: {
@@ -738,7 +738,7 @@ describe("InstructionTimesService", () => {
           delay: 163,
           now: "2023-01-26",
           endAt: new Date(
-            new Date("2023-01-26").getTime() + 163 * jrsInMillisecond,
+            new Date("2023-01-26").getTime() + 163 * millisecondsOfDay,
           ),
         },
         dossier: {
@@ -910,7 +910,7 @@ describe("InstructionTimesService", () => {
       ) {
         const recieveDelay =
           (result?.endAt?.getTime() - new Date(data.expected.now).getTime()) /
-          jrsInMillisecond;
+          millisecondsOfDay;
         expect(recieveDelay).toBe(data.expected.delay);
       }
     },

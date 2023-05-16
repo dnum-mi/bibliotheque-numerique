@@ -32,20 +32,21 @@ export class InstructionTimesService {
     InstructionTimesService.name,
   ) as unknown as LoggerService;
 
-  nbJrsAfterInstruction: number;
-  nbJrsAfterExtension: number;
-  nbJrsAfterIntentOpposition: number;
-  jrsInMillisecond = 1000 * 60 * 60 * 24;
+  nbDaysAfterInstruction: number;
+  nbDaysAfterExtension: number;
+  nbDaysAfterIntentOpposition: number;
+  millisecondsOfDay = 1000 * 60 * 60 * 24;
 
   constructor(private configService: ConfigService) {
-    this.nbJrsAfterInstruction =
-      this.configService.get("NB_JRS_AFTER_INSTRUCTION") *
-      this.jrsInMillisecond;
-    this.nbJrsAfterExtension =
-      this.configService.get("NB_JRS_AFTER_EXTENSION") * this.jrsInMillisecond;
-    this.nbJrsAfterIntentOpposition =
-      this.configService.get("NB_JRS_AFTER_INTENT_OPPOSITION") *
-      this.jrsInMillisecond;
+    this.nbDaysAfterInstruction =
+      this.configService.get("NB_DAYS_AFTER_INSTRUCTION") *
+      this.millisecondsOfDay;
+    this.nbDaysAfterExtension =
+      this.configService.get("NB_DAYS_AFTER_EXTENSION") *
+      this.millisecondsOfDay;
+    this.nbDaysAfterIntentOpposition =
+      this.configService.get("NB_DAYS_AFTER_INTENT_OPPOSITION") *
+      this.millisecondsOfDay;
   }
 
   findAll() {
@@ -150,7 +151,7 @@ export class InstructionTimesService {
           ].includes(instructionTime.state)
         ) {
           remainingTime =
-            (instructionTime.endAt.getTime() - now) / this.jrsInMillisecond;
+            (instructionTime.endAt.getTime() - now) / this.millisecondsOfDay;
           delayStatus =
             remainingTime > 0
               ? instructionTime.state
@@ -164,7 +165,7 @@ export class InstructionTimesService {
           remainingTime =
             (instructionTime.endAt.getTime() -
               instructionTime.stopAt.getTime()) /
-            this.jrsInMillisecond;
+            this.millisecondsOfDay;
           delayStatus =
             remainingTime > 0
               ? instructionTime.state
@@ -342,7 +343,7 @@ export class InstructionTimesService {
     if (datesForInstructionTimes.DateIntentOpposition) {
       delay.endAt =
         datesForInstructionTimes.DateIntentOpposition.getTime() +
-        this.nbJrsAfterIntentOpposition;
+        this.nbDaysAfterIntentOpposition;
       delay.startAt = datesForInstructionTimes.DateIntentOpposition.getTime();
       delay.state = EInstructionTimeState.INTENT_OPPO;
     }
@@ -350,7 +351,7 @@ export class InstructionTimesService {
     //En intruction
     const dateInstruction = new Date(datePassageEnInstruction);
     delay.startAt = dateInstruction.getTime();
-    delay.endAt = dateInstruction.getTime() + this.nbJrsAfterInstruction;
+    delay.endAt = dateInstruction.getTime() + this.nbDaysAfterInstruction;
     delay.state = EInstructionTimeState.IN_PROGRESS;
 
     //En prorogatoin
@@ -359,7 +360,7 @@ export class InstructionTimesService {
         datesForInstructionTimes.BeginProrogationDate.getTime();
       delay.endAt =
         timeProrogation +
-        this.nbJrsAfterExtension +
+        this.nbDaysAfterExtension +
         (delay.endAt - timeProrogation);
       // delay.startAt = timeProrogation;
       delay.state = EInstructionTimeState.IN_EXTENSION;
