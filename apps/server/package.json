@@ -15,6 +15,7 @@
     "dev:docker:stop": "docker compose --profile simple-dev -f docker-compose.dev.yml stop",
     "dev:in-docker": "run-s dev:server",
     "dev:server": "nest start --debug 0.0.0.0:9229 --watch",
+    "dev:worker": "nest start --entryFile main-worker.js --debug 0.0.0.0:9230 --watch",
     "docker:build": "docker compose -f docker-compose.yml -f docker-compose.dev.yml build server",
     "docker:db:down": "docker compose -f docker-compose.yml down",
     "docker:db:up": "docker compose -f docker-compose.yml up -d",

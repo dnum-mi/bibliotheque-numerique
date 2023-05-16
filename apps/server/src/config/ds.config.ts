@@ -1,3 +1,4 @@
+// TODO: those are not configs
 const config = {
   ds: {
     dossier: {
