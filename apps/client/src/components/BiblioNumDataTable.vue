@@ -42,9 +42,10 @@
     </tr>
   </DsfrTable>
 </template>
+
 <script lang="ts" setup>
 import { computed, reactive } from 'vue'
-import type { TypeHeaderDataTable } from '../shared/types/typeDataTable/typeDataTable'
+import type { TypeHeaderDataTable } from '@/shared/types/typeDataTable'
 
 const icon = 'ri-search-line'
 const props = withDefaults(defineProps<{

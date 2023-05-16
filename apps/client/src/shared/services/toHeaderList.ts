@@ -33,8 +33,8 @@ export function toHeaderList (mappingCol: Partial<IDemarcheMappingColumn>[]): Ty
     text: col.labelBN,
     value: col.id,
     type: getTypeForHeader(col),
-    filter: getTypeFilter(col),
-    renderer: getTypeRenderer(col),
+    // filter: getTypeFilter(col),
+    // renderer: getTypeRenderer(col),
   }))
 }
 

@@ -38,7 +38,7 @@ const router = useRouter()
 
 const rowData = computed(() => organismeStore.organismes)
 
-const headerJson: TypeHeaderDataTable = [
+const headerJson: TypeHeaderDataTable[] = [
   {
     text: 'Titre',
     value: 'title',
