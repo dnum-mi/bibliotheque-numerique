@@ -3,15 +3,20 @@ import { z } from 'zod'
 import { toFormValidator } from '@vee-validate/zod'
 import { useField, useForm } from 'vee-validate'
 import type { LoginForm } from '@/shared/interfaces'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores'
+
+const REQUIRED_FIELD_MESSAGE = 'Ce champ est requis'
 
 const router = useRouter()
 const userStore = useUserStore()
 
+const secure = ref()
+
 const validationSchema = toFormValidator(z.object({
-  email: z.string({ required_error: 'Vous devez renseigner ce champ' }).email('Format email incorrect'),
-  password: z.string({ required_error: 'Vous devez renseigner ce champ' }).min(6, 'Le mot de passe doit faire au moins 6 caractères'),
+  email: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).email('Ceci semble être une adresse email invalide'),
+  password: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).min(6, 'Le mot de passe doit contenir au moins 6 caractères'),
 }))
 
 const { handleSubmit, setErrors } = useForm<{ email: string, password: string }>({
@@ -47,6 +52,7 @@ const { value: passwordValue, errorMessage: passwordError } = useField('password
       <div class="fr-col-sm-1" />
       <div class="fr-col-sm-4">
         <div class="fr-" />
+        <!-- TODO: Faire autrement que ces <br> -->
         <br>
         <br>
         <br>
@@ -58,6 +64,7 @@ const { value: passwordValue, errorMessage: passwordError } = useField('password
         class="fr-col-sm-2"
         style="text-align: center"
       >
+        <!-- TODO: Faire autrement que ces <br> -->
         <br>
         <br>
         <br>

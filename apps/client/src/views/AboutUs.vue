@@ -4,7 +4,7 @@
       <div class="fr-py-0 fr-col-12 fr-col-md-6">
         <h1>À propos</h1>
         <p class="fr-text--sm fr-mb-3w">
-          Bibliothéque Numérique
+          Bibliothèque Numérique
         </p>
         <p class="fr-text--lead fr-mb-3w">
           La page que vous cherchez est en construction.

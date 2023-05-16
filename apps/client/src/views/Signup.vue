@@ -6,13 +6,14 @@ import type { UserForm } from '@/shared/interfaces'
 import { createUser } from '@/shared/services/user.service'
 import { useRouter } from 'vue-router'
 
+const REQUIRED_FIELD_MESSAGE = 'Ce champ est requis'
 const router = useRouter()
 
 const validationSchema = toFormValidator(z.object({
-  firstName: z.string({ required_error: 'Vous devez renseigner ce champ' }).min(2, 'Trop court'),
-  lastName: z.string({ required_error: 'Vous devez renseigner ce champ' }).min(2, 'Trop court'),
-  email: z.string({ required_error: 'Vous devez renseigner ce champ' }).email('Format email incorrect'),
-  password: z.string({ required_error: 'Vous devez renseigner ce champ' }).min(6, 'Le mot de passe doit faire au moins 6 caractères'),
+  firstName: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).min(2, 'Ceci ne semble pas être un prénom'),
+  lastName: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).min(2, 'Ceci ne semble pas être un nom'),
+  email: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).email('Ceci semble être une adresse email invalide'),
+  password: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).min(6, 'Le mot de passe doit contenir au moins 6 caractères'),
 }))
 
 const { handleSubmit } = useForm({

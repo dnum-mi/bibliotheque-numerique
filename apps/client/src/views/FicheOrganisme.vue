@@ -136,7 +136,7 @@ const representant1 = computed(() => organismeStore.organisme?.representants_leg
 const representants = computed(() => organismeStore.organisme?.representants_legaux || [])
 const tabTitles = [
   {
-    title: 'Status',
+    title: 'Statuts',
   },
 ]
 

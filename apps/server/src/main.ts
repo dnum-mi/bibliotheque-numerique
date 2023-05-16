@@ -7,7 +7,7 @@ import { AppModule } from "./app.module";
 import { LoggerService } from "./logger/logger.service";
 import * as session from "express-session";
 import * as passport from "passport";
-import { sessionSecret } from "auth/constants";
+import { sessionSecret } from "./auth/constants";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {

@@ -15,14 +15,14 @@
       :title="title"
       :headers="headersJson"
       :row-data="rowData"
-      with-action="{{true}}"
-      :floating-filter="true"
+      with-action
+      floating-filter
       @get-elt="getDossiers"
     />
   </LayoutList>
 </template>
 
-<script lang="ts"  setup>
+<script lang="ts" setup>
 import BiblioNumDataTableAgGrid from '@/components/BiblioNumDataTableAgGrid.vue'
 import LayoutList from '@/components/LayoutList.vue'
 import { useDemarcheStore } from '@/stores/demarche'
@@ -58,7 +58,7 @@ const headersJson = [
       return `${value?.nom} - ${value?.organisme}`
     },
   },
-  // TODO: Fontion de recupéreration des nombres de dossiers
+  // TODO: Fonction de recupération des nombres de dossiers
   // {
   //   text: 'Dossiers',
   //   value: 'dossiers',
@@ -67,16 +67,18 @@ const headersJson = [
   //   },
   // },
   {
-    text: 'La date publication',
+    text: 'La date de publication',
     value: 'datePublication',
     parseFn: dateToStringFr,
     type: 'date',
   },
   {
-    text: "Type d'organasime",
+    text: "Type d'organisme",
     value: 'typeOrganisme',
   },
 ]
+
+const title = 'Titre' // TODO: Trouver un titre ou bien le supprimer de la template
 
 const rowData = computed(() => demarcheStore.demarches.map(
   (d: any) => ({ ...d?.demarcheDS?.dataJson, typeOrganisme: d?.typeOrganisme, id: d.id })),
@@ -90,7 +92,3 @@ function getDossiers (data: any) {
   router.push({ name: 'DemarcheDossiers', params: { id: data.id } })
 }
 </script>
-
-<style scoped>
-
-</style>

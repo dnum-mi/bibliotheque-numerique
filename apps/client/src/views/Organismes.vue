@@ -12,19 +12,21 @@
       </div>
     </template>
     <BiblioNumDataTableAgGrid
-      pagination="false"
+      :pagination="false"
       :headers="headerJson"
       :row-data="rowData"
       row-selection="single"
-      :floating-filter="true"
+      floating-filter
       @selection-changed="onSelect"
     />
   </LayoutList>
 </template>
+
 <script lang="ts" setup>
 
 import BiblioNumDataTableAgGrid from '@/components/BiblioNumDataTableAgGrid.vue'
 import LayoutList from '@/components/LayoutList.vue'
+import type { TypeHeaderDataTable } from '@/shared/types/typeDataTable'
 import { useOrganismeStore } from '@/stores/organisme'
 import { dateToStringFr } from '@/utils/dateToString'
 
@@ -36,7 +38,7 @@ const router = useRouter()
 
 const rowData = computed(() => organismeStore.organismes)
 
-const headerJson = [
+const headerJson: TypeHeaderDataTable[] = [
   {
     text: 'Titre',
     value: 'title',

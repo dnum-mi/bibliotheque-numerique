@@ -36,8 +36,7 @@ const fields = computed<IField[]>(() => {
       label: labelElt?.text,
       value: value !== undefined ? (labelElt.parseFn ? labelElt.parseFn(value) : value) : '',
     }
-  },
-  )
+  })
 })
 
 </script>
@@ -59,7 +58,7 @@ const fields = computed<IField[]>(() => {
         <label
           :for="id"
           class="fr-text--bold fr-col-4 bn-text--shadow"
-        > {{ label }} : </label> <span
+        > {{ label }} : </label> <span
           :id="id"
           class="fr-text fr-col-8 bn-text--shadow"
         > {{ value }}</span>

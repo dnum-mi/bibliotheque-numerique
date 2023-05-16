@@ -24,7 +24,7 @@ const labelsDate = [
     parseFn: dateTimeToStringFr,
   },
   {
-    text: 'Date de derniére modification',
+    text: 'Date de dernière modification',
     value: 'dateDerniereModification',
     parseFn: dateTimeToStringFr,
   },

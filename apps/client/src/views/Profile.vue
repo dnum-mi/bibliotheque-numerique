@@ -35,7 +35,7 @@ import LayoutList from '@/components/LayoutList.vue'
 import DisplayLabelsValues from '@/components/DisplayLabelsValues.vue'
 import { computed } from 'vue'
 import BiblioNumDataTableAgGrid from '@/components/BiblioNumDataTableAgGrid.vue'
-import { IRole } from '@/shared/interfaces'
+import type { IRole } from '@/shared/interfaces'
 
 const userStore = useUserStore()
 const datas = userStore.currentUser
@@ -48,7 +48,7 @@ const labelsDate = [
     parseFn: dateTimeToStringFr,
   },
   {
-    text: 'Date de derniére modification',
+    text: 'Date de dernière modification',
     value: 'updateAt',
     parseFn: dateTimeToStringFr,
   },
@@ -86,7 +86,7 @@ const rolesHeadersJson = [
 ]
 
 const rolesRowData = computed(() => {
-  return [...datas.roles.values()].map((role: IRole) => ({
+  return [...datas?.roles.values()].map((role: IRole) => ({
     ...role,
     permissions: role.permissions.map((permission) => permission.name).join(', '),
   }))

@@ -23,10 +23,14 @@ describe('<Signin />', () => {
     })
 
     cy.get('#email').type('louis.dubois')
-    cy.get('.fr-error-text').should('contain.text', 'Format email incorrect')
+    cy.get('.fr-error-text').should('contain.text', 'Ceci semble être une adresse email invalide')
+    cy.get('#email').type('@gmail.com')
+    cy.get('.fr-error-text').should('not.exist')
 
     cy.get('#password').type('xx')
-    cy.get('.fr-error-text').should('contain.text', 'Le mot de passe doit faire au moins 6 caractères')
+    cy.get('.fr-error-text').should('contain.text', 'Le mot de passe doit contenir au moins 6 caractères')
+    cy.get('#password').type('etsiarn')
+    cy.get('.fr-error-text').should('not.exist')
   })
 
   it('form is validated', () => {
