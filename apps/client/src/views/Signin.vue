@@ -2,10 +2,10 @@
 import { z } from 'zod'
 import { toFormValidator } from '@vee-validate/zod'
 import { useField, useForm } from 'vee-validate'
-import type { LoginForm } from '@/shared/interfaces'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores'
+import type { CredentialsInput } from '@biblio-num/shared'
 
 const REQUIRED_FIELD_MESSAGE = 'Ce champ est requis'
 
@@ -23,7 +23,7 @@ const { handleSubmit, setErrors } = useForm<{ email: string, password: string }>
   validationSchema,
 })
 
-const submit = handleSubmit(async (formValue: LoginForm) => {
+const submit = handleSubmit(async (formValue: CredentialsInput) => {
   try {
     await userStore.login(formValue)
     router.push('/demarches')

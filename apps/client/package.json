@@ -25,7 +25,7 @@
     "typecheck": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false"
   },
   "dependencies": {
-    "@biblio-num/shared": "workspace:1.0.0",
+    "@biblio-num/shared": "workspace:^",
     "@gouvfr/dsfr": "^1.9.2",
     "@gouvminint/vue-dsfr": "^3.6.0",
     "@vee-validate/zod": "^4.9.3",

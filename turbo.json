@@ -37,7 +37,6 @@
     "dev": {
       "cache": false,
       "dependsOn": [
-        "^@biblio-num/utils#build",
         "^@biblio-num/shared#build"
       ]
     },
@@ -75,7 +74,6 @@
     },
     "test": {
       "dependsOn": [
-        "@biblio-num/utils#build",
         "@biblio-num/shared#build"
       ],
       "inputs": [

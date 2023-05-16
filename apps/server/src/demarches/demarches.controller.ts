@@ -23,7 +23,7 @@ import {
   RequirePermissions,
 } from "../guards/permissions.guard";
 import { PermissionName } from "../types/Permission.type";
-import { filterObjectFields } from "@biblio-num/utils";
+import { filterObjectFields } from "@biblio-num/shared";
 import { DossiersDSService } from "../dossiers_ds/dossiers_ds.service";
 import { LoggerService } from "../logger/logger.service";
 

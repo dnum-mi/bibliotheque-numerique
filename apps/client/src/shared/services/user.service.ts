@@ -1,6 +1,6 @@
 import { baseApiUrl, headers } from '../../utils/api-client'
 import axios from 'axios'
-import { CredentialsDto, CreateUserDto, UpdateUserDto } from '@biblio-num/shared'
+import type { CredentialsInput, CreateUserDto, UpdateUserDto, UserOutputDto } from '@biblio-num/shared'
 
 const AUTH_BASE_URL = `${baseApiUrl}/auth`
 const SIGN_UP_URL = `${AUTH_BASE_URL}/sign_up`
@@ -21,8 +21,7 @@ export async function createUser (userForm: CreateUserDto) {
   }
 }
 
-// TODO: Create a User type in @biblio-num/shared and replace UpdateUserDto with it
-export async function loginUser (loginForm: CredentialsDto): Promise<UpdateUserDto> {
+export async function loginUser (loginForm: CredentialsInput): Promise<UserOutputDto> {
   try {
     const response = await axios({
       method: 'post',
@@ -44,7 +43,6 @@ export async function logoutUser () {
   })
 }
 
-// TODO: Create a User type in @biblio-num/shared and replace UpdateUserDto with it
 export async function fetchCurrentUser (): Promise<UpdateUserDto | null> {
   try {
     const response = await axios(AUTH_PROFIL_URL)
@@ -54,7 +52,6 @@ export async function fetchCurrentUser (): Promise<UpdateUserDto | null> {
   }
 }
 
-// TODO: Create a User type in @biblio-num/shared and replace UpdateUserDto with it
 export const getUsers = async (): Promise<UpdateUserDto[] | null> => {
   const config = {
     method: 'get',
@@ -69,7 +66,6 @@ export const getUsers = async (): Promise<UpdateUserDto[] | null> => {
   }
 }
 
-// TODO: Create a User type in @biblio-num/shared and replace UpdateUserDto with it
 export const getUserById = async (id: number): Promise<UpdateUserDto | null> => {
   const config = {
     method: 'get',

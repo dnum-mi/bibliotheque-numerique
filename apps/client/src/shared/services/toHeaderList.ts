@@ -4,7 +4,7 @@ import { ChampType, ChampValueTypesKeys, keytoTypeData, typeForHeader, typeTable
 import { mappingLabelInstructionToKey } from '../types/instructionTime.type'
 
 export function getTypeForHeader (mappingColumn: Partial<IDemarcheMappingColumn>) {
-  const { typeValue, typeData } = mappingColumn
+  const { typeValue } = mappingColumn
   return (typeValue && typeForHeader[typeValue as keyof typeof typeForHeader]) || typeValue
 }
 

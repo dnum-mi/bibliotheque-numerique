@@ -14,9 +14,9 @@
     "dev:docker": "docker compose --profile simple-dev -f docker-compose.dev.yml up -d",
     "dev:docker:stop": "docker compose --profile simple-dev -f docker-compose.dev.yml stop",
     "dev:in-docker": "run-s dev:server",
-    "dev:worker-in-docker": "run-s dev:worker",
     "dev:server": "nest start --debug 0.0.0.0:9229 --watch",
     "dev:worker": "nest start --entryFile main-worker.js --debug 0.0.0.0:9230 --watch",
+    "dev:worker-in-docker": "run-s dev:worker",
     "docker:build": "docker compose -f docker-compose.yml -f docker-compose.dev.yml build server",
     "docker:db:down": "docker compose -f docker-compose.yml down",
     "docker:db:up": "docker compose -f docker-compose.yml up -d",
@@ -51,8 +51,7 @@
     "vite": "vite"
   },
   "dependencies": {
-    "@biblio-num/shared": "1.0.0",
-    "@biblio-num/utils": "1.0.0",
+    "@biblio-num/shared": "workspace:^",
     "@dnum-mi/ds-api-client": "^1.3.0",
     "@nest-middlewares/morgan": "7.0.1",
     "@nestjs-modules/mailer": "^1.8.1",

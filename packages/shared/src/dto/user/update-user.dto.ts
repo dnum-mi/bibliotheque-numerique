@@ -1,7 +1,7 @@
-import { CreateUserDto } from './create-user.dto';
+import { CreateUserDto } from './create-user.dto'
 
-import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { ApiProperty, PartialType } from '@nestjs/swagger'
+import { IsString } from 'class-validator'
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
   @ApiProperty({
@@ -13,5 +13,5 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
     message:
     'Les rôles doivent être des chaînes de caractères (dans un tableau)',
   })
-  roles?: string[];
+    roles?: string[]
 }
