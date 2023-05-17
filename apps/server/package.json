@@ -33,8 +33,6 @@
     "lint:fix": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "plugin:init": "cd src/plugins/ && sh bin/init",
     "prebuild": "rimraf dist",
-    "script:create-default-admin": "ts-node src/scripts/createDefaultAdmin.ts",
-    "script:create-default-admin:prod": "node dist/scripts/createDefaultAdmin.js",
     "script:loadOrganismes": "node dist/scripts/loadOrganismes.js",
     "sdev": "run-s dev:*",
     "sdev-stop": "run-s dev:docker:stop",
