@@ -59,7 +59,7 @@ build_app_back:
   stage: build-app
   artifacts:
     paths:
-      - apps/server/package-lock.json
+      - pnpm-lock.yaml
       - apps/server/package.json
       - apps/server/dist
   script:
@@ -101,6 +101,15 @@ docker_build_back:
   variables:
     WORKING_DIR: 'apps/server'
     IMAGE_NAME: 'bibliotheque_numerique-back'
+    DOCKERFILE: 'Dockerfile'
+  stage: docker-build
+  extends:
+    - .kaniko:build
+
+docker_build_worker:
+  variables:
+    WORKING_DIR: 'apps/server'
+    IMAGE_NAME: 'bibliotheque_numerique-worker'
     DOCKERFILE: 'Dockerfile'
   stage: docker-build
   extends:
