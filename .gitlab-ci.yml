@@ -105,12 +105,3 @@ docker_build_back:
   stage: docker-build
   extends:
     - .kaniko:build
-
-docker_build_worker:
-  variables:
-    WORKING_DIR: 'apps/server'
-    IMAGE_NAME: 'bibliotheque_numerique-worker'
-    DOCKERFILE: 'Dockerfile'
-  stage: docker-build
-  extends:
-    - .kaniko:build
