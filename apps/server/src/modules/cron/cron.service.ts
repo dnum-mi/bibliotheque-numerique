@@ -23,8 +23,7 @@ export class CronService implements OnApplicationBootstrap, OnModuleInit {
     this.logger.log(this.config.get("fetchDataInterval"));
   }
 
-  // we build cron in here because interval is dynamic and come from config
-  onModuleInit(): any {
+  private _dynamiclyBuildCronInRegistryFromConfig() {
     const job = new CronJob(
       this.config.get("fetchDataInterval"),
       this._fetchData.bind(this),
@@ -38,8 +37,7 @@ export class CronService implements OnApplicationBootstrap, OnModuleInit {
     job.start();
   }
 
-  // we let user choose if he wants to fetch data on startup
-  onApplicationBootstrap() {
+  private _launchCronOnStartup() {
     if (this.config.get("fetchDataOnStartup")) {
       this._fetchData();
     } else {
@@ -49,12 +47,17 @@ export class CronService implements OnApplicationBootstrap, OnModuleInit {
     }
   }
 
-  // upsert our demarche and dossier from DS Api
+  onModuleInit(): any {
+    this._dynamiclyBuildCronInRegistryFromConfig();
+  }
+
+  onApplicationBootstrap() {
+    this._launchCronOnStartup();
+  }
+
   private async _fetchData() {
     this.logger.log(`Upserting data from DS. (demarche and dossier)`);
-    // updating all demarche
     const demarcheIds = await this.demarcheDsService.upsertAllDemarche();
-    // updating all dossier
     await Promise.all(
       demarcheIds.map(async (demarcheId) => {
         this.logger.log(`Upserting Dossier for demarche number: ${demarcheId}`);

@@ -31,7 +31,6 @@ export class DemarchesDSService {
     );
   }
 
-  // This method is called by the cron job
   async upsertAllDemarche(): Promise<number[]> {
     this.logger.log("Upserting all demarches");
     const demarcheIds: number[] = await this.allDemarchesIds();
