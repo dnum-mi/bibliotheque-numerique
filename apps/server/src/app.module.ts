@@ -3,15 +3,10 @@ import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
-
-// Load Configurations
 import configuration from "./config/configuration";
 import fileConfig from "./config/file.config";
 import dsConfig from "./config/ds.config";
-
 import { AppDataSource } from "./db/app-data-source";
-
-// Load Modules
 import { DemarchesModule } from "./demarches/demarches.module";
 import { DemarchesDSModule } from "./demarches_ds/demarches_ds.module";
 import { DossiersModule } from "./dossiers/dossiers.module";
