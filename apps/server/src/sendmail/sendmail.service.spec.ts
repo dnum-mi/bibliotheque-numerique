@@ -4,6 +4,10 @@ import { SendMailService } from "./sendmail.service";
 import { SendMailModule } from "./sendmail.module";
 import * as SMTPTransport from "nodemailer/lib/smtp-transport";
 import MailMessage from "nodemailer/lib/mailer/mail-message";
+import { ConfigModule } from "@nestjs/config";
+import configuration from "../config/configuration";
+import fileConfig from "../config/file.config";
+import dsConfig from "../config/ds.config";
 
 /**
  * Code spyOnSmtpSend is from https://github.com/nest-modules/mailer/blob/master/lib/mailer.service.spec.ts

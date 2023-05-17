@@ -14,6 +14,7 @@ import { getDemarche } from "./__tests__/demarches";
 import { DossiersDSService } from "../dossiers_ds/dossiers_ds.service";
 import { DossiersService } from "../dossiers/dossiers.service";
 import { FilesService } from "../files/files.service";
+import dsConfig from "../config/ds.config";
 describe("DemarchesController", () => {
   let controller: DemarchesController;
   let service: DemarchesService;
@@ -28,7 +29,7 @@ describe("DemarchesController", () => {
         ConfigModule.forRoot({
           isGlobal: true,
           cache: true,
-          load: [configuration, fileConfig],
+          load: [configuration, fileConfig, dsConfig],
         }),
       ],
       controllers: [DemarchesController],

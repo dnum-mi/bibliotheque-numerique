@@ -12,6 +12,7 @@ import { datasourceTest, user_test } from "../entities/__tests__";
 import { Demarche, DemarcheDS, Dossier, DossierDS, User } from "../entities";
 import { getDemarche } from "./__tests__/demarches";
 import { DossiersDSModule } from "../dossiers_ds/dossiers_ds.module";
+import dsConfig from "../config/ds.config";
 
 describe("DemarchesService", () => {
   let service: DemarchesService;
@@ -26,7 +27,7 @@ describe("DemarchesService", () => {
         ConfigModule.forRoot({
           isGlobal: true,
           cache: true,
-          load: [configuration, fileConfig],
+          load: [configuration, fileConfig, dsConfig],
         }),
         DossiersDSModule,
       ],
