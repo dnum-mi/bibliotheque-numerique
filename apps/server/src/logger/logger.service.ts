@@ -72,6 +72,7 @@ export class LoggerService implements LoggerServiceNest {
       ],
     });
   }
+
   private _toCompleteLoggerObject(loggerObject: TLoggerObject): TLoggerObject {
     return {
       version: process.env.npm_package_version || "",

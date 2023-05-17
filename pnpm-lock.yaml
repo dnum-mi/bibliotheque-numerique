@@ -166,8 +166,8 @@ importers:
         specifier: 1.0.0
         version: link:../../packages/utils
       '@dnum-mi/ds-api-client':
-        specifier: ^1.1.4
-        version: 1.1.4
+        specifier: ^1.3.0
+        version: 1.3.0
       '@nestjs-modules/mailer':
         specifier: ^1.8.1
         version: 1.8.1(@nestjs/common@9.4.0)(@nestjs/core@9.4.0)(nodemailer@6.9.2)
@@ -1762,8 +1762,8 @@ packages:
       kuler: 2.0.0
     dev: false
 
-  /@dnum-mi/ds-api-client@1.1.4:
-    resolution: {integrity: sha512-iYoxnSkRx6H949sbT2r9nVYc0f/ghM8uK6SiElOr9XoE19Z40kX9NMjUx86sNuVlDCQVWprhmsLooSZ2FexzyQ==}
+  /@dnum-mi/ds-api-client@1.3.0:
+    resolution: {integrity: sha512-QvEHBeCyWWwNLdoMiPV3+pzqDtveQINCsbTJnMRWGhLuhOoJ+EpnSjoRMKZSdneuK/bhEug5ydGD3pfvjwiU3w==}
     engines: {node: '>=16.0.0', npm: '>=7.10.0'}
     dependencies:
       graphql: 16.6.0
@@ -5187,10 +5187,10 @@ packages:
       luxon: 3.3.0
     dev: false
 
-  /cross-fetch@3.1.5:
-    resolution: {integrity: sha512-lvb1SBsI0Z7GDwmuid+mU3kWVBwTVUbe7S0H52yaaAdQOXq2YktTCZdlAcNKFzE6QtRz0snpw9bNiPeOIkkQvw==}
+  /cross-fetch@3.1.6:
+    resolution: {integrity: sha512-riRvo06crlE8HiqOwIpQhxwdOk4fOeR7FVM/wXoxchFEqMNUjvbs3bfo4OTgMEMHzppd4DxFBDbyySj8Cv781g==}
     dependencies:
-      node-fetch: 2.6.7
+      node-fetch: 2.6.11
     transitivePeerDependencies:
       - encoding
     dev: false
@@ -7055,7 +7055,7 @@ packages:
       graphql: 14 - 16
     dependencies:
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.6.0)
-      cross-fetch: 3.1.5
+      cross-fetch: 3.1.6
       extract-files: 9.0.0
       form-data: 3.0.1
       graphql: 16.6.0
@@ -9371,8 +9371,8 @@ packages:
       lodash: 4.17.21
     dev: true
 
-  /node-fetch@2.6.7:
-    resolution: {integrity: sha512-ZjMPFEfVx5j+y2yF35Kzx5sF7kDzxuDj6ziH4FFbOp87zKDZNx8yExJIb05OGF4Nlt9IHFIMBkRl41VdvcNdbQ==}
+  /node-fetch@2.6.11:
+    resolution: {integrity: sha512-4I6pdBY1EthSqDmJkiNk3JIT8cswwR9nfeW/cPdUagJYEQG7R95WRH74wpz7ma8Gh/9dI9FP+OU+0E4FvtA55w==}
     engines: {node: 4.x || >=6.0.0}
     peerDependencies:
       encoding: ^0.1.0
