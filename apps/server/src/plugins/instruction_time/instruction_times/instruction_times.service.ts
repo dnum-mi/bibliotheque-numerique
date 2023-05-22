@@ -146,6 +146,7 @@ export class InstructionTimesService {
         let delayStatus = null;
         if (
           [
+            EInstructionTimeState.IN_EXTENSION,
             EInstructionTimeState.IN_PROGRESS,
             EInstructionTimeState.SECOND_RECEIPT as EInstructionTimeStateKey,
           ].includes(instructionTime.state)
@@ -293,6 +294,7 @@ export class InstructionTimesService {
 
     if (!instructionTime) {
       instructionTime = new InstructionTime();
+      instructionTime.state = EInstructionTimeState.DEFAULT;
     }
 
     instructionTime.dossier = dossier;
@@ -365,7 +367,6 @@ export class InstructionTimesService {
         timeProrogation +
         this.nbDaysAfterExtension +
         (delay.endAt - timeProrogation);
-      // delay.startAt = timeProrogation;
       delay.state = EInstructionTimeState.IN_EXTENSION;
     }
 

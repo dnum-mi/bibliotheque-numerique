@@ -2,15 +2,12 @@ import { Injectable, Logger } from "@nestjs/common";
 import { Demarche, Dossier, DossierDS } from "../entities";
 import { LoggerService } from "../logger/logger.service";
 import { EntityManager, InsertResult } from "typeorm";
-import { InstructionTimesService } from "../plugins/instruction_time/instruction_times/instruction_times.service";
 
 @Injectable()
 export class DossiersService {
   private readonly logger = new Logger(
     DossiersService.name,
   ) as unknown as LoggerService;
-
-  constructor(private instructionTimeService: InstructionTimesService) {}
 
   async upsertDossier(
     dossierDS: DossierDS,
@@ -35,18 +32,11 @@ export class DossiersService {
         full_message: "debug upsert Dossier",
         datas: result,
       });
-
-      //TODO: Call process when dossier is change
-      const dossier = await Dossier.findOneBy({
-        dossierDS: { id: dossierDS.id },
-      });
-      this.instructionTimeService.proccessByDossierId(dossier.id);
-
       return result;
     } catch (error) {
       this.logger.error({
         short_message: `Erreur pendant la mise à jour des dossiers numéros: ${dossierDS.id.toString()}`,
-        full_message: error.toString(),
+        full_message: error.stack,
       });
       throw new Error("Unable to update dossiers");
     }
@@ -58,7 +48,7 @@ export class DossiersService {
     } catch (error) {
       this.logger.error({
         short_message: "Échec récupération des dossiers",
-        full_message: error.toString(),
+        full_message: error.stack,
       });
       throw new Error("Unable to retrieve dossiers");
     }
@@ -70,7 +60,7 @@ export class DossiersService {
     } catch (error) {
       this.logger.error({
         short_message: `Échec récupération du dossier id: ${id}`,
-        full_message: error.toString(),
+        full_message: error.stack,
       });
       throw new Error("Unable to retrieve dossiers");
     }
@@ -85,7 +75,7 @@ export class DossiersService {
     } catch (error) {
       this.logger.error({
         short_message: `Échec récupération du dossier id: ${id}`,
-        full_message: error.toString(),
+        full_message: error.stack,
       });
       throw new Error(`Unable to retrieve dossier id: ${id}`);
     }
@@ -98,7 +88,7 @@ export class DossiersService {
     } catch (error) {
       this.logger.error({
         short_message: `Échec récupération du dossier id: ${id}`,
-        full_message: error.toString(),
+        full_message: error.stack,
       });
       throw new Error(`Unable to retrieve dossier id: ${id}`);
     }
@@ -109,7 +99,7 @@ export class DossiersService {
       } catch (error) {
         this.logger.error({
           short_message: `Échec suppression du dossier id: ${id}`,
-          full_message: error.toString(),
+          full_message: error.stack,
         });
         throw new Error(`Unable to remove dossier id: ${id}`);
       }
