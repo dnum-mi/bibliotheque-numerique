@@ -35,15 +35,13 @@ export class DossiersService {
         full_message: "debug upsert Dossier",
         datas: result,
       });
-      if (result) {
-        await Promise.all(
-          result.identifiers.map((identitier) => {
-            return this.instructionTimeService.proccessByDossierId(
-              identitier.id,
-            );
-          }),
-        );
-      }
+
+      //TODO: Call process when dossier is change
+      const dossier = await Dossier.findOneBy({
+        dossierDS: { id: dossierDS.id },
+      });
+      this.instructionTimeService.proccessByDossierId(dossier.id);
+
       return result;
     } catch (error) {
       this.logger.error({

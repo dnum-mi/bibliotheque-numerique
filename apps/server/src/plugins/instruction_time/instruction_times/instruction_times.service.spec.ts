@@ -273,14 +273,18 @@ describe("InstructionTimesService", () => {
     const datas = {
       //2
       ["In closure"]: {
-        expected: {},
+        expected: {
+          state: EInstructionTimeState.DEFAULT,
+        },
         dossier: {
           state: DossierState.Accepte,
         },
       },
       //3
       ["In building"]: {
-        expected: {},
+        expected: {
+          state: EInstructionTimeState.DEFAULT,
+        },
         dossier: {
           state: DossierState.EnConstruction,
         },
@@ -899,7 +903,10 @@ describe("InstructionTimesService", () => {
         .spyOn(Date, "now")
         .mockReturnValue(new Date(data.expected.now).getTime());
       const result = await service.proccess(instructionTime);
-      expect(result).toHaveProperty("state", data.expected.state || null);
+      expect(result).toHaveProperty(
+        "state",
+        data.expected.state || EInstructionTimeState.DEFAULT,
+      );
 
       if (
         typeof result !== "boolean" &&

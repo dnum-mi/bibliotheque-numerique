@@ -173,7 +173,7 @@ export class InstructionTimesService {
         }
 
         acc[dossier.id] = {
-          remainingTime,
+          remainingTime: remainingTime ? Math.round(remainingTime) : null,
           delayStatus: delayStatus ?? instructionTime.state ?? null,
         };
 
@@ -280,7 +280,10 @@ export class InstructionTimesService {
   }
 
   async proccessByDossierId(id: number) {
-    const dossier = await Dossier.findOneBy({ id });
+    const dossier = await Dossier.findOne({
+      where: { id: id },
+      relations: { dossierDS: true },
+    });
     if (!dossier) {
       // TODO: à revoir
       return false;
@@ -309,7 +312,7 @@ export class InstructionTimesService {
       ![DossierState.EnConstruction, DossierState.EnInstruction].includes(state)
     ) {
       //TODO: faire quelque chose
-      instructionTime.state = undefined;
+      instructionTime.state = EInstructionTimeState.DEFAULT;
       return await instructionTime.save();
     }
 

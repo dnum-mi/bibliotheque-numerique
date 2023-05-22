@@ -27,7 +27,7 @@ export class InstructionTime extends ApplicationEntity {
   @Column({ nullable: true, type: "timestamp" })
   endAt: Date;
 
-  @Column({ nullable: true })
+  @Column({ nullable: false, default: "" })
   state: EInstructionTimeStateKey;
 
   static findByDossierId(id: number) {
