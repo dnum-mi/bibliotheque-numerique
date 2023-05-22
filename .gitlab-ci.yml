@@ -59,7 +59,7 @@ build_app_back:
   stage: build-app
   artifacts:
     paths:
-      - apps/server/package-lock.json
+      - pnpm-lock.yaml
       - apps/server/package.json
       - apps/server/dist
   script:

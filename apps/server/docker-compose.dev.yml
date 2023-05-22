@@ -1,4 +1,43 @@
+version: '3'
+
 services:
+  worker:
+    profiles:
+      - dev
+    build:
+      target: builder
+      context: ../../
+      dockerfile: ./apps/server/Dockerfile
+    image: biblio-num/worker:dev
+    container_name: biblio-worker
+    depends_on:
+      - db
+    ports:
+      - 3042:${WORKER_PORT:-3042}
+      - 9230:9230
+    volumes:
+      - type: bind
+        source: ../..
+        target: /app
+      - /app/node_modules
+    networks:
+      - biblio-num-network
+    command: pnpm run dev:worker-in-docker
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_DB: biblio-num
+      POSTGRES_USERNAME: user
+      POSTGRES_PASSWORD: password
+      DS_API_URL: ${DS_API_URL}
+      DS_API_TOKEN: ${DS_API_TOKEN}
+      FORCE_COLOR: 1
+      DEBUG: 1
+      SMTP_SERVER: mailhog
+      SMTP_PORT: 1025
+      WORKER_PORT: ${WORKER_PORT}
+      WORKER_FETCH_DATA_INTERVAL: ${WORKER_FETCH_DATA_INTERVAL}
+      WORKER_FETCH_DATA_ON_STARTUP: ${WORKER_FETCH_DATA_ON_STARTUP}
+
   server:
     profiles:
       - dev
