@@ -24,6 +24,7 @@ export const mappingLabelInstructionToKey = {
 
 export enum EInstructionTimeState {
   FIRST_REQUEST = 'FIRST_REQUEST',
+  FIRST_RECEIPT = 'FIRST_RECEIPT',
   IN_PROGRESS = 'IN_PROGRESS',
   OUT_OF_DATE = 'OUT_OF_DATE',
   IN_EXTENSION = 'IN_EXTENSION',
