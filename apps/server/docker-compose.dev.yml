@@ -13,7 +13,7 @@ services:
     depends_on:
       - db
     ports:
-      - 3042:3042
+      - 3042:${WORKER_PORT:-3042}
       - 9230:9230
     volumes:
       - type: bind
