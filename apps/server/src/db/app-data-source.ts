@@ -16,6 +16,7 @@ import {
 } from "../entities";
 import { pluginsEntities } from "../plugins";
 import { resolve } from "path";
+import { JobLog } from "../modules/job-log/objects/job-log.entity";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
@@ -37,6 +38,7 @@ export const AppDataSource = new DataSource({
     Role,
     Connector,
     FileStorage,
+    JobLog,
     ...pluginsEntities,
   ],
   //TODO entities: ["../entities/**.entity.ts"],

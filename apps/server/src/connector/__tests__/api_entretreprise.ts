@@ -1,7 +1,7 @@
 export const dataApiEntreprise = {
   sourceName: "API_ENTREPRISE",
   method: "GET",
-  url: "https://staging.entreprise.api.gouv.fr/v3/ministere_interieur/rna/associations/${siren_or_rna}?context=${context}&object=${object}&recipient=${recipient}",
+  url: "https://staging.entreprise.api.gouv.fr/v3/ministere_interieur/rna/associations/${siren_or_rna}?context=${context}&object=${objects}&recipient=${recipient}",
   params: ["siren_or_rna"],
   query: {
     context: "Test API",
