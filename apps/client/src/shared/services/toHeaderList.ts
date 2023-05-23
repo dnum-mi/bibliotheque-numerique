@@ -33,8 +33,8 @@ export function toHeaderList (mappingCol: Partial<IDemarcheMappingColumn>[]): Ty
     text: col.labelBN,
     value: col.id,
     type: getTypeForHeader(col),
-    // filter: getTypeFilter(col),
-    // renderer: getTypeRenderer(col),
+    filter: getTypeFilter(col),
+    renderer: getTypeRenderer(col),
   }))
 }
 
@@ -87,12 +87,12 @@ export function toRowData (dataJson: object, mappingCols: Partial<IDemarcheMappi
   return result
 }
 
-function getTypeRenderer (mappingColumn: Partial<IDemarcheMappingColumn>) {
-  return mappingColumn?.labelSource?.length && mappingColumn?.labelSource?.length > 1 ? 'multi-value' : undefined
+function getTypeRenderer (mappingColumn: Partial<IDemarcheMappingColumn>): string | undefined {
+  return (mappingColumn?.labelSource?.length && mappingColumn?.labelSource?.length > 1) ? 'multi-value' : undefined
 }
 
-function getTypeFilter (mappingColumn: Partial<IDemarcheMappingColumn>) {
-  return mappingColumn?.labelSource?.length && mappingColumn?.labelSource?.length > 1
+function getTypeFilter (mappingColumn: Partial<IDemarcheMappingColumn>): string | undefined {
+  return (mappingColumn?.labelSource?.length && mappingColumn?.labelSource?.length > 1)
     ? 'multi-value'
     : undefined
 }
