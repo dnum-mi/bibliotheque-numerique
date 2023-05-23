@@ -15,6 +15,8 @@ import { DossiersDSService } from "../dossiers_ds/dossiers_ds.service";
 import { DossiersService } from "../dossiers/dossiers.service";
 import { FilesService } from "../files/files.service";
 import dsConfig from "../config/ds.config";
+import instructionTimeMappingConfig from "../plugins/instruction_time/config/instructionTimeMapping.config";
+import { InstructionTimesModule } from "../plugins/instruction_time/instruction_times/instruction_times.module";
 describe("DemarchesController", () => {
   let controller: DemarchesController;
   let service: DemarchesService;
@@ -29,8 +31,14 @@ describe("DemarchesController", () => {
         ConfigModule.forRoot({
           isGlobal: true,
           cache: true,
-          load: [configuration, fileConfig, dsConfig],
+          load: [
+            configuration,
+            fileConfig,
+            dsConfig,
+            instructionTimeMappingConfig,
+          ],
         }),
+        InstructionTimesModule,
       ],
       controllers: [DemarchesController],
       providers: [

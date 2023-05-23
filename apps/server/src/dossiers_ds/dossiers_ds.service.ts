@@ -1,13 +1,14 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { DsApiClient } from "@dnum-mi/ds-api-client";
 import { Dossier as TDossier } from "@dnum-mi/ds-api-client/dist/@types/types";
-import { DossierDS, FileStorage } from "../entities";
+import { Dossier, DossierDS, FileStorage } from "../entities";
 import { LoggerService } from "../logger/logger.service";
 import { DossiersService } from "../dossiers/dossiers.service";
 import { DataSource } from "typeorm";
 import { FilesService } from "../files/files.service";
 import { ConfigService } from "@nestjs/config";
 import { Champ, File, Message } from "@dnum-mi/ds-api-client/src/@types/types";
+import { InstructionTimesService } from "../plugins/instruction_time/instruction_times/instruction_times.service";
 
 @Injectable()
 export class DossiersDSService {
@@ -23,6 +24,7 @@ export class DossiersDSService {
     private dataSource: DataSource,
     private readonly filesService: FilesService,
     private readonly configService: ConfigService,
+    private instructionTimeService: InstructionTimesService,
   ) {
     this.dsApiClient = new DsApiClient(
       this.configService.get("ds").apiUrl,
@@ -39,7 +41,7 @@ export class DossiersDSService {
     } catch (error) {
       this.logger.error({
         short_message: "No dossier to upsert",
-        full_message: error.toString(),
+        full_message: error.stack,
       });
       throw new Error("Unable to update dossiers_ds");
     }
@@ -67,7 +69,7 @@ export class DossiersDSService {
     } catch (error) {
       this.logger.error({
         short_message: "Échec de la mise à jour des dossiers_ds",
-        full_message: error.toString(),
+        full_message: error.stack,
       });
       throw new Error("Unable to update dossiers_ds");
     }
@@ -109,13 +111,22 @@ export class DossiersDSService {
           dossiers: upsertResultDossiers,
         };
       });
+
+      this.proccessInstructionTime(dossier.number);
     } catch (error) {
       this.logger.error({
         short_message: "Échec de la mise à jour des dossiers_ds",
-        full_message: error.toString(),
+        full_message: error.stack,
       });
       throw new Error("Unable to update dossiers_ds");
     }
+  }
+
+  private async proccessInstructionTime(dossierId) {
+    const dossier = await Dossier.findOneBy({
+      dossierDS: { id: dossierId },
+    });
+    await this.instructionTimeService.proccessByDossierId(dossier.id);
   }
 
   private async updateFileUrlInJson(dossier: Partial<TDossier>) {
@@ -132,7 +143,7 @@ export class DossiersDSService {
     } catch (error) {
       this.logger.error({
         short_message: "Échec de la mise à jour des PJs de dossiers_ds",
-        full_message: error.toString(),
+        full_message: error.stack,
       });
       throw new Error("Unable to update PJ of dossiers_ds");
     }

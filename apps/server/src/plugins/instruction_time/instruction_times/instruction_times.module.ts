@@ -14,5 +14,6 @@ import instructionTimeMappingConfig from "../config/instructionTimeMapping.confi
   ],
   controllers: [InstructionTimesController],
   providers: [InstructionTimesService],
+  exports: [InstructionTimesService],
 })
 export class InstructionTimesModule {}

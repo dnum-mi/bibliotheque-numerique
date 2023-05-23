@@ -23,11 +23,20 @@ export class DossiersService {
       demarche: demarcheEntity,
     };
     try {
-      return await Dossier.upsertDossier(toUpsert, transactionalEntityManager);
+      const result = await Dossier.upsertDossier(
+        toUpsert,
+        transactionalEntityManager,
+      );
+      this.logger.debug({
+        short_message: "debug upsert Dossier",
+        full_message: "debug upsert Dossier",
+        datas: result,
+      });
+      return result;
     } catch (error) {
       this.logger.error({
         short_message: `Erreur pendant la mise à jour des dossiers numéros: ${dossierDS.id.toString()}`,
-        full_message: error.toString(),
+        full_message: error.stack,
       });
       throw new Error("Unable to update dossiers");
     }
@@ -39,7 +48,7 @@ export class DossiersService {
     } catch (error) {
       this.logger.error({
         short_message: "Échec récupération des dossiers",
-        full_message: error.toString(),
+        full_message: error.stack,
       });
       throw new Error("Unable to retrieve dossiers");
     }
@@ -51,7 +60,7 @@ export class DossiersService {
     } catch (error) {
       this.logger.error({
         short_message: `Échec récupération du dossier id: ${id}`,
-        full_message: error.toString(),
+        full_message: error.stack,
       });
       throw new Error("Unable to retrieve dossiers");
     }
@@ -66,7 +75,7 @@ export class DossiersService {
     } catch (error) {
       this.logger.error({
         short_message: `Échec récupération du dossier id: ${id}`,
-        full_message: error.toString(),
+        full_message: error.stack,
       });
       throw new Error(`Unable to retrieve dossier id: ${id}`);
     }
@@ -79,7 +88,7 @@ export class DossiersService {
     } catch (error) {
       this.logger.error({
         short_message: `Échec récupération du dossier id: ${id}`,
-        full_message: error.toString(),
+        full_message: error.stack,
       });
       throw new Error(`Unable to retrieve dossier id: ${id}`);
     }
@@ -90,7 +99,7 @@ export class DossiersService {
       } catch (error) {
         this.logger.error({
           short_message: `Échec suppression du dossier id: ${id}`,
-          full_message: error.toString(),
+          full_message: error.stack,
         });
         throw new Error(`Unable to remove dossier id: ${id}`);
       }

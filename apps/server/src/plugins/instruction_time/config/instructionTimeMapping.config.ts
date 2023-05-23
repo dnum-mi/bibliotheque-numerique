@@ -22,6 +22,9 @@ const config = {
     [keyInstructionTime.DATE_INTENT_OPPOSITION]:
       "Date de l'intention d'opposition aux financements",
   },
+  NB_DAYS_AFTER_INSTRUCTION: 60,
+  NB_DAYS_AFTER_EXTENSION: 120,
+  NB_DAYS_AFTER_INTENT_OPPOSITION: 30,
 };
 
 export type TInstructionTimeMappingConfig = typeof config;

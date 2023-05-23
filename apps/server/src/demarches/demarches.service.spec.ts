@@ -13,6 +13,8 @@ import { Demarche, DemarcheDS, Dossier, DossierDS, User } from "../entities";
 import { getDemarche } from "./__tests__/demarches";
 import { DossiersDSModule } from "../dossiers_ds/dossiers_ds.module";
 import dsConfig from "../config/ds.config";
+import instructionTimeMappingConfig from "../plugins/instruction_time/config/instructionTimeMapping.config";
+import { InstructionTimesModule } from "../plugins/instruction_time/instruction_times/instruction_times.module";
 
 describe("DemarchesService", () => {
   let service: DemarchesService;
@@ -27,9 +29,15 @@ describe("DemarchesService", () => {
         ConfigModule.forRoot({
           isGlobal: true,
           cache: true,
-          load: [configuration, fileConfig, dsConfig],
+          load: [
+            configuration,
+            fileConfig,
+            dsConfig,
+            instructionTimeMappingConfig,
+          ],
         }),
         DossiersDSModule,
+        InstructionTimesModule,
       ],
       controllers: [DemarchesController],
       providers: [DemarchesService, DemarchesDSService],
