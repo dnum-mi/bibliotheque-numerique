@@ -17,7 +17,7 @@ export type TypeHeaderDataTable = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   parseFn?: (value: any) => string,
   filter?: string | ((value: any) => boolean),
-  renderer?: Component,
+  renderer?: Component | string,
 }
 
 export enum AgGridTypeFilter {

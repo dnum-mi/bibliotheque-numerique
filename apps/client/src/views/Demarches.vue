@@ -12,7 +12,6 @@
       </div>
     </template>
     <BiblioNumDataTableAgGrid
-      :title="title"
       :headers="headersJson"
       :row-data="rowData"
       with-action
@@ -77,8 +76,6 @@ const headersJson = [
     value: 'typeOrganisme',
   },
 ]
-
-const title = 'Titre' // TODO: Trouver un titre ou bien le supprimer de la template
 
 const rowData = computed(() => demarcheStore.demarches.map(
   (d: any) => ({ ...d?.demarcheDS?.dataJson, typeOrganisme: d?.typeOrganisme, id: d.id })),
