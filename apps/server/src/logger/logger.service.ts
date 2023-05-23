@@ -18,6 +18,7 @@ type TLoggerObject = {
 @Injectable()
 export class LoggerService implements LoggerServiceNest {
   logger: winston.Logger;
+
   constructor(private configService: ConfigService) {
     const { printf } = winston.format;
     const customFormat = (colored?: boolean) =>
@@ -89,31 +90,36 @@ export class LoggerService implements LoggerServiceNest {
     );
     this.logger.info(loggerObject);
   }
-  error(message: string | TLoggerObject /* ...optionalParams: any[] */) {
+
+  error(message: string | TLoggerObject, ...optionalParams: any[]) {
     const loggerObject = this._toCompleteLoggerObject(
       typeof message === "string" ? { full_message: message } : message,
     );
     this.logger.error(loggerObject);
   }
-  warn(message: string | TLoggerObject /* ...optionalParams: any[] */) {
+
+  warn(message: string | TLoggerObject, ...optionalParams: any[]) {
     const loggerObject = this._toCompleteLoggerObject(
       typeof message === "string" ? { full_message: message } : message,
     );
     this.logger.warn(loggerObject);
   }
-  debug(message: string | TLoggerObject /* ...optionalParams: any[] */) {
+
+  debug(message: string | TLoggerObject, ...optionalParams: any[]) {
     const loggerObject = this._toCompleteLoggerObject(
       typeof message === "string" ? { full_message: message } : message,
     );
     this.logger.debug(loggerObject);
   }
-  verbose(message: string | TLoggerObject /* ...optionalParams: any[] */) {
+
+  verbose(message: string | TLoggerObject, ...optionalParams: any[]) {
     const loggerObject = this._toCompleteLoggerObject(
       typeof message === "string" ? { full_message: message } : message,
     );
     this.logger.verbose(loggerObject);
   }
-  silly(message: string | TLoggerObject /* ...optionalParams: any[] */) {
+
+  silly(message: string | TLoggerObject, ...optionalParams: any[]) {
     const loggerObject = this._toCompleteLoggerObject(
       typeof message === "string" ? { full_message: message } : message,
     );
