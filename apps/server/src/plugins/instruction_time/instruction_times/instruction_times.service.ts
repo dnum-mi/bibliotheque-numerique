@@ -149,7 +149,9 @@ export class InstructionTimesService {
     const dateDemand = date1?.date;
     if (dateReceipt && !dateDemand) {
       throw new Error(
-        `${messageError} ${date1?.message || "La premiére date"} est manaquant`,
+        `${messageError} ${
+          date1?.message || "La premiére date"
+        } est manaquante`,
       );
     }
 
@@ -164,7 +166,7 @@ export class InstructionTimesService {
     throw new Error(
       `${messageError} ${
         date2?.message || "la seconde date"
-      } est plus ancienne que ${date1?.message || "le premiére date"}`,
+      } est plus ancienne que ${date1?.message || "le première date"}`,
     );
   }
 
@@ -174,13 +176,13 @@ export class InstructionTimesService {
     this.checkAndGetLastDates(
       {
         date: instructionTime[keyInstructionTime.DATE_REQUEST1],
-        message: "La date de demande de pieces",
+        message: "La date de demande de pièces",
       },
       {
         date: instructionTime[keyInstructionTime.DATE_RECEIPT1],
-        message: "La date de reception de pieces",
+        message: "La date de réception de pièces",
       },
-      `${messageError} pour la premiére demande:`,
+      `${messageError} pour la première demande:`,
     );
 
     if (data.state !== DossierState.EnInstruction) {
@@ -196,13 +198,13 @@ export class InstructionTimesService {
     const isOk2ndDemand = this.checkAndGetLastDates(
       {
         date: instructionTime[keyInstructionTime.DATE_REQUEST2],
-        message: "La date de demande de pieces",
+        message: "La date de demande de pièces",
       },
       {
         date: instructionTime[keyInstructionTime.DATE_RECEIPT2],
-        message: "La date de reception de pieces",
+        message: "La date de reception de pièces",
       },
-      `${messageError} pour la deuxiéme demande:`,
+      `${messageError} pour la deuxième demande :`,
     );
 
     [
