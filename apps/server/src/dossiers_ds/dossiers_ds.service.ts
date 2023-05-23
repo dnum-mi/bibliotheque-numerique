@@ -32,7 +32,6 @@ export class DossiersDSService {
     );
   }
 
-
   async upsertDossierDS(dossierNumber: number, demarcheNumber: number) {
     try {
       const response = await this.dsApiClient.dossier(dossierNumber);

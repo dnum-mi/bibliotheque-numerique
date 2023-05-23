@@ -29,7 +29,12 @@ describe("DemarchesService", () => {
         ConfigModule.forRoot({
           isGlobal: true,
           cache: true,
-          load: [configuration, fileConfig, dsConfig, instructionTimeMappingConfig],
+          load: [
+            configuration,
+            fileConfig,
+            dsConfig,
+            instructionTimeMappingConfig,
+          ],
         }),
         DossiersDSModule,
         InstructionTimesModule,

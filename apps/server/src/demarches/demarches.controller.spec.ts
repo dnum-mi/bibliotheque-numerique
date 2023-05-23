@@ -31,7 +31,12 @@ describe("DemarchesController", () => {
         ConfigModule.forRoot({
           isGlobal: true,
           cache: true,
-          load: [configuration, fileConfig, dsConfig, instructionTimeMappingConfig],
+          load: [
+            configuration,
+            fileConfig,
+            dsConfig,
+            instructionTimeMappingConfig,
+          ],
         }),
         InstructionTimesModule,
       ],
