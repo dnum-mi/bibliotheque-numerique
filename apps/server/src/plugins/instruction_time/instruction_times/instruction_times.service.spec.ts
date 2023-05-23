@@ -2,7 +2,6 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { DossierState } from "@dnum-mi/ds-api-client/dist/@types/types";
-import { Dossier as TDossier } from "@dnum-mi/ds-api-client/dist/@types/types";
 import { DataSource } from "typeorm";
 import { faker } from "@faker-js/faker/locale/fr";
 
@@ -20,7 +19,6 @@ import {
 import { InstructionTime } from "../entities";
 import { Demarche, DemarcheDS, Dossier, DossierDS } from "../../../entities";
 import { EInstructionTimeState } from "../types/IntructionTime.type";
-import { type } from "os";
 
 describe("InstructionTimesService", () => {
   let service: InstructionTimesService;
@@ -271,7 +269,6 @@ describe("InstructionTimesService", () => {
 
   function getDataTestInstructionTime(idx) {
     const datas = {
-      //2
       ["In closure"]: {
         expected: {
           state: EInstructionTimeState.DEFAULT,
@@ -280,7 +277,7 @@ describe("InstructionTimesService", () => {
           state: DossierState.Accepte,
         },
       },
-      //3
+
       ["In building"]: {
         expected: {
           state: EInstructionTimeState.DEFAULT,
@@ -289,7 +286,7 @@ describe("InstructionTimesService", () => {
           state: DossierState.EnConstruction,
         },
       },
-      //4
+
       ["In first demand"]: {
         expected: {
           state: EInstructionTimeState.FIRST_REQUEST,
@@ -330,7 +327,7 @@ describe("InstructionTimesService", () => {
           ],
         },
       },
-      //5
+
       ["In first demand 2"]: {
         expected: {
           state: EInstructionTimeState.FIRST_REQUEST,
@@ -371,7 +368,7 @@ describe("InstructionTimesService", () => {
           ],
         },
       },
-      //6
+
       ["In instruction"]: {
         expected: {
           state: EInstructionTimeState.IN_PROGRESS,
@@ -418,7 +415,7 @@ describe("InstructionTimesService", () => {
           ],
         },
       },
-      //7
+
       ["In instruction 2"]: {
         expected: {
           state: EInstructionTimeState.IN_PROGRESS,
@@ -465,7 +462,7 @@ describe("InstructionTimesService", () => {
           ],
         },
       },
-      //8
+
       ["In instruction, out of date"]: {
         expected: {
           state: EInstructionTimeState.OUT_OF_DATE,
@@ -509,7 +506,7 @@ describe("InstructionTimesService", () => {
           ],
         },
       },
-      //9
+
       ["In extention"]: {
         expected: {
           state: EInstructionTimeState.IN_EXTENSION,
@@ -556,7 +553,7 @@ describe("InstructionTimesService", () => {
           ],
         },
       },
-      //10
+
       ["In extention, out of date"]: {
         expected: {
           state: EInstructionTimeState.OUT_OF_DATE,
@@ -600,7 +597,7 @@ describe("InstructionTimesService", () => {
           ],
         },
       },
-      //11
+
       ["In second demand"]: {
         expected: {
           state: EInstructionTimeState.SECOND_REQUEST,
@@ -644,7 +641,7 @@ describe("InstructionTimesService", () => {
           ],
         },
       },
-      //12
+
       ["In second demand 2"]: {
         expected: {
           state: EInstructionTimeState.SECOND_REQUEST,
@@ -688,7 +685,7 @@ describe("InstructionTimesService", () => {
           ],
         },
       },
-      //13
+
       ["In second reciept"]: {
         expected: {
           state: EInstructionTimeState.SECOND_RECEIPT,
@@ -735,7 +732,7 @@ describe("InstructionTimesService", () => {
           ],
         },
       },
-      //14
+
       ["In second reciept 2"]: {
         expected: {
           state: EInstructionTimeState.SECOND_RECEIPT,
@@ -782,7 +779,7 @@ describe("InstructionTimesService", () => {
           ],
         },
       },
-      //15
+
       ["In second reciept, out of date"]: {
         expected: {
           state: EInstructionTimeState.OUT_OF_DATE,
@@ -825,7 +822,7 @@ describe("InstructionTimesService", () => {
           ],
         },
       },
-      //16
+
       ["In opposition"]: {
         expected: {
           state: EInstructionTimeState.INTENT_OPPO,

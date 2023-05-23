@@ -26,6 +26,14 @@ type TIntructionTime = {
   [keyInstructionTime.DATE_INTENT_OPPOSITION]?: Date | null;
 };
 
+type TDelay = {
+  endAt: number;
+  startAt: number;
+  stopAt: number;
+  state: EInstructionTimeStateKey;
+  isStop: boolean;
+};
+
 @Injectable()
 export class InstructionTimesService {
   private readonly logger = new Logger(
@@ -303,92 +311,72 @@ export class InstructionTimesService {
   }
 
   async proccess(instructionTime: InstructionTime) {
-    ///Hors delai => Pas de calcul
-    if (instructionTime.state === EInstructionTimeState.OUT_OF_DATE)
-      return false;
+    if (this.isOutOfDate(instructionTime.state)) return false;
 
     const { dossier } = instructionTime;
     const { state, datePassageEnInstruction } = dossier.dossierDS.dataJson;
 
-    if (
-      ![DossierState.EnConstruction, DossierState.EnInstruction].includes(state)
-    ) {
-      //TODO: faire quelque chose
-      instructionTime.state = EInstructionTimeState.DEFAULT;
-      return await instructionTime.save();
+    if (this.isDossierClosed(state)) {
+      return await this.saveIsClose(instructionTime);
     }
 
     const datesForInstructionTimes =
       this.getMappingInstructionTimeByDossier(dossier);
 
-    //TODO: Coherence des dates à ajouter
     try {
       this.checkValidity(dossier.dossierDS.dataJson, datesForInstructionTimes);
     } catch (error) {
+      this.logger.error({
+        short_message: `Erreur pendant la check Validity instruction time: ${dossier.id.toString()}`,
+        full_message: error.stack,
+      });
       instructionTime.state = EInstructionTimeState.IN_ERROR;
       return await instructionTime.save();
     }
 
-    //Check state to action
     if (state === DossierState.EnConstruction) {
-      if (datesForInstructionTimes[keyInstructionTime.DATE_REQUEST1]) {
-        instructionTime.state = EInstructionTimeState.FIRST_REQUEST;
+      return await this.saveInConstruction(
+        instructionTime,
+        datesForInstructionTimes,
+      );
+    }
+
+    const delay = {} as TDelay;
+
+    if (datesForInstructionTimes.DateIntentOpposition) {
+      this.delayOpposition(delay, datesForInstructionTimes);
+    } else {
+      this.dalayInstruction(datePassageEnInstruction, delay);
+
+      if (datesForInstructionTimes.BeginProrogationDate) {
+        this.delayProrogation(datesForInstructionTimes, delay);
       }
-      return await instructionTime.save();
+
+      if (datesForInstructionTimes.DateRequest2) {
+        this.delayDateRequest2(delay, datesForInstructionTimes);
+      }
+
+      if (datesForInstructionTimes.DateReceipt2) {
+        this.delayDateReceipt2(delay, datesForInstructionTimes);
+      }
     }
+    return await this.saveInInstruction(instructionTime, delay);
+  }
 
-    const delay = {} as {
-      endAt: number;
-      startAt: number;
-      stopAt: number;
-      state: EInstructionTimeStateKey;
-      isStop: boolean;
-    };
+  private isOutOfDate(state) {
+    return state === EInstructionTimeState.OUT_OF_DATE;
+  }
 
-    if (datesForInstructionTimes.DateIntentOpposition) {
-      delay.endAt =
-        datesForInstructionTimes.DateIntentOpposition.getTime() +
-        this.nbDaysAfterIntentOpposition;
-      delay.startAt = datesForInstructionTimes.DateIntentOpposition.getTime();
-      delay.state = EInstructionTimeState.INTENT_OPPO;
-    }
+  private isDossierClosed(state) {
+    return ![DossierState.EnConstruction, DossierState.EnInstruction].includes(
+      state,
+    );
+  }
 
-    //En intruction
-    const dateInstruction = new Date(datePassageEnInstruction);
-    delay.startAt = dateInstruction.getTime();
-    delay.endAt = dateInstruction.getTime() + this.nbDaysAfterInstruction;
-    delay.state = EInstructionTimeState.IN_PROGRESS;
-
-    //En prorogatoin
-    if (datesForInstructionTimes.BeginProrogationDate) {
-      const timeProrogation =
-        datesForInstructionTimes.BeginProrogationDate.getTime();
-      delay.endAt =
-        timeProrogation +
-        this.nbDaysAfterExtension +
-        (delay.endAt - timeProrogation);
-      delay.state = EInstructionTimeState.IN_EXTENSION;
-    }
-
-    //2nd demande
-    if (datesForInstructionTimes.DateRequest2) {
-      delay.stopAt = datesForInstructionTimes.DateRequest2.getTime();
-      delay.state = EInstructionTimeState.SECOND_REQUEST;
-    }
-
-    //Receipt 2nd demand
-    if (datesForInstructionTimes.DateReceipt2) {
-      delay.endAt =
-        datesForInstructionTimes.DateReceipt2.getTime() -
-        (delay.stopAt - delay.endAt);
-      delay.state = EInstructionTimeState.SECOND_RECEIPT;
-    }
-
-    // Intention d'opposition
-    if (datesForInstructionTimes.DateIntentOpposition) {
-      delay.state = EInstructionTimeState.INTENT_OPPO;
-    }
-
+  private async saveInInstruction(
+    instructionTime: InstructionTime,
+    delay: TDelay,
+  ) {
     instructionTime.startAt = delay.startAt && new Date(delay.startAt);
     instructionTime.endAt = delay.endAt && new Date(delay.endAt);
     instructionTime.stopAt = delay.stopAt && new Date(delay.stopAt);
@@ -401,5 +389,67 @@ export class InstructionTimesService {
         : EInstructionTimeState.OUT_OF_DATE;
 
     return await instructionTime.save();
+  }
+
+  private async saveInConstruction(instructionTime, datesForInstructionTimes) {
+    if (datesForInstructionTimes[keyInstructionTime.DATE_REQUEST1]) {
+      instructionTime.state = EInstructionTimeState.FIRST_REQUEST;
+    }
+    return await instructionTime.save();
+  }
+
+  private async saveIsClose(instructionTime) {
+    //TODO: faire quelque chose
+    instructionTime.state = EInstructionTimeState.DEFAULT;
+    return await instructionTime.save();
+  }
+
+  private delayDateReceipt2(
+    delay: TDelay,
+    datesForInstructionTimes: TIntructionTime,
+  ) {
+    delay.endAt =
+      datesForInstructionTimes.DateReceipt2.getTime() -
+      (delay.stopAt - delay.endAt);
+    delay.state = EInstructionTimeState.SECOND_RECEIPT;
+  }
+
+  private delayDateRequest2(
+    delay: TDelay,
+    datesForInstructionTimes: TIntructionTime,
+  ) {
+    delay.stopAt = datesForInstructionTimes.DateRequest2.getTime();
+    delay.state = EInstructionTimeState.SECOND_REQUEST;
+  }
+
+  private delayProrogation(
+    datesForInstructionTimes: TIntructionTime,
+    delay: TDelay,
+  ) {
+    const timeProrogation =
+      datesForInstructionTimes.BeginProrogationDate.getTime();
+    delay.endAt =
+      timeProrogation +
+      this.nbDaysAfterExtension +
+      (delay.endAt - timeProrogation);
+    delay.state = EInstructionTimeState.IN_EXTENSION;
+  }
+
+  private dalayInstruction(datePassageEnInstruction, delay: TDelay) {
+    const dateInstruction = new Date(datePassageEnInstruction);
+    delay.startAt = dateInstruction.getTime();
+    delay.endAt = dateInstruction.getTime() + this.nbDaysAfterInstruction;
+    delay.state = EInstructionTimeState.IN_PROGRESS;
+  }
+
+  private delayOpposition(
+    delay: TDelay,
+    datesForInstructionTimes: TIntructionTime,
+  ) {
+    delay.endAt =
+      datesForInstructionTimes.DateIntentOpposition.getTime() +
+      this.nbDaysAfterIntentOpposition;
+    delay.startAt = datesForInstructionTimes.DateIntentOpposition.getTime();
+    delay.state = EInstructionTimeState.INTENT_OPPO;
   }
 }
