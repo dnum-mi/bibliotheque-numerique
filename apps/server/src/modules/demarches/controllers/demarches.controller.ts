@@ -15,7 +15,7 @@ import {
   Logger,
 } from "@nestjs/common";
 import { DemarchesService } from "../providers/demarches.service";
-import { Demarche, Dossier } from "../../../shared/entities";
+
 import { FilterPipe } from "../../../shared/pipe/filter.pipe";
 import { DemarchesDSService } from "../providers/demarches_ds.service";
 import {
@@ -26,6 +26,8 @@ import { PermissionName } from "../../../shared/types/Permission.type";
 import { filterObjectFields } from "@biblio-num/utils";
 import { DossiersDSService } from "../../dossiers/providers/dossiers_ds.service";
 import { LoggerService } from "../../logger/logger.service";
+import { Demarche } from "../entities/demarche.entity";
+import { Dossier } from "../../dossiers/entities/dossier.entity";
 
 @UseGuards(PermissionsGuard)
 @Controller("demarches")

@@ -4,16 +4,6 @@ dotenv.config();
 import { DataSource } from "typeorm";
 
 // Load Database Entities
-import {
-  DemarcheDS,
-  Demarche,
-  DossierDS,
-  Dossier,
-  User,
-  Role,
-  Connector,
-  FileStorage,
-} from "../shared/entities";
 import { pluginsEntities } from "../plugins";
 import { resolve } from "path";
 import { Demarche } from "../modules/demarches/entities/demarche.entity";
@@ -24,7 +14,6 @@ import { User } from "../modules/users/entities/user.entity";
 import { Role } from "../modules/roles/entities/role.entity";
 import { Connector } from "../modules/connector/connector.entity";
 import { FileStorage } from "../modules/files/file_storage.entity";
-import { JobLog } from "../modules/job-log/objects/job-log.entity";
 
 export const AppDataSource = new DataSource({
   type: "postgres",

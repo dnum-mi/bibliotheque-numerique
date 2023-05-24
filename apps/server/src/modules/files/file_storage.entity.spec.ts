@@ -1,7 +1,6 @@
 import { Test } from "@nestjs/testing";
 import { DataSource } from "typeorm";
 
-import { FileStorage } from "./index";
 import {
   datasourceTest,
   createOneFileStorage,

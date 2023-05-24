@@ -11,7 +11,7 @@ import {
 } from "@nestjs/common";
 import { Roles, RolesGuard } from "../roles/providers/roles.guard";
 import { UsersService } from "./users.service";
-import { User } from "../../shared/entities";
+import { User } from "./entities/user.entity";
 
 @Controller("users")
 @UseGuards(RolesGuard)

@@ -10,7 +10,7 @@ import {
 } from "@nestjs/common";
 import { ConnectorService } from "./connector.service";
 import { Roles, RolesGuard } from "../roles/providers/roles.guard";
-import { Connector } from "../../shared/entities";
+import { Connector } from "./connector.entity";
 
 @Controller("connector")
 @UseGuards(RolesGuard)

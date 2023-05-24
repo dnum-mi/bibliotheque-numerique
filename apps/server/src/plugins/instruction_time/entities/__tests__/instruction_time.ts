@@ -1,6 +1,5 @@
 import { faker } from "@faker-js/faker/locale/fr";
 import { InstructionTime } from "..";
-import { Dossier } from "../../../../shared/entities";
 import { EInstructionTimeState } from "../../types/IntructionTime.type";
 import { Dossier } from "../../../../modules/dossiers/entities/dossier.entity";
 

@@ -5,7 +5,6 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { FileStorage } from "../../shared/entities";
 import * as AWS from "aws-sdk";
 import { createReadStream } from "fs";
 import { join } from "path";

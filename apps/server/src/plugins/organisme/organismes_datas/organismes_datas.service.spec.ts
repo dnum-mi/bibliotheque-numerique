@@ -5,7 +5,6 @@ import { DataSource } from "typeorm";
 import { ConnectorModule } from "../../../modules/connector/connector.module";
 import { ConnectorService } from "../../../modules/connector/connector.service";
 import { Organisme, OrganismesData } from "../entities";
-import { Connector } from "../../../shared/entities";
 
 import { datasourceTest } from "../entities/__tests__";
 import { OrganismesDatasService } from "./organismes_datas.service";

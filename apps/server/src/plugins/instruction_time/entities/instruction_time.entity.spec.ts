@@ -13,12 +13,10 @@ import {
   dossier_ds_test,
   dossier_test,
 } from "../../../shared/entities/__tests__";
-import {
-  Demarche,
-  DemarcheDS,
-  Dossier,
-  DossierDS,
-} from "../../../shared/entities";
+import { Dossier } from "../../../modules/dossiers/entities/dossier.entity";
+import { DossierDS } from "../../../modules/dossiers/entities/dossier_ds.entity";
+import { Demarche } from "../../../modules/demarches/entities/demarche.entity";
+import { DemarcheDS } from "../../../modules/demarches/entities/demarche_ds.entity";
 
 describe("InstructionTime.entity", () => {
   let dataSource: DataSource;

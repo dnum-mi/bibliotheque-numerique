@@ -7,8 +7,9 @@ import {
   OneToMany,
   EntityManager,
 } from "typeorm";
-import { Dossier, DemarcheDS } from "./index";
-import { ApplicationEntity } from "./application_entity";
+import { ApplicationEntity } from "../../../shared/entities/application_entity";
+import { DemarcheDS } from "./demarche_ds.entity";
+import { Dossier } from "../../dossiers/entities/dossier.entity";
 
 export type TUpsertDemarche = Partial<
   Omit<Demarche, "demarcheDS"> & { demarcheDS: number }

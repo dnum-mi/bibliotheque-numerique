@@ -20,12 +20,6 @@ import {
   dossier_test,
 } from "../../../shared/entities/__tests__";
 import { InstructionTime } from "../entities";
-import {
-  Demarche,
-  DemarcheDS,
-  Dossier,
-  DossierDS,
-} from "../../../shared/entities";
 import { EInstructionTimeState } from "../types/IntructionTime.type";
 import { Dossier } from "../../../modules/dossiers/entities/dossier.entity";
 import { DossierDS } from "../../../modules/dossiers/entities/dossier_ds.entity";
