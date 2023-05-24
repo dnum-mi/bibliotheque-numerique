@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { Demarche, Dossier, DossierDS } from "../../shared/entities";
-import { LoggerService } from "../logger/logger.service";
+import { Demarche, Dossier, DossierDS } from "../../../shared/entities";
+import { LoggerService } from "../../logger/logger.service";
 import { EntityManager, InsertResult } from "typeorm";
 
 @Injectable()

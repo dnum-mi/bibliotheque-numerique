@@ -2,10 +2,10 @@ import { Module } from "@nestjs/common";
 import { DemarchesController } from "./controllers/demarches.controller";
 import { DemarchesService } from "./providers/demarches.service";
 import { DemarchesDSService } from "./providers/demarches_ds.service";
-import { DossiersDSModule } from "../dossiers_ds/dossiers_ds.module";
+import { DossiersModule } from "../dossiers/dossiers.module";
 
 @Module({
-  imports: [DossiersDSModule],
+  imports: [DossiersModule],
   controllers: [DemarchesController],
   providers: [DemarchesService, DemarchesDSService],
   exports: [DemarchesService, DemarchesDSService],
