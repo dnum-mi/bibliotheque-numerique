@@ -6,9 +6,9 @@ import {
   Inject,
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import { User } from "../../shared/entities";
+import { User } from "../../../shared/entities";
 import { ConfigService } from "@nestjs/config";
-import { TConfig } from "../../config/configuration";
+import { TConfig } from "../../../config/configuration";
 
 export const Roles = (...roles: string[]) => SetMetadata("roles", roles);
 

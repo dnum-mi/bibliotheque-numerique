@@ -21,7 +21,7 @@ import { DemarchesDSService } from "../providers/demarches_ds.service";
 import {
   PermissionsGuard,
   RequirePermissions,
-} from "../../guards/permissions.guard";
+} from "../../roles/providers/permissions.guard";
 import { PermissionName } from "../../../shared/types/Permission.type";
 import { filterObjectFields } from "@biblio-num/shared";
 import { DossiersDSService } from "../../dossiers/providers/dossiers_ds.service";

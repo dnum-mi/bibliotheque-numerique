@@ -9,7 +9,7 @@ import {
   Param,
   UseGuards,
 } from "@nestjs/common";
-import { Roles, RolesGuard } from "../guards/roles.guard";
+import { Roles, RolesGuard } from "../roles/providers/roles.guard";
 import { UsersService } from "./users.service";
 import { User } from "../../shared/entities";
 import { CreateUserDto, UpdateUserDto } from "@biblio-num/shared";

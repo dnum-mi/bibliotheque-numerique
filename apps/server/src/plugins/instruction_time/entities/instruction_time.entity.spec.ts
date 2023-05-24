@@ -13,7 +13,12 @@ import {
   dossier_ds_test,
   dossier_test,
 } from "../../../shared/entities/__tests__";
-import { Demarche, DemarcheDS, Dossier, DossierDS } from "../../../shared/entities";
+import {
+  Demarche,
+  DemarcheDS,
+  Dossier,
+  DossierDS,
+} from "../../../shared/entities";
 
 describe("InstructionTime.entity", () => {
   let dataSource: DataSource;
