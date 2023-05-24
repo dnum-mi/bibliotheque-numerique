@@ -1,10 +1,15 @@
 import { Test } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
 
-import { Role, User } from "./index";
-import { datasourceTest, user_test, createOneUser } from "./__tests__";
+import {
+  datasourceTest,
+  user_test,
+  createOneUser,
+} from "../../../shared/entities/__tests__";
 import * as bcrypt from "bcrypt";
 import { DataSource } from "typeorm";
+import { User } from "./user.entity";
+import { Role } from "../../roles/entities/role.entity";
 
 describe("user.entity", () => {
   let dataSource: DataSource;

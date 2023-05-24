@@ -7,9 +7,10 @@ import {
   JoinColumn,
   EntityManager,
 } from "typeorm";
-import { DossierDS, Demarche } from "./index";
-import { ApplicationEntity } from "./application_entity";
+import { ApplicationEntity } from "../../../shared/entities/application_entity";
 import { DossierState } from "@dnum-mi/ds-api-client/dist/@types/types";
+import { DossierDS } from "./dossier_ds.entity";
+import { Demarche } from "../../demarches/entities/demarche.entity";
 
 export type TUpsertDossier = Partial<
   Omit<Dossier, "dossierDS"> & { dossierDS: number }

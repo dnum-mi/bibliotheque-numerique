@@ -11,7 +11,7 @@ import {
 } from "@nestjs/common";
 import { FilterPipe } from "../../../shared/pipe/filter.pipe";
 import { DossiersService } from "../providers/dossiers.service";
-import { Dossier } from "../../../shared/entities";
+import { Dossier } from "../entities/dossier.entity";
 
 @Controller("dossiers")
 export class DossiersController {

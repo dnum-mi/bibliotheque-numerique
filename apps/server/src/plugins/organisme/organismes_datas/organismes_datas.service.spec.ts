@@ -5,7 +5,6 @@ import { DataSource } from "typeorm";
 import { ConnectorModule } from "../../../modules/connector/connector.module";
 import { ConnectorService } from "../../../modules/connector/connector.service";
 import { Organisme, OrganismesData } from "../entities";
-import { Connector } from "../../../shared/entities";
 
 import { datasourceTest } from "../entities/__tests__";
 import { OrganismesDatasService } from "./organismes_datas.service";
@@ -23,6 +22,7 @@ import fileConfig from "../../../config/file.config";
 import { ParseToOrganismesModule } from "../parserByConnector/parse_to_organismes.module";
 import { ParseToOrganismesService } from "../parserByConnector/parse_to_organismes.service";
 import { IParseToOrganisme } from "../parserByConnector/parse_to_organisme.interface";
+import { Connector } from "../../../modules/connector/connector.entity";
 
 async function createTestAddOrg(
   connectorService: ConnectorService,

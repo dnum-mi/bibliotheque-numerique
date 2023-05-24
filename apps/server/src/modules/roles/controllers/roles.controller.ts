@@ -12,12 +12,13 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { RolesService } from "../providers/roles.service";
-import { Role } from "../../../shared/entities";
+
 import {
   PermissionsGuard,
   RequirePermissions,
 } from "../providers/permissions.guard";
 import { PermissionName } from "../../../shared/types/Permission.type";
+import { Role } from "../entities/role.entity";
 
 @Controller("roles")
 @UseGuards(PermissionsGuard)

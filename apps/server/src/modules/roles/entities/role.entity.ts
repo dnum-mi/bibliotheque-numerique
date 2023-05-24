@@ -6,9 +6,9 @@ import {
   ManyToMany,
   Unique,
 } from "typeorm";
-import { User } from "./user.entity";
-import { ApplicationEntity } from "./application_entity";
-import { TPermission } from "../types/Permission.type";
+import { User } from "../../users/entities/user.entity";
+import { ApplicationEntity } from "../../../shared/entities/application_entity";
+import { TPermission } from "../../../shared/types/Permission.type";
 
 @Entity({ name: "roles" })
 @Unique("UK_ROLE_NAME", ["name"])

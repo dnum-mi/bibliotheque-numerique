@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker/locale/fr";
-import { FileStorage } from "../file_storage.entity";
+import { FileStorage } from "../../../modules/files/file_storage.entity";
 
 export function file_storage_test(): Partial<FileStorage> {
   return {

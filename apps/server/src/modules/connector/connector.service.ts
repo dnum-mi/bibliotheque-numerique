@@ -1,8 +1,8 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { Connector } from "../../shared/entities";
 import { HttpService } from "@nestjs/axios";
 import { LoggerService } from "../logger/logger.service";
 import { AxiosResponse } from "axios";
+import { Connector } from "./connector.entity";
 
 @Injectable()
 export class ConnectorService {

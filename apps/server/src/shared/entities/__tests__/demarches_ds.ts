@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker/locale/fr";
 import { Demarche as TDemarche } from "@dnum-mi/ds-api-client/dist/@types/types";
-import { DemarcheDS } from "../index";
+import { DemarcheDS } from "../../../modules/demarches/entities/demarche_ds.entity";
 
 export function demarche_ds_test(): Partial<DemarcheDS> {
   return {

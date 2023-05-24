@@ -1,7 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { DsApiClient } from "@dnum-mi/ds-api-client";
 import { Dossier as TDossier } from "@dnum-mi/ds-api-client/dist/@types/types";
-import { Dossier, DossierDS, FileStorage } from "../../../shared/entities";
 import { LoggerService } from "../../logger/logger.service";
 import { DossiersService } from "./dossiers.service";
 import { DataSource } from "typeorm";
@@ -9,6 +8,9 @@ import { FilesService } from "../../files/files.service";
 import { ConfigService } from "@nestjs/config";
 import { Champ, File, Message } from "@dnum-mi/ds-api-client/src/@types/types";
 import { InstructionTimesService } from "../../../plugins/instruction_time/instruction_times/instruction_times.service";
+import { DossierDS } from "../entities/dossier_ds.entity";
+import { Dossier } from "../entities/dossier.entity";
+import { FileStorage } from "../../files/file_storage.entity";
 
 @Injectable()
 export class DossiersDSService {

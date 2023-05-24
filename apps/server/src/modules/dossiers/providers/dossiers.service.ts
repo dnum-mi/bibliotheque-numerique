@@ -1,7 +1,9 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { Demarche, Dossier, DossierDS } from "../../../shared/entities";
 import { LoggerService } from "../../logger/logger.service";
 import { EntityManager, InsertResult } from "typeorm";
+import { Demarche } from "../../demarches/entities/demarche.entity";
+import { DossierDS } from "../entities/dossier_ds.entity";
+import { Dossier } from "../entities/dossier.entity";
 
 @Injectable()
 export class DossiersService {

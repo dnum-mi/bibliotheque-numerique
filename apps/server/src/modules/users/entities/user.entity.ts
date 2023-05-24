@@ -6,8 +6,8 @@ import {
   ManyToMany,
 } from "typeorm";
 import * as bcrypt from "bcrypt";
-import { Role } from "./role.entity";
-import { ApplicationEntity } from "./application_entity";
+import { Role } from "../../roles/entities/role.entity";
+import { ApplicationEntity } from "../../../shared/entities/application_entity";
 
 @Entity({ name: "users" })
 export class User extends ApplicationEntity {

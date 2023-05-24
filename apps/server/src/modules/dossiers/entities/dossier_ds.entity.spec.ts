@@ -2,12 +2,12 @@ import { Test } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { DataSource } from "typeorm";
 
-import { DossierDS } from "./index";
 import {
   datasourceTest,
   createOneDossierDs,
   dossier_ds_test,
-} from "./__tests__";
+} from "../../../shared/entities/__tests__";
+import { DossierDS } from "./dossier_ds.entity";
 
 describe("dossier_ds.entity", () => {
   let dataSource: DataSource;

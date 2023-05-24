@@ -8,7 +8,6 @@ import dayjs from "../../../utils/dayjs";
 
 import { InstructionTime } from "../entities";
 import { LoggerService } from "../../../modules/logger/logger.service";
-import { Dossier } from "../../../shared/entities";
 import {
   TInstructionTimeMappingConfig,
   keyInstructionTime,
@@ -17,6 +16,7 @@ import {
   EInstructionTimeState,
   EInstructionTimeStateKey,
 } from "../types/IntructionTime.type";
+import { Dossier } from "../../../modules/dossiers/entities/dossier.entity";
 import { Dayjs } from "dayjs";
 
 type TIntructionTime = {

@@ -1,13 +1,13 @@
 import { Test } from "@nestjs/testing";
 import { DataSource } from "typeorm";
 
-import { FileStorage } from "./index";
 import {
   datasourceTest,
   createOneFileStorage,
   file_storage_test,
-} from "./__tests__";
+} from "../../shared/entities/__tests__";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { FileStorage } from "./file_storage.entity";
 
 describe("file_storages.entity", () => {
   let dataSource: DataSource;

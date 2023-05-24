@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker/locale/fr";
-import { User } from "../index";
+import { User } from "../../../modules/users/entities/user.entity";
 
 export function user_test(): Partial<User> {
   return {

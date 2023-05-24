@@ -2,13 +2,13 @@ import { Test } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
 
 import { Organisme, OrganismesData } from ".";
-import { Connector } from "../../../shared/entities";
 import {
   datasourceTest,
   organismeData_test,
   createOneOrganismeData,
 } from "./__tests__";
 import { DataSource } from "typeorm";
+import { Connector } from "../../../modules/connector/connector.entity";
 
 describe("OrganismeData.entity", () => {
   let dataSource: DataSource;

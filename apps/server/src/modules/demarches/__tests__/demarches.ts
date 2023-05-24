@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker/locale/fr";
-import { Demarche } from "../../../shared/entities";
+import { Demarche } from "../entities/demarche.entity";
 
 export const getDemarche = (): Demarche =>
   ({

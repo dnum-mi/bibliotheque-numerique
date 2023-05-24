@@ -6,7 +6,6 @@ import configuration from "../../../config/configuration";
 import fileConfig from "../../../config/file.config";
 
 import { datasourceTest } from "../entities/__tests__";
-import { Connector } from "../../../shared/entities";
 import { Organisme, OrganismesData } from "../entities";
 
 import { ConnectorModule } from "../../../modules/connector/connector.module";
@@ -15,6 +14,7 @@ import { ParseToOrganismesModule } from "../parserByConnector/parse_to_organisme
 import { OrganismesDatasService } from "../organismes_datas/organismes_datas.service";
 import { OrganismesService } from "./organismes.service";
 import { getOrganismesData } from "./__tests__/organimsesData";
+import { Connector } from "../../../modules/connector/connector.entity";
 
 describe("OrganismesService", () => {
   let service: OrganismesService;

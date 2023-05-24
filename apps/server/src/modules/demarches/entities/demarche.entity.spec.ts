@@ -2,13 +2,16 @@ import { Test } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { DataSource } from "typeorm";
 
-import { Demarche, DemarcheDS, Dossier, DossierDS } from "./index";
 import {
   datasourceTest,
   createOneDemarcheDs,
   demarche_ds_test,
   demarche_test,
-} from "./__tests__";
+} from "../../../shared/entities/__tests__";
+import { Demarche } from "./demarche.entity";
+import { DemarcheDS } from "./demarche_ds.entity";
+import { Dossier } from "../../dossiers/entities/dossier.entity";
+import { DossierDS } from "../../dossiers/entities/dossier_ds.entity";
 
 describe("demarche.entity", () => {
   let dataSource: DataSource;

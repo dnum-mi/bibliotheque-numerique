@@ -5,7 +5,6 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { FileStorage } from "../../shared/entities";
 import * as AWS from "aws-sdk";
 import { createReadStream } from "fs";
 import { join } from "path";
@@ -14,6 +13,7 @@ import { HttpService } from "@nestjs/axios";
 import { AxiosResponse } from "axios";
 import { randomStringGenerator } from "@nestjs/common/utils/random-string-generator.util";
 import { S3 } from "aws-sdk/clients/browser_default";
+import { FileStorage } from "./file_storage.entity";
 
 @Injectable()
 export class FilesService {

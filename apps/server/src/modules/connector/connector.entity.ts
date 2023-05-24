@@ -1,4 +1,4 @@
-import { ApplicationEntity } from "./application_entity";
+import { ApplicationEntity } from "../../shared/entities/application_entity";
 
 import { Column, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
 

@@ -1,6 +1,4 @@
 import { Injectable, Logger } from "@nestjs/common";
-
-import { DemarcheDS } from "../../../shared/entities";
 import { LoggerService } from "../../logger/logger.service";
 import { DemarchesService } from "./demarches.service";
 import { DataSource } from "typeorm";
@@ -10,6 +8,7 @@ import {
   DsApiError,
   Demarche as GqlDemarche,
 } from "@dnum-mi/ds-api-client";
+import { DemarcheDS } from "../entities/demarche_ds.entity";
 
 @Injectable()
 export class DemarchesDSService {
