@@ -13,7 +13,10 @@ import {
   getDatasFromRNA,
   updateOrgFromRNA,
 } from "./__tests__/organismeFromRNA";
-import { connectorTest, createOneConnector } from "../../../shared/entities/__tests__";
+import {
+  connectorTest,
+  createOneConnector,
+} from "../../../shared/entities/__tests__";
 import { ConfigModule } from "@nestjs/config";
 import configuration from "../../../config/configuration";
 import fileConfig from "../../../config/file.config";

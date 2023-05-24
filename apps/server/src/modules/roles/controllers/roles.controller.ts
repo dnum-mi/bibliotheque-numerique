@@ -11,13 +11,13 @@ import {
   ParseIntPipe,
   UseGuards,
 } from "@nestjs/common";
-import { RolesService } from "./roles.service";
-import { Role } from "../../shared/entities";
+import { RolesService } from "../providers/roles.service";
+import { Role } from "../../../shared/entities";
 import {
   PermissionsGuard,
   RequirePermissions,
-} from "../guards/permissions.guard";
-import { PermissionName } from "../../shared/types/Permission.type";
+} from "../providers/permissions.guard";
+import { PermissionName } from "../../../shared/types/Permission.type";
 
 @Controller("roles")
 @UseGuards(PermissionsGuard)

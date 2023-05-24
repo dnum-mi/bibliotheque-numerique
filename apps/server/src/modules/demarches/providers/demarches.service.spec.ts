@@ -9,7 +9,13 @@ import { HttpModule } from "@nestjs/axios";
 import { DemarchesDSService } from "./demarches_ds.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { datasourceTest, user_test } from "../../../shared/entities/__tests__";
-import { Demarche, DemarcheDS, Dossier, DossierDS, User } from "../../../shared/entities";
+import {
+  Demarche,
+  DemarcheDS,
+  Dossier,
+  DossierDS,
+  User,
+} from "../../../shared/entities";
 import { getDemarche } from "../__tests__/demarches";
 import { DossiersDSModule } from "../../dossiers_ds/dossiers_ds.module";
 import dsConfig from "../../../config/ds.config";
