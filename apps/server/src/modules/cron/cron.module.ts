@@ -1,5 +1,4 @@
 import { Module } from "@nestjs/common";
-import { DemarchesDSModule } from "../demarches_ds/demarches_ds.module";
 import { DossiersDSModule } from "../dossiers_ds/dossiers_ds.module";
 import { CronService } from "./cron.service";
 import { LoggerModule } from "../logger/logger.module";
@@ -10,7 +9,6 @@ import { JobLogModule } from "../job-log/job-log.module";
     //TODO: Logger module should be global (see @Global at nestjs docs)
     LoggerModule,
 
-    DemarchesDSModule,
     DossiersDSModule,
     JobLogModule,
   ],
