@@ -2,10 +2,10 @@ import { AxiosResponse } from "axios";
 import { Test, TestingModule } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { DataSource } from "typeorm";
-import { ConnectorModule } from "../../../connector/connector.module";
-import { ConnectorService } from "../../../connector/connector.service";
+import { ConnectorModule } from "../../../modules/connector/connector.module";
+import { ConnectorService } from "../../../modules/connector/connector.service";
 import { Organisme, OrganismesData } from "../entities";
-import { Connector } from "../../../entities";
+import { Connector } from "../../../shared/entities";
 
 import { datasourceTest } from "../entities/__tests__";
 import { OrganismesDatasService } from "./organismes_datas.service";
@@ -13,7 +13,7 @@ import {
   getDatasFromRNA,
   updateOrgFromRNA,
 } from "./__tests__/organismeFromRNA";
-import { connectorTest, createOneConnector } from "../../../entities/__tests__";
+import { connectorTest, createOneConnector } from "../../../shared/entities/__tests__";
 import { ConfigModule } from "@nestjs/config";
 import configuration from "../../../config/configuration";
 import fileConfig from "../../../config/file.config";

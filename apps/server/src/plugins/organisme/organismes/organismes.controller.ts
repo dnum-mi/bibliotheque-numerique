@@ -9,7 +9,7 @@ import {
   Logger,
   ParseIntPipe,
 } from "@nestjs/common";
-import { LoggerService } from "../../../logger/logger.service";
+import { LoggerService } from "../../../modules/logger/logger.service";
 import { OrganismesService } from "./organismes.service";
 
 @Controller("organismes")

@@ -6,10 +6,10 @@ import {
   datasourceTest,
   dossier_ds_test,
   dossier_test,
-} from "../../../entities/__tests__";
+} from "../../../shared/entities/__tests__";
 import { instructionTime_test } from "../entities/__tests__";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { Demarche, DemarcheDS, Dossier, DossierDS } from "../../../entities";
+import { Demarche, DemarcheDS, Dossier, DossierDS } from "../../../shared/entities";
 import { ConfigModule } from "@nestjs/config";
 import configuration from "../../../config/configuration";
 import instructionTimeMappingConfig from "../config/instructionTimeMapping.config";

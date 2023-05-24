@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker/locale/fr";
 import { InstructionTime } from "..";
-import { Dossier } from "../../../../entities";
+import { Dossier } from "../../../../shared/entities";
 import { EInstructionTimeState } from "../../types/IntructionTime.type";
 
 export function instructionTime_test(

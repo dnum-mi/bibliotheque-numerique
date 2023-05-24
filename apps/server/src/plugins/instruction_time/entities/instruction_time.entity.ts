@@ -5,8 +5,8 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { ApplicationEntity } from "../../../entities/application_entity";
-import { Dossier } from "../../../entities";
+import { ApplicationEntity } from "../../../shared/entities/application_entity";
+import { Dossier } from "../../../shared/entities";
 import { EInstructionTimeStateKey } from "../types/IntructionTime.type";
 
 @Entity({ name: "instruction_times" })

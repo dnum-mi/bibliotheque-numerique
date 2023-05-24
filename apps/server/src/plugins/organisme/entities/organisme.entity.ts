@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { ApplicationEntity } from "../../../entities/application_entity";
+import { ApplicationEntity } from "../../../shared/entities/application_entity";
 import { OrganismesData } from "./organisme_data.entity";
 
 @Entity({ name: "organismes" })

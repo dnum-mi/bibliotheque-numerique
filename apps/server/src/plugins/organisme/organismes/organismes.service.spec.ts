@@ -6,10 +6,10 @@ import configuration from "../../../config/configuration";
 import fileConfig from "../../../config/file.config";
 
 import { datasourceTest } from "../entities/__tests__";
-import { Connector } from "../../../entities";
+import { Connector } from "../../../shared/entities";
 import { Organisme, OrganismesData } from "../entities";
 
-import { ConnectorModule } from "../../../connector/connector.module";
+import { ConnectorModule } from "../../../modules/connector/connector.module";
 import { ParseToOrganismesModule } from "../parserByConnector/parse_to_organismes.module";
 
 import { OrganismesDatasService } from "../organismes_datas/organismes_datas.service";

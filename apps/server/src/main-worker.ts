@@ -4,7 +4,7 @@ dotenv.config();
 
 import { NestFactory } from "@nestjs/core";
 import { ConfigService } from "@nestjs/config";
-import { LoggerService } from "./logger/logger.service";
+import { LoggerService } from "./modules/logger/logger.service";
 import { AppWorkerModule } from "./app-worker.module";
 
 async function bootstrap() {

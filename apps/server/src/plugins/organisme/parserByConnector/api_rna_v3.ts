@@ -1,7 +1,7 @@
 import { IParseToOrganisme } from "./parse_to_organisme.interface";
 import { Organisme } from "../entities";
 import { Logger } from "@nestjs/common";
-import { LoggerService } from "../../../logger/logger.service";
+import { LoggerService } from "../../../modules/logger/logger.service";
 import { toDate } from "@biblio-num/shared";
 
 export type TDataApiRnaV3 = {

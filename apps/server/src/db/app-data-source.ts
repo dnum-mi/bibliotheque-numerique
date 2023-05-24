@@ -13,7 +13,7 @@ import {
   Role,
   Connector,
   FileStorage,
-} from "../entities";
+} from "../shared/entities";
 import { pluginsEntities } from "../plugins";
 import { resolve } from "path";
 import { JobLog } from "../modules/job-log/objects/job-log.entity";

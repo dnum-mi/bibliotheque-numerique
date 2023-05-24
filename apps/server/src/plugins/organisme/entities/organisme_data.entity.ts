@@ -6,8 +6,8 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { ApplicationEntity } from "../../../entities/application_entity";
-import { Connector } from "../../../entities";
+import { ApplicationEntity } from "../../../shared/entities/application_entity";
+import { Connector } from "../../../shared/entities";
 import { Organisme } from "./organisme.entity";
 
 export type TUpsertOrganismeData = Partial<OrganismesData>;

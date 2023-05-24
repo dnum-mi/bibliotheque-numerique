@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { OrganismesDatasService } from "./organismes_datas.service";
-import { ConnectorModule } from "../../../connector/connector.module";
+import { ConnectorModule } from "../../../modules/connector/connector.module";
 import { ParseToOrganismesModule } from "../parserByConnector/parse_to_organismes.module";
 
 @Module({

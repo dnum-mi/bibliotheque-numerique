@@ -18,9 +18,9 @@ import {
   datasourceTest,
   dossier_ds_test,
   dossier_test,
-} from "../../../entities/__tests__";
+} from "../../../shared/entities/__tests__";
 import { InstructionTime } from "../entities";
-import { Demarche, DemarcheDS, Dossier, DossierDS } from "../../../entities";
+import { Demarche, DemarcheDS, Dossier, DossierDS } from "../../../shared/entities";
 import { EInstructionTimeState } from "../types/IntructionTime.type";
 
 describe("InstructionTimesService", () => {

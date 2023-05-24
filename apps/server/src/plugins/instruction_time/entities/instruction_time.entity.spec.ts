@@ -12,8 +12,8 @@ import {
   createOneDossierDs,
   dossier_ds_test,
   dossier_test,
-} from "../../../entities/__tests__";
-import { Demarche, DemarcheDS, Dossier, DossierDS } from "../../../entities";
+} from "../../../shared/entities/__tests__";
+import { Demarche, DemarcheDS, Dossier, DossierDS } from "../../../shared/entities";
 
 describe("InstructionTime.entity", () => {
   let dataSource: DataSource;
