@@ -1,8 +1,6 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { AppController } from "./app.controller";
-import { AppService } from "./app.service";
 import configuration from "./config/configuration";
 import fileConfig from "./config/file.config";
 import dsConfig from "./config/ds.config";
@@ -43,7 +41,7 @@ import { JobLogModule } from "./modules/job-log/job-log.module";
     // TODO: AppModule use JobModule for now to retrieve JobLogService
     JobLogModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
