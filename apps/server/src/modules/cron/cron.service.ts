@@ -7,7 +7,7 @@ import { ConfigService } from "@nestjs/config";
 import { LoggerService } from "../logger/logger.service";
 import { SchedulerRegistry } from "@nestjs/schedule";
 import { CronJob } from "cron";
-import { DemarchesDSService } from "../demarches_ds/demarches_ds.service";
+import { DemarchesDSService } from "../demarches/providers/demarches_ds.service";
 import { DossiersDSService } from "../dossiers_ds/dossiers_ds.service";
 
 @Injectable()

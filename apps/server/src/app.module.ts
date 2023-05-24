@@ -6,7 +6,6 @@ import fileConfig from "./config/file.config";
 import dsConfig from "./config/ds.config";
 import { AppDataSource } from "./db/app-data-source";
 import { DemarchesModule } from "./modules/demarches/demarches.module";
-import { DemarchesDSModule } from "./modules/demarches_ds/demarches_ds.module";
 import { DossiersModule } from "./modules/dossiers/dossiers.module";
 import { DossiersDSModule } from "./modules/dossiers_ds/dossiers_ds.module";
 import { RolesModule } from "./modules/roles/roles.module";
