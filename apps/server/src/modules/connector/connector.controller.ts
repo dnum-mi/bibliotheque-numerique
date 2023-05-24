@@ -9,8 +9,8 @@ import {
   ParseIntPipe,
 } from "@nestjs/common";
 import { ConnectorService } from "./connector.service";
-import { Roles, RolesGuard } from "../roles/providers/roles.guard";
-import { Connector } from "./connector.entity";
+import { Roles, RolesGuard } from "../guards/roles.guard";
+import { Connector } from "../../shared/entities";
 
 @Controller("connector")
 @UseGuards(RolesGuard)

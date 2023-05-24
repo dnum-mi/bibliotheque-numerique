@@ -4,6 +4,16 @@ dotenv.config();
 import { DataSource } from "typeorm";
 
 // Load Database Entities
+import {
+  DemarcheDS,
+  Demarche,
+  DossierDS,
+  Dossier,
+  User,
+  Role,
+  Connector,
+  FileStorage,
+} from "../shared/entities";
 import { pluginsEntities } from "../plugins";
 import { resolve } from "path";
 import { Demarche } from "../modules/demarches/entities/demarche.entity";

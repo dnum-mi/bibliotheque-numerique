@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { ApplicationEntity } from "../../../shared/entities/application_entity";
+import { Connector } from "../../../shared/entities";
 import { Organisme } from "./organisme.entity";
 import { Connector } from "../../../modules/connector/connector.entity";
 

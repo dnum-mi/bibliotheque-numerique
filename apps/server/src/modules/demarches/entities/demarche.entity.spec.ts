@@ -2,6 +2,7 @@ import { Test } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { DataSource } from "typeorm";
 
+import { Demarche, DemarcheDS, Dossier, DossierDS } from "./index";
 import {
   datasourceTest,
   createOneDemarcheDs,

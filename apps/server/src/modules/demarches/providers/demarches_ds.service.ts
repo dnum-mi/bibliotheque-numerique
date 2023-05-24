@@ -1,6 +1,8 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { LoggerService } from "../../logger/logger.service";
-import { DemarchesService } from "./demarches.service";
+
+import { DemarcheDS } from "../../shared/entities";
+import { LoggerService } from "../logger/logger.service";
+import { DemarchesService } from "../demarches/demarches.service";
 import { DataSource } from "typeorm";
 import { ConfigService } from "@nestjs/config";
 import {

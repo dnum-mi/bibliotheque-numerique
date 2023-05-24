@@ -1,12 +1,10 @@
 import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { EntityManager, In, InsertResult } from "typeorm";
-import { LoggerService } from "../../logger/logger.service";
+import { Demarche, DemarcheDS, TUpsertDemarche, User } from "../../shared/entities";
+import { LoggerService } from "../logger/logger.service";
 import { ConfigService } from "@nestjs/config";
-import { PermissionName } from "../../../shared/types/Permission.type";
-import { TConfig } from "../../../config/configuration";
-import { DemarcheDS } from "../entities/demarche_ds.entity";
-import { Demarche, TUpsertDemarche } from "../entities/demarche.entity";
-import { User } from "../../users/entities/user.entity";
+import { PermissionName } from "../../shared/types/Permission.type";
+import { TConfig } from "../../config/configuration";
 
 @Injectable()
 export class DemarchesService {

@@ -1,8 +1,5 @@
 import { faker } from "@faker-js/faker/locale/fr";
-import {
-  Connector,
-  TypeAuth,
-} from "../../../modules/connector/connector.entity";
+import { Connector, TypeAuth } from "../index";
 
 export const connectorTest = (): Partial<Connector> => ({
   name: faker.internet.userName(),

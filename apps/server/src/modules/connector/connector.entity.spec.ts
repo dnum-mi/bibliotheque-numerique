@@ -1,11 +1,8 @@
 import { Test } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
 
-import {
-  datasourceTest,
-  connectorTest,
-  createOneConnector,
-} from "../../shared/entities/__tests__";
+import { Connector } from "./index";
+import { datasourceTest, connectorTest, createOneConnector } from "./__tests__";
 import { DataSource } from "typeorm";
 import { Connector } from "./connector.entity";
 

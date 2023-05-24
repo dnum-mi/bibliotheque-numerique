@@ -2,7 +2,7 @@ import { IParseToOrganisme } from "./parse_to_organisme.interface";
 import { Organisme } from "../entities";
 import { Logger } from "@nestjs/common";
 import { LoggerService } from "../../../modules/logger/logger.service";
-import { toDate } from "@biblio-num/shared";
+import { toDate } from "@biblio-num/utils";
 
 export type TDataApiRnaV3 = {
   rna_id: string;

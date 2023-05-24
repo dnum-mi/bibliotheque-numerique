@@ -1,5 +1,6 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { ConnectorService } from "./connector.service";
+import { Connector } from "../../shared/entities";
 import { HttpModule } from "@nestjs/axios";
 import { DataSource } from "typeorm";
 import { TypeOrmModule } from "@nestjs/typeorm";
@@ -7,7 +8,6 @@ import { datasourceTest } from "../../shared/entities/__tests__";
 
 import { dataApiEntreprise } from "./__tests__";
 import { connectorTest } from "../../shared/entities/__tests__";
-import { Connector } from "./connector.entity";
 
 describe("ConnectorService", () => {
   let service: ConnectorService;

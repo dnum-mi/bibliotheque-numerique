@@ -2,6 +2,7 @@ import { Test } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
 
 import { Organisme, OrganismesData } from ".";
+import { Connector } from "../../../shared/entities";
 import {
   datasourceTest,
   organismeData_test,

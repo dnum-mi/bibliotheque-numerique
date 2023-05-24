@@ -1,6 +1,5 @@
 import { faker } from "@faker-js/faker/locale/fr";
-import { DemarcheDS } from "../../../modules/demarches/entities/demarche_ds.entity";
-import { Demarche } from "../../../modules/demarches/entities/demarche.entity";
+import { Demarche, DemarcheDS } from "../index";
 
 export function demarche_test(demarcheDS: DemarcheDS): Partial<Demarche> {
   return {

@@ -1,4 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
+import { User } from "../../shared/entities";
 import { LoggerService } from "../logger/logger.service";
 import { User } from "./entities/user.entity";
 import { FindOneOptions } from "typeorm";

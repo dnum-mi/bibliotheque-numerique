@@ -3,7 +3,7 @@ import { LoggerService } from "modules/logger/logger.service";
 import { ConnectorService } from "../../../modules/connector/connector.service";
 import { DataSource } from "typeorm";
 import { OrganismesData } from "../entities";
-
+import { Connector } from "../../../shared/entities";
 import {
   ParseToOrganismesService,
   TParseToOrganisme,

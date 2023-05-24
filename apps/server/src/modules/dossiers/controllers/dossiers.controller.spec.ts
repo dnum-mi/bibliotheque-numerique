@@ -2,8 +2,8 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { DossiersController } from "./dossiers.controller";
 import { DossiersService } from "../providers/dossiers.service";
 import { ConfigModule } from "@nestjs/config";
-import instructionTimeMappingConfig from "../../../plugins/instruction_time/config/instructionTimeMapping.config";
-import { InstructionTimesModule } from "../../../plugins/instruction_time/instruction_times/instruction_times.module";
+import instructionTimeMappingConfig from "../../plugins/instruction_time/config/instructionTimeMapping.config";
+import { InstructionTimesModule } from "../../plugins/instruction_time/instruction_times/instruction_times.module";
 
 describe("DossiersController", () => {
   let controller: DossiersController;

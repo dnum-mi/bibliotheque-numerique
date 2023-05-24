@@ -7,7 +7,8 @@ import {
   JoinColumn,
   EntityManager,
 } from "typeorm";
-import { ApplicationEntity } from "../../../shared/entities/application_entity";
+import { DossierDS, Demarche } from "./index";
+import { ApplicationEntity } from "./application_entity";
 import { DossierState } from "@dnum-mi/ds-api-client/dist/@types/types";
 import { DossierDS } from "./dossier_ds.entity";
 import { Demarche } from "../../demarches/entities/demarche.entity";

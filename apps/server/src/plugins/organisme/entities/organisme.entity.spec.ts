@@ -8,7 +8,7 @@ import {
   createOneOrganisme,
 } from "./__tests__";
 import { DataSource } from "typeorm";
-import { Connector } from "../../../modules/connector/connector.entity";
+import { Connector } from "../../../shared/entities";
 
 describe("Organisme.entity", () => {
   let dataSource: DataSource;

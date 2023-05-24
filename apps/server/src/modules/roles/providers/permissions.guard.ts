@@ -6,11 +6,10 @@ import {
   Inject,
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import { TConfig } from "../../../config/configuration";
+import { Role, User } from "../../shared/entities";
+import { TConfig } from "../../config/configuration";
 import { ConfigService } from "@nestjs/config";
-import { TPermission } from "../../../shared/types/Permission.type";
-import { Role } from "../entities/role.entity";
-import { User } from "../../users/entities/user.entity";
+import { TPermission } from "../../shared/types/Permission.type";
 
 export const RequirePermissions = (permission?: TPermission) =>
   SetMetadata("permission", permission);

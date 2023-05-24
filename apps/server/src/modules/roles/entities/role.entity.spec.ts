@@ -2,13 +2,8 @@ import { Test } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { DataSource } from "typeorm";
 
-import {
-  datasourceTest,
-  role_test,
-  createOneRole,
-} from "../../../shared/entities/__tests__";
-import { User } from "../../users/entities/user.entity";
-import { Role } from "./role.entity";
+import { Role, User } from "./index";
+import { datasourceTest, role_test, createOneRole } from "./__tests__";
 
 describe("role.entity", () => {
   let dataSource: DataSource;

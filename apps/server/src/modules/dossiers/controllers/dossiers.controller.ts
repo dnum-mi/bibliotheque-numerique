@@ -9,9 +9,9 @@ import {
   HttpStatus,
   HttpCode,
 } from "@nestjs/common";
-import { FilterPipe } from "../../../shared/pipe/filter.pipe";
-import { DossiersService } from "../providers/dossiers.service";
-import { Dossier } from "../entities/dossier.entity";
+import { FilterPipe } from "../../shared/pipe/filter.pipe";
+import { DossiersService } from "./dossiers.service";
+import { Dossier } from "../../shared/entities";
 
 @Controller("dossiers")
 export class DossiersController {

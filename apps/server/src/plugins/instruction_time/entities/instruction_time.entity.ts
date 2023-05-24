@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { ApplicationEntity } from "../../../shared/entities/application_entity";
+import { Dossier } from "../../../shared/entities";
 import { EInstructionTimeStateKey } from "../types/IntructionTime.type";
 import { Dossier } from "../../../modules/dossiers/entities/dossier.entity";
 

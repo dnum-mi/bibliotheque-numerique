@@ -1,7 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { LoggerService } from "../../logger/logger.service";
-import { Role } from "../entities/role.entity";
-import { User } from "../../users/entities/user.entity";
+import { Role, User } from "../../shared/entities";
+import { LoggerService } from "../logger/logger.service";
 
 @Injectable()
 export class RolesService {

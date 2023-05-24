@@ -7,10 +7,8 @@ import { ConfigService } from "@nestjs/config";
 import { LoggerService } from "../logger/logger.service";
 import { SchedulerRegistry } from "@nestjs/schedule";
 import { CronJob } from "cron";
-import { DemarchesDSService } from "../demarches/providers/demarches_ds.service";
-import { DossiersDSService } from "../dossiers/providers/dossiers_ds.service";
-import { JobLogService } from "../job-log/providers/job-log.service";
-import { JobNames } from "./job-name.enum";
+import { DemarchesDSService } from "../demarches_ds/demarches_ds.service";
+import { DossiersDSService } from "../dossiers_ds/dossiers_ds.service";
 
 @Injectable()
 export class CronService implements OnApplicationBootstrap, OnModuleInit {

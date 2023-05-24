@@ -6,6 +6,7 @@ import configuration from "../../../config/configuration";
 import fileConfig from "../../../config/file.config";
 
 import { datasourceTest } from "../entities/__tests__";
+import { Connector } from "../../../shared/entities";
 import { Organisme, OrganismesData } from "../entities";
 
 import { ConnectorModule } from "../../../modules/connector/connector.module";

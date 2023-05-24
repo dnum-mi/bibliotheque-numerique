@@ -8,6 +8,7 @@ import dayjs from "../../../shared/utils/dayjs";
 
 import { InstructionTime } from "../entities";
 import { LoggerService } from "../../../modules/logger/logger.service";
+import { Dossier } from "../../../shared/entities";
 import {
   TInstructionTimeMappingConfig,
   keyInstructionTime,

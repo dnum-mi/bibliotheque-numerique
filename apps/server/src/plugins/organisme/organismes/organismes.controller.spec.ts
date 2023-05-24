@@ -15,7 +15,7 @@ import { OrganismesController } from "./organismes.controller";
 
 import { OrganismesDatasService } from "../organismes_datas/organismes_datas.service";
 import { OrganismesService } from "./organismes.service";
-import { Connector } from "../../../modules/connector/connector.entity";
+import { Connector } from "../../../shared/entities";
 
 describe("OrganismesController", () => {
   let controller: OrganismesController;
