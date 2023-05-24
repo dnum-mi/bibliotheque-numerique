@@ -11,7 +11,7 @@ import { EjsAdapter } from "@nestjs-modules/mailer/dist/adapters/ejs.adapter";
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {
         const template = {
-          dir: `${__dirname}/../templates`,
+          dir: `${__dirname}/templates`,
           adapter: new EjsAdapter(),
           options: {
             strict: true,
