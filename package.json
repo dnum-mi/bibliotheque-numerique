@@ -21,6 +21,8 @@
     "dev:client-in-docker": "turbo dev:in-docker --filter=client",
     "test": "run-s docker:db:up test:only docker:db:down",
     "test:only": "turbo test",
+    "test:e2e": "turbo test:e2e --filter=client",
+    "test:e2e:ci": "turbo test:e2e:ci",
     "prepare": "$CI || husky install",
     "lint": "turbo lint",
     "docker:db:up": "docker compose --profile db-only -f apps/server/docker-compose.dev.yml up -d",

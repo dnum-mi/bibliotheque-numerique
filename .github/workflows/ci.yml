@@ -32,6 +32,9 @@ jobs:
       - name: run build
         run: |
             pnpm run build:client
+      - name: run test e2e
+        run: |
+            pnpm run test:e2e:ci
 
   server: 
     name: server - Run unit tests 
