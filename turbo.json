@@ -12,6 +12,18 @@
       ],
       "outputs": []
     },
+    "@biblio-num/client#test:e2e": {
+      "cache": false,
+      "dependsOn": [
+        "@biblio-num/utils#build",
+        "@biblio-num/server#build"
+      ],
+      "inputs": [
+        "src/**/*.tsx",
+        "src/**/*.ts"
+      ],
+      "outputs": []
+    },
     "build": {
       "dependsOn": [
         "^build"
