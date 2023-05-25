@@ -334,6 +334,9 @@ importers:
       mock-aws-s3:
         specifier: ^4.0.2
         version: 4.0.2
+      mockdate:
+        specifier: 3.0.5
+        version: 3.0.5
       nock:
         specifier: ^13.3.1
         version: 13.3.1
@@ -9287,6 +9290,10 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: false
+    
+  /mockdate@3.0.5:
+    resolution: {integrity: sha512-iniQP4rj1FhBdBYS/+eQv7j1tadJ9lJtdzgOpvsOHng/GbcDh2Fhdeq+ZRldrPYdXvCyfFUmFeEwEGXZB5I/AQ==}
+    dev: true
 
   /ms@2.0.0:
     resolution: {integrity: sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==}

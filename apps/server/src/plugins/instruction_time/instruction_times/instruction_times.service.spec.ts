@@ -1,9 +1,12 @@
+import MockDate from "mockdate";
 import { Test, TestingModule } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { DossierState } from "@dnum-mi/ds-api-client/dist/@types/types";
 import { DataSource } from "typeorm";
 import { faker } from "@faker-js/faker/locale/fr";
+
+import dayjs from "../../../utils/dayjs";
 
 import { InstructionTimesService } from "./instruction_times.service";
 import configuration from "../../../config/configuration";
@@ -58,6 +61,7 @@ describe("InstructionTimesService", () => {
   });
 
   afterEach(async () => {
+    MockDate.reset();
     await InstructionTime.delete({});
   });
   afterAll(async () => {
@@ -112,12 +116,16 @@ describe("InstructionTimesService", () => {
       await service.getMappingInstructionTimeByDossierId(fakeDossier.id),
     ).toEqual({
       BeginProrogationDate: null,
-      DateReceipt1: new Date("2021-02-01T00:00:00.000Z"),
-      DateReceipt2: new Date("2021-04-02T00:00:00.000Z"),
-      DateRequest1: new Date("2021-01-01T00:00:00.000Z"),
-      DateRequest2: new Date("2021-03-15T00:00:00.000Z"),
-      DurationExtension: new Date("2021-07-01T00:00:00.000Z"),
-      DateIntentOpposition: new Date("2021-03-15T00:00:00.000Z"),
+      DateReceipt1: dayjs("2021-02-01T00:00:00.000Z").startOf("day").toDate(),
+      DateReceipt2: dayjs("2021-04-02T00:00:00.000Z").startOf("day").toDate(),
+      DateRequest1: dayjs("2021-01-01T00:00:00.000Z").startOf("day").toDate(),
+      DateRequest2: dayjs("2021-03-15T00:00:00.000Z").startOf("day").toDate(),
+      DurationExtension: dayjs("2021-07-01T00:00:00.000Z")
+        .startOf("day")
+        .toDate(),
+      DateIntentOpposition: dayjs("2021-03-15T00:00:00.000Z")
+        .startOf("day")
+        .toDate(),
     });
   });
 
@@ -271,8 +279,9 @@ describe("InstructionTimesService", () => {
         [keyInstructionTime.DATE_RECEIPT2]: secondReceip,
         [keyInstructionTime.DATE_INTENT_OPPOSITION]: dateIntentOppo,
       };
-      const result = () =>
+      const result = () => {
         service.checkValidity(dossier.dataJson, instuctionTimes);
+      };
       expect(result).toThrow("Erreur dans les déclarations de dates");
     },
   );
@@ -339,21 +348,27 @@ describe("InstructionTimesService", () => {
         },
       },
 
-      ["In first demand 2"]: {
+      ["In instruction without 1st demand"]: {
         expected: {
-          state: EInstructionTimeState.FIRST_REQUEST,
+          state: EInstructionTimeState.IN_PROGRESS,
+          delay: 60,
+          now: "2023-01-01",
+          endAt: new Date(
+            new Date("2023-01-01").getTime() + 60 * millisecondsOfDay,
+          ),
         },
         dossier: {
-          state: DossierState.EnConstruction,
+          state: DossierState.EnInstruction,
+          datePassageEnInstruction: "2023-01-01",
           annotations: [
             {
               id: faker.datatype.uuid(),
-              date: "2023-01-01",
+              date: null,
               label: instructionTimeMappingConfigFound.DateRequest1,
             },
             {
               id: faker.datatype.uuid(),
-              date: "2023-01-05",
+              date: null,
               label: instructionTimeMappingConfigFound.DateReceipt1,
             },
             {
@@ -379,14 +394,59 @@ describe("InstructionTimesService", () => {
           ],
         },
       },
-
+      ["In instruction without 1st demand next day"]: {
+        expected: {
+          state: EInstructionTimeState.IN_PROGRESS,
+          delay: 55,
+          now: "2023-01-06",
+          endAt: new Date(
+            new Date("2023-01-01").getTime() + 60 * millisecondsOfDay,
+          ),
+        },
+        dossier: {
+          state: DossierState.EnInstruction,
+          datePassageEnInstruction: "2023-01-01",
+          annotations: [
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateRequest1,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateReceipt1,
+            },
+            {
+              id: faker.datatype.uuid(),
+              datetime: null,
+              label: instructionTimeMappingConfigFound.BeginProrogationDate,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateRequest2,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateReceipt2,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateIntentOpposition,
+            },
+          ],
+        },
+      },
       ["In instruction"]: {
         expected: {
           state: EInstructionTimeState.IN_PROGRESS,
           delay: 59,
           now: "2023-01-06",
           endAt: new Date(
-            new Date("2023-01-06").getTime() + 59 * millisecondsOfDay,
+            new Date("2023-01-05").getTime() + 60 * millisecondsOfDay,
           ),
         },
         dossier: {
@@ -430,10 +490,10 @@ describe("InstructionTimesService", () => {
       ["In instruction 2"]: {
         expected: {
           state: EInstructionTimeState.IN_PROGRESS,
-          delay: 60,
+          delay: 59,
           now: "2023-01-06",
           endAt: new Date(
-            new Date("2023-01-06").getTime() + 60 * millisecondsOfDay,
+            new Date("2023-01-05").getTime() + 60 * millisecondsOfDay,
           ),
         },
         dossier: {
@@ -524,7 +584,7 @@ describe("InstructionTimesService", () => {
           delay: 166,
           now: "2023-01-20",
           endAt: new Date(
-            new Date("2023-01-20").getTime() + 166 * millisecondsOfDay,
+            new Date("2023-01-06").getTime() + 180 * millisecondsOfDay,
           ),
         },
         dossier: {
@@ -885,7 +945,6 @@ describe("InstructionTimesService", () => {
     ${"In closure"}
     ${"In building"}
     ${"In first demand"}
-    ${"In first demand 2"}
     ${"In instruction"}
     ${"In instruction 2"}
     ${"In instruction, out of date"}
@@ -897,6 +956,8 @@ describe("InstructionTimesService", () => {
     ${"In second reciept 2"}
     ${"In second reciept, out of date"}
     ${"In opposition"}
+    ${"In instruction without 1st demand"}
+    ${"In instruction without 1st demand next day"}
   `(
     "cas $cas: Should create ou update of instruction time",
     async ({ cas }) => {
@@ -906,10 +967,9 @@ describe("InstructionTimesService", () => {
       instructionTime.dossier = new Dossier();
       instructionTime.dossier.dossierDS = new DossierDS();
       instructionTime.dossier.dossierDS.dataJson = data.dossier;
-
-      jest
-        .spyOn(Date, "now")
-        .mockReturnValue(new Date(data.expected.now).getTime());
+      if (data.expected.now) {
+        MockDate.set(data.expected.now);
+      }
       const result = await service.proccess(instructionTime);
       expect(result).toHaveProperty(
         "state",
@@ -923,9 +983,10 @@ describe("InstructionTimesService", () => {
           EInstructionTimeState.IN_EXTENSION,
         ].includes(data.expected.state)
       ) {
-        const recieveDelay =
-          (result?.endAt?.getTime() - new Date(data.expected.now).getTime()) /
-          millisecondsOfDay;
+        const recieveDelay = dayjs(result?.endAt).diff(
+          data.expected.now,
+          "day",
+        );
         expect(recieveDelay).toBe(data.expected.delay);
       }
     },
