@@ -62,7 +62,7 @@ importers:
     devDependencies:
       '@cypress/vue':
         specifier: ^5.0.5
-        version: 5.0.5(cypress@12.12.0)(vue@3.3.2)
+        version: 5.0.5(cypress@12.13.0)(vue@3.3.2)
       '@faker-js/faker':
         specifier: ^7.6.0
         version: 7.6.0
@@ -103,8 +103,8 @@ importers:
         specifier: ^0.3.2
         version: 0.3.2
       cypress:
-        specifier: ^12.12.0
-        version: 12.12.0
+        specifier: ^12.13.0
+        version: 12.13.0
       eslint:
         specifier: ^8.40.0
         version: 8.40.0
@@ -1730,7 +1730,7 @@ packages:
       uuid: 8.3.2
     dev: true
 
-  /@cypress/vue@5.0.5(cypress@12.12.0)(vue@3.3.2):
+  /@cypress/vue@5.0.5(cypress@12.13.0)(vue@3.3.2):
     resolution: {integrity: sha512-gjE0LKixK6XT4lPDFaEc8G6qNzm8YELgmbOiMVDxbVMuTtjYjorWQcIgzQ62uBX90/s7JrldXJ0W23gskoH4Ng==}
     engines: {node: '>=8'}
     peerDependencies:
@@ -1741,7 +1741,7 @@ packages:
       '@cypress/webpack-dev-server':
         optional: true
     dependencies:
-      cypress: 12.12.0
+      cypress: 12.13.0
       vue: 3.3.2
     dev: true
 
@@ -5263,8 +5263,8 @@ packages:
   /csstype@3.1.2:
     resolution: {integrity: sha512-I7K1Uu0MBPzaFKg4nI5Q7Vs2t+3gWWW648spaF+Rg7pI9ds18Ugn+lvg4SHczUdKlHI5LWBXyqfS8+DufyBsgQ==}
 
-  /cypress@12.12.0:
-    resolution: {integrity: sha512-UU5wFQ7SMVCR/hyKok/KmzG6fpZgBHHfrXcHzDmPHWrT+UUetxFzQgt7cxCszlwfozckzwkd22dxMwl/vNkWRw==}
+  /cypress@12.13.0:
+    resolution: {integrity: sha512-QJlSmdPk+53Zhy69woJMySZQJoWfEWun3X5OOenGsXjRPVfByVTHorxNehbzhZrEzH9RDUDqVcck0ahtlS+N/Q==}
     engines: {node: ^14.0.0 || ^16.0.0 || >=18.0.0}
     hasBin: true
     requiresBuild: true
@@ -12051,7 +12051,7 @@ packages:
     dev: false
 
   /verror@1.10.0:
-    resolution: {integrity: sha1-OhBcoXBTr1XW4nDB+CiGguGNpAA=}
+    resolution: {integrity: sha512-ZZKSmDAEFOijERBLkmYfJ+vmk3w+7hOLYDNkRCuRuMJGEmqYNCNLyBBFwWKVMhfwaEF3WOd0Zlw86U/WC/+nYw==}
     engines: {'0': node >=0.6.0}
     dependencies:
       assert-plus: 1.0.0
