@@ -67,6 +67,9 @@
     "start:prod": {
       "cache": false
     },
+    "start:worker:prod": {
+      "cache": false
+    },
     "test": {
       "dependsOn": [
         "@biblio-num/utils#build"
