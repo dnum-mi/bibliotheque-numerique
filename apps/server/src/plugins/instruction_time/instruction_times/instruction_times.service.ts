@@ -4,6 +4,8 @@ import { Dossier as TDossier } from "@dnum-mi/ds-api-client/dist/@types/types";
 import { DossierState } from "@dnum-mi/ds-api-client/dist/@types/types";
 import { In } from "typeorm";
 
+import dayjs from "../../../utils/dayjs";
+
 import { InstructionTime } from "../entities";
 import { LoggerService } from "../../../logger/logger.service";
 import { Dossier } from "../../../entities";
@@ -216,7 +218,7 @@ export class InstructionTimesService {
 
     if (!dateReceipt) return date1;
 
-    if (dateDemand.getTime() <= dateReceipt.getTime()) {
+    if (dayjs(dateDemand).isSameOrBefore(dateReceipt, "days")) {
       return date1;
     }
 
@@ -228,21 +230,34 @@ export class InstructionTimesService {
   }
 
   checkValidity(data: Partial<TDossier>, instructionTime: TIntructionTime) {
-    const messageError = "Erreur dans les déclarations de dates";
+    const messageError = `Erreur dans les déclarations de dates pour le dossier ${data.id}`;
+    const dateReceipt1stDemand =
+      instructionTime[keyInstructionTime.DATE_RECEIPT1];
+    const dateRequest1stDemand =
+      instructionTime[keyInstructionTime.DATE_REQUEST1];
+
+    if (data.state === DossierState.EnConstruction) {
+      if (dateReceipt1stDemand) {
+        throw Error(
+          `${messageError}: Ce dossier est en construction et posséde une date de récéption de 1er demande de piéce.`,
+        );
+      }
+      return true;
+    }
 
     this.checkAndGetLastDates(
       {
-        date: instructionTime[keyInstructionTime.DATE_REQUEST1],
+        date: dateRequest1stDemand,
         message: "La date de demande de pièces",
       },
       {
-        date: instructionTime[keyInstructionTime.DATE_RECEIPT1],
+        date: dateReceipt1stDemand,
         message: "La date de réception de pièces",
       },
       `${messageError} pour la première demande:`,
     );
 
-    if (data.state !== DossierState.EnInstruction) {
+    if (this.isDossierClosed(data.state)) {
       return true;
     }
 
@@ -250,6 +265,11 @@ export class InstructionTimesService {
       throw Error(`${messageError}: La date d'instruction est manquante`);
     }
 
+    if (dateRequest1stDemand && !dateReceipt1stDemand) {
+      throw Error(
+        `${messageError}: La date de reception de la 1ere demande est manquante`,
+      );
+    }
     const dateInstruction = new Date(data.datePassageEnInstruction);
 
     const isOk2ndDemand = this.checkAndGetLastDates(
@@ -264,9 +284,11 @@ export class InstructionTimesService {
       `${messageError} pour la deuxième demande :`,
     );
 
-    const forDateInstruction = {
-      date: dateInstruction,
-      message: "La date d'instruction",
+    const forDateStart = {
+      date: dateReceipt1stDemand || dateInstruction,
+      message: dateReceipt1stDemand
+        ? "La date de réception de la 1er demande de piéces"
+        : "La date d'instruction",
     };
 
     const forDateProrogation = {
@@ -280,7 +302,7 @@ export class InstructionTimesService {
     };
 
     this.checkAndGetLastDates(
-      forDateInstruction,
+      forDateStart,
       forDateProrogation,
       `${messageError}`,
     );
@@ -300,7 +322,7 @@ export class InstructionTimesService {
     }
 
     this.checkAndGetLastDates(
-      forDateInstruction,
+      forDateStart,
       forDateIntentionOppo,
       `${messageError}`,
     );
