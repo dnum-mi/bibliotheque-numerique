@@ -217,7 +217,7 @@ export class InstructionTimesService {
     if (!dateReceipt) return date1;
 
     if (dateDemand.getTime() <= dateReceipt.getTime()) {
-      return date2;
+      return date1;
     }
 
     throw new Error(
@@ -264,27 +264,47 @@ export class InstructionTimesService {
       `${messageError} pour la deuxième demande :`,
     );
 
-    [
-      {
-        date: dateInstruction,
-        message: "La date d'instruction",
-      },
+    const forDateInstruction = {
+      date: dateInstruction,
+      message: "La date d'instruction",
+    };
+
+    const forDateProrogation = {
+      date: instructionTime[keyInstructionTime.BEGIN_PROROGATION_DATE],
+      message: "La date de prorogation",
+    };
+
+    const forDateIntentionOppo = {
+      date: instructionTime[keyInstructionTime.DATE_INTENT_OPPOSITION],
+      message: "La date d'intention opposition",
+    };
+
+    this.checkAndGetLastDates(
+      forDateInstruction,
+      forDateProrogation,
+      `${messageError}`,
+    );
+
+    this.checkAndGetLastDates(
+      forDateProrogation,
+      isOk2ndDemand || undefined,
+      `${messageError} pour la date prorogation:`,
+    );
+
+    if (instructionTime[keyInstructionTime.BEGIN_PROROGATION_DATE]) {
       this.checkAndGetLastDates(
-        {
-          date: instructionTime[keyInstructionTime.BEGIN_PROROGATION_DATE],
-          message: "La date de prorogation",
-        },
-        isOk2ndDemand || undefined,
-        `${messageError} pour la date prorogation:`,
-      ),
-      {
-        date: instructionTime[keyInstructionTime.DATE_INTENT_OPPOSITION],
-        message: "La date d'intention opposition",
-      },
-    ].reduce((dateRecent, cur) => {
-      if (!dateRecent) return cur;
-      return this.checkAndGetLastDates(dateRecent, cur, `${messageError}:`);
-    });
+        forDateProrogation,
+        forDateIntentionOppo,
+        `${messageError}: `,
+      );
+    }
+
+    this.checkAndGetLastDates(
+      forDateInstruction,
+      forDateIntentionOppo,
+      `${messageError}`,
+    );
+
     return true;
   }
 
