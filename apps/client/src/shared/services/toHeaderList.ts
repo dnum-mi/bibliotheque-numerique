@@ -34,20 +34,20 @@ export function toHeaderList (mappingCol: Partial<IDemarcheMappingColumn>[]): Ty
   }))
 }
 
-const fctDefaultToRowData = (rowDatas: any[], id:string|number, datas:any) => {
-  rowDatas[0][id] = datas
-  return rowDatas
+const fctDefaultToRowData = (rowData: any[], id:string | number, data: any) => {
+  rowData[0][id] = data
+  return rowData
 }
 
 // TODO: A revoir
-const fctMultiRowData = (rowDatas:any[], id:string|number, datas:any) => {
-  datas.forEach((data:any, index:number) => {
-    if (index > (rowDatas.length - 1)) {
-      rowDatas = rowDatas[index][id] = data
+const fctMultiRowData = (rowData: any[], id:string | number, data: any) => {
+  data.forEach((data: any, index: number) => {
+    if (index > (rowData.length - 1)) {
+      rowData = rowData[index][id] = data
     }
   })
 
-  return rowDatas
+  return rowData
 }
 
 const getFctByTypeTable = {
@@ -55,16 +55,16 @@ const getFctByTypeTable = {
   [typeTable.MULTILINE]: fctMultiRowData,
 }
 
-const getValuesFromChamps = (col, datas) => col.labelSource?.reduce((datasFound, labelCur, index, sources) => {
-  const values = datasFound?.filter(data => data.label === labelCur)
+const getValuesFromChamps = (col, data) => col.labelSource?.reduce((dataFound, labelCur, index, sources) => {
+  const values = dataFound?.filter(datum => datum.label === labelCur)
   return index < (sources.length - 1) ? values?.map(val => val.champs).flat() || values : values
-}, datas)
+}, data)
 
 const dictCellByTypeData = {
   [ChampType.CHAMP]: getValuesFromChamps,
   [ChampType.ANNOTATION]: getValuesFromChamps,
-  [ChampType.INSTRUCTION_TIME]: (col, datas) => (datas && [datas[mappingLabelInstructionToKey[col.labelSource[0]]]]) || [],
-}
+  [ChampType.INSTRUCTION_TIME]: (col, data) => (data && [data[mappingLabelInstructionToKey[col.labelSource[0]]]]) || [],
+} as const
 
 export function toRowData (dataJson: object, mappingCols: Partial<IDemarcheMappingColumn>[]) {
   const result = mappingCols.reduce((acc, col) => {
