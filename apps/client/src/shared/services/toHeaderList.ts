@@ -8,12 +8,8 @@ export function getTypeForHeader (mappingColumn: Partial<IDemarcheMappingColumn>
   return (typeValue && typeForHeader[typeValue as keyof typeof typeForHeader]) || typeValue
 }
 
-export function toByType (value: string | number, type?: string | number) {
-  const toByTypeFct = {
-    [ChampValueTypesKeys.NUMBER]: (val) => Number(val),
-  }
-  const fct = toByTypeFct[type]
-  return fct ? fct(value) : value
+export function toByType (value: string | number, type?: string) {
+  return type === 'number' ? Number(value) : value
 }
 
 export function getValueBytypeValue (
