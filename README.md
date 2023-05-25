@@ -85,6 +85,64 @@ npm run db:create-default-admin
 
 (Pour créer le compte admin par défaut)
 
+## Conventions à respecter
+
+### Conventions de nommage
+
+#### Noms de branche git
+
+Le nom de branche doit être formé de la façon suivante :
+
+`<feat|fix|tech|docs|refacto>_#<ticket_github>/<description-en-kebab-case>`
+
+Exemples :
+
+- `feat_#353/worker-logs`
+- `refacto_#360/reorganize-backend`
+
+#### Message de validation (*commit*)
+
+Les messages de validation git doivent respecter les conventions de [Commits Conventionnels](https://www.conventionalcommits.org/fr/v1.0.0/).
+
+le projet étant franco-français d’une part, et l’anglais n’étant que rarement maîtrisé d’une part, les messages de commit devraient être au maximum en français.
+
+#### Noms de dossiers et fichiers
+
+Les noms des dossiers et des fichiers doivent impérativement être écrits en [kebab-case](https://www.freecodecamp.org/news/snake-case-vs-camel-case-vs-pascal-case-vs-kebab-case-whats-the-difference/) avec une seule exception : les noms de dossiers et de fichiers de composants Vue et des fichiers s’y afférents (fichiers de tests unitaires et de tests end-to-end, par exemple).
+
+Les noms de composants Vue doivent impérativement être formés d’au moins 2 mots, avec une seule exception : le composant `App.vue`.
+
+Exemple :
+
+```
+├── src
+│   ├── App.vue
+│   ├── components
+│   │   ├── BadgeTypeOrganisme.vue
+│   │   ├── BiblioNumDataTable.cy.ts
+│   │   ├── BiblioNumDataTable.vue
+│   │   ├── BiblioNumDataTableAgGrid.cy.ts
+│   │   ├── BiblioNumDataTableAgGrid.vue
+│   ├── stores
+│   │   ├── index.ts
+│   │   ├── role.ts
+│   │   └── user.ts
+```
+
+#### Noms de variables
+
+- variable booléenne : doit commencer par `is` (rarement `has`, `should` ou `can`) et être en `camelCase`  comme `isReallyTrue`
+- variable date : doit être préfixée par `Date` ou `At` et être en `camelCase`  comme `startDate` ou `lastModifiedAt`
+- fonction constructeur et classe : `PascalCase`
+- autre variable ou fonction : `camelCase`
+- constante : `SNAKE_CASE`
+
+Les noms de variables et de fonctions (méthodes aussi) doivent être explicite, et donc potentiellement très long... Jusqu’à une certaine limite.
+
+Les noms de variable d’un seul caractères doivent être proscrit, sauf dans de (très très) rares cas, comme la fonction d’identité (`x => x`) ou des fonctions fléchées extrêmement simples.
+
+Les **noms de variable doivent être au maximum en anglais**, et **peuvent être en français dans certains cas** si la traduction prête à confusion ou trop difficile (`demarche` ou `dossier`) ou si c’est un mot réservé (`affaire` peut rester `affaire` pour ne pas utiliser `case`).
+
 ## Développer sur le projet
 
 ### Lancer les apps en dev
