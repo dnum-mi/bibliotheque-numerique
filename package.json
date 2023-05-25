@@ -19,7 +19,6 @@
     "dev:server-in-docker": "turbo dev:in-docker --filter=server",
     "dev:worker-in-docker": "turbo dev:worker-in-docker --filter=server",
     "dev:client": "turbo dev --filter=client",
-    "dev:client-in-docker": "turbo dev:in-docker --filter=client",
     "test": "TEST_CMD=\"$( [ \"$CI\" ] && echo 'test:ci' || echo 'test:only' )\"; run-s $TEST_CMD",
     "test:ci": "run-s docker:db:up test:only docker:db:down",
     "test:only": "turbo test",
@@ -29,16 +28,15 @@
     "lint": "turbo lint",
     "docker:db:up": "docker compose --profile db-only -f apps/server/docker-compose.dev.yml up -d",
     "docker:db:down": "docker compose --profile db-only -f apps/server/docker-compose.dev.yml down",
+    "docker:adminer": "docker compose --profile adminer -f apps/server/docker-compose.dev.yml up -d",
+    "docker:pgadmin": "docker compose --profile pgadmin -f apps/server/docker-compose.dev.yml up -d",
     "build:client": "turbo build --filter=client",
     "lint:client": "turbo lint --filter=client",
     "test:client": "turbo test --filter=client",
     "build:server": "turbo build --filter=server",
     "lint:server": "turbo lint --filter=server",
     "test:server": "turbo test --filter=server",
-    "docker:dev": "docker compose --profile dev -f apps/server/docker-compose.dev.yml up -d",
-    "docker:prod:build": "docker compose -f docker-compose.prod.yml build",
-    "docker:prod": "docker compose -f docker-compose.prod.yml up -d",
-    "docker:prod:stop": "docker compose -f docker-compose.prod.yml down"
+    "docker:dev": "docker compose --profile dev -f apps/server/docker-compose.dev.yml up -d"
   },
   "repository": {
     "type": "git",
