@@ -54,6 +54,7 @@
   "dependencies": {
     "@biblio-num/utils": "1.0.0",
     "@dnum-mi/ds-api-client": "^1.3.0",
+    "@nest-middlewares/morgan": "7.0.1",
     "@nestjs-modules/mailer": "^1.8.1",
     "@nestjs/axios": "2.0.0",
     "@nestjs/common": "^9.4.0",
