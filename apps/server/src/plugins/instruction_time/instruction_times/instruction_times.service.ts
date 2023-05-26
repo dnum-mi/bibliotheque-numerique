@@ -248,15 +248,17 @@ export class InstructionTimesService {
       return true;
     }
 
+    const forCheckDateReception1stDemand = {
+      date: dateReceipt1stDemand,
+      message: "La date de réception de pièces",
+    };
+
     this.checkAndGetLastDates(
       {
         date: dateRequest1stDemand,
         message: "La date de demande de pièces",
       },
-      {
-        date: dateReceipt1stDemand,
-        message: "La date de réception de pièces",
-      },
+      forCheckDateReception1stDemand,
       `${messageError} pour la première demande:`,
     );
 
@@ -275,8 +277,17 @@ export class InstructionTimesService {
     }
 
     const dateInstruction = new Date(data.datePassageEnInstruction);
+    const forCheckDateInstruction = {
+      date: dateInstruction,
+      message: "La date d'instruction",
+    };
 
     if (dateReceipt1stDemand) {
+      this.checkAndGetLastDates(
+        forCheckDateReception1stDemand,
+        forCheckDateInstruction,
+        `${messageError}:`,
+      );
     }
 
     const isOk2ndDemand = this.checkAndGetLastDates(
@@ -291,12 +302,9 @@ export class InstructionTimesService {
       `${messageError} pour la deuxième demande :`,
     );
 
-    const forDateStart = {
-      date: dateReceipt1stDemand || dateInstruction,
-      message: dateReceipt1stDemand
-        ? "La date de réception de la 1er demande de piéces"
-        : "La date d'instruction",
-    };
+    const forDateStart = dateReceipt1stDemand
+      ? forCheckDateReception1stDemand
+      : forCheckDateInstruction;
 
     const forDateProrogation = {
       date: instructionTime[keyInstructionTime.BEGIN_PROROGATION_DATE],
