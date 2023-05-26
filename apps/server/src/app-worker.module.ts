@@ -8,6 +8,7 @@ import { LoggerModule } from "./logger/logger.module";
 import fileConfig from "./config/file.config";
 import { CronModule } from "./modules/cron/cron.module";
 import { ScheduleModule } from "@nestjs/schedule";
+import { JobLogModule } from "./modules/job-log/job-log.module";
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ScheduleModule } from "@nestjs/schedule";
 
     ScheduleModule.forRoot(),
     CronModule,
+    JobLogModule,
   ],
   controllers: [],
   providers: [],

@@ -18,6 +18,8 @@ type TLoggerObject = {
 @Injectable()
 export class LoggerService implements LoggerServiceNest {
   logger: winston.Logger;
+  private _logs: string[] = [];
+  private _isRegisteringLog = false;
 
   constructor(private configService: ConfigService) {
     const { printf } = winston.format;
@@ -84,32 +86,47 @@ export class LoggerService implements LoggerServiceNest {
     };
   }
 
-  log(message: string | TLoggerObject /* ...optionalParams: any[] */) {
-    const loggerObject = this._toCompleteLoggerObject(
-      typeof message === "string" ? { full_message: message } : message,
-    );
-    this.logger.info(loggerObject);
+  startRegisteringLogs() {
+    this._logs = [];
+    this._isRegisteringLog = true;
   }
 
-  error(message: string | TLoggerObject, ...optionalParams: any[]) {
+  stopRegisteringLog(): string[] {
+    this._isRegisteringLog = false;
+    return this._logs;
+  }
+
+  private _commonLogFunction(
+    message: string | TLoggerObject,
+    logFunctionKey: string,
+  ) {
     const loggerObject = this._toCompleteLoggerObject(
       typeof message === "string" ? { full_message: message } : message,
     );
-    this.logger.error(loggerObject);
+    if (this._isRegisteringLog) {
+      this._logs.push(JSON.stringify(loggerObject));
+      if (this._logs.length > 1000) {
+        this.logger.warn("Stack of logs is now more than 1000 lines");
+        this._logs.shift();
+      }
+    }
+    this.logger[logFunctionKey](loggerObject);
+  }
+
+  log(message: string | TLoggerObject, ...optionalParams: any[]) {
+    this._commonLogFunction(message, "info");
   }
 
   warn(message: string | TLoggerObject, ...optionalParams: any[]) {
-    const loggerObject = this._toCompleteLoggerObject(
-      typeof message === "string" ? { full_message: message } : message,
-    );
-    this.logger.warn(loggerObject);
+    this._commonLogFunction(message, "warn");
   }
 
   debug(message: string | TLoggerObject, ...optionalParams: any[]) {
-    const loggerObject = this._toCompleteLoggerObject(
-      typeof message === "string" ? { full_message: message } : message,
-    );
-    this.logger.debug(loggerObject);
+    this._commonLogFunction(message, "debug");
+  }
+
+  error(message: string | TLoggerObject, ...optionalParams: any[]) {
+    this._commonLogFunction(message, "error");
   }
 
   verbose(message: string | TLoggerObject, ...optionalParams: any[]) {

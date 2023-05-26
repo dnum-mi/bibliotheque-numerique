@@ -9,6 +9,8 @@ import { SchedulerRegistry } from "@nestjs/schedule";
 import { CronJob } from "cron";
 import { DemarchesDSService } from "../../demarches_ds/demarches_ds.service";
 import { DossiersDSService } from "../../dossiers_ds/dossiers_ds.service";
+import { JobLogService } from "../job-log/providers/job-log.service";
+import { JobNames } from "./job-name.enum";
 
 @Injectable()
 export class CronService implements OnApplicationBootstrap, OnModuleInit {
@@ -18,6 +20,7 @@ export class CronService implements OnApplicationBootstrap, OnModuleInit {
     private schedulerRegistry: SchedulerRegistry,
     private demarcheDsService: DemarchesDSService,
     private dossierDsService: DossiersDSService,
+    private jobLogService: JobLogService,
   ) {
     this.logger.log("Cron fetching data is set at: ");
     this.logger.log(this.config.get("fetchDataInterval"));
@@ -56,14 +59,34 @@ export class CronService implements OnApplicationBootstrap, OnModuleInit {
   }
 
   private async _fetchData() {
-    this.logger.log(`Upserting data from DS. (demarche and dossier)`);
-    const demarcheIds = await this.demarcheDsService.upsertAllDemarche();
-    await Promise.all(
-      demarcheIds.map(async (demarcheId) => {
-        this.logger.log(`Upserting Dossier for demarche number: ${demarcheId}`);
-        await this.dossierDsService.upsertDemarcheDossiersDS(demarcheId);
-      }),
+    const jobLog = await this.jobLogService.createJobLog(
+      JobNames.FETCH_DATA_FROM_DS,
     );
+    let thereWasAnError = false;
+    // TODO: replace the behavior here when we have true logs.
+    this.logger.startRegisteringLogs();
+    this.logger.log(`Upserting demarche from DS.`);
+    let demarcheIds: number[] = [];
+    try {
+      demarcheIds = await this.demarcheDsService.upsertAllDemarche();
+    } catch (e) {
+      thereWasAnError = true;
+    }
+    this.logger.log(`Upserting dossier forEach demarche.`);
+    for (const demarcheId of demarcheIds) {
+      this.logger.log(`Upserting Dossier for demarche number: ${demarcheId}`);
+      try {
+        await this.dossierDsService.upsertDemarcheDossiersDS(demarcheId);
+      } catch (e) {
+        thereWasAnError = true;
+      }
+    }
     this.logger.log("End of DS-data upserting.");
+    const logs = this.logger.stopRegisteringLog();
+    if (thereWasAnError) {
+      this.jobLogService.setJobLogFailure(jobLog.id, logs.join("\n"));
+    } else {
+      this.jobLogService.setJobLogSuccess(jobLog.id, logs.join("\n"));
+    }
   }
 }
