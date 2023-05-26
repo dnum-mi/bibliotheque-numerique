@@ -4,6 +4,8 @@ import { Dossier as TDossier } from "@dnum-mi/ds-api-client/dist/@types/types";
 import { DossierState } from "@dnum-mi/ds-api-client/dist/@types/types";
 import { In } from "typeorm";
 
+import dayjs from "../../../utils/dayjs";
+
 import { InstructionTime } from "../entities";
 import { LoggerService } from "../../../logger/logger.service";
 import { Dossier } from "../../../entities";
@@ -15,6 +17,7 @@ import {
   EInstructionTimeState,
   EInstructionTimeStateKey,
 } from "../types/IntructionTime.type";
+import { Dayjs } from "dayjs";
 
 type TIntructionTime = {
   [keyInstructionTime.DATE_REQUEST1]?: Date | null;
@@ -27,9 +30,9 @@ type TIntructionTime = {
 };
 
 type TDelay = {
-  endAt: number;
-  startAt: number;
-  stopAt: number;
+  endAt: Dayjs;
+  startAt: Dayjs;
+  stopAt: Dayjs;
   state: EInstructionTimeStateKey;
   isStop: boolean;
 };
@@ -46,15 +49,15 @@ export class InstructionTimesService {
   millisecondsOfDay = 1000 * 60 * 60 * 24;
 
   constructor(private configService: ConfigService) {
-    this.nbDaysAfterInstruction =
-      this.configService.get("NB_DAYS_AFTER_INSTRUCTION") *
-      this.millisecondsOfDay;
-    this.nbDaysAfterExtension =
-      this.configService.get("NB_DAYS_AFTER_EXTENSION") *
-      this.millisecondsOfDay;
-    this.nbDaysAfterIntentOpposition =
-      this.configService.get("NB_DAYS_AFTER_INTENT_OPPOSITION") *
-      this.millisecondsOfDay;
+    this.nbDaysAfterInstruction = this.configService.get(
+      "NB_DAYS_AFTER_INSTRUCTION",
+    );
+    this.nbDaysAfterExtension = this.configService.get(
+      "NB_DAYS_AFTER_EXTENSION",
+    );
+    this.nbDaysAfterIntentOpposition = this.configService.get(
+      "NB_DAYS_AFTER_INTENT_OPPOSITION",
+    );
   }
 
   findAll() {
@@ -108,9 +111,11 @@ export class InstructionTimesService {
         annotation &&
         (annotation.datetime || annotation.date || annotation.stringValue)
       ) {
-        result[annotationLabelKey] = new Date(
+        result[annotationLabelKey] = dayjs(
           annotation.datetime || annotation.date || annotation.stringValue,
-        );
+        )
+          .startOf("day")
+          .toDate();
       } else {
         result[annotationLabelKey] = null;
       }
@@ -216,7 +221,7 @@ export class InstructionTimesService {
 
     if (!dateReceipt) return date1;
 
-    if (dateDemand.getTime() <= dateReceipt.getTime()) {
+    if (dayjs(dateDemand).isSameOrBefore(dateReceipt, "days")) {
       return date1;
     }
 
@@ -228,21 +233,34 @@ export class InstructionTimesService {
   }
 
   checkValidity(data: Partial<TDossier>, instructionTime: TIntructionTime) {
-    const messageError = "Erreur dans les déclarations de dates";
+    const messageError = `Erreur dans les déclarations de dates pour le dossier ${data.id}`;
+    const dateReceipt1stDemand =
+      instructionTime[keyInstructionTime.DATE_RECEIPT1];
+    const dateRequest1stDemand =
+      instructionTime[keyInstructionTime.DATE_REQUEST1];
+
+    if (data.state === DossierState.EnConstruction) {
+      if (dateReceipt1stDemand) {
+        throw Error(
+          `${messageError}: Ce dossier est en construction et posséde une date de récéption de 1er demande de piéce.`,
+        );
+      }
+      return true;
+    }
 
     this.checkAndGetLastDates(
       {
-        date: instructionTime[keyInstructionTime.DATE_REQUEST1],
+        date: dateRequest1stDemand,
         message: "La date de demande de pièces",
       },
       {
-        date: instructionTime[keyInstructionTime.DATE_RECEIPT1],
+        date: dateReceipt1stDemand,
         message: "La date de réception de pièces",
       },
       `${messageError} pour la première demande:`,
     );
 
-    if (data.state !== DossierState.EnInstruction) {
+    if (this.isDossierClosed(data.state)) {
       return true;
     }
 
@@ -250,7 +268,16 @@ export class InstructionTimesService {
       throw Error(`${messageError}: La date d'instruction est manquante`);
     }
 
+    if (dateRequest1stDemand && !dateReceipt1stDemand) {
+      throw Error(
+        `${messageError}: La date de reception de la 1ere demande est manquante`,
+      );
+    }
+
     const dateInstruction = new Date(data.datePassageEnInstruction);
+
+    if (dateReceipt1stDemand) {
+    }
 
     const isOk2ndDemand = this.checkAndGetLastDates(
       {
@@ -264,9 +291,11 @@ export class InstructionTimesService {
       `${messageError} pour la deuxième demande :`,
     );
 
-    const forDateInstruction = {
-      date: dateInstruction,
-      message: "La date d'instruction",
+    const forDateStart = {
+      date: dateReceipt1stDemand || dateInstruction,
+      message: dateReceipt1stDemand
+        ? "La date de réception de la 1er demande de piéces"
+        : "La date d'instruction",
     };
 
     const forDateProrogation = {
@@ -280,7 +309,7 @@ export class InstructionTimesService {
     };
 
     this.checkAndGetLastDates(
-      forDateInstruction,
+      forDateStart,
       forDateProrogation,
       `${messageError}`,
     );
@@ -300,7 +329,7 @@ export class InstructionTimesService {
     }
 
     this.checkAndGetLastDates(
-      forDateInstruction,
+      forDateStart,
       forDateIntentionOppo,
       `${messageError}`,
     );
@@ -347,7 +376,7 @@ export class InstructionTimesService {
       this.checkValidity(dossier.dossierDS.dataJson, datesForInstructionTimes);
     } catch (error) {
       this.logger.error({
-        short_message: `Erreur pendant la check Validity instruction time: ${dossier.id.toString()}`,
+        short_message: `Erreur pendant la check Validity instruction time: ${dossier.id}`,
         full_message: error.stack,
       });
       instructionTime.state = EInstructionTimeState.IN_ERROR;
@@ -364,20 +393,25 @@ export class InstructionTimesService {
     const delay = {} as TDelay;
 
     if (datesForInstructionTimes.DateIntentOpposition) {
-      this.delayOpposition(delay, datesForInstructionTimes);
+      this.delayOpposition(datesForInstructionTimes, delay);
     } else {
-      this.dalayInstruction(datePassageEnInstruction, delay);
+      this.dalayInstruction(
+        dayjs(
+          datesForInstructionTimes.DateReceipt1 || datePassageEnInstruction,
+        ),
+        delay,
+      );
 
       if (datesForInstructionTimes.BeginProrogationDate) {
         this.delayProrogation(datesForInstructionTimes, delay);
       }
 
       if (datesForInstructionTimes.DateRequest2) {
-        this.delayDateRequest2(delay, datesForInstructionTimes);
+        this.delayDateRequest2(datesForInstructionTimes, delay);
       }
 
       if (datesForInstructionTimes.DateReceipt2) {
-        this.delayDateReceipt2(delay, datesForInstructionTimes);
+        this.delayDateReceipt2(datesForInstructionTimes, delay);
       }
     }
     return await this.saveInInstruction(instructionTime, delay);
@@ -397,17 +431,16 @@ export class InstructionTimesService {
     instructionTime: InstructionTime,
     delay: TDelay,
   ) {
-    instructionTime.startAt = delay.startAt && new Date(delay.startAt);
-    instructionTime.endAt = delay.endAt && new Date(delay.endAt);
-    instructionTime.stopAt = delay.stopAt && new Date(delay.stopAt);
+    instructionTime.startAt = delay.startAt && delay.startAt.toDate();
+    instructionTime.endAt = delay.endAt && delay.endAt.toDate();
+    instructionTime.stopAt = delay.stopAt && delay.stopAt.toDate();
     instructionTime.state =
       [
         EInstructionTimeState.SECOND_REQUEST,
         EInstructionTimeState.INTENT_OPPO as EInstructionTimeStateKey,
-      ].includes(delay.state) || Date.now() < delay.endAt
+      ].includes(delay.state) || dayjs().isSameOrBefore(delay.endAt)
         ? delay.state
         : EInstructionTimeState.OUT_OF_DATE;
-
     return await instructionTime.save();
   }
 
@@ -425,20 +458,22 @@ export class InstructionTimesService {
   }
 
   private delayDateReceipt2(
-    delay: TDelay,
     datesForInstructionTimes: TIntructionTime,
+    delay: TDelay,
   ) {
-    delay.endAt =
-      datesForInstructionTimes.DateReceipt2.getTime() -
-      (delay.stopAt - delay.endAt);
+    delay.endAt = delay.endAt.add(
+      delay.stopAt.diff(datesForInstructionTimes.DateReceipt2, "day"),
+      "day",
+    );
+
     delay.state = EInstructionTimeState.SECOND_RECEIPT;
   }
 
   private delayDateRequest2(
-    delay: TDelay,
     datesForInstructionTimes: TIntructionTime,
+    delay: TDelay,
   ) {
-    delay.stopAt = datesForInstructionTimes.DateRequest2.getTime();
+    delay.stopAt = dayjs(datesForInstructionTimes.DateRequest2);
     delay.state = EInstructionTimeState.SECOND_REQUEST;
   }
 
@@ -446,30 +481,28 @@ export class InstructionTimesService {
     datesForInstructionTimes: TIntructionTime,
     delay: TDelay,
   ) {
-    const timeProrogation =
-      datesForInstructionTimes.BeginProrogationDate.getTime();
-    delay.endAt =
-      timeProrogation +
-      this.nbDaysAfterExtension +
-      (delay.endAt - timeProrogation);
+    const timeProrogation = datesForInstructionTimes.BeginProrogationDate;
+    const remainingtime = delay.endAt.diff(timeProrogation, "day");
+    delay.endAt = dayjs(timeProrogation)
+      .add(this.nbDaysAfterExtension, "day")
+      .add(remainingtime, "day");
+
     delay.state = EInstructionTimeState.IN_EXTENSION;
   }
 
-  private dalayInstruction(datePassageEnInstruction, delay: TDelay) {
-    const dateInstruction = new Date(datePassageEnInstruction);
-    delay.startAt = dateInstruction.getTime();
-    delay.endAt = dateInstruction.getTime() + this.nbDaysAfterInstruction;
+  private dalayInstruction(dateStart: Dayjs, delay: TDelay) {
+    delay.startAt = dateStart;
+    delay.endAt = dayjs(dateStart).add(this.nbDaysAfterInstruction, "day");
     delay.state = EInstructionTimeState.IN_PROGRESS;
   }
 
   private delayOpposition(
-    delay: TDelay,
     datesForInstructionTimes: TIntructionTime,
+    delay: TDelay,
   ) {
-    delay.endAt =
-      datesForInstructionTimes.DateIntentOpposition.getTime() +
-      this.nbDaysAfterIntentOpposition;
-    delay.startAt = datesForInstructionTimes.DateIntentOpposition.getTime();
+    delay.startAt = dayjs(datesForInstructionTimes.DateIntentOpposition);
+    delay.endAt = delay.startAt.add(this.nbDaysAfterIntentOpposition, "day");
+
     delay.state = EInstructionTimeState.INTENT_OPPO;
   }
 }
