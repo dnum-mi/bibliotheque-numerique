@@ -117,15 +117,21 @@ export class LoggerService implements LoggerServiceNest {
     this._commonLogFunction(message, "info");
   }
 
+  warn(message: string | TLoggerObject, ...optionalParams: any[]) {
+    this._commonLogFunction(message, "warn");
+  }
+
   error(message: string | TLoggerObject, ...optionalParams: any[]) {
     this._commonLogFunction(message, "error");
   }
+
   verbose(message: string | TLoggerObject, ...optionalParams: any[]) {
     const loggerObject = this._toCompleteLoggerObject(
       typeof message === "string" ? { full_message: message } : message,
     );
     this.logger.verbose(loggerObject);
   }
+
   silly(message: string | TLoggerObject, ...optionalParams: any[]) {
     const loggerObject = this._toCompleteLoggerObject(
       typeof message === "string" ? { full_message: message } : message,
