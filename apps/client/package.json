@@ -21,10 +21,12 @@
     "test:ct:ci": "cypress run --component",
     "test:e2e": "start-server-and-test preview http://127.0.0.1:5050/ 'cypress open --e2e'",
     "test:e2e:ci": "start-server-and-test preview http://127.0.0.1:5050/ 'cypress run --e2e'",
-    "test:unit": "vitest --environment jsdom",
+    "test:unit": "vitest run",
+    "test:watch": "vitest",
     "typecheck": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false"
   },
   "dependencies": {
+    "@biblio-num/shared": "workspace:^",
     "@gouvfr/dsfr": "^1.9.2",
     "@gouvminint/vue-dsfr": "^3.6.0",
     "@vee-validate/zod": "^4.9.3",

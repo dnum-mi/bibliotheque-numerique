@@ -1,6 +1,6 @@
 {
   "extends": "./tsconfig.app.json",
-  "include": ["./**/*.{test,spec}.{ts,js}"],
+  "include": ["./vitest-setup.ts", "./**/*.{test,spec}.{ts,js}"],
   "exclude": [],
   "compilerOptions": {
     "composite": true,

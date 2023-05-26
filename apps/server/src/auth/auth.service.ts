@@ -15,7 +15,12 @@ export class AuthService {
     email: string,
     password: string,
   ): Promise<User | undefined> {
-    const user = await this.usersService.findByEmail(email);
+    const user = await this.usersService.findByEmail(email, [
+      "id",
+      "email",
+      "password",
+      "roles",
+    ]);
 
     if (!user) {
       throw new Error("User not found");

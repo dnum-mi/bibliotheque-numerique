@@ -32,13 +32,13 @@ export enum ChampValueTypesKeys {
 export const ChampValueBaseTypes = {
   [ChampValueTypesKeys.TEXT]: 'Texte',
   [ChampValueTypesKeys.NUMBER]: 'Nombre',
-}
+} as const
 
 export const ChampValueTypes = {
   ...ChampValueBaseTypes,
   [ChampValueTypesKeys.DATE]: 'Date',
   [ChampValueTypesKeys.PJ]: 'Pièce Jointe',
-}
+} as const
 
 export const typeForHeader = {
   [ChampValueTypesKeys.TEXT]: 'text',
@@ -46,7 +46,7 @@ export const typeForHeader = {
   // [ChampValueTypesKeys.BOOLEAN]: 'boolean',
   [ChampValueTypesKeys.DATE]: 'date',
   [ChampValueTypesKeys.PJ]: 'file',
-}
+} as const
 
 export const valueBytypeValue = {
   // [ChampValueTypesKeys.TEXT]: 'stringValue',
@@ -54,12 +54,12 @@ export const valueBytypeValue = {
   // [ChampValueTypesKeys.BOOLEAN]: 'value',
   [ChampValueTypesKeys.DATE]: 'date',
   [ChampValueTypesKeys.PJ]: 'file',
-}
+} as const
 
 export const keytoTypeData = {
   [ChampType.CHAMP]: 'champs',
   [ChampType.ANNOTATION]: 'annotations',
-}
+} as const
 
 export enum typeTable {
   DEFAULT = 'default',

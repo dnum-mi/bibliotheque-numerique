@@ -1,9 +1,9 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "pipeline": {
-    "@biblio-num/client#test:e2e:ci": {
+    "@biblio-num/client#test:e2e": {
+      "cache": false,
       "dependsOn": [
-        "@biblio-num/utils#build",
         "@biblio-num/server#build",
         "@biblio-num/client#build"
       ],
@@ -13,10 +13,8 @@
       ],
       "outputs": []
     },
-    "@biblio-num/client#test:e2e": {
-      "cache": false,
+    "@biblio-num/client#test:e2e:ci": {
       "dependsOn": [
-        "@biblio-num/utils#build",
         "@biblio-num/server#build",
         "@biblio-num/client#build"
       ],
@@ -34,10 +32,13 @@
         "dist/**"
       ]
     },
+    "clean:dist": {
+      "cache": false
+    },
     "dev": {
       "cache": false,
       "dependsOn": [
-        "^@biblio-num/utils#build"
+        "^@biblio-num/shared#build"
       ]
     },
     "dev:in-docker": {
@@ -74,7 +75,7 @@
     },
     "test": {
       "dependsOn": [
-        "@biblio-num/utils#build"
+        "@biblio-num/shared#build"
       ],
       "inputs": [
         "src/**/*.tsx",

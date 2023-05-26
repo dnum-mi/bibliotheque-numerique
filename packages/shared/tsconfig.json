@@ -1,0 +1,27 @@
+{
+  "include": ["src/**/*.ts"],
+  "exclude": ["dist/"],
+  "compilerOptions": {
+    "module": "commonjs",
+    "removeComments": true,
+    "declaration": true,
+    "declarationDir": "./types",
+    "declarationMap": true,
+    "preserveSymlinks": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "es2020",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./src",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strictNullChecks": true,
+    "noImplicitAny": true,
+    "strictBindCallApply": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": false,
+    "types": [".pnpm/@nestjs+common@9.4.0_class-transformer@0.5.1_class-validator@0.14.0_reflect-metadata@0.1.13_rxjs@7.8.1/node_modules/@nestjs/common"]
+  }
+}

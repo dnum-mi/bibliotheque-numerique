@@ -5,6 +5,7 @@
     "allowJs": true,
     "composite": true,
     "baseUrl": ".",
+    "moduleResolution": "node",
     "paths": {
       "@/*": ["./src/*"]
     },
