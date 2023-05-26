@@ -4,7 +4,8 @@
     "@biblio-num/client#test:e2e:ci": {
       "dependsOn": [
         "@biblio-num/utils#build",
-        "@biblio-num/server#build"
+        "@biblio-num/server#build",
+        "@biblio-num/client#build"
       ],
       "inputs": [
         "src/**/*.tsx",
@@ -16,7 +17,8 @@
       "cache": false,
       "dependsOn": [
         "@biblio-num/utils#build",
-        "@biblio-num/server#build"
+        "@biblio-num/server#build",
+        "@biblio-num/client#build"
       ],
       "inputs": [
         "src/**/*.tsx",
