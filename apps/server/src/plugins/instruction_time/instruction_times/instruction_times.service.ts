@@ -52,18 +52,12 @@ export class InstructionTimesService {
     this.nbDaysAfterInstruction = this.configService.get(
       "NB_DAYS_AFTER_INSTRUCTION",
     );
-    // *
-    //   this.millisecondsOfDay;
     this.nbDaysAfterExtension = this.configService.get(
       "NB_DAYS_AFTER_EXTENSION",
     );
-    //  *
-    // this.millisecondsOfDay;
     this.nbDaysAfterIntentOpposition = this.configService.get(
       "NB_DAYS_AFTER_INTENT_OPPOSITION",
     );
-    //  *
-    // this.millisecondsOfDay;
   }
 
   findAll() {
@@ -497,8 +491,6 @@ export class InstructionTimesService {
   }
 
   private dalayInstruction(dateStart: Dayjs, delay: TDelay) {
-    // const dateInstruction = new Date(datePassageEnInstruction);
-
     delay.startAt = dateStart;
     delay.endAt = dayjs(dateStart).add(this.nbDaysAfterInstruction, "day");
     delay.state = EInstructionTimeState.IN_PROGRESS;
