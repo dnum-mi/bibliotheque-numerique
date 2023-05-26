@@ -12,6 +12,8 @@ export class ConnectorService {
 
   constructor(private readonly httpService: HttpService) {}
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async findAll() {
     try {
       return await Connector.find();
@@ -24,6 +26,8 @@ export class ConnectorService {
     }
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async findOneById(id: number) {
     try {
       return await Connector.findOneBy({ id });
@@ -36,6 +40,8 @@ export class ConnectorService {
     }
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async findOneBySourceName(name: string) {
     try {
       return await Connector.findOneBy({ name });
@@ -48,6 +54,8 @@ export class ConnectorService {
     }
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async upsert(connector: Partial<Connector>) {
     try {
       const upsertConnectorResult = await Connector.upsertConnector(connector);
@@ -61,6 +69,8 @@ export class ConnectorService {
     }
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async remove(id: number) {
     try {
       return await Connector.delete({ id });
@@ -77,7 +87,7 @@ export class ConnectorService {
     entity: Connector,
     params: Record<string, string>,
     query?: Record<string, string>,
-  ): Promise<AxiosResponse<any>> {
+  ): Promise<AxiosResponse> {
     try {
       const url = this.buildUrl(entity.url, params, {
         ...entity.query,

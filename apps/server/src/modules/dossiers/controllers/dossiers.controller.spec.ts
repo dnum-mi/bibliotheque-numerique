@@ -1,3 +1,6 @@
+// TODO: fixe type
+/* eslint-disable */
+
 import { Test, TestingModule } from "@nestjs/testing";
 import { DossiersController } from "./dossiers.controller";
 import { DossiersService } from "../providers/dossiers.service";

@@ -13,6 +13,8 @@ export class DemarcheDS extends ApplicationEntity {
   @Column({ type: "timestamp" })
   dsUpdateAt: Date;
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   static upsertDemarcheDS(
     toUpsert: Partial<DemarcheDS> | Partial<DemarcheDS>[],
     transactionalEntityManager: EntityManager,

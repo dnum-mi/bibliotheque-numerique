@@ -44,6 +44,8 @@ export class DossiersService {
     }
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async findWithFilter(filter: object = {}) {
     try {
       return await Dossier.findWithFilter(filter);
@@ -56,6 +58,8 @@ export class DossiersService {
     }
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async findOne(id: number) {
     try {
       return await Dossier.findOneBy({ id: id });
@@ -68,6 +72,8 @@ export class DossiersService {
     }
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async findOneWithDetail(id: number) {
     try {
       return await Dossier.findOne({
@@ -83,6 +89,8 @@ export class DossiersService {
     }
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async remove(id: number) {
     let dossier: Dossier;
     try {

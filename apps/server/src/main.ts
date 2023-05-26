@@ -9,6 +9,8 @@ import * as session from "express-session";
 import * as passport from "passport";
 import { sessionSecret } from "./modules/auth/constants";
 
+// TODO: fixe type
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     cors: true,

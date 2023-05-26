@@ -31,7 +31,8 @@ export class Dossier extends ApplicationEntity {
 
   @Column({ type: "varchar" })
   state: DossierState;
-
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   static findWithFilter(filter: object) {
     return this.find({
       where: {
@@ -43,11 +44,13 @@ export class Dossier extends ApplicationEntity {
     });
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   static upsertDossier(
     toUpsert: TUpsertDossier | TUpsertDossier[],
     transactionalEntityManager: EntityManager,
   ) {
-    return transactionalEntityManager.upsert(Dossier, toUpsert as any, {
+    return transactionalEntityManager.upsert(Dossier, <never>toUpsert, {
       conflictPaths: ["dossierDS"],
       skipUpdateIfNoValuesChanged: true,
     });

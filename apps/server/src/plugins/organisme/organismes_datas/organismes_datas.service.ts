@@ -22,6 +22,8 @@ export class OrganismesDatasService {
     private parser2Organismes: ParseToOrganismesService,
   ) {}
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async findAll() {
     const organismeDatas = await OrganismesData.find({
       relations: { organismesSource: true },
@@ -32,10 +34,14 @@ export class OrganismesDatasService {
     }));
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   findOne(id: number) {
     return `This action returns a #${id} organismesData`;
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   remove(id: number) {
     return `This action removes a #${id} organismesData`;
   }
@@ -48,6 +54,8 @@ export class OrganismesDatasService {
     return organismesDatas || [];
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async createOrUpdate(
     idRna: string,
     connectorApi: Connector,
@@ -91,6 +99,8 @@ export class OrganismesDatasService {
     }
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async findAndAddByIdRna(idRna: string, connectorApi: Connector) {
     const parser = this.parser2Organismes.getParser(connectorApi.name)();
 
@@ -127,6 +137,8 @@ export class OrganismesDatasService {
     return await this.createOrUpdate(idRna, connectorApi, parser);
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async findAndAddByIdRnaFromAllApi(idRna: string, sources: string[]) {
     let connectorApisSelected;
     try {

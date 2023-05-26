@@ -31,6 +31,8 @@ export class UsersController {
 
   @Get()
   @Roles("admin")
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async listUsers() {
     let users: User[];
     try {
@@ -52,6 +54,8 @@ export class UsersController {
 
   @Get("/:id")
   @Roles("admin")
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async getUserById(@Param("id") id: number) {
     let user: User;
     try {

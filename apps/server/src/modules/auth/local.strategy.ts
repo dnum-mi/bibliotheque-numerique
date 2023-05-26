@@ -12,6 +12,8 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     });
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async validate(email: string, password: string): Promise<any> {
     const user = await this.authService.validateUser(email, password);
     if (!user) {

@@ -32,6 +32,8 @@ export class OrganismesData extends ApplicationEntity {
   idRef: string;
 
   @Column({ type: "jsonb" })
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   dataJson: any;
 
   @Column({ type: "timestamp" })

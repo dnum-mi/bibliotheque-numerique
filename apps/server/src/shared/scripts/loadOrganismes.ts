@@ -6,6 +6,8 @@ import { AppModule } from "app.module";
 import { LoggerService } from "modules/logger/logger.service";
 import { OrganismesDatasService } from "plugins/organisme/organismes_datas/organismes_datas.service";
 
+// TODO: fixe type
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 async function bootstrap() {
   let app;
   try {

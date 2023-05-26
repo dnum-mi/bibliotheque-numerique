@@ -44,6 +44,8 @@ export class Connector extends ApplicationEntity {
   @Column()
   token: string;
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   static upsertConnector(toUpsert: Partial<Connector>) {
     return this.createQueryBuilder()
       .insert()

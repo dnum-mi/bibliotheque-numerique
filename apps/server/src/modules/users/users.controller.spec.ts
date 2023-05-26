@@ -8,6 +8,8 @@ import { UsersController } from "./users.controller";
 describe.skip("Users", () => {
   let app: INestApplication;
   let controller: UsersController;
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   const usersService = { findAll: () => ["test"] };
 
   beforeAll(async () => {

@@ -43,8 +43,10 @@ export class Demarche extends ApplicationEntity {
   typeOrganisme: string;
 
   @Column({ type: "jsonb", default: "[]" })
-  mappingColumns: any[];
+  mappingColumns: [];
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   static findById(id: number) {
     return this.findOne({
       where: { id },
@@ -52,6 +54,8 @@ export class Demarche extends ApplicationEntity {
     });
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   static findByDsId(id: number) {
     return this.findOne({
       where: { demarcheDS: { id } },
@@ -59,6 +63,8 @@ export class Demarche extends ApplicationEntity {
     });
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   static findWithFilter(filter: object) {
     return this.find({
       where: {
@@ -70,6 +76,8 @@ export class Demarche extends ApplicationEntity {
     });
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   static upsertDemarche(
     toUpsert: TUpsertDemarche | TUpsertDemarche[],
     transactionalEntityManager: EntityManager,
@@ -78,7 +86,7 @@ export class Demarche extends ApplicationEntity {
       .createQueryBuilder()
       .insert()
       .into(Demarche)
-      .values(toUpsert as any)
+      .values(<never>toUpsert)
       .orUpdate(
         ["title", "state", "typeOrganisme", "updateAt"],
         ["idDemarcheDS"],

@@ -22,12 +22,23 @@ export class AuthController {
   // TODO: This route should be called 'token', since the resource it creates is a token, a route should not have a verb
   @UseGuards(LocalAuthGuard)
   @Post("sign_in")
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async signIn(@Request() req, @Body() body) {
     await this.authService.login(body);
     return req.user;
   }
 
+  @Post("sign_up")
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  async signUp(@Body() body) {
+    return this.usersService.create(body.email, body.password);
+  }
+
   @Delete("/")
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async logout(@Request() req, @Response() res, next) {
     req.logout(function (err) {
       if (err) {
@@ -41,6 +52,8 @@ export class AuthController {
   // TODO: Rename this route
   @UseGuards(JwtAuthGuard)
   @Get("jwt/profile")
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   jwtGetProfile(@Request() req) {
     if (req.user) {
       return req.user;
@@ -52,6 +65,8 @@ export class AuthController {
   // TODO: Move this route to users.controllers and maybe rename it to "/users/me"
   @UseGuards(AuthenticatedGuard)
   @Get("profile")
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   getProfile(@Request() req) {
     if (req.user) {
       return this.authService.login(req.user);

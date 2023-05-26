@@ -9,6 +9,8 @@ export function role_test(): Partial<Role> {
     permissions: [{ name: PermissionName.CREATE_ROLE }],
   };
 }
+// TODO: fixe type
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export const createOneRole = async (data) => {
   const role = Role.create();
   for (const entry in data) {

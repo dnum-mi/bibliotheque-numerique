@@ -109,6 +109,8 @@ export class DemarchesService {
     }
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/no-explicit-any
   getRulesFromUserPermissions(user: User): any {
     const { roles } = user;
     let demarcheIds: number[] = [];

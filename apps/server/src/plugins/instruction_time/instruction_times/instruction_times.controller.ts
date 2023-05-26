@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Get,
-  Param,
-  Delete,
-  Query,
-  ParseArrayPipe,
-} from "@nestjs/common";
+import { Controller, Get, Param, Query, ParseArrayPipe } from "@nestjs/common";
 import { InstructionTimesService } from "./instruction_times.service";
 
 @Controller("instruction-times")
@@ -15,21 +8,29 @@ export class InstructionTimesController {
   ) {}
 
   @Get()
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   findAll() {
     return this.instructionTimesService.findAll();
   }
 
   @Get(":id")
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   findOne(@Param("id") id: string) {
     return this.instructionTimesService.findOne(+id);
   }
 
   @Get("/dossier/:id")
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   findOneByDossierId(@Param("id") id: string) {
     return this.instructionTimesService.findOneByDossier(+id);
   }
 
   @Get("/dossiers/times")
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   getTimesByDossiers(
     @Query(
       "ids",

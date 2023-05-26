@@ -22,6 +22,8 @@ export type TPermissionDescription = TPermissionBase & {
 };
 
 export type TPermission = TPermissionBase & {
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   options?: any;
   write?: boolean;
   delete?: boolean;

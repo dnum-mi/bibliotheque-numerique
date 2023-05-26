@@ -50,6 +50,8 @@ describe("InstructionTime.entity", () => {
     const dossierDs = await createOneDossierDs(dataDs);
     const dossier = dossier_test(dossierDs);
 
+    // TODO: fixe type
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data = instructionTime_test(dossier as any);
     const instructionTime = await createOneInstructionTime(data);
 

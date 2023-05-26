@@ -27,6 +27,8 @@ export class RolesController {
 
   @Get()
   @RequirePermissions({ name: PermissionName.CREATE_ROLE })
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async listRoles() {
     let roles: Role[];
     try {
@@ -52,6 +54,8 @@ export class RolesController {
 
   @Get(":id")
   @RequirePermissions({ name: PermissionName.CREATE_ROLE })
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async getRoleById(@Param("id", ParseIntPipe) id: number) {
     let role: Role;
     try {
@@ -77,6 +81,8 @@ export class RolesController {
 
   @Post()
   @RequirePermissions({ name: PermissionName.CREATE_ROLE })
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async create(@Body("role") role: Partial<Role>) {
     try {
       return await this.rolesService.create(role);
@@ -96,6 +102,8 @@ export class RolesController {
 
   @Put(":id")
   @RequirePermissions({ name: PermissionName.CREATE_ROLE })
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async update(
     @Param("id", ParseIntPipe) id: number,
     @Body("role") role: Partial<Role>,
@@ -118,6 +126,8 @@ export class RolesController {
 
   @Post("assign")
   @RequirePermissions({ name: PermissionName.CREATE_ROLE })
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async assignRoleToUser(
     @Body("userId") userId: number,
     @Body("roleId") roleId: number,
@@ -140,6 +150,8 @@ export class RolesController {
 
   @Post("unassign")
   @RequirePermissions({ name: PermissionName.CREATE_ROLE })
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async unassignRoleToUser(
     @Body("userId") userId: number,
     @Body("roleId") roleId: number,
@@ -162,6 +174,8 @@ export class RolesController {
 
   @Delete("remove/:id")
   @RequirePermissions({ name: PermissionName.CREATE_ROLE })
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async deleteRole(@Param("id", ParseIntPipe) id: number) {
     try {
       await this.rolesService.remove(id);

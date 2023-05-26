@@ -13,6 +13,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type ,@typescript-eslint/no-explicit-any
   async validate(payload: any) {
     return { userId: payload.sub, email: payload.email };
   }

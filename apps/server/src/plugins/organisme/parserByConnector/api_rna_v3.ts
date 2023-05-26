@@ -54,6 +54,8 @@ export default class ParseApiRnaV3
     this.dataJson = result?.data?.data;
   }
 
+  // TODO: type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   toOrganismeEntity(organisme: Organisme, orgDataDataJson: TDataApiRnaV3) {
     const newOrganisme = organisme || new Organisme();
     newOrganisme.idRef = orgDataDataJson.rna_id;

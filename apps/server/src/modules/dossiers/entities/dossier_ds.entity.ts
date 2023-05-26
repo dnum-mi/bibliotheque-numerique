@@ -13,6 +13,8 @@ export class DossierDS extends ApplicationEntity {
   @Column({ type: "timestamp" })
   dsUpdateAt: Date;
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   static upsertDossierDS(
     toUpsert: Partial<DossierDS> | Partial<DossierDS>[],
     transactionalEntityManager: EntityManager,

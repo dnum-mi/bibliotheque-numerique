@@ -12,6 +12,8 @@ import { TPermission } from "../../../shared/types/Permission.type";
 import { Role } from "../entities/role.entity";
 import { User } from "../../users/entities/user.entity";
 
+// TODO: fixe type
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export const RequirePermissions = (permission?: TPermission) =>
   SetMetadata("permission", permission);
 

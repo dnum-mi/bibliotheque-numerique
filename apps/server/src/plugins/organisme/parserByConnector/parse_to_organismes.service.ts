@@ -10,14 +10,23 @@ export type TParseToOrganisme = IParseToOrganisme<TData, TResult>;
 @Injectable()
 export class ParseToOrganismesService {
   mapParsers: Record<string, () => TParseToOrganisme>;
+
   constructor() {
     this.mapParsers = {
+      // TODO: fixe type
+      // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
       API_ENTREPRISE_RNA_V3: () => new ParseApiRnaV3(),
+      // TODO: fixe type
+      // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
       API_ENTREPRISE_STAGING_V3: () => new ParseApiRnaV3(),
+      // TODO: fixe type
+      // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
       API_RNA_V1: () => new parseApiRnaV1(),
     };
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   getParser(name: string) {
     const parser = this.mapParsers[name];
     if (!parser) {

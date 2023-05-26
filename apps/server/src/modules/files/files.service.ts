@@ -81,6 +81,8 @@ export class FilesService {
     const fileStorage = await this.findFileStorage(fileStorageId);
 
     const stream = {
+      // TODO: fixe type
+      // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
       local: () => {
         return createReadStream(
           join(
@@ -89,6 +91,8 @@ export class FilesService {
           ),
         );
       },
+      // TODO: fixe type
+      // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
       s3: () => {
         return this.s3
           .getObject({
@@ -178,6 +182,8 @@ export class FilesService {
     return newFile;
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private async downloadFile(fileUrl) {
     return await this.httpService.axiosRef({
       url: fileUrl,
@@ -186,6 +192,8 @@ export class FilesService {
     });
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private fileFilter(fileExtension) {
     const authorizedExtensions = this.configService.get(
       "file.authorizedExtensions",
@@ -206,6 +214,8 @@ export class FilesService {
     }
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private fileNameGenerator(originalName) {
     return `${randomStringGenerator()}.${originalName
       .split(".")

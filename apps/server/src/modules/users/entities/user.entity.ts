@@ -31,6 +31,8 @@ export class User extends ApplicationEntity {
   @ManyToMany(() => Role, (role) => role.users)
   roles: Role[];
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   @BeforeInsert() async hashPassword() {
     this.password = await bcrypt.hash(this.password, 10);
   }

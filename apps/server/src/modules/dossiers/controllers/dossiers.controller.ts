@@ -18,6 +18,8 @@ export class DossiersController {
   constructor(private readonly dossiersService: DossiersService) {}
 
   @Get()
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async findAll() {
     let dossiers: Dossier[];
     try {
@@ -42,6 +44,8 @@ export class DossiersController {
   }
 
   @Post("search")
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async searchDossier(@Body("filter", FilterPipe) filter: object) {
     let dossiers: Dossier[];
     try {
@@ -63,6 +67,8 @@ export class DossiersController {
   }
 
   @Get(":id")
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async findOne(@Param("id") id: string) {
     let dossier: Dossier;
     try {
@@ -90,6 +96,8 @@ export class DossiersController {
   }
 
   @Get(":id/detail")
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async findOneWithDetail(@Param("id") id: string) {
     let dossier: Dossier;
     try {
@@ -118,6 +126,8 @@ export class DossiersController {
 
   @Delete(":id")
   @HttpCode(204)
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async remove(@Param("id") id: string) {
     try {
       return await this.dossiersService.remove(+id);

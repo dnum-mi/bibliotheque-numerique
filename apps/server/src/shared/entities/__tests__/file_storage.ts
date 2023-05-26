@@ -12,6 +12,8 @@ export function file_storage_test(): Partial<FileStorage> {
     mimeType: faker.system.mimeType(),
   };
 }
+// TODO: fixe type
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export const createOneFileStorage = async (data) => {
   const fileStorage = FileStorage.create();
   for (const entry in data) {

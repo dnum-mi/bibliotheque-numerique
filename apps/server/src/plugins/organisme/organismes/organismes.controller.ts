@@ -21,6 +21,8 @@ export class OrganismesController {
   constructor(private readonly organismesService: OrganismesService) {}
 
   @Get()
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async findAll() {
     try {
       return await this.organismesService.findAll();
@@ -33,16 +35,22 @@ export class OrganismesController {
   }
 
   @Get(":id")
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   findOneById(@Param("id", ParseIntPipe) id: number) {
     return this.organismesService.findOneById(id);
   }
 
   @Get("rna/:id")
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   findOneByIdRna(@Param("id") id: string) {
     return this.organismesService.findOneByIdRef(id);
   }
 
   @Post("rna")
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async addOrgnaismeByIdRNA(
     @Body("idRNA") idRNA: string,
     @Body("source") source: string,

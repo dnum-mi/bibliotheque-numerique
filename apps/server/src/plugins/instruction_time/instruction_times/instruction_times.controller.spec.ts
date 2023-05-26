@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import { Test, TestingModule } from "@nestjs/testing";
 import { InstructionTimesController } from "./instruction_times.controller";
 import { InstructionTimesService } from "./instruction_times.service";
