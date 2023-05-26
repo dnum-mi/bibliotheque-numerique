@@ -104,12 +104,12 @@ Exemples :
 
 Les messages de validation git doivent respecter les conventions de [Commits Conventionnels](https://www.conventionalcommits.org/fr/v1.0.0/).
 
-le projet étant franco-français d’une part, et l’anglais n’étant que rarement maîtrisé d’une part, les messages de commit devraient être au maximum en français.
+les messages de commit sont acceptés en anglais ou en français.
 
 #### Noms de dossiers et fichiers
-
 Les noms des dossiers et des fichiers doivent impérativement être écrits en [kebab-case](https://www.freecodecamp.org/news/snake-case-vs-camel-case-vs-pascal-case-vs-kebab-case-whats-the-difference/) avec une seule exception : les noms de dossiers et de fichiers de composants Vue et des fichiers s’y afférents (fichiers de tests unitaires et de tests end-to-end, par exemple).
 
+##### Front
 Les noms de composants Vue doivent impérativement être formés d’au moins 2 mots, avec une seule exception : le composant `App.vue`.
 
 Exemple :
@@ -128,11 +128,30 @@ Exemple :
 │   │   ├── role.ts
 │   │   └── user.ts
 ```
+##### Back
+les noms des modules et fichiers associés de NestJS doivent respecter la convention du framework. Les noms sont au singulier: CatModule, CatService, CatController etc.
+La structure est la suivante:
+```
+├── src
+│   ├── modules
+│   │   ├── cat
+│   │   │   ├── controllers
+│   │   │   │   ├── cat.controller.ts
+│   │   │   │   ├── cat.controller.spec.ts
+│   │   │   ├── providers
+│   │   │   │   ├── cat.service.ts
+│   │   │   │   ├── cat.service.spec.ts
+│   │   │   ├── entity
+│   │   │   │   ├── cat.entity.ts
+│   │   │   ├── cat.module.ts
+
+```
 
 #### Noms de variables
 
 - variable booléenne : doit commencer par `is` (rarement `has`, `should` ou `can`) et être en `camelCase`  comme `isReallyTrue`
 - variable date : doit être préfixée par `Date` ou `At` et être en `camelCase`  comme `startDate` ou `lastModifiedAt`
+- variable array : doit être être au `pluriel`. Exemple: `cats: Array<Cat>`
 - fonction constructeur et classe : `PascalCase`
 - autre variable ou fonction : `camelCase`
 - constante : `SNAKE_CASE`
@@ -142,6 +161,14 @@ Les noms de variables et de fonctions (méthodes aussi) doivent être explicite,
 Les noms de variable d’un seul caractères doivent être proscrit, sauf dans de (très très) rares cas, comme la fonction d’identité (`x => x`) ou des fonctions fléchées extrêmement simples.
 
 Les **noms de variable doivent être au maximum en anglais**, et **peuvent être en français dans certains cas** si la traduction prête à confusion ou trop difficile (`demarche` ou `dossier`) ou si c’est un mot réservé (`affaire` peut rester `affaire` pour ne pas utiliser `case`).
+
+#### Noms des endpoints
+le nom des **endpoints** doivent correspondres à la ressource au pluriel, et les quatres endpoint classique doivent être:
+- POST /cats (créer un cat)
+- GET /cats (tableaux de cats)
+- GET /cats/:id (un cat)
+- PATCH-PUT /cats/:id (modifie un cat)
+- DELETE /cats/:id
 
 ## Développer sur le projet
 
