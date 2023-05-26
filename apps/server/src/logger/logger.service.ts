@@ -121,6 +121,10 @@ export class LoggerService implements LoggerServiceNest {
     this._commonLogFunction(message, "warn");
   }
 
+  debug(message: string | TLoggerObject, ...optionalParams: any[]) {
+    this._commonLogFunction(message, "debug");
+  }
+
   error(message: string | TLoggerObject, ...optionalParams: any[]) {
     this._commonLogFunction(message, "error");
   }
