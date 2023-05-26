@@ -19,7 +19,7 @@
     "dev:server-in-docker": "turbo dev:in-docker --filter=server",
     "dev:worker-in-docker": "turbo dev:worker-in-docker --filter=server",
     "dev:client": "turbo dev --filter=client",
-    "test": "TEST_CMD=\"$( [ \"$CI\" ] && echo 'test:ci' || echo 'test:only' )\"; run-s $TEST_CMD",
+    "test": "run-s docker:db:up test:only",
     "test:ci": "run-s docker:db:up test:only docker:db:down",
     "test:only": "turbo test",
     "test:e2e": "turbo test:e2e --filter=client",
