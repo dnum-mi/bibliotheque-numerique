@@ -17,7 +17,7 @@ services:
       - 9230:9230
     volumes:
       - ../..:/app
-      - biblio-num-worker-node_modules:/app/node_modules
+      - biblio-num-worker-node_modules-volume:/app/node_modules
     networks:
       - biblio-num-network
     command: pnpm run dev:worker-in-docker
@@ -52,7 +52,7 @@ services:
       - 9229:9229
     volumes:
       - ../..:/app
-      - biblio-num-server-node_modules:/app/node_modules
+      - biblio-num-server-node_modules-volume:/app/node_modules
     networks:
       - biblio-num-network
     command: pnpm run dev:server-in-docker
@@ -195,5 +195,5 @@ volumes:
   biblio-num-pgadmin-volume:
   biblio-num-s3-volume:
   biblio-num-db-volume:
-  biblio-num-server-node_modules:
-  biblio-num-worker-node_modules:
+  biblio-num-server-node_modules-volume:
+  biblio-num-worker-node_modules-volume:
