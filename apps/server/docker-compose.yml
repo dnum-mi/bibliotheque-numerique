@@ -9,7 +9,7 @@ services:
       context: ../../
       dockerfile: ./apps/server/Dockerfile
     image: biblio-num/worker:dev
-    container_name: biblio-worker
+    container_name: biblio-num_worker
     depends_on:
       - db
     ports:

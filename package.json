@@ -26,17 +26,17 @@
     "test:e2e:ci": "turbo test:e2e:ci",
     "prepare": "$CI || husky install",
     "lint": "turbo lint",
-    "docker:db:up": "docker compose --profile db-only -f apps/server/docker-compose.dev.yml up -d",
-    "docker:db:down": "docker compose --profile db-only -f apps/server/docker-compose.dev.yml down",
-    "docker:adminer": "docker compose --profile adminer -f apps/server/docker-compose.dev.yml up -d",
-    "docker:pgadmin": "docker compose --profile pgadmin -f apps/server/docker-compose.dev.yml up -d",
+    "docker:db:up": "docker compose --profile db-only -f apps/server/docker-compose.yml up -d",
+    "docker:db:down": "docker compose --profile db-only -f apps/server/docker-compose.yml down",
+    "docker:adminer": "docker compose --profile adminer -f apps/server/docker-compose.yml up -d",
+    "docker:pgadmin": "docker compose --profile pgadmin -f apps/server/docker-compose.yml up -d",
     "build:client": "turbo build --filter=client",
     "lint:client": "turbo lint --filter=client",
     "test:client": "turbo test --filter=client",
     "build:server": "turbo build --filter=server",
     "lint:server": "turbo lint --filter=server",
     "test:server": "turbo test --filter=server",
-    "docker:dev": "docker compose --profile dev -f apps/server/docker-compose.dev.yml up -d"
+    "docker:dev": "docker compose --profile dev -f apps/server/docker-compose.yml up -d"
   },
   "repository": {
     "type": "git",
