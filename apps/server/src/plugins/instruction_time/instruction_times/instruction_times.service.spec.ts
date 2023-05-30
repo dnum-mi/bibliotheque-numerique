@@ -6,7 +6,7 @@ import { DossierState } from "@dnum-mi/ds-api-client/dist/@types/types";
 import { DataSource } from "typeorm";
 import { faker } from "@faker-js/faker/locale/fr";
 
-import dayjs from "../../../utils/dayjs";
+import dayjs from "../../../shared/utils/dayjs";
 
 import { InstructionTimesService } from "./instruction_times.service";
 import configuration from "../../../config/configuration";
