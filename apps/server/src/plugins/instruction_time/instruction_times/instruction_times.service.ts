@@ -4,7 +4,7 @@ import { Dossier as TDossier } from "@dnum-mi/ds-api-client/dist/@types/types";
 import { DossierState } from "@dnum-mi/ds-api-client/dist/@types/types";
 import { In } from "typeorm";
 
-import dayjs from "../../../utils/dayjs";
+import dayjs from "../../../shared/utils/dayjs";
 
 import { InstructionTime } from "../entities";
 import { LoggerService } from "../../../modules/logger/logger.service";

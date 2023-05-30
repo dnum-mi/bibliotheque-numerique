@@ -1,7 +1,7 @@
 import { Controller, Get } from "@nestjs/common";
 import { JobLogService } from "../providers/job-log.service";
 import { JobLog } from "../objects/job-log.entity";
-import { Roles } from "../../../guards/roles.guard";
+import { Roles } from "modules/roles/providers/roles.guard";
 
 @Controller("job-log")
 export class JobLogController {
