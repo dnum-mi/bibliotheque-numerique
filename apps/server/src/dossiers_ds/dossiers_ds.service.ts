@@ -112,7 +112,7 @@ export class DossiersDSService {
         };
       });
 
-      this.proccessInstructionTime(dossier.number);
+      await this.proccessInstructionTime(dossier.number);
     } catch (error) {
       this.logger.error({
         short_message: "Échec de la mise à jour des dossiers_ds",
