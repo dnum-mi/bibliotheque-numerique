@@ -47,7 +47,7 @@ export class DossiersDSService {
     }
   }
 
-  async upsertDemarcheDossiersDS(demarcheNumber: number) {
+  async upsertDemarcheDossiersDS(demarcheNumber: number): Promise<void> {
     try {
       const response = await this.dsApiClient.demarcheDossiers(demarcheNumber);
       const dossiers = response?.demarche?.dossiers?.nodes;
@@ -55,11 +55,9 @@ export class DossiersDSService {
         `For demarche (ID: ${demarcheNumber}), NB dossier to upsert is: ${dossiers.length}`,
       );
       if (dossiers && dossiers.length > 0) {
-        return await Promise.all(
-          dossiers.map(async (dossier) => {
-            await this.upsertDossierDSAndDossier(dossier, demarcheNumber);
-          }),
-        );
+        for (const dossier of dossiers) {
+          await this.upsertDossierDSAndDossier(dossier, demarcheNumber);
+        }
       } else {
         this.logger.warn({
           short_message: "No dossier to upsert",
@@ -112,7 +110,7 @@ export class DossiersDSService {
         };
       });
 
-      this.proccessInstructionTime(dossier.number);
+      await this.proccessInstructionTime(dossier.number);
     } catch (error) {
       this.logger.error({
         short_message: "Échec de la mise à jour des dossiers_ds",
