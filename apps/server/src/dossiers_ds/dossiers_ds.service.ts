@@ -58,13 +58,11 @@ export class DossiersDSService {
         for (const dossier of dossiers) {
           await this.upsertDossierDSAndDossier(dossier, demarcheNumber);
         }
-        return;
       } else {
         this.logger.warn({
           short_message: "No dossier to upsert",
           full_message: `No dossier to upsert for demarche number: ${demarcheNumber}`,
         });
-        return;
       }
     } catch (error) {
       this.logger.error({
