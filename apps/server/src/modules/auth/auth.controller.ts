@@ -1,18 +1,8 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Post,
-  Request,
-  Response,
-  UseGuards,
-} from "@nestjs/common";
+import { Body, Controller, Delete, Get, Post, Request, Response, UseGuards, } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { LocalAuthGuard } from "./local-auth.guard";
 import { JwtAuthGuard } from "./jwt-auth.guard";
 import { AuthenticatedGuard } from "./authenticated.guard";
-import { UsersService } from "../users/users.service";
 
 /* The TODO: of this file must be done after creating what nestjs calls "e2e-tests" */
 
@@ -20,7 +10,6 @@ import { UsersService } from "../users/users.service";
 export class AuthController {
   constructor(
     private authService: AuthService,
-    private usersService: UsersService,
   ) {}
 
   // TODO: This route should be called 'token', since the resource it creates is a token, a route should not have a verb
