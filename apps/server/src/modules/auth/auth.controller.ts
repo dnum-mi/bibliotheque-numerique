@@ -33,13 +33,6 @@ export class AuthController {
     return req.user;
   }
 
-  @Post("sign_up")
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  async signUp(@Body() body) {
-    return this.usersService.create(body.email, body.password);
-  }
-
   @Delete("/")
   // TODO: fixe type
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
