@@ -9,7 +9,7 @@ import { JobLogModule } from "../job-log/job-log.module";
     //TODO: Logger module should be global (see @Global at nestjs docs)
     LoggerModule,
     DossiersModule,
-    JobLogModule
+    JobLogModule,
   ],
   controllers: [],
   providers: [CronService],
