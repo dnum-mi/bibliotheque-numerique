@@ -26,6 +26,7 @@ import { Dossier } from "../../../modules/dossiers/entities/dossier.entity";
 import { DossierDS } from "../../../modules/dossiers/entities/dossier_ds.entity";
 import { Demarche } from "../../../modules/demarches/entities/demarche.entity";
 import { DemarcheDS } from "../../../modules/demarches/entities/demarche_ds.entity";
+import * as MockDate from "mockdate";
 
 describe("InstructionTimesService", () => {
   let service: InstructionTimesService;

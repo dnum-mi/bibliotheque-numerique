@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 
+// TODO: fixe type
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function jsonFormat(
   tokens: Record<
     string,

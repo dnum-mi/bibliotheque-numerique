@@ -22,6 +22,8 @@ export class LoggerModule {
     private loggerService: LoggerService,
   ) {}
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   configure(consumer: MiddlewareConsumer) {
     this.config.get("isDev")
       ? MorganMiddleware.configure("tiny", {

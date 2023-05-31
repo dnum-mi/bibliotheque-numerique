@@ -14,6 +14,7 @@ import { User } from "../modules/users/entities/user.entity";
 import { Role } from "../modules/roles/entities/role.entity";
 import { Connector } from "../modules/connector/connector.entity";
 import { FileStorage } from "../modules/files/file_storage.entity";
+import { JobLog } from "../modules/job-log/objects/job-log.entity";
 
 export const AppDataSource = new DataSource({
   type: "postgres",

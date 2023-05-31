@@ -12,6 +12,7 @@ import {
 import { Roles, RolesGuard } from "../roles/providers/roles.guard";
 import { UsersService } from "./users.service";
 import { User } from "./entities/user.entity";
+import { CreateUserDto, UpdateUserDto } from "@biblio-num/shared";
 
 @Controller("users")
 @UseGuards(RolesGuard)
@@ -19,12 +20,16 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post("user")
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async signUp(@Body() body: CreateUserDto) {
     return this.usersService.create(body.email, body.password);
   }
 
   // TODO: Add guards
   @Patch("user/:id")
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async updateMyUser(@Body() body: UpdateUserDto) {
     return this.usersService.create(body.email, body.password);
   }

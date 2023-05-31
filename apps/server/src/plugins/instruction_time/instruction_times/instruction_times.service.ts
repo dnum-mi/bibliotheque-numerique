@@ -17,6 +17,7 @@ import {
   EInstructionTimeStateKey,
 } from "../types/IntructionTime.type";
 import { Dossier } from "../../../modules/dossiers/entities/dossier.entity";
+import { Dayjs } from "dayjs";
 
 type TIntructionTime = {
   [keyInstructionTime.DATE_REQUEST1]?: Date | null;
@@ -539,7 +540,11 @@ export class InstructionTimesService {
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private dalayInstruction(datePassageEnInstruction, delay: TDelay) {
     const dateInstruction = new Date(datePassageEnInstruction);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     delay.startAt = dateInstruction.getTime();
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     delay.endAt = dateInstruction.getTime() + this.nbDaysAfterInstruction;
     delay.state = EInstructionTimeState.IN_PROGRESS;
   }
