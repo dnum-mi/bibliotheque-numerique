@@ -26,6 +26,8 @@ export class LoggerService implements LoggerServiceNest {
 
   constructor(private configService: ConfigService) {
     const { printf } = winston.format;
+    // TODO: type
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     const customFormat = (colored?: boolean) =>
       printf(({ level, message }) => {
         const { short_message, full_message, _service_name } = message;
