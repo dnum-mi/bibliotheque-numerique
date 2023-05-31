@@ -1,4 +1,13 @@
-import { Body, Controller, Delete, Get, Post, Request, Response, UseGuards, } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Post,
+  Request,
+  Response,
+  UseGuards,
+} from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { LocalAuthGuard } from "./local-auth.guard";
 import { JwtAuthGuard } from "./jwt-auth.guard";
@@ -8,9 +17,7 @@ import { AuthenticatedGuard } from "./authenticated.guard";
 
 @Controller("auth")
 export class AuthController {
-  constructor(
-    private authService: AuthService,
-  ) {}
+  constructor(private authService: AuthService) {}
 
   // TODO: This route should be called 'token', since the resource it creates is a token, a route should not have a verb
   @UseGuards(LocalAuthGuard)
