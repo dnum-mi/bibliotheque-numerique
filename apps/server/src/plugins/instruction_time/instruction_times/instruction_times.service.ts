@@ -4,7 +4,7 @@ import { Dossier as TDossier } from "@dnum-mi/ds-api-client/dist/@types/types";
 import { DossierState } from "@dnum-mi/ds-api-client/dist/@types/types";
 import { In } from "typeorm";
 
-import dayjs from "../../../shared/utils/dayjs";
+import dayjs, { type Dayjs } from "../../../shared/utils/dayjs";
 
 import { InstructionTime } from "../entities";
 import { LoggerService } from "../../../modules/logger/logger.service";
@@ -17,7 +17,6 @@ import {
   EInstructionTimeStateKey,
 } from "../types/IntructionTime.type";
 import { Dossier } from "../../../modules/dossiers/entities/dossier.entity";
-import { Dayjs } from "dayjs";
 
 type TIntructionTime = {
   [keyInstructionTime.DATE_REQUEST1]?: Date | null;
@@ -538,14 +537,9 @@ export class InstructionTimesService {
 
   // TODO: fixe type
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  private dalayInstruction(datePassageEnInstruction, delay: TDelay) {
-    const dateInstruction = new Date(datePassageEnInstruction);
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    delay.startAt = dateInstruction.getTime();
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    delay.endAt = dateInstruction.getTime() + this.nbDaysAfterInstruction;
+  private dalayInstruction(dateStart: Dayjs, delay: TDelay) {
+    delay.startAt = dateStart;
+    delay.endAt = dayjs(dateStart).add(this.nbDaysAfterInstruction, "day");
     delay.state = EInstructionTimeState.IN_PROGRESS;
   }
 
