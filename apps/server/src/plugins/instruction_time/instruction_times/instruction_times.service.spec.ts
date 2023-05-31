@@ -6,7 +6,7 @@ import { DossierState } from "@dnum-mi/ds-api-client/dist/@types/types";
 import { DataSource } from "typeorm";
 import { faker } from "@faker-js/faker/locale/fr";
 
-import dayjs from "../../../utils/dayjs";
+import dayjs from "../../../shared/utils/dayjs";
 
 import { InstructionTimesService } from "./instruction_times.service";
 import configuration from "../../../config/configuration";
@@ -18,10 +18,13 @@ import {
   datasourceTest,
   dossier_ds_test,
   dossier_test,
-} from "../../../entities/__tests__";
+} from "../../../shared/entities/__tests__";
 import { InstructionTime } from "../entities";
-import { Demarche, DemarcheDS, Dossier, DossierDS } from "../../../entities";
 import { EInstructionTimeState } from "../types/IntructionTime.type";
+import { Dossier } from "../../../modules/dossiers/entities/dossier.entity";
+import { DossierDS } from "../../../modules/dossiers/entities/dossier_ds.entity";
+import { Demarche } from "../../../modules/demarches/entities/demarche.entity";
+import { DemarcheDS } from "../../../modules/demarches/entities/demarche_ds.entity";
 
 describe("InstructionTimesService", () => {
   let service: InstructionTimesService;

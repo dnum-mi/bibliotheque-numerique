@@ -8,14 +8,14 @@ import fileConfig from "../../../config/file.config";
 import { Organisme, OrganismesData } from "../entities";
 import { datasourceTest } from "../entities/__tests__";
 
-import { ConnectorModule } from "../../../connector/connector.module";
+import { ConnectorModule } from "../../../modules/connector/connector.module";
 import { ParseToOrganismesModule } from "../parserByConnector/parse_to_organismes.module";
 
 import { OrganismesController } from "./organismes.controller";
 
 import { OrganismesDatasService } from "../organismes_datas/organismes_datas.service";
 import { OrganismesService } from "./organismes.service";
-import { Connector } from "../../../entities";
+import { Connector } from "../../../modules/connector/connector.entity";
 
 describe("OrganismesController", () => {
   let controller: OrganismesController;

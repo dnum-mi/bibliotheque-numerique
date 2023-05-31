@@ -1,13 +1,14 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { LoggerService } from "logger/logger.service";
-import { ConnectorService } from "../../../connector/connector.service";
+import { LoggerService } from "modules/logger/logger.service";
+import { ConnectorService } from "../../../modules/connector/connector.service";
 import { DataSource } from "typeorm";
 import { OrganismesData } from "../entities";
-import { Connector } from "../../../entities";
+
 import {
   ParseToOrganismesService,
   TParseToOrganisme,
 } from "../parserByConnector/parse_to_organismes.service";
+import { Connector } from "../../../modules/connector/connector.entity";
 
 @Injectable()
 export class OrganismesDatasService {

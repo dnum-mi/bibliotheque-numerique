@@ -2,7 +2,7 @@ import { Logger } from "@nestjs/common";
 import { toDate } from "@biblio-num/shared";
 import { Organisme } from "../entities";
 import { IParseToOrganisme } from "./parse_to_organisme.interface";
-import { LoggerService } from "../../../logger/logger.service";
+import { LoggerService } from "../../../modules/logger/logger.service";
 export type TDataApiRnaV1 = {
   id: number;
   is_waldec: string;
