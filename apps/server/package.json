@@ -7,6 +7,7 @@
   "private": true,
   "scripts": {
     "build": "nest build",
+    "clean:dist": "rimraf dist",
     "db:create-default-admin": "ts-node src/shared/scripts/createDefaultAdmin.ts",
     "db:create-default-admin:prod": "node dist/scripts/createDefaultAdmin.js",
     "db:loadOrganismes": "node dist/scripts/loadOrganismes.js",
