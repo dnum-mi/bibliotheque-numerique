@@ -13,5 +13,5 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
     message:
     'Les rôles doivent être des chaînes de caractères (dans un tableau)',
   })
-    roles?: string[]
+  roles?: string[]
 }

@@ -9,10 +9,10 @@ export class CreateDossierDto {
     description: 'TODO',
   })
   @IsNotEmpty()
-    dossierDS: string
+  dossierDS: string
 
   @IsNotEmpty({ message: 'Le mot de passe est requis' })
-    demarche: CreateDemarcheDto
+  demarche: CreateDemarcheDto
 
   state: DossierState
 }

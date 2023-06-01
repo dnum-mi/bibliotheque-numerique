@@ -8,9 +8,9 @@ export class CreateUserDto {
   })
   @IsEmail(undefined, { message: 'Cette adresse courriel semble invalide' })
   @IsNotEmpty()
-    email: string
+  email: string
 
   @IsNotEmpty({ message: 'Veuillez remplir le mot de passe' })
   @IsPasswordStrongEnough({ message: 'Ce mot de passe n’est pas assez fort' })
-    password: string
+  password: string
 }

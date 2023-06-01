@@ -9,5 +9,5 @@ export class UpdateDemarcheDto extends PartialType(CreateDemarcheDto) {
     description: 'Données de la démarche simplifiée associée',
   })
   @IsNotEmpty()
-    dataJson: Partial<DemarcheDS>
+  dataJson: Partial<DemarcheDS>
 }
