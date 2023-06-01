@@ -19,24 +19,32 @@ export class ConnectorController {
 
   @Roles("admin")
   @Get()
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   findAll() {
     return this.connectorService.findAll();
   }
 
   @Roles("admin")
   @Get(":id")
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   findOneById(@Param("id", ParseIntPipe) id: number) {
     return this.connectorService.findOneById(id);
   }
 
   @Roles("admin")
   @Get("name/:name")
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   findOneBySourceName(@Param("name") name: string) {
     return this.connectorService.findOneBySourceName(name);
   }
 
   @Roles("admin")
   @Post()
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   create(
     @Body()
     connector: Partial<Connector>,
@@ -46,6 +54,8 @@ export class ConnectorController {
 
   @Roles("admin")
   @Delete(":id")
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   remove(@Param("id", ParseIntPipe) id: number) {
     return this.connectorService.remove(id);
   }

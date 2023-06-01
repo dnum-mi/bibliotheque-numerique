@@ -10,6 +10,8 @@ import { ConfigService } from "@nestjs/config";
 import { TConfig } from "../../../config/configuration";
 import { User } from "../../users/entities/user.entity";
 
+// TODO: fixe type
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export const Roles = (...roles: string[]) => SetMetadata("roles", roles);
 
 @Injectable()

@@ -34,8 +34,9 @@ export class AuthService {
 
     return user;
   }
-
-  async login(user: any) {
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  async login(user) {
     const payload = { email: user.email, sub: user.userId };
     return {
       email: user.email,

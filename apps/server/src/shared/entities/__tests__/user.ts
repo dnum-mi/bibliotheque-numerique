@@ -8,6 +8,8 @@ export function user_test(): Partial<User> {
     roles: [],
   };
 }
+// TODO: fixe type
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export const createOneUser = async (data) => {
   const user = User.create();
   for (const entry in data) {

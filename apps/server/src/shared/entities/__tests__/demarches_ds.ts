@@ -10,6 +10,8 @@ export function demarche_ds_test(): Partial<DemarcheDS> {
   };
 }
 
+// TODO: fixe type
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export const createOneDemarcheDs = async (data: Partial<DemarcheDS>) => {
   const demarcheDs = DemarcheDS.create();
   for (const entry in data) {

@@ -1,7 +1,11 @@
 import { faker } from "@faker-js/faker/locale/fr";
 
+// TODO: fixe type
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export const idRNAFake = () => `W${faker.random.numeric(9)}`;
 
+// TODO: fixe type
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function getDatasFromRNA(idRNA?: string) {
   return {
     rna_id: idRNA || `W${faker.random.numeric(9)}`,
@@ -29,6 +33,8 @@ export function getDatasFromRNA(idRNA?: string) {
   };
 }
 
+// TODO: fixe type
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function updateOrgFromRNA(data) {
   return {
     ...data,

@@ -29,6 +29,8 @@ export class Role extends ApplicationEntity {
   @JoinTable({ name: "users_roles" })
   users: User[];
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   static insertRole(toUpsert: Partial<Role>) {
     return this.createQueryBuilder()
       .insert()
@@ -38,6 +40,8 @@ export class Role extends ApplicationEntity {
       .execute();
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   static updateRole(id: number, toUpdate: Partial<Role>) {
     return this.createQueryBuilder()
       .insert()

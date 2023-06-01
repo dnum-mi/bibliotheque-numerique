@@ -10,6 +10,8 @@ import { RolesService } from "../../modules/roles/providers/roles.service";
 import { ConfigService } from "@nestjs/config";
 import { TConfig } from "../../config/configuration";
 
+// TODO: fixe type
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule);
   app.useLogger(app.get(LoggerService));

@@ -17,6 +17,8 @@ export function organisme_test(): Partial<Organisme> {
     dateModification: faker.datatype.datetime(),
   };
 }
+// TODO: fixe type
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export const createOneOrganisme = async (data) => {
   const organisme = Organisme.create();
   for (const entry in data) {

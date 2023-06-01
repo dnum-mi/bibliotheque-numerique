@@ -8,8 +8,8 @@
   "scripts": {
     "build": "nest build",
     "clean:dist": "rimraf dist",
-    "db:create-default-admin": "ts-node src/scripts/createDefaultAdmin.ts",
-    "db:create-default-admin:prod": "node dist/shared/scripts/createDefaultAdmin.js",
+    "db:create-default-admin": "ts-node src/shared/scripts/createDefaultAdmin.ts",
+    "db:create-default-admin:prod": "node dist/scripts/createDefaultAdmin.js",
     "db:loadOrganismes": "node dist/scripts/loadOrganismes.js",
     "dev": "run-s dev:docker dev:server",
     "dev:docker": "docker compose --profile simple-dev -f docker-compose.yml up -d",

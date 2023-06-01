@@ -20,6 +20,8 @@ import { HttpModule } from "@nestjs/axios";
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
         const storages = {
+          // TODO: fixe type
+          // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
           local: () =>
             diskStorage({
               destination: configService.get("file.localStorageDir"),
@@ -33,6 +35,8 @@ import { HttpModule } from "@nestjs/axios";
                 );
               },
             }),
+          // TODO: fixe type
+          // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
           s3: () => {
             const s3 = new AWS.S3({
               accessKeyId: configService.get("file.accessKeyId"),
@@ -62,6 +66,8 @@ import { HttpModule } from "@nestjs/axios";
         };
 
         return {
+          // TODO: fixe type
+          // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
           fileFilter: (request, file, callback) => {
             const authorizedExtensions = configService.get(
               "file.authorizedExtensions",

@@ -10,6 +10,8 @@ export function dossier_ds_test(): Partial<DossierDS> {
     dsUpdateAt: faker.date.past(),
   };
 }
+// TODO: fixe type
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export const createOneDossierDs = async (data) => {
   const dossierDs = DossierDS.create();
   for (const entry in data) {

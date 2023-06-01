@@ -12,6 +12,9 @@ type TLoggerObject = {
   timestamp?: number;
   _service_name?: string;
   error?: Error;
+
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   datas?: any;
 };
 
@@ -23,6 +26,8 @@ export class LoggerService implements LoggerServiceNest {
 
   constructor(private configService: ConfigService) {
     const { printf } = winston.format;
+    // TODO: type
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     const customFormat = (colored?: boolean) =>
       printf(({ level, message }) => {
         const { short_message, full_message, _service_name } = message;
@@ -86,7 +91,7 @@ export class LoggerService implements LoggerServiceNest {
     };
   }
 
-  startRegisteringLogs() {
+  startRegisteringLogs(): void {
     this._logs = [];
     this._isRegisteringLog = true;
   }
@@ -99,7 +104,7 @@ export class LoggerService implements LoggerServiceNest {
   private _commonLogFunction(
     message: string | TLoggerObject,
     logFunctionKey: string,
-  ) {
+  ): void {
     const loggerObject = this._toCompleteLoggerObject(
       typeof message === "string" ? { full_message: message } : message,
     );
@@ -113,30 +118,42 @@ export class LoggerService implements LoggerServiceNest {
     this.logger[logFunctionKey](loggerObject);
   }
 
-  log(message: string | TLoggerObject, ...optionalParams: any[]) {
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  log(message: string | TLoggerObject) {
     this._commonLogFunction(message, "info");
   }
 
-  warn(message: string | TLoggerObject, ...optionalParams: any[]) {
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  warn(message: string | TLoggerObject) {
     this._commonLogFunction(message, "warn");
   }
 
-  debug(message: string | TLoggerObject, ...optionalParams: any[]) {
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  debug(message: string | TLoggerObject) {
     this._commonLogFunction(message, "debug");
   }
 
-  error(message: string | TLoggerObject, ...optionalParams: any[]) {
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  error(message: string | TLoggerObject) {
     this._commonLogFunction(message, "error");
   }
 
-  verbose(message: string | TLoggerObject, ...optionalParams: any[]) {
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  verbose(message: string | TLoggerObject) {
     const loggerObject = this._toCompleteLoggerObject(
       typeof message === "string" ? { full_message: message } : message,
     );
     this.logger.verbose(loggerObject);
   }
 
-  silly(message: string | TLoggerObject, ...optionalParams: any[]) {
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  silly(message: string | TLoggerObject) {
     const loggerObject = this._toCompleteLoggerObject(
       typeof message === "string" ? { full_message: message } : message,
     );

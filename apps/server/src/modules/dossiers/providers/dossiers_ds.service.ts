@@ -34,6 +34,8 @@ export class DossiersDSService {
     );
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async upsertDossierDS(dossierNumber: number, demarcheNumber: number) {
     try {
       const response = await this.dsApiClient.dossier(dossierNumber);
@@ -49,7 +51,9 @@ export class DossiersDSService {
     }
   }
 
-  async upsertDemarcheDossiersDS(demarcheNumber: number): Promise<void> {
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  async upsertDemarcheDossiersDS(demarcheNumber: number) {
     try {
       const response = await this.dsApiClient.demarcheDossiers(demarcheNumber);
       const dossiers = response?.demarche?.dossiers?.nodes;
@@ -75,6 +79,8 @@ export class DossiersDSService {
     }
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async upsertDossierDSAndDossier(
     dossier: Partial<TDossier>,
     demarcheNumber: number,
@@ -122,6 +128,8 @@ export class DossiersDSService {
     }
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private async proccessInstructionTime(dossierId) {
     const dossier = await Dossier.findOneBy({
       dossierDS: { id: dossierId },
@@ -129,6 +137,8 @@ export class DossiersDSService {
     await this.instructionTimeService.proccessByDossierId(dossier.id);
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private async updateFileUrlInJson(dossier: Partial<TDossier>) {
     try {
       dossier.champs = await this.replaceFileUrlInChamps(dossier.champs);
@@ -151,6 +161,8 @@ export class DossiersDSService {
     return dossier;
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private async replaceFileUrlInChamps(champs: Array<Champ>) {
     await Promise.all(
       champs.map(async (champ) => {
@@ -160,8 +172,11 @@ export class DossiersDSService {
           champFile.url = this.urlFileApi(fileStorage.id);
         } else if (this.isChampRepetition(champ)) {
           const newSubChamps = await this.replaceFileUrlInChamps(
+            // TODO: fixe type
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (<any>champ).champs,
           );
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (<any>champ).champs = newSubChamps;
         }
       }),
@@ -169,6 +184,8 @@ export class DossiersDSService {
     return champs;
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private async replaceFileUrlInMessages(messages: Array<Message>) {
     await Promise.all(
       messages.map(async (message) => {
@@ -210,10 +227,14 @@ export class DossiersDSService {
       .includes(champ["__typename"]);
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private urlFileApi(id) {
     return `${this.appURL()}/files/${id}`;
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private appURL() {
     return `${this.configService.get("protocol")}://${this.configService.get(
       "appHost",

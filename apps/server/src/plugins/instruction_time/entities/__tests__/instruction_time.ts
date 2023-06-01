@@ -14,6 +14,8 @@ export function instructionTime_test(
     state: faker.helpers.arrayElement(Object.values(EInstructionTimeState)),
   };
 }
+// TODO: fixe type
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export const createOneInstructionTime = async (data) => {
   const instructionTime = InstructionTime.create();
   for (const entry in data) {

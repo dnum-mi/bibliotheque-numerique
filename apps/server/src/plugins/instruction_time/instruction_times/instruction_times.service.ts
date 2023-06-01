@@ -4,7 +4,7 @@ import { Dossier as TDossier } from "@dnum-mi/ds-api-client/dist/@types/types";
 import { DossierState } from "@dnum-mi/ds-api-client/dist/@types/types";
 import { In } from "typeorm";
 
-import dayjs from "../../../shared/utils/dayjs";
+import dayjs, { type Dayjs } from "../../../shared/utils/dayjs";
 
 import { InstructionTime } from "../entities";
 import { LoggerService } from "../../../modules/logger/logger.service";
@@ -17,7 +17,6 @@ import {
   EInstructionTimeStateKey,
 } from "../types/IntructionTime.type";
 import { Dossier } from "../../../modules/dossiers/entities/dossier.entity";
-import { Dayjs } from "dayjs";
 
 type TIntructionTime = {
   [keyInstructionTime.DATE_REQUEST1]?: Date | null;
@@ -60,6 +59,8 @@ export class InstructionTimesService {
     );
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   findAll() {
     try {
       return InstructionTime.find();
@@ -72,6 +73,8 @@ export class InstructionTimesService {
     }
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   findOne(id: number) {
     try {
       return InstructionTime.findBy({ id: id });
@@ -84,6 +87,8 @@ export class InstructionTimesService {
     }
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   findOneByDossier(idDossier: number) {
     try {
       return InstructionTime.findByDossierId(idDossier);
@@ -106,6 +111,8 @@ export class InstructionTimesService {
       const annotation = annotations?.find(
         (annotation) =>
           annotation.label === instructionTimeMapping[annotationLabelKey],
+        // TODO: fixe type
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ) as any;
       if (
         annotation &&
@@ -123,6 +130,8 @@ export class InstructionTimesService {
     return result;
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async getMappingInstructionTimeByDossierId(idDossier: number): Promise<any> {
     try {
       const dossier = await Dossier.findOne({
@@ -141,6 +150,8 @@ export class InstructionTimesService {
     }
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async instructionTimeCalculation(idDossiers: number[]) {
     try {
       const instructionTimes = await InstructionTime.find({
@@ -152,6 +163,8 @@ export class InstructionTimesService {
         relations: { dossier: true },
       });
 
+      // TODO: fixe type
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return instructionTimes.reduce((acc: any, instructionTime) => {
         const { dossier } = instructionTime;
         const now = Date.now();
@@ -202,6 +215,8 @@ export class InstructionTimesService {
     }
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   checkAndGetLastDates(
     date1: { date: Date | undefined | null; message: string },
     date2: { date: Date | undefined | null; message: string },
@@ -232,6 +247,8 @@ export class InstructionTimesService {
     );
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   checkValidity(data: Partial<TDossier>, instructionTime: TIntructionTime) {
     const messageError = `Erreur dans les déclarations de dates pour le dossier ${data.id}`;
     const dateReceipt1stDemand =
@@ -345,6 +362,8 @@ export class InstructionTimesService {
     return true;
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async proccessByDossierId(id: number) {
     const dossier = await Dossier.findOne({
       where: { id: id },
@@ -367,6 +386,8 @@ export class InstructionTimesService {
     return true;
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async proccess(instructionTime: InstructionTime) {
     if (this.isOutOfDate(instructionTime.state)) return false;
 
@@ -425,16 +446,22 @@ export class InstructionTimesService {
     return await this.saveInInstruction(instructionTime, delay);
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private isOutOfDate(state) {
     return state === EInstructionTimeState.OUT_OF_DATE;
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private isDossierClosed(state) {
     return ![DossierState.EnConstruction, DossierState.EnInstruction].includes(
       state,
     );
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private async saveInInstruction(
     instructionTime: InstructionTime,
     delay: TDelay,
@@ -452,6 +479,8 @@ export class InstructionTimesService {
     return await instructionTime.save();
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private async saveInConstruction(instructionTime, datesForInstructionTimes) {
     if (datesForInstructionTimes[keyInstructionTime.DATE_REQUEST1]) {
       instructionTime.state = EInstructionTimeState.FIRST_REQUEST;
@@ -459,12 +488,16 @@ export class InstructionTimesService {
     return await instructionTime.save();
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private async saveIsClose(instructionTime) {
     //TODO: faire quelque chose
     instructionTime.state = EInstructionTimeState.DEFAULT;
     return await instructionTime.save();
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private delayDateReceipt2(
     datesForInstructionTimes: TIntructionTime,
     delay: TDelay,
@@ -477,6 +510,8 @@ export class InstructionTimesService {
     delay.state = EInstructionTimeState.SECOND_RECEIPT;
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private delayDateRequest2(
     datesForInstructionTimes: TIntructionTime,
     delay: TDelay,
@@ -485,6 +520,8 @@ export class InstructionTimesService {
     delay.state = EInstructionTimeState.SECOND_REQUEST;
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private delayProrogation(
     datesForInstructionTimes: TIntructionTime,
     delay: TDelay,
@@ -498,12 +535,16 @@ export class InstructionTimesService {
     delay.state = EInstructionTimeState.IN_EXTENSION;
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private dalayInstruction(dateStart: Dayjs, delay: TDelay) {
     delay.startAt = dateStart;
     delay.endAt = dayjs(dateStart).add(this.nbDaysAfterInstruction, "day");
     delay.state = EInstructionTimeState.IN_PROGRESS;
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private delayOpposition(
     datesForInstructionTimes: TIntructionTime,
     delay: TDelay,

@@ -10,6 +10,8 @@ export class SendMailService {
     SendMailService.name,
   ) as unknown as LoggerService;
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   public async welcome(to: string) {
     try {
       await this.mailerService.sendMail({
@@ -31,6 +33,8 @@ export class SendMailService {
   }
 
   //TODO: A vérifier l'utilité et template à completer
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   public async resetPwd(to: string, urlResetLink: string) {
     try {
       const subject = "Changement de mot de passe";

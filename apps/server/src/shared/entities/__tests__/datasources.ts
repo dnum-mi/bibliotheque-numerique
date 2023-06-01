@@ -1,5 +1,7 @@
 import { DataSource } from "typeorm";
 
+// TODO: fixe type
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export const datasourceTest = (entities) =>
   new DataSource({
     type: "postgres",

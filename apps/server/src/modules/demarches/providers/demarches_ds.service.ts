@@ -60,6 +60,8 @@ export class DemarchesDSService {
     return result;
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async upsertDemarchesDSAndDemarches(demarcheNumbers?: number[]) {
     const demarches = await this.demarchesByAPI(demarcheNumbers);
     if (!demarches.length) {

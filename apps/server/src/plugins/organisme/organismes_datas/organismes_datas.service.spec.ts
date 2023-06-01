@@ -24,6 +24,8 @@ import { ParseToOrganismesService } from "../parserByConnector/parse_to_organism
 import { IParseToOrganisme } from "../parserByConnector/parse_to_organisme.interface";
 import { Connector } from "../../../modules/connector/connector.entity";
 
+// TODO: fixe type
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 async function createTestAddOrg(
   connectorService: ConnectorService,
   service: OrganismesDatasService,
@@ -43,17 +45,26 @@ async function createTestAddOrg(
   return { idRNA, expected, orgSrc };
 }
 
+// TODO: fixe type
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 async function createNewOrgSrc() {
   const orgSrcTestData = connectorTest();
   const orgSrc = await createOneConnector(orgSrcTestData);
   return orgSrc;
 }
 
+// TODO: fixe type
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 class MockParseToOrg implements IParseToOrganisme<any, any> {
   toOrganismeEntity(organisme: Organisme): Organisme {
     throw new Error("Method not implemented.");
   }
+
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   dataJson: any;
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setDataJson(result: any): void {
     this.dataJson = result?.data?.data;
   }

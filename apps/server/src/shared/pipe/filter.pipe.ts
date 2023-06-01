@@ -11,6 +11,8 @@ import {
 
 @Injectable()
 export class FilterPipe implements PipeTransform {
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private _checkAndChangeKey(value: object) {
     if (value.hasOwnProperty("$in")) {
       return In(value["$in"]);
@@ -30,6 +32,8 @@ export class FilterPipe implements PipeTransform {
       return this._parseObjectFilter(value);
     }
   }
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private _parseObjectFilter(value: object) {
     for (const v of Object.keys(value)) {
       if (typeof value[v] === "object" && !Array.isArray(value[v])) {
@@ -39,6 +43,8 @@ export class FilterPipe implements PipeTransform {
     return value;
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/no-explicit-any
   transform(value: any) {
     if (typeof value === "object") {
       this._parseObjectFilter(value);

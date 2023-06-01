@@ -17,6 +17,8 @@ export class OrganismesService {
     private organismesDatasService: OrganismesDatasService,
   ) {}
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   findAll() {
     try {
       return Organisme.find();
@@ -29,6 +31,8 @@ export class OrganismesService {
     }
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   findOneById(id: number) {
     try {
       return Organisme.findOne({
@@ -44,6 +48,8 @@ export class OrganismesService {
     }
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   findOneByIdRef(idRef: string) {
     try {
       return Organisme.findOne({
@@ -58,6 +64,8 @@ export class OrganismesService {
     }
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async upsertOrganisme(idRef: string, sources: string[]) {
     let organismeDatas: OrganismesData[] = [];
     try {

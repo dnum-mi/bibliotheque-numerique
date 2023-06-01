@@ -208,6 +208,8 @@ export class DemarchesController {
 
   @Post("create")
   @RequirePermissions()
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async create(@Body("idDs", ParseIntPipe) idDs: number) {
     try {
       const demarche = await this.demarcheService.findByDsId(idDs);
@@ -235,6 +237,8 @@ export class DemarchesController {
 
   @Post("synchro_dossiers")
   @RequirePermissions()
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async synchroDossiers(@Body("id", ParseIntPipe) id: number) {
     try {
       const demarche = await this.demarcheService.findById(id);
@@ -268,6 +272,8 @@ export class DemarchesController {
 
   @Patch(":id")
   @RequirePermissions()
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async updateDemarche(
     @Param("id", ParseIntPipe) id: number,
     @Body() demarche: Partial<Demarche>,

@@ -8,6 +8,8 @@ export function demarche_test(demarcheDS: DemarcheDS): Partial<Demarche> {
     state: faker.datatype.string(),
     title: faker.datatype.string(),
     identification: faker.datatype.string(),
-    mappingColumns: [JSON.parse(faker.datatype.json())] as any[],
+    // TODO: fixe type
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mappingColumns: <never>(<Array<any>>[JSON.parse(faker.datatype.json())]),
   };
 }

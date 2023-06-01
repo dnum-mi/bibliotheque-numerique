@@ -9,6 +9,8 @@ export class RolesService {
     RolesService.name,
   ) as unknown as LoggerService;
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async listRoles() {
     try {
       return await Role.find();
@@ -20,7 +22,8 @@ export class RolesService {
       throw new Error("Unable to retrieve roles");
     }
   }
-
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async getRoleById(id: number) {
     try {
       return await Role.findOneBy({ id });
@@ -32,7 +35,8 @@ export class RolesService {
       throw new Error(`Unable to retrieve role id: ${id}`);
     }
   }
-
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async create(role: Partial<Role>) {
     try {
       const upsertRoleResult = await Role.insertRole(role);
@@ -45,7 +49,8 @@ export class RolesService {
       throw new Error("Unable to create role");
     }
   }
-
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async update(id: number, role: Partial<Role>) {
     try {
       const updateRoleResult = await Role.updateRole(id, role);
@@ -58,7 +63,8 @@ export class RolesService {
       throw new Error("Unable to create role");
     }
   }
-
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async assignRoleToUser(roleId: number, userId: number) {
     let user: User;
     let role: Role;
@@ -89,6 +95,8 @@ export class RolesService {
     }
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async unassignRoleToUser(roleId: number, userId: number) {
     let user: User;
     debugger;
@@ -118,7 +126,8 @@ export class RolesService {
       throw new Error(`Unable to unassign role to user: ${userId}`);
     }
   }
-
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async remove(id: number) {
     let role: Role;
     try {

@@ -9,6 +9,8 @@ export function organismeData_test(): Partial<OrganismesData> {
   };
 }
 
+// TODO: fixe type
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export const createOneOrganismeData = async (data) => {
   const organismeData = OrganismesData.create();
   for (const entry in data) {
@@ -17,6 +19,8 @@ export const createOneOrganismeData = async (data) => {
   return await organismeData.save();
 };
 
+// TODO: fixe type
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function updateDataUpdateAt(data: Partial<OrganismesData>) {
   return {
     ...data,

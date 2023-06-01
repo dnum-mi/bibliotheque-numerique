@@ -1,4 +1,5 @@
-import MockDate from "mockdate";
+/* eslint-disable */
+
 import { Test, TestingModule } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule, ConfigService } from "@nestjs/config";
@@ -25,6 +26,7 @@ import { Dossier } from "../../../modules/dossiers/entities/dossier.entity";
 import { DossierDS } from "../../../modules/dossiers/entities/dossier_ds.entity";
 import { Demarche } from "../../../modules/demarches/entities/demarche.entity";
 import { DemarcheDS } from "../../../modules/demarches/entities/demarche_ds.entity";
+import MockDate from "mockdate";
 
 describe("InstructionTimesService", () => {
   let service: InstructionTimesService;
