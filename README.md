@@ -1,20 +1,9 @@
----
-title: Guide du développeur pour bibliothèque-numérique
-description: Guide pour le nouvel arrivant détaillant les étapes nécessaires pour pouvoir travailler sur le projet
-author: Stanislas Ormières
-date: "2023-04-04T11:27:12.089Z"
-type: documentation
-tags:
-  - documentation
-  - dev
-  - npm
-  - docker
-keywords: ['']
----
-
 # Projet biblio-num
 
-Ceci est la documentation du développeur.
+## Contexte
+La solution bibliothèque numérique proposée s’appuie et complète les outils de gestion de téléprocédures SVE (ministère de l’intérieur) et Démarches-Simplifiées (DINUM) afin de permettre suite à la phase d’instruction de démarches de déclaration, l’interaction multi-acteurs autour de ces données, afin d’en tirer des analyses et actions légales éventuelles.
+
+# Installation pour le développement
 
 ## Workspaces
 
@@ -40,9 +29,9 @@ Pour les tests :
 - Mailhog pour le mock d’un serveur SMTP
 - supertest pour les tests "end-to-end" (attention, ne pas confondre les tests "end-to-end" NestJS et les test End-to-end avec Cypress)
 
-### Récupérer un token pour l’API de Démarche Simplifiée (DS)
+### Dépendances
 
-Aller sur le site de DS (IP privée, demander à l’équipe).
+Récupérer un token pour l’API de Démarche Simplifiée (DS). Aller sur le site de DS (IP privée, demander à l’équipe).
 
 ### Configurer les variables d’environment
 
@@ -59,32 +48,24 @@ Ce docker-compose avec le profile `simple-dev` lance le serveur de base de donn�
 Pour ce faire, lancer le script npm `dev:docker` :
 
 ```console
-npm run dev:docker
+pnpm run dev:docker
 ```
 
-### Lancer le(s) script(s) de création de données initiales
+### Lancer les scripts de création de données initiales
 
-Il faut maintenant le script d’initialisation des données :
+Il faut maintenant le script de [migration](https://typeorm.io/migrations) de base de données (Pour créer toutes les structures de données):
 
 ```console
-npm run typeorm:migration:init
+cd apps/server/
+pnpm run typeorm:migration:run
 ```
 
-Ce script est l’équivalent de ces deux scripts :
+et le script d'initialisation des données (Pour créer le compte admin par défaut):
 
 ```console
-npm run typeorm:migration:run
+cd apps/server/
+pnpm run db:create-default-admin
 ```
-
-(Pour créer toutes les structures de données)
-
-et
-
-```console
-npm run db:create-default-admin
-```
-
-(Pour créer le compte admin par défaut)
 
 ## Conventions à respecter
 
