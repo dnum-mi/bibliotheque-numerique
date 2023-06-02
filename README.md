@@ -26,7 +26,7 @@ Le projet est construit avec des [workspaces pnpm](https://pnpm.io/workspaces).
 
 ### Stack
 
-La stack choisie pour le Server :
+La stack choisie pour le Serveur (API RESTfull) :
 
 - Node.js
 - TypeScript
@@ -38,6 +38,7 @@ Pour les tests :
 
 - Jest (bientôt Vitest) pour le harnais de test
 - Mailhog pour le mock d’un serveur SMTP
+- supertest pour les tests "end-to-end" (attention, ne pas confondre les tests "end-to-end" NestJS et les test End-to-end avec Cypress)
 
 ### Récupérer un token pour l’API de Démarche Simplifiée (DS)
 
@@ -51,9 +52,9 @@ Aller sur le site de DS (IP privée, demander à l’équipe).
 
 ### Lancer la base de données PostgreSQL
 
-Le plus simple est de lancer le serveur en lançant le conteneur par le docker-compose `server/docker-compose.yml`.
+Le plus simple est de lancer le serveur de base de données en lançant le conteneur par le docker-compose `server/docker-compose.yml`.
 
-Ce docker-compose lance le serveur de base de données et une interface web d’administration **adminer** accessible à <http://localhost:8010>.
+Ce docker-compose avec le profile `simple-dev` lance le serveur de base de données et une interface web d’administration **adminer** accessible à <http://localhost:8010>.
 
 Pour ce faire, lancer le script npm `dev:docker` :
 
@@ -107,9 +108,11 @@ Les messages de validation git doivent respecter les conventions de [Commits Con
 les messages de commit sont acceptés en anglais ou en français.
 
 #### Noms de dossiers et fichiers
+
 Les noms des dossiers et des fichiers doivent impérativement être écrits en [kebab-case](https://www.freecodecamp.org/news/snake-case-vs-camel-case-vs-pascal-case-vs-kebab-case-whats-the-difference/) avec une seule exception : les noms de dossiers et de fichiers de composants Vue et des fichiers s’y afférents (fichiers de tests unitaires et de tests end-to-end, par exemple).
 
 ##### Front
+
 Les noms de composants Vue doivent impérativement être formés d’au moins 2 mots, avec une seule exception : le composant `App.vue`.
 
 Exemple :
@@ -128,9 +131,12 @@ Exemple :
 │   │   ├── role.ts
 │   │   └── user.ts
 ```
+
 ##### Back
+
 les noms des modules et fichiers associés de NestJS doivent respecter la convention du framework. Les noms sont au singulier: CatModule, CatService, CatController etc.
-La structure est la suivante:
+La structure est la suivante :
+
 ```
 ├── src
 │   ├── modules
@@ -154,21 +160,23 @@ La structure est la suivante:
 - variable array : doit être être au `pluriel`. Exemple: `cats: Array<Cat>`
 - fonction constructeur et classe : `PascalCase`
 - autre variable ou fonction : `camelCase`
-- constante : `SNAKE_CASE`
+- constante : `SCREAMING_SNAKE_CASE`
 
-Les noms de variables et de fonctions (méthodes aussi) doivent être explicite, et donc potentiellement très long... Jusqu’à une certaine limite.
+Les noms de variables et de fonctions (méthodes aussi) doivent être explicites, et donc potentiellement très long... Jusqu’à une certaine limite.
 
-Les noms de variable d’un seul caractères doivent être proscrit, sauf dans de (très très) rares cas, comme la fonction d’identité (`x => x`) ou des fonctions fléchées extrêmement simples.
+Les noms de variable d’un seul caractères doivent être proscrits, sauf dans de (très très) rares cas, comme la fonction d’identité (`x => x`) ou des fonctions fléchées extrêmement simples.
 
-Les **noms de variable doivent être au maximum en anglais**, et **peuvent être en français dans certains cas** si la traduction prête à confusion ou trop difficile (`demarche` ou `dossier`) ou si c’est un mot réservé (`affaire` peut rester `affaire` pour ne pas utiliser `case`).
+Les **noms de variable doivent être au maximum en anglais**, et **peuvent être en français dans certains cas** si la traduction prête à confusion ou trop difficile (`demarche` ou `dossier`) ou si c’est un mot réservé (`affaire` peut rester `affaire` pour ne pas utiliser `case` qui est un mot réservé du langage JavaScript - et donc TypeScript).
 
 #### Noms des endpoints
-le nom des **endpoints** doivent correspondres à la ressource au pluriel, et les quatres endpoint classique doivent être:
-- POST /cats (créer un cat)
-- GET /cats (tableaux de cats)
-- GET /cats/:id (un cat)
-- PATCH-PUT /cats/:id (modifie un cat)
-- DELETE /cats/:id
+
+le nom des **endpoints** doivent correspondres à la ressource au pluriel, et les quatres endpoint classiques doivent être:
+
+- POST /cats (pour créer un cat)
+- GET /cats (pour récupérer un tableaux de cats)
+- GET /cats/:id (pour récupérer un cat)
+- PATCH-PUT /cats/:id (pour modifier un cat)
+- DELETE /cats/:id (pour effacer un cat)
 
 ## Développer sur le projet
 
@@ -184,9 +192,15 @@ Le script du package.json `dev` lance le minimum de conteneurs :
 
 Et ensuite sont lancés les applications `server` et `client`.
 
+Lancer à la racine du projet :
+
+```console
+pnpm run dev
+```
+
 #### Avec le serveur dans un conteneur
 
-Le script du package.json `docker:dev` lance les mêmes conteneurs ainsi qu’un autre : un conteneur avec le serveur
+Le script du package.json `docker:dev` lance les mêmes conteneurs ainsi qu’un autre : un conteneur avec le serveur. Si le développeur souhaite développer dans un docker.
 
 #### Les conteneurs additionnels
 
@@ -244,7 +258,6 @@ pnpm run test:server
 pnpm run build:server
 ```
 
-
 ## Configuration de REST Client (extension VSCode)
 
 Installer l’extension [REST client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client)
@@ -262,3 +275,7 @@ Ajouter ces lignes dans vos settings :
 ```
 
 Vous pouvez désormais interroger l’API du serveur en utilisant dans VSCode le fichier `/apps/server/api.http`.
+
+## Utilisation de `api.http` depuis IntelliJ
+
+Depuis Webstorm ou un autre IDE de JetBrains, regarder la [documentation officielle](https://www.jetbrains.com/help/idea/http-client-in-product-code-editor.html).
