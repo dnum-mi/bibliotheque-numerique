@@ -997,4 +997,62 @@ describe("InstructionTimesService", () => {
       }
     },
   );
+
+  it("Should get delay 60 for date now when is in progress", async () => {
+    const dataInstructionTime = new InstructionTime();
+
+    dataInstructionTime.startAt = new Date();
+    dataInstructionTime.endAt = dayjs(new Date()).add(60, "day").toDate();
+    dataInstructionTime.dossier = { id: 1 } as Dossier;
+    dataInstructionTime.state = EInstructionTimeState.IN_PROGRESS;
+    jest
+    .spyOn(InstructionTime, "find")
+    .mockResolvedValueOnce([
+      dataInstructionTime,
+    ] as InstructionTime[]);
+
+
+    const result = await service.instructionTimeCalculation([dataInstructionTime.dossier.id])
+    expect(result[dataInstructionTime.dossier.id]).toHaveProperty("remainingTime", 60);
+  });
+
+
+  it("Should get out delay for date now when is in progress", async () => {
+    const dataInstructionTime = new InstructionTime();
+
+    dataInstructionTime.startAt = new Date();
+    dataInstructionTime.endAt = dayjs(new Date()).subtract(1, "day").toDate();
+    dataInstructionTime.dossier = { id: 1 } as Dossier;
+    dataInstructionTime.state = EInstructionTimeState.IN_PROGRESS;
+    jest
+    .spyOn(InstructionTime, "find")
+    .mockResolvedValueOnce([
+      dataInstructionTime,
+    ] as InstructionTime[]);
+
+
+    const result = await service.instructionTimeCalculation([dataInstructionTime.dossier.id])
+    expect(result[dataInstructionTime.dossier.id]).toHaveProperty("delayStatus", EInstructionTimeState.OUT_OF_DATE);
+  });
+
+  it("Should get stop delay for date now when is in 2nd demand", async () => {
+    const dataInstructionTime = new InstructionTime();
+
+    dataInstructionTime.startAt = new Date();
+    dataInstructionTime.stopAt = dayjs(dataInstructionTime.stopAt).add(5, "day").toDate();
+    dataInstructionTime.endAt = dayjs(dataInstructionTime.stopAt).add(20, "day").toDate();
+    dataInstructionTime.dossier = { id: 1 } as Dossier;
+    dataInstructionTime.state = EInstructionTimeState.SECOND_REQUEST;
+
+    jest
+    .spyOn(InstructionTime, "find")
+    .mockResolvedValueOnce([
+      dataInstructionTime,
+    ] as InstructionTime[]);
+
+    const result = await service.instructionTimeCalculation([dataInstructionTime.dossier.id])
+    expect(result[dataInstructionTime.dossier.id]).toHaveProperty("remainingTime", 20);
+    expect(result[dataInstructionTime.dossier.id]).toHaveProperty("delayStatus", EInstructionTimeState.SECOND_REQUEST);
+  });
+
 });
