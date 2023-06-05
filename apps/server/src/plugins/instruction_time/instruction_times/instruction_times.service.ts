@@ -477,6 +477,7 @@ export class InstructionTimesService {
       ].includes(delay.state) || dayjs().isSameOrBefore(delay.endAt)
         ? delay.state
         : EInstructionTimeState.OUT_OF_DATE;
+
     return await instructionTime.save();
   }
 
@@ -503,10 +504,9 @@ export class InstructionTimesService {
     datesForInstructionTimes: TIntructionTime,
     delay: TDelay,
   ) {
-    delay.endAt = delay.endAt.add(
-      delay.stopAt.diff(datesForInstructionTimes.DateReceipt2, "day"),
-      "day",
-    );
+    delay.endAt = dayjs(datesForInstructionTimes.DateReceipt2)
+      .startOf("day")
+      .add(delay.endAt.diff(delay.stopAt, "day"), "day");
 
     delay.state = EInstructionTimeState.SECOND_RECEIPT;
   }
