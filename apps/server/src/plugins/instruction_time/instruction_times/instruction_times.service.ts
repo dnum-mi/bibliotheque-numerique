@@ -167,7 +167,6 @@ export class InstructionTimesService {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return instructionTimes.reduce((acc: any, instructionTime) => {
         const { dossier } = instructionTime;
-        const now = Date.now();
         let remainingTime = null;
         let delayStatus = null;
         if (
@@ -177,8 +176,10 @@ export class InstructionTimesService {
             EInstructionTimeState.SECOND_RECEIPT as EInstructionTimeStateKey,
           ].includes(instructionTime.state)
         ) {
-          remainingTime =
-            (instructionTime.endAt.getTime() - now) / this.millisecondsOfDay;
+          remainingTime = dayjs(instructionTime.endAt)
+            .startOf("day")
+            .diff(dayjs().startOf("day"), "days");
+
           delayStatus =
             remainingTime > 0
               ? instructionTime.state
@@ -189,10 +190,10 @@ export class InstructionTimesService {
             EInstructionTimeState.SECOND_REQUEST as EInstructionTimeStateKey,
           ].includes(instructionTime.state)
         ) {
-          remainingTime =
-            (instructionTime.endAt.getTime() -
-              instructionTime.stopAt.getTime()) /
-            this.millisecondsOfDay;
+          const stopAt = dayjs(instructionTime.stopAt).startOf("day");
+          remainingTime = dayjs(instructionTime.endAt)
+            .startOf("day")
+            .diff(stopAt, "days");
           delayStatus =
             remainingTime > 0
               ? instructionTime.state
@@ -476,6 +477,7 @@ export class InstructionTimesService {
       ].includes(delay.state) || dayjs().isSameOrBefore(delay.endAt)
         ? delay.state
         : EInstructionTimeState.OUT_OF_DATE;
+
     return await instructionTime.save();
   }
 
@@ -502,10 +504,9 @@ export class InstructionTimesService {
     datesForInstructionTimes: TIntructionTime,
     delay: TDelay,
   ) {
-    delay.endAt = delay.endAt.add(
-      delay.stopAt.diff(datesForInstructionTimes.DateReceipt2, "day"),
-      "day",
-    );
+    delay.endAt = dayjs(datesForInstructionTimes.DateReceipt2)
+      .startOf("day")
+      .add(delay.endAt.diff(delay.stopAt, "day"), "day");
 
     delay.state = EInstructionTimeState.SECOND_RECEIPT;
   }
