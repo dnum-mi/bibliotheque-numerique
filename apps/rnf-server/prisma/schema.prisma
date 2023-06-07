@@ -1,6 +1,4 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
+// ======================================== GENERAL ========================================
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,8 +8,114 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Test {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+// ======================================== ENUMS ==========================================
+enum FoundationType {
+  FDD
+  FE
+  FRUP
+}
+
+enum FoundationRole {
+  DECLARANT
+  ADMIN
+  MANAGER
+}
+
+// ======================================== Foundation ======================================
+model Foundation {
+  id         Int            @id @default(autoincrement())
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+  rnfId      String         @unique
+  type       FoundationType @default(FDD)
+  department Int
+  title      String
+
+  address   Address @relation(fields: [addressId], references: [id])
+  addressId Int
+
+  // Contact
+  phone String?
+  email String?
+
+  // People
+  peoples PeopleInFoundation[]
+}
+
+// ======================================== Address ========================================
+model Address {
+  id             Int      @id @default(autoincrement())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  label          String
+  type           String
+  streetAddress  String?
+  streetNumber   String?
+  streetName     String?
+  postalCode     String
+  cityName       String
+  cityCode       String
+  departmentName String?
+  departmentCode String?
+  regionName     String?
+  regionCode     String?
+
+  people     People[]
+  foundation Foundation[]
+}
+
+// ======================================== PEOPLE =========================================
+model People {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  lastName    String
+  firstName   String
+  email       String
+  phone       String
+  profession  String
+  nationality String
+  bornAt      DateTime
+  bornPlace   String
+
+  address   Address @relation(fields: [addressId], references: [id])
+  addressId Int
+
+  foundations PeopleInFoundation[]
+}
+
+// ======================================== PEOPLE IN Foundation ===========================
+model PeopleInFoundation {
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  foundation   Foundation       @relation(fields: [foundationId], references: [id])
+  foundationId Int
+  people       People           @relation(fields: [peopleId], references: [id])
+  peopleId     Int
+  roles        FoundationRole[]
+
+  @@id([foundationId, peopleId])
+}
+
+// ======================================== Foundation History ============================
+model FoundationHistory {
+  id            Int            @id @default(autoincrement())
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  rnfId         String
+  historyNumber Int
+  type          FoundationType @default(FDD)
+  department    Int
+  title         String
+
+  // Contact
+  phone String?
+  email String?
+
+  // People
+  peoples Json[] // PeopleInFoundation[]
+  address Json // Address
+
+  // Json from DS API use to create or update foundation
+  rawDsJson Json
 }

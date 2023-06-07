@@ -1,9 +1,4 @@
-import {
-  ConsoleLogger,
-  HttpException,
-  Injectable,
-  LoggerService as LS,
-} from "@nestjs/common";
+import { ConsoleLogger, HttpException, Injectable, LoggerService as LS } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
 @Injectable()
@@ -14,20 +9,20 @@ export class LoggerService extends ConsoleLogger implements LS {
 
   log(...messages: string[]) {
     if (this.config.get("log.log")) {
-      messages.forEach((message) => super.log("\n" + message));
+      messages.forEach((message) => super.log(message));
     }
   }
 
   verbose(...messages: string[]) {
     if (this.config.get("log.verbose")) {
-      messages.forEach((message) => super.verbose("\n" + message));
+      messages.forEach((message) => super.verbose(message));
     }
   }
 
   error(error: Error): void {
     if (this.config.get("log.error")) {
       super.error(error.name + ": " + error.message);
-      super.debug(error.stack);
+      this.debug(error.stack!);
     }
   }
 
@@ -36,9 +31,9 @@ export class LoggerService extends ConsoleLogger implements LS {
       messages.forEach((message) => {
         if (message instanceof HttpException) {
           super.warn(`${message.getStatus()}: ${message.message}`);
-          super.debug(message.stack);
+          this.debug(message.stack!);
         } else {
-          super.warn(`\n ${message ?? ""}`);
+          super.warn(`${message ?? ""}`);
         }
       });
     }
@@ -46,7 +41,7 @@ export class LoggerService extends ConsoleLogger implements LS {
 
   debug(...messages: string[]) {
     if (this.config.get("log.debug")) {
-      messages.forEach((message) => super.debug("\n" + message));
+      messages.forEach((message) => super.debug(message));
     }
   }
 }

@@ -7,7 +7,7 @@ import { DemarchesModule } from "../demarches/demarches.module";
 
 @Module({
   imports: [
-    //TODO: Logger module should be global (see @Global at nestjs docs)
+    //TODO: Logger modules should be global (see @Global at nestjs docs)
     LoggerModule,
     DossiersModule,
     DemarchesModule,

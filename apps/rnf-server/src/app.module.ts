@@ -1,20 +1,22 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
-import generalConf from "./config/main.config";
+import generalConf from "./config/general.config";
 import logConf from "./config/logger.config";
-import { LoggerModule } from "@/modules/logger/logger.module";
-import { PrismaService } from "@/shared/providers/prisma.service";
+import dsConf from "./config/ds.config";
+import { LoggerModule } from "@/shared/modules/logger/logger.module";
+import { FoundationModule } from "@/modules/foundation/foundation.module";
+import { PrismaModule } from "@/shared/modules/prisma/prisma.module";
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [generalConf, logConf],
+      envFilePath: ".env",
+      load: [generalConf, logConf, dsConf],
     }),
     LoggerModule,
+    PrismaModule,
+    FoundationModule,
   ],
-  controllers: [],
-  providers: [PrismaService],
-  exports: [PrismaService],
 })
 export class AppModule {}

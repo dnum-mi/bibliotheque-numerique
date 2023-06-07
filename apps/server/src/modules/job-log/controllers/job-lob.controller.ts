@@ -9,7 +9,7 @@ export class JobLogController {
 
   @Get("")
   @Roles("admin")
-  // TODO: when pagination module exist, use it here.
+  // TODO: when pagination modules exist, use it here.
   async getLast10JobLogs(): Promise<JobLog[]> {
     return this.service.getLast10JobLogs();
   }

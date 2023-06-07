@@ -1,21 +1,16 @@
-import { HttpAdapterHost, NestFactory } from "@nestjs/core";
+import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
-import { ValidationPipe } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { AllExceptionsFilter } from "@/shared/filters/all-exception.filter";
-import { LoggerService } from "@/modules/logger/logger.service";
+import { mainConfig } from "@/main.config";
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
-  const loggerService = app.get(LoggerService);
-  const httpAdapterHost = app.get(HttpAdapterHost);
-
-  app.useLogger(app.get(LoggerService));
-  app.setGlobalPrefix("/api");
-  app.useGlobalPipes(new ValidationPipe());
-  app.useGlobalFilters(new AllExceptionsFilter(httpAdapterHost, loggerService));
-
+  const config = new DocumentBuilder().setTitle("RNF API").setDescription("RNF API documentation").setVersion("0.1").build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup("api", app, document);
+  mainConfig(app);
   await app.listen(configService.get("port") ?? 3001);
 }
 
