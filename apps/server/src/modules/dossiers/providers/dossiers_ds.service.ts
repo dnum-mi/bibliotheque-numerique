@@ -62,7 +62,14 @@ export class DossiersDSService {
       );
       if (dossiers && dossiers.length > 0) {
         for (const dossier of dossiers) {
-          await this.upsertDossierDSAndDossier(dossier, demarcheNumber);
+          await this.upsertDossierDSAndDossier(dossier, demarcheNumber).catch(
+            (error) => {
+              this.logger.error({
+                short_message: `Échec de la mise à jour du dossier de DS: ${dossier.id}`,
+                full_message: error.stack,
+              });
+            },
+          );
         }
       } else {
         this.logger.warn({
