@@ -9,11 +9,13 @@ import {
   Param,
   UseGuards,
 } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
 import { Roles, RolesGuard } from "../roles/providers/roles.guard";
 import { UsersService } from "./users.service";
 import { User } from "./entities/user.entity";
 import { CreateUserDto, UpdateUserDto } from "@biblio-num/shared";
 
+@ApiTags("Users")
 @Controller("users")
 @UseGuards(RolesGuard)
 export class UsersController {

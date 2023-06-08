@@ -8,13 +8,14 @@ import {
   Response,
   UseGuards,
 } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
 import { AuthService } from "./auth.service";
 import { LocalAuthGuard } from "./local-auth.guard";
 import { JwtAuthGuard } from "./jwt-auth.guard";
 import { AuthenticatedGuard } from "./authenticated.guard";
 
 /* The TODO: of this file must be done after creating what nestjs calls "e2e-tests" */
-
+@ApiTags("Auth")
 @Controller("auth")
 export class AuthController {
   constructor(private authService: AuthService) {}

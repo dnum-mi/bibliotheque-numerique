@@ -9,10 +9,12 @@ import {
   HttpStatus,
   HttpCode,
 } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
 import { FilterPipe } from "../../../shared/pipe/filter.pipe";
 import { DossiersService } from "../providers/dossiers.service";
 import { Dossier } from "../entities/dossier.entity";
 
+@ApiTags("Dossiers")
 @Controller("dossiers")
 export class DossiersController {
   constructor(private readonly dossiersService: DossiersService) {}

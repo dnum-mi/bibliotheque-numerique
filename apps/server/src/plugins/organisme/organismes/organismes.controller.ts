@@ -9,9 +9,11 @@ import {
   Logger,
   ParseIntPipe,
 } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
 import { LoggerService } from "../../../modules/logger/logger.service";
 import { OrganismesService } from "./organismes.service";
 
+@ApiTags("Organismes")
 @Controller("organismes")
 export class OrganismesController {
   private readonly logger = new Logger(

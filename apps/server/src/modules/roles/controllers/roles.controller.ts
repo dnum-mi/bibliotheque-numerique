@@ -11,6 +11,7 @@ import {
   ParseIntPipe,
   UseGuards,
 } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
 import { RolesService } from "../providers/roles.service";
 
 import {
@@ -20,6 +21,7 @@ import {
 import { PermissionName } from "../../../shared/types/Permission.type";
 import { Role } from "../entities/role.entity";
 
+@ApiTags("Roles")
 @Controller("roles")
 @UseGuards(PermissionsGuard)
 export class RolesController {
