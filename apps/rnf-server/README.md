@@ -35,6 +35,7 @@ CF : https://fr.wikipedia.org/wiki/Formule_de_Luhn
 3. [Codage avec Prisma Generate](#codage-avec-prisma-generate)
 4. [Test unitaire](#test-unitaire)
 4. [Test end-to-end](#test-end-to-end)
+5. [Documentation de l'API](#documentation)
 
 ## <a name="installation"></a> Installation
 
@@ -118,3 +119,10 @@ Pour les lancer, executer:
 ```shell
 pnpm run test
 ```
+
+## <a name="documentation"></a> Documentation de l'API
+Il est possible de voir les routes et la documentation de l'api sur
+```text
+http://localhost:3001/swagger
+```
+Vous pouvez utiliser cette documentation pour tester l'api directement depuis votre navigateur.
