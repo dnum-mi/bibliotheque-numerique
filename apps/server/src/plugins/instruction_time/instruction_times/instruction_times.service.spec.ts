@@ -904,6 +904,11 @@ describe("InstructionTimesService", () => {
         expected: {
           state: EInstructionTimeState.INTENT_OPPO,
           // now: "2023-07-10",
+          delay: 30,
+          now: "2023-01-28",
+          endAt: new Date(
+            new Date("2023-01-28").getTime() + 30 * millisecondsOfDay,
+          ),
         },
         dossier: {
           state: DossierState.EnInstruction,
@@ -942,6 +947,55 @@ describe("InstructionTimesService", () => {
           ],
         },
       },
+
+      ["In opposition in out of date"]: {
+        expected: {
+          state: EInstructionTimeState.INTENT_OPPO,
+          // now: "2023-07-10",
+          delay: -2,
+          now: "2023-03-01",
+          endAt: new Date(
+            new Date("2023-01-28").getTime() + 30 * millisecondsOfDay,
+          ),
+        },
+        dossier: {
+          state: DossierState.EnInstruction,
+          datePassageEnInstruction: "2023-01-06",
+          annotations: [
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateRequest1,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: null,
+              label: instructionTimeMappingConfigFound.DateReceipt1,
+            },
+            {
+              id: faker.datatype.uuid(),
+              datetime: "2023-01-20",
+              label: instructionTimeMappingConfigFound.BeginProrogationDate,
+            },
+            {
+              id: faker.datatype.uuid(),
+              datetime: "2023-01-22",
+              label: instructionTimeMappingConfigFound.DateRequest2,
+            },
+            {
+              id: faker.datatype.uuid(),
+              datetime: "2023-01-25",
+              label: instructionTimeMappingConfigFound.DateReceipt2,
+            },
+            {
+              id: faker.datatype.uuid(),
+              date: "2023-01-28",
+              label: instructionTimeMappingConfigFound.DateIntentOpposition,
+            },
+          ],
+        },
+      },
+
     };
     return datas[idx];
   }
@@ -964,6 +1018,7 @@ describe("InstructionTimesService", () => {
     ${"In opposition"}
     ${"In instruction without 1st demand"}
     ${"In instruction without 1st demand next day"}
+    ${"In opposition in out of date"}
   `(
     "cas $cas: Should create ou update of instruction time",
     async ({ cas }) => {
@@ -987,6 +1042,7 @@ describe("InstructionTimesService", () => {
         [
           EInstructionTimeState.IN_PROGRESS,
           EInstructionTimeState.IN_EXTENSION,
+          EInstructionTimeState.INTENT_OPPO,
         ].includes(data.expected.state)
       ) {
         const recieveDelay = dayjs(result?.endAt).diff(
@@ -1053,6 +1109,25 @@ describe("InstructionTimesService", () => {
     const result = await service.instructionTimeCalculation([dataInstructionTime.dossier.id])
     expect(result[dataInstructionTime.dossier.id]).toHaveProperty("remainingTime", 20);
     expect(result[dataInstructionTime.dossier.id]).toHaveProperty("delayStatus", EInstructionTimeState.SECOND_REQUEST);
+  });
+
+  it("Should get delay to 20 for date now when is in intent opposition", async () => {
+    const dataInstructionTime = new InstructionTime();
+
+    dataInstructionTime.startAt = new Date();
+    dataInstructionTime.endAt = dayjs().add(20, "day").toDate();
+    dataInstructionTime.dossier = { id: 1 } as Dossier;
+    dataInstructionTime.state = EInstructionTimeState.INTENT_OPPO;
+
+    jest
+    .spyOn(InstructionTime, "find")
+    .mockResolvedValueOnce([
+      dataInstructionTime,
+    ] as InstructionTime[]);
+
+    const result = await service.instructionTimeCalculation([dataInstructionTime.dossier.id])
+    expect(result[dataInstructionTime.dossier.id]).toHaveProperty("remainingTime", 20);
+    expect(result[dataInstructionTime.dossier.id]).toHaveProperty("delayStatus", EInstructionTimeState.INTENT_OPPO);
   });
 
 });

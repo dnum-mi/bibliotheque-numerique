@@ -200,6 +200,15 @@ export class InstructionTimesService {
               : EInstructionTimeState.OUT_OF_DATE;
         }
 
+        if (instructionTime.state === EInstructionTimeState.INTENT_OPPO) {
+          remainingTime = Math.max(
+            0,
+            dayjs(instructionTime.endAt)
+              .startOf("day")
+              .diff(dayjs().startOf("day"), "days"),
+          );
+        }
+
         acc[dossier.id] = {
           remainingTime: remainingTime ? Math.round(remainingTime) : null,
           delayStatus: delayStatus ?? instructionTime.state ?? null,
@@ -472,7 +481,7 @@ export class InstructionTimesService {
     instructionTime.stopAt = delay.stopAt && delay.stopAt.toDate();
     instructionTime.state =
       [
-        EInstructionTimeState.SECOND_REQUEST,
+        EInstructionTimeState.SECOND_REQUEST as EInstructionTimeStateKey,
         EInstructionTimeState.INTENT_OPPO as EInstructionTimeStateKey,
       ].includes(delay.state) || dayjs().isSameOrBefore(delay.endAt)
         ? delay.state
