@@ -8,10 +8,12 @@ import {
   Post,
   ParseIntPipe,
 } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
 import { ConnectorService } from "./connector.service";
 import { Roles, RolesGuard } from "../roles/providers/roles.guard";
 import { Connector } from "./connector.entity";
 
+@ApiTags("Connector")
 @Controller("connector")
 @UseGuards(RolesGuard)
 export class ConnectorController {

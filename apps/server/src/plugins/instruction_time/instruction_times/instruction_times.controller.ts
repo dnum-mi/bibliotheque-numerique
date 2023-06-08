@@ -1,6 +1,8 @@
 import { Controller, Get, Param, Query, ParseArrayPipe } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
 import { InstructionTimesService } from "./instruction_times.service";
 
+@ApiTags("Instruction-times")
 @Controller("instruction-times")
 export class InstructionTimesController {
   constructor(

@@ -3,6 +3,7 @@ dotenv.config();
 
 import { NestFactory } from "@nestjs/core";
 import { ConfigService } from "@nestjs/config";
+import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import { AppModule } from "./app.module";
 import { LoggerService } from "./modules/logger/logger.service";
 import * as session from "express-session";
@@ -15,6 +16,16 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     cors: true,
   });
+
+  const config = new DocumentBuilder()
+    .setTitle("Bibliothèque numérique API ")
+    .setDescription("Bibliothèque numérique API documentation")
+    .setVersion("1.0")
+    .setBasePath("/api")
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup("swagger", app, document);
+
   const configService = app.get(ConfigService);
   app.use(
     session({

@@ -14,6 +14,7 @@ import {
   Patch,
   Logger,
 } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
 import { DemarchesService } from "../providers/demarches.service";
 
 import { FilterPipe } from "../../../shared/pipe/filter.pipe";
@@ -29,6 +30,7 @@ import { LoggerService } from "../../logger/logger.service";
 import { Demarche } from "../entities/demarche.entity";
 import { Dossier } from "../../dossiers/entities/dossier.entity";
 
+@ApiTags("Demarches")
 @UseGuards(PermissionsGuard)
 @Controller("demarches")
 export class DemarchesController {
