@@ -351,7 +351,7 @@ export class InstructionTimesService {
       dayjs(forDateProrogation.date).diff(forDateStart.date, "days") >
         this.nbDaysAfterInstruction
     ) {
-      throw `${messageError} pour la date prorogation: elle est aprés ${
+      throw `${messageError} pour la date prorogation: Elle est aprés ${
         this.nbDaysAfterInstruction
       } jours par rapport à ${forDateStart.message.toLowerCase()}`;
     }
@@ -361,6 +361,16 @@ export class InstructionTimesService {
       isOk2ndDemand || undefined,
       `${messageError} pour la date prorogation:`,
     );
+
+    const nbDaysExtensionTotal =
+      this.nbDaysAfterInstruction + this.nbDaysAfterExtension;
+    if (
+      isOk2ndDemand?.date &&
+      dayjs(isOk2ndDemand.date).diff(forDateStart.date, "days") >
+        nbDaysExtensionTotal
+    ) {
+      throw `${messageError} pour la date 2eme demande de piece: Elle est aprés ${nbDaysExtensionTotal} jours par rapport à ${forDateStart.message.toLowerCase()}`;
+    }
 
     const forDateIntentionOppo = {
       date: instructionTime[keyInstructionTime.DATE_INTENT_OPPOSITION],
