@@ -2,7 +2,7 @@ import { Controller, Get } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { JobLogService } from "../providers/job-log.service";
 import { JobLog } from "../objects/job-log.entity";
-import { Roles } from "modules/roles/providers/roles.guard";
+import { Roles } from "../../roles/providers/roles.guard";
 
 @ApiTags("Job-log")
 @Controller("job-log")
