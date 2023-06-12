@@ -13,6 +13,7 @@
     "docker:prod:stop": "docker compose -f docker-compose.prod.yml down",
     "format": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-path .gitignore",
+    "lint:staged": "eslint --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-path .gitignore",
     "pretest:e2e": "npm run build",
     "pretest:e2e:ci": "npm run build",
     "preview": "vite preview --port 5050",

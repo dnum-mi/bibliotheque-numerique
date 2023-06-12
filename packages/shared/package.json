@@ -16,6 +16,7 @@
     "dev": "nodemon --watch src --exec 'pnpm run build'",
     "format": "eslint src/ --ext .ts --ignore-path ../../.gitignore --fix",
     "lint": "eslint src/ --ext .ts --ignore-path ../../.gitignore",
+    "lint:staged": "eslint --ext .ts --ignore-path ../../.gitignore",
     "test": "vitest run",
     "test:watch": "vitest"
   },

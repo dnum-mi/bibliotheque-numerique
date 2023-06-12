@@ -30,6 +30,7 @@
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-path ../../.gitignore",
     "lint:fix": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path ../../.gitignore",
+    "lint:staged": "eslint --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-path ../../.gitignore",
     "plugin:init": "cd src/plugins/ && sh bin/init",
     "prebuild": "rimraf dist",
     "script:loadOrganismes": "node dist/scripts/loadOrganismes.js",
