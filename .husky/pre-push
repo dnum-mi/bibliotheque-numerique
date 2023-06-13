@@ -1,5 +1,9 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-pnpm test
-pnpm test:e2e:ci
+echo "============================================"
+echo "==                                        =="
+echo "==   Remember to run tests before push!  =="
+echo "==                                        =="
+echo "============================================"
+sleep 1

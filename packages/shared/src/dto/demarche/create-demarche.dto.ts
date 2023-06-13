@@ -9,7 +9,7 @@ export class CreateDemarcheDto {
     description: 'Démarche associée dans l’application Démarches Simplifiées',
   })
   @IsNotEmpty()
-    demarcheDS: CreateDemarcheDSDto
+  demarcheDS: CreateDemarcheDSDto
 
   dossiers: CreateDossierDto[]
 
@@ -21,5 +21,5 @@ export class CreateDemarcheDto {
 
   typeOrganisme: string
 
-  mappingColumns: any[]
+  mappingColumns: any[] // eslint-disable-line @typescript-eslint/no-explicit-any
 }

@@ -6,10 +6,10 @@ export class CreateDossierDSDto {
   @ApiProperty({
     description: 'Create',
   })
-    dataJson: Partial<DossierDS>
+  dataJson: Partial<DossierDS>
 
   @ApiProperty({
     description: '',
   })
-    dsUpdateAt: Date
+  dsUpdateAt: Date
 }
