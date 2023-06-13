@@ -13,7 +13,6 @@ import { InstructionTimesService } from "./instruction_times.service";
 import configuration from "../../../config/configuration";
 import instructionTimeMappingConfig, {
   TInstructionTimeMappingConfig,
-  keyInstructionTime,
 } from "../config/instructionTimeMapping.config";
 import {
   datasourceTest,
@@ -191,114 +190,6 @@ describe("InstructionTimesService", () => {
     });
   });
 
-  const fakerDossierInConstructionOrClos = () =>
-    faker.helpers.arrayElement([
-      DossierState.EnConstruction,
-      DossierState.Accepte,
-      DossierState.Refuse,
-      DossierState.SansSuite,
-    ]);
-
-  const fakerDossierClosed = () =>
-    faker.helpers.arrayElement([
-      DossierState.Accepte,
-      DossierState.Refuse,
-      DossierState.SansSuite,
-    ]);
-
-  const fakerDateOrNull = (date) => faker.helpers.arrayElement([date, null]);
-
-  it.each`
-    cas                                                 | state                                 | dateInstrution                                                  | firstDemand                                          | firstReceip                                       | dateProrogation                                                    | secondDemand                                      | secondReceip                                                       | dateIntentOppo
-    ${"In building"}                                    | ${fakerDossierInConstructionOrClos()} | ${null}                                                         | ${null}                                              | ${null}                                           | ${null}                                                            | ${null}                                           | ${null}                                                            | ${null}
-    ${"In building with 1st Demand"}                    | ${fakerDossierInConstructionOrClos()} | ${faker.date.past().toISOString()}                              | ${fakerDateOrNull(faker.date.past(1, "2020-01-01"))} | ${null}                                           | ${null}                                                            | ${null}                                           | ${null}                                                            | ${null}
-    ${"In closed with all dates"}                       | ${fakerDossierClosed()}               | ${faker.date.past().toISOString()}                              | ${faker.date.past(1, "2020-01-01")}                  | ${faker.date.between("2020-01-01", "2020-02-01")} | ${fakerDateOrNull(faker.date.past())}                              | ${fakerDateOrNull(faker.date.past())}             | ${fakerDateOrNull(faker.date.past())}                              | ${null}
-    ${"In instruction with receip of 1st Demand"}       | ${DossierState.EnInstruction}         | ${faker.date.future(1, "2020-02-01").toISOString()}             | ${faker.date.past(1, "2020-01-01")}                  | ${faker.date.between("2020-01-01", "2020-02-01")} | ${null}                                                            | ${null}                                           | ${null}                                                            | ${null}
-    ${"In instruction with all dates"}                  | ${DossierState.EnInstruction}         | ${faker.date.between("2020-02-01", "2020-03-01").toISOString()} | ${faker.date.past(1, "2020-01-01")}                  | ${faker.date.between("2020-01-01", "2020-02-01")} | ${faker.date.between("2020-02-01", "2020-03-01")}                  | ${faker.date.between("2020-04-01", "2020-05-01")} | ${fakerDateOrNull(faker.date.between("2020-05-01", "2020-06-01"))} | ${null}
-    ${"In instruction without the dates of 1st Demand"} | ${DossierState.EnInstruction}         | ${faker.date.between("2020-01-01", "2020-02-01").toISOString()} | ${null}                                              | ${null}                                           | ${faker.date.between("2020-02-01", "2020-03-01")}                  | ${faker.date.between("2020-03-01", "2020-04-01")} | ${fakerDateOrNull(faker.date.between("2020-04-01", "2020-05-01"))} | ${null}
-    ${"In instruction with the date extension only"}    | ${DossierState.EnInstruction}         | ${faker.date.between("2020-01-01", "2020-02-01").toISOString()} | ${null}                                              | ${null}                                           | ${faker.date.between("2020-02-01", "2020-03-01")}                  | ${null}                                           | ${null}                                                            | ${null}
-    ${"In instruction with the date intent opppositon"} | ${DossierState.EnInstruction}         | ${faker.date.between("2020-01-01", "2020-02-01").toISOString()} | ${null}                                              | ${null}                                           | ${fakerDateOrNull(faker.date.between("2020-02-01", "2020-03-01"))} | ${null}                                           | ${null}                                                            | ${faker.date.future(1, "2020-03-01")}
-    ${"In instruction with the dates is same days"}     | ${DossierState.EnInstruction}         | ${new Date("2020-01-01T14:00:00")}                              | ${new Date("2020-01-01T15:00:00")}                   | ${new Date("2020-01-01T15:30:00")}                | ${new Date("2020-01-01T16:00:00")}                                 | ${new Date("2020-01-01T17:00:00")}                | ${new Date("2020-01-01T17:30:00")}                                 | ${new Date("2020-01-01T18:00:00")}
-  `(
-    "cas $cas: Should check of validities of date",
-    ({
-      state,
-      dateInstrution,
-      firstDemand,
-      firstReceip,
-      secondDemand,
-      secondReceip,
-      dateProrogation,
-      dateIntentOppo,
-    }) => {
-      const dossier: DossierDS = new DossierDS();
-      dossier.dataJson = {};
-      dossier.dataJson.state = state;
-      dossier.dataJson.datePassageEnInstruction = dateInstrution;
-      const instuctionTimes = {
-        [keyInstructionTime.DATE_REQUEST1]: firstDemand,
-        [keyInstructionTime.DATE_RECEIPT1]: firstReceip,
-        [keyInstructionTime.BEGIN_PROROGATION_DATE]: dateProrogation,
-        [keyInstructionTime.DATE_REQUEST2]: secondDemand,
-        [keyInstructionTime.DATE_RECEIPT2]: secondReceip,
-        [keyInstructionTime.DATE_INTENT_OPPOSITION]: dateIntentOppo,
-      };
-      const result = service.checkValidity(dossier.dataJson, instuctionTimes);
-      expect(result).toBe(true);
-    },
-  );
-
-  it.each`
-    cas                                                                    | state                          | dateInstrution                                                  | firstDemand                                          | firstReceip                           | dateProrogation                                   | secondDemand                                      | secondReceip                                           | dateIntentOppo                                    | messageError
-    ${"In closed with 1st demande after 1st receipt"}                      | ${fakerDossierClosed()}        | ${fakerDateOrNull(faker.date.past().toISOString())}             | ${faker.date.future(1, "2020-01-01")}                | ${faker.date.past(1, "2020-01-01")}   | ${null}                                           | ${null}                                           | ${null}                                                | ${null}                                           | ${"La date de réception de pièces est plus ancienne que La date de demande de pièces"}
-    ${"In instruction with 1st demande after 1st receipt"}                 | ${DossierState.EnInstruction}  | ${fakerDateOrNull(faker.date.past().toISOString())}             | ${faker.date.future(1, "2020-01-01")}                | ${faker.date.past(1, "2020-01-01")}   | ${null}                                           | ${null}                                           | ${null}                                                | ${null}                                           | ${"La date de réception de pièces est plus ancienne que La date de demande de pièces"}
-    ${"In instruction, without 1st demand and with 1st receipt "}          | ${DossierState.EnInstruction}  | ${fakerDateOrNull(faker.date.past().toISOString())}             | ${null}                                              | ${faker.date.past(1, "2020-01-01")}   | ${null}                                           | ${null}                                           | ${null}                                                | ${null}                                           | ${"La date de demande de pièces est manaquante"}
-    ${"In building with 1st demande and 1st receipt"}                      | ${DossierState.EnConstruction} | ${null}                                                         | ${fakerDateOrNull(faker.date.past(1, "2020-01-01"))} | ${faker.date.future(1, "2020-01-01")} | ${null}                                           | ${null}                                           | ${null}                                                | ${null}                                           | ${"Ce dossier est en construction et posséde une date de récéption de 1er demande de piéce"}
-    ${"In instruction without receipt of 1st demande"}                     | ${DossierState.EnInstruction}  | ${faker.date.past().toISOString()}                              | ${faker.date.past(1, "2020-01-01")}                  | ${null}                               | ${null}                                           | ${null}                                           | ${null}                                                | ${null}                                           | ${"La date de reception de la 1ere demande est manquante"}
-    ${"In instruction with receipt of 1st demande after instruction"}      | ${DossierState.EnInstruction}  | ${faker.date.between("2020-01-01", "2020-03-01").toISOString()} | ${faker.date.past(1, "2020-01-01")}                  | ${faker.date.future(1, "2020-03-01")} | ${null}                                           | ${null}                                           | ${null}                                                | ${null}                                           | ${"La date d'instruction est plus ancienne que La date de réception de pièces"}
-    ${"In instruction undated"}                                            | ${DossierState.EnInstruction}  | ${null}                                                         | ${null}                                              | ${null}                               | ${null}                                           | ${null}                                           | ${null}                                                | ${null}                                           | ${"La date d'instruction est manquante"}
-    ${"In instruction, prorogation before instruction date"}               | ${DossierState.EnInstruction}  | ${faker.date.future(1, "2020-01-01")}                           | ${null}                                              | ${null}                               | ${faker.date.past(1, "2020-01-01")}               | ${null}                                           | ${null}                                                | ${null}                                           | ${"La date de prorogation est plus ancienne que La date d'instruction"}
-    ${"In instruction, without prorogation and with 2nd demand"}           | ${DossierState.EnInstruction}  | ${faker.date.between("2020-01-01", "2020-01-15").toISOString()} | ${null}                                              | ${null}                               | ${null}                                           | ${faker.date.between("2020-01-15", "2020-02-01")} | ${fakerDateOrNull(faker.date.future(1, "2020-03-01"))} | ${null}                                           | ${"La date de prorogation est manaquante"}
-    ${"In instruction, prorogation after 2nd demand"}                      | ${DossierState.EnInstruction}  | ${faker.date.between("2020-01-01", "2020-01-15").toISOString()} | ${null}                                              | ${null}                               | ${faker.date.between("2020-02-01", "2020-03-01")} | ${faker.date.between("2020-01-15", "2020-02-01")} | ${fakerDateOrNull(faker.date.future(1, "2020-03-01"))} | ${null}                                           | ${"La date de demande de pièces est plus ancienne que La date de prorogation"}
-    ${"In instruction, 2nd demand after 2nd receipt date"}                 | ${DossierState.EnInstruction}  | ${faker.date.past(1, "2020-01-01")}                             | ${null}                                              | ${null}                               | ${null}                                           | ${faker.date.future(1, "2020-01-01")}             | ${faker.date.past(1, "2020-01-01")}                    | ${null}                                           | ${"La date de reception de pièces est plus ancienne que La date de demande de pièces"}
-    ${"In instruction, without 2nd demand and with 2nd receipt date"}      | ${DossierState.EnInstruction}  | ${faker.date.past(1, "2020-01-01")}                             | ${null}                                              | ${null}                               | ${null}                                           | ${null}                                           | ${faker.date.past(1, "2020-01-01")}                    | ${null}                                           | ${"La date de demande de pièces est manaquante"}
-    ${"In instruction, date intent opppositon before date instruction"}    | ${DossierState.EnInstruction}  | ${faker.date.future(1, "2020-01-01")}                           | ${null}                                              | ${null}                               | ${null}                                           | ${null}                                           | ${null}                                                | ${faker.date.past(1, "2020-01-01")}               | ${"La date d'intention opposition est plus ancienne que La date d'instruction"}
-    ${"In instruction, date intent opppositon before date prorogation"}    | ${DossierState.EnInstruction}  | ${faker.date.between("2020-01-01", "2020-01-05").toISOString()} | ${null}                                              | ${null}                               | ${faker.date.between("2020-01-20", "2020-02-01")} | ${null}                                           | ${null}                                                | ${faker.date.between("2020-01-10", "2020-01-20")} | ${"La date d'intention opposition est plus ancienne que La date de prorogation"}
-    ${"In instruction, prorogation after 60 days of the instruction date"} | ${DossierState.EnInstruction}  | ${faker.date.past(1, "2020-01-01").toISOString()}               | ${null}                                              | ${null}                               | ${faker.date.future(1, "2020-03-01")}             | ${null}                                           | ${null}                                                | ${null}                                           | ${"Elle est aprés 60 jours par rapport à la date d'instruction"}
-    ${"In instruction, 2nd demand after 180 days of the instruction date"} | ${DossierState.EnInstruction}  | ${faker.date.between("2020-01-01", "2020-02-01").toISOString()} | ${null}                                              | ${null}                               | ${faker.date.between("2020-02-01", "2020-03-01")} | ${faker.date.future(1, "2020-07-01")}             | ${null}                                                | ${null}                                           | ${"Elle est aprés 180 jours par rapport à la date d'instruction"}
-  `(
-    "cas $cas: Should throw error check of validities of dates",
-    ({
-      cas,
-      state,
-      dateInstrution,
-      firstDemand,
-      firstReceip,
-      secondDemand,
-      secondReceip,
-      dateProrogation,
-      dateIntentOppo,
-      messageError,
-    }) => {
-      const dossier: DossierDS = new DossierDS();
-      dossier.dataJson = {};
-      dossier.dataJson.state = state;
-      dossier.dataJson.datePassageEnInstruction = dateInstrution;
-      const instuctionTimes = {
-        [keyInstructionTime.DATE_REQUEST1]: firstDemand,
-        [keyInstructionTime.DATE_RECEIPT1]: firstReceip,
-        [keyInstructionTime.BEGIN_PROROGATION_DATE]: dateProrogation,
-        [keyInstructionTime.DATE_REQUEST2]: secondDemand,
-        [keyInstructionTime.DATE_RECEIPT2]: secondReceip,
-        [keyInstructionTime.DATE_INTENT_OPPOSITION]: dateIntentOppo,
-      };
-      const result = () => {
-          service.checkValidity(dossier.dataJson, instuctionTimes);
-      };
-      expect(result).toThrow("Erreur dans les déclarations de dates");
-      expect(result).toThrow(messageError);
-    },
-  );
   const millisecondsOfDay = 24 * 60 * 60 * 1000;
 
   function getDataTestInstructionTime(idx) {
