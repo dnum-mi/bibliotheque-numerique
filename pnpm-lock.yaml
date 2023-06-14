@@ -169,6 +169,9 @@ importers:
 
   apps/rnf-server:
     dependencies:
+      '@dnum-mi/ds-api-client':
+        specifier: ^1.4.1
+        version: 1.4.1
       '@nestjs/common':
         specifier: ^9.4.3
         version: 9.4.3(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13)(rxjs@7.8.1)
@@ -200,9 +203,12 @@ importers:
         specifier: ^7.8.1
         version: 7.8.1
     devDependencies:
+<<<<<<< Updated upstream
       '@dnum-mi/ds-api-client':
         specifier: ^1.4.0
         version: 1.4.0
+=======
+>>>>>>> Stashed changes
       '@nestjs/cli':
         specifier: ^9.5.0
         version: 9.5.0
@@ -282,8 +288,8 @@ importers:
         specifier: workspace:^
         version: link:../../packages/shared
       '@dnum-mi/ds-api-client':
-        specifier: ^1.3.0
-        version: 1.3.0
+        specifier: ^1.4.1
+        version: 1.4.1
       '@nest-middlewares/morgan':
         specifier: 7.0.1
         version: 7.0.1(@nestjs/common@9.4.0)
@@ -1940,15 +1946,24 @@ packages:
       - encoding
     dev: false
 
+<<<<<<< Updated upstream
   /@dnum-mi/ds-api-client@1.4.0:
     resolution: {integrity: sha512-t7WFM18jm3zTGwl6d3UbSfKZTehZFvSGqtZgJ0isseeyOZXkhuz8Q7ymv5TrdXN8IAwPM6BrqMEd8e0mnlvjHg==}
+=======
+  /@dnum-mi/ds-api-client@1.4.1:
+    resolution: {integrity: sha512-fDIqSvfuJ9tfTXd7WGEROgMv16ZK3BeT7sUeD1ZOW7cspLzHT6dbgfP4yjEj7BcdWcaZ5hlNyRpfAbjHGEM+5g==}
+>>>>>>> Stashed changes
     engines: {node: '>=16.0.0', npm: '>=7.10.0'}
     dependencies:
       graphql: 16.6.0
       graphql-request: 5.0.0(graphql@16.6.0)
     transitivePeerDependencies:
       - encoding
+<<<<<<< Updated upstream
     dev: true
+=======
+    dev: false
+>>>>>>> Stashed changes
 
   /@esbuild/android-arm64@0.17.18:
     resolution: {integrity: sha512-/iq0aK0eeHgSC3z55ucMAHO05OIqmQehiGay8eP5l/5l+iEr4EIbh4/MI8xD9qRFjqzgkc0JkX0LculNC9mXBw==}
@@ -2795,7 +2810,7 @@ packages:
       detect-libc: 2.0.1
       https-proxy-agent: 5.0.1
       make-dir: 3.1.0
-      node-fetch: 2.6.9
+      node-fetch: 2.6.11
       nopt: 5.0.0
       npmlog: 5.0.1
       rimraf: 3.0.2
@@ -3342,7 +3357,7 @@ packages:
     dependencies:
       chalk: 4.1.2
       consola: 2.15.3
-      node-fetch: 2.6.9
+      node-fetch: 2.6.11
     transitivePeerDependencies:
       - encoding
 
@@ -10743,17 +10758,6 @@ packages:
 
   /node-fetch@2.6.11:
     resolution: {integrity: sha512-4I6pdBY1EthSqDmJkiNk3JIT8cswwR9nfeW/cPdUagJYEQG7R95WRH74wpz7ma8Gh/9dI9FP+OU+0E4FvtA55w==}
-    engines: {node: 4.x || >=6.0.0}
-    peerDependencies:
-      encoding: ^0.1.0
-    peerDependenciesMeta:
-      encoding:
-        optional: true
-    dependencies:
-      whatwg-url: 5.0.0
-
-  /node-fetch@2.6.9:
-    resolution: {integrity: sha512-DJm/CJkZkRjKKj4Zi4BsKVZh3ValV5IR5s7LVZnW+6YMh0W1BfNA8XSs6DLMGYlId5F3KnA70uu2qepcR08Qqg==}
     engines: {node: 4.x || >=6.0.0}
     peerDependencies:
       encoding: ^0.1.0
