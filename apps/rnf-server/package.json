@@ -20,9 +20,11 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "./src/test/launch-e2e-test.sh",
     "test:unit": "./src/test/launch-unit-test.sh",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "generate-prisma": "prisma generate"
   },
   "dependencies": {
+    "@dnum-mi/ds-api-client": "^1.4.1",
     "@nestjs/common": "^9.4.3",
     "@nestjs/config": "^2.3.3",
     "@nestjs/core": "^9.4.3",
@@ -35,7 +37,6 @@
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
-    "@dnum-mi/ds-api-client": "^1.4.0",
     "@nestjs/cli": "^9.5.0",
     "@nestjs/schematics": "^9.2.0",
     "@nestjs/testing": "^9.4.3",

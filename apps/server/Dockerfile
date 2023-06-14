@@ -42,6 +42,7 @@ COPY --from=base /app/out/json/ .
 COPY --from=base /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=base /app/out/pnpm-workspace.yaml ./pnpm-workspace.yaml
 ENV CI=true
+ENV NODE_ENV=production
 RUN pnpm install --frozen-lockfile --production
 # Turbo needs this directory, even with --no-cache...
 RUN mkdir -p /app/node_modules/.cache/turbo/
