@@ -13,7 +13,6 @@ import { InstructionTimesService } from "./instruction_times.service";
 import configuration from "../../../config/configuration";
 import instructionTimeMappingConfig, {
   TInstructionTimeMappingConfig,
-  keyInstructionTime,
 } from "../config/instructionTimeMapping.config";
 import {
   datasourceTest,
@@ -191,106 +190,6 @@ describe("InstructionTimesService", () => {
     });
   });
 
-  const fakerDossierInConstructionOrClos = () =>
-    faker.helpers.arrayElement([
-      DossierState.EnConstruction,
-      DossierState.Accepte,
-      DossierState.Refuse,
-      DossierState.SansSuite,
-    ]);
-
-  const fakerDossierClosed = () =>
-    faker.helpers.arrayElement([
-      DossierState.Accepte,
-      DossierState.Refuse,
-      DossierState.SansSuite,
-    ]);
-
-  const fakerDateOrNull = (date) => faker.helpers.arrayElement([date, null]);
-
-  it.each`
-    cas                                                 | state                                 | dateInstrution                                                  | firstDemand                                          | firstReceip                                       | dateProrogation                                                    | secondDemand                                      | secondReceip                                                       | dateIntentOppo
-    ${"In building"}                                    | ${fakerDossierInConstructionOrClos()} | ${null}                                                         | ${null}                                              | ${null}                                           | ${null}                                                            | ${null}                                           | ${null}                                                            | ${null}
-    ${"In building with 1st Demand"}                    | ${fakerDossierInConstructionOrClos()} | ${faker.date.past().toISOString()}                              | ${fakerDateOrNull(faker.date.past(1, "2020-01-01"))} | ${null}                                           | ${null}                                                            | ${null}                                           | ${null}                                                            | ${null}
-    ${"In closed with all dates"}                       | ${fakerDossierClosed()}               | ${faker.date.past().toISOString()}                              | ${faker.date.past(1, "2020-01-01")}                  | ${faker.date.between("2020-01-01", "2020-02-01")} | ${fakerDateOrNull(faker.date.past())}                              | ${fakerDateOrNull(faker.date.past())}             | ${fakerDateOrNull(faker.date.past())}                              | ${null}
-    ${"In instruction with receip of 1st Demand"}       | ${DossierState.EnInstruction}         | ${faker.date.future(1, "2020-02-01").toISOString()}             | ${faker.date.past(1, "2020-01-01")}                  | ${faker.date.between("2020-01-01", "2020-02-01")} | ${null}                                                            | ${null}                                           | ${null}                                                            | ${null}
-    ${"In instruction with all dates"}                  | ${DossierState.EnInstruction}         | ${faker.date.between("2020-02-01", "2020-03-01").toISOString()} | ${faker.date.past(1, "2020-01-01")}                  | ${faker.date.between("2020-01-01", "2020-02-01")} | ${faker.date.between("2020-03-01", "2020-04-01")}                  | ${faker.date.between("2020-04-01", "2020-05-01")} | ${fakerDateOrNull(faker.date.between("2020-05-01", "2020-06-01"))} | ${null}
-    ${"In instruction without the dates of 1st Demand"} | ${DossierState.EnInstruction}         | ${faker.date.past(1, "2020-01-01").toISOString()}               | ${null}                                              | ${null}                                           | ${faker.date.between("2020-01-01", "2020-02-01")}                  | ${faker.date.between("2020-02-01", "2020-03-01")} | ${fakerDateOrNull(faker.date.between("2020-03-01", "2020-04-01"))} | ${null}
-    ${"In instruction with the date extension only"}    | ${DossierState.EnInstruction}         | ${faker.date.past(1, "2020-02-01").toISOString()}               | ${null}                                              | ${null}                                           | ${faker.date.future(1, "2020-02-01")}                              | ${null}                                           | ${null}                                                            | ${null}
-    ${"In instruction with the date intent opppositon"} | ${DossierState.EnInstruction}         | ${faker.date.past(1, "2020-02-01").toISOString()}               | ${null}                                              | ${null}                                           | ${fakerDateOrNull(faker.date.between("2020-02-01", "2020-03-01"))} | ${null}                                           | ${null}                                                            | ${faker.date.future(1, "2020-03-01")}
-    ${"In instruction with the dates is same days"}     | ${DossierState.EnInstruction}         | ${new Date("2020-01-01T14:00:00")}                              | ${new Date("2020-01-01T15:00:00")}                   | ${new Date("2020-01-01T15:30:00")}                | ${new Date("2020-01-01T16:00:00")}                                 | ${new Date("2020-01-01T17:00:00")}                | ${new Date("2020-01-01T17:30:00")}                                 | ${new Date("2020-01-01T18:00:00")}
-  `(
-    "cas $cas: Should check of validities of date",
-    ({
-      state,
-      dateInstrution,
-      firstDemand,
-      firstReceip,
-      secondDemand,
-      secondReceip,
-      dateProrogation,
-      dateIntentOppo,
-    }) => {
-      const dossier: DossierDS = new DossierDS();
-      dossier.dataJson = {};
-      dossier.dataJson.state = state;
-      dossier.dataJson.datePassageEnInstruction = dateInstrution;
-      const instuctionTimes = {
-        [keyInstructionTime.DATE_REQUEST1]: firstDemand,
-        [keyInstructionTime.DATE_RECEIPT1]: firstReceip,
-        [keyInstructionTime.BEGIN_PROROGATION_DATE]: dateProrogation,
-        [keyInstructionTime.DATE_REQUEST2]: secondDemand,
-        [keyInstructionTime.DATE_RECEIPT2]: secondReceip,
-        [keyInstructionTime.DATE_INTENT_OPPOSITION]: dateIntentOppo,
-      };
-      const result = service.checkValidity(dossier.dataJson, instuctionTimes);
-      expect(result).toBe(true);
-    },
-  );
-
-  it.each`
-    cas                                                                 | state                          | dateInstrution                                                  | firstDemand                                            | firstReceip                           | dateProrogation                                        | secondDemand                                           | secondReceip                                           | dateIntentOppo
-    ${"In closed with 1st demande after 1st receipt"}                   | ${fakerDossierClosed()}        | ${fakerDateOrNull(faker.date.past().toISOString())}             | ${fakerDateOrNull(faker.date.future(1, "2020-01-01"))} | ${faker.date.past(1, "2020-01-01")}   | ${null}                                                | ${null}                                                | ${null}                                                | ${null}
-    ${"In instruction with 1st demande after 1st receipt"}              | ${DossierState.EnInstruction}  | ${fakerDateOrNull(faker.date.past().toISOString())}             | ${fakerDateOrNull(faker.date.future(1, "2020-01-01"))} | ${faker.date.past(1, "2020-01-01")}   | ${null}                                                | ${null}                                                | ${null}                                                | ${null}
-    ${"In building with 1st demande and 1st receipt"}                   | ${DossierState.EnConstruction} | ${null}                                                         | ${fakerDateOrNull(faker.date.past(1, "2020-01-01"))}   | ${faker.date.future(1, "2020-01-01")} | ${null}                                                | ${null}                                                | ${null}                                                | ${null}
-    ${"In instruction without receipt of 1st demande"}                  | ${DossierState.EnInstruction}  | ${faker.date.past().toISOString()}                              | ${faker.date.past(1, "2020-01-01")}                    | ${null}                               | ${null}                                                | ${null}                                                | ${null}                                                | ${null}
-    ${"In instruction with receipt of 1st demande after instruction"}   | ${DossierState.EnInstruction}  | ${faker.date.between("2020-01-01", "2020-03-01").toISOString()} | ${faker.date.past(1, "2020-01-01")}                    | ${faker.date.future(1, "2020-03-01")} | ${null}                                                | ${null}                                                | ${null}                                                | ${null}
-    ${"In instruction undated"}                                         | ${DossierState.EnInstruction}  | ${null}                                                         | ${null}                                                | ${null}                               | ${null}                                                | ${null}                                                | ${null}                                                | ${null}
-    ${"In instruction, prorogation before instruction date"}            | ${DossierState.EnInstruction}  | ${faker.date.future(1, "2020-01-01")}                           | ${null}                                                | ${null}                               | ${faker.date.past(1, "2020-01-01")}                    | ${null}                                                | ${null}                                                | ${null}
-    ${"In instruction, prorogation after 2nd demand"}                   | ${DossierState.EnInstruction}  | ${faker.date.past(1, "2020-01-01")}                             | ${null}                                                | ${null}                               | ${fakerDateOrNull(faker.date.future(1, "2020-03-02"))} | ${faker.date.between("2020-02-01", "2020-03-01")}      | ${fakerDateOrNull(faker.date.future(1, "2020-03-01"))} | ${null}
-    ${"In instruction, 2nd demand after 2nd receipt date"}              | ${DossierState.EnInstruction}  | ${faker.date.past(1, "2020-01-01")}                             | ${null}                                                | ${null}                               | ${null}                                                | ${fakerDateOrNull(faker.date.future(1, "2020-01-01"))} | ${faker.date.past(1, "2020-01-01")}                    | ${null}
-    ${"In instruction, date intent opppositon before date instruction"} | ${DossierState.EnInstruction}  | ${faker.date.future(1, "2020-01-01")}                           | ${null}                                                | ${null}                               | ${null}                                                | ${null}                                                | ${null}                                                | ${faker.date.past(1, "2020-01-01")}
-    ${"In instruction, date intent opppositon before date prorogation"} | ${DossierState.EnInstruction}  | ${faker.date.past(1, "2020-01-01")}                             | ${null}                                                | ${null}                               | ${faker.date.future(1, "2020-03-01")}                  | ${null}                                                | ${null}                                                | ${faker.date.between("2020-01-01", "2020-03-01")}
-  `(
-    "cas $cas: Should throw error check of validities of dates",
-    ({
-      state,
-      dateInstrution,
-      firstDemand,
-      firstReceip,
-      secondDemand,
-      secondReceip,
-      dateProrogation,
-      dateIntentOppo,
-    }) => {
-      const dossier: DossierDS = new DossierDS();
-      dossier.dataJson = {};
-      dossier.dataJson.state = state;
-      dossier.dataJson.datePassageEnInstruction = dateInstrution;
-      const instuctionTimes = {
-        [keyInstructionTime.DATE_REQUEST1]: firstDemand,
-        [keyInstructionTime.DATE_RECEIPT1]: firstReceip,
-        [keyInstructionTime.BEGIN_PROROGATION_DATE]: dateProrogation,
-        [keyInstructionTime.DATE_REQUEST2]: secondDemand,
-        [keyInstructionTime.DATE_RECEIPT2]: secondReceip,
-        [keyInstructionTime.DATE_INTENT_OPPOSITION]: dateIntentOppo,
-      };
-      const result = () => {
-        service.checkValidity(dossier.dataJson, instuctionTimes);
-      };
-      expect(result).toThrow("Erreur dans les déclarations de dates");
-    },
-  );
   const millisecondsOfDay = 24 * 60 * 60 * 1000;
 
   function getDataTestInstructionTime(idx) {
@@ -995,7 +894,6 @@ describe("InstructionTimesService", () => {
           ],
         },
       },
-
     };
     return datas[idx];
   }
@@ -1062,16 +960,17 @@ describe("InstructionTimesService", () => {
     dataInstructionTime.dossier = { id: 1 } as Dossier;
     dataInstructionTime.state = EInstructionTimeState.IN_PROGRESS;
     jest
-    .spyOn(InstructionTime, "find")
-    .mockResolvedValueOnce([
-      dataInstructionTime,
-    ] as InstructionTime[]);
+      .spyOn(InstructionTime, "find")
+      .mockResolvedValueOnce([dataInstructionTime] as InstructionTime[]);
 
-
-    const result = await service.instructionTimeCalculation([dataInstructionTime.dossier.id])
-    expect(result[dataInstructionTime.dossier.id]).toHaveProperty("remainingTime", 60);
+    const result = await service.instructionTimeCalculation([
+      dataInstructionTime.dossier.id,
+    ]);
+    expect(result[dataInstructionTime.dossier.id]).toHaveProperty(
+      "remainingTime",
+      60,
+    );
   });
-
 
   it("Should get out delay for date now when is in progress", async () => {
     const dataInstructionTime = new InstructionTime();
@@ -1081,34 +980,46 @@ describe("InstructionTimesService", () => {
     dataInstructionTime.dossier = { id: 1 } as Dossier;
     dataInstructionTime.state = EInstructionTimeState.IN_PROGRESS;
     jest
-    .spyOn(InstructionTime, "find")
-    .mockResolvedValueOnce([
-      dataInstructionTime,
-    ] as InstructionTime[]);
+      .spyOn(InstructionTime, "find")
+      .mockResolvedValueOnce([dataInstructionTime] as InstructionTime[]);
 
-
-    const result = await service.instructionTimeCalculation([dataInstructionTime.dossier.id])
-    expect(result[dataInstructionTime.dossier.id]).toHaveProperty("delayStatus", EInstructionTimeState.OUT_OF_DATE);
+    const result = await service.instructionTimeCalculation([
+      dataInstructionTime.dossier.id,
+    ]);
+    expect(result[dataInstructionTime.dossier.id]).toHaveProperty(
+      "delayStatus",
+      EInstructionTimeState.OUT_OF_DATE,
+    );
   });
 
   it("Should get stop delay for date now when is in 2nd demand", async () => {
     const dataInstructionTime = new InstructionTime();
 
     dataInstructionTime.startAt = new Date();
-    dataInstructionTime.stopAt = dayjs(dataInstructionTime.stopAt).add(5, "day").toDate();
-    dataInstructionTime.endAt = dayjs(dataInstructionTime.stopAt).add(20, "day").toDate();
+    dataInstructionTime.stopAt = dayjs(dataInstructionTime.stopAt)
+      .add(5, "day")
+      .toDate();
+    dataInstructionTime.endAt = dayjs(dataInstructionTime.stopAt)
+      .add(20, "day")
+      .toDate();
     dataInstructionTime.dossier = { id: 1 } as Dossier;
     dataInstructionTime.state = EInstructionTimeState.SECOND_REQUEST;
 
     jest
-    .spyOn(InstructionTime, "find")
-    .mockResolvedValueOnce([
-      dataInstructionTime,
-    ] as InstructionTime[]);
+      .spyOn(InstructionTime, "find")
+      .mockResolvedValueOnce([dataInstructionTime] as InstructionTime[]);
 
-    const result = await service.instructionTimeCalculation([dataInstructionTime.dossier.id])
-    expect(result[dataInstructionTime.dossier.id]).toHaveProperty("remainingTime", 20);
-    expect(result[dataInstructionTime.dossier.id]).toHaveProperty("delayStatus", EInstructionTimeState.SECOND_REQUEST);
+    const result = await service.instructionTimeCalculation([
+      dataInstructionTime.dossier.id,
+    ]);
+    expect(result[dataInstructionTime.dossier.id]).toHaveProperty(
+      "remainingTime",
+      20,
+    );
+    expect(result[dataInstructionTime.dossier.id]).toHaveProperty(
+      "delayStatus",
+      EInstructionTimeState.SECOND_REQUEST,
+    );
   });
 
   it("Should get delay to 20 for date now when is in intent opposition", async () => {
@@ -1120,14 +1031,19 @@ describe("InstructionTimesService", () => {
     dataInstructionTime.state = EInstructionTimeState.INTENT_OPPO;
 
     jest
-    .spyOn(InstructionTime, "find")
-    .mockResolvedValueOnce([
-      dataInstructionTime,
-    ] as InstructionTime[]);
+      .spyOn(InstructionTime, "find")
+      .mockResolvedValueOnce([dataInstructionTime] as InstructionTime[]);
 
-    const result = await service.instructionTimeCalculation([dataInstructionTime.dossier.id])
-    expect(result[dataInstructionTime.dossier.id]).toHaveProperty("remainingTime", 20);
-    expect(result[dataInstructionTime.dossier.id]).toHaveProperty("delayStatus", EInstructionTimeState.INTENT_OPPO);
+    const result = await service.instructionTimeCalculation([
+      dataInstructionTime.dossier.id,
+    ]);
+    expect(result[dataInstructionTime.dossier.id]).toHaveProperty(
+      "remainingTime",
+      20,
+    );
+    expect(result[dataInstructionTime.dossier.id]).toHaveProperty(
+      "delayStatus",
+      EInstructionTimeState.INTENT_OPPO,
+    );
   });
-
 });

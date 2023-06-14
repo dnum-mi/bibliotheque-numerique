@@ -36,6 +36,8 @@ type TDelay = {
   isStop: boolean;
 };
 
+type toCheckDate = { date: Date | undefined | null; message: string };
+
 @Injectable()
 export class InstructionTimesService {
   private readonly logger = new Logger(
@@ -228,13 +230,13 @@ export class InstructionTimesService {
   // TODO: fixe type
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   checkAndGetLastDates(
-    date1: { date: Date | undefined | null; message: string },
-    date2: { date: Date | undefined | null; message: string },
+    date1: toCheckDate,
+    date2: toCheckDate,
     messageError: string,
-  ) {
-    const dateReceipt = date2?.date;
-    const dateDemand = date1?.date;
-    if (dateReceipt && !dateDemand) {
+  ): toCheckDate {
+    const dateBefore = date1?.date;
+    const dateAfter = date2?.date;
+    if (dateAfter && !dateBefore) {
       throw new Error(
         `${messageError} ${
           date1?.message || "La premiére date"
@@ -242,11 +244,11 @@ export class InstructionTimesService {
       );
     }
 
-    if (!dateDemand) return undefined;
+    if (!dateBefore) return undefined;
 
-    if (!dateReceipt) return date1;
+    if (!dateAfter) return date1;
 
-    if (dayjs(dateDemand).isSameOrBefore(dateReceipt, "days")) {
+    if (dayjs(dateBefore).isSameOrBefore(dateAfter, "days")) {
       return date1;
     }
 
@@ -338,22 +340,42 @@ export class InstructionTimesService {
       message: "La date de prorogation",
     };
 
-    const forDateIntentionOppo = {
-      date: instructionTime[keyInstructionTime.DATE_INTENT_OPPOSITION],
-      message: "La date d'intention opposition",
-    };
-
     this.checkAndGetLastDates(
       forDateStart,
       forDateProrogation,
       `${messageError}`,
     );
 
+    if (
+      forDateProrogation.date &&
+      dayjs(forDateProrogation.date).diff(forDateStart.date, "days") >
+        this.nbDaysAfterInstruction
+    ) {
+      throw `${messageError} pour la date prorogation: Elle est aprés ${
+        this.nbDaysAfterInstruction
+      } jours par rapport à ${forDateStart.message.toLowerCase()}`;
+    }
+
     this.checkAndGetLastDates(
       forDateProrogation,
       isOk2ndDemand || undefined,
       `${messageError} pour la date prorogation:`,
     );
+
+    const nbDaysExtensionTotal =
+      this.nbDaysAfterInstruction + this.nbDaysAfterExtension;
+    if (
+      isOk2ndDemand?.date &&
+      dayjs(isOk2ndDemand.date).diff(forDateStart.date, "days") >
+        nbDaysExtensionTotal
+    ) {
+      throw `${messageError} pour la date 2eme demande de piece: Elle est aprés ${nbDaysExtensionTotal} jours par rapport à ${forDateStart.message.toLowerCase()}`;
+    }
+
+    const forDateIntentionOppo = {
+      date: instructionTime[keyInstructionTime.DATE_INTENT_OPPOSITION],
+      message: "La date d'intention opposition",
+    };
 
     if (instructionTime[keyInstructionTime.BEGIN_PROROGATION_DATE]) {
       this.checkAndGetLastDates(
@@ -396,11 +418,7 @@ export class InstructionTimesService {
     return true;
   }
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  async proccess(instructionTime: InstructionTime) {
-    if (this.isOutOfDate(instructionTime.state)) return false;
-
+  async proccess(instructionTime: InstructionTime): Promise<InstructionTime> {
     const { dossier } = instructionTime;
     const { state, datePassageEnInstruction } = dossier.dossierDS.dataJson;
 
@@ -470,12 +488,10 @@ export class InstructionTimesService {
     );
   }
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private async saveInInstruction(
     instructionTime: InstructionTime,
     delay: TDelay,
-  ) {
+  ): Promise<InstructionTime> {
     instructionTime.startAt = delay.startAt && delay.startAt.toDate();
     instructionTime.endAt = delay.endAt && delay.endAt.toDate();
     instructionTime.stopAt = delay.stopAt && delay.stopAt.toDate();
