@@ -201,8 +201,8 @@ importers:
         version: 7.8.1
     devDependencies:
       '@dnum-mi/ds-api-client':
-        specifier: ^1.3.0
-        version: 1.3.0
+        specifier: ^1.4.0
+        version: 1.4.0
       '@nestjs/cli':
         specifier: ^9.5.0
         version: 9.5.0
@@ -1938,6 +1938,17 @@ packages:
       graphql-request: 5.0.0(graphql@16.6.0)
     transitivePeerDependencies:
       - encoding
+    dev: false
+
+  /@dnum-mi/ds-api-client@1.4.0:
+    resolution: {integrity: sha512-t7WFM18jm3zTGwl6d3UbSfKZTehZFvSGqtZgJ0isseeyOZXkhuz8Q7ymv5TrdXN8IAwPM6BrqMEd8e0mnlvjHg==}
+    engines: {node: '>=16.0.0', npm: '>=7.10.0'}
+    dependencies:
+      graphql: 16.6.0
+      graphql-request: 5.0.0(graphql@16.6.0)
+    transitivePeerDependencies:
+      - encoding
+    dev: true
 
   /@esbuild/android-arm64@0.17.18:
     resolution: {integrity: sha512-/iq0aK0eeHgSC3z55ucMAHO05OIqmQehiGay8eP5l/5l+iEr4EIbh4/MI8xD9qRFjqzgkc0JkX0LculNC9mXBw==}

@@ -34,4 +34,5 @@ export const dsServiceMock = {
       };
     } else throw new DsApiError(dossierNotFoundGraphQlError);
   }),
+  writeRnfIdInPrivateAnnotation: jest.fn().mockResolvedValue(undefined),
 };

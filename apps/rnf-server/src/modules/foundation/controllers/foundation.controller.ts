@@ -27,6 +27,12 @@ export class FoundationController {
     const rawDossier = await this.dsService.getOneDossier(dto.dossierId);
     const createDto = this.dsMapperService.mapDossierToFoundation(rawDossier);
     const foundation = await this.service.CreateFoundation(createDto);
+    // TODO: use email sent by front to determine instructeur id. For now, we take the first one
+    const instructeurId = rawDossier.instructeurs?.[0].id;
+    if (!instructeurId) {
+      throw new Error("Could not find instructor id.");
+    }
+    await this.dsService.writeRnfIdInPrivateAnnotation(rawDossier.id!, instructeurId, foundation.type, foundation.rnfId);
     // TODO: await this.foundationHistoryService.newHistoryEntry(foundation, dto);
     return { rnfId: foundation.rnfId };
   }

@@ -25,9 +25,9 @@ describe("DsService", () => {
           return {
             get: jest.fn().mockImplementation((str: string) => {
               switch (true) {
-                case str === "ds.demarcheDotationId":
+                case str === "ds.demarcheFDDId":
                   return "7";
-                case str === "ds.demarcheEntrepriseId":
+                case str === "ds.demarcheFEId":
                   return "12";
               }
             }),

@@ -20,12 +20,12 @@ export class DsMapperService {
   // TODO: find a way to load it from config, or s3, or something that doesnt need to push code to change it
   private _initMappers() {
     this.logger.verbose(`_initMappers`);
-    if (!this.conf.get("ds.demarcheDotationId") || !this.conf.get("ds.demarcheEntrepriseId")) {
-      throw new Error("The id of the demarche dotation and entreprise are not set.");
+    if (!this.conf.get("ds.demarcheFDDId") || !this.conf.get("ds.demarcheFEId")) {
+      throw new Error("The id of the demarche dotation and entreprise are not set. Check your env.");
     }
     this.mappers = {
-      [this.conf.get("ds.demarcheDotationId")]: DotationFoundationMapper,
-      [this.conf.get("ds.demarcheEntrepriseId")]: EntrepriseFoundationMapper,
+      [this.conf.get("ds.demarcheFDDId")]: DotationFoundationMapper,
+      [this.conf.get("ds.demarcheFEId")]: EntrepriseFoundationMapper,
     };
   }
 
