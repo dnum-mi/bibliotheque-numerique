@@ -20,7 +20,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "./src/test/launch-e2e-test.sh",
     "test:unit": "./src/test/launch-unit-test.sh",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "generate-prisma": "prisma generate"
   },
   "dependencies": {
     "@nestjs/common": "^9.4.3",
