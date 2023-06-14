@@ -8,9 +8,13 @@ import {
   EntityManager,
 } from "typeorm";
 import { ApplicationEntity } from "../../../shared/entities/application_entity";
-import { DossierState } from "@dnum-mi/ds-api-client/dist/@types/types";
+import {
+  DossierState,
+  TypeOrganisme,
+} from "@dnum-mi/ds-api-client/dist/@types/types";
 import { DossierDS } from "./dossier_ds.entity";
 import { Demarche } from "../../demarches/entities/demarche.entity";
+import { ApiProperty } from "@nestjs/swagger";
 
 export type TUpsertDossier = Partial<
   Omit<Dossier, "dossierDS"> & { dossierDS: number }
@@ -29,6 +33,7 @@ export class Dossier extends ApplicationEntity {
   @JoinColumn()
   demarche: Demarche;
 
+  @ApiProperty({ enum: DossierState })
   @Column({ type: "varchar" })
   state: DossierState;
   // TODO: fixe type
