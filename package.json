@@ -39,7 +39,7 @@
     "lint:server": "turbo lint --filter=server",
     "test:server": "turbo test --filter=server",
     "docker:dev": "docker compose --profile dev -f apps/server/docker-compose.yml up -d",
-    "docker:build:client": "docker build -t bn-client:latest --target production -f apps/client/Dockerfile . && docker run bn-client:latest",
+    "docker:build:client": "docker build -t bn-client:latest --target production -f apps/client/Dockerfile .",
     "docker:build:server": "docker build -t bn-server:latest --target production -f apps/server/Dockerfile ."
   },
   "repository": {
