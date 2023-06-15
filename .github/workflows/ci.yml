@@ -60,8 +60,26 @@ jobs:
         run: |
             pnpm run build:server
 
+  docker-client:
+    name: client - Build docker image
+    if: ${{ !github.event.pull_request.draft }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checks-out repository
+        uses: actions/checkout@v3
+      - name: Use Node.js 18.x.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+      - name: run build
+        run: |
+          npm i -g pnpm
+          pnpm i --frozen-lockfile
+          pnpm run docker:build:client
+
   docker-server:
-    name: build server - Build docker image
+    name: server - Build docker image
     if: ${{ !github.event.pull_request.draft }}
     runs-on: ubuntu-latest
 
@@ -78,20 +96,3 @@ jobs:
           pnpm i --frozen-lockfile
           pnpm run docker:build:server
 
-  docker-client:
-    name: build client - Build docker image
-    if: ${{ !github.event.pull_request.draft }}
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checks-out repository
-        uses: actions/checkout@v3
-      - name: Use Node.js 18.x.x
-        uses: actions/setup-node@v3
-        with:
-          node-version: "18"
-      - name: run build
-        run: |
-          npm i -g pnpm
-          pnpm i --frozen-lockfile
-          pnpm run docker:build:client
