@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 import { useForm } from 'vee-validate'
-import DemarcheConfiguration from '@/views/DemarcheConfiguration.vue'
+import DemarcheConfiguration from '@/views/demarches/DemarcheConfiguration.vue'
 import { useDemarcheStore } from '@/stores'
 
 const props = withDefaults(defineProps<{

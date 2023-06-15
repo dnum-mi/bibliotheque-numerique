@@ -19,7 +19,7 @@ const routes = [
     path: '/demarches/:id/dossiers',
     name: 'DemarcheDossiers',
     beforeEnter: [isAuthenticatedGuard],
-    component: () => import('@/views/DemarcheDossiers.vue'),
+    component: () => import('@/views/demarches/DemarcheDossiers.vue'),
   },
   {
     path: '/dossiers/:id',
@@ -31,7 +31,7 @@ const routes = [
     path: '/demarches',
     name: 'Demarches',
     beforeEnter: [canAccessDemarchesGuard],
-    component: () => import('@/views/Demarches.vue'),
+    component: () => import('@/views/demarches/Demarches.vue'),
   },
   {
     path: '/sign_in',
