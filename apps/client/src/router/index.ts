@@ -75,13 +75,13 @@ const routes = [
     path: '/organismes/:id',
     name: 'FicheOrganismes',
     beforeEnter: [isAuthenticatedGuard],
-    component: () => import('@/views/FicheOrganisme.vue'),
+    component: () => import('@/views/organismes/FicheOrganisme.vue'),
   },
   {
     path: '/organismes',
     name: 'Organismes',
     beforeEnter: [isAuthenticatedGuard],
-    component: () => import('@/views/Organismes.vue'),
+    component: () => import('@/views/organismes/Organismes.vue'),
   },
 ]
 
