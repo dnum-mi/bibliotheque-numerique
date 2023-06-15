@@ -1,14 +1,3 @@
-FROM node:lts as development
-
-WORKDIR /app
-
-RUN npm i -g pnpm
-
-COPY . .
-RUN pnpm i
-RUN pnpm run build
-CMD [ "pnpm", "run", "dev:client" ]
-
 FROM node:lts as base
 
 WORKDIR /app

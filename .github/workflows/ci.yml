@@ -12,7 +12,7 @@ on:
 
 jobs:
   client:
-    name: client - Run unit tests 
+    name: client - Run unit tests
     if: ${{ !github.event.pull_request.draft }}
     runs-on: ubuntu-latest
 
@@ -24,7 +24,7 @@ jobs:
         with:
           node-version: "18"
       - name: run test unit FRONT
-        run: | 
+        run: |
             npm i -g pnpm
             pnpm i --frozen-lockfile
             pnpm run lint:client
@@ -36,8 +36,8 @@ jobs:
         run: |
             pnpm run test:e2e:ci
 
-  server: 
-    name: server - Run unit tests 
+  server:
+    name: server - Run unit tests
     if: ${{ !github.event.pull_request.draft }}
     runs-on: ubuntu-latest
 
@@ -49,7 +49,7 @@ jobs:
         with:
           node-version: "18"
       - name: run test unit BACK-END
-        run: | 
+        run: |
             npm i -g pnpm
             pnpm i --frozen-lockfile
             pnpm run lint:server
@@ -59,3 +59,40 @@ jobs:
       - name: run build
         run: |
             pnpm run build:server
+
+  docker-client:
+    name: client - Build docker image
+    if: ${{ !github.event.pull_request.draft }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checks-out repository
+        uses: actions/checkout@v3
+      - name: Use Node.js 18.x.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+      - name: run build
+        run: |
+          npm i -g pnpm
+          pnpm i --frozen-lockfile
+          pnpm run docker:build:client
+
+  docker-server:
+    name: server - Build docker image
+    if: ${{ !github.event.pull_request.draft }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checks-out repository
+        uses: actions/checkout@v3
+      - name: Use Node.js 18.x.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+      - name: run build
+        run: |
+          npm i -g pnpm
+          pnpm i --frozen-lockfile
+          pnpm run docker:build:server
+
