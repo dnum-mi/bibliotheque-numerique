@@ -1,6 +1,6 @@
 import '@gouvminint/vue-dsfr/styles'
-import '../main.css'
-import * as icons from '../icons'
+import '@/main.css'
+import * as icons from '@/icons'
 
 import VueDsfr from '@gouvminint/vue-dsfr'
 
@@ -9,7 +9,7 @@ import { useRoleStore } from '@/stores'
 
 import Role from './Role.vue'
 
-import { createRandomRoles, getPermissionNumber } from './__tests__/roles'
+import { createRandomRoles, getPermissionNumber } from '@/views/__tests__/roles'
 import { createMemoryHistory, createRouter } from 'vue-router'
 
 describe('<Role />', () => {
@@ -24,7 +24,7 @@ describe('<Role />', () => {
         {
           path: '/role/:id',
           name: 'Role',
-          component: () => import('@/views/Role.vue'),
+          component: () => import('@/views/admin/Role.vue'),
         }],
       history: createMemoryHistory(),
     })

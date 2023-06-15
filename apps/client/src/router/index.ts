@@ -57,19 +57,19 @@ const routes = [
     path: '/admin',
     name: 'Admin',
     beforeEnter: [canManageRolesGuard],
-    component: () => import('@/views/Admin.vue'),
+    component: () => import('@/views/admin/Admin.vue'),
   },
   {
     path: '/user/:id',
     name: 'User',
     beforeEnter: [hasAdminAccessGuard],
-    component: () => import('@/views/User.vue'),
+    component: () => import('@/views/admin/User.vue'),
   },
   {
     path: '/role/:id',
     name: 'Role',
     beforeEnter: [canManageRolesGuard],
-    component: () => import('@/views/Role.vue'),
+    component: () => import('@/views/admin/Role.vue'),
   },
   {
     path: '/organismes/:id',
