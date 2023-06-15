@@ -25,7 +25,7 @@ const routes = [
     path: '/dossiers/:id',
     name: 'Dossier',
     beforeEnter: [isAuthenticatedGuard],
-    component: () => import('@/views/Dossier.vue'),
+    component: () => import('@/views/dossiers/Dossier.vue'),
   },
   {
     path: '/demarches',

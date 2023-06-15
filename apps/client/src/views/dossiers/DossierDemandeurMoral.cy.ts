@@ -1,7 +1,7 @@
 import '@gouvminint/vue-dsfr/styles'
-import '../main.css'
+import '@/main.css'
 
-import { getDemandeurMorale } from './__tests__/dossiers'
+import { getDemandeurMorale } from '@/views/__tests__/dossiers'
 
 import DossierDemandeurMoral from './DossierDemandeurMoral.vue'
 

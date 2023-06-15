@@ -1,10 +1,10 @@
 import '@gouvminint/vue-dsfr/styles'
-import '../main.css'
+import '@/main.css'
 import VueDsfr from '@gouvminint/vue-dsfr'
 
 import DossierMessages from './DossierMessages.vue'
 
-import { generateDossierDS } from './__tests__/dossiers'
+import { generateDossierDS } from '@/views/__tests__/dossiers'
 
 describe('<DossierMessages />', () => {
   it('renders', () => {

@@ -1,12 +1,12 @@
 import '@gouvminint/vue-dsfr/styles'
-import '../main.css'
+import '@/main.css'
 
 import VueDsfr from '@gouvminint/vue-dsfr'
 
 import { createPinia } from 'pinia'
 import Dossier from './Dossier.vue'
 import { useDossierStore } from '@/stores/dossier'
-import { generateDossier } from './__tests__/dossiers'
+import { generateDossier } from '@/views/__tests__/dossiers'
 
 describe('<Dossier />', () => {
   it('renders', () => {

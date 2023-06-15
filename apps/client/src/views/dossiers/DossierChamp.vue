@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import DossierChamps from './DossierChamps.vue'
-import { prettyByteSizeByString } from '../utils/prettyByteSize'
+import { prettyByteSizeByString } from '@/utils/prettyByteSize'
 
 withDefaults(defineProps<{
     champ?: object[]
