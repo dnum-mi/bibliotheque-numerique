@@ -14,7 +14,7 @@
     "lint:staged": "eslint ",
     "start": "nest start",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
+    "start:prod": "pnpx prisma migrate deploy; node dist/main",
     "test": "pnpm run test:unit && pnpm run test:e2e",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",

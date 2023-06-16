@@ -1,0 +1,210 @@
+version: '3'
+
+services:
+  worker:
+    profiles:
+      - prod
+    build:
+      target: production
+      context: .
+      dockerfile: ./apps/server/Dockerfile
+    image: biblio-num/worker:prod
+    container_name: biblio-num_worker
+    depends_on:
+      - db
+    ports:
+      - 3042:${WORKER_PORT:-3042}
+    networks:
+      - biblio-num-prod-network
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_DB: biblio-num
+      POSTGRES_USERNAME: user
+      POSTGRES_PASSWORD: password
+      DS_API_URL: ${DS_API_URL}
+      DS_API_TOKEN: ${DS_API_TOKEN}
+      FORCE_COLOR: 1
+      DEBUG: 1
+      SMTP_SERVER: mailhog
+      SMTP_PORT: 1025
+      WORKER_PORT: ${WORKER_PORT}
+      WORKER_FETCH_DATA_INTERVAL: ${WORKER_FETCH_DATA_INTERVAL}
+      WORKER_FETCH_DATA_ON_STARTUP: ${WORKER_FETCH_DATA_ON_STARTUP}
+
+  server:
+    profiles:
+      - prod
+    build:
+      target: production
+      context: .
+      dockerfile: ./apps/server/Dockerfile
+    image: biblio-num/server:prod
+    container_name: biblio-num-prod_server
+    depends_on:
+      - db
+    ports:
+      - 3000:3000
+    networks:
+      - biblio-num-prod-network
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_DB: biblio-num
+      POSTGRES_USERNAME: user
+      POSTGRES_PASSWORD: password
+      DS_API_URL: ${DS_API_URL}
+      DS_API_TOKEN: ${DS_API_TOKEN}
+      FORCE_COLOR: 1
+      DEBUG: 1
+      SMTP_SERVER: mailhog
+      SMTP_PORT: 1025
+
+  db:
+    profiles:
+      - prod
+      - simple-dev
+      - db-only
+    image: postgres:14.5
+    container_name: biblio-num_db
+    restart: always
+    environment:
+      POSTGRES_DB: biblio-num
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./docker/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - type: volume
+        source: biblio-num-prod-db-volume
+        target: /var/lib/postgresql/data
+    networks:
+      - biblio-num-prod-network
+
+  adminer:
+    profiles:
+      - adminer
+    image: adminer
+    restart: always
+    ports:
+      - 8010:8080
+    environment:
+      - ADMINER_DEFAULT_SERVER=db
+      - ADMINER_DEFAULT_SYSTEM=PostgreSQL
+      - ADMINER_DESIGN=lucas-sandery
+    networks:
+      - biblio-num-prod-network
+
+  mailhog:
+    profiles:
+      - prod
+      - dev
+      - simple-dev
+      - tests-e2e
+    container_name: mailhog
+    image: mailhog/mailhog
+    restart: always
+    ports:
+        - 1025:1025
+        - 8025:8025
+    networks:
+      - biblio-num-prod-network
+
+  keycloak:
+    profiles:
+      - dev
+      - simple-dev
+      - tests-e2e
+    image: quay.io/keycloak/keycloak:19.0.2
+    container_name: biblio-num_keycloak
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: db
+      DB_DATABASE: keycloak
+      DB_USER: user
+      DB_SCHEMA: public
+      DB_PASSWORD: password
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: Pa55w0rd
+    ports:
+      - 8088:8080
+    depends_on:
+      - db
+    volumes:
+      - ./docker/keycloak/realms:/opt/keycloak/data/import
+    command: start-dev --import-realm
+    networks:
+      - biblio-num-prod-network
+
+  s3:
+    profiles:
+      - dev
+      - simple-dev
+      - tests-e2e
+    image: quay.io/minio/minio:RELEASE.2023-01-20T02-05-44Z
+    container_name: biblio-num_minio
+    environment:
+      MINIO_ROOT_USER: s3_biblio-num_minio # MINIO_ACCESS_KEY = MINIO_ROOT_USER
+      MINIO_ROOT_PASSWORD: s3_biblio-num_minio # MINIO_SECRET_KEY = MINIO_ROOT_PASSWORD
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - type: volume
+        source: biblio-num-s3-volume
+        target: /data
+    command: server --address ":9000" --console-address ":9001" /data
+    networks:
+      - biblio-num-prod-network
+
+  rnf-server:
+    profiles:
+      - prod
+    build:
+      target: production
+      context: .
+      dockerfile: ./apps/rnf-server/Dockerfile
+    image: biblio-num/rnf-server:prod
+    container_name: biblio-num-prod_rnf_server
+    depends_on:
+      - db
+    ports:
+      - 3001:3001
+    networks:
+      - biblio-num-prod-network
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_DB: rnf
+      POSTGRES_USERNAME: user
+      POSTGRES_PASSWORD: password
+      DS_API_URL: ${DS_API_URL}
+      DS_API_TOKEN: ${DS_API_TOKEN}
+      FORCE_COLOR: 1
+      DEBUG: 1
+      SMTP_SERVER: mailhog
+      SMTP_PORT: 1025
+
+  client:
+    profiles:
+      - prod
+    build:
+      target: production
+      context: .
+      dockerfile: ./apps/client/Dockerfile
+    image: biblio-num/client:prod
+    container_name: biblio-num-prod_client
+    ports:
+      - 8080:8080
+    networks:
+      - biblio-num-prod-network
+
+networks:
+  biblio-num-prod-network:
+    name: biblio-num-prod-network
+    driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1450
+
+volumes:
+  biblio-num-pgadmin-volume:
+  biblio-num-s3-volume:
+  biblio-num-prod-db-volume:
