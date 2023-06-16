@@ -6,6 +6,7 @@ import dsConf from "./config/ds.config";
 import { LoggerModule } from "@/shared/modules/logger/logger.module";
 import { FoundationModule } from "@/modules/foundation/foundation.module";
 import { PrismaModule } from "@/shared/modules/prisma/prisma.module";
+import { HealthModule } from "./modules/health/health.module";
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { PrismaModule } from "@/shared/modules/prisma/prisma.module";
     LoggerModule,
     PrismaModule,
     FoundationModule,
+    HealthModule,
   ],
 })
 export class AppModule {}
