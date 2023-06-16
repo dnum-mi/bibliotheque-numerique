@@ -1,5 +1,5 @@
 {
-  "name": "rnf-server",
+  "name": "@biblio-num/rnf-server",
   "version": "0.1.0",
   "description": "",
   "author": "",
@@ -21,7 +21,9 @@
     "test:e2e": "./src/test/launch-e2e-test.sh",
     "test:unit": "./src/test/launch-unit-test.sh",
     "test:watch": "jest --watch",
-    "generate-prisma": "prisma generate"
+    "generate": "prisma generate",
+    "dev:server": "nest start --debug 0.0.0.0:9229 --watch",
+    "dev:in-docker": "run-s dev:server"
   },
   "dependencies": {
     "@dnum-mi/ds-api-client": "^1.4.1",

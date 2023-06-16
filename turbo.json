@@ -47,6 +47,9 @@
     "dev:server-in-docker": {
       "cache": false
     },
+    "dev:rnf-server-in-docker": {
+      "cache": false
+    },
     "dev:worker-in-docker": {
       "cache": false
     },
