@@ -15,6 +15,7 @@ import { ConnectorModule } from "./modules/connector/connector.module";
 import { FilesModule } from "./modules/files/files.module";
 import { pluginsModules } from "./plugins";
 import { JobLogModule } from "./modules/job-log/job-log.module";
+import { HealthModule } from "./modules/health/health.module";
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { JobLogModule } from "./modules/job-log/job-log.module";
     RolesModule,
     ConnectorModule,
     FilesModule,
+    HealthModule,
     ...pluginsModules,
 
     // TODO: AppModule use JobModule for now to retrieve JobLogService

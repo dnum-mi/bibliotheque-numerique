@@ -45,7 +45,7 @@
     "docker:build:client:check": "sh ci/scripts/check_http.sh 8080",
     "docker:build:client:stop": "docker stop bn-client",
     "docker:build:server:run": "docker run -d -p 0.0.0.0:3000:3000 --name bn-server --network biblio-num-network -e JWT_SECRET=test -e SESSION_SECRET=test -e POSTGRES_DB=biblio-num -e POSTGRES_USERNAME=user -e POSTGRES_PASSWORD=password -e POSTGRES_HOST=db bn-server:latest",
-    "docker:build:server:check": "sh ci/scripts/check_http.sh 3000",
+    "docker:build:server:check": "sh ci/scripts/check_http.sh 3000 health",
     "docker:build:server:stop": "docker stop bn-server"
   },
   "repository": {
