@@ -2,6 +2,7 @@ import { Controller, Get } from "@nestjs/common";
 import { HealthCheck, HealthCheckService, PrismaHealthIndicator } from "@nestjs/terminus";
 import { ApiTags } from "@nestjs/swagger";
 import { PrismaService } from "@/shared/modules/prisma/providers/prisma.service";
+import { HealthCheckResult } from "@nestjs/terminus/dist/health-check/health-check-result.interface";
 
 @ApiTags("Health")
 @Controller("health")
@@ -10,9 +11,8 @@ export class HealthController {
 
   @Get()
   @HealthCheck()
-  check() {
+  check(): Promise<HealthCheckResult> {
     // TODO: ask Terminus module to code with TYPE.
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-return
     return this.health.check([() => this.prisma.pingCheck("prisma", this.prismaService)]);
   }
 }

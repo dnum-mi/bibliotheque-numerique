@@ -6,6 +6,8 @@ import {
   TypeOrmHealthIndicator,
 } from "@nestjs/terminus";
 import { ApiTags } from "@nestjs/swagger";
+import { HealthCheckResult } from "@nestjs/terminus/dist/health-check/health-check-result.interface";
+import { HealthIndicatorResult } from "@nestjs/terminus/dist/health-indicator";
 
 @ApiTags("Health")
 @Controller("health")
@@ -18,9 +20,9 @@ export class HealthController {
 
   @Get()
   @HealthCheck()
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  check() {
-    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-    return this.health.check([() => this.db.pingCheck("database")]);
+  check(): Promise<HealthCheckResult> {
+    return this.health.check([
+      (): Promise<HealthIndicatorResult> => this.db.pingCheck("database"),
+    ]);
   }
 }
