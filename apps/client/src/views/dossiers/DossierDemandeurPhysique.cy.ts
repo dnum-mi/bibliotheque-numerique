@@ -1,7 +1,7 @@
 import '@gouvminint/vue-dsfr/styles'
-import '../main.css'
+import '@/main.css'
 
-import { getDemandeurPhysique } from './__tests__/dossiers'
+import { getDemandeurPhysique } from '@/views/__tests__/dossiers'
 
 import DossierDemandePhysique from './DossierDemandeurPhysique.vue'
 import { dateToStringFr } from '@/utils/dateToString'

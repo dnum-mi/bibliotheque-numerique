@@ -2,7 +2,7 @@ import '@gouvminint/vue-dsfr/styles'
 
 import DemarcheService from './DemarcheService.vue'
 
-import { generateDemarche } from './__tests__/demarches'
+import { generateDemarche } from '@/views/__tests__/demarches'
 import { createPinia } from 'pinia'
 import { useDemarcheStore } from '@/stores'
 import VueDsfr from '@gouvminint/vue-dsfr'

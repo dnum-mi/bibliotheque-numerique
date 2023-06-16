@@ -1,7 +1,7 @@
 import '@gouvminint/vue-dsfr/styles'
-import '../main.css'
+import '@/main.css'
 
-import { getChamps } from './__tests__/dossiers'
+import { getChamps } from '@/views/__tests__/dossiers'
 
 import DossierChamp from './DossierChamp.vue'
 

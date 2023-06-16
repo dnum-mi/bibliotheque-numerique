@@ -1,7 +1,7 @@
 import '@gouvminint/vue-dsfr/styles'
-import '../main.css'
+import '@/main.css'
 
-import { generateDossierDS } from './__tests__/dossiers'
+import { generateDossierDS } from '@/views/__tests__/dossiers'
 
 import DossierTitle from './DossierTitle.vue'
 

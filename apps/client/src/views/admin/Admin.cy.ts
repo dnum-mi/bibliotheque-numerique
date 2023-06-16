@@ -1,13 +1,13 @@
 import '@gouvminint/vue-dsfr/styles'
-import '../main.css'
-import * as icons from '../icons'
+import '@/main.css'
+import * as icons from '@/icons'
 
 import VueDsfr from '@gouvminint/vue-dsfr'
 
 import { createPinia } from 'pinia'
 import Admin from './Admin.vue'
 
-import { createRandomAdmin, createRandomUsers, createRandomUserWithCreateRole, createRandomUserWithoutCreateRole } from './__tests__/users'
+import { createRandomAdmin, createRandomUsers, createRandomUserWithCreateRole, createRandomUserWithoutCreateRole } from '@/views/__tests__/users'
 import { createRandomRoles } from '@/views/__tests__/roles'
 import { useRoleStore, useUserStore } from '@/stores'
 import type { User } from '@/shared/interfaces'

@@ -1,5 +1,5 @@
 import '@gouvminint/vue-dsfr/styles'
-import '../main.css'
+import '@/main.css'
 
 import VueDsfr from '@gouvminint/vue-dsfr'
 
@@ -7,7 +7,6 @@ import DemarcheGrpInstructeurs from './DemarcheGrpInstructeurs.vue'
 import { createPinia } from 'pinia'
 import { useDemarcheStore } from '@/stores'
 import { generateDemarche } from '@/views/__tests__/demarches'
-import * as icons from '@/icons'
 
 describe('<DemarcheGrpInstructeurs />', () => {
   it('renders', () => {

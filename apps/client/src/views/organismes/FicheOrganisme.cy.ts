@@ -1,8 +1,8 @@
 import VueDsfr from '@gouvminint/vue-dsfr'
 import '@gouvfr/dsfr/dist/dsfr.min.css'
 import '@gouvminint/vue-dsfr/styles'
-import '../main.css'
-import * as icons from '../icons'
+import '@/main.css'
+import * as icons from '@/icons'
 
 import { createPinia } from 'pinia'
 
