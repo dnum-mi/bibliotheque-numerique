@@ -58,7 +58,7 @@
     "@nest-middlewares/morgan": "7.0.1",
     "@nestjs-modules/mailer": "^1.8.1",
     "@nestjs/axios": "2.0.0",
-    "@nestjs/common": "^9.4.0",
+    "@nestjs/common": "^9.4.3",
     "@nestjs/config": "^2.3.1",
     "@nestjs/core": "^9.4.0",
     "@nestjs/jwt": "^10.0.3",
