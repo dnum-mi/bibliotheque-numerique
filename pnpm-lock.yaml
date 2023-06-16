@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 importers:
 
   .:
@@ -187,8 +191,8 @@ importers:
         specifier: ^6.3.0
         version: 6.3.0(@nestjs/common@9.4.3)(@nestjs/core@9.4.3)(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13)
       '@nestjs/terminus':
-        specifier: 9.2.2
-        version: 9.2.2(@nestjs/axios@2.0.0)(@nestjs/common@9.4.0)(@nestjs/core@9.4.0)(@nestjs/typeorm@9.0.1)(reflect-metadata@0.1.13)(rxjs@7.8.1)(typeorm@0.3.16)
+        specifier: ^10.0.0-beta.0
+        version: 10.0.0-beta.0(@nestjs/axios@2.0.0)(@nestjs/common@9.4.3)(@nestjs/core@9.4.3)(@prisma/client@4.15.0)(reflect-metadata@0.1.13)(rxjs@7.8.1)
       '@prisma/client':
         specifier: 4.15.0
         version: 4.15.0(prisma@4.15.0)
@@ -502,7 +506,7 @@ importers:
     dependencies:
       '@nestjs/swagger':
         specifier: ^6.3.0
-        version: 6.3.0(@nestjs/common@9.4.0)(@nestjs/core@9.4.0)(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13)
+        version: 6.3.0(@nestjs/common@9.4.3)(@nestjs/core@9.4.3)(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13)
       class-validator:
         specifier: 0.14.0
         version: 0.14.0
@@ -3107,6 +3111,7 @@ packages:
       class-transformer: 0.5.1
       class-validator: 0.14.0
       reflect-metadata: 0.1.13
+    dev: true
 
   /@nestjs/mapped-types@1.2.2(@nestjs/common@9.4.3)(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13):
     resolution: {integrity: sha512-3dHxLXs3M0GPiriAcCFFJQHoDFUuzTD5w6JDhE7TyfT89YKpe6tcCCIqOZWdXmt9AZjjK30RkHRSFF+QEnWFQg==}
@@ -3238,6 +3243,7 @@ packages:
       path-to-regexp: 3.2.0
       reflect-metadata: 0.1.13
       swagger-ui-dist: 4.18.2
+    dev: true
 
   /@nestjs/swagger@6.3.0(@nestjs/common@9.4.3)(@nestjs/core@9.4.3)(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13):
     resolution: {integrity: sha512-Gnig189oa1tD+h0BYIfUwhp/wvvmTn6iO3csR2E4rQrDTgCxSxZDlNdfZo3AC+Rmf8u0KX4ZAX1RZN1qXTtC7A==}
@@ -3266,6 +3272,64 @@ packages:
       path-to-regexp: 3.2.0
       reflect-metadata: 0.1.13
       swagger-ui-dist: 4.18.2
+    dev: false
+
+  /@nestjs/terminus@10.0.0-beta.0(@nestjs/axios@2.0.0)(@nestjs/common@9.4.3)(@nestjs/core@9.4.3)(@prisma/client@4.15.0)(reflect-metadata@0.1.13)(rxjs@7.8.1):
+    resolution: {integrity: sha512-XRVkrFb+yx3RLCOyXmljbXvkvqmheLHo5M3oADBAIIs+zpDKKFx8WQphIBBnHrAiXK8ICgzRQRPm0ZkyW4nGYw==}
+    peerDependencies:
+      '@grpc/grpc-js': '*'
+      '@grpc/proto-loader': '*'
+      '@mikro-orm/core': '*'
+      '@mikro-orm/nestjs': '*'
+      '@nestjs/axios': '*'
+      '@nestjs/common': 9.x
+      '@nestjs/core': 9.x
+      '@nestjs/microservices': '*'
+      '@nestjs/mongoose': '*'
+      '@nestjs/sequelize': '*'
+      '@nestjs/typeorm': '*'
+      '@prisma/client': '*'
+      mongoose: '*'
+      reflect-metadata: 0.1.x
+      rxjs: 7.x
+      sequelize: '*'
+      typeorm: '*'
+    peerDependenciesMeta:
+      '@grpc/grpc-js':
+        optional: true
+      '@grpc/proto-loader':
+        optional: true
+      '@mikro-orm/core':
+        optional: true
+      '@mikro-orm/nestjs':
+        optional: true
+      '@nestjs/axios':
+        optional: true
+      '@nestjs/microservices':
+        optional: true
+      '@nestjs/mongoose':
+        optional: true
+      '@nestjs/sequelize':
+        optional: true
+      '@nestjs/typeorm':
+        optional: true
+      '@prisma/client':
+        optional: true
+      mongoose:
+        optional: true
+      sequelize:
+        optional: true
+      typeorm:
+        optional: true
+    dependencies:
+      '@nestjs/axios': 2.0.0(@nestjs/common@9.4.3)(axios@1.4.0)(reflect-metadata@0.1.13)(rxjs@7.8.1)
+      '@nestjs/common': 9.4.3(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13)(rxjs@7.8.1)
+      '@nestjs/core': 9.4.3(@nestjs/common@9.4.3)(@nestjs/platform-express@9.4.3)(reflect-metadata@0.1.13)(rxjs@7.8.1)
+      '@prisma/client': 4.15.0(prisma@4.15.0)
+      boxen: 5.1.2
+      check-disk-space: 3.3.1
+      reflect-metadata: 0.1.13
+      rxjs: 7.8.1
     dev: false
 
   /@nestjs/terminus@9.2.2(@nestjs/axios@2.0.0)(@nestjs/common@9.4.0)(@nestjs/core@9.4.0)(@nestjs/typeorm@9.0.1)(reflect-metadata@0.1.13)(rxjs@7.8.1)(typeorm@0.3.16):
@@ -13756,7 +13820,7 @@ packages:
       '@rollup/pluginutils': 4.2.1
       chalk: 4.1.2
       debug: 4.3.4(supports-color@8.1.1)
-      vite: 4.3.9(@types/node@18.16.18)(sass@1.63.3)
+      vite: 4.3.9(@types/node@18.16.9)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -13810,6 +13874,39 @@ packages:
       postcss: 8.4.23
       rollup: 3.21.0
       sass: 1.63.3
+    optionalDependencies:
+      fsevents: 2.3.2
+    dev: true
+
+  /vite@4.3.9(@types/node@18.16.9):
+    resolution: {integrity: sha512-qsTNZjO9NoJNW7KnOrgYwczm0WctJ8m/yqYAMAK9Lxt4SoySUfS5S8ia9K7JHpa3KEeMfyF8LoJ3c5NeBJy6pg==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    hasBin: true
+    peerDependencies:
+      '@types/node': '>= 14'
+      less: '*'
+      sass: '*'
+      stylus: '*'
+      sugarss: '*'
+      terser: ^5.4.0
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+      less:
+        optional: true
+      sass:
+        optional: true
+      stylus:
+        optional: true
+      sugarss:
+        optional: true
+      terser:
+        optional: true
+    dependencies:
+      '@types/node': 18.16.9
+      esbuild: 0.17.18
+      postcss: 8.4.23
+      rollup: 3.21.0
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
