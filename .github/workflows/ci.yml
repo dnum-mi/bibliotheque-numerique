@@ -97,6 +97,7 @@ jobs:
           pnpm run docker:build:server
           pnpm run docker:db:up
           pnpm run docker:build:server:run
+          pnpm run docker:build:server:check
           pnpm run docker:build:server:stop
           pnpm run docker:db:down
 
