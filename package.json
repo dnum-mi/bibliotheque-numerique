@@ -53,10 +53,10 @@
     "docker:build:client:run": "docker run -d -p 0.0.0.0:8080:8080 --name bn-client  bn-client:latest",
     "docker:build:client:check": "sh ci/scripts/check_http.sh 8080",
     "docker:build:client:stop": "docker stop bn-client",
-    "docker:build:server:run": "docker run -d -p 0.0.0.0:3000:3000 --name bn-server --network biblio-num-network -e JWT_SECRET=test -e SESSION_SECRET=test -e POSTGRES_DB=biblio-num -e POSTGRES_USERNAME=user -e POSTGRES_PASSWORD=password -e POSTGRES_HOST=db bn-server:latest",
+    "docker:build:server:run": "docker run -d -p 0.0.0.0:3000:3000 --name bn-server --network biblio-num-network --env-file ./docker/.env-bn bn-server:latest",
     "docker:build:server:check": "sh ci/scripts/check_http.sh 3000 health",
     "docker:build:server:stop": "docker stop bn-server",
-    "docker:build:rnf-server:run": "docker run -d -p 0.0.0.0:3001:3001 --name rnf-server --network biblio-num-network -e DATABASE_DB=rnf -e DATABASE_USERNAME=user -e DATABASE_PASSWORD=password -e DATABASE_HOST=db -e DS_DEMARCHE_FDD_ID=7 -e DS_DEMARCHE_FE_ID=12 -e DS_FDD_RNF_ANNOTATION_ID=Q2hhbXAtMzIx -e DS_FE_RNF_ANNOTATION_ID=Q2hhbXAtMzIx rnf-server:latest",
+    "docker:build:rnf-server:run": "docker run -d -p 0.0.0.0:3001:3001 --name rnf-server --network biblio-num-network --env-file ./docker/.env-rnf rnf-server:latest",
     "docker:build:rnf-server:check": "sh ci/scripts/check_http.sh 3001 api/health",
     "docker:build:rnf-server:stop": "docker stop rnf-server"
   },
