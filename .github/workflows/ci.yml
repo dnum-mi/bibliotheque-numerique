@@ -73,6 +73,7 @@ jobs:
         run: |
           npm i -g pnpm
           pnpm i --frozen-lockfile
+          pnpm run generate-rnf
           pnpm run lint:rnf-server
           pnpm run docker:db:up
           pnpm run test:rnf-server
