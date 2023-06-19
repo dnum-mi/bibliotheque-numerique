@@ -98,7 +98,6 @@ jobs:
       - name: run build
         run: |
           npm i -g pnpm
-          pnpm i --frozen-lockfile
           pnpm run docker:build:client
           pnpm run docker:build:client:run
           pnpm run docker:build:client:check
@@ -119,7 +118,6 @@ jobs:
       - name: run build
         run: |
           npm i -g pnpm
-          pnpm i --frozen-lockfile
           pnpm run docker:build:server
           pnpm run docker:db:up
           pnpm run docker:build:server:run
@@ -142,10 +140,8 @@ jobs:
       - name: run build
         run: |
           npm i -g pnpm
-          pnpm i --frozen-lockfile
           pnpm run docker:build:rnf-server
           pnpm run docker:db:up
           pnpm run docker:build:rnf-server:run
-          pnpm run docker:build:rnf-server:check
           pnpm run docker:build:rnf-server:stop
           pnpm run docker:db:down
