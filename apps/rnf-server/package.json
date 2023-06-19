@@ -1,5 +1,5 @@
 {
-  "name": "rnf-server",
+  "name": "@biblio-num/rnf-server",
   "version": "0.1.0",
   "description": "",
   "author": "",
@@ -14,14 +14,16 @@
     "lint:staged": "eslint ",
     "start": "nest start",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
+    "start:prod": "prisma migrate deploy; node dist/main",
     "test": "pnpm run test:unit && pnpm run test:e2e",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "./src/test/launch-e2e-test.sh",
     "test:unit": "./src/test/launch-unit-test.sh",
     "test:watch": "jest --watch",
-    "generate-prisma": "prisma generate"
+    "generate-code": "prisma generate",
+    "dev:server": "nest start --debug 0.0.0.0:9229 --watch",
+    "dev:in-docker": "run-s dev:server"
   },
   "dependencies": {
     "@dnum-mi/ds-api-client": "^1.4.1",

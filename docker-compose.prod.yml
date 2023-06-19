@@ -1,0 +1,122 @@
+version: '3'
+
+services:
+  worker:
+    profiles:
+      - prod
+    build:
+      target: production
+      context: .
+      dockerfile: ./apps/server/Dockerfile
+    image: biblio-num/worker:prod
+    container_name: biblio-num_worker
+    depends_on:
+      - db
+    ports:
+      - 3042:${WORKER_PORT:-3042}
+    networks:
+      - biblio-num-prod-network
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_DB: biblio-num
+      POSTGRES_USERNAME: user
+      POSTGRES_PASSWORD: password
+      DS_API_URL: ${DS_API_URL}
+      DS_API_TOKEN: ${DS_API_TOKEN}
+      FORCE_COLOR: 1
+      DEBUG: 1
+      WORKER_PORT: ${WORKER_PORT:-3042}
+      WORKER_FETCH_DATA_INTERVAL: ${WORKER_FETCH_DATA_INTERVAL:-"0 0 1 * * *"}
+      WORKER_FETCH_DATA_ON_STARTUP: ${WORKER_FETCH_DATA_ON_STARTUP:-true}
+
+  server:
+    profiles:
+      - prod
+    build:
+      target: production
+      context: .
+      dockerfile: ./apps/server/Dockerfile
+    image: biblio-num/server:prod
+    container_name: biblio-num-prod_server
+    depends_on:
+      - db
+    ports:
+      - 3000:3000
+    networks:
+      - biblio-num-prod-network
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_DB: biblio-num
+      POSTGRES_USERNAME: user
+      POSTGRES_PASSWORD: password
+      DS_API_URL: ${DS_API_URL}
+      DS_API_TOKEN: ${DS_API_TOKEN}
+      FORCE_COLOR: 1
+
+  rnf-server:
+    profiles:
+      - prod
+    build:
+      target: production
+      context: .
+      dockerfile: ./apps/rnf-server/Dockerfile
+    image: biblio-num/rnf-server:prod
+    container_name: biblio-num-prod_rnf_server
+    depends_on:
+      - db
+    ports:
+      - 3001:3001
+    networks:
+      - biblio-num-prod-network
+    environment:
+      DATABASE_HOST: db
+      DATABASE_DB: rnf
+      DATABASE_USERNAME: user
+      DATABASE_PASSWORD: password
+      DATABASE_PORT: 5432
+      DS_API_URL: ${DS_API_URL}
+      DS_API_TOKEN: ${DS_API_TOKEN}
+      FORCE_COLOR: 1
+
+  db:
+    profiles:
+      - prod
+    image: postgres:14.5
+    container_name: biblio-num_db
+    restart: always
+    environment:
+      POSTGRES_DB: biblio-num
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - type: volume
+        source: biblio-num-prod-db-volume
+        target: /var/lib/postgresql/data
+    networks:
+      - biblio-num-prod-network
+
+  client:
+    profiles:
+      - prod
+    build:
+      target: production
+      context: .
+      dockerfile: ./apps/client/Dockerfile
+    image: biblio-num/client:prod
+    container_name: biblio-num-prod_client
+    ports:
+      - 8080:8080
+    networks:
+      - biblio-num-prod-network
+
+networks:
+  biblio-num-prod-network:
+    name: biblio-num-prod-network
+    driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1450
+
+volumes:
+  biblio-num-prod-db-volume:

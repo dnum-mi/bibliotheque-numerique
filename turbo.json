@@ -24,6 +24,9 @@
       ],
       "outputs": []
     },
+    "generate-code": {
+      "cache": false
+    },
     "build": {
       "dependsOn": [
         "^build"
@@ -45,6 +48,9 @@
       "cache": false
     },
     "dev:server-in-docker": {
+      "cache": false
+    },
+    "dev:rnf-server-in-docker": {
       "cache": false
     },
     "dev:worker-in-docker": {
