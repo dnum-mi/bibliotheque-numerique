@@ -24,7 +24,8 @@ COPY --from=base --chown=node:root /app/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=base --chown=node:root /app/out/pnpm-workspace.yaml ./pnpm-workspace.yaml
 RUN pnpm install --frozen-lockfile
 COPY --from=base --chown=node:root /app/out/full/ .
-RUN cd apps/rnf-server && pnpx prisma generate
+# RUN cd apps/rnf-server && pnpx prisma generate
+RUN pnpm run generate-rnf
 RUN pnpm run build:rnf-server
 
 CMD ["pnpm", "run", "dev:rnf-server-in-docker"]
@@ -46,6 +47,6 @@ RUN pnpm install --frozen-lockfile --production
 RUN mkdir -p /app/node_modules/.cache/turbo/
 COPY --from=builder /app/turbo.json .
 COPY --from=builder /app/apps ./apps
-RUN cd apps/rnf-server && pnpx prisma generate
+RUN pnpm run generate-rnf
 
 CMD ["pnpm", "run", "start:rnf-server"]

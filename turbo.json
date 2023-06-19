@@ -24,6 +24,9 @@
       ],
       "outputs": []
     },
+    "generate-code": {
+      "cache": false
+    },
     "build": {
       "dependsOn": [
         "^build"

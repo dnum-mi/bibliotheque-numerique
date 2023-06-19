@@ -22,6 +22,7 @@
     "dev:rnf-server-in-docker": "turbo dev:in-docker --filter=rnf-server",
     "dev:client": "turbo dev --filter=client",
     "test": "run-s docker:db:up test:only",
+    "generate-rnf": "turbo generate-code --filter=rnf-server",
     "test:ci": "run-s docker:db:up test:only docker:db:down",
     "test:only": "turbo test",
     "test:e2e": "turbo test:e2e --filter=client",
