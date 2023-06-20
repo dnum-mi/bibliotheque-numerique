@@ -1,21 +1,21 @@
-import { ref , computed } from 'vue'
+import { ref, computed } from 'vue'
 import { fetchRnfId } from '../api-client/index.js'
 
-function useRfnClient () {
+function useRnfClient() {
   const requesting = ref(false)
   const rnfId = ref('')
   const errorMessage = ref('')
 
-  async function getRnfId (dossierId: number) {
+  async function getRnfId(dossierId: number, instructeurEmail: string) {
     try {
       requesting.value = true
       errorMessage.value = ''
       rnfId.value = ''
-      const res = await fetchRnfId(dossierId)
+      const res = await fetchRnfId(dossierId, instructeurEmail)
       const rnfResponseBody = await res.json()
       rnfId.value = rnfResponseBody.rnfId
     } catch (err) {
-      errorMessage.value = err instanceof Error ? err.message : err as string
+      errorMessage.value = err instanceof Error ? err.message : (err as string)
     } finally {
       requesting.value = false
     }
@@ -29,4 +29,4 @@ function useRfnClient () {
   }
 }
 
-export default useRfnClient
+export default useRnfClient

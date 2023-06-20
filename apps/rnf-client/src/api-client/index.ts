@@ -1,6 +1,6 @@
-import { foundationRoute } from "./routes"
+import { foundationRoute } from './routes'
 
-async function fetchRnfId (dossierId: number) {
+async function fetchRnfId(dossierId: number, instructeurEmail: string) {
   const res = await fetch(foundationRoute, {
     method: 'POST',
     headers: {
@@ -8,10 +8,14 @@ async function fetchRnfId (dossierId: number) {
     },
     body: JSON.stringify({
       dossierId,
+      email: instructeurEmail,
     }),
   })
   if (!res.ok) {
     const errorBody = await res.json().catch(() => res.text())
+    if (errorBody.statusCode === 403) {
+      throw new Error("Cette adresse courriel ne semble pas être l'email d'un instructeur de ce dossier.")
+    }
     if (errorBody.statusCode === 424) {
       throw new Error('Ce dossier ne semble pas exister ou bien ne pas correspondre à une création')
     }
@@ -23,6 +27,4 @@ async function fetchRnfId (dossierId: number) {
   return res
 }
 
-export {
-  fetchRnfId,
-}
+export { fetchRnfId }
