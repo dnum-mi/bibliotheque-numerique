@@ -50,7 +50,7 @@ async function getRnfId() {
     alertProps.title = 'Impossible de créer l’identifiant'
     return
   }
-  alertProps.description = `Le numéro RNF correspondant au dossier ${dossierId.value} a été créé !`
+  alertProps.description = `Le numéro RNF correspondant au dossier ${dossierId.value} a été créé !`
   alertProps.type = 'success'
   alertProps.title = rnfClient.rnfId.value
 }
@@ -66,7 +66,7 @@ async function getRnfId() {
               <DsfrInput
                 v-model="dossierId"
                 autofocus
-                type="string"
+                type="text"
                 :label="dossierInputLabel"
                 label-visible
                 :placeholder="dossierInputPlaceholder"

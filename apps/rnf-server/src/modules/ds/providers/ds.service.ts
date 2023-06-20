@@ -44,12 +44,11 @@ export class DsService {
     rnfId: string,
   ): Promise<void> {
     this.logger.verbose("writeRnfIdInPrivateAnnotation");
-    const sentence = `Votre numéro RNF est le: ${rnfId}`;
     const input: DossierModifierAnnotationTextInput = {
       dossierId: dossierGraphQlId,
       instructeurId,
       annotationId: this._giveAnnotationId(foundationType),
-      value: sentence,
+      value: rnfId,
     };
     this.logger.debug("input: " + JSON.stringify(input));
     return this.dsApiClient.writeInPrivateAnnotation(input).then((response: boolean) => {

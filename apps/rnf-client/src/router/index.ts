@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory, type RouteLocationNormalized } from 'vue-router'
 
-import CreateRnf from '../views/CreateRnf.vue'
+import CreateRnf from '@/views/CreateRnf.vue'
 
 import { MAIN_TITLE } from '@/config.js'
 
