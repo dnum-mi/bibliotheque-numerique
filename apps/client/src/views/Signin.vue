@@ -6,6 +6,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores'
 import type { CredentialsInput } from '@biblio-num/shared'
+import LayoutAccueil from '../components/LayoutAccueil.vue'
 
 const REQUIRED_FIELD_MESSAGE = 'Ce champ est requis'
 
@@ -38,90 +39,92 @@ const { value: passwordValue, errorMessage: passwordError } = useField('password
 </script>
 
 <template>
-  <div class="fr-container">
-    <h2 class="mb-20">
-      Connectez-vous
-    </h2>
-    <div
-      class="fr-container fr-grid-row"
-      style="background: whitesmoke"
-    >
-      <div class="fr-col-12">
-        <br>
-      </div>
-      <div class="fr-col-sm-1" />
-      <div class="fr-col-sm-4">
-        <div class="fr-" />
-        <!-- TODO: Faire autrement que ces <br> -->
-        <br>
-        <br>
-        <br>
-        <DsfrFranceConnect
-          :secure="secure"
-        />
-      </div>
+  <LayoutAccueil>
+    <div class="fr-container">
+      <h2 class="mb-20">
+        Connectez-vous
+      </h2>
       <div
-        class="fr-col-sm-2"
-        style="text-align: center"
+        class="fr-container fr-grid-row"
+        style="background: whitesmoke"
       >
-        <!-- TODO: Faire autrement que ces <br> -->
-        <br>
-        <br>
-        <br>
-        <br>
-      </div>
-      <div class="fr-col-sm-4">
-        <form
-          class="card"
-          @submit="submit"
+        <div class="fr-col-12">
+          <br>
+        </div>
+        <div class="fr-col-sm-1" />
+        <div class="fr-col-sm-4">
+          <div class="fr-" />
+          <!-- TODO: Faire autrement que ces <br> -->
+          <br>
+          <br>
+          <br>
+          <DsfrFranceConnect
+            :secure="secure"
+          />
+        </div>
+        <div
+          class="fr-col-sm-2"
+          style="text-align: center"
         >
-          <DsfrInputGroup
-            :is-valid="emailError"
-            :error-message="emailError"
+          <!-- TODO: Faire autrement que ces <br> -->
+          <br>
+          <br>
+          <br>
+          <br>
+        </div>
+        <div class="fr-col-sm-4">
+          <form
+            class="card"
+            @submit="submit"
           >
-            <DsfrInput
-              id="email"
-              v-model="emailValue"
-              label="Email"
-              label-visible
-              placeholder="louis.dubois@interieur.gouv.fr"
-              type="email"
-              required
+            <DsfrInputGroup
+              :is-valid="emailError"
+              :error-message="emailError"
             >
-              <template #required-tip>
-                <em class="required-label"> *</em>
-              </template>
-            </DsfrInput>
-          </DsfrInputGroup>
+              <DsfrInput
+                id="email"
+                v-model="emailValue"
+                label="Email"
+                label-visible
+                placeholder="louis.dubois@interieur.gouv.fr"
+                type="email"
+                required
+              >
+                <template #required-tip>
+                  <em class="required-label"> *</em>
+                </template>
+              </DsfrInput>
+            </DsfrInputGroup>
 
-          <DsfrInputGroup
-            :is-valid="passwordError"
-            :error-message="passwordError"
-          >
-            <DsfrInput
-              id="password"
-              v-model="passwordValue"
-              label="Mot de passe (6 caractères minimum)"
-              label-visible
-              placeholder="xxxxxx"
-              type="password"
-              required
+            <DsfrInputGroup
+              :is-valid="passwordError"
+              :error-message="passwordError"
             >
-              <template #required-tip>
-                <em class="required-label"> *</em>
-              </template>
-            </DsfrInput>
-          </DsfrInputGroup>
+              <DsfrInput
+                id="password"
+                v-model="passwordValue"
+                label="Mot de passe (6 caractères minimum)"
+                label-visible
+                placeholder="xxxxxx"
+                type="password"
+                required
+              >
+                <template #required-tip>
+                  <em class="required-label"> *</em>
+                </template>
+              </DsfrInput>
+            </DsfrInputGroup>
 
-          <DsfrButton type="submit">
-            Se connecter
-          </DsfrButton>
-        </form>
-      </div>
-      <div class="fr-col-sm-1" />
-      <div class="fr-col-12">
-        <br>
+            <DsfrButton type="submit">
+              Se connecter
+            </DsfrButton>
+          </form>
+        </div>
+        <div class="fr-col-sm-1" />
+        <div class="fr-col-12">
+          <br>
+        </div>
       </div>
     </div>
-  </div>
+  </layoutaccueil>
 </template>
