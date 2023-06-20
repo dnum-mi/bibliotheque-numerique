@@ -18,10 +18,6 @@ const quickLinksBase = [
     iconAttrs: iconColor,
   },
   {
-    label: 'Organismes',
-    path: '/organismes',
-  },
-  {
     label: 'À propos',
     path: '/a-propos',
   },
@@ -32,6 +28,11 @@ const userStore = useUserStore()
 watch(() => userStore.isAuthenticated, () => {
   quickLinks.value = quickLinksBase
   if (userStore.isAuthenticated) {
+    quickLinks.value = quickLinks.value.concat({
+      label: 'Organismes',
+      path: '/organismes',
+    })
+
     if (userStore.canAccessDemarches) {
       quickLinks.value = quickLinks.value.concat({
         label: 'Démarches',
