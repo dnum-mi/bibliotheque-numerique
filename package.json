@@ -44,15 +44,21 @@
     "build:rnf-server": "turbo build --filter=rnf-server",
     "lint:server": "turbo lint --filter=server",
     "test:server": "turbo test --filter=server",
+    "lint:rnf-server": "turbo lint --filter=rnf-server",
+    "test:rnf-server": "turbo test --filter=rnf-server",
     "docker:dev": "docker compose --profile dev -f apps/server/docker-compose.yml up -d",
     "docker:build:client": "docker build -t bn-client:latest --target production -f apps/client/Dockerfile .",
     "docker:build:server": "docker build -t bn-server:latest --target production -f apps/server/Dockerfile .",
+    "docker:build:rnf-server": "docker build -t rnf-server:latest --target production -f apps/rnf-server/Dockerfile .",
     "docker:build:client:run": "docker run -d -p 0.0.0.0:8080:8080 --name bn-client  bn-client:latest",
     "docker:build:client:check": "sh ci/scripts/check_http.sh 8080",
     "docker:build:client:stop": "docker stop bn-client",
-    "docker:build:server:run": "docker run -d -p 0.0.0.0:3000:3000 --name bn-server --network biblio-num-network -e JWT_SECRET=test -e SESSION_SECRET=test -e POSTGRES_DB=biblio-num -e POSTGRES_USERNAME=user -e POSTGRES_PASSWORD=password -e POSTGRES_HOST=db bn-server:latest",
+    "docker:build:server:run": "docker run -d -p 0.0.0.0:3000:3000 --name bn-server --network biblio-num-network --env-file ./docker/.env-bn bn-server:latest",
     "docker:build:server:check": "sh ci/scripts/check_http.sh 3000 health",
-    "docker:build:server:stop": "docker stop bn-server"
+    "docker:build:server:stop": "docker stop bn-server",
+    "docker:build:rnf-server:run": "docker run -d -p 0.0.0.0:3001:3001 --name rnf-server --network biblio-num-network --env-file ./docker/.env-rnf rnf-server:latest",
+    "docker:build:rnf-server:check": "sh ci/scripts/check_http.sh 3001 api/health",
+    "docker:build:rnf-server:stop": "docker stop rnf-server"
   },
   "repository": {
     "type": "git",

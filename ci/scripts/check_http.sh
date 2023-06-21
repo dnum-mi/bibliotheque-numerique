@@ -14,7 +14,7 @@ until [ "$timeout" -le 0 -o "$test_result" -eq "0" ] ; do
         curl --fail --retry-max-time 120 --retry-delay 1  --retry 1  "http://localhost:${port}/${path}"
 	test_result=$?
 	echo "Wait $timeout seconds: http://localhost:${port}/${path} up $test_result";
-	(( timeout-- ))
+	timeout=$(expr $timeout - 1)
 	sleep 1
 done
 if [ "$test_result" -gt "0" ] ; then
