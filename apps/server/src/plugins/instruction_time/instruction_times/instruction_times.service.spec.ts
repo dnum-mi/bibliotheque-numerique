@@ -1046,4 +1046,30 @@ describe("InstructionTimesService", () => {
       EInstructionTimeState.INTENT_OPPO,
     );
   });
+
+  it("Should get delay to 0 for date now when the date of intent opposition is more 30 days  ", async () => {
+    const dataInstructionTime = new InstructionTime();
+
+    dataInstructionTime.startAt = new Date();
+    dataInstructionTime.endAt = dayjs().add(-1, "day").toDate();
+    dataInstructionTime.dossier = { id: 1 } as Dossier;
+    dataInstructionTime.state = EInstructionTimeState.INTENT_OPPO;
+
+    jest
+      .spyOn(InstructionTime, "find")
+      .mockResolvedValueOnce([dataInstructionTime] as InstructionTime[]);
+
+    const result = await service.instructionTimeCalculation([
+      dataInstructionTime.dossier.id,
+    ]);
+    expect(result[dataInstructionTime.dossier.id]).toHaveProperty(
+      "remainingTime",
+      0,
+    );
+    expect(result[dataInstructionTime.dossier.id]).toHaveProperty(
+      "delayStatus",
+      EInstructionTimeState.INTENT_OPPO,
+    );
+  });
+
 });
