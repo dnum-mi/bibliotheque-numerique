@@ -1,9 +1,10 @@
 describe('Home', () => {
-  it('Title', () => {
-    cy.visit('/')
-      .get('.fr-header__service')
-      .should('contain', 'Service')
-      .get('.fr-header__service-tagline')
-      .should('contain', 'Description du service')
+  it('Should have the right title', () => {
+    cy.visit('/').get('.fr-header__service').should('contain', 'RNF')
+  })
+
+  it('Should spawn on createRnf formulaire', () => {
+    cy.visit('/') //
+      .get('form.rnf-request')
   })
 })

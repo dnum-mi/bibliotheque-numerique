@@ -31,6 +31,12 @@ export const dsServiceMock = {
       return {
         champs: [null, null],
         demarche: { title: "Fake title" },
+        instructeurs: [
+          {
+            id: "SW5zdHJ1Y3RldXItNA==",
+            email: "yoyo@gmail.com",
+          },
+        ],
       };
     } else throw new DsApiError(dossierNotFoundGraphQlError);
   }),

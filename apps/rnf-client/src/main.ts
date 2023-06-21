@@ -15,5 +15,5 @@ import './main.css'
 
 createApp(App)
   .use(router)
-  .use(VueDsfr, { icons: Object.values(icons)})
+  .use(VueDsfr, { icons: Object.values(icons) })
   .mount('#app')

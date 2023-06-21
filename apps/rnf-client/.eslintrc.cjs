@@ -16,6 +16,7 @@ module.exports = {
   rules: {
     'jsx-quotes': [2, 'prefer-double'],
     'comma-dangle': [2, 'always-multiline'],
+    'no-irregular-whitespace': 1,
   },
   overrides: [
     {

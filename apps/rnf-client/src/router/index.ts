@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory, type RouteLocationNormalized } from 'vue-router'
 
-import Home from '../views/AppHome.vue'
+import CreateRnf from '@/views/CreateRnf.vue'
 
 import { MAIN_TITLE } from '@/config.js'
 
@@ -8,7 +8,7 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Home,
+    component: CreateRnf,
   },
 ]
 
@@ -17,7 +17,8 @@ const router = createRouter({
   routes,
 })
 
-router.beforeEach((to: RouteLocationNormalized) => { // Cf. https://github.com/vueuse/head pour des transformations avancées de Head
+router.beforeEach((to: RouteLocationNormalized) => {
+  // Cf. https://github.com/vueuse/head pour des transformations avancées de Head
   const specificTitle = to.meta.title ? `${to.meta.title} - ` : ''
   document.title = `${specificTitle}${MAIN_TITLE}`
 })

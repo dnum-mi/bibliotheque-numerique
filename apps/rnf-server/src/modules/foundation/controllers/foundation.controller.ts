@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from "@nestjs/common";
+import { Body, Controller, ForbiddenException, Get, Param, Post } from "@nestjs/common";
 import { LoggerService } from "@/shared/modules/logger/providers/logger.service";
 import { FoundationService } from "@/modules/foundation/providers/foundation.service";
 import { DsService } from "@/modules/ds/providers/ds.service";
@@ -25,13 +25,12 @@ export class FoundationController {
   async createFoundation(@Body() dto: DossierNumberInputDto): Promise<RnfIdOutputDto> {
     this.logger.verbose("createNewFoundation");
     const rawDossier = await this.dsService.getOneDossier(dto.dossierId);
+    const instructeurId = rawDossier.instructeurs?.find((i) => i.email === dto.email)?.id;
+    if (!instructeurId) {
+      throw new ForbiddenException("This instructeur's email is not linked to this dossier.");
+    }
     const createDto = this.dsMapperService.mapDossierToFoundation(rawDossier);
     const foundation = await this.service.CreateFoundation(createDto);
-    // TODO: use email sent by front to determine instructeur id. For now, we take the first one
-    const instructeurId = rawDossier.instructeurs?.[0].id;
-    if (!instructeurId) {
-      throw new Error("Could not find instructor id.");
-    }
     await this.dsService.writeRnfIdInPrivateAnnotation(rawDossier.id!, instructeurId, foundation.type, foundation.rnfId);
     // TODO: await this.foundationHistoryService.newHistoryEntry(foundation, dto);
     return { rnfId: foundation.rnfId };

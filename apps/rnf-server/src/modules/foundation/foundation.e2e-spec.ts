@@ -39,29 +39,65 @@ describe("Foundation Controller (e2e)", () => {
         statusCode: 400,
         message:
           "Validation error(s):\n Champs dossierId: dossierId should not be null or undefined, dossierId must not be less than 0" +
-          ", dossierId must be a number conforming to the specified constraints",
+          ", dossierId must be a number conforming to the specified constraints\n" +
+          "Champs email: email should not be null or undefined, email must be an email",
         path: "/api/foundation",
       });
   });
 
   it("POST /foundation - Should return 424 if dossierId provided is wrong", () => {
-    return request(app.getHttpServer()).post("/api/foundation").send({ dossierId: 42 }).expect(424).expect({
-      statusCode: 424,
-      message: "GraphQL Error from DS-API.",
-      path: "/api/foundation",
-    });
+    return request(app.getHttpServer())
+      .post("/api/foundation")
+      .send({
+        dossierId: 42,
+        email: "toto@gmail.com",
+      })
+      .expect(424)
+      .expect({
+        statusCode: 424,
+        message: "GraphQL Error from DS-API.",
+        path: "/api/foundation",
+      });
   });
 
   it("POST /foundation - Should return 400 if dossierId has not the right demarche", () => {
-    return request(app.getHttpServer()).post("/api/foundation").send({ dossierId: 37 }).expect(400).expect({
-      statusCode: 400,
-      message: "This demarche id is not implemented",
-      path: "/api/foundation",
-    });
+    return request(app.getHttpServer())
+      .post("/api/foundation")
+      .send({
+        dossierId: 37,
+        email: "yoyo@gmail.com",
+      })
+      .expect(400)
+      .expect({
+        statusCode: 400,
+        message: "This demarche id is not implemented",
+        path: "/api/foundation",
+      });
+  });
+
+  it("POST /foundation - Should return 403 if email provided is wrong", () => {
+    return request(app.getHttpServer())
+      .post("/api/foundation")
+      .send({
+        dossierId: 37,
+        email: "fake@gmail.com",
+      })
+      .expect(403)
+      .expect({
+        statusCode: 403,
+        message: "This instructeur's email is not linked to this dossier.",
+        path: "/api/foundation",
+      });
   });
 
   it("POST /foundation - Should create a new foundation with dotation", async () => {
-    const result = await request(app.getHttpServer()).post("/api/foundation").send({ dossierId: 17 }).expect(201);
+    const result = await request(app.getHttpServer())
+      .post("/api/foundation")
+      .send({
+        dossierId: 17,
+        email: "toto@gmail.com",
+      })
+      .expect(201);
     expect(result.body).toEqual({
       rnfId: "033-FDD-000001-06",
     });
@@ -96,7 +132,13 @@ describe("Foundation Controller (e2e)", () => {
   });
 
   it("POST /foundation - Should create a new foundation with entreprise", async () => {
-    const result = await request(app.getHttpServer()).post("/api/foundation").send({ dossierId: 65 }).expect(201);
+    const result = await request(app.getHttpServer())
+      .post("/api/foundation")
+      .send({
+        dossierId: 65,
+        email: "titi@gmail.com",
+      })
+      .expect(201);
     expect(result.body).toEqual({
       rnfId: "059-FE-000001-08",
     });
