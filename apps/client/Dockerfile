@@ -45,10 +45,10 @@ RUN npm i -g pnpm
 
 # First install the dependencies (as they change less often)
 COPY .gitignore .gitignore
-COPY --from=base /app/out/json/ .
-COPY --from=base /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+COPY --from=base_rnf /app/out/json/ .
+COPY --from=base_rnf /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 RUN pnpm install --frozen-lockfile
-COPY --from=base /app/out/full/ .
+COPY --from=base_rnf /app/out/full/ .
 RUN npm run build:rnf-client
 
 # PROD
@@ -57,7 +57,7 @@ RUN npm run build:rnf-client
 FROM bitnami/nginx:latest as production
 
 COPY --from=builder /app/apps/client/dist /app
-COPY --from=builder_rnf /app/apps/client/dist /app/rnf
+COPY --from=builder_rnf /app/apps/rnf-client/dist /app/rnf
 COPY ./nginx/bn-rnf.conf /opt/bitnami/nginx/conf/server_blocks/bn-rnf.conf
 
 USER 1001
