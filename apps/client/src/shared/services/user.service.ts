@@ -1,11 +1,11 @@
 import { baseApiUrl, headers } from '../../utils/api-client'
 import axios from 'axios'
-import type { CredentialsInput, CreateUserDto, UpdateUserDto, UserOutputDto } from '@biblio-num/shared'
+import type { CredentialsInput, CreateUserDto, UpdateUserDto, UserOutputDto, CredentialsInputDto } from '@biblio-num/shared'
 
 const AUTH_BASE_URL = `${baseApiUrl}/auth`
 const USER_BASE_URL = `${baseApiUrl}/users`
 const SIGN_UP_URL = `${USER_BASE_URL}/user`
-const SIGN_IN_URL = `${AUTH_BASE_URL}/sign_in`
+const SIGN_IN_URL = `${AUTH_BASE_URL}/sign-in`
 const AUTH_PROFIL_URL = `${AUTH_BASE_URL}/profile`
 
 export async function createUser (userForm: CreateUserDto) {

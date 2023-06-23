@@ -22,7 +22,7 @@ export class AuthController {
 
   // TODO: This route should be called 'token', since the resource it creates is a token, a route should not have a verb
   @UseGuards(LocalAuthGuard)
-  @Post("sign_in")
+  @Post("sign-in")
   // TODO: fixe type
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async signIn(@Request() req, @Body() body) {
