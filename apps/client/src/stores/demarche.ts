@@ -198,7 +198,7 @@ export const useDemarcheStore = defineStore('demarche', () => {
     [EInstructionTimeState.FIRST_REQUEST]: '1ere demande',
     [EInstructionTimeState.IN_PROGRESS]: 'Instruction',
     [EInstructionTimeState.OUT_OF_DATE]: 'Délai expiré',
-    [EInstructionTimeState.IN_EXTENSION]: 'Proroger',
+    [EInstructionTimeState.IN_EXTENSION]: 'Prorogation',
     [EInstructionTimeState.SECOND_REQUEST]: '2eme demande',
     [EInstructionTimeState.SECOND_RECEIPT]: '2eme demande',
     [EInstructionTimeState.INTENT_OPPO]: "Intention d'opposition",
