@@ -22,7 +22,7 @@ export async function createUser (userForm: CreateUserDto) {
   }
 }
 
-export async function loginUser (loginForm: CredentialsInput): Promise<UserOutputDto> {
+export async function loginUser (loginForm: CredentialsInputDto): Promise<UserOutputDto> {
   try {
     const response = await axios({
       method: 'post',
