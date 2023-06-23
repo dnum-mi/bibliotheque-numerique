@@ -10,6 +10,9 @@ export class CreateUserDto {
   @IsNotEmpty()
   email: string
 
+  @ApiProperty({
+    description: 'Mot de passe de l’utilisateur',
+  })
   @IsNotEmpty({ message: 'Veuillez remplir le mot de passe' })
   @IsPasswordStrongEnough({ message: 'Ce mot de passe n’est pas assez fort' })
   password: string
