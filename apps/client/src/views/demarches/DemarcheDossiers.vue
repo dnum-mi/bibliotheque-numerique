@@ -102,6 +102,8 @@ function selectTab (idx:number) {
             :row-data="rowDatas"
             :floating-filter="true"
             row-selection="single"
+            :pagination="true"
+            :pagination-page-size="20"
             @selection-changed="onSelect"
           />
         </div>
