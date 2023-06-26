@@ -8,7 +8,8 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: () => import('@/views/AppHome.vue'),
+    beforeEnter: [isAuthenticatedGuard],
+    redirect: { name: 'Demarches' },
   },
   {
     path: '/a-propos',
@@ -37,6 +38,7 @@ const routes = [
     path: '/sign_in',
     beforeEnter: [isNotAuthenticatedGuard],
     component: () => import('@/views/Signin.vue'),
+    name: 'SignIn',
   },
   {
     path: '/sign_up',
@@ -47,6 +49,7 @@ const routes = [
     path: '/profile',
     beforeEnter: [isAuthenticatedGuard],
     component: () => import('@/views/Profile.vue'),
+    name: 'Profile',
   },
   {
     path: '/logout',

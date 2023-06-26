@@ -3,14 +3,14 @@ import { useUserStore } from '../../stores'
 export function isAuthenticatedGuard () {
   const userStore = useUserStore()
   if (!userStore.isAuthenticated) {
-    return '/sign_in'
+    return { name: 'SignIn' }
   }
 }
 
 export function hasAdminAccessGuard () {
   const userStore = useUserStore()
   if (!userStore.hasAdminAccess) {
-    return '/sign_in'
+    return { name: 'SignIn' }
   }
 }
 
@@ -24,7 +24,7 @@ export function canManageRolesGuard () {
 export function canAccessDemarchesGuard () {
   const userStore = useUserStore()
   if (!userStore.canAccessDemarches) {
-    return '/'
+    return { name: 'Profile' }
   }
 }
 
