@@ -13,6 +13,7 @@ import { AuthService } from "./auth.service";
 import { LocalAuthGuard } from "./local-auth.guard";
 import { JwtAuthGuard } from "./jwt-auth.guard";
 import { AuthenticatedGuard } from "./authenticated.guard";
+import { CredentialsInputDto, UserOutputDto } from "@biblio-num/shared";
 
 /* The TODO: of this file must be done after creating what nestjs calls "e2e-tests" */
 @ApiTags("Auth")
@@ -22,10 +23,13 @@ export class AuthController {
 
   // TODO: This route should be called 'token', since the resource it creates is a token, a route should not have a verb
   @UseGuards(LocalAuthGuard)
-  @Post("sign_in")
+  @Post("sign-in")
   // TODO: fixe type
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  async signIn(@Request() req, @Body() body) {
+  async signIn(
+    @Request() req,
+    @Body() body: CredentialsInputDto,
+  ): Promise<UserOutputDto> {
     await this.authService.login(body);
     return req.user;
   }

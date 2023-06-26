@@ -5,7 +5,7 @@ import { useField, useForm } from 'vee-validate'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores'
-import type { CredentialsInput } from '@biblio-num/shared'
+import type { CredentialsInputDto } from '@biblio-num/shared'
 import LayoutAccueil from '../components/LayoutAccueil.vue'
 
 const REQUIRED_FIELD_MESSAGE = 'Ce champ est requis'
@@ -24,7 +24,7 @@ const { handleSubmit, setErrors } = useForm<{ email: string, password: string }>
   validationSchema,
 })
 
-const submit = handleSubmit(async (formValue: CredentialsInput) => {
+const submit = handleSubmit(async (formValue: CredentialsInputDto) => {
   try {
     await userStore.login(formValue)
     router.push('/demarches')
