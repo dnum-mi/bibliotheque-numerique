@@ -10,23 +10,11 @@ const serviceDescription = 'Recherchez une démarche, un dossier, un organisme'
 const logoText = ['Ministère', 'de l’intérieur', 'et des outre-mer']
 
 const iconColor = { color: 'var(--red-marianne-425-625)' }
-const quickLinksBase = [
-  {
-    label: 'Home',
-    path: '/',
-    icon: 'ri-home-4-line',
-    iconAttrs: iconColor,
-  },
-  {
-    label: 'À propos',
-    path: '/a-propos',
-  },
-]
-const quickLinks = ref(quickLinksBase)
+const quickLinks = ref([])
 
 const userStore = useUserStore()
 watch(() => userStore.isAuthenticated, () => {
-  quickLinks.value = quickLinksBase
+  quickLinks.value = []
   if (userStore.isAuthenticated) {
     quickLinks.value = quickLinks.value.concat({
       label: 'Organismes',
@@ -62,7 +50,7 @@ watch(() => userStore.isAuthenticated, () => {
       })
     }
   } else {
-    quickLinks.value = quickLinksBase.concat(
+    quickLinks.value = [
       {
         label: 'Se connecter',
         path: '/sign_in',
@@ -75,7 +63,7 @@ watch(() => userStore.isAuthenticated, () => {
         icon: 'ri-user-line',
         iconAttrs: iconColor,
       },
-    )
+    ]
   }
 })
 
