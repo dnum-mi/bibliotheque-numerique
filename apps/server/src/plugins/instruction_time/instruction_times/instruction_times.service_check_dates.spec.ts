@@ -547,7 +547,7 @@ describe("InstructionTimesService, Check Date", () => {
         firstDemand: null,
         firstReceip: null,
         dateProrogation: faker.date.between("2020-02-01", "2020-03-01"),
-        secondDemand: faker.date.future(1, "2020-07-01"),
+        secondDemand: faker.date.future(1, "2020-07-31"),
         secondReceip: null,
         dateIntentOppo: null,
       });
