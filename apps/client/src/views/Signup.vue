@@ -21,10 +21,11 @@ const { handleSubmit } = useForm({
   validationSchema,
 })
 
+const signInPath = '/sign_in'
 const submit = handleSubmit(async (formValue: UserForm) => {
   try {
     await createUser(formValue)
-    await router.push('/sign_in')
+    await router.push(signInPath)
   } catch (e) {
     console.log(e)
   }
@@ -39,17 +40,18 @@ const { value: passwordValue, errorMessage: passwordError } = useField('password
 
 <template>
   <LayoutAccueil>
-    <div class="fr-container">
-      <h2 class="mb-20">
-        Inscription
-      </h2>
+    <div class="fr-container fr-m-5w">
       <div
         class="fr-container fr-grid-row"
-        style="background: whitesmoke"
       >
-        <div class="fr-col-3" />
-        <div class="fr-col-5">
-          <br>
+        <div class="fr-col-1" />
+        <div class="fr-col-10">
+          <h5
+            class="mb-20 fr-text-title--blue-france"
+            style="text-align:center"
+          >
+            Inscription
+          </h5>
           <form
             class="card"
             @submit="submit"
@@ -130,13 +132,26 @@ const { value: passwordValue, errorMessage: passwordError } = useField('password
               </DsfrInput>
             </DsfrInputGroup>
 
-            <DsfrButton>
-              Inscription
-            </DsfrButton>
+            <div
+              class="fr-m-4w"
+              style="text-align:center"
+            >
+              <DsfrButton>
+                S'inscrire
+              </DsfrButton>
+            </div>
+            <div
+              class="fr-m-4w"
+              style="text-align:center"
+            >
+              <router-link :to="signInPath">
+                Déjà inscrit? Connectez-vous ici.
+              </router-link>
+            </div>
           </form>
           <br>
         </div>
-        <div class="fr-col-3" />
+        <div class="fr-col-1" />
       </div>
     </div>
   </LayoutAccueil>
