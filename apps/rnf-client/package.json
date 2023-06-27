@@ -33,6 +33,7 @@
     "@testing-library/cypress": "^7.0.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/vue": "^7.0.0",
+    "@testing-library/cypress": "^7.0.0",
     "@types/jsdom": "^21.1.1",
     "@types/node": "^18.16.17",
     "@vitejs/plugin-vue": "^4.2.3",
