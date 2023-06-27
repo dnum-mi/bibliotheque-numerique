@@ -84,7 +84,7 @@ async function getRnfId() {
           </DsfrInputGroup>
 
           <p class="text-center">
-            <span class="fr-link  fr-mx-4v  inline-block"><a href="#" @click.prevent="handleReset()">Effacer</a></span>
+            <span class="fr-link  fr-mx-4v  inline-block"><a href="#" data-testid="reset-btn" @click.prevent="handleReset()">Effacer</a></span>
             <DsfrButton type="submit" label="Rechercher" />
           </p>
         </div>

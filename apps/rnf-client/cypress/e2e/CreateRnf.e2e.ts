@@ -43,6 +43,39 @@ describe('RNF creation form', () => {
     cy.get('.fr-alert').should('contain', 'ne semble pas être l\'email')
   })
 
+  it('Should reset the form', () => {
+    cy.visit('/')
+
+    cy.get('.rnf-request').find('input[type=text]').type('17')
+
+    cy.get('.rnf-request') //
+      .find('input[type=email]')
+      .type('nonexisting@interieur.gouv.fr')
+
+    cy.get('[data-testid="reset-btn"]') //
+      .click()
+
+    cy.get('.rnf-request') //
+      .find('input[type=email]')
+      .should('have.value', '')
+
+    cy.get('.fr-messages-group').should('not.exist')
+
+    cy.get('.rnf-request') //
+      .find('input[type=email]')
+      .type('nonexisting@interieur')
+
+    cy.get('.rnf-request') //
+      .find('input[type=email]')
+      .blur()
+
+    cy.get('.fr-messages-group').should('contain', 'pas valide')
+
+    cy.get('[data-testid="reset-btn"]') //
+      .click()
+    cy.get('.fr-messages-group').should('not.exist')
+  })
+
   it('Should create an RNF id', () => {
     cy.visit('/')
 
