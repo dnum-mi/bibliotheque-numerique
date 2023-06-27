@@ -6,7 +6,6 @@ import { ConnectorModule } from "../../../modules/connector/connector.module";
 import { ConnectorService } from "../../../modules/connector/connector.service";
 import { Organisme, OrganismesData } from "../entities";
 
-import { datasourceTest } from "../entities/__tests__";
 import { OrganismesDatasService } from "./organismes_datas.service";
 import {
   getDatasFromRNA,
@@ -16,13 +15,14 @@ import {
   connectorTest,
   createOneConnector,
 } from "../../../shared/entities/__tests__";
-import { ConfigModule } from "@nestjs/config";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 import configuration from "../../../config/configuration";
 import fileConfig from "../../../config/file.config";
 import { ParseToOrganismesModule } from "../parserByConnector/parse_to_organismes.module";
 import { ParseToOrganismesService } from "../parserByConnector/parse_to_organismes.service";
 import { IParseToOrganisme } from "../parserByConnector/parse_to_organisme.interface";
 import { Connector } from "../../../modules/connector/connector.entity";
+import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
 
 // TODO: fixe type
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -76,16 +76,13 @@ class MockParseToOrg implements IParseToOrganisme<any, any> {
 describe("OrganismesDatasService", () => {
   let service: OrganismesDatasService;
   let connectorService: ConnectorService;
-  let dataSource: DataSource;
   let parserService: ParseToOrganismesService;
   let parser: MockParseToOrg;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
-        TypeOrmModule.forRoot(
-          datasourceTest([Organisme, OrganismesData, Connector]).options,
-        ),
+        TypeOrmModule.forRootAsync(typeormFactoryLoader),
         ConnectorModule,
         ConfigModule.forRoot({
           isGlobal: true,
@@ -99,7 +96,6 @@ describe("OrganismesDatasService", () => {
 
     service = module.get<OrganismesDatasService>(OrganismesDatasService);
     connectorService = module.get<ConnectorService>(ConnectorService);
-    dataSource = module.get<DataSource>(DataSource);
     parserService = module.get<ParseToOrganismesService>(
       ParseToOrganismesService,
     );
@@ -110,10 +106,6 @@ describe("OrganismesDatasService", () => {
   afterEach(async () => {
     await OrganismesData.delete({});
     await Connector.delete({});
-  });
-
-  afterAll(async () => {
-    await dataSource.destroy();
   });
 
   it("should be defined", () => {

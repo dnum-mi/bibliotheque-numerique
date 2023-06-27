@@ -8,7 +8,6 @@ import fileConfig from "../../../config/file.config";
 import { HttpModule } from "@nestjs/axios";
 import { DemarchesDSService } from "../providers/demarches_ds.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { datasourceTest } from "../../../shared/entities/__tests__";
 import { getDemarche } from "../__tests__/demarches";
 import { DossiersDSService } from "../../dossiers/providers/dossiers_ds.service";
 import { DossiersService } from "../../dossiers/providers/dossiers.service";
@@ -16,10 +15,8 @@ import { FilesService } from "../../files/files.service";
 import dsConfig from "../../../config/ds.config";
 import instructionTimeMappingConfig from "../../../plugins/instruction_time/config/instructionTimeMapping.config";
 import { InstructionTimesModule } from "../../../plugins/instruction_time/instruction_times/instruction_times.module";
-import { Demarche } from "../entities/demarche.entity";
-import { DemarcheDS } from "../entities/demarche_ds.entity";
-import { Dossier } from "../../dossiers/entities/dossier.entity";
-import { DossierDS } from "../../dossiers/entities/dossier_ds.entity";
+import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
+
 describe("DemarchesController", () => {
   let controller: DemarchesController;
   let service: DemarchesService;
@@ -27,9 +24,7 @@ describe("DemarchesController", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
-        TypeOrmModule.forRoot(
-          datasourceTest([Demarche, DemarcheDS, Dossier, DossierDS]).options,
-        ),
+        TypeOrmModule.forRootAsync(typeormFactoryLoader),
         HttpModule,
         ConfigModule.forRoot({
           isGlobal: true,

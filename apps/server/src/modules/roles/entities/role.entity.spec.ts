@@ -1,30 +1,19 @@
 import { Test } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { DataSource } from "typeorm";
 
-import {
-  datasourceTest,
-  role_test,
-  createOneRole,
-} from "../../../shared/entities/__tests__";
-import { User } from "../../users/entities/user.entity";
+import { createOneRole, role_test } from "../../../shared/entities/__tests__";
 import { Role } from "./role.entity";
+import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
 
 describe("role.entity", () => {
-  let dataSource: DataSource;
   beforeAll(async () => {
-    const module = await Test.createTestingModule({
-      imports: [TypeOrmModule.forRoot(datasourceTest([Role, User]).options)],
+    await Test.createTestingModule({
+      imports: [TypeOrmModule.forRootAsync(typeormFactoryLoader)],
     }).compile();
-    dataSource = module.get<DataSource>(DataSource);
   });
 
   afterEach(async () => {
     await Role.delete({});
-  });
-
-  afterAll(async () => {
-    await dataSource.destroy();
   });
 
   it("create entity", async () => {

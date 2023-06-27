@@ -40,16 +40,14 @@
     "start:prod": "typeorm-ts-node-commonjs migration:run -d dist/db/app-data-source.js; node dist/main",
     "start:worker:prod": "node dist/main-worker",
     "stop": "docker compose stop -d",
-    "test": "NODE_ENV='test' jest --runInBand",
-    "test:cov": "NODE_ENV='test' jest --coverage --runInBand",
-    "test:debug": "NODE_ENV='test' node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "NODE_ENV='test' jest --config ./test/jest-e2e.json",
-    "test:watch": "NODE_ENV='test' jest --watch --runInBand",
-    "typeorm": "NODE_ENV='test' typeorm-ts-node-commonjs",
-    "typeorm:migration:generate": "typeorm-ts-node-commonjs migration:generate -d src/db/app-data-source.ts",
-    "typeorm:migration:revert": "typeorm-ts-node-commonjs migration:revert -d src/db/app-data-source.ts",
-    "typeorm:migration:run": "typeorm-ts-node-commonjs migration:run -d src/db/app-data-source.ts",
-    "typeorm:migration:show": "typeorm-ts-node-commonjs migration:show -d src/db/app-data-source.ts",
+    "test": "run-s test:unit test:e2e",
+    "test:unit": "NODE_ENV='test-unit' jest --config ./test/jest-unit.json",
+    "fixtures": "NODE_ENV='test-e2e' fixtures-ts-node-esm load ./test/fixtures --dataSource=./test/data-source-e2e.typeorm.ts --sync",
+    "test:e2e": "run-s fixtures && jest --config ./test/jest-e2e.json",
+    "typeorm": "typeorm-ts-node-commonjs -d ./database/data-source.typeorm.ts",
+    "migration:revert": "npm run typeorm migration:revert",
+    "migration:run": "npm run typeorm migration:run",
+    "migration:show": "npm run typeorm migration:show",
     "vite": "vite"
   },
   "dependencies": {
@@ -123,33 +121,10 @@
     "ts-loader": "^9.4.2",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "4.2.0",
+    "typeorm-fixtures-cli": "3.1.0",
     "typescript": "^4.9.5",
     "vite-plugin-node": "^3.0.2",
     "vitest": "^0.30.1"
-  },
-  "jest": {
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
-    ],
-    "coverageDirectory": "../coverage",
-    "coveragePathIgnorePatterns": [
-      "db",
-      "config"
-    ],
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "moduleNameMapper": {
-      "^@/(.*)$": "<rootDir>/$1"
-    },
-    "rootDir": "src",
-    "testEnvironment": "node",
-    "testRegex": ".*\\.spec\\.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    }
   },
   "volta": {
     "node": "18.16.0"

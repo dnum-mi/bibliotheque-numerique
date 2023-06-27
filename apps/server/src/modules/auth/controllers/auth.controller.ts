@@ -9,11 +9,11 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
-import { AuthService } from "./auth.service";
-import { LocalAuthGuard } from "./local-auth.guard";
-import { JwtAuthGuard } from "./jwt-auth.guard";
-import { AuthenticatedGuard } from "./authenticated.guard";
 import { CredentialsInputDto, UserOutputDto } from "@biblio-num/shared";
+import { AuthService } from "../providers/auth.service";
+import { LocalAuthGuard } from "../providers/local-auth.guard";
+import { JwtAuthGuard } from "../providers/jwt-auth.guard";
+import { AuthenticatedGuard } from "../providers/authenticated.guard";
 
 /* The TODO: of this file must be done after creating what nestjs calls "e2e-tests" */
 @ApiTags("Auth")

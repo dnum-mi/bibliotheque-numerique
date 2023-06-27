@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { SendMailService } from "./sendmail.service";
 import { TConfig } from "config/configuration";
 import { EjsAdapter } from "@nestjs-modules/mailer/dist/adapters/ejs.adapter";
+import { NodeEnv } from "../../shared/types/node-env.enum";
 
 @Module({
   imports: [
@@ -18,7 +19,7 @@ import { EjsAdapter } from "@nestjs-modules/mailer/dist/adapters/ejs.adapter";
           },
         };
 
-        if (process.env.NODE_ENV === "test") {
+        if (process.env.NODE_ENV === NodeEnv.TestUnit) {
           return {
             transport: {
               host: "localhost",

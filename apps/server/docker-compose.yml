@@ -67,7 +67,7 @@ services:
       DEBUG: 1
       SMTP_SERVER: mailhog
       SMTP_PORT: 1025
-  
+
   db:
     profiles:
       - dev
@@ -89,7 +89,7 @@ services:
         target: /var/lib/postgresql/data
     networks:
       - biblio-num-network
-  
+
   adminer:
     profiles:
       - adminer

@@ -1,31 +1,20 @@
 import { Test } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
 
-import {
-  datasourceTest,
-  user_test,
-  createOneUser,
-} from "../../../shared/entities/__tests__";
+import { createOneUser, user_test } from "../../../shared/entities/__tests__";
 import * as bcrypt from "bcrypt";
-import { DataSource } from "typeorm";
 import { User } from "./user.entity";
-import { Role } from "../../roles/entities/role.entity";
+import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
 
 describe("user.entity", () => {
-  let dataSource: DataSource;
   beforeAll(async () => {
-    const module = await Test.createTestingModule({
-      imports: [TypeOrmModule.forRoot(datasourceTest([User, Role]).options)],
+    await Test.createTestingModule({
+      imports: [TypeOrmModule.forRootAsync(typeormFactoryLoader)],
     }).compile();
-    dataSource = module.get<DataSource>(DataSource);
   });
 
   afterEach(async () => {
     await User.delete({});
-  });
-
-  afterAll(async () => {
-    await dataSource.destroy();
   });
 
   it("create entity", async () => {

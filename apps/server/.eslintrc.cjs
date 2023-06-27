@@ -20,7 +20,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: ["src/**/*.{spec,test}.{js,ts,jsx,tsx}"],
+      files: ["src/**/*.{spec,test}.{js,ts,jsx,tsx}", "test/**/*.{js,ts}"],
       env: {
         jest: true,
       },

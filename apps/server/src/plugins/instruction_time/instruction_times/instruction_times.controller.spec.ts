@@ -4,20 +4,13 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { InstructionTimesController } from "./instruction_times.controller";
 import { InstructionTimesService } from "./instruction_times.service";
 import { InstructionTime } from "../entities";
-import {
-  datasourceTest,
-  dossier_ds_test,
-  dossier_test,
-} from "../../../shared/entities/__tests__";
+import { dossier_ds_test, dossier_test, } from "../../../shared/entities/__tests__";
 import { instructionTime_test } from "../entities/__tests__";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule } from "@nestjs/config";
 import configuration from "../../../config/configuration";
 import instructionTimeMappingConfig from "../config/instructionTimeMapping.config";
-import { Dossier } from "../../../modules/dossiers/entities/dossier.entity";
-import { DossierDS } from "../../../modules/dossiers/entities/dossier_ds.entity";
-import { Demarche } from "../../../modules/demarches/entities/demarche.entity";
-import { DemarcheDS } from "../../../modules/demarches/entities/demarche_ds.entity";
+import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
 
 describe("InstructionTimesController", () => {
   let controller: InstructionTimesController;
@@ -26,15 +19,7 @@ describe("InstructionTimesController", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
-        TypeOrmModule.forRoot(
-          datasourceTest([
-            InstructionTime,
-            Dossier,
-            DossierDS,
-            Demarche,
-            DemarcheDS,
-          ]).options,
-        ),
+        TypeOrmModule.forRootAsync(typeormFactoryLoader),
         ConfigModule.forRoot({
           isGlobal: true,
           cache: true,

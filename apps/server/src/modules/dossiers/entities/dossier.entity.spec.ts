@@ -1,37 +1,24 @@
 import { Test } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { DataSource } from "typeorm";
 import {
-  datasourceTest,
-  dossier_test,
   createOneDossierDs,
   dossier_ds_test,
+  dossier_test,
 } from "../../../shared/entities/__tests__";
 import { DossierDS } from "./dossier_ds.entity";
 import { Dossier } from "./dossier.entity";
-import { Demarche } from "../../demarches/entities/demarche.entity";
-import { DemarcheDS } from "../../demarches/entities/demarche_ds.entity";
+import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
 
 describe("dossier_ds.entity", () => {
-  let dataSource: DataSource;
   beforeAll(async () => {
-    const module = await Test.createTestingModule({
-      imports: [
-        TypeOrmModule.forRoot(
-          datasourceTest([DossierDS, Dossier, Demarche, DemarcheDS]).options,
-        ),
-      ],
+    await Test.createTestingModule({
+      imports: [TypeOrmModule.forRootAsync(typeormFactoryLoader)],
     }).compile();
-    dataSource = module.get<DataSource>(DataSource);
   });
 
   afterEach(async () => {
     await Dossier.delete({});
     await DossierDS.delete({});
-  });
-
-  afterAll(async () => {
-    await dataSource.destroy();
   });
 
   it("create entity", async () => {

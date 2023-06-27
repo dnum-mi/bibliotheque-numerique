@@ -1,34 +1,19 @@
 import { Test } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
 
-import { Organisme, OrganismesData } from ".";
-import {
-  datasourceTest,
-  organismeData_test,
-  createOneOrganismeData,
-} from "./__tests__";
-import { DataSource } from "typeorm";
-import { Connector } from "../../../modules/connector/connector.entity";
+import { OrganismesData } from ".";
+import { createOneOrganismeData, organismeData_test } from "./__tests__";
+import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
 
 describe("OrganismeData.entity", () => {
-  let dataSource: DataSource;
   beforeAll(async () => {
-    const module = await Test.createTestingModule({
-      imports: [
-        TypeOrmModule.forRoot(
-          datasourceTest([Organisme, OrganismesData, Connector]).options,
-        ),
-      ],
+    await Test.createTestingModule({
+      imports: [TypeOrmModule.forRootAsync(typeormFactoryLoader)],
     }).compile();
-    dataSource = module.get<DataSource>(DataSource);
   });
 
   afterEach(async () => {
     await OrganismesData.delete({});
-  });
-
-  afterAll(async () => {
-    await dataSource.destroy();
   });
 
   it("create entity", async () => {

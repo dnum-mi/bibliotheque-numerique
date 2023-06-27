@@ -1,0 +1,9 @@
+entity: User
+items:
+  user-1:
+    id: 1
+    email: admin@localhost.com
+    password: $2b$10$l2/O3hJ.K3sLnKWBf5AE/.XnmSAuG2H7KcaiBdOvCuEd5NL.3fahS
+    createdAt: 2023-06-12T06:54:45.000Z
+    updatedAt: 2023-06-12T06:54:45.000Z
+

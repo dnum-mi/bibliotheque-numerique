@@ -1,11 +1,10 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { ConfigModule } from "@nestjs/config";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 
 import configuration from "../../../config/configuration";
 import fileConfig from "../../../config/file.config";
 
-import { datasourceTest } from "../entities/__tests__";
 import { Organisme, OrganismesData } from "../entities";
 
 import { ConnectorModule } from "../../../modules/connector/connector.module";
@@ -14,7 +13,7 @@ import { ParseToOrganismesModule } from "../parserByConnector/parse_to_organisme
 import { OrganismesDatasService } from "../organismes_datas/organismes_datas.service";
 import { OrganismesService } from "./organismes.service";
 import { getOrganismesData } from "./__tests__/organimsesData";
-import { Connector } from "../../../modules/connector/connector.entity";
+import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
 
 describe("OrganismesService", () => {
   let service: OrganismesService;
@@ -23,9 +22,7 @@ describe("OrganismesService", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
-        TypeOrmModule.forRoot(
-          datasourceTest([Connector, OrganismesData, Organisme]).options,
-        ),
+        TypeOrmModule.forRootAsync(typeormFactoryLoader),
         ConnectorModule,
         ConfigModule.forRoot({
           isGlobal: true,

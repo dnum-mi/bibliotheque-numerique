@@ -1,6 +1,7 @@
 const config = {
   env: process.env.NODE_ENV || "development",
   isDev: ["dev", "development", "local"].includes(process.env.NODE_ENV),
+  isTest: ["test", "test-unit", "test-e2e"].includes(process.env.NODE_ENV),
   protocol: process.env.PROTOCOL || `http`,
   port: parseInt(process.env.PORT, 10) || 3000,
   appHost: process.env.APP_HOST || `localhost:3000`,

@@ -10,13 +10,10 @@ import configuration from "../../../config/configuration";
 import instructionTimeMappingConfig, {
   keyInstructionTime,
 } from "../config/instructionTimeMapping.config";
-import { datasourceTest } from "../../../shared/entities/__tests__";
 import { InstructionTime } from "../entities";
-import { Dossier } from "../../../modules/dossiers/entities/dossier.entity";
 import { DossierDS } from "../../../modules/dossiers/entities/dossier_ds.entity";
-import { Demarche } from "../../../modules/demarches/entities/demarche.entity";
-import { DemarcheDS } from "../../../modules/demarches/entities/demarche_ds.entity";
 import MockDate from "mockdate";
+import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
 
 describe("InstructionTimesService, Check Date", () => {
   let service: InstructionTimesService;
@@ -25,15 +22,7 @@ describe("InstructionTimesService, Check Date", () => {
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
-        TypeOrmModule.forRoot(
-          datasourceTest([
-            InstructionTime,
-            Dossier,
-            DossierDS,
-            Demarche,
-            DemarcheDS,
-          ]).options,
-        ),
+        TypeOrmModule.forRootAsync(typeormFactoryLoader),
         ConfigModule.forRoot({
           isGlobal: true,
           cache: true,

@@ -1,5 +1,5 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { ConfigModule } from "@nestjs/config";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 
 import { DemarchesController } from "../controllers/demarches.controller";
 import { DemarchesService } from "./demarches.service";
@@ -8,17 +8,14 @@ import fileConfig from "../../../config/file.config";
 import { HttpModule } from "@nestjs/axios";
 import { DemarchesDSService } from "./demarches_ds.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { datasourceTest, user_test } from "../../../shared/entities/__tests__";
+import { user_test } from "../../../shared/entities/__tests__";
 import { getDemarche } from "../__tests__/demarches";
 import dsConfig from "../../../config/ds.config";
 import instructionTimeMappingConfig from "../../../plugins/instruction_time/config/instructionTimeMapping.config";
 import { InstructionTimesModule } from "../../../plugins/instruction_time/instruction_times/instruction_times.module";
-import { Demarche } from "../entities/demarche.entity";
-import { DemarcheDS } from "../entities/demarche_ds.entity";
-import { Dossier } from "../../dossiers/entities/dossier.entity";
-import { DossierDS } from "../../dossiers/entities/dossier_ds.entity";
 import { User } from "../../users/entities/user.entity";
 import { DossiersModule } from "../../dossiers/dossiers.module";
+import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
 
 describe("DemarchesService", () => {
   let service: DemarchesService;
@@ -26,10 +23,7 @@ describe("DemarchesService", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
-        TypeOrmModule.forRoot(
-          datasourceTest([Demarche, DemarcheDS, Dossier, DossierDS]).options,
-        ),
-        HttpModule,
+        TypeOrmModule.forRootAsync(typeormFactoryLoader),
         ConfigModule.forRoot({
           isGlobal: true,
           cache: true,
@@ -40,6 +34,7 @@ describe("DemarchesService", () => {
             instructionTimeMappingConfig,
           ],
         }),
+        HttpModule,
         DossiersModule,
         InstructionTimesModule,
       ],

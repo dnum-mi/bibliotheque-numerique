@@ -32,6 +32,8 @@ export class LoggerModule {
           },
         })
       : MorganMiddleware.configure(jsonFormat);
-    consumer.apply(MorganMiddleware).forRoutes("*");
+    if (!this.config.get("isTest")) {
+      consumer.apply(MorganMiddleware).forRoutes("*");
+    }
   }
 }

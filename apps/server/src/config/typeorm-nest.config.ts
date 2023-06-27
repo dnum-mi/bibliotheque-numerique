@@ -1,0 +1,22 @@
+import { registerAs } from "@nestjs/config";
+import { options } from "../../database/typeorm.config";
+import { NodeEnv } from "../shared/types/node-env.enum";
+
+export default registerAs("database", () => {
+  switch (process.env.NODE_ENV) {
+    case NodeEnv.TestUnit:
+      return {
+        ...options,
+        database: "biblio-num-unit",
+        synchronize: true,
+      };
+    case NodeEnv.TestE2E:
+      return {
+        ...options,
+        database: "biblio-num-e2e",
+        synchronize: true,
+      };
+    default:
+      return options;
+  }
+});
