@@ -5,8 +5,8 @@ import { useField, useForm } from 'vee-validate'
 import { z } from 'zod'
 import { toTypedSchema } from '@vee-validate/zod'
 
-const dossierInputLabel = 'Veuillez indiquer un numéro de dossier'
-const emailInputLabel = "Veuillez indiquer votre email d'instructeur"
+const dossierInputLabel = 'N° de dossier Démarches simplifées'
+const emailInputLabel = "Courriel utilisé dans Démarches Simplifiées"
 const dossierInputPlaceholder = '456735'
 const emailInputPlaceholder = 'instructeur@ds-gouv.fr'
 
@@ -22,7 +22,7 @@ const validationSchema = toTypedSchema(
   }),
 )
 
-const { handleSubmit } = useForm({
+const { handleSubmit, handleReset } = useForm({
   validationSchema,
 })
 
@@ -84,7 +84,8 @@ async function getRnfId() {
           </DsfrInputGroup>
 
           <p class="text-center">
-            <DsfrButton type="submit" label="Envoyer" />
+            <span class="fr-link  fr-mx-4v  inline-block"><a href="#" @click.prevent="handleReset()">Effacer</a></span>
+            <DsfrButton type="submit" label="Rechercher" />
           </p>
         </div>
       </form>
@@ -110,5 +111,8 @@ async function getRnfId() {
 
 .h-\[250px\] {
   height: 250px;
+}
+.inline-block {
+  display: inline-block;
 }
 </style>
