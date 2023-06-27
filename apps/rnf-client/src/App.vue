@@ -7,8 +7,8 @@ import AppToaster from '@/components/AppToaster.vue'
 import ReloadPrompt from '@/components/ReloadPrompt.vue'
 import { MAIN_TITLE } from './config.js'
 
-const serviceTitle = 'RNF'
-const serviceDescription = MAIN_TITLE
+const serviceTitle = MAIN_TITLE
+
 const logoText = ['Ministère', 'de l’intérieur', 'et des outre-mer']
 
 const {
@@ -28,7 +28,6 @@ const toaster = useToaster()
 <template>
   <DsfrHeader
     :service-title="serviceTitle"
-    :service-description="serviceDescription"
     :logo-text="logoText"
   />
 
