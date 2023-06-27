@@ -1,4 +1,4 @@
-import { computeLuhn, padZero } from "@/shared/utils/number.utils";
+import { computeLuhn, formatPhoneNumber, padZero } from "@/shared/utils/number.utils";
 
 describe("Utils: Numbers", () => {
   it("should zero pad correctly", () => {
@@ -22,5 +22,19 @@ describe("Utils: Numbers", () => {
     expect(() => {
       computeLuhn("fakeNumber", 10);
     }).toThrow("Source is not a valid number");
+  });
+
+  it("Should convert number phone correctly", () => {
+    expect(formatPhoneNumber("0601020304")).toEqual("+33601020304");
+    expect(formatPhoneNumber("+33601020304")).toEqual("+33601020304");
+    expect(formatPhoneNumber("06 01 02 03 04")).toEqual("+33601020304");
+    expect(formatPhoneNumber("06.01.02.03.04")).toEqual("+33601020304");
+    expect(formatPhoneNumber("06-01-02-03-04")).toEqual("+33601020304");
+    expect(formatPhoneNumber("00336 01 02 03 04")).toEqual("+33601020304");
+    expect(formatPhoneNumber("00 336 01 02 03 04")).toEqual("+33601020304");
+    expect(formatPhoneNumber("00 33 6 01 02 03 04")).toEqual("+33601020304");
+    expect(() => {
+      formatPhoneNumber("toto");
+    }).toThrowError("This phone number is not valid");
   });
 });

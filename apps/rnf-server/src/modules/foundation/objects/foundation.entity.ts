@@ -19,19 +19,20 @@ export class FoundationEntity extends BaseEntity implements Foundation {
   @IsDefined()
   type: FoundationType;
 
-  @IsNumber()
+  @IsString()
   @IsDefined()
-  department: number;
+  @IsNotEmpty()
+  department: string;
 
   @IsString()
   @IsDefined()
   @IsEmail()
-  email: string | null;
+  email: string;
 
   @IsString()
   @IsDefined()
   @IsPhoneNumber()
-  phone: string | null;
+  phone: string;
 
   @IsDefined()
   @IsNumber()

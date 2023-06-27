@@ -2,6 +2,7 @@ import { ArgumentsHost, BadRequestException, Catch, ExceptionFilter, HttpExcepti
 import { HttpAdapterHost } from "@nestjs/core";
 import { LoggerService } from "@/shared/modules/logger/providers/logger.service";
 import { DsApiError } from "@dnum-mi/ds-api-client";
+import { CollisionException } from "@/shared/exceptions/collision.exception";
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -14,6 +15,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     let httpStatus: HttpStatus = exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
     let message = "no message.";
+    let data = {};
 
     switch (true) {
       case !exception:
@@ -24,6 +26,13 @@ export class AllExceptionsFilter implements ExceptionFilter {
         httpStatus = 424;
         message = (exception as DsApiError).message;
         this.logger.debug((exception as DsApiError).graphQlResponse as string);
+        break;
+      case exception instanceof CollisionException:
+        const collisionException = exception as CollisionException;
+        this.logger.log("Collisions have been found with " + collisionException.foundations.map((f) => f.rnfId).join(","));
+        httpStatus = 409;
+        message = (exception as DsApiError).message;
+        data = collisionException.foundations;
         break;
       case exception instanceof HttpException && httpStatus !== HttpStatus.INTERNAL_SERVER_ERROR:
         message = (exception as HttpException).message;
@@ -37,6 +46,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const responseBody = {
       statusCode: httpStatus,
       message,
+      data,
       path: httpAdapter.getRequestUrl(ctx.getRequest()) as string,
     };
 

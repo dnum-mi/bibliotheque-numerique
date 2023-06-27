@@ -26,3 +26,17 @@ export const computeLuhn = (source: string, mod = 10): number => {
   }
   return mod - (total % mod);
 };
+
+export const formatPhoneNumber = (phoneNumber: string): string => {
+  if (phoneNumber.match(/^\+?\d{11}$/)) {
+    return phoneNumber;
+  }
+  const normalizedPhoneNumber: string = phoneNumber
+    .replace(/\D/g, "")
+    .replace(/^00(.*)$/, "+$1")
+    .replace(/^0(.*)$/, "+33$1");
+  if (normalizedPhoneNumber.length !== 12) {
+    throw new Error("This phone number is not valid: " + phoneNumber);
+  }
+  return normalizedPhoneNumber;
+};

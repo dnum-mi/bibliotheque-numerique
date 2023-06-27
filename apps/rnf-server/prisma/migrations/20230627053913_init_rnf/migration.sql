@@ -11,11 +11,11 @@ CREATE TABLE "Foundation" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "rnfId" TEXT NOT NULL,
     "type" "FoundationType" NOT NULL DEFAULT 'FDD',
-    "department" INTEGER NOT NULL,
+    "department" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "addressId" INTEGER NOT NULL,
-    "phone" TEXT,
-    "email" TEXT,
+    "phone" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
 
     CONSTRAINT "Foundation_pkey" PRIMARY KEY ("id")
 );
@@ -34,7 +34,7 @@ CREATE TABLE "Address" (
     "cityName" TEXT NOT NULL,
     "cityCode" TEXT NOT NULL,
     "departmentName" TEXT,
-    "departmentCode" TEXT,
+    "departmentCode" TEXT NOT NULL,
     "regionName" TEXT,
     "regionCode" TEXT,
 
@@ -78,10 +78,10 @@ CREATE TABLE "FoundationHistory" (
     "rnfId" TEXT NOT NULL,
     "historyNumber" INTEGER NOT NULL,
     "type" "FoundationType" NOT NULL DEFAULT 'FDD',
-    "department" INTEGER NOT NULL,
+    "department" TEXT NOT NULL,
     "title" TEXT NOT NULL,
-    "phone" TEXT,
-    "email" TEXT,
+    "phone" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
     "peoples" JSONB[],
     "address" JSONB NOT NULL,
     "rawDsJson" JSONB NOT NULL,

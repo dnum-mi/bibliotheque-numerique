@@ -28,15 +28,15 @@ model Foundation {
   updatedAt  DateTime       @updatedAt
   rnfId      String         @unique
   type       FoundationType @default(FDD)
-  department Int
+  department String
   title      String
 
   address   Address @relation(fields: [addressId], references: [id])
   addressId Int
 
   // Contact
-  phone String?
-  email String?
+  phone String
+  email String
 
   // People
   peoples PeopleInFoundation[]
@@ -56,7 +56,7 @@ model Address {
   cityName       String
   cityCode       String
   departmentName String?
-  departmentCode String?
+  departmentCode String
   regionName     String?
   regionCode     String?
 
@@ -105,12 +105,12 @@ model FoundationHistory {
   rnfId         String
   historyNumber Int
   type          FoundationType @default(FDD)
-  department    Int
+  department    String
   title         String
 
   // Contact
-  phone String?
-  email String?
+  phone String
+  email String
 
   // People
   peoples Json[] // PeopleInFoundation[]

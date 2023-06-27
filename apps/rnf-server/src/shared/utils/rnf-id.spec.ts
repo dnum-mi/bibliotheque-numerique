@@ -11,7 +11,7 @@ describe("Utils: RNF ID", () => {
     expect(() => {
       createRnfId({
         type: FoundationType.FDD,
-        department: 42,
+        department: "42",
       } as FoundationEntity);
     }).toThrow("Foundation id is not a number");
 
@@ -19,14 +19,14 @@ describe("Utils: RNF ID", () => {
       createRnfId({
         id: "fakeId",
         type: FoundationType.FDD,
-        department: 42,
+        department: "42",
       } as unknown as FoundationEntity);
     }).toThrow("Foundation id is not a number");
 
     expect(() => {
       createRnfId({
         id: 42,
-        department: 42,
+        department: "42",
       } as FoundationEntity);
     }).toThrow("Foundation type is not defined");
 
@@ -35,7 +35,7 @@ describe("Utils: RNF ID", () => {
         id: 42,
         type: FoundationType.FRUP,
       } as FoundationEntity);
-    }).toThrow("Foundation department is not a number");
+    }).toThrow("Foundation department is not a three characters string");
   });
 
   it("should create rnf", () => {
@@ -43,7 +43,7 @@ describe("Utils: RNF ID", () => {
       createRnfId({
         id: 42,
         type: FoundationType.FRUP,
-        department: 42,
+        department: "42",
       } as FoundationEntity),
     ).toEqual("042-FRUP-000042-09");
 
@@ -51,7 +51,7 @@ describe("Utils: RNF ID", () => {
       createRnfId({
         id: 1234,
         type: FoundationType.FRUP,
-        department: 978,
+        department: "978",
       } as FoundationEntity),
     ).toEqual("978-FRUP-001234-01");
 
@@ -59,7 +59,7 @@ describe("Utils: RNF ID", () => {
       createRnfId({
         id: 42,
         type: FoundationType.FRUP,
-        department: 57,
+        department: "57",
       } as FoundationEntity),
     ).toEqual("057-FRUP-000042-03");
   });

@@ -2,27 +2,62 @@ import { BaseEntityService } from "@/shared/base-entity/base-entity.service";
 import { LoggerService } from "@/shared/modules/logger/providers/logger.service";
 import { PrismaService } from "@/shared/modules/prisma/providers/prisma.service";
 import { FoundationEntity } from "@/modules/foundation/objects/foundation.entity";
-import { DsService } from "@/modules/ds/providers/ds.service";
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { CreateFoundationDto } from "@/modules/foundation/objects/dto/create-foundation.dto";
 import { createRnfId } from "@/shared/utils/rnf-id.utils";
 import { Foundation } from "@prisma/client";
 import { GetFoundationOutputDto } from "@/modules/foundation/objects/dto/outputs/get-foundation-output.dto";
+import { formatPhoneNumber } from "@/shared/utils/number.utils";
+import { CollisionException } from "@/shared/exceptions/collision.exception";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class FoundationService extends BaseEntityService<FoundationEntity> {
-  constructor(protected readonly prisma: PrismaService, private readonly logger: LoggerService, private dsService: DsService) {
+  constructor(protected readonly prisma: PrismaService, private readonly logger: LoggerService, private readonly config: ConfigService) {
     super(prisma);
     this.logger.setContext(this.constructor.name);
   }
 
-  async CreateFoundation(dto: CreateFoundationDto): Promise<Foundation> {
+  private async _findIdOfCollision(dto: CreateFoundationDto): Promise<{ id: number }[]> {
+    // we cannot use prisma natively here because of the similarity function
+    const query = `
+      SELECT "Foundation".id, "Address".label
+      FROM "Foundation"
+      LEFT JOIN "Address" ON "Foundation"."addressId" = "Address".id
+      WHERE
+        "Foundation"."type" = '${dto.type}' AND
+        (
+            "Foundation"."email" = '${dto.email}' OR
+            "Foundation"."phone" = '${dto.phone}' OR
+            "Address"."label" = '${dto.address.label}' OR
+            similarity(
+                lower(unaccent(replace("Foundation".title, ' ', ''))),
+                lower(unaccent(replace('${dto.title}', ' ', '')))
+            ) > ${this.config.get("foundationTitleSimilarityThreshold")}
+        );
+    `;
+    return this.prisma.$queryRawUnsafe(query) as Promise<{ id: number }[]>;
+  }
+
+  private async _findCollision(dto: CreateFoundationDto): Promise<void> {
+    const collisions = await this._findIdOfCollision(dto);
+    if (collisions.length) {
+      throw new CollisionException(await this.getFoundations(collisions.map((id) => id.id)));
+    }
+    return;
+  }
+
+  async CreateFoundation(dto: CreateFoundationDto, forceCreation?: boolean): Promise<Foundation> {
     this.logger.verbose(`CreateFoundation`);
     const code = dto.address.departmentCode;
     if (!dto.address || !code) {
       throw new BadRequestException("An address with its departmentCode is required.");
     }
     this.logger.debug(`department found: ${dto.address.departmentCode}`);
+    dto.phone = formatPhoneNumber(dto.phone);
+    if (!forceCreation) {
+      await this._findCollision(dto);
+    }
     return this.prisma.$transaction(async (prisma) => {
       const foundation = await prisma.foundation.create({
         data: {
@@ -30,7 +65,7 @@ export class FoundationService extends BaseEntityService<FoundationEntity> {
           type: dto.type,
           phone: dto.phone,
           email: dto.email,
-          department: parseInt(code),
+          department: code,
           address: {
             create: dto.address,
           },
@@ -44,8 +79,15 @@ export class FoundationService extends BaseEntityService<FoundationEntity> {
     });
   }
 
-  async getFoundation(rnfId: string): Promise<GetFoundationOutputDto> {
-    this.logger.verbose(`getFoundation`);
+  async getFoundations(ids: number[]): Promise<FoundationEntity[]> {
+    return this.prisma.foundation.findMany({
+      where: { id: { in: ids } },
+      include: { address: true },
+    });
+  }
+
+  async getOneFoundation(rnfId: string): Promise<GetFoundationOutputDto> {
+    this.logger.verbose(`getOneFoundation`);
     return this.prisma.foundation.findUnique({ where: { rnfId }, include: { address: true } }).then((foundation) => {
       if (!foundation) {
         throw new NotFoundException("No foundation found with this rnfId.");

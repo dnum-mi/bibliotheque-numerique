@@ -36,7 +36,7 @@ export class AddressEntity extends BaseEntity implements Address {
   departmentName: string | null;
 
   @IsString()
-  departmentCode: string | null;
+  departmentCode: string;
 
   @IsString()
   regionName: string | null;

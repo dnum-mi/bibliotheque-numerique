@@ -1,4 +1,4 @@
-import { IsDefined, IsEmail, IsNumber, Min } from "class-validator";
+import { IsBoolean, IsDefined, IsEmail, IsNumber, IsOptional, Min } from "class-validator";
 
 export class DossierNumberInputDto {
   @IsDefined()
@@ -9,4 +9,8 @@ export class DossierNumberInputDto {
   @IsDefined()
   @IsEmail()
   email: string;
+
+  @IsBoolean()
+  @IsOptional()
+  forceCreate?: boolean;
 }

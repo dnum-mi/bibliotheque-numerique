@@ -23,8 +23,8 @@ const checkFoundationInformation = (foundation: MinimalFoundationInformation): v
       throw new Error("Foundation is not defined");
     case !isNumber(foundation.id):
       throw new Error("Foundation id is not a number");
-    case !isNumber(foundation.department):
-      throw new Error("Foundation department is not a number");
+    case !foundation.department || foundation.department.length > 3:
+      throw new Error("Foundation department is not a three characters string");
     // @ts-expect-error same as above
     case !foundation.type:
       throw new Error("Foundation type is not defined");
@@ -35,7 +35,8 @@ const checkFoundationInformation = (foundation: MinimalFoundationInformation): v
 
 const createRnfWithoutLuhn = (foundation: MinimalFoundationInformation): string => {
   checkFoundationInformation(foundation);
-  return `${padZero(foundation.department, 3)}-${foundation.type}-${padZero(foundation.id, 6)}`;
+  const department = (foundation.department.length === 2 ? "0" : "") + foundation.department.toUpperCase();
+  return `${department}-${foundation.type}-${padZero(foundation.id, 6)}`;
 };
 
 const addLuhnToRnf = (rnfWithoutLuhn: string): string => {

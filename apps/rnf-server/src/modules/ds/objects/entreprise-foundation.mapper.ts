@@ -29,7 +29,8 @@ export const EntrepriseFoundationMapper: Mapper<CreateFoundationDto> = {
     };
   },
   // TODO: those fields are not in the form. Ask the client
-  email: (ch: ChampHash) => null,
-  phone: (ch: ChampHash) => null,
+  // return random phone number
+  phone: () => `+33${Array.from({ length: 9 }, () => Math.floor(Math.random() * 10)).join("")}`,
+  email: () => `fake-email-${Math.floor(Math.random() * 10000)}@gmail.com`,
   peopleInFoundationToCreate: () => null,
 };

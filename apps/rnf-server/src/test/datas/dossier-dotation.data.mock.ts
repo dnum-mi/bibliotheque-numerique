@@ -105,7 +105,7 @@ export const dotationDossierDataMock = {
       id: "Q2hhbXAtOTA=",
       __typename: "TextChamp",
       label: "Titre du fonds de dotation (suivi du sigle s'il existe)",
-      stringValue: "Héritage",
+      stringValue: "Je suis un titre compliqué avec des espaces et des accents et des MajUsCules",
     },
     {
       id: "Q2hhbXAtOTE=",
@@ -124,7 +124,7 @@ export const dotationDossierDataMock = {
         departmentName: "Gironde",
         departmentCode: "33",
         regionName: "Nouvelle-Aquitaine",
-        regionCode: "75",
+        regionCode: "33",
       },
       commune: {
         name: "Bordeaux",

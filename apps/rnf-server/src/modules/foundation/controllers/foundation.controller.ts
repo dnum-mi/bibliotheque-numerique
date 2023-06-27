@@ -30,7 +30,7 @@ export class FoundationController {
       throw new ForbiddenException("This instructeur's email is not linked to this dossier.");
     }
     const createDto = this.dsMapperService.mapDossierToFoundation(rawDossier);
-    const foundation = await this.service.CreateFoundation(createDto);
+    const foundation = await this.service.CreateFoundation(createDto, dto.forceCreate);
     await this.dsService.writeRnfIdInPrivateAnnotation(rawDossier.id!, instructeurId, foundation.type, foundation.rnfId);
     // TODO: await this.foundationHistoryService.newHistoryEntry(foundation, dto);
     return { rnfId: foundation.rnfId };
@@ -39,6 +39,6 @@ export class FoundationController {
   @Get(`/:rnfId`)
   async getFoundation(@Param() params: GetFoundationInputDto): Promise<GetFoundationOutputDto> {
     this.logger.verbose("getFoundation");
-    return this.service.getFoundation(params.rnfId);
+    return this.service.getOneFoundation(params.rnfId);
   }
 }
