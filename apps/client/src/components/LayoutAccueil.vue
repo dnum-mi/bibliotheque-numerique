@@ -1,3 +1,7 @@
+<script lang="ts" setup>
+import BnPrez from '@/assets/bn.svg'
+</script>
+
 <template>
   <div class="fr-container">
     <div class="fr-grid-row">
@@ -7,7 +11,7 @@
         <slot />
       </div>
       <div class="fr-col-md-6">
-        <img src="bn.svg">
+        <BnPrez />
       </div>
     </div>
   </div>
