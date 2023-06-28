@@ -1,42 +1,27 @@
 import { FoundationEntity } from "@/modules/foundation/objects/foundation.entity";
 import { isNumber } from "class-validator";
 import { computeLuhn, padZero } from "@/shared/utils/number.utils";
+import { throwIf } from "@/shared/utils/error.utils";
 
 const LUHN_ALGORITHM_KEY = 42;
 const LUHN_ALGORITHM_KEY_SIZE = LUHN_ALGORITHM_KEY.toString().length;
-
-type MinimalFoundationInformation = Pick<FoundationEntity, "id" | "department" | "type">;
-
-export const createRnfId = (foundation: MinimalFoundationInformation): string => {
-  return addLuhnToRnf(createRnfWithoutLuhn(foundation));
+type MinimalFoundationInformation = Pick<FoundationEntity, "department" | "type">;
+export type FountationInformationToCreateRnf = {
+  foundation: MinimalFoundationInformation;
+  index: number;
 };
 
-export const isRnfLuhnValid = (rnf: string): boolean => {
-  const rnfWithoutLuhn = rnf.slice(0, -LUHN_ALGORITHM_KEY_SIZE - 1);
-  return rnf === addLuhnToRnf(rnfWithoutLuhn);
-};
+const hasNoFoundation = (dto: FountationInformationToCreateRnf) => (dto?.foundation ? null : "Foundation is not defined");
+const indexIsNotANumber = (dto: FountationInformationToCreateRnf) => (isNumber(dto.index) ? null : "Foundation index is not a number");
+const departmentIsNotCorrect = (dto: FountationInformationToCreateRnf) =>
+  !dto.foundation.department || dto.foundation.department.length > 3 ? "Foundation department is not a three characters string" : null;
+const hasNoType = (dto: FountationInformationToCreateRnf) => (dto.foundation.type ? null : "Foundation type is not defined");
+const checkFoundation = throwIf<FountationInformationToCreateRnf>(hasNoFoundation, indexIsNotANumber, departmentIsNotCorrect, hasNoType);
 
-const checkFoundationInformation = (foundation: MinimalFoundationInformation): void => {
-  switch (true) {
-    // @ts-expect-error this function is too important to rely only on typescript
-    case !foundation:
-      throw new Error("Foundation is not defined");
-    case !isNumber(foundation.id):
-      throw new Error("Foundation id is not a number");
-    case !foundation.department || foundation.department.length > 3:
-      throw new Error("Foundation department is not a three characters string");
-    // @ts-expect-error same as above
-    case !foundation.type:
-      throw new Error("Foundation type is not defined");
-    default:
-      return;
-  }
-};
-
-const createRnfWithoutLuhn = (foundation: MinimalFoundationInformation): string => {
-  checkFoundationInformation(foundation);
-  const department = (foundation.department.length === 2 ? "0" : "") + foundation.department.toUpperCase();
-  return `${department}-${foundation.type}-${padZero(foundation.id, 6)}`;
+const createRnfWithoutLuhn = (dto: FountationInformationToCreateRnf): string => {
+  checkFoundation(dto);
+  const department = (dto.foundation.department.length === 2 ? "0" : "") + dto.foundation.department.toUpperCase();
+  return `${department}-${dto.foundation.type}-${padZero(dto.index, 5)}`;
 };
 
 const addLuhnToRnf = (rnfWithoutLuhn: string): string => {
@@ -47,4 +32,13 @@ const addLuhnToRnf = (rnfWithoutLuhn: string): string => {
   }
   const luhn = computeLuhn(onlyNumbersString);
   return `${rnfWithoutLuhn}-${padZero(luhn, LUHN_ALGORITHM_KEY_SIZE)}`;
+};
+
+export const createRnfId = (dto: FountationInformationToCreateRnf): string => {
+  return addLuhnToRnf(createRnfWithoutLuhn(dto));
+};
+
+export const isRnfLuhnValid = (rnf: string): boolean => {
+  const rnfWithoutLuhn = rnf.slice(0, -LUHN_ALGORITHM_KEY_SIZE - 1);
+  return rnf === addLuhnToRnf(rnfWithoutLuhn);
 };

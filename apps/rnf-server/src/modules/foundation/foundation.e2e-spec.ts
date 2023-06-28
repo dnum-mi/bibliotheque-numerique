@@ -144,12 +144,12 @@ describe("Foundation Controller (e2e)", () => {
       })
       .expect(201);
     expect(result.body).toEqual({
-      rnfId: "033-FDD-000001-06",
+      rnfId: "033-FDD-00001-02",
     });
-    await prisma.foundation.findFirst({ where: { rnfId: "033-FDD-000001-06" }, include: { address: true } }).then((a) => {
+    await prisma.foundation.findFirst({ where: { rnfId: "033-FDD-00001-02" }, include: { address: true } }).then((a) => {
       expect(a).toMatchObject({
         id: 1,
-        rnfId: "033-FDD-000001-06",
+        rnfId: "033-FDD-00001-02",
         type: "FDD",
         department: "33",
         title: "Je suis un titre compliqué avec des espaces et des accents et des MajUsCules",
@@ -185,12 +185,12 @@ describe("Foundation Controller (e2e)", () => {
       })
       .expect(201);
     expect(result.body).toEqual({
-      rnfId: "059-FE-000001-08",
+      rnfId: "059-FE-00001-04",
     });
-    await prisma.foundation.findFirst({ where: { rnfId: "059-FE-000001-08" }, include: { address: true } }).then((a) => {
+    await prisma.foundation.findFirst({ where: { rnfId: "059-FE-00001-04" }, include: { address: true } }).then((a) => {
       expect(a).toMatchObject({
         id: 1,
-        rnfId: "059-FE-000001-08",
+        rnfId: "059-FE-00001-04",
         type: "FE",
         department: "59",
         title: "Test demo",
@@ -440,6 +440,9 @@ describe("Foundation Controller (e2e)", () => {
       .expect(201);
     await prisma.foundation.count().then((count) => {
       expect(count).toEqual(2);
+    });
+    await prisma.foundation.findMany({}).then((fs) => {
+      expect(fs[1].rnfId).toEqual("033-FDD-00002-08");
     });
   });
 });

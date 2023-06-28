@@ -73,8 +73,10 @@ export class FoundationService extends BaseEntityService<FoundationEntity> {
         },
       });
       this.logger.debug(`foundation created: ${foundation.id}`);
-      foundation.rnfId = createRnfId(foundation);
-      await prisma.foundation.update({ where: { id: foundation.id }, data: { rnfId: createRnfId(foundation) } });
+      const index = await prisma.foundation.count({ where: { type: dto.type, department: code } });
+      const rnfId = createRnfId({ foundation, index });
+      await prisma.foundation.update({ where: { id: foundation.id }, data: { rnfId } });
+      foundation.rnfId = rnfId;
       return foundation;
     });
   }

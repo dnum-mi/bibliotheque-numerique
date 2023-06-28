@@ -2,7 +2,8 @@
 
 ## About
 
-Cette application a pour but de référencer la création des foundations (faite sur Démarche simplifiés) et de leur attribuer un numéro unique afin de pouvoir retrouver les informations correspondantes si demandées.
+Cette application a pour but de référencer la création des foundations (faite sur Démarche simplifiés) et de leur
+attribuer un numéro unique afin de pouvoir retrouver les informations correspondantes si demandées.
 
 ## Numéro RNF
 
@@ -11,8 +12,10 @@ Cette application a pour but de référencer la création des foundations (faite
 Un numéro RNF pour une fondation est déterminé comme ceci:
 
 ```
-  <Numéro département sur trois charactère> - <type de fondation> - <numéro id sur 6 chars> - <clef de luhn sur 2 char>
+  <Numéro département sur trois charactère> - <type de fondation> - <numéro id sur 5 chars> - <clef de luhn sur 2 char>
 ```
+
+Le numéro id est obtenu en recherchant toutes les fondations déjà existantes ayant le même départment et le même type.
 
 ### Exemple
 
@@ -24,10 +27,11 @@ const fondationToto = {
   id: 42,
   type: 'FRUP'
 }
+const numberOfFoundationWithThisTypeAndDepartment = 12;
 ```
 
 ```typescript
-  const totoRnf = "057-FRUP-000042-03"
+  const totoRnf = "057-FRUP-00013-03"
 ```
 
 ### Algorithm de Luhn
@@ -85,7 +89,8 @@ CF : <https://fr.wikipedia.org/wiki/Formule_de_Luhn>
 
 ### Migration
 
-1. Après avoir effectué une migration ou une modification de votre modèle Prisma, exécutez la commande `pnpx prisma generate`
+1. Après avoir effectué une migration ou une modification de votre modèle Prisma, exécutez la
+   commande `pnpx prisma generate`
 
 - Cela générera le client Prisma dans `node_modules/@prisma/client`
 
@@ -95,7 +100,8 @@ CF : <https://fr.wikipedia.org/wiki/Formule_de_Luhn>
 
 ### Sync without migration
 
-il est aussi possible de syncroniser directement le schema prisma avec la base de donnée pendant le prototyping sans effectuer une migration à chaque fois.
+il est aussi possible de syncroniser directement le schema prisma avec la base de donnée pendant le prototyping sans
+effectuer une migration à chaque fois.
 Pour cela, utiliser la commande:
 
 ```shell
@@ -108,7 +114,7 @@ Si vous avec un user qui ressemble à ça dans votre schéma:
 
 ```prisma
 model User {
-  name: String
+  name:  String
   email: String
 }
 ```
@@ -121,20 +127,21 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-    const newUser = await prisma.user.create({
-        data: {
-            name: "Alice",
-            email: "alice@prisma.io",
-        },
-    });
+  const newUser = await prisma.user.create({
+    data: {
+      name: "Alice",
+      email: "alice@prisma.io",
+    },
+  });
 
-    console.log(`Created new user: ${newUser.name} (ID: ${newUser.id})`);
+  console.log(`Created new user: ${newUser.name} (ID: ${newUser.id})`);
 }
 ```
 
 ## <a name="test-end-to-end"></a> Test End-to-end
 
-L'api est testée en e2e pour chaque des controllers. Nous moquons seulement DsService afin de ne pas dépender d'une API extérieure lors des test. Cf fondation.e2e-spec.ts
+L'api est testée en e2e pour chaque des controllers. Nous moquons seulement DsService afin de ne pas dépender d'une API
+extérieure lors des test. Cf fondation.e2e-spec.ts
 Pour les lancer, executer:
 
 ```shell
@@ -143,7 +150,9 @@ pnpm run test:e2e
 
 ## <a name="test-unitaire"></a> Test Unitaire
 
-L'application est testée unitairement pour tout ce qui est considéré comme "complex". Nous ne testons pas tous les service et controller qui sont triviaux. Par exemple, les utilitaires de nombres et de génération de l'algorithme de luhn sont testés.
+L'application est testée unitairement pour tout ce qui est considéré comme "complex". Nous ne testons pas tous les
+service et controller qui sont triviaux. Par exemple, les utilitaires de nombres et de génération de l'algorithme de
+luhn sont testés.
 Pour les lancer, executer:
 
 ```shell

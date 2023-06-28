@@ -1,73 +1,90 @@
-import { createRnfId, isRnfLuhnValid } from "@/shared/utils/rnf-id.utils";
+import { createRnfId, FountationInformationToCreateRnf, isRnfLuhnValid } from "@/shared/utils/rnf-id.utils";
 import { FoundationEntity } from "@/modules/foundation/objects/foundation.entity";
 import { FoundationType } from "@prisma/client";
 
 describe("Utils: RNF ID", () => {
   it("should throw if it is impossible to create rnf", () => {
     expect(() => {
-      createRnfId(undefined as unknown as FoundationEntity);
+      createRnfId(undefined as unknown as FountationInformationToCreateRnf);
     }).toThrow("Foundation is not defined");
 
     expect(() => {
       createRnfId({
-        type: FoundationType.FDD,
-        department: "42",
-      } as FoundationEntity);
-    }).toThrow("Foundation id is not a number");
+        foundation: {
+          type: FoundationType.FDD,
+          department: "42",
+        } as FoundationEntity,
+        index: null as unknown as number,
+      });
+    }).toThrow("Foundation index is not a number");
 
     expect(() => {
       createRnfId({
-        id: "fakeId",
-        type: FoundationType.FDD,
-        department: "42",
-      } as unknown as FoundationEntity);
-    }).toThrow("Foundation id is not a number");
+        foundation: {
+          type: FoundationType.FDD,
+          department: "42",
+        } as unknown as FoundationEntity,
+        index: "wrong" as unknown as number,
+      });
+    }).toThrow("Foundation index is not a number");
 
     expect(() => {
       createRnfId({
-        id: 42,
-        department: "42",
-      } as FoundationEntity);
+        foundation: {
+          id: 42,
+          department: "42",
+        } as FoundationEntity,
+        index: 0,
+      });
     }).toThrow("Foundation type is not defined");
 
     expect(() => {
       createRnfId({
-        id: 42,
-        type: FoundationType.FRUP,
-      } as FoundationEntity);
+        foundation: {
+          id: 42,
+          type: FoundationType.FRUP,
+        } as FoundationEntity,
+        index: 0,
+      });
     }).toThrow("Foundation department is not a three characters string");
   });
 
   it("should create rnf", () => {
     expect(
       createRnfId({
-        id: 42,
-        type: FoundationType.FRUP,
-        department: "42",
-      } as FoundationEntity),
-    ).toEqual("042-FRUP-000042-09");
+        foundation: {
+          type: FoundationType.FRUP,
+          department: "42",
+        } as FoundationEntity,
+        index: 42,
+      }),
+    ).toEqual("042-FRUP-00042-05");
 
     expect(
       createRnfId({
-        id: 1234,
-        type: FoundationType.FRUP,
-        department: "978",
-      } as FoundationEntity),
-    ).toEqual("978-FRUP-001234-01");
+        foundation: {
+          type: FoundationType.FRUP,
+          department: "978",
+        } as FoundationEntity,
+        index: 1234,
+      }),
+    ).toEqual("978-FRUP-01234-07");
 
     expect(
       createRnfId({
-        id: 42,
-        type: FoundationType.FRUP,
-        department: "57",
-      } as FoundationEntity),
-    ).toEqual("057-FRUP-000042-03");
+        foundation: {
+          type: FoundationType.FRUP,
+          department: "57",
+        } as FoundationEntity,
+        index: 42,
+      }),
+    ).toEqual("057-FRUP-00042-09");
   });
 
   it("should verify luhn", () => {
-    expect(isRnfLuhnValid("042-FRUP-000042-09")).toBeTruthy();
-    expect(isRnfLuhnValid("042-FRUP-000042-42")).toBeFalsy();
-    expect(isRnfLuhnValid("978-FRUP-001234-01")).toBeTruthy();
-    expect(isRnfLuhnValid("978-FRUP-001234-11")).toBeFalsy();
+    expect(isRnfLuhnValid("042-FRUP-00042-05")).toBeTruthy();
+    expect(isRnfLuhnValid("042-FRUP-00042-42")).toBeFalsy();
+    expect(isRnfLuhnValid("978-FRUP-01234-07")).toBeTruthy();
+    expect(isRnfLuhnValid("978-FRUP-01234-11")).toBeFalsy();
   });
 });
