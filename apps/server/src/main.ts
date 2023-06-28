@@ -1,11 +1,8 @@
-import * as dotenv from "dotenv";
 import { NestFactory } from "@nestjs/core";
 import { ConfigService } from "@nestjs/config";
 import { AppModule } from "./app.module";
 import { LoggerService } from "./modules/logger/logger.service";
 import { configMain } from "./config-main";
-
-dotenv.config();
 
 // TODO: fixe type
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type

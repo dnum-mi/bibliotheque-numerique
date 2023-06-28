@@ -6,17 +6,17 @@ export default registerAs("database", () => {
   switch (process.env.NODE_ENV) {
     case NodeEnv.TestUnit:
       return {
-        ...options,
+        ...options(),
         database: "biblio-num-unit",
         synchronize: true,
       };
     case NodeEnv.TestE2E:
       return {
-        ...options,
+        ...options(),
         database: "biblio-num-e2e",
         synchronize: true,
       };
     default:
-      return options;
+      return options();
   }
 });

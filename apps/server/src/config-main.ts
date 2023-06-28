@@ -1,6 +1,3 @@
-import * as dotenv from "dotenv";
-
-dotenv.config();
 import * as passport from "passport";
 import * as session from "express-session";
 import { sessionSecret } from "./modules/auth/objects/constants";
