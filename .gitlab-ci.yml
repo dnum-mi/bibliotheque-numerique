@@ -85,6 +85,7 @@ build_app_rnf_back:
   script:
     - 'npm i -g pnpm'
     - 'pnpm i --frozen-lockfile'
+    - 'pnpm run generate-rnf'
     - 'pnpm run build:rnf-server'
 
 test_docker_front:
