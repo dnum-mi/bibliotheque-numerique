@@ -3,6 +3,8 @@ import { SendMailService } from "./sendmail.service";
 import { SendMailModule } from "./sendmail.module";
 import * as SMTPTransport from "nodemailer/lib/smtp-transport";
 import MailMessage from "nodemailer/lib/mailer/mail-message";
+import { LoggerService } from "../../shared/modules/logger/logger.service";
+import { loggerServiceMock } from "../../../test/mock/logger-service.mock";
 
 /**
  * Code spyOnSmtpSend is from https://github.com/nest-modules/mailer/blob/master/lib/mailer.service.spec.ts
@@ -41,7 +43,13 @@ describe("SendMailService", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [SendMailModule],
-    }).compile();
+    })
+      .useMocker((token) => {
+        if (token === LoggerService) {
+          return loggerServiceMock;
+        }
+      })
+      .compile();
     service = module.get<SendMailService>(SendMailService);
   });
 

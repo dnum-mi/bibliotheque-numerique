@@ -1,5 +1,7 @@
 import { getDatasFromRNA } from "../organismes_datas/__tests__/organismeFromRNA";
 import ParseApiRnaV3 from "./api_rna_v3";
+import { loggerServiceMock } from "../../../../test/mock/logger-service.mock";
+import { LoggerService } from "../../../shared/modules/logger/logger.service";
 
 describe("Parser API_RNA_V3", () => {
   it("should have organisme", () => {
@@ -13,7 +15,9 @@ describe("Parser API_RNA_V3", () => {
       headers: {},
       config: {},
     };
-    const parser = new ParseApiRnaV3();
+    const parser = new ParseApiRnaV3(
+      loggerServiceMock as unknown as LoggerService,
+    );
     // parser.setDataJson(result);
 
     const organisme = parser.toOrganismeEntity(undefined, dataExpected);

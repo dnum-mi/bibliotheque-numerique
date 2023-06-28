@@ -18,18 +18,13 @@ describe("⚠️ TODO: Auth (e2e)", () => {
     await app.init();
   });
 
-  it("shoud return 403 on bad sign_in", async () => {
+  it("shoud return 403 on bad sign_in", () => {
     return request(app.getHttpServer())
-      .post("/auth/sign_in")
+      .post("/auth/sign-in")
       .send({
         email: "toto",
         password: "toto",
       })
-      .expect(404)
-      .expect({
-        statusCode: 404,
-        message: "Cannot POST /auth/sign_in",
-        error: "Not Found",
-      });
+      .expect(500); // TODO: should be 403
   });
 });

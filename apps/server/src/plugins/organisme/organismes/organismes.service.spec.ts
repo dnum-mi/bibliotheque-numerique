@@ -1,11 +1,11 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { ConfigModule, ConfigService } from "@nestjs/config";
+import { ConfigModule } from "@nestjs/config";
 
 import configuration from "../../../config/configuration";
 import fileConfig from "../../../config/file.config";
 
-import { Organisme, OrganismesData } from "../entities";
+import { Organisme } from "../entities";
 
 import { ConnectorModule } from "../../../modules/connector/connector.module";
 import { ParseToOrganismesModule } from "../parserByConnector/parse_to_organismes.module";
@@ -14,6 +14,8 @@ import { OrganismesDatasService } from "../organismes_datas/organismes_datas.ser
 import { OrganismesService } from "./organismes.service";
 import { getOrganismesData } from "./__tests__/organimsesData";
 import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
+import { LoggerService } from "../../../shared/modules/logger/logger.service";
+import { loggerServiceMock } from "../../../../test/mock/logger-service.mock";
 
 describe("OrganismesService", () => {
   let service: OrganismesService;
@@ -32,7 +34,10 @@ describe("OrganismesService", () => {
         ParseToOrganismesModule,
       ],
       providers: [OrganismesService, OrganismesDatasService],
-    }).compile();
+    })
+      .overrideProvider(LoggerService)
+      .useValue(loggerServiceMock)
+      .compile();
 
     service = module.get<OrganismesService>(OrganismesService);
     dataService = module.get<OrganismesDatasService>(OrganismesDatasService);
@@ -51,7 +56,7 @@ describe("OrganismesService", () => {
     const fakeOrgData = [getOrganismesData()];
     jest
       .spyOn(dataService, "findAndAddByIdRnaFromAllApi")
-      .mockResolvedValueOnce([{ status: "fulfilled", value: 1 }]);
+      .mockResolvedValueOnce([{ status: "fulfilled", value: true }]);
 
     jest.spyOn(dataService, "findByIdRNA").mockResolvedValueOnce(fakeOrgData);
 

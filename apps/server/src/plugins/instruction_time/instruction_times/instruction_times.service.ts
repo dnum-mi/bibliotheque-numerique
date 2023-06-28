@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Dossier as TDossier } from "@dnum-mi/ds-api-client/dist/@types/types";
 import { DossierState } from "@dnum-mi/ds-api-client/dist/@types/types";

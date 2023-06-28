@@ -4,13 +4,18 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { InstructionTimesController } from "./instruction_times.controller";
 import { InstructionTimesService } from "./instruction_times.service";
 import { InstructionTime } from "../entities";
-import { dossier_ds_test, dossier_test, } from "../../../shared/entities/__tests__";
+import {
+  dossier_ds_test,
+  dossier_test,
+} from "../../../shared/entities/__tests__";
 import { instructionTime_test } from "../entities/__tests__";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule } from "@nestjs/config";
 import configuration from "../../../config/configuration";
 import instructionTimeMappingConfig from "../config/instructionTimeMapping.config";
 import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
+import { LoggerService } from "../../../shared/modules/logger/logger.service";
+import { loggerServiceMock } from "../../../../test/mock/logger-service.mock";
 
 describe("InstructionTimesController", () => {
   let controller: InstructionTimesController;
@@ -28,7 +33,10 @@ describe("InstructionTimesController", () => {
       ],
       controllers: [InstructionTimesController],
       providers: [InstructionTimesService],
-    }).compile();
+    })
+      .overrideProvider(LoggerService)
+      .useValue(loggerServiceMock)
+      .compile();
 
     controller = module.get<InstructionTimesController>(
       InstructionTimesController,
@@ -71,7 +79,7 @@ describe("InstructionTimesController", () => {
       jest
         .spyOn(service, "findOne")
         .mockRejectedValue(new Error("Unable to retrieve InstructionTime"));
-      await expect(controller.findOne("0")).rejects.toThrow(
+      await expect(controller.findOne(0)).rejects.toThrow(
         "Unable to retrieve InstructionTime",
       );
     });
@@ -81,7 +89,7 @@ describe("InstructionTimesController", () => {
       jest
         .spyOn(service, "findOne")
         .mockImplementation(() => instructionTime as any);
-      await expect(controller.findOne(instructionTime.id.toString())).toBe(
+      await expect(controller.findOne(instructionTime.id)).toBe(
         instructionTime,
       );
     });
@@ -92,7 +100,7 @@ describe("InstructionTimesController", () => {
       jest
         .spyOn(service, "findOneByDossier")
         .mockRejectedValue(new Error("Unable to retrieve InstructionTime"));
-      await expect(controller.findOneByDossierId("0")).rejects.toThrow(
+      await expect(controller.findOneByDossierId(0)).rejects.toThrow(
         "Unable to retrieve InstructionTime",
       );
     });
@@ -103,7 +111,7 @@ describe("InstructionTimesController", () => {
         .spyOn(service, "findOneByDossier")
         .mockImplementation(() => instructionTime as any);
       await expect(
-        controller.findOneByDossierId(instructionTime.dossier.id.toString()),
+        controller.findOneByDossierId(instructionTime.dossier.id),
       ).toBe(instructionTime);
     });
   });

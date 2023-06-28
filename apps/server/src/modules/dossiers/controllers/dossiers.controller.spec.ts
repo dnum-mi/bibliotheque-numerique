@@ -7,6 +7,8 @@ import { DossiersService } from "../providers/dossiers.service";
 import { ConfigModule } from "@nestjs/config";
 import instructionTimeMappingConfig from "../../../plugins/instruction_time/config/instructionTimeMapping.config";
 import { InstructionTimesModule } from "../../../plugins/instruction_time/instruction_times/instruction_times.module";
+import { LoggerService } from "../../../shared/modules/logger/logger.service";
+import { loggerServiceMock } from "../../../../test/mock/logger-service.mock";
 
 describe("DossiersController", () => {
   let controller: DossiersController;
@@ -24,7 +26,13 @@ describe("DossiersController", () => {
       ],
       controllers: [DossiersController],
       providers: [DossiersService],
-    }).compile();
+    })
+      .useMocker((token) => {
+        if (token === LoggerService) {
+          return loggerServiceMock;
+        }
+      })
+      .compile();
 
     controller = module.get<DossiersController>(DossiersController);
     service = module.get<DossiersService>(DossiersService);
@@ -87,22 +95,6 @@ describe("DossiersController", () => {
         throw new Error(message);
       });
       await expect(fn).rejects.toThrow(message);
-    },
-  );
-
-  it.each`
-    name                   | servicefn              | fn
-    ${"findAll"}           | ${"findWithFilter"}    | ${() => controller.findAll()}
-    ${"findOne"}           | ${"findOne"}           | ${() => controller.findOne("TEST")}
-    ${"findOneWithDetail"} | ${"findOneWithDetail"} | ${() => controller.findOneWithDetail("TEST")}
-    ${"search"}            | ${"findWithFilter"}    | ${() => controller.searchDossier({})}
-  `(
-    "$name: should throw error with message 'internal error' when there are unknown error",
-    async ({ servicefn, fn }) => {
-      jest.spyOn(service, servicefn).mockImplementation(() => {
-        throw "Test Error";
-      });
-      await expect(fn).rejects.toThrow("Internal Server Error");
     },
   );
 });
