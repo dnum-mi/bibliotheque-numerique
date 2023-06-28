@@ -32,7 +32,10 @@ export class AllExceptionsFilter implements ExceptionFilter {
         this.logger.log("Collisions have been found with " + collisionException.foundations.map((f) => f.rnfId).join(","));
         httpStatus = 409;
         message = (exception as DsApiError).message;
-        data = collisionException.foundations;
+        data = {
+          collisionFoundations: collisionException.foundations,
+          currentFoundation: collisionException.currentFoundation,
+        };
         break;
       case exception instanceof HttpException && httpStatus !== HttpStatus.INTERNAL_SERVER_ERROR:
         message = (exception as HttpException).message;

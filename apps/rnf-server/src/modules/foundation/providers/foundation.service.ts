@@ -42,7 +42,7 @@ export class FoundationService extends BaseEntityService<FoundationEntity> {
   private async _findCollision(dto: CreateFoundationDto): Promise<void> {
     const collisions = await this._findIdOfCollision(dto);
     if (collisions.length) {
-      throw new CollisionException(await this.getFoundations(collisions.map((id) => id.id)));
+      throw new CollisionException(dto, await this.getFoundations(collisions.map((id) => id.id)));
     }
     return;
   }

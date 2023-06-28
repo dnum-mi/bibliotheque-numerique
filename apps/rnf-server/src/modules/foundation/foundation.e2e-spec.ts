@@ -9,6 +9,7 @@ import { LoggerService } from "@/shared/modules/logger/providers/logger.service"
 import { loggerServiceMock } from "@/test/mocks/logger-service.mock";
 import { PrismaService } from "@/shared/modules/prisma/providers/prisma.service";
 import { Foundation } from "@prisma/client";
+import { dotationDossierDataMock } from "@/test/datas/dossier-dotation.data.mock";
 
 const dumbFoundation = {
   rnfId: "033-FDD-000000-00",
@@ -35,6 +36,28 @@ const dumbFoundation = {
   phone: "+33102030405",
 };
 
+const createFoundationDtoFromDossier17 = {
+  title: "Je suis un titre compliqué avec des espaces et des accents et des MajUsCules",
+  type: "FDD",
+  address: {
+    label: "11 Rue Pelleport 33800 Bordeaux",
+    type: "housenumber",
+    streetAddress: "11 Rue Pelleport",
+    streetNumber: "11",
+    streetName: "Rue Pelleport",
+    postalCode: "33800",
+    cityName: "Bordeaux",
+    cityCode: "33063",
+    departmentName: "Gironde",
+    departmentCode: "33",
+    regionName: "Nouvelle-Aquitaine",
+    regionCode: "33",
+  },
+  email: "tata@gmail.com",
+  phone: "+33686465445",
+  peopleInFoundationToCreate: null,
+};
+
 const insertDumbFoundation = async (prisma: PrismaService, f: Partial<Foundation>) => {
   return prisma.foundation.create({
     // @ts-ignore not really important in test context
@@ -44,6 +67,27 @@ const insertDumbFoundation = async (prisma: PrismaService, f: Partial<Foundation
     },
   });
 };
+
+const checkCollisionResponse =
+  (df) =>
+  ({
+    body,
+    body: {
+      data,
+      data: {
+        collisionFoundations: [firstFoundation],
+        currentFoundation,
+      },
+    },
+  }) => {
+    expect(body).toBeDefined();
+    expect(data).toBeDefined();
+    expect(data.collisionFoundations).toBeDefined();
+    expect(currentFoundation).toBeDefined();
+    expect(firstFoundation).toBeDefined();
+    expect(firstFoundation.rnfId).toEqual(df.rnfId);
+    expect(currentFoundation).toMatchObject(createFoundationDtoFromDossier17);
+  };
 
 describe("Foundation Controller (e2e)", () => {
   let app: INestApplication;
@@ -146,33 +190,38 @@ describe("Foundation Controller (e2e)", () => {
     expect(result.body).toEqual({
       rnfId: "033-FDD-00001-02",
     });
-    await prisma.foundation.findFirst({ where: { rnfId: "033-FDD-00001-02" }, include: { address: true } }).then((a) => {
-      expect(a).toMatchObject({
-        id: 1,
-        rnfId: "033-FDD-00001-02",
-        type: "FDD",
-        department: "33",
-        title: "Je suis un titre compliqué avec des espaces et des accents et des MajUsCules",
-        addressId: 1,
-        phone: "+33686465445",
-        email: "tata@gmail.com",
-        address: {
+    await prisma.foundation
+      .findFirst({
+        where: { rnfId: "033-FDD-00001-02" },
+        include: { address: true },
+      })
+      .then((a) => {
+        expect(a).toMatchObject({
           id: 1,
-          label: "11 Rue Pelleport 33800 Bordeaux",
-          type: "housenumber",
-          streetAddress: "11 Rue Pelleport",
-          streetNumber: "11",
-          streetName: "Rue Pelleport",
-          postalCode: "33800",
-          cityName: "Bordeaux",
-          cityCode: "33063",
-          departmentName: "Gironde",
-          departmentCode: "33",
-          regionName: "Nouvelle-Aquitaine",
-          regionCode: "33",
-        },
+          rnfId: "033-FDD-00001-02",
+          type: "FDD",
+          department: "33",
+          title: "Je suis un titre compliqué avec des espaces et des accents et des MajUsCules",
+          addressId: 1,
+          phone: "+33686465445",
+          email: "tata@gmail.com",
+          address: {
+            id: 1,
+            label: "11 Rue Pelleport 33800 Bordeaux",
+            type: "housenumber",
+            streetAddress: "11 Rue Pelleport",
+            streetNumber: "11",
+            streetName: "Rue Pelleport",
+            postalCode: "33800",
+            cityName: "Bordeaux",
+            cityCode: "33063",
+            departmentName: "Gironde",
+            departmentCode: "33",
+            regionName: "Nouvelle-Aquitaine",
+            regionCode: "33",
+          },
+        });
       });
-    });
     return;
   });
 
@@ -325,20 +374,7 @@ describe("Foundation Controller (e2e)", () => {
         email: "toto@gmail.com",
       })
       .expect(409)
-      .then(
-        ({
-          body,
-          body: {
-            data,
-            data: [firstFoundation],
-          },
-        }) => {
-          expect(body).toBeDefined();
-          expect(data).toBeDefined();
-          expect(data).toHaveLength(1);
-          expect(firstFoundation.rnfId).toEqual(df.rnfId);
-        },
-      );
+      .then(checkCollisionResponse(df));
   });
 
   it("POST /foundation - Should return a 409 if email already exists", async () => {
@@ -350,20 +386,7 @@ describe("Foundation Controller (e2e)", () => {
         email: "toto@gmail.com",
       })
       .expect(409)
-      .then(
-        ({
-          body,
-          body: {
-            data,
-            data: [firstFoundation],
-          },
-        }) => {
-          expect(body).toBeDefined();
-          expect(data).toBeDefined();
-          expect(data).toHaveLength(1);
-          expect(firstFoundation.rnfId).toEqual(df.rnfId);
-        },
-      );
+      .then(checkCollisionResponse(df));
   });
 
   it("POST /foundation - Should return a 409 if address already exists", async () => {
@@ -393,20 +416,7 @@ describe("Foundation Controller (e2e)", () => {
         email: "toto@gmail.com",
       })
       .expect(409)
-      .then(
-        ({
-          body,
-          body: {
-            data,
-            data: [firstFoundation],
-          },
-        }) => {
-          expect(body).toBeDefined();
-          expect(data).toBeDefined();
-          expect(data).toHaveLength(1);
-          expect(firstFoundation.rnfId).toEqual(df.rnfId);
-        },
-      );
+      .then(checkCollisionResponse(df));
   });
 
   it("POST /foundation - Should return a 409 if title is similar", async () => {
