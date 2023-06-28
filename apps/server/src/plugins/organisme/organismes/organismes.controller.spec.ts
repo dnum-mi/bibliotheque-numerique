@@ -51,7 +51,7 @@ describe("OrganismesController", () => {
 
     const idRNA = "Test id RNA";
     await expect(
-      controller.addOrgnaismeByIdRNA("Test id RNA", "Test organisme source"),
+      controller.addOrganismeByIdRNA("Test id RNA", "Test organisme source"),
     ).rejects.toThrow(`organisme RNA: ${idRNA} not found`);
   });
 });

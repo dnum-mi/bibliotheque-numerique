@@ -6,81 +6,31 @@ import { Connector } from "./connector.entity";
 
 @Injectable()
 export class ConnectorService {
-  private readonly logger = new Logger(
-    ConnectorService.name,
-  ) as unknown as LoggerService;
-
   constructor(private readonly httpService: HttpService) {}
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  async findAll() {
-    try {
-      return await Connector.find();
-    } catch (error) {
-      this.logger.error({
-        short_message: "Échec récupération des connecteurs",
-        full_message: error.toString(),
-      });
-      throw new Error("Unable to retrieve connectors");
-    }
+  async findAll(): Promise<Connector[]> {
+    return Connector.find();
   }
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  async findOneById(id: number) {
-    try {
-      return await Connector.findOneBy({ id });
-    } catch (error) {
-      this.logger.error({
-        short_message: "Échec récupération du connecteur",
-        full_message: error.toString(),
-      });
-      throw new Error("Unable to retrieve connector");
-    }
+  async findOneById(id: number): Promise<Connector> {
+    return Connector.findOneBy({ id });
   }
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  async findOneBySourceName(name: string) {
-    try {
-      return await Connector.findOneBy({ name });
-    } catch (error) {
-      this.logger.error({
-        short_message: "Échec récupération du connecteur",
-        full_message: error.toString(),
-      });
-      throw new Error("Unable to retrieve connector");
-    }
+  async findOneBySourceName(name: string): Promise<Connector> {
+    return await Connector.findOneBy({ name });
   }
 
   // TODO: fixe type
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async upsert(connector: Partial<Connector>) {
-    try {
-      const upsertConnectorResult = await Connector.upsertConnector(connector);
-      return upsertConnectorResult.raw[0];
-    } catch (error) {
-      this.logger.error({
-        short_message: "Échec création du connecteur",
-        full_message: error.toString(),
-      });
-      throw new Error("Unable to create connector");
-    }
+    const upsertConnectorResult = await Connector.upsertConnector(connector);
+    return upsertConnectorResult.raw[0];
   }
 
   // TODO: fixe type
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async remove(id: number) {
-    try {
-      return await Connector.delete({ id });
-    } catch (error) {
-      this.logger.error({
-        short_message: `Échec suppression du connecteur id: ${id}`,
-        full_message: error.toString(),
-      });
-      throw new Error(`Unable to remove connector id: ${id}`);
-    }
+    return await Connector.delete({ id });
   }
 
   async getResult(
@@ -88,25 +38,17 @@ export class ConnectorService {
     params: Record<string, string>,
     query?: Record<string, string>,
   ): Promise<AxiosResponse> {
-    try {
-      const url = this.buildUrl(entity.url, params, {
-        ...entity.query,
-        ...query,
-      });
-      return await this.httpService.axiosRef({
-        method: entity.method,
-        url,
-        headers: {
-          Authorization: `${entity.typeAuth} ${entity.token}`,
-        },
-      });
-    } catch (error) {
-      this.logger.error({
-        short_message: `Connector ${entity?.name}: ${error.message}`,
-        full_message: error.stack,
-      });
-      throw new Error(`Connector ${entity?.name}: ${error.message}`);
-    }
+    const url = this.buildUrl(entity.url, params, {
+      ...entity.query,
+      ...query,
+    });
+    return await this.httpService.axiosRef({
+      method: entity.method,
+      url,
+      headers: {
+        Authorization: `${entity.typeAuth} ${entity.token}`,
+      },
+    });
   }
 
   private buildUrl(

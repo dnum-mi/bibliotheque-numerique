@@ -9,13 +9,14 @@ import { CronModule } from "./modules/cron/cron.module";
 import { ScheduleModule } from "@nestjs/schedule";
 import { JobLogModule } from "./modules/job-log/job-log.module";
 import { typeormFactoryLoader } from "./shared/utils/typeorm-factory-loader";
+import loggerConfig from "./config/logger.config";
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
-      load: [configuration, dsConfig, fileConfig],
+      load: [configuration, dsConfig, fileConfig, loggerConfig],
     }),
     LoggerModule,
     TypeOrmModule.forRootAsync(typeormFactoryLoader),

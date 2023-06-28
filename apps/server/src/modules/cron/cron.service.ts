@@ -22,13 +22,12 @@ export class CronService implements OnApplicationBootstrap, OnModuleInit {
     private dossierDsService: DossiersDSService,
     private jobLogService: JobLogService,
   ) {
+    this.logger.setContext(this.constructor.name);
     this.logger.log("Cron fetching data is set at: ");
     this.logger.log(this.config.get("fetchDataInterval"));
   }
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  private _dynamiclyBuildCronInRegistryFromConfig() {
+  private _dynamiclyBuildCronInRegistryFromConfig(): void {
     const job = new CronJob(
       this.config.get("fetchDataInterval"),
       this._fetchData.bind(this),
@@ -42,9 +41,7 @@ export class CronService implements OnApplicationBootstrap, OnModuleInit {
     job.start();
   }
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  private _launchCronOnStartup() {
+  private _launchCronOnStartup(): void {
     if (this.config.get("fetchDataOnStartup")) {
       this._fetchData();
     } else {
@@ -54,21 +51,15 @@ export class CronService implements OnApplicationBootstrap, OnModuleInit {
     }
   }
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  onModuleInit() {
+  onModuleInit(): void {
     this._dynamiclyBuildCronInRegistryFromConfig();
   }
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  onApplicationBootstrap() {
+  onApplicationBootstrap(): void {
     this._launchCronOnStartup();
   }
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  private async _fetchData() {
+  private async _fetchData(): Promise<void> {
     const jobLog = await this.jobLogService.createJobLog(
       JobNames.FETCH_DATA_FROM_DS,
     );

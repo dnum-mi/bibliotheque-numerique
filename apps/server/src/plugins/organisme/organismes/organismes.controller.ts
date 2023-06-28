@@ -8,83 +8,47 @@ import {
   HttpStatus,
   Logger,
   ParseIntPipe,
+  BadRequestException,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import { OrganismesService } from "./organismes.service";
+import { Organisme } from "../entities";
 
 @ApiTags("Organismes")
 @Controller("organismes")
 export class OrganismesController {
-  private readonly logger = new Logger(
-    OrganismesController.name,
-  ) as unknown as LoggerService;
-
-  constructor(private readonly organismesService: OrganismesService) {}
+  constructor(
+    private readonly organismesService: OrganismesService,
+    private readonly logger: LoggerService,
+  ) {
+    this.logger.setContext(this.constructor.name);
+  }
 
   @Get()
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  async findAll() {
-    try {
-      return await this.organismesService.findAll();
-    } catch (error) {
-      throw new HttpException(
-        error instanceof Error ? error.message : "Internal Server Error",
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+  async findAll(): Promise<Organisme[]> {
+    return this.organismesService.findAll();
   }
 
   @Get(":id")
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  findOneById(@Param("id", ParseIntPipe) id: number) {
+  findOneById(@Param("id", ParseIntPipe) id: number): Promise<Organisme> {
     return this.organismesService.findOneById(id);
   }
 
   @Get("rna/:id")
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  findOneByIdRna(@Param("id") id: string) {
+  findOneByIdRna(@Param("id") id: string): Promise<Organisme> {
     return this.organismesService.findOneByIdRef(id);
   }
 
   @Post("rna")
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  async addOrgnaismeByIdRNA(
+  async addOrganismeByIdRNA(
     @Body("idRNA") idRNA: string,
     @Body("source") source: string,
-  ) {
+  ): Promise<{ message: string }> {
     if (!idRNA) {
-      throw new HttpException(
-        `idRNA ${idRNA} is empty`,
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new BadRequestException(`idRNA ${idRNA} is empty`);
     }
-
-    try {
-      await this.organismesService.upsertOrganisme(idRNA, [source]);
-
-      return { message: `organisme RNA: ${idRNA} create success!` };
-    } catch (error) {
-      if (error.status === HttpStatus.NOT_FOUND) {
-        throw new HttpException(
-          `organisme RNA: ${idRNA} not found`,
-          error.statusCode,
-        );
-      }
-
-      this.logger.error({
-        short_message: error.message,
-        full_message: error.stack,
-      });
-
-      throw new HttpException(
-        error instanceof Error ? error.message : "Internal Server Error",
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+    await this.organismesService.upsertOrganisme(idRNA, [source]);
+    return { message: `organisme RNA: ${idRNA} create success!` };
   }
 }

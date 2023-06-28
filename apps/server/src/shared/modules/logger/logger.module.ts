@@ -7,20 +7,14 @@ import { jsonFormat } from "./morgan-jsonformat.function";
 
 @Global()
 @Module({
-  imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      cache: true,
-      load: [configuration],
-    }),
-  ],
+  imports: [],
   providers: [LoggerService],
   exports: [LoggerService],
 })
 export class LoggerModule {
   constructor(
-    private config: ConfigService,
-    private loggerService: LoggerService,
+    private readonly config: ConfigService,
+    private readonly loggerService: LoggerService,
   ) {}
 
   configure(consumer: MiddlewareConsumer): void {

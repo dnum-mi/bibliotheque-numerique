@@ -36,9 +36,7 @@ export class Dossier extends ApplicationEntity {
   @ApiProperty({ enum: DossierState })
   @Column({ type: "varchar" })
   state: DossierState;
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  static findWithFilter(filter: object) {
+  static findWithFilter(filter: object): Promise<Dossier[]> {
     return this.find({
       where: {
         ...filter,

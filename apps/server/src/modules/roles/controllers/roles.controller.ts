@@ -10,6 +10,7 @@ import {
   Param,
   ParseIntPipe,
   UseGuards,
+  NotFoundException,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { RolesService } from "../providers/roles.service";
@@ -20,6 +21,7 @@ import {
 } from "../providers/permissions.guard";
 import { PermissionName } from "../../../shared/types/Permission.type";
 import { Role } from "../entities/role.entity";
+import { User } from "../../users/entities/user.entity";
 
 @ApiTags("Roles")
 @Controller("roles")
@@ -29,54 +31,20 @@ export class RolesController {
 
   @Get()
   @RequirePermissions({ name: PermissionName.CREATE_ROLE })
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  async listRoles() {
-    let roles: Role[];
-    try {
-      roles = await this.rolesService.listRoles();
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new HttpException(
-          error.message,
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-      throw new HttpException(
-        "Internal Server Error",
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-
+  async listRoles(): Promise<Role[]> {
+    const roles = await this.rolesService.listRoles();
     if (roles.length === 0) {
-      throw new HttpException("No role found", HttpStatus.NOT_FOUND);
+      throw new NotFoundException("No role found");
     }
     return roles;
   }
 
   @Get(":id")
   @RequirePermissions({ name: PermissionName.CREATE_ROLE })
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  async getRoleById(@Param("id", ParseIntPipe) id: number) {
-    let role: Role;
-    try {
-      role = await this.rolesService.getRoleById(id);
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new HttpException(
-          error.message,
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-      throw new HttpException(
-        "Internal Server Error",
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-
+  async getRoleById(@Param("id", ParseIntPipe) id: number): Promise<Role> {
+    const role = await this.rolesService.getRoleById(id);
     if (!role) {
-      throw new HttpException("Role not found", HttpStatus.NOT_FOUND);
+      throw new NotFoundException("Role not found");
     }
     return role;
   }
@@ -86,20 +54,7 @@ export class RolesController {
   // TODO: fixe type
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async create(@Body("role") role: Partial<Role>) {
-    try {
-      return await this.rolesService.create(role);
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new HttpException(
-          error.message,
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-      throw new HttpException(
-        "Internal Server Error",
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+    return await this.rolesService.create(role);
   }
 
   @Put(":id")
@@ -110,88 +65,30 @@ export class RolesController {
     @Param("id", ParseIntPipe) id: number,
     @Body("role") role: Partial<Role>,
   ) {
-    try {
-      return await this.rolesService.update(id, role);
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new HttpException(
-          error.message,
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-      throw new HttpException(
-        "Internal Server Error",
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+    return await this.rolesService.update(id, role);
   }
 
   @Post("assign")
   @RequirePermissions({ name: PermissionName.CREATE_ROLE })
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async assignRoleToUser(
     @Body("userId") userId: number,
     @Body("roleId") roleId: number,
-  ) {
-    try {
-      await this.rolesService.assignRoleToUser(roleId, userId);
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new HttpException(
-          error.message,
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-      throw new HttpException(
-        "Internal Server Error",
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+  ): Promise<void> {
+    await this.rolesService.assignRoleToUser(roleId, userId);
   }
 
   @Post("unassign")
   @RequirePermissions({ name: PermissionName.CREATE_ROLE })
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async unassignRoleToUser(
     @Body("userId") userId: number,
     @Body("roleId") roleId: number,
-  ) {
-    try {
-      await this.rolesService.unassignRoleToUser(roleId, userId);
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new HttpException(
-          error.message,
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-      throw new HttpException(
-        "Internal Server Error",
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+  ): Promise<void> {
+    await this.rolesService.unassignRoleToUser(roleId, userId);
   }
 
   @Delete("remove/:id")
   @RequirePermissions({ name: PermissionName.CREATE_ROLE })
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  async deleteRole(@Param("id", ParseIntPipe) id: number) {
-    try {
-      await this.rolesService.remove(id);
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new HttpException(
-          error.message,
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-      throw new HttpException(
-        "Internal Server Error",
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+  async deleteRole(@Param("id", ParseIntPipe) id: number): Promise<void> {
+    await this.rolesService.remove(id);
   }
 }

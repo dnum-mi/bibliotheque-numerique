@@ -30,9 +30,7 @@ export class InstructionTime extends ApplicationEntity {
   @Column({ nullable: false, default: "" })
   state: EInstructionTimeStateKey;
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  static findByDossierId(id: number) {
+  static findByDossierId(id: number): Promise<InstructionTime> {
     return this.findOne({
       where: { dossier: { id } },
       relations: { dossier: true },

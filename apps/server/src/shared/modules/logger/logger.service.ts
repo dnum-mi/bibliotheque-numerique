@@ -1,6 +1,5 @@
 import { ConsoleLogger, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import * as dayjs from "dayjs";
 import { LoggerService as LS } from "@nestjs/common/services/logger.service";
 
 @Injectable()
