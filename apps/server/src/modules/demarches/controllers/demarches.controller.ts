@@ -26,7 +26,7 @@ import {
 import { PermissionName } from "../../../shared/types/Permission.type";
 import { filterObjectFields } from "@biblio-num/shared";
 import { DossiersDSService } from "../../dossiers/providers/dossiers_ds.service";
-import { LoggerService } from "../../logger/logger.service";
+import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import { Demarche } from "../entities/demarche.entity";
 import { Dossier } from "../../dossiers/entities/dossier.entity";
 

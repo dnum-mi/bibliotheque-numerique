@@ -3,7 +3,7 @@ dotenv.config();
 
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "app.module";
-import { LoggerService } from "modules/logger/logger.service";
+import { LoggerService } from "shared/modules/logger/logger.service";
 import { OrganismesDatasService } from "plugins/organisme/organismes_datas/organismes_datas.service";
 
 // TODO: fixe type

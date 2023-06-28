@@ -1,5 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { LoggerService } from "modules/logger/logger.service";
+import { LoggerService } from "shared/modules/logger/logger.service";
 import { ConnectorService } from "../../../modules/connector/connector.service";
 import { DataSource } from "typeorm";
 import { OrganismesData } from "../entities";

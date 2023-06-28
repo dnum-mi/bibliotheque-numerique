@@ -1,7 +1,7 @@
 import { NestFactory } from "@nestjs/core";
 import { ConfigService } from "@nestjs/config";
 import { AppModule } from "./app.module";
-import { LoggerService } from "./modules/logger/logger.service";
+import { LoggerService } from "./shared/modules/logger/logger.service";
 import { configMain } from "./config-main";
 
 // TODO: fixe type

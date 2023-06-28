@@ -10,7 +10,7 @@ import {
   ParseIntPipe,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
-import { LoggerService } from "../../../modules/logger/logger.service";
+import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import { OrganismesService } from "./organismes.service";
 
 @ApiTags("Organismes")

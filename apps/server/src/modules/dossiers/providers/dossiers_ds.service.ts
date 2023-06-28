@@ -1,7 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { DsApiClient } from "@dnum-mi/ds-api-client";
 import { Dossier as TDossier } from "@dnum-mi/ds-api-client/dist/@types/types";
-import { LoggerService } from "../../logger/logger.service";
+import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import { DossiersService } from "./dossiers.service";
 import { DataSource } from "typeorm";
 import { FilesService } from "../../files/files.service";

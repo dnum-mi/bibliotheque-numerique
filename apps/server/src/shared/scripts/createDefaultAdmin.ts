@@ -3,7 +3,7 @@ dotenv.config();
 
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "../../app.module";
-import { LoggerService } from "../../modules/logger/logger.service";
+import { LoggerService } from "../modules/logger/logger.service";
 
 import { UsersService } from "../../modules/users/users.service";
 import { RolesService } from "../../modules/roles/providers/roles.service";

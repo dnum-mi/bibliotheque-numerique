@@ -4,7 +4,7 @@ import {
   OnModuleInit,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { LoggerService } from "../logger/logger.service";
+import { LoggerService } from "../../shared/modules/logger/logger.service";
 import { SchedulerRegistry } from "@nestjs/schedule";
 import { CronJob } from "cron";
 import { DemarchesDSService } from "../demarches/providers/demarches_ds.service";

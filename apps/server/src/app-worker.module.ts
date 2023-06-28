@@ -3,7 +3,7 @@ import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import configuration from "./config/worker.config";
 import dsConfig from "./config/ds.config";
-import { LoggerModule } from "./modules/logger/logger.module";
+import { LoggerModule } from "./shared/modules/logger/logger.module";
 import fileConfig from "./config/file.config";
 import { CronModule } from "./modules/cron/cron.module";
 import { ScheduleModule } from "@nestjs/schedule";

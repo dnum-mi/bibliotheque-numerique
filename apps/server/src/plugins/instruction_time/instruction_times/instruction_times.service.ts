@@ -7,7 +7,7 @@ import { In } from "typeorm";
 import dayjs, { type Dayjs } from "../../../shared/utils/dayjs";
 
 import { InstructionTime } from "../entities";
-import { LoggerService } from "../../../modules/logger/logger.service";
+import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import {
   TInstructionTimeMappingConfig,
   keyInstructionTime,
