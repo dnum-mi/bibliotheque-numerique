@@ -45,3 +45,9 @@ const toaster = useToaster()
     @update-service-worker="updateServiceWorker()"
   />
 </template>
+
+<style>
+.break-word {
+  word-wrap: break-word;
+}
+</style>

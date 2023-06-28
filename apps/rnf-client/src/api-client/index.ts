@@ -11,7 +11,7 @@ async function fetchRnfId(dossierId: number, instructeurEmail: string) {
       email: instructeurEmail,
     }),
   })
-  if (!res.ok) {
+  if (!res.ok && res.status !== 409) {
     const errorBody = await res.json().catch(() => res.text())
     if (errorBody.statusCode === 403) {
       throw new Error("Cette adresse courriel ne semble pas être l'email d'un instructeur de ce dossier.")

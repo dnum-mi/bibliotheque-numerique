@@ -1,10 +1,11 @@
 /// <reference types="vitest" />
 import { fileURLToPath, URL } from 'node:url'
-
 import { defineConfig } from 'vite'
+
 import { VitePWA } from 'vite-plugin-pwa'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
+import AutoImport from 'unplugin-auto-import/vite'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -21,6 +22,32 @@ export default defineConfig({
     vue(),
     vueJsx(),
     VitePWA({}),
+    AutoImport({
+      imports: [
+        // presets
+        'vue',
+        'vue-router',
+        'pinia',
+        {
+          '@vueuse/core': [
+            'useMouse',
+            'createReusableTemplate',
+          ],
+        },
+        // example type import
+        {
+          from: 'vue-router',
+          imports: ['RouteLocationRaw'],
+          type: true,
+        },
+      ],
+      dts: './auto-imports.d.ts',
+      eslintrc: {
+        enabled: true, // Default `false`
+        filepath: './.eslintrc-auto-import.json', // Default `./.eslintrc-auto-import.json`
+        globalsPropValue: true, // Default `true`, (true | false | 'readonly' | 'readable' | 'writable' | 'writeable')
+      },
+    }),
   ],
   base: process.env.BASE_URL || '/rnf',
   resolve: {
