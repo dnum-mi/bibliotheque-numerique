@@ -1,4 +1,32 @@
 describe('RNF creation form', () => {
+  let collisionObject = {};
+  let collisionResponse = {};
+  let reponseCreated = {};
+  before(() => {
+    cy.fixture('foundation').then(collision => {
+      collisionObject = collision
+      collisionResponse = {
+        "statusCode": 409,
+        "message": "Foundations have been found",
+        "data": {
+          collisionFoundations : Array.from({ length: 8 }).map((elt, idx) => ({
+                ...collisionObject,
+                "rnfId": `095-FDD-000002-04-${idx}`,
+              })),
+            currentFoundation: {
+              ...collisionObject,
+            },
+            },
+        "path": "/api/foundation",
+      }
+
+    })
+    cy.fixture('createDossier113').then(response => {
+      reponseCreated=response
+    })
+
+  })
+
   it('Should print an error if dossier doesnt exist', () => {
     cy.visit('/')
 
@@ -76,75 +104,56 @@ describe('RNF creation form', () => {
     cy.get('.fr-messages-group').should('not.exist')
   })
 
-  const collisionResponse = {
-    "statusCode": 409,
-    "message": "Foundations have been found",
-    "data": {
-      collisionFoundations : Array.from({ length: 8 }).map((elt, idx) => ({
-            "id": 2,
-            "createdAt": "2023-06-27T13:53:36.147Z",
-            "updatedAt": "2023-06-27T13:53:36.147Z",
-            "rnfId": `095-FDD-000002-04-${idx}`,
-            "type": "FDD",
-            "department": "95",
-            "title": "test de fondation",
-            "addressId": 2,
-            "phone": "+33612345678",
-            "email": "baudoin.tran@interieur.gouv.fr",
-            "address": {
-                "id": 2,
-                "createdAt": "2023-06-27T13:53:36.147Z",
-                "updatedAt": "2023-06-27T13:53:36.147Z",
-                "label": "1 Place du Coeur Battant 95490 Vauréal",
-                "type": "housenumber",
-                "streetAddress": "1 Place du Coeur Battant",
-                "streetNumber": "1",
-                "streetName": "Place du Coeur Battant",
-                "postalCode": "95490",
-                "cityName": "Vauréal",
-                "cityCode": "95637",
-                "departmentName": "Val-d'Oise",
-                "departmentCode": "95",
-                "regionName": "Île-de-France",
-                "regionCode": "11",
-            },
-          })),
-        currentFoundation: {
-          "type": "FDD",
-          "department": "95",
-          "title": "test de fondation",
-          "addressId": 2,
-          "phone": "+33612345678",
-          "email": "baudoin.tran@interieur.gouv.fr",
-          "address": {
-              "id": 2,
-              "createdAt": "2023-06-27T13:53:36.147Z",
-              "updatedAt": "2023-06-27T13:53:36.147Z",
-              "label": "1 Place du Coeur Battant 95490 Vauréal",
-              "type": "housenumber",
-              "streetAddress": "1 Place du Coeur Battant",
-              "streetNumber": "1",
-              "streetName": "Place du Coeur Battant",
-              "postalCode": "95490",
-              "cityName": "Vauréal",
-              "cityCode": "95637",
-              "departmentName": "Val-d'Oise",
-              "departmentCode": "95",
-              "regionName": "Île-de-France",
-              "regionCode": "11",
-          }},
-        },
-    "path": "/api/foundation",
-  }
-
-  it.only('Should display similar foundation', () => {
+  it('Should create an RNF id', () => {
     cy.visit('/')
 
-    cy.intercept({ url: '/api/rnf/foundation', method: 'POST' }, req => {
-      req.reply({ body: collisionResponse, statusCode: 409, headers: { 'Content-Type': 'application/json' }})
-    }).as('createRnf')
+    if(Cypress.env("WITH_MOCK_API")) {
+      cy.fixture('createDossier113').then(response => {
+        cy.intercept({ url: '/api/rnf/foundation', method: 'POST' },req => {
+          req.reply({ body: response, statusCode: 201, headers: { 'Content-Type': 'application/json' }})
+        }).as('createRnf')
+      })
+    } else {
+      cy.intercept({ url: '/api/rnf/foundation', method: 'POST' }).as('createRnf')
+    }
 
-    cy.get('.rnf-request').find('input[type=text]').type('17')
+    cy.get('.rnf-request').find('input[type=text]').type('113')
+
+    cy.get('.rnf-request') //
+      .find('input[type=email]')
+      .type('dev@pulsarr.fr')
+
+    cy.get('.rnf-request') //
+      .find('input[type=email]')
+      .type('{ENTER}')
+
+    cy.wait('@createRnf', { timeout: 10000 }) //
+      .its('response')
+      .should('have.property', 'statusCode', 201)
+
+    cy.url()
+      .should('include', '/result')
+    cy.get('h2').should('contain', ' a été créé, et ajouté en annotation privée.')
+    cy.get('h2').should('contain', '059-FDD-00')
+  })
+
+  const shouldSimilarFoundation = () => {
+    cy.visit('/')
+
+
+    if(Cypress.env("WITH_MOCK_API")) {
+      cy.intercept({ url: '/api/rnf/foundation', method: 'POST' }, req => {
+        const { forceCreate } = req.body
+        if(forceCreate) {
+          return req.reply({ body: reponseCreated, statusCode: 201, headers: { 'Content-Type': 'application/json' }})
+        }
+        req.reply({ body: collisionResponse, statusCode: 409, headers: { 'Content-Type': 'application/json' }})
+      }).as('createRnf')
+    } else {
+      cy.intercept({ url: '/api/rnf/foundation', method: 'POST' }).as('createRnf')
+    }
+
+    cy.get('.rnf-request').find('input[type=text]').type('113')
 
     cy.get('.rnf-request') //
       .find('input[type=email]')
@@ -161,27 +170,51 @@ describe('RNF creation form', () => {
     cy.get('.fr-alert').should('not.exist')
     cy.get('.collision').should('exist')
     cy.get('.fr-card').should('exist')
+
+    cy.get("footer").should('contain', 'Aucune structure ne correspond')
+    cy.get("button").should('contain', 'Créer un ID RNF')
+  }
+
+  it('Should display similar foundation', () => {
+    shouldSimilarFoundation()
+    cy.get('.fr-radio-group').eq(0).click()
+
+    cy.get("footer").should('contain', 'Une structure RNF a déjà été créée')
+    cy.get("button").should('contain', 'Rejeter la demande')
+
+    cy.get('h6').contains('Demande d’inscription au RNF').click()
+
+    cy.get("footer").should('contain', 'Aucune structure ne correspond')
+    cy.get("button").should('contain', 'Créer un ID RNF')
   })
 
-  it('Should create an RNF id', () => {
-    cy.visit('/')
 
-    cy.intercept({ url: '/api/rnf/foundation', method: 'POST' }).as('createRnf')
+  it('Should create an RNF id if there are similar foundations', () => {
+    shouldSimilarFoundation()
 
-    cy.get('.rnf-request').find('input[type=text]').type('113')
-
-    cy.get('.rnf-request') //
-      .find('input[type=email]')
-      .type('dev@pulsarr.fr')
-
-    cy.get('.rnf-request') //
-      .find('input[type=email]')
-      .type('{ENTER}')
-
+    cy.get('[data-testid="create-btn"]') //
+    .click()
     cy.wait('@createRnf', { timeout: 10000 }) //
-      .its('response')
-      .should('have.property', 'statusCode', 201)
+    .its('response')
+    .should('have.property', 'statusCode', 201)
 
-    cy.get('.fr-alert').should('contain', '059-FDD-00')
+    cy.url()
+      .should('include', '/result')
+    cy.get('h2').should('contain', ' a été créé, et ajouté en annotation privée.')
+
   })
+
+  it('Should reject an RNF id existed', () => {
+    shouldSimilarFoundation()
+    cy.get('.fr-radio-group').eq(0).click()
+
+    cy.get('[data-testid="create-btn"]') //
+    .click()
+
+    cy.url()
+      .should('include', '/result')
+    cy.get('h2').should('contain', 'Retournez dans Démarches Simplifiées pour refuser le dossier')
+
+  })
+
 })
