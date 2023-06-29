@@ -50,4 +50,16 @@ const toaster = useToaster()
 .break-word {
   word-wrap: break-word;
 }
+.flex {
+  display: flex;
+}
+.flex-col {
+  flex-direction: column;
+}
+.justify-center {
+  justify-content: center;
+}
+.items-center {
+  align-items: center;
+}
 </style>

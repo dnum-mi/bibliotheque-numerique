@@ -1,6 +1,6 @@
 import { foundationRoute } from './routes'
 
-async function fetchRnfId(dossierId: number, instructeurEmail: string) {
+async function fetchRnfId(dossierId: number, instructeurEmail: string, force: boolean) {
   const res = await fetch(foundationRoute, {
     method: 'POST',
     headers: {
@@ -9,6 +9,7 @@ async function fetchRnfId(dossierId: number, instructeurEmail: string) {
     body: JSON.stringify({
       dossierId,
       email: instructeurEmail,
+      forceCreate: force,
     }),
   })
   if (!res.ok && res.status !== 409) {

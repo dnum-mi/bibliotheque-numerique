@@ -49,12 +49,12 @@ function useRnfClient() {
   const collisions: FoundationOutputDto[] = reactive([])
   const currentFoundation: Ref<CurrentFoundationOutputDto> = ref({}) as Ref<CurrentFoundationOutputDto>
 
-  async function getRnfId(dossierId: number, instructeurEmail: string) {
+  async function getRnfId(dossierId: number, instructeurEmail: string, force: boolean) {
     try {
       requesting.value = true
       errorMessage.value = ''
       rnfId.value = ''
-      const res = await fetchRnfId(dossierId, instructeurEmail)
+      const res = await fetchRnfId(dossierId, instructeurEmail, force)
       const rnfResponseBody = await res.json()
 
       if (res.status === 409) {
