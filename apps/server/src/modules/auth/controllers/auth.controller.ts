@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
-import { CredentialsInputDto, UserOutputDto } from "@biblio-num/shared";
+import { CredentialsInputDto } from "@biblio-num/shared";
 import { AuthService } from "../providers/auth.service";
 import { LocalAuthGuard } from "../providers/local-auth.guard";
 import { JwtAuthGuard } from "../providers/jwt-auth.guard";
@@ -26,10 +26,7 @@ export class AuthController {
   @Post("sign-in")
   // TODO: fixe type
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  async signIn(
-    @Request() req,
-    @Body() body: CredentialsInputDto,
-  ): Promise<UserOutputDto> {
+  async signIn(@Request() req, @Body() body: CredentialsInputDto) {
     await this.authService.login(body);
     return req.user;
   }
