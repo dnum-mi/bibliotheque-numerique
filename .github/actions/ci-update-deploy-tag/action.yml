@@ -46,6 +46,7 @@ runs:
       run: |
         sed -i "s/bibliotheque_numerique-front:.*$/bibliotheque_numerique-front:${{ steps.get_version.outputs.version }}/" ${{ inputs.path }}
         sed -i "s/bibliotheque_numerique-back:.*$/bibliotheque_numerique-back:${{ steps.get_version.outputs.version }}/" ${{ inputs.path }}
+        sed -i "s/bibliotheque_numerique-rnf-back:.*$/bibliotheque_numerique-rnf-back:${{ steps.get_version.outputs.version }}/" ${{ inputs.path }}
 
     - name: Commit changes
       working-directory: ${{ inputs.repo }}
