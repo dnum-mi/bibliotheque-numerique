@@ -34,15 +34,15 @@ describe('RNF creation form', () => {
 
     cy.get('.rnf-request').find('input[type=text]').type('12')
 
-    cy.get('.rnf-request') //
+    cy.get('.rnf-request')
       .find('input[type=email]')
       .type('nonexisting@interieur.gouv.fr')
 
-    cy.get('.rnf-request') //
+    cy.get('.rnf-request')
       .find('input[type=email]')
       .type('{ENTER}')
 
-    cy.wait('@createRnf', { timeout: 10000 }) //
+    cy.wait('@createRnf', { timeout: 10000 })
       .its('response')
       .should('have.property', 'statusCode', 424)
 
@@ -56,15 +56,15 @@ describe('RNF creation form', () => {
 
     cy.get('.rnf-request').find('input[type=text]').type('17')
 
-    cy.get('.rnf-request') //
+    cy.get('.rnf-request')
       .find('input[type=email]')
       .type('nonexisting@interieur.gouv.fr')
 
-    cy.get('.rnf-request') //
+    cy.get('.rnf-request')
       .find('input[type=email]')
       .type('{ENTER}')
 
-    cy.wait('@createRnf', { timeout: 10000 }) //
+    cy.wait('@createRnf', { timeout: 10000 })
       .its('response')
       .should('have.property', 'statusCode', 403)
 
@@ -76,30 +76,30 @@ describe('RNF creation form', () => {
 
     cy.get('.rnf-request').find('input[type=text]').type('17')
 
-    cy.get('.rnf-request') //
+    cy.get('.rnf-request')
       .find('input[type=email]')
       .type('nonexisting@interieur.gouv.fr')
 
-    cy.get('[data-testid="reset-btn"]') //
+    cy.get('[data-testid="reset-btn"]')
       .click()
 
-    cy.get('.rnf-request') //
+    cy.get('.rnf-request')
       .find('input[type=email]')
       .should('have.value', '')
 
     cy.get('.fr-messages-group').should('not.exist')
 
-    cy.get('.rnf-request') //
+    cy.get('.rnf-request')
       .find('input[type=email]')
       .type('nonexisting@interieur')
 
-    cy.get('.rnf-request') //
+    cy.get('.rnf-request')
       .find('input[type=email]')
       .blur()
 
     cy.get('.fr-messages-group').should('contain', 'pas valide')
 
-    cy.get('[data-testid="reset-btn"]') //
+    cy.get('[data-testid="reset-btn"]')
       .click()
     cy.get('.fr-messages-group').should('not.exist')
   })
@@ -119,15 +119,15 @@ describe('RNF creation form', () => {
 
     cy.get('.rnf-request').find('input[type=text]').type('113')
 
-    cy.get('.rnf-request') //
+    cy.get('.rnf-request')
       .find('input[type=email]')
       .type('dev@pulsarr.fr')
 
-    cy.get('.rnf-request') //
+    cy.get('.rnf-request')
       .find('input[type=email]')
       .type('{ENTER}')
 
-    cy.wait('@createRnf', { timeout: 10000 }) //
+    cy.wait('@createRnf', { timeout: 10000 })
       .its('response')
       .should('have.property', 'statusCode', 201)
 
@@ -155,15 +155,15 @@ describe('RNF creation form', () => {
 
     cy.get('.rnf-request').find('input[type=text]').type('113')
 
-    cy.get('.rnf-request') //
+    cy.get('.rnf-request')
       .find('input[type=email]')
       .type('dev@pulsarr.fr')
 
-    cy.get('.rnf-request') //
+    cy.get('.rnf-request')
       .find('input[type=email]')
       .type('{ENTER}')
 
-    cy.wait('@createRnf', { timeout: 10000 }) //
+    cy.wait('@createRnf', { timeout: 10000 })
       .its('response')
       .should('have.property', 'statusCode', 409)
 
@@ -192,9 +192,9 @@ describe('RNF creation form', () => {
   it('Should create an RNF id if there are similar foundations', () => {
     shouldSimilarFoundation()
 
-    cy.get('[data-testid="create-btn"]') //
+    cy.get('[data-testid="create-btn"]')
     .click()
-    cy.wait('@createRnf', { timeout: 10000 }) //
+    cy.wait('@createRnf', { timeout: 10000 })
     .its('response')
     .should('have.property', 'statusCode', 201)
 
@@ -208,7 +208,7 @@ describe('RNF creation form', () => {
     shouldSimilarFoundation()
     cy.get('.fr-radio-group').eq(0).click()
 
-    cy.get('[data-testid="create-btn"]') //
+    cy.get('[data-testid="create-btn"]')
     .click()
 
     cy.url()

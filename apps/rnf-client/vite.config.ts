@@ -7,7 +7,6 @@ import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import AutoImport from 'unplugin-auto-import/vite'
 
-// https://vitejs.dev/config/
 export default defineConfig({
   server: {
     port: 5172,
@@ -24,7 +23,6 @@ export default defineConfig({
     VitePWA({}),
     AutoImport({
       imports: [
-        // presets
         'vue',
         'vue-router',
         'pinia',
@@ -34,7 +32,6 @@ export default defineConfig({
             'createReusableTemplate',
           ],
         },
-        // example type import
         {
           from: 'vue-router',
           imports: ['RouteLocationRaw'],
@@ -43,9 +40,9 @@ export default defineConfig({
       ],
       dts: './auto-imports.d.ts',
       eslintrc: {
-        enabled: true, // Default `false`
-        filepath: './.eslintrc-auto-import.json', // Default `./.eslintrc-auto-import.json`
-        globalsPropValue: true, // Default `true`, (true | false | 'readonly' | 'readable' | 'writable' | 'writeable')
+        enabled: true,
+        filepath: './.eslintrc-auto-import.json',
+        globalsPropValue: true,
       },
     }),
   ],
