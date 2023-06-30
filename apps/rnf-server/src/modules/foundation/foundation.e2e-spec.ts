@@ -1,15 +1,8 @@
-import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import { AppModule } from "@/app.module";
-import { DsService } from "@/modules/ds/providers/ds.service";
-import { dsServiceMock } from "@/test/mocks/ds-service.mock";
-import { mainConfig } from "@/main.config";
-import { LoggerService } from "@/shared/modules/logger/providers/logger.service";
-import { loggerServiceMock } from "@/test/mocks/logger-service.mock";
 import { PrismaService } from "@/shared/modules/prisma/providers/prisma.service";
 import { Foundation } from "@prisma/client";
-import { dotationDossierDataMock } from "@/test/datas/dossier-dotation.data.mock";
+import { createTestingModule } from "@/test/create-testing-module";
 
 const dumbFoundation = {
   rnfId: "033-FDD-000000-00",
@@ -94,19 +87,7 @@ describe("Foundation Controller (e2e)", () => {
   let prisma: PrismaService;
 
   beforeAll(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    })
-      .overrideProvider(DsService)
-      .useValue(dsServiceMock)
-      .overrideProvider(LoggerService)
-      .useValue(loggerServiceMock)
-      .compile();
-
-    app = moduleFixture.createNestApplication();
-    mainConfig(app);
-    prisma = moduleFixture.get<PrismaService>(PrismaService);
-    await app.init();
+    ({ app, prisma } = await createTestingModule());
   });
 
   beforeEach(async () => {
