@@ -7,6 +7,9 @@ import { OrganismesData } from "../../entities";
 
 export function getOrganismesData(): OrganismesData {
   const idRNA = idRNAFake();
+  const dataUpdateAt = faker.date.past();
+  const updateAt = faker.date.past(1, dataUpdateAt);
+
   return {
     organismesSource: {
       id: faker.datatype.number(),
@@ -15,8 +18,8 @@ export function getOrganismesData(): OrganismesData {
     id: faker.datatype.number(),
     idRef: idRNA,
     dataJson: JSON.parse(JSON.stringify(getDatasFromRNA(idRNA))),
-    dataUpdateAt: faker.date.past(),
+    dataUpdateAt,
     createAt: faker.date.past(),
-    updateAt: faker.date.past(),
+    updateAt,
   } as unknown as OrganismesData;
 }
