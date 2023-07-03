@@ -52,7 +52,7 @@ jobs:
             pnpm run lint:server
             pnpm run docker:db:up
             cp docker/.env-bn apps/server/.env
-          pnpm run test:server
+            pnpm run test:server
             pnpm run docker:db:down
       - name: run build
         run: |
