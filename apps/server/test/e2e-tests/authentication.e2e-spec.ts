@@ -27,4 +27,28 @@ describe("⚠️ TODO: Auth (e2e)", () => {
       })
       .expect(500); // TODO: should be 403
   });
+
+  it("shoud return 200 on connection", () => {
+    return request(app.getHttpServer())
+      .post("/auth/sign-in")
+      .send({
+        email: "admin@localhost.com",
+        password: "password",
+      })
+      .expect(201) // TODO: should be 200
+      .expect(({ body }) => {
+        expect(body).toMatchObject({
+          id: 1,
+          email: "admin@localhost.com",
+          password:
+            "$2b$10$kMNimu.ZLuSd9V6v0Lqf0ueFr6RImoGomwazi1pj7rD9xp5VgwOq6",
+        });
+        expect(body.roles?.[0]).toMatchObject({
+          id: 1,
+          name: "admin",
+          description: "App administrator, has full rights",
+          permissions: [],
+        });
+      });
+  });
 });

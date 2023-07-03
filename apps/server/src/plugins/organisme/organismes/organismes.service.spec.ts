@@ -43,11 +43,6 @@ describe("OrganismesService", () => {
     dataService = module.get<OrganismesDatasService>(OrganismesDatasService);
   });
 
-  // afterEach(async () => {
-  // await OrganismesData.delete({});
-  // await Connector.delete({});
-  // })
-
   it("should be defined", () => {
     expect(service).toBeDefined();
   });
@@ -59,6 +54,10 @@ describe("OrganismesService", () => {
       .mockResolvedValueOnce([{ status: "fulfilled", value: true }]);
 
     jest.spyOn(dataService, "findByIdRNA").mockResolvedValueOnce(fakeOrgData);
+
+    await service.upsertOrganisme(fakeOrgData[0].idRef, [
+      fakeOrgData[0].organismesSource as unknown as string,
+    ]);
 
     const organismeFound = await Organisme.findOneBy({
       idRef: fakeOrgData[0].idRef,

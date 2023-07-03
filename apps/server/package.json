@@ -44,6 +44,7 @@
     "test:unit": "NODE_ENV='test-unit' jest --config ./test/jest-unit.json",
     "fixtures": "NODE_ENV='test-e2e' fixtures-ts-node-esm load ./test/fixtures --dataSource=./test/data-source-e2e.typeorm.ts --sync",
     "test:e2e": "run-s fixtures && jest --config ./test/jest-e2e.json",
+    "test:e2e:dev": "run-s fixtures && jest --config ./test/jest-e2e.json --watch",
     "typeorm": "typeorm-ts-node-commonjs -d ./database/data-source.typeorm.ts",
     "migration:revert": "npm run typeorm migration:revert",
     "migration:run": "npm run typeorm migration:run",
