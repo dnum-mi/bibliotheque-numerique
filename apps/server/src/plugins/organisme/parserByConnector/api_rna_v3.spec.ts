@@ -6,19 +6,9 @@ import { LoggerService } from "../../../shared/modules/logger/logger.service";
 describe("Parser API_RNA_V3", () => {
   it("should have organisme", () => {
     const dataExpected = getDatasFromRNA();
-    const result = {
-      data: {
-        data: dataExpected,
-      },
-      status: 200,
-      statusText: "Ok",
-      headers: {},
-      config: {},
-    };
     const parser = new ParseApiRnaV3(
       loggerServiceMock as unknown as LoggerService,
     );
-    // parser.setDataJson(result);
 
     const organisme = parser.toOrganismeEntity(undefined, dataExpected);
     expect(organisme).toBeDefined();

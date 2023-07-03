@@ -1,7 +1,6 @@
 import { AxiosResponse } from "axios";
 import { Test, TestingModule } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { DataSource } from "typeorm";
 import { ConnectorModule } from "../../../modules/connector/connector.module";
 import { ConnectorService } from "../../../modules/connector/connector.service";
 import { Organisme, OrganismesData } from "../entities";
@@ -15,7 +14,7 @@ import {
   connectorTest,
   createOneConnector,
 } from "../../../shared/entities/__tests__";
-import { ConfigModule, ConfigService } from "@nestjs/config";
+import { ConfigModule } from "@nestjs/config";
 import configuration from "../../../config/configuration";
 import fileConfig from "../../../config/file.config";
 import { ParseToOrganismesModule } from "../parserByConnector/parse_to_organismes.module";
@@ -56,7 +55,7 @@ async function createNewOrgSrc() {
 // TODO: fixe type
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 class MockParseToOrg implements IParseToOrganisme<any, any> {
-  toOrganismeEntity(organisme: Organisme): Organisme {
+  toOrganismeEntity(): Organisme {
     throw new Error("Method not implemented.");
   }
 

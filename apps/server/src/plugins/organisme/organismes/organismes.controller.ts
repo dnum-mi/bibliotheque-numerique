@@ -4,9 +4,6 @@ import {
   Body,
   Param,
   Post,
-  HttpException,
-  HttpStatus,
-  Logger,
   ParseIntPipe,
   BadRequestException,
 } from "@nestjs/common";

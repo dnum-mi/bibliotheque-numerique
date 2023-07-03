@@ -5,11 +5,7 @@ import { JobLogModule } from "../job-log/job-log.module";
 import { DemarchesModule } from "../demarches/demarches.module";
 
 @Module({
-  imports: [
-    DossiersModule,
-    DemarchesModule,
-    JobLogModule,
-  ],
+  imports: [DossiersModule, DemarchesModule, JobLogModule],
   controllers: [],
   providers: [CronService],
 })

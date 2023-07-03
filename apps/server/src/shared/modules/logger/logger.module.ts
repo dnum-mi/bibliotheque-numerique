@@ -1,7 +1,6 @@
 import { Global, MiddlewareConsumer, Module } from "@nestjs/common";
 import { LoggerService } from "./logger.service";
-import configuration from "../../../config/configuration";
-import { ConfigModule, ConfigService } from "@nestjs/config";
+import { ConfigService } from "@nestjs/config";
 import { MorganMiddleware } from "@nest-middlewares/morgan";
 import { jsonFormat } from "./morgan-jsonformat.function";
 

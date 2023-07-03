@@ -60,10 +60,6 @@ describe("OrganismesService", () => {
 
     jest.spyOn(dataService, "findByIdRNA").mockResolvedValueOnce(fakeOrgData);
 
-    const org = await service.upsertOrganisme(fakeOrgData[0].idRef, [
-      fakeOrgData[0].organismesSource as unknown as string,
-    ]);
-
     const organismeFound = await Organisme.findOneBy({
       idRef: fakeOrgData[0].idRef,
     });

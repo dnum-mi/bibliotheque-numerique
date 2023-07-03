@@ -4,8 +4,6 @@ import {
   Get,
   Post,
   Put,
-  HttpException,
-  HttpStatus,
   Delete,
   Param,
   ParseIntPipe,
@@ -21,7 +19,6 @@ import {
 } from "../providers/permissions.guard";
 import { PermissionName } from "../../../shared/types/Permission.type";
 import { Role } from "../entities/role.entity";
-import { User } from "../../users/entities/user.entity";
 
 @ApiTags("Roles")
 @Controller("roles")

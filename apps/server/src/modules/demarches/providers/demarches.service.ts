@@ -1,10 +1,4 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  Logger,
-  NotFoundException,
-} from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { EntityManager, In, InsertResult } from "typeorm";
 import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import { ConfigService } from "@nestjs/config";
