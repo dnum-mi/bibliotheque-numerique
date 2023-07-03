@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { useRnfStore } from '@/stores/rnf-store'
-import { dsUrl } from '../config';
 
 const rnfStore = useRnfStore()
 
@@ -14,8 +13,13 @@ const subtitle = computed( () => created
   ? 'Retournez dans Démarches Simplifiées pour accepter le dossier.'
   : `L’identifiant ${rnfStore.rnfId} a été ajouté en annotation privée.`)
 
+  const dsUrl = ref('')
+
+  onMounted(async () => {
+    dsUrl.value = await rnfStore.getUrlDs()
+  })
   const onClick = () => {
-    location.href = `${dsUrl}${rnfStore.dossierId}`
+    location.href = `${dsUrl.value}/dossiers/${rnfStore.dossierId}`
   }
 </script>
 

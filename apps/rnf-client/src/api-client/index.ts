@@ -1,4 +1,4 @@
-import { foundationRoute } from './routes'
+import { foundationRoute, urlDSRoute } from './routes'
 
 async function fetchRnfId(dossierId: number, instructeurEmail: string, force: boolean) {
   const res = await fetch(foundationRoute, {
@@ -28,4 +28,24 @@ async function fetchRnfId(dossierId: number, instructeurEmail: string, force: bo
   return res
 }
 
-export { fetchRnfId }
+
+async function fetchUrlDS(): Promise<string> {
+  const res = await fetch(urlDSRoute, {
+    method: 'GET',
+    headers: {
+      'content-type': 'application/json',
+    },
+  })
+
+  if (!res.ok) {
+    throw new Error(await res.text())
+  }
+
+  const json = await res.json()
+  return json.url;
+}
+
+export {
+  fetchRnfId,
+  fetchUrlDS,
+}
