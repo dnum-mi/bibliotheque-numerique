@@ -4,6 +4,7 @@ import { AppModule } from "../../src/app.module";
 import { configMain } from "../../src/config-main";
 import * as request from "supertest";
 import { loggerServiceMock } from "../mock/logger-service.mock";
+import { LoggerService } from "../../src/shared/modules/logger/logger.service";
 
 describe("⚠️ TODO: Auth (e2e)", () => {
   let app: INestApplication;
@@ -11,10 +12,12 @@ describe("⚠️ TODO: Auth (e2e)", () => {
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
-    }).compile();
+    })
+      .overrideProvider(LoggerService)
+      .useValue(loggerServiceMock)
+      .compile();
     app = moduleFixture.createNestApplication();
     configMain(app);
-    app.useLogger(loggerServiceMock);
     await app.init();
   });
 
@@ -25,7 +28,7 @@ describe("⚠️ TODO: Auth (e2e)", () => {
         email: "toto",
         password: "toto",
       })
-      .expect(500); // TODO: should be 403
+      .expect(404);
   });
 
   it("shoud return 200 on connection", () => {
@@ -35,7 +38,7 @@ describe("⚠️ TODO: Auth (e2e)", () => {
         email: "admin@localhost.com",
         password: "password",
       })
-      .expect(201) // TODO: should be 200
+      .expect(200)
       .expect(({ body }) => {
         expect(body).toMatchObject({
           id: 1,

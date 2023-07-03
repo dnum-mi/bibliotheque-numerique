@@ -474,6 +474,9 @@ importers:
       dotenv:
         specifier: ^16.0.3
         version: 16.1.4
+      dotenv-cli:
+        specifier: 7.2.1
+        version: 7.2.1
       ejs:
         specifier: ^3.1.9
         version: 3.1.9
@@ -6279,7 +6282,6 @@ packages:
       dotenv: 16.1.4
       dotenv-expand: 10.0.0
       minimist: 1.2.8
-    dev: true
 
   /dotenv-expand@10.0.0:
     resolution: {integrity: sha512-GopVGCpVS1UKH75VKHGuQFqS1Gusej0z4FyQkPdwjil2gNIv+LNsqBlboOzpJFZKVT95GkCyWJbBSdFEFUWI2A==}

@@ -6,7 +6,7 @@ clear
 dotenv -e ./src/test/.env.test prisma migrate reset -- -f
 clear
 echo "==========================================\n========= Launching e2e tests.. ==========\n=========================================="
-if [ $1 = 'dev' ]
+if [ "x$1" = "xdev" ]
 then
     dotenv -e ./src/test/.env.test jest -- --config ./src/test/jest-e2e.json --watch --silent=false
 else
