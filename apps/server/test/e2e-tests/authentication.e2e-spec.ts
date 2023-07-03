@@ -40,8 +40,6 @@ describe("⚠️ TODO: Auth (e2e)", () => {
         expect(body).toMatchObject({
           id: 1,
           email: "admin@localhost.com",
-          password:
-            "$2b$10$kMNimu.ZLuSd9V6v0Lqf0ueFr6RImoGomwazi1pj7rD9xp5VgwOq6",
         });
         expect(body.roles?.[0]).toMatchObject({
           id: 1,

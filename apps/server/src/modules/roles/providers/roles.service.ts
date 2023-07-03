@@ -44,7 +44,6 @@ export class RolesService {
   }
 
   async unassignRoleToUser(roleId: number, userId: number): Promise<User> {
-    debugger; // TODO: ???
     const user = await User.findOne({
       where: { id: userId },
       relations: { roles: true },
