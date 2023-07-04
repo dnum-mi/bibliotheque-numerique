@@ -30,6 +30,7 @@ export default defineConfig({
           '@vueuse/core': [
             'useMouse',
             'createReusableTemplate',
+            'useStorage',
           ],
         },
         {
