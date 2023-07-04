@@ -11,7 +11,7 @@ describe('RNF creation form', () => {
         "data": {
           collisionFoundations : Array.from({ length: 8 }).map((elt, idx) => ({
                 ...collisionObject,
-                "rnfId": `095-FDD-000002-04-${idx}`,
+                "rnfId": `095-FDD-000002-0${idx}`,
               })),
             currentFoundation: {
               ...collisionObject,
@@ -34,15 +34,15 @@ describe('RNF creation form', () => {
 
     cy.get('.rnf-request').find('input[type=text]').type('12')
 
-    cy.get('.rnf-request')
+    cy.get('.rnf-request') //
       .find('input[type=email]')
       .type('nonexisting@interieur.gouv.fr')
 
-    cy.get('.rnf-request')
+    cy.get('.rnf-request') //
       .find('input[type=email]')
       .type('{ENTER}')
 
-    cy.wait('@createRnf', { timeout: 10000 })
+    cy.wait('@createRnf', { timeout: 10000 }) //
       .its('response')
       .should('have.property', 'statusCode', 424)
 
@@ -56,15 +56,15 @@ describe('RNF creation form', () => {
 
     cy.get('.rnf-request').find('input[type=text]').type('17')
 
-    cy.get('.rnf-request')
+    cy.get('.rnf-request') //
       .find('input[type=email]')
       .type('nonexisting@interieur.gouv.fr')
 
-    cy.get('.rnf-request')
+    cy.get('.rnf-request') //
       .find('input[type=email]')
       .type('{ENTER}')
 
-    cy.wait('@createRnf', { timeout: 10000 })
+    cy.wait('@createRnf', { timeout: 10000 }) //
       .its('response')
       .should('have.property', 'statusCode', 403)
 
@@ -76,30 +76,30 @@ describe('RNF creation form', () => {
 
     cy.get('.rnf-request').find('input[type=text]').type('17')
 
-    cy.get('.rnf-request')
+    cy.get('.rnf-request') //
       .find('input[type=email]')
       .type('nonexisting@interieur.gouv.fr')
 
-    cy.get('[data-testid="reset-btn"]')
+    cy.get('[data-testid="reset-btn"]') //
       .click()
 
-    cy.get('.rnf-request')
+    cy.get('.rnf-request') //
       .find('input[type=email]')
       .should('have.value', '')
 
     cy.get('.fr-messages-group').should('not.exist')
 
-    cy.get('.rnf-request')
+    cy.get('.rnf-request') //
       .find('input[type=email]')
       .type('nonexisting@interieur')
 
-    cy.get('.rnf-request')
+    cy.get('.rnf-request') //
       .find('input[type=email]')
       .blur()
 
     cy.get('.fr-messages-group').should('contain', 'pas valide')
 
-    cy.get('[data-testid="reset-btn"]')
+    cy.get('[data-testid="reset-btn"]') //
       .click()
     cy.get('.fr-messages-group').should('not.exist')
   })
@@ -119,27 +119,26 @@ describe('RNF creation form', () => {
 
     cy.get('.rnf-request').find('input[type=text]').type('113')
 
-    cy.get('.rnf-request')
+    cy.get('.rnf-request') //
       .find('input[type=email]')
       .type('dev@pulsarr.fr')
 
-    cy.get('.rnf-request')
+    cy.get('.rnf-request') //
       .find('input[type=email]')
       .type('{ENTER}')
 
-    cy.wait('@createRnf', { timeout: 10000 })
+    cy.wait('@createRnf', { timeout: 10000 }) //
       .its('response')
       .should('have.property', 'statusCode', 201)
 
-    cy.url()
+    cy.url() //
       .should('include', '/result')
     cy.get('h2').should('contain', ' a été créé, et ajouté en annotation privée.')
     cy.get('h2').should('contain', '059-FDD-00')
   })
 
-  const shouldSimilarFoundation = () => {
+  const shouldDisplaySimilarFoundations = () => {
     cy.visit('/')
-
 
     if(Cypress.env("WITH_MOCK_API")) {
       cy.intercept({ url: '/api/rnf/foundation', method: 'POST' }, req => {
@@ -155,15 +154,15 @@ describe('RNF creation form', () => {
 
     cy.get('.rnf-request').find('input[type=text]').type('113')
 
-    cy.get('.rnf-request')
+    cy.get('.rnf-request') //
       .find('input[type=email]')
       .type('dev@pulsarr.fr')
 
-    cy.get('.rnf-request')
+    cy.get('.rnf-request') //
       .find('input[type=email]')
       .type('{ENTER}')
 
-    cy.wait('@createRnf', { timeout: 10000 })
+    cy.wait('@createRnf', { timeout: 10000 }) //
       .its('response')
       .should('have.property', 'statusCode', 409)
 
@@ -176,7 +175,7 @@ describe('RNF creation form', () => {
   }
 
   it('Should display similar foundation', () => {
-    shouldSimilarFoundation()
+    shouldDisplaySimilarFoundations()
     cy.get('.fr-radio-group').eq(0).click()
 
     cy.get("footer").should('contain', 'Une structure RNF a déjà été créée')
@@ -190,28 +189,28 @@ describe('RNF creation form', () => {
 
 
   it('Should create an RNF id if there are similar foundations', () => {
-    shouldSimilarFoundation()
+    shouldDisplaySimilarFoundations()
 
-    cy.get('[data-testid="create-btn"]')
+    cy.get('[data-testid="create-btn"]') //
     .click()
-    cy.wait('@createRnf', { timeout: 10000 })
+    cy.wait('@createRnf', { timeout: 10000 }) //
     .its('response')
     .should('have.property', 'statusCode', 201)
 
-    cy.url()
+    cy.url() //
       .should('include', '/result')
     cy.get('h2').should('contain', ' a été créé, et ajouté en annotation privée.')
 
   })
 
   it('Should reject an RNF id existed', () => {
-    shouldSimilarFoundation()
+    shouldDisplaySimilarFoundations()
     cy.get('.fr-radio-group').eq(0).click()
 
-    cy.get('[data-testid="create-btn"]')
+    cy.get('[data-testid="create-btn"]') //
     .click()
 
-    cy.url()
+    cy.url() //
       .should('include', '/result')
     cy.get('h2').should('contain', 'Retournez dans Démarches Simplifiées pour refuser le dossier')
 
