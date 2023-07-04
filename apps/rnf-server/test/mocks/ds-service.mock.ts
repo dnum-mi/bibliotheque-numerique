@@ -1,5 +1,5 @@
-import { dotationDossierDataMock } from "@/test/datas/dossier-dotation.data.mock";
-import { entrepriseDossierDataMock } from "@/test/datas/dossier-entreprise.data.mock";
+import { dotationDossierDataMock } from "./datas/dossier-dotation.data.mock";
+import { entrepriseDossierDataMock } from "./datas/dossier-entreprise.data.mock";
 import { DsApiError } from "@dnum-mi/ds-api-client";
 
 const dossierNotFoundGraphQlError = {

@@ -3,9 +3,9 @@ import { DsService } from "@/modules/ds/providers/ds.service";
 import { DsMapperService } from "@/modules/ds/providers/ds-mapper.service";
 import { Dossier } from "@dnum-mi/ds-api-client";
 import { LoggerService } from "@/shared/modules/logger/providers/logger.service";
-import { loggerServiceMock } from "@/test/mocks/logger-service.mock";
-import { dotationDossierDataMock } from "@/test/datas/dossier-dotation.data.mock";
-import { entrepriseDossierDataMock } from "@/test/datas/dossier-entreprise.data.mock";
+import { loggerServiceMock } from "../../../../test/mocks/logger-service.mock";
+import { dotationDossierDataMock } from "../../../../test/mocks/datas/dossier-dotation.data.mock";
+import { entrepriseDossierDataMock } from "../../../../test/mocks/datas/dossier-entreprise.data.mock";
 import { ConfigService } from "@nestjs/config";
 
 describe("DsService", () => {

@@ -16,7 +16,7 @@ import { LocalAuthGuard } from "../providers/local-auth.guard";
 import { JwtAuthGuard } from "../providers/jwt-auth.guard";
 import { AuthenticatedGuard } from "../providers/authenticated.guard";
 
-/* The TODO: of this file must be done after creating what nestjs calls "e2e-tests" */
+/* The TODO: of this file must be done after creating what nestjs calls "tests" */
 @ApiTags("Auth")
 @Controller("auth")
 export class AuthController {

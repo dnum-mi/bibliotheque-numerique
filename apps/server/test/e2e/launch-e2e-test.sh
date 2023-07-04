@@ -9,7 +9,7 @@ dotenv -e ./test/.env.test pnpm run fixtures
 echo "============================================\n======== Launching e2e tests.. =============\n============================================"
 if [ "x$1" = "xdev" ]
 then
-    dotenv -e ./test/.env.test jest -- --config ./test/jest-e2e.json --watch --silent=false
+    dotenv -e ./test/.env.test jest -- --config ./test/e2e/jest-e2e.json --watch --silent=false
 else
-    dotenv -e ./test/.env.test jest -- --config ./test/jest-e2e.json
+    dotenv -e ./test/.env.test jest -- --config ./test/e2e/jest-e2e.json --detectOpenHandles --silent=true
 fi

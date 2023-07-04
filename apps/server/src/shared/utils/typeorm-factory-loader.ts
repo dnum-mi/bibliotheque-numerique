@@ -19,7 +19,6 @@ export const typeormFactoryLoader = {
     logger: LoggerService,
   ): Promise<DataSourceOptions> => {
     const options = configService.get("database");
-
     const dataSource = new DataSource(options);
     await dataSource
       .initialize()

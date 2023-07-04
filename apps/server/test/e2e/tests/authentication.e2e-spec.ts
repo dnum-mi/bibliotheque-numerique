@@ -1,24 +1,16 @@
-import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
-import { AppModule } from "../../src/app.module";
-import { configMain } from "../../src/config-main";
 import * as request from "supertest";
-import { loggerServiceMock } from "../mock/logger-service.mock";
-import { LoggerService } from "../../src/shared/modules/logger/logger.service";
+import { TestingModuleFactory } from "../testing-module.factory";
 
 describe("⚠️ TODO: Auth (e2e)", () => {
   let app: INestApplication;
 
   beforeAll(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    })
-      .overrideProvider(LoggerService)
-      .useValue(loggerServiceMock)
-      .compile();
-    app = moduleFixture.createNestApplication();
-    configMain(app);
-    await app.init();
+    app = await TestingModuleFactory();
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   it("shoud return 403 on bad sign_in", () => {
@@ -31,8 +23,8 @@ describe("⚠️ TODO: Auth (e2e)", () => {
       .expect(404);
   });
 
-  it("shoud return 200 on connection", () => {
-    return request(app.getHttpServer())
+  it("shoud return 200 on connection", async () => {
+    await request(app.getHttpServer())
       .post("/auth/sign-in")
       .send({
         email: "admin@localhost.com",

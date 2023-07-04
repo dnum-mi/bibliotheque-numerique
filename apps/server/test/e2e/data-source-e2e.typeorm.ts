@@ -1,5 +1,5 @@
 import { DataSource } from "typeorm";
-import { options } from "../database/typeorm.config";
+import { options } from "../../database/typeorm.config";
 import { DataSourceOptions } from "typeorm/data-source/DataSourceOptions";
 
 // this is not use by the code. But only for fixtures

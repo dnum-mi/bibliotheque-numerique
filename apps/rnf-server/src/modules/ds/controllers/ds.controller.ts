@@ -22,7 +22,7 @@ export class DsController {
   getDsUrl(): GetDsUrlOutputDto {
     this.logger.verbose("getDsUrl");
     return {
-      url: `https://${this.dsHost}`,
+      url: this.dsHost,
     };
   }
 }

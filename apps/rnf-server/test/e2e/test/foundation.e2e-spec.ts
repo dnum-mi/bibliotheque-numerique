@@ -2,7 +2,7 @@ import { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { PrismaService } from "@/shared/modules/prisma/providers/prisma.service";
 import { Foundation } from "@prisma/client";
-import { createTestingModule } from "@/test/create-testing-module";
+import { testingModuleFactory } from "../testing-module.factory";
 
 const dumbFoundation = {
   rnfId: "033-FDD-000000-00",
@@ -87,7 +87,7 @@ describe("Foundation Controller (e2e)", () => {
   let prisma: PrismaService;
 
   beforeAll(async () => {
-    ({ app, prisma } = await createTestingModule());
+    ({ app, prisma } = await testingModuleFactory());
   });
 
   beforeEach(async () => {
@@ -95,6 +95,11 @@ describe("Foundation Controller (e2e)", () => {
     await prisma.$executeRaw`ALTER SEQUENCE "Foundation_id_seq" RESTART WITH 1;`;
     await prisma.address.deleteMany({});
     await prisma.$executeRaw`ALTER SEQUENCE "Address_id_seq" RESTART WITH 1;`;
+  });
+
+  afterAll(async () => {
+    await app.close();
+    await prisma.$disconnect();
   });
 
   it("POST /foundation - Should return 400 if no dossierId provided", () => {

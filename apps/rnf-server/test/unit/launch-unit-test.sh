@@ -5,7 +5,7 @@ clear
 echo "==========================================\n========= Launching unit tests.. =========\n=========================================="
 if [ "x$1" = "xdev" ]
 then
-    jest --config ./src/test/jest-unit.json --watch --silent=false
+    jest --config ./test/unit/jest-unit.json --watch --silent=false
 else
-    jest --config ./src/test/jest-unit.json
+    jest --config ./test/unit/jest-unit.json --detectOpenHandles --silent=true
 fi
