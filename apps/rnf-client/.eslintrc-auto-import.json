@@ -78,6 +78,7 @@
     "mapWritableState": true,
     "setActivePinia": true,
     "setMapStoreSuffix": true,
-    "storeToRefs": true
+    "storeToRefs": true,
+    "useStorage": true
   }
 }
