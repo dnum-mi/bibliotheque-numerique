@@ -1,8 +1,8 @@
-import { Logger } from "@nestjs/common";
 import { toDate } from "@biblio-num/shared";
 import { Organisme } from "../entities";
 import { IParseToOrganisme } from "./parse_to_organisme.interface";
-import { LoggerService } from "../../../modules/logger/logger.service";
+import { LoggerService } from "../../../shared/modules/logger/logger.service";
+
 export type TDataApiRnaV1 = {
   id: number;
   is_waldec: string;
@@ -67,9 +67,9 @@ export type TResultApiRnaV1 = {
 export default class ParseApiRnaV1
   implements IParseToOrganisme<Partial<TDataApiRnaV1>, TResultApiRnaV1>
 {
-  private readonly logger = new Logger(
-    ParseApiRnaV1.name,
-  ) as unknown as LoggerService;
+  constructor(private readonly logger: LoggerService) {
+    this.logger.setContext(this.constructor.name);
+  }
 
   toOrganismeEntity(
     organisme: Organisme,
@@ -137,9 +137,11 @@ export default class ParseApiRnaV1
   }
 
   dataJson: Partial<TDataApiRnaV1>;
+
   setDataJson(result: { data: Partial<TResultApiRnaV1> }): void {
     this.dataJson = result?.data?.association;
   }
+
   getDataUpdateAt(): Date {
     return new Date(this.dataJson?.derniere_maj);
   }

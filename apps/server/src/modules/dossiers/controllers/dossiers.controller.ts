@@ -5,9 +5,8 @@ import {
   Param,
   Body,
   Delete,
-  HttpException,
-  HttpStatus,
   HttpCode,
+  NotFoundException,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { FilterPipe } from "../../../shared/pipe/filter.pipe";
@@ -20,130 +19,42 @@ export class DossiersController {
   constructor(private readonly dossiersService: DossiersService) {}
 
   @Get()
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  async findAll() {
-    let dossiers: Dossier[];
-    try {
-      dossiers = await this.dossiersService.findWithFilter();
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new HttpException(
-          error.message,
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-      throw new HttpException(
-        "Internal Server Error",
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-
+  async findAll(): Promise<Dossier[]> {
+    const dossiers = await this.dossiersService.findWithFilter();
     if (dossiers.length === 0) {
-      throw new HttpException("No dossier found", HttpStatus.NOT_FOUND);
+      throw new NotFoundException("No dossier found");
     }
     return dossiers;
   }
 
   @Post("search")
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  async searchDossier(@Body("filter", FilterPipe) filter: object) {
-    let dossiers: Dossier[];
-    try {
-      dossiers = await this.dossiersService.findWithFilter(filter);
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new HttpException(
-          error.message,
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-      throw new HttpException(
-        "Internal Server Error",
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-
-    return dossiers;
+  async searchDossier(
+    @Body("filter", FilterPipe) filter: object,
+  ): Promise<Dossier[]> {
+    return this.dossiersService.findWithFilter(filter);
   }
 
   @Get(":id")
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  async findOne(@Param("id") id: string) {
-    let dossier: Dossier;
-    try {
-      dossier = await this.dossiersService.findOne(+id);
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new HttpException(
-          error.message,
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-      throw new HttpException(
-        "Internal Server Error",
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-
+  async findOne(@Param("id") id: string): Promise<Dossier> {
+    const dossier = await this.dossiersService.findOne(+id);
     if (!dossier) {
-      throw new HttpException(
-        `Dossier id: ${id} not found`,
-        HttpStatus.NOT_FOUND,
-      );
+      throw new NotFoundException(`Dossier id: ${id} not found`);
     }
     return dossier;
   }
 
   @Get(":id/detail")
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  async findOneWithDetail(@Param("id") id: string) {
-    let dossier: Dossier;
-    try {
-      dossier = await this.dossiersService.findOneWithDetail(+id);
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new HttpException(
-          error.message,
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-      throw new HttpException(
-        "Internal Server Error",
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-
+  async findOneWithDetail(@Param("id") id: string): Promise<Dossier> {
+    const dossier = await this.dossiersService.findOneWithDetail(+id);
     if (!dossier) {
-      throw new HttpException(
-        `Dossier id: ${id} not found`,
-        HttpStatus.NOT_FOUND,
-      );
+      throw new NotFoundException(`Dossier id: ${id} not found`);
     }
     return dossier;
   }
 
   @Delete(":id")
   @HttpCode(204)
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  async remove(@Param("id") id: string) {
-    try {
-      return await this.dossiersService.remove(+id);
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new HttpException(
-          error.message,
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-      throw new HttpException(
-        "Internal Server Error",
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+  async remove(@Param("id") id: string): Promise<Dossier | void> {
+    return this.dossiersService.remove(+id);
   }
 }

@@ -1,6 +1,6 @@
-import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { EntityManager, In, InsertResult } from "typeorm";
-import { LoggerService } from "../../logger/logger.service";
+import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import { ConfigService } from "@nestjs/config";
 import { PermissionName } from "../../../shared/types/Permission.type";
 import { TConfig } from "../../../config/configuration";
@@ -10,11 +10,10 @@ import { User } from "../../users/entities/user.entity";
 
 @Injectable()
 export class DemarchesService {
-  private readonly logger = new Logger(
-    DemarchesService.name,
-  ) as unknown as LoggerService;
-
-  constructor(private configService: ConfigService) {}
+  constructor(
+    private configService: ConfigService,
+    private logger: LoggerService,
+  ) {}
 
   private _typeOrganismeFromDemarcheDs(
     demarcheDS: DemarcheDS,
@@ -54,59 +53,22 @@ export class DemarchesService {
       state: demarcheDS.dataJson.state,
       typeOrganisme: this._typeOrganismeFromDemarcheDs(demarcheDS),
     }));
-    try {
-      return await Demarche.upsertDemarche(
-        toUpsert,
-        transactionalEntityManager,
-      );
-    } catch (error) {
-      this.logger.error({
-        short_message: `Erreur pendant la mise à jour des démarches numéros: ${demarchesDS
-          .map((d) => d.id)
-          .toString()}`,
-        full_message: error.toString(),
-      });
-      throw new Error("Unable to update demarches");
-    }
+    return await Demarche.upsertDemarche(toUpsert, transactionalEntityManager);
   }
 
   async findById(id: number): Promise<Demarche> {
-    try {
-      return await Demarche.findById(id);
-    } catch (error) {
-      this.logger.error({
-        short_message: `Échec récupération de la démarche id: ${id}`,
-        full_message: error.toString(),
-      });
-      throw new Error(`Unable to retrieve demarche id: ${id}`);
-    }
+    return await Demarche.findById(id);
   }
 
   async findByDsId(id: number): Promise<Demarche> {
-    try {
-      return await Demarche.findByDsId(id);
-    } catch (error) {
-      this.logger.error({
-        short_message: `Échec récupération de la démarche number: ${id}`,
-        full_message: error.toString(),
-      });
-      throw new Error(`Unable to retrieve demarche number: ${id}`);
-    }
+    return await Demarche.findByDsId(id);
   }
 
   async findWithFilter(user: User, filter: object = {}): Promise<Demarche[]> {
-    try {
-      return Demarche.findWithFilter({
-        ...filter,
-        ...this._getFiltersFromUserPermissions(user),
-      });
-    } catch (error) {
-      this.logger.error({
-        short_message: "Échec récupération des démarches",
-        full_message: error.toString(),
-      });
-      throw new Error("Unable to retrieve demarches");
-    }
+    return Demarche.findWithFilter({
+      ...filter,
+      ...this._getFiltersFromUserPermissions(user),
+    });
   }
 
   // TODO: fixe type
@@ -138,23 +100,10 @@ export class DemarchesService {
   }
 
   async updateDemarche(id: number, demarche: Partial<Demarche>): Promise<void> {
-    let result;
-    try {
-      result = await Demarche.update(id, demarche);
-    } catch (error) {
-      this.logger.error({
-        short_message: "Échec la mise à jour des mappingColumns pour démarche",
-        full_message: error.toString(),
-      });
-      throw new Error("Unable to retrieve demarches");
-    }
+    const result = await Demarche.update(id, demarche);
     if (result.affected === 0) {
-      throw new HttpException(
-        `Demarche id: ${id} not found`,
-        HttpStatus.NOT_FOUND,
-      );
+      throw new NotFoundException(`Demarche id: ${id} not found`);
     }
-    return;
   }
 
   private _getFiltersFromUserPermissions(user: User): object {

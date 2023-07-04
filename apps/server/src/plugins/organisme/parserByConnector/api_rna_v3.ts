@@ -1,7 +1,6 @@
 import { IParseToOrganisme } from "./parse_to_organisme.interface";
 import { Organisme } from "../entities";
-import { Logger } from "@nestjs/common";
-import { LoggerService } from "../../../modules/logger/logger.service";
+import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import { toDate } from "@biblio-num/shared";
 
 export type TDataApiRnaV3 = {
@@ -38,11 +37,12 @@ export type TResultApiRnaV3 = {
 export default class ParseApiRnaV3
   implements IParseToOrganisme<Partial<TDataApiRnaV3>, TResultApiRnaV3>
 {
-  private readonly logger = new Logger(
-    ParseApiRnaV3.name,
-  ) as unknown as LoggerService;
+  constructor(private logger: LoggerService) {
+    this.logger.setContext(this.constructor.name);
+  }
 
   dataJson: Partial<TDataApiRnaV3>;
+
   getDataUpdateAt(): Date {
     return new Date(this.dataJson.mise_a_jour);
   }

@@ -1,126 +1,71 @@
-import { Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { DataSource } from "typeorm";
-import { LoggerService } from "../../../modules/logger/logger.service";
+import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import { Organisme, OrganismesData } from "../entities";
 import { OrganismesDatasService } from "../organismes_datas/organismes_datas.service";
 import { ParseToOrganismesService } from "../parserByConnector/parse_to_organismes.service";
 
 @Injectable()
 export class OrganismesService {
-  private readonly logger = new Logger(
-    OrganismesService.name,
-  ) as unknown as LoggerService;
-
   constructor(
     private dataSource: DataSource,
     private parserToOrganismes: ParseToOrganismesService,
     private organismesDatasService: OrganismesDatasService,
-  ) {}
-
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  findAll() {
-    try {
-      return Organisme.find();
-    } catch (error) {
-      this.logger.error({
-        short_message: "Échec récupération des organismes",
-        full_message: error.toString(),
-      });
-      throw new Error("Unable to retrieve demarches");
-    }
+    private readonly logger: LoggerService,
+  ) {
+    this.logger.setContext(this.constructor.name);
   }
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  findOneById(id: number) {
-    try {
-      return Organisme.findOne({
-        where: { id },
-        relations: { organismeDatas: true },
-      });
-    } catch (error) {
-      this.logger.error({
-        short_message: "Échec récupération des organismes",
-        full_message: error.toString(),
-      });
-      throw new Error("Unable to retrieve demarches");
-    }
+  findAll(): Promise<Organisme[]> {
+    return Organisme.find();
   }
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  findOneByIdRef(idRef: string) {
-    try {
-      return Organisme.findOne({
-        where: { idRef },
-      });
-    } catch (error) {
-      this.logger.error({
-        short_message: "Échec récupération des organismes",
-        full_message: error.toString(),
-      });
-      throw new Error("Unable to retrieve demarches");
-    }
+  findOneById(id: number): Promise<Organisme> {
+    return Organisme.findOne({
+      where: { id },
+      relations: { organismeDatas: true },
+    });
   }
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  async upsertOrganisme(idRef: string, sources: string[]) {
+  findOneByIdRef(idRef: string): Promise<Organisme> {
+    return Organisme.findOne({
+      where: { idRef },
+    });
+  }
+
+  async upsertOrganisme(idRef: string, sources: string[]): Promise<Organisme> {
     let organismeDatas: OrganismesData[] = [];
-    try {
-      await this.organismesDatasService.findAndAddByIdRnaFromAllApi(
-        idRef,
-        sources,
-      );
-
-      organismeDatas = await this.organismesDatasService.findByIdRNA(idRef);
-    } catch (error) {
-      this.logger.error({
-        short_message: `Échec de récupération d'un organisme: ${idRef}`,
-        full_message: error.stack,
-      });
-      throw new Error(`Unable to upload organisme ${idRef}`);
-    }
+    await this.organismesDatasService.findAndAddByIdRnaFromAllApi(
+      idRef,
+      sources,
+    );
+    organismeDatas = await this.organismesDatasService.findByIdRNA(idRef);
 
     if (organismeDatas?.length === 0) {
-      const message = `No datas for ${idRef}`;
-      this.logger.warn({
-        short_message: message,
-        full_message: message,
-      });
-      throw new NotFoundException(message);
+      throw new NotFoundException(`No datas for ${idRef}`);
     }
 
-    try {
-      let organisme = await Organisme.findOneBy({ idRef });
+    let organisme = await Organisme.findOneBy({ idRef });
 
-      if (!organisme) {
-        organisme = new Organisme();
-      }
-      // TODO: Manque une règle pour sélectionner l'organisme datas correcte
-      if (
-        !organisme.id ||
-        organisme.updateAt?.getTime() < organismeDatas[0].dataUpdateAt.getTime()
-      ) {
-        //TODO: A revoir pour une solution pour instancier 1 fois le parser
-        const parser = this.parserToOrganismes.getParser(
-          organismeDatas[0].organismesSource.name,
-        )();
+    if (!organisme) {
+      organisme = new Organisme();
+    }
+    // TODO: Manque une règle pour sélectionner l'organisme datas correcte
+    if (
+      !organisme.id ||
+      organisme.updateAt?.getTime() < organismeDatas[0].dataUpdateAt.getTime()
+    ) {
+      //TODO: A revoir pour une solution pour instancier 1 fois le parser
+      const parser = this.parserToOrganismes.getParser(
+        organismeDatas[0].organismesSource.name,
+      )();
 
-        organisme = parser.toOrganismeEntity(
-          organisme,
-          organismeDatas[0].dataJson,
-        );
-        organisme.organismeDatas = organismeDatas;
-        return await organisme.save();
-      }
-    } catch (error) {
-      this.logger.error({
-        short_message: "Échec création d'un organisme",
-        full_message: error.stack,
-      });
-      throw new Error("Unable to create organisme");
+      organisme = parser.toOrganismeEntity(
+        organisme,
+        organismeDatas[0].dataJson,
+      );
+      organisme.organismeDatas = organismeDatas;
+      return await organisme.save();
     }
   }
 }

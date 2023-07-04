@@ -1,6 +1,7 @@
 import { Controller, Get, Param, Query, ParseArrayPipe } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { InstructionTimesService } from "./instruction_times.service";
+import { InstructionTime } from "../entities";
 
 @ApiTags("Instruction-times")
 @Controller("instruction-times")
@@ -10,24 +11,18 @@ export class InstructionTimesController {
   ) {}
 
   @Get()
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  findAll() {
+  findAll(): Promise<InstructionTime[]> {
     return this.instructionTimesService.findAll();
   }
 
   @Get(":id")
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  findOne(@Param("id") id: string) {
-    return this.instructionTimesService.findOne(+id);
+  findOne(@Param("id") id: number): Promise<InstructionTime> {
+    return this.instructionTimesService.findOne(id);
   }
 
   @Get("/dossier/:id")
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  findOneByDossierId(@Param("id") id: string) {
-    return this.instructionTimesService.findOneByDossier(+id);
+  findOneByDossierId(@Param("id") id: number): Promise<InstructionTime> {
+    return this.instructionTimesService.findOneByDossier(id);
   }
 
   @Get("/dossiers/times")

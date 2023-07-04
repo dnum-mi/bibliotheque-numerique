@@ -1,6 +1,6 @@
 import { ConfigModule, ConfigService } from "@nestjs/config";
-import { LoggerModule } from "../../modules/logger/logger.module";
-import { LoggerService } from "../../modules/logger/logger.service";
+import { LoggerModule } from "../modules/logger/logger.module";
+import { LoggerService } from "../modules/logger/logger.service";
 import { DataSource } from "typeorm";
 import { DataSourceOptions } from "typeorm/data-source/DataSourceOptions";
 import typeormNestConfig from "../../config/typeorm-nest.config";

@@ -3,7 +3,7 @@
 # This script is used to launch the unit tests.
 clear
 echo "==========================================\n========= Launching unit tests.. =========\n=========================================="
-if [ $1 = 'dev' ]
+if [ "x$1" = "xdev" ]
 then
     jest --config ./src/test/jest-unit.json --watch --silent=false
 else

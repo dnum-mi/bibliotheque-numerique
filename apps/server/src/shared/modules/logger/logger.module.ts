@@ -1,30 +1,22 @@
-import { MiddlewareConsumer, Module } from "@nestjs/common";
+import { Global, MiddlewareConsumer, Module } from "@nestjs/common";
 import { LoggerService } from "./logger.service";
-import configuration from "../../config/configuration";
-import { ConfigModule, ConfigService } from "@nestjs/config";
+import { ConfigService } from "@nestjs/config";
 import { MorganMiddleware } from "@nest-middlewares/morgan";
 import { jsonFormat } from "./morgan-jsonformat.function";
 
+@Global()
 @Module({
-  imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      cache: true,
-      load: [configuration],
-    }),
-  ],
+  imports: [],
   providers: [LoggerService],
   exports: [LoggerService],
 })
 export class LoggerModule {
   constructor(
-    private config: ConfigService,
-    private loggerService: LoggerService,
+    private readonly config: ConfigService,
+    private readonly loggerService: LoggerService,
   ) {}
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  configure(consumer: MiddlewareConsumer) {
+  configure(consumer: MiddlewareConsumer): void {
     this.config.get("isDev")
       ? MorganMiddleware.configure("tiny", {
           stream: {

@@ -1,6 +1,6 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { ConfigModule, ConfigService } from "@nestjs/config";
+import { ConfigModule } from "@nestjs/config";
 
 import configuration from "../../../config/configuration";
 import fileConfig from "../../../config/file.config";
@@ -13,6 +13,8 @@ import { OrganismesController } from "./organismes.controller";
 import { OrganismesDatasService } from "../organismes_datas/organismes_datas.service";
 import { OrganismesService } from "./organismes.service";
 import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
+import { LoggerService } from "../../../shared/modules/logger/logger.service";
+import { loggerServiceMock } from "../../../../test/mock/logger-service.mock";
 
 describe("OrganismesController", () => {
   let controller: OrganismesController;
@@ -32,7 +34,10 @@ describe("OrganismesController", () => {
       ],
       controllers: [OrganismesController],
       providers: [OrganismesService, OrganismesDatasService],
-    }).compile();
+    })
+      .overrideProvider(LoggerService)
+      .useValue(loggerServiceMock)
+      .compile();
 
     controller = module.get<OrganismesController>(OrganismesController);
     dataService = module.get<OrganismesDatasService>(OrganismesDatasService);
@@ -49,9 +54,8 @@ describe("OrganismesController", () => {
 
     jest.spyOn(dataService, "findByIdRNA").mockResolvedValueOnce([]);
 
-    const idRNA = "Test id RNA";
     await expect(
-      controller.addOrgnaismeByIdRNA("Test id RNA", "Test organisme source"),
-    ).rejects.toThrow(`organisme RNA: ${idRNA} not found`);
+      controller.addOrganismeByIdRNA("Test id RNA", "Test organisme source"),
+    ).rejects.toThrow(`No datas for Test id RNA`);
   });
 });

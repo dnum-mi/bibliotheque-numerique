@@ -8,10 +8,7 @@ import {
   EntityManager,
 } from "typeorm";
 import { ApplicationEntity } from "../../../shared/entities/application_entity";
-import {
-  DossierState,
-  TypeOrganisme,
-} from "@dnum-mi/ds-api-client/dist/@types/types";
+import { DossierState } from "@dnum-mi/ds-api-client/dist/@types/types";
 import { DossierDS } from "./dossier_ds.entity";
 import { Demarche } from "../../demarches/entities/demarche.entity";
 import { ApiProperty } from "@nestjs/swagger";
@@ -36,9 +33,7 @@ export class Dossier extends ApplicationEntity {
   @ApiProperty({ enum: DossierState })
   @Column({ type: "varchar" })
   state: DossierState;
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  static findWithFilter(filter: object) {
+  static findWithFilter(filter: object): Promise<Dossier[]> {
     return this.find({
       where: {
         ...filter,

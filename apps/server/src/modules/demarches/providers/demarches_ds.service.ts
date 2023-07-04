@@ -1,33 +1,30 @@
-import { Injectable, Logger } from "@nestjs/common";
-import { LoggerService } from "../../logger/logger.service";
+import { Injectable } from "@nestjs/common";
+import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import { DemarchesService } from "./demarches.service";
 import { DataSource } from "typeorm";
 import { ConfigService } from "@nestjs/config";
 import {
+  Demarche as GqlDemarche,
   DsApiClient,
   DsApiError,
-  Demarche as GqlDemarche,
 } from "@dnum-mi/ds-api-client";
 import { DemarcheDS } from "../entities/demarche_ds.entity";
 
 @Injectable()
 export class DemarchesDSService {
-  // TODO: logger should be injected with nestjs dependency injection
-  private readonly logger = new Logger(
-    DemarchesDSService.name,
-  ) as unknown as LoggerService;
-
   private dsApiClient: DsApiClient;
 
   constructor(
     private demarchesService: DemarchesService,
     private dataSource: DataSource,
     private config: ConfigService,
+    private logger: LoggerService,
   ) {
     this.dsApiClient = new DsApiClient(
       this.config.get("ds.apiUrl"),
       this.config.get("ds.apiToken"),
     );
+    this.logger.setContext(this.constructor.name);
   }
 
   async upsertAllDemarche(): Promise<number[]> {

@@ -1,11 +1,9 @@
 import { NestFactory } from "@nestjs/core";
 import { ConfigService } from "@nestjs/config";
-import { LoggerService } from "./modules/logger/logger.service";
+import { LoggerService } from "./shared/modules/logger/logger.service";
 import { AppWorkerModule } from "./app-worker.module";
 
-// TODO: fixe type
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-async function bootstrap() {
+async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppWorkerModule);
   const configService = app.get(ConfigService);
   app.useLogger(app.get(LoggerService));

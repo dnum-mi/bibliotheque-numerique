@@ -1,5 +1,5 @@
-import { Injectable, Logger } from "@nestjs/common";
-import { LoggerService } from "modules/logger/logger.service";
+import { Injectable } from "@nestjs/common";
+import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import { ConnectorService } from "../../../modules/connector/connector.service";
 import { DataSource } from "typeorm";
 import { OrganismesData } from "../entities";
@@ -12,15 +12,14 @@ import { Connector } from "../../../modules/connector/connector.entity";
 
 @Injectable()
 export class OrganismesDatasService {
-  private readonly logger = new Logger(
-    OrganismesDatasService.name,
-  ) as unknown as LoggerService;
-
   constructor(
     private dataSource: DataSource,
     private connectorService: ConnectorService,
     private parser2Organismes: ParseToOrganismesService,
-  ) {}
+    private readonly logger: LoggerService,
+  ) {
+    this.logger.setContext(this.constructor.name);
+  }
 
   // TODO: fixe type
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -54,49 +53,37 @@ export class OrganismesDatasService {
     return organismesDatas || [];
   }
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async createOrUpdate(
     idRna: string,
     connectorApi: Connector,
     parser: TParseToOrganisme,
-  ) {
-    try {
-      let organismeData = await OrganismesData.findOneBy({
-        idRef: idRna,
-        organismesSource: { id: connectorApi.id },
-      });
+  ): Promise<boolean> {
+    let organismeData = await OrganismesData.findOneBy({
+      idRef: idRna,
+      organismesSource: { id: connectorApi.id },
+    });
 
-      if (!organismeData) {
-        organismeData = new OrganismesData();
-        organismeData.idRef = idRna;
-        organismeData.organismesSource = connectorApi;
-      }
-
-      const dateMiseAJours = parser.getDataUpdateAt();
-
-      if (organismeData.dataUpdateAt?.getTime() === dateMiseAJours.getTime()) {
-        const message = `No update or no create organisme data for ${idRna} with ${connectorApi.name}`;
-        this.logger.warn({
-          short_message: message,
-          full_message: message,
-        });
-        return false;
-      }
-      organismeData.dataUpdateAt = dateMiseAJours;
-      organismeData.dataJson = JSON.parse(JSON.stringify(parser.dataJson));
-
-      await organismeData.save();
-      return true;
-    } catch (error) {
-      this.logger.error({
-        short_message: "No organisme_data to upsert",
-        full_message: error.stack,
-        error,
-        datas: { idRna, connectorApi, parser },
-      });
-      throw new Error("Unable to upsert organisme_data");
+    if (!organismeData) {
+      organismeData = new OrganismesData();
+      organismeData.idRef = idRna;
+      organismeData.organismesSource = connectorApi;
     }
+
+    const dateMiseAJours = parser.getDataUpdateAt();
+
+    if (organismeData.dataUpdateAt?.getTime() === dateMiseAJours.getTime()) {
+      const message = `No update or no create organisme data for ${idRna} with ${connectorApi.name}`;
+      this.logger.warn({
+        short_message: message,
+        full_message: message,
+      });
+      return false;
+    }
+    organismeData.dataUpdateAt = dateMiseAJours;
+    organismeData.dataJson = JSON.parse(JSON.stringify(parser.dataJson));
+
+    await organismeData.save();
+    return true;
   }
 
   // TODO: fixe type
@@ -104,73 +91,48 @@ export class OrganismesDatasService {
   async findAndAddByIdRna(idRna: string, connectorApi: Connector) {
     const parser = this.parser2Organismes.getParser(connectorApi.name)();
 
-    try {
-      //TODO: A revoir quand il y en a plusieurs comment savoir quoi mettre
-      const params = connectorApi?.params?.reduce(
-        (acc, key) => ({ ...acc, [key]: idRna }),
-        {},
-      );
+    //TODO: A revoir quand il y en a plusieurs comment savoir quoi mettre
+    const params = connectorApi?.params?.reduce(
+      (acc, key) => ({ ...acc, [key]: idRna }),
+      {},
+    );
 
-      const result = await this.connectorService.getResult(
-        connectorApi,
-        params,
-        connectorApi.query,
-      );
+    const result = await this.connectorService.getResult(
+      connectorApi,
+      params,
+      connectorApi.query,
+    );
 
-      parser.setDataJson(result);
+    parser.setDataJson(result);
 
-      if (!parser.dataJson) {
-        this.logger.warn({
-          short_message: `No found organisation from extern api for ${idRna} with ${connectorApi.name}`,
-          full_message: `No found organisation from extern api for ${idRna} with ${connectorApi.name}`,
-        });
-
-        return false;
-      }
-    } catch (error) {
-      this.logger.error({
-        short_message: "No found organisation from extern api",
-        full_message: error.stack,
+    if (!parser.dataJson) {
+      this.logger.warn({
+        short_message: `No found organisation from extern api for ${idRna} with ${connectorApi.name}`,
+        full_message: `No found organisation from extern api for ${idRna} with ${connectorApi.name}`,
       });
-      throw new Error("Unable to upsert organisme_data");
+
+      return false;
     }
+
     return await this.createOrUpdate(idRna, connectorApi, parser);
   }
 
   // TODO: fixe type
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async findAndAddByIdRnaFromAllApi(idRna: string, sources: string[]) {
-    let connectorApisSelected;
-    try {
-      const connectorApis = await Connector.find({});
-      connectorApisSelected = sources?.length
-        ? connectorApis.filter((connector) => sources.includes(connector.name))
-        : connectorApis;
-    } catch (error) {
-      const message = "Error intern to get connectors";
-      this.logger.error({
-        short_message: message,
-        full_message: error.stack,
-      });
-      throw new Error(message);
-    }
+    const connectorApis = await Connector.find({});
+    const connectorApisSelected = sources?.length
+      ? connectorApis.filter((connector) => sources.includes(connector.name))
+      : connectorApis;
 
     if (!connectorApisSelected || !connectorApisSelected.length) {
       throw new Error(`Error Connectors not found: ${sources}`);
     }
 
-    try {
-      return await Promise.allSettled(
-        connectorApisSelected.map(async (connectorApi) =>
-          this.findAndAddByIdRna(idRna, connectorApi),
-        ),
-      );
-    } catch (error) {
-      this.logger.error({
-        short_message: "No organisme_data to upsert",
-        full_message: error.stack,
-      });
-      throw new Error("Unable to upsert organisme_data");
-    }
+    return await Promise.allSettled(
+      connectorApisSelected.map(async (connectorApi) =>
+        this.findAndAddByIdRna(idRna, connectorApi),
+      ),
+    );
   }
 }

@@ -16,6 +16,8 @@ import dsConfig from "../../../config/ds.config";
 import instructionTimeMappingConfig from "../../../plugins/instruction_time/config/instructionTimeMapping.config";
 import { InstructionTimesModule } from "../../../plugins/instruction_time/instruction_times/instruction_times.module";
 import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
+import { LoggerService } from "../../../shared/modules/logger/logger.service";
+import { loggerServiceMock } from "../../../../test/mock/logger-service.mock";
 
 describe("DemarchesController", () => {
   let controller: DemarchesController;
@@ -46,7 +48,10 @@ describe("DemarchesController", () => {
         DossiersService,
         FilesService,
       ],
-    }).compile();
+    })
+      .overrideProvider(LoggerService)
+      .useValue(loggerServiceMock)
+      .compile();
 
     controller = module.get<DemarchesController>(DemarchesController);
     service = module.get<DemarchesService>(DemarchesService);

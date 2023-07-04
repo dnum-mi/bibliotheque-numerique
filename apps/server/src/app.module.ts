@@ -1,15 +1,15 @@
 import { Module } from "@nestjs/common";
-import { ConfigModule, ConfigService } from "@nestjs/config";
+import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import configuration from "./config/configuration";
 import fileConfig from "./config/file.config";
 import dsConfig from "./config/ds.config";
+import loggerConfig from "./config/logger.config";
 import typeormConfig from "./config/typeorm-nest.config";
 import { DemarchesModule } from "./modules/demarches/demarches.module";
 import { DossiersModule } from "./modules/dossiers/dossiers.module";
 import { RolesModule } from "./modules/roles/roles.module";
-import { LoggerModule } from "./modules/logger/logger.module";
-import { AuthModule } from "./modules/auth/auth.module";
+import { LoggerModule } from "./shared/modules/logger/logger.module";
 import { UsersModule } from "./modules/users/users.module";
 import { ConnectorModule } from "./modules/connector/connector.module";
 import { FilesModule } from "./modules/files/files.module";
@@ -17,13 +17,14 @@ import { pluginsModules } from "./plugins";
 import { JobLogModule } from "./modules/job-log/job-log.module";
 import { typeormFactoryLoader } from "./shared/utils/typeorm-factory-loader";
 import { HealthModule } from "./modules/health/health.module";
+import { AuthModule } from "./modules/auth/auth.module";
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
-      load: [configuration, fileConfig, dsConfig, typeormConfig],
+      load: [configuration, fileConfig, dsConfig, typeormConfig, loggerConfig],
     }),
     LoggerModule,
     TypeOrmModule.forRootAsync(typeormFactoryLoader),

@@ -1,13 +1,9 @@
-import { Injectable, Logger } from "@nestjs/common";
-import { LoggerService } from "../logger/logger.service";
+import { Injectable } from "@nestjs/common";
 import { User } from "./entities/user.entity";
 import { FindOneOptions } from "typeorm";
 
 @Injectable()
 export class UsersService {
-  private readonly logger = new Logger(
-    UsersService.name,
-  ) as unknown as LoggerService;
   async findByEmail(
     email: string,
     select?: FindOneOptions<User>["select"],
@@ -45,29 +41,13 @@ export class UsersService {
   }
 
   async listUsers(): Promise<User[]> {
-    try {
-      return await User.find({ relations: ["roles"] });
-    } catch (error) {
-      this.logger.error({
-        short_message: "Échec récupération des utilisateurs",
-        full_message: error.toString(),
-      });
-      throw new Error("Unable to retrieve users");
-    }
+    return await User.find({ relations: ["roles"] });
   }
 
   async getUserById(id: number): Promise<User> {
-    try {
-      return await User.findOne({
-        where: { id },
-        relations: ["roles"],
-      });
-    } catch (error) {
-      this.logger.error({
-        short_message: `Échec récupération de l'utilisateur id: ${id}`,
-        full_message: error.toString(),
-      });
-      throw new Error(`Unable to retrieve user ${id}`);
-    }
+    return await User.findOne({
+      where: { id },
+      relations: ["roles"],
+    });
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Dossier as TDossier } from "@dnum-mi/ds-api-client/dist/@types/types";
 import { DossierState } from "@dnum-mi/ds-api-client/dist/@types/types";
@@ -7,7 +7,7 @@ import { In } from "typeorm";
 import dayjs, { type Dayjs } from "../../../shared/utils/dayjs";
 
 import { InstructionTime } from "../entities";
-import { LoggerService } from "../../../modules/logger/logger.service";
+import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import {
   TInstructionTimeMappingConfig,
   keyInstructionTime,
@@ -40,16 +40,16 @@ type toCheckDate = { date: Date | undefined | null; message: string };
 
 @Injectable()
 export class InstructionTimesService {
-  private readonly logger = new Logger(
-    InstructionTimesService.name,
-  ) as unknown as LoggerService;
-
   nbDaysAfterInstruction: number;
   nbDaysAfterExtension: number;
   nbDaysAfterIntentOpposition: number;
   millisecondsOfDay = 1000 * 60 * 60 * 24;
 
-  constructor(private configService: ConfigService) {
+  constructor(
+    private configService: ConfigService,
+    private readonly logger: LoggerService,
+  ) {
+    this.logger.setContext(this.constructor.name);
     this.nbDaysAfterInstruction = this.configService.get(
       "NB_DAYS_AFTER_INSTRUCTION",
     );
@@ -61,46 +61,16 @@ export class InstructionTimesService {
     );
   }
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  findAll() {
-    try {
-      return InstructionTime.find();
-    } catch (error) {
-      this.logger.error({
-        short_message: "Échec récupération des InstructionTime",
-        full_message: error.stack,
-      });
-      throw new Error("Unable to retrieve InstructionTime");
-    }
+  findAll(): Promise<InstructionTime[]> {
+    return InstructionTime.find();
   }
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  findOne(id: number) {
-    try {
-      return InstructionTime.findBy({ id: id });
-    } catch (error) {
-      this.logger.error({
-        short_message: "Échec récupération des InstructionTime",
-        full_message: error.stack,
-      });
-      throw new Error("Unable to retrieve InstructionTime");
-    }
+  findOne(id: number): Promise<InstructionTime> {
+    return InstructionTime.findOneBy({ id: id });
   }
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  findOneByDossier(idDossier: number) {
-    try {
-      return InstructionTime.findByDossierId(idDossier);
-    } catch (error) {
-      this.logger.error({
-        short_message: "Échec récupération des InstructionTime",
-        full_message: error.stack,
-      });
-      throw new Error("Unable to retrieve InstructionTime");
-    }
+  findOneByDossier(idDossier: number): Promise<InstructionTime> {
+    return InstructionTime.findByDossierId(idDossier);
   }
 
   getMappingInstructionTimeByDossier(dossier: Dossier): TIntructionTime {
@@ -132,100 +102,81 @@ export class InstructionTimesService {
     return result;
   }
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async getMappingInstructionTimeByDossierId(idDossier: number): Promise<any> {
-    try {
-      const dossier = await Dossier.findOne({
-        where: { id: idDossier },
-        relations: { dossierDS: true },
-      });
-      return this.getMappingInstructionTimeByDossier(dossier);
-    } catch (error) {
-      this.logger.error({
-        short_message: `Échec récupération du mapping InstructionTime pour le dossier ${idDossier}`,
-        full_message: error.stack,
-      });
-      throw new Error(
-        `Unable to retrieve mappingInstructionTime for dossier ${idDossier}`,
-      );
-    }
+  async getMappingInstructionTimeByDossierId(
+    idDossier: number,
+  ): Promise<TIntructionTime> {
+    const dossier = await Dossier.findOne({
+      where: { id: idDossier },
+      relations: { dossierDS: true },
+    });
+    return this.getMappingInstructionTimeByDossier(dossier);
   }
 
   // TODO: fixe type
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async instructionTimeCalculation(idDossiers: number[]) {
-    try {
-      const instructionTimes = await InstructionTime.find({
-        where: {
-          dossier: {
-            id: In(idDossiers),
-          },
+    const instructionTimes = await InstructionTime.find({
+      where: {
+        dossier: {
+          id: In(idDossiers),
         },
-        relations: { dossier: true },
-      });
+      },
+      relations: { dossier: true },
+    });
 
-      // TODO: fixe type
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return instructionTimes.reduce((acc: any, instructionTime) => {
-        const { dossier } = instructionTime;
-        let remainingTime = null;
-        let delayStatus = null;
-        if (
-          [
-            EInstructionTimeState.IN_EXTENSION,
-            EInstructionTimeState.IN_PROGRESS,
-            EInstructionTimeState.SECOND_RECEIPT as EInstructionTimeStateKey,
-          ].includes(instructionTime.state)
-        ) {
-          remainingTime = dayjs(instructionTime.endAt)
+    // TODO: fixe type
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return instructionTimes.reduce((acc: any, instructionTime) => {
+      const { dossier } = instructionTime;
+      let remainingTime = null;
+      let delayStatus = null;
+      if (
+        [
+          EInstructionTimeState.IN_EXTENSION,
+          EInstructionTimeState.IN_PROGRESS,
+          EInstructionTimeState.SECOND_RECEIPT as EInstructionTimeStateKey,
+        ].includes(instructionTime.state)
+      ) {
+        remainingTime = dayjs(instructionTime.endAt)
+          .startOf("day")
+          .diff(dayjs().startOf("day"), "days");
+
+        delayStatus =
+          remainingTime > 0
+            ? instructionTime.state
+            : EInstructionTimeState.OUT_OF_DATE;
+      }
+      if (
+        [
+          EInstructionTimeState.SECOND_REQUEST as EInstructionTimeStateKey,
+        ].includes(instructionTime.state)
+      ) {
+        const stopAt = dayjs(instructionTime.stopAt).startOf("day");
+        remainingTime = dayjs(instructionTime.endAt)
+          .startOf("day")
+          .diff(stopAt, "days");
+        delayStatus =
+          remainingTime > 0
+            ? instructionTime.state
+            : EInstructionTimeState.OUT_OF_DATE;
+      }
+
+      if (instructionTime.state === EInstructionTimeState.INTENT_OPPO) {
+        remainingTime = Math.max(
+          0,
+          dayjs(instructionTime.endAt)
             .startOf("day")
-            .diff(dayjs().startOf("day"), "days");
+            .diff(dayjs().startOf("day"), "days"),
+        );
+      }
 
-          delayStatus =
-            remainingTime > 0
-              ? instructionTime.state
-              : EInstructionTimeState.OUT_OF_DATE;
-        }
-        if (
-          [
-            EInstructionTimeState.SECOND_REQUEST as EInstructionTimeStateKey,
-          ].includes(instructionTime.state)
-        ) {
-          const stopAt = dayjs(instructionTime.stopAt).startOf("day");
-          remainingTime = dayjs(instructionTime.endAt)
-            .startOf("day")
-            .diff(stopAt, "days");
-          delayStatus =
-            remainingTime > 0
-              ? instructionTime.state
-              : EInstructionTimeState.OUT_OF_DATE;
-        }
+      acc[dossier.id] = {
+        remainingTime: remainingTime != null ? Math.round(remainingTime) : null,
+        delayStatus: delayStatus ?? instructionTime.state ?? null,
+      };
 
-        if (instructionTime.state === EInstructionTimeState.INTENT_OPPO) {
-          remainingTime = Math.max(
-            0,
-            dayjs(instructionTime.endAt)
-              .startOf("day")
-              .diff(dayjs().startOf("day"), "days"),
-          );
-        }
-
-        acc[dossier.id] = {
-          remainingTime:
-            remainingTime != null ? Math.round(remainingTime) : null,
-          delayStatus: delayStatus ?? instructionTime.state ?? null,
-        };
-
-        return acc;
-      }, {});
-    } catch (error) {
-      this.logger.error({
-        short_message: "Échec calcul des InstructionTime",
-        full_message: error.stack,
-      });
-      throw new Error("Unable to calculate InstructionTime");
-    }
+      return acc;
+    }, {});
   }
 
   // TODO: fixe type
@@ -395,9 +346,7 @@ export class InstructionTimesService {
     return true;
   }
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  async proccessByDossierId(id: number) {
+  async proccessByDossierId(id: number): Promise<boolean> {
     const dossier = await Dossier.findOne({
       where: { id: id },
       relations: { dossierDS: true },
