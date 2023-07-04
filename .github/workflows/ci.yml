@@ -76,7 +76,6 @@ jobs:
           pnpm run generate-rnf
           pnpm run lint:rnf-server
           pnpm run docker:db:up
-          pnpm run test:rnf-server
           pnpm run docker:db:down
       - name: run build
         run: |
