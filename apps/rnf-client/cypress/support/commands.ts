@@ -4,6 +4,8 @@
 //   return faker.name.firstName().replace(/ /g, '') + '.' + faker.name.lastName().replace(/ /g, '') + '@'
 // }
 
+import '@testing-library/cypress/add-commands'
+
 Cypress.Commands.add('deleteIndexedDB', () => {
   Cypress.on('window:before:load', win => {
     win.indexedDB.deleteDatabase('localforage')
