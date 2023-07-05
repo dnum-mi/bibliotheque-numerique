@@ -2,10 +2,11 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 import { LoggerService } from "@/shared/modules/logger/providers/logger.service";
 import { Dossier } from "@dnum-mi/ds-api-client";
 import { CreateFoundationDto } from "@/modules/foundation/objects/dto/create-foundation.dto";
-import { Mapper } from "@/modules/ds/objects/mapper.type";
-import { DotationFoundationMapper } from "@/modules/ds/objects/dotation-foundation.mapper";
-import { EntrepriseFoundationMapper } from "@/modules/ds/objects/entreprise-foundation.mapper";
-import { ChampHash } from "@/modules/ds/objects/champ-hash.type";
+import { Mapper } from "@/modules/ds/objects/types/mapper.type";
+import { DotationFoundationMapper } from "@/modules/ds/objects/mappers/dotation-foundation.mapper";
+import { EntrepriseFoundationMapper } from "@/modules/ds/objects/mappers/entreprise-foundation.mapper";
+import { DemandeNumeroRnfMapper } from "@/modules/ds/objects/mappers/demande-numero-rnf.mapper";
+import { ChampHash } from "@/modules/ds/objects/types/champ-hash.type";
 import { ConfigService } from "@nestjs/config";
 
 @Injectable()
@@ -26,6 +27,7 @@ export class DsMapperService {
     this.mappers = {
       [this.conf.get("ds.demarcheFDDId")]: DotationFoundationMapper,
       [this.conf.get("ds.demarcheFEId")]: EntrepriseFoundationMapper,
+      [this.conf.get("ds.demarcheDNRId")]: DemandeNumeroRnfMapper,
     };
   }
 

@@ -7,6 +7,7 @@ import { loggerServiceMock } from "../../../../test/mocks/logger-service.mock";
 import { dotationDossierDataMock } from "../../../../test/mocks/datas/dossier-dotation.data.mock";
 import { entrepriseDossierDataMock } from "../../../../test/mocks/datas/dossier-entreprise.data.mock";
 import { ConfigService } from "@nestjs/config";
+import { dnrDossierDataMock } from "../../../../test/mocks/datas/dossier-dnr.data.mock";
 
 describe("DsService", () => {
   let service: DsMapperService;
@@ -29,6 +30,8 @@ describe("DsService", () => {
                   return "37";
                 case str === "ds.demarcheFEId":
                   return "12";
+                case str === "ds.demarcheDNRId":
+                  return "43";
               }
             }),
           };
@@ -106,6 +109,31 @@ describe("DsService", () => {
       },
       // email: null,
       // phone: null,
+      peopleInFoundationToCreate: null,
+    });
+  });
+
+  it("Should correctly map a demande numéro rnf demarche", () => {
+    const result = service.mapDossierToFoundation(dnrDossierDataMock);
+    expect(result).toMatchObject({
+      title: "Fondation des tulipes",
+      type: "FRUP",
+      address: {
+        label: "3 Rue Colbert 59800 Lille",
+        type: "housenumber",
+        streetAddress: "3 Rue Colbert",
+        streetNumber: "3",
+        streetName: "Rue Colbert",
+        postalCode: "59800",
+        cityName: "Lille",
+        cityCode: "59350",
+        departmentName: "Nord",
+        departmentCode: "59",
+        regionName: "Hauts-de-France",
+        regionCode: "32",
+      },
+      email: "tulipe@gmail.com",
+      phone: "07 89 89 89 89",
       peopleInFoundationToCreate: null,
     });
   });

@@ -250,6 +250,43 @@ describe("Foundation Controller (e2e)", () => {
     return;
   });
 
+  it("POST /foundation - Should create a new foundation with demande numéro rnf", async () => {
+    const result = await request(app.getHttpServer())
+      .post("/api/foundation")
+      .send({
+        dossierId: 135,
+        email: "jojo@gmail.com",
+      })
+      .expect(201);
+    expect(result.body).toEqual({
+      rnfId: "059-FRUP-00001-08",
+    });
+    await prisma.foundation.findFirst({ where: { rnfId: "059-FRUP-00001-08" }, include: { address: true } }).then((a) => {
+      expect(a).toMatchObject({
+        id: 1,
+        title: "Fondation des tulipes",
+        type: "FRUP",
+        address: {
+          label: "3 Rue Colbert 59800 Lille",
+          type: "housenumber",
+          streetAddress: "3 Rue Colbert",
+          streetNumber: "3",
+          streetName: "Rue Colbert",
+          postalCode: "59800",
+          cityName: "Lille",
+          cityCode: "59350",
+          departmentName: "Nord",
+          departmentCode: "59",
+          regionName: "Hauts-de-France",
+          regionCode: "32",
+        },
+        email: "tulipe@gmail.com",
+        phone: "+33789898989",
+      });
+    });
+    return;
+  });
+
   it("GET /foundation/rnf-id - Should return 400 for wrong rnf", async () => {
     return await request(app.getHttpServer()).get("/api/foundation/toto").expect(400).expect({
       statusCode: 400,

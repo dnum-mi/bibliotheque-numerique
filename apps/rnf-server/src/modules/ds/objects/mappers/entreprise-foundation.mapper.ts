@@ -1,14 +1,14 @@
-import { Mapper } from "@/modules/ds/objects/mapper.type";
-import { ChampHash } from "@/modules/ds/objects/champ-hash.type";
-import { AddressChamp } from "@dnum-mi/ds-api-client/dist/@types/types";
+import { ChampHash } from "@/modules/ds/objects/types/champ-hash.type";
 import { FoundationType } from "@prisma/client";
+import { AddressChamp } from "@dnum-mi/ds-api-client/dist/@types/types";
+import { Mapper } from "@/modules/ds/objects/types/mapper.type";
 import { CreateFoundationDto } from "@/modules/foundation/objects/dto/create-foundation.dto";
 
-export const DotationFoundationMapper: Mapper<CreateFoundationDto> = {
-  title: (ch: ChampHash) => ch["Titre du fonds de dotation (suivi du sigle s'il existe)"].stringValue ?? null,
-  type: () => FoundationType.FDD as string,
+export const EntrepriseFoundationMapper: Mapper<CreateFoundationDto> = {
+  title: (ch: ChampHash) => ch["Titre de la fondation d'entreprise"].stringValue ?? null,
+  type: () => FoundationType.FE as string,
   address: (ch: ChampHash) => {
-    const addressChamp = ch["Adresse du siège social du fonds de dotation"] as AddressChamp;
+    const addressChamp = ch["Adresse du siège social de la fondation d'entreprise"] as AddressChamp;
     const address = addressChamp.address;
     if (addressChamp.__typename !== "AddressChamp" || !address) {
       return null;
@@ -28,7 +28,9 @@ export const DotationFoundationMapper: Mapper<CreateFoundationDto> = {
       regionCode: address.regionCode ?? null,
     };
   },
-  email: (ch: ChampHash) => ch["Courriel du fonds de dotation"].stringValue ?? null,
-  phone: (ch: ChampHash) => ch["Numéro de téléphone du fonds de dotation"].stringValue ?? null,
-  peopleInFoundationToCreate: (ch: ChampHash) => null,
+  // TODO: those fields are not in the form. Ask the client
+  // return random phone number
+  phone: () => `+33${Array.from({ length: 9 }, () => Math.floor(Math.random() * 10)).join("")}`,
+  email: () => `fake-email-${Math.floor(Math.random() * 10000)}@gmail.com`,
+  peopleInFoundationToCreate: () => null,
 };

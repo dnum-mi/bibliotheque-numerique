@@ -1,6 +1,7 @@
 import { dotationDossierDataMock } from "./datas/dossier-dotation.data.mock";
 import { entrepriseDossierDataMock } from "./datas/dossier-entreprise.data.mock";
 import { DsApiError } from "@dnum-mi/ds-api-client";
+import { dnrDossierDataMock } from "./datas/dossier-dnr.data.mock";
 
 const dossierNotFoundGraphQlError = {
   data: null,
@@ -52,6 +53,8 @@ export const dsServiceMock = {
         return dotationDossierDataMock;
       case 65:
         return entrepriseDossierDataMock;
+      case 135:
+        return dnrDossierDataMock;
       case 500:
         return injectionSqlDossier;
       case 37:
