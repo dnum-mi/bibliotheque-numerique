@@ -22,7 +22,7 @@ export class DsService {
       throw new Error("RNG Annotation's ids are not configured. Check your env.");
     } else {
       this.dsApiClient = new DsApiClient(api, token);
-      this.logger.debug(`DS API Client configured with: \n   api = ${api}\n   token =${token}`);
+      this.logger.debug(`DS API Client configured with: \n   api = ${api}\n   token = ***${token.slice(-8)}`);
     }
   }
 
