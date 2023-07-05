@@ -21,24 +21,44 @@ const dossierNotFoundGraphQlError = {
   ],
 };
 
+const badDossier = {
+  champs: [null, null],
+  demarche: { title: "Fake title" },
+  instructeurs: [
+    {
+      id: "SW5zdHJ1Y3RldXItNA==",
+      email: "yoyo@gmail.com",
+    },
+  ],
+};
+
+const injectionSqlDossier = {
+  ...dotationDossierDataMock,
+  champs: dotationDossierDataMock.champs?.map((c) => {
+    if (c.id === "Q2hhbXAtOTI=") {
+      return {
+        ...c,
+        stringValue: "test.test@test.fr' AND 1=1'",
+      };
+    }
+    return c;
+  }),
+};
+
 export const dsServiceMock = {
   getOneDossier: jest.fn().mockImplementation((id: number) => {
-    if (id === 17) {
-      return dotationDossierDataMock;
-    } else if (id === 65) {
-      return entrepriseDossierDataMock;
-    } else if (id === 37) {
-      return {
-        champs: [null, null],
-        demarche: { title: "Fake title" },
-        instructeurs: [
-          {
-            id: "SW5zdHJ1Y3RldXItNA==",
-            email: "yoyo@gmail.com",
-          },
-        ],
-      };
-    } else throw new DsApiError(dossierNotFoundGraphQlError);
+    switch (id) {
+      case 17:
+        return dotationDossierDataMock;
+      case 65:
+        return entrepriseDossierDataMock;
+      case 500:
+        return injectionSqlDossier;
+      case 37:
+        return badDossier;
+      default:
+        throw new DsApiError(dossierNotFoundGraphQlError);
+    }
   }),
   writeRnfIdInPrivateAnnotation: jest.fn().mockResolvedValue(undefined),
 };

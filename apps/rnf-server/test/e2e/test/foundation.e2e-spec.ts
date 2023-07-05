@@ -51,7 +51,7 @@ const createFoundationDtoFromDossier17 = {
   peopleInFoundationToCreate: null,
 };
 
-const insertDumbFoundation = async (prisma: PrismaService, f: Partial<Foundation>) => {
+const insertDumbFoundation = async (prisma: PrismaService, f?: Partial<Foundation>) => {
   return prisma.foundation.create({
     // @ts-ignore not really important in test context
     data: {
@@ -412,6 +412,18 @@ describe("Foundation Controller (e2e)", () => {
       .post("/api/foundation")
       .send({
         dossierId: 17,
+        email: "toto@gmail.com",
+      })
+      .expect(409);
+  });
+
+  it("POST /foundation - Should not be susceptible to SQL injection", async () => {
+    // Same title but no space, no maj and TWO different letters
+    await insertDumbFoundation(prisma);
+    await request(app.getHttpServer())
+      .post("/api/foundation")
+      .send({
+        dossierId: 500,
         email: "toto@gmail.com",
       })
       .expect(409);

@@ -20,23 +20,22 @@ export class FoundationService extends BaseEntityService<FoundationEntity> {
 
   private async _findIdOfCollision(dto: CreateFoundationDto): Promise<{ id: number }[]> {
     // we cannot use prisma natively here because of the similarity function
-    const query = `
+    return this.prisma.$queryRaw`
       SELECT "Foundation".id, "Address".label
       FROM "Foundation"
       LEFT JOIN "Address" ON "Foundation"."addressId" = "Address".id
       WHERE
-        "Foundation"."type" = '${dto.type}' AND
+        "Foundation"."type"::text = ${dto.type} AND
         (
-            "Foundation"."email" = '${dto.email}' OR
-            "Foundation"."phone" = '${dto.phone}' OR
-            "Address"."label" = '${dto.address.label}' OR
+            "Foundation"."email" = ${dto.email} OR
+            "Foundation"."phone" = ${dto.phone} OR
+            "Address"."label" = ${dto.address.label} OR
             similarity(
-                lower(unaccent(replace("Foundation".title, ' ', ''))),
-                lower(unaccent(replace('${dto.title}', ' ', '')))
+                lower(unaccent(replace("Foundation"."title", ' ', ''))),
+                lower(unaccent(replace(${dto.title}, ' ', '')))
             ) > ${this.config.get("foundationTitleSimilarityThreshold")}
         );
-    `;
-    return this.prisma.$queryRawUnsafe(query) as Promise<{ id: number }[]>;
+    ` as Promise<{ id: number }[]>;
   }
 
   private async _findCollision(dto: CreateFoundationDto): Promise<void> {
