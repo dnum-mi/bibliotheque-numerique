@@ -53,7 +53,7 @@ const createFoundationDtoFromDossier17 = {
 
 const insertDumbFoundation = async (prisma: PrismaService, f?: Partial<Foundation>) => {
   return prisma.foundation.create({
-    // @ts-ignore not really important in test context
+    // @ts-expect-error not really important in test context
     data: {
       ...dumbFoundation,
       ...f,
@@ -175,6 +175,10 @@ describe("Foundation Controller (e2e)", () => {
       .expect(201);
     expect(result.body).toEqual({
       rnfId: "033-FDD-00001-02",
+      ds: {
+        dossierId: 17,
+        demarcheId: 37,
+      },
     });
     await prisma.foundation
       .findFirst({
@@ -221,6 +225,10 @@ describe("Foundation Controller (e2e)", () => {
       .expect(201);
     expect(result.body).toEqual({
       rnfId: "059-FE-00001-04",
+      ds: {
+        demarcheId: 12,
+        dossierId: 65,
+      },
     });
     await prisma.foundation.findFirst({ where: { rnfId: "059-FE-00001-04" }, include: { address: true } }).then((a) => {
       expect(a).toMatchObject({
@@ -260,6 +268,10 @@ describe("Foundation Controller (e2e)", () => {
       .expect(201);
     expect(result.body).toEqual({
       rnfId: "059-FRUP-00001-08",
+      ds: {
+        demarcheId: 43,
+        dossierId: 135,
+      },
     });
     await prisma.foundation.findFirst({ where: { rnfId: "059-FRUP-00001-08" }, include: { address: true } }).then((a) => {
       expect(a).toMatchObject({
@@ -414,7 +426,7 @@ describe("Foundation Controller (e2e)", () => {
 
   it("POST /foundation - Should return a 409 if address already exists", async () => {
     const df = await insertDumbFoundation(prisma, {
-      // @ts-ignore not really important in test context
+      // @ts-expect-error not really important in test context
       address: {
         create: {
           label: "11 Rue Pelleport 33800 Bordeaux",

@@ -1,7 +1,7 @@
 import { Mapper } from "@/modules/ds/objects/types/mapper.type";
 import { ChampHash } from "@/modules/ds/objects/types/champ-hash.type";
 import { AddressChamp } from "@dnum-mi/ds-api-client/dist/@types/types";
-import { Foundation, FoundationType } from "@prisma/client";
+import { FoundationType } from "@prisma/client";
 import { CreateFoundationDto } from "@/modules/foundation/objects/dto/create-foundation.dto";
 
 export const DemandeNumeroRnfMapper: Mapper<CreateFoundationDto> = {
