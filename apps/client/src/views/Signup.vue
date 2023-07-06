@@ -8,13 +8,19 @@ import { useRouter } from 'vue-router'
 import LayoutAccueil from '../components/LayoutAccueil.vue'
 
 const REQUIRED_FIELD_MESSAGE = 'Ce champ est requis'
+const PASSWORD_MESSAGE = 'Le mot de passe doit contenir au moins 15 caractères, une lettre minuscule, une lettre majuscule, un chiffre, et un caractère spécial.'
 const router = useRouter()
 
 const validationSchema = toFormValidator(z.object({
   firstName: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).min(2, 'Ceci ne semble pas être un prénom'),
   lastName: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).min(2, 'Ceci ne semble pas être un nom'),
   email: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).email('Ceci semble être une adresse email invalide'),
-  password: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).min(6, 'Le mot de passe doit contenir au moins 6 caractères'),
+  password: z.string({ required_error: REQUIRED_FIELD_MESSAGE })
+    .min(15, PASSWORD_MESSAGE)
+    .regex(/[a-z]/, PASSWORD_MESSAGE)
+    .regex(/[A-Z]/, PASSWORD_MESSAGE)
+    .regex(/[0-9]/, PASSWORD_MESSAGE)
+    .regex(/[!@#$%^&*()\-_=+[{\]}\\|;:'",<.>/?]/, PASSWORD_MESSAGE),
 }))
 
 const { handleSubmit } = useForm({

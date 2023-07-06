@@ -27,7 +27,7 @@ describe('<Signup />', () => {
     cy.get('.fr-error-text').should('contain.text', 'Ceci semble être une adresse email invalide')
 
     cy.get('#password').type('xx')
-    cy.get('.fr-error-text').should('contain.text', 'Le mot de passe doit contenir au moins 6 caractères')
+    cy.get('.fr-error-text').should('contain.text', 'Le mot de passe doit contenir au moins 15 caractères')
   })
 
   it('form is validated', () => {
@@ -38,7 +38,7 @@ describe('<Signup />', () => {
     cy.get('#firstName').type('dubois')
     cy.get('#lastName').type('louis')
     cy.get('#email').type('louis.dubois@interieur.gouv.fr')
-    cy.get('#password').type('IsVeryComplicatedPassword')
+    cy.get('#password').type('IsVeryComplicatedPassword#077')
     cy.get('.fr-error-text').should('not.exist')
   })
 })
