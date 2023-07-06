@@ -8,7 +8,7 @@ RUN chown node:node /app
 USER node
 
 COPY . .
-RUN turbo prune --scope=@biblio-num/client --docker
+RUN turbo prune --scope=rnf-client --docker
 
 FROM node:lts AS builder
 
@@ -22,10 +22,10 @@ COPY --from=base /app/out/json/ .
 COPY --from=base /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 RUN pnpm install --frozen-lockfile
 COPY --from=base /app/out/full/ .
-RUN npm run build:client
+RUN npm run build:rnf-client
 
 FROM bitnami/nginx:latest as production
 
-COPY --from=builder /app/apps/client/dist /app
+COPY --from=builder /app/apps/rnf-client/dist /app
 
 USER 1001
