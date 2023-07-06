@@ -1,10 +1,8 @@
 import { faker } from "@faker-js/faker/locale/fr";
-import { Demarche } from "../entities/demarche.entity";
+import { Demarche } from "../../../src/modules/demarches/entities/demarche.entity";
 
-export const getDemarche = (): Demarche =>
+export const getFakeDemarche = (): Demarche =>
   ({
-    // TODO: fixe type
-    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     demarcheDS: faker.datatype.json(),
     state: faker.datatype.string(),
     title: faker.datatype.string(),

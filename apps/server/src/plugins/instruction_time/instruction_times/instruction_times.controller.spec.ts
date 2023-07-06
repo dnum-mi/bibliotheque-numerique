@@ -3,12 +3,6 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { InstructionTimesController } from "./instruction_times.controller";
 import { InstructionTimesService } from "./instruction_times.service";
-import { InstructionTime } from "../entities";
-import {
-  dossier_ds_test,
-  dossier_test,
-} from "../../../shared/entities/__tests__";
-import { instructionTime_test } from "../entities/__tests__";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule } from "@nestjs/config";
 import configuration from "../../../config/configuration";
@@ -16,6 +10,9 @@ import instructionTimeMappingConfig from "../config/instructionTimeMapping.confi
 import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
 import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import { loggerServiceMock } from "../../../../test/mock/logger-service.mock";
+import { getFakeDossierDs, getFakeDossierTest } from "../../../../test/unit/fake-data/dossier.fake-data";
+import { getFakeInstructionTime } from "../../../../test/unit/fake-data/instruction-time.fake-data";
+import { InstructionTime } from "./instruction_time.entity";
 
 describe("InstructionTimesController", () => {
   let controller: InstructionTimesController;
@@ -48,12 +45,12 @@ describe("InstructionTimesController", () => {
     expect(controller).toBeDefined();
   });
 
-  const dossierDs = dossier_ds_test();
-  const dossier = dossier_test(dossierDs as any);
-  const instructionTime = instructionTime_test(dossier as any);
-  const dossierDs2 = dossier_ds_test();
-  const dossier2 = dossier_test(dossierDs2 as any);
-  const instructionTime2 = instructionTime_test(dossier2 as any);
+  const dossierDs = getFakeDossierDs();
+  const dossier = getFakeDossierTest(dossierDs as any);
+  const instructionTime = getFakeInstructionTime(dossier as any);
+  const dossierDs2 = getFakeDossierDs();
+  const dossier2 = getFakeDossierTest(dossierDs2 as any);
+  const instructionTime2 = getFakeInstructionTime(dossier2 as any);
 
   describe("findAll", () => {
     it("should return empty array", async () => {

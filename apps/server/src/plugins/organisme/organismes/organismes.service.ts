@@ -1,9 +1,10 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { DataSource } from "typeorm";
 import { LoggerService } from "../../../shared/modules/logger/logger.service";
-import { Organisme, OrganismesData } from "../entities";
 import { OrganismesDatasService } from "../organismes_datas/organismes_datas.service";
 import { ParseToOrganismesService } from "../parserByConnector/parse_to_organismes.service";
+import { Organisme } from "./organisme.entity";
+import { OrganismesData } from "../organismes_datas/organisme_data.entity";
 
 @Injectable()
 export class OrganismesService {

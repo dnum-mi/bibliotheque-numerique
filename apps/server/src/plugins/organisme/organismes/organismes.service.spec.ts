@@ -1,21 +1,17 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule } from "@nestjs/config";
-
 import configuration from "../../../config/configuration";
 import fileConfig from "../../../config/file.config";
-
-import { Organisme } from "../entities";
-
 import { ConnectorModule } from "../../../modules/connector/connector.module";
 import { ParseToOrganismesModule } from "../parserByConnector/parse_to_organismes.module";
-
 import { OrganismesDatasService } from "../organismes_datas/organismes_datas.service";
 import { OrganismesService } from "./organismes.service";
-import { getOrganismesData } from "./__tests__/organimsesData";
 import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
 import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import { loggerServiceMock } from "../../../../test/mock/logger-service.mock";
+import { getFakeOrganismesData } from "../../../../test/unit/fake-data/organisme-data.fake-data";
+import { Organisme } from "./organisme.entity";
 
 describe("OrganismesService", () => {
   let service: OrganismesService;
@@ -48,7 +44,7 @@ describe("OrganismesService", () => {
   });
 
   it("should create new Organisme", async () => {
-    const fakeOrgData = [getOrganismesData()];
+    const fakeOrgData = [getFakeOrganismesData()];
     jest
       .spyOn(dataService, "findAndAddByIdRnaFromAllApi")
       .mockResolvedValueOnce([{ status: "fulfilled", value: true }]);
@@ -79,7 +75,7 @@ describe("OrganismesService", () => {
   });
 
   it("should return one message when a organisme is not found in API", async () => {
-    const fakeOrgData = getOrganismesData();
+    const fakeOrgData = getFakeOrganismesData();
     jest
       .spyOn(dataService, "findAndAddByIdRnaFromAllApi")
       .mockResolvedValueOnce([{ status: "rejected", reason: "test" }]);

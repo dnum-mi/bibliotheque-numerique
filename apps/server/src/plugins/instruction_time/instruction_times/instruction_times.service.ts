@@ -6,7 +6,6 @@ import { In } from "typeorm";
 
 import dayjs, { type Dayjs } from "../../../shared/utils/dayjs";
 
-import { InstructionTime } from "../entities";
 import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import {
   TInstructionTimeMappingConfig,
@@ -15,8 +14,9 @@ import {
 import {
   EInstructionTimeState,
   EInstructionTimeStateKey,
-} from "../types/IntructionTime.type";
+} from "./types/IntructionTime.type";
 import { Dossier } from "../../../modules/dossiers/entities/dossier.entity";
+import { InstructionTime } from "./instruction_time.entity";
 
 type TIntructionTime = {
   [keyInstructionTime.DATE_REQUEST1]?: Date | null;

@@ -2,13 +2,13 @@ import { Injectable } from "@nestjs/common";
 import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import { ConnectorService } from "../../../modules/connector/connector.service";
 import { DataSource } from "typeorm";
-import { OrganismesData } from "../entities";
 
 import {
   ParseToOrganismesService,
   TParseToOrganisme,
 } from "../parserByConnector/parse_to_organismes.service";
 import { Connector } from "../../../modules/connector/connector.entity";
+import { OrganismesData } from "./organisme_data.entity";
 
 @Injectable()
 export class OrganismesDatasService {
@@ -72,6 +72,7 @@ export class OrganismesDatasService {
     const dateMiseAJours = parser.getDataUpdateAt();
 
     if (organismeData.dataUpdateAt?.getTime() === dateMiseAJours.getTime()) {
+      console.log('ici')
       const message = `No update or no create organisme data for ${idRna} with ${connectorApi.name}`;
       this.logger.warn({
         short_message: message,
@@ -120,7 +121,7 @@ export class OrganismesDatasService {
   // TODO: fixe type
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async findAndAddByIdRnaFromAllApi(idRna: string, sources: string[]) {
-    const connectorApis = await Connector.find({});
+    const connectorApis = await this.connectorService.repository.find({});
     const connectorApisSelected = sources?.length
       ? connectorApis.filter((connector) => sources.includes(connector.name))
       : connectorApis;

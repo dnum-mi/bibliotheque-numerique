@@ -10,10 +10,10 @@ import configuration from "../../../config/configuration";
 import instructionTimeMappingConfig, {
   keyInstructionTime,
 } from "../config/instructionTimeMapping.config";
-import { InstructionTime } from "../entities";
 import { DossierDS } from "../../../modules/dossiers/entities/dossier_ds.entity";
 import MockDate from "mockdate";
 import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
+import { InstructionTime } from "./instruction_time.entity";
 
 describe("InstructionTimesService, Check Date", () => {
   let service: InstructionTimesService;

@@ -11,16 +11,15 @@ import dayjs from "../../../shared/utils/dayjs";
 import { InstructionTimesService } from "./instruction_times.service";
 import configuration from "../../../config/configuration";
 import instructionTimeMappingConfig, {
-  keyInstructionTime,
   TInstructionTimeMappingConfig,
 } from "../config/instructionTimeMapping.config";
-import { dossier_ds_test, dossier_test, } from "../../../shared/entities/__tests__";
-import { InstructionTime } from "../entities";
-import { EInstructionTimeState } from "../types/IntructionTime.type";
+import { EInstructionTimeState } from "./types/IntructionTime.type";
 import { Dossier } from "../../../modules/dossiers/entities/dossier.entity";
 import { DossierDS } from "../../../modules/dossiers/entities/dossier_ds.entity";
 import MockDate from "mockdate";
 import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
+import { InstructionTime } from "./instruction_time.entity";
+import { getFakeDossierDs, getFakeDossierTest } from "../../../../test/unit/fake-data/dossier.fake-data";
 
 describe("InstructionTimesService", () => {
   let service: InstructionTimesService;
@@ -58,8 +57,8 @@ describe("InstructionTimesService", () => {
   });
 
   it("It should return good annotations", async () => {
-    const fakeDossierDs = dossier_ds_test();
-    const fakeDossier = dossier_test(fakeDossierDs as DossierDS);
+    const fakeDossierDs = getFakeDossierDs();
+    const fakeDossier = getFakeDossierTest(fakeDossierDs as DossierDS);
     jest
       .spyOn(Dossier, "findOne")
       .mockResolvedValueOnce(fakeDossier as Dossier);
@@ -122,8 +121,8 @@ describe("InstructionTimesService", () => {
     const fakeInstrunctionTime: Partial<InstructionTime>[] = Array.from(
       { length: 3 },
       (elt, idx) => {
-        const dossierDs = dossier_ds_test();
-        const dossier = dossier_test(dossierDs as DossierDS);
+        const dossierDs = getFakeDossierDs();
+        const dossier = getFakeDossierTest(dossierDs as DossierDS);
         dossier.id = idx + 1;
 
         if (dossier.id === 2) {

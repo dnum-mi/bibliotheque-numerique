@@ -8,7 +8,6 @@ import fileConfig from "../../../config/file.config";
 import { HttpModule } from "@nestjs/axios";
 import { DemarchesDSService } from "../providers/demarches_ds.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { getDemarche } from "../__tests__/demarches";
 import { DossiersDSService } from "../../dossiers/providers/dossiers_ds.service";
 import { DossiersService } from "../../dossiers/providers/dossiers.service";
 import { FilesService } from "../../files/files.service";
@@ -18,6 +17,7 @@ import { InstructionTimesModule } from "../../../plugins/instruction_time/instru
 import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
 import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import { loggerServiceMock } from "../../../../test/mock/logger-service.mock";
+import { getFakeDemarche } from "../../../../test/unit/fake-data/demarche.fake-data";
 
 describe("DemarchesController", () => {
   let controller: DemarchesController;
@@ -62,7 +62,7 @@ describe("DemarchesController", () => {
   });
 
   it("should return one demarche", async () => {
-    const fakeDemarche = getDemarche();
+    const fakeDemarche = getFakeDemarche();
     jest.spyOn(service, "findByDsId").mockResolvedValueOnce(fakeDemarche);
     const fakeReq = {
       user: {
@@ -76,7 +76,7 @@ describe("DemarchesController", () => {
   });
 
   it("should return many demarches", async () => {
-    const fakeDemarches = [getDemarche(), getDemarche()];
+    const fakeDemarches = [getFakeDemarche(), getFakeDemarche()];
     jest.spyOn(service, "findWithFilter").mockResolvedValueOnce(fakeDemarches);
     const fakeReq = {
       user: {

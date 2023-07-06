@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ApplicationEntity } from "../../../shared/entities/application_entity";
-import { OrganismesData } from "./organisme_data.entity";
+import { OrganismesData } from "../organismes_datas/organisme_data.entity";
 
 @Entity({ name: "organismes" })
 export class Organisme extends ApplicationEntity {

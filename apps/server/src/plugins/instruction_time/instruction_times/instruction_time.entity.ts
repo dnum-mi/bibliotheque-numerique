@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { ApplicationEntity } from "../../../shared/entities/application_entity";
-import { EInstructionTimeStateKey } from "../types/IntructionTime.type";
+import { EInstructionTimeStateKey } from "./types/IntructionTime.type";
 import { Dossier } from "../../../modules/dossiers/entities/dossier.entity";
 
 @Entity({ name: "instruction_times" })

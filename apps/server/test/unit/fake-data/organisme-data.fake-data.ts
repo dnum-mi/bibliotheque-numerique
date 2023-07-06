@@ -1,12 +1,29 @@
+/* eslint-disable */
 import { faker } from "@faker-js/faker/locale/fr";
+import { OrganismesData } from "../../../src/plugins/organisme/organismes_datas/organisme_data.entity";
 
-// TODO: fixe type
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export const idRNAFake = () => `W${faker.random.numeric(9)}`;
+export function getFakeOrganismesData(): OrganismesData {
+  const idRNA = getFakeIdRNA();
+  const dataUpdateAt = faker.date.past();
+  const updateAt = faker.date.past(1, dataUpdateAt);
 
-// TODO: fixe type
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export function getDatasFromRNA(idRNA?: string) {
+  return {
+    organismesSource: {
+      id: faker.datatype.number(),
+      name: "API_ENTREPRISE_RNA_V3",
+    },
+    id: faker.datatype.number(),
+    idRef: idRNA,
+    dataJson: JSON.parse(JSON.stringify(getFakeDatasFromRNA(idRNA))),
+    dataUpdateAt,
+    createAt: faker.date.past(),
+    updateAt,
+  } as unknown as OrganismesData;
+}
+
+export const getFakeIdRNA = () => `W${faker.random.numeric(9)}`;
+
+export function getFakeDatasFromRNA(idRNA?: string) {
   return {
     rna_id: idRNA || `W${faker.random.numeric(9)}`,
     titre: faker.company.name(),
@@ -33,9 +50,7 @@ export function getDatasFromRNA(idRNA?: string) {
   };
 }
 
-// TODO: fixe type
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export function updateOrgFromRNA(data) {
+export function getFakeUpdateOrgFromRNA(data) {
   return {
     ...data,
     objet: faker.company.catchPhrase(),
