@@ -3,17 +3,18 @@ import { DsApiClient } from "@dnum-mi/ds-api-client";
 import { Dossier as TDossier } from "@dnum-mi/ds-api-client/dist/@types/types";
 import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import { DossiersService } from "./dossiers.service";
-import { DataSource } from "typeorm";
+import { DataSource, EntityManager, Repository } from "typeorm";
 import { FilesService } from "../../files/files.service";
 import { ConfigService } from "@nestjs/config";
 import { Champ, File, Message } from "@dnum-mi/ds-api-client/src/@types/types";
 import { InstructionTimesService } from "../../../plugins/instruction_time/instruction_times/instruction_times.service";
 import { DossierDS } from "../entities/dossier_ds.entity";
-import { Dossier } from "../entities/dossier.entity";
 import { FileStorage } from "../../files/file_storage.entity";
+import { BaseEntityService } from "../../../shared/base-entity/base-entity.service";
+import { InjectRepository } from "@nestjs/typeorm";
 
 @Injectable()
-export class DossiersDSService {
+export class DossiersDSService extends BaseEntityService {
   private dsApiClient: DsApiClient;
 
   constructor(
@@ -22,8 +23,11 @@ export class DossiersDSService {
     private readonly filesService: FilesService,
     private readonly configService: ConfigService,
     private instructionTimeService: InstructionTimesService,
-    private readonly logger: LoggerService,
+    protected readonly logger: LoggerService,
+    @InjectRepository(DossierDS) protected readonly repo: Repository<DossierDS>,
   ) {
+    super(repo, logger);
+    this.logger.setContext(this.constructor.name);
     this.dsApiClient = new DsApiClient(
       this.configService.get("ds").apiUrl,
       this.configService.get("ds").apiToken,
@@ -31,16 +35,36 @@ export class DossiersDSService {
     this.logger.setContext(this.constructor.name);
   }
 
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  private async _upsertDossierDS(
+    toUpsert: Partial<DossierDS> | Partial<DossierDS>[],
+    transactionalEntityManager: EntityManager,
+  ) {
+    return transactionalEntityManager
+      .createQueryBuilder()
+      .insert()
+      .into(DossierDS)
+      .values(toUpsert)
+      .orUpdate(["dataJson", "updateAt", "dsUpdateAt"], "PK_DOSSIER_DS_ID", {
+        skipUpdateIfNoValuesChanged: true,
+      })
+      .returning(["id", "dataJson"])
+      .execute();
+  }
+
   async upsertDossierDS(
     dossierNumber: number,
     demarcheNumber: number,
   ): Promise<void> {
+    this.logger.verbose("upsertDossierDS");
     const response = await this.dsApiClient.dossier(dossierNumber);
     const dossier = response?.dossier;
     return this.upsertDossierDSAndDossier(dossier, demarcheNumber);
   }
 
   async upsertDemarcheDossiersDS(demarcheNumber: number): Promise<void> {
+    this.logger.verbose("upsertDemarcheDossiersDS");
     const response = await this.dsApiClient.demarcheDossiers(demarcheNumber);
     const dossiers = response?.demarche?.dossiers?.nodes;
     this.logger.log(
@@ -69,6 +93,7 @@ export class DossiersDSService {
     dossier: Partial<TDossier>,
     demarcheNumber: number,
   ): Promise<void> {
+    this.logger.verbose("upsertDossierDSAndDossier");
     await this.dataSource.transaction(async (transactionalEntityManager) => {
       const toUpsert = {
         id: dossier.number,
@@ -76,7 +101,7 @@ export class DossiersDSService {
         dsUpdateAt: dossier.dateDerniereModification,
       } as Partial<DossierDS>;
 
-      const dossierFound = await DossierDS.findOneBy({ id: dossier.number });
+      const dossierFound = await this.findOneById(dossier.number);
 
       if (dossierFound) {
         // TODO: update Dossier
@@ -84,7 +109,7 @@ export class DossiersDSService {
         dossier = await this.updateFileUrlInJson(dossier);
       }
 
-      const upsertResultDossiersDS = await DossierDS.upsertDossierDS(
+      const upsertResultDossiersDS = await this._upsertDossierDS(
         toUpsert,
         transactionalEntityManager,
       );
@@ -105,7 +130,8 @@ export class DossiersDSService {
   }
 
   private async proccessInstructionTime(dossierId): Promise<void> {
-    const dossier = await Dossier.findOneBy({
+    this.logger.verbose("proccessInstructionTime");
+    const dossier = await this.dossiersService.repository.findOneBy({
       dossierDS: { id: dossierId },
     });
     await this.instructionTimeService.proccessByDossierId(dossier.id);
@@ -114,6 +140,7 @@ export class DossiersDSService {
   private async updateFileUrlInJson(
     dossier: Partial<TDossier>,
   ): Promise<Partial<TDossier>> {
+    this.logger.verbose("updateFileUrlInJson");
     dossier.champs = await this.replaceFileUrlInChamps(dossier.champs);
 
     if (dossier.annotations) {
@@ -128,6 +155,7 @@ export class DossiersDSService {
   private async replaceFileUrlInChamps(
     champs: Array<Champ>,
   ): Promise<Array<Champ>> {
+    this.logger.verbose("replaceFileUrlInChamps");
     await Promise.all(
       champs.map(async (champ) => {
         if (this.champHasFile(champ)) {
@@ -151,6 +179,7 @@ export class DossiersDSService {
   private async replaceFileUrlInMessages(
     messages: Array<Message>,
   ): Promise<Array<Message>> {
+    this.logger.verbose("replaceFileUrlInMessages");
     await Promise.all(
       messages.map(async (message) => {
         if (this.messageHasFile(message)) {
@@ -164,6 +193,7 @@ export class DossiersDSService {
   }
 
   private async copyRemoteFile(dsFile): Promise<FileStorage> {
+    this.logger.verbose("copyRemoteFile");
     return await this.filesService.copyRemoteFile(
       dsFile.url,
       dsFile.checksum,
@@ -174,6 +204,7 @@ export class DossiersDSService {
   }
 
   private champHasFile(champ): boolean {
+    this.logger.verbose("champHasFile");
     return (
       this.configService
         .get("ds.dossier.champs.pjTypeName")
@@ -182,20 +213,24 @@ export class DossiersDSService {
   }
 
   private messageHasFile(message): boolean {
+    this.logger.verbose("messageHasFile");
     return message.attachment !== null;
   }
 
   private isChampRepetition(champ): boolean {
+    this.logger.verbose("isChampRepetition");
     return this.configService
       .get("ds.dossier.champs.repetitionTypeName")
       .includes(champ["__typename"]);
   }
 
   private urlFileApi(id): string {
+    this.logger.verbose("urlFileApi");
     return `${this.appURL()}/files/${id}`;
   }
 
   private appURL(): string {
+    this.logger.verbose("appURL");
     return `${this.configService.get("protocol")}://${this.configService.get(
       "appHost",
     )}${this.configService.get("appPath")}`;

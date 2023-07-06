@@ -1,18 +1,18 @@
 import {
-  Entity,
   Column,
-  PrimaryGeneratedColumn,
+  Entity,
   JoinTable,
   ManyToMany,
+  PrimaryGeneratedColumn,
   Unique,
 } from "typeorm";
 import { User } from "../../users/entities/user.entity";
-import { ApplicationEntity } from "../../../shared/entities/application_entity";
 import { TPermission } from "../../../shared/types/Permission.type";
+import { BaseEntity } from "../../../shared/base-entity/base.entity";
 
 @Entity({ name: "roles" })
 @Unique("UK_ROLE_NAME", ["name"])
-export class Role extends ApplicationEntity {
+export class Role extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
@@ -28,27 +28,4 @@ export class Role extends ApplicationEntity {
   @ManyToMany(() => User, (user) => user.roles)
   @JoinTable({ name: "users_roles" })
   users: User[];
-
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  static insertRole(toUpsert: Partial<Role>) {
-    return this.createQueryBuilder()
-      .insert()
-      .into(Role)
-      .values(toUpsert)
-      .returning(["id", "name", "description", "permissions"])
-      .execute();
-  }
-
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  static updateRole(id: number, toUpdate: Partial<Role>) {
-    return this.createQueryBuilder()
-      .insert()
-      .update(Role)
-      .set(toUpdate)
-      .where("id = :id", { id })
-      .returning(["id", "name", "description", "permissions"])
-      .execute();
-  }
 }

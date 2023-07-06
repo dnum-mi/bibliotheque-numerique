@@ -5,14 +5,14 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { ApplicationEntity } from "../../../shared/entities/application_entity";
-import { Organisme } from "../organismes/organisme.entity";
+import { Organisme } from "./organisme.entity";
 import { Connector } from "../../../modules/connector/connector.entity";
+import { BaseEntity } from "../../../shared/base-entity/base.entity";
 
 export type TUpsertOrganismeData = Partial<OrganismesData>;
 
 @Entity({ name: "organismes_datas" })
-export class OrganismesData extends ApplicationEntity {
+export class OrganismesData extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 

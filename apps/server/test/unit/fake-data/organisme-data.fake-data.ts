@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { faker } from "@faker-js/faker/locale/fr";
-import { OrganismesData } from "../../../src/plugins/organisme/organismes_datas/organisme_data.entity";
+import { OrganismesData } from "../../../src/plugins/organisme/organismes/organisme_data.entity";
 
 export function getFakeOrganismesData(): OrganismesData {
   const idRNA = getFakeIdRNA();

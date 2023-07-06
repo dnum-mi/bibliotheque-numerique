@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import { DemarchesService } from "./demarches.service";
-import { DataSource } from "typeorm";
+import { DataSource, EntityManager, Repository } from "typeorm";
 import { ConfigService } from "@nestjs/config";
 import {
   Demarche as GqlDemarche,
@@ -9,22 +9,45 @@ import {
   DsApiError,
 } from "@dnum-mi/ds-api-client";
 import { DemarcheDS } from "../entities/demarche_ds.entity";
+import { BaseEntityService } from "../../../shared/base-entity/base-entity.service";
+import { InjectRepository } from "@nestjs/typeorm";
 
 @Injectable()
-export class DemarchesDSService {
+export class DemarchesDSService extends BaseEntityService<DemarcheDS> {
   private dsApiClient: DsApiClient;
 
   constructor(
     private demarchesService: DemarchesService,
     private dataSource: DataSource,
     private config: ConfigService,
-    private logger: LoggerService,
+    protected logger: LoggerService,
+    @InjectRepository(DemarcheDS)
+    protected readonly repo: Repository<DemarcheDS>,
   ) {
+    super(repo, logger);
     this.dsApiClient = new DsApiClient(
       this.config.get("ds.apiUrl"),
       this.config.get("ds.apiToken"),
     );
     this.logger.setContext(this.constructor.name);
+  }
+
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  private async _upsertDemarcheDS(
+    toUpsert: Partial<DemarcheDS> | Partial<DemarcheDS>[],
+    transactionalEntityManager: EntityManager,
+  ) {
+    return transactionalEntityManager
+      .createQueryBuilder()
+      .insert()
+      .into(DemarcheDS)
+      .values(toUpsert)
+      .orUpdate(["dataJson", "updateAt", "dsUpdateAt"], "PK_DEMARCHE_DS_ID", {
+        skipUpdateIfNoValuesChanged: true,
+      })
+      .returning(["id", "dataJson"])
+      .execute();
   }
 
   async upsertAllDemarche(): Promise<number[]> {
@@ -74,7 +97,7 @@ export class DemarchesDSService {
           : new Date(),
       }));
 
-      const upsertResultDemarchesDS = await DemarcheDS.upsertDemarcheDS(
+      const upsertResultDemarchesDS = await this._upsertDemarcheDS(
         toUpsert,
         transactionalEntityManager,
       );
@@ -92,7 +115,7 @@ export class DemarchesDSService {
   }
 
   async allDemarchesIds(): Promise<number[]> {
-    const allDemarcheEntity = await DemarcheDS.find({ select: ["id"] });
+    const allDemarcheEntity = await this.repo.find({ select: ["id"] });
     return allDemarcheEntity.map((demarche) => demarche.id) || [];
   }
 }

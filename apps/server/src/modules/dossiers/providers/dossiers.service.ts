@@ -1,14 +1,36 @@
 import { Injectable } from "@nestjs/common";
 import { LoggerService } from "../../../shared/modules/logger/logger.service";
-import { EntityManager, InsertResult } from "typeorm";
-import { Demarche } from "../../demarches/entities/demarche.entity";
+import { EntityManager, InsertResult, Repository } from "typeorm";
 import { DossierDS } from "../entities/dossier_ds.entity";
 import { Dossier } from "../entities/dossier.entity";
+import { DemarchesService } from "../../demarches/providers/demarches.service";
+import { InjectRepository } from "@nestjs/typeorm";
+import { BaseEntityService } from "../../../shared/base-entity/base-entity.service";
+
+export type TUpsertDossier = Partial<
+  Omit<Dossier, "dossierDS"> & { dossierDS: number }
+>;
 
 @Injectable()
-export class DossiersService {
-  constructor(private readonly logger: LoggerService) {
+export class DossiersService extends BaseEntityService<Dossier> {
+  constructor(
+    @InjectRepository(Dossier) protected readonly repo: Repository<Dossier>,
+    protected readonly logger: LoggerService,
+    private readonly demarcheService: DemarchesService,
+  ) {
+    super(repo, logger);
     this.logger.setContext(this.constructor.name);
+  }
+
+  private async _upsertDossier(
+    toUpsert: TUpsertDossier | TUpsertDossier[],
+    transactionalEntityManager: EntityManager,
+  ): Promise<InsertResult> {
+    this.logger.verbose("_upsertDossier");
+    return transactionalEntityManager.upsert(Dossier, <never>toUpsert, {
+      conflictPaths: ["dossierDS"],
+      skipUpdateIfNoValuesChanged: true,
+    });
   }
 
   async upsertDossier(
@@ -16,7 +38,8 @@ export class DossiersService {
     demarcheNumber: number,
     transactionalEntityManager: EntityManager,
   ): Promise<InsertResult> {
-    const demarcheEntity = await Demarche.findOneBy({
+    this.logger.verbose("upsertDossier");
+    const demarcheEntity = await this.demarcheService.repository.findOneBy({
       demarcheDS: { id: demarcheNumber },
     });
     const toUpsert = {
@@ -24,7 +47,7 @@ export class DossiersService {
       state: dossierDS.dataJson.state,
       demarche: demarcheEntity,
     };
-    const result = await Dossier.upsertDossier(
+    const result = await this._upsertDossier(
       toUpsert,
       transactionalEntityManager,
     );
@@ -32,27 +55,14 @@ export class DossiersService {
     return result;
   }
 
-  async findWithFilter(filter: object = {}): Promise<Dossier[]> {
-    return await Dossier.findWithFilter(filter);
-  }
-
+  //TODO: remove and use parent method
   async findOne(id: number): Promise<Dossier> {
-    return await Dossier.findOneBy({ id: id });
+    this.logger.verbose("findOne");
+    return await this.findOneById(id);
   }
 
+  //TODO: remove and use parent method
   async findOneWithDetail(id: number): Promise<Dossier> {
-    return await Dossier.findOne({
-      where: { id: id },
-      relations: { dossierDS: true },
-    });
-  }
-
-  async remove(id: number): Promise<Dossier | void> {
-    const dossier = await Dossier.findOneBy({ id: id });
-    if (dossier) {
-      return dossier.remove();
-    } else {
-      this.logger.warn("Dossier not found. Cannot perform remove.");
-    }
+    return await this.findOneById(id, { dossierDS: true });
   }
 }

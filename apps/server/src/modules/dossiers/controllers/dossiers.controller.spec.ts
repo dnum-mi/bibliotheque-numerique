@@ -54,7 +54,7 @@ describe("DossiersController", () => {
     expect(await fn()).toBe(result);
   });
 
-  it("findAll: should throw error when there are nothing", async () => {
+  it("findAllAndMap: should throw error when there are nothing", async () => {
     jest.spyOn(service, "findWithFilter").mockImplementation(async () => []);
     await expect(() => controller.findAll()).rejects.toThrow(
       "No dossier found",

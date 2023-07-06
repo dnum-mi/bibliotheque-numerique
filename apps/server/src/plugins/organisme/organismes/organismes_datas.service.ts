@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import { ConnectorService } from "../../../modules/connector/connector.service";
-import { DataSource } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 
 import {
   ParseToOrganismesService,
@@ -9,22 +9,27 @@ import {
 } from "../parserByConnector/parse_to_organismes.service";
 import { Connector } from "../../../modules/connector/connector.entity";
 import { OrganismesData } from "./organisme_data.entity";
+import { BaseEntityService } from "../../../shared/base-entity/base-entity.service";
+import { InjectRepository } from "@nestjs/typeorm";
 
 @Injectable()
-export class OrganismesDatasService {
+export class OrganismesDatasService extends BaseEntityService<OrganismesData> {
   constructor(
     private dataSource: DataSource,
     private connectorService: ConnectorService,
     private parser2Organismes: ParseToOrganismesService,
-    private readonly logger: LoggerService,
+    protected readonly logger: LoggerService,
+    @InjectRepository(OrganismesData)
+    protected readonly repo: Repository<OrganismesData>,
   ) {
+    super(repo, logger);
     this.logger.setContext(this.constructor.name);
   }
 
   // TODO: fixe type
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  async findAll() {
-    const organismeDatas = await OrganismesData.find({
+  async findAllAndMap() {
+    const organismeDatas = await this.repo.find({
       relations: { organismesSource: true },
     });
     return organismeDatas.map((organismeData) => ({
@@ -33,20 +38,8 @@ export class OrganismesDatasService {
     }));
   }
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  findOne(id: number) {
-    return `This action returns a #${id} organismesData`;
-  }
-
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  remove(id: number) {
-    return `This action removes a #${id} organismesData`;
-  }
-
   async findByIdRNA(idRef: string): Promise<OrganismesData[]> {
-    const organismesDatas = await OrganismesData.find({
+    const organismesDatas = await this.repo.find({
       where: { idRef },
       relations: { organismesSource: true },
     });
@@ -58,7 +51,7 @@ export class OrganismesDatasService {
     connectorApi: Connector,
     parser: TParseToOrganisme,
   ): Promise<boolean> {
-    let organismeData = await OrganismesData.findOneBy({
+    let organismeData = await this.repo.findOneBy({
       idRef: idRna,
       organismesSource: { id: connectorApi.id },
     });
@@ -72,7 +65,7 @@ export class OrganismesDatasService {
     const dateMiseAJours = parser.getDataUpdateAt();
 
     if (organismeData.dataUpdateAt?.getTime() === dateMiseAJours.getTime()) {
-      console.log('ici')
+      console.log("ici");
       const message = `No update or no create organisme data for ${idRna} with ${connectorApi.name}`;
       this.logger.warn({
         short_message: message,
@@ -83,7 +76,7 @@ export class OrganismesDatasService {
     organismeData.dataUpdateAt = dateMiseAJours;
     organismeData.dataJson = JSON.parse(JSON.stringify(parser.dataJson));
 
-    await organismeData.save();
+    await this.repo.save(organismeData);
     return true;
   }
 

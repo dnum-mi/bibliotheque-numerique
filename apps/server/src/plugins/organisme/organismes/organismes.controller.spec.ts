@@ -10,7 +10,7 @@ import { ParseToOrganismesModule } from "../parserByConnector/parse_to_organisme
 
 import { OrganismesController } from "./organismes.controller";
 
-import { OrganismesDatasService } from "../organismes_datas/organismes_datas.service";
+import { OrganismesDatasService } from "./organismes_datas.service";
 import { OrganismesService } from "./organismes.service";
 import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
 import { LoggerService } from "../../../shared/modules/logger/logger.service";

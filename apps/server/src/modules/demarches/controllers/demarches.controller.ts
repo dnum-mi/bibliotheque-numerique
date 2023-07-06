@@ -47,7 +47,7 @@ export class DemarchesController {
   @Get()
   @RequirePermissions({ name: PermissionName.ACCESS_DEMARCHE })
   async getDemarches(@Request() req): Promise<Demarche[]> {
-    const demarches = await this.demarcheService.findWithFilter(req.user);
+    const demarches = await this.demarcheService.findWithPermissions(req.user);
     if (demarches.length === 0) {
       throw new NotFoundException("No demarche found");
     }
@@ -60,7 +60,7 @@ export class DemarchesController {
     @Request() req,
     @Body("filter", FilterPipe) filter: object,
   ): Promise<Demarche[]> {
-    return this.demarcheService.findWithFilter(req.user, filter);
+    return this.demarcheService.findWithPermissions(req.user, filter);
   }
 
   @Get(":id")
@@ -71,8 +71,8 @@ export class DemarchesController {
     @Query("fields", new ParseArrayPipe({ separator: ",", optional: true }))
     fields: string[],
   ): Promise<Demarche | Partial<Demarche>> {
-    const rules = this.demarcheService.getRulesFromUserPermissions(req.user);
-    if (rules.id?.length > 0 && !rules.id.find((ruleId) => ruleId === id)) {
+    const ids = this.demarcheService.getRulesFromUserPermissions(req.user);
+    if (ids.length > 0 && !ids.find((ruleId) => ruleId === id)) {
       throw new HttpException(
         `Not authorized access for demarche id: ${id}`,
         HttpStatus.FORBIDDEN,
@@ -94,13 +94,10 @@ export class DemarchesController {
     @Query("fields", new ParseArrayPipe({ separator: ",", optional: true }))
     fields?: string[],
   ): Promise<Demarche | Partial<Demarche>> {
-    const rules = this.demarcheService.getRulesFromUserPermissions(req.user);
+    const ids = this.demarcheService.getRulesFromUserPermissions(req.user);
     const demarche = await this.demarcheService.findByDsId(id);
 
-    if (
-      rules.id?.length > 0 &&
-      !rules.id.find((ruleId) => ruleId === demarche.id)
-    ) {
+    if (ids.length > 0 && !ids.find((ruleId) => ruleId === demarche.id)) {
       throw new ForbiddenException(
         `Not authorized access for demarche id: ${id}`,
       );

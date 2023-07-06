@@ -5,19 +5,23 @@ import { Connector } from "./connector.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { BaseEntityService } from "../../shared/base-entity/base-entity.service";
+import { LoggerService } from "../../shared/modules/logger/logger.service";
 
 @Injectable()
 export class ConnectorService extends BaseEntityService<Connector> {
   constructor(
     private readonly httpService: HttpService,
     @InjectRepository(Connector) protected readonly repo: Repository<Connector>,
+    protected readonly logger: LoggerService,
   ) {
-    super(repo);
+    super(repo, logger);
+    this.logger.setContext(this.constructor.name);
   }
 
   // TODO: fixe type
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private _upsertConnector(toUpsert: Partial<Connector>) {
+    this.logger.verbose("_upsertConnector");
     return this.repo
       .createQueryBuilder()
       .insert()
@@ -52,14 +56,6 @@ export class ConnectorService extends BaseEntityService<Connector> {
       .execute();
   }
 
-  async findAll(): Promise<Connector[]> {
-    return this.repo.find();
-  }
-
-  async findOneById(id: number): Promise<Connector> {
-    return this.repo.findOneBy({ id });
-  }
-
   async findOneBySourceName(name: string): Promise<Connector> {
     return await this.repo.findOneBy({ name });
   }
@@ -69,12 +65,6 @@ export class ConnectorService extends BaseEntityService<Connector> {
   async upsert(connector: Partial<Connector>) {
     const upsertConnectorResult = await this._upsertConnector(connector);
     return upsertConnectorResult.raw[0];
-  }
-
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  async remove(id: number) {
-    return await this.repo.delete({ id });
   }
 
   async getResult(

@@ -19,7 +19,7 @@ import {
 import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
 import { faker } from "@faker-js/faker/locale/fr";
 import { getFakeDatasFromRNA, getFakeUpdateOrgFromRNA } from "../../../../test/unit/fake-data/organisme-data.fake-data";
-import { Organisme } from "../organismes/organisme.entity";
+import { Organisme } from "./organisme.entity";
 import { OrganismesData } from "./organisme_data.entity";
 
 const connectorTest = (): Partial<Connector> => ({

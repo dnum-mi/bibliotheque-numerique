@@ -1,5 +1,5 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { EntityManager, In, InsertResult } from "typeorm";
+import { Injectable } from "@nestjs/common";
+import { EntityManager, In, InsertResult, Repository } from "typeorm";
 import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import { ConfigService } from "@nestjs/config";
 import { PermissionName } from "../../../shared/types/Permission.type";
@@ -7,17 +7,45 @@ import { TConfig } from "../../../config/configuration";
 import { DemarcheDS } from "../entities/demarche_ds.entity";
 import { Demarche, TUpsertDemarche } from "../entities/demarche.entity";
 import { User } from "../../users/entities/user.entity";
+import { BaseEntityService } from "../../../shared/base-entity/base-entity.service";
+import { InjectRepository } from "@nestjs/typeorm";
+import { FindOptionsWhere } from "typeorm/find-options/FindOptionsWhere";
 
 @Injectable()
-export class DemarchesService {
+export class DemarchesService extends BaseEntityService<Demarche> {
   constructor(
     private configService: ConfigService,
-    private logger: LoggerService,
-  ) {}
+    protected logger: LoggerService,
+    @InjectRepository(Demarche) repo: Repository<Demarche>,
+  ) {
+    super(repo, logger);
+    this.logger.setContext(this.constructor.name);
+  }
+
+  private async _upsertDemarche(
+    toUpsert: TUpsertDemarche | TUpsertDemarche[],
+    transactionalEntityManager: EntityManager,
+  ): Promise<InsertResult> {
+    this.logger.verbose("upsertDemarche");
+    return transactionalEntityManager
+      .createQueryBuilder()
+      .insert()
+      .into(Demarche)
+      .values(<never>toUpsert)
+      .orUpdate(
+        ["title", "state", "typeOrganisme", "updateAt"],
+        ["idDemarcheDS"],
+        {
+          skipUpdateIfNoValuesChanged: true,
+        },
+      )
+      .execute();
+  }
 
   private _typeOrganismeFromDemarcheDs(
     demarcheDS: DemarcheDS,
   ): string | undefined {
+    this.logger.verbose("_typeOrganismeFromDemarcheDs");
     const TypeOrganisme =
       this.configService.get<TConfig["typeOrganisme"]>("typeOrganisme");
     const annotationDescriptors =
@@ -43,37 +71,8 @@ export class DemarchesService {
     return undefined;
   }
 
-  async upsertDemarches(
-    demarchesDS: DemarcheDS[],
-    transactionalEntityManager: EntityManager,
-  ): Promise<InsertResult> {
-    const toUpsert = demarchesDS.map<TUpsertDemarche>((demarcheDS) => ({
-      demarcheDS: demarcheDS.id,
-      title: demarcheDS.dataJson.title,
-      state: demarcheDS.dataJson.state,
-      typeOrganisme: this._typeOrganismeFromDemarcheDs(demarcheDS),
-    }));
-    return await Demarche.upsertDemarche(toUpsert, transactionalEntityManager);
-  }
-
-  async findById(id: number): Promise<Demarche> {
-    return await Demarche.findById(id);
-  }
-
-  async findByDsId(id: number): Promise<Demarche> {
-    return await Demarche.findByDsId(id);
-  }
-
-  async findWithFilter(user: User, filter: object = {}): Promise<Demarche[]> {
-    return Demarche.findWithFilter({
-      ...filter,
-      ...this._getFiltersFromUserPermissions(user),
-    });
-  }
-
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/no-explicit-any
-  getRulesFromUserPermissions(user: User): any {
+  public getRulesFromUserPermissions(user: User): number[] {
+    this.logger.verbose("getRulesFromUserPermissions");
     const { roles } = user;
     let demarcheIds: number[] = [];
     for (const role of roles) {
@@ -83,7 +82,7 @@ export class DemarchesService {
           "defaultAdmin.roleName",
         )
       ) {
-        return {};
+        return [];
       }
       const permissionAccessDemarche = role.permissions.find(
         (p) => p.name === PermissionName.ACCESS_DEMARCHE,
@@ -94,23 +93,51 @@ export class DemarchesService {
         );
       }
     }
-    return {
-      demarcheDS: demarcheIds,
-    };
+    return demarcheIds;
+  }
+
+  async findById(id: number): Promise<Demarche> {
+    this.logger.verbose("findById");
+    return super.findOneById(id, {
+      demarcheDS: true,
+      dossiers: { dossierDS: true },
+    });
+  }
+
+  async findByDsId(id: number): Promise<Demarche> {
+    this.logger.verbose("findByDsId");
+    return this.repo.findOne({
+      where: { demarcheDS: { id } },
+      relations: { demarcheDS: true },
+    });
+  }
+
+  async upsertDemarches(
+    demarchesDS: DemarcheDS[],
+    transactionalEntityManager: EntityManager,
+  ): Promise<InsertResult> {
+    this.logger.verbose("upsertDemarches");
+    const toUpsert = demarchesDS.map<TUpsertDemarche>((demarcheDS) => ({
+      demarcheDS: demarcheDS.id,
+      title: demarcheDS.dataJson.title,
+      state: demarcheDS.dataJson.state,
+      typeOrganisme: this._typeOrganismeFromDemarcheDs(demarcheDS),
+    }));
+    return await this._upsertDemarche(toUpsert, transactionalEntityManager);
+  }
+
+  async findWithPermissions(
+    user: User,
+    filter: FindOptionsWhere<Demarche> = {},
+  ): Promise<Demarche[]> {
+    this.logger.verbose("findWithFilter");
+    return super.findWithFilter({
+      ...filter,
+      demarcheDS: In(this.getRulesFromUserPermissions(user)),
+    });
   }
 
   async updateDemarche(id: number, demarche: Partial<Demarche>): Promise<void> {
-    const result = await Demarche.update(id, demarche);
-    if (result.affected === 0) {
-      throw new NotFoundException(`Demarche id: ${id} not found`);
-    }
-  }
-
-  private _getFiltersFromUserPermissions(user: User): object {
-    const rules = this.getRulesFromUserPermissions(user);
-    return {
-      demarcheDS:
-        rules?.demarcheDS?.length > 0 ? In(rules?.demarcheDS) : undefined,
-    };
+    return this.updateOrThrow(id, demarche);
   }
 }
