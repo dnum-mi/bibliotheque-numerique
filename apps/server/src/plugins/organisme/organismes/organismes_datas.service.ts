@@ -65,7 +65,6 @@ export class OrganismesDatasService extends BaseEntityService<OrganismesData> {
     const dateMiseAJours = parser.getDataUpdateAt();
 
     if (organismeData.dataUpdateAt?.getTime() === dateMiseAJours.getTime()) {
-      console.log("ici");
       const message = `No update or no create organisme data for ${idRna} with ${connectorApi.name}`;
       this.logger.warn({
         short_message: message,

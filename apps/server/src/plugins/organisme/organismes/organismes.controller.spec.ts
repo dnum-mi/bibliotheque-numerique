@@ -15,6 +15,8 @@ import { OrganismesService } from "./organismes.service";
 import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
 import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import { loggerServiceMock } from "../../../../test/mock/logger-service.mock";
+import { Organisme } from "./organisme.entity";
+import { OrganismesData } from "./organisme_data.entity";
 
 describe("OrganismesController", () => {
   let controller: OrganismesController;
@@ -23,7 +25,9 @@ describe("OrganismesController", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
+        // TODO: typeorm should not be imported for unit test, neither should it be imported twice for connection and injection
         TypeOrmModule.forRootAsync(typeormFactoryLoader),
+        TypeOrmModule.forFeature([Organisme, OrganismesData]),
         ParseToOrganismesModule,
         ConnectorModule,
         ConfigModule.forRoot({

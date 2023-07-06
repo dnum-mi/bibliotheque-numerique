@@ -470,7 +470,7 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
     if (datesForInstructionTimes[keyInstructionTime.DATE_REQUEST1]) {
       instructionTime.state = EInstructionTimeState.FIRST_REQUEST;
     }
-    return await instructionTime.save();
+    return await this.repo.save(instructionTime);
   }
 
   // TODO: fixe type
@@ -478,7 +478,7 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
   private async saveIsClose(instructionTime) {
     //TODO: faire quelque chose
     instructionTime.state = EInstructionTimeState.DEFAULT;
-    return await instructionTime.save();
+    return await this.repo.save(instructionTime);
   }
 
   // TODO: fixe type

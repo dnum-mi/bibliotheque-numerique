@@ -10,9 +10,16 @@ import instructionTimeMappingConfig from "../config/instructionTimeMapping.confi
 import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
 import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import { loggerServiceMock } from "../../../../test/mock/logger-service.mock";
-import { getFakeDossierDs, getFakeDossierTest } from "../../../../test/unit/fake-data/dossier.fake-data";
+import {
+  getFakeDossierDs,
+  getFakeDossierTest,
+} from "../../../../test/unit/fake-data/dossier.fake-data";
 import { getFakeInstructionTime } from "../../../../test/unit/fake-data/instruction-time.fake-data";
 import { InstructionTime } from "./instruction_time.entity";
+import { DossiersModule } from "../../../modules/dossiers/dossiers.module";
+import { Dossier } from "../../../modules/dossiers/entities/dossier.entity";
+import dsConfig from "../../../config/ds.config";
+import fileConfig from "../../../config/file.config";
 
 describe("InstructionTimesController", () => {
   let controller: InstructionTimesController;
@@ -21,11 +28,14 @@ describe("InstructionTimesController", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
+        // TODO: typeorm should not be imported for unit test, neither should it be imported twice for connection and injection
         TypeOrmModule.forRootAsync(typeormFactoryLoader),
+        TypeOrmModule.forFeature([InstructionTime, Dossier]),
+        DossiersModule,
         ConfigModule.forRoot({
           isGlobal: true,
           cache: true,
-          load: [configuration, instructionTimeMappingConfig],
+          load: [configuration, dsConfig, fileConfig, instructionTimeMappingConfig],
         }),
       ],
       controllers: [InstructionTimesController],

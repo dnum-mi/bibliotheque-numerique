@@ -9,6 +9,15 @@ import instructionTimeMappingConfig from "../../../plugins/instruction_time/conf
 import { InstructionTimesModule } from "../../../plugins/instruction_time/instruction_times/instruction_times.module";
 import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import { loggerServiceMock } from "../../../../test/mock/logger-service.mock";
+import { Dossier } from "../entities/dossier.entity";
+import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
+import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
+import { InstructionTime } from "../../../plugins/instruction_time/instruction_times/instruction_time.entity";
+import { DossiersModule } from "../dossiers.module";
+import { DemarchesModule } from "../../demarches/demarches.module";
+import { Demarche } from "../../demarches/entities/demarche.entity";
+import dsConfig from "../../../config/ds.config";
+import fileConfig from "../../../config/file.config";
 
 describe("DossiersController", () => {
   let controller: DossiersController;
@@ -17,12 +26,15 @@ describe("DossiersController", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
+        // TODO: typeorm should not be imported for unit test, neither should it be imported twice for connection and injection
+        TypeOrmModule.forRootAsync(typeormFactoryLoader),
+        TypeOrmModule.forFeature([InstructionTime, Dossier, Demarche]),
+        DemarchesModule,
         ConfigModule.forRoot({
           isGlobal: true,
           cache: true,
-          load: [instructionTimeMappingConfig],
+          load: [dsConfig, fileConfig, instructionTimeMappingConfig],
         }),
-        InstructionTimesModule,
       ],
       controllers: [DossiersController],
       providers: [DossiersService],

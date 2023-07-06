@@ -72,7 +72,7 @@ export class DemarchesController {
     fields: string[],
   ): Promise<Demarche | Partial<Demarche>> {
     const ids = this.demarcheService.getRulesFromUserPermissions(req.user);
-    if (ids.length > 0 && !ids.find((ruleId) => ruleId === id)) {
+    if (ids && ids.length > 0 && !ids.find((ruleId) => ruleId === id)) {
       throw new HttpException(
         `Not authorized access for demarche id: ${id}`,
         HttpStatus.FORBIDDEN,
@@ -97,7 +97,11 @@ export class DemarchesController {
     const ids = this.demarcheService.getRulesFromUserPermissions(req.user);
     const demarche = await this.demarcheService.findByDsId(id);
 
-    if (ids.length > 0 && !ids.find((ruleId) => ruleId === demarche.id)) {
+    if (
+      ids &&
+      ids.length > 0 &&
+      !ids.find((ruleId) => ruleId === demarche.id)
+    ) {
       throw new ForbiddenException(
         `Not authorized access for demarche id: ${id}`,
       );

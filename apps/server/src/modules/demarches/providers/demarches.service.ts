@@ -71,7 +71,7 @@ export class DemarchesService extends BaseEntityService<Demarche> {
     return undefined;
   }
 
-  public getRulesFromUserPermissions(user: User): number[] {
+  public getRulesFromUserPermissions(user: User): number[] | void {
     this.logger.verbose("getRulesFromUserPermissions");
     const { roles } = user;
     let demarcheIds: number[] = [];
@@ -82,7 +82,7 @@ export class DemarchesService extends BaseEntityService<Demarche> {
           "defaultAdmin.roleName",
         )
       ) {
-        return [];
+        return;
       }
       const permissionAccessDemarche = role.permissions.find(
         (p) => p.name === PermissionName.ACCESS_DEMARCHE,
@@ -130,11 +130,15 @@ export class DemarchesService extends BaseEntityService<Demarche> {
     user: User,
     filter: FindOptionsWhere<Demarche> = {},
   ): Promise<Demarche[]> {
-    this.logger.verbose("findWithFilter");
-    return super.findWithFilter({
+    this.logger.verbose("findWithPermissions");
+    const query = {
       ...filter,
-      demarcheDS: In(this.getRulesFromUserPermissions(user)),
-    });
+    };
+    const ids = this.getRulesFromUserPermissions(user);
+    if (ids) {
+      query.demarcheDS = In(ids);
+    }
+    return super.findWithFilter(query);
   }
 
   async updateDemarche(id: number, demarche: Partial<Demarche>): Promise<void> {

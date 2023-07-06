@@ -18,6 +18,11 @@ import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-load
 import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import { loggerServiceMock } from "../../../../test/mock/logger-service.mock";
 import { getFakeDemarche } from "../../../../test/unit/fake-data/demarche.fake-data";
+import { Demarche } from "../entities/demarche.entity";
+import { DemarcheDS } from "../entities/demarche_ds.entity";
+import { Dossier } from "../../dossiers/entities/dossier.entity";
+import { DossierDS } from "../../dossiers/entities/dossier_ds.entity";
+import { FileStorage } from "../../files/file_storage.entity";
 
 describe("DemarchesController", () => {
   let controller: DemarchesController;
@@ -26,7 +31,15 @@ describe("DemarchesController", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
+        // TODO: typeorm should not be imported for unit test, neither should it be imported twice for connection and injection
         TypeOrmModule.forRootAsync(typeormFactoryLoader),
+        TypeOrmModule.forFeature([
+          Demarche,
+          DemarcheDS,
+          Dossier,
+          DossierDS,
+          FileStorage,
+        ]),
         HttpModule,
         ConfigModule.forRoot({
           isGlobal: true,
@@ -77,13 +90,12 @@ describe("DemarchesController", () => {
 
   it("should return many demarches", async () => {
     const fakeDemarches = [getFakeDemarche(), getFakeDemarche()];
-    jest.spyOn(service, "findWithFilter").mockResolvedValueOnce(fakeDemarches);
+    jest.spyOn(service, "findWithPermissions").mockResolvedValue(fakeDemarches);
     const fakeReq = {
       user: {
         roles: [{ name: "admin" }],
       },
     };
-
     expect(await controller.getDemarches(fakeReq)).toBe(fakeDemarches);
   });
 });

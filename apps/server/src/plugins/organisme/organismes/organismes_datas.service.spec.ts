@@ -12,10 +12,7 @@ import fileConfig from "../../../config/file.config";
 import { ParseToOrganismesModule } from "../parserByConnector/parse_to_organismes.module";
 import { ParseToOrganismesService } from "../parserByConnector/parse_to_organismes.service";
 import { IParseToOrganisme } from "../parserByConnector/parse_to_organisme.interface";
-import {
-  Connector,
-  TypeAuth,
-} from "../../../modules/connector/connector.entity";
+import { Connector, TypeAuth } from "../../../modules/connector/connector.entity";
 import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
 import { faker } from "@faker-js/faker/locale/fr";
 import { getFakeDatasFromRNA, getFakeUpdateOrgFromRNA } from "../../../../test/unit/fake-data/organisme-data.fake-data";
@@ -87,7 +84,9 @@ describe("OrganismesDatasService", () => {
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
+        // TODO: typeorm should not be imported for unit test, neither should it be imported twice for connection and injection
         TypeOrmModule.forRootAsync(typeormFactoryLoader),
+        TypeOrmModule.forFeature([OrganismesData]),
         ConnectorModule,
         ConfigModule.forRoot({
           isGlobal: true,
@@ -109,7 +108,7 @@ describe("OrganismesDatasService", () => {
   });
 
   afterEach(async () => {
-    await OrganismesData.delete({});
+    await service.repository.delete({});
     await connectorService.repository.delete({});
   });
 
@@ -122,7 +121,7 @@ describe("OrganismesDatasService", () => {
       connectorService,
       service,
     );
-    const orgData = await OrganismesData.find();
+    const orgData = await service.repository.find();
     expect(orgData[0]).toHaveProperty("idRef", idRNA);
     expect(orgData[0]).toHaveProperty("dataJson");
     expect(orgData[0].dataJson).toMatchObject(expected);
@@ -136,7 +135,7 @@ describe("OrganismesDatasService", () => {
 
     const result = await service.findAndAddByIdRna("test", orgSrc);
     expect(result).toBe(false);
-    const orgData = await OrganismesData.find();
+    const orgData = await service.repository.find();
     expect(orgData).toHaveLength(0);
   });
 
@@ -148,7 +147,7 @@ describe("OrganismesDatasService", () => {
 
     const result1 = await service.findAndAddByIdRna(idRNA, orgSrc);
     expect(result1).toBe(false);
-    const orgData = await OrganismesData.find();
+    const orgData = await service.repository.find();
     expect(orgData).toHaveLength(1);
     expect(orgData[0]).toHaveProperty("idRef", idRNA);
     expect(orgData[0]).toHaveProperty("dataJson");
@@ -170,7 +169,7 @@ describe("OrganismesDatasService", () => {
 
     const result = await service.findAndAddByIdRna(idRNA, orgSrc);
     expect(result).toBe(true);
-    const orgData = await OrganismesData.find();
+    const orgData = await service.repository.find();
 
     expect(orgData[0]).toHaveProperty("idRef", idRNA);
     expect(orgData[0]).toHaveProperty("dataJson");

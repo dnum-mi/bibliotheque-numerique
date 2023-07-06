@@ -14,6 +14,10 @@ import { DossierDS } from "../../../modules/dossiers/entities/dossier_ds.entity"
 import MockDate from "mockdate";
 import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
 import { InstructionTime } from "./instruction_time.entity";
+import { DossiersModule } from "../../../modules/dossiers/dossiers.module";
+import { Dossier } from "../../../modules/dossiers/entities/dossier.entity";
+import dsConfig from "../../../config/ds.config";
+import fileConfig from "../../../config/file.config";
 
 describe("InstructionTimesService, Check Date", () => {
   let service: InstructionTimesService;
@@ -22,11 +26,19 @@ describe("InstructionTimesService, Check Date", () => {
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
+        // TODO: typeorm should not be imported for unit test, neither should it be imported twice for connection and injection
         TypeOrmModule.forRootAsync(typeormFactoryLoader),
+        TypeOrmModule.forFeature([InstructionTime, Dossier]),
+        DossiersModule,
         ConfigModule.forRoot({
           isGlobal: true,
           cache: true,
-          load: [configuration, instructionTimeMappingConfig],
+          load: [
+            configuration,
+            dsConfig,
+            fileConfig,
+            instructionTimeMappingConfig,
+          ],
         }),
       ],
       providers: [InstructionTimesService],
@@ -38,7 +50,7 @@ describe("InstructionTimesService, Check Date", () => {
 
   afterEach(async () => {
     MockDate.reset();
-    await InstructionTime.delete({});
+    await service.repository.delete({});
   });
   afterAll(async () => {
     await dataSource.destroy();

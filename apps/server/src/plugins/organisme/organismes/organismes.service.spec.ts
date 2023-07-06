@@ -10,8 +10,9 @@ import { OrganismesService } from "./organismes.service";
 import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
 import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import { loggerServiceMock } from "../../../../test/mock/logger-service.mock";
-import { getFakeOrganismesData } from "../../../../test/unit/fake-data/organisme-data.fake-data";
 import { Organisme } from "./organisme.entity";
+import { OrganismesData } from "./organisme_data.entity";
+import { getFakeOrganismesData } from "../../../../test/unit/fake-data/organisme-data.fake-data";
 
 describe("OrganismesService", () => {
   let service: OrganismesService;
@@ -20,7 +21,9 @@ describe("OrganismesService", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
+        // TODO: typeorm should not be imported for unit test, neither should it be imported twice for connection and injection
         TypeOrmModule.forRootAsync(typeormFactoryLoader),
+        TypeOrmModule.forFeature([Organisme, OrganismesData]),
         ConnectorModule,
         ConfigModule.forRoot({
           isGlobal: true,
@@ -55,7 +58,7 @@ describe("OrganismesService", () => {
       fakeOrgData[0].organismesSource as unknown as string,
     ]);
 
-    const organismeFound = await Organisme.findOneBy({
+    const organismeFound = await service.repository.findOneBy({
       idRef: fakeOrgData[0].idRef,
     });
     expect(organismeFound).toBeDefined();
