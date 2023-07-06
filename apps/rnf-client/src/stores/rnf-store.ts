@@ -7,6 +7,7 @@ export const useRnfStore = defineStore('rnf', () => {
   const created: Ref<boolean> = useStorage('rnfCreated', false)
   const rnfId: Ref<string> = useStorage('rnfId', '')
   const dossierId:Ref<string> = useStorage('dossierId', '')
+  const demarcheId:Ref<string> = useStorage('demarcheId', '')
   let urlDs: string | undefined
 
   const getUrlDs = async () => {
@@ -21,6 +22,7 @@ export const useRnfStore = defineStore('rnf', () => {
   return {
     created,
     dossierId,
+    demarcheId,
     rnfId,
     getUrlDs,
   }

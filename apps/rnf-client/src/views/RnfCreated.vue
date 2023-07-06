@@ -19,7 +19,7 @@ const subtitle = computed( () => created
     dsUrl.value = await rnfStore.getUrlDs()
   })
   const onClick = () => {
-    location.href = `${dsUrl.value}/dossiers/${rnfStore.dossierId}`
+    location.href = `${dsUrl.value}/procedures/${rnfStore.demarcheId}/dossiers/${rnfStore.dossierId}/annotations-privees`
   }
 </script>
 

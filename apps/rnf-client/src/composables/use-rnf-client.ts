@@ -36,9 +36,15 @@ export type FoundationOutputDto = {
 
 export type CurrentFoundationOutputDto = Omit<FoundationOutputDto, 'rnfId'|'createdAt'|'updatedAt'>
 
+export type InfoDSOutputDto = {
+  demarcheId: Number;
+  dossierId: Number;
+}
+
 type FoundationCollisionOutputDto = {
   collisionFoundations: FoundationOutputDto[],
   currentFoundation: CurrentFoundationOutputDto,
+  ds: InfoDSOutputDto,
 }
 
 
@@ -48,6 +54,7 @@ function useRnfClient() {
   const errorMessage = ref('')
   const collisions: FoundationOutputDto[] = reactive([])
   const currentFoundation: Ref<CurrentFoundationOutputDto> = ref({}) as Ref<CurrentFoundationOutputDto>
+  const ds:Ref<InfoDSOutputDto | undefined> = ref(undefined)
 
   async function getRnfId(dossierId: number, instructeurEmail: string, force: boolean) {
     try {
@@ -57,14 +64,17 @@ function useRnfClient() {
       const res = await fetchRnfId(dossierId, instructeurEmail, force)
       const rnfResponseBody = await res.json()
 
+
       if (res.status === 409) {
         const { data: foundationsCollision }: { data: FoundationCollisionOutputDto } = rnfResponseBody
         collisions.length = 0
         collisions.push(...foundationsCollision.collisionFoundations)
         currentFoundation.value = foundationsCollision.currentFoundation
+        ds.value = foundationsCollision.ds
         return
       }
       rnfId.value = rnfResponseBody.rnfId
+      ds.value = rnfResponseBody.ds
     } catch (err) {
       errorMessage.value = err instanceof Error ? err.message : (err as string)
     } finally {
@@ -79,6 +89,7 @@ function useRnfClient() {
     getRnfId,
     collisions,
     currentFoundation,
+    ds,
   }
 }
 
