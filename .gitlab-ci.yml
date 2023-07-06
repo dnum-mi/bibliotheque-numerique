@@ -37,6 +37,14 @@ test_front:
   extends:
     - .node:sonar
 
+test_rnf_front:
+  variables:
+    WORKING_DIR: apps/rnf-client
+  stage: test-sonar
+  allow_failure: true
+  extends:
+    - .node:sonar
+
 test_back:
   variables:
     WORKING_DIR: apps/server
@@ -62,6 +70,16 @@ build_app_front:
     - 'npm i -g pnpm'
     - 'pnpm i --frozen-lockfile'
     - 'pnpm run build:client'
+
+build_app_rnf_front:
+  stage: build-app
+  artifacts:
+    paths:
+      - client/dist-*
+  script:
+    - 'npm i -g pnpm'
+    - 'pnpm i --frozen-lockfile'
+    - 'pnpm run build:rnf-client'
 
 build_app_back:
   stage: build-app
@@ -98,6 +116,16 @@ test_docker_front:
   extends:
     - .docker:test
 
+test_docker_rnf_front:
+  variables:
+    WORKING_DIR: 'apps/rnf-client'
+    IMAGE_NAME: 'rnf-front'
+    DOCKERFILE: 'Dockerfile'
+  stage: docker-test
+  allow_failure: true
+  extends:
+    - .docker:test
+
 test_docker_back:
   image: docker:stable
   variables:
@@ -113,7 +141,7 @@ test_docker_rnf_back:
   image: docker:stable
   variables:
     WORKING_DIR: 'apps/rnf-server'
-    IMAGE_NAME: 'bibliotheque_numerique-rnf-back'
+    IMAGE_NAME: 'rnf-back'
     DOCKERFILE: 'Dockerfile'
   stage: docker-test
   allow_failure: true
@@ -124,6 +152,15 @@ docker_build_front:
   variables:
     WORKING_DIR: 'apps/client'
     IMAGE_NAME: 'bibliotheque_numerique-front'
+    DOCKERFILE: 'Dockerfile'
+  stage: docker-build
+  extends:
+    - .kaniko:build
+
+docker_build_rnf_front:
+  variables:
+    WORKING_DIR: 'apps/rnf-client'
+    IMAGE_NAME: 'rnf-front'
     DOCKERFILE: 'Dockerfile'
   stage: docker-build
   extends:
@@ -141,7 +178,7 @@ docker_build_back:
 docker_build_rnf_back:
   variables:
     WORKING_DIR: 'apps/rnf-server'
-    IMAGE_NAME: 'bibliotheque_numerique-rnf-back'
+    IMAGE_NAME: 'rnf-back'
     DOCKERFILE: 'Dockerfile'
   stage: docker-build
   extends:

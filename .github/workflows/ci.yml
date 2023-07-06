@@ -33,6 +33,28 @@ jobs:
         run: |
             pnpm run build:client
 
+  rnf-client:
+    name: rnf-client - Run tests
+    if: ${{ !github.event.pull_request.draft }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checks-out repository
+        uses: actions/checkout@v3
+      - name: Use Node.js 18.x.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+      - name: run test FRONT
+        run: |
+          npm i -g pnpm
+          pnpm i --frozen-lockfile
+          pnpm run lint:rnf-client
+          pnpm run test:rnf-client
+      - name: run build
+        run: |
+          pnpm run build:rnf-client
+
   server:
     name: server - Run tests
     if: ${{ !github.event.pull_request.draft }}
@@ -101,6 +123,26 @@ jobs:
           pnpm run docker:build:client:run
           pnpm run docker:build:client:check
           pnpm run docker:build:client:stop
+
+  docker-rnf-client:
+    name: rnf-client - Build and Run docker image
+    if: ${{ !github.event.pull_request.draft }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checks-out repository
+        uses: actions/checkout@v3
+      - name: Use Node.js 18.x.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+      - name: run build
+        run: |
+          npm i -g pnpm
+          pnpm run docker:build:rnf-client
+          pnpm run docker:build:rnf-client:run
+          pnpm run docker:build:rnf-client:check
+          pnpm run docker:build:rnf-client:stop
 
   docker-server:
     name: server - Build and Run docker image
