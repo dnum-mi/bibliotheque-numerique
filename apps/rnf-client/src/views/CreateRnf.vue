@@ -66,6 +66,8 @@ const alertProps = reactive({
 async function getRnfId(force: boolean) {
   await rnfClient.getRnfId(+dossierId.value, instructeurEmail.value, force)
   rnfStore.dossierId = dossierId.value
+  rnfStore.demarcheId = rnfClient.ds.value?.demarcheId?.toString() ?? ''
+
   if (!force) {
     if (rnfClient.collisions.length) {
       return

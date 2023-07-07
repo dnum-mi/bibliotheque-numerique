@@ -10,6 +10,7 @@ import { GetFoundationOutputDto } from "@/modules/foundation/objects/dto/outputs
 import { formatPhoneNumber } from "@/shared/utils/number.utils";
 import { CollisionException } from "@/shared/exceptions/collision.exception";
 import { ConfigService } from "@nestjs/config";
+import { InfoDSOutputDto } from "../objects/dto/info-ds-output.dto";
 
 @Injectable()
 export class FoundationService extends BaseEntityService<FoundationEntity> {
@@ -38,15 +39,15 @@ export class FoundationService extends BaseEntityService<FoundationEntity> {
     ` as Promise<{ id: number }[]>;
   }
 
-  private async _findCollision(dto: CreateFoundationDto): Promise<void> {
+  private async _findCollision(dto: CreateFoundationDto, ds: InfoDSOutputDto): Promise<void> {
     const collisions = await this._findIdOfCollision(dto);
     if (collisions.length) {
-      throw new CollisionException(dto, await this.getFoundations(collisions.map((id) => id.id)));
+      throw new CollisionException(dto, await this.getFoundations(collisions.map((id) => id.id)), ds);
     }
     return;
   }
 
-  async CreateFoundation(dto: CreateFoundationDto, forceCreation?: boolean): Promise<Foundation> {
+  async CreateFoundation(dto: CreateFoundationDto, ds: InfoDSOutputDto, forceCreation?: boolean): Promise<Foundation> {
     this.logger.verbose(`CreateFoundation`);
     const code = dto.address.departmentCode;
     if (!dto.address || !code) {
@@ -55,7 +56,7 @@ export class FoundationService extends BaseEntityService<FoundationEntity> {
     this.logger.debug(`department found: ${dto.address.departmentCode}`);
     dto.phone = formatPhoneNumber(dto.phone);
     if (!forceCreation) {
-      await this._findCollision(dto);
+      await this._findCollision(dto, ds);
     }
     return this.prisma.$transaction(async (prisma) => {
       const foundation = await prisma.foundation.create({

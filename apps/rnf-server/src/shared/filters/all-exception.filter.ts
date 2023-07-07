@@ -35,6 +35,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
         data = {
           collisionFoundations: collisionException.foundations,
           currentFoundation: collisionException.currentFoundation,
+          ds: collisionException.ds,
         };
         break;
       case exception instanceof HttpException && httpStatus !== HttpStatus.INTERNAL_SERVER_ERROR:

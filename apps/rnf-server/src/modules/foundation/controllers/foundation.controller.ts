@@ -8,6 +8,7 @@ import { RnfIdOutputDto } from "@/modules/foundation/objects/dto/outputs/rnf-id-
 import { GetFoundationInputDto } from "@/modules/foundation/objects/dto/inputs/get-foundation-input.dto";
 import { ApiTags } from "@nestjs/swagger";
 import { GetFoundationOutputDto } from "@/modules/foundation/objects/dto/outputs/get-foundation-output.dto";
+import { InfoDSOutputDto } from "../objects/dto/info-ds-output.dto";
 
 @ApiTags("Foundation")
 @Controller("foundation")
@@ -30,10 +31,16 @@ export class FoundationController {
       throw new ForbiddenException("This instructeur's email is not linked to this dossier.");
     }
     const createDto = this.dsMapperService.mapDossierToFoundation(rawDossier);
-    const foundation = await this.service.CreateFoundation(createDto, dto.forceCreate);
+
+    const ds: InfoDSOutputDto = {
+      demarcheId: rawDossier.demarche?.number,
+      dossierId: rawDossier.number,
+    };
+
+    const foundation = await this.service.CreateFoundation(createDto, ds, dto.forceCreate);
     await this.dsService.writeRnfIdInPrivateAnnotation(rawDossier.id!, instructeurId, foundation.type, foundation.rnfId);
     // TODO: await this.foundationHistoryService.newHistoryEntry(foundation, dto);
-    return { rnfId: foundation.rnfId };
+    return { rnfId: foundation.rnfId, ds };
   }
 
   @Get(`/:rnfId`)
