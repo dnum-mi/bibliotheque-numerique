@@ -185,7 +185,7 @@ export class FilesService {
     newFile.checksum = checksum;
     newFile.byteSize = byteSize;
     newFile.mimeType = mimeType;
-    await this.repo.create(newFile);
+    await this.repo.save(this.repo.create(newFile));
     return newFile;
   }
 

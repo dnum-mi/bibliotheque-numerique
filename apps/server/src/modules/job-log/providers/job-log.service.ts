@@ -19,9 +19,7 @@ export class JobLogService extends BaseEntityService<JobLog> {
 
   async createJobLog(name: JobNamesKeys): Promise<JobLog> {
     this.logger.verbose("createJobLog");
-    const jobLog = this.repo.create({ jobName: name });
-    await this.repo.save(jobLog);
-    return jobLog;
+    return this.createAndSave({ jobName: name });
   }
 
   async getLast10JobLogs(): Promise<JobLog[]> {

@@ -71,8 +71,12 @@ export class DemarchesController {
     @Query("fields", new ParseArrayPipe({ separator: ",", optional: true }))
     fields: string[],
   ): Promise<Demarche | Partial<Demarche>> {
-    const ids = this.demarcheService.getRulesFromUserPermissions(req.user);
-    if (ids && ids.length > 0 && !ids.find((ruleId) => ruleId === id)) {
+    const ruleIds = this.demarcheService.getRulesFromUserPermissions(req.user);
+    if (
+      ruleIds &&
+      ruleIds.length > 0 &&
+      !ruleIds.find((ruleId) => ruleId === id)
+    ) {
       throw new HttpException(
         `Not authorized access for demarche id: ${id}`,
         HttpStatus.FORBIDDEN,

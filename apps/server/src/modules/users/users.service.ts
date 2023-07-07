@@ -33,7 +33,7 @@ export class UsersService extends BaseEntityService<User> {
     if (userInDb) {
       throw new Error("User already exists");
     }
-    return this.repo.create({
+    return this.createAndSave({
       email,
       password,
     });
@@ -45,7 +45,7 @@ export class UsersService extends BaseEntityService<User> {
     if (userInDb) {
       return userInDb;
     }
-    return this.repo.create({
+    return this.createAndSave({
       email,
       password,
     });

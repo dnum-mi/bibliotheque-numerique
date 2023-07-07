@@ -1,4 +1,4 @@
-import { DeleteResult, FindOneOptions, Repository } from "typeorm";
+import { DeepPartial, DeleteResult, FindOneOptions, Repository } from "typeorm";
 import { BaseEntity } from "./base.entity";
 import { LoggerService } from "../modules/logger/logger.service";
 import { FindOptionsRelations } from "typeorm/find-options/FindOptionsRelations";
@@ -16,6 +16,11 @@ export abstract class BaseEntityService<T extends BaseEntity = BaseEntity> {
   public get repository(): Repository<T> {
     this.logger.verbose("get repository");
     return this.repo;
+  }
+
+  async createAndSave(obj: DeepPartial<T>): Promise<T> {
+    this.logger.verbose("createAndSave");
+    return this.repo.save(this.repo.create(obj));
   }
 
   async findWithFilter(

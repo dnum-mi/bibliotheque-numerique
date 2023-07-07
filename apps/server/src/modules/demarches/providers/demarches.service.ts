@@ -134,11 +134,11 @@ export class DemarchesService extends BaseEntityService<Demarche> {
     const query = {
       ...filter,
     };
-    const ids = this.getRulesFromUserPermissions(user);
-    if (ids) {
-      query.demarcheDS = In(ids);
+    const ruleIds = this.getRulesFromUserPermissions(user);
+    if (ruleIds) {
+      query.demarcheDS = In(ruleIds);
     }
-    return super.findWithFilter(query);
+    return super.findWithFilter(query, { demarcheDS: true });
   }
 
   async updateDemarche(id: number, demarche: Partial<Demarche>): Promise<void> {

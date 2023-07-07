@@ -32,7 +32,6 @@ export class DossiersDSService extends BaseEntityService {
       this.configService.get("ds").apiUrl,
       this.configService.get("ds").apiToken,
     );
-    this.logger.setContext(this.constructor.name);
   }
 
   // TODO: fixe type
