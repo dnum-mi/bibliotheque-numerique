@@ -3,7 +3,6 @@ import { Test } from "@nestjs/testing";
 import { UsersModule } from "./users.module";
 import { UsersService } from "./users.service";
 import { HttpStatus, INestApplication } from "@nestjs/common";
-import { UsersController } from "./users.controller";
 
 describe.skip("Users", () => {
   let app: INestApplication;
