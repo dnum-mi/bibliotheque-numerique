@@ -180,7 +180,10 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
       }
 
       acc[dossier.id] = {
-        remainingTime: remainingTime != null ? Math.round(remainingTime) : null,
+        remainingTime:
+          remainingTime != null && remainingTime >= 0
+            ? Math.round(remainingTime)
+            : null,
         delayStatus: delayStatus ?? instructionTime.state ?? null,
       };
 
