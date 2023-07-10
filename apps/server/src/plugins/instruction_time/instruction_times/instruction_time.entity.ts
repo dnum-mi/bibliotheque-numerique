@@ -1,10 +1,19 @@
-import { Column, Entity, JoinColumn, OneToOne } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { EInstructionTimeStateKey } from "./types/IntructionTime.type";
 import { Dossier } from "../../../modules/dossiers/entities/dossier.entity";
 import { BaseEntity } from "../../../shared/base-entity/base.entity";
 
 @Entity({ name: "instruction_times" })
 export class InstructionTime extends BaseEntity {
+  @PrimaryGeneratedColumn("increment")
+  id: number;
+
   @OneToOne(() => Dossier)
   @JoinColumn()
   dossier: Dossier;

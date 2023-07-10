@@ -38,6 +38,8 @@ export class DemarchesDSService extends BaseEntityService<DemarcheDS> {
     toUpsert: Partial<DemarcheDS> | Partial<DemarcheDS>[],
     transactionalEntityManager: EntityManager,
   ) {
+    this.logger.verbose("_upsertDemarcheDS");
+    console.log(toUpsert);
     return transactionalEntityManager
       .createQueryBuilder()
       .insert()
@@ -51,6 +53,7 @@ export class DemarchesDSService extends BaseEntityService<DemarcheDS> {
   }
 
   async upsertAllDemarche(): Promise<number[]> {
+    this.logger.verbose("upsertAllDemarche");
     this.logger.log("Upserting all demarches");
     const demarcheIds: number[] = await this.allDemarchesIds();
     this.logger.log("Id found for demarche: " + demarcheIds.join(", "));
@@ -61,6 +64,7 @@ export class DemarchesDSService extends BaseEntityService<DemarcheDS> {
   async demarchesByAPI(
     demarcheNumbers?: number[],
   ): Promise<Partial<GqlDemarche>[]> {
+    this.logger.verbose("demarchesByAPI");
     const result = [];
     for (const id of demarcheNumbers) {
       try {
@@ -83,6 +87,7 @@ export class DemarchesDSService extends BaseEntityService<DemarcheDS> {
   // TODO: fixe type
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async upsertDemarchesDSAndDemarches(demarcheNumbers?: number[]) {
+    this.logger.verbose("upsertDemarchesDSAndDemarches");
     const demarches = await this.demarchesByAPI(demarcheNumbers);
     if (!demarches.length) {
       return;
@@ -115,6 +120,7 @@ export class DemarchesDSService extends BaseEntityService<DemarcheDS> {
   }
 
   async allDemarchesIds(): Promise<number[]> {
+    this.logger.verbose("allDemarchesIds");
     const allDemarcheEntity = await this.repo.find({ select: ["id"] });
     return allDemarcheEntity.map((demarche) => demarche.id) || [];
   }
