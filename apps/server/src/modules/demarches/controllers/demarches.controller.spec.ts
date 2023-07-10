@@ -8,7 +8,6 @@ import fileConfig from "../../../config/file.config";
 import { HttpModule } from "@nestjs/axios";
 import { DemarchesDSService } from "../providers/demarches_ds.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { getDemarche } from "../__tests__/demarches";
 import { DossiersDSService } from "../../dossiers/providers/dossiers_ds.service";
 import { DossiersService } from "../../dossiers/providers/dossiers.service";
 import { FilesService } from "../../files/files.service";
@@ -18,6 +17,12 @@ import { InstructionTimesModule } from "../../../plugins/instruction_time/instru
 import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
 import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import { loggerServiceMock } from "../../../../test/mock/logger-service.mock";
+import { getFakeDemarche } from "../../../../test/unit/fake-data/demarche.fake-data";
+import { Demarche } from "../entities/demarche.entity";
+import { DemarcheDS } from "../entities/demarche_ds.entity";
+import { Dossier } from "../../dossiers/entities/dossier.entity";
+import { DossierDS } from "../../dossiers/entities/dossier_ds.entity";
+import { FileStorage } from "../../files/file_storage.entity";
 
 describe("DemarchesController", () => {
   let controller: DemarchesController;
@@ -26,7 +31,15 @@ describe("DemarchesController", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
+        // TODO: typeorm should not be imported for unit test, neither should it be imported twice for connection and injection
         TypeOrmModule.forRootAsync(typeormFactoryLoader),
+        TypeOrmModule.forFeature([
+          Demarche,
+          DemarcheDS,
+          Dossier,
+          DossierDS,
+          FileStorage,
+        ]),
         HttpModule,
         ConfigModule.forRoot({
           isGlobal: true,
@@ -62,7 +75,7 @@ describe("DemarchesController", () => {
   });
 
   it("should return one demarche", async () => {
-    const fakeDemarche = getDemarche();
+    const fakeDemarche = getFakeDemarche();
     jest.spyOn(service, "findByDsId").mockResolvedValueOnce(fakeDemarche);
     const fakeReq = {
       user: {
@@ -76,14 +89,13 @@ describe("DemarchesController", () => {
   });
 
   it("should return many demarches", async () => {
-    const fakeDemarches = [getDemarche(), getDemarche()];
-    jest.spyOn(service, "findWithFilter").mockResolvedValueOnce(fakeDemarches);
+    const fakeDemarches = [getFakeDemarche(), getFakeDemarche()];
+    jest.spyOn(service, "findWithPermissions").mockResolvedValue(fakeDemarches);
     const fakeReq = {
       user: {
         roles: [{ name: "admin" }],
       },
     };
-
     expect(await controller.getDemarches(fakeReq)).toBe(fakeDemarches);
   });
 });

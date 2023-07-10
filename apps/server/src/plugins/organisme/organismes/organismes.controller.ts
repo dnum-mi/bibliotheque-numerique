@@ -10,7 +10,7 @@ import {
 import { ApiTags } from "@nestjs/swagger";
 import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import { OrganismesService } from "./organismes.service";
-import { Organisme } from "../entities";
+import { Organisme } from "./organisme.entity";
 
 @ApiTags("Organismes")
 @Controller("organismes")

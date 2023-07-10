@@ -1,9 +1,9 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { ApplicationEntity } from "../../../shared/entities/application_entity";
 import { OrganismesData } from "./organisme_data.entity";
+import { BaseEntity } from "../../../shared/base-entity/base.entity";
 
 @Entity({ name: "organismes" })
-export class Organisme extends ApplicationEntity {
+export class Organisme extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 

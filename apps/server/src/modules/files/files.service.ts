@@ -14,13 +14,20 @@ import { AxiosResponse } from "axios";
 import { randomStringGenerator } from "@nestjs/common/utils/random-string-generator.util";
 import { S3 } from "aws-sdk/clients/browser_default";
 import { FileStorage } from "./file_storage.entity";
+import { LoggerService } from "../../shared/modules/logger/logger.service";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
 
 @Injectable()
 export class FilesService {
   constructor(
     private readonly configService: ConfigService,
     private readonly httpService: HttpService,
-  ) {}
+    private logger: LoggerService,
+    @InjectRepository(FileStorage) private repo: Repository<FileStorage>,
+  ) {
+    this.logger.setContext(this.constructor.name);
+  }
 
   private s3 = new AWS.S3({
     accessKeyId: this.configService.get("file.accessKeyId"),
@@ -72,7 +79,7 @@ export class FilesService {
   }
 
   public async findFileStorage(fileStorageId: string): Promise<FileStorage> {
-    return await FileStorage.findOneBy({ id: fileStorageId });
+    return await this.repo.findOneBy({ id: fileStorageId });
   }
 
   public async getFile(
@@ -178,7 +185,7 @@ export class FilesService {
     newFile.checksum = checksum;
     newFile.byteSize = byteSize;
     newFile.mimeType = mimeType;
-    await newFile.save();
+    await this.repo.save(this.repo.create(newFile));
     return newFile;
   }
 

@@ -1,39 +1,40 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { DataSource } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import { LoggerService } from "../../../shared/modules/logger/logger.service";
-import { Organisme, OrganismesData } from "../entities";
-import { OrganismesDatasService } from "../organismes_datas/organismes_datas.service";
+import { OrganismesDatasService } from "./organismes_datas.service";
 import { ParseToOrganismesService } from "../parserByConnector/parse_to_organismes.service";
+import { Organisme } from "./organisme.entity";
+import { OrganismesData } from "./organisme_data.entity";
+import { BaseEntityService } from "../../../shared/base-entity/base-entity.service";
+import { InjectRepository } from "@nestjs/typeorm";
 
 @Injectable()
-export class OrganismesService {
+export class OrganismesService extends BaseEntityService<Organisme> {
   constructor(
     private dataSource: DataSource,
     private parserToOrganismes: ParseToOrganismesService,
     private organismesDatasService: OrganismesDatasService,
-    private readonly logger: LoggerService,
+    protected readonly logger: LoggerService,
+    @InjectRepository(Organisme) protected readonly repo: Repository<Organisme>,
   ) {
+    super(repo, logger);
     this.logger.setContext(this.constructor.name);
   }
 
-  findAll(): Promise<Organisme[]> {
-    return Organisme.find();
-  }
-
   findOneById(id: number): Promise<Organisme> {
-    return Organisme.findOne({
-      where: { id },
-      relations: { organismeDatas: true },
-    });
+    this.logger.verbose("findOneById");
+    return super.findOneById(id, { organismeDatas: true });
   }
 
   findOneByIdRef(idRef: string): Promise<Organisme> {
-    return Organisme.findOne({
+    this.logger.verbose("findOneByIdRef");
+    return this.repo.findOne({
       where: { idRef },
     });
   }
 
   async upsertOrganisme(idRef: string, sources: string[]): Promise<Organisme> {
+    this.logger.verbose("upsertOrganisme");
     let organismeDatas: OrganismesData[] = [];
     await this.organismesDatasService.findAndAddByIdRnaFromAllApi(
       idRef,
@@ -45,7 +46,7 @@ export class OrganismesService {
       throw new NotFoundException(`No datas for ${idRef}`);
     }
 
-    let organisme = await Organisme.findOneBy({ idRef });
+    let organisme = await this.findOneByIdRef(idRef);
 
     if (!organisme) {
       organisme = new Organisme();
@@ -65,7 +66,7 @@ export class OrganismesService {
         organismeDatas[0].dataJson,
       );
       organisme.organismeDatas = organismeDatas;
-      return await organisme.save();
+      return await this.repo.save(organisme);
     }
   }
 }

@@ -1,4 +1,4 @@
-import { Organisme } from "../entities";
+import { Organisme } from "../organismes/organisme.entity";
 
 export interface IParseToOrganisme<T, U> {
   dataJson: T;

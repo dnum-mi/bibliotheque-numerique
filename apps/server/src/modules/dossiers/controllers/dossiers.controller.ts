@@ -12,6 +12,7 @@ import { ApiTags } from "@nestjs/swagger";
 import { FilterPipe } from "../../../shared/pipe/filter.pipe";
 import { DossiersService } from "../providers/dossiers.service";
 import { Dossier } from "../entities/dossier.entity";
+import { DeleteResult } from "typeorm";
 
 @ApiTags("Dossiers")
 @Controller("dossiers")
@@ -20,7 +21,7 @@ export class DossiersController {
 
   @Get()
   async findAll(): Promise<Dossier[]> {
-    const dossiers = await this.dossiersService.findWithFilter();
+    const dossiers = await this.dossiersService.findAll();
     if (dossiers.length === 0) {
       throw new NotFoundException("No dossier found");
     }
@@ -54,7 +55,7 @@ export class DossiersController {
 
   @Delete(":id")
   @HttpCode(204)
-  async remove(@Param("id") id: string): Promise<Dossier | void> {
+  async remove(@Param("id") id: string): Promise<DeleteResult> {
     return this.dossiersService.remove(+id);
   }
 }

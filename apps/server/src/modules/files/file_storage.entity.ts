@@ -1,11 +1,13 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { ApplicationEntity } from "../../shared/entities/application_entity";
+import { BaseEntity } from "../../shared/base-entity/base.entity";
 
 @Entity({ name: "file_storages" })
-export class FileStorage extends ApplicationEntity {
+export class FileStorage extends BaseEntity {
   @PrimaryGeneratedColumn("uuid", {
     primaryKeyConstraintName: "PK_FILE_STORAGE_ID",
   })
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore TODO: why is this id a string all of a sudden ?
   id: string;
 
   @Column({ type: "varchar" })

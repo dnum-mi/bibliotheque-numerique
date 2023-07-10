@@ -1,16 +1,16 @@
 import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
   BeforeInsert,
+  Column,
+  Entity,
   ManyToMany,
+  PrimaryGeneratedColumn,
 } from "typeorm";
 import * as bcrypt from "bcrypt";
 import { Role } from "../../roles/entities/role.entity";
-import { ApplicationEntity } from "../../../shared/entities/application_entity";
+import { BaseEntity } from "../../../shared/base-entity/base.entity";
 
 @Entity({ name: "users" })
-export class User extends ApplicationEntity {
+export class User extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 

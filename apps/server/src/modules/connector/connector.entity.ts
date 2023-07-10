@@ -1,9 +1,7 @@
-import { ApplicationEntity } from "../../shared/entities/application_entity";
-
 import { Column, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { BaseEntity } from "../../shared/base-entity/base.entity";
 
 export enum TypeAuth {
-  BASIC_TOKEN = "Basic",
   BEARER_TOKEN = "Bearer",
 }
 
@@ -11,7 +9,7 @@ export type TMethod = "GET" | "POST";
 
 @Entity({ name: "connectors" })
 @Unique("UK_CONNECTOR_NAME", ["name"])
-export class Connector extends ApplicationEntity {
+export class Connector extends BaseEntity {
   @PrimaryGeneratedColumn("increment", {
     primaryKeyConstraintName: "PK_CONNECTOR_ID",
   })
@@ -43,40 +41,4 @@ export class Connector extends ApplicationEntity {
 
   @Column()
   token: string;
-
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  static upsertConnector(toUpsert: Partial<Connector>) {
-    return this.createQueryBuilder()
-      .insert()
-      .into(Connector)
-      .values(toUpsert)
-      .orUpdate(
-        [
-          "name",
-          "method",
-          "url",
-          "params",
-          "query",
-          "typeAuth",
-          "token",
-          "updateAt",
-        ],
-        "UK_CONNECTOR_NAME",
-        {
-          skipUpdateIfNoValuesChanged: true,
-        },
-      )
-      .returning([
-        "id",
-        "method",
-        "name",
-        "url",
-        "params",
-        "query",
-        "typeAuth",
-        "token",
-      ])
-      .execute();
-  }
 }

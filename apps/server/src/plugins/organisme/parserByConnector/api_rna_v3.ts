@@ -1,7 +1,7 @@
 import { IParseToOrganisme } from "./parse_to_organisme.interface";
-import { Organisme } from "../entities";
 import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import { toDate } from "@biblio-num/shared";
+import { Organisme } from "../organismes/organisme.entity";
 
 export type TDataApiRnaV3 = {
   rna_id: string;

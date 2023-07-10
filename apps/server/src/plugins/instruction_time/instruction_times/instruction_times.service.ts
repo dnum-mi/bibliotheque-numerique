@@ -2,11 +2,10 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Dossier as TDossier } from "@dnum-mi/ds-api-client/dist/@types/types";
 import { DossierState } from "@dnum-mi/ds-api-client/dist/@types/types";
-import { In } from "typeorm";
+import { In, Repository } from "typeorm";
 
 import dayjs, { type Dayjs } from "../../../shared/utils/dayjs";
 
-import { InstructionTime } from "../entities";
 import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import {
   TInstructionTimeMappingConfig,
@@ -15,8 +14,12 @@ import {
 import {
   EInstructionTimeState,
   EInstructionTimeStateKey,
-} from "../types/IntructionTime.type";
+} from "./types/IntructionTime.type";
 import { Dossier } from "../../../modules/dossiers/entities/dossier.entity";
+import { InstructionTime } from "./instruction_time.entity";
+import { BaseEntityService } from "../../../shared/base-entity/base-entity.service";
+import { InjectRepository } from "@nestjs/typeorm";
+import { DossiersService } from "../../../modules/dossiers/providers/dossiers.service";
 
 type TIntructionTime = {
   [keyInstructionTime.DATE_REQUEST1]?: Date | null;
@@ -39,7 +42,7 @@ type TDelay = {
 type toCheckDate = { date: Date | undefined | null; message: string };
 
 @Injectable()
-export class InstructionTimesService {
+export class InstructionTimesService extends BaseEntityService<InstructionTime> {
   nbDaysAfterInstruction: number;
   nbDaysAfterExtension: number;
   nbDaysAfterIntentOpposition: number;
@@ -47,8 +50,12 @@ export class InstructionTimesService {
 
   constructor(
     private configService: ConfigService,
-    private readonly logger: LoggerService,
+    protected readonly logger: LoggerService,
+    private readonly dossierService: DossiersService,
+    @InjectRepository(InstructionTime)
+    protected readonly repo: Repository<InstructionTime>,
   ) {
+    super(repo, logger);
     this.logger.setContext(this.constructor.name);
     this.nbDaysAfterInstruction = this.configService.get(
       "NB_DAYS_AFTER_INSTRUCTION",
@@ -61,16 +68,19 @@ export class InstructionTimesService {
     );
   }
 
-  findAll(): Promise<InstructionTime[]> {
-    return InstructionTime.find();
+  async findByDossierId(id: number): Promise<InstructionTime> {
+    return this.repo.findOne({
+      where: { dossier: { id } },
+      relations: { dossier: true },
+    });
   }
 
   findOne(id: number): Promise<InstructionTime> {
-    return InstructionTime.findOneBy({ id: id });
+    return this.findOneById(id);
   }
 
   findOneByDossier(idDossier: number): Promise<InstructionTime> {
-    return InstructionTime.findByDossierId(idDossier);
+    return this.findByDossierId(idDossier);
   }
 
   getMappingInstructionTimeByDossier(dossier: Dossier): TIntructionTime {
@@ -105,9 +115,8 @@ export class InstructionTimesService {
   async getMappingInstructionTimeByDossierId(
     idDossier: number,
   ): Promise<TIntructionTime> {
-    const dossier = await Dossier.findOne({
-      where: { id: idDossier },
-      relations: { dossierDS: true },
+    const dossier = await this.dossierService.findOneById(idDossier, {
+      dossierDS: true,
     });
     return this.getMappingInstructionTimeByDossier(dossier);
   }
@@ -115,7 +124,7 @@ export class InstructionTimesService {
   // TODO: fixe type
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async instructionTimeCalculation(idDossiers: number[]) {
-    const instructionTimes = await InstructionTime.find({
+    const instructionTimes = await this.repo.find({
       where: {
         dossier: {
           id: In(idDossiers),
@@ -347,16 +356,15 @@ export class InstructionTimesService {
   }
 
   async proccessByDossierId(id: number): Promise<boolean> {
-    const dossier = await Dossier.findOne({
-      where: { id: id },
-      relations: { dossierDS: true },
+    const dossier = await this.dossierService.findOneById(id, {
+      dossierDS: true,
     });
     if (!dossier) {
       // TODO: à revoir
       return false;
     }
 
-    let instructionTime = await InstructionTime.findByDossierId(id);
+    let instructionTime = await this.findByDossierId(id);
 
     if (!instructionTime) {
       instructionTime = new InstructionTime();
@@ -387,7 +395,7 @@ export class InstructionTimesService {
         full_message: error.stack,
       });
       instructionTime.state = EInstructionTimeState.IN_ERROR;
-      return await instructionTime.save();
+      return this.repo.save(instructionTime);
     }
 
     if (state === DossierState.EnConstruction) {
@@ -453,7 +461,7 @@ export class InstructionTimesService {
         ? delay.state
         : EInstructionTimeState.OUT_OF_DATE;
 
-    return await instructionTime.save();
+    return this.repo.save(instructionTime);
   }
 
   // TODO: fixe type
@@ -462,7 +470,7 @@ export class InstructionTimesService {
     if (datesForInstructionTimes[keyInstructionTime.DATE_REQUEST1]) {
       instructionTime.state = EInstructionTimeState.FIRST_REQUEST;
     }
-    return await instructionTime.save();
+    return await this.repo.save(instructionTime);
   }
 
   // TODO: fixe type
@@ -470,7 +478,7 @@ export class InstructionTimesService {
   private async saveIsClose(instructionTime) {
     //TODO: faire quelque chose
     instructionTime.state = EInstructionTimeState.DEFAULT;
-    return await instructionTime.save();
+    return await this.repo.save(instructionTime);
   }
 
   // TODO: fixe type

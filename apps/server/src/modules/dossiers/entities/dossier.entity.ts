@@ -1,24 +1,19 @@
 import {
-  Entity,
   Column,
-  PrimaryGeneratedColumn,
-  OneToOne,
-  ManyToOne,
+  Entity,
   JoinColumn,
-  EntityManager,
+  ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
 } from "typeorm";
-import { ApplicationEntity } from "../../../shared/entities/application_entity";
 import { DossierState } from "@dnum-mi/ds-api-client/dist/@types/types";
 import { DossierDS } from "./dossier_ds.entity";
 import { Demarche } from "../../demarches/entities/demarche.entity";
 import { ApiProperty } from "@nestjs/swagger";
-
-export type TUpsertDossier = Partial<
-  Omit<Dossier, "dossierDS"> & { dossierDS: number }
->;
+import { BaseEntity } from "../../../shared/base-entity/base.entity";
 
 @Entity({ name: "dossiers" })
-export class Dossier extends ApplicationEntity {
+export class Dossier extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
@@ -33,26 +28,4 @@ export class Dossier extends ApplicationEntity {
   @ApiProperty({ enum: DossierState })
   @Column({ type: "varchar" })
   state: DossierState;
-  static findWithFilter(filter: object): Promise<Dossier[]> {
-    return this.find({
-      where: {
-        ...filter,
-      },
-      relations: {
-        dossierDS: true,
-      },
-    });
-  }
-
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  static upsertDossier(
-    toUpsert: TUpsertDossier | TUpsertDossier[],
-    transactionalEntityManager: EntityManager,
-  ) {
-    return transactionalEntityManager.upsert(Dossier, <never>toUpsert, {
-      conflictPaths: ["dossierDS"],
-      skipUpdateIfNoValuesChanged: true,
-    });
-  }
 }

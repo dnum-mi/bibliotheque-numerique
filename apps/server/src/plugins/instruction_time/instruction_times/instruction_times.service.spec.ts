@@ -11,36 +11,44 @@ import dayjs from "../../../shared/utils/dayjs";
 import { InstructionTimesService } from "./instruction_times.service";
 import configuration from "../../../config/configuration";
 import instructionTimeMappingConfig, {
-  keyInstructionTime,
   TInstructionTimeMappingConfig,
 } from "../config/instructionTimeMapping.config";
-import { dossier_ds_test, dossier_test, } from "../../../shared/entities/__tests__";
-import { InstructionTime } from "../entities";
-import { EInstructionTimeState } from "../types/IntructionTime.type";
+import { EInstructionTimeState } from "./types/IntructionTime.type";
 import { Dossier } from "../../../modules/dossiers/entities/dossier.entity";
 import { DossierDS } from "../../../modules/dossiers/entities/dossier_ds.entity";
 import MockDate from "mockdate";
 import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
+import { InstructionTime } from "./instruction_time.entity";
+import { getFakeDossierDs, getFakeDossierTest } from "../../../../test/unit/fake-data/dossier.fake-data";
+import { DossiersService } from "../../../modules/dossiers/providers/dossiers.service";
+import { DossiersModule } from "../../../modules/dossiers/dossiers.module";
+import fileConfig from "../../../config/file.config";
+import dsConfig from "../../../config/ds.config";
 
 describe("InstructionTimesService", () => {
   let service: InstructionTimesService;
+  let dossierService: DossiersService;
   let configService: ConfigService;
   let instructionTimeMappingConfigFound: TInstructionTimeMappingConfig["instructionTimeMappingConfig"];
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
+        // TODO: typeorm should not be imported for unit test, neither should it be imported twice for connection and injection
         TypeOrmModule.forRootAsync(typeormFactoryLoader),
+        TypeOrmModule.forFeature([InstructionTime, Dossier]),
+        DossiersModule,
         ConfigModule.forRoot({
           isGlobal: true,
           cache: true,
-          load: [configuration, instructionTimeMappingConfig],
+          load: [configuration, dsConfig, fileConfig, instructionTimeMappingConfig],
         }),
       ],
       providers: [InstructionTimesService],
     }).compile();
 
     service = module.get<InstructionTimesService>(InstructionTimesService);
+    dossierService = module.get<DossiersService>(DossiersService);
     configService = module.get<ConfigService>(ConfigService);
 
     instructionTimeMappingConfigFound = configService.get<
@@ -49,8 +57,8 @@ describe("InstructionTimesService", () => {
   });
 
   afterEach(async () => {
+    await service.repository.delete({});
     MockDate.reset();
-    await InstructionTime.delete({});
   });
 
   it("should be defined", () => {
@@ -58,10 +66,10 @@ describe("InstructionTimesService", () => {
   });
 
   it("It should return good annotations", async () => {
-    const fakeDossierDs = dossier_ds_test();
-    const fakeDossier = dossier_test(fakeDossierDs as DossierDS);
+    const fakeDossierDs = getFakeDossierDs();
+    const fakeDossier = getFakeDossierTest(fakeDossierDs as DossierDS);
     jest
-      .spyOn(Dossier, "findOne")
+      .spyOn(dossierService, "findOneById")
       .mockResolvedValueOnce(fakeDossier as Dossier);
 
     fakeDossier.dossierDS.dataJson.annotations = [
@@ -122,8 +130,8 @@ describe("InstructionTimesService", () => {
     const fakeInstrunctionTime: Partial<InstructionTime>[] = Array.from(
       { length: 3 },
       (elt, idx) => {
-        const dossierDs = dossier_ds_test();
-        const dossier = dossier_test(dossierDs as DossierDS);
+        const dossierDs = getFakeDossierDs();
+        const dossier = getFakeDossierTest(dossierDs as DossierDS);
         dossier.id = idx + 1;
 
         if (dossier.id === 2) {
@@ -148,7 +156,7 @@ describe("InstructionTimesService", () => {
     );
 
     jest
-      .spyOn(InstructionTime, "find")
+      .spyOn(service.repository, "find")
       .mockResolvedValueOnce(fakeInstrunctionTime as InstructionTime[]);
 
     expect(
@@ -941,7 +949,7 @@ describe("InstructionTimesService", () => {
     dataInstructionTime.dossier = { id: 1 } as Dossier;
     dataInstructionTime.state = EInstructionTimeState.IN_PROGRESS;
     jest
-      .spyOn(InstructionTime, "find")
+      .spyOn(service.repository, "find")
       .mockResolvedValueOnce([dataInstructionTime] as InstructionTime[]);
 
     const result = await service.instructionTimeCalculation([
@@ -961,7 +969,7 @@ describe("InstructionTimesService", () => {
     dataInstructionTime.dossier = { id: 1 } as Dossier;
     dataInstructionTime.state = EInstructionTimeState.IN_PROGRESS;
     jest
-      .spyOn(InstructionTime, "find")
+      .spyOn(service.repository, "find")
       .mockResolvedValueOnce([dataInstructionTime] as InstructionTime[]);
 
     const result = await service.instructionTimeCalculation([
@@ -987,7 +995,7 @@ describe("InstructionTimesService", () => {
     dataInstructionTime.state = EInstructionTimeState.SECOND_REQUEST;
 
     jest
-      .spyOn(InstructionTime, "find")
+      .spyOn(service.repository, "find")
       .mockResolvedValueOnce([dataInstructionTime] as InstructionTime[]);
 
     const result = await service.instructionTimeCalculation([
@@ -1012,7 +1020,7 @@ describe("InstructionTimesService", () => {
     dataInstructionTime.state = EInstructionTimeState.INTENT_OPPO;
 
     jest
-      .spyOn(InstructionTime, "find")
+      .spyOn(service.repository, "find")
       .mockResolvedValueOnce([dataInstructionTime] as InstructionTime[]);
 
     const result = await service.instructionTimeCalculation([
@@ -1037,7 +1045,7 @@ describe("InstructionTimesService", () => {
     dataInstructionTime.state = EInstructionTimeState.INTENT_OPPO;
 
     jest
-      .spyOn(InstructionTime, "find")
+      .spyOn(service.repository, "find")
       .mockResolvedValueOnce([dataInstructionTime] as InstructionTime[]);
 
     const result = await service.instructionTimeCalculation([

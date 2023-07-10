@@ -1,7 +1,7 @@
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "app.module";
 import { LoggerService } from "../../shared/modules/logger/logger.service";
-import { OrganismesDatasService } from "plugins/organisme/organismes_datas/organismes_datas.service";
+import { OrganismesDatasService } from "plugins/organisme/organismes/organismes_datas.service";
 
 // TODO: fixe type
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type

@@ -1,35 +1,70 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { HttpService } from "@nestjs/axios";
 import { AxiosResponse } from "axios";
 import { Connector } from "./connector.entity";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { BaseEntityService } from "../../shared/base-entity/base-entity.service";
+import { LoggerService } from "../../shared/modules/logger/logger.service";
 
 @Injectable()
-export class ConnectorService {
-  constructor(private readonly httpService: HttpService) {}
-
-  async findAll(): Promise<Connector[]> {
-    return Connector.find();
+export class ConnectorService extends BaseEntityService<Connector> {
+  constructor(
+    private readonly httpService: HttpService,
+    @InjectRepository(Connector) protected readonly repo: Repository<Connector>,
+    protected readonly logger: LoggerService,
+  ) {
+    super(repo, logger);
+    this.logger.setContext(this.constructor.name);
   }
 
-  async findOneById(id: number): Promise<Connector> {
-    return Connector.findOneBy({ id });
+  // TODO: fixe type
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  private _upsertConnector(toUpsert: Partial<Connector>) {
+    this.logger.verbose("_upsertConnector");
+    return this.repo
+      .createQueryBuilder()
+      .insert()
+      .into(Connector)
+      .values(toUpsert)
+      .orUpdate(
+        [
+          "name",
+          "method",
+          "url",
+          "params",
+          "query",
+          "typeAuth",
+          "token",
+          "updateAt",
+        ],
+        "UK_CONNECTOR_NAME",
+        {
+          skipUpdateIfNoValuesChanged: true,
+        },
+      )
+      .returning([
+        "id",
+        "method",
+        "name",
+        "url",
+        "params",
+        "query",
+        "typeAuth",
+        "token",
+      ])
+      .execute();
   }
 
   async findOneBySourceName(name: string): Promise<Connector> {
-    return await Connector.findOneBy({ name });
+    return await this.repo.findOneBy({ name });
   }
 
   // TODO: fixe type
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async upsert(connector: Partial<Connector>) {
-    const upsertConnectorResult = await Connector.upsertConnector(connector);
+    const upsertConnectorResult = await this._upsertConnector(connector);
     return upsertConnectorResult.raw[0];
-  }
-
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  async remove(id: number) {
-    return await Connector.delete({ id });
   }
 
   async getResult(

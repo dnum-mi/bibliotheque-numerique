@@ -5,12 +5,12 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { ApplicationEntity } from "../../../shared/entities/application_entity";
-import { EInstructionTimeStateKey } from "../types/IntructionTime.type";
+import { EInstructionTimeStateKey } from "./types/IntructionTime.type";
 import { Dossier } from "../../../modules/dossiers/entities/dossier.entity";
+import { BaseEntity } from "../../../shared/base-entity/base.entity";
 
 @Entity({ name: "instruction_times" })
-export class InstructionTime extends ApplicationEntity {
+export class InstructionTime extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
@@ -29,11 +29,4 @@ export class InstructionTime extends ApplicationEntity {
 
   @Column({ nullable: false, default: "" })
   state: EInstructionTimeStateKey;
-
-  static findByDossierId(id: number): Promise<InstructionTime> {
-    return this.findOne({
-      where: { dossier: { id } },
-      relations: { dossier: true },
-    });
-  }
 }

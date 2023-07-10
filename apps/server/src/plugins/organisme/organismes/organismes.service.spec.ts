@@ -1,21 +1,18 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule } from "@nestjs/config";
-
 import configuration from "../../../config/configuration";
 import fileConfig from "../../../config/file.config";
-
-import { Organisme } from "../entities";
-
 import { ConnectorModule } from "../../../modules/connector/connector.module";
 import { ParseToOrganismesModule } from "../parserByConnector/parse_to_organismes.module";
-
-import { OrganismesDatasService } from "../organismes_datas/organismes_datas.service";
+import { OrganismesDatasService } from "./organismes_datas.service";
 import { OrganismesService } from "./organismes.service";
-import { getOrganismesData } from "./__tests__/organimsesData";
 import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
 import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import { loggerServiceMock } from "../../../../test/mock/logger-service.mock";
+import { Organisme } from "./organisme.entity";
+import { OrganismesData } from "./organisme_data.entity";
+import { getFakeOrganismesData } from "../../../../test/unit/fake-data/organisme-data.fake-data";
 
 describe("OrganismesService", () => {
   let service: OrganismesService;
@@ -24,7 +21,9 @@ describe("OrganismesService", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
+        // TODO: typeorm should not be imported for unit test, neither should it be imported twice for connection and injection
         TypeOrmModule.forRootAsync(typeormFactoryLoader),
+        TypeOrmModule.forFeature([Organisme, OrganismesData]),
         ConnectorModule,
         ConfigModule.forRoot({
           isGlobal: true,
@@ -48,7 +47,7 @@ describe("OrganismesService", () => {
   });
 
   it("should create new Organisme", async () => {
-    const fakeOrgData = [getOrganismesData()];
+    const fakeOrgData = [getFakeOrganismesData()];
     jest
       .spyOn(dataService, "findAndAddByIdRnaFromAllApi")
       .mockResolvedValueOnce([{ status: "fulfilled", value: true }]);
@@ -59,7 +58,7 @@ describe("OrganismesService", () => {
       fakeOrgData[0].organismesSource as unknown as string,
     ]);
 
-    const organismeFound = await Organisme.findOneBy({
+    const organismeFound = await service.repository.findOneBy({
       idRef: fakeOrgData[0].idRef,
     });
     expect(organismeFound).toBeDefined();
@@ -79,7 +78,7 @@ describe("OrganismesService", () => {
   });
 
   it("should return one message when a organisme is not found in API", async () => {
-    const fakeOrgData = getOrganismesData();
+    const fakeOrgData = getFakeOrganismesData();
     jest
       .spyOn(dataService, "findAndAddByIdRnaFromAllApi")
       .mockResolvedValueOnce([{ status: "rejected", reason: "test" }]);
