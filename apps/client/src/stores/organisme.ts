@@ -29,7 +29,7 @@ export const useOrganismeStore = defineStore('organisme', () => {
       return
     }
     const result = await fetchOrganimseByIdRNA(id)
-    if (result) organisme.value = result?.dataJson
+    if (result) organisme.value = result
   }
 
   const loadOrganismes = async () => {
