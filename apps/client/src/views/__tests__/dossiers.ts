@@ -149,6 +149,10 @@ export const generateDossier = () => ({
   dossierDS: {
     dataJson: generateDossierDS(),
   },
+  demarche: {
+    title: faker.random.word(),
+    typeOrganisme: faker.random.word(),
+  },
 })
 
 export const generateDossiers = () => Array.from({ length: faker.datatype.number({ min: 1, max: 20 }) }, () => generateDossier())

@@ -63,6 +63,6 @@ export class DossiersService extends BaseEntityService<Dossier> {
 
   //TODO: remove and use parent method
   async findOneWithDetail(id: number): Promise<Dossier> {
-    return await this.findOneById(id, { dossierDS: true });
+    return await this.findOneById(id, { dossierDS: true, demarche: true });
   }
 }
