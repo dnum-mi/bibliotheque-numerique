@@ -11,6 +11,7 @@ import DossierAnnotations from './DossierAnnotations.vue'
 import DossierMessages from './DossierMessages.vue'
 
 const dossierStore = useDossierStore()
+const dossier = computed<object>(() => dossierStore?.dossier || {})
 const dossierDS = computed<object>(() => dossierStore?.dossier?.dossierDS?.dataJson || {})
 
 const tabTitles = [
@@ -42,7 +43,7 @@ onMounted(async () => {
 <template>
   <LayoutFiche>
     <template #title>
-      <DossierTitle :datas="dossierDS" />
+      <DossierTitle :datas="dossier" />
     </template>
     <template #sub-title>
       <DossierInformations :datas="dossierDS" />
