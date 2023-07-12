@@ -37,11 +37,15 @@ export class AuthService {
   // TODO: fixe type
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async login(user) {
-    const payload = { email: user.email, sub: user.userId };
+    const findUser = await this.usersService.findByEmail(user.email, [
+      "id",
+      "email",
+      "roles",
+    ]);
     return {
-      email: user.email,
-      roles: user.roles,
-      access_token: this.jwtService.sign(payload),
+      id: findUser.id,
+      email: findUser.email,
+      roles: findUser.roles,
     };
   }
 }

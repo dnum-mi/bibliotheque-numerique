@@ -29,8 +29,7 @@ export class AuthController {
   // TODO: fixe type
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async signIn(@Request() req, @Body() body: CredentialsInputDto) {
-    await this.authService.login(body);
-    return req.user;
+    return this.authService.login(body);
   }
 
   @Delete("/")
