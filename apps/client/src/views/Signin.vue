@@ -29,7 +29,7 @@ const submit = handleSubmit(async (formValue: CredentialsInputDto) => {
     await userStore.login(formValue)
     router.push('/demarches')
   } catch (e) {
-    setErrors({ password: e as string })
+    setErrors({ password: 'Login ou mot de passe incorrectes !' })
   }
 })
 
