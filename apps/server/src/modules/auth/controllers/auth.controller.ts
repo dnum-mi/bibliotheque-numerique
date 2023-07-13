@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
-import { CredentialsInputDto } from "@biblio-num/shared";
+import { CredentialsInputDto, LoginOutputDto } from "@biblio-num/shared";
 import { AuthService } from "../providers/auth.service";
 import { LocalAuthGuard } from "../providers/local-auth.guard";
 import { JwtAuthGuard } from "../providers/jwt-auth.guard";
@@ -22,20 +22,18 @@ import { AuthenticatedGuard } from "../providers/authenticated.guard";
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  // TODO: This route should be called 'token', since the resource it creates is a token, a route should not have a verb
   @UseGuards(LocalAuthGuard)
   @HttpCode(200)
   @Post("sign-in")
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  async signIn(@Request() req, @Body() body: CredentialsInputDto) {
+  async signIn(
+    @Request() req,
+    @Body() body: CredentialsInputDto,
+  ): Promise<LoginOutputDto> {
     return this.authService.login(body);
   }
 
   @Delete("/")
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  async logout(@Request() req, @Response() res, next) {
+  async logout(@Request() req, @Response() res, next): Promise<void> {
     req.logout(function (err) {
       if (err) {
         return next(err);
