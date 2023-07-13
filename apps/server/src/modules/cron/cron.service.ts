@@ -28,17 +28,19 @@ export class CronService implements OnApplicationBootstrap, OnModuleInit {
   }
 
   private _dynamiclyBuildCronInRegistryFromConfig(): void {
-    const job = new CronJob(
-      this.config.get("fetchDataInterval"),
-      this._fetchData.bind(this),
-    );
+    const mapperJobs = [
+      {
+        cron: this.config.get("fetchDataInterval"),
+        fct: this._fetchData,
+        description: "Fetching Data from Démarche Simplifiée",
+      },
+    ];
 
-    this.schedulerRegistry.addCronJob(
-      "Fetching Data from Démarche Simplifiée",
-      job,
-    );
-
-    job.start();
+    mapperJobs.map((mapper) => {
+      const job = new CronJob(mapper.cron, mapper.fct.bind(this));
+      this.schedulerRegistry.addCronJob(mapper.description, job);
+      job.start();
+    });
   }
 
   private _launchCronOnStartup(): void {
