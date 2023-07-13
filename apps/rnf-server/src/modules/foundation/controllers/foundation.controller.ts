@@ -1,4 +1,4 @@
-import { Body, Controller, ForbiddenException, Get, Param, Post } from "@nestjs/common";
+import { Body, Controller, ForbiddenException, Get, Param, Post, Query } from "@nestjs/common";
 import { LoggerService } from "@/shared/modules/logger/providers/logger.service";
 import { FoundationService } from "@/modules/foundation/providers/foundation.service";
 import { DsService } from "@/modules/ds/providers/ds.service";
@@ -9,6 +9,7 @@ import { GetFoundationInputDto } from "@/modules/foundation/objects/dto/inputs/g
 import { ApiTags } from "@nestjs/swagger";
 import { GetFoundationOutputDto } from "@/modules/foundation/objects/dto/outputs/get-foundation-output.dto";
 import { InfoDSOutputDto } from "../objects/dto/info-ds-output.dto";
+import { GetFoundationsInputDto } from "../objects/dto/inputs/get-foundations-inputs.dto";
 
 @ApiTags("Foundation")
 @Controller("foundation")
@@ -47,5 +48,12 @@ export class FoundationController {
   async getFoundation(@Param() params: GetFoundationInputDto): Promise<GetFoundationOutputDto> {
     this.logger.verbose("getFoundation");
     return this.service.getOneFoundation(params.rnfId);
+  }
+
+  @Get("")
+  async getFoundations(@Query() query: GetFoundationsInputDto): Promise<GetFoundationOutputDto[]> {
+    this.logger.verbose("getFoundations");
+
+    return this.service.getFoundationsByRnfIds(query.rnfIds, query.date);
   }
 }
