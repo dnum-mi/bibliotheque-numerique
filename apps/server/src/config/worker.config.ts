@@ -1,6 +1,7 @@
 const config = {
   port: parseInt(process.env.WORKER_PORT, 10) || 3042,
   fetchDataInterval: process.env.WORKER_FETCH_DATA_INTERVAL || "0 0 1 * * *",
+  fetchOrgInterval: process.env.WORKER_FETCH_ORG_INTERVAL || "0 0 1 * * *",
   fetchDataOnStartup:
     process.env.WORKER_FETCH_DATA_ON_STARTUP === "true" || "true",
   log: {
