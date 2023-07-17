@@ -9,7 +9,7 @@ import {
   Response,
   UseGuards,
 } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiOkResponse, ApiTags } from "@nestjs/swagger";
 import { CredentialsInputDto, LoginOutputDto } from "@biblio-num/shared";
 import { AuthService } from "../providers/auth.service";
 import { LocalAuthGuard } from "../providers/local-auth.guard";
@@ -25,6 +25,7 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @HttpCode(200)
   @Post("sign-in")
+  @ApiOkResponse({ type: LoginOutputDto })
   async signIn(
     @Request() req,
     @Body() body: CredentialsInputDto,
