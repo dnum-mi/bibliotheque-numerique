@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { UsersService } from "../../users/users.service";
 import * as bcrypt from "bcrypt";
 import { User } from "../../users/entities/user.entity";
-import { RoleOutputDto } from "@biblio-num/shared";
+import { RoleOutputDto, UserOutputDto } from "@biblio-num/shared";
 
 @Injectable()
 export class AuthService {
@@ -33,7 +33,7 @@ export class AuthService {
   }
 
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  async login(user) {
+  async login(user): Promise<UserOutputDto> {
     const findUser: User = await this.usersService.findByEmail(user.email, [
       "id",
       "email",

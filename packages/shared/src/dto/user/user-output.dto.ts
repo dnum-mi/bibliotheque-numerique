@@ -1,9 +1,15 @@
-import { ApiProperty, PickType } from '@nestjs/swagger'
-import { UpdateUserDto } from './update-user.dto'
+import { ApiProperty, PartialType } from '@nestjs/swagger'
+import { CreateUserDto } from './create-user.dto'
+import { RoleOutputDto } from 'dto/role'
 
-export class UserOutputDto extends UpdateUserDto {
+export class UserOutputDto extends PartialType(CreateUserDto) {
   @ApiProperty({
     description: 'Id unique de l’utilisateur',
   })
-  id: string
+  id: number
+
+  @ApiProperty({
+    description: 'Roles de l’utilisateur',
+  })
+  roles: RoleOutputDto[]
 }

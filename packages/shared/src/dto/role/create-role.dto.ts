@@ -3,18 +3,18 @@ import { IsNotEmpty } from 'class-validator'
 
 export class CreateRoleDto {
   @ApiProperty({
-    description: 'Le nom de rôle',
+    description: 'Nom du rôle',
   })
   @IsNotEmpty()
   name: string
 
   @ApiProperty({
-    description: 'La description de rôle',
+    description: 'Description du rôle',
   })
   description: string
 
   @ApiProperty({
-    description: 'Les permissions de rôle',
+    description: 'Permissions du rôle',
   })
   permissions: string[]
 }
