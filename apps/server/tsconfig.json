@@ -5,6 +5,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
+    "preserveSymlinks": true,
     "target": "es2020",
     "sourceMap": true,
     "outDir": "./dist",
