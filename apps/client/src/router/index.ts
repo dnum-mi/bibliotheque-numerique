@@ -98,6 +98,11 @@ const routes = [
     name: 'resetPassword',
     component: () => import('@/views/ResetPassword.vue'),
   },
+  {
+    path: '/:pathMatch(.*)*',
+    name: '404',
+    component: () => import('@/views/Error404.vue'),
+  },
 ]
 
 const router = createRouter({
