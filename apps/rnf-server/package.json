@@ -25,7 +25,8 @@
     "test:watch": "jest --watch",
     "generate-code": "prisma generate",
     "dev:server": "nest start --debug 0.0.0.0:9229 --watch",
-    "dev:in-docker": "run-s dev:server"
+    "dev:in-docker": "run-s dev:server",
+    "test:e2e:one":"dotenv -e ./test/.env.test jest -- --config ./test/e2e/jest-e2e.json"
   },
   "dependencies": {
     "@dnum-mi/ds-api-client": "^1.4.1",

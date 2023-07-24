@@ -97,4 +97,20 @@ export class FoundationService extends BaseEntityService<FoundationEntity> {
       return foundation;
     });
   }
+
+  async getFoundationsByRnfIds(rnfIds: string[], updatedAfter: Date | undefined): Promise<FoundationEntity[]> {
+    const where: {
+      rnfId: { in: string[] };
+      updatedAt?: { gte: Date };
+    } = { rnfId: { in: rnfIds } };
+    if (updatedAfter) {
+      where.updatedAt = {
+        gte: updatedAfter,
+      };
+    }
+    return this.prisma.foundation.findMany({
+      where,
+      include: { address: true },
+    });
+  }
 }
