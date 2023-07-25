@@ -7,7 +7,7 @@ export function jsonFormat(
     string,
     (req: Request, res: Response, param?: string) => string
   >,
-  req: Request & { request_id: string },
+  req: Request & { request_id: string; headers: Record<string, string> },
   res: Response,
 ) {
   return JSON.stringify({
