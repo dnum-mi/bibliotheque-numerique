@@ -86,6 +86,12 @@ const routes = [
     beforeEnter: [isAuthenticatedGuard],
     component: () => import('@/views/organismes/Organismes.vue'),
   },
+  {
+    path: '/update-password/:token',
+    name: 'updatePassword',
+    component: () => import('@/views/UpdatePassword.vue'),
+    props: true,
+  },
 ]
 
 const router = createRouter({
