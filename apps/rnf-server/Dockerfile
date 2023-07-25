@@ -21,7 +21,7 @@ USER node
 # First install the dependencies (as they change less often)
 COPY --from=base --chown=node:root /app/out/json/ .
 COPY --from=base --chown=node:root /app/pnpm-lock.yaml ./pnpm-lock.yaml
-COPY --from=base --chown=node:root /app/out/pnpm-workspace.yaml ./pnpm-workspace.yaml
+COPY --from=base --chown=node:root /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
 RUN pnpm install --frozen-lockfile
 COPY --from=base --chown=node:root /app/out/full/ .
 # RUN cd apps/rnf-server && pnpx prisma generate
@@ -39,7 +39,7 @@ RUN npm i -g pnpm
 
 COPY --from=base /app/out/json/ .
 COPY --from=base /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
-COPY --from=base /app/out/pnpm-workspace.yaml ./pnpm-workspace.yaml
+COPY --from=base /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
 ENV CI=true
 ENV NODE_ENV=production
 RUN pnpm install --frozen-lockfile --production
