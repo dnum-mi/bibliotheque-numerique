@@ -4,8 +4,8 @@
     "@biblio-num/client#test:e2e": {
       "cache": false,
       "dependsOn": [
-        "@biblio-num/server#build",
-        "@biblio-num/client#build"
+        "^@biblio-num/server#build",
+        "^@biblio-num/client#build"
       ],
       "inputs": [
         "src/**/*.tsx",
@@ -15,17 +15,14 @@
     },
     "@biblio-num/client#test:e2e:ci": {
       "dependsOn": [
-        "@biblio-num/server#build",
-        "@biblio-num/client#build"
+        "^@biblio-num/server#build",
+        "^@biblio-num/client#build"
       ],
       "inputs": [
         "src/**/*.tsx",
         "src/**/*.ts"
       ],
       "outputs": []
-    },
-    "generate-code": {
-      "cache": false
     },
     "build": {
       "dependsOn": [
@@ -47,13 +44,22 @@
     "dev:in-docker": {
       "cache": false
     },
-    "dev:server-in-docker": {
-      "cache": false
-    },
     "dev:rnf-server-in-docker": {
       "cache": false
     },
+    "dev:server": {
+      "cache": false,
+      "dependsOn": [
+        "^@biblio-num/shared#build"
+      ]
+    },
+    "dev:server-in-docker": {
+      "cache": false
+    },
     "dev:worker-in-docker": {
+      "cache": false
+    },
+    "generate-code": {
       "cache": false
     },
     "lint": {},
@@ -81,7 +87,7 @@
     },
     "test": {
       "dependsOn": [
-        "@biblio-num/shared#build"
+        "^@biblio-num/shared#build"
       ],
       "inputs": [
         "src/**/*.tsx",

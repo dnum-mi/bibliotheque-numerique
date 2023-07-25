@@ -2,7 +2,7 @@ FROM node:lts as base
 
 WORKDIR /app
 
-RUN npm i -g turbo
+RUN npm i -g turbo@1.10.3
 
 RUN chown node:root /app
 USER node

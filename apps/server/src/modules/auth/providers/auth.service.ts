@@ -1,21 +1,18 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { UsersService } from "../../users/users.service";
 import * as bcrypt from "bcrypt";
-import { JwtService } from "@nestjs/jwt";
 import { User } from "../../users/entities/user.entity";
+import { RoleOutputDto, UserOutputDto } from "@biblio-num/shared";
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private usersService: UsersService,
-    private jwtService: JwtService,
-  ) {}
+  constructor(private usersService: UsersService) {}
 
   async validateUser(
     email: string,
     password: string,
   ): Promise<User | undefined> {
-    const user = await this.usersService.findByEmail(email, [
+    const user: User = await this.usersService.findByEmail(email, [
       "id",
       "email",
       "password",
@@ -26,7 +23,7 @@ export class AuthService {
       throw new NotFoundException("User not found");
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch: boolean = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
       throw new NotFoundException("Invalid credentials");
@@ -34,14 +31,18 @@ export class AuthService {
 
     return user;
   }
-  // TODO: fixe type
+
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  async login(user) {
-    const payload = { email: user.email, sub: user.userId };
+  async login(user): Promise<UserOutputDto> {
+    const findUser: User = await this.usersService.findByEmail(user.email, [
+      "id",
+      "email",
+      "roles",
+    ]);
     return {
-      email: user.email,
-      roles: user.roles,
-      access_token: this.jwtService.sign(payload),
+      id: findUser.id,
+      email: findUser.email,
+      roles: findUser.roles as unknown as RoleOutputDto[],
     };
   }
 }

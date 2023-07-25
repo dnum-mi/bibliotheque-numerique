@@ -6,7 +6,7 @@ RUN chown node:root /app
 
 FROM dev-base as base
 
-RUN npm i -g turbo
+RUN npm i -g turbo@1.10.3
 
 USER node
 COPY . .
