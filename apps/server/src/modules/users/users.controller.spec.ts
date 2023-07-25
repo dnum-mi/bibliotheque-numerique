@@ -23,9 +23,12 @@ describe.skip("Users", () => {
   });
 
   it(`/GET users`, () => {
-    return request(app.getHttpServer())
-      .get("/users")
-      .expect(HttpStatus.FORBIDDEN);
+    return (
+      request(app.getHttpServer())
+        // @ts-ignore The property 'get' really exists
+        .get("/users")
+        .expect(HttpStatus.FORBIDDEN)
+    );
   });
 
   it(`/GET users with admin rights`, async () => {
