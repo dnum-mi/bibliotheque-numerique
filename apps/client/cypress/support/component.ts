@@ -21,6 +21,14 @@ import './commands'
 
 import { mount } from 'cypress/vue'
 
+import VueDsfr from '@gouvminint/vue-dsfr'
+import '@gouvfr/dsfr/dist/dsfr.min.css'
+import '@gouvminint/vue-dsfr/styles'
+import '@/main.css'
+import * as icons from '@/icons'
+
+import { createPinia } from 'pinia'
+
 // Augment the Cypress namespace to include type definitions for
 // your custom command.
 // Alternatively, can be defined in cypress/support/component.d.ts
@@ -36,8 +44,21 @@ declare global {
 
 Cypress.Commands.add('mount', (component, options = {}) => {
   options.global = options.global || {}
+
   options.global.stubs = options.global.stubs || {}
   options.global.stubs.transition = false
+
+  if (!options.extensions) {
+    options.global.plugins = options.global.plugins || []
+    options.global.plugins.push(createPinia())
+    options.global.plugins.push({
+      install: (app) => {
+        app.use(VueDsfr,
+          { icons: Object.values(icons) },
+        )
+      },
+    })
+  }
 
   return mount(component, options)
 })
