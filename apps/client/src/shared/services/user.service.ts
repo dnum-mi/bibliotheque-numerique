@@ -1,4 +1,4 @@
-import { baseApiUrl, headers } from '../../utils/api-client'
+import { apiClientInstance, baseApiUrl, headers } from '../../utils/api-client'
 import axios, { AxiosError } from 'axios'
 import type {
   CreateUserDto,
@@ -6,6 +6,7 @@ import type {
   CredentialsInputDto,
   UserOutputDto,
   UpdateUserPasswordDto,
+  ResetPasswordInputDto,
 } from '@biblio-num/shared'
 
 const AUTH_BASE_URL = `${baseApiUrl}/auth`
@@ -97,3 +98,5 @@ export const getUserById = async (id: number): Promise<UpdateUserDto | null> => 
   const response = await axios(config)
   return response.data
 }
+
+export const resetPassword = (resetPasswordInput: ResetPasswordInputDto) => apiClientInstance.post('/users/reset-password', resetPasswordInput)
