@@ -2,7 +2,7 @@ FROM node:lts as base
 
 WORKDIR /app
 
-RUN npm i -g turbo
+RUN npm i -g turbo@1.10.3
 
 RUN chown node:root /app
 USER node
@@ -23,7 +23,7 @@ USER node
 # First install the dependencies (as they change less often)
 COPY --from=base --chown=node:root /app/out/json/ .
 COPY --from=base --chown=node:root /app/pnpm-lock.yaml ./pnpm-lock.yaml
-COPY --from=base --chown=node:root /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
+COPY --from=base --chown=node:root /app/out/pnpm-workspace.yaml ./pnpm-workspace.yaml
 RUN pnpm install --frozen-lockfile
 COPY --from=base --chown=node:root /app/out/full/ .
 RUN pnpm run build:server
@@ -40,7 +40,7 @@ RUN npm i -g pnpm
 
 COPY --from=base /app/out/json/ .
 COPY --from=base /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
-COPY --from=base /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
+COPY --from=base /app/out/pnpm-workspace.yaml ./pnpm-workspace.yaml
 ENV CI=true
 ENV NODE_ENV=production
 RUN pnpm install --frozen-lockfile --production
