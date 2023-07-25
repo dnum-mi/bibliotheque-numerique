@@ -1,26 +1,22 @@
 <script setup lang="ts">
-import { z } from 'zod'
-import { toFormValidator } from '@vee-validate/zod'
-import { useField, useForm } from 'vee-validate'
-import type { UserForm } from '@/shared/interfaces'
-import { createUser } from '@/shared/services/user.service'
 import { useRouter } from 'vue-router'
-import LayoutAccueil from '../components/LayoutAccueil.vue'
+import { z } from 'zod'
+import { toFormValidator, toTypedSchema } from '@vee-validate/zod'
+import { useField, useForm } from 'vee-validate'
+import type { CreateUserDto } from '@biblio-num/shared'
 
-const REQUIRED_FIELD_MESSAGE = 'Ce champ est requis'
-const PASSWORD_MESSAGE = 'Le mot de passe doit contenir au moins 15 caractères, une lettre minuscule, une lettre majuscule, un chiffre, et un caractère spécial.'
+import { createUser } from '@/shared/services/user.service'
+import LayoutAccueil from '../components/LayoutAccueil.vue'
+import { passwordValidator } from '@/utils/password.validator'
+import { REQUIRED_FIELD_MESSAGE } from '@/messages'
+
 const router = useRouter()
 
-const validationSchema = toFormValidator(z.object({
+const validationSchema = toTypedSchema(z.object({
   firstName: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).min(2, 'Ceci ne semble pas être un prénom'),
   lastName: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).min(2, 'Ceci ne semble pas être un nom'),
   email: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).email('Ceci semble être une adresse email invalide'),
-  password: z.string({ required_error: REQUIRED_FIELD_MESSAGE })
-    .min(15, PASSWORD_MESSAGE)
-    .regex(/[a-z]/, PASSWORD_MESSAGE)
-    .regex(/[A-Z]/, PASSWORD_MESSAGE)
-    .regex(/[0-9]/, PASSWORD_MESSAGE)
-    .regex(/[!@#$%^&*()\-_=+[{\]}\\|;:'",<.>/?]/, PASSWORD_MESSAGE),
+  password: passwordValidator,
 }))
 
 const { handleSubmit } = useForm({
@@ -28,7 +24,7 @@ const { handleSubmit } = useForm({
 })
 
 const signInPath = '/sign_in'
-const submit = handleSubmit(async (formValue: UserForm) => {
+const onSubmit = handleSubmit(async (formValue: CreateUserDto) => {
   try {
     await createUser(formValue)
     await router.push(signInPath)
@@ -41,7 +37,6 @@ const { value: firstNameValue, errorMessage: firstNameError } = useField('firstN
 const { value: lastNameValue, errorMessage: lastNameError } = useField('lastName')
 const { value: emailValue, errorMessage: emailError } = useField('email')
 const { value: passwordValue, errorMessage: passwordError } = useField('password')
-
 </script>
 
 <template>
@@ -60,7 +55,7 @@ const { value: passwordValue, errorMessage: passwordError } = useField('password
           </h5>
           <form
             class="card"
-            @submit="submit"
+            @submit="onSubmit"
           >
             <DsfrInputGroup
               :is-valid="firstNameError"

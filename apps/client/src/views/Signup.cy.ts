@@ -1,21 +1,8 @@
-import '@gouvminint/vue-dsfr/styles'
-import '../main.css'
-
-import VueDsfr from '@gouvminint/vue-dsfr'
-
 import Signup from './Signup.vue'
 
 describe('<Signup />', () => {
-  const extensions = {
-    use: [
-      VueDsfr,
-    ],
-  }
-
   it('form not validated', () => {
-    cy.mount(Signup, {
-      extensions,
-    })
+    cy.mount(Signup)
 
     cy.get('#firstName').type('d')
     cy.get('.fr-error-text').should('contain.text', 'Ceci ne semble pas être un prénom')
@@ -31,9 +18,7 @@ describe('<Signup />', () => {
   })
 
   it('form is validated', () => {
-    cy.mount(Signup, {
-      extensions,
-    })
+    cy.mount(Signup)
 
     cy.get('#firstName').type('dubois')
     cy.get('#lastName').type('louis')
