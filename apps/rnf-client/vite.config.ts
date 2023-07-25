@@ -11,9 +11,9 @@ export default defineConfig({
   server: {
     port: 5172,
     proxy: {
-      '^/api/rnf': {
+      '^/api': {
         target: 'http://localhost:3001',
-        rewrite: (value: string) => value.replace(/^\/api\/rnf/, '/api'),
+        rewrite: (value: string) => value.replace(/^\/api/, ''),
       },
     },
   },

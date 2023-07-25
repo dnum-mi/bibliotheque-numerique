@@ -30,7 +30,7 @@ describe('RNF creation form', () => {
   it('Should print an error if dossier doesnt exist', () => {
     cy.visit('/')
 
-    cy.intercept({ url: '/api/rnf/foundation', method: 'POST' }).as('createRnf')
+    cy.intercept({ url: '/api/foundation', method: 'POST' }).as('createRnf')
 
     cy.get('.rnf-request').find('input[type=text]').type('12')
 
@@ -52,7 +52,7 @@ describe('RNF creation form', () => {
   it('Should print an error if email is not authorized', () => {
     cy.visit('/')
 
-    cy.intercept({ url: '/api/rnf/foundation', method: 'POST' }).as('createRnf')
+    cy.intercept({ url: '/api/foundation', method: 'POST' }).as('createRnf')
 
     cy.get('.rnf-request').find('input[type=text]').type('17')
 
@@ -109,12 +109,12 @@ describe('RNF creation form', () => {
 
     if(Cypress.env("WITH_MOCK_API")) {
       cy.fixture('createDossier113').then(response => {
-        cy.intercept({ url: '/api/rnf/foundation', method: 'POST' },req => {
+        cy.intercept({ url: '/api/foundation', method: 'POST' },req => {
           req.reply({ body: response, statusCode: 201, headers: { 'Content-Type': 'application/json' }})
         }).as('createRnf')
       })
     } else {
-      cy.intercept({ url: '/api/rnf/foundation', method: 'POST' }).as('createRnf')
+      cy.intercept({ url: '/api/foundation', method: 'POST' }).as('createRnf')
     }
 
     cy.get('.rnf-request').find('input[type=text]').type('113')
@@ -141,7 +141,7 @@ describe('RNF creation form', () => {
     cy.visit('/')
 
     if(Cypress.env("WITH_MOCK_API")) {
-      cy.intercept({ url: '/api/rnf/foundation', method: 'POST' }, req => {
+      cy.intercept({ url: '/api/foundation', method: 'POST' }, req => {
         const { forceCreate } = req.body
         if(forceCreate) {
           return req.reply({ body: reponseCreated, statusCode: 201, headers: { 'Content-Type': 'application/json' }})
@@ -149,7 +149,7 @@ describe('RNF creation form', () => {
         req.reply({ body: collisionResponse, statusCode: 409, headers: { 'Content-Type': 'application/json' }})
       }).as('createRnf')
     } else {
-      cy.intercept({ url: '/api/rnf/foundation', method: 'POST' }).as('createRnf')
+      cy.intercept({ url: '/api/foundation', method: 'POST' }).as('createRnf')
     }
 
     cy.get('.rnf-request').find('input[type=text]').type('113')
