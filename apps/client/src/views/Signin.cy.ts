@@ -1,25 +1,14 @@
-import '@gouvminint/vue-dsfr/styles'
-import '../main.css'
-
-import VueDsfr from '@gouvminint/vue-dsfr'
-
 import Signin from './Signin.vue'
 import { createPinia } from 'pinia'
 import { createRandomUserForm } from '@/views/__tests__/users'
 
 describe('<Signin />', () => {
-  const pinia = createPinia()
+  const stores = createPinia()
   const newUser = createRandomUserForm()
-  const extensions = {
-    use: [
-      pinia,
-      VueDsfr,
-    ],
-  }
 
   it('form not validated', () => {
     cy.mount(Signin, {
-      extensions,
+      stores,
     })
 
     cy.get('#email').type('louis.dubois')
@@ -35,7 +24,7 @@ describe('<Signin />', () => {
 
   it('form is validated', () => {
     cy.mount(Signin, {
-      extensions,
+      stores,
     })
     cy.log(newUser.email)
     cy.log(newUser.password)

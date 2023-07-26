@@ -102,6 +102,24 @@ const { value: passwordValue, errorMessage: passwordError } = useField('password
                 Se connecter
               </DsfrButton>
             </div>
+
+            <div
+              class="fr-m-4w"
+              style="text-align:center"
+            >
+              <router-link :to="{name: 'signUp'}">
+                Pas encore inscrit ? Inscrivez-vous ici.
+              </router-link>
+            </div>
+
+            <div
+              class="fr-m-4w"
+              style="text-align:center"
+            >
+              <router-link :to="{ name: 'resetPassword' }">
+                Mot de passe oublié ?
+              </router-link>
+            </div>
           </form>
         </div>
         <div class="fr-col-1" />
