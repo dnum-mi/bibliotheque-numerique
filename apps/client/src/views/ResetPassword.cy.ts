@@ -1,29 +1,11 @@
-import VueDsfr from '@gouvminint/vue-dsfr'
-import '@gouvfr/dsfr/dist/dsfr.min.css'
-import '@gouvminint/vue-dsfr/styles'
-import '@/main.css'
-import * as icons from '@/icons'
-
+import { ASK_RESET_PWD_SUCCESS } from '../messages'
 import ResetPassword from './ResetPassword.vue'
 
 describe('<ResetPassword />', () => {
   it('renders', () => {
-    cy.intercept('/api/usr/reset-password', { success: true })
-    const extensions = {
-      use: [
-        {
-          install: (app) => {
-            app.use(VueDsfr,
-              { icons: Object.values(icons) },
-            )
-          },
-        },
-      ],
-    }
+    cy.intercept('/api/users/reset-password', { success: true })
 
-    cy.mount(ResetPassword, {
-      extensions,
-    })
+    cy.mount(ResetPassword)
 
     cy.contains('Envoyer').click()
     cy.get('.fr-error-text').should('contain.text', 'Veuillez saisir votre adresse courriel')
@@ -32,6 +14,6 @@ describe('<ResetPassword />', () => {
     cy.get('#email').type('@gmail.com')
     cy.get('.fr-error-text').should('not.exist')
     cy.contains('Envoyer').click()
-    cy.get('.fr-alert').should('contain', 'Votre demande a été prise en compte. Vous recevrez un courriel pour modifier votre mot de passe.')
+    cy.get('.fr-alert').should('contain', ASK_RESET_PWD_SUCCESS)
   })
 })

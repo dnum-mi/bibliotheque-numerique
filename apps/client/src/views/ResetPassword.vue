@@ -63,6 +63,7 @@ import { z } from 'zod'
 import type { ResetPasswordInputDto } from '@biblio-num/shared'
 import { resetPassword } from '@/shared/services/user.service'
 import { ref } from 'vue'
+import { ASK_RESET_PWD_SUCCESS } from '../messages'
 
 const validationSchema = toTypedSchema(z.object({
   email: z.string({ required_error: 'Veuillez saisir votre adresse courriel' }).nonempty('Veuillez saisir votre adresse courriel').email('L’adresse courriel ne semble pas valide'),
@@ -80,7 +81,7 @@ const openAlert = ref(false)
 const onSubmit = handleSubmit(async (formValue : ResetPasswordInputDto) => {
   await resetPassword(formValue)
   openAlert.value = true
-  alertDescription.value = 'Votre demande a été prise en compte. Vous recevrez un courriel pour modifier votre mot de passe.'
+  alertDescription.value = ASK_RESET_PWD_SUCCESS
 })
 
 const closeAlert = () => {
