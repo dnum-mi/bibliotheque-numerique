@@ -27,8 +27,7 @@ import '@gouvminint/vue-dsfr/styles'
 import '@/main.css'
 import * as icons from '@/icons'
 
-import { createPinia } from 'pinia'
-
+import router from '@/router'
 // Augment the Cypress namespace to include type definitions for
 // your custom command.
 // Alternatively, can be defined in cypress/support/component.d.ts
@@ -50,7 +49,6 @@ Cypress.Commands.add('mount', (component, options = {}) => {
 
   if (!options.extensions) {
     options.global.plugins = options.global.plugins || []
-    options.global.plugins.push(createPinia())
     options.global.plugins.push({
       install: (app) => {
         app.use(VueDsfr,
@@ -58,6 +56,11 @@ Cypress.Commands.add('mount', (component, options = {}) => {
         )
       },
     })
+    options.global.plugins.push(router)
+  }
+
+  if (options.stores) {
+    options.global.plugins.push(options.stores)
   }
 
   return mount(component, options)
