@@ -1,6 +1,6 @@
 import { Controller, Get } from "@nestjs/common";
 import { LoggerService } from "@/shared/modules/logger/providers/logger.service";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { ConfigService } from "@nestjs/config";
 import { GetDsUrlOutputDto } from "@/modules/ds/objects/dto/get-ds-url-output.dto";
 
@@ -19,6 +19,7 @@ export class DsController {
   }
 
   @Get(`/url`)
+  @ApiOperation({ summary: "Récupérer l'url de Démarches simplifiées." })
   getDsUrl(): GetDsUrlOutputDto {
     this.logger.verbose("getDsUrl");
     return {

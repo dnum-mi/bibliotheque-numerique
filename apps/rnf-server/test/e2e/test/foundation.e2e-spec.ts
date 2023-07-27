@@ -102,9 +102,9 @@ describe("Foundation Controller (e2e)", () => {
     await prisma.$disconnect();
   });
 
-  it("POST /foundation - Should return 400 if no dossierId provided", () => {
+  it("POST /foundations - Should return 400 if no dossierId provided", () => {
     return request(app.getHttpServer())
-      .post("/api/foundation")
+      .post("/api/foundations")
       .expect(400)
       .expect({
         statusCode: 400,
@@ -113,13 +113,13 @@ describe("Foundation Controller (e2e)", () => {
           ", dossierId must be a number conforming to the specified constraints\n" +
           "Champs email: email should not be null or undefined, email must be an email",
         data: {},
-        path: "/api/foundation",
+        path: "/api/foundations",
       });
   });
 
-  it("POST /foundation - Should return 424 if dossierId provided is wrong", () => {
+  it("POST /foundations - Should return 424 if dossierId provided is wrong", () => {
     return request(app.getHttpServer())
-      .post("/api/foundation")
+      .post("/api/foundations")
       .send({
         dossierId: 42,
         email: "toto@gmail.com",
@@ -129,13 +129,13 @@ describe("Foundation Controller (e2e)", () => {
         statusCode: 424,
         message: "GraphQL Error from DS-API.",
         data: {},
-        path: "/api/foundation",
+        path: "/api/foundations",
       });
   });
 
-  it("POST /foundation - Should return 400 if dossierId has not the right demarche", () => {
+  it("POST /foundations - Should return 400 if dossierId has not the right demarche", () => {
     return request(app.getHttpServer())
-      .post("/api/foundation")
+      .post("/api/foundations")
       .send({
         dossierId: 37,
         email: "yoyo@gmail.com",
@@ -145,13 +145,13 @@ describe("Foundation Controller (e2e)", () => {
         statusCode: 400,
         message: "This demarche id is not implemented",
         data: {},
-        path: "/api/foundation",
+        path: "/api/foundations",
       });
   });
 
-  it("POST /foundation - Should return 403 if email provided is wrong", () => {
+  it("POST /foundations - Should return 403 if email provided is wrong", () => {
     return request(app.getHttpServer())
-      .post("/api/foundation")
+      .post("/api/foundations")
       .send({
         dossierId: 37,
         email: "fake@gmail.com",
@@ -161,13 +161,13 @@ describe("Foundation Controller (e2e)", () => {
         statusCode: 403,
         message: "This instructeur's email is not linked to this dossier.",
         data: {},
-        path: "/api/foundation",
+        path: "/api/foundations",
       });
   });
 
-  it("POST /foundation - Should create a new foundation with dotation", async () => {
+  it("POST /foundations - Should create a new foundation with dotation", async () => {
     const result = await request(app.getHttpServer())
-      .post("/api/foundation")
+      .post("/api/foundations")
       .send({
         dossierId: 17,
         email: "toto@gmail.com",
@@ -215,9 +215,9 @@ describe("Foundation Controller (e2e)", () => {
     return;
   });
 
-  it("POST /foundation - Should create a new foundation with entreprise", async () => {
+  it("POST /foundations - Should create a new foundation with entreprise", async () => {
     const result = await request(app.getHttpServer())
-      .post("/api/foundation")
+      .post("/api/foundations")
       .send({
         dossierId: 65,
         email: "titi@gmail.com",
@@ -258,9 +258,9 @@ describe("Foundation Controller (e2e)", () => {
     return;
   });
 
-  it("POST /foundation - Should create a new foundation with demande numéro rnf", async () => {
+  it("POST /foundations - Should create a new foundation with demande numéro rnf", async () => {
     const result = await request(app.getHttpServer())
-      .post("/api/foundation")
+      .post("/api/foundations")
       .send({
         dossierId: 135,
         email: "jojo@gmail.com",
@@ -273,51 +273,56 @@ describe("Foundation Controller (e2e)", () => {
         dossierId: 135,
       },
     });
-    await prisma.foundation.findFirst({ where: { rnfId: "059-FRUP-00001-08" }, include: { address: true } }).then((a) => {
-      expect(a).toMatchObject({
-        id: 1,
-        title: "Fondation des tulipes",
-        type: "FRUP",
-        address: {
-          label: "3 Rue Colbert 59800 Lille",
-          type: "housenumber",
-          streetAddress: "3 Rue Colbert",
-          streetNumber: "3",
-          streetName: "Rue Colbert",
-          postalCode: "59800",
-          cityName: "Lille",
-          cityCode: "59350",
-          departmentName: "Nord",
-          departmentCode: "59",
-          regionName: "Hauts-de-France",
-          regionCode: "32",
-        },
-        email: "tulipe@gmail.com",
-        phone: "+33789898989",
+    await prisma.foundation
+      .findFirst({
+        where: { rnfId: "059-FRUP-00001-08" },
+        include: { address: true },
+      })
+      .then((a) => {
+        expect(a).toMatchObject({
+          id: 1,
+          title: "Fondation des tulipes",
+          type: "FRUP",
+          address: {
+            label: "3 Rue Colbert 59800 Lille",
+            type: "housenumber",
+            streetAddress: "3 Rue Colbert",
+            streetNumber: "3",
+            streetName: "Rue Colbert",
+            postalCode: "59800",
+            cityName: "Lille",
+            cityCode: "59350",
+            departmentName: "Nord",
+            departmentCode: "59",
+            regionName: "Hauts-de-France",
+            regionCode: "32",
+          },
+          email: "tulipe@gmail.com",
+          phone: "+33789898989",
+        });
       });
-    });
     return;
   });
 
-  it("GET /foundation/rnf-id - Should return 400 for wrong rnf", async () => {
-    return await request(app.getHttpServer()).get("/api/foundation/toto").expect(400).expect({
+  it("GET /foundations/rnf-id - Should return 400 for wrong rnf", async () => {
+    return await request(app.getHttpServer()).get("/api/foundations/toto").expect(400).expect({
       statusCode: 400,
       message: "Validation error(s):\n Champs rnfId: Le numéro RNF n'est pas valide",
       data: {},
-      path: "/api/foundation/toto",
+      path: "/api/foundations/toto",
     });
   });
 
-  it("GET /foundation/rnf-id - Should return 404 for not existing rnf", async () => {
-    return await request(app.getHttpServer()).get("/api/foundation/059-FE-000002-04").expect(404).expect({
+  it("GET /foundations/rnf-id - Should return 404 for not existing rnf", async () => {
+    return await request(app.getHttpServer()).get("/api/foundations/059-FE-000002-04").expect(404).expect({
       statusCode: 404,
       data: {},
       message: "No foundation found with this rnfId.",
-      path: "/api/foundation/059-FE-000002-04",
+      path: "/api/foundations/059-FE-000002-04",
     });
   });
 
-  it("GET /foundation/rnf-id - Should return 200 with correct foundation", async () => {
+  it("GET /foundations/rnf-id - Should return 200 with correct foundation", async () => {
     await prisma.foundation.create({
       data: {
         rnfId: "033-FDD-000001-06",
@@ -370,7 +375,7 @@ describe("Foundation Controller (e2e)", () => {
         },
       },
     });
-    const result = await request(app.getHttpServer()).get("/api/foundation/033-FDD-000001-06").expect(200);
+    const result = await request(app.getHttpServer()).get("/api/foundations/033-FDD-000001-06").expect(200);
     expect(result.body).toMatchObject({
       id: 1,
       rnfId: "033-FDD-000001-06",
@@ -400,10 +405,10 @@ describe("Foundation Controller (e2e)", () => {
     expect(date.getTime()).toBeCloseTo(new Date().getTime(), -3);
   });
 
-  it("POST /foundation - Should return a 409 if phone already exists", async () => {
+  it("POST /foundations - Should return a 409 if phone already exists", async () => {
     const df = await insertDumbFoundation(prisma, { phone: "+33686465445" });
     await request(app.getHttpServer())
-      .post("/api/foundation")
+      .post("/api/foundations")
       .send({
         dossierId: 17,
         email: "toto@gmail.com",
@@ -412,10 +417,10 @@ describe("Foundation Controller (e2e)", () => {
       .then(checkCollisionResponse(df));
   });
 
-  it("POST /foundation - Should return a 409 if email already exists", async () => {
+  it("POST /foundations - Should return a 409 if email already exists", async () => {
     const df = await insertDumbFoundation(prisma, { email: "tata@gmail.com" });
     await request(app.getHttpServer())
-      .post("/api/foundation")
+      .post("/api/foundations")
       .send({
         dossierId: 17,
         email: "toto@gmail.com",
@@ -424,7 +429,7 @@ describe("Foundation Controller (e2e)", () => {
       .then(checkCollisionResponse(df));
   });
 
-  it("POST /foundation - Should return a 409 if address already exists", async () => {
+  it("POST /foundations - Should return a 409 if address already exists", async () => {
     const df = await insertDumbFoundation(prisma, {
       // @ts-expect-error not really important in test context
       address: {
@@ -445,7 +450,7 @@ describe("Foundation Controller (e2e)", () => {
       },
     });
     await request(app.getHttpServer())
-      .post("/api/foundation")
+      .post("/api/foundations")
       .send({
         dossierId: 17,
         email: "toto@gmail.com",
@@ -454,11 +459,11 @@ describe("Foundation Controller (e2e)", () => {
       .then(checkCollisionResponse(df));
   });
 
-  it("POST /foundation - Should return a 409 if title is similar", async () => {
+  it("POST /foundations - Should return a 409 if title is similar", async () => {
     // Same title but no space, no maj and TWO different letters
     await insertDumbFoundation(prisma, { title: "jesuisuntitrecmpliquéavecdesespacesetdesaccentsetdesmajusules" });
     await request(app.getHttpServer())
-      .post("/api/foundation")
+      .post("/api/foundations")
       .send({
         dossierId: 17,
         email: "toto@gmail.com",
@@ -466,11 +471,11 @@ describe("Foundation Controller (e2e)", () => {
       .expect(409);
   });
 
-  it("POST /foundation - Should not be susceptible to SQL injection", async () => {
+  it("POST /foundations - Should not be susceptible to SQL injection", async () => {
     // Same title but no space, no maj and TWO different letters
     await insertDumbFoundation(prisma);
     await request(app.getHttpServer())
-      .post("/api/foundation")
+      .post("/api/foundations")
       .send({
         dossierId: 500,
         email: "toto@gmail.com",
@@ -478,17 +483,17 @@ describe("Foundation Controller (e2e)", () => {
       .expect(409);
   });
 
-  it("POST /foundation - Should create EVEN if collision", async () => {
+  it("POST /foundations - Should create EVEN if collision", async () => {
     await insertDumbFoundation(prisma, { phone: "+33686 46 5445" });
     await request(app.getHttpServer())
-      .post("/api/foundation")
+      .post("/api/foundations")
       .send({
         dossierId: 17,
         email: "toto@gmail.com",
       })
       .expect(409);
     await request(app.getHttpServer())
-      .post("/api/foundation")
+      .post("/api/foundations")
       .send({
         dossierId: 17,
         email: "toto@gmail.com",
@@ -503,11 +508,15 @@ describe("Foundation Controller (e2e)", () => {
     });
   });
 
-  it.only("GET /fondations - Should get list fondation", async () => {
+  it("GET /fondations - Should return 400 if bad argument", async () => {
+    return request(app.getHttpServer()).get("/api/foundations").send({}).expect(400);
+  });
+
+  it("GET /fondations - Should get list fondation", async () => {
     await insertDumbFoundation(prisma, { rnfId: "033-FDD-00002-08", updatedAt: new Date("2023-06-01") });
     await insertDumbFoundation(prisma, { rnfId: "033-FDD-000001-06" });
     const { body: fondations } = await request(app.getHttpServer())
-      .get("/api/foundation")
+      .get("/api/foundations")
       .query({
         rnfIds: ["033-FDD-00002-08", "033-FDD-000001-06"],
         date: new Date("2023-06-02"),

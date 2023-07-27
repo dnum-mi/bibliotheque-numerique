@@ -6,13 +6,13 @@ import { DsMapperService } from "@/modules/ds/providers/ds-mapper.service";
 import { DossierNumberInputDto } from "@/modules/foundation/objects/dto/inputs/dossier-number-input.dto";
 import { RnfIdOutputDto } from "@/modules/foundation/objects/dto/outputs/rnf-id-output.dto";
 import { GetFoundationInputDto } from "@/modules/foundation/objects/dto/inputs/get-foundation-input.dto";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiConflictResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { GetFoundationOutputDto } from "@/modules/foundation/objects/dto/outputs/get-foundation-output.dto";
 import { InfoDSOutputDto } from "../objects/dto/info-ds-output.dto";
 import { GetFoundationsInputDto } from "../objects/dto/inputs/get-foundations-inputs.dto";
 
 @ApiTags("Foundation")
-@Controller("foundation")
+@Controller("foundations")
 export class FoundationController {
   constructor(
     private readonly logger: LoggerService,
@@ -24,6 +24,8 @@ export class FoundationController {
   }
 
   @Post("")
+  @ApiOperation({ summary: "Créer une fondation." })
+  @ApiConflictResponse({ description: "Une ou des fondations similaires ont été trouvées." })
   async createFoundation(@Body() dto: DossierNumberInputDto): Promise<RnfIdOutputDto> {
     this.logger.verbose("createNewFoundation");
     const rawDossier = await this.dsService.getOneDossier(dto.dossierId);
@@ -45,15 +47,16 @@ export class FoundationController {
   }
 
   @Get(`/:rnfId`)
+  @ApiOperation({ summary: "Retourner la fondation correspondant au numéro RNF." })
   async getFoundation(@Param() params: GetFoundationInputDto): Promise<GetFoundationOutputDto> {
     this.logger.verbose("getFoundation");
     return this.service.getOneFoundation(params.rnfId);
   }
 
   @Get("")
+  @ApiOperation({ summary: "Lister un ensemble de fondation connues." })
   async getFoundations(@Query() query: GetFoundationsInputDto): Promise<GetFoundationOutputDto[]> {
     this.logger.verbose("getFoundations");
-
     return this.service.getFoundationsByRnfIds(query.rnfIds, query.date);
   }
 }
