@@ -273,29 +273,34 @@ describe("Foundation Controller (e2e)", () => {
         dossierId: 135,
       },
     });
-    await prisma.foundation.findFirst({ where: { rnfId: "059-FRUP-00001-08" }, include: { address: true } }).then((a) => {
-      expect(a).toMatchObject({
-        id: 1,
-        title: "Fondation des tulipes",
-        type: "FRUP",
-        address: {
-          label: "3 Rue Colbert 59800 Lille",
-          type: "housenumber",
-          streetAddress: "3 Rue Colbert",
-          streetNumber: "3",
-          streetName: "Rue Colbert",
-          postalCode: "59800",
-          cityName: "Lille",
-          cityCode: "59350",
-          departmentName: "Nord",
-          departmentCode: "59",
-          regionName: "Hauts-de-France",
-          regionCode: "32",
-        },
-        email: "tulipe@gmail.com",
-        phone: "+33789898989",
+    await prisma.foundation
+      .findFirst({
+        where: { rnfId: "059-FRUP-00001-08" },
+        include: { address: true },
+      })
+      .then((a) => {
+        expect(a).toMatchObject({
+          id: 1,
+          title: "Fondation des tulipes",
+          type: "FRUP",
+          address: {
+            label: "3 Rue Colbert 59800 Lille",
+            type: "housenumber",
+            streetAddress: "3 Rue Colbert",
+            streetNumber: "3",
+            streetName: "Rue Colbert",
+            postalCode: "59800",
+            cityName: "Lille",
+            cityCode: "59350",
+            departmentName: "Nord",
+            departmentCode: "59",
+            regionName: "Hauts-de-France",
+            regionCode: "32",
+          },
+          email: "tulipe@gmail.com",
+          phone: "+33789898989",
+        });
       });
-    });
     return;
   });
 
@@ -503,7 +508,11 @@ describe("Foundation Controller (e2e)", () => {
     });
   });
 
-  it.only("GET /fondations - Should get list fondation", async () => {
+  it("GET /fondations - Should return 400 if bad argument", async () => {
+    return request(app.getHttpServer()).get("/api/foundation").send({}).expect(400);
+  });
+
+  it("GET /fondations - Should get list fondation", async () => {
     await insertDumbFoundation(prisma, { rnfId: "033-FDD-00002-08", updatedAt: new Date("2023-06-01") });
     await insertDumbFoundation(prisma, { rnfId: "033-FDD-000001-06" });
     const { body: fondations } = await request(app.getHttpServer())

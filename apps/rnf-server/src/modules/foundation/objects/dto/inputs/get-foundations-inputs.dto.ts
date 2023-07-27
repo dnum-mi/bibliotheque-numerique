@@ -1,11 +1,14 @@
-import { IsArray, IsDateString, IsDefined } from "class-validator";
+import { IsDateString, IsDefined, IsOptional, IsString } from "class-validator";
 import { isRnfIdValid } from "../../../../../shared/validators/rnf-id/rnf-id.decorator";
+import { ApiProperty } from "@nestjs/swagger";
 
 export class GetFoundationsInputDto {
-  @IsDefined()
+  @ApiProperty({ description: "Liste des id(s) à sélectionner." })
   @isRnfIdValid({ each: true })
   rnfIds: string[];
 
+  @IsOptional()
   @IsDateString()
-  date: Date;
+  @ApiProperty({ description: "Lister seulement celles qui ont été modifiées depuis 'date'." })
+  date?: Date;
 }
