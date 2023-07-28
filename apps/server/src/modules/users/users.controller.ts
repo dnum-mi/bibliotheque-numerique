@@ -11,7 +11,11 @@ import { ApiTags } from "@nestjs/swagger";
 import { Roles, RolesGuard } from "../roles/providers/roles.guard";
 import { UsersService } from "./users.service";
 import { User } from "./entities/user.entity";
-import { CreateUserDto, UpdateUserDto } from "@biblio-num/shared";
+import {
+  CreateUserDto,
+  UpdateUserDto,
+  ResetPasswordInputDto,
+} from "@biblio-num/shared";
 
 @ApiTags("Users")
 @Controller("users")
@@ -40,5 +44,11 @@ export class UsersController {
   @Roles("admin")
   async getUserById(@Param("id") id: number): Promise<User> {
     return this.usersService.getUserById(id);
+  }
+
+  @Post("/reset-password")
+  async resetPassword(@Body() body: ResetPasswordInputDto): Promise<boolean> {
+    await this.usersService.resetPassword(body.email);
+    return true;
   }
 }

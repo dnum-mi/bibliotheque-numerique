@@ -4,12 +4,18 @@ import { FindOneOptions, Repository } from "typeorm";
 import { BaseEntityService } from "../../shared/base-entity/base-entity.service";
 import { LoggerService } from "../../shared/modules/logger/logger.service";
 import { InjectRepository } from "@nestjs/typeorm";
+import { JwtService } from "@nestjs/jwt";
+import { ConfigService } from "@nestjs/config";
+import { SendMailService } from "../sendmail/sendmail.service";
 
 @Injectable()
 export class UsersService extends BaseEntityService<User> {
   constructor(
     protected logger: LoggerService,
     @InjectRepository(User) protected readonly repo: Repository<User>,
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
+    private readonly sendMailService: SendMailService,
   ) {
     super(repo, logger);
     this.logger.setContext(this.constructor.name);
@@ -59,5 +65,21 @@ export class UsersService extends BaseEntityService<User> {
   async getUserById(id: number): Promise<User> {
     this.logger.verbose("getUserById");
     return this.findOneById(id, { roles: true });
+  }
+
+  async resetPassword(email: string): Promise<void> {
+    this.logger.verbose("resetPassword");
+    const userInDb = await this.repo.findOne({
+      where: { email },
+      select: ["id"],
+    });
+    if (!userInDb) return;
+
+    const jwt = this.jwtService.sign({ user: userInDb.id });
+    const app_url = this.configService.get("APP_URL");
+    await this.sendMailService.resetPwd(
+      email,
+      `${app_url}/update-password/${jwt}`,
+    );
   }
 }
