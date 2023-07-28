@@ -43,19 +43,6 @@ export class AuthController {
     });
   }
 
-  // TODO: Rename this route
-  @UseGuards(JwtAuthGuard)
-  @Get("jwt/profile")
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  jwtGetProfile(@Request() req) {
-    if (req.user) {
-      return req.user;
-    } else {
-      return {}; // TODO: Why not throw an (HTTP) error here?
-    }
-  }
-
   // TODO: Move this route to users.controllers and maybe rename it to "/users/me"
   @UseGuards(AuthenticatedGuard)
   @Get("profile")
