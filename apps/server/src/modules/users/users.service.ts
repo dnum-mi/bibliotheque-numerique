@@ -83,4 +83,9 @@ export class UsersService extends BaseEntityService<User> {
       `${app_url}/update-password/${jwtforurl}`,
     );
   }
+
+  async updatePassword(user: User, password: string): Promise<void> {
+    user.password = password;
+    await this.repo.save(user);
+  }
 }

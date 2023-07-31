@@ -7,3 +7,10 @@ items:
     createdAt: 2023-06-12T06:54:45.000Z
     updatedAt: 2023-06-12T06:54:45.000Z
     roles: ["@adminRole"]
+  testPwdUser:
+    id: 2
+    email: test.pwd@localhost.com
+    password: password
+    createdAt: 2023-06-12T06:54:45.000Z
+    updatedAt: 2023-06-12T06:54:45.000Z
+    roles: ["@adminRole"]
