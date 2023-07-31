@@ -36,8 +36,7 @@ import { NodeEnv } from "../../shared/types/node-env.enum";
           };
         }
 
-        const { host, port, from, user, pass } =
-          configService.get<TConfig["smtp"]>("smtp");
+        const { host, port, from, user, pass } = configService.get("smtp");
         const transport = {
           host,
           port,
