@@ -76,10 +76,11 @@ export class UsersService extends BaseEntityService<User> {
     if (!userInDb) return;
 
     const jwt = this.jwtService.sign({ user: userInDb.id });
+    const jwtforurl = Buffer.from(jwt).toString("base64url");
     const app_url = this.configService.get("APP_URL");
     await this.sendMailService.resetPwd(
       email,
-      `${app_url}/update-password/${jwt}`,
+      `${app_url}/update-password/${jwtforurl}`,
     );
   }
 }
