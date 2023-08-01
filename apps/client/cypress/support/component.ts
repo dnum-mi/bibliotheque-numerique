@@ -21,6 +21,13 @@ import './commands'
 
 import { mount } from 'cypress/vue'
 
+import VueDsfr from '@gouvminint/vue-dsfr'
+import '@gouvfr/dsfr/dist/dsfr.min.css'
+import '@gouvminint/vue-dsfr/styles'
+import '@/main.css'
+import * as icons from '@/icons'
+
+import router from '@/router'
 // Augment the Cypress namespace to include type definitions for
 // your custom command.
 // Alternatively, can be defined in cypress/support/component.d.ts
@@ -36,8 +43,25 @@ declare global {
 
 Cypress.Commands.add('mount', (component, options = {}) => {
   options.global = options.global || {}
+
   options.global.stubs = options.global.stubs || {}
   options.global.stubs.transition = false
+
+  if (!options.extensions) {
+    options.global.plugins = options.global.plugins || []
+    options.global.plugins.push({
+      install: (app) => {
+        app.use(VueDsfr,
+          { icons: Object.values(icons) },
+        )
+      },
+    })
+    options.global.plugins.push(router)
+  }
+
+  if (options.stores) {
+    options.global.plugins.push(options.stores)
+  }
 
   return mount(component, options)
 })

@@ -5,6 +5,11 @@ export const headers = {
   'Content-Type': 'application/json',
 }
 
+export const apiClientInstance = axios.create({
+  baseURL: baseApiUrl,
+  headers,
+})
+
 export const apiClient = {
   getDemarcheByDsId: async (id: number) => {
     const config = {

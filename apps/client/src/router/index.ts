@@ -42,6 +42,7 @@ const routes = [
   },
   {
     path: '/sign_up',
+    name: 'signUp',
     beforeEnter: [isNotAuthenticatedGuard],
     component: () => import('@/views/Signup.vue'),
   },
@@ -85,6 +86,17 @@ const routes = [
     name: 'Organismes',
     beforeEnter: [isAuthenticatedGuard],
     component: () => import('@/views/organismes/Organismes.vue'),
+  },
+  {
+    path: '/update-password/:token',
+    name: 'updatePassword',
+    component: () => import('@/views/UpdatePassword.vue'),
+    props: true,
+  },
+  {
+    path: '/reset-password',
+    name: 'resetPassword',
+    component: () => import('@/views/ResetPassword.vue'),
   },
 ]
 

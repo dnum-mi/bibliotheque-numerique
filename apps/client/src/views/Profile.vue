@@ -18,6 +18,30 @@
       :labels="labelsDate"
       class="fr-pb-3v fr-m-5w"
     />
+
+    <div
+      class="fr-container fr-grid-row fr-mb-2w"
+    >
+      <DsfrButton
+        class="fr-mb-2w"
+        type="buttonType"
+        label="Modifier mon mot de passe"
+        secondary
+        no-outline
+        @click="onClick()"
+      />
+
+      <DsfrAlert
+        class="fr-col-12 fr-pm-2w"
+        :title="alertTitle"
+        :description="alertDescription"
+        :type="alertType"
+        :closed="!openAlert"
+        closeable
+        @close="() => openAlert=false"
+      />
+    </div>
+
     <BiblioNumDataTableAgGrid
       title="La liste des vos rôles"
       :headers="rolesHeadersJson"
@@ -33,13 +57,21 @@ import { useUserStore } from '@/stores'
 import { dateTimeToStringFr, dateToStringFr } from '@/utils/dateToString'
 import LayoutList from '@/components/LayoutList.vue'
 import DisplayLabelsValues from '@/components/DisplayLabelsValues.vue'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import BiblioNumDataTableAgGrid from '@/components/BiblioNumDataTableAgGrid.vue'
 import type { IRole } from '@/shared/interfaces'
+import { resetPassword } from '../shared/services'
+import type { ResetPasswordInputDto } from '@biblio-num/shared'
+import { ASK_RESET_PWD_SUCCESS } from '../messages'
 
 const userStore = useUserStore()
 const datas = userStore.currentUser
 const title = 'profile'
+
+const alertTitle = ref('')
+const alertDescription = ref('')
+const openAlert = ref(false)
+const alertType = ref('info')
 
 const labelsDate = [
   {
@@ -91,5 +123,12 @@ const rolesRowData = computed(() => {
     permissions: role.permissions.map((permission) => permission.name).join(', '),
   }))
 })
+
+const onClick = async () => {
+  await resetPassword({ email: datas?.email } as ResetPasswordInputDto)
+  alertType.value = 'info'
+  openAlert.value = true
+  alertDescription.value = ASK_RESET_PWD_SUCCESS
+}
 
 </script>
