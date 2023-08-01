@@ -7,8 +7,11 @@ import { z } from 'zod'
 
 import { updatePassword } from '@/shared/services'
 import { passwordValidator } from '@/utils/password.validator'
+import { useRouter } from 'vue-router'
 
 const props = defineProps<{ token: string }>()
+
+const router = useRouter()
 
 const validationSchema = toTypedSchema(z.object({
   newPassword: passwordValidator,
@@ -37,8 +40,8 @@ const onSubmit = handleSubmit(async () => {
     openAlert.value = true
     alertDescription.value = 'Votre mot de passe a été changé.'
     alertType.value = 'success'
+    router.push({ name: 'Home' })
   } catch (error) {
-    console.log(error)
     openAlert.value = true
     alertDescription.value = error.message
     alertType.value = 'error'
