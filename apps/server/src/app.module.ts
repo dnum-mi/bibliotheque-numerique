@@ -7,6 +7,7 @@ import dsConfig from "./config/ds.config";
 import loggerConfig from "./config/logger.config";
 import typeormConfig from "./config/typeorm-nest.config";
 import smtpConfig from "./config/smtp.config";
+import jwtConfig from "./config/jwt.config";
 import { DemarchesModule } from "./modules/demarches/demarches.module";
 import { DossiersModule } from "./modules/dossiers/dossiers.module";
 import { RolesModule } from "./modules/roles/roles.module";
@@ -33,6 +34,7 @@ import { DsApiModule } from "./shared/modules/ds-api/ds-api.module";
         typeormConfig,
         loggerConfig,
         smtpConfig,
+        jwtConfig,
       ],
     }),
     LoggerModule,
