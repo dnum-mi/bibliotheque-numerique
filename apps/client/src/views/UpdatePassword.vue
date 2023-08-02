@@ -9,6 +9,8 @@ import { updatePassword } from '@/shared/services'
 import { passwordValidator } from '@/utils/password.validator'
 import { useRouter } from 'vue-router'
 
+import useToaster from '@/composables/use-toaster'
+
 const props = defineProps<{ token: string }>()
 
 const router = useRouter()
@@ -30,22 +32,19 @@ const alertTitle = ref('')
 const alertDescription = ref('')
 const openAlert = ref(false)
 
+const toaster = useToaster()
+
 const onSubmit = handleSubmit(async () => {
   if (newPasswordValue.value !== confirmPasswordValue.value) {
     setErrors({ confirmPassword: 'Les mots de passe ne correspondent pas' })
     return
   }
-  try {
-    await updatePassword({ password: newPasswordValue.value, token: props.token })
-    openAlert.value = true
-    alertDescription.value = 'Votre mot de passe a été changé.'
-    alertType.value = 'success'
-    router.push({ name: 'Home' })
-  } catch (error) {
-    openAlert.value = true
-    alertDescription.value = error.message
-    alertType.value = 'error'
-  }
+  await updatePassword({ password: newPasswordValue.value, token: props.token })
+  openAlert.value = true
+  alertDescription.value = 'Votre mot de passe a été changé.'
+  alertType.value = 'success'
+  toaster.addSuccessMessage({ description: 'Votre mot de passe a été changé.' })
+  router.push({ name: 'Home' })
 })
 
 const onCloseAlert = () => {

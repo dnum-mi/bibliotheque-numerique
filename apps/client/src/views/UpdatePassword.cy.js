@@ -48,13 +48,14 @@ describe('<UpdatePassword />', () => {
 
 function failedTest (statusCode, message) {
   cy.intercept('/api/users/user', { statusCode, message: 'erreur ...' })
+  cy.on('uncaught:exception', (err, runnable) => {
+    expect(err.message).to.include(message)
+    return true
+  })
   cy.mount(UpdatePassword, { props: { token: 'token' } })
 
   cy.get('#newPassword')
     .type(goodPassword)
   cy.get('#confirmPassword').type(goodPassword)
   cy.get('button').click()
-  cy.get('.fr-alert')
-    .should('have.class', 'fr-alert--error')
-    .should('contain.text', message)
 }
