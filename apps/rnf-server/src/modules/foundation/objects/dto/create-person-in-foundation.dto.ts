@@ -1,12 +1,12 @@
 import { FoundationRole } from "@prisma/client";
 import { IsDefined, IsEnum } from "class-validator";
-import { CreatePeopleDto } from "@/modules/people/objects/dto/create-people.dto";
+import { CreatePersonDto } from "@/modules/person/objects/dto/create-person.dto";
 import { Type } from "class-transformer";
 
-export class CreatePeopleInFoundationDto {
+export class CreatePersonInFoundationDto {
   @IsDefined()
-  @Type(() => CreatePeopleDto)
-  people: CreatePeopleDto;
+  @Type(() => CreatePersonDto)
+  person: CreatePersonDto;
 
   @IsDefined()
   @IsEnum(FoundationRole)

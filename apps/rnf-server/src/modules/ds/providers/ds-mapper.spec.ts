@@ -84,7 +84,7 @@ describe("DsService", () => {
       },
       email: "tata@gmail.com",
       phone: "06 86 46 54 45",
-      peopleInFoundationToCreate: null,
+      personInFoundationToCreate: null,
     });
   });
 
@@ -109,7 +109,7 @@ describe("DsService", () => {
       },
       // email: null,
       // phone: null,
-      peopleInFoundationToCreate: null,
+      personInFoundationToCreate: null,
     });
   });
 
@@ -134,7 +134,7 @@ describe("DsService", () => {
       },
       email: "tulipe@gmail.com",
       phone: "07 89 89 89 89",
-      peopleInFoundationToCreate: null,
+      personInFoundationToCreate: null,
     });
   });
 });

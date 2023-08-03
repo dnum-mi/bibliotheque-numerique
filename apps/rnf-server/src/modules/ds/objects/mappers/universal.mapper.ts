@@ -29,5 +29,5 @@ export const universalMapper: Mapper = {
       regionCode: address.regionCode ?? null,
     };
   },
-  peopleInFoundationToCreate: (ch: Champ) => null,
+  personInFoundationToCreate: (ch: Champ) => null,
 };

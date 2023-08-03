@@ -48,7 +48,7 @@ const createFoundationDtoFromDossier17 = {
   },
   email: "tata@gmail.com",
   phone: "+33686465445",
-  peopleInFoundationToCreate: null,
+  personInFoundationToCreate: null,
 };
 
 const insertDumbFoundation = async (prisma: PrismaService, f?: Partial<Foundation>) => {
