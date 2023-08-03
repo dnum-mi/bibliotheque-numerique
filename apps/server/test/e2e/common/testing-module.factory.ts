@@ -9,21 +9,6 @@ import { loggerServiceMock } from "../../mock/logger-service.mock";
 import { mailerServiceMock } from "../../mock/mailer-service.mock";
 import { MailerService } from "@nestjs-modules/mailer";
 
-export const TestingModuleFactory = async (): Promise<INestApplication> => {
-  const moduleFixture: TestingModule = await Test.createTestingModule({
-    imports: [AppModule],
-  })
-    .overrideProvider(LoggerService)
-    .useValue(loggerServiceMock)
-    .overrideProvider(DsApiClient)
-    .useValue(dsApiClientMock)
-    .compile();
-  const app = moduleFixture.createNestApplication();
-  await configMain(app);
-  await app.init();
-  return app;
-};
-
 export class CTestingModuleFactory {
   app: INestApplication;
   mailerService = mailerServiceMock;
@@ -36,6 +21,8 @@ export class CTestingModuleFactory {
       .useValue(loggerServiceMock)
       .overrideProvider(MailerService)
       .useValue(this.mailerService)
+      .overrideProvider(DsApiClient)
+      .useValue(dsApiClientMock)
       .compile();
 
     this.app = moduleFixture.createNestApplication();

@@ -16,8 +16,8 @@ describe("users (e2e)", () => {
     mailerService = testingModule.mailerService as MailerService;
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
+  beforeEach(() => {
+    jest.spyOn(mailerService, "sendMail").mockClear();
   });
   afterAll(async () => {
     await app.close();
