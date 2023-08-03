@@ -567,6 +567,9 @@ importers:
       '@types/passport-local':
         specifier: ^1.0.35
         version: 1.0.35
+      '@types/superagent':
+        specifier: ^4.1.18
+        version: 4.1.18
       '@types/supertest':
         specifier: ^2.0.12
         version: 2.0.12

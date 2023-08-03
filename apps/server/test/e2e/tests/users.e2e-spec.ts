@@ -37,8 +37,7 @@ describe("users (e2e)", () => {
           return;
         },
       );
-    await request(app.getHttpServer())
-      // @ts-ignore The property 'post' really exists
+    await request(app.getHttpServer()) //
       .post("/users/reset-password")
       .send({
         email,
@@ -49,8 +48,7 @@ describe("users (e2e)", () => {
   });
 
   it("Should no send mail for reset password with e-mail no correct", async () => {
-    await request(app.getHttpServer())
-      // @ts-ignore The property 'post' really exists
+    await request(app.getHttpServer()) //
       .post("/users/reset-password")
       .send({
         email: "nouser@test.com",
@@ -59,16 +57,14 @@ describe("users (e2e)", () => {
   });
 
   it("should 401 to update password if there are not token", async () => {
-    await request(app.getHttpServer())
-      // @ts-ignore The property 'post' really exists
+    await request(app.getHttpServer()) //
       .put("/users/user")
       .send({})
       .expect(401);
   });
 
   it("should 403 to update password with invalide token", async () => {
-    await request(app.getHttpServer())
-      // @ts-ignore The property 'post' really exists
+    await request(app.getHttpServer()) //
       .put("/users/user")
       .send({ token: "test" })
       .expect(403);
@@ -82,8 +78,7 @@ describe("users (e2e)", () => {
     const jwt = jwtService.sign({ user: 2 });
     const jwtforurl = Buffer.from(jwt).toString("base64url");
 
-    await request(app.getHttpServer())
-      // @ts-ignore The property 'post' really exists
+    await request(app.getHttpServer()) //
       .put("/users/user")
       .send({
         password: "Y,cqu;CQ.5]BcD3",
@@ -100,8 +95,7 @@ describe("users (e2e)", () => {
     const jwt = jwtService.sign({ user: 2 });
     const jwtforurl = Buffer.from(jwt).toString("base64url");
 
-    await request(app.getHttpServer())
-      // @ts-ignore The property 'post' really exists
+    await request(app.getHttpServer()) //
       .put("/users/user")
       .send({
         token: jwtforurl,
