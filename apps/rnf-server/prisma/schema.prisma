@@ -38,8 +38,8 @@ model Foundation {
   phone String
   email String
 
-  // People
-  peoples PeopleInFoundation[]
+  // Person
+  persons PersonInFoundation[]
 }
 
 // ======================================== Address ========================================
@@ -60,12 +60,12 @@ model Address {
   regionName     String?
   regionCode     String?
 
-  people     People[]
+  person     Person[]
   foundation Foundation[]
 }
 
-// ======================================== PEOPLE =========================================
-model People {
+// ======================================== Person =========================================
+model Person {
   id          Int      @id @default(autoincrement())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -81,20 +81,20 @@ model People {
   address   Address @relation(fields: [addressId], references: [id])
   addressId Int
 
-  foundations PeopleInFoundation[]
+  foundations PersonInFoundation[]
 }
 
-// ======================================== PEOPLE IN Foundation ===========================
-model PeopleInFoundation {
+// ======================================== Person IN Foundation ===========================
+model PersonInFoundation {
   createdAt    DateTime         @default(now())
   updatedAt    DateTime         @updatedAt
   foundation   Foundation       @relation(fields: [foundationId], references: [id])
   foundationId Int
-  people       People           @relation(fields: [peopleId], references: [id])
-  peopleId     Int
+  person       Person           @relation(fields: [personId], references: [id])
+  personId     Int
   roles        FoundationRole[]
 
-  @@id([foundationId, peopleId])
+  @@id([foundationId, personId])
 }
 
 // ======================================== Foundation History ============================
@@ -112,8 +112,8 @@ model FoundationHistory {
   phone String
   email String
 
-  // People
-  peoples Json[] // PeopleInFoundation[]
+  // Person
+  persons Json[] // PersonInFoundation[]
   address Json // Address
 
   // Json from DS API use to create or update foundation
