@@ -1,3 +1,4 @@
-import { ChampHash } from "@/modules/ds/objects/types/champ-hash.type";
+import { CreateFoundationDto } from "@/modules/foundation/objects/dto/create-foundation.dto";
+import { Champ } from "@dnum-mi/ds-api-client";
 
-export type Mapper<T> = Record<keyof T, (object: ChampHash) => Record<string, string | null> | string | null>;
+export type Mapper = Record<keyof CreateFoundationDto, (champs: Champ) => Record<string, string | null> | string | null>;

@@ -88,6 +88,10 @@ export const dnrDossierDataMock = {
       __typename: "TextChamp",
       label: "Identifiant RNF",
       stringValue: "",
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum"
+      },
     },
     {
       id: "Q2hhbXAtMTM2Ng==",
@@ -95,18 +99,30 @@ export const dnrDossierDataMock = {
       label: "Votre structure possède-t-elle déjà un identifiant RNF ?",
       stringValue: "false",
       checked: false,
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum"
+      },
     },
     {
       id: "Q2hhbXAtMTM2OA==",
       __typename: "TextChamp",
       label: "Type de structure",
       stringValue: "Fondation reconnue d'utilité publique (FRUP)",
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "#rnf-type-rnf#lorem ipsum"
+      },
     },
     {
       id: "Q2hhbXAtMTM2OQ==",
       __typename: "DepartementChamp",
       label: "Siège de votre structure",
       stringValue: "59 - Nord",
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum"
+      },
       departement: {
         name: "Nord",
         code: "59",
@@ -117,12 +133,20 @@ export const dnrDossierDataMock = {
       __typename: "TextChamp",
       label: "Titre de la structure",
       stringValue: "Fondation des tulipes",
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum#rnf-titre-rnf#"
+      },
     },
     {
       id: "Q2hhbXAtMTM3MQ==",
       __typename: "AddressChamp",
       label: "Adresse du siège social de la structure",
       stringValue: "3 Rue Colbert 59800 Lille",
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum#rnf-addresse-rnf#"
+      },
       address: {
         label: "3 Rue Colbert 59800 Lille",
         type: "housenumber",
@@ -152,18 +176,30 @@ export const dnrDossierDataMock = {
       __typename: "TextChamp",
       label: "Courriel de contact de la structure",
       stringValue: "tulipe@gmail.com",
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lo#rnf-courriel-rnf#rem ipsum"
+      },
     },
     {
       id: "Q2hhbXAtMTM3Mw==",
       __typename: "TextChamp",
       label: "Téléphone contact de la structure",
       stringValue: "07 89 89 89 89",
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "#rnf-telephone-rnf#lorem ipsum"
+      },
     },
     {
       id: "Q2hhbXAtMTM3NA==",
       __typename: "TextChamp",
       label: "Déclarant pour la structure",
       stringValue: "",
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum"
+      },
     },
     {
       id: "Q2hhbXAtMTM3NQ==",
@@ -171,30 +207,50 @@ export const dnrDossierDataMock = {
       label: "Civilité du déclarant",
       stringValue: "M.",
       civilite: "M",
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum"
+      },
     },
     {
       id: "Q2hhbXAtMTM3Ng==",
       __typename: "TextChamp",
       label: "Nom",
       stringValue: "DIDIER ",
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum"
+      },
     },
     {
       id: "Q2hhbXAtMTM3Nw==",
       __typename: "TextChamp",
       label: "Prénom",
       stringValue: "Robin",
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum"
+      },
     },
     {
       id: "Q2hhbXAtMTM3OA==",
       __typename: "TextChamp",
       label: "Adresse électronique du déclarant",
       stringValue: "jojo@gmail.com",
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum"
+      },
     },
     {
       id: "Q2hhbXAtMTM3OQ==",
       __typename: "TextChamp",
       label: "Numéro de téléphone du déclarant",
       stringValue: "06 89 89 89 89",
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum"
+      },
     },
   ],
   annotations: [

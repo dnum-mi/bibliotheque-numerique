@@ -100,12 +100,20 @@ export const dotationDossierDataMock = {
       __typename: "TextChamp",
       label: "Titre, adresse et durée du fonds de dotation",
       stringValue: "",
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum"
+      }
     },
     {
       id: "Q2hhbXAtOTA=",
       __typename: "TextChamp",
       label: "Titre du fonds de dotation (suivi du sigle s'il existe)",
       stringValue: "Je suis un titre compliqué avec des espaces et des accents et des MajUsCules",
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem #rnf-titre-rnf#ipsum"
+      }
     },
     {
       id: "Q2hhbXAtOTE=",
@@ -135,18 +143,30 @@ export const dotationDossierDataMock = {
         name: "Gironde",
         code: "33",
       },
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lo#rnf-addresse-rnf#rem ipsum"
+      }
     },
     {
       id: "Q2hhbXAtOTI=",
       __typename: "TextChamp",
       label: "Courriel du fonds de dotation",
       stringValue: "tata@gmail.com",
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "#rnf-courriel-rnf#lorem ipsum"
+      }
     },
     {
       id: "Q2hhbXAtOTM=",
       __typename: "TextChamp",
       label: "Numéro de téléphone du fonds de dotation",
       stringValue: "06 86 46 54 45",
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum#rnf-telephone-rnf#"
+      }
     },
     {
       id: "Q2hhbXAtOTQ=",
@@ -154,6 +174,10 @@ export const dotationDossierDataMock = {
       label: "Durée d'existence du fonds de dotation",
       stringValue: "Durée indéterminée",
       values: ["Durée indéterminée"],
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum"
+      }
     },
     {
       id: "Q2hhbXAtOTU=",
@@ -161,12 +185,20 @@ export const dotationDossierDataMock = {
       label: "Durée d'existence (en nombre d'années)",
       stringValue: "5",
       integerNumber: "5",
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum"
+      }
     },
     {
       id: "Q2hhbXAtOTY=",
       __typename: "TextChamp",
       label: "Administrateurs/administratrices du fond de dotation",
       stringValue: "",
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum"
+      }
     },
     {
       id: "Q2hhbXAtOTc=",
@@ -182,24 +214,40 @@ export const dotationDossierDataMock = {
           url: "https://fakeurl/rails/active_storage/disk/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdDVG9JYTJWNVNTSWhhMk5tWjNWa2FUTnNkVGN4ZUhObk1UVTFkakZ3WW05aU5XUjROZ1k2QmtWVU9oQmthWE53YjNOcGRHbHZia2tpQVh4aGRIUmhZMmh0Wlc1ME95Qm1hV3hsYm1GdFpUMGlSa1F0SUcxbGJXSnlaWE1nWkdVZ2JDVXlOMkZrYldsdWFYTjBjbUYwYVc5dUxuaHNjM2dpT3lCbWFXeGxibUZ0WlNvOVZWUkdMVGduSjBaRUxTVXlNRzFsYldKeVpYTWxNakJrWlNVeU1Hd2xNamRoWkcxcGJtbHpkSEpoZEdsdmJpNTRiSE40QmpzR1ZEb1JZMjl1ZEdWdWRGOTBlWEJsU1NKR1lYQndiR2xqWVhScGIyNHZkbTVrTG05d1pXNTRiV3htYjNKdFlYUnpMVzltWm1salpXUnZZM1Z0Wlc1MExuTndjbVZoWkhOb1pXVjBiV3d1YzJobFpYUUdPd1pVT2hGelpYSjJhV05sWDI1aGJXVTZDbXh2WTJGcyIsImV4cCI6IjIwMjMtMDYtMDRUMTA6NTA6NDAuMzAzWiIsInB1ciI6ImJsb2Jfa2V5In19--307af1da1bc99a172b726d3b41e482132c11ff75/FD-%20membres%20de%20l'administration.xlsx",
         },
       ],
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum"
+      }
     },
     {
       id: "Q2hhbXAtOTg=",
       __typename: "TextChamp",
       label: "Objet et statuts du fonds de dotation",
       stringValue: "",
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum"
+      }
     },
     {
       id: "Q2hhbXAtOTk=",
       __typename: "TextChamp",
       label: "Explication",
       stringValue: "",
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum"
+      }
     },
     {
       id: "Q2hhbXAtMTAw",
       __typename: "TextChamp",
       label: "Objet du fonds de dotation",
       stringValue: "L'objet du fonds de dotation",
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum"
+      }
     },
     {
       id: "Q2hhbXAtMTAx",
@@ -207,6 +255,10 @@ export const dotationDossierDataMock = {
       label: "Caractère(s) d'intérêt général, au sens de la loi, poursuivi(s) par votre fonds de dotation",
       stringValue: "Familial",
       values: ["Familial"],
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum"
+      }
     },
     {
       id: "Q2hhbXAtMTAy",
@@ -214,6 +266,10 @@ export const dotationDossierDataMock = {
       label: "Thème(s) de l'objet du fonds de dotation",
       stringValue: "Éducation, formation",
       values: ["Éducation, formation"],
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum"
+      }
     },
     {
       id: "Q2hhbXAtMTAz",
@@ -221,24 +277,40 @@ export const dotationDossierDataMock = {
       label: "Pièce à déposer : statuts proposés",
       stringValue: "",
       files: [],
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum"
+      }
     },
     {
       id: "Q2hhbXAtMTA0",
       __typename: "TextChamp",
       label: "Modalités d'action du fonds de dotation",
       stringValue: "",
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum"
+      }
     },
     {
       id: "Q2hhbXAtMTA1",
       __typename: "TextChamp",
       label: "Nature de la dotation",
       stringValue: "Consomptible",
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum"
+      }
     },
     {
       id: "Q2hhbXAtMTA2",
       __typename: "TextChamp",
       label: "Actions du fonds de dotation",
       stringValue: "Mixte",
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum"
+      }
     },
     {
       id: "Q2hhbXAtMTA4",
@@ -246,18 +318,30 @@ export const dotationDossierDataMock = {
       label: "Le fonds de dotation envisage-t-il de financer des actions ou des organismes dont le siège n'est pas en France ?",
       stringValue: "false",
       checked: false,
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum"
+      }
     },
     {
       id: "Q2hhbXAtMTA3",
       __typename: "TextChamp",
       label: "Déclarant",
       stringValue: "",
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum"
+      }
     },
     {
       id: "Q2hhbXAtMTA5",
       __typename: "TextChamp",
       label: "Qualité du déclarant",
       stringValue: "",
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum"
+      }
     },
     {
       id: "Q2hhbXAtMTEw",
@@ -265,24 +349,40 @@ export const dotationDossierDataMock = {
       label: "Le mandat de l'un des fondateurs du fonds de dotation",
       stringValue: "",
       files: [],
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum"
+      }
     },
     {
       id: "Q2hhbXAtMTEx",
       __typename: "TextChamp",
       label: "Numéro de téléphone du déclarant",
       stringValue: "",
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum"
+      }
     },
     {
       id: "Q2hhbXAtMTEy",
       __typename: "TextChamp",
       label: "Publication au journal officiel",
       stringValue: "",
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum"
+      }
     },
     {
       id: "Q2hhbXAtMTEz",
       __typename: "PieceJustificativeChamp",
       label: "Formulaire de publication au JO",
       stringValue: "",
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum"
+      },
       files: [
         {
           filename: "FD- membres de l'administration-1.xlsx",
@@ -302,12 +402,20 @@ export const dotationDossierDataMock = {
         name: "Paris",
         code: "75",
       },
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum"
+      }
     },
     {
       id: "Q2hhbXAtMTE1",
       __typename: "TextChamp",
       label: "Pièce(s) justificative(s) supplémentaire(s)",
       stringValue: "",
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum"
+      }
     },
     {
       id: "Q2hhbXAtMTE2",
@@ -315,6 +423,10 @@ export const dotationDossierDataMock = {
       label: "Autre(s) pièce(s) à transmettre",
       stringValue: "",
       files: [],
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum"
+      }
     },
   ],
   annotations: [

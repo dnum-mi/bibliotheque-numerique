@@ -1,7 +1,7 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { DsService } from "@/modules/ds/providers/ds.service";
 import { DsMapperService } from "@/modules/ds/providers/ds-mapper.service";
-import { Dossier } from "@dnum-mi/ds-api-client";
+import { DossierWithCustomChamp } from "@dnum-mi/ds-api-client";
 import { LoggerService } from "@/shared/modules/logger/providers/logger.service";
 import { loggerServiceMock } from "../../../../test/mocks/logger-service.mock";
 import { dotationDossierDataMock } from "../../../../test/mocks/datas/dossier-dotation.data.mock";
@@ -47,24 +47,24 @@ describe("DsService", () => {
     expect(() => {
       service.mapDossierToFoundation({
         demarche: {},
-      } as Partial<Dossier>);
+      } as DossierWithCustomChamp);
     }).toThrow(`Dossier champs is empty`);
     expect(() => {
       service.mapDossierToFoundation({
         demarche: {},
         champs: [{}],
-      } as unknown as Partial<Dossier>);
+      } as unknown as DossierWithCustomChamp);
     }).toThrow(`This demarche id is not implemented`);
     expect(() => {
       service.mapDossierToFoundation({
         demarche: { title },
         champs: [{}],
-      } as unknown as Partial<Dossier>);
+      } as unknown as DossierWithCustomChamp);
     }).toThrow(`This demarche id is not implemented`);
   });
 
   it("Should correctly map a dotation foundation demarche", () => {
-    const result = service.mapDossierToFoundation(dotationDossierDataMock);
+    const result = service.mapDossierToFoundation(dotationDossierDataMock as DossierWithCustomChamp);
     expect(result).toEqual({
       title: "Je suis un titre compliqué avec des espaces et des accents et des MajUsCules",
       type: "FDD",
@@ -89,7 +89,7 @@ describe("DsService", () => {
   });
 
   it("Should correctly map a entreprise demarche", () => {
-    const result = service.mapDossierToFoundation(entrepriseDossierDataMock);
+    const result = service.mapDossierToFoundation(entrepriseDossierDataMock as DossierWithCustomChamp);
     expect(result).toMatchObject({
       title: "Test demo",
       type: "FE",
@@ -114,7 +114,7 @@ describe("DsService", () => {
   });
 
   it("Should correctly map a demande numéro rnf demarche", () => {
-    const result = service.mapDossierToFoundation(dnrDossierDataMock);
+    const result = service.mapDossierToFoundation(dnrDossierDataMock as DossierWithCustomChamp);
     expect(result).toMatchObject({
       title: "Fondation des tulipes",
       type: "FRUP",

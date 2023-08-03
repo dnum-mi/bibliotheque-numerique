@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { Dossier, DossierModifierAnnotationTextInput, DsApiClient } from "@dnum-mi/ds-api-client";
+import { Dossier, DossierModifierAnnotationTextInput, DossierWithCustomChamp, DsApiClient } from "@dnum-mi/ds-api-client";
 import { LoggerService } from "@/shared/modules/logger/providers/logger.service";
 import { FoundationType } from "@prisma/client";
 
@@ -60,9 +60,9 @@ export class DsService {
     });
   }
 
-  async getOneDossier(idDossier: number): Promise<Partial<Dossier>> {
+  async getOneDossier(idDossier: number): Promise<DossierWithCustomChamp> {
     this.logger.verbose("getOneDossier");
-    return this.dsApiClient.dossier(idDossier).then((response: { dossier: Partial<Dossier> }) => {
+    return this.dsApiClient.dossierWithCustomChamp(idDossier).then((response: { dossier: DossierWithCustomChamp }) => {
       this.logger.debug("DS API response: " + JSON.stringify(response.dossier));
       return response.dossier;
     });

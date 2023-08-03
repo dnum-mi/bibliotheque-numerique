@@ -41,7 +41,7 @@ export class FoundationController {
     };
 
     const foundation = await this.service.CreateFoundation(createDto, ds, dto.forceCreate);
-    await this.dsService.writeRnfIdInPrivateAnnotation(rawDossier.id!, instructeurId, foundation.type, foundation.rnfId);
+    await this.dsService.writeRnfIdInPrivateAnnotation(rawDossier.id, instructeurId, foundation.type, foundation.rnfId);
     // TODO: await this.foundationHistoryService.newHistoryEntry(foundation, dto);
     return { rnfId: foundation.rnfId, ds };
   }
