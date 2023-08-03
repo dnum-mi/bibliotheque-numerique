@@ -7,7 +7,7 @@ import {
   OneToMany,
 } from "typeorm";
 import { DemarcheDS } from "./demarche_ds.entity";
-import { Dossier } from "../../dossiers/entities/dossier.entity";
+import { Dossier } from "../../dossiers/objects/entities/dossier.entity";
 import { BaseEntity } from "../../../shared/base-entity/base.entity";
 
 export type TUpsertDemarche = Partial<

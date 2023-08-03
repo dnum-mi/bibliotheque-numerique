@@ -14,8 +14,8 @@ import instructionTimeMappingConfig, {
   TInstructionTimeMappingConfig,
 } from "../config/instructionTimeMapping.config";
 import { EInstructionTimeState } from "./types/IntructionTime.type";
-import { Dossier } from "../../../modules/dossiers/entities/dossier.entity";
-import { DossierDS } from "../../../modules/dossiers/entities/dossier_ds.entity";
+import { Dossier } from "../../../modules/dossiers/objects/entities/dossier.entity";
+import { DossierDS } from "../../../modules/dossiers/objects/entities/dossier_ds.entity";
 import MockDate from "mockdate";
 import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
 import { InstructionTime } from "./instruction_time.entity";
@@ -24,6 +24,7 @@ import { DossiersService } from "../../../modules/dossiers/providers/dossiers.se
 import { DossiersModule } from "../../../modules/dossiers/dossiers.module";
 import fileConfig from "../../../config/file.config";
 import dsConfig from "../../../config/ds.config";
+import { DsApiModule } from "../../../shared/modules/ds-api/ds-api.module";
 
 describe("InstructionTimesService", () => {
   let service: InstructionTimesService;
@@ -38,6 +39,7 @@ describe("InstructionTimesService", () => {
         TypeOrmModule.forRootAsync(typeormFactoryLoader),
         TypeOrmModule.forFeature([InstructionTime, Dossier]),
         DossiersModule,
+        DsApiModule,
         ConfigModule.forRoot({
           isGlobal: true,
           cache: true,

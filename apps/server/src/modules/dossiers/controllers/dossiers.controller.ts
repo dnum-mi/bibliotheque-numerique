@@ -11,7 +11,7 @@ import {
 import { ApiTags } from "@nestjs/swagger";
 import { FilterPipe } from "../../../shared/pipe/filter.pipe";
 import { DossiersService } from "../providers/dossiers.service";
-import { Dossier } from "../entities/dossier.entity";
+import { Dossier } from "../objects/entities/dossier.entity";
 import { DeleteResult } from "typeorm";
 
 @ApiTags("Dossiers")

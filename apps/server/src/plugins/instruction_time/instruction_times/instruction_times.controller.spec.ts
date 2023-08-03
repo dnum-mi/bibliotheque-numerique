@@ -17,9 +17,10 @@ import {
 import { getFakeInstructionTime } from "../../../../test/unit/fake-data/instruction-time.fake-data";
 import { InstructionTime } from "./instruction_time.entity";
 import { DossiersModule } from "../../../modules/dossiers/dossiers.module";
-import { Dossier } from "../../../modules/dossiers/entities/dossier.entity";
+import { Dossier } from "../../../modules/dossiers/objects/entities/dossier.entity";
 import dsConfig from "../../../config/ds.config";
 import fileConfig from "../../../config/file.config";
+import { DsApiModule } from "../../../shared/modules/ds-api/ds-api.module";
 
 describe("InstructionTimesController", () => {
   let controller: InstructionTimesController;
@@ -32,6 +33,7 @@ describe("InstructionTimesController", () => {
         TypeOrmModule.forRootAsync(typeormFactoryLoader),
         TypeOrmModule.forFeature([InstructionTime, Dossier]),
         DossiersModule,
+        DsApiModule,
         ConfigModule.forRoot({
           isGlobal: true,
           cache: true,

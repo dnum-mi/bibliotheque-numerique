@@ -18,6 +18,7 @@ import { JobLogModule } from "./modules/job-log/job-log.module";
 import { typeormFactoryLoader } from "./shared/utils/typeorm-factory-loader";
 import { HealthModule } from "./modules/health/health.module";
 import { AuthModule } from "./modules/auth/auth.module";
+import { DsApiModule } from "./shared/modules/ds-api/ds-api.module";
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { AuthModule } from "./modules/auth/auth.module";
       load: [configuration, fileConfig, dsConfig, typeormConfig, loggerConfig],
     }),
     LoggerModule,
+    DsApiModule,
     TypeOrmModule.forRootAsync(typeormFactoryLoader),
     DemarchesModule,
     DossiersModule,

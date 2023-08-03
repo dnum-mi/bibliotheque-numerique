@@ -13,15 +13,10 @@ $ npm install
 
 ```bash
 # Running migrations
-$ npm run typeorm:migration:run
-$ npm run typeorm migration:run -- -d src/db/app-data-source.ts
+$ npm run migration:run
 
-# Create a migration
-$ npm run typeorm:migration:create -n Dossier
-$ mv 1668775846269-Dossier.ts src/db/migrations
-
-# Generating migrations
-$ npm run typeorm:migration:generate
+# Generating a migration
+$ npm run migration:generate database/migrations/TheNameOfMyMigration
 ```
 
 ## Running the app
@@ -72,3 +67,15 @@ $ npm run test:cov
 ```text
 http://localhost:3000/swagger
 ```
+
+## S3 minio
+Afin de pouvoir utiliser minio en local il faut:
+- démarrer le docker minio
+- aller sur le docker minio localhost:9000
+- utiliser les identifiants (qui se trouve dans le fichier docker-compose, chapitre minio)
+- identifiant ET password: ``s3_biblio-num_minio``
+- créer une nouvelle API key
+- mettre les deux clefs privée et publiques dans l'env
+- créer un bucket (du même nom que l'env)
+- redémarrer le serveur.
+

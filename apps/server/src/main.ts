@@ -20,8 +20,8 @@ async function bootstrap(): Promise<void> {
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup("swagger", app, document);
   }
+  await configMain(app);
   const configService = app.get(ConfigService);
-  configMain(app, configService);
   await app.listen(configService.get("port"));
 }
 bootstrap();

@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DsApiClient } from "@dnum-mi/ds-api-client";
+import { DsApiClient, RepetitionChamp } from "@dnum-mi/ds-api-client";
 import { Dossier as TDossier } from "@dnum-mi/ds-api-client/dist/@types/types";
 import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import { DossiersService } from "./dossiers.service";
@@ -8,30 +8,27 @@ import { FilesService } from "../../files/files.service";
 import { ConfigService } from "@nestjs/config";
 import { Champ, File, Message } from "@dnum-mi/ds-api-client/src/@types/types";
 import { InstructionTimesService } from "../../../plugins/instruction_time/instruction_times/instruction_times.service";
-import { DossierDS } from "../entities/dossier_ds.entity";
+import { DossierDS } from "../objects/entities/dossier_ds.entity";
 import { FileStorage } from "../../files/file_storage.entity";
 import { BaseEntityService } from "../../../shared/base-entity/base-entity.service";
 import { InjectRepository } from "@nestjs/typeorm";
+import { FieldService } from "./field.service";
 
 @Injectable()
 export class DossiersDSService extends BaseEntityService {
-  private dsApiClient: DsApiClient;
-
   constructor(
     private dossiersService: DossiersService,
     private dataSource: DataSource,
     private readonly filesService: FilesService,
     private readonly configService: ConfigService,
     private instructionTimeService: InstructionTimesService,
+    private fieldService: FieldService,
     protected readonly logger: LoggerService,
     @InjectRepository(DossierDS) protected readonly repo: Repository<DossierDS>,
+    private readonly dsApiClient: DsApiClient,
   ) {
     super(repo, logger);
     this.logger.setContext(this.constructor.name);
-    this.dsApiClient = new DsApiClient(
-      this.configService.get("ds").apiUrl,
-      this.configService.get("ds").apiToken,
-    );
   }
 
   // TODO: fixe type
@@ -40,6 +37,7 @@ export class DossiersDSService extends BaseEntityService {
     toUpsert: Partial<DossierDS> | Partial<DossierDS>[],
     transactionalEntityManager: EntityManager,
   ) {
+    this.logger.verbose("_upsertDossierDS");
     return transactionalEntityManager
       .createQueryBuilder()
       .insert()
@@ -52,39 +50,31 @@ export class DossiersDSService extends BaseEntityService {
       .execute();
   }
 
-  async upsertDossierDS(
-    dossierNumber: number,
-    demarcheNumber: number,
-  ): Promise<void> {
-    this.logger.verbose("upsertDossierDS");
-    const response = await this.dsApiClient.dossier(dossierNumber);
-    const dossier = response?.dossier;
-    return this.upsertDossierDSAndDossier(dossier, demarcheNumber);
-  }
-
   async upsertDemarcheDossiersDS(demarcheNumber: number): Promise<void> {
     this.logger.verbose("upsertDemarcheDossiersDS");
-    const response = await this.dsApiClient.demarcheDossiers(demarcheNumber);
+    const response = await this.dsApiClient.demarcheDossierWithCustomChamp(
+      demarcheNumber,
+    );
     const dossiers = response?.demarche?.dossiers?.nodes;
     this.logger.log(
-      `For demarche (ID: ${demarcheNumber}), NB dossier to upsert is: ${dossiers.length}`,
+      `For demarche (ID: ${demarcheNumber}), NB dossier to upsert is: ${dossiers?.length}`,
     );
     if (dossiers && dossiers.length > 0) {
       for (const dossier of dossiers) {
         await this.upsertDossierDSAndDossier(dossier, demarcheNumber).catch(
           (error) => {
-            this.logger.error({
-              short_message: `Échec de la mise à jour du dossier de DS: ${dossier.id}`,
-              full_message: error.stack,
-            });
+            this.logger.error(
+              `Échec de la mise à jour du dossier de DS: ${dossier.id}`,
+            );
+            this.logger.error(error.message);
+            this.logger.debug(error.stack);
           },
         );
       }
     } else {
-      this.logger.warn({
-        short_message: "No dossier to upsert",
-        full_message: `No dossier to upsert for demarche number: ${demarcheNumber}`,
-      });
+      this.logger.warn(
+        `No dossier to upsert for demarche number: ${demarcheNumber}`,
+      );
     }
   }
 
@@ -108,21 +98,25 @@ export class DossiersDSService extends BaseEntityService {
         dossier = await this.updateFileUrlInJson(dossier);
       }
 
-      const upsertResultDossiersDS = await this._upsertDossierDS(
+      const upsertResultDossierDS = await this._upsertDossierDS(
         toUpsert,
         transactionalEntityManager,
       );
 
-      const upsertResultDossiers = await this.dossiersService.upsertDossier(
-        upsertResultDossiersDS.raw[0],
+      const dossierUpsertResult = await this.dossiersService.upsertDossier(
+        upsertResultDossierDS.raw[0],
         demarcheNumber,
         transactionalEntityManager,
       );
 
-      return {
-        dossiersDS: upsertResultDossiersDS,
-        dossiers: upsertResultDossiers,
-      };
+      const id = dossierUpsertResult.identifiers?.[0]?.id || dossier.id;
+
+      // we only update fields if dossier is created or updated
+      await this.fieldService.overwriteFieldsFromDataJsonWithTransaction(
+        dossier,
+        id,
+        transactionalEntityManager,
+      );
     });
 
     await this.proccessInstructionTime(dossier.number);
@@ -141,7 +135,6 @@ export class DossiersDSService extends BaseEntityService {
   ): Promise<Partial<TDossier>> {
     this.logger.verbose("updateFileUrlInJson");
     dossier.champs = await this.replaceFileUrlInChamps(dossier.champs);
-
     if (dossier.annotations) {
       dossier.annotations = await this.replaceFileUrlInChamps(
         dossier.annotations,
@@ -155,23 +148,17 @@ export class DossiersDSService extends BaseEntityService {
     champs: Array<Champ>,
   ): Promise<Array<Champ>> {
     this.logger.verbose("replaceFileUrlInChamps");
-    await Promise.all(
-      champs.map(async (champ) => {
-        if (this.champHasFile(champ)) {
-          const champFile: File = champ["file"];
-          const fileStorage = await this.copyRemoteFile(champFile);
-          champFile.url = this.urlFileApi(fileStorage.id);
-        } else if (this.isChampRepetition(champ)) {
-          const newSubChamps = await this.replaceFileUrlInChamps(
-            // TODO: fixe type
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (<any>champ).champs,
-          );
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (<any>champ).champs = newSubChamps;
+    for (const champ of champs) {
+      if (this.champHasFile(champ)) {
+        const champFile: File = champ["file"];
+        const fileStorage = await this.copyRemoteFile(champFile);
+        champFile.url = this.urlFileApi(fileStorage.id);
+      } else if (this.isChampRepetition(champ)) {
+        for (const row of (champ as RepetitionChamp).rows) {
+          await this.replaceFileUrlInChamps(row.champs);
         }
-      }),
-    );
+      }
+    }
     return champs;
   }
 
@@ -204,6 +191,7 @@ export class DossiersDSService extends BaseEntityService {
 
   private champHasFile(champ): boolean {
     this.logger.verbose("champHasFile");
+    this.logger.debug(champ);
     return (
       this.configService
         .get("ds.dossier.champs.pjTypeName")

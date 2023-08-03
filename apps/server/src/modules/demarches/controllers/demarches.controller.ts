@@ -29,7 +29,7 @@ import { filterObjectFields } from "@biblio-num/shared";
 import { DossiersDSService } from "../../dossiers/providers/dossiers_ds.service";
 import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import { Demarche } from "../entities/demarche.entity";
-import { Dossier } from "../../dossiers/entities/dossier.entity";
+import { Dossier } from "../../dossiers/objects/entities/dossier.entity";
 
 @ApiTags("Demarches")
 @UseGuards(PermissionsGuard)
@@ -129,7 +129,7 @@ export class DemarchesController {
   }
 
   @Post("create")
-  @RequirePermissions()
+  // @RequirePermissions() // TODO: only superadmin should be able
   async create(
     @Body("idDs", ParseIntPipe) idDs: number,
   ): Promise<{ message: string }> {
@@ -144,21 +144,28 @@ export class DemarchesController {
     return { message: `Demarche id: ${idDs} create success!` };
   }
 
-  @Post("synchro_dossiers")
-  @RequirePermissions()
+  @Post("synchro-dossiers")
+  // @RequirePermissions() // TODO: only superadmin should be able
   async synchroDossiers(
-    @Body("id", ParseIntPipe) id: number,
+    @Body("idDs", ParseIntPipe) idDs: number,
   ): Promise<{ message: string }> {
-    const demarche = await this.demarcheService.findById(id);
-    if (!demarche) {
-      throw new NotFoundException(`Demarche id: ${id} n'existe pas.`);
+    const exist = await this.demarcheService.repository.exist({
+      where: { demarcheDS: { id: idDs } },
+    });
+    if (!exist) {
+      // TODO: if not superadmin, return 404 here
+      // throw new NotFoundException(`Demarche id: ${id} n'existe pas.`);
+      await this.demarchesDSServices.upsertDemarchesDSAndDemarches([idDs]);
     }
-
+    const demarche = await this.demarcheService.findByDsId(idDs);
+    if (!demarche) {
+      throw new NotFoundException(`Demarche with idDs: ${idDs} n'existe pas.`);
+    }
     await this.dossierDSServices.upsertDemarcheDossiersDS(
       demarche.demarcheDS.id,
     );
     return {
-      message: `Les dossiers de la demarche id ${id} sont synchronisés.`,
+      message: `Les dossiers de la demarche id ${idDs} sont synchronisés.`,
     };
   }
 

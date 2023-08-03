@@ -39,6 +39,7 @@ export class FilesService {
   });
 
   async uploadFile(file, checksum = ""): Promise<FileStorage> {
+    this.logger.verbose("uploadFile");
     if (!file) {
       throw new HttpException(
         {
@@ -79,12 +80,14 @@ export class FilesService {
   }
 
   public async findFileStorage(fileStorageId: string): Promise<FileStorage> {
+    this.logger.verbose("findFileStorage");
     return await this.repo.findOneBy({ id: fileStorageId });
   }
 
   public async getFile(
     fileStorageId: string,
   ): Promise<{ stream: stream.Readable; info: FileStorage }> {
+    this.logger.verbose("getFile");
     const fileStorage = await this.findFileStorage(fileStorageId);
 
     const stream = {
@@ -126,6 +129,7 @@ export class FilesService {
     mimeType,
     fileName = null,
   ): Promise<FileStorage> {
+    this.logger.verbose("copyRemoteFile");
     fileName = fileName.isNull ? fileUrl.split("/").pop() : fileName;
 
     const fileExtension = fileName.split(".").pop().toLowerCase();
@@ -158,7 +162,13 @@ export class FilesService {
     passThrough: PassThrough;
     promise: Promise<S3.ManagedUpload.SendData>;
   } {
+    this.logger.verbose("uploadFromStream");
     const passThrough = new PassThrough();
+    this.logger.debug({
+      Bucket: this.configService.get("file.awsDefaultS3Bucket"),
+      Key: fileName,
+      ContentType: fileResponse.headers["content-type"],
+    });
     const promise = this.s3
       .upload({
         Bucket: this.configService.get("file.awsDefaultS3Bucket"),
@@ -178,6 +188,7 @@ export class FilesService {
     byteSize,
     mimeType,
   ): Promise<FileStorage> {
+    this.logger.verbose("createFileStorage");
     const newFile = new FileStorage();
     newFile.name = name;
     newFile.path = path;
@@ -192,6 +203,7 @@ export class FilesService {
   // TODO: fixe type
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private async downloadFile(fileUrl) {
+    this.logger.verbose("downloadFile");
     return await this.httpService.axiosRef({
       url: fileUrl,
       method: "GET",
@@ -202,6 +214,7 @@ export class FilesService {
   // TODO: fixe type
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private fileFilter(fileExtension) {
+    this.logger.verbose("fileFilter");
     const authorizedExtensions = this.configService.get(
       "file.authorizedExtensions",
     );
@@ -224,6 +237,7 @@ export class FilesService {
   // TODO: fixe type
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private fileNameGenerator(originalName) {
+    this.logger.verbose("fileNameGenerator");
     return `${randomStringGenerator()}.${originalName
       .split(".")
       .pop()

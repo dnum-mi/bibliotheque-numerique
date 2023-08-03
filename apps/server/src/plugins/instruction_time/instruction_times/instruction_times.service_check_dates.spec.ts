@@ -10,14 +10,15 @@ import configuration from "../../../config/configuration";
 import instructionTimeMappingConfig, {
   keyInstructionTime,
 } from "../config/instructionTimeMapping.config";
-import { DossierDS } from "../../../modules/dossiers/entities/dossier_ds.entity";
+import { DossierDS } from "../../../modules/dossiers/objects/entities/dossier_ds.entity";
 import MockDate from "mockdate";
 import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
 import { InstructionTime } from "./instruction_time.entity";
 import { DossiersModule } from "../../../modules/dossiers/dossiers.module";
-import { Dossier } from "../../../modules/dossiers/entities/dossier.entity";
+import { Dossier } from "../../../modules/dossiers/objects/entities/dossier.entity";
 import dsConfig from "../../../config/ds.config";
 import fileConfig from "../../../config/file.config";
+import { DsApiModule } from "../../../shared/modules/ds-api/ds-api.module";
 
 describe("InstructionTimesService, Check Date", () => {
   let service: InstructionTimesService;
@@ -30,6 +31,7 @@ describe("InstructionTimesService, Check Date", () => {
         TypeOrmModule.forRootAsync(typeormFactoryLoader),
         TypeOrmModule.forFeature([InstructionTime, Dossier]),
         DossiersModule,
+        DsApiModule,
         ConfigModule.forRoot({
           isGlobal: true,
           cache: true,

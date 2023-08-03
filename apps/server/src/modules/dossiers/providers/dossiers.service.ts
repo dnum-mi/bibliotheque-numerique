@@ -1,11 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import { EntityManager, InsertResult, Repository } from "typeorm";
-import { DossierDS } from "../entities/dossier_ds.entity";
-import { Dossier } from "../entities/dossier.entity";
+import { DossierDS } from "../objects/entities/dossier_ds.entity";
+import { Dossier } from "../objects/entities/dossier.entity";
 import { DemarchesService } from "../../demarches/providers/demarches.service";
 import { InjectRepository } from "@nestjs/typeorm";
 import { BaseEntityService } from "../../../shared/base-entity/base-entity.service";
+import { FieldService } from "./field.service";
 
 export type TUpsertDossier = Partial<
   Omit<Dossier, "dossierDS"> & { dossierDS: number }
@@ -17,6 +18,7 @@ export class DossiersService extends BaseEntityService<Dossier> {
     @InjectRepository(Dossier) protected readonly repo: Repository<Dossier>,
     protected readonly logger: LoggerService,
     private readonly demarcheService: DemarchesService,
+    private readonly fieldService: FieldService,
   ) {
     super(repo, logger);
     this.logger.setContext(this.constructor.name);

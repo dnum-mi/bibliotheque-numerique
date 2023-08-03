@@ -1,6 +1,6 @@
-import { DossierDS } from "../../../src/modules/dossiers/entities/dossier_ds.entity";
+import { DossierDS } from "../../../src/modules/dossiers/objects/entities/dossier_ds.entity";
 import { Demarche } from "../../../src/modules/demarches/entities/demarche.entity";
-import { Dossier } from "../../../src/modules/dossiers/entities/dossier.entity";
+import { Dossier } from "../../../src/modules/dossiers/objects/entities/dossier.entity";
 import { faker } from "@faker-js/faker/locale/fr";
 import { DossierState } from "@dnum-mi/ds-api-client/dist/@types/types";
 

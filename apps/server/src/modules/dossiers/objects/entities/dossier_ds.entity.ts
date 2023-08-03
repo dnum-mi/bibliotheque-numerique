@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryColumn } from "typeorm";
 import { Dossier as TDossier } from "@dnum-mi/ds-api-client/dist/@types/types";
-import { BaseEntity } from "../../../shared/base-entity/base.entity";
+import { BaseEntity } from "../../../../shared/base-entity/base.entity";
 
 @Entity({ name: "dossiers_ds" })
 export class DossierDS extends BaseEntity {

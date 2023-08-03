@@ -1,4 +1,4 @@
-import { Dossier } from "../../../src/modules/dossiers/entities/dossier.entity";
+import { Dossier } from "../../../src/modules/dossiers/objects/entities/dossier.entity";
 import { faker } from "@faker-js/faker/locale/fr";
 import { EInstructionTimeState } from "../../../src/plugins/instruction_time/instruction_times/types/IntructionTime.type";
 import { InstructionTime } from "../../../src/plugins/instruction_time/instruction_times/instruction_time.entity";

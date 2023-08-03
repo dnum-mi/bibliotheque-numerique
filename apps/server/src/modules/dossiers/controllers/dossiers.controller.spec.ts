@@ -6,18 +6,19 @@ import { DossiersController } from "./dossiers.controller";
 import { DossiersService } from "../providers/dossiers.service";
 import { ConfigModule } from "@nestjs/config";
 import instructionTimeMappingConfig from "../../../plugins/instruction_time/config/instructionTimeMapping.config";
-import { InstructionTimesModule } from "../../../plugins/instruction_time/instruction_times/instruction_times.module";
 import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import { loggerServiceMock } from "../../../../test/mock/logger-service.mock";
-import { Dossier } from "../entities/dossier.entity";
-import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
+import { Dossier } from "../objects/entities/dossier.entity";
+import { TypeOrmModule } from "@nestjs/typeorm";
 import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
 import { InstructionTime } from "../../../plugins/instruction_time/instruction_times/instruction_time.entity";
-import { DossiersModule } from "../dossiers.module";
 import { DemarchesModule } from "../../demarches/demarches.module";
 import { Demarche } from "../../demarches/entities/demarche.entity";
 import dsConfig from "../../../config/ds.config";
 import fileConfig from "../../../config/file.config";
+import { Field } from "../objects/entities/field.entity";
+import { FieldService } from "../providers/field.service";
+import { DsApiModule } from "../../../shared/modules/ds-api/ds-api.module";
 
 describe("DossiersController", () => {
   let controller: DossiersController;
@@ -28,8 +29,9 @@ describe("DossiersController", () => {
       imports: [
         // TODO: typeorm should not be imported for unit test, neither should it be imported twice for connection and injection
         TypeOrmModule.forRootAsync(typeormFactoryLoader),
-        TypeOrmModule.forFeature([InstructionTime, Dossier, Demarche]),
+        TypeOrmModule.forFeature([InstructionTime, Dossier, Demarche, Field]),
         DemarchesModule,
+        DsApiModule,
         ConfigModule.forRoot({
           isGlobal: true,
           cache: true,
@@ -37,12 +39,13 @@ describe("DossiersController", () => {
         }),
       ],
       controllers: [DossiersController],
-      providers: [DossiersService],
+      providers: [DossiersService, FieldService],
     })
       .useMocker((token) => {
         if (token === LoggerService) {
           return loggerServiceMock;
         }
+        return null;
       })
       .compile();
 

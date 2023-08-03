@@ -8,17 +8,9 @@ export const dataSource = new DataSource({
   database: "biblio-num-e2e",
 } as DataSourceOptions);
 
-dataSource
-  .initialize()
-  .then(() => {
-    console.log("====================================================");
-    console.log("Datasource initialized successfully");
-    console.log("Connected to " + dataSource.options.database);
-    console.log("====================================================\n");
-  })
-  .catch((e) => {
-    console.log("====================================================");
-    console.log("Datasource initialization failed");
-    console.log(e);
-    console.log("====================================================\n");
-  });
+dataSource.initialize().catch((e) => {
+  console.log("====================================================");
+  console.log("Datasource initialization failed");
+  console.log(e);
+  console.log("====================================================\n");
+});

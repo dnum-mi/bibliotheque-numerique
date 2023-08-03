@@ -14,8 +14,6 @@ import { InjectRepository } from "@nestjs/typeorm";
 
 @Injectable()
 export class DemarchesDSService extends BaseEntityService<DemarcheDS> {
-  private dsApiClient: DsApiClient;
-
   constructor(
     private demarchesService: DemarchesService,
     private dataSource: DataSource,
@@ -23,12 +21,9 @@ export class DemarchesDSService extends BaseEntityService<DemarcheDS> {
     protected logger: LoggerService,
     @InjectRepository(DemarcheDS)
     protected readonly repo: Repository<DemarcheDS>,
+    private readonly dsApiClient: DsApiClient,
   ) {
     super(repo, logger);
-    this.dsApiClient = new DsApiClient(
-      this.config.get("ds.apiUrl"),
-      this.config.get("ds.apiToken"),
-    );
     this.logger.setContext(this.constructor.name);
   }
 
@@ -39,7 +34,6 @@ export class DemarchesDSService extends BaseEntityService<DemarcheDS> {
     transactionalEntityManager: EntityManager,
   ) {
     this.logger.verbose("_upsertDemarcheDS");
-    console.log(toUpsert);
     return transactionalEntityManager
       .createQueryBuilder()
       .insert()

@@ -15,7 +15,7 @@ import {
   EInstructionTimeState,
   EInstructionTimeStateKey,
 } from "./types/IntructionTime.type";
-import { Dossier } from "../../../modules/dossiers/entities/dossier.entity";
+import { Dossier } from "../../../modules/dossiers/objects/entities/dossier.entity";
 import { InstructionTime } from "./instruction_time.entity";
 import { BaseEntityService } from "../../../shared/base-entity/base-entity.service";
 import { InjectRepository } from "@nestjs/typeorm";
