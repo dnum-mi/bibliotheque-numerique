@@ -13,7 +13,7 @@ describe("users (e2e)", () => {
     const testingModule = new CTestingModuleFactory();
     await testingModule.init();
     app = testingModule.app;
-    mailerService = testingModule.mailerService as unknown as MailerService;
+    mailerService = testingModule.mailerService as MailerService;
   });
 
   afterEach(() => {

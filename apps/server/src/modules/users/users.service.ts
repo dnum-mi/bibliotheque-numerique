@@ -73,14 +73,17 @@ export class UsersService extends BaseEntityService<User> {
       where: { email },
       select: ["id"],
     });
-    if (!userInDb) return;
-
+    if (!userInDb) {
+      this.logger.warn(`Reset password: Cannot find user ${email}`);
+      return;
+    }
     const jwt = this.jwtService.sign({ user: userInDb.id });
-    const jwtforurl = Buffer.from(jwt).toString("base64url");
-    const app_url = this.configService.get("appFrontUrl");
+    // jwt does not go natively in url. We had to transform it in base64
+    const jwtForUrl = Buffer.from(jwt).toString("base64url");
+    const appUrl = this.configService.get("appFrontUrl");
     await this.sendMailService.resetPwd(
       email,
-      `${app_url}/update-password/${jwtforurl}`,
+      `${appUrl}/update-password/${jwtForUrl}`,
     );
   }
 

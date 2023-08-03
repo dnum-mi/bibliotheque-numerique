@@ -1,12 +1,14 @@
 import { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import { TestingModuleFactory } from "../common/testing-module.factory";
+import { CTestingModuleFactory } from "../common/testing-module.factory";
 
 describe("⚠️ TODO: Auth (e2e)", () => {
   let app: INestApplication;
 
   beforeAll(async () => {
-    app = await TestingModuleFactory();
+    const testingModule = new CTestingModuleFactory();
+    await testingModule.init();
+    app = testingModule.app;
   });
 
   afterAll(async () => {
