@@ -1,7 +1,5 @@
 include:
   - local: "/ci/includes/node.yml"
-  - local: "/ci/includes/docker.yml"
-  - local: "/ci/includes/vault.yml"
   - local: "/ci/includes/rules.yml"
 
 default:
