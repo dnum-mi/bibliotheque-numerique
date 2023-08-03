@@ -1,6 +1,7 @@
 include:
   - local: "/ci/includes/node.yml"
   - local: "/ci/includes/rules.yml"
+  - local: "/ci/includes/docker.yml"
   - project: $CATALOG_PATH
     file:
       - vault-ci.yml
@@ -158,7 +159,7 @@ docker_build_front:
     DOCKERFILE: 'Dockerfile'
   stage: docker-build
   extends:
-    - .kaniko:build
+    - .kaniko:build-push
 
 docker_build_rnf_front:
   variables:
@@ -167,7 +168,7 @@ docker_build_rnf_front:
     DOCKERFILE: 'Dockerfile'
   stage: docker-build
   extends:
-    - .kaniko:build
+    - .kaniko:build-push
 
 docker_build_back:
   variables:
@@ -176,7 +177,7 @@ docker_build_back:
     DOCKERFILE: 'Dockerfile'
   stage: docker-build
   extends:
-    - .kaniko:build
+    - .kaniko:build-push
 
 docker_build_rnf_back:
   variables:
@@ -185,4 +186,4 @@ docker_build_rnf_back:
     DOCKERFILE: 'Dockerfile'
   stage: docker-build
   extends:
-    - .kaniko:build
+    - .kaniko:build-push
