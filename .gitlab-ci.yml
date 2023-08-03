@@ -1,6 +1,11 @@
 include:
   - local: "/ci/includes/node.yml"
   - local: "/ci/includes/rules.yml"
+  - project: $CATALOG_PATH
+    file:
+      - vault-ci.yml
+      - kaniko-ci.yml
+    ref: main
 
 default:
   image: node:18
