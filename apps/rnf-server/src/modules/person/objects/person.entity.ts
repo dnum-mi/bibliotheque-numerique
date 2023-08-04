@@ -1,10 +1,10 @@
-import { People as PrismaPeople } from "@prisma/client";
+import { Person as PrismaPerson } from "@prisma/client";
 import { IsDate, IsDefined, IsEmail, IsNumber, IsPhoneNumber, IsString } from "class-validator";
 import { AddressEntity } from "@/shared/objects/address/address.entity";
-import { PeopleInFoundationEntity } from "@/modules/foundation/objects/people-in-foundation.entity";
+import { PersonInFoundationEntity } from "@/modules/foundation/objects/person-in-foundation.entity";
 import { BaseEntity } from "@/shared/base-entity/base.entity";
 
-export class PeopleEntity extends BaseEntity implements PrismaPeople {
+export class PersonEntity extends BaseEntity implements PrismaPerson {
   @IsString()
   @IsDefined()
   lastName: string;
@@ -44,5 +44,5 @@ export class PeopleEntity extends BaseEntity implements PrismaPeople {
   addressId: number;
   address: AddressEntity;
 
-  foundations?: PeopleInFoundationEntity[];
+  foundations?: PersonInFoundationEntity[];
 }

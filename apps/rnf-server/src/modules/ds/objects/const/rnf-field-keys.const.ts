@@ -6,5 +6,5 @@ export const rnfFieldKeys: Record<keyof CreateFoundationDto, RegExp> = {
   address: /.*\#rnf\-addresse\-rnf\#.*/,
   email: /.*\#rnf\-courriel\-rnf\#.*/,
   phone: /.*\#rnf\-telephone\-rnf\#.*/,
-  peopleInFoundationToCreate: /.*\#rnf\-personne\-rnf\#.*/,
+  personInFoundationToCreate: /.*\#rnf\-personne\-rnf\#.*/,
 };

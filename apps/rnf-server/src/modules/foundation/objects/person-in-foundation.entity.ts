@@ -1,13 +1,13 @@
-import { PeopleInFoundation, FoundationRole } from "@prisma/client";
+import { PersonInFoundation, FoundationRole } from "@prisma/client";
 import { IsArray, IsDefined, IsEnum } from "class-validator";
-import { PeopleEntity } from "@/modules/people/objects/people.entity";
+import { PersonEntity } from "@/modules/person/objects/person.entity";
 import { BaseEntityOnlyDates } from "@/shared/base-entity/base.entity";
 import { FoundationEntity } from "@/modules/foundation/objects/foundation.entity";
 import { FoundationHistoryEntity } from "@/modules/foundation/objects/foundation-history.entity";
 
-export class PeopleInFoundationEntity extends BaseEntityOnlyDates implements PeopleInFoundation {
+export class PersonInFoundationEntity extends BaseEntityOnlyDates implements PersonInFoundation {
   @IsDefined()
-  peopleId: number;
+  personId: number;
 
   @IsDefined()
   foundationId: number;
@@ -19,7 +19,7 @@ export class PeopleInFoundationEntity extends BaseEntityOnlyDates implements Peo
   @IsEnum(FoundationRole, { each: true })
   roles: FoundationRole[];
 
-  people?: PeopleEntity;
+  person?: PersonEntity;
   foundation?: FoundationEntity;
   foundationHistory?: FoundationHistoryEntity;
 }
