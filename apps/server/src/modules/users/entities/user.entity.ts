@@ -1,5 +1,6 @@
 import {
   BeforeInsert,
+  BeforeUpdate,
   Column,
   Entity,
   ManyToMany,
@@ -31,9 +32,9 @@ export class User extends BaseEntity {
   @ManyToMany(() => Role, (role) => role.users)
   roles: Role[];
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  @BeforeInsert() async hashPassword() {
+  @BeforeInsert()
+  @BeforeUpdate()
+  async hashPassword(): Promise<void> {
     this.password = await bcrypt.hash(this.password, 10);
   }
 }

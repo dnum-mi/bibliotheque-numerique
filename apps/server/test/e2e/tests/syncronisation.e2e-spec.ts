@@ -1,5 +1,5 @@
 import { INestApplication } from "@nestjs/common";
-import { TestingModuleFactory } from "../common/testing-module.factory";
+import { CTestingModuleFactory } from "../common/testing-module.factory";
 import * as request from "supertest";
 import { getAdminCookie } from "../common/get-admin-cookie";
 import { dataSource } from "../data-source-e2e.typeorm";
@@ -14,7 +14,10 @@ describe("Syncronisation ", () => {
   let cookie: string;
 
   beforeAll(async () => {
-    app = await TestingModuleFactory();
+    const testingModule = new CTestingModuleFactory();
+    await testingModule.init();
+    app = testingModule.app;
+
     cookie = await getAdminCookie(app);
     const dossier = await dataSource.manager.findOne(Dossier, {
       where: { dossierDS: { id: 142 } },
@@ -41,6 +44,7 @@ describe("Syncronisation ", () => {
   });
 
   afterAll(async () => {
+    await dataSource.destroy();
     await app.close();
   });
 
@@ -70,131 +74,132 @@ describe("Syncronisation ", () => {
   });
 
   it("should syncronise one dossier of one demarche and create associated fields", async () => {
-    return (
-      request(app.getHttpServer())
-        // @ts-ignore The property 'post' really exists
-        .post("/demarches/synchro-dossiers")
-        .set("Cookie", [cookie])
-        .send({
-          idDs: 42,
-        })
-        .expect(201)
-        .then((res) => {
-          expect(res.body).toEqual({
-            message: "Les dossiers de la demarche id 42 sont synchronisés.",
-          });
-          return dataSource.manager.find(Field, {});
-        })
-        .then((fields) => {
-          expect(fields.length).toEqual(8);
-          expect(fields).toMatchObject([
-            {
-              id: 1,
-              fieldSource: "champs",
-              dsChampType: "TextChamp",
-              type: "string",
-              formatFunctionRef: null,
-              dsFieldId: "Q2hhbXAtMTA0Mw==",
-              stringValue: "C'est du chocolat.",
-              parentId: null,
-              parentRowIndex: null,
-              label: "Informations relatives au bénéficiaire du financement",
-              dossierId: 1,
-            },
-            {
-              id: 2,
-              fieldSource: "champs",
-              dsChampType: "TextChamp",
-              type: "string",
-              formatFunctionRef: null,
-              dsFieldId: "Q2hhbXAtMTA0NQ==",
-              stringValue: "W123456789",
-              parentId: null,
-              parentRowIndex: null,
-              label: "Saisir le n°RNA de l'association",
-              dossierId: 1,
-            },
-            {
-              id: 3,
-              fieldSource: "champs",
-              dsChampType: "RepetitionChamp",
-              type: "string",
-              formatFunctionRef: null,
-              dsFieldId: "Q2hhbXAtMTA2NQ==",
-              stringValue: "",
-              parentId: null,
-              parentRowIndex: null,
-              label: "Liste de course",
-              dossierId: 1,
-            },
-            {
-              id: 4,
-              fieldSource: "dossier",
-              dsChampType: null,
-              type: "string",
-              formatFunctionRef: null,
-              dsFieldId: null,
-              stringValue: "en_construction",
-              parentId: null,
-              parentRowIndex: null,
-              label: "state",
-              rawJson: null,
-              dossierId: 1,
-            },
-            {
-              id: 5,
-              fieldSource: "champs",
-              dsChampType: "TextChamp",
-              type: "string",
-              formatFunctionRef: null,
-              dsFieldId: "Q2hhbXAtMTA2Nnww",
-              stringValue: "Fraise",
-              parentId: 3,
-              parentRowIndex: 0,
-              label: "Fruit",
-              dossierId: 1,
-            },
-            {
-              id: 6,
-              fieldSource: "champs",
-              dsChampType: "TextChamp",
-              type: "string",
-              formatFunctionRef: null,
-              dsFieldId: "Q2hhbXAtMTA2N3ww",
-              stringValue: "Oignon",
-              parentId: 3,
-              parentRowIndex: 0,
-              label: "Légume",
-              dossierId: 1,
-            },
-            {
-              id: 7,
-              fieldSource: "champs",
-              dsChampType: "TextChamp",
-              type: "string",
-              formatFunctionRef: null,
-              dsFieldId: "Q2hhbXAtMTA2Nnww",
-              stringValue: "Framboise",
-              parentId: 3,
-              parentRowIndex: 1,
-              label: "Fruit",
-              dossierId: 1,
-            },
-            {
-              id: 8,
-              fieldSource: "champs",
-              dsChampType: "TextChamp",
-              type: "string",
-              formatFunctionRef: null,
-              dsFieldId: "Q2hhbXAtMTA2N3ww",
-              stringValue: "Poivron",
-              parentId: 3,
-              parentRowIndex: 1,
-              label: "Légume",
-              dossierId: 1,
-            },
-          ]);
-        })
-    );
+    return request(app.getHttpServer())
+      .post("/demarches/synchro-dossiers")
+      .set("Cookie", [cookie])
+      .send({
+        idDs: 42,
+      })
+      .expect(201)
+      .then((res) => {
+        expect(res.body).toEqual({
+          message: "Les dossiers de la demarche id 42 sont synchronisés.",
+        });
+        return dataSource.manager.find(Field, {
+          order: {
+            id: "ASC",
+          },
+        });
+      })
+      .then((fields) => {
+        expect(fields.length).toEqual(8);
+        expect(fields).toMatchObject([
+          {
+            id: 1,
+            fieldSource: "champs",
+            dsChampType: "TextChamp",
+            type: "string",
+            formatFunctionRef: null,
+            dsFieldId: "Q2hhbXAtMTA0Mw==",
+            stringValue: "C'est du chocolat.",
+            parentId: null,
+            parentRowIndex: null,
+            label: "Informations relatives au bénéficiaire du financement",
+            dossierId: 1,
+          },
+          {
+            id: 2,
+            fieldSource: "champs",
+            dsChampType: "TextChamp",
+            type: "string",
+            formatFunctionRef: null,
+            dsFieldId: "Q2hhbXAtMTA0NQ==",
+            stringValue: "W123456789",
+            parentId: null,
+            parentRowIndex: null,
+            label: "Saisir le n°RNA de l'association",
+            dossierId: 1,
+          },
+          {
+            id: 3,
+            fieldSource: "champs",
+            dsChampType: "RepetitionChamp",
+            type: "string",
+            formatFunctionRef: null,
+            dsFieldId: "Q2hhbXAtMTA2NQ==",
+            stringValue: "",
+            parentId: null,
+            parentRowIndex: null,
+            label: "Liste de course",
+            dossierId: 1,
+          },
+          {
+            id: 4,
+            fieldSource: "dossier",
+            dsChampType: null,
+            type: "string",
+            formatFunctionRef: null,
+            dsFieldId: null,
+            stringValue: "en_construction",
+            parentId: null,
+            parentRowIndex: null,
+            label: "state",
+            rawJson: null,
+            dossierId: 1,
+          },
+          {
+            id: 5,
+            fieldSource: "champs",
+            dsChampType: "TextChamp",
+            type: "string",
+            formatFunctionRef: null,
+            dsFieldId: "Q2hhbXAtMTA2Nnww",
+            stringValue: "Fraise",
+            parentId: 3,
+            parentRowIndex: 0,
+            label: "Fruit",
+            dossierId: 1,
+          },
+          {
+            id: 6,
+            fieldSource: "champs",
+            dsChampType: "TextChamp",
+            type: "string",
+            formatFunctionRef: null,
+            dsFieldId: "Q2hhbXAtMTA2N3ww",
+            stringValue: "Oignon",
+            parentId: 3,
+            parentRowIndex: 0,
+            label: "Légume",
+            dossierId: 1,
+          },
+          {
+            id: 7,
+            fieldSource: "champs",
+            dsChampType: "TextChamp",
+            type: "string",
+            formatFunctionRef: null,
+            dsFieldId: "Q2hhbXAtMTA2Nnww",
+            stringValue: "Framboise",
+            parentId: 3,
+            parentRowIndex: 1,
+            label: "Fruit",
+            dossierId: 1,
+          },
+          {
+            id: 8,
+            fieldSource: "champs",
+            dsChampType: "TextChamp",
+            type: "string",
+            formatFunctionRef: null,
+            dsFieldId: "Q2hhbXAtMTA2N3ww",
+            stringValue: "Poivron",
+            parentId: 3,
+            parentRowIndex: 1,
+            label: "Légume",
+            dossierId: 1,
+          },
+        ]);
+      });
   });
 });

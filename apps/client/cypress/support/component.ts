@@ -28,6 +28,7 @@ import '@/main.css'
 import * as icons from '@/icons'
 
 import router from '@/router'
+
 // Augment the Cypress namespace to include type definitions for
 // your custom command.
 // Alternatively, can be defined in cypress/support/component.d.ts

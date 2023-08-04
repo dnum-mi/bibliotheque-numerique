@@ -2,6 +2,7 @@ import { CreateUserDto } from './create-user.dto'
 
 import { ApiProperty, PartialType } from '@nestjs/swagger'
 import { IsString, IsNotEmpty } from 'class-validator'
+import { IsPasswordStrongEnough } from './is-password-strong-enough'
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
   @ApiProperty({
@@ -25,6 +26,7 @@ export class UpdateUserPasswordDto {
     message:
     'Veuillez indiquer le nouveau mot de passe',
   })
+  @IsPasswordStrongEnough({ message: 'Ce mot de passe n’est pas assez fort' })
   password: string
 
   @ApiProperty({

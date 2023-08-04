@@ -5,7 +5,6 @@ import { PassportModule } from "@nestjs/passport";
 import { LocalStrategy } from "./providers/local.strategy";
 import { JwtModule } from "@nestjs/jwt";
 import { jwtConstants } from "./objects/constants";
-import { JwtStrategy } from "./providers/jwt.strategy";
 import { AuthController } from "./controllers/auth.controller";
 import { SessionSerializer } from "./objects/session.serializer";
 
@@ -18,7 +17,7 @@ import { SessionSerializer } from "./objects/session.serializer";
       signOptions: { expiresIn: "60s" },
     }),
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy, SessionSerializer],
+  providers: [AuthService, LocalStrategy, SessionSerializer],
   exports: [AuthService],
   controllers: [AuthController],
 })

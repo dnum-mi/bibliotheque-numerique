@@ -11,8 +11,12 @@ import { NodeEnv } from "../../shared/types/node-env.enum";
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {
+        const templatePath =
+          process.env.NODE_ENV === NodeEnv.TestUnit
+            ? __dirname
+            : "dist/modules/sendmail";
         const template = {
-          dir: `${__dirname}/templates`,
+          dir: `${templatePath}/templates`,
           adapter: new EjsAdapter(),
           options: {
             strict: true,
@@ -32,8 +36,7 @@ import { NodeEnv } from "../../shared/types/node-env.enum";
           };
         }
 
-        const { host, port, from, user, pass } =
-          configService.get<TConfig["smtp"]>("smtp");
+        const { host, port, from, user, pass } = configService.get("smtp");
         const transport = {
           host,
           port,

@@ -30,4 +30,16 @@ export const dsApiClientMock = {
         return null;
     }
   }),
+  demarcheDossierWithCustomChamp: jest
+  .fn()
+  .mockImplementation(async (idDemarche: number) => {
+    switch (idDemarche) {
+      case 29:
+        return demarcheAndDossierFinancementEtrangerDataMock;
+      case 42:
+        return smallDemarcheAndDossierFinancementEtrangerDataMock;
+      default:
+        return null;
+    }
+  }),
 };

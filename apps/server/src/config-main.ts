@@ -1,7 +1,7 @@
 import * as passport from "passport";
 import * as session from "express-session";
 import { sessionSecret } from "./modules/auth/objects/constants";
-import { INestApplication } from "@nestjs/common";
+import { INestApplication, ValidationPipe } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { LoggerService } from "./shared/modules/logger/logger.service";
 import { HttpAdapterHost } from "@nestjs/core";
@@ -42,6 +42,7 @@ export const configMain = async (
     new AllExceptionsFilter(httpAdapterHost, exceptionFilterLogger),
     new QueryFailedFilter(httpAdapterHost, queryFailedFilterLogger),
   );
+  app.useGlobalPipes(new ValidationPipe());
   app.use(passport.initialize());
   app.use(passport.session());
 };
