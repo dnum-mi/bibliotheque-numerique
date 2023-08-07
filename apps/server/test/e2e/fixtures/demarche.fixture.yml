@@ -1,5 +1,11 @@
 entity: Demarche
 items:
+  demarche-financement:
+    state: "published"
+    title: "Déclaration de financement étranger"
+    identification: "financement"
+    type: "ARUP"
+    dsDataJson: "{}"
   configurationDemarche:
     id: 1
     title: 'Démarche de test pour les configurations'
@@ -20,3 +26,4 @@ items:
         formatFunctionRef: 'state'
       }
     ]
+

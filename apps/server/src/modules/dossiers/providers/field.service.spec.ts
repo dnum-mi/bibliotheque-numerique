@@ -200,7 +200,7 @@ describe('FieldService', () => {
     expect(new Date('2023-08-18').getTime()).toEqual(fields[0].dateValue.getTime())
   })
 
-  it('Create children field for repetable champs', async () => {
+  it('Create children scenario for repetable champs', async () => {
     const raw = {
       id: 'RG9zc2llci0xMzY=',
       champs: [

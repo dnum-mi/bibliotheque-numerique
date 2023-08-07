@@ -1,0 +1,7 @@
+entity: Dossier
+items:
+  dossier{1..10}:
+    demarche: "@demarche-financement"
+    state: "accepte"
+    sourceId: "($current)"
+    dsDataJson: "{}"

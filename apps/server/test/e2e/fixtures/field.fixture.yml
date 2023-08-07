@@ -1,0 +1,1366 @@
+entity: Field
+items:
+  # region Dossier1
+  dossier1-identifiant:
+    dsFieldId: "I01"
+    dsChampType: "TextChamp"
+    fieldSource: dossier
+    type: string
+    stringValue: "W00000001"
+    parent: null
+    label: "Identifiant"
+    dossier: "@dossier1"
+  dossier1-depot:
+    dsFieldId: "I02"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "01/06/2023"
+    parent: null
+    label: "Moment"
+    dossier: "@dossier1"
+  dossier1-titre:
+    dsFieldId: "I03"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Avenger"
+    parent: null
+    label: "Titre"
+    dossier: "@dossier1"
+  dossier1-consentement:
+    dsFieldId: "I04"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: boolean
+    stringValue: "true"
+    parent: null
+    label: "Consentement"
+    dossier: "@dossier1"
+  dossier1-etat:
+    dsFieldId: "I05"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "instruction"
+    parent: null
+    label: "Etat"
+    dossier: "@dossier1"
+  dossier1-etat-delai:
+    dsFieldId: "I06"
+    dsChampType: null
+    fieldSource: computed
+    type: boolean
+    stringValue: "true"
+    parent: null
+    label: "Delais"
+    dossier: "@dossier1"
+  dossier1-excel:
+    dsFieldId: "I07"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: boolean
+    stringValue: "true"
+    parent: null
+    label: "Excel"
+    dossier: "@dossier1"
+  dossier1-total-excel:
+    dsFieldId: null
+    dsChampType: null
+    fieldSource: computed
+    type: number
+    stringValue: "21000"
+    parent: null
+    label: "Total Excel"
+    dossier: "@dossier1"
+  dossier1-total-montant:
+    fieldSource: computed
+    dsChampType: null
+    type: string
+    stringValue: "32800"
+    parent: null
+    label: "Total Montant"
+    dossier: "@dossier1"
+  dossier1-total:
+    fieldSource: computed
+    dsChampType: null
+    type: string
+    stringValue: "53800"
+    parent: null
+    label: "Total"
+    dossier: "@dossier1"
+  dossier1-declaration-financement:
+    fieldSource: champs
+    dsChampType: RepetitionChamp
+    type: string
+    stringValue: ""
+    parent: null
+    label: "Déclaration de financement"
+    dossier: "@dossier1"
+  # region children declaration financement
+  # region row1
+  dossier1-df-1-montant:
+    dsFieldId: "I08"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: number
+    stringValue: "16400"
+    parent: "@dossier1-declaration-financement"
+    parentRowIndex: 1
+    label: "Montant"
+    dossier: "@dossier1"
+  dossier1-df-1-pays:
+    dsFieldId: "I09"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Qatar"
+    parent: "@dossier1-declaration-financement"
+    parentRowIndex: 1
+    label: "Pays"
+    dossier: "@dossier1"
+  dossier1-df-1-organisme:
+    dsFieldId: "I10"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Qatar corporated"
+    parent: "@dossier1-declaration-financement"
+    parentRowIndex: 1
+    label: "Organisme financeur"
+    dossier: "@dossier1"
+  # endregion
+  # region row2
+  dossier1-df-2-montant:
+    dsFieldId: "I08"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: number
+    stringValue: "16400"
+    parent: "@dossier1-declaration-financement"
+    parentRowIndex: 2
+    label: "Montant"
+    dossier: "@dossier1"
+  dossier1-df-2-pays:
+    dsFieldId: "I09"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Turquie"
+    parent: "@dossier1-declaration-financement"
+    parentRowIndex: 2
+    label: "Pays"
+    dossier: "@dossier1"
+  dossier1-df-2-organisme:
+    dsFieldId: "I10"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Turkish Cie"
+    parent: "@dossier1-declaration-financement"
+    parentRowIndex: 2
+    label: "Organisme financeur"
+    dossier: "@dossier1"
+  # endregion
+  # endregion
+  # endregion
+  # region Dossier2
+  dossier2-identifiant:
+    dsFieldId: "I01"
+    dsChampType: "TextChamp"
+    fieldSource: dossier
+    type: string
+    stringValue: "W00000002"
+    parent: null
+    label: "Identifiant"
+    dossier: "@dossier2"
+  dossier2-depot:
+    dsFieldId: "I02"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "03/06/2023"
+    parent: null
+    label: "Moment"
+    dossier: "@dossier2"
+  dossier2-titre:
+    dsFieldId: "I03"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Interstellar"
+    parent: null
+    label: "Titre"
+    dossier: "@dossier2"
+  dossier2-consentement:
+    dsFieldId: "I04"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: boolean
+    stringValue: "true"
+    parent: null
+    label: "Consentement"
+    dossier: "@dossier2"
+  dossier2-etat:
+    dsFieldId: "I05"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "valide"
+    parent: null
+    label: "Etat"
+    dossier: "@dossier2"
+  dossier2-etat-delai:
+    dsFieldId: "I06"
+    dsChampType: null
+    fieldSource: computed
+    type: boolean
+    stringValue: "false"
+    parent: null
+    label: "Delais"
+    dossier: "@dossier2"
+  dossier2-excel:
+    dsFieldId: "I07"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: boolean
+    stringValue: "true"
+    parent: null
+    label: "Excel"
+    dossier: "@dossier2"
+  dossier2-total-excel:
+    dsFieldId: null
+    dsChampType: null
+    fieldSource: computed
+    type: number
+    stringValue: "18000"
+    parent: null
+    label: "Total Excel"
+    dossier: "@dossier2"
+  dossier2-total:
+    fieldSource: computed
+    dsChampType: null
+    type: string
+    stringValue: "53800"
+    parent: null
+    label: "Total"
+    dossier: "@dossier2"
+  # endregion
+  # region Dossier3
+  dossier3-identifiant:
+    dsFieldId: "I01"
+    dsChampType: "TextChamp"
+    fieldSource: dossier
+    type: string
+    stringValue: "W00000003"
+    parent: null
+    label: "Identifiant"
+    dossier: "@dossier3"
+  dossier3-depot:
+    dsFieldId: "I02"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "04/06/2023"
+    parent: null
+    label: "Moment"
+    dossier: "@dossier3"
+  dossier3-titre:
+    dsFieldId: "I03"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Dune"
+    parent: null
+    label: "Titre"
+    dossier: "@dossier3"
+  dossier3-consentement:
+    dsFieldId: "I04"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: boolean
+    stringValue: "false"
+    parent: null
+    label: "Consentement"
+    dossier: "@dossier3"
+  dossier3-etat:
+    dsFieldId: "I05"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "valide"
+    parent: null
+    label: "Etat"
+    dossier: "@dossier3"
+  dossier3-etat-delai:
+    dsFieldId: "I06"
+    dsChampType: null
+    fieldSource: computed
+    type: boolean
+    stringValue: "true"
+    parent: null
+    label: "Delais"
+    dossier: "@dossier3"
+  dossier3-excel:
+    dsFieldId: "I07"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: boolean
+    stringValue: "false"
+    parent: null
+    label: "Excel"
+    dossier: "@dossier3"
+  dossier3-total-excel:
+    dsFieldId: null
+    dsChampType: null
+    fieldSource: computed
+    type: number
+    stringValue: "0"
+    parent: null
+    label: "Total Excel"
+    dossier: "@dossier3"
+  dossier3-total-montant:
+    fieldSource: computed
+    dsChampType: null
+    type: string
+    stringValue: "18400"
+    parent: null
+    label: "Total Montant"
+    dossier: "@dossier3"
+  dossier3-total:
+    fieldSource: computed
+    dsChampType: null
+    type: string
+    stringValue: "18400"
+    parent: null
+    label: "Total"
+    dossier: "@dossier3"
+  dossier3-declaration-financement:
+    fieldSource: champs
+    dsChampType: RepetitionChamp
+    type: string
+    stringValue: ""
+    parent: null
+    label: "Déclaration de financement"
+    dossier: "@dossier3"
+  # region children declaration financement
+  # region row1
+  dossier3-df-1-montant:
+    dsFieldId: "I08"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: number
+    stringValue: "5800"
+    parent: "@dossier3-declaration-financement"
+    parentRowIndex: 1
+    label: "Montant"
+    dossier: "@dossier3"
+  dossier3-df-1-pays:
+    dsFieldId: "I09"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Écosse"
+    parent: "@dossier3-declaration-financement"
+    parentRowIndex: 1
+    label: "Pays"
+    dossier: "@dossier3"
+  dossier3-df-1-organisme:
+    dsFieldId: "I10"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Atréides"
+    parent: "@dossier3-declaration-financement"
+    parentRowIndex: 1
+    label: "Organisme financeur"
+    dossier: "@dossier3"
+  # endregion
+  # region row2
+  dossier3-df-2-montant:
+    dsFieldId: "I08"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: number
+    stringValue: "12600"
+    parent: "@dossier3-declaration-financement"
+    parentRowIndex: 2
+    label: "Montant"
+    dossier: "@dossier3"
+  dossier3-df-2-pays:
+    dsFieldId: "I09"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "USA"
+    parent: "@dossier3-declaration-financement"
+    parentRowIndex: 2
+    label: "Pays"
+    dossier: "@dossier3"
+  dossier3-df-2-organisme:
+    dsFieldId: "I10"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Arkonen"
+    parent: "@dossier3-declaration-financement"
+    parentRowIndex: 2
+    label: "Organisme financeur"
+    dossier: "@dossier3"
+  # endregion
+  # endregion
+  # endregion
+  # region Dossier4
+  dossier4-identifiant:
+    dsFieldId: "I01"
+    dsChampType: "TextChamp"
+    fieldSource: dossier
+    type: string
+    stringValue: "W00000004"
+    parent: null
+    label: "Identifiant"
+    dossier: "@dossier4"
+  dossier4-depot:
+    dsFieldId: "I02"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "02/06/2023"
+    parent: null
+    label: "Moment"
+    dossier: "@dossier4"
+  dossier4-titre:
+    dsFieldId: "I03"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Memento"
+    parent: null
+    label: "Titre"
+    dossier: "@dossier4"
+  dossier4-consentement:
+    dsFieldId: "I04"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: boolean
+    stringValue: "true"
+    parent: null
+    label: "Consentement"
+    dossier: "@dossier4"
+  dossier4-etat:
+    dsFieldId: "I05"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "instruction"
+    parent: null
+    label: "Etat"
+    dossier: "@dossier4"
+  dossier4-etat-delai:
+    dsFieldId: "I06"
+    dsChampType: null
+    fieldSource: computed
+    type: boolean
+    stringValue: "false"
+    parent: null
+    label: "Delais"
+    dossier: "@dossier4"
+  dossier4-total:
+    fieldSource: computed
+    dsChampType: null
+    type: string
+    stringValue: "0"
+    parent: null
+    label: "Total"
+    dossier: "@dossier4"
+  # endregion
+  # region Dossier5
+  dossier5-identifiant:
+    dsFieldId: "I01"
+    dsChampType: "TextChamp"
+    fieldSource: dossier
+    type: string
+    stringValue: "W00000005"
+    parent: null
+    label: "Identifiant"
+    dossier: "@dossier5"
+  dossier5-depot:
+    dsFieldId: "I02"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "01/06/2023"
+    parent: null
+    label: "Moment"
+    dossier: "@dossier5"
+  dossier5-titre:
+    dsFieldId: "I03"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Captain Fantastic"
+    parent: null
+    label: "Titre"
+    dossier: "@dossier5"
+  dossier5-consentement:
+    dsFieldId: "I04"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: boolean
+    stringValue: "false"
+    parent: null
+    label: "Consentement"
+    dossier: "@dossier5"
+  dossier5-etat:
+    dsFieldId: "I05"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "instruction"
+    parent: null
+    label: "Etat"
+    dossier: "@dossier5"
+  dossier5-etat-delai:
+    dsFieldId: "I06"
+    dsChampType: null
+    fieldSource: computed
+    type: boolean
+    stringValue: "true"
+    parent: null
+    label: "Delais"
+    dossier: "@dossier5"
+  dossier5-excel:
+    dsFieldId: "I07"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: boolean
+    stringValue: "true"
+    parent: null
+    label: "Excel"
+    dossier: "@dossier5"
+  dossier5-total-excel:
+    dsFieldId: null
+    dsChampType: null
+    fieldSource: computed
+    type: number
+    stringValue: "13200"
+    parent: null
+    label: "Total Excel"
+    dossier: "@dossier5"
+  dossier5-total-montant:
+    fieldSource: computed
+    dsChampType: null
+    type: string
+    stringValue: "31900"
+    parent: null
+    label: "Total Montant"
+    dossier: "@dossier5"
+  dossier5-total:
+    fieldSource: computed
+    dsChampType: null
+    type: string
+    stringValue: "45100"
+    parent: null
+    label: "Total"
+    dossier: "@dossier5"
+  dossier5-declaration-financement:
+    fieldSource: champs
+    dsChampType: RepetitionChamp
+    type: string
+    stringValue: ""
+    parent: null
+    label: "Déclaration de financement"
+    dossier: "@dossier5"
+  # region children declaration financement
+  # region row1
+  dossier5-df-1-montant:
+    dsFieldId: "I08"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: number
+    stringValue: "23000"
+    parent: "@dossier5-declaration-financement"
+    parentRowIndex: 1
+    label: "Montant"
+    dossier: "@dossier5"
+  dossier5-df-1-pays:
+    dsFieldId: "I09"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "France"
+    parent: "@dossier5-declaration-financement"
+    parentRowIndex: 1
+    label: "Pays"
+    dossier: "@dossier5"
+  dossier5-df-1-organisme:
+    dsFieldId: "I10"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Pulsarr"
+    parent: "@dossier5-declaration-financement"
+    parentRowIndex: 1
+    label: "Organisme financeur"
+    dossier: "@dossier5"
+  # endregion
+  # region row2
+  dossier5-df-2-montant:
+    dsFieldId: "I08"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: number
+    stringValue: "2500"
+    parent: "@dossier5-declaration-financement"
+    parentRowIndex: 2
+    label: "Montant"
+    dossier: "@dossier5"
+  dossier5-df-2-pays:
+    dsFieldId: "I09"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Qatar"
+    parent: "@dossier5-declaration-financement"
+    parentRowIndex: 2
+    label: "Pays"
+    dossier: "@dossier5"
+  dossier5-df-2-organisme:
+    dsFieldId: "I10"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Babou"
+    parent: "@dossier5-declaration-financement"
+    parentRowIndex: 2
+    label: "Organisme financeur"
+    dossier: "@dossier5"
+  # endregion
+  # region row3
+  dossier5-df-3-montant:
+    dsFieldId: "I08"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: number
+    stringValue: "6400"
+    parent: "@dossier5-declaration-financement"
+    parentRowIndex: 3
+    label: "Montant"
+    dossier: "@dossier5"
+  dossier5-df-3-pays:
+    dsFieldId: "I09"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "USA"
+    parent: "@dossier5-declaration-financement"
+    parentRowIndex: 3
+    label: "Pays"
+    dossier: "@dossier5"
+  dossier5-df-3-organisme:
+    dsFieldId: "I10"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Wallmart"
+    parent: "@dossier5-declaration-financement"
+    parentRowIndex: 3
+    label: "Organisme financeur"
+    dossier: "@dossier5"
+  # endregion
+  # endregion
+  # endregion
+  # region Dossier6
+  dossier6-identifiant:
+    dsFieldId: "I01"
+    dsChampType: "TextChamp"
+    fieldSource: dossier
+    type: string
+    stringValue: "W00000006"
+    parent: null
+    label: "Identifiant"
+    dossier: "@dossier6"
+  dossier6-depot:
+    dsFieldId: "I02"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "02/06/2023"
+    parent: null
+    label: "Moment"
+    dossier: "@dossier6"
+  dossier6-titre:
+    dsFieldId: "I03"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Ender's game"
+    parent: null
+    label: "Titre"
+    dossier: "@dossier6"
+  dossier6-consentement:
+    dsFieldId: "I04"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: boolean
+    stringValue: "true"
+    parent: null
+    label: "Consentement"
+    dossier: "@dossier6"
+  dossier6-etat:
+    dsFieldId: "I05"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "valide"
+    parent: null
+    label: "Etat"
+    dossier: "@dossier6"
+  dossier6-etat-delai:
+    dsFieldId: "I06"
+    dsChampType: null
+    fieldSource: computed
+    type: boolean
+    stringValue: "false"
+    parent: null
+    label: "Delais"
+    dossier: "@dossier6"
+  dossier6-excel:
+    dsFieldId: "I07"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: boolean
+    stringValue: "false"
+    parent: null
+    label: "Excel"
+    dossier: "@dossier6"
+  dossier6-total-montant:
+    fieldSource: computed
+    dsChampType: null
+    type: string
+    stringValue: "8800"
+    parent: null
+    label: "Total Montant"
+    dossier: "@dossier6"
+  dossier6-total:
+    fieldSource: computed
+    dsChampType: null
+    type: string
+    stringValue: "8800"
+    parent: null
+    label: "Total"
+    dossier: "@dossier6"
+  dossier6-declaration-financement:
+    fieldSource: champs
+    dsChampType: RepetitionChamp
+    type: string
+    stringValue: ""
+    parent: null
+    label: "Déclaration de financement"
+    dossier: "@dossier6"
+  # region children declaration financement
+  # region row1
+  dossier6-df-1-montant:
+    dsFieldId: "I08"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: number
+    stringValue: "8800"
+    parent: "@dossier6-declaration-financement"
+    parentRowIndex: 1
+    label: "Montant"
+    dossier: "@dossier6"
+  dossier6-df-1-pays:
+    dsFieldId: "I09"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Turquie"
+    parent: "@dossier6-declaration-financement"
+    parentRowIndex: 1
+    label: "Pays"
+    dossier: "@dossier6"
+  dossier6-df-1-organisme:
+    dsFieldId: "I10"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Turkish Cie"
+    parent: "@dossier6-declaration-financement"
+    parentRowIndex: 1
+    label: "Organisme financeur"
+    dossier: "@dossier6"
+  # endregion
+  # endregion
+  # endregion
+  # region Dossier7
+  dossier7-identifiant:
+    dsFieldId: "I01"
+    dsChampType: "TextChamp"
+    fieldSource: dossier
+    type: string
+    stringValue: "W00000007"
+    parent: null
+    label: "Identifiant"
+    dossier: "@dossier7"
+  dossier7-depot:
+    dsFieldId: "I02"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "04/06/2023"
+    parent: null
+    label: "Moment"
+    dossier: "@dossier7"
+  dossier7-titre:
+    dsFieldId: "I03"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Barbie"
+    parent: null
+    label: "Titre"
+    dossier: "@dossier7"
+  dossier7-consentement:
+    dsFieldId: "I04"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: boolean
+    stringValue: "false"
+    parent: null
+    label: "Consentement"
+    dossier: "@dossier7"
+  dossier7-etat:
+    dsFieldId: "I05"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "instruction"
+    parent: null
+    label: "Etat"
+    dossier: "@dossier7"
+  dossier7-etat-delai:
+    dsFieldId: "I06"
+    dsChampType: null
+    fieldSource: computed
+    type: boolean
+    stringValue: "true"
+    parent: null
+    label: "Delais"
+    dossier: "@dossier7"
+  dossier7-excel:
+    dsFieldId: "I07"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: boolean
+    stringValue: "true"
+    parent: null
+    label: "Excel"
+    dossier: "@dossier7"
+  dossier7-total-excel:
+    dsFieldId: null
+    dsChampType: null
+    fieldSource: computed
+    type: number
+    stringValue: "1600"
+    parent: null
+    label: "Total Excel"
+    dossier: "@dossier7"
+  dossier7-total-montant:
+    fieldSource: computed
+    dsChampType: null
+    type: string
+    stringValue: "8900"
+    parent: null
+    label: "Total Montant"
+    dossier: "@dossier7"
+  dossier7-total:
+    fieldSource: computed
+    dsChampType: null
+    type: string
+    stringValue: "10500"
+    parent: null
+    label: "Total"
+    dossier: "@dossier7"
+  dossier7-declaration-financement:
+    fieldSource: champs
+    dsChampType: RepetitionChamp
+    type: string
+    stringValue: ""
+    parent: null
+    label: "Déclaration de financement"
+    dossier: "@dossier7"
+  # region children declaration financement
+  # region row1
+  dossier7-df-1-montant:
+    dsFieldId: "I08"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: number
+    stringValue: "2500"
+    parent: "@dossier7-declaration-financement"
+    parentRowIndex: 1
+    label: "Montant"
+    dossier: "@dossier7"
+  dossier7-df-1-pays:
+    dsFieldId: "I09"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Qatar"
+    parent: "@dossier7-declaration-financement"
+    parentRowIndex: 1
+    label: "Pays"
+    dossier: "@dossier7"
+  dossier7-df-1-organisme:
+    dsFieldId: "I10"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Babou"
+    parent: "@dossier7-declaration-financement"
+    parentRowIndex: 1
+    label: "Organisme financeur"
+    dossier: "@dossier7"
+  # endregion
+  # region row2
+  dossier7-df-2-montant:
+    dsFieldId: "I08"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: number
+    stringValue: "6400"
+    parent: "@dossier7-declaration-financement"
+    parentRowIndex: 2
+    label: "Montant"
+    dossier: "@dossier7"
+  dossier7-df-2-pays:
+    dsFieldId: "I09"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "USA"
+    parent: "@dossier7-declaration-financement"
+    parentRowIndex: 2
+    label: "Pays"
+    dossier: "@dossier7"
+  dossier7-df-2-organisme:
+    dsFieldId: "I10"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Wallmart"
+    parent: "@dossier7-declaration-financement"
+    parentRowIndex: 2
+    label: "Organisme financeur"
+    dossier: "@dossier7"
+  # endregion
+  # endregion
+  # endregion
+  # region Dossier8
+  dossier8-identifiant:
+    dsFieldId: "I01"
+    dsChampType: "TextChamp"
+    fieldSource: dossier
+    type: string
+    stringValue: "W00000002"
+    parent: null
+    label: "Identifiant"
+    dossier: "@dossier8"
+  dossier8-depot:
+    dsFieldId: "I02"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "03/06/2023"
+    parent: null
+    label: "Moment"
+    dossier: "@dossier8"
+  dossier8-titre:
+    dsFieldId: "I03"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "L'homme invisible"
+    parent: null
+    label: "Titre"
+    dossier: "@dossier8"
+  dossier8-consentement:
+    dsFieldId: "I04"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: boolean
+    stringValue: "true"
+    parent: null
+    label: "Consentement"
+    dossier: "@dossier8"
+  dossier8-etat:
+    dsFieldId: "I05"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "valide"
+    parent: null
+    label: "Etat"
+    dossier: "@dossier8"
+  dossier8-etat-delai:
+    dsFieldId: "I06"
+    dsChampType: null
+    fieldSource: computed
+    type: boolean
+    stringValue: "true"
+    parent: null
+    label: "Delais"
+    dossier: "@dossier8"
+  dossier8-excel:
+    dsFieldId: "I07"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: boolean
+    stringValue: "false"
+    parent: null
+    label: "Excel"
+    dossier: "@dossier8"
+  # endregion
+  # region Dossier9
+  dossier9-identifiant:
+    dsFieldId: "I01"
+    dsChampType: "TextChamp"
+    fieldSource: dossier
+    type: string
+    stringValue: "W00000009"
+    parent: null
+    label: "Identifiant"
+    dossier: "@dossier9"
+  dossier9-depot:
+    dsFieldId: "I02"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "13/06/2023"
+    parent: null
+    label: "Moment"
+    dossier: "@dossier9"
+  dossier9-titre:
+    dsFieldId: "I03"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Telma & Louise"
+    parent: null
+    label: "Titre"
+    dossier: "@dossier9"
+  dossier9-consentement:
+    dsFieldId: "I04"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: boolean
+    stringValue: "true"
+    parent: null
+    label: "Consentement"
+    dossier: "@dossier9"
+  dossier9-etat:
+    dsFieldId: "I05"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "valide"
+    parent: null
+    label: "Etat"
+    dossier: "@dossier9"
+  dossier9-etat-delai:
+    dsFieldId: "I06"
+    dsChampType: null
+    fieldSource: computed
+    type: boolean
+    stringValue: "false"
+    parent: null
+    label: "Delais"
+    dossier: "@dossier9"
+  dossier9-excel:
+    dsFieldId: "I07"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: boolean
+    stringValue: "true"
+    parent: null
+    label: "Excel"
+    dossier: "@dossier9"
+  dossier9-total-excel:
+    dsFieldId: null
+    dsChampType: null
+    fieldSource: computed
+    type: number
+    stringValue: "14300"
+    parent: null
+    label: "Total Excel"
+    dossier: "@dossier9"
+  dossier9-total:
+    fieldSource: computed
+    dsChampType: null
+    type: string
+    stringValue: "14300"
+    parent: null
+    label: "Total"
+    dossier: "@dossier9"
+  # endregion
+  # region Dossier10
+  dossier10-identifiant:
+    dsFieldId: "I01"
+    dsChampType: "TextChamp"
+    fieldSource: dossier
+    type: string
+    stringValue: "W00000010"
+    parent: null
+    label: "Identifiant"
+    dossier: "@dossier10"
+  dossier10-depot:
+    dsFieldId: "I02"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "06/06/2023"
+    parent: null
+    label: "Moment"
+    dossier: "@dossier10"
+  dossier10-titre:
+    dsFieldId: "I03"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Premier Contact"
+    parent: null
+    label: "Titre"
+    dossier: "@dossier10"
+  dossier10-consentement:
+    dsFieldId: "I04"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: boolean
+    stringValue: "false"
+    parent: null
+    label: "Consentement"
+    dossier: "@dossier10"
+  dossier10-etat:
+    dsFieldId: "I05"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "instruction"
+    parent: null
+    label: "Etat"
+    dossier: "@dossier10"
+  dossier10-etat-delai:
+    dsFieldId: "I06"
+    dsChampType: null
+    fieldSource: computed
+    type: boolean
+    stringValue: "false"
+    parent: null
+    label: "Delais"
+    dossier: "@dossier10"
+  dossier10-excel:
+    dsFieldId: "I07"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: boolean
+    stringValue: "true"
+    parent: null
+    label: "Excel"
+    dossier: "@dossier10"
+  dossier10-total-excel:
+    dsFieldId: null
+    dsChampType: null
+    fieldSource: computed
+    type: number
+    stringValue: "14600"
+    parent: null
+    label: "Total Excel"
+    dossier: "@dossier10"
+  dossier10-total-montant:
+    fieldSource: computed
+    dsChampType: null
+    type: string
+    stringValue: "83800"
+    parent: null
+    label: "Total Montant"
+    dossier: "@dossier10"
+  dossier10-total:
+    fieldSource: computed
+    dsChampType: null
+    type: string
+    stringValue: "98400"
+    parent: null
+    label: "Total"
+    dossier: "@dossier10"
+  dossier10-declaration-financement:
+    fieldSource: champs
+    dsChampType: RepetitionChamp
+    type: string
+    stringValue: ""
+    parent: null
+    label: "Déclaration de financement"
+    dossier: "@dossier10"
+  # region children declaration financement
+  # region row1
+  dossier10-df-1-montant:
+    dsFieldId: "I08"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: number
+    stringValue: "15600"
+    parent: "@dossier10-declaration-financement"
+    parentRowIndex: 1
+    label: "Montant"
+    dossier: "@dossier10"
+  dossier10-df-1-pays:
+    dsFieldId: "I09"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "France"
+    parent: "@dossier10-declaration-financement"
+    parentRowIndex: 1
+    label: "Pays"
+    dossier: "@dossier10"
+  dossier10-df-1-organisme:
+    dsFieldId: "I10"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Pulsarr"
+    parent: "@dossier10-declaration-financement"
+    parentRowIndex: 1
+    label: "Organisme financeur"
+    dossier: "@dossier10"
+  # endregion
+  # region row2
+  dossier10-df-2-montant:
+    dsFieldId: "I08"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: number
+    stringValue: "23000"
+    parent: "@dossier10-declaration-financement"
+    parentRowIndex: 2
+    label: "Montant"
+    dossier: "@dossier10"
+  dossier10-df-2-pays:
+    dsFieldId: "I09"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Qatar"
+    parent: "@dossier10-declaration-financement"
+    parentRowIndex: 2
+    label: "Pays"
+    dossier: "@dossier10"
+  dossier10-df-2-organisme:
+    dsFieldId: "I10"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Babou"
+    parent: "@dossier10-declaration-financement"
+    parentRowIndex: 2
+    label: "Organisme financeur"
+    dossier: "@dossier10"
+  # endregion
+  # region row3
+  dossier10-df-3-montant:
+    dsFieldId: "I08"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: number
+    stringValue: "17400"
+    parent: "@dossier10-declaration-financement"
+    parentRowIndex: 3
+    label: "Montant"
+    dossier: "@dossier10"
+  dossier10-df-3-pays:
+    dsFieldId: "I09"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "USA"
+    parent: "@dossier10-declaration-financement"
+    parentRowIndex: 3
+    label: "Pays"
+    dossier: "@dossier10"
+  dossier10-df-3-organisme:
+    dsFieldId: "I10"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Wallmart"
+    parent: "@dossier10-declaration-financement"
+    parentRowIndex: 3
+    label: "Organisme financeur"
+    dossier: "@dossier10"
+  # endregion
+  # region row4
+  dossier10-df-4-montant:
+    dsFieldId: "I08"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: number
+    stringValue: "8600"
+    parent: "@dossier10-declaration-financement"
+    parentRowIndex: 4
+    label: "Montant"
+    dossier: "@dossier10"
+  dossier10-df-4-pays:
+    dsFieldId: "I09"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Écosse"
+    parent: "@dossier10-declaration-financement"
+    parentRowIndex: 4
+    label: "Pays"
+    dossier: "@dossier10"
+  dossier10-df-4-organisme:
+    dsFieldId: "I10"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Atréides"
+    parent: "@dossier10-declaration-financement"
+    parentRowIndex: 4
+    label: "Organisme financeur"
+    dossier: "@dossier10"
+  # endregion
+  # region row5
+  dossier10-df-5-montant:
+    dsFieldId: "I08"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: number
+    stringValue: "19200"
+    parent: "@dossier10-declaration-financement"
+    parentRowIndex: 5
+    label: "Montant"
+    dossier: "@dossier10"
+  dossier10-df-5-pays:
+    dsFieldId: "I09"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Turquie"
+    parent: "@dossier10-declaration-financement"
+    parentRowIndex: 5
+    label: "Pays"
+    dossier: "@dossier10"
+  dossier10-df-5-organisme:
+    dsFieldId: "I10"
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Turkish Cie"
+    parent: "@dossier10-declaration-financement"
+    parentRowIndex: 5
+    label: "Organisme financeur"
+    dossier: "@dossier10"
+  # endregion
+  # endregion
+  # endregion
