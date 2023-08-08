@@ -1,6 +1,6 @@
-<svg width="800" height="900" viewBox="0 0 800 900" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<mask id="mask0_10900_206967" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="800" height="900">
-<rect width="800" height="900" rx="8" transform="matrix(-1 0 0 1 800 0)" fill="#F5F5FE"/>
+<svg width="800" height="800" viewBox="0 0 800 900" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<mask id="mask0_10900_206967" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="800" height="800">
+<rect width="800" height="800" rx="8" transform="matrix(-1 0 0 1 800 0)" fill="#F5F5FE"/>
 </mask>
 <g mask="url(#mask0_10900_206967)">
 <rect x="-88" y="92" width="1157" height="690" fill="url(#pattern0)"/>

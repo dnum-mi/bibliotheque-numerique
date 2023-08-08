@@ -10,6 +10,7 @@ import DemarcheInformations from '@/views/demarches/DemarcheInformations.vue'
 import DemarcheConfigurations from '@/views/demarches/DemarcheConfigurations.vue'
 import BiblioNumDataTableAgGrid from '@/components/BiblioNumDataTableAgGrid.vue'
 import LayoutList from '@/components/LayoutList.vue'
+import type { DsfrTabItemProps } from '@gouvminint/vue-dsfr/types/components/DsfrTabs/DsfrTabItem.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -50,22 +51,18 @@ watch(() => demarcheStore.demarcheConfigurations, async (newValue) => {
 }, { deep: true })
 
 const onSelect = (e) => {
-  router.push({ name: 'Dossier', params: { id: e[0].idBiblioNum } })
+  router.push({ name: 'Dossiers', params: { id: e[0].idBiblioNum } })
 }
 
-const tabTitles = computed<object[]>(() => {
-  const tab = [
-    {
-      title: 'Dossiers',
-    },
-    {
-      title: 'Information',
-    },
-  ]
-  if (userStore.canManageRoles) tab.push({ title: 'Configuration' })
-  return tab
-},
-)
+const tabTitles = computed(() => ([
+  {
+    title: 'Dossiers',
+  },
+  {
+    title: 'Information',
+  },
+  ...(userStore.canManageRoles ? [{ title: 'Configuration' }] : []),
+]))
 
 const initialSelectedIndex = 0
 const selectedTabIndex = ref(0)

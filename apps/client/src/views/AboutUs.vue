@@ -14,12 +14,12 @@
         </p>
         <ul class="fr-btns-group fr-btns-group--inline-md">
           <li>
-            <a
+            <RouterLink
               class="fr-btn"
-              href="/"
+              to="/"
             >
               Page d'accueil
-            </a>
+            </RouterLink>
           </li>
         </ul>
       </div>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { z } from 'zod'
-import { toFormValidator, toTypedSchema } from '@vee-validate/zod'
+import { toTypedSchema } from '@vee-validate/zod'
 import { useField, useForm } from 'vee-validate'
 import type { CreateUserDto } from '@biblio-num/shared'
 
@@ -33,10 +33,10 @@ const onSubmit = handleSubmit(async (formValue: CreateUserDto) => {
   }
 })
 
-const { value: firstNameValue, errorMessage: firstNameError } = useField('firstName')
-const { value: lastNameValue, errorMessage: lastNameError } = useField('lastName')
-const { value: emailValue, errorMessage: emailError } = useField('email')
-const { value: passwordValue, errorMessage: passwordError } = useField('password')
+const { value: firstNameValue, errorMessage: firstNameError } = useField<string>('firstName')
+const { value: lastNameValue, errorMessage: lastNameError } = useField<string>('lastName')
+const { value: emailValue, errorMessage: emailError } = useField<string>('email')
+const { value: passwordValue, errorMessage: passwordError } = useField<string>('password')
 </script>
 
 <template>
@@ -51,7 +51,7 @@ const { value: passwordValue, errorMessage: passwordError } = useField('password
             class="mb-20 fr-text-title--blue-france"
             style="text-align:center"
           >
-            Inscription
+            Inscrivez-vous
           </h5>
           <form
             class="card"
@@ -145,9 +145,9 @@ const { value: passwordValue, errorMessage: passwordError } = useField('password
               class="fr-m-4w"
               style="text-align:center"
             >
-              <router-link :to="signInPath">
+              <RouterLink :to="signInPath">
                 Déjà inscrit? Connectez-vous ici.
-              </router-link>
+              </RouterLink>
             </div>
           </form>
           <br>

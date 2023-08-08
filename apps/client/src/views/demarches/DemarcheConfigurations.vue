@@ -1,44 +1,66 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
+import { computed, ref, type Ref } from 'vue'
 import { useForm } from 'vee-validate'
-import DemarcheConfiguration from '@/views/demarches/DemarcheConfiguration.vue'
-import { useDemarcheStore } from '@/stores'
 
-const props = withDefaults(defineProps<{
+import useToaster from '@/composables/use-toaster'
+import { useDemarcheStore } from '@/stores'
+import DemarcheConfiguration from '@/views/demarches/DemarcheConfiguration.vue'
+
+withDefaults(defineProps<{
     dataJson?: object
   }>(), {
   dataJson: () => ({}),
 })
 const title = 'La configuration'
 
+type TitleTag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
+type DsfrAlertType = 'error' | 'success' | 'warning' | 'info'
+
 const demarcheStore = useDemarcheStore()
 const demarcheConfigurations = computed<any[]>(() => demarcheStore.demarcheConfigurations)
-const alertType = ref('')
+const alertType: Ref<DsfrAlertType> = ref('info')
 const alertTitle = ref('')
 const alertDescription = ref('')
 
+const saveIcon = 'ri-save-line'
+const updatingIcon = 'ri-refresh-line'
+const isSaving = ref(false)
+const updateIcon = computed(() => ({
+  name: isSaving.value ? updatingIcon : saveIcon,
+  ...(isSaving.value ? { animation: 'spin' } : {}),
+}))
+
+const toaster = useToaster()
 const { handleSubmit } = useForm()
 const submit = handleSubmit(async () => {
+  if (isSaving.value) {
+    return
+  }
   try {
-    await demarcheStore.updateDemarcheConfigurations(demarcheConfigurations)
-    alertType.value = 'success'
-    alertTitle.value = 'Mise à jour réussi!'
-    alertDescription.value = 'Les champs ou les annotations sélectionnées sont bien ajoutés dans la colonne du tableau.'
+    isSaving.value = true
+    await demarcheStore.updateDemarcheConfigurations(demarcheConfigurations.value)
+    toaster.addMessage({
+      description: 'Les champs ou les annotations sélectionnés sont bien ajoutés dans la colonne du tableau.',
+      title: 'Mise à jour réussie !',
+      type: 'success',
+    })
   } catch (e) {
-    console.error('Update demarche configurations Error')
-    alertType.value = 'error'
-    alertTitle.value = 'Échec de mise à jour!'
-    alertDescription.value = 'Une erreur s\'est produite pendant la mise à jour des données.'
+    toaster.addMessage({
+      description: 'Une erreur s’est produite pendant la mise à jour des données.',
+      title: 'Échec de mise à jour !',
+      type: 'error',
+    })
+  } finally {
+    isSaving.value = false
   }
 })
-
 </script>
 
 <template>
   <div class="fr-container">
     <div>
       <DsfrAlert
-        v-if="!!alertType"
+        v-if="!!alertTitle"
         :type="alertType"
         :title="alertTitle"
         :description="alertDescription"
@@ -53,7 +75,7 @@ const submit = handleSubmit(async () => {
       Sélectionnez les champs ou les annotations privés afin de les afficher dans la liste des dossiers de cette démarche.
     </div>
 
-    <div class="fr-container fr-pb-3v">
+    <div class="fr-pb-3v">
       <div class="fr-grid-row">
         <div class="fr-col-1 fr-p-2v">
           <label class="fr-text--bold" />
@@ -77,13 +99,56 @@ const submit = handleSubmit(async () => {
       @submit="submit"
     >
       <hr>
+      <div
+        v-for="conf of demarcheConfigurations"
+        :key="conf.id"
+      >
+        {{ conf }}
+      </div>
       <DemarcheConfiguration
         :datas="demarcheConfigurations"
       />
-      <hr>
-      <DsfrButton class="fr-mb-3w">
-        Mettre à jour
-      </DsfrButton>
+      <div class="fixed  bottom-0  bg-white  w-full  top-shadow  text-right  fr-px-4w  left-0">
+        <DsfrButton
+          class="fr-my-2w"
+        >
+          Mettre à jour
+          <VIcon v-bind="updateIcon" />
+        </DsfrButton>
+      </div>
     </form>
   </div>
 </template>
+
+<style scoped>
+.top-shadow {
+  filter: drop-shadow(0 1px 3px var(--shadow-color));
+}
+
+.w-full {
+  width: 100vw;
+}
+.fixed {
+  position: fixed;
+}
+
+.bottom-0 {
+  bottom: 0;
+}
+
+.bg-white {
+  background-color: var(--grey-1000-50);
+}
+
+.text-right {
+  text-align: right;
+}
+
+.left-0 {
+  left: 0em;
+}
+
+.fr-container {
+  margin-bottom: 6rem;
+}
+</style>

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, type Ref } from 'vue'
 import { apiClient } from '@/utils/api-client'
 import { getConfigurations, updateConfigurations } from '@/shared/services'
 
@@ -12,6 +12,7 @@ import type { TypeHeaderDataTable } from '@/shared/types/typeDataTable'
 import { ChampValueTypesKeys, ChampType } from '@/shared/types'
 import { fetchInstructionTimeByDossiers } from '@/shared/services/instructionTimes.service'
 import { EInstructionTimeState, keyInstructionTime } from '../shared/types/instructionTime.type'
+import type { UpdateDemarcheDto } from '@biblio-num/shared'
 
 const headerDossierIdDefault: TypeHeaderDataTable[] = [
   {
@@ -91,7 +92,7 @@ const getParserFnByType = (type) => {
 
 export const useDemarcheStore = defineStore('demarche', () => {
   let mappingColumn: IDemarcheMappingColumn[]
-  const demarche = ref({})
+  const demarche: Ref<UpdateDemarcheDto> = ref({})
   const hearderListDossier = ref<TypeHeaderDataTable[]>([])
   const rowDatasDossiers = ref<object[]>([])
   const dossiers = ref([])
@@ -117,13 +118,22 @@ export const useDemarcheStore = defineStore('demarche', () => {
 
   const demarches = ref([])
   const getDemarches = async () => {
-    const result = await apiClient.getDemarches()
+    try {
+      const result = await apiClient.getDemarches()
 
-    if (result) {
-      demarches.value = result.map((demarche: any) => {
-        demarche.typeOrganisme = demarche?.typeOrganisme || ''
-        return demarche
-      })
+      if (result) {
+        demarches.value = result.map((demarche: any) => {
+          demarche.typeOrganisme = demarche?.typeOrganisme || ''
+          return demarche
+        })
+      }
+    } catch (error) {
+      // TODO: Afficher une erreur compréhensible à l’utilisateur
+      if (error instanceof Error) {
+        console.warn(error.message)
+        return
+      }
+      console.warn(error.message)
     }
   }
 
@@ -144,7 +154,7 @@ export const useDemarcheStore = defineStore('demarche', () => {
   }
 
   const updateDemarcheConfigurations = async (configurationsForm: []) => {
-    await updateConfigurations(demarche.value.id, configurationsForm.value)
+    await updateConfigurations(demarche.value.id, configurationsForm)
     await getDemarcheConfigurations()
   }
 
@@ -197,7 +207,7 @@ export const useDemarcheStore = defineStore('demarche', () => {
     [EInstructionTimeState.FIRST_REQUEST]: '1ere demande',
     [EInstructionTimeState.IN_PROGRESS]: 'Instruction',
     [EInstructionTimeState.OUT_OF_DATE]: 'Délai expiré',
-    [EInstructionTimeState.IN_EXTENSION]: 'Prorogation',
+    [EInstructionTimeState.IN_EXTENSION]: 'Proroger',
     [EInstructionTimeState.SECOND_REQUEST]: '2eme demande',
     [EInstructionTimeState.SECOND_RECEIPT]: '2eme demande',
     [EInstructionTimeState.INTENT_OPPO]: "Intention d'opposition",

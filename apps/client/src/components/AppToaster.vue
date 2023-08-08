@@ -30,6 +30,7 @@ const close = (id: string) => emit('close-message', id)
 
 <style scoped>
 .toaster-container {
+  pointer-events: none;
   position: fixed;
   bottom: 1rem;
   width: 100%;

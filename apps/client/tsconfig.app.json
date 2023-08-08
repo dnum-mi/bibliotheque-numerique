@@ -7,8 +7,9 @@
     "baseUrl": ".",
     "moduleResolution": "node",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["src/*"]
     },
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals"],
+    "lib": ["ES2020"]
   },
 }
