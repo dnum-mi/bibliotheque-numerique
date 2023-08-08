@@ -1,4 +1,8 @@
-import { Injectable } from "@nestjs/common";
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { User } from "./entities/user.entity";
 import { FindOneOptions, Repository } from "typeorm";
 import { BaseEntityService } from "../../shared/base-entity/base-entity.service";
@@ -37,7 +41,7 @@ export class UsersService extends BaseEntityService<User> {
     this.logger.verbose("create");
     const userInDb = await this.findByEmail(email);
     if (userInDb) {
-      throw new Error("User already exists");
+      throw new ConflictException("User already exists");
     }
     return this.createAndSave({
       email,
@@ -64,7 +68,12 @@ export class UsersService extends BaseEntityService<User> {
 
   async getUserById(id: number): Promise<User> {
     this.logger.verbose("getUserById");
-    return this.findOneById(id, { roles: true });
+    return this.findOneById(id, { roles: true }).then((user) => {
+      if (!user) {
+        throw new NotFoundException("User not found");
+      }
+      return user;
+    });
   }
 
   async resetPassword(email: string): Promise<void> {
