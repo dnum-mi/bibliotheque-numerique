@@ -7,6 +7,7 @@ import ReloadPrompt from '@/components/ReloadPrompt.vue'
 import { useUserStore } from '@/stores'
 
 import useToaster from '@/composables/use-toaster'
+import AppToaster from './components/AppToaster.vue'
 
 const serviceTitle = 'Bibliothèque Numérique'
 const serviceDescription = 'Recherchez une démarche, un dossier, un organisme'
@@ -83,17 +84,16 @@ const close = async () => {
   needRefresh.value = false
 }
 
-const hasError = ref(false)
-const descriptionError = ref('Description du message')
+const toaster = useToaster()
+
 onErrorCaptured((error) => {
   const router = useRouter()
 
   if (error?.response?.status === 404) {
-    console.debug({ error, router: router.currentRoute.value })
     router.push({ name: '404', params: { pathMatch: router.currentRoute.value.path } })
   } else {
-    hasError.value = true
-    descriptionError.value = error?.response?.data?.message || error.message
+    const description = error?.response?.data?.message || error.message
+    toaster.addErrorMessage({ description })
     console.error(error)
   }
   return false
@@ -110,20 +110,14 @@ onErrorCaptured((error) => {
     :quick-links="quickLinks"
   />
 
-  <DsfrAlert
-    v-if="hasError"
-    title="Erreur"
-    :description="descriptionError"
-    type="error"
-    small
-    closeable
-    @close="hasError=false"
-  />
-
   <div>
     <router-view />
   </div>
 
+  <AppToaster
+    :messages="toaster.messages"
+    @close-message="toaster.removeMessage($event)"
+  />
   <ReloadPrompt
     :offline-ready="offlineReady"
     :need-refresh="needRefresh"
