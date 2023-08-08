@@ -152,7 +152,7 @@ onErrorCaptured((error: Error | AxiosError) => {
     :quick-links="quickLinks"
   />
 
-  <div class="container">
+  <div class="fr-container">
     <router-view />
   </div>
 

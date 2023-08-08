@@ -86,11 +86,8 @@ const submit = handleSubmit(async () => {
         <div class="fr-col-4 fr-p-2v">
           <label class="fr-text--bold"> Libellé origine</label>
         </div>
-        <div class="fr-col-4 fr-p-2v">
+        <div class="fr-col-6 fr-p-2v">
           <label class="fr-text--bold"> Libellé personnalisé</label>
-        </div>
-        <div class="fr-col-2 fr-p-2v">
-          <label class="fr-text--bold"> Valeur Type</label>
         </div>
       </div>
     </div>
