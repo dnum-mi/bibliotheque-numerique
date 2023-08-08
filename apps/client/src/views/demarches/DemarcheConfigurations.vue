@@ -17,7 +17,7 @@ type TitleTag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
 type DsfrAlertType = 'error' | 'success' | 'warning' | 'info'
 
 const demarcheStore = useDemarcheStore()
-const demarcheConfigurations = computed<any[]>(() => demarcheStore.demarcheConfigurations)
+const demarcheConfigurations = computed(() => demarcheStore.demarcheConfigurations)
 const alertType: Ref<DsfrAlertType> = ref('info')
 const alertTitle = ref('')
 const alertDescription = ref('')
@@ -99,12 +99,6 @@ const submit = handleSubmit(async () => {
       @submit="submit"
     >
       <hr>
-      <div
-        v-for="conf of demarcheConfigurations"
-        :key="conf.id"
-      >
-        {{ conf }}
-      </div>
       <DemarcheConfiguration
         :datas="demarcheConfigurations"
       />

@@ -98,6 +98,7 @@ const focusOn = async ($event: (InputEvent & {target: { checked: boolean; id: st
           <DsfrSelect
             :id="`typeValue-${mappingColumn.id}`"
             v-model="mappingColumn.typeValue"
+            label=""
             :options="mappingColumn.typeData === ChampType.INSTRUCTION_TIME ? listTypeInstructionTime : listType"
             :disabled="!mappingColumn.display"
           />

@@ -7,26 +7,26 @@ const MAIN_TITLE = 'Bibliothèque Numérique'
 
 const routes = [
   {
-    path: '/',
     name: 'Home',
+    path: '/',
     component: () => import('@/views/AppHome.vue'),
   },
   {
-    path: '/a-propos',
     name: 'About',
+    path: '/a-propos',
     component: () => import('@/views/AboutUs.vue'),
   },
   {
-    path: '/dossiers/:id',
     name: 'Dossiers',
+    path: '/dossiers/:id',
     component: () => import('@/views/dossiers/Dossier.vue'),
     meta: {
       needsAuth: true,
     },
   },
   {
-    path: '/demarches',
     name: 'Demarches',
+    path: '/demarches',
     beforeEnter: [canAccessDemarchesGuard],
     children: [
       {
@@ -100,12 +100,12 @@ const routes = [
       {
         name: 'ListeOrganismes',
         path: '',
-        component: () => import('@/views/ListeOrganismes.vue'),
+        component: () => import('@/views/organismes/ListeOrganismes.vue'),
       },
       {
         name: 'FicheOrganisme',
         path: ':id',
-        component: () => import('@/views/FicheOrganisme.vue'),
+        component: () => import('@/views/organismes/FicheOrganisme.vue'),
       },
     ],
   },

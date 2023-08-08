@@ -1,26 +1,3 @@
-<template>
-  <LayoutList>
-    <template #title>
-      <div class="bn-list-search bn-list-search-demarche">
-        <span
-          class="fr-icon-search-line fr-p-1w"
-          aria-hidden="true"
-        />
-        <h6 class="bn-list-search-title-demarche fr-p-1w fr-m-0">
-          Rechercher démarches
-        </h6>
-      </div>
-    </template>
-    <BiblioNumDataTableAgGrid
-      :headers="headersJson"
-      :row-data="rowData"
-      with-action
-      floating-filter
-      @get-elt="getDossiers"
-    />
-  </LayoutList>
-</template>
-
 <script lang="ts" setup>
 import BiblioNumDataTableAgGrid from '@/components/BiblioNumDataTableAgGrid.vue'
 import LayoutList from '@/components/LayoutList.vue'
@@ -85,7 +62,30 @@ onMounted(async () => {
   await demarcheStore.getDemarches()
 })
 
-function getDossiers (data: any) {
-  router.push({ name: 'DemarcheDossiers', params: { id: data.id } })
+function getDossier ({ id }: { id: string }) {
+  router.push({ name: 'DemarcheDossiers', params: { id } })
 }
 </script>
+
+<template>
+  <LayoutList>
+    <template #title>
+      <div class="bn-list-search bn-list-search-demarche">
+        <span
+          class="fr-icon-search-line fr-p-1w"
+          aria-hidden="true"
+        />
+        <h6 class="bn-list-search-title-demarche fr-p-1w fr-m-0">
+          Rechercher démarches
+        </h6>
+      </div>
+    </template>
+    <BiblioNumDataTableAgGrid
+      :headers="headersJson"
+      :row-data="rowData"
+      with-action
+      floating-filter
+      @get-elt="getDossier($event)"
+    />
+  </LayoutList>
+</template>

@@ -3225,8 +3225,8 @@ packages:
       vue-router: ^4.2.2
     dependencies:
       '@gouvfr/dsfr': 1.9.3
-      focus-trap: 7.4.3
-      focus-trap-vue: 4.0.2(focus-trap@7.4.3)(vue@3.3.4)
+      focus-trap: 7.5.2
+      focus-trap-vue: 4.0.2(focus-trap@7.5.2)(vue@3.3.4)
       oh-vue-icons: 1.0.0-rc3(vue@3.3.4)
       vue: 3.3.4
       vue-router: 4.2.2(vue@3.3.4)

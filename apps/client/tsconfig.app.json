@@ -10,6 +10,6 @@
       "@/*": ["src/*"]
     },
     "types": ["vitest/globals"],
-    "lib": ["ES2020"]
+    "lib": ["ES2020", "DOM"]
   },
 }

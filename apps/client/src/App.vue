@@ -4,11 +4,10 @@ import { useRegisterSW } from 'virtual:pwa-register/vue'
 import { useRouter, useRoute } from 'vue-router'
 import { AxiosError } from 'axios'
 
-import { useUserStore } from '@/stores'
 import useToaster from '@/composables/use-toaster.js'
+import { useUserStore } from '@/stores'
 
 import AppToaster from '@/components/AppToaster.vue'
-
 import ReloadPrompt from '@/components/ReloadPrompt.vue'
 
 const serviceTitle = 'Bibliothèque Numérique'
