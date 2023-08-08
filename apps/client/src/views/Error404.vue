@@ -6,7 +6,7 @@
         Erreur 404
       </p>
       <p class="fr-text--lead  fr-mb-3w">
-        La page que vous cherchez est introuvable. Excusez-nous pour la gène occasionnée.
+        La page que vous cherchez est introuvable. Excusez-nous pour la gêne occasionnée.
       </p>
       <ul class="fr-btns-group  fr-btns-group--inline-md">
         <li>
