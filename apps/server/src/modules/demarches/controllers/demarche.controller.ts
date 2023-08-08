@@ -14,7 +14,10 @@ import {
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { DemarcheService } from '../providers/services/demarche.service'
-import { PermissionsGuard, RequirePermissions } from '../../roles/providers/permissions.guard'
+import {
+  PermissionsGuard,
+  RequirePermissions,
+} from '../../roles/providers/permissions.guard'
 import { PermissionName } from '../../../shared/types/Permission.type'
 import { LoggerService } from '../../../shared/modules/logger/logger.service'
 import { Demarche } from '../objects/entities/demarche.entity'
@@ -64,7 +67,8 @@ export class DemarcheController {
     })
   }
 
-  @Get(':id/dossiers')
+  // TODO: delete
+  @Get('/deprecated/:id/dossiers')
   @RequirePermissions({ name: PermissionName.ACCESS_DEMARCHE })
   async getDemarcheDossiersById (@Param('id', ParseIntPipe) id: number): Promise<Dossier[]> {
     this.logger.verbose('getDemarcheDossiersById')
