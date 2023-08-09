@@ -1,6 +1,6 @@
-import { registerAs } from "@nestjs/config";
+import { registerAs } from '@nestjs/config'
 
-export default registerAs("jwt", () => ({
+export default registerAs('jwt', () => ({
   secret: process.env.JWT_SECRET,
-  expiresIn: process.env.JWT_EXPIRE_IN || "15m",
-}));
+  expiresIn: process.env.JWT_EXPIRE_IN || '15m',
+}))

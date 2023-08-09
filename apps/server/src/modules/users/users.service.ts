@@ -14,56 +14,53 @@ import { SendMailService } from "../sendmail/sendmail.service";
 
 @Injectable()
 export class UsersService extends BaseEntityService<User> {
-  constructor(
+  constructor (
     protected logger: LoggerService,
     @InjectRepository(User) protected readonly repo: Repository<User>,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly sendMailService: SendMailService,
   ) {
-    super(repo, logger);
-    this.logger.setContext(this.constructor.name);
+    super(repo, logger)
+    this.logger.setContext(this.constructor.name)
   }
 
-  async findByEmail(
-    email: string,
-    select?: FindOneOptions<User>["select"],
-  ): Promise<User | undefined> {
-    this.logger.verbose("findByEmail");
+  async findByEmail (email: string, select?: FindOneOptions<User>['select']): Promise<User | undefined> {
+    this.logger.verbose('findByEmail')
     return this.repo.findOne({
       where: { email },
       relations: { roles: true },
       select,
-    });
+    })
   }
 
-  async create(email: string, password): Promise<User> {
-    this.logger.verbose("create");
-    const userInDb = await this.findByEmail(email);
+  async create (email: string, password): Promise<User> {
+    this.logger.verbose('create')
+    const userInDb = await this.findByEmail(email)
     if (userInDb) {
       throw new ConflictException("User already exists");
     }
     return this.createAndSave({
       email,
       password,
-    });
+    })
   }
 
-  async findOrCreate(email: string, password): Promise<User> {
-    this.logger.verbose("findOrCreate");
-    const userInDb = await this.findByEmail(email);
+  async findOrCreate (email: string, password): Promise<User> {
+    this.logger.verbose('findOrCreate')
+    const userInDb = await this.findByEmail(email)
     if (userInDb) {
-      return userInDb;
+      return userInDb
     }
     return this.createAndSave({
       email,
       password,
-    });
+    })
   }
 
-  async listUsers(): Promise<User[]> {
-    this.logger.verbose("listUsers");
-    return await this.repo.find({ relations: ["roles"] });
+  async listUsers (): Promise<User[]> {
+    this.logger.verbose('listUsers')
+    return await this.repo.find({ relations: ['roles'] })
   }
 
   async getUserById(id: number): Promise<User> {
@@ -76,28 +73,25 @@ export class UsersService extends BaseEntityService<User> {
     });
   }
 
-  async resetPassword(email: string): Promise<void> {
-    this.logger.verbose("resetPassword");
+  async resetPassword (email: string): Promise<void> {
+    this.logger.verbose('resetPassword')
     const userInDb = await this.repo.findOne({
       where: { email },
-      select: ["id"],
-    });
+      select: ['id'],
+    })
     if (!userInDb) {
-      this.logger.warn(`Reset password: Cannot find user ${email}`);
-      return;
+      this.logger.warn(`Reset password: Cannot find user ${email}`)
+      return
     }
-    const jwt = this.jwtService.sign({ user: userInDb.id });
+    const jwt = this.jwtService.sign({ user: userInDb.id })
     // jwt does not go natively in url. We had to transform it in base64
-    const jwtForUrl = Buffer.from(jwt).toString("base64url");
-    const appUrl = this.configService.get("appFrontUrl");
-    await this.sendMailService.resetPwd(
-      email,
-      `${appUrl}/update-password/${jwtForUrl}`,
-    );
+    const jwtForUrl = Buffer.from(jwt).toString('base64url')
+    const appUrl = this.configService.get('appFrontUrl')
+    await this.sendMailService.resetPwd(email, `${appUrl}/update-password/${jwtForUrl}`)
   }
 
-  async updatePassword(user: User, password: string): Promise<void> {
-    user.password = password;
-    await this.repo.save(user);
+  async updatePassword (user: User, password: string): Promise<void> {
+    user.password = password
+    await this.repo.save(user)
   }
 }

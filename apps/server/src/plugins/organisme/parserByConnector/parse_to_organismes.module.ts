@@ -1,5 +1,5 @@
-import { Module } from "@nestjs/common";
-import { ParseToOrganismesService } from "./parse_to_organismes.service";
+import { Module } from '@nestjs/common'
+import { ParseToOrganismesService } from './parse_to_organismes.service'
 
 @Module({
   providers: [ParseToOrganismesService],

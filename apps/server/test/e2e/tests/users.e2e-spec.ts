@@ -14,18 +14,18 @@ describe("users (e2e)", () => {
   let cookie: string;
 
   beforeAll(async () => {
-    const testingModule = new TestingModuleFactory();
-    await testingModule.init();
-    app = testingModule.app;
-    mailerService = testingModule.mailerService as MailerService;
-  });
+    const testingModule = new TestingModuleFactory()
+    await testingModule.init()
+    app = testingModule.app
+    mailerService = testingModule.mailerService as MailerService
+  })
 
   beforeEach(() => {
-    jest.spyOn(mailerService, "sendMail").mockClear();
-  });
+    jest.spyOn(mailerService, 'sendMail').mockClear()
+  })
   afterAll(async () => {
-    await app.close();
-  });
+    await app.close()
+  })
 
   it("GET /users - Should return error 403 if user is not connected", async () => {
     await request(app.getHttpServer()) //
@@ -107,65 +107,65 @@ describe("users (e2e)", () => {
         },
       );
     await request(app.getHttpServer()) //
-      .post("/users/reset-password")
+      .post('/users/reset-password')
       .send({
         email,
-      });
-    expect(mailerService.sendMail).toBeCalled();
-    expect(to).toBe(email);
-    expect(subject).toBe("Modifier son mot de passe");
-  });
+      })
+    expect(mailerService.sendMail).toBeCalled()
+    expect(to).toBe(email)
+    expect(subject).toBe('Modifier son mot de passe')
+  })
 
   it("POST /users/reset-password - Should no send mail for reset password with e-mail no correct", async () => {
     await request(app.getHttpServer()) //
-      .post("/users/reset-password")
+      .post('/users/reset-password')
       .send({
-        email: "nouser@test.com",
-      });
-    expect(mailerService.sendMail).not.toBeCalled();
-  });
+        email: 'nouser@test.com',
+      })
+    expect(mailerService.sendMail).not.toBeCalled()
+  })
 
   it("PUT /users/user - should 401 to update password if there are not token", async () => {
     await request(app.getHttpServer()) //
-      .put("/users/user")
+      .put('/users/user')
       .send({})
-      .expect(401);
-  });
+      .expect(401)
+  })
 
   it("PUT /users/user - should 403 to update password with invalide token", async () => {
     await request(app.getHttpServer()) //
-      .put("/users/user")
-      .send({ token: "test" })
-      .expect(403);
-  });
+      .put('/users/user')
+      .send({ token: 'test' })
+      .expect(403)
+  })
 
   it("PUT /users/user - should 200 to update password ", async () => {
     const jwtService = new JwtService({
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: "1m" },
-    });
-    const jwt = jwtService.sign({ user: 2 });
-    const jwtforurl = Buffer.from(jwt).toString("base64url");
+      signOptions: { expiresIn: '1m' },
+    })
+    const jwt = jwtService.sign({ user: 2 })
+    const jwtforurl = Buffer.from(jwt).toString('base64url')
 
     await request(app.getHttpServer()) //
-      .put("/users/user")
+      .put('/users/user')
       .send({
-        password: "Y,cqu;CQ.5]BcD3",
+        password: 'Y,cqu;CQ.5]BcD3',
         token: jwtforurl,
       })
-      .expect(200);
-  });
+      .expect(200)
+  })
 
   it("PUT /users/user - should 400 to update password without password", async () => {
     const jwtService = new JwtService({
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: "1m" },
-    });
-    const jwt = jwtService.sign({ user: 2 });
-    const jwtforurl = Buffer.from(jwt).toString("base64url");
+      signOptions: { expiresIn: '1m' },
+    })
+    const jwt = jwtService.sign({ user: 2 })
+    const jwtforurl = Buffer.from(jwt).toString('base64url')
 
     await request(app.getHttpServer()) //
-      .put("/users/user")
+      .put('/users/user')
       .send({
         token: jwtforurl,
       })

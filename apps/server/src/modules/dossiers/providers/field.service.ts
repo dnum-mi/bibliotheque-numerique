@@ -1,25 +1,18 @@
-import { Injectable } from "@nestjs/common";
-import { BaseEntityService } from "../../../shared/base-entity/base-entity.service";
-import { Field } from "../objects/entities/field.entity";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { LoggerService } from "../../../shared/modules/logger/logger.service";
-import { Dossier as TDossier } from "@dnum-mi/ds-api-client/dist/@types/types";
+import { Injectable } from '@nestjs/common'
+import { BaseEntityService } from '../../../shared/base-entity/base-entity.service'
+import { Field } from '../objects/entities/field.entity'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Repository } from 'typeorm'
+import { LoggerService } from '../../../shared/modules/logger/logger.service'
+import { Dossier as TDossier } from '@dnum-mi/ds-api-client/dist/@types/types'
 
-import {
-  DsChampType,
-  DsChampTypeKeys,
-  giveTypeFromDsChampType,
-} from "../objects/enums/ds-champ-type.enum";
-import {
-  FormatFunctionRef,
-  FormatFunctionRefKeys,
-} from "@biblio-num/shared/dist";
-import { FieldType } from "../objects/enums/field-type.enum";
-import { CreateFieldDto } from "../objects/dto/fields/create-field.dto";
-import { CustomChamp } from "@dnum-mi/ds-api-client/src/@types/types";
-import { dossierFields } from "../objects/constante/dossier-fields-record.const";
-import { FieldSource } from "../objects/enums/field-source.enum";
+import { DsChampType, DsChampTypeKeys, giveTypeFromDsChampType } from '../objects/enums/ds-champ-type.enum'
+import { FormatFunctionRef, FormatFunctionRefKeys } from '@biblio-num/shared/dist'
+import { FieldType } from '../objects/enums/field-type.enum'
+import { CreateFieldDto } from '../objects/dto/fields/create-field.dto'
+import { CustomChamp } from '@dnum-mi/ds-api-client/src/@types/types'
+import { dossierFields } from '../objects/constante/dossier-fields-record.const'
+import { FieldSource } from '../objects/enums/field-source.enum'
 
 type RawChamp = CustomChamp & {
   __typename: string;
@@ -28,39 +21,34 @@ type RawChamp = CustomChamp & {
 
 @Injectable()
 export class FieldService extends BaseEntityService<Field> {
-  constructor(
-    @InjectRepository(Field) protected repo: Repository<Field>,
-    protected logger: LoggerService,
-  ) {
-    super(repo, logger);
-    this.logger.setContext(this.constructor.name);
+  constructor (@InjectRepository(Field) protected repo: Repository<Field>, protected logger: LoggerService) {
+    super(repo, logger)
+    this.logger.setContext(this.constructor.name)
   }
 
-  static giveFormatFunctionRef(
-    type: DsChampTypeKeys,
-  ): FormatFunctionRefKeys | null {
+  static giveFormatFunctionRef (type: DsChampTypeKeys): FormatFunctionRefKeys | null {
     switch (type) {
       case DsChampType.PaysChamp:
-        return FormatFunctionRef.country;
+        return FormatFunctionRef.country
       default:
-        return null;
+        return null
     }
   }
 
-  private _createFieldsFromRawChamps(
+  private _createFieldsFromRawChamps (
     champs: Array<RawChamp>,
     dossierId: number,
     parentRow: number = null,
   ): CreateFieldDto[] {
-    this.logger.verbose(`_createFieldsFromRawChamps`);
-    this.logger.debug(`parentRow: ${parentRow}`);
-    const fields: CreateFieldDto[] = [];
+    this.logger.verbose('_createFieldsFromRawChamps')
+    this.logger.debug(`parentRow: ${parentRow}`)
+    const fields: CreateFieldDto[] = []
     champs.forEach((champ) => {
-      this.logger.debug(`champ: ${JSON.stringify(champ.label)}`);
+      this.logger.debug(`champ: ${JSON.stringify(champ.label)}`)
       if (!champ.__typename || !champ.id || !champ.label) {
-        this.logger.warn(`champ is not valid: ${JSON.stringify(champ)}`);
+        this.logger.warn(`champ is not valid: ${JSON.stringify(champ)}`)
       } else {
-        const type = DsChampType[champ.__typename] ?? DsChampType.UnknownChamp;
+        const type = DsChampType[champ.__typename] ?? DsChampType.UnknownChamp
         fields.push({
           dsFieldId: champ.champDescriptor.id,
           label: champ.label,
@@ -76,30 +64,23 @@ export class FieldService extends BaseEntityService<Field> {
             champ.__typename === DsChampType.RepetitionChamp
               ? champ.rows?.length
                 ? champ.rows
-                    .map((row, i: number) => {
-                      return this._createFieldsFromRawChamps(
-                        row.champs,
-                        dossierId,
-                        i,
-                      );
-                    })
-                    .flat()
+                  .map((row, i: number) => {
+                    return this._createFieldsFromRawChamps(row.champs, dossierId, i)
+                  })
+                  .flat()
                 : []
               : null,
-        } as CreateFieldDto);
+        } as CreateFieldDto)
       }
-    });
-    return fields;
+    })
+    return fields
   }
 
-  private _createFieldsFromRawDossier(
-    dossierJson: Partial<TDossier>,
-    dossierId: number,
-  ): CreateFieldDto[] {
-    this.logger.verbose("_createFieldsFromRawDossier");
-    const fields: CreateFieldDto[] = [];
+  private _createFieldsFromRawDossier (dossierJson: Partial<TDossier>, dossierId: number): CreateFieldDto[] {
+    this.logger.verbose('_createFieldsFromRawDossier')
+    const fields: CreateFieldDto[] = []
     Object.keys(dossierFields).forEach((key) => {
-      const value = dossierJson[dossierFields[key]];
+      const value = dossierJson[dossierFields[key]]
       if (value !== undefined) {
         fields.push({
           dsFieldId: null,
@@ -113,41 +94,32 @@ export class FieldService extends BaseEntityService<Field> {
           children: null,
           dossierId,
           rawJson: null,
-        });
+        })
       }
-    });
-    return fields;
+    })
+    return fields
   }
 
-  private _createFieldsFromDataJson(
-    dataJson: Partial<TDossier>,
-    dossierId: number,
-  ): CreateFieldDto[] {
-    this.logger.verbose("_createFieldsFromDataJson");
-    const champs = dataJson?.champs;
+  private _createFieldsFromDataJson (dataJson: Partial<TDossier>, dossierId: number): CreateFieldDto[] {
+    this.logger.verbose('_createFieldsFromDataJson')
+    const champs = dataJson?.champs
     if (!champs) {
-      throw new Error("Cannot map field without champs in dataJson.");
+      throw new Error('Cannot map field without champs in dataJson.')
     }
 
-    const champsFields = this._createFieldsFromRawChamps(
-      champs as RawChamp[],
-      dossierId,
-    );
+    const champsFields = this._createFieldsFromRawChamps(champs as RawChamp[], dossierId)
 
-    const dossierFields = this._createFieldsFromRawDossier(dataJson, dossierId);
+    const dossierFields = this._createFieldsFromRawDossier(dataJson, dossierId)
 
-    return [...champsFields, ...dossierFields];
+    return [...champsFields, ...dossierFields]
   }
 
-  async overwriteFieldsFromDataJson(
-    dataJson: Partial<TDossier>,
-    dossierId: number,
-  ): Promise<Field[]> {
-    this.logger.verbose("createFieldsFromDataJsonWithTransaction");
-    const fields = this._createFieldsFromDataJson(dataJson, dossierId);
-    await this.repo.delete({ dossierId });
+  async overwriteFieldsFromDataJson (dataJson: Partial<TDossier>, dossierId: number): Promise<Field[]> {
+    this.logger.verbose('createFieldsFromDataJsonWithTransaction')
+    const fields = this._createFieldsFromDataJson(dataJson, dossierId)
+    await this.repo.delete({ dossierId })
     // TODO: supprimer les fichiers S3
-    return this.repo.save(fields);
+    return this.repo.save(fields)
   }
 }
 
@@ -161,7 +133,6 @@ export class FieldService extends BaseEntityService<Field> {
        - supprimer les champs qui ne sont plus dans le dossier
         - mettre à jour les champs qui ont changé
         - créer les nouveaux champs
-
 
    this.repo.upsert([
    ])

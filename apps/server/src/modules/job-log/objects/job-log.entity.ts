@@ -1,31 +1,31 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { JobNames, JobNamesKeys } from "../../cron/job-name.enum";
-import { JobStatus, JobStatusValues } from "./job-status.enum";
-import { BaseEntity } from "../../../shared/base-entity/base.entity";
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
+import { JobNames, JobNamesKeys } from '../../cron/job-name.enum'
+import { JobStatus, JobStatusValues } from './job-status.enum'
+import { BaseEntity } from '../../../shared/base-entity/base.entity'
 
 // TODO: until we have a proper way to manage log, we use this table to store information about job execution
-@Entity("job_logs")
+@Entity('job_logs')
 export class JobLog extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+    id: number
 
   @Column({ nullable: true })
-  overAt: Date | null;
+    overAt: Date | null
 
   @Column({
-    type: "enum",
+    type: 'enum',
     enum: JobNames,
     default: JobNames.UNKNOWN_JOB,
   })
-  jobName: JobNamesKeys;
+    jobName: JobNamesKeys
 
   @Column({
-    type: "enum",
+    type: 'enum',
     enum: JobStatus,
     default: JobStatus.RUNNING,
   })
-  jobStatus: JobStatusValues;
+    jobStatus: JobStatusValues
 
   @Column({ nullable: true })
-  log: string | null;
+    log: string | null
 }

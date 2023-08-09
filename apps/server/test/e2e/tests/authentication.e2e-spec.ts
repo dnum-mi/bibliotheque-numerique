@@ -9,25 +9,25 @@ describe("Auth (e2e)", () => {
   let cookie: string;
 
   beforeAll(async () => {
-    const testingModule = new TestingModuleFactory();
-    await testingModule.init();
-    app = testingModule.app;
-  });
+    const testingModule = new TestingModuleFactory()
+    await testingModule.init()
+    app = testingModule.app
+  })
 
   afterAll(async () => {
-    await app.close();
-    await dataSource.destroy();
-  });
+    await app.close()
+    await dataSource.destroy()
+  })
 
   it("POST /auth/sign-in - Should return 404 on bad sign_in", () => {
     return request(app.getHttpServer())
-      .post("/auth/sign-in")
+      .post('/auth/sign-in')
       .send({
-        email: "toto",
-        password: "toto",
+        email: 'toto',
+        password: 'toto',
       })
-      .expect(404);
-  });
+      .expect(404)
+  })
 
   it("POST /auth/sign-in - Should return 404 on bad password", async () => {
     await request(app.getHttpServer())
@@ -41,21 +41,21 @@ describe("Auth (e2e)", () => {
 
   it("POST /auth/sign-in - Should return 200 on connection", async () => {
     await request(app.getHttpServer())
-      .post("/auth/sign-in")
+      .post('/auth/sign-in')
       .send({
-        email: "admin@localhost.com",
-        password: "password",
+        email: 'admin@localhost.com',
+        password: 'password',
       })
       .expect(200)
       .expect(({ body }) => {
         expect(body).toMatchObject({
           id: 1,
-          email: "admin@localhost.com",
-        });
+          email: 'admin@localhost.com',
+        })
         expect(body.roles?.[0]).toMatchObject({
           id: 1,
-          name: "admin",
-          description: "App administrator, has full rights",
+          name: 'admin',
+          description: 'App administrator, has full rights',
           permissions: [],
         });
       });

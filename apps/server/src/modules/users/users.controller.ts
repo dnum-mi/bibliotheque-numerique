@@ -20,11 +20,11 @@ import {
 } from "@biblio-num/shared";
 import { UpdatePasswordGuard } from "./update-password.guard";
 
-@ApiTags("Users")
-@Controller("users")
+@ApiTags('Users')
+@Controller('users')
 @UseGuards(RolesGuard)
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor (private readonly usersService: UsersService) {}
 
   @Post("user")
   async signUp(@Body() body: CreateUserDto): Promise<UserOutputDto> {
@@ -45,18 +45,15 @@ export class UsersController {
     return this.usersService.getUserById(id);
   }
 
-  @Post("/reset-password")
-  async resetPassword(@Body() body: ResetPasswordInputDto): Promise<boolean> {
-    await this.usersService.resetPassword(body.email);
-    return true;
+  @Post('/reset-password')
+  async resetPassword (@Body() body: ResetPasswordInputDto): Promise<boolean> {
+    await this.usersService.resetPassword(body.email)
+    return true
   }
 
-  @Put("user")
+  @Put('user')
   @UseGuards(UpdatePasswordGuard)
-  async updatePassword(
-    @Request() req,
-    @Body() body: UpdateUserPasswordDto,
-  ): Promise<void> {
-    await this.usersService.updatePassword(req.user, body.password);
+  async updatePassword (@Request() req, @Body() body: UpdateUserPasswordDto): Promise<void> {
+    await this.usersService.updatePassword(req.user, body.password)
   }
 }
