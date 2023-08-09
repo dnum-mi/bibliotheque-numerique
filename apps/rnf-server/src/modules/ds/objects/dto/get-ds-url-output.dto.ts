@@ -1,3 +1,3 @@
 export class GetDsUrlOutputDto {
-  url: string;
+  url: string
 }

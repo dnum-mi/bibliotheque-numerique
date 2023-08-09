@@ -1,6 +1,6 @@
-import { registerAs } from "@nestjs/config";
+import { registerAs } from '@nestjs/config'
 
-export default registerAs("ds", () => ({
+export default registerAs('ds', () => ({
   host: process.env.DS_API_HOST,
   api: process.env.DS_API_URL,
   token: process.env.DS_API_TOKEN,
@@ -10,4 +10,4 @@ export default registerAs("ds", () => ({
   annotationFDDId: process.env.DS_FDD_RNF_ANNOTATION_ID,
   annotationFEId: process.env.DS_FE_RNF_ANNOTATION_ID,
   annotationDNRId: process.env.DS_DNR_RNF_ANNOTATION_ID,
-}));
+}))

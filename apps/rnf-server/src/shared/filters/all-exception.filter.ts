@@ -1,50 +1,58 @@
-import { ArgumentsHost, BadRequestException, Catch, ExceptionFilter, HttpException, HttpStatus } from "@nestjs/common";
-import { HttpAdapterHost } from "@nestjs/core";
-import { LoggerService } from "@/shared/modules/logger/providers/logger.service";
-import { DsApiError } from "@dnum-mi/ds-api-client";
-import { CollisionException } from "@/shared/exceptions/collision.exception";
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common'
+import { HttpAdapterHost } from '@nestjs/core'
+import { LoggerService } from '@/shared/modules/logger/providers/logger.service'
+import { DsApiError } from '@dnum-mi/ds-api-client'
+import { CollisionException } from '@/shared/exceptions/collision.exception'
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
-  constructor(private readonly httpAdapterHost: HttpAdapterHost, private readonly logger: LoggerService) {}
+  constructor (
+    private readonly httpAdapterHost: HttpAdapterHost,
+    private readonly logger: LoggerService,
+  ) {}
 
-  catch(exception: unknown, host: ArgumentsHost): void {
-    const { httpAdapter } = this.httpAdapterHost;
+  catch (exception: unknown, host: ArgumentsHost): void {
+    const { httpAdapter } = this.httpAdapterHost
 
-    const ctx = host.switchToHttp();
+    const ctx = host.switchToHttp()
 
-    let httpStatus: HttpStatus = exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
-    let message = "no message.";
-    let data = {};
+    let httpStatus: HttpStatus = exception instanceof HttpException
+      ? exception.getStatus()
+      : HttpStatus.INTERNAL_SERVER_ERROR
+    let message = 'no message.'
+    let data = {}
 
     switch (true) {
       case !exception:
-        this.logger.error(new Error("AllException filter caught something that is not defined"));
-        break;
+        this.logger.error(new Error('AllException filter caught something that is not defined'))
+        break
       case exception instanceof DsApiError:
-        this.logger.warn((exception as DsApiError).message);
-        httpStatus = 424;
-        message = (exception as DsApiError).message;
-        this.logger.debug((exception as DsApiError).graphQlResponse as string);
-        break;
+        this.logger.warn((exception as DsApiError).message)
+        httpStatus = 424
+        message = (exception as DsApiError).message
+        this.logger.debug((exception as DsApiError).graphQlResponse as string)
+        break
       case exception instanceof CollisionException:
-        const collisionException = exception as CollisionException;
-        this.logger.log("Collisions have been found with " + collisionException.foundations.map((f) => f.rnfId).join(","));
-        httpStatus = 409;
-        message = (exception as DsApiError).message;
+        const collisionException = exception as CollisionException // eslint-disable-line no-case-declarations
+        this.logger.log(
+          'Collisions have been found with ' +
+          collisionException.foundations.map((f) => f.rnfId).join(','),
+        )
+        httpStatus = 409
+        message = (exception as DsApiError).message
         data = {
           collisionFoundations: collisionException.foundations,
           currentFoundation: collisionException.currentFoundation,
           ds: collisionException.ds,
-        };
-        break;
+        }
+        break
       case exception instanceof HttpException && httpStatus !== HttpStatus.INTERNAL_SERVER_ERROR:
-        message = (exception as HttpException).message;
-        this.logger.warn(exception as HttpException);
-        break;
+        message = (exception as HttpException).message
+        this.logger.warn(exception as HttpException)
+        break
       default:
-        message = "Internal server error";
-        this.logger.error(exception as Error);
+        message = 'Internal server error'
+        this.logger.error(exception as Error)
     }
 
     const responseBody = {
@@ -52,8 +60,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
       message,
       data,
       path: httpAdapter.getRequestUrl(ctx.getRequest()) as string,
-    };
+    }
 
-    httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
+    httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus)
   }
 }

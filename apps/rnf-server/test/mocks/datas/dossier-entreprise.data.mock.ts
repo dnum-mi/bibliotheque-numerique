@@ -96,7 +96,7 @@ export const entrepriseDossierDataMock = {
       stringValue: "",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
+        description: "lorem ipsum",
       },
     },
     {
@@ -106,7 +106,7 @@ export const entrepriseDossierDataMock = {
       stringValue: "Test demo",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lo#rnf-titre-rnf#rem ipsum"
+        description: "lo#rnf-titre-rnf#rem ipsum",
       },
     },
     {
@@ -139,7 +139,7 @@ export const entrepriseDossierDataMock = {
       },
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "#rnf-addresse-rnf#lorem ipsum"
+        description: "#rnf-addresse-rnf#lorem ipsum",
       },
     },
     {
@@ -150,7 +150,7 @@ export const entrepriseDossierDataMock = {
       integerNumber: "4",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
+        description: "lorem ipsum",
       },
     },
     {
@@ -160,7 +160,7 @@ export const entrepriseDossierDataMock = {
       stringValue: "",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
+        description: "lorem ipsum",
       },
     },
     {
@@ -170,7 +170,7 @@ export const entrepriseDossierDataMock = {
       stringValue: "",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
+        description: "lorem ipsum",
       },
       rows: [
         {
@@ -181,9 +181,9 @@ export const entrepriseDossierDataMock = {
               label: "Raison sociale de la personne morale, entreprise ou institution fondatrice",
               stringValue: "Demo Test",
               // TODO: replace this with real value of getCustomChamp
-      champDescriptor: {
-        description: "lorem ipsum"
-      },
+              champDescriptor: {
+                description: "lorem ipsum",
+              },
             },
             {
               id: "Q2hhbXAtNTYy",
@@ -214,9 +214,9 @@ export const entrepriseDossierDataMock = {
                 code: "59",
               },
               // TODO: replace this with real value of getCustomChamp
-      champDescriptor: {
-        description: "lorem ipsum"
-      },
+              champDescriptor: {
+                description: "lorem ipsum",
+              },
             },
             {
               id: "Q2hhbXAtNTYz",
@@ -224,9 +224,9 @@ export const entrepriseDossierDataMock = {
               label: "Activités de la structure fondatrice ",
               stringValue: "Jeux",
               // TODO: replace this with real value of getCustomChamp
-      champDescriptor: {
-        description: "lorem ipsum"
-      },
+              champDescriptor: {
+                description: "lorem ipsum",
+              },
             },
             {
               id: "Q2hhbXAtNTY0",
@@ -234,9 +234,9 @@ export const entrepriseDossierDataMock = {
               label: "Nom du représentant de l'entreprise ou institution fondatrice",
               stringValue: "Jean",
               // TODO: replace this with real value of getCustomChamp
-      champDescriptor: {
-        description: "lorem ipsum"
-      },
+              champDescriptor: {
+                description: "lorem ipsum",
+              },
             },
             {
               id: "Q2hhbXAtNTY1",
@@ -244,9 +244,9 @@ export const entrepriseDossierDataMock = {
               label: "Prénom(s) du représentant de l'entreprise ou institution fondatrice",
               stringValue: "Louis",
               // TODO: replace this with real value of getCustomChamp
-      champDescriptor: {
-        description: "lorem ipsum"
-      },
+              champDescriptor: {
+                description: "lorem ipsum",
+              },
             },
             {
               id: "Q2hhbXAtNTY3",
@@ -255,9 +255,9 @@ export const entrepriseDossierDataMock = {
               stringValue: "28 December 2022",
               date: "2022-12-28",
               // TODO: replace this with real value of getCustomChamp
-      champDescriptor: {
-        description: "lorem ipsum"
-      },
+              champDescriptor: {
+                description: "lorem ipsum",
+              },
             },
             {
               id: "Q2hhbXAtNTY4",
@@ -265,9 +265,9 @@ export const entrepriseDossierDataMock = {
               label: "Lieu de naissance du représentant de l'entreprise ou institution fondatrice",
               stringValue: "Pairs",
               // TODO: replace this with real value of getCustomChamp
-      champDescriptor: {
-        description: "lorem ipsum"
-      },
+              champDescriptor: {
+                description: "lorem ipsum",
+              },
             },
             {
               id: "Q2hhbXAtNTY5",
@@ -275,9 +275,9 @@ export const entrepriseDossierDataMock = {
               label: "Nationalité du représentant de l'entreprise ou institution fondatrice",
               stringValue: "Française",
               // TODO: replace this with real value of getCustomChamp
-      champDescriptor: {
-        description: "lorem ipsum"
-      },
+              champDescriptor: {
+                description: "lorem ipsum",
+              },
             },
             {
               id: "Q2hhbXAtNTcw",
@@ -308,9 +308,9 @@ export const entrepriseDossierDataMock = {
                 code: "59",
               },
               // TODO: replace this with real value of getCustomChamp
-      champDescriptor: {
-        description: "lorem ipsum"
-      },
+              champDescriptor: {
+                description: "lorem ipsum",
+              },
             },
           ],
         },
@@ -323,7 +323,7 @@ export const entrepriseDossierDataMock = {
       stringValue: "",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
+        description: "lorem ipsum",
       },
     },
     {
@@ -333,7 +333,7 @@ export const entrepriseDossierDataMock = {
       stringValue: "",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
+        description: "lorem ipsum",
       },
     },
     {
@@ -343,7 +343,7 @@ export const entrepriseDossierDataMock = {
       stringValue: "test",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
+        description: "lorem ipsum",
       },
     },
     {
@@ -353,7 +353,7 @@ export const entrepriseDossierDataMock = {
       stringValue: "",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
+        description: "lorem ipsum",
       },
       files: [
         {
@@ -373,7 +373,7 @@ export const entrepriseDossierDataMock = {
       values: ["Scientifique", "Culturel"],
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
+        description: "lorem ipsum",
       },
     },
     {
@@ -384,7 +384,7 @@ export const entrepriseDossierDataMock = {
       values: ["Activités politiques"],
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
+        description: "lorem ipsum",
       },
     },
     {
@@ -392,7 +392,7 @@ export const entrepriseDossierDataMock = {
       __typename: "CheckboxChamp",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
+        description: "lorem ipsum",
       },
       label:
         "La fondation d'entreprise envisage-t-elle de financer des actions à l'international ou des organismes dont le siège n'est pas en France ?",
@@ -404,7 +404,7 @@ export const entrepriseDossierDataMock = {
       __typename: "TextChamp",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
+        description: "lorem ipsum",
       },
       label: "Programme d'action pluriannuel de la fondation d'entreprise",
       stringValue: "",
@@ -414,7 +414,7 @@ export const entrepriseDossierDataMock = {
       __typename: "IntegerNumberChamp",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
+        description: "lorem ipsum",
       },
       label: "Montant total du programme d'action pluriannuel",
       stringValue: "3000",
@@ -427,7 +427,7 @@ export const entrepriseDossierDataMock = {
       stringValue: "",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
+        description: "lorem ipsum",
       },
       rows: [
         {
@@ -458,7 +458,7 @@ export const entrepriseDossierDataMock = {
       stringValue: "",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
+        description: "lorem ipsum",
       },
       rows: [
         {
@@ -489,7 +489,7 @@ export const entrepriseDossierDataMock = {
       stringValue: "",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
+        description: "lorem ipsum",
       },
     },
     {
@@ -499,7 +499,7 @@ export const entrepriseDossierDataMock = {
       stringValue: "Personne mandatée par les fondateurs",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
+        description: "lorem ipsum",
       },
     },
     {
@@ -508,7 +508,7 @@ export const entrepriseDossierDataMock = {
       label: "Le mandat de l'un des fondateurs de la fondation d'entreprise",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
+        description: "lorem ipsum",
       },
       stringValue: "",
       files: [],
@@ -519,7 +519,7 @@ export const entrepriseDossierDataMock = {
       label: "Numéro de téléphone du déclarant",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
+        description: "lorem ipsum",
       },
       stringValue: "",
     },
@@ -529,7 +529,7 @@ export const entrepriseDossierDataMock = {
       label: "Pièce(s) justificative(s) supplémentaire(s)",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
+        description: "lorem ipsum",
       },
       stringValue: "",
       files: [],
@@ -540,7 +540,7 @@ export const entrepriseDossierDataMock = {
       label: "Publication Journal Officiel (JOAFE)",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
+        description: "lorem ipsum",
       },
       stringValue: "",
     },
@@ -550,7 +550,7 @@ export const entrepriseDossierDataMock = {
       label: "Préfecture de déclaration",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
+        description: "lorem ipsum",
       },
       stringValue: "75 - Paris",
       departement: {

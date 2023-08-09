@@ -11,7 +11,7 @@ module.exports = {
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "plugin:@typescript-eslint/strict",
-    "standard"
+    "standard",
   ],
   env: {
     node: true,
@@ -26,6 +26,9 @@ module.exports = {
     "@typescript-eslint/no-unsafe-assignment": "off",
     "@typescript-eslint/restrict-template-expressions": "off",
     "max-len": ["error", { code: 120 }],
+    'no-useless-constructor': 'off',
+    'no-irregular-whitespace': 'off',
+    'comma-dangle': ['error', 'always-multiline'],
   },
   overrides: [
     {

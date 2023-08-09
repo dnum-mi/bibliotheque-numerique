@@ -1,46 +1,46 @@
-import { IsDefined, IsString } from "class-validator";
-import { Address } from "@prisma/client";
-import { BaseEntity } from "@/shared/base-entity/base.entity";
+import { IsDefined, IsString } from 'class-validator'
+import { Address } from '@prisma/client'
+import { BaseEntity } from '@/shared/base-entity/base.entity'
 
 export class AddressEntity extends BaseEntity implements Address {
   @IsString()
   @IsDefined()
-  label: string;
+    label: string
 
   @IsString()
   @IsDefined()
-  type: string;
+    type: string
 
   @IsString()
-  streetAddress: string | null;
+    streetAddress: string | null
 
   @IsString()
-  streetNumber: string | null;
+    streetNumber: string | null
 
   @IsString()
-  streetName: string | null;
-
-  @IsString()
-  @IsDefined()
-  postalCode: string;
+    streetName: string | null
 
   @IsString()
   @IsDefined()
-  cityName: string;
+    postalCode: string
 
   @IsString()
   @IsDefined()
-  cityCode: string;
+    cityName: string
 
   @IsString()
-  departmentName: string | null;
+  @IsDefined()
+    cityCode: string
 
   @IsString()
-  departmentCode: string;
+    departmentName: string | null
 
   @IsString()
-  regionName: string | null;
+    departmentCode: string
 
   @IsString()
-  regionCode: string | null;
+    regionName: string | null
+
+  @IsString()
+    regionCode: string | null
 }

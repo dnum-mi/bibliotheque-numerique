@@ -1,67 +1,67 @@
-import { dotationDossierDataMock } from "./datas/dossier-dotation.data.mock";
-import { entrepriseDossierDataMock } from "./datas/dossier-entreprise.data.mock";
-import { DsApiError } from "@dnum-mi/ds-api-client";
-import { dnrDossierDataMock } from "./datas/dossier-dnr.data.mock";
+import { dotationDossierDataMock } from './datas/dossier-dotation.data.mock'
+import { entrepriseDossierDataMock } from './datas/dossier-entreprise.data.mock'
+import { DsApiError } from '@dnum-mi/ds-api-client'
+import { dnrDossierDataMock } from './datas/dossier-dnr.data.mock'
 
 const dossierNotFoundGraphQlError = {
   data: null,
   errors: [
     {
-      message: "Dossier not found",
+      message: 'Dossier not found',
       locations: [
         {
           line: 191,
           column: 5,
         },
       ],
-      path: ["dossier"],
+      path: ['dossier'],
       extensions: {
-        code: "not_found",
+        code: 'not_found',
       },
     },
   ],
-};
+}
 
 const badDossier = {
   champs: [null, null],
-  demarche: { title: "Fake title" },
+  demarche: { title: 'Fake title' },
   instructeurs: [
     {
-      id: "SW5zdHJ1Y3RldXItNA==",
-      email: "yoyo@gmail.com",
+      id: 'SW5zdHJ1Y3RldXItNA==',
+      email: 'yoyo@gmail.com',
     },
   ],
-};
+}
 
 const injectionSqlDossier = {
   ...dotationDossierDataMock,
   champs: dotationDossierDataMock.champs?.map((c) => {
-    if (c.id === "Q2hhbXAtOTI=") {
+    if (c.id === 'Q2hhbXAtOTI=') {
       return {
         ...c,
         stringValue: "test.test@test.fr' AND 1=1'",
-      };
+      }
     }
-    return c;
+    return c
   }),
-};
+}
 
 export const dsServiceMock = {
   getOneDossier: jest.fn().mockImplementation((id: number) => {
     switch (id) {
       case 17:
-        return dotationDossierDataMock;
+        return dotationDossierDataMock
       case 65:
-        return entrepriseDossierDataMock;
+        return entrepriseDossierDataMock
       case 135:
-        return dnrDossierDataMock;
+        return dnrDossierDataMock
       case 500:
-        return injectionSqlDossier;
+        return injectionSqlDossier
       case 37:
-        return badDossier;
+        return badDossier
       default:
-        throw new DsApiError(dossierNotFoundGraphQlError);
+        throw new DsApiError(dossierNotFoundGraphQlError)
     }
   }),
   writeRnfIdInPrivateAnnotation: jest.fn().mockResolvedValue(undefined),
-};
+}

@@ -1,8 +1,8 @@
-import { Champ } from "@dnum-mi/ds-api-client";
-import { AddressChamp } from "@dnum-mi/ds-api-client/dist/@types/types";
-import { Mapper } from "@/modules/ds/objects/types/mapper.type";
+import { Champ } from '@dnum-mi/ds-api-client'
+import { AddressChamp } from '@dnum-mi/ds-api-client/dist/@types/types'
+import { Mapper } from '@/modules/ds/objects/types/mapper.type'
 
-const stringValue = (ch: Champ | null) => ch?.stringValue ?? null;
+const stringValue = (ch: Champ | null) => ch?.stringValue ?? null
 
 export const universalMapper: Mapper = {
   title: stringValue,
@@ -10,10 +10,10 @@ export const universalMapper: Mapper = {
   phone: stringValue,
   type: stringValue,
   address: (ch: AddressChamp | null) => {
-    if (!ch || ch.__typename !== "AddressChamp" || !ch.address) {
-      return null;
+    if (!ch || ch.__typename !== 'AddressChamp' || !ch.address) {
+      return null
     }
-    const address = ch.address;
+    const address = ch.address
     return {
       label: address.label,
       type: address.type,
@@ -27,7 +27,7 @@ export const universalMapper: Mapper = {
       departmentCode: address.departmentCode ?? null,
       regionName: address.regionName ?? null,
       regionCode: address.regionCode ?? null,
-    };
+    }
   },
   personInFoundationToCreate: (ch: Champ) => null,
-};
+}

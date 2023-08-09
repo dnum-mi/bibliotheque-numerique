@@ -1,48 +1,49 @@
-import { Person as PrismaPerson } from "@prisma/client";
-import { IsDate, IsDefined, IsEmail, IsNumber, IsPhoneNumber, IsString } from "class-validator";
-import { AddressEntity } from "@/shared/objects/address/address.entity";
-import { PersonInFoundationEntity } from "@/modules/foundation/objects/person-in-foundation.entity";
-import { BaseEntity } from "@/shared/base-entity/base.entity";
+import { Person as PrismaPerson } from '@prisma/client'
+import { IsDate, IsDefined, IsEmail, IsNumber, IsPhoneNumber, IsString } from 'class-validator'
+import { AddressEntity } from '@/shared/objects/address/address.entity'
+import { PersonInFoundationEntity } from '@/modules/foundation/objects/person-in-foundation.entity'
+import { BaseEntity } from '@/shared/base-entity/base.entity'
 
 export class PersonEntity extends BaseEntity implements PrismaPerson {
   @IsString()
   @IsDefined()
-  lastName: string;
+    lastName: string
 
   @IsString()
   @IsDefined()
-  firstName: string;
+    firstName: string
 
   @IsString()
   @IsDefined()
   @IsEmail()
-  email: string;
+    email: string
 
   @IsString()
   @IsDefined()
   @IsPhoneNumber()
-  phone: string;
+    phone: string
 
   @IsString()
   @IsDefined()
-  profession: string;
+    profession: string
 
   @IsString()
   @IsDefined()
-  nationality: string;
+    nationality: string
 
   @IsDate()
   @IsDefined()
-  bornAt: Date;
+    bornAt: Date
 
   @IsString()
   @IsDefined()
-  bornPlace: string;
+    bornPlace: string
 
   @IsDefined()
   @IsNumber()
-  addressId: number;
-  address: AddressEntity;
+    addressId: number
 
-  foundations?: PersonInFoundationEntity[];
+  address: AddressEntity
+
+  foundations?: PersonInFoundationEntity[]
 }
