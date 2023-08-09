@@ -1,3 +1,5 @@
+// TODO: Remove this eslint-disable
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Module } from '@nestjs/common'
 import { MailerModule } from '@nestjs-modules/mailer'
 import { ConfigModule, ConfigService } from '@nestjs/config'
@@ -33,7 +35,7 @@ import { NodeEnvs } from '../../shared/types/node-env.enum'
         }
 
         const { host, port, from, user, pass } = configService.get('smtp')
-        const transport = {
+        const transport: Record<string, any> = {
           host,
           port,
         }
@@ -47,7 +49,7 @@ import { NodeEnvs } from '../../shared/types/node-env.enum'
           }
         }
 
-        const options = {
+        const options: Record<string, any> = {
           transport,
           template,
         }

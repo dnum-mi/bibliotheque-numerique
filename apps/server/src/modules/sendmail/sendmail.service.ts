@@ -21,9 +21,7 @@ export class SendMailService {
   }
 
   // TODO: A vérifier l'utilité et template à completer
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  public async resetPwd (to: string, urlResetLink: string) {
+  public async resetPwd (to: string, urlResetLink: string): Promise<void> {
     const subject = 'Modifier son mot de passe'
     await this.mailerService.sendMail({
       to,

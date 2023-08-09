@@ -4,8 +4,8 @@ import { Equal, In, LessThan, LessThanOrEqual, MoreThan, MoreThanOrEqual, Not } 
 @Injectable()
 export class FilterPipe implements PipeTransform {
   // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  private _checkAndChangeKey (value: object) {
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/no-explicit-any
+  private _checkAndChangeKey (value: Record<string, any>) {
     if (Object.hasOwn(value, '$in')) {
       return In(value.$in)
     } else if (Object.hasOwn(value, '$gt')) {

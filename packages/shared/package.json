@@ -26,7 +26,7 @@
     "class-validator": "0.14.0"
   },
   "devDependencies": {
-    "@dnum-mi/ds-api-client": "^1.3.0",
+    "@dnum-mi/ds-api-client": "^1.5.1",
     "@nestjs/common": "^9.4.3",
     "nodemon": "2.0.22",
     "rimraf": "^5.0.1",

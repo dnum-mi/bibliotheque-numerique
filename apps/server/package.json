@@ -106,6 +106,7 @@
     "@types/jest": "28.1.8",
     "@types/multer": "^1.4.7",
     "@types/node": "^18.17.0",
+    "@types/nodemailer": "6.4.9",
     "@types/passport-local": "^1.0.35",
     "@types/superagent": "^4.1.18",
     "@types/supertest": "^2.0.12",

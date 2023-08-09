@@ -1,9 +1,11 @@
 import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm'
 import { BaseEntity } from '../../shared/base-entity/base.entity'
 
-export const TypeAuth = {
+export const AuthTypes = {
   BEARER_TOKEN: 'Bearer',
-}
+} as const
+
+export type AuthType = typeof AuthTypes[keyof typeof AuthTypes]
 
 export type TMethod = 'GET' | 'POST';
 
@@ -37,7 +39,7 @@ export class Connector extends BaseEntity {
     query: Record<string, string> // Params are needed for the url, we store the keys and defaultValues
 
   @Column()
-    typeAuth: TypeAuth
+    typeAuth:AuthType
 
   @Column()
     token: string

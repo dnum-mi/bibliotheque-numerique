@@ -12,7 +12,7 @@ import fileConfig from "../../../config/file.config";
 import { ParseToOrganismesModule } from "../parserByConnector/parse_to_organismes.module";
 import { ParseToOrganismesService } from "../parserByConnector/parse_to_organismes.service";
 import { IParseToOrganisme } from "../parserByConnector/parse_to_organisme.interface";
-import { Connector, TypeAuth } from "../../../modules/connector/connector.entity";
+import { Connector, AuthTypes } from "../../../modules/connector/connector.entity";
 import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
 import { faker } from "@faker-js/faker/locale/fr";
 import { getFakeDatasFromRNA, getFakeUpdateOrgFromRNA } from "../../../../test/unit/fake-data/organisme-data.fake-data";
@@ -28,7 +28,7 @@ const connectorTest = (): Partial<Connector> => ({
     query1: faker.datatype.string(5),
     query2: faker.datatype.string(5),
   },
-  typeAuth: TypeAuth.BEARER_TOKEN,
+  typeAuth: AuthTypes.BEARER_TOKEN,
   token: faker.internet.password(),
 });
 

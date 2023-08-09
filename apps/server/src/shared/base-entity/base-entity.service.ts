@@ -7,6 +7,8 @@ import { NotFoundException } from '@nestjs/common'
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
 
 export abstract class BaseEntityService<T extends BaseEntity = BaseEntity> {
+  /* eslint-disable  @typescript-eslint/no-explicit-any */
+
   constructor (protected readonly repo: Repository<T>, protected readonly logger: LoggerService) {}
 
   // TODO: repository should not be used outside the service. When refacto is complete, this should be deleted
@@ -22,7 +24,7 @@ export abstract class BaseEntityService<T extends BaseEntity = BaseEntity> {
 
   async findWithFilter (filter: FindOptionsWhere<T>, relations?: FindOptionsRelations<T>): Promise<T[]> {
     this.logger.verbose('findWithFilter')
-    const query = {}
+    const query: Record<string, any> = {}
     if (relations) {
       query.relations = relations
     }
@@ -36,7 +38,7 @@ export abstract class BaseEntityService<T extends BaseEntity = BaseEntity> {
 
   async findOneById (id: number, relations?: FindOptionsRelations<T>): Promise<T> {
     this.logger.verbose('findOneById')
-    const query = { where: { id } }
+    const query: Record<string, any> = { where: { id } }
     if (relations) {
       query.relations = relations
     }
