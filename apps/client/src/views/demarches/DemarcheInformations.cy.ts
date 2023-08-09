@@ -24,7 +24,7 @@ describe('<DemarcheDescription />', () => {
       useStore.demarche = demarche
     }
 
-    const datas = demarche.demarcheDS.dataJson
+    const datas = demarche.dsDataJson
     cy.mount(DemarcheInformations, { extensions })
     cy.get('label').then(($label) => {
       cy.wrap($label).contains('Description').next().should('contain', datas.description)

@@ -10,14 +10,14 @@ import {
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { FilterPipe } from "../../../shared/pipe/filter.pipe";
-import { DossiersService } from "../providers/dossiers.service";
+import { DossierService } from "../providers/dossier.service";
 import { Dossier } from "../objects/entities/dossier.entity";
 import { DeleteResult } from "typeorm";
 
 @ApiTags("Dossiers")
 @Controller("dossiers")
-export class DossiersController {
-  constructor(private readonly dossiersService: DossiersService) {}
+export class DossierController {
+  constructor(private readonly dossiersService: DossierService) {}
 
   @Get()
   async findAll(): Promise<Dossier[]> {

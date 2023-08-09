@@ -2,8 +2,8 @@
 /* eslint-disable */
 
 import { Test, TestingModule } from "@nestjs/testing";
-import { DossiersController } from "./dossiers.controller";
-import { DossiersService } from "../providers/dossiers.service";
+import { DossierController } from "./dossier.controller";
+import { DossierService } from "../providers/dossier.service";
 import { ConfigModule } from "@nestjs/config";
 import instructionTimeMappingConfig from "../../../plugins/instruction_time/config/instructionTimeMapping.config";
 import { LoggerService } from "../../../shared/modules/logger/logger.service";
@@ -12,17 +12,17 @@ import { Dossier } from "../objects/entities/dossier.entity";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
 import { InstructionTime } from "../../../plugins/instruction_time/instruction_times/instruction_time.entity";
-import { DemarchesModule } from "../../demarches/demarches.module";
-import { Demarche } from "../../demarches/entities/demarche.entity";
+import { DemarcheModule } from "../../demarches/demarche.module";
+import { Demarche } from "../../demarches/objects/entities/demarche.entity";
 import dsConfig from "../../../config/ds.config";
 import fileConfig from "../../../config/file.config";
 import { Field } from "../objects/entities/field.entity";
 import { FieldService } from "../providers/field.service";
 import { DsApiModule } from "../../../shared/modules/ds-api/ds-api.module";
 
-describe("DossiersController", () => {
-  let controller: DossiersController;
-  let service: DossiersService;
+describe("DossierController", () => {
+  let controller: DossierController;
+  let service: DossierService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -30,7 +30,7 @@ describe("DossiersController", () => {
         // TODO: typeorm should not be imported for unit test, neither should it be imported twice for connection and injection
         TypeOrmModule.forRootAsync(typeormFactoryLoader),
         TypeOrmModule.forFeature([InstructionTime, Dossier, Demarche, Field]),
-        DemarchesModule,
+        DemarcheModule,
         DsApiModule,
         ConfigModule.forRoot({
           isGlobal: true,
@@ -38,8 +38,8 @@ describe("DossiersController", () => {
           load: [dsConfig, fileConfig, instructionTimeMappingConfig],
         }),
       ],
-      controllers: [DossiersController],
-      providers: [DossiersService, FieldService],
+      controllers: [DossierController],
+      providers: [DossierService, FieldService],
     })
       .useMocker((token) => {
         if (token === LoggerService) {
@@ -49,8 +49,8 @@ describe("DossiersController", () => {
       })
       .compile();
 
-    controller = module.get<DossiersController>(DossiersController);
-    service = module.get<DossiersService>(DossiersService);
+    controller = module.get<DossierController>(DossierController);
+    service = module.get<DossierService>(DossierService);
   });
 
   it("should be defined", () => {

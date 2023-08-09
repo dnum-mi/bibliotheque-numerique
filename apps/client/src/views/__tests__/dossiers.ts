@@ -146,9 +146,7 @@ export const generateDossierDSPersonnePhysique = () => generateDossierDSByTypeDe
 
 export const generateDossier = () => ({
   id: faker.random.numeric(),
-  dossierDS: {
-    dataJson: generateDossierDS(),
-  },
+  dsDataJson: generateDossierDS(),
   demarche: {
     title: faker.random.word(),
     typeOrganisme: faker.random.word(),

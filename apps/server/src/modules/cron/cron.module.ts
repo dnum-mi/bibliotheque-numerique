@@ -1,12 +1,12 @@
 import { Module } from "@nestjs/common";
 import { CronService } from "./cron.service";
-import { DossiersModule } from "../dossiers/dossiers.module";
+import { DossierModule } from "../dossiers/dossier.module";
 import { JobLogModule } from "../job-log/job-log.module";
-import { DemarchesModule } from "../demarches/demarches.module";
+import { DemarcheModule } from "../demarches/demarche.module";
 import { OrganismesModule } from "../../plugins/organisme/organismes/organismes.module";
 
 @Module({
-  imports: [DossiersModule, DemarchesModule, JobLogModule, OrganismesModule],
+  imports: [DossierModule, DemarcheModule, JobLogModule, OrganismesModule],
   controllers: [],
   providers: [CronService],
 })

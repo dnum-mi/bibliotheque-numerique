@@ -15,20 +15,19 @@ import instructionTimeMappingConfig, {
 } from "../config/instructionTimeMapping.config";
 import { EInstructionTimeState } from "./types/IntructionTime.type";
 import { Dossier } from "../../../modules/dossiers/objects/entities/dossier.entity";
-import { DossierDS } from "../../../modules/dossiers/objects/entities/dossier_ds.entity";
 import MockDate from "mockdate";
 import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
 import { InstructionTime } from "./instruction_time.entity";
-import { getFakeDossierDs, getFakeDossierTest } from "../../../../test/unit/fake-data/dossier.fake-data";
-import { DossiersService } from "../../../modules/dossiers/providers/dossiers.service";
-import { DossiersModule } from "../../../modules/dossiers/dossiers.module";
+import { getFakeDossierTest } from "../../../../test/unit/fake-data/dossier.fake-data";
+import { DossierService } from "../../../modules/dossiers/providers/dossier.service";
+import { DossierModule } from "../../../modules/dossiers/dossier.module";
 import fileConfig from "../../../config/file.config";
 import dsConfig from "../../../config/ds.config";
 import { DsApiModule } from "../../../shared/modules/ds-api/ds-api.module";
 
 describe("InstructionTimesService", () => {
   let service: InstructionTimesService;
-  let dossierService: DossiersService;
+  let dossierService: DossierService;
   let configService: ConfigService;
   let instructionTimeMappingConfigFound: TInstructionTimeMappingConfig["instructionTimeMappingConfig"];
 
@@ -38,7 +37,7 @@ describe("InstructionTimesService", () => {
         // TODO: typeorm should not be imported for unit test, neither should it be imported twice for connection and injection
         TypeOrmModule.forRootAsync(typeormFactoryLoader),
         TypeOrmModule.forFeature([InstructionTime, Dossier]),
-        DossiersModule,
+        DossierModule,
         DsApiModule,
         ConfigModule.forRoot({
           isGlobal: true,
@@ -50,7 +49,7 @@ describe("InstructionTimesService", () => {
     }).compile();
 
     service = module.get<InstructionTimesService>(InstructionTimesService);
-    dossierService = module.get<DossiersService>(DossiersService);
+    dossierService = module.get<DossierService>(DossierService);
     configService = module.get<ConfigService>(ConfigService);
 
     instructionTimeMappingConfigFound = configService.get<
@@ -68,13 +67,12 @@ describe("InstructionTimesService", () => {
   });
 
   it("It should return good annotations", async () => {
-    const fakeDossierDs = getFakeDossierDs();
-    const fakeDossier = getFakeDossierTest(fakeDossierDs as DossierDS);
+    const fakeDossier = getFakeDossierTest(null);
     jest
       .spyOn(dossierService, "findOneById")
       .mockResolvedValueOnce(fakeDossier as Dossier);
 
-    fakeDossier.dossierDS.dataJson.annotations = [
+    fakeDossier.dsDataJson.annotations = [
       {
         id: faker.datatype.uuid(),
         date: "2021-02-01",
@@ -132,13 +130,12 @@ describe("InstructionTimesService", () => {
     const fakeInstrunctionTime: Partial<InstructionTime>[] = Array.from(
       { length: 3 },
       (elt, idx) => {
-        const dossierDs = getFakeDossierDs();
-        const dossier = getFakeDossierTest(dossierDs as DossierDS);
+        const dossier = getFakeDossierTest(null);
         dossier.id = idx + 1;
 
         if (dossier.id === 2) {
-          dossierDs.dataJson.state = DossierState.EnConstruction;
-          dossierDs.dataJson.annotations = [
+          dossier.dsDataJson.state = DossierState.EnConstruction;
+          dossier.dsDataJson.annotations = [
             {
               id: faker.datatype.uuid(),
               date: "2021-02-01",
@@ -915,8 +912,8 @@ describe("InstructionTimesService", () => {
 
       const instructionTime = new InstructionTime();
       instructionTime.dossier = new Dossier();
-      instructionTime.dossier.dossierDS = new DossierDS();
-      instructionTime.dossier.dossierDS.dataJson = data.dossier;
+      instructionTime.dossier.dsDataJson = getFakeDossierTest(null).dsDataJson;
+      instructionTime.dossier.dsDataJson = data.dossier;
       if (data.expected.now) {
         MockDate.set(data.expected.now);
       }

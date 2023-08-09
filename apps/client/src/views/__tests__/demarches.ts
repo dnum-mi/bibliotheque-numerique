@@ -22,54 +22,50 @@ export const generateDemarche = () => ({
   state: 'publiee',
   title: faker.lorem.sentence(5),
   typeOrganisme: getTypeOrganisme(),
-  demarcheDS: {
-    dataJson: {
+  lastSynchronisedAt: faker.date.past().toISOString(),
+  dsDataJson: {
+    id: faker.datatype.string(29),
+    state: 'publiee',
+    title: faker.lorem.sentence(5),
+    number: faker.datatype.number(),
+    declarative: 'accepte',
+    description: faker.lorem.sentence(5),
+    dateCreation: faker.date.past().toISOString(),
+    dateFermeture: faker.date.past().toISOString(),
+    datePublication: faker.date.past().toISOString(),
+    dateDepublication: faker.date.past().toISOString(),
+    dateDerniereModification: faker.date.past().toISOString(),
+    service: {
       id: faker.datatype.string(29),
-      state: 'publiee',
-      title: faker.lorem.sentence(5),
-      number: faker.datatype.number(),
-      declarative: 'accepte',
-      description: faker.lorem.sentence(5),
-      dateCreation: faker.date.past().toISOString(),
-      dateFermeture: faker.date.past().toISOString(),
-      datePublication: faker.date.past().toISOString(),
-      dateDepublication: faker.date.past().toISOString(),
-      dateDerniereModification: faker.date.past().toISOString(),
-      service: {
-        id: faker.datatype.string(29),
-        nom: 'DLPAJ',
-        siret: faker.random.numeric(14),
-        organisme: 'Direction des libertés publiques et des affaires juridiques',
-        typeOrganisme: 'administration_centrale',
-      },
-      revisions: getRevisions(),
-      draftRevision: getRevisions(),
-      publishedRevision: () => {
-        const revision = getRevision()
-        revision.annotationDescriptors.push({
-          id: faker.datatype.string(29),
-          type: 'text',
-          label: "Type d'organisme",
-          options: null,
-          required: false,
-          description: getTypeOrganisme(),
-          champDescriptors: null,
-        })
-        return revision
-      },
-      groupeInstructeurs: Array.from({ length: faker.datatype.number({ min: 1, max: 20 }) }, () => ({
-        id: faker.datatype.string(29),
-        label: faker.random.words(5),
-        number: faker.datatype.number(),
-        instructeurs: Array.from({ length: faker.datatype.number({ min: 1, max: 20 }) }, () => ({
-          id: faker.datatype.string(29),
-          email: faker.internet.email(),
-        })),
-      })),
+      nom: 'DLPAJ',
+      siret: faker.random.numeric(14),
+      organisme: 'Direction des libertés publiques et des affaires juridiques',
+      typeOrganisme: 'administration_centrale',
     },
-    dsUpdateAt: faker.date.past().toISOString(),
-    createAt: faker.date.past().toISOString(),
-    updateAt: faker.date.past().toISOString(),
+    revisions: getRevisions(),
+    draftRevision: getRevisions(),
+    publishedRevision: () => {
+      const revision = getRevision()
+      revision.annotationDescriptors.push({
+        id: faker.datatype.string(29),
+        type: 'text',
+        label: "Type d'organisme",
+        options: null,
+        required: false,
+        description: getTypeOrganisme(),
+        champDescriptors: null,
+      })
+      return revision
+    },
+    groupeInstructeurs: Array.from({ length: faker.datatype.number({ min: 1, max: 20 }) }, () => ({
+      id: faker.datatype.string(29),
+      label: faker.random.words(5),
+      number: faker.datatype.number(),
+      instructeurs: Array.from({ length: faker.datatype.number({ min: 1, max: 20 }) }, () => ({
+        id: faker.datatype.string(29),
+        email: faker.internet.email(),
+      })),
+    })),
   },
 })
 

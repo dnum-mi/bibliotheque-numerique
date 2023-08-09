@@ -3,12 +3,6 @@ import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import { loggerServiceMock } from "../../../../test/mock/logger-service.mock";
 import { FieldService } from "./field.service";
 import { Dossier as TDossier } from "@dnum-mi/ds-api-client/dist/@types/types";
-import { EntityManager } from "typeorm";
-
-const fakeTransactionalEntityManager = {
-  delete: jest.fn().mockResolvedValue(true),
-  save: jest.fn().mockImplementation((a, b) => b),
-};
 
 describe("FieldService", () => {
   let service: FieldService;
@@ -21,7 +15,10 @@ describe("FieldService", () => {
     })
       .useMocker((token) => {
         if (token === "FieldRepository") {
-          return {};
+          return {
+            delete: jest.fn().mockResolvedValue(true),
+            save: jest.fn().mockImplementation((a) => a),
+          };
         } else if (token === LoggerService) {
           return loggerServiceMock;
         }
@@ -50,10 +47,9 @@ describe("FieldService", () => {
         },
       ],
     };
-    const fields = await service.overwriteFieldsFromDataJsonWithTransaction(
+    const fields = await service.overwriteFieldsFromDataJson(
       raw as Partial<TDossier>,
       42,
-      fakeTransactionalEntityManager as unknown as EntityManager,
     );
     expect(fields).toEqual([
       {
@@ -86,10 +82,9 @@ describe("FieldService", () => {
       state: "en cours",
       champs: [],
     };
-    const fields = await service.overwriteFieldsFromDataJsonWithTransaction(
+    const fields = await service.overwriteFieldsFromDataJson(
       raw as Partial<TDossier>,
       42,
-      fakeTransactionalEntityManager as unknown as EntityManager,
     );
     expect(fields).toEqual([
       {
@@ -180,10 +175,9 @@ describe("FieldService", () => {
         },
       ],
     };
-    const fields = await service.overwriteFieldsFromDataJsonWithTransaction(
+    const fields = await service.overwriteFieldsFromDataJson(
       raw as Partial<TDossier>,
       42,
-      fakeTransactionalEntityManager as unknown as EntityManager,
     );
     expect(fields).toMatchObject([
       {

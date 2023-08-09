@@ -12,7 +12,7 @@ import DossierMessages from './DossierMessages.vue'
 
 const dossierStore = useDossierStore()
 const dossier = computed<object>(() => dossierStore?.dossier || {})
-const dossierDS = computed<object>(() => dossierStore?.dossier?.dossierDS?.dataJson || {})
+const dossierDS = computed<object>(() => dossierStore?.dossier?.dsDataJson || {})
 
 const tabTitles = [
   {

@@ -21,7 +21,7 @@ describe('<DemarcheService />', () => {
         VueDsfr,
       ],
     }
-    const service = demarche.demarcheDS.dataJson.service
+    const service = demarche.dsDataJson.service
     cy.mount(DemarcheService, { extensions })
     cy.get('label').then(($label) => {
       cy.wrap($label).contains('Nom').next().should('contain', service.nom)

@@ -11,12 +11,11 @@ import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-load
 import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import { loggerServiceMock } from "../../../../test/mock/logger-service.mock";
 import {
-  getFakeDossierDs,
   getFakeDossierTest,
 } from "../../../../test/unit/fake-data/dossier.fake-data";
 import { getFakeInstructionTime } from "../../../../test/unit/fake-data/instruction-time.fake-data";
 import { InstructionTime } from "./instruction_time.entity";
-import { DossiersModule } from "../../../modules/dossiers/dossiers.module";
+import { DossierModule } from "../../../modules/dossiers/dossier.module";
 import { Dossier } from "../../../modules/dossiers/objects/entities/dossier.entity";
 import dsConfig from "../../../config/ds.config";
 import fileConfig from "../../../config/file.config";
@@ -32,7 +31,7 @@ describe("InstructionTimesController", () => {
         // TODO: typeorm should not be imported for unit test, neither should it be imported twice for connection and injection
         TypeOrmModule.forRootAsync(typeormFactoryLoader),
         TypeOrmModule.forFeature([InstructionTime, Dossier]),
-        DossiersModule,
+        DossierModule,
         DsApiModule,
         ConfigModule.forRoot({
           isGlobal: true,
@@ -57,11 +56,9 @@ describe("InstructionTimesController", () => {
     expect(controller).toBeDefined();
   });
 
-  const dossierDs = getFakeDossierDs();
-  const dossier = getFakeDossierTest(dossierDs as any);
+  const dossier = getFakeDossierTest(null);
   const instructionTime = getFakeInstructionTime(dossier as any);
-  const dossierDs2 = getFakeDossierDs();
-  const dossier2 = getFakeDossierTest(dossierDs2 as any);
+  const dossier2 = getFakeDossierTest(null);
   const instructionTime2 = getFakeInstructionTime(dossier2 as any);
 
   describe("findAll", () => {

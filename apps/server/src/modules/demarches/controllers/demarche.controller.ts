@@ -16,29 +16,27 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
-import { DemarchesService } from "../providers/demarches.service";
+import { DemarcheService } from "../providers/demarche.service";
 
 import { FilterPipe } from "../../../shared/pipe/filter.pipe";
-import { DemarchesDSService } from "../providers/demarches_ds.service";
 import {
   PermissionsGuard,
   RequirePermissions,
 } from "../../roles/providers/permissions.guard";
 import { PermissionName } from "../../../shared/types/Permission.type";
 import { filterObjectFields } from "@biblio-num/shared";
-import { DossiersDSService } from "../../dossiers/providers/dossiers_ds.service";
 import { LoggerService } from "../../../shared/modules/logger/logger.service";
-import { Demarche } from "../entities/demarche.entity";
+import { Demarche } from "../objects/entities/demarche.entity";
 import { Dossier } from "../../dossiers/objects/entities/dossier.entity";
+import { DemarcheSynchroniseService } from "../providers/demarche-synchronise.service";
 
 @ApiTags("Demarches")
 @UseGuards(PermissionsGuard)
 @Controller("demarches")
-export class DemarchesController {
+export class DemarcheController {
   constructor(
-    private readonly demarcheService: DemarchesService,
-    private readonly demarchesDSServices: DemarchesDSService,
-    private readonly dossierDSServices: DossiersDSService,
+    private readonly demarcheService: DemarcheService,
+    private readonly demarcheSynchroniseService: DemarcheSynchroniseService,
     private readonly logger: LoggerService,
   ) {
     this.logger.setContext(this.constructor.name);
@@ -129,52 +127,29 @@ export class DemarchesController {
   }
 
   @Post("create")
-  // @RequirePermissions() // TODO: only superadmin should be able
+  // @RequirePermissions() // TODO: manage permissions
   async create(
-    @Body("idDs", ParseIntPipe) idDs: number,
+    @Body("idDs", ParseIntPipe) dsId: number,
   ): Promise<{ message: string }> {
-    const demarche = await this.demarcheService.findByDsId(idDs);
-
-    if (demarche)
-      return { message: `Demarche id: ${idDs} exists, nothing to do.` };
-
-    // TODO: Run this upsert in a Job
-    await this.demarchesDSServices.upsertDemarchesDSAndDemarches([idDs]);
-
-    return { message: `Demarche id: ${idDs} create success!` };
+    await this.demarcheSynchroniseService.createAndSynchronise(dsId);
+    return { message: `Demarche with DS id ${dsId} has been created.` };
   }
 
   @Post("synchro-dossiers")
-  // @RequirePermissions() // TODO: only superadmin should be able
+  // @RequirePermissions() // TODO: manage permissions
   async synchroDossiers(
     @Body("idDs", ParseIntPipe) idDs: number,
   ): Promise<{ message: string }> {
-    const exist = await this.demarcheService.repository.exist({
-      where: { demarcheDS: { id: idDs } },
-    });
-    if (!exist) {
-      // TODO: if not superadmin, return 404 here
-      // throw new NotFoundException(`Demarche id: ${id} n'existe pas.`);
-      await this.demarchesDSServices.upsertDemarchesDSAndDemarches([idDs]);
-    }
-    const demarche = await this.demarcheService.findByDsId(idDs);
-    if (!demarche) {
-      throw new NotFoundException(`Demarche with idDs: ${idDs} n'existe pas.`);
-    }
-    await this.dossierDSServices.upsertDemarcheDossiersDS(
-      demarche.demarcheDS.id,
-    );
-    return {
-      message: `Les dossiers de la demarche id ${idDs} sont synchronisés.`,
-    };
+    await this.demarcheSynchroniseService.synchroniseOneDemarche(idDs);
+    return { message: `Demarche with DS id ${idDs} has been synchronised.` };
   }
 
-  @Patch(":id")
+  @Patch(":dsId")
   @RequirePermissions()
   async updateDemarche(
-    @Param("id", ParseIntPipe) id: number,
+    @Param("dsId", ParseIntPipe) dsId: number,
     @Body() demarche: Partial<Demarche>,
   ): Promise<void> {
-    await this.demarcheService.updateDemarche(id, demarche);
+    await this.demarcheService.updateWithDsId(dsId, demarche);
   }
 }

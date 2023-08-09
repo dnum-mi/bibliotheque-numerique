@@ -10,7 +10,7 @@ describe('<DossierTitle />', () => {
     const datas = generateDossier()
     cy.mount(DossierTitle, { props: { datas } })
     cy.get('.fr-container')
-      .should('contain', datas.dossierDS.dataJson.number)
+      .should('contain', datas.dsDataJson.number)
       .should('contain', datas.demarche.title)
       .should('contain', datas.demarche.typeOrganisme)
   })

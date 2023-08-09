@@ -4,12 +4,13 @@ import { LoggerService } from "../modules/logger/logger.service";
 import { DataSource } from "typeorm";
 import { DataSourceOptions } from "typeorm/data-source/DataSourceOptions";
 import typeormNestConfig from "../../config/typeorm-nest.config";
+import configuration from "../../config/configuration";
 
 export const typeormFactoryLoader = {
   imports: [
     ConfigModule.forRoot({
       cache: true,
-      load: [typeormNestConfig],
+      load: [configuration, typeormNestConfig],
     }),
     LoggerModule,
   ],

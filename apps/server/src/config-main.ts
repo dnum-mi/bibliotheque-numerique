@@ -7,6 +7,7 @@ import { LoggerService } from "./shared/modules/logger/logger.service";
 import { HttpAdapterHost } from "@nestjs/core";
 import { QueryFailedFilter } from "./shared/exceptions/filters/query-failed.filter";
 import { AllExceptionsFilter } from "./shared/exceptions/filters/all-exception.filter";
+import { AxiosExceptionFilter } from "./shared/exceptions/filters/axios-exception.filter";
 
 export const configMain = async (
   app: INestApplication,
@@ -31,16 +32,20 @@ export const configMain = async (
   );
   let exceptionFilterLogger: LoggerService = loggerService;
   let queryFailedFilterLogger: LoggerService = loggerService;
+  let axiosFailedErrorLogger: LoggerService = loggerService;
   if (!configService.get("isTest")) {
     exceptionFilterLogger = new LoggerService(configService);
     exceptionFilterLogger.setContext("AllExceptionsFilter");
     queryFailedFilterLogger = new LoggerService(configService);
     queryFailedFilterLogger.setContext("QueryFailedFilter");
+    axiosFailedErrorLogger = new LoggerService(configService);
+    axiosFailedErrorLogger.setContext("AxiosExceptionFilter");
   }
   // order is important here, from most generic to most specific
   app.useGlobalFilters(
     new AllExceptionsFilter(httpAdapterHost, exceptionFilterLogger),
     new QueryFailedFilter(httpAdapterHost, queryFailedFilterLogger),
+    new AxiosExceptionFilter(httpAdapterHost, axiosFailedErrorLogger),
   );
   app.useGlobalPipes(new ValidationPipe());
   app.use(passport.initialize());

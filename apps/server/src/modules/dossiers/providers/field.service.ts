@@ -2,19 +2,20 @@ import { Injectable } from "@nestjs/common";
 import { BaseEntityService } from "../../../shared/base-entity/base-entity.service";
 import { Field } from "../objects/entities/field.entity";
 import { InjectRepository } from "@nestjs/typeorm";
-import { EntityManager, Repository } from "typeorm";
+import { Repository } from "typeorm";
 import { LoggerService } from "../../../shared/modules/logger/logger.service";
 import { Dossier as TDossier } from "@dnum-mi/ds-api-client/dist/@types/types";
 
 import {
   DsChampType,
   DsChampTypeKeys,
+  giveTypeFromDsChampType,
 } from "../objects/enums/ds-champ-type.enum";
 import {
   FormatFunctionRef,
   FormatFunctionRefKeys,
 } from "@biblio-num/shared/dist";
-import { FieldType, FieldTypeKeys } from "../objects/enums/field-type.enum";
+import { FieldType } from "../objects/enums/field-type.enum";
 import { CreateFieldDto } from "../objects/dto/fields/create-field.dto";
 import { CustomChamp } from "@dnum-mi/ds-api-client/src/@types/types";
 import { dossierFields } from "../objects/constante/dossier-fields-record.const";
@@ -46,21 +47,6 @@ export class FieldService extends BaseEntityService<Field> {
     }
   }
 
-  static giveTypeFromDsChampType(type: DsChampTypeKeys): FieldTypeKeys {
-    switch (type) {
-      case DsChampType.CheckboxChamp:
-        return FieldType.boolean;
-      case DsChampType.DatetimeChamp:
-      case DsChampType.DateChamp:
-        return FieldType.date;
-      case DsChampType.IntegerNumberChamp:
-      case DsChampType.DecimalNumberChamp:
-        return FieldType.number;
-      default:
-        return FieldType.string;
-    }
-  }
-
   private _createFieldsFromRawChamps(
     champs: Array<RawChamp>,
     dossierId: number,
@@ -84,7 +70,7 @@ export class FieldService extends BaseEntityService<Field> {
           fieldSource: FieldSource.champs,
           parentRowIndex: parentRow,
           formatFunctionRef: FieldService.giveFormatFunctionRef(type),
-          type: FieldService.giveTypeFromDsChampType(type),
+          type: giveTypeFromDsChampType(type),
           rawJson: champ,
           children:
             champ.__typename === DsChampType.RepetitionChamp
@@ -153,14 +139,30 @@ export class FieldService extends BaseEntityService<Field> {
     return [...champsFields, ...dossierFields];
   }
 
-  async overwriteFieldsFromDataJsonWithTransaction(
+  async overwriteFieldsFromDataJson(
     dataJson: Partial<TDossier>,
     dossierId: number,
-    transactionalEntityManager: EntityManager,
   ): Promise<Field[]> {
     this.logger.verbose("createFieldsFromDataJsonWithTransaction");
     const fields = this._createFieldsFromDataJson(dataJson, dossierId);
-    await transactionalEntityManager.delete(Field, { dossierId });
-    return transactionalEntityManager.save(Field, fields);
+    await this.repo.delete({ dossierId });
+    // TODO: supprimer les fichiers S3
+    return this.repo.save(fields);
   }
 }
+
+/*
+   solution 1: mettre des uuid partout
+   solution 2: supprimer tous les champs et les insérer (actuel)
+      => supprimer tous les fichiers du s3 et les réuploder
+
+   solution 3: faire un upsert manuel
+       - récupérer les champs existants
+       - supprimer les champs qui ne sont plus dans le dossier
+        - mettre à jour les champs qui ont changé
+        - créer les nouveaux champs
+
+
+   this.repo.upsert([
+   ])
+ */

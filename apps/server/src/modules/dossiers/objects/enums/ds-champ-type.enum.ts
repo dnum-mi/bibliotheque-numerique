@@ -1,3 +1,6 @@
+import { Champ } from "@dnum-mi/ds-api-client/src/@types/types";
+import { FieldType, FieldTypeKeys } from "./field-type.enum";
+
 export const DsChampType = {
   UnknownChamp: "UnknownChamp",
   AddressChamp: "AddressChamp",
@@ -24,3 +27,30 @@ export const DsChampType = {
 };
 
 export type DsChampTypeKeys = (typeof DsChampType)[keyof typeof DsChampType];
+
+export const giveTypeFromDsChampType = (
+  type: DsChampTypeKeys,
+): FieldTypeKeys => {
+  switch (type) {
+    case DsChampType.CheckboxChamp:
+      return FieldType.boolean;
+    case DsChampType.DatetimeChamp:
+    case DsChampType.DateChamp:
+      return FieldType.date;
+    case DsChampType.IntegerNumberChamp:
+    case DsChampType.DecimalNumberChamp:
+      return FieldType.number;
+    case DsChampType.PieceJustificativeChamp:
+    case DsChampType.TitreIdentiteChamp:
+      return FieldType.file;
+    default:
+      return FieldType.string;
+  }
+};
+
+export const isRepetitionChamp = (champ: Champ): boolean =>
+  champ["__typename"] === DsChampType.RepetitionChamp;
+
+export const isFileChamp = (champ: Champ): boolean =>
+  giveTypeFromDsChampType(champ["__typename"] as DsChampTypeKeys) ===
+  FieldType.file;

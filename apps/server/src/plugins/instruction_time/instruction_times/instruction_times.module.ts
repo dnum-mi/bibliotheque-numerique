@@ -5,7 +5,7 @@ import { ConfigModule } from "@nestjs/config";
 import instructionTimeMappingConfig from "../config/instructionTimeMapping.config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { InstructionTime } from "./instruction_time.entity";
-import { DossiersModule } from "../../../modules/dossiers/dossiers.module";
+import { DossierModule } from "../../../modules/dossiers/dossier.module";
 
 @Module({
   imports: [
@@ -15,7 +15,7 @@ import { DossiersModule } from "../../../modules/dossiers/dossiers.module";
       load: [instructionTimeMappingConfig],
     }),
     TypeOrmModule.forFeature([InstructionTime]),
-    forwardRef(() => DossiersModule),
+    forwardRef(() => DossierModule),
   ],
   controllers: [InstructionTimesController],
   providers: [InstructionTimesService],

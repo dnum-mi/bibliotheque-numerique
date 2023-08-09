@@ -9,7 +9,7 @@ import { loggerServiceMock } from "../../mock/logger-service.mock";
 import { mailerServiceMock } from "../../mock/mailer-service.mock";
 import { MailerService } from "@nestjs-modules/mailer";
 
-export class CTestingModuleFactory {
+export class TestingModuleFactory {
   app: INestApplication;
   mailerService = mailerServiceMock;
 

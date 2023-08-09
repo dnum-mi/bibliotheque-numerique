@@ -17,6 +17,9 @@ export default registerAs("database", () => {
         synchronize: true,
       };
     default:
-      return options();
+      return {
+        ...options(),
+        synchronize: process.env.TYPEORM_FORCE_SYNCHRONIZE === "true",
+      };
   }
 });

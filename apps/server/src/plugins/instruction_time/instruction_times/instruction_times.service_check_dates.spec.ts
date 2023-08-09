@@ -10,11 +10,10 @@ import configuration from "../../../config/configuration";
 import instructionTimeMappingConfig, {
   keyInstructionTime,
 } from "../config/instructionTimeMapping.config";
-import { DossierDS } from "../../../modules/dossiers/objects/entities/dossier_ds.entity";
 import MockDate from "mockdate";
 import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
 import { InstructionTime } from "./instruction_time.entity";
-import { DossiersModule } from "../../../modules/dossiers/dossiers.module";
+import { DossierModule } from "../../../modules/dossiers/dossier.module";
 import { Dossier } from "../../../modules/dossiers/objects/entities/dossier.entity";
 import dsConfig from "../../../config/ds.config";
 import fileConfig from "../../../config/file.config";
@@ -30,7 +29,7 @@ describe("InstructionTimesService, Check Date", () => {
         // TODO: typeorm should not be imported for unit test, neither should it be imported twice for connection and injection
         TypeOrmModule.forRootAsync(typeormFactoryLoader),
         TypeOrmModule.forFeature([InstructionTime, Dossier]),
-        DossiersModule,
+        DossierModule,
         DsApiModule,
         ConfigModule.forRoot({
           isGlobal: true,
@@ -98,10 +97,10 @@ describe("InstructionTimesService, Check Date", () => {
       secondReceip,
       dateIntentOppo,
     } = argTocheck;
-    const dossier: DossierDS = new DossierDS();
-    dossier.dataJson = {};
-    dossier.dataJson.state = state;
-    dossier.dataJson.datePassageEnInstruction = dateInstrution;
+    const dossier: Dossier = new Dossier();
+    dossier.dsDataJson = {};
+    dossier.dsDataJson.state = state;
+    dossier.dsDataJson.datePassageEnInstruction = dateInstrution;
     const instuctionTimes = {
       [keyInstructionTime.DATE_REQUEST1]: firstDemand,
       [keyInstructionTime.DATE_RECEIPT1]: firstReceip,
@@ -110,7 +109,7 @@ describe("InstructionTimesService, Check Date", () => {
       [keyInstructionTime.DATE_RECEIPT2]: secondReceip,
       [keyInstructionTime.DATE_INTENT_OPPOSITION]: dateIntentOppo,
     };
-    return service.checkValidity(dossier.dataJson, instuctionTimes);
+    return service.checkValidity(dossier.dsDataJson, instuctionTimes);
   }
 
   it("In building: Should check of validities of date", () => {

@@ -420,8 +420,8 @@ importers:
         specifier: workspace:^
         version: link:../../packages/shared
       '@dnum-mi/ds-api-client':
-        specifier: ^1.5.0
-        version: 1.5.0
+        specifier: ^1.5.1
+        version: 1.5.1
       '@nest-middlewares/morgan':
         specifier: 7.0.1
         version: 7.0.1(@nestjs/common@10.1.2)
@@ -2704,8 +2704,8 @@ packages:
       - encoding
     dev: true
 
-  /@dnum-mi/ds-api-client@1.4.1:
-    resolution: {integrity: sha512-fDIqSvfuJ9tfTXd7WGEROgMv16ZK3BeT7sUeD1ZOW7cspLzHT6dbgfP4yjEj7BcdWcaZ5hlNyRpfAbjHGEM+5g==}
+  /@dnum-mi/ds-api-client@1.5.0:
+    resolution: {integrity: sha512-9J8YHPYeEBKoc3PMH3UBOZQloXcjp/8MwSn/hn3VwowbrDNggAFjuyBicL55AtyLEGo1SRtCHpUF9O2P1VZl5g==}
     engines: {node: '>=16.0.0', npm: '>=7.10.0'}
     dependencies:
       graphql: 16.6.0
@@ -2714,8 +2714,8 @@ packages:
       - encoding
     dev: false
 
-  /@dnum-mi/ds-api-client@1.5.0:
-    resolution: {integrity: sha512-9J8YHPYeEBKoc3PMH3UBOZQloXcjp/8MwSn/hn3VwowbrDNggAFjuyBicL55AtyLEGo1SRtCHpUF9O2P1VZl5g==}
+  /@dnum-mi/ds-api-client@1.5.1:
+    resolution: {integrity: sha512-V1Ar+PT4ECqn2WDq0Ny6ymX3pd6DPgr6vNPHjmhOnBca2m3Ph/JVHkten38gIWAkVm9DcY42mOcbnFmmsvAWBA==}
     engines: {node: '>=16.0.0', npm: '>=7.10.0'}
     dependencies:
       graphql: 16.6.0

@@ -16,6 +16,6 @@ export const options = (): DataSourceOptions =>
     entities: [resolve(__dirname, "../src/**/**.entity.{ts,js}")],
     migrations: [
       resolve(__dirname, "./migrations/*.{ts,js}"),
-      resolve(__dirname, "./src/plugins/**/db/migrations/*.{ts,js}"),
+      resolve(__dirname, "../src/plugins/migrations/*.{ts,js}"),
     ],
   } as DataSourceOptions);

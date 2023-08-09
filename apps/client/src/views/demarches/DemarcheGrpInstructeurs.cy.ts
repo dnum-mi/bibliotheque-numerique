@@ -27,7 +27,7 @@ describe('<DemarcheGrpInstructeurs />', () => {
 
     cy.get('h3').should('contain', 'Groupe Instructeurs')
     cy.get('section').then($section => {
-      for (const grp of demarche.demarcheDS.dataJson?.groupeInstructeurs) {
+      for (const grp of demarche.dsDataJson?.groupeInstructeurs) {
         cy.wrap($section)
           .contains(grp.label)
           .click()

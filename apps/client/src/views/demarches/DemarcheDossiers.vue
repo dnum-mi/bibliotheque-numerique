@@ -17,7 +17,7 @@ const demarcheStore = useDemarcheStore()
 const userStore = useUserStore()
 
 const title = computed<string>(() => demarcheStore.demarche?.title || '')
-const number = computed<string>(() => demarcheStore.demarche?.demarcheDS?.dataJson?.number || '')
+const number = computed<string>(() => demarcheStore.demarche?.dsDataJson?.number || '')
 const demarche = computed<object>(() => demarcheStore.demarche || {})
 const headerDossiers = computed<object[]>(() => demarcheStore.hearderListDossier || [])
 const rowDatas = computed(() => demarcheStore.rowDatasDossiers || [])
@@ -131,7 +131,7 @@ function selectTab (idx:number) {
         :selected="selectedTabIndex === 2"
       >
         <DemarcheConfigurations
-          :data-json="demarche?.demarcheDS?.dataJson"
+          :data-json="demarche?.dsDataJson"
           class="fr-pt-3w"
         />
       </DsfrTabContent>

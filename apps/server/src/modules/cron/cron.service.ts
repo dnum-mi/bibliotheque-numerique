@@ -7,12 +7,11 @@ import { ConfigService } from "@nestjs/config";
 import { LoggerService } from "../../shared/modules/logger/logger.service";
 import { SchedulerRegistry } from "@nestjs/schedule";
 import { CronJob } from "cron";
-import { DemarchesDSService } from "../demarches/providers/demarches_ds.service";
-import { DossiersDSService } from "../dossiers/providers/dossiers_ds.service";
 import { JobLogService } from "../job-log/providers/job-log.service";
 import { JobNames } from "./job-name.enum";
-import { TMapperJobs } from "./mapper-jobs.type";
+import { DemarcheSynchroniseService } from "../demarches/providers/demarche-synchronise.service";
 import { OrganismesService } from "../../plugins/organisme/organismes/organismes.service";
+import { TMapperJobs } from "./mapper-jobs.type";
 
 @Injectable()
 export class CronService implements OnApplicationBootstrap, OnModuleInit {
@@ -20,9 +19,8 @@ export class CronService implements OnApplicationBootstrap, OnModuleInit {
     private config: ConfigService,
     private logger: LoggerService,
     private schedulerRegistry: SchedulerRegistry,
-    private demarcheDsService: DemarchesDSService,
-    private dossierDsService: DossiersDSService,
     private jobLogService: JobLogService,
+    private demarcheSynchroniseService: DemarcheSynchroniseService,
     private OrganismeService: OrganismesService,
   ) {
     this.logger.setContext(this.constructor.name);
@@ -75,32 +73,19 @@ export class CronService implements OnApplicationBootstrap, OnModuleInit {
     const jobLog = await this.jobLogService.createJobLog(
       JobNames.FETCH_DATA_FROM_DS,
     );
-    let thereWasAnError = false;
     // TODO: replace the behavior here when we have true logs.
     this.logger.startRegisteringLogs();
-    this.logger.log(`Upserting demarche from DS.`);
-    let demarcheIds: number[] = [];
+    this.logger.log(`Synchronising all demarche with 'Démarches simplifiées'.`);
     try {
-      demarcheIds = await this.demarcheDsService.upsertAllDemarche();
+      await this.demarcheSynchroniseService.synchroniseAllDemarches();
     } catch (e) {
-      thereWasAnError = true;
-    }
-    this.logger.log(`Upserting dossier forEach demarche.`);
-    for (const demarcheId of demarcheIds) {
-      this.logger.log(`Upserting Dossier for demarche number: ${demarcheId}`);
-      try {
-        await this.dossierDsService.upsertDemarcheDossiersDS(demarcheId);
-      } catch (e) {
-        thereWasAnError = true;
-      }
-    }
-    this.logger.log("End of DS-data upserting.");
-    const logs = this.logger.stopRegisteringLog();
-    if (thereWasAnError) {
+      const logs = this.logger.stopRegisteringLog();
       this.jobLogService.setJobLogFailure(jobLog.id, logs.join("\n"));
-    } else {
+    } finally {
+      const logs = this.logger.stopRegisteringLog();
       this.jobLogService.setJobLogSuccess(jobLog.id, logs.join("\n"));
     }
+    this.logger.log("End synchronising.");
   }
 
   private async jobUpdateOrgnanisme(): Promise<void> {

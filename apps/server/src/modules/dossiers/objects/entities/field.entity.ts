@@ -21,7 +21,7 @@ import { FieldSource, FieldSourceKeys } from "../enums/field-source.enum";
 export const fieldUniqueFields = ["dossierId", "dsFieldId", "parentRowIndex"];
 
 @Entity("fields")
-@Unique(fieldUniqueFields)
+@Unique("UQ_FIELD", fieldUniqueFields)
 export class Field extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;

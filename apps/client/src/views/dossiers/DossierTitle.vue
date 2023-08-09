@@ -12,7 +12,7 @@ const orgRef = computed(() => props.datas?.organisme?.id || '')
 const orgName = computed(() => props.datas?.organisme?.title || '')
 const orgType = computed(() => props.datas?.demarche?.typeOrganisme || '')
 const procedureName = computed(() => props.datas?.demarche?.title || '')
-const idDossier = computed(() => props.datas?.dossierDS?.dataJson.number || '')
+const idDossier = computed(() => props.datas?.dsDataJson?.number || '')
 </script>
 
 <template>

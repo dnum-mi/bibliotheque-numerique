@@ -137,8 +137,8 @@ export const useDemarcheStore = defineStore('demarche', () => {
 
   const demarcheConfigurations = ref<IDemarcheMappingColumn[]>([])
   const getDemarcheConfigurations = async () => {
-    const champDescriptors = demarche.value?.demarcheDS?.dataJson.publishedRevision?.champDescriptors
-    const annotationDescriptors = demarche.value?.demarcheDS?.dataJson.publishedRevision?.annotationDescriptors
+    const champDescriptors = demarche.value?.dsDataJson?.publishedRevision?.champDescriptors
+    const annotationDescriptors = demarche.value?.dsDataJson?.publishedRevision?.annotationDescriptors
 
     demarcheConfigurations.value = await getConfigurations(demarche.value.id, champDescriptors, annotationDescriptors) as any
   }
@@ -173,20 +173,19 @@ export const useDemarcheStore = defineStore('demarche', () => {
 
   const loadRowDatas = async () => {
     rowDatasDossiers.value = dossiers.value?.map(data => {
-      const { dossierDS, id } = data
-      const { dataJson, id: idDs } = dossierDS || {}
+      const { dsDataJson, id } = data
 
-      const jsonForRowData = dataJson && isDemarcheWithInstructionTime()
+      const jsonForRowData = dsDataJson && isDemarcheWithInstructionTime()
         ? {
-            ...dataJson,
+            ...dsDataJson,
             [ChampType.INSTRUCTION_TIME]: instructionTimes.value[id],
           }
-        : dataJson
+        : dsDataJson
 
       const rowDatasFromMapping = toRowData(jsonForRowData, mappingColumn)
       const row = rowDatasFromMapping.map(rowData => ({
         idBiblioNum: id,
-        ...dataJson,
+        ...dsDataJson,
         ...rowData,
       }))
 

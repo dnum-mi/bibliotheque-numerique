@@ -8,7 +8,7 @@ import { stateToFr } from '@/utils/stateToString'
 import { useDemarcheStore } from '@/stores'
 
 const demarcheStore = useDemarcheStore()
-const dataJson = computed<object>(() => demarcheStore.demarche?.demarcheDS?.dataJson || {})
+const dataJson = computed<object>(() => demarcheStore.demarche?.dsDataJson || {})
 
 const title = 'Informations'
 

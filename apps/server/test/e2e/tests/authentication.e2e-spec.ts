@@ -1,22 +1,24 @@
 import { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import { CTestingModuleFactory } from "../common/testing-module.factory";
+import { dataSource } from "../data-source-e2e.typeorm";
+import { TestingModuleFactory } from "../common/testing-module.factory";
 
 describe("⚠️ TODO: Auth (e2e)", () => {
   let app: INestApplication;
 
   beforeAll(async () => {
-    const testingModule = new CTestingModuleFactory();
+    const testingModule = new TestingModuleFactory();
     await testingModule.init();
     app = testingModule.app;
   });
 
   afterAll(async () => {
     await app.close();
+    await dataSource.destroy();
   });
 
   it("shoud return 403 on bad sign_in", () => {
-    return request(app.getHttpServer()) //
+    return request(app.getHttpServer())
       .post("/auth/sign-in")
       .send({
         email: "toto",
@@ -26,7 +28,7 @@ describe("⚠️ TODO: Auth (e2e)", () => {
   });
 
   it("shoud return 200 on connection", async () => {
-    await request(app.getHttpServer()) //
+    await request(app.getHttpServer())
       .post("/auth/sign-in")
       .send({
         email: "admin@localhost.com",

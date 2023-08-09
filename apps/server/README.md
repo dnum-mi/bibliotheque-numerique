@@ -12,11 +12,11 @@ $ npm install
 ## Migration
 
 ```bash
-# Running migrations
+# Running old-migrations
 $ npm run migration:run
 
 # Generating a migration
-$ npm run migration:generate database/migrations/TheNameOfMyMigration
+$ npm run migration:generate database/old-migrations/TheNameOfMyMigration
 ```
 
 ## Running the app

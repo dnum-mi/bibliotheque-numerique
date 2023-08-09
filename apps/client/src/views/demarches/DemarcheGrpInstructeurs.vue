@@ -4,7 +4,7 @@ import { useDemarcheStore } from '@/stores'
 
 const expandedId = ref(undefined)
 const demarcheStore = useDemarcheStore()
-const groupInstructeurs = computed<object[]>(() => demarcheStore.demarche?.demarcheDS?.dataJson?.groupeInstructeurs || [])
+const groupInstructeurs = computed<object[]>(() => demarcheStore.demarche?.dsDataJson?.groupeInstructeurs || [])
 </script>
 
 <template>

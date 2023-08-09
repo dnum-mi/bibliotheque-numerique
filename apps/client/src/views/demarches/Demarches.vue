@@ -78,7 +78,7 @@ const headersJson = [
 ]
 
 const rowData = computed(() => demarcheStore.demarches.map(
-  (d: any) => ({ ...d?.demarcheDS?.dataJson, typeOrganisme: d?.typeOrganisme, id: d.id })),
+  (d: any) => ({ ...d?.dsDataJson, typeOrganisme: d?.typeOrganisme, id: d.id })),
 )
 
 onMounted(async () => {

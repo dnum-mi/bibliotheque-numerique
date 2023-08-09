@@ -1,12 +1,11 @@
 import { INestApplication } from "@nestjs/common";
-import { CTestingModuleFactory } from "../common/testing-module.factory";
+import { TestingModuleFactory } from "../common/testing-module.factory";
 import * as request from "supertest";
 import { getAdminCookie } from "../common/get-admin-cookie";
 import { dataSource } from "../data-source-e2e.typeorm";
 import { Field } from "../../../src/modules/dossiers/objects/entities/field.entity";
 import { Dossier } from "../../../src/modules/dossiers/objects/entities/dossier.entity";
-import { DossierDS } from "../../../src/modules/dossiers/objects/entities/dossier_ds.entity";
-import { Demarche } from "../../../src/modules/demarches/entities/demarche.entity";
+import { Demarche } from "../../../src/modules/demarches/objects/entities/demarche.entity";
 import { InstructionTime } from "../../../src/plugins/instruction_time/instruction_times/instruction_time.entity";
 
 describe("Syncronisation ", () => {
@@ -14,13 +13,13 @@ describe("Syncronisation ", () => {
   let cookie: string;
 
   beforeAll(async () => {
-    const testingModule = new CTestingModuleFactory();
+    const testingModule = new TestingModuleFactory();
     await testingModule.init();
     app = testingModule.app;
 
     cookie = await getAdminCookie(app);
     const dossier = await dataSource.manager.findOne(Dossier, {
-      where: { dossierDS: { id: 142 } },
+      where: { sourceId: "142" },
       select: ["id"],
     });
     if (dossier) {
@@ -39,7 +38,6 @@ describe("Syncronisation ", () => {
       await dataSource.manager.query(
         `ALTER SEQUENCE "dossiers_id_seq" RESTART WITH 1;`,
       );
-      await dataSource.manager.delete(DossierDS, { id: 142 });
     }
   });
 
@@ -75,7 +73,7 @@ describe("Syncronisation ", () => {
 
   it("should syncronise one dossier of one demarche and create associated fields", async () => {
     return request(app.getHttpServer())
-      .post("/demarches/synchro-dossiers")
+      .post("/demarches/create")
       .set("Cookie", [cookie])
       .send({
         idDs: 42,
@@ -83,13 +81,9 @@ describe("Syncronisation ", () => {
       .expect(201)
       .then((res) => {
         expect(res.body).toEqual({
-          message: "Les dossiers de la demarche id 42 sont synchronisés.",
+          message: "Demarche with DS id 42 has been created.",
         });
-        return dataSource.manager.find(Field, {
-          order: {
-            id: "ASC",
-          },
-        });
+        return dataSource.manager.find(Field, {});
       })
       .then((fields) => {
         expect(fields.length).toEqual(8);

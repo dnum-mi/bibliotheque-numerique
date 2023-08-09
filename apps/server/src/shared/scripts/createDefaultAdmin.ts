@@ -13,7 +13,7 @@ import { LoggerService } from "../modules/logger/logger.service";
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
-  app.useLogger(app.get(LoggerService));
+  app.useLogger(await app.resolve(LoggerService));
   const defaultAdmin =
     configService.get<TConfig["defaultAdmin"]>("defaultAdmin");
   const usersService = app.get(UsersService);

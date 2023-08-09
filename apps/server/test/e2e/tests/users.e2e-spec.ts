@@ -1,6 +1,6 @@
 import { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import { CTestingModuleFactory } from "../common/testing-module.factory";
+import { TestingModuleFactory } from "../common/testing-module.factory";
 import { ISendMailOptions, MailerService } from "@nestjs-modules/mailer";
 import { JwtService } from "@nestjs/jwt";
 import { jwtConstants } from "../../../src/modules/auth/objects/constants";
@@ -10,7 +10,7 @@ describe("users (e2e)", () => {
   let mailerService: MailerService;
 
   beforeAll(async () => {
-    const testingModule = new CTestingModuleFactory();
+    const testingModule = new TestingModuleFactory();
     await testingModule.init();
     app = testingModule.app;
     mailerService = testingModule.mailerService as MailerService;

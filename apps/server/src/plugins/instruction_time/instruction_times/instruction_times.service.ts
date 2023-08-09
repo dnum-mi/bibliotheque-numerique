@@ -19,7 +19,7 @@ import { Dossier } from "../../../modules/dossiers/objects/entities/dossier.enti
 import { InstructionTime } from "./instruction_time.entity";
 import { BaseEntityService } from "../../../shared/base-entity/base-entity.service";
 import { InjectRepository } from "@nestjs/typeorm";
-import { DossiersService } from "../../../modules/dossiers/providers/dossiers.service";
+import { DossierService } from "../../../modules/dossiers/providers/dossier.service";
 
 type TIntructionTime = {
   [keyInstructionTime.DATE_REQUEST1]?: Date | null;
@@ -51,7 +51,7 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
   constructor(
     private configService: ConfigService,
     protected readonly logger: LoggerService,
-    private readonly dossierService: DossiersService,
+    private readonly dossierService: DossierService,
     @InjectRepository(InstructionTime)
     protected readonly repo: Repository<InstructionTime>,
   ) {
@@ -87,7 +87,7 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
     const instructionTimeMapping = this.configService.get<
       TInstructionTimeMappingConfig["instructionTimeMappingConfig"]
     >("instructionTimeMappingConfig");
-    const annotations = dossier.dossierDS.dataJson.annotations;
+    const annotations = dossier.dsDataJson.annotations;
     const result = {};
     for (const annotationLabelKey of Object.keys(instructionTimeMapping)) {
       const annotation = annotations?.find(
@@ -115,9 +115,7 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
   async getMappingInstructionTimeByDossierId(
     idDossier: number,
   ): Promise<TIntructionTime> {
-    const dossier = await this.dossierService.findOneById(idDossier, {
-      dossierDS: true,
-    });
+    const dossier = await this.dossierService.findOneById(idDossier);
     return this.getMappingInstructionTimeByDossier(dossier);
   }
 
@@ -359,9 +357,8 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
   }
 
   async proccessByDossierId(id: number): Promise<boolean> {
-    const dossier = await this.dossierService.findOneById(id, {
-      dossierDS: true,
-    });
+    this.logger.verbose(`proccessByDossierId: ${id}`);
+    const dossier = await this.dossierService.findOneById(id);
     if (!dossier) {
       // TODO: à revoir
       return false;
@@ -381,7 +378,7 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
 
   async proccess(instructionTime: InstructionTime): Promise<InstructionTime> {
     const { dossier } = instructionTime;
-    const { state, datePassageEnInstruction } = dossier.dossierDS.dataJson;
+    const { state, datePassageEnInstruction } = dossier.dsDataJson;
 
     if (this.isDossierClosed(state)) {
       return await this.saveIsClose(instructionTime);
@@ -391,7 +388,7 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
       this.getMappingInstructionTimeByDossier(dossier);
 
     try {
-      this.checkValidity(dossier.dossierDS.dataJson, datesForInstructionTimes);
+      this.checkValidity(dossier.dsDataJson, datesForInstructionTimes);
     } catch (error) {
       this.logger.error({
         short_message: `Erreur pendant la check Validity instruction time: ${dossier.id}`,

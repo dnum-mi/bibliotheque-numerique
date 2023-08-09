@@ -68,15 +68,14 @@ export class FilesService {
       local: file.mimetype,
       s3: file.contentType,
     };
-
-    return this.createFileStorage(
-      name[this.configService.get("file.driver")],
-      path[this.configService.get("file.driver")],
-      file.originalname,
-      checksum,
-      file.size,
-      mimeType[this.configService.get("file.driver")],
-    );
+    return this.repo.save<Partial<FileStorage>>({
+      name: name[this.configService.get("file.driver")],
+      path: path[this.configService.get("file.driver")],
+      originalName: file.originalname,
+      checksum: checksum,
+      byteSize: file.size,
+      mimeType: mimeType[this.configService.get("file.driver")],
+    });
   }
 
   public async findFileStorage(fileStorageId: string): Promise<FileStorage> {
@@ -145,14 +144,14 @@ export class FilesService {
     stream.data.pipe(passThrough);
 
     const { Key, Location } = await promise;
-    return this.createFileStorage(
-      Key,
-      Location,
-      fileName,
+    return this.repo.save<Partial<FileStorage>>({
+      name: Key,
+      path: Location,
+      originalName: fileName,
       checksum,
       byteSize,
       mimeType,
-    );
+    });
   }
 
   private uploadFromStream(
@@ -178,26 +177,6 @@ export class FilesService {
       })
       .promise();
     return { passThrough, promise };
-  }
-
-  private async createFileStorage(
-    name,
-    path,
-    originalName,
-    checksum,
-    byteSize,
-    mimeType,
-  ): Promise<FileStorage> {
-    this.logger.verbose("createFileStorage");
-    const newFile = new FileStorage();
-    newFile.name = name;
-    newFile.path = path;
-    newFile.originalName = originalName;
-    newFile.checksum = checksum;
-    newFile.byteSize = byteSize;
-    newFile.mimeType = mimeType;
-    await this.repo.save(this.repo.create(newFile));
-    return newFile;
   }
 
   // TODO: fixe type

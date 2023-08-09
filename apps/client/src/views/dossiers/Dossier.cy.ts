@@ -14,7 +14,7 @@ describe('<Dossier />', () => {
     // eslint-disable-next-line
     const useStore = useDossierStore(pinia)
     const dossier = generateDossier()
-    const dossierDS = dossier.dossierDS.dataJson
+    const dossierDS = dossier.dsDataJson
     useStore.dossier = dossier
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     useStore.getDossier = async (id: number) => {
