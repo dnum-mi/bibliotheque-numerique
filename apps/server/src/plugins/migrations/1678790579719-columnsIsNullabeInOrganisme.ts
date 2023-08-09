@@ -1,58 +1,56 @@
-import { MigrationInterface, QueryRunner, TableColumn } from "typeorm";
+import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm'
 
-export class columnsIsNullabeInOrganisme1678790579719
-  implements MigrationInterface
-{
-  tableName = "organismes";
+export class columnsIsNullabeInOrganisme1678790579719 implements MigrationInterface {
+  tableName = 'organismes'
   columnsToUpdate = [
     {
-      type: "varchar",
+      type: 'varchar',
       isNullable: true,
-      name: "address",
+      name: 'address',
     },
     {
-      type: "varchar",
+      type: 'varchar',
       isNullable: true,
-      name: "zipCode",
+      name: 'zipCode',
     },
     {
-      type: "varchar",
+      type: 'varchar',
       isNullable: true,
-      name: "city",
+      name: 'city',
     },
     {
-      type: "varchar",
+      type: 'varchar',
       isNullable: true,
-      name: "typeStructure",
+      name: 'typeStructure',
     },
     {
-      type: "varchar",
+      type: 'varchar',
       isNullable: true,
-      name: "leaderName",
+      name: 'leaderName',
     },
     {
-      type: "timestamp",
+      type: 'timestamp',
       isNullable: true,
-      name: "dateDeclaration",
+      name: 'dateDeclaration',
     },
     {
-      type: "timestamp",
+      type: 'timestamp',
       isNullable: true,
-      name: "datePublication",
+      name: 'datePublication',
     },
     {
-      name: "dateModification",
-      type: "timestamp",
+      name: 'dateModification',
+      type: 'timestamp',
       isNullable: true,
     },
     {
-      name: "dateDissolution",
-      type: "timestamp",
+      name: 'dateDissolution',
+      type: 'timestamp',
       isNullable: true,
     },
-  ];
+  ]
 
-  public async up(queryRunner: QueryRunner): Promise<void> {
+  public async up (queryRunner: QueryRunner): Promise<void> {
     await Promise.all(
       this.columnsToUpdate.map(({ name, type, isNullable }) =>
         queryRunner.changeColumn(
@@ -65,10 +63,10 @@ export class columnsIsNullabeInOrganisme1678790579719
           }),
         ),
       ),
-    );
+    )
   }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
+  public async down (queryRunner: QueryRunner): Promise<void> {
     await Promise.all(
       this.columnsToUpdate.map(({ name, type }) =>
         queryRunner.changeColumn(
@@ -80,6 +78,6 @@ export class columnsIsNullabeInOrganisme1678790579719
           }),
         ),
       ),
-    );
+    )
   }
 }

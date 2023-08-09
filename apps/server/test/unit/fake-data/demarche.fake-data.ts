@@ -1,5 +1,5 @@
-import { faker } from "@faker-js/faker/locale/fr";
-import { Demarche } from "../../../src/modules/demarches/objects/entities/demarche.entity";
+import { faker } from '@faker-js/faker/locale/fr'
+import { Demarche } from '../../../src/modules/demarches/objects/entities/demarche.entity'
 
 export const getFakeDemarche = (): Demarche =>
   ({
@@ -11,4 +11,4 @@ export const getFakeDemarche = (): Demarche =>
     mappingColumns: [JSON.parse(faker.datatype.json())],
     createAt: faker.date.past(),
     updateAt: faker.date.past(),
-  } as unknown as Demarche);
+  } as unknown as Demarche)

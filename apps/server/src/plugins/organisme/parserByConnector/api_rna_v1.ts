@@ -1,7 +1,7 @@
-import { toDate } from "@biblio-num/shared";
-import { IParseToOrganisme } from "./parse_to_organisme.interface";
-import { LoggerService } from "../../../shared/modules/logger/logger.service";
-import { Organisme } from "../organismes/organisme.entity";
+import { toDate } from '@biblio-num/shared'
+import { IParseToOrganisme } from './parse_to_organisme.interface'
+import { LoggerService } from '../../../shared/modules/logger/logger.service'
+import { Organisme } from '../organismes/organisme.entity'
 
 export type TDataApiRnaV1 = {
   id: number;
@@ -55,7 +55,7 @@ export type TDataApiRnaV1 = {
 };
 
 export type TResultApiRnaV1 = {
-  //TODO: A reférifier avec la doc
+  // TODO: A reférifier avec la doc
   // total_results: number;
   // total_pages: number;
   // per_page: number;
@@ -64,85 +64,72 @@ export type TResultApiRnaV1 = {
   association: TDataApiRnaV1;
 };
 
-export default class ParseApiRnaV1
-  implements IParseToOrganisme<Partial<TDataApiRnaV1>, TResultApiRnaV1>
-{
-  constructor(private readonly logger: LoggerService) {
-    this.logger.setContext(this.constructor.name);
+export default class ParseApiRnaV1 implements IParseToOrganisme<Partial<TDataApiRnaV1>, TResultApiRnaV1> {
+  constructor (private readonly logger: LoggerService) {
+    this.logger.setContext(this.constructor.name)
   }
 
-  toOrganismeEntity(
-    organisme: Organisme,
-    orgDataDataJson: Partial<TDataApiRnaV1>,
-  ): Organisme {
-    const newOrganisme = organisme || new Organisme();
-    newOrganisme.idRef = orgDataDataJson.id_association;
-    newOrganisme.title = orgDataDataJson.titre;
+  toOrganismeEntity (organisme: Organisme, orgDataDataJson: Partial<TDataApiRnaV1>): Organisme {
+    const newOrganisme = organisme || new Organisme()
+    newOrganisme.idRef = orgDataDataJson.id_association
+    newOrganisme.title = orgDataDataJson.titre
 
-    newOrganisme.address = `${orgDataDataJson?.adresse_numero_voie || ""} ${
-      orgDataDataJson?.adresse_type_voie || ""
-    } ${orgDataDataJson?.adresse_libelle_voie || ""} ${
-      orgDataDataJson?.adresse_code_postal || ""
-    } ${orgDataDataJson?.adresse_libelle_commune || ""}`;
+    newOrganisme.address = `${orgDataDataJson?.adresse_numero_voie || ''} ${orgDataDataJson?.adresse_type_voie || ''} ${
+      orgDataDataJson?.adresse_libelle_voie || ''
+    } ${orgDataDataJson?.adresse_code_postal || ''} ${orgDataDataJson?.adresse_libelle_commune || ''}`
 
-    newOrganisme.city = orgDataDataJson?.adresse_libelle_commune;
-    newOrganisme.zipCode = orgDataDataJson?.adresse_code_postal;
+    newOrganisme.city = orgDataDataJson?.adresse_libelle_commune
+    newOrganisme.zipCode = orgDataDataJson?.adresse_code_postal
 
-    newOrganisme.emails = [orgDataDataJson?.email] || null;
-    newOrganisme.phoneNumbers = [orgDataDataJson?.telephone] || null;
+    newOrganisme.emails = [orgDataDataJson?.email] || null
+    newOrganisme.phoneNumbers = [orgDataDataJson?.telephone] || null
 
     try {
-      newOrganisme.dateCreation = toDate(orgDataDataJson?.date_creation);
+      newOrganisme.dateCreation = toDate(orgDataDataJson?.date_creation)
     } catch (error) {
       this.logger.warn({
         short_message: `Error for date_creation of ${newOrganisme.idRef}: ${error.message}`,
         full_message: `Error for date_creation of ${newOrganisme.idRef}: ${error.stack}`,
-      });
+      })
     }
-    newOrganisme.dateModification = orgDataDataJson?.derniere_maj;
+    newOrganisme.dateModification = orgDataDataJson?.derniere_maj
     try {
-      newOrganisme.dateDissolution = toDate(
-        orgDataDataJson?.date_declaration_dissolution,
-      );
+      newOrganisme.dateDissolution = toDate(orgDataDataJson?.date_declaration_dissolution)
     } catch (error) {
       this.logger.warn({
         short_message: `Error for date_declaration_dissolution of ${newOrganisme.idRef}: ${error.message}`,
         full_message: `Error for date_declaration_dissolution of ${newOrganisme.idRef}: ${error.stack}`,
-      });
+      })
     }
 
     try {
-      newOrganisme.datePublication = toDate(
-        orgDataDataJson?.date_publication_creation,
-      );
+      newOrganisme.datePublication = toDate(orgDataDataJson?.date_publication_creation)
     } catch (error) {
       this.logger.warn({
         short_message: `Error for date_publication_creation of ${newOrganisme.idRef}: ${error.message}`,
         full_message: `Error for date_publication_creation of ${newOrganisme.idRef}: ${error.stack}`,
-      });
+      })
     }
 
     try {
-      newOrganisme.dateDeclaration = toDate(
-        orgDataDataJson.date_derniere_declaration,
-      );
+      newOrganisme.dateDeclaration = toDate(orgDataDataJson.date_derniere_declaration)
     } catch (error) {
       this.logger.warn({
         short_message: `Error for date_derniere_declaration of ${newOrganisme.idRef}: ${error.message}`,
         full_message: `Error for date_derniere_declaration of ${newOrganisme.idRef}: ${error.stack}`,
-      });
+      })
     }
 
-    return newOrganisme;
+    return newOrganisme
   }
 
-  dataJson: Partial<TDataApiRnaV1>;
+  dataJson: Partial<TDataApiRnaV1>
 
-  setDataJson(result: { data: Partial<TResultApiRnaV1> }): void {
-    this.dataJson = result?.data?.association;
+  setDataJson (result: { data: Partial<TResultApiRnaV1> }): void {
+    this.dataJson = result?.data?.association
   }
 
-  getDataUpdateAt(): Date {
-    return new Date(this.dataJson?.derniere_maj);
+  getDataUpdateAt (): Date {
+    return new Date(this.dataJson?.derniere_maj)
   }
 }

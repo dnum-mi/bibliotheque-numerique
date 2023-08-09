@@ -1,64 +1,64 @@
 export const smallDemarcheAndDossierFinancementEtrangerDataMock = {
   demarche: {
-    id: "UHJvY2VkdXJlLTI5",
+    id: 'UHJvY2VkdXJlLTI5',
     number: 43,
-    title: "Small Déclaration des financements étrangers",
-    state: "publiee",
+    title: 'Small Déclaration des financements étrangers',
+    state: 'publiee',
     dossiers: {
       nodes: [
         {
-          id: "RG9zc2llci0xMzY=",
+          id: 'RG9zc2llci0xMzY=',
           number: 142,
           archived: false,
-          state: "en_construction",
-          dateDerniereModification: "2020-07-26T04:26:48.000Z",
+          state: 'en_construction',
+          dateDerniereModification: '2020-07-26T04:26:48.000Z',
           messages: [],
           champs: [
             {
-              id: "useless",
-              __typename: "TextChamp",
-              label: "Informations relatives au bénéficiaire du financement",
+              id: 'useless',
+              __typename: 'TextChamp',
+              label: 'Informations relatives au bénéficiaire du financement',
               stringValue: "C'est du chocolat.",
               champDescriptor: {
-                id: "Q2hhbXAtMTA0Mw==",
+                id: 'Q2hhbXAtMTA0Mw==',
               },
             },
             {
-              id: "useless",
-              __typename: "TextChamp",
+              id: 'useless',
+              __typename: 'TextChamp',
               label: "Saisir le n°RNA de l'association",
-              stringValue: "W123456789",
+              stringValue: 'W123456789',
               champDescriptor: {
-                id: "Q2hhbXAtMTA0NQ==",
+                id: 'Q2hhbXAtMTA0NQ==',
               },
             },
             {
-              id: "useless",
-              __typename: "RepetitionChamp",
-              label: "Liste de course",
-              stringValue: "",
+              id: 'useless',
+              __typename: 'RepetitionChamp',
+              label: 'Liste de course',
+              stringValue: '',
               champDescriptor: {
-                id: "Q2hhbXAtMTA2NQ==",
+                id: 'Q2hhbXAtMTA2NQ==',
               },
               rows: [
                 {
                   champs: [
                     {
-                      id: "useless",
-                      __typename: "TextChamp",
-                      label: "Fruit",
-                      stringValue: "Fraise",
+                      id: 'useless',
+                      __typename: 'TextChamp',
+                      label: 'Fruit',
+                      stringValue: 'Fraise',
                       champDescriptor: {
-                        id: "Q2hhbXAtMTA2Nnww",
+                        id: 'Q2hhbXAtMTA2Nnww',
                       },
                     },
                     {
-                      id: "useless",
-                      __typename: "TextChamp",
-                      label: "Légume",
-                      stringValue: "Oignon",
+                      id: 'useless',
+                      __typename: 'TextChamp',
+                      label: 'Légume',
+                      stringValue: 'Oignon',
                       champDescriptor: {
-                        id: "Q2hhbXAtMTA2N3ww",
+                        id: 'Q2hhbXAtMTA2N3ww',
                       },
                     },
                   ],
@@ -66,21 +66,21 @@ export const smallDemarcheAndDossierFinancementEtrangerDataMock = {
                 {
                   champs: [
                     {
-                      id: "useless",
-                      __typename: "TextChamp",
-                      label: "Fruit",
-                      stringValue: "Framboise",
+                      id: 'useless',
+                      __typename: 'TextChamp',
+                      label: 'Fruit',
+                      stringValue: 'Framboise',
                       champDescriptor: {
-                        id: "Q2hhbXAtMTA2Nnww",
+                        id: 'Q2hhbXAtMTA2Nnww',
                       },
                     },
                     {
-                      id: "useless",
-                      __typename: "TextChamp",
-                      label: "Légume",
-                      stringValue: "Poivron",
+                      id: 'useless',
+                      __typename: 'TextChamp',
+                      label: 'Légume',
+                      stringValue: 'Poivron',
                       champDescriptor: {
-                        id: "Q2hhbXAtMTA2N3ww",
+                        id: 'Q2hhbXAtMTA2N3ww',
                       },
                     },
                   ],
@@ -90,9 +90,9 @@ export const smallDemarcheAndDossierFinancementEtrangerDataMock = {
           ],
           annotations: [
             {
-              id: "useless",
-              __typename: "TextChamp",
-              label: "Préciser si SR déjà saisis",
+              id: 'useless',
+              __typename: 'TextChamp',
+              label: 'Préciser si SR déjà saisis',
               stringValue: "Oui oui c'est fait, merci bien.",
             },
           ],
@@ -100,4 +100,4 @@ export const smallDemarcheAndDossierFinancementEtrangerDataMock = {
       ],
     },
   },
-};
+}

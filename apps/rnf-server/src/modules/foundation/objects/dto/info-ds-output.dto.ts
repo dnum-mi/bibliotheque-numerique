@@ -1,12 +1,13 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty } from '@nestjs/swagger'
 
 export class InfoDSOutputDto {
   @ApiProperty({
-    description: "numero de démarche",
+    description: 'numero de démarche',
   })
-  demarcheId: number | undefined;
+    demarcheId: number | undefined
+
   @ApiProperty({
-    description: "numero de dossier",
+    description: 'numero de dossier',
   })
-  dossierId: number | undefined;
+    dossierId: number | undefined
 }

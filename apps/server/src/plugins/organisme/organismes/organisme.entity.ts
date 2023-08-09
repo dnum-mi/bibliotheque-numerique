@@ -1,97 +1,94 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { OrganismesData } from "./organisme_data.entity";
-import { BaseEntity } from "../../../shared/base-entity/base.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
+import { OrganismesData } from './organisme_data.entity'
+import { BaseEntity } from '../../../shared/base-entity/base.entity'
 
-@Entity({ name: "organismes" })
+@Entity({ name: 'organismes' })
 export class Organisme extends BaseEntity {
-  @PrimaryGeneratedColumn("increment")
-  id: number;
+  @PrimaryGeneratedColumn('increment')
+    id: number
 
   @Column({
-    type: "varchar",
+    type: 'varchar',
     nullable: false,
   })
-  idRef: string;
+    idRef: string
 
-  @OneToMany(
-    () => OrganismesData,
-    (organismesDatas) => organismesDatas.organisme,
-  )
-  organismeDatas: OrganismesData[];
+  @OneToMany(() => OrganismesData, (organismesDatas) => organismesDatas.organisme)
+    organismeDatas: OrganismesData[]
 
   @Column({
-    type: "varchar",
+    type: 'varchar',
     nullable: false,
   })
-  title: string;
+    title: string
 
   @Column({
-    type: "varchar",
+    type: 'varchar',
     nullable: true,
   })
-  address: string;
+    address: string
 
   // TODO: issue #272 - Mettre en place un table contact?
   @Column({
-    type: "jsonb",
+    type: 'jsonb',
     nullable: true,
   })
-  emails: string[];
+    emails: string[]
 
   @Column({
-    type: "jsonb",
+    type: 'jsonb',
     nullable: true,
   })
-  phoneNumbers: string[];
+    phoneNumbers: string[]
 
   @Column({
-    type: "varchar",
+    type: 'varchar',
     nullable: true,
   })
-  zipCode: string;
+    zipCode: string
 
   @Column({
-    type: "varchar",
+    type: 'varchar',
     nullable: true,
   })
-  city: string;
+    city: string
 
   @Column({
-    type: "varchar",
+    type: 'varchar',
     nullable: true,
   })
-  typeStructure: string;
+    typeStructure: string
 
   @Column({
-    type: "varchar",
+    type: 'varchar',
     nullable: true,
   })
-  leaderName: string;
+    leaderName: string
 
-  @Column({ type: "date" })
-  dateCreation: Date;
-
-  @Column({
-    type: "date",
-    nullable: true,
-  })
-  dateDeclaration: Date;
+  @Column({ type: 'date' })
+    dateCreation: Date
 
   @Column({
-    type: "date",
+    type: 'date',
     nullable: true,
   })
-  datePublication: Date;
+    dateDeclaration: Date
 
   @Column({
-    type: "date",
+    type: 'date',
     nullable: true,
   })
-  dateModification: Date;
+    datePublication: Date
 
   @Column({
-    type: "date",
+    type: 'date',
     nullable: true,
   })
-  dateDissolution: Date;
+    dateModification: Date
+
+  @Column({
+    type: 'date',
+    nullable: true,
+  })
+    dateDissolution: Date
 }

@@ -1,54 +1,40 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Post,
-  Response,
-  UploadedFile,
-  UseInterceptors,
-} from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
-import { FileInterceptor } from "@nestjs/platform-express";
-import { FilesService } from "./files.service";
+import type { Express } from 'express'
+import { Body, Controller, Get, Param, Post, Response, UploadedFile, UseInterceptors } from '@nestjs/common'
+import { ApiTags } from '@nestjs/swagger'
+import { FileInterceptor } from '@nestjs/platform-express'
+import { FilesService } from './files.service'
 
-@ApiTags("Files")
-@Controller("files")
+@ApiTags('Files')
+@Controller('files')
 export class FilesController {
-  constructor(private readonly filesService: FilesService) {}
+  constructor (private readonly filesService: FilesService) {}
 
-  @Post("upload")
-  @UseInterceptors(FileInterceptor("file"))
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file'))
   // TODO: fixe type
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  async uploadFile(@UploadedFile() file: Express.Multer.File) {
-    return this.filesService.uploadFile(file);
+  async uploadFile (@UploadedFile() file: Express.Multer.File) {
+    return this.filesService.uploadFile(file)
   }
 
-  @Get(":id")
+  @Get(':id')
   // TODO: fixe type
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  async download(@Param("id") id: string, @Response() response) {
-    const file = await this.filesService.getFile(id);
-    file.stream.pipe(response);
+  async download (@Param('id') id: string, @Response() response) {
+    const file = await this.filesService.getFile(id)
+    file.stream.pipe(response)
   }
 
-  @Post("copy")
+  @Post('copy')
   // TODO: fixe type
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  async copyFile(
-    @Body("fileUrl") fileUrl: string,
-    @Body("fileName") fileName: string,
-    @Body("checksum") checksum: string,
-    @Body("mimeType") mimeType: string,
-    @Body("byteSize") byteSize: string,
+  async copyFile (
+    @Body('fileUrl') fileUrl: string,
+    @Body('fileName') fileName: string,
+    @Body('checksum') checksum: string,
+    @Body('mimeType') mimeType: string,
+    @Body('byteSize') byteSize: string,
   ) {
-    return await this.filesService.copyRemoteFile(
-      fileUrl,
-      checksum,
-      byteSize,
-      mimeType,
-      fileName,
-    );
+    return await this.filesService.copyRemoteFile(fileUrl, checksum, byteSize, mimeType, fileName)
   }
 }

@@ -1,33 +1,68 @@
 module.exports = {
   root: true,
-  parser: "@typescript-eslint/parser",
+  parser: '@typescript-eslint/parser',
   parserOptions: {
-    sourceType: "module",
-    project: ["tsconfig.eslint.json", "tsconfig.json"],
+    sourceType: 'module',
+    tsconfigRootDir: __dirname,
+    project: ['tsconfig.eslint.json', 'tsconfig.json'],
   },
-  plugins: ["@typescript-eslint/eslint-plugin"],
+  plugins: ['@typescript-eslint/eslint-plugin'],
   extends: [
-    "plugin:@typescript-eslint/recommended",
-    "plugin:prettier/recommended",
+    'plugin:@typescript-eslint/recommended',
+    'standard',
   ],
   env: {
     node: true,
+    jest: true,
   },
+  ignorePatterns: ['.eslintrc.js'],
   rules: {
-    "@typescript-eslint/ban-ts-comment": [
-      "error",
-      { "ts-ignore": "allow-with-description" },
-    ],
-    "@typescript-eslint/interface-name-prefix": "off",
-    "@typescript-eslint/explicit-function-return-type": "error",
-    "@typescript-eslint/no-explicit-any": "error",
+    '@typescript-eslint/ban-ts-comment': ['error', { 'ts-ignore': 'allow-with-description' }],
+    '@typescript-eslint/strict-boolean-expressions': 'off',
+    '@typescript-eslint/no-unsafe-call': 'off',
+    '@typescript-eslint/no-extraneous-class': 'off',
+    '@typescript-eslint/no-unsafe-assignment': 'off',
+    '@typescript-eslint/restrict-template-expressions': 'off',
+    '@typescript-eslint/interface-name-prefix': 'off',
+    'no-useless-constructor': 'off',
+    '@typescript-eslint/explicit-function-return-type': 'error',
+    '@typescript-eslint/no-explicit-any': 'error',
+    'max-len': ['error', { code: 120 }],
+    'no-irregular-whitespace': 'warn',
+    'comma-dangle': ['error', 'always-multiline'],
   },
   overrides: [
     {
-      files: ["src/**/*.{spec,test}.{js,ts,jsx,tsx}", "test/**/*.{js,ts}"],
+      files: ['*.spec.ts', '*.mock.ts', '*.e2e-spec.ts'],
+      rules: {
+        '@typescript-eslint/no-empty-function': 'off',
+        '@typescript-eslint/no-unsafe-member-access': 'off',
+        '@typescript-eslint/no-unsafe-argument': 'off',
+      },
+    },
+    {
+      files: ['src/**/*.{spec,test}.{js,ts,jsx,tsx}', 'test/**/*.{js,ts}'],
       env: {
         jest: true,
       },
     },
+    {
+      files: ['*.mock.ts'],
+      rules: {
+        'max-len': 'off',
+      },
+    },
+    {
+      files: ['*spec.ts'],
+      rules: {
+        'max-len': ['warn', { code: 140 }],
+      },
+    },
+    {
+      files: ['database/migrations/*.ts'],
+      rules: {
+        'max-len': ['warn', { code: 200 }],
+      },
+    },
   ],
-};
+}

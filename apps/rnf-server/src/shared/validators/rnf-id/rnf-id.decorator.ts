@@ -1,15 +1,15 @@
-import { registerDecorator, ValidationOptions } from "class-validator";
-import { RnfIdConstraint } from "@/shared/validators/rnf-id/rnf-id.constraint";
+import { registerDecorator, ValidationOptions } from 'class-validator'
+import { RnfIdConstraint } from '@/shared/validators/rnf-id/rnf-id.constraint'
 
-export function isRnfIdValid(validationOptions?: ValidationOptions) {
+export function isRnfIdValid (validationOptions?: ValidationOptions) {
   return function (object: NonNullable<unknown>, propertyName: string) {
     registerDecorator({
-      name: "isRnfIdValid",
+      name: 'isRnfIdValid',
       target: object.constructor,
-      propertyName: propertyName,
+      propertyName,
       options: validationOptions,
       constraints: [],
       validator: RnfIdConstraint,
-    });
-  };
+    })
+  }
 }

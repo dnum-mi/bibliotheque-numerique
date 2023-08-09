@@ -90,7 +90,7 @@ export const dnrDossierDataMock = {
       stringValue: "",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
+        description: "lorem ipsum",
       },
     },
     {
@@ -101,7 +101,7 @@ export const dnrDossierDataMock = {
       checked: false,
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
+        description: "lorem ipsum",
       },
     },
     {
@@ -111,7 +111,7 @@ export const dnrDossierDataMock = {
       stringValue: "Fondation reconnue d'utilité publique (FRUP)",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "#rnf-type-rnf#lorem ipsum"
+        description: "#rnf-type-rnf#lorem ipsum",
       },
     },
     {
@@ -121,7 +121,7 @@ export const dnrDossierDataMock = {
       stringValue: "59 - Nord",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
+        description: "lorem ipsum",
       },
       departement: {
         name: "Nord",
@@ -135,7 +135,7 @@ export const dnrDossierDataMock = {
       stringValue: "Fondation des tulipes",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum#rnf-titre-rnf#"
+        description: "lorem ipsum#rnf-titre-rnf#",
       },
     },
     {
@@ -145,7 +145,7 @@ export const dnrDossierDataMock = {
       stringValue: "3 Rue Colbert 59800 Lille",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum#rnf-addresse-rnf#"
+        description: "lorem ipsum#rnf-addresse-rnf#",
       },
       address: {
         label: "3 Rue Colbert 59800 Lille",
@@ -178,7 +178,7 @@ export const dnrDossierDataMock = {
       stringValue: "tulipe@gmail.com",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lo#rnf-courriel-rnf#rem ipsum"
+        description: "lo#rnf-courriel-rnf#rem ipsum",
       },
     },
     {
@@ -188,7 +188,7 @@ export const dnrDossierDataMock = {
       stringValue: "07 89 89 89 89",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "#rnf-telephone-rnf#lorem ipsum"
+        description: "#rnf-telephone-rnf#lorem ipsum",
       },
     },
     {
@@ -198,7 +198,7 @@ export const dnrDossierDataMock = {
       stringValue: "",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
+        description: "lorem ipsum",
       },
     },
     {
@@ -209,7 +209,7 @@ export const dnrDossierDataMock = {
       civilite: "M",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
+        description: "lorem ipsum",
       },
     },
     {
@@ -219,7 +219,7 @@ export const dnrDossierDataMock = {
       stringValue: "DIDIER ",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
+        description: "lorem ipsum",
       },
     },
     {
@@ -229,7 +229,7 @@ export const dnrDossierDataMock = {
       stringValue: "Robin",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
+        description: "lorem ipsum",
       },
     },
     {
@@ -239,7 +239,7 @@ export const dnrDossierDataMock = {
       stringValue: "jojo@gmail.com",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
+        description: "lorem ipsum",
       },
     },
     {
@@ -249,7 +249,7 @@ export const dnrDossierDataMock = {
       stringValue: "06 89 89 89 89",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
+        description: "lorem ipsum",
       },
     },
   ],

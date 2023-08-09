@@ -102,8 +102,8 @@ export const dotationDossierDataMock = {
       stringValue: "",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
-      }
+        description: "lorem ipsum",
+      },
     },
     {
       id: "Q2hhbXAtOTA=",
@@ -112,8 +112,8 @@ export const dotationDossierDataMock = {
       stringValue: "Je suis un titre compliqué avec des espaces et des accents et des MajUsCules",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem #rnf-titre-rnf#ipsum"
-      }
+        description: "lorem #rnf-titre-rnf#ipsum",
+      },
     },
     {
       id: "Q2hhbXAtOTE=",
@@ -145,8 +145,8 @@ export const dotationDossierDataMock = {
       },
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lo#rnf-addresse-rnf#rem ipsum"
-      }
+        description: "lo#rnf-addresse-rnf#rem ipsum",
+      },
     },
     {
       id: "Q2hhbXAtOTI=",
@@ -155,8 +155,8 @@ export const dotationDossierDataMock = {
       stringValue: "tata@gmail.com",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "#rnf-courriel-rnf#lorem ipsum"
-      }
+        description: "#rnf-courriel-rnf#lorem ipsum",
+      },
     },
     {
       id: "Q2hhbXAtOTM=",
@@ -165,8 +165,8 @@ export const dotationDossierDataMock = {
       stringValue: "06 86 46 54 45",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum#rnf-telephone-rnf#"
-      }
+        description: "lorem ipsum#rnf-telephone-rnf#",
+      },
     },
     {
       id: "Q2hhbXAtOTQ=",
@@ -176,8 +176,8 @@ export const dotationDossierDataMock = {
       values: ["Durée indéterminée"],
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
-      }
+        description: "lorem ipsum",
+      },
     },
     {
       id: "Q2hhbXAtOTU=",
@@ -187,8 +187,8 @@ export const dotationDossierDataMock = {
       integerNumber: "5",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
-      }
+        description: "lorem ipsum",
+      },
     },
     {
       id: "Q2hhbXAtOTY=",
@@ -197,8 +197,8 @@ export const dotationDossierDataMock = {
       stringValue: "",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
-      }
+        description: "lorem ipsum",
+      },
     },
     {
       id: "Q2hhbXAtOTc=",
@@ -216,8 +216,8 @@ export const dotationDossierDataMock = {
       ],
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
-      }
+        description: "lorem ipsum",
+      },
     },
     {
       id: "Q2hhbXAtOTg=",
@@ -226,8 +226,8 @@ export const dotationDossierDataMock = {
       stringValue: "",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
-      }
+        description: "lorem ipsum",
+      },
     },
     {
       id: "Q2hhbXAtOTk=",
@@ -236,8 +236,8 @@ export const dotationDossierDataMock = {
       stringValue: "",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
-      }
+        description: "lorem ipsum",
+      },
     },
     {
       id: "Q2hhbXAtMTAw",
@@ -246,8 +246,8 @@ export const dotationDossierDataMock = {
       stringValue: "L'objet du fonds de dotation",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
-      }
+        description: "lorem ipsum",
+      },
     },
     {
       id: "Q2hhbXAtMTAx",
@@ -257,8 +257,8 @@ export const dotationDossierDataMock = {
       values: ["Familial"],
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
-      }
+        description: "lorem ipsum",
+      },
     },
     {
       id: "Q2hhbXAtMTAy",
@@ -268,8 +268,8 @@ export const dotationDossierDataMock = {
       values: ["Éducation, formation"],
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
-      }
+        description: "lorem ipsum",
+      },
     },
     {
       id: "Q2hhbXAtMTAz",
@@ -279,8 +279,8 @@ export const dotationDossierDataMock = {
       files: [],
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
-      }
+        description: "lorem ipsum",
+      },
     },
     {
       id: "Q2hhbXAtMTA0",
@@ -289,8 +289,8 @@ export const dotationDossierDataMock = {
       stringValue: "",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
-      }
+        description: "lorem ipsum",
+      },
     },
     {
       id: "Q2hhbXAtMTA1",
@@ -299,8 +299,8 @@ export const dotationDossierDataMock = {
       stringValue: "Consomptible",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
-      }
+        description: "lorem ipsum",
+      },
     },
     {
       id: "Q2hhbXAtMTA2",
@@ -309,8 +309,8 @@ export const dotationDossierDataMock = {
       stringValue: "Mixte",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
-      }
+        description: "lorem ipsum",
+      },
     },
     {
       id: "Q2hhbXAtMTA4",
@@ -320,8 +320,8 @@ export const dotationDossierDataMock = {
       checked: false,
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
-      }
+        description: "lorem ipsum",
+      },
     },
     {
       id: "Q2hhbXAtMTA3",
@@ -330,8 +330,8 @@ export const dotationDossierDataMock = {
       stringValue: "",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
-      }
+        description: "lorem ipsum",
+      },
     },
     {
       id: "Q2hhbXAtMTA5",
@@ -340,8 +340,8 @@ export const dotationDossierDataMock = {
       stringValue: "",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
-      }
+        description: "lorem ipsum",
+      },
     },
     {
       id: "Q2hhbXAtMTEw",
@@ -351,8 +351,8 @@ export const dotationDossierDataMock = {
       files: [],
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
-      }
+        description: "lorem ipsum",
+      },
     },
     {
       id: "Q2hhbXAtMTEx",
@@ -361,8 +361,8 @@ export const dotationDossierDataMock = {
       stringValue: "",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
-      }
+        description: "lorem ipsum",
+      },
     },
     {
       id: "Q2hhbXAtMTEy",
@@ -371,8 +371,8 @@ export const dotationDossierDataMock = {
       stringValue: "",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
-      }
+        description: "lorem ipsum",
+      },
     },
     {
       id: "Q2hhbXAtMTEz",
@@ -381,7 +381,7 @@ export const dotationDossierDataMock = {
       stringValue: "",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
+        description: "lorem ipsum",
       },
       files: [
         {
@@ -404,8 +404,8 @@ export const dotationDossierDataMock = {
       },
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
-      }
+        description: "lorem ipsum",
+      },
     },
     {
       id: "Q2hhbXAtMTE1",
@@ -414,8 +414,8 @@ export const dotationDossierDataMock = {
       stringValue: "",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
-      }
+        description: "lorem ipsum",
+      },
     },
     {
       id: "Q2hhbXAtMTE2",
@@ -425,8 +425,8 @@ export const dotationDossierDataMock = {
       files: [],
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum"
-      }
+        description: "lorem ipsum",
+      },
     },
   ],
   annotations: [

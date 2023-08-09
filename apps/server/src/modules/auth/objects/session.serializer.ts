@@ -1,13 +1,13 @@
-import { PassportSerializer } from "@nestjs/passport";
+import { PassportSerializer } from '@nestjs/passport'
 
 export class SessionSerializer extends PassportSerializer {
   // TODO: fixe type
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  serializeUser(user: any, done: (err: Error, user: any) => void): any {
-    done(null, user);
+  serializeUser (user: any, done: (err: Error, user: any) => void): any {
+    done(null, user)
   }
 
-  deserializeUser(
+  deserializeUser (
     // TODO: fixe type
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     payload: any,
@@ -15,6 +15,6 @@ export class SessionSerializer extends PassportSerializer {
     // TODO: fixe type
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): any {
-    done(null, payload);
+    done(null, payload)
   }
 }

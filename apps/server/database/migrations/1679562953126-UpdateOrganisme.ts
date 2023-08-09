@@ -1,24 +1,24 @@
-import { MigrationInterface, QueryRunner, TableColumn } from "typeorm";
+import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm'
 
 export class UpdateOrganisme1679562953126 implements MigrationInterface {
-  public async up(queryRunner: QueryRunner): Promise<void> {
+  public async up (queryRunner: QueryRunner): Promise<void> {
     const addEmails = queryRunner.addColumn(
-      "organismes",
+      'organismes',
       new TableColumn({
-        name: "emails",
-        type: "jsonb",
+        name: 'emails',
+        type: 'jsonb',
         isNullable: true,
       }),
-    );
+    )
     const addPhoneNumbers = queryRunner.addColumn(
-      "organismes",
+      'organismes',
       new TableColumn({
-        name: "phoneNumbers",
-        type: "jsonb",
+        name: 'phoneNumbers',
+        type: 'jsonb',
         isNullable: true,
       }),
-    );
-    await Promise.all([addEmails, addPhoneNumbers]);
+    )
+    await Promise.all([addEmails, addPhoneNumbers])
     // TODO: UPDATE TABLES ROWS
     // Update doesn't work
     // const OrganismeSource = AppDataSource.getRepository(Organisme);
@@ -37,13 +37,10 @@ export class UpdateOrganisme1679562953126 implements MigrationInterface {
     // await Promise.all(promiseArray);
   }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
-    const removeEmailColumn = queryRunner.dropColumn("organismes", "emails");
-    const removePhoneNumbersColumn = queryRunner.dropColumn(
-      "organismes",
-      "phoneNumbers",
-    );
+  public async down (queryRunner: QueryRunner): Promise<void> {
+    const removeEmailColumn = queryRunner.dropColumn('organismes', 'emails')
+    const removePhoneNumbersColumn = queryRunner.dropColumn('organismes', 'phoneNumbers')
 
-    await Promise.all([removeEmailColumn, removePhoneNumbersColumn]);
+    await Promise.all([removeEmailColumn, removePhoneNumbersColumn])
   }
 }

@@ -1,5 +1,5 @@
-import { Module } from "@nestjs/common";
-import { PersonService } from "@/modules/person/providers/person.service";
+import { Module } from '@nestjs/common'
+import { PersonService } from '@/modules/person/providers/person.service'
 
 @Module({
   imports: [],

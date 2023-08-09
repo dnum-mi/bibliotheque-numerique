@@ -1,95 +1,95 @@
-import { MigrationInterface, QueryRunner, Table, TableIndex } from "typeorm";
+import { MigrationInterface, QueryRunner, Table, TableIndex } from 'typeorm'
 
 export class AddOrganismeTable1672704027352 implements MigrationInterface {
-  public async up(queryRunner: QueryRunner): Promise<void> {
+  public async up (queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: "organismes",
+        name: 'organismes',
         columns: [
           {
-            name: "id",
-            type: "int",
+            name: 'id',
+            type: 'int',
             isPrimary: true,
             isGenerated: true,
-            generationStrategy: "increment",
+            generationStrategy: 'increment',
           },
           {
-            name: "idRef",
-            type: "varchar",
+            name: 'idRef',
+            type: 'varchar',
             isNullable: false,
           },
           {
-            name: "title",
-            type: "varchar",
+            name: 'title',
+            type: 'varchar',
             isNullable: false,
           },
 
           {
-            name: "address",
-            type: "varchar",
+            name: 'address',
+            type: 'varchar',
           },
           {
-            name: "zipCode",
-            type: "varchar",
+            name: 'zipCode',
+            type: 'varchar',
           },
           {
-            name: "city",
-            type: "varchar",
+            name: 'city',
+            type: 'varchar',
           },
           {
-            name: "typeStructure",
-            type: "varchar",
+            name: 'typeStructure',
+            type: 'varchar',
           },
           {
-            name: "leaderName",
-            type: "varchar",
+            name: 'leaderName',
+            type: 'varchar',
           },
           {
-            name: "dateCreation",
-            type: "timestamp",
+            name: 'dateCreation',
+            type: 'timestamp',
           },
           {
-            name: "dateDeclaration",
-            type: "timestamp",
+            name: 'dateDeclaration',
+            type: 'timestamp',
           },
           {
-            name: "datePublication",
-            type: "timestamp",
+            name: 'datePublication',
+            type: 'timestamp',
           },
           {
-            name: "createAt",
-            type: "timestamp",
-            default: "now()",
+            name: 'createAt',
+            type: 'timestamp',
+            default: 'now()',
           },
           {
-            name: "updateAt",
-            type: "timestamp",
-            default: "now()",
+            name: 'updateAt',
+            type: 'timestamp',
+            default: 'now()',
           },
         ],
       }),
       true,
-    );
+    )
 
     await queryRunner.createIndex(
-      "organismes",
+      'organismes',
       new TableIndex({
-        name: "IDX_ORGANISME_IDREF",
-        columnNames: ["idRef"],
+        name: 'IDX_ORGANISME_IDREF',
+        columnNames: ['idRef'],
       }),
-    );
+    )
     await queryRunner.createIndex(
-      "organismes",
+      'organismes',
       new TableIndex({
-        name: "IDX_ORGANISME_TITLE",
-        columnNames: ["title"],
+        name: 'IDX_ORGANISME_TITLE',
+        columnNames: ['title'],
       }),
-    );
+    )
   }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropIndex("organismes", "IDX_ORGANISME_IDREF");
-    await queryRunner.dropIndex("organismes", "IDX_ORGANISME_TITLE");
-    await queryRunner.dropTable("organismes");
+  public async down (queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.dropIndex('organismes', 'IDX_ORGANISME_IDREF')
+    await queryRunner.dropIndex('organismes', 'IDX_ORGANISME_TITLE')
+    await queryRunner.dropTable('organismes')
   }
 }

@@ -1,7 +1,7 @@
-import { IParseToOrganisme } from "./parse_to_organisme.interface";
-import { LoggerService } from "../../../shared/modules/logger/logger.service";
-import { toDate } from "@biblio-num/shared";
-import { Organisme } from "../organismes/organisme.entity";
+import { IParseToOrganisme } from './parse_to_organisme.interface'
+import { LoggerService } from '../../../shared/modules/logger/logger.service'
+import { toDate } from '@biblio-num/shared'
+import { Organisme } from '../organismes/organisme.entity'
 
 export type TDataApiRnaV3 = {
   rna_id: string;
@@ -34,85 +34,81 @@ export type TResultApiRnaV3 = {
   meta: object;
 };
 
-export default class ParseApiRnaV3
-  implements IParseToOrganisme<Partial<TDataApiRnaV3>, TResultApiRnaV3>
-{
-  constructor(private logger: LoggerService) {
-    this.logger.setContext(this.constructor.name);
+export default class ParseApiRnaV3 implements IParseToOrganisme<Partial<TDataApiRnaV3>, TResultApiRnaV3> {
+  constructor (private logger: LoggerService) {
+    this.logger.setContext(this.constructor.name)
   }
 
-  dataJson: Partial<TDataApiRnaV3>;
+  dataJson: Partial<TDataApiRnaV3>
 
-  getDataUpdateAt(): Date {
-    return new Date(this.dataJson.mise_a_jour);
+  getDataUpdateAt (): Date {
+    return new Date(this.dataJson.mise_a_jour)
   }
 
-  setDataJson(result: { data: Partial<TResultApiRnaV3> }): void {
+  setDataJson (result: { data: Partial<TResultApiRnaV3> }): void {
     if (!result?.data) {
-      throw new Error("Data is empty or undefined");
+      throw new Error('Data is empty or undefined')
     }
-    this.dataJson = result?.data?.data;
+    this.dataJson = result?.data?.data
   }
 
   // TODO: type
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  toOrganismeEntity(organisme: Organisme, orgDataDataJson: TDataApiRnaV3) {
-    const newOrganisme = organisme || new Organisme();
-    newOrganisme.idRef = orgDataDataJson.rna_id;
-    newOrganisme.title = orgDataDataJson.titre;
+  toOrganismeEntity (organisme: Organisme, orgDataDataJson: TDataApiRnaV3) {
+    const newOrganisme = organisme || new Organisme()
+    newOrganisme.idRef = orgDataDataJson.rna_id
+    newOrganisme.title = orgDataDataJson.titre
 
-    newOrganisme.address = `${
-      orgDataDataJson?.adresse_siege?.complement || ""
-    } ${orgDataDataJson?.adresse_siege?.numero_voie || ""} ${
-      orgDataDataJson?.adresse_siege?.type_voie || ""
-    } ${orgDataDataJson?.adresse_siege?.libelle_voie || ""} ${
-      orgDataDataJson?.adresse_siege?.code_postal || ""
-    } ${orgDataDataJson?.adresse_siege?.commune || ""}`;
+    newOrganisme.address = `${orgDataDataJson?.adresse_siege?.complement || ''} ${
+      orgDataDataJson?.adresse_siege?.numero_voie || ''
+    } ${orgDataDataJson?.adresse_siege?.type_voie || ''} ${orgDataDataJson?.adresse_siege?.libelle_voie || ''} ${
+      orgDataDataJson?.adresse_siege?.code_postal || ''
+    } ${orgDataDataJson?.adresse_siege?.commune || ''}`
 
-    newOrganisme.city = orgDataDataJson?.adresse_siege?.commune;
-    newOrganisme.zipCode = orgDataDataJson.adresse_siege?.code_postal;
+    newOrganisme.city = orgDataDataJson?.adresse_siege?.commune
+    newOrganisme.zipCode = orgDataDataJson.adresse_siege?.code_postal
 
     try {
-      newOrganisme.dateCreation = toDate(orgDataDataJson.date_creation);
+      newOrganisme.dateCreation = toDate(orgDataDataJson.date_creation)
     } catch (error) {
       this.logger.warn({
         short_message: `Error for date_creation of ${newOrganisme.idRef}: ${error.message}`,
         full_message: `Error for date_creation of ${newOrganisme.idRef}: ${error.stack}`,
-      });
+      })
     }
     try {
-      newOrganisme.dateDeclaration = toDate(orgDataDataJson.date_declaration);
+      newOrganisme.dateDeclaration = toDate(orgDataDataJson.date_declaration)
     } catch (error) {
       this.logger.warn({
         short_message: `Error for date_declaration of ${newOrganisme.idRef}: ${error.message}`,
         full_message: `Error for date_declaration of ${newOrganisme.idRef}: ${error.stack}`,
-      });
+      })
     }
     try {
-      newOrganisme.datePublication = toDate(orgDataDataJson.date_publication);
+      newOrganisme.datePublication = toDate(orgDataDataJson.date_publication)
     } catch (error) {
       this.logger.warn({
         short_message: `Error for date_publication of ${newOrganisme.idRef}: ${error.message}`,
         full_message: `Error for date_publication of ${newOrganisme.idRef}: ${error.stack}`,
-      });
+      })
     }
     try {
-      newOrganisme.dateModification = toDate(orgDataDataJson.mise_a_jour);
+      newOrganisme.dateModification = toDate(orgDataDataJson.mise_a_jour)
     } catch (error) {
       this.logger.warn({
         short_message: `Error for mise_a_jour of ${newOrganisme.idRef}: ${error.message}`,
         full_message: `Error for mise_a_jour of ${newOrganisme.idRef}: ${error.stack}`,
-      });
+      })
     }
     try {
-      newOrganisme.dateDissolution = toDate(orgDataDataJson.date_dissolution);
+      newOrganisme.dateDissolution = toDate(orgDataDataJson.date_dissolution)
     } catch (error) {
       this.logger.warn({
         short_message: `Error for date_dissolution of ${newOrganisme.idRef}: ${error.message}`,
         full_message: `Error for date_dissolution of ${newOrganisme.idRef}: ${error.stack}`,
-      });
+      })
     }
 
-    return newOrganisme;
+    return newOrganisme
   }
 }

@@ -1,10 +1,10 @@
-import { Test, TestingModule } from "@nestjs/testing";
-import { SendMailService } from "./sendmail.service";
-import { SendMailModule } from "./sendmail.module";
-import * as SMTPTransport from "nodemailer/lib/smtp-transport";
-import MailMessage from "nodemailer/lib/mailer/mail-message";
-import { LoggerService } from "../../shared/modules/logger/logger.service";
-import { loggerServiceMock } from "../../../test/mock/logger-service.mock";
+import { Test, TestingModule } from '@nestjs/testing'
+import { SendMailService } from './sendmail.service'
+import { SendMailModule } from './sendmail.module'
+import * as SMTPTransport from 'nodemailer/lib/smtp-transport'
+import MailMessage from 'nodemailer/lib/mailer/mail-message'
+import { LoggerService } from '../../shared/modules/logger/logger.service'
+import { loggerServiceMock } from '../../../test/mock/logger-service.mock'
 
 /**
  * Code spyOnSmtpSend is from https://github.com/nest-modules/mailer/blob/master/lib/mailer.service.spec.ts
@@ -12,33 +12,30 @@ import { loggerServiceMock } from "../../../test/mock/logger-service.mock";
  */
 // TODO: fixe type
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function spyOnSmtpSend(onMail: (mail: MailMessage) => void) {
+function spyOnSmtpSend (onMail: (mail: MailMessage) => void) {
   return jest
-    .spyOn(SMTPTransport.prototype, "send")
+    .spyOn(SMTPTransport.prototype, 'send')
     .mockImplementation(function (
       mail: MailMessage,
-      callback: (
-        err: Error | null,
-        info: SMTPTransport.SentMessageInfo,
-      ) => void,
+      callback: (err: Error | null, info: SMTPTransport.SentMessageInfo) => void,
     ): void {
-      onMail(mail);
+      onMail(mail)
       callback(null, {
         envelope: {
           from: mail.data.from as string,
           to: [mail.data.to as string],
         },
-        messageId: "ABCD",
+        messageId: 'ABCD',
         accepted: [],
         rejected: [],
         pending: [],
-        response: "ok",
-      });
-    });
+        response: 'ok',
+      })
+    })
 }
 
-describe("SendMailService", () => {
-  let service: SendMailService;
+describe('SendMailService', () => {
+  let service: SendMailService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -46,43 +43,31 @@ describe("SendMailService", () => {
     })
       .useMocker((token) => {
         if (token === LoggerService) {
-          return loggerServiceMock;
+          return loggerServiceMock
         }
       })
-      .compile();
-    service = module.get<SendMailService>(SendMailService);
-  });
+      .compile()
+    service = module.get<SendMailService>(SendMailService)
+  })
 
-  it("should be defined", () => {
-    expect(service).toBeDefined();
-  });
+  it('should be defined', () => {
+    expect(service).toBeDefined()
+  })
 
-  it("should  get mail from one template", async () => {
-    const email = "test.test@exemple.com";
-    let result;
+  it('should  get mail from one template', async () => {
+    const email = 'test.test@exemple.com'
+    let result
     spyOnSmtpSend((obj: MailMessage) => {
-      result = obj;
-    });
-    await service.welcome(email);
-    expect(result).toBeDefined();
-    expect(result).toHaveProperty("data");
-    expect(result.data).toHaveProperty("to", email);
-    expect(result.data).toHaveProperty("from", "defaults@test.com");
-    expect(result.data).toHaveProperty(
-      "subject",
-      expect.stringMatching(/Bienvenue/),
-    );
-    expect(result.data).toHaveProperty(
-      "html",
-      expect.stringMatching(/Bibliothèque Numérique/),
-    );
-    expect(result.data).toHaveProperty(
-      "html",
-      expect.stringMatching("Bienvenue"),
-    );
-    expect(result.data).toHaveProperty(
-      "html",
-      expect.stringMatching(new RegExp(email)),
-    );
-  });
-});
+      result = obj
+    })
+    await service.welcome(email)
+    expect(result).toBeDefined()
+    expect(result).toHaveProperty('data')
+    expect(result.data).toHaveProperty('to', email)
+    expect(result.data).toHaveProperty('from', 'defaults@test.com')
+    expect(result.data).toHaveProperty('subject', expect.stringMatching(/Bienvenue/))
+    expect(result.data).toHaveProperty('html', expect.stringMatching(/Bibliothèque Numérique/))
+    expect(result.data).toHaveProperty('html', expect.stringMatching('Bienvenue'))
+    expect(result.data).toHaveProperty('html', expect.stringMatching(new RegExp(email)))
+  })
+})

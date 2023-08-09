@@ -1,17 +1,17 @@
-import { IsDate, IsDefined, IsNumber } from "class-validator";
+import { IsDate, IsDefined, IsNumber } from 'class-validator'
 
 export class BaseEntityOnlyDates {
   @IsDate()
   @IsDefined()
-  createdAt: Date;
+    createdAt: Date
 
   @IsDate()
   @IsDefined()
-  updatedAt: Date;
+    updatedAt: Date
 }
 
 export class BaseEntity extends BaseEntityOnlyDates {
   @IsNumber()
   @IsDefined()
-  id: number;
+    id: number
 }

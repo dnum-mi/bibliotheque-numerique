@@ -19,6 +19,7 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "@biblio-num/shared/*": ["packages/shared/*"]
-    }
+    },
+    "lib": ["es2022"]
   }
 }

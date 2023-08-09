@@ -1,5 +1,5 @@
-import { PrismaService } from "@/shared/modules/prisma/providers/prisma.service";
-import { Global, Module } from "@nestjs/common";
+import { PrismaService } from '@/shared/modules/prisma/providers/prisma.service'
+import { Global, Module } from '@nestjs/common'
 
 @Global()
 @Module({

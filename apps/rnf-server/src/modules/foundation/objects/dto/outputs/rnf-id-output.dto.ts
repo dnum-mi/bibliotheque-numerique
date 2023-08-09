@@ -1,8 +1,8 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { InfoDSOutputDto } from "../info-ds-output.dto";
+import { ApiProperty } from '@nestjs/swagger'
+import { InfoDSOutputDto } from '../info-ds-output.dto'
 
 export class RnfIdOutputDto {
-  ds: InfoDSOutputDto;
+  ds: InfoDSOutputDto
   @ApiProperty()
-  rnfId: string;
+    rnfId: string
 }

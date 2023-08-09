@@ -1,4 +1,5 @@
 module.exports = {
+  root: true,
   parser: "@typescript-eslint/parser",
   parserOptions: {
     project: "tsconfig.json",
@@ -8,11 +9,10 @@ module.exports = {
   plugins: ["@typescript-eslint/eslint-plugin"],
   extends: [
     "plugin:@typescript-eslint/recommended",
-    "plugin:prettier/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "plugin:@typescript-eslint/strict",
+    "standard",
   ],
-  root: true,
   env: {
     node: true,
     jest: true,
@@ -25,7 +25,10 @@ module.exports = {
     "@typescript-eslint/no-extraneous-class": "off",
     "@typescript-eslint/no-unsafe-assignment": "off",
     "@typescript-eslint/restrict-template-expressions": "off",
-    "max-len": ["error", { code: 140 }],
+    "max-len": ["error", { code: 120 }],
+    'no-useless-constructor': 'off',
+    'no-irregular-whitespace': 'off',
+    'comma-dangle': ['error', 'always-multiline'],
   },
   overrides: [
     {
@@ -36,5 +39,23 @@ module.exports = {
         "@typescript-eslint/no-unsafe-argument": "off",
       },
     },
+    {
+      files: ["src/**/*.{spec,test}.{js,ts,jsx,tsx}", "test/**/*.{js,ts}"],
+      env: {
+        jest: true,
+      },
+    },
+    {
+      files: ["*.mock.ts"],
+      rules: {
+        "max-len": "off"
+      }
+    },
+    {
+      files: ["*spec.ts"],
+      rules: {
+        "max-len": ["warn", { code: 140 }]
+      }
+    }
   ],
 };
