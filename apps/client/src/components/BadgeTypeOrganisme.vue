@@ -6,7 +6,7 @@
   />
 </template>
 
-<style lang="css">
+<style lang="css" scoped>
 .fr-badge--beige-gris-galet-950-100 {
   background-color: var(--beige-gris-galet-950-100);
 }

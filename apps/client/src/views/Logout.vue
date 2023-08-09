@@ -7,10 +7,13 @@ const userStore = useUserStore()
 const router = useRouter()
 
 onMounted(async () => {
-  await userStore.logout()
+  try {
+    await userStore.logout()
+  } catch (e) {
+    // TODO: Afficher une erreur compréhensible à l’utilisateur
+  }
   router.push('/sign_in')
 })
-
 </script>
 
 <template>

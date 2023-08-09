@@ -26,7 +26,8 @@ const props = withDefaults(defineProps<{
 const getIcon = (icon?: string | TIconFunction): string => {
   if (typeof icon === 'function') {
     return icon(props.params.data)
-  } else if (typeof icon === 'string') {
+  }
+  if (typeof icon === 'string') {
     return icon
   }
   return 'ri-search-line'
@@ -44,7 +45,6 @@ const showElt = () => {
 </script>
 
 <style scoped>
-
 .fr-btn {
   --padding: 0;
 }

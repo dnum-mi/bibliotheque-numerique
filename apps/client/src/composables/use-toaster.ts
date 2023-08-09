@@ -33,7 +33,7 @@ export type Message = {
 const timeouts: Record<string, number> = {}
 const messages: Message[] = reactive([])
 
-const useToaster = () => {
+const useToaster = (defaultTimeout = 10000) => {
   function removeMessage (id: string) {
     const index = messages.findIndex(message => message.id === id)
     clearTimeout(timeouts[id])
@@ -48,23 +48,20 @@ const useToaster = () => {
     message.titleTag ??= 'h3'
     message.closeable ??= true
     message.type ??= 'info'
-    message.timeout ??= 3000
+    message.timeout ??= defaultTimeout
     messages.push({ ...message, description: `${message.description}` })
     timeouts[message.id] = window.setTimeout(() => removeMessage(message.id as string), message.timeout)
   }
 
-  const defaultTimeout = 10000
   function addSuccessMessage (message: Message) {
     addMessage({
       ...message,
-      timeout: defaultTimeout,
       type: 'success',
     })
   }
   function addErrorMessage (message: Message) {
     addMessage({
       ...message,
-      timeout: defaultTimeout,
       type: 'error',
     })
   }

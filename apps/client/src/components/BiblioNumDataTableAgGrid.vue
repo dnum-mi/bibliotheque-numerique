@@ -1,28 +1,3 @@
-<template>
-  <h4 v-if="title">
-    {{ title }}
-  </h4>
-  <ag-grid-vue
-    style="max-width: 100%;height: 690px;"
-    class="ag-theme-alpine"
-    :column-defs="columnDefs"
-    :row-data="rowData"
-    :pagination="pagination"
-    :pagination-page-size="paginationPageSize"
-    :default-col-def="{
-      sortable: true,
-      resizable: true,
-      filter: true
-    }"
-    :context="context"
-    :side-bar="sideBar"
-    :grid-options="gridOptions"
-    :row-selection="rowSelection"
-    @selection-changed="onSelectionChanged"
-    @grid-ready="onGridReady"
-  />
-</template>
-
 <script lang="ts" setup>
 import { computed, ref, watchEffect } from 'vue'
 
@@ -42,8 +17,7 @@ import AgGridMultiValueCell from './ag-grid/AgGridMultiValueCell.vue'
 import AgGridAttachmentCell from './ag-grid/AgGridAttachmentCell.vue'
 import type { Component } from 'vue'
 
-const getFilterAgGrid = (header) => {
-  const { type, filter } = header
+const getFilterAgGrid = ({ type, filter }) => {
   const typeFilter = filter === AgGridTypeFilter.MULTI_VALUE && type === 'number' ? AgGridTypeFilter.MULTI_VALUE_NUMBER : type
   return (typeFilter && filterToApply[typeFilter as AgGridTypeFilter]) || { }
 }
@@ -157,3 +131,28 @@ const onGridReady = (params) => {
   watchEffect(() => { params.api.setRowData(props.rowData) })
 }
 </script>
+
+<template>
+  <h4 v-if="title">
+    {{ title }}
+  </h4>
+  <ag-grid-vue
+    style="max-width: 100%;height: 690px;"
+    class="ag-theme-alpine"
+    :column-defs="columnDefs"
+    :row-data="rowData"
+    :pagination="pagination"
+    :pagination-page-size="paginationPageSize"
+    :default-col-def="{
+      sortable: true,
+      resizable: true,
+      filter: true
+    }"
+    :context="context"
+    :side-bar="sideBar"
+    :grid-options="gridOptions"
+    :row-selection="rowSelection"
+    @selection-changed="onSelectionChanged"
+    @grid-ready="onGridReady"
+  />
+</template>

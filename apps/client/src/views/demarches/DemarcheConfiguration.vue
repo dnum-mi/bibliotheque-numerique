@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
+import { computed, nextTick } from 'vue'
 import type { IDemarcheMappingColumn } from '@/shared/interfaces'
 import { ChampType, ChampValueBaseTypes, ChampValueTypes, ChampValueTypesKeys, TypeDeChampDS } from '@/shared/types'
 import { enumToDsfrSelectOptions } from '@/utils/enumToDsfrSelectOptions'
@@ -16,6 +16,13 @@ const demarcheMappingColumns = computed<IDemarcheMappingColumn[]>(() => props.da
   return data
 }))
 
+const focusOn = async ($event: (InputEvent & {target: { checked: boolean; id: string}})) => {
+  if ($event.target?.checked) {
+    setTimeout(() => {
+      (document.getElementById($event.target.id.replace('display', 'labelBN')) as HTMLInputElement).focus()
+    })
+  }
+}
 </script>
 
 <template>
@@ -40,15 +47,16 @@ const demarcheMappingColumns = computed<IDemarcheMappingColumn[]>(() => props.da
     />
     <div class="fr-container fr-pb-3v">
       <div class="fr-grid-row">
-        <div class="fr-col-1 fr-p-2v fr-mt-3w fr-pl-4w">
+        <div class="fr-col-1  fr-p-2v  fr-mt-3w  fr-pl-4w">
           <DsfrCheckbox
             v-if="mappingColumn.typeName != TypeDeChampDS.REPETITION"
             :id="`display-${mappingColumn.id}`"
             v-model="mappingColumn.display"
             :name="mappingColumn.id"
+            @click="focusOn($event)"
           />
         </div>
-        <div class="fr-col-1 fr-p-2v fr-mt-3w">
+        <div class="fr-col-1  fr-p-2v  fr-mt-3w">
           <DsfrBadge
             :id="`typeData-${mappingColumn.id}`"
             :label="mappingColumn.typeData.toUpperCase()"
@@ -58,18 +66,18 @@ const demarcheMappingColumns = computed<IDemarcheMappingColumn[]>(() => props.da
           />
           <span
             v-if="mappingColumn.typeName === TypeDeChampDS.REPETITION"
-            class="fr-icon-table-fill fr-icon--sm"
+            class="fr-icon-table-fill   fr-icon--sm"
             aria-hidden="true"
             title="Type de champ: Bloc Répétable"
           />
           <span
             v-if="mappingColumn.labelSource.length > 1"
-            class="fr-icon-list-unordered fr-icon--sm"
+            class="fr-icon-list-unordered  fr-icon--sm"
             aria-hidden="true"
             title="Le champ dans <Bloc Répétable>"
           />
         </div>
-        <div class="fr-col-4 fr-p-2v">
+        <div class="fr-col-4  fr-p-2v">
           <DsfrInput
             :id="`labelSource-${mappingColumn.id}`"
             :model-value="mappingColumn.labelSource.slice(-1).toString()"
@@ -78,20 +86,11 @@ const demarcheMappingColumns = computed<IDemarcheMappingColumn[]>(() => props.da
             @update:model-value="mappingColumn.labelSource = $event"
           />
         </div>
-        <div class="fr-col-4 fr-p-2v">
+        <div class="fr-col-6  fr-p-2v">
           <DsfrInput
             :id="`labelBN-${mappingColumn.id}`"
             v-model="mappingColumn.labelBN"
             is-textarea
-            :disabled="!mappingColumn.display"
-          />
-        </div>
-        <div class="fr-col-2 fr-p-2v">
-          <DsfrSelect
-            :id="`typeValue-${mappingColumn.id}`"
-            v-model="mappingColumn.typeValue"
-            label=""
-            :options="mappingColumn.typeData === ChampType.INSTRUCTION_TIME ? listTypeInstructionTime : listType"
             :disabled="!mappingColumn.display"
           />
         </div>

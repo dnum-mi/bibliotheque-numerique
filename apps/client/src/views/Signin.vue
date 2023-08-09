@@ -40,7 +40,7 @@ const { value: passwordValue, errorMessage: passwordError } = useField('password
 
 <template>
   <LayoutAccueil>
-    <div class="fr-container fr-m-5w">
+    <div class="fr-container">
       <div
         class="fr-container fr-grid-row"
       >
@@ -107,7 +107,7 @@ const { value: passwordValue, errorMessage: passwordError } = useField('password
               class="fr-m-4w"
               style="text-align:center"
             >
-              <router-link :to="{name: 'signUp'}">
+              <router-link :to="{name: 'SignUp'}">
                 Pas encore inscrit ? Inscrivez-vous ici.
               </router-link>
             </div>
@@ -116,7 +116,7 @@ const { value: passwordValue, errorMessage: passwordError } = useField('password
               class="fr-m-4w"
               style="text-align:center"
             >
-              <router-link :to="{ name: 'resetPassword' }">
+              <router-link :to="{ name: 'ResetPassword' }">
                 Mot de passe oublié ?
               </router-link>
             </div>

@@ -14,7 +14,6 @@ describe('<DemarcheConfigurations />', () => {
       .should('contain', 'Type Champs')
       .should('contain', 'Libellé origine')
       .should('contain', 'Libellé personnalisé')
-      .should('contain', 'Valeur Type')
       .should('contain', 'Mettre à jour')
   })
 })

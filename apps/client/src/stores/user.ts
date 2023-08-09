@@ -16,14 +16,8 @@ export const useUserStore = defineStore('user', {
     loaded: false,
   }),
   getters: {
-    isAuthenticated (state): boolean | null {
-      if (state.currentUser) {
-        return true
-      } else if (!state.currentUser && state.loaded) {
-        return false
-      } else {
-        return null
-      }
+    isAuthenticated (state): boolean {
+      return !!state.currentUser
     },
     hasAdminAccess (state): boolean {
       if (state.currentUser?.roles.find(role => role.name === RoleName.ADMIN)) {
@@ -40,13 +34,8 @@ export const useUserStore = defineStore('user', {
     },
   },
   actions: {
-    async login (loginForm: CredentialsInputDto) {
-      try {
-        this.currentUser = await loginUser(loginForm)
-      } catch (e) {
-        console.log('Login Error')
-        throw e
-      }
+    async login (loginForm: CredentialsInput) {
+      this.currentUser = await loginUser(loginForm)
     },
     async logout () {
       await logoutUser()
