@@ -9,12 +9,12 @@ import {
   Request,
   Response,
   UseGuards,
-} from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
-import { CredentialsInputDto, UserOutputDto } from "@biblio-num/shared";
-import { AuthService } from "../providers/auth.service";
-import { LocalAuthGuard } from "../providers/local-auth.guard";
-import { AuthenticatedGuard } from "../providers/authenticated.guard";
+} from '@nestjs/common'
+import { ApiTags } from '@nestjs/swagger'
+import { CredentialsInputDto, UserOutputDto } from '@biblio-num/shared'
+import { AuthService } from '../providers/auth.service'
+import { LocalAuthGuard } from '../providers/local-auth.guard'
+import { AuthenticatedGuard } from '../providers/authenticated.guard'
 
 /* The TODO: of this file must be done after creating what nestjs calls "tests" */
 @ApiTags('Auth')
@@ -41,12 +41,12 @@ export class AuthController {
   }
 
   @UseGuards(AuthenticatedGuard)
-  @Get("profile")
-  getProfile(@Request() req): Promise<UserOutputDto> {
+  @Get('profile')
+  getProfile (@Request() req): Promise<UserOutputDto> {
     if (req.user) {
       return this.authService.login(req.user)
     } else {
-      throw new NotFoundException("User not found");
+      throw new NotFoundException('User not found')
     }
   }
 }

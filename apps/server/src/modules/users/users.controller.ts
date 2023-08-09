@@ -8,17 +8,17 @@ import {
   Put,
   Request,
   UseGuards,
-} from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
-import { Roles, RolesGuard } from "../roles/providers/roles.guard";
-import { UsersService } from "./users.service";
+} from '@nestjs/common'
+import { ApiTags } from '@nestjs/swagger'
+import { Roles, RolesGuard } from '../roles/providers/roles.guard'
+import { UsersService } from './users.service'
 import {
   CreateUserDto,
   UpdateUserPasswordDto,
   ResetPasswordInputDto,
   UserOutputDto,
-} from "@biblio-num/shared";
-import { UpdatePasswordGuard } from "./update-password.guard";
+} from '@biblio-num/shared'
+import { UpdatePasswordGuard } from './update-password.guard'
 
 @ApiTags('Users')
 @Controller('users')
@@ -26,23 +26,23 @@ import { UpdatePasswordGuard } from "./update-password.guard";
 export class UsersController {
   constructor (private readonly usersService: UsersService) {}
 
-  @Post("user")
-  async signUp(@Body() body: CreateUserDto): Promise<UserOutputDto> {
-    return this.usersService.create(body.email, body.password);
+  @Post('user')
+  async signUp (@Body() body: CreateUserDto): Promise<UserOutputDto> {
+    return this.usersService.create(body.email, body.password)
   }
 
   @Get()
-  @Roles("admin")
-  async listUsers(): Promise<UserOutputDto[]> {
-    return this.usersService.listUsers();
+  @Roles('admin')
+  async listUsers (): Promise<UserOutputDto[]> {
+    return this.usersService.listUsers()
   }
 
-  @Get("/:id")
-  @Roles("admin")
-  async getUserById(
-    @Param("id", ParseIntPipe) id: number,
+  @Get('/:id')
+  @Roles('admin')
+  async getUserById (
+    @Param('id', ParseIntPipe) id: number,
   ): Promise<UserOutputDto> {
-    return this.usersService.getUserById(id);
+    return this.usersService.getUserById(id)
   }
 
   @Post('/reset-password')
