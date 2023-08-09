@@ -3,7 +3,7 @@ import {
   Controller,
   Get,
   Param,
-  Patch,
+  ParseIntPipe,
   Post,
   Put,
   Request,
@@ -12,11 +12,11 @@ import {
 import { ApiTags } from "@nestjs/swagger";
 import { Roles, RolesGuard } from "../roles/providers/roles.guard";
 import { UsersService } from "./users.service";
-import { User } from "./entities/user.entity";
 import {
   CreateUserDto,
   UpdateUserPasswordDto,
   ResetPasswordInputDto,
+  UserOutputDto,
 } from "@biblio-num/shared";
 import { UpdatePasswordGuard } from "./update-password.guard";
 
@@ -27,19 +27,21 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post("user")
-  async signUp(@Body() body: CreateUserDto): Promise<User> {
+  async signUp(@Body() body: CreateUserDto): Promise<UserOutputDto> {
     return this.usersService.create(body.email, body.password);
   }
 
   @Get()
   @Roles("admin")
-  async listUsers(): Promise<User[]> {
+  async listUsers(): Promise<UserOutputDto[]> {
     return this.usersService.listUsers();
   }
 
   @Get("/:id")
   @Roles("admin")
-  async getUserById(@Param("id") id: number): Promise<User> {
+  async getUserById(
+    @Param("id", ParseIntPipe) id: number,
+  ): Promise<UserOutputDto> {
     return this.usersService.getUserById(id);
   }
 

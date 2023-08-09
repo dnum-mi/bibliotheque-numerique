@@ -7,3 +7,10 @@ items:
     description: "App administrator, has full rights"
     createdAt: 2023-06-12T06:54:45.000Z
     updatedAt: 2023-06-12T06:54:45.000Z
+  defaultRole:
+    id: 2
+    name: user
+    permissions: []
+    description: "App user, has none rights"
+    createdAt: 2023-06-12T06:54:45.000Z
+    updatedAt: 2023-06-12T06:54:45.000Z
