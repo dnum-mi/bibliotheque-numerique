@@ -22,7 +22,7 @@ export class UpdatePasswordGuard implements CanActivate {
     // jwt does not go natively in url. We had to transform it in base64
     const tokenJwt = Buffer.from(token, 'base64url').toString()
     const decode = this.jwtService.decode(tokenJwt)
-    if (!decode) return false
+    if (!decode || typeof decode === 'string') return false
     const user = await this.userService.findOneById(decode.user)
     if (!user) return false
     request.user = user

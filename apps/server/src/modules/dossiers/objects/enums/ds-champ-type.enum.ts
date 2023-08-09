@@ -46,7 +46,9 @@ export const giveTypeFromDsChampType = (type: DsChampTypeKeys): FieldTypeKeys =>
   }
 }
 
-export const isRepetitionChamp = (champ: Champ): boolean => champ.__typename === DsChampType.RepetitionChamp
+// eslint-disable-next-line dot-notation
+export const isRepetitionChamp = (champ: Champ): boolean => champ['__typename'] === DsChampType.RepetitionChamp
 
 export const isFileChamp = (champ: Champ): boolean =>
-  giveTypeFromDsChampType(champ.__typename as DsChampTypeKeys) === FieldType.file
+  // eslint-disable-next-line dot-notation
+  giveTypeFromDsChampType(champ['__typename'] as DsChampTypeKeys) === FieldType.file

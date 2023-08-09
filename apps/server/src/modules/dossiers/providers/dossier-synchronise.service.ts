@@ -4,7 +4,7 @@ import { Repository } from 'typeorm'
 import { Dossier } from '../objects/entities/dossier.entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { BaseEntityService } from '../../../shared/base-entity/base-entity.service'
-import { Dossier as TDossier, File as TFile, RepetitionChamp } from '@dnum-mi/ds-api-client'
+import { Dossier as TDossier, File as TFile, RepetitionChamp, PieceJustificativeChamp } from '@dnum-mi/ds-api-client'
 import { Champ, Message } from '@dnum-mi/ds-api-client/src/@types/types'
 import { ConfigService } from '@nestjs/config'
 import { FilesService } from '../../files/files.service'
@@ -57,14 +57,18 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
   private async _formatFileChamp (originalChamp: Champ): Promise<Champ> {
     this.logger.debug(`_formatFileChamp (${originalChamp.label})`)
     const champ = { ...originalChamp }
-    this.logger.debug(originalChamp.__typename)
-    if (isFileChamp(originalChamp) && (originalChamp.files?.length || originalChamp.file)) {
-      const files = [...(originalChamp.files ?? []), ...[originalChamp.file]].filter((a) => !!a)
-      await Promise.all(
-        files.map(async (file) => {
-          file.url = await this.copyDsFile(file)
-        }),
-      )
+    // eslint-disable-next-line dot-notation
+    this.logger.debug(originalChamp['__typename'])
+    if (isFileChamp(originalChamp)) {
+      const fileChamp = originalChamp as PieceJustificativeChamp
+      if ((fileChamp.files?.length || fileChamp.file)) {
+        const files = [...((fileChamp).files ?? []), ...[(fileChamp).file]].filter((a) => !!a)
+        await Promise.all(
+          files.map(async (file) => {
+            file.url = await this.copyDsFile(file)
+          }),
+        )
+      }
     } else if (isRepetitionChamp(originalChamp)) {
       const rChamp = champ as RepetitionChamp
       rChamp.rows = await Promise.all(

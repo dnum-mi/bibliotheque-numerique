@@ -7,7 +7,7 @@ import { FoundationEntity } from '@/modules/foundation/objects/foundation.entity
 import { Prisma } from '@prisma/client'
 
 @Injectable()
-export class FoundationHistoryService extends BaseEntityService<FoundationHistoryEntity> {
+export class FoundationHistoryService extends BaseEntityService {
   constructor (protected readonly prisma: PrismaService, private logger: LoggerService) {
     super(prisma)
     this.logger.setContext(this.constructor.name)

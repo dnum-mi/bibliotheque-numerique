@@ -261,7 +261,7 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
 
     const nbDaysExtensionTotal = this.nbDaysAfterInstruction + this.nbDaysAfterExtension
     if (isOk2ndDemand?.date && dayjs(isOk2ndDemand.date).diff(forDateStart.date, 'days') > nbDaysExtensionTotal) {
-      throw new Error(`${messageError} pour la date 2eme demande de piece: Elle est aprés ${nbDaysExtensionTotal}` +
+      throw new Error(`${messageError} pour la date 2eme demande de piece: Elle est aprés ${nbDaysExtensionTotal} ` +
       `jours par rapport à ${forDateStart.message.toLowerCase()}`)
     }
 

@@ -90,6 +90,7 @@ describe('InstructionTimesService, Check Date', () => {
     dossier.dsDataJson.state = state
     dossier.dsDataJson.datePassageEnInstruction = dateInstrution
     const instuctionTimes = {
+      id: 'dossier-test',
       [keyInstructionTime.DATE_REQUEST1]: firstDemand,
       [keyInstructionTime.DATE_RECEIPT1]: firstReceip,
       [keyInstructionTime.BEGIN_PROROGATION_DATE]: dateProrogation,
