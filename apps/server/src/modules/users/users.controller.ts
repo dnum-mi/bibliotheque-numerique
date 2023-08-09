@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  ParseIntPipe,
   Post,
   Put,
   Request,
@@ -38,7 +39,9 @@ export class UsersController {
 
   @Get("/:id")
   @Roles("admin")
-  async getUserById(@Param("id") id: number): Promise<UserOutputDto> {
+  async getUserById(
+    @Param("id", ParseIntPipe) id: number,
+  ): Promise<UserOutputDto> {
     return this.usersService.getUserById(id);
   }
 

@@ -5,6 +5,7 @@ import { ISendMailOptions, MailerService } from "@nestjs-modules/mailer";
 import { JwtService } from "@nestjs/jwt";
 import { jwtConstants } from "../../../src/modules/auth/objects/constants";
 import { getAdminCookie } from "../common/get-admin-cookie";
+import { getUserCookie } from "../common/get-user-cookie";
 import { faker } from "@faker-js/faker/locale/fr";
 
 describe("users (e2e)", () => {
@@ -26,6 +27,20 @@ describe("users (e2e)", () => {
     await app.close();
   });
 
+  it("GET /users - Should return error 403 if user is not connected", async () => {
+    await request(app.getHttpServer()) //
+      .get(`/users`)
+      .expect(403);
+  });
+
+  it("GET /users - Should return error 403 if user is not admin", async () => {
+    cookie = await getUserCookie(app);
+    await request(app.getHttpServer()) //
+      .get(`/users`)
+      .set("Cookie", [cookie])
+      .expect(403);
+  });
+
   it("GET /users - Should return all users", async () => {
     cookie = await getAdminCookie(app);
     const response = await request(app.getHttpServer())
@@ -34,12 +49,9 @@ describe("users (e2e)", () => {
       .expect(200);
     expect(response.body).toBeDefined();
     expect(response.body.length).toBeGreaterThan(0);
-  });
-
-  it("GET /users - Should return error 403 if user is not connected", async () => {
-    await request(app.getHttpServer()) //
-      .get(`/users`)
-      .expect(403);
+    expect(response.body[0].id).toBeDefined();
+    expect(response.body[0].email).toBeDefined();
+    expect(response.body[0].password).toBeUndefined();
   });
 
   it("GET /users/:id - Should return the user", async () => {
@@ -64,13 +76,13 @@ describe("users (e2e)", () => {
       .expect(404);
   });
 
-  it("GET /users/:id - Should return error 500 if user id is not a number", async () => {
+  it("GET /users/:id - Should return error 400 if user id is not a number", async () => {
     const id = "test";
     cookie = await getAdminCookie(app);
     await request(app.getHttpServer()) //
       .get(`/users/${id}`)
       .set("Cookie", [cookie])
-      .expect(500);
+      .expect(400);
   });
 
   it("GET /users/:id - Should return error 403 if user is not connected", async () => {
@@ -194,7 +206,6 @@ describe("users (e2e)", () => {
         password,
       })
       .expect(201);
-    console.log(response.body);
     expect(response.body).toBeDefined();
     expect(response.body.email).toBe(email);
     expect(response.body.id).toBeDefined();

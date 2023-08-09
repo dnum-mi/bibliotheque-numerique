@@ -1,4 +1,4 @@
-import { ApiProperty, OmitType, PartialType } from '@nestjs/swagger'
+import { ApiProperty, OmitType } from '@nestjs/swagger'
 import { CreateUserDto } from './create-user.dto'
 import { RoleOutputDto } from 'dto/role'
 
