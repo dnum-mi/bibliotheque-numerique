@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   HttpCode,
+  NotFoundException,
   Post,
   Request,
   Response,
@@ -42,16 +43,13 @@ export class AuthController {
     });
   }
 
-  // TODO: Move this route to users.controllers and maybe rename it to "/users/me"
   @UseGuards(AuthenticatedGuard)
   @Get("profile")
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  getProfile(@Request() req) {
+  getProfile(@Request() req): Promise<UserOutputDto> {
     if (req.user) {
       return this.authService.login(req.user);
     } else {
-      return {}; // TODO: Why not throw an (HTTP) error here?
+      throw new NotFoundException("User not found");
     }
   }
 }
