@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Module } from '@nestjs/common'
-import { FilesController } from './files.controller'
+import { FileController } from './controllers/file.controller'
 import { MulterModule } from '@nestjs/platform-express'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { diskStorage } from 'multer'
@@ -7,8 +7,8 @@ import { randomStringGenerator } from '@nestjs/common/utils/random-string-genera
 import * as AWS from 'aws-sdk'
 import * as multerS3 from 'multer-s3'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { FileStorage } from './file_storage.entity'
-import { FilesService } from './files.service'
+import { FileStorage } from './objects/entities/file_storage.entity'
+import { FileService } from './providers/file.service'
 import { HttpModule } from '@nestjs/axios'
 
 @Module({
@@ -84,8 +84,8 @@ import { HttpModule } from '@nestjs/axios'
       },
     }),
   ],
-  controllers: [FilesController],
-  providers: [ConfigModule, ConfigService, FilesService],
-  exports: [FilesService],
+  controllers: [FileController],
+  providers: [ConfigModule, ConfigService, FileService],
+  exports: [FileService],
 })
-export class FilesModule {}
+export class FileModule {}
