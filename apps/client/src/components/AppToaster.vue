@@ -20,7 +20,7 @@ const close = (id: string) => emit('close-message', id)
       <DsfrAlert
         v-for="message in messages"
         :key="message.id"
-        style="background-color: white; width: 90%;"
+        style="background-color: white; width: 90%; pointer-events: all;"
         v-bind="message"
         @close="close(message.id as string)"
       />
