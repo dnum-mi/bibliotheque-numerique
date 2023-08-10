@@ -45,21 +45,3 @@ const toaster = useToaster()
     @update-service-worker="updateServiceWorker()"
   />
 </template>
-
-<style>
-.break-word {
-  word-wrap: break-word;
-}
-.flex {
-  display: flex;
-}
-.flex-col {
-  flex-direction: column;
-}
-.justify-center {
-  justify-content: center;
-}
-.items-center {
-  align-items: center;
-}
-</style>
