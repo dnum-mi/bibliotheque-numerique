@@ -23,18 +23,6 @@ export class OrganismesDatasService extends BaseEntityService<OrganismesData> {
     this.logger.setContext(this.constructor.name)
   }
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  async findAllAndMap () {
-    const organismeDatas = await this.repo.find({
-      relations: { organismesSource: true },
-    })
-    return organismeDatas.map((organismeData) => ({
-      ...organismeData,
-      organismesSource: organismeData.organismesSource.name,
-    }))
-  }
-
   async findByIdRNA (idRef: string): Promise<OrganismesData[]> {
     const organismesDatas = await this.repo.find({
       where: { idRef },

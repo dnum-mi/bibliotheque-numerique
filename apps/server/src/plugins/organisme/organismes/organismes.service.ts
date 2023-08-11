@@ -4,7 +4,6 @@ import { LoggerService } from '../../../shared/modules/logger/logger.service'
 import { OrganismesDatasService } from './organismes_datas.service'
 import { ParseToOrganismesService } from '../parserByConnector/parse_to_organismes.service'
 import { Organisme } from './organisme.entity'
-import { OrganismesData } from './organisme_data.entity'
 import { BaseEntityService } from '../../../shared/base-entity/base-entity.service'
 import { InjectRepository } from '@nestjs/typeorm'
 
@@ -35,9 +34,8 @@ export class OrganismesService extends BaseEntityService<Organisme> {
 
   async upsertOrganisme (idRef: string, sources: string[]): Promise<Organisme> {
     this.logger.verbose('upsertOrganisme')
-    let organismeDatas: OrganismesData[] = []
     await this.organismesDatasService.findAndAddByIdRnaFromAllApi(idRef, sources)
-    organismeDatas = await this.organismesDatasService.findByIdRNA(idRef)
+    const organismeDatas = await this.organismesDatasService.findByIdRNA(idRef)
 
     if (organismeDatas?.length === 0) {
       throw new NotFoundException(`No datas for ${idRef}`)

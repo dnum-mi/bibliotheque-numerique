@@ -34,10 +34,6 @@ export class ConnectorService extends BaseEntityService<Connector> {
       .execute()
   }
 
-  async findOneBySourceName (name: string): Promise<Connector> {
-    return await this.repo.findOneBy({ name })
-  }
-
   // TODO: fixe type
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async upsert (connector: Partial<Connector>) {

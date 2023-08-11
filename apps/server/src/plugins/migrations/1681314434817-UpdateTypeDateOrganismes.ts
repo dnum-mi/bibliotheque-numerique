@@ -30,8 +30,6 @@ export class UpdateTypeDateOrganismeDatas1681314434817 implements MigrationInter
     },
   ]
 
-  prefixNew = 'new_'
-
   public async up (queryRunner: QueryRunner): Promise<void> {
     const table = await queryRunner.getTable(this.tableName)
     const changedColumns: { oldColumn: TableColumn; newColumn: TableColumn }[] = await Promise.all(

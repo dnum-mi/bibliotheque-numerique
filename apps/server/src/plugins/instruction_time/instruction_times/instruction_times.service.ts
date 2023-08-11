@@ -39,7 +39,6 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
   nbDaysAfterInstruction: number
   nbDaysAfterExtension: number
   nbDaysAfterIntentOpposition: number
-  millisecondsOfDay = 1000 * 60 * 60 * 24
 
   constructor (
     private configService: ConfigService,
@@ -232,6 +231,7 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
         date: instructionTime[keyInstructionTime.DATE_RECEIPT2],
         message: 'La date de reception de pièces',
       },
+      // eslint-disable-next-line no-irregular-whitespace
       `${messageError} pour la deuxième demande :`,
     )
 
@@ -344,12 +344,6 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
       }
     }
     return await this.saveInInstruction(instructionTime, delay)
-  }
-
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  private isOutOfDate (state) {
-    return state === EInstructionTimeState.OUT_OF_DATE
   }
 
   // TODO: fixe type

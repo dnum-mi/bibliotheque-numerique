@@ -17,9 +17,10 @@ import {
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { DemarcheService } from '../providers/demarche.service'
-
-import { FilterPipe } from '../../../shared/pipe/filter.pipe'
-import { PermissionsGuard, RequirePermissions } from '../../roles/providers/permissions.guard'
+import {
+  PermissionsGuard,
+  RequirePermissions,
+} from '../../roles/providers/permissions.guard'
 import { PermissionName } from '../../../shared/types/Permission.type'
 import { filterObjectFields } from '@biblio-num/shared'
 import { LoggerService } from '../../../shared/modules/logger/logger.service'
@@ -49,12 +50,6 @@ export class DemarcheController {
     return demarches
   }
 
-  @Post('search')
-  @RequirePermissions({ name: PermissionName.ACCESS_DEMARCHE })
-  async searchDemarches (@Request() req, @Body('filter', FilterPipe) filter: object): Promise<Demarche[]> {
-    return this.demarcheService.findWithPermissions(req.user, filter)
-  }
-
   @Get(':id')
   @RequirePermissions({ name: PermissionName.ACCESS_DEMARCHE })
   async getDemarcheById (
@@ -64,8 +59,15 @@ export class DemarcheController {
       fields: string[],
   ): Promise<Demarche | Partial<Demarche>> {
     const ruleIds = this.demarcheService.getRulesFromUserPermissions(req.user)
-    if (ruleIds && ruleIds.length > 0 && !ruleIds.find((ruleId) => ruleId === id)) {
-      throw new HttpException(`Not authorized access for demarche id: ${id}`, HttpStatus.FORBIDDEN)
+    if (
+      ruleIds &&
+      ruleIds.length > 0 &&
+      !ruleIds.find((ruleId) => ruleId === id)
+    ) {
+      throw new HttpException(
+        `Not authorized access for demarche id: ${id}`,
+        HttpStatus.FORBIDDEN,
+      )
     }
 
     const demarche = await this.demarcheService.findById(id)
@@ -86,8 +88,14 @@ export class DemarcheController {
     const ids = this.demarcheService.getRulesFromUserPermissions(req.user)
     const demarche = await this.demarcheService.findByDsId(id)
 
-    if (ids && ids.length > 0 && !ids.find((ruleId) => ruleId === demarche.id)) {
-      throw new ForbiddenException(`Not authorized access for demarche id: ${id}`)
+    if (
+      ids &&
+      ids.length > 0 &&
+      !ids.find((ruleId) => ruleId === demarche.id)
+    ) {
+      throw new ForbiddenException(
+        `Not authorized access for demarche id: ${id}`,
+      )
     }
     if (!demarche) {
       throw new NotFoundException(`Demarche number: ${id} not found`)
@@ -97,7 +105,9 @@ export class DemarcheController {
 
   @Get(':id/dossiers')
   @RequirePermissions({ name: PermissionName.ACCESS_DEMARCHE })
-  async getDemarcheDossiersById (@Param('id', ParseIntPipe) id: number): Promise<Dossier[]> {
+  async getDemarcheDossiersById (
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<Dossier[]> {
     const demarche = await this.demarcheService.findById(id)
     if (!demarche) {
       throw new NotFoundException(`Demarche id: ${id} not found`)
@@ -107,21 +117,28 @@ export class DemarcheController {
 
   @Post('create')
   // @RequirePermissions() // TODO: manage permissions
-  async create (@Body('idDs', ParseIntPipe) dsId: number): Promise<{ message: string }> {
+  async create (
+    @Body('idDs', ParseIntPipe) dsId: number,
+  ): Promise<{ message: string }> {
     await this.demarcheSynchroniseService.createAndSynchronise(dsId)
     return { message: `Demarche with DS id ${dsId} has been created.` }
   }
 
   @Post('synchro-dossiers')
   // @RequirePermissions() // TODO: manage permissions
-  async synchroDossiers (@Body('idDs', ParseIntPipe) idDs: number): Promise<{ message: string }> {
+  async synchroDossiers (
+    @Body('idDs', ParseIntPipe) idDs: number,
+  ): Promise<{ message: string }> {
     await this.demarcheSynchroniseService.synchroniseOneDemarche(idDs)
     return { message: `Demarche with DS id ${idDs} has been synchronised.` }
   }
 
   @Patch(':dsId')
   @RequirePermissions()
-  async updateDemarche (@Param('dsId', ParseIntPipe) dsId: number, @Body() demarche: Partial<Demarche>): Promise<void> {
+  async updateDemarche (
+    @Param('dsId', ParseIntPipe) dsId: number,
+    @Body() demarche: Partial<Demarche>,
+  ): Promise<void> {
     await this.demarcheService.updateWithDsId(dsId, demarche)
   }
 }

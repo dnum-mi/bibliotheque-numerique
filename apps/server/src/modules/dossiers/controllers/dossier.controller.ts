@@ -1,9 +1,7 @@
-import { Controller, Get, Post, Param, Body, Delete, HttpCode, NotFoundException } from '@nestjs/common'
+import { Controller, Get, NotFoundException, Param } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
-import { FilterPipe } from '../../../shared/pipe/filter.pipe'
 import { DossierService } from '../providers/dossier.service'
 import { Dossier } from '../objects/entities/dossier.entity'
-import { DeleteResult } from 'typeorm'
 
 @ApiTags('Dossiers')
 @Controller('dossiers')
@@ -17,11 +15,6 @@ export class DossierController {
       throw new NotFoundException('No dossier found')
     }
     return dossiers
-  }
-
-  @Post('search')
-  async searchDossier (@Body('filter', FilterPipe) filter: object): Promise<Dossier[]> {
-    return this.dossiersService.findWithFilter(filter)
   }
 
   @Get(':id')
@@ -40,11 +33,5 @@ export class DossierController {
       throw new NotFoundException(`Dossier id: ${id} not found`)
     }
     return dossier
-  }
-
-  @Delete(':id')
-  @HttpCode(204)
-  async remove (@Param('id') id: string): Promise<DeleteResult> {
-    return this.dossiersService.remove(+id)
   }
 }

@@ -62,7 +62,6 @@ describe("DossierController", () => {
     ${"findAll"}           | ${"findWithFilter"}    | ${() => controller.findAll()}
     ${"findOne"}           | ${"findOne"}           | ${() => controller.findOne("TEST")}
     ${"findOneWithDetail"} | ${"findOneWithDetail"} | ${() => controller.findOneWithDetail("TEST")}
-    ${"search"}            | ${"findWithFilter"}    | ${() => controller.searchDossier({})}
   `("$name: should get dossiers ", async ({ servicefn, fn }) => {
     const result = ["dossiers"];
     jest.spyOn(service, servicefn).mockImplementation(() => result);
@@ -88,20 +87,11 @@ describe("DossierController", () => {
     },
   );
 
-  it("search: should throw error when there are nothing", async () => {
-    const result = [];
-    jest
-      .spyOn(service, "findWithFilter")
-      .mockImplementation(async () => result);
-    expect(await controller.searchDossier({})).toBe(result);
-  });
-
   it.each`
     name                   | servicefn              | fn
     ${"findAll"}           | ${"findWithFilter"}    | ${() => controller.findAll()}
     ${"findOne"}           | ${"findOne"}           | ${() => controller.findOne("TEST")}
     ${"findOneWithDetail"} | ${"findOneWithDetail"} | ${() => controller.findOneWithDetail("TEST")}
-    ${"search"}            | ${"findWithFilter"}    | ${() => controller.searchDossier({})}
   `(
     "$name: should throw error with message of error when there are error",
     async ({ name, servicefn, fn }) => {

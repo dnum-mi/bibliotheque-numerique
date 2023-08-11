@@ -47,7 +47,7 @@ module.exports = {
       },
     },
     {
-      files: ['*.mock.ts'],
+      files: ['*.mock.ts', 'database/migrations/*.ts'],
       rules: {
         'max-len': 'off',
       },
@@ -56,12 +56,6 @@ module.exports = {
       files: ['*spec.ts'],
       rules: {
         'max-len': ['warn', { code: 140 }],
-      },
-    },
-    {
-      files: ['database/migrations/*.ts'],
-      rules: {
-        'max-len': ['warn', { code: 200 }],
       },
     },
   ],

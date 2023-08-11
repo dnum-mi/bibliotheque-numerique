@@ -30,5 +30,3 @@ export class OrganismesData extends BaseEntity {
   @Column({ type: 'timestamp' })
     dataUpdateAt: Date
 }
-
-export type TUpsertOrganismeData = Partial<OrganismesData>;
