@@ -30,7 +30,9 @@ export class DemarcheService extends BaseEntityService<Demarche> {
 
   async findByDsId (id: number): Promise<Demarche> {
     this.logger.verbose('findByDsId')
-    return this.repo.createQueryBuilder('d').where("d.\"dsDataJson\"->>'number' = :id", { id }).getOne()
+    return this.repo.createQueryBuilder('d')
+      .where("d.\"dsDataJson\"->>'number' = :id", { id })
+      .getOne()
   }
 
   async findWithPermissions (user: User, filter: FindOptionsWhere<Demarche> = {}): Promise<Demarche[]> {
@@ -59,10 +61,5 @@ export class DemarcheService extends BaseEntityService<Demarche> {
       }
     }
     return demarcheIds
-  }
-
-  async updateWithDsId (dsId: number, update: Partial<Demarche>): Promise<void> {
-    this.logger.verbose('updateWithDsId')
-    await this.repo.createQueryBuilder().where("\"dsDataJson\"->>'number' = :dsId", { dsId }).update(update).execute()
   }
 }

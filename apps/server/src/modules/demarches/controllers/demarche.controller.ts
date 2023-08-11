@@ -43,6 +43,7 @@ export class DemarcheController {
   @Get()
   @RequirePermissions({ name: PermissionName.ACCESS_DEMARCHE })
   async getDemarches (@Request() req): Promise<Demarche[]> {
+    this.logger.verbose('getDemarches')
     const demarches = await this.demarcheService.findWithPermissions(req.user)
     if (demarches.length === 0) {
       throw new NotFoundException('No demarche found')
@@ -58,6 +59,7 @@ export class DemarcheController {
     @Query('fields', new ParseArrayPipe({ separator: ',', optional: true }))
       fields: string[],
   ): Promise<Demarche | Partial<Demarche>> {
+    this.logger.verbose('getDemarcheById')
     const ruleIds = this.demarcheService.getRulesFromUserPermissions(req.user)
     if (
       ruleIds &&
@@ -85,6 +87,7 @@ export class DemarcheController {
     @Query('fields', new ParseArrayPipe({ separator: ',', optional: true }))
       fields?: string[],
   ): Promise<Demarche | Partial<Demarche>> {
+    this.logger.verbose('getDemarcheByDsId')
     const ids = this.demarcheService.getRulesFromUserPermissions(req.user)
     const demarche = await this.demarcheService.findByDsId(id)
 
@@ -108,6 +111,7 @@ export class DemarcheController {
   async getDemarcheDossiersById (
     @Param('id', ParseIntPipe) id: number,
   ): Promise<Dossier[]> {
+    this.logger.verbose('getDemarcheDossiersById')
     const demarche = await this.demarcheService.findById(id)
     if (!demarche) {
       throw new NotFoundException(`Demarche id: ${id} not found`)
@@ -120,6 +124,7 @@ export class DemarcheController {
   async create (
     @Body('idDs', ParseIntPipe) dsId: number,
   ): Promise<{ message: string }> {
+    this.logger.verbose('create')
     await this.demarcheSynchroniseService.createAndSynchronise(dsId)
     return { message: `Demarche with DS id ${dsId} has been created.` }
   }
@@ -129,16 +134,18 @@ export class DemarcheController {
   async synchroDossiers (
     @Body('idDs', ParseIntPipe) idDs: number,
   ): Promise<{ message: string }> {
+    this.logger.verbose('synchroDossiers')
     await this.demarcheSynchroniseService.synchroniseOneDemarche(idDs)
     return { message: `Demarche with DS id ${idDs} has been synchronised.` }
   }
 
-  @Patch(':dsId')
+  @Patch(':id')
   @RequirePermissions()
   async updateDemarche (
-    @Param('dsId', ParseIntPipe) dsId: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() demarche: Partial<Demarche>,
   ): Promise<void> {
-    await this.demarcheService.updateWithDsId(dsId, demarche)
+    this.logger.verbose('updateDemarche')
+    await this.demarcheService.updateOrThrow(id, demarche)
   }
 }
