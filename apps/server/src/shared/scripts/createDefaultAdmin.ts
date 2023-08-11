@@ -4,26 +4,30 @@ import { NestFactory } from '@nestjs/core'
 import { AppModule } from '../../app.module'
 import { UsersService } from '../../modules/users/users.service'
 import { RolesService } from '../../modules/roles/providers/roles.service'
-import { ConfigService } from '@nestjs/config'
-import { TConfig } from '../../config/configuration'
 import { LoggerService } from '../modules/logger/logger.service'
+import * as path from 'path'
 
-dotenv.config()
+dotenv.config({
+  path: path.resolve(__dirname, '..', '..', '..', '.env'),
+})
 
 async function bootstrap (): Promise<void> {
   const app = await NestFactory.create(AppModule)
-  const configService = app.get(ConfigService)
   app.useLogger(await app.resolve(LoggerService))
-  const defaultAdmin = configService.get<TConfig['defaultAdmin']>('defaultAdmin')
   const usersService = app.get(UsersService)
   const rolesService = app.get(RolesService)
-  const { email, password, roleName } = defaultAdmin
+  const email = process.env.DEFAULT_ADMIN_EMAIL
+  const password = process.env.DEFAULT_ADMIN_PASSWORD
+
+  if (!email || !password) {
+    throw new Error('Unable to create default admin. User or password is undefined')
+  }
 
   try {
     const [user, role] = await Promise.all([
       usersService.findOrCreate(email, password),
       rolesService.create({
-        name: roleName,
+        name: 'admin',
         description: 'App administrator, has full rights',
       }),
     ])
