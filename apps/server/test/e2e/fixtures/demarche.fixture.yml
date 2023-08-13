@@ -1,10 +1,23 @@
 entity: Demarche
 items:
   demarche-financement:
+    id: 1
     state: "published"
     title: "Déclaration de financement étranger"
     identification: "financement"
     type: "ARUP"
+    mappingColumns: [
+      {"id":"I01", "label":"Identifiant"},
+      {"id":"I02", "label":"Moment"},
+      {"id":"I03", "label":"Titre"},
+      {"id":"I04", "label":"Consentement"},
+      {"id":"I05", "label":"Etat"},
+      {"id":"I06", "label":"Delais"},
+      {"id":"I07", "label":"Excel"},
+      {"id":"I08", "label":"Montant"},
+      {"id":"I09", "label":"Pays"},
+      {"id":"I10", "label":"Organismefinanceur"}
+    ]
     dsDataJson: "{}"
   configurationDemarche:
     id: 1

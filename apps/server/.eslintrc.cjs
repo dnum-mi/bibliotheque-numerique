@@ -70,5 +70,6 @@ module.exports = {
         'max-len': ['warn', { code: 140 }],
       },
     },
+
   ],
 }

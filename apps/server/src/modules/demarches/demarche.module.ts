@@ -6,10 +6,11 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { Demarche } from './objects/entities/demarche.entity'
 import { DemarcheSynchroniseService } from './providers/services/demarche-synchronise.service'
 import { DemarcheConfigurationController } from './controllers/demarche-configuration.controller'
+import { DemarcheDossierController } from './controllers/demarche-dossier.controller';
 
 @Module({
   imports: [forwardRef(() => DossierModule), TypeOrmModule.forFeature([Demarche])],
-  controllers: [DemarcheController, DemarcheConfigurationController],
+  controllers: [DemarcheController, DemarcheDossierController, DemarcheConfigurationController],
   providers: [DemarcheService, DemarcheSynchroniseService],
   exports: [DemarcheService, DemarcheSynchroniseService],
 })
