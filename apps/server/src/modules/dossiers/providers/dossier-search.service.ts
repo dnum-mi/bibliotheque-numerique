@@ -6,7 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { BaseEntityService } from '../../../shared/base-entity/base-entity.service'
 import { DynamicKeys, SearchDossierDto } from '../objects/dto/search-dossier.dto';
 import { Demarche } from '../../demarches/objects/entities/demarche.entity';
-import { SortDto } from '@biblio-num/shared/dist';
+import { SortDto } from '@biblio-num/shared';
 
 @Injectable()
 export class DossierSearchService extends BaseEntityService<Dossier> {
@@ -25,15 +25,12 @@ export class DossierSearchService extends BaseEntityService<Dossier> {
 
   private _buildSortQuery(sorts: SortDto<DynamicKeys>[], hashColumns: Record<string, string>,): string {
     this.logger.verbose("_buildSortQuery");
-    console.log(sorts);
-    const a = !sorts?.length ? '' : `ORDER BY ${
+    return !sorts?.length ? '' : `ORDER BY ${
       sorts
-        .filter(s => hashColumns[s.field])
-        .map(s => `${hashColumns[s.field]} ${s.order}`)
+        .filter(s => hashColumns[s.key])
+        .map(s => `${hashColumns[s.key]} ${s.order}`)
         .join(', ')
     }`;
-    console.log(a);
-    return a;
   }
 
   private _buildPaginationQuery(page: number, perPage: number): string {
@@ -48,7 +45,7 @@ export class DossierSearchService extends BaseEntityService<Dossier> {
   }
 
   // count the number of row before pagination
-  private _buildCountCTE(demarcheId: number, dto: SearchDossierDto, hashColumns: Record<string, string>): string {
+  private _buildCountCTE(demarcheId: number): string {
     this.logger.verbose("_buildCountCTE")
     return `
       countCTE AS (
@@ -60,7 +57,6 @@ export class DossierSearchService extends BaseEntityService<Dossier> {
             WHERE d."demarcheId" = ${demarcheId}
             GROUP BY d.id
             ${this._buildFilterQuery()}
-            ${this._buildSortQuery(dto.sorts, hashColumns)}
         ) sub
       )
    `
@@ -101,7 +97,7 @@ export class DossierSearchService extends BaseEntityService<Dossier> {
     )
     const query = `
       WITH
-      ${this._buildCountCTE(demarche.id, dto, hashColumns)},
+      ${this._buildCountCTE(demarche.id)},
       ${this._buildMainCTE(demarche.id, hashColumns, dto)}
       SELECT *, (SELECT nbrRows FROM countCTE) as total
       FROM mainCTE
@@ -110,7 +106,6 @@ export class DossierSearchService extends BaseEntityService<Dossier> {
       ${this._buildPaginationQuery(dto.page || 1, dto.perPage || 5)}
     `
     const result = await this.repo.query(query);
-    console.log(query);
     return {
       total: parseInt(result[0].total),
       data: result.map((r) => {

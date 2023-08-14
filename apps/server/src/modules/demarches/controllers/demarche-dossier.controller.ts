@@ -1,5 +1,5 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import { Body, Controller, Get, HttpCode, Post, Query, UseGuards } from '@nestjs/common'
+import { ApiResponse, ApiTags } from '@nestjs/swagger'
 import { PermissionsGuard, RequirePermissions } from '../../roles/providers/permissions.guard'
 import { PermissionName } from '../../../shared/types/Permission.type'
 import { LoggerService } from '../../../shared/modules/logger/logger.service'
@@ -14,18 +14,19 @@ import { DossierSearchService } from '../../dossiers/providers/dossier-search.se
 @UseGuards(PermissionsGuard)
 @RequirePermissions({ name: PermissionName.ACCESS_DEMARCHE })
 @UseGuards(DemarcheExistGuard)
-@Controller('demarches/:demarcheId/dossiers')
+@Controller('demarches/:demarcheId')
 export class DemarcheDossierController {
   constructor (private readonly logger: LoggerService,
                private dossierSearchService: DossierSearchService) {
     this.logger.setContext(this.constructor.name)
   }
 
-  @Get()
-  async searchDossier (@Query() dto: SearchDossierDto,
+  @ApiResponse({status: 200})
+  @HttpCode(200)
+  @Post('/dossiers-search')
+  async searchDossier (@Body() dto: SearchDossierDto,
                        @DemarcheParam() demarche: Partial<Demarche>): Promise<{ total: number, data: any[] }> {
     this.logger.verbose('searchDossier')
-    console.log(dto);
     return this.dossierSearchService.search(demarche, dto)
   }
 }

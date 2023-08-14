@@ -1,17 +1,15 @@
 import { Filter } from './filters'
 import { IsArray, IsDefined, IsNumber, IsOptional, IsString, Max, Min, ValidateNested } from 'class-validator'
-import { Type } from 'class-transformer'
 import { SortDto } from './sort.dto'
+import { Type } from 'class-transformer'
 
 export class PaginationDto<T> {
   @IsOptional()
-  @Type(() => Number)
   @IsNumber()
   @Min(1)
   page?: number | 1
 
   @IsOptional()
-  @Type(() => Number)
   @IsNumber()
   @Min(5)
   @Max(100)
@@ -25,6 +23,7 @@ export class PaginationDto<T> {
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
+  @Type(() => SortDto)
   sorts?: SortDto<T>[]
 
   @IsOptional()
