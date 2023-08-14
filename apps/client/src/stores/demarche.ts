@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, type Ref } from 'vue'
+
 import { apiClient } from '@/utils/api-client'
 import { getConfigurations, updateConfigurations } from '@/shared/services'
 
@@ -8,13 +9,15 @@ import { booleanToYesNo } from '@/utils/booleanToString'
 import { stateToFr } from '@/utils/stateToString'
 import { dateToStringFr } from '@/utils/dateToString'
 import type { IDemarcheMappingColumn } from '@/shared/interfaces'
-import type { TypeHeaderDataTable } from '@/shared/types/typeDataTable'
-import { ChampValueTypesKeys, ChampType } from '@/shared/types'
+import { ChampValueTypesKeys, ChampType, type HeaderDataTable } from '@/shared/types'
 import { fetchInstructionTimeByDossiers } from '@/shared/services/instructionTimes.service'
-import { EInstructionTimeState, keyInstructionTime } from '../shared/types/instructionTime.type'
-import type { UpdateDemarcheDto } from '@biblio-num/shared'
+import { EInstructionTimeState, keyInstructionTime } from '@/shared/types'
 
-const headerDossierIdDefault: TypeHeaderDataTable[] = [
+import CheckRenderer from '../components/ag-grid/CheckRenderer.vue'
+import CprCheckRenderer from '../components/ag-grid/CprCheckRenderer.vue'
+import DossierStateRenderer from '../components/ag-grid/DossierStateRenderer.vue'
+
+const headerDossierIdDefault: HeaderDataTable[] = [
   {
     value: 'idBiblioNum',
     type: 'hidden',
@@ -26,17 +29,17 @@ const headerDossierIdDefault: TypeHeaderDataTable[] = [
   },
 ]
 
-const headerDossierDefault: TypeHeaderDataTable[] = [
+const headerDossierDefault: HeaderDataTable[] = [
   {
     text: 'Archivé',
     value: 'archived',
-    parseFn: booleanToYesNo,
+    renderer: CheckRenderer,
     type: 'boolean',
   },
   {
     text: 'Etat',
     value: 'state',
-    parseFn: stateToFr,
+    renderer: DossierStateRenderer,
     type: 'StateDS',
   },
   {
@@ -66,16 +69,13 @@ const headerDossierDefault: TypeHeaderDataTable[] = [
   {
     text: 'Association déclarée cultuelle dans télédéclaration loi CRPR ?',
     value: 'annotations',
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    parseFn: (value:any) => {
-      return value ? value[0]?.stringValue : ''
-    },
+    renderer: CprCheckRenderer,
   },
   {
     text: 'Si oui, date d\'entrée en vigueur de la qualité cultuelle',
     value: 'annotations',
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    parseFn: (value:any) => {
+    parseFn: (value: any) => {
       return value ? value[0]?.stringValue : ''
     },
   },
@@ -92,8 +92,8 @@ const getParserFnByType = (type) => {
 
 export const useDemarcheStore = defineStore('demarche', () => {
   let mappingColumn: IDemarcheMappingColumn[]
-  const demarche: Ref<UpdateDemarcheDto> = ref({})
-  const hearderListDossier = ref<TypeHeaderDataTable[]>([])
+  const demarche: Ref<any> = ref({})
+  const hearderListDossier = ref<HeaderDataTable[]>([])
   const rowDatasDossiers = ref<object[]>([])
   const dossiers = ref([])
   const instructionTimes = ref({})
@@ -104,15 +104,6 @@ export const useDemarcheStore = defineStore('demarche', () => {
       return
     }
     const result = await apiClient.getDemarche(idDemarche)
-    if (result) demarche.value = result
-  }
-
-  const getDemarcheByDsId = async (idDemarcheDS: number) => {
-    if (!idDemarcheDS) {
-      console.error('idDemarcheDS doit être saisie')
-      return
-    }
-    const result = await apiClient.getDemarcheByDsId(idDemarcheDS)
     if (result) demarche.value = result
   }
 
@@ -236,7 +227,6 @@ export const useDemarcheStore = defineStore('demarche', () => {
   return {
     demarche,
     getDemarche,
-    getDemarcheByDsId,
     demarches,
     getDemarches,
     dossiers,

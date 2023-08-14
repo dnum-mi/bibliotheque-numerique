@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import { computed, ref, watchEffect } from 'vue'
+import { computed, watchEffect, type ComputedRef, type Component } from 'vue'
 
 import { AgGridVue } from 'ag-grid-vue3'
 import 'ag-grid-enterprise'
 import 'ag-grid-community/styles/ag-grid.css'
 import 'ag-grid-community/styles/ag-theme-alpine.css'
 
-import { AgGridTypeFilter, type Action, type TypeHeaderDataTable } from '@/shared/types/typeDataTable'
+import { AgGridFilter, type Action, type HeaderDataTable } from '@/shared/types'
 import TableCellAction from './TableCellAction.vue'
 import { PAGINATION_PAGE_SIZE } from '@/config'
 
@@ -15,26 +15,25 @@ import { localeTextAgGrid } from './ag-grid/agGridOptions'
 
 import AgGridMultiValueCell from './ag-grid/AgGridMultiValueCell.vue'
 import AgGridAttachmentCell from './ag-grid/AgGridAttachmentCell.vue'
-import type { Component } from 'vue'
 
-const getFilterAgGrid = ({ type, filter }) => {
-  const typeFilter = filter === AgGridTypeFilter.MULTI_VALUE && type === 'number' ? AgGridTypeFilter.MULTI_VALUE_NUMBER : type
-  return (typeFilter && filterToApply[typeFilter as AgGridTypeFilter]) || { }
+const getFilterAgGrid = ({ type, filter }: {type: string; filter: string }) => {
+  const typeFilter = filter === AgGridFilter.MULTI_VALUE && type === 'number' ? AgGridFilter.MULTI_VALUE_NUMBER : type
+  return (typeFilter && filterToApply[typeFilter as AgGridFilter]) || { }
 }
 
 const toRenderer = {
-  [AgGridTypeFilter.MULTI_VALUE]: {
+  [AgGridFilter.MULTI_VALUE]: {
     cellRenderer: AgGridMultiValueCell,
     autoHeight: true,
   },
-  [AgGridTypeFilter.FILE]: {
+  [AgGridFilter.FILE]: {
     cellRenderer: AgGridAttachmentCell,
   },
 }
 const getRendererAgGrid = (header) => {
   const { renderer, type } = header
 
-  const typeRenderder = renderer === AgGridTypeFilter.MULTI_VALUE ? AgGridTypeFilter.MULTI_VALUE : type
+  const typeRenderder = renderer === AgGridFilter.MULTI_VALUE ? AgGridFilter.MULTI_VALUE : type
   const agRenderer = toRenderer[typeRenderder]
   return agRenderer
 }
@@ -42,7 +41,7 @@ const getRendererAgGrid = (header) => {
 const props = withDefaults(defineProps<{
     title?: string,
     rowData?: object[],
-    headers?: TypeHeaderDataTable[],
+    headers?: HeaderDataTable[],
     pagination?: boolean,
     paginationPageSize?: number,
     withAction?: boolean,
@@ -71,44 +70,53 @@ interface AgGridColumnDefs {
   suppressMenu?: boolean,
 }
 
-const columnDefs = computed(() => {
-  if (!props.headers.length) { return }
-  const headers: TypeHeaderDataTable[] = [...props.headers]
-  const columnDefs: AgGridColumnDefs[] = []
-  if (props.withAction) {
-    columnDefs.unshift({
-      headerName: 'Action',
-      field: headers[0].value,
-      action: headers[0]?.action || undefined,
-      cellRenderer: TableCellAction,
-      initialPinned: 'left',
-      width: 100,
-      sortable: false,
-      filter: false,
-      suppressMenu: false,
-    })
-    headers.shift()
+const columnDefs: ComputedRef<AgGridColumnDefs[]> = computed(() => {
+  if (!props.headers.length) {
+    return
   }
+  const headers: HeaderDataTable[] = [...props.headers]
 
-  return columnDefs.concat(headers.filter(header => header.type !== 'hidden').map((header) => {
-    const filter = getFilterAgGrid(header)
-    const renderer = getRendererAgGrid(header) || {
-      cellRenderer: header.parseFn ? (params: any) => header.parseFn?.(params.value) : undefined,
-    }
-    return {
-      floatingFilter: props.floatingFilter,
-      headerName: header.text || '',
-      field: header.value,
-      width: header.width || undefined,
-      ...renderer,
-      ...filter,
-    }
-  }))
+  const filteredHeaders = headers
+    .filter((header, idx) => ((props.withAction && idx === 0) || header.type !== 'hidden'))
+    .map((header) => {
+      const filter = getFilterAgGrid(header)
+      const renderer = getRendererAgGrid(header) || {
+        cellRenderer: header.renderer ?? (header.parseFn ? (params: any) => header.parseFn?.(params.value) : undefined),
+      }
+      return {
+        floatingFilter: props.floatingFilter,
+        headerName: header.text || '',
+        field: header.value,
+        width: header.width || undefined,
+        ...renderer,
+        ...filter,
+      }
+    })
+
+  return [
+    ...(props.withAction
+      ? [{
+          headerName: 'Action',
+          field: headers[0].value,
+          action: headers[0]?.action || undefined,
+          cellRenderer: TableCellAction,
+          initialPinned: 'left',
+          width: 100,
+          sortable: false,
+          filter: false,
+          suppressMenu: false,
+        }]
+      : []),
+    ...filteredHeaders,
+  ]
+/*
+  columnDefs.concat()
+  */
 })
 
 const emit = defineEmits(['getElt', 'selectionChanged'])
-const showElt = data => {
-  emit('getElt', data)
+const showElt = ($event) => {
+  emit('getElt', $event)
 }
 
 const context = { showElt }

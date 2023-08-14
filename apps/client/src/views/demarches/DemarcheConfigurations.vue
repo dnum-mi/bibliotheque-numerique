@@ -80,13 +80,13 @@ const submit = handleSubmit(async () => {
         <div class="fr-col-1 fr-p-2v">
           <label class="fr-text--bold" />
         </div>
-        <div class="fr-col-1 fr-p-2v">
+        <div class="fr-col-2 fr-p-2v">
           <label class="fr-text--bold"> Type Champs</label>
         </div>
         <div class="fr-col-4 fr-p-2v">
           <label class="fr-text--bold"> Libellé origine</label>
         </div>
-        <div class="fr-col-6 fr-p-2v">
+        <div class="fr-col-5 fr-p-2v">
           <label class="fr-text--bold"> Libellé personnalisé</label>
         </div>
       </div>
@@ -99,7 +99,7 @@ const submit = handleSubmit(async () => {
       <DemarcheConfiguration
         :datas="demarcheConfigurations"
       />
-      <div class="fixed  bottom-0  bg-white  w-full  top-shadow  text-right  fr-px-4w  left-0">
+      <div class="fixed  bottom-0  bg-white  w-full  top-shadow  text-right  fr-px-4w  left-0  z-1">
         <DsfrButton
           class="fr-my-2w"
         >

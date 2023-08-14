@@ -97,3 +97,4 @@ onMounted(async () => {
   await organismeStore.loadOrganismes()
 })
 </script>
+@/shared/types/DataTable.type

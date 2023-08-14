@@ -12,7 +12,7 @@ const prefecture = computed(() => props.datas.groupeInstructeur?.label.toUpperCa
 const depot = computed(() => dateTimeToStringFr(props.datas.dateDepot) || '')
 const intruction = computed(() => dateTimeToStringFr(props.datas.datePassageEnInstruction) || '')
 const publication = computed(() => '')
-const etat = computed(() => props.datas.state?.toUpperCase() || '')
+const etat = computed(() => props.datas?.state?.toUpperCase() || '')
 </script>
 
 <template>

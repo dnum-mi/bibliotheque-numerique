@@ -10,7 +10,6 @@ import DemarcheInformations from '@/views/demarches/DemarcheInformations.vue'
 import DemarcheConfigurations from '@/views/demarches/DemarcheConfigurations.vue'
 import BiblioNumDataTableAgGrid from '@/components/BiblioNumDataTableAgGrid.vue'
 import LayoutList from '@/components/LayoutList.vue'
-import type { DsfrTabItemProps } from '@gouvminint/vue-dsfr/types/components/DsfrTabs/DsfrTabItem.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -64,11 +63,16 @@ const tabTitles = computed(() => ([
   ...(userStore.canManageRoles ? [{ title: 'Configuration' }] : []),
 ]))
 
-const initialSelectedIndex = 0
 const selectedTabIndex = ref(0)
-function selectTab (idx:number) {
+function selectTab (idx: number) {
   selectedTabIndex.value = idx
+  router.push({ ...route, hash: '#' + tabTitles.value[idx].title })
 }
+onMounted(() => {
+  if (route.hash.slice(1).length) {
+    selectTab(tabTitles.value.findIndex(tabTitle => route.hash.slice(1) === tabTitle.title) || 0)
+  }
+})
 </script>
 
 <template>
@@ -82,9 +86,10 @@ function selectTab (idx:number) {
     </template>
 
     <DsfrTabs
+      :key="selectedTabIndex"
       tab-list-name="tabs-dossier"
       :tab-titles="tabTitles"
-      :initial-selected-index="initialSelectedIndex"
+      :initial-selected-index="selectedTabIndex"
       class="fr-pt-5w"
       @select-tab="selectTab"
     >
@@ -137,7 +142,7 @@ function selectTab (idx:number) {
 </template>
 
 <style scoped>
-  .fr-tabs__panel {
-    padding: 0;
-  }
+.fr-tabs__panel {
+  padding: 0;
+}
 </style>

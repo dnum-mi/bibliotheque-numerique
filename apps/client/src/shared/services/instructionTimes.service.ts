@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { baseApiUrl, headers } from '@/utils/api-client'
-import type { TypeInstructionTimes } from '../types/instructionTime.type'
+import type { TypeInstructionTimes } from '../types/InstructionTime.type'
 
 const axiosInstructionTimes = axios.create({
   baseURL: `${baseApiUrl}/instruction-times`,

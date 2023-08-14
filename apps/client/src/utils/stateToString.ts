@@ -1,25 +1,31 @@
+import type { DossierStateKeys } from '@biblio-num/shared'
 
-// TODO: Récuperer les types de ds-api-client
-// eslint-disable-next-line no-unused-vars
-enum DossierState {
-  // eslint-disable-next-line no-unused-vars
-  EnConstruction = 'en_construction',
-  // eslint-disable-next-line no-unused-vars
-  EnInstruction = 'en_instruction',
-  // eslint-disable-next-line no-unused-vars
-  Accepte = 'accepte',
-  // eslint-disable-next-line no-unused-vars
-  Refuse = 'refuse',
-  // eslint-disable-next-line no-unused-vars
-  SansSuite = 'sans_suite',
+export type DossierStateValue = {
+  label: string,
+  type: string;
 }
 
-export const stateToFr = (value:string):string => {
-  return {
-    [DossierState.Accepte]: 'Accepté-e',
-    [DossierState.EnConstruction]: 'En construction',
-    [DossierState.EnInstruction]: 'En instruction',
-    [DossierState.Refuse]: 'Refusé',
-    [DossierState.SansSuite]: 'Sans suite',
-  }[value] || ''
-}
+export const DossierState: Record<DossierStateKeys, DossierStateValue> = {
+  en_construction: {
+    label: 'En construction',
+    type: 'new',
+  },
+  en_instruction: {
+    label: 'En instruction',
+    type: 'info',
+  },
+  accepte: {
+    label: 'Accepté',
+    type: 'success',
+  },
+  refuse: {
+    label: 'Refusé',
+    type: 'error',
+  },
+  sans_suite: {
+    label: 'Sans suite',
+    type: 'warning',
+  },
+} as const
+
+export const stateToFr = (dossierStateKey: DossierStateKeys): DossierStateValue => DossierState[dossierStateKey]

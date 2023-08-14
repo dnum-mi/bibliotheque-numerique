@@ -28,11 +28,14 @@ export class DemarcheService extends BaseEntityService<Demarche> {
     })
   }
 
-  async findByDsId (id: number): Promise<Demarche> {
+  async findByDsId (id: number, select?: (keyof Demarche)[]): Promise<Demarche> {
     this.logger.verbose('findByDsId')
-    return this.repo.createQueryBuilder('d')
+    const query = await this.repo.createQueryBuilder('d')
       .where("d.\"dsDataJson\"->>'number' = :id", { id })
-      .getOne()
+    if (select) {
+      query.select(select)
+    }
+    return query.getOne()
   }
 
   async findWithPermissions (user: User, filter: FindOptionsWhere<Demarche> = {}): Promise<Demarche[]> {

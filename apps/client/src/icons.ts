@@ -1,5 +1,6 @@
 export {
   RiCloseLine,
+  RiCheckLine,
   RiFlagLine,
   RiHome2Line,
   RiHome4Line,
@@ -9,6 +10,7 @@ export {
   RiEyeFill,
   RiLogoutBoxRLine,
   RiShieldStarLine,
+  RiSubtractLine,
   CoTrash,
   RiAddCircleLine,
   RiIndeterminateCircleLine,

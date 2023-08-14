@@ -45,13 +45,13 @@
 
 <script lang="ts" setup>
 import { computed, reactive } from 'vue'
-import type { TypeHeaderDataTable } from '@/shared/types/typeDataTable'
+import type { HeaderDataTable } from '@/shared/types'
 
 const icon = 'ri-search-line'
 const props = withDefaults(defineProps<{
     title: string,
     datas?: object,
-    headers?: TypeHeaderDataTable[],
+    headers?: HeaderDataTable[],
     withAction?: boolean,
   }>(), {
   datas: () => ({}),
@@ -77,3 +77,4 @@ const getElt = data => {
   emit('getElt', data)
 }
 </script>
+@/shared/types/DataTable.type

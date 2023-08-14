@@ -46,6 +46,15 @@ export abstract class BaseEntityService<T extends BaseEntity = BaseEntity> {
     return this.repo.findOne(query as FindOneOptions<T>)
   }
 
+  async findOneOrThrow (options: FindOneOptions<T>): Promise<T> {
+    const result = await this.repo.findOne(options)
+    if (!result) {
+      this.logger.debug(`Query object: ${JSON.stringify(options.where)}`)
+      throw new NotFoundException('Cannot find resource.')
+    }
+    return result
+  }
+
   async updateOrThrow (id: number, data: QueryDeepPartialEntity<T>): Promise<void> {
     this.logger.verbose('updateOrThrow')
     const result = await this.repo.update(id, data)
