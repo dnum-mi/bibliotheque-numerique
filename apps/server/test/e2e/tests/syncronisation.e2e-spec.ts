@@ -7,7 +7,6 @@ import { Field } from '../../../src/modules/dossiers/objects/entities/field.enti
 import { Dossier } from '../../../src/modules/dossiers/objects/entities/dossier.entity'
 import { Demarche } from '../../../src/modules/demarches/objects/entities/demarche.entity'
 import { InstructionTime } from '../../../src/plugins/instruction_time/instruction_times/instruction_time.entity'
-import { In } from 'typeorm'
 
 describe('Syncronisation ', () => {
   let app: INestApplication
@@ -69,6 +68,8 @@ describe('Syncronisation ', () => {
   })
 
   it('should syncronise one dossier of one demarche and create associated fields', async () => {
+
+    let numberOfFields = await dataSource.manager.count(Field);
     return request(app.getHttpServer())
       .post('/demarches/create')
       .set('Cookie', [cookie])
@@ -76,25 +77,125 @@ describe('Syncronisation ', () => {
         idDs: 42,
       })
       .expect(201)
-      .then((res) => {
+      .then(async (res) => {
         expect(res.body).toEqual({
           message: 'Demarche with DS id 42 has been created.',
         })
-        return dataSource.manager.find(Field, {
-          where: {
-            sourceId: In([
-              'Q2hhbXAtMTA0Mw==',
-              'Q2hhbXAtMTA0NQ==',
-              'Q2hhbXAtMTA2NQ==',
-              'Q2hhbXAtMTA2Nnww',
-              'Q2hhbXAtMTA2N3ww',
-            ]),
-          },
-        })
+        const demarche = await dataSource.manager.createQueryBuilder(Demarche, 'd')
+          .where("d.\"dsDataJson\"->>'number' = :id", { id: '43' })
+          .select('d.id')
+          .getOne()
+        return dataSource.manager.find(Field, { where: {dossier: {demarcheId: demarche.id}} })
       })
-      .then(() => {
-        // TODO: fix again on new pagination branch
-        expect(true).toBe(true)
+      .then((fields) => {
+        expect(fields.length).toEqual(8)
+        expect(fields).toMatchObject([
+          {
+            id: numberOfFields + 1,
+            fieldSource: 'champs',
+            dsChampType: 'TextChamp',
+            type: 'string',
+            formatFunctionRef: null,
+            dsFieldId: 'Q2hhbXAtMTA0Mw==',
+            stringValue: "C'est du chocolat.",
+            parentId: null,
+            parentRowIndex: null,
+            label: 'Informations relatives au bénéficiaire du financement',
+            dossierId: 11,
+          },
+          {
+            id: numberOfFields + 2,
+            fieldSource: 'champs',
+            dsChampType: 'TextChamp',
+            type: 'string',
+            formatFunctionRef: null,
+            dsFieldId: 'Q2hhbXAtMTA0NQ==',
+            stringValue: 'W123456789',
+            parentId: null,
+            parentRowIndex: null,
+            label: "Saisir le n°RNA de l'association",
+            dossierId: 11,
+          },
+          {
+            id: numberOfFields + 3,
+            fieldSource: 'champs',
+            dsChampType: 'RepetitionChamp',
+            type: 'string',
+            formatFunctionRef: null,
+            dsFieldId: 'Q2hhbXAtMTA2NQ==',
+            stringValue: '',
+            parentId: null,
+            parentRowIndex: null,
+            label: 'Liste de course',
+            dossierId: 11,
+          },
+          {
+            id: numberOfFields + 4,
+            fieldSource: 'dossier',
+            dsChampType: null,
+            type: 'string',
+            formatFunctionRef: null,
+            dsFieldId: null,
+            stringValue: 'en_construction',
+            parentId: null,
+            parentRowIndex: null,
+            label: 'state',
+            rawJson: null,
+            dossierId: 11,
+          },
+          {
+            id: numberOfFields + 5,
+            fieldSource: 'champs',
+            dsChampType: 'TextChamp',
+            type: 'string',
+            formatFunctionRef: null,
+            dsFieldId: 'Q2hhbXAtMTA2Nnww',
+            stringValue: 'Fraise',
+            parentId: numberOfFields + 3,
+            parentRowIndex: 0,
+            label: 'Fruit',
+            dossierId: 11,
+          },
+          {
+            id: numberOfFields + 6,
+            fieldSource: 'champs',
+            dsChampType: 'TextChamp',
+            type: 'string',
+            formatFunctionRef: null,
+            dsFieldId: 'Q2hhbXAtMTA2N3ww',
+            stringValue: 'Oignon',
+            parentId: numberOfFields + 3,
+            parentRowIndex: 0,
+            label: 'Légume',
+            dossierId: 11,
+          },
+          {
+            id: numberOfFields + 7,
+            fieldSource: 'champs',
+            dsChampType: 'TextChamp',
+            type: 'string',
+            formatFunctionRef: null,
+            dsFieldId: 'Q2hhbXAtMTA2Nnww',
+            stringValue: 'Framboise',
+            parentId: numberOfFields + 3,
+            parentRowIndex: 1,
+            label: 'Fruit',
+            dossierId: 11,
+          },
+          {
+            id: numberOfFields + 8,
+            fieldSource: 'champs',
+            dsChampType: 'TextChamp',
+            type: 'string',
+            formatFunctionRef: null,
+            dsFieldId: 'Q2hhbXAtMTA2N3ww',
+            stringValue: 'Poivron',
+            parentId: numberOfFields + 3,
+            parentRowIndex: 1,
+            label: 'Légume',
+            dossierId: 11,
+          },
+        ])
       })
   })
 })
