@@ -5,7 +5,7 @@ import '../main.css'
 import * as icons from '../icons'
 
 import { getDateISO } from '../utils/__tests__/fake-data'
-import { dateToStringFr } from '@/utils/dateToString'
+import { dateToStringFr } from '@/utils/date-to-string'
 import { getFileObjectExample } from '../__test__/ds-type'
 import { AgGridFilter } from '@/shared/types'
 

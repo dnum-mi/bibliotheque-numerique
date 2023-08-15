@@ -69,7 +69,8 @@ function selectTab (idx: number) {
   router.push({ ...route, hash: '#' + tabTitles.value[idx].title })
 }
 onMounted(() => {
-  if (route.hash.slice(1).length) {
+  // The optional chaining operator is here for component testing, where route is nullish
+  if (route?.hash.slice(1).length) {
     selectTab(tabTitles.value.findIndex(tabTitle => route.hash.slice(1) === tabTitle.title) || 0)
   }
 })

@@ -61,7 +61,7 @@ import { toTypedSchema } from '@vee-validate/zod'
 import { useField, useForm } from 'vee-validate'
 import { z } from 'zod'
 import type { ResetPasswordInputDto } from '@biblio-num/shared'
-import { resetPassword } from '@/shared/services/user.service'
+import apiClient from '@/api/api-client'
 import { ref } from 'vue'
 import { ASK_RESET_PWD_SUCCESS } from '../messages'
 
@@ -79,7 +79,7 @@ const alertDescription = ref('')
 const openAlert = ref(false)
 
 const onSubmit = handleSubmit(async (formValue : ResetPasswordInputDto) => {
-  await resetPassword(formValue)
+  await apiClient.resetPassword(formValue)
   openAlert.value = true
   alertDescription.value = ASK_RESET_PWD_SUCCESS
 })

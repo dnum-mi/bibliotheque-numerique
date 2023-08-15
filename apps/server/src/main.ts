@@ -12,7 +12,7 @@ async function bootstrap (): Promise<void> {
     const { SwaggerModule, DocumentBuilder } = await import('@nestjs/swagger')
 
     const config = new DocumentBuilder()
-      .setTitle('Bibliothèque numérique API ')
+      .setTitle('Bibliothèque numérique API')
       .setDescription('Bibliothèque numérique API documentation')
       .setVersion('1.0')
       .setBasePath('/api')

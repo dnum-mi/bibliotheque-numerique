@@ -4,7 +4,7 @@ import { useRoleStore, useUserStore } from '@/stores'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import BiblioNumDataTableAgGrid from '@/components/BiblioNumDataTableAgGrid.vue'
-import { dateToStringFr } from '@/utils/dateToString'
+import { dateToStringFr } from '@/utils'
 import type { IRole, User } from '@/shared/interfaces'
 
 const idUser = ref(0)
@@ -160,3 +160,4 @@ const rolesHeadersJson = [
     flex: 2;
   }
 </style>
+@/utils/date-to-string

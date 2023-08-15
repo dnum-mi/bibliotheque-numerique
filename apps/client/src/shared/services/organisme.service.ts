@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { baseApiUrl, headers } from '@/utils/api-client'
+import { baseApiUrl, headers } from '@/api/api-client'
 
 export async function fetchOrganimseById (id: number): Promise<any | null> {
   const config = {

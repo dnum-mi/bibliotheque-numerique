@@ -2,7 +2,7 @@
 import BiblioNumDataTableAgGrid from '@/components/BiblioNumDataTableAgGrid.vue'
 import LayoutList from '@/components/LayoutList.vue'
 import { useDemarcheStore } from '@/stores/demarche'
-import { dateToStringFr } from '@/utils/dateToString'
+import { dateToStringFr } from '@/utils'
 import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -89,3 +89,4 @@ function getDossier ({ id }: { id: string }) {
     />
   </LayoutList>
 </template>
+@/utils/date-to-string

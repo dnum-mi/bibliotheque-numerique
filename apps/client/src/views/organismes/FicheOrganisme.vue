@@ -118,7 +118,7 @@ import bnBadgeTypeOrganisme from '@/components/BadgeTypeOrganisme.vue'
 import infoContact from '@/components/InfoContact.vue'
 import { useOrganismeStore } from '@/stores/organisme'
 import { useRoute } from 'vue-router'
-import { dateToStringFr } from '@/utils/dateToString'
+import { dateToStringFr } from '@/utils'
 
 const organismeStore = useOrganismeStore()
 
@@ -153,3 +153,4 @@ onMounted(async () => {
   }
 })
 </script>
+@/utils/date-to-string

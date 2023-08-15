@@ -15,7 +15,7 @@
 import { computed, onMounted } from 'vue'
 import BiblioNumDataTableAgGrid from '@/components/BiblioNumDataTableAgGrid.vue'
 import { useRoleStore, useUserStore } from '@/stores'
-import { dateToStringFr } from '@/utils/dateToString'
+import { dateToStringFr } from '@/utils'
 import type { IRole } from '@/shared/interfaces'
 import router from '@/router'
 import { RoleName } from '@/shared/types/Permission.type'
@@ -86,3 +86,4 @@ onMounted(async () => {
 })
 
 </script>
+@/utils/date-to-string

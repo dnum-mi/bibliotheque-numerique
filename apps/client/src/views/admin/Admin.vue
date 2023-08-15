@@ -69,7 +69,7 @@
 <script setup lang="ts">
 import BiblioNumDataTableAgGrid from '@/components/BiblioNumDataTableAgGrid.vue'
 import { useUserStore, useRoleStore } from '@/stores'
-import { dateToStringFr } from '@/utils/dateToString'
+import { dateToStringFr } from '@/utils'
 import { computed, onMounted } from 'vue'
 import { DsfrInputGroup, DsfrInput, DsfrButton } from '@gouvminint/vue-dsfr'
 import type { IRoleForm, User } from '@/shared/interfaces'
@@ -175,3 +175,4 @@ onMounted(async () => {
     }
   }
 </style>
+@/utils/date-to-string

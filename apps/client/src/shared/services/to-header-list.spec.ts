@@ -1,8 +1,13 @@
 import { describe, expect, it } from 'vitest'
 import type { IDemarcheMappingColumn } from '../interfaces'
-import { ChampType, ChampValueTypesKeys } from '../types'
-import { toRowData } from './toHeaderList'
-import { EInstructionTimeState, LabelInstructionTime, keyInstructionTime } from '../types/InstructionTime.type'
+import {
+  ChampType,
+  ChampValueTypesKeys,
+  EInstructionTimeState,
+  LabelInstructionTime,
+  keyInstructionTime,
+} from '@/shared/types'
+import { toRowData } from './to-header-list'
 
 describe('Test HeaderList', () => {
   const dataJson = {

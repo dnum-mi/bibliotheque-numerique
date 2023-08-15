@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 
-import { stateToFr } from '@/utils/stateToString'
+import { stateToFr } from '@/utils'
 import type { DossierStateKeys } from '@biblio-num/shared'
 
 const props = defineProps<{
@@ -25,3 +25,4 @@ const state = computed(() => {
     />
   </div>
 </template>
+@/utils/state-to-string

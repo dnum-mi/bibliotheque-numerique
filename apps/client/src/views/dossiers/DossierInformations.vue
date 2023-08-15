@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { dateTimeToStringFr } from '@/utils/dateToString'
+import { dateTimeToStringFr } from '@/utils'
 import { computed } from 'vue'
 
 const props = withDefaults(defineProps<{
@@ -47,3 +47,4 @@ const etat = computed(() => props.datas?.state?.toUpperCase() || '')
   padding: 0;
 }
 </style>
+@/utils/date-to-string

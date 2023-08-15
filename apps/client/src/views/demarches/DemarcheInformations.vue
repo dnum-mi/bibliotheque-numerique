@@ -3,8 +3,7 @@ import DisplayLabelsValues from '@/components/DisplayLabelsValues.vue'
 import { DemarcheStateMapping } from '@/utils/demarche-mapping'
 import type { KeyDemarcheStateMapping } from '@/shared/types/Demarche.type'
 import { computed } from 'vue'
-import { dateTimeToStringFr } from '@/utils/dateToString'
-import { stateToFr } from '@/utils/stateToString'
+import { dateTimeToStringFr, stateToFr } from '@/utils'
 import { useDemarcheStore } from '@/stores'
 
 const demarcheStore = useDemarcheStore()
@@ -101,3 +100,4 @@ const declarative = computed(() => stateToFr(dataJson.value?.declarative))
     />
   </div>
 </template>
+@/utils/date-to-string@/utils/state-to-string

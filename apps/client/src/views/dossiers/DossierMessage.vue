@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import { dateTimeToStringFr } from '@/utils/dateToString'
-import { prettyByteSizeByString } from '@/utils/prettyByteSize'
+import { dateTimeToStringFr, prettyByteSizeByString } from '@/utils'
 
 defineProps<{
     email: string,
@@ -58,3 +57,5 @@ defineProps<{
     <hr class="fr-mt-1w fr-mb-1v">
   </div>
 </template>
+@/utils/date-to-string
+@/utils/pretty-byte-size

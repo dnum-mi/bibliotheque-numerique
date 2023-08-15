@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { dateToStringFr } from '@/utils/dateToString'
+import { dateToStringFr } from '@/utils'
 
 const props = withDefaults(defineProps<{
     datas?: object
@@ -47,3 +47,4 @@ const fieldsDemandeur = [
     </div>
   </div>
 </template>
+@/utils/date-to-string

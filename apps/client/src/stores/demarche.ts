@@ -1,16 +1,14 @@
 import { defineStore } from 'pinia'
 import { ref, type Ref } from 'vue'
 
-import { apiClient } from '@/utils/api-client'
+import apiClient from '@/api/api-client'
 import { getConfigurations, updateConfigurations } from '@/shared/services'
 
-import { toHeaderList, toRowData } from '@/shared/services/toHeaderList'
-import { booleanToYesNo } from '@/utils/booleanToString'
-import { stateToFr } from '@/utils/stateToString'
-import { dateToStringFr } from '@/utils/dateToString'
+import { toHeaderList, toRowData } from '@/shared/services/to-header-list'
+import { booleanToYesNo, stateToFr, dateToStringFr } from '@/utils'
 import type { IDemarcheMappingColumn } from '@/shared/interfaces'
 import { ChampValueTypesKeys, ChampType, type HeaderDataTable } from '@/shared/types'
-import { fetchInstructionTimeByDossiers } from '@/shared/services/instructionTimes.service'
+import { fetchInstructionTimeByDossiers } from '@/shared/services/instruction-times.service'
 import { EInstructionTimeState, keyInstructionTime } from '@/shared/types'
 
 import CheckRenderer from '../components/ag-grid/CheckRenderer.vue'
@@ -100,7 +98,7 @@ export const useDemarcheStore = defineStore('demarche', () => {
 
   const getDemarche = async (idDemarche: number) => {
     if (!idDemarche) {
-      console.log('idDemarche doit être saisie')
+      console.log('idDemarche doit être saisi')
       return
     }
     const result = await apiClient.getDemarche(idDemarche)
@@ -124,7 +122,7 @@ export const useDemarcheStore = defineStore('demarche', () => {
         console.warn(error.message)
         return
       }
-      console.warn(error.message)
+      console.warn(error)
     }
   }
 

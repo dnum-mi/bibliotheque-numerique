@@ -54,13 +54,13 @@
 <script setup lang="ts">
 
 import { useUserStore } from '@/stores'
-import { dateTimeToStringFr, dateToStringFr } from '@/utils/dateToString'
+import { dateTimeToStringFr, dateToStringFr } from '@/utils'
 import LayoutList from '@/components/LayoutList.vue'
 import DisplayLabelsValues from '@/components/DisplayLabelsValues.vue'
 import { computed, ref } from 'vue'
 import BiblioNumDataTableAgGrid from '@/components/BiblioNumDataTableAgGrid.vue'
 import type { IRole } from '@/shared/interfaces'
-import { resetPassword } from '../shared/services'
+import apiClient from '@/api/api-client'
 import type { ResetPasswordInputDto } from '@biblio-num/shared'
 import { ASK_RESET_PWD_SUCCESS } from '../messages'
 
@@ -125,10 +125,11 @@ const rolesRowData = computed(() => {
 })
 
 const onClick = async () => {
-  await resetPassword({ email: datas?.email } as ResetPasswordInputDto)
+  await apiClient.resetPassword({ email: datas?.email } as ResetPasswordInputDto)
   alertType.value = 'info'
   openAlert.value = true
   alertDescription.value = ASK_RESET_PWD_SUCCESS
 }
 
 </script>
+@/utils/date-to-string
