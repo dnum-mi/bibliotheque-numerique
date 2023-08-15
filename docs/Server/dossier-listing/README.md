@@ -92,12 +92,12 @@ All the building and executing of the query that produces the result grouping by
 
 Here is the SQL base query the code is based on:
 ```SQL
-WITH repeated AS (
+WITH repeatedCTE AS (
     SELECT
         f."dossierId",
         f."dsFieldId",
         f."stringValue",
-        COALESCE(ROW_NUMBER() OVER (PARTITION BY f."dossierId", f."dsFieldId" ORDER BY f."parentRowIndex"), 0) AS row_num
+        COALESCE(ROW_NUMBER() OVER (PARTITION BY f."dossierId", f."dsFieldId" ORDER BY f."parentRowIndex"), 0) AS maxRowNbr
     FROM fields f
     INNER JOIN dossiers d ON f."dossierId" = d.id
     WHERE f."parentRowIndex" IS NOT NULL
@@ -105,7 +105,7 @@ WITH repeated AS (
     AND d."demarcheId" = 1
 ),
 
-non_repeated AS (
+nonRepeatedCTE AS (
     SELECT
         f."dossierId",
         f."dsFieldId",
@@ -117,29 +117,34 @@ non_repeated AS (
     AND d."demarcheId" = 1
 )
 
-, combined AS (
+, combinedCTE AS (
     SELECT
         n."dossierId",
-        MAX(CASE WHEN n."dsFieldId" = 'I01' THEN n."stringValue" END) AS Identifiant,
-        MAX(CASE WHEN n."dsFieldId" = 'I02' THEN n."stringValue" END) AS Moment,
-        MAX(CASE WHEN n."dsFieldId" = 'I03' THEN n."stringValue" END) AS Titre,
-        MAX(CASE WHEN r."dsFieldId" = 'I09' THEN r."stringValue" END) AS Pays,
-        MAX(CASE WHEN r."dsFieldId" = 'I08' THEN r."stringValue" END) AS Montant
-    FROM non_repeated n
-    LEFT JOIN repeated r ON n."dossierId" = r."dossierId"
-    GROUP BY n."dossierId", r.row_num
+        MAX(COALESCE(CASE WHEN n."dsFieldId" = 'I01' THEN n."stringValue" END,
+                     CASE WHEN r."dsFieldId" = 'I01' THEN r."stringValue" END)) AS Identifiant,
+        MAX(COALESCE(CASE WHEN n."dsFieldId" = 'I02' THEN n."stringValue" END,
+                     CASE WHEN r."dsFieldId" = 'I02' THEN r."stringValue" END)) AS Moment,
+        MAX(COALESCE(CASE WHEN n."dsFieldId" = 'I03' THEN n."stringValue" END,
+                     CASE WHEN r."dsFieldId" = 'I03' THEN r."stringValue" END)) AS Titre,
+        MAX(COALESCE(CASE WHEN n."dsFieldId" = 'I08' THEN n."stringValue" END,
+                     CASE WHEN r."dsFieldId" = 'I08' THEN r."stringValue" END)) AS Pays,
+        MAX(COALESCE(CASE WHEN n."dsFieldId" = 'I09' THEN n."stringValue" END,
+                     CASE WHEN r."dsFieldId" = 'I09' THEN r."stringValue" END)) AS Pays,
+    FROM nonRepeatedCTE n
+    LEFT JOIN repeatedCTE r ON n."dossierId" = r."dossierId"
+    GROUP BY n."dossierId", r.maxRowNbr
 ),
 
-counted AS (
+countedCTE AS (
   SELECT *,
-           COUNT(*) OVER () AS total_count
-  FROM combined
+           COUNT(*) OVER () AS total
+  FROM combinedCTE
   WHERE Pays = 'Qatar' OR Pays IS NULL
   ORDER BY Titre
 )
 
-SELECT * FROM counted
-OFFSET 0 LIMIT 10;
+SELECT * FROM countedCTE
+OFFSET 0 LIMIT 5;
 ```
 
 #### Explanation of the Query
@@ -148,43 +153,34 @@ This query provides a structured way to extract data from the `fields` table whi
 
 ##### `repeated` CTE
 
-**Purpose**: Captures fields that are repeated.
-
-**Details**:
+Captures fields that are repeated.
 - Selects from the `fields` table where `parentRowIndex` is not null, indicating potential repetition.
 - An INNER JOIN with the `dossiers` table ensures we only consider entries from dossiers with `demarcheId = 1`.
 - The `ROW_NUMBER()` function, partitioning data by `dossierId` and `dsFieldId`, generates a unique `row_num` for each repeated field.
 
 ##### `non_repeated` CTE
 
-**Purpose**: Extracts fields that do not repeat.
-
-**Details**:
+Extracts fields that do not repeat.
 - Captures entries where `parentRowIndex` is null.
 - Similarly, it performs an INNER JOIN with the `dossiers` table to filter data, focusing only on entries with `demarcheId = 1`.
 
-##### `combined` CTE
-
-**Purpose**: Aggregates and aligns data from both the `repeated` and `non_repeated` CTEs.
-
-**Details**:
-- Main aim is to align non-repeated fields (like `Identifiant`, `Moment`, and `Titre`) with their corresponding repeated ones (`Pays` and `Montant`).
-- The aggregation process involves a LEFT JOIN on `dossierId`, ensuring that every non-repeated field is matched with its relevant repeated field.
-- The `GROUP BY` clause, grouping by `dossierId` and `row_num`, makes sure each unique combination of fields gets its row.
+##### `combined` CTE:
+- This CTE aggregates the data from the `repeatedCTE` and `nonRepeatedCTE`.
+- For every field ID, it attempts to fetch a value from both `nonRepeatedCTE` and `repeatedCTE`.
+  - It prioritizes non-repeated values, but if it finds none, it falls back to the repeated values.
+- This means it dynamically adjusts based on whether a field is repeated or not, taking into account the presence or absence of a `parentRowIndex`.
+- The `LEFT JOIN` on `dossierId` ensures that every non-repeated field is presented alongside its corresponding repeated field if present.
+- The `GROUP BY` clause groups by `dossierId` and `maxRowNbr` to make sure each unique field combination gets its own row.
 
 ##### `counted` CTE
 
-**Purpose**: Calculate the total number of results before applying the `LIMIT`.
-
-**Details**:
+Calculate the total number of results before applying the `LIMIT`.
 - Builds upon the `combined` CTE to calculate the total count using the `COUNT(*) OVER ()` window function.
 - The count will be the same for every row, representing the number of rows before pagination.
 
 ##### Final Query
 
-**Purpose**: Provides the final filtered, ordered, and paginated result.
-
-**Details**:
+Provides the final filtered, ordered, and paginated result.
 - Works with the `counted` CTE to filter, order, and paginate results.
 - Filtering targets entries where `Pays` is 'Qatar' or null.
 - The results are ordered by `Titre`.

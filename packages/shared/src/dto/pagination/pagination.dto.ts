@@ -18,7 +18,7 @@ export class PaginationDto<T> {
   @IsDefined()
   @IsArray()
   @IsString({ each: true })
-  columns: (keyof T)[]
+  columns: ((keyof T) & string)[]
 
   @IsOptional()
   @IsArray()

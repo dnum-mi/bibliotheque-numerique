@@ -10,6 +10,7 @@ import { Field } from './objects/entities/field.entity'
 import { FieldService } from './providers/field.service'
 import { DossierSynchroniseService } from './providers/dossier-synchronise.service'
 import { DossierSearchService } from './providers/dossier-search.service';
+import { FieldSearchService } from './providers/field-search.service';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { DossierSearchService } from './providers/dossier-search.service';
     TypeOrmModule.forFeature([Dossier, Field]),
   ],
   controllers: [DossierController],
-  providers: [DossierService, DossierSearchService, DossierSynchroniseService, FieldService],
-  exports: [DossierService, DossierSearchService, DossierSynchroniseService, FieldService],
+  providers: [DossierService, DossierSearchService, DossierSynchroniseService, FieldService, FieldSearchService],
+  exports: [DossierService, DossierSearchService, DossierSynchroniseService, FieldService, FieldSearchService],
 })
 export class DossierModule {}
