@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, watchEffect, type ComputedRef, type Component } from 'vue'
+import { computed, watchEffect, ref, type ComputedRef, type Component, toRaw } from 'vue'
 
 import { AgGridVue } from 'ag-grid-vue3'
 import 'ag-grid-enterprise'
@@ -40,7 +40,7 @@ const getRendererAgGrid = (header) => {
 
 const props = withDefaults(defineProps<{
     title?: string,
-    rowData?: object[],
+    rowData?: Record<string, any>[],
     headers?: HeaderDataTable[],
     pagination?: boolean,
     paginationPageSize?: number,
@@ -135,9 +135,22 @@ const onSelectionChanged = (params) => {
   emit('selectionChanged', params.api.getSelectedRows())
 }
 
+const gridApi = ref(null) // Optional - for accessing Grid's API
+const columnApi = ref(null) // Optional - for accessing Grid's API
+
 const onGridReady = (params) => {
   watchEffect(() => { params.api.setRowData(props.rowData) })
+  gridApi.value = params.api
+  columnApi.value = params.columnApi
 }
+
+defineExpose({
+  getCurrentFilter () {
+    const filters = Object.fromEntries(Object.entries(gridApi.value.getFilterModel()).map(([key, value]) => ([key, value])))
+    // const columnStates = columnApi.value.getColumnState().map(({ colId, filter }) => ({ colId, filter }))
+    return filters
+  },
+})
 </script>
 
 <template>

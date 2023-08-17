@@ -28,11 +28,14 @@ importers:
         specifier: ^1.9.3
         version: 1.9.3
       '@gouvminint/vue-dsfr':
-        specifier: ^4.2.1
-        version: 4.2.1(oh-vue-icons@1.0.0-rc3)(vue-router@4.2.2)(vue@3.3.4)
+        specifier: ^4.3.0
+        version: 4.3.0(oh-vue-icons@1.0.0-rc3)(vue-router@4.2.2)(vue@3.3.4)
       '@vee-validate/zod':
         specifier: ^4.9.6
         version: 4.9.6(vue@3.3.4)
+      '@vueuse/core':
+        specifier: 10.2.1
+        version: 10.2.1(vue@3.3.4)
       ag-grid-community:
         specifier: ^28.2.1
         version: 28.2.1
@@ -3651,8 +3654,8 @@ packages:
       esbuild-linux-64: 0.15.18
     dev: false
 
-  /@gouvminint/vue-dsfr@4.2.1(oh-vue-icons@1.0.0-rc3)(vue-router@4.2.2)(vue@3.3.4):
-    resolution: {integrity: sha512-E9O8oN94EAghqm6akHIxWxYTUvvph7M7MWks2YHvsUspWIwr1pSBd6diwuO1KjCYmB0uXJuXdfUxiu9lDsZERQ==}
+  /@gouvminint/vue-dsfr@4.3.0(oh-vue-icons@1.0.0-rc3)(vue-router@4.2.2)(vue@3.3.4):
+    resolution: {integrity: sha512-Mk89h45f0GpVWlygATPDOiwwlyVirg8URckhDSvctLiaV1oILzBGR2JwPMdXaNm2wScGiTldy5bvd4NliwExAQ==}
     engines: {node: '>=18.x.x', npm: '>=8.x.x'}
     peerDependencies:
       oh-vue-icons: 1.0.0-rc3
@@ -9935,7 +9938,7 @@ packages:
   /eslint-import-resolver-node@0.3.7:
     resolution: {integrity: sha512-gozW2blMLJCeFpBwugLTGyvVjNoeo1knonXAcatC6bjPBZitotxdWf7Gimr25N4c0AAOo4eOUfaG82IJPDpqCA==}
     dependencies:
-      debug: 3.2.7(supports-color@8.1.1)
+      debug: 3.2.7(supports-color@5.5.0)
       is-core-module: 2.12.1
       resolve: 1.22.2
     transitivePeerDependencies:
@@ -9964,7 +9967,7 @@ packages:
         optional: true
     dependencies:
       '@typescript-eslint/parser': 5.62.0(eslint@8.42.0)(typescript@4.9.5)
-      debug: 3.2.7(supports-color@8.1.1)
+      debug: 3.2.7(supports-color@5.5.0)
       eslint: 8.42.0
       eslint-import-resolver-node: 0.3.7
     transitivePeerDependencies:
@@ -10027,7 +10030,7 @@ packages:
       array-includes: 3.1.6
       array.prototype.flat: 1.3.1
       array.prototype.flatmap: 1.3.1
-      debug: 3.2.7(supports-color@8.1.1)
+      debug: 3.2.7(supports-color@5.5.0)
       doctrine: 2.1.0
       eslint: 8.42.0
       eslint-import-resolver-node: 0.3.7

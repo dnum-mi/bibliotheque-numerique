@@ -193,12 +193,12 @@ export const useDemarcheStore = defineStore('demarche', () => {
   }
 
   const translateEtatDelai = {
-    [EInstructionTimeState.FIRST_REQUEST]: '1ere demande',
+    [EInstructionTimeState.FIRST_REQUEST]: '1ère demande',
     [EInstructionTimeState.IN_PROGRESS]: 'Instruction',
     [EInstructionTimeState.OUT_OF_DATE]: 'Délai expiré',
     [EInstructionTimeState.IN_EXTENSION]: 'Proroger',
-    [EInstructionTimeState.SECOND_REQUEST]: '2eme demande',
-    [EInstructionTimeState.SECOND_RECEIPT]: '2eme demande',
+    [EInstructionTimeState.SECOND_REQUEST]: '2ème demande',
+    [EInstructionTimeState.SECOND_RECEIPT]: '2ème demande',
     [EInstructionTimeState.INTENT_OPPO]: "Intention d'opposition",
     [EInstructionTimeState.IN_ERROR]: 'Erreur',
   }

@@ -13,7 +13,6 @@ withDefaults(defineProps<{
 })
 const title = 'La configuration'
 
-type TitleTag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
 type DsfrAlertType = 'error' | 'success' | 'warning' | 'info'
 
 const demarcheStore = useDemarcheStore()
