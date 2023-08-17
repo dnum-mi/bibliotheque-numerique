@@ -8,7 +8,7 @@ import { Dossier as TDossier } from '@dnum-mi/ds-api-client/dist/@types/types'
 
 import { DsChampType, DsChampTypeKeys, giveTypeFromDsChampType } from '../objects/enums/ds-champ-type.enum'
 import { FormatFunctionRef, FormatFunctionRefKeys } from '@biblio-num/shared'
-import { FieldType } from '../objects/enums/field-type.enum'
+import { FieldType, FieldTypeKeys } from '../objects/enums/field-type.enum'
 import { CreateFieldDto } from '../objects/dto/fields/create-field.dto'
 import { CustomChamp } from '@dnum-mi/ds-api-client/src/@types/types'
 import { dossierFields } from '../objects/constante/dossier-fields-record.const'
@@ -48,17 +48,20 @@ export class FieldService extends BaseEntityService<Field> {
       if (!champ.__typename || !champ.id || !champ.label) {
         this.logger.warn(`champ is not valid: ${JSON.stringify(champ)}`)
       } else {
-        const type = DsChampType[champ.__typename] ?? DsChampType.UnknownChamp
+        const dsType = DsChampType[champ.__typename] ?? DsChampType.UnknownChamp
+        const type = giveTypeFromDsChampType(dsType)
         fields.push({
           dsFieldId: champ.champDescriptor.id,
           label: champ.label,
           stringValue: champ.stringValue,
-          dsChampType: type,
+          dateValue: type === FieldType.date ? new Date(champ.stringValue) : null,
+          numberValue: type === FieldType.number ? parseFloat(champ.stringValue) : null,
+          dsChampType: dsType,
           dossierId,
           fieldSource: FieldSource.champs,
           parentRowIndex: parentRow,
-          formatFunctionRef: FieldService.giveFormatFunctionRef(type),
-          type: giveTypeFromDsChampType(type),
+          formatFunctionRef: FieldService.giveFormatFunctionRef(dsType),
+          type,
           rawJson: champ,
           children:
             champ.__typename === DsChampType.RepetitionChamp
@@ -85,7 +88,9 @@ export class FieldService extends BaseEntityService<Field> {
         fields.push({
           dsFieldId: null,
           label: key,
-          stringValue: value,
+          stringValue: value.toString(),
+          dateValue: null,
+          numberValue: null,
           dsChampType: null,
           fieldSource: FieldSource.dossier,
           type: FieldType.string,
