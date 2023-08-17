@@ -1,0 +1,22 @@
+entity: Demarche
+items:
+  configurationDemarche:
+    id: 1
+    title: 'Démarche de test pour les configurations'
+    dsDataJson: {}
+    mappingColumns: [
+      {
+        id: '01',
+        columnLabel: null,
+        originalLabel: 'Title',
+        type: 'string',
+        formatFunctionRef: null
+      },
+      {
+        id: '02',
+        columnLabel: 'already a custom label',
+        originalLabel: 'state',
+        type: 'string',
+        formatFunctionRef: 'state'
+      }
+    ]
