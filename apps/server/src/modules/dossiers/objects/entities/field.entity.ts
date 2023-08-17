@@ -14,7 +14,7 @@ export const fieldUniqueFields = ['dossierId', 'dsFieldId', 'parentRowIndex']
 @Unique('UQ_FIELD', fieldUniqueFields)
 export class Field extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
-    id: number
+  id: number
 
   @Column({
     type: 'enum',
@@ -22,7 +22,7 @@ export class Field extends BaseEntity {
     nullable: false,
     default: FieldSource.champs,
   })
-    fieldSource: FieldSourceKeys
+  fieldSource: FieldSourceKeys
 
   @Column({
     type: 'enum',
@@ -30,14 +30,14 @@ export class Field extends BaseEntity {
     nullable: true,
     default: DsChampType.UnknownChamp,
   })
-    dsChampType: DsChampTypeKeys | null
+  dsChampType: DsChampTypeKeys | null
 
   @Column({
     type: 'enum',
     enum: FieldType,
     default: FieldType.string,
   })
-    type: FieldTypeKeys
+  type: FieldTypeKeys
 
   @Column({
     type: 'enum',
@@ -45,46 +45,56 @@ export class Field extends BaseEntity {
     enum: FormatFunctionRef,
     default: null,
   })
-    formatFunctionRef: FormatFunctionRefKeys | null
+  formatFunctionRef: FormatFunctionRefKeys | null
 
   @Column({
     nullable: true,
   })
-    dsFieldId: string | null
+  dsFieldId: string
 
   @Column({
     nullable: false,
   })
-    stringValue: string
+  stringValue: string
+
+  @Column({
+    nullable: true,
+  })
+  dateValue: Date | null
+
+  @Column({
+    nullable: true,
+  })
+  numberValue: number | null
 
   @ManyToOne(() => Field, (field) => field.children)
-    parent?: Field | null
+  parent?: Field | null
 
   @Column({ nullable: true })
-    parentId: number | null
+  parentId: number | null
 
   @OneToMany(() => Field, (field) => field.parent, {
     cascade: true,
   })
   @JoinColumn()
-    children?: Field[] | null
+  children?: Field[] | null
 
   @Column({
     nullable: true,
   })
-    parentRowIndex: null | number
+  parentRowIndex: null | number
 
   @Column({
     nullable: false,
   })
-    label: string
+  label: string
 
   @Column({ type: 'jsonb', default: null, nullable: true })
-    rawJson: Partial<Champ> | null
+  rawJson: Partial<Champ> | null
 
   @ManyToOne(() => Dossier, (dossier) => dossier.fields)
-    dossier?: Dossier
+  dossier?: Dossier
 
   @Column()
-    dossierId: number
+  dossierId: number
 }
