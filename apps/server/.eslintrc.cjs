@@ -30,6 +30,18 @@ module.exports = {
     'max-len': ['error', { code: 120 }],
     'no-irregular-whitespace': 'warn',
     'comma-dangle': ['error', 'always-multiline'],
+    indent: [
+      'error',
+      2,
+      {
+        ignoredNodes: [
+          "PropertyDefinition",
+          'FunctionExpression > .params[decorators.length > 0]',
+          'FunctionExpression > .params > :matches(Decorator, :not(:first-child))',
+          'ClassBody.body > PropertyDefinition[decorators.length > 0] > .key',
+        ],
+      },
+    ],
   },
   overrides: [
     {

@@ -5,7 +5,7 @@ import { SchedulerRegistry } from '@nestjs/schedule'
 import { CronJob } from 'cron'
 import { JobLogService } from '../job-log/providers/job-log.service'
 import { JobNames } from './job-name.enum'
-import { DemarcheSynchroniseService } from '../demarches/providers/demarche-synchronise.service'
+import { DemarcheSynchroniseService } from '../demarches/providers/services/demarche-synchronise.service'
 import { OrganismesService } from '../../plugins/organisme/organismes/organismes.service'
 import { TMapperJobs } from './mapper-jobs.type'
 

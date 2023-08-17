@@ -1,15 +1,15 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
 import { Repository } from 'typeorm'
-import { LoggerService } from '../../../shared/modules/logger/logger.service'
+import { LoggerService } from '../../../../shared/modules/logger/logger.service'
 import { ConfigService } from '@nestjs/config'
-import { Demarche } from '../objects/entities/demarche.entity'
-import { BaseEntityService } from '../../../shared/base-entity/base-entity.service'
+import { Demarche } from '../../objects/entities/demarche.entity'
+import { BaseEntityService } from '../../../../shared/base-entity/base-entity.service'
 import { InjectRepository } from '@nestjs/typeorm'
-import { OrganismeType, OrganismeTypeKeys, organismeTypeRegex } from '../objects/enums/organisme-type.enum'
+import { OrganismeType, OrganismeTypeKeys, organismeTypeRegex } from '../../objects/enums/organisme-type.enum'
 import { DsApiClient } from '@dnum-mi/ds-api-client'
 import { Demarche as TDemarche, Dossier as TDossier } from '@dnum-mi/ds-api-client/dist/@types/generated-types'
 import { DemarcheService } from './demarche.service'
-import { DossierSynchroniseService } from '../../dossiers/providers/dossier-synchronise.service'
+import { DossierSynchroniseService } from '../../../dossiers/providers/dossier-synchronise.service'
 
 @Injectable()
 export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {

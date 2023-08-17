@@ -14,7 +14,7 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
-import { DemarcheService } from '../providers/demarche.service'
+import { DemarcheService } from '../providers/services/demarche.service'
 import {
   PermissionsGuard,
   RequirePermissions,
@@ -23,8 +23,8 @@ import { PermissionName } from '../../../shared/types/Permission.type'
 import { LoggerService } from '../../../shared/modules/logger/logger.service'
 import { Demarche } from '../objects/entities/demarche.entity'
 import { Dossier } from '../../dossiers/objects/entities/dossier.entity'
-import { DemarcheSynchroniseService } from '../providers/demarche-synchronise.service'
 import { GetDemarcheByIdDto } from '../objects/dto/get-demarche-by-id.dto'
+import { DemarcheSynchroniseService } from '../providers/services/demarche-synchronise.service'
 
 @ApiTags('Demarches')
 @UseGuards(PermissionsGuard)
