@@ -7,7 +7,6 @@ import {
   NotFoundException,
   Param,
   ParseIntPipe,
-  Patch,
   Post,
   Query,
   Request,
@@ -106,15 +105,5 @@ export class DemarcheController {
     this.logger.verbose('synchroDossiers')
     await this.demarcheSynchroniseService.synchroniseOneDemarche(idDs)
     return { message: `Demarche with DS id ${idDs} has been synchronised.` }
-  }
-
-  @Patch(':id')
-  @RequirePermissions()
-  async updateDemarche (
-    @Param('id', ParseIntPipe) id: number,
-    @Body() demarche: Partial<Demarche>,
-  ): Promise<void> {
-    this.logger.verbose('updateDemarche')
-    await this.demarcheService.updateOrThrow(id, demarche)
   }
 }

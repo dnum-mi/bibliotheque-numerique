@@ -28,10 +28,10 @@ export class FieldService extends BaseEntityService<Field> {
 
   static giveFormatFunctionRef (type: DsChampTypeKeys): FormatFunctionRefKeys | null {
     switch (type) {
-      case DsChampType.PaysChamp:
-        return FormatFunctionRef.country
-      default:
-        return null
+    case DsChampType.PaysChamp:
+      return FormatFunctionRef.country
+    default:
+      return null
     }
   }
 

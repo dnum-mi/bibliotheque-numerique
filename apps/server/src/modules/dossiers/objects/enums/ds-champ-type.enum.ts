@@ -30,19 +30,19 @@ export type DsChampTypeKeys = (typeof DsChampType)[keyof typeof DsChampType];
 
 export const giveTypeFromDsChampType = (type: DsChampTypeKeys): FieldTypeKeys => {
   switch (type) {
-    case DsChampType.CheckboxChamp:
-      return FieldType.boolean
-    case DsChampType.DatetimeChamp:
-    case DsChampType.DateChamp:
-      return FieldType.date
-    case DsChampType.IntegerNumberChamp:
-    case DsChampType.DecimalNumberChamp:
-      return FieldType.number
-    case DsChampType.PieceJustificativeChamp:
-    case DsChampType.TitreIdentiteChamp:
-      return FieldType.file
-    default:
-      return FieldType.string
+  case DsChampType.CheckboxChamp:
+    return FieldType.boolean
+  case DsChampType.DatetimeChamp:
+  case DsChampType.DateChamp:
+    return FieldType.date
+  case DsChampType.IntegerNumberChamp:
+  case DsChampType.DecimalNumberChamp:
+    return FieldType.number
+  case DsChampType.PieceJustificativeChamp:
+  case DsChampType.TitreIdentiteChamp:
+    return FieldType.file
+  default:
+    return FieldType.string
   }
 }
 
