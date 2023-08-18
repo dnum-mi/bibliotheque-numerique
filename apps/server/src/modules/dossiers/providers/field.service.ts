@@ -8,7 +8,7 @@ import { Dossier as TDossier } from '@dnum-mi/ds-api-client/dist/@types/types'
 
 import { DsChampType, DsChampTypeKeys, giveTypeFromDsChampType } from '../objects/enums/ds-champ-type.enum'
 import { FormatFunctionRef, FormatFunctionRefKeys } from '@biblio-num/shared'
-import { FieldType, FieldTypeKeys } from '../objects/enums/field-type.enum'
+import { FieldType } from '../objects/enums/field-type.enum'
 import { CreateFieldDto } from '../objects/dto/fields/create-field.dto'
 import { CustomChamp } from '@dnum-mi/ds-api-client/src/@types/types'
 import { dossierFields } from '../objects/constante/dossier-fields-record.const'
