@@ -35,7 +35,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
       break
     default:
       message = 'Internal server error'
-      this.logger.error(exception as Error)
+      this.logger.error((exception as Error).message)
+      this.logger.debug((exception as Error).stack)
     }
 
     const responseBody = {

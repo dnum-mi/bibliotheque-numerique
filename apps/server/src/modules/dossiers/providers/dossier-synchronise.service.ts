@@ -4,13 +4,20 @@ import { Repository } from 'typeorm'
 import { Dossier } from '../objects/entities/dossier.entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { BaseEntityService } from '../../../shared/base-entity/base-entity.service'
-import { Dossier as TDossier, File as TFile, RepetitionChamp, PieceJustificativeChamp } from '@dnum-mi/ds-api-client'
-import { Champ, Message } from '@dnum-mi/ds-api-client/src/@types/types'
+import {
+  Dossier as TDossier,
+  File as TFile,
+  RepetitionChamp,
+  PieceJustificativeChamp,
+  Champ,
+  Message,
+} from '@dnum-mi/ds-api-client'
 import { ConfigService } from '@nestjs/config'
 import { FilesService } from '../../files/files.service'
-import { isFileChamp, isRepetitionChamp } from '../objects/enums/ds-champ-type.enum'
 import { FieldService } from './field.service'
 import { InstructionTimesService } from '../../../plugins/instruction_time/instruction_times/instruction_times.service'
+import { Demarche } from '../../demarches/objects/entities/demarche.entity'
+import { isFileChamp, isRepetitionChamp } from '../../../shared/modules/ds-api/objects/ds-champ.utils'
 
 @Injectable()
 export class DossierSynchroniseService extends BaseEntityService<Dossier> {
@@ -61,8 +68,8 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
     this.logger.debug(originalChamp['__typename'])
     if (isFileChamp(originalChamp)) {
       const fileChamp = originalChamp as PieceJustificativeChamp
-      if ((fileChamp.files?.length || fileChamp.file)) {
-        const files = [...((fileChamp).files ?? []), ...[(fileChamp).file]].filter((a) => !!a)
+      if (fileChamp.files?.length || fileChamp.file) {
+        const files = [...(fileChamp.files ?? []), ...[fileChamp.file]].filter((a) => !!a)
         await Promise.all(
           files.map(async (file) => {
             file.url = await this.copyDsFile(file)
@@ -74,7 +81,7 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
       rChamp.rows = await Promise.all(
         rChamp.rows.map(async (row) => ({
           ...row,
-          champs: await Promise.all(row.champs.map(async (champ) => await this._formatFileChamp(champ))),
+          champs: await Promise.all(row.champs.map(async (champ: Champ) => await this._formatFileChamp(champ))),
         })),
       )
     }
@@ -85,20 +92,22 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
     this.logger.verbose('_formatFileData')
     return {
       ...dossier,
-      champs: await Promise.all(dossier.champs.map(async (champ) => await this._formatFileChamp(champ))),
-      annotations: await Promise.all(dossier.annotations.map(async (champ) => await this._formatFileChamp(champ))),
+      champs: await Promise.all(dossier.champs.map(async (champ: Champ) => await this._formatFileChamp(champ))),
+      annotations: await Promise.all(
+        dossier.annotations.map(async (champ: Champ) => await this._formatFileChamp(champ)),
+      ),
       messages: await Promise.all(dossier.messages.map(async (message) => await this._formatFileMessage(message))),
     }
   }
 
   /* endregion */
 
-  async synchroniseOneDossier (originalJsonDossier: TDossier, demarcheId: number): Promise<void> {
+  async synchroniseOneDossier (originalJsonDossier: TDossier, demarche: Demarche): Promise<void> {
     this.logger.verbose('synchroniseOneDossier')
     const jsonDossier = await this._formatFileData(originalJsonDossier)
     const upsert = await this.repo.upsert(
       {
-        demarche: { id: demarcheId },
+        demarche: { id: demarche.id },
         sourceId: '' + jsonDossier.number,
         dsDataJson: jsonDossier,
         state: jsonDossier.state,
@@ -109,7 +118,7 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
       },
     )
     const id = upsert.identifiers[0].id
-    await this.fieldService.overwriteFieldsFromDataJson(jsonDossier, id)
+    await this.fieldService.overwriteFieldsFromDataJson(jsonDossier, id, demarche.mappingColumns)
     await this.instructionTimeService.proccessByDossierId(id)
     this.logger.log(`Successfully synchronised dossier ${id} (dsId: ${jsonDossier.number})`)
   }

@@ -5,8 +5,8 @@ import { DossierState } from '@dnum-mi/ds-api-client/dist/@types/types'
 
 export function getFakeDossierTest (dataJson: object | null, demarche?: Demarche): Partial<Dossier> {
   return {
-    dsDataJson: dataJson || JSON.parse(faker.datatype.json()),
+    dsDataJson: dataJson || {},
     demarche,
-    state: faker.datatype.string() as unknown as DossierState,
+    state: faker.string.sample() as unknown as DossierState,
   }
 }

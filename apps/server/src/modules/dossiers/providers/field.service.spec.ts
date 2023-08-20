@@ -3,6 +3,55 @@ import { LoggerService } from '../../../shared/modules/logger/logger.service'
 import { loggerServiceMock } from '../../../../test/mock/logger-service.mock'
 import { FieldService } from './field.service'
 import { Dossier as TDossier } from '@dnum-mi/ds-api-client/dist/@types/types'
+import { FieldType } from '../objects/enums/field-type.enum'
+import { MappingColumn } from '../../demarches/objects/entities/mapping-column.object'
+import { FieldSource } from '../objects/enums/field-source.enum'
+import { fixFields } from '../objects/constante/fix-field.dictionnary'
+import { FormatFunctionRef } from '@biblio-num/shared'
+
+const fakeMappingColumnHash: MappingColumn[] = [
+  ...fixFields,
+  {
+    type: FieldType.number,
+    id: 'Q4hhbXAtMTA0Mw==',
+    formatFunctionRef: null,
+    source: FieldSource.champs,
+    columnLabel: null,
+    originalLabel: 'Total de doritos dans le monde',
+  },
+  {
+    type: FieldType.date,
+    id: 'Q1hhbXAtMTA0Mw==',
+    formatFunctionRef: null,
+    source: FieldSource.annotation,
+    columnLabel: null,
+    originalLabel: "Naissance de quelqu'un",
+  },
+  {
+    type: FieldType.string,
+    id: 'Q2hhbXAtMTA2NQ==',
+    formatFunctionRef: null,
+    source: FieldSource.champs,
+    columnLabel: null,
+    originalLabel: 'Champ répétable',
+  },
+  {
+    type: FieldType.string,
+    id: 'A2hhbXAtMTA2NQ==',
+    formatFunctionRef: FormatFunctionRef.country,
+    source: FieldSource.champs,
+    columnLabel: null,
+    originalLabel: "Pays d'origine du financement",
+  },
+  {
+    type: FieldType.number,
+    id: 'B2hhbXAtMTA2NQ==',
+    formatFunctionRef: null,
+    source: FieldSource.champs,
+    columnLabel: null,
+    originalLabel: 'Montant du financement',
+  },
+]
 
 describe('FieldService', () => {
   let service: FieldService
@@ -32,69 +81,123 @@ describe('FieldService', () => {
     expect(service).toBeDefined()
   })
 
-  it('Create simple first level champs fields', async () => {
+  it('Should create at least fixFields', async () => {
     const raw = {
       id: 'RG9zc2llci0xMzY=',
+      state: 'bientôt cuit',
+    }
+    const fields = await service.overwriteFieldsFromDataJson(raw as Partial<TDossier>, 42, fakeMappingColumnHash)
+    expect(fields).toEqual([
+      {
+        sourceId: '1a4b62c4-b81f-4e83-ac34-f6d601b8a8d4',
+        label: 'state',
+        formatFunctionRef: 'status',
+        type: 'string',
+        fieldSource: 'fix-field',
+        stringValue: 'bientôt cuit',
+        dateValue: null,
+        numberValue: null,
+        dossierId: 42,
+        parentRowIndex: null,
+        rawJson: null,
+        dsChampType: null,
+      },
+    ])
+  })
+
+  it('Should create fixfield and one number champs', async () => {
+    const raw = {
+      id: 'RG9zc2llci0xMzY=',
+      state: 'bientôt cuit',
       champs: [
         {
-          id: 'Q2hhbXAtMTA0Mw==',
-          __typename: 'TextChamp',
-          label: 'Informations relatives au bénéficiaire du financement',
-          stringValue: 'toto',
+          id: 'Q4hhbXAtMTA0Mw==',
+          __typename: 'DecimalNumberChamp',
+          label: 'Total de doritos dans le monde',
+          stringValue: '4569873456.123',
           champDescriptor: {
             id: 'Q4hhbXAtMTA0Mw==',
           },
         },
       ],
     }
-    const fields = await service.overwriteFieldsFromDataJson(raw as Partial<TDossier>, 42)
-    expect(fields).toEqual([
+    const fields = await service.overwriteFieldsFromDataJson(raw as Partial<TDossier>, 42, fakeMappingColumnHash)
+    expect(fields).toMatchObject([
       {
-        dsFieldId: 'Q4hhbXAtMTA0Mw==',
-        label: 'Informations relatives au bénéficiaire du financement',
-        stringValue: 'toto',
-        dsChampType: 'TextChamp',
-        fieldSource: 'champs',
+        sourceId: 'Q4hhbXAtMTA0Mw==',
+        label: 'Total de doritos dans le monde',
         formatFunctionRef: null,
-        type: 'string',
+        type: 'number',
+        fieldSource: 'champs',
+        stringValue: '4569873456.123',
+        dateValue: null,
+        numberValue: 4569873456.123,
+        dsChampType: 'DecimalNumberChamp',
+        dossierId: 42,
         parentRowIndex: null,
         children: null,
+      },
+      {
+        sourceId: '1a4b62c4-b81f-4e83-ac34-f6d601b8a8d4',
+        label: 'state',
+        formatFunctionRef: 'status',
+        type: 'string',
+        fieldSource: 'fix-field',
+        stringValue: 'bientôt cuit',
+        dateValue: null,
+        numberValue: null,
         dossierId: 42,
-        rawJson: {
-          id: 'Q2hhbXAtMTA0Mw==',
-          __typename: 'TextChamp',
-          label: 'Informations relatives au bénéficiaire du financement',
-          stringValue: 'toto',
-          champDescriptor: {
-            id: 'Q4hhbXAtMTA0Mw==',
-          },
-        },
+        parentRowIndex: null,
+        rawJson: null,
+        dsChampType: null,
       },
     ])
   })
 
-  it('Create simple first level dossier fields', async () => {
+  it('Should create fixfield and one date annotation', async () => {
     const raw = {
       id: 'RG9zc2llci0xMzY=',
-      state: 'en cours',
-      champs: [],
+      state: 'bientôt cuit',
+      annotations: [
+        {
+          id: 'Q1hhbXAtMTA0Mw==',
+          __typename: 'DateChamp',
+          label: "Naissance de quelqu'un",
+          stringValue: '2023-08-18',
+        },
+      ],
     }
-    const fields = await service.overwriteFieldsFromDataJson(raw as Partial<TDossier>, 42)
-    expect(fields).toEqual([
+    const fields = await service.overwriteFieldsFromDataJson(raw as Partial<TDossier>, 42, fakeMappingColumnHash)
+    expect(fields).toMatchObject([
       {
-        dsFieldId: null,
-        label: 'state',
-        stringValue: 'en cours',
-        dsChampType: null,
-        fieldSource: 'dossier',
+        sourceId: 'Q1hhbXAtMTA0Mw==',
+        label: "Naissance de quelqu'un",
         formatFunctionRef: null,
-        type: 'string',
+        type: 'date',
+        fieldSource: 'annotation',
+        stringValue: '2023-08-18',
+        numberValue: null,
+        dsChampType: 'DateChamp',
+        dossierId: 42,
         parentRowIndex: null,
         children: null,
+      },
+      {
+        sourceId: '1a4b62c4-b81f-4e83-ac34-f6d601b8a8d4',
+        label: 'state',
+        formatFunctionRef: 'status',
+        type: 'string',
+        fieldSource: 'fix-field',
+        stringValue: 'bientôt cuit',
+        dateValue: null,
+        numberValue: null,
         dossierId: 42,
+        parentRowIndex: null,
         rawJson: null,
+        dsChampType: null,
       },
     ])
+    expect(new Date('2023-08-18').getTime()).toEqual(fields[0].dateValue.getTime())
   })
 
   it('Create children field for repetable champs', async () => {
@@ -118,7 +221,7 @@ describe('FieldService', () => {
                   label: "Pays d'origine du financement",
                   stringValue: 'Anguilla',
                   champDescriptor: {
-                    id: 'Q2hhbXAtMTA2Nnww',
+                    id: 'A2hhbXAtMTA2NQ==',
                   },
                   pays: {
                     name: 'Anguilla',
@@ -132,7 +235,7 @@ describe('FieldService', () => {
                   stringValue: '1111111',
                   integerNumber: '1111111',
                   champDescriptor: {
-                    id: 'Q2hhbXAtMTA3MXww',
+                    id: 'B2hhbXAtMTA2NQ==',
                   },
                 },
               ],
@@ -149,7 +252,7 @@ describe('FieldService', () => {
                     code: 'DZ',
                   },
                   champDescriptor: {
-                    id: 'pBUkM1UlZZMzMwSg==',
+                    id: 'A2hhbXAtMTA2NQ==',
                   },
                 },
                 {
@@ -159,7 +262,7 @@ describe('FieldService', () => {
                   stringValue: '10',
                   integerNumber: '10',
                   champDescriptor: {
-                    id: 'MUg1MkRSNlpKUkhRUl',
+                    id: 'B2hhbXAtMTA2NQ==',
                   },
                 },
               ],
@@ -168,123 +271,92 @@ describe('FieldService', () => {
         },
       ],
     }
-    const fields = await service.overwriteFieldsFromDataJson(raw as Partial<TDossier>, 42)
+    const fields = await service.overwriteFieldsFromDataJson(raw as Partial<TDossier>, 42, fakeMappingColumnHash)
     expect(fields).toMatchObject([
       {
-        dsFieldId: 'Q2hhbXAtMTA2NQ==',
-        label: "Déclaration d'un financement d'un montant supérieur à 15 300 €",
-        stringValue: '',
-        dsChampType: 'RepetitionChamp',
-        fieldSource: 'champs',
+        sourceId: 'Q2hhbXAtMTA2NQ==',
+        label: 'Champ répétable',
         formatFunctionRef: null,
         type: 'string',
-        rawJson: {
-          id: 'useless',
-          __typename: 'RepetitionChamp',
-          label: "Déclaration d'un financement d'un montant supérieur à 15 300 €",
-          stringValue: '',
-          champDescriptor: {
-            id: 'Q2hhbXAtMTA2NQ==',
-          },
-        },
+        fieldSource: 'champs',
+        stringValue: '',
+        dateValue: null,
+        numberValue: null,
+        dsChampType: 'RepetitionChamp',
+        dossierId: 42,
+        parentRowIndex: null,
         children: [
           {
-            dsFieldId: 'Q2hhbXAtMTA2Nnww',
+            sourceId: 'A2hhbXAtMTA2NQ==',
             label: "Pays d'origine du financement",
+            formatFunctionRef: FormatFunctionRef.country,
+            type: 'string',
+            fieldSource: 'champs',
             stringValue: 'Anguilla',
+            dateValue: null,
+            numberValue: null,
             dsChampType: 'PaysChamp',
-            fieldSource: 'champs',
-            formatFunctionRef: 'country',
-            type: 'string',
-            rawJson: {
-              id: 'useless',
-              __typename: 'PaysChamp',
-              label: "Pays d'origine du financement",
-              stringValue: 'Anguilla',
-              pays: {
-                code: 'AI',
-                name: 'Anguilla',
-              },
-              champDescriptor: {
-                id: 'Q2hhbXAtMTA2Nnww',
-              },
-            },
+            dossierId: 42,
             parentRowIndex: 0,
             children: null,
-            dossierId: 42,
           },
           {
-            dsFieldId: 'Q2hhbXAtMTA3MXww',
+            sourceId: 'B2hhbXAtMTA2NQ==',
             label: 'Montant du financement',
+            formatFunctionRef: null,
+            type: 'number',
+            fieldSource: 'champs',
             stringValue: '1111111',
+            dateValue: null,
+            numberValue: 1111111,
             dsChampType: 'IntegerNumberChamp',
-            fieldSource: 'champs',
-            formatFunctionRef: null,
-            type: 'number',
-            rawJson: {
-              id: 'useless',
-              __typename: 'IntegerNumberChamp',
-              label: 'Montant du financement',
-              stringValue: '1111111',
-              integerNumber: '1111111',
-              champDescriptor: {
-                id: 'Q2hhbXAtMTA3MXww',
-              },
-            },
+            dossierId: 42,
             parentRowIndex: 0,
             children: null,
-            dossierId: 42,
           },
           {
-            dsFieldId: 'pBUkM1UlZZMzMwSg==',
+            sourceId: 'A2hhbXAtMTA2NQ==',
             label: "Pays d'origine du financement",
-            stringValue: 'Algeria',
-            dsChampType: 'PaysChamp',
-            fieldSource: 'champs',
-            formatFunctionRef: 'country',
+            formatFunctionRef: FormatFunctionRef.country,
             type: 'string',
-            rawJson: {
-              id: 'useless',
-              __typename: 'PaysChamp',
-              label: "Pays d'origine du financement",
-              stringValue: 'Algeria',
-              pays: {
-                code: 'DZ',
-                name: 'Algeria',
-              },
-              champDescriptor: {
-                id: 'pBUkM1UlZZMzMwSg==',
-              },
-            },
+            fieldSource: 'champs',
+            stringValue: 'Algeria',
+            dateValue: null,
+            numberValue: null,
+            dsChampType: 'PaysChamp',
+            dossierId: 42,
             parentRowIndex: 1,
             children: null,
-            dossierId: 42,
           },
           {
-            dsFieldId: 'MUg1MkRSNlpKUkhRUl',
+            sourceId: 'B2hhbXAtMTA2NQ==',
             label: 'Montant du financement',
-            stringValue: '10',
-            dsChampType: 'IntegerNumberChamp',
-            fieldSource: 'champs',
             formatFunctionRef: null,
             type: 'number',
-            rawJson: {
-              id: 'useless',
-              __typename: 'IntegerNumberChamp',
-              label: 'Montant du financement',
-              stringValue: '10',
-              integerNumber: '10',
-              champDescriptor: {
-                id: 'MUg1MkRSNlpKUkhRUl',
-              },
-            },
+            fieldSource: 'champs',
+            stringValue: '10',
+            dateValue: null,
+            numberValue: 10,
+            dsChampType: 'IntegerNumberChamp',
+            dossierId: 42,
             parentRowIndex: 1,
             children: null,
-            dossierId: 42,
           },
         ],
-        parentRowIndex: null,
+      },
+      {
+        sourceId: '1a4b62c4-b81f-4e83-ac34-f6d601b8a8d4',
+        label: 'state',
+        formatFunctionRef: 'status',
+        type: 'string',
+        fieldSource: 'fix-field',
+        stringValue: '',
+        dateValue: null,
+        numberValue: null,
         dossierId: 42,
+        parentRowIndex: null,
+        rawJson: null,
+        dsChampType: null,
       },
     ])
   })

@@ -4,6 +4,59 @@ export const smallDemarcheAndDossierFinancementEtrangerDataMock = {
     number: 43,
     title: 'Small Déclaration des financements étrangers',
     state: 'publiee',
+    activeRevision: {
+      id: 'UHJvY2VkdXJlUmV2aXNpb24tNTY=',
+      datePublication: '2023-07-27T16:33:59+02:00',
+      champDescriptors: [
+        {
+          __typename: 'HeaderSectionChampDescriptor',
+          id: 'Q2hhbXAtMTA0Mw==',
+          label: 'Informations relatives au bénéficiaire du financement',
+          description: '',
+          required: false,
+        },
+        {
+          __typename: 'RNAChampDescriptor',
+          id: 'Q2hhbXAtMTA0NQ==',
+          label: "Saisir le n°RNA de l'association",
+          description:
+            'Le numéro RNA se compose de la lettre « W » suivi du code de votre département (ou pour les outremers du chiffre 9 + une lettre) suivi de 7 chiffres.',
+          required: false,
+        },
+        {
+          __typename: 'RepetitionChampDescriptor',
+          id: 'Q2hhbXAtMTA2NQ==',
+          label: 'Liste de course',
+          description: '',
+          required: false,
+          champDescriptors: [
+            {
+              __typename: 'TextChampDescriptor',
+              id: 'Q2hhbXAtMTA2Nnww',
+              label: 'Fruit',
+              description: '',
+              required: false,
+            },
+            {
+              __typename: 'TextChampDescriptor',
+              id: 'Q2hhbXAtMTA2N3ww',
+              label: 'Légume',
+              description: '',
+              required: false,
+            },
+          ],
+        },
+      ],
+      annotationDescriptors: [
+        {
+          __typename: 'TextChampDescriptor',
+          id: 'Q2hhbXAtODc=',
+          label: 'Une annotation',
+          description: '',
+          required: false,
+        },
+      ],
+    },
     dossiers: {
       nodes: [
         {
@@ -90,9 +143,9 @@ export const smallDemarcheAndDossierFinancementEtrangerDataMock = {
           ],
           annotations: [
             {
-              id: 'useless',
+              id: 'Q2hhbXAtODc=',
               __typename: 'TextChamp',
-              label: 'Préciser si SR déjà saisis',
+              label: 'Une annotation',
               stringValue: "Oui oui c'est fait, merci bien.",
             },
           ],

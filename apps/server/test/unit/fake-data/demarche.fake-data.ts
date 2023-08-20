@@ -3,12 +3,12 @@ import { Demarche } from '../../../src/modules/demarches/objects/entities/demarc
 
 export const getFakeDemarche = (): Demarche =>
   ({
-    demarcheDS: faker.datatype.json(),
-    state: faker.datatype.string(),
-    title: faker.datatype.string(),
-    dossiers: [JSON.parse(faker.datatype.json())],
-    typeOrganisme: faker.datatype.string(),
-    mappingColumns: [JSON.parse(faker.datatype.json())],
+    demarcheDS: { },
+    state: faker.string.sample(),
+    title: faker.string.sample(),
+    dossiers: [],
+    typeOrganisme: faker.string.sample(),
+    mappingColumns: [],
     createAt: faker.date.past(),
     updateAt: faker.date.past(),
   } as unknown as Demarche)

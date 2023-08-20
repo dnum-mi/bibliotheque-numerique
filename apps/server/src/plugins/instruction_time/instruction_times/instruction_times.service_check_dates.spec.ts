@@ -121,7 +121,7 @@ describe('InstructionTimesService, Check Date', () => {
       forTestValidity({
         state: fakerDossierInConstructionOrClos(),
         dateInstrution: faker.date.past().toISOString(),
-        firstDemand: fakerDateOrNull(faker.date.past(1, '2020-01-01')),
+        firstDemand: fakerDateOrNull(faker.date.past({ years: 1, refDate: '2020-01-01' })),
         firstReceip: null,
         dateProrogation: null,
         secondDemand: null,
@@ -136,8 +136,8 @@ describe('InstructionTimesService, Check Date', () => {
       forTestValidity({
         state: fakerDossierClosed(),
         dateInstrution: faker.date.past().toISOString(),
-        firstDemand: faker.date.past(1, '2020-01-01'),
-        firstReceip: faker.date.between('2020-01-01', '2020-02-01'),
+        firstDemand: faker.date.past({ years: 1, refDate: '2020-01-01' }),
+        firstReceip: faker.date.between({ from: '2020-01-01', to: '2020-02-01' }),
         dateProrogation: fakerDateOrNull(faker.date.past()),
         secondDemand: fakerDateOrNull(faker.date.past()),
         secondReceip: fakerDateOrNull(faker.date.past()),
@@ -150,9 +150,9 @@ describe('InstructionTimesService, Check Date', () => {
     expect(
       forTestValidity({
         state: DossierState.EnInstruction,
-        dateInstrution: faker.date.future(1, '2020-02-01').toISOString(),
-        firstDemand: faker.date.past(1, '2020-01-01'),
-        firstReceip: faker.date.between('2020-01-01', '2020-02-01'),
+        dateInstrution: faker.date.future({ years: 1, refDate: '2020-02-01' }).toISOString(),
+        firstDemand: faker.date.past({ years: 1, refDate: '2020-01-01' }),
+        firstReceip: faker.date.between({ from: '2020-01-01', to: '2020-02-01' }),
         dateProrogation: null,
         secondDemand: null,
         secondReceip: null,
@@ -165,12 +165,12 @@ describe('InstructionTimesService, Check Date', () => {
     expect(
       forTestValidity({
         state: DossierState.EnInstruction,
-        dateInstrution: faker.date.between('2020-02-01', '2020-03-01').toISOString(),
-        firstDemand: faker.date.past(1, '2020-01-01'),
-        firstReceip: faker.date.between('2020-01-01', '2020-02-01'),
-        dateProrogation: faker.date.between('2020-02-01', '2020-03-01'),
-        secondDemand: faker.date.between('2020-04-01', '2020-05-01'),
-        secondReceip: fakerDateOrNull(faker.date.between('2020-05-01', '2020-06-01')),
+        dateInstrution: faker.date.between({ from: '2020-02-01', to: '2020-03-01' }).toISOString(),
+        firstDemand: faker.date.past({ years: 1, refDate: '2020-01-01' }),
+        firstReceip: faker.date.between({ from: '2020-01-01', to: '2020-02-01' }),
+        dateProrogation: faker.date.between({ from: '2020-02-01', to: '2020-03-01' }),
+        secondDemand: faker.date.between({ from: '2020-04-01', to: '2020-05-01' }),
+        secondReceip: fakerDateOrNull(faker.date.between({ from: '2020-05-01', to: '2020-06-01' })),
         dateIntentOppo: null,
       }),
     ).toBe(true)
@@ -180,12 +180,12 @@ describe('InstructionTimesService, Check Date', () => {
     expect(
       forTestValidity({
         state: DossierState.EnInstruction,
-        dateInstrution: faker.date.between('2020-01-01', '2020-02-01').toISOString(),
+        dateInstrution: faker.date.between({ from: '2020-01-01', to: '2020-02-01' }).toISOString(),
         firstDemand: null,
         firstReceip: null,
-        dateProrogation: faker.date.between('2020-02-01', '2020-03-01'),
-        secondDemand: faker.date.between('2020-03-01', '2020-04-01'),
-        secondReceip: fakerDateOrNull(faker.date.between('2020-04-01', '2020-05-01')),
+        dateProrogation: faker.date.between({ from: '2020-02-01', to: '2020-03-01' }),
+        secondDemand: faker.date.between({ from: '2020-03-01', to: '2020-04-01' }),
+        secondReceip: fakerDateOrNull(faker.date.between({ from: '2020-04-01', to: '2020-05-01' })),
         dateIntentOppo: null,
       }),
     ).toBe(true)
@@ -195,10 +195,10 @@ describe('InstructionTimesService, Check Date', () => {
     expect(
       forTestValidity({
         state: DossierState.EnInstruction,
-        dateInstrution: faker.date.between('2020-01-01', '2020-02-01').toISOString(),
+        dateInstrution: faker.date.between({ from: '2020-01-01', to: '2020-02-01' }).toISOString(),
         firstDemand: null,
         firstReceip: null,
-        dateProrogation: faker.date.between('2020-02-01', '2020-03-01'),
+        dateProrogation: faker.date.between({ from: '2020-02-01', to: '2020-03-01' }),
         secondDemand: null,
         secondReceip: null,
         dateIntentOppo: null,
@@ -210,13 +210,13 @@ describe('InstructionTimesService, Check Date', () => {
     expect(
       forTestValidity({
         state: DossierState.EnInstruction,
-        dateInstrution: faker.date.between('2020-01-01', '2020-02-01').toISOString(),
+        dateInstrution: faker.date.between({ from: '2020-01-01', to: '2020-02-01' }).toISOString(),
         firstDemand: null,
         firstReceip: null,
-        dateProrogation: fakerDateOrNull(faker.date.between('2020-02-01', '2020-03-01')),
+        dateProrogation: fakerDateOrNull(faker.date.between({ from: '2020-02-01', to: '2020-03-01' })),
         secondDemand: null,
         secondReceip: null,
-        dateIntentOppo: faker.date.future(1, '2020-03-01'),
+        dateIntentOppo: faker.date.future({ years: 1, refDate: '2020-03-01' }),
       }),
     ).toBe(true)
   })
@@ -241,8 +241,8 @@ describe('InstructionTimesService, Check Date', () => {
       forTestValidity({
         state: fakerDossierClosed(),
         dateInstrution: fakerDateOrNull(faker.date.past().toISOString()),
-        firstDemand: faker.date.future(1, '2020-01-01'),
-        firstReceip: faker.date.past(1, '2020-01-01'),
+        firstDemand: faker.date.future({ years: 1, refDate: '2020-01-01' }),
+        firstReceip: faker.date.past({ years: 1, refDate: '2020-01-01' }),
         dateProrogation: null,
         secondDemand: null,
         secondReceip: null,
@@ -257,8 +257,8 @@ describe('InstructionTimesService, Check Date', () => {
       forTestValidity({
         state: DossierState.EnInstruction,
         dateInstrution: fakerDateOrNull(faker.date.past().toISOString()),
-        firstDemand: faker.date.future(1, '2020-01-01'),
-        firstReceip: faker.date.past(1, '2020-01-01'),
+        firstDemand: faker.date.future({ years: 1, refDate: '2020-01-01' }),
+        firstReceip: faker.date.past({ years: 1, refDate: '2020-01-01' }),
         dateProrogation: null,
         secondDemand: null,
         secondReceip: null,
@@ -275,7 +275,7 @@ describe('InstructionTimesService, Check Date', () => {
         state: DossierState.EnInstruction,
         dateInstrution: fakerDateOrNull(faker.date.past().toISOString()),
         firstDemand: null,
-        firstReceip: faker.date.past(1, '2020-01-01'),
+        firstReceip: faker.date.past({ years: 1, refDate: '2020-01-01' }),
         dateProrogation: null,
         secondDemand: null,
         secondReceip: null,
@@ -290,8 +290,8 @@ describe('InstructionTimesService, Check Date', () => {
       forTestValidity({
         state: DossierState.EnConstruction,
         dateInstrution: null,
-        firstDemand: fakerDateOrNull(faker.date.past(1, '2020-01-01')),
-        firstReceip: faker.date.future(1, '2020-01-01'),
+        firstDemand: fakerDateOrNull(faker.date.past({ years: 1, refDate: '2020-01-01' })),
+        firstReceip: faker.date.future({ years: 1, refDate: '2020-01-01' }),
         dateProrogation: null,
         secondDemand: null,
         secondReceip: null,
@@ -307,7 +307,7 @@ describe('InstructionTimesService, Check Date', () => {
       forTestValidity({
         state: DossierState.EnInstruction,
         dateInstrution: faker.date.past().toISOString(),
-        firstDemand: faker.date.past(1, '2020-01-01'),
+        firstDemand: faker.date.past({ years: 1, refDate: '2020-01-01' }),
         firstReceip: null,
         dateProrogation: null,
         secondDemand: null,
@@ -323,9 +323,9 @@ describe('InstructionTimesService, Check Date', () => {
     const result = (): void => {
       forTestValidity({
         state: DossierState.EnInstruction,
-        dateInstrution: faker.date.between('2020-01-01', '2020-03-01').toISOString(),
-        firstDemand: faker.date.past(1, '2020-01-01'),
-        firstReceip: faker.date.future(1, '2020-03-01'),
+        dateInstrution: faker.date.between({ from: '2020-01-01', to: '2020-03-01' }).toISOString(),
+        firstDemand: faker.date.past({ years: 1, refDate: '2020-01-01' }),
+        firstReceip: faker.date.future({ years: 1, refDate: '2020-03-01' }),
         dateProrogation: null,
         secondDemand: null,
         secondReceip: null,
@@ -357,10 +357,10 @@ describe('InstructionTimesService, Check Date', () => {
     const result = (): void => {
       forTestValidity({
         state: DossierState.EnInstruction,
-        dateInstrution: faker.date.future(1, '2020-01-01'),
+        dateInstrution: faker.date.future({ years: 1, refDate: '2020-01-01' }),
         firstDemand: null,
         firstReceip: null,
-        dateProrogation: faker.date.past(1, '2020-01-01'),
+        dateProrogation: faker.date.past({ years: 1, refDate: '2020-01-01' }),
         secondDemand: null,
         secondReceip: null,
         dateIntentOppo: null,
@@ -373,12 +373,12 @@ describe('InstructionTimesService, Check Date', () => {
     const result = (): void => {
       forTestValidity({
         state: DossierState.EnInstruction,
-        dateInstrution: faker.date.between('2020-01-01', '2020-01-15').toISOString(),
+        dateInstrution: faker.date.between({ from: '2020-01-01', to: '2020-01-15' }).toISOString(),
         firstDemand: null,
         firstReceip: null,
         dateProrogation: null,
-        secondDemand: faker.date.between('2020-01-15', '2020-02-01'),
-        secondReceip: fakerDateOrNull(faker.date.future(1, '2020-03-01')),
+        secondDemand: faker.date.between({ from: '2020-01-15', to: '2020-02-01' }),
+        secondReceip: fakerDateOrNull(faker.date.future({ years: 1, refDate: '2020-03-01' })),
         dateIntentOppo: null,
       })
     }
@@ -390,12 +390,12 @@ describe('InstructionTimesService, Check Date', () => {
     const result = (): void => {
       forTestValidity({
         state: DossierState.EnInstruction,
-        dateInstrution: faker.date.between('2020-01-01', '2020-01-15').toISOString(),
+        dateInstrution: faker.date.between({ from: '2020-01-01', to: '2020-01-15' }).toISOString(),
         firstDemand: null,
         firstReceip: null,
-        dateProrogation: faker.date.between('2020-02-01', '2020-03-01'),
-        secondDemand: faker.date.between('2020-01-15', '2020-02-01'),
-        secondReceip: fakerDateOrNull(faker.date.future(1, '2020-03-01')),
+        dateProrogation: faker.date.between({ from: '2020-02-01', to: '2020-03-01' }),
+        secondDemand: faker.date.between({ from: '2020-01-15', to: '2020-02-01' }),
+        secondReceip: fakerDateOrNull(faker.date.future({ years: 1, refDate: '2020-03-01' })),
         dateIntentOppo: null,
       })
     }
@@ -406,12 +406,12 @@ describe('InstructionTimesService, Check Date', () => {
     const result = (): void => {
       forTestValidity({
         state: DossierState.EnInstruction,
-        dateInstrution: faker.date.past(1, '2020-01-01'),
+        dateInstrution: faker.date.past({ years: 1, refDate: '2020-01-01' }),
         firstDemand: null,
         firstReceip: null,
         dateProrogation: null,
-        secondDemand: faker.date.future(1, '2020-01-01'),
-        secondReceip: faker.date.past(1, '2020-01-01'),
+        secondDemand: faker.date.future({ years: 1, refDate: '2020-01-01' }),
+        secondReceip: faker.date.past({ years: 1, refDate: '2020-01-01' }),
         dateIntentOppo: null,
       })
     }
@@ -423,12 +423,12 @@ describe('InstructionTimesService, Check Date', () => {
     const result = (): void => {
       forTestValidity({
         state: DossierState.EnInstruction,
-        dateInstrution: faker.date.past(1, '2020-01-01'),
+        dateInstrution: faker.date.past({ years: 1, refDate: '2020-01-01' }),
         firstDemand: null,
         firstReceip: null,
         dateProrogation: null,
         secondDemand: null,
-        secondReceip: faker.date.past(1, '2020-01-01'),
+        secondReceip: faker.date.past({ years: 1, refDate: '2020-01-01' }),
         dateIntentOppo: null,
       })
     }
@@ -439,13 +439,13 @@ describe('InstructionTimesService, Check Date', () => {
     const result = (): void => {
       forTestValidity({
         state: DossierState.EnInstruction,
-        dateInstrution: faker.date.future(1, '2020-01-01'),
+        dateInstrution: faker.date.future({ years: 1, refDate: '2020-01-01' }),
         firstDemand: null,
         firstReceip: null,
         dateProrogation: null,
         secondDemand: null,
         secondReceip: null,
-        dateIntentOppo: faker.date.past(1, '2020-01-01'),
+        dateIntentOppo: faker.date.past({ years: 1, refDate: '2020-01-01' }),
       })
     }
 
@@ -455,13 +455,13 @@ describe('InstructionTimesService, Check Date', () => {
     const result = (): void => {
       forTestValidity({
         state: DossierState.EnInstruction,
-        dateInstrution: faker.date.between('2020-01-01', '2020-01-05').toISOString(),
+        dateInstrution: faker.date.between({ from: '2020-01-01', to: '2020-01-05' }).toISOString(),
         firstDemand: null,
         firstReceip: null,
-        dateProrogation: faker.date.between('2020-01-20', '2020-02-01'),
+        dateProrogation: faker.date.between({ from: '2020-01-20', to: '2020-02-01' }),
         secondDemand: null,
         secondReceip: null,
-        dateIntentOppo: faker.date.between('2020-01-10', '2020-01-20'),
+        dateIntentOppo: faker.date.between({ from: '2020-01-10', to: '2020-01-20' }),
       })
     }
 
@@ -472,10 +472,10 @@ describe('InstructionTimesService, Check Date', () => {
     const result = (): void => {
       forTestValidity({
         state: DossierState.EnInstruction,
-        dateInstrution: faker.date.past(1, '2020-01-01').toISOString(),
+        dateInstrution: faker.date.past({ years: 1, refDate: '2020-01-01' }).toISOString(),
         firstDemand: null,
         firstReceip: null,
-        dateProrogation: faker.date.future(1, '2020-03-01'),
+        dateProrogation: faker.date.future({ years: 1, refDate: '2020-03-01' }),
         secondDemand: null,
         secondReceip: null,
         dateIntentOppo: null,
@@ -488,11 +488,11 @@ describe('InstructionTimesService, Check Date', () => {
     const result = (): void => {
       forTestValidity({
         state: DossierState.EnInstruction,
-        dateInstrution: faker.date.between('2020-01-01', '2020-02-01').toISOString(),
+        dateInstrution: faker.date.between({ from: '2020-01-01', to: '2020-02-01' }).toISOString(),
         firstDemand: null,
         firstReceip: null,
-        dateProrogation: faker.date.between('2020-02-01', '2020-03-01'),
-        secondDemand: faker.date.future(1, '2020-07-31'),
+        dateProrogation: faker.date.between({ from: '2020-02-01', to: '2020-03-01' }),
+        secondDemand: faker.date.future({ years: 1, refDate: '2020-07-31' }),
         secondReceip: null,
         dateIntentOppo: null,
       })

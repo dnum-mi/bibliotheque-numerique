@@ -1,7 +1,7 @@
 export const FieldSource = {
   champs: 'champs',
   annotation: 'annotation',
-  dossier: 'dossier',
+  fixField: 'fix-field',
 }
 
 export type FieldSourceKeys = (typeof FieldSource)[keyof typeof FieldSource];

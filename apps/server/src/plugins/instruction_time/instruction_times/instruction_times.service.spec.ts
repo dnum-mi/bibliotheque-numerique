@@ -74,32 +74,32 @@ describe("InstructionTimesService", () => {
 
     fakeDossier.dsDataJson.annotations = [
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         date: "2021-02-01",
         label: instructionTimeMappingConfigFound.DateReceipt1,
       },
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         date: "2021-04-02",
         label: instructionTimeMappingConfigFound.DateReceipt2,
       },
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         date: "2021-01-01",
         label: instructionTimeMappingConfigFound.DateRequest1,
       },
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         date: "2021-03-15",
         label: instructionTimeMappingConfigFound.DateRequest2,
       },
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         datetime: "2021-07-01T00:00:00.000Z",
         label: instructionTimeMappingConfigFound.DurationExtension,
       },
       {
-        id: faker.datatype.uuid(),
+        id: faker.string.uuid(),
         date: "2021-03-15",
         label: instructionTimeMappingConfigFound.DateIntentOpposition,
       },
@@ -137,7 +137,7 @@ describe("InstructionTimesService", () => {
           dossier.dsDataJson.state = DossierState.EnConstruction;
           dossier.dsDataJson.annotations = [
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: "2021-02-01",
               label: instructionTimeMappingConfig.DateRequest1,
             },
@@ -208,32 +208,32 @@ describe("InstructionTimesService", () => {
           state: DossierState.EnConstruction,
           annotations: [
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: "2023-01-01",
               label: instructionTimeMappingConfigFound.DateRequest1,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateReceipt1,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               datetime: null,
               label: instructionTimeMappingConfigFound.BeginProrogationDate,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateRequest2,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateReceipt2,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateIntentOpposition,
             },
@@ -255,32 +255,32 @@ describe("InstructionTimesService", () => {
           datePassageEnInstruction: "2023-01-01",
           annotations: [
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateRequest1,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateReceipt1,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               datetime: null,
               label: instructionTimeMappingConfigFound.BeginProrogationDate,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateRequest2,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateReceipt2,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateIntentOpposition,
             },
@@ -301,32 +301,32 @@ describe("InstructionTimesService", () => {
           datePassageEnInstruction: "2023-01-01",
           annotations: [
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateRequest1,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateReceipt1,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               datetime: null,
               label: instructionTimeMappingConfigFound.BeginProrogationDate,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateRequest2,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateReceipt2,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateIntentOpposition,
             },
@@ -347,32 +347,32 @@ describe("InstructionTimesService", () => {
           datePassageEnInstruction: "2023-01-05",
           annotations: [
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: "2023-01-01",
               label: instructionTimeMappingConfigFound.DateRequest1,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: "2023-01-05",
               label: instructionTimeMappingConfigFound.DateReceipt1,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               datetime: null,
               label: instructionTimeMappingConfigFound.BeginProrogationDate,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateReceipt2,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateRequest2,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateIntentOpposition,
             },
@@ -394,32 +394,32 @@ describe("InstructionTimesService", () => {
           datePassageEnInstruction: "2023-01-06",
           annotations: [
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: "2023-01-01",
               label: instructionTimeMappingConfigFound.DateRequest1,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: "2023-01-05",
               label: instructionTimeMappingConfigFound.DateReceipt1,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               datetime: null,
               label: instructionTimeMappingConfigFound.BeginProrogationDate,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateRequest2,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateReceipt2,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateIntentOpposition,
             },
@@ -438,32 +438,32 @@ describe("InstructionTimesService", () => {
           datePassageEnInstruction: "2023-01-06",
           annotations: [
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: "2023-01-01",
               label: instructionTimeMappingConfigFound.DateRequest1,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: "2023-01-05",
               label: instructionTimeMappingConfigFound.DateReceipt1,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               datetime: null,
               label: instructionTimeMappingConfigFound.BeginProrogationDate,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateReceipt2,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateRequest2,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateIntentOpposition,
             },
@@ -485,32 +485,32 @@ describe("InstructionTimesService", () => {
           datePassageEnInstruction: "2023-01-06",
           annotations: [
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateRequest1,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateReceipt1,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               datetime: "2023-01-20",
               label: instructionTimeMappingConfigFound.BeginProrogationDate,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateRequest2,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateReceipt2,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateIntentOpposition,
             },
@@ -529,32 +529,32 @@ describe("InstructionTimesService", () => {
           datePassageEnInstruction: "2023-01-06",
           annotations: [
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateRequest1,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateReceipt1,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               datetime: "2023-01-20",
               label: instructionTimeMappingConfigFound.BeginProrogationDate,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateRequest2,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateReceipt2,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateIntentOpposition,
             },
@@ -573,32 +573,32 @@ describe("InstructionTimesService", () => {
           datePassageEnInstruction: "2023-01-06",
           annotations: [
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateRequest1,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateReceipt1,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: "2023-01-20",
               label: instructionTimeMappingConfigFound.BeginProrogationDate,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: "2023-01-22",
               label: instructionTimeMappingConfigFound.DateRequest2,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateReceipt2,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateIntentOpposition,
             },
@@ -617,32 +617,32 @@ describe("InstructionTimesService", () => {
           datePassageEnInstruction: "2023-01-06",
           annotations: [
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateRequest1,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateReceipt1,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               datetime: "2023-01-20",
               label: instructionTimeMappingConfigFound.BeginProrogationDate,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               datetime: "2023-01-22",
               label: instructionTimeMappingConfigFound.DateRequest2,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateReceipt2,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateIntentOpposition,
             },
@@ -664,32 +664,32 @@ describe("InstructionTimesService", () => {
           datePassageEnInstruction: "2023-01-06",
           annotations: [
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateRequest1,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateReceipt1,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               datetime: "2023-01-20",
               label: instructionTimeMappingConfigFound.BeginProrogationDate,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               datetime: "2023-01-22",
               label: instructionTimeMappingConfigFound.DateRequest2,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               datetime: "2023-01-25",
               label: instructionTimeMappingConfigFound.DateReceipt2,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateIntentOpposition,
             },
@@ -711,32 +711,32 @@ describe("InstructionTimesService", () => {
           datePassageEnInstruction: "2023-01-06",
           annotations: [
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateRequest1,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateReceipt1,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               datetime: "2023-01-20",
               label: instructionTimeMappingConfigFound.BeginProrogationDate,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               datetime: "2023-01-22",
               label: instructionTimeMappingConfigFound.DateRequest2,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               datetime: "2023-01-25",
               label: instructionTimeMappingConfigFound.DateReceipt2,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateIntentOpposition,
             },
@@ -754,32 +754,32 @@ describe("InstructionTimesService", () => {
           datePassageEnInstruction: "2023-01-06",
           annotations: [
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateRequest1,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateReceipt1,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               datetime: "2023-01-20",
               label: instructionTimeMappingConfigFound.BeginProrogationDate,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               datetime: "2023-01-22",
               label: instructionTimeMappingConfigFound.DateRequest2,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               datetime: "2023-01-25",
               label: instructionTimeMappingConfigFound.DateReceipt2,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateIntentOpposition,
             },
@@ -802,32 +802,32 @@ describe("InstructionTimesService", () => {
           datePassageEnInstruction: "2023-01-06",
           annotations: [
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateRequest1,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateReceipt1,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               datetime: "2023-01-20",
               label: instructionTimeMappingConfigFound.BeginProrogationDate,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               datetime: "2023-01-22",
               label: instructionTimeMappingConfigFound.DateRequest2,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               datetime: "2023-01-25",
               label: instructionTimeMappingConfigFound.DateReceipt2,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: "2023-01-28",
               label: instructionTimeMappingConfigFound.DateIntentOpposition,
             },
@@ -850,32 +850,32 @@ describe("InstructionTimesService", () => {
           datePassageEnInstruction: "2023-01-06",
           annotations: [
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateRequest1,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: null,
               label: instructionTimeMappingConfigFound.DateReceipt1,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               datetime: "2023-01-20",
               label: instructionTimeMappingConfigFound.BeginProrogationDate,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               datetime: "2023-01-22",
               label: instructionTimeMappingConfigFound.DateRequest2,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               datetime: "2023-01-25",
               label: instructionTimeMappingConfigFound.DateReceipt2,
             },
             {
-              id: faker.datatype.uuid(),
+              id: faker.string.uuid(),
               date: "2023-01-28",
               label: instructionTimeMappingConfigFound.DateIntentOpposition,
             },

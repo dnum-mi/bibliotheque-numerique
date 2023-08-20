@@ -1,14 +1,14 @@
 /* eslint-disable no-use-before-define */
 import { BaseEntity } from '../../../../shared/base-entity/base.entity'
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique } from 'typeorm'
-import { DsChampType, DsChampTypeKeys } from '../enums/ds-champ-type.enum'
+import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique } from 'typeorm'
+import { DsChampType, DsChampTypeKeys } from '../../../../shared/modules/ds-api/objects/ds-champ-type.enum'
 import { FieldType, FieldTypeKeys } from '../enums/field-type.enum'
 import { FormatFunctionRef, FormatFunctionRefKeys } from '@biblio-num/shared'
 import { Champ } from '@dnum-mi/ds-api-client/src/@types/types'
 import { Dossier } from './dossier.entity'
 import { FieldSource, FieldSourceKeys } from '../enums/field-source.enum'
 
-export const fieldUniqueFields = ['dossierId', 'dsFieldId', 'parentRowIndex']
+export const fieldUniqueFields = ['dossierId', 'sourceId', 'parentRowIndex']
 
 @Entity('fields')
 @Unique('UQ_FIELD', fieldUniqueFields)
@@ -47,21 +47,25 @@ export class Field extends BaseEntity {
   })
   formatFunctionRef: FormatFunctionRefKeys | null
 
+  @Index()
   @Column({
-    nullable: true,
+    nullable: false,
   })
-  dsFieldId: string
+  sourceId: string
 
+  @Index()
   @Column({
     nullable: false,
   })
   stringValue: string
 
+  @Index()
   @Column({
     nullable: true,
   })
   dateValue: Date | null
 
+  @Index()
   @Column({
     nullable: true,
   })
