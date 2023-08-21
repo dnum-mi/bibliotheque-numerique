@@ -6,7 +6,7 @@ import { Repository } from 'typeorm'
 import { LoggerService } from '../../../shared/modules/logger/logger.service'
 import { Dossier as TDossier } from '@dnum-mi/ds-api-client/dist/@types/types'
 import { DsChampType } from '../../../shared/modules/ds-api/objects/ds-champ-type.enum'
-import { FieldType } from '../objects/enums/field-type.enum'
+import { FieldType, FieldTypeKeys } from '../objects/enums/field-type.enum'
 import { CreateFieldDto } from '../objects/dto/fields/create-field.dto'
 import { CustomChamp } from '@dnum-mi/ds-api-client/src/@types/types'
 import { fixFieldValueFunctions } from '../objects/constante/fix-field.dictionnary'
@@ -125,5 +125,16 @@ export class FieldService extends BaseEntityService<Field> {
     await this.repo.delete({ dossierId })
     // TODO: supprimer les fichiers S3
     return this.repo.save(fields)
+  }
+
+  async giveFieldType (fieldsId: string[]): Promise<Record<string, FieldTypeKeys>> {
+    this.logger.verbose('giveFieldType')
+    return await this.repo.query(`
+        SELECT DISTINCT "sourceId", type
+        FROM fields
+        WHERE "sourceId" IN (${fieldsId.map((id) => `'${id}'`).join(',')});
+    `).then(result => {
+      return Object.fromEntries(result.map((r: { sourceId: string; type: FieldTypeKeys }) => [r.sourceId, r.type]))
+    })
   }
 }

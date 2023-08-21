@@ -28,7 +28,7 @@ WITH countCTE AS (
         FROM dossiers d
         JOIN fields f ON d.id = f."dossierId"
         GROUP BY d.id
-        HAVING 'Qatar' = ANY(ARRAY_AGG(CASE WHEN f."sourceId" = 'I09' THEN f."stringValue" END) FILTER (WHERE f."sourceId" = 'I09'))
+        HAVING 10000 < ALL(ARRAY_AGG(CASE WHEN f."sourceId" = 'I08' THEN f."numberValue" END) FILTER (WHERE f."sourceId" = 'I08'))
     ) sub
 ),
 
@@ -36,10 +36,10 @@ mainCTE AS (
     SELECT
         d.id as dossier_id,
         ARRAY_AGG(CASE WHEN f."sourceId" = 'I01' THEN f."stringValue" END) FILTER (WHERE f."sourceId" = 'I01') as "I01",
-        ARRAY_AGG(CASE WHEN f."sourceId" = 'I02' THEN f."stringValue" END) FILTER (WHERE f."sourceId" = 'I02') as "I02",
+        ARRAY_AGG(CASE WHEN f."sourceId" = 'I02' THEN f."dateValue" END) FILTER (WHERE f."sourceId" = 'I02') as "I02",
         ARRAY_AGG(CASE WHEN f."sourceId" = 'I03' THEN f."stringValue" END) FILTER (WHERE f."sourceId" = 'I03') as "I03",
         ARRAY_AGG(CASE WHEN f."sourceId" = 'I09' THEN f."stringValue" END) FILTER (WHERE f."sourceId" = 'I09') as "I09",
-        ARRAY_AGG(CASE WHEN f."sourceId" = 'I08' THEN f."stringValue" END) FILTER (WHERE f."sourceId" = 'I08') as "I08"
+        ARRAY_AGG(CASE WHEN f."sourceId" = 'I08' THEN f."numberValue" END) FILTER (WHERE f."sourceId" = 'I08') as "I08"
     FROM dossiers d
     JOIN fields f ON d.id = f."dossierId"
     GROUP BY d.id
@@ -47,7 +47,7 @@ mainCTE AS (
 
 SELECT *, (SELECT total_rows FROM countCTE) as total
 FROM mainCTE
-WHERE 'Qatar' = ANY("I09")
+WHERE 10000 < ALL("I08")
 ORDER BY "I03"[1]
 OFFSET 0 LIMIT 5;
 ```
@@ -70,6 +70,7 @@ To retrieve detailed records for each `dossier`.
 - **JOIN** `dossiers` with `fields`.
 - **GROUP BY** the `d.id` column.
 - For each distinct `"sourceId"`, use the `ARRAY_AGG` function and `FILTER` clause to create arrays of corresponding field values.
+- Select `"stringValue"` or `"numberValue"` or `"dateValue"` based on the type for each ID. We did a first simple query to find thoses types.
 
 ##### 3. **Main Query**
 
@@ -77,7 +78,7 @@ Combine results from both CTEs, apply filters, sort, and paginate the final outp
 - **SELECT** all columns from `mainCTE`.
 - Add a column `total` which fetches the count from `countCTE`.
 - Use the **WHERE** clause to filter results.
-- **ORDER BY** the first value of the `Moment` array.
+- **ORDER BY** the first value of the `I03` array.
 - Implement pagination with `OFFSET` and `LIMIT`.
 ---
 

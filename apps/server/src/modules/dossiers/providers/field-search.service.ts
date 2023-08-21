@@ -8,21 +8,25 @@ import { SearchDossierDto } from '../objects/dto/search-dossier.dto'
 import { Demarche } from '../../demarches/objects/entities/demarche.entity'
 import { Field } from '../objects/entities/field.entity'
 import { buildFilterQuery, buildPaginationQuery, buildSortQuery } from './common-search.utils'
+import { FieldService } from './field.service'
+import { FieldTypeKeys } from '../objects/enums/field-type.enum'
 
 @Injectable()
 export class FieldSearchService extends BaseEntityService<Field> {
   constructor(
     @InjectRepository(Dossier) protected readonly repo: Repository<Field>,
     protected readonly logger: LoggerService,
+    private readonly fieldService: FieldService,
   ) {
     super(repo, logger)
     this.logger.setContext(this.constructor.name)
   }
 
-  private _buildCommonRepeatedCTE(demarcheId: number, fieldsId: string[], repeated: boolean) {
+  private _buildCommonRepeatedCTE(demarcheId: number, fieldsId: string[], repeated: boolean): string {
     this.logger.verbose('_buildCommonRepeatedCTE')
     const repeatedLine = repeated
-      ? ',COALESCE(ROW_NUMBER() OVER (PARTITION BY f."dossierId", f."dsFieldId" ORDER BY f."parentRowIndex"), 0) AS maxRowNbr'
+      ? `,COALESCE(ROW_NUMBER() OVER (PARTITION BY f."dossierId", f."dsFieldId" ORDER BY f."parentRowIndex"), 0)
+        AS maxRowNbr`
       : ''
     const name = repeated ? 'repeatedCTE' : 'nonRepeatedCTE'
     return `
@@ -30,7 +34,9 @@ export class FieldSearchService extends BaseEntityService<Field> {
         SELECT
           f."dossierId",
           f."dsFieldId",
-          f."stringValue"
+          f."stringValue",
+          f."dateValue",
+          f."numberValue"
           ${repeatedLine}
         FROM fields f
         INNER JOIN dossiers d ON f."dossierId" = d.id
@@ -46,12 +52,16 @@ export class FieldSearchService extends BaseEntityService<Field> {
     return this._buildCommonRepeatedCTE(demarcheId, fieldsId, true)
   }
 
-  private _buildNonRepeatedCTE(demarcheId: number, fieldsId: string[]): string {
+  private _buildNonRepeatedCTE(
+    demarcheId: number,
+    fieldsId: string[],
+  ): string {
     this.logger.verbose('_buildNonRepeatedCTE')
     return this._buildCommonRepeatedCTE(demarcheId, fieldsId, false)
   }
 
-  private _buildCombinedCTE(fieldsId: string[]): string {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private _buildCombinedCTE(fieldsId: string[], typeHash: Record<string, FieldTypeKeys>): string {
     this.logger.verbose('_buildRepeatedCTE')
     return `
       combinedCTE AS (
@@ -59,7 +69,12 @@ export class FieldSearchService extends BaseEntityService<Field> {
             n."dossierId",
             ${fieldsId
     .map((id: string) => {
-      return `MAX(COALESCE(CASE WHEN n."dsFieldId" = '${id}' THEN n."stringValue" END, CASE WHEN r."dsFieldId" = '${id}' THEN r."stringValue" END)) AS "${id}"`
+      return `
+        MAX(COALESCE(
+          CASE WHEN n."dsFieldId" = '${id}' THEN n."stringValue" END,
+          CASE WHEN r."dsFieldId" = '${id}' THEN r."stringValue" END)
+        ) AS "${id}"
+      `
     })
     .filter((a) => !!a)
     .join(',')}
@@ -70,13 +85,13 @@ export class FieldSearchService extends BaseEntityService<Field> {
     `
   }
 
-  private _buildCountedCTE(dto: SearchDossierDto): string {
+  private _buildCountedCTE(dto: SearchDossierDto, typeHash: Record<string, FieldTypeKeys>): string {
     this.logger.verbose('_buildRepeatedCTE')
     return `
       countedCTE AS (
         SELECT *, COUNT(*) OVER () AS total
         FROM combinedCTE
-        ${buildFilterQuery()}
+        ${buildFilterQuery(typeHash)}
         ${buildSortQuery(dto.sorts)}
       )
     `
@@ -84,11 +99,12 @@ export class FieldSearchService extends BaseEntityService<Field> {
 
   async search(demarche: Partial<Demarche>, dto: SearchDossierDto): Promise<{ total: number; data: any[] }> {
     this.logger.verbose('search')
+    const typeHash = await this.fieldService.giveFieldType(dto.columns)
     const query = `WITH
       ${this._buildRepeatedCTE(demarche.id, dto.columns)},
       ${this._buildNonRepeatedCTE(demarche.id, dto.columns)},
-      ${this._buildCombinedCTE(dto.columns)},
-      ${this._buildCountedCTE(dto)}
+      ${this._buildCombinedCTE(dto.columns, typeHash)},
+      ${this._buildCountedCTE(dto, typeHash)}
       SELECT * FROM countedCTE
       ${buildPaginationQuery(dto.page || 1, dto.perPage || 5)}
     `
