@@ -11,8 +11,8 @@ The front end application wants to display a list of dossiers. Each column of th
 This is two completly different behaviours for us. All the problem comes from the fact that a dossier can have repeatable fields. In this case, we need to display one line per repeatable field.
 To give a concret exemple, the excel file in this folder have two tabs. The first one is the result of the query with grouping by dossier. The second one is the result of the query with grouping.
 The data in the file, are the one in fixture used for end-to-end testing.
-In the first tab, the second line represent the "dsFieldId" of each field.
-When we work in our query, we manipulate field with its "dsFieldId". The name of the column is just the label we found from demarche configuration, which have a mappedColumn field.
+In the first tab, the second line represent the "sourceId" of each field.
+When we work in our query, we manipulate field with its "sourceId". The name of the column is just the label we found from demarche configuration, which have a mappedColumn field.
 
 ## The solution
 
@@ -28,18 +28,18 @@ WITH countCTE AS (
         FROM dossiers d
         JOIN fields f ON d.id = f."dossierId"
         GROUP BY d.id
-        HAVING 'Qatar' = ANY(ARRAY_AGG(CASE WHEN f."dsFieldId" = 'I09' THEN f."stringValue" END) FILTER (WHERE f."dsFieldId" = 'I09'))
+        HAVING 'Qatar' = ANY(ARRAY_AGG(CASE WHEN f."sourceId" = 'I09' THEN f."stringValue" END) FILTER (WHERE f."sourceId" = 'I09'))
     ) sub
 ),
 
 mainCTE AS (
     SELECT
         d.id as dossier_id,
-        ARRAY_AGG(CASE WHEN f."dsFieldId" = 'I01' THEN f."stringValue" END) FILTER (WHERE f."dsFieldId" = 'I01') as Identifiant,
-        ARRAY_AGG(CASE WHEN f."dsFieldId" = 'I02' THEN f."stringValue" END) FILTER (WHERE f."dsFieldId" = 'I02') as Moment,
-        ARRAY_AGG(CASE WHEN f."dsFieldId" = 'I03' THEN f."stringValue" END) FILTER (WHERE f."dsFieldId" = 'I03') as Titre,
-        ARRAY_AGG(CASE WHEN f."dsFieldId" = 'I09' THEN f."stringValue" END) FILTER (WHERE f."dsFieldId" = 'I09') as Pays,
-        ARRAY_AGG(CASE WHEN f."dsFieldId" = 'I08' THEN f."stringValue" END) FILTER (WHERE f."dsFieldId" = 'I08') as Montant
+        ARRAY_AGG(CASE WHEN f."sourceId" = 'I01' THEN f."stringValue" END) FILTER (WHERE f."sourceId" = 'I01') as "I01",
+        ARRAY_AGG(CASE WHEN f."sourceId" = 'I02' THEN f."stringValue" END) FILTER (WHERE f."sourceId" = 'I02') as "I02",
+        ARRAY_AGG(CASE WHEN f."sourceId" = 'I03' THEN f."stringValue" END) FILTER (WHERE f."sourceId" = 'I03') as "I03",
+        ARRAY_AGG(CASE WHEN f."sourceId" = 'I09' THEN f."stringValue" END) FILTER (WHERE f."sourceId" = 'I09') as "I09",
+        ARRAY_AGG(CASE WHEN f."sourceId" = 'I08' THEN f."stringValue" END) FILTER (WHERE f."sourceId" = 'I08') as "I08"
     FROM dossiers d
     JOIN fields f ON d.id = f."dossierId"
     GROUP BY d.id
@@ -47,8 +47,8 @@ mainCTE AS (
 
 SELECT *, (SELECT total_rows FROM countCTE) as total
 FROM mainCTE
-WHERE 'Qatar' = ANY(Pays)
-ORDER BY Moment[1]
+WHERE 'Qatar' = ANY("I09")
+ORDER BY "I03"[1]
 OFFSET 0 LIMIT 5;
 ```
 This specific query select dossier ordered by Moment columns, with pays = QATAR.
@@ -69,7 +69,7 @@ To compute the total number of `dossiers` that have a specific field value.
 To retrieve detailed records for each `dossier`.
 - **JOIN** `dossiers` with `fields`.
 - **GROUP BY** the `d.id` column.
-- For each distinct `"dsFieldId"`, use the `ARRAY_AGG` function and `FILTER` clause to create arrays of corresponding field values.
+- For each distinct `"sourceId"`, use the `ARRAY_AGG` function and `FILTER` clause to create arrays of corresponding field values.
 
 ##### 3. **Main Query**
 
@@ -95,41 +95,41 @@ Here is the SQL base query the code is based on:
 WITH repeatedCTE AS (
     SELECT
         f."dossierId",
-        f."dsFieldId",
+        f."sourceId",
         f."stringValue",
-        COALESCE(ROW_NUMBER() OVER (PARTITION BY f."dossierId", f."dsFieldId" ORDER BY f."parentRowIndex"), 0) AS maxRowNbr
+        COALESCE(ROW_NUMBER() OVER (PARTITION BY f."dossierId", f."sourceId" ORDER BY f."parentRowIndex"), 0) AS maxRowNbr
     FROM fields f
     INNER JOIN dossiers d ON f."dossierId" = d.id
     WHERE f."parentRowIndex" IS NOT NULL
-    AND f."dsFieldId" IN ('I01', 'I02', 'I03', 'I08', 'I09')
+    AND f."sourceId" IN ('I01', 'I02', 'I03', 'I08', 'I09')
     AND d."demarcheId" = 1
 ),
 
 nonRepeatedCTE AS (
     SELECT
         f."dossierId",
-        f."dsFieldId",
+        f."sourceId",
         f."stringValue"
     FROM fields f
     INNER JOIN dossiers d ON f."dossierId" = d.id
     WHERE f."parentRowIndex" IS NULL
-    AND f."dsFieldId" IN ('I01', 'I02', 'I03', 'I08', 'I09')
+    AND f."sourceId" IN ('I01', 'I02', 'I03', 'I08', 'I09')
     AND d."demarcheId" = 1
 )
 
 , combinedCTE AS (
     SELECT
         n."dossierId",
-        MAX(COALESCE(CASE WHEN n."dsFieldId" = 'I01' THEN n."stringValue" END,
-                     CASE WHEN r."dsFieldId" = 'I01' THEN r."stringValue" END)) AS Identifiant,
-        MAX(COALESCE(CASE WHEN n."dsFieldId" = 'I02' THEN n."stringValue" END,
-                     CASE WHEN r."dsFieldId" = 'I02' THEN r."stringValue" END)) AS Moment,
-        MAX(COALESCE(CASE WHEN n."dsFieldId" = 'I03' THEN n."stringValue" END,
-                     CASE WHEN r."dsFieldId" = 'I03' THEN r."stringValue" END)) AS Titre,
-        MAX(COALESCE(CASE WHEN n."dsFieldId" = 'I08' THEN n."stringValue" END,
-                     CASE WHEN r."dsFieldId" = 'I08' THEN r."stringValue" END)) AS Pays,
-        MAX(COALESCE(CASE WHEN n."dsFieldId" = 'I09' THEN n."stringValue" END,
-                     CASE WHEN r."dsFieldId" = 'I09' THEN r."stringValue" END)) AS Pays,
+        MAX(COALESCE(CASE WHEN n."sourceId" = 'I01' THEN n."stringValue" END,
+                     CASE WHEN r."sourceId" = 'I01' THEN r."stringValue" END)) AS "I01",
+        MAX(COALESCE(CASE WHEN n."sourceId" = 'I02' THEN n."stringValue" END,
+                     CASE WHEN r."sourceId" = 'I02' THEN r."stringValue" END)) AS "I02",
+        MAX(COALESCE(CASE WHEN n."sourceId" = 'I03' THEN n."stringValue" END,
+                     CASE WHEN r."sourceId" = 'I03' THEN r."stringValue" END)) AS "I03",
+        MAX(COALESCE(CASE WHEN n."sourceId" = 'I08' THEN n."stringValue" END,
+                     CASE WHEN r."sourceId" = 'I08' THEN r."stringValue" END)) AS "I08",
+        MAX(COALESCE(CASE WHEN n."sourceId" = 'I09' THEN n."stringValue" END,
+                     CASE WHEN r."sourceId" = 'I09' THEN r."stringValue" END)) AS "I09"
     FROM nonRepeatedCTE n
     LEFT JOIN repeatedCTE r ON n."dossierId" = r."dossierId"
     GROUP BY n."dossierId", r.maxRowNbr
@@ -139,8 +139,8 @@ countedCTE AS (
   SELECT *,
            COUNT(*) OVER () AS total
   FROM combinedCTE
-  WHERE Pays = 'Qatar' OR Pays IS NULL
-  ORDER BY Titre
+  WHERE "I09" = 'Qatar'
+  ORDER BY "I03"
 )
 
 SELECT * FROM countedCTE
@@ -156,7 +156,7 @@ This query provides a structured way to extract data from the `fields` table whi
 Captures fields that are repeated.
 - Selects from the `fields` table where `parentRowIndex` is not null, indicating potential repetition.
 - An INNER JOIN with the `dossiers` table ensures we only consider entries from dossiers with `demarcheId = 1`.
-- The `ROW_NUMBER()` function, partitioning data by `dossierId` and `dsFieldId`, generates a unique `row_num` for each repeated field.
+- The `ROW_NUMBER()` function, partitioning data by `dossierId` and `sourceId`, generates a unique `row_num` for each repeated field.
 
 ##### `non_repeated` CTE
 
