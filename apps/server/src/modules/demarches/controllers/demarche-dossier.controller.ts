@@ -7,8 +7,10 @@ import { DemarcheExistGuard } from '../providers/guards/demarche-exist.guard'
 import { SearchDossierDto } from '../../dossiers/objects/dto/search-dossier.dto'
 import { Demarche } from '../objects/entities/demarche.entity'
 import { DemarcheParam } from '../providers/decorators/current-demarche.decorator'
-import { DossierSearchService } from '../../dossiers/providers/dossier-search.service';
-import { FieldSearchService } from '../../dossiers/providers/field-search.service';
+import { DossierSearchService } from '../../dossiers/providers/dossier-search.service'
+import { FieldSearchService } from '../../dossiers/providers/field-search.service'
+import { DossierSearchOutputDto } from '../objects/dtos/dossier-search-output.dto'
+import { FieldSearchOutputDto } from '../objects/dtos/field-search-output.dto'
 
 @ApiTags('Demarches')
 @ApiTags('Dossiers')
@@ -23,20 +25,20 @@ export class DemarcheDossierController {
     this.logger.setContext(this.constructor.name)
   }
 
-  @ApiResponse({status: 200})
+  @ApiResponse({ status: 200 })
   @HttpCode(200)
   @Post('/dossiers-search')
   async searchDossier(@Body() dto: SearchDossierDto,
-                      @DemarcheParam() demarche: Partial<Demarche>): Promise<{ total: number, data: any[] }> {
+                      @DemarcheParam() demarche: Partial<Demarche>): Promise<DossierSearchOutputDto> {
     this.logger.verbose('searchDossier')
     return this.dossierSearchService.search(demarche, dto)
   }
 
-  @ApiResponse({status: 200})
+  @ApiResponse({ status: 200 })
   @HttpCode(200)
   @Post('/fields-search')
   async searchFields(@Body() dto: SearchDossierDto,
-                     @DemarcheParam() demarche: Partial<Demarche>): Promise<{ total: number, data: any[] }> {
+                     @DemarcheParam() demarche: Partial<Demarche>): Promise<FieldSearchOutputDto> {
     this.logger.verbose('searchDossier')
     return this.fieldSearchService.search(demarche, dto)
   }

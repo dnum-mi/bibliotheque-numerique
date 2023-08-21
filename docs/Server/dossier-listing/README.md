@@ -16,6 +16,14 @@ When we work in our query, we manipulate field with its "sourceId". The name of 
 
 ## The solution
 
+For both of this solution, we did a previous simple query to know in advance the type of the field given its id.
+This will allow us to use the string field, the date field or the number field accordingly, and boost performance for filtering those data.
+```SQL
+SELECT DISTINCT "sourceId", type
+        FROM fields
+        WHERE "sourceId" IN ("I01", "I02", "I03", "I08", "I09");
+```
+
 ### Grouping by dossier
 All the building and executing of the query that produces the result grouping by dossier can be found in 'dossier-search.service.ts'. As it is complicated, we isolated the code only for this in one service.
 #### Query
@@ -98,6 +106,8 @@ WITH repeatedCTE AS (
         f."dossierId",
         f."sourceId",
         f."stringValue",
+        f."dateValue",
+        f."numberValue",
         COALESCE(ROW_NUMBER() OVER (PARTITION BY f."dossierId", f."sourceId" ORDER BY f."parentRowIndex"), 0) AS maxRowNbr
     FROM fields f
     INNER JOIN dossiers d ON f."dossierId" = d.id
@@ -110,7 +120,9 @@ nonRepeatedCTE AS (
     SELECT
         f."dossierId",
         f."sourceId",
-        f."stringValue"
+        f."stringValue",
+        f."dateValue",
+        f."numberValue"
     FROM fields f
     INNER JOIN dossiers d ON f."dossierId" = d.id
     WHERE f."parentRowIndex" IS NULL
@@ -123,12 +135,12 @@ nonRepeatedCTE AS (
         n."dossierId",
         MAX(COALESCE(CASE WHEN n."sourceId" = 'I01' THEN n."stringValue" END,
                      CASE WHEN r."sourceId" = 'I01' THEN r."stringValue" END)) AS "I01",
-        MAX(COALESCE(CASE WHEN n."sourceId" = 'I02' THEN n."stringValue" END,
-                     CASE WHEN r."sourceId" = 'I02' THEN r."stringValue" END)) AS "I02",
+        MAX(COALESCE(CASE WHEN n."sourceId" = 'I02' THEN n."dateValue" END,
+                     CASE WHEN r."sourceId" = 'I02' THEN r."dateValue" END)) AS "I02",
         MAX(COALESCE(CASE WHEN n."sourceId" = 'I03' THEN n."stringValue" END,
                      CASE WHEN r."sourceId" = 'I03' THEN r."stringValue" END)) AS "I03",
-        MAX(COALESCE(CASE WHEN n."sourceId" = 'I08' THEN n."stringValue" END,
-                     CASE WHEN r."sourceId" = 'I08' THEN r."stringValue" END)) AS "I08",
+        MAX(COALESCE(CASE WHEN n."sourceId" = 'I08' THEN n."numberValue" END,
+                     CASE WHEN r."sourceId" = 'I08' THEN r."numberValue" END)) AS "I08",
         MAX(COALESCE(CASE WHEN n."sourceId" = 'I09' THEN n."stringValue" END,
                      CASE WHEN r."sourceId" = 'I09' THEN r."stringValue" END)) AS "I09"
     FROM nonRepeatedCTE n
@@ -169,6 +181,7 @@ Extracts fields that do not repeat.
 - This CTE aggregates the data from the `repeatedCTE` and `nonRepeatedCTE`.
 - For every field ID, it attempts to fetch a value from both `nonRepeatedCTE` and `repeatedCTE`.
   - It prioritizes non-repeated values, but if it finds none, it falls back to the repeated values.
+  - Select `"stringValue"` or `"numberValue"` or `"dateValue"` based on the type for each ID. We did a first simple query to find thoses types.
 - This means it dynamically adjusts based on whether a field is repeated or not, taking into account the presence or absence of a `parentRowIndex`.
 - The `LEFT JOIN` on `dossierId` ensures that every non-repeated field is presented alongside its corresponding repeated field if present.
 - The `GROUP BY` clause groups by `dossierId` and `maxRowNbr` to make sure each unique field combination gets its own row.

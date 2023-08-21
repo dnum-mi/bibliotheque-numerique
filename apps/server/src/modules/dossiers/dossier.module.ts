@@ -9,8 +9,8 @@ import { Dossier } from './objects/entities/dossier.entity'
 import { Field } from './objects/entities/field.entity'
 import { FieldService } from './providers/field.service'
 import { DossierSynchroniseService } from './providers/dossier-synchronise.service'
-import { DossierSearchService } from './providers/dossier-search.service';
-import { FieldSearchService } from './providers/field-search.service';
+import { DossierSearchService } from './providers/dossier-search.service'
+import { FieldSearchService } from './providers/field-search.service'
 
 @Module({
   imports: [

@@ -68,8 +68,7 @@ describe('Syncronisation ', () => {
   })
 
   it('should syncronise one dossier of one demarche and create associated fields', async () => {
-
-    let numberOfFields = await dataSource.manager.count(Field);
+    const numberOfFields = await dataSource.manager.count(Field)
     return request(app.getHttpServer())
       .post('/demarches/create')
       .set('Cookie', [cookie])
@@ -85,10 +84,10 @@ describe('Syncronisation ', () => {
           .where("d.\"dsDataJson\"->>'number' = :id", { id: '43' })
           .select('d.id')
           .getOne()
-        return dataSource.manager.find(Field, { where: {dossier: {demarcheId: demarche.id}} })
+        return dataSource.manager.find(Field, { where: { dossier: { demarcheId: demarche.id } } })
       })
       .then((fields) => {
-        expect(fields.length).toEqual(8)
+        expect(fields.length).toEqual(9)
         expect(fields).toMatchObject([
           {
             id: numberOfFields + 1,

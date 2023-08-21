@@ -1,6 +1,6 @@
 import { DynamicKeys } from '../objects/dto/search-dossier.dto'
 import { SortDto } from '@biblio-num/shared'
-import { FieldTypeKeys } from '../objects/enums/field-type.enum'
+import { FieldType, FieldTypeKeys } from '../objects/enums/field-type.enum'
 
 export const buildPaginationQuery = (page: number, perPage: number): string => {
   return `OFFSET ${(page - 1) * perPage} LIMIT ${perPage}`
@@ -16,4 +16,15 @@ export const buildFilterQuery = (typeHash: Record<string, FieldTypeKeys>): strin
     return ''
   }
   return ''
+}
+
+export const deduceFieldToQueryFromType = (type: FieldTypeKeys): string => {
+  switch (type) {
+  case FieldType.date:
+    return 'dateValue'
+  case FieldType.number:
+    return 'numberValue'
+  default:
+    return 'stringValue'
+  }
 }

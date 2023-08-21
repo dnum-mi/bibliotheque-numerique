@@ -7,9 +7,15 @@ import { BaseEntityService } from '../../../shared/base-entity/base-entity.servi
 import { SearchDossierDto } from '../objects/dto/search-dossier.dto'
 import { Demarche } from '../../demarches/objects/entities/demarche.entity'
 import { Field } from '../objects/entities/field.entity'
-import { buildFilterQuery, buildPaginationQuery, buildSortQuery } from './common-search.utils'
+import {
+  buildFilterQuery,
+  buildPaginationQuery,
+  buildSortQuery,
+  deduceFieldToQueryFromType,
+} from './common-search.utils'
 import { FieldService } from './field.service'
 import { FieldTypeKeys } from '../objects/enums/field-type.enum'
+import { FieldSearchOutputDto } from '../../demarches/objects/dtos/field-search-output.dto'
 
 @Injectable()
 export class FieldSearchService extends BaseEntityService<Field> {
@@ -25,7 +31,7 @@ export class FieldSearchService extends BaseEntityService<Field> {
   private _buildCommonRepeatedCTE(demarcheId: number, fieldsId: string[], repeated: boolean): string {
     this.logger.verbose('_buildCommonRepeatedCTE')
     const repeatedLine = repeated
-      ? `,COALESCE(ROW_NUMBER() OVER (PARTITION BY f."dossierId", f."dsFieldId" ORDER BY f."parentRowIndex"), 0)
+      ? `,COALESCE(ROW_NUMBER() OVER (PARTITION BY f."dossierId", f."sourceId" ORDER BY f."parentRowIndex"), 0)
         AS maxRowNbr`
       : ''
     const name = repeated ? 'repeatedCTE' : 'nonRepeatedCTE'
@@ -33,7 +39,7 @@ export class FieldSearchService extends BaseEntityService<Field> {
       ${name} AS (
         SELECT
           f."dossierId",
-          f."dsFieldId",
+          f."sourceId",
           f."stringValue",
           f."dateValue",
           f."numberValue"
@@ -41,7 +47,7 @@ export class FieldSearchService extends BaseEntityService<Field> {
         FROM fields f
         INNER JOIN dossiers d ON f."dossierId" = d.id
         WHERE f."parentRowIndex" IS ${repeated ? 'NOT ' : ''}NULL
-        AND f."dsFieldId" IN (${fieldsId.map((id) => `'${id}'`).join(',')})
+        AND f."sourceId" IN (${fieldsId.map((id) => `'${id}'`).join(',')})
         AND d."demarcheId" = ${demarcheId}
       )
     `
@@ -60,7 +66,6 @@ export class FieldSearchService extends BaseEntityService<Field> {
     return this._buildCommonRepeatedCTE(demarcheId, fieldsId, false)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private _buildCombinedCTE(fieldsId: string[], typeHash: Record<string, FieldTypeKeys>): string {
     this.logger.verbose('_buildRepeatedCTE')
     return `
@@ -69,10 +74,11 @@ export class FieldSearchService extends BaseEntityService<Field> {
             n."dossierId",
             ${fieldsId
     .map((id: string) => {
+      const field = deduceFieldToQueryFromType(typeHash[id])
       return `
         MAX(COALESCE(
-          CASE WHEN n."dsFieldId" = '${id}' THEN n."stringValue" END,
-          CASE WHEN r."dsFieldId" = '${id}' THEN r."stringValue" END)
+          CASE WHEN n."sourceId" = '${id}' THEN n."${field}" END,
+          CASE WHEN r."sourceId" = '${id}' THEN r."${field}" END)
         ) AS "${id}"
       `
     })
@@ -97,7 +103,7 @@ export class FieldSearchService extends BaseEntityService<Field> {
     `
   }
 
-  async search(demarche: Partial<Demarche>, dto: SearchDossierDto): Promise<{ total: number; data: any[] }> {
+  async search(demarche: Partial<Demarche>, dto: SearchDossierDto): Promise<FieldSearchOutputDto> {
     this.logger.verbose('search')
     const typeHash = await this.fieldService.giveFieldType(dto.columns)
     const query = `WITH

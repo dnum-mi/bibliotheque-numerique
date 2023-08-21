@@ -6,9 +6,15 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { BaseEntityService } from '../../../shared/base-entity/base-entity.service'
 import { SearchDossierDto } from '../objects/dto/search-dossier.dto'
 import { Demarche } from '../../demarches/objects/entities/demarche.entity'
-import { buildFilterQuery, buildPaginationQuery, buildSortQuery } from './common-search.utils'
+import {
+  buildFilterQuery,
+  buildPaginationQuery,
+  buildSortQuery,
+  deduceFieldToQueryFromType,
+} from './common-search.utils'
 import { FieldService } from './field.service'
-import { FieldType, FieldTypeKeys } from '../objects/enums/field-type.enum'
+import { FieldTypeKeys } from '../objects/enums/field-type.enum'
+import { DossierSearchOutputDto } from '../../demarches/objects/dtos/dossier-search-output.dto'
 
 @Injectable()
 export class DossierSearchService extends BaseEntityService<Dossier> {
@@ -24,19 +30,10 @@ export class DossierSearchService extends BaseEntityService<Dossier> {
   // as a same field ID can have multiple instance (repetable fields), we need to aggregate them in an array
   private _buildArrayAggregateFromOneFieldId(id: string, type: FieldTypeKeys): string {
     this.logger.verbose('_buildArrayAggregateFromOneFieldId')
-    let fieldToSelect = ''
-    switch (type) {
-    case FieldType.date:
-      fieldToSelect = 'dateValue'
-      break
-    case FieldType.number:
-      fieldToSelect = 'numberValue'
-      break
-    default:
-      fieldToSelect = 'stringValue'
-    }
     return `
-      ARRAY_AGG(CASE WHEN f."sourceId" = '${id}' THEN f."${fieldToSelect}" END) FILTER (WHERE f."sourceId" = '${id}')
+      ARRAY_AGG(
+        CASE WHEN f."sourceId" = '${id}' THEN f."${deduceFieldToQueryFromType(type)}" END)
+        FILTER (WHERE f."sourceId" = '${id}')
     `
   }
 
@@ -82,7 +79,7 @@ export class DossierSearchService extends BaseEntityService<Dossier> {
    `
   }
 
-  async search(demarche: Partial<Demarche>, dto: SearchDossierDto): Promise<{ total: number; data: any[] }> {
+  async search(demarche: Partial<Demarche>, dto: SearchDossierDto): Promise<DossierSearchOutputDto> {
     this.logger.verbose('search')
     const typeHash = await this.fieldService.giveFieldType(dto.columns)
     const query = `WITH

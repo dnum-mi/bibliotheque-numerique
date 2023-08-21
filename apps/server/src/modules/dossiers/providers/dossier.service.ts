@@ -14,6 +14,4 @@ export class DossierService extends BaseEntityService<Dossier> {
     super(repo, logger)
     this.logger.setContext(this.constructor.name)
   }
-
 }
-
