@@ -1,7 +1,7 @@
 export const smallDemarcheAndDossierFinancementEtrangerDataMock = {
   demarche: {
     id: 'UHJvY2VkdXJlLTI5',
-    number: 43,
+    number: 42,
     title: 'Small Déclaration des financements étrangers',
     state: 'publiee',
     activeRevision: {
