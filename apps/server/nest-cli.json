@@ -4,7 +4,10 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "assets": ["**/*.ejs"],
+    "deleteOutDir": true,
+    "builder": "swc",
     "watchAssets": true,
+    "typeCheck": true,
     "plugins": ["@nestjs/swagger"]
   }
 }

@@ -20,7 +20,7 @@ const close = (id: string) => emit('close-message', id)
       <DsfrAlert
         v-for="message in messages"
         :key="message.id"
-        style="background-color: white; width: 90%; pointer-events: all;"
+        class="app-alert"
         v-bind="message"
         @close="close(message.id as string)"
       />
@@ -40,6 +40,12 @@ const close = (id: string) => emit('close-message', id)
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.app-alert {
+  background-color: var(--grey-1000-50);
+  width: 90%;
+  pointer-events: all;
 }
 
 .list-move, /* apply transition to moving elements */
