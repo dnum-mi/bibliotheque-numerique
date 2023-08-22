@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useRoute, useRouter } from 'vue-router'
-import { computed, onMounted, ref, watch, type Ref } from 'vue'
+import { computed, onMounted, ref, watch, type Ref, watchEffect } from 'vue'
 import { useStorage } from '@vueuse/core'
 
 import { useDemarcheStore } from '@/stores/demarche'
@@ -28,6 +28,9 @@ const getIdDemarche = () => {
   return Number(params.id)
 }
 
+/**
+ * Custom filter management
+ */
 const filterLabelGroups = {
   create: {
     title: 'Enregistrement du filtre actuel',
@@ -36,6 +39,7 @@ const filterLabelGroups = {
     icon: 'ri-save-line',
     submitFn (filters) {
       userFilters.value = { ...userFilters.value, [currentFilterName.value]: filters }
+      userFilter.value = currentFilterName.value
     },
   },
   update: {
@@ -85,6 +89,16 @@ const saveCurrentFilter = () => {
   filterLabelGroup.value.submitFn(filters)
   filterModalOpen.value = false
 }
+
+const resetAgGridFilters = () => {
+  bnDemarchesGrid.value.resetAgGridFilters()
+  userFilter.value = undefined
+}
+
+watchEffect(() => {
+  bnDemarchesGrid.value?.setFilters(userFilters.value[userFilter.value])
+})
+// End of custom filter management
 
 onMounted(async () => {
   const id = getIdDemarche()
@@ -176,7 +190,7 @@ onMounted(() => {
                 ref="modalOrigin"
                 :disabled="!userFilter"
                 type="submit"
-                @click="userFilter = undefined"
+                @click="resetAgGridFilters()"
               >
                 <VIcon name="ri-filter-off-line" />
               </DsfrButton>

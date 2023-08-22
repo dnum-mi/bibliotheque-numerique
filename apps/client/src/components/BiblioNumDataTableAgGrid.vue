@@ -135,8 +135,8 @@ const onSelectionChanged = (params) => {
   emit('selectionChanged', params.api.getSelectedRows())
 }
 
-const gridApi = ref(null) // Optional - for accessing Grid's API
-const columnApi = ref(null) // Optional - for accessing Grid's API
+const gridApi = ref() // Optional - for accessing Grid's API
+const columnApi = ref() // Optional - for accessing Grid's API
 
 const onGridReady = (params) => {
   watchEffect(() => { params.api.setRowData(props.rowData) })
@@ -146,9 +146,15 @@ const onGridReady = (params) => {
 
 defineExpose({
   getCurrentFilter () {
-    const filters = Object.fromEntries(Object.entries(gridApi.value.getFilterModel()).map(([key, value]) => ([key, value])))
+    const filters = Object.fromEntries(Object.entries(gridApi.value?.getFilterModel()).map(([key, value]) => ([key, value])))
     // const columnStates = columnApi.value.getColumnState().map(({ colId, filter }) => ({ colId, filter }))
     return filters
+  },
+  setFilters (filters) {
+    gridApi.value?.setFilterModel(filters)
+  },
+  resetAgGridFilters () {
+    gridApi.value?.setFilterModel({})
   },
 })
 </script>
