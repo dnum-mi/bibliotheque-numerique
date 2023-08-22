@@ -2,11 +2,14 @@ import axios, { AxiosError } from 'axios'
 
 import type {
   CreateUserDto,
-  UpdateUserDto,
   CredentialsInputDto,
-  UserOutputDto,
-  UpdateUserPasswordDto,
+  DossierSearchOutputDto,
+  FieldSearchOutputDto,
   ResetPasswordInputDto,
+  SearchDossierDto,
+  UpdateUserDto,
+  UpdateUserPasswordDto,
+  UserOutputDto,
 } from '@biblio-num/shared'
 
 import { demarchesRoute, getDemarcheByIdRoute, getDossiersFromDemarcheByIdRoute } from './bn-api-routes'
@@ -59,24 +62,18 @@ export default {
     return response.data
   },
 
-  getDossiers: async (id?: number) => {
-    const extPath = id ? `/${id}` : ''
-    const config = {
-      method: 'get',
-      url: `${baseApiUrl}/deprecated/dossiers${extPath}`,
-      headers,
-    }
-    const response = await axios(config)
+  searchFields: async (demarcheId: number, dto: SearchDossierDto): Promise<FieldSearchOutputDto> => {
+    const response = await apiClientInstance.post(`/demarches/${demarcheId}/search-fields`, dto)
+    return response.data
+  },
+
+  searchDossiers: async (demarcheId: number, dto: SearchDossierDto): Promise<DossierSearchOutputDto> => {
+    const response = await apiClientInstance.post(`/demarches/${demarcheId}/search-dossier`, dto)
     return response.data
   },
 
   getDossier: async (id: number) => {
-    const config = {
-      method: 'get',
-      url: `${baseApiUrl}/dossiers/${id}/detail`,
-      headers,
-    }
-    const response = await axios(config)
+    const response = await apiClientInstance.get(`/dossiers/${id}/detail`)
     return response.data
   },
 
