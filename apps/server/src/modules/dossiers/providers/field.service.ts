@@ -7,7 +7,7 @@ import { LoggerService } from '../../../shared/modules/logger/logger.service'
 import { Dossier as TDossier } from '@dnum-mi/ds-api-client/dist/@types/types'
 
 import { DsChampType, DsChampTypeKeys, giveTypeFromDsChampType } from '../objects/enums/ds-champ-type.enum'
-import { FormatFunctionRef, FormatFunctionRefKeys } from '@biblio-num/shared/dist'
+import { FormatFunctionRef, FormatFunctionRefKeys } from '@biblio-num/shared'
 import { FieldType } from '../objects/enums/field-type.enum'
 import { CreateFieldDto } from '../objects/dto/fields/create-field.dto'
 import { CustomChamp } from '@dnum-mi/ds-api-client/src/@types/types'

@@ -1,13 +1,11 @@
 import {
   Body,
   Controller,
-  ForbiddenException,
   Get,
   HttpException,
   HttpStatus,
   NotFoundException,
   Param,
-  ParseArrayPipe,
   ParseIntPipe,
   Patch,
   Post,
@@ -22,11 +20,11 @@ import {
   RequirePermissions,
 } from '../../roles/providers/permissions.guard'
 import { PermissionName } from '../../../shared/types/Permission.type'
-import { filterObjectFields } from '@biblio-num/shared'
 import { LoggerService } from '../../../shared/modules/logger/logger.service'
 import { Demarche } from '../objects/entities/demarche.entity'
 import { Dossier } from '../../dossiers/objects/entities/dossier.entity'
 import { DemarcheSynchroniseService } from '../providers/demarche-synchronise.service'
+import { GetDemarcheByIdDto } from '../objects/dto/get-demarche-by-id.dto'
 
 @ApiTags('Demarches')
 @UseGuards(PermissionsGuard)
@@ -56,8 +54,7 @@ export class DemarcheController {
   async getDemarcheById (
     @Request() req,
     @Param('id', ParseIntPipe) id: number,
-    @Query('fields', new ParseArrayPipe({ separator: ',', optional: true }))
-      fields: string[],
+    @Query() dto: GetDemarcheByIdDto,
   ): Promise<Demarche | Partial<Demarche>> {
     this.logger.verbose('getDemarcheById')
     const ruleIds = this.demarcheService.getRulesFromUserPermissions(req.user)
@@ -72,38 +69,10 @@ export class DemarcheController {
       )
     }
 
-    const demarche = await this.demarcheService.findById(id)
-    if (!demarche) {
-      throw new NotFoundException(`Demarche id: ${id} not found`)
-    }
-    return fields?.length > 0 ? filterObjectFields(fields, demarche) : demarche
-  }
-
-  @Get('ds/:id')
-  @RequirePermissions({ name: PermissionName.ACCESS_DEMARCHE })
-  async getDemarcheByDsId (
-    @Request() req,
-    @Param('id', ParseIntPipe) id: number,
-    @Query('fields', new ParseArrayPipe({ separator: ',', optional: true }))
-      fields?: string[],
-  ): Promise<Demarche | Partial<Demarche>> {
-    this.logger.verbose('getDemarcheByDsId')
-    const ids = this.demarcheService.getRulesFromUserPermissions(req.user)
-    const demarche = await this.demarcheService.findByDsId(id)
-
-    if (
-      ids &&
-      ids.length > 0 &&
-      !ids.find((ruleId) => ruleId === demarche.id)
-    ) {
-      throw new ForbiddenException(
-        `Not authorized access for demarche id: ${id}`,
-      )
-    }
-    if (!demarche) {
-      throw new NotFoundException(`Demarche number: ${id} not found`)
-    }
-    return fields?.length > 0 ? filterObjectFields(fields, demarche) : demarche
+    return this.demarcheService.findOneOrThrow({
+      where: { id },
+      ...(dto.fields ? { select: dto.fields } : {}),
+    })
   }
 
   @Get(':id/dossiers')

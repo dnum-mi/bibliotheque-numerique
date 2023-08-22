@@ -5,7 +5,7 @@ import { toTypedSchema } from '@vee-validate/zod'
 import { useField, useForm } from 'vee-validate'
 import { z } from 'zod'
 
-import { updatePassword } from '@/shared/services'
+import apiClient from '@/api/api-client'
 import { passwordValidator } from '@/utils/password.validator'
 import { useRouter } from 'vue-router'
 
@@ -39,7 +39,7 @@ const onSubmit = handleSubmit(async () => {
     setErrors({ confirmPassword: 'Les mots de passe ne correspondent pas' })
     return
   }
-  await updatePassword({ password: newPasswordValue.value, token: props.token })
+  await apiClient.updatePassword({ password: newPasswordValue.value, token: props.token })
   openAlert.value = true
   alertDescription.value = 'Votre mot de passe a été changé.'
   alertType.value = 'success'

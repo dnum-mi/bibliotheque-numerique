@@ -1,6 +1,6 @@
 import axios from 'axios'
 import type { IRole, IRoleForm } from '@/shared/interfaces'
-import { baseApiUrl, headers } from '@/utils/api-client'
+import { baseApiUrl, headers } from '@/api/api-client'
 
 export const fetchRoles = async () => {
   const config = {

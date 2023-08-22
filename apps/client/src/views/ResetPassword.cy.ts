@@ -1,3 +1,4 @@
+import 'virtual:uno.css'
 import { ASK_RESET_PWD_SUCCESS } from '../messages'
 import ResetPassword from './ResetPassword.vue'
 

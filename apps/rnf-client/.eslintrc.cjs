@@ -13,7 +13,7 @@ module.exports = {
     'standard',
     '@vue/eslint-config-prettier/skip-formatting',
     './.eslintrc-auto-import.json',
-    ],
+  ],
   rules: {
     'jsx-quotes': [2, 'prefer-double'],
     'comma-dangle': [2, 'always-multiline'],

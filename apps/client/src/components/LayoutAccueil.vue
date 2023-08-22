@@ -16,21 +16,3 @@ import BnPrez from '@/assets/bn.svg'
     </div>
   </div>
 </template>
-
-<style scoped>
-.flex {
-  display: flex;
-}
-
-.justify-center {
-  justify-content: center;
-}
-
-.items-center {
-  align-items: center;
-}
-
-.w-full {
-  width: 100%;
-}
-</style>

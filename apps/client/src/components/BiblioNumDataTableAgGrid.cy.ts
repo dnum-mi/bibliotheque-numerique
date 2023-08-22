@@ -1,14 +1,15 @@
 import '@gouvminint/vue-dsfr/styles'
+import VueDsfr from '@gouvminint/vue-dsfr'
+
 import '../main.css'
 import * as icons from '../icons'
 
-import VueDsfr from '@gouvminint/vue-dsfr'
+import { getDateISO } from '../utils/__tests__/fake-data'
+import { dateToStringFr } from '@/utils/date-to-string'
+import { getFileObjectExample } from '../__test__/ds-type'
+import { AgGridFilter } from '@/shared/types'
 
 import BiblioNumDataTable from './BiblioNumDataTableAgGrid.vue'
-import { getDateISO } from '../utils/__tests__/fake-data'
-import { dateToStringFr } from '@/utils/dateToString'
-import { getFileObjectExample } from '../__test__/ds-type'
-import { AgGridTypeFilter } from '../shared/types/typeDataTable'
 
 describe('<BiblioNumDataTable />', () => {
   it('renders', () => {
@@ -66,12 +67,12 @@ describe('<BiblioNumDataTable />', () => {
       {
         text: 'Test-Key',
         value: 'testkey',
-        type: AgGridTypeFilter.FILE,
+        type: AgGridFilter.FILE,
       },
       {
         text: 'Test-Key1',
         value: 'testkey1',
-        type: AgGridTypeFilter.TEXT,
+        type: AgGridFilter.TEXT,
       },
 
     ]

@@ -6,6 +6,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import svgLoader from 'vite-svg-loader'
+import UnoCSS from 'unocss/vite'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -14,6 +15,7 @@ export default defineConfig({
     vueJsx(),
     svgLoader(),
     VitePWA({}),
+    UnoCSS(),
   ],
   base: process.env.BASE_URL || '/',
   server: {

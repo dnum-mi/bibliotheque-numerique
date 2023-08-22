@@ -1,9 +1,3 @@
-export const dossierStates = {
-  EnConstruction: 'en_construction',
-  EnInstruction: 'en_instruction',
-  Accepte: 'accepte',
-  Refuse: 'refuse',
-  SansSuite: 'sans_suite',
-} as const
+import { DossierState } from '@dnum-mi/ds-api-client'
 
-export type DossierState = typeof dossierStates[keyof typeof dossierStates]
+export type DossierStateKeys = typeof DossierState[keyof typeof DossierState]

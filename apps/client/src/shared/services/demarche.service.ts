@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-import { baseApiUrl, headers } from '../../utils/api-client'
+import { baseApiUrl, headers } from '@/api/api-client'
 import { ChampType, TypeDeChampDS } from '@/shared/types'
 import type { IDemarcheMappingColumn } from '../interfaces'
 

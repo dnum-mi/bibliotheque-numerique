@@ -4,7 +4,7 @@ import '@/main.css'
 import { generateDossierDS } from '@/views/__tests__/dossiers'
 
 import DossierInformations from './DossierInformations.vue'
-import { dateTimeToStringFr } from '@/utils/dateToString'
+import { dateTimeToStringFr } from '@/utils/date-to-string'
 
 describe('<DossierInformations />', () => {
   const labelValues = [

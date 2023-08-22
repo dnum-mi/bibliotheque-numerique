@@ -7,7 +7,7 @@ export type Action = {
   condition?: (row: any) => boolean;
 }
 
-export type TypeHeaderDataTable = {
+export type HeaderDataTable = {
   text?: string,
   action?: Action;
   value?: string,
@@ -20,7 +20,7 @@ export type TypeHeaderDataTable = {
   renderer?: Component | string,
 }
 
-export enum AgGridTypeFilter {
+export enum AgGridFilter {
   DATE='date',
   TEXT='text',
   NUMBER='number',

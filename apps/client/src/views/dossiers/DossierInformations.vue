@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { dateTimeToStringFr } from '@/utils/dateToString'
+import { dateTimeToStringFr } from '@/utils'
 import { computed } from 'vue'
 
 const props = withDefaults(defineProps<{
@@ -12,7 +12,7 @@ const prefecture = computed(() => props.datas.groupeInstructeur?.label.toUpperCa
 const depot = computed(() => dateTimeToStringFr(props.datas.dateDepot) || '')
 const intruction = computed(() => dateTimeToStringFr(props.datas.datePassageEnInstruction) || '')
 const publication = computed(() => '')
-const etat = computed(() => props.datas.state?.toUpperCase() || '')
+const etat = computed(() => props.datas?.state?.toUpperCase() || '')
 </script>
 
 <template>
@@ -47,3 +47,4 @@ const etat = computed(() => props.datas.state?.toUpperCase() || '')
   padding: 0;
 }
 </style>
+@/utils/date-to-string

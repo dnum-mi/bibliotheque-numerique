@@ -13,13 +13,13 @@ describe('<Profile />', () => {
     const useStore = useUserStore(pinia)
     const newUser = createRandomAdmin()
     useStore.currentUser = newUser
-    const userRols = newUser.roles
+    const userRoles = newUser.roles
 
     cy.mount(Profile, { stores: pinia })
     cy.contains(newUser.email)
     cy.contains('La liste des vos rôles')
-    cy.contains(userRols[0].name)
-    cy.contains(userRols[0].description)
+    cy.contains(userRoles[0].name)
+    cy.contains(userRoles[0].description)
 
     cy.contains('Modifier mon mot de passe').click()
     cy.get('.fr-alert').should('contain', ASK_RESET_PWD_SUCCESS)

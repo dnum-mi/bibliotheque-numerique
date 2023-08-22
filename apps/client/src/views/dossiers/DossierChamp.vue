@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import DossierChamps from './DossierChamps.vue'
-import { prettyByteSizeByString } from '@/utils/prettyByteSize'
+import { prettyByteSizeByString } from '@/utils'
 
 withDefaults(defineProps<{
     champ?: object[]
@@ -46,3 +46,4 @@ const dataCy = 'dossier-champ'
     </div>
   </div>
 </template>
+@/utils/pretty-byte-size

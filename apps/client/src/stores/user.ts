@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import type { User } from '@/shared/interfaces'
-import { fetchCurrentUser, getUsers, getUserById, loginUser, logoutUser } from '@/shared/services/user.service'
+import bnApiClient from '@/api/api-client'
 import { PermissionName, RoleName } from '@/shared/types/Permission.type'
 import type { CredentialsInput, CredentialsInputDto } from '@biblio-num/shared'
 interface UserState {
@@ -35,26 +35,26 @@ export const useUserStore = defineStore('user', {
   },
   actions: {
     async login (loginForm: CredentialsInput) {
-      this.currentUser = await loginUser(loginForm)
+      this.currentUser = await bnApiClient.loginUser(loginForm)
     },
     async logout () {
-      await logoutUser()
+      await bnApiClient.logoutUser()
       this.currentUser = null
     },
     async loadCurrentUser () {
-      this.currentUser = await fetchCurrentUser()
+      this.currentUser = await bnApiClient.fetchCurrentUser()
       this.loaded = true
     },
     async loadUsers () {
       if (!this.hasAdminAccess) return
-      const users = await getUsers()
+      const users = await bnApiClient.getUsers()
       for (const user of users) {
         this.users.set(user.id, user)
       }
     },
     async loadUserById (id: number) {
       if (!this.hasAdminAccess) return
-      const user = await getUserById(id)
+      const user = await bnApiClient.getUserById(id)
       this.users.set(user.id, user)
     },
   },

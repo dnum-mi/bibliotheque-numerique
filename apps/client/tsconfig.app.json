@@ -1,15 +1,16 @@
 {
   "extends": "@vue/tsconfig/tsconfig.dom.json",
   "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
+  "exclude": ["@nestjs/websockets/socket-module"],
   "compilerOptions": {
     "allowJs": true,
     "composite": true,
     "baseUrl": ".",
     "moduleResolution": "node",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     },
     "types": ["vitest/globals"],
     "lib": ["ES2020", "DOM"]
-  },
+  }
 }

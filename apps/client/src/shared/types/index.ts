@@ -1,2 +1,4 @@
 export * from './Demarche.type'
 export * from './Permission.type'
+export * from './DataTable.type'
+export * from './InstructionTime.type'

@@ -5,7 +5,7 @@ import { toTypedSchema } from '@vee-validate/zod'
 import { useField, useForm } from 'vee-validate'
 import type { CreateUserDto } from '@biblio-num/shared'
 
-import { createUser } from '@/shared/services/user.service'
+import apiClient from '@/api/api-client'
 import LayoutAccueil from '../components/LayoutAccueil.vue'
 import { passwordValidator } from '@/utils/password.validator'
 import { REQUIRED_FIELD_MESSAGE } from '@/messages'
@@ -26,7 +26,7 @@ const { handleSubmit } = useForm({
 const signInPath = '/sign_in'
 const onSubmit = handleSubmit(async (formValue: CreateUserDto) => {
   try {
-    await createUser(formValue)
+    await apiClient.createUser(formValue)
     await router.push(signInPath)
   } catch (e) {
     console.log(e)

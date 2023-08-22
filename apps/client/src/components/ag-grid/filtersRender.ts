@@ -1,5 +1,5 @@
 import { localeTextAgGrid } from './agGridOptions'
-import { AgGridTypeFilter } from '@/shared/types/typeDataTable'
+import { AgGridFilter } from '@/shared/types'
 
 export const filterParamsDate = {
   comparator: (filterLocalDateAtMidnight, cellValue) => {
@@ -19,20 +19,20 @@ export const filterParamsDate = {
 }
 
 export const filterToApply = {
-  [AgGridTypeFilter.DATE]: {
+  [AgGridFilter.DATE]: {
     filter: 'agDateColumnFilter',
     filterParams: filterParamsDate,
   },
-  [AgGridTypeFilter.TEXT]: {
+  [AgGridFilter.TEXT]: {
     filter: 'agTextColumnFilter',
   },
-  [AgGridTypeFilter.NUMBER]: {
+  [AgGridFilter.NUMBER]: {
     filter: 'agNumberColumnFilter',
   },
-  [AgGridTypeFilter.MULTI_VALUE]: {
+  [AgGridFilter.MULTI_VALUE]: {
     filter: 'agSetColumnFilter',
   },
-  [AgGridTypeFilter.MULTI_VALUE_NUMBER]: {
+  [AgGridFilter.MULTI_VALUE_NUMBER]: {
     filter: 'agNumberColumnFilter',
     filterParams: {
       filterOptions: [
@@ -97,7 +97,7 @@ export const filterToApply = {
       ],
     },
   },
-  [AgGridTypeFilter.FILE]: {
+  [AgGridFilter.FILE]: {
     filter: false,
   },
 }

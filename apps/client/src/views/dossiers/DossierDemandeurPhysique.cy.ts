@@ -4,7 +4,7 @@ import '@/main.css'
 import { getDemandeurPhysique } from '@/views/__tests__/dossiers'
 
 import DossierDemandePhysique from './DossierDemandeurPhysique.vue'
-import { dateToStringFr } from '@/utils/dateToString'
+import { dateToStringFr } from '@/utils/date-to-string'
 
 describe('<DossierDemandePhysique />', () => {
   it('renders', () => {

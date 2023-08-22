@@ -28,7 +28,7 @@ import BiblioNumDataTableAgGrid from '@/components/BiblioNumDataTableAgGrid.vue'
 import LayoutList from '@/components/LayoutList.vue'
 import type { TypeHeaderDataTable } from '@/shared/types/typeDataTable'
 import { useOrganismeStore } from '@/stores/organisme'
-import { dateToStringFr } from '@/utils/dateToString'
+import { dateToStringFr } from '@/utils'
 
 import { onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
@@ -97,3 +97,5 @@ onMounted(async () => {
   await organismeStore.loadOrganismes()
 })
 </script>
+@/shared/types/DataTable.type
+@/utils/date-to-string
