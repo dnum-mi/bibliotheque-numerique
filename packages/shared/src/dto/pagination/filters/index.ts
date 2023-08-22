@@ -1,1 +1,1 @@
-export * from './all-filter.dto'
+export * from './filter.dto'

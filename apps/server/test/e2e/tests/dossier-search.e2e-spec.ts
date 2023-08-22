@@ -79,7 +79,6 @@ describe('Dossier listing', () => {
       .set('Cookie', [adminCookie])
       .expect(200)
       .expect(({ body }) => {
-        console.log(body)
         expect(body.total).toEqual(10)
         expect(body.data.length).toEqual(5)
         expect(body.data).toEqual([
@@ -237,5 +236,101 @@ describe('Dossier listing', () => {
           },
         ])
       })
+  })
+
+  const badFilters = [
+    {},
+    { filterType: 'text' },
+    {
+      condition1: {
+        type: 'equals',
+      },
+    },
+    {
+      filterType: 'text',
+      condition1: {
+        type: 'eq',
+      },
+    },
+    {
+      filterType: 'text',
+      condition1: {
+        filter: 'toto',
+      },
+    },
+    {
+      filterType: 'text',
+      condition1: {
+        type: 'equals',
+        filter: 'toto',
+      },
+      condition2: {
+        operator: 'equals',
+        filter: 'toto',
+      },
+    },
+    {
+      filterType: 'text',
+      condition1: {
+        type: 'equals',
+        filter: 'toto',
+      },
+      condition2: {
+        type: 'equals',
+        filter: 'toto',
+      },
+    },
+    {
+      filterType: 'text',
+      condition1: {
+        type: 'equals',
+        filter: 'toto',
+      },
+      operator: 'OR',
+    },
+    {
+      filterType: 'text',
+      condition1: {
+        type: 'equals',
+        filter: 'toto',
+      },
+      operator: 'TUTU',
+      condition2: {
+        type: 'equals',
+        filter: 'toto',
+      },
+    },
+  ]
+
+  badFilters.forEach((badFilter, i) => {
+    it(`Should return 400 if filter is incorrect (p-${i})`, () => {
+      return request(app.getHttpServer())
+        .post('/demarches/1/dossiers-search')
+        .send({
+          columns: ['I01', 'I02', 'I03'],
+          filters: { I01: badFilter },
+        })
+        .set('Cookie', [adminCookie])
+        .expect(400)
+    })
+  })
+
+  it('Should only return dossier with pays=Qatar', () => {
+    return request(app.getHttpServer())
+      .post('/demarches/1/dossiers-search')
+      .send({
+        columns: ['I01', 'I02', 'I03', 'I08', 'I09'],
+        filters: {
+          I01: {
+            filterType: 'text',
+            condition1: {
+              type: 'contains',
+              filter: 'Qatar',
+            },
+          },
+        },
+      })
+      .set('Cookie', [adminCookie])
+      .expect(200)
   })
 })
