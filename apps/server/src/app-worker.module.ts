@@ -10,6 +10,7 @@ import { ScheduleModule } from '@nestjs/schedule'
 import { JobLogModule } from './modules/job-log/job-log.module'
 import { typeormFactoryLoader } from './shared/utils/typeorm-factory-loader'
 import loggerConfig from './config/logger.config'
+import { DsApiModule } from './shared/modules/ds-api/ds-api.module'
 
 @Module({
   imports: [
@@ -20,8 +21,8 @@ import loggerConfig from './config/logger.config'
     }),
     LoggerModule,
     TypeOrmModule.forRootAsync(typeormFactoryLoader),
-
     ScheduleModule.forRoot(),
+    DsApiModule,
     CronModule,
     JobLogModule,
   ],

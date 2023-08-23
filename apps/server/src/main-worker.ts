@@ -6,7 +6,7 @@ import { AppWorkerModule } from './app-worker.module'
 async function bootstrap (): Promise<void> {
   const app = await NestFactory.create(AppWorkerModule)
   const configService = app.get(ConfigService)
-  app.useLogger(app.get(LoggerService))
+  app.useLogger(await app.resolve(LoggerService))
   await app.listen(configService.get('port'))
 }
 
