@@ -4,7 +4,6 @@ import { Repository } from 'typeorm'
 import { Dossier } from '../objects/entities/dossier.entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { BaseEntityService } from '../../../shared/base-entity/base-entity.service'
-import { SearchDossierDto } from '../objects/dto/search-dossier.dto'
 import { Demarche } from '../../demarches/objects/entities/demarche.entity'
 import { Field } from '../objects/entities/field.entity'
 import {
@@ -14,8 +13,7 @@ import {
   deduceFieldToQueryFromType,
 } from './common-search.utils'
 import { FieldService } from './field.service'
-import { FieldTypeKeys } from '../objects/enums/field-type.enum'
-import { FieldSearchOutputDto } from '../../demarches/objects/dtos/field-search-output.dto'
+import { FieldSearchOutputDto, FieldTypeKeys, SearchDossierDto } from '@biblio-num/shared'
 
 @Injectable()
 export class FieldSearchService extends BaseEntityService<Field> {

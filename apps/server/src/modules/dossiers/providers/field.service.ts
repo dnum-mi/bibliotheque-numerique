@@ -6,11 +6,10 @@ import { Repository } from 'typeorm'
 import { LoggerService } from '../../../shared/modules/logger/logger.service'
 import { Dossier as TDossier } from '@dnum-mi/ds-api-client/dist/@types/types'
 import { DsChampType } from '../../../shared/modules/ds-api/objects/ds-champ-type.enum'
-import { FieldType, FieldTypeKeys } from '../objects/enums/field-type.enum'
 import { CreateFieldDto } from '../objects/dto/fields/create-field.dto'
 import { CustomChamp } from '@dnum-mi/ds-api-client/src/@types/types'
 import { fixFieldValueFunctions } from '../objects/constante/fix-field.dictionnary'
-import { MappingColumn } from '../../demarches/objects/entities/mapping-column.object'
+import { FieldType, FieldTypeKeys, MappingColumn } from '@biblio-num/shared'
 
 type RawChamp = CustomChamp & {
   __typename: string;

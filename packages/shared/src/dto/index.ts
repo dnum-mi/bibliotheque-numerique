@@ -1,3 +1,5 @@
 export * from './user'
 export * from './pagination'
 export * from './role'
+export * from './dossier'
+export * from './demarche'

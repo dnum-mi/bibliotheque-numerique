@@ -3,7 +3,7 @@ import { Dossier } from '../../../dossiers/objects/entities/dossier.entity'
 import { BaseEntity } from '../../../../shared/base-entity/base.entity'
 import { OrganismeType, OrganismeTypeKeys } from '../enums/organisme-type.enum'
 import { Demarche as TDemarche } from '@dnum-mi/ds-api-client/dist/@types/generated-types'
-import { MappingColumn } from './mapping-column.object'
+import { MappingColumn } from '@biblio-num/shared'
 
 @Entity({ name: 'demarches' })
 export class Demarche extends BaseEntity {

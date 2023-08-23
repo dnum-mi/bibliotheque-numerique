@@ -3,11 +3,8 @@ import { LoggerService } from '../../../shared/modules/logger/logger.service'
 import { loggerServiceMock } from '../../../../test/mock/logger-service.mock'
 import { FieldService } from './field.service'
 import { Dossier as TDossier } from '@dnum-mi/ds-api-client/dist/@types/types'
-import { FieldType } from '../objects/enums/field-type.enum'
-import { MappingColumn } from '../../demarches/objects/entities/mapping-column.object'
-import { FieldSource } from '../objects/enums/field-source.enum'
 import { fixFields } from '../objects/constante/fix-field.dictionnary'
-import { FormatFunctionRef } from '@biblio-num/shared'
+import { FieldSource, FieldType, FormatFunctionRef, MappingColumn } from '@biblio-num/shared'
 
 const fakeMappingColumnHash: MappingColumn[] = [
   ...fixFields,

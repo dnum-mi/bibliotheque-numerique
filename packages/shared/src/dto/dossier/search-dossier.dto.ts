@@ -1,4 +1,4 @@
-import { PaginationDto } from '@biblio-num/shared'
+import { PaginationDto } from '../pagination'
 
 /*
     Because we really paginate field of dossier, and not dossier itself, we cannot know the keyof Dossier.

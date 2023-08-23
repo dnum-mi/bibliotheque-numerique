@@ -19,9 +19,9 @@ import { PermissionName } from '../../../shared/types/Permission.type'
 import { LoggerService } from '../../../shared/modules/logger/logger.service'
 import { Demarche } from '../objects/entities/demarche.entity'
 import { Dossier } from '../../dossiers/objects/entities/dossier.entity'
-import { GetDemarcheByIdDto } from '../objects/dto/get-demarche-by-id.dto'
 import { DemarcheSynchroniseService } from '../providers/services/demarche-synchronise.service'
 import { Roles } from '../../roles/providers/roles.guard'
+import { GetDemarcheByIdDto } from '../objects/dtos/get-demarche-by-id.dto'
 
 @ApiTags('Demarches')
 @UseGuards(PermissionsGuard)

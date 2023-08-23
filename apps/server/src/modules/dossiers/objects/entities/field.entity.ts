@@ -2,11 +2,16 @@
 import { BaseEntity } from '../../../../shared/base-entity/base.entity'
 import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique } from 'typeorm'
 import { DsChampType, DsChampTypeKeys } from '../../../../shared/modules/ds-api/objects/ds-champ-type.enum'
-import { FieldType, FieldTypeKeys } from '../enums/field-type.enum'
-import { FormatFunctionRef, FormatFunctionRefKeys } from '@biblio-num/shared'
+import {
+  FieldSource,
+  FieldSourceKeys,
+  FieldType,
+  FieldTypeKeys,
+  FormatFunctionRef,
+  FormatFunctionRefKeys,
+} from '@biblio-num/shared'
 import { Champ } from '@dnum-mi/ds-api-client/src/@types/types'
 import { Dossier } from './dossier.entity'
-import { FieldSource, FieldSourceKeys } from '../enums/field-source.enum'
 
 export const fieldUniqueFields = ['dossierId', 'sourceId', 'parentRowIndex']
 

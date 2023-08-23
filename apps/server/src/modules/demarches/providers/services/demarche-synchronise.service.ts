@@ -9,8 +9,6 @@ import { OrganismeType, OrganismeTypeKeys, organismeTypeRegex } from '../../obje
 import { DsApiClient } from '@dnum-mi/ds-api-client'
 import { DemarcheService } from './demarche.service'
 import { DossierSynchroniseService } from '../../../dossiers/providers/dossier-synchronise.service'
-import { MappingColumn } from '../../objects/entities/mapping-column.object'
-import { FieldSource, FieldSourceKeys } from '../../../dossiers/objects/enums/field-source.enum'
 import { type ChampDescriptor, type Demarche as TDemarche, type Dossier as TDossier } from '@dnum-mi/ds-api-client'
 import { fixFields } from '../../../dossiers/objects/constante/fix-field.dictionnary'
 import {
@@ -18,6 +16,7 @@ import {
   giveTypeFromDsChampType,
   isRepetitionChampDescriptor,
 } from '../../../../shared/modules/ds-api/objects/ds-champ.utils'
+import { FieldSource, FieldSourceKeys, MappingColumn } from '@biblio-num/shared'
 
 @Injectable()
 export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {

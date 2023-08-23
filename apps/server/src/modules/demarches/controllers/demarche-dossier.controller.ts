@@ -4,13 +4,11 @@ import { PermissionsGuard, RequirePermissions } from '../../roles/providers/perm
 import { PermissionName } from '../../../shared/types/Permission.type'
 import { LoggerService } from '../../../shared/modules/logger/logger.service'
 import { DemarcheExistGuard } from '../providers/guards/demarche-exist.guard'
-import { SearchDossierDto } from '../../dossiers/objects/dto/search-dossier.dto'
 import { Demarche } from '../objects/entities/demarche.entity'
 import { DemarcheParam } from '../providers/decorators/current-demarche.decorator'
 import { DossierSearchService } from '../../dossiers/providers/dossier-search.service'
 import { FieldSearchService } from '../../dossiers/providers/field-search.service'
-import { DossierSearchOutputDto } from '../objects/dtos/dossier-search-output.dto'
-import { FieldSearchOutputDto } from '../objects/dtos/field-search-output.dto'
+import { DossierSearchOutputDto, FieldSearchOutputDto, SearchDossierDto } from '@biblio-num/shared'
 
 @ApiTags('Demarches')
 @ApiTags('Dossiers')

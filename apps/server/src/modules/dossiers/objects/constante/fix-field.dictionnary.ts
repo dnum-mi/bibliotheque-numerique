@@ -1,8 +1,5 @@
-import { MappingColumn } from '../../../demarches/objects/entities/mapping-column.object'
-import { FieldType } from '../enums/field-type.enum'
-import { FormatFunctionRef } from '@biblio-num/shared'
+import { FieldSource, FieldType, FormatFunctionRef, MappingColumn } from '@biblio-num/shared'
 import { Dossier as TDossier } from '@dnum-mi/ds-api-client'
-import { FieldSource } from '../enums/field-source.enum'
 
 type FixFieldValueGetter = (dossier: Partial<TDossier>) => string | number | boolean | Date | null;
 
