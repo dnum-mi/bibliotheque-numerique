@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common'
+import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import * as AWS from 'aws-sdk'
 import stream, { PassThrough } from 'stream'
@@ -10,9 +10,15 @@ import { FileStorageEntity } from '../objects/entities/file-storage.entity'
 import { LoggerService } from '@/shared/modules/logger/providers/logger.service'
 import { PrismaService } from '@/shared/modules/prisma/providers/prisma.service'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
+import { Express } from 'express'
 
 @Injectable()
 export class FileStorageService extends BaseEntityService {
+  private s3: S3
+  private bucketName: string
+  private authorizedExtensions: string
+  private maxFileSize: number
+
   constructor (
     protected readonly prisma: PrismaService,
     private readonly config: ConfigService,
@@ -21,53 +27,52 @@ export class FileStorageService extends BaseEntityService {
   ) {
     super(prisma)
     this.logger.setContext(this.constructor.name)
+    this.s3 = new AWS.S3({
+      accessKeyId: this.config.get('file.accessKeyId'),
+      secretAccessKey: this.config.get('file.secretAccessKey'),
+      endpoint: this.config.get('file.awsDefaultS3Url'),
+      region: this.config.get('file.awsS3Region'),
+      s3ForcePathStyle: true,
+      signatureVersion: 'v4',
+    })
+    this.bucketName = this.config.get('file.awsDefaultS3Bucket')!
+    this.authorizedExtensions = this.config.get('file.authorizedExtensions')!
+    this.maxFileSize = this.config.get('file.maxFileSize')!
   }
 
-  private s3 = new AWS.S3({
-    accessKeyId: this.config.get('file.accessKeyId'),
-    secretAccessKey: this.config.get('file.secretAccessKey'),
-    endpoint: this.config.get('file.awsDefaultS3Url'),
-    region: this.config.get('file.awsS3Region'),
-    s3ForcePathStyle: true,
-    signatureVersion: 'v4',
-  })
-
-  async uploadFile (file, checksum = ''): Promise<FileStorageEntity> {
+  async uploadFile (file: Express.Multer.File, checksum = ''): Promise<FileStorageEntity> {
     this.logger.verbose('uploadFile')
     if (!file) {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            file: 'selectFile',
-          },
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      )
+      throw new BadRequestException('file should not be empty')
     }
+
+    const fileName: string = file.originalname
+    const fileExtension: string = this.fileExtension(fileName)
+    const fileKey = `${randomStringGenerator()}.${fileExtension.toLowerCase()}`
+
+    this.fileFilter(fileExtension)
+
+    const uploadResult: S3.ManagedUpload.SendData = await this.s3.upload({
+      Bucket: this.bucketName,
+      Key: fileKey,
+      Body: file.buffer,
+    }, { partSize: this.maxFileSize }).promise()
 
     return await this.prisma.fileStorage.create({
       data: {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        name: file.key,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        path: file.location,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        originalName: file.originalName,
+        name: fileKey,
+        path: uploadResult.Location,
+        originalName: fileName,
         checksum,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         byteSize: file.size,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        mimeType: file.contentType,
+        mimeType: file.mimetype,
       },
     })
   }
 
   public async findFileStorage (uuid: string): Promise<FileStorageEntity> {
     this.logger.verbose('findFileStorage')
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    return this.prisma.fileStorage.findUnique({ where: { uuid } }).then((fileStorage) => {
+    return this.prisma.fileStorage.findFirst({ where: { uuid } }).then((fileStorage) => {
       if (!fileStorage) {
         throw new NotFoundException('')
       }
@@ -77,47 +82,45 @@ export class FileStorageService extends BaseEntityService {
 
   public async getFile (uuid: string): Promise<{ stream: stream.Readable; info: FileStorageEntity }> {
     this.logger.verbose('getFile')
-    const fileStorage = await this.findFileStorage(uuid)
+    if (uuid.length !== 36) throw new BadRequestException('Validation failed (uuid  is expected)')
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    const stream = this.s3.getObject({
-      Bucket: this.config.get('file.awsDefaultS3Bucket'),
-      Key: fileStorage.name,
-    }).createReadStream()
+    const fileStorage: FileStorageEntity = await this.findFileStorage(uuid)
 
     if (fileStorage) {
+      const stream: stream.Readable = this.s3.getObject({
+        Bucket: this.bucketName,
+        Key: fileStorage.name,
+      }).createReadStream()
       return { stream, info: fileStorage }
     }
     throw new NotFoundException()
   }
 
-  async copyRemoteFile (fileUrl, checksum, byteSize, mimeType, fileName = ''): Promise<FileStorageEntity> {
+  async copyRemoteFile (fileUrl: string, fileName: string, checksum: string, byteSize: number, mimeType: string):
+    Promise<FileStorageEntity> {
     this.logger.verbose('copyRemoteFile')
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    fileName = fileName === '' ? fileUrl.split('/').pop() : fileName
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const fileExtension = fileName.split('.').pop().toLowerCase()
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    const fileExtension: string = this.fileExtension(fileName)
     this.fileFilter(fileExtension)
 
-    const stream = await this.downloadFile(fileUrl)
+    const stream: AxiosResponse = await this.downloadFile(fileUrl)
 
-    const { passThrough, promise } = this.uploadFromStream(stream, this.fileNameGenerator(fileName))
+    const { passThrough, promise } = this.uploadFromStream(stream, this.fileNameGenerator(fileExtension))
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     stream.data.pipe(passThrough)
 
     const { Key, Location } = await promise
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    // eslint-disable-next-line max-len
-    return this.prisma.fileStorage.create({ name: Key, path: Location, originalName: fileName, checksum, byteSize, mimeType })
+    return this.prisma.fileStorage.create({
+      data: {
+        name: Key,
+        path: Location,
+        originalName: fileName,
+        checksum,
+        byteSize: Number(byteSize),
+        mimeType,
+      },
+    })
   }
 
   private uploadFromStream (
@@ -132,7 +135,7 @@ export class FileStorageService extends BaseEntityService {
 
     const promise = this.s3
       .upload({
-        Bucket: 'rnfbucket', // TODO this.config.get('file.awsDefaultS3Bucket'),
+        Bucket: this.bucketName,
         Key: fileName,
         ContentType: fileResponse.headers['content-type'],
         Body: passThrough,
@@ -147,18 +150,19 @@ export class FileStorageService extends BaseEntityService {
       url: fileUrl,
       method: 'GET',
       responseType: 'stream',
+    }).catch((error) => {
+      console.log(error)
+      throw new NotFoundException('File is not found')
     })
   }
 
   private fileFilter (fileExtension: string): void {
     this.logger.verbose('fileFilter')
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    const authorizedExtensions: string = this.config.get('file.authorizedExtensions')
-    if (!authorizedExtensions.includes('*') && !authorizedExtensions.includes(fileExtension)) {
+    if (!this.authorizedExtensions.includes('*') && !this.authorizedExtensions.includes(fileExtension)) {
       throw new HttpException(
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
+          message: 'File is not valid',
           errors: {
             file: 'cantUploadFileType',
           },
@@ -168,10 +172,13 @@ export class FileStorageService extends BaseEntityService {
     }
   }
 
-  private fileNameGenerator (originalName: string): string {
+  private fileNameGenerator (fileExtension: string): string {
     this.logger.verbose('fileNameGenerator')
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    return `${randomStringGenerator()}.${originalName.split('.').pop().toLowerCase()}`
+    return `${randomStringGenerator()}.${fileExtension.toLowerCase()}`
+  }
+
+  private fileExtension (fileName: string): string {
+    this.logger.verbose('fileExtension')
+    return fileName.slice((fileName.lastIndexOf('.') - 1 >>> 0) + 2)
   }
 }

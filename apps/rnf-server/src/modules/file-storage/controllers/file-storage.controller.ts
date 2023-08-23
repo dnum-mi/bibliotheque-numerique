@@ -4,6 +4,7 @@ import { ApiTags } from '@nestjs/swagger'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { FileStorageService } from '../providers/file-storage.service'
 import { FileStorageEntity } from '../objects/entities/file-storage.entity'
+import { DownloadFileInputDto } from '@/modules/file-storage/objects/dto/inputs/download-file-input.dto'
 
 @ApiTags('Files')
 @Controller('files')
@@ -17,8 +18,8 @@ export class FileStorageController {
   }
 
   @Get(':uuid')
-  async download (@Param('uuid') uuid: string, @Response() response): Promise<void> {
-    const file = await this.filesService.getFile(uuid)
+  async download (@Param() params: DownloadFileInputDto, @Response() response): Promise<void> {
+    const file = await this.filesService.getFile(params.uuid)
     file.stream.pipe(response)
   }
 
@@ -28,10 +29,8 @@ export class FileStorageController {
     @Body('fileName') fileName: string,
     @Body('checksum') checksum: string,
     @Body('mimeType') mimeType: string,
-    @Body('byteSize') byteSize: string,
+    @Body('byteSize') byteSize: number,
   ): Promise<FileStorageEntity> {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    return await this.filesService.copyRemoteFile(fileUrl, checksum, byteSize, mimeType, fileName)
+    return await this.filesService.copyRemoteFile(fileUrl, fileName, checksum, byteSize, mimeType)
   }
 }
