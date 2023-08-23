@@ -118,6 +118,7 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
       },
     )
     await this._synchroniseAllDossier(dossiers, demarche)
+    this.logger.log(`successfully synchronised demarche (with Id DS: ${dsId}) and its dossiers`)
   }
 
   /* endregion */
@@ -157,7 +158,7 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
     this.logger.verbose('synchroniseAllDemarches')
     const demarches = await this.repo.find()
     const promises = demarches.map((demarche) =>
-      this._synchroniseOneDemarche(demarche, parseInt(demarche.dsDataJson.id)),
+      this._synchroniseOneDemarche(demarche, demarche.dsDataJson.number),
     )
     return Promise.all(promises)
   }

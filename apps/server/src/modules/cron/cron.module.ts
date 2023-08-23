@@ -6,7 +6,13 @@ import { DemarcheModule } from '../demarches/demarche.module'
 import { OrganismesModule } from '../../plugins/organisme/organismes/organismes.module'
 
 @Module({
-  imports: [DossierModule, DemarcheModule, JobLogModule, OrganismesModule],
+  imports: [
+    DossierModule,
+    DemarcheModule,
+    OrganismesModule,
+    JobLogModule,
+    OrganismesModule,
+  ],
   controllers: [],
   providers: [CronService],
 })
