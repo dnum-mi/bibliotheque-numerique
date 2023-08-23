@@ -1,111 +1,64 @@
 <script lang="ts" setup>
-import { computed, nextTick } from 'vue'
-import type { IDemarcheMappingColumn } from '@/shared/interfaces'
-import { ChampType, ChampValueBaseTypes, ChampValueTypes, ChampValueTypesKeys, TypeDeChampDS } from '@/shared/types'
-import { enumToDsfrSelectOptions } from '@/utils/enumToDsfrSelectOptions'
+import { computed } from 'vue'
+
+import type { MappingColumn } from '@biblio-num/shared'
+
+import DemarcheConfigurationMappingColumn from './DemarcheConfigurationMappingColumn.vue'
 
 const props = withDefaults(defineProps<{
-    datas: IDemarcheMappingColumn[]
+    mappingColumns: MappingColumn[]
   }>(), {
-  datas: () => ([]),
+  mappingColumns: () => ([]),
 })
-const listType = enumToDsfrSelectOptions(ChampValueTypes)
-const listTypeInstructionTime = enumToDsfrSelectOptions(ChampValueBaseTypes)
-const demarcheMappingColumns = computed<IDemarcheMappingColumn[]>(() => props.datas.map(data => {
-  data.typeValue = data.typeValue || ChampValueTypesKeys.TEXT
-  return data
-}).slice().sort((
-  { labelSource: [labelA, supLabelA] },
-  { labelSource: [labelB, supLabelB] },
-) => {
-  if (supLabelA && supLabelB) {
-    return (labelA + supLabelA) > (labelB + supLabelB) ? 1 : -1
-  }
-  return labelA > labelB ? 1 : -1
-}))
-
-const focusOn = async ($event: (InputEvent & {target: { checked: boolean; id: string}})) => {
-  if ($event.target?.checked) {
-    setTimeout(() => {
-      (document.getElementById($event.target.id.replace('display', 'labelBN')) as HTMLInputElement).focus()
-    })
-  }
-}
+const demarcheMappingColumns = computed<MappingColumn[]>(() => props.mappingColumns)
 </script>
 
 <template>
-  <ul class="list-none p-0 m-0">
-    <li
-      v-for="mappingColumn in demarcheMappingColumns"
-      :key="mappingColumn.id"
-    >
-      <DsfrInput
-        :id="`id-${mappingColumn.id}`"
-        v-model="mappingColumn.id"
-        type="hidden"
-      />
-      <DsfrInput
-        :id="`typeName-${mappingColumn.id}`"
-        v-model="mappingColumn.typeName"
-        type="hidden"
-      />
-      <DsfrInput
-        :id="`typeData-${mappingColumn.id}`"
-        v-model="mappingColumn.typeData"
-        type="hidden"
-      />
-      <div class="fr-container">
-        <div class="fr-grid-row">
-          <div class="fr-col-1  fr-p-2v">
-            <DsfrCheckbox
-              v-if="mappingColumn.typeName != TypeDeChampDS.REPETITION"
-              :id="`display-${mappingColumn.id}`"
-              v-model="mappingColumn.display"
-              :name="mappingColumn.id"
-              class="fr-pt-3v flex  justify-center"
-              @click="focusOn($event)"
+  <div class="fr-container">
+    <ul class="list-none p-0 m-0">
+      <template
+        v-for="mappingColumn in demarcheMappingColumns"
+        :key="mappingColumn.id"
+      >
+        <!-- Si le mappingColumn est un parent... -->
+        <template v-if="mappingColumn.children">
+          <!-- ...on affiche le parent... -->
+          <li>
+            <DemarcheConfigurationMappingColumn
+              :id="mappingColumn.id"
+              is-parent
+              :type="mappingColumn.type"
+              :label="mappingColumn.originalLabel"
+              :initial-label-bn="mappingColumn.columnLabel"
             />
-          </div>
-          <div class="fr-col-2  flex  items-center">
-            <DsfrBadge
-              :id="`typeData-${mappingColumn.id}`"
-              :label="mappingColumn.typeData.toUpperCase()"
-              small
-              type="info"
-              class="fr-mr-1w"
+          </li>
+          <!-- ...et tous ses enfants ensuite -->
+          <li
+            v-for="childMappingColumn of mappingColumn.children"
+            :key="childMappingColumn.id"
+          >
+            <DemarcheConfigurationMappingColumn
+              :id="childMappingColumn.id"
+              :type="childMappingColumn.type"
+              is-children
+              :label="childMappingColumn.originalLabel"
             />
-            <span
-              v-if="mappingColumn.typeName === TypeDeChampDS.REPETITION"
-              class="fr-icon-table-fill   fr-icon--sm"
-              aria-hidden="true"
-              title="Type de champ: Bloc Répétable"
+          </li>
+        </template>
+        <!-- Si le mappingColumn n’est pas un parent, on l’affiche simplement -->
+        <template v-else>
+          <li>
+            <DemarcheConfigurationMappingColumn
+              :id="mappingColumn.id"
+              :type="mappingColumn.type"
+              :label="mappingColumn.originalLabel"
+              :initial-label-bn="mappingColumn.columnLabel"
             />
-            <span
-              v-if="mappingColumn.labelSource.length > 1"
-              class="fr-icon-list-unordered  fr-icon--sm"
-              aria-hidden="true"
-              title="Le champ dans <Bloc Répétable>"
-            />
-          </div>
-          <div class="fr-col-4  fr-p-2v">
-            <DsfrInput
-              :id="`labelSource-${mappingColumn.id}`"
-              :model-value="mappingColumn.labelSource.at(-1)"
-              readonly
-              @update:model-value="mappingColumn.labelSource = $event"
-            />
-          </div>
-          <div class="fr-col-5  fr-p-2v">
-            <DsfrInput
-              :id="`labelBN-${mappingColumn.id}`"
-              v-model="mappingColumn.labelBN"
-              :disabled="!mappingColumn.display"
-            />
-          </div>
-        </div>
-      </div>
-    </li>
-  </ul>
+          </li>
+        </template>
+      </template>
+    </ul>
+  </div>
 </template>
 
 <style scoped>

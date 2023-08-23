@@ -1,36 +1,30 @@
 <script lang="ts" setup>
 import { useRoute, useRouter } from 'vue-router'
-import { computed, onMounted, ref, watch, type Ref, watchEffect } from 'vue'
+import { computed, onMounted, ref, watch, type Ref, watchEffect, ComputedRef } from 'vue'
 import { useStorage } from '@vueuse/core'
-
-import { useDemarcheStore } from '@/stores/demarche'
-import { useUserStore } from '@/stores'
+import type { IDemarche, DossierSearchOutputDto, FieldSearchOutputDto, MappingColumn } from '@biblio-num/shared'
+import { useUserStore, useDemarcheStore } from '@/stores'
 import GroupInstructeurs from '@/views/demarches/DemarcheGrpInstructeurs.vue'
 import DemarcheService from '@/views/demarches/DemarcheService.vue'
 import DemarcheInformations from '@/views/demarches/DemarcheInformations.vue'
 import DemarcheConfigurations from '@/views/demarches/DemarcheConfigurations.vue'
 import BiblioNumDataTableAgGrid from '@/components/BiblioNumDataTableAgGrid.vue'
 import LayoutList from '@/components/LayoutList.vue'
+import type { DsfrTabItemProps } from '@gouvminint/vue-dsfr/types/components/DsfrTabs/DsfrTabItem.vue'
 
 const route = useRoute()
 const router = useRouter()
 const demarcheStore = useDemarcheStore()
 const userStore = useUserStore()
 
-const title = computed<string>(() => demarcheStore.demarche?.title || '')
-const number = computed<string>(() => demarcheStore.demarche?.dsDataJson?.number || '')
-const demarche = computed<object>(() => demarcheStore.demarche || {})
-const headerDossiers = computed<object[]>(() => demarcheStore.hearderListDossier || [])
-const rowDatas = computed(() => demarcheStore.rowDatasDossiers || [])
+const demarche = computed<IDemarche>(() => demarcheStore.currentDemarche || {})
+const demarcheConfiguration = computed<MappingColumn[]>(() => demarcheStore.currentDemarcheConfiguration)
+const demarcheDossiers = computed<DossierSearchOutputDto>(() => demarcheStore.currentDemarcheDossiers || [])
+const demarcheFields = computed<FieldSearchOutputDto>(() => demarcheStore.currentDemarcheFields || [])
 
-const getIdDemarche = () => {
-  const params = route?.params
-  return Number(params.id)
-}
+const props = defineProps<{id: string}>()
 
-/**
- * Custom filter management
- */
+/* #region Custom filter management */
 const filterLabelGroups = {
   create: {
     title: 'Enregistrement du filtre actuel',
@@ -98,45 +92,33 @@ const resetAgGridFilters = () => {
 watchEffect(() => {
   bnDemarchesGrid.value?.setFilters(userFilters.value[userFilter.value])
 })
-// End of custom filter management
+/* #endregion */
 
 onMounted(async () => {
-  const id = getIdDemarche()
-  if (id) {
-    await demarcheStore.getDemarche(id)
-    await demarcheStore.getDossiers(id)
-    await demarcheStore.loadInstructionTimes()
-
-    await demarcheStore.getDemarcheConfigurations()
-
-    await demarcheStore.loadHeaderDossiers()
-    await demarcheStore.loadRowDatas()
+  if (props.id) {
+    await demarcheStore.getDemarche(parseInt(props.id))
   }
 })
 
-watch(() => demarcheStore.demarcheConfigurations, async (newValue) => {
-  const id = getIdDemarche()
-  if (id) {
-    await demarcheStore.getDemarche(id)
-    await demarcheStore.loadHeaderDossiers()
-    await demarcheStore.loadRowDatas()
-  }
-}, { deep: true })
-
-const onSelect = (e) => {
-  router.push({ name: 'Dossiers', params: { id: e[0].idBiblioNum } })
+const onSelect = ($event) => {
+  router.push({ name: 'Dossiers', params: { id: $event[0].idBiblioNum } })
 }
 
-const tabTitles = computed(() => ([
+/* #region Tab management */
+
+const tabTitles: ComputedRef<(DsfrTabItemProps & { title: string;})[]> = computed(() => ([
   {
+    panelId: 'pan-1',
+    tabId: 'tab-1',
     title: 'Dossiers',
   },
   {
+    panelId: 'pan-2',
+    tabId: 'tab-2',
     title: 'Information',
   },
-  ...(userStore.canManageRoles ? [{ title: 'Configuration' }] : []),
+  ...(userStore.canManageRoles ? [{ title: 'Configuration', panelId: 'pan-3', tabId: 'tab-3' }] : []),
 ]))
-
 const selectedTabIndex = ref(0)
 function selectTab (idx: number) {
   selectedTabIndex.value = idx
@@ -148,6 +130,7 @@ onMounted(() => {
     selectTab(tabTitles.value.findIndex(tabTitle => route.hash.slice(1) === tabTitle.title) || 0)
   }
 })
+/* #endregion */
 </script>
 
 <template>
@@ -155,7 +138,7 @@ onMounted(() => {
     <template #title>
       <div class="bn-list-search bn-list-search-dossier">
         <h6 class="bn-list-search-title-dossier fr-p-1w fr-m-0">
-          {{ title }} - N° {{ number }}
+          {{ demarche.title }} - N° {{ demarche.dsDataJson.number || '' }}
         </h6>
       </div>
     </template>
@@ -173,7 +156,10 @@ onMounted(() => {
         tab-id="tab-0"
         :selected="selectedTabIndex === 0"
       >
-        <div :style="{paddingBottom: '2rem'}">
+        <h2>
+          To refacto
+        </h2>
+        <!-- <div :style="{paddingBottom: '2rem'}">
           <div
             class="flex  justify-end  h-24"
           >
@@ -230,9 +216,9 @@ onMounted(() => {
             row-selection="single"
             :pagination="true"
             :pagination-page-size="20"
-            @selection-changed="onSelect"
+            @selection-changed="onSelect($event)"
           />
-        </div>
+        </div> -->
       </DsfrTabContent>
 
       <DsfrTabContent
@@ -250,6 +236,7 @@ onMounted(() => {
           class="fr-pt-5w"
         />
       </DsfrTabContent>
+
       <DsfrTabContent
         v-if="userStore.canManageRoles"
         panel-id="tab-content-2"
@@ -257,13 +244,12 @@ onMounted(() => {
         :selected="selectedTabIndex === 2"
       >
         <DemarcheConfigurations
-          :data-json="demarche?.dsDataJson"
           class="fr-pt-3w"
         />
       </DsfrTabContent>
     </DsfrTabs>
   </LayoutList>
-  <DsfrModal
+  <!-- <DsfrModal
     :opened="filterModalOpen"
     :title="filterLabelGroup.title"
     :origin="$refs.modalOrigin"
@@ -293,7 +279,7 @@ onMounted(() => {
         />
       </div>
     </form>
-  </DsfrModal>
+  </DsfrModal> -->
 </template>
 
 <style scoped>

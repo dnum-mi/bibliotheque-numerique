@@ -21,7 +21,7 @@ import { Demarche } from '../objects/entities/demarche.entity'
 import { Dossier } from '../../dossiers/objects/entities/dossier.entity'
 import { DemarcheSynchroniseService } from '../providers/services/demarche-synchronise.service'
 import { Roles } from '../../roles/providers/roles.guard'
-import { GetDemarcheByIdDto } from '../objects/dtos/get-demarche-by-id.dto'
+import { DemarcheOutputDto, demarcheOutputDtoKeys } from '@/modules/demarches/objects/dtos/demarche-output.dto'
 
 @ApiTags('Demarches')
 @UseGuards(PermissionsGuard)
@@ -51,8 +51,7 @@ export class DemarcheController {
   async getDemarcheById(
     @Request() req,
     @Param('id', ParseIntPipe) id: number,
-    @Query() dto: GetDemarcheByIdDto,
-  ): Promise<Demarche | Partial<Demarche>> {
+  ): Promise<DemarcheOutputDto> {
     this.logger.verbose('getDemarcheById')
     const ruleIds = this.demarcheService.getRulesFromUserPermissions(req.user)
     if (ruleIds && ruleIds.length > 0 && !ruleIds.find((ruleId) => ruleId === id)) {
@@ -61,7 +60,7 @@ export class DemarcheController {
 
     return this.demarcheService.findOneOrThrow({
       where: { id },
-      ...(dto.fields ? { select: dto.fields } : {}),
+      select: demarcheOutputDtoKeys,
     })
   }
 

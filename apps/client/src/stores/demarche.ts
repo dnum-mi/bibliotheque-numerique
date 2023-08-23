@@ -2,241 +2,62 @@ import { defineStore } from 'pinia'
 import { ref, type Ref } from 'vue'
 
 import apiClient from '@/api/api-client'
-import { getConfigurations, updateConfigurations } from '@/shared/services'
 
 import { toHeaderList, toRowData } from '@/shared/services/to-header-list'
 import { booleanToYesNo, stateToFr, dateToStringFr } from '@/utils'
-import type { IDemarcheMappingColumn } from '@/shared/interfaces'
+import type { IDemarche, MappingColumn, DossierSearchOutputDto, FieldSearchOutputDto, SearchDossierDto } from '@biblio-num/shared'
 import { ChampValueTypesKeys, ChampType, type HeaderDataTable } from '@/shared/types'
 import { fetchInstructionTimeByDossiers } from '@/shared/services/instruction-times.service'
 import { EInstructionTimeState, keyInstructionTime } from '@/shared/types'
 
-import CheckRenderer from '../components/ag-grid/CheckRenderer.vue'
-import CprCheckRenderer from '../components/ag-grid/CprCheckRenderer.vue'
-import DossierStateRenderer from '../components/ag-grid/DossierStateRenderer.vue'
-
-const headerDossierIdDefault: HeaderDataTable[] = [
-  {
-    value: 'idBiblioNum',
-    type: 'hidden',
-  },
-  {
-    text: 'Numéro',
-    value: 'number',
-    type: 'number',
-  },
-]
-
-const headerDossierDefault: HeaderDataTable[] = [
-  {
-    text: 'Archivé',
-    value: 'archived',
-    renderer: CheckRenderer,
-    type: 'boolean',
-  },
-  {
-    text: 'Etat',
-    value: 'state',
-    renderer: DossierStateRenderer,
-    type: 'StateDS',
-  },
-  {
-    text: 'Date de dépot',
-    value: 'dateDepot',
-    parseFn: dateToStringFr,
-    type: 'date',
-  },
-  {
-    text: 'Date de construction',
-    value: 'datePassageEnConstruction',
-    parseFn: dateToStringFr,
-    type: 'date',
-  },
-  {
-    text: "Date d'instruction",
-    value: 'datePassageEnInstruction',
-    parseFn: dateToStringFr,
-    type: 'date',
-  },
-  {
-    text: 'Date de traitement',
-    value: 'dateTraitement',
-    parseFn: dateToStringFr,
-    type: 'date',
-  },
-  {
-    text: 'Association déclarée cultuelle dans télédéclaration loi CRPR ?',
-    value: 'annotations',
-    renderer: CprCheckRenderer,
-  },
-  {
-    text: 'Si oui, date d\'entrée en vigueur de la qualité cultuelle',
-    value: 'annotations',
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    parseFn: (value: any) => {
-      return value ? value[0]?.stringValue : ''
-    },
-  },
-]
-
-const typeToParserFn = {
-  [ChampValueTypesKeys.DATE]: dateToStringFr,
-  boolean: booleanToYesNo,
-  StateDS: stateToFr,
-}
-const getParserFnByType = (type) => {
-  return typeToParserFn[type]
-}
-
 export const useDemarcheStore = defineStore('demarche', () => {
-  let mappingColumn: IDemarcheMappingColumn[]
-  const demarche: Ref<any> = ref({})
-  const hearderListDossier = ref<HeaderDataTable[]>([])
-  const rowDatasDossiers = ref<object[]>([])
-  const dossiers = ref([])
-  const instructionTimes = ref({})
+  const demarches = ref<IDemarche[]>([])
+  const currentDemarche: Ref<IDemarche> = ref({})
+  const currentDemarcheDossiers: Ref<DossierSearchOutputDto> = ref({})
+  const currentDemarcheFields: Ref<FieldSearchOutputDto> = ref({})
+  const currentDemarcheConfiguration = ref<MappingColumn[]>([])
+
+  const updateOneMappingColumn = async (id: string, columnLabel: string): Promise<void> => {
+    await apiClient.updateOneMappingColumn(currentDemarche.value.id, id, { columnLabel })
+    await getCurrentDemarcheConfigurations()
+  }
+
+  const getCurrentDemarcheConfigurations = async () => {
+    currentDemarcheConfiguration.value = await apiClient.getDemarcheConfiguration(currentDemarche.value.id)
+  }
 
   const getDemarche = async (idDemarche: number) => {
-    if (!idDemarche) {
-      console.log('idDemarche doit être saisi')
-      return
-    }
     const result = await apiClient.getDemarche(idDemarche)
-    if (result) demarche.value = result
+    if (result) {
+      currentDemarche.value = result
+      currentDemarcheConfiguration.value = result.m
+    }
   }
 
-  const demarches = ref([])
   const getDemarches = async () => {
-    try {
-      const result = await apiClient.getDemarches()
-
-      if (result) {
-        demarches.value = result.map((demarche: any) => {
-          demarche.typeOrganisme = demarche?.typeOrganisme || ''
-          return demarche
-        })
-      }
-    } catch (error) {
-      // TODO: Afficher une erreur compréhensible à l’utilisateur
-      if (error instanceof Error) {
-        console.warn(error.message)
-        return
-      }
-      console.warn(error)
-    }
+    demarches.value = await apiClient.getDemarches()
   }
 
-  const getDossiers = async (idDemarche: number) => {
-    if (!idDemarche) {
-      console.log('idDemarche doit être saisie')
-    }
-    const results = await apiClient.getDossiersFromDemarche(idDemarche)
-    if (results) dossiers.value = results
+  const searchCurrentDemarcheDossiers = async (dto: SearchDossierDto) => {
+    currentDemarcheDossiers.value = await apiClient.searchDemarcheDossiers(currentDemarche.value.id, dto)
   }
 
-  const demarcheConfigurations = ref<IDemarcheMappingColumn[]>([])
-  const getDemarcheConfigurations = async () => {
-    const champDescriptors = demarche.value?.dsDataJson?.publishedRevision?.champDescriptors
-    const annotationDescriptors = demarche.value?.dsDataJson?.publishedRevision?.annotationDescriptors
-
-    demarcheConfigurations.value = await getConfigurations(demarche.value.id, champDescriptors, annotationDescriptors) as any
-  }
-
-  const updateDemarcheConfigurations = async (configurationsForm: []) => {
-    await updateConfigurations(demarche.value.id, configurationsForm)
-    await getDemarcheConfigurations()
-  }
-
-  const isDemarcheWithInstructionTime = () => {
-    return demarche.value && demarche.value.identification === 'FE'
-  }
-
-  const loadHeaderDossiers = async () => {
-    mappingColumn = demarche.value?.mappingColumns || []
-    // TODO: A revoir pour la preview
-    // demarcheConfigurations.value.filter((mapping: IDemarcheMappingColumn) => mapping.display === true) || []
-
-    const headerMapping = toHeaderList(mappingColumn).map(header => {
-      const parseFn = getParserFnByType(header.type)
-      if (parseFn) {
-        return {
-          ...header,
-          parseFn,
-        }
-      }
-      return header
-    })
-
-    hearderListDossier.value = [...headerDossierIdDefault, ...headerMapping, ...headerDossierDefault]
-  }
-
-  const loadRowDatas = async () => {
-    rowDatasDossiers.value = dossiers.value?.map(data => {
-      const { dsDataJson, id } = data
-
-      const jsonForRowData = dsDataJson && isDemarcheWithInstructionTime()
-        ? {
-            ...dsDataJson,
-            [ChampType.INSTRUCTION_TIME]: instructionTimes.value[id],
-          }
-        : dsDataJson
-
-      const rowDatasFromMapping = toRowData(jsonForRowData, mappingColumn)
-      const row = rowDatasFromMapping.map(rowData => ({
-        idBiblioNum: id,
-        ...dsDataJson,
-        ...rowData,
-      }))
-
-      return row
-    }).flat()
-  }
-
-  const translateEtatDelai = {
-    [EInstructionTimeState.FIRST_REQUEST]: '1ère demande',
-    [EInstructionTimeState.IN_PROGRESS]: 'Instruction',
-    [EInstructionTimeState.OUT_OF_DATE]: 'Délai expiré',
-    [EInstructionTimeState.IN_EXTENSION]: 'Proroger',
-    [EInstructionTimeState.SECOND_REQUEST]: '2ème demande',
-    [EInstructionTimeState.SECOND_RECEIPT]: '2ème demande',
-    [EInstructionTimeState.INTENT_OPPO]: "Intention d'opposition",
-    [EInstructionTimeState.IN_ERROR]: 'Erreur',
-  }
-
-  const loadInstructionTimes = async () => {
-    // TODO: A voir du besoin d'une condition coté front ou back
-    if (isDemarcheWithInstructionTime()) {
-      const instructionTimesFound = await fetchInstructionTimeByDossiers(dossiers.value.map(dossier => dossier.id))
-      // TODO: A refaire avec des types pour ag-grid
-      const instructionTimesTranslated = {}
-      for (const idDossier in instructionTimesFound) {
-        const instructionTime = instructionTimesFound[idDossier]
-        const etatDelai = translateEtatDelai[instructionTime[keyInstructionTime.ETAT_DELAI]] || ''
-
-        instructionTimesTranslated[idDossier] = {
-          ...instructionTime,
-          [keyInstructionTime.ETAT_DELAI]: etatDelai,
-        }
-      }
-      instructionTimes.value = instructionTimesTranslated
-    }
+  const searchCurrentDemarcheFields = async (dto: SearchDossierDto) => {
+    currentDemarcheDossiers.value = await apiClient.searchDemarcheFields(currentDemarche.value.id, dto)
   }
 
   return {
-    demarche,
-    getDemarche,
     demarches,
+    currentDemarche,
+    currentDemarcheConfiguration,
+    currentDemarcheFields,
+    currentDemarcheDossiers,
+
     getDemarches,
-    dossiers,
-    getDossiers,
-    demarcheConfigurations,
-    getDemarcheConfigurations,
-    updateDemarcheConfigurations,
-    loadHeaderDossiers,
-    hearderListDossier,
-    rowDatasDossiers,
-    loadRowDatas,
-    loadInstructionTimes,
-    instructionTimes,
+    getCurrentDemarcheConfigurations,
+    searchCurrentDemarcheDossiers,
+    searchCurrentDemarcheFields,
+    getDemarche,
+    updateOneMappingColumn,
   }
 })

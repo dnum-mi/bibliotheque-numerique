@@ -1,6 +1,5 @@
 import { DsChampType, DsChampTypeKeys } from './ds-champ-type.enum'
-import { FormatFunctionRef, FormatFunctionRefKeys } from '@biblio-num/shared'
-import { FieldType, FieldTypeKeys } from '../../../../../../../packages/shared/src/enums/fields/field-type.enum'
+import { FormatFunctionRef, FormatFunctionRefKeys, FieldType, FieldTypeKeys } from '@biblio-num/shared'
 import { Champ } from '@dnum-mi/ds-api-client'
 
 export const giveFormatFunctionRefFromDsChampType = (

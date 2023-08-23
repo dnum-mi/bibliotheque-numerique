@@ -41,6 +41,7 @@ const routes = [
         path: ':id/dossiers',
         name: 'DemarcheDossiers',
         component: () => import('@/views/demarches/DemarcheDossiers.vue'),
+        props: true,
         meta: {
           needsAuth: true,
         },

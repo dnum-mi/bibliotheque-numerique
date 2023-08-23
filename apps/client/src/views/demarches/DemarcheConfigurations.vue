@@ -6,17 +6,12 @@ import useToaster from '@/composables/use-toaster'
 import { useDemarcheStore } from '@/stores'
 import DemarcheConfiguration from '@/views/demarches/DemarcheConfiguration.vue'
 
-withDefaults(defineProps<{
-    dataJson?: object
-  }>(), {
-  dataJson: () => ({}),
-})
 const title = 'La configuration'
 
 type DsfrAlertType = 'error' | 'success' | 'warning' | 'info'
 
 const demarcheStore = useDemarcheStore()
-const demarcheConfigurations = computed(() => demarcheStore.demarcheConfigurations)
+const demarcheConfiguration = computed(() => demarcheStore.currentDemarcheConfiguration)
 const alertType: Ref<DsfrAlertType> = ref('info')
 const alertTitle = ref('')
 const alertDescription = ref('')
@@ -31,28 +26,6 @@ const updateIcon = computed(() => ({
 
 const toaster = useToaster()
 const { handleSubmit } = useForm()
-const submit = handleSubmit(async () => {
-  if (isSaving.value) {
-    return
-  }
-  try {
-    isSaving.value = true
-    await demarcheStore.updateDemarcheConfigurations(demarcheConfigurations.value)
-    toaster.addMessage({
-      description: 'Les champs ou les annotations sélectionnés sont bien ajoutés dans la colonne du tableau.',
-      title: 'Mise à jour réussie !',
-      type: 'success',
-    })
-  } catch (e) {
-    toaster.addMessage({
-      description: 'Une erreur s’est produite pendant la mise à jour des données.',
-      title: 'Échec de mise à jour !',
-      type: 'error',
-    })
-  } finally {
-    isSaving.value = false
-  }
-})
 </script>
 
 <template>
@@ -91,54 +64,9 @@ const submit = handleSubmit(async () => {
       </div>
     </div>
 
-    <form
-      @submit="submit"
-    >
-      <hr>
-      <DemarcheConfiguration
-        :datas="demarcheConfigurations"
-      />
-      <div class="fixed  bottom-0  bg-white  w-full  top-shadow  text-right  fr-px-4w  left-0  z-1">
-        <DsfrButton
-          class="fr-my-2w"
-        >
-          Mettre à jour
-          <VIcon v-bind="updateIcon" />
-        </DsfrButton>
-      </div>
-    </form>
+    <hr>
+    <DemarcheConfiguration
+      :datas="demarcheConfigurations"
+    />
   </div>
 </template>
-
-<style scoped>
-.top-shadow {
-  filter: drop-shadow(0 1px 3px var(--shadow-color));
-}
-
-.w-full {
-  width: 100vw;
-}
-.fixed {
-  position: fixed;
-}
-
-.bottom-0 {
-  bottom: 0;
-}
-
-.bg-white {
-  background-color: var(--grey-1000-50);
-}
-
-.text-right {
-  text-align: right;
-}
-
-.left-0 {
-  left: 0em;
-}
-
-.fr-container {
-  margin-bottom: 6rem;
-}
-</style>

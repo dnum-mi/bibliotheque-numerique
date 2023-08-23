@@ -179,7 +179,7 @@ defineExpose({
     :side-bar="sideBar"
     :grid-options="gridOptions"
     :row-selection="rowSelection"
-    @selection-changed="onSelectionChanged"
+    @selection-changed="onSelectionChanged($event)"
     @grid-ready="onGridReady"
   />
 </template>

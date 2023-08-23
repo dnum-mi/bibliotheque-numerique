@@ -1,8 +1,8 @@
 import axios from 'axios'
 
-import { baseApiUrl, headers } from '@/api/api-client'
+import apiClient, { baseApiUrl, headers } from '@/api/api-client'
 import { ChampType, TypeDeChampDS } from '@/shared/types'
-import type { IDemarcheMappingColumn } from '../interfaces'
+import { getDemarcheByIdRoute } from '@/api/bn-api-routes'
 
 const DEMARCHE_BASE_URL = `${baseApiUrl}/demarches`
 const IDENTIFICATIONS_INSTRUCTION_TIME = ['FE']
@@ -11,23 +11,14 @@ export async function updateConfigurations (idDemarche: string, demarcheMappingC
   const chooseColumn = demarcheMappingColumn.filter(item => item.display)
   const updateAttribute = { mappingColumns: chooseColumn }
 
-  const response = await axios({
-    method: 'patch',
-    url: `${DEMARCHE_BASE_URL}/${idDemarche}`,
-    data: JSON.stringify(updateAttribute),
-    headers,
-  })
+  const response = await apiClient.patch(getDemarcheByIdRoute(idDemarche), updateAttribute)
   return response.data
 }
 
-export async function getConfigurations (idDemarche: string, champDescriptors: any[], annotationDescriptors: any[]): Promise<IDemarcheMappingColumn[]> {
+export async function getConfigurations (idDemarche: number, champDescriptors: any[], annotationDescriptors: any[]): Promise<IDemarcheMappingColumn[]> {
   let configurations: any[] | PromiseLike<IDemarcheMappingColumn[]> = []
 
-  const response = await axios({
-    method: 'get',
-    url: `${DEMARCHE_BASE_URL}/${idDemarche}`,
-    headers,
-  })
+  const response = await apiClient.getDemarche(idDemarche)
   const mappingColumns = response.data.mappingColumns
   if (Array.isArray(mappingColumns)) configurations = mappingColumns
 
@@ -75,7 +66,7 @@ function hashConfiguration (objet: any, typeData: string, parentLabel: string | 
   return demarcheMappingColumnBase(objet.id, labelSource, objet.type, typeData, objet.display)
 }
 
-function instructionTimeConfigurations (idDemarche: string) {
+function instructionTimeConfigurations (idDemarche: number) {
   return [
     demarcheMappingColumnBase(btoa(`TEMPSRESTANT${idDemarche}`), ['Temps restant'], '', ChampType.INSTRUCTION_TIME, false),
     demarcheMappingColumnBase(btoa(`ETATDELAI${idDemarche}`), ['État délai'], '', ChampType.INSTRUCTION_TIME, false),
