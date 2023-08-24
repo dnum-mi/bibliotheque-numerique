@@ -159,7 +159,7 @@ docker_build_front:
     DOCKERFILE: 'Dockerfile'
   stage: docker-build
   extends:
-    - .kaniko:build-push
+    - .kaniko:simple-build-push
 
 docker_build_rnf_front:
   variables:
@@ -168,7 +168,7 @@ docker_build_rnf_front:
     DOCKERFILE: 'Dockerfile'
   stage: docker-build
   extends:
-    - .kaniko:build-push
+    - .kaniko:simple-build-push
 
 docker_build_back:
   variables:
@@ -177,7 +177,7 @@ docker_build_back:
     DOCKERFILE: 'Dockerfile'
   stage: docker-build
   extends:
-    - .kaniko:build-push
+    - .kaniko:simple-build-push
 
 docker_build_rnf_back:
   variables:
@@ -186,4 +186,4 @@ docker_build_rnf_back:
     DOCKERFILE: 'Dockerfile'
   stage: docker-build
   extends:
-    - .kaniko:build-push
+    - .kaniko:simple-build-push
