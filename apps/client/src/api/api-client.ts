@@ -122,7 +122,8 @@ export const demarchesApiClient = {
   },
 
   getDemarcheConfiguration: async (demarcheId: number): Promise<MappingColumn[]> => {
-    return apiClientInstance.get(getDemarcheConfigurationRoute(demarcheId))
+    const response = await apiClientInstance.get(getDemarcheConfigurationRoute(demarcheId))
+    return response.data
   },
 
   searchDemarcheFields: async (demarcheId: number, dto: SearchDossierDto): Promise<FieldSearchOutputDto> => {

@@ -40,7 +40,7 @@ const routes = [
       {
         path: ':id/dossiers',
         name: 'DemarcheDossiers',
-        component: () => import('@/views/demarches/DemarcheDossiers.vue'),
+        component: () => import('@/views/demarches/demarche/Demarche.vue'),
         props: true,
         meta: {
           needsAuth: true,

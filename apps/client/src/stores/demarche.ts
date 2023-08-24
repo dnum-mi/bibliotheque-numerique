@@ -3,19 +3,27 @@ import { ref, type Ref } from 'vue'
 
 import apiClient from '@/api/api-client'
 
-import { toHeaderList, toRowData } from '@/shared/services/to-header-list'
-import { booleanToYesNo, stateToFr, dateToStringFr } from '@/utils'
 import type { IDemarche, MappingColumn, DossierSearchOutputDto, FieldSearchOutputDto, SearchDossierDto } from '@biblio-num/shared'
-import { ChampValueTypesKeys, ChampType, type HeaderDataTable } from '@/shared/types'
-import { fetchInstructionTimeByDossiers } from '@/shared/services/instruction-times.service'
-import { EInstructionTimeState, keyInstructionTime } from '@/shared/types'
 
 export const useDemarcheStore = defineStore('demarche', () => {
-  const demarches = ref<IDemarche[]>([])
+  const demarches: Ref<IDemarche[]> = ref<IDemarche[]>([])
   const currentDemarche: Ref<IDemarche> = ref({})
   const currentDemarcheDossiers: Ref<DossierSearchOutputDto> = ref({})
   const currentDemarcheFields: Ref<FieldSearchOutputDto> = ref({})
   const currentDemarcheConfiguration = ref<MappingColumn[]>([])
+  // hash will be easier to manipulate
+  const currentDemarcheConfigurationHash = ref<Record<string, MappingColumn>>({})
+
+  const _setConfiguration = (configuration: MappingColumn[]) => {
+    currentDemarcheConfiguration.value = configuration.sort((c1, c2) => {
+      const c1Label = !!c1.columnLabel || !!c1?.children?.find((c) => !!c.columnLabel)
+      const c2Label = !!c2.columnLabel || !!c2?.children?.find((c) => !!c.columnLabel)
+      return c1Label && !c2Label ? -1 : 1
+    })
+    currentDemarcheConfigurationHash.value = Object.fromEntries(configuration
+      .filter((c) => c.columnLabel) // filter out empty columnLabel
+      .map((c) => [c.id, c]))
+  }
 
   const updateOneMappingColumn = async (id: string, columnLabel: string): Promise<void> => {
     await apiClient.updateOneMappingColumn(currentDemarche.value.id, id, { columnLabel })
@@ -23,14 +31,14 @@ export const useDemarcheStore = defineStore('demarche', () => {
   }
 
   const getCurrentDemarcheConfigurations = async () => {
-    currentDemarcheConfiguration.value = await apiClient.getDemarcheConfiguration(currentDemarche.value.id)
+    _setConfiguration(await apiClient.getDemarcheConfiguration(currentDemarche.value.id))
   }
 
   const getDemarche = async (idDemarche: number) => {
     const result = await apiClient.getDemarche(idDemarche)
     if (result) {
       currentDemarche.value = result
-      currentDemarcheConfiguration.value = result.m
+      _setConfiguration(result.mappingColumns)
     }
   }
 
@@ -50,6 +58,7 @@ export const useDemarcheStore = defineStore('demarche', () => {
     demarches,
     currentDemarche,
     currentDemarcheConfiguration,
+    currentDemarcheConfigurationHash,
     currentDemarcheFields,
     currentDemarcheDossiers,
 

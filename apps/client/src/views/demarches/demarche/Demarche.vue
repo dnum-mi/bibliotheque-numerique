@@ -1,14 +1,13 @@
 <script lang="ts" setup>
 import { useRoute, useRouter } from 'vue-router'
-import { computed, onMounted, ref, watch, type Ref, watchEffect, ComputedRef } from 'vue'
+import { computed, onMounted, ref, watch, type Ref, watchEffect, type ComputedRef } from 'vue'
 import { useStorage } from '@vueuse/core'
 import type { IDemarche, DossierSearchOutputDto, FieldSearchOutputDto, MappingColumn } from '@biblio-num/shared'
 import { useUserStore, useDemarcheStore } from '@/stores'
-import GroupInstructeurs from '@/views/demarches/DemarcheGrpInstructeurs.vue'
-import DemarcheService from '@/views/demarches/DemarcheService.vue'
-import DemarcheInformations from '@/views/demarches/DemarcheInformations.vue'
-import DemarcheConfigurations from '@/views/demarches/DemarcheConfigurations.vue'
-import BiblioNumDataTableAgGrid from '@/components/BiblioNumDataTableAgGrid.vue'
+import GroupInstructeurs from '@/views/demarches/demarche/information/DemarcheGrpInstructeurs.vue'
+import DemarcheService from '@/views/demarches/demarche/information/DemarcheService.vue'
+import DemarcheInformations from '@/views/demarches/demarche/information/DemarcheInformations.vue'
+import DemarcheConfigurations from '@/views/demarches/demarche/configuration/DemarcheConfigurations.vue'
 import LayoutList from '@/components/LayoutList.vue'
 import type { DsfrTabItemProps } from '@gouvminint/vue-dsfr/types/components/DsfrTabs/DsfrTabItem.vue'
 
@@ -134,11 +133,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <LayoutList>
+  <LayoutList class="fr-pb-2w">
     <template #title>
-      <div class="bn-list-search bn-list-search-dossier">
-        <h6 class="bn-list-search-title-dossier fr-p-1w fr-m-0">
-          {{ demarche.title }} - N° {{ demarche.dsDataJson.number || '' }}
+      <div class="bn-list-search  bn-list-search-dossier">
+        <h6 class="bn-list-search-title-dossier  fr-p-1w  fr-m-0">
+          {{ demarche.title }} - N° {{ demarche.dsDataJson?.number || '' }}
         </h6>
       </div>
     </template>
@@ -243,9 +242,7 @@ onMounted(() => {
         tab-id="tab-2"
         :selected="selectedTabIndex === 2"
       >
-        <DemarcheConfigurations
-          class="fr-pt-3w"
-        />
+        <DemarcheConfigurations />
       </DsfrTabContent>
     </DsfrTabs>
   </LayoutList>
@@ -284,6 +281,6 @@ onMounted(() => {
 
 <style scoped>
 .fr-tabs__panel {
-  padding: 0;
+  padding: 2rem;
 }
 </style>

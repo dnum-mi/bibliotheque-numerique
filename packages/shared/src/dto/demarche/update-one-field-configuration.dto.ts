@@ -1,7 +1,8 @@
-import { IsDefined, IsString } from 'class-validator'
+import { IsOptional, IsString, ValidateIf } from 'class-validator'
 
 export class UpdateOneFieldConfigurationDto {
-  @IsDefined()
+  @ValidateIf(o => o.columnLabel !== undefined)
+  @IsOptional()
   @IsString()
-  columnLabel: string
+  columnLabel: string | null
 }

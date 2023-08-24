@@ -2,8 +2,8 @@ import { Body, Controller, Get, NotFoundException, Param, Patch, UseGuards } fro
 import { ApiTags } from '@nestjs/swagger'
 import { DemarcheService } from '../providers/services/demarche.service'
 import { PermissionsGuard, RequirePermissions } from '../../roles/providers/permissions.guard'
-import { LoggerService } from '../../../shared/modules/logger/logger.service'
-import { PermissionName } from '../../../shared/types/Permission.type'
+import { LoggerService } from '@/shared/modules/logger/logger.service'
+import { PermissionName } from '@/shared/types/Permission.type'
 import { DemarcheExistGuard } from '../providers/guards/demarche-exist.guard'
 import { Demarche } from '../objects/entities/demarche.entity'
 import { DemarcheParam } from '../providers/decorators/current-demarche.decorator'
@@ -36,7 +36,10 @@ export class DemarcheConfigurationController {
     @Body() dto: UpdateOneFieldConfigurationDto,
   ): Promise<boolean> {
     this.logger.verbose('updateOneFieldConfiguration')
-    const field = demarche.mappingColumns.find((f) => f.id === fieldId)
+    const field = demarche.mappingColumns
+      .map((m) => [m, ...m.children ?? []])
+      .flat(1)
+      .find((f) => f.id === fieldId)
     if (!field) {
       throw new NotFoundException('No field with this id')
     }
