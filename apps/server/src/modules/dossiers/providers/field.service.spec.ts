@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { LoggerService } from '../../../shared/modules/logger/logger.service'
+import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { loggerServiceMock } from '../../../../test/mock/logger-service.mock'
 import { FieldService } from './field.service'
 import { Dossier as TDossier } from '@dnum-mi/ds-api-client/dist/@types/types'
@@ -31,22 +31,24 @@ const fakeMappingColumnHash: MappingColumn[] = [
     source: FieldSource.champs,
     columnLabel: null,
     originalLabel: 'Champ répétable',
-  },
-  {
-    type: FieldType.string,
-    id: 'A2hhbXAtMTA2NQ==',
-    formatFunctionRef: FormatFunctionRef.country,
-    source: FieldSource.champs,
-    columnLabel: null,
-    originalLabel: "Pays d'origine du financement",
-  },
-  {
-    type: FieldType.number,
-    id: 'B2hhbXAtMTA2NQ==',
-    formatFunctionRef: null,
-    source: FieldSource.champs,
-    columnLabel: null,
-    originalLabel: 'Montant du financement',
+    children: [
+      {
+        type: FieldType.string,
+        id: 'A2hhbXAtMTA2NQ==',
+        formatFunctionRef: FormatFunctionRef.country,
+        source: FieldSource.champs,
+        columnLabel: null,
+        originalLabel: "Pays d'origine du financement",
+      },
+      {
+        type: FieldType.number,
+        id: 'B2hhbXAtMTA2NQ==',
+        formatFunctionRef: null,
+        source: FieldSource.champs,
+        columnLabel: null,
+        originalLabel: 'Montant du financement',
+      },
+    ],
   },
 ]
 

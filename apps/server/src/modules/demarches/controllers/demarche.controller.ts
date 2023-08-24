@@ -8,15 +8,14 @@ import {
   Param,
   ParseIntPipe,
   Post,
-  Query,
   Request,
   UseGuards,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { DemarcheService } from '../providers/services/demarche.service'
 import { PermissionsGuard, RequirePermissions } from '../../roles/providers/permissions.guard'
-import { PermissionName } from '../../../shared/types/Permission.type'
-import { LoggerService } from '../../../shared/modules/logger/logger.service'
+import { PermissionName } from '@/shared/types/Permission.type'
+import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { Demarche } from '../objects/entities/demarche.entity'
 import { Dossier } from '../../dossiers/objects/entities/dossier.entity'
 import { DemarcheSynchroniseService } from '../providers/services/demarche-synchronise.service'

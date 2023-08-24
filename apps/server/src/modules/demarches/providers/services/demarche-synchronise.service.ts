@@ -1,9 +1,9 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
 import { Repository } from 'typeorm'
-import { LoggerService } from '../../../../shared/modules/logger/logger.service'
+import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { ConfigService } from '@nestjs/config'
 import { Demarche } from '../../objects/entities/demarche.entity'
-import { BaseEntityService } from '../../../../shared/base-entity/base-entity.service'
+import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { InjectRepository } from '@nestjs/typeorm'
 import { OrganismeType, OrganismeTypeKeys, organismeTypeRegex } from '../../objects/enums/organisme-type.enum'
 import { DsApiClient } from '@dnum-mi/ds-api-client'
@@ -15,7 +15,7 @@ import {
   giveFormatFunctionRefFromDsChampType,
   giveTypeFromDsChampType,
   isRepetitionChampDescriptor,
-} from '../../../../shared/modules/ds-api/objects/ds-champ.utils'
+} from '@/shared/modules/ds-api/objects/ds-champ.utils'
 import { FieldSource, FieldSourceKeys, MappingColumn } from '@biblio-num/shared'
 
 @Injectable()
@@ -70,24 +70,17 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
       throw new Error('No revision found inside demarche.')
     }
     const __fromDescriptorsToMappingColumn = (cds: ChampDescriptor[], source: FieldSourceKeys): MappingColumn[] =>
-      cds
-        .map((cd: ChampDescriptor) => {
-          const mp = {
-            id: cd.id,
-            originalLabel: cd.label,
-            columnLabel: null,
-            formatFunctionRef: giveFormatFunctionRefFromDsChampType(cd.__typename, true),
-            source,
-            type: giveTypeFromDsChampType(cd.__typename, true),
-          }
-          return [
-            mp,
-            ...(isRepetitionChampDescriptor(cd)
-              ? __fromDescriptorsToMappingColumn(cd.champDescriptors as ChampDescriptor[], source)
-              : []),
-          ]
-        })
-        .flat(1)
+      cds.map((cd: ChampDescriptor) => ({
+        id: cd.id,
+        originalLabel: cd.label,
+        columnLabel: null,
+        formatFunctionRef: giveFormatFunctionRefFromDsChampType(cd.__typename, true),
+        source,
+        type: giveTypeFromDsChampType(cd.__typename, true),
+        ...isRepetitionChampDescriptor(cd)
+          ? { children: __fromDescriptorsToMappingColumn(cd.champDescriptors as ChampDescriptor[], source) }
+          : {},
+      }))
 
     return [
       ...__fromDescriptorsToMappingColumn(

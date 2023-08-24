@@ -1,19 +1,12 @@
-import { FieldSourceKeys, FieldTypeKeys, FormatFunctionRefKeys } from '../../enums'
-
-interface IMappingColumn {
-  id: string
-  columnLabel?: string
-  originalLabel: string
-  type: FieldTypeKeys
-  formatFunctionRef?: FormatFunctionRefKeys
-  source: FieldSourceKeys
-}
-export class MappingColumn implements IMappingColumn {
+class MappingColumnWithoutChildren {
   id: string
   columnLabel?: string
   originalLabel: string
   type: string
   formatFunctionRef?: string | undefined
   source: string
-  children?: IMappingColumn[]
+}
+
+export class MappingColumn extends MappingColumnWithoutChildren {
+  children?: MappingColumnWithoutChildren[]
 }
