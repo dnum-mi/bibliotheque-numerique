@@ -9,7 +9,11 @@ import { ConfigService } from '@nestjs/config'
       provide: DsApiClient,
       inject: [ConfigService],
       useFactory: (configService: ConfigService): DsApiClient => {
-        return new DsApiClient(configService.get('ds').apiUrl, configService.get('ds').apiToken)
+        return new DsApiClient(
+          configService.get('ds').apiUrl,
+          configService.get('ds').apiToken,
+          process.env.http_proxy || '',
+        )
       },
     },
   ],
