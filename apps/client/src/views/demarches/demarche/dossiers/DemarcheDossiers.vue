@@ -12,7 +12,8 @@ import 'ag-grid-community/styles/ag-theme-alpine.css'
 import { localeTextAgGrid } from '@/components/ag-grid/agGridOptions'
 import { ColDef } from 'ag-grid-community/dist/lib/entities/colDef'
 import AgGridMultiValueCell from '@/components/ag-grid/AgGridMultiValueCell.vue'
-import { GridApi, GridReadyEvent } from 'ag-grid-community'
+import { GridApi, GridOptions, GridReadyEvent } from 'ag-grid-community'
+import DemarcheDossiersPagination, { IPagination } from '@/views/demarches/demarche/dossiers/DemarcheDossiersPagination.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -22,10 +23,10 @@ const demarche = computed<IDemarche>(() => demarcheStore.currentDemarche)
 const demarcheConfiguration = computed<MappingColumnWithoutChildren[]>(() => demarcheStore.currentDemarchePlaneConfiguration)
 const groupByDossier: Ref<boolean> = ref(false)
 const result: Ref<DossierSearchOutputDto | FieldSearchOutputDto> = computed(() => demarcheStore.currentDemarcheDossiers)
-const gridOptions = {
-  pagination: true,
+const gridOptions: GridOptions = {
   domLayout: 'autoHeight',
   localeText: localeTextAgGrid,
+  pagination: false,
 }
 const defaultColDef = {
   sortable: true,
@@ -33,7 +34,7 @@ const defaultColDef = {
   resizable: true,
 }
 const dossierSearchDto: ComputedRef<SearchDossierDto> = computed(() => ({
-  page: 1,
+  page: Number(route.query.page),
   perPage: 5,
   // sorts: [],
   // filters: [],
@@ -74,11 +75,18 @@ const refresh = async () => {
   gridApi.value.showLoadingOverlay()
   await demarcheStore.searchCurrentDemarcheDossiers(groupByDossier.value, dossierSearchDto.value)
   updateColumnDefs()
+  // gridApi.value.setRowCount(result.value.total, false)
   gridApi.value.hideOverlay()
 }
 
 const onGridReady = (event: GridReadyEvent) => {
   gridApi.value = event.api
+}
+
+const paginationUpdated = (pagination: IPagination) => {
+  dossierSearchDto.value.page = pagination.page
+  dossierSearchDto.value.perPage = pagination.perPage
+  refresh()
 }
 
 watch(demarche, refresh)
@@ -102,6 +110,12 @@ watch(demarche, refresh)
         :row-data="result.data"
         :grid-options="gridOptions"
         @grid-ready="onGridReady($event)"
+      />
+    </div>
+    <div class="flex justify-end fr-mt-2v">
+      <DemarcheDossiersPagination
+        :total="result.total"
+        @pagination-updated="paginationUpdated($event)"
       />
     </div>
   </div>
