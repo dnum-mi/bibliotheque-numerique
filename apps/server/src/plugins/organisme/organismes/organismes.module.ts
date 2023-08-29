@@ -15,5 +15,6 @@ import { OrganismesData } from './organisme_data.entity'
   imports: [ConnectorModule, ParseToOrganismesModule, TypeOrmModule.forFeature([Organisme, OrganismesData])],
   controllers: [OrganismesController],
   providers: [OrganismesService, OrganismesDatasService],
+  exports: [OrganismesService],
 })
 export class OrganismesModule {}

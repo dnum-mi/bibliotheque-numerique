@@ -14,15 +14,4 @@ export class DossierService extends BaseEntityService<Dossier> {
     super(repo, logger)
     this.logger.setContext(this.constructor.name)
   }
-
-  // TODO: remove and use parent method
-  async findOne (id: number): Promise<Dossier> {
-    this.logger.verbose('findOne')
-    return await this.findOneById(id)
-  }
-
-  // TODO: remove and use parent method
-  async findOneWithDetail (id: number): Promise<Dossier> {
-    return await this.findOneById(id, { demarche: true })
-  }
 }

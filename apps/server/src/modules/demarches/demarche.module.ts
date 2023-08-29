@@ -1,14 +1,16 @@
 import { forwardRef, Module } from '@nestjs/common'
 import { DemarcheController } from './controllers/demarche.controller'
-import { DemarcheService } from './providers/demarche.service'
+import { DemarcheService } from './providers/services/demarche.service'
 import { DossierModule } from '../dossiers/dossier.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { Demarche } from './objects/entities/demarche.entity'
-import { DemarcheSynchroniseService } from './providers/demarche-synchronise.service'
+import { DemarcheSynchroniseService } from './providers/services/demarche-synchronise.service'
+import { DemarcheConfigurationController } from './controllers/demarche-configuration.controller'
+import { DemarcheDossierController } from './controllers/demarche-dossier.controller'
 
 @Module({
   imports: [forwardRef(() => DossierModule), TypeOrmModule.forFeature([Demarche])],
-  controllers: [DemarcheController],
+  controllers: [DemarcheController, DemarcheDossierController, DemarcheConfigurationController],
   providers: [DemarcheService, DemarcheSynchroniseService],
   exports: [DemarcheService, DemarcheSynchroniseService],
 })

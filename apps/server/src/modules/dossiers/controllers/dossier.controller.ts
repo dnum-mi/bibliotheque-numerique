@@ -8,18 +8,9 @@ import { Dossier } from '../objects/entities/dossier.entity'
 export class DossierController {
   constructor (private readonly dossiersService: DossierService) {}
 
-  @Get()
-  async findAll (): Promise<Dossier[]> {
-    const dossiers = await this.dossiersService.findAll()
-    if (dossiers.length === 0) {
-      throw new NotFoundException('No dossier found')
-    }
-    return dossiers
-  }
-
   @Get(':id')
   async findOne (@Param('id') id: string): Promise<Dossier> {
-    const dossier = await this.dossiersService.findOne(+id)
+    const dossier = await this.dossiersService.findOneById(+id)
     if (!dossier) {
       throw new NotFoundException(`Dossier id: ${id} not found`)
     }
@@ -28,7 +19,7 @@ export class DossierController {
 
   @Get(':id/detail')
   async findOneWithDetail (@Param('id') id: string): Promise<Dossier> {
-    const dossier = await this.dossiersService.findOneWithDetail(+id)
+    const dossier = await this.dossiersService.findOneById(+id, { demarche: true })
     if (!dossier) {
       throw new NotFoundException(`Dossier id: ${id} not found`)
     }

@@ -1,0 +1,241 @@
+import { INestApplication } from '@nestjs/common'
+import { TestingModuleFactory } from '../common/testing-module.factory'
+import { dataSource } from '../data-source-e2e.typeorm'
+import * as request from 'supertest'
+import { getAdminCookie } from '../common/get-admin-cookie'
+
+describe('Dossier listing', () => {
+  let app: INestApplication
+  let adminCookie: string
+
+  beforeAll(async () => {
+    const testingModule = new TestingModuleFactory()
+    await testingModule.init()
+    app = testingModule.app
+    adminCookie = await getAdminCookie(app)
+  })
+
+  afterAll(async () => {
+    await app.close()
+    await dataSource.destroy()
+  })
+
+  it('shoud return 403 if not connected', () => {
+    return request(app.getHttpServer())
+      .post('/demarches/1/dossiers-search')
+      .send({
+        idDs: 42,
+      })
+      .expect(403)
+  })
+
+  it('shoud return 404 if demarche doesnt exist', () => {
+    return request(app.getHttpServer()).get('/demarches/13847/dossiers-search').set('Cookie', [adminCookie]).expect(404)
+  })
+
+  it('Should return 400 if query is empty', () => {
+    return request(app.getHttpServer()).post('/demarches/1/dossiers-search').set('Cookie', [adminCookie]).expect(400)
+  })
+
+  it('Should return 400 if page is incorrect', () => {
+    return request(app.getHttpServer())
+      .post('/demarches/1/dossiers-search')
+      .send({
+        page: -1,
+        columns: ['I01', 'I02', 'I03'],
+      })
+      .set('Cookie', [adminCookie])
+      .expect(400)
+  })
+
+  it('Should return 400 if perPage is incorrect', () => {
+    return request(app.getHttpServer())
+      .post('/demarches/1/dossiers-search')
+      .send({
+        columns: ['I01', 'I02', 'I03'],
+        perPage: 500,
+      })
+      .set('Cookie', [adminCookie])
+      .expect(400)
+  })
+
+  it('Should return 400 if sorts is incorrect', () => {
+    return request(app.getHttpServer())
+      .post('/demarches/1/dossiers-search')
+      .send({
+        columns: ['I01', 'I02', 'I03'],
+        sorts: [{ toto: 'I03', order: 'ASC' }],
+      })
+      .set('Cookie', [adminCookie])
+      .expect(400)
+  })
+
+  it('Should Paginate correctly with default options', () => {
+    return request(app.getHttpServer())
+      .post('/demarches/1/dossiers-search')
+      .send({
+        columns: ['I01', 'I02', 'I03', 'I09'],
+      })
+      .set('Cookie', [adminCookie])
+      .expect(200)
+      .expect(({ body }) => {
+        console.log(body)
+        expect(body.total).toEqual(10)
+        expect(body.data.length).toEqual(5)
+        expect(body.data).toEqual([
+          {
+            dossier_id: 1,
+            I01: 'W00000001',
+            I02: '2023-05-31T22:00:00.000Z',
+            I03: 'Avenger',
+            I09: ['Qatar', 'Turquie'],
+          },
+          {
+            dossier_id: 2,
+            I01: 'W00000002',
+            I02: '2023-06-02T22:00:00.000Z',
+            I03: 'Interstellar',
+            I09: null,
+          },
+          {
+            dossier_id: 3,
+            I01: 'W00000003',
+            I02: '2023-06-03T22:00:00.000Z',
+            I03: 'Dune',
+            I09: ['USA', 'Écosse'],
+          },
+          {
+            dossier_id: 4,
+            I01: 'W00000004',
+            I02: '2023-06-01T22:00:00.000Z',
+            I03: 'Memento',
+            I09: null,
+          },
+          {
+            dossier_id: 5,
+            I01: 'W00000005',
+            I02: '2023-05-31T22:00:00.000Z',
+            I03: 'Captain Fantastic',
+            I09: ['USA', 'Qatar', 'France'],
+          },
+        ])
+      })
+  })
+
+  it('Should Paginate correctly with pagination', () => {
+    return request(app.getHttpServer())
+      .post('/demarches/1/dossiers-search')
+      .send({
+        page: 2,
+        perPage: 5,
+        columns: ['I01', 'I02', 'I03', 'I08', 'I09'],
+      })
+      .set('Cookie', [adminCookie])
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body.total).toEqual(10)
+        expect(body.data.length).toEqual(5)
+        expect(body.data).toEqual([
+          {
+            dossier_id: 6,
+            I01: 'W00000006',
+            I02: '2023-06-01T22:00:00.000Z',
+            I03: "Ender's game",
+            I08: 8800,
+            I09: 'Turquie',
+          },
+          {
+            dossier_id: 7,
+            I01: 'W00000007',
+            I02: '2023-06-03T22:00:00.000Z',
+            I03: 'Barbie',
+            I08: [6400, 2500],
+            I09: ['Qatar', 'USA'],
+          },
+          {
+            dossier_id: 8,
+            I01: 'W00000002',
+            I02: '2023-06-02T22:00:00.000Z',
+            I03: "L'homme invisible",
+            I08: null,
+            I09: null,
+          },
+          {
+            dossier_id: 9,
+            I01: 'W00000009',
+            I02: '2023-06-12T22:00:00.000Z',
+            I03: 'Telma & Louise',
+            I08: null,
+            I09: null,
+          },
+          {
+            dossier_id: 10,
+            I01: 'W00000010',
+            I02: '2023-06-05T22:00:00.000Z',
+            I03: 'Premier Contact',
+            I08: [17400, 8600, 19200, 15600, 23000],
+            I09: ['USA', 'Écosse', 'Turquie', 'France', 'Qatar'],
+          },
+        ])
+      })
+  })
+
+  it('Should Paginate correctly with sort (by title)', () => {
+    return request(app.getHttpServer())
+      .post('/demarches/1/dossiers-search')
+      .send({
+        page: 2,
+        perPage: 5,
+        columns: ['I01', 'I02', 'I03', 'I08', 'I09'],
+        sorts: [{ key: 'I03', order: 'ASC' }],
+      })
+      .set('Cookie', [adminCookie])
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body.total).toEqual(10)
+        expect(body.data.length).toEqual(5)
+        expect(body.data).toEqual([
+          {
+            dossier_id: 2,
+            I01: 'W00000002',
+            I02: '2023-06-02T22:00:00.000Z',
+            I03: 'Interstellar',
+            I08: null,
+            I09: null,
+          },
+          {
+            dossier_id: 8,
+            I01: 'W00000002',
+            I02: '2023-06-02T22:00:00.000Z',
+            I03: "L'homme invisible",
+            I08: null,
+            I09: null,
+          },
+          {
+            dossier_id: 4,
+            I01: 'W00000004',
+            I02: '2023-06-01T22:00:00.000Z',
+            I03: 'Memento',
+            I08: null,
+            I09: null,
+          },
+          {
+            dossier_id: 10,
+            I01: 'W00000010',
+            I02: '2023-06-05T22:00:00.000Z',
+            I03: 'Premier Contact',
+            I08: [17400, 8600, 19200, 15600, 23000],
+            I09: ['USA', 'Écosse', 'Turquie', 'France', 'Qatar'],
+          },
+          {
+            dossier_id: 9,
+            I01: 'W00000009',
+            I02: '2023-06-12T22:00:00.000Z',
+            I03: 'Telma & Louise',
+            I08: null,
+            I09: null,
+          },
+        ])
+      })
+  })
+})

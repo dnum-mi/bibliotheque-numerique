@@ -55,12 +55,13 @@ export abstract class BaseEntityService<T extends BaseEntity = BaseEntity> {
     return result
   }
 
-  async updateOrThrow (id: number, data: QueryDeepPartialEntity<T>): Promise<void> {
+  async updateOrThrow (id: number, data: QueryDeepPartialEntity<T>): Promise<boolean> {
     this.logger.verbose('updateOrThrow')
     const result = await this.repo.update(id, data)
     if (result.affected === 0) {
       throw new NotFoundException(`${this.repo.metadata.name} id: ${id} not found`)
     }
+    return true
   }
 
   async remove (id: number): Promise<DeleteResult> {

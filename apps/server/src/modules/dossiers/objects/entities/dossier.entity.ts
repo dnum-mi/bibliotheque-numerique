@@ -10,26 +10,26 @@ import { Dossier as TDossier } from '@dnum-mi/ds-api-client/dist/@types/generate
 @Unique('UQ_DOSSIER', ['sourceId', 'demarche'])
 export class Dossier extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
-    id: number
+  id: number
 
   @Column({ nullable: false })
-    demarcheId: number
+  demarcheId: number
 
   @ManyToOne(() => Demarche, (demarche) => demarche.dossiers)
   @JoinColumn()
-    demarche?: Demarche
+  demarche?: Demarche
 
   @OneToMany(() => Field, (field) => field.dossier, { cascade: true })
   @JoinColumn()
-    fields?: Field[]
+  fields?: Field[]
 
   @ApiProperty({ enum: DossierState })
   @Column({ type: 'varchar' })
-    state: DossierState
+  state: DossierState
 
   @Column({ nullable: false })
-    sourceId: string
+  sourceId: string
 
   @Column({ type: 'jsonb' })
-    dsDataJson: Partial<TDossier>
+  dsDataJson: Partial<TDossier>
 }

@@ -15,7 +15,7 @@ module.exports = {
     node: true,
     jest: true,
   },
-  ignorePatterns: ['.eslintrc.js'],
+  ignorePatterns: ['.eslintrc.js', 'database/migrations/*.ts'],
   rules: {
     '@typescript-eslint/ban-ts-comment': ['error', { 'ts-ignore': 'allow-with-description' }],
     '@typescript-eslint/strict-boolean-expressions': 'off',
@@ -30,6 +30,19 @@ module.exports = {
     'max-len': ['error', { code: 120 }],
     'no-irregular-whitespace': 'warn',
     'comma-dangle': ['error', 'always-multiline'],
+    indent: [
+      'error',
+      2,
+      {
+        ignoredNodes: [
+          'PropertyDefinition',
+          'FunctionExpression > .params[decorators.length > 0]',
+          'FunctionExpression > .params > :matches(Decorator, :not(:first-child))',
+          'ClassBody.body > PropertyDefinition[decorators.length > 0] > .key',
+        ],
+      },
+    ],
+    'space-before-function-paren': 0,
   },
   overrides: [
     {
@@ -58,5 +71,6 @@ module.exports = {
         'max-len': ['warn', { code: 140 }],
       },
     },
+
   ],
 }

@@ -23,10 +23,10 @@ const connectorTest = (): Partial<Connector> => ({
   name: faker.internet.userName(),
   method: faker.helpers.arrayElement(["GET", "POST"]),
   url: faker.internet.url(),
-  params: faker.datatype.array(2).map((a) => a.toString()),
+  params: ["toto", "titi"],
   query: {
-    query1: faker.datatype.string(5),
-    query2: faker.datatype.string(5),
+    query1: faker.string.sample(5),
+    query2: faker.string.sample(5),
   },
   typeAuth: AuthTypes.BEARER_TOKEN,
   token: faker.internet.password(),

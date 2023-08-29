@@ -63,7 +63,7 @@ export default {
     const extPath = id ? `/${id}` : ''
     const config = {
       method: 'get',
-      url: `${baseApiUrl}/dossiers${extPath}`,
+      url: `${baseApiUrl}/deprecated/dossiers${extPath}`,
       headers,
     }
     const response = await axios(config)

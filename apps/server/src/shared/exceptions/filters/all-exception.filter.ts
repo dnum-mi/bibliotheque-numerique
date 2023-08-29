@@ -20,22 +20,23 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const data = {}
 
     switch (true) {
-      case !exception:
-        this.logger.error(new Error('AllException filter caught something that is not defined'))
-        break
-      case exception instanceof DsApiError:
-        this.logger.warn((exception as DsApiError).message)
-        httpStatus = 424
-        message = (exception as DsApiError).message
-        this.logger.debug((exception as DsApiError).graphQlResponse as string)
-        break
-      case exception instanceof HttpException && httpStatus !== HttpStatus.INTERNAL_SERVER_ERROR:
-        message = (exception as HttpException).message
-        this.logger.warn(exception as HttpException)
-        break
-      default:
-        message = 'Internal server error'
-        this.logger.error(exception as Error)
+    case !exception:
+      this.logger.error(new Error('AllException filter caught something that is not defined'))
+      break
+    case exception instanceof DsApiError:
+      this.logger.warn((exception as DsApiError).message)
+      httpStatus = 424
+      message = (exception as DsApiError).message
+      this.logger.debug((exception as DsApiError).graphQlResponse as string)
+      break
+    case exception instanceof HttpException && httpStatus !== HttpStatus.INTERNAL_SERVER_ERROR:
+      message = (exception as HttpException).message
+      this.logger.warn(exception as HttpException)
+      break
+    default:
+      message = 'Internal server error'
+      this.logger.error((exception as Error).message)
+      this.logger.debug((exception as Error).stack)
     }
 
     const responseBody = {
