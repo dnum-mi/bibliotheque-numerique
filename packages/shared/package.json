@@ -25,7 +25,7 @@
     "build": "run-s clean:dist build:types",
     "build:types": "tsc",
     "clean:dist": "rimraf dist types",
-    "dev": "nodemon --watch src --exec 'pnpm run build'",
+    "dev": "nodemon --watch src --exec 'pnpm run build:types'",
     "format": "eslint src/ --ext .ts --ignore-path ../../.gitignore --fix",
     "lint": "eslint src/ --ext .ts --ignore-path ../../.gitignore",
     "lint:staged": "eslint --ext .ts --ignore-path ../../.gitignore",

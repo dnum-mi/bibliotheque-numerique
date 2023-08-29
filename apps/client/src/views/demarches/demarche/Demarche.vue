@@ -1,15 +1,15 @@
 <script lang="ts" setup>
 import { useRoute, useRouter } from 'vue-router'
-import { computed, onMounted, ref, watch, type Ref, watchEffect, type ComputedRef } from 'vue'
-import { useStorage } from '@vueuse/core'
-import type { IDemarche, DossierSearchOutputDto, FieldSearchOutputDto, MappingColumn } from '@biblio-num/shared'
-import { useUserStore, useDemarcheStore } from '@/stores'
+import { computed, type ComputedRef, onMounted, ref } from 'vue'
+import type { IDemarche } from '@biblio-num/shared'
+import { useDemarcheStore, useUserStore } from '@/stores'
 import GroupInstructeurs from '@/views/demarches/demarche/information/DemarcheGrpInstructeurs.vue'
 import DemarcheService from '@/views/demarches/demarche/information/DemarcheService.vue'
 import DemarcheInformations from '@/views/demarches/demarche/information/DemarcheInformations.vue'
 import DemarcheConfigurations from '@/views/demarches/demarche/configuration/DemarcheConfigurations.vue'
 import LayoutList from '@/components/LayoutList.vue'
 import type { DsfrTabItemProps } from '@gouvminint/vue-dsfr/types/components/DsfrTabs/DsfrTabItem.vue'
+import DemarcheDossiers from '@/views/demarches/demarche/dossiers/DemarcheDossiers.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -17,81 +17,7 @@ const demarcheStore = useDemarcheStore()
 const userStore = useUserStore()
 
 const demarche = computed<IDemarche>(() => demarcheStore.currentDemarche || {})
-const demarcheConfiguration = computed<MappingColumn[]>(() => demarcheStore.currentDemarcheConfiguration)
-const demarcheDossiers = computed<DossierSearchOutputDto>(() => demarcheStore.currentDemarcheDossiers || [])
-const demarcheFields = computed<FieldSearchOutputDto>(() => demarcheStore.currentDemarcheFields || [])
-
-const props = defineProps<{id: string}>()
-
-/* #region Custom filter management */
-const filterLabelGroups = {
-  create: {
-    title: 'Enregistrement du filtre actuel',
-    button: 'Enregistrer',
-    input: 'Nommer le filtre actuel',
-    icon: 'ri-save-line',
-    submitFn (filters) {
-      userFilters.value = { ...userFilters.value, [currentFilterName.value]: filters }
-      userFilter.value = currentFilterName.value
-    },
-  },
-  update: {
-    title: 'Modification du filtre actuel',
-    button: 'Enregistrer',
-    input: 'Renommer le filtre actuel',
-    icon: 'ri-edit-line',
-    submitFn () {
-      userFilters.value = Object.fromEntries(
-        Object.entries(userFilters.value)
-          .map(([key, value]) => ([key === userFilter.value ? currentFilterName.value : key, value])),
-      )
-      userFilter.value = currentFilterName.value
-    },
-  },
-  delete: {
-    title: 'Supprimer le filtre actuel',
-    button: 'Supprimer',
-    input: 'Supprimer le filtre actuel',
-    icon: 'ri-delete-bin-line',
-    submitFn () {
-      userFilters.value = Object.fromEntries(Object.entries(userFilters.value).filter(([key]) => (key !== userFilter.value)))
-      userFilter.value = undefined
-    },
-  },
-} as const
-type FilterModalType = keyof typeof filterLabelGroups
-const modalOrigin = ref()
-const userFilter = ref()
-const currentFilterName = ref()
-const filterModalType: Ref<FilterModalType> = ref('create')
-const filterModalOpen = ref(false)
-const closeFilterModal = () => { filterModalOpen.value = false }
-const userFilters = useStorage('dossiers-filters', {})
-const bnDemarchesGrid = ref()
-
-const filterLabelGroup = computed(() => filterLabelGroups[filterModalType.value])
-
-const openFilterModal = (modalType) => {
-  filterModalOpen.value = true
-  filterModalType.value = modalType
-  currentFilterName.value = modalType === 'create' ? '' : userFilter.value
-}
-
-const saveCurrentFilter = () => {
-  const filters = bnDemarchesGrid.value.getCurrentFilter()
-  filterLabelGroup.value.submitFn(filters)
-  filterModalOpen.value = false
-}
-
-const resetAgGridFilters = () => {
-  bnDemarchesGrid.value.resetAgGridFilters()
-  userFilter.value = undefined
-}
-
-watchEffect(() => {
-  bnDemarchesGrid.value?.setFilters(userFilters.value[userFilter.value])
-})
-/* #endregion */
+const props = defineProps<{ id: string }>()
 
 onMounted(async () => {
   if (props.id) {
@@ -99,13 +25,9 @@ onMounted(async () => {
   }
 })
 
-const onSelect = ($event) => {
-  router.push({ name: 'Dossiers', params: { id: $event[0].idBiblioNum } })
-}
-
 /* #region Tab management */
 
-const tabTitles: ComputedRef<(DsfrTabItemProps & { title: string;})[]> = computed(() => ([
+const tabTitles: ComputedRef<(DsfrTabItemProps & { title: string })[]> = computed(() => [
   {
     panelId: 'pan-1',
     tabId: 'tab-1',
@@ -117,16 +39,18 @@ const tabTitles: ComputedRef<(DsfrTabItemProps & { title: string;})[]> = compute
     title: 'Information',
   },
   ...(userStore.canManageRoles ? [{ title: 'Configuration', panelId: 'pan-3', tabId: 'tab-3' }] : []),
-]))
+])
 const selectedTabIndex = ref(0)
+
 function selectTab (idx: number) {
   selectedTabIndex.value = idx
   router.push({ ...route, hash: '#' + tabTitles.value[idx].title })
 }
+
 onMounted(() => {
   // The optional chaining operator is here for component testing, where route is nullish
   if (route?.hash.slice(1).length) {
-    selectTab(tabTitles.value.findIndex(tabTitle => route.hash.slice(1) === tabTitle.title) || 0)
+    selectTab(tabTitles.value.findIndex((tabTitle) => route.hash.slice(1) === tabTitle.title) || 0)
   }
 })
 /* #endregion */
@@ -135,9 +59,9 @@ onMounted(() => {
 <template>
   <LayoutList class="fr-pb-2w">
     <template #title>
-      <div class="bn-list-search  bn-list-search-dossier">
-        <h6 class="bn-list-search-title-dossier  fr-p-1w  fr-m-0">
-          {{ demarche.title }} - N° {{ demarche.dsDataJson?.number || '' }}
+      <div class="bn-list-search bn-list-search-dossier">
+        <h6 class="bn-list-search-title-dossier fr-p-1w fr-m-0">
+          {{ demarche.title }} - N° {{ demarche.dsDataJson?.number || "" }}
         </h6>
       </div>
     </template>
@@ -150,92 +74,27 @@ onMounted(() => {
       class="fr-pt-5w"
       @select-tab="selectTab"
     >
+      <!-- Dossiers -->
       <DsfrTabContent
         panel-id="tab-content-0"
         tab-id="tab-0"
         :selected="selectedTabIndex === 0"
       >
-        <h2>
-          To refacto
-        </h2>
-        <!-- <div :style="{paddingBottom: '2rem'}">
-          <div
-            class="flex  justify-end  h-24"
-          >
-            <DsfrSelect
-              v-if="Object.keys(userFilters).length"
-              v-model="userFilter"
-              label="Filtres personnalisés"
-              default-unselected-text="Sélectionner un filtre"
-              :options="Object.entries(userFilters).map(([value]) => ({value, text: value}))"
-            />
-
-            <div class="fr-mx-2v  fr-mt-2v  flex  justify-center  items-center  gap-2">
-              <DsfrButton
-                ref="modalOrigin"
-                :disabled="!userFilter"
-                type="submit"
-                @click="resetAgGridFilters()"
-              >
-                <VIcon name="ri-filter-off-line" />
-              </DsfrButton>
-              <DsfrButton
-                ref="modalOrigin"
-                :disabled="!userFilter"
-                type="submit"
-                @click="openFilterModal('update')"
-              >
-                <VIcon name="ri-edit-line" />
-              </DsfrButton>
-              <DsfrButton
-                ref="modalOrigin"
-                :disabled="!userFilter"
-                type="submit"
-                @click="openFilterModal('delete')"
-              >
-                <VIcon name="ri-delete-bin-line" />
-              </DsfrButton>
-            </div>
-            <div class="fr-mx-2v  fr-mt-2v  flex  justify-center  items-center">
-              <DsfrButton
-                ref="modalOrigin"
-                type="submit"
-                @click="openFilterModal('create')"
-              >
-                Enregistrer le filtre actuel
-                <VIcon name="ri-save-line" />
-              </DsfrButton>
-            </div>
-          </div>
-          <BiblioNumDataTableAgGrid
-            ref="bnDemarchesGrid"
-            :headers="headerDossiers"
-            :row-data="rowDatas"
-            :floating-filter="true"
-            row-selection="single"
-            :pagination="true"
-            :pagination-page-size="20"
-            @selection-changed="onSelect($event)"
-          />
-        </div> -->
+        <DemarcheDossiers />
       </DsfrTabContent>
 
+      <!-- Informations -->
       <DsfrTabContent
         panel-id="tab-content-1"
         tab-id="tab-1"
         :selected="selectedTabIndex === 1"
       >
-        <DemarcheInformations
-          class="fr-pt-3w"
-        />
-        <DemarcheService
-          class="fr-pt-5w"
-        />
-        <GroupInstructeurs
-          class="fr-pt-5w"
-        />
+        <DemarcheInformations class="fr-pt-3w" />
+        <DemarcheService class="fr-pt-5w" />
+        <GroupInstructeurs class="fr-pt-5w" />
       </DsfrTabContent>
 
+      <!-- Configurations -->
       <DsfrTabContent
         v-if="userStore.canManageRoles"
         panel-id="tab-content-2"
@@ -246,37 +105,6 @@ onMounted(() => {
       </DsfrTabContent>
     </DsfrTabs>
   </LayoutList>
-  <!-- <DsfrModal
-    :opened="filterModalOpen"
-    :title="filterLabelGroup.title"
-    :origin="$refs.modalOrigin"
-    @close="closeFilterModal"
-  >
-    <form
-      class="flex  items-end  gap-4"
-      @submit.prevent="saveCurrentFilter()"
-    >
-      <div class="flex-basis-[34%]  flex-grow">
-        <DsfrInput
-          v-model="currentFilterName"
-          type="text"
-          :label="filterLabelGroup.input"
-          label-visible
-          placeholder="> 15 300€"
-          :readonly="filterModalType === 'delete'"
-        />
-      </div>
-      <div class="flex  items-end">
-        <DsfrButton
-          type="submit"
-          :label="filterLabelGroup.button"
-          :icon="{ name: filterLabelGroup.icon }"
-          icon-right
-          :disabled="!currentFilterName"
-        />
-      </div>
-    </form>
-  </DsfrModal> -->
 </template>
 
 <style scoped>

@@ -127,7 +127,7 @@ export const demarchesApiClient = {
   },
 
   searchDemarcheFields: async (demarcheId: number, dto: SearchDossierDto): Promise<FieldSearchOutputDto> => {
-    const response = await apiClientInstance.post(`/demarches/${demarcheId}/search-fields`, dto)
+    const response = await apiClientInstance.post(`/demarches/${demarcheId}/fields-search`, dto)
     return response.data
   },
 }

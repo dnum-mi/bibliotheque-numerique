@@ -1,16 +1,27 @@
 import { defineStore } from 'pinia'
-import { ref, type Ref } from 'vue'
+import { ref, computed, type Ref, type ComputedRef } from 'vue'
 
 import apiClient from '@/api/api-client'
 
-import type { IDemarche, MappingColumn, DossierSearchOutputDto, FieldSearchOutputDto, SearchDossierDto } from '@biblio-num/shared'
+import type {
+  IDemarche,
+  MappingColumn,
+  MappingColumnWithoutChildren,
+  DossierSearchOutputDto,
+  FieldSearchOutputDto,
+  SearchDossierDto,
+} from '@biblio-num/shared'
 
 export const useDemarcheStore = defineStore('demarche', () => {
   const demarches: Ref<IDemarche[]> = ref<IDemarche[]>([])
   const currentDemarche: Ref<IDemarche> = ref({})
   const currentDemarcheDossiers: Ref<DossierSearchOutputDto> = ref({})
   const currentDemarcheFields: Ref<FieldSearchOutputDto> = ref({})
-  const currentDemarcheConfiguration = ref<MappingColumn[]>([])
+  const currentDemarcheConfiguration = ref<MappingColumnWithoutChildren[]>([])
+  const currentDemarchePlaneConfiguration: ComputedRef<MappingColumnWithoutChildren[]> = computed<MappingColumnWithoutChildren[]>(() => currentDemarcheConfiguration.value
+    .map((c: MappingColumn) => [c, ...c.children || []])
+    .flat(1)
+    .filter(c => !!c.columnLabel))
   // hash will be easier to manipulate
   const currentDemarcheConfigurationHash = ref<Record<string, MappingColumn>>({})
 
@@ -51,13 +62,14 @@ export const useDemarcheStore = defineStore('demarche', () => {
   }
 
   const searchCurrentDemarcheFields = async (dto: SearchDossierDto) => {
-    currentDemarcheDossiers.value = await apiClient.searchDemarcheFields(currentDemarche.value.id, dto)
+    currentDemarcheFields.value = await apiClient.searchDemarcheFields(currentDemarche.value.id, dto)
   }
 
   return {
     demarches,
     currentDemarche,
     currentDemarcheConfiguration,
+    currentDemarchePlaneConfiguration,
     currentDemarcheConfigurationHash,
     currentDemarcheFields,
     currentDemarcheDossiers,
