@@ -35,6 +35,6 @@ export class Demarche extends BaseEntity {
   })
   type: OrganismeTypeKeys
 
-  @Column({ type: 'jsonb' })
+  @Column({ type: 'jsonb', default: '{}' })
   dsDataJson: Partial<TDemarche>
 }

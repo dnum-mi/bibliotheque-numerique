@@ -44,13 +44,9 @@ export class SimplifyDemarcheAndDossier1691074992986 implements MigrationInterfa
     await queryRunner.query(
       'ALTER TABLE "demarches" ADD "type" "public"."demarches_type_enum" NOT NULL DEFAULT \'unknown\'',
     )
-    await queryRunner.query('ALTER TABLE "demarches" ADD "dsDataJson" jsonb NOT NULL')
+    await queryRunner.query('ALTER TABLE "demarches" ADD "dsDataJson" jsonb NOT NULL DEFAULT \'{}\'')
     await queryRunner.query('ALTER TABLE "dossiers" ADD "sourceId" character varying NOT NULL')
-    await queryRunner.query('ALTER TABLE "dossiers" ADD "dsDataJson" jsonb NOT NULL')
-    await queryRunner.query('ALTER TABLE "connectors" ALTER COLUMN "params" SET NOT NULL')
-    await queryRunner.query('ALTER TABLE "connectors" ALTER COLUMN "query" SET NOT NULL')
-    await queryRunner.query('ALTER TABLE "connectors" ALTER COLUMN "typeAuth" SET NOT NULL')
-    await queryRunner.query('ALTER TABLE "connectors" ALTER COLUMN "token" SET NOT NULL')
+    await queryRunner.query('ALTER TABLE "dossiers" ADD "dsDataJson" jsonb NOT NULL DEFAULT \'{}\'')
     await queryRunner.query('ALTER TABLE "job_logs" DROP CONSTRAINT "UQ_58193ed7a13b6627e99dc1c0985"')
     await queryRunner.query('ALTER TYPE "public"."job_logs_jobname_enum" RENAME TO "job_logs_jobname_enum_old"')
     await queryRunner.query(
@@ -150,10 +146,6 @@ export class SimplifyDemarcheAndDossier1691074992986 implements MigrationInterfa
     await queryRunner.query('DROP TYPE "public"."job_logs_jobname_enum"')
     await queryRunner.query('ALTER TYPE "public"."job_logs_jobname_enum_old" RENAME TO "job_logs_jobname_enum"')
     await queryRunner.query('ALTER TABLE "job_logs" ADD CONSTRAINT "UQ_58193ed7a13b6627e99dc1c0985" UNIQUE ("id")')
-    await queryRunner.query('ALTER TABLE "connectors" ALTER COLUMN "token" DROP NOT NULL')
-    await queryRunner.query('ALTER TABLE "connectors" ALTER COLUMN "typeAuth" DROP NOT NULL')
-    await queryRunner.query('ALTER TABLE "connectors" ALTER COLUMN "query" DROP NOT NULL')
-    await queryRunner.query('ALTER TABLE "connectors" ALTER COLUMN "params" DROP NOT NULL')
     await queryRunner.query('ALTER TABLE "dossiers" DROP COLUMN "dsDataJson"')
     await queryRunner.query('ALTER TABLE "dossiers" DROP COLUMN "sourceId"')
     await queryRunner.query('ALTER TABLE "demarches" DROP COLUMN "dsDataJson"')
