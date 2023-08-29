@@ -80,7 +80,7 @@ onMounted(() => {
         tab-id="tab-0"
         :selected="selectedTabIndex === 0"
       >
-        <DemarcheDossiers />
+        <DemarcheDossiers demarche-id="demarche.id" />
       </DsfrTabContent>
 
       <!-- Informations -->

@@ -213,7 +213,7 @@ export const dossiersApiClient = {
   },
 
   searchDemarcheDossiers: async (demarcheId: number, dto: SearchDossierDto): Promise<DossierSearchOutputDto> => {
-    const response = await apiClientInstance.post(`/demarches/${demarcheId}/search-dossier`, dto)
+    const response = await apiClientInstance.post(`/demarches/${demarcheId}/dossiers-search`, dto)
     return response.data
   },
 

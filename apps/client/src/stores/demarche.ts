@@ -12,14 +12,15 @@ import type {
   SearchDossierDto,
 } from '@biblio-num/shared'
 
+export type FrontMappingColumn = MappingColumnWithoutChildren & { isChild: boolean }
+
 export const useDemarcheStore = defineStore('demarche', () => {
   const demarches: Ref<IDemarche[]> = ref<IDemarche[]>([])
   const currentDemarche: Ref<IDemarche> = ref({})
-  const currentDemarcheDossiers: Ref<DossierSearchOutputDto> = ref({})
-  const currentDemarcheFields: Ref<FieldSearchOutputDto> = ref({})
+  const currentDemarcheDossiers = ref<DossierSearchOutputDto | FieldSearchOutputDto>({ total: 0, data: [] })
   const currentDemarcheConfiguration = ref<MappingColumnWithoutChildren[]>([])
-  const currentDemarchePlaneConfiguration: ComputedRef<MappingColumnWithoutChildren[]> = computed<MappingColumnWithoutChildren[]>(() => currentDemarcheConfiguration.value
-    .map((c: MappingColumn) => [c, ...c.children || []])
+  const currentDemarchePlaneConfiguration: ComputedRef<FrontMappingColumn[]> = computed<MappingColumnWithoutChildren[]>(() => currentDemarcheConfiguration.value
+    .map((c: MappingColumn) => c.children?.length ? c.children.map(c => ({ ...c, isChild: true })) : [c])
     .flat(1)
     .filter(c => !!c.columnLabel))
   // hash will be easier to manipulate
@@ -57,12 +58,10 @@ export const useDemarcheStore = defineStore('demarche', () => {
     demarches.value = await apiClient.getDemarches()
   }
 
-  const searchCurrentDemarcheDossiers = async (dto: SearchDossierDto) => {
-    currentDemarcheDossiers.value = await apiClient.searchDemarcheDossiers(currentDemarche.value.id, dto)
-  }
-
-  const searchCurrentDemarcheFields = async (dto: SearchDossierDto) => {
-    currentDemarcheFields.value = await apiClient.searchDemarcheFields(currentDemarche.value.id, dto)
+  const searchCurrentDemarcheDossiers = async (groupByDossier: boolean, dto: SearchDossierDto): Promise<void> => {
+    currentDemarcheDossiers.value = groupByDossier
+      ? await apiClient.searchDemarcheDossiers(currentDemarche.value.id, dto)
+      : await apiClient.searchDemarcheFields(currentDemarche.value.id, dto)
   }
 
   return {
@@ -71,13 +70,10 @@ export const useDemarcheStore = defineStore('demarche', () => {
     currentDemarcheConfiguration,
     currentDemarchePlaneConfiguration,
     currentDemarcheConfigurationHash,
-    currentDemarcheFields,
     currentDemarcheDossiers,
-
     getDemarches,
     getCurrentDemarcheConfigurations,
     searchCurrentDemarcheDossiers,
-    searchCurrentDemarcheFields,
     getDemarche,
     updateOneMappingColumn,
   }
