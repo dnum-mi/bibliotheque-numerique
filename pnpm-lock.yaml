@@ -429,8 +429,8 @@ importers:
         specifier: workspace:^
         version: link:../../packages/shared
       '@dnum-mi/ds-api-client':
-        specifier: ^1.6.1
-        version: 1.6.1
+        specifier: ^1.6.2
+        version: 1.6.2
       '@nest-middlewares/morgan':
         specifier: 7.0.1
         version: 7.0.1(@nestjs/common@10.1.3)
@@ -2918,6 +2918,18 @@ packages:
 
   /@dnum-mi/ds-api-client@1.6.1:
     resolution: {integrity: sha512-74JsyjgFr3ghvqWGXCu3bSxOBsUF7VLPDm0s0mlyTghDfeq3VGaY8Vae0A9U0RqSI9OINyUaBlDyIHdsZt73jQ==}
+    engines: {node: '>=16.0.0', npm: '>=7.10.0'}
+    dependencies:
+      graphql: 16.6.0
+      graphql-request: 5.0.0(graphql@16.6.0)
+      https-proxy-agent: 7.0.1
+    transitivePeerDependencies:
+      - encoding
+      - supports-color
+    dev: false
+
+  /@dnum-mi/ds-api-client@1.6.2:
+    resolution: {integrity: sha512-3Ixti6HJ3KGVzHwvN1F5GdN7UJt2EgOn3zQZZxO+m6af1Ska14Sqhet9LiV4rF65sAy0l+MmO+A/S3dZLN72Mw==}
     engines: {node: '>=16.0.0', npm: '>=7.10.0'}
     dependencies:
       graphql: 16.6.0
