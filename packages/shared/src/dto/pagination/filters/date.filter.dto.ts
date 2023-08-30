@@ -1,14 +1,14 @@
 import { IsDefined, IsEnum, IsOptional, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
 
-const DateFilterConditions = {
+export const DateFilterConditions = {
   Equals: 'equals',
   NotEqual: 'notEqual',
   LessThan: 'lessThan',
   GreaterThan: 'greaterThan',
 }
 
-type DateFilterConditionsKeys = (typeof DateFilterConditions)[keyof typeof DateFilterConditions];
+export type DateFilterConditionsKeys = (typeof DateFilterConditions)[keyof typeof DateFilterConditions];
 
 export class DateFilterConditionDto {
   @IsDefined()

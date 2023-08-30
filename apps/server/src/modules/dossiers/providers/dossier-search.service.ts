@@ -12,7 +12,7 @@ import {
   deduceFieldToQueryFromType,
 } from './common-search.utils'
 import { FieldService } from './field.service'
-import { DossierSearchOutputDto, FieldTypeKeys, SearchDossierDto } from '@biblio-num/shared'
+import { DossierSearchOutputDto, FieldTypeKeys, FilterDto, SearchDossierDto } from '@biblio-num/shared'
 
 @Injectable()
 export class DossierSearchService extends BaseEntityService<Dossier> {
@@ -57,13 +57,13 @@ export class DossierSearchService extends BaseEntityService<Dossier> {
   }
 
   // count the number of row before pagination
-  private _buildCountCTE(typeHash: Record<string, FieldTypeKeys>): string {
+  private _buildCountCTE(filters: Record<string, FilterDto>, typeHash: Record<string, FieldTypeKeys>): string {
     this.logger.verbose('_buildCountCTE')
     return `
       countCTE AS (
         SELECT COUNT(*) as nbrRows
         FROM aggregatedCTE
-        ${buildFilterQuery(typeHash)}
+        ${buildFilterQuery(filters, typeHash)}
       )
    `
   }
@@ -73,10 +73,10 @@ export class DossierSearchService extends BaseEntityService<Dossier> {
     const typeHash = await this.fieldService.giveFieldType(dto.columns)
     const query = `WITH
       ${this._buildAggregatedCTE(demarche.id, typeHash)},
-      ${this._buildCountCTE(typeHash)}
+      ${this._buildCountCTE(dto.filters, typeHash)}
       SELECT *, (SELECT nbrRows FROM countCTE) as total
       FROM aggregatedCTE
-      ${buildFilterQuery(typeHash)}
+      ${buildFilterQuery(dto.filters, typeHash)}
       ${buildSortQuery(dto.sorts)}
       ${buildPaginationQuery(dto.page || 1, dto.perPage || 5)}
     `

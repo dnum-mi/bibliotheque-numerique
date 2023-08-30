@@ -1,1 +1,4 @@
 export * from './filter.dto'
+export * from './string.filter.dto'
+export * from './number.filter.dto'
+export * from './date.filter.dto'

@@ -1,7 +1,7 @@
 import { IsDefined, IsEnum, IsOptional, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
 
-const TextFilterConditions = {
+export const TextFilterConditions = {
   Contains: 'contains',
   NotContains: 'notContains',
   StartsWith: 'startsWith',
@@ -10,10 +10,10 @@ const TextFilterConditions = {
   NotBlank: 'notBlank',
 }
 
-type TextFilterConditionsKeys =
+export type TextFilterConditionsKeys =
   (typeof TextFilterConditions)[keyof typeof TextFilterConditions];
 
-class TextFilterConditionDto {
+export class TextFilterConditionDto {
   @IsDefined()
   @IsEnum(TextFilterConditions)
   type: TextFilterConditionsKeys

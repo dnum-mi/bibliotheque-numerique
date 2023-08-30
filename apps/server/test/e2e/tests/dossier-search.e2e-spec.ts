@@ -315,25 +315,26 @@ describe('Dossier listing', () => {
     })
   })
 
-  // it('Should only return dossier with pays=Qatar', () => {
-  //   return request(app.getHttpServer())
-  //     .post('/demarches/1/dossiers-search')
-  //     .send({
-  //       columns: ['I01', 'I02', 'I03', 'I08', 'I09'],
-  //       filters: {
-  //         I01: {
-  //           filterType: 'text',
-  //           condition1: {
-  //             type: 'contains',
-  //             filter: 'atar',
-  //           },
-  //         },
-  //       },
-  //     })
-  //     .set('Cookie', [adminCookie])
-  //     .expect(200)
-  //     .then(({ body }) => {
-  //       console.log(body)
-  //     })
-  // })
+  it.only('Should only return dossier with pays=Qatar', () => {
+    return request(app.getHttpServer())
+      .post('/demarches/1/dossiers-search')
+      .send({
+        columns: ['I01', 'I02', 'I03', 'I08', 'I09'],
+        filters: {
+          I01: {
+            filterType: 'text',
+            condition1: {
+              type: 'contains',
+              filter: 'atar',
+            },
+          },
+        },
+      })
+      .set('Cookie', [adminCookie])
+      .expect(200)
+      .then(({ body }) => {
+        console.log(body)
+        expect(false).toBeTruthy()
+      })
+  })
 })

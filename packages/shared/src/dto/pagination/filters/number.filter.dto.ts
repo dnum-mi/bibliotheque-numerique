@@ -1,7 +1,7 @@
 import { IsDefined, IsEnum, IsOptional, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
 
-const NumberFilterConditions = {
+export const NumberFilterConditions = {
   Equals: 'equals',
   NotEqual: 'notEqual',
   LessThan: 'lessThan',
@@ -10,10 +10,10 @@ const NumberFilterConditions = {
   GreaterThanOrEqual: 'greaterThanOrEqual',
 }
 
-type NumberFilterConditionsKeys =
+export type NumberFilterConditionsKeys =
   (typeof NumberFilterConditions)[keyof typeof NumberFilterConditions];
 
-class NumberFilterConditionDto {
+export class NumberFilterConditionDto {
   @IsDefined()
   @IsEnum(NumberFilterConditions)
   type: NumberFilterConditionsKeys
