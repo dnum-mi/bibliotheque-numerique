@@ -24,16 +24,16 @@ type QuickLink = {
 }
 
 const quickLinksBase: QuickLink[] = [
-  {
-    label: 'Home',
-    to: '/',
-    icon: 'ri-home-4-line',
-    iconAttrs: iconColor,
-  },
-  {
-    label: 'À propos',
-    to: '/a-propos',
-  },
+  // {
+  //   label: 'Home',
+  //   to: '/',
+  //   icon: 'ri-home-4-line',
+  //   iconAttrs: iconColor,
+  // },
+  // {
+  //   label: 'À propos',
+  //   to: '/a-propos',
+  // },
 ]
 
 const quickLinks: Ref<QuickLink[]> = ref(quickLinksBase)
@@ -132,7 +132,10 @@ onErrorCaptured((error: Error | AxiosError) => {
   const router = useRouter()
 
   if (error instanceof AxiosError && error?.response?.status === 404) {
-    router.push({ name: '404', params: { pathMatch: router.currentRoute.value.path } })
+    router.push({
+      name: '404',
+      query: { from: router.currentRoute.value.path },
+    })
   } else {
     const description = (error instanceof AxiosError && error?.response?.data?.message) || error.message
     toaster.addErrorMessage({ description })
