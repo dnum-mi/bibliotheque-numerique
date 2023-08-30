@@ -1,7 +1,7 @@
 import type { HeaderDataTable } from '../types'
 import type { IDemarcheMappingColumn } from '../interfaces'
 import { ChampType, keytoTypeData, typeForHeader, typeTable, valueBytypeValue } from '../types'
-import { mappingLabelInstructionToKey } from '../types/instructionTime.type'
+import { mappingLabelInstructionToKey } from '../types/InstructionTime.type'
 
 export function getTypeForHeader (mappingColumn: Partial<IDemarcheMappingColumn>) {
   const { typeValue } = mappingColumn
