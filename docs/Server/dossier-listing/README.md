@@ -29,18 +29,7 @@ All the building and executing of the query that produces the result grouping by
 #### Query
 Here is the SQL base query the code is based on:
 ```SQL
-WITH countCTE AS (
-    SELECT COUNT(*) as total_rows
-    FROM (
-        SELECT d.id
-        FROM dossiers d
-        JOIN fields f ON d.id = f."dossierId"
-        GROUP BY d.id
-        HAVING 10000 < ALL(ARRAY_AGG(CASE WHEN f."sourceId" = 'I08' THEN f."numberValue" END) FILTER (WHERE f."sourceId" = 'I08'))
-    ) sub
-),
-
-mainCTE AS (
+WITH aggregatedCTE AS (
     SELECT
         d.id as dossier_id,
         ARRAY_AGG(CASE WHEN f."sourceId" = 'I01' THEN f."stringValue" END) FILTER (WHERE f."sourceId" = 'I01') as "I01",
@@ -51,47 +40,52 @@ mainCTE AS (
     FROM dossiers d
     JOIN fields f ON d.id = f."dossierId"
     GROUP BY d.id
+),
+
+countCTE AS (
+    SELECT COUNT(*) as total_rows
+    FROM aggregatedCTE
+    WHERE 10000 < ANY("I08")
 )
 
 SELECT *, (SELECT total_rows FROM countCTE) as total
-FROM mainCTE
-WHERE 10000 < ALL("I08")
+FROM aggregatedCTE
+WHERE 10000 < ANY("I08")
 ORDER BY "I03"[1]
 OFFSET 0 LIMIT 5;
 ```
-This specific query select dossier ordered by Moment columns, with pays = QATAR.
+This specific query selects dossiers ordered by the I03 columns with one I08 column at least greater than 10000
 
 #### Explanation
 
 This query is designed to fetch a list of `dossiers` based on specified criteria and also to count the total number of these qualifying `dossiers`. The query uses Common Table Expressions (CTEs) for clarity and organization.
 
-##### 1. **countCTE**
+##### 1. **aggregatedCTE**
 
-To compute the total number of `dossiers` that have a specific field value.
+This CTE retrieves detailed records for each `dossier`.
 - **JOIN** the `dossiers` table with `fields` on `dossierId`.
 - **GROUP BY** the `d.id` column.
-- Use **HAVING** to filter out groups based on the `ARRAY_AGG` function for a specific field value.
+- For each distinct `"sourceId"`, use the `ARRAY_AGG` function and **FILTER** clause to create arrays of corresponding field values.
+- Select `"stringValue"`, `"numberValue"`, or `"dateValue"` based on the ID. A simple preliminary query was used to determine these types.
 
-##### 2. **mainCTE**
+##### 2. **countCTE**
 
-To retrieve detailed records for each `dossier`.
-- **JOIN** `dossiers` with `fields`.
-- **GROUP BY** the `d.id` column.
-- For each distinct `"sourceId"`, use the `ARRAY_AGG` function and `FILTER` clause to create arrays of corresponding field values.
-- Select `"stringValue"` or `"numberValue"` or `"dateValue"` based on the type for each ID. We did a first simple query to find thoses types.
+Computes the total number of `dossiers` that have a specific field value.
+- Take the aggregated data from `aggregatedCTE`.
+- Use the **WHERE** clause to filter results based on the specific field value.
 
 ##### 3. **Main Query**
 
 Combine results from both CTEs, apply filters, sort, and paginate the final output.
-- **SELECT** all columns from `mainCTE`.
+- **SELECT** all columns from `aggregatedCTE`.
 - Add a column `total` which fetches the count from `countCTE`.
 - Use the **WHERE** clause to filter results.
 - **ORDER BY** the first value of the `I03` array.
 - Implement pagination with `OFFSET` and `LIMIT`.
----
 
 This query structure ensures an organized approach to extracting comprehensive `dossier` details and also provides a consistent count of records for pagination.
 
+---
 
 ### Not grouping by dossier
 
