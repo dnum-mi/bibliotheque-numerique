@@ -91,7 +91,6 @@ export class DossierSearchService extends BaseEntityService<Dossier> {
       ${buildSortQuery(dto.sorts)}
       ${buildPaginationQuery(dto.page || 1, dto.perPage || 5)}
     `
-    console.log(query)
     const result = await this.repo.query(query)
     return {
       total: parseInt(result[0].total),
