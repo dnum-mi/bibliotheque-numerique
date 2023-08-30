@@ -2,7 +2,7 @@
 import { useRoute, useRouter } from 'vue-router'
 import { computed, ComputedRef, ref, Ref, watch } from 'vue'
 import type { FieldSearchOutputDto, IDemarche } from '@biblio-num/shared'
-import { DossierSearchOutputDto, MappingColumnWithoutChildren, SearchDossierDto } from '@biblio-num/shared'
+import { DossierSearchOutputDto, MappingColumnWithoutChildren, SearchDossierDto, SortDto } from '@biblio-num/shared'
 import { FrontMappingColumn, useDemarcheStore, useUserStore } from '@/stores'
 import { fromFieldTypeToAgGridFilter } from '@/views/demarches/demarche/dossiers/demarche-dossiers-utils'
 import { AgGridVue } from 'ag-grid-vue3'
@@ -14,6 +14,8 @@ import { ColDef } from 'ag-grid-community/dist/lib/entities/colDef'
 import AgGridMultiValueCell from '@/components/ag-grid/AgGridMultiValueCell.vue'
 import { GridApi, GridOptions, GridReadyEvent } from 'ag-grid-community'
 import DemarcheDossiersPagination, { IPagination } from '@/views/demarches/demarche/dossiers/DemarcheDossiersPagination.vue'
+import { ColumnApi } from 'ag-grid-community/dist/lib/columns/columnApi'
+import { ColumnState } from 'ag-grid-community/dist/lib/columns/columnModel'
 
 const route = useRoute()
 const router = useRouter()
@@ -36,7 +38,7 @@ const defaultColDef = {
 const dossierSearchDto: ComputedRef<SearchDossierDto> = computed(() => ({
   page: Number(route.query.page),
   perPage: 5,
-  // sorts: [],
+  sorts: [],
   // filters: [],
   columns: demarcheConfiguration.value.map((c) => c.id),
 }))
@@ -70,17 +72,24 @@ const updateColumnDefs = () => {
   ]
 }
 const gridApi: Ref<GridApi> = ref()
+const columnApi: Ref<ColumnApi> = ref()
 
 const refresh = async () => {
   gridApi.value.showLoadingOverlay()
+  dossierSearchDto.value.sorts = []
+  columnApi.value.getColumnState().forEach((state: ColumnState) => {
+    if (state.sort) {
+      dossierSearchDto.value.sorts.push({ key: state.colId, order: state.sort.toUpperCase() })
+    }
+  })
   await demarcheStore.searchCurrentDemarcheDossiers(groupByDossier.value, dossierSearchDto.value)
   updateColumnDefs()
-  // gridApi.value.setRowCount(result.value.total, false)
   gridApi.value.hideOverlay()
 }
 
 const onGridReady = (event: GridReadyEvent) => {
   gridApi.value = event.api
+  columnApi.value = event.columnApi
 }
 
 const paginationUpdated = (pagination: IPagination) => {
@@ -110,6 +119,7 @@ watch(demarche, refresh)
         :row-data="result.data"
         :grid-options="gridOptions"
         @grid-ready="onGridReady($event)"
+        @sort-changed="refresh()"
       />
     </div>
     <div class="flex justify-end fr-mt-2v">
