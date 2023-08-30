@@ -24,16 +24,16 @@ type QuickLink = {
 }
 
 const quickLinksBase: QuickLink[] = [
-  {
-    label: 'Home',
-    to: '/',
-    icon: 'ri-home-4-line',
-    iconAttrs: iconColor,
-  },
-  {
-    label: 'À propos',
-    to: '/a-propos',
-  },
+  // {
+  //   label: 'Home',
+  //   to: '/',
+  //   icon: 'ri-home-4-line',
+  //   iconAttrs: iconColor,
+  // },
+  // {
+  //   label: 'À propos',
+  //   to: '/a-propos',
+  // },
 ]
 
 const quickLinks: Ref<QuickLink[]> = ref(quickLinksBase)
