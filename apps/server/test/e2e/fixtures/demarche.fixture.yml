@@ -39,4 +39,18 @@ items:
         formatFunctionRef: 'state'
       }
     ]
+  demarche-number-2:
+    id: 3
+    state: "published"
+    title: "Déclaration de financement étranger"
+    identification: "financement"
+    type: "ARUP"
+    dsDataJson: "{ number: 2}"
+  demarche-number-3:
+    id: 4
+    state: "published"
+    title: "Déclaration de financement étranger"
+    identification: "financement"
+    type: "ARUP"
+    dsDataJson: "{ number: 3 }"
 

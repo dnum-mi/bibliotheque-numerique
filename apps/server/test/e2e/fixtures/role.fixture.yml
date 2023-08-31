@@ -14,3 +14,10 @@ items:
     description: "App user, has none rights"
     createdAt: 2023-06-12T06:54:45.000Z
     updatedAt: 2023-06-12T06:54:45.000Z
+  demarche2Role:
+    id: 3
+    name: demarche2
+    permissions: [{ "name": "ACCESS_DEMARCHE", "options": { "demarcheIds": [3] } }]
+    description: "App user, has none rights"
+    createdAt: 2023-06-12T06:54:45.000Z
+    updatedAt: 2023-06-12T06:54:45.000Z
