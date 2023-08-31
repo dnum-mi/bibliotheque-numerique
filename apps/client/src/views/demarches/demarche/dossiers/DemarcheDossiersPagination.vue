@@ -17,7 +17,7 @@ const emit = defineEmits<{
 }>()
 
 const currentPage = ref(route.query.page || 1)
-const perPage = ref(5)
+const perPage = ref(10)
 
 const canNextPage = computed(() => {
   return currentPage.value * perPage.value < props.total

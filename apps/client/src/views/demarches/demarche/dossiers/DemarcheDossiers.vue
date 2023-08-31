@@ -1,21 +1,21 @@
 <script lang="ts" setup>
 import { useRoute, useRouter } from 'vue-router'
-import { computed, ComputedRef, ref, Ref, watch } from 'vue'
+import { computed, type ComputedRef, ref, type Ref, watch } from 'vue'
 import type { FieldSearchOutputDto, IDemarche } from '@biblio-num/shared'
 import { DossierSearchOutputDto, MappingColumnWithoutChildren, SearchDossierDto, SortDto } from '@biblio-num/shared'
-import { FrontMappingColumn, useDemarcheStore, useUserStore } from '@/stores'
+import { type FrontMappingColumn, useDemarcheStore, useUserStore } from '@/stores'
 import { fromFieldTypeToAgGridFilter } from '@/views/demarches/demarche/dossiers/demarche-dossiers-utils'
 import { AgGridVue } from 'ag-grid-vue3'
 import 'ag-grid-enterprise'
 import 'ag-grid-community/styles/ag-grid.css'
 import 'ag-grid-community/styles/ag-theme-alpine.css'
 import { localeTextAgGrid } from '@/components/ag-grid/agGridOptions'
-import { ColDef } from 'ag-grid-community/dist/lib/entities/colDef'
+import { type ColDef } from 'ag-grid-community/dist/lib/entities/colDef'
 import AgGridMultiValueCell from '@/components/ag-grid/AgGridMultiValueCell.vue'
-import { GridApi, GridOptions, GridReadyEvent } from 'ag-grid-community'
-import DemarcheDossiersPagination, { IPagination } from '@/views/demarches/demarche/dossiers/DemarcheDossiersPagination.vue'
+import { GridApi, type GridOptions, type GridReadyEvent } from 'ag-grid-community'
+import DemarcheDossiersPagination, { type IPagination } from '@/views/demarches/demarche/dossiers/DemarcheDossiersPagination.vue'
 import { ColumnApi } from 'ag-grid-community/dist/lib/columns/columnApi'
-import { ColumnState } from 'ag-grid-community/dist/lib/columns/columnModel'
+import { type ColumnState } from 'ag-grid-community/dist/lib/columns/columnModel'
 
 const route = useRoute()
 const router = useRouter()
@@ -29,6 +29,7 @@ const gridOptions: GridOptions = {
   domLayout: 'autoHeight',
   localeText: localeTextAgGrid,
   pagination: false,
+  suppressMenuHide: true,
 }
 const defaultColDef = {
   sortable: true,
@@ -37,7 +38,7 @@ const defaultColDef = {
 }
 const dossierSearchDto: ComputedRef<SearchDossierDto> = computed(() => ({
   page: Number(route.query.page),
-  perPage: 5,
+  perPage: 10,
   sorts: [],
   // filters: [],
   columns: demarcheConfiguration.value.map((c) => c.id),
@@ -58,6 +59,8 @@ const updateColumnDefs = () => {
         field: column.id,
         filter: fromFieldTypeToAgGridFilter(column.type),
         autoHeight: true,
+
+        menuTabs: ['filterMenuTab'],
         cellRenderer:
           groupByDossier.value && column.isChild
             ? AgGridMultiValueCell
@@ -74,10 +77,17 @@ const updateColumnDefs = () => {
 const gridApi: Ref<GridApi> = ref()
 const columnApi: Ref<ColumnApi> = ref()
 
-const refresh = async () => {
+const refresh = async (firstTime = false) => {
+  console.log('coucou')
   gridApi.value.showLoadingOverlay()
-  dossierSearchDto.value.sorts = []
+  if (!firstTime) {
+    dossierSearchDto.value.sorts = []
+    dossierSearchDto.value.columns = []
+  }
   columnApi.value.getColumnState().forEach((state: ColumnState) => {
+    if (!state.hide) {
+      dossierSearchDto.value.columns.push(state.colId)
+    }
     if (state.sort) {
       dossierSearchDto.value.sorts.push({ key: state.colId, order: state.sort.toUpperCase() })
     }
@@ -118,8 +128,17 @@ watch(demarche, refresh)
         :default-col-def="defaultColDef"
         :row-data="result.data"
         :grid-options="gridOptions"
+        :side-bar="{
+          toolPanels: ['columns', 'filters'],
+          SideBarDef: {
+            hiddenByDefault: false,
+          },
+        }"
         @grid-ready="onGridReady($event)"
         @sort-changed="refresh()"
+        @drag-stopped="refresh()"
+        @column-visible="refresh()"
+        @filter-changed="refresh()"
       />
     </div>
     <div class="flex justify-end fr-mt-2v">

@@ -81,7 +81,7 @@ export class DossierSearchService extends BaseEntityService<Dossier> {
       ${buildPaginationQuery(dto.page || 1, dto.perPage || 5)}
     `
     const result = await this.repo.query(query)
-    if (!result[0]) {
+    if (!result?.[0]) {
       return { total: 0, data: [] }
     }
     const withoutChildrenIds: string[] = demarche.mappingColumns
@@ -93,7 +93,7 @@ export class DossierSearchService extends BaseEntityService<Dossier> {
         delete r.total
         Object.keys(r).forEach((key: string) => {
           if (withoutChildrenIds.includes(key)) {
-            r[key] = r[key][0]
+            r[key] = r[key]?.[0] || null
           }
         })
         return r
