@@ -32,15 +32,15 @@ export class Connector extends BaseEntity {
   })
     url: string // https://api.entreprise.data.gouv.fr/v2/etablissements/$params1}?query1={$query1}&query2={$query2}
 
-  @Column({ type: 'jsonb' })
+  @Column({ type: 'jsonb', nullable: true })
     params: string[] // Params are needed for the url, we store the keys only
 
-  @Column({ type: 'jsonb' })
+  @Column({ type: 'jsonb', nullable: true })
     query: Record<string, string> // Params are needed for the url, we store the keys and defaultValues
 
-  @Column()
+  @Column({ nullable: true })
     typeAuth:AuthType
 
-  @Column()
+  @Column({ nullable: true })
     token: string
 }

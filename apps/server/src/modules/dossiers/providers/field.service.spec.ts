@@ -151,6 +151,55 @@ describe('FieldService', () => {
     ])
   })
 
+  it('Should not crash if number champ is wrong', async () => {
+    const raw = {
+      id: 'RG9zc2llci0xMzY=',
+      state: 'bientôt cuit',
+      champs: [
+        {
+          id: 'Q4hhbXAtMTA0Mw==',
+          __typename: 'DecimalNumberChamp',
+          label: 'Total de doritos dans le monde',
+          stringValue: 'JE SUIS PAS UN NOMBRE HIHIHII HAHAHAHA',
+          champDescriptor: {
+            id: 'Q4hhbXAtMTA0Mw==',
+          },
+        },
+      ],
+    }
+    const fields = await service.overwriteFieldsFromDataJson(raw as Partial<TDossier>, 42, fakeMappingColumnHash)
+    expect(fields).toMatchObject([
+      {
+        sourceId: 'Q4hhbXAtMTA0Mw==',
+        label: 'Total de doritos dans le monde',
+        formatFunctionRef: null,
+        type: 'number',
+        fieldSource: 'champs',
+        stringValue: 'JE SUIS PAS UN NOMBRE HIHIHII HAHAHAHA',
+        dateValue: null,
+        numberValue: null,
+        dsChampType: 'DecimalNumberChamp',
+        dossierId: 42,
+        parentRowIndex: null,
+        children: null,
+      },
+      {
+        sourceId: '1a4b62c4-b81f-4e83-ac34-f6d601b8a8d4',
+        label: 'state',
+        formatFunctionRef: 'status',
+        type: 'string',
+        fieldSource: 'fix-field',
+        stringValue: 'bientôt cuit',
+        dateValue: null,
+        numberValue: null,
+        dossierId: 42,
+        parentRowIndex: null,
+        rawJson: null,
+        dsChampType: null,
+      },
+    ])
+  })
+
   it('Should create fixfield and one date annotation', async () => {
     const raw = {
       id: 'RG9zc2llci0xMzY=',

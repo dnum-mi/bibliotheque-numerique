@@ -10,6 +10,10 @@ const routes = [
     name: 'Home',
     path: '/',
     component: () => import('@/views/AppHome.vue'),
+    meta: {
+      needsAuth: true,
+    },
+    redirect: { name: 'Demarches' },
   },
   {
     name: 'About',
@@ -25,7 +29,6 @@ const routes = [
     },
   },
   {
-    name: 'Demarches',
     path: '/demarches',
     beforeEnter: [canAccessDemarchesGuard],
     children: [

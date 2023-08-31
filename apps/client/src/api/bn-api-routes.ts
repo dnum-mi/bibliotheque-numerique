@@ -4,7 +4,7 @@ export const signInRoute = `${authRoute}/sign-in` // TODO: devrait s’appeler `
 
 export const demarchesRoute = '/demarches'
 export const getDemarcheByIdRoute = (id: number) => `${demarchesRoute}/${id}`
-export const getDossiersFromDemarcheByIdRoute = (id: number) => `${demarchesRoute}/${id}/dossiers`
+export const getDossiersFromDemarcheByIdRoute = (id: number) => `${demarchesRoute}/${id}/deprecated/dossiers`
 
 export const usersRoutes = '/users'
 export const getUserByIdRoute = (id: number) => `${usersRoutes}/${id}`

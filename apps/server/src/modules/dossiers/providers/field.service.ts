@@ -26,6 +26,16 @@ export class FieldService extends BaseEntityService<Field> {
     this.logger.setContext(this.constructor.name)
   }
 
+  static giveNumberOrNull(type: FieldTypeKeys, stringValue: string): number | null {
+    const number = type === FieldType.number ? parseFloat(stringValue) : null
+    return number && !isNaN(number) ? number : null
+  }
+
+  static giveDateOrNull(type: FieldTypeKeys, stringValue: string): Date | null {
+    const date = type === FieldType.date && stringValue.length ? new Date(stringValue) : null
+    return date && !isNaN(date.getTime()) ? date : null
+  }
+
   private _extractColumnRefFieldInformation (
     columnRef: MappingColumn,
   ): Pick<CreateFieldDto, 'sourceId' | 'label' | 'formatFunctionRef' | 'type' | 'fieldSource'> {
@@ -58,13 +68,14 @@ export class FieldService extends BaseEntityService<Field> {
         const id = champ.champDescriptor?.id ?? champ.id
         const columnRef = columnHash[id]
         if (!columnRef) {
+          this.logger.debug(champ)
           throw new Error(`There is no reference of ${id} in column hash`)
         }
         fields.push({
           ...this._extractColumnRefFieldInformation(columnRef),
           stringValue: champ.stringValue,
-          dateValue: columnRef.type === FieldType.date && champ.stringValue.length ? new Date(champ.stringValue) : null,
-          numberValue: columnRef.type === FieldType.number ? parseFloat(champ.stringValue) : null,
+          dateValue: FieldService.giveDateOrNull(columnRef.type, champ.stringValue),
+          numberValue: FieldService.giveNumberOrNull(columnRef.type, champ.stringValue),
           dsChampType: dsType,
           dossierId,
           parentRowIndex: parentRow,
@@ -101,9 +112,8 @@ export class FieldService extends BaseEntityService<Field> {
         return {
           ...this._extractColumnRefFieldInformation(columnHash[fixFieldId]),
           stringValue: value.toString(),
-          dateValue:
-            ((columnHash[fixFieldId].type === FieldType.date) && value.length) ? new Date(value as string) : null,
-          numberValue: columnHash[fixFieldId].type === FieldType.number ? parseFloat(value as string) : null,
+          dateValue: FieldService.giveDateOrNull(columnHash[fixFieldId].type, value),
+          numberValue: FieldService.giveNumberOrNull(columnHash[fixFieldId].type, value),
           dossierId,
           parentRowIndex: null,
           rawJson: null,

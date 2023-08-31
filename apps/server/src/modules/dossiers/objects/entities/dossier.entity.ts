@@ -30,6 +30,6 @@ export class Dossier extends BaseEntity {
   @Column({ nullable: false })
   sourceId: string
 
-  @Column({ type: 'jsonb' })
+  @Column({ type: 'jsonb', default: '{}' })
   dsDataJson: Partial<TDossier>
 }

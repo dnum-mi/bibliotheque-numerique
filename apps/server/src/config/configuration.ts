@@ -7,6 +7,7 @@ const config = {
   appHost: process.env.APP_HOST || 'localhost:3000',
   appPath: process.env.APP_PATH || '',
   appFrontUrl: process.env.APP_FRONT_URL || 'http://localhost:8080',
+  httpProxy: process.env.http_proxy || '',
   log: {
     date_format: process.env.LOG_DATE_FORMAT || 'DD/MM/YYYY HH:mm:ss',
   },

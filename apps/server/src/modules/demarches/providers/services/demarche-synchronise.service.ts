@@ -57,7 +57,7 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
               this.logger.error(
                 `Dossier ${dossier.id} (sourceId: ${dossier.number}) failed to synchronise: ${err.message}`,
               )
-              this.logger.debug(err)
+              this.logger.error(err)
             }),
       ),
     )
