@@ -28,6 +28,9 @@ export abstract class BaseEntityService<T extends BaseEntity = BaseEntity> {
     if (relations) {
       query.relations = relations
     }
+    if (filter) {
+      query.where = filter
+    }
     return this.repo.find(query)
   }
 
