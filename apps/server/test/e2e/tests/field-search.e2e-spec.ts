@@ -30,11 +30,17 @@ describe('Field search', () => {
   })
 
   it('shoud return 404 if demarche doesnt exist', () => {
-    return request(app.getHttpServer()).get('/demarches/13847/fields-search').set('Cookie', [adminCookie]).expect(404)
+    return request(app.getHttpServer())
+      .get('/demarches/13847/fields-search')
+      .set('Cookie', [adminCookie])
+      .expect(404)
   })
 
   it('Should return 400 if query is empty', () => {
-    return request(app.getHttpServer()).post('/demarches/1/fields-search').set('Cookie', [adminCookie]).expect(400)
+    return request(app.getHttpServer())
+      .post('/demarches/1/fields-search')
+      .set('Cookie', [adminCookie])
+      .expect(400)
   })
 
   it('Should return 400 if page is incorrect', () => {
@@ -235,6 +241,110 @@ describe('Field search', () => {
             I09: 'Turquie',
           },
         ])
+      })
+  })
+
+  it('Should only return dossier with pays=Qatar', () => {
+    return request(app.getHttpServer())
+      .post('/demarches/1/fields-search')
+      .send({
+        columns: ['I01', 'I02', 'I03', 'I08', 'I09'],
+        filters: {
+          I09: {
+            filterType: 'text',
+            condition1: {
+              type: 'contains',
+              filter: 'atar',
+            },
+          },
+        },
+      })
+      .set('Cookie', [adminCookie])
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toEqual({
+          total: 4,
+          data: [
+            {
+              dossierId: 1,
+              I01: 'W00000001',
+              I02: '2023-05-31T22:00:00.000Z',
+              I03: 'Avenger',
+              I08: 16400,
+              I09: 'Qatar',
+            },
+            {
+              dossierId: 5,
+              I01: 'W00000005',
+              I02: '2023-05-31T22:00:00.000Z',
+              I03: 'Captain Fantastic',
+              I08: 2500,
+              I09: 'Qatar',
+            },
+            {
+              dossierId: 7,
+              I01: 'W00000007',
+              I02: '2023-06-03T22:00:00.000Z',
+              I03: 'Barbie',
+              I08: 2500,
+              I09: 'Qatar',
+            },
+            {
+              dossierId: 10,
+              I01: 'W00000010',
+              I02: '2023-06-05T22:00:00.000Z',
+              I03: 'Premier Contact',
+              I08: 23000,
+              I09: 'Qatar',
+            },
+          ],
+        })
+      })
+  })
+
+  it.only('Should only return dossier with pays=Qatar AND 10000 > financement > 20000', () => {
+    return request(app.getHttpServer())
+      .post('/demarches/1/fields-search')
+      .send({
+        columns: ['I01', 'I02', 'I03', 'I08', 'I09'],
+        filters: {
+          I09: {
+            filterType: 'text',
+            condition1: {
+              type: 'contains',
+              filter: 'atar',
+            },
+          },
+          I08: {
+            filterType: 'number',
+            condition1: {
+              type: 'greaterThan',
+              filter: 10000,
+            },
+            condition2: {
+              type: 'lessThan',
+              filter: 20000,
+            },
+            operator: 'AND',
+          },
+        },
+      })
+      .set('Cookie', [adminCookie])
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toEqual({
+          total: 1,
+          data: [
+            {
+              dossierId: 1,
+              I01: 'W00000001',
+              I02: '2023-05-31T22:00:00.000Z',
+              I03: 'Avenger',
+              I08: 16400,
+              I09: 'Qatar',
+            },
+          ],
+        })
       })
   })
 })

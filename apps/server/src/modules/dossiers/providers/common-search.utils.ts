@@ -129,13 +129,12 @@ export const buildFilterQuery = (
   typeHash: Record<string, FieldTypeKeys>,
   isArray = false,
 ): string => {
-  const keys = Object.keys(filters)
-  if (!keys.length) {
+  if (!filters) {
     return ''
   } else {
     return (
       'WHERE ' +
-      keys
+      Object.keys(filters)
         .map(
           (key) =>
             `(${_buildOneFilter(key, filters[key], typeHash[key], isArray)})`,

@@ -63,7 +63,7 @@ export class DossierSearchService extends BaseEntityService<Dossier> {
       countCTE AS (
         SELECT COUNT(*) as nbrRows
         FROM aggregatedCTE
-        ${buildFilterQuery(filters, typeHash)}
+        ${buildFilterQuery(filters, typeHash, true)}
       )
    `
   }
@@ -76,11 +76,14 @@ export class DossierSearchService extends BaseEntityService<Dossier> {
       ${this._buildCountCTE(dto.filters, typeHash)}
       SELECT *, (SELECT nbrRows FROM countCTE) as total
       FROM aggregatedCTE
-      ${buildFilterQuery(dto.filters, typeHash)}
+      ${buildFilterQuery(dto.filters, typeHash, true)}
       ${buildSortQuery(dto.sorts)}
       ${buildPaginationQuery(dto.page || 1, dto.perPage || 5)}
     `
     const result = await this.repo.query(query)
+    if (!result[0]) {
+      return { total: 0, data: [] }
+    }
     return {
       total: parseInt(result[0].total),
       data: result.map((r) => {
