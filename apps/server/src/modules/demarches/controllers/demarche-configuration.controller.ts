@@ -5,10 +5,9 @@ import { PermissionsGuard, RequirePermissions } from '../../roles/providers/perm
 import { LoggerService } from '../../../shared/modules/logger/logger.service'
 import { PermissionName } from '../../../shared/types/Permission.type'
 import { DemarcheExistGuard } from '../providers/guards/demarche-exist.guard'
-import { MappingColumn } from '../objects/entities/mapping-column.object'
 import { Demarche } from '../objects/entities/demarche.entity'
 import { DemarcheParam } from '../providers/decorators/current-demarche.decorator'
-import { UpdateOneFieldConfigurationDto } from '../objects/dtos/update-one-field-configuration.dto'
+import { MappingColumn, UpdateOneFieldConfigurationDto } from '@biblio-num/shared'
 
 @ApiTags('Demarches')
 @ApiTags('Configurations')

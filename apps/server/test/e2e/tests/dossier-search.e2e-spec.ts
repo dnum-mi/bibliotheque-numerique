@@ -30,11 +30,17 @@ describe('Dossier listing', () => {
   })
 
   it('shoud return 404 if demarche doesnt exist', () => {
-    return request(app.getHttpServer()).get('/demarches/13847/dossiers-search').set('Cookie', [adminCookie]).expect(404)
+    return request(app.getHttpServer())
+      .get('/demarches/13847/dossiers-search')
+      .set('Cookie', [adminCookie])
+      .expect(404)
   })
 
   it('Should return 400 if query is empty', () => {
-    return request(app.getHttpServer()).post('/demarches/1/dossiers-search').set('Cookie', [adminCookie]).expect(400)
+    return request(app.getHttpServer())
+      .post('/demarches/1/dossiers-search')
+      .set('Cookie', [adminCookie])
+      .expect(400)
   })
 
   it('Should return 400 if page is incorrect', () => {
@@ -71,55 +77,56 @@ describe('Dossier listing', () => {
   })
 
   it('Should Paginate correctly with default options', () => {
-    return request(app.getHttpServer())
-      .post('/demarches/1/dossiers-search')
-      .send({
-        columns: ['I01', 'I02', 'I03', 'I09'],
-      })
-      .set('Cookie', [adminCookie])
-      .expect(200)
-      .expect(({ body }) => {
-        console.log(body)
-        expect(body.total).toEqual(10)
-        expect(body.data.length).toEqual(5)
-        expect(body.data).toEqual([
-          {
-            dossier_id: 1,
-            I01: 'W00000001',
-            I02: '2023-05-31T22:00:00.000Z',
-            I03: 'Avenger',
-            I09: ['Qatar', 'Turquie'],
-          },
-          {
-            dossier_id: 2,
-            I01: 'W00000002',
-            I02: '2023-06-02T22:00:00.000Z',
-            I03: 'Interstellar',
-            I09: null,
-          },
-          {
-            dossier_id: 3,
-            I01: 'W00000003',
-            I02: '2023-06-03T22:00:00.000Z',
-            I03: 'Dune',
-            I09: ['USA', 'Écosse'],
-          },
-          {
-            dossier_id: 4,
-            I01: 'W00000004',
-            I02: '2023-06-01T22:00:00.000Z',
-            I03: 'Memento',
-            I09: null,
-          },
-          {
-            dossier_id: 5,
-            I01: 'W00000005',
-            I02: '2023-05-31T22:00:00.000Z',
-            I03: 'Captain Fantastic',
-            I09: ['USA', 'Qatar', 'France'],
-          },
-        ])
-      })
+    return (
+      request(app.getHttpServer())
+        .post('/demarches/1/dossiers-search')
+        .send({
+          columns: ['I01', 'I02', 'I03', 'I09'],
+        })
+        .set('Cookie', [adminCookie])
+        // .expect(200)
+        .expect(({ body }) => {
+          expect(body.total).toEqual(10)
+          expect(body.data.length).toEqual(5)
+          expect(body.data).toEqual([
+            {
+              dossier_id: 1,
+              I01: 'W00000001',
+              I02: '2023-05-31T22:00:00.000Z',
+              I03: 'Avenger',
+              I09: ['Qatar', 'Turquie'],
+            },
+            {
+              dossier_id: 2,
+              I01: 'W00000002',
+              I02: '2023-06-02T22:00:00.000Z',
+              I03: 'Interstellar',
+              I09: null,
+            },
+            {
+              dossier_id: 3,
+              I01: 'W00000003',
+              I02: '2023-06-03T22:00:00.000Z',
+              I03: 'Dune',
+              I09: ['USA', 'Écosse'],
+            },
+            {
+              dossier_id: 4,
+              I01: 'W00000004',
+              I02: '2023-06-01T22:00:00.000Z',
+              I03: 'Memento',
+              I09: null,
+            },
+            {
+              dossier_id: 5,
+              I01: 'W00000005',
+              I02: '2023-05-31T22:00:00.000Z',
+              I03: 'Captain Fantastic',
+              I09: ['USA', 'Qatar', 'France'],
+            },
+          ])
+        })
+    )
   })
 
   it('Should Paginate correctly with pagination', () => {
@@ -234,6 +241,197 @@ describe('Dossier listing', () => {
             I03: 'Telma & Louise',
             I08: null,
             I09: null,
+          },
+        ])
+      })
+  })
+
+  const badFilters = [
+    {},
+    { filterType: 'text' },
+    {
+      condition1: {
+        type: 'equals',
+      },
+    },
+    {
+      filterType: 'text',
+      condition1: {
+        type: 'eq',
+      },
+    },
+    {
+      filterType: 'text',
+      condition1: {
+        filter: 'toto',
+      },
+    },
+    {
+      filterType: 'text',
+      condition1: {
+        type: 'equals',
+        filter: 'toto',
+      },
+      condition2: {
+        operator: 'equals',
+        filter: 'toto',
+      },
+    },
+    {
+      filterType: 'text',
+      condition1: {
+        type: 'equals',
+        filter: 'toto',
+      },
+      condition2: {
+        type: 'equals',
+        filter: 'toto',
+      },
+    },
+    {
+      filterType: 'text',
+      condition1: {
+        type: 'equals',
+        filter: 'toto',
+      },
+      operator: 'OR',
+    },
+    {
+      filterType: 'text',
+      condition1: {
+        type: 'equals',
+        filter: 'toto',
+      },
+      operator: 'TUTU',
+      condition2: {
+        type: 'equals',
+        filter: 'toto',
+      },
+    },
+  ]
+
+  badFilters.forEach((badFilter, i) => {
+    it(`Should return 400 if filter is incorrect (p-${i})`, () => {
+      return request(app.getHttpServer())
+        .post('/demarches/1/dossiers-search')
+        .send({
+          columns: ['I01', 'I02', 'I03'],
+          filters: { I01: badFilter },
+        })
+        .set('Cookie', [adminCookie])
+        .expect(400)
+    })
+  })
+
+  it('Should only return dossier with pays=Qatar', () => {
+    return request(app.getHttpServer())
+      .post('/demarches/1/dossiers-search')
+      .send({
+        columns: ['I01', 'I02', 'I03', 'I08', 'I09'],
+        filters: {
+          I09: {
+            filterType: 'text',
+            condition1: {
+              type: 'contains',
+              filter: 'atar',
+            },
+          },
+        },
+      })
+      .set('Cookie', [adminCookie])
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.data).toEqual([
+          {
+            dossier_id: 1,
+            I03: 'Avenger',
+            I08: [16400, 16400],
+            I09: ['Qatar', 'Turquie'],
+            I01: 'W00000001',
+            I02: '2023-05-31T22:00:00.000Z',
+          },
+          {
+            dossier_id: 5,
+            I03: 'Captain Fantastic',
+            I08: [23000, 6400, 2500],
+            I09: ['USA', 'Qatar', 'France'],
+            I01: 'W00000005',
+            I02: '2023-05-31T22:00:00.000Z',
+          },
+          {
+            dossier_id: 7,
+            I03: 'Barbie',
+            I08: [6400, 2500],
+            I09: ['Qatar', 'USA'],
+            I01: 'W00000007',
+            I02: '2023-06-03T22:00:00.000Z',
+          },
+          {
+            dossier_id: 10,
+            I03: 'Premier Contact',
+            I08: [17400, 8600, 19200, 15600, 23000],
+            I09: ['USA', 'Écosse', 'Turquie', 'France', 'Qatar'],
+            I01: 'W00000010',
+            I02: '2023-06-05T22:00:00.000Z',
+          },
+        ])
+      })
+  })
+
+  it('Should only return dossier with pays=Qatar AND 10000 > financement > 20000', () => {
+    return request(app.getHttpServer())
+      .post('/demarches/1/dossiers-search')
+      .send({
+        columns: ['I01', 'I02', 'I03', 'I08', 'I09'],
+        filters: {
+          I09: {
+            filterType: 'text',
+            condition1: {
+              type: 'contains',
+              filter: 'atar',
+            },
+          },
+          I08: {
+            filterType: 'number',
+            condition1: {
+              type: 'greaterThan',
+              filter: 10000,
+            },
+            condition2: {
+              type: 'lessThan',
+              filter: 20000,
+            },
+            operator: 'AND',
+          },
+        },
+      })
+      .set('Cookie', [adminCookie])
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.data).toEqual([
+          {
+            dossier_id: 1,
+            I08: [16400, 16400],
+            I09: ['Qatar', 'Turquie'],
+            I03: 'Avenger',
+            I01: 'W00000001',
+            I02: '2023-05-31T22:00:00.000Z',
+          },
+          {
+            dossier_id: 5,
+            I08: [23000, 6400, 2500],
+            I09: ['USA', 'Qatar', 'France'],
+            I03: 'Captain Fantastic',
+            I01: 'W00000005',
+            I02: '2023-05-31T22:00:00.000Z',
+          },
+          {
+            dossier_id: 10,
+            I08: [17400, 8600, 19200, 15600, 23000],
+            I09: ['USA', 'Écosse', 'Turquie', 'France', 'Qatar'],
+            I03: 'Premier Contact',
+            I01: 'W00000010',
+            I02: '2023-06-05T22:00:00.000Z',
           },
         ])
       })

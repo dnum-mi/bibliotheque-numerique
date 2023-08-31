@@ -4,7 +4,6 @@ import { Repository } from 'typeorm'
 import { Dossier } from '../objects/entities/dossier.entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { BaseEntityService } from '../../../shared/base-entity/base-entity.service'
-import { SearchDossierDto } from '../objects/dto/search-dossier.dto'
 import { Demarche } from '../../demarches/objects/entities/demarche.entity'
 import {
   buildFilterQuery,
@@ -13,8 +12,7 @@ import {
   deduceFieldToQueryFromType,
 } from './common-search.utils'
 import { FieldService } from './field.service'
-import { FieldTypeKeys } from '../objects/enums/field-type.enum'
-import { DossierSearchOutputDto } from '../../demarches/objects/dtos/dossier-search-output.dto'
+import { DossierSearchOutputDto, FieldTypeKeys, FilterDto, SearchDossierDto } from '@biblio-num/shared'
 
 @Injectable()
 export class DossierSearchService extends BaseEntityService<Dossier> {
@@ -37,40 +35,19 @@ export class DossierSearchService extends BaseEntityService<Dossier> {
     `
   }
 
-  // count the number of row before pagination
-  private _buildCountCTE(demarcheId: number, typeHash: Record<string, FieldTypeKeys>): string {
-    this.logger.verbose('_buildCountCTE')
-    return `
-      countCTE AS (
-        SELECT COUNT(*) as nbrRows
-        FROM (
-            SELECT d.id
-            FROM dossiers d
-            JOIN fields f ON d.id = f."dossierId"
-            WHERE d."demarcheId" = ${demarcheId}
-            GROUP BY d.id
-            ${buildFilterQuery(typeHash)}
-        ) sub
-      )
-   `
-  }
-
   // build a common table expression to facilitate manipulation of fields
-  // where every field is its stringValue in a column of its label.
-  private _buildMainCTE(demarcheId: number, typeHash: Record<string, FieldTypeKeys>): string {
-    this.logger.verbose('_buildMainCTE')
+  // where every field is its stringValue (or number or date) in a column of its label.
+  private _buildAggregatedCTE(demarcheId: number, typeHash: Record<string, FieldTypeKeys>): string {
+    this.logger.verbose('_buildAggregatedCTE')
     const fieldsId = Object.keys(typeHash)
+    const select = fieldsId
+      .map((id: string) => `${this._buildArrayAggregateFromOneFieldId(id, typeHash[id])} as "${id}"`)
+      .join(',')
     return `
-      mainCTE AS (
+      aggregatedCTE AS (
         SELECT
             d.id as dossier_id,
-            ${fieldsId
-    .map((id: string) => {
-      // use array aggregate for field that have multiple instance (repeatable fields)
-      return `${this._buildArrayAggregateFromOneFieldId(id, typeHash[id])} as "${id}"`
-    })
-    .filter((a) => !!a)
-    .join(',')}
+            ${select}
         FROM dossiers d
         JOIN fields f ON d.id = f."dossierId"
         WHERE d."demarcheId" = ${demarcheId}
@@ -79,20 +56,34 @@ export class DossierSearchService extends BaseEntityService<Dossier> {
    `
   }
 
+  // count the number of row before pagination
+  private _buildCountCTE(filters: Record<string, FilterDto>, typeHash: Record<string, FieldTypeKeys>): string {
+    this.logger.verbose('_buildCountCTE')
+    return `
+      countCTE AS (
+        SELECT COUNT(*) as nbrRows
+        FROM aggregatedCTE
+        ${buildFilterQuery(filters, typeHash, true)}
+      )
+   `
+  }
+
   async search(demarche: Partial<Demarche>, dto: SearchDossierDto): Promise<DossierSearchOutputDto> {
     this.logger.verbose('search')
     const typeHash = await this.fieldService.giveFieldType(dto.columns)
     const query = `WITH
-      ${this._buildCountCTE(demarche.id, typeHash)},
-      ${this._buildMainCTE(demarche.id, typeHash)}
+      ${this._buildAggregatedCTE(demarche.id, typeHash)},
+      ${this._buildCountCTE(dto.filters, typeHash)}
       SELECT *, (SELECT nbrRows FROM countCTE) as total
-      FROM mainCTE
-      ${buildFilterQuery(typeHash)}
+      FROM aggregatedCTE
+      ${buildFilterQuery(dto.filters, typeHash, true)}
       ${buildSortQuery(dto.sorts)}
       ${buildPaginationQuery(dto.page || 1, dto.perPage || 5)}
     `
-    console.log(query)
     const result = await this.repo.query(query)
+    if (!result[0]) {
+      return { total: 0, data: [] }
+    }
     return {
       total: parseInt(result[0].total),
       data: result.map((r) => {

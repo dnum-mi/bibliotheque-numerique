@@ -4,7 +4,6 @@ import { Repository } from 'typeorm'
 import { Dossier } from '../objects/entities/dossier.entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { BaseEntityService } from '../../../shared/base-entity/base-entity.service'
-import { SearchDossierDto } from '../objects/dto/search-dossier.dto'
 import { Demarche } from '../../demarches/objects/entities/demarche.entity'
 import { Field } from '../objects/entities/field.entity'
 import {
@@ -14,8 +13,7 @@ import {
   deduceFieldToQueryFromType,
 } from './common-search.utils'
 import { FieldService } from './field.service'
-import { FieldTypeKeys } from '../objects/enums/field-type.enum'
-import { FieldSearchOutputDto } from '../../demarches/objects/dtos/field-search-output.dto'
+import { FieldSearchOutputDto, FieldTypeKeys, SearchDossierDto } from '@biblio-num/shared'
 
 @Injectable()
 export class FieldSearchService extends BaseEntityService<Field> {
@@ -97,7 +95,7 @@ export class FieldSearchService extends BaseEntityService<Field> {
       countedCTE AS (
         SELECT *, COUNT(*) OVER () AS total
         FROM combinedCTE
-        ${buildFilterQuery(typeHash)}
+        ${buildFilterQuery(dto.filters, typeHash)}
         ${buildSortQuery(dto.sorts)}
       )
     `
@@ -115,6 +113,9 @@ export class FieldSearchService extends BaseEntityService<Field> {
       ${buildPaginationQuery(dto.page || 1, dto.perPage || 5)}
     `
     const result = await this.repo.query(query)
+    if (!result[0]) {
+      return { total: 0, data: [] }
+    }
     return {
       total: parseInt(result[0].total),
       data: result.map((r) => {
