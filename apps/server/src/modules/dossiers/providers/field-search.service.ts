@@ -95,7 +95,7 @@ export class FieldSearchService extends BaseEntityService<Field> {
       countedCTE AS (
         SELECT *, COUNT(*) OVER () AS total
         FROM combinedCTE
-        ${buildFilterQuery(typeHash)}
+        ${buildFilterQuery(dto.filters, typeHash)}
         ${buildSortQuery(dto.sorts)}
       )
     `
