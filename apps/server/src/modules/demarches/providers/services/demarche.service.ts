@@ -50,6 +50,18 @@ export class DemarcheService extends BaseEntityService<Demarche> {
     return super.findWithFilter(query)
   }
 
+  withPermissions (user: User, filter: Demarche): boolean {
+    this.logger.verbose('findOneWithPermissions')
+    const ruleIds = this.getRulesFromUserPermissions(user)
+    if (!ruleIds) {
+      return true
+    }
+    if (ruleIds.length > 0 && ruleIds.some(ruleId => ruleId === filter.id)) {
+      return true
+    }
+    return false
+  }
+
   public getRulesFromUserPermissions (user: User): number[] | void {
     this.logger.verbose('getRulesFromUserPermissions')
     const { roles } = user
