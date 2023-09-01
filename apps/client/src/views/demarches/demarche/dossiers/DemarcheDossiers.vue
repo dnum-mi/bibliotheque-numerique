@@ -1,20 +1,20 @@
 <script lang="ts" setup>
 import { useRoute, useRouter } from 'vue-router'
-import { computed, type ComputedRef, watch, ref, type Ref } from 'vue'
+import { computed, onMounted, type Ref, ref, watch } from 'vue'
 import type { IDemarche } from '@biblio-num/shared'
 import { SearchDossierDto } from '@biblio-num/shared'
 import { type FrontMappingColumn, useDemarcheStore, useUserStore } from '@/stores'
 import { AgGridVue } from 'ag-grid-vue3'
 import 'ag-grid-enterprise'
 import 'ag-grid-community/styles/ag-grid.css'
-import 'ag-grid-community/styles/ag-theme-alpine.css'
-import { localeTextAgGrid } from '@/components/ag-grid/agGridOptions'
-import { type ColDef } from 'ag-grid-community/dist/lib/entities/colDef'
+import 'ag-grid-community/styles/ag-theme-material.css'
+import { type ColDef, ColumnMenuTab } from 'ag-grid-community/dist/lib/entities/colDef'
 import { type IServerSideGetRowsParams } from 'ag-grid-community/dist/lib/interfaces/iServerSideDatasource'
 import { fromFieldTypeToAgGridFilter } from '@/views/demarches/demarche/dossiers/demarche-dossiers-utils'
 import { GridApi, type GridReadyEvent } from 'ag-grid-community'
 import DemarcheDossierCellRenderer from '@/views/demarches/demarche/dossiers/DemarcheDossierCellRenderer.vue'
-import { SortModelItem } from 'ag-grid-community/dist/lib/sortController'
+import { type SortModelItem } from 'ag-grid-community/dist/lib/sortController'
+import { gridOptionFactory } from '@/views/demarches/demarche/dossiers/grid-option-factory'
 
 const route = useRoute()
 const router = useRouter()
@@ -24,12 +24,6 @@ const gridApi: Ref<GridApi | undefined> = ref()
 const groupByDossier: Ref<boolean> = ref(false)
 const demarche = computed<IDemarche>(() => demarcheStore.currentDemarche as IDemarche)
 const demarcheConfiguration = computed<FrontMappingColumn[]>(() => demarcheStore.currentDemarchePlaneConfiguration)
-const sideBarOptions = {
-  toolPanels: ['columns', 'filters'],
-  SideBarDef: {
-    hiddenByDefault: false,
-  },
-}
 const pageSize = 5
 
 const computeSort = (dto: SearchDossierDto, sortModel: SortModelItem[]) => {
@@ -46,7 +40,7 @@ const computeFilter = (dto: SearchDossierDto, filterModel: Record<string, any>) 
   const keys = Object.keys(filterModel)
   if (keys.length) {
     dto.filters = {}
-    keys.forEach(key => {
+    keys.forEach((key) => {
       if (!filterModel[key].condition1) {
         dto.filters[key] = {
           filterType: filterModel[key].filterType,
@@ -75,10 +69,10 @@ const getRows = async (params: IServerSideGetRowsParams) => {
     }
     computeSort(dto, params.request.sortModel)
     computeFilter(dto, params.request.filterModel)
-    dto.columns = params.columnApi.getColumnState()
-      .filter(state => !state.hide)
-      .map(state => state.colId)
-    console.log(params.request)
+    dto.columns = params.columnApi
+      .getColumnState()
+      .filter((state) => !state.hide)
+      .map((state) => state.colId)
     dto.perPage = pageSize
     dto.page = params.request.startRow / pageSize + 1
     const response = await demarcheStore.searchCurrentDemarcheDossiers(groupByDossier.value, dto)
@@ -88,23 +82,8 @@ const getRows = async (params: IServerSideGetRowsParams) => {
   }
 }
 
-const gridOptions = {
-  domLayout: 'autoHeight',
-  localeText: localeTextAgGrid,
-  suppressMenuHide: true,
-  rowModelType: 'serverSide',
-  serverSideDatasource: { getRows },
-  serverSideSortOnServer: true,
-  serverSideFilterOnServer: true,
-  pagination: true,
-  paginationPageSize: pageSize,
-  cacheBlockSize: pageSize,
-}
-const defaultColumnsDef = {
-  sortable: true,
-  filter: true,
-  resizable: true,
-}
+const gridOptions = gridOptionFactory(getRows, pageSize)
+
 const columnsDef: Ref<ColDef[] | undefined> = ref()
 
 const computeColumnsDef = () => {
@@ -121,7 +100,8 @@ const computeColumnsDef = () => {
         field: column.id,
         filter: fromFieldTypeToAgGridFilter(column.type),
         autoHeight: true,
-        menuTabs: ['filterMenuTab'],
+        sortable: true,
+        menuTabs: ['filterMenuTab'] as ColumnMenuTab[],
         cellRenderer: DemarcheDossierCellRenderer,
         cellRendererParams: { column },
       }
@@ -129,12 +109,15 @@ const computeColumnsDef = () => {
   ]
 }
 
-watch(demarche, computeColumnsDef)
-watch(groupByDossier, () => {
+const refresh = () => {
   if (gridApi.value) {
-    gridApi.value?.refreshServerSide()
+    gridApi.value.refreshServerSideStore({ purge: true })
   }
-}, { immediate: true })
+}
+
+onMounted(computeColumnsDef)
+watch(demarche, computeColumnsDef)
+watch(groupByDossier, refresh, { immediate: true })
 
 const onGridReady = (event: GridReadyEvent) => {
   gridApi.value = event.api
@@ -149,14 +132,14 @@ const onGridReady = (event: GridReadyEvent) => {
         label="Grouper par dossier"
       />
     </div>
-    <div class="ag-grid-wrapper">
+    <div
+      v-if="demarche"
+      class="ag-grid-wrapper"
+    >
       <ag-grid-vue
-        v-if="demarche"
-        class="ag-theme-alpine"
+        class="ag-theme-material"
         :column-defs="columnsDef"
-        :default-col-def="defaultColumnsDef"
         :grid-options="gridOptions"
-        :side-bar="sideBarOptions"
         @grid-ready="onGridReady($event)"
       />
     </div>

@@ -1,5 +1,5 @@
 import { Champ } from '@dnum-mi/ds-api-client'
-// import { AddressChamp } from '@dnum-mi/ds-api-client/dist/@types/types'
+import { AddressChamp } from '@dnum-mi/ds-api-client/dist/@types/types'
 import { Mapper } from '@/modules/ds/objects/types/mapper.type'
 
 const stringValue = (ch: Champ | null) => ch?.stringValue ?? null

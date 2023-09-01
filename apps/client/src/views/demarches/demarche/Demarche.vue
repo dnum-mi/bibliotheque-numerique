@@ -80,7 +80,10 @@ onMounted(() => {
         tab-id="tab-0"
         :selected="selectedTabIndex === 0"
       >
-        <DemarcheDossiers demarche-id="demarche.id" />
+        <DemarcheDossiers
+          v-if="selectedTabIndex === 0"
+          demarche-id="demarche.id"
+        />
       </DsfrTabContent>
 
       <!-- Informations -->
@@ -89,9 +92,11 @@ onMounted(() => {
         tab-id="tab-1"
         :selected="selectedTabIndex === 1"
       >
-        <DemarcheInformations class="fr-pt-3w" />
-        <DemarcheService class="fr-pt-5w" />
-        <GroupInstructeurs class="fr-pt-5w" />
+        <template v-if="selectedTabIndex === 1">
+          <DemarcheInformations class="fr-pt-3w" />
+          <DemarcheService class="fr-pt-5w" />
+          <GroupInstructeurs class="fr-pt-5w" />
+        </template>
       </DsfrTabContent>
 
       <!-- Configurations -->
@@ -101,7 +106,9 @@ onMounted(() => {
         tab-id="tab-2"
         :selected="selectedTabIndex === 2"
       >
-        <DemarcheConfigurations />
+        <template v-if="selectedTabIndex === 2">
+          <DemarcheConfigurations />
+        </template>
       </DsfrTabContent>
     </DsfrTabs>
   </LayoutList>

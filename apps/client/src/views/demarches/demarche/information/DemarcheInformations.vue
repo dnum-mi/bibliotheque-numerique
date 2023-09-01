@@ -7,7 +7,7 @@ import { dateTimeToStringFr, stateToFr } from '@/utils'
 import { useDemarcheStore } from '@/stores'
 
 const demarcheStore = useDemarcheStore()
-const dataJson = computed<object>(() => demarcheStore.demarche?.dsDataJson || {})
+const dataJson = computed<object>(() => demarcheStore.currentDemarche?.dsDataJson || {})
 
 const title = 'Informations'
 
