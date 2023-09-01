@@ -16,13 +16,13 @@ export type FrontMappingColumn = MappingColumnWithoutChildren & { isChild: boole
 
 export const useDemarcheStore = defineStore('demarche', () => {
   const demarches: Ref<IDemarche[]> = ref<IDemarche[]>([])
-  const currentDemarche: Ref<IDemarche> = ref({})
+  const currentDemarche: Ref<IDemarche | undefined> = ref()
   const currentDemarcheDossiers = ref<DossierSearchOutputDto | FieldSearchOutputDto>({ total: 0, data: [] })
   const currentDemarcheConfiguration = ref<MappingColumnWithoutChildren[]>([])
-  const currentDemarchePlaneConfiguration: ComputedRef<FrontMappingColumn[]> = computed<MappingColumnWithoutChildren[]>(() => currentDemarcheConfiguration.value
+  const currentDemarchePlaneConfiguration: ComputedRef<FrontMappingColumn[]> = computed(() => currentDemarcheConfiguration.value
     .map((c: MappingColumn) => c.children?.length ? c.children.map(c => ({ ...c, isChild: true })) : [c])
     .flat(1)
-    .filter(c => !!c.columnLabel))
+    .filter(c => !!c.columnLabel) as FrontMappingColumn[])
   // hash will be easier to manipulate
   const currentDemarcheConfigurationHash = ref<Record<string, MappingColumn>>({})
 
@@ -38,12 +38,16 @@ export const useDemarcheStore = defineStore('demarche', () => {
   }
 
   const updateOneMappingColumn = async (id: string, columnLabel: string): Promise<void> => {
-    await apiClient.updateOneMappingColumn(currentDemarche.value.id, id, { columnLabel })
-    await getCurrentDemarcheConfigurations()
+    if (currentDemarche.value) {
+      await apiClient.updateOneMappingColumn(currentDemarche.value.id, id, { columnLabel })
+      await getCurrentDemarcheConfigurations()
+    }
   }
 
   const getCurrentDemarcheConfigurations = async () => {
-    _setConfiguration(await apiClient.getDemarcheConfiguration(currentDemarche.value.id))
+    if (currentDemarche.value) {
+      _setConfiguration(await apiClient.getDemarcheConfiguration(currentDemarche.value.id))
+    }
   }
 
   const getDemarche = async (idDemarche: number) => {
@@ -58,10 +62,15 @@ export const useDemarcheStore = defineStore('demarche', () => {
     demarches.value = await apiClient.getDemarches()
   }
 
-  const searchCurrentDemarcheDossiers = async (groupByDossier: boolean, dto: SearchDossierDto): Promise<void> => {
-    currentDemarcheDossiers.value = groupByDossier
-      ? await apiClient.searchDemarcheDossiers(currentDemarche.value.id, dto)
-      : await apiClient.searchDemarcheFields(currentDemarche.value.id, dto)
+  const searchCurrentDemarcheDossiers = async (groupByDossier: boolean, dto: SearchDossierDto): Promise<DossierSearchOutputDto | FieldSearchOutputDto> => {
+    if (currentDemarche.value) {
+      currentDemarcheDossiers.value = groupByDossier
+        ? await apiClient.searchDemarcheDossiers(currentDemarche.value.id, dto)
+        : await apiClient.searchDemarcheFields(currentDemarche.value.id, dto)
+      return currentDemarcheDossiers.value
+    } else {
+      throw new Error("Can't search without a current demarche")
+    }
   }
 
   return {

@@ -1,57 +1,119 @@
 <script lang="ts" setup>
 import { useRoute, useRouter } from 'vue-router'
-import { computed, type ComputedRef, ref, type Ref, watch } from 'vue'
-import type { FieldSearchOutputDto, IDemarche } from '@biblio-num/shared'
-import { DossierSearchOutputDto, MappingColumnWithoutChildren, SearchDossierDto, SortDto } from '@biblio-num/shared'
+import { computed, type ComputedRef, watch, ref, type Ref } from 'vue'
+import type { IDemarche } from '@biblio-num/shared'
+import { SearchDossierDto } from '@biblio-num/shared'
 import { type FrontMappingColumn, useDemarcheStore, useUserStore } from '@/stores'
-import { fromFieldTypeToAgGridFilter } from '@/views/demarches/demarche/dossiers/demarche-dossiers-utils'
 import { AgGridVue } from 'ag-grid-vue3'
 import 'ag-grid-enterprise'
 import 'ag-grid-community/styles/ag-grid.css'
 import 'ag-grid-community/styles/ag-theme-alpine.css'
 import { localeTextAgGrid } from '@/components/ag-grid/agGridOptions'
 import { type ColDef } from 'ag-grid-community/dist/lib/entities/colDef'
-import AgGridMultiValueCell from '@/components/ag-grid/AgGridMultiValueCell.vue'
-import { GridApi, type GridOptions, type GridReadyEvent } from 'ag-grid-community'
-import DemarcheDossiersPagination, { type IPagination } from '@/views/demarches/demarche/dossiers/DemarcheDossiersPagination.vue'
-import { ColumnApi } from 'ag-grid-community/dist/lib/columns/columnApi'
-import { type ColumnState } from 'ag-grid-community/dist/lib/columns/columnModel'
+import { type IServerSideGetRowsParams } from 'ag-grid-community/dist/lib/interfaces/iServerSideDatasource'
+import { fromFieldTypeToAgGridFilter } from '@/views/demarches/demarche/dossiers/demarche-dossiers-utils'
+import { GridApi, type GridReadyEvent } from 'ag-grid-community'
+import DemarcheDossierCellRenderer from '@/views/demarches/demarche/dossiers/DemarcheDossierCellRenderer.vue'
+import { SortModelItem } from 'ag-grid-community/dist/lib/sortController'
 
 const route = useRoute()
 const router = useRouter()
 const demarcheStore = useDemarcheStore()
 const userStore = useUserStore()
-const demarche = computed<IDemarche>(() => demarcheStore.currentDemarche)
-const demarcheConfiguration = computed<MappingColumnWithoutChildren[]>(() => demarcheStore.currentDemarchePlaneConfiguration)
+const gridApi: Ref<GridApi | undefined> = ref()
 const groupByDossier: Ref<boolean> = ref(false)
-const result: Ref<DossierSearchOutputDto | FieldSearchOutputDto> = computed(() => demarcheStore.currentDemarcheDossiers)
-const gridOptions: GridOptions = {
+const demarche = computed<IDemarche>(() => demarcheStore.currentDemarche as IDemarche)
+const demarcheConfiguration = computed<FrontMappingColumn[]>(() => demarcheStore.currentDemarchePlaneConfiguration)
+const sideBarOptions = {
+  toolPanels: ['columns', 'filters'],
+  SideBarDef: {
+    hiddenByDefault: false,
+  },
+}
+const pageSize = 5
+
+const computeSort = (dto: SearchDossierDto, sortModel: SortModelItem[]) => {
+  if (sortModel.length) {
+    dto.sorts = sortModel.map((sort) => ({
+      key: sort.colId,
+      // TODO: correct server side if key = sort => 500
+      order: sort.sort === 'asc' ? 'ASC' : 'DESC',
+    }))
+  }
+}
+
+const computeFilter = (dto: SearchDossierDto, filterModel: Record<string, any>) => {
+  const keys = Object.keys(filterModel)
+  if (keys.length) {
+    dto.filters = {}
+    keys.forEach(key => {
+      if (!filterModel[key].condition1) {
+        dto.filters[key] = {
+          filterType: filterModel[key].filterType,
+          condition1: {
+            filter: filterModel[key].filter,
+            type: filterModel[key].type,
+          },
+        }
+      } else {
+        dto.filters[key] = filterModel[key]
+      }
+    })
+  } else {
+    dto.filters = undefined
+  }
+}
+
+const getRows = async (params: IServerSideGetRowsParams) => {
+  if (demarche.value) {
+    const dto: SearchDossierDto = {
+      page: 1,
+      perPage: pageSize,
+      sorts: [],
+      filters: undefined,
+      columns: [],
+    }
+    computeSort(dto, params.request.sortModel)
+    computeFilter(dto, params.request.filterModel)
+    dto.columns = params.columnApi.getColumnState()
+      .filter(state => !state.hide)
+      .map(state => state.colId)
+    console.log(params.request)
+    dto.perPage = pageSize
+    dto.page = params.request.startRow / pageSize + 1
+    const response = await demarcheStore.searchCurrentDemarcheDossiers(groupByDossier.value, dto)
+    params.success({ rowData: response.data, rowCount: response.total })
+  } else {
+    params.fail()
+  }
+}
+
+const gridOptions = {
   domLayout: 'autoHeight',
   localeText: localeTextAgGrid,
-  pagination: false,
   suppressMenuHide: true,
+  rowModelType: 'serverSide',
+  serverSideDatasource: { getRows },
+  serverSideSortOnServer: true,
+  serverSideFilterOnServer: true,
+  pagination: true,
+  paginationPageSize: pageSize,
+  cacheBlockSize: pageSize,
 }
-const defaultColDef = {
+const defaultColumnsDef = {
   sortable: true,
   filter: true,
   resizable: true,
 }
-const dossierSearchDto: ComputedRef<SearchDossierDto> = computed(() => ({
-  page: Number(route.query.page),
-  perPage: 10,
-  sorts: [],
-  // filters: [],
-  columns: demarcheConfiguration.value.map((c) => c.id),
-}))
+const columnsDef: Ref<ColDef[] | undefined> = ref()
 
-const columnDefs: Ref<ColDef[]> = ref([])
-
-const updateColumnDefs = () => {
-  columnDefs.value = [
+const computeColumnsDef = () => {
+  columnsDef.value = [
     {
       headerName: 'N° dossier',
       field: 'dossierId',
       filter: 'agNumberColumnFilter',
+      menuTabs: ['filterMenuTab'],
     },
     ...demarcheConfiguration.value.map((column: FrontMappingColumn) => {
       return {
@@ -59,56 +121,24 @@ const updateColumnDefs = () => {
         field: column.id,
         filter: fromFieldTypeToAgGridFilter(column.type),
         autoHeight: true,
-
         menuTabs: ['filterMenuTab'],
-        cellRenderer:
-          groupByDossier.value && column.isChild
-            ? AgGridMultiValueCell
-            : (params: { value: string }) => {
-                if (column.type === 'date') {
-                  return new Date(params.value).toLocaleDateString()
-                }
-                return params.value
-              },
+        cellRenderer: DemarcheDossierCellRenderer,
+        cellRendererParams: { column },
       }
     }),
   ]
 }
-const gridApi: Ref<GridApi> = ref()
-const columnApi: Ref<ColumnApi> = ref()
 
-const refresh = async (firstTime = false) => {
-  console.log('coucou')
-  gridApi.value.showLoadingOverlay()
-  if (!firstTime) {
-    dossierSearchDto.value.sorts = []
-    dossierSearchDto.value.columns = []
+watch(demarche, computeColumnsDef)
+watch(groupByDossier, () => {
+  if (gridApi.value) {
+    gridApi.value?.refreshServerSide()
   }
-  columnApi.value.getColumnState().forEach((state: ColumnState) => {
-    if (!state.hide) {
-      dossierSearchDto.value.columns.push(state.colId)
-    }
-    if (state.sort) {
-      dossierSearchDto.value.sorts.push({ key: state.colId, order: state.sort.toUpperCase() })
-    }
-  })
-  await demarcheStore.searchCurrentDemarcheDossiers(groupByDossier.value, dossierSearchDto.value)
-  updateColumnDefs()
-  gridApi.value.hideOverlay()
-}
+}, { immediate: true })
 
 const onGridReady = (event: GridReadyEvent) => {
   gridApi.value = event.api
-  columnApi.value = event.columnApi
 }
-
-const paginationUpdated = (pagination: IPagination) => {
-  dossierSearchDto.value.page = pagination.page
-  dossierSearchDto.value.perPage = pagination.perPage
-  refresh()
-}
-
-watch(demarche, refresh)
 </script>
 
 <template>
@@ -117,34 +147,17 @@ watch(demarche, refresh)
       <DsfrToggleSwitch
         v-model="groupByDossier"
         label="Grouper par dossier"
-        @update:model-value="refresh()"
       />
-      <!--    <DemarcheDossiersFilters />-->
     </div>
     <div class="ag-grid-wrapper">
       <ag-grid-vue
+        v-if="demarche"
         class="ag-theme-alpine"
-        :column-defs="columnDefs"
-        :default-col-def="defaultColDef"
-        :row-data="result.data"
+        :column-defs="columnsDef"
+        :default-col-def="defaultColumnsDef"
         :grid-options="gridOptions"
-        :side-bar="{
-          toolPanels: ['columns', 'filters'],
-          SideBarDef: {
-            hiddenByDefault: false,
-          },
-        }"
+        :side-bar="sideBarOptions"
         @grid-ready="onGridReady($event)"
-        @sort-changed="refresh()"
-        @drag-stopped="refresh()"
-        @column-visible="refresh()"
-        @filter-changed="refresh()"
-      />
-    </div>
-    <div class="flex justify-end fr-mt-2v">
-      <DemarcheDossiersPagination
-        :total="result.total"
-        @pagination-updated="paginationUpdated($event)"
       />
     </div>
   </div>
