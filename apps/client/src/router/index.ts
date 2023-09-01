@@ -129,6 +129,13 @@ const routes = [
     name: '404',
     component: () => import('@/views/Error404.vue'),
   },
+  {
+    path: '/valid-email/:token',
+    name: 'ValidEmail',
+    component: () => import('@/views/ValidEmail.vue'),
+    props: true,
+
+  },
 ]
 
 const router = createRouter({
