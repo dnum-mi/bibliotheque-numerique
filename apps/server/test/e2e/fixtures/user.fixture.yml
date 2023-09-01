@@ -32,3 +32,11 @@ items:
     updatedAt: 2023-06-12T06:54:45.000Z
     roles: ["@demarche2Role"]
     validated: true
+  testNoValidUser:
+    id: 5
+    email: test.no.valid@localhost.com
+    password: password
+    createdAt: 2023-06-12T06:54:45.000Z
+    updatedAt: 2023-06-12T06:54:45.000Z
+    roles: ["@defaultRole"]
+    validated: false
