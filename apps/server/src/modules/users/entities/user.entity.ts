@@ -22,6 +22,13 @@ export class User extends BaseEntity {
   })
     password: string
 
+  @Column({
+    type: 'boolean',
+    nullable: false,
+    default: false,
+  })
+   validated: boolean
+
   @ManyToMany(() => Role, (role) => role.users)
     roles: Role[]
 
