@@ -1,4 +1,14 @@
-import { IsArray, IsDefined, IsNumber, IsOptional, IsString, Max, Min, ValidateNested } from 'class-validator'
+import {
+  ArrayNotEmpty,
+  IsArray,
+  IsDefined,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+  ValidateNested,
+} from 'class-validator'
 import { SortDto } from './sort.dto'
 import { Type } from 'class-transformer'
 import { FilterDto } from './filters'
@@ -19,6 +29,7 @@ export class PaginationDto<T> {
   @IsDefined()
   @IsArray()
   @IsString({ each: true })
+  @ArrayNotEmpty()
   columns: ((keyof T) & string)[]
 
   @IsOptional()

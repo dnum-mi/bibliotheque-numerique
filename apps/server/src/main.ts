@@ -15,7 +15,6 @@ async function bootstrap (): Promise<void> {
       .setTitle('Bibliothèque numérique API')
       .setDescription('Bibliothèque numérique API documentation')
       .setVersion('1.0')
-      .setBasePath('/api')
       .build()
     const document = SwaggerModule.createDocument(app, config)
     SwaggerModule.setup('swagger', app, document)

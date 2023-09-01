@@ -1,10 +1,14 @@
 import { FieldSourceKeys, FieldTypeKeys, FormatFunctionRefKeys } from '../../enums'
 
-export class MappingColumn {
+export class MappingColumnWithoutChildren {
   id: string
-  columnLabel: string | null
+  columnLabel?: string
   originalLabel: string
   type: FieldTypeKeys
-  formatFunctionRef?: FormatFunctionRefKeys
+  formatFunctionRef?: FormatFunctionRefKeys | undefined
   source: FieldSourceKeys
+}
+
+export class MappingColumn extends MappingColumnWithoutChildren {
+  children?: MappingColumnWithoutChildren[]
 }

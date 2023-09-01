@@ -6,6 +6,9 @@
   "collectCoverageFrom": [
     "**/*.(t|j)s"
   ],
+  "moduleNameMapper": {
+    "^@/(.*)$": "<rootDir>/../../src/$1"
+  },
   "transform": {
     "^.+\\.ts$": "ts-jest"
   }

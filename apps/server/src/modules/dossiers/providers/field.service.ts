@@ -1,24 +1,24 @@
 import { Injectable } from '@nestjs/common'
-import { BaseEntityService } from '../../../shared/base-entity/base-entity.service'
+import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { Field } from '../objects/entities/field.entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
-import { LoggerService } from '../../../shared/modules/logger/logger.service'
+import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { Dossier as TDossier } from '@dnum-mi/ds-api-client/dist/@types/types'
-import { DsChampType } from '../../../shared/modules/ds-api/objects/ds-champ-type.enum'
+import { DsChampType } from '@/shared/modules/ds-api/objects/ds-champ-type.enum'
 import { CreateFieldDto } from '../objects/dto/fields/create-field.dto'
 import { CustomChamp } from '@dnum-mi/ds-api-client/src/@types/types'
 import { fixFieldValueFunctions } from '../objects/constante/fix-field.dictionnary'
 import { FieldType, FieldTypeKeys, MappingColumn } from '@biblio-num/shared'
 
 type RawChamp = CustomChamp & {
-  __typename: string;
-  rows: Array<{ champs: Array<RawChamp> }>;
-};
+  __typename: string
+  rows: Array<{ champs: Array<RawChamp> }>
+}
 
 @Injectable()
 export class FieldService extends BaseEntityService<Field> {
-  constructor (
+  constructor(
     @InjectRepository(Field) protected repo: Repository<Field>,
     protected logger: LoggerService,
   ) {
@@ -38,7 +38,10 @@ export class FieldService extends BaseEntityService<Field> {
 
   private _extractColumnRefFieldInformation (
     columnRef: MappingColumn,
-  ): Pick<CreateFieldDto, 'sourceId' | 'label' | 'formatFunctionRef' | 'type' | 'fieldSource'> {
+  ): Pick<
+    CreateFieldDto,
+    'sourceId' | 'label' | 'formatFunctionRef' | 'type' | 'fieldSource'
+  > {
     this.logger.verbose('_extractColumnRefFieldInformation')
     return {
       sourceId: columnRef.id,
@@ -49,7 +52,7 @@ export class FieldService extends BaseEntityService<Field> {
     }
   }
 
-  private _createFieldsFromRawChamps (
+  private _createFieldsFromRawChamps(
     champs: Array<RawChamp>,
     dossierId: number,
     columnHash: Record<string, MappingColumn>,
@@ -85,7 +88,12 @@ export class FieldService extends BaseEntityService<Field> {
               ? champ.rows?.length
                 ? champ.rows
                   .map((row, i: number) => {
-                    return this._createFieldsFromRawChamps(row.champs, dossierId, columnHash, i)
+                    return this._createFieldsFromRawChamps(
+                      row.champs,
+                      dossierId,
+                      columnHash,
+                      i,
+                    )
                   })
                   .flat()
                 : []
@@ -96,7 +104,7 @@ export class FieldService extends BaseEntityService<Field> {
     return fields
   }
 
-  private _createFieldsFromDataJson (
+  private _createFieldsFromDataJson(
     dataJson: Partial<TDossier>,
     dossierId: number,
     columnHash: Record<string, MappingColumn>,
@@ -105,10 +113,19 @@ export class FieldService extends BaseEntityService<Field> {
     const champs = dataJson?.champs ?? []
     const annotations = dataJson?.annotations ?? []
     return [
-      ...this._createFieldsFromRawChamps(champs as RawChamp[], dossierId, columnHash),
-      ...this._createFieldsFromRawChamps(annotations as RawChamp[], dossierId, columnHash),
+      ...this._createFieldsFromRawChamps(
+        champs as RawChamp[],
+        dossierId,
+        columnHash,
+      ),
+      ...this._createFieldsFromRawChamps(
+        annotations as RawChamp[],
+        dossierId,
+        columnHash,
+      ),
       ...Object.keys(fixFieldValueFunctions).map((fixFieldId) => {
-        const value:string = fixFieldValueFunctions[fixFieldId](dataJson)?.toString() ?? ''
+        const value: string =
+          fixFieldValueFunctions[fixFieldId](dataJson)?.toString() ?? ''
         return {
           ...this._extractColumnRefFieldInformation(columnHash[fixFieldId]),
           stringValue: value.toString(),
@@ -123,27 +140,49 @@ export class FieldService extends BaseEntityService<Field> {
     ]
   }
 
-  async overwriteFieldsFromDataJson (
+  async overwriteFieldsFromDataJson(
     dataJson: Partial<TDossier>,
     dossierId: number,
     mappingColumns: MappingColumn[],
   ): Promise<Field[]> {
     this.logger.verbose('createFieldsFromDataJsonWithTransaction')
-    const columnHash: Record<string, MappingColumn> = Object.fromEntries(mappingColumns.map((mc) => [mc.id, mc]))
-    const fields = this._createFieldsFromDataJson(dataJson, dossierId, columnHash)
+    const columnHash: Record<string, MappingColumn> = Object.fromEntries(
+      mappingColumns
+        .map((mc: MappingColumn) => [
+          [mc.id, mc],
+          ...(mc.children?.length ? mc.children.map((c) => [c.id, c]) : []),
+        ])
+        .flat(1),
+    )
+    const fields = this._createFieldsFromDataJson(
+      dataJson,
+      dossierId,
+      columnHash,
+    )
     await this.repo.delete({ dossierId })
     // TODO: supprimer les fichiers S3
     return this.repo.save(fields)
   }
 
-  async giveFieldType (fieldsId: string[]): Promise<Record<string, FieldTypeKeys>> {
+  async giveFieldType(
+    fieldsId: string[],
+  ): Promise<Record<string, FieldTypeKeys>> {
     this.logger.verbose('giveFieldType')
-    return await this.repo.query(`
+    return await this.repo
+      .query(
+        `
         SELECT DISTINCT "sourceId", type
         FROM fields
         WHERE "sourceId" IN (${fieldsId.map((id) => `'${id}'`).join(',')});
-    `).then(result => {
-      return Object.fromEntries(result.map((r: { sourceId: string; type: FieldTypeKeys }) => [r.sourceId, r.type]))
-    })
+    `,
+      )
+      .then((result) => {
+        return Object.fromEntries(
+          result.map((r: { sourceId: string; type: FieldTypeKeys }) => [
+            r.sourceId,
+            r.type,
+          ]),
+        )
+      })
   }
 }

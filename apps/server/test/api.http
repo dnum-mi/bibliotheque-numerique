@@ -1,0 +1,20 @@
+@{{baseUrl}} = http://localhost:8080
+
+###
+# @name login
+POST {{baseUrl}}/auth/sign-in HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "password"
+}
+
+### Créer la démarche 5
+
+POST {{baseUrl}}/demarches/create HTTP/1.1
+Content-Type: application/json
+
+{
+  "idDs": 5
+}

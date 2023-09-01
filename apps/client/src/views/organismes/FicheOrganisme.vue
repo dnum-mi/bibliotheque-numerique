@@ -149,7 +149,7 @@ function selectTab (idx:number) {
 onMounted(async () => {
   const params = useRoute()?.params
   if (params?.id) {
-    await organismeStore.loadOrganismebyIdRNA(params.id as string)
+    await organismeStore.loadOrganismeByIdRNA(params.id as string)
   }
 })
 </script>

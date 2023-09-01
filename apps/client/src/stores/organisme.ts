@@ -1,6 +1,7 @@
-import { fetchOrganimseById, fetchOrganimseByIdRNA, fetchOrganimses } from '@/shared/services/organisme.service'
-import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { defineStore } from 'pinia'
+
+import apiClient from '@/api/api-client'
 
 export const useOrganismeStore = defineStore('organisme', () => {
   const formatData = (data: { zipCode: string; city: any }) => {
@@ -14,35 +15,27 @@ export const useOrganismeStore = defineStore('organisme', () => {
   const organisme = ref<any>({})
   const organismes = ref<any[]>([])
 
-  const loadOrganismebyId = async (id: number) => {
+  const loadOrganismeByIdRNA = async (id: string) => {
     if (!id) {
-      console.log(`Pas de valeur id: ${id}`)
       return
     }
-    const result = await fetchOrganimseById(id)
-    if (result) organisme.value = result
-  }
-
-  const loadOrganismebyIdRNA = async (id: string) => {
-    if (!id) {
-      console.log(`Pas de valeur id: ${id}`)
-      return
+    const result = await apiClient.getOrganismeByIdRna(id)
+    if (result) {
+      organisme.value = result
     }
-    const result = await fetchOrganimseByIdRNA(id)
-    if (result) organisme.value = result
   }
 
   const loadOrganismes = async () => {
-    const result = await fetchOrganimses()
-    // if (result) organisme.value = result.organismeData.dataJson.data
-    if (result) organismes.value = result?.map((data: any) => { const newData = formatData(data); return newData })
+    const result = await apiClient.getOrganismes()
+    if (result) {
+      organismes.value = result?.map((data: any) => { const newData = formatData(data); return newData })
+    }
   }
 
   return {
     organisme,
     organismes,
-    loadOrganismebyId,
-    loadOrganismebyIdRNA,
+    loadOrganismeByIdRNA,
     loadOrganismes,
   }
 })

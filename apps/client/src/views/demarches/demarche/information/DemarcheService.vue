@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { useDemarcheStore } from '@/stores'
 
 const demarcheStore = useDemarcheStore()
-const service = computed<object>(() => demarcheStore.demarche?.dsDataJson?.service || {})
+const service = computed<object>(() => demarcheStore.currentDemarche?.dsDataJson?.service || {})
 const labelKeys = {
   nom: 'Nom',
   organisme: 'Organisme',

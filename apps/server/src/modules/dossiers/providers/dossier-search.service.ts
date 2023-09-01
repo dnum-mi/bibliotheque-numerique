@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common'
-import { LoggerService } from '../../../shared/modules/logger/logger.service'
+import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { Repository } from 'typeorm'
 import { Dossier } from '../objects/entities/dossier.entity'
 import { InjectRepository } from '@nestjs/typeorm'
-import { BaseEntityService } from '../../../shared/base-entity/base-entity.service'
+import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { Demarche } from '../../demarches/objects/entities/demarche.entity'
 import {
   buildFilterQuery,
@@ -12,7 +12,7 @@ import {
   deduceFieldToQueryFromType,
 } from './common-search.utils'
 import { FieldService } from './field.service'
-import { DossierSearchOutputDto, FieldTypeKeys, FilterDto, SearchDossierDto } from '@biblio-num/shared'
+import { DossierSearchOutputDto, FieldTypeKeys, FilterDto, MappingColumn, SearchDossierDto } from '@biblio-num/shared'
 
 @Injectable()
 export class DossierSearchService extends BaseEntityService<Dossier> {
@@ -46,7 +46,7 @@ export class DossierSearchService extends BaseEntityService<Dossier> {
     return `
       aggregatedCTE AS (
         SELECT
-            d.id as dossier_id,
+            d.id as "dossierId",
             ${select}
         FROM dossiers d
         JOIN fields f ON d.id = f."dossierId"
@@ -81,16 +81,19 @@ export class DossierSearchService extends BaseEntityService<Dossier> {
       ${buildPaginationQuery(dto.page || 1, dto.perPage || 5)}
     `
     const result = await this.repo.query(query)
-    if (!result[0]) {
+    if (!result?.[0]) {
       return { total: 0, data: [] }
     }
+    const withoutChildrenIds: string[] = demarche.mappingColumns
+      .filter((c: MappingColumn) => !c.children?.length)
+      .map(c => c.id)
     return {
       total: parseInt(result[0].total),
       data: result.map((r) => {
         delete r.total
         Object.keys(r).forEach((key: string) => {
-          if (r[key] instanceof Array && r[key].length === 1) {
-            r[key] = r[key][0]
+          if (withoutChildrenIds.includes(key)) {
+            r[key] = r[key]?.[0] || null
           }
         })
         return r
