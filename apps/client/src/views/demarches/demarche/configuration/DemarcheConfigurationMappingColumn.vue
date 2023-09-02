@@ -3,7 +3,7 @@ import { useDebounceFn } from '@vueuse/core'
 import { ref, watch } from 'vue'
 
 import { useDemarcheStore } from '@/stores'
-import { MappingColumn } from '@biblio-num/shared'
+import type { MappingColumn } from '@biblio-num/shared'
 
 const props = defineProps<{
   isChildren?: boolean;

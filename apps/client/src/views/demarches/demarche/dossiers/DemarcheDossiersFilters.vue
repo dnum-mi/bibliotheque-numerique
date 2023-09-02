@@ -2,7 +2,7 @@
 <!--import { computed, type Ref, ref, watchEffect } from 'vue'-->
 <!--import { useStorage } from '@vueuse/core'-->
 <!--import { useUserStore } from '@/stores'-->
-<!--import { SearchDossierDto } from '@biblio-num/shared'-->
+<!--import type { SearchDossierDto } from '@biblio-num/shared'-->
 
 <!--const userStore = useUserStore()-->
 

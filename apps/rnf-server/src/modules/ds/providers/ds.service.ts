@@ -14,7 +14,6 @@ export class DsService {
     this.logger.setContext(this.constructor.name)
     const api: string | undefined = this.config.get('ds.api')
     const token: string | undefined = this.config.get('ds.token')
-    const httpProxy: string | undefined = this.config.get('httpProxy')
     this.annotationFDDId = this.config.get('ds.annotationFDDId')!
     this.annotationFEId = this.config.get('ds.annotationFEId')!
     if (!api || !token) {
@@ -22,7 +21,7 @@ export class DsService {
     } else if (!this.annotationFEId || !this.annotationFDDId) {
       throw new Error("RNG Annotation's ids are not configured. Check your env.")
     } else {
-      this.dsApiClient = new DsApiClient(api, token, httpProxy || '')
+      this.dsApiClient = new DsApiClient(api, token)
       this.logger.debug(`DS API Client configured with: \n   api = ${api}\n   token = ***${token.slice(-8)}`)
     }
   }

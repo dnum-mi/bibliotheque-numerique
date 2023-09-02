@@ -55,7 +55,13 @@ describe('Configuration ', () => {
   })
 
   it('Patch /:fieldId - Should return 400', async () => {
-    return request(app.getHttpServer()).patch('/demarches/1/configurations/01').set('Cookie', [cookie]).expect(400)
+    return request(app.getHttpServer()).patch('/demarches/1/configurations/01').set('Cookie', [cookie]).send({
+      columnLabel: 456,
+    }).expect(400)
+  })
+
+  it('Patch /:fieldId - Should return 400', async () => {
+    return request(app.getHttpServer()).patch('/demarches/1/configurations/01').set('Cookie', [cookie]).expect(200)
   })
 
   it('Patch /:fieldId - Should change label of field', async () => {

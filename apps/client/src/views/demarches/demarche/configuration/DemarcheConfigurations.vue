@@ -2,7 +2,7 @@
 import { computed, ComputedRef, nextTick, ref } from 'vue'
 import { useDemarcheStore } from '@/stores'
 import DemarcheConfigurationMappingColumn from '@/views/demarches/demarche/configuration/DemarcheConfigurationMappingColumn.vue'
-import { MappingColumn } from '@biblio-num/shared'
+import type { MappingColumn } from '@biblio-num/shared'
 
 const title = 'La configuration'
 

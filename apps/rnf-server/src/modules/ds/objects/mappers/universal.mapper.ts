@@ -9,7 +9,7 @@ export const universalMapper: Mapper = {
   email: stringValue,
   phone: stringValue,
   type: stringValue,
-  // @ts-expect-error TODO: fix
+  // @ts-expect-error todo: fix this
   address: (ch: AddressChamp | null) => {
     if (!ch || ch.__typename !== 'AddressChamp' || !ch.address) {
       return null

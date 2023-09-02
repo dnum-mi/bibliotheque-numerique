@@ -29,7 +29,7 @@ const onSubmit = handleSubmit(async (formValue: CreateUserDto) => {
     await apiClient.createUser(formValue)
     await router.push(signInPath)
   } catch (e) {
-    console.log(e)
+    // TODO: Afficher une erreur compréhensible à l’utilisateur
   }
 })
 

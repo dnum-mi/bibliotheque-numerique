@@ -1,19 +1,19 @@
 <script lang="ts" setup>
-import { useRoute, useRouter } from 'vue-router'
-import { computed, onMounted, type Ref, ref, watch } from 'vue'
-import type { IDemarche } from '@biblio-num/shared'
-import { SearchDossierDto } from '@biblio-num/shared'
-import { type FrontMappingColumn, useDemarcheStore, useUserStore } from '@/stores'
-import { AgGridVue } from 'ag-grid-vue3'
 import 'ag-grid-enterprise'
 import 'ag-grid-community/styles/ag-grid.css'
 import 'ag-grid-community/styles/ag-theme-material.css'
-import { type ColDef, ColumnMenuTab } from 'ag-grid-community/dist/lib/entities/colDef'
-import { type IServerSideGetRowsParams } from 'ag-grid-community/dist/lib/interfaces/iServerSideDatasource'
+import '@/ag-grid-dsfr.css'
+
+import { useRoute, useRouter } from 'vue-router'
+import { computed, onMounted, type Ref, ref, watch } from 'vue'
+import { AgGridVue } from 'ag-grid-vue3'
+import type { ColDef, ColumnMenuTab, GridApi, GridReadyEvent, IServerSideGetRowsParams, SortModelItem } from 'ag-grid-community'
+
+import type { IDemarche, SearchDossierDto } from '@biblio-num/shared'
+
+import { type FrontMappingColumn, useDemarcheStore, useUserStore } from '@/stores'
 import { fromFieldTypeToAgGridFilter } from '@/views/demarches/demarche/dossiers/demarche-dossiers-utils'
-import { GridApi, type GridReadyEvent } from 'ag-grid-community'
 import DemarcheDossierCellRenderer from '@/views/demarches/demarche/dossiers/DemarcheDossierCellRenderer.vue'
-import { type SortModelItem } from 'ag-grid-community/dist/lib/sortController'
 import { gridOptionFactory } from '@/views/demarches/demarche/dossiers/grid-option-factory'
 
 const route = useRoute()

@@ -14,6 +14,6 @@ export async function fetchInstructionTimeByDossiers (ids: number[]): Promise<Ty
     const instructionTimes:TypeInstructionTimes = response.data
     return instructionTimes
   } catch (error) {
-    console.log(error)
+    // TODO: Afficher une erreur compréhensible à l’utilisateur
   }
 }

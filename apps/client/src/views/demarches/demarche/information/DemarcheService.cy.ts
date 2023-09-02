@@ -9,20 +9,13 @@ import VueDsfr from '@gouvminint/vue-dsfr'
 
 describe('<DemarcheService />', () => {
   it('renders with props', () => {
-    const pinia = createPinia()
-    const useStore = useDemarcheStore(pinia)
+    const useStore = useDemarcheStore()
     const demarche = generateDemarche()
-    useStore.demarche = demarche
-    useStore.getDemarche = async (id: number) => {
-      useStore.demarche = demarche
-    }
-    const extensions = {
-      use: [
-        VueDsfr,
-      ],
-    }
+    useStore.currentDemarche = demarche
     const service = demarche.dsDataJson.service
-    cy.mount(DemarcheService, { extensions })
+
+    cy.mountWithPinia(DemarcheService)
+
     cy.get('label').then(($label) => {
       cy.wrap($label).contains('Nom').next().should('contain', service.nom)
       cy.wrap($label).contains('Organisme').next().should('contain', service.organisme)

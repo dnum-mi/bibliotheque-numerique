@@ -6,7 +6,6 @@ export const useDossierStore = defineStore('dossier', () => {
   const dossier = ref({})
   const getDossier = async (idDossier: number) => {
     if (!idDossier) {
-      console.log('idDossier doit être saisie')
       return
     }
     const result = await apiClient.getDossier(idDossier)

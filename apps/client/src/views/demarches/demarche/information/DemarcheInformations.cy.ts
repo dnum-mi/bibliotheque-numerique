@@ -9,23 +9,15 @@ import { useDemarcheStore } from '@/stores'
 import VueDsfr from '@gouvminint/vue-dsfr'
 
 describe('<DemarcheDescription />', () => {
-  const pinia = createPinia()
-  const extensions = {
-    use: [
-      VueDsfr,
-    ],
-  }
-
   it('renders with props', () => {
-    const useStore = useDemarcheStore(pinia)
+    const useStore = useDemarcheStore()
     const demarche = generateDemarche()
-    useStore.demarche = demarche
-    useStore.getDemarche = async (id: number) => {
-      useStore.demarche = demarche
-    }
+    useStore.currentDemarche = demarche
 
     const datas = demarche.dsDataJson
-    cy.mount(DemarcheInformations, { extensions })
+
+    cy.mountWithPinia(DemarcheInformations)
+
     cy.get('label').then(($label) => {
       cy.wrap($label).contains('Description').next().should('contain', datas.description)
       cy.wrap($label).contains('Etat').next().should('contain', 'Publiée')

@@ -1,10 +1,11 @@
 <script lang="ts" setup>
-import { computed, watchEffect, ref, type ComputedRef, type Component } from 'vue'
-
-import { AgGridVue } from 'ag-grid-vue3'
 import 'ag-grid-enterprise'
 import 'ag-grid-community/styles/ag-grid.css'
-import 'ag-grid-community/styles/ag-theme-alpine.css'
+import 'ag-grid-community/styles/ag-theme-material.css'
+import '@/ag-grid-dsfr.css'
+
+import { computed, watchEffect, ref, type ComputedRef, type Component } from 'vue'
+import { AgGridVue } from 'ag-grid-vue3'
 
 import { AgGridFilter, type Action, type HeaderDataTable } from '@/shared/types'
 import TableCellAction from './TableCellAction.vue'
@@ -165,7 +166,7 @@ defineExpose({
   </h4>
   <ag-grid-vue
     style="max-width: 100%;height: 690px;"
-    class="ag-theme-alpine"
+    class="ag-theme-material"
     :column-defs="columnDefs"
     :row-data="rowData"
     :pagination="pagination"

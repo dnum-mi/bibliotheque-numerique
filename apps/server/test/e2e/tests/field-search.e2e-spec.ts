@@ -3,6 +3,7 @@ import { TestingModuleFactory } from '../common/testing-module.factory'
 import { dataSource } from '../data-source-e2e.typeorm'
 import * as request from 'supertest'
 import { getAdminCookie } from '../common/get-admin-cookie'
+import * as dayjs from 'dayjs'
 
 describe('Field search', () => {
   let app: INestApplication
@@ -91,35 +92,35 @@ describe('Field search', () => {
           {
             dossierId: 1,
             I01: 'W00000001',
-            I02: '2023-05-31T22:00:00.000Z',
+            I02: dayjs('2023-06-01').toISOString(),
             I03: 'Avenger',
             I09: 'Qatar',
           },
           {
             dossierId: 1,
             I01: 'W00000001',
-            I02: '2023-05-31T22:00:00.000Z',
+            I02: dayjs('2023-06-01').toISOString(),
             I03: 'Avenger',
             I09: 'Turquie',
           },
           {
             dossierId: 2,
             I01: 'W00000002',
-            I02: '2023-06-02T22:00:00.000Z',
+            I02: dayjs('2023-06-03').toISOString(),
             I03: 'Interstellar',
             I09: null,
           },
           {
             dossierId: 3,
             I01: 'W00000003',
-            I02: '2023-06-03T22:00:00.000Z',
+            I02: dayjs('2023-06-04').toISOString(),
             I03: 'Dune',
             I09: 'Écosse',
           },
           {
             dossierId: 3,
             I01: 'W00000003',
-            I02: '2023-06-03T22:00:00.000Z',
+            I02: dayjs('2023-06-04').toISOString(),
             I03: 'Dune',
             I09: 'USA',
           },
@@ -144,7 +145,7 @@ describe('Field search', () => {
           {
             dossierId: 4,
             I01: 'W00000004',
-            I02: '2023-06-01T22:00:00.000Z',
+            I02: dayjs('2023-06-02').toISOString(),
             I03: 'Memento',
             I08: null,
             I09: null,
@@ -152,7 +153,7 @@ describe('Field search', () => {
           {
             dossierId: 5,
             I01: 'W00000005',
-            I02: '2023-05-31T22:00:00.000Z',
+            I02: dayjs('2023-06-01').toISOString(),
             I03: 'Captain Fantastic',
             I08: 23000,
             I09: 'France',
@@ -160,7 +161,7 @@ describe('Field search', () => {
           {
             dossierId: 5,
             I01: 'W00000005',
-            I02: '2023-05-31T22:00:00.000Z',
+            I02: dayjs('2023-06-01').toISOString(),
             I03: 'Captain Fantastic',
             I08: 2500,
             I09: 'Qatar',
@@ -168,7 +169,7 @@ describe('Field search', () => {
           {
             dossierId: 5,
             I01: 'W00000005',
-            I02: '2023-05-31T22:00:00.000Z',
+            I02: dayjs('2023-06-01').toISOString(),
             I03: 'Captain Fantastic',
             I08: 6400,
             I09: 'USA',
@@ -176,7 +177,7 @@ describe('Field search', () => {
           {
             dossierId: 6,
             I01: 'W00000006',
-            I02: '2023-06-01T22:00:00.000Z',
+            I02: dayjs('2023-06-02').toISOString(),
             I03: "Ender's game",
             I08: 8800,
             I09: 'Turquie',
@@ -203,7 +204,7 @@ describe('Field search', () => {
           {
             dossierId: 5,
             I01: 'W00000005',
-            I02: '2023-05-31T22:00:00.000Z',
+            I02: dayjs('2023-06-01').toISOString(),
             I03: 'Captain Fantastic',
             I08: 23000,
             I09: 'France',
@@ -211,7 +212,7 @@ describe('Field search', () => {
           {
             dossierId: 5,
             I01: 'W00000005',
-            I02: '2023-05-31T22:00:00.000Z',
+            I02: dayjs('2023-06-01').toISOString(),
             I03: 'Captain Fantastic',
             I08: 2500,
             I09: 'Qatar',
@@ -219,7 +220,7 @@ describe('Field search', () => {
           {
             dossierId: 3,
             I01: 'W00000003',
-            I02: '2023-06-03T22:00:00.000Z',
+            I02: dayjs('2023-06-04').toISOString(),
             I03: 'Dune',
             I08: 12600,
             I09: 'USA',
@@ -227,7 +228,7 @@ describe('Field search', () => {
           {
             dossierId: 3,
             I01: 'W00000003',
-            I02: '2023-06-03T22:00:00.000Z',
+            I02: dayjs('2023-06-04').toISOString(),
             I03: 'Dune',
             I08: 5800,
             I09: 'Écosse',
@@ -235,7 +236,7 @@ describe('Field search', () => {
           {
             dossierId: 6,
             I01: 'W00000006',
-            I02: '2023-06-01T22:00:00.000Z',
+            I02: dayjs('2023-06-02').toISOString(),
             I03: "Ender's game",
             I08: 8800,
             I09: 'Turquie',
@@ -268,7 +269,7 @@ describe('Field search', () => {
             {
               dossierId: 1,
               I01: 'W00000001',
-              I02: '2023-05-31T22:00:00.000Z',
+              I02: dayjs('2023-06-01').toISOString(),
               I03: 'Avenger',
               I08: 16400,
               I09: 'Qatar',
@@ -276,7 +277,7 @@ describe('Field search', () => {
             {
               dossierId: 5,
               I01: 'W00000005',
-              I02: '2023-05-31T22:00:00.000Z',
+              I02: dayjs('2023-06-01').toISOString(),
               I03: 'Captain Fantastic',
               I08: 2500,
               I09: 'Qatar',
@@ -284,7 +285,7 @@ describe('Field search', () => {
             {
               dossierId: 7,
               I01: 'W00000007',
-              I02: '2023-06-03T22:00:00.000Z',
+              I02: dayjs('2023-06-04').toISOString(),
               I03: 'Barbie',
               I08: 2500,
               I09: 'Qatar',
@@ -292,7 +293,7 @@ describe('Field search', () => {
             {
               dossierId: 10,
               I01: 'W00000010',
-              I02: '2023-06-05T22:00:00.000Z',
+              I02: dayjs('2023-06-06').toISOString(),
               I03: 'Premier Contact',
               I08: 23000,
               I09: 'Qatar',
@@ -302,7 +303,7 @@ describe('Field search', () => {
       })
   })
 
-  it.only('Should only return dossier with pays=Qatar AND 10000 > financement > 20000', () => {
+  it('Should only return dossier with pays=Qatar AND 10000 > financement > 20000', () => {
     return request(app.getHttpServer())
       .post('/demarches/1/fields-search')
       .send({
@@ -338,7 +339,7 @@ describe('Field search', () => {
             {
               dossierId: 1,
               I01: 'W00000001',
-              I02: '2023-05-31T22:00:00.000Z',
+              I02: dayjs('2023-06-01').toISOString(),
               I03: 'Avenger',
               I08: 16400,
               I09: 'Qatar',
