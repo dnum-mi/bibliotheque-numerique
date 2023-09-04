@@ -1,6 +1,6 @@
 import { registerDecorator, ValidationOptions } from 'class-validator'
 
-import { isString, isLongerThan12, containsSpecialChars } from '../../utils'
+import { isString, isLongerThan15, containsSpecialChars } from '../../utils'
 
 export function IsPasswordStrongEnough (validationOptions?: ValidationOptions) {
   /* eslint-disable  @typescript-eslint/no-explicit-any */
@@ -14,7 +14,7 @@ export function IsPasswordStrongEnough (validationOptions?: ValidationOptions) {
         validate (value: string) {
           return [
             isString,
-            isLongerThan12,
+            isLongerThan15,
             containsSpecialChars,
           ]
             .every(fn => fn(value))

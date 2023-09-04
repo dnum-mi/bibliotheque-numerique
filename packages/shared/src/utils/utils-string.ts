@@ -11,5 +11,5 @@ export function containsAtLeastOneOf (chars: string) {
   return (value: string) => chars.split('').some(char => value.includes(char))
 }
 
-export const isLongerThan12 = isLongerThan(12)
-export const containsSpecialChars = containsAtLeastOneOf('#!@;-:*') // TODO: Check the special characters to be included
+export const isLongerThan15 = isLongerThan(15)
+export const containsSpecialChars = containsAtLeastOneOf('!@#$%^&*()-_=+[{]}|;:\'",<.>/?') // TODO: Check the special characters to be
