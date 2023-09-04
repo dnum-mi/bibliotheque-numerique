@@ -10,6 +10,10 @@ export const gridOptionFactory = (getRows: (params: any) => void, pageSize:numbe
   serverSideSortOnServer: true,
   serverSideFilterOnServer: true,
   pagination: true,
+  defaultColDef: {
+    resizable: true,
+    sortable: true,
+  },
   paginationPageSize: pageSize,
   cacheBlockSize: pageSize,
   sideBar: {

@@ -77,6 +77,7 @@ onMounted(() => {
       <!-- Dossiers -->
       <DsfrTabContent
         panel-id="tab-content-0"
+        class="small-padding-tab"
         tab-id="tab-0"
         :selected="selectedTabIndex === 0"
       >
@@ -117,5 +118,9 @@ onMounted(() => {
 <style scoped>
 .fr-tabs__panel {
   padding: 2rem;
+}
+
+.small-padding-tab {
+  padding:5px !important;
 }
 </style>

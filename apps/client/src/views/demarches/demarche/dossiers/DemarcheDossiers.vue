@@ -24,7 +24,7 @@ const gridApi: Ref<GridApi | undefined> = ref()
 const groupByDossier: Ref<boolean> = ref(false)
 const demarche = computed<IDemarche>(() => demarcheStore.currentDemarche as IDemarche)
 const demarcheConfiguration = computed<FrontMappingColumn[]>(() => demarcheStore.currentDemarchePlaneConfiguration)
-const pageSize = 5
+const pageSize = 20
 
 const computeSort = (dto: SearchDossierDto, sortModel: SortModelItem[]) => {
   if (sortModel.length) {
@@ -100,7 +100,6 @@ const computeColumnsDef = () => {
         field: column.id,
         filter: fromFieldTypeToAgGridFilter(column.type),
         autoHeight: true,
-        sortable: true,
         menuTabs: ['filterMenuTab'] as ColumnMenuTab[],
         cellRenderer: DemarcheDossierCellRenderer,
         cellRendererParams: { column },
@@ -126,7 +125,7 @@ const onGridReady = (event: GridReadyEvent) => {
 
 <template>
   <div :style="{ paddingBottom: '2rem' }">
-    <div class="flex no-label-on-toggle">
+    <div class="flex no-label-on-toggle fr-pl-2w fr-pt-2w">
       <DsfrToggleSwitch
         v-model="groupByDossier"
         label="Grouper par dossier"
@@ -149,5 +148,8 @@ const onGridReady = (event: GridReadyEvent) => {
 <style scoped>
 :deep(.fr-toggle label::before) {
   content: "" !important;
+}
+:deep(.ag-paging-panel) {
+  border-top: none !important;
 }
 </style>
