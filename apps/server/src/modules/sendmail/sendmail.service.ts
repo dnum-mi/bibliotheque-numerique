@@ -33,4 +33,17 @@ export class SendMailService {
     })
     this.logger.log(`Send Mail to ${to} with the subject ${subject}`)
   }
+
+  public async validSignUp (to: string, urlValidLink: string): Promise<void> {
+    const subject = 'Confirmer votre inscription'
+    await this.mailerService.sendMail({
+      to,
+      subject,
+      template: 'validSignUp',
+      context: {
+        urlValidLink,
+      },
+    })
+    this.logger.log(`Send Mail to ${to} with the subject ${subject}`)
+  }
 }

@@ -33,6 +33,7 @@ async function bootstrap (): Promise<void> {
     ])
     if (user?.id && role?.id) {
       await rolesService.assignRoleToUser(role.id, user.id)
+      await usersService.validEmail(user)
     } else {
       throw new Error('Unable to create default admin')
     }

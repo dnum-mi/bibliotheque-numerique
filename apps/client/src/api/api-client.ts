@@ -12,6 +12,7 @@ import type {
   UpdateUserDto,
   UpdateUserPasswordDto,
   UserOutputDto,
+  ValidateEmailDto,
 } from '@biblio-num/shared'
 
 import {
@@ -38,6 +39,7 @@ import {
 } from '@/api/bn-api-routes'
 import type { IRoleForm } from '@/shared/interfaces'
 
+import { ErrorvalidateEmail } from './ErrorValidEmail'
 const updatePasswordFeedback = {
   401: 'Le token est absent, veuillez fournir un token valide',
   403: 'Token invalide ou expiré, veuillez fournir un token valide',
@@ -199,6 +201,21 @@ export const usersApiClient = {
 
   async resetPassword (resetPasswordInput: ResetPasswordInputDto) {
     apiClientInstance.post('/users/reset-password', resetPasswordInput)
+  },
+
+  async validEmail (token: string) {
+    try {
+      const validateEmail: ValidateEmailDto = {
+        validate: true,
+        token,
+      }
+      const response = await apiClientInstance.post('/users/valid-email', validateEmail)
+    } catch (error) {
+      if (error && error instanceof AxiosError) {
+        throw new ErrorvalidateEmail(error)
+      }
+      throw error
+    }
   },
 }
 

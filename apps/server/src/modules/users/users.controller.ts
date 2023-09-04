@@ -19,6 +19,7 @@ import {
   UserOutputDto,
 } from '@biblio-num/shared'
 import { UpdatePasswordGuard } from './update-password.guard'
+import { ValidSignUpGuard } from './validate-sign-up.guard'
 
 @ApiTags('Users')
 @Controller('users')
@@ -28,7 +29,12 @@ export class UsersController {
 
   @Post('user')
   async signUp (@Body() body: CreateUserDto): Promise<UserOutputDto> {
-    return this.usersService.create(body.email, body.password)
+    const user = await this.usersService.create(body.email, body.password)
+    return {
+      id: user.id,
+      email: user.email,
+      roles: user.roles,
+    }
   }
 
   @Get()
@@ -55,5 +61,11 @@ export class UsersController {
   @UseGuards(UpdatePasswordGuard)
   async updatePassword (@Request() req, @Body() body: UpdateUserPasswordDto): Promise<void> {
     await this.usersService.updatePassword(req.user, body.password)
+  }
+
+  @Post('/valid-email')
+  @UseGuards(ValidSignUpGuard)
+  async validSignUp (@Request() req): Promise<void> {
+    return await this.usersService.validEmail(req.user)
   }
 }

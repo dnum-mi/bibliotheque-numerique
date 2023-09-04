@@ -9,10 +9,14 @@ export class AuthService {
   constructor (private usersService: UsersService) {}
 
   async validateUser (email: string, password: string): Promise<User | undefined> {
-    const user: User = await this.usersService.findByEmail(email, ['id', 'email', 'password', 'roles'])
+    const user: User = await this.usersService.findByEmail(email, ['id', 'email', 'password', 'roles', 'validated'])
 
     if (!user) {
       throw new NotFoundException('User not found')
+    }
+
+    if (!user.validated) {
+      throw new NotFoundException('Invalid e-mail')
     }
 
     const isMatch: boolean = await bcrypt.compare(password, user.password)

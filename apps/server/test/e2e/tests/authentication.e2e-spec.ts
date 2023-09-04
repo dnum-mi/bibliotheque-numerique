@@ -92,4 +92,14 @@ describe('Auth (e2e)', () => {
         })
       })
   })
+
+  it('POST /auth/sign-in - Should return 404 on user no valid', async () => {
+    await request(app.getHttpServer())
+      .post('/auth/sign-in')
+      .send({
+        email: 'test.no.valid@localhost.com',
+        password: 'password',
+      })
+      .expect(404)
+  })
 })

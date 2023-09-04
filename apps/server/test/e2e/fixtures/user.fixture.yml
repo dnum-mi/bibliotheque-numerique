@@ -7,6 +7,7 @@ items:
     createdAt: 2023-06-12T06:54:45.000Z
     updatedAt: 2023-06-12T06:54:45.000Z
     roles: ["@adminRole"]
+    validated: true
   testPwdUser:
     id: 2
     email: test.pwd@localhost.com
@@ -14,6 +15,7 @@ items:
     createdAt: 2023-06-12T06:54:45.000Z
     updatedAt: 2023-06-12T06:54:45.000Z
     roles: ["@adminRole"]
+    validated: true
   testDefaultRoleUser:
     id: 3
     email: test.no.role@localhost.com
@@ -21,6 +23,7 @@ items:
     createdAt: 2023-06-12T06:54:45.000Z
     updatedAt: 2023-06-12T06:54:45.000Z
     roles: ["@defaultRole"]
+    validated: true
   testDemarche2RoleUser:
     id: 4
     email: test.demarche.2@localhost.com
@@ -28,3 +31,12 @@ items:
     createdAt: 2023-06-12T06:54:45.000Z
     updatedAt: 2023-06-12T06:54:45.000Z
     roles: ["@demarche2Role"]
+    validated: true
+  testNoValidUser:
+    id: 5
+    email: test.no.valid@localhost.com
+    password: password
+    createdAt: 2023-06-12T06:54:45.000Z
+    updatedAt: 2023-06-12T06:54:45.000Z
+    roles: ["@defaultRole"]
+    validated: false
