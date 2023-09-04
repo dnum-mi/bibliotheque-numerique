@@ -26,7 +26,7 @@ jobs:
           token: ${{ secrets.DSO_BIBLIO_NUME_DEPLOY_TOKEN }}
           owner: dnum-mi
           repo: dso-bibliotheque-numerique-deploy
-          branch: main
+          branch: dev
           path: base/deployment.yaml
       - name: Send a sync request to DSO api
         run: |
