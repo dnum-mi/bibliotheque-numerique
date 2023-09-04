@@ -12,8 +12,8 @@ jobs:
         uses: actions/checkout@v3
       - name: Send a sync request to DSO api
         run: |
-          curl -X POST --fail -F token=${{ secrets.GITLAB_TRIGGER_TOKEN }} -F ref=${{vars.BRANCH_SYNC}} --form "variables[GIT_BRANCH_DEPLOY]=dev" ${{vars.URL_MIRROR}}
-          
+          curl -X POST --fail -F token=${{ secrets.GITLAB_TRIGGER_TOKEN }} -F ref=${{vars.BRANCH_SYNC}} -F "variables[GIT_BRANCH_DEPLOY]=dev" -F variables[PROJECT_NAME]=biblio-num ${{vars.URL_MIRROR}}
+
   integration-deploy:
     name: Sync repo for deploy to integration
     runs-on: ubuntu-latest
@@ -30,4 +30,4 @@ jobs:
           path: base/deployment.yaml
       - name: Send a sync request to DSO api
         run: |
-          curl -X POST --fail -F token=${{ secrets.GITLAB_DEPLOY_TRIGGER_TOKEN }} -F ref=${{vars.BRANCH_SYNC}} --form "variables[GIT_BRANCH_DEPLOY]=main" ${{vars.DEPLOY_URL_MIRROR}}
+          curl -X POST --fail -F token=${{ secrets.GITLAB_DEPLOY_TRIGGER_TOKEN }} -F ref=${{vars.BRANCH_SYNC}} -F "variables[GIT_BRANCH_DEPLOY]=dev" -F variables[PROJECT_NAME]=bn-deploy ${{vars.DEPLOY_URL_MIRROR}}
