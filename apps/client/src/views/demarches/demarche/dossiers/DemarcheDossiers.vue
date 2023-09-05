@@ -7,7 +7,7 @@ import '@/ag-grid-dsfr.css'
 import { computed, type ComputedRef, onMounted, reactive, type Ref, ref, watch } from 'vue'
 import { AgGridVue } from 'ag-grid-vue3'
 import type { GridOptions } from 'ag-grid-enterprise'
-import type { ColDef, ColumnMenuTab, GridApi, GridReadyEvent, IServerSideGetRowsParams, SortModelItem } from 'ag-grid-community'
+import type { ColumnApi, SelectionChangedEvent, ColDef, ColumnMenuTab, GridApi, GridReadyEvent, IServerSideGetRowsParams, SortModelItem } from 'ag-grid-community'
 import type { CreateCustomFilterDto, FilterDto, ICustomFilter, IDemarche, SearchDossierDto, SortDto } from '@biblio-num/shared'
 
 import { type FrontMappingColumn, useCustomFilterStore, useDemarcheStore } from '@/stores'
@@ -21,8 +21,6 @@ import DemarcheDossierCellRenderer from '@/views/demarches/demarche/dossiers/Dem
 import { gridOptionFactory } from '@/views/demarches/demarche/dossiers/grid-option-factory'
 import { type SmallFilter } from './DemarcheDossiersFilters.vue'
 import { deepAlmostEqual, selectKeysInObject } from '@/utils/object'
-import { ColumnApi } from 'ag-grid-community'
-import { SelectionChangedEvent } from 'ag-grid-community/dist/lib/events'
 import { useRouter } from 'vue-router'
 
 const demarcheStore = useDemarcheStore()
