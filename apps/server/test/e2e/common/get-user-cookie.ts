@@ -9,7 +9,6 @@ export const getUserCookie = (app: INestApplication, email?: string): Promise<st
       password: 'password',
     })
     .then((res) => {
-      console.log(res.header)
       return res.header['set-cookie'][0].split(';')[0]
     })
 }

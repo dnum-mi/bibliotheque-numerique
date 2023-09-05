@@ -26,7 +26,7 @@ describe('Configuration ', () => {
   })
 
   it('GET - Should return 404 on configurations', async () => {
-    return request(app.getHttpServer()).get('/demarches/8765/configurations').expect(404)
+    return request(app.getHttpServer()).get('/demarches/8765/configurations').set('Cookie', [cookie]).expect(404)
   })
 
   it('GET - Should return 200 and configurations', async () => {

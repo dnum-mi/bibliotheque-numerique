@@ -1,19 +1,19 @@
-import { Body, Controller, Get, NotFoundException, Param, Patch, UseGuards } from '@nestjs/common'
+import { Body, Controller, Get, NotFoundException, Param, Patch, UseGuards, UseInterceptors } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { DemarcheService } from '../providers/services/demarche.service'
 import { PermissionsGuard, RequirePermissions } from '../../roles/providers/permissions.guard'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { PermissionName } from '@/shared/types/Permission.type'
-import { DemarcheExistGuard } from '../providers/guards/demarche-exist.guard'
+import { CurrentDemarcheInterceptor } from '../providers/interceptors/current-demarche.interceptor'
 import { Demarche } from '../objects/entities/demarche.entity'
-import { DemarcheParam } from '../providers/decorators/current-demarche.decorator'
+import { CurrentDemarche } from '../providers/decorators/current-demarche.decorator'
 import { MappingColumn, UpdateOneFieldConfigurationDto } from '@biblio-num/shared'
 
 @ApiTags('Demarches')
 @ApiTags('Configurations')
 @UseGuards(PermissionsGuard) // TODO: only admin can update configuration ?
 @RequirePermissions({ name: PermissionName.ACCESS_DEMARCHE })
-@UseGuards(DemarcheExistGuard)
+@UseInterceptors(CurrentDemarcheInterceptor)
 @Controller('demarches/:demarcheId/configurations')
 export class DemarcheConfigurationController {
   constructor (
@@ -24,14 +24,14 @@ export class DemarcheConfigurationController {
   }
 
   @Get()
-  async getDemarcheConfiguration (@DemarcheParam() demarche: Partial<Demarche>): Promise<MappingColumn[]> {
+  async getDemarcheConfiguration (@CurrentDemarche() demarche: Partial<Demarche>): Promise<MappingColumn[]> {
     this.logger.verbose('getDemarcheConfiguration')
     return demarche.mappingColumns
   }
 
   @Patch(':fieldId')
   async updateOneFieldConfiguration (
-    @DemarcheParam() demarche: Partial<Demarche>,
+    @CurrentDemarche() demarche: Partial<Demarche>,
     @Param('fieldId') fieldId: string,
     @Body() dto: UpdateOneFieldConfigurationDto,
   ): Promise<boolean> {

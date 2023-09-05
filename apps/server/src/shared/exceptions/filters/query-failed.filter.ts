@@ -13,17 +13,26 @@ export class QueryFailedFilter implements ExceptionFilter {
     const { httpAdapter } = this.httpAdapterHost
 
     const ctx = host.switchToHttp()
-    this.logger.error(`500 Typeorm QueryFailedError: ${exception.message}`)
+    let statusCode = 500
+    let message = 'Internal server error.'
+
+    if (exception.message && exception.message.includes('duplicate key value violates unique constraint')) {
+      statusCode = 409
+      message = 'Conflict: Duplicate entry found.'
+      this.logger.warn(`409 Conflict: ${exception.message}`)
+    } else {
+      this.logger.error(`500 Typeorm QueryFailedError: ${exception.message}`)
+    }
     this.logger.debug(exception.query)
     httpAdapter.reply(
       ctx.getResponse(),
       {
-        statusCode: 500,
-        message: 'Internal server error.',
+        statusCode,
+        message,
         data: {},
         path: httpAdapter.getRequestUrl(ctx.getRequest()) as string,
       },
-      500,
+      statusCode,
     )
   }
 }

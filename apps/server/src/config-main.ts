@@ -42,7 +42,7 @@ export const configMain = async (app: INestApplication, configService?: ConfigSe
     new QueryFailedFilter(httpAdapterHost, queryFailedFilterLogger),
     new AxiosExceptionFilter(httpAdapterHost, axiosFailedErrorLogger),
   )
-  app.useGlobalPipes(new ValidationPipe({ transform: true }))
+  app.useGlobalPipes(new ValidationPipe({ transform: true, skipMissingProperties: false }))
   app.use(passport.initialize())
   app.use(passport.session())
 }

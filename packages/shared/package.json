@@ -34,9 +34,10 @@
   },
   "types": "types/",
   "dependencies": {
+    "@nestjs/mapped-types": "2.0.2",
     "@nestjs/swagger": "^6.3.0",
-    "class-validator": "0.14.0",
-    "class-transformer": "0.5.1"
+    "class-transformer": "0.5.1",
+    "class-validator": "0.14.0"
   },
   "devDependencies": {
     "@dnum-mi/ds-api-client": "^1.5.1",

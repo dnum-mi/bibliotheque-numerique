@@ -17,6 +17,7 @@ module.exports = {
     'comma-dangle': [2, 'always-multiline'],
     'no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars': 'off',
+    "no-dupe-class-members": "off",
     indent: [
       'error',
       2,

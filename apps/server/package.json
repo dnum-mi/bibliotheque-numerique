@@ -27,7 +27,7 @@
     "docker:smtp:run": "docker compose -f docker-compose.yml -f docker-compose.yml up mailhog -d",
     "docker:start": "docker compose -f docker-compose.yml up",
     "docker:stop": "docker compose -f docker-compose.yml -f docker-compose.yml down",
-    "fixtures": "fixtures-ts-node-esm load test/e2e/fixtures --dataSource=./test/e2e/data-source-e2e.typeorm.ts --sync",
+    "fixtures": "fixtures-ts-node-esm load test/e2e/fixtures --require=tsconfig-paths/register --dataSource=./test/e2e/data-source-e2e.typeorm.ts --sync",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-path ../../.gitignore",
     "lint:fix": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path ../../.gitignore",

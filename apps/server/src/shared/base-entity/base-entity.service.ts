@@ -58,17 +58,34 @@ export abstract class BaseEntityService<T extends BaseEntity = BaseEntity> {
     return result
   }
 
-  async updateOrThrow (id: number, data: QueryDeepPartialEntity<T>): Promise<boolean> {
+  async updateOrThrow(id: number, data: QueryDeepPartialEntity<T>): Promise<boolean>
+  async updateOrThrow(query: FindOptionsWhere<T>, data: QueryDeepPartialEntity<T>): Promise<boolean>
+  async updateOrThrow(idOrQuery: number | FindOptionsWhere<T>, data: QueryDeepPartialEntity<T>): Promise<boolean> {
     this.logger.verbose('updateOrThrow')
-    const result = await this.repo.update(id, data)
-    if (result.affected === 0) {
-      throw new NotFoundException(`${this.repo.metadata.name} id: ${id} not found`)
+    let query
+    if (typeof idOrQuery === 'number') {
+      query = { id: idOrQuery }
+    } else {
+      query = idOrQuery
     }
+    const result = await this.repo.update(query, data)
+    if (result.affected === 0) {
+      throw new NotFoundException(`${this.repo.metadata.name} not found for update.`)
+    }
+
     return true
   }
 
-  async remove (id: number): Promise<DeleteResult> {
+  async remove(id: number): Promise<DeleteResult>
+  async remove(query: FindOptionsWhere<T>): Promise<DeleteResult>
+  async remove(idOrQuery: number | FindOptionsWhere<T>): Promise<DeleteResult> {
     this.logger.verbose('remove')
-    return this.repo.delete(id)
+    let query
+    if (typeof idOrQuery === 'number') {
+      query = { id: idOrQuery }
+    } else {
+      query = idOrQuery
+    }
+    return this.repo.delete(query)
   }
 }

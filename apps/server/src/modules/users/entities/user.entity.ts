@@ -1,7 +1,16 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm'
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity, JoinTable,
+  ManyToMany,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm'
 import * as bcrypt from 'bcrypt'
 import { Role } from '../../roles/entities/role.entity'
-import { BaseEntity } from '../../../shared/base-entity/base.entity'
+import { BaseEntity } from '@/shared/base-entity/base.entity'
+import { CustomFilter } from '@/modules/custom-filters/objects/entities/custom-filter.entity'
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
@@ -37,4 +46,8 @@ export class User extends BaseEntity {
   async hashPassword (): Promise<void> {
     this.password = await bcrypt.hash(this.password, 10)
   }
+
+  @OneToMany(() => CustomFilter, (customFilter) => customFilter.user)
+  @JoinTable()
+  customFilters?: CustomFilter[]
 }

@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common'
-import { LoggerService } from '../../../shared/modules/logger/logger.service'
+import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { Repository } from 'typeorm'
 import { Dossier } from '../objects/entities/dossier.entity'
 import { InjectRepository } from '@nestjs/typeorm'
-import { BaseEntityService } from '../../../shared/base-entity/base-entity.service'
+import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 
 @Injectable()
 export class DossierService extends BaseEntityService<Dossier> {

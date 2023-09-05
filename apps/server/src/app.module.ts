@@ -21,6 +21,7 @@ import { typeormFactoryLoader } from './shared/utils/typeorm-factory-loader'
 import { HealthModule } from './modules/health/health.module'
 import { AuthModule } from './modules/auth/auth.module'
 import { DsApiModule } from './shared/modules/ds-api/ds-api.module'
+import { CustomFilterModule } from '@/modules/custom-filters/custom-filter.module'
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { DsApiModule } from './shared/modules/ds-api/ds-api.module'
     ConnectorModule,
     FilesModule,
     HealthModule,
+    CustomFilterModule,
     ...pluginsModules,
 
     // TODO: AppModule use JobModule for now to retrieve JobLogService

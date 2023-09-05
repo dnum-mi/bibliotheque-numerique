@@ -1,20 +1,20 @@
-import { Body, Controller, HttpCode, Post, UseGuards } from '@nestjs/common'
+import { Body, Controller, HttpCode, Post, UseGuards, UseInterceptors } from '@nestjs/common'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 import { PermissionsGuard, RequirePermissions } from '../../roles/providers/permissions.guard'
-import { PermissionName } from '../../../shared/types/Permission.type'
-import { LoggerService } from '../../../shared/modules/logger/logger.service'
-import { DemarcheExistGuard } from '../providers/guards/demarche-exist.guard'
+import { PermissionName } from '@/shared/types/Permission.type'
+import { LoggerService } from '@/shared/modules/logger/logger.service'
+import { CurrentDemarcheInterceptor } from '../providers/interceptors/current-demarche.interceptor'
 import { Demarche } from '../objects/entities/demarche.entity'
-import { DemarcheParam } from '../providers/decorators/current-demarche.decorator'
 import { DossierSearchService } from '../../dossiers/providers/dossier-search.service'
 import { FieldSearchService } from '../../dossiers/providers/field-search.service'
 import { DossierSearchOutputDto, FieldSearchOutputDto, SearchDossierDto } from '@biblio-num/shared'
+import { CurrentDemarche } from '@/modules/demarches/providers/decorators/current-demarche.decorator'
 
 @ApiTags('Demarches')
 @ApiTags('Dossiers')
 @UseGuards(PermissionsGuard)
 @RequirePermissions({ name: PermissionName.ACCESS_DEMARCHE })
-@UseGuards(DemarcheExistGuard)
+@UseInterceptors(CurrentDemarcheInterceptor)
 @Controller('demarches/:demarcheId')
 export class DemarcheDossierController {
   constructor (private readonly logger: LoggerService,
@@ -27,7 +27,7 @@ export class DemarcheDossierController {
   @HttpCode(200)
   @Post('/dossiers-search')
   async searchDossier(@Body() dto: SearchDossierDto,
-                      @DemarcheParam() demarche: Partial<Demarche>): Promise<DossierSearchOutputDto> {
+                      @CurrentDemarche() demarche: Partial<Demarche>): Promise<DossierSearchOutputDto> {
     this.logger.verbose('searchDossier')
     return this.dossierSearchService.search(demarche, dto)
   }
@@ -36,7 +36,7 @@ export class DemarcheDossierController {
   @HttpCode(200)
   @Post('/fields-search')
   async searchFields(@Body() dto: SearchDossierDto,
-                     @DemarcheParam() demarche: Partial<Demarche>): Promise<FieldSearchOutputDto> {
+                     @CurrentDemarche() demarche: Partial<Demarche>): Promise<FieldSearchOutputDto> {
     this.logger.verbose('searchDossier')
     return this.fieldSearchService.search(demarche, dto)
   }
