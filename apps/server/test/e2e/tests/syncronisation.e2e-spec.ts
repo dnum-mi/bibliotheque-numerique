@@ -3,10 +3,10 @@ import { TestingModuleFactory } from '../common/testing-module.factory'
 import * as request from 'supertest'
 import { getAdminCookie } from '../common/get-admin-cookie'
 import { dataSource } from '../data-source-e2e.typeorm'
-import { Field } from '../../../src/modules/dossiers/objects/entities/field.entity'
-import { Dossier } from '../../../src/modules/dossiers/objects/entities/dossier.entity'
-import { Demarche } from '../../../src/modules/demarches/objects/entities/demarche.entity'
-import { InstructionTime } from '../../../src/plugins/instruction_time/instruction_times/instruction_time.entity'
+import { Field } from '@/modules/dossiers/objects/entities/field.entity'
+import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
+import { Demarche } from '@/modules/demarches/objects/entities/demarche.entity'
+import { InstructionTime } from '@/plugins/instruction_time/instruction_times/instruction_time.entity'
 
 describe('Syncronisation ', () => {
   let app: INestApplication
@@ -93,7 +93,7 @@ describe('Syncronisation ', () => {
         })
       })
       .then((fields) => {
-        expect(fields.length).toEqual(9)
+        expect(fields.length).toEqual(10)
         expect(fields).toMatchObject([
           {
             fieldSource: 'fix-field',
@@ -107,6 +107,20 @@ describe('Syncronisation ', () => {
             parentId: null,
             parentRowIndex: null,
             label: 'state',
+            rawJson: null,
+          },
+          {
+            fieldSource: 'fix-field',
+            dsChampType: null,
+            type: 'number',
+            formatFunctionRef: null,
+            sourceId: '96151176-4624-4706-b861-722d2e53545d',
+            stringValue: '142',
+            dateValue: null,
+            numberValue: 142,
+            parentId: null,
+            parentRowIndex: null,
+            label: 'Id démarche simplifié',
             rawJson: null,
           },
           {
@@ -210,10 +224,10 @@ describe('Syncronisation ', () => {
             label: 'Une annotation',
           },
         ])
-        expect(fields[3].parentId).toEqual(fields[7].id)
-        expect(fields[4].parentId).toEqual(fields[7].id)
-        expect(fields[5].parentId).toEqual(fields[7].id)
-        expect(fields[6].parentId).toEqual(fields[7].id)
+        expect(fields[4].parentId).toEqual(fields[8].id)
+        expect(fields[5].parentId).toEqual(fields[8].id)
+        expect(fields[6].parentId).toEqual(fields[8].id)
+        expect(fields[7].parentId).toEqual(fields[8].id)
       })
   })
 })

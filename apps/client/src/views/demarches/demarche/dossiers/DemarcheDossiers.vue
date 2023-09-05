@@ -94,6 +94,7 @@ const computeColumnsDef = () => {
     {
       headerName: 'N° dossier',
       field: 'dossierId',
+      hide: true,
       filter: 'agNumberColumnFilter',
       menuTabs: ['filterMenuTab'],
     },

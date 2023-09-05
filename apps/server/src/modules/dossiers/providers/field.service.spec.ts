@@ -84,9 +84,24 @@ describe('FieldService', () => {
     const raw = {
       id: 'RG9zc2llci0xMzY=',
       state: 'bientôt cuit',
+      number: 142,
     }
     const fields = await service.overwriteFieldsFromDataJson(raw as Partial<TDossier>, 42, fakeMappingColumnHash)
     expect(fields).toEqual([
+      {
+        sourceId: '96151176-4624-4706-b861-722d2e53545d',
+        label: 'Id démarche simplifié',
+        formatFunctionRef: undefined,
+        type: FieldType.number,
+        fieldSource: FieldSource.fixField,
+        stringValue: '142',
+        dateValue: null,
+        numberValue: 142,
+        dossierId: 42,
+        parentRowIndex: null,
+        rawJson: null,
+        dsChampType: null,
+      },
       {
         sourceId: '1a4b62c4-b81f-4e83-ac34-f6d601b8a8d4',
         label: 'state',
@@ -108,6 +123,7 @@ describe('FieldService', () => {
     const raw = {
       id: 'RG9zc2llci0xMzY=',
       state: 'bientôt cuit',
+      number: 142,
       champs: [
         {
           id: 'Q4hhbXAtMTA0Mw==',
@@ -123,18 +139,18 @@ describe('FieldService', () => {
     const fields = await service.overwriteFieldsFromDataJson(raw as Partial<TDossier>, 42, fakeMappingColumnHash)
     expect(fields).toMatchObject([
       {
-        sourceId: 'Q4hhbXAtMTA0Mw==',
-        label: 'Total de doritos dans le monde',
-        formatFunctionRef: null,
-        type: 'number',
-        fieldSource: 'champs',
-        stringValue: '4569873456.123',
+        sourceId: '96151176-4624-4706-b861-722d2e53545d',
+        label: 'Id démarche simplifié',
+        formatFunctionRef: undefined,
+        type: FieldType.number,
+        fieldSource: FieldSource.fixField,
+        stringValue: '142',
         dateValue: null,
-        numberValue: 4569873456.123,
-        dsChampType: 'DecimalNumberChamp',
+        numberValue: 142,
         dossierId: 42,
         parentRowIndex: null,
-        children: null,
+        rawJson: null,
+        dsChampType: null,
       },
       {
         sourceId: '1a4b62c4-b81f-4e83-ac34-f6d601b8a8d4',
@@ -150,6 +166,20 @@ describe('FieldService', () => {
         rawJson: null,
         dsChampType: null,
       },
+      {
+        sourceId: 'Q4hhbXAtMTA0Mw==',
+        label: 'Total de doritos dans le monde',
+        formatFunctionRef: null,
+        type: 'number',
+        fieldSource: 'champs',
+        stringValue: '4569873456.123',
+        dateValue: null,
+        numberValue: 4569873456.123,
+        dsChampType: 'DecimalNumberChamp',
+        dossierId: 42,
+        parentRowIndex: null,
+        children: null,
+      },
     ])
   })
 
@@ -157,6 +187,7 @@ describe('FieldService', () => {
     const raw = {
       id: 'RG9zc2llci0xMzY=',
       state: 'bientôt cuit',
+      number: 142,
       champs: [
         {
           id: 'Q4hhbXAtMTA0Mw==',
@@ -172,6 +203,34 @@ describe('FieldService', () => {
     const fields = await service.overwriteFieldsFromDataJson(raw as Partial<TDossier>, 42, fakeMappingColumnHash)
     expect(fields).toMatchObject([
       {
+        sourceId: '96151176-4624-4706-b861-722d2e53545d',
+        label: 'Id démarche simplifié',
+        formatFunctionRef: undefined,
+        type: FieldType.number,
+        fieldSource: FieldSource.fixField,
+        stringValue: '142',
+        dateValue: null,
+        numberValue: 142,
+        dossierId: 42,
+        parentRowIndex: null,
+        rawJson: null,
+        dsChampType: null,
+      },
+      {
+        sourceId: '1a4b62c4-b81f-4e83-ac34-f6d601b8a8d4',
+        label: 'state',
+        formatFunctionRef: 'status',
+        type: 'string',
+        fieldSource: 'fix-field',
+        stringValue: 'bientôt cuit',
+        dateValue: null,
+        numberValue: null,
+        dossierId: 42,
+        parentRowIndex: null,
+        rawJson: null,
+        dsChampType: null,
+      },
+      {
         sourceId: 'Q4hhbXAtMTA0Mw==',
         label: 'Total de doritos dans le monde',
         formatFunctionRef: null,
@@ -185,6 +244,39 @@ describe('FieldService', () => {
         parentRowIndex: null,
         children: null,
       },
+    ])
+  })
+
+  it('Should create fixfield and one date annotation', async () => {
+    const raw = {
+      id: 'RG9zc2llci0xMzY=',
+      state: 'bientôt cuit',
+      number: 142,
+      annotations: [
+        {
+          id: 'Q1hhbXAtMTA0Mw==',
+          __typename: 'DateChamp',
+          label: "Naissance de quelqu'un",
+          stringValue: '2023-08-18',
+        },
+      ],
+    }
+    const fields = await service.overwriteFieldsFromDataJson(raw as Partial<TDossier>, 42, fakeMappingColumnHash)
+    expect(fields).toMatchObject([
+      {
+        sourceId: '96151176-4624-4706-b861-722d2e53545d',
+        label: 'Id démarche simplifié',
+        formatFunctionRef: undefined,
+        type: FieldType.number,
+        fieldSource: FieldSource.fixField,
+        stringValue: '142',
+        dateValue: null,
+        numberValue: 142,
+        dossierId: 42,
+        parentRowIndex: null,
+        rawJson: null,
+        dsChampType: null,
+      },
       {
         sourceId: '1a4b62c4-b81f-4e83-ac34-f6d601b8a8d4',
         label: 'state',
@@ -199,24 +291,6 @@ describe('FieldService', () => {
         rawJson: null,
         dsChampType: null,
       },
-    ])
-  })
-
-  it('Should create fixfield and one date annotation', async () => {
-    const raw = {
-      id: 'RG9zc2llci0xMzY=',
-      state: 'bientôt cuit',
-      annotations: [
-        {
-          id: 'Q1hhbXAtMTA0Mw==',
-          __typename: 'DateChamp',
-          label: "Naissance de quelqu'un",
-          stringValue: '2023-08-18',
-        },
-      ],
-    }
-    const fields = await service.overwriteFieldsFromDataJson(raw as Partial<TDossier>, 42, fakeMappingColumnHash)
-    expect(fields).toMatchObject([
       {
         sourceId: 'Q1hhbXAtMTA0Mw==',
         label: "Naissance de quelqu'un",
@@ -230,27 +304,15 @@ describe('FieldService', () => {
         parentRowIndex: null,
         children: null,
       },
-      {
-        sourceId: '1a4b62c4-b81f-4e83-ac34-f6d601b8a8d4',
-        label: 'state',
-        formatFunctionRef: 'status',
-        type: 'string',
-        fieldSource: 'fix-field',
-        stringValue: 'bientôt cuit',
-        dateValue: null,
-        numberValue: null,
-        dossierId: 42,
-        parentRowIndex: null,
-        rawJson: null,
-        dsChampType: null,
-      },
     ])
-    expect(new Date('2023-08-18').getTime()).toEqual(fields[0].dateValue.getTime())
+    expect(new Date('2023-08-18').getTime()).toEqual(fields[2].dateValue.getTime())
   })
 
   it('Create children scenario for repetable champs', async () => {
     const raw = {
       id: 'RG9zc2llci0xMzY=',
+      state: '',
+      number: 142,
       champs: [
         {
           id: 'useless',
@@ -322,6 +384,34 @@ describe('FieldService', () => {
     const fields = await service.overwriteFieldsFromDataJson(raw as Partial<TDossier>, 42, fakeMappingColumnHash)
     expect(fields).toMatchObject([
       {
+        sourceId: '96151176-4624-4706-b861-722d2e53545d',
+        label: 'Id démarche simplifié',
+        formatFunctionRef: undefined,
+        type: FieldType.number,
+        fieldSource: FieldSource.fixField,
+        stringValue: '142',
+        dateValue: null,
+        numberValue: 142,
+        dossierId: 42,
+        parentRowIndex: null,
+        rawJson: null,
+        dsChampType: null,
+      },
+      {
+        sourceId: '1a4b62c4-b81f-4e83-ac34-f6d601b8a8d4',
+        label: 'state',
+        formatFunctionRef: 'status',
+        type: 'string',
+        fieldSource: 'fix-field',
+        stringValue: '',
+        dateValue: null,
+        numberValue: null,
+        dossierId: 42,
+        parentRowIndex: null,
+        rawJson: null,
+        dsChampType: null,
+      },
+      {
         sourceId: 'Q2hhbXAtMTA2NQ==',
         label: 'Champ répétable',
         formatFunctionRef: null,
@@ -391,20 +481,6 @@ describe('FieldService', () => {
             children: null,
           },
         ],
-      },
-      {
-        sourceId: '1a4b62c4-b81f-4e83-ac34-f6d601b8a8d4',
-        label: 'state',
-        formatFunctionRef: 'status',
-        type: 'string',
-        fieldSource: 'fix-field',
-        stringValue: '',
-        dateValue: null,
-        numberValue: null,
-        dossierId: 42,
-        parentRowIndex: null,
-        rawJson: null,
-        dsChampType: null,
       },
     ])
   })

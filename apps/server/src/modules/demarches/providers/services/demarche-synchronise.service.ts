@@ -83,12 +83,12 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
       }))
 
     return [
+      ...fixFields,
+      ...__fromDescriptorsToMappingColumn((revision.champDescriptors as ChampDescriptor[]) ?? [], FieldSource.champs),
       ...__fromDescriptorsToMappingColumn(
         (revision.annotationDescriptors as ChampDescriptor[]) ?? [],
         FieldSource.annotation,
       ),
-      ...__fromDescriptorsToMappingColumn((revision.champDescriptors as ChampDescriptor[]) ?? [], FieldSource.champs),
-      ...fixFields,
     ]
   }
 

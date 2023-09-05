@@ -113,16 +113,6 @@ export class FieldService extends BaseEntityService<Field> {
     const champs = dataJson?.champs ?? []
     const annotations = dataJson?.annotations ?? []
     return [
-      ...this._createFieldsFromRawChamps(
-        champs as RawChamp[],
-        dossierId,
-        columnHash,
-      ),
-      ...this._createFieldsFromRawChamps(
-        annotations as RawChamp[],
-        dossierId,
-        columnHash,
-      ),
       ...Object.keys(fixFieldValueFunctions).map((fixFieldId) => {
         const value: string =
           fixFieldValueFunctions[fixFieldId](dataJson)?.toString() ?? ''
@@ -137,6 +127,16 @@ export class FieldService extends BaseEntityService<Field> {
           dsChampType: null,
         }
       }),
+      ...this._createFieldsFromRawChamps(
+        champs as RawChamp[],
+        dossierId,
+        columnHash,
+      ),
+      ...this._createFieldsFromRawChamps(
+        annotations as RawChamp[],
+        dossierId,
+        columnHash,
+      ),
     ]
   }
 
