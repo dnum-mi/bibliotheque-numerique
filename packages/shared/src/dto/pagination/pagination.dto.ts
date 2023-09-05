@@ -36,9 +36,9 @@ export class PaginationDto<T> {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => SortDto)
-  sorts?: SortDto<T>[]
+  sorts: SortDto<T>[]
 
   @IsOptional()
   @IsValidFilter({ message: 'Les filtres de pagination ne sont pas valides.' })
-  filters?: Record<keyof T, FilterDto>
+  filters: Record<keyof T, FilterDto> | null
 }

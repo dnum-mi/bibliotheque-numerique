@@ -12,6 +12,8 @@ import type {
   UpdateUserDto,
   UpdateUserPasswordDto,
   UserOutputDto,
+  CreateCustomFilterDto,
+  PatchCustomFilterDto,
   ValidateEmailDto,
 } from '@biblio-num/shared'
 
@@ -28,6 +30,8 @@ import {
   organismesRoute,
   rolesRoute,
   unassignRoleRoute,
+  getCustomFiltersRoute,
+  getOneCustomFiltersRoute,
 } from './bn-api-routes'
 import {
   authRoute,
@@ -240,10 +244,33 @@ export const dossiersApiClient = {
   },
 }
 
+export const customFiltersApiClient = {
+  getCustomFilters: async () => {
+    const response = await apiClientInstance.get(getCustomFiltersRoute())
+    return response.data
+  },
+
+  createOneCustomFilter: async (dto: CreateCustomFilterDto) => {
+    const response = await apiClientInstance.post(getCustomFiltersRoute(), dto)
+    return response.data
+  },
+
+  updateOneCustomFilter: async (id: number, dto: PatchCustomFilterDto) => {
+    const response = await apiClientInstance.patch(getOneCustomFiltersRoute(id), dto)
+    return response.data
+  },
+
+  deleteOneCustomFilter: async (id: number) => {
+    const response = await apiClientInstance.delete(getOneCustomFiltersRoute(id))
+    return response.data
+  },
+}
+
 export default {
   ...rolesApiClient,
   ...demarchesApiClient,
   ...organismeApiClient,
   ...usersApiClient,
   ...dossiersApiClient,
+  ...customFiltersApiClient,
 }

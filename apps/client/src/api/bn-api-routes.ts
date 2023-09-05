@@ -25,3 +25,7 @@ export const fieldsSearch = '/fields-search'
 export const organismesRoute = '/organismes'
 export const getOrganismeByIdRoute = (organismeId: number) => `/organismes/${organismeId}/detail`
 export const getOrganismeByIdRnaRoute = (idRna: string) => `/organismes/rna/${idRna}`
+
+export const customFiltersRoute = '/custom-filters'
+export const getCustomFiltersRoute = () => customFiltersRoute
+export const getOneCustomFiltersRoute = (id: number) => `/custom-filters/${id}`

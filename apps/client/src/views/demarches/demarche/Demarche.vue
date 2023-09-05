@@ -76,9 +76,9 @@ onMounted(() => {
     >
       <!-- Dossiers -->
       <DsfrTabContent
-        panel-id="tab-content-0"
+        panel-id="pan-1"
         class="small-padding-tab"
-        tab-id="tab-0"
+        tab-id="tab-1"
         :selected="selectedTabIndex === 0"
       >
         <DemarcheDossiers
@@ -89,8 +89,8 @@ onMounted(() => {
 
       <!-- Informations -->
       <DsfrTabContent
-        panel-id="tab-content-1"
-        tab-id="tab-1"
+        panel-id="pan-2"
+        tab-id="tab-2"
         :selected="selectedTabIndex === 1"
       >
         <template v-if="selectedTabIndex === 1">
@@ -103,8 +103,8 @@ onMounted(() => {
       <!-- Configurations -->
       <DsfrTabContent
         v-if="userStore.canManageRoles"
-        panel-id="tab-content-2"
-        tab-id="tab-2"
+        panel-id="pan-3"
+        tab-id="tab-3"
         :selected="selectedTabIndex === 2"
       >
         <template v-if="selectedTabIndex === 2">

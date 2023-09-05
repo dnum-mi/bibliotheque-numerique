@@ -1,11 +1,11 @@
-import { IsArray, IsBoolean, IsDefined, IsOptional, IsString, ValidateNested } from 'class-validator'
+import { IsArray, IsBoolean, IsDefined, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator'
 import { ICustomFilter } from '../../interfaces'
 import { FilterDto, SortDto } from '../pagination'
 import { IsValidFilter } from '../pagination/filters/is-valid-filter.decorator'
 import { DynamicKeys } from '../dossier'
 import { Type } from 'class-transformer'
 
-export class CreateCustomFilterDto implements ICustomFilter {
+export class CreateCustomFilterDto implements Omit<ICustomFilter, 'id'> {
   @IsString()
   @IsDefined()
   name: string

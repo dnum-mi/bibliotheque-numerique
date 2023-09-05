@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { Demarche } from '../../demarches/objects/entities/demarche.entity'
 import {
+  adjustDto,
   buildFilterQuery,
   buildPaginationQuery,
   buildSortQuery,
@@ -71,6 +72,7 @@ export class DossierSearchService extends BaseEntityService<Dossier> {
   async search(demarche: Partial<Demarche>, dto: SearchDossierDto): Promise<DossierSearchOutputDto> {
     this.logger.verbose('search')
     const typeHash = await this.fieldService.giveFieldType(dto.columns)
+    dto = adjustDto(dto)
     const query = `WITH
       ${this._buildAggregatedCTE(demarche.id, typeHash)},
       ${this._buildCountCTE(dto.filters, typeHash)}

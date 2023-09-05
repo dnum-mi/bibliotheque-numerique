@@ -5,5 +5,7 @@ export const loggerServiceMock = {
   debug: () => {},
   log: () => {},
   warn: () => {},
-  error: () => {},
+  error: (e) => {
+    console.log(e)
+  },
 };

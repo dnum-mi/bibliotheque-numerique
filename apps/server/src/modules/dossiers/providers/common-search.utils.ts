@@ -6,7 +6,7 @@ import {
   FieldTypeKeys,
   FilterDto,
   NumberFilterConditionDto,
-  NumberFilterConditions,
+  NumberFilterConditions, SearchDossierDto,
   SortDto,
   TextFilterConditionDto,
   TextFilterConditions,
@@ -129,7 +129,7 @@ export const buildFilterQuery = (
   typeHash: Record<string, FieldTypeKeys>,
   isArray = false,
 ): string => {
-  if (!filters) {
+  if (!filters || !Object.keys(filters).length) {
     return ''
   } else {
     return (
@@ -164,4 +164,24 @@ export const buildSortQuery = (sorts: SortDto<DynamicKeys>[]): string => {
   return !sorts?.length
     ? ''
     : `ORDER BY ${sorts.map((s) => `"${s.key}" ${s.order}`).join(', ')}`
+}
+
+export const adjustDto = (dto: SearchDossierDto): SearchDossierDto => {
+  let newFilter = dto.filters
+  if (dto.filters && !!Object.keys(dto.filters).length) {
+    newFilter = { ...dto.filters }
+    // clean filter about columns that are not selected
+    Object.keys(dto.filters).forEach(key => {
+      if (!dto.columns.includes(key)) {
+        delete newFilter[key]
+      }
+    })
+  }
+  // clean filter about columns that are not selected
+  const newSort = (dto.sorts || []).filter(s => dto.columns.includes(s.key))
+  return {
+    ...dto,
+    sorts: newSort,
+    filters: newFilter,
+  }
 }

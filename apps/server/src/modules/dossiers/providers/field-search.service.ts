@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common'
-import { LoggerService } from '../../../shared/modules/logger/logger.service'
+import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { Repository } from 'typeorm'
 import { Dossier } from '../objects/entities/dossier.entity'
 import { InjectRepository } from '@nestjs/typeorm'
-import { BaseEntityService } from '../../../shared/base-entity/base-entity.service'
+import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { Demarche } from '../../demarches/objects/entities/demarche.entity'
 import { Field } from '../objects/entities/field.entity'
 import {
+  adjustDto,
   buildFilterQuery,
   buildPaginationQuery,
   buildSortQuery,
@@ -104,6 +105,7 @@ export class FieldSearchService extends BaseEntityService<Field> {
   async search(demarche: Partial<Demarche>, dto: SearchDossierDto): Promise<FieldSearchOutputDto> {
     this.logger.verbose('search')
     const typeHash = await this.fieldService.giveFieldType(dto.columns)
+    dto = adjustDto(dto)
     const query = `WITH
       ${this._buildRepeatedCTE(demarche.id, dto.columns)},
       ${this._buildNonRepeatedCTE(demarche.id, dto.columns)},

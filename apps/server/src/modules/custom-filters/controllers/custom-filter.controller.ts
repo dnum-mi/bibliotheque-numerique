@@ -1,4 +1,15 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards, UseInterceptors } from '@nestjs/common'
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { CustomFilter } from '@/modules/custom-filters/objects/entities/custom-filter.entity'
@@ -60,6 +71,9 @@ export class CustomFilterController {
   async deleteOneFilter(@Param('filterId') filterId: number,
                         @CurrentUserId() userId: number): Promise<DeleteResult> {
     this.logger.verbose('deleteOneFilter')
+    if (!Number(filterId)) {
+      throw new BadRequestException('Filter id must be a number')
+    }
     return this.service.remove({ id: filterId, userId })
   }
 }

@@ -34,7 +34,7 @@
     "lint:staged": "eslint --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-path ../../.gitignore",
     "migration:generate": "npm run typeorm migration:generate",
     "migration:revert": "npm run typeorm migration:revert",
-    "migration:run": "npm run typeorm migration:run",
+    "migration:run": "NODE_OPTIONS=\"-r tsconfig-paths/register\" npm run typeorm migration:run",
     "migration:show": "npm run typeorm migration:show",
     "plugin:init": "cd src/plugins/ && sh bin/init",
     "prebuild": "rimraf dist",

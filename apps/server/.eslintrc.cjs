@@ -30,7 +30,7 @@ module.exports = {
     'max-len': ['error', { code: 120 }],
     'no-irregular-whitespace': 'warn',
     'comma-dangle': ['error', 'always-multiline'],
-    "no-dupe-class-members": "off",
+    'no-dupe-class-members': 'off',
     indent: [
       'error',
       2,
