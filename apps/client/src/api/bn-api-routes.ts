@@ -5,7 +5,7 @@ export const signInRoute = `${authRoute}/sign-in` // TODO: devrait s’appeler `
 export const rolesRoute = '/roles'
 export const assignRoleRoute = '/roles/assign' // TODO: ne devrait pas contenir de verbe (assign)
 export const unassignRoleRoute = '/roles/unassign' // TODO: ne devrait pas contenir de verbe (unassign)
-export const getRoleByIdRoute = (roleId: number) => `/roles${roleId}`
+export const getRoleByIdRoute = (roleId: number) => `/roles/${roleId}`
 
 export const demarchesRoute = '/demarches'
 export const getDemarcheByIdRoute = (id: number) => `${demarchesRoute}/${id}`

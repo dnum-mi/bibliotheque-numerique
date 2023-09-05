@@ -8,7 +8,7 @@
   "scripts": {
     "build": "nest build",
     "clean:dist": "rimraf dist",
-    "db:create-default-admin": "ts-node src/shared/scripts/createDefaultAdmin.ts",
+    "db:create-default-admin": "ts-node --require=tsconfig-paths/register src/shared/scripts/createDefaultAdmin.ts",
     "db:create-default-admin:prod": "node dist/src/shared/scripts/createDefaultAdmin.js",
     "db:loadOrganismes": "node dist/src/shared/scripts/loadOrganismes.js",
     "dev": "run-s dev:docker dev:server",

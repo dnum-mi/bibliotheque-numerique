@@ -38,11 +38,7 @@ export class DemarcheController {
   @RequirePermissions({ name: PermissionName.ACCESS_DEMARCHE })
   async getDemarches(@Request() req): Promise<Demarche[]> {
     this.logger.verbose('getDemarches')
-    const demarches = await this.demarcheService.findWithPermissions(req.user)
-    if (demarches.length === 0) {
-      throw new NotFoundException('No demarche found')
-    }
-    return demarches
+    return await this.demarcheService.findWithPermissions(req.user)
   }
 
   @Get(':id')

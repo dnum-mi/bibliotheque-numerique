@@ -71,7 +71,7 @@ export class RolesController {
     await this.rolesService.unassignRoleToUser(roleId, userId)
   }
 
-  @Delete('remove/:id')
+  @Delete(':id')
   @RequirePermissions({ name: PermissionName.CREATE_ROLE })
   async deleteRole (@Param('id', ParseIntPipe) id: number): Promise<void> {
     await this.rolesService.removeButAdmin(id)

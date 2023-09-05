@@ -8,9 +8,11 @@ export const useRoleStore = defineStore('role', () => {
   const roles = ref<Map<number, IRole>>(new Map())
 
   const fetchRoles = async () => {
+    const newMap = new Map()
     for (const role of await apiClient.getRoles()) {
-      roles.value.set(role.id, role)
+      newMap.set(role.id, role)
     }
+    roles.value = newMap
   }
   const fetchRoleById = async (id: number) => {
     roles.value.set(id, await apiClient.getRoleById(id))
