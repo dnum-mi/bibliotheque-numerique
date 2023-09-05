@@ -14,6 +14,7 @@ export const gridOptionFactory = (getRows: (params: any) => void, pageSize:numbe
     resizable: true,
     sortable: true,
   },
+  rowSelection: 'single',
   paginationPageSize: pageSize,
   cacheBlockSize: pageSize,
   sideBar: {

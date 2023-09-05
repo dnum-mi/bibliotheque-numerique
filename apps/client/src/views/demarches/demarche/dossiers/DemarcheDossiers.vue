@@ -22,8 +22,11 @@ import { gridOptionFactory } from '@/views/demarches/demarche/dossiers/grid-opti
 import { type SmallFilter } from './DemarcheDossiersFilters.vue'
 import { deepAlmostEqual, selectKeysInObject } from '@/utils/object'
 import { ColumnApi } from 'ag-grid-community'
+import { SelectionChangedEvent } from 'ag-grid-community/dist/lib/events'
+import { useRouter } from 'vue-router'
 
 const demarcheStore = useDemarcheStore()
+const router = useRouter()
 const gridApi: Ref<GridApi | undefined> = ref()
 const columnApi: Ref<ColumnApi | undefined> = ref()
 const groupByDossier: Ref<boolean> = ref(false)
@@ -108,6 +111,16 @@ const computeColumnsDef = () => {
       }
     }),
   ]
+}
+
+const onSelectionChanged = ($event: SelectionChangedEvent) => {
+  const id = $event.api.getSelectedRows()?.[0]?.dossierId
+  if (id) {
+    router.push({
+      name: 'Dossiers',
+      params: { id },
+    })
+  }
 }
 
 const refresh = () => {
@@ -245,6 +258,7 @@ const updateFilterName = async (name: string) => {
         :grid-options="gridOptions"
         @grid-ready="onGridReady($event)"
         @column-visible="refresh()"
+        @selection-changed="onSelectionChanged($event)"
       />
     </div>
   </div>
