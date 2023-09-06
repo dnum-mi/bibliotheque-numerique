@@ -27,6 +27,6 @@ RUN npm run build:rnf-client
 FROM bitnami/nginx:latest as production
 
 COPY --from=builder /app/apps/rnf-client/dist /app
-COPY ../../docker/nginx/bn-rnf.conf /opt/bitnami/nginx/conf/server_blocks/rnf.conf
+COPY --from=base /app/docker/nginx/bn-rnf.conf /opt/bitnami/nginx/conf/server_blocks/rnf.conf
 
 USER 1001
