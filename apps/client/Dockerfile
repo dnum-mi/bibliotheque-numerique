@@ -27,5 +27,5 @@ RUN npm run build:client
 FROM bitnami/nginx:latest as production
 
 COPY --from=builder /app/apps/client/dist /app
-
+COPY ../../docker/nginx/bn-rnf.conf /opt/bitnami/nginx/conf/server_blocks/bn.conf
 USER 1001
