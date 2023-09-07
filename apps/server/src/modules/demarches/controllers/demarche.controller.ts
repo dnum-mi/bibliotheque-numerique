@@ -19,8 +19,11 @@ import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { Demarche } from '../objects/entities/demarche.entity'
 import { Dossier } from '../../dossiers/objects/entities/dossier.entity'
 import { DemarcheSynchroniseService } from '../providers/services/demarche-synchronise.service'
-import { Roles } from '../../roles/providers/roles.guard'
+import { Roles, RolesGuard } from '../../roles/providers/roles.guard'
+import { User } from '../../users/entities/user.entity'
 import { DemarcheOutputDto, demarcheOutputDtoKeys } from '@/modules/demarches/objects/dtos/demarche-output.dto'
+import { CurrentUser } from '@/modules/users/decorators/current-user.decorator'
+import { SmallDemarcheOutputDto } from '@biblio-num/shared/types/dto/demarche/small-demarche-output.dto'
 
 @ApiTags('Demarches')
 @UseGuards(PermissionsGuard)
@@ -34,11 +37,19 @@ export class DemarcheController {
     this.logger.setContext(this.constructor.name)
   }
 
+  @UseGuards(RolesGuard)
+  @Roles('admin')
+  @Get('small')
+  async allSmallDemarche(): Promise<SmallDemarcheOutputDto[]> {
+    this.logger.verbose('allSmallDemarche')
+    return this.demarcheService.repository.find({ select: ['id', 'title'] })
+  }
+
   @Get()
   @RequirePermissions({ name: PermissionName.ACCESS_DEMARCHE })
-  async getDemarches(@Request() req): Promise<Demarche[]> {
+  async getDemarches(@CurrentUser() user: User): Promise<Demarche[]> {
     this.logger.verbose('getDemarches')
-    return await this.demarcheService.findWithPermissions(req.user)
+    return this.demarcheService.findWithPermissions(user)
   }
 
   @Get(':id')
