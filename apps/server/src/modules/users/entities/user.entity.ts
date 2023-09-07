@@ -21,6 +21,10 @@ export class User extends BaseEntity {
     type: 'varchar',
     nullable: false,
     unique: true,
+    transformer: {
+      from: (dbValue: string) => dbValue,
+      to: (entityValue: string) => entityValue.toLowerCase(),
+    },
   })
     email: string
 

@@ -18,7 +18,7 @@ describe('Common search utils', () => {
             },
             { I09: 'string' },
           ),
-        ).toEqual('WHERE (("I09" LIKE \'%to%\'))')
+        ).toEqual('WHERE (("I09" ILIKE \'%to%\'))')
       })
 
       it('Should build filter for "notContains"', () => {
@@ -35,7 +35,7 @@ describe('Common search utils', () => {
             },
             { I09: 'string' },
           ),
-        ).toEqual('WHERE (("I09" NOT LIKE \'%to%\'))')
+        ).toEqual('WHERE (("I09" NOT ILIKE \'%to%\'))')
       })
 
       it('Should build filter for "startsWith"', () => {
@@ -52,7 +52,7 @@ describe('Common search utils', () => {
             },
             { I09: 'string' },
           ),
-        ).toEqual('WHERE (("I09" LIKE \'to%\'))')
+        ).toEqual('WHERE (("I09" ILIKE \'to%\'))')
       })
 
       it('Should build filter for "endsWith"', () => {
@@ -69,7 +69,7 @@ describe('Common search utils', () => {
             },
             { I09: 'string' },
           ),
-        ).toEqual('WHERE (("I09" LIKE \'%to\'))')
+        ).toEqual('WHERE (("I09" ILIKE \'%to\'))')
       })
 
       it('Should build filter for "blank"', () => {
@@ -123,7 +123,7 @@ describe('Common search utils', () => {
             true,
           ),
         ).toEqual(
-          'WHERE ((EXISTS (SELECT 1 FROM UNNEST("I09") AS item WHERE item LIKE \'%to%\')))',
+          'WHERE ((EXISTS (SELECT 1 FROM UNNEST("I09") AS item WHERE item ILIKE \'%to%\')))',
         )
       })
 
@@ -143,7 +143,7 @@ describe('Common search utils', () => {
             true,
           ),
         ).toEqual(
-          'WHERE ((EXISTS (SELECT 1 FROM UNNEST("I09") AS item WHERE item NOT LIKE \'%to%\')))',
+          'WHERE ((EXISTS (SELECT 1 FROM UNNEST("I09") AS item WHERE item NOT ILIKE \'%to%\')))',
         )
       })
 
@@ -163,7 +163,7 @@ describe('Common search utils', () => {
             true,
           ),
         ).toEqual(
-          'WHERE ((EXISTS (SELECT 1 FROM UNNEST("I09") AS item WHERE item LIKE \'to%\')))',
+          'WHERE ((EXISTS (SELECT 1 FROM UNNEST("I09") AS item WHERE item ILIKE \'to%\')))',
         )
       })
 
@@ -183,7 +183,7 @@ describe('Common search utils', () => {
             true,
           ),
         ).toEqual(
-          'WHERE ((EXISTS (SELECT 1 FROM UNNEST("I09") AS item WHERE item LIKE \'%to\')))',
+          'WHERE ((EXISTS (SELECT 1 FROM UNNEST("I09") AS item WHERE item ILIKE \'%to\')))',
         )
       })
 
@@ -629,7 +629,7 @@ describe('Common search utils', () => {
           },
           { I09: 'string' },
         ),
-      ).toEqual('WHERE (("I09" LIKE \'%to%\') AND ("I09" NOT LIKE \'%ti%\'))')
+      ).toEqual('WHERE (("I09" ILIKE \'%to%\') AND ("I09" NOT ILIKE \'%ti%\'))')
     })
 
     it('Should build filter for two conditions using "OR" operator', () => {
@@ -651,7 +651,7 @@ describe('Common search utils', () => {
           },
           { I09: 'string' },
         ),
-      ).toEqual('WHERE (("I09" LIKE \'to%\') OR ("I09" LIKE \'%ti\'))')
+      ).toEqual('WHERE (("I09" ILIKE \'to%\') OR ("I09" ILIKE \'%ti\'))')
     })
 
     it('Should build filter for multiple fields using "AND" operator', () => {
@@ -685,7 +685,7 @@ describe('Common search utils', () => {
           true,
         ),
       ).toEqual(
-        'WHERE ((EXISTS (SELECT 1 FROM UNNEST("I09") AS item WHERE item LIKE \'%to%\'))) AND ((EXISTS (SELECT 1 FROM UNNEST("I08") AS item WHERE item > 10000)) OR (EXISTS (SELECT 1 FROM UNNEST("I08") AS item WHERE item > 20000)))',
+        'WHERE ((EXISTS (SELECT 1 FROM UNNEST("I09") AS item WHERE item ILIKE \'%to%\'))) AND ((EXISTS (SELECT 1 FROM UNNEST("I08") AS item WHERE item > 10000)) OR (EXISTS (SELECT 1 FROM UNNEST("I08") AS item WHERE item > 20000)))',
       )
     })
   })

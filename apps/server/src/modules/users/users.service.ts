@@ -32,7 +32,7 @@ export class UsersService extends BaseEntityService<User> {
   async findByEmail (email: string, select?: FindOneOptions<User>['select']): Promise<User | undefined> {
     this.logger.verbose('findByEmail')
     return this.repo.findOne({
-      where: { email },
+      where: { email: email.toLowerCase() },
       relations: { roles: true },
       select,
     })

@@ -13,7 +13,6 @@ import { CurrentDemarche } from '@/modules/demarches/providers/decorators/curren
 @ApiTags('Demarches')
 @ApiTags('Dossiers')
 @UseGuards(PermissionsGuard)
-@RequirePermissions({ name: PermissionName.ACCESS_DEMARCHE })
 @UseInterceptors(CurrentDemarcheInterceptor)
 @Controller('demarches/:demarcheId')
 export class DemarcheDossierController {
@@ -23,8 +22,9 @@ export class DemarcheDossierController {
     this.logger.setContext(this.constructor.name)
   }
 
-  @ApiResponse({ status: 200 })
   @HttpCode(200)
+  @ApiResponse({ status: 200 })
+  @RequirePermissions({ name: PermissionName.ACCESS_DEMARCHE })
   @Post('/dossiers-search')
   async searchDossier(@Body() dto: SearchDossierDto,
                       @CurrentDemarche() demarche: Partial<Demarche>): Promise<DossierSearchOutputDto> {
@@ -32,8 +32,9 @@ export class DemarcheDossierController {
     return this.dossierSearchService.search(demarche, dto)
   }
 
-  @ApiResponse({ status: 200 })
   @HttpCode(200)
+  @ApiResponse({ status: 200 })
+  @RequirePermissions({ name: PermissionName.ACCESS_DEMARCHE })
   @Post('/fields-search')
   async searchFields(@Body() dto: SearchDossierDto,
                      @CurrentDemarche() demarche: Partial<Demarche>): Promise<FieldSearchOutputDto> {

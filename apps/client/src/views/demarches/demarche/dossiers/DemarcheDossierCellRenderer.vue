@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { defineProps, computed } from 'vue'
-import countriesFlagHash from '@/assets/country.json'
+import slugify from 'slugify'
 
 const props = defineProps<{ params: any }>()
 
@@ -37,6 +37,15 @@ const giveStatusType = (status: string): dsfrType => {
 }
 /* endregion */
 
+/* region PAYS region */
+const getFlagURL = (countryName: string) => {
+  if (!countryName?.length) {
+    return ''
+  }
+  const slug = slugify(countryName, { lower: true, strict: true })
+  return `/countries-svg/${slug}.svg`
+}
+/* endregion */
 </script>
 
 <template>
@@ -53,7 +62,7 @@ const giveStatusType = (status: string): dsfrType => {
           <span
             :key="cellValue"
             class="round-flag fr-mr-1w"
-            :style="{ backgroundImage: `url(${countriesFlagHash[cellValue]})` }"
+            :style="{ backgroundImage: `url(${getFlagURL(cellValue)})` }"
           />
           {{ cellValue || "pas de pays" }}
         </div>

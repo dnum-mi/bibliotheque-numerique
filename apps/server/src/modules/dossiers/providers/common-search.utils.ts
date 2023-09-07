@@ -24,13 +24,13 @@ const _buildOneTextFilter = (
   key = _adaptKeyForArray(key, isArray)
   switch (filter.type) {
   case TextFilterConditions.Contains:
-    return `(${key} LIKE '%${filter.filter}%')${isArray ? ')' : ''}`
+    return `(${key} ILIKE '%${filter.filter}%')${isArray ? ')' : ''}`
   case TextFilterConditions.NotContains:
-    return `(${key} NOT LIKE '%${filter.filter}%')${isArray ? ')' : ''}`
+    return `(${key} NOT ILIKE '%${filter.filter}%')${isArray ? ')' : ''}`
   case TextFilterConditions.StartsWith:
-    return `(${key} LIKE '${filter.filter}%')${isArray ? ')' : ''}`
+    return `(${key} ILIKE '${filter.filter}%')${isArray ? ')' : ''}`
   case TextFilterConditions.EndsWith:
-    return `(${key} LIKE '%${filter.filter}')${isArray ? ')' : ''}`
+    return `(${key} ILIKE '%${filter.filter}')${isArray ? ')' : ''}`
   case TextFilterConditions.Blank:
     return `(${key} IS NULL OR item = "")${isArray ? ')' : ''}`
   case TextFilterConditions.NotBlank:
