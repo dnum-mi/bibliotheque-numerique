@@ -3,6 +3,7 @@ const config = {
   fetchDataInterval: process.env.WORKER_FETCH_DATA_INTERVAL || '0 0 1 * * *',
   fetchOrgInterval: process.env.WORKER_FETCH_ORG_INTERVAL || '0 0 1 * * *',
   fetchDataOnStartup: process.env.WORKER_FETCH_DATA_ON_STARTUP === 'true' || 'true',
+  fetchDataOnStartupFromScratch: process.env.WORKER_FETCH_DATA_ON_STARTUP_FROM_SCRATCH === 'true' || 'true',
   log: {
     date_format: process.env.LOG_DATE_FORMAT || 'DD/MM/YYYY HH:mm:ss',
   },

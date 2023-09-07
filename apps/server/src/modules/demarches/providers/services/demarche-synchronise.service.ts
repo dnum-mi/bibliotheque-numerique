@@ -92,24 +92,26 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
     ]
   }
 
-  private async _synchroniseOneDemarche (demarche: Demarche, dsId: number): Promise<void> {
+  private async _synchroniseOneDemarche (demarche: Demarche, dsId: number, fromScratch = false): Promise<void> {
     this.logger.verbose('_synchroniseOneDemarche')
-    const result = await this.dsApiClient.demarcheDossierWithCustomChamp(dsId, demarche.lastSynchronisedAt)
+    const lastSyncronisedAt = fromScratch ? new Date(0) : demarche.lastSynchronisedAt
+    const result = await this.dsApiClient.demarcheDossierWithCustomChamp(dsId, lastSyncronisedAt)
     const raw = result.demarche
     const dossiers = [...raw.dossiers.nodes]
     delete raw.dossiers
+    const toUpdate = {
+      lastSynchronisedAt: new Date(),
+      title: raw.title,
+      state: raw.state,
+      type: this._findOrganismeType(raw),
+      mappingColumns: this._generateMappingColumns(raw),
+      dsDataJson: raw,
+    }
     await this.repo.update(
       { id: demarche.id },
-      {
-        lastSynchronisedAt: new Date(),
-        title: raw.title,
-        state: raw.state,
-        type: this._findOrganismeType(raw),
-        mappingColumns: this._generateMappingColumns(raw),
-        dsDataJson: raw,
-      },
+      toUpdate,
     )
-    await this._synchroniseAllDossier(dossiers, demarche)
+    await this._synchroniseAllDossier(dossiers, { ...demarche, ...toUpdate })
     this.logger.log(`successfully synchronised demarche (with Id DS: ${dsId}) and its dossiers`)
   }
 
@@ -137,20 +139,20 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
     await this._synchroniseAllDossier(dossiers, demarche)
   }
 
-  public async synchroniseOneDemarche (dsId: number): Promise<void> {
+  public async synchroniseOneDemarche (dsId: number, fromScratch = false): Promise<void> {
     this.logger.verbose('synchroniseOneDemarche')
     const demarche = await this.demarcheService.findByDsId(dsId)
     if (!demarche) {
       throw new NotFoundException(`Demarche with dsId ${dsId} not found.`)
     }
-    return this._synchroniseOneDemarche(demarche, dsId)
+    return this._synchroniseOneDemarche(demarche, dsId, fromScratch)
   }
 
-  public async synchroniseAllDemarches (): Promise<void[]> {
+  public async synchroniseAllDemarches (fromScratch = false): Promise<void[]> {
     this.logger.verbose('synchroniseAllDemarches')
     const demarches = await this.repo.find()
     const promises = demarches.map((demarche) =>
-      this._synchroniseOneDemarche(demarche, demarche.dsDataJson.number),
+      this._synchroniseOneDemarche(demarche, demarche.dsDataJson.number, fromScratch),
     )
     return Promise.all(promises)
   }

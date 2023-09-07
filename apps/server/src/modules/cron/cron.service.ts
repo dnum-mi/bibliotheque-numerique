@@ -4,13 +4,13 @@ import {
   OnModuleInit,
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { LoggerService } from '../../shared/modules/logger/logger.service'
+import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { SchedulerRegistry } from '@nestjs/schedule'
 import { CronJob } from 'cron'
 import { JobLogService } from '../job-log/providers/job-log.service'
 import { JobNames } from './job-name.enum'
 import { DemarcheSynchroniseService } from '../demarches/providers/services/demarche-synchronise.service'
-import { OrganismesService } from '../../plugins/organisme/organismes/organismes.service'
+import { OrganismesService } from '@/plugins/organisme/organismes/organismes.service'
 import { TMapperJobs } from './mapper-jobs.type'
 
 @Injectable()
@@ -53,7 +53,7 @@ export class CronService implements OnApplicationBootstrap, OnModuleInit {
 
   private _launchCronOnStartup(): void {
     if (this.config.get('fetchDataOnStartup')) {
-      this._fetchData()
+      this._fetchData(this.config.get('fetchDataOnStartupFromScratch'))
     } else {
       this.logger.log(
         'fetchDataOnStartup is set to false, skipping data fetching on startup',
@@ -69,7 +69,7 @@ export class CronService implements OnApplicationBootstrap, OnModuleInit {
     this._launchCronOnStartup()
   }
 
-  private async _fetchData(): Promise<void> {
+  private async _fetchData(fromScratch = false): Promise<void> {
     const jobLog = await this.jobLogService.createJobLog(
       JobNames.FETCH_DATA_FROM_DS,
     )
@@ -78,7 +78,7 @@ export class CronService implements OnApplicationBootstrap, OnModuleInit {
     this.logger.log("Synchronising all demarche with 'Démarches simplifiées'.")
     let error = false
     try {
-      await this.demarcheSynchroniseService.synchroniseAllDemarches()
+      await this.demarcheSynchroniseService.synchroniseAllDemarches(fromScratch)
     } catch (e) {
       error = true
       this.logger.error(e)
