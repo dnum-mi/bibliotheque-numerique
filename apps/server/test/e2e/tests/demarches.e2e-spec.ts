@@ -5,7 +5,7 @@ import { TestingModuleFactory } from '../common/testing-module.factory'
 import { getUserCookie } from '../common/get-user-cookie'
 import { getAdminCookie } from '../common/get-admin-cookie'
 
-describe('Auth (e2e)', () => {
+describe('Demarches (e2e)', () => {
   let app: INestApplication
   let adminCookie: string
   let userCookie: string
@@ -44,7 +44,7 @@ describe('Auth (e2e)', () => {
       .then(({ body }) => {
         expect(body.length).toBeGreaterThan(0)
         body.forEach(d => {
-          expect(Object.keys(d)).toEqual(['id', 'title'])
+          expect(Object.keys(d)).toEqual(['id', 'title', 'dsId'])
         })
       })
   })

@@ -5,9 +5,9 @@
     :headers="rolesHeadersJson"
     :row-data="rolesRowData"
     with-action="{{ true }}"
+    :side-bar="false"
     row-selection="single"
     @get-elt="getRole"
-    @selection-changed="onSelectionChanged"
   />
 </template>
 
@@ -27,11 +27,7 @@ const rolesHeadersJson = [
   {
     value: 'id',
     action: { condition: (role: IRole) => canManageRoles.value && (role.name !== RoleName.ADMIN) },
-  },
-  {
-    text: 'Id',
-    value: 'id',
-    width: 65,
+    width: 15,
   },
   {
     text: 'Name',

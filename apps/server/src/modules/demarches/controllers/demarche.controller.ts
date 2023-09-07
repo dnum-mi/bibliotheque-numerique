@@ -23,7 +23,7 @@ import { Roles, RolesGuard } from '../../roles/providers/roles.guard'
 import { User } from '../../users/entities/user.entity'
 import { DemarcheOutputDto, demarcheOutputDtoKeys } from '@/modules/demarches/objects/dtos/demarche-output.dto'
 import { CurrentUser } from '@/modules/users/decorators/current-user.decorator'
-import { SmallDemarcheOutputDto } from '@biblio-num/shared/types/dto/demarche/small-demarche-output.dto'
+import { SmallDemarcheOutputDto } from '@biblio-num/shared'
 
 @ApiTags('Demarches')
 @UseGuards(PermissionsGuard)
@@ -42,7 +42,15 @@ export class DemarcheController {
   @Get('small')
   async allSmallDemarche(): Promise<SmallDemarcheOutputDto[]> {
     this.logger.verbose('allSmallDemarche')
-    return this.demarcheService.repository.find({ select: ['id', 'title'] })
+    return this.demarcheService.repository
+      .find({ select: ['id', 'title', 'dsDataJson'] })
+      .then(demarches => {
+        return demarches.map(d => ({
+          id: d.id,
+          title: d.title,
+          dsId: d.dsDataJson?.number,
+        }))
+      })
   }
 
   @Get()

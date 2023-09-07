@@ -47,6 +47,6 @@ describe('<Role />', () => {
     cy.mount(Role, {
       extensions,
     })
-    cy.get('[data-cy=permissions-role-list]').find('li').should('have.length', getPermissionNumber())
+    cy.get('[data-cy=permissions-role-list]').find('[type="checkbox"]').should('have.length', 2)
   })
 })

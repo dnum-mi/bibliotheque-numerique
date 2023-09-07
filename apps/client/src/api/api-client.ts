@@ -31,7 +31,7 @@ import {
   rolesRoute,
   unassignRoleRoute,
   getCustomFiltersRoute,
-  getOneCustomFiltersRoute,
+  getOneCustomFiltersRoute, smallDemarchesRoutes,
 } from './bn-api-routes'
 import {
   authRoute,
@@ -125,6 +125,10 @@ export const demarchesApiClient = {
   getDemarches: async () => {
     const response = await apiClientInstance.get(demarchesRoute)
     return response.data
+  },
+
+  getSmallDemarches: async () => {
+    return (await apiClientInstance.get(smallDemarchesRoutes)).data
   },
 
   getDemarcheConfiguration: async (demarcheId: number): Promise<MappingColumn[]> => {

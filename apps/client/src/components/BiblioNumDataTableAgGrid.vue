@@ -48,6 +48,7 @@ const props = withDefaults(defineProps<{
     withAction?: boolean,
     rowSelection?: string,
     floatingFilter?: boolean,
+    sideBar?: boolean
   }>(), {
   title: undefined,
   rowData: () => [],
@@ -57,6 +58,7 @@ const props = withDefaults(defineProps<{
   withAction: false,
   rowSelection: undefined,
   floatingFilter: false,
+  sideBar: true,
 })
 
 interface AgGridColumnDefs {
@@ -121,12 +123,14 @@ const showElt = ($event) => {
 }
 
 const context = { showElt }
-const sideBar = {
-  toolPanels: ['columns', 'filters'],
-  SideBarDef: {
-    hiddenByDefault: false,
-  },
-}
+const sideBar = props.sideBar
+  ? {
+      toolPanels: ['columns', 'filters'],
+      SideBarDef: {
+        hiddenByDefault: false,
+      },
+    }
+  : false
 
 const gridOptions = {
   localeText: localeTextAgGrid,
