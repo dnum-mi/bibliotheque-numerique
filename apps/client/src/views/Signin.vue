@@ -2,7 +2,7 @@
 import { z } from 'zod'
 import { toFormValidator } from '@vee-validate/zod'
 import { useField, useForm } from 'vee-validate'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores'
 import type { CredentialsInputDto } from '@biblio-num/shared'
@@ -12,6 +12,13 @@ const REQUIRED_FIELD_MESSAGE = 'Ce champ est requis'
 
 const router = useRouter()
 const userStore = useUserStore()
+const tmpType = ref('password')
+const tmpTitle = computed(() => (tmpType.value === 'password' ? 'Afficher le mot de passe' : 'Masquer le mot de passe'))
+const eyeIcon = computed(() => (tmpType.value === 'password' ? 'fr-icon-eye-fill' : 'fr-icon-eye-off-fill'))
+
+const togglePassword = () => {
+  tmpType.value = tmpType.value === 'password' ? 'text' : 'password'
+}
 
 const secure = ref()
 
@@ -82,16 +89,22 @@ const { value: passwordValue, errorMessage: passwordError } = useField('password
               <DsfrInput
                 id="password"
                 v-model="passwordValue"
+                :type="tmpType"
                 label="Mot de passe (6 caractères minimum)"
                 label-visible
                 placeholder="xxxxxx"
-                type="password"
                 required
               >
                 <template #required-tip>
                   <em class="required-label"> *</em>
                 </template>
               </DsfrInput>
+              <button
+                class="absolute right-[57%] top-[125.5%]"
+                @click.prevent="togglePassword"
+              >
+                <span :class="eyeIcon" />
+              </button>
             </DsfrInputGroup>
 
             <div
