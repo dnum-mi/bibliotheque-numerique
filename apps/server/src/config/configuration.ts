@@ -1,4 +1,27 @@
-const config = {
+export type TConfig = {
+  env: string;
+  isDev: boolean;
+  isTest: boolean;
+  protocol: string;
+  port: number;
+  appHost: string;
+  appPath: string;
+  appFrontUrl: string;
+  httpProxy: string;
+  log: {
+    date_format: string;
+  },
+  cookie: {
+    maxAge: number;
+  },
+  defaultAdmin: {
+    email: string;
+    password: string;
+    roleName: string;
+  }
+};
+
+export default () : TConfig => ({
   env: process.env.NODE_ENV || 'development',
   isDev: ['dev', 'development', 'local'].includes(process.env.NODE_ENV),
   isTest: ['test', 'test-unit', 'test-e2e'].includes(process.env.NODE_ENV),
@@ -11,16 +34,6 @@ const config = {
   log: {
     date_format: process.env.LOG_DATE_FORMAT || 'DD/MM/YYYY HH:mm:ss',
   },
-  smtp: {
-    host: process.env.SMTP_SERVER || 'localhost',
-    port: process.env.SMTP_PORT || '25',
-    from: process.env.MAIL_FROM || 'noreply.biblio-num@interieur.gouv.fr',
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PWD,
-  },
-  jwt: {
-    secret: process.env.JWT_SECRET,
-  },
   cookie: {
     maxAge: 3600000,
   },
@@ -29,9 +42,4 @@ const config = {
     password: process.env.DEFAULT_ADMIN_PASSWORD,
     roleName: 'admin',
   },
-}
-
-export type TConfig = typeof config;
-// TODO: fixe type
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export default () => config
+})
