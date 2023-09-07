@@ -86,25 +86,30 @@ const { value: passwordValue, errorMessage: passwordError } = useField('password
               :is-valid="passwordError"
               :error-message="passwordError"
             >
-              <DsfrInput
-                id="password"
-                v-model="passwordValue"
-                :type="tmpType"
-                label="Mot de passe (6 caractères minimum)"
-                label-visible
-                placeholder="xxxxxx"
-                required
-              >
-                <template #required-tip>
-                  <em class="required-label"> *</em>
-                </template>
-              </DsfrInput>
-              <button
-                class="absolute right-[57%] top-[125.5%]"
-                @click.prevent="togglePassword"
-              >
-                <span :class="eyeIcon" />
-              </button>
+              <div class="relative">
+                <DsfrInput
+                  id="password"
+                  v-model="passwordValue"
+                  :type="tmpType"
+                  label="Mot de passe (6 caractères minimum)"
+                  label-visible
+                  placeholder="xxxxxx"
+                  required
+                >
+                  <template #required-tip>
+                    <em class="required-label"> *</em>
+                  </template>
+                </DsfrInput>
+                <div class="absolute  right-2  top-[55%]">
+                  <Vicon
+                    :class="eyeIcon"
+                    :name="eyeIcon"
+                    scale="1.25"
+                    :title="tmpTitle"
+                    @click.prevent="togglePassword"
+                  />
+                </div>
+              </div>
             </DsfrInputGroup>
 
             <div
