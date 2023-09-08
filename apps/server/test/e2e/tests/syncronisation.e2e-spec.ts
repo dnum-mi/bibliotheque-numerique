@@ -141,7 +141,6 @@ describe('Syncronisation ', () => {
         })
       })
       .then((fields) => {
-        console.log(fields)
         expect(fields.length).toEqual(13)
         expect(fields).toMatchObject([
           {
