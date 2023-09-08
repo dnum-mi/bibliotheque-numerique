@@ -7,6 +7,8 @@ export {
   RiEyeFill,
   RiFilterOffLine,
   RiFlagLine,
+  RiFileList2Fill,
+  RiFileList2Line,
   RiHome2Line,
   RiHome4Line,
   RiIndeterminateCircleLine,

@@ -40,7 +40,8 @@ const quickLinks: Ref<QuickLink[]> = ref(quickLinksBase)
 
 const demarcheQuickLink: QuickLink = {
   label: 'Démarches',
-  to: '/demarches',
+  to: { name: 'Demarches' },
+  icon: 'ri-file-list-2-fill',
 }
 
 const unauthenticatedQuickLinks: QuickLink[] = [
@@ -61,7 +62,8 @@ const unauthenticatedQuickLinks: QuickLink[] = [
 const authenticatedQuickLinksPart1: QuickLink[] = [
   {
     label: 'Organismes',
-    to: '/organismes',
+    to: { name: 'Organismes' },
+    icon: 'ri-file-list-2-line',
   },
 ]
 
@@ -104,13 +106,12 @@ watch([() => userStore.isAuthenticated, route], async () => {
       ...authenticatedQuickLinksPart2,
       ...(userStore.canManageRoles ? [manageRolesQuickLink] : []),
     ]
-    return
+  } else {
+    quickLinks.value = [
+      ...quickLinksBase,
+      ...unauthenticatedQuickLinks.filter(isCurrentRoute),
+    ]
   }
-
-  quickLinks.value = [
-    ...quickLinksBase,
-    ...unauthenticatedQuickLinks.filter(isCurrentRoute),
-  ]
 })
 
 const searchQuery = ref('')
