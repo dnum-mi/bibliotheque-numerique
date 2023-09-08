@@ -3,16 +3,21 @@ import { ConfigService } from '@nestjs/config'
 import { Dossier as TDossier, DossierState } from '@dnum-mi/ds-api-client/dist/@types/types'
 import { In, Repository } from 'typeorm'
 
-import dayjs, { type Dayjs } from '../../../shared/utils/dayjs'
+import dayjs, { type Dayjs } from '@/shared/utils/dayjs'
 
-import { LoggerService } from '../../../shared/modules/logger/logger.service'
+import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { TInstructionTimeMappingConfig, keyInstructionTime } from '../config/instructionTimeMapping.config'
 import { EInstructionTimeState, EInstructionTimeStateKey } from './types/IntructionTime.type'
-import { Dossier } from '../../../modules/dossiers/objects/entities/dossier.entity'
+import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
 import { InstructionTime } from './instruction_time.entity'
-import { BaseEntityService } from '../../../shared/base-entity/base-entity.service'
+import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { InjectRepository } from '@nestjs/typeorm'
-import { DossierService } from '../../../modules/dossiers/providers/dossier.service'
+import { DossierService } from '@/modules/dossiers/providers/dossier.service'
+import { FieldService } from '@/modules/dossiers/providers/field.service'
+import {
+  fixFieldInstructionTimeDelay,
+  fixFieldInstructionTimeStatus,
+} from './constante/fix-field-instrucation-times.dictionnary'
 
 type TIntructionTime = {
   [keyInstructionTime.DATE_REQUEST1]?: Date | null;
@@ -46,6 +51,7 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
     private readonly dossierService: DossierService,
     @InjectRepository(InstructionTime)
     protected readonly repo: Repository<InstructionTime>,
+    protected fieldService: FieldService,
   ) {
     super(repo, logger)
     this.logger.setContext(this.constructor.name)
@@ -98,9 +104,7 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
     return this.getMappingInstructionTimeByDossier(dossier)
   }
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  async instructionTimeCalculation (idDossiers: number[]) {
+  async instructionTimeCalculation (idDossiers: number[]): Promise<void> {
     const instructionTimes = await this.repo.find({
       where: {
         dossier: {
@@ -110,12 +114,10 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
       relations: { dossier: true },
     })
 
-    // TODO: fixe type
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return instructionTimes.reduce((acc: any, instructionTime) => {
+    await Promise.all(instructionTimes.map(async (instructionTime): Promise<void> => {
       const { dossier } = instructionTime
       let remainingTime = null
-      let delayStatus = null
+      let delayStatus = instructionTime.state
       if (
         [
           EInstructionTimeState.IN_EXTENSION,
@@ -126,24 +128,35 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
         remainingTime = dayjs(instructionTime.endAt).startOf('day').diff(dayjs().startOf('day'), 'days')
 
         delayStatus = remainingTime > 0 ? instructionTime.state : EInstructionTimeState.OUT_OF_DATE
-      }
-      if ([EInstructionTimeState.SECOND_REQUEST as EInstructionTimeStateKey].includes(instructionTime.state)) {
+      } else if ([EInstructionTimeState.SECOND_REQUEST as EInstructionTimeStateKey].includes(instructionTime.state)) {
         const stopAt = dayjs(instructionTime.stopAt).startOf('day')
         remainingTime = dayjs(instructionTime.endAt).startOf('day').diff(stopAt, 'days')
         delayStatus = remainingTime > 0 ? instructionTime.state : EInstructionTimeState.OUT_OF_DATE
-      }
-
-      if (instructionTime.state === EInstructionTimeState.INTENT_OPPO) {
+      } else if (instructionTime.state === EInstructionTimeState.INTENT_OPPO) {
         remainingTime = Math.max(0, dayjs(instructionTime.endAt).startOf('day').diff(dayjs().startOf('day'), 'days'))
       }
 
-      acc[dossier.id] = {
-        remainingTime: remainingTime != null && remainingTime >= 0 ? Math.round(remainingTime) : null,
-        delayStatus: delayStatus ?? instructionTime.state ?? null,
+      if (remainingTime != null && remainingTime >= 0) {
+        await this.fieldService.upsert({
+          sourceId: fixFieldInstructionTimeDelay.id,
+          dossierId: dossier.id,
+          numberValue: Math.round(remainingTime),
+          label: fixFieldInstructionTimeDelay.originalLabel,
+          type: fixFieldInstructionTimeDelay.type,
+          fieldSource: fixFieldInstructionTimeDelay.source,
+        })
       }
-
-      return acc
-    }, {})
+      if (delayStatus) {
+        await this.fieldService.upsert({
+          sourceId: fixFieldInstructionTimeStatus.id,
+          dossierId: dossier.id,
+          stringValue: delayStatus,
+          label: fixFieldInstructionTimeStatus.originalLabel,
+          type: fixFieldInstructionTimeStatus.type,
+          fieldSource: fixFieldInstructionTimeStatus.source,
+        })
+      }
+    }))
   }
 
   // TODO: fixe type

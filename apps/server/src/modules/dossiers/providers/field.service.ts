@@ -185,4 +185,14 @@ export class FieldService extends BaseEntityService<Field> {
         )
       })
   }
+
+  async upsert(field: Pick<Field, 'sourceId' | 'dossierId'> & Partial<Field>): Promise<Field[]> {
+    const result = await this.repo.upsert(field,
+      {
+        conflictPaths: ['sourceId', 'dossierId', 'parentRowIndex'],
+        skipUpdateIfNoValuesChanged: true,
+      },
+    )
+    return result.generatedMaps as Field[]
+  }
 }

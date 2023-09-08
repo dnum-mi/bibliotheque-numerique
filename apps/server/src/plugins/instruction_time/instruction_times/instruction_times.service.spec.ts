@@ -23,12 +23,16 @@ import { DossierModule } from "../../../modules/dossiers/dossier.module";
 import fileConfig from "../../../config/file.config";
 import dsConfig from "../../../config/ds.config";
 import { DsApiModule } from "../../../shared/modules/ds-api/ds-api.module";
+import { FieldService } from "../../../modules/dossiers/providers/field.service";
+import { Field } from "../../../modules/dossiers/objects/entities/field.entity";
+import { fixFieldInstructionTimeDelay, fixFieldInstructionTimeStatus } from "./constante/fix-field-instrucation-times.dictionnary";
 
 describe("InstructionTimesService", () => {
   let service: InstructionTimesService;
   let dossierService: DossierService;
   let configService: ConfigService;
   let instructionTimeMappingConfigFound: TInstructionTimeMappingConfig["instructionTimeMappingConfig"];
+  let fieldService: FieldService;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -43,6 +47,7 @@ describe("InstructionTimesService", () => {
           cache: true,
           load: [configuration, dsConfig, fileConfig, instructionTimeMappingConfig],
         }),
+
       ],
       providers: [InstructionTimesService],
     }).useMocker(() => ({})).compile();
@@ -50,6 +55,7 @@ describe("InstructionTimesService", () => {
     service = module.get<InstructionTimesService>(InstructionTimesService);
     dossierService = module.get<DossierService>(DossierService);
     configService = module.get<ConfigService>(ConfigService);
+    fieldService = module.get<FieldService>(FieldService);
 
     instructionTimeMappingConfigFound = configService.get<
       TInstructionTimeMappingConfig["instructionTimeMappingConfig"]
@@ -57,8 +63,9 @@ describe("InstructionTimesService", () => {
   });
 
   afterEach(async () => {
-    await service.repository.delete({});
-    MockDate.reset();
+    await service.repository.delete({})
+    MockDate.reset()
+    jest.clearAllMocks()
   });
 
   it("should be defined", () => {
@@ -153,28 +160,33 @@ describe("InstructionTimesService", () => {
       },
     );
 
+    const results = {}
+    const mockUpsert = jest
+      .spyOn(fieldService, 'upsert')
+      .mockImplementation(async (obj: Field): Promise<Field[]> => {
+        results[obj.sourceId] = obj
+        return [new Field()]
+      })
+
     jest
       .spyOn(service.repository, "find")
       .mockResolvedValueOnce(fakeInstrunctionTime as InstructionTime[]);
 
-    expect(
-      await service.instructionTimeCalculation(
-        fakeInstrunctionTime.map((d) => d.dossier.id),
-      ),
-    ).toEqual({
-      "1": {
-        remainingTime: null,
-        delayStatus: null,
-      },
-      "2": {
-        remainingTime: null,
-        delayStatus: EInstructionTimeState.FIRST_REQUEST,
-      },
-      "3": {
-        remainingTime: null,
-        delayStatus: null,
-      },
-    });
+    await service.instructionTimeCalculation(
+      fakeInstrunctionTime.map((d) => d.dossier.id),
+    )
+
+    expect(mockUpsert).toBeCalledTimes(1)
+
+
+    expect(results[fixFieldInstructionTimeStatus.id]).toMatchObject({
+      sourceId: fixFieldInstructionTimeStatus.id,
+      dossierId: 2,
+      stringValue: EInstructionTimeState.FIRST_REQUEST,
+      label: fixFieldInstructionTimeStatus.originalLabel,
+      type: fixFieldInstructionTimeStatus.type,
+      fieldSource: fixFieldInstructionTimeStatus.source,
+    })
   });
 
   const millisecondsOfDay = 24 * 60 * 60 * 1000;
@@ -950,13 +962,36 @@ describe("InstructionTimesService", () => {
       .spyOn(service.repository, "find")
       .mockResolvedValueOnce([dataInstructionTime] as InstructionTime[]);
 
-    const result = await service.instructionTimeCalculation([
+    const results = {}
+    const mockUpsert = jest
+      .spyOn(fieldService, 'upsert')
+      .mockImplementation(async (obj: Field): Promise<Field[]> => {
+        results[obj.sourceId] = obj
+        return [new Field()]
+      })
+
+    await service.instructionTimeCalculation([
       dataInstructionTime.dossier.id,
     ]);
-    expect(result[dataInstructionTime.dossier.id]).toHaveProperty(
-      "remainingTime",
-      60,
-    );
+
+    expect(mockUpsert).toBeCalledTimes(2)
+
+    expect(results[fixFieldInstructionTimeDelay.id]).toMatchObject({
+        sourceId: fixFieldInstructionTimeDelay.id,
+        dossierId: dataInstructionTime.dossier.id,
+        numberValue: 60,
+        label: fixFieldInstructionTimeDelay.originalLabel,
+        type: fixFieldInstructionTimeDelay.type,
+        fieldSource: fixFieldInstructionTimeDelay.source,
+    })
+    expect(results[fixFieldInstructionTimeStatus.id]).toMatchObject({
+        sourceId: fixFieldInstructionTimeStatus.id,
+        dossierId: dataInstructionTime.dossier.id,
+        stringValue: EInstructionTimeState.IN_PROGRESS,
+        label: fixFieldInstructionTimeStatus.originalLabel,
+        type: fixFieldInstructionTimeStatus.type,
+        fieldSource: fixFieldInstructionTimeStatus.source,
+      })
   });
 
   it("Should get out delay for date now when is in progress", async () => {
@@ -970,13 +1005,28 @@ describe("InstructionTimesService", () => {
       .spyOn(service.repository, "find")
       .mockResolvedValueOnce([dataInstructionTime] as InstructionTime[]);
 
-    const result = await service.instructionTimeCalculation([
+    const results = {}
+    const mockUpsert = jest
+      .spyOn(fieldService, 'upsert')
+      .mockImplementation(async (obj: Field): Promise<Field[]> => {
+        results[obj.sourceId] = obj
+        return [new Field()]
+      })
+
+    await service.instructionTimeCalculation([
       dataInstructionTime.dossier.id,
     ]);
-    expect(result[dataInstructionTime.dossier.id]).toHaveProperty(
-      "delayStatus",
-      EInstructionTimeState.OUT_OF_DATE,
-    );
+
+    expect(mockUpsert).toBeCalledTimes(1)
+
+    expect(results[fixFieldInstructionTimeStatus.id]).toMatchObject({
+        sourceId: fixFieldInstructionTimeStatus.id,
+        dossierId: dataInstructionTime.dossier.id,
+        stringValue: EInstructionTimeState.OUT_OF_DATE,
+        label: fixFieldInstructionTimeStatus.originalLabel,
+        type: fixFieldInstructionTimeStatus.type,
+        fieldSource: fixFieldInstructionTimeStatus.source,
+      })
   });
 
   it("Should get stop delay for date now when is in 2nd demand", async () => {
@@ -996,17 +1046,37 @@ describe("InstructionTimesService", () => {
       .spyOn(service.repository, "find")
       .mockResolvedValueOnce([dataInstructionTime] as InstructionTime[]);
 
+
+    const results = {}
+    const mockUpsert = jest
+      .spyOn(fieldService, 'upsert')
+      .mockImplementation(async (obj: Field): Promise<Field[]> => {
+        results[obj.sourceId] = obj
+        return [new Field()]
+      })
+
     const result = await service.instructionTimeCalculation([
       dataInstructionTime.dossier.id,
     ]);
-    expect(result[dataInstructionTime.dossier.id]).toHaveProperty(
-      "remainingTime",
-      20,
-    );
-    expect(result[dataInstructionTime.dossier.id]).toHaveProperty(
-      "delayStatus",
-      EInstructionTimeState.SECOND_REQUEST,
-    );
+
+    expect(mockUpsert).toBeCalledTimes(2)
+
+    expect(results[fixFieldInstructionTimeDelay.id]).toMatchObject({
+        sourceId: fixFieldInstructionTimeDelay.id,
+        dossierId: dataInstructionTime.dossier.id,
+        numberValue: 20,
+        label: fixFieldInstructionTimeDelay.originalLabel,
+        type: fixFieldInstructionTimeDelay.type,
+        fieldSource: fixFieldInstructionTimeDelay.source,
+    })
+    expect(results[fixFieldInstructionTimeStatus.id]).toMatchObject({
+        sourceId: fixFieldInstructionTimeStatus.id,
+        dossierId: dataInstructionTime.dossier.id,
+        stringValue: EInstructionTimeState.SECOND_REQUEST,
+        label: fixFieldInstructionTimeStatus.originalLabel,
+        type: fixFieldInstructionTimeStatus.type,
+        fieldSource: fixFieldInstructionTimeStatus.source,
+      })
   });
 
   it("Should get delay to 20 for date now when is in intent opposition", async () => {
@@ -1017,21 +1087,41 @@ describe("InstructionTimesService", () => {
     dataInstructionTime.dossier = { id: 1 } as Dossier;
     dataInstructionTime.state = EInstructionTimeState.INTENT_OPPO;
 
+    const results = {}
+    const mockUpsert = jest
+      .spyOn(fieldService, 'upsert')
+      .mockImplementation(async (obj: Field): Promise<Field[]> => {
+        results[obj.sourceId] = obj
+        return [new Field()]
+      })
+
     jest
       .spyOn(service.repository, "find")
       .mockResolvedValueOnce([dataInstructionTime] as InstructionTime[]);
 
-    const result = await service.instructionTimeCalculation([
+    await service.instructionTimeCalculation([
       dataInstructionTime.dossier.id,
     ]);
-    expect(result[dataInstructionTime.dossier.id]).toHaveProperty(
-      "remainingTime",
-      20,
-    );
-    expect(result[dataInstructionTime.dossier.id]).toHaveProperty(
-      "delayStatus",
-      EInstructionTimeState.INTENT_OPPO,
-    );
+
+    expect(mockUpsert).toBeCalledTimes(2)
+
+    expect(results[fixFieldInstructionTimeDelay.id]).toMatchObject({
+        sourceId: fixFieldInstructionTimeDelay.id,
+        dossierId: dataInstructionTime.dossier.id,
+        numberValue: 20,
+        label: fixFieldInstructionTimeDelay.originalLabel,
+        type: fixFieldInstructionTimeDelay.type,
+        fieldSource: fixFieldInstructionTimeDelay.source,
+    })
+    expect(results[fixFieldInstructionTimeStatus.id]).toMatchObject({
+        sourceId: fixFieldInstructionTimeStatus.id,
+        dossierId: dataInstructionTime.dossier.id,
+        stringValue: EInstructionTimeState.INTENT_OPPO,
+        label: fixFieldInstructionTimeStatus.originalLabel,
+        type: fixFieldInstructionTimeStatus.type,
+        fieldSource: fixFieldInstructionTimeStatus.source,
+      })
+
   });
 
   it("Should get delay to 0 for date now when the date of intent opposition is more 30 days  ", async () => {
@@ -1043,20 +1133,38 @@ describe("InstructionTimesService", () => {
     dataInstructionTime.state = EInstructionTimeState.INTENT_OPPO;
 
     jest
-      .spyOn(service.repository, "find")
-      .mockResolvedValueOnce([dataInstructionTime] as InstructionTime[]);
+    .spyOn(service.repository, "find")
+    .mockResolvedValueOnce([dataInstructionTime] as InstructionTime[]);
 
-    const result = await service.instructionTimeCalculation([
+    const results = {}
+    const mockUpsert = jest
+      .spyOn(fieldService, 'upsert')
+      .mockImplementation(async (obj: Field): Promise<Field[]> => {
+        results[obj.sourceId] = obj
+        return [new Field()]
+      })
+
+    await service.instructionTimeCalculation([
       dataInstructionTime.dossier.id,
-    ]);
-    expect(result[dataInstructionTime.dossier.id]).toHaveProperty(
-      "remainingTime",
-      0,
-    );
-    expect(result[dataInstructionTime.dossier.id]).toHaveProperty(
-      "delayStatus",
-      EInstructionTimeState.INTENT_OPPO,
-    );
+    ])
+    expect(mockUpsert).toBeCalledTimes(2)
+
+    expect(results[fixFieldInstructionTimeDelay.id]).toMatchObject({
+        sourceId: fixFieldInstructionTimeDelay.id,
+        dossierId: dataInstructionTime.dossier.id,
+        numberValue: 0,
+        label: fixFieldInstructionTimeDelay.originalLabel,
+        type: fixFieldInstructionTimeDelay.type,
+        fieldSource: fixFieldInstructionTimeDelay.source,
+    })
+    expect(results[fixFieldInstructionTimeStatus.id]).toMatchObject({
+        sourceId: fixFieldInstructionTimeStatus.id,
+        dossierId: dataInstructionTime.dossier.id,
+        stringValue: EInstructionTimeState.INTENT_OPPO,
+        label: fixFieldInstructionTimeStatus.originalLabel,
+        type: fixFieldInstructionTimeStatus.type,
+        fieldSource: fixFieldInstructionTimeStatus.source,
+      })
   });
 
 });
