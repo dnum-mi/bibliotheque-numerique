@@ -5,6 +5,9 @@ import { FieldService } from './field.service'
 import { Dossier as TDossier } from '@dnum-mi/ds-api-client/dist/@types/types'
 import { fixFields } from '../objects/constante/fix-field.dictionnary'
 import { FieldSource, FieldType, FormatFunctionRef, MappingColumn } from '@biblio-num/shared'
+import { Field } from '../objects/entities/field.entity'
+
+import * as dayjs from 'dayjs'
 
 const fakeMappingColumnHash: MappingColumn[] = [
   ...fixFields,
@@ -52,6 +55,54 @@ const fakeMappingColumnHash: MappingColumn[] = [
   },
 ]
 
+const expectedFixFieldsDates = (
+  dossierId,
+  dateDepot = null,
+  datePassageEnInstruction = null,
+  datePassageEnConstruction = null): Partial<Field>[] => ([
+  {
+    sourceId: '9863ce70-6378-4d7e-aca9-b81fb7b97c11',
+    label: 'Date de dépot',
+    formatFunctionRef: undefined,
+    type: FieldType.date,
+    fieldSource: FieldSource.fixField,
+    stringValue: dateDepot ? dayjs(dateDepot).toISOString() : '',
+    dateValue: dateDepot ? dayjs(dateDepot).toDate() : null,
+    numberValue: null,
+    dossierId,
+    parentRowIndex: null,
+    rawJson: null,
+    dsChampType: null,
+  },
+  {
+    sourceId: '9863ce70-6378-4d7e-aca9-b81fb7b97c12',
+    label: 'Date de passage en instruction',
+    formatFunctionRef: undefined,
+    type: FieldType.date,
+    fieldSource: FieldSource.fixField,
+    stringValue: dateDepot ? dayjs(datePassageEnInstruction).toISOString() : '',
+    dateValue: dateDepot ? dayjs(datePassageEnInstruction).toDate() : null,
+    numberValue: null,
+    dossierId,
+    parentRowIndex: null,
+    rawJson: null,
+    dsChampType: null,
+  },
+  {
+    sourceId: '9863ce70-6378-4d7e-aca9-b81fb7b97c13',
+    label: 'Date de passage en construction',
+    formatFunctionRef: undefined,
+    type: FieldType.date,
+    fieldSource: FieldSource.fixField,
+    stringValue: dateDepot ? dayjs(datePassageEnConstruction).toISOString() : '',
+    dateValue: dateDepot ? dayjs(datePassageEnConstruction).toDate() : null,
+    numberValue: null,
+    dossierId,
+    parentRowIndex: null,
+    rawJson: null,
+    dsChampType: null,
+  },
+])
 describe('FieldService', () => {
   let service: FieldService
 
@@ -85,6 +136,9 @@ describe('FieldService', () => {
       id: 'RG9zc2llci0xMzY=',
       state: 'bientôt cuit',
       number: 142,
+      dateDepot: dayjs('2022-10-13T10:04:29').toISOString(),
+      datePassageEnInstruction: dayjs('2022-10-13T10:04:29').toISOString(),
+      datePassageEnConstruction: dayjs('2022-10-13T10:04:29').toISOString(),
     }
     const fields = await service.overwriteFieldsFromDataJson(raw as Partial<TDossier>, 42, fakeMappingColumnHash)
     expect(fields).toEqual([
@@ -116,6 +170,7 @@ describe('FieldService', () => {
         rawJson: null,
         dsChampType: null,
       },
+      ...expectedFixFieldsDates(42, raw.dateDepot, raw.datePassageEnInstruction, raw.datePassageEnConstruction),
     ])
   })
 
@@ -166,6 +221,7 @@ describe('FieldService', () => {
         rawJson: null,
         dsChampType: null,
       },
+      ...expectedFixFieldsDates(42),
       {
         sourceId: 'Q4hhbXAtMTA0Mw==',
         label: 'Total de doritos dans le monde',
@@ -230,6 +286,7 @@ describe('FieldService', () => {
         rawJson: null,
         dsChampType: null,
       },
+      ...expectedFixFieldsDates(42),
       {
         sourceId: 'Q4hhbXAtMTA0Mw==',
         label: 'Total de doritos dans le monde',
@@ -291,6 +348,7 @@ describe('FieldService', () => {
         rawJson: null,
         dsChampType: null,
       },
+      ...expectedFixFieldsDates(42),
       {
         sourceId: 'Q1hhbXAtMTA0Mw==',
         label: "Naissance de quelqu'un",
@@ -305,7 +363,7 @@ describe('FieldService', () => {
         children: null,
       },
     ])
-    expect(new Date('2023-08-18').getTime()).toEqual(fields[2].dateValue.getTime())
+    expect(new Date('2023-08-18').getTime()).toEqual(fields[fields.length - 1].dateValue.getTime())
   })
 
   it('Create children scenario for repetable champs', async () => {
@@ -411,6 +469,7 @@ describe('FieldService', () => {
         rawJson: null,
         dsChampType: null,
       },
+      ...expectedFixFieldsDates(42),
       {
         sourceId: 'Q2hhbXAtMTA2NQ==',
         label: 'Champ répétable',

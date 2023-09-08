@@ -173,6 +173,27 @@ describe('Generating demarche mapping columns', () => {
         source: 'fix-field',
       },
       {
+        id: '9863ce70-6378-4d7e-aca9-b81fb7b97c11',
+        columnLabel: null,
+        originalLabel: 'Date de dépot',
+        type: 'date',
+        source: 'fix-field',
+      },
+      {
+        id: '9863ce70-6378-4d7e-aca9-b81fb7b97c12',
+        columnLabel: null,
+        originalLabel: 'Date de passage en instruction',
+        type: 'date',
+        source: 'fix-field',
+      },
+      {
+        id: '9863ce70-6378-4d7e-aca9-b81fb7b97c13',
+        columnLabel: null,
+        originalLabel: 'Date de passage en construction',
+        type: 'date',
+        source: 'fix-field',
+      },
+      {
         id: 'Q2hhbXAtMzE=',
         originalLabel: 'Informations de base',
         columnLabel: null,
