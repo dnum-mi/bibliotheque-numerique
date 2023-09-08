@@ -40,7 +40,7 @@ const quickLinks: Ref<QuickLink[]> = ref(quickLinksBase)
 
 const demarcheQuickLink: QuickLink = {
   label: 'Démarches',
-  to: '/demarches',
+  to: { name: 'Demarches' },
 }
 
 const unauthenticatedQuickLinks: QuickLink[] = [
@@ -61,7 +61,7 @@ const unauthenticatedQuickLinks: QuickLink[] = [
 const authenticatedQuickLinksPart1: QuickLink[] = [
   {
     label: 'Organismes',
-    to: '/organismes',
+    to: { name: 'Organismes' },
   },
 ]
 
@@ -104,13 +104,12 @@ watch([() => userStore.isAuthenticated, route], async () => {
       ...authenticatedQuickLinksPart2,
       ...(userStore.canManageRoles ? [manageRolesQuickLink] : []),
     ]
-    return
+  } else {
+    quickLinks.value = [
+      ...quickLinksBase,
+      ...unauthenticatedQuickLinks.filter(isCurrentRoute),
+    ]
   }
-
-  quickLinks.value = [
-    ...quickLinksBase,
-    ...unauthenticatedQuickLinks.filter(isCurrentRoute),
-  ]
 })
 
 const searchQuery = ref('')
@@ -148,6 +147,7 @@ onErrorCaptured((error: Error | AxiosError) => {
 
 <template>
   <DsfrHeader
+    :key="quickLinks.length"
     v-model="searchQuery"
     :service-title="serviceTitle"
     :service-description="serviceDescription"
