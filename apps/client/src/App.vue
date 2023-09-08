@@ -149,7 +149,6 @@ onErrorCaptured((error: Error | AxiosError) => {
 
 <template>
   <DsfrHeader
-    :key="quickLinks.length"
     v-model="searchQuery"
     :service-title="serviceTitle"
     :service-description="serviceDescription"
