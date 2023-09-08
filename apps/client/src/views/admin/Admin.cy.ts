@@ -42,7 +42,7 @@ describe('<Admin />', () => {
       extensions,
     })
 
-    cy.get('h2.mb-20').should('contain', 'Espace administration')
+    cy.get('h2.mb-10').should('contain', 'Espace administration')
     cy.get('[data-cy=user-list] [data-cy=cell-action-icon]').should('have.length', 10)
     cy.get('[data-cy=role-list] [data-cy=cell-action-icon]').should('have.length', 10)
   })
@@ -75,7 +75,7 @@ describe('<Admin />', () => {
       extensions,
     })
 
-    cy.get('h2.mb-20').should('contain', 'Espace administration')
+    cy.get('h2.mb-10').should('contain', 'Espace administration')
     cy.get('[data-cy=user-list] [data-cy=cell-action-icon]').should('have.length', 10)
     cy.get('[data-cy=role-list]').should('not.exist')
   })
@@ -109,7 +109,7 @@ describe('<Admin />', () => {
       extensions,
     })
 
-    cy.get('h2.mb-20').should('contain', 'Espace administration')
+    cy.get('h2.mb-10').should('contain', 'Espace administration')
     cy.get('[data-cy=user-list] [data-cy=cell-action-icon]').should('have.length', 10)
     cy.get('[data-cy=role-list]').should('exist')
   })

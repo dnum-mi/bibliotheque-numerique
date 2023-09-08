@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
 import type { User } from '@/shared/interfaces'
 import bnApiClient from '@/api/api-client'
-import { PermissionName, RoleName } from '@/shared/types/Permission.type'
-import type { CredentialsInput, CredentialsInputDto } from '@biblio-num/shared'
+import { RoleName } from '@/shared/types/Permission.type'
+import type { CredentialsInput } from '@biblio-num/shared'
 interface UserState {
   currentUser: User | null,
   users: Map<number, User>,
@@ -27,10 +27,10 @@ export const useUserStore = defineStore('user', {
       }
     },
     canManageRoles (state): boolean {
-      return !!state.currentUser?.roles?.find(role => role.name === RoleName.ADMIN || role?.permissions?.find(permission => permission?.name === PermissionName.CREATE_ROLE))
+      return !!state.currentUser?.roles?.find(role => role.name === RoleName.ADMIN || role?.permissions?.find(permission => permission?.name === 'CREATE_ROLE'))
     },
     canAccessDemarches (state): boolean {
-      return !!state.currentUser?.roles?.find(role => role.name === RoleName.ADMIN || role?.permissions?.find(permission => permission?.name === PermissionName.ACCESS_DEMARCHE))
+      return !!state.currentUser?.roles?.find(role => role.name === RoleName.ADMIN || role?.permissions?.find(permission => permission?.name === 'ACCESS_DEMARCHE'))
     },
   },
   actions: {

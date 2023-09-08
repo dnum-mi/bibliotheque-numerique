@@ -18,11 +18,11 @@ items:
       {"id":"I09", "label":"Pays"},
       {"id":"I10", "label":"Organismefinanceur"}
     ]
-    dsDataJson: "{}"
+    dsDataJson: {number: 76}
   configurationDemarche:
     id: 1
     title: 'Démarche de test pour les configurations'
-    dsDataJson: {}
+    dsDataJson: {number: 77}
     mappingColumns: [
       {
         id: '01',
@@ -45,12 +45,12 @@ items:
     title: "Déclaration de financement étranger"
     identification: "financement"
     type: "ARUP"
-    dsDataJson: "{ number: 2}"
+    dsDataJson: { number: 2}
   demarche-number-3:
     id: 4
     state: "published"
     title: "Déclaration de financement étranger"
     identification: "financement"
     type: "ARUP"
-    dsDataJson: "{ number: 3 }"
+    dsDataJson: { number: 3 }
 

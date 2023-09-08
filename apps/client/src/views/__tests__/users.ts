@@ -1,7 +1,5 @@
 import { faker } from '@faker-js/faker/locale/fr'
 import type { User, UserForm } from '@/shared/interfaces'
-import { PermissionName } from '@/shared/types/Permission.type'
-import type { TPermission } from '@/shared/types/tpermission'
 
 export const createRandomUserForm = (): UserForm => ({
   email: faker.internet.email(),
@@ -53,9 +51,6 @@ export const createRandomUserWithoutCreateRole = () => ({
     updateAt: faker.date.past().toISOString(),
   }],
 })
-export const PermissionCreateRole: TPermission = {
-  name: PermissionName.CREATE_ROLE,
-}
 export const createRandomUserWithCreateRole = () => ({
   id: faker.helpers.unique(faker.datatype.number, [1000]),
   firstName: faker.internet.userName(),
@@ -65,7 +60,7 @@ export const createRandomUserWithCreateRole = () => ({
     id: 1,
     name: 'admin_local',
     description: 'Administrator local',
-    permissions: [PermissionCreateRole],
+    permissions: [{ name: 'CREATE_ROLE' }],
     createAt: faker.date.past().toISOString(),
     updateAt: faker.date.past().toISOString(),
   }],

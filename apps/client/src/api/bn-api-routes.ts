@@ -8,6 +8,7 @@ export const unassignRoleRoute = '/roles/unassign' // TODO: ne devrait pas conte
 export const getRoleByIdRoute = (roleId: number) => `/roles/${roleId}`
 
 export const demarchesRoute = '/demarches'
+export const smallDemarchesRoutes = `${demarchesRoute}/small`
 export const getDemarcheByIdRoute = (id: number) => `${demarchesRoute}/${id}`
 export const getDemarcheConfigurationRoute = (id: number) => `${getDemarcheByIdRoute(id)}/configurations`
 export const getUpdateOneMappingColumnRoute = (demarcheId: number, fieldId: string) => `${getDemarcheConfigurationRoute(demarcheId)}/${fieldId}`

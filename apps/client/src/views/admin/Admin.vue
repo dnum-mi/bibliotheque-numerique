@@ -1,6 +1,6 @@
 <template>
   <div class="fr-container">
-    <h2 class="mb-20">
+    <h2 class="mb-10 mt-10">
       Espace administration
     </h2>
     <div
@@ -41,8 +41,10 @@
       </DsfrButton>
     </div>
   </div>
+  <br>
   <div
-    style="display: flex"
+    style="display: flex;"
+    class="gap-5 p-5"
   >
     <div
       :class="canManageRole?'fr-col-6':'fr-col-12'"
@@ -52,6 +54,7 @@
         title="Utilisateurs"
         :headers="usersHeadersJson"
         :row-data="usersRowData"
+        :side-bar="false"
         with-action="{{ true }}"
         @get-elt="getUser"
       />
