@@ -7,6 +7,7 @@ import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores'
 import type { CredentialsInputDto } from '@biblio-num/shared'
 import LayoutAccueil from '../components/LayoutAccueil.vue'
+import ToggleInputPassword from '../components/ToggleInputPassword.vue'
 
 const REQUIRED_FIELD_MESSAGE = 'Ce champ est requis'
 
@@ -41,7 +42,6 @@ const submit = handleSubmit(async (formValue: CredentialsInputDto) => {
 })
 
 const { value: emailValue, errorMessage: emailError } = useField('email')
-const { value: passwordValue, errorMessage: passwordError } = useField('password')
 
 </script>
 
@@ -82,35 +82,7 @@ const { value: passwordValue, errorMessage: passwordError } = useField('password
               </DsfrInput>
             </DsfrInputGroup>
 
-            <DsfrInputGroup
-              :is-valid="passwordError"
-              :error-message="passwordError"
-            >
-              <div class="relative">
-                <DsfrInput
-                  id="password"
-                  v-model="passwordValue"
-                  :type="tmpType"
-                  label="Mot de passe (6 caractères minimum)"
-                  label-visible
-                  placeholder="xxxxxx"
-                  required
-                >
-                  <template #required-tip>
-                    <em class="required-label"> *</em>
-                  </template>
-                </DsfrInput>
-                <div class="absolute  right-2  top-[55%]">
-                  <Vicon
-                    :class="eyeIcon"
-                    :name="eyeIcon"
-                    scale="1.25"
-                    :title="tmpTitle"
-                    @click.prevent="togglePassword"
-                  />
-                </div>
-              </div>
-            </DsfrInputGroup>
+            <ToggleInputPassword />
 
             <div
               class="fr-m-4w"
