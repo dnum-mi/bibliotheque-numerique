@@ -17,6 +17,24 @@ import { localeTextAgGrid } from './ag-grid/agGridOptions'
 import AgGridMultiValueCell from './ag-grid/AgGridMultiValueCell.vue'
 import AgGridAttachmentCell from './ag-grid/AgGridAttachmentCell.vue'
 
+const props = withDefaults(defineProps<{
+    title?: string,
+    rowData?: Record<string, any>[],
+    headers?: HeaderDataTable[],
+    pagination?: boolean,
+    paginationPageSize?: number,
+    withAction?: boolean,
+    rowSelection?: string,
+    floatingFilter?: boolean,
+    isHiddenSideBar?: boolean
+  }>(), {
+  title: undefined,
+  rowData: () => [],
+  headers: () => [],
+  paginationPageSize: PAGINATION_PAGE_SIZE,
+  rowSelection: undefined,
+})
+
 const getFilterAgGrid = ({ type, filter }: {type: string; filter: string }) => {
   const typeFilter = filter === AgGridFilter.MULTI_VALUE && type === 'number' ? AgGridFilter.MULTI_VALUE_NUMBER : type
   return (typeFilter && filterToApply[typeFilter as AgGridFilter]) || { }
@@ -38,28 +56,6 @@ const getRendererAgGrid = (header) => {
   const agRenderer = toRenderer[typeRenderder]
   return agRenderer
 }
-
-const props = withDefaults(defineProps<{
-    title?: string,
-    rowData?: Record<string, any>[],
-    headers?: HeaderDataTable[],
-    pagination?: boolean,
-    paginationPageSize?: number,
-    withAction?: boolean,
-    rowSelection?: string,
-    floatingFilter?: boolean,
-    sideBar?: boolean
-  }>(), {
-  title: undefined,
-  rowData: () => [],
-  headers: () => [],
-  pagination: false,
-  paginationPageSize: PAGINATION_PAGE_SIZE,
-  withAction: false,
-  rowSelection: undefined,
-  floatingFilter: false,
-  sideBar: true,
-})
 
 interface AgGridColumnDefs {
   headerName?: string,
@@ -101,8 +97,8 @@ const columnDefs: ComputedRef<AgGridColumnDefs[]> = computed(() => {
       ? [{
           headerName: 'Action',
           field: headers[0].value,
-          action: headers[0]?.action || undefined,
           cellRenderer: TableCellAction,
+          cellRendererParams: { action: headers[0].action },
           initialPinned: 'left',
           width: 100,
           sortable: false,
@@ -123,14 +119,14 @@ const showElt = ($event) => {
 }
 
 const context = { showElt }
-const sideBar = props.sideBar
-  ? {
+const sideBar = computed(() => props.isHiddenSideBar
+  ? false
+  : {
       toolPanels: ['columns', 'filters'],
       SideBarDef: {
         hiddenByDefault: false,
       },
-    }
-  : false
+    })
 
 const gridOptions = {
   localeText: localeTextAgGrid,

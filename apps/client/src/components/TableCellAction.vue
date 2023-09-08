@@ -1,26 +1,14 @@
-<template>
-  <DsfrButton
-    v-show="show"
-    data-cy="cell-action-icon"
-    :disabled="disabled"
-    :icon="icon"
-    tertiary="tertiary"
-    icon-only
-    @click="showElt"
-  />
-</template>
 <script lang="ts" setup>
 
 import type { TIconFunction } from '@/shared/types/typeDataTablele.js'
 import { computed } from 'vue'
 
 const props = withDefaults(defineProps<{
-  label:string,
-  disabled: boolean,
+  label?: string,
+  disabled?: boolean,
   params: any,
 }>(), {
   label: '',
-  disabled: false,
 })
 
 const getIcon = (icon?: string | TIconFunction): string => {
@@ -33,16 +21,28 @@ const getIcon = (icon?: string | TIconFunction): string => {
   return 'ri-search-line'
 }
 
-const icon = computed<string>(() => getIcon(props.params.colDef.action?.icon))
+const icon = computed<string>(() => getIcon(props.params.action?.icon))
 
-const show = props.params.colDef.action?.condition
-  ? props.params.colDef.action?.condition(props.params.data)
+const show = props.params.action?.condition
+  ? props.params.action?.condition(props.params.data)
   : true
 
 const showElt = () => {
   props.params.context.showElt(props.params.data)
 }
 </script>
+
+<template>
+  <DsfrButton
+    v-show="show"
+    data-cy="cell-action-icon"
+    :disabled="disabled"
+    :icon="icon"
+    tertiary="tertiary"
+    icon-only
+    @click="showElt"
+  />
+</template>
 
 <style scoped>
 .fr-btn {
