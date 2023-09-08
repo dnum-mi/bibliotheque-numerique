@@ -41,6 +41,7 @@ const quickLinks: Ref<QuickLink[]> = ref(quickLinksBase)
 const demarcheQuickLink: QuickLink = {
   label: 'Démarches',
   to: { name: 'Demarches' },
+  icon: 'ri-file-list-2-fill',
 }
 
 const unauthenticatedQuickLinks: QuickLink[] = [
@@ -62,6 +63,7 @@ const authenticatedQuickLinksPart1: QuickLink[] = [
   {
     label: 'Organismes',
     to: { name: 'Organismes' },
+    icon: 'ri-file-list-2-line',
   },
 ]
 
