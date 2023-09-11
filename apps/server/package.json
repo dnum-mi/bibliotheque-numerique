@@ -51,6 +51,7 @@
     "test:e2e:one": "NODE_ENV='test-e2e' dotenv -e ./test/.env.test jest -- --config ./test/e2e/jest-e2e.json",
     "test:unit": "test/unit/launch-unit-test.sh",
     "test:unit:dev": "test/unit/launch-unit-test.sh dev",
+    "test:unit:one": "NODE_ENV='test-unit' dotenv -e ./test/.env.test jest -- --config ./test/unit/jest-unit.json",
     "typeorm": "typeorm-ts-node-commonjs -d ./database/data-source.typeorm.ts",
     "vite": "vite"
   },
