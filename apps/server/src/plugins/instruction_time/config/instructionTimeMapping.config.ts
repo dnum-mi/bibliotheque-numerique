@@ -8,7 +8,14 @@ export const keyInstructionTime = {
   DATE_INTENT_OPPOSITION: 'DateIntentOpposition',
 } as const
 
-const config = {
+export type TInstructionTimeMappingConfig = {
+  instructionTimeMappingConfig: Record<string, string>;
+  NB_DAYS_AFTER_INSTRUCTION: number;
+  NB_DAYS_AFTER_EXTENSION: number;
+  NB_DAYS_AFTER_INTENT_OPPOSITION: number;
+};
+
+const config = (): TInstructionTimeMappingConfig => ({
   instructionTimeMappingConfig: {
     [keyInstructionTime.DATE_REQUEST1]: 'Date de la première demande de pièces',
     [keyInstructionTime.DATE_RECEIPT1]: 'Date de réception des pièces de la première demande',
@@ -21,9 +28,6 @@ const config = {
   NB_DAYS_AFTER_INSTRUCTION: 60,
   NB_DAYS_AFTER_EXTENSION: 120,
   NB_DAYS_AFTER_INTENT_OPPOSITION: 30,
-}
+})
 
-export type TInstructionTimeMappingConfig = typeof config;
-// TODO: fixe type
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export default () => config
+export default config
