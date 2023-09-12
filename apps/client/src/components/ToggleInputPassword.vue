@@ -31,15 +31,24 @@ const togglePassword = () => {
           <em class="required-label"> *</em>
         </template>
       </DsfrInput>
-      <div class="absolute  right-2  top-[55%]">
+      <button
+        type="button"
+        class="btn absolute  right-2  top-[55%]"
+        @click.prevent="togglePassword"
+      >
         <Vicon
           :class="eyeIcon"
           :name="eyeIcon"
           scale="1.25"
           :title="tmpTitle"
-          @click.prevent="togglePassword"
         />
-      </div>
+      </button>
     </div>
   </DsfrInputGroup>
 </template>
+
+<style lang="css" scoped>
+.btn {
+  background-color: transparent !important;
+}
+</style>

@@ -61,7 +61,7 @@ const { value: emailValue, errorMessage: emailError } = useField('email')
           </h5>
           <form
             class="card"
-            @submit="submit"
+            @submit.prevent="submit"
           >
             <DsfrInputGroup
               :is-valid="emailError"
