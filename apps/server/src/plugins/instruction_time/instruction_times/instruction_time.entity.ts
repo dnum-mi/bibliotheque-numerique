@@ -1,26 +1,26 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm'
 import { EInstructionTimeStateKey } from './types/IntructionTime.type'
-import { Dossier } from '../../../modules/dossiers/objects/entities/dossier.entity'
-import { BaseEntity } from '../../../shared/base-entity/base.entity'
+import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
+import { BaseEntity } from '@/shared/base-entity/base.entity'
 
 @Entity({ name: 'instruction_times' })
 export class InstructionTime extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
-    id: number
+  declare id: number
 
   @OneToOne(() => Dossier)
   @JoinColumn()
-    dossier: Dossier
+  dossier: Dossier
 
   @Column({ nullable: true, type: 'timestamp' })
-    startAt: Date
+  startAt: Date
 
   @Column({ nullable: true, type: 'timestamp' })
-    stopAt: Date
+  stopAt: Date
 
   @Column({ nullable: true, type: 'timestamp' })
-    endAt: Date
+  endAt: Date
 
   @Column({ nullable: false, default: '' })
-    state: EInstructionTimeStateKey
+  state: EInstructionTimeStateKey
 }

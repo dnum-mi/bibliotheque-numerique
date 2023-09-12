@@ -36,7 +36,9 @@ describe('InstructionTimesService, Check Date', () => {
         }),
       ],
       providers: [InstructionTimesService],
-    }).compile()
+    })
+      .useMocker(() => ({}))
+      .compile()
 
     service = module.get<InstructionTimesService>(InstructionTimesService)
     dataSource = module.get<DataSource>(DataSource)

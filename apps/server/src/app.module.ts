@@ -24,6 +24,7 @@ import { HealthModule } from './modules/health/health.module'
 import { AuthModule } from './modules/auth/auth.module'
 import { DsApiModule } from './shared/modules/ds-api/ds-api.module'
 import { CustomFilterModule } from '@/modules/custom-filters/custom-filter.module'
+import { XlsxModule } from '@/shared/modules/xlsx/xlsx.module'
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { CustomFilterModule } from '@/modules/custom-filters/custom-filter.modul
     }),
     LoggerModule,
     DsApiModule,
+    XlsxModule,
     TypeOrmModule.forRootAsync(typeormFactoryLoader),
     DemarcheModule,
     DossierModule,

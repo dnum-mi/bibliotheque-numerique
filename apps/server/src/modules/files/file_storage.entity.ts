@@ -8,7 +8,7 @@ export class FileStorage extends BaseEntity {
   })
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore TODO: why is this id a string all of a sudden ?
-    id: string
+  declare id: string
 
   @Column({ type: 'varchar' })
     name: string

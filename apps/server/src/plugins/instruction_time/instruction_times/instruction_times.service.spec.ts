@@ -45,7 +45,7 @@ describe("InstructionTimesService", () => {
         }),
       ],
       providers: [InstructionTimesService],
-    }).compile();
+    }).useMocker(() => ({})).compile();
 
     service = module.get<InstructionTimesService>(InstructionTimesService);
     dossierService = module.get<DossierService>(DossierService);

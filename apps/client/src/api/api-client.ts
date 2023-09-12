@@ -1,4 +1,4 @@
-import axios, { AxiosError } from 'axios'
+import axios, { AxiosError, type AxiosResponse } from 'axios'
 
 import type {
   CreateUserDto,
@@ -22,16 +22,19 @@ import {
   demarchesRoute,
   getDemarcheByIdRoute,
   getDemarcheConfigurationRoute,
-  getDossiersFromDemarcheByIdRoute,
   getOrganismeByIdRnaRoute,
-  getOrganismeByIdRoute,
   getRoleByIdRoute,
   getUpdateOneMappingColumnRoute,
   organismesRoute,
   rolesRoute,
   unassignRoleRoute,
   getCustomFiltersRoute,
-  getOneCustomFiltersRoute, smallDemarchesRoutes,
+  getOneCustomFiltersRoute,
+  smallDemarchesRoutes,
+  getListDemarcheDossierRoute,
+  getListDemarcheFieldRoute,
+  getXlsxDemarcheDossierRoute,
+  getXlsxDemarcheFieldRoute, getDossierDetail,
 } from './bn-api-routes'
 import {
   authRoute,
@@ -61,6 +64,17 @@ export const apiClientInstance = axios.create({
   baseURL: baseApiUrl,
   headers,
 })
+
+const downloadAFile = (response: AxiosResponse) => {
+  const blob = new Blob([response.data], { type: response.headers['content-type'] })
+  const link = document.createElement('a')
+  link.href = window.URL.createObjectURL(blob)
+  link.download = 'export.xlsx'
+  link.click()
+  link.remove()
+  window.URL.revokeObjectURL(link.href)
+  return response.data
+}
 
 export const rolesApiClient = {
   getRoles: async () => {
@@ -137,19 +151,18 @@ export const demarchesApiClient = {
   },
 
   searchDemarcheFields: async (demarcheId: number, dto: SearchDossierDto): Promise<FieldSearchOutputDto> => {
-    const response = await apiClientInstance.post(`/demarches/${demarcheId}/fields-search`, dto)
+    const response = await apiClientInstance.post(getListDemarcheFieldRoute(demarcheId), dto)
     return response.data
+  },
+
+  exportDemarcheFields: async (demarcheId: number, dto: SearchDossierDto): Promise<void> => {
+    downloadAFile(await apiClientInstance.post(getXlsxDemarcheFieldRoute(demarcheId), dto, { responseType: 'blob' }))
   },
 }
 
 export const organismeApiClient = {
   getOrganismes: async () => {
     const response = await apiClientInstance.get(organismesRoute)
-    return response.data
-  },
-
-  getOrganismeById: async (organismeId: number) => {
-    const response = await apiClientInstance.get(getOrganismeByIdRoute(organismeId))
     return response.data
   },
 
@@ -228,23 +241,22 @@ export const usersApiClient = {
 }
 
 export const dossiersApiClient = {
-  getDossiersFromDemarche: async (id: number) => {
-    const response = await apiClientInstance.get(getDossiersFromDemarcheByIdRoute(id))
-    return response.data
-  },
-
   updateOneMappingColumn: async (demarcheId: number, fieldId: string, dto: UpdateOneFieldConfigurationDto) => {
     return apiClientInstance.patch(getUpdateOneMappingColumnRoute(demarcheId, fieldId), dto)
   },
 
-  searchDemarcheDossiers: async (demarcheId: number, dto: SearchDossierDto): Promise<DossierSearchOutputDto> => {
-    const response = await apiClientInstance.post(`/demarches/${demarcheId}/dossiers-search`, dto)
+  getDossier: async (id: number) => {
+    const response = await apiClientInstance.get(getDossierDetail(id))
     return response.data
   },
 
-  getDossier: async (id: number) => {
-    const response = await apiClientInstance.get(`/dossiers/${id}/detail`)
+  searchDemarcheDossiers: async (demarcheId: number, dto: SearchDossierDto): Promise<DossierSearchOutputDto> => {
+    const response = await apiClientInstance.post(getListDemarcheDossierRoute(demarcheId), dto)
     return response.data
+  },
+
+  exportDemarcheDossiers: async (demarcheId: number, dto: SearchDossierDto): Promise<void> => {
+    downloadAFile(await apiClientInstance.post(getXlsxDemarcheDossierRoute(demarcheId), dto, { responseType: 'blob' }))
   },
 }
 

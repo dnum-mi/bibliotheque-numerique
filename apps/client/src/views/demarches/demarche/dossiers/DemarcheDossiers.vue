@@ -223,18 +223,29 @@ const updateFilterName = async (name: string) => {
   }
 }
 /* endregion */
+
+const download = () => {
+  demarcheStore.exportCurrentDemarcheDossiers(groupByDossier.value, paginationDto)
+}
 </script>
 
 <template>
   <div :style="{ paddingBottom: '2rem' }">
-    <div class="flex justify-between no-label-on-toggle fr-pl-2w fr-pt-2w">
+    <div class="flex justify-between no-label-on-toggle items-center fr-pl-2w fr-pt-2w">
       <DsfrToggleSwitch
         :model-value="groupByDossier"
+        class="self-end"
         label="Grouper par dossier"
         @update:model-value="
           groupByDossier = $event;
           refresh();
         "
+      />
+      <DsfrButton
+        :label="'Télécharger'"
+        icon="ri-file-download-fill"
+        small
+        @click="download"
       />
       <DemarcheDossiersFilters
         :filters="customFilters as SmallFilter[]"

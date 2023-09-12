@@ -90,7 +90,9 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^5.0.1",
     "rxjs": "^7.8.1",
-    "typeorm": "^0.3.17"
+    "typeorm": "^0.3.17",
+    "uuid": "9.0.0",
+    "xlsx": "0.18.5"
   },
   "devDependencies": {
     "@faker-js/faker": "^8.0.2",
@@ -111,6 +113,7 @@
     "@types/passport-local": "^1.0.35",
     "@types/superagent": "^4.1.18",
     "@types/supertest": "^2.0.12",
+    "@types/xlsx": "0.0.36",
     "@typescript-eslint/eslint-plugin": "^6.4.1",
     "@typescript-eslint/parser": "^6.4.1",
     "eslint": "^8.47.0",
