@@ -11,6 +11,7 @@ import { LoggerService } from '@/shared/modules/logger/providers/logger.service'
 import { PrismaService } from '@/shared/modules/prisma/providers/prisma.service'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { Express } from 'express'
+import { CreateFileStorageDto } from '@/shared/objects/file-storage/create-file.dto'
 
 @Injectable()
 export class FileStorageService extends BaseEntityService {
@@ -66,6 +67,7 @@ export class FileStorageService extends BaseEntityService {
         checksum,
         byteSize: file.size,
         mimeType: file.mimetype,
+        foundation: {},
       },
     })
   }
@@ -96,10 +98,10 @@ export class FileStorageService extends BaseEntityService {
     throw new NotFoundException()
   }
 
-  async copyRemoteFile (fileUrl: string, fileName: string, checksum: string, byteSize: number, mimeType: string):
-    Promise<FileStorageEntity> {
+  async copyRemoteFile ({ fileUrl, originalName }: CreateFileStorageDto):
+    Promise<{ key: string, location: string }> {
     this.logger.verbose('copyRemoteFile')
-    const fileExtension: string = this.fileExtension(fileName)
+    const fileExtension: string = this.fileExtension(originalName)
     this.fileFilter(fileExtension)
 
     const stream: AxiosResponse = await this.downloadFile(fileUrl)
@@ -111,16 +113,20 @@ export class FileStorageService extends BaseEntityService {
 
     const { Key, Location } = await promise
 
-    return this.prisma.fileStorage.create({
-      data: {
-        name: Key,
-        path: Location,
-        originalName: fileName,
-        checksum,
-        byteSize: Number(byteSize),
-        mimeType,
-      },
-    })
+    return {
+      key: Key,
+      location: Location,
+    }
+    // return this.prisma.fileStorage.create({
+    //   data: {
+    //     name: Key,
+    //     path: Location,
+    //     originalName: fileName,
+    //     checksum,
+    //     byteSize: Number(byteSize),
+    //     mimeType,
+    //   },
+    // })
   }
 
   private uploadFromStream (

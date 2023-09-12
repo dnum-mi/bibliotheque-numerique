@@ -1,5 +1,6 @@
 import { IsDefined, IsNotEmpty, IsNumber, IsString } from 'class-validator'
 import { BaseEntity } from '@/shared/base-entity/base.entity'
+import { FoundationEntity } from '@/modules/foundation/objects/foundation.entity'
 
 export class FileStorageEntity extends BaseEntity {
   @IsString()
@@ -36,4 +37,6 @@ export class FileStorageEntity extends BaseEntity {
   @IsDefined()
   @IsNotEmpty()
     mimeType: string
+
+  foundation?: FoundationEntity
 }

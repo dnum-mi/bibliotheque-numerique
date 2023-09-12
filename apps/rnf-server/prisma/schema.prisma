@@ -40,6 +40,9 @@ model Foundation {
 
   // Person
   persons PersonInFoundation[]
+
+  // FileStorage
+  status    FileStorage[]
 }
 
 // ======================================== Address ========================================
@@ -122,7 +125,7 @@ model FoundationHistory {
 
 model FileStorage {
   id        Int      @id @default(autoincrement())
-  uuid      String   @db.Uuid @default(dbgenerated("gen_random_uuid()"))
+  uuid      String   @db.Uuid @default(dbgenerated("gen_random_uuid()")) @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   name      String
@@ -131,4 +134,7 @@ model FileStorage {
   checksum String
   byteSize Int
   mimeType String
+
+  foundation  Foundation @relation(fields: [foundationId], references: [id])
+  foundationId Int
 }

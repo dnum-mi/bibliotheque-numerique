@@ -1,6 +1,7 @@
-import { Champ } from '@dnum-mi/ds-api-client'
+import { Champ, PieceJustificativeChamp } from '@dnum-mi/ds-api-client'
 import { AddressChamp } from '@dnum-mi/ds-api-client/dist/@types/types'
 import { Mapper } from '@/modules/ds/objects/types/mapper.type'
+import { CreateFileStorageDto } from '@/shared/objects/file-storage/create-file.dto'
 
 const stringValue = (ch: Champ | null) => ch?.stringValue ?? null
 
@@ -31,4 +32,17 @@ export const universalMapper: Mapper = {
     }
   },
   personInFoundationToCreate: (ch: Champ) => null,
+  status: (ch: PieceJustificativeChamp | null) => {
+    if (!ch || ch.__typename !== 'PieceJustificativeChamp' || !ch.file) {
+      return null
+    }
+    const file = ch.file
+    return {
+      fileUrl: file.url,
+      originalName: file.filename,
+      mimeType: file.contentType,
+      checksum: file.checksum,
+      byteSize: Number(file.byteSizeBigInt as string),
+    } as CreateFileStorageDto
+  },
 }

@@ -3,6 +3,7 @@ import { IsDefined, IsEmail, IsEnum, IsNotEmpty, IsNumber, IsPhoneNumber, IsStri
 import { PersonInFoundationEntity } from '@/modules/foundation/objects/person-in-foundation.entity'
 import { BaseEntity } from '@/shared/base-entity/base.entity'
 import { AddressEntity } from '@/shared/objects/address/address.entity'
+import { FileStorageEntity } from '@/modules/file-storage/objects/entities/file-storage.entity'
 
 export class FoundationEntity extends BaseEntity implements Foundation {
   @IsString()
@@ -37,6 +38,8 @@ export class FoundationEntity extends BaseEntity implements Foundation {
   @IsDefined()
   @IsNumber()
     addressId: number
+
+  status?: FileStorageEntity
 
   address: AddressEntity
 
