@@ -114,17 +114,26 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
       relations: { dossier: true },
     })
 
+    await this.updateInstructionTimeToFields(instructionTimes)
+  }
+
+  async instructionTimeCalculationForAllDossier (): Promise<void> {
+    this.logger.verbose('instructionTimeCalculationForAllDossier')
+    const instructionTimes = await this.repo.find({ relations: { dossier: true } })
+
+    await this.updateInstructionTimeToFields(instructionTimes)
+  }
+
+  private async updateInstructionTimeToFields(instructionTimes: InstructionTime[]): Promise<void> {
     await Promise.all(instructionTimes.map(async (instructionTime): Promise<void> => {
       const { dossier } = instructionTime
       let remainingTime = null
       let delayStatus = instructionTime.state
-      if (
-        [
-          EInstructionTimeState.IN_EXTENSION,
-          EInstructionTimeState.IN_PROGRESS,
-          EInstructionTimeState.SECOND_RECEIPT as EInstructionTimeStateKey,
-        ].includes(instructionTime.state)
-      ) {
+      if ([
+        EInstructionTimeState.IN_EXTENSION,
+        EInstructionTimeState.IN_PROGRESS,
+        EInstructionTimeState.SECOND_RECEIPT as EInstructionTimeStateKey,
+      ].includes(instructionTime.state)) {
         remainingTime = dayjs(instructionTime.endAt).startOf('day').diff(dayjs().startOf('day'), 'days')
 
         delayStatus = remainingTime > 0 ? instructionTime.state : EInstructionTimeState.OUT_OF_DATE
