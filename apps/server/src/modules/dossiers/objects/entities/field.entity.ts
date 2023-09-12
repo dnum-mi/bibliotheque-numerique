@@ -19,7 +19,7 @@ export const fieldUniqueFields = ['dossierId', 'sourceId', 'parentRowIndex']
 @Unique('UQ_FIELD', fieldUniqueFields)
 export class Field extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
-  id: number
+  declare id: number
 
   @Column({
     type: 'enum',

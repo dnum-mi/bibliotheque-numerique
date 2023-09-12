@@ -8,7 +8,7 @@ import { MappingColumn } from '@biblio-num/shared'
 @Entity({ name: 'demarches' })
 export class Demarche extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
-  id: number
+  declare id: number
 
   @OneToMany(() => Dossier, (dossier) => dossier.demarche)
   dossiers: Dossier[]

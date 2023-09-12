@@ -15,7 +15,7 @@ import { CustomFilter } from '@/modules/custom-filters/objects/entities/custom-f
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
-    id: number
+  declare id: number
 
   @Column({
     type: 'varchar',
@@ -26,24 +26,24 @@ export class User extends BaseEntity {
       to: (entityValue: string) => entityValue.toLowerCase(),
     },
   })
-    email: string
+  email: string
 
   @Column({
     type: 'varchar',
     nullable: false,
     select: false,
   })
-    password: string
+  password: string
 
   @Column({
     type: 'boolean',
     nullable: false,
     default: false,
   })
-   validated: boolean
+  validated: boolean
 
   @ManyToMany(() => Role, (role) => role.users)
-    roles: Role[]
+  roles: Role[]
 
   @BeforeInsert()
   @BeforeUpdate()

@@ -12,7 +12,7 @@ import { User } from '@/modules/users/entities/user.entity'
 @Unique('UQ_CUSTOM_FILTERS', ['userId', 'name'])
 export class CustomFilter extends BaseEntity implements ICustomFilter {
   @PrimaryGeneratedColumn('increment')
-  id: number
+  declare id: number
 
   @Column({ type: 'varchar', default: 'Tableau personnalisé', nullable: false })
   name: string
