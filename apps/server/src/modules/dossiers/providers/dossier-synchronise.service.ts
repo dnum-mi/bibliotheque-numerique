@@ -18,6 +18,7 @@ import { FieldService } from './field.service'
 import { InstructionTimesService } from '../../../plugins/instruction_time/instruction_times/instruction_times.service'
 import { Demarche } from '../../demarches/objects/entities/demarche.entity'
 import { isFileChamp, isRepetitionChamp } from '../../../shared/modules/ds-api/objects/ds-champ.utils'
+import { IdentificationDemarche } from '@biblio-num/shared'
 
 @Injectable()
 export class DossierSynchroniseService extends BaseEntityService<Dossier> {
@@ -119,7 +120,9 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
     )
     const id = upsert.identifiers[0].id
     await this.fieldService.overwriteFieldsFromDataJson(jsonDossier, id, demarche.mappingColumns)
-    await this.instructionTimeService.proccessByDossierId(id)
+    if (demarche.identification === IdentificationDemarche.FE) {
+      await this.instructionTimeService.proccessByDossierId(id)
+    }
     this.logger.log(`Successfully synchronised dossier ${id} (dsId: ${jsonDossier.number})`)
   }
 }

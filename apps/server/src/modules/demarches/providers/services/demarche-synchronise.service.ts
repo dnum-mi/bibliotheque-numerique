@@ -22,13 +22,13 @@ import {
   type Demarche as TDemarche,
   type Dossier as TDossier,
 } from '@dnum-mi/ds-api-client'
-import { fixFields } from '../../../dossiers/objects/constante/fix-field.dictionnary'
+import { getFixFieldsByIdentification } from '../../../dossiers/objects/constante/fix-field.dictionnary'
 import {
   giveFormatFunctionRefFromDsChampType,
   giveTypeFromDsChampType,
   isRepetitionChampDescriptor,
 } from '@/shared/modules/ds-api/objects/ds-champ.utils'
-import { FieldSource, FieldSourceKeys, MappingColumn } from '@biblio-num/shared'
+import { FieldSource, FieldSourceKeys, MappingColumn, type IdentificationDemarcheKeys } from '@biblio-num/shared'
 
 @Injectable()
 export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
@@ -87,6 +87,7 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
   private _generateMappingColumns(
     dsDemarche: Partial<TDemarche>,
     originalMappingColumns: MappingColumn[] = [],
+    identification: IdentificationDemarcheKeys | undefined = undefined,
   ): MappingColumn[] {
     this.logger.verbose('_generateMappingColumns')
     const revision = dsDemarche.publishedRevision ?? dsDemarche.activeRevision
@@ -121,7 +122,7 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
       }))
 
     return [
-      ...fixFields.map(ff => ({
+      ...getFixFieldsByIdentification(identification).map(ff => ({
         columnLabel: originalRenameHash[ff.id] || ff.columnLabel,
         ...ff,
       })),
@@ -160,6 +161,7 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
       mappingColumns: this._generateMappingColumns(
         raw,
         demarche.mappingColumns,
+        demarche.identification,
       ),
       dsDataJson: raw,
     }
@@ -172,7 +174,9 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
 
   /* endregion */
 
-  public async createAndSynchronise(dsId: number): Promise<void> {
+  public async createAndSynchronise(
+    dsId: number,
+    identification: IdentificationDemarcheKeys | undefined): Promise<void> {
     this.logger.verbose('createAndSynchronise')
     const raw = await this.dsApiClient.demarcheDossierWithCustomChamp(dsId)
     if (!raw) {
@@ -188,8 +192,9 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
       title: raw.demarche.title,
       state: raw.demarche.state ?? 'no-state',
       type: this._findOrganismeType(raw.demarche),
-      mappingColumns: this._generateMappingColumns(raw.demarche),
+      mappingColumns: this._generateMappingColumns(raw.demarche, [], identification),
       dsDataJson: raw.demarche,
+      identification,
     })
     await this._synchroniseAllDossier(dossiers, demarche)
   }

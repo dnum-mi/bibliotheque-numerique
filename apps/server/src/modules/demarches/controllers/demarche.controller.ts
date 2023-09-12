@@ -23,7 +23,7 @@ import { Roles, RolesGuard } from '../../roles/providers/roles.guard'
 import { User } from '../../users/entities/user.entity'
 import { DemarcheOutputDto, demarcheOutputDtoKeys } from '@/modules/demarches/objects/dtos/demarche-output.dto'
 import { CurrentUser } from '@/modules/users/decorators/current-user.decorator'
-import { SmallDemarcheOutputDto } from '@biblio-num/shared'
+import { SmallDemarcheOutputDto, CreateDemarcheDto } from '@biblio-num/shared'
 
 @ApiTags('Demarches')
 @UseGuards(PermissionsGuard)
@@ -92,10 +92,10 @@ export class DemarcheController {
 
   @Post('create')
   @Roles('admin') // TODO: superadmin
-  async create(@Body('idDs', ParseIntPipe) dsId: number): Promise<{ message: string }> {
+  async create(@Body() dto: CreateDemarcheDto): Promise<{ message: string }> {
     this.logger.verbose('create')
-    await this.demarcheSynchroniseService.createAndSynchronise(dsId)
-    return { message: `Demarche with DS id ${dsId} has been created.` }
+    await this.demarcheSynchroniseService.createAndSynchronise(dto.idDs, dto.identification)
+    return { message: `Demarche with DS id ${dto.idDs} has been created.` }
   }
 
   @Post('synchro-dossiers')
