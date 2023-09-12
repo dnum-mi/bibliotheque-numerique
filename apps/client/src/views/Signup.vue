@@ -137,7 +137,7 @@ const { value: passwordValue, errorMessage: passwordError } = useField<string>('
               class="fr-m-4w"
               style="text-align:center"
             >
-              <DsfrButton>
+              <DsfrButton type="submit">
                 S'inscrire
               </DsfrButton>
             </div>

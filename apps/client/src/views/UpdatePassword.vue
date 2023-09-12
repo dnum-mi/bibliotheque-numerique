@@ -109,7 +109,7 @@ const onCloseAlert = () => {
               class="fr-m-4w"
               style="text-align:center"
             >
-              <DsfrButton>
+              <DsfrButton type="submit">
                 Modifer
               </DsfrButton>
             </div>

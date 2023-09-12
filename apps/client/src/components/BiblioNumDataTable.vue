@@ -1,48 +1,3 @@
-<template>
-  <DsfrTable
-    :title="title"
-  >
-    <template #header>
-      <tr>
-        <DsfrTableHeader
-          v-for="(header,idx) of headers"
-          :key="header.value"
-          :header="header.text || ''"
-          :icon="icons[idx]"
-          @click="onClick(idx, header.sortable)"
-        />
-      </tr>
-    </template>
-    <tr
-      v-for="data in datas"
-      :key="data"
-    >
-      <td>
-        <DsfrButton
-          :label="label"
-          :disabled="disabled"
-          :icon="icon"
-          :icon-right="iconRight"
-          @click="getElt(data)"
-        />
-      </td>
-
-      <td
-        v-for="header in headersDisplay"
-        :key="header.value"
-      >
-        {{
-          header.value
-            ? ( header.parseFn
-              ? header.parseFn(data[header.value])
-              : data[header.value])
-            : ''
-        }}
-      </td>
-    </tr>
-  </DsfrTable>
-</template>
-
 <script lang="ts" setup>
 import { computed, reactive } from 'vue'
 import type { HeaderDataTable } from '@/shared/types'
@@ -77,4 +32,46 @@ const getElt = data => {
   emit('getElt', data)
 }
 </script>
-@/shared/types/DataTable.type
+
+<template>
+  <DsfrTable
+    :title="title"
+  >
+    <template #header>
+      <tr>
+        <DsfrTableHeader
+          v-for="(header,idx) of headers"
+          :key="header.value"
+          :header="header.text || ''"
+          :icon="icons[idx]"
+          @click="onClick(idx, header.sortable)"
+        />
+      </tr>
+    </template>
+    <tr
+      v-for="data in datas"
+      :key="data"
+    >
+      <td>
+        <DsfrButton
+          :label="`Détails de ${data.id}`"
+          :icon="icon"
+          @click="getElt(data)"
+        />
+      </td>
+
+      <td
+        v-for="header in headersDisplay"
+        :key="header.value"
+      >
+        {{
+          header.value
+            ? ( header.parseFn
+              ? header.parseFn(data[header.value])
+              : data[header.value])
+            : ''
+        }}
+      </td>
+    </tr>
+  </DsfrTable>
+</template>

@@ -54,8 +54,8 @@
         title="Utilisateurs"
         :headers="usersHeadersJson"
         :row-data="usersRowData"
-        :side-bar="false"
-        with-action="{{ true }}"
+        is-hidden-side-bar
+        with-action
         @get-elt="getUser"
       />
     </div>
@@ -178,4 +178,3 @@ onMounted(async () => {
     }
   }
 </style>
-@/utils/date-to-string

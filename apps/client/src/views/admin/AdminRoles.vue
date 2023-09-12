@@ -4,8 +4,8 @@
     component-action=""
     :headers="rolesHeadersJson"
     :row-data="rolesRowData"
-    with-action="{{ true }}"
-    :side-bar="false"
+    is-hidden-side-bar
+    with-action
     row-selection="single"
     @get-elt="getRole"
   />
@@ -82,4 +82,3 @@ onMounted(async () => {
 })
 
 </script>
-@/utils/date-to-string

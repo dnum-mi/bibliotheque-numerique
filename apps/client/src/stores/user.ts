@@ -20,11 +20,7 @@ export const useUserStore = defineStore('user', {
       return !!state.currentUser
     },
     hasAdminAccess (state): boolean {
-      if (state.currentUser?.roles.find(role => role.name === RoleName.ADMIN)) {
-        return true
-      } else {
-        return false
-      }
+      return !!(state.currentUser?.roles.some(role => role.name === RoleName.ADMIN))
     },
     canManageRoles (state): boolean {
       return !!state.currentUser?.roles?.find(role => role.name === RoleName.ADMIN || role?.permissions?.find(permission => permission?.name === 'CREATE_ROLE'))
