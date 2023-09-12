@@ -4,7 +4,7 @@ items:
     id: 1
     state: "published"
     title: "Déclaration de financement étranger"
-    identification: "financement"
+    identification: "FE"
     type: "ARUP"
     mappingColumns: [
       {"id":"I01", "label":"Identifiant"},
@@ -43,14 +43,14 @@ items:
     id: 3
     state: "published"
     title: "Déclaration de financement étranger"
-    identification: "financement"
+    identification: "FE"
     type: "ARUP"
     dsDataJson: { number: 2}
   demarche-number-3:
     id: 4
     state: "published"
     title: "Déclaration de financement étranger"
-    identification: "financement"
+    identification: "FE"
     type: "ARUP"
     dsDataJson: { number: 3 }
   demarche-update-identification:
