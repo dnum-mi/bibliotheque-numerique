@@ -9,6 +9,7 @@ import apiClient from '@/api/api-client'
 import LayoutAccueil from '../components/LayoutAccueil.vue'
 import { passwordValidator } from '@/utils/password.validator'
 import { REQUIRED_FIELD_MESSAGE } from '@/messages'
+import ToggleInputPassword from '@/components/ToggleInputPassword.vue'
 
 const router = useRouter()
 
@@ -36,7 +37,6 @@ const onSubmit = handleSubmit(async (formValue: CreateUserDto) => {
 const { value: firstNameValue, errorMessage: firstNameError } = useField<string>('firstName')
 const { value: lastNameValue, errorMessage: lastNameError } = useField<string>('lastName')
 const { value: emailValue, errorMessage: emailError } = useField<string>('email')
-const { value: passwordValue, errorMessage: passwordError } = useField<string>('password')
 </script>
 
 <template>
@@ -114,24 +114,7 @@ const { value: passwordValue, errorMessage: passwordError } = useField<string>('
               </DsfrInput>
             </DsfrInputGroup>
 
-            <DsfrInputGroup
-              :is-valid="passwordError"
-              :error-message="passwordError"
-            >
-              <DsfrInput
-                id="password"
-                v-model="passwordValue"
-                label="Mot de passe"
-                label-visible
-                placeholder="xxxxxx"
-                type="password"
-                required
-              >
-                <template #required-tip>
-                  <em class="required-label"> *</em>
-                </template>
-              </DsfrInput>
-            </DsfrInputGroup>
+            <ToggleInputPassword />
 
             <div
               class="fr-m-4w"

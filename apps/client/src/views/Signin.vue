@@ -2,16 +2,24 @@
 import { z } from 'zod'
 import { toFormValidator } from '@vee-validate/zod'
 import { useField, useForm } from 'vee-validate'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores'
 import type { CredentialsInputDto } from '@biblio-num/shared'
 import LayoutAccueil from '../components/LayoutAccueil.vue'
+import ToggleInputPassword from '../components/ToggleInputPassword.vue'
 
 const REQUIRED_FIELD_MESSAGE = 'Ce champ est requis'
 
 const router = useRouter()
 const userStore = useUserStore()
+const tmpType = ref('password')
+const tmpTitle = computed(() => (tmpType.value === 'password' ? 'Afficher le mot de passe' : 'Masquer le mot de passe'))
+const eyeIcon = computed(() => (tmpType.value === 'password' ? 'fr-icon-eye-fill' : 'fr-icon-eye-off-fill'))
+
+const togglePassword = () => {
+  tmpType.value = tmpType.value === 'password' ? 'text' : 'password'
+}
 
 const secure = ref()
 
@@ -34,7 +42,6 @@ const submit = handleSubmit(async (formValue: CredentialsInputDto) => {
 })
 
 const { value: emailValue, errorMessage: emailError } = useField('email')
-const { value: passwordValue, errorMessage: passwordError } = useField('password')
 
 </script>
 
@@ -54,7 +61,7 @@ const { value: passwordValue, errorMessage: passwordError } = useField('password
           </h5>
           <form
             class="card"
-            @submit="submit"
+            @submit.prevent="submit"
           >
             <DsfrInputGroup
               :is-valid="emailError"
@@ -75,24 +82,7 @@ const { value: passwordValue, errorMessage: passwordError } = useField('password
               </DsfrInput>
             </DsfrInputGroup>
 
-            <DsfrInputGroup
-              :is-valid="passwordError"
-              :error-message="passwordError"
-            >
-              <DsfrInput
-                id="password"
-                v-model="passwordValue"
-                label="Mot de passe (6 caractères minimum)"
-                label-visible
-                placeholder="xxxxxx"
-                type="password"
-                required
-              >
-                <template #required-tip>
-                  <em class="required-label"> *</em>
-                </template>
-              </DsfrInput>
-            </DsfrInputGroup>
+            <ToggleInputPassword />
 
             <div
               class="fr-m-4w"
