@@ -102,7 +102,7 @@ export class FieldSearchService extends BaseEntityService<Field> {
     `
   }
 
-  async search(demarche: Partial<Demarche>, dto: SearchDossierDto): Promise<FieldSearchOutputDto> {
+  async search(demarche: Partial<Demarche>, dto: SearchDossierDto, complete = false): Promise<FieldSearchOutputDto> {
     this.logger.verbose('search')
     const typeHash = await this.fieldService.giveFieldType(dto.columns)
     dto = adjustDto(dto)
@@ -112,7 +112,7 @@ export class FieldSearchService extends BaseEntityService<Field> {
       ${this._buildCombinedCTE(dto.columns, typeHash)},
       ${this._buildCountedCTE(dto, typeHash)}
       SELECT * FROM countedCTE
-      ${buildPaginationQuery(dto.page || 1, dto.perPage || 5)}
+      ${complete ? '' : buildPaginationQuery(dto.page || 1, dto.perPage || 5)}
     `
     const result = await this.repo.query(query)
     if (!result[0]) {

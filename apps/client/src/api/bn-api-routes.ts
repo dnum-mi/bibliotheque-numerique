@@ -12,8 +12,10 @@ export const smallDemarchesRoutes = `${demarchesRoute}/small`
 export const getDemarcheByIdRoute = (id: number) => `${demarchesRoute}/${id}`
 export const getDemarcheConfigurationRoute = (id: number) => `${getDemarcheByIdRoute(id)}/configurations`
 export const getUpdateOneMappingColumnRoute = (demarcheId: number, fieldId: string) => `${getDemarcheConfigurationRoute(demarcheId)}/${fieldId}`
-export const getListDemarcheDossierRoute = (demarcheId: number) => `${getDemarcheByIdRoute}/search-dossiers`
-export const getListDemarcheFieldRoute = (demarcheId: number) => `${getDemarcheByIdRoute}/search-fields`
+export const getListDemarcheDossierRoute = (demarcheId: number) => `${getDemarcheByIdRoute(demarcheId)}/dossiers-search`
+export const getListDemarcheFieldRoute = (demarcheId: number) => `${getDemarcheByIdRoute(demarcheId)}/fields-search`
+export const getXlsxDemarcheDossierRoute = (demarcheId: number) => `${getListDemarcheDossierRoute(demarcheId)}/export/xlsx`
+export const getXlsxDemarcheFieldRoute = (demarcheId: number) => `${getListDemarcheFieldRoute(demarcheId)}/export/xlsx`
 export const getDossiersFromDemarcheByIdRoute = (id: number) => `${demarchesRoute}/${id}/deprecated/dossiers`
 
 export const usersRoutes = '/users'
@@ -30,3 +32,6 @@ export const getOrganismeByIdRnaRoute = (idRna: string) => `/organismes/rna/${id
 export const customFiltersRoute = '/custom-filters'
 export const getCustomFiltersRoute = () => customFiltersRoute
 export const getOneCustomFiltersRoute = (id: number) => `/custom-filters/${id}`
+
+export const dossierRoute = '/dossiers'
+export const getDossierDetail = (id: number) => `${dossierRoute}/${id}/detail`

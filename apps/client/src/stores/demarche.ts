@@ -73,6 +73,16 @@ export const useDemarcheStore = defineStore('demarche', () => {
     }
   }
 
+  const exportCurrentDemarcheDossiers = async (groupByDossier: boolean, dto: SearchDossierDto): Promise<void> => {
+    if (currentDemarche.value) {
+      return groupByDossier
+        ? await apiClient.exportDemarcheDossiers(currentDemarche.value.id, dto)
+        : await apiClient.exportDemarcheFields(currentDemarche.value.id, dto)
+    } else {
+      throw new Error("Can't search without a current demarche")
+    }
+  }
+
   return {
     demarches,
     currentDemarche,
@@ -85,5 +95,6 @@ export const useDemarcheStore = defineStore('demarche', () => {
     searchCurrentDemarcheDossiers,
     getDemarche,
     updateOneMappingColumn,
+    exportCurrentDemarcheDossiers,
   }
 })
