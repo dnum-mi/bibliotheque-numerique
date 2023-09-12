@@ -26,5 +26,5 @@ export class CreateFoundationDto extends PickType(FoundationEntity, createFounda
 
   @ValidateNested()
   @Type(() => CreateFileStorageDto)
-    status?: (e: any) => CreateFileStorageDto
+    status?: CreateFileStorageDto
 }

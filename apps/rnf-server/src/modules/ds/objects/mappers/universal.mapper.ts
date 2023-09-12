@@ -1,17 +1,15 @@
 import { Champ, PieceJustificativeChamp } from '@dnum-mi/ds-api-client'
 import { AddressChamp } from '@dnum-mi/ds-api-client/dist/@types/types'
 import { Mapper } from '@/modules/ds/objects/types/mapper.type'
-import { CreateFileStorageDto } from '@/shared/objects/file-storage/create-file.dto'
 
-const stringValue = (ch: Champ | null) => ch?.stringValue ?? null
+const stringValue = (ch?: Champ) => ch?.stringValue ?? null
 
 export const universalMapper: Mapper = {
   title: stringValue,
   email: stringValue,
   phone: stringValue,
   type: stringValue,
-  // @ts-expect-error todo: fix this
-  address: (ch: AddressChamp | null) => {
+  address: (ch?: AddressChamp) => {
     if (!ch || ch.__typename !== 'AddressChamp' || !ch.address) {
       return null
     }
@@ -32,17 +30,17 @@ export const universalMapper: Mapper = {
     }
   },
   personInFoundationToCreate: (ch: Champ) => null,
-  status: (ch: PieceJustificativeChamp | null) => {
-    if (!ch || ch.__typename !== 'PieceJustificativeChamp' || !ch.file) {
+  status: (champ?: PieceJustificativeChamp) => {
+    if (!champ || champ.__typename !== 'PieceJustificativeChamp' || !champ.file) {
       return null
     }
-    const file = ch.file
+    const file = champ.file
     return {
       fileUrl: file.url,
       originalName: file.filename,
       mimeType: file.contentType,
       checksum: file.checksum,
       byteSize: Number(file.byteSizeBigInt as string),
-    } as CreateFileStorageDto
+    }
   },
 }

@@ -10,8 +10,8 @@ import { FileStorageEntity } from '../objects/entities/file-storage.entity'
 import { LoggerService } from '@/shared/modules/logger/providers/logger.service'
 import { PrismaService } from '@/shared/modules/prisma/providers/prisma.service'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
-import { Express } from 'express'
 import { CreateFileStorageDto } from '@/shared/objects/file-storage/create-file.dto'
+import { Express } from 'express'
 
 @Injectable()
 export class FileStorageService extends BaseEntityService {
@@ -104,11 +104,12 @@ export class FileStorageService extends BaseEntityService {
     const fileExtension: string = this.fileExtension(originalName)
     this.fileFilter(fileExtension)
 
-    const stream: AxiosResponse = await this.downloadFile(fileUrl)
+    const stream: AxiosResponse<{
+      pipe: (pt: PassThrough) => void
+    }> = await this.downloadFile(fileUrl)
 
     const { passThrough, promise } = this.uploadFromStream(stream, this.fileNameGenerator(fileExtension))
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     stream.data.pipe(passThrough)
 
     const { Key, Location } = await promise
@@ -117,16 +118,6 @@ export class FileStorageService extends BaseEntityService {
       key: Key,
       location: Location,
     }
-    // return this.prisma.fileStorage.create({
-    //   data: {
-    //     name: Key,
-    //     path: Location,
-    //     originalName: fileName,
-    //     checksum,
-    //     byteSize: Number(byteSize),
-    //     mimeType,
-    //   },
-    // })
   }
 
   private uploadFromStream (

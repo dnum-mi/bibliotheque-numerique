@@ -40,7 +40,7 @@ export class FoundationController {
       dossierId: rawDossier.number,
     }
 
-    const foundation = await this.service.CreateFoundation(createDto, ds, dto.forceCreate)
+    const foundation = await this.service.createFoundation(createDto, ds, dto.forceCreate)
     await this.dsService.writeRnfIdInPrivateAnnotation(rawDossier.id, instructeurId, foundation.type, foundation.rnfId)
     // TODO: await this.foundationHistoryService.newHistoryEntry(foundation, dto);
     return { rnfId: foundation.rnfId, ds }
@@ -48,7 +48,7 @@ export class FoundationController {
 
   @Get('/:rnfId')
   @ApiOperation({ summary: 'Retourner la fondation correspondant au numéro RNF.' })
-  async getFoundation (@Param() params: GetFoundationInputDto): Promise<GetFoundationOutputDto> {
+  async getFoundation (@Param() params: GetFoundationInputDto): Promise<GetFoundationOutputDto | null> {
     this.logger.verbose('getFoundation')
     return this.service.getOneFoundation(params.rnfId)
   }

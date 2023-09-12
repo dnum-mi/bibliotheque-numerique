@@ -52,7 +52,7 @@ export class FoundationService extends BaseEntityService {
     }
   }
 
-  async CreateFoundation (dto: CreateFoundationDto, ds: InfoDSOutputDto, forceCreation?: boolean): Promise<Foundation> {
+  async createFoundation (dto: CreateFoundationDto, ds: InfoDSOutputDto, forceCreation?: boolean): Promise<Foundation> {
     this.logger.verbose('CreateFoundation')
     const code = dto.address.departmentCode
     if (!dto.address || !code) {
@@ -111,14 +111,18 @@ export class FoundationService extends BaseEntityService {
     })
   }
 
-  async getOneFoundation (rnfId: string): Promise<GetFoundationOutputDto> {
+  async getOneFoundation (rnfId: string): Promise<GetFoundationOutputDto | null> {
     this.logger.verbose('getOneFoundation')
-    return this.prisma.foundation.findUnique({ where: { rnfId }, include: { address: true } }).then((foundation) => {
-      if (!foundation) {
-        throw new NotFoundException('No foundation found with this rnfId.')
-      }
-      return foundation
+    return this.prisma.foundation.findUnique({
+      where: { rnfId },
+      include: { address: true, status: true },
     })
+      .then((foundation) => {
+        if (!foundation) {
+          throw new NotFoundException('No foundation found with this rnfId.')
+        }
+        return foundation
+      })
   }
 
   async getFoundationsByRnfIds (rnfIds: string[], updatedAfter: Date | undefined): Promise<FoundationEntity[]> {

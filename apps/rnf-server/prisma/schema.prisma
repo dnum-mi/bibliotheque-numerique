@@ -42,7 +42,7 @@ model Foundation {
   persons PersonInFoundation[]
 
   // FileStorage
-  status    FileStorage[]
+  status    FileStorage?
 }
 
 // ======================================== Address ========================================
@@ -136,5 +136,5 @@ model FileStorage {
   mimeType String
 
   foundation  Foundation @relation(fields: [foundationId], references: [id])
-  foundationId Int
+  foundationId Int @unique
 }
