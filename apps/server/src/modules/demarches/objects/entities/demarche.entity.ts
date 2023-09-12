@@ -3,7 +3,8 @@ import { Dossier } from '../../../dossiers/objects/entities/dossier.entity'
 import { BaseEntity } from '../../../../shared/base-entity/base.entity'
 import { OrganismeType, OrganismeTypeKeys } from '../enums/organisme-type.enum'
 import { Demarche as TDemarche } from '@dnum-mi/ds-api-client/dist/@types/generated-types'
-import { MappingColumn } from '@biblio-num/shared'
+import { MappingColumn, IdentificationDemarche } from '@biblio-num/shared'
+import type { IdentificationDemarcheKeys } from '@biblio-num/shared'
 
 @Entity({ name: 'demarches' })
 export class Demarche extends BaseEntity {
@@ -19,8 +20,12 @@ export class Demarche extends BaseEntity {
   @Column()
   title: string
 
-  @Column({ nullable: true })
-  identification: string
+  @Column({
+    type: 'enum',
+    enum: IdentificationDemarche,
+    nullable: true,
+  })
+  identification: IdentificationDemarcheKeys
 
   @Column({ type: 'jsonb', default: '[]' })
   mappingColumns: MappingColumn[]
