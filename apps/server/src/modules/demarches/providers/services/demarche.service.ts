@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { In, Repository } from 'typeorm'
 import { LoggerService } from '../../../../shared/modules/logger/logger.service'
 import { ConfigService } from '@nestjs/config'
@@ -9,6 +9,8 @@ import { User } from '../../../users/entities/user.entity'
 import { BaseEntityService } from '../../../../shared/base-entity/base-entity.service'
 import { InjectRepository } from '@nestjs/typeorm'
 import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere'
+import { IdentificationDemarcheKeys } from '@biblio-num/shared'
+import { fixFieldsByIdentificationDictionary } from '../../../dossiers/objects/constante/fix-field.dictionnary'
 
 @Injectable()
 export class DemarcheService extends BaseEntityService<Demarche> {
@@ -76,5 +78,27 @@ export class DemarcheService extends BaseEntityService<Demarche> {
       }
     }
     return demarcheIds
+  }
+
+  async updateIdentificationDemarche (id: number, identification: IdentificationDemarcheKeys | null): Promise<void> {
+    const demarche = await this.findById(id)
+    if (!demarche) throw new NotFoundException(`demarche ${id} not found`)
+    const { mappingColumns, identification: identificationOrigin } = demarche
+
+    const mappingEntries = fixFieldsByIdentificationDictionary[identification || identificationOrigin]
+
+    await this.repo.update(
+      { id },
+      {
+        mappingColumns: identification !== undefined || mappingEntries
+          ? (
+            identification
+              ? mappingColumns.concat(mappingEntries)
+              : mappingColumns.filter(mapping => !(mappingEntries.map(entry => entry.id)).includes(mapping.id))
+          )
+          : mappingColumns,
+        identification,
+      },
+    )
   }
 }

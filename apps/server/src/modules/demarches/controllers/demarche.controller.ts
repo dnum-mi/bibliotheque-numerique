@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -7,6 +8,7 @@ import {
   NotFoundException,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Request,
   UseGuards,
@@ -23,7 +25,11 @@ import { Roles, RolesGuard } from '../../roles/providers/roles.guard'
 import { User } from '../../users/entities/user.entity'
 import { DemarcheOutputDto, demarcheOutputDtoKeys } from '@/modules/demarches/objects/dtos/demarche-output.dto'
 import { CurrentUser } from '@/modules/users/decorators/current-user.decorator'
-import { SmallDemarcheOutputDto, CreateDemarcheDto } from '@biblio-num/shared'
+import {
+  SmallDemarcheOutputDto,
+  CreateDemarcheDto,
+  UpdateIdentificationDemarcheInputDto,
+} from '@biblio-num/shared'
 
 @ApiTags('Demarches')
 @UseGuards(PermissionsGuard)
@@ -104,5 +110,19 @@ export class DemarcheController {
     this.logger.verbose('synchroDossiers')
     await this.demarcheSynchroniseService.synchroniseOneDemarche(idDs)
     return { message: `Demarche with DS id ${idDs} has been synchronised.` }
+  }
+
+  @Patch(':id/identification')
+  @Roles('admin') // TODO: superadmin
+  async updateIdendtication (
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateIdentificationDemarcheInputDto,
+  ): Promise<{message: string}> {
+    this.logger.verbose(`update identification of demarche ${id}`)
+    if (dto && dto.identification === undefined) {
+      throw new BadRequestException('identification can not be undefined')
+    }
+    await this.demarcheService.updateIdentificationDemarche(id, dto.identification)
+    return { message: `Demarche of id ${id} has been update with identification ${dto.identification}.` }
   }
 }

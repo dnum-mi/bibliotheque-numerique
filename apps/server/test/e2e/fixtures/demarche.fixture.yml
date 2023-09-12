@@ -53,4 +53,93 @@ items:
     identification: "financement"
     type: "ARUP"
     dsDataJson: { number: 3 }
+  demarche-update-identification:
+    id: 5
+    state: "published"
+    title: "[UPDATE-IDENTIFICATION] Déclaration de financement étranger"
+    type: "ARUP"
+    mappingColumns: [
+      {"id":"I01", "label":"Identifiant"},
+      {"id":"I02", "label":"Moment"},
+      {"id":"I03", "label":"Titre"},
+      {"id":"I04", "label":"Consentement"},
+      {"id":"I05", "label":"Etat"},
+      {"id":"I06", "label":"Delais"},
+      {"id":"I07", "label":"Excel"},
+      {"id":"I08", "label":"Montant"},
+      {"id":"I09", "label":"Pays"},
+      {"id":"I10", "label":"Organismefinanceur"}
+    ]
+    dsDataJson: {number: 4}
+  demarche-delete-identification:
+    id: 6
+    state: "published"
+    title: "[DELETE-IDENTIFICATION] Déclaration de financement étranger"
+    type: "ARUP"
+    identification: "FE"
+    mappingColumns: [
+    {
+        "id": "ca6b1946-efe2-448d-b9e3-645829093dc6",
+        "type": "number",
+        "source": "fix-field",
+        "columnLabel": null,
+        "originalLabel": "Temps restant",
+        "formatFunctionRef": "remaing-time"
+    },
+    {
+        "id": "ca6b1946-efe2-448d-b9e3-645829093dc5",
+        "type": "string",
+        "source": "fix-field",
+        "columnLabel": null,
+        "originalLabel": "Etat délai",
+        "formatFunctionRef": "delay-status"
+    },
+      {"id":"I01", "label":"Identifiant"},
+      {"id":"I02", "label":"Moment"},
+      {"id":"I03", "label":"Titre"},
+      {"id":"I04", "label":"Consentement"},
+      {"id":"I05", "label":"Etat"},
+      {"id":"I06", "label":"Delais"},
+      {"id":"I07", "label":"Excel"},
+      {"id":"I08", "label":"Montant"},
+      {"id":"I09", "label":"Pays"},
+      {"id":"I10", "label":"Organismefinanceur"}
+    ]
+    dsDataJson: {number: 5}
+
+  demarche-undefined-identification:
+    id: 6
+    state: "published"
+    title: "[UNDEFINED-IDENTIFICATION] Déclaration de financement étranger"
+    type: "ARUP"
+    identification: "FE"
+    mappingColumns: [
+    {
+        "id": "ca6b1946-efe2-448d-b9e3-645829093dc6",
+        "type": "number",
+        "source": "fix-field",
+        "columnLabel": null,
+        "originalLabel": "Temps restant",
+        "formatFunctionRef": "remaing-time"
+    },
+    {
+        "id": "ca6b1946-efe2-448d-b9e3-645829093dc5",
+        "type": "string",
+        "source": "fix-field",
+        "columnLabel": null,
+        "originalLabel": "Etat délai",
+        "formatFunctionRef": "delay-status"
+    },
+      {"id":"I01", "label":"Identifiant"},
+      {"id":"I02", "label":"Moment"},
+      {"id":"I03", "label":"Titre"},
+      {"id":"I04", "label":"Consentement"},
+      {"id":"I05", "label":"Etat"},
+      {"id":"I06", "label":"Delais"},
+      {"id":"I07", "label":"Excel"},
+      {"id":"I08", "label":"Montant"},
+      {"id":"I09", "label":"Pays"},
+      {"id":"I10", "label":"Organismefinanceur"}
+    ]
+    dsDataJson: {number: 6}
 
