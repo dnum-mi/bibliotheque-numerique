@@ -1,15 +1,27 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { Repository } from 'typeorm'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { ConfigService } from '@nestjs/config'
 import { Demarche } from '../../objects/entities/demarche.entity'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { InjectRepository } from '@nestjs/typeorm'
-import { OrganismeType, OrganismeTypeKeys, organismeTypeRegex } from '../../objects/enums/organisme-type.enum'
+import {
+  OrganismeType,
+  OrganismeTypeKeys,
+  organismeTypeRegex,
+} from '../../objects/enums/organisme-type.enum'
 import { DsApiClient } from '@dnum-mi/ds-api-client'
 import { DemarcheService } from './demarche.service'
 import { DossierSynchroniseService } from '../../../dossiers/providers/dossier-synchronise.service'
-import { type ChampDescriptor, type Demarche as TDemarche, type Dossier as TDossier } from '@dnum-mi/ds-api-client'
+import {
+  type ChampDescriptor,
+  type Demarche as TDemarche,
+  type Dossier as TDossier,
+} from '@dnum-mi/ds-api-client'
 import { fixFields } from '../../../dossiers/objects/constante/fix-field.dictionnary'
 import {
   giveFormatFunctionRefFromDsChampType,
@@ -20,7 +32,7 @@ import { FieldSource, FieldSourceKeys, MappingColumn } from '@biblio-num/shared'
 
 @Injectable()
 export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
-  constructor (
+  constructor(
     private configService: ConfigService,
     protected logger: LoggerService,
     private demarcheService: DemarcheService,
@@ -33,11 +45,17 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
   }
 
   /* region private */
-  private _findOrganismeType (dsDemarche: Partial<TDemarche>): OrganismeTypeKeys {
+  private _findOrganismeType(
+    dsDemarche: Partial<TDemarche>,
+  ): OrganismeTypeKeys {
     this.logger.verbose('_findTypeOfOrganisme')
-    for (const descriptor of dsDemarche.activeRevision?.annotationDescriptors ?? []) {
+    for (const descriptor of dsDemarche.activeRevision?.annotationDescriptors ??
+    []) {
       for (const [type, regex] of Object.entries(organismeTypeRegex)) {
-        if (descriptor.label.includes('organisme') && descriptor.description.match(regex)) {
+        if (
+          descriptor.label.includes('organisme') &&
+          descriptor.description.match(regex)
+        ) {
           return type
         }
       }
@@ -45,7 +63,10 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
     return OrganismeType.unknown
   }
 
-  private async _synchroniseAllDossier (dossiers: TDossier[], demarche: Demarche): Promise<void> {
+  private async _synchroniseAllDossier(
+    dossiers: TDossier[],
+    demarche: Demarche,
+  ): Promise<void> {
     this.logger.verbose('_synchroniseAllDossier')
     await Promise.all(
       dossiers.map(
@@ -63,28 +84,51 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
     )
   }
 
-  private _generateMappingColumns (dsDemarche: Partial<TDemarche>): MappingColumn[] {
+  private _generateMappingColumns(
+    dsDemarche: Partial<TDemarche>,
+    originalMappingColumns: MappingColumn[] = [],
+  ): MappingColumn[] {
     this.logger.verbose('_generateMappingColumns')
     const revision = dsDemarche.publishedRevision ?? dsDemarche.activeRevision
     if (!revision) {
       throw new Error('No revision found inside demarche.')
     }
-    const __fromDescriptorsToMappingColumn = (cds: ChampDescriptor[], source: FieldSourceKeys): MappingColumn[] =>
+    const originalRenameHash = Object.fromEntries(
+      originalMappingColumns.map((omc) => [omc.id, omc.columnLabel]),
+    )
+    const __fromDescriptorsToMappingColumn = (
+      cds: ChampDescriptor[],
+      source: FieldSourceKeys,
+    ): MappingColumn[] =>
       cds.map((cd: ChampDescriptor) => ({
         id: cd.id,
         originalLabel: cd.label,
-        columnLabel: null,
-        formatFunctionRef: giveFormatFunctionRefFromDsChampType(cd.__typename, true),
+        columnLabel: originalRenameHash[cd.id] || null,
+        formatFunctionRef: giveFormatFunctionRefFromDsChampType(
+          cd.__typename,
+          true,
+        ),
         source,
         type: giveTypeFromDsChampType(cd.__typename, true),
-        ...isRepetitionChampDescriptor(cd)
-          ? { children: __fromDescriptorsToMappingColumn(cd.champDescriptors as ChampDescriptor[], source) }
-          : {},
+        ...(isRepetitionChampDescriptor(cd)
+          ? {
+            children: __fromDescriptorsToMappingColumn(
+              cd.champDescriptors as ChampDescriptor[],
+              source,
+            ),
+          }
+          : {}),
       }))
 
     return [
-      ...fixFields,
-      ...__fromDescriptorsToMappingColumn((revision.champDescriptors as ChampDescriptor[]) ?? [], FieldSource.champs),
+      ...fixFields.map(ff => ({
+        columnLabel: originalRenameHash[ff.id] || ff.columnLabel,
+        ...ff,
+      })),
+      ...__fromDescriptorsToMappingColumn(
+        (revision.champDescriptors as ChampDescriptor[]) ?? [],
+        FieldSource.champs,
+      ),
       ...__fromDescriptorsToMappingColumn(
         (revision.annotationDescriptors as ChampDescriptor[]) ?? [],
         FieldSource.annotation,
@@ -92,10 +136,19 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
     ]
   }
 
-  private async _synchroniseOneDemarche (demarche: Demarche, dsId: number, fromScratch = false): Promise<void> {
+  private async _synchroniseOneDemarche(
+    demarche: Demarche,
+    dsId: number,
+    fromScratch = false,
+  ): Promise<void> {
     this.logger.verbose('_synchroniseOneDemarche')
-    const lastSyncronisedAt = fromScratch ? new Date(0) : demarche.lastSynchronisedAt
-    const result = await this.dsApiClient.demarcheDossierWithCustomChamp(dsId, lastSyncronisedAt)
+    const lastSyncronisedAt = fromScratch
+      ? new Date(0)
+      : demarche.lastSynchronisedAt
+    const result = await this.dsApiClient.demarcheDossierWithCustomChamp(
+      dsId,
+      lastSyncronisedAt,
+    )
     const raw = result.demarche
     const dossiers = [...raw.dossiers.nodes]
     delete raw.dossiers
@@ -104,20 +157,22 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
       title: raw.title,
       state: raw.state,
       type: this._findOrganismeType(raw),
-      mappingColumns: this._generateMappingColumns(raw),
+      mappingColumns: this._generateMappingColumns(
+        raw,
+        demarche.mappingColumns,
+      ),
       dsDataJson: raw,
     }
-    await this.repo.update(
-      { id: demarche.id },
-      toUpdate,
-    )
+    await this.repo.update({ id: demarche.id }, toUpdate)
     await this._synchroniseAllDossier(dossiers, { ...demarche, ...toUpdate })
-    this.logger.log(`successfully synchronised demarche (with Id DS: ${dsId}) and its dossiers`)
+    this.logger.log(
+      `successfully synchronised demarche (with Id DS: ${dsId}) and its dossiers`,
+    )
   }
 
   /* endregion */
 
-  public async createAndSynchronise (dsId: number): Promise<void> {
+  public async createAndSynchronise(dsId: number): Promise<void> {
     this.logger.verbose('createAndSynchronise')
     const raw = await this.dsApiClient.demarcheDossierWithCustomChamp(dsId)
     if (!raw) {
@@ -139,7 +194,10 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
     await this._synchroniseAllDossier(dossiers, demarche)
   }
 
-  public async synchroniseOneDemarche (dsId: number, fromScratch = false): Promise<void> {
+  public async synchroniseOneDemarche(
+    dsId: number,
+    fromScratch = false,
+  ): Promise<void> {
     this.logger.verbose('synchroniseOneDemarche')
     const demarche = await this.demarcheService.findByDsId(dsId)
     if (!demarche) {
@@ -148,11 +206,15 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
     return this._synchroniseOneDemarche(demarche, dsId, fromScratch)
   }
 
-  public async synchroniseAllDemarches (fromScratch = false): Promise<void[]> {
+  public async synchroniseAllDemarches(fromScratch = false): Promise<void[]> {
     this.logger.verbose('synchroniseAllDemarches')
     const demarches = await this.repo.find()
     const promises = demarches.map((demarche) =>
-      this._synchroniseOneDemarche(demarche, demarche.dsDataJson.number, fromScratch),
+      this._synchroniseOneDemarche(
+        demarche,
+        demarche.dsDataJson.number,
+        fromScratch,
+      ),
     )
     return Promise.all(promises)
   }
