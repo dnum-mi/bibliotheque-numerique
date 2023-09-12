@@ -8,6 +8,54 @@ import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
 import { Demarche } from '@/modules/demarches/objects/entities/demarche.entity'
 import { InstructionTime } from '@/plugins/instruction_time/instruction_times/instruction_time.entity'
 
+import * as dayjs from 'dayjs'
+
+const expectedFixFieldsDates = (dossierId,
+  dateDepot = null,
+  datePassageEnInstruction = null,
+  datePassageEnConstruction = null)
+  :Partial<Field>[] => ([
+  {
+    sourceId: '9863ce70-6378-4d7e-aca9-b81fb7b97c11',
+    label: 'Date de dépot',
+    formatFunctionRef: null,
+    type: 'date',
+    fieldSource: 'fix-field',
+    stringValue: dateDepot ? dayjs(dateDepot).toISOString() : '',
+    dateValue: dateDepot ? dayjs(dateDepot).toDate() : null,
+    numberValue: null,
+    parentRowIndex: null,
+    rawJson: null,
+    dsChampType: null,
+  },
+  {
+    sourceId: '9863ce70-6378-4d7e-aca9-b81fb7b97c12',
+    label: 'Date de passage en instruction',
+    formatFunctionRef: null,
+    type: 'date',
+    fieldSource: 'fix-field',
+    stringValue: dateDepot ? dayjs(datePassageEnInstruction).toISOString() : '',
+    dateValue: dateDepot ? dayjs(datePassageEnInstruction).toDate() : null,
+    numberValue: null,
+    parentRowIndex: null,
+    rawJson: null,
+    dsChampType: null,
+  },
+  {
+    sourceId: '9863ce70-6378-4d7e-aca9-b81fb7b97c13',
+    label: 'Date de passage en construction',
+    formatFunctionRef: null,
+    type: 'date',
+    fieldSource: 'fix-field',
+    stringValue: dateDepot ? dayjs(datePassageEnConstruction).toISOString() : '',
+    dateValue: dateDepot ? dayjs(datePassageEnConstruction).toDate() : null,
+    numberValue: null,
+    parentRowIndex: null,
+    rawJson: null,
+    dsChampType: null,
+  },
+])
+
 describe('Syncronisation ', () => {
   let app: INestApplication
   let cookie: string
@@ -93,7 +141,8 @@ describe('Syncronisation ', () => {
         })
       })
       .then((fields) => {
-        expect(fields.length).toEqual(10)
+        console.log(fields)
+        expect(fields.length).toEqual(13)
         expect(fields).toMatchObject([
           {
             fieldSource: 'fix-field',
@@ -123,6 +172,7 @@ describe('Syncronisation ', () => {
             label: 'Id démarche simplifié',
             rawJson: null,
           },
+          ...expectedFixFieldsDates(42),
           {
             fieldSource: 'champs',
             dsChampType: 'TextChamp',
@@ -224,10 +274,10 @@ describe('Syncronisation ', () => {
             label: 'Une annotation',
           },
         ])
-        expect(fields[4].parentId).toEqual(fields[8].id)
-        expect(fields[5].parentId).toEqual(fields[8].id)
-        expect(fields[6].parentId).toEqual(fields[8].id)
-        expect(fields[7].parentId).toEqual(fields[8].id)
+        expect(fields[7].parentId).toEqual(fields[11].id)
+        expect(fields[8].parentId).toEqual(fields[11].id)
+        expect(fields[9].parentId).toEqual(fields[11].id)
+        expect(fields[10].parentId).toEqual(fields[11].id)
       })
   })
 })

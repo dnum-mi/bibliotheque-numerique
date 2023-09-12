@@ -1,15 +1,18 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
+
 import configuration from './config/worker.config'
 import dsConfig from './config/ds.config'
-import { LoggerModule } from './shared/modules/logger/logger.module'
+import smtpConfig from './config/smtp.config'
 import fileConfig from './config/file.config'
+import loggerConfig from './config/logger.config'
+
+import { LoggerModule } from './shared/modules/logger/logger.module'
 import { CronModule } from './modules/cron/cron.module'
 import { ScheduleModule } from '@nestjs/schedule'
 import { JobLogModule } from './modules/job-log/job-log.module'
 import { typeormFactoryLoader } from './shared/utils/typeorm-factory-loader'
-import loggerConfig from './config/logger.config'
 import { DsApiModule } from './shared/modules/ds-api/ds-api.module'
 
 @Module({
@@ -17,7 +20,7 @@ import { DsApiModule } from './shared/modules/ds-api/ds-api.module'
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
-      load: [configuration, dsConfig, fileConfig, loggerConfig],
+      load: [configuration, dsConfig, fileConfig, loggerConfig, smtpConfig],
     }),
     LoggerModule,
     TypeOrmModule.forRootAsync(typeormFactoryLoader),

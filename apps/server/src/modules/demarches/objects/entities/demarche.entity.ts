@@ -25,7 +25,7 @@ export class Demarche extends BaseEntity {
   @Column({ type: 'jsonb', default: '[]' })
   mappingColumns: MappingColumn[]
 
-  @Column({ type: 'date', default: '2022-01-01' })
+  @Column({ type: 'timestamp', default: '2022-01-01' })
   lastSynchronisedAt: Date
 
   @Column({
