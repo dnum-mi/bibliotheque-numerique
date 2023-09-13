@@ -11,14 +11,12 @@ import { LoggerService } from '@/shared/modules/logger/providers/logger.service'
 import { PrismaService } from '@/shared/modules/prisma/providers/prisma.service'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { CreateFileStorageDto } from '@/shared/objects/file-storage/create-file.dto'
-import { Express } from 'express'
 
 @Injectable()
 export class FileStorageService extends BaseEntityService {
   private s3: S3
   private bucketName: string
   private authorizedExtensions: string
-  private maxFileSize: number
 
   constructor (
     protected readonly prisma: PrismaService,
@@ -38,38 +36,6 @@ export class FileStorageService extends BaseEntityService {
     })
     this.bucketName = this.config.get('file.awsDefaultS3Bucket')!
     this.authorizedExtensions = this.config.get('file.authorizedExtensions')!
-    this.maxFileSize = this.config.get('file.maxFileSize')!
-  }
-
-  async uploadFile (file: Express.Multer.File, checksum = ''): Promise<FileStorageEntity> {
-    this.logger.verbose('uploadFile')
-    if (!file) {
-      throw new BadRequestException('file should not be empty')
-    }
-
-    const fileName: string = file.originalname
-    const fileExtension: string = this.fileExtension(fileName)
-    const fileKey = `${randomStringGenerator()}.${fileExtension.toLowerCase()}`
-
-    this.fileFilter(fileExtension)
-
-    const uploadResult: S3.ManagedUpload.SendData = await this.s3.upload({
-      Bucket: this.bucketName,
-      Key: fileKey,
-      Body: file.buffer,
-    }, { partSize: this.maxFileSize }).promise()
-
-    return await this.prisma.fileStorage.create({
-      data: {
-        name: fileKey,
-        path: uploadResult.Location,
-        originalName: fileName,
-        checksum,
-        byteSize: file.size,
-        mimeType: file.mimetype,
-        foundation: {},
-      },
-    })
   }
 
   public async findFileStorage (uuid: string): Promise<FileStorageEntity> {
