@@ -3,13 +3,11 @@
 import type { TIconFunction } from '@/shared/types/typeDataTablele.js'
 import { computed } from 'vue'
 
-const props = withDefaults(defineProps<{
-  label?: string,
-  disabled?: boolean,
+const props = defineProps<{
+  label:string,
+  disabled: boolean,
   params: any,
-}>(), {
-  label: '',
-})
+}>()
 
 const getIcon = (icon?: string | TIconFunction): string => {
   if (typeof icon === 'function') {
@@ -31,6 +29,18 @@ const showElt = () => {
   props.params.context.showElt(props.params.data)
 }
 </script>
+<template>
+  <DsfrButton
+    v-show="show"
+    :title="params.title"
+    data-cy="cell-action-icon"
+    :disabled="disabled"
+    :icon="icon"
+    tertiary
+    icon-only
+    @click="showElt"
+  />
+</template>
 
 <template>
   <DsfrButton

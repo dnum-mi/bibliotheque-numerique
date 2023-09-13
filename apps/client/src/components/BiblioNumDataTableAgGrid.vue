@@ -21,6 +21,7 @@ import type { SelectionChangedEvent, GridReadyEvent } from 'ag-grid-community'
 const props = withDefaults(defineProps<{
     title?: string,
     rowData?: Record<string, any>[],
+    actionTitle: string,
     headers?: HeaderDataTable[],
     pagination?: boolean,
     paginationPageSize?: number,
@@ -102,7 +103,10 @@ const columnDefs: ComputedRef<AgGridColumnDefs[]> = computed(() => {
           headerName: 'Action',
           field: headers[0].value,
           cellRenderer: TableCellAction,
-          cellRendererParams: { action: headers[0].action },
+          cellRendererParams: {
+            action: headers[0].action,
+            title: props.actionTitle,
+          },
           initialPinned: 'left',
           width: 100,
           sortable: false,
@@ -183,8 +187,9 @@ defineExpose({
     {{ title }}
   </h4>
   <ag-grid-vue
-    style="max-width: 100%;height: 690px;"
+    style="max-width: 100%; height: 690px"
     class="ag-theme-material"
+    ensure-dom-order="true"
     :column-defs="columnDefs"
     :row-data="rowData"
     :pagination="pagination"
