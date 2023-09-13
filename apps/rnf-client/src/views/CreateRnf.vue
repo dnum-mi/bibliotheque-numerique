@@ -23,8 +23,9 @@ const dictFoundation = {
   phone: 'Téléphone',
   email: 'Courriel du déclarant',
   'address.label': 'Adresse du siège social',
+  status: 'Statuts',
 } as const
-const { rnfId: _, ...dictCurrentFoundation } = dictFoundation
+const { rnfId, ...dictCurrentFoundation } = dictFoundation
 
 const [DefineTemplate, ReuseTemplate] = createReusableTemplate<{
   foundation: CurrentFoundationOutputDto | FoundationOutputDto
@@ -124,7 +125,16 @@ const buttonProps = computed(() => (selectedFoundation.value ? rejectProps : cre
   <DefineTemplate v-slot="{ foundation, dictionnaire }">
     <div v-for="(value, prop) in dictionnaire" :key="prop" class="fr-pl-4w">
       <h5 class="fr-text--md fr-my-1v">{{ value }}</h5>
-      <p class="break-word">{{ deepGet(foundation, prop, '') }}</p>
+      <template v-if="typeof deepGet(foundation, prop, '') != 'object'">
+        <p class="break-word">{{ deepGet(foundation, prop, '') }}</p>
+      </template>
+      <template v-else>
+        <p class="break-word">
+          <a :href="deepGet(foundation, prop, '').fileUrl || `/api/files/${deepGet(foundation, prop, '').uuid}`" target="_blank">
+            Voir les statuts
+          </a>
+        </p>
+      </template>
     </div>
   </DefineTemplate>
 

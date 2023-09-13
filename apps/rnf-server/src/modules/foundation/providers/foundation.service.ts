@@ -104,25 +104,23 @@ export class FoundationService extends BaseEntityService {
     })
   }
 
-  async getFoundations (ids: number[]): Promise<FoundationEntity[]> {
+  async getFoundations (ids: number[]): Promise<GetFoundationOutputDto[]> {
     return this.prisma.foundation.findMany({
       where: { id: { in: ids } },
-      include: { address: true },
+      include: { address: true, status: true },
     })
   }
 
   async getOneFoundation (rnfId: string): Promise<GetFoundationOutputDto | null> {
     this.logger.verbose('getOneFoundation')
-    return this.prisma.foundation.findUnique({
+    const foundation = await this.prisma.foundation.findUnique({
       where: { rnfId },
       include: { address: true, status: true },
     })
-      .then((foundation) => {
-        if (!foundation) {
-          throw new NotFoundException('No foundation found with this rnfId.')
-        }
-        return foundation
-      })
+    if (!foundation) {
+      throw new NotFoundException('No foundation found with this rnfId.')
+    }
+    return foundation
   }
 
   async getFoundationsByRnfIds (rnfIds: string[], updatedAfter: Date | undefined): Promise<FoundationEntity[]> {
