@@ -122,6 +122,7 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
     await this.fieldService.overwriteFieldsFromDataJson(jsonDossier, id, demarche.mappingColumns)
     if (demarche.identification === IdentificationDemarche.FE) {
       await this.instructionTimeService.proccessByDossierId(id)
+      await this.instructionTimeService.instructionTimeCalculation([id])
     }
     this.logger.log(`Successfully synchronised dossier ${id} (dsId: ${jsonDossier.number})`)
   }
