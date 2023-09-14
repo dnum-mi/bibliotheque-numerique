@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common'
 import { FileStorageController } from './controllers/file-storage.controller'
-import { ConfigModule, ConfigService } from '@nestjs/config'
 import { FileStorageService } from './providers/file-storage.service'
 import { HttpModule } from '@nestjs/axios'
 
@@ -9,7 +8,7 @@ import { HttpModule } from '@nestjs/axios'
     HttpModule,
   ],
   controllers: [FileStorageController],
-  providers: [ConfigModule, ConfigService, FileStorageService],
+  providers: [FileStorageService],
   exports: [FileStorageService],
 })
 export class FileStorageModule {}

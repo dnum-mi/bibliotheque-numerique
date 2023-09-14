@@ -7,10 +7,12 @@ import { mainConfig } from '@/main.config'
 import { PrismaService } from '@/shared/modules/prisma/providers/prisma.service'
 import { LoggerService } from '@/shared/modules/logger/providers/logger.service'
 import { loggerServiceMock } from '../mocks/logger-service.mock'
+import { FileStorageService } from '@/modules/file-storage/providers/file-storage.service'
 
 interface TestingModuleFactoryOutput {
   app: INestApplication;
   prisma: PrismaService;
+  fileStorage: FileStorageService;
 }
 
 export const testingModuleFactory = async (): Promise<TestingModuleFactoryOutput> => {
@@ -26,7 +28,8 @@ export const testingModuleFactory = async (): Promise<TestingModuleFactoryOutput
   const app = moduleFixture.createNestApplication()
   mainConfig(app)
   const prisma = moduleFixture.get<PrismaService>(PrismaService)
+  const fileStorage = moduleFixture.get<FileStorageService>(FileStorageService)
   await app.init()
 
-  return { app, prisma }
+  return { app, prisma, fileStorage }
 }

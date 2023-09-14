@@ -109,9 +109,9 @@ describe('Foundation Controller (e2e)', () => {
       .expect({
         statusCode: 400,
         message:
-          'Validation error(s):\n Champs dossierId: dossierId should not be null or undefined, dossierId must not be less than 0' +
+          'Validation error(s):\n Champ dossierId: dossierId should not be null or undefined, dossierId must not be less than 0' +
           ', dossierId must be a number conforming to the specified constraints\n' +
-          'Champs email: email should not be null or undefined, email must be an email',
+          'Champ email: email should not be null or undefined, email must be an email',
         data: {},
         path: '/api/foundations',
       })
@@ -304,7 +304,7 @@ describe('Foundation Controller (e2e)', () => {
   it('GET /foundations/rnf-id - Should return 400 for wrong rnf', async () => {
     return await request(app.getHttpServer()).get('/api/foundations/toto').expect(400).expect({
       statusCode: 400,
-      message: "Validation error(s):\n Champs rnfId: Le numéro RNF n'est pas valide",
+      message: "Validation error(s):\n Champ rnfId: Le numéro RNF n'est pas valide",
       data: {},
       path: '/api/foundations/toto',
     })

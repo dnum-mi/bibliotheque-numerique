@@ -1,8 +1,9 @@
 import { IsDefined, IsNotEmpty, IsNumber, IsString } from 'class-validator'
 import { BaseEntity } from '@/shared/base-entity/base.entity'
 import { FoundationEntity } from '@/modules/foundation/objects/foundation.entity'
+import { FileStorage } from '@prisma/client'
 
-export class FileStorageEntity extends BaseEntity {
+export class FileStorageEntity extends BaseEntity implements FileStorage {
   @IsString()
   @IsDefined()
   @IsNotEmpty()
@@ -37,6 +38,9 @@ export class FileStorageEntity extends BaseEntity {
   @IsDefined()
   @IsNotEmpty()
     mimeType: string
+
+  @IsNumber()
+    foundationId: number
 
   foundation?: FoundationEntity
 }

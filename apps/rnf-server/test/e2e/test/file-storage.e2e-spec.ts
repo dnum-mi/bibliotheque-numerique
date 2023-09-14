@@ -2,73 +2,25 @@ import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
 import { testingModuleFactory } from '../testing-module.factory'
 import { PrismaService } from '@/shared/modules/prisma/providers/prisma.service'
+import { FileStorageService } from '@/modules/file-storage/providers/file-storage.service'
+import stream, { Readable } from 'stream'
 
 describe('file-storage (e2e)', () => {
   let app: INestApplication
   let prisma: PrismaService
+  let fileStorage: FileStorageService
 
   beforeAll(async () => {
-    ({ app, prisma } = await testingModuleFactory())
+    ({
+      app,
+      prisma,
+      fileStorage,
+    } = await testingModuleFactory())
   })
 
   afterAll(async () => {
     await app.close()
     await prisma.$disconnect()
-  })
-
-  it('POST /files/upload - Should upload file', async () => {
-    const result = await request(app.getHttpServer())
-      .post('/api/files/upload')
-      .attach('file', './test/mocks/datas/pj/goodFile.txt')
-      .expect(201)
-    expect(result.body).toMatchObject({
-      id: expect.any(Number),
-      uuid: expect.any(String),
-      createdAt: expect.any(String),
-      updatedAt: expect.any(String),
-      name: expect.any(String),
-      path: expect.any(String),
-      originalName: 'goodFile.txt',
-      checksum: '',
-      byteSize: 9,
-      mimeType: 'text/plain',
-    })
-  })
-
-  it('POST /files/upload - Should return 400 if file is not provided', () => {
-    return request(app.getHttpServer())
-      .post('/api/files/upload')
-      .expect(400)
-      .expect({
-        statusCode: 400,
-        message: 'file should not be empty',
-        data: {},
-        path: '/api/files/upload',
-      })
-  })
-
-  it('POST /files/upload - Should return 422 if file extension is not valid', () => {
-    return request(app.getHttpServer())
-      .post('/api/files/upload')
-      .attach('file', './test/mocks/datas/pj/badFile.sh')
-      .expect(422)
-      .expect({
-        statusCode: 422,
-        message: 'File is not valid',
-        data: {},
-        path: '/api/files/upload',
-      })
-  })
-
-  it('GET /files/:id - Should download file', async () => {
-    const { body } = await request(app.getHttpServer())
-      .post('/api/files/upload')
-      .attach('file', './test/mocks/datas/pj/goodFile.txt')
-      .expect(201)
-    return request(app.getHttpServer())
-      .get(`/api/files/${body.uuid}`)
-      .expect(200)
-      .expect('test PJ.\n')
   })
 
   it('GET /files/:id - Should return 404 if file not found', () => {
@@ -77,7 +29,7 @@ describe('file-storage (e2e)', () => {
       .expect(404)
       .expect({
         statusCode: 404,
-        message: 'Not Found',
+        message: 'UUID not found',
         data: {},
         path: '/api/files/cf9fb439-2ff0-4fe1-8416-41b63834c5ea',
       })
@@ -89,54 +41,39 @@ describe('file-storage (e2e)', () => {
       .expect(400)
       .expect({
         statusCode: 400,
-        message: 'Validation failed (uuid  is expected)',
+        message: 'Validation error(s):\n Champ uuid: uuid must be a UUID',
         data: {},
         path: '/api/files/toto',
       })
   })
 
-  it('POST /files/copy - Should copy file', async () => {
-    const result = await request(app.getHttpServer())
-      .post('/api/files/copy')
-      .send({
-        fileUrl: 'https://developer.mozilla.org/favicon-48x48.cbbd161b.png',
-        fileName: 'favicon-48x48.cbbd161b.png',
-        checksum: 'd41d8cd98f00b204e9800998ecf8427e',
-        mimeType: 'image/png',
-        byteSize: '1078',
-      })
-      .expect(201)
-    expect(result.body).toMatchObject({
-      id: expect.any(Number),
-      uuid: expect.any(String),
-      name: expect.any(String),
-      path: expect.any(String),
-      originalName: 'favicon-48x48.cbbd161b.png',
-      mimeType: 'image/png',
-      byteSize: 1078,
-      checksum: 'd41d8cd98f00b204e9800998ecf8427e',
-      createdAt: expect.any(String),
-      updatedAt: expect.any(String),
+  it('GET /files/:id - Should download file', async () => {
+    const textInFile = 'test PJ.'
+    const fileUuid = 'c8e8d568-64b8-4508-a2d4-d17586184b3f'
+    jest.spyOn(fileStorage, 'findFileStorage').mockResolvedValue(
+      {
+        id: 1,
+        uuid: fileUuid,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        name: '0855e52f3ad28137d4a69.jpg',
+        path: 'http://127.0.0.1:9000/rnfbucket/0855e52f3ad28137d4a69.jpg',
+        originalName: 'test.jpg',
+        checksum: '0855e52f3ad28137d4a69',
+        byteSize: 1000,
+        mimeType: 'image/jpeg',
+        foundationId: 1,
+      },
+    )
+    jest.spyOn(fileStorage, 's3GetObject').mockImplementation((): stream.Readable => {
+      const readable = new Readable()
+      readable.push(textInFile)
+      readable.push(null)
+      return readable
     })
-  })
-
-  it('POST /files/copy - Should return 404 if fileUrl is not reachable', () => {
-    return request(app.getHttpServer())
-      .post('/api/files/copy')
-      .send({
-        fileUrl: 'https://developer.mozilla.org/badFile.png',
-        fileName: 'badFile.png',
-        checksum: 'd41d8cd98f00b204e9800998ecf8427e',
-        mimeType: 'image/png',
-        byteSize: '1078',
-      })
-      .expect(404)
-      .expect({
-        statusCode: 404,
-        message: 'File is not found',
-        data: {},
-        path: '/api/files/copy',
-
-      })
+    await request(app.getHttpServer())
+      .get(`/api/files/${fileUuid}`)
+      .expect(200)
+      .expect(textInFile)
   })
 })

@@ -1,4 +1,8 @@
-import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common'
+import {
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import * as AWS from 'aws-sdk'
 import stream, { PassThrough } from 'stream'
@@ -42,7 +46,7 @@ export class FileStorageService extends BaseEntityService {
     this.logger.verbose('findFileStorage')
     return this.prisma.fileStorage.findFirst({ where: { uuid } }).then((fileStorage) => {
       if (!fileStorage) {
-        throw new NotFoundException('')
+        throw new NotFoundException('UUID not found')
       }
       return fileStorage
     })
@@ -50,18 +54,14 @@ export class FileStorageService extends BaseEntityService {
 
   public async getFile (uuid: string): Promise<{ stream: stream.Readable; info: FileStorageEntity }> {
     this.logger.verbose('getFile')
-    if (uuid.length !== 36) throw new BadRequestException('Validation failed (uuid  is expected)')
 
     const fileStorage: FileStorageEntity = await this.findFileStorage(uuid)
 
     if (fileStorage) {
-      const stream: stream.Readable = this.s3.getObject({
-        Bucket: this.bucketName,
-        Key: fileStorage.name,
-      }).createReadStream()
+      const stream: stream.Readable = this.s3GetObject(fileStorage.name)
       return { stream, info: fileStorage }
     }
-    throw new NotFoundException()
+    throw new NotFoundException("File doesn't exist in the bucket")
   }
 
   async copyRemoteFile ({ fileUrl, originalName }: CreateFileStorageDto):
@@ -86,6 +86,13 @@ export class FileStorageService extends BaseEntityService {
     }
   }
 
+  s3GetObject (Key: string): stream.Readable {
+    return this.s3.getObject({
+      Bucket: this.bucketName,
+      Key,
+    }).createReadStream()
+  }
+
   private uploadFromStream (
     fileResponse: AxiosResponse,
     fileName: string,
@@ -107,14 +114,14 @@ export class FileStorageService extends BaseEntityService {
     return { passThrough, promise }
   }
 
-  private async downloadFile (fileUrl): Promise<AxiosResponse> {
+  private async downloadFile (fileUrl: string): Promise<AxiosResponse> {
     this.logger.verbose('downloadFile')
     return await this.httpService.axiosRef({
       url: fileUrl,
       method: 'GET',
       responseType: 'stream',
     }).catch((error) => {
-      console.log(error)
+      this.logger.error(error as Error)
       throw new NotFoundException('File is not found')
     })
   }
@@ -122,16 +129,7 @@ export class FileStorageService extends BaseEntityService {
   private fileFilter (fileExtension: string): void {
     this.logger.verbose('fileFilter')
     if (!this.authorizedExtensions.includes('*') && !this.authorizedExtensions.includes(fileExtension)) {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          message: 'File is not valid',
-          errors: {
-            file: 'cantUploadFileType',
-          },
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      )
+      throw new UnprocessableEntityException('File is not valid')
     }
   }
 

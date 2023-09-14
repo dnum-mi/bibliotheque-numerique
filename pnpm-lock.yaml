@@ -341,8 +341,8 @@ importers:
         specifier: ^1.4.7
         version: 1.4.7
       aws-sdk:
-        specifier: ^2.1432.0
-        version: 2.1432.0
+        specifier: ^2.1443.0
+        version: 2.1443.0
       axios:
         specifier: ^1.4.0
         version: 1.4.0
@@ -7922,22 +7922,6 @@ packages:
   /available-typed-arrays@1.0.5:
     resolution: {integrity: sha512-DMD0KiN46eipeziST1LPP/STfDU0sufISXmjSgvVsoU2tqxctQeASejWcfNtxYKqETM1UxQ8sp2OrSBWpHY6sw==}
     engines: {node: '>= 0.4'}
-
-  /aws-sdk@2.1432.0:
-    resolution: {integrity: sha512-bnPilJ0YkFOHGL2yYSnpd/oMnsDicGQKmE479vDn/AVcKhRswcg893DTqxrkkuuylEIcIIPPHBqX+IlwNv1zqw==}
-    engines: {node: '>= 10.0.0'}
-    dependencies:
-      buffer: 4.9.2
-      events: 1.1.1
-      ieee754: 1.1.13
-      jmespath: 0.16.0
-      querystring: 0.2.0
-      sax: 1.2.1
-      url: 0.10.3
-      util: 0.12.5
-      uuid: 8.0.0
-      xml2js: 0.5.0
-    dev: false
 
   /aws-sdk@2.1443.0:
     resolution: {integrity: sha512-QMHWzNuNc3OyYGStCgoB3e4ouuDVIn8FJC5hDrPGX5qUyi8WeUb5l3oI/93MH5jym/1qLIsq4cArJYwUF2blgg==}
