@@ -182,7 +182,7 @@ describe("InstructionTimesService", () => {
     expect(results[fixFieldInstructionTimeStatus.id]).toMatchObject({
       sourceId: fixFieldInstructionTimeStatus.id,
       dossierId: 2,
-      stringValue: EInstructionTimeState.FIRST_REQUEST,
+      stringValue: "1ère demande",
       label: fixFieldInstructionTimeStatus.originalLabel,
       type: fixFieldInstructionTimeStatus.type,
       fieldSource: fixFieldInstructionTimeStatus.source,
@@ -987,7 +987,7 @@ describe("InstructionTimesService", () => {
     expect(results[fixFieldInstructionTimeStatus.id]).toMatchObject({
         sourceId: fixFieldInstructionTimeStatus.id,
         dossierId: dataInstructionTime.dossier.id,
-        stringValue: EInstructionTimeState.IN_PROGRESS,
+        stringValue: 'Instruction',
         label: fixFieldInstructionTimeStatus.originalLabel,
         type: fixFieldInstructionTimeStatus.type,
         fieldSource: fixFieldInstructionTimeStatus.source,
@@ -1022,7 +1022,7 @@ describe("InstructionTimesService", () => {
     expect(results[fixFieldInstructionTimeStatus.id]).toMatchObject({
         sourceId: fixFieldInstructionTimeStatus.id,
         dossierId: dataInstructionTime.dossier.id,
-        stringValue: EInstructionTimeState.OUT_OF_DATE,
+        stringValue: 'Délai expiré',
         label: fixFieldInstructionTimeStatus.originalLabel,
         type: fixFieldInstructionTimeStatus.type,
         fieldSource: fixFieldInstructionTimeStatus.source,
@@ -1072,7 +1072,7 @@ describe("InstructionTimesService", () => {
     expect(results[fixFieldInstructionTimeStatus.id]).toMatchObject({
         sourceId: fixFieldInstructionTimeStatus.id,
         dossierId: dataInstructionTime.dossier.id,
-        stringValue: EInstructionTimeState.SECOND_REQUEST,
+        stringValue: "2ème demande",
         label: fixFieldInstructionTimeStatus.originalLabel,
         type: fixFieldInstructionTimeStatus.type,
         fieldSource: fixFieldInstructionTimeStatus.source,
@@ -1116,7 +1116,7 @@ describe("InstructionTimesService", () => {
     expect(results[fixFieldInstructionTimeStatus.id]).toMatchObject({
         sourceId: fixFieldInstructionTimeStatus.id,
         dossierId: dataInstructionTime.dossier.id,
-        stringValue: EInstructionTimeState.INTENT_OPPO,
+        stringValue: 'Intention opposition',
         label: fixFieldInstructionTimeStatus.originalLabel,
         type: fixFieldInstructionTimeStatus.type,
         fieldSource: fixFieldInstructionTimeStatus.source,
@@ -1160,7 +1160,7 @@ describe("InstructionTimesService", () => {
     expect(results[fixFieldInstructionTimeStatus.id]).toMatchObject({
         sourceId: fixFieldInstructionTimeStatus.id,
         dossierId: dataInstructionTime.dossier.id,
-        stringValue: EInstructionTimeState.INTENT_OPPO,
+        stringValue: 'Intention opposition',
         label: fixFieldInstructionTimeStatus.originalLabel,
         type: fixFieldInstructionTimeStatus.type,
         fieldSource: fixFieldInstructionTimeStatus.source,

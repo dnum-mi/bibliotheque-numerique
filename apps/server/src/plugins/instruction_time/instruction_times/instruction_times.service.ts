@@ -39,6 +39,19 @@ type TDelay = {
 
 type toCheckDate = { date: Date | undefined | null; message: string };
 
+const stringValueDictionary = {
+  [EInstructionTimeState.FIRST_REQUEST]: '1ère demande',
+  [EInstructionTimeState.FIRST_RECEIPT]: '1ère demande',
+  [EInstructionTimeState.INTENT_OPPO]: 'Intention opposition',
+  [EInstructionTimeState.IN_ERROR]: 'Erreur',
+  [EInstructionTimeState.IN_EXTENSION]: 'Prorogation',
+  [EInstructionTimeState.IN_PROGRESS]: 'Instruction',
+  [EInstructionTimeState.OUT_OF_DATE]: 'Délai expiré',
+  [EInstructionTimeState.SECOND_RECEIPT]: '2ème demande',
+  [EInstructionTimeState.SECOND_REQUEST]: '2ème demande',
+
+}
+
 @Injectable()
 export class InstructionTimesService extends BaseEntityService<InstructionTime> {
   nbDaysAfterInstruction: number
@@ -161,7 +174,7 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
         await this.fieldService.upsert({
           sourceId: fixFieldInstructionTimeStatus.id,
           dossierId: dossier.id,
-          stringValue: delayStatus,
+          stringValue: stringValueDictionary[delayStatus],
           label: fixFieldInstructionTimeStatus.originalLabel,
           type: fixFieldInstructionTimeStatus.type,
           fieldSource: fixFieldInstructionTimeStatus.source,

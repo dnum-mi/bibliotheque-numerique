@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { defineProps, computed } from 'vue'
 import slugify from 'slugify'
+import delayStateBadge from '@/components/DelayStateBadge.vue'
 
 const props = defineProps<{ params: any }>()
 
@@ -17,6 +18,11 @@ const cellValues = computed(() => {
 
 const ffr = computed(() => {
   return props.params.column?.formatFunctionRef
+})
+
+const componentRenderer = computed(() => {
+  if (props.params.column?.formatFunctionRef === 'delay-status') return delayStateBadge
+  return null
 })
 /* endregion */
 
@@ -78,7 +84,12 @@ const getFlagURL = (countryName: string) => {
         />
       </template>
 
-      <!-- DEFAULT -->
+      <template v-else-if="!!componentRenderer">
+        <component
+          :is="componentRenderer"
+          :value="cellValue"
+        />
+      </template>
       <template v-else>
         {{ cellValue || "" }}
       </template>

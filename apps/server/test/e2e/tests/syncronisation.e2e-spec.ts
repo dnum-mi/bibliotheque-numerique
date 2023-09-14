@@ -380,7 +380,6 @@ describe('Syncronisation ', () => {
         })
       })
       .then((fields) => {
-        console.log(JSON.stringify(fields))
         expect(fields).toMatchObject(
           expect.arrayContaining([
             expect.objectContaining(
@@ -436,7 +435,7 @@ describe('Syncronisation ', () => {
             expect.objectContaining(
               {
                 sourceId: 'ca6b1946-efe2-448d-b9e3-645829093dc5',
-                stringValue: 'IN_PROGRESS',
+                stringValue: 'Instruction',
               },
             ),
             expect.objectContaining(
