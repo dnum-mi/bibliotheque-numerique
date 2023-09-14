@@ -486,6 +486,7 @@ describe('InstructionTimesService, Check Date', () => {
 
     expect(result).toThrow("Elle est aprés 60 jours par rapport à la date d'instruction")
   })
+
   it('cas In instruction, 2nd demand after 180 days of the instruction date: Should throw error check of validities of dates', () => {
     const result = (): void => {
       forTestValidity({
