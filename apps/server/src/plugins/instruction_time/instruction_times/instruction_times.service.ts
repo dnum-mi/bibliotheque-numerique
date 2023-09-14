@@ -146,13 +146,15 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
       }
 
       if (remainingTime != null && remainingTime >= 0) {
+        const value = Math.round(remainingTime)
         await this.fieldService.upsert({
           sourceId: fixFieldInstructionTimeDelay.id,
           dossierId: dossier.id,
-          numberValue: Math.round(remainingTime),
+          numberValue: value,
           label: fixFieldInstructionTimeDelay.originalLabel,
           type: fixFieldInstructionTimeDelay.type,
           fieldSource: fixFieldInstructionTimeDelay.source,
+          stringValue: `${value}`,
         })
       }
       if (delayStatus) {
