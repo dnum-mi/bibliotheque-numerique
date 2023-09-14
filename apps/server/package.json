@@ -20,7 +20,7 @@
     "dev:worker-in-docker": "run-s dev:worker",
     "docker:build": "docker compose -f docker-compose.yml -f docker-compose.yml build server",
     "docker:db:down": "docker compose -f docker-compose.yml down",
-    "docker:db:up": "docker compose -f docker-compose.yml up -d",
+    "docker:db:up": "docker compose --profile db-only -f docker-compose.yml  up -d",
     "docker:dev": "docker compose --profile dev -f docker-compose.yml up -d",
     "docker:logs": "docker logs -f biblio-num_server",
     "docker:logs:db": "docker logs -f biblio-num_db",
