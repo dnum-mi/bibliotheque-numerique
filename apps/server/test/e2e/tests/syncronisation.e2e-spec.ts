@@ -184,7 +184,7 @@ describe('Syncronisation ', () => {
             numberValue: null,
             parentId: null,
             parentRowIndex: null,
-            label: 'state',
+            label: 'Status',
             rawJson: null,
           },
           {

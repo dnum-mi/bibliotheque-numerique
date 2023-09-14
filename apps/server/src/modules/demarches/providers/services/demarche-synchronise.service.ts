@@ -121,10 +121,10 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
           : {}),
       }))
 
-    return [
+    const result = [
       ...getFixFieldsByIdentification(identification).map(ff => ({
-        columnLabel: originalRenameHash[ff.id] || ff.columnLabel,
         ...ff,
+        columnLabel: originalRenameHash[ff.id] || ff.columnLabel,
       })),
       ...__fromDescriptorsToMappingColumn(
         (revision.champDescriptors as ChampDescriptor[]) ?? [],
@@ -135,6 +135,9 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
         FieldSource.annotation,
       ),
     ]
+
+    this.logger.debug(result)
+    return result
   }
 
   private async _synchroniseOneDemarche(
