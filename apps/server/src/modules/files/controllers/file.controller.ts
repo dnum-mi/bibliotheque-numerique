@@ -3,8 +3,9 @@ import { Body, Controller, Get, Param, Post, Response, UploadedFile, UseGuards, 
 import { ApiTags } from '@nestjs/swagger'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { FileService } from '../providers/file.service'
-import { FileStorage } from '../objects/entities/file_storage.entity'
 import { AuthenticatedGuard } from '@/modules/auth/providers/authenticated.guard'
+import { DownloadFileInputDto } from '../objects/dto/inputs/download-file-input.dto'
+import { FileStorageOutputDto } from '@/modules/files/objects/dto/outputs/file-storage-output.dto'
 
 @ApiTags('Files')
 @Controller('files')
@@ -14,14 +15,14 @@ export class FileController {
   @UseGuards(AuthenticatedGuard)
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
-  async uploadFile (@UploadedFile() file: Express.Multer.File): Promise<FileStorage> {
+  async uploadFile (@UploadedFile() file: Express.Multer.File): Promise<FileStorageOutputDto> {
     return this.filesService.uploadFile(file)
   }
 
   @UseGuards(AuthenticatedGuard)
-  @Get(':id')
-  async download (@Param('id') id: string, @Response() response): Promise<void> {
-    const file = await this.filesService.getFile(id)
+  @Get(':uuid')
+  async download (@Param() params: DownloadFileInputDto, @Response() response): Promise<void> {
+    const file = await this.filesService.getFile(params.uuid)
     file.stream.pipe(response)
   }
 
@@ -33,7 +34,7 @@ export class FileController {
     @Body('checksum') checksum: string,
     @Body('mimeType') mimeType: string,
     @Body('byteSize') byteSize: string,
-  ): Promise<FileStorage> {
+  ): Promise<FileStorageOutputDto> {
     return await this.filesService.copyRemoteFile(fileUrl, checksum, byteSize, mimeType, fileName)
   }
 }
