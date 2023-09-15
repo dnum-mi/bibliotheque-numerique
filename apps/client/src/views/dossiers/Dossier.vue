@@ -19,7 +19,7 @@ const tabTitles = [
     title: 'Demande',
   },
   {
-    title: 'Annotations privé',
+    title: 'Annotations privées',
   },
   {
     title: 'Messagerie',

@@ -10,7 +10,7 @@ describe('<DossierInformations />', () => {
   const labelValues = [
     'PRÉFECTURE',
     'DÉPÔT',
-    'INTRUCTION',
+    'INSTRUCTION',
     'PUBLICATION',
     'ÉTAT',
   ]
@@ -31,7 +31,7 @@ describe('<DossierInformations />', () => {
     cy.get('label').then(($label) => {
       cy.wrap($label).contains('PRÉFECTURE').next().should('contain', datas.groupeInstructeur?.label.toUpperCase())
       cy.wrap($label).contains('DÉPÔT').next().should('contain', dateTimeToStringFr(datas.dateDepot))
-      cy.wrap($label).contains('INTRUCTION').next().should('contain', dateTimeToStringFr(datas.datePassageEnInstruction))
+      cy.wrap($label).contains('INSTRUCTION').next().should('contain', dateTimeToStringFr(datas.datePassageEnInstruction))
       cy.wrap($label).contains('PUBLICATION').next().should('contain', '')
       cy.wrap($label).contains('ÉTAT').next().should('contain', datas.state?.toUpperCase())
     })
