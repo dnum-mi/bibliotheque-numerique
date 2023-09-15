@@ -85,6 +85,7 @@ describe('DsService', () => {
       email: 'tata@gmail.com',
       phone: '06 86 46 54 45',
       personInFoundationToCreate: null,
+      status: null,
     })
   })
 

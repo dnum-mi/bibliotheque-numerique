@@ -13,7 +13,7 @@ export function mainConfig (app: INestApplication) {
     new ValidationPipe({
       exceptionFactory: (errors: ValidationError[]) => {
         const message = `Validation error(s):\n ${errors
-          .map((e: ValidationError) => `Champs ${e.property}: ${Object.values(e.constraints!).join(', ')}`)
+          .map((e: ValidationError) => `Champ ${e.property}: ${Object.values(e.constraints!).join(', ')}`)
           .join('\n')}`
         return new BadRequestException(message)
       },

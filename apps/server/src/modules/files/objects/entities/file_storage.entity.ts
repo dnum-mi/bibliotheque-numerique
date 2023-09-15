@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
-import { BaseEntity } from '../../shared/base-entity/base.entity'
+import { BaseEntity } from '../../../../shared/base-entity/base.entity'
 
 @Entity({ name: 'file_storages' })
 export class FileStorage extends BaseEntity {

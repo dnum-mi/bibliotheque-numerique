@@ -13,7 +13,7 @@ import {
   Message,
 } from '@dnum-mi/ds-api-client'
 import { ConfigService } from '@nestjs/config'
-import { FilesService } from '../../files/files.service'
+import { FileService } from '../../files/providers/file.service'
 import { FieldService } from './field.service'
 import { InstructionTimesService } from '../../../plugins/instruction_time/instruction_times/instruction_times.service'
 import { Demarche } from '../../demarches/objects/entities/demarche.entity'
@@ -25,7 +25,7 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
     @InjectRepository(Dossier) protected readonly repo: Repository<Dossier>,
     protected readonly logger: LoggerService,
     private configService: ConfigService,
-    private fileService: FilesService,
+    private fileService: FileService,
     private fieldService: FieldService,
     private instructionTimeService: InstructionTimesService,
   ) {

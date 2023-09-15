@@ -8,15 +8,13 @@ import { HttpService } from '@nestjs/axios'
 import { AxiosResponse } from 'axios'
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util'
 import { S3 } from 'aws-sdk/clients/browser_default'
-import { FileStorage } from './file_storage.entity'
+import { FileStorage } from '../objects/entities/file_storage.entity'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 
 @Injectable()
-export class FilesService {
-  private s3
-
+export class FileService {
   constructor (
     private readonly configService: ConfigService,
     private readonly httpService: HttpService,
@@ -24,15 +22,16 @@ export class FilesService {
     @InjectRepository(FileStorage) private repo: Repository<FileStorage>,
   ) {
     this.logger.setContext(this.constructor.name)
-    this.s3 = new AWS.S3({
-      accessKeyId: this.configService.get('file.accessKeyId'),
-      secretAccessKey: this.configService.get('file.secretAccessKey'),
-      endpoint: this.configService.get('file.awsDefaultS3Url'),
-      region: this.configService.get('file.awsS3Region'),
-      s3ForcePathStyle: true,
-      signatureVersion: 'v4',
-    })
   }
+
+  private s3 = new AWS.S3({
+    accessKeyId: this.configService.get('file.accessKeyId'),
+    secretAccessKey: this.configService.get('file.secretAccessKey'),
+    endpoint: this.configService.get('file.awsDefaultS3Url'),
+    region: this.configService.get('file.awsS3Region'),
+    s3ForcePathStyle: true,
+    signatureVersion: 'v4',
+  })
 
   async uploadFile (file, checksum = ''): Promise<FileStorage> {
     this.logger.verbose('uploadFile')
@@ -157,9 +156,7 @@ export class FilesService {
     return { passThrough, promise }
   }
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  private async downloadFile (fileUrl) {
+  private async downloadFile (fileUrl): Promise<AxiosResponse> {
     this.logger.verbose('downloadFile')
     return await this.httpService.axiosRef({
       url: fileUrl,
@@ -168,9 +165,7 @@ export class FilesService {
     })
   }
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  private fileFilter (fileExtension) {
+  private fileFilter (fileExtension): void {
     this.logger.verbose('fileFilter')
     const authorizedExtensions = this.configService.get('file.authorizedExtensions')
     if (authorizedExtensions.indexOf('*') === -1 && authorizedExtensions.indexOf(fileExtension) === -1) {
@@ -186,9 +181,7 @@ export class FilesService {
     }
   }
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  private fileNameGenerator (originalName) {
+  private fileNameGenerator (originalName): string {
     this.logger.verbose('fileNameGenerator')
     return `${randomStringGenerator()}.${originalName.split('.').pop().toLowerCase()}`
   }

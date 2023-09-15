@@ -11,6 +11,7 @@ import { formatPhoneNumber } from '@/shared/utils/number.utils'
 import { CollisionException } from '@/shared/exceptions/collision.exception'
 import { ConfigService } from '@nestjs/config'
 import { InfoDSOutputDto } from '../objects/dto/info-ds-output.dto'
+import { FileStorageService } from '@/modules/file-storage/providers/file-storage.service'
 
 @Injectable()
 export class FoundationService extends BaseEntityService {
@@ -18,6 +19,7 @@ export class FoundationService extends BaseEntityService {
     protected readonly prisma: PrismaService,
     private readonly logger: LoggerService,
     private readonly config: ConfigService,
+    private readonly fileStorage: FileStorageService,
   ) {
     super(prisma)
     this.logger.setContext(this.constructor.name)
@@ -50,7 +52,7 @@ export class FoundationService extends BaseEntityService {
     }
   }
 
-  async CreateFoundation (dto: CreateFoundationDto, ds: InfoDSOutputDto, forceCreation?: boolean): Promise<Foundation> {
+  async createFoundation (dto: CreateFoundationDto, ds: InfoDSOutputDto, forceCreation?: boolean): Promise<Foundation> {
     this.logger.verbose('CreateFoundation')
     const code = dto.address.departmentCode
     if (!dto.address || !code) {
@@ -61,7 +63,14 @@ export class FoundationService extends BaseEntityService {
     if (!forceCreation) {
       await this._findCollision(dto, ds)
     }
+
     return this.prisma.$transaction(async (prisma) => {
+      const statusFile = dto.status
+      let file: Awaited<ReturnType<FileStorageService['copyRemoteFile']>> | undefined
+      if (statusFile) {
+        file = await this.fileStorage.copyRemoteFile(statusFile)
+      }
+
       const foundation = await prisma.foundation.create({
         data: {
           title: dto.title,
@@ -73,6 +82,17 @@ export class FoundationService extends BaseEntityService {
             create: dto.address,
           },
           rnfId: `in-creation-${new Date().getTime()}`,
+          ...((file && statusFile)
+            ? {
+                status: {
+                  create: {
+                    ...{ ...statusFile, fileUrl: undefined },
+                    name: file.key,
+                    path: file.location,
+                  },
+                },
+              }
+            : {}),
         },
       })
       this.logger.debug(`foundation created: ${foundation.id}`)
@@ -84,21 +104,23 @@ export class FoundationService extends BaseEntityService {
     })
   }
 
-  async getFoundations (ids: number[]): Promise<FoundationEntity[]> {
+  async getFoundations (ids: number[]): Promise<GetFoundationOutputDto[]> {
     return this.prisma.foundation.findMany({
       where: { id: { in: ids } },
-      include: { address: true },
+      include: { address: true, status: true },
     })
   }
 
-  async getOneFoundation (rnfId: string): Promise<GetFoundationOutputDto> {
+  async getOneFoundation (rnfId: string): Promise<GetFoundationOutputDto | null> {
     this.logger.verbose('getOneFoundation')
-    return this.prisma.foundation.findUnique({ where: { rnfId }, include: { address: true } }).then((foundation) => {
-      if (!foundation) {
-        throw new NotFoundException('No foundation found with this rnfId.')
-      }
-      return foundation
+    const foundation = await this.prisma.foundation.findUnique({
+      where: { rnfId },
+      include: { address: true, status: true },
     })
+    if (!foundation) {
+      throw new NotFoundException('No foundation found with this rnfId.')
+    }
+    return foundation
   }
 
   async getFoundationsByRnfIds (rnfIds: string[], updatedAfter: Date | undefined): Promise<FoundationEntity[]> {

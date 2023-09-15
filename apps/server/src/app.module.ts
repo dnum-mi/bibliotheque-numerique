@@ -16,7 +16,7 @@ import { RolesModule } from './modules/roles/roles.module'
 import { LoggerModule } from './shared/modules/logger/logger.module'
 import { UsersModule } from './modules/users/users.module'
 import { ConnectorModule } from './modules/connector/connector.module'
-import { FilesModule } from './modules/files/files.module'
+import { FileModule } from './modules/files/file.module'
 import { pluginsModules } from './plugins'
 import { JobLogModule } from './modules/job-log/job-log.module'
 import { typeormFactoryLoader } from './shared/utils/typeorm-factory-loader'
@@ -43,7 +43,7 @@ import { XlsxModule } from '@/shared/modules/xlsx/xlsx.module'
     UsersModule,
     RolesModule,
     ConnectorModule,
-    FilesModule,
+    FileModule,
     HealthModule,
     CustomFilterModule,
     ...pluginsModules,
