@@ -129,6 +129,20 @@ export const smallDemarcheAndDossierFinancementEtrangerDataMock = () => ({
             },
           ],
         },
+        {
+          __typename: 'PieceJustificativeChampDescriptor',
+          id: 'Q2hhbXAtNTY=',
+          label: 'Chargement du fichier complété à partir du modèle',
+          description: 'Merci de veiller à compléter le modèle sans en modifier la structure (ne pas ajouter de colonne, ne pas faire de mise en forme, etc.)',
+          required: false,
+          fileTemplate: {
+            filename: 'modele-financements-inferieurs-15300.xlsx',
+            contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            checksum: 'TYfaas3CfEWOgE+EE1D3Ig==',
+            byteSize: '9810',
+            url: 'https://demarches-simplifiees.fr/rails/active_storage/disk/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdDVG9JYTJWNVNTSWhkblJvZGpreE0zaGhlR2sxYVhoNGIzRnpkR1J3Y2pGemVYbHFNZ1k2QmtWVU9oQmthWE53YjNOcGRHbHZia2tpQVh4aGRIUmhZMmh0Wlc1ME95Qm1hV3hsYm1GdFpUMGliVzlrWld4bExXWnBibUZ1WTJWdFpXNTBjeTFwYm1abGNtbGxkWEp6TFRFMU16QXdMbmhzYzNnaU95Qm1hV3hsYm1GdFpTbzlWVlJHTFRnbkoyMXZaR1ZzWlMxbWFXNWhibU5sYldWdWRITXRhVzVtWlhKcFpYVnljeTB4TlRNd01DNTRiSE40QmpzR1ZEb1JZMjl1ZEdWdWRGOTBlWEJsU1NKR1lYQndiR2xqWVhScGIyNHZkbTVrTG05d1pXNTRiV3htYjNKdFlYUnpMVzltWm1salpXUnZZM1Z0Wlc1MExuTndjbVZoWkhOb1pXVjBiV3d1YzJobFpYUUdPd1pVT2hGelpYSjJhV05sWDI1aGJXVTZDbXh2WTJGcyIsImV4cCI6IjIwMjMtMDktMThUMjE6MjA6NDIuNjUwWiIsInB1ciI6ImJsb2Jfa2V5In19--bfdc091df3ebd99e08e231fed38683924a5e5163/modele-financements-inferieurs-15300.xlsx',
+          },
+        },
       ],
       annotationDescriptors: [
         {
@@ -292,6 +306,24 @@ export const smallDemarcheAndDossierFinancementEtrangerDataMock = () => ({
                   ],
                 },
               ],
+            },
+            {
+              id: 'useless',
+              __typename: 'PieceJustificativeChamp',
+              label: 'Chargement du fichier complété à partir du modèle',
+              stringValue: '',
+              files: [
+                {
+                  filename: 'modele-financements-inferieurs-15300.xlsx',
+                  contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                  checksum: 'D4io8724vjNaW4AXltzPCQ==',
+                  byteSize: '9403',
+                  url: 'https://api.example.com/modele-financements-inferieurs-15300.xlsx',
+                },
+              ],
+              champDescriptor: {
+                id: 'Q2hhbXAtNTY=',
+              },
             },
           ],
           annotations: [

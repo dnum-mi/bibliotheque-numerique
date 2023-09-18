@@ -127,7 +127,7 @@ export class FileService {
     }).createReadStream()
   }
 
-  private uploadFromStream (
+  uploadFromStream (
     fileResponse: AxiosResponse,
     fileName: string,
   ): {
@@ -152,7 +152,7 @@ export class FileService {
     return { passThrough, promise }
   }
 
-  private async downloadFile (fileUrl: string): Promise<AxiosResponse> {
+  async downloadFile (fileUrl: string): Promise<AxiosResponse> {
     this.logger.verbose('downloadFile')
     return await this.httpService.axiosRef({
       url: fileUrl,
