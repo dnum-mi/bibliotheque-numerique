@@ -16,6 +16,7 @@ import { localeTextAgGrid } from './ag-grid/agGridOptions'
 
 import AgGridMultiValueCell from './ag-grid/AgGridMultiValueCell.vue'
 import AgGridAttachmentCell from './ag-grid/AgGridAttachmentCell.vue'
+import type { SelectionChangedEvent, GridReadyEvent } from 'ag-grid-community'
 
 const props = withDefaults(defineProps<{
     title?: string,
@@ -89,6 +90,7 @@ const columnDefs: ComputedRef<AgGridColumnDefs[]> = computed(() => {
         width: header.width || undefined,
         ...renderer,
         ...filter,
+        hide: header.hide,
       }
     })
 
@@ -122,7 +124,21 @@ const context = { showElt }
 const sideBar = computed(() => props.isHiddenSideBar
   ? false
   : {
-      toolPanels: ['columns', 'filters'],
+      toolPanels: [{
+        id: 'columns',
+        labelDefault: 'Columns',
+        labelKey: 'columns',
+        iconKey: 'columns',
+        toolPanel: 'agColumnsToolPanel',
+        toolPanelParams: {
+          suppressRowGroups: true,
+          suppressValues: true,
+          suppressPivots: true,
+          suppressPivotMode: true,
+          suppressColumnSelectAll: true,
+          suppressColumnExpandAll: true,
+        },
+      }, 'filters'],
       SideBarDef: {
         hiddenByDefault: false,
       },
@@ -132,14 +148,14 @@ const gridOptions = {
   localeText: localeTextAgGrid,
 }
 
-const onSelectionChanged = (params) => {
+const onSelectionChanged = (params: SelectionChangedEvent) => {
   emit('selectionChanged', params.api.getSelectedRows())
 }
 
 const gridApi = ref() // Optional - for accessing Grid's API
 const columnApi = ref() // Optional - for accessing Grid's API
 
-const onGridReady = (params) => {
+const onGridReady = (params: GridReadyEvent) => {
   watchEffect(() => { params.api.setRowData(props.rowData) })
   gridApi.value = params.api
   columnApi.value = params.columnApi
@@ -174,7 +190,8 @@ defineExpose({
     :default-col-def="{
       sortable: true,
       resizable: true,
-      filter: true
+      filter: true,
+      enablePivot: false
     }"
     :context="context"
     :side-bar="sideBar"
