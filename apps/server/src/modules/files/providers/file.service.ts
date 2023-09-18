@@ -80,7 +80,7 @@ export class FileService {
       const stream: stream.Readable = this.s3GetObject(fileStorage.name)
       return { stream, info: fileStorage }
     }
-    throw new NotFoundException("File doesn't exist in the bucket")
+    throw new NotFoundException("File doesn't exist")
   }
 
   async copyRemoteFile (fileUrl, checksum, byteSize, mimeType, fileName = null): Promise<FileStorageOutputDto> {
