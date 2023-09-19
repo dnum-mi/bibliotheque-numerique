@@ -53,6 +53,8 @@ const paginationChanged = computed(() => {
   )
 })
 
+const fetching = computed(() => demarcheStore.fetching)
+
 const computeSort = (sortModel: SortModelItem[]): SortDto[] => {
   return sortModel.map((sort) => ({
     key: sort.colId,
@@ -62,6 +64,7 @@ const computeSort = (sortModel: SortModelItem[]): SortDto[] => {
 
 // function called by aggrid in SSR mode to fetch its data
 const getRows = async (params: IServerSideGetRowsParams) => {
+  if (fetching.value) return undefined
   if (demarche.value) {
     paginationDto.sorts = computeSort(params.request.sortModel)
     paginationDto.filters = fromAggToBackendFilter(params.request.filterModel)
@@ -133,6 +136,9 @@ onMounted(async () => {
   await customFilterStore.getCustomFilters()
 })
 watch(demarche, computeColumnsDef)
+watch(fetching, () => {
+  if (!fetching.value) refresh()
+})
 
 const resetAggState = () => {
   if (gridApi.value && columnApi.value) {
