@@ -16,7 +16,7 @@ const headersJson = [
   },
   {
     text: 'Type',
-    value: 'typeOrganisme',
+    value: 'type',
   },
   {
     text: 'N° Démarche DS',
@@ -58,23 +58,18 @@ const headersJson = [
     value: 'datePublication',
     parseFn: dateToStringFr,
     type: 'date',
-    hide: true,
   },
 ]
-declare interface TRowData extends IDemarche {
-  id: number;
-  typeOrganisme: string;
-}
 
-const rowData = computed<TRowData[]>(() => demarcheStore.demarches.map(
-  (d: any) => ({ ...d?.dsDataJson, typeOrganisme: d?.typeOrganisme, id: d.id })),
+const rowData = computed<IDemarche[]>(() => demarcheStore.demarches.map<IDemarche>(
+  (d: IDemarche) => ({ ...d?.dsDataJson, type: d?.type, id: d.id } as IDemarche)),
 )
 
 onMounted(async () => {
   await demarcheStore.getDemarches()
 })
 
-const selectDemarche = (row:TRowData[]) => {
+const selectDemarche = (row:IDemarche[]) => {
   router.push({ name: 'DemarcheDossiers', params: { id: row[0].id } })
 }
 </script>

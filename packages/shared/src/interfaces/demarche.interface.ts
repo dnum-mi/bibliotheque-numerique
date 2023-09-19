@@ -8,4 +8,5 @@ export interface IDemarche {
   identification: string
   mappingColumns: MappingColumn[]
   dsDataJson: Partial<TDemarche>
+  type: string
 }
