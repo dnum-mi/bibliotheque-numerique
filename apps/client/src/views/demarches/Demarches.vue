@@ -22,7 +22,6 @@ const headersJson = [
     text: 'N° Démarche DS',
     value: 'number',
     type: 'number',
-    hide: true,
   },
   {
     text: 'Libellé de la démarche',
@@ -36,14 +35,12 @@ const headersJson = [
     parseFn: (value:any) => {
       return `${value?.nom} - ${value?.organisme}`
     },
-    hide: true,
   },
   {
     text: 'Créé le',
     value: 'dateCreation',
     parseFn: dateToStringFr,
     type: 'date',
-    hide: true,
   },
   // TODO: Fonction de recupération des nombres de dossiers
   // {
