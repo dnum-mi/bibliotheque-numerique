@@ -4,6 +4,7 @@ import LayoutList from '@/components/LayoutList.vue'
 import { useDemarcheStore } from '@/stores/demarche'
 import { dateToStringFr } from '@/utils'
 import type { IDemarche } from '@biblio-num/shared'
+import type { ValueFormatterParams } from 'ag-grid-community'
 import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -17,6 +18,10 @@ const headersJson = [
   {
     text: 'Type',
     value: 'type',
+    valueFormatter: (params: ValueFormatterParams) => params.value === 'unknown' ? 'Type non défini' : params.value,
+    filterParams: {
+      valueFormatter: (params: ValueFormatterParams) => params.value === 'unknown' ? 'Type non défini' : params.value,
+    },
   },
   {
     text: 'N° Démarche DS',

@@ -91,6 +91,8 @@ const columnDefs: ComputedRef<AgGridColumnDefs[]> = computed(() => {
         ...renderer,
         ...filter,
         hide: header.hide,
+        valueFormatter: header?.valueFormatter,
+        filterParams: header?.filterParams,
       }
     })
 
