@@ -18,6 +18,7 @@ const checked = ref(!!labelBN.value)
 const isParent = !props.isChildren && props.mappingColumn.children?.length
 
 const focusOnInput = () => {
+  if (checked.value) labelBN.value = labelBN.value || props.mappingColumn.originalLabel
   setTimeout(() => {
     labelBNInput.value.focus()
   })
