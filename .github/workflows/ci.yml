@@ -11,9 +11,67 @@ on:
       - 'main'
 
 jobs:
+  checks:
+    name: Checks
+    runs-on: ubuntu-latest
+    outputs:
+      is_client_modified: ${{ steps.is_client.outputs.is_client_modified }}
+      is_server_modified: ${{ steps.is_server.outputs.is_server_modified }}
+      is_rnf_client_modified: ${{ steps.is_rnf_client.outputs.is_rnf_client_modified }}
+      is_rnf_server_modified: ${{ steps.is_rnf_server.outputs.is_rnf_server_modified }}
+      is_shared_modified: ${{ steps.is_shared.outputs.is_shared_modified }}
+    steps:
+      - name: Checks-out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Récupérer si apps/client a été modifié
+        id: is_client
+        run: |
+          if git log HEAD...origin/$GITHUB_BASE_REF --name-only --pretty=format: | sort -u | grep -E -q '^(apps/client)/'; then
+            is_client_modified="true"
+          fi
+          echo "is_client_modified=$is_client_modified" >> $GITHUB_OUTPUT
+      - name: Récupérer si packages/shared a été modifié
+        id: is_shared
+        run: |
+          if git log HEAD...origin/$GITHUB_BASE_REF --name-only --pretty=format: | sort -u | grep -E -q '^(packages/shared)/'; then
+            is_shared_modified="true"
+          fi
+          echo "is_shared_modified=$is_shared_modified" >> $GITHUB_OUTPUT
+      - name: Récupérer si apps/server a été modifié
+        id: is_server
+        run: |
+          if git log HEAD...origin/$GITHUB_BASE_REF --name-only --pretty=format: | sort -u | grep -E -q '^(apps/server)/'; then
+            is_server_modified="true"
+          fi
+          echo "is_server_modified=$is_server_modified" >> $GITHUB_OUTPUT
+      - name: Récupérer si apps/rnf-client a été modifié
+        id: is_rnf_client
+        run: |
+          if git log HEAD...origin/$GITHUB_BASE_REF --name-only --pretty=format: | sort -u | grep -E -q '^(apps/rnf-client)/'; then
+            is_rnf_client_modified="true"
+          fi
+          echo "is_rnf_client_modified=$is_rnf_client_modified" >> $GITHUB_OUTPUT
+      - name: Récupérer si apps/rnf-server a été modifié
+        id: is_rnf_server
+        run: |
+          if git log HEAD...origin/$GITHUB_BASE_REF --name-only --pretty=format: | sort -u | grep -E -q '^(apps/rnf-server)/'; then
+            is_rnf_server_modified="true"
+          fi
+          echo "is_rnf_server_modified=$is_rnf_server_modified" >> $GITHUB_OUTPUT
+      - name: Recap
+        run: |
+          echo "is_client_modified: ${{ steps.is_client.outputs.is_client_modified }}"
+          echo "is_server_modified: ${{ steps.is_server.outputs.is_server_modified }}"
+          echo "is_shared_modified: ${{ steps.is_shared.outputs.is_shared_modified }}"
+          echo "is_rnf_client_modified: ${{ steps.is_rnf_client.outputs.is_rnf_client_modified }}"
+          echo "is_rnf_server_modified: ${{ steps.is_rnf_server.outputs.is_rnf_server_modified }}"
+
   client:
     name: client - Run tests
-    if: ${{ !github.event.pull_request.draft }}
+    needs: checks
+    if: (!github.event.pull_request.draft) && (needs.checks.outputs.is_client_modified || needs.checks.outputs.is_shared_modified)
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -35,8 +93,9 @@ jobs:
             pnpm run build:client
 
   rnf-client:
+    needs: checks
+    if: (!github.event.pull_request.draft) && needs.checks.outputs.is_rnf_client_modified
     name: rnf-client - Run tests
-    if: ${{ !github.event.pull_request.draft }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -59,7 +118,8 @@ jobs:
 
   server:
     name: server - Run tests
-    if: ${{ !github.event.pull_request.draft }}
+    needs: checks
+    if: (!github.event.pull_request.draft) && (needs.checks.outputs.is_server_modified || needs.checks.outputs.is_shared_modified)
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -84,7 +144,8 @@ jobs:
 
   rnf-server:
     name: rnf-server - Run tests
-    if: ${{ !github.event.pull_request.draft }}
+    needs: checks
+    if: (!github.event.pull_request.draft) && needs.checks.outputs.is_rnf_server_modified
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -110,7 +171,8 @@ jobs:
 
   docker-client:
     name: client - Build and Run docker image
-    if: ${{ !github.event.pull_request.draft }}
+    needs: checks
+    if: (!github.event.pull_request.draft) && (needs.checks.outputs.is_client_modified || needs.checks.outputs.is_shared_modified)
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -131,7 +193,8 @@ jobs:
 
   docker-rnf-client:
     name: rnf-client - Build and Run docker image
-    if: ${{ !github.event.pull_request.draft }}
+    needs: checks
+    if: (!github.event.pull_request.draft) && needs.checks.outputs.is_rnf_client_modified
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -152,7 +215,8 @@ jobs:
 
   docker-server:
     name: server - Build and Run docker image
-    if: ${{ !github.event.pull_request.draft }}
+    needs: checks
+    if: (!github.event.pull_request.draft) && (needs.checks.outputs.is_server_modified || needs.checks.outputs.is_shared_modified)
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -175,7 +239,8 @@ jobs:
 
   docker-rnf-server:
     name: rnf-server - Build and Run docker image
-    if: ${{ !github.event.pull_request.draft }}
+    needs: checks
+    if: (!github.event.pull_request.draft) && needs.checks.outputs.is_rnf_server_modified
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
