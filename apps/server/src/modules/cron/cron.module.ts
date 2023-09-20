@@ -4,6 +4,7 @@ import { DossierModule } from '../dossiers/dossier.module'
 import { JobLogModule } from '../job-log/job-log.module'
 import { DemarcheModule } from '../demarches/demarche.module'
 import { OrganismesModule } from '../../plugins/organisme/organismes/organismes.module'
+import { InstructionTimesModule } from '../../plugins/instruction_time/instruction_times/instruction_times.module'
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { OrganismesModule } from '../../plugins/organisme/organismes/organismes.
     OrganismesModule,
     JobLogModule,
     OrganismesModule,
+    InstructionTimesModule,
   ],
   controllers: [],
   providers: [CronService],
