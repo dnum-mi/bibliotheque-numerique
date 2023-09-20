@@ -50,12 +50,15 @@ export const useDemarcheStore = defineStore('demarche', () => {
     }
   }
 
+  const fetching = ref(false)
   const getDemarche = async (idDemarche: number) => {
+    fetching.value = true
     const result = await apiClient.getDemarche(idDemarche)
     if (result) {
       currentDemarche.value = result
       _setConfiguration(result.mappingColumns)
     }
+    fetching.value = false
   }
 
   const getDemarches = async () => {
@@ -96,5 +99,6 @@ export const useDemarcheStore = defineStore('demarche', () => {
     getDemarche,
     updateOneMappingColumn,
     exportCurrentDemarcheDossiers,
+    fetching,
   }
 })
