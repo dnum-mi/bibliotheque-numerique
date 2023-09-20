@@ -10,7 +10,7 @@ const props = withDefaults(defineProps<{
 
 const prefecture = computed(() => props.datas.groupeInstructeur?.label.toUpperCase() || '')
 const depot = computed(() => dateTimeToStringFr(props.datas.dateDepot) || '')
-const intruction = computed(() => dateTimeToStringFr(props.datas.datePassageEnInstruction) || '')
+const instruction = computed(() => dateTimeToStringFr(props.datas.datePassageEnInstruction) || '')
 const publication = computed(() => '')
 const etat = computed(() => props.datas?.state?.toUpperCase() || '')
 </script>
@@ -27,8 +27,8 @@ const etat = computed(() => props.datas?.state?.toUpperCase() || '')
         <span class="bn-fiche-sub-title--text">{{ depot }}</span>
       </div>
       <div class="fr-col-2">
-        <label class="bn-fiche-sub-title--label">INTRUCTION</label>
-        <span class="bn-fiche-sub-title--text">{{ intruction }}</span>
+        <label class="bn-fiche-sub-title--label">INSTRUCTION</label>
+        <span class="bn-fiche-sub-title--text">{{ instruction }}</span>
       </div>
       <div class="fr-col-2">
         <label class="bn-fiche-sub-title--label">PUBLICATION</label>
