@@ -3,6 +3,8 @@ import BiblioNumDataTableAgGrid from '@/components/BiblioNumDataTableAgGrid.vue'
 import LayoutList from '@/components/LayoutList.vue'
 import { useDemarcheStore } from '@/stores/demarche'
 import { dateToStringFr } from '@/utils'
+import type { IDemarche } from '@biblio-num/shared'
+import type { ValueFormatterParams } from 'ag-grid-community'
 import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -11,20 +13,25 @@ const router = useRouter()
 const headersJson = [
   {
     value: 'id',
+    type: 'hidden',
   },
   {
-    text: 'Id',
+    text: 'Type',
+    value: 'type',
+    valueFormatter: (params: ValueFormatterParams) => params.value === 'unknown' ? 'Type non défini' : params.value,
+    filterParams: {
+      valueFormatter: (params: ValueFormatterParams) => params.value === 'unknown' ? 'Type non défini' : params.value,
+    },
+  },
+  {
+    text: 'N° Démarche DS',
     value: 'number',
+    type: 'number',
   },
   {
-    text: 'Création',
-    value: 'dateCreation',
-    parseFn: dateToStringFr,
-    type: 'date',
-  },
-  {
-    text: 'Le libellé',
+    text: 'Libellé de la démarche',
     value: 'title',
+    type: 'text',
   },
   {
     text: 'Service',
@@ -33,6 +40,12 @@ const headersJson = [
     parseFn: (value:any) => {
       return `${value?.nom} - ${value?.organisme}`
     },
+  },
+  {
+    text: 'Créé le',
+    value: 'dateCreation',
+    parseFn: dateToStringFr,
+    type: 'date',
   },
   // TODO: Fonction de recupération des nombres de dossiers
   // {
@@ -43,27 +56,23 @@ const headersJson = [
   //   },
   // },
   {
-    text: 'La date de publication',
+    text: 'Publié le',
     value: 'datePublication',
     parseFn: dateToStringFr,
     type: 'date',
   },
-  {
-    text: "Type d'organisme",
-    value: 'typeOrganisme',
-  },
 ]
 
-const rowData = computed(() => demarcheStore.demarches.map(
-  (d: any) => ({ ...d?.dsDataJson, typeOrganisme: d?.typeOrganisme, id: d.id })),
+const rowData = computed<IDemarche[]>(() => demarcheStore.demarches.map<IDemarche>(
+  (d: IDemarche) => ({ ...d?.dsDataJson, type: d?.type, id: d.id } as IDemarche)),
 )
 
 onMounted(async () => {
   await demarcheStore.getDemarches()
 })
 
-function getDossier ({ id }: { id: string }) {
-  router.push({ name: 'DemarcheDossiers', params: { id } })
+const selectDemarche = (row:IDemarche[]) => {
+  router.push({ name: 'DemarcheDossiers', params: { id: row[0].id } })
 }
 </script>
 
@@ -76,17 +85,16 @@ function getDossier ({ id }: { id: string }) {
           aria-hidden="true"
         />
         <h6 class="bn-list-search-title-demarche fr-p-1w fr-m-0">
-          Rechercher démarches
+          Rechercher une démarche
         </h6>
       </div>
     </template>
     <BiblioNumDataTableAgGrid
       :headers="headersJson"
       :row-data="rowData"
-      with-action
       floating-filter
-      @get-elt="getDossier($event)"
+      row-selection="single"
+      @selection-changed="selectDemarche"
     />
   </LayoutList>
 </template>
-@/utils/date-to-string

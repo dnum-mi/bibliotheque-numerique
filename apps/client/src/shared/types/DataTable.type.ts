@@ -1,3 +1,4 @@
+import type { ISetFilterParams, ValueFormatterFunc, ValueFormatterParams } from 'ag-grid-community'
 import type { Component } from 'vue'
 
 export type TIconFunction = (data: any) => string;
@@ -14,10 +15,13 @@ export type HeaderDataTable = {
   sortable?: boolean,
   type?: string,
   width?: number,
+  hide?: boolean,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   parseFn?: (value: any) => string,
   filter?: string | ((value: any) => boolean),
   renderer?: Component | string,
+  valueFormatter?: (params: ValueFormatterParams) => string | ValueFormatterFunc,
+  filterParams?: ISetFilterParams
 }
 
 export enum AgGridFilter {
