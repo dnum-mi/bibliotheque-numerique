@@ -9,6 +9,7 @@ import { FilterDateDto } from './date.filter.dto'
 import { FilterNumberDto } from './number.filter.dto'
 
 export function IsValidFilter (validationOptions?: ValidationOptions) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (object: any, propertyName: string) => {
     registerDecorator({
       name: 'isValidFilter',
@@ -16,6 +17,7 @@ export function IsValidFilter (validationOptions?: ValidationOptions) {
       propertyName,
       options: validationOptions,
       validator: {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         validate (value: any, args: ValidationArguments): boolean {
           if (typeof value !== 'object') {
             return false

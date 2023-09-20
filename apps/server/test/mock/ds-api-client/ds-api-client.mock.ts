@@ -15,7 +15,7 @@ export const dsApiClientMock = {
         case 29:
           return demarcheAndDossierFinancementEtrangerDataMock;
         case 42:
-          return smallDemarcheAndDossierFinancementEtrangerDataMock;
+          return smallDemarcheAndDossierFinancementEtrangerDataMock();
         default:
           return null;
       }

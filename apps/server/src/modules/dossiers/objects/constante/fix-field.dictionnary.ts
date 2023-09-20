@@ -1,5 +1,8 @@
-import { FieldSource, FieldType, FormatFunctionRef, MappingColumn } from '@biblio-num/shared'
+import type { IdentificationDemarcheKeys } from '@biblio-num/shared'
+import { IdentificationDemarche, FieldSource, FieldType, FormatFunctionRef, MappingColumn } from '@biblio-num/shared'
 import { Dossier as TDossier } from '@dnum-mi/ds-api-client'
+import { fixFieldsInstructionTime } from
+  '@/plugins/instruction_time/instruction_times/constante/fix-field-instrucation-times.dictionnary'
 
 type FixFieldValueGetter = (dossier: Partial<TDossier>) => string | number | boolean | Date | null;
 
@@ -14,7 +17,7 @@ export const fixFields: MappingColumn[] = [
   {
     id: '1a4b62c4-b81f-4e83-ac34-f6d601b8a8d4',
     columnLabel: 'Status',
-    originalLabel: 'state',
+    originalLabel: 'Status',
     type: FieldType.string,
     formatFunctionRef: FormatFunctionRef.status,
     source: FieldSource.fixField,
@@ -48,4 +51,19 @@ export const fixFieldValueFunctions: Record<string, FixFieldValueGetter> = {
   '9863ce70-6378-4d7e-aca9-b81fb7b97c11': (dossier) => dossier.dateDepot,
   '9863ce70-6378-4d7e-aca9-b81fb7b97c12': (dossier) => dossier.datePassageEnInstruction,
   '9863ce70-6378-4d7e-aca9-b81fb7b97c13': (dossier) => dossier.datePassageEnConstruction,
+}
+
+export const fixFieldsByIdentificationDictionary = {
+  [IdentificationDemarche.FE]: fixFieldsInstructionTime,
+}
+
+export const getFixFieldsByIdentification = (identification?: IdentificationDemarcheKeys): MappingColumn[] => {
+  if (identification) {
+    return [
+      ...fixFields,
+      ...fixFieldsByIdentificationDictionary[identification],
+    ]
+  }
+
+  return fixFields
 }

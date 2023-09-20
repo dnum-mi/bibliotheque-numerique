@@ -3,6 +3,7 @@ export type TConfig = {
   port: number;
   fetchDataInterval: string;
   fetchOrgInterval: string;
+  fetchDelayCalculation: string,
   fetchDataOnStartup: boolean;
   fetchDataOnStartupFromScratch: boolean;
   log: {
@@ -15,6 +16,7 @@ const config = (): TConfig => ({
   port: parseInt(process.env.WORKER_PORT, 10) || 3042,
   fetchDataInterval: process.env.WORKER_FETCH_DATA_INTERVAL || '0 0 1 * * *',
   fetchOrgInterval: process.env.WORKER_FETCH_ORG_INTERVAL || '0 0 1 * * *',
+  fetchDelayCalculation: process.env.WORKER_DELAY_CALCUlATION || '0 0 2 * * *',
   fetchDataOnStartup: process.env.WORKER_FETCH_DATA_ON_STARTUP
     ? process.env.WORKER_FETCH_DATA_ON_STARTUP === 'true'
     : true,

@@ -1,6 +1,5 @@
 import { forwardRef, Module } from '@nestjs/common'
 import { InstructionTimesService } from './instruction_times.service'
-import { InstructionTimesController } from './instruction_times.controller'
 import { ConfigModule } from '@nestjs/config'
 import instructionTimeMappingConfig from '../config/instructionTimeMapping.config'
 import { TypeOrmModule } from '@nestjs/typeorm'
@@ -17,7 +16,6 @@ import { DossierModule } from '../../../modules/dossiers/dossier.module'
     TypeOrmModule.forFeature([InstructionTime]),
     forwardRef(() => DossierModule),
   ],
-  controllers: [InstructionTimesController],
   providers: [InstructionTimesService],
   exports: [InstructionTimesService],
 })

@@ -4,6 +4,8 @@ import { dataSource } from '../data-source-e2e.typeorm'
 import { TestingModuleFactory } from '../common/testing-module.factory'
 import { getUserCookie } from '../common/get-user-cookie'
 import { getAdminCookie } from '../common/get-admin-cookie'
+import { Demarche } from '../../../src/modules/demarches/objects/entities/demarche.entity'
+import { Like } from 'typeorm'
 
 describe('Demarches (e2e)', () => {
   let app: INestApplication
@@ -47,5 +49,90 @@ describe('Demarches (e2e)', () => {
           expect(Object.keys(d)).toEqual(['id', 'title', 'dsId'])
         })
       })
+  })
+
+  it('patch identification should update mappingColumn with identification equal FE ', async () => {
+    const demarche = await dataSource.manager.findOne(Demarche, {
+      where: { title: Like('[UPDATE-IDENTIFICATION]%') },
+    })
+
+    const { body } = await request(app.getHttpServer())
+      .patch(`/demarches/${demarche.id}/identification`)
+      .set('Cookie', [adminCookie])
+      .send({
+        identification: 'FE',
+      })
+      .expect(200)
+
+    expect(body).toHaveProperty('message', `Demarche of id ${demarche.id} has been update with identification FE.`)
+
+    const demarche1 = await dataSource.manager.findOne(Demarche, {
+      where: { id: demarche.id },
+    })
+    expect(demarche1).toHaveProperty('identification', 'FE')
+    expect(demarche1.mappingColumns).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining(
+          {
+            id: 'ca6b1946-efe2-448d-b9e3-645829093dc5',
+          },
+        ),
+        expect.objectContaining(
+          {
+            id: 'ca6b1946-efe2-448d-b9e3-645829093dc6',
+          },
+        ),
+      ],
+      ),
+    )
+  })
+
+  it('patch identification should delete fix-field of instrection into mappingColumn with identification equal at null', async () => {
+    const demarche = await dataSource.manager.findOne(Demarche, {
+      where: { title: Like('[DELETE-IDENTIFICATION]%') },
+    })
+
+    const { body } = await request(app.getHttpServer())
+      .patch(`/demarches/${demarche.id}/identification`)
+      .set('Cookie', [adminCookie])
+      .send({
+        identification: null,
+      })
+      .expect(200)
+
+    expect(body).toHaveProperty('message', `Demarche of id ${demarche.id} has been update with identification null.`)
+
+    const demarche1 = await dataSource.manager.findOne(Demarche, {
+      where: { id: demarche.id },
+    })
+    expect(demarche1).toHaveProperty('identification', null)
+    expect(demarche1.mappingColumns).toEqual(
+      expect.not.arrayContaining([
+        expect.objectContaining(
+          {
+            id: 'ca6b1946-efe2-448d-b9e3-645829093dc5',
+          },
+        ),
+        expect.objectContaining(
+          {
+            id: 'ca6b1946-efe2-448d-b9e3-645829093dc6',
+          },
+        ),
+      ],
+      ),
+    )
+  })
+
+  it('patch identification should return 400 if identification is undefined', async () => {
+    const demarche = await dataSource.manager.findOne(Demarche, {
+      where: { title: Like('[UNDEFINED-IDENTIFICATION]%') },
+    })
+
+    await request(app.getHttpServer())
+      .patch(`/demarches/${demarche.id}/identification`)
+      .set('Cookie', [adminCookie])
+      .send({
+      })
+      .expect(400)
   })
 })

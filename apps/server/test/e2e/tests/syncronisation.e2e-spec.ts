@@ -124,6 +124,7 @@ describe('Syncronisation ', () => {
       .set('Cookie', [cookie])
       .send({
         idDs: 42,
+        identification: 'FE',
       })
       .expect(201)
       .then(async (res) => {
@@ -134,15 +135,43 @@ describe('Syncronisation ', () => {
           .createQueryBuilder(Demarche, 'd')
           .where('d."dsDataJson"->>\'number\' = :id', { id: '42' })
           .select('d.id')
+          .addSelect('d.mappingColumns')
           .getOne()
+
+        expect(demarche).toBeDefined()
+        expect(demarche.mappingColumns).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining(
+              {
+                id: 'ca6b1946-efe2-448d-b9e3-645829093dc5',
+              },
+            ),
+            expect.objectContaining(
+              {
+                id: 'ca6b1946-efe2-448d-b9e3-645829093dc6',
+              },
+            ),
+          ],
+          ),
+        )
+
+        expect(demarche.mappingColumns).toMatchObject(
+          expect.arrayContaining([
+            expect.objectContaining(
+              {
+                id: 'Q2hhbXAtMTExMA==',
+                type: 'date',
+                source: 'annotation',
+              },
+            )],
+          ))
         return dataSource.manager.find(Field, {
-          where: { dossier: { demarcheId: demarche.id } },
+          where: { dossier: { demarcheId: demarche.id, sourceId: '142' } },
           order: { sourceId: 'ASC', stringValue: 'ASC' },
         })
       })
       .then((fields) => {
-        console.log(fields)
-        expect(fields.length).toEqual(13)
+        expect(fields.length).toEqual(20)
         expect(fields).toMatchObject([
           {
             fieldSource: 'fix-field',
@@ -155,7 +184,7 @@ describe('Syncronisation ', () => {
             numberValue: null,
             parentId: null,
             parentRowIndex: null,
-            label: 'state',
+            label: 'Status',
             rawJson: null,
           },
           {
@@ -262,6 +291,54 @@ describe('Syncronisation ', () => {
           },
           {
             fieldSource: 'annotation',
+            dsChampType: 'DateChamp',
+            type: 'date',
+            sourceId: 'Q2hhbXAtMTEwOQ==',
+            dateValue: null,
+          },
+          {
+            fieldSource: 'annotation',
+            dsChampType: 'DateChamp',
+            type: 'date',
+            sourceId: 'Q2hhbXAtMTExMA==',
+            dateValue: null,
+          },
+          {
+            fieldSource: 'annotation',
+            dsChampType: 'IntegerNumberChamp',
+            type: 'number',
+            sourceId: 'Q2hhbXAtMTExMg==',
+          },
+          {
+            fieldSource: 'annotation',
+            dsChampType: 'DateChamp',
+            type: 'date',
+            sourceId: 'Q2hhbXAtMTExMQ==',
+            dateValue: null,
+          },
+          {
+            fieldSource: 'annotation',
+            dsChampType: 'DateChamp',
+            type: 'date',
+            sourceId: 'Q2hhbXAtMTExMw==',
+            dateValue: null,
+          },
+          {
+            fieldSource: 'annotation',
+            dsChampType: 'DateChamp',
+            type: 'date',
+            sourceId: 'Q2hhbXAtMTExNA==',
+            dateValue: null,
+          },
+          {
+            fieldSource: 'annotation',
+            dsChampType: 'DateChamp',
+            type: 'date',
+            sourceId: 'Q2hhbXAtMTExOA==',
+            dateValue: null,
+          },
+          {
+            fieldSource: 'annotation',
             dsChampType: 'TextChamp',
             type: 'string',
             formatFunctionRef: null,
@@ -273,11 +350,104 @@ describe('Syncronisation ', () => {
             parentRowIndex: null,
             label: 'Une annotation',
           },
+
         ])
         expect(fields[7].parentId).toEqual(fields[11].id)
         expect(fields[8].parentId).toEqual(fields[11].id)
         expect(fields[9].parentId).toEqual(fields[11].id)
         expect(fields[10].parentId).toEqual(fields[11].id)
+
+        expect(fields).toEqual(
+          expect.not.arrayContaining([
+            expect.objectContaining(
+              {
+                sourceId: 'ca6b1946-efe2-448d-b9e3-645829093dc5',
+              },
+            ),
+            expect.objectContaining(
+              {
+                sourceId: 'ca6b1946-efe2-448d-b9e3-645829093dc6',
+              },
+            ),
+          ],
+          ),
+        )
+      })
+      .then(() => {
+        return dataSource.manager.find(Field, {
+          where: { dossier: { sourceId: '143' } },
+          order: { sourceId: 'ASC', stringValue: 'ASC' },
+        })
+      })
+      .then((fields) => {
+        expect(fields).toMatchObject(
+          expect.arrayContaining([
+            expect.objectContaining(
+              {
+                fieldSource: 'annotation',
+                dsChampType: 'DateChamp',
+                type: 'date',
+                sourceId: 'Q2hhbXAtMTEwOQ==',
+                dateValue: dayjs().subtract(7, 'days').startOf('day').toDate(),
+              },
+            ),
+          ]))
+
+        expect(fields).toMatchObject(
+          expect.arrayContaining([
+
+            expect.objectContaining(
+              {
+                fieldSource: 'annotation',
+                dsChampType: 'DateChamp',
+                type: 'date',
+                sourceId: 'Q2hhbXAtMTExMA==',
+                dateValue: dayjs().subtract(2, 'days').startOf('day').toDate(),
+              }),
+          ]))
+
+        expect(fields).toMatchObject(
+          expect.arrayContaining([
+
+            expect.objectContaining(
+              {
+                fieldSource: 'annotation',
+                dsChampType: 'DateChamp',
+                type: 'date',
+                sourceId: 'Q2hhbXAtMTExMQ==',
+              }),
+          ]))
+
+        expect(fields).toMatchObject(
+          expect.arrayContaining([
+
+            expect.objectContaining(
+              {
+                fieldSource: 'annotation',
+                dsChampType: 'DateChamp',
+                type: 'date',
+                sourceId: 'Q2hhbXAtMTExNA==',
+              }),
+          ]))
+
+        expect(fields).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining(
+              {
+                sourceId: 'ca6b1946-efe2-448d-b9e3-645829093dc5',
+                stringValue: 'Instruction',
+              },
+            ),
+            expect.objectContaining(
+              {
+                sourceId: 'ca6b1946-efe2-448d-b9e3-645829093dc6',
+                // 60 - (aujourd'hui - la date de reception de la 2eme demande)
+                numberValue: 58,
+              },
+            ),
+          ],
+          ),
+        )
       })
   })
 })

@@ -12,6 +12,7 @@ import { JobNames } from './job-name.enum'
 import { DemarcheSynchroniseService } from '../demarches/providers/services/demarche-synchronise.service'
 import { OrganismesService } from '@/plugins/organisme/organismes/organismes.service'
 import { TMapperJobs } from './mapper-jobs.type'
+import { InstructionTimesService } from '../../plugins/instruction_time/instruction_times/instruction_times.service'
 
 @Injectable()
 export class CronService implements OnApplicationBootstrap, OnModuleInit {
@@ -22,6 +23,7 @@ export class CronService implements OnApplicationBootstrap, OnModuleInit {
     private jobLogService: JobLogService,
     private demarcheSynchroniseService: DemarcheSynchroniseService,
     private organismeService: OrganismesService,
+    private instructionTimesService: InstructionTimesService,
   ) {
     this.logger.setContext(this.constructor.name)
     this.logger.log('Cron fetching data is set at: ')
@@ -41,6 +43,12 @@ export class CronService implements OnApplicationBootstrap, OnModuleInit {
         cronTime: this.config.get('fetchDataInterval'),
         fct: this.jobUpdateOrgnanisme,
         description: 'Mise à jours des orgranismes',
+      },
+      {
+        name: 'UPDATE-INSTRUCTION-TIMES-CALCULATION',
+        cronTime: this.config.get('cron-plugin.delayCalculation'),
+        fct: this._instructionTimesCalculation,
+        description: 'Fetching instruction times',
       },
     ]
 
@@ -107,5 +115,19 @@ export class CronService implements OnApplicationBootstrap, OnModuleInit {
         })
       }
     })
+  }
+
+  private async _instructionTimesCalculation(): Promise<void> {
+    try {
+      this.logger.verbose(
+        'UPDATE-INSTRUCTION-TIMES-CALCULATION',
+      )
+      this.instructionTimesService.instructionTimeCalculationForAllDossier()
+    } catch (error) {
+      this.logger.error({
+        message: `UPDATE-INSTRUCTION-TIMES-CALCULATION: ${error.message}`,
+        error,
+      })
+    }
   }
 }
