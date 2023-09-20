@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Get,
@@ -119,9 +118,6 @@ export class DemarcheController {
     @Body() dto: UpdateIdentificationDemarcheInputDto,
   ): Promise<{message: string}> {
     this.logger.verbose(`update identification of demarche ${id}`)
-    if (dto && dto.identification === undefined) {
-      throw new BadRequestException('identification can not be undefined')
-    }
     await this.demarcheService.updateIdentificationDemarche(id, dto.identification)
     return { message: `Demarche of id ${id} has been update with identification ${dto.identification}.` }
   }

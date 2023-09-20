@@ -81,7 +81,7 @@ export class DemarcheService extends BaseEntityService<Demarche> {
   }
 
   async updateIdentificationDemarche (id: number, identification: IdentificationDemarcheKeys | null): Promise<void> {
-    const demarche = await this.findById(id)
+    const demarche = await this.findOneOrThrow({ where: { id } })
     if (!demarche) throw new NotFoundException(`demarche ${id} not found`)
     const { mappingColumns, identification: identificationOrigin } = demarche
 

@@ -1,8 +1,8 @@
-import { IsEnum, IsOptional } from 'class-validator'
+import { IsEnum, IsOptional, ValidateIf } from 'class-validator'
 import { IdentificationDemarche, IdentificationDemarcheKeys } from '../../enums'
 
 export class UpdateIdentificationDemarcheInputDto {
-  @IsOptional()
+  @ValidateIf(o => o.identification !== null)
   @IsEnum(IdentificationDemarche)
   identification?: IdentificationDemarcheKeys
 }
