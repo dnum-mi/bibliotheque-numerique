@@ -9,6 +9,10 @@ import { Demarche } from '@/modules/demarches/objects/entities/demarche.entity'
 import { InstructionTime } from '@/plugins/instruction_time/instruction_times/instruction_time.entity'
 
 import * as dayjs from 'dayjs'
+import { FileService } from '@/modules/files/providers/file.service'
+import stream, { PassThrough, Readable } from 'stream'
+import { AxiosHeaders, AxiosResponse } from 'axios'
+import { S3 } from 'aws-sdk/clients/browser_default'
 
 const expectedFixFieldsDates = (dossierId,
   dateDepot = null,
@@ -59,11 +63,13 @@ const expectedFixFieldsDates = (dossierId,
 describe('Syncronisation ', () => {
   let app: INestApplication
   let cookie: string
+  let fileService: FileService
 
   beforeAll(async () => {
     const testingModule = new TestingModuleFactory()
     await testingModule.init()
     app = testingModule.app
+    fileService = testingModule.fileService as FileService
 
     cookie = await getAdminCookie(app)
     const dossier = await dataSource.manager.findOne(Dossier, {
@@ -119,6 +125,31 @@ describe('Syncronisation ', () => {
   })
 
   it('should syncronise one dossier of one demarche and create associated fields', async () => {
+    jest.spyOn(fileService, 'downloadFile').mockImplementation((): Promise<AxiosResponse> => {
+      const readable = new Readable()
+      readable.push('test PJ.')
+      readable.push(null)
+      return Promise.resolve({
+        data: readable,
+        headers: {
+          'content-type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        } as unknown as AxiosHeaders,
+      } as AxiosResponse)
+    })
+    jest.spyOn(fileService, 'uploadFromStream').mockImplementation((): {
+      passThrough: stream.PassThrough;
+      promise: Promise<S3.ManagedUpload.SendData>;
+    } => {
+      const passThrough = new PassThrough()
+      return {
+        passThrough,
+        promise: Promise.resolve({
+          Key: 'modele-financements-inferieurs-15300.xlsx',
+          Location: 'http://s3.com/modele-financements-inferieurs-15300.xlsx',
+        } as S3.ManagedUpload.SendData),
+      }
+    })
+
     return request(app.getHttpServer())
       .post('/demarches/create')
       .set('Cookie', [cookie])
@@ -171,7 +202,7 @@ describe('Syncronisation ', () => {
         })
       })
       .then((fields) => {
-        expect(fields.length).toEqual(20)
+        expect(fields.length).toEqual(21)
         expect(fields).toMatchObject([
           {
             fieldSource: 'fix-field',
@@ -338,6 +369,18 @@ describe('Syncronisation ', () => {
             dateValue: null,
           },
           {
+            fieldSource: 'champs',
+            dsChampType: 'PieceJustificativeChamp',
+            formatFunctionRef: null,
+            sourceId: 'Q2hhbXAtNTY=',
+            stringValue: '',
+            dateValue: null,
+            numberValue: null,
+            parentId: null,
+            parentRowIndex: null,
+            label: 'Chargement du fichier complété à partir du modèle',
+          },
+          {
             fieldSource: 'annotation',
             dsChampType: 'TextChamp',
             type: 'string',
@@ -350,7 +393,6 @@ describe('Syncronisation ', () => {
             parentRowIndex: null,
             label: 'Une annotation',
           },
-
         ])
         expect(fields[7].parentId).toEqual(fields[11].id)
         expect(fields[8].parentId).toEqual(fields[11].id)

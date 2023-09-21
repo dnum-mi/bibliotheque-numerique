@@ -8,10 +8,12 @@ import { LoggerService } from '../../../src/shared/modules/logger/logger.service
 import { loggerServiceMock } from '../../mock/logger-service.mock'
 import { mailerServiceMock } from '../../mock/mailer-service.mock'
 import { MailerService } from '@nestjs-modules/mailer'
+import { FileService } from '@/modules/files/providers/file.service'
 
 export class TestingModuleFactory {
   app: INestApplication
   mailerService = mailerServiceMock
+  fileService: FileService
 
   async init (): Promise<void> {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -27,6 +29,7 @@ export class TestingModuleFactory {
 
     this.app = moduleFixture.createNestApplication()
     configMain(this.app)
+    this.fileService = moduleFixture.get<FileService>(FileService)
     await this.app.init()
   }
 }
