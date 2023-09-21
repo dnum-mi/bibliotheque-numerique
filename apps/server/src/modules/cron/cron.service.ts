@@ -46,7 +46,7 @@ export class CronService implements OnApplicationBootstrap, OnModuleInit {
       },
       {
         name: 'UPDATE-INSTRUCTION-TIMES-CALCULATION',
-        cronTime: this.config.get('cron-plugin.delayCalculation'),
+        cronTime: this.config.get('fetchDelayCalculation'),
         fct: this._instructionTimesCalculation,
         description: 'Fetching instruction times',
       },
