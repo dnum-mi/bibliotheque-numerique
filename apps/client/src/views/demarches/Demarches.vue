@@ -14,6 +14,7 @@ const headersJson = [
   {
     value: 'id',
     type: 'hidden',
+    width: 0,
   },
   {
     text: 'Type',
@@ -22,30 +23,27 @@ const headersJson = [
     filterParams: {
       valueFormatter: (params: ValueFormatterParams) => params.value === 'unknown' ? 'Type non défini' : params.value,
     },
+    width: 200,
   },
+
   {
     text: 'N° Démarche DS',
     value: 'number',
     type: 'number',
+    width: 200,
   },
   {
     text: 'Libellé de la démarche',
     value: 'title',
     type: 'text',
-  },
-  {
-    text: 'Service',
-    value: 'service',
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    parseFn: (value:any) => {
-      return `${value?.nom} - ${value?.organisme}`
-    },
+    width: 600,
   },
   {
     text: 'Créé le',
     value: 'dateCreation',
     parseFn: dateToStringFr,
     type: 'date',
+    width: 200,
   },
   // TODO: Fonction de recupération des nombres de dossiers
   // {
@@ -60,6 +58,7 @@ const headersJson = [
     value: 'datePublication',
     parseFn: dateToStringFr,
     type: 'date',
+    width: 200,
   },
 ]
 
@@ -74,6 +73,7 @@ onMounted(async () => {
 const selectDemarche = (row:IDemarche[]) => {
   router.push({ name: 'DemarcheDossiers', params: { id: row[0].id } })
 }
+
 </script>
 
 <template>
