@@ -317,7 +317,7 @@ export const smallDemarcheAndDossierFinancementEtrangerDataMock = () => ({
                   filename: 'modele-financements-inferieurs-15300.xlsx',
                   contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                   checksum: 'D4io8724vjNaW4AXltzPCQ==',
-                  byteSize: '9403',
+                  byteSizeBigInt: '9403',
                   url: 'https://api.example.com/modele-financements-inferieurs-15300.xlsx',
                 },
               ],
