@@ -40,7 +40,7 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
     const copy = await this.fileService.copyRemoteFile(
       file.url,
       file.checksum,
-      file.byteSize,
+      file.byteSizeBigInt,
       file.contentType,
       file.filename,
     )
