@@ -1,16 +1,3 @@
-<template>
-  <BiblioNumDataTableAgGrid
-    title="Rôles"
-    action-title="Administrer ce rôle"
-    component-action=""
-    :headers="rolesHeadersJson"
-    :row-data="rolesRowData"
-    is-hidden-side-bar
-    with-action
-    row-selection="single"
-    @get-elt="getRole"
-  />
-</template>
 
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
@@ -29,6 +16,7 @@ const rolesHeadersJson = [
     value: 'id',
     action: { condition: (role: IRole) => canManageRoles.value && (role.name !== RoleName.ADMIN) },
     width: 15,
+    hide: true,
   },
   {
     text: 'Name',
@@ -70,8 +58,10 @@ const rolesRowData = computed(() => {
 
 const canManageRoles = computed(() => userStore.canManageRoles)
 
-const getRole = async (data: IRole) => {
-  router.push({ name: 'Role', params: { id: data.id } })
+const selectRole = (row: IRole[]) => {
+  if (canManageRoles.value && row[0].name !== RoleName.ADMIN) {
+    router.push({ name: 'Role', params: { id: row[0].id } })
+  }
 }
 
 onMounted(async () => {
@@ -83,3 +73,16 @@ onMounted(async () => {
 })
 
 </script>
+
+<template>
+  <BiblioNumDataTableAgGrid
+    title="Rôles"
+    action-title="Administrer ce rôle"
+    component-action=""
+    :headers="rolesHeadersJson"
+    :row-data="rolesRowData"
+    is-hidden-side-bar
+    row-selection="single"
+    @selection-changed="selectRole"
+  />
+</template>

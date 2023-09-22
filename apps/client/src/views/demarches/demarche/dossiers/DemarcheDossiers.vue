@@ -295,6 +295,7 @@ const toggleView = useDebounceFn((isActive) => {
         class="ag-theme-material"
         :column-defs="columnsDef"
         :grid-options="gridOptions"
+        :row-style="{ cursor: 'pointer' }"
         @grid-ready="onGridReady($event)"
         @column-visible="refresh()"
         @selection-changed="onSelectionChanged($event)"
