@@ -26,7 +26,11 @@ export const useCustomFilterStore = defineStore('custom-filter', () => {
     await getCustomFilters()
   }
 
+  const $reset = () => {
+    customFilters.value = []
+  }
   return {
+    $reset,
     customFilters,
     getCustomFilters,
     createCustomFilter,

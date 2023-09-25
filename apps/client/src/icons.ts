@@ -2,6 +2,8 @@ export {
   CoTrash,
   RiAddCircleLine,
   RiCheckLine,
+  RiCheckboxBlankCircleLine,
+  RiCheckboxCircleFill,
   RiCloseLine,
   RiDeleteBinLine,
   RiEyeFill,

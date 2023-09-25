@@ -82,6 +82,14 @@ const authenticatedQuickLinksPart2: QuickLink[] = [
   },
 ]
 
+const authenticatedQuickLinksPart3: QuickLink[] = [
+  {
+    label: 'Statistiques',
+    to: { name: 'Statistiques' },
+    iconAttrs: iconColor,
+  },
+]
+
 const manageRolesQuickLink = {
   label: 'Administration',
   to: { name: 'Admin' },
@@ -101,10 +109,11 @@ watch([() => userStore.isAuthenticated, route], async () => {
   if (userStore.isAuthenticated) {
     quickLinks.value = [
       ...quickLinksBase,
-      ...authenticatedQuickLinksPart1,
       ...(userStore.canAccessDemarches ? [demarcheQuickLink] : []),
-      ...authenticatedQuickLinksPart2,
+      ...authenticatedQuickLinksPart1,
+      ...authenticatedQuickLinksPart3,
       ...(userStore.canManageRoles ? [manageRolesQuickLink] : []),
+      ...authenticatedQuickLinksPart2,
     ]
   } else {
     quickLinks.value = [

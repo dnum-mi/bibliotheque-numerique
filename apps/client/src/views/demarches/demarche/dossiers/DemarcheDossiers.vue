@@ -4,7 +4,9 @@ import 'ag-grid-community/styles/ag-grid.css'
 import 'ag-grid-community/styles/ag-theme-material.css'
 import '@/ag-grid-dsfr.css'
 
-import { computed, type ComputedRef, onMounted, reactive, type Ref, ref, watch } from 'vue'
+import { computed, type ComputedRef, reactive, type Ref, ref, watch, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useDebounceFn } from '@vueuse/core'
 import { AgGridVue } from 'ag-grid-vue3'
 import type { GridOptions } from 'ag-grid-enterprise'
 import type { ColumnApi, SelectionChangedEvent, ColDef, ColumnMenuTab, GridApi, GridReadyEvent, IServerSideGetRowsParams, SortModelItem } from 'ag-grid-community'
@@ -21,7 +23,6 @@ import DemarcheDossierCellRenderer from '@/views/demarches/demarche/dossiers/Dem
 import { gridOptionFactory } from '@/views/demarches/demarche/dossiers/grid-option-factory'
 import { type SmallFilter } from './DemarcheDossiersFilters.vue'
 import { deepAlmostEqual, selectKeysInObject } from '@/utils/object'
-import { useRouter } from 'vue-router'
 
 const demarcheStore = useDemarcheStore()
 const router = useRouter()
@@ -131,9 +132,14 @@ const refresh = () => {
   }
 }
 
+const route = useRoute()
+
 onMounted(async () => {
   computeColumnsDef()
   await customFilterStore.getCustomFilters()
+  if (route.query.customFilter) {
+    selectFilter(Number(route.query.customFilter))
+  }
 })
 watch(demarche, computeColumnsDef)
 watch(fetching, () => {
@@ -228,31 +234,48 @@ const updateFilterName = async (name: string) => {
     selectedCustomFilter.value.name = name
   }
 }
+
 /* endregion */
 
 const download = () => {
   demarcheStore.exportCurrentDemarcheDossiers(groupByDossier.value, paginationDto)
 }
+
+const toggleView = useDebounceFn((isActive) => {
+  groupByDossier.value = isActive
+  refresh()
+})
 </script>
 
 <template>
   <div :style="{ paddingBottom: '2rem' }">
     <div class="flex justify-between no-label-on-toggle items-center fr-pl-2w fr-pt-2w">
-      <DsfrToggleSwitch
-        :model-value="groupByDossier"
-        class="self-end"
-        label="Grouper par dossier"
-        @update:model-value="
-          groupByDossier = $event;
-          refresh();
-        "
-      />
-      <DsfrButton
-        :label="'Télécharger'"
-        icon="ri-file-download-fill"
-        small
-        @click="download"
-      />
+      <div
+        class="flex  gap-2"
+      >
+        <div>
+          <DsfrButton
+            :tertiary="groupByDossier"
+            :class="{ 'opacity-70': groupByDossier }"
+            @click="toggleView(false)"
+          >
+            Vue par dossier <VIcon :name="!groupByDossier ? 'ri-checkbox-circle-fill' : 'ri-checkbox-blank-circle-line'" />
+          </DsfrButton>
+          <DsfrButton
+            :tertiary="!groupByDossier"
+            :class="{ 'opacity-70': !groupByDossier }"
+            @click="toggleView(true)"
+          >
+            <VIcon :name="groupByDossier ? 'ri-checkbox-circle-fill' : 'ri-checkbox-blank-circle-line'" /> Vue par champ
+          </DsfrButton>
+        </div>
+        <DsfrButton
+          :label="'Télécharger'"
+          icon="ri-file-download-fill"
+          small
+          @click="download"
+        />
+      </div>
       <DemarcheDossiersFilters
         :filters="customFilters as SmallFilter[]"
         :selected-filter="selectedCustomFilter as SmallFilter"

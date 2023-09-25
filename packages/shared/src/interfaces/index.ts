@@ -1,2 +1,5 @@
 export * from './demarche.interface'
 export * from './custom-filters.interface'
+export * from './user-friendly-filter.interface'
+export * from './total.interface'
+export * from './small-custom-filter-dto.interface'

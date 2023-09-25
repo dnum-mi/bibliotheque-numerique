@@ -69,6 +69,14 @@ const routes = [
     },
   },
   {
+    name: 'Statistiques',
+    path: '/statistiques',
+    component: () => import('@/views/Statistiques.vue'),
+    meta: {
+      needsAuth: true,
+    },
+  },
+  {
     name: 'LogOut',
     path: '/logout',
     component: () => import('@/views/Logout.vue'),
