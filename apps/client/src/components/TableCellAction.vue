@@ -42,18 +42,6 @@ const showElt = () => {
   />
 </template>
 
-<template>
-  <DsfrButton
-    v-show="show"
-    data-cy="cell-action-icon"
-    :disabled="disabled"
-    :icon="icon"
-    tertiary="tertiary"
-    icon-only
-    @click="showElt"
-  />
-</template>
-
 <style scoped>
 .fr-btn {
   --padding: 0;
