@@ -22,7 +22,14 @@ import { DsConfigurationService } from '@/modules/ds/providers/ds-configuration.
 import { DsMapperService } from '@/modules/ds/providers/ds-mapper.service'
 import { FileStorageService } from '@/modules/file-storage/providers/file-storage.service'
 import { CreateFileStorageDto } from '@/shared/objects/file-storage/create-file.dto'
+import { Prisma } from '@prisma/client'
 
+interface createNestedStatus {
+  status: Prisma.FileStorageCreateNestedOneWithoutFoundationInput
+}
+interface updateNestedStatus {
+  status: Prisma.FileStorageUpdateOneWithoutFoundationNestedInput
+}
 @Injectable()
 export class FoundationService extends BaseEntityService {
   constructor(
@@ -78,16 +85,14 @@ export class FoundationService extends BaseEntityService {
     }
   }
 
-  // TODO: why can't I import 'FileStorageCreateNestedOneWithoutFoundationInput' from prisma client ?
   private async _cascadeCreateFile(
     statusFile: CreateFileStorageDto | undefined,
-  ): Promise<null | { status: any}> {
+  ): Promise<null | createNestedStatus> {
     this.logger.verbose('_cascadeCreateFile')
     if (statusFile) {
       const file = await this.fileStorage.copyRemoteFile(statusFile)
       return {
         status: {
-          disconnect: true,
           create: {
             ...{ ...statusFile, fileUrl: undefined },
             name: file.key,
@@ -198,6 +203,18 @@ export class FoundationService extends BaseEntityService {
   /* endregion */
 
   /* region update foundation */
+  public async triggerAllRefresh() {
+    this.logger.log('Refreshing foundation')
+    await this.triggerFeModificationRefresh()
+    await this.triggerFddModificationRefresh()
+    await this.triggerFeDissolution()
+    await this.triggerFddDissolution()
+    this.logger.log('Setting lastRefreshedAt')
+    await this.dsConfigurationService.updateConfiguration({
+      foundationRefreshedAt: new Date(),
+    })
+  }
+
   public async triggerFeModificationRefresh() {
     this.logger.verbose('triggerFeModificationRefresh')
     await this._lookForFoundationModification(
@@ -232,14 +249,24 @@ export class FoundationService extends BaseEntityService {
     this.logger.verbose('updateFoundation')
     const foundation = await this.getOneFoundation(rnfId)
     await this.historyService.newHistoryEntry(foundation)
+    const cascadeFile = await this._cascadeCreateFile(dto.status)
+    const cascadeUpdateFile: updateNestedStatus | undefined = cascadeFile
+      ? {
+        status: {
+          create: cascadeFile.status.create,
+          // disconnect: true,
+        },
+      }
+      : undefined
     return this.prisma.foundation.update({
       where: { rnfId },
+      // @ts-expect-error why ?
       data: {
         ...dto,
         address: {
           update: dto.address,
         },
-        ...((await this._cascadeCreateFile(dto.status)) ?? {}),
+        ...cascadeUpdateFile,
       },
     })
   }
@@ -280,13 +307,14 @@ export class FoundationService extends BaseEntityService {
     const rnfChamp = this.dsMapperService.findChampsInDossier(doss.champs, {
       rnf: this.dsConfigurationService.rnfFieldKeys.rnfId,
     }).rnf
-    const rnfId = stringValue(rnfChamp)
+    let rnfId: string | null = stringValue(rnfChamp)
     if (!rnfId) {
       this.logger.debug(`No RNF-ID in dossier (nbrDossier: ${doss.number})`)
     } else if (doss.state !== DossierState.Accepte) {
       this.logger.debug(
         `Dossier (nbrDossier: ${doss.number}) is not accepted. (${doss.state})`,
       )
+      rnfId = null
     }
     return rnfId
   }
@@ -331,9 +359,14 @@ export class FoundationService extends BaseEntityService {
           this.logger.log(
             `Dissolving foundation ${rnfId} because of dossier ${doss.number}`,
           )
-          await this.updateFoundation(rnfId, {
-            dissolvedAt: new Date(),
-          })
+          try {
+            await this.updateFoundation(rnfId, {
+              dissolvedAt: new Date(),
+            })
+          } catch (e) {
+            this.logger.error(`Error while updating foundation ${rnfId}`)
+            this.logger.error(e as Error)
+          }
         }
       }
     } else {

@@ -54,6 +54,8 @@ export class DsConfigurationController {
       return this.foundationService.triggerFeDissolution()
     case 'fddDissolution':
       return this.foundationService.triggerFddDissolution()
+    case 'all':
+      return this.foundationService.triggerAllRefresh()
     }
     throw new BadRequestException('Invalid type in query.')
   }

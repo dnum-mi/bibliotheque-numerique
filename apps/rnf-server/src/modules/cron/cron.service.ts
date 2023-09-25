@@ -47,14 +47,6 @@ export class CronService implements OnModuleInit {
 
   private async _refreshFoundation() {
     this.logger.verbose('refreshFoundation')
-    this.logger.log('Refreshing foundation')
-    await this.foundationService.triggerFeModificationRefresh()
-    await this.foundationService.triggerFddModificationRefresh()
-    await this.foundationService.triggerFeDissolution()
-    await this.foundationService.triggerFddDissolution()
-    this.logger.log('Setting lastRefreshedAt')
-    await this.dsConfigurationService.updateConfiguration({
-      foundationRefreshedAt: new Date(),
-    })
+    await this.foundationService.triggerAllRefresh()
   }
 }
