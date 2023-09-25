@@ -32,11 +32,12 @@ describe('DsMapperService & DsConfigurationService', () => {
             },
           }
         }
+        return {}
       })
       .compile()
 
     service = module.get<DsMapperService>(DsMapperService)
-    module.get<DsConfigurationService>(DsConfigurationService).onModuleInit()
+    await module.get<DsConfigurationService>(DsConfigurationService).onModuleInit()
   })
 
   it('Should throw error if Demarche doesnt exist or champs are empty', () => {

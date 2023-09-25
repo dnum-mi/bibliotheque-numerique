@@ -5,6 +5,7 @@ import { dnrDossierDataMock } from './datas/dossier-dnr.data.mock'
 import {
   demarcheDossierEntrepriseModificationDataMock,
 } from './datas/demarche-dossier-entreprise-modification.data.mock'
+import { demarcheDossierEntrepriseDissolutionDataMock } from './datas/demarche-dossier-entreprise-dissolution.mock'
 
 const dossierNotFoundGraphQlError = {
   data: null,
@@ -67,7 +68,14 @@ export const dsServiceMock = {
     }
   }),
   getOneDemarcheWithDossier: jest.fn().mockImplementation((id: number) => {
-    if (id === 53) { return demarcheDossierEntrepriseModificationDataMock } else { throw new DsApiError(dossierNotFoundGraphQlError) }
+    switch (id) {
+    case 53:
+      return demarcheDossierEntrepriseModificationDataMock
+    case 54:
+      return demarcheDossierEntrepriseDissolutionDataMock
+    default:
+      throw new DsApiError(dossierNotFoundGraphQlError)
+    }
   }),
   writeRnfIdInPrivateAnnotation: jest.fn().mockResolvedValue(undefined),
 }

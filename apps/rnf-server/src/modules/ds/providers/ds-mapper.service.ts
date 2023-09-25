@@ -41,7 +41,7 @@ export class DsMapperService {
     }
     const champsHash = this.findChampsInDossier(rawDossier.champs, this.dsConfigurationService.rnfFieldKeys)
     return Object.fromEntries(
-      Object.keys(mapper).map((key) => [key, (mapper!)[key](champsHash[key])])
+      Object.keys(mapper).map((key) => [key, (mapper!)[key](champsHash[key])] as [string, string])
         .filter(([key, value]) => !!value),
     ) as unknown as CreateFoundationDto
   }

@@ -1,8 +1,5 @@
-/* eslint-disable */
-import { Dossier, DossierWithCustomChamp } from '@dnum-mi/ds-api-client'
-
-export const demarcheDossierEntrepriseModificationRnfId = "042-FE-000001-00"
-export const demarcheDossierEntrepriseModificationNewTitle = "Un super titre"
+export const demarcheDossierEntrepriseModificationRnfId = '042-FE-000001-00'
+export const demarcheDossierEntrepriseModificationNewTitle = 'Un super titre'
 
 export const demarcheDossierEntrepriseModificationDataMock = {
   demarche: {

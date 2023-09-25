@@ -215,15 +215,15 @@ export class FoundationService extends BaseEntityService {
   }
 
   public async triggerFeDissolution() {
-    this.logger.verbose('triggerFeDissolution')
     await this._lookForFoundationDissolution(
+      'Dissolution of FE',
       this.dsConfigurationService.configuration.dsDemarcheFEDissolutionId,
     )
   }
 
   public async triggerFddDissolution() {
-    this.logger.verbose('triggerFddDissolution')
     await this._lookForFoundationDissolution(
+      'Dissolution of FDD',
       this.dsConfigurationService.configuration.dsDemarcheFDDDissolutionId,
     )
   }
@@ -265,7 +265,7 @@ export class FoundationService extends BaseEntityService {
     if (dossiers.length) {
       for (const doss of dossiers) {
         try {
-          await this._synchroniseOneDossier(doss, dsDemarcheId)
+          await this._updateOneFoundationWithDossier(doss, dsDemarcheId)
         } catch (err) {
           this.logger.error(`Error for dossier: ${doss.number}`)
           this.logger.error(err as Error)
@@ -276,11 +276,7 @@ export class FoundationService extends BaseEntityService {
     }
   }
 
-  private async _synchroniseOneDossier(
-    doss: DossierWithCustomChamp,
-    dsDemarcheId: number,
-  ): Promise<void> {
-    this.logger.verbose('_synchroniseOneDossier')
+  private checkIfRnfInAcceptedDossier(doss: DossierWithCustomChamp): string | null {
     const rnfChamp = this.dsMapperService.findChampsInDossier(doss.champs, {
       rnf: this.dsConfigurationService.rnfFieldKeys.rnfId,
     }).rnf
@@ -291,7 +287,17 @@ export class FoundationService extends BaseEntityService {
       this.logger.debug(
         `Dossier (nbrDossier: ${doss.number}) is not accepted. (${doss.state})`,
       )
-    } else {
+    }
+    return rnfId
+  }
+
+  private async _updateOneFoundationWithDossier(
+    doss: DossierWithCustomChamp,
+    dsDemarcheId: number,
+  ): Promise<void> {
+    this.logger.verbose('_synchroniseOneDossier')
+    const rnfId = this.checkIfRnfInAcceptedDossier(doss)
+    if (rnfId) {
       this.logger.verbose(
         `Updating foundation ${rnfId} with dossier ${doss.number}`,
       )
@@ -303,10 +309,36 @@ export class FoundationService extends BaseEntityService {
     }
   }
 
-  private async _lookForFoundationDissolution(dsDemarcheId: number) {
+  private async _lookForFoundationDissolution(name: string, dsDemarcheId: number) {
     this.logger.verbose('_lookForFoundationDissolution')
-    console.log(dsDemarcheId)
-    console.log('TODO')
+    this.logger.log(`Checking for: ${name}`)
+    let raw: IDsApiClientDemarche
+    try {
+      raw = await this.dsService.getOneDemarcheWithDossier(
+        dsDemarcheId,
+        this.dsConfigurationService.configuration.foundationRefreshedAt,
+      )
+    } catch (e) {
+      this.logger.error(`Error while fetching ${name}`)
+      this.logger.error(e as Error)
+      return
+    }
+    const dossiers = raw.demarche.dossiers.nodes
+    if (dossiers.length) {
+      for (const doss of dossiers) {
+        const rnfId = this.checkIfRnfInAcceptedDossier(doss)
+        if (rnfId) {
+          this.logger.log(
+            `Dissolving foundation ${rnfId} because of dossier ${doss.number}`,
+          )
+          await this.updateFoundation(rnfId, {
+            dissolvedAt: new Date(),
+          })
+        }
+      }
+    } else {
+      this.logger.debug('No dossier to update.')
+    }
   }
 
   /* endregion */

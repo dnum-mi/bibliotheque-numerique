@@ -31,6 +31,7 @@ export type FoundationOutputDto = {
   addressId: number;
   phone: string;
   email: string;
+  dissolvedAt?: Date;
   address: AddressOutputDto;
 }
 

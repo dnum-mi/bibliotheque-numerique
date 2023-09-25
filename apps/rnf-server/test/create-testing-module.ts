@@ -22,7 +22,7 @@ export const createTestingModule = async (): Promise<{
     .compile()
 
   const app = moduleFixture.createNestApplication()
-  mainConfig(app)
+  await mainConfig(app)
   const prisma = moduleFixture.get<PrismaService>(PrismaService)
   await app.init()
   return { app, prisma }
