@@ -2,15 +2,20 @@ import { BadRequestException, INestApplication, ValidationError, ValidationPipe 
 import { LoggerService } from '@/shared/modules/logger/providers/logger.service'
 import { AllExceptionsFilter } from '@/shared/filters/all-exception.filter'
 import { HttpAdapterHost } from '@nestjs/core'
+import { ConfigService } from '@nestjs/config'
 
-export function mainConfig (app: INestApplication) {
-  const loggerService = app.get(LoggerService)
+export async function mainConfig (app: INestApplication, isTest = false) {
+  const loggerService = await app.resolve<LoggerService>(LoggerService)
+  loggerService.setContext('Nestjs-main')
   const httpAdapterHost = app.get(HttpAdapterHost)
 
-  app.useLogger(app.get(LoggerService))
+  app.useLogger(loggerService)
   app.setGlobalPrefix('/api')
   app.useGlobalPipes(
     new ValidationPipe({
+      transform: true,
+      forbidNonWhitelisted: true,
+      whitelist: true,
       exceptionFactory: (errors: ValidationError[]) => {
         const message = `Validation error(s):\n ${errors
           .map((e: ValidationError) => `Champ ${e.property}: ${Object.values(e.constraints!).join(', ')}`)
@@ -19,5 +24,7 @@ export function mainConfig (app: INestApplication) {
       },
     }),
   )
-  app.useGlobalFilters(new AllExceptionsFilter(httpAdapterHost, loggerService))
+  const allExceptionsFilterLogger = new LoggerService(app.get(ConfigService))
+  allExceptionsFilterLogger.setContext('AllExceptionsFilter')
+  app.useGlobalFilters(new AllExceptionsFilter(httpAdapterHost, isTest ? loggerService : allExceptionsFilterLogger))
 }

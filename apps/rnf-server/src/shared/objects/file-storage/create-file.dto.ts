@@ -12,5 +12,5 @@ export const fileStorageKeys: (keyof FileStorageEntity)[] = [
 export class CreateFileStorageDto extends PickType(FileStorageEntity, fileStorageKeys) {
   @IsDefined()
   @IsString()
-    fileUrl: string
+  fileUrl: string
 }

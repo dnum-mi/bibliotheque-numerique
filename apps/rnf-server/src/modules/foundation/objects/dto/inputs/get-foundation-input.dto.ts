@@ -5,5 +5,5 @@ export class GetFoundationInputDto {
   @IsDefined()
   @IsString()
   @isRnfIdValid()
-    rnfId: string
+  rnfId: string
 }

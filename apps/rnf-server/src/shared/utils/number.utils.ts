@@ -28,6 +28,9 @@ export const computeLuhn = (source: string, mod = 10): number => {
 }
 
 export const formatPhoneNumber = (phoneNumber: string): string => {
+  if (!phoneNumber) {
+    return phoneNumber
+  }
   if (phoneNumber.match(/^\+?\d{11}$/)) {
     return phoneNumber
   }

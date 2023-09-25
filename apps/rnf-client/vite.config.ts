@@ -6,6 +6,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import AutoImport from 'unplugin-auto-import/vite'
+import Unocss from 'unocss/vite'
 
 export default defineConfig({
   server: {
@@ -21,6 +22,7 @@ export default defineConfig({
     vue(),
     vueJsx(),
     VitePWA({}),
+    Unocss(),
     AutoImport({
       imports: [
         'vue',

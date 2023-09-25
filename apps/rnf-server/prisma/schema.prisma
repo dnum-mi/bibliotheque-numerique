@@ -21,28 +21,44 @@ enum FoundationRole {
   MANAGER
 }
 
-// ======================================== Foundation ======================================
+// ======================================== Foundation =====================================
 model Foundation {
-  id         Int            @id @default(autoincrement())
-  createdAt  DateTime       @default(now())
-  updatedAt  DateTime       @updatedAt
-  rnfId      String         @unique
-  type       FoundationType @default(FDD)
-  department String
-  title      String
+  id          Int                  @id @default(autoincrement())
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+  rnfId       String               @unique
+  type        FoundationType       @default(FDD)
+  department  String
+  title       String
+  dissolvedAt DateTime?
+  phone       String
+  email       String
+  // relations
+  address     Address              @relation(fields: [addressId], references: [id])
+  addressId   Int
+  persons     PersonInFoundation[]
+  status      FileStorage? @relation("FoundationStatus")
+}
 
-  address   Address @relation(fields: [addressId], references: [id])
-  addressId Int
+model FoundationHistory {
+  id            Int            @id @default(autoincrement())
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  rnfId         String
+  historyNumber Int
+  type          FoundationType @default(FDD)
+  department    String
+  title         String
+  dissolvedAt   DateTime?
 
   // Contact
   phone String
   email String
 
   // Person
-  persons PersonInFoundation[]
-
-  // FileStorage
-  status  FileStorage?
+  persons Json[] // PersonInFoundation[]
+  address Json // Address
+  status  Json
 }
 
 // ======================================== Address ========================================
@@ -100,41 +116,46 @@ model PersonInFoundation {
   @@id([foundationId, personId])
 }
 
-// ======================================== Foundation History ============================
-model FoundationHistory {
-  id            Int            @id @default(autoincrement())
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  rnfId         String
-  historyNumber Int
-  type          FoundationType @default(FDD)
-  department    String
-  title         String
+// ======================================== File storage  ===================================
+model FileStorage {
+  id           Int      @id @default(autoincrement())
+  uuid         String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  name         String
+  path         String
+  originalName String
+  checksum     String
+  byteSize     Int
+  mimeType     String
 
-  // Contact
-  phone String
-  email String
-
-  // Person
-  persons Json[] // PersonInFoundation[]
-  address Json // Address
-
-  // Json from DS API use to create or update foundation
-  rawDsJson Json
+  foundation      Foundation? @relation("FoundationStatus", fields: [foundationId], references: [id])
+  foundationId    Int? @unique
 }
 
-model FileStorage {
-  id        Int      @id @default(autoincrement())
-  uuid      String   @db.Uuid @default(dbgenerated("gen_random_uuid()")) @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  name      String
-  path      String
-  originalName String
-  checksum String
-  byteSize Int
-  mimeType String
-
-  foundation  Foundation @relation(fields: [foundationId], references: [id])
-  foundationId Int @unique
+// ======================================== Ds Confifuation ================================
+model DSConfiguration {
+  id                                Int      @id @default(autoincrement())
+  createdAt                         DateTime @default(now())
+  foundationRefreshedAt             DateTime @default("1970-01-01T00:00:00.000Z")
+  updatedAt                         DateTime @updatedAt
+  dsDemarcheFDDCreationId           Int      @default(37)
+  dsDemarcheFDDCreationAnnotationId String   @default("Q2hhbXAtMTE4")
+  dsDemarcheFDDModificationId       Int      @default(50)
+  dsDemarcheFDDDissolutionId        Int      @default(51)
+  dsDemarcheFECreationId            Int      @default(12)
+  dsDemarcheFECreationAnnotationId  String   @default("Q2hhbXAtMzIx")
+  dsDemarcheFEModificationId        Int      @default(53)
+  dsDemarcheFEDissolutionId         Int      @default(54)
+  dsDemarcheDNRId                   Int      @default(43)
+  dsDemarcheDNRAnnotationId         String   @default("Q2hhbXAtMTQ3OQ==")
+  fieldRegexTitle                   String   @default("#rnf-titre-rnf#")
+  fieldRegexType                    String   @default("#rnf-type-rnf#")
+  fieldRegexAddress                 String   @default("#rnf-addresse-rnf#")
+  fieldRegexEmail                   String   @default("#rnf-courriel-rnf#")
+  fieldRegexPhone                   String   @default("#rnf-telephone-rnf#")
+  fieldRegexPerson                  String   @default("#rnf-personne-rnf#")
+  fieldRegexRnfId                   String   @default("#rnf-numero-rnf-rnf#")
+  fieldRegexStatus                  String   @default("#rnf-status-rnf#")
+  cronUpdateFrequency               String   @default("0 */5 * * * *")
 }

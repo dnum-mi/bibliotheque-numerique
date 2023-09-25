@@ -4,7 +4,5 @@ export const loggerServiceMock = {
   debug: () => {},
   log: () => {},
   warn: () => {},
-  error: (e) => {
-    console.log(e)
-  },
+  error: () => {},
 }

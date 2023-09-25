@@ -139,7 +139,11 @@ const buttonProps = computed(() => (selectedFoundation.value ? rejectProps : cre
   </DefineTemplate>
 
   <div class="h-[250px]">
-    <div class="h-full">
+    <div class="h-full flex flex-col">
+      <div v-if="rnfClient.collisions.length === 0" class="text-center">
+        <p v-if="rnfClient.requesting.value">Requête en cours, veuillez patienter...</p>
+        <DsfrAlert v-if="alertProps.description" v-bind="alertProps" />
+      </div>
       <form class="rnf-request rnf-content" @submit.prevent="onSubmit($event)">
         <div>
           <DsfrInputGroup label-visible :error-message="dossierIdError || emailError">
@@ -172,10 +176,6 @@ const buttonProps = computed(() => (selectedFoundation.value ? rejectProps : cre
           </p>
         </div>
       </form>
-      <div v-if="rnfClient.collisions.length === 0" class="text-center">
-        <p v-if="rnfClient.requesting.value">Requête en cours, veuillez patienter...</p>
-        <DsfrAlert v-if="alertProps.description" v-bind="alertProps" />
-      </div>
       <div v-if="rnfClient.collisions.length" class="fr-pt-4w">
         <div class="fr-container">
           <div class="fr-grid-row">

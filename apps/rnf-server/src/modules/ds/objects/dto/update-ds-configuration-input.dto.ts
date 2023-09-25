@@ -1,0 +1,74 @@
+import { IsNumber, IsOptional, IsString } from 'class-validator'
+
+// TODO: Why is PartialType not working ??
+// export class UpdateDsConfigurationInputDto extends PartialType(DsConfigurationEntity) {}
+
+export class UpdateDsConfigurationInputDto {
+  @IsNumber()
+  @IsOptional()
+  dsDemarcheFDDCreationId: number
+
+  @IsString()
+  @IsOptional()
+  dsDemarcheFDDCreationAnnotationId: string
+
+  @IsNumber()
+  @IsOptional()
+  dsDemarcheFDDModificationId: number
+
+  @IsNumber()
+  @IsOptional()
+  dsDemarcheFDDDissolutionId: number
+
+  @IsNumber()
+  @IsOptional()
+  dsDemarcheFECreationId: number
+
+  @IsString()
+  @IsOptional()
+  dsDemarcheFECreationAnnotationId: string
+
+  @IsNumber()
+  @IsOptional()
+  dsDemarcheFEModificationId: number
+
+  @IsNumber()
+  @IsOptional()
+  dsDemarcheFEDissolutionId: number
+
+  @IsNumber()
+  @IsOptional()
+  dsDemarcheDNRId: number
+
+  @IsString()
+  @IsOptional()
+  dsDemarcheDNRAnnotationId: string
+
+  @IsString()
+  @IsOptional()
+  fieldRegexTitle: string
+
+  @IsString()
+  @IsOptional()
+  fieldRegexType: string
+
+  @IsString()
+  @IsOptional()
+  fieldRegexAddress: string
+
+  @IsString()
+  @IsOptional()
+  fieldRegexEmail: string
+
+  @IsString()
+  @IsOptional()
+  fieldRegexPhone: string
+
+  @IsString()
+  @IsOptional()
+  fieldRegexPersonInFoundationToCreate: string
+
+  @IsString()
+  @IsOptional()
+  cronUpdateFrequency: string
+}

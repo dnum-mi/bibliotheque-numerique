@@ -9,7 +9,10 @@ import { GetDsUrlOutputDto } from '@/modules/ds/objects/dto/get-ds-url-output.dt
 export class DsController {
   dsHost: string
 
-  constructor (private readonly logger: LoggerService, private readonly config: ConfigService) {
+  constructor(
+    private readonly logger: LoggerService,
+    private readonly config: ConfigService,
+  ) {
     this.logger.setContext(this.constructor.name)
     const host = this.config.get('ds.host')
     if (!host) {
@@ -20,7 +23,7 @@ export class DsController {
 
   @Get('/url')
   @ApiOperation({ summary: "Récupérer l'url de Démarches simplifiées." })
-  getDsUrl (): GetDsUrlOutputDto {
+  getDsUrl(): GetDsUrlOutputDto {
     this.logger.verbose('getDsUrl')
     return {
       url: this.dsHost,

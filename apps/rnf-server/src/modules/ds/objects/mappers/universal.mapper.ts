@@ -1,8 +1,13 @@
-import { Champ, PieceJustificativeChamp } from '@dnum-mi/ds-api-client'
+import {
+  Champ,
+  CustomChamp,
+  PieceJustificativeChamp,
+} from '@dnum-mi/ds-api-client'
 import { AddressChamp } from '@dnum-mi/ds-api-client/dist/@types/types'
 import { Mapper } from '@/modules/ds/objects/types/mapper.type'
 
-const stringValue = (ch?: Champ) => ch?.stringValue ?? null
+export const stringValue = (ch?: Champ | CustomChamp) =>
+  ch?.stringValue ?? null
 
 export const universalMapper: Mapper = {
   title: stringValue,
@@ -29,9 +34,9 @@ export const universalMapper: Mapper = {
       regionCode: address.regionCode ?? null,
     }
   },
-  personInFoundationToCreate: (ch: Champ) => null,
+  personInFoundationToCreate: () => null,
   status: (champ?: PieceJustificativeChamp) => {
-    if (!champ || champ.__typename !== 'PieceJustificativeChamp' || !champ.file) {
+    if (!champ?.file || champ.__typename !== 'PieceJustificativeChamp') {
       return null
     }
     const file = champ.file

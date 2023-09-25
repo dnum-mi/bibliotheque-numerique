@@ -1,0 +1,87 @@
+import { DSConfiguration } from '@prisma/client'
+import { BaseEntity } from '@/shared/base-entity/base.entity'
+import { IsDate, IsDefined, IsNumber, IsString } from 'class-validator'
+
+export class DsConfigurationEntity
+  extends BaseEntity
+  implements DSConfiguration {
+  @IsDate()
+  foundationRefreshedAt: Date
+
+  @IsNumber()
+  @IsDefined()
+  dsDemarcheFDDCreationId: number
+
+  @IsString()
+  @IsDefined()
+  dsDemarcheFDDCreationAnnotationId: string
+
+  @IsNumber()
+  @IsDefined()
+  dsDemarcheFDDModificationId: number
+
+  @IsNumber()
+  @IsDefined()
+  dsDemarcheFDDDissolutionId: number
+
+  @IsNumber()
+  @IsDefined()
+  dsDemarcheFECreationId: number
+
+  @IsString()
+  @IsDefined()
+  dsDemarcheFECreationAnnotationId: string
+
+  @IsNumber()
+  @IsDefined()
+  dsDemarcheFEModificationId: number
+
+  @IsNumber()
+  @IsNumber()
+  @IsDefined()
+  dsDemarcheFEDissolutionId: number
+
+  @IsNumber()
+  @IsDefined()
+  dsDemarcheDNRId: number
+
+  @IsString()
+  @IsDefined()
+  dsDemarcheDNRAnnotationId: string
+
+  @IsString()
+  @IsDefined()
+  fieldRegexTitle: string
+
+  @IsString()
+  @IsDefined()
+  fieldRegexType: string
+
+  @IsString()
+  @IsDefined()
+  fieldRegexAddress: string
+
+  @IsString()
+  @IsDefined()
+  fieldRegexEmail: string
+
+  @IsString()
+  @IsDefined()
+  fieldRegexPhone: string
+
+  @IsString()
+  @IsDefined()
+  fieldRegexPerson: string
+
+  @IsString()
+  @IsDefined()
+  fieldRegexRnfId: string
+
+  @IsString()
+  @IsDefined()
+  fieldRegexStatus: string
+
+  @IsString()
+  @IsDefined()
+  cronUpdateFrequency: string
+}

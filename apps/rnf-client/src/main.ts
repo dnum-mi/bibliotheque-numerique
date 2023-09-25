@@ -12,6 +12,7 @@ import VueDsfr from '@gouvminint/vue-dsfr'
 import App from './App.vue'
 import router from './router/index'
 import * as icons from './icons'
+import 'virtual:uno.css'
 
 import './main.css'
 

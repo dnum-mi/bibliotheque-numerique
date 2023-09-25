@@ -17,14 +17,14 @@ export const createFoundationDtoKeys =
 export class CreateFoundationDto extends PickType(FoundationEntity, createFoundationDtoKeys) {
   @ValidateNested()
   @Type(() => CreateAddressDto)
-    address: CreateAddressDto
+  address: CreateAddressDto
 
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreatePersonInFoundationDto)
-    personInFoundationToCreate?: CreatePersonInFoundationDto[]
+  personInFoundationToCreate?: CreatePersonInFoundationDto[]
 
   @ValidateNested()
   @Type(() => CreateFileStorageDto)
-    status?: CreateFileStorageDto
+  status?: CreateFileStorageDto
 }

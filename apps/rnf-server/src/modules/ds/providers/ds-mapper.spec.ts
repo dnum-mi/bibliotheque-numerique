@@ -5,58 +5,56 @@ import { LoggerService } from '@/shared/modules/logger/providers/logger.service'
 import { loggerServiceMock } from '../../../../test/mocks/logger-service.mock'
 import { dotationDossierDataMock } from '../../../../test/mocks/datas/dossier-dotation.data.mock'
 import { entrepriseDossierDataMock } from '../../../../test/mocks/datas/dossier-entreprise.data.mock'
-import { ConfigService } from '@nestjs/config'
 import { dnrDossierDataMock } from '../../../../test/mocks/datas/dossier-dnr.data.mock'
+import { DsConfigurationService } from '@/modules/ds/providers/ds-configuration.service'
+import { dsConfigurationServiceMock } from '../../../../test/mocks/ds-configuration-service.mock'
+import { PrismaService } from '@/shared/modules/prisma/providers/prisma.service'
 
-describe('DsService', () => {
+describe('DsMapperService & DsConfigurationService', () => {
   let service: DsMapperService
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [],
       controllers: [],
-      providers: [DsMapperService],
+      providers: [DsMapperService, DsConfigurationService],
     })
       .useMocker((token) => {
         if (token === LoggerService) {
           return loggerServiceMock
         }
-        if (token === ConfigService) {
+        if (token === PrismaService) {
           return {
-            get: jest.fn().mockImplementation((str: string) => {
-              switch (true) {
-                case str === 'ds.demarcheFDDId':
-                  return '37'
-                case str === 'ds.demarcheFEId':
-                  return '12'
-                case str === 'ds.demarcheDNRId':
-                  return '43'
-              }
-            }),
+            dSConfiguration: {
+              findFirst: jest.fn().mockResolvedValue(
+                dsConfigurationServiceMock.configuration,
+              ),
+            },
           }
         }
       })
       .compile()
 
     service = module.get<DsMapperService>(DsMapperService)
+    module.get<DsConfigurationService>(DsConfigurationService).onModuleInit()
   })
 
   it('Should throw error if Demarche doesnt exist or champs are empty', () => {
     const title = "!Je suis une démarche qui n'existe pas!"
     expect(() => {
-      service.mapDossierToFoundation({
+      service.mapDossierToDto({
         demarche: {},
         champs: [],
       } as unknown as DossierWithCustomChamp)
     }).toThrow('Dossier champs is empty')
     expect(() => {
-      service.mapDossierToFoundation({
+      service.mapDossierToDto({
         demarche: {},
         champs: [{}],
       } as unknown as DossierWithCustomChamp)
     }).toThrow('This demarche id is not implemented')
     expect(() => {
-      service.mapDossierToFoundation({
+      service.mapDossierToDto({
         demarche: { title },
         champs: [{}],
       } as unknown as DossierWithCustomChamp)
@@ -64,9 +62,12 @@ describe('DsService', () => {
   })
 
   it('Should correctly map a dotation foundation demarche', () => {
-    const result = service.mapDossierToFoundation(dotationDossierDataMock as DossierWithCustomChamp)
+    const result = service.mapDossierToDto(
+      dotationDossierDataMock as DossierWithCustomChamp,
+    )
     expect(result).toEqual({
-      title: 'Je suis un titre compliqué avec des espaces et des accents et des MajUsCules',
+      title:
+        'Je suis un titre compliqué avec des espaces et des accents et des MajUsCules',
       type: 'FDD',
       address: {
         label: '11 Rue Pelleport 33800 Bordeaux',
@@ -84,13 +85,13 @@ describe('DsService', () => {
       },
       email: 'tata@gmail.com',
       phone: '06 86 46 54 45',
-      personInFoundationToCreate: null,
-      status: null,
     })
   })
 
   it('Should correctly map a entreprise demarche', () => {
-    const result = service.mapDossierToFoundation(entrepriseDossierDataMock as DossierWithCustomChamp)
+    const result = service.mapDossierToDto(
+      entrepriseDossierDataMock as DossierWithCustomChamp,
+    )
     expect(result).toMatchObject({
       title: 'Test demo',
       type: 'FE',
@@ -108,14 +109,13 @@ describe('DsService', () => {
         regionName: 'Hauts-de-France',
         regionCode: '32',
       },
-      // email: null,
-      // phone: null,
-      personInFoundationToCreate: null,
     })
   })
 
   it('Should correctly map a demande numéro rnf demarche', () => {
-    const result = service.mapDossierToFoundation(dnrDossierDataMock as DossierWithCustomChamp)
+    const result = service.mapDossierToDto(
+      dnrDossierDataMock as DossierWithCustomChamp,
+    )
     expect(result).toMatchObject({
       title: 'Fondation des tulipes',
       type: 'FRUP',
@@ -135,7 +135,6 @@ describe('DsService', () => {
       },
       email: 'tulipe@gmail.com',
       phone: '07 89 89 89 89',
-      personInFoundationToCreate: null,
     })
   })
 })

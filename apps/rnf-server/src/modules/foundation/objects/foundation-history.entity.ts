@@ -3,10 +3,10 @@ import { FoundationEntity } from '@/modules/foundation/objects/foundation.entity
 import { OmitType } from '@nestjs/swagger'
 
 export class FoundationHistoryEntity
-  extends OmitType(FoundationEntity, ['addressId', 'address', 'persons'])
+  extends OmitType(FoundationEntity, ['addressId', 'address', 'persons', 'status'])
   implements FoundationHistory {
   historyNumber: number
   address: Prisma.JsonValue
+  status: Prisma.JsonValue
   persons: Prisma.JsonValue[]
-  rawDsJson: Prisma.JsonValue
 }

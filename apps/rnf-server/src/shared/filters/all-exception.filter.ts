@@ -23,36 +23,37 @@ export class AllExceptionsFilter implements ExceptionFilter {
     let data = {}
 
     switch (true) {
-      case !exception:
-        this.logger.error(new Error('AllException filter caught something that is not defined'))
-        break
-      case exception instanceof DsApiError:
-        this.logger.warn((exception as DsApiError).message)
-        httpStatus = 424
-        message = (exception as DsApiError).message
-        this.logger.debug((exception as DsApiError).graphQlResponse as string)
-        break
-      case exception instanceof CollisionException:
-        const collisionException = exception as CollisionException // eslint-disable-line no-case-declarations
-        this.logger.log(
-          'Collisions have been found with ' +
+    case !exception:
+      this.logger.error(new Error('AllException filter caught something that is not defined'))
+      break
+    case exception instanceof DsApiError:
+      this.logger.warn((exception as DsApiError).message)
+      httpStatus = 424
+      message = (exception as DsApiError).message
+      this.logger.debug((exception as DsApiError).graphQlRequest as string)
+      this.logger.debug((exception as DsApiError).graphQlResponse as string)
+      break
+    case exception instanceof CollisionException:
+      const collisionException = exception as CollisionException // eslint-disable-line no-case-declarations
+      this.logger.log(
+        'Collisions have been found with ' +
           collisionException.foundations.map((f) => f.rnfId).join(','),
-        )
-        httpStatus = 409
-        message = (exception as DsApiError).message
-        data = {
-          collisionFoundations: collisionException.foundations,
-          currentFoundation: collisionException.currentFoundation,
-          ds: collisionException.ds,
-        }
-        break
-      case exception instanceof HttpException && httpStatus !== HttpStatus.INTERNAL_SERVER_ERROR:
-        message = (exception as HttpException).message
-        this.logger.warn(exception as HttpException)
-        break
-      default:
-        message = 'Internal server error'
-        this.logger.error(exception as Error)
+      )
+      httpStatus = 409
+      message = (exception as DsApiError).message
+      data = {
+        collisionFoundations: collisionException.foundations,
+        currentFoundation: collisionException.currentFoundation,
+        ds: collisionException.ds,
+      }
+      break
+    case exception instanceof HttpException && httpStatus !== HttpStatus.INTERNAL_SERVER_ERROR:
+      message = (exception as HttpException).message
+      this.logger.warn(exception as HttpException)
+      break
+    default:
+      message = 'Internal server error'
+      this.logger.error(exception as Error)
     }
 
     const responseBody = {

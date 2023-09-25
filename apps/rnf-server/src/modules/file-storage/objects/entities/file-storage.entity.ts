@@ -7,40 +7,40 @@ export class FileStorageEntity extends BaseEntity implements FileStorage {
   @IsString()
   @IsDefined()
   @IsNotEmpty()
-    uuid: string
+  uuid: string
 
   @IsString()
   @IsDefined()
   @IsNotEmpty()
-    name: string
+  name: string
 
   @IsString()
   @IsDefined()
   @IsNotEmpty()
-    path: string
+  path: string
 
   @IsString()
   @IsDefined()
   @IsNotEmpty()
-    originalName: string
+  originalName: string
 
   @IsString()
   @IsDefined()
   @IsNotEmpty()
-    checksum: string
+  checksum: string
 
   @IsNumber()
   @IsDefined()
   @IsNotEmpty()
-    byteSize: number
+  byteSize: number
 
   @IsString()
   @IsDefined()
   @IsNotEmpty()
-    mimeType: string
+  mimeType: string
 
   @IsNumber()
-    foundationId: number
+  foundationId: number | null
 
   foundation?: FoundationEntity
 }

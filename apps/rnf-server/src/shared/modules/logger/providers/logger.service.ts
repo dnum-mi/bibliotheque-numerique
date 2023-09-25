@@ -19,10 +19,14 @@ export class LoggerService extends ConsoleLogger implements LS {
     }
   }
 
-  error (error: Error): void {
+  error (error: Error | string): void {
     if (this.config.get('log.error')) {
-      super.error(error.name + ': ' + error.message)
-      this.debug(error.stack!)
+      if (error instanceof Error) {
+        super.error(error.name + ': ' + error.message)
+        this.debug(error.stack!)
+      } else {
+        super.error(error)
+      }
     }
   }
 

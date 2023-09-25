@@ -2,30 +2,48 @@ import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { LoggerService } from '@/shared/modules/logger/providers/logger.service'
 import { PrismaService } from '@/shared/modules/prisma/providers/prisma.service'
 import { FoundationEntity } from '@/modules/foundation/objects/foundation.entity'
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { CreateFoundationDto } from '@/modules/foundation/objects/dto/create-foundation.dto'
 import { createRnfId } from '@/shared/utils/rnf-id.utils'
-import { Foundation } from '@prisma/client'
-import { GetFoundationOutputDto } from '@/modules/foundation/objects/dto/outputs/get-foundation-output.dto'
 import { formatPhoneNumber } from '@/shared/utils/number.utils'
 import { CollisionException } from '@/shared/exceptions/collision.exception'
 import { ConfigService } from '@nestjs/config'
 import { InfoDSOutputDto } from '../objects/dto/info-ds-output.dto'
+import { UpdateFoundationDto } from '@/modules/foundation/objects/dto/update-foundation.dto'
+import { FoundationHistoryService } from '@/modules/foundation/providers/foundation-history.service'
+import { DossierState, DossierWithCustomChamp } from '@dnum-mi/ds-api-client'
+import { stringValue } from '@/modules/ds/objects/mappers/universal.mapper'
+import { IDsApiClientDemarche, DsService } from '@/modules/ds/providers/ds.service'
+import { DsConfigurationService } from '@/modules/ds/providers/ds-configuration.service'
+import { DsMapperService } from '@/modules/ds/providers/ds-mapper.service'
 import { FileStorageService } from '@/modules/file-storage/providers/file-storage.service'
+import { CreateFileStorageDto } from '@/shared/objects/file-storage/create-file.dto'
 
 @Injectable()
 export class FoundationService extends BaseEntityService {
-  constructor (
+  constructor(
     protected readonly prisma: PrismaService,
     private readonly logger: LoggerService,
     private readonly config: ConfigService,
     private readonly fileStorage: FileStorageService,
+    private readonly dsService: DsService,
+    private readonly dsMapperService: DsMapperService,
+    private readonly dsConfigurationService: DsConfigurationService,
+    private readonly historyService: FoundationHistoryService,
   ) {
     super(prisma)
     this.logger.setContext(this.constructor.name)
   }
 
-  private async _findIdOfCollision (dto: CreateFoundationDto): Promise<{ id: number }[]> {
+  /* region Create Foundation */
+  private async _findIdOfCollision(
+    dto: CreateFoundationDto,
+  ): Promise<{ id: number }[]> {
+    this.logger.verbose('_findIdOfCollision')
     // we cannot use prisma natively here because of the similarity function
     return this.prisma.$queryRaw`
       SELECT "Foundation".id, "Address".label
@@ -45,18 +63,53 @@ export class FoundationService extends BaseEntityService {
     ` as Promise<{ id: number }[]>
   }
 
-  private async _findCollision (dto: CreateFoundationDto, ds: InfoDSOutputDto): Promise<void> {
+  private async _findCollision(
+    dto: CreateFoundationDto,
+    ds: InfoDSOutputDto,
+  ): Promise<void> {
+    this.logger.verbose('_findCollision')
     const collisions = await this._findIdOfCollision(dto)
     if (collisions.length) {
-      throw new CollisionException(dto, await this.getFoundations(collisions.map((id) => id.id)), ds)
+      throw new CollisionException(
+        dto,
+        await this.getFoundations(collisions.map((id) => id.id)),
+        ds,
+      )
     }
   }
 
-  async createFoundation (dto: CreateFoundationDto, ds: InfoDSOutputDto, forceCreation?: boolean): Promise<Foundation> {
+  // TODO: why can't I import 'FileStorageCreateNestedOneWithoutFoundationInput' from prisma client ?
+  private async _cascadeCreateFile(
+    statusFile: CreateFileStorageDto | undefined,
+  ): Promise<null | { status: any}> {
+    this.logger.verbose('_cascadeCreateFile')
+    if (statusFile) {
+      const file = await this.fileStorage.copyRemoteFile(statusFile)
+      return {
+        status: {
+          disconnect: true,
+          create: {
+            ...{ ...statusFile, fileUrl: undefined },
+            name: file.key,
+            path: file.location,
+          },
+        },
+      }
+    }
+    return null
+  }
+
+  async createFoundation(
+    dto: CreateFoundationDto,
+    ds: InfoDSOutputDto,
+    forceCreation?: boolean,
+  ): Promise<FoundationEntity> {
     this.logger.verbose('CreateFoundation')
     const code = dto.address.departmentCode
     if (!dto.address || !code) {
-      throw new BadRequestException('An address with its departmentCode is required.')
+      throw new BadRequestException(
+        'An address with its departmentCode is required.',
+      )
     }
     this.logger.debug(`department found: ${dto.address.departmentCode}`)
     dto.phone = formatPhoneNumber(dto.phone)
@@ -65,12 +118,7 @@ export class FoundationService extends BaseEntityService {
     }
 
     return this.prisma.$transaction(async (prisma) => {
-      const statusFile = dto.status
-      let file: Awaited<ReturnType<FileStorageService['copyRemoteFile']>> | undefined
-      if (statusFile) {
-        file = await this.fileStorage.copyRemoteFile(statusFile)
-      }
-
+      this.logger.debug('Starting transaction')
       const foundation = await prisma.foundation.create({
         data: {
           title: dto.title,
@@ -82,51 +130,59 @@ export class FoundationService extends BaseEntityService {
             create: dto.address,
           },
           rnfId: `in-creation-${new Date().getTime()}`,
-          ...((file && statusFile)
-            ? {
-                status: {
-                  create: {
-                    ...{ ...statusFile, fileUrl: undefined },
-                    name: file.key,
-                    path: file.location,
-                  },
-                },
-              }
-            : {}),
+          ...((await this._cascadeCreateFile(dto.status)) ?? {}),
         },
       })
-      this.logger.debug(`foundation created: ${foundation.id}`)
-      const index = await prisma.foundation.count({ where: { type: dto.type, department: code } })
+      const index = await prisma.foundation.count({
+        where: { type: dto.type, department: code },
+      })
       const rnfId = createRnfId({ foundation, index })
-      await prisma.foundation.update({ where: { id: foundation.id }, data: { rnfId } })
+      await prisma.foundation.update({
+        where: { id: foundation.id },
+        data: { rnfId },
+      })
       foundation.rnfId = rnfId
+      this.logger.log(`A new Foundation has been created: ${foundation.rnfId}`)
       return foundation
     })
   }
 
-  async getFoundations (ids: number[]): Promise<GetFoundationOutputDto[]> {
+  /* endregion */
+
+  /* region Get foundations */
+  async getFoundations(ids: number[]): Promise<FoundationEntity[]> {
+    this.logger.verbose('getFoundations')
     return this.prisma.foundation.findMany({
       where: { id: { in: ids } },
       include: { address: true, status: true },
     })
   }
 
-  async getOneFoundation (rnfId: string): Promise<GetFoundationOutputDto | null> {
+  async getOneFoundation(rnfId: string): Promise<FoundationEntity> {
     this.logger.verbose('getOneFoundation')
-    const foundation = await this.prisma.foundation.findUnique({
-      where: { rnfId },
-      include: { address: true, status: true },
-    })
-    if (!foundation) {
-      throw new NotFoundException('No foundation found with this rnfId.')
-    }
-    return foundation
+    return this.prisma.foundation
+      .findFirst({
+        where: { rnfId },
+        include: { address: true, status: true },
+      })
+      .then((f) => {
+        if (!f) {
+          throw new NotFoundException(
+            `Foundation with rnfId ${rnfId} not found`,
+          )
+        }
+        return f
+      })
   }
 
-  async getFoundationsByRnfIds (rnfIds: string[], updatedAfter: Date | undefined): Promise<FoundationEntity[]> {
+  async getFoundationsByRnfIds(
+    rnfIds: string[],
+    updatedAfter: Date | undefined,
+  ): Promise<FoundationEntity[]> {
+    this.logger.verbose('getFoundationsByRnfIds')
     const where: {
-      rnfId: { in: string[] };
-      updatedAt?: { gte: Date };
+      rnfId: { in: string[] }
+      updatedAt?: { gte: Date }
     } = { rnfId: { in: rnfIds } }
     if (updatedAfter) {
       where.updatedAt = {
@@ -135,7 +191,123 @@ export class FoundationService extends BaseEntityService {
     }
     return this.prisma.foundation.findMany({
       where,
-      include: { address: true },
+      include: { address: true, status: true },
     })
   }
+
+  /* endregion */
+
+  /* region update foundation */
+  public async triggerFeModificationRefresh() {
+    this.logger.verbose('triggerFeModificationRefresh')
+    await this._lookForFoundationModification(
+      'Modification of FE',
+      this.dsConfigurationService.configuration.dsDemarcheFEModificationId,
+    )
+  }
+
+  public async triggerFddModificationRefresh() {
+    this.logger.verbose('triggerFddModificationRefresh')
+    await this._lookForFoundationModification(
+      'Modification of FDD',
+      this.dsConfigurationService.configuration.dsDemarcheFDDModificationId,
+    )
+  }
+
+  public async triggerFeDissolution() {
+    this.logger.verbose('triggerFeDissolution')
+    await this._lookForFoundationDissolution(
+      this.dsConfigurationService.configuration.dsDemarcheFEDissolutionId,
+    )
+  }
+
+  public async triggerFddDissolution() {
+    this.logger.verbose('triggerFddDissolution')
+    await this._lookForFoundationDissolution(
+      this.dsConfigurationService.configuration.dsDemarcheFDDDissolutionId,
+    )
+  }
+
+  async updateFoundation(rnfId: string, dto: UpdateFoundationDto) {
+    this.logger.verbose('updateFoundation')
+    const foundation = await this.getOneFoundation(rnfId)
+    await this.historyService.newHistoryEntry(foundation)
+    return this.prisma.foundation.update({
+      where: { rnfId },
+      data: {
+        ...dto,
+        address: {
+          update: dto.address,
+        },
+        ...((await this._cascadeCreateFile(dto.status)) ?? {}),
+      },
+    })
+  }
+
+  private async _lookForFoundationModification(
+    name: string,
+    dsDemarcheId: number,
+  ): Promise<void> {
+    this.logger.verbose('_lookForFoundationModification')
+    this.logger.log(`Checking for: ${name}`)
+    let raw: IDsApiClientDemarche
+    try {
+      raw = await this.dsService.getOneDemarcheWithDossier(
+        dsDemarcheId,
+        this.dsConfigurationService.configuration.foundationRefreshedAt,
+      )
+    } catch (e) {
+      this.logger.error(`Error while fetching ${name}`)
+      this.logger.error(e as Error)
+      return
+    }
+    const dossiers = raw.demarche.dossiers.nodes
+    if (dossiers.length) {
+      for (const doss of dossiers) {
+        try {
+          await this._synchroniseOneDossier(doss, dsDemarcheId)
+        } catch (err) {
+          this.logger.error(`Error for dossier: ${doss.number}`)
+          this.logger.error(err as Error)
+        }
+      }
+    } else {
+      this.logger.debug('No dossier to update.')
+    }
+  }
+
+  private async _synchroniseOneDossier(
+    doss: DossierWithCustomChamp,
+    dsDemarcheId: number,
+  ): Promise<void> {
+    this.logger.verbose('_synchroniseOneDossier')
+    const rnfChamp = this.dsMapperService.findChampsInDossier(doss.champs, {
+      rnf: this.dsConfigurationService.rnfFieldKeys.rnfId,
+    }).rnf
+    const rnfId = stringValue(rnfChamp)
+    if (!rnfId) {
+      this.logger.debug(`No RNF-ID in dossier (nbrDossier: ${doss.number})`)
+    } else if (doss.state !== DossierState.Accepte) {
+      this.logger.debug(
+        `Dossier (nbrDossier: ${doss.number}) is not accepted. (${doss.state})`,
+      )
+    } else {
+      this.logger.verbose(
+        `Updating foundation ${rnfId} with dossier ${doss.number}`,
+      )
+      const dto = this.dsMapperService.mapDossierToDto(
+        doss,
+        this.dsConfigurationService.getMapperFromDemarcheDsId(dsDemarcheId),
+      )
+      await this.updateFoundation(rnfId, dto)
+    }
+  }
+
+  private async _lookForFoundationDissolution(dsDemarcheId: number) {
+    this.logger.verbose('_lookForFoundationDissolution')
+    console.log(dsDemarcheId)
+    console.log('TODO')
+  }
+
+  /* endregion */
 }

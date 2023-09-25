@@ -1,10 +1,20 @@
-import { Global, Module } from '@nestjs/common'
+import { Global, Module, Scope } from '@nestjs/common'
 import { LoggerService } from '@/shared/modules/logger/providers/logger.service'
+import { ConfigService } from '@nestjs/config'
 
 @Global()
 @Module({
   imports: [],
-  providers: [LoggerService],
+  providers: [
+    {
+      provide: LoggerService,
+      inject: [ConfigService],
+      useFactory: (config: ConfigService): LoggerService => {
+        return new LoggerService(config)
+      },
+      scope: Scope.TRANSIENT,
+    },
+  ],
   exports: [LoggerService],
 })
 export class LoggerModule {}

@@ -26,7 +26,7 @@ export const testingModuleFactory = async (): Promise<TestingModuleFactoryOutput
     .compile()
 
   const app = moduleFixture.createNestApplication()
-  mainConfig(app)
+  await mainConfig(app, true)
   const prisma = moduleFixture.get<PrismaService>(PrismaService)
   const fileStorage = moduleFixture.get<FileStorageService>(FileStorageService)
   await app.init()

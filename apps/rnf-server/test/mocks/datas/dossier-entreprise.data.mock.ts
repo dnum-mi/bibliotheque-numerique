@@ -100,6 +100,16 @@ export const entrepriseDossierDataMock = {
       },
     },
     {
+      id: "Q2hTTXAtOTI=",
+      __typename: "TextChamp",
+      label: "Courriel du fonds d'entreprise",
+      stringValue: "tata@gmail.com",
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "#rnf-courriel-rnf#lorem ipsum",
+      },
+    },
+    {
       id: "Q2hhbXAtMjk0",
       __typename: "TextChamp",
       label: "Titre de la fondation d'entreprise",
@@ -517,11 +527,10 @@ export const entrepriseDossierDataMock = {
       id: "Q2hhbXAtMzE3",
       __typename: "TextChamp",
       label: "Numéro de téléphone du déclarant",
-      // TODO: replace this with real value of getCustomChamp
+      stringValue: "06 86 46 54 45",
       champDescriptor: {
-        description: "lorem ipsum",
+        description: "lorem ipsum#rnf-telephone-rnf#",
       },
-      stringValue: "",
     },
     {
       id: "Q2hhbXAtMzE4",

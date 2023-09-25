@@ -3,5 +3,5 @@ import { Champ, PieceJustificativeChamp, AddressChamp } from '@dnum-mi/ds-api-cl
 
 export type Mapper = Record<
   keyof CreateFoundationDto,
-  (champ?: Champ | PieceJustificativeChamp | AddressChamp) => Record<string, string | number | null> | string | null
+  (champs?: Champ | PieceJustificativeChamp | AddressChamp) => Record<string, string | number | null> | string | null
 >

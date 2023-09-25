@@ -8,6 +8,8 @@ import { LoggerModule } from '@/shared/modules/logger/logger.module'
 import { FoundationModule } from '@/modules/foundation/foundation.module'
 import { PrismaModule } from '@/shared/modules/prisma/prisma.module'
 import { HealthModule } from './modules/health/health.module'
+import { DsModule } from '@/modules/ds/ds.module'
+import { CronModule } from '@/modules/cron/cron.module'
 import { FileStorageModule } from '@/modules/file-storage/file-storage.module'
 
 @Module({
@@ -21,6 +23,8 @@ import { FileStorageModule } from '@/modules/file-storage/file-storage.module'
     PrismaModule,
     FoundationModule,
     HealthModule,
+    DsModule,
+    CronModule,
     FileStorageModule,
   ],
 })

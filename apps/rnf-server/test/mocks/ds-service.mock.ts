@@ -2,6 +2,9 @@ import { dotationDossierDataMock } from './datas/dossier-dotation.data.mock'
 import { entrepriseDossierDataMock } from './datas/dossier-entreprise.data.mock'
 import { DsApiError } from '@dnum-mi/ds-api-client'
 import { dnrDossierDataMock } from './datas/dossier-dnr.data.mock'
+import {
+  demarcheDossierEntrepriseModificationDataMock,
+} from './datas/demarche-dossier-entreprise-modification.data.mock'
 
 const dossierNotFoundGraphQlError = {
   data: null,
@@ -49,19 +52,22 @@ const injectionSqlDossier = {
 export const dsServiceMock = {
   getOneDossier: jest.fn().mockImplementation((id: number) => {
     switch (id) {
-      case 17:
-        return dotationDossierDataMock
-      case 65:
-        return entrepriseDossierDataMock
-      case 135:
-        return dnrDossierDataMock
-      case 500:
-        return injectionSqlDossier
-      case 37:
-        return badDossier
-      default:
-        throw new DsApiError(dossierNotFoundGraphQlError)
+    case 17:
+      return dotationDossierDataMock
+    case 65:
+      return entrepriseDossierDataMock
+    case 135:
+      return dnrDossierDataMock
+    case 500:
+      return injectionSqlDossier
+    case 37:
+      return badDossier
+    default:
+      throw new DsApiError(dossierNotFoundGraphQlError)
     }
+  }),
+  getOneDemarcheWithDossier: jest.fn().mockImplementation((id: number) => {
+    if (id === 53) { return demarcheDossierEntrepriseModificationDataMock } else { throw new DsApiError(dossierNotFoundGraphQlError) }
   }),
   writeRnfIdInPrivateAnnotation: jest.fn().mockResolvedValue(undefined),
 }

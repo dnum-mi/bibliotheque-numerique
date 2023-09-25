@@ -8,7 +8,7 @@ clear
 echo "==========================================\n========= Launching e2e tests.. ==========\n=========================================="
 if [ "x$1" = "xdev" ]
 then
-    dotenv -e ./test/.env.test jest -- --config ./test/e2e/jest-e2e.json --watch --silent=false
+    dotenv -e ./test/.env.test jest -- --config ./test/e2e/jest-e2e.json --watch --runInBand --silent=false
 else
     dotenv -e ./test/.env.test jest -- --config ./test/e2e/jest-e2e.json --silent=true --detectOpenHandles
 fi

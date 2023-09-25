@@ -7,41 +7,41 @@ import { BaseEntity } from '@/shared/base-entity/base.entity'
 export class PersonEntity extends BaseEntity implements PrismaPerson {
   @IsString()
   @IsDefined()
-    lastName: string
+  lastName: string
 
   @IsString()
   @IsDefined()
-    firstName: string
+  firstName: string
 
   @IsString()
   @IsDefined()
   @IsEmail()
-    email: string
+  email: string
 
   @IsString()
   @IsDefined()
   @IsPhoneNumber()
-    phone: string
+  phone: string
 
   @IsString()
   @IsDefined()
-    profession: string
+  profession: string
 
   @IsString()
   @IsDefined()
-    nationality: string
+  nationality: string
 
   @IsDate()
   @IsDefined()
-    bornAt: Date
+  bornAt: Date
 
   @IsString()
   @IsDefined()
-    bornPlace: string
+  bornPlace: string
 
   @IsDefined()
   @IsNumber()
-    addressId: number
+  addressId: number
 
   address: AddressEntity
 

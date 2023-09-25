@@ -6,7 +6,7 @@ import { mainConfig } from '@/main.config'
 async function bootstrap () {
   const app = await NestFactory.create(AppModule)
   const configService = app.get(ConfigService)
-  mainConfig(app)
+  await mainConfig(app)
 
   if (process.env.NODE_ENV !== 'production') {
     const { SwaggerModule, DocumentBuilder } = await import('@nestjs/swagger')

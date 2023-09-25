@@ -1,59 +1,48 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { LoggerService } from '@/shared/modules/logger/providers/logger.service'
-import { DossierWithCustomChamp } from '@dnum-mi/ds-api-client'
+import { CustomChamp, DossierWithCustomChamp } from '@dnum-mi/ds-api-client'
 import { CreateFoundationDto } from '@/modules/foundation/objects/dto/create-foundation.dto'
+import { DsConfigurationService } from '@/modules/ds/providers/ds-configuration.service'
 import { Mapper } from '@/modules/ds/objects/types/mapper.type'
-import { DotationFoundationMapper } from '@/modules/ds/objects/mappers/dotation-foundation.mapper'
-import { EntrepriseFoundationMapper } from '@/modules/ds/objects/mappers/entreprise-foundation.mapper'
-import { DemandeNumeroRnfMapper } from '@/modules/ds/objects/mappers/demande-numero-rnf.mapper'
-import { ConfigService } from '@nestjs/config'
-import { rnfFieldKeys } from '@/modules/ds/objects/const/rnf-field-keys.const'
 
 @Injectable()
 export class DsMapperService {
-  private mappers: Record<string, Mapper>
-
-  constructor (private logger: LoggerService, private conf: ConfigService) {
+  constructor(
+    private readonly logger: LoggerService,
+    private readonly dsConfigurationService: DsConfigurationService,
+  ) {
     this.logger.setContext(this.constructor.name)
-    this._initMappers()
   }
 
-  // TODO: find a way to load it from config, or s3, or something that doesnt need to push code to change it
-  private _initMappers () {
-    this.logger.verbose('_initMappers')
-    if (!this.conf.get('ds.demarcheFDDId') || !this.conf.get('ds.demarcheFEId')) {
-      throw new Error('The id of the demarche dotation and entreprise are not set. Check your env.')
-    }
-    this.mappers = {
-      [this.conf.get('ds.demarcheFDDId')]: DotationFoundationMapper,
-      [this.conf.get('ds.demarcheFEId')]: EntrepriseFoundationMapper,
-      [this.conf.get('ds.demarcheDNRId')]: DemandeNumeroRnfMapper,
-    }
-  }
-
-  mapDossierToFoundation (rawDossier: DossierWithCustomChamp): CreateFoundationDto {
-    this.logger.verbose('mapDossierToFoundation')
-    if (!rawDossier.champs.length) {
-      throw new BadRequestException('Dossier champs is empty.')
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    const demarcheId = rawDossier.demarche?.number?.toString() ?? "!Pas d'id de demarche !"
-    const mapper = this.mappers[demarcheId]
-    if (!mapper) {
-      throw new BadRequestException('This demarche id is not implemented')
-    }
-    this.logger.debug('starting mapping')
+  public findChampsInDossier(
+    champs: CustomChamp[],
+    regexHash: Record<string, RegExp>,
+  ): Record<string, CustomChamp> {
     const champsHash = {}
-    for (const champ of rawDossier.champs) {
-      for (const key in rnfFieldKeys) {
-        if (champ.champDescriptor.description?.match(rnfFieldKeys[key] as RegExp)) {
+    for (const champ of champs) {
+      for (const key in regexHash) {
+        if (champ.champDescriptor.description?.match(regexHash[key])) {
           champsHash[key] = champ
         }
       }
     }
+    return champsHash
+  }
+
+  mapDossierToDto(rawDossier: DossierWithCustomChamp, mapper?: Mapper): CreateFoundationDto {
+    this.logger.verbose('mapDossierToFoundation')
+    if (!rawDossier.champs.length) {
+      throw new BadRequestException('Dossier champs is empty.')
+    }
+    if (!mapper) {
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      const demarcheId = rawDossier.demarche.number?.toString() ?? '!no-id!'
+      mapper = this.dsConfigurationService.getMapperFromDemarcheDsId(demarcheId)
+    }
+    const champsHash = this.findChampsInDossier(rawDossier.champs, this.dsConfigurationService.rnfFieldKeys)
     return Object.fromEntries(
-      Object.keys(mapper)
-        .map((key) => [key, mapper[key](champsHash[key])]),
+      Object.keys(mapper).map((key) => [key, (mapper!)[key](champsHash[key])])
+        .filter(([key, value]) => !!value),
     ) as unknown as CreateFoundationDto
   }
 }
