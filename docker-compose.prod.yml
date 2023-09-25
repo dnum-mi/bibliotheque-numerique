@@ -111,6 +111,20 @@ services:
     networks:
       - biblio-num-prod-network
 
+  rnf-client:
+    profiles:
+      - prod
+    build:
+      target: production
+      context: .
+      dockerfile: ./apps/rnf-client/Dockerfile
+    image: biblio-num/rnf-client:prod
+    container_name: biblio-num-prod_rnf_client
+    ports:
+      - 8080:8080
+    networks:
+      - biblio-num-prod-network
+
 networks:
   biblio-num-prod-network:
     name: biblio-num-prod-network
