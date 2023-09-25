@@ -91,6 +91,7 @@ const selectDemarche = (row:IDemarche[]) => {
     </template>
     <BiblioNumDataTableAgGrid
       :headers="headersJson"
+      action-title="Voir les détails de la démarche"
       :row-data="rowData"
       floating-filter
       row-selection="single"

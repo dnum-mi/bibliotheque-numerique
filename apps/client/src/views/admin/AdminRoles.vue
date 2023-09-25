@@ -1,6 +1,7 @@
 <template>
   <BiblioNumDataTableAgGrid
-    title="Roles"
+    title="Rôles"
+    action-title="Administrer ce rôle"
     component-action=""
     :headers="rolesHeadersJson"
     :row-data="rolesRowData"

@@ -13,6 +13,7 @@
     </template>
     <BiblioNumDataTableAgGrid
       :pagination="false"
+      action-title="voir le détail de l'organisme"
       :headers="headerJson"
       :row-data="rowData"
       row-selection="single"

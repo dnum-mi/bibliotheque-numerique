@@ -44,6 +44,7 @@
 
     <BiblioNumDataTableAgGrid
       title="La liste des vos rôles"
+      action-title=""
       :headers="rolesHeadersJson"
       :row-data="rolesRowData"
       :with-action="false"

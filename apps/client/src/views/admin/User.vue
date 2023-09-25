@@ -132,6 +132,7 @@ const rolesHeadersJson = [
     >
       <BiblioNumDataTableAgGrid
         title="Roles"
+        action-title=""
         component-action=""
         with-action="{{ true }}"
         :headers="rolesHeadersJson"
