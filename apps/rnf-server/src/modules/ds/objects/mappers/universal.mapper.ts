@@ -48,4 +48,34 @@ export const universalMapper: Mapper = {
       byteSize: Number(file.byteSizeBigInt as string),
     }
   },
+  personQuality: stringValue,
+  personCivility: stringValue,
+  personFirstName: stringValue,
+  personLastName: stringValue,
+  personBornAt: stringValue,
+  personBornPlace: stringValue,
+  personNationality: stringValue,
+  personProfession: stringValue,
+  personAddress: (ch?: AddressChamp) => {
+    if (!ch || ch.__typename !== 'AddressChamp' || !ch.address) {
+      return null
+    }
+    const address = ch.address
+    return {
+      label: address.label,
+      type: address.type,
+      streetAddress: address.streetAddress ?? null,
+      streetNumber: address.streetNumber ?? null,
+      streetName: address.streetName ?? null,
+      postalCode: address.postalCode,
+      cityName: address.cityName,
+      cityCode: address.cityCode,
+      departmentName: address.departmentName ?? null,
+      departmentCode: address.departmentCode ?? null,
+      regionName: address.regionName ?? null,
+      regionCode: address.regionCode ?? null,
+    }
+  },
+  personPhone: stringValue,
+  personAdministrator: stringValue,
 }

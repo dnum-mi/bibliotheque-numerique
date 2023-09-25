@@ -71,4 +71,48 @@ export class UpdateDsConfigurationInputDto {
   @IsString()
   @IsOptional()
   cronUpdateFrequency: string
+
+  @IsString()
+  @IsOptional()
+  fieldRegexPersonQuality: string
+
+  @IsString()
+  @IsOptional()
+  fieldRegexPersonCivility: string
+
+  @IsString()
+  @IsOptional()
+  fieldRegexPersonFirstName: string
+
+  @IsString()
+  @IsOptional()
+  fieldRegexPersonLastName: string
+
+  @IsString()
+  @IsOptional()
+  fieldRegexPersonBornAt: string
+
+  @IsString()
+  @IsOptional()
+  fieldRegexPersonBornPlace: string
+
+  @IsString()
+  @IsOptional()
+  fieldRegexPersonNationality: string
+
+  @IsString()
+  @IsOptional()
+  fieldRegexPersonProfession: string
+
+  @IsString()
+  @IsOptional()
+  fieldRegexPersonAddress: string
+
+  @IsString()
+  @IsOptional()
+  fieldRegexPersonPhone: string
+
+  @IsString()
+  @IsOptional()
+  fieldRegexAdministator: string
 }

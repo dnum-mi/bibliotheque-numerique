@@ -1,6 +1,6 @@
 import { FoundationEntity } from '@/modules/foundation/objects/foundation.entity'
 import { PickType } from '@nestjs/swagger'
-import { IsArray, ValidateNested } from 'class-validator'
+import { IsArray, IsDate, IsString, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
 import { CreatePersonInFoundationDto } from '@/modules/foundation/objects/dto/create-person-in-foundation.dto'
 import { CreateAddressDto } from '@/shared/objects/address/create-address.dto'
@@ -22,9 +22,53 @@ export class CreateFoundationDto extends PickType(FoundationEntity, createFounda
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreatePersonInFoundationDto)
-  personInFoundationToCreate?: CreatePersonInFoundationDto[]
+  personInFoundationToCreate?: []
 
   @ValidateNested()
   @Type(() => CreateFileStorageDto)
   status?: CreateFileStorageDto
+
+  @ValidateNested()
+  @IsString()
+  personQuality?: string
+
+  @ValidateNested()
+  @IsString()
+  personCivility?: string
+
+  @ValidateNested()
+  @IsString()
+  personFirstName?: string
+
+  @ValidateNested()
+  @IsString()
+  personLastName?: string
+
+  @ValidateNested()
+  @IsDate()
+  personBornAt?: string
+
+  @ValidateNested()
+  @IsString()
+  personBornPlace?: string
+
+  @ValidateNested()
+  @IsString()
+  personNationality?: string
+
+  @ValidateNested()
+  @IsString()
+  personProfession?: string
+
+  @ValidateNested()
+  @Type(() => CreateAddressDto)
+  personAddress?: CreateAddressDto
+
+  @ValidateNested()
+  @IsString()
+  personPhone?: string
+
+  @ValidateNested()
+  @IsString()
+  personAdministrator?: string
 }
