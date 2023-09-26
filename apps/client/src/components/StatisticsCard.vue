@@ -5,6 +5,32 @@ import type { SmallDemarcheOutputDto } from '@biblio-num/shared'
 import { useCustomFilterStore } from '@/stores/custom-filters'
 import { DsfrButton } from '@gouvminint/vue-dsfr'
 
+// TODO: will be in library
+interface UserFriendlyFilter {
+  label: string
+  value: string
+}
+
+// will be in library
+interface SmallCustomFilterDto {
+  id: number
+  name: string
+  filters: UserFriendlyFilter[]
+}
+
+// TODO: will be in library
+interface Total {
+  label: string
+  total: string
+}
+
+// TODO: will be in library
+interface Card {
+  customFilter: SmallCustomFilterDto,
+  totals: Total[]
+  demarche: SmallDemarcheOutputDto // already in library
+}
+
 const customFilterStore = useCustomFilterStore()
 
 const createCardData = (customFilter: SmallCustomFilterDto) => {
@@ -51,32 +77,6 @@ const createExtraCardData = () => ({
     },
   ],
 })
-
-// TODO: will be in library
-interface UserFriendlyFilter {
-  label: string
-  value: string
-}
-
-// will be in library
-interface SmallCustomFilterDto {
-  id: number
-  name: string
-  filters: UserFriendlyFilter[]
-}
-
-// TODO: will be in library
-interface Total {
-  label: string
-  total: string
-}
-
-// TODO: will be in library
-interface Card {
-  customFilter: SmallCustomFilterDto,
-  totals: Total[]
-  demarche: SmallDemarcheOutputDto // already in library
-}
 
 // TODO : Exemple de body de retour de la function stats
 const cardsOld = reactive([

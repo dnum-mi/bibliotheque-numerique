@@ -1,4 +1,4 @@
-import { UserFriendlyFilter } from "./user-friendly-filter.interface"
+import { UserFriendlyFilter } from './user-friendly-filter.interface'
 
 export interface SmallCustomFilterDto {
   id: number
