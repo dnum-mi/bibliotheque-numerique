@@ -23,20 +23,7 @@ type QuickLink = {
   iconAttrs?: Record<string, string>;
 }
 
-const quickLinksBase: QuickLink[] = [
-  // {
-  //   label: 'Home',
-  //   to: '/',
-  //   icon: 'ri-home-4-line',
-  //   iconAttrs: iconColor,
-  // },
-  // {
-  //   label: 'À propos',
-  //   to: '/a-propos',
-  // },
-]
-
-const quickLinks: Ref<QuickLink[]> = ref(quickLinksBase)
+const quickLinks: Ref<QuickLink[]> = ref([])
 
 const demarcheQuickLink: QuickLink = {
   label: 'Démarches',
@@ -62,7 +49,7 @@ const unauthenticatedQuickLinks: QuickLink[] = [
 const authenticatedQuickLinksPart1: QuickLink[] = [
   {
     label: 'Organismes',
-    to: { name: 'Organismes' },
+    to: { name: 'ListeOrganismes' },
     icon: 'ri-file-list-2-line',
   },
 ]
@@ -108,7 +95,6 @@ watch([() => userStore.isAuthenticated, route], async () => {
 
   if (userStore.isAuthenticated) {
     quickLinks.value = [
-      ...quickLinksBase,
       ...(userStore.canAccessDemarches ? [demarcheQuickLink] : []),
       ...authenticatedQuickLinksPart1,
       ...authenticatedQuickLinksPart3,
@@ -117,7 +103,6 @@ watch([() => userStore.isAuthenticated, route], async () => {
     ]
   } else {
     quickLinks.value = [
-      ...quickLinksBase,
       ...unauthenticatedQuickLinks.filter(isCurrentRoute),
     ]
   }
@@ -165,7 +150,7 @@ onErrorCaptured((error: Error | AxiosError) => {
     :quick-links="quickLinks"
   />
 
-  <div class="fr-container">
+  <div class="fr-container  min-h-full">
     <router-view />
   </div>
 

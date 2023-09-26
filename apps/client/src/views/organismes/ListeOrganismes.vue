@@ -1,38 +1,12 @@
-<template>
-  <LayoutList>
-    <template #title>
-      <div class="bn-list-search bn-list-search-organisme">
-        <span
-          class="fr-icon-search-line fr-p-1w"
-          aria-hidden="true"
-        />
-        <h6 class="bn-list-search-title-organisme fr-p-1w fr-m-0">
-          Rechercher un organisme
-        </h6>
-      </div>
-    </template>
-    <BiblioNumDataTableAgGrid
-      :pagination="false"
-      action-title="voir le détail de l'organisme"
-      :headers="headerJson"
-      :row-data="rowData"
-      row-selection="single"
-      floating-filter
-      @selection-changed="onSelect"
-    />
-  </LayoutList>
-</template>
-
 <script lang="ts" setup>
+import { onMounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
 
 import BiblioNumDataTableAgGrid from '@/components/BiblioNumDataTableAgGrid.vue'
 import LayoutList from '@/components/LayoutList.vue'
 import type { TypeHeaderDataTable } from '@/shared/types/typeDataTable'
 import { useOrganismeStore } from '@/stores/organisme'
 import { dateToStringFr } from '@/utils'
-
-import { onMounted, computed } from 'vue'
-import { useRouter } from 'vue-router'
 
 const organismeStore = useOrganismeStore()
 const router = useRouter()
@@ -91,12 +65,35 @@ const headerJson: TypeHeaderDataTable[] = [
 ]
 
 const onSelect = (e) => {
-  router.push({ path: `/organismes/${e[0].idRef}` })
+  console.log(e)
+  router.push({ name: 'FicheOrganisme', params: { id: e[0].idRef } })
 }
 
 onMounted(async () => {
   await organismeStore.loadOrganismes()
 })
 </script>
-@/shared/types/DataTable.type
-@/utils/date-to-string
+
+<template>
+  <LayoutList>
+    <template #title>
+      <div class="bn-list-search bn-list-search-organisme">
+        <span
+          class="fr-icon-search-line fr-p-1w"
+          aria-hidden="true"
+        />
+        <h6 class="bn-list-search-title-organisme fr-p-1w fr-m-0">
+          Rechercher un organisme
+        </h6>
+      </div>
+    </template>
+    <BiblioNumDataTableAgGrid
+      :pagination="false"
+      :headers="headerJson"
+      :row-data="rowData"
+      row-selection="single"
+      floating-filter
+      @selection-changed="onSelect"
+    />
+  </LayoutList>
+</template>

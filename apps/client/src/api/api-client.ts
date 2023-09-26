@@ -15,6 +15,7 @@ import type {
   CreateCustomFilterDto,
   PatchCustomFilterDto,
   ValidateEmailDto,
+  LeanDossierOutputDto,
 } from '@biblio-num/shared'
 
 import {
@@ -34,7 +35,7 @@ import {
   getListDemarcheDossierRoute,
   getListDemarcheFieldRoute,
   getXlsxDemarcheDossierRoute,
-  getXlsxDemarcheFieldRoute, getDossierDetail,
+  getXlsxDemarcheFieldRoute, getDossierDetail, getOrganismeDossiers,
 } from './bn-api-routes'
 import {
   authRoute,
@@ -173,7 +174,6 @@ export const organismeApiClient = {
 }
 
 export const usersApiClient = {
-
   async createUser (userData: CreateUserDto) {
     const response = await apiClientInstance.post(createUserRoute, userData)
     return response.data
@@ -245,10 +245,11 @@ export const dossiersApiClient = {
     return apiClientInstance.patch(getUpdateOneMappingColumnRoute(demarcheId, fieldId), dto)
   },
 
-  getDossier: async (id: number) => {
-    const response = await apiClientInstance.get(getDossierDetail(id))
-    return response.data
-  },
+  getDossier: async (id: number) =>
+    (await apiClientInstance.get(getDossierDetail(id))).data,
+
+  getOrganismeDossiers: async (organismeId: number): Promise<LeanDossierOutputDto[]> =>
+    (await apiClientInstance.get(getOrganismeDossiers(organismeId))).data,
 
   searchDemarcheDossiers: async (demarcheId: number, dto: SearchDossierDto): Promise<DossierSearchOutputDto> => {
     const response = await apiClientInstance.post(getListDemarcheDossierRoute(demarcheId), dto)

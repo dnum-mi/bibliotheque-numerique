@@ -20,8 +20,11 @@ import * as icons from './icons'
 
 import './main.css'
 
+import StatusBadge from './components/StatusBadge.vue'
+
 createApp(App)
   .use(createPinia())
+  .component('StatusBadge', StatusBadge)
   .use(router)
   .use(VueDsfr, { icons: Object.values(icons) })
   .mount('#app')

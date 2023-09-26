@@ -8,9 +8,17 @@ body,
   min-height: 100%;
 }
 
+.ag-theme-alpine {
+  --ag-selected-tab-underline-width: 2px;
+  --ag-selected-tab-underline-transition-speed: 0.5s;
+
+  --ag-side-bar-panel-width: 300px;
+}
+
 .fr-container {
   max-width: 100%;
 }
+  
 
 /* Style Biblitique Numerique */
 .bn-list-search {
@@ -100,6 +108,21 @@ body,
 }
 .bn-message-body--text{
   color: #161616;
+}
+
+.bn-icon--green-archipel {
+  background-color: #58C5CF;
+  border-radius: 100%;
+  color: var(--grey-1000-50);
+  width: 2rem;
+  height: 2rem;
+  display: inline-block;
+  text-align: center;
+}
+
+.bn-icon--green-archipel > span {
+  position: relative;
+  top: 0.25rem
 }
 
 .bn-icon--blue-france-main-525 {

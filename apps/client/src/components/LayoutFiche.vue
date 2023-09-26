@@ -1,13 +1,13 @@
 <template>
-  <div class="fr-container">
-    <div class="fr-grid-row">
+  <div class="">
+    <div class="fr-grid-row m-4">
       <div class="bn-fiche-title bn-fiche-space-left fr-col-12">
         <slot name="title" />
       </div>
       <div class="bn-fiche-sub-title bn-fiche-space-left fr-col-12">
         <slot name="sub-title" />
       </div>
-      <div class="bn-fiche-body bn-fiche-space-left fr-col-12">
+      <div class="">
         <slot />
       </div>
     </div>
@@ -16,7 +16,7 @@
 
 <style lang="css" scoped>
 .fr-container {
-  padding: 0;
+  padding: 1;
 }
 .bn-fiche-title {
   height: 5.25rem;
