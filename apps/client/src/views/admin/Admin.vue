@@ -20,6 +20,7 @@ const usersHeadersJson = [
     text: 'Id',
     value: 'id',
     width: 65,
+    hide: true,
   },
   {
     text: 'Email',
@@ -77,8 +78,8 @@ const createRole = async () => {
   }
 }
 
-const getUser = (data: { id: number }) => {
-  router.push({ name: 'User', params: { id: data.id } })
+const selectUser = (row: {id: number}[]) => {
+  router.push({ name: 'User', params: { id: row[0].id } })
 }
 
 const activeGrid = ref(1)
@@ -152,8 +153,8 @@ onMounted(async () => {
         :headers="usersHeadersJson"
         :row-data="usersRowData"
         is-hidden-side-bar
-        with-action
-        @get-elt="getUser"
+        row-selection="single"
+        @selection-changed="selectUser"
       />
     </div>
     <div

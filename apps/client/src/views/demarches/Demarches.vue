@@ -74,6 +74,8 @@ const selectDemarche = (row:IDemarche[]) => {
   router.push({ name: 'DemarcheDossiers', params: { id: row[0].id } })
 }
 
+const rowStyle = { cursor: 'pointer' }
+
 </script>
 
 <template>
@@ -95,6 +97,7 @@ const selectDemarche = (row:IDemarche[]) => {
       :row-data="rowData"
       floating-filter
       row-selection="single"
+      :row-style="rowStyle"
       @selection-changed="selectDemarche"
     />
   </LayoutList>

@@ -43,8 +43,8 @@ describe('<Admin />', () => {
     })
 
     cy.get('h2.mb-10').should('contain', 'Espace administration')
-    cy.get('[data-cy=user-list] [data-cy=cell-action-icon]').should('have.length', 10)
-    cy.get('[data-cy=role-list] [data-cy=cell-action-icon]').should('have.length', 10)
+    cy.get('[data-cy=user-list] .ag-row').should('have.length', 10)
+    cy.get('[data-cy=role-list] .ag-row').should('have.length', 10)
   })
   it('Should render because user without create role', () => {
     const pinia = createPinia()
@@ -76,7 +76,7 @@ describe('<Admin />', () => {
     })
 
     cy.get('h2.mb-10').should('contain', 'Espace administration')
-    cy.get('[data-cy=user-list] [data-cy=cell-action-icon]').should('have.length', 10)
+    cy.get('[data-cy=user-list] .ag-row').should('have.length', 10)
     cy.get('[data-cy=role-list]').should('not.exist')
   })
 
@@ -110,7 +110,7 @@ describe('<Admin />', () => {
     })
 
     cy.get('h2.mb-10').should('contain', 'Espace administration')
-    cy.get('[data-cy=user-list] [data-cy=cell-action-icon]').should('have.length', 10)
+    cy.get('[data-cy=user-list] .ag-row').should('have.length', 10)
     cy.get('[data-cy=role-list]').should('exist')
   })
 })

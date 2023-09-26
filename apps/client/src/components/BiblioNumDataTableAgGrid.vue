@@ -17,6 +17,7 @@ import { localeTextAgGrid } from './ag-grid/agGridOptions'
 import AgGridMultiValueCell from './ag-grid/AgGridMultiValueCell.vue'
 import AgGridAttachmentCell from './ag-grid/AgGridAttachmentCell.vue'
 import type { SelectionChangedEvent, GridReadyEvent } from 'ag-grid-community'
+import type { GridOptions, RowStyle } from 'ag-grid-enterprise'
 
 const props = withDefaults(defineProps<{
     title?: string,
@@ -29,6 +30,7 @@ const props = withDefaults(defineProps<{
     rowSelection?: string,
     floatingFilter?: boolean,
     isHiddenSideBar?: boolean
+    rowStyle?: RowStyle
   }>(), {
   title: undefined,
   rowData: () => [],
@@ -150,9 +152,22 @@ const sideBar = computed(() => props.isHiddenSideBar
       },
     })
 
-const gridOptions = {
-  localeText: localeTextAgGrid,
-}
+const gridOptions = computed(() => {
+  if (props.gridOptions) {
+    return {
+      localeText: localeTextAgGrid,
+      ...props.gridOptions,
+    }
+  }
+
+  return {
+    localeText: localeTextAgGrid,
+  }
+})
+
+// const gridOptions = {
+//   localeText: localeTextAgGrid,
+// }
 
 const onSelectionChanged = (params: SelectionChangedEvent) => {
   emit('selectionChanged', params.api.getSelectedRows())
@@ -204,6 +219,7 @@ defineExpose({
     :side-bar="sideBar"
     :grid-options="gridOptions"
     :row-selection="rowSelection"
+    :row-style="{ cursor: 'pointer' }"
     @selection-changed="onSelectionChanged($event)"
     @grid-ready="onGridReady"
   />
