@@ -34,4 +34,7 @@ export class CustomFilter extends BaseEntity implements ICustomFilter {
 
   @Column()
   userId: number
+
+  @Column({ type: 'int', nullable: false })
+  demarcheId: number
 }
