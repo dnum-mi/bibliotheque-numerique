@@ -6,14 +6,13 @@ import {
   Get,
   Param,
   Patch,
-  Post,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { CustomFilter } from '@/modules/custom-filters/objects/entities/custom-filter.entity'
-import { ICustomFilter, CreateCustomFilterDto, PatchCustomFilterDto } from '@biblio-num/shared'
+import { ICustomFilter, PatchCustomFilterDto } from '@biblio-num/shared'
 import { PermissionsGuard, RequirePermissions } from '@/modules/roles/providers/permissions.guard'
 import { PermissionName } from '@/shared/types/Permission.type'
 import { CustomFilterService } from '@/modules/custom-filters/providers/services/custom-filter.service'
@@ -34,17 +33,6 @@ export class CustomFilterController {
     private logger: LoggerService,
   ) {
     this.logger.setContext(this.constructor.name)
-  }
-
-  @Post()
-  @RequirePermissions({ name: PermissionName.ACCESS_DEMARCHE })
-  async createOneFilter(@Body() dto: CreateCustomFilterDto, @CurrentUserId() userId: number): Promise<ICustomFilter> {
-    this.logger.verbose('createOneFilter')
-    return this.service.createAndSave({ ...dto, userId })
-      .then(filter => {
-        delete filter.userId
-        return filter
-      })
   }
 
   @Patch(':filterId')

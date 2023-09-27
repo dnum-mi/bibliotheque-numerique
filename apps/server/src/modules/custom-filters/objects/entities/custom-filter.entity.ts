@@ -7,6 +7,7 @@ import {
   SortDto,
 } from '@biblio-num/shared'
 import { User } from '@/modules/users/entities/user.entity'
+import { Demarche } from '../../../demarches/objects/entities/demarche.entity'
 
 @Entity()
 @Unique('UQ_CUSTOM_FILTERS', ['userId', 'name'])
@@ -34,6 +35,9 @@ export class CustomFilter extends BaseEntity implements ICustomFilter {
 
   @Column()
   userId: number
+
+  @ManyToOne(() => Demarche, (demarche) => demarche.customFilters)
+  demarche?: Demarche
 
   @Column({ type: 'int', nullable: false })
   demarcheId: number

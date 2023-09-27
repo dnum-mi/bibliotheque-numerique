@@ -1,10 +1,11 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity, JoinTable, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
 import { Dossier } from '../../../dossiers/objects/entities/dossier.entity'
 import { BaseEntity } from '../../../../shared/base-entity/base.entity'
 import { OrganismeType, OrganismeTypeKeys } from '../enums/organisme-type.enum'
 import { Demarche as TDemarche } from '@dnum-mi/ds-api-client/dist/@types/generated-types'
 import { MappingColumn, IdentificationDemarche } from '@biblio-num/shared'
 import type { IdentificationDemarcheKeys } from '@biblio-num/shared'
+import { CustomFilter } from '../../../custom-filters/objects/entities/custom-filter.entity'
 
 @Entity({ name: 'demarches' })
 export class Demarche extends BaseEntity {
@@ -42,4 +43,8 @@ export class Demarche extends BaseEntity {
 
   @Column({ type: 'jsonb', default: '{}' })
   dsDataJson: Partial<TDemarche>
+
+  @OneToMany(() => CustomFilter, (customFilter) => customFilter.demarche)
+  @JoinTable()
+  customFilters?: CustomFilter[]
 }

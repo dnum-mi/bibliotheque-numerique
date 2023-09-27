@@ -6,7 +6,16 @@ items:
     filters: {"I01": {filterType: "text", operator: "AND",condition1:{type: "contains", filter: "toto"},condition2:{type: "contains", filter: "tata"}}}
     columns: ['I01','I02','I03','I08','I09']
     user: "@testDemarche2RoleUser"
+    demarcheId: 1
   anotherRandomFilter:
     name: Another custom filter
     columns: [ 'I01','I02' ]
     user: "@testPwdUser"
+    demarcheId: 1
+  aRandomFilter2:
+    name: My custom filter 2
+    sorts: [{ "key":"I01", "order":'ASC'},{"key":'I02', "order":'DESC'}]
+    filters: {"I01": {filterType: "text", operator: "AND",condition1:{type: "contains", filter: "toto"},condition2:{type: "contains", filter: "tata"}}}
+    columns: ['I01','I02','I03','I08','I09']
+    user: "@testDemarche2RoleUser"
+    demarcheId: 5
