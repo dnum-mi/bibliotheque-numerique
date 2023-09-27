@@ -21,7 +21,9 @@ export default defineConfig({
   plugins: [
     vue(),
     vueJsx(),
-    VitePWA({}),
+    VitePWA({
+      navigateFallbackDenylist: [/^\/api/],
+    }),
     Unocss(),
     AutoImport({
       imports: [

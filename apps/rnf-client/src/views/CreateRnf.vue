@@ -135,6 +135,7 @@ const buttonProps = computed(() => (selectedFoundation.value ? rejectProps : cre
       <template v-else>
         <p class="break-word">
           <a
+            download
             :href="deepGet(foundation, prop, '').fileUrl || `/api/files/${deepGet(foundation, prop, '').uuid}`"
             target="_blank"
           >

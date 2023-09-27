@@ -47,6 +47,7 @@ defineProps<{
             aria-hidden="true"
           />
           <a
+            download
             :href="attachment.url"
             target="_blank"
             class="fr-link"

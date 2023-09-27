@@ -14,7 +14,9 @@ export default defineConfig({
     vue(),
     vueJsx(),
     svgLoader(),
-    VitePWA({}),
+    VitePWA({
+      navigateFallbackDenylist: [/^\/api/],
+    }),
     UnoCSS(),
   ],
   base: process.env.BASE_URL || '/',
