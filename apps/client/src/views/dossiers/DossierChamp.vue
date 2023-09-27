@@ -28,6 +28,7 @@ const dataCy = 'dossier-champ'
       class="fr-text fr-mt-1w bn-champ--text"
     >
       <a
+        download
         :href=" champ.file.url"
         target="_blank"
         class="fr-link"
