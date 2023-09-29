@@ -428,6 +428,112 @@ export const dotationDossierDataMock = {
         description: "lorem ipsum",
       },
     },
+
+    {
+      id: "Q2hhbXAtMTE5MHwwMUhCNzhWRzZDQk5FSzUxMUNDWTBOU05COA==",
+      __typename: "TextChamp",
+      label: "Qualité du représentant",
+      stringValue: "Représentant du fondateur",
+      champDescriptor: {
+        description: "lorem ipsum#rnf-person-qualite-rnf#",
+      },
+    },
+    {
+      id: "Q2hhbXAtMTE5MHwwMUhCNzhWRzZDQk5FSzUxMUNDWTBOU05COA==",
+      __typename: "TextChamp",
+      label: "Civilite du représentant",
+      stringValue: "M",
+      champDescriptor: {
+        description: "lorem ipsum#rnf-person-civilite-rnf#",
+      },
+    },
+    {
+      id: "Q2hhbXAtMTE5MXwwMUhCNzhWRzZDQk5FSzUxMUNDWTBOU05COA==",
+      __typename: "TextChamp",
+      label: "Nom",
+      stringValue: "JEAN",
+      champDescriptor: {
+        description: "lorem ipsum#rnf-person-nom-rnf#",
+      },
+    },
+    {
+      id: "Q2hhbXAtMTE5MnwwMUhCNzhWRzZDQk5FSzUxMUNDWTBOU05COA==",
+      __typename: "TextChamp",
+      label: "Prénom",
+      stringValue: "EVA",
+      champDescriptor: {
+        description: "lorem ipsum#rnf-person-prenom-rnf#",
+      },
+    },
+    {
+      id: "Q2hhbXAtMTE5M3wwMUhCNzhWRzZDQk5FSzUxMUNDWTBOU05COA==",
+      __typename: "DateChamp",
+      label: "Date de naissance",
+      stringValue: "13 septembre 2023",
+      date: "2023-09-13",
+      champDescriptor: {
+        description: "lorem ipsum#rnf-person-date-naissance-rnf#",
+      },
+    },
+    {
+      id: "Q2hhbXAtMTE5NHwwMUhCNzhWRzZDQk5FSzUxMUNDWTBOU05COA==",
+      __typename: "TextChamp",
+      label: "Lieu de naissance du déclarant",
+      stringValue: "PARIS",
+      champDescriptor: {
+        description: "lorem ipsum#rnf-person-lieu-naissance-rnf#",
+      },
+    },
+    {
+      id: "Q2hhbXAtMTE5NXwwMUhCNzhWRzZDQk5FSzUxMUNDWTBOU05COA==",
+      __typename: "TextChamp",
+      label: "Nationalité",
+      stringValue: "Aruba",
+      champDescriptor: {
+        description: "lorem ipsum#rnf-person-nationalite-rnf#",
+      },
+    },
+    {
+      id: "Q2hhbXAtMTE5NnwwMUhCNzhWRzZDQk5FSzUxMUNDWTBOU05COA==",
+      __typename: "TextChamp",
+      label: "Profession",
+      stringValue: "SDF",
+      champDescriptor: {
+        description: "lorem ipsum#rnf-person-profession-rnf#",
+      },
+    },
+    {
+      id: "Q2hhbXAtMTE5N3wwMUhCNzhWRzZDQk5FSzUxMUNDWTBOU05COA==",
+      __typename: "AddressChamp",
+      label: "Adresse",
+      stringValue: "1 Square Rameau 59800 Lille",
+      address: {
+        label: "1 Square Rameau 59800 Lille",
+        type: "housenumber",
+        streetAddress:" 1 Square Rameau",
+        streetNumber: "1",
+        streetName: "Square Rameau",
+        postalCode: "59800",
+        cityName: "Lille",
+        cityCode: "59350",
+        departmentName: "Nord",
+        departmentCode: "59",
+        regionName: "Hauts-de-France",
+        regionCode: "32"
+      },
+      champDescriptor: {
+        description: "lorem ipsum#rnf-person-adresse-rnf#",
+      },
+    },
+    {
+      id: "Q2hhbXAtMTE5NnwwMUhCNzhWRzZDQk5FSzUxMUNDWTBOU05COA==",
+      __typename: "TextChamp",
+      label: "Telephone",
+      stringValue: "0123456789",
+      champDescriptor: {
+        description: "lorem ipsum#rnf-person-telephone-rnf#",
+      },
+    },
   ],
   annotations: [
     {

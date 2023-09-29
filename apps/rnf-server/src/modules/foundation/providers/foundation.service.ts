@@ -22,7 +22,8 @@ import { DsConfigurationService } from '@/modules/ds/providers/ds-configuration.
 import { DsMapperService } from '@/modules/ds/providers/ds-mapper.service'
 import { FileStorageService } from '@/modules/file-storage/providers/file-storage.service'
 import { CreateFileStorageDto } from '@/shared/objects/file-storage/create-file.dto'
-import { Prisma } from '@prisma/client'
+import { PersonInFoundation, Prisma } from '@prisma/client'
+import { CreatePersonInFoundationDto } from '@/modules/foundation/objects/dto/create-person-in-foundation.dto'
 
 interface createNestedStatus {
   status: Prisma.FileStorageCreateNestedOneWithoutFoundationInput
@@ -136,8 +137,10 @@ export class FoundationService extends BaseEntityService {
           },
           rnfId: `in-creation-${new Date().getTime()}`,
           ...((await this._cascadeCreateFile(dto.status)) ?? {}),
+          ...this._cascadeCreatePersons(dto),
         },
       })
+
       const index = await prisma.foundation.count({
         where: { type: dto.type, department: code },
       })
@@ -150,6 +153,36 @@ export class FoundationService extends BaseEntityService {
       this.logger.log(`A new Foundation has been created: ${foundation.rnfId}`)
       return foundation
     })
+  }
+
+  private _cascadeCreatePersons(dto: CreateFoundationDto): Prisma.FoundationCreateNestedOneWithoutPersonsInput {
+    this.logger.verbose('_cascadeCreatePersons')
+    let persons = {}
+    if (dto.personInFoundationToCreate) {
+      persons = {
+        persons: {
+          create: dto.personInFoundationToCreate.map((personInFoundation) => ({
+            person: {
+              create: {
+                lastName: personInFoundation.person.lastName,
+                firstName: personInFoundation.person.firstName,
+                bornAt: personInFoundation.person.bornAt,
+                bornPlace: personInFoundation.person.bornPlace,
+                nationality: personInFoundation.person.nationality,
+                profession: personInFoundation.person.profession,
+                phone: personInFoundation.person.phone,
+                email: '',
+                address: {
+                  create: personInFoundation.person.address,
+                },
+              },
+            },
+            roles: personInFoundation.role,
+          })),
+        },
+      }
+    }
+    return persons
   }
 
   /* endregion */

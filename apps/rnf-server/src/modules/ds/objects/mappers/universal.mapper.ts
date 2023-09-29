@@ -1,13 +1,17 @@
 import {
   Champ,
-  CustomChamp,
-  PieceJustificativeChamp,
+  CustomChamp, DateChamp,
+  PieceJustificativeChamp, RepetitionChamp,
 } from '@dnum-mi/ds-api-client'
 import { AddressChamp } from '@dnum-mi/ds-api-client/dist/@types/types'
 import { Mapper } from '@/modules/ds/objects/types/mapper.type'
 
 export const stringValue = (ch?: Champ | CustomChamp) =>
   ch?.stringValue ?? null
+
+export const dateValue = (ch?: DateChamp) =>
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  ch?.date ?? null
 
 export const universalMapper: Mapper = {
   title: stringValue,
@@ -52,7 +56,7 @@ export const universalMapper: Mapper = {
   personCivility: stringValue,
   personFirstName: stringValue,
   personLastName: stringValue,
-  personBornAt: stringValue,
+  personBornAt: dateValue,
   personBornPlace: stringValue,
   personNationality: stringValue,
   personProfession: stringValue,
