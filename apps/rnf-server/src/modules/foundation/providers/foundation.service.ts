@@ -22,8 +22,8 @@ import { DsConfigurationService } from '@/modules/ds/providers/ds-configuration.
 import { DsMapperService } from '@/modules/ds/providers/ds-mapper.service'
 import { FileStorageService } from '@/modules/file-storage/providers/file-storage.service'
 import { CreateFileStorageDto } from '@/shared/objects/file-storage/create-file.dto'
-import { PersonInFoundation, Prisma } from '@prisma/client'
-import { CreatePersonInFoundationDto } from '@/modules/foundation/objects/dto/create-person-in-foundation.dto'
+import { Prisma } from '@prisma/client'
+import { RawChamp } from '@/modules/ds/objects/types/raw-champ.type'
 
 interface createNestedStatus {
   status: Prisma.FileStorageCreateNestedOneWithoutFoundationInput
@@ -337,7 +337,7 @@ export class FoundationService extends BaseEntityService {
   }
 
   private checkIfRnfInAcceptedDossier(doss: DossierWithCustomChamp): string | null {
-    const rnfChamp = this.dsMapperService.findChampsInDossier(doss.champs, {
+    const rnfChamp = this.dsMapperService.findChampsInDossier(doss.champs as RawChamp[], {
       rnf: this.dsConfigurationService.rnfFieldKeys.rnfId,
     }).rnf
     let rnfId: string | null = stringValue(rnfChamp)

@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { LoggerService } from '@/shared/modules/logger/providers/logger.service'
-import { CustomChamp, DossierWithCustomChamp } from '@dnum-mi/ds-api-client'
+import { Champ, DossierWithCustomChamp } from '@dnum-mi/ds-api-client'
 import { CreateFoundationDto } from '@/modules/foundation/objects/dto/create-foundation.dto'
 import { DsConfigurationService } from '@/modules/ds/providers/ds-configuration.service'
 import { Mapper } from '@/modules/ds/objects/types/mapper.type'
@@ -8,6 +8,8 @@ import { personMapper } from '@/modules/ds/objects/mappers/person.mapper'
 import { CreatePersonInFoundationDto } from '@/modules/foundation/objects/dto/create-person-in-foundation.dto'
 import { CreatePersonDto } from '@/modules/person/objects/dto/create-person.dto'
 import { FoundationRole } from '@prisma/client'
+import { TypeDeChamp } from '@dnum-mi/ds-api-client/dist/@types/generated-types'
+import { RawChamp } from '@/modules/ds/objects/types/raw-champ.type'
 
 @Injectable()
 export class DsMapperService {
@@ -19,14 +21,22 @@ export class DsMapperService {
   }
 
   public findChampsInDossier(
-    champs: CustomChamp[],
+    champs: RawChamp[],
     regexHash: Record<string, RegExp>,
-  ): Record<string, CustomChamp> {
+  ): Record<string, Champ> {
     const champsHash = {}
     for (const champ of champs) {
       for (const key in regexHash) {
         if (champ.champDescriptor.description?.match(regexHash[key])) {
-          champsHash[key] = champ
+          if (champ.champDescriptor.type === TypeDeChamp.Repetition) {
+            champsHash[key] = {
+              rows: champ.rows.map((subChamp: {
+                champs: RawChamp[]
+              }) => this.findChampsInDossier(subChamp.champs, this.dsConfigurationService.rnfFieldKeys)),
+            } as unknown as Champ
+          } else {
+            champsHash[key] = champ
+          }
         }
       }
     }
@@ -44,7 +54,8 @@ export class DsMapperService {
       mapper = this.dsConfigurationService.getMapperFromDemarcheDsId(demarcheId)
     }
 
-    const champsHash = this.findChampsInDossier(rawDossier.champs, this.dsConfigurationService.rnfFieldKeys)
+    const champsHash =
+      this.findChampsInDossier(rawDossier.champs as RawChamp[], this.dsConfigurationService.rnfFieldKeys)
 
     const mapperWithOutPerson = this.mapperWithOutPerson(mapper)
     const foudationDto: CreateFoundationDto = Object.fromEntries(
@@ -54,7 +65,6 @@ export class DsMapperService {
     ) as unknown as CreateFoundationDto
 
     foudationDto.personInFoundationToCreate = this.mapPersonInFoundationToDto(champsHash, mapper)
-
     return foudationDto
   }
 
@@ -66,25 +76,38 @@ export class DsMapperService {
     return mapperWithOutPerson
   }
 
-  mapPersonInFoundationToDto(champsHash: Record<string, CustomChamp>, mapper: Mapper): CreatePersonInFoundationDto[] {
+  mapPersonInFoundationToDto(champsHash: Record<string, Champ>, mapper: Mapper): CreatePersonInFoundationDto[] {
     this.logger.verbose('mapPersonInFoundationToDto')
 
     const personInFoundationDto: CreatePersonInFoundationDto[] = []
 
     // Declarant
     const declarant: CreatePersonDto = this.mapPersonToDto(champsHash, mapper)
-    const roles = FoundationRole.DECLARANT
-    personInFoundationDto.push({ person: declarant, role: roles })
+    personInFoundationDto.push({ person: declarant, role: FoundationRole.DECLARANT })
+
+    if (!champsHash.personAdministrator) {
+      return personInFoundationDto
+    }
 
     // Administrators
-    // const administrators: PersonMapper[] = this.dsConfigurationService.getAdministratorsFromDemarcheDsId('!no-id!')
-    console.log(champsHash)
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const administratorsChamps: {champs: RawChamp[]}[] =
+      (champsHash.personAdministrator as unknown as RawChamp).rows ?? []
+
+    if (administratorsChamps.length > 0) {
+      administratorsChamps.forEach((administrator) => {
+        const admin: CreatePersonDto = this.mapPersonToDto(administrator as unknown as Record<string, Champ>, mapper)
+        admin[personMapper.personPhone] = ''
+        personInFoundationDto.push({
+          person: admin,
+          role: FoundationRole.ADMIN,
+        })
+      })
+    }
 
     return personInFoundationDto
   }
 
-  mapPersonToDto(champsHash: Record<string, CustomChamp>, mapper: Mapper): CreatePersonDto {
+  mapPersonToDto(champsHash: Record<string, Champ>, mapper: Mapper): CreatePersonDto {
     this.logger.verbose('mapPersonToDto')
 
     const personDto: CreatePersonDto = Object.fromEntries(
