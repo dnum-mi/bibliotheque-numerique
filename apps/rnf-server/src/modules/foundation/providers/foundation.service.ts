@@ -190,18 +190,38 @@ export class FoundationService extends BaseEntityService {
   /* region Get foundations */
   async getFoundations(ids: number[]): Promise<FoundationEntity[]> {
     this.logger.verbose('getFoundations')
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     return this.prisma.foundation.findMany({
       where: { id: { in: ids } },
-      include: { address: true, status: true },
+      include: {
+        address: true,
+        status: true,
+        persons: {
+          include: {
+            person: true,
+          },
+        },
+      },
     })
   }
 
   async getOneFoundation(rnfId: string): Promise<FoundationEntity> {
     this.logger.verbose('getOneFoundation')
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     return this.prisma.foundation
       .findFirst({
         where: { rnfId },
-        include: { address: true, status: true },
+        include: {
+          address: true,
+          status: true,
+          persons: {
+            include: {
+              person: true,
+            },
+          },
+        },
       })
       .then((f) => {
         if (!f) {
@@ -227,9 +247,19 @@ export class FoundationService extends BaseEntityService {
         gte: updatedAfter,
       }
     }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     return this.prisma.foundation.findMany({
       where,
-      include: { address: true, status: true },
+      include: {
+        address: true,
+        status: true,
+        persons: {
+          include: {
+            person: true,
+          },
+        },
+      },
     })
   }
 
