@@ -33,6 +33,7 @@ export const getOrganismeByIdRnaRoute = (idRna: string) => `${organismesRoute}/r
 export const customFiltersRoute = '/custom-filters'
 export const getCustomFiltersRoute = () => customFiltersRoute
 export const getOneCustomFiltersRoute = (id: number) => `/custom-filters/${id}`
+export const getCustomFiltersByDemarcheRoute = (id:number) => `${customFiltersRoute}/demarche/${id}`
 
 export const dossierRoute = '/dossiers'
 export const getDossierDetail = (id: number) => `${dossierRoute}/${id}/detail`

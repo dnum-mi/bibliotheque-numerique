@@ -141,7 +141,10 @@ onMounted(async () => {
     selectFilter(Number(route.query.customFilter))
   }
 })
-watch(demarche, computeColumnsDef)
+watch(demarche, async (newValue) => {
+  computeColumnsDef()
+  await customFilterStore.getCustomFiltersByDemarche(newValue.id)
+})
 watch(fetching, () => {
   if (!fetching.value) refresh()
 })
@@ -189,7 +192,7 @@ const createFilter = async (filterName: string) => {
     sorts: paginationDto.sorts,
     filters: paginationDto.filters || undefined,
   }
-  await customFilterStore.createCustomFilter(createCustomFilterDto)
+  await customFilterStore.createCustomFilter(createCustomFilterDto, demarche.value.id)
   const filterId = customFilters.value.find((f) => f.name === filterName)?.id
   selectFilter(filterId)
 }

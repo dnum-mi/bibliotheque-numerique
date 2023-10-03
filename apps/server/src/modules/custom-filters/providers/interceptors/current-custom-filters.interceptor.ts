@@ -13,10 +13,16 @@ export class CurrentCustomFiltersInterceptor implements NestInterceptor {
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<void> {
     const user = context.switchToHttp().getRequest().user
+    const where:{ user: { id: number }, demarcheId?: number} = { user: { id: user.id } }
+
+    const demarche = context.switchToHttp().getRequest().demarche
+    if (demarche) {
+      where.demarcheId = demarche.id
+    }
     return from(
       this.service.repository.find({
-        where: { user: { id: user.id } },
-        select: ['columns', 'filters', 'sorts', 'groupByDossier', 'name', 'id'],
+        where,
+        select: ['columns', 'filters', 'sorts', 'groupByDossier', 'name', 'id', 'demarcheId'],
       }),
     ).pipe(
       switchMap((filters) => {

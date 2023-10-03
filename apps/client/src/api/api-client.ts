@@ -35,7 +35,7 @@ import {
   getListDemarcheDossierRoute,
   getListDemarcheFieldRoute,
   getXlsxDemarcheDossierRoute,
-  getXlsxDemarcheFieldRoute, getDossierDetail, getOrganismeDossiers,
+  getXlsxDemarcheFieldRoute, getDossierDetail, getOrganismeDossiers, getCustomFiltersByDemarcheRoute,
 } from './bn-api-routes'
 import {
   authRoute,
@@ -267,8 +267,13 @@ export const customFiltersApiClient = {
     return response.data
   },
 
-  createOneCustomFilter: async (dto: CreateCustomFilterDto) => {
-    const response = await apiClientInstance.post(getCustomFiltersRoute(), dto)
+  getCustomFiltersByDemarche: async (id: number) => {
+    const response = await apiClientInstance.get(getCustomFiltersByDemarcheRoute(id))
+    return response.data
+  },
+
+  createOneCustomFilter: async (dto: CreateCustomFilterDto, demarcheId: number) => {
+    const response = await apiClientInstance.post(getCustomFiltersByDemarcheRoute(demarcheId), dto)
     return response.data
   },
 
