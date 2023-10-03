@@ -20,6 +20,32 @@ type AddressOutputDto = {
   regionCode: string;
 }
 
+export type PersonOutputDto = {
+  id: number;
+  createdAt: string;
+  updatedAt: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  profession: string;
+  nationality: string;
+  bornAt: Date;
+  bornPlace: string;
+  addressId: number;
+  address: AddressOutputDto;
+}
+
+export type PersonInFoundationOutputDto = {
+  id: number;
+  createdAt: string;
+  updatedAt: string;
+  foundationId: number;
+  personId: number;
+  roles: [];
+  person: PersonOutputDto;
+}
+
 export type FoundationOutputDto = {
   id: number;
   createdAt: string;
@@ -33,6 +59,7 @@ export type FoundationOutputDto = {
   email: string;
   dissolvedAt?: Date;
   address: AddressOutputDto;
+  persons: PersonInFoundationOutputDto[]
 }
 
 export type CurrentFoundationOutputDto = Omit<FoundationOutputDto, 'rnfId'|'createdAt'|'updatedAt'>

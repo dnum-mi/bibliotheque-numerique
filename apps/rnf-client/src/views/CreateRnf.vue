@@ -7,6 +7,7 @@ import { toTypedSchema } from '@vee-validate/zod'
 
 import { deepGet } from '@/utils'
 import type { CurrentFoundationOutputDto, FoundationOutputDto } from '@/composables/use-rnf-client'
+import { computed, type Ref, ref } from 'vue'
 
 const rnfStore = useRnfStore()
 const router = useRouter()
@@ -24,6 +25,7 @@ const dictFoundation = {
   email: 'Courriel du déclarant',
   'address.label': 'Adresse du siège social',
   status: 'Statuts',
+  persons: 'Personnes habilitées à la structure',
 } as const
 const { rnfId, ...dictCurrentFoundation } = dictFoundation
 
@@ -119,9 +121,53 @@ const rejectProps = {
   class: 'btn-reject',
 }
 const buttonProps = computed(() => (selectedFoundation.value ? rejectProps : createProps))
+
+const personsModal = ref()
+const personsModalOpen: Ref<boolean> = ref(false)
+const personsModalData: Ref<[]> = ref([])
+
+const openPersonsModal = (persons: []) => {
+  personsModalOpen.value = true
+  personsModalData.value = persons
+}
+
+const closePersonsModal = () => {
+  personsModalOpen.value = false
+}
 </script>
 
 <template>
+  <DsfrModal
+    :opened="personsModalOpen"
+    title="Personnes habilitées à la structure"
+    :origin="$refs.personsModal"
+    @close="closePersonsModal"
+  >
+    <p>
+      <DsfrTable
+        :headers="[
+          { text: 'Rôle', value: 'role'},
+          { text: 'Prénom', value: 'firstName' },
+          { text: 'Nom', value: 'lastName' },
+          { text: 'Courriel', value: 'email' },
+          { text: 'Téléphone', value: 'phone' },
+          { text: 'Profession', value: 'profession' },
+          { text: 'Nationalité', value: 'nationality'},
+          { text: 'Date de naissance', value: 'bornAt'}
+        ]"
+        :rows="personsModalData.map((item) => ({
+          role: item.roles.toString(),
+          firstName: item.person.firstName,
+          lastName: item.person.lastName,
+          email: item.person.email,
+          phone: item.person.phone,
+          profession: item.person.profession,
+          nationality: item.person.nationality,
+          bornAt: item.person.bornAt
+        }))"
+      />
+    </p>
+  </DsfrModal>
   <DefineTemplate v-slot="{ foundation, dictionnaire }">
     <div
       v-for="(value, prop) in dictionnaire"
@@ -132,7 +178,14 @@ const buttonProps = computed(() => (selectedFoundation.value ? rejectProps : cre
       <template v-if="typeof deepGet(foundation, prop, '') != 'object'">
         <p class="break-word">{{ deepGet(foundation, prop, '') }}</p>
       </template>
-      <template v-else>
+      <template v-else-if="Array.isArray(deepGet(foundation, prop, '')) && deepGet(foundation, prop, '').length > 0">
+        <p class="break-word">
+          <a :ref="personsModal" href="#" label="Voir les personnes" @click="openPersonsModal(deepGet(foundation, prop, ''))">
+            Voir les personnes
+          </a>
+        </p>
+      </template>
+      <template v-else-if="deepGet(foundation, prop, '').fileUrl || deepGet(foundation, prop, '').uuid">
         <p class="break-word">
           <a
             download
