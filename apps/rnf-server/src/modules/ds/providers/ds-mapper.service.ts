@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { LoggerService } from '@/shared/modules/logger/providers/logger.service'
-import { Champ, DossierWithCustomChamp } from '@dnum-mi/ds-api-client'
+import { Champ, CustomChamp, DossierWithCustomChamp } from '@dnum-mi/ds-api-client'
 import { CreateFoundationDto } from '@/modules/foundation/objects/dto/create-foundation.dto'
 import { DsConfigurationService } from '@/modules/ds/providers/ds-configuration.service'
 import { Mapper } from '@/modules/ds/objects/types/mapper.type'
@@ -21,7 +21,7 @@ export class DsMapperService {
   }
 
   public findChampsInDossier(
-    champs: RawChamp[],
+    champs: CustomChamp[],
     regexHash: Record<string, RegExp>,
   ): Record<string, Champ> {
     const champsHash = {}
@@ -29,8 +29,9 @@ export class DsMapperService {
       for (const key in regexHash) {
         if (champ.champDescriptor.description?.match(regexHash[key])) {
           if (champ.champDescriptor.type === TypeDeChamp.Repetition) {
+            const rawChamp = champ as unknown as RawChamp
             champsHash[key] = {
-              rows: champ.rows.map((subChamp: {
+              rows: rawChamp.rows.map((subChamp: {
                 champs: RawChamp[]
               }) => this.findChampsInDossier(subChamp.champs, this.dsConfigurationService.rnfFieldKeys)),
             } as unknown as Champ
@@ -55,7 +56,7 @@ export class DsMapperService {
     }
 
     const champsHash =
-      this.findChampsInDossier(rawDossier.champs as RawChamp[], this.dsConfigurationService.rnfFieldKeys)
+      this.findChampsInDossier(rawDossier.champs, this.dsConfigurationService.rnfFieldKeys)
 
     const mapperWithOutPerson = this.mapperWithOutPerson(mapper)
     const foudationDto: CreateFoundationDto = Object.fromEntries(

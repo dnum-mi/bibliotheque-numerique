@@ -1,7 +1,7 @@
 import {
   Champ,
   CustomChamp, DateChamp,
-  PieceJustificativeChamp, RepetitionChamp,
+  PieceJustificativeChamp,
 } from '@dnum-mi/ds-api-client'
 import { AddressChamp } from '@dnum-mi/ds-api-client/dist/@types/types'
 import { Mapper } from '@/modules/ds/objects/types/mapper.type'

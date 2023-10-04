@@ -8,6 +8,7 @@ import { toTypedSchema } from '@vee-validate/zod'
 import { deepGet } from '@/utils'
 import type { CurrentFoundationOutputDto, FoundationOutputDto } from '@/composables/use-rnf-client'
 import { computed, type Ref, ref } from 'vue'
+import { dateToStringFr } from "@/composables/date-to-string";
 
 const rnfStore = useRnfStore()
 const router = useRouter()
@@ -163,7 +164,7 @@ const closePersonsModal = () => {
           phone: item.person.phone,
           profession: item.person.profession,
           nationality: item.person.nationality,
-          bornAt: item.person.bornAt
+          bornAt: dateToStringFr(item.person.bornAt)
         }))"
       />
     </p>
