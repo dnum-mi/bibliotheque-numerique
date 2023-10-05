@@ -103,6 +103,53 @@ const expectedFixFieldsDates = (
     dsChampType: null,
   },
 ])
+
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+const expectClassicalFixFields = (status?: string) => [
+  {
+    sourceId: '96151176-4624-4706-b861-722d2e53545d',
+    label: 'Id démarche simplifié',
+    formatFunctionRef: undefined,
+    type: FieldType.number,
+    fieldSource: FieldSource.fixField,
+    stringValue: '142',
+    dateValue: null,
+    numberValue: 142,
+    dossierId: 42,
+    parentRowIndex: null,
+    rawJson: null,
+    dsChampType: null,
+  },
+  {
+    sourceId: '1a4b62c4-b81f-4e83-ac34-f6d601b8a8d4',
+    label: 'Status',
+    formatFunctionRef: 'status',
+    type: 'string',
+    fieldSource: 'fix-field',
+    stringValue: status || 'bientôt cuit',
+    dateValue: null,
+    numberValue: null,
+    dossierId: 42,
+    parentRowIndex: null,
+    rawJson: null,
+    dsChampType: null,
+  },
+  {
+    sourceId: '9863ce70-6378-4d7e-aca9-b81fb7b97c10',
+    label: 'préfecture',
+    type: 'string',
+    fieldSource: 'fix-field',
+    formatFunctionRef: undefined,
+    stringValue: 'Unknown',
+    dateValue: null,
+    numberValue: null,
+    dossierId: 42,
+    parentRowIndex: null,
+    rawJson: null,
+    dsChampType: null,
+  },
+]
+
 describe('FieldService', () => {
   let service: FieldService
 
@@ -142,34 +189,7 @@ describe('FieldService', () => {
     }
     const fields = await service.overwriteFieldsFromDataJson(raw as Partial<TDossier>, 42, fakeMappingColumnHash)
     expect(fields).toEqual([
-      {
-        sourceId: '96151176-4624-4706-b861-722d2e53545d',
-        label: 'Id démarche simplifié',
-        formatFunctionRef: undefined,
-        type: FieldType.number,
-        fieldSource: FieldSource.fixField,
-        stringValue: '142',
-        dateValue: null,
-        numberValue: 142,
-        dossierId: 42,
-        parentRowIndex: null,
-        rawJson: null,
-        dsChampType: null,
-      },
-      {
-        sourceId: '1a4b62c4-b81f-4e83-ac34-f6d601b8a8d4',
-        label: 'Status',
-        formatFunctionRef: 'status',
-        type: 'string',
-        fieldSource: 'fix-field',
-        stringValue: 'bientôt cuit',
-        dateValue: null,
-        numberValue: null,
-        dossierId: 42,
-        parentRowIndex: null,
-        rawJson: null,
-        dsChampType: null,
-      },
+      ...expectClassicalFixFields(),
       ...expectedFixFieldsDates(42, raw.dateDepot, raw.datePassageEnInstruction, raw.datePassageEnConstruction),
     ])
   })
@@ -193,34 +213,7 @@ describe('FieldService', () => {
     }
     const fields = await service.overwriteFieldsFromDataJson(raw as Partial<TDossier>, 42, fakeMappingColumnHash)
     expect(fields).toMatchObject([
-      {
-        sourceId: '96151176-4624-4706-b861-722d2e53545d',
-        label: 'Id démarche simplifié',
-        formatFunctionRef: undefined,
-        type: FieldType.number,
-        fieldSource: FieldSource.fixField,
-        stringValue: '142',
-        dateValue: null,
-        numberValue: 142,
-        dossierId: 42,
-        parentRowIndex: null,
-        rawJson: null,
-        dsChampType: null,
-      },
-      {
-        sourceId: '1a4b62c4-b81f-4e83-ac34-f6d601b8a8d4',
-        label: 'Status',
-        formatFunctionRef: 'status',
-        type: 'string',
-        fieldSource: 'fix-field',
-        stringValue: 'bientôt cuit',
-        dateValue: null,
-        numberValue: null,
-        dossierId: 42,
-        parentRowIndex: null,
-        rawJson: null,
-        dsChampType: null,
-      },
+      ...expectClassicalFixFields(),
       ...expectedFixFieldsDates(42),
       {
         sourceId: 'Q4hhbXAtMTA0Mw==',
@@ -258,34 +251,7 @@ describe('FieldService', () => {
     }
     const fields = await service.overwriteFieldsFromDataJson(raw as Partial<TDossier>, 42, fakeMappingColumnHash)
     expect(fields).toMatchObject([
-      {
-        sourceId: '96151176-4624-4706-b861-722d2e53545d',
-        label: 'Id démarche simplifié',
-        formatFunctionRef: undefined,
-        type: FieldType.number,
-        fieldSource: FieldSource.fixField,
-        stringValue: '142',
-        dateValue: null,
-        numberValue: 142,
-        dossierId: 42,
-        parentRowIndex: null,
-        rawJson: null,
-        dsChampType: null,
-      },
-      {
-        sourceId: '1a4b62c4-b81f-4e83-ac34-f6d601b8a8d4',
-        label: 'Status',
-        formatFunctionRef: 'status',
-        type: 'string',
-        fieldSource: 'fix-field',
-        stringValue: 'bientôt cuit',
-        dateValue: null,
-        numberValue: null,
-        dossierId: 42,
-        parentRowIndex: null,
-        rawJson: null,
-        dsChampType: null,
-      },
+      ...expectClassicalFixFields(),
       ...expectedFixFieldsDates(42),
       {
         sourceId: 'Q4hhbXAtMTA0Mw==',
@@ -320,34 +286,7 @@ describe('FieldService', () => {
     }
     const fields = await service.overwriteFieldsFromDataJson(raw as Partial<TDossier>, 42, fakeMappingColumnHash)
     expect(fields).toMatchObject([
-      {
-        sourceId: '96151176-4624-4706-b861-722d2e53545d',
-        label: 'Id démarche simplifié',
-        formatFunctionRef: undefined,
-        type: FieldType.number,
-        fieldSource: FieldSource.fixField,
-        stringValue: '142',
-        dateValue: null,
-        numberValue: 142,
-        dossierId: 42,
-        parentRowIndex: null,
-        rawJson: null,
-        dsChampType: null,
-      },
-      {
-        sourceId: '1a4b62c4-b81f-4e83-ac34-f6d601b8a8d4',
-        label: 'Status',
-        formatFunctionRef: 'status',
-        type: 'string',
-        fieldSource: 'fix-field',
-        stringValue: 'bientôt cuit',
-        dateValue: null,
-        numberValue: null,
-        dossierId: 42,
-        parentRowIndex: null,
-        rawJson: null,
-        dsChampType: null,
-      },
+      ...expectClassicalFixFields(),
       ...expectedFixFieldsDates(42),
       {
         sourceId: 'Q1hhbXAtMTA0Mw==',
@@ -369,7 +308,7 @@ describe('FieldService', () => {
   it('Create children scenario for repetable champs', async () => {
     const raw = {
       id: 'RG9zc2llci0xMzY=',
-      state: '',
+      state: 'à point',
       number: 142,
       champs: [
         {
@@ -441,34 +380,7 @@ describe('FieldService', () => {
     }
     const fields = await service.overwriteFieldsFromDataJson(raw as Partial<TDossier>, 42, fakeMappingColumnHash)
     expect(fields).toMatchObject([
-      {
-        sourceId: '96151176-4624-4706-b861-722d2e53545d',
-        label: 'Id démarche simplifié',
-        formatFunctionRef: undefined,
-        type: FieldType.number,
-        fieldSource: FieldSource.fixField,
-        stringValue: '142',
-        dateValue: null,
-        numberValue: 142,
-        dossierId: 42,
-        parentRowIndex: null,
-        rawJson: null,
-        dsChampType: null,
-      },
-      {
-        sourceId: '1a4b62c4-b81f-4e83-ac34-f6d601b8a8d4',
-        label: 'Status',
-        formatFunctionRef: 'status',
-        type: 'string',
-        fieldSource: 'fix-field',
-        stringValue: '',
-        dateValue: null,
-        numberValue: null,
-        dossierId: 42,
-        parentRowIndex: null,
-        rawJson: null,
-        dsChampType: null,
-      },
+      ...expectClassicalFixFields(raw.state),
       ...expectedFixFieldsDates(42),
       {
         sourceId: 'Q2hhbXAtMTA2NQ==',

@@ -10,9 +10,8 @@ import { CronJob } from 'cron'
 import { JobLogService } from '../job-log/providers/job-log.service'
 import { JobNames } from './job-name.enum'
 import { DemarcheSynchroniseService } from '../demarches/providers/services/demarche-synchronise.service'
-import { OrganismesService } from '@/plugins/organisme/organismes/organismes.service'
 import { TMapperJobs } from './mapper-jobs.type'
-import { InstructionTimesService } from '../../plugins/instruction_time/instruction_times/instruction_times.service'
+import { InstructionTimesService } from '@/plugins/instruction_time/instruction_times/instruction_times.service'
 
 @Injectable()
 export class CronService implements OnApplicationBootstrap, OnModuleInit {
@@ -22,7 +21,6 @@ export class CronService implements OnApplicationBootstrap, OnModuleInit {
     private schedulerRegistry: SchedulerRegistry,
     private jobLogService: JobLogService,
     private demarcheSynchroniseService: DemarcheSynchroniseService,
-    private organismeService: OrganismesService,
     private instructionTimesService: InstructionTimesService,
   ) {
     this.logger.setContext(this.constructor.name)
@@ -38,12 +36,12 @@ export class CronService implements OnApplicationBootstrap, OnModuleInit {
         fct: this._fetchData,
         description: 'Fetching Data from Démarche Simplifiée',
       },
-      {
-        name: JobNames.UPDATE_ORGANISMES,
-        cronTime: this.config.get('fetchDataInterval'),
-        fct: this.jobUpdateOrgnanisme,
-        description: 'Mise à jours des orgranismes',
-      },
+      // {
+      //   name: JobNames.UPDATE_ORGANISMES,
+      //   cronTime: this.config.get('fetchDataInterval'),
+      //   fct: this.jobUpdateOrgnanisme,
+      //   description: 'Mise à jours des orgranismes',
+      // },
       {
         name: 'UPDATE-INSTRUCTION-TIMES-CALCULATION',
         cronTime: this.config.get('fetchDelayCalculation'),
@@ -100,28 +98,13 @@ export class CronService implements OnApplicationBootstrap, OnModuleInit {
     this.logger.log('End synchronising.')
   }
 
-  private async jobUpdateOrgnanisme(): Promise<void> {
-    const organismes = await this.organismeService.findAll()
-    organismes?.forEach(async (organisme) => {
-      try {
-        this.logger.verbose(
-          `${JobNames.UPDATE_ORGANISMES}: updating ${organisme.idRef}`,
-        )
-        await this.organismeService.upsertOrganisme(organisme.idRef, [])
-      } catch (error) {
-        this.logger.error({
-          message: `${JobNames.UPDATE_ORGANISMES}: ${error.message}`,
-          error,
-        })
-      }
-    })
+  private async jobUpdateOrganisme(): Promise<void> {
+    // TODO
   }
 
   private async _instructionTimesCalculation(): Promise<void> {
     try {
-      this.logger.verbose(
-        'UPDATE-INSTRUCTION-TIMES-CALCULATION',
-      )
+      this.logger.verbose('UPDATE-INSTRUCTION-TIMES-CALCULATION')
       this.instructionTimesService.instructionTimeCalculationForAllDossier()
     } catch (error) {
       this.logger.error({

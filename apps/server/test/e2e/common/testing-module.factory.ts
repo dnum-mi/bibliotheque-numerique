@@ -1,14 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { AppModule } from '../../../src/app.module'
-import { configMain } from '../../../src/config-main'
+import { AppModule } from '@/app.module'
+import { configMain } from '@/config-main'
 import { INestApplication } from '@nestjs/common'
 import { DsApiClient } from '@dnum-mi/ds-api-client'
 import { dsApiClientMock } from '../../mock/ds-api-client/ds-api-client.mock'
-import { LoggerService } from '../../../src/shared/modules/logger/logger.service'
+import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { loggerServiceMock } from '../../mock/logger-service.mock'
 import { mailerServiceMock } from '../../mock/mailer-service.mock'
 import { MailerService } from '@nestjs-modules/mailer'
 import { FileService } from '@/modules/files/providers/file.service'
+import { RnfService } from '@/modules/organismes/providers/rnf.service'
+import { rnfServiceMock } from '../../mock/rnf-service/rnf-service.mock'
+import { RnaService } from '@/modules/organismes/providers/rna.service'
+import { rnaServiceMock } from '../../mock/rna-service/rna-service.mock'
 
 export class TestingModuleFactory {
   app: INestApplication
@@ -25,10 +29,14 @@ export class TestingModuleFactory {
       .useValue(this.mailerService)
       .overrideProvider(DsApiClient)
       .useValue(dsApiClientMock)
+      .overrideProvider(RnfService)
+      .useValue(rnfServiceMock)
+      .overrideProvider(RnaService)
+      .useValue(rnaServiceMock)
       .compile()
 
     this.app = moduleFixture.createNestApplication()
-    configMain(this.app)
+    await configMain(this.app)
     this.fileService = moduleFixture.get<FileService>(FileService)
     await this.app.init()
   }

@@ -21,6 +21,10 @@ export const DsChampType = {
   SiretChamp: 'SiretChamp',
   TextChamp: 'TextChamp',
   TitreIdentiteChamp: 'TitreIdentiteChamp',
+
+  // technically those are TextChamp for DS, with RNA or RNF ChampDescriptor
+  RnaChamp: 'RnaChamp',
+  RnfChamp: 'RnfChamp',
 }
 
-export type DsChampTypeKeys = (typeof DsChampType)[keyof typeof DsChampType];
+export type DsChampTypeKeys = (typeof DsChampType)[keyof typeof DsChampType]

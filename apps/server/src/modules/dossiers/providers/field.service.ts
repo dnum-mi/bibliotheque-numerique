@@ -5,14 +5,21 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { Dossier as TDossier } from '@dnum-mi/ds-api-client/dist/@types/types'
-import { DsChampType } from '@/shared/modules/ds-api/objects/ds-champ-type.enum'
+import {
+  DsChampType,
+  DsChampTypeKeys,
+} from '@/shared/modules/ds-api/objects/ds-champ-type.enum'
 import { CreateFieldDto } from '../objects/dto/fields/create-field.dto'
 import { CustomChamp } from '@dnum-mi/ds-api-client/src/@types/types'
 import { fixFieldValueFunctions } from '../objects/constante/fix-field.dictionnary'
-import { FieldType, FieldTypeKeys, MappingColumn } from '@biblio-num/shared'
+import { FieldType, FieldTypeKeys, FormatFunctionRef, FormatFunctionRefKeys, MappingColumn } from '@biblio-num/shared'
+import { ChampDescriptor } from '@dnum-mi/ds-api-client'
 
 type RawChamp = CustomChamp & {
   __typename: string
+  champDescriptor: ChampDescriptor & {
+    __typename: string
+  }
   rows: Array<{ champs: Array<RawChamp> }>
 }
 
@@ -26,17 +33,23 @@ export class FieldService extends BaseEntityService<Field> {
     this.logger.setContext(this.constructor.name)
   }
 
-  static giveNumberOrNull(type: FieldTypeKeys, stringValue: string): number | null {
+  static giveNumberOrNull(
+    type: FieldTypeKeys,
+    stringValue: string,
+  ): number | null {
     const number = type === FieldType.number ? parseFloat(stringValue) : null
     return number && !isNaN(number) ? number : null
   }
 
   static giveDateOrNull(type: FieldTypeKeys, stringValue: string): Date | null {
-    const date = type === FieldType.date && stringValue.length ? new Date(stringValue) : null
+    const date =
+      type === FieldType.date && stringValue.length
+        ? new Date(stringValue)
+        : null
     return date && !isNaN(date.getTime()) ? date : null
   }
 
-  private _extractColumnRefFieldInformation (
+  private _extractColumnRefFieldInformation(
     columnRef: MappingColumn,
   ): Pick<
     CreateFieldDto,
@@ -50,6 +63,17 @@ export class FieldService extends BaseEntityService<Field> {
       type: columnRef.type,
       fieldSource: columnRef.source,
     }
+  }
+
+  private _extractDsChampType(champ: RawChamp, formatFunctionRefKey?: FormatFunctionRefKeys | null): DsChampTypeKeys {
+    const originalDsChampType: DsChampTypeKeys =
+      DsChampType[champ.__typename] ?? DsChampType.UnknownChamp
+    if (formatFunctionRefKey === FormatFunctionRef.rna) {
+      return DsChampType.RnaChamp
+    } else if (formatFunctionRefKey === FormatFunctionRef.rnf) {
+      return DsChampType.RnfChamp
+    }
+    return originalDsChampType
   }
 
   private _createFieldsFromRawChamps(
@@ -67,9 +91,9 @@ export class FieldService extends BaseEntityService<Field> {
       if (!champ.__typename || !champ.id || !champ.label) {
         this.logger.warn(`champ is not valid: ${JSON.stringify(champ)}`)
       } else {
-        const dsType = DsChampType[champ.__typename] ?? DsChampType.UnknownChamp
         const id = champ.champDescriptor?.id ?? champ.id
         const columnRef = columnHash[id]
+        const dsType = this._extractDsChampType(champ, columnRef.formatFunctionRef)
         if (!columnRef) {
           this.logger.debug(champ)
           throw new Error(`There is no reference of ${id} in column hash`)
@@ -77,8 +101,14 @@ export class FieldService extends BaseEntityService<Field> {
         fields.push({
           ...this._extractColumnRefFieldInformation(columnRef),
           stringValue: champ.stringValue,
-          dateValue: FieldService.giveDateOrNull(columnRef.type, champ.stringValue),
-          numberValue: FieldService.giveNumberOrNull(columnRef.type, champ.stringValue),
+          dateValue: FieldService.giveDateOrNull(
+            columnRef.type,
+            champ.stringValue,
+          ),
+          numberValue: FieldService.giveNumberOrNull(
+            columnRef.type,
+            champ.stringValue,
+          ),
           dsChampType: dsType,
           dossierId,
           parentRowIndex: parentRow,
@@ -119,8 +149,14 @@ export class FieldService extends BaseEntityService<Field> {
         return {
           ...this._extractColumnRefFieldInformation(columnHash[fixFieldId]),
           stringValue: value.toString(),
-          dateValue: FieldService.giveDateOrNull(columnHash[fixFieldId].type, value),
-          numberValue: FieldService.giveNumberOrNull(columnHash[fixFieldId].type, value),
+          dateValue: FieldService.giveDateOrNull(
+            columnHash[fixFieldId].type,
+            value,
+          ),
+          numberValue: FieldService.giveNumberOrNull(
+            columnHash[fixFieldId].type,
+            value,
+          ),
           dossierId,
           parentRowIndex: null,
           rawJson: null,
@@ -186,13 +222,13 @@ export class FieldService extends BaseEntityService<Field> {
       })
   }
 
-  async upsert(field: Pick<Field, 'sourceId' | 'dossierId'> & Partial<Field>): Promise<Field[]> {
-    const result = await this.repo.upsert(field,
-      {
-        conflictPaths: ['sourceId', 'dossierId', 'parentRowIndex'],
-        skipUpdateIfNoValuesChanged: true,
-      },
-    )
+  async upsert(
+    field: Pick<Field, 'sourceId' | 'dossierId'> & Partial<Field>,
+  ): Promise<Field[]> {
+    const result = await this.repo.upsert(field, {
+      conflictPaths: ['sourceId', 'dossierId', 'parentRowIndex'],
+      skipUpdateIfNoValuesChanged: true,
+    })
     return result.generatedMaps as Field[]
   }
 }

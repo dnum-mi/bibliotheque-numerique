@@ -16,7 +16,7 @@ $ npm install
 $ npm run migration:run
 
 # Generating a migration
-$ npm run migration:generate database/old-migrations/TheNameOfMyMigration
+$ npm run migration:generate database/migrations/TheNameOfMyMigration
 ```
 
 ## Running the app

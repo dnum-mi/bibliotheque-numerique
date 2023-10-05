@@ -1,11 +1,11 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, type RouterOptions } from 'vue-router'
 
 import { useUserStore } from '@/stores'
 import { hasAdminAccessGuard, canManageRolesGuard, canAccessDemarchesGuard, isAuthenticatedGuard, isNotAuthenticatedGuard } from '@/shared/guards'
 
 const MAIN_TITLE = 'Bibliothèque Numérique'
 
-const routes = [
+const routes: RouterOptions['routes'] = [
   {
     name: 'Home',
     path: '/',
@@ -14,6 +14,7 @@ const routes = [
       needsAuth: true,
     },
     redirect: { name: 'Demarches' },
+    children: [],
   },
   {
     name: 'About',
@@ -112,12 +113,20 @@ const routes = [
       {
         name: 'ListeOrganismes',
         path: '',
-        component: () => import('@/views/organismes/ListeOrganismes.vue'),
+        component: () => import('@/views/organismes/list/ListeOrganismes.vue'),
       },
       {
         name: 'FicheOrganisme',
         path: ':id',
-        component: () => import('@/views/organismes/FicheOrganisme.vue'),
+        component: () => import('@/views/organismes/organisme/FicheOrganisme.vue'),
+        props: (route) => {
+          const id = route.params.id
+          const idType = route.query.idType || 'Id'
+          return {
+            id,
+            idType,
+          }
+        },
       },
     ],
   },

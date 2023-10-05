@@ -2,7 +2,7 @@ import { forwardRef, Module } from '@nestjs/common'
 import { DossierService } from './providers/dossier.service'
 import { DossierController } from './controllers/dossier.controller'
 import { FileModule } from '../files/file.module'
-import { InstructionTimesModule } from '../../plugins/instruction_time/instruction_times/instruction_times.module'
+import { InstructionTimesModule } from '@/plugins/instruction_time/instruction_times/instruction_times.module'
 import { DemarcheModule } from '../demarches/demarche.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { Dossier } from './objects/entities/dossier.entity'
@@ -11,12 +11,14 @@ import { FieldService } from './providers/field.service'
 import { DossierSynchroniseService } from './providers/dossier-synchronise.service'
 import { DossierSearchService } from './providers/dossier-search.service'
 import { FieldSearchService } from './providers/field-search.service'
+import { OrganismeModule } from '@/modules/organismes/organisme.module'
 
 @Module({
   imports: [
     FileModule,
     forwardRef(() => InstructionTimesModule),
     forwardRef(() => DemarcheModule),
+    forwardRef(() => OrganismeModule),
     TypeOrmModule.forFeature([Dossier, Field]),
   ],
   controllers: [DossierController],

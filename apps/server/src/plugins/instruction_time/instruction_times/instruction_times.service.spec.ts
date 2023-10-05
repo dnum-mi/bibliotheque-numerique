@@ -13,18 +13,18 @@ import instructionTimeMappingConfig, {
   TInstructionTimeMappingConfig,
 } from "../config/instructionTimeMapping.config";
 import { EInstructionTimeState } from "./types/IntructionTime.type";
-import { Dossier } from "../../../modules/dossiers/objects/entities/dossier.entity";
+import { Dossier } from "@/modules/dossiers/objects/entities/dossier.entity";
 import MockDate from "mockdate";
-import { typeormFactoryLoader } from "../../../shared/utils/typeorm-factory-loader";
+import { typeormFactoryLoader } from "@/shared/utils/typeorm-factory-loader";
 import { InstructionTime } from "./instruction_time.entity";
 import { getFakeDossierTest } from "../../../../test/unit/fake-data/dossier.fake-data";
-import { DossierService } from "../../../modules/dossiers/providers/dossier.service";
-import { DossierModule } from "../../../modules/dossiers/dossier.module";
+import { DossierService } from "@/modules/dossiers/providers/dossier.service";
+import { DossierModule } from "@/modules/dossiers/dossier.module";
 import fileConfig from "../../../config/file.config";
 import dsConfig from "../../../config/ds.config";
-import { DsApiModule } from "../../../shared/modules/ds-api/ds-api.module";
-import { FieldService } from "../../../modules/dossiers/providers/field.service";
-import { Field } from "../../../modules/dossiers/objects/entities/field.entity";
+import { DsApiModule } from "@/shared/modules/ds-api/ds-api.module";
+import { FieldService } from "@/modules/dossiers/providers/field.service";
+import { Field } from "@/modules/dossiers/objects/entities/field.entity";
 import { fixFieldInstructionTimeDelay, fixFieldInstructionTimeStatus } from "./constante/fix-field-instrucation-times.dictionnary";
 
 describe("InstructionTimesService", () => {

@@ -1,20 +1,33 @@
 import { DsChampType, DsChampTypeKeys } from './ds-champ-type.enum'
-import { FormatFunctionRef, FormatFunctionRefKeys, FieldTypeKeys, FieldType } from '@biblio-num/shared'
-import { Champ } from '@dnum-mi/ds-api-client'
+import {
+  FormatFunctionRef,
+  FormatFunctionRefKeys,
+  FieldTypeKeys,
+  FieldType,
+} from '@biblio-num/shared'
+import { Champ, ChampDescriptor } from '@dnum-mi/ds-api-client'
 
 export const giveFormatFunctionRefFromDsChampType = (
-  type: DsChampTypeKeys,
-  forDescriptor = false,
+  cd: ChampDescriptor,
 ): FormatFunctionRefKeys | null => {
-  switch (type) {
-  case DsChampType.PaysChamp + (forDescriptor ? 'Descriptor' : ''):
+  switch (true) {
+  case cd.__typename === 'PaysChampDescriptor':
     return FormatFunctionRef.country
+  case cd.__typename === 'RNAChampDescriptor':
+    return FormatFunctionRef.rna
+  case cd.__typename === 'RNFChampDescriptor':
+  case (cd.__typename === 'TextChampDescriptor') &&
+      !!cd.description?.match('#bn-rnf-field-bn#'):
+    return FormatFunctionRef.rnf
   default:
     return null
   }
 }
 
-export const giveTypeFromDsChampType = (type: DsChampTypeKeys, forDescriptor = false): FieldTypeKeys => {
+export const giveTypeFromDsChampType = (
+  type: DsChampTypeKeys,
+  forDescriptor = false,
+): FieldTypeKeys => {
   switch (type) {
   case DsChampType.CheckboxChamp + (forDescriptor ? 'Descriptor' : ''):
     return FieldType.boolean
@@ -24,7 +37,8 @@ export const giveTypeFromDsChampType = (type: DsChampTypeKeys, forDescriptor = f
   case DsChampType.IntegerNumberChamp + (forDescriptor ? 'Descriptor' : ''):
   case DsChampType.DecimalNumberChamp + (forDescriptor ? 'Descriptor' : ''):
     return FieldType.number
-  case DsChampType.PieceJustificativeChamp + (forDescriptor ? 'Descriptor' : ''):
+  case DsChampType.PieceJustificativeChamp +
+      (forDescriptor ? 'Descriptor' : ''):
   case DsChampType.TitreIdentiteChamp + (forDescriptor ? 'Descriptor' : ''):
     return FieldType.file
   default:
@@ -33,10 +47,12 @@ export const giveTypeFromDsChampType = (type: DsChampTypeKeys, forDescriptor = f
 }
 
 // eslint-disable-next-line dot-notation
-export const isRepetitionChamp = (champ: Champ): boolean => champ.__typename === DsChampType.RepetitionChamp
+export const isRepetitionChamp = (champ: Champ): boolean =>
+  champ.__typename === DsChampType.RepetitionChamp
 
 export const isRepetitionChampDescriptor = (champ: Champ): boolean =>
   champ.__typename === DsChampType.RepetitionChamp + 'Descriptor'
 
 export const isFileChamp = (champ: Champ): boolean =>
-  giveTypeFromDsChampType(champ.__typename as DsChampTypeKeys) === FieldType.file
+  giveTypeFromDsChampType(champ.__typename as DsChampTypeKeys) ===
+  FieldType.file

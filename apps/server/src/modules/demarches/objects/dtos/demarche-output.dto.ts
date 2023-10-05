@@ -9,7 +9,9 @@ export const demarcheOutputDtoKeys: (keyof Demarche)[] = [
   'identification',
   'mappingColumns',
   'dsDataJson',
+  'types',
 ]
 
-export class DemarcheOutputDto extends PickType(Demarche, demarcheOutputDtoKeys) implements IDemarche {
-}
+export class DemarcheOutputDto
+  extends PickType(Demarche, demarcheOutputDtoKeys)
+  implements IDemarche {}

@@ -3,7 +3,7 @@ import { useRoute } from 'vue-router'
 
 import { computed, onMounted, ref } from 'vue'
 import { useDossierStore } from '@/stores/dossier'
-import LayoutFiche from '@/components/LayoutFiche.vue'
+import LayoutFiche from '@/components/Layout/LayoutFiche.vue'
 import DossierTitle from './DossierTitle.vue'
 import DossierInformations from './DossierInformations.vue'
 import DossierDemande from './DossierDemande.vue'

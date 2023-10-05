@@ -9,6 +9,6 @@ export const getAdminCookie = (app: INestApplication): Promise<string> => {
       password: 'password',
     })
     .then((res) => {
-      return res.header['set-cookie'][0].split(';')[0]
+      return res.header['set-cookie']?.[0].split(';')[0]
     })
 }

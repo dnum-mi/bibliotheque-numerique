@@ -7,11 +7,11 @@ import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { Demarche } from '../../demarches/objects/entities/demarche.entity'
 import {
   adjustDto,
-  buildFilterQuery,
+  buildFilterQueryWithWhere,
   buildPaginationQuery,
   buildSortQuery,
   deduceFieldToQueryFromType,
-} from './common-search.utils'
+} from '@/shared/utils/common-search.utils'
 import { FieldService } from './field.service'
 import { DossierSearchOutputDto, FieldTypeKeys, FilterDto, MappingColumn, SearchDossierDto } from '@biblio-num/shared'
 
@@ -64,7 +64,7 @@ export class DossierSearchService extends BaseEntityService<Dossier> {
       countCTE AS (
         SELECT COUNT(*) as nbrRows
         FROM aggregatedCTE
-        ${buildFilterQuery(filters, typeHash, true)}
+        ${buildFilterQueryWithWhere(filters, typeHash, true)}
       )
    `
   }
@@ -78,7 +78,7 @@ export class DossierSearchService extends BaseEntityService<Dossier> {
       ${this._buildCountCTE(dto.filters, typeHash)}
       SELECT *, (SELECT nbrRows FROM countCTE) as total
       FROM aggregatedCTE
-      ${buildFilterQuery(dto.filters, typeHash, true)}
+      ${buildFilterQueryWithWhere(dto.filters, typeHash, true)}
       ${buildSortQuery(dto.sorts)}
       ${complete ? '' : buildPaginationQuery(dto.page || 1, dto.perPage || 5)}
     `

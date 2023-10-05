@@ -8,13 +8,17 @@ import { Demarche } from '../../demarches/objects/entities/demarche.entity'
 import { Field } from '../objects/entities/field.entity'
 import {
   adjustDto,
-  buildFilterQuery,
+  buildFilterQueryWithWhere,
   buildPaginationQuery,
   buildSortQuery,
   deduceFieldToQueryFromType,
-} from './common-search.utils'
+} from '@/shared/utils/common-search.utils'
 import { FieldService } from './field.service'
-import { FieldSearchOutputDto, FieldTypeKeys, SearchDossierDto } from '@biblio-num/shared'
+import {
+  FieldSearchOutputDto,
+  FieldTypeKeys,
+  SearchDossierDto,
+} from '@biblio-num/shared'
 
 @Injectable()
 export class FieldSearchService extends BaseEntityService<Field> {
@@ -27,7 +31,11 @@ export class FieldSearchService extends BaseEntityService<Field> {
     this.logger.setContext(this.constructor.name)
   }
 
-  private _buildCommonRepeatedCTE(demarcheId: number, fieldsId: string[], repeated: boolean): string {
+  private _buildCommonRepeatedCTE(
+    demarcheId: number,
+    fieldsId: string[],
+    repeated: boolean,
+  ): string {
     this.logger.verbose('_buildCommonRepeatedCTE')
     const repeatedLine = repeated
       ? `,COALESCE(ROW_NUMBER() OVER (PARTITION BY f."dossierId", f."sourceId" ORDER BY f."parentRowIndex"), 0)
@@ -57,15 +65,15 @@ export class FieldSearchService extends BaseEntityService<Field> {
     return this._buildCommonRepeatedCTE(demarcheId, fieldsId, true)
   }
 
-  private _buildNonRepeatedCTE(
-    demarcheId: number,
-    fieldsId: string[],
-  ): string {
+  private _buildNonRepeatedCTE(demarcheId: number, fieldsId: string[]): string {
     this.logger.verbose('_buildNonRepeatedCTE')
     return this._buildCommonRepeatedCTE(demarcheId, fieldsId, false)
   }
 
-  private _buildCombinedCTE(fieldsId: string[], typeHash: Record<string, FieldTypeKeys>): string {
+  private _buildCombinedCTE(
+    fieldsId: string[],
+    typeHash: Record<string, FieldTypeKeys>,
+  ): string {
     this.logger.verbose('_buildRepeatedCTE')
     return `
       combinedCTE AS (
@@ -90,19 +98,26 @@ export class FieldSearchService extends BaseEntityService<Field> {
     `
   }
 
-  private _buildCountedCTE(dto: SearchDossierDto, typeHash: Record<string, FieldTypeKeys>): string {
+  private _buildCountedCTE(
+    dto: SearchDossierDto,
+    typeHash: Record<string, FieldTypeKeys>,
+  ): string {
     this.logger.verbose('_buildRepeatedCTE')
     return `
       countedCTE AS (
         SELECT *, COUNT(*) OVER () AS total
         FROM combinedCTE
-        ${buildFilterQuery(dto.filters, typeHash)}
+        ${buildFilterQueryWithWhere(dto.filters, typeHash)}
         ${buildSortQuery(dto.sorts)}
       )
     `
   }
 
-  async search(demarche: Partial<Demarche>, dto: SearchDossierDto, complete = false): Promise<FieldSearchOutputDto> {
+  async search(
+    demarche: Partial<Demarche>,
+    dto: SearchDossierDto,
+    complete = false,
+  ): Promise<FieldSearchOutputDto> {
     this.logger.verbose('search')
     const typeHash = await this.fieldService.giveFieldType(dto.columns)
     dto = adjustDto(dto)

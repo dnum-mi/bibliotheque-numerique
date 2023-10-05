@@ -7,7 +7,7 @@ import GroupInstructeurs from '@/views/demarches/demarche/information/DemarcheGr
 import DemarcheService from '@/views/demarches/demarche/information/DemarcheService.vue'
 import DemarcheInformations from '@/views/demarches/demarche/information/DemarcheInformations.vue'
 import DemarcheConfigurations from '@/views/demarches/demarche/configuration/DemarcheConfigurations.vue'
-import LayoutList from '@/components/LayoutList.vue'
+import LayoutList from '@/components/Layout/LayoutList.vue'
 import type { DsfrTabItemProps } from '@gouvminint/vue-dsfr/types/components/DsfrTabs/DsfrTabItem.vue'
 import DemarcheDossiers from '@/views/demarches/demarche/dossiers/DemarcheDossiers.vue'
 

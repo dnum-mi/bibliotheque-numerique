@@ -1,10 +1,10 @@
 /* eslint-disable */
-import { LoggerService } from '../../../../shared/modules/logger/logger.service';
-import { loggerServiceMock } from '../../../../../test/mock/logger-service.mock';
-import { DemarcheSynchroniseService } from './demarche-synchronise.service';
-import { Test, TestingModule } from '@nestjs/testing';
-import { Demarche } from '@dnum-mi/ds-api-client';
-import { FormatFunctionRef } from '@biblio-num/shared';
+import { LoggerService } from '@/shared/modules/logger/logger.service'
+import { loggerServiceMock } from '../../../../../test/mock/logger-service.mock'
+import { DemarcheSynchroniseService } from './demarche-synchronise.service'
+import { Test, TestingModule } from '@nestjs/testing'
+import { Demarche } from '@dnum-mi/ds-api-client'
+import { FormatFunctionRef } from '@biblio-num/shared'
 
 const fakeDemarche = {
   activeRevision: {
@@ -58,7 +58,8 @@ const fakeDemarche = {
         required: false,
         fileTemplate: {
           filename: 'modele-financements-inferieurs-15300.xlsx',
-          contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          contentType:
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
           checksum: 'TYfaas3CfEWOgE+EE1D3Ig==',
           byteSize: '9810',
           url: 'https://195.154.196.196:3000/rails/active_storage/disk/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdDVG9JYTJWNVNTSWhkblJvZGpreE0zaGhlR2sxYVhoNGIzRnpkR1J3Y2pGemVYbHFNZ1k2QmtWVU9oQmthWE53YjNOcGRHbHZia2tpQVh4aGRIUmhZMmh0Wlc1ME95Qm1hV3hsYm1GdFpUMGliVzlrWld4bExXWnBibUZ1WTJWdFpXNTBjeTFwYm1abGNtbGxkWEp6TFRFMU16QXdMbmhzYzNnaU95Qm1hV3hsYm1GdFpTbzlWVlJHTFRnbkoyMXZaR1ZzWlMxbWFXNWhibU5sYldWdWRITXRhVzVtWlhKcFpYVnljeTB4TlRNd01DNTRiSE40QmpzR1ZEb1JZMjl1ZEdWdWRGOTBlWEJsU1NKR1lYQndiR2xqWVhScGIyNHZkbTVrTG05d1pXNTRiV3htYjNKdFlYUnpMVzltWm1salpXUnZZM1Z0Wlc1MExuTndjbVZoWkhOb1pXVjBiV3d1YzJobFpYUUdPd1pVT2hGelpYSjJhV05sWDI1aGJXVTZDbXh2WTJGcyIsImV4cCI6IjIwMjMtMDgtMjBUMDg6NTg6MjIuNDI0WiIsInB1ciI6ImJsb2Jfa2V5In19--e47262c71910b03cd17bb0d9380b7f1a914bf8dd/modele-financements-inferieurs-15300.xlsx',
@@ -89,7 +90,8 @@ const fakeDemarche = {
           {
             __typename: 'PieceJustificativeChampDescriptor',
             id: 'Q2hhbXAtMTA1MQ==',
-            label: 'Bien vouloir joindre un document listant les personnes mises à disposition',
+            label:
+              'Bien vouloir joindre un document listant les personnes mises à disposition',
             description:
               'indiquer pour chacune des personnes mises à disposition, leur NOM Prénom et date de naissance.',
             required: false,
@@ -133,10 +135,10 @@ const fakeDemarche = {
       },
     ],
   },
-};
+}
 
 describe('Generating demarche mapping columns', () => {
-  let service: DemarcheSynchroniseService;
+  let service: DemarcheSynchroniseService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -146,17 +148,21 @@ describe('Generating demarche mapping columns', () => {
     })
       .useMocker((token) => {
         if (token === LoggerService) {
-          return loggerServiceMock;
+          return loggerServiceMock
         }
-        return {};
+        return {}
       })
-      .compile();
+      .compile()
 
-    service = module.get<DemarcheSynchroniseService>(DemarcheSynchroniseService);
-  });
+    service = module.get<DemarcheSynchroniseService>(DemarcheSynchroniseService)
+  })
 
   it('Should create a correct mapping column', () => {
-    expect(service['_generateMappingColumns'](fakeDemarche as unknown as Partial<Demarche>)).toEqual([
+    expect(
+      service['_generateMappingColumns'](
+        fakeDemarche as unknown as Partial<Demarche>,
+      ),
+    ).toEqual([
       {
         id: '96151176-4624-4706-b861-722d2e53545d',
         columnLabel: 'ID',
@@ -171,6 +177,13 @@ describe('Generating demarche mapping columns', () => {
         type: 'string',
         formatFunctionRef: 'status',
         source: 'fix-field',
+      },
+      {
+        columnLabel: 'Préfecture',
+        id: '9863ce70-6378-4d7e-aca9-b81fb7b97c10',
+        originalLabel: 'préfecture',
+        source: 'fix-field',
+        type: 'string',
       },
       {
         id: '9863ce70-6378-4d7e-aca9-b81fb7b97c11',
@@ -213,7 +226,7 @@ describe('Generating demarche mapping columns', () => {
         id: 'Q2hhbXAtMzI=',
         originalLabel: "Saisir le n°RNA de l'association",
         columnLabel: null,
-        formatFunctionRef: null,
+        formatFunctionRef: 'rna',
         source: 'champs',
         type: 'string',
       },
@@ -235,7 +248,8 @@ describe('Generating demarche mapping columns', () => {
       },
       {
         id: 'Q2hhbXAtMTA0OA==',
-        originalLabel: "Déclaration d'un financement d'un montant supérieur à 15 300 €",
+        originalLabel:
+          "Déclaration d'un financement d'un montant supérieur à 15 300 €",
         columnLabel: null,
         formatFunctionRef: null,
         source: 'champs',
@@ -259,13 +273,14 @@ describe('Generating demarche mapping columns', () => {
           },
           {
             id: 'Q2hhbXAtMTA1MQ==',
-            originalLabel: 'Bien vouloir joindre un document listant les personnes mises à disposition',
+            originalLabel:
+              'Bien vouloir joindre un document listant les personnes mises à disposition',
             columnLabel: null,
             formatFunctionRef: null,
             source: 'champs',
             type: 'file',
           },
-        ]
+        ],
       },
       {
         id: 'Q2hhbXAtMTA0Nw==',
@@ -277,7 +292,8 @@ describe('Generating demarche mapping columns', () => {
       },
       {
         id: 'Q2hhbXAtODc=',
-        originalLabel: 'Association déclarée cultuelle dans télédéclaration loi CRPR ?',
+        originalLabel:
+          'Association déclarée cultuelle dans télédéclaration loi CRPR ?',
         columnLabel: null,
         formatFunctionRef: null,
         source: 'annotation',
@@ -285,7 +301,8 @@ describe('Generating demarche mapping columns', () => {
       },
       {
         id: 'Q2hhbXAtODg=',
-        originalLabel: "Si oui, date d'entrée en vigueur de la qualité cultuelle",
+        originalLabel:
+          "Si oui, date d'entrée en vigueur de la qualité cultuelle",
         columnLabel: null,
         formatFunctionRef: null,
         source: 'annotation',
@@ -299,6 +316,6 @@ describe('Generating demarche mapping columns', () => {
         source: 'annotation',
         type: 'string',
       },
-    ]);
-  });
-});
+    ])
+  })
+})

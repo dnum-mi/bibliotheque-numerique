@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common'
-import { LoggerService } from '../../../shared/modules/logger/logger.service'
+import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { Repository } from 'typeorm'
 import { Dossier } from '../objects/entities/dossier.entity'
 import { InjectRepository } from '@nestjs/typeorm'
-import { BaseEntityService } from '../../../shared/base-entity/base-entity.service'
+import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import {
   Dossier as TDossier,
   File as TFile,
@@ -15,10 +15,13 @@ import {
 import { ConfigService } from '@nestjs/config'
 import { FileService } from '../../files/providers/file.service'
 import { FieldService } from './field.service'
-import { InstructionTimesService } from '../../../plugins/instruction_time/instruction_times/instruction_times.service'
+import { InstructionTimesService } from '@/plugins/instruction_time/instruction_times/instruction_times.service'
 import { Demarche } from '../../demarches/objects/entities/demarche.entity'
-import { isFileChamp, isRepetitionChamp } from '../../../shared/modules/ds-api/objects/ds-champ.utils'
+import { isFileChamp, isRepetitionChamp } from '@/shared/modules/ds-api/objects/ds-champ.utils'
 import { IdentificationDemarche } from '@biblio-num/shared'
+import { DsChampType } from '@/shared/modules/ds-api/objects/ds-champ-type.enum'
+import { OrganismeService } from '@/modules/organismes/providers/organisme.service'
+import { Field } from '@/modules/dossiers/objects/entities/field.entity'
 
 @Injectable()
 export class DossierSynchroniseService extends BaseEntityService<Dossier> {
@@ -28,6 +31,7 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
     private configService: ConfigService,
     private fileService: FileService,
     private fieldService: FieldService,
+    private organismeService: OrganismeService,
     private instructionTimeService: InstructionTimesService,
   ) {
     super(repo, logger)
@@ -101,6 +105,22 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
     }
   }
 
+  private async _linkOrganisme (idDossier: number, fields: Field[]): Promise<void> {
+    this.logger.verbose('_linkOrganisme')
+    for (const field of fields) {
+      if (field.dsChampType === DsChampType.RnfChamp && field.stringValue.length) {
+        const idOrganisme = await this.organismeService.associateOrganismeFromRnf(field.stringValue)
+        await this.repo.update({ id: idDossier }, { organisme: { id: idOrganisme } })
+        break
+      }
+      if (field.dsChampType === DsChampType.RnaChamp && field.stringValue.length) {
+        const idOrganisme = await this.organismeService.associateOrganismeFromRna(field.stringValue)
+        await this.repo.update({ id: idDossier }, { organisme: { id: idOrganisme } })
+        break
+      }
+    }
+  }
+
   /* endregion */
 
   async synchroniseOneDossier (originalJsonDossier: TDossier, demarche: Demarche): Promise<void> {
@@ -112,6 +132,8 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
         sourceId: '' + jsonDossier.number,
         dsDataJson: jsonDossier,
         state: jsonDossier.state,
+        dateDepot: jsonDossier.dateDepot,
+        prefecture: 'unknown',
       },
       {
         conflictPaths: ['sourceId', 'demarche'],
@@ -119,11 +141,18 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
       },
     )
     const id = upsert.identifiers[0].id
-    await this.fieldService.overwriteFieldsFromDataJson(jsonDossier, id, demarche.mappingColumns)
+    const fields = await this.fieldService.overwriteFieldsFromDataJson(jsonDossier, id, demarche.mappingColumns)
+    try {
+      await this._linkOrganisme(id, fields)
+    } catch (e) {
+      this.logger.error('Couldnt link organisme to this dossier.')
+      this.logger.error(e)
+    }
     if (demarche.identification === IdentificationDemarche.FE) {
       await this.instructionTimeService.proccessByDossierId(id)
       await this.instructionTimeService.instructionTimeCalculation([id])
     }
+
     this.logger.log(`Successfully synchronised dossier ${id} (dsId: ${jsonDossier.number})`)
   }
 }

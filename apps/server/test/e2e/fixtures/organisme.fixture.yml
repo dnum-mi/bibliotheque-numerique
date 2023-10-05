@@ -1,0 +1,193 @@
+entity: Organisme
+items:
+  BMW:
+    id: '1'
+    type: 'ARUP'
+    title: 'Bmw'
+    addressType: "housenumber"
+    addressLabel: "4 Rue Judaïque 33000 Bordeaux"
+    addressCityName: "Bordeaux"
+    addressPostalCode: "33000"
+    addressRegionCode: "75"
+    addressRegionName: "Nouvelle-Aquitaine"
+    addressStreetName: "Rue Judaïque"
+    addressStreetNumber: "4"
+    addressStreetAddress: "4 Rue Judaïque"
+    addressDepartmentCode: "33"
+    addressDepartmentName: "Gironde"
+    emails: 'bmw@fake-email.fr'
+    telephones: '0123456789'
+    dateCreation: '2023-10-04T06:38:58.000Z'
+    idRna: 'W001'
+  Renault:
+    id: '2'
+    type: 'FRUP'
+    title: 'Renault'
+    addressType: "housenumber"
+    addressLabel: "5 Rue du Temple 75004 Paris"
+    addressCityName: "Paris"
+    addressPostalCode: "75004"
+    addressRegionCode: "75"
+    addressRegionName: "Île-de-France"
+    addressStreetName: "Rue du Temple"
+    addressStreetNumber: "5"
+    addressStreetAddress: "5 Rue du Temple"
+    addressDepartmentCode: "75"
+    addressDepartmentName: "Paris"
+    emails: 'renault@fake-email.fr'
+    telephones: '1234567890'
+    dateCreation: '2023-10-04T06:40:00.000Z'
+    idRnf: 'F001'
+  Peugeot:
+    id: '3'
+    type: 'FRUP'
+    title: 'Peugeot'
+    addressType: "housenumber"
+    addressLabel: "6 Rue de la Paix 75002 Paris"
+    addressCityName: "Paris"
+    addressPostalCode: "75002"
+    addressRegionCode: "75"
+    addressRegionName: "Île-de-France"
+    addressStreetName: "Rue de la Paix"
+    addressStreetNumber: "6"
+    addressStreetAddress: "6 Rue de la Paix"
+    addressDepartmentCode: "75"
+    addressDepartmentName: "Paris"
+    emails: 'peugeot@fake-email.fr'
+    telephones: '2345678901'
+    dateCreation: '2023-10-04T06:42:00.000Z'
+    idRnf: 'F002'
+  Toyota:
+    id: '4'
+    type: 'ARUP'
+    title: 'Toyota'
+    addressType: "housenumber"
+    addressLabel: "7 Rue des Archives 75003 Paris"
+    addressCityName: "Paris"
+    addressPostalCode: "75003"
+    addressRegionCode: "75"
+    addressRegionName: "Île-de-France"
+    addressStreetName: "Rue des Archives"
+    addressStreetNumber: "7"
+    addressStreetAddress: "7 Rue des Archives"
+    addressDepartmentCode: "75"
+    addressDepartmentName: "Paris"
+    emails: 'toyota@fake-email.fr'
+    telephones: '3456789012'
+    dateCreation: '2023-10-04T06:44:00.000Z'
+    idRna: 'W002'
+  Honda:
+    id: '5'
+    type: 'CULTE'
+    title: 'Honda'
+    addressType: "housenumber"
+    addressLabel: "8 Rue Montorgueil 75001 Paris"
+    addressCityName: "Paris"
+    addressPostalCode: "75001"
+    addressRegionCode: "75"
+    addressRegionName: "Île-de-France"
+    addressStreetName: "Rue Montorgueil"
+    addressStreetNumber: "8"
+    addressStreetAddress: "8 Rue Montorgueil"
+    addressDepartmentCode: "75"
+    addressDepartmentName: "Paris"
+    emails: 'honda@fake-email.fr'
+    telephones: '4567890123'
+    dateCreation: '2023-10-04T06:46:00.000Z'
+    idRna: 'W003'
+  Ford:
+    id: '6'
+    type: 'CULTE'
+    title: 'Ford'
+    addressType: "housenumber"
+    addressLabel: "9 Rue de la Pompe 75116 Paris"
+    addressCityName: "Paris"
+    addressPostalCode: "75116"
+    addressRegionCode: "75"
+    addressRegionName: "Île-de-France"
+    addressStreetName: "Rue de la Pompe"
+    addressStreetNumber: "9"
+    addressStreetAddress: "9 Rue de la Pompe"
+    addressDepartmentCode: "75"
+    addressDepartmentName: "Paris"
+    emails: 'ford@fake-email.fr'
+    telephones: '5678901234'
+    dateCreation: '2023-10-04T06:48:00.000Z'
+    idRna: 'W004'
+  Nissan:
+    id: '7'
+    type: 'FDD'
+    title: 'Nissan'
+    addressType: "housenumber"
+    addressLabel: "10 Rue Saint-Antoine 75004 Paris"
+    addressCityName: "Paris"
+    addressPostalCode: "75004"
+    addressRegionCode: "75"
+    addressRegionName: "Île-de-France"
+    addressStreetName: "Rue Saint-Antoine"
+    addressStreetNumber: "10"
+    addressStreetAddress: "10 Rue Saint-Antoine"
+    addressDepartmentCode: "75"
+    addressDepartmentName: "Paris"
+    emails: 'nissan@fake-email.fr'
+    telephones: '6789012345'
+    dateCreation: '2023-10-04T06:50:00.000Z'
+    idRnf: 'F003'
+  Hyundai:
+    id: '8'
+    type: 'FDD'
+    title: 'Hyundai'
+    addressType: "housenumber"
+    addressLabel: "11 Rue du Faubourg Saint-Antoine 75012 Paris"
+    addressCityName: "Paris"
+    addressPostalCode: "75012"
+    addressRegionCode: "75"
+    addressRegionName: "Île-de-France"
+    addressStreetName: "Rue du Faubourg Saint-Antoine"
+    addressStreetNumber: "11"
+    addressStreetAddress: "11 Rue du Faubourg Saint-Antoine"
+    addressDepartmentCode: "75"
+    addressDepartmentName: "Paris"
+    emails: 'hyundai@fake-email.fr'
+    telephones: '7890123456'
+    dateCreation: '2023-10-04T06:52:00.000Z'
+    idRnf: 'F004'
+  Chevrolet:
+    id: '9'
+    type: 'FE'
+    title: 'Chevrolet'
+    addressType: "housenumber"
+    addressLabel: "12 Rue de Belleville 75020 Paris"
+    addressCityName: "Paris"
+    addressPostalCode: "75020"
+    addressRegionCode: "75"
+    addressRegionName: "Île-de-France"
+    addressStreetName: "Rue de Belleville"
+    addressStreetNumber: "12"
+    addressStreetAddress: "12 Rue de Belleville"
+    addressDepartmentCode: "75"
+    addressDepartmentName: "Paris"
+    emails: 'chevrolet@fake-email.fr'
+    telephones: '8901234567'
+    dateCreation: '2023-10-04T06:54:00.000Z'
+    idRnf: 'F005'
+  Subaru:
+    id: '10'
+    type: 'FE'
+    title: 'Subaru'
+    addressType: "housenumber"
+    addressLabel: "13 Rue de la Roquette 75011 Paris"
+    addressCityName: "Paris"
+    addressPostalCode: "75011"
+    addressRegionCode: "75"
+    addressRegionName: "Île-de-France"
+    addressStreetName: "Rue de la Roquette"
+    addressStreetNumber: "13"
+    addressStreetAddress: "13 Rue de la Roquette"
+    addressDepartmentCode: "75"
+    addressDepartmentName: "Paris"
+    emails: 'subaru@fake-email.fr'
+    telephones: '9012345678'
+    dateCreation: '2023-10-04T06:56:00.000Z'
+    idRnf: 'F006'
+

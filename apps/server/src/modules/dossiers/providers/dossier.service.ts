@@ -1,17 +1,47 @@
-import { Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { Repository } from 'typeorm'
 import { Dossier } from '../objects/entities/dossier.entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
+import { LeanDossierOutputDto } from '@biblio-num/shared'
 
 @Injectable()
 export class DossierService extends BaseEntityService<Dossier> {
-  constructor (
+  constructor(
     @InjectRepository(Dossier) protected readonly repo: Repository<Dossier>,
     protected readonly logger: LoggerService,
   ) {
     super(repo, logger)
     this.logger.setContext(this.constructor.name)
+  }
+
+  async getOrganismeDossiers(
+    organismeId: number,
+  ): Promise<LeanDossierOutputDto[]> {
+    if (isNaN(organismeId)) {
+      throw new BadRequestException('Invalid organisme id.')
+    }
+    this.logger.verbose(`getOrganismeDossiers ${organismeId}`)
+    return this.repo
+      .createQueryBuilder('d')
+      .innerJoinAndSelect(
+        'd.demarche',
+        'demarche',
+        'demarche.id = d.demarcheId',
+      )
+      .innerJoin('d.organisme', 'organisme', 'organisme.id = d.organismeId')
+      .where('organisme.id = :organismeId', { organismeId })
+      .select(['d', 'demarche.title'])
+      .getMany()
+      .then(dossiers => {
+        return dossiers.map(d => ({
+          id: d.id,
+          demarcheTitle: d.demarche.title,
+          prefecture: d.prefecture,
+          state: d.state,
+          depotDate: d.dateDepot,
+        }))
+      })
   }
 }

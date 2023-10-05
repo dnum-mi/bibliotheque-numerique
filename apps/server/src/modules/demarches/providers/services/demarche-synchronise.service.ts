@@ -5,35 +5,33 @@ import {
 } from '@nestjs/common'
 import { Repository } from 'typeorm'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
-import { ConfigService } from '@nestjs/config'
 import { Demarche } from '../../objects/entities/demarche.entity'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { InjectRepository } from '@nestjs/typeorm'
 import {
-  OrganismeType,
-  OrganismeTypeKeys,
-  organismeTypeRegex,
-} from '../../objects/enums/organisme-type.enum'
-import { DsApiClient } from '@dnum-mi/ds-api-client'
-import { DemarcheService } from './demarche.service'
-import { DossierSynchroniseService } from '../../../dossiers/providers/dossier-synchronise.service'
-import {
   type ChampDescriptor,
   type Demarche as TDemarche,
   type Dossier as TDossier,
+  DsApiClient,
 } from '@dnum-mi/ds-api-client'
+import { DemarcheService } from './demarche.service'
+import { DossierSynchroniseService } from '../../../dossiers/providers/dossier-synchronise.service'
 import { getFixFieldsByIdentification } from '../../../dossiers/objects/constante/fix-field.dictionnary'
 import {
   giveFormatFunctionRefFromDsChampType,
   giveTypeFromDsChampType,
   isRepetitionChampDescriptor,
 } from '@/shared/modules/ds-api/objects/ds-champ.utils'
-import { FieldSource, FieldSourceKeys, MappingColumn, type IdentificationDemarcheKeys } from '@biblio-num/shared'
+import {
+  FieldSource,
+  FieldSourceKeys,
+  type IdentificationDemarcheKeys,
+  MappingColumn,
+} from '@biblio-num/shared'
 
 @Injectable()
 export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
   constructor(
-    private configService: ConfigService,
     protected logger: LoggerService,
     private demarcheService: DemarcheService,
     @InjectRepository(Demarche) repo: Repository<Demarche>,
@@ -45,24 +43,6 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
   }
 
   /* region private */
-  private _findOrganismeType(
-    dsDemarche: Partial<TDemarche>,
-  ): OrganismeTypeKeys {
-    this.logger.verbose('_findTypeOfOrganisme')
-    for (const descriptor of dsDemarche.activeRevision?.annotationDescriptors ??
-    []) {
-      for (const [type, regex] of Object.entries(organismeTypeRegex)) {
-        if (
-          descriptor.label.includes('organisme') &&
-          descriptor.description.match(regex)
-        ) {
-          return type
-        }
-      }
-    }
-    return OrganismeType.unknown
-  }
-
   private async _synchroniseAllDossier(
     dossiers: TDossier[],
     demarche: Demarche,
@@ -87,7 +67,7 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
   private _generateMappingColumns(
     dsDemarche: Partial<TDemarche>,
     originalMappingColumns: MappingColumn[] = [],
-    identification: IdentificationDemarcheKeys | undefined = undefined,
+    identification?: IdentificationDemarcheKeys,
   ): MappingColumn[] {
     this.logger.verbose('_generateMappingColumns')
     const revision = dsDemarche.publishedRevision ?? dsDemarche.activeRevision
@@ -105,24 +85,21 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
         id: cd.id,
         originalLabel: cd.label,
         columnLabel: originalRenameHash[cd.id] || null,
-        formatFunctionRef: giveFormatFunctionRefFromDsChampType(
-          cd.__typename,
-          true,
-        ),
+        formatFunctionRef: giveFormatFunctionRefFromDsChampType(cd),
         source,
         type: giveTypeFromDsChampType(cd.__typename, true),
         ...(isRepetitionChampDescriptor(cd)
           ? {
             children: __fromDescriptorsToMappingColumn(
-              cd.champDescriptors as ChampDescriptor[],
-              source,
+                cd.champDescriptors as ChampDescriptor[],
+                source,
             ),
           }
           : {}),
       }))
 
     const result = [
-      ...getFixFieldsByIdentification(identification).map(ff => ({
+      ...getFixFieldsByIdentification(identification).map((ff) => ({
         ...ff,
         columnLabel: originalRenameHash[ff.id] || ff.columnLabel,
       })),
@@ -160,7 +137,7 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
       lastSynchronisedAt: new Date(),
       title: raw.title,
       state: raw.state,
-      type: this._findOrganismeType(raw),
+      types: [],
       mappingColumns: this._generateMappingColumns(
         raw,
         demarche.mappingColumns,
@@ -179,7 +156,8 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
 
   public async createAndSynchronise(
     dsId: number,
-    identification: IdentificationDemarcheKeys | undefined): Promise<void> {
+    identification: IdentificationDemarcheKeys | undefined,
+  ): Promise<void> {
     this.logger.verbose('createAndSynchronise')
     const raw = await this.dsApiClient.demarcheDossierWithCustomChamp(dsId)
     if (!raw) {
@@ -194,8 +172,12 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
       lastSynchronisedAt: new Date(),
       title: raw.demarche.title,
       state: raw.demarche.state ?? 'no-state',
-      type: this._findOrganismeType(raw.demarche),
-      mappingColumns: this._generateMappingColumns(raw.demarche, [], identification),
+      types: [],
+      mappingColumns: this._generateMappingColumns(
+        raw.demarche,
+        [],
+        identification,
+      ),
       dsDataJson: raw.demarche,
       identification,
     })

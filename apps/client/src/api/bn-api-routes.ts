@@ -26,9 +26,11 @@ export const dossierSearch = '/dossiers-search'
 export const fieldsSearch = '/fields-search'
 
 export const organismesRoute = '/organismes'
+export const organismesListRoute = '/organismes/list'
 export const getOrganismeDossiers = (organismeId: number) => `${organismesRoute}/${organismeId}/dossiers`
-export const getOrganismeByIdRoute = (organismeId: number) => `${organismesRoute}/${organismeId}/detail`
-export const getOrganismeByIdRnaRoute = (idRna: string) => `${organismesRoute}/rna/${idRna}`
+export const getOrganismeByIdRoute = (organismeId: number) => `${organismesRoute}/${organismeId}`
+export const getOrganismeByRnaRoute = (organismeRna: string) => `${organismesRoute}/rna/${organismeRna}`
+export const getOrganismeByRnfRoute = (organismeRnf: string) => `${organismesRoute}/rnf/${organismeRnf}`
 
 export const customFiltersRoute = '/custom-filters'
 export const getCustomFiltersRoute = () => customFiltersRoute

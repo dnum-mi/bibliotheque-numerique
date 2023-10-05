@@ -15,7 +15,8 @@ import type {
   CreateCustomFilterDto,
   PatchCustomFilterDto,
   ValidateEmailDto,
-  LeanDossierOutputDto,
+  LeanDossierOutputDto, IOrganisme,
+  PaginationDto,
 } from '@biblio-num/shared'
 
 import {
@@ -23,7 +24,6 @@ import {
   demarchesRoute,
   getDemarcheByIdRoute,
   getDemarcheConfigurationRoute,
-  getOrganismeByIdRnaRoute,
   getRoleByIdRoute,
   getUpdateOneMappingColumnRoute,
   organismesRoute,
@@ -35,7 +35,13 @@ import {
   getListDemarcheDossierRoute,
   getListDemarcheFieldRoute,
   getXlsxDemarcheDossierRoute,
-  getXlsxDemarcheFieldRoute, getDossierDetail, getOrganismeDossiers, getCustomFiltersByDemarcheRoute,
+  getXlsxDemarcheFieldRoute,
+  getDossierDetail,
+  getOrganismeDossiers,
+  getOrganismeByIdRoute,
+  getCustomFiltersByDemarcheRoute,
+  getOrganismeByRnaRoute,
+  getOrganismeByRnfRoute, organismesListRoute,
 } from './bn-api-routes'
 import {
   authRoute,
@@ -162,13 +168,23 @@ export const demarchesApiClient = {
 }
 
 export const organismeApiClient = {
-  getOrganismes: async () => {
-    const response = await apiClientInstance.get(organismesRoute)
+  getOrganismes: async (dto: PaginationDto<IOrganisme>) => {
+    const response = await apiClientInstance.post(organismesListRoute, dto)
     return response.data
   },
 
-  getOrganismeByIdRna: async (organismeIdRna: string) => {
-    const response = await apiClientInstance.get(getOrganismeByIdRnaRoute(organismeIdRna))
+  getOrganismeById: async (organismeId: string): Promise<IOrganisme> => {
+    const response = await apiClientInstance.get(getOrganismeByIdRoute(+organismeId))
+    return response.data
+  },
+
+  getOrganismeByRna: async (organismeIdRna: string): Promise<IOrganisme> => {
+    const response = await apiClientInstance.get(getOrganismeByRnaRoute(organismeIdRna))
+    return response.data
+  },
+
+  getOrganismeByRnf: async (organismeIdRnf: string): Promise<IOrganisme> => {
+    const response = await apiClientInstance.get(getOrganismeByRnfRoute(organismeIdRnf))
     return response.data
   },
 }

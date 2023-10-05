@@ -6,7 +6,7 @@ import { useField, useForm } from 'vee-validate'
 import type { CreateUserDto } from '@biblio-num/shared'
 
 import apiClient from '@/api/api-client'
-import LayoutAccueil from '../components/LayoutAccueil.vue'
+import LayoutAccueil from '../components/Layout/LayoutAccueil.vue'
 import { passwordValidator } from '@/utils/password.validator'
 import { REQUIRED_FIELD_MESSAGE } from '@/messages'
 import ToggleInputPassword from '@/components/ToggleInputPassword.vue'

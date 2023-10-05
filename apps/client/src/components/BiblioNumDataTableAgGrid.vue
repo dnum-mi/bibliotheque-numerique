@@ -1,8 +1,4 @@
 <script lang="ts" setup>
-import 'ag-grid-enterprise'
-import 'ag-grid-community/styles/ag-grid.css'
-import 'ag-grid-community/styles/ag-theme-material.css'
-import '@/ag-grid-dsfr.css'
 
 import { computed, watchEffect, ref, type ComputedRef, type Component } from 'vue'
 import { AgGridVue } from 'ag-grid-vue3'
@@ -18,6 +14,7 @@ import AgGridMultiValueCell from './ag-grid/AgGridMultiValueCell.vue'
 import AgGridAttachmentCell from './ag-grid/AgGridAttachmentCell.vue'
 import type { SelectionChangedEvent, GridReadyEvent } from 'ag-grid-community'
 import type { GridOptions, RowStyle } from 'ag-grid-enterprise'
+import OrganismeBadge from '@/components/Badges/OrganismeBadge.vue'
 
 const props = withDefaults(defineProps<{
     title?: string,

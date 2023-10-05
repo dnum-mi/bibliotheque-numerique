@@ -5,3 +5,15 @@ items:
     state: "accepte"
     sourceId: "($current)"
     dsDataJson: "{}"
+  bmwDossier1:
+    demarche: "@demarche-financement"
+    state: "accepte"
+    sourceId: "123456"
+    dsDataJson: "{}"
+    organisme: "@BMW"
+  bmwDossier2:
+    demarche: "@demarche-financement"
+    state: "accepte"
+    sourceId: "123457"
+    dsDataJson: "{}"
+    organisme: "@BMW"

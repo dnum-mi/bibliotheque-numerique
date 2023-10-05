@@ -127,10 +127,7 @@ onErrorCaptured((error: Error | AxiosError) => {
   const router = useRouter()
 
   if (error instanceof AxiosError && error?.response?.status === 404) {
-    router.push({
-      name: '404',
-      query: { from: router.currentRoute.value.path },
-    })
+    return false
   } else {
     const description = (error instanceof AxiosError && error?.response?.data?.message) || error.message
     toaster.addErrorMessage({ description })
@@ -150,7 +147,7 @@ onErrorCaptured((error: Error | AxiosError) => {
     :quick-links="quickLinks"
   />
 
-  <div class="fr-container  min-h-full">
+  <div class="min-h-full">
     <router-view />
   </div>
 

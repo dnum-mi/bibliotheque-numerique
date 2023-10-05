@@ -1,5 +1,6 @@
 import { MappingColumn } from '../dto'
 import { Demarche as TDemarche } from '@dnum-mi/ds-api-client'
+import { OrganismeTypeKeys } from '../enums/organismes/organisme-type.enums'
 
 export interface IDemarche {
   id: number
@@ -8,5 +9,5 @@ export interface IDemarche {
   identification: string
   mappingColumns: MappingColumn[]
   dsDataJson: Partial<TDemarche>
-  type: string
+  types: OrganismeTypeKeys[]
 }

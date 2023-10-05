@@ -1,7 +1,7 @@
 /* eslint-disable no-use-before-define */
-import { BaseEntity } from '../../../../shared/base-entity/base.entity'
+import { BaseEntity } from '@/shared/base-entity/base.entity'
 import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique } from 'typeorm'
-import { DsChampType, DsChampTypeKeys } from '../../../../shared/modules/ds-api/objects/ds-champ-type.enum'
+import { DsChampType, DsChampTypeKeys } from '@/shared/modules/ds-api/objects/ds-champ-type.enum'
 import {
   FieldSource,
   FieldSourceKeys,

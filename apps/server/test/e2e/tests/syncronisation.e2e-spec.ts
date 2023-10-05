@@ -6,7 +6,6 @@ import { dataSource } from '../data-source-e2e.typeorm'
 import { Field } from '@/modules/dossiers/objects/entities/field.entity'
 import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
 import { Demarche } from '@/modules/demarches/objects/entities/demarche.entity'
-import { InstructionTime } from '@/plugins/instruction_time/instruction_times/instruction_time.entity'
 
 import * as dayjs from 'dayjs'
 import { FileService } from '@/modules/files/providers/file.service'
@@ -14,11 +13,12 @@ import stream, { PassThrough, Readable } from 'stream'
 import { AxiosHeaders, AxiosResponse } from 'axios'
 import { S3 } from 'aws-sdk/clients/browser_default'
 
-const expectedFixFieldsDates = (dossierId,
+const expectedFixFieldsDates = (
+  dossierId,
   dateDepot = null,
   datePassageEnInstruction = null,
-  datePassageEnConstruction = null)
-  :Partial<Field>[] => ([
+  datePassageEnConstruction = null,
+): Partial<Field>[] => [
   {
     sourceId: '9863ce70-6378-4d7e-aca9-b81fb7b97c11',
     label: 'Date de dépot',
@@ -51,14 +51,16 @@ const expectedFixFieldsDates = (dossierId,
     formatFunctionRef: null,
     type: 'date',
     fieldSource: 'fix-field',
-    stringValue: dateDepot ? dayjs(datePassageEnConstruction).toISOString() : '',
+    stringValue: dateDepot
+      ? dayjs(datePassageEnConstruction).toISOString()
+      : '',
     dateValue: dateDepot ? dayjs(datePassageEnConstruction).toDate() : null,
     numberValue: null,
     parentRowIndex: null,
     rawJson: null,
     dsChampType: null,
   },
-])
+]
 
 describe('Syncronisation ', () => {
   let app: INestApplication
@@ -70,28 +72,7 @@ describe('Syncronisation ', () => {
     await testingModule.init()
     app = testingModule.app
     fileService = testingModule.fileService as FileService
-
     cookie = await getAdminCookie(app)
-    const dossier = await dataSource.manager.findOne(Dossier, {
-      where: { sourceId: '142' },
-      select: ['id'],
-    })
-    if (dossier) {
-      // while watching test, fixture are not reloaded, we reset data manually
-      await dataSource.manager.delete(Field, { dossier: { id: dossier.id } })
-      await dataSource.manager.delete(InstructionTime, {
-        dossier: dossier.id,
-      })
-      await dataSource.manager.delete(Dossier, {
-        id: dossier.id,
-      })
-      const demarche = await dataSource.manager
-        .createQueryBuilder(Demarche, 'd')
-        .where('d."dsDataJson"->>\'number\' = :id', { id: '42' })
-        .select('d.id')
-        .getOne()
-      await dataSource.manager.delete(Demarche, { id: demarche.id })
-    }
   })
 
   afterAll(async () => {
@@ -124,31 +105,37 @@ describe('Syncronisation ', () => {
     )
   })
 
-  it('should syncronise one dossier of one demarche and create associated fields', async () => {
-    jest.spyOn(fileService, 'downloadFile').mockImplementation((): Promise<AxiosResponse> => {
-      const readable = new Readable()
-      readable.push('test PJ.')
-      readable.push(null)
-      return Promise.resolve({
-        data: readable,
-        headers: {
-          'content-type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        } as unknown as AxiosHeaders,
-      } as AxiosResponse)
-    })
-    jest.spyOn(fileService, 'uploadFromStream').mockImplementation((): {
-      passThrough: stream.PassThrough;
-      promise: Promise<S3.ManagedUpload.SendData>;
-    } => {
-      const passThrough = new PassThrough()
-      return {
-        passThrough,
-        promise: Promise.resolve({
-          Key: 'modele-financements-inferieurs-15300.xlsx',
-          Location: 'http://s3.com/modele-financements-inferieurs-15300.xlsx',
-        } as S3.ManagedUpload.SendData),
-      }
-    })
+  it.only('should syncronise one dossier of one demarche and create associated fields', async () => {
+    // TODO mock it in testing-module
+    jest
+      .spyOn(fileService, 'downloadFile')
+      .mockImplementation((): Promise<AxiosResponse> => {
+        const readable = new Readable()
+        readable.push('test PJ.')
+        readable.push(null)
+        return Promise.resolve({
+          data: readable,
+          headers: {
+            'content-type':
+              'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          } as unknown as AxiosHeaders,
+        } as AxiosResponse)
+      })
+    jest.spyOn(fileService, 'uploadFromStream').mockImplementation(
+      (): {
+        passThrough: stream.PassThrough
+        promise: Promise<S3.ManagedUpload.SendData>
+      } => {
+        const passThrough = new PassThrough()
+        return {
+          passThrough,
+          promise: Promise.resolve({
+            Key: 'modele-financements-inferieurs-15300.xlsx',
+            Location: 'http://s3.com/modele-financements-inferieurs-15300.xlsx',
+          } as S3.ManagedUpload.SendData),
+        }
+      },
+    )
 
     return request(app.getHttpServer())
       .post('/demarches/create')
@@ -172,37 +159,31 @@ describe('Syncronisation ', () => {
         expect(demarche).toBeDefined()
         expect(demarche.mappingColumns).toEqual(
           expect.arrayContaining([
-            expect.objectContaining(
-              {
-                id: 'ca6b1946-efe2-448d-b9e3-645829093dc5',
-              },
-            ),
-            expect.objectContaining(
-              {
-                id: 'ca6b1946-efe2-448d-b9e3-645829093dc6',
-              },
-            ),
-          ],
-          ),
+            expect.objectContaining({
+              id: 'ca6b1946-efe2-448d-b9e3-645829093dc5',
+            }),
+            expect.objectContaining({
+              id: 'ca6b1946-efe2-448d-b9e3-645829093dc6',
+            }),
+          ]),
         )
 
         expect(demarche.mappingColumns).toMatchObject(
           expect.arrayContaining([
-            expect.objectContaining(
-              {
-                id: 'Q2hhbXAtMTExMA==',
-                type: 'date',
-                source: 'annotation',
-              },
-            )],
-          ))
+            expect.objectContaining({
+              id: 'Q2hhbXAtMTExMA==',
+              type: 'date',
+              source: 'annotation',
+            }),
+          ]),
+        )
         return dataSource.manager.find(Field, {
           where: { dossier: { demarcheId: demarche.id, sourceId: '142' } },
           order: { sourceId: 'ASC', stringValue: 'ASC' },
         })
       })
       .then((fields) => {
-        expect(fields.length).toEqual(21)
+        expect(fields.length).toEqual(22)
         expect(fields).toMatchObject([
           {
             fieldSource: 'fix-field',
@@ -232,6 +213,19 @@ describe('Syncronisation ', () => {
             label: 'Id démarche simplifié',
             rawJson: null,
           },
+          {
+            sourceId: '9863ce70-6378-4d7e-aca9-b81fb7b97c10',
+            label: 'préfecture',
+            type: 'string',
+            fieldSource: 'fix-field',
+            formatFunctionRef: null,
+            stringValue: 'Unknown',
+            dateValue: null,
+            numberValue: null,
+            parentRowIndex: null,
+            rawJson: null,
+            dsChampType: null,
+          },
           ...expectedFixFieldsDates(42),
           {
             fieldSource: 'champs',
@@ -248,9 +242,9 @@ describe('Syncronisation ', () => {
           },
           {
             fieldSource: 'champs',
-            dsChampType: 'TextChamp',
+            dsChampType: 'RnaChamp',
             type: 'string',
-            formatFunctionRef: null,
+            formatFunctionRef: 'rna',
             sourceId: 'Q2hhbXAtMTA0NQ==',
             stringValue: 'W123456789',
             dateValue: null,
@@ -394,25 +388,20 @@ describe('Syncronisation ', () => {
             label: 'Une annotation',
           },
         ])
-        expect(fields[7].parentId).toEqual(fields[11].id)
-        expect(fields[8].parentId).toEqual(fields[11].id)
-        expect(fields[9].parentId).toEqual(fields[11].id)
-        expect(fields[10].parentId).toEqual(fields[11].id)
+        expect(fields[8].parentId).toEqual(fields[12].id)
+        expect(fields[9].parentId).toEqual(fields[12].id)
+        expect(fields[10].parentId).toEqual(fields[12].id)
+        expect(fields[11].parentId).toEqual(fields[12].id)
 
         expect(fields).toEqual(
           expect.not.arrayContaining([
-            expect.objectContaining(
-              {
-                sourceId: 'ca6b1946-efe2-448d-b9e3-645829093dc5',
-              },
-            ),
-            expect.objectContaining(
-              {
-                sourceId: 'ca6b1946-efe2-448d-b9e3-645829093dc6',
-              },
-            ),
-          ],
-          ),
+            expect.objectContaining({
+              sourceId: 'ca6b1946-efe2-448d-b9e3-645829093dc5',
+            }),
+            expect.objectContaining({
+              sourceId: 'ca6b1946-efe2-448d-b9e3-645829093dc6',
+            }),
+          ]),
         )
       })
       .then(() => {
@@ -424,72 +413,138 @@ describe('Syncronisation ', () => {
       .then((fields) => {
         expect(fields).toMatchObject(
           expect.arrayContaining([
-            expect.objectContaining(
-              {
-                fieldSource: 'annotation',
-                dsChampType: 'DateChamp',
-                type: 'date',
-                sourceId: 'Q2hhbXAtMTEwOQ==',
-                dateValue: dayjs().subtract(7, 'days').startOf('day').toDate(),
-              },
-            ),
-          ]))
+            expect.objectContaining({
+              fieldSource: 'annotation',
+              dsChampType: 'DateChamp',
+              type: 'date',
+              sourceId: 'Q2hhbXAtMTEwOQ==',
+              dateValue: dayjs().subtract(7, 'days').startOf('day').toDate(),
+            }),
+          ]),
+        )
 
         expect(fields).toMatchObject(
           expect.arrayContaining([
-
-            expect.objectContaining(
-              {
-                fieldSource: 'annotation',
-                dsChampType: 'DateChamp',
-                type: 'date',
-                sourceId: 'Q2hhbXAtMTExMA==',
-                dateValue: dayjs().subtract(2, 'days').startOf('day').toDate(),
-              }),
-          ]))
-
-        expect(fields).toMatchObject(
-          expect.arrayContaining([
-
-            expect.objectContaining(
-              {
-                fieldSource: 'annotation',
-                dsChampType: 'DateChamp',
-                type: 'date',
-                sourceId: 'Q2hhbXAtMTExMQ==',
-              }),
-          ]))
+            expect.objectContaining({
+              fieldSource: 'annotation',
+              dsChampType: 'DateChamp',
+              type: 'date',
+              sourceId: 'Q2hhbXAtMTExMA==',
+              dateValue: dayjs().subtract(2, 'days').startOf('day').toDate(),
+            }),
+          ]),
+        )
 
         expect(fields).toMatchObject(
           expect.arrayContaining([
+            expect.objectContaining({
+              fieldSource: 'annotation',
+              dsChampType: 'DateChamp',
+              type: 'date',
+              sourceId: 'Q2hhbXAtMTExMQ==',
+            }),
+          ]),
+        )
 
-            expect.objectContaining(
-              {
-                fieldSource: 'annotation',
-                dsChampType: 'DateChamp',
-                type: 'date',
-                sourceId: 'Q2hhbXAtMTExNA==',
-              }),
-          ]))
+        expect(fields).toMatchObject(
+          expect.arrayContaining([
+            expect.objectContaining({
+              fieldSource: 'annotation',
+              dsChampType: 'DateChamp',
+              type: 'date',
+              sourceId: 'Q2hhbXAtMTExNA==',
+            }),
+          ]),
+        )
 
         expect(fields).toEqual(
           expect.arrayContaining([
-            expect.objectContaining(
-              {
-                sourceId: 'ca6b1946-efe2-448d-b9e3-645829093dc5',
-                stringValue: 'Instruction',
-              },
-            ),
-            expect.objectContaining(
-              {
-                sourceId: 'ca6b1946-efe2-448d-b9e3-645829093dc6',
-                // 60 - (aujourd'hui - la date de reception de la 2eme demande)
-                numberValue: 58,
-              },
-            ),
-          ],
-          ),
+            expect.objectContaining({
+              sourceId: 'ca6b1946-efe2-448d-b9e3-645829093dc5',
+              stringValue: 'Instruction',
+            }),
+            expect.objectContaining({
+              sourceId: 'ca6b1946-efe2-448d-b9e3-645829093dc6',
+              // 60 - (aujourd'hui - la date de reception de la 2eme demande)
+              numberValue: 58,
+            }),
+          ]),
         )
+      })
+  })
+
+  it('should associate two organisme upon synchronising', async () => {
+    return request(app.getHttpServer())
+      .post('/demarches/create')
+      .set('Cookie', [cookie])
+      .send({
+        idDs: 101,
+      })
+      .expect(201)
+      .then(async (res) => {
+        expect(res.body).toEqual({
+          message: 'Demarche with DS id 101 has been created.',
+        })
+        const dossierFoundationChocolat = await dataSource.manager.findOne(
+          Dossier,
+          {
+            where: {
+              sourceId: '201',
+            },
+            relations: ['organisme'],
+          },
+        )
+        expect(dossierFoundationChocolat.organisme).toMatchObject({
+          type: 'FE',
+          title: 'Titre test avec Baudoin ',
+
+          addressLabel: '4 Rue Judaïque 33000 Bordeaux',
+          addressPostalCode: '33000',
+          addressCityName: 'Bordeaux',
+          addressType: 'housenumber',
+          addressStreetAddress: '4 Rue Judaïque',
+          addressStreetNumber: '4',
+          addressStreetName: 'Rue Judaïque',
+          addressDepartmentName: 'Gironde',
+          addressDepartmentCode: '33',
+          addressRegionName: 'Nouvelle-Aquitaine',
+          addressRegionCode: '75',
+          email: 'something@rnf.fr',
+          phoneNumber: '+33603020105',
+          dateCreation: '2023-09-25',
+          dateDissolution: null,
+          idRna: null,
+          rnaJson: null,
+          idRnf: '033-FE-00001-02',
+        })
+
+        const dossierAssociationFabulous = await dataSource.manager.findOne(
+          Dossier,
+          {
+            where: {
+              sourceId: '202',
+            },
+            relations: ['organisme'],
+          },
+        )
+        expect(dossierAssociationFabulous.organisme).toMatchObject({
+          type: 'CULTE',
+          title: 'FABULOUS ALL STRINGS BAND',
+          addressLabel: '11 RUE Sylvain Sénécaux 27830 Neaufles-Saint-Martin',
+          addressPostalCode: '27830',
+          addressCityName: 'Neaufles-Saint-Martin',
+          addressType: 'RUE',
+          addressStreetAddress: '11 RUE Sylvain Sénécaux',
+          addressStreetNumber: '11',
+          addressStreetName: 'Sylvain Sénécaux',
+          email: null,
+          phoneNumber: null,
+          dateCreation: '2008-09-09',
+          dateDissolution: null,
+          idRna: 'W271000008',
+          idRnf: null,
+          rnfJson: null,
+        })
       })
   })
 })

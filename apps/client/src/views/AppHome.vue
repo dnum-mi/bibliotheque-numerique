@@ -38,5 +38,5 @@
 </template>
 
 <script lang="ts" setup>
-import LayoutAccueil from '../components/LayoutAccueil.vue'
+import LayoutAccueil from '../components/Layout/LayoutAccueil.vue'
 </script>

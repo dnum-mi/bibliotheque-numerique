@@ -6,7 +6,7 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores'
 import type { CredentialsInputDto } from '@biblio-num/shared'
-import LayoutAccueil from '../components/LayoutAccueil.vue'
+import LayoutAccueil from '../components/Layout/LayoutAccueil.vue'
 import ToggleInputPassword from '../components/ToggleInputPassword.vue'
 
 const REQUIRED_FIELD_MESSAGE = 'Ce champ est requis'

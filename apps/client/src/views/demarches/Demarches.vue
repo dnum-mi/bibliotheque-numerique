@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import BiblioNumDataTableAgGrid from '@/components/BiblioNumDataTableAgGrid.vue'
-import LayoutList from '@/components/LayoutList.vue'
+import LayoutList from '@/components/Layout/LayoutList.vue'
 import { useDemarcheStore } from '@/stores/demarche'
 import { dateToStringFr } from '@/utils'
 import type { IDemarche } from '@biblio-num/shared'
-import type { ValueFormatterParams } from 'ag-grid-community'
 import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import OrganismeBadgesRenderer from '@/components/Badges/OrganismeBadgesRenderer.vue'
 
 const demarcheStore = useDemarcheStore()
 const router = useRouter()
@@ -17,19 +17,15 @@ const headersJson = [
     width: 0,
   },
   {
-    text: 'Type',
-    value: 'type',
-    valueFormatter: (params: ValueFormatterParams) => params.value === 'unknown' ? 'Type non défini' : params.value,
-    filterParams: {
-      valueFormatter: (params: ValueFormatterParams) => params.value === 'unknown' ? 'Type non défini' : params.value,
-    },
-    width: 200,
-  },
-
-  {
     text: 'N° Démarche DS',
     value: 'number',
     type: 'number',
+    width: 200,
+  },
+  {
+    text: 'Types',
+    value: 'types',
+    renderer: OrganismeBadgesRenderer,
     width: 200,
   },
   {
@@ -63,7 +59,7 @@ const headersJson = [
 ]
 
 const rowData = computed<IDemarche[]>(() => demarcheStore.demarches.map<IDemarche>(
-  (d: IDemarche) => ({ ...d?.dsDataJson, type: d?.type, id: d.id } as IDemarche)),
+  (d: IDemarche) => ({ ...d?.dsDataJson, types: d?.types, id: d.id } as IDemarche)),
 )
 
 onMounted(async () => {

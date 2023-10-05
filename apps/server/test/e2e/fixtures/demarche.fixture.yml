@@ -106,7 +106,6 @@ items:
       {"id":"I10", "label":"Organismefinanceur"}
     ]
     dsDataJson: {number: 5}
-
   demarche-undefined-identification:
     id: 6
     state: "published"

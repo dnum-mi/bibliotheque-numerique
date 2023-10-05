@@ -2,7 +2,9 @@ export const FormatFunctionRef = {
   country: 'country',
   status: 'status',
   delayStatus: 'delay-status',
-  remainingTime: 'remaing-time',
+  remainingTime: 'remaining-time',
+  rnf: 'rnf',
+  rna: 'rna',
 }
 
 export type FormatFunctionRefKeys =

@@ -9,13 +9,14 @@ import loggerConfig from './config/logger.config'
 import typeormConfig from './config/typeorm-nest.config'
 import smtpConfig from './config/smtp.config'
 import jwtConfig from './config/jwt.config'
+import rnaConfig from './config/rna.config'
+import rnfConfig from './config/rnf.config'
 
 import { DemarcheModule } from './modules/demarches/demarche.module'
 import { DossierModule } from './modules/dossiers/dossier.module'
 import { RolesModule } from './modules/roles/roles.module'
 import { LoggerModule } from './shared/modules/logger/logger.module'
 import { UsersModule } from './modules/users/users.module'
-import { ConnectorModule } from './modules/connector/connector.module'
 import { FileModule } from './modules/files/file.module'
 import { pluginsModules } from './plugins'
 import { JobLogModule } from './modules/job-log/job-log.module'
@@ -25,13 +26,24 @@ import { AuthModule } from './modules/auth/auth.module'
 import { DsApiModule } from './shared/modules/ds-api/ds-api.module'
 import { CustomFilterModule } from '@/modules/custom-filters/custom-filter.module'
 import { XlsxModule } from '@/shared/modules/xlsx/xlsx.module'
+import { OrganismeModule } from '@/modules/organismes/organisme.module'
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
-      load: [configuration, fileConfig, dsConfig, typeormConfig, loggerConfig, smtpConfig, jwtConfig],
+      load: [
+        configuration,
+        fileConfig,
+        dsConfig,
+        typeormConfig,
+        loggerConfig,
+        smtpConfig,
+        jwtConfig,
+        rnaConfig,
+        rnfConfig,
+      ],
     }),
     LoggerModule,
     DsApiModule,
@@ -42,10 +54,10 @@ import { XlsxModule } from '@/shared/modules/xlsx/xlsx.module'
     AuthModule,
     UsersModule,
     RolesModule,
-    ConnectorModule,
     FileModule,
     HealthModule,
     CustomFilterModule,
+    OrganismeModule,
     ...pluginsModules,
 
     // TODO: AppModule use JobModule for now to retrieve JobLogService
@@ -54,5 +66,4 @@ import { XlsxModule } from '@/shared/modules/xlsx/xlsx.module'
   controllers: [],
   providers: [],
 })
-export class AppModule {
-}
+export class AppModule {}

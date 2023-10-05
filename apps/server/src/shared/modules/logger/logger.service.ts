@@ -22,7 +22,7 @@ export class LoggerService extends ConsoleLogger implements LS {
   }
 
   private _commonLogFunction (
-    message: string | object,
+    message: string | object | Error,
     logFunctionKey: 'log' | 'warn' | 'debug' | 'error' | 'verbose',
   ): void {
     // TODO: cleaner way to manage object in log
@@ -57,8 +57,9 @@ export class LoggerService extends ConsoleLogger implements LS {
     }
   }
 
-  error (message: string | object): void {
+  error (message: string | object | Error): void {
     if (this.configService.get('log.error')) {
+      message = message instanceof Error ? message.stack : message
       this._commonLogFunction(message, 'error')
     }
   }

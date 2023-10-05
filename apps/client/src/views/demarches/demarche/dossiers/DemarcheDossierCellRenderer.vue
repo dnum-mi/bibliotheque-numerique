@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 import { defineProps, computed } from 'vue'
 import slugify from 'slugify'
-import delayStateBadge from '@/components/DelayStateBadge.vue'
+import delayStateBadge from '@/components/Badges/DelayStateBadge.vue'
 
 const props = defineProps<{ params: any }>()
 
 /* region all cell */
 const cellValues = computed(() => {
-  const cellValuesAsArray = (Array.isArray(props.params.value) ? props.params.value : [props.params.value])
+  const cellValuesAsArray = Array.isArray(props.params.value) ? props.params.value : [props.params.value]
   return cellValuesAsArray.map((cv) => {
     if (props.params.column.type === 'date') {
       cv = cv ? new Date(cv).toLocaleDateString() : ''
@@ -27,8 +27,8 @@ const componentRenderer = computed(() => {
 /* endregion */
 
 /* region STATUS */
-type dsfrType = 'success' | 'error' | 'warning' | 'info' | 'new'
-const statusDictionary: Record<string, { label: string, type: dsfrType }> = {
+type dsfrType = 'success' | 'error' | 'warning' | 'info' | 'new';
+const statusDictionary: Record<string, { label: string; type: dsfrType }> = {
   accepte: { label: 'Accepté', type: 'success' },
   en_construction: { label: 'En construction', type: 'new' },
   en_instruction: { label: 'En instruction', type: 'new' },
@@ -84,12 +84,35 @@ const getFlagURL = (countryName: string) => {
         />
       </template>
 
+      <!-- RNF -->
+      <template v-else-if="ffr === 'rnf' && cellValue">
+        <RouterLink
+          :to="{ name: 'FicheOrganisme', params: { id: cellValue }, query: { idType: 'Rnf' } }"
+          @click.stop
+        >
+          {{ cellValue }}
+        </RouterLink>
+      </template>
+
+      <!-- RNA -->
+      <template v-else-if="ffr === 'rna' && cellValue">
+        <RouterLink
+          :to="{ name: 'FicheOrganisme', params: { id: cellValue }, query: {idType: 'Rna'} }"
+          @click.stop
+        >
+          {{ cellValue }}
+        </RouterLink>
+      </template>
+
+      <!-- ComponentRenderer-->
       <template v-else-if="!!componentRenderer">
         <component
           :is="componentRenderer"
           :value="cellValue"
         />
       </template>
+
+      <!-- Default-->
       <template v-else>
         {{ cellValue || "" }}
       </template>
@@ -99,9 +122,6 @@ const getFlagURL = (countryName: string) => {
 </template>
 
 <style>
-.ag-cell-wrapper {
-  //height: 100% !important;
-}
 span.round-flag {
   display: block !important;
   width: 25px !important;

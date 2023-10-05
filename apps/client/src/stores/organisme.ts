@@ -1,41 +1,30 @@
-import { ref } from 'vue'
+import { ref, type Ref } from 'vue'
 import { defineStore } from 'pinia'
 
 import apiClient from '@/api/api-client'
+import type { IOrganisme, PaginatedOrganismeDto, PaginationDto } from '@biblio-num/shared'
+
+export type OrganismeIdType = 'Rna' | 'Rnf' | 'Id'
 
 export const useOrganismeStore = defineStore('organisme', () => {
-  const formatData = (data: { zipCode: string; city: any }) => {
-    return {
-      ...data,
-      prefecture: `${data?.zipCode?.substring(0, 2) || ''} - ${data?.city || ''}`,
-      // type: 'CULTES',
-    }
-  }
+  const organisme = ref<IOrganisme>() as Ref<IOrganisme>
+  const organismes = ref<Partial<IOrganisme>[]>([])
 
-  const organisme = ref<any>({})
-  const organismes = ref<any[]>([])
-
-  const loadOrganismeByIdRNA = async (id: string) => {
+  const loadOrganisme = async (id: string, type: OrganismeIdType) => {
     if (!id) {
       return
     }
-    const result = await apiClient.getOrganismeByIdRna(id)
-    if (result) {
-      organisme.value = result
-    }
+    organisme.value = await apiClient[`getOrganismeBy${type}`](id)
   }
 
-  const loadOrganismes = async () => {
-    const result = await apiClient.getOrganismes()
-    if (result) {
-      organismes.value = result?.map((data: any) => { const newData = formatData(data); return newData })
-    }
+  const loadOrganismes = async (dto: PaginationDto<IOrganisme>): Promise<PaginatedOrganismeDto> => {
+    return apiClient.getOrganismes(dto)
   }
 
   return {
     organisme,
     organismes,
-    loadOrganismeByIdRNA,
+    loadOrganisme,
     loadOrganismes,
   }
 })

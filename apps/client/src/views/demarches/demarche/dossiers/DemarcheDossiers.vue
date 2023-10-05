@@ -4,25 +4,20 @@ import 'ag-grid-community/styles/ag-grid.css'
 import 'ag-grid-community/styles/ag-theme-material.css'
 import '@/ag-grid-dsfr.css'
 
-import { computed, type ComputedRef, reactive, type Ref, ref, watch, onMounted } from 'vue'
+import { computed, type ComputedRef, onMounted, ref, type Ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useDebounceFn } from '@vueuse/core'
-import { AgGridVue } from 'ag-grid-vue3'
 import type { GridOptions } from 'ag-grid-enterprise'
-import type { ColumnApi, SelectionChangedEvent, ColDef, ColumnMenuTab, GridApi, GridReadyEvent, IServerSideGetRowsParams, SortModelItem } from 'ag-grid-community'
-import type { CreateCustomFilterDto, FilterDto, ICustomFilter, IDemarche, SearchDossierDto, SortDto } from '@biblio-num/shared'
+import type { ColDef, ColumnApi, ColumnMenuTab, GridApi, GridReadyEvent, SelectionChangedEvent } from 'ag-grid-community'
+import type { CreateCustomFilterDto, ICustomFilter, IDemarche, PaginationDto } from '@biblio-num/shared'
 
 import { type FrontMappingColumn, useCustomFilterStore, useDemarcheStore } from '@/stores'
-import {
-  backendFilterToAggFilter,
-  fromAggToBackendFilter,
-  fromFieldTypeToAgGridFilter,
-} from '@/views/demarches/demarche/dossiers/demarche-dossiers-utils'
 import DemarcheDossiersFilters from '@/views/demarches/demarche/dossiers/DemarcheDossiersFilters.vue'
 import DemarcheDossierCellRenderer from '@/views/demarches/demarche/dossiers/DemarcheDossierCellRenderer.vue'
-import { gridOptionFactory } from '@/views/demarches/demarche/dossiers/grid-option-factory'
 import { type SmallFilter } from './DemarcheDossiersFilters.vue'
 import { deepAlmostEqual, selectKeysInObject } from '@/utils/object'
+import AgGridServerSide from '@/components/ag-grid/server-side/AgGridServerSide.vue'
+import { backendFilterToAggFilter, fromFieldTypeToAgGridFilter } from '@/components/ag-grid/server-side/pagination.utils'
 
 const demarcheStore = useDemarcheStore()
 const router = useRouter()
@@ -31,23 +26,15 @@ const columnApi: Ref<ColumnApi | undefined> = ref()
 const groupByDossier: Ref<boolean> = ref(false)
 const demarche = computed<IDemarche>(() => demarcheStore.currentDemarche as IDemarche)
 const demarcheConfiguration = computed<FrontMappingColumn[]>(() => demarcheStore.currentDemarchePlaneConfiguration)
-const pageSize = 20
 const customFilterStore = useCustomFilterStore()
 const customFilters: ComputedRef<ICustomFilter[]> = computed(() => customFilterStore.customFilters)
 const selectedCustomFilter: Ref<ICustomFilter | null> = ref(null)
-const paginationDto: SearchDossierDto = reactive({
-  page: 1,
-  perPage: pageSize,
-  sorts: [],
-  filters: null,
-  columns: [],
-})
 
 const paginationChanged = computed(() => {
   const keys = ['columns', 'filters', 'sorts']
   return !deepAlmostEqual(
     {
-      ...selectKeysInObject(paginationDto, keys),
+      ...selectKeysInObject(paginationDto.value, keys),
       groupByDossier: groupByDossier.value,
     },
     selectKeysInObject(selectedCustomFilter.value, [...keys, 'groupByDossier']),
@@ -56,37 +43,10 @@ const paginationChanged = computed(() => {
 
 const fetching = computed(() => demarcheStore.fetching)
 
-const computeSort = (sortModel: SortModelItem[]): SortDto[] => {
-  return sortModel.map((sort) => ({
-    key: sort.colId,
-    order: sort.sort === 'asc' ? 'ASC' : 'DESC',
-  }))
-}
-
-// function called by aggrid in SSR mode to fetch its data
-const getRows = async (params: IServerSideGetRowsParams) => {
-  if (fetching.value) return undefined
-  if (demarche.value) {
-    paginationDto.sorts = computeSort(params.request.sortModel)
-    paginationDto.filters = fromAggToBackendFilter(params.request.filterModel)
-    paginationDto.columns = params.columnApi
-      .getColumnState()
-      .filter((state) => !state.hide)
-      .map((state) => state.colId)
-    paginationDto.perPage = pageSize
-    paginationDto.page = (params.request.startRow || 0) / pageSize + 1
-    const response = await demarcheStore.searchCurrentDemarcheDossiers(groupByDossier.value, paginationDto)
-    params.success({ rowData: response.data, rowCount: response.total })
-  } else {
-    params.fail()
-  }
-}
-
-const gridOptions: GridOptions = {
-  ...gridOptionFactory(getRows, pageSize),
+const specificGridOptions: GridOptions = {
   onDragStopped: () => {
     if (selectedCustomFilter.value) {
-      refresh()
+      agGridComponent.value.refresh()
     }
   },
 }
@@ -126,12 +86,6 @@ const onSelectionChanged = ($event: SelectionChangedEvent) => {
   }
 }
 
-const refresh = () => {
-  if (gridApi.value) {
-    gridApi.value.refreshServerSideStore({ purge: true })
-  }
-}
-
 const route = useRoute()
 
 onMounted(async () => {
@@ -146,7 +100,7 @@ watch(demarche, async (newValue) => {
   await customFilterStore.getCustomFiltersByDemarche(newValue.id)
 })
 watch(fetching, () => {
-  if (!fetching.value) refresh()
+  if (!fetching.value) agGridComponent.value?.refresh()
 })
 
 const resetAggState = () => {
@@ -158,11 +112,11 @@ const resetAggState = () => {
 
 const updateAggState = () => {
   if (gridApi.value && columnApi.value) {
-    gridApi.value.setFilterModel(backendFilterToAggFilter(paginationDto.filters || {}))
+    gridApi.value.setFilterModel(backendFilterToAggFilter(paginationDto.value.filters || {}))
     const statesHash = Object.fromEntries(columnApi.value?.getColumnState().map((state) => [state.colId, state]))
-    const sortHash = Object.fromEntries(paginationDto.sorts.map((sort) => [sort.key, sort]))
+    const sortHash = Object.fromEntries(paginationDto.value.sorts.map((sort) => [sort.key, sort]))
     columnApi.value?.applyColumnState({
-      state: paginationDto.columns.map((c) => {
+      state: paginationDto.value.columns.map((c) => {
         const result = {
           ...statesHash[c],
           hide: false,
@@ -188,20 +142,20 @@ const createFilter = async (filterName: string) => {
   const createCustomFilterDto: CreateCustomFilterDto = {
     name: filterName,
     groupByDossier: groupByDossier.value,
-    columns: paginationDto.columns,
-    sorts: paginationDto.sorts,
-    filters: paginationDto.filters || undefined,
+    columns: paginationDto.value.columns,
+    sorts: paginationDto.value.sorts,
+    filters: paginationDto.value.filters || undefined,
   }
   await customFilterStore.createCustomFilter(createCustomFilterDto, demarche.value.id)
-  const filterId = customFilters.value.find((f) => f.name === filterName)?.id
+  const filterId = customFilters.value.find((f) => f.name === filterName)?.id || null
   selectFilter(filterId)
 }
-const updateFilter = async (filter: SmallFilter) => {
+const updateFilter = async () => {
   if (selectedCustomFilter.value) {
     selectedCustomFilter.value.groupByDossier = groupByDossier.value
-    selectedCustomFilter.value.columns = paginationDto.columns
-    selectedCustomFilter.value.sorts = paginationDto.sorts
-    selectedCustomFilter.value.filters = paginationDto.filters || undefined
+    selectedCustomFilter.value.columns = paginationDto.value.columns
+    selectedCustomFilter.value.sorts = paginationDto.value.sorts
+    selectedCustomFilter.value.filters = paginationDto.value.filters || undefined
     await customFilterStore.updateCustomFilter(selectedCustomFilter.value.id, selectedCustomFilter.value)
   } else {
     throw new Error('There is not a selected custom filter')
@@ -223,9 +177,9 @@ const selectFilter = (id: number | null) => {
   selectedCustomFilter.value = customFilters.value.find((cf) => cf.id === id) || null
   if (selectedCustomFilter.value) {
     groupByDossier.value = selectedCustomFilter.value?.groupByDossier
-    paginationDto.columns = selectedCustomFilter.value?.columns
-    paginationDto.sorts = selectedCustomFilter.value?.sorts || []
-    paginationDto.filters = selectedCustomFilter.value?.filters || null
+    paginationDto.value.columns = selectedCustomFilter.value?.columns
+    paginationDto.value.sorts = selectedCustomFilter.value?.sorts || []
+    paginationDto.value.filters = selectedCustomFilter.value?.filters || null
     updateAggState()
   } else {
     throw new Error('Selected custom filter does not exist')
@@ -241,35 +195,42 @@ const updateFilterName = async (name: string) => {
 /* endregion */
 
 const download = () => {
-  demarcheStore.exportCurrentDemarcheDossiers(groupByDossier.value, paginationDto)
+  demarcheStore.exportCurrentDemarcheDossiers(groupByDossier.value, paginationDto.value)
 }
 
-const toggleView = useDebounceFn((isActive) => {
+const agGridComponent = ref()
+
+const toggleView = useDebounceFn((isActive: boolean) => {
   groupByDossier.value = isActive
-  refresh()
+  agGridComponent.value?.refresh()
 })
+
+const paginationDto = ref()
+const apiCall = (dto: PaginationDto<any>) => {
+  return demarcheStore.searchCurrentDemarcheDossiers(groupByDossier.value, dto)
+}
 </script>
 
 <template>
   <div :style="{ paddingBottom: '2rem' }">
     <div class="flex justify-between no-label-on-toggle items-center fr-pl-2w fr-pt-2w">
-      <div
-        class="flex  gap-2"
-      >
+      <div class="flex gap-2">
         <div>
           <DsfrButton
             :tertiary="groupByDossier"
             :class="{ 'opacity-70': groupByDossier }"
             @click="toggleView(false)"
           >
-            Vue par dossier <VIcon :name="!groupByDossier ? 'ri-checkbox-circle-fill' : 'ri-checkbox-blank-circle-line'" />
+            Vue par champ
+            <VIcon :name="!groupByDossier ? 'ri-checkbox-circle-fill' : 'ri-checkbox-blank-circle-line'" />
           </DsfrButton>
           <DsfrButton
             :tertiary="!groupByDossier"
             :class="{ 'opacity-70': !groupByDossier }"
             @click="toggleView(true)"
           >
-            <VIcon :name="groupByDossier ? 'ri-checkbox-circle-fill' : 'ri-checkbox-blank-circle-line'" /> Vue par champ
+            <VIcon :name="groupByDossier ? 'ri-checkbox-circle-fill' : 'ri-checkbox-blank-circle-line'" />
+            Vue par dossier
           </DsfrButton>
         </div>
         <DsfrButton
@@ -284,24 +245,26 @@ const toggleView = useDebounceFn((isActive) => {
         :selected-filter="selectedCustomFilter as SmallFilter"
         :pagination-changed="paginationChanged"
         @create-filter="createFilter($event)"
-        @update-filter="updateFilter($event)"
+        @update-filter="updateFilter()"
         @update-filter-name="updateFilterName($event)"
         @delete-filter="deleteFilter()"
         @select-filter="selectFilter($event)"
       />
     </div>
     <div
-      v-if="demarche"
+      v-if="demarche && columnsDef"
       class="ag-grid-wrapper"
     >
-      <ag-grid-vue
-        class="ag-theme-material"
+      <ag-grid-server-side
+        ref="agGridComponent"
+        v-model:pagination-dto="paginationDto"
         :column-defs="columnsDef"
-        :grid-options="gridOptions"
-        :row-style="{ cursor: 'pointer' }"
+        :loading="fetching"
+        :pre-condition="!!demarche"
+        :specific-grid-option="specificGridOptions"
+        :on-selection-changed="onSelectionChanged"
+        :api-call="apiCall"
         @grid-ready="onGridReady($event)"
-        @column-visible="refresh()"
-        @selection-changed="onSelectionChanged($event)"
       />
     </div>
   </div>

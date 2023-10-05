@@ -134,7 +134,7 @@ const rolesHeadersJson = [
         title="Roles"
         action-title=""
         component-action=""
-        with-action="{{ true }}"
+        with-action
         :headers="rolesHeadersJson"
         :row-data="rolesRowData"
         @get-elt="getElt"

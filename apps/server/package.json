@@ -32,7 +32,7 @@
     "lint:fix": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path ../../.gitignore",
     "lint:staged": "eslint --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-path ../../.gitignore",
     "migration:generate": "NODE_OPTIONS=\"-r tsconfig-paths/register\" npm run typeorm migration:generate",
-    "migration:revert": "npm run typeorm migration:revert",
+    "migration:revert": "NODE_OPTIONS=\"-r tsconfig-paths/register\" npm run typeorm migration:revert",
     "migration:run": "NODE_OPTIONS=\"-r tsconfig-paths/register\" npm run typeorm migration:run",
     "migration:show": "npm run typeorm migration:show",
     "plugin:init": "cd src/plugins/ && sh bin/init",

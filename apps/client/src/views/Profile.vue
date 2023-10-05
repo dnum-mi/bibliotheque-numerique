@@ -47,7 +47,6 @@
       action-title=""
       :headers="rolesHeadersJson"
       :row-data="rolesRowData"
-      :with-action="false"
     />
   </LayoutList>
 </template>
@@ -56,7 +55,7 @@
 
 import { useUserStore } from '@/stores'
 import { dateTimeToStringFr, dateToStringFr } from '@/utils'
-import LayoutList from '@/components/LayoutList.vue'
+import LayoutList from '@/components/Layout/LayoutList.vue'
 import DisplayLabelsValues from '@/components/DisplayLabelsValues.vue'
 import { computed, ref } from 'vue'
 import BiblioNumDataTableAgGrid from '@/components/BiblioNumDataTableAgGrid.vue'

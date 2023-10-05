@@ -1,7 +1,7 @@
 .ag-theme-material {
   --ag-material-primary-color: var(--blue-france-main-525);
   --ag-material-accent-color: var(--blue-france-sun-113-625);
-
+  --ag-range-selection-border-color: var(--ag-row-border-color);
   --ag-selected-tab-underline-width: 2px;
   --ag-selected-tab-underline-transition-speed: 0.5s;
 

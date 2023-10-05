@@ -20,7 +20,13 @@ import * as icons from './icons'
 
 import './main.css'
 
-import StatusBadge from './components/StatusBadge.vue'
+import 'ag-grid-enterprise'
+import 'ag-grid-community/styles/ag-grid.css'
+import 'ag-grid-community/styles/ag-theme-material.css'
+import '@/ag-grid-dsfr.css'
+
+// We use statusBadge in DsfrTable
+import StatusBadge from './components/Badges/StatusBadge.vue'
 
 createApp(App)
   .use(createPinia())
