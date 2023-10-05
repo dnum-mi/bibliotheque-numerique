@@ -23,6 +23,7 @@ import { DsMapperService } from '@/modules/ds/providers/ds-mapper.service'
 import { FileStorageService } from '@/modules/file-storage/providers/file-storage.service'
 import { CreateFileStorageDto } from '@/shared/objects/file-storage/create-file.dto'
 import { Prisma } from '@prisma/client'
+import { GetFoundationOutputDto } from '@/modules/foundation/objects/dto/outputs/get-foundation-output.dto'
 
 interface createNestedStatus {
   status: Prisma.FileStorageCreateNestedOneWithoutFoundationInput
@@ -187,10 +188,8 @@ export class FoundationService extends BaseEntityService {
   /* endregion */
 
   /* region Get foundations */
-  async getFoundations(ids: number[]): Promise<FoundationEntity[]> {
+  async getFoundations(ids: number[]): Promise<GetFoundationOutputDto[]> {
     this.logger.verbose('getFoundations')
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
     return this.prisma.foundation.findMany({
       where: { id: { in: ids } },
       include: {
@@ -198,17 +197,19 @@ export class FoundationService extends BaseEntityService {
         status: true,
         persons: {
           include: {
-            person: true,
+            person: {
+              include: {
+                address: true,
+              },
+            },
           },
         },
       },
     })
   }
 
-  async getOneFoundation(rnfId: string): Promise<FoundationEntity> {
+  async getOneFoundation(rnfId: string): Promise<GetFoundationOutputDto> {
     this.logger.verbose('getOneFoundation')
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
     return this.prisma.foundation
       .findFirst({
         where: { rnfId },
@@ -217,7 +218,11 @@ export class FoundationService extends BaseEntityService {
           status: true,
           persons: {
             include: {
-              person: true,
+              person: {
+                include: {
+                  address: true,
+                },
+              },
             },
           },
         },
@@ -235,7 +240,7 @@ export class FoundationService extends BaseEntityService {
   async getFoundationsByRnfIds(
     rnfIds: string[],
     updatedAfter: Date | undefined,
-  ): Promise<FoundationEntity[]> {
+  ): Promise<GetFoundationOutputDto[]> {
     this.logger.verbose('getFoundationsByRnfIds')
     const where: {
       rnfId: { in: string[] }
@@ -246,8 +251,6 @@ export class FoundationService extends BaseEntityService {
         gte: updatedAfter,
       }
     }
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
     return this.prisma.foundation.findMany({
       where,
       include: {
@@ -255,7 +258,11 @@ export class FoundationService extends BaseEntityService {
         status: true,
         persons: {
           include: {
-            person: true,
+            person: {
+              include: {
+                address: true,
+              },
+            },
           },
         },
       },
@@ -309,7 +316,7 @@ export class FoundationService extends BaseEntityService {
 
   async updateFoundation(rnfId: string, dto: UpdateFoundationDto) {
     this.logger.verbose('updateFoundation')
-    const foundation = await this.getOneFoundation(rnfId)
+    const foundation = await this.getOneFoundation(rnfId) as FoundationEntity
     await this.historyService.newHistoryEntry(foundation)
     const cascadeFile = await this._cascadeCreateFile(dto.status)
     const cascadeUpdateFile: updateNestedStatus | undefined = cascadeFile

@@ -3,9 +3,5 @@ import { InfoPersonInFoundationDto } from '@/modules/foundation/objects/dto/info
 
 type ExtendedCreateFoundationDto = CreateFoundationDto & { rnfId: string }
 
-// eslint-disable-next-line no-use-before-define
-export type RnfFieldKey = foudationMapper & personMapper
-
-type foudationMapper = Record<keyof ExtendedCreateFoundationDto, RegExp>
-
-type personMapper = Record<keyof InfoPersonInFoundationDto, RegExp>
+export type RnfFieldKey = Record<keyof ExtendedCreateFoundationDto, RegExp>
+  & Record<keyof InfoPersonInFoundationDto, RegExp>
