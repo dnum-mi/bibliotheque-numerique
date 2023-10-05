@@ -320,6 +320,10 @@ export class FoundationService extends BaseEntityService {
         },
       }
       : undefined
+
+    // TODO: update persons
+    delete dto.personInFoundationToCreate
+
     return this.prisma.foundation.update({
       where: { rnfId },
       // @ts-expect-error why ?

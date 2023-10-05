@@ -81,19 +81,20 @@ export class DsMapperService {
     this.logger.verbose('mapPersonInFoundationToDto')
 
     const personInFoundationDto: CreatePersonInFoundationDto[] = []
+    if (!champsHash.personFirstName) {
+      return personInFoundationDto
+    }
 
     // Declarant
     const declarant: CreatePersonDto = this.mapPersonToDto(champsHash, mapper)
     personInFoundationDto.push({ person: declarant, role: FoundationRole.DECLARANT })
 
+    // Administrators
     if (!champsHash.personAdministrator) {
       return personInFoundationDto
     }
-
-    // Administrators
     const administratorsChamps: {champs: RawChamp[]}[] =
       (champsHash.personAdministrator as unknown as RawChamp).rows ?? []
-
     if (administratorsChamps.length > 0) {
       administratorsChamps.forEach((administrator) => {
         const admin: CreatePersonDto = this.mapPersonToDto(administrator as unknown as Record<string, Champ>, mapper)

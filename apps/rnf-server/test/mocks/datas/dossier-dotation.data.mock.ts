@@ -428,7 +428,6 @@ export const dotationDossierDataMock = {
         description: "lorem ipsum",
       },
     },
-
     {
       id: "Q2hhbXAtMTE5MHwwMUhCNzhWRzZDQk5FSzUxMUNDWTBOU05COA==",
       __typename: "TextChamp",
