@@ -4,6 +4,6 @@ import {
   GetPersonInFoundationOutputDto,
 } from '@/modules/person/objects/dto/outputs/get-person-in-foundation-output.dto'
 
-export class GetFoundationOutputDto extends OmitType(FoundationEntity, ['persons'] as const) {
+export class FoundationOutputDto extends OmitType(FoundationEntity, ['persons'] as const) {
   persons?: GetPersonInFoundationOutputDto[]
 }
