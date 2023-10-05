@@ -14,6 +14,9 @@ export class PersonEntity extends BaseEntity implements PrismaPerson {
   firstName: string
 
   @IsString()
+  civility: string
+
+  @IsString()
   @IsDefined()
   @IsEmail()
   email: string

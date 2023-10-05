@@ -88,6 +88,7 @@ model Person {
   id          Int      @id @default(autoincrement())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  civility    String   @default("")
   lastName    String
   firstName   String
   email       String

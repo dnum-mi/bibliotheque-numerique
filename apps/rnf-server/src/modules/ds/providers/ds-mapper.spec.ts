@@ -105,6 +105,7 @@ describe('DsMapperService & DsConfigurationService', () => {
             },
             bornAt: new Date('2023-09-13'),
             bornPlace: 'PARIS',
+            civility: 'M',
             firstName: 'EVA',
             lastName: 'JEAN',
             nationality: 'Aruba',

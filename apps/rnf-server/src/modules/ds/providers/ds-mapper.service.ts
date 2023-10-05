@@ -124,11 +124,6 @@ export class DsMapperService {
     // @ts-expect-error
     delete personDto.quality
 
-    // Todo: Add civility in entity
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    delete personDto.civility
-
     return personDto
   }
 }
