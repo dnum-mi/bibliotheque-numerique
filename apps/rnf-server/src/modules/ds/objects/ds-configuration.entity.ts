@@ -84,4 +84,48 @@ export class DsConfigurationEntity
   @IsString()
   @IsDefined()
   cronUpdateFrequency: string
+
+  @IsString()
+  @IsDefined()
+  fieldRegexPersonQuality: string
+
+  @IsString()
+  @IsDefined()
+  fieldRegexPersonCivility: string
+
+  @IsString()
+  @IsDefined()
+  fieldRegexPersonFirstName: string
+
+  @IsString()
+  @IsDefined()
+  fieldRegexPersonLastName: string
+
+  @IsString()
+  @IsDefined()
+  fieldRegexPersonBornAt: string
+
+  @IsString()
+  @IsDefined()
+  fieldRegexPersonBornPlace: string
+
+  @IsString()
+  @IsDefined()
+  fieldRegexPersonNationality: string
+
+  @IsString()
+  @IsDefined()
+  fieldRegexPersonProfession: string
+
+  @IsString()
+  @IsDefined()
+  fieldRegexPersonAddress: string
+
+  @IsString()
+  @IsDefined()
+  fieldRegexPersonPhone: string
+
+  @IsString()
+  @IsDefined()
+  fieldRegexAdministator: string
 }

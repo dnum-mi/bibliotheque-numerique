@@ -1,6 +1,6 @@
 import { PersonEntity } from '@/modules/person/objects/person.entity'
 import { PickType } from '@nestjs/swagger'
-import { ValidateNested } from 'class-validator'
+import { IsString, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
 import { CreateAddressDto } from '@/shared/objects/address/create-address.dto'
 
@@ -10,4 +10,12 @@ export class CreatePersonDto extends PickType(PersonEntity, createPersonDtoKeys)
   @ValidateNested()
   @Type(() => CreateAddressDto)
     address: CreateAddressDto
+
+  @ValidateNested()
+  @IsString()
+  quality: string
+
+  @ValidateNested()
+  @IsString()
+  civility: string
 }

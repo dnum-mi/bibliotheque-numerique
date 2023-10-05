@@ -86,6 +86,35 @@ describe('DsMapperService & DsConfigurationService', () => {
       },
       email: 'tata@gmail.com',
       phone: '06 86 46 54 45',
+      personInFoundationToCreate: [
+        {
+          person: {
+            address: {
+              cityCode: '59350',
+              cityName: 'Lille',
+              departmentCode: '59',
+              departmentName: 'Nord',
+              label: '1 Square Rameau 59800 Lille',
+              postalCode: '59800',
+              regionCode: '32',
+              regionName: 'Hauts-de-France',
+              streetAddress: ' 1 Square Rameau',
+              streetName: 'Square Rameau',
+              streetNumber: '1',
+              type: 'housenumber',
+            },
+            bornAt: new Date('2023-09-13'),
+            bornPlace: 'PARIS',
+            civility: 'M',
+            firstName: 'EVA',
+            lastName: 'JEAN',
+            nationality: 'Aruba',
+            phone: '0123456789',
+            profession: 'SDF',
+          },
+          role: 'DECLARANT',
+        },
+      ],
     })
   })
 

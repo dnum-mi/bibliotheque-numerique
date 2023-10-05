@@ -72,6 +72,17 @@ export class DsConfigurationService implements OnModuleInit {
         ),
         rnfId: new RegExp(`.*${this.configuration.fieldRegexRnfId}.*`),
         status: new RegExp(`.*${this.configuration.fieldRegexStatus}.*`),
+        personQuality: new RegExp(`.*${this.configuration.fieldRegexPersonQuality}.*`),
+        personCivility: new RegExp(`.*${this.configuration.fieldRegexPersonCivility}.*`),
+        personFirstName: new RegExp(`.*${this.configuration.fieldRegexPersonFirstName}.*`),
+        personLastName: new RegExp(`.*${this.configuration.fieldRegexPersonLastName}.*`),
+        personBornAt: new RegExp(`.*${this.configuration.fieldRegexPersonBornAt}.*`),
+        personBornPlace: new RegExp(`.*${this.configuration.fieldRegexPersonBornPlace}.*`),
+        personNationality: new RegExp(`.*${this.configuration.fieldRegexPersonNationality}.*`),
+        personProfession: new RegExp(`.*${this.configuration.fieldRegexPersonProfession}.*`),
+        personAddress: new RegExp(`.*${this.configuration.fieldRegexPersonAddress}.*`),
+        personPhone: new RegExp(`.*${this.configuration.fieldRegexPersonPhone}.*`),
+        personAdministrator: new RegExp(`.*${this.configuration.fieldRegexAdministator}.*`),
       },
     }
   }

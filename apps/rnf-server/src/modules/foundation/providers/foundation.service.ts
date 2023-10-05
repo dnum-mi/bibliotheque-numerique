@@ -23,6 +23,7 @@ import { DsMapperService } from '@/modules/ds/providers/ds-mapper.service'
 import { FileStorageService } from '@/modules/file-storage/providers/file-storage.service'
 import { CreateFileStorageDto } from '@/shared/objects/file-storage/create-file.dto'
 import { Prisma } from '@prisma/client'
+import { FoundationOutputDto } from '@/modules/foundation/objects/dto/outputs/foundation-output.dto'
 
 interface createNestedStatus {
   status: Prisma.FileStorageCreateNestedOneWithoutFoundationInput
@@ -136,8 +137,10 @@ export class FoundationService extends BaseEntityService {
           },
           rnfId: `in-creation-${new Date().getTime()}`,
           ...((await this._cascadeCreateFile(dto.status)) ?? {}),
+          ...this._cascadeCreatePersons(dto),
         },
       })
+
       const index = await prisma.foundation.count({
         where: { type: dto.type, department: code },
       })
@@ -152,23 +155,75 @@ export class FoundationService extends BaseEntityService {
     })
   }
 
+  private _cascadeCreatePersons(dto: CreateFoundationDto): Prisma.FoundationCreateNestedOneWithoutPersonsInput {
+    this.logger.verbose('_cascadeCreatePersons')
+    let persons = {}
+    if (dto.personInFoundationToCreate) {
+      persons = {
+        persons: {
+          create: dto.personInFoundationToCreate.map((personInFoundation) => ({
+            person: {
+              create: {
+                lastName: personInFoundation.person.lastName,
+                firstName: personInFoundation.person.firstName,
+                bornAt: personInFoundation.person.bornAt,
+                bornPlace: personInFoundation.person.bornPlace,
+                nationality: personInFoundation.person.nationality,
+                profession: personInFoundation.person.profession,
+                phone: personInFoundation.person.phone,
+                email: '',
+                address: {
+                  create: personInFoundation.person.address,
+                },
+              },
+            },
+            roles: personInFoundation.role,
+          })),
+        },
+      }
+    }
+    return persons
+  }
+
   /* endregion */
 
   /* region Get foundations */
-  async getFoundations(ids: number[]): Promise<FoundationEntity[]> {
+
+  private _cascadeGetFoundation(): Prisma.FoundationInclude {
+    this.logger.verbose('_cascadeGetFoundation')
+    return {
+      address: true,
+      status: true,
+      persons: {
+        include: {
+          person: {
+            include: {
+              address: true,
+            },
+          },
+        },
+      },
+    }
+  }
+
+  async getFoundations(ids: number[]): Promise<FoundationOutputDto[]> {
     this.logger.verbose('getFoundations')
     return this.prisma.foundation.findMany({
       where: { id: { in: ids } },
-      include: { address: true, status: true },
+      include: {
+        ...this._cascadeGetFoundation(),
+      },
     })
   }
 
-  async getOneFoundation(rnfId: string): Promise<FoundationEntity> {
+  async getOneFoundation(rnfId: string): Promise<FoundationOutputDto> {
     this.logger.verbose('getOneFoundation')
     return this.prisma.foundation
       .findFirst({
         where: { rnfId },
-        include: { address: true, status: true },
+        include: {
+          ...this._cascadeGetFoundation(),
+        },
       })
       .then((f) => {
         if (!f) {
@@ -183,7 +238,7 @@ export class FoundationService extends BaseEntityService {
   async getFoundationsByRnfIds(
     rnfIds: string[],
     updatedAfter: Date | undefined,
-  ): Promise<FoundationEntity[]> {
+  ): Promise<FoundationOutputDto[]> {
     this.logger.verbose('getFoundationsByRnfIds')
     const where: {
       rnfId: { in: string[] }
@@ -196,7 +251,9 @@ export class FoundationService extends BaseEntityService {
     }
     return this.prisma.foundation.findMany({
       where,
-      include: { address: true, status: true },
+      include: {
+        ...this._cascadeGetFoundation(),
+      },
     })
   }
 
@@ -247,7 +304,7 @@ export class FoundationService extends BaseEntityService {
 
   async updateFoundation(rnfId: string, dto: UpdateFoundationDto) {
     this.logger.verbose('updateFoundation')
-    const foundation = await this.getOneFoundation(rnfId)
+    const foundation = await this.getOneFoundation(rnfId) as FoundationEntity
     await this.historyService.newHistoryEntry(foundation)
     const cascadeFile = await this._cascadeCreateFile(dto.status)
     const cascadeUpdateFile: updateNestedStatus | undefined = cascadeFile
@@ -258,6 +315,10 @@ export class FoundationService extends BaseEntityService {
         },
       }
       : undefined
+
+    // TODO: update persons
+    delete dto.personInFoundationToCreate
+
     return this.prisma.foundation.update({
       where: { rnfId },
       // @ts-expect-error why ?

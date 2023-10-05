@@ -21,6 +21,17 @@ export const dsConfigurationServiceMock = {
     fieldRegexStatus: '#rnf-status-rnf#',
     fieldRegexPersonInFoundationToCreate: '#rnf-personne-rnf#',
     cronUpdateFrequency: '* */5 * * * *',
+    fieldRegexPersonQuality: '#rnf-person-qualite-rnf#',
+    fieldRegexPersonCivility: '#rnf-person-civilite-rnf#',
+    fieldRegexPersonFirstName: '#rnf-person-prenom-rnf#',
+    fieldRegexPersonLastName: '#rnf-person-nom-rnf#',
+    fieldRegexPersonBornAt: '#rnf-person-date-naissance-rnf#',
+    fieldRegexPersonBornPlace: '#rnf-person-lieu-naissance-rnf#',
+    fieldRegexPersonNationality: '#rnf-person-nationalite-rnf#',
+    fieldRegexPersonProfession: '#rnf-person-profession-rnf#',
+    fieldRegexPersonAddress: '#rnf-person-adresse-rnf#',
+    fieldRegexPersonPhone: '#rnf-person-telephone-rnf#',
+    fieldRegexAdministator: '#rnf-administrateur-rnf#',
   },
   getMapperFromDemarcheDsId: jest.fn().mockImplementation((n) => {
     switch (`${n}`) {

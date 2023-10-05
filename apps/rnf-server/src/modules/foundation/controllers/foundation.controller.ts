@@ -17,7 +17,7 @@ import { GetFoundationInputDto } from '@/modules/foundation/objects/dto/inputs/g
 import { ApiConflictResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { InfoDSOutputDto } from '../objects/dto/info-ds-output.dto'
 import { GetFoundationsInputDto } from '../objects/dto/inputs/get-foundations-inputs.dto'
-import { FoundationEntity } from '@/modules/foundation/objects/foundation.entity'
+import { FoundationOutputDto } from '@/modules/foundation/objects/dto/outputs/foundation-output.dto'
 
 @ApiTags('Foundation')
 @Controller('foundations')
@@ -78,7 +78,7 @@ export class FoundationController {
   })
   async getFoundation(
     @Param() params: GetFoundationInputDto,
-  ): Promise<FoundationEntity> {
+  ): Promise<FoundationOutputDto> {
     this.logger.verbose('getFoundation')
     return this.service.getOneFoundation(params.rnfId)
   }
@@ -88,7 +88,7 @@ export class FoundationController {
   @ApiOperation({ summary: 'Lister un ensemble de fondation connues.' })
   async getFoundations(
     @Query() query: GetFoundationsInputDto,
-  ): Promise<FoundationEntity[]> {
+  ): Promise<FoundationOutputDto[]> {
     this.logger.verbose('getFoundations')
     return this.service.getFoundationsByRnfIds(query.rnfIds, query.date)
   }
