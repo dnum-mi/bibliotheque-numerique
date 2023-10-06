@@ -88,13 +88,9 @@ describe('Demarches (e2e)', () => {
     )
   })
 
-  it('Should patch identification should delete fix-field of instrection into mappingColumn with identification equal at null and types undefined.', async () => {
-    const demarche = await dataSource.manager.findOne(Demarche, {
-      where: { title: Like('[DELETE-IDENTIFICATION]%') },
-    })
-
+  it('Should patch identification should delete fix-field of intersection into mappingColumn with identification equal to null and types undefined.', async () => {
     const { body } = await request(app.getHttpServer())
-      .patch(`/demarches/${demarche.id}`)
+      .patch('/demarches/6')
       .set('Cookie', [adminCookie])
       .send({
         identification: null,
@@ -103,11 +99,11 @@ describe('Demarches (e2e)', () => {
 
     expect(body).toHaveProperty(
       'message',
-      `Demarche of id ${demarche.id} has been update with identification null and types undefined.`,
+      'Demarche of id 6 has been update with identification null and types undefined.',
     )
 
     const demarche1 = await dataSource.manager.findOne(Demarche, {
-      where: { id: demarche.id },
+      where: { id: 6 },
     })
     expect(demarche1).toHaveProperty('identification', null)
     expect(demarche1.mappingColumns).toEqual(
@@ -123,36 +119,28 @@ describe('Demarches (e2e)', () => {
   })
 
   it('Should patch types ', async () => {
-    const demarche = await dataSource.manager.findOne(Demarche, {
-      where: { title: Like('[UPDATE-IDENTIFICATION]%') },
-    })
-
     const types = ['FE', 'ARUP', 'FRUP']
 
     const { body } = await request(app.getHttpServer())
-      .patch(`/demarches/${demarche.id}`)
+      .patch('/demarches/5')
       .set('Cookie', [adminCookie])
       .send({ types })
       .expect(200)
 
     expect(body).toHaveProperty(
       'message',
-      `Demarche of id ${demarche.id} has been update with identification undefined and types ${types}.`,
+      `Demarche of id 5 has been update with identification undefined and types ${types}.`,
     )
 
     const demarche1 = await dataSource.manager.findOne(Demarche, {
-      where: { id: demarche.id },
+      where: { id: 5 },
     })
     expect(demarche1).toHaveProperty('types', types)
   })
 
   it('Should patch identification should return 400 if identification and type is undefined', async () => {
-    const demarche = await dataSource.manager.findOne(Demarche, {
-      where: { title: Like('[UNDEFINED-IDENTIFICATION]%') },
-    })
-
     await request(app.getHttpServer())
-      .patch(`/demarches/${demarche.id}`)
+      .patch('/demarches/7')
       .set('Cookie', [adminCookie])
       .send({})
       .expect(400)
