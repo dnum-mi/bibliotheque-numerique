@@ -14,13 +14,18 @@ items:
       {"id":"I05", "label":"Etat"},
       {"id":"I06", "label":"Delais"},
       {"id":"I07", "label":"Excel"},
-      {"id":"I08", "label":"Montant"},
-      {"id":"I09", "label":"Pays"},
-      {"id":"I10", "label":"Organismefinanceur"}
+      {
+        'id': "I42",
+        'children': [
+          { "id": "I08", "label": "Montant" },
+          { "id": "I09", "label": "Pays" },
+          { "id": "I10", "label": "Organismefinanceur" }
+        ],
+      }
     ]
     dsDataJson: {number: 76}
   configurationDemarche:
-    id: 1
+    id: 2
     title: 'Démarche de test pour les configurations'
     dsDataJson: {number: 77}
     mappingColumns: [
@@ -107,7 +112,7 @@ items:
     ]
     dsDataJson: {number: 5}
   demarche-undefined-identification:
-    id: 6
+    id: 7
     state: "published"
     title: "[UNDEFINED-IDENTIFICATION] Déclaration de financement étranger"
     type: "ARUP"

@@ -197,14 +197,14 @@ describe('Organismes (e2e)', () => {
         .then(({ body }) => {
           expect(body).toEqual([
             {
-              demarcheTitle: 'Démarche de test pour les configurations',
+              demarcheTitle: 'Déclaration de financement étranger',
               depotDate: null,
               id: 12,
               prefecture: null,
               state: 'accepte',
             },
             {
-              demarcheTitle: 'Démarche de test pour les configurations',
+              demarcheTitle: 'Déclaration de financement étranger',
               depotDate: null,
               id: 11,
               prefecture: null,
