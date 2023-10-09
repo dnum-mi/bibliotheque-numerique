@@ -135,7 +135,7 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
       lastSynchronisedAt: new Date(),
       title: raw.title,
       state: raw.state,
-      types: [],
+      types: demarche.types || [],
       mappingColumns: this._generateMappingColumns(
         raw,
         demarche.mappingColumns,
