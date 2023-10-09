@@ -139,16 +139,18 @@ onErrorCaptured((error: Error | AxiosError) => {
 </script>
 
 <template>
-  <DsfrHeader
-    v-model="searchQuery"
-    :service-title="serviceTitle"
-    :service-description="serviceDescription"
-    :logo-text="logoText"
-    :quick-links="quickLinks"
-  />
+  <div class="flex flex-col h-full w-full">
+    <DsfrHeader
+      v-model="searchQuery"
+      :service-title="serviceTitle"
+      :service-description="serviceDescription"
+      :logo-text="logoText"
+      :quick-links="quickLinks"
+    />
 
-  <div class="min-h-full">
-    <router-view />
+    <div class="grow w-full">
+      <router-view />
+    </div>
   </div>
 
   <AppToaster
@@ -163,3 +165,9 @@ onErrorCaptured((error: Error | AxiosError) => {
     @update-service-worker="updateServiceWorker()"
   />
 </template>
+
+<style>
+.pageSize {
+
+}
+</style>

@@ -32,13 +32,13 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div>
+  <div class="w-full h-full">
     <div v-if="errorGetFilter">
       {{ errorGetFilter }}
     </div>
     <div
       v-else
-      class="flex flex-col gap-8"
+      class="flex flex-col gap-8 w-full h-full"
     >
       <!-- HEADER -->
       <div class="flex flex-row gap-2 justify-between">
@@ -65,7 +65,7 @@ onMounted(async () => {
       </div>
       <!-- CONTENT -->
       <div class="flex flex-row justify-between">
-        <div class="w-2/3">
+        <div>
           <ul class="list-none flex flex-col gap-4">
             <li
               v-for="filter of card?.customFilter.filters"
@@ -114,5 +114,3 @@ onMounted(async () => {
     </div>
   </div>
 </template>
-
-<style scoped></style>

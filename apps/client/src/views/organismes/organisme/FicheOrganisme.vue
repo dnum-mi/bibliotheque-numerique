@@ -36,6 +36,7 @@ const selectedTabIndex = ref(0)
 function selectTab (idx: number) {
   selectedTabIndex.value = idx
 }
+
 const copyLink = async () => {
   try {
     await navigator.clipboard.writeText(currentUrl.value)
@@ -65,20 +66,20 @@ onMounted(async () => {
   </div>
   <div
     v-if="organisme && !isLoading"
-    class="fr-grid-row gap-4 min-h-full"
+    class="flex flex-row gap-8 h-full p-4"
   >
-    <LayoutFiche class="fr-p-0 fr-col-6 min-h-full flex flex-column">
+    <LayoutFiche class="w-1/2">
       <template #title>
         <OrganismeBadge
           :type="organisme.type"
+          class="mr-4"
           big
         />
         <span class="fr-text--lead fr-text--bold">{{ organisme.idRna }} -</span>
         <span class="fr-text--lead">{{ organisme.title }}</span>
       </template>
-
       <template #sub-title>
-        <div class="flex  gap-4">
+        <div class="flex gap-4">
           <div class="flex-grow">
             <label class="bn-fiche-sub-title--label">SIÈGE SOCIAL</label>
             <span class="bn-fiche-sub-title--text">{{ organisme.addressLabel }}</span>
@@ -108,71 +109,77 @@ onMounted(async () => {
           </div>
         </div>
       </template>
-      <div class="flex-grow">
-        <DsfrTabs
-          tab-list-name="tabs-fiche"
-          :tab-titles="tabTitles"
-          :initial-selected-index="0"
-          @select-tab="selectTab"
-        >
-          <DsfrTabContent
-            panel-id="tab-content-0"
-            tab-id="tab-0"
-            :selected="selectedTabIndex === 0"
+      <template #content>
+        <div class="w-full h-full">
+          <DsfrTabs
+            tab-list-name="tabs-fiche"
+            :tab-titles="tabTitles"
+            :initial-selected-index="0"
+            class="h-full"
+            @select-tab="selectTab"
           >
-            <div class="bn-list-contact">
-              <div class="fr-container">
-                <div class="fr-grid-row">
-                  <div class="fr-col-12 fr-mb-2w">
-                    <div class="fr-mr-2w bn-icon--blue-france-main-525">
-                      <span
-                        class="fr-icon-question-answer-line"
-                        aria-hidden="true"
-                      />
-                    </div>
-
-                    <span class="fr-text fr-text--bold">Adresse et contacts</span>
+            <DsfrTabContent
+              panel-id="tab-content-0"
+              tab-id="tab-0"
+              :selected="selectedTabIndex === 0"
+            >
+              <div class="flex flex-col gap-6">
+                <div class="flex flex-row gap-2 items-center">
+                  <div class="fr-mr-2w bn-icon--blue-france-main-525">
+                    <span
+                      class="fr-icon-question-answer-line"
+                      aria-hidden="true"
+                    />
                   </div>
 
-                  <InfoContact
-                    :name="organisme.title"
-                    :info="organisme.addressLabel"
-                    :emails="organisme.email"
-                    :phones="organisme.phoneNumber"
-                  />
+                  <span class="fr-text fr-text--bold">Adresse et contacts</span>
                 </div>
+
+                <InfoContact
+                  :name="organisme.title"
+                  :info="organisme.addressLabel"
+                  :emails="organisme.email"
+                  :phones="organisme.phoneNumber"
+                />
               </div>
-            </div>
-          </DsfrTabContent>
-        </DsfrTabs>
-      </div>
-      <footer class="footer">
-        <div class="fr-col-11 fr-col-lg-6 footer-actions mx-auto">
-          <DsfrButton
-            :style="{ width: '50%' }"
-            class="m-4 p-4 flex justify-center"
-            label="Copier le lien"
-            icon="ri-arrow-go-back-fill"
-            :icon-right="true"
-            secondary
-            @click="copyLink()"
-          />
+            </DsfrTabContent>
+          </DsfrTabs>
         </div>
-      </footer>
+      </template>
+      <template #footer>
+        <footer class="footer">
+          <div class="flex align-center justify-center fr-card--shadow">
+            <DsfrButton
+              :style="{ width: '50%' }"
+              class="m-4 p-4 flex justify-center"
+              label="Copier le lien"
+              icon="ri-arrow-go-back-fill"
+              :icon-right="true"
+              secondary
+              @click="copyLink()"
+            />
+          </div>
+        </footer>
+      </template>
     </LayoutFiche>
 
-    <ListeDossier :organisme-id="organisme.id" />
+    <div class="w-1/2 flex flex-col">
+      <div class="fr-p-3w flex align-center gap-3">
+        <div class="bn-icon--green-archipel">
+          <span
+            class="fr-icon-book-2-line"
+            aria-hidden="true"
+          />
+        </div>
+        <h4 class="fr-text--bold m-0">
+          Dossiers déposés
+        </h4>
+      </div>
+      <div class="w-full">
+        <ListeDossier :organisme-id="organisme.id" />
+      </div>
+    </div>
   </div>
 </template>
 
-<style scoped>
-.footer {
-  background-color: #fff;
-  text-align: center;
-  box-shadow: 0 -4px 16px rgb(0 0 0 / 25%);
-}
-
-.footer button {
-  width: 50%;
-}
-</style>
+<style scoped></style>

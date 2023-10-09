@@ -19,7 +19,7 @@ const champs = computed(() => props.datas?.champs || [])
 <template>
   <div class="fr-container">
     <div class="fr-grid-row fr-mb-5v">
-      <h5 class="bn-text--shadow">
+      <h5 class="">
         <span
           class="fr-icon-account-line fr-icon--lg fr-mr-2w bn-ellipse bn-ellipse-account"
           aria-hidden="true"

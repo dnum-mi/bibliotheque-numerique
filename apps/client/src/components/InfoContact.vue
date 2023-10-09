@@ -8,23 +8,26 @@ defineProps<{
 </script>
 
 <template>
-  <div class="fr-col-12 fr-mb-2w">
-    <div class="fr-container">
-      <div class="fr-grid-row">
-        <div class="fr-col-3">
-          <label class="bn-info-contact--text-sm fr-text--bold">{{ name }}</label>
-          <span class="bn-info-contact--text-sm">{{ info }}</span>
-        </div>
-        <label class="bn-info-contact--text-sm fr-text--bold"> Téléphone </label>
-        <span class="bn-info-contact--text-sm">
-          {{ phone }}
-        </span>
-
-        <label class="bn-info-contact--text-sm fr-text--bold">Courriel</label>
-        <span class="bn-info-contact--text-sm">
-          {{ email }}
-        </span>
-      </div>
+  <div class="flex flex-row justify-between w-full">
+    <div class="flex flex-col">
+      <label class="bn-info-contact--text-sm fr-text--bold">
+        {{ name }}
+      </label>
+      <span class="bn-info-contact--text-sm">
+        {{ info }}
+      </span>
+    </div>
+    <div class="flex flex-col">
+      <label class="bn-info-contact--text-sm fr-text--bold"> Téléphone </label>
+      <span class="bn-info-contact--text-sm">
+        {{ phone }}
+      </span>
+    </div>
+    <div class="flex flex-col">
+      <label class="bn-info-contact--text-sm fr-text--bold">Courriel</label>
+      <span class="bn-info-contact--text-sm">
+        {{ email }}
+      </span>
     </div>
   </div>
 </template>

@@ -39,12 +39,11 @@ const fieldsDemandeur = [
         :key="label"
         class="fr-col-3"
       >
-        <label class="fr-text--bold bn-text--shadow"> {{ label }} </label>
-        <div class="fr-text bn-text--shadow fr-mt-4v">
+        <label class="fr-text--bold"> {{ label }} </label>
+        <div class="fr-text fr-mt-4v">
           {{ value }}
         </div>
       </div>
     </div>
   </div>
 </template>
-@/utils/date-to-string

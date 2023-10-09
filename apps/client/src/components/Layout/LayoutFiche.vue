@@ -1,34 +1,32 @@
 <template>
   <div>
-    <div class="fr-grid-row m-4">
-      <div class="bn-fiche-title bn-fiche-space-left fr-col-12">
-        <slot name="title" />
+    <div class="flex flex-col justify-between w-full h-full">
+      <div class="flex flex-col gap-3 w-full grow">
+        <div class="bn-fiche-title fr-p-3w">
+          <slot name="title" />
+        </div>
+        <div class="bn-fiche-sub-title fr-p-2w">
+          <slot name="sub-title" />
+        </div>
+        <div class="grow">
+          <slot name="content" />
+        </div>
       </div>
-      <div class="bn-fiche-sub-title bn-fiche-space-left fr-col-12">
-        <slot name="sub-title" />
-      </div>
-      <div>
-        <slot />
+      <div class="w-full">
+        <slot name="footer" />
       </div>
     </div>
   </div>
 </template>
 
+<script setup lang='ts'>
+</script>
 <style scoped>
 .bn-fiche-title {
-  height: 5.25rem;
-  align-items: baseline;
-  display: flex;
   background-color: var(--background-alt-grey);
-  margin: 0.125rem;
-  flex-wrap: wrap;
-  align-content: flex-end;
 }
+
 .bn-fiche-sub-title {
-  height: 4rem;
-  align-items: center;
-  display: flex;
   background-color: var(--background-alt-grey);
-  margin: 0.125rem;
 }
 </style>

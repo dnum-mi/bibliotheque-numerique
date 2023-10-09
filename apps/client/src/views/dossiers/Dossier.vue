@@ -49,35 +49,37 @@ onMounted(async () => {
       <DossierInformations :datas="dossierDS" />
     </template>
 
-    <DsfrTabs
-      tab-list-name="tabs-dossier"
-      :tab-titles="tabTitles"
-      :initial-selected-index="initialSelectedIndex"
-      @select-tab="selectTab"
-    >
-      <DsfrTabContent
-        panel-id="tab-content-0"
-        tab-id="tab-0"
-        :selected="selectedTabIndex === 0"
+    <template #content>
+      <DsfrTabs
+        tab-list-name="tabs-dossier"
+        :tab-titles="tabTitles"
+        :initial-selected-index="initialSelectedIndex"
+        @select-tab="selectTab"
       >
-        <DossierDemande :datas="dossierDS" />
-      </DsfrTabContent>
+        <DsfrTabContent
+          panel-id="tab-content-0"
+          tab-id="tab-0"
+          :selected="selectedTabIndex === 0"
+        >
+          <DossierDemande :datas="dossierDS" />
+        </DsfrTabContent>
 
-      <DsfrTabContent
-        panel-id="tab-content-1"
-        tab-id="tab-1"
-        :selected="selectedTabIndex === 1"
-      >
-        <DossierAnnotations :datas="dossierDS" />
-      </DsfrTabContent>
+        <DsfrTabContent
+          panel-id="tab-content-1"
+          tab-id="tab-1"
+          :selected="selectedTabIndex === 1"
+        >
+          <DossierAnnotations :datas="dossierDS" />
+        </DsfrTabContent>
 
-      <DsfrTabContent
-        panel-id="tab-content-2"
-        tab-id="tab-2"
-        :selected="selectedTabIndex === 2"
-      >
-        <DossierMessages :datas="dossierDS" />
-      </DsfrTabContent>
-    </DsfrTabs>
+        <DsfrTabContent
+          panel-id="tab-content-2"
+          tab-id="tab-2"
+          :selected="selectedTabIndex === 2"
+        >
+          <DossierMessages :datas="dossierDS" />
+        </DsfrTabContent>
+      </DsfrTabs>
+    </template>
   </LayoutFiche>
 </template>
