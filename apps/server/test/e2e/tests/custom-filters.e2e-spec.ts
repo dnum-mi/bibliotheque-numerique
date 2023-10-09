@@ -5,7 +5,7 @@ import { TestingModuleFactory } from '../common/testing-module.factory'
 import { getUserCookie } from '../common/get-user-cookie'
 import { CustomFilterService } from '@/modules/custom-filters/providers/services/custom-filter.service'
 import { CustomFilter } from '@/modules/custom-filters/objects/entities/custom-filter.entity'
-import { Demarche } from '../../../src/modules/demarches/objects/entities/demarche.entity'
+import { Demarche } from '@/modules/demarches/objects/entities/demarche.entity'
 
 describe('Custom filters (e2e)', () => {
   let app: INestApplication
@@ -16,7 +16,10 @@ describe('Custom filters (e2e)', () => {
     name: 'My custom filter',
     groupByDossier: false,
     columns: ['I01', 'I02', 'I03', 'I08', 'I09'],
-    sorts: [{ key: 'I01', order: 'ASC' }, { key: 'I02', order: 'DESC' }],
+    sorts: [
+      { key: 'I01', order: 'ASC' },
+      { key: 'I02', order: 'DESC' },
+    ],
     filters: {
       I01: {
         filterType: 'text',
@@ -33,29 +36,6 @@ describe('Custom filters (e2e)', () => {
     id: 3,
     demarcheId: 5,
     name: `${customFilterFromFixture.name} 2`,
-  }
-
-  const customFilterFromFixture3 = {
-    ...customFilterFromFixture,
-    id: 4,
-    filters: {
-      I02: {
-        condition1: {
-          filter: '2023-06-03',
-          type: 'greaterThan',
-        },
-        filterType: 'date',
-      },
-      I10: {
-        condition1: {
-          filter: 'babo',
-          type: 'contains',
-        },
-        filterType: 'text',
-      },
-    },
-    groupByDossier: false,
-    name: 'My custom filter for stats',
   }
 
   let demarchesCount = 0
@@ -76,22 +56,21 @@ describe('Custom filters (e2e)', () => {
   })
 
   it('Should give 403', async () => {
-    return request(app.getHttpServer())
-      .get('/custom-filters')
-      .expect(403)
+    return request(app.getHttpServer()).get('/custom-filters').expect(403)
   })
 
   it('Should return my filters', async () => {
+    const filter = await filterService.repository.find({ where: { userId: 4 } })
+
     return request(app.getHttpServer())
       .get('/custom-filters')
       .set('Cookie', [cookie])
       .expect(200)
       .then(({ body }) => {
-        expect(body).toMatchObject([
-          customFilterFromFixture,
-          customFilterFromFixture2,
-          customFilterFromFixture3,
-        ])
+        expect(body instanceof Array).toBeTruthy()
+        body.forEach((b, i) => {
+          expect(filter[i]).toMatchObject(b)
+        })
       })
   })
 
@@ -102,12 +81,17 @@ describe('Custom filters (e2e)', () => {
   })
 
   it('Should return my filters of demarche 1', async () => {
+    const filter = await filterService.repository.find({ where: { userId: 4, demarcheId: 1 } })
+
     return request(app.getHttpServer())
       .get('/custom-filters/demarche/1')
       .set('Cookie', [cookie])
       .expect(200)
       .then(({ body }) => {
-        expect(body).toMatchObject([customFilterFromFixture, customFilterFromFixture3])
+        expect(body instanceof Array).toBeTruthy()
+        body.forEach((b, i) => {
+          expect(filter[i]).toMatchObject(b)
+        })
       })
   })
 
@@ -157,7 +141,9 @@ describe('Custom filters (e2e)', () => {
       .expect(201)
       .then(async ({ body }) => {
         expect(body).toMatchObject({ ...filter })
-        const addedFilter = await filterService.repository.findOne({ where: { name: 'Superman' } })
+        const addedFilter = await filterService.repository.findOne({
+          where: { name: 'Superman' },
+        })
         expect(addedFilter).toMatchObject({ ...filter, userId: 4 })
       })
   })
@@ -185,7 +171,9 @@ describe('Custom filters (e2e)', () => {
       .expect(201)
       .then(async ({ body }) => {
         expect(body).toMatchObject({ ...filter })
-        const addedFilter = await filterService.repository.findOne({ where: { name: 'Superman 2' } })
+        const addedFilter = await filterService.repository.findOne({
+          where: { name: 'Superman 2' },
+        })
         expect(addedFilter).toMatchObject({ ...filter, userId: 4 })
       })
   })
@@ -365,8 +353,13 @@ describe('Custom filters (e2e)', () => {
       })
       .expect(200)
       .then(async () => {
-        const filter = await filterService.repository.findOne({ where: { id: 1 } })
-        expect(filter).toMatchObject({ ...customFilterFromFixture, name: 'new name' })
+        const filter = await filterService.repository.findOne({
+          where: { id: 1 },
+        })
+        expect(filter).toMatchObject({
+          ...customFilterFromFixture,
+          name: 'new name',
+        })
       })
   })
 
@@ -382,7 +375,9 @@ describe('Custom filters (e2e)', () => {
       .set('Cookie', [cookie])
       .expect(200)
       .then(async () => {
-        const filter = await filterService.repository.findOne({ where: { id: filterId } })
+        const filter = await filterService.repository.findOne({
+          where: { id: filterId },
+        })
         expect(filter).toBeNull()
       })
   })

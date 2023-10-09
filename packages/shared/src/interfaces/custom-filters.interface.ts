@@ -5,8 +5,8 @@ export interface ICustomFilter {
   name: string
   groupByDossier: boolean
   columns: string[]
-  sorts?: SortDto<DynamicKeys>[]
-  filters?: Record<keyof DynamicKeys, FilterDto>
-  demarcheId?: number,
-  totals?: string[]
+  sorts: SortDto<DynamicKeys>[] | null
+  filters: Record<keyof DynamicKeys, FilterDto> | null
+  demarcheId: number,
+  totals: string[] | null
 }

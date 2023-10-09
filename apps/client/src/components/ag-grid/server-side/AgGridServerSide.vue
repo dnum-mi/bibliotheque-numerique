@@ -47,10 +47,8 @@ const refresh = () => {
 
 // function called by aggrid in SSR mode to fetch its data
 const getRows = async (params: IServerSideGetRowsParams) => {
-  console.log(props.loading, props.preCondition)
   if (props.loading) return undefined
   if (props.preCondition) {
-    console.log('getRows', params)
     const dto: PaginationDto<T> = {
       sorts: fromAggToBackendSort(params.request.sortModel),
       filters: fromAggToBackendFilter<T>(params.request.filterModel),

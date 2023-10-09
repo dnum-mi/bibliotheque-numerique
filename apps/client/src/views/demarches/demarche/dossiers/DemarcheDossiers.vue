@@ -9,10 +9,10 @@ import { useRoute, useRouter } from 'vue-router'
 import { useDebounceFn } from '@vueuse/core'
 import type { GridOptions } from 'ag-grid-enterprise'
 import type { ColDef, ColumnApi, ColumnMenuTab, GridApi, GridReadyEvent, SelectionChangedEvent } from 'ag-grid-community'
-import type { CreateCustomFilterDto, ICustomFilter, IDemarche, PaginationDto } from '@biblio-num/shared'
+import type { CreateCustomFilterDto, ICustomFilter, IDemarche, PaginationDto, PatchCustomFilterDto } from '@biblio-num/shared'
 
 import { type FrontMappingColumn, useCustomFilterStore, useDemarcheStore } from '@/stores'
-import DemarcheDossiersFilters from '@/views/demarches/demarche/dossiers/DemarcheDossiersFilters.vue'
+import DemarcheDossiersFilters, { type TotalsAllowed } from '@/views/demarches/demarche/dossiers/DemarcheDossiersFilters.vue'
 import DemarcheDossierCellRenderer from '@/views/demarches/demarche/dossiers/DemarcheDossierCellRenderer.vue'
 import { type SmallFilter } from './DemarcheDossiersFilters.vue'
 import { deepAlmostEqual, selectKeysInObject } from '@/utils/object'
@@ -25,11 +25,15 @@ const gridApi: Ref<GridApi | undefined> = ref()
 const columnApi: Ref<ColumnApi | undefined> = ref()
 const groupByDossier: Ref<boolean> = ref(false)
 const demarche = computed<IDemarche>(() => demarcheStore.currentDemarche as IDemarche)
-const demarcheConfiguration = computed<FrontMappingColumn[]>(() => demarcheStore.currentDemarchePlaneConfiguration)
+const demarcheConfiguration = computed<FrontMappingColumn[]>(() => demarcheStore.currentDemarcheFlatConfiguration)
 const customFilterStore = useCustomFilterStore()
 const customFilters: ComputedRef<ICustomFilter[]> = computed(() => customFilterStore.customFilters)
 const selectedCustomFilter: Ref<ICustomFilter | null> = ref(null)
-
+const totalsAllowed: ComputedRef<TotalsAllowed[]> = computed(
+  () => demarcheConfiguration.value
+    .filter(mapping => mapping.type === 'number' && mapping.id !== '96151176-4624-4706-b861-722d2e53545d')
+    .map((mapping) => ({ id: mapping.id, columnLabel: mapping.columnLabel })),
+)
 const paginationChanged = computed(() => {
   const keys = ['columns', 'filters', 'sorts']
   return !deepAlmostEqual(
@@ -91,10 +95,11 @@ const route = useRoute()
 onMounted(async () => {
   computeColumnsDef()
   await customFilterStore.getCustomFilters()
-  if (route.query.customFilter) {
-    selectFilter(Number(route.query.customFilter))
-  }
+  // if (route.query.customFilter) {
+  //   selectFilter(Number(route.query.customFilter))
+  // }
 })
+
 watch(demarche, async (newValue) => {
   computeColumnsDef()
   await customFilterStore.getCustomFiltersByDemarche(newValue.id)
@@ -138,13 +143,17 @@ const onGridReady = (event: GridReadyEvent) => {
 }
 
 /* region Filter events */
-const createFilter = async (filterName: string) => {
+const createFilter = async ({ filterName = '', totals = '' }: { filterName: string, totals: string }) => {
   const createCustomFilterDto: CreateCustomFilterDto = {
     name: filterName,
     groupByDossier: groupByDossier.value,
     columns: paginationDto.value.columns,
     sorts: paginationDto.value.sorts,
     filters: paginationDto.value.filters || undefined,
+  }
+
+  if (totals) {
+    createCustomFilterDto.totals = totals === 'Aucun total' ? [] : [totals]
   }
   await customFilterStore.createCustomFilter(createCustomFilterDto, demarche.value.id)
   const filterId = customFilters.value.find((f) => f.name === filterName)?.id || null
@@ -175,6 +184,7 @@ const selectFilter = (id: number | null) => {
     return
   }
   selectedCustomFilter.value = customFilters.value.find((cf) => cf.id === id) || null
+  console.log(selectedCustomFilter)
   if (selectedCustomFilter.value) {
     groupByDossier.value = selectedCustomFilter.value?.groupByDossier
     paginationDto.value.columns = selectedCustomFilter.value?.columns
@@ -185,10 +195,17 @@ const selectFilter = (id: number | null) => {
     throw new Error('Selected custom filter does not exist')
   }
 }
-const updateFilterName = async (name: string) => {
+const updateFilterName = async ({ filterName = '', totals = '' }) => {
   if (selectedCustomFilter.value) {
-    await customFilterStore.updateCustomFilter(selectedCustomFilter.value.id, { name })
-    selectedCustomFilter.value.name = name
+    const dto: PatchCustomFilterDto = {
+      name: filterName,
+    }
+    if (totals) {
+      dto.totals = totals === 'Aucun total' ? [] : [totals]
+    }
+    await customFilterStore.updateCustomFilter(selectedCustomFilter.value.id, dto)
+    selectedCustomFilter.value.name = filterName
+    selectedCustomFilter.value.totals = dto.totals
   }
 }
 
@@ -206,7 +223,12 @@ const toggleView = useDebounceFn((isActive: boolean) => {
 })
 
 const paginationDto = ref()
-const apiCall = (dto: PaginationDto<any>) => {
+watch(paginationDto, async (newValue, oldValue) => {
+  if (!oldValue && newValue && route.query.customFilter) {
+    selectFilter(Number(route.query.customFilter))
+  }
+})
+const apiCall = (dto: PaginationDto<unknown>) => {
   return demarcheStore.searchCurrentDemarcheDossiers(groupByDossier.value, dto)
 }
 </script>
@@ -244,6 +266,7 @@ const apiCall = (dto: PaginationDto<any>) => {
         :filters="customFilters as SmallFilter[]"
         :selected-filter="selectedCustomFilter as SmallFilter"
         :pagination-changed="paginationChanged"
+        :totals-allowed="totalsAllowed"
         @create-filter="createFilter($event)"
         @update-filter="updateFilter()"
         @update-filter-name="updateFilterName($event)"

@@ -4,7 +4,7 @@ export class MappingColumnWithoutChildren {
   id: string
   columnLabel?: string
   originalLabel: string
-  type: FieldTypeKeys
+  type?: FieldTypeKeys
   formatFunctionRef?: FormatFunctionRefKeys | undefined
   source: FieldSourceKeys
 }

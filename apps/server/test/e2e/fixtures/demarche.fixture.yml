@@ -7,19 +7,19 @@ items:
     identification: "FE"
     type: "ARUP"
     mappingColumns: [
-      { "id": "I01", "label": "Identifiant", "type": "string" },
-      { "id": "I02", "label": "Moment", "type": "date" },
-      { "id": "I03", "label": "Titre", "type": "string" },
-      { "id": "I04", "label": "Consentement", "type": "string" },
-      { "id": "I05", "label": "Etat", "type": "string" },
-      { "id": "I06", "label": "Delais", "type": "number" },
-      { "id": "I07", "label": "Excel", "type": "string" },
+      { "id": "I01", "columnLabel": "Identifiant", "type": "string" },
+      { "id": "I02", "columnLabel": "Moment", "type": "date" },
+      { "id": "I03", "columnLabel": "Titre", "type": "string" },
+      { "id": "I04", "columnLabel": "Consentement", "type": "string" },
+      { "id": "I05", "columnLabel": "Etat", "type": "string" },
+      { "id": "I06", "columnLabel": "Delais", "type": "number" },
+      { "id": "I07", "columnLabel": "Excel", "type": "string" },
       {
         'id': "I42",
         'children': [
-          { "id": "I08", "label": "Montant", "type": "number" },
-          { "id": "I09", "label": "Pays", "type": "string" },
-          { "id": "I10", "label": "Organismefinanceur", "type": "string" }
+          { "id": "I08", "columnLabel": "Montant", "type": "number" },
+          { "id": "I09", "columnLabel": "Pays", "type": "string" },
+          { "id": "I10", "columnLabel": "Organismefinanceur", "type": "string" }
         ],
       }
     ]
@@ -64,16 +64,16 @@ items:
     title: "[UPDATE-IDENTIFICATION] Déclaration de financement étranger"
     type: "ARUP"
     mappingColumns: [
-      {"id":"I01", "label":"Identifiant"},
-      {"id":"I02", "label":"Moment"},
-      {"id":"I03", "label":"Titre"},
-      {"id":"I04", "label":"Consentement"},
-      {"id":"I05", "label":"Etat"},
-      {"id":"I06", "label":"Delais"},
-      {"id":"I07", "label":"Excel"},
-      {"id":"I08", "label":"Montant"},
-      {"id":"I09", "label":"Pays"},
-      {"id":"I10", "label":"Organismefinanceur"}
+      {"id":"I01", "columnLabel":"Identifiant"},
+      {"id":"I02", "columnLabel":"Moment"},
+      {"id":"I03", "columnLabel":"Titre"},
+      {"id":"I04", "columnLabel":"Consentement"},
+      {"id":"I05", "columnLabel":"Etat"},
+      {"id":"I06", "columnLabel":"Delais"},
+      {"id":"I07", "columnLabel":"Excel"},
+      {"id":"I08", "columnLabel":"Montant"},
+      {"id":"I09", "columnLabel":"Pays"},
+      {"id":"I10", "columnLabel":"Organismefinanceur"}
     ]
     dsDataJson: {number: 4}
   demarche-delete-identification:
@@ -99,16 +99,16 @@ items:
         "originalLabel": "Etat délai",
         "formatFunctionRef": "delay-status"
     },
-      {"id":"I01", "label":"Identifiant"},
-      {"id":"I02", "label":"Moment"},
-      {"id":"I03", "label":"Titre"},
-      {"id":"I04", "label":"Consentement"},
-      {"id":"I05", "label":"Etat"},
-      {"id":"I06", "label":"Delais"},
-      {"id":"I07", "label":"Excel"},
-      {"id":"I08", "label":"Montant"},
-      {"id":"I09", "label":"Pays"},
-      {"id":"I10", "label":"Organismefinanceur"}
+      {"id":"I01", "columnLabel":"Identifiant"},
+      {"id":"I02", "columnLabel":"Moment"},
+      {"id":"I03", "columnLabel":"Titre"},
+      {"id":"I04", "columnLabel":"Consentement"},
+      {"id":"I05", "columnLabel":"Etat"},
+      {"id":"I06", "columnLabel":"Delais"},
+      {"id":"I07", "columnLabel":"Excel"},
+      {"id":"I08", "columnLabel":"Montant"},
+      {"id":"I09", "columnLabel":"Pays"},
+      {"id":"I10", "columnLabel":"Organismefinanceur"}
     ]
     dsDataJson: {number: 5}
   demarche-undefined-identification:
@@ -134,16 +134,16 @@ items:
         "originalLabel": "Etat délai",
         "formatFunctionRef": "delay-status"
     },
-      {"id":"I01", "label":"Identifiant"},
-      {"id":"I02", "label":"Moment"},
-      {"id":"I03", "label":"Titre"},
-      {"id":"I04", "label":"Consentement"},
-      {"id":"I05", "label":"Etat"},
-      {"id":"I06", "label":"Delais"},
-      {"id":"I07", "label":"Excel"},
-      {"id":"I08", "label":"Montant"},
-      {"id":"I09", "label":"Pays"},
-      {"id":"I10", "label":"Organismefinanceur"}
+      {"id":"I01", "columnLabel":"Identifiant"},
+      {"id":"I02", "columnLabel":"Moment"},
+      {"id":"I03", "columnLabel":"Titre"},
+      {"id":"I04", "columnLabel":"Consentement"},
+      {"id":"I05", "columnLabel":"Etat"},
+      {"id":"I06", "columnLabel":"Delais"},
+      {"id":"I07", "columnLabel":"Excel"},
+      {"id":"I08", "columnLabel":"Montant"},
+      {"id":"I09", "columnLabel":"Pays"},
+      {"id":"I10", "columnLabel":"Organismefinanceur"}
     ]
     dsDataJson: {number: 6}
 

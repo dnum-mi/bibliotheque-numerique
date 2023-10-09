@@ -12,8 +12,13 @@ import {
 import { CreateFieldDto } from '../objects/dto/fields/create-field.dto'
 import { CustomChamp } from '@dnum-mi/ds-api-client/src/@types/types'
 import { fixFieldValueFunctions } from '../objects/constante/fix-field.dictionnary'
-import { deduceFieldToQueryFromType } from '@/shared/utils/common-search.utils'
-import { FieldType, FieldTypeKeys, FormatFunctionRef, FormatFunctionRefKeys, MappingColumn } from '@biblio-num/shared'
+import {
+  FieldType,
+  FieldTypeKeys,
+  FormatFunctionRef,
+  FormatFunctionRefKeys,
+  MappingColumn,
+} from '@biblio-num/shared'
 import { ChampDescriptor } from '@dnum-mi/ds-api-client'
 
 type RawChamp = CustomChamp & {
@@ -66,7 +71,10 @@ export class FieldService extends BaseEntityService<Field> {
     }
   }
 
-  private _extractDsChampType(champ: RawChamp, formatFunctionRefKey?: FormatFunctionRefKeys | null): DsChampTypeKeys {
+  private _extractDsChampType(
+    champ: RawChamp,
+    formatFunctionRefKey?: FormatFunctionRefKeys | null,
+  ): DsChampTypeKeys {
     const originalDsChampType: DsChampTypeKeys =
       DsChampType[champ.__typename] ?? DsChampType.UnknownChamp
     if (formatFunctionRefKey === FormatFunctionRef.rna) {
@@ -94,7 +102,10 @@ export class FieldService extends BaseEntityService<Field> {
       } else {
         const id = champ.champDescriptor?.id ?? champ.id
         const columnRef = columnHash[id]
-        const dsType = this._extractDsChampType(champ, columnRef.formatFunctionRef)
+        const dsType = this._extractDsChampType(
+          champ,
+          columnRef.formatFunctionRef,
+        )
         if (!columnRef) {
           this.logger.debug(champ)
           throw new Error(`There is no reference of ${id} in column hash`)
@@ -205,41 +216,28 @@ export class FieldService extends BaseEntityService<Field> {
     fieldsId: string[],
   ): Promise<Record<string, FieldTypeKeys>> {
     this.logger.verbose('giveFieldType')
-    return await this._queryGiveFieldType(fieldsId)
-      .then((result) => {
-        return Object.fromEntries(
-          result.map((r: { sourceId: string; type: FieldTypeKeys }) => [
-            r.sourceId,
-            r.type,
-          ]),
-        )
-      })
+    return await this._queryGiveFieldType(fieldsId).then((result) => {
+      return Object.fromEntries(
+        result.map((r: { sourceId: string; type: FieldTypeKeys }) => [
+          r.sourceId,
+          r.type,
+        ]),
+      )
+    })
   }
 
   private async _queryGiveFieldType(
     fieldsId: string[],
-  ): Promise< { sourceId: string; type: FieldTypeKeys }[]> {
+  ): Promise<{ sourceId: string; type: FieldTypeKeys }[]> {
     return this.repo
       .createQueryBuilder()
-      .select('"sourceId"').distinct(true)
+      .select('"sourceId"')
+      .distinct(true)
       .addSelect('type')
-      .where('"sourceId" IN (:...sourceids)', { sourceids: fieldsId.map((id) => id) })
-      .getRawMany()
-  }
-
-  async giveFieldTypeIntoWhereQueries(
-    fieldsId: string[],
-  ): Promise<Record<string, string>> {
-    this.logger.verbose('giveFieldTypeIntoWhereQueries')
-    return await this._queryGiveFieldType(fieldsId)
-      .then((result) => {
-        return Object.fromEntries(
-          result.map((r: { sourceId: string; type: FieldTypeKeys }) => [
-            r.sourceId,
-            deduceFieldToQueryFromType(r.type),
-          ]),
-        )
+      .where('"sourceId" IN (:...sourceids)', {
+        sourceids: fieldsId.map((id) => id),
       })
+      .getRawMany()
   }
 
   async upsert(

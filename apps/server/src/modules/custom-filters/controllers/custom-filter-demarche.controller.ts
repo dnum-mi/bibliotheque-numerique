@@ -50,6 +50,7 @@ export class CustomFilterDemarcheController {
     return filters
   }
 
+  // TODO: route should be : /customfilter/:filterId/stats (not customfilter/demarche/:idDemarche/:idFilter/stats)
   @RequirePermissions({ name: PermissionName.ACCESS_DEMARCHE })
   @Get(':filterId/stats')
   async getStatistique(

@@ -19,7 +19,6 @@ const apiCall = async (params: PaginationDto<IOrganisme>) => {
 const onSelectionChanged = (event: SelectionChangedEvent) => {
   const id = event.api.getSelectedRows()?.[0]?.id
   if (id) {
-    console.log(id)
     router.push({
       name: 'FicheOrganisme',
       params: { id },

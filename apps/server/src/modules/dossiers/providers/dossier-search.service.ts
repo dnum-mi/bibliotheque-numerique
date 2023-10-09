@@ -11,7 +11,6 @@ import {
   buildPaginationQuery,
   buildSortQuery,
   deduceFieldToQueryFromType,
-  buildOneFilter,
 } from '@/shared/utils/common-search.utils'
 import { FieldService } from './field.service'
 import {
@@ -21,10 +20,6 @@ import {
   MappingColumn,
   SearchDossierDto,
 } from '@biblio-num/shared'
-import { Field } from '../objects/entities/field.entity'
-import { IStatistique } from '../objects/dto/statistique/statistique.interface'
-import { CustomFilter } from '../../custom-filters/objects/entities/custom-filter.entity'
-import { fromMappingColumnArrayToTypeHash } from '../../demarches/utils/demarche.utils'
 
 @Injectable()
 export class DossierSearchService extends BaseEntityService<Dossier> {
@@ -38,22 +33,36 @@ export class DossierSearchService extends BaseEntityService<Dossier> {
   }
 
   // as a same field ID can have multiple instance (repetable fields), we need to aggregate them in an array
-  private _buildArrayAggregateFromOneFieldId(id: string, type: FieldTypeKeys): string {
+  private _buildArrayAggregateFromOneFieldId(
+    id: string,
+    type: FieldTypeKeys,
+  ): string {
     this.logger.verbose('_buildArrayAggregateFromOneFieldId')
     return `
       ARRAY_AGG(
-        CASE WHEN f."sourceId" = '${id}' THEN f."${deduceFieldToQueryFromType(type)}" END)
+        CASE WHEN f."sourceId" = '${id}' THEN f."${deduceFieldToQueryFromType(
+  type,
+)}" END)
         FILTER (WHERE f."sourceId" = '${id}')
     `
   }
 
   // build a common table expression to facilitate manipulation of fields
   // where every field is its stringValue (or number or date) in a column of its label.
-  private _buildAggregatedCTE(demarcheId: number, typeHash: Record<string, FieldTypeKeys>): string {
+  private _buildAggregatedCTE(
+    demarcheId: number,
+    typeHash: Record<string, FieldTypeKeys>,
+  ): string {
     this.logger.verbose('_buildAggregatedCTE')
     const fieldsId = Object.keys(typeHash)
     const select = fieldsId
-      .map((id: string) => `${this._buildArrayAggregateFromOneFieldId(id, typeHash[id])} as "${id}"`)
+      .map(
+        (id: string) =>
+          `${this._buildArrayAggregateFromOneFieldId(
+            id,
+            typeHash[id],
+          )} as "${id}"`,
+      )
       .join(',')
     return `
       aggregatedCTE AS (
@@ -69,7 +78,10 @@ export class DossierSearchService extends BaseEntityService<Dossier> {
   }
 
   // count the number of row before pagination
-  private _buildCountCTE(filters: Record<string, FilterDto>, typeHash: Record<string, FieldTypeKeys>): string {
+  private _buildCountCTE(
+    filters: Record<string, FilterDto>,
+    typeHash: Record<string, FieldTypeKeys>,
+  ): string {
     this.logger.verbose('_buildCountCTE')
     return `
       countCTE AS (
@@ -80,7 +92,11 @@ export class DossierSearchService extends BaseEntityService<Dossier> {
    `
   }
 
-  async search(demarche: Partial<Demarche>, dto: SearchDossierDto, complete = false): Promise<DossierSearchOutputDto> {
+  async search(
+    demarche: Partial<Demarche>,
+    dto: SearchDossierDto,
+    complete = false,
+  ): Promise<DossierSearchOutputDto> {
     this.logger.verbose('search')
     const typeHash = await this.fieldService.giveFieldType(dto.columns)
     dto = adjustDto(dto)
@@ -99,7 +115,7 @@ export class DossierSearchService extends BaseEntityService<Dossier> {
     }
     const withoutChildrenIds: string[] = demarche.mappingColumns
       .filter((c: MappingColumn) => !c.children?.length)
-      .map(c => c.id)
+      .map((c) => c.id)
     return {
       total: parseInt(result[0].total),
       data: result.map((r) => {
@@ -112,39 +128,5 @@ export class DossierSearchService extends BaseEntityService<Dossier> {
         return r
       }),
     }
-  }
-
-  async statistics(demarche: Demarche, customFilter:CustomFilter): Promise<IStatistique> {
-    this.logger.verbose('statistics')
-    const { filters } = customFilter
-    const { mappingColumns } = demarche
-
-    console.log(mappingColumns)
-
-    const query = this.repo.createQueryBuilder('d')
-      .select('d.id')
-      .distinct(true)
-      .innerJoin(Field, 'f', 'f.dossierId = d.id')
-
-    if (filters) {
-      const mch = fromMappingColumnArrayToTypeHash(mappingColumns)
-
-      // TODO: le filtre de date 'in range', check de la format de date
-      Object.entries(filters)
-        .forEach(([key, filter], idx) => {
-          const aliasTable = `t${idx}`
-          const commonWhere = `t${idx}."dossierId" = d.id`
-          const typeWhere = `t${idx}."sourceId" = '${key}'`
-          const fieldName = deduceFieldToQueryFromType(mch[key])
-          const customWhere = buildOneFilter(fieldName, filter, mch[key], false, aliasTable)
-          query.innerJoin(
-            Field,
-            aliasTable,
-            `${commonWhere} AND ${typeWhere} AND (${customWhere})`)
-        })
-    }
-
-    query.where('d.demarcheId = :demarcheId', { demarcheId: demarche.id })
-    return await query.getCount().then(c => ({ nb: c }))
   }
 }

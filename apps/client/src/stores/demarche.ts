@@ -19,7 +19,7 @@ export const useDemarcheStore = defineStore('demarche', () => {
   const currentDemarche: Ref<IDemarche | undefined> = ref()
   const currentDemarcheDossiers = ref<DossierSearchOutputDto | FieldSearchOutputDto>({ total: 0, data: [] })
   const currentDemarcheConfiguration = ref<MappingColumnWithoutChildren[]>([])
-  const currentDemarchePlaneConfiguration: ComputedRef<FrontMappingColumn[]> = computed(() => currentDemarcheConfiguration.value
+  const currentDemarcheFlatConfiguration: ComputedRef<FrontMappingColumn[]> = computed(() => currentDemarcheConfiguration.value
     .map((c: MappingColumn) => c.children?.length ? c.children.map(c => ({ ...c, isChild: true })) : [c])
     .flat(1)
     .filter(c => !!c.columnLabel) as FrontMappingColumn[])
@@ -90,7 +90,7 @@ export const useDemarcheStore = defineStore('demarche', () => {
     demarches,
     currentDemarche,
     currentDemarcheConfiguration,
-    currentDemarchePlaneConfiguration,
+    currentDemarcheFlatConfiguration,
     currentDemarcheConfigurationHash,
     currentDemarcheDossiers,
     getDemarches,

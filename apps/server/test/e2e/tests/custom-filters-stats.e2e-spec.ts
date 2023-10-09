@@ -34,15 +34,15 @@ describe('statistique', () => {
       customFilter: {
         filters: [
           {
-            label: 'I02',
+            label: 'Moment',
             value: 'Après le: 2023-06-03',
           },
           {
-            label: 'I08',
+            label: 'Montant',
             value: 'Plus grand que: 0',
           },
           {
-            label: 'I10',
+            label: 'Organismefinanceur',
             value: 'Contient le mot: babo',
           },
         ],
@@ -56,8 +56,78 @@ describe('statistique', () => {
       },
       totals: [
         {
+          label: 'Total des champs',
+          total: 9,
+        },
+      ],
+    })
+  })
+
+  it('Should return nb champs and montant', async () => {
+    const { body } = await request(app.getHttpServer())
+      .get('/custom-filters/demarche/1/5/stats')
+      .set('Cookie', [cookie])
+      .expect(200)
+
+    expect(body).toMatchObject({
+      customFilter: {
+        filters: [
+          {
+            label: 'Pays',
+            value: 'Contient le mot: a',
+          },
+        ],
+        id: 5,
+        name: 'Total montant for champs',
+      },
+      demarche: {
+        dsId: 76,
+        id: 1,
+        title: 'Déclaration de financement étranger',
+      },
+      totals: [
+        {
+          label: 'Total pour: Montant',
+          total: 125800,
+        },
+        {
+          label: 'Total des champs',
+          total: 10,
+        },
+      ],
+    })
+  })
+
+  it('Should return nb dossiers and montant', async () => {
+    const { body } = await request(app.getHttpServer())
+      .get('/custom-filters/demarche/1/6/stats')
+      .set('Cookie', [cookie])
+      .expect(200)
+
+    expect(body).toMatchObject({
+      customFilter: {
+        filters: [
+          {
+            label: 'Pays',
+            value: 'Contient le mot: a',
+          },
+        ],
+        id: 6,
+        name: 'Total montant for dossier',
+      },
+      demarche: {
+        dsId: 76,
+        id: 1,
+        title: 'Déclaration de financement étranger',
+      },
+      totals: [
+        {
+          label: 'Total pour: Montant',
+          total: 175800,
+        },
+        {
           label: 'Total des dossiers',
-          total: '2',
+          total: 5,
         },
       ],
     })

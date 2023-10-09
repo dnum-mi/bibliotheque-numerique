@@ -5,10 +5,16 @@ import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { InjectRepository } from '@nestjs/typeorm'
 import { CustomFilter } from '@/modules/custom-filters/objects/entities/custom-filter.entity'
 import { DossierSearchService } from '../../../dossiers/providers/dossier-search.service'
-import { ICustomFilterStat, UserFriendlyFilter, ITotal } from '@biblio-num/shared'
-import { humanReadableFilter } from '@/shared/utils/common-search.utils'
+import {
+  DossierSearchOutputDto,
+  FieldSearchOutputDto,
+  ICustomFilterStat,
+  ITotal,
+} from '@biblio-num/shared'
+import { fromCustomFilterToHumanReadableFilter } from '@/shared/utils/common-search.utils'
 import { fromMappingColumnArrayToLabelHash } from '../../../demarches/utils/demarche.utils'
 import { Demarche } from '../../../demarches/objects/entities/demarche.entity'
+import { FieldSearchService } from '@/modules/dossiers/providers/field-search.service'
 
 @Injectable()
 export class CustomFilterService extends BaseEntityService<CustomFilter> {
@@ -17,12 +23,43 @@ export class CustomFilterService extends BaseEntityService<CustomFilter> {
     @InjectRepository(CustomFilter)
     protected readonly repo: Repository<CustomFilter>,
     private readonly dossierSearchService: DossierSearchService,
+    private readonly fieldSearchService: FieldSearchService,
   ) {
     super(repo, logger)
     this.logger.setContext(this.constructor.name)
   }
 
-  async getStats (id: number, userId: number, demarche: Demarche): Promise<ICustomFilterStat> {
+  private _sumTotalsFromResult(
+    customFilter: CustomFilter,
+    labelHash: Record<string, string>,
+    result: DossierSearchOutputDto | FieldSearchOutputDto,
+  ): ITotal[] {
+    const __add = (a: number, b: number): number => a + b
+    return customFilter.totals
+      .map((totalKey) => ({
+        label: `Total pour: ${labelHash[totalKey] || totalKey}`,
+        total: result.data
+          .map((element) => {
+            const number = element?.[totalKey] || 0
+            return number instanceof Array ? number.reduce(__add, 0) : number
+          })
+          .reduce(__add, 0),
+      }))
+      .concat([
+        {
+          label: customFilter.groupByDossier
+            ? 'Total des dossiers'
+            : 'Total des champs',
+          total: result.total,
+        },
+      ])
+  }
+
+  async getStats(
+    id: number,
+    userId: number,
+    demarche: Demarche,
+  ): Promise<ICustomFilterStat> {
     const customFilter = await this.findOneOrThrow({
       where: {
         user: { id: userId },
@@ -30,36 +67,27 @@ export class CustomFilterService extends BaseEntityService<CustomFilter> {
         id,
       },
     })
-
-    const { name, filters: filtersFromCustom } = customFilter
-
+    const { name, filters } = customFilter
     const mch = fromMappingColumnArrayToLabelHash(demarche.mappingColumns)
+    const humanReadableFilter = fromCustomFilterToHumanReadableFilter(
+      filters,
+      mch,
+    )
 
-    const filters: UserFriendlyFilter[] = filtersFromCustom
-      ? Object.entries(filtersFromCustom).map(([key, value]) => {
-        return ({
-          label: mch[key] || key,
-          value: humanReadableFilter(value),
-        })
-      })
-      : []
-
-    // const stat = await this.dossierSearchService.statistiques(demarcheId, customFilter)
-    const stat = await this.dossierSearchService.statistics(demarche, customFilter)
-    const totals:ITotal[] = [
-      {
-        label: 'Total des dossiers',
-        total: `${stat.nb}`,
-      },
-    ]
+    let result: DossierSearchOutputDto | FieldSearchOutputDto
+    if (customFilter.groupByDossier) {
+      result = await this.dossierSearchService.search(demarche, customFilter, true)
+    } else {
+      result = await this.fieldSearchService.search(demarche, customFilter, true)
+    }
 
     return {
       customFilter: {
         id,
         name,
-        filters,
+        filters: humanReadableFilter,
       },
-      totals,
+      totals: this._sumTotalsFromResult(customFilter, mch, result),
       demarche: {
         id: demarche.id,
         dsId: demarche.dsDataJson.number,

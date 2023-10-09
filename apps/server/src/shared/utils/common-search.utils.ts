@@ -11,8 +11,10 @@ import {
   SortDto,
   TextFilterConditionDto,
   TextFilterConditions,
+  UserFriendlyFilter,
 } from '@biblio-num/shared'
 import { BadRequestException } from '@nestjs/common'
+import { FiltersInCustomFilter } from '@/modules/custom-filters/objects/entities/custom-filter.entity'
 
 /* region FILTERS */
 
@@ -117,6 +119,7 @@ type filterFactory = (
   prefix?: string,
 ) => string
 
+// TODO: Injection SQL
 export const buildOneFilter = (
   key: string,
   filter: FilterDto,
@@ -250,7 +253,7 @@ export const dictionaryHumanReadableFilterType = {
 export const humanReadableOperator = (filterType, type): string =>
   dictionaryHumanReadableFilterType[filterType]?.[type] || ''
 
-export function humanReadableFilter(filter: FilterDto): string {
+export const humanReadableFilter = (filter: FilterDto): string => {
   // TODO: A faire
   return [filter.condition1, filter.condition2]
     .filter((c) => c)
@@ -261,6 +264,20 @@ export function humanReadableFilter(filter: FilterDto): string {
         }`,
     )
     .join(filter.operator ? (filter.operator === 'AND' ? ' et ' : ' ou ') : '')
+}
+
+export const fromCustomFilterToHumanReadableFilter = (
+  ffc: FiltersInCustomFilter,
+  mch: Record<string, string>,
+): UserFriendlyFilter[] => {
+  return ffc
+    ? Object.entries(ffc).map(([key, value]) => {
+      return {
+        label: mch[key] || key,
+        value: humanReadableFilter(value),
+      }
+    })
+    : []
 }
 
 /* endregion */

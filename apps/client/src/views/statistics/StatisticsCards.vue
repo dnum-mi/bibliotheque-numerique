@@ -60,7 +60,6 @@ onMounted(async () => {
     </DsfrModal>
   </template>
 </template>
-
 <style scoped>
 .alert {
   --hover: var(--error-425-625);

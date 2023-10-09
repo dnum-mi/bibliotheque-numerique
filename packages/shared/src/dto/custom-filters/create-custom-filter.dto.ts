@@ -1,4 +1,4 @@
-import { IsArray, IsBoolean, IsDefined, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator'
+import { IsArray, IsBoolean, IsDefined, IsNumber, IsOptional, IsString, ValidateIf, ValidateNested } from 'class-validator'
 import { ICustomFilter } from '../../interfaces'
 import { FilterDto, SortDto } from '../pagination'
 import { IsValidFilter } from '../pagination/filters/is-valid-filter.decorator'
@@ -25,14 +25,15 @@ export class CreateCustomFilterDto implements Omit<ICustomFilter, 'id' |'demarch
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => SortDto)
-  sorts?: SortDto<DynamicKeys>[]
+  sorts: SortDto<DynamicKeys>[] | null
 
   @IsValidFilter({ message: 'Les filtres de pagination ne sont pas valides.' })
   @IsOptional()
-  filters?: Record<string, FilterDto>
+  filters: Record<string, FilterDto> | null
 
   @IsOptional()
+  @ValidateIf((o) => o.totals !== null)
   @IsArray()
   @IsString({ each: true })
-  totals?: string[] | undefined
+  totals: string[] | null
 }
