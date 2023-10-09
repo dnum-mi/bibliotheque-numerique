@@ -20,6 +20,10 @@ const ffr = computed(() => {
   return props.params.column?.formatFunctionRef
 })
 
+const type = computed(() => {
+  return props.params.column?.type
+})
+
 const componentRenderer = computed(() => {
   if (props.params.column?.formatFunctionRef === 'delay-status') return delayStateBadge
   return null
@@ -102,6 +106,11 @@ const getFlagURL = (countryName: string) => {
         >
           {{ cellValue }}
         </RouterLink>
+      </template>
+
+      <!-- BOOLEAN -->
+      <template v-else-if="type === 'boolean'">
+        {{ cellValue ? 'Oui': 'Non' }}
       </template>
 
       <!-- ComponentRenderer-->
