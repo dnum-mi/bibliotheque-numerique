@@ -6,13 +6,14 @@ import {
   IsOptional,
   IsString,
   Max,
-  Min,
+  Min, Validate, ValidateIf,
   ValidateNested,
 } from 'class-validator'
 import { SortDto } from './sort.dto'
 import { Type } from 'class-transformer'
 import { FilterDto } from './filters'
 import { IsValidFilter } from './filters/is-valid-filter.decorator'
+import { ColumnContainsKeyContraint } from './column-contains-key.contraint'
 
 export class PaginationDto<T> {
   @IsOptional()
@@ -30,15 +31,17 @@ export class PaginationDto<T> {
   @IsArray()
   @IsString({ each: true })
   @ArrayNotEmpty()
-  columns: ((keyof T) & string)[]
+  columns: ((keyof T) | string)[]
 
   @IsOptional()
   @IsArray()
+  @Validate(ColumnContainsKeyContraint, ['sorts'])
   @ValidateNested({ each: true })
   @Type(() => SortDto)
   sorts: SortDto<T>[]
 
   @IsOptional()
   @IsValidFilter({ message: 'Les filtres de pagination ne sont pas valides.' })
+  @Validate(ColumnContainsKeyContraint, ['filters'])
   filters: Record<keyof T, FilterDto> | null
 }

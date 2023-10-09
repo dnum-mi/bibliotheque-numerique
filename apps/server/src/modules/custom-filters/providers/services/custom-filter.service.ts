@@ -35,24 +35,24 @@ export class CustomFilterService extends BaseEntityService<CustomFilter> {
     result: DossierSearchOutputDto | FieldSearchOutputDto,
   ): ITotal[] {
     const __add = (a: number, b: number): number => a + b
-    return customFilter.totals
-      .map((totalKey) => ({
-        label: `Total pour: ${labelHash[totalKey] || totalKey}`,
+    return [
+      {
+        label: customFilter.groupByDossier
+          ? 'Total des dossiers'
+          : 'Total des champs',
+        total: result.total,
+      },
+    ].concat(
+      customFilter.totals.map((totalKey) => ({
+        label: labelHash[totalKey] || totalKey,
         total: result.data
           .map((element) => {
             const number = element?.[totalKey] || 0
             return number instanceof Array ? number.reduce(__add, 0) : number
           })
           .reduce(__add, 0),
-      }))
-      .concat([
-        {
-          label: customFilter.groupByDossier
-            ? 'Total des dossiers'
-            : 'Total des champs',
-          total: result.total,
-        },
-      ])
+      })),
+    )
   }
 
   async getStats(
@@ -76,9 +76,17 @@ export class CustomFilterService extends BaseEntityService<CustomFilter> {
 
     let result: DossierSearchOutputDto | FieldSearchOutputDto
     if (customFilter.groupByDossier) {
-      result = await this.dossierSearchService.search(demarche, customFilter, true)
+      result = await this.dossierSearchService.search(
+        demarche,
+        customFilter,
+        true,
+      )
     } else {
-      result = await this.fieldSearchService.search(demarche, customFilter, true)
+      result = await this.fieldSearchService.search(
+        demarche,
+        customFilter,
+        true,
+      )
     }
 
     return {
@@ -90,6 +98,7 @@ export class CustomFilterService extends BaseEntityService<CustomFilter> {
       totals: this._sumTotalsFromResult(customFilter, mch, result),
       demarche: {
         id: demarche.id,
+        types: demarche.types,
         dsId: demarche.dsDataJson.number,
         title: demarche.title,
       },

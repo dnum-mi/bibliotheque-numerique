@@ -2,16 +2,22 @@
 import { onMounted, ref } from 'vue'
 import type { ICustomFilterStat } from '@biblio-num/shared'
 import type { Ref } from 'vue'
+import { frenchFormatNumber } from '@/utils/french-number'
 
 import apiClient from '@/api/api-client'
+import OrganismeBadge from '@/components/Badges/OrganismeBadge.vue'
 
 const props = defineProps<{
-  filterId: number,
-  demarcheId: number
- }>()
+  filterId: number;
+  demarcheId: number;
+}>()
 
-const card:Ref<ICustomFilterStat|undefined> = ref()
-const errorGetFilter:Ref<string | undefined> = ref()
+const card: Ref<ICustomFilterStat | undefined> = ref()
+const errorGetFilter: Ref<string | undefined> = ref()
+const addEuro = (title: string) => {
+  console.log(title)
+  return title.toLowerCase().includes('financement')
+}
 
 const emit = defineEmits(['delete'])
 const onDelete = () => {
@@ -30,67 +36,72 @@ onMounted(async () => {
     <div v-if="errorGetFilter">
       {{ errorGetFilter }}
     </div>
-    <div v-else>
-      <div>
-        <strong>N° DS: {{ card?.demarche.dsId }}</strong> - {{ card?.demarche.title }}
-      </div>
-      <div class="wrapper-title">
-        <span class="fr-text--bold text-xl"> {{ card?.customFilter.name }}</span>
-        <div>
-          <button
-            type="button"
-            class="fr-icon-close-line"
-            aria-hidden="true"
-            @click.prevent="
-              $event.target.parentElement.parentElement.parentElement.style.display = 'none'
-            "
-          />
-          <button
-            type="button"
-            class="fr-icon-delete-line"
-            aria-hidden="true"
-            @click.prevent="onDelete"
+    <div
+      v-else
+      class="flex flex-col gap-8"
+    >
+      <!-- HEADER -->
+      <div class="flex flex-row gap-2 justify-between">
+        <div class="flex gap-2">
+          <OrganismeBadge
+            v-for="type in card?.demarche.types"
+            :key="type"
+            :type="type"
           />
         </div>
+        <p class="uppercase m-0 text-sm text-gray-400 fr-text--bold">
+          [N° DS: <span class="text-gray-700">{{ card?.demarche.dsId }}</span>] {{ card?.demarche.title }}
+        </p>
       </div>
-      <div class="flex  my-4">
-        <div class="half">
-          <ul class="list-none  m-0  p-0">
+      <!-- TITLE -->
+      <div class="flex flex-row justify-between">
+        <span class="fr-text--bold text-xl"> {{ card?.customFilter.name }}</span>
+        <button
+          type="button"
+          class="fr-icon-delete-line fr-text-default--warning"
+          aria-hidden="true"
+          @click.prevent="onDelete"
+        />
+      </div>
+      <!-- CONTENT -->
+      <div class="flex flex-row justify-between">
+        <div class="w-2/3">
+          <ul class="list-none flex flex-col gap-4">
             <li
               v-for="filter of card?.customFilter.filters"
               :key="filter.label"
-              class="my-2"
             >
-              <p class="uppercase  my-1  p-0  text-sm  text-gray-500  text-sm">
+              <p class="uppercase m-0 text-sm text-gray-400 fr-text--bold">
                 {{ filter.label }}
               </p>
-              <p class="m-0  p-0  font-bold  text-sm">
+              <p class="m-0 p-0 font-bold text-sm">
                 {{ filter.value }}
               </p>
             </li>
           </ul>
         </div>
 
-        <div class="half">
-          <ul class="list-none  m-0  p-0">
+        <div class="w-1/3">
+          <ul class="list-none pl-0 flex flex-col gap-4">
             <li
               v-for="total of card?.totals"
               :key="total.label"
             >
-              <p class="uppercase  my-1  p-0  text-sm  text-gray-500  text-sm">
+              <p class="uppercase m-0 text-sm text-gray-400 fr-text--bold">
                 {{ total.label }}
               </p>
-              <p class="text-4xl">
-                {{ total.total }}
+              <p class="text-4xl m-0">
+                {{ frenchFormatNumber(total.total) }} {{ addEuro(total.label) ? '€' : '' }}
               </p>
             </li>
           </ul>
         </div>
       </div>
-      <div class="flex justify-end">
+      <!-- FOOTER -->
+      <div class="flex justify-end mt-4">
         <RouterLink
           v-if="card"
-          class="fr-link  fr-icon-arrow-right-line  fr-link--icon-right"
+          class="fr-link fr-icon-arrow-right-line fr-link--icon-right"
           :to="{
             name: 'DemarcheDossiers',
             params: { id: card?.demarche.id },
@@ -104,17 +115,4 @@ onMounted(async () => {
   </div>
 </template>
 
-<style scoped>
-.wrapper-title {
-  display: flex;
-  margin-top: 1em;
-  justify-content: space-between;
-}
-
-.half {
-  flex-basis: 48%;
-  flex-grow: 0;
-  flex-shrink: 0;
-}
-
-</style>
+<style scoped></style>

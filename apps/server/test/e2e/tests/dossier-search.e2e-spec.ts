@@ -77,6 +77,36 @@ describe('Dossier listing', () => {
       .expect(400)
   })
 
+  it('Should return 400 if sort contain key not in column', () => {
+    return request(app.getHttpServer())
+      .post('/demarches/1/dossiers-search')
+      .send({
+        columns: ['I01', 'I02', 'I03'],
+        sorts: [{ key: 'I04', order: 'ASC' }],
+      })
+      .set('Cookie', [adminCookie])
+      .expect(400)
+  })
+
+  it('Should return 400 if filter contain key not in column', () => {
+    return request(app.getHttpServer())
+      .post('/demarches/1/dossiers-search')
+      .send({
+        columns: ['I01', 'I02', 'I03'],
+        filters: {
+          I09: {
+            filterType: 'text',
+            condition1: {
+              type: 'contains',
+              filter: 'atar',
+            },
+          },
+        },
+      })
+      .set('Cookie', [adminCookie])
+      .expect(400)
+  })
+
   it('Should Paginate correctly with default options', () => {
     return (
       request(app.getHttpServer())

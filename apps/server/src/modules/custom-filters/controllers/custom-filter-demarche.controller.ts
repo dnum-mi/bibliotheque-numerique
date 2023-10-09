@@ -4,9 +4,9 @@ import { CreateCustomFilterDto, ICustomFilter, ICustomFilterStat } from '@biblio
 
 import { PermissionsGuard, RequirePermissions } from '../../roles/providers/permissions.guard'
 import { CustomFilterService } from '../providers/services/custom-filter.service'
-import { LoggerService } from '../../../shared/modules/logger/logger.service'
+import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { CurrentDemarcheInterceptor } from '../../demarches/providers/interceptors/current-demarche.interceptor'
-import { PermissionName } from '../../../shared/types/Permission.type'
+import { PermissionName } from '@/shared/types/Permission.type'
 import { CurrentUserId } from '../../users/decorators/current-user-id.decorator'
 import { CurrentDemarche } from '../../demarches/providers/decorators/current-demarche.decorator'
 import { CurrentCustomFiltersInterceptor } from '../providers/interceptors/current-custom-filters.interceptor'

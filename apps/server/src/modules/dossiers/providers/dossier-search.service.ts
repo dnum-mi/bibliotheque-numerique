@@ -98,7 +98,7 @@ export class DossierSearchService extends BaseEntityService<Dossier> {
     complete = false,
   ): Promise<DossierSearchOutputDto> {
     this.logger.verbose('search')
-    const typeHash = await this.fieldService.giveFieldType(dto.columns)
+    const typeHash = await this.fieldService.giveFieldType(dto.columns as string[])
     dto = adjustDto(dto)
     const query = `WITH
       ${this._buildAggregatedCTE(demarche.id, typeHash)},

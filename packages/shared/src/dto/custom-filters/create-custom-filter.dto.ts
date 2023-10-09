@@ -1,11 +1,10 @@
-import { IsArray, IsBoolean, IsDefined, IsNumber, IsOptional, IsString, ValidateIf, ValidateNested } from 'class-validator'
+import { IsArray, IsBoolean, IsDefined, IsOptional, IsString, Validate, ValidateIf } from 'class-validator'
 import { ICustomFilter } from '../../interfaces'
-import { FilterDto, SortDto } from '../pagination'
-import { IsValidFilter } from '../pagination/filters/is-valid-filter.decorator'
-import { DynamicKeys } from '../dossier'
-import { Type } from 'class-transformer'
+import { PaginationDto } from '../pagination'
+import { PickType } from '@nestjs/swagger'
+import { ColumnContainsKeyContraint } from '../pagination/column-contains-key.contraint'
 
-export class CreateCustomFilterDto implements Omit<ICustomFilter, 'id' |'demarcheId'> {
+export class CreateCustomFilterDto extends PickType(PaginationDto, ['columns', 'filters', 'sorts']) implements Omit<ICustomFilter, 'id' | 'demarcheId'> {
   id: number
   demarcheId?: number | undefined
   @IsString()
@@ -16,24 +15,10 @@ export class CreateCustomFilterDto implements Omit<ICustomFilter, 'id' |'demarch
   @IsOptional()
   groupByDossier: boolean
 
-  @IsDefined()
-  @IsArray()
-  @IsString({ each: true })
-  columns: string[]
-
-  @IsOptional()
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => SortDto)
-  sorts: SortDto<DynamicKeys>[] | null
-
-  @IsValidFilter({ message: 'Les filtres de pagination ne sont pas valides.' })
-  @IsOptional()
-  filters: Record<string, FilterDto> | null
-
   @IsOptional()
   @ValidateIf((o) => o.totals !== null)
   @IsArray()
+  @Validate(ColumnContainsKeyContraint, ['totals'])
   @IsString({ each: true })
   totals: string[] | null
 }

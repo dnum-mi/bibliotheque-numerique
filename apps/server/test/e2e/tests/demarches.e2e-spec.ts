@@ -49,7 +49,7 @@ describe('Demarches (e2e)', () => {
       .then(({ body }) => {
         expect(body.length).toBeGreaterThan(0)
         body.forEach((d) => {
-          expect(Object.keys(d)).toEqual(['id', 'title', 'dsId'])
+          expect(Object.keys(d)).toEqual(['id', 'title', 'types', 'dsId'])
         })
       })
   })

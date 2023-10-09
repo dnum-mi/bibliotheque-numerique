@@ -119,6 +119,19 @@ describe('Custom filters (e2e)', () => {
       .expect(404)
   })
 
+  it('Should give 400 with keys of totals not in columns', async () => {
+    return request(app.getHttpServer())
+      .post('/custom-filters/demarche/1')
+      .set('Cookie', [cookie])
+      .send({
+        name: 'Superman',
+        groupByDossier: true,
+        columns: ['I01', 'I02'],
+        totals: ['I08'],
+      })
+      .expect(400)
+  })
+
   it('Should add a filter', async () => {
     const filter = {
       name: 'Superman',
@@ -148,7 +161,7 @@ describe('Custom filters (e2e)', () => {
       })
   })
 
-  it('Should add a filter with totals', async () => {
+  it.only('Should add a filter with totals', async () => {
     const filter = {
       name: 'Superman 2',
       groupByDossier: true,

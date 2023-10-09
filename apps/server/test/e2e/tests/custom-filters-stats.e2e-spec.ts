@@ -87,12 +87,12 @@ describe('statistique', () => {
       },
       totals: [
         {
-          label: 'Total pour: Montant',
-          total: 125800,
-        },
-        {
           label: 'Total des champs',
           total: 10,
+        },
+        {
+          label: 'Montant',
+          total: 125800,
         },
       ],
     })
@@ -122,12 +122,12 @@ describe('statistique', () => {
       },
       totals: [
         {
-          label: 'Total pour: Montant',
-          total: 175800,
-        },
-        {
           label: 'Total des dossiers',
           total: 5,
+        },
+        {
+          label: 'Montant',
+          total: 175800,
         },
       ],
     })

@@ -52,11 +52,12 @@ export class DemarcheController {
   async allSmallDemarche(): Promise<SmallDemarcheOutputDto[]> {
     this.logger.verbose('allSmallDemarche')
     return this.demarcheService.repository
-      .find({ select: ['id', 'title', 'dsDataJson'] })
+      .find({ select: ['id', 'title', 'dsDataJson', 'types'] })
       .then((demarches) => {
         return demarches.map((d) => ({
           id: d.id,
           title: d.title,
+          types: d.types,
           dsId: d.dsDataJson?.number,
         }))
       })

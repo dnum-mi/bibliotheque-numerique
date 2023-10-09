@@ -7,7 +7,7 @@ defineProps<{
 
 <template>
   <DsfrBadge
-    :class="`custom-${type.toLowerCase()}`"
+    :class="`custom-${type?.toLowerCase()}`"
     :label="type"
     :small="!big"
     no-icon

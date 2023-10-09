@@ -119,12 +119,13 @@ export class FieldSearchService extends BaseEntityService<Field> {
     complete = false,
   ): Promise<FieldSearchOutputDto> {
     this.logger.verbose('search')
-    const typeHash = await this.fieldService.giveFieldType(dto.columns)
+    const cols = dto.columns as string[]
+    const typeHash = await this.fieldService.giveFieldType(cols)
     dto = adjustDto(dto)
     const query = `WITH
-      ${this._buildRepeatedCTE(demarche.id, dto.columns)},
-      ${this._buildNonRepeatedCTE(demarche.id, dto.columns)},
-      ${this._buildCombinedCTE(dto.columns, typeHash)},
+      ${this._buildRepeatedCTE(demarche.id, cols)},
+      ${this._buildNonRepeatedCTE(demarche.id, cols)},
+      ${this._buildCombinedCTE(cols, typeHash)},
       ${this._buildCountedCTE(dto, typeHash)}
       SELECT * FROM countedCTE
       ${complete ? '' : buildPaginationQuery(dto.page || 1, dto.perPage || 5)}
