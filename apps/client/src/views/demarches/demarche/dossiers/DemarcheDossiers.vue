@@ -95,9 +95,6 @@ const route = useRoute()
 onMounted(async () => {
   computeColumnsDef()
   await customFilterStore.getCustomFilters()
-  // if (route.query.customFilter) {
-  //   selectFilter(Number(route.query.customFilter))
-  // }
 })
 
 watch(demarche, async (newValue) => {
@@ -134,6 +131,7 @@ const updateAggState = () => {
       applyOrder: true,
       defaultState: { hide: true },
     })
+    agGridComponent.value.refresh()
   }
 }
 
@@ -184,7 +182,6 @@ const selectFilter = (id: number | null) => {
     return
   }
   selectedCustomFilter.value = customFilters.value.find((cf) => cf.id === id) || null
-  console.log(selectedCustomFilter)
   if (selectedCustomFilter.value) {
     groupByDossier.value = selectedCustomFilter.value?.groupByDossier
     paginationDto.value.columns = selectedCustomFilter.value?.columns
@@ -203,6 +200,7 @@ const updateFilterName = async ({ filterName = '', totals = '' }) => {
     if (totals) {
       dto.totals = totals === 'Aucun total' ? [] : [totals]
     }
+    dto.columns = paginationDto.value.columns
     await customFilterStore.updateCustomFilter(selectedCustomFilter.value.id, dto)
     selectedCustomFilter.value.name = filterName
     selectedCustomFilter.value.totals = dto.totals

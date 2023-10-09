@@ -14,6 +14,7 @@ export const useOrganismeStore = defineStore('organisme', () => {
     if (!id) {
       return
     }
+    organisme.value = {} as IOrganisme
     organisme.value = await apiClient[`getOrganismeBy${type}`](id)
   }
 

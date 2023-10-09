@@ -73,7 +73,6 @@ const filterLabelGroups = {
 } as const
 
 type FilterModalType = keyof typeof filterLabelGroups;
-const modalOrigin = ref()
 const inputFilterName: Ref<string> = ref('')
 const filterModalType: Ref<FilterModalType> = ref('create')
 const inputFilterTotals: Ref<string | undefined> = ref(undefined)
@@ -124,7 +123,6 @@ const createOrUpdate = () => {
     />
     <div class="fr-mx-2v fr-mt-2v flex justify-center items-center gap-2">
       <DsfrButton
-        ref="modalOrigin"
         :disabled="!selectedFilter"
         type="submit"
         @click="resetAgGridFilters()"
@@ -132,7 +130,6 @@ const createOrUpdate = () => {
         <VIcon name="ri-filter-off-line" />
       </DsfrButton>
       <DsfrButton
-        ref="modalOrigin"
         :disabled="!selectedFilter"
         type="submit"
         @click="openFilterModal('update')"
@@ -140,7 +137,6 @@ const createOrUpdate = () => {
         <VIcon name="ri-edit-line" />
       </DsfrButton>
       <DsfrButton
-        ref="modalOrigin"
         :disabled="!selectedFilter"
         type="submit"
         @click="openFilterModal('delete')"
@@ -150,7 +146,6 @@ const createOrUpdate = () => {
     </div>
     <div class="fr-mx-2v  fr-mt-2v  flex  justify-center  items-center  gap-2">
       <DsfrButton
-        :ref="modalOrigin"
         type="submit"
         :disabled="!!selectedFilter && !paginationChanged"
         @click="createOrUpdate()"
@@ -163,7 +158,6 @@ const createOrUpdate = () => {
   <DsfrModal
     :opened="filterModalOpen"
     :title="filterLabelGroup.title"
-    :origin="$refs.modalOrigin"
     @close="closeFilterModal"
   >
     <form
