@@ -8,7 +8,6 @@ import type { CredentialsInputDto } from '@biblio-num/shared'
 import LayoutAccueil from '@/components/Layout/LayoutAccueil.vue'
 import { useUserStore } from '@/stores'
 import ToggleInputPassword from '@/components/ToggleInputPassword.vue'
-import PasswordHint from '@/components/PasswordHint.vue'
 import { passwordValidator } from '@/utils/password.validator'
 
 const REQUIRED_FIELD_MESSAGE = 'Ce champ est requis'
@@ -19,7 +18,8 @@ const userStore = useUserStore()
 const validationSchema = toTypedSchema(z.object({
   email: z.string({ required_error: REQUIRED_FIELD_MESSAGE })
     .email('Ceci semble être une adresse email invalide'),
-  password: import.meta.env.PROD ? passwordValidator : z.string({ required_error: REQUIRED_FIELD_MESSAGE }).min(8, 'Le mot de passe doit contenir au moins 15 caractères'),
+  password: z.string({ required_error: REQUIRED_FIELD_MESSAGE })
+    .min(import.meta.env.PROD ? 15 : 8, 'Le mot de passe doit contenir au moins 15 caractères'),
 }))
 
 const { handleSubmit, setErrors } = useForm<{ email: string, password: string }>({
@@ -31,7 +31,7 @@ const submit = handleSubmit(async (formValue: CredentialsInputDto) => {
     await userStore.login(formValue)
     router.push('/demarches')
   } catch (e) {
-    setErrors({ password: 'Adresse électronique ou mot de passe incorrectes !' })
+    setErrors({ password: 'Ces identifiants ne correspondent à aucun utilisateur' })
   }
 })
 
@@ -82,9 +82,6 @@ const { value: passwordValue, errorMessage: passwordError } = useField<string>('
               v-model="passwordValue"
               :password-error="passwordError"
               label="Saisir votre mot de passe"
-            />
-            <PasswordHint
-              :password="passwordValue"
             />
 
             <div

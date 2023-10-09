@@ -14,10 +14,8 @@ describe('<Signin />', () => {
 
     cy.get('#password').type('xx')
     cy.get('.fr-error-text').should('contain.text', 'Le mot de passe doit contenir au moins 15 caractères')
-    cy.get('.fr-highlight').should('be.visible')
     cy.get('#password').type('A1etsn*!etisan34')
     cy.get('.fr-error-text').should('not.exist')
-    cy.get('.fr-highlight').should('not.be.visible')
   })
 
   it('form is validated', () => {
@@ -26,9 +24,7 @@ describe('<Signin />', () => {
     cy.log(newUser.password)
 
     cy.get('#email').type(newUser.email)
-    cy.get('.fr-highlight').should('be.visible')
     cy.get('#password').type(newUser.password)
     cy.get('.fr-error-text').should('not.exist')
-    cy.get('.fr-highlight').should('not.be.visible')
   })
 })
