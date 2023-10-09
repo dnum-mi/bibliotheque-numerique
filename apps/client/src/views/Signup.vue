@@ -37,6 +37,7 @@ const onSubmit = handleSubmit(async (formValue: CreateUserDto) => {
 const { value: firstNameValue, errorMessage: firstNameError } = useField<string>('firstName')
 const { value: lastNameValue, errorMessage: lastNameError } = useField<string>('lastName')
 const { value: emailValue, errorMessage: emailError } = useField<string>('email')
+const { value: passwordValue, errorMessage: passwordError } = useField<string>('password')
 </script>
 
 <template>
@@ -114,7 +115,12 @@ const { value: emailValue, errorMessage: emailError } = useField<string>('email'
               </DsfrInput>
             </DsfrInputGroup>
 
-            <ToggleInputPassword />
+            <ToggleInputPassword
+              id="password"
+              v-model="passwordValue"
+              :password-error="passwordError"
+              label="Saisir un mot de passe"
+            />
 
             <div
               class="fr-m-4w"

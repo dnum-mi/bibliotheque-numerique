@@ -7,10 +7,9 @@
         <div class="fr-col-1" />
         <div class="fr-col-10">
           <h5
-            class="mb-20 fr-text-title--blue-france"
-            style="text-align:center"
+            class="mb-20  text-center  fr-text-title--blue-france"
           >
-            Réinistialisation du mot de passe
+            Réinitialisation de votre mot de passe
           </h5>
           <form
             class="card"
@@ -66,7 +65,9 @@ import { ref } from 'vue'
 import { ASK_RESET_PWD_SUCCESS } from '../messages'
 
 const validationSchema = toTypedSchema(z.object({
-  email: z.string({ required_error: 'Veuillez saisir votre adresse courriel' }).nonempty('Veuillez saisir votre adresse courriel').email('L’adresse courriel ne semble pas valide'),
+  email: z.string({ required_error: 'Veuillez saisir votre adresse courriel' })
+    .nonempty('Veuillez saisir votre adresse courriel')
+    .email('L’adresse courriel ne semble pas valide'),
 }))
 
 const { handleSubmit, handleReset } = useForm({

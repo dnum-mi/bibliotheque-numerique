@@ -5,8 +5,8 @@ export interface IRole {
   name: string;
   description: string;
   permissions: TPermission[]
-  createdAt: string;
-  updatedAt: string;
+  createAt: string;
+  updateAt: string;
 }
 
 export interface IRoleForm {

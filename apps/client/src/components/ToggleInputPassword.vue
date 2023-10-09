@@ -1,8 +1,20 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useField, useForm } from 'vee-validate'
 
-const { value: passwordValue, errorMessage: passwordError } = useField('password')
+withDefaults(defineProps<{
+  modelValue?: string
+  passwordError?: string
+  label?: string
+  id?: string
+}>(), {
+  modelValue: '',
+  passwordError: '',
+  label: 'Mot de passe (15 caractères minimum)',
+  id: 'password',
+})
+
+const emit = defineEmits<{(event: 'update:modelValue', password: string) : void }>()
+
 const tmpType = ref('password')
 const tmpTitle = computed(() => (tmpType.value === 'password' ? 'Afficher le mot de passe' : 'Masquer le mot de passe'))
 const eyeIcon = computed(() => (tmpType.value === 'password' ? 'fr-icon-eye-fill' : 'fr-icon-eye-off-fill'))
@@ -19,13 +31,14 @@ const togglePassword = () => {
   >
     <div class="relative">
       <DsfrInput
-        id="password"
-        v-model="passwordValue"
+        :id="id"
+        :model-value="modelValue"
         :type="tmpType"
-        label="Mot de passe (6 caractères minimum)"
+        :label="label"
         label-visible
         placeholder="xxxxxx"
         required
+        @update:model-value="$emit('update:modelValue', $event)"
       >
         <template #required-tip>
           <em class="required-label"> *</em>
@@ -36,10 +49,9 @@ const togglePassword = () => {
         class="btn absolute  right-2  top-[55%]"
         @click.prevent="togglePassword"
       >
-        <Vicon
+        <span
           :class="eyeIcon"
           :name="eyeIcon"
-          scale="1.25"
           :title="tmpTitle"
         />
       </button>

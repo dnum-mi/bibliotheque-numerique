@@ -1,15 +1,17 @@
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, type Ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useField, useForm } from 'vee-validate'
 import { z } from 'zod'
+import { DsfrAlert } from '@gouvminint/vue-dsfr'
 
 import apiClient from '@/api/api-client'
 import { passwordValidator } from '@/utils/password.validator'
-import { useRouter } from 'vue-router'
 
 import useToaster from '@/composables/use-toaster'
+import ToggleInputPassword from '@/components/ToggleInputPassword.vue'
 
 const props = defineProps<{ token: string }>()
 
@@ -24,9 +26,9 @@ const { handleSubmit, setErrors } = useForm({
   validationSchema,
 })
 
-const alertType = ref('info')
+const alertType: Ref<InstanceType<typeof DsfrAlert>['$props']['type']> = ref('info')
 
-const { value: newPasswordValue, errorMessage: passwordError } = useField<string>('newPassword')
+const { value: newPasswordValue, errorMessage: newPasswordError } = useField<string>('newPassword')
 const { value: confirmPasswordValue, errorMessage: confirmPasswordError } = useField<string>('confirmPassword')
 const alertTitle = ref('')
 const alertDescription = ref('')
@@ -70,41 +72,19 @@ const onCloseAlert = () => {
             class="card"
             @submit.prevent="onSubmit"
           >
-            <DsfrInputGroup
-              :is-valid="passwordError"
-              :error-message="passwordError"
-            >
-              <DsfrInput
-                id="newPassword"
-                v-model="newPasswordValue"
-                label="Saisir votre nouveau mot de passe"
-                label-visible
-                placeholder="xxxxxx"
-                type="password"
-              >
-                <template #required-tip>
-                  <em class="required-label"> *</em>
-                </template>
-              </DsfrInput>
-            </DsfrInputGroup>
+            <ToggleInputPassword
+              id="newPassword"
+              v-model="newPasswordValue"
+              label="Saisir votre nouveau mot de passe"
+              :password-error="newPasswordError"
+            />
+            <ToggleInputPassword
+              id="confirmPassword"
+              v-model="confirmPasswordValue"
+              label="Confirmer le nouveau mot de passe "
+              :password-error="confirmPasswordError"
+            />
 
-            <DsfrInputGroup
-              :is-valid="confirmPasswordError"
-              :error-message="confirmPasswordError"
-            >
-              <DsfrInput
-                id="confirmPassword"
-                v-model="confirmPasswordValue"
-                label="Confrimer le nouveau mot de passe"
-                label-visible
-                placeholder="xxxxxx"
-                type="password"
-              >
-                <template #required-tip>
-                  <em class="required-label"> *</em>
-                </template>
-              </DsfrInput>
-            </DsfrInputGroup>
             <div
               class="fr-m-4w"
               style="text-align:center"

@@ -219,7 +219,7 @@ export const usersApiClient = {
     return apiClientInstance.delete(authRoute)
   },
 
-  async fetchCurrentUser (): Promise<UpdateUserDto | null> {
+  async fetchCurrentUser (): Promise<UserOutputDto | null> {
     try {
       const response = await apiClientInstance.get(profileRoute)
       return response.data
@@ -228,12 +228,12 @@ export const usersApiClient = {
     }
   },
 
-  async getUsers (): Promise<UpdateUserDto[] | null> {
+  async getUsers (): Promise<UserOutputDto[] | null> {
     const response = await apiClientInstance.get(usersRoutes)
     return response.data
   },
 
-  async getUserById (id: number): Promise<UpdateUserDto | null> {
+  async getUserById (id: number): Promise<UserOutputDto | null> {
     const response = await apiClientInstance.get(getUserByIdRoute(id))
     return response.data
   },

@@ -19,7 +19,7 @@
     "preview": "vite preview --port 5050",
     "test": "run-s test:unit test:ct:ci",
     "test:ct": "cypress open --component",
-    "test:ct:ci": "cypress run --component",
+    "test:ct:ci": "NODE_ENV=production cypress run --component",
     "test:e2e": "start-server-and-test preview http://127.0.0.1:5050/ 'cypress open --e2e'",
     "test:e2e:ci": "start-server-and-test preview http://127.0.0.1:5050/ 'cypress run --e2e'",
     "test:unit": "vitest run",

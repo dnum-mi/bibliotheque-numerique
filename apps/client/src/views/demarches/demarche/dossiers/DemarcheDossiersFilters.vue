@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, type Ref, type ComputedRef, ref, onMounted } from 'vue'
+import { computed, ref, type Ref } from 'vue'
 
 export type SmallFilter = {
   id: number
@@ -111,7 +111,6 @@ const createOrUpdate = () => {
     openFilterModal('create')
   }
 }
-
 </script>
 
 <template>
@@ -151,7 +150,7 @@ const createOrUpdate = () => {
     </div>
     <div class="fr-mx-2v  fr-mt-2v  flex  justify-center  items-center  gap-2">
       <DsfrButton
-        ref="modalOrigin"
+        :ref="modalOrigin"
         type="submit"
         :disabled="!!selectedFilter && !paginationChanged"
         @click="createOrUpdate()"

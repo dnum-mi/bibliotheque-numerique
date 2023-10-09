@@ -1,9 +1,10 @@
 import { faker } from '@faker-js/faker/locale/fr'
-import type { User, UserForm } from '@/shared/interfaces'
+import type { User } from '@/shared/interfaces'
+import type { CredentialsInputDto } from '@biblio-num/shared'
 
-export const createRandomUserForm = (): UserForm => ({
+export const createRandomUserForm = (): CredentialsInputDto => ({
   email: faker.internet.email(),
-  password: faker.internet.password(),
+  password: faker.internet.password(15) + '1Ab*',
 })
 
 export const createRandomUser = (id?: number): User => ({
@@ -37,7 +38,7 @@ export const createRandomAdmin = (): User => ({
   }],
 })
 
-export const createRandomUserWithoutCreateRole = () => ({
+export const createRandomUserWithoutCreateRole = (): User => ({
   id: faker.helpers.unique(faker.datatype.number, [1000]),
   firstName: faker.internet.userName(),
   lastName: faker.internet.userName(),
@@ -51,7 +52,7 @@ export const createRandomUserWithoutCreateRole = () => ({
     updateAt: faker.date.past().toISOString(),
   }],
 })
-export const createRandomUserWithCreateRole = () => ({
+export const createRandomUserWithCreateRole = (): User => ({
   id: faker.helpers.unique(faker.datatype.number, [1000]),
   firstName: faker.internet.userName(),
   lastName: faker.internet.userName(),

@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import type { User } from '@/shared/interfaces'
 import bnApiClient from '@/api/api-client'
 import { RoleName } from '@/shared/types/Permission.type'
-import type { CredentialsInput } from '@biblio-num/shared'
+import type { CredentialsInputDto, UserOutputDto } from '@biblio-num/shared'
 interface UserState {
   currentUser: User | null,
   users: Map<number, User>,
@@ -12,7 +12,7 @@ interface UserState {
 export const useUserStore = defineStore('user', {
   state: (): UserState => ({
     currentUser: null,
-    users: new Map(),
+    users: new Map<number, UserOutputDto>(),
     loaded: false,
   }),
   getters: {
@@ -30,7 +30,7 @@ export const useUserStore = defineStore('user', {
     },
   },
   actions: {
-    async login (loginForm: CredentialsInput) {
+    async login (loginForm: CredentialsInputDto) {
       this.currentUser = await bnApiClient.loginUser(loginForm)
     },
     async logout () {
@@ -44,6 +44,7 @@ export const useUserStore = defineStore('user', {
     async loadUsers () {
       if (!this.hasAdminAccess) return
       const users = await bnApiClient.getUsers()
+      if (!users) return
       for (const user of users) {
         this.users.set(user.id, user)
       }
@@ -51,6 +52,7 @@ export const useUserStore = defineStore('user', {
     async loadUserById (id: number) {
       if (!this.hasAdminAccess) return
       const user = await bnApiClient.getUserById(id)
+      if (!user) return
       this.users.set(user.id, user)
     },
   },

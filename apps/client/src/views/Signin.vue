@@ -1,31 +1,25 @@
 <script setup lang="ts">
 import { z } from 'zod'
-import { toFormValidator } from '@vee-validate/zod'
+import { toTypedSchema } from '@vee-validate/zod'
 import { useField, useForm } from 'vee-validate'
-import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useUserStore } from '@/stores'
+
 import type { CredentialsInputDto } from '@biblio-num/shared'
-import LayoutAccueil from '../components/Layout/LayoutAccueil.vue'
-import ToggleInputPassword from '../components/ToggleInputPassword.vue'
+import LayoutAccueil from '@/components/Layout/LayoutAccueil.vue'
+import { useUserStore } from '@/stores'
+import ToggleInputPassword from '@/components/ToggleInputPassword.vue'
+import PasswordHint from '@/components/PasswordHint.vue'
+import { passwordValidator } from '@/utils/password.validator'
 
 const REQUIRED_FIELD_MESSAGE = 'Ce champ est requis'
 
 const router = useRouter()
 const userStore = useUserStore()
-const tmpType = ref('password')
-const tmpTitle = computed(() => (tmpType.value === 'password' ? 'Afficher le mot de passe' : 'Masquer le mot de passe'))
-const eyeIcon = computed(() => (tmpType.value === 'password' ? 'fr-icon-eye-fill' : 'fr-icon-eye-off-fill'))
 
-const togglePassword = () => {
-  tmpType.value = tmpType.value === 'password' ? 'text' : 'password'
-}
-
-const secure = ref()
-
-const validationSchema = toFormValidator(z.object({
-  email: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).email('Ceci semble être une adresse email invalide'),
-  password: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).min(6, 'Le mot de passe doit contenir au moins 6 caractères'),
+const validationSchema = toTypedSchema(z.object({
+  email: z.string({ required_error: REQUIRED_FIELD_MESSAGE })
+    .email('Ceci semble être une adresse email invalide'),
+  password: import.meta.env.PROD ? passwordValidator : z.string({ required_error: REQUIRED_FIELD_MESSAGE }).min(8, 'Le mot de passe doit contenir au moins 15 caractères'),
 }))
 
 const { handleSubmit, setErrors } = useForm<{ email: string, password: string }>({
@@ -41,7 +35,8 @@ const submit = handleSubmit(async (formValue: CredentialsInputDto) => {
   }
 })
 
-const { value: emailValue, errorMessage: emailError } = useField('email')
+const { value: emailValue, errorMessage: emailError } = useField<string>('email')
+const { value: passwordValue, errorMessage: passwordError } = useField<string>('password')
 
 </script>
 
@@ -82,7 +77,15 @@ const { value: emailValue, errorMessage: emailError } = useField('email')
               </DsfrInput>
             </DsfrInputGroup>
 
-            <ToggleInputPassword />
+            <ToggleInputPassword
+              id="password"
+              v-model="passwordValue"
+              :password-error="passwordError"
+              label="Saisir votre mot de passe"
+            />
+            <PasswordHint
+              :password="passwordValue"
+            />
 
             <div
               class="fr-m-4w"
@@ -115,5 +118,5 @@ const { value: emailValue, errorMessage: emailError } = useField('email')
         <div class="fr-col-1" />
       </div>
     </div>
-  </layoutaccueil>
+  </LayoutAccueil>
 </template>
