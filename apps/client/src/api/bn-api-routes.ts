@@ -36,6 +36,7 @@ export const customFiltersRoute = '/custom-filters'
 export const getCustomFiltersRoute = () => customFiltersRoute
 export const getOneCustomFiltersRoute = (id: number) => `/custom-filters/${id}`
 export const getCustomFiltersByDemarcheRoute = (id:number) => `${customFiltersRoute}/demarche/${id}`
+export const getCustomFiltersStats = (demarcheId: number, id: number) => `${getCustomFiltersByDemarcheRoute(demarcheId)}/${id}/stats`
 
 export const dossierRoute = '/dossiers'
 export const getDossierDetail = (id: number) => `${dossierRoute}/${id}/detail`

@@ -1,8 +1,7 @@
 
 <script setup lang="ts">
-import StatisticsCard from '@/components/StatisticsCard.vue'
+import StatisticsCard from './StatisticsCards.vue'
 import LayoutList from '@/components/Layout/LayoutList.vue'
-
 </script>
 
 <template>

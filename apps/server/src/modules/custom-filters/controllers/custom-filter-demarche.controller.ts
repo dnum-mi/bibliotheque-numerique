@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Post, UseGuards, UseInterceptors } from '@nestjs/common'
+import { Body, Controller, Get, Param, Post, UseGuards, UseInterceptors } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
-import { CreateCustomFilterDto, ICustomFilter } from '@biblio-num/shared'
+import { CreateCustomFilterDto, ICustomFilter, ICustomFilterStat } from '@biblio-num/shared'
 
 import { PermissionsGuard, RequirePermissions } from '../../roles/providers/permissions.guard'
 import { CustomFilterService } from '../providers/services/custom-filter.service'
@@ -48,5 +48,15 @@ export class CustomFilterDemarcheController {
   ): Promise<ICustomFilter[]> {
     this.logger.verbose('getMyCustomFilters')
     return filters
+  }
+
+  @RequirePermissions({ name: PermissionName.ACCESS_DEMARCHE })
+  @Get(':filterId/stats')
+  async getStatistique(
+    @Param('filterId') filterId: number,
+    @CurrentUserId() userId: number,
+    @CurrentDemarche() demarche: Demarche,
+  ): Promise<ICustomFilterStat> {
+    return this.service.getStats(filterId, userId, demarche)
   }
 }

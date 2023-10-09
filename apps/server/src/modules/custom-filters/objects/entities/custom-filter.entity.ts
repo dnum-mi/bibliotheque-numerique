@@ -9,6 +9,7 @@ import {
 import { User } from '@/modules/users/entities/user.entity'
 import { Demarche } from '../../../demarches/objects/entities/demarche.entity'
 
+export type filtersInCustomFilter = Record<keyof DynamicKeys, FilterDto> | null
 @Entity()
 @Unique('UQ_CUSTOM_FILTERS', ['userId', 'name'])
 export class CustomFilter extends BaseEntity implements ICustomFilter {
@@ -28,7 +29,7 @@ export class CustomFilter extends BaseEntity implements ICustomFilter {
   sorts?: SortDto<DynamicKeys>[] | null
 
   @Column({ type: 'jsonb', nullable: true, default: null })
-  filters?: Record<keyof DynamicKeys, FilterDto> | null
+  filters?: filtersInCustomFilter
 
   @ManyToOne(() => User, (user) => user.customFilters)
   user?: User
@@ -41,4 +42,7 @@ export class CustomFilter extends BaseEntity implements ICustomFilter {
 
   @Column({ type: 'int', nullable: false })
   demarcheId: number
+
+  @Column({ type: 'jsonb', default: '[]', nullable: true })
+  totals?: string[]
 }

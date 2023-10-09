@@ -22,7 +22,7 @@ export class CurrentCustomFiltersInterceptor implements NestInterceptor {
     return from(
       this.service.repository.find({
         where,
-        select: ['columns', 'filters', 'sorts', 'groupByDossier', 'name', 'id', 'demarcheId'],
+        select: ['columns', 'filters', 'sorts', 'groupByDossier', 'name', 'id', 'demarcheId', 'totals'],
       }),
     ).pipe(
       switchMap((filters) => {

@@ -7,19 +7,19 @@ items:
     identification: "FE"
     type: "ARUP"
     mappingColumns: [
-      {"id":"I01", "label":"Identifiant"},
-      {"id":"I02", "label":"Moment"},
-      {"id":"I03", "label":"Titre"},
-      {"id":"I04", "label":"Consentement"},
-      {"id":"I05", "label":"Etat"},
-      {"id":"I06", "label":"Delais"},
-      {"id":"I07", "label":"Excel"},
+      { "id": "I01", "label": "Identifiant", "type": "string" },
+      { "id": "I02", "label": "Moment", "type": "date" },
+      { "id": "I03", "label": "Titre", "type": "string" },
+      { "id": "I04", "label": "Consentement", "type": "string" },
+      { "id": "I05", "label": "Etat", "type": "string" },
+      { "id": "I06", "label": "Delais", "type": "number" },
+      { "id": "I07", "label": "Excel", "type": "string" },
       {
         'id': "I42",
         'children': [
-          { "id": "I08", "label": "Montant" },
-          { "id": "I09", "label": "Pays" },
-          { "id": "I10", "label": "Organismefinanceur" }
+          { "id": "I08", "label": "Montant", "type": "number" },
+          { "id": "I09", "label": "Pays", "type": "string" },
+          { "id": "I10", "label": "Organismefinanceur", "type": "string" }
         ],
       }
     ]

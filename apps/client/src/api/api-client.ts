@@ -41,7 +41,9 @@ import {
   getOrganismeByIdRoute,
   getCustomFiltersByDemarcheRoute,
   getOrganismeByRnaRoute,
-  getOrganismeByRnfRoute, organismesListRoute,
+  getOrganismeByRnfRoute,
+  organismesListRoute,
+  getCustomFiltersStats,
 } from './bn-api-routes'
 import {
   authRoute,
@@ -300,6 +302,10 @@ export const customFiltersApiClient = {
 
   deleteOneCustomFilter: async (id: number) => {
     const response = await apiClientInstance.delete(getOneCustomFiltersRoute(id))
+    return response.data
+  },
+  getCustomFilterStats: async (id: number, demarcheId: number) => {
+    const response = await apiClientInstance.get(getCustomFiltersStats(demarcheId, id))
     return response.data
   },
 }

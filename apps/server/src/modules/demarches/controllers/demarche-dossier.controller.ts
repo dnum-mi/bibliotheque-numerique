@@ -12,6 +12,7 @@ import { CurrentDemarche } from '@/modules/demarches/providers/decorators/curren
 import { ServerResponse } from 'http'
 import { XlsxService } from '@/shared/modules/xlsx/xlsx.service'
 import { ReadStream } from 'fs'
+import { fromMappingColumnArrayToLabelHash } from '../utils/demarche.utils'
 
 const xlsxContent = {
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': {
@@ -56,12 +57,7 @@ export class DemarcheDossierController {
   }
 
   private _fromDataToXlsx = (mappingColumns: MappingColumn[], data): ReadStream => {
-    const mch = Object.fromEntries(mappingColumns.map(mc =>
-      mc.children?.length
-        ? mc.children.map(mc2 => [mc2.id, mc2.columnLabel])
-        : [[mc.id, mc.columnLabel]])
-      .flat(1),
-    )
+    const mch = fromMappingColumnArrayToLabelHash(mappingColumns)
     return this.xlsxService.generateXlsxFile(
       data.map(e => Object.fromEntries(
         Object.entries(e).map(([idKey, value]) => {

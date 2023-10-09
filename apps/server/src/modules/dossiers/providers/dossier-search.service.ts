@@ -11,9 +11,20 @@ import {
   buildPaginationQuery,
   buildSortQuery,
   deduceFieldToQueryFromType,
+  buildOneFilter,
 } from '@/shared/utils/common-search.utils'
 import { FieldService } from './field.service'
-import { DossierSearchOutputDto, FieldTypeKeys, FilterDto, MappingColumn, SearchDossierDto } from '@biblio-num/shared'
+import {
+  DossierSearchOutputDto,
+  FieldTypeKeys,
+  FilterDto,
+  MappingColumn,
+  SearchDossierDto,
+} from '@biblio-num/shared'
+import { Field } from '../objects/entities/field.entity'
+import { IStatistique } from '../objects/dto/statistique/statistique.interface'
+import { CustomFilter } from '../../custom-filters/objects/entities/custom-filter.entity'
+import { fromMappingColumnArrayToTypeHash } from '../../demarches/utils/demarche.utils'
 
 @Injectable()
 export class DossierSearchService extends BaseEntityService<Dossier> {
@@ -101,5 +112,39 @@ export class DossierSearchService extends BaseEntityService<Dossier> {
         return r
       }),
     }
+  }
+
+  async statistics(demarche: Demarche, customFilter:CustomFilter): Promise<IStatistique> {
+    this.logger.verbose('statistics')
+    const { filters } = customFilter
+    const { mappingColumns } = demarche
+
+    console.log(mappingColumns)
+
+    const query = this.repo.createQueryBuilder('d')
+      .select('d.id')
+      .distinct(true)
+      .innerJoin(Field, 'f', 'f.dossierId = d.id')
+
+    if (filters) {
+      const mch = fromMappingColumnArrayToTypeHash(mappingColumns)
+
+      // TODO: le filtre de date 'in range', check de la format de date
+      Object.entries(filters)
+        .forEach(([key, filter], idx) => {
+          const aliasTable = `t${idx}`
+          const commonWhere = `t${idx}."dossierId" = d.id`
+          const typeWhere = `t${idx}."sourceId" = '${key}'`
+          const fieldName = deduceFieldToQueryFromType(mch[key])
+          const customWhere = buildOneFilter(fieldName, filter, mch[key], false, aliasTable)
+          query.innerJoin(
+            Field,
+            aliasTable,
+            `${commonWhere} AND ${typeWhere} AND (${customWhere})`)
+        })
+    }
+
+    query.where('d.demarcheId = :demarcheId', { demarcheId: demarche.id })
+    return await query.getCount().then(c => ({ nb: c }))
   }
 }

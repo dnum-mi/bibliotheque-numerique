@@ -21,8 +21,9 @@ const _buildOneTextFilter = (
   key: string,
   filter: TextFilterConditionDto,
   isArray = false,
+  prefix?: string,
 ): string => {
-  key = _adaptKeyForArray(key, isArray)
+  key = _adaptKeyForArray(key, isArray, prefix)
   switch (filter.type) {
   case TextFilterConditions.Contains:
     return `(${key} ILIKE '%${filter.filter}%')${isArray ? ')' : ''}`
@@ -44,6 +45,7 @@ const _buildOneTextFilter = (
 }
 /* endregion */
 
+// TODO: In_range
 /* region DATE FILTER */
 const dateSqlOperators = {
   [DateFilterConditions.Equals]: '=',
@@ -55,6 +57,7 @@ const _buildOneDateFilter = (
   key: string,
   filter: DateFilterConditionDto,
   isArray = false,
+  prefix?: string,
 ): string => {
   const dateSqlOperator = dateSqlOperators[filter.type]
   if (!dateSqlOperator) {
@@ -62,7 +65,7 @@ const _buildOneDateFilter = (
       `Unknown date filter condition: ${filter.type}`,
     )
   }
-  key = _adaptKeyForArray(key, isArray)
+  key = _adaptKeyForArray(key, isArray, prefix)
   return `(${key} ${dateSqlOperator} '${filter.filter}'${isArray ? ')' : ''})`
 }
 /* endregion */
@@ -80,6 +83,7 @@ const _buildOneNumberFilter = (
   key: string,
   filter: NumberFilterConditionDto,
   isArray = false,
+  prefix?: string,
 ): string => {
   const numberSqlOperator = numberSqlOperators[filter.type]
   if (!numberSqlOperator) {
@@ -87,15 +91,21 @@ const _buildOneNumberFilter = (
       `Unknown number filter condition: ${filter.type}`,
     )
   }
-  key = _adaptKeyForArray(key, isArray)
+  key = _adaptKeyForArray(key, isArray, prefix)
   return `(${key} ${numberSqlOperator} ${filter.filter}${isArray ? ')' : ''})`
 }
 /* endregion */
 
-const _adaptKeyForArray = (key: string, isArray = false): string =>
-  isArray
-    ? `EXISTS (SELECT 1 FROM UNNEST("${key}") AS item WHERE item`
-    : `"${key}"`
+const _adaptKeyForArray = (
+  key: string,
+  isArray = false,
+  prefix?: string,
+): string => {
+  const keyWithPrefix = `${prefix ? `${prefix}.` : ''}"${key}"`
+  return isArray
+    ? `EXISTS (SELECT 1 FROM UNNEST(${keyWithPrefix}) AS item WHERE item`
+    : `${keyWithPrefix}`
+}
 
 type filterFactory = (
   key: string,
@@ -104,13 +114,15 @@ type filterFactory = (
     | DateFilterConditionDto
     | NumberFilterConditionDto,
   isArray: boolean,
+  prefix?: string,
 ) => string
 
-const _buildOneFilter = (
+export const buildOneFilter = (
   key: string,
   filter: FilterDto,
   type: FieldTypeKeys,
   isArray = false,
+  prefix?: string,
 ): string => {
   const filterFactory: filterFactory =
     type === FieldType.date
@@ -118,12 +130,13 @@ const _buildOneFilter = (
       : type === FieldType.number
         ? _buildOneNumberFilter
         : _buildOneTextFilter
-  let result = filterFactory(key, filter.condition1, isArray)
+  let result = filterFactory(key, filter.condition1, isArray, prefix)
   if (filter.operator) {
     result = `${result} ${filter.operator} ${filterFactory(
       key,
       filter.condition2,
       isArray,
+      prefix,
     )}`
   }
   return result
@@ -140,7 +153,7 @@ export const buildFilterQuery = (
     return Object.keys(filters)
       .map(
         (key) =>
-          `(${_buildOneFilter(key, filters[key], typeHash[key], isArray)})`,
+          `(${buildOneFilter(key, filters[key], typeHash[key], isArray)})`,
       )
       .join(' AND ')
   }
@@ -156,16 +169,17 @@ export const buildFilterQueryWithWhere = (
 }
 /* endregion */
 
-export const deduceFieldToQueryFromType = (type: FieldTypeKeys): string => {
-  switch (type) {
-  case FieldType.date:
-    return 'dateValue'
-  case FieldType.number:
-    return 'numberValue'
-  default:
-    return 'stringValue'
-  }
-}
+/* region Search utils */
+
+const fieldTypeDict = {
+  [FieldType.date]: 'dateValue',
+  [FieldType.number]: 'numberValue',
+  default: 'stringValue',
+} as const
+type FieldTypeValues = (typeof fieldTypeDict)[keyof typeof fieldTypeDict]
+export const deduceFieldToQueryFromType = (
+  type: FieldTypeKeys,
+): FieldTypeValues => fieldTypeDict[type] || fieldTypeDict.default
 
 export const buildPaginationQuery = (page: number, perPage: number): string => {
   return `OFFSET ${(page - 1) * perPage} LIMIT ${perPage}`
@@ -196,3 +210,57 @@ export const adjustDto = (dto: SearchDossierDto): SearchDossierDto => {
     filters: newFilter,
   }
 }
+/* endregion */
+
+/* region French filter dictionnaries */
+
+export const dictionaryHumanReadableOperatorsNumber = {
+  [NumberFilterConditions.Equals]: 'Égal à:',
+  [NumberFilterConditions.NotEqual]: 'Différent de:',
+  [NumberFilterConditions.LessThan]: 'Plus petit que:',
+  [NumberFilterConditions.GreaterThan]: 'Plus grand que:',
+  [NumberFilterConditions.LessThanOrEqual]: 'Plus petit ou égal à:',
+  [NumberFilterConditions.GreaterThanOrEqual]: 'Plus grand ou égal à:',
+}
+
+// TODO: In_range, blank, no_blank
+export const dictionaryHumanReadableOperatorsText = {
+  [TextFilterConditions.Contains]: 'Contient le mot:',
+  [TextFilterConditions.NotContains]: 'Ne contient pas le mot:',
+  [TextFilterConditions.StartsWith]: 'Commence par le mot:',
+  [TextFilterConditions.EndsWith]: 'Fini par le mot:',
+  [TextFilterConditions.Blank]: 'Les non-renseignés',
+  [TextFilterConditions.NotBlank]: 'Les renseignés',
+}
+
+// TODO: In_range, blank, no_blank
+export const dictionaryHumanReadableOperatorsDate = {
+  [DateFilterConditions.Equals]: 'Le:',
+  [DateFilterConditions.NotEqual]: 'En dehors du:',
+  [DateFilterConditions.LessThan]: 'Avant le:',
+  [DateFilterConditions.GreaterThan]: 'Après le:',
+}
+
+// TODO: In_range, blank, no_blank
+export const dictionaryHumanReadableFilterType = {
+  text: dictionaryHumanReadableOperatorsText,
+  number: dictionaryHumanReadableOperatorsNumber,
+  date: dictionaryHumanReadableOperatorsDate,
+}
+export const humanReadableOperator = (filterType, type): string =>
+  dictionaryHumanReadableFilterType[filterType]?.[type] || ''
+
+export function humanReadableFilter(filter: FilterDto): string {
+  // TODO: A faire
+  return [filter.condition1, filter.condition2]
+    .filter((c) => c)
+    .map(
+      (condition) =>
+        `${humanReadableOperator(filter.filterType, condition.type)} ${
+          condition.filter
+        }`,
+    )
+    .join(filter.operator ? (filter.operator === 'AND' ? ' et ' : ' ou ') : '')
+}
+
+/* endregion */

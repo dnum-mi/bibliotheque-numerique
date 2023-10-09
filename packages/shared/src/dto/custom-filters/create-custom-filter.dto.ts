@@ -5,7 +5,9 @@ import { IsValidFilter } from '../pagination/filters/is-valid-filter.decorator'
 import { DynamicKeys } from '../dossier'
 import { Type } from 'class-transformer'
 
-export class CreateCustomFilterDto implements Omit<ICustomFilter, 'id'> {
+export class CreateCustomFilterDto implements Omit<ICustomFilter, 'id' |'demarcheId'> {
+  id: number
+  demarcheId?: number | undefined
   @IsString()
   @IsDefined()
   name: string
@@ -28,4 +30,9 @@ export class CreateCustomFilterDto implements Omit<ICustomFilter, 'id'> {
   @IsValidFilter({ message: 'Les filtres de pagination ne sont pas valides.' })
   @IsOptional()
   filters?: Record<string, FilterDto>
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  totals?: string[] | undefined
 }

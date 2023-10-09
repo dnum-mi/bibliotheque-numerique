@@ -34,6 +34,30 @@ describe('Custom filters (e2e)', () => {
     demarcheId: 5,
     name: `${customFilterFromFixture.name} 2`,
   }
+
+  const customFilterFromFixture3 = {
+    ...customFilterFromFixture,
+    id: 4,
+    filters: {
+      I02: {
+        condition1: {
+          filter: '2023-06-03',
+          type: 'greaterThan',
+        },
+        filterType: 'date',
+      },
+      I10: {
+        condition1: {
+          filter: 'babo',
+          type: 'contains',
+        },
+        filterType: 'text',
+      },
+    },
+    groupByDossier: false,
+    name: 'My custom filter for stats',
+  }
+
   let demarchesCount = 0
   beforeAll(async () => {
     const testingModule = new TestingModuleFactory()
@@ -41,6 +65,7 @@ describe('Custom filters (e2e)', () => {
     app = testingModule.app
     filterService = await app.resolve<CustomFilterService>(CustomFilterService)
     await filterService.remove({ name: 'Superman' })
+    await filterService.remove({ name: 'Superman 2' })
     cookie = await getUserCookie(app, 'test.demarche.2@localhost.com')
     demarchesCount = await dataSource.manager.count(Demarche)
   })
@@ -65,6 +90,7 @@ describe('Custom filters (e2e)', () => {
         expect(body).toMatchObject([
           customFilterFromFixture,
           customFilterFromFixture2,
+          customFilterFromFixture3,
         ])
       })
   })
@@ -81,7 +107,7 @@ describe('Custom filters (e2e)', () => {
       .set('Cookie', [cookie])
       .expect(200)
       .then(({ body }) => {
-        expect(body).toMatchObject([customFilterFromFixture])
+        expect(body).toMatchObject([customFilterFromFixture, customFilterFromFixture3])
       })
   })
 
@@ -132,6 +158,34 @@ describe('Custom filters (e2e)', () => {
       .then(async ({ body }) => {
         expect(body).toMatchObject({ ...filter })
         const addedFilter = await filterService.repository.findOne({ where: { name: 'Superman' } })
+        expect(addedFilter).toMatchObject({ ...filter, userId: 4 })
+      })
+  })
+
+  it('Should add a filter with totals', async () => {
+    const filter = {
+      name: 'Superman 2',
+      groupByDossier: true,
+      columns: ['I01', 'I02', 'I08'],
+      sorts: [{ key: 'I02', order: 'DESC' }],
+      filters: {
+        I02: {
+          operator: 'OR',
+          condition1: { type: 'contains', filter: 'super' },
+          condition2: { type: 'contains', filter: 'man' },
+          filterType: 'text',
+        },
+      },
+      totals: ['I08'],
+    }
+    return request(app.getHttpServer())
+      .post('/custom-filters/demarche/1')
+      .set('Cookie', [cookie])
+      .send(filter)
+      .expect(201)
+      .then(async ({ body }) => {
+        expect(body).toMatchObject({ ...filter })
+        const addedFilter = await filterService.repository.findOne({ where: { name: 'Superman 2' } })
         expect(addedFilter).toMatchObject({ ...filter, userId: 4 })
       })
   })

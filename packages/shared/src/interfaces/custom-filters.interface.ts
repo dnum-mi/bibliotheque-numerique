@@ -7,4 +7,6 @@ export interface ICustomFilter {
   columns: string[]
   sorts?: SortDto<DynamicKeys>[]
   filters?: Record<keyof DynamicKeys, FilterDto>
+  demarcheId?: number,
+  totals?: string[]
 }

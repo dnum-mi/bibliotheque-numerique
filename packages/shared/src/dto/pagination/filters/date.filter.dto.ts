@@ -16,10 +16,10 @@ export class DateFilterConditionDto {
   type: DateFilterConditionsKeys
 
   @IsDefined()
-  filter: number
+  filter: number | string
 
   @IsOptional()
-  filterTo?: number
+  filterTo?: number | string
 }
 
 export class FilterDateDto {

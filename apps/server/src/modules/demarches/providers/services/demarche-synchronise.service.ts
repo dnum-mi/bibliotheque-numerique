@@ -112,8 +112,6 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
         FieldSource.annotation,
       ),
     ]
-
-    this.logger.debug(result)
     return result
   }
 

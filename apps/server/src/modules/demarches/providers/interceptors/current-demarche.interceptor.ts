@@ -24,7 +24,7 @@ export class CurrentDemarcheInterceptor implements NestInterceptor {
 
     return from(
       this.service.repository
-        .findOne({ where: { id }, select: ['id', 'mappingColumns'] }),
+        .findOne({ where: { id }, select: ['id', 'mappingColumns', 'dsDataJson', 'title'] }),
     ).pipe(
       switchMap((demarche) => {
         if (!demarche) {

@@ -72,7 +72,7 @@ const routes: RouterOptions['routes'] = [
   {
     name: 'Statistiques',
     path: '/statistiques',
-    component: () => import('@/views/Statistiques.vue'),
+    component: () => import('@/views/statistics/Statistics.vue'),
     meta: {
       needsAuth: true,
     },

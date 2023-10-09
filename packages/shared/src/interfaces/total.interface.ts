@@ -1,4 +1,4 @@
-export interface Total {
+export interface ITotal {
   label: string
   total: string
 }

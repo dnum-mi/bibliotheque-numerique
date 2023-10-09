@@ -12,6 +12,7 @@ import {
 import { CreateFieldDto } from '../objects/dto/fields/create-field.dto'
 import { CustomChamp } from '@dnum-mi/ds-api-client/src/@types/types'
 import { fixFieldValueFunctions } from '../objects/constante/fix-field.dictionnary'
+import { deduceFieldToQueryFromType } from '@/shared/utils/common-search.utils'
 import { FieldType, FieldTypeKeys, FormatFunctionRef, FormatFunctionRefKeys, MappingColumn } from '@biblio-num/shared'
 import { ChampDescriptor } from '@dnum-mi/ds-api-client'
 
@@ -204,19 +205,38 @@ export class FieldService extends BaseEntityService<Field> {
     fieldsId: string[],
   ): Promise<Record<string, FieldTypeKeys>> {
     this.logger.verbose('giveFieldType')
-    return await this.repo
-      .query(
-        `
-        SELECT DISTINCT "sourceId", type
-        FROM fields
-        WHERE "sourceId" IN (${fieldsId.map((id) => `'${id}'`).join(',')});
-    `,
-      )
+    return await this._queryGiveFieldType(fieldsId)
       .then((result) => {
         return Object.fromEntries(
           result.map((r: { sourceId: string; type: FieldTypeKeys }) => [
             r.sourceId,
             r.type,
+          ]),
+        )
+      })
+  }
+
+  private async _queryGiveFieldType(
+    fieldsId: string[],
+  ): Promise< { sourceId: string; type: FieldTypeKeys }[]> {
+    return this.repo
+      .createQueryBuilder()
+      .select('"sourceId"').distinct(true)
+      .addSelect('type')
+      .where('"sourceId" IN (:...sourceids)', { sourceids: fieldsId.map((id) => id) })
+      .getRawMany()
+  }
+
+  async giveFieldTypeIntoWhereQueries(
+    fieldsId: string[],
+  ): Promise<Record<string, string>> {
+    this.logger.verbose('giveFieldTypeIntoWhereQueries')
+    return await this._queryGiveFieldType(fieldsId)
+      .then((result) => {
+        return Object.fromEntries(
+          result.map((r: { sourceId: string; type: FieldTypeKeys }) => [
+            r.sourceId,
+            deduceFieldToQueryFromType(r.type),
           ]),
         )
       })

@@ -4,6 +4,6 @@ export const FieldType = {
   date: 'date',
   boolean: 'boolean',
   file: 'file',
-}
+} as const
 
 export type FieldTypeKeys = (typeof FieldType)[keyof typeof FieldType];
