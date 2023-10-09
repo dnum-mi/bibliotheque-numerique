@@ -24,7 +24,6 @@ variables:
 stages:
   - read-secret
   - test-sonar
-  - build-app
   - docker-test
   - docker-build
 
@@ -64,51 +63,6 @@ test_rnf_back:
   allow_failure: true
   extends:
     - .node:sonar
-
-build_app_front:
-  stage: build-app
-  artifacts:
-    paths:
-      - client/dist-*
-  script:
-    - 'npm i -g pnpm'
-    - 'pnpm i --frozen-lockfile'
-    - 'pnpm run build:client'
-
-build_app_rnf_front:
-  stage: build-app
-  artifacts:
-    paths:
-      - client/dist-*
-  script:
-    - 'npm i -g pnpm'
-    - 'pnpm i --frozen-lockfile'
-    - 'pnpm run build:rnf-client'
-
-build_app_back:
-  stage: build-app
-  artifacts:
-    paths:
-      - pnpm-lock.yaml
-      - apps/server/package.json
-      - apps/server/dist
-  script:
-    - 'npm i -g pnpm'
-    - 'pnpm i --frozen-lockfile'
-    - 'pnpm run build:server'
-
-build_app_rnf_back:
-  stage: build-app
-  artifacts:
-    paths:
-      - pnpm-lock.yaml
-      - apps/rnf-server/package.json
-      - apps/rnf-server/dist
-  script:
-    - 'npm i -g pnpm'
-    - 'pnpm i --frozen-lockfile'
-    - 'pnpm run generate-rnf'
-    - 'pnpm run build:rnf-server'
 
 test_docker_front:
   variables:
