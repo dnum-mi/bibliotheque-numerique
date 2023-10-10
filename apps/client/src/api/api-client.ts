@@ -9,14 +9,16 @@ import type {
   ResetPasswordInputDto,
   SearchDossierDto,
   UpdateOneFieldConfigurationDto,
-  UpdateUserDto,
   UpdateUserPasswordDto,
   UserOutputDto,
   CreateCustomFilterDto,
   PatchCustomFilterDto,
   ValidateEmailDto,
-  LeanDossierOutputDto, IOrganisme,
+  LeanDossierOutputDto,
+  IOrganisme,
   PaginationDto,
+  SmallCustomFilterDto,
+  IDossier,
 } from '@biblio-num/shared'
 
 import {
@@ -26,7 +28,6 @@ import {
   getDemarcheConfigurationRoute,
   getRoleByIdRoute,
   getUpdateOneMappingColumnRoute,
-  organismesRoute,
   rolesRoute,
   unassignRoleRoute,
   getCustomFiltersRoute,
@@ -64,7 +65,7 @@ const updatePasswordFeedback = {
   default: 'Une erreur inconnue est survenue',
 } as const
 
-export const baseApiUrl = import.meta.env?.API_URL || '/api'
+const baseApiUrl = import.meta.env?.API_URL || '/api'
 export const headers = {
   'Content-Type': 'application/json',
 }
@@ -263,7 +264,7 @@ export const dossiersApiClient = {
     return apiClientInstance.patch(getUpdateOneMappingColumnRoute(demarcheId, fieldId), dto)
   },
 
-  getDossier: async (id: number) =>
+  getDossier: async (id: number): Promise<IDossier> =>
     (await apiClientInstance.get(getDossierDetail(id))).data,
 
   getOrganismeDossiers: async (organismeId: number): Promise<LeanDossierOutputDto[]> =>
@@ -280,12 +281,12 @@ export const dossiersApiClient = {
 }
 
 export const customFiltersApiClient = {
-  getCustomFilters: async () => {
+  getCustomFilters: async (): Promise<SmallCustomFilterDto[]> => {
     const response = await apiClientInstance.get(getCustomFiltersRoute())
     return response.data
   },
 
-  getCustomFiltersByDemarche: async (id: number) => {
+  getCustomFiltersByDemarche: async (id: number): Promise<SmallCustomFilterDto[]> => {
     const response = await apiClientInstance.get(getCustomFiltersByDemarcheRoute(id))
     return response.data
   },

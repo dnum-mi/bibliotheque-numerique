@@ -1,3 +1,13 @@
+<script lang="ts" setup>
+import { computed } from 'vue'
+
+const props = defineProps<{ params: { value: string[] } }>()
+
+const cellValues = computed(() => {
+  return props.params.value || []
+})
+</script>
+
 <template>
   <div>
     <span
@@ -10,15 +20,3 @@
     </span>
   </div>
 </template>
-
-<script lang="ts" setup>
-import { computed } from 'vue'
-
-const props = withDefaults(defineProps<{params: any}>(), {
-  params: () => ({}),
-})
-
-const cellValues = computed(() => {
-  return props.params.value || []
-})
-</script>

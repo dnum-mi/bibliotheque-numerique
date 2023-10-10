@@ -1,6 +1,6 @@
 // return true if two object are deeply similar
 // will consider undefined and null as equal
-export const deepAlmostEqual = (obj1: any, obj2: any): boolean => {
+export const deepAlmostEqual = (obj1: unknown, obj2: unknown): boolean => {
   if (obj1 === obj2) return true
   // eslint-disable-next-line eqeqeq
   if ((obj1 === null || obj2 === null) && (obj1 == obj2)) {
@@ -14,24 +14,13 @@ export const deepAlmostEqual = (obj1: any, obj2: any): boolean => {
   if (keys1.length !== keys2.length) return false
   for (const key of keys1) {
     if (!keys2.includes(key)) return false
+    // @ts-ignore Use dynamic key of unknown object
     if (!deepAlmostEqual(obj1[key], obj2[key])) return false
   }
   return true
 }
 
-export const selectKeysInObject = (a: any, keys: string[]) => {
-  const result: any = {}
-  if (!a || typeof a !== 'object') {
-    return a
-  }
-  Object.keys(a).forEach(key => {
-    if (keys.includes(key)) {
-      result[key] = a[key]
-    }
-  })
-  return result
-}
+const pick = <T extends Record<string | symbol, unknown>>(obj: T, keys: (keyof T)[]): Partial<T> =>
+  (Object.fromEntries(Object.entries(obj).filter(([key]) => keys.includes(key as keyof T))) as Partial<T>)
 
-// export const pick = (obj: Record<string | symbol, any>, keys: (string | symbol)[]) => ({
-
-// })
+export const selectKeysInObject = pick

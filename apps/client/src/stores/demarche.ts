@@ -37,9 +37,9 @@ export const useDemarcheStore = defineStore('demarche', () => {
       .map((c) => [c.id, c]))
   }
 
-  const updateOneMappingColumn = async (id: string, columnLabel: string): Promise<void> => {
+  const updateOneMappingColumn = async (id: string, columnLabel: string | null): Promise<void> => {
     if (currentDemarche.value) {
-      await apiClient.updateOneMappingColumn(currentDemarche.value.id, id, { columnLabel })
+      await apiClient.updateOneMappingColumn(currentDemarche.value.id, id, { columnLabel: columnLabel ?? null })
       await getCurrentDemarcheConfigurations()
     }
   }

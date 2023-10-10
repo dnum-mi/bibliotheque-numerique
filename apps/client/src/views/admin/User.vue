@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import { useRoleStore, useUserStore } from '@/stores'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
@@ -22,9 +21,7 @@ const hasRoleId = (id: number) =>
     ?.map((r: IRole) => r.id)
     .includes(id)
 
-const rolesRowData = computed(() => {
-  return [...roleStore.roles.values()]
-})
+const rolesRowData = computed(() => Array.from(roleStore.roles.values()))
 
 const assignRole = async (roleId: number) => {
   await roleStore.assignRole(idUser.value, roleId)
@@ -40,7 +37,7 @@ const getElt = async (data: { id: number }) => {
     await userStore.loadUserById(idUser.value)
     idUser.value = Number(idUser.value)
   } catch (error) {
-    console.error(error)
+    import.meta.env.DEV && console.error(error)
   }
 }
 
@@ -53,7 +50,7 @@ onMounted(async () => {
       roleStore.fetchRoles(),
     ])
   } catch (error) {
-    console.error(error)
+    import.meta.env.DEV && console.error(error)
   }
 })
 
@@ -61,8 +58,8 @@ const rolesHeadersJson = [
   {
     value: 'id',
     action: {
-      icon: (data: any) => {
-        return hasRoleId(data.id)
+      icon: ({ id }: {id: number}) => {
+        return hasRoleId(id)
           ? 'ri-indeterminate-circle-line'
           : 'ri-add-circle-line'
       },
@@ -110,7 +107,7 @@ const rolesHeadersJson = [
   <div
     v-if="userData"
     :data-cy="dataCy"
-    class="user-page"
+    class="flex"
   >
     <div class="user-info">
       <div class="fr-col-12 fr-grid-row">
@@ -137,28 +134,21 @@ const rolesHeadersJson = [
         with-action
         :headers="rolesHeadersJson"
         :row-data="rolesRowData"
-        @get-elt="getElt"
+        @get-elt="getElt($event)"
       />
     </div>
   </div>
 </template>
 
-<style lang="scss" scoped>
-  div.user-info {
-    padding: 50px 50px;
-  }
-  .fr-text--bold {
-    padding-right: 10px;
-  }
-  div.user-page {
-    display: flex;
-    flex-direction: row;
-  }
-  div.user-info {
-    flex: 1;
-  }
-  div.role-list {
-    flex: 2;
-  }
+<style scoped>
+.user-info {
+  flex: 1;
+  padding: 50px 50px;
+}
+.fr-text--bold {
+  padding-right: 10px;
+}
+.role-list {
+  flex: 2;
+}
 </style>
-@/utils/date-to-string

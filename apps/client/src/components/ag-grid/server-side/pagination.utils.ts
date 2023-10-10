@@ -2,6 +2,7 @@ import type { FilterDto, SortDto } from '@biblio-num/shared'
 import { type SortModelItem } from 'ag-grid-community'
 
 const fieldTypesDict = {
+  file: 'agTextColumnFilter',
   string: 'agTextColumnFilter',
   number: 'agNumberColumnFilter',
   date: 'agDateColumnFilter',
@@ -9,7 +10,7 @@ const fieldTypesDict = {
   default: 'agTextColumnFilter',
 } as const
 
-// TODO: use FieldType but enum from library doesnt work in front.
+// TODO: use FieldType but enum from library doesn't work in front.
 export const fromFieldTypeToAgGridFilter = (fieldType: keyof typeof fieldTypesDict) => fieldTypesDict[fieldType] || fieldTypesDict.default
 
 export const fromAggToBackendSort = (sortModel: SortModelItem[]): SortDto[] => {

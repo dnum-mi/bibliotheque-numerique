@@ -1,59 +1,63 @@
 import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
+
 import type { User } from '@/shared/interfaces'
 import bnApiClient from '@/api/api-client'
 import { RoleName } from '@/shared/types/Permission.type'
 import type { CredentialsInputDto, UserOutputDto } from '@biblio-num/shared'
-interface UserState {
-  currentUser: User | null,
-  users: Map<number, User>,
-  loaded: boolean
-}
 
-export const useUserStore = defineStore('user', {
-  state: (): UserState => ({
-    currentUser: null,
-    users: new Map<number, UserOutputDto>(),
-    loaded: false,
-  }),
-  getters: {
-    isAuthenticated (state): boolean {
-      return !!state.currentUser
-    },
-    hasAdminAccess (state): boolean {
-      return !!(state.currentUser?.roles.some(role => role.name === RoleName.ADMIN))
-    },
-    canManageRoles (state): boolean {
-      return !!state.currentUser?.roles?.find(role => role.name === RoleName.ADMIN || role?.permissions?.find(permission => permission?.name === 'CREATE_ROLE'))
-    },
-    canAccessDemarches (state): boolean {
-      return !!state.currentUser?.roles?.find(role => role.name === RoleName.ADMIN || role?.permissions?.find(permission => permission?.name === 'ACCESS_DEMARCHE'))
-    },
-  },
-  actions: {
-    async login (loginForm: CredentialsInputDto) {
-      this.currentUser = await bnApiClient.loginUser(loginForm)
-    },
-    async logout () {
-      await bnApiClient.logoutUser()
-      this.currentUser = null
-    },
-    async loadCurrentUser () {
-      this.currentUser = await bnApiClient.fetchCurrentUser()
-      this.loaded = true
-    },
-    async loadUsers () {
-      if (!this.hasAdminAccess) return
-      const users = await bnApiClient.getUsers()
-      if (!users) return
-      for (const user of users) {
-        this.users.set(user.id, user)
-      }
-    },
-    async loadUserById (id: number) {
-      if (!this.hasAdminAccess) return
-      const user = await bnApiClient.getUserById(id)
-      if (!user) return
-      this.users.set(user.id, user)
-    },
-  },
+export const useUserStore = defineStore('user', () => {
+  const currentUser = ref<User | null>(null)
+  const users = ref(new Map<number, UserOutputDto>())
+  const loaded = ref(false)
+
+  const isAuthenticated = computed(() => !!currentUser.value)
+  const hasAdminAccess = computed(() => !!(currentUser.value?.roles.some(role => role.name === RoleName.ADMIN)))
+  const canManageRoles = computed(() => !!currentUser.value?.roles?.find(role => role.name === RoleName.ADMIN || role?.permissions?.find(permission => permission?.name === 'CREATE_ROLE')))
+  const canAccessDemarches = computed(() => !!currentUser.value?.roles?.find(role => role.name === RoleName.ADMIN || role?.permissions?.find(permission => permission?.name === 'ACCESS_DEMARCHE')))
+
+  const login = async (loginForm: CredentialsInputDto) => {
+    currentUser.value = await bnApiClient.loginUser(loginForm)
+  }
+
+  const logout = async () => {
+    await bnApiClient.logoutUser()
+    currentUser.value = null
+  }
+
+  const loadCurrentUser = async () => {
+    currentUser.value = await bnApiClient.fetchCurrentUser()
+    loaded.value = true
+  }
+
+  const loadUsers = async () => {
+    if (!hasAdminAccess.value) return
+    const users = await bnApiClient.getUsers()
+    if (!users) return
+    for (const user of users) {
+      users.value.set(user.id, user)
+    }
+  }
+
+  const loadUserById = async (id: number) => {
+    if (!hasAdminAccess.value) return
+    const user = await bnApiClient.getUserById(id)
+    if (!user) return
+    users.value.set(user.id, user)
+  }
+
+  return {
+    currentUser,
+    users,
+    loaded,
+    isAuthenticated,
+    hasAdminAccess,
+    canManageRoles,
+    canAccessDemarches,
+    login,
+    logout,
+    loadCurrentUser,
+    loadUsers,
+    loadUserById,
+  }
 })

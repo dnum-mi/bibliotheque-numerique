@@ -1,12 +1,19 @@
 <script lang="ts" setup>
-
-import type { TIconFunction } from '@/shared/types/typeDataTablele.js'
+import type { TIconFunction } from '@/shared/types/DataTable.type'
 import { computed } from 'vue'
 
 const props = defineProps<{
   label:string,
   disabled: boolean,
-  params: any,
+  params: {
+    data: unknown
+    action: {
+      icon: string
+      condition:(data: unknown) => boolean
+    }
+    title: string
+    context: { showElt: (data: unknown) => void }
+  },
 }>()
 
 const getIcon = (icon?: string | TIconFunction): string => {
@@ -41,9 +48,3 @@ const showElt = () => {
     @click="showElt"
   />
 </template>
-
-<style scoped>
-.fr-btn {
-  --padding: 0;
-}
-</style>

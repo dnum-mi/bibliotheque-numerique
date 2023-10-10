@@ -34,6 +34,11 @@ import '@gouvminint/vue-dsfr/styles' // Les styles propres aux composants de Vue
 import '@gouvfr/dsfr/dist/scheme/scheme.min.css' // Facultatif: Si les thèmes sont utilisés (thème sombre, thème clair)
 import '@gouvfr/dsfr/dist/utility/icons/icons.min.css' // Facultatif: Si des icônes sont utilisées avec les classes "fr-icon-..."
 
+import 'ag-grid-enterprise'
+import 'ag-grid-community/styles/ag-grid.css'
+import 'ag-grid-community/styles/ag-theme-material.css'
+import '@/ag-grid-dsfr.css'
+
 import * as icons from '@/icons'
 
 import router from '@/router'

@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
-import type { ICustomFilterStat } from '@biblio-num/shared'
-import type { Ref } from 'vue'
-import { frenchFormatNumber } from '@/utils/french-number'
 
+import type { ICustomFilterStat } from '@biblio-num/shared'
+
+import { formatCurrency, frenchFormatNumber } from '@/utils/french-number'
 import apiClient from '@/api/api-client'
 import OrganismeBadge from '@/components/Badges/OrganismeBadge.vue'
 
@@ -12,10 +12,10 @@ const props = defineProps<{
   demarcheId: number;
 }>()
 
-const card: Ref<ICustomFilterStat | undefined> = ref()
-const errorGetFilter: Ref<string | undefined> = ref()
-const addEuro = (title: string) => {
-  console.log(title)
+const card = ref<ICustomFilterStat>()
+const errorGetFilter = ref<string>()
+
+const isFinancement = (title: string) => {
   return title.toLowerCase().includes('financement')
 }
 
@@ -91,7 +91,7 @@ onMounted(async () => {
                 {{ total.label }}
               </p>
               <p class="text-4xl m-0">
-                {{ frenchFormatNumber(total.total) }} {{ addEuro(total.label) ? '€' : '' }}
+                {{ isFinancement(total.label) ? formatCurrency(total.total) : frenchFormatNumber(total.total) }}
               </p>
             </li>
           </ul>

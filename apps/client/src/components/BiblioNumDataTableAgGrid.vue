@@ -13,12 +13,13 @@ import { localeTextAgGrid } from './ag-grid/agGridOptions'
 import AgGridMultiValueCell from './ag-grid/AgGridMultiValueCell.vue'
 import AgGridAttachmentCell from './ag-grid/AgGridAttachmentCell.vue'
 import type { SelectionChangedEvent, GridReadyEvent } from 'ag-grid-community'
-import type { GridOptions, RowStyle } from 'ag-grid-enterprise'
-import OrganismeBadge from '@/components/Badges/OrganismeBadge.vue'
+import type { RowStyle } from 'ag-grid-enterprise'
+import type { AgGridCommon } from 'ag-grid-community/dist/lib/interfaces/iCommon'
+import { onBeforeUnmount } from 'vue'
 
 const props = withDefaults(defineProps<{
     title?: string,
-    rowData?: Record<string, any>[],
+    rowData?: Record<string, string | number>[],
     actionTitle: string,
     headers?: HeaderDataTable[],
     pagination?: boolean,
@@ -34,9 +35,10 @@ const props = withDefaults(defineProps<{
   headers: () => [],
   paginationPageSize: PAGINATION_PAGE_SIZE,
   rowSelection: undefined,
+  rowStyle: () => ({}),
 })
 
-const getFilterAgGrid = ({ type, filter }: {type: string; filter: string }) => {
+const getFilterAgGrid = ({ type, filter }: HeaderDataTable) => {
   const typeFilter = filter === AgGridFilter.MULTI_VALUE && type === 'number' ? AgGridFilter.MULTI_VALUE_NUMBER : type
   return (typeFilter && filterToApply[typeFilter as AgGridFilter]) || { }
 }
@@ -50,11 +52,12 @@ const toRenderer = {
     cellRenderer: AgGridAttachmentCell,
   },
 }
-const getRendererAgGrid = (header) => {
+const getRendererAgGrid = (header: HeaderDataTable) => {
   const { renderer, type } = header
 
-  const typeRenderder = renderer === AgGridFilter.MULTI_VALUE ? AgGridFilter.MULTI_VALUE : type
-  const agRenderer = toRenderer[typeRenderder]
+  const typeRenderer = renderer === AgGridFilter.MULTI_VALUE ? AgGridFilter.MULTI_VALUE : type
+  // @ts-ignore this uses dynamic key
+  const agRenderer = toRenderer[typeRenderer]
   return agRenderer
 }
 
@@ -72,7 +75,7 @@ interface AgGridColumnDefs {
 
 const columnDefs: ComputedRef<AgGridColumnDefs[]> = computed(() => {
   if (!props.headers.length) {
-    return
+    return []
   }
   const headers: HeaderDataTable[] = [...props.headers]
 
@@ -81,7 +84,10 @@ const columnDefs: ComputedRef<AgGridColumnDefs[]> = computed(() => {
     .map((header) => {
       const filter = getFilterAgGrid(header)
       const renderer = getRendererAgGrid(header) || {
-        cellRenderer: header.renderer ?? (header.parseFn ? (params: any) => header.parseFn?.(params.value) : undefined),
+        cellRenderer: header.renderer ??
+        (header.parseFn
+          ? (params: Record<string | symbol, unknown>) => header.parseFn?.(params.value)
+          : undefined),
       }
       return {
         floatingFilter: props.floatingFilter,
@@ -115,13 +121,10 @@ const columnDefs: ComputedRef<AgGridColumnDefs[]> = computed(() => {
       : []),
     ...filteredHeaders,
   ]
-/*
-  columnDefs.concat()
-  */
 })
 
 const emit = defineEmits(['getElt', 'selectionChanged'])
-const showElt = ($event) => {
+const showElt = ($event: string) => {
   emit('getElt', $event)
 }
 
@@ -149,43 +152,32 @@ const sideBar = computed(() => props.isHiddenSideBar
       },
     })
 
-const gridOptions = computed(() => {
-  if (props.gridOptions) {
-    return {
-      localeText: localeTextAgGrid,
-      ...props.gridOptions,
-    }
-  }
-
-  return {
-    localeText: localeTextAgGrid,
-  }
-})
-
-// const gridOptions = {
-//   localeText: localeTextAgGrid,
-// }
+const gridOptions = {
+  localeText: localeTextAgGrid,
+}
 
 const onSelectionChanged = (params: SelectionChangedEvent) => {
   emit('selectionChanged', params.api.getSelectedRows())
 }
 
-const gridApi = ref() // Optional - for accessing Grid's API
-const columnApi = ref() // Optional - for accessing Grid's API
+const gridApi = ref<AgGridCommon<unknown, unknown>['api']>() // Optional - for accessing Grid's API
+const columnApi = ref<AgGridCommon<unknown, unknown>['columnApi']>() // Optional - for accessing Grid's API
 
 const onGridReady = (params: GridReadyEvent) => {
-  watchEffect(() => { params.api.setRowData(props.rowData) })
+  const unwatch = watchEffect(() => { params.api.setRowData(props.rowData) })
   gridApi.value = params.api
   columnApi.value = params.columnApi
+  onBeforeUnmount(unwatch)
 }
 
 defineExpose({
   getCurrentFilter () {
-    const filters = Object.fromEntries(Object.entries(gridApi.value?.getFilterModel()).map(([key, value]) => ([key, value])))
-    // const columnStates = columnApi.value.getColumnState().map(({ colId, filter }) => ({ colId, filter }))
+    const filterModel = gridApi.value?.getFilterModel() || {}
+    const filters = Object.fromEntries(Object.entries(filterModel).map(([key, value]) => ([key, value])))
+    // const columnStates = columnApi.value?.getColumnState().map(({ colId }) => ({ colId }))
     return filters
   },
-  setFilters (filters) {
+  setFilters (filters: Parameters<AgGridCommon<unknown, unknown>['api']['setFilterModel']>[0]) {
     gridApi.value?.setFilterModel(filters)
   },
   resetAgGridFilters () {

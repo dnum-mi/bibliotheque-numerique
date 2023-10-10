@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import { useRoute, useRouter } from 'vue-router'
 import { computed, type ComputedRef, onMounted, ref } from 'vue'
+
 import type { IDemarche } from '@biblio-num/shared'
+
 import { useDemarcheStore, useUserStore } from '@/stores'
 import GroupInstructeurs from '@/views/demarches/demarche/information/DemarcheGrpInstructeurs.vue'
 import DemarcheService from '@/views/demarches/demarche/information/DemarcheService.vue'
@@ -16,7 +18,7 @@ const router = useRouter()
 const demarcheStore = useDemarcheStore()
 const userStore = useUserStore()
 
-const demarche = computed<IDemarche>(() => demarcheStore.currentDemarche || {})
+const demarche = computed<IDemarche | undefined>(() => demarcheStore.currentDemarche)
 const props = defineProps<{ id: string }>()
 
 onMounted(async () => {
@@ -57,7 +59,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <LayoutList class="fr-pb-2w">
+  <LayoutList
+    v-if="demarche"
+    class="fr-pb-2w"
+  >
     <template #title>
       <div class="bn-list-search bn-list-search-dossier">
         <h6 class="bn-list-search-title-dossier fr-p-1w fr-m-0">

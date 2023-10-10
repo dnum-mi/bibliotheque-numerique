@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia'
 import { ref, type Ref } from 'vue'
-import type { CreateCustomFilterDto, PatchCustomFilterDto, ICustomFilter } from '@biblio-num/shared'
+import type { CreateCustomFilterDto, PatchCustomFilterDto, SmallCustomFilterDto } from '@biblio-num/shared'
 
 import apiClient from '@/api/api-client'
 
 export const useCustomFilterStore = defineStore('custom-filter', () => {
-  const customFilters: Ref<ICustomFilter[]> = ref<ICustomFilter[]>([])
+  const customFilters: Ref<SmallCustomFilterDto[]> = ref<SmallCustomFilterDto[]>([])
   let currentDemarcheId: number
   const getCustomFilters = async () => {
     customFilters.value = await apiClient.getCustomFilters()

@@ -3,9 +3,7 @@ import '@gouvminint/vue-dsfr/styles'
 import DemarcheService from './DemarcheService.vue'
 
 import { generateDemarche } from '@/views/__tests__/demarches'
-import { createPinia } from 'pinia'
 import { useDemarcheStore } from '@/stores'
-import VueDsfr from '@gouvminint/vue-dsfr'
 
 describe('<DemarcheService />', () => {
   it('renders with props', () => {
