@@ -97,11 +97,13 @@ watch([() => userStore.isAuthenticated, route], async () => {
   const isCurrentRoute = ({ to }: QuickLink) => to !== route.path && to?.name !== route.name
 
   if (userStore.isAuthenticated) {
-    quickLinks.value = [
-      ...(userStore.canAccessDemarches ? [demarcheQuickLink] : []),
+    quickLinks.value = [ // TODO: refacto role
+      // ...(userStore.canAccessDemarches ? [demarcheQuickLink] : []),
+      demarcheQuickLink,
       ...authenticatedQuickLinksPart1,
       ...authenticatedQuickLinksPart3,
-      ...(userStore.canManageRoles ? [manageRolesQuickLink] : []),
+      manageRolesQuickLink,
+      // ...(userStore.canManageRoles ? [manageRolesQuickLink] : []),
       ...authenticatedQuickLinksPart2,
     ]
   } else {

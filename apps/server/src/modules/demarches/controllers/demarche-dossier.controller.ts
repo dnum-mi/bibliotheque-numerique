@@ -1,18 +1,23 @@
-import { Body, Controller, Header, HttpCode, Post, Res, UseGuards, UseInterceptors } from '@nestjs/common'
+import { Body, Controller, Header, HttpCode, Post, Res, UseInterceptors } from '@nestjs/common'
 import { ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swagger'
-import { PermissionsGuard, RequirePermissions } from '../../roles/providers/permissions.guard'
-import { PermissionName } from '@/shared/types/Permission.type'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { CurrentDemarcheInterceptor } from '../providers/interceptors/current-demarche.interceptor'
 import { Demarche } from '../objects/entities/demarche.entity'
 import { DossierSearchService } from '../../dossiers/providers/dossier-search.service'
 import { FieldSearchService } from '../../dossiers/providers/field-search.service'
-import { DossierSearchOutputDto, FieldSearchOutputDto, MappingColumn, SearchDossierDto } from '@biblio-num/shared'
+import {
+  DossierSearchOutputDto,
+  FieldSearchOutputDto,
+  MappingColumn,
+  Roles,
+  SearchDossierDto,
+} from '@biblio-num/shared'
 import { CurrentDemarche } from '@/modules/demarches/providers/decorators/current-demarche.decorator'
 import { ServerResponse } from 'http'
 import { XlsxService } from '@/shared/modules/xlsx/xlsx.service'
 import { ReadStream } from 'fs'
 import { fromMappingColumnArrayToLabelHash } from '../utils/demarche.utils'
+import { Role } from '@/modules/users/providers/decorators/role.decorator'
 
 const xlsxContent = {
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': {
@@ -25,7 +30,6 @@ const xlsxContent = {
 
 @ApiTags('Demarches')
 @ApiTags('Dossiers')
-@UseGuards(PermissionsGuard)
 @UseInterceptors(CurrentDemarcheInterceptor)
 @Controller('demarches/:demarcheId')
 export class DemarcheDossierController {
@@ -38,7 +42,7 @@ export class DemarcheDossierController {
 
   @HttpCode(200)
   @ApiResponse({ status: 200 })
-  @RequirePermissions({ name: PermissionName.ACCESS_DEMARCHE })
+  @Role(Roles.superadmin) // TODO: role - filter with options
   @Post('/dossiers-search')
   async searchDossier(@Body() dto: SearchDossierDto,
                       @CurrentDemarche() demarche: Partial<Demarche>): Promise<DossierSearchOutputDto> {
@@ -48,8 +52,8 @@ export class DemarcheDossierController {
 
   @HttpCode(200)
   @ApiResponse({ status: 200 })
-  @RequirePermissions({ name: PermissionName.ACCESS_DEMARCHE })
   @Post('/fields-search')
+  @Role(Roles.superadmin) // TODO: role - filter with options
   async searchFields(@Body() dto: SearchDossierDto,
                      @CurrentDemarche() demarche: Partial<Demarche>): Promise<FieldSearchOutputDto> {
     this.logger.verbose('searchDossier')
@@ -72,11 +76,11 @@ export class DemarcheDossierController {
 
   @HttpCode(200)
   @ApiResponse({ status: 200 })
-  @RequirePermissions({ name: PermissionName.ACCESS_DEMARCHE })
   @ApiOkResponse({ description: 'Excel file served successfully', content: xlsxContent })
   @Header('Content-type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
   @Header('Content-Disposition', 'export.xlsx')
   @Post('/dossiers-search/export/xlsx')
+  @Role(Roles.superadmin) // TODO: role - filter with options
   async searchDossierExport(@Body() dto: SearchDossierDto,
                             @Res() res: ServerResponse,
                             @CurrentDemarche() demarche: Partial<Demarche>): Promise<void> {
@@ -87,11 +91,11 @@ export class DemarcheDossierController {
 
   @HttpCode(200)
   @ApiResponse({ status: 200 })
-  @RequirePermissions({ name: PermissionName.ACCESS_DEMARCHE })
   @ApiOkResponse({ description: 'Excel file served successfully', content: xlsxContent })
   @Header('Content-type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
   @Header('Content-Disposition', 'export.xlsx')
   @Post('/fields-search/export/xlsx')
+  @Role(Roles.superadmin) // TODO: role - filter with options
   async searchFieldsExport(@Body() dto: SearchDossierDto,
                      @Res() res: ServerResponse,
                      @CurrentDemarche() demarche: Partial<Demarche>): Promise<void> {

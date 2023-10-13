@@ -1,6 +1,6 @@
 import { ApiProperty, OmitType } from '@nestjs/swagger'
 import { CreateUserDto } from './create-user.dto'
-import { RoleOutputDto } from 'dto/role'
+import { IRole } from '../../interfaces'
 
 export class UserOutputDto extends OmitType(CreateUserDto, ['password']) {
   @ApiProperty({
@@ -9,7 +9,7 @@ export class UserOutputDto extends OmitType(CreateUserDto, ['password']) {
   id: number
 
   @ApiProperty({
-    description: 'Roles de l’utilisateur',
+    description: 'Role de l\'utilisateur',
   })
-  roles: RoleOutputDto[]
+  role: IRole
 }

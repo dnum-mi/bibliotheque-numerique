@@ -9,7 +9,6 @@ import OrganismeBadge from '@/components/Badges/OrganismeBadge.vue'
 
 const props = defineProps<{
   filterId: number;
-  demarcheId: number;
 }>()
 
 const card = ref<ICustomFilterStat>()
@@ -26,7 +25,7 @@ const onDelete = () => {
 
 onMounted(async () => {
   if (props.filterId) {
-    card.value = await apiClient.getCustomFilterStats(props.filterId, props.demarcheId)
+    card.value = await apiClient.getCustomFilterStats(props.filterId)
   }
 })
 </script>

@@ -1,9 +1,7 @@
 import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
-
 import { TestingModuleFactory } from '../common/testing-module.factory'
 import { dataSource } from '../data-source-e2e.typeorm'
-import { getUserCookie } from '../common/get-user-cookie'
 
 describe('statistique', () => {
   let app: INestApplication
@@ -13,10 +11,7 @@ describe('statistique', () => {
     const testingModule = new TestingModuleFactory()
     await testingModule.init()
     app = testingModule.app
-    // filterService = await app.resolve<CustomFilterService>(CustomFilterService)
-    // await filterService.remove({ name: 'Superman' })
-    cookie = await getUserCookie(app, 'test.demarche.2@localhost.com')
-    // demarchesCount = await dataSource.manager.count(Demarche)
+    cookie = testingModule.cookies.instructor
   })
 
   afterAll(async () => {
@@ -26,7 +21,7 @@ describe('statistique', () => {
 
   it('Should return nb dossiers', async () => {
     const { body } = await request(app.getHttpServer())
-      .get('/custom-filters/demarche/1/4/stats')
+      .get('/custom-filters/4/stats')
       .set('Cookie', [cookie])
       .expect(200)
 
@@ -65,7 +60,7 @@ describe('statistique', () => {
 
   it('Should return nb champs and montant', async () => {
     const { body } = await request(app.getHttpServer())
-      .get('/custom-filters/demarche/1/5/stats')
+      .get('/custom-filters/5/stats')
       .set('Cookie', [cookie])
       .expect(200)
 
@@ -100,7 +95,7 @@ describe('statistique', () => {
 
   it('Should return nb dossiers and montant', async () => {
     const { body } = await request(app.getHttpServer())
-      .get('/custom-filters/demarche/1/6/stats')
+      .get('/custom-filters/6/stats')
       .set('Cookie', [cookie])
       .expect(200)
 

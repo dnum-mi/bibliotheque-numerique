@@ -26,4 +26,5 @@ export {
   RiShieldStarLine,
   RiSortDesc,
   RiSubtractLine,
+  RiUserSettingsLine,
 } from 'oh-vue-icons/icons'

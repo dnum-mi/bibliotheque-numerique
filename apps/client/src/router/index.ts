@@ -11,9 +11,10 @@ const routes: RouterOptions['routes'] = [
   {
     name: 'Home',
     path: '/',
-    meta: {
-      needsAuth: true,
-    },
+    // TODO: refactor role
+    // meta: {
+    //   needsAuth: true,
+    // },
     redirect: { name: 'Demarches' },
     children: [],
   },
@@ -26,13 +27,15 @@ const routes: RouterOptions['routes'] = [
     name: 'Dossiers',
     path: '/dossiers/:id',
     component: () => import('@/views/dossiers/Dossier.vue'),
-    meta: {
-      needsAuth: true,
-    },
+    // TODO: refactor role
+    // meta: {
+    //   needsAuth: true,
+    // },
   },
   {
     path: '/demarches',
-    beforeEnter: [canAccessDemarchesGuard],
+    // TODO: refacto role
+    // beforeEnter: [canAccessDemarchesGuard],
     children: [
       {
         path: '',
@@ -56,66 +59,76 @@ const routes: RouterOptions['routes'] = [
   {
     name: SIGN_IN_ROUTE_NAME,
     path: '/sign_in',
-    beforeEnter: [isNotAuthenticatedGuard],
+    // TODO: refacto role
+    // beforeEnter: [isNotAuthenticatedGuard],
     component: () => import('@/views/Signin.vue'),
   },
   {
     name: 'SignUp',
     path: '/sign_up',
-    beforeEnter: [isNotAuthenticatedGuard],
+    // TODO: refacto role
+    // beforeEnter: [isNotAuthenticatedGuard],
     component: () => import('@/views/Signup.vue'),
   },
   {
     name: 'Profile',
     path: '/profile',
     component: () => import('@/views/Profile.vue'),
-    meta: {
-      needsAuth: true,
-    },
+    // TODO: refactor role
+    // meta: {
+    //   needsAuth: true,
+    // },
   },
   {
     name: 'Statistiques',
     path: '/statistiques',
     component: () => import('@/views/statistics/Statistics.vue'),
-    meta: {
-      needsAuth: true,
-    },
+    // TODO: refactor role
+    // meta: {
+    //   needsAuth: true,
+    // },
   },
   {
     name: 'LogOut',
     path: '/logout',
     component: () => import('@/views/Logout.vue'),
-    meta: {
-      needsAuth: true,
-    },
+    // TODO: refactor role
+    // meta: {
+    //   needsAuth: true,
+    // },
   },
   {
     name: 'User',
     path: '/user/:id',
-    beforeEnter: [hasAdminAccessGuard],
+    // TODO: refacto role
+    // beforeEnter: [hasAdminAccessGuard],
     component: () => import('@/views/admin/User.vue'),
   },
   {
     name: 'Admin',
     path: '/admin',
-    beforeEnter: [canManageRolesGuard],
+    // TODO: refacto role
+    // beforeEnter: [canManageRolesGuard],
     component: () => import('@/views/admin/Admin.vue'),
   },
-  {
-    name: 'Role',
-    path: '/role/:id',
-    beforeEnter: [canManageRolesGuard],
-    component: () => import('@/views/admin/Role.vue'),
-    props: (route) => ({
-      id: Number(route.params.id),
-    }),
-  },
+  // TODO: refacto role
+  // {
+  //   name: 'Role',
+  //   path: '/role/:id',
+  //   // TODO: refacto role
+  //   // beforeEnter: [canManageRolesGuard],
+  //   component: () => import('@/views/admin/Role.vue'),
+  //   props: (route) => ({
+  //     id: Number(route.params.id),
+  //   }),
+  // },
   {
     name: 'Organismes',
     path: '/organismes',
-    meta: {
-      needsAuth: true,
-    },
+    // TODO: refactor role
+    // meta: {
+    //   needsAuth: true,
+    // },
     children: [
       {
         name: 'ListeOrganismes',

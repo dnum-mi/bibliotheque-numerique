@@ -1,0 +1,11 @@
+{
+  "id": 1,
+  "email": "admin@example.com",
+  "lastname": "nomAdmin",
+  "firstname": "pernomAdmin",
+  "password": "password",
+  "role": {
+    "label": "sudo",
+    "options": []
+  } 
+}
