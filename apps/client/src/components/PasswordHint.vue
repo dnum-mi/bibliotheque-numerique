@@ -2,6 +2,7 @@
 <script setup lang="ts">
 import { computed, type Ref } from 'vue'
 import BnCheckerPassword from './BnCheckerPassword.vue'
+import TransitionExpand from './TransitionExpand.vue'
 
 const props = withDefaults(defineProps<{ password?: string, hintText?: string }>(), {
   password: '',
@@ -25,19 +26,23 @@ const checks: Ref<string[]> = computed(() => {
 </script>
 
 <template>
-  <transition name="squeeze">
-    <DsfrHighlight
-      v-show="checks.length > 0"
+  <TransitionExpand name="list">
+    <div
+      v-if="checks.length > 0"
       small
-      class="mt-4 !ml-0"
+      class="fr-highlight  mt-4  !ml-0"
     >
-      <div class="fr-text-label--grey text-sm">
+      <div class="fr-text-label--grey  text-sm  list">
         <span class="fr-hint text-sm">{{ hintText }}</span>
-        <ul class="pl-0">
+        <TransitionGroup
+          name="list"
+          tag="ul"
+          class="list  p-0  list-none  relative"
+        >
           <li
             v-for="(text, i) in Object.keys(strongEnoughPasswordObject)"
+            v-show="checks.includes(text)"
             :key="i"
-            class="list-none"
           >
             <BnCheckerPassword
               :key="i"
@@ -45,37 +50,37 @@ const checks: Ref<string[]> = computed(() => {
               :valid="!checks.includes(text)"
             />
           </li>
-        </ul>
+        </TransitionGroup>
       </div>
-    </DsfrHighlight>
-  </transition>
+    </div>
+  </TransitionExpand>
 </template>
 
 <style scoped>
-.squeeze-enter-active {
-  transform-origin: top center;
-  animation: squeeze-in 1s;
+.list-move, /* apply transition to moving elements */
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease-in-out;
+  transition-delay: 0.2s;
+  margin: 0;
 }
 
-.squeeze-leave-active {
-  transform-origin: top center;
-  animation: squeeze-in 1s reverse;
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transition-delay: 0.2s;
+}
+.list-move {
+  transition-delay: 0.2s;
 }
 
-@keyframes squeeze-in {
-  0% {
-    transform: scaleY(0);
-  }
+/* ensure leaving items are taken out of layout flow so that moving
+   animations can be calculated correctly. */
+.list-leave-active {
+  position: absolute;
+}
 
-  30% {
-    transform: scaleY(0);
-  }
-
-  50% {
-    transform: scaleY(0.75);
-  }
-
-  100% {
-    transform: scaleY(1);
-  }
-}</style>
+.list {
+  transition: all 0.3s ease-in-out;
+}
+</style>

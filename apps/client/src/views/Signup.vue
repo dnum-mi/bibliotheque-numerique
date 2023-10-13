@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { z } from 'zod'
+import { AxiosError } from 'axios'
 import { toTypedSchema } from '@vee-validate/zod'
-import { useField, useForm } from 'vee-validate'
+import { useField, useForm, useIsFormDirty, useIsFormValid } from 'vee-validate'
+
 import type { CreateUserDto } from '@biblio-num/shared'
 
 import apiClient from '@/api/api-client'
-import LayoutAccueil from '../components/Layout/LayoutAccueil.vue'
 import { passwordValidator } from '@/utils/password.validator'
 import { REQUIRED_FIELD_MESSAGE } from '@/messages'
+import LayoutAccueil from '../components/Layout/LayoutAccueil.vue'
 import ToggleInputPassword from '@/components/ToggleInputPassword.vue'
+import PasswordHint from '@/components/PasswordHint.vue'
 
 const router = useRouter()
 
@@ -24,13 +27,20 @@ const { handleSubmit } = useForm({
   validationSchema,
 })
 
+const isDirty = useIsFormDirty()
+const isFormValid = useIsFormValid()
+
 const signInPath = '/sign_in'
 const onSubmit = handleSubmit(async (formValue: CreateUserDto) => {
   try {
     await apiClient.createUser(formValue)
     await router.push(signInPath)
-  } catch (e) {
-    // TODO: Afficher une erreur compréhensible à l’utilisateur
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      passwordError.value = error.response?.data.msg ?? (`Impossible de créer l’utilisateur (${error.message})`)
+    } else {
+      passwordError.value = (error as Error).message
+    }
   }
 })
 
@@ -118,15 +128,19 @@ const { value: passwordValue, errorMessage: passwordError } = useField<string>('
             <ToggleInputPassword
               id="password"
               v-model="passwordValue"
-              :password-error="passwordError"
               label="Saisir un mot de passe"
             />
+
+            <PasswordHint :password="passwordValue" />
 
             <div
               class="fr-m-4w"
               style="text-align:center"
             >
-              <DsfrButton type="submit">
+              <DsfrButton
+                type="submit"
+                :disabled="!isDirty || !isFormValid"
+              >
                 S'inscrire
               </DsfrButton>
             </div>

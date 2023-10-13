@@ -46,7 +46,7 @@ const togglePassword = () => {
       </DsfrInput>
       <button
         type="button"
-        class="btn absolute  right-2  top-[55%]"
+        class="btn  absolute  right-2  bottom-0  transform  translate-y-[-30%]"
         @click.prevent="togglePassword"
       >
         <span
