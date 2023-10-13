@@ -15,7 +15,6 @@ describe('<User />', () => {
 
     // Stub store
     const userStore = useUserStore()
-    cy.stub(userStore, 'currentUser').returns(admin)
     cy.stub(userStore, 'loadUserById', async (id: number) => { userStore.users.set(id, { ...createRandomUser(), id }) })
 
     cy.mountWithPinia(User)

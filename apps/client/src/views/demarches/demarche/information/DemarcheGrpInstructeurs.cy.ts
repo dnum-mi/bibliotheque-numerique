@@ -1,22 +1,26 @@
-import '@gouvminint/vue-dsfr/styles'
-import '@/main.css'
-
-import VueDsfr from '@gouvminint/vue-dsfr'
+import { createRandomUser } from '@/views/__tests__/users'
 
 import DemarcheGrpInstructeurs from './DemarcheGrpInstructeurs.vue'
-import { createPinia, type Pinia } from 'pinia'
 import { useDemarcheStore } from '@/stores'
 import { generateDemarche } from '@/views/__tests__/demarches'
+import apiClient from '@/api/api-client'
 
 describe('<DemarcheGrpInstructeurs />', () => {
   it('renders', () => {
-    const useStore = useDemarcheStore()
+    const demarcheStore = useDemarcheStore()
+    const user = createRandomUser()
+    // Prevent api calls
+    cy.stub(apiClient, 'fetchCurrentUser').returns(Promise.resolve(user))
+
     const demarche = generateDemarche()
-    useStore.currentDemarche = demarche
+    cy.stub(apiClient, 'getDemarche').withArgs(demarche.id)
+      .returns(Promise.resolve(demarche))
+    cy.then(() => {
+      demarcheStore.getDemarche(demarche.id)
+    })
 
     cy.mountWithPinia(DemarcheGrpInstructeurs)
 
-    cy.log('demarche?.dsDataJson?.groupeInstructeurs', JSON.stringify(demarche?.dsDataJson?.groupeInstructeurs))
     cy.get('h3').should('contain', 'Groupe Instructeurs')
     cy.get('section').then($section => {
       for (const grp of demarche.dsDataJson?.groupeInstructeurs) {

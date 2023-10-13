@@ -47,4 +47,3 @@ const etat = computed(() => props.datas?.state?.toUpperCase() || '')
   padding: 0;
 }
 </style>
-@/utils/date-to-string

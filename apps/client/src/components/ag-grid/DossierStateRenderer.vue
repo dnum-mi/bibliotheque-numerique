@@ -24,5 +24,4 @@ const state = computed(() => {
       :type="state.type"
     />
   </div>
-</template>
-@/utils/state-to-string
+</template>/utils/state-to-string

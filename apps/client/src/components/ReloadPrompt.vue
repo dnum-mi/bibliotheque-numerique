@@ -1,10 +1,13 @@
 <script lang="ts" setup>
-defineProps({
-  offlineReady: Boolean,
-  needRefresh: Boolean,
-})
+defineProps<{
+  offlineReady: boolean
+  needRefresh: boolean
+}>()
 
-defineEmits(['close', 'updateServiceWorker'])
+defineEmits<{
+  close: [],
+  updateServiceWorker: [],
+}>()
 </script>
 
 <template>

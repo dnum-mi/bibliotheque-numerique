@@ -20,8 +20,8 @@ describe('<Signin />', () => {
 
   it('form is validated', () => {
     cy.mount(Signin)
-    cy.log(newUser.email)
-    cy.log(newUser.password)
+    // cy.log(newUser.email)
+    // cy.log(newUser.password)
 
     cy.get('#email').type(newUser.email)
     cy.get('#password').type(newUser.password)

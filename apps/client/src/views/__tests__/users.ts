@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker/locale/fr'
 import type { User } from '@/shared/interfaces'
 import type { CredentialsInputDto } from '@biblio-num/shared'
+import { RoleName } from '@/shared/types'
 
 export const createRandomUserForm = (): CredentialsInputDto => ({
   email: faker.internet.email(),
@@ -15,13 +16,8 @@ export const createRandomUser = (id?: number): User => ({
   roles: [],
 })
 
-export const createRandomUsers = (count: number): User[] => {
-  const users = []
-  for (let i = 1; i <= count; i++) {
-    users.push(createRandomUser(i))
-  }
-  return users
-}
+export const createRandomUsers = (count: number, ids?: number[]): User[] =>
+  Array.from({ length: count }, (_, i) => createRandomUser(ids?.[i] || undefined))
 
 export const createRandomAdmin = (): User => ({
   id: faker.helpers.unique(faker.datatype.number, [1000]),
@@ -30,7 +26,7 @@ export const createRandomAdmin = (): User => ({
   email: faker.internet.email(),
   roles: [{
     id: 1,
-    name: 'admin',
+    name: RoleName.ADMIN,
     description: 'Administrator',
     permissions: [],
     createAt: faker.date.past().toISOString(),
@@ -45,7 +41,7 @@ export const createRandomUserWithoutCreateRole = (): User => ({
   email: faker.internet.email(),
   roles: [{
     id: 1,
-    name: 'admin_local',
+    name: RoleName.ADMIN_LOCAL,
     description: 'Administrator local',
     permissions: [],
     createAt: faker.date.past().toISOString(),
@@ -59,7 +55,7 @@ export const createRandomUserWithCreateRole = (): User => ({
   email: faker.internet.email(),
   roles: [{
     id: 1,
-    name: 'admin_local',
+    name: RoleName.ADMIN_LOCAL,
     description: 'Administrator local',
     permissions: [{ name: 'CREATE_ROLE' }],
     createAt: faker.date.past().toISOString(),

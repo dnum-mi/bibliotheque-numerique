@@ -58,5 +58,3 @@ defineProps<{
     <hr class="fr-mt-1w fr-mb-1v">
   </div>
 </template>
-@/utils/date-to-string
-@/utils/pretty-byte-size

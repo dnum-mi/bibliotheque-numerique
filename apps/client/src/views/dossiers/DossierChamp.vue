@@ -47,4 +47,3 @@ const dataCy = 'dossier-champ'
     </div>
   </div>
 </template>
-@/utils/pretty-byte-size

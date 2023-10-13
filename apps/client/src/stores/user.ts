@@ -8,7 +8,7 @@ import type { CredentialsInputDto, UserOutputDto } from '@biblio-num/shared'
 
 export const useUserStore = defineStore('user', () => {
   const currentUser = ref<User | null>(null)
-  const users = ref(new Map<number, UserOutputDto>())
+  const users = ref<Map<number, UserOutputDto>>(new Map<number, UserOutputDto>())
   const loaded = ref(false)
 
   const isAuthenticated = computed(() => !!currentUser.value)
@@ -32,9 +32,9 @@ export const useUserStore = defineStore('user', () => {
 
   const loadUsers = async () => {
     if (!hasAdminAccess.value) return
-    const users = await bnApiClient.getUsers()
-    if (!users) return
-    for (const user of users) {
+    const userArr = await bnApiClient.getUsers()
+    if (!userArr) return
+    for (const user of userArr) {
       users.value.set(user.id, user)
     }
   }

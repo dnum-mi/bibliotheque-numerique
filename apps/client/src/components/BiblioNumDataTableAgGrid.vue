@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-
 import { computed, watchEffect, ref, type ComputedRef, type Component } from 'vue'
 import { AgGridVue } from 'ag-grid-vue3'
 
@@ -37,6 +36,13 @@ const props = withDefaults(defineProps<{
   rowSelection: undefined,
   rowStyle: () => ({}),
 })
+const emit = defineEmits(['getElt', 'selectionChanged'])
+
+const showElt = ($event: string) => {
+  emit('getElt', $event)
+}
+
+const context = { showElt }
 
 const getFilterAgGrid = ({ type, filter }: HeaderDataTable) => {
   const typeFilter = filter === AgGridFilter.MULTI_VALUE && type === 'number' ? AgGridFilter.MULTI_VALUE_NUMBER : type
@@ -123,12 +129,6 @@ const columnDefs: ComputedRef<AgGridColumnDefs[]> = computed(() => {
   ]
 })
 
-const emit = defineEmits(['getElt', 'selectionChanged'])
-const showElt = ($event: string) => {
-  emit('getElt', $event)
-}
-
-const context = { showElt }
 const sideBar = computed(() => props.isHiddenSideBar
   ? false
   : {
@@ -164,10 +164,9 @@ const gridApi = ref<AgGridCommon<unknown, unknown>['api']>() // Optional - for a
 const columnApi = ref<AgGridCommon<unknown, unknown>['columnApi']>() // Optional - for accessing Grid's API
 
 const onGridReady = (params: GridReadyEvent) => {
-  const unwatch = watchEffect(() => { params.api.setRowData(props.rowData) })
+  watchEffect(() => { params.api.setRowData(props.rowData) })
   gridApi.value = params.api
   columnApi.value = params.columnApi
-  onBeforeUnmount(unwatch)
 }
 
 defineExpose({
