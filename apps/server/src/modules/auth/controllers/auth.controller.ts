@@ -2,9 +2,7 @@ import {
   Body,
   Controller,
   Delete,
-  Get,
   HttpCode,
-  NotFoundException,
   Post,
   Request,
   Response,
@@ -13,24 +11,34 @@ import {
 import { ApiTags } from '@nestjs/swagger'
 import { CredentialsInputDto, UserOutputDto } from '@biblio-num/shared'
 import { AuthService } from '../providers/auth.service'
-import { LocalAuthGuard } from '../providers/local-auth.guard'
-import { AuthenticatedGuard } from '../providers/authenticated.guard'
+import { PublicRoute } from '@/modules/users/providers/decorators/public-route.decorator'
+import { LoggerService } from '@/shared/modules/logger/logger.service'
+import { LocalAuthGuard } from '@/modules/auth/providers/local.guard'
 
 /* The TODO: of this file must be done after creating what nestjs calls "tests" */
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-  constructor (private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private logger: LoggerService,
+  ) {
+    this.logger.setContext(this.constructor.name)
+  }
 
-  @UseGuards(LocalAuthGuard)
   @HttpCode(200)
+  @PublicRoute()
+  @UseGuards(LocalAuthGuard)
   @Post('sign-in')
-  async signIn (@Request() req, @Body() body: CredentialsInputDto): Promise<UserOutputDto> {
+  async signIn(@Body() body: CredentialsInputDto): Promise<UserOutputDto> {
+    this.logger.verbose('signIn')
     return this.authService.login(body)
   }
 
   @Delete('/')
-  async logout (@Request() req, @Response() res, next): Promise<void> {
+  @PublicRoute()
+  async logout(@Request() req, @Response() res, next): Promise<void> {
+    this.logger.verbose('logout')
     req.logout(function (err) {
       if (err) {
         return next(err)
@@ -38,15 +46,5 @@ export class AuthController {
 
       res.send({ success: true })
     })
-  }
-
-  @UseGuards(AuthenticatedGuard)
-  @Get('profile')
-  getProfile (@Request() req): Promise<UserOutputDto> {
-    if (req.user) {
-      return this.authService.login(req.user)
-    } else {
-      throw new NotFoundException('User not found')
-    }
   }
 }

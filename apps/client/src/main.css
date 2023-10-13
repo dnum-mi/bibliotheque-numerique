@@ -62,6 +62,11 @@ body,
   color: var(--background-default-grey);
 }
 
+.bn-list-admin {
+  background-color: var(--green-tilleul-verveine-sun-418-moon-817);
+  color: var(--background-default-grey);
+}
+
 .bn-fiche-space-left {
   padding-left: 8%
 }

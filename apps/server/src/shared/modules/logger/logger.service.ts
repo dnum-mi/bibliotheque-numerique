@@ -7,28 +7,34 @@ export class LoggerService extends ConsoleLogger implements LS {
   private _logs: string[] = []
   private _isRegisteringLog = false
 
-  constructor (private readonly configService: ConfigService) {
+  constructor(private readonly configService: ConfigService) {
     super()
   }
 
-  startRegisteringLogs (): void {
+  startRegisteringLogs(): void {
     this._logs = []
     this._isRegisteringLog = true
   }
 
-  stopRegisteringLog (): string[] {
+  stopRegisteringLog(): string[] {
     this._isRegisteringLog = false
     return this._logs
   }
 
-  private _commonLogFunction (
+  private _formatMessage(message: unknown): string {
+    if (typeof message === 'string') {
+      return message
+    } else if (message instanceof Error) {
+      return message.stack || message.message
+    } else {
+      return JSON.stringify(message, null, 2) // Indentation for readability
+    }
+  }
+
+  private _commonLogFunction(
     message: string | object | Error,
     logFunctionKey: 'log' | 'warn' | 'debug' | 'error' | 'verbose',
   ): void {
-    // TODO: cleaner way to manage object in log
-    if (!(message instanceof String)) {
-      message = JSON.stringify(message)
-    }
     if (this._isRegisteringLog) {
       this._logs.push(JSON.stringify(message))
       if (this._logs.length > 1000) {
@@ -36,35 +42,34 @@ export class LoggerService extends ConsoleLogger implements LS {
         this._logs.shift()
       }
     }
-    super[logFunctionKey](message)
+    super[logFunctionKey](this._formatMessage(message))
   }
 
-  log (message: string | object): void {
+  log(message: string | object): void {
     if (this.configService.get('log.log')) {
       this._commonLogFunction(message, 'log')
     }
   }
 
-  warn (message: string | object): void {
+  warn(message: string | object): void {
     if (this.configService.get('log.warn')) {
       this._commonLogFunction(message, 'warn')
     }
   }
 
-  debug (message: string | object): void {
+  debug(message: string | object): void {
     if (this.configService.get('log.debug')) {
       this._commonLogFunction(message, 'debug')
     }
   }
 
-  error (message: string | object | Error): void {
+  error(message: string | object | Error): void {
     if (this.configService.get('log.error')) {
-      message = message instanceof Error ? message.stack : message
       this._commonLogFunction(message, 'error')
     }
   }
 
-  verbose (message: string | object): void {
+  verbose(message: string | object): void {
     if (this.configService.get('log.verbose')) {
       this._commonLogFunction(message, 'verbose')
     }

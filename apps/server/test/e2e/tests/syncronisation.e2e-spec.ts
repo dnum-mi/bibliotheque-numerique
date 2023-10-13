@@ -1,7 +1,6 @@
 import { INestApplication } from '@nestjs/common'
-import { TestingModuleFactory } from '../common/testing-module.factory'
+import { Cookies, TestingModuleFactory } from '../common/testing-module.factory'
 import * as request from 'supertest'
-import { getAdminCookie } from '../common/get-admin-cookie'
 import { dataSource } from '../data-source-e2e.typeorm'
 import { Field } from '@/modules/dossiers/objects/entities/field.entity'
 import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
@@ -12,6 +11,9 @@ import { FileService } from '@/modules/files/providers/file.service'
 import stream, { PassThrough, Readable } from 'stream'
 import { AxiosHeaders, AxiosResponse } from 'axios'
 import { S3 } from 'aws-sdk/clients/browser_default'
+import { OrganismeService } from '@/modules/organismes/providers/organisme.service'
+import { DossierService } from '@/modules/dossiers/providers/dossier.service'
+import { FieldService } from '@/modules/dossiers/providers/field.service'
 
 const expectedFixFieldsTotalAmount = (): Partial<Field>[] => [
   {
@@ -301,15 +303,21 @@ const expectedFixFieldsDates = (
 
 describe('Syncronisation ', () => {
   let app: INestApplication
-  let cookie: string
+  let cookies: Cookies
   let fileService: FileService
+  let organismeService: OrganismeService
+  let dossierService: DossierService
+  let fieldService: FieldService
 
   beforeAll(async () => {
     const testingModule = new TestingModuleFactory()
     await testingModule.init()
     app = testingModule.app
     fileService = testingModule.fileService as FileService
-    cookie = await getAdminCookie(app)
+    organismeService = await app.resolve(OrganismeService)
+    dossierService = await app.resolve(DossierService)
+    fieldService = await app.resolve(FieldService)
+    cookies = testingModule.cookies
   })
 
   afterAll(async () => {
@@ -317,32 +325,33 @@ describe('Syncronisation ', () => {
     await app.close()
   })
 
-  it('Should return 403 on synchro_dossier', async () => {
-    return (
-      request(app.getHttpServer())
-        // @ts-ignore The property 'post' really exists
-        .post('/demarches/synchro-dossiers')
-        .send({
-          id: 29,
-        })
-        .expect(403)
-    )
+  it('Should return 401', async () => {
+    return request(app.getHttpServer())
+      .post('/demarches/synchro-dossiers')
+      .expect(401)
+  })
+
+  it('Should return 403 for user else than sudo', async () => {
+    return request(app.getHttpServer())
+      .post('/demarches/synchro-dossiers')
+      .set('Cookie', [cookies.superadmin])
+      .send({
+        id: 29,
+      })
+      .expect(403)
   })
 
   it('Should return 404 on wrong demarche id', async () => {
-    return (
-      request(app.getHttpServer())
-        // @ts-ignore The property 'post' really exists
-        .post('/demarches/synchro-dossiers')
-        .set('Cookie', [cookie])
-        .send({
-          idDs: 404,
-        })
-        .expect(404)
-    )
+    return request(app.getHttpServer())
+      .post('/demarches/synchro-dossiers')
+      .set('Cookie', [cookies.sudo])
+      .send({
+        idDs: 404,
+      })
+      .expect(404)
   })
 
-  it.only('should syncronise one dossier of one demarche and create associated fields', async () => {
+  it('should syncronise one dossier of one demarche and create associated fields', async () => {
     // TODO mock it in testing-module
     jest
       .spyOn(fileService, 'downloadFile')
@@ -376,7 +385,7 @@ describe('Syncronisation ', () => {
 
     return request(app.getHttpServer())
       .post('/demarches/create')
-      .set('Cookie', [cookie])
+      .set('Cookie', [cookies.sudo])
       .send({
         idDs: 42,
         identification: 'FE',
@@ -715,7 +724,7 @@ describe('Syncronisation ', () => {
   it('should associate two organisme upon synchronising', async () => {
     return request(app.getHttpServer())
       .post('/demarches/create')
-      .set('Cookie', [cookie])
+      .set('Cookie', [cookies.sudo])
       .send({
         idDs: 101,
       })
@@ -756,6 +765,9 @@ describe('Syncronisation ', () => {
           rnaJson: null,
           idRnf: '033-FE-00001-02',
         })
+        await fieldService.repository.delete({ dossier: { id: dossierFoundationChocolat.id } })
+        await dossierService.repository.delete({ sourceId: '201' })
+        await organismeService.repository.delete({ idRnf: '033-FE-00001-02' })
 
         const dossierAssociationFabulous = await dataSource.manager.findOne(
           Dossier,
@@ -784,6 +796,9 @@ describe('Syncronisation ', () => {
           idRnf: null,
           rnfJson: null,
         })
+        await fieldService.repository.delete({ dossier: { id: dossierAssociationFabulous.id } })
+        await dossierService.repository.delete({ sourceId: '202' })
+        await organismeService.repository.delete({ idRna: 'W271000008' })
       })
   })
 })

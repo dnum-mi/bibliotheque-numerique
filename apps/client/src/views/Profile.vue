@@ -1,16 +1,68 @@
+<template>
+  <LayoutList>
+    <template #title>
+      <div class="bn-list-search bn-list-search-profile">
+        <span
+          class="fr-icon-account-circle-line fr-p-1w"
+          aria-hidden="true"
+        />
+        <h6 class="bn-list-search-title-profile fr-p-1w fr-m-0">
+          Mon profil
+        </h6>
+      </div>
+    </template>
+    <DisplayLabelsValues
+      :title="title"
+      prefix-id="profile"
+      :datas="datas"
+      :labels="labelsDate"
+      class="fr-pb-3v fr-m-5w"
+    />
+
+    <div
+      class="fr-container fr-grid-row fr-mb-2w"
+    >
+      <DsfrButton
+        class="fr-mb-2w"
+        type="buttonType"
+        label="Modifier mon mot de passe"
+        secondary
+        no-outline
+        @click="onClick()"
+      />
+
+      <DsfrAlert
+        class="fr-col-12 fr-pm-2w"
+        :title="alertTitle"
+        :description="alertDescription"
+        :type="alertType"
+        :closed="!openAlert"
+        closeable
+        @close="() => openAlert=false"
+      />
+    </div>
+
+    <BiblioNumDataTableAgGrid
+      title="La liste des vos rôles"
+      action-title=""
+      :headers="rolesHeadersJson"
+      :row-data="rolesRowData"
+    />
+  </LayoutList>
+</template>
+
 <script setup lang="ts">
-import { computed, ref } from 'vue'
 
-import type { ResetPasswordInputDto } from '@biblio-num/shared'
-
-import type { IRole } from '@/shared/interfaces'
 import { useUserStore } from '@/stores'
 import { dateTimeToStringFr, dateToStringFr } from '@/utils'
 import LayoutList from '@/components/Layout/LayoutList.vue'
 import DisplayLabelsValues from '@/components/DisplayLabelsValues.vue'
+import { computed, ref } from 'vue'
 import BiblioNumDataTableAgGrid from '@/components/BiblioNumDataTableAgGrid.vue'
+import type { IRole } from '@/shared/interfaces'
 import apiClient from '@/api/api-client'
-import { ASK_RESET_PWD_SUCCESS } from '@/messages'
+import type { ResetPasswordInputDto } from '@biblio-num/shared'
+import { ASK_RESET_PWD_SUCCESS } from '../messages'
 
 const userStore = useUserStore()
 const datas = userStore.currentUser
@@ -66,10 +118,7 @@ const rolesHeadersJson = [
 ]
 
 const rolesRowData = computed(() => {
-  return [...(datas?.roles?.values() ?? [])].map((role: IRole) => ({
-    ...role,
-    permissions: role.permissions.map((permission) => permission.name).join(', '),
-  }))
+  return [] // TODO: role refacto
 })
 
 const onClick = async () => {
@@ -78,57 +127,5 @@ const onClick = async () => {
   openAlert.value = true
   alertDescription.value = ASK_RESET_PWD_SUCCESS
 }
+
 </script>
-
-<template>
-  <LayoutList>
-    <template #title>
-      <div class="bn-list-search bn-list-search-profile">
-        <span
-          class="fr-icon-account-circle-line fr-p-1w"
-          aria-hidden="true"
-        />
-        <h6 class="bn-list-search-title-profile fr-p-1w fr-m-0">
-          Mon profil
-        </h6>
-      </div>
-    </template>
-    <DisplayLabelsValues
-      :title="title"
-      prefix-id="profile"
-      :datas="datas"
-      :labels="labelsDate"
-      class="fr-pb-3v fr-m-5w"
-    />
-
-    <div
-      class="fr-container fr-grid-row fr-mb-2w"
-    >
-      <DsfrButton
-        class="fr-mb-2w"
-        type="buttonType"
-        label="Modifier mon mot de passe"
-        secondary
-        no-outline
-        @click="onClick()"
-      />
-
-      <DsfrAlert
-        class="fr-col-12 fr-pm-2w"
-        :title="alertTitle"
-        :description="alertDescription"
-        :type="alertType"
-        :closed="!openAlert"
-        closeable
-        @close="() => openAlert=false"
-      />
-    </div>
-
-    <BiblioNumDataTableAgGrid
-      title="La liste des vos rôles"
-      action-title=""
-      :headers="rolesHeadersJson"
-      :row-data="rolesRowData"
-    />
-  </LayoutList>
-</template>

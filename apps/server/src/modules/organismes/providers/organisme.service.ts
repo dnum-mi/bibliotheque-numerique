@@ -11,7 +11,7 @@ import {
   IRnaOutput,
   IRnfOutput,
   OrganismeType,
-  PaginatedOrganismeDto,
+  PaginatedDto,
   PaginationDto,
 } from '@biblio-num/shared'
 import { buildFilterQuery } from '@/shared/utils/common-search.utils'
@@ -115,7 +115,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
 
   async listOrganisme(
     dto: PaginationDto<IOrganisme>,
-  ): Promise<PaginatedOrganismeDto> {
+  ): Promise<PaginatedDto<IOrganisme>> {
     this.logger.verbose('listOrganisme')
     const query = this.repo.createQueryBuilder('o')
     if (dto.filters) {
@@ -136,7 +136,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
       return {
         data,
         total: count,
-      } as PaginatedOrganismeDto
+      } as PaginatedDto<IOrganisme>
     })
   }
 }

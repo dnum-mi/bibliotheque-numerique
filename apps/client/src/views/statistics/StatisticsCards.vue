@@ -5,12 +5,13 @@ import { DsfrButton } from '@gouvminint/vue-dsfr'
 import StatisticCard from './StatisticsCard.vue'
 
 import { useCustomFilterStore } from '@/stores/custom-filters'
+import type { IFilter } from 'ag-grid-community'
 
 const customFilterStore = useCustomFilterStore()
 
 const customFilters = computed(() => customFilterStore.customFilters || [])
 const customFilterToDelete = ref()
-const showModal = (customFilter) => {
+const showModal = (customFilter: IFilter) => {
   customFilterToDelete.value = customFilter
 }
 
@@ -34,7 +35,6 @@ onMounted(async () => {
         v-if="customFilter.demarcheId"
         :filter-id="customFilter.id"
         class="fr-p-3w w-full h-full fr-card--shadow"
-        :demarche-id="customFilter.demarcheId"
         @delete="showModal"
       />
     </div>

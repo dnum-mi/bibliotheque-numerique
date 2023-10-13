@@ -30,13 +30,14 @@ export class AllExceptionsFilter implements ExceptionFilter {
       this.logger.debug((exception as DsApiError).graphQlResponse as string)
       break
     case exception instanceof HttpException && httpStatus !== HttpStatus.INTERNAL_SERVER_ERROR:
-      message = (exception as HttpException).message
-      this.logger.warn(exception as HttpException)
+      const e = exception as HttpException
+      message = e.message
+      this.logger.warn(e.message)
+      this.logger.debug(e)
       break
     default:
       message = 'Erreur serveur, l’administrateur a été prévenu'
-      this.logger.error((exception as Error).message)
-      this.logger.debug((exception as Error).stack)
+      this.logger.error(exception as Error)
     }
 
     const responseBody = {

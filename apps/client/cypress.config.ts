@@ -11,6 +11,9 @@ export default defineConfig({
     supportFile: 'cypress/support/e2e.ts',
     baseUrl: 'http://localhost:5050',
     specPattern: 'cypress/e2e/**/*.{cy,e2e}.ts',
+    viewportHeight: 1024,
+    viewportWidth: 1280,
+
   },
 
   component: {

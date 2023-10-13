@@ -7,10 +7,21 @@ import { Demarche } from './objects/entities/demarche.entity'
 import { DemarcheSynchroniseService } from './providers/services/demarche-synchronise.service'
 import { DemarcheConfigurationController } from './controllers/demarche-configuration.controller'
 import { DemarcheDossierController } from './controllers/demarche-dossier.controller'
+import { CustomFilterModule } from '@/modules/custom-filters/custom-filter.module'
+import { DemarcheCustomFilterController } from '@/modules/demarches/controllers/demarche-custom-filter.controller'
 
 @Module({
-  imports: [forwardRef(() => DossierModule), TypeOrmModule.forFeature([Demarche])],
-  controllers: [DemarcheController, DemarcheDossierController, DemarcheConfigurationController],
+  imports: [
+    forwardRef(() => DossierModule),
+    TypeOrmModule.forFeature([Demarche]),
+    CustomFilterModule,
+  ],
+  controllers: [
+    DemarcheController,
+    DemarcheDossierController,
+    DemarcheConfigurationController,
+    DemarcheCustomFilterController,
+  ],
   providers: [DemarcheService, DemarcheSynchroniseService],
   exports: [DemarcheService, DemarcheSynchroniseService],
 })

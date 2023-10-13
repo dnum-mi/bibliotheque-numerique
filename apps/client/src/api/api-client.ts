@@ -20,6 +20,7 @@ import type {
   IOrganisme,
   PaginationDto,
   IDossier,
+  IUser,
   ICustomFilter,
 } from '@biblio-num/shared'
 
@@ -34,23 +35,22 @@ import {
   unassignRoleRoute,
   getCustomFiltersRoute,
   getOneCustomFiltersRoute,
+  getOneCustomFiltersStats,
   smallDemarchesRoutes,
   getListDemarcheDossierRoute,
   getListDemarcheFieldRoute,
   getXlsxDemarcheDossierRoute,
   getXlsxDemarcheFieldRoute,
+  getDemarcheCustomFilterRoute,
   getDossierDetail,
   getOrganismeDossiers,
   getOrganismeByIdRoute,
-  getCustomFiltersByDemarcheRoute,
   getOrganismeByRnaRoute,
   getOrganismeByRnfRoute,
   organismesListRoute,
-  getCustomFiltersStats,
 } from './bn-api-routes'
 import {
   authRoute,
-  createUserRoute,
   getUserByIdRoute,
   profileRoute,
   signInRoute,
@@ -223,13 +223,13 @@ export const organismeApiClient = {
 
 export const usersApiClient = {
   async createUser (userData: CreateUserDto) {
-    const response = await apiClientInstance.post(createUserRoute, userData)
+    const response = await apiClientInstance.post(usersRoutes, userData)
     return response.data
   },
 
   async updatePassword (updateUserPassword: UpdateUserPasswordDto) {
     try {
-      const response = await apiClientInstance.put(createUserRoute, updateUserPassword)
+      const response = await apiClientInstance.put(usersRoutes, updateUserPassword)
       return response.data
     } catch (error) {
       if (error && error instanceof AxiosError) {
@@ -254,10 +254,17 @@ export const usersApiClient = {
     return response?.data
   },
 
+  // TODO: BEGIN: A modifirer ou suprrimer getUsers
   async getUsers (): Promise<UserOutputDto[] | null> {
     const response = await apiClientInstance.get(usersRoutes)
     return response.data
   },
+
+  getRolesUsers: async (dto: PaginationDto<IUser>) => {
+    const response = await apiClientInstance.post(usersRoutes, dto)
+    return response.data
+  },
+  // TODO: END: A modifirer ou suprrimer getUsers
 
   async getUserById (id: number): Promise<UserOutputDto | null> {
     const response = await apiClientInstance.get(getUserByIdRoute(id))
@@ -311,13 +318,13 @@ export const customFiltersApiClient = {
     return response.data
   },
 
-  getCustomFiltersByDemarche: async (id: number): Promise<ICustomFilter[]> => {
-    const response = await apiClientInstance.get(getCustomFiltersByDemarcheRoute(id))
+  getCustomFiltersByDemarche: async (demarcheId: number): Promise<ICustomFilter[]> => {
+    const response = await apiClientInstance.get(getDemarcheCustomFilterRoute(demarcheId))
     return response.data
   },
 
   createOneCustomFilter: async (dto: CreateCustomFilterDto, demarcheId: number) => {
-    const response = await apiClientInstance.post(getCustomFiltersByDemarcheRoute(demarcheId), dto)
+    const response = await apiClientInstance.post(getDemarcheCustomFilterRoute(demarcheId), dto)
     return response?.data
   },
 
@@ -330,8 +337,8 @@ export const customFiltersApiClient = {
     const response = await apiClientInstance.delete(getOneCustomFiltersRoute(id))
     return response.data
   },
-  getCustomFilterStats: async (id: number, demarcheId: number) => {
-    const response = await apiClientInstance.get(getCustomFiltersStats(demarcheId, id))
+  getCustomFilterStats: async (id: number) => {
+    const response = await apiClientInstance.get(getOneCustomFiltersStats(id))
     return response.data
   },
 }

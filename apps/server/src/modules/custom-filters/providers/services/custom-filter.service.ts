@@ -13,7 +13,6 @@ import {
 } from '@biblio-num/shared'
 import { fromCustomFilterToHumanReadableFilter } from '@/shared/utils/common-search.utils'
 import { fromMappingColumnArrayToLabelHash } from '../../../demarches/utils/demarche.utils'
-import { Demarche } from '../../../demarches/objects/entities/demarche.entity'
 import { FieldSearchService } from '@/modules/dossiers/providers/field-search.service'
 
 @Injectable()
@@ -55,20 +54,18 @@ export class CustomFilterService extends BaseEntityService<CustomFilter> {
     )
   }
 
-  async getStats(
-    id: number,
-    userId: number,
-    demarche: Demarche,
-  ): Promise<ICustomFilterStat> {
+  async getStats(id: number, userId: number): Promise<ICustomFilterStat> {
     const customFilter = await this.findOneOrThrow({
       where: {
         user: { id: userId },
-        demarcheId: demarche.id,
         id,
       },
+      relations: ['demarche'],
     })
     const { name, filters } = customFilter
-    const mch = fromMappingColumnArrayToLabelHash(demarche.mappingColumns)
+    const mch = fromMappingColumnArrayToLabelHash(
+      customFilter.demarche.mappingColumns,
+    )
     const humanReadableFilter = fromCustomFilterToHumanReadableFilter(
       filters,
       mch,
@@ -77,13 +74,13 @@ export class CustomFilterService extends BaseEntityService<CustomFilter> {
     let result: DossierSearchOutputDto | FieldSearchOutputDto
     if (customFilter.groupByDossier) {
       result = await this.dossierSearchService.search(
-        demarche,
+        customFilter.demarche,
         customFilter,
         true,
       )
     } else {
       result = await this.fieldSearchService.search(
-        demarche,
+        customFilter.demarche,
         customFilter,
         true,
       )
@@ -97,10 +94,10 @@ export class CustomFilterService extends BaseEntityService<CustomFilter> {
       },
       totals: this._sumTotalsFromResult(customFilter, mch, result),
       demarche: {
-        id: demarche.id,
-        types: demarche.types,
-        dsId: demarche.dsDataJson.number,
-        title: demarche.title,
+        id: customFilter.demarche.id,
+        types: customFilter.demarche.types,
+        dsId: customFilter.demarche.dsDataJson.number,
+        title: customFilter.demarche.title,
       },
     }
   }

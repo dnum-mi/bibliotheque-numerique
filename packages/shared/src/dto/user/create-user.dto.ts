@@ -4,6 +4,18 @@ import { IsPasswordStrongEnough } from './is-password-strong-enough.js'
 
 export class CreateUserDto {
   @ApiProperty({
+    description: 'Prénom de l’utilisateur',
+  })
+  @IsNotEmpty()
+  firstname: string
+
+  @ApiProperty({
+    description: 'Nom de l’utilisateur',
+  })
+  @IsNotEmpty()
+  lastname: string
+
+  @ApiProperty({
     description: 'Adresse courriel de l’utilisateur',
   })
   @IsEmail(undefined, { message: 'Cette adresse courriel semble invalide' })

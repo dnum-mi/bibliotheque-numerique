@@ -1,21 +1,6 @@
-import { CreateUserDto } from './create-user.dto'
-
-import { ApiProperty, PartialType } from '@nestjs/swagger'
-import { IsString, IsNotEmpty } from 'class-validator'
+import { ApiProperty } from '@nestjs/swagger'
+import { IsNotEmpty } from 'class-validator'
 import { IsPasswordStrongEnough } from './is-password-strong-enough'
-
-export class UpdateUserDto extends PartialType(CreateUserDto) {
-  @ApiProperty({
-    description: 'Rôles de l’utilisateur',
-    example: ['Instructeur', 'Admin'],
-  })
-  @IsString({
-    each: true,
-    message:
-    'Les rôles doivent être des chaînes de caractères (dans un tableau)',
-  })
-  roles?: string[]
-}
 
 export class UpdateUserPasswordDto {
   @ApiProperty({

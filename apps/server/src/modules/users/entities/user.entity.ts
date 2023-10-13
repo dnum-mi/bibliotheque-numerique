@@ -2,18 +2,23 @@ import {
   BeforeInsert,
   BeforeUpdate,
   Column,
-  Entity, JoinTable,
-  ManyToMany,
+  Entity,
+  JoinTable,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm'
 import * as bcrypt from 'bcrypt'
-import { Role } from '../../roles/entities/role.entity'
 import { BaseEntity } from '@/shared/base-entity/base.entity'
 import { CustomFilter } from '@/modules/custom-filters/objects/entities/custom-filter.entity'
+import { IUser, IRole } from '@biblio-num/shared'
+
+const defaultRole: IRole = {
+  label: null,
+  options: [],
+}
 
 @Entity({ name: 'users' })
-export class User extends BaseEntity {
+export class User extends BaseEntity implements IUser {
   @PrimaryGeneratedColumn('increment')
   declare id: number
 
@@ -31,6 +36,20 @@ export class User extends BaseEntity {
   @Column({
     type: 'varchar',
     nullable: false,
+    default: '',
+  })
+  lastname: string
+
+  @Column({
+    type: 'varchar',
+    nullable: false,
+    default: '',
+  })
+  firstname: string
+
+  @Column({
+    type: 'varchar',
+    nullable: false,
     select: false,
   })
   password: string
@@ -42,8 +61,12 @@ export class User extends BaseEntity {
   })
   validated: boolean
 
-  @ManyToMany(() => Role, (role) => role.users, { cascade: ['insert'] })
-  roles: Role[]
+  @Column({
+    type: 'jsonb',
+    nullable: false,
+    default: defaultRole,
+  })
+  role: IRole
 
   skipHashPassword: boolean = false
 

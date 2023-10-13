@@ -1,197 +1,106 @@
-<script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
-import { z } from 'zod'
-import { useField, useForm } from 'vee-validate'
-import { DsfrInputGroup, DsfrInput, DsfrButton } from '@gouvminint/vue-dsfr'
 
-import BiblioNumDataTableAgGrid from '@/components/BiblioNumDataTableAgGrid.vue'
-import { useUserStore, useRoleStore } from '@/stores'
-import { dateToStringFr } from '@/utils'
-import type { IRoleForm, User } from '@/shared/interfaces'
-import { toTypedSchema } from '@vee-validate/zod'
-import router from '@/router'
-import AdminRoles from './AdminRoles.vue'
+<script lang="ts" setup>
+import { ref } from 'vue'
+import type { Ref } from 'vue'
+import type { ColDef, ValueFormatterParams, SelectionChangedEvent } from 'ag-grid-community'
+import type { IUser, PaginationDto } from '@biblio-num/shared'
 
-const userStore = useUserStore()
-const roleStore = useRoleStore()
+import LayoutList from '@/components/Layout/LayoutList.vue'
+import AgGridServerSide from '@/components/ag-grid/server-side/AgGridServerSide.vue'
+import { useUserStore } from '@/stores'
+import { baseColDef } from '@/components/ag-grid/server-side/columndef-base'
+import RoleBadgesRenderer from '../../components/Badges/RoleBadgesRenderer.vue'
+import { useRoute, useRouter } from 'vue-router'
+// const props = defineProps<{ }>()
 
-const usersHeadersJson = [
+const agGridComponent = ref()
+const router = useRouter()
+
+const columnDefs:Ref<ColDef[]> = ref([
   {
-    text: 'Id',
-    value: 'id',
-    width: 65,
+    headerName: 'id',
+    field: 'id',
     hide: true,
   },
   {
-    text: 'Email',
-    value: 'email',
-    width: 250,
+    ...baseColDef,
+    headerName: 'Courriel',
+    field: 'email',
+    width: 350,
   },
   {
-    text: 'Roles',
-    value: 'roles',
-    width: 250,
+    ...baseColDef,
+    headerName: 'Rôle',
+    field: 'role.label',
+    width: 300,
+    cellRenderer: RoleBadgesRenderer,
+    filter: 'agSetColumnFilter',
+    filterParams: {
+      values: ['sudo', 'admin', 'superadmin', 'instructor', ''],
+      cellRenderer: RoleBadgesRenderer,
+      suppressMiniFilter: true,
+    },
   },
+  // TODO: A revoir par rapport au BACK-END
   {
-    text: 'Created At',
-    value: 'createAt',
-    parseFn: dateToStringFr,
-    type: 'date',
-    width: 130,
+    ...baseColDef,
+    suppressMenu: true,
+    headerName: 'Type',
+    field: 'type',
+    width: 450,
   },
-  {
-    text: 'Updated At',
-    value: 'updateAt',
-    parseFn: dateToStringFr,
-    type: 'date',
-    width: 130,
-  },
-]
+  // TODO: A confirmer
+  // {
+  //   headerName: 'Création',
+  //   field: 'createAt',
+  // },
+  // {
+  //   headerName: 'Modification',
+  //   field: 'updateAt',
+  // },
+])
 
-const usersRowData = computed(() => {
-  return [...userStore.users.values()].map((user: User) => ({
-    ...user,
-    roles: user.roles.map((role) => role.name).join(', '),
-  }))
-})
-const canManageRole = computed(() => userStore.canManageRoles)
+const store = useUserStore()
+const apiCall = async (params: PaginationDto<IUser>) => {
+  return store.getUsersRole(params)
+}
 
-const validationSchema = toTypedSchema(z.object({
-  name: z.string({ required_error: 'Vous devez renseigner ce champ' }),
-  description: z.string({ required_error: 'Vous devez renseigner ce champ' }),
-}))
-
-const { setErrors } = useForm<IRoleForm>({
-  validationSchema,
-})
-
-const { value: roleNameValue, errorMessage: roleNameError } = useField<string>('roleName')
-const { value: roleDescriptionValue, errorMessage: roleDescriptionError } = useField<string>('roleDescription')
-
-const createRole = async () => {
-  try {
-    await roleStore.createRole({ name: roleNameValue.value, description: roleDescriptionValue.value })
-    roleNameValue.value = ''
-    roleDescriptionValue.value = ''
-  } catch (e) {
-    setErrors({ name: e as string })
+const onSelectionChanged = (event: SelectionChangedEvent) => {
+  const id = event.api.getSelectedRows()?.[0]?.id
+  if (id) {
+    router.push({
+      name: 'User',
+      params: { id },
+    })
   }
 }
 
-const selectUser = (row: {id: number}[]) => {
-  router.push({ name: 'User', params: { id: row[0].id } })
-}
-
-const rolesRef = ref<HTMLElement>()
-const usersRef = ref<HTMLElement>()
-
-const activeGrid = ref(1)
-
-onMounted(() => userStore.loadUsers())
 </script>
 
 <template>
-  <div class="fr-container">
-    <h2 class="mb-10 mt-10">
-      Espace administration
-    </h2>
-    <div
-      v-if="canManageRole"
-      class="role-form"
-    >
-      <DsfrInputGroup
-        :is-valid="roleNameError"
-        :error-message="roleNameError"
-      >
-        <DsfrInput
-          id="roleName"
-          v-model="roleNameValue"
-          label="Nom du rôle"
-          placeholder="Nom du rôle"
-          type="text"
-          required
-        />
-      </DsfrInputGroup>
-      <DsfrInputGroup
-        :is-valid="roleDescriptionError"
-        :error-message="roleDescriptionError"
-      >
-        <DsfrInput
-          id="roleDescription"
-          v-model="roleDescriptionValue"
-          label="Description du rôle"
-          placeholder="Description du rôle"
-          type="text"
-          required
-        />
-      </DsfrInputGroup>
-      <DsfrButton
-        type="button"
-        @click="createRole"
-      >
-        Ajouter un rôle
-      </DsfrButton>
-    </div>
-  </div>
-  <br>
-  <div
-    style="display: flex;"
-    class="gap-5 p-5"
-  >
-    <div
-      ref="users"
-      :class="canManageRole?'fr-col-6':'fr-col-12'"
-      data-cy="user-list"
-      aria-label="Tableau utilisateurs"
-      :tabindex="activeGrid === 1 ? 0 : 1"
-      @focus="activeGrid = 1"
-      @keyup.arrow-right="rolesRef?.focus()"
-      @keyup.arrow-left="rolesRef?.focus()"
-    >
-      <BiblioNumDataTableAgGrid
-        title="Utilisateurs"
-        action-title="Voir le détail de l'utilisateur"
-        :headers="usersHeadersJson"
-        :row-data="usersRowData"
-        is-hidden-side-bar
-        row-selection="single"
-        @selection-changed="selectUser"
-      />
-    </div>
-    <div
-      v-if="canManageRole"
-      ref="roles"
-      class="fr-col-6"
-      data-cy="role-list"
-      aria-label="Tableau des rôles"
-      :tabindex="activeGrid === 2 ? 0 : 2"
-      @focus="activeGrid = 2"
-      @keyup.arrow-right="usersRef?.focus()"
-      @keyup.arrow-left="usersRef?.focus()"
-    >
-      <AdminRoles />
-    </div>
-  </div>
-</template>
+  <LayoutList>
+    <template #title>
+      <div class="bn-list-search bn-list-admin">
+        <span
+          class="fr-p-1w"
+        >
+          <VIcon
+            name="ri-user-settings-line"
+            aria-hidden="true"
+          />
+        </span>
+        <h6 class="bn-list-search bn-list-admin fr-m-0">
+          Administration des permissions
+        </h6>
+      </div>
+    </template>
 
-<style lang="scss">
-  .role-form {
-    display: flex;
-    .fr-input-group {
-      .fr-input {
-        margin: 0;
-      }
-      min-width: 160px;
-      margin: 10px;
-      flex: 1;
-      &:nth-child(2) {
-        flex: 3;
-      }
-    }
-    .fr-btn {
-      margin: 10px;
-      flex: 1;
-      min-width: 160px;
-    }
-  }
-</style>
+    <ag-grid-server-side
+      ref="agGridComponent"
+      :column-defs="columnDefs"
+      pre-condition
+      :api-call="apiCall"
+      :on-selection-changed="onSelectionChanged"
+    />
+  </LayoutList>
+</template>
