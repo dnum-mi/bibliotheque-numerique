@@ -1,3 +1,5 @@
+import 'reflect-metadata'
+
 import { buildFilterQuery } from './common-search.utils'
 import { DateFilterConditions } from '@biblio-num/shared'
 

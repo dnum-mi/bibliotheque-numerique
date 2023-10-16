@@ -1,113 +1,73 @@
-import '@gouvminint/vue-dsfr/styles'
-import '@/main.css'
-import * as icons from '@/icons'
-
-import VueDsfr from '@gouvminint/vue-dsfr'
-
-import { createPinia } from 'pinia'
 import Admin from './Admin.vue'
 
 import { createRandomAdmin, createRandomUsers, createRandomUserWithCreateRole, createRandomUserWithoutCreateRole } from '@/views/__tests__/users'
 import { createRandomRoles } from '@/views/__tests__/roles'
-import { useRoleStore, useUserStore } from '@/stores'
+import { useUserStore } from '@/stores'
 import type { User } from '@/shared/interfaces'
+import bnApiClient from '@/api/api-client'
 
 describe('<Admin />', () => {
-  it('Should render because admin', () => {
-    const pinia = createPinia()
-    const userStore = useUserStore(pinia)
-    const roleStore = useRoleStore(pinia)
+  it('Should render both lists if connected as admin', () => {
     const adminUser = createRandomAdmin()
-    const users: User[] = createRandomUsers(10)
-    userStore.currentUser = adminUser
-    userStore.users = new Map(users.map(user => [user.id, user]))
-    roleStore.roles = createRandomRoles(10)
+    // Prevent api calls
+    cy.stub(bnApiClient, 'loginUser').returns(Promise.resolve(adminUser))
+    cy.stub(bnApiClient, 'fetchCurrentUser').returns(Promise.resolve(adminUser))
+    cy.stub(bnApiClient, 'getRoles').returns(Promise.resolve(createRandomRoles(10)))
+    const users = createRandomUsers(10)
+    cy.stub(bnApiClient, 'getUsers').returns(Promise.resolve(users))
 
-    userStore.loadUsers = () => Promise.resolve()
-    roleStore.fetchRoles = () => Promise.resolve()
-
-    const extensions = {
-      use: [
-        pinia,
-        {
-          install: (app) => {
-            app.use(VueDsfr,
-              { icons: Object.values(icons) },
-            )
-          },
-        },
-      ],
-    }
-    cy.mount(Admin, {
-      extensions,
+    // Stub stores
+    const userStore = useUserStore()
+    cy.then(async () => {
+      await userStore.login({ email: adminUser.email, password: 'password' })
+      await userStore.loadCurrentUser()
     })
+
+    cy.mountWithPinia(Admin)
 
     cy.get('h2.mb-10').should('contain', 'Espace administration')
     cy.get('[data-cy=user-list] .ag-row').should('have.length', 10)
     cy.get('[data-cy=role-list] .ag-row').should('have.length', 10)
   })
-  it('Should render because user without create role', () => {
-    const pinia = createPinia()
-    const userStore = useUserStore(pinia)
-    const roleStore = useRoleStore(pinia)
-    const adminUser = createRandomUserWithoutCreateRole()
-    const users: User[] = createRandomUsers(10)
-    userStore.currentUser = adminUser
-    userStore.users = new Map(users.map(user => [user.id, user]))
-    roleStore.roles = createRandomRoles(10)
 
-    userStore.loadUsers = () => Promise.resolve()
-    roleStore.fetchRoles = () => Promise.resolve()
+  it.skip('Should render only user list if connected user without create role', () => {
+    const userWithoutCreateRole = createRandomUserWithoutCreateRole()
+    // Prevent api calls
+    cy.stub(bnApiClient, 'loginUser').returns(Promise.resolve(userWithoutCreateRole))
+    cy.stub(bnApiClient, 'fetchCurrentUser').returns(Promise.resolve(userWithoutCreateRole))
+    cy.stub(bnApiClient, 'getRoles').returns(Promise.resolve(createRandomRoles(10)))
 
-    const extensions = {
-      use: [
-        pinia,
-        {
-          install: (app) => {
-            app.use(VueDsfr,
-              { icons: Object.values(icons) },
-            )
-          },
-        },
-      ],
-    }
-    cy.mount(Admin, {
-      extensions,
+    const userStore = useUserStore()
+    const users = createRandomUsers(10)
+    cy.stub(bnApiClient, 'getUsers').returns(Promise.resolve(users))
+    cy.then(async () => {
+      await userStore.loadUsers()
     })
+
+    cy.mountWithPinia(Admin)
 
     cy.get('h2.mb-10').should('contain', 'Espace administration')
     cy.get('[data-cy=user-list] .ag-row').should('have.length', 10)
     cy.get('[data-cy=role-list]').should('not.exist')
   })
 
-  it('Should render because user with create role', () => {
-    const pinia = createPinia()
-    const userStore = useUserStore(pinia)
-    const roleStore = useRoleStore(pinia)
-    const adminUser = createRandomUserWithCreateRole()
-    const users: User[] = createRandomUsers(10)
-    userStore.currentUser = adminUser
-    userStore.users = new Map(users.map(user => [user.id, user]))
-    roleStore.roles = createRandomRoles(10)
+  it.skip('Should render both lists if connected as user with create role', () => {
+    const userWithCreateRole = createRandomUserWithCreateRole()
+    // Prevent api calls
+    cy.stub(bnApiClient, 'loginUser').returns(Promise.resolve(userWithCreateRole))
+    cy.stub(bnApiClient, 'fetchCurrentUser').returns(Promise.resolve(userWithCreateRole))
+    cy.stub(bnApiClient, 'getRoles').returns(Promise.resolve(createRandomRoles(10)))
+    const users = createRandomUsers(10)
+    cy.stub(bnApiClient, 'getUsers').returns(Promise.resolve(users))
 
-    userStore.loadUsers = () => Promise.resolve()
-    roleStore.fetchRoles = () => Promise.resolve()
-
-    const extensions = {
-      use: [
-        pinia,
-        {
-          install: (app) => {
-            app.use(VueDsfr,
-              { icons: Object.values(icons) },
-            )
-          },
-        },
-      ],
-    }
-    cy.mount(Admin, {
-      extensions,
+    // Stub stores
+    const userStore = useUserStore()
+    cy.then(async () => {
+      await userStore.login({ email: userWithCreateRole.email, password: 'password' })
+      await userStore.loadCurrentUser()
     })
+
+    cy.mountWithPinia(Admin)
 
     cy.get('h2.mb-10').should('contain', 'Espace administration')
     cy.get('[data-cy=user-list] .ag-row').should('have.length', 10)

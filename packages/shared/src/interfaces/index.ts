@@ -1,4 +1,5 @@
 export * from './demarche.interface'
+export * from './dossier.interface'
 export * from './custom-filters.interface'
 export * from './user-friendly-filter.interface'
 export * from './total.interface'

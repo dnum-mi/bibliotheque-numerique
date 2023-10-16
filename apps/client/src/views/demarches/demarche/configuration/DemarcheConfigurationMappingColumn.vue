@@ -12,21 +12,21 @@ const props = defineProps<{
 
 const emits = defineEmits(['columnUpdated'])
 
-const labelBNInput = ref()
-const labelBN = ref(props.mappingColumn.columnLabel)
+const labelBNInput = ref<HTMLElement | null | undefined>()
+const labelBN = ref<string | undefined>(props.mappingColumn.columnLabel)
 const checked = ref(!!labelBN.value)
 const isParent = !props.isChildren && props.mappingColumn.children?.length
 
 const focusOnInput = () => {
   if (checked.value) labelBN.value = labelBN.value || props.mappingColumn.originalLabel
   setTimeout(() => {
-    labelBNInput.value.focus()
+    labelBNInput.value?.focus()
   })
 }
 
 const demarcheStore = useDemarcheStore()
 const save = useDebounceFn(async (id: string, label: string | null) => {
-  await demarcheStore.updateOneMappingColumn(id, label)
+  await demarcheStore.updateOneMappingColumn(id, label ?? null)
   if (label) {
     emits('columnUpdated')
   }
@@ -38,9 +38,9 @@ watch(checked, (newValue) => {
     labelBN.value = ''
     focusOnInput()
   } else {
-    labelBN.value = null
+    labelBN.value = undefined
   }
-  save(props.mappingColumn.id, labelBN.value)
+  save(props.mappingColumn.id, labelBN.value ?? null)
 })
 </script>
 
@@ -53,7 +53,7 @@ watch(checked, (newValue) => {
       :id="`display-${props.mappingColumn.id}`"
       v-model="checked"
       :name="props.mappingColumn.id"
-      class="fr-pt-2v flex justify-center"
+      class="fr-pt-2v  flex  justify-center"
       :class="{ 'fr-ml-10v': isChildren }"
       @click="focusOnInput()"
     />
@@ -67,7 +67,7 @@ watch(checked, (newValue) => {
   <div class="fr-col-1  flex  items-center">
     <DsfrBadge
       :id="`type-${props.mappingColumn.id}`"
-      :label="isParent ? 'Répétable' : mappingColumn.type?.toUpperCase()"
+      :label="isParent ? 'Répétable' : mappingColumn.type?.toUpperCase() || ''"
       small
       type="info"
       class="fr-mr-1w"
@@ -76,20 +76,20 @@ watch(checked, (newValue) => {
   <div class="fr-col-5  fr-p-2v  flex  items-center">
     <p
       :id="`labelSource-${props.mappingColumn.id}`"
-      class="fr-m-0 ellipsis"
+      class="fr-m-0  ellipsis"
       :title="mappingColumn.originalLabel"
     >
       {{ mappingColumn.originalLabel }}
     </p>
   </div>
-  <div class="fr-col-5 fr-p-2v">
+  <div class="fr-col-5  fr-p-2v">
     <DsfrInput
       :id="`labelBN-${props.mappingColumn.id}`"
       ref="labelBNInput"
       v-model="labelBN"
       class="fr-m-0"
       :disabled="!checked"
-      @update:model-value="save(props.mappingColumn.id, labelBN)"
+      @update:model-value="save(props.mappingColumn.id, labelBN ?? null)"
     />
   </div>
 </template>

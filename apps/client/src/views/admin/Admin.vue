@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onBeforeUnmount, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { z } from 'zod'
 import { useField, useForm } from 'vee-validate'
 import { DsfrInputGroup, DsfrInput, DsfrButton } from '@gouvminint/vue-dsfr'
@@ -82,11 +82,12 @@ const selectUser = (row: {id: number}[]) => {
   router.push({ name: 'User', params: { id: row[0].id } })
 }
 
+const rolesRef = ref<HTMLElement>()
+const usersRef = ref<HTMLElement>()
+
 const activeGrid = ref(1)
 
-onMounted(async () => {
-  await Promise.all([userStore.loadUsers()])
-})
+onMounted(() => userStore.loadUsers())
 </script>
 
 <template>
@@ -144,8 +145,8 @@ onMounted(async () => {
       aria-label="Tableau utilisateurs"
       :tabindex="activeGrid === 1 ? 0 : 1"
       @focus="activeGrid = 1"
-      @keyup.arrow-right="$refs.roles.focus()"
-      @keyup.arrow-left="$refs.roles.focus()"
+      @keyup.arrow-right="rolesRef?.focus()"
+      @keyup.arrow-left="rolesRef?.focus()"
     >
       <BiblioNumDataTableAgGrid
         title="Utilisateurs"
@@ -165,8 +166,8 @@ onMounted(async () => {
       aria-label="Tableau des rôles"
       :tabindex="activeGrid === 2 ? 0 : 2"
       @focus="activeGrid = 2"
-      @keyup.arrow-right="$refs.users.focus()"
-      @keyup.arrow-left="$refs.users.focus()"
+      @keyup.arrow-right="usersRef?.focus()"
+      @keyup.arrow-left="usersRef?.focus()"
     >
       <AdminRoles />
     </div>

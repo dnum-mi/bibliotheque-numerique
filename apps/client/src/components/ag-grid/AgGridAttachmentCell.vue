@@ -1,3 +1,13 @@
+<script lang="ts" setup>
+import { computed } from 'vue'
+
+const props = withDefaults(defineProps<{params: any}>(), {
+  params: () => ({}),
+})
+
+const href = computed(() => props.params.value.url)
+</script>
+
 <template>
   <div class="fr-download">
     <a
@@ -11,20 +21,3 @@
     /></a>
   </div>
 </template>
-
-<script lang="ts" setup>
-import { computed } from 'vue'
-
-const props = withDefaults(defineProps<{params: any}>(), {
-  params: () => ({}),
-})
-
-const cellValues = computed(() => {
-  return props.params.value || []
-})
-
-const format = computed(() => props.params.value.contentType)
-const size = computed(() => props.params.value.byteSizeBigInt)
-const href = computed(() => props.params.value.url)
-
-</script>

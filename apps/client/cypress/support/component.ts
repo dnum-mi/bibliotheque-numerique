@@ -34,6 +34,11 @@ import '@gouvminint/vue-dsfr/styles' // Les styles propres aux composants de Vue
 import '@gouvfr/dsfr/dist/scheme/scheme.min.css' // Facultatif: Si les thèmes sont utilisés (thème sombre, thème clair)
 import '@gouvfr/dsfr/dist/utility/icons/icons.min.css' // Facultatif: Si des icônes sont utilisées avec les classes "fr-icon-..."
 
+import 'ag-grid-enterprise'
+import 'ag-grid-community/styles/ag-grid.css'
+import 'ag-grid-community/styles/ag-theme-material.css'
+import '@/ag-grid-dsfr.css'
+
 import * as icons from '@/icons'
 
 import router from '@/router'
@@ -43,13 +48,11 @@ import { DefineComponent } from 'vue'
 // your custom command.
 // Alternatively, can be defined in cypress/support/component.d.ts
 // with a <reference path="./component" /> at the top of your spec.
-declare global {
+declare module 'cypress' {
   // eslint-disable-next-line @typescript-eslint/no-namespace
-  namespace Cypress {
-    interface Chainable {
-      mount: typeof mount
-      mountWithPinia: typeof mountWithPinia
-    }
+  interface Chainable {
+    mount: typeof mount
+    mountWithPinia: typeof mountWithPinia
   }
 }
 
@@ -85,8 +88,6 @@ beforeEach(() => {
   // New Pinia
   pinia = createPinia()
 
-  cy.log('beforeEach')
-
   // Set current Pinia instance
   setActivePinia(pinia)
 })
@@ -101,7 +102,6 @@ function mountWithPinia (
   options.global = options.global || {}
 
   options.global.stubs = options.global.stubs || {}
-  options.global.stubs.transition = false
 
   options.global.plugins = options.global.plugins || []
   options.global.plugins.push({

@@ -1,22 +1,23 @@
 <script setup lang="ts">
-
-import { useRoleStore } from '@/stores'
 import { computed, type ComputedRef, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
-import type { IRole } from '@/shared/interfaces'
-import router from '@/router'
-import type { SmallDemarcheOutputDto } from '@biblio-num/shared/types/dto/demarche/small-demarche-output.dto'
-import { Permissions } from '@/shared/types'
 import { useDebounceFn } from '@vueuse/core'
 
+import type { SmallDemarcheOutputDto } from '@biblio-num/shared/types/dto/demarche/small-demarche-output.dto'
+
+import { useRoleStore } from '@/stores'
+import type { IRole } from '@/shared/interfaces'
+import router from '@/router'
+import { Permissions } from '@/shared/types'
+
 const roleStore = useRoleStore()
-const route = useRoute()
-const dataCy = 'role'
+
+const props = defineProps<{
+  id: number
+}>()
 
 const demarches: ComputedRef<SmallDemarcheOutputDto[]> = computed(() => roleStore.demarches)
 const roleData = computed<IRole | undefined>(() => {
-  const params = route?.params
-  return roleStore.roles.get(Number(params?.id))
+  return roleStore?.roles?.get?.(props.id)
 })
 const createRoleChecked: ComputedRef<boolean> = computed(() => !!roleData.value?.permissions.find(rd => rd.name === 'CREATE_ROLE'))
 const accessDemarcheChecked: ComputedRef<boolean> = computed(() => !!roleData.value?.permissions.find(rd => rd.name === 'ACCESS_DEMARCHE'))
@@ -36,14 +37,11 @@ const deleteRole = async () => {
 }
 
 onMounted(async () => {
-  const params = route?.params
-  if (params && params.id) {
-    try {
-      await roleStore.fetchRoleById(Number(params.id))
-      await roleStore.fetchDemarches()
-    } catch (error) {
-      console.error(error)
-    }
+  try {
+    await roleStore.fetchRoleById(Number(props.id))
+    await roleStore.fetchDemarches()
+  } catch (error) {
+    import.meta.env.DEV && console.error(error)
   }
 })
 
@@ -86,7 +84,7 @@ const changeOneDemarche = useDebounceFn(async (id: number) => {
 <template>
   <div
     v-if="roleData"
-    :data-cy="dataCy"
+    data-cy="role"
     class="flex flex-row justify-center mt-20 gap-40 "
   >
     <div class="w-1/3">
@@ -143,7 +141,3 @@ const changeOneDemarche = useDebounceFn(async (id: number) => {
     </div>
   </div>
 </template>
-
-<style lang="scss" scoped>
-
-</style>

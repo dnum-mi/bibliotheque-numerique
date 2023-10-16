@@ -1,48 +1,23 @@
-import '@gouvminint/vue-dsfr/styles'
-import '@/main.css'
-import * as icons from '@/icons'
-
-import VueDsfr from '@gouvminint/vue-dsfr'
-
-import { createPinia } from 'pinia'
 import User from './User.vue'
 
 import { createRandomAdmin, createRandomUser } from '@/views/__tests__/users'
 import { createRandomRoles } from '@/views/__tests__/roles'
-import { useRoleStore, useUserStore } from '@/stores'
+import { useUserStore } from '@/stores'
+import apiClient from '@/api/api-client'
 
 describe('<User />', () => {
-  it('Should render because admin', () => {
-    const pinia = createPinia()
+  it('Should render list of user if connected as admin', () => {
+    const admin = createRandomAdmin()
+    // Prevent api calls
+    cy.stub(apiClient, 'loginUser').returns(Promise.resolve(admin))
+    cy.stub(apiClient, 'fetchCurrentUser').returns(Promise.resolve(admin))
+    cy.stub(apiClient, 'getRoles').returns(Promise.resolve(createRandomRoles(10)))
 
-    const userStore = useUserStore(pinia)
-    const roleStore = useRoleStore(pinia)
+    // Stub store
+    const userStore = useUserStore()
+    cy.stub(userStore, 'loadUserById', async (id: number) => { userStore.users.set(id, { ...createRandomUser(), id }) })
 
-    userStore.currentUser = createRandomAdmin()
-    userStore.users = new Map()
-    roleStore.roles = createRandomRoles(10)
-
-    userStore.loadUserById = (id: number) => {
-      userStore.users.set(id, { ...createRandomUser(), id })
-      return Promise.resolve()
-    }
-    roleStore.fetchRoles = () => Promise.resolve()
-
-    const extensions = {
-      use: [
-        pinia,
-        {
-          install: (app) => {
-            app.use(VueDsfr,
-              { icons: Object.values(icons) },
-            )
-          },
-        },
-      ],
-    }
-    cy.mount(User, {
-      extensions,
-    })
+    cy.mountWithPinia(User)
 
     cy.get('h2.mb-20').should('contain', 'Utilisateur')
     cy.get('[data-cy=user-role-list] [data-cy=cell-action-icon]').should('have.length', 10)

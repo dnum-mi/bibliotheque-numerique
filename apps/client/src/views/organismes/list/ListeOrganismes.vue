@@ -1,12 +1,14 @@
 <script lang="ts" setup>
+import { type SelectionChangedEvent } from 'ag-grid-community'
 import { useRouter } from 'vue-router'
 import { ref } from 'vue'
+
+import type { IOrganisme, PaginationDto } from '@biblio-num/shared'
+
 import { useOrganismeStore } from '@/stores/organisme'
 import LayoutList from '@/components/Layout/LayoutList.vue'
 import AgGridServerSide from '@/components/ag-grid/server-side/AgGridServerSide.vue'
-import { SelectionChangedEvent } from 'ag-grid-community'
 import { listOrganismeColumnDef } from '@/views/organismes/list/column-def.const'
-import type { IOrganisme, PaginationDto } from '@biblio-num/shared'
 
 const pageSize = 20
 const organismeStore = useOrganismeStore()

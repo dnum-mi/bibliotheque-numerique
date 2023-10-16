@@ -132,4 +132,3 @@ const onClick = async () => {
 }
 
 </script>
-@/utils/date-to-string

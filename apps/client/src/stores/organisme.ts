@@ -7,14 +7,14 @@ import type { IOrganisme, PaginatedOrganismeDto, PaginationDto } from '@biblio-n
 export type OrganismeIdType = 'Rna' | 'Rnf' | 'Id'
 
 export const useOrganismeStore = defineStore('organisme', () => {
-  const organisme = ref<IOrganisme>() as Ref<IOrganisme>
+  const organisme = ref<IOrganisme>()
   const organismes = ref<Partial<IOrganisme>[]>([])
 
   const loadOrganisme = async (id: string, type: OrganismeIdType) => {
     if (!id) {
       return
     }
-    organisme.value = {} as IOrganisme
+    organisme.value = undefined
     organisme.value = await apiClient[`getOrganismeBy${type}`](id)
   }
 

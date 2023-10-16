@@ -2,8 +2,9 @@
 import { defineProps, computed } from 'vue'
 import slugify from 'slugify'
 import delayStateBadge from '@/components/Badges/DelayStateBadge.vue'
+import type { FormatFunctionRefKeys } from '@biblio-num/shared'
 
-const props = defineProps<{ params: any }>()
+const props = defineProps<{ params: {value: string, column: {type: string, formatFunctionRef: FormatFunctionRefKeys }} }>()
 
 /* region all cell */
 const cellValues = computed(() => {
@@ -131,12 +132,12 @@ const getFlagURL = (countryName: string) => {
 </template>
 
 <style>
-span.round-flag {
-  display: block !important;
-  width: 25px !important;
-  height: 25px !important;
+.round-flag {
+  display: block;
+  width: 25px;
+  height: 25px;
   border-radius: 50%;
-  background-size: cover !important;
-  background-position: center !important;
+  background-size: cover;
+  background-position: center;
 }
 </style>

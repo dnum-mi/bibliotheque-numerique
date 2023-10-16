@@ -102,6 +102,9 @@ const routes: RouterOptions['routes'] = [
     path: '/role/:id',
     beforeEnter: [canManageRolesGuard],
     component: () => import('@/views/admin/Role.vue'),
+    props: (route) => ({
+      id: Number(route.params.id),
+    }),
   },
   {
     name: 'Organismes',

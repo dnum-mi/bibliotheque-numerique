@@ -1,9 +1,4 @@
 <script lang="ts" setup>
-import 'ag-grid-enterprise'
-import 'ag-grid-community/styles/ag-grid.css'
-import 'ag-grid-community/styles/ag-theme-material.css'
-import '@/ag-grid-dsfr.css'
-
 import { computed, type ComputedRef, onMounted, ref, type Ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useDebounceFn } from '@vueuse/core'
@@ -21,18 +16,19 @@ import { backendFilterToAggFilter, fromFieldTypeToAgGridFilter } from '@/compone
 
 const demarcheStore = useDemarcheStore()
 const router = useRouter()
-const gridApi: Ref<GridApi | undefined> = ref()
-const columnApi: Ref<ColumnApi | undefined> = ref()
-const groupByDossier: Ref<boolean> = ref(false)
+const route = useRoute()
+const gridApi = ref<GridApi>()
+const columnApi = ref<ColumnApi>()
+const groupByDossier = ref(false)
 const demarche = computed<IDemarche>(() => demarcheStore.currentDemarche as IDemarche)
 const demarcheConfiguration = computed<FrontMappingColumn[]>(() => demarcheStore.currentDemarcheFlatConfiguration)
 const customFilterStore = useCustomFilterStore()
-const customFilters: ComputedRef<ICustomFilter[]> = computed(() => customFilterStore.customFilters)
-const selectedCustomFilter: Ref<ICustomFilter | null> = ref(null)
-const totalsAllowed: ComputedRef<TotalsAllowed[]> = computed(
+const customFilters = computed<ICustomFilter[]>(() => customFilterStore.customFilters as ICustomFilter[])
+const selectedCustomFilter = ref<ICustomFilter | null>(null)
+const totalsAllowed: ComputedRef<TotalsAllowed[] | undefined> = computed(
   () => demarcheConfiguration.value
     .filter(mapping => mapping.type === 'number' && mapping.id !== '96151176-4624-4706-b861-722d2e53545d')
-    .map((mapping) => ({ id: mapping.id, columnLabel: mapping.columnLabel })),
+    .map((mapping) => ({ id: mapping.id, columnLabel: mapping.columnLabel } as TotalsAllowed)),
 )
 const paginationChanged = computed(() => {
   const keys = ['columns', 'filters', 'sorts']
@@ -89,8 +85,6 @@ const onSelectionChanged = ($event: SelectionChangedEvent) => {
     })
   }
 }
-
-const route = useRoute()
 
 onMounted(async () => {
   computeColumnsDef()
@@ -203,7 +197,7 @@ const updateFilterName = async ({ filterName = '', totals = '' }) => {
     dto.columns = paginationDto.value.columns
     await customFilterStore.updateCustomFilter(selectedCustomFilter.value.id, dto)
     selectedCustomFilter.value.name = filterName
-    selectedCustomFilter.value.totals = dto.totals
+    selectedCustomFilter.value.totals = dto.totals ?? null
   }
 }
 

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, type Ref } from 'vue'
+import { ref } from 'vue'
 
 import type { IRole, IRoleForm } from '@/shared/interfaces'
 import apiClient from '@/api/api-client'
@@ -7,7 +7,7 @@ import type { SmallDemarcheOutputDto } from '@biblio-num/shared'
 
 export const useRoleStore = defineStore('role', () => {
   const roles = ref<Map<number, IRole>>(new Map())
-  const demarches: Ref<SmallDemarcheOutputDto[]> = ref([])
+  const demarches = ref<SmallDemarcheOutputDto[]>([])
 
   const fetchDemarches = async () => {
     demarches.value = await apiClient.getSmallDemarches()

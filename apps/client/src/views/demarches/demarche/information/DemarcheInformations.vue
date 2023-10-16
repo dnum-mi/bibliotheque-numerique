@@ -100,4 +100,3 @@ const declarative = computed(() => stateToFr(dataJson.value?.declarative))
     />
   </div>
 </template>
-@/utils/date-to-string@/utils/state-to-string

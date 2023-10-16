@@ -1,6 +1,7 @@
-import { MappingColumn } from '../dto'
 import { Demarche as TDemarche } from '@dnum-mi/ds-api-client'
+
 import { OrganismeTypeKeys } from '../enums/organismes/organisme-type.enums'
+import { MappingColumn } from '../dto'
 
 export interface IDemarche {
   id: number

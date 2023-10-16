@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, ComputedRef, nextTick, ref } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import { useDemarcheStore } from '@/stores'
 import DemarcheConfigurationMappingColumn from '@/views/demarches/demarche/configuration/DemarcheConfigurationMappingColumn.vue'
 import type { MappingColumn } from '@biblio-num/shared'
@@ -7,35 +7,34 @@ import type { MappingColumn } from '@biblio-num/shared'
 const title = 'La configuration'
 
 const demarcheStore = useDemarcheStore()
-const demarcheConfiguration: ComputedRef<MappingColumn[]> = computed(() => demarcheStore.currentDemarcheConfiguration)
+const demarcheConfiguration = computed<MappingColumn[]>(() => demarcheStore.currentDemarcheConfiguration)
 
 // after update, array is re-arrange. For user comfort, we scroll to the updated element and blink it
 const mappingColumnContainerRef = ref(null)
-const handleColumnUpdated = (id: string) => {
-  nextTick(() => {
-    const element = document.querySelector(`[data-id="${id}"]`)
-    if (!element) return
+const handleColumnUpdated = async (id: string) => {
+  await nextTick()
+  const element = document.querySelector<HTMLElement>(`[data-id="${id}"]`)
+  if (!element) return
 
-    const elementTop = element.getBoundingClientRect().top + window.scrollY
-    const viewportHeight = window.innerHeight
-    const elementHeight = element.offsetHeight
+  const elementTop = (element.getBoundingClientRect().top + window.scrollY)
+  const viewportHeight = window.innerHeight
+  const elementHeight = element.offsetHeight
 
-    const scrollTo = elementTop - (viewportHeight / 2) + (elementHeight / 2)
+  const scrollTo = elementTop - (viewportHeight / 2) + (elementHeight / 2)
 
-    window.scrollTo({
-      top: scrollTo,
-      behavior: 'smooth', // for smooth scrolling
-    })
-
-    element.classList.add('background-blue')
-    setTimeout(() => {
-      element.classList.remove('background-blue')
-      element.classList.add('background-transparent')
-    }, 1)
-    setTimeout(() => {
-      element.classList.remove('background-transparent')
-    }, 10000)
+  window.scrollTo({
+    top: scrollTo,
+    behavior: 'smooth', // for smooth scrolling
   })
+
+  element.classList.add('background-blue')
+  setTimeout(() => {
+    element.classList.remove('background-blue')
+    element.classList.add('background-transparent')
+  }, 1)
+  setTimeout(() => {
+    element.classList.remove('background-transparent')
+  }, 10000)
 }
 </script>
 
