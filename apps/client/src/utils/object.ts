@@ -20,7 +20,7 @@ export const deepAlmostEqual = (obj1: unknown, obj2: unknown): boolean => {
   return true
 }
 
-const pick = <T extends Record<string | symbol, unknown>>(obj: T, keys: (keyof T)[]): Partial<T> =>
-  (Object.fromEntries(Object.entries(obj).filter(([key]) => keys.includes(key as keyof T))) as Partial<T>)
+const pick = <T extends Record<string | symbol, unknown>>(obj: T | undefined | null, keys: (string | symbol)[]): Partial<T> =>
+  obj ? (Object.fromEntries(Object.entries(obj).filter(([key]) => keys.includes(key))) as Partial<T>) : {}
 
 export const selectKeysInObject = pick

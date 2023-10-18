@@ -123,15 +123,46 @@ const close = async () => {
 
 const toaster = useToaster()
 
+// onErrorCaptured((error: Error | AxiosError) => {
+//   const router = useRouter()
+
+//   if (error instanceof AxiosError && error?.response?.status === 404) {
+//     return false
+//   } else {
+//     const description = (error instanceof AxiosError && error?.response?.data?.message) || error.message
+//     toaster.addErrorMessage({ description })
+//     console.log('description', description)
+//     console.error(error)
+//   }
+//   return false
+// })
 onErrorCaptured((error: Error | AxiosError) => {
   const router = useRouter()
 
-  if (error instanceof AxiosError && error?.response?.status === 404) {
-    return false
+  if (error instanceof AxiosError) {
+    if (error?.response && error?.response?.status) {
+      const status = error.response.status
+
+      const errorMessages = {
+        400: 'Requête invalide. Veuillez vérifier vos données.',
+        401: 'Non autorisé. Veuillez vous connecter pour accéder à cette ressource.',
+        403: 'Accès refusé. Vous n\'avez pas les permissions nécessaires.',
+        404: 'Ressource non trouvée.',
+        500: 'Erreur interne du serveur. Veuillez contacter votre administrateur.',
+      }
+
+      const errorMessage = errorMessages[status] || 'Erreur inconnue. Veuillez réessayer.'
+      console.log(status)
+      console.error(`Erreur HTTP [${status}]: ${errorMessage}`)
+      toaster.addErrorMessage({ description: errorMessage })
+
+      if (status === 404) {
+        router.push('/not-found')
+      }
+    }
   } else {
-    const description = (error instanceof AxiosError && error?.response?.data?.message) || error.message
-    toaster.addErrorMessage({ description })
-    console.error(error)
+    console.error('Erreur inattendue:', error)
+    toaster.addErrorMessage({ description: 'Erreur inattendue. veuillez contacter votre administrateur.' })
   }
   return false
 })

@@ -37,7 +37,7 @@ const paginationChanged = computed(() => {
       ...selectKeysInObject(paginationDto.value, keys),
       groupByDossier: groupByDossier.value,
     },
-    selectKeysInObject(selectedCustomFilter.value, [...keys, 'groupByDossier']),
+    selectKeysInObject(selectedCustomFilter.value || {}, [...keys, 'groupByDossier']),
   )
 })
 
