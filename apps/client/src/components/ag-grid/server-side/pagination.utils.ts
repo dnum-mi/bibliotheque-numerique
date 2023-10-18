@@ -37,7 +37,7 @@ export const fromAggToBackendFilter = <T>(filterModel: FilterModel): Record<keyo
                 type: value.type,
               }
             : {
-                filter: value.filter,
+                filter: value.filter ?? value.values,
                 type: value.type,
               },
         }
