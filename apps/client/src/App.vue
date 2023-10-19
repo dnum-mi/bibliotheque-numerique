@@ -124,8 +124,6 @@ const close = async () => {
 const toaster = useToaster()
 
 onErrorCaptured((error: Error | AxiosError) => {
-  const router = useRouter()
-
   if (error instanceof AxiosError) {
     if (error?.response && error?.response?.status) {
       const status = error.response.status
@@ -139,16 +137,17 @@ onErrorCaptured((error: Error | AxiosError) => {
       }
 
       const errorMessage = errorMessages[status] || 'Erreur inconnue. Veuillez réessayer.'
-      console.log(status)
-      console.error(`Erreur HTTP [${status}]: ${errorMessage}`)
       toaster.addErrorMessage({ description: errorMessage })
-
-      if (status === 404) {
-        router.push('/not-found')
+      if (import.meta.env.DEV) {
+        console.log(status)
+        console.error(`Erreur HTTP [${status}]: ${errorMessage}`)
       }
     }
   } else {
-    console.error('Erreur inattendue:', error)
+    if (import.meta.env.DEV) {
+      toaster.addErrorMessage({ description: error })
+      console.error('Erreur inattendue:', error)
+    }
   }
   return false
 })
