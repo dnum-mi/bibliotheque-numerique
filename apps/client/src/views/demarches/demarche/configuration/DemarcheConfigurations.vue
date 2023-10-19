@@ -44,7 +44,7 @@ const handleColumnUpdated = async (id: string) => {
       {{ title }}
     </h3>
     <div class="fr-text--alt fr-pb-3w">
-      Sélectionnez les champs ou les annotations privés afin de les afficher dans la liste des dossiers de cette démarche.
+      Sélectionnez les champs ou les annotations privées afin de les afficher dans la liste des dossiers de cette démarche.
     </div>
 
     <div

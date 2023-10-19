@@ -123,19 +123,6 @@ const close = async () => {
 
 const toaster = useToaster()
 
-// onErrorCaptured((error: Error | AxiosError) => {
-//   const router = useRouter()
-
-//   if (error instanceof AxiosError && error?.response?.status === 404) {
-//     return false
-//   } else {
-//     const description = (error instanceof AxiosError && error?.response?.data?.message) || error.message
-//     toaster.addErrorMessage({ description })
-//     console.log('description', description)
-//     console.error(error)
-//   }
-//   return false
-// })
 onErrorCaptured((error: Error | AxiosError) => {
   const router = useRouter()
 
@@ -162,7 +149,6 @@ onErrorCaptured((error: Error | AxiosError) => {
     }
   } else {
     console.error('Erreur inattendue:', error)
-    toaster.addErrorMessage({ description: 'Erreur inattendue. veuillez contacter votre administrateur.' })
   }
   return false
 })
