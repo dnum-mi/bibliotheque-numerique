@@ -188,7 +188,7 @@ describe('Syncronisation ', () => {
           {
             fieldSource: 'fix-field',
             dsChampType: null,
-            type: 'string',
+            type: 'enum',
             formatFunctionRef: 'status',
             sourceId: '1a4b62c4-b81f-4e83-ac34-f6d601b8a8d4',
             stringValue: 'en_construction',

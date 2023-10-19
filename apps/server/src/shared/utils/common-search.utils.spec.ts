@@ -231,6 +231,42 @@ describe('Common search utils', () => {
     })
   })
 
+  describe('Enum filters', () => {
+    it('Should build filter for normal field', () => {
+      expect(
+        buildFilterQuery(
+          {
+            I09: {
+              filterType: 'set',
+              condition1: {
+                filter: ['toto', 'tata'],
+              },
+            },
+          },
+          { I09: 'enum' },
+        ),
+      ).toEqual('(("I09" IN (\'toto\',\'tata\')))')
+    })
+    it('Should build filter for array field', () => {
+      expect(
+        buildFilterQuery(
+          {
+            I09: {
+              filterType: 'set',
+              condition1: {
+                filter: ['toto'],
+              },
+            },
+          },
+          { I09: 'enum' },
+          true,
+        ),
+      ).toEqual(
+        '((EXISTS (SELECT 1 FROM UNNEST("I09") AS item WHERE item IN (\'toto\'))))',
+      )
+    })
+  })
+
   describe('Date filters', () => {
     describe('Normal date filters', () => {
       it('Should build filter for date equals condition', () => {

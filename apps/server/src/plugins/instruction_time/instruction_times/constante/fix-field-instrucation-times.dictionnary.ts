@@ -13,7 +13,7 @@ export const fixFieldInstructionTimeStatus: MappingColumn = {
   id: 'ca6b1946-efe2-448d-b9e3-645829093dc5',
   columnLabel: null,
   originalLabel: 'Etat délai',
-  type: FieldType.string,
+  type: FieldType.enum,
   source: FieldSource.fixField,
   formatFunctionRef: FormatFunctionRef.delayStatus,
 }

@@ -42,7 +42,7 @@ items:
     sourceId: "I05"
     dsChampType: "TextChamp"
     fieldSource: champs
-    type: string
+    type: enum
     stringValue: "instruction"
     parent: null
     label: "Etat"
@@ -215,7 +215,7 @@ items:
     sourceId: "I05"
     dsChampType: "TextChamp"
     fieldSource: champs
-    type: string
+    type: enum
     stringValue: "valide"
     parent: null
     label: "Etat"
@@ -301,7 +301,7 @@ items:
     sourceId: "I05"
     dsChampType: "TextChamp"
     fieldSource: champs
-    type: string
+    type: enum
     stringValue: "valide"
     parent: null
     label: "Etat"
@@ -474,7 +474,7 @@ items:
     sourceId: "I05"
     dsChampType: "TextChamp"
     fieldSource: champs
-    type: string
+    type: enum
     stringValue: "instruction"
     parent: null
     label: "Etat"
@@ -541,7 +541,7 @@ items:
     sourceId: "I05"
     dsChampType: "TextChamp"
     fieldSource: champs
-    type: string
+    type: enum
     stringValue: "instruction"
     parent: null
     label: "Etat"
@@ -747,7 +747,7 @@ items:
     sourceId: "I05"
     dsChampType: "TextChamp"
     fieldSource: champs
-    type: string
+    type: enum
     stringValue: "valide"
     parent: null
     label: "Etat"
@@ -877,7 +877,7 @@ items:
     sourceId: "I05"
     dsChampType: "TextChamp"
     fieldSource: champs
-    type: string
+    type: enum
     stringValue: "instruction"
     parent: null
     label: "Etat"
@@ -1050,7 +1050,7 @@ items:
     sourceId: "I05"
     dsChampType: "TextChamp"
     fieldSource: champs
-    type: string
+    type: enum
     stringValue: "valide"
     parent: null
     label: "Etat"
@@ -1116,7 +1116,7 @@ items:
     sourceId: "I05"
     dsChampType: "TextChamp"
     fieldSource: champs
-    type: string
+    type: enum
     stringValue: "valide"
     parent: null
     label: "Etat"
@@ -1202,7 +1202,7 @@ items:
     sourceId: "I05"
     dsChampType: "TextChamp"
     fieldSource: champs
-    type: string
+    type: enum
     stringValue: "instruction"
     parent: null
     label: "Etat"

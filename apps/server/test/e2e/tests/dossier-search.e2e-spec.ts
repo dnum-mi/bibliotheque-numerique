@@ -467,4 +467,90 @@ describe('Dossier listing', () => {
         ])
       })
   })
+
+  it('Should only return dossier with etat = instruction', async () => {
+    await request(app.getHttpServer())
+      .post('/demarches/1/dossiers-search')
+      .send({
+        columns: ['I01', 'I05'],
+        filters: {
+          I05: {
+            filterType: 'set',
+            condition1: {
+              filter: ['instruction'],
+            },
+          },
+        },
+      })
+      .set('Cookie', [adminCookie])
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.data).toEqual([
+          {
+            dossierId: 1,
+            I01: 'W00000001',
+            I05: 'instruction',
+          },
+          {
+            dossierId: 4,
+            I01: 'W00000004',
+            I05: 'instruction',
+          },
+          {
+            dossierId: 5,
+            I01: 'W00000005',
+            I05: 'instruction',
+          },
+          {
+            dossierId: 7,
+            I01: 'W00000007',
+            I05: 'instruction',
+          },
+          {
+            dossierId: 10,
+            I01: 'W00000010',
+            I05: 'instruction',
+          },
+        ])
+      })
+    await request(app.getHttpServer())
+      .post('/demarches/1/dossiers-search')
+      .send({
+        columns: ['I05'],
+        filters: {
+          I05: {
+            filterType: 'set',
+            condition1: {
+              filter: ['instruction', 'valide'],
+            },
+          },
+        },
+      })
+      .set('Cookie', [adminCookie])
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.data).toEqual([
+          {
+            dossierId: 1,
+            I05: 'instruction',
+          },
+          {
+            dossierId: 2,
+            I05: 'valide',
+          },
+          {
+            dossierId: 3,
+            I05: 'valide',
+          },
+          {
+            dossierId: 4,
+            I05: 'instruction',
+          },
+          {
+            dossierId: 5,
+            I05: 'instruction',
+          },
+        ])
+      })
+  })
 })

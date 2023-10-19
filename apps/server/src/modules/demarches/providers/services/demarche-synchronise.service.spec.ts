@@ -174,7 +174,7 @@ describe('Generating demarche mapping columns', () => {
         id: '1a4b62c4-b81f-4e83-ac34-f6d601b8a8d4',
         columnLabel: 'Status',
         originalLabel: 'Status',
-        type: 'string',
+        type: 'enum',
         formatFunctionRef: 'status',
         source: 'fix-field',
       },

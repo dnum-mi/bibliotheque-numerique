@@ -12,6 +12,7 @@ import {
   TextFilterConditionDto,
   TextFilterConditions,
   UserFriendlyFilter,
+  EnumFilterConditionDto,
 } from '@biblio-num/shared'
 import { BadRequestException } from '@nestjs/common'
 import { FiltersInCustomFilter } from '@/modules/custom-filters/objects/entities/custom-filter.entity'
@@ -47,7 +48,6 @@ const _buildOneTextFilter = (
 }
 /* endregion */
 
-// TODO: In_range
 /* region DATE FILTER */
 const dateSqlOperators = {
   [DateFilterConditions.Equals]: '=',
@@ -98,6 +98,18 @@ const _buildOneNumberFilter = (
 }
 /* endregion */
 
+/* region ENUM FILTER */
+const _buildOneEnumFilter = (
+  key: string,
+  filter: EnumFilterConditionDto,
+  isArray = false,
+  prefix?: string,
+): string => {
+  key = _adaptKeyForArray(key, isArray, prefix)
+  return `(${key} IN (${filter.filter.map((s) => `'${s}'`).join(',')})${isArray ? ')' : ''})`
+}
+/* endregion */
+
 const _adaptKeyForArray = (
   key: string,
   isArray = false,
@@ -114,7 +126,8 @@ type filterFactory = (
   filter:
     | TextFilterConditionDto
     | DateFilterConditionDto
-    | NumberFilterConditionDto,
+    | NumberFilterConditionDto
+    | EnumFilterConditionDto,
   isArray: boolean,
   prefix?: string,
 ) => string
@@ -127,12 +140,20 @@ export const buildOneFilter = (
   isArray = false,
   prefix?: string,
 ): string => {
-  const filterFactory: filterFactory =
-    type === FieldType.date
-      ? _buildOneDateFilter
-      : type === FieldType.number
-        ? _buildOneNumberFilter
-        : _buildOneTextFilter
+  let filterFactory: filterFactory
+  switch (type) {
+  case FieldType.date:
+    filterFactory = _buildOneDateFilter
+    break
+  case FieldType.number:
+    filterFactory = _buildOneNumberFilter
+    break
+  case FieldType.enum:
+    filterFactory = _buildOneEnumFilter
+    break
+  default:
+    filterFactory = _buildOneTextFilter
+  }
   let result = filterFactory(key, filter.condition1, isArray, prefix)
   if (filter.operator) {
     result = `${result} ${filter.operator} ${filterFactory(
@@ -244,14 +265,19 @@ export const dictionaryHumanReadableOperatorsDate = {
   [DateFilterConditions.GreaterThan]: 'Après le:',
 }
 
+export const dictionnaryHumanReadableOperatorsEnum = {
+  default: 'Contient: ',
+}
+
 // TODO: In_range, blank, no_blank
 export const dictionaryHumanReadableFilterType = {
   text: dictionaryHumanReadableOperatorsText,
   number: dictionaryHumanReadableOperatorsNumber,
   date: dictionaryHumanReadableOperatorsDate,
+  enum: dictionnaryHumanReadableOperatorsEnum,
 }
 export const humanReadableOperator = (filterType, type): string =>
-  dictionaryHumanReadableFilterType[filterType]?.[type] || ''
+  dictionaryHumanReadableFilterType[filterType]?.[type || 'default'] || ''
 
 export const humanReadableFilter = (filter: FilterDto): string => {
   // TODO: A faire
@@ -260,7 +286,9 @@ export const humanReadableFilter = (filter: FilterDto): string => {
     .map(
       (condition) =>
         `${humanReadableOperator(filter.filterType, condition.type)} ${
-          condition.filter
+          condition.filter instanceof Array
+            ? condition.filter.join(', ')
+            : condition.filter
         }`,
     )
     .join(filter.operator ? (filter.operator === 'AND' ? ' et ' : ' ou ') : '')
