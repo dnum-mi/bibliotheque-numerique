@@ -29,10 +29,10 @@ const dataCy = 'dossier-champ'
     >
       <a
         download
-        :href=" champ.file.url"
+        :href="champ.file?.url"
         target="_blank"
         class="fr-link"
-      >{{ champ.file.filename }} <span class="fr-text--xs">({{ prettyByteSizeByString(champ.file.byteSizeBigInt) }})</span></a>
+      >{{ champ.file?.filename }} <span class="fr-text--xs">({{ prettyByteSizeByString(champ.file?.byteSizeBigInt) }})</span></a>
     </div>
     <DossierChamps
       v-else-if="champ.__typename =='RepetitionChamp' "
