@@ -1,13 +1,14 @@
 <script lang="ts" setup>
+import { computed } from 'vue'
+
 import DisplayLabelsValues from '@/components/DisplayLabelsValues.vue'
 import { DemarcheStateMapping } from '@/utils/demarche-mapping'
 import type { KeyDemarcheStateMapping } from '@/shared/types/Demarche.type'
-import { computed } from 'vue'
 import { dateTimeToStringFr, stateToFr } from '@/utils'
 import { useDemarcheStore } from '@/stores'
 
 const demarcheStore = useDemarcheStore()
-const dataJson = computed<object>(() => demarcheStore.currentDemarche?.dsDataJson || {})
+const dataJson = computed(() => demarcheStore.currentDemarche?.dsDataJson)
 
 const title = 'Informations'
 
@@ -41,8 +42,7 @@ const labelsDate = [
 ]
 
 const etat = computed(() => dataJson.value?.state ? DemarcheStateMapping[dataJson.value?.state as KeyDemarcheStateMapping] : '')
-const declarative = computed(() => stateToFr(dataJson.value?.declarative))
-
+const declarative = computed(() => stateToFr(dataJson?.value?.declarative))
 </script>
 
 <template>

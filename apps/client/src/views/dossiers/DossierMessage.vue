@@ -5,10 +5,13 @@ defineProps<{
     email: string,
     body: string,
     createdAt: string,
-    attachment: object,
+    attachment: {
+      url: string,
+      filename: string,
+      byteSizeBigInt: string,
+    },
     demandeur: string | boolean,
   }>()
-
 </script>
 
 <template>

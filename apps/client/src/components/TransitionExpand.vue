@@ -55,7 +55,7 @@ const leave = (element: HTMLElement) => {
     name="expand"
     @enter="enter($event as HTMLElement)"
     @after-enter="afterEnter($event as HTMLElement)"
-    @leave="leave"
+    @leave="leave($event as HTMLElement)"
   >
     <slot />
   </transition>

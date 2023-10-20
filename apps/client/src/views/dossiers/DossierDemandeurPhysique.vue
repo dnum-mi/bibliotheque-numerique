@@ -1,8 +1,10 @@
 <script lang="ts" setup>
+import type { Demandeur, PersonnePhysique } from '@biblio-num/shared'
+
 import { dateToStringFr } from '@/utils'
 
 const props = withDefaults(defineProps<{
-    datas?: object
+    datas?: Demandeur & PersonnePhysique | Record<string, never>;
   }>(), {
   datas: () => ({}),
 })
@@ -11,11 +13,11 @@ const title = 'DemandeurDossier'
 const fieldsDemandeur = [
   {
     label: 'Civilité',
-    value: props.datas.civilite.toUpperCase(),
+    value: props.datas.civilite?.toUpperCase(),
   },
   {
     label: 'Nom',
-    value: props.datas.nom.toUpperCase(),
+    value: props.datas.nom?.toUpperCase(),
   },
   {
     label: 'Prénom',

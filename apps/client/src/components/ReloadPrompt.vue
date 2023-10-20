@@ -25,7 +25,7 @@ defineEmits<{
       </span>
     </div>
 
-    <div class="actions">
+    <div class="flex  flex-row  gap-2">
       <DsfrButton
         v-if="needRefresh"
         class="button"
@@ -59,15 +59,5 @@ defineEmits<{
   z-index: 1;
   border-radius: 5px;
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-}
-
-.mb-2 {
-  margin-bottom: 1rem;
-}
-
-.actions {
-  display: flex;
-  flex-direction: row-reverse;
-  gap: 0.5rem;
 }
 </style>

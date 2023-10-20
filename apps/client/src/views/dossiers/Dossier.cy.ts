@@ -1,35 +1,21 @@
-import '@gouvminint/vue-dsfr/styles'
-import '@/main.css'
-
-import VueDsfr from '@gouvminint/vue-dsfr'
-
-import { createPinia } from 'pinia'
 import Dossier from './Dossier.vue'
 import { useDossierStore } from '@/stores/dossier'
 import { generateDossier } from '@/views/__tests__/dossiers'
 
+import apiClient from '@/api/api-client'
+
 describe('<Dossier />', () => {
   it('renders', () => {
-    const pinia = createPinia()
-    // eslint-disable-next-line
-    const useStore = useDossierStore(pinia)
+    const dossierStore = useDossierStore()
     const dossier = generateDossier()
-    const dossierDS = dossier.dsDataJson
-    useStore.dossier = dossier
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    useStore.getDossier = async (id: number) => {
-      useStore.dossier = dossier
-    }
 
-    const extensions = {
-      use: [
-        pinia,
-        VueDsfr,
-      ],
-    }
-    cy.mount(Dossier, {
-      extensions,
+    cy.stub(apiClient, 'getDossier').withArgs(+dossier.id).resolves(dossier)
+    const dossierDS = dossier.dsDataJson
+    cy.then(() => {
+      dossierStore.getDossier(+dossier.id)
     })
+
+    cy.mountWithPinia(Dossier)
 
     cy.get('.bn-fiche-title').should('contain', `${dossierDS.number}`)
     cy.get('.bn-fiche-sub-title').should('contain', `${dossierDS.state?.toUpperCase()}`)

@@ -1,9 +1,16 @@
 <script lang="ts" setup generic="T extends DynamicKeys">
 import { AgGridVue } from 'ag-grid-vue3'
-import { ColDef, ColumnApi, GridApi, GridReadyEvent, IServerSideGetRowsParams, SelectionChangedEvent } from 'ag-grid-community'
+import {
+  ColumnApi,
+  GridApi,
+  type ColDef,
+  type GridReadyEvent,
+  type IServerSideGetRowsParams,
+  type SelectionChangedEvent,
+} from 'ag-grid-community'
 import type { GridOptions } from 'ag-grid-enterprise'
 import { gridOptionFactory } from '@/components/ag-grid/server-side/grid-option-factory'
-import { ref, Ref } from 'vue'
+import { ref } from 'vue'
 import type { DynamicKeys, PaginationDto } from '@biblio-num/shared'
 import { fromAggToBackendFilter, fromAggToBackendSort } from '@/components/ag-grid/server-side/pagination.utils'
 
@@ -30,14 +37,14 @@ const props = withDefaults(
     specificGridOption: () => ({}),
   },
 )
-// eslint-disable-next-line func-call-spacing
+
 const emit = defineEmits<{
-  (e: 'gridReady', p: GridReadyEvent): void;
-  (e: 'update:paginationDto', p: PaginationDto<T>): void;
+  'gridReady': [p: GridReadyEvent],
+  'update:paginationDto': [p: PaginationDto<T>],
 }>()
 
-const gridApi: Ref<GridApi | undefined> = ref()
-const columnApi: Ref<ColumnApi | undefined> = ref()
+const gridApi = ref<GridApi>()
+const columnApi = ref<ColumnApi>()
 
 const refresh = () => {
   if (gridApi.value) {

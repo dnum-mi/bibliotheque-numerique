@@ -9,8 +9,8 @@ const props = withDefaults(defineProps<{
 })
 
 const iconClass = computed(() => ({
-  'fr-icon-error-fill fr-text-default--error': !props.valid,
-  'fr-icon-success-fill fr-text-default--success': props.valid,
+  'fr-icon-error-fill  fr-text-default--error': !props.valid,
+  'fr-icon-success-fill  fr-text-default--success': props.valid,
 }))
 
 </script>

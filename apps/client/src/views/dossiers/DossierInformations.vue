@@ -1,9 +1,12 @@
 <script lang="ts" setup>
-import { dateTimeToStringFr } from '@/utils'
 import { computed } from 'vue'
 
+import type { TDossier } from '@biblio-num/shared'
+
+import { dateTimeToStringFr } from '@/utils'
+
 const props = withDefaults(defineProps<{
-    datas?: object
+    datas?: TDossier | Record<string, never>
   }>(), {
   datas: () => ({}),
 })

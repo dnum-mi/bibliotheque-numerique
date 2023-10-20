@@ -1,13 +1,13 @@
-import { LANG_FOR_DATE_TIME } from '@/config'
+import { LOCALE_FOR_DATE_TIME } from '@/config'
 
-export const dateTimeToStringFr = (value: string | number):string => {
+export const dateTimeToStringFr = (value: string | number): string => {
   return value
-    ? (new Date(value)).toLocaleString(LANG_FOR_DATE_TIME)
+    ? (new Date(value)).toLocaleString(LOCALE_FOR_DATE_TIME)
     : ''
 }
 
-export const dateToStringFr = (value: string | number | undefined):string => {
+export const dateToStringFr = (value: Date | string | number | undefined): string => {
   return value
-    ? (new Date(value)).toLocaleDateString(LANG_FOR_DATE_TIME)
+    ? (new Date(value)).toLocaleDateString(LOCALE_FOR_DATE_TIME)
     : ''
 }

@@ -1,1 +1,1 @@
-export const booleanToYesNo = (value:boolean):string => value ? 'Oui' : 'Non'
+export const booleanToYesNo = (value: boolean): string => value ? 'Oui' : 'Non'

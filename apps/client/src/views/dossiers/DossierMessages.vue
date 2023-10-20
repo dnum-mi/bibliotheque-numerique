@@ -1,17 +1,20 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import DossierMessage from './DossierMessage.vue'
-import { nameToInitials } from '@/utils/nameToInitials'
+import { getInitialsFromName } from '@/utils/name-to-initials'
+import type { Demandeur, PersonnePhysique, TDossier } from '@biblio-num/shared'
+
+type PopulatedDossier = TDossier & { demandeur: Demandeur & PersonnePhysique & { email: string } } | Record<string, never>
 
 const props = withDefaults(defineProps<{
-    datas?: object
+    datas?: PopulatedDossier
   }>(), {
   datas: () => ({}),
 })
 const messages = computed(() => props.datas?.messages || [])
 // TODO: add demandeur email in objet dossier
-const demandeurEmail = computed(() => props.datas?.demandeur.email || [])
-const demandeInitials = computed(() => nameToInitials(props.datas?.demandeur.nom + ' ' + props.datas?.demandeur.prenom).toUpperCase() || [])
+const demandeurEmail = computed(() => props.datas?.demandeur.email)
+const demandeurInitials = computed(() => getInitialsFromName(props.datas?.demandeur.nom + ' ' + props.datas?.demandeur.prenom) || '')
 </script>
 
 <template>
@@ -32,7 +35,7 @@ const demandeInitials = computed(() => nameToInitials(props.datas?.demandeur.nom
             :body="body"
             :created-at="createdAt"
             :attachment="attachment"
-            :demandeur="(demandeurEmail === email) ? demandeInitials : false"
+            :demandeur="(demandeurEmail === email) ? demandeurInitials : false"
           />
         </div>
       </div>

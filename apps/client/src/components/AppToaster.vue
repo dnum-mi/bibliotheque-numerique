@@ -5,7 +5,9 @@ import { DsfrAlert } from '@gouvminint/vue-dsfr'
 import type { Message } from '@/composables/use-toaster'
 
 defineProps<{ messages: Message[] }>()
-const emit = defineEmits(['close-message'])
+const emit = defineEmits<{
+  'close-message': [id: string]
+}>()
 const close = (id: string) => emit('close-message', id)
 </script>
 

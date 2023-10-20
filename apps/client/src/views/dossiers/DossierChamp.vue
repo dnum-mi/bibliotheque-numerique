@@ -1,19 +1,19 @@
 <script lang="ts" setup>
-import DossierChamps from './DossierChamps.vue'
 import { prettyByteSizeByString } from '@/utils'
 
-withDefaults(defineProps<{
-    champ?: object[]
-  }>(), {
-  champ: () => ([]),
-})
+import type { PieceJustificativeChamp, RepetitionChamp } from '@biblio-num/shared'
 
-const dataCy = 'dossier-champ'
-</script>>
+import DossierChamps from './DossierChamps.vue'
+
+defineProps<{
+  champ: PieceJustificativeChamp & RepetitionChamp
+}>()
+</script>
+
 <template>
   <div
     v-if="champ"
-    :data-cy="dataCy"
+    data-cy="dossier-champ"
     class="fr-mb-2w fr-col-12"
   >
     <hr class="fr-mt-3w fr-pb-1w">
@@ -29,10 +29,10 @@ const dataCy = 'dossier-champ'
     >
       <a
         download
-        :href="champ.file?.url"
+        :href=" champ.file?.url"
         target="_blank"
         class="fr-link"
-      >{{ champ.file?.filename }} <span class="fr-text--xs">({{ prettyByteSizeByString(champ.file?.byteSizeBigInt) }})</span></a>
+      >{{ champ.file?.filename }} <span class="fr-text--xs">({{ prettyByteSizeByString(String(champ.file?.byteSizeBigInt)) }})</span></a>
     </div>
     <DossierChamps
       v-else-if="champ.__typename =='RepetitionChamp' "

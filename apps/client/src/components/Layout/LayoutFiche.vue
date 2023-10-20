@@ -19,8 +19,6 @@
   </div>
 </template>
 
-<script setup lang='ts'>
-</script>
 <style scoped>
 .bn-fiche-title {
   background-color: var(--background-alt-grey);

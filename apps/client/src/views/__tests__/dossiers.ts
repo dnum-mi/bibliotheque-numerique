@@ -1,3 +1,4 @@
+import type { Demandeur } from '@biblio-num/shared'
 import { faker } from '@faker-js/faker/locale/fr'
 
 const getStateDossier = () => { return faker.helpers.arrayElement(['accepte', 'en_construction', 'en_instruction']) }
@@ -73,7 +74,7 @@ export const getDemandeurPhysique = () => ({
   prenom: faker.name.firstName(),
 })
 
-export const generateDossierDSByTypeDemandeur = (__typename:string, demandeurTest: object) => ({
+export const generateDossierDSByTypeDemandeur = (__typename:string, demandeurTest: Demandeur) => ({
   id: faker.datatype.string(20),
   number: faker.datatype.number(),
   archived: faker.datatype.boolean(),
