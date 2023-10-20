@@ -1,10 +1,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 
-const props = withDefaults(defineProps<{params: any}>(), {
-  params: () => ({}),
-})
-
+const props = defineProps<{ params: { value: { url: string } } }>()
 const href = computed(() => props.params.value.url)
 </script>
 

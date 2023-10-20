@@ -1,7 +1,7 @@
 import { localeTextAgGrid } from '@/components/ag-grid/agGridOptions'
-import type { GridOptions } from 'ag-grid-community'
+import type { GridOptions, IServerSideGetRowsParams } from 'ag-grid-community'
 
-export const gridOptionFactory = (getRows: (params: any) => void, pageSize:number): GridOptions => ({
+export const gridOptionFactory = (getRows: (params: IServerSideGetRowsParams) => void, pageSize: number): GridOptions => ({
   domLayout: 'autoHeight',
   localeText: localeTextAgGrid,
   suppressMenuHide: true,

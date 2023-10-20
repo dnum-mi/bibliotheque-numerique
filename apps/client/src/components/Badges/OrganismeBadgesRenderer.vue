@@ -1,18 +1,16 @@
 <script lang="ts" setup>
+import { computed } from 'vue'
+
 import type { OrganismeTypeKeys } from '@biblio-num/shared'
-import { computed, ComputedRef } from 'vue'
+
 import OrganismeBadge from '@/components/Badges/OrganismeBadge.vue'
 
-const props = withDefaults(defineProps<{ params: any }>(), {
-  params: () => ({}),
-})
+const props = defineProps<{ params: { value: OrganismeTypeKeys | OrganismeTypeKeys[] } }>()
 
-const types: ComputedRef<OrganismeTypeKeys[]> = computed(() => {
-  const v = props.params.value
-  return ((v instanceof Array) ? v : [v]) || []
+const types = computed(() => {
+  const value = props.params.value
+  return value instanceof Array ? value : [value]
 })
-
-// const cssClass = computed(() => {})
 </script>
 
 <template>

@@ -10,7 +10,7 @@ export const Permissions: Record<string, string> = {
 
 export type TPermission = {
   name: string;
-  options?: any;
+  options?: unknown;
   write?: boolean;
   delete?: boolean;
 };

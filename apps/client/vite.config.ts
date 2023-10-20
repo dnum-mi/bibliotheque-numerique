@@ -15,7 +15,9 @@ export default defineConfig({
     vueJsx(),
     svgLoader(),
     VitePWA({
-      navigateFallbackDenylist: [/^\/api/],
+      workbox: {
+        navigateFallbackDenylist: [/^\/api/],
+      },
     }),
     UnoCSS(),
   ],

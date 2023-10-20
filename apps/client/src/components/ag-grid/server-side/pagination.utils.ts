@@ -1,5 +1,6 @@
 import type { FilterDto, SortDto } from '@biblio-num/shared'
 import { type SortModelItem } from 'ag-grid-community'
+import type { AgGridCommon } from 'ag-grid-community/dist/lib/interfaces/iCommon'
 
 const fieldTypesDict = {
   file: 'agTextColumnFilter',
@@ -11,7 +12,7 @@ const fieldTypesDict = {
 } as const
 
 // TODO: use FieldType but enum from library doesn't work in front.
-export const fromFieldTypeToAgGridFilter = (fieldType: keyof typeof fieldTypesDict) => fieldTypesDict[fieldType] || fieldTypesDict.default
+export const getAgGridFilterFromFieldType = (fieldType?: keyof typeof fieldTypesDict) => (fieldType && fieldTypesDict[fieldType]) || fieldTypesDict.default
 
 export const fromAggToBackendSort = (sortModel: SortModelItem[]): SortDto[] => {
   return sortModel.map((sort) => ({
@@ -20,11 +21,12 @@ export const fromAggToBackendSort = (sortModel: SortModelItem[]): SortDto[] => {
   }))
 }
 
-export const fromAggToBackendFilter = <T>(filterModel: Record<string, any>): Record<keyof T, FilterDto> | null => {
+type FilterModel = Parameters<AgGridCommon<unknown, unknown>['api']['setFilterModel']>[0]
+export const fromAggToBackendFilter = <T>(filterModel: FilterModel): Record<keyof T, FilterDto> | null => {
   const entries = Object.entries(filterModel)
   if (entries.length) {
     const filters: Record<string, FilterDto> = {}
-    entries.forEach(([key, value]) => {
+    entries.forEach(([key, value]: [string, FilterModel]) => {
       if (!value.condition1) {
         filters[key] = {
           filterType: value.filterType,
@@ -40,7 +42,7 @@ export const fromAggToBackendFilter = <T>(filterModel: Record<string, any>): Rec
               },
         }
       } else {
-        filters[key] = value
+        filters[key] = value as FilterDto
       }
     })
     return filters as Record<keyof T, FilterDto>
@@ -49,10 +51,10 @@ export const fromAggToBackendFilter = <T>(filterModel: Record<string, any>): Rec
   }
 }
 
-export const backendFilterToAggFilter = (filters: Record<string, FilterDto>): Record<string, any> => {
+export const backendFilterToAggFilter = (filters: Record<string, FilterDto>): FilterModel => {
   const entries = Object.entries(filters)
   if (entries.length) {
-    const aggFilters: Record<string, any> = {}
+    const aggFilters: FilterModel = {}
     entries.forEach(([key, value]) => {
       if (value.condition2) {
         aggFilters[key] = filters[key]
