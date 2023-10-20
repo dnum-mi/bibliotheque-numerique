@@ -11,7 +11,7 @@ items:
       { "id": "I02", "columnLabel": "Moment", "type": "date" },
       { "id": "I03", "columnLabel": "Titre", "type": "string" },
       { "id": "I04", "columnLabel": "Consentement", "type": "string" },
-      { "id": "I05", "columnLabel": "Etat", "type": "string" },
+      { "id": "I05", "columnLabel": "Etat", "type": "enum" },
       { "id": "I06", "columnLabel": "Delais", "type": "number" },
       { "id": "I07", "columnLabel": "Excel", "type": "string" },
       {
