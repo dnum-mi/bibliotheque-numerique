@@ -13,6 +13,7 @@ import { gridOptionFactory } from '@/components/ag-grid/server-side/grid-option-
 import { ref } from 'vue'
 import type { DynamicKeys, PaginationDto } from '@biblio-num/shared'
 import { fromAggToBackendFilter, fromAggToBackendSort } from '@/components/ag-grid/server-side/pagination.utils'
+import { valueBytypeValue } from '../../../shared/types'
 
 const pageSize = 20
 
@@ -52,25 +53,59 @@ const refresh = () => {
   }
 }
 
+const hasfilterEnumUnselectedAll = (filterModel: Record<string, any>) => {
+  const enumIds: (string| undefined)[] = props.columnDefs.filter(colDef =>
+    // TODO: need to identify from DemarcheDossiers.
+    // eslint-disable-next-line
+    // @ts-ignore
+    colDef.fieldType === 'enum',
+  ).map(colDef => colDef.field)
+
+  if (!enumIds) {
+    return false
+  }
+  for (const emunId of enumIds) {
+    const filter = Object.entries(filterModel)
+      .find(([key, value]) => key === emunId &&
+                              value.filterType === 'set' &&
+                              !value.values.length)
+    if (filter) return true
+  }
+  return false
+}
+
 // function called by aggrid in SSR mode to fetch its data
 const getRows = async (params: IServerSideGetRowsParams) => {
-  if (props.loading) return undefined
-  if (props.preCondition) {
-    const dto: PaginationDto<T> = {
-      sorts: fromAggToBackendSort(params.request.sortModel),
-      filters: fromAggToBackendFilter<T>(params.request.filterModel),
-      columns: params.columnApi
-        .getColumnState()
-        .filter((state) => !state.hide)
-        .map((state) => state.colId),
-      perPage: pageSize,
-      page: (params.request.startRow || 0) / pageSize + 1,
+  try {
+    const hasFilterEnumEmpty = hasfilterEnumUnselectedAll(params.request.filterModel)
+    if (hasFilterEnumEmpty) {
+      params.success({ rowData: [], rowCount: 0 })
+      return
     }
-    emit('update:paginationDto', dto)
-    const response = await props.apiCall(dto)
-    params.success({ rowData: response.data, rowCount: response.total })
-  } else {
+
+    if (props.loading) return undefined
+    if (props.preCondition) {
+      const dto: PaginationDto<T> = {
+        sorts: fromAggToBackendSort(params.request.sortModel),
+        filters: fromAggToBackendFilter<T>(params.request.filterModel),
+        columns: params.columnApi
+          .getColumnState()
+          .filter((state) => !state.hide)
+          .map((state) => state.colId),
+        perPage: pageSize,
+        page: (params.request.startRow || 0) / pageSize + 1,
+      }
+      emit('update:paginationDto', dto)
+      const response = await props.apiCall(dto)
+
+      params.success({ rowData: response.data, rowCount: response.total })
+    } else {
+      params.fail()
+    }
+  } catch (error) {
     params.fail()
+    console.error(error)
+    throw error
   }
 }
 const gridOptions = {

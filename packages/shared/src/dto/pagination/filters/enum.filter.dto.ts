@@ -1,8 +1,10 @@
-import { IsDefined, ValidateNested } from 'class-validator'
+import { ArrayNotEmpty, IsDefined, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
 
 export class EnumFilterConditionDto {
   type?: undefined
+
+  @ArrayNotEmpty()
   @IsDefined()
   filter: string[]
 }

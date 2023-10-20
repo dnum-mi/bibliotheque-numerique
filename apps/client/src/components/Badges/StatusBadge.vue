@@ -6,7 +6,7 @@ const statusDictionary = {
   en_construction: { label: 'En construction', type: 'new' },
   en_instruction: { label: 'En instruction', type: 'new' },
   refuse: { label: 'Refusé', type: 'error' },
-  sans_suite: { label: 'sans_suite', type: 'warning' },
+  sans_suite: { label: 'Sans suite', type: 'warning' },
 } as const
 
 const props = defineProps<{

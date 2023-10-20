@@ -26,7 +26,8 @@ import DemarcheDossierCellRenderer from '@/views/demarches/demarche/dossiers/Dem
 import { type SmallFilter } from './DemarcheDossiersFilters.vue'
 import { deepAlmostEqual, selectKeysInObject } from '@/utils/object'
 import AgGridServerSide from '@/components/ag-grid/server-side/AgGridServerSide.vue'
-import { backendFilterToAggFilter, getAgGridFilterFromFieldType } from '@/components/ag-grid/server-side/pagination.utils'
+import { backendFilterToAggFilter } from '@/components/ag-grid/server-side/pagination.utils'
+import { fromFieldTypeToAgGridFilter } from '@/components/ag-grid/server-side/filters.utils'
 
 const demarcheStore = useDemarcheStore()
 const router = useRouter()
@@ -80,11 +81,13 @@ const computeColumnsDef = () => {
       return {
         headerName: column.columnLabel,
         field: column.id,
-        filter: getAgGridFilterFromFieldType(column.type),
+        ...fromFieldTypeToAgGridFilter(column.type, column.formatFunctionRef),
         autoHeight: true,
         menuTabs: ['filterMenuTab'] as ColumnMenuTab[],
         cellRenderer: DemarcheDossierCellRenderer,
         cellRendererParams: { column },
+        // TODO: need to identify type of filter
+        fieldType: column.type,
       }
     }),
   ]
