@@ -124,14 +124,30 @@ const close = async () => {
 const toaster = useToaster()
 
 onErrorCaptured((error: Error | AxiosError) => {
-  const router = useRouter()
+  if (error instanceof AxiosError) {
+    if (error?.response && error?.response?.status) {
+      const status = error.response.status
 
-  if (error instanceof AxiosError && error?.response?.status === 404) {
-    return false
+      const errorMessages = {
+        400: 'Requête invalide. Veuillez vérifier vos données.',
+        401: 'Non autorisé. Veuillez vous connecter pour accéder à cette ressource.',
+        403: 'Accès refusé. Vous n\'avez pas les permissions nécessaires.',
+        404: 'Ressource non trouvée.',
+        500: 'Erreur interne du serveur. Veuillez contacter votre administrateur.',
+      }
+
+      const errorMessage = errorMessages[status] || 'Erreur inconnue. Veuillez réessayer.'
+      toaster.addErrorMessage({ description: errorMessage })
+      if (import.meta.env.DEV) {
+        console.log(status)
+        console.error(`Erreur HTTP [${status}]: ${errorMessage}`)
+      }
+    }
   } else {
-    const description = (error instanceof AxiosError && error?.response?.data?.message) || error.message
-    toaster.addErrorMessage({ description })
-    console.error(error)
+    if (import.meta.env.DEV) {
+      toaster.addErrorMessage({ description: error })
+      console.error('Erreur inattendue:', error)
+    }
   }
   return false
 })
