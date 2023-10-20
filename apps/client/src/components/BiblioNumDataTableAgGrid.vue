@@ -2,7 +2,7 @@
 import { computed, watchEffect, ref, type ComputedRef, type Component } from 'vue'
 import { AgGridVue } from 'ag-grid-vue3'
 
-import { AgGridFilter, type Action, type HeaderDataTable } from '@/shared/types'
+import { agGridFilterDict, type AgGridFilterKey, type Action, type HeaderDataTable } from '@/shared/types'
 import TableCellAction from './TableCellAction.vue'
 import { PAGINATION_PAGE_SIZE } from '@/config'
 
@@ -14,7 +14,6 @@ import AgGridAttachmentCell from './ag-grid/AgGridAttachmentCell.vue'
 import type { SelectionChangedEvent, GridReadyEvent } from 'ag-grid-community'
 import type { RowStyle } from 'ag-grid-enterprise'
 import type { AgGridCommon } from 'ag-grid-community/dist/lib/interfaces/iCommon'
-import { onBeforeUnmount } from 'vue'
 
 const props = withDefaults(defineProps<{
     title?: string,
@@ -45,23 +44,23 @@ const showElt = ($event: string) => {
 const context = { showElt }
 
 const getFilterAgGrid = ({ type, filter }: HeaderDataTable) => {
-  const typeFilter = filter === AgGridFilter.MULTI_VALUE && type === 'number' ? AgGridFilter.MULTI_VALUE_NUMBER : type
-  return (typeFilter && filterToApply[typeFilter as AgGridFilter]) || { }
+  const typeFilter = filter === agGridFilterDict.MULTI_VALUE && type === 'number' ? agGridFilterDict.MULTI_VALUE_NUMBER : type
+  return (typeFilter && filterToApply[typeFilter as AgGridFilterKey]) || { }
 }
 
 const toRenderer = {
-  [AgGridFilter.MULTI_VALUE]: {
+  [agGridFilterDict.MULTI_VALUE]: {
     cellRenderer: AgGridMultiValueCell,
     autoHeight: true,
   },
-  [AgGridFilter.FILE]: {
+  [agGridFilterDict.FILE]: {
     cellRenderer: AgGridAttachmentCell,
   },
 }
 const getRendererAgGrid = (header: HeaderDataTable) => {
   const { renderer, type } = header
 
-  const typeRenderer = renderer === AgGridFilter.MULTI_VALUE ? AgGridFilter.MULTI_VALUE : type
+  const typeRenderer = renderer === agGridFilterDict.MULTI_VALUE ? agGridFilterDict.MULTI_VALUE : type
   // @ts-ignore this uses dynamic key
   const agRenderer = toRenderer[typeRenderer]
   return agRenderer

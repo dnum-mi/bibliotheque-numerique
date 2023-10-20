@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 defineProps<{
-  offlineReady: boolean
-  needRefresh: boolean
+  offlineReady?: boolean
+  needRefresh?: boolean
 }>()
 
 defineEmits<{

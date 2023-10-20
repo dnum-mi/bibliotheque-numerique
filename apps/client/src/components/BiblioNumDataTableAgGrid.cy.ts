@@ -7,7 +7,7 @@ import * as icons from '../icons'
 import { getDateISO } from '../utils/__tests__/fake-data'
 import { dateToStringFr } from '@/utils/date-to-string'
 import { getFileObjectExample } from '../__test__/ds-type'
-import { AgGridFilter } from '@/shared/types'
+import { agGridFilterDict } from '@/shared/types'
 
 import BiblioNumDataTable from './BiblioNumDataTableAgGrid.vue'
 
@@ -67,12 +67,12 @@ describe('<BiblioNumDataTable />', () => {
       {
         text: 'Test-Key',
         value: 'testkey',
-        type: AgGridFilter.FILE,
+        type: agGridFilterDict.FILE,
       },
       {
         text: 'Test-Key1',
         value: 'testkey1',
-        type: AgGridFilter.TEXT,
+        type: agGridFilterDict.TEXT,
       },
 
     ]
