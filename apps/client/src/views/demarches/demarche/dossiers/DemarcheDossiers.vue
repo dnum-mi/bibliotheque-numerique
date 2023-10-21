@@ -3,8 +3,22 @@ import { computed, type ComputedRef, onMounted, ref, type Ref, watch } from 'vue
 import { useRoute, useRouter } from 'vue-router'
 import { useDebounceFn } from '@vueuse/core'
 import type { GridOptions } from 'ag-grid-enterprise'
-import type { ColDef, ColumnApi, ColumnMenuTab, GridApi, GridReadyEvent, SelectionChangedEvent } from 'ag-grid-community'
-import type { CreateCustomFilterDto, ICustomFilter, IDemarche, PaginationDto, PatchCustomFilterDto } from '@biblio-num/shared'
+import type {
+  ColDef,
+  ColumnApi,
+  ColumnMenuTab,
+  GridApi,
+  GridReadyEvent,
+  SelectionChangedEvent,
+} from 'ag-grid-community'
+
+import type {
+  CreateCustomFilterDto,
+  ICustomFilter,
+  IDemarche,
+  PaginationDto,
+  PatchCustomFilterDto,
+} from '@biblio-num/shared'
 
 import { type FrontMappingColumn, useCustomFilterStore, useDemarcheStore } from '@/stores'
 import DemarcheDossiersFilters, { type TotalsAllowed } from '@/views/demarches/demarche/dossiers/DemarcheDossiersFilters.vue'

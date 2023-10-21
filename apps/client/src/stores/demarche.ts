@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed, type ComputedRef } from 'vue'
+import { ref, computed } from 'vue'
 
 import apiClient from '@/api/api-client'
 
@@ -16,10 +16,10 @@ export type FrontMappingColumn = MappingColumnWithoutChildren & { isChild: boole
 
 export const useDemarcheStore = defineStore('demarche', () => {
   const demarches = ref<IDemarche[]>([])
-  const currentDemarche = ref<IDemarche | undefined>()
+  const currentDemarche = ref<IDemarche>()
   const currentDemarcheDossiers = ref<DossierSearchOutputDto | FieldSearchOutputDto>({ total: 0, data: [] })
   const currentDemarcheConfiguration = ref<MappingColumnWithoutChildren[]>([])
-  const currentDemarcheFlatConfiguration: ComputedRef<FrontMappingColumn[]> = computed(() => currentDemarcheConfiguration.value
+  const currentDemarcheFlatConfiguration = computed<FrontMappingColumn[]>(() => currentDemarcheConfiguration.value
     .map((c: MappingColumn) => c.children?.length ? c.children.map(c => ({ ...c, isChild: true })) : [c])
     .flat(1)
     .filter(c => !!c.columnLabel) as FrontMappingColumn[])

@@ -6,6 +6,10 @@ export type DossierStateValue = {
 }
 
 export const DossierState: Record<DossierStateKeys, DossierStateValue> = {
+  accepte: {
+    label: 'Accepté',
+    type: 'success',
+  },
   en_construction: {
     label: 'En construction',
     type: 'new',
@@ -13,10 +17,6 @@ export const DossierState: Record<DossierStateKeys, DossierStateValue> = {
   en_instruction: {
     label: 'En instruction',
     type: 'info',
-  },
-  accepte: {
-    label: 'Accepté',
-    type: 'success',
   },
   refuse: {
     label: 'Refusé',
@@ -28,4 +28,4 @@ export const DossierState: Record<DossierStateKeys, DossierStateValue> = {
   },
 } as const
 
-export const stateToFr = (dossierStateKey: DossierStateKeys): DossierStateValue => DossierState[dossierStateKey]
+export const stateToFr = (dossierStateKey?: DossierStateKeys | null): DossierStateValue | '' => dossierStateKey ? DossierState[dossierStateKey] : ''

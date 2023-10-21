@@ -1,28 +1,26 @@
 
 <script setup lang="ts">
-import { computed, type Ref } from 'vue'
+import { computed } from 'vue'
 import BnCheckerPassword from './BnCheckerPassword.vue'
 import TransitionExpand from './TransitionExpand.vue'
 
 const props = withDefaults(defineProps<{ password?: string, hintText?: string }>(), {
   password: '',
-  hintText: 'Votre mot de passe doit contenir au moins :',
+  hintText: 'Votre mot de passe doit contenir au moins :',
 })
 
-const strongEnoughPasswordObject = {
+const strongEnoughPasswordDict = {
   '15 caractères': /^.{15,}$/,
   '1 chiffre': /\d+/,
   '1 majuscule': /[A-Z]+/,
   '1 minuscule': /[a-z]+/,
   '1 caractère spécial': /\W+/,
-}
+} as const
 
-const checks: Ref<string[]> = computed(() => {
-  const result = Object.entries(strongEnoughPasswordObject)
-    .filter(([, regex]) => !regex.test(props.password))
-    .map(([key]) => key)
-  return result
-})
+type PasswordCheckKey = keyof typeof strongEnoughPasswordDict
+const checks = computed<PasswordCheckKey[]>(() => Object.entries(strongEnoughPasswordDict)
+  .filter(([, regex]) => !regex.test(props.password))
+  .map(([key]) => key as PasswordCheckKey))
 </script>
 
 <template>
@@ -40,7 +38,7 @@ const checks: Ref<string[]> = computed(() => {
           class="list  p-0  list-none  relative"
         >
           <li
-            v-for="(text, i) in Object.keys(strongEnoughPasswordObject)"
+            v-for="(text, i) in (Object.keys(strongEnoughPasswordDict) as PasswordCheckKey[])"
             v-show="checks.includes(text)"
             :key="i"
           >

@@ -1,19 +1,24 @@
 <script lang="ts" setup>
-import { isPersonneMorale, isPersonnePhysique } from '@/utils/helperDemandeur'
 import { computed } from 'vue'
+import type { Demandeur, TDossier, Champ } from '@biblio-num/shared'
+
+import { isPersonneMorale, isPersonnePhysique } from '@/utils/helperDemandeur'
 import DossierChamps from './DossierChamps.vue'
 import DossierDemandeurMoral from './DossierDemandeurMoral.vue'
 import DossierDemandeurPhysique from './DossierDemandeurPhysique.vue'
+
+type PopulatedDossier = TDossier & { demandeur: Demandeur & { __typename: string } } | Record<string, never>
+
 const props = withDefaults(defineProps<{
-    datas?: object
+    datas?: PopulatedDossier
   }>(), {
   datas: () => ({}),
 })
 
-const isDemandeurMorale = computed(() => isPersonneMorale(props.datas?.demandeur?.__typename))
-const isDemandeurPhysique = computed(() => isPersonnePhysique(props.datas?.demandeur?.__typename))
-const demandeur = computed(() => props.datas?.demandeur || {})
-const champs = computed(() => props.datas?.champs || [])
+const isDemandeurMorale = computed(() => isPersonneMorale((props.datas?.demandeur)?.__typename))
+const isDemandeurPhysique = computed(() => isPersonnePhysique((props.datas?.demandeur)?.__typename))
+const demandeur = computed(() => props.datas?.demandeur)
+const champs = computed<Champ[]>(() => props.datas?.champs as Champ[])
 </script>
 
 <template>

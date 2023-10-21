@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import { useRoute } from 'vue-router'
-
 import { computed, onMounted, ref } from 'vue'
+
+import type { DossierOutputDto } from '@biblio-num/shared'
+
 import { useDossierStore } from '@/stores/dossier'
 import LayoutFiche from '@/components/Layout/LayoutFiche.vue'
 import DossierTitle from './DossierTitle.vue'
@@ -11,8 +13,8 @@ import DossierAnnotations from './DossierAnnotations.vue'
 import DossierMessages from './DossierMessages.vue'
 
 const dossierStore = useDossierStore()
-const dossier = computed<object>(() => dossierStore?.dossier || {})
-const dossierDS = computed<object>(() => dossierStore?.dossier?.dsDataJson || {})
+const dossier = computed<DossierOutputDto | undefined>(() => dossierStore?.dossier)
+const dossierDS = computed<DossierOutputDto['dsDataJson'] | undefined>(() => dossierStore?.dossier?.dsDataJson)
 
 const tabTitles = [
   {

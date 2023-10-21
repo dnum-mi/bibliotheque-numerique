@@ -1,16 +1,5 @@
-<template>
-  <DsfrBadge
-    v-if="state.label"
-    no-icon
-    small
-    :label="state.label"
-    :type="state.type"
-  />
-</template>
-
 <script lang="ts" setup>
 import { computed } from 'vue'
-import { EInstructionTimeState } from '@/shared/types'
 
 const props = defineProps<{
   value: string
@@ -32,3 +21,13 @@ const state = computed(() => {
   return dictionary[props.value] || { label: props.value, type: 'info' }
 })
 </script>
+
+<template>
+  <DsfrBadge
+    v-if="state.label"
+    no-icon
+    small
+    :label="state.label"
+    :type="state.type"
+  />
+</template>

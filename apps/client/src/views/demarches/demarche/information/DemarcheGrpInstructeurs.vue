@@ -2,9 +2,9 @@
 import { computed, ref } from 'vue'
 import { useDemarcheStore } from '@/stores'
 
-const expandedId = ref<number>()
+const expandedId = ref<string>()
 const demarcheStore = useDemarcheStore()
-const groupInstructeurs = computed<object[]>(() => demarcheStore.currentDemarche?.dsDataJson?.groupeInstructeurs || [])
+const groupInstructeurs = computed(() => demarcheStore.currentDemarche?.dsDataJson?.groupeInstructeurs || [])
 </script>
 
 <template>

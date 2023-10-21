@@ -1,42 +1,41 @@
-<script lang='ts' setup=''>
+<script lang='ts' setup>
+import type { OrganismeTypeKeys } from '@biblio-num/shared'
+
 defineProps<{
-  type: string
+  type: OrganismeTypeKeys
   big?: boolean
 }>()
 </script>
 
 <template>
   <DsfrBadge
-    :class="`custom-${type?.toLowerCase()}`"
+    :class="`custom-${type.toLowerCase()}`"
     :label="type"
     :small="!big"
+    type="success"
     no-icon
   />
 </template>
 
-<style>
+<style scoped>
 .custom-culte {
-  color: #6a6156;
-  background-color: #feede5;
+  --text-default-success: #6a6156;
+  --background-contrast-success: #feede5;
 }
 
 .custom-fdd {
-  color: #6e445a;
-  background-color: #fee7fc;
+  --text-default-success: #6e445a;
+  --background-contrast-success: #fee7fc;
 }
 
 .custom-fe {
-  color: #8d533e;
-  background-color: #fef4f2;
+  --text-default-success: #8d533e;
+  --background-contrast-success: #fef4f2;
 }
 
-.custom-arup {
-  color: #66673d;
-  background-color: var(--green-tilleul-verveine-975-75);
-}
-
+.custom-arup,
 .custom-frup {
-  color: #66673d;
-  background-color: var(--green-tilleul-verveine-975-75);
+  --text-default-success: #66673d;
+  --background-contrast-success: var(--green-tilleul-verveine-975-75);
 }
 </style>

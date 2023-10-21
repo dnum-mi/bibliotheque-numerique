@@ -1,26 +1,25 @@
 <script lang="ts" setup>
-import { ref, onMounted, computed, ComputedRef } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { dateToStringFr } from '@/utils'
 
 import LayoutFiche from '@/components/Layout/LayoutFiche.vue'
 import ListeDossier from './ListeDossier.vue'
 import OrganismeBadge from '@/components/Badges/OrganismeBadge.vue'
 import InfoContact from '@/components/InfoContact.vue'
-import { OrganismeIdType, useOrganismeStore } from '@/stores/organisme'
+import { type OrganismeIdType, useOrganismeStore } from '@/stores/organisme'
 
 import useToaster from '@/composables/use-toaster'
-import type { IOrganisme } from '@biblio-num/shared'
 
 const props = withDefaults(defineProps<{ id: string; idType: OrganismeIdType }>(), {})
 
 const organismeStore = useOrganismeStore()
 
-const organisme: ComputedRef<IOrganisme> = computed(() => organismeStore.organisme)
+const organisme = computed(() => organismeStore.organisme)
 const prefecture = computed(
   () => `${organismeStore.organisme?.addressPostalCode?.substring(0, 2) || ''} ${organismeStore.organisme?.addressCityName || ''}`,
 )
-const creation = computed(() => dateToStringFr(organismeStore.organisme?.dateCreation))
-const dissolution = computed(() => dateToStringFr(organismeStore.organisme?.dateDissolution))
+const creation = computed(() => dateToStringFr(organisme.value?.dateCreation))
+const dissolution = computed(() => dateToStringFr(organisme.value?.dateDissolution))
 
 const tabTitles = [
   {

@@ -42,7 +42,7 @@ import '@/ag-grid-dsfr.css'
 import * as icons from '@/icons'
 
 import router from '@/router'
-import { DefineComponent } from 'vue'
+import type { DefineComponent } from 'vue'
 
 // Augment the Cypress namespace to include type definitions for
 // your custom command.

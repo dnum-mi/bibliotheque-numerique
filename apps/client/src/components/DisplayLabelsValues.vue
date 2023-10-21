@@ -1,35 +1,34 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 
-type TypeLabelData = {
+type LabelData = {
   text: string,
   value: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  parseFn?: (value: any) => string
+  parseFn?: (value: string | number) => string
 }
-type TypeLabelsData = TypeLabelData[]
+type LabelsData = LabelData[]
 
 const props = withDefaults(defineProps<{
     title: string,
     prefixId: string,
-    datas?: object,
-    labels?: TypeLabelsData,
+    datas?: Record<string, unknown>[],
+    labels?: LabelsData,
   }>(), {
-  datas: () => ({}),
+  datas: () => [],
   labels: () => [],
 })
 
 const dataCy = props.title ? `cy-${props.title}` : ''
 
-type keyOfDatas = keyof typeof props.datas
+type DataKey = keyof typeof props.datas
 interface IField {
     id: string,
     label: string,
     value: string,
   }
 const fields = computed<IField[]>(() => {
-  return props.labels.map<IField>((labelElt: TypeLabelData) => {
-    const value = props.datas[labelElt?.value as keyOfDatas]
+  return props.labels.map((labelElt: LabelData) => {
+    const value = props.datas[labelElt?.value as DataKey]
 
     return {
       id: `${props.prefixId}-${labelElt?.value}`,
@@ -38,14 +37,11 @@ const fields = computed<IField[]>(() => {
     }
   })
 })
-
 </script>
 
 <template>
-  <!-- <h3> {{ title }} </h3> -->
-
   <div
-    v-if="datas"
+    v-if="fields?.length"
     :data-cy="dataCy"
     class="fr-container"
   >
