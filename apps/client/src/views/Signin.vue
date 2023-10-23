@@ -2,13 +2,12 @@
 import { z } from 'zod'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useField, useForm } from 'vee-validate'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 import type { CredentialsInputDto } from '@biblio-num/shared'
 import LayoutAccueil from '@/components/Layout/LayoutAccueil.vue'
 import { useUserStore } from '@/stores'
 import ToggleInputPassword from '@/components/ToggleInputPassword.vue'
-import { passwordValidator } from '@/utils/password.validator'
 
 const REQUIRED_FIELD_MESSAGE = 'Ce champ est requis'
 
@@ -26,9 +25,14 @@ const { handleSubmit, setErrors } = useForm<{ email: string, password: string }>
   validationSchema,
 })
 
+const route = useRoute()
 const submit = handleSubmit(async (formValue: CredentialsInputDto) => {
   try {
     await userStore.login(formValue)
+    if (route.query.redirect) {
+      router.push(route.query.redirect as string)
+      return
+    }
     router.push('/demarches')
   } catch (e) {
     setErrors({ password: 'Ces identifiants ne correspondent à aucun utilisateur' })
@@ -37,7 +41,6 @@ const submit = handleSubmit(async (formValue: CredentialsInputDto) => {
 
 const { value: emailValue, errorMessage: emailError } = useField<string>('email')
 const { value: passwordValue, errorMessage: passwordError } = useField<string>('password')
-
 </script>
 
 <template>

@@ -1,4 +1,7 @@
 import axios, { AxiosError, type AxiosResponse } from 'axios'
+import { useRouter } from 'vue-router'
+
+import useToaster from '@/composables/use-toaster'
 
 import type {
   CreateUserDto,
@@ -57,6 +60,7 @@ import {
 import type { IRoleForm } from '@/shared/interfaces'
 
 import { ErrorvalidateEmail } from './ErrorValidEmail'
+
 const updatePasswordFeedback = {
   401: 'Le token est absent, veuillez fournir un token valide',
   403: 'Token invalide ou expiré, veuillez fournir un token valide',
@@ -73,6 +77,24 @@ export const headers = {
 export const apiClientInstance = axios.create({
   baseURL: baseApiUrl,
   headers,
+})
+
+const toaster = useToaster()
+const router = useRouter()
+apiClientInstance.interceptors.response.use(r => r, (error) => {
+  if ([401, 403].includes(error.response.status)) {
+    toaster.addMessage({ type: 'warning', description: 'Vous n’êtes plus connecté, veuillez vous réauthentifier' })
+    router.push({ name: 'SignIn', query: { redirect: location.href.replace(location.origin, '') } })
+    return error.response
+  }
+  if (error.response.status >= 400 && error.response.status < 500) {
+    toaster.addErrorMessage(error.response.data.message)
+    return error.response
+  }
+  if (error.response.status >= 500) {
+    toaster.addErrorMessage(error.response.data?.message ?? 'Une erreur inconnue est survenue')
+    import.meta.env.DEV && console.error(error)
+  }
 })
 
 const downloadAFile = (response: AxiosResponse) => {

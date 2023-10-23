@@ -9,7 +9,6 @@ const routes: RouterOptions['routes'] = [
   {
     name: 'Home',
     path: '/',
-    component: () => import('@/views/AppHome.vue'),
     meta: {
       needsAuth: true,
     },

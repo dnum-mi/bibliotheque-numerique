@@ -30,11 +30,11 @@ const { handleSubmit } = useForm({
 const isDirty = useIsFormDirty()
 const isFormValid = useIsFormValid()
 
-const signInPath = '/sign_in'
+const signInRoute = { name: 'SignIn' }
 const onSubmit = handleSubmit(async (formValue: CreateUserDto) => {
   try {
     await apiClient.createUser(formValue)
-    await router.push(signInPath)
+    await router.push(signInRoute)
   } catch (error) {
     if (error instanceof AxiosError) {
       passwordError.value = error.response?.data.msg ?? (`Impossible de créer l’utilisateur (${error.message})`)
@@ -148,7 +148,7 @@ const { value: passwordValue, errorMessage: passwordError } = useField<string>('
               class="fr-m-4w"
               style="text-align:center"
             >
-              <RouterLink :to="signInPath">
+              <RouterLink :to="signInRoute">
                 Déjà inscrit? Connectez-vous ici.
               </RouterLink>
             </div>
