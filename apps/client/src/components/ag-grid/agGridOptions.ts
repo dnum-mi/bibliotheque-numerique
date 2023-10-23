@@ -75,4 +75,5 @@ export const localeTextAgGrid = {
   blank: 'Vide',
   ariaMenuColumn: 'Appuyer sur CTRL ENTREE (CMD ENTREE sur mac) pour ouvrir le menu des colonnes.',
   ariaSortableColumn: 'Appuyer pour trier',
+  loadingError: 'Une erreur inconnue est survenue durant chargement. Vieullez contacter votre administrateur',
 }
