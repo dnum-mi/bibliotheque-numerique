@@ -145,7 +145,7 @@ const sideBar = computed(() => props.isHiddenSideBar
           suppressColumnSelectAll: true,
           suppressColumnExpandAll: true,
         },
-      }, 'filters'],
+      }],
       SideBarDef: {
         hiddenByDefault: false,
       },
