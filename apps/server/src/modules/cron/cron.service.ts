@@ -34,7 +34,7 @@ export class CronService implements OnApplicationBootstrap, OnModuleInit {
         name: JobNames.FETCH_DATA_FROM_DS,
         cronTime: this.config.get('fetchDataInterval'),
         fct: this._fetchData,
-        description: 'Fetching Data from Démarche Simplifiée',
+        description: 'Fetching Data from Démarches Simplifiées',
       },
       // {
       //   name: JobNames.UPDATE_ORGANISMES,

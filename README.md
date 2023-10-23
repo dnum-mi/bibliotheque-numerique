@@ -1,6 +1,7 @@
 # Projet biblio-num
 
 ## Contexte
+
 La solution bibliothèque numérique proposée s’appuie et complète les outils de gestion de téléprocédures SVE (ministère de l’intérieur) et Démarches-Simplifiées (DINUM) afin de permettre suite à la phase d’instruction de démarches de déclaration, l’interaction multi-acteurs autour de ces données, afin d’en tirer des analyses et actions légales éventuelles.
 
 # Installation pour le développement
@@ -31,12 +32,12 @@ Pour les tests :
 
 ### Dépendances
 
-Récupérer un token pour l’API de Démarche Simplifiée (DS). Aller sur le site de DS (IP privée, demander à l’équipe).
+Récupérer un token pour l’API de Démarches Simplifiées (DS). Aller sur le site de DS (IP privée, demander à l’équipe).
 
 ### Configurer les variables d’environment
 
 1. Copier le contenu de `server/.env-example` et le coller dans un fichier `server/.env`
-2. Créer un token pour l’API de Démarche Simplifiée (DS)
+2. Créer un token pour l’API de Démarches Simplifiées (DS)
 3. Remplir toutes les variables d’environment
 
 ### Lancer la base de données PostgreSQL
