@@ -24,12 +24,12 @@ export const filterCellRender: Record<string, Component> = {
 }
 
 // TODO: use FieldType but enum from library doesn't work in front.
-export const fromFieldTypeToAgGridFilter = (fieldType: keyof typeof fieldTypesDict, formatFunctionRef: FormatFunctionRefKeys) => {
+export const getAgGridFilterFromFieldType = (fieldType?: keyof typeof fieldTypesDict, formatFunctionRef?: FormatFunctionRefKeys): IFilterDef => {
   const filter:IFilterDef = {
-    filter: fieldTypesDict[fieldType] || fieldTypesDict.default,
+    filter: (fieldType && fieldTypesDict[fieldType]) || fieldTypesDict.default,
   }
 
-  const filterValues: string[] = filterEnumvalues[formatFunctionRef]
+  const filterValues: string[] | string | undefined = (formatFunctionRef && filterEnumvalues[formatFunctionRef])
 
   if (fieldType === 'enum' && filterValues) {
     filter.filterParams = {
@@ -37,7 +37,7 @@ export const fromFieldTypeToAgGridFilter = (fieldType: keyof typeof fieldTypesDi
       suppressMiniFilter: true,
     }
 
-    if (filterCellRender[formatFunctionRef]) {
+    if (formatFunctionRef && filterCellRender[formatFunctionRef]) {
       filter.filterParams.cellRenderer = filterCellRender[formatFunctionRef]
     }
   }

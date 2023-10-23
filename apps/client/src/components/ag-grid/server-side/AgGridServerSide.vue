@@ -3,24 +3,29 @@ import { AgGridVue } from 'ag-grid-vue3'
 import {
   ColumnApi,
   GridApi,
-  type ColDef,
-  type GridReadyEvent,
-  type IServerSideGetRowsParams,
-  type SelectionChangedEvent,
 } from 'ag-grid-community'
-import type { GridOptions } from 'ag-grid-enterprise'
+import type {
+  GridReadyEvent,
+  IServerSideGetRowsParams,
+  SelectionChangedEvent,
+} from 'ag-grid-community'
+import type { GridOptions, SetFilterModel } from 'ag-grid-enterprise'
 import { gridOptionFactory } from '@/components/ag-grid/server-side/grid-option-factory'
 import { ref } from 'vue'
 import type { DynamicKeys, PaginationDto } from '@biblio-num/shared'
-import { fromAggToBackendFilter, fromAggToBackendSort } from '@/components/ag-grid/server-side/pagination.utils'
-import { valueBytypeValue } from '../../../shared/types'
+import {
+  fromAggToBackendFilter,
+  fromAggToBackendSort,
+} from '@/components/ag-grid/server-side/pagination.utils'
+import type { BNColDef } from '@/components/ag-grid/server-side/bn-col-def.interface'
+import type { FilterModel } from '@/components/ag-grid/server-side/filter-model.interface'
 
 const pageSize = 20
 
 const props = withDefaults(
   defineProps<{
     paginationDto?: PaginationDto<T>;
-    columnDefs: ColDef[];
+    columnDefs: BNColDef[];
     apiCall:(params: PaginationDto<T>) => Promise<{ total: number; data: T[] }>;
     onSelectionChanged: ($event: SelectionChangedEvent) => void;
     loading?: boolean;
@@ -44,8 +49,8 @@ const emit = defineEmits<{
   'update:paginationDto': [p: PaginationDto<T>],
 }>()
 
-const gridApi = ref<GridApi>()
-const columnApi = ref<ColumnApi>()
+const gridApi = ref<GridApi | undefined>()
+const columnApi = ref<ColumnApi | undefined>()
 
 const refresh = () => {
   if (gridApi.value) {
@@ -53,11 +58,8 @@ const refresh = () => {
   }
 }
 
-const hasfilterEnumUnselectedAll = (filterModel: Record<string, any>) => {
+const hasfilterEnumUnselectedAll = (filterModel: Record<string, FilterModel>) => {
   const enumIds: (string| undefined)[] = props.columnDefs.filter(colDef =>
-    // TODO: need to identify from DemarcheDossiers.
-    // eslint-disable-next-line
-    // @ts-ignore
     colDef.fieldType === 'enum',
   ).map(colDef => colDef.field)
 
@@ -68,7 +70,7 @@ const hasfilterEnumUnselectedAll = (filterModel: Record<string, any>) => {
     const filter = Object.entries(filterModel)
       .find(([key, value]) => key === emunId &&
                               value.filterType === 'set' &&
-                              !value.values.length)
+                              !(value as SetFilterModel).values.length)
     if (filter) return true
   }
   return false

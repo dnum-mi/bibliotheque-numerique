@@ -1,19 +1,22 @@
-import type { FilterDto, SortDto } from '@biblio-num/shared'
+import type {
+  DateFilterConditionDto,
+  EnumFilterConditionDto,
+  FilterDto,
+  NumberFilterConditionDto,
+  SortDto,
+  TextFilterConditionDto,
+} from '@biblio-num/shared'
+import type {
+  DateFilterModel,
+  NumberFilterModel,
+  SetFilterModel,
+  SortModelItem,
+  TextFilterModel,
+} from 'ag-grid-community'
+import type { FilterModel } from './filter-model.interface'
+// import type { AgGridCommon } from 'ag-grid-community/dist/lib/interfaces/iCommon'
 
-import { type SortModelItem } from 'ag-grid-community'
-import type { AgGridCommon } from 'ag-grid-community/dist/lib/interfaces/iCommon'
-
-const fieldTypesDict = {
-  file: 'agTextColumnFilter',
-  string: 'agTextColumnFilter',
-  number: 'agNumberColumnFilter',
-  date: 'agDateColumnFilter',
-  boolean: 'agSetColumnFilter',
-  default: 'agTextColumnFilter',
-} as const
-
-// TODO: use FieldType but enum from library doesn't work in front.
-export const getAgGridFilterFromFieldType = (fieldType?: keyof typeof fieldTypesDict) => (fieldType && fieldTypesDict[fieldType]) || fieldTypesDict.default
+// export const getAgGridFilterFromFieldType = (fieldType?: keyof typeof fieldTypesDict) => (fieldType && fieldTypesDict[fieldType]) || fieldTypesDict.default
 
 export const fromAggToBackendSort = (sortModel: SortModelItem[]): SortDto[] => {
   return sortModel.map((sort) => ({
@@ -22,28 +25,52 @@ export const fromAggToBackendSort = (sortModel: SortModelItem[]): SortDto[] => {
   }))
 }
 
-type FilterModel = Parameters<AgGridCommon<unknown, unknown>['api']['setFilterModel']>[0]
-export const fromAggToBackendFilter = <T>(filterModel: FilterModel): Record<keyof T, FilterDto> | null => {
+// type FilterModel = Parameters<AgGridCommon<unknown, unknown>['api']['setFilterModel']>[0]
+export const fromAggToBackendFilter = <T>(filterModel: Record<string, FilterModel>): Record<keyof T, FilterDto> | null => {
   const entries = Object.entries(filterModel)
   if (entries.length) {
     const filters: Record<string, FilterDto> = {}
-    entries.forEach(([key, value]: [string, FilterModel]) => {
-      if (!value.condition1) {
-        filters[key] = {
-          filterType: value.filterType,
-          condition1: value.filterType === 'date'
-            ? {
-                filter: value.dateFrom,
-                filterTo: value.dateTo,
-                type: value.type,
-              }
-            : {
-                filter: value.filter ?? value.values,
-                type: value.type,
-              },
+    entries.forEach(([key, value]) => {
+      switch (true) {
+        case ('condition1' in value):
+          filters[key] = value as FilterDto
+          break
+        case value.filterType === 'date':
+        {
+          const v = value as DateFilterModel
+          filters[key] = {
+            filterType: v.filterType as string,
+            condition1: {
+              filter: v.dateFrom as string,
+              filterTo: v.dateTo,
+              type: v.type,
+            } as DateFilterConditionDto,
+          }
+          break
         }
-      } else {
-        filters[key] = value as FilterDto
+        case value.filterType === 'set':
+        {
+          const v = value as SetFilterModel
+          filters[key] = {
+            filterType: v.filterType as string,
+            condition1: {
+              filter: v.values,
+            } as EnumFilterConditionDto,
+          }
+          break
+        }
+        default:
+        {
+          const v = value as TextFilterModel | NumberFilterModel
+          filters[key] = {
+            filterType: v.filterType as string,
+            condition1: {
+              filter: v.filter,
+              type: v.type,
+            } as TextFilterConditionDto | NumberFilterConditionDto,
+          }
+          break
+        }
       }
     })
     return filters as Record<keyof T, FilterDto>
