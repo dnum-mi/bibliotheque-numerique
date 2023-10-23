@@ -78,36 +78,33 @@ const hasfilterEnumUnselectedAll = (filterModel: Record<string, FilterModel>) =>
 
 // function called by aggrid in SSR mode to fetch its data
 const getRows = async (params: IServerSideGetRowsParams) => {
-  try {
-    const hasFilterEnumEmpty = hasfilterEnumUnselectedAll(params.request.filterModel)
-    if (hasFilterEnumEmpty) {
-      params.success({ rowData: [], rowCount: 0 })
-      return
+  const hasFilterEnumEmpty = hasfilterEnumUnselectedAll(params.request.filterModel)
+  if (hasFilterEnumEmpty) {
+    params.success({ rowData: [], rowCount: 0 })
+    return
+  }
+
+  if (props.loading) return undefined
+  if (props.preCondition) {
+    const dto: PaginationDto<T> = {
+      sorts: fromAggToBackendSort(params.request.sortModel),
+      filters: fromAggToBackendFilter<T>(params.request.filterModel),
+      columns: params.columnApi
+        .getColumnState()
+        .filter((state) => !state.hide)
+        .map((state) => state.colId),
+      perPage: pageSize,
+      page: (params.request.startRow || 0) / pageSize + 1,
     }
-
-    if (props.loading) return undefined
-    if (props.preCondition) {
-      const dto: PaginationDto<T> = {
-        sorts: fromAggToBackendSort(params.request.sortModel),
-        filters: fromAggToBackendFilter<T>(params.request.filterModel),
-        columns: params.columnApi
-          .getColumnState()
-          .filter((state) => !state.hide)
-          .map((state) => state.colId),
-        perPage: pageSize,
-        page: (params.request.startRow || 0) / pageSize + 1,
-      }
-      emit('update:paginationDto', dto)
+    emit('update:paginationDto', dto)
+    try {
       const response = await props.apiCall(dto)
-
       params.success({ rowData: response.data, rowCount: response.total })
-    } else {
+    } catch (error) {
       params.fail()
     }
-  } catch (error) {
+  } else {
     params.fail()
-    console.error(error)
-    throw error
   }
 }
 const gridOptions = {

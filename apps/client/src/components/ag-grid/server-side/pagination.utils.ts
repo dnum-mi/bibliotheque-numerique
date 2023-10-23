@@ -13,10 +13,7 @@ import type {
   SortModelItem,
   TextFilterModel,
 } from 'ag-grid-community'
-import type { FilterModel } from './filter-model.interface'
-// import type { AgGridCommon } from 'ag-grid-community/dist/lib/interfaces/iCommon'
-
-// export const getAgGridFilterFromFieldType = (fieldType?: keyof typeof fieldTypesDict) => (fieldType && fieldTypesDict[fieldType]) || fieldTypesDict.default
+import type { AgGridCommon } from 'ag-grid-community/dist/lib/interfaces/iCommon'
 
 export const fromAggToBackendSort = (sortModel: SortModelItem[]): SortDto[] => {
   return sortModel.map((sort) => ({
@@ -25,7 +22,7 @@ export const fromAggToBackendSort = (sortModel: SortModelItem[]): SortDto[] => {
   }))
 }
 
-// type FilterModel = Parameters<AgGridCommon<unknown, unknown>['api']['setFilterModel']>[0]
+type FilterModel = Parameters<AgGridCommon<unknown, unknown>['api']['setFilterModel']>[0]
 export const fromAggToBackendFilter = <T>(filterModel: Record<string, FilterModel>): Record<keyof T, FilterDto> | null => {
   const entries = Object.entries(filterModel)
   if (entries.length) {
