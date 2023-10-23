@@ -34,7 +34,6 @@ export const gridOptionFactory = (getRows: (params: IServerSideGetRowsParams) =>
           suppressColumnExpandAll: true,
         },
       },
-      'filters',
     ],
     hiddenByDefault: false,
   },
