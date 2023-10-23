@@ -134,9 +134,9 @@ onErrorCaptured((error: Error | AxiosError) => {
         403: 'Accès refusé. Vous n\'avez pas les permissions nécessaires.',
         404: 'Ressource non trouvée.',
         500: 'Erreur interne du serveur. Veuillez contacter votre administrateur.',
-      }
+      } as const
 
-      const errorMessage = errorMessages[status] || 'Erreur inconnue. Veuillez réessayer.'
+      const errorMessage = errorMessages[status as keyof typeof errorMessages] || 'Erreur inconnue. Veuillez réessayer.'
       toaster.addErrorMessage({ description: errorMessage })
       if (import.meta.env.DEV) {
         console.log(status)
@@ -145,7 +145,7 @@ onErrorCaptured((error: Error | AxiosError) => {
     }
   } else {
     if (import.meta.env.DEV) {
-      toaster.addErrorMessage({ description: error })
+      toaster.addErrorMessage({ description: error instanceof Error ? error.message : error })
       console.error('Erreur inattendue:', error)
     }
   }
