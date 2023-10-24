@@ -130,7 +130,7 @@ const getFlagURL = (countryName: string) => {
 
       <!-- Default-->
       <template v-else>
-        {{ cellValue || "" }}
+        {{ cellValue ?? '' }}
       </template>
     </div>
     <!--  date -->

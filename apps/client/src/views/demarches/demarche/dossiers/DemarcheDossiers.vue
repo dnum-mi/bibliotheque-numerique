@@ -98,6 +98,8 @@ const computeColumnsDef = () => {
         cellRendererParams: { column },
         // TODO: need to identify type of filter
         fieldType: column.type,
+        sortable: column.formatFunctionRef !== 'file', // TODO use FormatFunctionRef.file
+        suppressMenu: column.formatFunctionRef === 'file', // TODO use FormatFunctionRef.file
       }
     }),
   ]

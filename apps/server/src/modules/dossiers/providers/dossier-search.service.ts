@@ -122,7 +122,7 @@ export class DossierSearchService extends BaseEntityService<Dossier> {
         delete r.total
         Object.keys(r).forEach((key: string) => {
           if (withoutChildrenIds.includes(key)) {
-            r[key] = r[key]?.[0] || null
+            r[key] = r[key]?.[0] ?? null
           }
         })
         return r
