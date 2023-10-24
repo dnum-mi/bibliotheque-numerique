@@ -22,6 +22,7 @@ import { IdentificationDemarche } from '@biblio-num/shared'
 import { DsChampType } from '@/shared/modules/ds-api/objects/ds-champ-type.enum'
 import { OrganismeService } from '@/modules/organismes/providers/organisme.service'
 import { Field } from '@/modules/dossiers/objects/entities/field.entity'
+import { ExcelFieldService } from '@/modules/dossiers/providers/excel-field.service'
 
 @Injectable()
 export class DossierSynchroniseService extends BaseEntityService<Dossier> {
@@ -33,6 +34,7 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
     private fieldService: FieldService,
     private organismeService: OrganismeService,
     private instructionTimeService: InstructionTimesService,
+    private excelFieldService: ExcelFieldService,
   ) {
     super(repo, logger)
     this.logger.setContext(this.constructor.name)
@@ -151,6 +153,7 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
     if (demarche.identification === IdentificationDemarche.FE) {
       await this.instructionTimeService.proccessByDossierId(id)
       await this.instructionTimeService.instructionTimeCalculation([id])
+      await this.excelFieldService.proccessByDossierId(id)
     }
 
     this.logger.log(`Successfully synchronised dossier ${id} (dsId: ${jsonDossier.number})`)

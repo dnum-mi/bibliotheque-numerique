@@ -365,7 +365,7 @@ describe('Syncronisation ', () => {
           {
             fieldSource: 'champs',
             dsChampType: 'PieceJustificativeChamp',
-            formatFunctionRef: null,
+            formatFunctionRef: 'file',
             sourceId: 'Q2hhbXAtNTY=',
             stringValue: '',
             dateValue: null,

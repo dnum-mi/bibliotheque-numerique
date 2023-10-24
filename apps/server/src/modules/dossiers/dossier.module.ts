@@ -12,6 +12,8 @@ import { DossierSynchroniseService } from './providers/dossier-synchronise.servi
 import { DossierSearchService } from './providers/dossier-search.service'
 import { FieldSearchService } from './providers/field-search.service'
 import { OrganismeModule } from '@/modules/organismes/organisme.module'
+import { ExcelService } from '@/modules/dossiers/providers/excel.service'
+import { ExcelFieldService } from '@/modules/dossiers/providers/excel-field.service'
 
 @Module({
   imports: [
@@ -22,7 +24,23 @@ import { OrganismeModule } from '@/modules/organismes/organisme.module'
     TypeOrmModule.forFeature([Dossier, Field]),
   ],
   controllers: [DossierController],
-  providers: [DossierService, DossierSearchService, DossierSynchroniseService, FieldService, FieldSearchService],
-  exports: [DossierService, DossierSearchService, DossierSynchroniseService, FieldService, FieldSearchService],
+  providers: [
+    DossierService,
+    DossierSearchService,
+    DossierSynchroniseService,
+    FieldService,
+    FieldSearchService,
+    ExcelService,
+    ExcelFieldService,
+  ],
+  exports: [
+    DossierService,
+    DossierSearchService,
+    DossierSynchroniseService,
+    FieldService,
+    FieldSearchService,
+    ExcelService,
+    ExcelFieldService,
+  ],
 })
 export class DossierModule {}

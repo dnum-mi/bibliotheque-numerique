@@ -242,7 +242,7 @@ describe('Generating demarche mapping columns', () => {
         id: 'Q2hhbXAtNTY=',
         originalLabel: 'Chargement du fichier complété à partir du modèle',
         columnLabel: null,
-        formatFunctionRef: null,
+        formatFunctionRef: "file",
         source: 'champs',
         type: 'file',
       },
@@ -276,7 +276,7 @@ describe('Generating demarche mapping columns', () => {
             originalLabel:
               'Bien vouloir joindre un document listant les personnes mises à disposition',
             columnLabel: null,
-            formatFunctionRef: null,
+            formatFunctionRef: "file",
             source: 'champs',
             type: 'file',
           },

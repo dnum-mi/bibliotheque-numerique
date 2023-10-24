@@ -5,6 +5,7 @@ export const FormatFunctionRef = {
   remainingTime: 'remaining-time',
   rnf: 'rnf',
   rna: 'rna',
+  file: 'file',
 }
 
 export type FormatFunctionRefKeys =

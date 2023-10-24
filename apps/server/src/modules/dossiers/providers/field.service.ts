@@ -10,7 +10,6 @@ import {
   DsChampTypeKeys,
 } from '@/shared/modules/ds-api/objects/ds-champ-type.enum'
 import { CreateFieldDto } from '../objects/dto/fields/create-field.dto'
-import { CustomChamp } from '@dnum-mi/ds-api-client/src/@types/types'
 import { fixFieldValueFunctions } from '../objects/constante/fix-field.dictionnary'
 import {
   FieldType,
@@ -19,15 +18,8 @@ import {
   FormatFunctionRefKeys,
   MappingColumn,
 } from '@biblio-num/shared'
-import { ChampDescriptor } from '@dnum-mi/ds-api-client'
-
-type RawChamp = CustomChamp & {
-  __typename: string
-  champDescriptor: ChampDescriptor & {
-    __typename: string
-  }
-  rows: Array<{ champs: Array<RawChamp> }>
-}
+import { RawChamp } from '@/shared/types/raw-champ.type'
+import { PieceJustificativeChamp } from '@dnum-mi/ds-api-client'
 
 @Injectable()
 export class FieldService extends BaseEntityService<Field> {
@@ -37,6 +29,16 @@ export class FieldService extends BaseEntityService<Field> {
   ) {
     super(repo, logger)
     this.logger.setContext(this.constructor.name)
+  }
+
+  static giveString(
+    champ: RawChamp,
+  ): string {
+    if (champ.__typename === DsChampType.PieceJustificativeChamp) {
+      return (champ as unknown as PieceJustificativeChamp).file?.url ?? ''
+    } else {
+      return champ.stringValue
+    }
   }
 
   static giveNumberOrNull(
@@ -112,7 +114,7 @@ export class FieldService extends BaseEntityService<Field> {
         }
         fields.push({
           ...this._extractColumnRefFieldInformation(columnRef),
-          stringValue: champ.stringValue,
+          stringValue: FieldService.giveString(champ),
           dateValue: FieldService.giveDateOrNull(
             columnRef.type,
             champ.stringValue,
@@ -146,6 +148,34 @@ export class FieldService extends BaseEntityService<Field> {
     return fields
   }
 
+  private _createFieldsFromFixFields(
+    dossierId: number,
+    columnHash: Record<string, MappingColumn>,
+    dataJson?: Partial<TDossier>,
+  ): CreateFieldDto[] {
+    this.logger.verbose('_createFieldsFromFixFields')
+    return Object.keys(fixFieldValueFunctions).map((fixFieldId) => {
+      const value: string =
+        fixFieldValueFunctions[fixFieldId](dataJson)?.toString() ?? ''
+      return {
+        ...this._extractColumnRefFieldInformation(columnHash[fixFieldId]),
+        stringValue: value.toString(),
+        dateValue: FieldService.giveDateOrNull(
+          columnHash[fixFieldId].type,
+          value,
+        ),
+        numberValue: FieldService.giveNumberOrNull(
+          columnHash[fixFieldId].type,
+          value,
+        ),
+        dossierId,
+        parentRowIndex: null,
+        rawJson: null,
+        dsChampType: null,
+      }
+    })
+  }
+
   private _createFieldsFromDataJson(
     dataJson: Partial<TDossier>,
     dossierId: number,
@@ -155,26 +185,7 @@ export class FieldService extends BaseEntityService<Field> {
     const champs = dataJson?.champs ?? []
     const annotations = dataJson?.annotations ?? []
     return [
-      ...Object.keys(fixFieldValueFunctions).map((fixFieldId) => {
-        const value: string =
-          fixFieldValueFunctions[fixFieldId](dataJson)?.toString() ?? ''
-        return {
-          ...this._extractColumnRefFieldInformation(columnHash[fixFieldId]),
-          stringValue: value.toString(),
-          dateValue: FieldService.giveDateOrNull(
-            columnHash[fixFieldId].type,
-            value,
-          ),
-          numberValue: FieldService.giveNumberOrNull(
-            columnHash[fixFieldId].type,
-            value,
-          ),
-          dossierId,
-          parentRowIndex: null,
-          rawJson: null,
-          dsChampType: null,
-        }
-      }),
+      ...this._createFieldsFromFixFields(dossierId, columnHash, dataJson),
       ...this._createFieldsFromRawChamps(
         champs as RawChamp[],
         dossierId,

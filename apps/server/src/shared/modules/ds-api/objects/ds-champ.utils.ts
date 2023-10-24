@@ -19,6 +19,8 @@ export const giveFormatFunctionRefFromDsChampType = (
   case (cd.__typename === 'TextChampDescriptor') &&
       !!cd.description?.match('#bn-rnf-field-bn#'):
     return FormatFunctionRef.rnf
+  case cd.__typename === 'PieceJustificativeChampDescriptor':
+    return FormatFunctionRef.file
   default:
     return null
   }

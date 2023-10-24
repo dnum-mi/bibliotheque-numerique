@@ -9,6 +9,10 @@ import {
 import { Dossier as TDossier } from '@dnum-mi/ds-api-client'
 // eslint-disable-next-line max-len
 import { fixFieldsInstructionTime } from '@/plugins/instruction_time/instruction_times/constante/fix-field-instrucation-times.dictionnary'
+import {
+  fixFieldsAmounts,
+  fixFieldsExcelChamps,
+} from '@/modules/dossiers/objects/constante/fix-field-excel-champ.dictionnary'
 
 type FixFieldValueGetter = (
   dossier: Partial<TDossier>,
@@ -71,8 +75,14 @@ export const fixFieldValueFunctions: Record<string, FixFieldValueGetter> = {
     dossier.datePassageEnConstruction,
 }
 
+export const fixFieldsDemarcheFE: MappingColumn[] = [
+  ...fixFieldsInstructionTime,
+  fixFieldsExcelChamps,
+  ...fixFieldsAmounts,
+]
+
 export const fixFieldsByIdentificationDictionary = {
-  [IdentificationDemarche.FE]: fixFieldsInstructionTime,
+  [IdentificationDemarche.FE]: fixFieldsDemarcheFE,
 }
 
 export const getFixFieldsByIdentification = (
