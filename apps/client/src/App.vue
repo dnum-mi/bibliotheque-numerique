@@ -29,6 +29,7 @@ const demarcheQuickLink: QuickLink = {
   label: 'Démarches',
   to: { name: 'Demarches' },
   icon: 'ri-file-list-2-fill',
+  iconAttrs: { title: 'Démarches' },
 }
 
 const unauthenticatedQuickLinks: QuickLink[] = [
@@ -36,13 +37,13 @@ const unauthenticatedQuickLinks: QuickLink[] = [
     label: 'Se connecter',
     to: { name: 'SignIn' },
     icon: 'ri-lock-line',
-    iconAttrs: iconColor,
+    iconAttrs: { title: 'Se connecter' },
   },
   {
     label: 'S’enregistrer',
     to: { name: 'SignUp' },
     icon: 'ri-user-line',
-    iconAttrs: iconColor,
+    iconAttrs: { title: 'S’enregistrer' },
   },
 ]
 
@@ -51,6 +52,7 @@ const authenticatedQuickLinksPart1: QuickLink[] = [
     label: 'Organismes',
     to: { name: 'ListeOrganismes' },
     icon: 'ri-file-list-2-line',
+    iconAttrs: { title: 'Organismes' },
   },
 ]
 
@@ -59,13 +61,13 @@ const authenticatedQuickLinksPart2: QuickLink[] = [
     label: 'Mon profil',
     to: { name: 'Profile' },
     icon: 'ri-account-circle-line',
-    iconAttrs: iconColor,
+    iconAttrs: { title: 'Mon profil' },
   },
   {
     label: 'Déconnexion',
     to: { name: 'LogOut' },
     icon: 'ri-logout-box-r-line',
-    iconAttrs: iconColor,
+    iconAttrs: { title: 'Déconnexion', ...iconColor },
   },
 ]
 
@@ -73,7 +75,8 @@ const authenticatedQuickLinksPart3: QuickLink[] = [
   {
     label: 'Statistiques',
     to: { name: 'Statistiques' },
-    iconAttrs: iconColor,
+    icon: 'ri-bar-chart-box-line',
+    iconAttrs: { title: 'Statistiques' },
   },
 ]
 
@@ -81,7 +84,7 @@ const manageRolesQuickLink = {
   label: 'Administration',
   to: { name: 'Admin' },
   icon: 'ri-shield-star-line',
-  iconAttrs: iconColor,
+  iconAttrs: { ...iconColor, title: 'Administration' },
 }
 
 const userStore = useUserStore()
@@ -182,8 +185,24 @@ onErrorCaptured((error: Error | AxiosError) => {
   />
 </template>
 
-<style>
-.pageSize {
+<style scoped>
+@media screen and (max-width: 1400px) {
+  :deep(.fr-header__tools-links .fr-btn) {
+    padding: 0.25rem !important;
+  }
+}
 
+@media screen and (max-width: 1250px) {
+  :deep(.fr-header__tools-links .fr-btn) {
+    font-size: 0.75rem !important;
+  }
+}
+
+@media screen and (max-width: 1120px) {
+  :deep(.fr-header__tools-links .fr-btn) {
+    width: 30px !important;
+    height: 30px !important;
+    overflow: hidden !important;
+  }
 }
 </style>
