@@ -33,42 +33,34 @@ export class ExcelFieldService extends BaseEntityService<Field> {
     this.logger.setContext(this.constructor.name)
   }
 
-  async proccessByDossierId(id: number): Promise<boolean> {
+  async proccessByDossierId(id: number): Promise<void> {
     this.logger.verbose('proccessByDossierId')
 
-    const excelField: Field = await this.repo.findOne({
-      where: {
-        dossierId: id,
-        fieldSource: 'champs',
-        dsChampType: DsChampType.PieceJustificativeChamp,
-        sourceId: this.configService.get<string>('excel-import.excelChampId'),
-      },
-    })
+    await this.createFieldsAmounts(
+      id, await this.createFieldsFromRawJson(id),
+    )
+  }
+
+  async createFieldsFromRawJson(
+    dossierId: number,
+  ): Promise<Field> {
+    this.logger.verbose('createFieldsFromRawJson')
+
+    const excelField: Field = await this._findExcelFieldByDossierId(dossierId)
 
     if (!excelField?.rawJson) {
       this.logger.error('excel field is not correct')
       this.logger.debug(excelField)
-      return false
+      return null
     }
 
     const fileUrl = (excelField.rawJson as PieceJustificativeChamp).file?.url
     if (!fileUrl) {
       this.logger.warn('Excel field fileUrl not found in rawJson')
-      return false
+      return null
     }
 
     const rawJson = excelField.rawJson as RawChamp
-    const excelFixField = await this.createFieldsFromRawJson(rawJson, id, fileUrl)
-    await this.createFieldsAmounts(id, excelFixField)
-    return true
-  }
-
-  async createFieldsFromRawJson(
-    rawJson: RawChamp,
-    dossierId: number,
-    fileUrl: string,
-  ): Promise<Field> {
-    this.logger.verbose('createFieldsFromRawJson')
 
     if (!rawJson) return null
     const field :CreateFieldDto = await this._createFieldsFromExcelFile(
@@ -80,6 +72,18 @@ export class ExcelFieldService extends BaseEntityService<Field> {
 
     this.logger.debug(field)
     return this.repo.save(field)
+  }
+
+  async _findExcelFieldByDossierId(dossierId: number): Promise<Field> {
+    this.logger.verbose('_findExcelFieldByDossierId')
+    return await this.repo.findOne({
+      where: {
+        dossierId,
+        fieldSource: 'champs',
+        dsChampType: DsChampType.PieceJustificativeChamp,
+        sourceId: this.configService.get<string>('excel-import.excelChampId'),
+      },
+    })
   }
 
   private async _createFieldsFromExcelFile(

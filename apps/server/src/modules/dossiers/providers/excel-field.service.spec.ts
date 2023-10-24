@@ -16,7 +16,6 @@ import { ExcelService } from '@/modules/dossiers/providers/excel.service'
 import excelImportConfig from '@/config/excel-import.config'
 import { ConfigModule } from '@nestjs/config'
 import { ExcelFieldService } from '@/modules/dossiers/providers/excel-field.service'
-import { RawChamp } from '@/shared/types/raw-champ.type'
 import { Field } from '@/modules/dossiers/objects/entities/field.entity'
 
 const fakeExcelDateFunding = '11/11/2022'
@@ -460,7 +459,9 @@ describe('ExcelFieldService', () => {
   })
 
   it('Should get null if excel field not found', async () => {
-    const result = await service.createFieldsFromRawJson(null, 42, 'path/DeclarationFinancementsEtrangers.xlsx')
+    const raw = {}
+    jest.spyOn(service, '_findExcelFieldByDossierId').mockResolvedValue({ rawJson: raw } as unknown as Field)
+    const result = await service.createFieldsFromRawJson(42)
     expect(result).toBeNull()
   })
 
@@ -477,8 +478,9 @@ describe('ExcelFieldService', () => {
         byteSizeBigInt: '149557',
         url: 'test/mock/excel-service/data/DeclarationFinancementsEtrangers.xlsx',
       },
-    } as unknown as RawChamp
-    const fields = await service.createFieldsFromRawJson(raw, 42, 'path/DeclarationFinancementsEtrangers.xlsx')
+    }
+    jest.spyOn(service, '_findExcelFieldByDossierId').mockResolvedValue({ rawJson: raw } as unknown as Field)
+    const fields = await service.createFieldsFromRawJson(42)
     expect(fields).toMatchObject(
       expectedExcelFixFieldsDates,
     )
