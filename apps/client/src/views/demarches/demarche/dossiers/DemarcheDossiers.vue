@@ -1,17 +1,22 @@
 <script lang="ts" setup>
-import { computed, type ComputedRef, onMounted, ref, type Ref, watch } from 'vue'
+import {
+  computed,
+  type ComputedRef,
+  onMounted,
+  ref,
+  type Ref,
+  watch,
+} from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useDebounceFn } from '@vueuse/core'
 import type { GridOptions } from 'ag-grid-enterprise'
 import type {
-  ColDef,
   ColumnApi,
   ColumnMenuTab,
   GridApi,
   GridReadyEvent,
   SelectionChangedEvent,
 } from 'ag-grid-community'
-
 import type {
   CreateCustomFilterDto,
   ICustomFilter,
@@ -20,13 +25,19 @@ import type {
   PatchCustomFilterDto,
 } from '@biblio-num/shared'
 
-import { type FrontMappingColumn, useCustomFilterStore, useDemarcheStore } from '@/stores'
+import {
+  type FrontMappingColumn,
+  useCustomFilterStore,
+  useDemarcheStore,
+} from '@/stores'
 import DemarcheDossiersFilters, { type TotalsAllowed } from '@/views/demarches/demarche/dossiers/DemarcheDossiersFilters.vue'
 import DemarcheDossierCellRenderer from '@/views/demarches/demarche/dossiers/DemarcheDossierCellRenderer.vue'
 import { type SmallFilter } from './DemarcheDossiersFilters.vue'
 import { deepAlmostEqual, selectKeysInObject } from '@/utils/object'
 import AgGridServerSide from '@/components/ag-grid/server-side/AgGridServerSide.vue'
-import { backendFilterToAggFilter, getAgGridFilterFromFieldType } from '@/components/ag-grid/server-side/pagination.utils'
+import { backendFilterToAggFilter } from '@/components/ag-grid/server-side/pagination.utils'
+import { getAgGridFilterFromFieldType } from '@/components/ag-grid/server-side/filters.utils'
+import type { BNColDef } from '@/components/ag-grid/server-side/bnColDef.interface'
 
 const demarcheStore = useDemarcheStore()
 const router = useRouter()
@@ -65,7 +76,7 @@ const specificGridOptions: GridOptions = {
   },
 }
 
-const columnsDef: Ref<ColDef[] | undefined> = ref()
+const columnsDef: Ref<BNColDef[] | undefined> = ref()
 
 const computeColumnsDef = () => {
   columnsDef.value = [
@@ -80,11 +91,13 @@ const computeColumnsDef = () => {
       return {
         headerName: column.columnLabel,
         field: column.id,
-        filter: getAgGridFilterFromFieldType(column.type),
+        ...getAgGridFilterFromFieldType(column.type, column.formatFunctionRef),
         autoHeight: true,
         menuTabs: ['filterMenuTab'] as ColumnMenuTab[],
         cellRenderer: DemarcheDossierCellRenderer,
         cellRendererParams: { column },
+        // TODO: need to identify type of filter
+        fieldType: column.type,
       }
     }),
   ]

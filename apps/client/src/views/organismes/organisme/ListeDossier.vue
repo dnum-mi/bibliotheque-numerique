@@ -42,7 +42,6 @@ const updateListeDossiers = async () => {
           if (typeof v === 'number') {
             return [k, String(v)]
           }
-          console.log({ k })
           if (k.includes('date') || k.includes('Date')) {
             return [k, new Date(v).toLocaleDateString()]
           }

@@ -19,6 +19,7 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': 'off',
     'no-irregular-whitespace': 'warn',
     '@typescript-eslint/ban-ts-comment': ['error', { 'ts-ignore': 'allow-with-description' }],
+    'no-case-declarations': 'off',
   },
   overrides: [
     {
