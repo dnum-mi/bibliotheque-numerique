@@ -13,6 +13,7 @@ export class FileController {
   @Get(':uuid')
   async download (@Param() params: DownloadFileInputDto, @Response() response): Promise<void> {
     const file = await this.filesService.getFile(params.uuid)
+    response.setHeader('Content-Disposition', `attachment; filename="${file.info.originalName}"`)
     file.stream.pipe(response)
   }
 }
