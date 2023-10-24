@@ -13,6 +13,8 @@ import { RnfService } from '@/modules/organismes/providers/rnf.service'
 import { rnfServiceMock } from '../../mock/rnf-service/rnf-service.mock'
 import { RnaService } from '@/modules/organismes/providers/rna.service'
 import { rnaServiceMock } from '../../mock/rna-service/rna-service.mock'
+import { ExcelService } from '@/modules/dossiers/providers/excel.service'
+import { excelServiceMock } from '../../mock/excel-service/excel-service.mock'
 
 export class TestingModuleFactory {
   app: INestApplication
@@ -33,6 +35,8 @@ export class TestingModuleFactory {
       .useValue(rnfServiceMock)
       .overrideProvider(RnaService)
       .useValue(rnaServiceMock)
+      .overrideProvider(ExcelService)
+      .useValue(excelServiceMock)
       .compile()
 
     this.app = moduleFixture.createNestApplication()

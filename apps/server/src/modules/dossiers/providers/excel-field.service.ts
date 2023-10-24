@@ -61,8 +61,6 @@ export class ExcelFieldService extends BaseEntityService<Field> {
     }
 
     const rawJson = excelField.rawJson as RawChamp
-
-    if (!rawJson) return null
     const field :CreateFieldDto = await this._createFieldsFromExcelFile(
       rawJson,
       dossierId,

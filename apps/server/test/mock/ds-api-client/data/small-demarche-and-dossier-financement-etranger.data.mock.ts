@@ -131,7 +131,7 @@ export const smallDemarcheAndDossierFinancementEtrangerDataMock = () => ({
         },
         {
           __typename: 'PieceJustificativeChampDescriptor',
-          id: 'Q2hhbXAtNTY=',
+          id: 'Q2hhbXAtNTg=',
           label: 'Chargement du fichier complété à partir du modèle',
           description: 'Merci de veiller à compléter le modèle sans en modifier la structure (ne pas ajouter de colonne, ne pas faire de mise en forme, etc.)',
           required: false,
@@ -308,21 +308,19 @@ export const smallDemarcheAndDossierFinancementEtrangerDataMock = () => ({
               ],
             },
             {
-              id: 'useless',
+              id: 'Q2hhbXAtNTg=',
               __typename: 'PieceJustificativeChamp',
               label: 'Chargement du fichier complété à partir du modèle',
               stringValue: '',
-              files: [
-                {
-                  filename: 'modele-financements-inferieurs-15300.xlsx',
-                  contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                  checksum: 'D4io8724vjNaW4AXltzPCQ==',
-                  byteSizeBigInt: '9403',
-                  url: 'https://api.example.com/modele-financements-inferieurs-15300.xlsx',
-                },
-              ],
+              file: {
+                filename: 'modele-financements-inferieurs-15300.xlsx',
+                contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                checksum: 'D4io8724vjNaW4AXltzPCQ==',
+                byteSizeBigInt: '9403',
+                url: 'https://api.example.com/modele-financements-inferieurs-15300.xlsx',
+              },
               champDescriptor: {
-                id: 'Q2hhbXAtNTY=',
+                id: 'Q2hhbXAtNTg=',
               },
             },
           ],

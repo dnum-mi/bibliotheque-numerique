@@ -1,5 +1,5 @@
 export const excelChampsLabel = {
-  excelPieceJointe: 'Excel: Pièce jointe ',
+  excelPieceJointe: 'Excel: Pièce jointe',
   dateFunding: 'Excel: Date du financement',
   contributorPersonalityType: 'Excel: Type de personnalité du contributeur',
   nativeCountry: 'Excel: Pays d\'origine',
