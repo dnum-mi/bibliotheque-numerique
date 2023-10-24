@@ -1,16 +1,17 @@
+import { useRoute } from 'vue-router'
 import { useUserStore } from '../../stores'
 
 export function isAuthenticatedGuard () {
   const userStore = useUserStore()
   if (!userStore.isAuthenticated) {
-    return { name: 'SignIn' }
+    return { name: 'SignIn', query: { redirect: location.href.replace(location.origin, '') } }
   }
 }
 
 export function hasAdminAccessGuard () {
   const userStore = useUserStore()
   if (!userStore.hasAdminAccess) {
-    return { name: 'SignIn' }
+    return { name: 'SignIn', query: { redirect: location.href.replace(location.origin, '') } }
   }
 }
 

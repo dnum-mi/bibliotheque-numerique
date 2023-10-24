@@ -196,6 +196,7 @@ const deleteFilter = async () => {
     await customFilterStore.deleteCustomFilter(selectedCustomFilter.value?.id)
     selectedCustomFilter.value = null
     resetAggState()
+    await customFilterStore.getCustomFiltersByDemarche(demarche.value.id)
   }
 }
 const selectFilter = (id: number | null) => {

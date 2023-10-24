@@ -10,13 +10,13 @@ const router = useRouter()
 const toaster = useToaster()
 
 onMounted(async () => {
+  useCustomFilterStore().$reset()
   try {
-    useCustomFilterStore().$reset()
     await userStore.logout()
   } catch (error) {
     toaster.addErrorMessage({ description: 'une erreur est survenue à la déconnexion' })
   }
-  router.push('/sign_in')
+  router.push({ name: 'SignIn' })
 })
 </script>
 
