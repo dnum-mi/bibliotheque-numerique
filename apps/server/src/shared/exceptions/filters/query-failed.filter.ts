@@ -18,7 +18,10 @@ export class QueryFailedFilter implements ExceptionFilter {
 
     if (exception.message && exception.message.includes('duplicate key value violates unique constraint')) {
       statusCode = 409
-      message = 'Conflict: Duplicate entry found.'
+      message = 'Conflit : Cette valeur existe déjà.'
+      if ((exception as unknown as Record<string, string>).constraint === 'UQ_CUSTOM_FILTERS') {
+        message = 'Conflit : Vous avez déjà créé un filtre avec ce nom.'
+      }
       this.logger.warn(`409 Conflict: ${exception.message}`)
     } else {
       this.logger.error(`500 Typeorm QueryFailedError: ${exception.message}`)

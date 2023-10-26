@@ -5,6 +5,8 @@ import { hasAdminAccessGuard, canManageRolesGuard, canAccessDemarchesGuard, isAu
 
 const MAIN_TITLE = 'Bibliothèque Numérique'
 
+export const SIGN_IN_ROUTE_NAME = 'SignIn'
+
 const routes: RouterOptions['routes'] = [
   {
     name: 'Home',
@@ -49,7 +51,7 @@ const routes: RouterOptions['routes'] = [
     ],
   },
   {
-    name: 'SignIn',
+    name: SIGN_IN_ROUTE_NAME,
     path: '/sign_in',
     beforeEnter: [isNotAuthenticatedGuard],
     component: () => import('@/views/Signin.vue'),

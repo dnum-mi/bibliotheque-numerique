@@ -58,7 +58,7 @@ const headersJson = [
   },
 ]
 
-const rowData = computed<IDemarche[]>(() => demarcheStore.demarches.map<IDemarche>(
+const rowData = computed<IDemarche[]>(() => (Array.isArray(demarcheStore.demarches) ? demarcheStore.demarches : []).map<IDemarche>(
   (d: IDemarche) => ({ ...d?.dsDataJson, types: d?.types, id: d.id } as IDemarche)),
 )
 

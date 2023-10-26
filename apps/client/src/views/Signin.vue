@@ -8,11 +8,9 @@ import type { CredentialsInputDto } from '@biblio-num/shared'
 import LayoutAccueil from '@/components/Layout/LayoutAccueil.vue'
 import { useUserStore } from '@/stores'
 import ToggleInputPassword from '@/components/ToggleInputPassword.vue'
+import useToaster from '@/composables/use-toaster'
 
 const REQUIRED_FIELD_MESSAGE = 'Ce champ est requis'
-
-const router = useRouter()
-const userStore = useUserStore()
 
 const validationSchema = toTypedSchema(z.object({
   email: z.string({ required_error: REQUIRED_FIELD_MESSAGE })
@@ -25,9 +23,13 @@ const { handleSubmit, setErrors } = useForm<{ email: string, password: string }>
   validationSchema,
 })
 
+const toaster = useToaster()
+const router = useRouter()
 const route = useRoute()
+const userStore = useUserStore()
 const submit = handleSubmit(async (formValue: CredentialsInputDto) => {
   try {
+    toaster.removeMessage('auth')
     await userStore.login(formValue)
     if (route.query.redirect) {
       router.push(route.query.redirect as string)

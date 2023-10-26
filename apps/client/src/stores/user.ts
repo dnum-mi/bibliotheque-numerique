@@ -1,10 +1,11 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
+import type { CredentialsInputDto, UserOutputDto } from '@biblio-num/shared'
+
 import type { User } from '@/shared/interfaces'
 import bnApiClient from '@/api/api-client'
 import { RoleName } from '@/shared/types/Permission.type'
-import type { CredentialsInputDto, UserOutputDto } from '@biblio-num/shared'
 
 export const useUserStore = defineStore('user', () => {
   const currentUser = ref<User | null>(null)
@@ -20,9 +21,13 @@ export const useUserStore = defineStore('user', () => {
     currentUser.value = await bnApiClient.loginUser(loginForm)
   }
 
+  const resetUser = () => {
+    currentUser.value = null
+  }
+
   const logout = async () => {
     await bnApiClient.logoutUser()
-    currentUser.value = null
+    resetUser()
   }
 
   const loadCurrentUser = async () => {
@@ -59,5 +64,6 @@ export const useUserStore = defineStore('user', () => {
     loadCurrentUser,
     loadUsers,
     loadUserById,
+    resetUser,
   }
 })

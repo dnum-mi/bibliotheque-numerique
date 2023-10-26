@@ -133,8 +133,8 @@ onErrorCaptured((error: Error | AxiosError) => {
 
       const errorMessages = {
         400: 'Requête invalide. Veuillez vérifier vos données.',
-        401: 'Non autorisé. Veuillez vous connecter pour accéder à cette ressource.',
-        403: 'Accès refusé. Vous n\'avez pas les permissions nécessaires.',
+        401: 'Vous n’êtes plus connecté. Veuillez vous connecter pour accéder à cette ressource.',
+        403: 'Accès refusé. Vous n’avez pas les permissions nécessaires.',
         404: 'Ressource non trouvée.',
         500: 'Erreur interne du serveur. Veuillez contacter votre administrateur.',
       } as const
