@@ -1,9 +1,25 @@
-import { createRouter, createWebHistory, type RouterOptions } from 'vue-router'
+import {
+  createRouter,
+  createWebHistory,
+  type RouterOptions,
+} from 'vue-router'
 
 import { useUserStore } from '@/stores'
-import { hasAdminAccessGuard, canManageRolesGuard, canAccessDemarchesGuard, isAuthenticatedGuard, isNotAuthenticatedGuard } from '@/shared/guards'
-import { routeNames } from './route-names'
+import {
+  hasAdminAccessGuard,
+  canManageRolesGuard,
+  canAccessDemarchesGuard,
+  isAuthenticatedGuard,
+  isNotAuthenticatedGuard,
+  canAccessByRoleGuard,
+  canAccessByDemarcheGuard,
+} from '@/shared/guards'
 
+import { routeNames } from './route-names'
+import type { RolesKeys } from '@biblio-num/shared'
+import {
+  Roles,
+} from '@/biblio-num/shared'
 const MAIN_TITLE = 'Bibliothèque Numérique'
 
 export const SIGN_IN_ROUTE_NAME = 'SignIn'
@@ -33,12 +49,15 @@ const routes: RouterOptions['routes'] = [
   },
   {
     path: '/demarches',
-    beforeEnter: [canAccessDemarchesGuard],
     children: [
       {
         path: '',
         name: routeNames.DEMARCHES,
         component: () => import('@/views/demarches/Demarches.vue'),
+        meta: {
+          needsAuth: true,
+          roleLevel: Roles.instructor,
+        },
       },
       {
         path: ':demarcheId/dossiers',
@@ -50,6 +69,8 @@ const routes: RouterOptions['routes'] = [
         }),
         meta: {
           needsAuth: true,
+          roleLevel: Roles.instructor,
+          needsDemarchesId: true,
         },
       },
     ],
@@ -80,6 +101,7 @@ const routes: RouterOptions['routes'] = [
     component: () => import('@/views/statistics/Statistics.vue'),
     meta: {
       needsAuth: true,
+      roleLevel: Roles.instructor,
     },
   },
   {
@@ -93,21 +115,27 @@ const routes: RouterOptions['routes'] = [
   {
     name: routeNames.USER,
     path: '/user/:id',
-    beforeEnter: [hasAdminAccessGuard],
     component: () => import('@/views/admin/User.vue'),
+    meta: {
+      needsAuth: true,
+      roleLevel: Roles.admin,
+    },
   },
   {
     name: routeNames.ADMIN,
     path: '/admin',
-    beforeEnter: [canManageRolesGuard],
     component: () => import('@/views/admin/Admin.vue'),
+    meta: {
+      needsAuth: true,
+      roleLevel: Roles.admin,
+    },
+
   },
   // TODO: refacto role
   // {
   //   name: routeNames.ROLE,
   //   path: '/role/:id',
   //   // TODO: refacto role
-  //   // beforeEnter: [canManageRolesGuard],
   //   component: () => import('@/views/admin/Role.vue'),
   //   props: (route) => ({
   //     id: Number(route.params.id),
@@ -118,12 +146,20 @@ const routes: RouterOptions['routes'] = [
     path: '/organismes',
     meta: {
       needsAuth: true,
+      meta: {
+        needsAuth: true,
+        roleLevel: Roles.instructor,
+      },
     },
     children: [
       {
         name: routeNames.LISTE_ORGANISMES,
         path: '',
         component: () => import('@/views/organismes/list/ListeOrganismes.vue'),
+        meta: {
+          needsAuth: true,
+          roleLevel: Roles.instructor,
+        },
       },
       {
         name: routeNames.FICHE_ORGANISME,
@@ -136,6 +172,10 @@ const routes: RouterOptions['routes'] = [
             id,
             idType,
           }
+        },
+        meta: {
+          needsAuth: true,
+          roleLevel: Roles.instructor,
         },
       },
     ],
@@ -180,8 +220,24 @@ router.beforeEach(async (to, from) => {
   if (!userStore.loaded) {
     await userStore.loadCurrentUser()
   }
+
+  const role = userStore.currentUser?.role
+  let next
   if (to.meta?.needsAuth) {
-    return isAuthenticatedGuard()
+    next = isAuthenticatedGuard()
+    if (next) return next
+
+    if (canAccessByRoleGuard(
+          to.meta?.roleLevel as RolesKeys | undefined,
+          role?.label as RolesKeys | undefined,
+    ) &&
+        canAccessByDemarcheGuard(
+          to.meta?.needsDemarchesId as boolean | undefined,
+          to.params?.demarcheId as string | undefined,
+          role,
+        )
+    ) return true
+    return { name: routeNames.PROFILE }
   }
 })
 

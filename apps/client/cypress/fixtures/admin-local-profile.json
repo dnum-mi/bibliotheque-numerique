@@ -5,6 +5,11 @@
   "firstname": "pernomAdminLocal",
   "role": {
     "label": "admin",
-    "options": []
-    } 
-  }
+    "options": {
+      "1": {
+        "national":false,
+        "prefectures": ["75"]
+      }
+    }
+  } 
+}

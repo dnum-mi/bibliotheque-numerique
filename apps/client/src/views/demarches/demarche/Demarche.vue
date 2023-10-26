@@ -19,11 +19,11 @@ const demarcheStore = useDemarcheStore()
 const userStore = useUserStore()
 
 const demarche = computed<IDemarche | undefined>(() => demarcheStore.currentDemarche)
-const props = defineProps<{ id: string, customDisplayId?: string }>()
+const props = defineProps<{ demarcheId: string, customDisplayId?: string }>()
 
 onMounted(async () => {
-  if (props.id) {
-    await demarcheStore.getDemarche(Number(props.id))
+  if (props.demarcheId) {
+    await demarcheStore.getDemarche(Number(props.demarcheId))
   }
 })
 
