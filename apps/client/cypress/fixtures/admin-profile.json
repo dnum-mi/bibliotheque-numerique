@@ -5,6 +5,6 @@
   "firstname": "pernomAdmin",
   "role": {
     "label": "sudo",
-    "options": []
+    "options": {}
     } 
   }

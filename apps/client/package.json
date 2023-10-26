@@ -5,6 +5,7 @@
     "build": "vue-tsc --noEmit && vite build",
     "dev": "vite",
     "dev:e2e": "start-server-and-test 'vite dev --port 5050' http://127.0.0.1:5050/ 'cypress open --e2e'",
+    "dev:e2e:ci": "start-server-and-test 'vite dev --port 5050' http://127.0.0.1:5050/ 'cypress run --e2e'",
     "docker:dev": "docker compose -f docker-compose.dev.yml up",
     "docker:dev:build": "docker compose -f docker-compose.dev.yml build",
     "docker:dev:stop": "docker compose -f docker-compose.dev.yml down",

@@ -1,7 +1,16 @@
+import type { RouteLocationRaw } from 'vue-router'
 import { useUserStore } from '@/stores'
 import { routeNames } from '@/router/route-names'
+import type {
+  IRole,
+  RolesKeys,
+} from '@biblio-num/shared'
+import {
+  canAccessDemarche,
+  isSuperiorOrSimilar,
+} from '@/biblio-num/shared'
 
-export function isAuthenticatedGuard () {
+export function isAuthenticatedGuard (): RouteLocationRaw | undefined {
   const userStore = useUserStore()
   if (!userStore.isAuthenticated) {
     return { name: routeNames.SIGNIN, query: { redirect: location.href.replace(location.origin, '') } }
@@ -37,4 +46,15 @@ export function isNotAuthenticatedGuard () {
   if (userStore.isAuthenticated) {
     return '/'
   }
+}
+
+export const canAccessByRoleGuard = (
+  comparedTo?: RolesKeys,
+  toCompare?: RolesKeys,
+) => {
+  return (!comparedTo || isSuperiorOrSimilar(comparedTo, toCompare ?? null))
+}
+
+export const canAccessByDemarcheGuard = (needDemarchesId?: boolean, demarcheId?:string, role?: IRole) => {
+  return !needDemarchesId || (demarcheId && role && canAccessDemarche(+demarcheId, role))
 }
