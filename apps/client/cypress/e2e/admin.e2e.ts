@@ -3,7 +3,7 @@ import { getPaginatedUsers } from '../fixtures/usersRoles'
 describe('Home', () => {
   let userNumber: number
   before(() => {
-    cy.fixture('userAdmin').then((user) => {
+    cy.fixture('admin-profile').then((user) => {
       cy.intercept('api/auth/profile', user)
     })
     const users = getPaginatedUsers()
