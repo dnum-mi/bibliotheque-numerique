@@ -37,34 +37,34 @@ export class UsersService
   }
 
   async onApplicationBootstrap(): Promise<void> {
-    this._upsertDefaultSudoUser()
+    if (this.configService.get('sudo-user.forceUpsert')) {
+      this._upsertDefaultSudoUser()
+    } else {
+      this.logger.log('Skipping upserting of default sudo user.')
+    }
   }
 
   private async _upsertDefaultSudoUser(): Promise<void> {
     this.logger.verbose('_upsertDefaultSudoUser')
-    if (this.configService.get('sudo-user.forceUpsert')) {
-      // TODO: delete when refacato role
-      const role = await this.roleService.repository.upsert(
+    // TODO: delete when refacato role
+    const role = await this.roleService.repository.upsert(
+      {
+        name: 'admin',
+        description: 'App administrator, has full rights',
+      },
+      { conflictPaths: ['name'] },
+    )
+    const user = await this.repo
+      .upsert(
         {
-          name: 'admin',
-          description: 'App administrator, has full rights',
+          email: this.configService.get('sudo-user.email'),
+          password: this.configService.get('sudo-user.hashedPassword'),
+          validated: true,
+          skipHashPassword: true,
         },
-        { conflictPaths: ['name'] },
+        { conflictPaths: ['email'] },
       )
-      const user = await this.repo
-        .upsert(
-          {
-            email: this.configService.get('sudo-user.email'),
-            password: this.configService.get('sudo-user.hashedPassword'),
-            validated: true,
-            skipHashPassword: true,
-          },
-          { conflictPaths: ['email'] },
-        )
-      this.roleService.assignRoleToUser(role.identifiers[0].id, user.identifiers[0].id)
-    } else {
-      this.logger.log('Skipping upserting of default sudo user.')
-    }
+    this.roleService.assignRoleToUser(role.identifiers[0].id, user.identifiers[0].id)
   }
 
   async findByEmail(

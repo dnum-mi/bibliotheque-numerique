@@ -61,13 +61,6 @@ cd apps/server/
 pnpm run typeorm:migration:run
 ```
 
-et le script d'initialisation des données (Pour créer le compte admin par défaut):
-
-```console
-cd apps/server/
-pnpm run db:create-default-admin
-```
-
 ## Conventions à respecter
 
 ### Conventions de nommage
