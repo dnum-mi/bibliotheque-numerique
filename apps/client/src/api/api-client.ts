@@ -79,6 +79,11 @@ export const apiClientInstance = axios.create({
   headers,
 })
 
+export const apiClientAuthInstance = axios.create({
+  baseURL: baseApiUrl,
+  headers,
+})
+
 const toaster = useToaster()
 const router = useRouter()
 apiClientInstance.interceptors.response.use(r => r, (error) => {
@@ -89,7 +94,7 @@ apiClientInstance.interceptors.response.use(r => r, (error) => {
   }
   if (error.response.status >= 400 && error.response.status < 500) {
     toaster.addErrorMessage(error.response.data.message)
-    return error.response
+    return null
   }
   if (error.response.status >= 500) {
     toaster.addErrorMessage(error.response.data?.message ?? 'Une erreur inconnue est survenue')
@@ -234,7 +239,7 @@ export const usersApiClient = {
   },
 
   async loginUser (loginForm: CredentialsInputDto): Promise<UserOutputDto> {
-    const response = await apiClientInstance.post(signInRoute, loginForm, { withCredentials: true })
+    const response = await apiClientAuthInstance.post(signInRoute, loginForm, { withCredentials: true })
     return response.data
   },
 

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { UsersService } from '../../users/users.service'
 import * as bcrypt from 'bcrypt'
 import { User } from '../../users/entities/user.entity'
@@ -11,18 +11,15 @@ export class AuthService {
   async validateUser (email: string, password: string): Promise<User | undefined> {
     const user: User = await this.usersService.findByEmail(email, ['id', 'email', 'password', 'roles', 'validated'])
 
-    if (!user) {
-      throw new NotFoundException('User not found')
-    }
-
-    if (!user.validated) {
-      throw new NotFoundException('Invalid e-mail')
+    const unauthorizedError = new UnauthorizedException('Invalid credentials')
+    if (!user || !user.validated) {
+      throw unauthorizedError
     }
 
     const isMatch: boolean = await bcrypt.compare(password, user.password)
 
     if (!isMatch) {
-      throw new NotFoundException('Invalid credentials')
+      throw unauthorizedError
     }
 
     return user

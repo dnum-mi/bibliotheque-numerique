@@ -118,7 +118,7 @@ const rolesHeadersJson = [
 ]
 
 const rolesRowData = computed(() => {
-  return [...datas?.roles.values()].map((role: IRole) => ({
+  return [...(datas?.roles?.values() || [])].map((role: IRole) => ({
     ...role,
     permissions: role.permissions.map((permission) => permission.name).join(', '),
   }))

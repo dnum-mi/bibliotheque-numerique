@@ -24,6 +24,9 @@ export function canManageRolesGuard () {
 
 export function canAccessDemarchesGuard () {
   const userStore = useUserStore()
+  if (!userStore.isAuthenticated) {
+    return { name: 'SignIn' }
+  }
   if (!userStore.canAccessDemarches) {
     return { name: 'Profile' }
   }
