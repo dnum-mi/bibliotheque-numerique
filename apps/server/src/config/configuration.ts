@@ -16,7 +16,6 @@ export type TConfig = {
   },
   defaultAdmin: {
     email: string;
-    password: string;
     roleName: string;
   }
 };
@@ -38,8 +37,7 @@ export default () : TConfig => ({
     maxAge: 3600000,
   },
   defaultAdmin: {
-    email: process.env.DEFAULT_ADMIN_EMAIL,
-    password: process.env.DEFAULT_ADMIN_PASSWORD,
+    email: process.env.DEFAULT_SUDO_EMAIL,
     roleName: 'admin',
   },
 })
