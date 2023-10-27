@@ -2,34 +2,75 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
+  OnApplicationBootstrap,
+  forwardRef, Inject,
 } from '@nestjs/common'
 import { User } from './entities/user.entity'
 import { FindOneOptions, Repository } from 'typeorm'
-import { BaseEntityService } from '../../shared/base-entity/base-entity.service'
-import { LoggerService } from '../../shared/modules/logger/logger.service'
+import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
+import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { InjectRepository } from '@nestjs/typeorm'
 import { JwtService } from '@nestjs/jwt'
 import { ConfigService } from '@nestjs/config'
 import { SendMailService } from '../sendmail/sendmail.service'
+import { RolesService } from '@/modules/roles/providers/roles.service'
 
 type jwtPlaylod = {
-  user: string | number,
+  user: string | number
 }
 
 @Injectable()
-export class UsersService extends BaseEntityService<User> {
-  constructor (
+export class UsersService
+  extends BaseEntityService<User>
+  implements OnApplicationBootstrap {
+  constructor(
     protected logger: LoggerService,
     @InjectRepository(User) protected readonly repo: Repository<User>,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly sendMailService: SendMailService,
+    @Inject(forwardRef(() => RolesService))
+    private readonly roleService: RolesService,
   ) {
     super(repo, logger)
     this.logger.setContext(this.constructor.name)
   }
 
-  async findByEmail (email: string, select?: FindOneOptions<User>['select']): Promise<User | undefined> {
+  async onApplicationBootstrap(): Promise<void> {
+    this._upsertDefaultSudoUser()
+  }
+
+  private async _upsertDefaultSudoUser(): Promise<void> {
+    this.logger.verbose('_upsertDefaultSudoUser')
+    if (this.configService.get('sudo-user.forceUpsert')) {
+      // TODO: delete when refacato role
+      const role = await this.roleService.repository.upsert(
+        {
+          name: 'admin',
+          description: 'App administrator, has full rights',
+        },
+        { conflictPaths: ['name'] },
+      )
+      const user = await this.repo
+        .upsert(
+          {
+            email: this.configService.get('sudo-user.email'),
+            password: this.configService.get('sudo-user.hashedPassword'),
+            validated: true,
+            skipHashPassword: true,
+          },
+          { conflictPaths: ['email'] },
+        )
+      this.roleService.assignRoleToUser(role.identifiers[0].id, user.identifiers[0].id)
+    } else {
+      this.logger.log('Skipping upserting of default sudo user.')
+    }
+  }
+
+  async findByEmail(
+    email: string,
+    select?: FindOneOptions<User>['select'],
+  ): Promise<User | undefined> {
     this.logger.verbose('findByEmail')
     return this.repo.findOne({
       where: { email: email.toLowerCase() },
@@ -38,14 +79,17 @@ export class UsersService extends BaseEntityService<User> {
     })
   }
 
-  async create (email: string, password): Promise<User> {
+  async create(email: string, password): Promise<User> {
     this.logger.verbose('create')
     const userInDb = await this.findByEmail(email)
     if (userInDb) {
       if (!userInDb.validated) {
         await this.mailToValidSignUp(userInDb)
       }
-      throw new ConflictException({ message: 'User already exists', data: { withEMailValidated: true } })
+      throw new ConflictException({
+        message: 'User already exists',
+        data: { withEMailValidated: true },
+      })
     }
 
     const user = await this.createAndSave({
@@ -58,7 +102,7 @@ export class UsersService extends BaseEntityService<User> {
     return user
   }
 
-  async findOrCreate (email: string, password): Promise<User> {
+  async findOrCreate(email: string, password): Promise<User> {
     this.logger.verbose('findOrCreate')
     const userInDb = await this.findByEmail(email)
     if (userInDb) {
@@ -70,12 +114,12 @@ export class UsersService extends BaseEntityService<User> {
     })
   }
 
-  async listUsers (): Promise<User[]> {
+  async listUsers(): Promise<User[]> {
     this.logger.verbose('listUsers')
     return await this.repo.find({ relations: ['roles'] })
   }
 
-  async getUserById (id: number): Promise<User> {
+  async getUserById(id: number): Promise<User> {
     this.logger.verbose('getUserById')
     return this.findOneById(id, { roles: true }).then((user) => {
       if (!user) {
@@ -85,7 +129,7 @@ export class UsersService extends BaseEntityService<User> {
     })
   }
 
-  async resetPassword (email: string): Promise<void> {
+  async resetPassword(email: string): Promise<void> {
     this.logger.verbose('resetPassword')
     const userInDb = await this.repo.findOne({
       where: { email },
@@ -96,10 +140,16 @@ export class UsersService extends BaseEntityService<User> {
       return
     }
     const { appUrl, jwtForUrl } = this.createJwtOnUrl({ user: userInDb.id })
-    await this.sendMailService.resetPwd(email, `${appUrl}/update-password/${jwtForUrl}`)
+    await this.sendMailService.resetPwd(
+      email,
+      `${appUrl}/update-password/${jwtForUrl}`,
+    )
   }
 
-  private createJwtOnUrl(playload: jwtPlaylod): {appUrl:string, jwtForUrl: string} {
+  private createJwtOnUrl(playload: jwtPlaylod): {
+    appUrl: string
+    jwtForUrl: string
+  } {
     const jwt = this.jwtService.sign(playload)
     // jwt does not go natively in url. We had to transform it in base64
     const jwtForUrl = Buffer.from(jwt).toString('base64url')
@@ -107,17 +157,20 @@ export class UsersService extends BaseEntityService<User> {
     return { appUrl, jwtForUrl }
   }
 
-  async updatePassword (user: User, password: string): Promise<void> {
+  async updatePassword(user: User, password: string): Promise<void> {
     user.password = password
     await this.repo.save(user)
   }
 
-  private async mailToValidSignUp (userInDb: User): Promise<void> {
+  private async mailToValidSignUp(userInDb: User): Promise<void> {
     const { appUrl, jwtForUrl } = this.createJwtOnUrl({ user: userInDb.email })
-    await this.sendMailService.validSignUp(userInDb.email, `${appUrl}/valid-email/${jwtForUrl}`)
+    await this.sendMailService.validSignUp(
+      userInDb.email,
+      `${appUrl}/valid-email/${jwtForUrl}`,
+    )
   }
 
-  async validEmail (user: User): Promise<void> {
+  async validEmail(user: User): Promise<void> {
     if (user.validated) {
       this.logger.warn(`User ${user.email} already validated`)
       throw new ConflictException('User already validated')

@@ -28,6 +28,7 @@ import { DsApiModule } from './shared/modules/ds-api/ds-api.module'
 import { CustomFilterModule } from '@/modules/custom-filters/custom-filter.module'
 import { XlsxModule } from '@/shared/modules/xlsx/xlsx.module'
 import { OrganismeModule } from '@/modules/organismes/organisme.module'
+import sudoUserConfig from '@/config/sudo-user.config'
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { OrganismeModule } from '@/modules/organismes/organisme.module'
         rnaConfig,
         rnfConfig,
         excelImportConfig,
+        sudoUserConfig,
       ],
     }),
     LoggerModule,

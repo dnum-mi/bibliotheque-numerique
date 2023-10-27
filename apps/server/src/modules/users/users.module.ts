@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { forwardRef, Module } from '@nestjs/common'
 import { UsersController } from './users.controller'
 import { UsersService } from './users.service'
 import { TypeOrmModule } from '@nestjs/typeorm'
@@ -6,6 +6,7 @@ import { User } from './entities/user.entity'
 import { JwtModule } from '@nestjs/jwt'
 import { SendMailModule } from '../sendmail/sendmail.module'
 import { ConfigModule, ConfigService } from '@nestjs/config'
+import { RolesModule } from '@/modules/roles/roles.module'
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
       inject: [ConfigService],
     }),
     SendMailModule,
+    forwardRef(() => RolesModule),
   ],
   controllers: [UsersController],
   providers: [UsersService],

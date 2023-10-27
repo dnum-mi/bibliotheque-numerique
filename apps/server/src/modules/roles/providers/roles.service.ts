@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, forwardRef, Inject } from '@nestjs/common'
 import { LoggerService } from '../../../shared/modules/logger/logger.service'
 import { Role } from '../entities/role.entity'
 import { User } from '../../users/entities/user.entity'
@@ -12,6 +12,7 @@ export class RolesService extends BaseEntityService<Role> {
   constructor (
     protected readonly logger: LoggerService,
     @InjectRepository(Role) protected readonly repo: Repository<Role>,
+    @Inject(forwardRef(() => UsersService))
     private readonly userService: UsersService,
   ) {
     super(repo, logger)

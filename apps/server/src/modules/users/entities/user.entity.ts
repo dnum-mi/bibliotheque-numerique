@@ -42,13 +42,17 @@ export class User extends BaseEntity {
   })
   validated: boolean
 
-  @ManyToMany(() => Role, (role) => role.users)
+  @ManyToMany(() => Role, (role) => role.users, { cascade: ['insert'] })
   roles: Role[]
+
+  skipHashPassword: boolean = false
 
   @BeforeInsert()
   @BeforeUpdate()
   async hashPassword (): Promise<void> {
-    this.password = await bcrypt.hash(this.password, 10)
+    if (!this.skipHashPassword) {
+      this.password = await bcrypt.hash(this.password, 10)
+    }
   }
 
   @OneToMany(() => CustomFilter, (customFilter) => customFilter.user)
