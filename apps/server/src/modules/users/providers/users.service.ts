@@ -1,7 +1,7 @@
 import {
   ConflictException,
   Injectable,
-  NotFoundException,
+  NotFoundException, OnApplicationBootstrap,
 } from '@nestjs/common'
 import { User } from '../entities/user.entity'
 import { FindOneOptions, Repository } from 'typeorm'
@@ -18,7 +18,7 @@ type jwtPlaylod = {
 }
 
 @Injectable()
-export class UsersService extends BaseEntityService<User> {
+export class UsersService extends BaseEntityService<User> implements OnApplicationBootstrap {
   constructor (
     protected logger: LoggerService,
     @InjectRepository(User) protected readonly repo: Repository<User>,
@@ -28,6 +28,31 @@ export class UsersService extends BaseEntityService<User> {
   ) {
     super(repo, logger)
     this.logger.setContext(this.constructor.name)
+  }
+
+  async onApplicationBootstrap(): Promise<void> {
+    if (this.configService.get('sudo-user.forceUpsert')) {
+      this._upsertDefaultSudoUser()
+    } else {
+      this.logger.log('Skipping upserting of default sudo user.')
+    }
+  }
+
+  private async _upsertDefaultSudoUser(): Promise<void> {
+    this.logger.verbose('_upsertDefaultSudoUser')
+    await this.repo
+      .upsert(
+        {
+          email: this.configService.get('sudo-user.email'),
+          password: this.configService.get('sudo-user.hashedPassword'),
+          validated: true,
+          firstname: 'sudo',
+          lastname: 'sudo',
+          skipHashPassword: true,
+          role: { label: 'sudo', options: [] },
+        },
+        { conflictPaths: ['email'] },
+      )
   }
 
   async findByEmail (email: string, select?: FindOneOptions<User>['select']): Promise<User | undefined> {
