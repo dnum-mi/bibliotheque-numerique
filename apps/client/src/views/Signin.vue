@@ -35,7 +35,7 @@ const submit = handleSubmit(async (formValue: CredentialsInputDto) => {
       router.push(route.query.redirect as string)
       return
     }
-    router.push('/demarches')
+    router.push({ name: 'Demarches' })
   } catch (e) {
     setErrors({ password: 'Ces identifiants ne correspondent à aucun utilisateur' })
   }
