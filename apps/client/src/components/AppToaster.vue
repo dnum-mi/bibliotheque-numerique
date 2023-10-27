@@ -41,7 +41,7 @@ const close = (id: string) => emit('close-message', id)
   position: fixed;
   bottom: 1rem;
   width: 100%;
-  z-index: 1;
+  z-index: 1750; /* To be on top of .fr-modal which has z-index: 1750 */
 }
 .toasters {
   display: flex;

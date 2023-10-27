@@ -43,7 +43,10 @@ const routes: RouterOptions['routes'] = [
         path: ':id/dossiers',
         name: 'DemarcheDossiers',
         component: () => import('@/views/demarches/demarche/Demarche.vue'),
-        props: true,
+        props: (route) => ({
+          id: route.params.id,
+          customDisplayId: route.query.customDisplayId,
+        }),
         meta: {
           needsAuth: true,
         },

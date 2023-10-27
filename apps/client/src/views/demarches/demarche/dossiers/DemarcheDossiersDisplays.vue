@@ -1,11 +1,6 @@
 <script lang="ts" setup>
-import { computed, ref, type Ref } from 'vue'
-
-export type SmallFilter = {
-  id: number
-  name: string
-  totals: string []
-};
+import type { ICustomFilter } from '@biblio-num/shared'
+import { watch, computed, ref } from 'vue'
 
 export type TotalsAllowed = {
   id: string,
@@ -13,10 +8,11 @@ export type TotalsAllowed = {
 }
 
 const props = withDefaults(defineProps<{
-  displays?: SmallFilter[],
+  displays?: ICustomFilter[],
   paginationChanged?: boolean
-  selectedDisplay?: SmallFilter | null,
+  selectedDisplay?: ICustomFilter | null,
   totalsAllowed?: TotalsAllowed[]
+  operationSuccess?: boolean
 }>(), {
   displays: () => [],
   selectedDisplay: null,
@@ -40,9 +36,10 @@ const emit = defineEmits<{
   (event: 'deleteDisplay') : void
 }>()
 
+const currentDisplay = computed(() => props.selectedDisplay)
 const filterLabelGroups = {
   duplicate: {
-    title: `Dupliquer l’affichage ${props.selectedDisplay?.name}`,
+    title: `Dupliquer l’affichage ${currentDisplay.value?.name}`,
     button: 'Enregistrer',
     input: 'Nommer le nouvel affichage',
     icon: 'ri-save-line',
@@ -84,29 +81,35 @@ const filterLabelGroups = {
 } as const
 
 type FilterModalType = keyof typeof filterLabelGroups;
-const inputFilterName: Ref<string> = ref('')
-const filterModalType: Ref<FilterModalType> = ref('create')
-const inputFilterTotals: Ref<string | undefined> = ref(undefined)
+const inputFilterName = ref('')
+const filterModalType = ref<FilterModalType>('create')
+const inputFilterTotals = ref<string>()
 const filterModalOpen = ref(false)
+const operationSucceeded = computed(() => props.operationSuccess)
+
+watch(operationSucceeded, (success: boolean) => {
+  if (success) {
+    filterModalOpen.value = false
+    closeFilterModal()
+  }
+})
 
 const closeFilterModal = () => {
   filterModalOpen.value = false
 }
 const filterLabelGroup = computed(() => filterLabelGroups[filterModalType.value])
 const openDisplayModal = (modalType: FilterModalType) => {
-  console.log('openDisplayModal', modalType)
   filterModalOpen.value = true
   filterModalType.value = modalType
   if (modalType === 'duplicate') {
-    inputFilterName.value = `${props.selectedDisplay?.name} (copie)`
+    inputFilterName.value = `${currentDisplay.value?.name} (copie)`
   } else {
-    inputFilterName.value = modalType === 'create' ? '' : (props.selectedDisplay?.name || '')
+    inputFilterName.value = modalType === 'create' ? '' : (currentDisplay.value?.name || '')
   }
-  inputFilterTotals.value = modalType === 'create' ? undefined : (props.selectedDisplay?.totals?.[0] ?? '')
+  inputFilterTotals.value = modalType === 'create' ? undefined : (currentDisplay.value?.totals?.[0] ?? '')
 }
 const saveCurrentFilter = () => {
   filterLabelGroup.value.submitFn()
-  filterModalOpen.value = false
 }
 const resetAgGridFilters = () => {
   emit('selectDisplay', null)
@@ -124,7 +127,7 @@ const onSelectFilterChange = ($event: string) => {
 }
 
 const update = () => {
-  if (props.selectedDisplay) {
+  if (currentDisplay.value) {
     emit('updateDisplay')
   }
 }
@@ -174,6 +177,7 @@ const update = () => {
       </DsfrButton>
     </div>
   </div>
+
   <DsfrModal
     :opened="filterModalOpen"
     :title="filterLabelGroup.title"
@@ -201,7 +205,15 @@ const update = () => {
           :options="totalsAllowedOptions"
         />
       </div>
-      <div class="flex justify-end">
+      <div class="flex  justify-end  gap-4">
+        <DsfrButton
+          type="button"
+          label="Annuler"
+          tertiary
+          :icon="{ name: 'ri-arrow-go-back-line' }"
+          icon-right
+          @click="closeFilterModal()"
+        />
         <DsfrButton
           type="submit"
           :class="{'fr-error-bg': filterModalType === 'delete'}"
@@ -219,7 +231,6 @@ const update = () => {
 .fr-error-bg:not(:disabled) {
   background-color: var(--border-plain-error);
   color: #fff;
-
 }
 
 .fr-error-bg:not(:disabled)&:hover {

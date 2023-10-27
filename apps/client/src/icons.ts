@@ -1,6 +1,7 @@
 export {
   CoTrash,
   RiAddCircleLine,
+  RiArrowGoBackLine,
   RiBarChartBoxLine,
   RiCheckLine,
   RiCheckboxBlankCircleLine,

@@ -3,6 +3,10 @@ import { HttpAdapterHost } from '@nestjs/core'
 import { LoggerService } from '../../modules/logger/logger.service'
 import { QueryFailedError } from 'typeorm'
 
+const knownConstraints = {
+  UQ_CUSTOM_FILTERS: 'Vous avez déjà créé un filtre avec ce nom',
+}
+
 @Catch(QueryFailedError)
 export class QueryFailedFilter implements ExceptionFilter {
   constructor (private readonly httpAdapterHost: HttpAdapterHost, private readonly logger: LoggerService) {
@@ -18,10 +22,8 @@ export class QueryFailedFilter implements ExceptionFilter {
 
     if (exception.message && exception.message.includes('duplicate key value violates unique constraint')) {
       statusCode = 409
-      message = 'Conflit : Cette valeur existe déjà.'
-      if ((exception as unknown as Record<string, string>).constraint === 'UQ_CUSTOM_FILTERS') {
-        message = 'Conflit : Vous avez déjà créé un filtre avec ce nom.'
-      }
+      const constraint = (exception as unknown as Record<string, string>).constraint
+      message = constraint in knownConstraints ? knownConstraints[constraint] : 'Conflit : Cette valeur existe déjà.'
       this.logger.warn(`409 Conflict: ${exception.message}`)
     } else {
       this.logger.error(`500 Typeorm QueryFailedError: ${exception.message}`)

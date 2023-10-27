@@ -23,7 +23,7 @@ const props = defineProps<{ id: string, customDisplayId?: string }>()
 
 onMounted(async () => {
   if (props.id) {
-    await demarcheStore.getDemarche(parseInt(props.id))
+    await demarcheStore.getDemarche(Number(props.id))
   }
 })
 
@@ -88,7 +88,8 @@ onMounted(() => {
       >
         <DemarcheDossiers
           v-if="selectedTabIndex === 0"
-          demarche-id="demarche.id"
+          :id="id"
+          :custom-display-id="customDisplayId"
         />
       </DsfrTabContent>
 
