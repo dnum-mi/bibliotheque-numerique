@@ -250,7 +250,8 @@ export const usersApiClient = {
   },
 
   async fetchCurrentUser (): Promise<UserOutputDto | null> {
-    return apiClientInstance.get(profileRoute)
+    const response = await apiClientInstance.get(profileRoute)
+    return response?.data
   },
 
   async getUsers (): Promise<UserOutputDto[] | null> {
@@ -317,7 +318,7 @@ export const customFiltersApiClient = {
 
   createOneCustomFilter: async (dto: CreateCustomFilterDto, demarcheId: number) => {
     const response = await apiClientInstance.post(getCustomFiltersByDemarcheRoute(demarcheId), dto)
-    return response.data
+    return response?.data
   },
 
   updateOneCustomFilter: async (id: number, dto: PatchCustomFilterDto) => {

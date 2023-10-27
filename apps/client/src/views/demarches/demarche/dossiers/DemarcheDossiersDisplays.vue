@@ -13,13 +13,13 @@ export type TotalsAllowed = {
 }
 
 const props = withDefaults(defineProps<{
-  filters?: SmallFilter[],
+  displays?: SmallFilter[],
   paginationChanged?: boolean
-  selectedFilter?: SmallFilter | null,
+  selectedDisplay?: SmallFilter | null,
   totalsAllowed?: TotalsAllowed[]
 }>(), {
-  filters: () => [],
-  selectedFilter: null,
+  displays: () => [],
+  selectedDisplay: null,
   totalsAllowed: () => [],
 })
 
@@ -33,41 +33,52 @@ const totalsAllowedOptions = computed(() => [
 
 // eslint-disable-next-line func-call-spacing
 const emit = defineEmits<{
-  (event: 'selectFilter', filterId: number | null) : void
-  (event: 'createFilter', filter: { filterName?: string, totals?: string }) : void
-  (event: 'updateFilterName', filter: { filterName?: string, totals?: string }) : void
-  (event: 'updateFilter') : void
-  (event: 'deleteFilter') : void
+  (event: 'selectDisplay', filterId: number | null) : void
+  (event: 'createDisplay', filter: { filterName?: string, totals?: string }) : void
+  (event: 'updateDisplayName', filter: { filterName?: string, totals?: string }) : void
+  (event: 'updateDisplay') : void
+  (event: 'deleteDisplay') : void
 }>()
 
 const filterLabelGroups = {
-  create: {
-    title: 'Créer un nouveau filtre personnalisé',
+  duplicate: {
+    title: `Dupliquer l’affichage ${props.selectedDisplay?.name}`,
     button: 'Enregistrer',
-    input: 'Nommer le filtre personnalisé',
+    input: 'Nommer le nouvel affichage',
     icon: 'ri-save-line',
     totals: 'Sélectionner la colonne pour le total numéraire',
     submitFn () {
-      emit('createFilter', { filterName: inputFilterName.value, totals: inputFilterTotals.value })
+      emit('createDisplay', { filterName: inputFilterName.value, totals: inputFilterTotals.value })
+    },
+  },
+  create: {
+    title: 'Créer un nouvel affichage personnalisé',
+    button: 'Enregistrer',
+    input: 'Nommer l’affichage personnalisé',
+    icon: 'ri-save-line',
+    totals: 'Sélectionner la colonne pour le total numéraire',
+    submitFn () {
+      emit('createDisplay', { filterName: inputFilterName.value, totals: inputFilterTotals.value })
     },
   },
   update: {
-    title: 'Renommer le filtre actuel',
+    title: 'Renommer l’affichage actuel',
     button: 'Enregistrer',
-    input: 'Renommer le filtre personnalisé',
+    input: 'Renommer l’affichage personnalisé',
     icon: 'ri-edit-line',
     totals: 'Sélectionner la colonne pour le total numéraire',
     submitFn () {
-      emit('updateFilterName', { filterName: inputFilterName.value, totals: inputFilterTotals.value })
+      emit('updateDisplayName', { filterName: inputFilterName.value, totals: inputFilterTotals.value })
     },
   },
   delete: {
-    title: 'Supprimer le filtre actuel',
+    title: 'Supprimer l’affichage actuel',
     button: 'Supprimer',
     icon: 'ri-delete-bin-line',
+    input: 'Supprimer l’affichage personnalisé',
     totals: 'Sélectionner la colonne pour le total numéraire',
     submitFn () {
-      emit('deleteFilter')
+      emit('deleteDisplay')
     },
   },
 } as const
@@ -82,32 +93,39 @@ const closeFilterModal = () => {
   filterModalOpen.value = false
 }
 const filterLabelGroup = computed(() => filterLabelGroups[filterModalType.value])
-const openFilterModal = (modalType: FilterModalType) => {
+const openDisplayModal = (modalType: FilterModalType) => {
+  console.log('openDisplayModal', modalType)
   filterModalOpen.value = true
   filterModalType.value = modalType
-  inputFilterName.value = modalType === 'create' ? '' : (props.selectedFilter?.name || '')
-  inputFilterTotals.value = modalType === 'create' ? undefined : (props.selectedFilter?.totals[0] || '')
+  if (modalType === 'duplicate') {
+    inputFilterName.value = `${props.selectedDisplay?.name} (copie)`
+  } else {
+    inputFilterName.value = modalType === 'create' ? '' : (props.selectedDisplay?.name || '')
+  }
+  inputFilterTotals.value = modalType === 'create' ? undefined : (props.selectedDisplay?.totals?.[0] ?? '')
 }
 const saveCurrentFilter = () => {
   filterLabelGroup.value.submitFn()
   filterModalOpen.value = false
 }
 const resetAgGridFilters = () => {
-  emit('selectFilter', null)
+  emit('selectDisplay', null)
 }
 
 const defaultOption = { text: 'Aucun filtre sélectionné', value: null }
-const filterList = computed(() => [defaultOption, ...props.filters.map(({ id, name }) => ({ text: name, value: id }))])
+const filterList = computed(() => [defaultOption, ...props.displays.map(({ id, name }) => ({ text: name, value: id }))])
 
 const onSelectFilterChange = ($event: string) => {
-  emit('selectFilter', +$event)
+  if ($event === defaultOption.text) {
+    resetAgGridFilters()
+    return
+  }
+  emit('selectDisplay', +$event)
 }
 
-const createOrUpdate = () => {
-  if (props.selectedFilter) {
-    emit('updateFilter')
-  } else {
-    openFilterModal('create')
+const update = () => {
+  if (props.selectedDisplay) {
+    emit('updateDisplay')
   }
 }
 </script>
@@ -115,43 +133,44 @@ const createOrUpdate = () => {
 <template>
   <div class="flex justify-end h-24">
     <DsfrSelect
-      :model-value="selectedFilter?.id"
-      label="Sélectionner un filtre"
-      default-unselected-text="Aucun filtre sélectionné"
+      :model-value="selectedDisplay?.id"
+      label="Sélectionner un affichage"
+      default-unselected-text="Aucun affichage sélectionné"
       :options="filterList"
       @update:model-value="onSelectFilterChange($event)"
     />
     <div class="fr-mx-2v fr-mt-2v flex justify-center items-center gap-2">
       <DsfrButton
-        :disabled="!selectedFilter"
         type="submit"
-        @click="resetAgGridFilters()"
+        :title="selectedDisplay ? `Dupliquer l’affichage ${selectedDisplay.name}` : 'Créer un nouvel affichage personnalisé'"
+        @click="openDisplayModal(selectedDisplay ? 'duplicate' : 'create')"
       >
-        <VIcon name="ri-filter-off-line" />
+        <VIcon :name="selectedDisplay ? 'ri-file-copy-line' : 'ri-add-line'" />
       </DsfrButton>
       <DsfrButton
-        :disabled="!selectedFilter"
         type="submit"
-        @click="openFilterModal('update')"
+        :disabled="!selectedDisplay || !paginationChanged"
+        title="Mettre à jour l’affichage personnalisé"
+        @click="update()"
+      >
+        <VIcon name="ri-save-line" />
+      </DsfrButton>
+      <DsfrButton
+        :disabled="!selectedDisplay"
+        type="submit"
+        title="Renommer l’affichage ou changer la colonne du total numéraire"
+        @click="openDisplayModal('update')"
       >
         <VIcon name="ri-edit-line" />
       </DsfrButton>
       <DsfrButton
-        :disabled="!selectedFilter"
+        :disabled="!selectedDisplay"
         type="submit"
-        @click="openFilterModal('delete')"
+        title="supprimer l’affichage personnalisé"
+        class="fr-error-bg"
+        @click="openDisplayModal('delete')"
       >
         <VIcon name="ri-delete-bin-line" />
-      </DsfrButton>
-    </div>
-    <div class="fr-mx-2v  fr-mt-2v  flex  justify-center  items-center  gap-2">
-      <DsfrButton
-        type="submit"
-        :disabled="!!selectedFilter && !paginationChanged"
-        @click="createOrUpdate()"
-      >
-        {{ !!selectedFilter ? 'Mettre à jour le filtre personnalisé' : 'Créer un nouveau filtre personnalisé' }}
-        <VIcon name="ri-save-line" />
       </DsfrButton>
     </div>
   </div>
@@ -185,6 +204,7 @@ const createOrUpdate = () => {
       <div class="flex justify-end">
         <DsfrButton
           type="submit"
+          :class="{'fr-error-bg': filterModalType === 'delete'}"
           :label="filterLabelGroup.button"
           :icon="{ name: filterLabelGroup.icon }"
           icon-right
@@ -194,3 +214,15 @@ const createOrUpdate = () => {
     </form>
   </DsfrModal>
 </template>
+
+<style scoped>
+.fr-error-bg:not(:disabled) {
+  background-color: var(--border-plain-error);
+  color: #fff;
+
+}
+
+.fr-error-bg:not(:disabled)&:hover {
+  background-color: var(--border-flat-error);
+}
+</style>

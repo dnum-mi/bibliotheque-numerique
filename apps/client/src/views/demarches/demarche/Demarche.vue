@@ -19,7 +19,7 @@ const demarcheStore = useDemarcheStore()
 const userStore = useUserStore()
 
 const demarche = computed<IDemarche | undefined>(() => demarcheStore.currentDemarche)
-const props = defineProps<{ id: string }>()
+const props = defineProps<{ id: string, customDisplayId?: string }>()
 
 onMounted(async () => {
   if (props.id) {

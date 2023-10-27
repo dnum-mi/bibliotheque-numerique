@@ -6,6 +6,7 @@ export {
   RiCheckboxBlankCircleLine,
   RiCheckboxCircleFill,
   RiCloseLine,
+  RiFileCopyLine,
   RiDeleteBinLine,
   RiExternalLinkFill,
   RiEyeFill,

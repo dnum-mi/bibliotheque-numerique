@@ -31,8 +31,13 @@ export const useUserStore = defineStore('user', () => {
   }
 
   const loadCurrentUser = async () => {
-    currentUser.value = await bnApiClient.fetchCurrentUser()
+    const user = await bnApiClient.fetchCurrentUser()
     loaded.value = true
+    if (!user) {
+      currentUser.value = null
+      return
+    }
+    currentUser.value = user
   }
 
   const loadUsers = async () => {
