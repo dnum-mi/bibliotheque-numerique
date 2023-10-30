@@ -4,7 +4,7 @@ describe('Home', () => {
   let userNumber: number
   before(() => {
     cy.fixture('admin-profile').then((user) => {
-      cy.intercept('api/auth/profile', user)
+      cy.intercept('api/users/me', user)
     })
     const users = getPaginatedUsers()
     userNumber = users.data.length
