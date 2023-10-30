@@ -9,7 +9,8 @@ import { useUserStore } from '@/stores'
 
 import AppToaster from '@/components/AppToaster.vue'
 import ReloadPrompt from '@/components/ReloadPrompt.vue'
-import { routeNames } from './router/route-names'
+import { routeNames } from '@/router/route-names'
+import { Roles, isSuperiorOrSimilar } from '@/biblio-num/shared'
 
 const serviceTitle = 'Bibliothèque Numérique'
 const serviceDescription = 'Recherchez une démarche, un dossier, un organisme'
@@ -55,7 +56,7 @@ const organismesQuickLink: QuickLink = {
   iconAttrs: { title: 'Organismes' },
 }
 
-const authenticatedQuickLinksPart2: QuickLink[] = [
+const authenticatedQuickLinksDefault: QuickLink[] = [
   {
     label: 'Mon profil',
     to: { name: routeNames.PROFILE },
@@ -70,14 +71,12 @@ const authenticatedQuickLinksPart2: QuickLink[] = [
   },
 ]
 
-const authenticatedQuickLinksPart3: QuickLink[] = [
-  {
-    label: 'Statistiques',
-    to: { name: routeNames.STATISTIQUES },
-    icon: 'ri-bar-chart-box-line',
-    iconAttrs: { title: 'Statistiques' },
-  },
-]
+const statisticsQuickLink: QuickLink = {
+  label: 'Statistiques',
+  to: { name: routeNames.STATISTIQUES },
+  icon: 'ri-bar-chart-box-line',
+  iconAttrs: { title: 'Statistiques' },
+}
 
 const manageRolesQuickLink = {
   label: 'Administration',
@@ -90,25 +89,30 @@ const userStore = useUserStore()
 const router = useRouter()
 const route = useRoute()
 
+const getQuickLinks = () => {
+  const role = userStore.currentUser?.role.label
+  if (!role) return []
+  return isSuperiorOrSimilar(Roles.instructor, role)
+    ? [
+        demarcheQuickLink,
+        organismesQuickLink,
+        statisticsQuickLink,
+        ...(isSuperiorOrSimilar(Roles.admin, role) ? [manageRolesQuickLink] : []),
+      ]
+    : []
+}
+
 watch([() => userStore.isAuthenticated, route], async () => {
   await router.isReady()
 
-  const isCurrentRoute = ({ to }: QuickLink) => to !== route.path && to?.name !== route.name
-
   if (userStore.isAuthenticated) {
-    quickLinks.value = [ // TODO: refacto role
-      // ...(userStore.canAccessDemarches ? [demarcheQuickLink] : []),
-      demarcheQuickLink,
-      ...authenticatedQuickLinksPart1,
-      ...authenticatedQuickLinksPart3,
-      manageRolesQuickLink,
-      // ...(userStore.canManageRoles ? [manageRolesQuickLink] : []),
-      ...authenticatedQuickLinksPart2,
+    quickLinks.value = [
+      ...getQuickLinks(),
+      ...authenticatedQuickLinksDefault,
     ]
   } else {
-    quickLinks.value = [
-      ...unauthenticatedQuickLinks.filter(isCurrentRoute),
-    ]
+    const isCurrentRoute = ({ to }: QuickLink) => to !== route.path && to?.name !== route.name
+    quickLinks.value = unauthenticatedQuickLinks.filter(isCurrentRoute)
   }
 })
 
