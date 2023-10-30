@@ -1,16 +1,17 @@
-import { useUserStore } from '../../stores'
+import { useUserStore } from '@/stores'
+import { routeNames } from '@/router/route-names'
 
 export function isAuthenticatedGuard () {
   const userStore = useUserStore()
   if (!userStore.isAuthenticated) {
-    return { name: 'SignIn', query: { redirect: location.href.replace(location.origin, '') } }
+    return { name: routeNames.SIGNIN, query: { redirect: location.href.replace(location.origin, '') } }
   }
 }
 
 export function hasAdminAccessGuard () {
   const userStore = useUserStore()
   if (!userStore.hasAdminAccess) {
-    return { name: 'SignIn', query: { redirect: location.href.replace(location.origin, '') } }
+    return { name: routeNames.SIGNIN, query: { redirect: location.href.replace(location.origin, '') } }
   }
 }
 
@@ -24,10 +25,10 @@ export function canManageRolesGuard () {
 export function canAccessDemarchesGuard () {
   const userStore = useUserStore()
   if (!userStore.isAuthenticated) {
-    return { name: 'SignIn' }
+    return { name: routeNames.SIGNIN }
   }
   if (!userStore.canAccessDemarches) {
-    return { name: 'Profile' }
+    return { name: routeNames.PROFILE }
   }
 }
 

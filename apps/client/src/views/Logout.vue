@@ -4,6 +4,7 @@ import useToaster from '@/composables/use-toaster.js'
 import { useUserStore, useCustomFilterStore } from '@/stores'
 
 import { onMounted } from 'vue'
+import { routeNames } from '@/router/route-names'
 
 const userStore = useUserStore()
 const router = useRouter()
@@ -16,7 +17,7 @@ onMounted(async () => {
   } catch (error) {
     toaster.addErrorMessage({ description: 'une erreur est survenue à la déconnexion' })
   }
-  router.push({ name: 'SignIn' })
+  router.push({ name: routeNames.SIGNIN })
 })
 </script>
 

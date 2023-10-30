@@ -12,6 +12,7 @@ import { passwordValidator } from '@/utils/password.validator'
 
 import useToaster from '@/composables/use-toaster'
 import ToggleInputPassword from '@/components/ToggleInputPassword.vue'
+import { routeNames } from '@/router/route-names'
 
 const props = defineProps<{ token: string }>()
 
@@ -46,7 +47,7 @@ const onSubmit = handleSubmit(async () => {
   alertDescription.value = 'Votre mot de passe a été changé.'
   alertType.value = 'success'
   toaster.addSuccessMessage({ description: 'Votre mot de passe a été changé.' })
-  router.push({ name: 'Home' })
+  router.push({ name: routeNames.HOME })
 })
 
 const onCloseAlert = () => {

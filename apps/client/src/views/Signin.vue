@@ -8,6 +8,7 @@ import type { CredentialsInputDto } from '@biblio-num/shared'
 import LayoutAccueil from '@/components/Layout/LayoutAccueil.vue'
 import { useUserStore } from '@/stores'
 import ToggleInputPassword from '@/components/ToggleInputPassword.vue'
+import { routeNames } from '@/router/route-names'
 import useToaster from '@/composables/use-toaster'
 
 const REQUIRED_FIELD_MESSAGE = 'Ce champ est requis'
@@ -35,7 +36,7 @@ const submit = handleSubmit(async (formValue: CredentialsInputDto) => {
       router.push(route.query.redirect as string)
       return
     }
-    router.push({ name: 'Demarches' })
+    router.push({ name: routeNames.DEMARCHES })
   } catch (e) {
     setErrors({ password: 'Ces identifiants ne correspondent à aucun utilisateur' })
   }

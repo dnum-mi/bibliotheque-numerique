@@ -7,6 +7,7 @@ import type { IDemarche } from '@biblio-num/shared'
 import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import OrganismeBadgesRenderer from '@/components/Badges/OrganismeBadgesRenderer.vue'
+import { routeNames } from '@/router/route-names'
 
 const demarcheStore = useDemarcheStore()
 const router = useRouter()
@@ -67,7 +68,7 @@ onMounted(async () => {
 })
 
 const selectDemarche = (row:IDemarche[]) => {
-  router.push({ name: 'DemarcheDossiers', params: { id: row[0].id } })
+  router.push({ name: routeNames.DEMARCHE_DOSSIERS, params: { demarcheId: row[0].id } })
 }
 
 const rowStyle = { cursor: 'pointer' }

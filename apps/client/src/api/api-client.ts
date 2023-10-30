@@ -59,6 +59,7 @@ import {
 import type { IRoleForm } from '@/shared/interfaces'
 
 import { ErrorvalidateEmail } from './ErrorValidEmail'
+import { routeNames } from '../router/route-names'
 import { returnToSignIn } from '@/shared/auth-utils'
 
 const updatePasswordFeedback = {
@@ -89,10 +90,10 @@ apiClientInstance.interceptors.response.use(r => r, (error) => {
   if (error.response == null) {
     return error
   }
-  if ([401, 403].includes(error.response?.status)) {
+  if ([401, 403].includes(error.response.status)) {
     toaster.addMessage({ id: 'auth', type: 'warning', description: 'Vous n’êtes plus connecté, veuillez vous réauthentifier' })
-    returnToSignIn()
-    return null
+    router.push({ name: routeNames.SIGNIN, query: { redirect: location.href.replace(location.origin, '') } })
+    return error.response
   }
   if (error.response.status >= 400 && error.response.status < 500) {
     toaster.addErrorMessage(error.response.data.message)

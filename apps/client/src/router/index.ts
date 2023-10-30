@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, type RouterOptions } from 'vue-router'
 
 import { useUserStore } from '@/stores'
 import { hasAdminAccessGuard, canManageRolesGuard, canAccessDemarchesGuard, isAuthenticatedGuard, isNotAuthenticatedGuard } from '@/shared/guards'
+import { routeNames } from './route-names'
 
 const MAIN_TITLE = 'Bibliothèque Numérique'
 
@@ -9,21 +10,21 @@ export const SIGN_IN_ROUTE_NAME = 'SignIn'
 
 const routes: RouterOptions['routes'] = [
   {
-    name: 'Home',
+    name: routeNames.HOME,
     path: '/',
     meta: {
       needsAuth: true,
     },
-    redirect: { name: 'Demarches' },
+    redirect: { name: routeNames.DEMARCHES },
     children: [],
   },
   {
-    name: 'About',
+    name: routeNames.ABOUT,
     path: '/a-propos',
     component: () => import('@/views/AboutUs.vue'),
   },
   {
-    name: 'Dossiers',
+    name: routeNames.DOSSIERS,
     path: '/dossiers/:id',
     component: () => import('@/views/dossiers/Dossier.vue'),
     meta: {
@@ -36,12 +37,12 @@ const routes: RouterOptions['routes'] = [
     children: [
       {
         path: '',
-        name: 'Demarches',
+        name: routeNames.DEMARCHES,
         component: () => import('@/views/demarches/Demarches.vue'),
       },
       {
-        path: ':id/dossiers',
-        name: 'DemarcheDossiers',
+        path: ':demarcheId/dossiers',
+        name: routeNames.DEMARCHE_DOSSIERS,
         component: () => import('@/views/demarches/demarche/Demarche.vue'),
         props: (route) => ({
           id: route.params.id,
@@ -54,19 +55,19 @@ const routes: RouterOptions['routes'] = [
     ],
   },
   {
-    name: SIGN_IN_ROUTE_NAME,
+    name: routeNames.SIGNIN,
     path: '/sign_in',
     beforeEnter: [isNotAuthenticatedGuard],
     component: () => import('@/views/Signin.vue'),
   },
   {
-    name: 'SignUp',
+    name: routeNames.SIGNUP,
     path: '/sign_up',
     beforeEnter: [isNotAuthenticatedGuard],
     component: () => import('@/views/Signup.vue'),
   },
   {
-    name: 'Profile',
+    name: routeNames.PROFILE,
     path: '/profile',
     component: () => import('@/views/Profile.vue'),
     meta: {
@@ -74,7 +75,7 @@ const routes: RouterOptions['routes'] = [
     },
   },
   {
-    name: 'Statistiques',
+    name: routeNames.STATISTIQUES,
     path: '/statistiques',
     component: () => import('@/views/statistics/Statistics.vue'),
     meta: {
@@ -82,7 +83,7 @@ const routes: RouterOptions['routes'] = [
     },
   },
   {
-    name: 'LogOut',
+    name: routeNames.LOGOUT,
     path: '/logout',
     component: () => import('@/views/Logout.vue'),
     meta: {
@@ -90,20 +91,20 @@ const routes: RouterOptions['routes'] = [
     },
   },
   {
-    name: 'User',
+    name: routeNames.USER,
     path: '/user/:id',
     beforeEnter: [hasAdminAccessGuard],
     component: () => import('@/views/admin/User.vue'),
   },
   {
-    name: 'Admin',
+    name: routeNames.ADMIN,
     path: '/admin',
     beforeEnter: [canManageRolesGuard],
     component: () => import('@/views/admin/Admin.vue'),
   },
   // TODO: refacto role
   // {
-  //   name: 'Role',
+  //   name: routeNames.ROLE,
   //   path: '/role/:id',
   //   // TODO: refacto role
   //   // beforeEnter: [canManageRolesGuard],
@@ -113,19 +114,19 @@ const routes: RouterOptions['routes'] = [
   //   }),
   // },
   {
-    name: 'Organismes',
+    name: routeNames.ORGANISMES,
     path: '/organismes',
     meta: {
       needsAuth: true,
     },
     children: [
       {
-        name: 'ListeOrganismes',
+        name: routeNames.LISTE_ORGANISMES,
         path: '',
         component: () => import('@/views/organismes/list/ListeOrganismes.vue'),
       },
       {
-        name: 'FicheOrganisme',
+        name: routeNames.FICHE_ORGANISME,
         path: ':id',
         component: () => import('@/views/organismes/organisme/FicheOrganisme.vue'),
         props: (route) => {
@@ -141,23 +142,23 @@ const routes: RouterOptions['routes'] = [
   },
   {
     path: '/update-password/:token',
-    name: 'UpdatePassword',
+    name: routeNames.UPDATE_PASSWORD,
     component: () => import('@/views/UpdatePassword.vue'),
     props: true,
   },
   {
     path: '/reset-password',
-    name: 'ResetPassword',
+    name: routeNames.RESET_PASSWORD,
     component: () => import('@/views/ResetPassword.vue'),
   },
   {
     path: '/:pathMatch(.*)*',
-    name: '404',
+    name: routeNames.Page_404,
     component: () => import('@/views/Error404.vue'),
   },
   {
     path: '/valid-email/:token',
-    name: 'ValidEmail',
+    name: routeNames.VALIDE_MAIL,
     component: () => import('@/views/ValidEmail.vue'),
     props: true,
 

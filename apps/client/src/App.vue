@@ -9,6 +9,7 @@ import { useUserStore } from '@/stores'
 
 import AppToaster from '@/components/AppToaster.vue'
 import ReloadPrompt from '@/components/ReloadPrompt.vue'
+import { routeNames } from './router/route-names'
 
 const serviceTitle = 'Bibliothèque Numérique'
 const serviceDescription = 'Recherchez une démarche, un dossier, un organisme'
@@ -27,7 +28,7 @@ const quickLinks: Ref<QuickLink[]> = ref([])
 
 const demarcheQuickLink: QuickLink = {
   label: 'Démarches',
-  to: { name: 'Demarches' },
+  to: { name: routeNames.DEMARCHES },
   icon: 'ri-file-list-2-fill',
   iconAttrs: { title: 'Démarches' },
 }
@@ -35,37 +36,35 @@ const demarcheQuickLink: QuickLink = {
 const unauthenticatedQuickLinks: QuickLink[] = [
   {
     label: 'Se connecter',
-    to: { name: 'SignIn' },
+    to: { name: routeNames.SIGNIN },
     icon: 'ri-lock-line',
     iconAttrs: { title: 'Se connecter' },
   },
   {
     label: 'S’enregistrer',
-    to: { name: 'SignUp' },
+    to: { name: routeNames.SIGNUP },
     icon: 'ri-user-line',
     iconAttrs: { title: 'S’enregistrer' },
   },
 ]
 
-const authenticatedQuickLinksPart1: QuickLink[] = [
-  {
-    label: 'Organismes',
-    to: { name: 'ListeOrganismes' },
-    icon: 'ri-file-list-2-line',
-    iconAttrs: { title: 'Organismes' },
-  },
-]
+const organismesQuickLink: QuickLink = {
+  label: 'Organismes',
+  to: { name: routeNames.LISTE_ORGANISMES },
+  icon: 'ri-file-list-2-line',
+  iconAttrs: { title: 'Organismes' },
+}
 
 const authenticatedQuickLinksPart2: QuickLink[] = [
   {
     label: 'Mon profil',
-    to: { name: 'Profile' },
+    to: { name: routeNames.PROFILE },
     icon: 'ri-account-circle-line',
     iconAttrs: { title: 'Mon profil' },
   },
   {
     label: 'Déconnexion',
-    to: { name: 'LogOut' },
+    to: { name: routeNames.LOGOUT },
     icon: 'ri-logout-box-r-line',
     iconAttrs: { title: 'Déconnexion', ...iconColor },
   },
@@ -74,7 +73,7 @@ const authenticatedQuickLinksPart2: QuickLink[] = [
 const authenticatedQuickLinksPart3: QuickLink[] = [
   {
     label: 'Statistiques',
-    to: { name: 'Statistiques' },
+    to: { name: routeNames.STATISTIQUES },
     icon: 'ri-bar-chart-box-line',
     iconAttrs: { title: 'Statistiques' },
   },
@@ -82,7 +81,7 @@ const authenticatedQuickLinksPart3: QuickLink[] = [
 
 const manageRolesQuickLink = {
   label: 'Administration',
-  to: { name: 'Admin' },
+  to: { name: routeNames.ADMIN },
   icon: 'ri-shield-star-line',
   iconAttrs: { ...iconColor, title: 'Administration' },
 }
