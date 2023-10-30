@@ -1,0 +1,10 @@
+{
+  "id":1,
+  "email":"admin-local@example.com",
+  "lastname": "nomAdminLocal",
+  "firstname": "pernomAdminLocal",
+  "role": {
+    "label": "admin",
+    "options": []
+    } 
+  }

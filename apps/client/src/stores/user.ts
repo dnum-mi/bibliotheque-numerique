@@ -25,11 +25,8 @@ export const useUserStore = defineStore('user', () => {
 
   const isAuthenticated = computed(() => !!currentUser.value)
   const hasAdminAccess = computed(() => !!(currentUser.value?.role?.label && RolesAdmins.includes(currentUser.value?.role?.label)))
-  const canManageRoles = computed(() => hasAdminAccess)
-  // const canManageRoles = computed(() => !!currentUser.value?.roles?.find(role => role.name === RoleName.ADMIN || role?.permissions?.find(permission => permission?.name === 'CREATE_ROLE')))
-  // TODO: A revoir pour les droit de démarches
+  const canManageRoles = computed(() => hasAdminAccess.value)
   const canAccessDemarches = computed(() => !!(currentUser.value?.role?.label))
-  // const canAccessDemarches = computed(() => !!currentUser.value?.roles?.find(role => role.name === RoleName.ADMIN || role?.permissions?.find(permission => permission?.name === 'ACCESS_DEMARCHE')))
 
   const login = async (loginForm: CredentialsInputDto) => {
     currentUser.value = await bnApiClient.loginUser(loginForm)
