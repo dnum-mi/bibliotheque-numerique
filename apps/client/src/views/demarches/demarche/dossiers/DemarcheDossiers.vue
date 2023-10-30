@@ -299,7 +299,16 @@ const apiCall = (dto: PaginationDto<unknown>) => {
 
 <template>
   <div :style="{ paddingBottom: '2rem' }">
-    <div class="flex justify-between no-label-on-toggle items-center fr-pl-2w fr-pt-2w">
+    <div class="flex justify-end m-2">
+      <DsfrButton
+        :label="'Télécharger'"
+        icon="ri-file-download-fill"
+        small
+        @click="download"
+      />
+    </div>
+
+    <div class="flex justify-between no-label-on-toggle items-center fr-pl-2w">
       <div class="flex gap-2">
         <div>
           <DsfrButton
@@ -319,12 +328,6 @@ const apiCall = (dto: PaginationDto<unknown>) => {
             Vue par dossier
           </DsfrButton>
         </div>
-        <DsfrButton
-          :label="'Télécharger'"
-          icon="ri-file-download-fill"
-          small
-          @click="download"
-        />
       </div>
       <DemarcheDossiersDisplays
         :displays="customFilters as ICustomFilter[]"
