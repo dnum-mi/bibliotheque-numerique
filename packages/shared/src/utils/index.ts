@@ -1,3 +1,3 @@
-export * from './utils-date'
-export * from './utils-string'
+export * from './date.utils'
+export * from './string.utils'
 export * from './role.utils'
