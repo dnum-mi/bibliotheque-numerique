@@ -14,7 +14,7 @@ export class QueryFailedFilter implements ExceptionFilter {
 
     const ctx = host.switchToHttp()
     let statusCode = 500
-    let message = 'Internal server error.'
+    let message = 'Erreur serveur, l’administrateur a été prévenu.'
 
     if (exception.message && exception.message.includes('duplicate key value violates unique constraint')) {
       statusCode = 409

@@ -34,7 +34,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       this.logger.warn(exception as HttpException)
       break
     default:
-      message = 'Internal server error'
+      message = 'Erreur serveur, l’administrateur a été prévenu'
       this.logger.error((exception as Error).message)
       this.logger.debug((exception as Error).stack)
     }
