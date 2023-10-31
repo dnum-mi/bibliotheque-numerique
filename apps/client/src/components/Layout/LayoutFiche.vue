@@ -1,11 +1,11 @@
 <template>
   <div>
-    <div class="flex flex-col justify-between w-full h-full">
-      <div class="flex flex-col gap-3 w-full grow">
-        <div class="bn-fiche-title fr-p-3w">
+    <div class="flex  flex-col  justify-between  w-full  h-full">
+      <div class="flex  flex-col  gap-3  w-full  grow">
+        <div class="bn-fiche-title  fr-p-3w">
           <slot name="title" />
         </div>
-        <div class="bn-fiche-sub-title fr-p-2w">
+        <div class="bn-fiche-sub-title  fr-p-2w">
           <slot name="sub-title" />
         </div>
         <div class="grow">

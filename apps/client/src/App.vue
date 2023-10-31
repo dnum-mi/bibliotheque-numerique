@@ -172,9 +172,9 @@ onErrorCaptured((error: Error | AxiosError) => {
       :quick-links="quickLinks"
     />
 
-    <div class="grow w-full">
+    <main class="flex  flex-col  grow  w-full  h-full  min-h-0  overflow-auto">
       <router-view />
-    </div>
+    </main>
   </div>
 
   <AppToaster
@@ -191,6 +191,12 @@ onErrorCaptured((error: Error | AxiosError) => {
 </template>
 
 <style scoped>
+#app {
+  height: 100% !important;
+  display: flex;
+  flex-direction: column;
+}
+
 @media screen and (max-width: 1400px) {
   :deep(.fr-header__tools-links .fr-btn) {
     padding: 0.25rem !important;

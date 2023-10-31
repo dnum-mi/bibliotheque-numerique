@@ -1,7 +1,7 @@
-import type { Demandeur } from '@biblio-num/shared'
+import type { Demandeur, DossierStateKeys, IDossier, IOrganisme, TDossier } from '@biblio-num/shared'
 import { faker } from '@faker-js/faker/locale/fr'
 
-const getStateDossier = () => { return faker.helpers.arrayElement(['accepte', 'en_construction', 'en_instruction']) }
+const getStateDossier = (): DossierStateKeys => { return faker.helpers.arrayElement(['accepte', 'en_construction', 'en_instruction']) }
 const getTypeDemandeur = () => { return faker.helpers.arrayElement(['PersonneMorale', 'PersonnePhysique']) }
 
 export const getChamps = () => {
@@ -21,33 +21,33 @@ const getTypeAddress = () => {
 }
 
 export const getDemandeurMorale = () => ({
-  siret: faker.random.numeric(14),
+  siret: faker.string.numeric(14),
   siegeSocial: faker.datatype.boolean(),
-  naf: `${faker.random.numeric(4)}${faker.random.alpha(1)}`,
+  naf: `${faker.string.numeric(4)}${faker.string.alpha(1)}`,
   libelleNaf: faker.company.catchPhrase(),
   address: {
     label: faker.company.name(),
     type: getTypeAddress(),
-    streetAddress: faker.address.streetAddress(),
-    streetNumber: faker.address.street(),
-    streetName: faker.address.streetName(),
-    postalCode: faker.address.zipCode(),
-    cityName: faker.address.cityName(),
-    cityCode: faker.address.zipCode(),
-    departmentName: faker.address.state(),
-    departmentCode: faker.address.zipCode(),
-    regionName: faker.address.state(),
-    regionCode: faker.address.zipCode(),
+    streetAddress: faker.location.streetAddress(),
+    streetNumber: faker.location.street(),
+    streetName: faker.location.streetName(),
+    postalCode: faker.location.zipCode(),
+    cityName: faker.location.cityName(),
+    cityCode: faker.location.zipCode(),
+    departmentName: faker.location.state(),
+    departmentCode: faker.location.zipCode(),
+    regionName: faker.location.state(),
+    regionCode: faker.location.zipCode(),
   },
   entreprise: {
-    siren: faker.random.numeric(14),
-    capitalSocial: faker.finance.account(),
-    numeroTvaIntracommunautaire: `FR${faker.random.numeric(14)}`,
+    siren: faker.string.numeric(14),
+    capitalSocial: faker.finance.accountNumber(),
+    numeroTvaIntracommunautaire: `FR${faker.string.numeric(14)}`,
     formeJuridique: faker.lorem.word(),
-    formeJuridiqueCode: faker.random.numeric(4),
+    formeJuridiqueCode: faker.string.numeric(4),
     nomCommercial: faker.company.name(),
     raisonSociale: faker.company.name(),
-    siretSiegeSocial: faker.random.numeric(14),
+    siretSiegeSocial: faker.string.numeric(14),
     codeEffectifEntreprise: '01',
     dateCreation: faker.date.past().toISOString(),
     nom: faker.name.lastName(),
@@ -68,15 +68,15 @@ export const getDemandeurMorale = () => ({
 })
 
 export const getDemandeurPhysique = () => ({
-  civilite: faker.name.prefix(), // getCivilite(),
+  civilite: faker.person.prefix(), // getCivilite(),
   dateDeNaissance: faker.date.past().toDateString(),
-  nom: faker.name.lastName(),
-  prenom: faker.name.firstName(),
+  nom: faker.person.lastName(),
+  prenom: faker.person.firstName(),
 })
 
-export const generateDossierDSByTypeDemandeur = (__typename:string, demandeurTest: Demandeur) => ({
-  id: faker.datatype.string(20),
-  number: faker.datatype.number(),
+export const generateDossierDSByTypeDemandeur = (__typename:string, demandeurTest: Demandeur): TDossier => ({
+  id: faker.string.alpha(20),
+  number: faker.number.int(),
   archived: faker.datatype.boolean(),
   state: getStateDossier(),
   dateDerniereModification: faker.date.past().toISOString(),
@@ -89,19 +89,19 @@ export const generateDossierDSByTypeDemandeur = (__typename:string, demandeurTes
     filename: faker.system.fileName(),
     contentType: 'application/pdf',
     checksum: 'NuHflNIvs7CL5xm3MQMl6w==',
-    byteSizeBigInt: faker.datatype.number(),
+    byteSizeBigInt: faker.number.bigInt(),
     url: faker.internet.url(),
   },
   attestation: null,
   pdf: {
     url: faker.internet.url(),
   },
-  instructeurs: Array(faker.datatype.number({ min: 1, max: 5 })).fill({}).map(() => ({
+  instructeurs: Array(faker.number.int({ min: 1, max: 5 })).fill({}).map(() => ({
     email: faker.internet.email(),
   })),
   groupeInstructeur: {
-    id: faker.datatype.string(20),
-    number: faker.datatype.number(),
+    id: faker.string.numeric(20),
+    number: faker.number.int(),
     label: faker.address.cityName(),
   },
   traitements: [
@@ -111,7 +111,7 @@ export const generateDossierDSByTypeDemandeur = (__typename:string, demandeurTes
       dateTraitement: faker.date.past().toISOString(),
       motivation: null,
     },
-    ...Array(faker.datatype.number({ min: 1, max: 5 })).fill({}).map(() => ({
+    ...Array(faker.string.numeric(1)).fill('').map(() => ({
       state: getStateDossier(),
       emailAgentTraitant: faker.internet.email(),
       dateTraitement: faker.date.past().toISOString(),
@@ -121,21 +121,21 @@ export const generateDossierDSByTypeDemandeur = (__typename:string, demandeurTes
   champs: getChamps(),
   annotations: getChamps(),
   avis: [],
-  messages: Array(faker.datatype.number({ min: 1, max: 5 })).fill({}).map(() => ({
-    id: faker.datatype.string(20),
+  messages: Array(faker.string.numeric({ min: 1, max: 5 })).fill({}).map(() => ({
+    id: faker.string.numeric(20),
     email: faker.internet.email(),
-    body: faker.lorem.paragraphs().split(faker.datatype.string(1)).join('<br><br>'),
+    body: faker.lorem.paragraphs().split(faker.string.alpha(1)).join('<br><br>'),
     createdAt: faker.date.past().toISOString(),
   })),
   demandeur: {
     __typename,
-    id: faker.random.numeric(),
+    id: faker.string.numeric(),
 
     ...demandeurTest,
   },
 })
 
-export const generateDossierDS = () => {
+export const generateDossierDS = (): TDossier => {
   const __typename = getTypeDemandeur()
   const demandeurTest = __typename === 'PersonneMorale' ? getDemandeurMorale() : getDemandeurPhysique()
 
@@ -144,14 +144,39 @@ export const generateDossierDS = () => {
 
 export const generateDossierDSPersonneMorale = () => generateDossierDSByTypeDemandeur('PersonneMorale', getDemandeurMorale())
 export const generateDossierDSPersonnePhysique = () => generateDossierDSByTypeDemandeur('PersonnePhysique', getDemandeurPhysique())
+export const getRandomOrganismeType = () => faker.helpers.arrayElement(['unknown', 'FDD', 'FE', 'FRUP', 'ARUP', 'CULTE'])
+export const generateOrganisme = (): IOrganisme => ({
+  id: faker.number.int(),
+  title: faker.company.name(),
+  type: getRandomOrganismeType(),
+  idRna: null,
+  rnaJson: null,
+  idRnf: null,
+  rnfJson: null,
+  addressCityName: faker.location.city(),
+  addressDepartmentName: faker.string.numeric(2),
+  addressDepartmentCode: faker.string.numeric(2),
+  addressLabel: faker.location.streetAddress(),
+  addressPostalCode: faker.location.zipCode(),
+  addressRegionName: faker.location.state(),
+  addressRegionCode: faker.string.numeric(2),
+  addressStreetAddress: faker.location.streetAddress(),
+  addressStreetName: faker.location.street(),
+  addressStreetNumber: faker.string.numeric({ length: { min: 1, max: 3 } }),
+  addressType: faker.helpers.arrayElement(['housenumber', 'street', 'municipality', 'locality']),
+  email: faker.internet.email(),
+  phoneNumber: faker.phone.number(),
+  dateCreation: new Date(faker.date.past().toISOString()),
+  dateDissolution: null,
+})
 
-export const generateDossier = () => ({
-  id: faker.random.numeric(),
+export const generateDossier = (): IDossier & { organisme: IOrganisme } => ({
+  id: +faker.string.numeric(),
   dsDataJson: generateDossierDS(),
   demarche: {
-    title: faker.random.word(),
-    typeOrganisme: faker.random.word(),
+    title: faker.word.noun(),
   },
+  organisme: generateOrganisme(),
 })
 
 export const generateDossiers = () => Array.from({ length: faker.datatype.number({ min: 1, max: 20 }) }, () => generateDossier())
