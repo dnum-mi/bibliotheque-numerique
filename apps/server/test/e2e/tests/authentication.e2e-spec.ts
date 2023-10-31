@@ -8,7 +8,7 @@ const adminFixtureUser = {
   email: 'admin1@localhost.com',
   lastname: '',
   firstname: '',
-  role: { key: 'admin', options: [] },
+  role: { label: 'admin', options: { 2: { national: false, prefectures: ['D75'] } } },
 }
 
 describe('Auth (e2e)', () => {
@@ -55,9 +55,10 @@ describe('Auth (e2e)', () => {
         })
         .expect(200)
         .expect(({ body }) => {
-          expect(body).toEqual({
+          expect(body).toMatchObject({
             email: adminFixtureUser.email,
             id: adminFixtureUser.id,
+            role: adminFixtureUser.role,
           })
         })
     })

@@ -29,12 +29,13 @@ export class AuthService {
 
   async login (dto: CredentialsInputDto): Promise<UserOutputDto> {
     this.logger.verbose(`login (${dto.email})`)
-    const findUser: User = await this.usersService.findByEmail(dto.email, ['id', 'email'])
+    const findUser: User = await this.usersService.findByEmail(dto.email, ['id', 'email', 'role'])
     // eslint-disable-next-line
     // @ts-ignore TODO: role refacto
     return {
       id: findUser.id,
       email: findUser.email,
+      role: findUser.role,
     }
   }
 }
