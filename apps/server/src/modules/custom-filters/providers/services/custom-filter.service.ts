@@ -42,7 +42,7 @@ export class CustomFilterService extends BaseEntityService<CustomFilter> {
         total: result.total,
       },
     ].concat(
-      customFilter.totals.map((totalKey) => ({
+      customFilter.totals?.map((totalKey) => ({
         label: labelHash[totalKey] || totalKey,
         total: result.data
           .map((element) => {
@@ -50,7 +50,7 @@ export class CustomFilterService extends BaseEntityService<CustomFilter> {
             return number instanceof Array ? number.reduce(__add, 0) : number
           })
           .reduce(__add, 0),
-      })),
+      })) || [],
     )
   }
 

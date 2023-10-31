@@ -4,10 +4,6 @@ body,
   height: 100%;
 }
 
-.h-full {
-  min-height: 100%;
-}
-
 .ag-theme-alpine {
   --ag-selected-tab-underline-width: 2px;
   --ag-selected-tab-underline-transition-speed: 0.5s;

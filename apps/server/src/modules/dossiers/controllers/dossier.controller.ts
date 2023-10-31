@@ -26,7 +26,7 @@ export class DossierController {
       relations: ['demarche'],
     })
     if (!canAccessDemarche(dossier.demarche.id, role)) {
-      throw new ForbiddenException('Vous n\'avez pas accès à la démarche correspondante à ce dossier')
+      throw new ForbiddenException('Vous n’avez pas accès à la démarche correspondante à ce dossier')
     }
     const fullDossier = canAccessPrefectureInDemarche(dossier.prefecture, role, dossier.demarche.id)
     return {

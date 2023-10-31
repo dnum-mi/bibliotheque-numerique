@@ -10,16 +10,16 @@ Content-Type: application/json
   "password": "password"
 }
 
-### Créer la démarche 38
+### Créer la démarche 35
 
 POST {{baseUrl}}/demarches/create HTTP/1.1
 Content-Type: application/json
 
 {
-  "idDs": 38
+  "idDs": 35
 }
 
-### Synchroniser la démarche 38
+### Synchroniser le dossier
 
 POST {{baseUrl}}/demarches/synchro-dossiers HTTP/1.1
 Content-Type: application/json

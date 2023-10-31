@@ -19,8 +19,8 @@ defineProps<{
 
 <style scoped>
 .custom-culte {
-  --text-default-success: #6a6156;
-  --background-contrast-success: #feede5;
+  --text-default-success: var(--text-action-high-yellow-moutarde);
+  --background-contrast-success: var(--background-contrast-yellow-moutarde);
 }
 
 .custom-fdd {
