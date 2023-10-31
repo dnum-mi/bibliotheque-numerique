@@ -239,6 +239,10 @@ const download = () => {
 
 const agGridComponent = ref()
 
+const hasNoRepeatableField = computed(() => {
+  return !demarcheStore.currentDemarche?.mappingColumns.some((m) => 'children' in m)
+})
+
 const toggleView = useDebounceFn((isActive: boolean) => {
   groupByDossier.value = isActive
   agGridComponent.value?.refresh()
@@ -263,6 +267,7 @@ const apiCall = (dto: PaginationDto<unknown>) => {
           <DsfrButton
             :tertiary="groupByDossier"
             :class="{ 'opacity-70': groupByDossier }"
+            :disabled="hasNoRepeatableField"
             @click="toggleView(false)"
           >
             Vue par champ
