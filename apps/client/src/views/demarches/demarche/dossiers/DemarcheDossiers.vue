@@ -182,7 +182,9 @@ const createFilter = async ({ filterName = '', totals = '' }: { filterName?: str
     const filterId = customFilters.value.find((f) => f.name === filterName)?.id || null
     selectFilter(filterId)
     customDisplayOperationSuccess.value = true
-  } catch {}
+  } catch (error) {
+    import.meta.env.DEV && console.warn(error)
+  }
 }
 const updateFilter = async () => {
   customDisplayOperationSuccess.value = false
@@ -194,7 +196,9 @@ const updateFilter = async () => {
     try {
       await customFilterStore.updateCustomFilter(selectedCustomFilter.value.id, selectedCustomFilter.value)
       customDisplayOperationSuccess.value = true
-    } catch {}
+    } catch (error) {
+      import.meta.env.DEV && console.warn(error)
+    }
   } else {
     throw new Error('Aucun affichage sélectionné, impossible de mettre à jour l’affichage personnalisé')
   }
@@ -207,7 +211,9 @@ const deleteFilter = async () => {
       selectedCustomFilter.value = null
       resetAggState()
       customDisplayOperationSuccess.value = true
-    } catch {}
+    } catch (error) {
+      import.meta.env.DEV && console.warn(error)
+    }
     await customFilterStore.getCustomFiltersByDemarche(demarche.value.id)
   }
 }
@@ -227,7 +233,9 @@ const updateFilterName = async ({ filterName = '', totals = '' }) => {
       selectedCustomFilter.value.name = filterName
       selectedCustomFilter.value.totals = dto.totals ?? null
       customDisplayOperationSuccess.value = false
-    } catch {}
+    } catch (error) {
+      import.meta.env.DEV && console.warn(error)
+    }
   }
 }
 
