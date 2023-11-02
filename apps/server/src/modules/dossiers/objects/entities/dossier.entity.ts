@@ -51,7 +51,7 @@ export class Dossier extends BaseEntity implements IDossier {
 
   @Column({
     type: 'enum',
-    enum: Prefecture,
+    enum: Object.keys(Prefecture),
     nullable: true,
     default: null,
   })

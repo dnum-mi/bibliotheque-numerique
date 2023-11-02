@@ -1,19 +1,40 @@
 entity: Dossier
 items:
   dossier{1..10}:
+    id: "($current)"
     demarche: "@demarche-financement"
     state: "accepte"
     sourceId: "($current)"
     dsDataJson: "{}"
   bmwDossier1:
+    id: 11
     demarche: "@demarche-financement"
     state: "accepte"
     sourceId: "123456"
-    dsDataJson: "{}"
+    prefecture: "D75"
+    dsDataJson: {
+      annotations: "I can see you",
+      messages: "Big brother is watching you"
+    }
     organisme: "@BMW"
   bmwDossier2:
+    id: 12
     demarche: "@demarche-financement"
     state: "accepte"
     sourceId: "123457"
-    dsDataJson: "{}"
+    prefecture: "D57"
+    dsDataJson: {
+      annotations: "I can see you",
+      messages: "Big brother is watching you"
+    }
     organisme: "@BMW"
+  Dossier3:
+    demarche: "@configurationDemarche"
+    state: "accepte"
+    sourceId: "123458"
+    prefecture: "D57"
+    dsDataJson: {
+      annotations: "I can see you",
+      messages: "Big brother is watching you"
+    }
+    organisme: "@Hyundai"

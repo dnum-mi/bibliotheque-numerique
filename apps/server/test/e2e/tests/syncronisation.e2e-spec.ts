@@ -844,7 +844,7 @@ describe('Syncronisation ', () => {
             },
           },
         )
-        expect(dossierMetz.prefecture).toEqual('57 - Moselle')
+        expect(dossierMetz.prefecture).toEqual('D57')
         await fieldService.repository.delete({ dossier: { id: dossierMetz.id } })
         await dossierService.repository.delete({ sourceId: '202' })
         const dossierNoPrefecture = await dataSource.manager.findOne(

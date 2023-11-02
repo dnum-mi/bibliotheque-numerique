@@ -42,7 +42,7 @@ import {
   getXlsxDemarcheDossierRoute,
   getXlsxDemarcheFieldRoute,
   getDemarcheCustomFilterRoute,
-  getDossierDetail,
+  getDossierByIdRoute,
   getOrganismeDossiers,
   getOrganismeByIdRoute,
   getOrganismeByRnaRoute,
@@ -297,7 +297,7 @@ export const dossiersApiClient = {
   },
 
   getDossier: async (id: number): Promise<IDossier> =>
-    (await apiClientInstance.get(getDossierDetail(id))).data,
+    (await apiClientInstance.get(getDossierByIdRoute(id))).data,
 
   getOrganismeDossiers: async (organismeId: number): Promise<LeanDossierOutputDto[]> =>
     (await apiClientInstance.get(getOrganismeDossiers(organismeId))).data,
