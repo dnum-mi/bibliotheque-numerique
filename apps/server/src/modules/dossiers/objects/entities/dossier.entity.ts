@@ -14,10 +14,11 @@ import { BaseEntity } from '@/shared/base-entity/base.entity'
 import { Field } from './field.entity'
 import { Dossier as TDossier } from '@dnum-mi/ds-api-client/dist/@types/generated-types'
 import { Organisme } from '@/modules/organismes/objects/organisme.entity'
+import { IDossier, Prefecture, PrefectureKeys } from '@biblio-num/shared'
 
 @Entity({ name: 'dossiers' })
 @Unique('UQ_DOSSIER', ['sourceId', 'demarche'])
-export class Dossier extends BaseEntity {
+export class Dossier extends BaseEntity implements IDossier {
   @PrimaryGeneratedColumn('increment')
   declare id: number
 
@@ -42,12 +43,17 @@ export class Dossier extends BaseEntity {
   @Column({ nullable: true, default: null })
   dateDepot: string
 
-  @Column({ nullable: true, default: null })
-  prefecture: string
-
   @Column({ type: 'jsonb', default: '{}' })
   dsDataJson: Partial<TDossier>
 
   @ManyToOne(() => Organisme, (org) => org.dossiers)
   organisme?: Organisme | null
+
+  @Column({
+    type: 'enum',
+    enum: Prefecture,
+    nullable: true,
+    default: null,
+  })
+  prefecture: PrefectureKeys | null
 }

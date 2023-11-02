@@ -14,6 +14,9 @@ import { S3 } from 'aws-sdk/clients/browser_default'
 import { OrganismeService } from '@/modules/organismes/providers/organisme.service'
 import { DossierService } from '@/modules/dossiers/providers/dossier.service'
 import { FieldService } from '@/modules/dossiers/providers/field.service'
+import { DemarcheService } from '@/modules/demarches/providers/services/demarche.service'
+import { In } from 'typeorm'
+import { InstructionTimesService } from '@/plugins/instruction_time/instruction_times/instruction_times.service'
 
 const expectedFixFieldsTotalAmount = (): Partial<Field>[] => [
   {
@@ -308,6 +311,8 @@ describe('Syncronisation ', () => {
   let organismeService: OrganismeService
   let dossierService: DossierService
   let fieldService: FieldService
+  let demarcheService: DemarcheService
+  let instructionTimeService: InstructionTimesService
 
   beforeAll(async () => {
     const testingModule = new TestingModuleFactory()
@@ -317,6 +322,8 @@ describe('Syncronisation ', () => {
     organismeService = await app.resolve(OrganismeService)
     dossierService = await app.resolve(DossierService)
     fieldService = await app.resolve(FieldService)
+    demarcheService = await app.resolve(DemarcheService)
+    instructionTimeService = await app.resolve(InstructionTimesService)
     cookies = testingModule.cookies
   })
 
@@ -383,6 +390,8 @@ describe('Syncronisation ', () => {
       },
     )
 
+    let demarche: Demarche
+
     return request(app.getHttpServer())
       .post('/demarches/create')
       .set('Cookie', [cookies.sudo])
@@ -395,7 +404,7 @@ describe('Syncronisation ', () => {
         expect(res.body).toEqual({
           message: 'Demarche with DS id 42 has been created.',
         })
-        const demarche = await dataSource.manager
+        demarche = await dataSource.manager
           .createQueryBuilder(Demarche, 'd')
           .where('d."dsDataJson"->>\'number\' = :id', { id: '42' })
           .select('d.id')
@@ -719,6 +728,14 @@ describe('Syncronisation ', () => {
           ]),
         )
       })
+      .then(async () => {
+        const dossiers = await dossierService.repository.find({ where: { demarche: { id: demarche.id } } })
+        const dids = dossiers.map((d) => d.id)
+        await fieldService.repository.delete({ dossierId: In(dids) })
+        await instructionTimeService.repository.delete({ dossier: { id: In(dids) } })
+        await dossierService.repository.delete({ id: In(dids) })
+        await demarcheService.repository.delete({ id: demarche.id })
+      })
   })
 
   it('should associate two organisme upon synchronising', async () => {
@@ -768,7 +785,6 @@ describe('Syncronisation ', () => {
         await fieldService.repository.delete({ dossier: { id: dossierFoundationChocolat.id } })
         await dossierService.repository.delete({ sourceId: '201' })
         await organismeService.repository.delete({ idRnf: '033-FE-00001-02' })
-
         const dossierAssociationFabulous = await dataSource.manager.findOne(
           Dossier,
           {
@@ -799,6 +815,55 @@ describe('Syncronisation ', () => {
         await fieldService.repository.delete({ dossier: { id: dossierAssociationFabulous.id } })
         await dossierService.repository.delete({ sourceId: '202' })
         await organismeService.repository.delete({ idRna: 'W271000008' })
+        await dataSource.manager
+          .createQueryBuilder()
+          .delete()
+          .from(Demarche)
+          .where("\"dsDataJson\"->>'number' = :id", { id: '101' })
+          .execute()
+      })
+  })
+
+  it('should associate prefecture upon synchronising', async () => {
+    return request(app.getHttpServer())
+      .post('/demarches/create')
+      .set('Cookie', [cookies.sudo])
+      .send({
+        idDs: 102,
+      })
+      .expect(201)
+      .then(async (res) => {
+        expect(res.body).toEqual({
+          message: 'Demarche with DS id 102 has been created.',
+        })
+        const dossierMetz = await dataSource.manager.findOne(
+          Dossier,
+          {
+            where: {
+              sourceId: '202',
+            },
+          },
+        )
+        expect(dossierMetz.prefecture).toEqual('57 - Moselle')
+        await fieldService.repository.delete({ dossier: { id: dossierMetz.id } })
+        await dossierService.repository.delete({ sourceId: '202' })
+        const dossierNoPrefecture = await dataSource.manager.findOne(
+          Dossier,
+          {
+            where: {
+              sourceId: '203',
+            },
+          },
+        )
+        expect(dossierNoPrefecture.prefecture).toEqual(null)
+        await fieldService.repository.delete({ dossier: { id: dossierNoPrefecture.id } })
+        await dossierService.repository.delete({ sourceId: '203' })
+        await dataSource.manager
+          .createQueryBuilder()
+          .delete()
+          .from(Demarche)
+          .where("\"dsDataJson\"->>'number' = :id", { id: '102' })
+          .execute()
       })
   })
 })
