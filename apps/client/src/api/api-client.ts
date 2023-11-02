@@ -19,6 +19,7 @@ import type {
   LeanDossierOutputDto,
   IOrganisme,
   PaginationDto,
+  ICustomFilter,
   IDossier,
   IUser,
   ICustomFilter,
