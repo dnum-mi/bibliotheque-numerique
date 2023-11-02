@@ -32,18 +32,18 @@ export class DemarcheConfigurationController {
   }
 
   @Get()
-  @Role(Roles.admin) // TODO: role - filter with options
+  @Role(Roles.admin)
   async getDemarcheConfiguration(
-    @CurrentDemarche() demarche: Partial<Demarche>,
+    @CurrentDemarche() demarche: Demarche,
   ): Promise<MappingColumn[]> {
     this.logger.verbose('getDemarcheConfiguration')
     return demarche.mappingColumns
   }
 
   @Patch(':fieldId')
-  @Role(Roles.admin) // TODO: role - filter with options
+  @Role(Roles.admin)
   async updateOneFieldConfiguration(
-    @CurrentDemarche() demarche: Partial<Demarche>,
+    @CurrentDemarche() demarche: Demarche,
     @Param('fieldId') fieldId: string,
     @Body() dto: UpdateOneFieldConfigurationDto,
   ): Promise<boolean> {

@@ -20,7 +20,7 @@ describe('Dossier listing', () => {
     await dataSource.destroy()
   })
 
-  it('shoud return 401 if not connected', () => {
+  it('Should return 401 if not connected', () => {
     return request(app.getHttpServer())
       .post('/demarches/1/dossiers-search')
       .send({
@@ -29,7 +29,7 @@ describe('Dossier listing', () => {
       .expect(401)
   })
 
-  it('shoud return 403', () => {
+  it('Should return 403', () => {
     return request(app.getHttpServer())
       .post('/demarches/1/dossiers-search')
       .set('Cookie', [cookies.norole])
@@ -39,7 +39,17 @@ describe('Dossier listing', () => {
       .expect(403)
   })
 
-  it('shoud return 404 if demarche doesnt exist', () => {
+  it('Should return 403 wrong demarche', () => {
+    return request(app.getHttpServer())
+      .post('/demarches/2/dossiers-search')
+      .set('Cookie', [cookies.instructor])
+      .send({
+        idDs: 42,
+      })
+      .expect(403)
+  })
+
+  it('Should return 404 if demarche doesnt exist', () => {
     return request(app.getHttpServer())
       .get('/demarches/13847/dossiers-search')
       .set('Cookie', [cookies.superadmin])
