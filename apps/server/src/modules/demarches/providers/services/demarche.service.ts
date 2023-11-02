@@ -1,14 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
-import { Repository } from 'typeorm'
+import { In, Repository } from 'typeorm'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { Demarche } from '../../objects/entities/demarche.entity'
-import { User } from '../../../users/entities/user.entity'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { InjectRepository } from '@nestjs/typeorm'
-import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere'
 import { fixFieldsByIdentificationDictionary } from '../../../dossiers/objects/constante/fix-field.dictionnary'
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
 import { UpdateDemarcheDto } from '@/modules/demarches/objects/dtos/update-demarche.dto'
+import { IRole, isBelowSuperAdmin } from '@biblio-num/shared'
+import { FindManyOptions } from 'typeorm/find-options/FindManyOptions'
+import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere'
 
 @Injectable()
 export class DemarcheService extends BaseEntityService<Demarche> {
@@ -18,13 +19,6 @@ export class DemarcheService extends BaseEntityService<Demarche> {
   ) {
     super(repo, logger)
     this.logger.setContext(this.constructor.name)
-  }
-
-  async findById(id: number): Promise<Demarche> {
-    this.logger.verbose('findById')
-    return super.findOneById(id, {
-      dossiers: true,
-    })
   }
 
   async findByDsId(id: number, select?: (keyof Demarche)[]): Promise<Demarche> {
@@ -38,28 +32,16 @@ export class DemarcheService extends BaseEntityService<Demarche> {
     return query.getOne()
   }
 
-  async findWithPermissions(
-    user: User,
-    filter: FindOptionsWhere<Demarche> = {},
+  async findMultipleDemarche(
+    filter: FindManyOptions<Demarche> = {},
+    role: IRole,
   ): Promise<Demarche[]> {
-    this.logger.verbose('findWithPermissions')
-    const query = {
-      ...filter,
+    this.logger.verbose('findMultipleDemarche')
+    if (isBelowSuperAdmin(role.label)) {
+      const allowedIds: FindOptionsWhere<Demarche> = { id: In(Object.keys(role.options)) }
+      filter.where = [...[filter.where ?? []].flat(), allowedIds]
     }
-    // eslint-disable-next-line
-    // @ts-ignore TODO: role refacto
-    // const ruleIds = this.getRulesFromUserPermissions(user)
-    // if (ruleIds) {
-    //   query.id = In(ruleIds)
-    // }
-    return super.findWithFilter(query)
-  }
-
-  // eslint-disable-next-line
-  // @ts-ignore TODO: role refacto
-  withPermissions(): boolean {
-    this.logger.verbose('findOneWithPermissions')
-    return true
+    return this.repo.find(filter)
   }
 
   async updateDemarche(

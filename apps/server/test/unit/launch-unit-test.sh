@@ -9,5 +9,5 @@ if [ "x$1" = "xdev" ]
 then
     dotenv -e ./test/.env.test jest -- --config ./test/unit/jest-unit.json --watch --silent=false
 else
-    dotenv -e ./test/.env.test jest -- --config ./test/unit/jest-unit.json --silent=true --detectOpenHandles
+    dotenv -e ./test/.env.test jest -- --config ./test/unit/jest-unit.json --silent=true --detectOpenHandles --coverage=true
 fi

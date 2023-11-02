@@ -7,8 +7,8 @@ items:
     createdAt: 2023-06-12T06:54:45.000Z
     updatedAt: 2023-06-12T06:54:45.000Z
     role: {
-      "label":"sudo",
-      "options":[],
+      "label": "sudo",
+      "options": [ ],
     }
     validated: true
   superadminUser:
@@ -17,7 +17,7 @@ items:
     password: password
     createdAt: 2023-06-12T06:54:45.000Z
     updatedAt: 2023-06-12T06:54:45.000Z
-    role: { label: "superadmin", options:[] }
+    role: { label: "superadmin", options: { } }
     validated: true
   noRoleUser:
     id: 3
@@ -25,7 +25,7 @@ items:
     password: password
     createdAt: 2023-06-12T06:54:45.000Z
     updatedAt: 2023-06-12T06:54:45.000Z
-    role: { label: null, options: [ ] }
+    role: { label: null, options: { } }
     validated: true
   admin1User:
     id: 4
@@ -33,7 +33,7 @@ items:
     password: password
     createdAt: 2023-06-12T06:54:45.000Z
     updatedAt: 2023-06-12T06:54:45.000Z
-    role: { label: "admin", options: [ ] }
+    role: { label: "admin", options: { 2: { national: false, prefectures: [ '75' ] } } }
     validated: true
   instructor1User:
     id: 5
@@ -41,16 +41,15 @@ items:
     password: password
     createdAt: 2023-06-12T06:54:45.000Z
     updatedAt: 2023-06-12T06:54:45.000Z
-    role: { label: "instructor", options: [ ] }
+    role: { label: "instructor", options: { 1: { national: false, prefectures: [ '75' ] }, 5: { national: false, prefectures: [ '57' ] } } }
     validated: true
-#  TODO: Refacto following users
   testPwdUser:
     id: 10
     email: admin@localhost.com
     password: password
     createdAt: 2023-06-12T06:54:45.000Z
     updatedAt: 2023-06-12T06:54:45.000Z
-    role: { label: null, options:[] }
+    role: { label: null, options: { } }
     validated: true
   testNoValidUser:
     id: 12
@@ -58,5 +57,5 @@ items:
     password: password
     createdAt: 2023-06-12T06:54:45.000Z
     updatedAt: 2023-06-12T06:54:45.000Z
-    role: { label: null, options:[] }
+    role: { label: null, options: { } }
     validated: false

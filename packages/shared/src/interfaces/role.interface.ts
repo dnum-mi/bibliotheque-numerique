@@ -1,8 +1,8 @@
-import { RolesKeys } from '../enums'
+import { PrefectureKeys, RolesKeys } from '../enums'
 
 export interface IRoleOption {
   national: boolean;
-  prefectures: string[];
+  prefectures: PrefectureKeys[];
 }
 
 export interface IRole {

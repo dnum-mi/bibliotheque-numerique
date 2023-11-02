@@ -42,10 +42,10 @@ export class DemarcheDossierController {
 
   @HttpCode(200)
   @ApiResponse({ status: 200 })
-  @Role(Roles.superadmin) // TODO: role - filter with options
+  @Role(Roles.instructor)
   @Post('/dossiers-search')
   async searchDossier(@Body() dto: SearchDossierDto,
-                      @CurrentDemarche() demarche: Partial<Demarche>): Promise<DossierSearchOutputDto> {
+                      @CurrentDemarche() demarche: Demarche): Promise<DossierSearchOutputDto> {
     this.logger.verbose('searchDossier')
     return this.dossierSearchService.search(demarche, dto)
   }
@@ -53,9 +53,9 @@ export class DemarcheDossierController {
   @HttpCode(200)
   @ApiResponse({ status: 200 })
   @Post('/fields-search')
-  @Role(Roles.superadmin) // TODO: role - filter with options
+  @Role(Roles.instructor)
   async searchFields(@Body() dto: SearchDossierDto,
-                     @CurrentDemarche() demarche: Partial<Demarche>): Promise<FieldSearchOutputDto> {
+                     @CurrentDemarche() demarche: Demarche): Promise<FieldSearchOutputDto> {
     this.logger.verbose('searchDossier')
     return this.fieldSearchService.search(demarche, dto)
   }
@@ -80,10 +80,10 @@ export class DemarcheDossierController {
   @Header('Content-type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
   @Header('Content-Disposition', 'export.xlsx')
   @Post('/dossiers-search/export/xlsx')
-  @Role(Roles.superadmin) // TODO: role - filter with options
+  @Role(Roles.instructor) // TODO: role - filter with options
   async searchDossierExport(@Body() dto: SearchDossierDto,
                             @Res() res: ServerResponse,
-                            @CurrentDemarche() demarche: Partial<Demarche>): Promise<void> {
+                            @CurrentDemarche() demarche: Demarche): Promise<void> {
     this.logger.verbose('searchDossierExport')
     const data = (await this.dossierSearchService.search(demarche, dto, true)).data
     this._fromDataToXlsx(demarche.mappingColumns, data).pipe(res)
@@ -95,10 +95,10 @@ export class DemarcheDossierController {
   @Header('Content-type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
   @Header('Content-Disposition', 'export.xlsx')
   @Post('/fields-search/export/xlsx')
-  @Role(Roles.superadmin) // TODO: role - filter with options
+  @Role(Roles.instructor) // TODO: role - filter with options
   async searchFieldsExport(@Body() dto: SearchDossierDto,
                      @Res() res: ServerResponse,
-                     @CurrentDemarche() demarche: Partial<Demarche>): Promise<void> {
+                     @CurrentDemarche() demarche: Demarche): Promise<void> {
     this.logger.verbose('searchDossierExport')
     const data = (await this.fieldSearchService.search(demarche, dto, true)).data
     this._fromDataToXlsx(demarche.mappingColumns, data).pipe(res)

@@ -44,15 +44,15 @@ describe('Demarches (e2e)', () => {
       expect(body).toHaveLength(nbr)
     })
 
-    // TODO: role - only demarche accessible by instructor
-    // it('should have one demarche 2 ', async () => {
-    //   const { body } = await request(app.getHttpServer())
-    //     .get('/demarches')
-    //     .set('Cookie', [cookies.superadmin])
-    //     .expect(200)
-    //   expect(body).toHaveLength(1)
-    //   expect(body[0]).toHaveProperty('id', 3)
-    // })
+    it('should only have my demarche', async () => {
+      const { body } = await request(app.getHttpServer())
+        .get('/demarches')
+        .set('Cookie', [cookies.instructor])
+        .expect(200)
+      expect(body).toHaveLength(2)
+      expect(body[0]).toHaveProperty('id', 1)
+      expect(body[1]).toHaveProperty('id', 5)
+    })
   })
 
   describe('GET /demarches/small', () => {
@@ -79,6 +79,16 @@ describe('Demarches (e2e)', () => {
             expect(Object.keys(d)).toEqual(['id', 'title', 'types', 'dsId'])
           })
         })
+    })
+
+    it('should only have my demarche', async () => {
+      const { body } = await request(app.getHttpServer())
+        .get('/demarches/small')
+        .set('Cookie', [cookies.instructor])
+        .expect(200)
+      expect(body).toHaveLength(2)
+      expect(body[0]).toHaveProperty('id', 1)
+      expect(body[1]).toHaveProperty('id', 5)
     })
   })
 

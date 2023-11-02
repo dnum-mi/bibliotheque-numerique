@@ -36,6 +36,13 @@ describe('Configuration ', () => {
       .expect(403)
   })
 
+  it('GET - Should return 403 on admin to other demarche', async () => {
+    return request(app.getHttpServer())
+      .get('/demarches/1/configurations')
+      .set('Cookie', [cookies.admin])
+      .expect(403)
+  })
+
   it('GET - Should return 404 on configurations', async () => {
     return request(app.getHttpServer())
       .get('/demarches/8765/configurations')

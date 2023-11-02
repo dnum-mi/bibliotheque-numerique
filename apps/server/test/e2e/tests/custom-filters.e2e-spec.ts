@@ -91,10 +91,11 @@ describe('Custom filters (e2e)', () => {
         .expect(401)
     })
 
-    it('Should give 401 of demarche 1', async () => {
+    it('Should give 403 of demarche 2', async () => {
       return request(app.getHttpServer())
-        .get('/demarches/1/custom-filters')
-        .expect(401)
+        .get('/demarches/2/custom-filters')
+        .set('Cookie', [cookies.instructor])
+        .expect(403)
     })
 
     it('Should return my filters of demarche 1', async () => {
@@ -132,6 +133,19 @@ describe('Custom filters (e2e)', () => {
   })
 
   describe('POST /demarches/id/custom-filters', () => {
+    it('Should give 401', async () => {
+      return request(app.getHttpServer())
+        .post('/demarches/2/custom-filters')
+        .expect(401)
+    })
+
+    it('Should give 403 of demarche 2', async () => {
+      return request(app.getHttpServer())
+        .post('/demarches/2/custom-filters')
+        .set('Cookie', [cookies.instructor])
+        .expect(403)
+    })
+
     it('Should give 400 with keys of totals not in columns', async () => {
       return request(app.getHttpServer())
         .post('/demarches/1/custom-filters')
@@ -204,7 +218,6 @@ describe('Custom filters (e2e)', () => {
         })
     })
 
-    // TODO: actually testing interceptor demarche. Should be tested unitary
     it('Should not add a filter with demarche no existing', async () => {
       const filter = {
         name: 'Superman1',

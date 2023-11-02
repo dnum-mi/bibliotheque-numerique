@@ -7,7 +7,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  Request,
+  Request, UseInterceptors,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { DemarcheService } from '../providers/services/demarche.service'
@@ -20,9 +20,12 @@ import {
   demarcheOutputDtoKeys,
 } from '@/modules/demarches/objects/dtos/demarche-output.dto'
 import { CurrentUser } from '@/modules/users/providers/decorators/current-user.decorator'
-import { SmallDemarcheOutputDto, CreateDemarcheDto, Roles } from '@biblio-num/shared'
+import { SmallDemarcheOutputDto, CreateDemarcheDto, Roles, IRole } from '@biblio-num/shared'
 import { UpdateDemarcheDto } from '@/modules/demarches/objects/dtos/update-demarche.dto'
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
+import { CurrentUserRole } from '@/modules/users/providers/decorators/current-user-role.decorator'
+import { CurrentDemarcheInterceptor } from '@/modules/demarches/providers/interceptors/current-demarche.interceptor'
+import { CurrentDemarche } from '@/modules/demarches/providers/decorators/current-demarche.decorator'
 
 @ApiTags('Demarches')
 @Controller('demarches')
@@ -36,11 +39,11 @@ export class DemarcheController {
   }
 
   @Get('small')
-  @Role(Roles.superadmin) // TODO: role - filter with options
-  async allSmallDemarche(): Promise<SmallDemarcheOutputDto[]> {
+  @Role(Roles.instructor)
+  async allSmallDemarche(@CurrentUserRole() role: IRole): Promise<SmallDemarcheOutputDto[]> {
     this.logger.verbose('allSmallDemarche')
-    return this.demarcheService.repository
-      .find({ select: ['id', 'title', 'dsDataJson', 'types'] })
+    return this.demarcheService
+      .findMultipleDemarche({ select: ['id', 'title', 'dsDataJson', 'types'] }, role)
       .then((demarches) => {
         return demarches.map((d) => ({
           id: d.id,
@@ -52,37 +55,20 @@ export class DemarcheController {
   }
 
   @Get()
-  @Role(Roles.superadmin) // TODO: role - filter with options
-  async getDemarches(@CurrentUser() user: User): Promise<Demarche[]> {
+  @Role(Roles.instructor)
+  async getDemarches(@CurrentUserRole() role: IRole): Promise<Demarche[]> {
     this.logger.verbose('getDemarches')
-    return this.demarcheService.findWithPermissions(user)
+    return this.demarcheService.findMultipleDemarche({}, role)
   }
 
-  @Get(':id')
-  @Role(Roles.superadmin) // TODO: role - filter with options
+  @Get(':demarcheId')
+  @Role(Roles.instructor)
+  @UseInterceptors(CurrentDemarcheInterceptor)
   async getDemarcheById(
-    @Request() req,
-    @Param('id', ParseIntPipe) id: number,
+    @CurrentDemarche() demarche: Demarche,
   ): Promise<DemarcheOutputDto> {
     this.logger.verbose('getDemarcheById')
-    // eslint-disable-next-line
-    // @ts-ignore TODO: role refacto
-    // const ruleIds = this.demarcheService.getRulesFromUserPermissions(req.user)
-    // if (
-    //   ruleIds &&
-    //   ruleIds.length > 0 &&
-    //   !ruleIds.find((ruleId) => ruleId === id)
-    // ) {
-    //   throw new HttpException(
-    //     `Not authorized access for demarche id: ${id}`,
-    //     HttpStatus.FORBIDDEN,
-    //   )
-    // }
-
-    return this.demarcheService.findOneOrThrow({
-      where: { id },
-      select: demarcheOutputDtoKeys,
-    })
+    return demarche
   }
 
   @Post('create')
