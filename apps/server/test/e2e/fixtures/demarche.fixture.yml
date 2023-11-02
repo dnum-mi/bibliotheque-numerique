@@ -26,6 +26,7 @@ items:
     dsDataJson: {number: 76}
   configurationDemarche:
     id: 2
+    state: "published"
     title: 'Démarche de test pour les configurations'
     dsDataJson: {number: 77}
     mappingColumns: [

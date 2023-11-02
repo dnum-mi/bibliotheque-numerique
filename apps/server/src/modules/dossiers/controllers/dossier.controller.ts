@@ -1,15 +1,15 @@
 import {
   Controller,
+  ForbiddenException,
   Get,
-  NotFoundException,
   Param,
-  Request,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { DossierService } from '../providers/dossier.service'
 import { Dossier } from '../objects/entities/dossier.entity'
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
-import { Roles } from '@biblio-num/shared'
+import { canAccessDemarche, canAccessPrefectureInDemarche, IRole, Roles } from '@biblio-num/shared'
+import { CurrentUserRole } from '@/modules/users/providers/decorators/current-user-role.decorator'
 
 @ApiTags('Dossiers')
 @Controller('dossiers')
@@ -19,36 +19,23 @@ export class DossierController {
   ) {}
 
   @Get(':id')
-  @Role(Roles.superadmin) // TODO: role - filter with options
-  async findOne (@Request() req, @Param('id') id: string): Promise<Dossier> {
-    const dossier = await this.dossiersService.findOneById(+id, { demarche: true })
-    if (!dossier) {
-      throw new NotFoundException(`Dossier id: ${id} not found`)
+  @Role(Roles.instructor)
+  async findOne (@CurrentUserRole() role: IRole, @Param('id') id: string): Promise<Dossier> {
+    const dossier = await this.dossiersService.findOneOrThrow({
+      where: { id: Number(id) },
+      relations: ['demarche'],
+    })
+    if (!canAccessDemarche(dossier.demarche.id, role)) {
+      throw new ForbiddenException('Vous n\'avez pas accès à la démarche correspondante à ce dossier')
     }
-    return dossier
-    // eslint-disable-next-line
-    // @ts-ignore TODO: role refacto
-    // if (this.demarcheService.withPermissions(req.user, dossier.demarche)) {
-    //   return dossier
-    // } else {
-    //   throw new ForbiddenException(`Not authorized access for dossier id: ${id}`)
-    // }
-  }
-
-  @Get(':id/detail')
-  @Role(Roles.instructor) // TODO: role - filter with options
-  async findOneWithDetail (@Request() req, @Param('id') id: string): Promise<Dossier> {
-    const dossier = await this.dossiersService.findOneById(+id, { demarche: true })
-    if (!dossier) {
-      throw new NotFoundException(`Dossier id: ${id} not found`)
+    const fullDossier = canAccessPrefectureInDemarche(dossier.prefecture, role, dossier.demarche.id)
+    return {
+      ...dossier,
+      dsDataJson: {
+        ...dossier.dsDataJson,
+        annotations: fullDossier ? dossier.dsDataJson.annotations : [],
+        messages: fullDossier ? dossier.dsDataJson.messages : [],
+      },
     }
-    return dossier
-    // eslint-disable-next-line
-    // @ts-ignore TODO: role refacto
-    // if (this.demarcheService.withPermissions(req.user, dossier.demarche)) {
-    //   return dossier
-    // } else {
-    //   throw new ForbiddenException(`Not authorized access for dossier id: ${id}`)
-    // }
   }
 }
