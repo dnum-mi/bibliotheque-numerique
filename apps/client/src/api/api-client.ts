@@ -229,7 +229,7 @@ export const usersApiClient = {
 
   async updatePassword (updateUserPassword: UpdateUserPasswordDto) {
     try {
-      const response = await apiClientInstance.put(usersRoutes, updateUserPassword)
+      const response = await apiClientAuthInstance.put(usersRoutes, updateUserPassword)
       return response.data
     } catch (error) {
       if (error && error instanceof AxiosError) {
@@ -272,7 +272,7 @@ export const usersApiClient = {
   },
 
   async resetPassword (resetPasswordInput: ResetPasswordInputDto) {
-    apiClientInstance.post('/users/reset-password', resetPasswordInput)
+    apiClientAuthInstance.post('/users/reset-password', resetPasswordInput)
   },
 
   async validEmail (token: string) {
