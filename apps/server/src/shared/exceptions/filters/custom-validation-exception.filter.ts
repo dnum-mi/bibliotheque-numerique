@@ -27,7 +27,7 @@ export class CustomValidationExceptionFilter implements ExceptionFilter {
         },
         path: httpAdapter.getRequestUrl(ctx.getRequest()) as string,
       },
-      424,
+      400,
     )
   }
 }

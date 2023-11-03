@@ -6,6 +6,7 @@ export interface IUser {
   email: string
   lastname: string
   firstname: string
+  job: string | null
   password: string
   role: IRole
   validated: boolean

@@ -49,6 +49,13 @@ export class User extends BaseEntity implements IUser {
 
   @Column({
     type: 'varchar',
+    nullable: true,
+    default: null,
+  })
+  job: string
+
+  @Column({
+    type: 'varchar',
     nullable: false,
     select: false,
   })

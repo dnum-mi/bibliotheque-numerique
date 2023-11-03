@@ -46,11 +46,12 @@ describe('file-storage (e2e)', () => {
         .get('/files/toto')
         .set('Cookie', [cookies.norole])
         .expect(400)
-        .expect({
-          statusCode: 400,
-          message: 'Bad Request Exception',
-          data: {},
-          path: '/files/toto',
+        .expect(({ body }) => {
+          expect(body).toMatchObject({
+            statusCode: 400,
+            message: 'Validation failed',
+            path: '/files/toto',
+          })
         })
     })
 
