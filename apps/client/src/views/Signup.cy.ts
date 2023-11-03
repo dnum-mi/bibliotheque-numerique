@@ -6,11 +6,11 @@ describe('<Signup />', () => {
     cy.get('[type=submit]').as('submitBtn')
     cy.get('@submitBtn').should('be.disabled')
 
-    cy.get('#firstName').type('d')
+    cy.get('#firstname').type('d')
     cy.get('.fr-error-text').should('contain.text', 'Ceci ne semble pas être un prénom')
     cy.get('@submitBtn').should('be.disabled')
 
-    cy.get('#lastName').type('l')
+    cy.get('#lastname').type('l')
     cy.get('.fr-error-text').should('contain.text', 'Ceci ne semble pas être un nom')
     cy.get('@submitBtn').should('be.disabled')
 
@@ -27,10 +27,10 @@ describe('<Signup />', () => {
     cy.get('[type=submit]').as('submitBtn')
     cy.get('@submitBtn').should('be.disabled')
 
-    cy.get('#firstName').type('dubois')
+    cy.get('#firstname').type('dubois')
     cy.get('.fr-error-text').should('not.exist')
     cy.get('@submitBtn').should('be.disabled')
-    cy.get('#lastName').type('louis')
+    cy.get('#lastname').type('louis')
     cy.get('.fr-error-text').should('not.exist')
     cy.get('@submitBtn').should('be.disabled')
     cy.get('#email').type('louis.dubois@interieur.gouv.fr')
