@@ -38,6 +38,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     default:
       message = 'Erreur serveur, l’administrateur a été prévenu'
       this.logger.error(exception as Error)
+      this.logger.debug((exception as Error).stack)
     }
 
     const responseBody = {
