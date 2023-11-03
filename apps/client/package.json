@@ -18,7 +18,7 @@
     "pretest:e2e": "npm run build",
     "pretest:e2e:ci": "npm run build",
     "preview": "vite preview --port 5050",
-    "test": "run-s test:unit test:ct:ci",
+    "test": "run-s test:unit test:ct:ci dev:e2e:ci",
     "test:ct": "cypress open --component",
     "test:ct:ci": "NODE_ENV=production cypress run --component",
     "test:e2e": "start-server-and-test preview http://127.0.0.1:5050/ 'cypress open --e2e'",
