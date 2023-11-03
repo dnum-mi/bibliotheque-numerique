@@ -188,6 +188,7 @@ describe('users (e2e)', () => {
       email: faker.internet.email(),
       lastname: 'De la jungle',
       firstname: 'George',
+      job: 'King',
     }
 
     it('Should return error 400 if email is not valid', async () => {

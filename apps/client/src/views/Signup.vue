@@ -17,9 +17,10 @@ import PasswordHint from '@/components/PasswordHint.vue'
 const router = useRouter()
 
 const validationSchema = toTypedSchema(z.object({
-  firstName: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).min(2, 'Ceci ne semble pas être un prénom'),
-  lastName: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).min(2, 'Ceci ne semble pas être un nom'),
+  firstname: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).min(2, 'Ceci ne semble pas être un prénom'),
+  lastname: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).min(2, 'Ceci ne semble pas être un nom'),
   email: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).email('Ceci semble être une adresse email invalide'),
+  job: z.string(),
   password: passwordValidator,
 }))
 
@@ -44,8 +45,9 @@ const onSubmit = handleSubmit(async (formValue: CreateUserDto) => {
   }
 })
 
-const { value: firstNameValue, errorMessage: firstNameError } = useField<string>('firstName')
-const { value: lastNameValue, errorMessage: lastNameError } = useField<string>('lastName')
+const { value: firstnameValue, errorMessage: firstnameError } = useField<string>('firstname')
+const { value: lastnameValue, errorMessage: lastnameError } = useField<string>('lastname')
+const { value: jobValue, errorMessage: jobError } = useField<string>('job')
 const { value: emailValue, errorMessage: emailError } = useField<string>('email')
 const { value: passwordValue, errorMessage: passwordError } = useField<string>('password')
 </script>
@@ -64,17 +66,19 @@ const { value: passwordValue, errorMessage: passwordError } = useField<string>('
           >
             Inscrivez-vous
           </h5>
+          <!-- FORM -->
           <form
             class="card"
             @submit="onSubmit"
           >
+            <!-- firstname -->
             <DsfrInputGroup
-              :is-valid="firstNameError"
-              :error-message="firstNameError"
+              :is-valid="firstnameError"
+              :error-message="firstnameError"
             >
               <DsfrInput
-                id="firstName"
-                v-model="firstNameValue"
+                id="firstname"
+                v-model="firstnameValue"
                 label="Prénom"
                 label-visible
                 placeholder="Dubois"
@@ -87,13 +91,14 @@ const { value: passwordValue, errorMessage: passwordError } = useField<string>('
               </DsfrInput>
             </DsfrInputGroup>
 
+            <!-- lastname -->
             <DsfrInputGroup
-              :is-valid="lastNameError"
-              :error-message="lastNameError"
+              :is-valid="lastnameError"
+              :error-message="lastnameError"
             >
               <DsfrInput
-                id="lastName"
-                v-model="lastNameValue"
+                id="lastname"
+                v-model="lastnameValue"
                 label="Nom"
                 label-visible
                 placeholder="Louis"
@@ -106,6 +111,22 @@ const { value: passwordValue, errorMessage: passwordError } = useField<string>('
               </DsfrInput>
             </DsfrInputGroup>
 
+            <!-- job -->
+            <DsfrInputGroup
+              :is-valid="jobError"
+              :error-message="jobError"
+            >
+              <DsfrInput
+                id="job"
+                v-model="jobValue"
+                label="Intitulé du poste"
+                label-visible
+                placeholder="Premier ministre"
+                type="text"
+              />
+            </DsfrInputGroup>
+
+            <!-- EMAIL -->
             <DsfrInputGroup
               :is-valid="emailError"
               :error-message="emailError"
@@ -125,6 +146,7 @@ const { value: passwordValue, errorMessage: passwordError } = useField<string>('
               </DsfrInput>
             </DsfrInputGroup>
 
+            <!-- PASSWORD -->
             <ToggleInputPassword
               id="password"
               v-model="passwordValue"

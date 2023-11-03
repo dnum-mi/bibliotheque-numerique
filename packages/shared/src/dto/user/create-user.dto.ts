@@ -16,6 +16,12 @@ export class CreateUserDto {
   lastname: string
 
   @ApiProperty({
+    description: 'Métier de l’utilisateur',
+    nullable: true,
+  })
+  job: string | null
+
+  @ApiProperty({
     description: 'Adresse courriel de l’utilisateur',
   })
   @IsEmail(undefined, { message: 'Cette adresse courriel semble invalide' })
