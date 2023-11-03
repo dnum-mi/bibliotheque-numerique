@@ -7,7 +7,7 @@ const goodPassword2 = 'abcd1234ABCD#!*0124'
 
 describe('<UpdatePassword />', () => {
   it('renders sucess', () => {
-    cy.intercept('/api/users/user', { success: true })
+    cy.intercept('/api/users', { success: true })
     cy.mount(UpdatePassword, { props: { token: 'token' } })
 
     cy.get('#newPassword').type(shortPassword)
@@ -45,7 +45,7 @@ describe('<UpdatePassword />', () => {
 })
 
 function failedTest (statusCode, message) {
-  cy.intercept('/api/users/user', { statusCode, message: 'erreur ...' })
+  cy.intercept('/api/users', { statusCode, message: 'erreur ...' })
   cy.on('uncaught:exception', (err, runnable) => {
     expect(err.message).to.include(message)
     return true

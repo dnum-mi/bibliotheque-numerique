@@ -78,6 +78,7 @@ const onCloseAlert = () => {
               label="Saisir votre nouveau mot de passe"
               :password-error="newPasswordError"
             />
+            <PasswordHint :password="newPasswordValue" />
             <ToggleInputPassword
               id="confirmPassword"
               v-model="confirmPasswordValue"
