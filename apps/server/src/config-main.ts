@@ -1,7 +1,7 @@
 import * as passport from 'passport'
 import * as session from 'express-session'
 import { sessionSecret } from './modules/auth/objects/constants'
-import { INestApplication, ValidationPipe } from '@nestjs/common'
+import { INestApplication } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { LoggerService } from './shared/modules/logger/logger.service'
 import { HttpAdapterHost } from '@nestjs/core'

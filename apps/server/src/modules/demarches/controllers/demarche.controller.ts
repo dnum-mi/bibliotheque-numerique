@@ -7,19 +7,16 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  Request, UseInterceptors,
+  UseInterceptors,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { DemarcheService } from '../providers/services/demarche.service'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { Demarche } from '../objects/entities/demarche.entity'
 import { DemarcheSynchroniseService } from '../providers/services/demarche-synchronise.service'
-import { User } from '../../users/entities/user.entity'
 import {
   DemarcheOutputDto,
-  demarcheOutputDtoKeys,
 } from '@/modules/demarches/objects/dtos/demarche-output.dto'
-import { CurrentUser } from '@/modules/users/providers/decorators/current-user.decorator'
 import { SmallDemarcheOutputDto, CreateDemarcheDto, Roles, IRole } from '@biblio-num/shared'
 import { UpdateDemarcheDto } from '@/modules/demarches/objects/dtos/update-demarche.dto'
 import { Role } from '@/modules/users/providers/decorators/role.decorator'

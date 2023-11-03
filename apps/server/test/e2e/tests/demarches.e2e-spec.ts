@@ -146,6 +146,7 @@ describe('Demarches (e2e)', () => {
       )
     })
 
+    // eslint-disable-next-line max-len
     it('Should patch identification should delete fix-field of intersection into mappingColumn with identification equal to null and types undefined.', async () => {
       const { body } = await request(app.getHttpServer())
         .patch('/demarches/6')

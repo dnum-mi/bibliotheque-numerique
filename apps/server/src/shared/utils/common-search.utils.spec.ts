@@ -723,6 +723,7 @@ describe('Common search utils', () => {
           true,
         ),
       ).toEqual(
+        // eslint-disable-next-line max-len
         '((EXISTS (SELECT 1 FROM UNNEST("I09") AS item WHERE item ILIKE \'%to%\'))) AND ((EXISTS (SELECT 1 FROM UNNEST("I08") AS item WHERE item > 10000)) OR (EXISTS (SELECT 1 FROM UNNEST("I08") AS item WHERE item > 20000)))',
       )
     })
