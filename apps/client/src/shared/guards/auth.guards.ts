@@ -1,4 +1,3 @@
-import { useRoute } from 'vue-router'
 import { useUserStore } from '../../stores'
 
 export function isAuthenticatedGuard () {

@@ -1,9 +1,11 @@
 <script lang="ts" setup>
-import { defineProps, computed } from 'vue'
+import { computed } from 'vue'
 import slugify from 'slugify'
+
+import type { FormatFunctionRefKeys } from '@biblio-num/shared'
+
 import delayStateBadge from '@/components/Badges/DelayStateBadge.vue'
 import AgGridAttachmentCell from '@/components/ag-grid/AgGridAttachmentCell.vue'
-import type { FormatFunctionRefKeys } from '@biblio-num/shared'
 
 const props = defineProps<{ params: {value: string, column: {type: string, formatFunctionRef: FormatFunctionRefKeys }} }>()
 

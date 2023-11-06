@@ -5,9 +5,11 @@ import { DsfrAlert } from '@gouvminint/vue-dsfr'
 import type { Message } from '@/composables/use-toaster'
 
 defineProps<{ messages: Message[] }>()
+
 const emit = defineEmits<{
   'close-message': [id: string]
 }>()
+
 const close = (id: string) => emit('close-message', id)
 </script>
 
@@ -19,13 +21,16 @@ const close = (id: string) => emit('close-message', id)
       tag="div"
       class="toasters"
     >
-      <DsfrAlert
+      <template
         v-for="message in messages"
         :key="message.id"
-        class="app-alert"
-        v-bind="message"
-        @close="close(message.id as string)"
-      />
+      >
+        <DsfrAlert
+          class="app-alert"
+          v-bind="message"
+          @close="close(message.id as string)"
+        />
+      </template>
     </transition-group>
   </div>
 </template>
@@ -36,7 +41,7 @@ const close = (id: string) => emit('close-message', id)
   position: fixed;
   bottom: 1rem;
   width: 100%;
-  z-index: 1;
+  z-index: 1750; /* To be on top of .fr-modal which has z-index: 1750 */
 }
 .toasters {
   display: flex;

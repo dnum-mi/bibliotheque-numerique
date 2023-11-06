@@ -1,5 +1,4 @@
 import axios, { AxiosError, type AxiosResponse } from 'axios'
-import { useRouter } from 'vue-router'
 
 import useToaster from '@/composables/use-toaster'
 
@@ -20,8 +19,8 @@ import type {
   LeanDossierOutputDto,
   IOrganisme,
   PaginationDto,
-  SmallCustomFilterDto,
   IDossier,
+  ICustomFilter,
 } from '@biblio-num/shared'
 
 import {
@@ -60,6 +59,7 @@ import {
 import type { IRoleForm } from '@/shared/interfaces'
 
 import { ErrorvalidateEmail } from './ErrorValidEmail'
+import { returnToSignIn } from '@/shared/auth-utils'
 
 const updatePasswordFeedback = {
   401: 'Le token est absent, veuillez fournir un token valide',
@@ -85,20 +85,22 @@ export const apiClientAuthInstance = axios.create({
 })
 
 const toaster = useToaster()
-const router = useRouter()
 apiClientInstance.interceptors.response.use(r => r, (error) => {
-  if ([401, 403].includes(error.response.status)) {
-    toaster.addMessage({ type: 'warning', description: 'Vous n’êtes plus connecté, veuillez vous réauthentifier' })
-    router.push({ name: 'SignIn', query: { redirect: location.href.replace(location.origin, '') } })
-    return error.response
+  if (error.response == null) {
+    return error
+  }
+  if ([401, 403].includes(error.response?.status)) {
+    toaster.addMessage({ id: 'auth', type: 'warning', description: 'Vous n’êtes plus connecté, veuillez vous réauthentifier' })
+    returnToSignIn()
+    return null
   }
   if (error.response.status >= 400 && error.response.status < 500) {
     toaster.addErrorMessage(error.response.data.message)
     return null
   }
   if (error.response.status >= 500) {
-    toaster.addErrorMessage(error.response.data?.message ?? 'Une erreur inconnue est survenue')
     import.meta.env.DEV && console.error(error)
+    toaster.addErrorMessage({ id: '500', description: 'Une erreur inconnue est survenue. L’administrateur a été prévenu' })
   }
 })
 
@@ -248,12 +250,8 @@ export const usersApiClient = {
   },
 
   async fetchCurrentUser (): Promise<UserOutputDto | null> {
-    try {
-      const response = await apiClientInstance.get(profileRoute)
-      return response.data
-    } catch (error) {
-      return null
-    }
+    const response = await apiClientInstance.get(profileRoute)
+    return response?.data
   },
 
   async getUsers (): Promise<UserOutputDto[] | null> {
@@ -276,7 +274,7 @@ export const usersApiClient = {
         validate: true,
         token,
       }
-      const response = await apiClientInstance.post('/users/valid-email', validateEmail)
+      await apiClientInstance.post('/users/valid-email', validateEmail)
     } catch (error) {
       if (error && error instanceof AxiosError) {
         throw new ErrorvalidateEmail(error)
@@ -308,19 +306,19 @@ export const dossiersApiClient = {
 }
 
 export const customFiltersApiClient = {
-  getCustomFilters: async (): Promise<SmallCustomFilterDto[]> => {
+  getCustomFilters: async (): Promise<ICustomFilter[]> => {
     const response = await apiClientInstance.get(getCustomFiltersRoute())
     return response.data
   },
 
-  getCustomFiltersByDemarche: async (id: number): Promise<SmallCustomFilterDto[]> => {
+  getCustomFiltersByDemarche: async (id: number): Promise<ICustomFilter[]> => {
     const response = await apiClientInstance.get(getCustomFiltersByDemarcheRoute(id))
     return response.data
   },
 
   createOneCustomFilter: async (dto: CreateCustomFilterDto, demarcheId: number) => {
     const response = await apiClientInstance.post(getCustomFiltersByDemarcheRoute(demarcheId), dto)
-    return response.data
+    return response?.data
   },
 
   updateOneCustomFilter: async (id: number, dto: PatchCustomFilterDto) => {

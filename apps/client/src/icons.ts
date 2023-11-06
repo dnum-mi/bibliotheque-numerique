@@ -1,10 +1,13 @@
 export {
   CoTrash,
   RiAddCircleLine,
+  RiArrowGoBackLine,
+  RiBarChartBoxLine,
   RiCheckLine,
   RiCheckboxBlankCircleLine,
   RiCheckboxCircleFill,
   RiCloseLine,
+  RiFileCopyLine,
   RiDeleteBinLine,
   RiExternalLinkFill,
   RiEyeFill,

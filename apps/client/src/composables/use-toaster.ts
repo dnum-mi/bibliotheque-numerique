@@ -44,6 +44,9 @@ const useToaster = (defaultTimeout = 10000) => {
   }
 
   function addMessage (message: Message) {
+    if (message.id && timeouts[message.id]) {
+      removeMessage(message.id)
+    }
     message.id ??= getRandomHtmlId('toaster')
     message.titleTag ??= 'h3'
     message.closeable ??= true

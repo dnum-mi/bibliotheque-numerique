@@ -1,12 +1,5 @@
 <script lang="ts" setup>
-import {
-  computed,
-  type ComputedRef,
-  onMounted,
-  ref,
-  type Ref,
-  watch,
-} from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useDebounceFn } from '@vueuse/core'
 import type { GridOptions } from 'ag-grid-enterprise'
@@ -17,6 +10,7 @@ import type {
   GridReadyEvent,
   SelectionChangedEvent,
 } from 'ag-grid-community'
+
 import type {
   CreateCustomFilterDto,
   ICustomFilter,
@@ -30,14 +24,19 @@ import {
   useCustomFilterStore,
   useDemarcheStore,
 } from '@/stores'
-import DemarcheDossiersFilters, { type TotalsAllowed } from '@/views/demarches/demarche/dossiers/DemarcheDossiersFilters.vue'
 import DemarcheDossierCellRenderer from '@/views/demarches/demarche/dossiers/DemarcheDossierCellRenderer.vue'
-import { type SmallFilter } from './DemarcheDossiersFilters.vue'
 import { deepAlmostEqual, selectKeysInObject } from '@/utils/object'
 import AgGridServerSide from '@/components/ag-grid/server-side/AgGridServerSide.vue'
 import { backendFilterToAggFilter } from '@/components/ag-grid/server-side/pagination.utils'
 import { getAgGridFilterFromFieldType } from '@/components/ag-grid/server-side/filters.utils'
 import type { BNColDef } from '@/components/ag-grid/server-side/bnColDef.interface'
+import DemarcheDossiersDisplays, { type TotalsAllowed } from './DemarcheDossiersDisplays.vue'
+
+type DemarcheDossiersProps = {
+  id: string
+  customDisplayId?: string
+}
+const props = defineProps<DemarcheDossiersProps>()
 
 const demarcheStore = useDemarcheStore()
 const router = useRouter()
@@ -50,7 +49,7 @@ const demarcheConfiguration = computed<FrontMappingColumn[]>(() => demarcheStore
 const customFilterStore = useCustomFilterStore()
 const customFilters = computed<ICustomFilter[]>(() => customFilterStore.customFilters as ICustomFilter[])
 const selectedCustomFilter = ref<ICustomFilter | null>(null)
-const totalsAllowed: ComputedRef<TotalsAllowed[] | undefined> = computed(
+const totalsAllowed = computed<TotalsAllowed[] | undefined>(
   () => demarcheConfiguration.value
     .filter(mapping => mapping.type === 'number' && mapping.id !== '96151176-4624-4706-b861-722d2e53545d')
     .map((mapping) => ({ id: mapping.id, columnLabel: mapping.columnLabel } as TotalsAllowed)),
@@ -76,7 +75,7 @@ const specificGridOptions: GridOptions = {
   },
 }
 
-const columnsDef: Ref<BNColDef[] | undefined> = ref()
+const columnsDef = ref<BNColDef[]>()
 
 const computeColumnsDef = () => {
   columnsDef.value = [
@@ -164,7 +163,9 @@ const onGridReady = (event: GridReadyEvent) => {
 }
 
 /* region Filter events */
-const createFilter = async ({ filterName = '', totals = '' }: { filterName: string, totals: string }) => {
+const customDisplayOperationSuccess = ref(true)
+const createFilter = async ({ filterName = '', totals = '' }: { filterName?: string, totals?: string }) => {
+  customDisplayOperationSuccess.value = false
   const createCustomFilterDto: CreateCustomFilterDto = {
     name: filterName,
     groupByDossier: groupByDossier.value,
@@ -176,47 +177,49 @@ const createFilter = async ({ filterName = '', totals = '' }: { filterName: stri
   if (totals) {
     createCustomFilterDto.totals = totals === 'Aucun total' ? [] : [totals]
   }
-  await customFilterStore.createCustomFilter(createCustomFilterDto, demarche.value.id)
-  const filterId = customFilters.value.find((f) => f.name === filterName)?.id || null
-  selectFilter(filterId)
+  try {
+    await customFilterStore.createCustomFilter(createCustomFilterDto, demarche.value.id)
+    const filterId = customFilters.value.find((f) => f.name === filterName)?.id || null
+    selectFilter(filterId)
+    customDisplayOperationSuccess.value = true
+  } catch (error) {
+    import.meta.env.DEV && console.warn(error)
+  }
 }
 const updateFilter = async () => {
+  customDisplayOperationSuccess.value = false
   if (selectedCustomFilter.value) {
     selectedCustomFilter.value.groupByDossier = groupByDossier.value
     selectedCustomFilter.value.columns = paginationDto.value.columns
     selectedCustomFilter.value.sorts = paginationDto.value.sorts
     selectedCustomFilter.value.filters = paginationDto.value.filters || undefined
-    await customFilterStore.updateCustomFilter(selectedCustomFilter.value.id, selectedCustomFilter.value)
+    try {
+      await customFilterStore.updateCustomFilter(selectedCustomFilter.value.id, selectedCustomFilter.value)
+      customDisplayOperationSuccess.value = true
+    } catch (error) {
+      import.meta.env.DEV && console.warn(error)
+    }
   } else {
-    throw new Error('There is not a selected custom filter')
+    throw new Error('Aucun affichage sélectionné, impossible de mettre à jour l’affichage personnalisé')
   }
 }
 const deleteFilter = async () => {
+  customDisplayOperationSuccess.value = false
   if (selectedCustomFilter.value) {
-    await customFilterStore.deleteCustomFilter(selectedCustomFilter.value?.id)
-    selectedCustomFilter.value = null
-    resetAggState()
+    try {
+      await customFilterStore.deleteCustomFilter(selectedCustomFilter.value?.id)
+      selectedCustomFilter.value = null
+      resetAggState()
+      customDisplayOperationSuccess.value = true
+    } catch (error) {
+      import.meta.env.DEV && console.warn(error)
+    }
     await customFilterStore.getCustomFiltersByDemarche(demarche.value.id)
   }
 }
-const selectFilter = (id: number | null) => {
-  if (id === null) {
-    selectedCustomFilter.value = null
-    resetAggState()
-    return
-  }
-  selectedCustomFilter.value = customFilters.value.find((cf) => cf.id === id) || null
-  if (selectedCustomFilter.value) {
-    groupByDossier.value = selectedCustomFilter.value?.groupByDossier
-    paginationDto.value.columns = selectedCustomFilter.value?.columns
-    paginationDto.value.sorts = selectedCustomFilter.value?.sorts || []
-    paginationDto.value.filters = selectedCustomFilter.value?.filters || null
-    updateAggState()
-  } else {
-    throw new Error('Selected custom filter does not exist')
-  }
-}
+
 const updateFilterName = async ({ filterName = '', totals = '' }) => {
+  customDisplayOperationSuccess.value = false
   if (selectedCustomFilter.value) {
     const dto: PatchCustomFilterDto = {
       name: filterName,
@@ -225,12 +228,59 @@ const updateFilterName = async ({ filterName = '', totals = '' }) => {
       dto.totals = totals === 'Aucun total' ? [] : [totals]
     }
     dto.columns = paginationDto.value.columns
-    await customFilterStore.updateCustomFilter(selectedCustomFilter.value.id, dto)
-    selectedCustomFilter.value.name = filterName
-    selectedCustomFilter.value.totals = dto.totals ?? null
+    try {
+      await customFilterStore.updateCustomFilter(selectedCustomFilter.value.id, dto)
+      selectedCustomFilter.value.name = filterName
+      selectedCustomFilter.value.totals = dto.totals ?? null
+      customDisplayOperationSuccess.value = false
+    } catch (error) {
+      import.meta.env.DEV && console.warn(error)
+    }
   }
 }
 
+const addCurrentFilterToRoute = () => {
+  const query: Record<string, string | number | undefined> = {
+    ...route.query,
+    customDisplayId: selectedCustomFilter.value?.id,
+  }
+  if (selectedCustomFilter.value == null) {
+    delete query.customDisplayId
+  }
+  router.push({
+    query,
+  })
+}
+
+watch(() => props.customDisplayId, async (newDisplayId, oldDisplayId) => {
+  if (newDisplayId === oldDisplayId) {
+    return
+  }
+  selectFilter(newDisplayId ? Number(newDisplayId) : null)
+})
+
+const selectFilter = async (id: number | null) => {
+  if (id === null) {
+    selectedCustomFilter.value = null
+    resetAggState()
+    addCurrentFilterToRoute()
+    return
+  }
+  if (customFilterStore.customFilters.length === 0) {
+    await customFilterStore.getCustomFiltersByDemarche(demarche.value.id)
+  }
+  selectedCustomFilter.value = customFilters.value.find((cf) => cf.id === id) || null
+  if (selectedCustomFilter.value) {
+    groupByDossier.value = selectedCustomFilter.value?.groupByDossier
+    paginationDto.value.columns = selectedCustomFilter.value?.columns
+    paginationDto.value.sorts = selectedCustomFilter.value?.sorts || []
+    paginationDto.value.filters = selectedCustomFilter.value?.filters || null
+    updateAggState()
+    addCurrentFilterToRoute()
+  } else {
+    throw new Error('Le filtre sélectionné n’existe pas')
+  }
+}
 /* endregion */
 
 const download = () => {
@@ -250,8 +300,8 @@ const toggleView = useDebounceFn((isActive: boolean) => {
 
 const paginationDto = ref()
 watch(paginationDto, async (newValue, oldValue) => {
-  if (!oldValue && newValue && route.query.customFilter) {
-    selectFilter(Number(route.query.customFilter))
+  if (!oldValue && newValue && route.query.customDisplayId) {
+    selectFilter(Number(route.query.customDisplayId))
   }
 })
 const apiCall = (dto: PaginationDto<unknown>) => {
@@ -261,7 +311,16 @@ const apiCall = (dto: PaginationDto<unknown>) => {
 
 <template>
   <div :style="{ paddingBottom: '2rem' }">
-    <div class="flex justify-between no-label-on-toggle items-center fr-pl-2w fr-pt-2w">
+    <div class="flex justify-end m-2">
+      <DsfrButton
+        :label="'Télécharger'"
+        icon="ri-file-download-fill"
+        small
+        @click="download"
+      />
+    </div>
+
+    <div class="flex justify-between no-label-on-toggle items-center fr-pl-2w">
       <div class="flex gap-2">
         <div>
           <DsfrButton
@@ -282,23 +341,18 @@ const apiCall = (dto: PaginationDto<unknown>) => {
             Vue par dossier
           </DsfrButton>
         </div>
-        <DsfrButton
-          :label="'Télécharger'"
-          icon="ri-file-download-fill"
-          small
-          @click="download"
-        />
       </div>
-      <DemarcheDossiersFilters
-        :filters="customFilters as SmallFilter[]"
-        :selected-filter="selectedCustomFilter as SmallFilter"
+      <DemarcheDossiersDisplays
+        :displays="customFilters as ICustomFilter[]"
+        :selected-display="selectedCustomFilter as ICustomFilter"
         :pagination-changed="paginationChanged"
         :totals-allowed="totalsAllowed"
-        @create-filter="createFilter($event)"
-        @update-filter="updateFilter()"
-        @update-filter-name="updateFilterName($event)"
-        @delete-filter="deleteFilter()"
-        @select-filter="selectFilter($event)"
+        :operation-success="customDisplayOperationSuccess"
+        @create-display="createFilter($event)"
+        @update-display="updateFilter()"
+        @update-display-name="updateFilterName($event)"
+        @delete-display="deleteFilter()"
+        @select-display="selectFilter($event)"
       />
     </div>
     <div

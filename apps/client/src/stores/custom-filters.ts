@@ -17,8 +17,11 @@ export const useCustomFilterStore = defineStore('custom-filter', () => {
   }
 
   const createCustomFilter = async (dto: CreateCustomFilterDto, demarcheId: number) => {
-    await apiClient.createOneCustomFilter(dto, demarcheId)
-    await getCustomFiltersByDemarche(demarcheId)
+    const customDisplay = await apiClient.createOneCustomFilter(dto, demarcheId)
+    if (customDisplay == null) {
+      throw new Error('Custom filter creation failed')
+    }
+    getCustomFiltersByDemarche(demarcheId)
   }
 
   const updateCustomFilter = async (id: number, dto: PatchCustomFilterDto) => {
