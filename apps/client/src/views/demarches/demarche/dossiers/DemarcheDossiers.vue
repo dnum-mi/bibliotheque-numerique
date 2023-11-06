@@ -29,7 +29,7 @@ import { deepAlmostEqual, selectKeysInObject } from '@/utils/object'
 import AgGridServerSide from '@/components/ag-grid/server-side/AgGridServerSide.vue'
 import { backendFilterToAggFilter } from '@/components/ag-grid/server-side/pagination.utils'
 import { getAgGridFilterFromFieldType } from '@/components/ag-grid/server-side/filters.utils'
-import type { BNColDef } from '@/components/ag-grid/server-side/bnColDef.interface'
+import type { BNColDef } from '@/components/ag-grid/server-side/bn-col-def.interface'
 import DemarcheDossiersDisplays, { type TotalsAllowed } from './DemarcheDossiersDisplays.vue'
 
 type DemarcheDossiersProps = {
@@ -135,6 +135,7 @@ watch(demarche, async (newValue) => {
   computeColumnsDef()
   await customFilterStore.getCustomFiltersByDemarche(newValue.id)
 })
+
 watch(fetching, () => {
   if (!fetching.value) agGridComponent.value?.refresh()
 })

@@ -7,7 +7,25 @@ import type { FormatFunctionRefKeys } from '@biblio-num/shared'
 import delayStateBadge from '@/components/Badges/DelayStateBadge.vue'
 import AgGridAttachmentCell from '@/components/ag-grid/AgGridAttachmentCell.vue'
 
-const props = defineProps<{ params: {value: string, column: {type: string, formatFunctionRef: FormatFunctionRefKeys }} }>()
+// TODO: check into @biblio-num/shared
+const FieldType = {
+  string: 'string',
+  number: 'number',
+  enum: 'enum',
+  date: 'date',
+  boolean: 'boolean',
+  file: 'file',
+} as const
+
+const props = defineProps<{
+  params: {
+    value: string
+    column: {
+      type: string
+      formatFunctionRef: FormatFunctionRefKeys
+    }
+  }
+}>()
 
 /* region all cell */
 const cellValues = computed(() => {
@@ -50,6 +68,8 @@ const giveStatusType = (status: string): dsfrType => {
   return statusDictionary[status]?.type || 'info'
 }
 /* endregion */
+
+const formattedNumber = computed(() => new Intl.NumberFormat('fr-FR').format(Number(props.params.value)))
 
 /* region PAYS region */
 const getFlagURL = (countryName: string) => {
@@ -132,7 +152,15 @@ const getFlagURL = (countryName: string) => {
 
       <!-- Default-->
       <template v-else>
-        {{ cellValue ?? '' }}
+        <span
+          v-if="params.column.type === FieldType.number"
+          class="block  text-right"
+        >
+          {{ formattedNumber }}
+        </span>
+        <template v-else>
+          {{ cellValue ?? '' }}
+        </template>
       </template>
     </div>
     <!--  date -->
