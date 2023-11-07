@@ -23,7 +23,7 @@ export class DossierController {
   async findOne (@CurrentUserRole() role: IRole, @Param('id') id: string): Promise<Dossier> {
     const dossier = await this.dossiersService.findOneOrThrow({
       where: { id: Number(id) },
-      relations: ['demarche'],
+      relations: ['demarche', 'organisme'],
     })
     if (!canAccessDemarche(dossier.demarche.id, role)) {
       throw new ForbiddenException('Vous n’avez pas accès à la démarche correspondante à ce dossier')

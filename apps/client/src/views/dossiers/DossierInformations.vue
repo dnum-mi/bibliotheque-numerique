@@ -19,7 +19,7 @@ const etat = computed(() => props.datas?.state?.toUpperCase() || '')
 </script>
 
 <template>
-  <div class="fr-container">
+  <div class="fr-pl-2v">
     <div class="fr-grid-row">
       <div class="fr-col-2">
         <label class="bn-fiche-sub-title--label">PRÉFECTURE</label>
@@ -44,9 +44,3 @@ const etat = computed(() => props.datas?.state?.toUpperCase() || '')
     </div>
   </div>
 </template>
-
-<style scoped>
-.fr-container {
-  padding: 0;
-}
-</style>

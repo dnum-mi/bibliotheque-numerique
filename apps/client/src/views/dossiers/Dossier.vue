@@ -1,9 +1,8 @@
 <script lang="ts" setup>
-import { faker } from '@faker-js/faker'
 import { useRoute } from 'vue-router'
 import { computed, onMounted, ref } from 'vue'
 
-import type { DossierOutputDto } from '@biblio-num/shared'
+import type { Champ, DossierOutputDto, PieceJustificativeChamp, DossierMessage } from '@biblio-num/shared'
 
 import { useDossierStore } from '@/stores/dossier'
 import LayoutFiche from '@/components/Layout/LayoutFiche.vue'
@@ -13,53 +12,43 @@ import DossierAnnotations from './DossierAnnotations.vue'
 import DossierMessages from './DossierMessages.vue'
 import DossierHeader from './DossierHeader.vue'
 import DossierMessagerie from './DossierMessagerie.vue'
-import { LOCALE_FOR_DATE_TIME } from '@/config'
+import { copyCurrentUrlInClipboard, formatForMessageDate } from '@/utils'
 
 const dossierStore = useDossierStore()
 const dossier = computed<DossierOutputDto | undefined>(() => dossierStore?.dossier)
-const dossierDS = computed<DossierOutputDto['dsDataJson'] | undefined>(() => dossierStore?.dossier?.dsDataJson)
+const dossierDS = computed<DossierOutputDto['dsDataJson'] | undefined>(() => dossier.value?.dsDataJson)
 
-/* region Fake data */
-const attachedFilesNb = computed(() => 3)
-const hasAccessToDetails = computed(() => true)
+const messages = computed(() => dossier.value?.dsDataJson.messages.map(({ id, createdAt, body, email, attachments, attachment }: DossierMessage) => ({
+  id,
+  date: formatForMessageDate(new Date(createdAt)),
+  email,
+  body,
+  attachments: [...(attachments ?? []), ...(attachment ? [attachment] : [])],
+})))
 
-const possibleExtensions = ['pdf', 'doc', 'docx', 'xsl', 'xslx', 'jpg', 'jpeg', 'png', 'gif', 'txt', 'csv', 'odt', 'ods']
-const generateAttachment = () => ({
-  name: faker.system.fileName().split('.').slice(0, -1).join('.') // Remove extension
-    .concat('.', faker.helpers.arrayElement(possibleExtensions)), // Add random extension from possibleExtensions
-  size: `${faker.string.numeric({ length: { min: 1, max: 3 } })} Mo`,
-})
-const generateMessage = () => ({
-  id: 1,
-  title: 'Message 1',
-  from: faker.internet.email({
-    firstName: faker.person.firstName().toLocaleLowerCase(),
-    lastName: faker.person.lastName().toLocaleLowerCase(),
-    provider: 'interieur.gouv.fr',
-  }),
-  date: new Intl.DateTimeFormat(LOCALE_FOR_DATE_TIME, { dateStyle: 'long', timeStyle: 'medium' }).format(faker.date.past()),
-  body: faker.lorem.paragraph(),
-  attachments: Array.from({ length: faker.number.int({ min: 0, max: 3 }) }, generateAttachment),
-})
-const messages = Array.from({ length: 25 }, generateMessage)
-/* endregion Fake data */
+const annotations = computed(() => dossier.value?.dsDataJson.annotations)
 
-const tabTitles = [
+const attachments = computed(
+  () => dossierDS.value?.champs
+    .reduce((files: Champ[], champ: PieceJustificativeChamp) => {
+      if (champ.__typename === 'PieceJustificativeChamp' && champ.file != null) {
+        return [...files, champ.file]
+      }
+      return files
+    }, []),
+)
+
+const tabTitles = computed(() => [
   {
     title: 'Demande',
   },
-  ...(hasAccessToDetails.value
-    ? [
-        {
-          title: 'Annotations privées',
-        },
-        {
-          title: `Piecès jointes (${attachedFilesNb.value})`,
-        },
-      ]
-    : []
-  ),
-]
+  ...annotations.value?.length
+    ? [{ title: 'Annotations privées' }]
+    : [],
+  ...attachments.value?.length
+    ? [{ title: `Pièces jointes (${attachments.value.length})` }]
+    : [],
+])
 const initialSelectedIndex = 0
 const selectedTabIndex = ref(0)
 function selectTab (idx:number) {
@@ -76,10 +65,16 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="flex  gap-2  flex-grow  min-h-0  overflow-auto">
-    <div class="organisme  min-h-0  fr-pl-2v overflow-auto">
-      <LayoutFiche>
-        <template #title>
+  <div class="flex  gap-2  flex-grow  overflow-auto">
+    <div class="flex-basis-[60%]  overflow-auto">
+      <LayoutFiche
+        title-bg-color="var(--pink-macaron-main-689)"
+        title-fg-color="var(--text-inverted-grey)"
+      >
+        <template
+          v-if="dossier"
+          #title
+        >
           <DossierHeader :dossier="dossier" />
         </template>
         <template #sub-title>
@@ -87,6 +82,7 @@ onMounted(async () => {
         </template>
         <template #content>
           <DsfrTabs
+            class="fr-ml-2w"
             tab-list-name="tabs-dossier"
             :tab-titles="tabTitles"
             :initial-selected-index="initialSelectedIndex"
@@ -104,7 +100,7 @@ onMounted(async () => {
               tab-id="tab-1"
               :selected="selectedTabIndex === 1"
             >
-              <DossierAnnotations :datas="dossierDS" />
+              <DossierAnnotations :annotations="annotations" />
             </DsfrTabContent>
             <DsfrTabContent
               panel-id="tab-content-2"
@@ -115,22 +111,26 @@ onMounted(async () => {
             </DsfrTabContent>
           </DsfrTabs>
         </template>
+        <template #footer>
+          <DsfrButton
+            type="button"
+            label="Copier le lien"
+            icon="ri-links-line"
+            secondary
+            @click="copyCurrentUrlInClipboard()"
+          />
+        </template>
       </LayoutFiche>
     </div>
     <DossierMessagerie
-      class="messagerie  min-h-0  overflow-auto"
+      class="flex-basis-[40%]  fr-pr-2v  overflow-y-auto"
       :messages="messages"
     />
   </div>
 </template>
 
 <style scoped>
-.organisme {
-  flex-basis: 60%;
-}
 .messagerie {
-  flex-basis: 40%;
-  overflow-y: auto;
   --at-apply: p-4  border-l-solid  border-1  border-[var(--background-contrast-grey)];
 }
 
