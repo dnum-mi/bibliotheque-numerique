@@ -1,30 +1,35 @@
 import {
   ConflictException,
   Injectable,
-  NotFoundException, OnApplicationBootstrap,
+  NotFoundException,
+  OnApplicationBootstrap,
 } from '@nestjs/common'
 import { User } from '../entities/user.entity'
-import { FindOneOptions, Repository } from 'typeorm'
+import { FindOneOptions, In, Repository } from 'typeorm'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { InjectRepository } from '@nestjs/typeorm'
 import { JwtService } from '@nestjs/jwt'
 import { ConfigService } from '@nestjs/config'
 import { SendMailService } from '../../sendmail/sendmail.service'
-import { CreateUserDto } from '@biblio-num/shared'
+import { CreateUserDto, MyProfileOutputDto } from '@biblio-num/shared'
+import { DemarcheService } from '@/modules/demarches/providers/services/demarche.service'
 
 type jwtPlaylod = {
-  user: string | number,
+  user: string | number
 }
 
 @Injectable()
-export class UsersService extends BaseEntityService<User> implements OnApplicationBootstrap {
-  constructor (
+export class UsersService
+  extends BaseEntityService<User>
+  implements OnApplicationBootstrap {
+  constructor(
     protected logger: LoggerService,
     @InjectRepository(User) protected readonly repo: Repository<User>,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly sendMailService: SendMailService,
+    private readonly demarcheService: DemarcheService,
   ) {
     super(repo, logger)
     this.logger.setContext(this.constructor.name)
@@ -40,22 +45,24 @@ export class UsersService extends BaseEntityService<User> implements OnApplicati
 
   private async _upsertDefaultSudoUser(): Promise<void> {
     this.logger.verbose('_upsertDefaultSudoUser')
-    await this.repo
-      .upsert(
-        {
-          email: this.configService.get('sudo-user.email'),
-          password: this.configService.get('sudo-user.hashedPassword'),
-          validated: true,
-          firstname: 'sudo',
-          lastname: 'sudo',
-          skipHashPassword: true,
-          role: { label: 'sudo', options: [] },
-        },
-        { conflictPaths: ['email'] },
-      )
+    await this.repo.upsert(
+      {
+        email: this.configService.get('sudo-user.email'),
+        password: this.configService.get('sudo-user.hashedPassword'),
+        validated: true,
+        firstname: 'sudo',
+        lastname: 'sudo',
+        skipHashPassword: true,
+        role: { label: 'sudo', options: [] },
+      },
+      { conflictPaths: ['email'] },
+    )
   }
 
-  async findByEmail (email: string, select?: FindOneOptions<User>['select']): Promise<User | undefined> {
+  async findByEmail(
+    email: string,
+    select?: FindOneOptions<User>['select'],
+  ): Promise<User | undefined> {
     this.logger.verbose('findByEmail')
     return this.repo.findOne({
       where: { email: email.toLowerCase() },
@@ -63,14 +70,17 @@ export class UsersService extends BaseEntityService<User> implements OnApplicati
     })
   }
 
-  async create (body: CreateUserDto): Promise<User> {
+  async create(body: CreateUserDto): Promise<User> {
     this.logger.verbose('create')
     const userInDb = await this.findByEmail(body.email)
     if (userInDb) {
       if (!userInDb.validated) {
         await this.mailToValidSignUp(userInDb)
       }
-      throw new ConflictException({ message: 'User already exists', data: { withEMailValidated: true } })
+      throw new ConflictException({
+        message: 'User already exists',
+        data: { withEMailValidated: true },
+      })
     }
 
     const user = await this.createAndSave(body)
@@ -80,7 +90,7 @@ export class UsersService extends BaseEntityService<User> implements OnApplicati
     return user
   }
 
-  async findOrCreate (email: string, password): Promise<User> {
+  async findOrCreate(email: string, password): Promise<User> {
     this.logger.verbose('findOrCreate')
     const userInDb = await this.findByEmail(email)
     if (userInDb) {
@@ -92,12 +102,12 @@ export class UsersService extends BaseEntityService<User> implements OnApplicati
     })
   }
 
-  async listUsers (): Promise<User[]> {
+  async listUsers(): Promise<User[]> {
     this.logger.verbose('listUsers')
     return await this.repo.find()
   }
 
-  async getUserById (id: number): Promise<User> {
+  async getUserById(id: number): Promise<User> {
     this.logger.verbose('getUserById')
     return this.findOneById(id).then((user) => {
       if (!user) {
@@ -107,7 +117,7 @@ export class UsersService extends BaseEntityService<User> implements OnApplicati
     })
   }
 
-  async resetPassword (email: string): Promise<void> {
+  async resetPassword(email: string): Promise<void> {
     this.logger.verbose('resetPassword')
     const userInDb = await this.repo.findOne({
       where: { email },
@@ -118,10 +128,16 @@ export class UsersService extends BaseEntityService<User> implements OnApplicati
       return
     }
     const { appUrl, jwtForUrl } = this.createJwtOnUrl({ user: userInDb.id })
-    await this.sendMailService.resetPwd(email, `${appUrl}/update-password/${jwtForUrl}`)
+    await this.sendMailService.resetPwd(
+      email,
+      `${appUrl}/update-password/${jwtForUrl}`,
+    )
   }
 
-  private createJwtOnUrl(playload: jwtPlaylod): {appUrl:string, jwtForUrl: string} {
+  private createJwtOnUrl(playload: jwtPlaylod): {
+    appUrl: string
+    jwtForUrl: string
+  } {
     const jwt = this.jwtService.sign(playload)
     // jwt does not go natively in url. We had to transform it in base64
     const jwtForUrl = Buffer.from(jwt).toString('base64url')
@@ -129,21 +145,47 @@ export class UsersService extends BaseEntityService<User> implements OnApplicati
     return { appUrl, jwtForUrl }
   }
 
-  async updatePassword (user: User, password: string): Promise<void> {
+  async updatePassword(user: User, password: string): Promise<void> {
     user.password = password
     await this.repo.save(user)
   }
 
-  private async mailToValidSignUp (userInDb: User): Promise<void> {
+  private async mailToValidSignUp(userInDb: User): Promise<void> {
     const { appUrl, jwtForUrl } = this.createJwtOnUrl({ user: userInDb.email })
-    await this.sendMailService.validSignUp(userInDb.email, `${appUrl}/valid-email/${jwtForUrl}`)
+    await this.sendMailService.validSignUp(
+      userInDb.email,
+      `${appUrl}/valid-email/${jwtForUrl}`,
+    )
   }
 
-  async validEmail (user: User): Promise<void> {
+  async validEmail(user: User): Promise<void> {
     if (user.validated) {
       this.logger.warn(`User ${user.email} already validated`)
       throw new ConflictException('User already validated')
     }
     await this.repo.update(user.id, { validated: true })
+  }
+
+  async enrichProfileWithDemarche(user: User): Promise<MyProfileOutputDto> {
+    const demarcheIds = Object.keys(user.role.options)
+    const smallDemarches = await this.demarcheService.findMultipleSmallDemarche(
+      { where: { id: In(demarcheIds) } },
+      user.role,
+    )
+    const sdHash = Object.fromEntries(smallDemarches.map((sd) => [sd.id, sd]))
+    delete user.skipHashPassword
+    delete user.password
+    return {
+      ...user,
+      role: {
+        ...user.role,
+        options: Object.fromEntries(
+          Object.entries(user.role.options).map(([id, option]) => [
+            id,
+            { ...option, demarche: sdHash[id] },
+          ]),
+        ),
+      },
+    }
   }
 }

@@ -7,7 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { fixFieldsByIdentificationDictionary } from '../../../dossiers/objects/constante/fix-field.dictionnary'
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
 import { UpdateDemarcheDto } from '@/modules/demarches/objects/dtos/update-demarche.dto'
-import { IRole, isBelowSuperAdmin } from '@biblio-num/shared'
+import { IRole, isBelowSuperAdmin, SmallDemarcheOutputDto } from '@biblio-num/shared'
 import { FindManyOptions } from 'typeorm/find-options/FindManyOptions'
 import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere'
 
@@ -32,13 +32,32 @@ export class DemarcheService extends BaseEntityService<Demarche> {
     return query.getOne()
   }
 
+  async findMultipleSmallDemarche(
+    filter: FindManyOptions<Demarche> = {},
+    role: IRole,
+  ): Promise<SmallDemarcheOutputDto[]> {
+    return this.findMultipleDemarche(
+      { ...filter, select: ['id', 'title', 'dsDataJson', 'types'] },
+      role,
+    ).then((demarches) => {
+      return demarches.map((d) => ({
+        id: d.id,
+        title: d.title,
+        types: d.types,
+        dsId: d.dsDataJson?.number,
+      }))
+    })
+  }
+
   async findMultipleDemarche(
     filter: FindManyOptions<Demarche> = {},
     role: IRole,
   ): Promise<Demarche[]> {
     this.logger.verbose('findMultipleDemarche')
     if (isBelowSuperAdmin(role.label)) {
-      const allowedIds: FindOptionsWhere<Demarche> = { id: In(Object.keys(role.options)) }
+      const allowedIds: FindOptionsWhere<Demarche> = {
+        id: In(Object.keys(role.options)),
+      }
       filter.where = [...[filter.where ?? []].flat(), allowedIds]
     }
     return this.repo.find(filter)

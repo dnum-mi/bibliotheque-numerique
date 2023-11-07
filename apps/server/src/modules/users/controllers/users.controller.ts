@@ -23,6 +23,8 @@ import { ValidSignUpGuard } from '@/modules/users/providers/guards/validate-sign
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
 import { PublicRoute } from '@/modules/users/providers/decorators/public-route.decorator'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
+import { CurrentUser } from '@/modules/users/providers/decorators/current-user.decorator'
+import { User } from '@/modules/users/entities/user.entity'
 
 @ApiTags('Users')
 @Controller('users')
@@ -63,9 +65,9 @@ export class UsersController {
 
   @Get('/me')
   @Role('any')
-  getProfile(@Request() req): Promise<UserOutputDto> {
+  getProfile(@CurrentUser() user: User): Promise<UserOutputDto> {
     this.logger.verbose('getProfile')
-    return this.usersService.findByEmail(req.user.email)
+    return this.usersService.enrichProfileWithDemarche(user)
   }
 
   @Get('/:id')
