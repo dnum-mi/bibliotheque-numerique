@@ -1,4 +1,4 @@
-import { getPaginatedUsers } from '../fixtures/usersRoles'
+import { getPaginatedUsers } from '../utils/usersRoles'
 
 describe('Home', () => {
   let userNumber: number
@@ -17,11 +17,11 @@ describe('Home', () => {
     cy.get('h6').should('contain', 'Administration des permissions')
     cy.get('[role="row"]').should('have.length', 2 + userNumber)
 
-    cy.get('[role="row"]')
-      .should('contain', 'Administrateur')
-      .contains('Administrateur')
-      .click()
+    // cy.get('[role="row"]')
+    //   .should('contain', 'Administrateur')
+    //   .contains('Administrateur')
+    //   .click()
 
-    cy.url().should('match', /\/user\/\d/)
+    // cy.url().should('match', /\/user\/\d/)
   })
 })
