@@ -130,6 +130,21 @@ const routes: RouterOptions['routes'] = [
       roleLevel: Roles.admin,
     },
 
+    children: [
+      {
+        name: 'Admin',
+        path: '',
+        component: () => import('@/views/admin/ListUsers.vue'),
+      },
+      {
+        name: 'User',
+        path: '/user/:id',
+        // TODO: refacto role
+        // beforeEnter: [hasAdminAccessGuard],
+        component: () => import('@/views/admin/User.vue'),
+      },
+
+    ],
   },
   // TODO: refacto role
   // {
