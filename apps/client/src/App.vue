@@ -197,6 +197,11 @@ onErrorCaptured((error: Error | AxiosError) => {
   flex-direction: column;
 }
 
+.raised-top-shadow {
+  background-color: var(--background-raised-grey);
+  filter: drop-shadow(0 -3px 5px var(--shadow-color));
+}
+
 @media screen and (max-width: 1400px) {
   :deep(.fr-header__tools-links .fr-btn) {
     padding: 0.25rem !important;
