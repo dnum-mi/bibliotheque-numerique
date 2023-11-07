@@ -234,7 +234,7 @@ export const usersApiClient = {
   async updatePassword (updateUserPassword: UpdateUserPasswordDto) {
     try {
       const response = await apiClientAuthInstance.put(usersRoutes, updateUserPassword)
-      return response.data
+      return response?.data
     } catch (error) {
       if (error && error instanceof AxiosError) {
         const feedbackCode = (String(error.response?.status)) as keyof typeof updatePasswordFeedback

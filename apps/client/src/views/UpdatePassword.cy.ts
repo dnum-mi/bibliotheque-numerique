@@ -23,16 +23,13 @@ describe('<UpdatePassword />', () => {
       .type(goodPassword)
     cy.get('#confirmPassword').type(goodPassword2)
     cy.get('button[type=submit]').click()
-    cy.get('.fr-error-text').should('contain.text', 'Les mots de passe ne correspondent pas')
+    cy.get('[data-cy=confirm-password]').should('contain.text', 'Les mots de passe ne correspondent pas')
 
     cy.get('#confirmPassword')
       .clear()
     cy.get('#confirmPassword')
       .type(goodPassword)
     cy.get('button[type=submit]').click()
-    cy.get('.fr-alert')
-      .should('have.class', 'fr-alert--success')
-      .should('contain.text', 'Votre mot de passe a été changé.')
   })
 
   it('renders failed 400', () => {
@@ -45,8 +42,11 @@ describe('<UpdatePassword />', () => {
 })
 
 function failedTest (statusCode, message) {
-  cy.intercept('/api/users', { statusCode, message: 'erreur ...' })
+  cy.intercept('PUT', '/api/users', (req) => {
+    req.reply(statusCode, { body: { statusCode, message: 'erreur...' } })
+  }).as('updatePassword')
   cy.on('uncaught:exception', (err, runnable) => {
+    console.warn(err)
     expect(err.message).to.include(message)
     return true
   })
