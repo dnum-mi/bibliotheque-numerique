@@ -83,6 +83,7 @@ const onCloseAlert = () => {
             <ToggleInputPassword
               id="confirmPassword"
               v-model="confirmPasswordValue"
+              data-cy="confirm-password"
               label="Confirmer le nouveau mot de passe "
               :password-error="confirmPasswordError"
             />
