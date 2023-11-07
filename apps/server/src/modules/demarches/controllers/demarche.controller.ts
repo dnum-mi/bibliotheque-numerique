@@ -39,16 +39,7 @@ export class DemarcheController {
   @Role(Roles.instructor)
   async allSmallDemarche(@CurrentUserRole() role: IRole): Promise<SmallDemarcheOutputDto[]> {
     this.logger.verbose('allSmallDemarche')
-    return this.demarcheService
-      .findMultipleDemarche({ select: ['id', 'title', 'dsDataJson', 'types'] }, role)
-      .then((demarches) => {
-        return demarches.map((d) => ({
-          id: d.id,
-          title: d.title,
-          types: d.types,
-          dsId: d.dsDataJson?.number,
-        }))
-      })
+    return this.demarcheService.findMultipleSmallDemarche({}, role)
   }
 
   @Get()

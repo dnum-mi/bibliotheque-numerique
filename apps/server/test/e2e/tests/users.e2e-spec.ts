@@ -148,7 +148,12 @@ describe('users (e2e)', () => {
     })
 
     it('Should 200 to update password ', async () => {
-      const oldPassword = await userService.repository.findOne({ where: { id: 2 }, select: ['password'] }).then((user) => user.password)
+      const oldPassword = await userService.repository
+        .findOne({
+          where: { id: 2 },
+          select: ['password'],
+        })
+        .then((user) => user.password)
       const jwtService = new JwtService({
         secret: jwtConstants.secret,
         signOptions: { expiresIn: '1m' },
@@ -253,6 +258,47 @@ describe('users (e2e)', () => {
         .expect(({ body }) => {
           expect(body).toMatchObject({
             email: 'admin1@localhost.com',
+          })
+        })
+    })
+
+    it('Should return pretty role with demarche name', async () => {
+      await request(app.getHttpServer())
+        .get('/users/me')
+        .set('Cookie', [cookies.instructor])
+        .expect(200)
+        .expect(({ body }) => {
+          expect(body).toEqual({
+            id: 5,
+            email: 'instructor1@localhost.com',
+            validated: true,
+            role: {
+              label: 'instructor',
+              options: {
+                1: {
+
+                  national: false,
+                  prefectures: ['D75'],
+                  demarche: {
+                    id: 1,
+                    title: 'Déclaration de financement étranger',
+                    types: ['ARUP'],
+                    dsId: 76,
+                  },
+                },
+                5: {
+                  national: false,
+                  prefectures: ['D57'],
+                  demarche: {
+                    id: 5,
+                    title:
+                      '[UPDATE-IDENTIFICATION] Déclaration de financement étranger',
+                    types: ['ARUP'],
+                    dsId: 4,
+                  },
+                },
+              },
+            },
           })
         })
     })

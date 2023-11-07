@@ -6,6 +6,7 @@ import { User } from './entities/user.entity'
 import { JwtModule } from '@nestjs/jwt'
 import { SendMailModule } from '../sendmail/sendmail.module'
 import { ConfigModule, ConfigService } from '@nestjs/config'
+import { DemarcheModule } from '@/modules/demarches/demarche.module'
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
       inject: [ConfigService],
     }),
     SendMailModule,
+    DemarcheModule,
   ],
   controllers: [UsersController],
   providers: [UsersService],
