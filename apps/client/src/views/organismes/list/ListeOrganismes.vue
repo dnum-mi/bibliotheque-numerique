@@ -35,12 +35,12 @@ const agGridComponent = ref()
 <template>
   <LayoutList>
     <template #title>
-      <div class="bn-list-search bn-list-search-organisme">
+      <div class="bn-banner  bn-banner--organisme">
         <span
           class="fr-icon-search-line fr-p-1w"
           aria-hidden="true"
         />
-        <h6 class="bn-list-search-title-organisme fr-p-1w fr-m-0">
+        <h6 class="bn-banner-title  fr-p-1w  fr-m-0">
           Rechercher un organisme
         </h6>
       </div>

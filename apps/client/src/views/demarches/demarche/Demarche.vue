@@ -64,8 +64,8 @@ onMounted(() => {
     class="fr-pb-2w"
   >
     <template #title>
-      <div class="bn-list-search bn-list-search-dossier">
-        <h6 class="bn-list-search-title-dossier fr-p-1w fr-m-0">
+      <div class="bn-banner  bn-banner--dossier">
+        <h6 class="bn-banner-title  fr-p-1w  fr-m-0">
           {{ demarche.title }} - N° {{ demarche.dsDataJson?.number || "" }}
         </h6>
       </div>

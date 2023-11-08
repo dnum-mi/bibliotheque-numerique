@@ -7,6 +7,7 @@ export {
   RiAddCircleLine,
   RiArrowGoBackFill,
   RiAttachmentLine,
+  RiBarChartBoxLine,
   RiChat3Line,
   RiArrowGoBackLine,
   RiBarChartBoxLine,

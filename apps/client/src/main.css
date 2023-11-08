@@ -14,47 +14,40 @@ body,
 .fr-container {
   max-width: 100%;
 }
-  
 
-/* Style Biblitique Numerique */
-.bn-list-search {
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
-.bn-list-search-profile {
-  background-color: var(--border-plain-green-bourgeon);
-  color: var(--background-default-grey);
-}
-
-.bn-list-search-organisme {
-  background-color: var(--border-plain-grey);
-  color: var(--background-default-grey);
+/* Style Bibliothèque Numerique */
+.bn-banner {
+  --at-apply: h-full  flex  items-center  p-4;
+  /* Default colors */
+  --bn-bg-title-banner: var(--grey-200-850);
+  --bn-text-title-banner: var(--background-default-grey);
+ 
+  /* Bg and text colors */
+  background-color: var(--bn-bg-title-banner);
+  color: var(--bn-text-title-banner);
 }
 
-.bn-list-search-demarche {
-  background-color: var(--artwork-minor-blue-france);
-  color: var(--background-default-grey);
+.bn-banner--profile {
+  --bn-bg-title-banner: var(--border-plain-green-bourgeon);
+  --bn-text-title-banner: var(--background-default-grey);
 }
 
-.bn-list-search-dossier {
-  background-color: var(--artwork-minor-blue-france);
-  color: var(--background-default-grey);
+.bn-banner--organisme {
+  --bn-bg-title-banner: var(--border-plain-grey);
+  --bn-text-title-banner: var(--background-default-grey);
 }
 
-.bn-list-search-title-profile {
-  color: var(--background-default-grey);
+.bn-banner--demarche {
+  --bn-bg-title-banner: var(--artwork-minor-blue-france);
+  --bn-text-title-banner: var(--background-default-grey);
 }
 
-.bn-list-search-title-organisme {
-  color: var(--background-default-grey);
+.bn-banner--dossier {
+  --bn-bg-title-banner: var(--artwork-minor-blue-france);
+  --bn-text-title-banner: var(--background-default-grey);
 }
 
-.bn-list-search-title-demarche {
-  color: var(--background-default-grey);
-}
-
-.bn-list-search-title-dossier {
+.bn-banner-title {
   color: var(--background-default-grey);
 }
 

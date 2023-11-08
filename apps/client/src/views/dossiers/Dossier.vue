@@ -68,7 +68,7 @@ onMounted(async () => {
   <div class="flex  gap-2  flex-grow  overflow-auto">
     <div class="flex-basis-[60%]  overflow-auto">
       <LayoutFiche
-        title-bg-color="var(--pink-macaron-main-689)"
+        title-bg-color="var(--blue-france-main-525)"
         title-fg-color="var(--text-inverted-grey)"
       >
         <template

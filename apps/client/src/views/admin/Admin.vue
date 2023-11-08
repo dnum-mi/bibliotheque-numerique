@@ -2,22 +2,22 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import type { Ref } from 'vue'
+import { useRouter } from 'vue-router'
 import type { ColDef, SelectionChangedEvent } from 'ag-grid-community'
 
-import LayoutList from '@/components/Layout/LayoutList.vue'
-import AgGridServerSide from '@/components/ag-grid/server-side/AgGridServerSide.vue'
-import { useUserStore } from '@/stores'
-import { baseColDef } from '@/components/ag-grid/server-side/columndef-base'
-import RoleBadgesRenderer from '../../components/Badges/RoleBadgesRenderer.vue'
-import { useRouter } from 'vue-router'
 import { PaginationUserDto } from '@biblio-num/shared'
+
 import { dateToStringFr } from '@/utils'
-// const props = defineProps<{ }>()
+import { baseColDef } from '@/components/ag-grid/server-side/columndef-base'
+import { useUserStore } from '@/stores'
+import AgGridServerSide from '@/components/ag-grid/server-side/AgGridServerSide.vue'
+import LayoutList from '@/components/Layout/LayoutList.vue'
+import RoleBadgesRenderer from '@/components/Badges/RoleBadgesRenderer.vue'
 
 const agGridComponent = ref()
 const router = useRouter()
 
-const columnDefs:Ref<ColDef[]> = ref([
+const columnDefs: Ref<ColDef[]> = ref([
   {
     headerName: 'id',
     field: 'id',
@@ -97,13 +97,12 @@ const onSelectionChanged = (event: SelectionChangedEvent) => {
     })
   }
 }
-
 </script>
 
 <template>
   <LayoutList>
     <template #title>
-      <div class="bn-list-search bn-list-admin">
+      <div class="bn-banner  bn-list-admin">
         <span
           class="fr-p-1w"
         >
@@ -112,7 +111,7 @@ const onSelectionChanged = (event: SelectionChangedEvent) => {
             aria-hidden="true"
           />
         </span>
-        <h6 class="bn-list-search bn-list-admin fr-m-0">
+        <h6 class="bn-list-admin  fr-m-0">
           Administration des permissions
         </h6>
       </div>
