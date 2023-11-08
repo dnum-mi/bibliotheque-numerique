@@ -78,12 +78,12 @@ const rowStyle = { cursor: 'pointer' }
 <template>
   <LayoutList>
     <template #title>
-      <div class="bn-list-search bn-list-search-demarche">
+      <div class="bn-banner  bn-banner--demarche">
         <span
           class="fr-icon-search-line fr-p-1w"
           aria-hidden="true"
         />
-        <h6 class="bn-list-search-title-demarche fr-p-1w fr-m-0">
+        <h6 class="bn-banner-title fr-p-1w fr-m-0">
           Rechercher une démarche
         </h6>
       </div>

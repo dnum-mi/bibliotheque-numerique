@@ -7,12 +7,12 @@ import LayoutList from '@/components/Layout/LayoutList.vue'
 <template>
   <LayoutList>
     <template #title>
-      <div class="bn-list-search bn-list-search-profile">
+      <div class="bn-banner  bn-banner--profile">
         <span
-          class="fr-icon-table-fill fr-p-1w"
+          class="fr-icon-table-fill  fr-p-1w"
           aria-hidden="true"
         />
-        <h6 class="bn-list-search-title-profile fr-p-1w fr-m-0">
+        <h6 class="bn-banner-title  fr-p-1w  fr-m-0">
           Statistiques
         </h6>
       </div>

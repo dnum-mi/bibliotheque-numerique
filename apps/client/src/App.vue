@@ -16,7 +16,8 @@ const serviceTitle = 'Bibliothèque Numérique'
 const serviceDescription = 'Recherchez une démarche, un dossier, un organisme'
 const logoText = ['Ministère', 'de l’intérieur', 'et des outre-mer']
 
-const iconColor = { color: 'var(--red-marianne-425-625)' }
+const redColor = 'var(--red-marianne-425-625)'
+const iconPropsRedColor = { color: redColor }
 
 type QuickLink = {
   label: string;
@@ -31,7 +32,7 @@ const demarcheQuickLink: QuickLink = {
   label: 'Démarches',
   to: { name: routeNames.DEMARCHES },
   icon: 'ri-file-list-2-fill',
-  iconAttrs: { title: 'Démarches' },
+  iconAttrs: { title: 'Démarches', ...iconPropsRedColor },
 }
 
 const unauthenticatedQuickLinks: QuickLink[] = [
@@ -39,13 +40,13 @@ const unauthenticatedQuickLinks: QuickLink[] = [
     label: 'Se connecter',
     to: { name: routeNames.SIGNIN },
     icon: 'ri-lock-line',
-    iconAttrs: { title: 'Se connecter' },
+    iconAttrs: { title: 'Se connecter', ...iconPropsRedColor },
   },
   {
     label: 'S’enregistrer',
     to: { name: routeNames.SIGNUP },
     icon: 'ri-user-line',
-    iconAttrs: { title: 'S’enregistrer' },
+    iconAttrs: { title: 'S’enregistrer', ...iconPropsRedColor },
   },
 ]
 
@@ -67,7 +68,7 @@ const authenticatedQuickLinksDefault: QuickLink[] = [
     label: 'Déconnexion',
     to: { name: routeNames.LOGOUT },
     icon: 'ri-logout-box-r-line',
-    iconAttrs: { title: 'Déconnexion', ...iconColor },
+    iconAttrs: { title: 'Déconnexion', ...iconColor, ...iconPropsRedColor },
   },
 ]
 
@@ -82,7 +83,7 @@ const manageRolesQuickLink = {
   label: 'Administration',
   to: { name: routeNames.ADMIN },
   icon: 'ri-shield-star-line',
-  iconAttrs: { ...iconColor, title: 'Administration' },
+  iconAttrs: { ...iconColor, title: 'Administration', ...iconPropsRedColor },
 }
 
 const userStore = useUserStore()

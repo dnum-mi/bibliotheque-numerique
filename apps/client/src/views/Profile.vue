@@ -1,12 +1,12 @@
 <template>
   <LayoutList>
     <template #title>
-      <div class="bn-list-search bn-list-search-profile">
+      <div class="bn-banner  bn-banner--profile">
         <span
-          class="fr-icon-account-circle-line fr-p-1w"
+          class="fr-icon-account-circle-line  fr-p-1w"
           aria-hidden="true"
         />
-        <h6 class="bn-list-search-title-profile fr-p-1w fr-m-0">
+        <h6 class="bn-banner-title  fr-p-1w  fr-m-0">
           Mon profil
         </h6>
       </div>

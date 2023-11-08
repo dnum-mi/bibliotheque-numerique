@@ -56,7 +56,7 @@ onMounted(async () => {
   >
     <LayoutFiche
       class="flex-basis-[60%]  overflow-auto"
-      title-bg-color="var(--green-menthe-main-548)"
+      title-bg-color="var(--grey-200-850)"
       title-fg-color="var(--text-inverted-grey)"
     >
       <template #title>
