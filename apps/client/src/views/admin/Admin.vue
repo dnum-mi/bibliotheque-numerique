@@ -2,15 +2,16 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import type { Ref } from 'vue'
-import type { ColDef, ValueFormatterParams, SelectionChangedEvent } from 'ag-grid-community'
-import type { IUser, PaginationDto } from '@biblio-num/shared'
+import type { ColDef, SelectionChangedEvent } from 'ag-grid-community'
 
 import LayoutList from '@/components/Layout/LayoutList.vue'
 import AgGridServerSide from '@/components/ag-grid/server-side/AgGridServerSide.vue'
 import { useUserStore } from '@/stores'
 import { baseColDef } from '@/components/ag-grid/server-side/columndef-base'
 import RoleBadgesRenderer from '../../components/Badges/RoleBadgesRenderer.vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
+import { PaginationUserDto } from '@biblio-num/shared'
+import { dateToStringFr } from '@/utils'
 // const props = defineProps<{ }>()
 
 const agGridComponent = ref()
@@ -26,43 +27,65 @@ const columnDefs:Ref<ColDef[]> = ref([
     ...baseColDef,
     headerName: 'Courriel',
     field: 'email',
-    width: 350,
+  },
+  {
+    ...baseColDef,
+    headerName: 'Prénom',
+    field: 'firstname',
+    width: 150,
+  },
+  {
+    ...baseColDef,
+    headerName: 'Nom de famille',
+    field: 'lastname',
+    width: 150,
+  },
+  {
+    ...baseColDef,
+    headerName: 'Intitulé de poste',
+    field: 'job',
   },
   {
     ...baseColDef,
     headerName: 'Rôle',
-    field: 'role.label',
+    field: 'roleLabel',
     width: 300,
+    sortable: false,
     cellRenderer: RoleBadgesRenderer,
     filter: 'agSetColumnFilter',
     filterParams: {
-      values: ['sudo', 'admin', 'superadmin', 'instructor', ''],
+      values: ['admin', 'superadmin', 'instructor', ''],
       cellRenderer: RoleBadgesRenderer,
       suppressMiniFilter: true,
     },
+    suppressMenu: true,
   },
-  // TODO: A revoir par rapport au BACK-END
   {
     ...baseColDef,
+    headerName: 'Options',
+    field: 'roleOptionsResume',
+    sortable: false,
     suppressMenu: true,
-    headerName: 'Type',
-    field: 'type',
-    width: 450,
   },
-  // TODO: A confirmer
-  // {
-  //   headerName: 'Création',
-  //   field: 'createAt',
-  // },
-  // {
-  //   headerName: 'Modification',
-  //   field: 'updateAt',
-  // },
+  {
+    ...baseColDef,
+    headerName: 'Création',
+    field: 'createAt',
+    filter: 'agDateColumnFilter',
+    valueFormatter: ({ value }) => dateToStringFr(value),
+  },
+  {
+    ...baseColDef,
+    headerName: 'Modification',
+    field: 'updateAt',
+    filter: 'agDateColumnFilter',
+    valueFormatter: ({ value }) => dateToStringFr(value),
+  },
 ])
 
 const store = useUserStore()
-const apiCall = async (params: PaginationDto<IUser>) => {
-  return store.getUsersRole(params)
+const apiCall = async (params: PaginationUserDto) => {
+  return store.listUsers(params)
 }
 
 const onSelectionChanged = (event: SelectionChangedEvent) => {

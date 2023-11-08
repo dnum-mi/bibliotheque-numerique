@@ -1,8 +1,4 @@
-import { OmitType } from '@nestjs/swagger'
 import { PaginationDto } from '../pagination'
-import { UserOutputDto } from './user-output.dto'
+import { AgGridUserDto } from './ag-grid-user.dto'
 
-class PaginableUser extends OmitType(UserOutputDto, ['role']) {
-}
-
-export class PaginationUserDto extends PaginationDto<PaginableUser> {}
+export class PaginationUserDto extends PaginationDto<AgGridUserDto> {}

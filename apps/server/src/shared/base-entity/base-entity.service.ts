@@ -84,6 +84,8 @@ export abstract class BaseEntityService<T extends BaseEntity = BaseEntity> {
       dto.sorts.forEach(sort => {
         query.addOrderBy(`o.${sort.key}`, sort.order)
       })
+    } else {
+      query.addOrderBy('o.id', 'ASC')
     }
     query.limit(dto.perPage || 20)
     query.offset((dto.perPage * (dto.page - 1)) || 0)

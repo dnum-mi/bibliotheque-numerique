@@ -52,14 +52,14 @@ describe('users (e2e)', () => {
         .expect(200)
       expect(response.body).toBeDefined()
       expect(response.body.total).toEqual(7)
-      expect(response.body.data).toEqual([
+      expect(response.body.data).toMatchObject([
         { id: 1, lastname: 'SUDO', firstname: 'Cécile' },
         { id: 2, lastname: 'SUPERADMIN', firstname: 'Bob' },
         { id: 3, lastname: 'norole', firstname: 'Bill' },
         { id: 4, lastname: 'admin1', firstname: 'Suzette' },
         { id: 5, lastname: 'instructor1', firstname: 'Steve' },
-        { id: 7, lastname: 'norole', firstname: 'Titouan' },
         { id: 6, lastname: 'sudo', firstname: 'sudo' },
+        { id: 7, lastname: 'norole', firstname: 'Titouan' },
       ])
     })
 
@@ -85,6 +85,67 @@ describe('users (e2e)', () => {
       expect(response.body.data).toEqual([
         { id: 4, lastname: 'admin1', firstname: 'Suzette' },
         { id: 2, lastname: 'SUPERADMIN', firstname: 'Bob' },
+      ])
+    })
+
+    it('Should return a list of user with role resume', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/users/list')
+        .set('Cookie', [cookies.superadmin])
+        .send({
+          columns: ['firstname', 'lastname', 'roleLabel', 'roleOptionsResume'],
+        })
+        .expect(200)
+      expect(response.body.data).toMatchObject([
+        {
+          id: 1,
+          lastname: 'SUDO',
+          firstname: 'Cécile',
+          roleLabel: 'sudo',
+          roleOptionsResume: '',
+        },
+        {
+          id: 2,
+          lastname: 'SUPERADMIN',
+          firstname: 'Bob',
+          roleLabel: 'superadmin',
+          roleOptionsResume: '',
+        },
+        {
+          id: 3,
+          lastname: 'norole',
+          firstname: 'Bill',
+          roleLabel: null,
+          roleOptionsResume: '',
+        },
+        {
+          id: 4,
+          lastname: 'admin1',
+          firstname: 'Suzette',
+          roleLabel: 'admin',
+          roleOptionsResume: 'ARUP (1), FRUP (1)',
+        },
+        {
+          id: 5,
+          lastname: 'instructor1',
+          firstname: 'Steve',
+          roleLabel: 'instructor',
+          roleOptionsResume: 'ARUP (2), FDD (1)',
+        },
+        {
+          id: 6,
+          lastname: 'sudo',
+          firstname: 'sudo',
+          roleLabel: 'sudo',
+          roleOptionsResume: '',
+        },
+        {
+          id: 7,
+          lastname: 'norole',
+          firstname: 'Titouan',
+          roleLabel: null,
+          roleOptionsResume: '',
+        },
       ])
     })
   })
@@ -315,7 +376,7 @@ describe('users (e2e)', () => {
                   demarche: {
                     id: 1,
                     title: 'Déclaration de financement étranger',
-                    types: ['ARUP'],
+                    types: ['ARUP', 'FDD'],
                     dsId: 76,
                   },
                 },

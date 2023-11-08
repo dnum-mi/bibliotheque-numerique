@@ -5,14 +5,22 @@ import {
   OnApplicationBootstrap,
 } from '@nestjs/common'
 import { User } from '../objects/user.entity'
-import { FindOneOptions, Repository } from 'typeorm'
+import { FindOneOptions, In, Repository } from 'typeorm'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { InjectRepository } from '@nestjs/typeorm'
 import { JwtService } from '@nestjs/jwt'
 import { ConfigService } from '@nestjs/config'
 import { SendMailService } from '../../sendmail/sendmail.service'
-import { CreateUserDto, MyProfileOutputDto } from '@biblio-num/shared'
+import {
+  CreateUserDto,
+  PaginatedUserDto,
+  PaginationUserDto,
+  MyProfileOutputDto,
+  AgGridUserDto,
+  IRole, OrganismeTypeKeys,
+  PaginatedDto,
+} from '@biblio-num/shared'
 import { UserFieldTypeHashConst } from '@/modules/users/objects/consts/user-field-type-hash.const'
 import { DemarcheService } from '@/modules/demarches/providers/services/demarche.service'
 
@@ -160,6 +168,50 @@ export class UsersService
       throw new ConflictException('User already validated')
     }
     await this.repo.update(user.id, { validated: true })
+  }
+
+  private _generateRoleResume(role: IRole, demarcheHash: Record<number, {types: OrganismeTypeKeys[]}>): string {
+    this.logger.verbose('_generateRoleResume')
+    const typeHash: Record<OrganismeTypeKeys, number> = {}
+    Object.keys(role.options).forEach((demarcheId) => {
+      demarcheHash[demarcheId].types.forEach((type) => {
+        typeHash[type] = typeHash[type] ? typeHash[type] + 1 : 1
+      })
+    })
+    return Object.entries(typeHash).map(([type, count]) => `${type} (${count})`).join(', ')
+  }
+
+  async listUsers (dto: PaginationUserDto): Promise<PaginatedUserDto> {
+    this.logger.verbose('listUsers')
+    const labelIndex = dto.columns.indexOf('roleLabel')
+    const optionIndex = dto.columns.indexOf('roleOptionsResume')
+    const userAskedForRole = labelIndex !== -1 || optionIndex !== -1
+    if (userAskedForRole) {
+      dto.columns.push('role')
+      dto.columns = dto.columns.filter((c) => c !== 'roleLabel' && c !== 'roleOptionsResume')
+    }
+    const paginated: PaginatedDto<AgGridUserDto & { role: IRole}> = await this.paginate(dto)
+    if (userAskedForRole) {
+      const demarcheIds = paginated.data
+        .map((user) => Object.keys(user.role?.options))
+        .flat()
+      const sds = await this.demarcheService.findMultipleDemarche({
+        where: { id: In(demarcheIds) },
+        select: ['id', 'types'],
+      })
+      const demarcheHash = Object.fromEntries(sds.map(sd => [sd.id, sd]))
+      const users = paginated.data.map((user) => {
+        user.roleLabel = user.role.label
+        user.roleOptionsResume = this._generateRoleResume(user.role, demarcheHash)
+        delete user.role
+        return user
+      })
+      return {
+        total: paginated.total,
+        data: users,
+      }
+    }
+    return paginated
   }
 
   async enrichProfileWithDemarche(user: User): Promise<MyProfileOutputDto> {
