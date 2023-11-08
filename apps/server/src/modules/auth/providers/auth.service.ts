@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { UsersService } from '../../users/providers/users.service'
 import * as bcrypt from 'bcrypt'
-import { User } from '../../users/entities/user.entity'
+import { User } from '@/modules/users/objects/user.entity'
 import { CredentialsInputDto, UserOutputDto } from '@biblio-num/shared'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 

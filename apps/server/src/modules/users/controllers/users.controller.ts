@@ -1,7 +1,7 @@
 import {
   Body,
   Controller,
-  Get,
+  Get, HttpCode,
   Param,
   ParseIntPipe,
   Post,
@@ -9,7 +9,7 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import { ApiResponse, ApiTags } from '@nestjs/swagger'
 import { UsersService } from '../providers/users.service'
 import {
   CreateUserDto,
@@ -17,6 +17,8 @@ import {
   ResetPasswordInputDto,
   UserOutputDto,
   Roles,
+  PaginationUserDto,
+  PaginatedUserDto,
 } from '@biblio-num/shared'
 import { UpdatePasswordGuard } from '@/modules/users/providers/guards/update-password.guard'
 import { ValidSignUpGuard } from '@/modules/users/providers/guards/validate-sign-up.guard'
@@ -41,6 +43,8 @@ export class UsersController {
     return {
       id: user.id,
       email: user.email,
+      createAt: user.createAt,
+      updateAt: user.updateAt,
       lastname: user.lastname,
       firstname: user.firstname,
       job: user.job,
@@ -56,11 +60,13 @@ export class UsersController {
     await this.usersService.updatePassword(req.user, body.password)
   }
 
-  @Get()
+  @Post('/list')
+  @HttpCode(200)
   @Role(Roles.admin)
-  async listUsers (): Promise<UserOutputDto[]> {
+  @ApiResponse({ status: 200 })
+  async listUsers (@Body() dto: PaginationUserDto): Promise<PaginatedUserDto> {
     this.logger.verbose('listUsers')
-    return this.usersService.listUsers()
+    return this.usersService.paginate(dto)
   }
 
   @Get('/me')
