@@ -21,7 +21,6 @@ describe('users (e2e)', () => {
     userService = await app.resolve(UsersService)
     cookies = testingModule.cookies
   })
-
   beforeEach(() => {
     jest.spyOn(mailerService, 'sendMail').mockClear()
   })
@@ -29,30 +28,64 @@ describe('users (e2e)', () => {
     await app.close()
   })
 
-  describe(' GET /users', () => {
+  describe('POST /users/list', () => {
     it('Should return error 401', async () => {
       await request(app.getHttpServer()) //
-        .get('/users')
+        .post('/users/list')
         .expect(401)
     })
 
     it('Should return 403 for instructor', async () => {
       await request(app.getHttpServer()) //
-        .get('/users')
+        .post('/users/list')
         .set('Cookie', [cookies.instructor])
         .expect(403)
     })
 
-    it('Should return all users', async () => {
+    it('Should return a list of user', async () => {
       const response = await request(app.getHttpServer())
-        .get('/users')
+        .post('/users/list')
         .set('Cookie', [cookies.superadmin])
+        .send({
+          columns: ['firstname', 'lastname'],
+        })
         .expect(200)
       expect(response.body).toBeDefined()
-      expect(response.body.length).toBeGreaterThan(0)
-      expect(response.body[0].id).toBeDefined()
-      expect(response.body[0].email).toBeDefined()
-      expect(response.body[0].password).toBeUndefined()
+      expect(response.body.total).toEqual(7)
+      expect(response.body.data).toEqual([
+        { id: 1, lastname: 'SUDO', firstname: 'Cécile' },
+        { id: 2, lastname: 'SUPERADMIN', firstname: 'Bob' },
+        { id: 3, lastname: 'norole', firstname: 'Bill' },
+        { id: 4, lastname: 'admin1', firstname: 'Suzette' },
+        { id: 5, lastname: 'instructor1', firstname: 'Steve' },
+        { id: 7, lastname: 'norole', firstname: 'Titouan' },
+        { id: 6, lastname: 'sudo', firstname: 'sudo' },
+      ])
+    })
+
+    it('Should return a list of user', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/users/list')
+        .set('Cookie', [cookies.superadmin])
+        .send({
+          columns: ['firstname', 'lastname'],
+          sorts: [{ key: 'firstname', order: 'DESC' }],
+          filters: {
+            lastname: {
+              filterType: 'text',
+              condition1: {
+                type: 'contains',
+                filter: 'admin',
+              },
+            },
+          },
+        })
+        .expect(200)
+      expect(response.body).toBeDefined()
+      expect(response.body.data).toEqual([
+        { id: 4, lastname: 'admin1', firstname: 'Suzette' },
+        { id: 2, lastname: 'SUPERADMIN', firstname: 'Bob' },
+      ])
     })
   })
 

@@ -4,8 +4,8 @@ import {
   NotFoundException,
   OnApplicationBootstrap,
 } from '@nestjs/common'
-import { User } from '../entities/user.entity'
-import { FindOneOptions, In, Repository } from 'typeorm'
+import { User } from '../objects/user.entity'
+import { FindOneOptions, Repository } from 'typeorm'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -13,6 +13,7 @@ import { JwtService } from '@nestjs/jwt'
 import { ConfigService } from '@nestjs/config'
 import { SendMailService } from '../../sendmail/sendmail.service'
 import { CreateUserDto, MyProfileOutputDto } from '@biblio-num/shared'
+import { UserFieldTypeHashConst } from '@/modules/users/objects/consts/user-field-type-hash.const'
 import { DemarcheService } from '@/modules/demarches/providers/services/demarche.service'
 
 type jwtPlaylod = {
@@ -31,7 +32,7 @@ export class UsersService
     private readonly sendMailService: SendMailService,
     private readonly demarcheService: DemarcheService,
   ) {
-    super(repo, logger)
+    super(repo, logger, UserFieldTypeHashConst)
     this.logger.setContext(this.constructor.name)
   }
 
@@ -102,12 +103,7 @@ export class UsersService
     })
   }
 
-  async listUsers(): Promise<User[]> {
-    this.logger.verbose('listUsers')
-    return await this.repo.find()
-  }
-
-  async getUserById(id: number): Promise<User> {
+  async getUserById (id: number): Promise<User> {
     this.logger.verbose('getUserById')
     return this.findOneById(id).then((user) => {
       if (!user) {

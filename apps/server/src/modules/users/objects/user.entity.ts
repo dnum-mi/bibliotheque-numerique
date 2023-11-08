@@ -1,4 +1,5 @@
 import {
+  AfterLoad,
   BeforeInsert,
   BeforeUpdate,
   Column,
@@ -76,6 +77,11 @@ export class User extends BaseEntity implements IUser {
   role: IRole
 
   skipHashPassword: boolean = false
+
+  @AfterLoad()
+  async removeSkipHashPasswordReference(): Promise<void> {
+    delete this.skipHashPassword
+  }
 
   @BeforeInsert()
   @BeforeUpdate()
