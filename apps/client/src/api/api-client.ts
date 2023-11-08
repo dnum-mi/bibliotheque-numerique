@@ -19,6 +19,7 @@ import type {
   LeanDossierOutputDto,
   IOrganisme,
   PaginationDto,
+  PaginationUserDto,
   ICustomFilter,
   IDossier,
   IUser,
@@ -49,6 +50,7 @@ import {
   getOrganismeByRnaRoute,
   getOrganismeByRnfRoute,
   organismesListRoute,
+  usersListRoute,
 } from './bn-api-routes'
 import {
   authRoute,
@@ -256,17 +258,10 @@ export const usersApiClient = {
     return response?.data
   },
 
-  // TODO: BEGIN: A modifirer ou suprrimer getUsers
-  async getUsers (): Promise<UserOutputDto[] | null> {
-    const response = await apiClientInstance.get(usersRoutes)
+  listUsers: async (dto: PaginationUserDto) => {
+    const response = await apiClientInstance.post(usersListRoute, dto)
     return response.data
   },
-
-  getRolesUsers: async (dto: PaginationDto<IUser>) => {
-    const response = await apiClientInstance.post(usersRoutes, dto)
-    return response.data
-  },
-  // TODO: END: A modifirer ou suprrimer getUsers
 
   async getUserById (id: number): Promise<UserOutputDto | null> {
     const response = await apiClientInstance.get(getUserByIdRoute(id))

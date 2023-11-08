@@ -26,7 +26,7 @@ import { Role } from '@/modules/users/providers/decorators/role.decorator'
 import { PublicRoute } from '@/modules/users/providers/decorators/public-route.decorator'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { CurrentUser } from '@/modules/users/providers/decorators/current-user.decorator'
-import { User } from '@/modules/users/entities/user.entity'
+import { User } from '../objects/user.entity'
 
 @ApiTags('Users')
 @Controller('users')
@@ -66,7 +66,7 @@ export class UsersController {
   @ApiResponse({ status: 200 })
   async listUsers (@Body() dto: PaginationUserDto): Promise<PaginatedUserDto> {
     this.logger.verbose('listUsers')
-    return this.usersService.paginate(dto)
+    return this.usersService.listUsers(dto)
   }
 
   @Get('/me')

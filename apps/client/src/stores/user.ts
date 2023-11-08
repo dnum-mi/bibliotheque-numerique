@@ -8,17 +8,13 @@ import bnApiClient from '@/api/api-client'
 import type {
   CredentialsInputDto,
   UserOutputDto,
-  PaginatedDto,
-  PaginationDto,
-  IUser,
+  PaginationUserDto,
 } from '@biblio-num/shared'
 
 // TODO: enum Roles dans packages/shared n'est pas récupérable
-const RolesAdmins = ['admin', 'sudo', 'superadmin']// [Roles.admin, Roles.sudo, Roles.superadmin]
+const RolesAdmins = ['admin', 'sudo', 'superadmin']
 
 export const useUserStore = defineStore('user', () => {
-  // TODO: A verfier
-  // const currentUser = ref<User | null>(null)
   const currentUser = ref<UserOutputDto | null>(null)
   const users = ref<Map<number, UserOutputDto>>(new Map<number, UserOutputDto>())
   const loaded = ref(false)
@@ -51,13 +47,9 @@ export const useUserStore = defineStore('user', () => {
     currentUser.value = user
   }
 
-  const loadUsers = async () => {
+  const listUsers = async (dto: PaginationUserDto) => {
     if (!hasAdminAccess.value) return
-    const userArr = await bnApiClient.getUsers()
-    if (!userArr) return
-    for (const user of userArr) {
-      users.value.set(user.id, user)
-    }
+    return bnApiClient.listUsers(dto)
   }
 
   const loadUserById = async (id: number) => {
@@ -65,10 +57,6 @@ export const useUserStore = defineStore('user', () => {
     const user = await bnApiClient.getUserById(id)
     if (!user) return
     users.value.set(user.id, user)
-  }
-
-  const getUsersRole = async (dto: PaginationDto<IUser>): Promise<PaginatedDto<UserOutputDto>> => {
-    return bnApiClient.getRolesUsers(dto)
   }
 
   return {
@@ -82,7 +70,7 @@ export const useUserStore = defineStore('user', () => {
     login,
     logout,
     loadCurrentUser,
-    loadUsers,
+    listUsers,
     loadUserById,
     getUsersRole,
     resetUser,

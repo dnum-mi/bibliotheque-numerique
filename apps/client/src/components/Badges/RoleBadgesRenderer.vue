@@ -10,7 +10,7 @@ type DsfrBageType = Exclude<InstanceType<typeof DsfrBadge>['$props']['type'], un
 
 const dictionary: Record<string, { label: string, type: DsfrBageType }> = {
   sudo: { label: 'Administrateur technique', type: 'info' },
-  superadmin: { label: 'Administrateur de tous les démarches', type: 'info' },
+  superadmin: { label: 'Super Administrateur', type: 'info' },
   admin: { label: 'Administrateur', type: 'info' },
   instructor: { label: 'Instructeur', type: 'new' },
 }

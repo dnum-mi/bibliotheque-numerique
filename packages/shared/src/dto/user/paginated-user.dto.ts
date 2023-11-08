@@ -1,14 +1,4 @@
 import { PaginatedDto } from '../pagination'
-import { PrefectureKeys, RolesKeys } from '../../enums'
+import { AgGridUserDto } from './ag-grid-user.dto'
 
-export class UserForAgGridDto {
-  id: number
-  firstname: string
-  lastname: string
-  email: string
-  job: string
-  roleLabel: RolesKeys
-  optionResume: string
-}
-
-export class PaginatedUserDto extends PaginatedDto<UserForAgGridDto> {}
+export class PaginatedUserDto extends PaginatedDto<AgGridUserDto> {}

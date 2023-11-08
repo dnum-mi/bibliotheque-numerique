@@ -7,7 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { fixFieldsByIdentificationDictionary } from '../../../dossiers/objects/constante/fix-field.dictionnary'
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
 import { UpdateDemarcheDto } from '@/modules/demarches/objects/dtos/update-demarche.dto'
-import { IRole, isBelowSuperAdmin, SmallDemarcheOutputDto } from '@biblio-num/shared'
+import { IRole, isBelowSuperAdmin, Roles, SmallDemarcheOutputDto } from '@biblio-num/shared'
 import { FindManyOptions } from 'typeorm/find-options/FindManyOptions'
 import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere'
 
@@ -51,7 +51,7 @@ export class DemarcheService extends BaseEntityService<Demarche> {
 
   async findMultipleDemarche(
     filter: FindManyOptions<Demarche> = {},
-    role: IRole,
+    role: IRole = { label: Roles.superadmin, options: null },
   ): Promise<Demarche[]> {
     this.logger.verbose('findMultipleDemarche')
     if (isBelowSuperAdmin(role.label)) {

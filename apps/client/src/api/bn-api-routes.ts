@@ -18,6 +18,7 @@ export const getXlsxDemarcheFieldRoute = (demarcheId: number) => `${getListDemar
 export const getDemarcheCustomFilterRoute = (demarcheId: number) => `${demarchesRoute}/${demarcheId}/custom-filters`
 
 export const usersRoutes = '/users'
+export const usersListRoute = `${usersRoutes}/list`
 export const getUserByIdRoute = (id: number) => `${usersRoutes}/${id}`
 export const profileRoute = `${usersRoutes}/me`
 
