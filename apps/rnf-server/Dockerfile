@@ -6,6 +6,10 @@ RUN chown node:root /app
 
 FROM dev-base as base
 
+RUN npm config set proxy "$http_proxy" && \
+    npm config set https-proxy "$https_proxy" && \
+    npm config set noproxy "$no_proxy"
+
 RUN npm i -g turbo
 
 USER node
@@ -14,6 +18,10 @@ RUN turbo prune --scope=@biblio-num/rnf-server --docker
 
 
 FROM dev-base AS builder
+
+RUN npm config set proxy "$http_proxy" && \
+    npm config set https-proxy "$https_proxy" && \
+    npm config set noproxy "$no_proxy"
 
 RUN npm i -g pnpm
 USER node
@@ -32,6 +40,10 @@ CMD ["pnpm", "run", "dev:rnf-server-in-docker"]
 
 
 FROM bitnami/node:18.16.0 as production
+
+RUN npm config set proxy "$http_proxy" && \
+    npm config set https-proxy "$https_proxy" && \
+    npm config set noproxy "$no_proxy"
 
 WORKDIR /app
 

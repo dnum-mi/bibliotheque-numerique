@@ -1,5 +1,9 @@
 FROM node:lts as base
 
+RUN npm config set proxy "$http_proxy" && \
+    npm config set https-proxy "$https_proxy" && \
+    npm config set noproxy "$no_proxy"
+
 WORKDIR /app
 
 RUN npm i -g turbo pnpm
@@ -11,6 +15,10 @@ COPY . .
 RUN turbo prune --scope=rnf-client --docker
 
 FROM node:lts AS builder
+
+RUN npm config set proxy "$http_proxy" && \
+    npm config set https-proxy "$https_proxy" && \
+    npm config set noproxy "$no_proxy"
 
 WORKDIR /app
 

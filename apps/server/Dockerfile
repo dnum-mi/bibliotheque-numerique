@@ -1,5 +1,9 @@
 FROM node:lts as base
 
+RUN npm config set proxy "$http_proxy" && \
+    npm config set https-proxy "$https_proxy" && \
+    npm config set noproxy "$no_proxy"
+
 WORKDIR /app
 
 RUN npm i -g turbo
@@ -12,6 +16,10 @@ RUN turbo prune --scope=@biblio-num/server --docker
 
 
 FROM node:lts AS builder
+
+RUN npm config set proxy "$http_proxy" && \
+    npm config set https-proxy "$https_proxy" && \
+    npm config set noproxy "$no_proxy"
 
 WORKDIR /app
 
@@ -32,6 +40,10 @@ CMD ["pnpm", "run", "dev:server-in-docker"]
 
 
 FROM bitnami/node:18.16.0 as production
+
+RUN npm config set proxy "$http_proxy" && \
+    npm config set https-proxy "$https_proxy" && \
+    npm config set noproxy "$no_proxy"
 
 WORKDIR /app
 
