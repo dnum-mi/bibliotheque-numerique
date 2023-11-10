@@ -25,7 +25,7 @@ import type {
   IDossier,
   PaginatedUserDto,
   MyProfileOutputDto,
-  UwrupoDto,
+  UserWithEditableRole,
 } from '@biblio-num/shared'
 
 import {
@@ -266,7 +266,7 @@ export const usersApiClient = {
     return response.data
   },
 
-  async getUserById (id: number): Promise<UwrupoDto | null> {
+  async getUserById (id: number): Promise<UserWithEditableRole | null> {
     const response = await apiClientInstance.get(getUserByIdRoute(id))
     return response.data
   },

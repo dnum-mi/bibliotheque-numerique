@@ -10,7 +10,7 @@ import type {
   UserOutputDto,
   PaginationUserDto,
   MyProfileOutputDto,
-  UwrupoDto,
+  UserWithEditableRole,
 } from '@biblio-num/shared'
 
 // TODO: enum Roles dans packages/shared n'est pas récupérable
@@ -20,7 +20,7 @@ export const useUserStore = defineStore('user', () => {
   const currentUser = ref<UserOutputDto | null>(null)
   const myProfile = ref<MyProfileOutputDto | null>(null)
   const users = ref<Map<number, UserOutputDto>>(new Map<number, UserOutputDto>())
-  const selectedUser = ref<UwrupoDto | null>(null)
+  const selectedUser = ref<UserWithEditableRole | null>(null)
 
   const loaded = ref(false)
 
