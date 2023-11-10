@@ -10,6 +10,7 @@ import type {
   UserOutputDto,
   PaginationUserDto,
   MyProfileOutputDto,
+  UwrupoDto,
 } from '@biblio-num/shared'
 
 // TODO: enum Roles dans packages/shared n'est pas récupérable
@@ -19,6 +20,8 @@ export const useUserStore = defineStore('user', () => {
   const currentUser = ref<UserOutputDto | null>(null)
   const myProfile = ref<MyProfileOutputDto | null>(null)
   const users = ref<Map<number, UserOutputDto>>(new Map<number, UserOutputDto>())
+  const selectedUser = ref<UwrupoDto | null>(null)
+
   const loaded = ref(false)
 
   const isAuthenticated = computed(() => !!currentUser.value)
@@ -57,15 +60,17 @@ export const useUserStore = defineStore('user', () => {
 
   const loadUserById = async (id: number) => {
     if (!hasAdminAccess.value) return
-    const user = await bnApiClient.getUserById(id)
-    if (!user) return
-    users.value.set(user.id, user)
+    selectedUser.value = await bnApiClient.getUserById(id)
+    if (!selectedUser.value) return
+    // TODO: A voir quel utiliter
+    users.value.set(selectedUser.value.user.id, selectedUser.value.user)
   }
 
   return {
     currentUser,
     myProfile,
     users,
+    selectedUser,
     loaded,
     isAuthenticated,
     hasAdminAccess,
