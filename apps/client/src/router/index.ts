@@ -113,49 +113,26 @@ const routes: RouterOptions['routes'] = [
     },
   },
   {
-    name: routeNames.USER,
-    path: '/user/:id',
-    component: () => import('@/views/admin/User.vue'),
-    meta: {
-      needsAuth: true,
-      roleLevel: Roles.admin,
-    },
-  },
-  {
-    name: routeNames.ADMIN,
     path: '/admin',
     component: () => import('@/views/admin/Admin.vue'),
     meta: {
       needsAuth: true,
       roleLevel: Roles.admin,
     },
-
     children: [
       {
-        name: 'Admin',
+        name: routeNames.ADMIN,
         path: '',
         component: () => import('@/views/admin/ListUsers.vue'),
       },
       {
-        name: 'User',
+        name: routeNames.USER,
         path: '/user/:id',
-        // TODO: refacto role
-        // beforeEnter: [hasAdminAccessGuard],
         component: () => import('@/views/admin/User.vue'),
       },
 
     ],
   },
-  // TODO: refacto role
-  // {
-  //   name: routeNames.ROLE,
-  //   path: '/role/:id',
-  //   // TODO: refacto role
-  //   component: () => import('@/views/admin/Role.vue'),
-  //   props: (route) => ({
-  //     id: Number(route.params.id),
-  //   }),
-  // },
   {
     name: routeNames.ORGANISMES,
     path: '/organismes',

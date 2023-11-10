@@ -1,8 +1,348 @@
 <script lang="ts" setup>
-// const props = defineProps<{ }>()
+import type { IRole, OrganismeTypeKeys, PrefectureOptions, UserOutputDto, UserWithEditableRole, OneDemarcheRoleOption } from '@biblio-num/shared'
+import { onMounted, ref, computed } from 'vue'
+import { useUserStore } from '@/stores'
+import { useRoute } from 'vue-router'
+import { OrganismeType, Roles } from '@/biblio-num/shared'
+import DemarcheLocalization from './DemarcheLocalization.vue'
+import { getRandomId } from '@gouvminint/vue-dsfr'
 
+import UserGeographicalRights from './UserGeographicalRights.vue'
+
+// const props = defineProps<{ }>()
+const userStore = useUserStore()
+
+const selectedUser = computed<UserWithEditableRole | null>(() => userStore.selectedUser)
+const user = computed<UserOutputDto|undefined>(() => selectedUser.value?.originalUser)
+const role = computed<Record<number, OneDemarcheRoleOption>| undefined>(() => selectedUser.value?.demarcheHash)
+
+type DemarcheHtmlAttrs = {
+  class?: string | null
+  disabled?: boolean | null
+}
+type DemarcheRole = {
+  options: OneDemarcheRoleOption
+  attrs: DemarcheHtmlAttrs
+}
+type DemarchesRoles = {
+  label: string
+  name: OrganismeTypeKeys
+  value: boolean
+  key: string
+  localization?: PrefectureOptions
+  commonPrefectureValues: string[]
+  commonPrefectureAddables: string[]
+  commonPrefectureDeletables: string[]
+  children?: DemarcheRole[]
+  attrs: DemarcheHtmlAttrs
+}
+
+const typeOrganismeLabel = {
+  [OrganismeType.ARUP]: 'Associations reconnues d’utilité publique (ARUP)',
+  [OrganismeType.CULTE]: 'Associations cultuelles (Cultes)',
+  [OrganismeType.FDD]: 'Fonds de dotation (FDD)',
+  [OrganismeType.FE]: 'Fondations d’entreprises (FE)',
+  [OrganismeType.FRUP]: 'Fondations reconnues d’utilité publique (FRUP)',
+  [OrganismeType.unknown]: 'Type d’organisme inconnu',
+}
+
+const isAllCheck = (children: DemarcheRole[]):boolean => children.reduce((val, demarche) => {
+  return (val &&= demarche.options.checked)
+}, true)
+
+const getCommonPrefectureOptionGetter = (children: DemarcheRole[]) => (prop: 'addable' | 'value' | 'deletable') => {
+  const commonPrefectureAddables: string[] = []
+  const childrenOptions = children
+    .map(({ options: { prefectureOptions: { prefectures } } }) => ({ [prop]: prefectures[prop] }))
+
+  const firstChildOption = childrenOptions.shift() || { [prop]: [] }
+  if (childrenOptions.length === 0) { // S’il n’y avait qu’un seul type de démarche...
+    commonPrefectureAddables.push(...firstChildOption[prop]) // ... on ajoute les préfectures de ce type
+  } else {
+    for (const childOptions of childrenOptions) {
+      if (childOptions[prop].length !== firstChildOption[prop].length) {
+        break
+      }
+      let continueLoop = true
+      for (const pref of childOptions[prop]) {
+        if (!firstChildOption[prop].includes(pref)) {
+          continueLoop = false
+          break
+        }
+      }
+      if (!continueLoop) {
+        break
+      }
+      commonPrefectureAddables.push(...childOptions[prop])
+    }
+  }
+  return commonPrefectureAddables
+}
+
+const organismeTypes = computed(() => [
+  ...new Set(Object.values(role.value || {}).map(({ types }) => types.length ? types : [OrganismeType.unknown]).flat()),
+])
+
+const demarchesRoles = computed<DemarchesRoles[]>(() => {
+  if (!role.value) return []
+
+  return organismeTypes.value.map((type) => {
+    const localization: PrefectureOptions = {
+      national: {
+        value: true,
+        editable: true,
+      },
+      prefectures: {
+        value: [],
+        addable: [],
+        deletable: [],
+      },
+    }
+    const children = Object.values(role.value || {})
+      .concat(
+        Object.values(role.value || {})
+          .filter(demarcheOption => demarcheOption.types.length === 0)
+          .map(dOpts => ({ ...dOpts, types: [OrganismeType.unknown] })),
+      )
+      .filter(demarcheOption => demarcheOption.types.includes(type))
+      .map((d): DemarcheRole => {
+        localization.national.value &&= d.prefectureOptions.national.value
+        localization.national.editable &&= d.prefectureOptions.national.editable
+
+        return {
+          options: d,
+          attrs: {
+            class: null,
+            disabled: !canEditDemarche(d),
+          },
+        }
+      })
+    const value = isAllCheck(children)
+
+    const getCommonPrefectureOptionsFor = getCommonPrefectureOptionGetter(children)
+
+    const commonPrefectureValues: string[] = getCommonPrefectureOptionsFor('value')
+    const commonPrefectureAddables: string[] = getCommonPrefectureOptionsFor('addable')
+    const commonPrefectureDeletables: string[] = getCommonPrefectureOptionsFor('deletable')
+    return {
+      label: typeOrganismeLabel[type] || typeOrganismeLabel[OrganismeType.unknown],
+      name: type,
+      value,
+      key: getRandomId(type),
+      localization,
+      children,
+      commonPrefectureValues,
+      commonPrefectureAddables,
+      commonPrefectureDeletables,
+      attrs: {
+        class: null,
+        disabled: children?.some(d => !canEditDemarche(d.options)),
+      },
+    }
+  })
+    .filter(type => type.children && type.children.length)
+})
+
+const demarchesRolesChanged = ref<DemarchesRoles[]>([])
+
+const updateCheckTypeByChild = (id: number) => {
+  if (!role.value || !role.value[id]?.types) return
+  role.value[id].types.forEach((type: string) => {
+    const objType = demarchesRolesChanged.value.filter(dr => dr.name === type)[0]
+    if (!objType || !objType.children) return
+    objType.value = isAllCheck(objType.children)
+  })
+}
+
+const roleSelected = ref<string>('')
+const roleOptions = [
+  {
+    label: 'Administrateur',
+    value: Roles.admin,
+  },
+  {
+    label: 'Instructeur',
+    value: Roles.instructor,
+  },
+]
+const updateRole = (event: string) => {
+  roleSelected.value = event
+}
+
+const updateTypeDemarche = ({ name, checked, dr }: { name: string, checked: boolean, dr:DemarchesRoles}) => {
+  dr.value = checked
+  if (checked) {
+    dr.children?.forEach(child => { updateDemarche({ name, id: child.options.id, checked, d: child }) })
+    dr.key = getRandomId(name)
+  }
+}
+
+const updateDemarche = ({ name, id, checked, d }: { name: string, id: number, checked: boolean, d:DemarcheRole }) => {
+  d.options.checked = checked
+  updateCheckTypeByChild(id)
+}
+
+const keyLocalization = ref<string>(getRandomId('location'))
+const onClickDemarches = (elt: DemarchesRoles | DemarcheRole) => {
+  if (elt.attrs.disabled) {
+    return
+  }
+  demarchesRolesChanged.value.forEach((dr) => {
+    dr.attrs.class = null
+    dr.children?.forEach(d => { d.attrs.class = null })
+  })
+  elt.attrs.class = 'fr-background-contrast--info'
+  if ('options' in elt) {
+    geographicalRights.value = elt.options.prefectureOptions
+  } else {
+    geographicalRights.value = {
+      national: {
+        value: elt.localization?.national.value ?? false,
+        editable: elt.localization?.national.editable ?? false,
+      },
+      prefectures: {
+        value: elt.commonPrefectureValues,
+        addable: elt.commonPrefectureAddables,
+        deletable: elt.commonPrefectureDeletables,
+      },
+      // elt.localization
+
+    }
+  }
+  keyLocalization.value = getRandomId('location')
+}
+
+const canEditDemarche = (d: OneDemarcheRoleOption) => !!(
+  d.prefectureOptions.national.editable ||
+  d.prefectureOptions.prefectures.addable.length ||
+  d.prefectureOptions.prefectures.deletable.length
+)
+
+const geographicalRights = ref<PrefectureOptions | null>(null)
+
+onMounted(async () => {
+  const params = useRoute()?.params
+  const id = Number(params.id)
+  if (id) {
+    await userStore.loadUserById(id)
+    roleSelected.value = userStore.selectedUser?.originalUser.role.label || ''
+    demarchesRolesChanged.value = demarchesRoles.value
+  }
+})
 </script>
 
 <template>
-  USer
+  <div class="flex flex-row  gap-4 fr-p-2w flex-wrap bn-sub-title">
+    <div>
+      <label class="bn-fiche-sub-title--label">Courriel</label>
+      <span class="text-xl">{{ user?.email }}</span>
+    </div>
+    <div
+      v-if="!!user?.firstname || !!user?.lastname"
+    >
+      <label class="bn-fiche-sub-title--label">Nom complet</label>
+      <span class="text-xl">{{ user?.firstname || '' }} {{ user?.lastname || '' }}</span>
+    </div>
+    <div
+      v-if="!!user?.job"
+    >
+      <label class="bn-fiche-sub-title--label">fonction</label>
+      <span class="text-xl">{{ user?.job }}</span>
+    </div>
+  </div>
+
+  <div class="fr-container">
+    <div class="fr-grid-row">
+      <div class="fr-col-2 border-r-2">
+        <h6>
+          Rôle
+        </h6>
+        <DsfrRadioButtonSet
+          v-model="roleSelected"
+          name="role"
+          :options="roleOptions"
+          @update:model-value="updateRole($event as string)"
+        />
+      </div>
+      <div class="fr-col-6 border-x-2">
+        <h6>
+          Démarches
+        </h6>
+        <div
+          v-for="dr in demarchesRolesChanged"
+          :key="dr.name"
+          class="p-4"
+        >
+          <div
+            class="flex flex-row justify-between  fr-mb-2w"
+            :class="dr.attrs?.class"
+            @click="onClickDemarches(dr)"
+          >
+            <DsfrCheckbox
+              class="font-bold"
+              :label="dr.label"
+              :name="dr.name"
+              :model-value="dr.value"
+              :disabled="dr.attrs.disabled"
+              @update:model-value="updateTypeDemarche({ name: dr.name, checked: $event, dr})"
+            />
+            <DemarcheLocalization
+              v-if="dr.localization || dr.commonPrefectureValues"
+              :key="dr.key"
+              :national="dr.localization?.national.value"
+              :prefectures="dr.commonPrefectureValues"
+            />
+          </div>
+          <div v-if="dr.children">
+            <div
+              v-for="d in dr.children"
+              :key="d.options.id"
+              class="p-l-4  fr-py-2v"
+            >
+              <div
+                class="flex  flex-row  justify-between  py-2"
+                :class="d.attrs?.class || ''"
+                @click="onClickDemarches(d)"
+              >
+                <DsfrCheckbox
+                  :key="dr.key"
+                  :label="d.options.title"
+                  :name="d.options.id.toString()"
+                  :model-value="d.options.checked"
+                  :disabled="d.attrs.disabled"
+                  @update:model-value="updateDemarche({ name: dr.name, id: d.options.id,checked: $event, d })"
+                />
+                <DemarcheLocalization
+                  v-if="d.options.prefectureOptions"
+                  :national="d.options.prefectureOptions.national.value"
+                  :prefectures="d.options.prefectureOptions.prefectures.value"
+                />
+              </div>
+            </div>
+          </div>
+          <hr class="fr-hr  fr-mt-2w">
+        </div>
+      </div>
+      <div class="fr-col-4 border-r-2">
+        <h6>
+          Localisation
+        </h6>
+        <UserGeographicalRights
+          v-if="!!geographicalRights"
+          :key="keyLocalization"
+          :geographical-rights="geographicalRights"
+        />
+      </div>
+    </div>
+  </div>
 </template>
+
+<style scoped>
+.bn-sub-title {
+  background-color: var(--background-alt-grey);
+}
+
+:deep(input[type="checkbox"]:disabled + label) {
+  color: var(--text-grey);
+}
+</style>

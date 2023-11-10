@@ -2,7 +2,7 @@ import { SmallDemarcheOutputDto } from '../../demarche/small-demarche-output.dto
 import { PrefectureKeys, RolesKeys } from '../../../enums'
 import { UserOutputDto } from './user-output.dto'
 
-type PrefectureOptions = {
+export type PrefectureOptions = {
   national: {
     value: boolean
     editable: boolean
