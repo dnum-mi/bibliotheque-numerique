@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { onBeforeUnmount, ref, onMounted } from 'vue'
 
-const props = withDefaults(defineProps<{
+withDefaults(defineProps<{
   titleBgColor?: string
   titleFgColor?: string
   subtitleBgColor?: string
@@ -13,27 +13,27 @@ const props = withDefaults(defineProps<{
   subtitleFgColor: 'var(--text-default-grey)',
 })
 
-const organisme = ref<HTMLElement | null>(null)
+const mainEl = ref<HTMLElement | null>(null)
 const isAtBottom = ref(true)
 
 const checkBottomScroll = () => {
-  const { scrollHeight, scrollTop, clientHeight } = organisme.value as HTMLElement
+  const { scrollHeight, scrollTop, clientHeight } = mainEl.value as HTMLElement
   isAtBottom.value = scrollHeight - scrollTop === clientHeight
 }
 
 onMounted(() => {
-  organisme.value?.addEventListener('scroll', checkBottomScroll)
+  mainEl.value?.addEventListener('scroll', checkBottomScroll)
   setTimeout(checkBottomScroll, 300)
 })
 onBeforeUnmount(() => {
-  organisme.value?.removeEventListener('scroll', checkBottomScroll)
+  mainEl.value?.removeEventListener('scroll', checkBottomScroll)
 })
 </script>
 
 <template>
   <div class="flex  flex-col  justify-between  w-full  h-full  overflow-y-auto">
     <div
-      ref="organisme"
+      ref="mainEl"
       class="flex  flex-col  gap-3  w-full  h-full  overflow-y-auto"
     >
       <div class="bn-fiche-title  fr-p-3w">
