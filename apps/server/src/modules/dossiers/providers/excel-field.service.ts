@@ -8,7 +8,11 @@ import {
   DsChampType,
 } from '@/shared/modules/ds-api/objects/ds-champ-type.enum'
 import { CreateFieldDto } from '../objects/dto/fields/create-field.dto'
-import { FormatFunctionRef, FieldTypeKeys, FieldSource, MappingColumn } from '@biblio-num/shared'
+import {
+  FormatFunctionRef, FieldTypeKeys, FieldSource, MappingColumn,
+  contributorPersonalityTypeKeys, nativeCountryKeys, characterFundingKeys,
+  natureFundingKeys, paymentMethodKeys,
+} from '@biblio-num/shared'
 import {
   fixFieldChampsTotalAmount, fixFieldDossierTotalAmount, fixFieldExcelTotalAmount,
   fixFieldsExcelAmount,
@@ -19,7 +23,7 @@ import { ExcelService } from '@/modules/dossiers/providers/excel.service'
 import { ConfigService } from '@nestjs/config'
 import { RawChamp } from '@/shared/types/raw-champ.type'
 import { PieceJustificativeChamp } from '@dnum-mi/ds-api-client'
-import { ExcelData, ExcelDataRow } from '@/shared/types/excel-data.type'
+import { ExcelData, ExcelDataCell, ExcelDataRow } from '@/shared/types/excel-data.type'
 
 @Injectable()
 export class ExcelFieldService extends BaseEntityService<Field> {
@@ -122,19 +126,122 @@ export class ExcelFieldService extends BaseEntityService<Field> {
     } as CreateFieldDto
   }
 
-  private _createFieldsFromExcelRow(row: ExcelDataRow, dossierId: number, i: number): CreateFieldDto[] {
+  _createFieldsFromExcelRow(row: ExcelDataRow, dossierId: number, i: number): CreateFieldDto[] {
     this.logger.verbose('_createFieldsFromExcelRow')
+    const validatedRow = this._validateExcelRow(row)
     return [
-      this._fixFieldExcelRow(fixFieldsExcelDateFunding, null, dossierId, String(row[0]), new Date(row[0]), null, i),
-      this._fixFieldExcelRow(fixFieldsExcelContributorPersonalityType, null, dossierId, String(row[1]), null, null, i),
       this._fixFieldExcelRow(
-        fixFieldsExcelNativeCountry, FormatFunctionRef.country, dossierId, String(row[2]), null, null, i,
+        fixFieldsExcelDateFunding,
+        null,
+        dossierId,
+        String(validatedRow[0]),
+        new Date(validatedRow[0]),
+        null,
+        i,
       ),
-      this._fixFieldExcelRow(fixFieldsExcelNatureFunding, null, dossierId, String(row[3]), null, null, i),
-      this._fixFieldExcelRow(fixFieldsExcelCharacterFunding, null, dossierId, String(row[4]), null, null, i),
-      this._fixFieldExcelRow(fixFieldsExcelPaymentMethod, null, dossierId, String(row[5]), null, null, i),
-      this._fixFieldExcelRow(fixFieldsExcelAmount, null, dossierId, String(row[6]), null, Number(row[6]), i),
+      this._fixFieldExcelRow(
+        fixFieldsExcelContributorPersonalityType,
+        null,
+        dossierId,
+        String(validatedRow[1]),
+        null,
+        null,
+        i,
+      ),
+      this._fixFieldExcelRow(
+        fixFieldsExcelNativeCountry,
+        FormatFunctionRef.country,
+        dossierId,
+        String(validatedRow[2]),
+        null,
+        null,
+        i,
+      ),
+      this._fixFieldExcelRow(
+        fixFieldsExcelNatureFunding,
+        null,
+        dossierId,
+        String(validatedRow[3]),
+        null,
+        null,
+        i,
+      ),
+      this._fixFieldExcelRow(
+        fixFieldsExcelCharacterFunding,
+        null,
+        dossierId,
+        String(validatedRow[4]),
+        null,
+        null,
+        i,
+      ),
+      this._fixFieldExcelRow(
+        fixFieldsExcelPaymentMethod,
+        null,
+        dossierId,
+        String(validatedRow[5]),
+        null,
+        null,
+        i,
+      ),
+      this._fixFieldExcelRow(
+        fixFieldsExcelAmount,
+        null,
+        dossierId,
+        String(validatedRow[6]),
+        null,
+        Number(validatedRow[6]),
+        i,
+      ),
     ]
+  }
+
+  _validateExcelRow(row: ExcelDataRow): ExcelDataRow {
+    this.logger.verbose('_validateExcelRow')
+    return [
+      this._validateCellDate(row[0]),
+      this._validateCellByList(row[1], contributorPersonalityTypeKeys),
+      this._validateCellByList(row[2], nativeCountryKeys),
+      this._validateCellByList(row[3], natureFundingKeys),
+      this._validateCellByList(row[4], characterFundingKeys),
+      this._validateCellByList(row[5], paymentMethodKeys),
+      this._validateCellAmount(row[6]),
+    ] as ExcelDataRow
+  }
+
+  _validateCellDate(cell: ExcelDataCell): ExcelDataCell {
+    this.logger.verbose('_validateExcelRowDateFunding')
+    const datePattern = /^(\d{2})\/(\d{2})\/(\d{4})$/
+    if (!datePattern.test(cell.toString())) {
+      this.logger.warn('Date funding is not valid')
+      return null
+    }
+    return cell
+  }
+
+  _validateCellByList(cell: ExcelDataCell, authorizedList: string[]): ExcelDataCell {
+    this.logger.verbose('_validateCellByList')
+    if (!authorizedList.includes(cell.toString())) {
+      this.logger.warn('Cell is not valid')
+      return null
+    }
+    return cell
+  }
+
+  _validateCellAmount(cell: ExcelDataCell): ExcelDataCell {
+    this.logger.verbose('_validateCellAmount')
+    const regexChiffres = /^[0-9]+$/
+
+    if (!regexChiffres.test(cell.toString())) {
+      this.logger.warn('Cell amount format is not valid')
+    } else if (Number(cell) < 0) {
+      this.logger.warn('Cell amount is < 0')
+    } else if (Number(cell) > 15300) {
+      this.logger.warn('Cell amount is > 15300')
+    } else {
+      return cell
+    }
+    return 0
   }
 
   private _fixFieldExcelRow(
