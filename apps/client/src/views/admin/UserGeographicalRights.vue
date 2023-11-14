@@ -57,6 +57,7 @@ const prefecturesToAdd = computed<DsfrTagProps[]>(
     .filter((pref) => !props.geographicalRights.prefectures.value.includes(pref))
     .map<DsfrTagProps>(
       (pref) => ({
+        class: 'tag-button',
         label: pref,
         tagName: 'button',
         onClick: () => {
@@ -99,9 +100,6 @@ const newPrefecture = ref<string>('')
     <DsfrTags
       :tags="prefectures"
     />
-    <!-- <div class="border">
-      <DsfrTags :tags="prefecturesToAdd" />
-    </div> -->
 
     <fieldset
       v-if="prefecturesToAdd?.length"

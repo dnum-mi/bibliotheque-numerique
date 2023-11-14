@@ -205,8 +205,6 @@ const onClickDemarches = (elt: DemarchesRoles | DemarcheRole) => {
         addable: elt.commonPrefectureAddables,
         deletable: elt.commonPrefectureDeletables,
       },
-      // elt.localization
-
     }
   }
   keyLocalization.value = getRandomId('location')
@@ -252,7 +250,7 @@ onMounted(async () => {
 
   <div class="fr-container">
     <div class="fr-grid-row">
-      <div class="fr-col-2 border-r-2">
+      <div class="fr-col-2 fr-pt-2w">
         <h6>
           Rôle
         </h6>
@@ -263,22 +261,21 @@ onMounted(async () => {
           @update:model-value="updateRole($event as string)"
         />
       </div>
-      <div class="fr-col-6 border-x-2">
+      <div class="fr-col-6 fr-pt-2w">
         <h6>
           Démarches
         </h6>
         <div
           v-for="dr in demarchesRolesChanged"
           :key="dr.name"
-          class="p-4"
         >
           <div
-            class="flex flex-row justify-between  fr-mb-2w"
+            class="flex flex-row justify-between fr-py-2w rounded-lg"
             :class="dr.attrs?.class"
             @click="onClickDemarches(dr)"
           >
             <DsfrCheckbox
-              class="font-bold"
+              class="font-bold fr-px-2v"
               :label="dr.label"
               :name="dr.name"
               :model-value="dr.value"
@@ -288,6 +285,7 @@ onMounted(async () => {
             <DemarcheLocalization
               v-if="dr.localization || dr.commonPrefectureValues"
               :key="dr.key"
+              class="fr-px-2v"
               :national="dr.localization?.national.value"
               :prefectures="dr.commonPrefectureValues"
             />
@@ -296,16 +294,17 @@ onMounted(async () => {
             <div
               v-for="d in dr.children"
               :key="d.options.id"
-              class="p-l-4  fr-py-2v"
+              class="p-l-4 fr-py-2v rounded-lg"
+              :class="d.attrs?.class || ''"
             >
               <div
                 class="flex  flex-row  justify-between  py-2"
-                :class="d.attrs?.class || ''"
                 @click="onClickDemarches(d)"
               >
                 <DsfrCheckbox
                   :key="dr.key"
                   :label="d.options.title"
+                  class="fr-px-2v"
                   :name="d.options.id.toString()"
                   :model-value="d.options.checked"
                   :disabled="d.attrs.disabled"
@@ -313,16 +312,17 @@ onMounted(async () => {
                 />
                 <DemarcheLocalization
                   v-if="d.options.prefectureOptions"
+                  class="fr-px-2v"
                   :national="d.options.prefectureOptions.national.value"
                   :prefectures="d.options.prefectureOptions.prefectures.value"
                 />
               </div>
             </div>
           </div>
-          <hr class="fr-hr  fr-mt-2w">
+          <hr class="fr-hr fr-mt-2w">
         </div>
       </div>
-      <div class="fr-col-4 border-r-2">
+      <div class="fr-col-4 fr-pt-2w fr-pl-2w">
         <h6>
           Localisation
         </h6>
