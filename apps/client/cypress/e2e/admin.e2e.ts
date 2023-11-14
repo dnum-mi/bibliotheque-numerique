@@ -29,4 +29,22 @@ describe('Home', () => {
     cy.wait('@userSelected')
     cy.url().should('match', /\/user\/\d/)
   })
+
+  it.only('update user with no role', () => {
+    cy.intercept({
+      method: 'GET',
+      url: /\/api\/users\/\d{1,3}/,
+    }, { fixture: 'no-role-user-selected.json' }).as('userSelected')
+
+    cy.visit('/user/444')
+    cy.wait('@userSelected')
+    cy.get('[type=radio]').should('not.be.checked')
+
+    cy.get('[type=checkbox]').should('not.be.checked')
+    cy.get('div').should('contain', 'Demarche 4')
+      .contains('Demarche 4')
+      .parent()
+      .children('input')
+      .should('be.disabled')
+  })
 })
