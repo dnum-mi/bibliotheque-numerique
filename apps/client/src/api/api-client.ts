@@ -118,54 +118,6 @@ const downloadAFile = (response: AxiosResponse) => {
   return response.data
 }
 
-export const rolesApiClient = {
-  getRoles: async () => {
-    const response = await apiClientInstance.get(rolesRoute)
-    return response.data
-  },
-
-  getRoleById: async (roleId: number) => {
-    const response = await apiClientInstance.get(getRoleByIdRoute(roleId))
-    return response.data
-  },
-
-  upsertRole: async (role: IRoleForm, id?: number) => {
-    if (typeof id === 'number') {
-      role.id = id
-    }
-    const response = await apiClientInstance.post(rolesRoute, { role })
-    return response.data
-  },
-
-  updateRole: async (id: number, role: Partial<IRoleForm>) => {
-    const response = await apiClientInstance.put(getRoleByIdRoute(id), { role })
-    return response.data
-  },
-
-  deleteRole: async (id: number) => {
-    const response = await apiClientInstance.delete(getRoleByIdRoute(id))
-    return response.data
-  },
-
-  assignRole: async (userId: number, roleId: number) => {
-    try {
-      await apiClientInstance.post(assignRoleRoute, { userId, roleId })
-      return true
-    } catch {
-      return false
-    }
-  },
-
-  unassignRole: async (userId: number, roleId: number) => {
-    try {
-      await apiClientInstance.post(unassignRoleRoute, { userId, roleId })
-      return true
-    } catch {
-      return false
-    }
-  },
-}
-
 export const demarchesApiClient = {
   getDemarcheByDsId: async (id: number) => {
     const url = `${demarchesRoute}/ds/${id}`
@@ -344,7 +296,6 @@ export const customFiltersApiClient = {
 }
 
 export default {
-  ...rolesApiClient,
   ...demarchesApiClient,
   ...organismeApiClient,
   ...usersApiClient,
