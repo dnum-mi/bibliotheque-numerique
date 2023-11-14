@@ -9,13 +9,7 @@ import { getRandomId } from '@gouvminint/vue-dsfr'
 
 import UserGeographicalRights from './UserGeographicalRights.vue'
 
-// const props = defineProps<{ }>()
-const userStore = useUserStore()
-
-const selectedUser = computed<UserWithEditableRole | null>(() => userStore.selectedUser)
-const user = computed<UserOutputDto|undefined>(() => selectedUser.value?.originalUser)
-const role = computed<Record<number, OneDemarcheRoleOption>| undefined>(() => selectedUser.value?.demarcheHash)
-
+// #region Types, Mapping, Enum
 type DemarcheHtmlAttrs = {
   class?: string | null
   disabled?: boolean | null
@@ -45,7 +39,32 @@ const typeOrganismeLabel = {
   [OrganismeType.FRUP]: 'Fondations reconnues d’utilité publique (FRUP)',
   [OrganismeType.unknown]: 'Type d’organisme inconnu',
 }
+// #endregion
 
+const userStore = useUserStore()
+const selectedUser = computed<UserWithEditableRole | null>(() => userStore.selectedUser)
+const user = computed<UserOutputDto|undefined>(() => selectedUser.value?.originalUser)
+const role = computed<Record<number, OneDemarcheRoleOption>| undefined>(() => selectedUser.value?.demarcheHash)
+
+// #region View Role
+const roleSelected = ref<string>('')
+const roleOptions = [
+  {
+    label: 'Administrateur',
+    value: Roles.admin,
+  },
+  {
+    label: 'Instructeur',
+    value: Roles.instructor,
+  },
+]
+const updateRole = async (event: string) => {
+  // roleSelected.value = event
+  await useUserStore.updateRole(event)
+}
+// #endregion
+
+// #region View Demarches
 const isAllCheck = (children: DemarcheRole[]):boolean => children.reduce((val, demarche) => {
   return (val &&= demarche.options.checked)
 }, true)
@@ -154,21 +173,6 @@ const updateCheckTypeByChild = (id: number) => {
   })
 }
 
-const roleSelected = ref<string>('')
-const roleOptions = [
-  {
-    label: 'Administrateur',
-    value: Roles.admin,
-  },
-  {
-    label: 'Instructeur',
-    value: Roles.instructor,
-  },
-]
-const updateRole = (event: string) => {
-  roleSelected.value = event
-}
-
 const updateTypeDemarche = ({ name, checked, dr }: { name: string, checked: boolean, dr:DemarchesRoles}) => {
   dr.value = checked
   if (checked) {
@@ -182,7 +186,6 @@ const updateDemarche = ({ name, id, checked, d }: { name: string, id: number, ch
   updateCheckTypeByChild(id)
 }
 
-const keyLocalization = ref<string>(getRandomId('location'))
 const onClickDemarches = (elt: DemarchesRoles | DemarcheRole) => {
   if (elt.attrs.disabled) {
     return
@@ -207,7 +210,6 @@ const onClickDemarches = (elt: DemarchesRoles | DemarcheRole) => {
       },
     }
   }
-  keyLocalization.value = getRandomId('location')
 }
 
 const canEditDemarche = (d: OneDemarcheRoleOption) => !!(
@@ -215,7 +217,14 @@ const canEditDemarche = (d: OneDemarcheRoleOption) => !!(
   d.prefectureOptions.prefectures.addable.length ||
   d.prefectureOptions.prefectures.deletable.length)
 
+// #endregion
+
+// #region view locatlization
+const keyLocalization = ref<string>(getRandomId('location'))
+keyLocalization.value = getRandomId('location')
+
 const geographicalRights = ref<PrefectureOptions | null>(null)
+// #endregion
 
 onMounted(async () => {
   const params = useRoute()?.params
