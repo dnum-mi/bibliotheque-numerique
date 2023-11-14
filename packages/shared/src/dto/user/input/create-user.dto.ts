@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsEmail, IsNotEmpty } from 'class-validator'
-import { IsPasswordStrongEnough } from './is-password-strong-enough.js'
+import { IsPasswordStrongEnough } from './is-password-strong-enough'
 
 export class CreateUserDto {
   @ApiProperty({

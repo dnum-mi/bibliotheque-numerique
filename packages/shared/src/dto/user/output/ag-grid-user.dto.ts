@@ -1,4 +1,4 @@
-import { RolesKeys } from '../../enums'
+import { RolesKeys } from '../../../enums'
 
 export class AgGridUserDto {
   id: number
