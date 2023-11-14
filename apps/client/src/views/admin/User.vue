@@ -215,8 +215,7 @@ const onClickDemarches = (elt: DemarchesRoles | DemarcheRole) => {
 const canEditDemarche = (d: OneDemarcheRoleOption) => !!(
   d.prefectureOptions.national.editable ||
   d.prefectureOptions.prefectures.addable.length ||
-  d.prefectureOptions.prefectures.deletable.length
-)
+  d.prefectureOptions.prefectures.deletable.length)
 
 const geographicalRights = ref<PrefectureOptions | null>(null)
 
@@ -225,7 +224,7 @@ onMounted(async () => {
   const id = Number(params.id)
   if (id) {
     await userStore.loadUserById(id)
-    roleSelected.value = userStore.selectedUser?.originalUser.role.label || ''
+    roleSelected.value = userStore.selectedUser?.originalUser?.role.label || ''
     demarchesRolesChanged.value = demarchesRoles.value
   }
 })
