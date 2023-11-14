@@ -68,7 +68,7 @@ const { value: passwordValue, errorMessage: passwordError } = useField<string>('
           <!-- FORM -->
           <form
             class="card"
-            @submit="onSubmit"
+            @submit="onSubmit($event)"
           >
             <!-- firstname -->
             <DsfrInputGroup

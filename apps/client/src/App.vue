@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, onErrorCaptured, type Ref } from 'vue'
+import { ref, watch, onErrorCaptured } from 'vue'
 import { useRegisterSW } from 'virtual:pwa-register/vue'
 import { useRouter, useRoute } from 'vue-router'
 import { AxiosError } from 'axios'
@@ -26,7 +26,7 @@ type QuickLink = {
   iconAttrs?: Record<string, string>;
 }
 
-const quickLinks: Ref<QuickLink[]> = ref([])
+const quickLinks = ref<QuickLink[]>([])
 
 const demarcheQuickLink: QuickLink = {
   label: 'Démarches',
