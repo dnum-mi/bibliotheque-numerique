@@ -134,5 +134,3 @@ defineExpose({
     @selection-changed="onSelectionChanged($event)"
   />
 </template>
-
-<style scoped></style>

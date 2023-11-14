@@ -1,23 +1,24 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import type { Ref } from 'vue'
 import { useRouter } from 'vue-router'
-import type { ColDef, SelectionChangedEvent } from 'ag-grid-community'
+import type { SelectionChangedEvent } from 'ag-grid-community'
 
-import { PaginationUserDto } from '@biblio-num/shared'
+import type { PaginationUserDto } from '@biblio-num/shared'
 
 import { dateToStringFr } from '@/utils'
-import { baseColDef } from '@/components/ag-grid/server-side/columndef-base'
 import { useUserStore } from '@/stores'
-import AgGridServerSide from '@/components/ag-grid/server-side/AgGridServerSide.vue'
+import type { BNColDef } from '@/components/ag-grid/server-side/bn-col-def.interface'
 import LayoutList from '@/components/Layout/LayoutList.vue'
+import AgGridServerSide from '@/components/ag-grid/server-side/AgGridServerSide.vue'
+import { baseColDef } from '@/components/ag-grid/server-side/columndef-base'
 import RoleBadgesRenderer from '@/components/Badges/RoleBadgesRenderer.vue'
+// const props = defineProps<{ }>()
 
 const agGridComponent = ref()
 const router = useRouter()
 
-const columnDefs: Ref<ColDef[]> = ref([
+const columnDefs = ref<BNColDef[]>([
   {
     headerName: 'id',
     field: 'id',
