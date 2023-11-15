@@ -4,11 +4,8 @@ export class UpdateOneRoleOptionDto {
   demarcheId: number
   checked?: boolean
   national?: boolean
-  prefectures?:
-    | {
-        add: PrefectureKeys
-      }
-    | {
-        remove: PrefectureKeys
-      }
+  prefecture?: {
+    toAdd: boolean
+    key: PrefectureKeys
+  }
 }
