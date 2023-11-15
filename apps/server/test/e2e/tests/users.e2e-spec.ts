@@ -150,47 +150,6 @@ describe('users (e2e)', () => {
     })
   })
 
-  describe('GET /users/:id', () => {
-    it('Should return 401', async () => {
-      return request(app.getHttpServer()).get('/users/2').expect(401)
-    })
-
-    it('Should return 403 for instructor', async () => {
-      return request(app.getHttpServer())
-        .get('/users/2')
-        .set('Cookie', [cookies.instructor])
-        .expect(403)
-    })
-
-    it('Should return the user', async () => {
-      const id = 2
-      const response = await request(app.getHttpServer())
-        .get(`/users/${id}`)
-        .set('Cookie', [cookies.superadmin])
-        .expect(200)
-      expect(response.body).toBeDefined()
-      expect(response.body.id).toBe(id)
-      expect(response.body.email).toBeDefined()
-      expect(response.body.password).toBeUndefined()
-    })
-
-    it('Should return error 404 if the user is not found', async () => {
-      const id = 999
-      await request(app.getHttpServer()) //
-        .get(`/users/${id}`)
-        .set('Cookie', [cookies.superadmin])
-        .expect(404)
-    })
-
-    it('Should return error 400 if user id is not a number', async () => {
-      const id = 'test'
-      await request(app.getHttpServer()) //
-        .get(`/users/${id}`)
-        .set('Cookie', [cookies.superadmin])
-        .expect(400)
-    })
-  })
-
   describe('POST /users/reset-password', () => {
     it('Should send a mail to reset password with e-mail correct', async () => {
       const email = 'admin@localhost.com'

@@ -35,9 +35,11 @@ export class RoleGuard implements CanActivate {
     }
 
     const endPointRole = this.reflector.get<RolesKeys>(ROLE_KEY, context.getHandler())
-    if (!endPointRole) {
+    const controllerRole = this.reflector.get<RolesKeys>(ROLE_KEY, context.getClass())
+    if (!endPointRole && !controllerRole) {
       noRoleDefined(context)
     }
+    const role = controllerRole || endPointRole
 
     const user = context.switchToHttp().getRequest().user
     if (!user) {
@@ -45,9 +47,9 @@ export class RoleGuard implements CanActivate {
     }
     this.logger.debug(`Hi ${user.email}`)
     const userRole = user.role?.label
-    if (!userRole && endPointRole === 'any') { // anyone connected
+    if (!userRole && role === 'any') { // anyone connected
       return true
-    } else if (isSuperiorOrSimilar(endPointRole, userRole)) {
+    } else if (isSuperiorOrSimilar(role, userRole)) {
       return true
     } else {
       this.logger.warn(`User with role ${userRole} cannot access to route which has a minimum role of ${endPointRole}.`)
