@@ -1,8 +1,8 @@
 import { SmallDemarcheOutputDto } from '../../demarche/small-demarche-output.dto'
-import { PrefectureKeys } from '../../../enums'
+import { PrefectureKeys, RolesKeys } from '../../../enums'
 import { UserOutputDto } from './user-output.dto'
 
-type prefectureOptions = {
+type PrefectureOptions = {
   national: {
     value: boolean
     editable: boolean
@@ -17,10 +17,12 @@ type prefectureOptions = {
 export type OneDemarcheRoleOption = {
   checked: boolean,
   editable: boolean,
-  prefectureOptions: prefectureOptions
+  prefectureOptions: PrefectureOptions
 } & SmallDemarcheOutputDto
 
 export class UserWithEditableRole {
   originalUser: UserOutputDto
+  possibleRoles: RolesKeys[]
+  deletable: boolean
   demarcheHash: Record<number, OneDemarcheRoleOption>
 }
