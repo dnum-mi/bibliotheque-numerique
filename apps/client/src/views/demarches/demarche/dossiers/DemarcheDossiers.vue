@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useDebounceFn } from '@vueuse/core'
 import type { GridOptions } from 'ag-grid-enterprise'
@@ -29,7 +29,7 @@ import { deepAlmostEqual, selectKeysInObject } from '@/utils/object'
 import AgGridServerSide from '@/components/ag-grid/server-side/AgGridServerSide.vue'
 import { backendFilterToAggFilter } from '@/components/ag-grid/server-side/pagination.utils'
 import { getAgGridFilterFromFieldType } from '@/components/ag-grid/server-side/filters.utils'
-import type { BNColDef } from '@/components/ag-grid/server-side/bnColDef.interface'
+import type { BNColDef } from '@/components/ag-grid/server-side/bn-col-def.interface'
 import DemarcheDossiersDisplays, { type TotalsAllowed } from './DemarcheDossiersDisplays.vue'
 
 type DemarcheDossiersProps = {
@@ -43,7 +43,6 @@ const router = useRouter()
 const route = useRoute()
 const gridApi = ref<GridApi>()
 const columnApi = ref<ColumnApi>()
-const groupByDossier = ref(false)
 const demarche = computed<IDemarche>(() => demarcheStore.currentDemarche as IDemarche)
 const demarcheConfiguration = computed<FrontMappingColumn[]>(() => demarcheStore.currentDemarcheFlatConfiguration)
 const customFilterStore = useCustomFilterStore()
@@ -54,6 +53,19 @@ const totalsAllowed = computed<TotalsAllowed[] | undefined>(
     .filter(mapping => mapping.type === 'number' && mapping.id !== '96151176-4624-4706-b861-722d2e53545d')
     .map((mapping) => ({ id: mapping.id, columnLabel: mapping.columnLabel } as TotalsAllowed)),
 )
+
+const hasNoRepeatableField = computed(() => {
+  return !demarcheStore.currentDemarche?.mappingColumns.some((m) => 'children' in m)
+})
+
+const groupByDossier = ref(hasNoRepeatableField.value)
+
+watchEffect(() => {
+  if (hasNoRepeatableField.value) {
+    groupByDossier.value = false
+  }
+})
+
 const paginationChanged = computed(() => {
   const keys = ['columns', 'filters', 'sorts']
   return !deepAlmostEqual(
@@ -123,6 +135,7 @@ watch(demarche, async (newValue) => {
   computeColumnsDef()
   await customFilterStore.getCustomFiltersByDemarche(newValue.id)
 })
+
 watch(fetching, () => {
   if (!fetching.value) agGridComponent.value?.refresh()
 })
@@ -289,10 +302,6 @@ const download = () => {
 
 const agGridComponent = ref()
 
-const hasNoRepeatableField = computed(() => {
-  return !demarcheStore.currentDemarche?.mappingColumns.some((m) => 'children' in m)
-})
-
 const toggleView = useDebounceFn((isActive: boolean) => {
   groupByDossier.value = isActive
   agGridComponent.value?.refresh()
@@ -326,7 +335,6 @@ const apiCall = (dto: PaginationDto<unknown>) => {
           <DsfrButton
             :tertiary="groupByDossier"
             :class="{ 'opacity-70': groupByDossier }"
-            :disabled="hasNoRepeatableField"
             @click="toggleView(false)"
           >
             Vue par champ
@@ -335,6 +343,7 @@ const apiCall = (dto: PaginationDto<unknown>) => {
           <DsfrButton
             :tertiary="!groupByDossier"
             :class="{ 'opacity-70': !groupByDossier }"
+            :disabled="hasNoRepeatableField"
             @click="toggleView(true)"
           >
             <VIcon :name="groupByDossier ? 'ri-checkbox-circle-fill' : 'ri-checkbox-blank-circle-line'" />
