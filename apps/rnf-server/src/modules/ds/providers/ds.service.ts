@@ -29,7 +29,7 @@ export class DsService {
     this.logger.setContext(this.constructor.name)
     const api: string | undefined = this.config.get('ds.api')
     const token: string | undefined = this.config.get('ds.token')
-    const httpProxy: string | undefined = this.config.get('ds.proxy')
+    const httpProxy: string | undefined = this.config.get('ds.httpProxy')
     if (!api || !token) {
       throw new Error('DS API not configured. Check your env.')
     } else {
