@@ -3,7 +3,16 @@ import { User } from '../user.entity'
 
 // TODO: maybe there is an elegant way to have this.
 export const UserFieldTypeHashConst: Record<
-  keyof Omit<User, 'role' | 'skipHashPassword' | 'password' | 'validated' | 'hashPassword' | 'customFilters' | 'removeSkipHashPasswordReference'>,
+  keyof Omit<
+    User,
+    | 'role'
+    | 'skipHashPassword'
+    | 'password'
+    | 'validated'
+    | 'hashPassword'
+    | 'customFilters'
+    | 'removeSkipHashPasswordReference'
+  >,
   FieldTypeKeys
 > = {
   id: 'number',

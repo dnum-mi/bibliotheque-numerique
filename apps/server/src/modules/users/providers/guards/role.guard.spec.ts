@@ -1,4 +1,3 @@
-import 'reflect-metadata'
 import { Test, TestingModule } from '@nestjs/testing'
 import { RoleGuard } from './role.guard'
 import { Reflector } from '@nestjs/core'

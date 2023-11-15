@@ -12,4 +12,5 @@ export interface IUser {
   validated: boolean
   customFilters?: ICustomFilter[]
   updateAt: Date
+  createAt: Date
 }

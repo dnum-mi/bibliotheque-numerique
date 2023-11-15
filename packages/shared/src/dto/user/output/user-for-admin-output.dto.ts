@@ -1,4 +1,5 @@
-import { OrganismeTypeKeys, PrefectureKeys } from '../../../enums'
+import { SmallDemarcheOutputDto } from '../../demarche/small-demarche-output.dto'
+import { PrefectureKeys } from '../../../enums'
 import { UserOutputDto } from './user-output.dto'
 
 type prefectureOptions = {
@@ -13,13 +14,13 @@ type prefectureOptions = {
   }
 }
 
-export class UserForAdminOutputDto {
+export type OneDemarcheRoleOption = {
+  checked: boolean,
+  editable: boolean,
+  prefectureOptions: prefectureOptions
+} & SmallDemarcheOutputDto
+
+export class UserWithEditableRole {
   originalUser: UserOutputDto
-  demarcheHash: Record<number, {
-    id: number,
-    checked: boolean,
-    label: string,
-    types: OrganismeTypeKeys[],
-    prefectureOptions: prefectureOptions
-  }>
+  demarcheHash: Record<number, OneDemarcheRoleOption>
 }
