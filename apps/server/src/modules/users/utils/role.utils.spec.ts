@@ -6,8 +6,13 @@ import {
   Roles,
   SmallDemarcheOutputDto,
   UpdateOneRoleOptionDto,
+  UserWithEditableRole,
 } from '@biblio-num/shared'
-import { generateUserWithEditableRole, isEditionAllowed } from '@/modules/users/utils/role.utils'
+import {
+  generateRoleAttributionList,
+  generateUserWithEditableRole,
+  isEditionAllowed,
+} from '@/modules/users/utils/role.utils'
 
 /* region MOCK DEMARCHES */
 /*
@@ -105,7 +110,7 @@ describe('RoleUtils', () => {
           superAdmin,
           allSmallDemarches,
         ),
-      ).toEqual({
+      ).toMatchObject({
         originalUser: superAdmin,
         demarcheHash: Object.fromEntries(
           allSmallDemarches.map((sd, i) => [
@@ -138,7 +143,7 @@ describe('RoleUtils', () => {
           emptyInstructor,
           allSmallDemarches,
         ),
-      ).toEqual({
+      ).toMatchObject({
         originalUser: emptyInstructor,
         demarcheHash: Object.fromEntries(
           allSmallDemarches.map((sd, i) => [
@@ -171,7 +176,7 @@ describe('RoleUtils', () => {
           emptyAdmin,
           allSmallDemarches,
         ),
-      ).toEqual({
+      ).toMatchObject({
         originalUser: emptyAdmin,
         demarcheHash: Object.fromEntries(
           allSmallDemarches.map((sd, i) => [
@@ -217,7 +222,7 @@ describe('RoleUtils', () => {
           bobInstructor,
           allSmallDemarches,
         ),
-      ).toEqual({
+      ).toMatchObject({
         originalUser: bobInstructor,
         demarcheHash: Object.fromEntries(
           allSmallDemarches.map((sd, i) => [
@@ -258,7 +263,7 @@ describe('RoleUtils', () => {
         emptyInstructor,
         allSmallDemarches,
       )
-      expect(result.demarcheHash[1]).toEqual({
+      expect(result.demarcheHash[1]).toMatchObject({
         ...allSmallDemarches[0],
         checked: false,
         editable: true,
@@ -300,7 +305,7 @@ describe('RoleUtils', () => {
         bobInstructor,
         allSmallDemarches,
       )
-      expect(result.demarcheHash[1]).toEqual({
+      expect(result.demarcheHash[1]).toMatchObject({
         ...allSmallDemarches[0],
         checked: true,
         editable: true,
@@ -333,7 +338,7 @@ describe('RoleUtils', () => {
         emptyInstructor,
         allSmallDemarches,
       )
-      expect(result.demarcheHash[1]).toEqual({
+      expect(result.demarcheHash[1]).toMatchObject({
         ...allSmallDemarches[0],
         checked: false,
         editable: true,
@@ -375,7 +380,7 @@ describe('RoleUtils', () => {
         bobInstructor,
         allSmallDemarches,
       )
-      expect(result.demarcheHash[1]).toEqual({
+      expect(result.demarcheHash[1]).toMatchObject({
         ...allSmallDemarches[0],
         checked: true,
         editable: true,
@@ -417,7 +422,7 @@ describe('RoleUtils', () => {
         bobInstructor,
         allSmallDemarches,
       )
-      expect(result.demarcheHash[1]).toEqual({
+      expect(result.demarcheHash[1]).toMatchObject({
         ...allSmallDemarches[0],
         checked: true,
         editable: false,
@@ -459,7 +464,7 @@ describe('RoleUtils', () => {
         bobInstructor,
         allSmallDemarches,
       )
-      expect(result.demarcheHash[1]).toEqual({
+      expect(result.demarcheHash[1]).toMatchObject({
         ...allSmallDemarches[0],
         checked: true,
         editable: false,
@@ -479,8 +484,10 @@ describe('RoleUtils', () => {
   })
 
   describe('isEditionAllowed', () => {
-    const openEditionForEmptyInstructor = {
+    const openEditionForEmptyInstructor: UserWithEditableRole = {
       originalUser: emptyInstructor,
+      deletable: false,
+      possibleRoles: [],
       demarcheHash: Object.fromEntries(
         allSmallDemarches.map((sd, i) => [
           sd.id,
@@ -511,6 +518,8 @@ describe('RoleUtils', () => {
         } as UpdateOneRoleOptionDto,
         {
           originalUser: superAdmin,
+          deletable: false,
+          possibleRoles: [],
           demarcheHash: openEditionForEmptyInstructor.demarcheHash,
         },
       )).toBeFalsy()
@@ -614,6 +623,156 @@ describe('RoleUtils', () => {
         } as UpdateOneRoleOptionDto,
         editable,
       )).toBeTruthy()
+    })
+  })
+
+  describe('generateRoleAttributionList', () => {
+    it('Should throw an error if editor its not an admin', () => {
+      expect(() => {
+        generateRoleAttributionList(emptyInstructor, emptyInstructor)
+      }).toThrow('Only an admin can generate role attribution list')
+    })
+
+    it('Should return empty array if target is superadmin', () => {
+      expect(generateRoleAttributionList(superAdmin, superAdmin)).toEqual([])
+    })
+
+    it('Should return complete array if editor is superadmin', () => {
+      expect(generateRoleAttributionList(superAdmin, emptyAdmin))
+        .toEqual([Roles.superadmin, Roles.admin, Roles.instructor])
+    })
+
+    it('Should return admin and instructor if target is contained', () => {
+      expect(generateRoleAttributionList(emptyAdmin, emptyInstructor))
+        .toEqual([Roles.instructor, Roles.admin])
+    })
+
+    it('Should return [] if target is not contained - 1', () => {
+      const bob = dumbUserFromRole({
+        label: Roles.instructor,
+        options: {
+          1: {
+            national: true,
+            prefectures: [],
+          },
+          3: {
+            national: false,
+            prefectures: [Prefecture.D57, Prefecture.D75],
+          },
+        },
+      })
+      const alice = dumbUserFromRole({
+        label: Roles.admin,
+        options: {
+          3: {
+            national: true,
+            prefectures: [],
+          },
+        },
+      })
+      expect(generateRoleAttributionList(alice, bob))
+        .toEqual([])
+    })
+
+    it('Should return [] if target is not contained - 2', () => {
+      const bob = dumbUserFromRole({
+        label: Roles.instructor,
+        options: {
+          1: {
+            national: true,
+            prefectures: [],
+          },
+          3: {
+            national: false,
+            prefectures: [Prefecture.D57, Prefecture.D75],
+          },
+        },
+      })
+      const alice = dumbUserFromRole({
+        label: Roles.admin,
+        options: {
+          1: {
+            national: false,
+            prefectures: [Prefecture.D57],
+          },
+          3: {
+            national: true,
+            prefectures: [],
+          },
+        },
+      })
+      expect(generateRoleAttributionList(alice, bob))
+        .toEqual([])
+    })
+
+    it('Should return [] if target is not contained - 3', () => {
+      const bob = dumbUserFromRole({
+        label: Roles.instructor,
+        options: {
+          1: {
+            national: true,
+            prefectures: [],
+          },
+          3: {
+            national: false,
+            prefectures: [Prefecture.D57, Prefecture.D75],
+          },
+        },
+      })
+      const alice = dumbUserFromRole({
+        label: Roles.admin,
+        options: {
+          1: {
+            national: true,
+            prefectures: [],
+          },
+          3: {
+            national: false,
+            prefectures: [Prefecture.D75, Prefecture.D30],
+          },
+        },
+      })
+      expect(generateRoleAttributionList(alice, bob))
+        .toEqual([])
+    })
+
+    it('Should return [Admin, Instructor] if target is contained (complex)', () => {
+      const bob = dumbUserFromRole({
+        label: Roles.instructor,
+        options: {
+          1: {
+            national: true,
+            prefectures: [],
+          },
+          3: {
+            national: false,
+            prefectures: [Prefecture.D57, Prefecture.D75],
+          },
+          4: {
+            national: false,
+            prefectures: [Prefecture.D30],
+          },
+        },
+      })
+      const alice = dumbUserFromRole({
+        label: Roles.admin,
+        options: {
+          1: {
+            national: true,
+            prefectures: [],
+          },
+          3: {
+            national: false,
+            prefectures: [Prefecture.D57, Prefecture.D75, Prefecture.D30],
+          },
+          4: {
+            national: true,
+            prefectures: [],
+          },
+        },
+      })
+      expect(generateRoleAttributionList(alice, bob))
+        .toEqual([Roles.instructor, Roles.admin])
     })
   })
 })

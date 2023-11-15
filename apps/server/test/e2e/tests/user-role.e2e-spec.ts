@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
 import { Cookies, TestingModuleFactory } from '../common/testing-module.factory'
 import { UserService } from '@/modules/users/providers/user.service'
-import { IRole, Prefecture, UpdateOneRoleOptionDto } from '@biblio-num/shared'
+import { IRole, Prefecture, Roles, UpdateOneRoleOptionDto } from '@biblio-num/shared'
 
 describe('users (e2e)', () => {
   let app: INestApplication
@@ -57,7 +57,6 @@ describe('users (e2e)', () => {
           1: {
             id: 1,
             title: 'Déclaration de financement étranger',
-            types: ['ARUP', 'FDD'],
             dsId: 76,
             checked: true,
             editable: true,
@@ -69,7 +68,6 @@ describe('users (e2e)', () => {
           2: {
             id: 2,
             title: 'Démarche de test pour les configurations',
-            types: ['ARUP', 'FRUP'],
             dsId: 77,
             checked: false,
             editable: true,
@@ -81,7 +79,6 @@ describe('users (e2e)', () => {
           3: {
             id: 3,
             title: 'Déclaration de financement étranger',
-            types: ['FE', 'FDD'],
             dsId: 2,
             checked: false,
             editable: true,
@@ -93,7 +90,6 @@ describe('users (e2e)', () => {
           4: {
             id: 4,
             title: 'Déclaration de financement étranger',
-            types: ['CULTE'],
             dsId: 3,
             checked: false,
             editable: true,
@@ -106,7 +102,6 @@ describe('users (e2e)', () => {
             id: 5,
             title:
               '[UPDATE-IDENTIFICATION] Déclaration de financement étranger',
-            types: ['ARUP'],
             dsId: 4,
             checked: true,
             editable: true,
@@ -119,7 +114,6 @@ describe('users (e2e)', () => {
             id: 6,
             title:
               '[DELETE-IDENTIFICATION] Déclaration de financement étranger',
-            types: ['ARUP'],
             dsId: 5,
             checked: false,
             editable: true,
@@ -132,7 +126,6 @@ describe('users (e2e)', () => {
             id: 7,
             title:
               '[UNDEFINED-IDENTIFICATION] Déclaration de financement étranger',
-            types: ['ARUP', 'FDD'],
             dsId: 6,
             checked: false,
             editable: true,
@@ -289,6 +282,75 @@ describe('users (e2e)', () => {
       expect(user.role.options[1]).toEqual({
         national: false,
         prefectures: [],
+      })
+    })
+  })
+
+  describe('PUT /users/:targetUserId/role', () => {
+    it('Should return error 401', async () => {
+      await request(app.getHttpServer()) //
+        .put('/users/1/role')
+        .expect(401)
+    })
+
+    it('Should return 403 for instructor', async () => {
+      await request(app.getHttpServer()) //
+        .put('/users/1/role')
+        .set('Cookie', [cookies.instructor])
+        .expect(403)
+    })
+
+    it('Should return 200', async () => {
+      await request(app.getHttpServer()) //
+        .put('/users/5/role')
+        .set('Cookie', [cookies.superadmin])
+        .send({
+          role: Roles.superadmin,
+        })
+        .expect(200)
+      expect((await userService.findOneById(5)).role).toEqual({
+        label: Roles.superadmin,
+        options: {},
+      })
+    })
+
+    it('Should return 200', async () => {
+      await request(app.getHttpServer()) //
+        .put('/users/5/role')
+        .set('Cookie', [cookies.superadmin])
+        .send({
+          role: Roles.admin,
+        })
+        .expect(200)
+      expect((await userService.findOneById(5)).role).toEqual({
+        label: Roles.admin,
+        options: user5OriginalRole.options,
+      })
+    })
+  })
+
+  describe('DELETE /users/:targetUserId/role', () => {
+    it('Should return error 401', async () => {
+      await request(app.getHttpServer()) //
+        .delete('/users/1/role')
+        .expect(401)
+    })
+
+    it('Should return 403 for instructor', async () => {
+      await request(app.getHttpServer()) //
+        .delete('/users/1/role')
+        .set('Cookie', [cookies.instructor])
+        .expect(403)
+    })
+
+    it('Should return 200', async () => {
+      await request(app.getHttpServer()) //
+        .delete('/users/5/role')
+        .set('Cookie', [cookies.superadmin])
+        .expect(200)
+      expect((await userService.findOneById(5)).role).toEqual({
+        label: null,
+        options: {},
       })
     })
   })

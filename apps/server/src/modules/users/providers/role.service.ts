@@ -1,6 +1,9 @@
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { Injectable } from '@nestjs/common'
 import {
+  IRole,
+  IUser,
+  Roles,
   UpdateOneRoleOptionDto,
   UserWithEditableRole,
 } from '@biblio-num/shared'
@@ -13,6 +16,13 @@ export class RoleService {
     private readonly userService: UserService,
   ) {
     this.logger.setContext(this.constructor.name)
+  }
+
+  public async updateUserRole(user: IUser, role: IRole): Promise<void> {
+    if (role.label === Roles.superadmin) {
+      role.options = {}
+    }
+    await this.userService.updateOrThrow(user.id, { role })
   }
 
   public async patchOneRole(

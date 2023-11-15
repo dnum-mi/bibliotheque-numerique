@@ -8,6 +8,8 @@ import {
   IRoleOption,
   IUser,
   UpdateOneRoleOptionDto,
+  RolesKeys,
+  isSuperiorOrSimilar,
 } from '@biblio-num/shared'
 import { isDefined } from 'class-validator'
 
@@ -39,8 +41,9 @@ const _isDemarcheEditable = (
   if (!targetRoleOption) return true
   if (editorRoleOptions.national) return true
   if (targetRoleOption.national) return false
-  return (targetRoleOption.prefectures ?? [])
-    .every((p) => (editorRoleOptions.prefectures ?? []).includes(p))
+  return (targetRoleOption.prefectures ?? []).every((p) =>
+    (editorRoleOptions.prefectures ?? []).includes(p),
+  )
 }
 
 export const generateUserWithEditableRole = (
@@ -62,12 +65,12 @@ export const generateUserWithEditableRole = (
   )
   if (isBelowSuperAdmin(target.role.label)) {
     if (editor.role.label === Roles.superadmin) {
-      Object.entries(hash).forEach(([, value]) => {
+      Object.values(hash).forEach((value) => {
         value.editable = true
         value.prefectureOptions.national.editable = true
       })
     } else {
-      Object.entries(hash).forEach(([, value]) => {
+      Object.values(hash).forEach((value) => {
         value.editable = _isDemarcheEditable(
           editor.role.options[value.id],
           target.role.options[value.id],
@@ -89,8 +92,11 @@ export const generateUserWithEditableRole = (
       })
     }
   }
+  const possibleRoles = generateRoleAttributionList(editor, target)
   return {
     originalUser: target,
+    possibleRoles,
+    deletable: isRoleDeletable(target.role.label, possibleRoles),
     demarcheHash: hash,
   }
 }
@@ -102,17 +108,74 @@ export const isEditionAllowed = (
   const { originalUser, demarcheHash } = userWithEditableRole
   const option = demarcheHash[roleEdit.demarcheId]
   if (!option) return false
-  if (isBelowSuperAdmin(originalUser.role.label)) {
-    if (isDefined(roleEdit.checked) && !option.editable) return false
-    if (isDefined(roleEdit.national) && !option.prefectureOptions.national.editable) return false
-    if (isDefined(roleEdit.prefecture)) {
-      if (roleEdit.prefecture.toAdd) {
-        return option.prefectureOptions.prefectures.addable.includes(roleEdit.prefecture.key)
-      } else {
-        return option.prefectureOptions.prefectures.deletable.includes(roleEdit.prefecture.key)
-      }
-    }
-    return true
+  if (!isBelowSuperAdmin(originalUser.role.label)) return false
+  if (isDefined(roleEdit.checked) && !option.editable) return false
+  if (
+    isDefined(roleEdit.national) &&
+    !option.prefectureOptions.national.editable
+  ) {
+    return false
   }
-  return false
+  if (isDefined(roleEdit.prefecture)) {
+    if (roleEdit.prefecture.toAdd) {
+      return option.prefectureOptions.prefectures.addable.includes(
+        roleEdit.prefecture.key,
+      )
+    } else {
+      return option.prefectureOptions.prefectures.deletable.includes(
+        roleEdit.prefecture.key,
+      )
+    }
+  }
+  return true
 }
+
+const _isTargetRoleOptionContainedInAdminRoleOption = (
+  editor: Record<number, IRoleOption>,
+  target: Record<number, IRoleOption>,
+): boolean => {
+  for (const [demarcheId, oneRoleOption] of Object.entries(target)) {
+    if (!editor[demarcheId]) {
+      return false
+    }
+    if (oneRoleOption.national && !editor[demarcheId].national) {
+      return false
+    }
+    if (
+      !oneRoleOption.national &&
+      !editor[demarcheId].national &&
+      !oneRoleOption.prefectures.every((p) =>
+        editor[demarcheId].prefectures.includes(p),
+      )
+    ) {
+      return false
+    }
+  }
+  return true
+}
+
+export const generateRoleAttributionList = (
+  editor: IUser,
+  target: IUser,
+): RolesKeys[] => {
+  if (!isSuperiorOrSimilar(Roles.admin, editor.role.label)) {
+    throw new Error('Only an admin can generate role attribution list')
+  }
+  if (target.role.label === Roles.superadmin) {
+    return []
+  }
+  if (editor.role.label === Roles.superadmin) {
+    return [Roles.superadmin, Roles.admin, Roles.instructor]
+  }
+  return _isTargetRoleOptionContainedInAdminRoleOption(
+    editor.role.options,
+    target.role.options,
+  )
+    ? [Roles.instructor, Roles.admin]
+    : []
+}
+
+export const isRoleDeletable = (
+  targetRole: RolesKeys,
+  possibleRoles: RolesKeys[],
+): boolean => (targetRole === Roles.superadmin ? false : !!possibleRoles.length)
