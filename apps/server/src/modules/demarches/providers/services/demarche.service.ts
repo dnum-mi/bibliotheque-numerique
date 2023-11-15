@@ -32,6 +32,10 @@ export class DemarcheService extends BaseEntityService<Demarche> {
     return query.getOne()
   }
 
+  async findAllSmallDemarche(): Promise<SmallDemarcheOutputDto[]> {
+    return this.findMultipleSmallDemarche({}, { label: Roles.superadmin, options: null })
+  }
+
   async findMultipleSmallDemarche(
     filter: FindManyOptions<Demarche> = {},
     role: IRole,

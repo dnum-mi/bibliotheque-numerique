@@ -7,6 +7,8 @@ import { JwtModule } from '@nestjs/jwt'
 import { SendMailModule } from '../sendmail/sendmail.module'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { DemarcheModule } from '@/modules/demarches/demarche.module'
+import { RoleService } from '@/modules/users/providers/role.service'
+import { UserRoleController } from '@/modules/users/controllers/user-role.controller'
 
 @Module({
   imports: [
@@ -27,8 +29,8 @@ import { DemarcheModule } from '@/modules/demarches/demarche.module'
     SendMailModule,
     DemarcheModule,
   ],
-  controllers: [UserController],
-  providers: [UserService],
+  controllers: [UserController, UserRoleController],
+  providers: [UserService, RoleService],
   exports: [UserService],
 })
 export class UserModule {}
