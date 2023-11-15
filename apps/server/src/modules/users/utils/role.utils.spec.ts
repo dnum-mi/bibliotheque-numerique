@@ -5,8 +5,9 @@ import {
   Prefecture,
   Roles,
   SmallDemarcheOutputDto,
+  UpdateOneRoleOptionDto,
 } from '@biblio-num/shared'
-import { generateUserWithEditableRole } from '@/modules/users/utils/role.utils'
+import { generateUserWithEditableRole, isEditionAllowed } from '@/modules/users/utils/role.utils'
 
 /* region MOCK DEMARCHES */
 /*
@@ -83,7 +84,6 @@ const emptyInstructor: IUser = dumbUserFromRole({
   label: Roles.instructor,
   options: {},
 })
-
 /* endregion */
 
 describe('RoleUtils', () => {
@@ -475,6 +475,145 @@ describe('RoleUtils', () => {
           },
         },
       })
+    })
+  })
+
+  describe('isEditionAllowed', () => {
+    const openEditionForEmptyInstructor = {
+      originalUser: emptyInstructor,
+      demarcheHash: Object.fromEntries(
+        allSmallDemarches.map((sd, i) => [
+          sd.id,
+          {
+            ...allSmallDemarches[i],
+            checked: false,
+            editable: true,
+            prefectureOptions: {
+              national: {
+                value: false,
+                editable: true,
+              },
+              prefectures: {
+                value: [],
+                deletable: [],
+                addable: [],
+              },
+            },
+          },
+        ]),
+      ),
+    }
+    it('Shouldn\'t be able to edit superadmin', () => {
+      expect(isEditionAllowed(
+        {
+          demarcheId: 1,
+          checked: true,
+        } as UpdateOneRoleOptionDto,
+        {
+          originalUser: superAdmin,
+          demarcheHash: openEditionForEmptyInstructor.demarcheHash,
+        },
+      )).toBeFalsy()
+    })
+    it('Shouldn\'t be able to check', () => {
+      const editable = { ...openEditionForEmptyInstructor }
+      editable.demarcheHash[1].editable = false
+      expect(isEditionAllowed(
+        {
+          demarcheId: 1,
+          checked: false,
+        } as UpdateOneRoleOptionDto,
+        editable,
+      )).toBeFalsy()
+    })
+    it('Should be able to check', () => {
+      const editable = { ...openEditionForEmptyInstructor }
+      editable.demarcheHash[1].editable = true
+      expect(isEditionAllowed(
+        {
+          demarcheId: 1,
+          checked: false,
+        } as UpdateOneRoleOptionDto,
+        editable,
+      )).toBeTruthy()
+    })
+    it('Shouldn\'t be able to check national', () => {
+      const editable = { ...openEditionForEmptyInstructor }
+      editable.demarcheHash[1].prefectureOptions.national.editable = false
+      expect(isEditionAllowed(
+        {
+          demarcheId: 1,
+          national: true,
+        } as UpdateOneRoleOptionDto,
+        editable,
+      )).toBeFalsy()
+    })
+    it('Should be able to check national', () => {
+      const editable = { ...openEditionForEmptyInstructor }
+      editable.demarcheHash[1].prefectureOptions.national.editable = true
+      expect(isEditionAllowed(
+        {
+          demarcheId: 1,
+          national: true,
+        } as UpdateOneRoleOptionDto,
+        editable,
+      )).toBeTruthy()
+    })
+    it('Shouldn\'t be able to check add pref', () => {
+      const editable = { ...openEditionForEmptyInstructor }
+      editable.demarcheHash[1].prefectureOptions.prefectures.addable = [Prefecture.D57]
+      expect(isEditionAllowed(
+        {
+          demarcheId: 1,
+          prefecture: {
+            toAdd: true,
+            key: Prefecture.D75,
+          },
+        } as UpdateOneRoleOptionDto,
+        editable,
+      )).toBeFalsy()
+    })
+    it('Should be able to check add pref', () => {
+      const editable = { ...openEditionForEmptyInstructor }
+      editable.demarcheHash[1].prefectureOptions.prefectures.addable = [Prefecture.D57]
+      expect(isEditionAllowed(
+        {
+          demarcheId: 1,
+          prefecture: {
+            toAdd: true,
+            key: Prefecture.D57,
+          },
+        } as UpdateOneRoleOptionDto,
+        editable,
+      )).toBeTruthy()
+    })
+    it('Shouldn\'t be able to check del pref', () => {
+      const editable = { ...openEditionForEmptyInstructor }
+      editable.demarcheHash[1].prefectureOptions.prefectures.deletable = [Prefecture.D57]
+      expect(isEditionAllowed(
+        {
+          demarcheId: 1,
+          prefecture: {
+            toAdd: false,
+            key: Prefecture.D75,
+          },
+        } as UpdateOneRoleOptionDto,
+        editable,
+      )).toBeFalsy()
+    })
+    it('Should be able to check del pref', () => {
+      const editable = { ...openEditionForEmptyInstructor }
+      editable.demarcheHash[1].prefectureOptions.prefectures.deletable = [Prefecture.D75]
+      expect(isEditionAllowed(
+        {
+          demarcheId: 1,
+          prefecture: {
+            toAdd: false,
+            key: Prefecture.D75,
+          },
+        } as UpdateOneRoleOptionDto,
+        editable,
+      )).toBeTruthy()
     })
   })
 })
