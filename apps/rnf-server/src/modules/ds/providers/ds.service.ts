@@ -35,9 +35,7 @@ export class DsService {
     } else {
       this.dsApiClient = new DsApiClient(api, token, httpProxy)
       this.logger.debug(
-        `DS API Client configured with: \n   api = ${api}\n   token = ***${token.slice(
-          -8,
-        )}`,
+        `DS API Client configured with: \n   api = ${api}\n   token = ***${token.slice(-8)}\n   proxy = ${httpProxy}`,
       )
     }
   }
