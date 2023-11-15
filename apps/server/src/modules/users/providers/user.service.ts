@@ -29,7 +29,7 @@ type jwtPlaylod = {
 }
 
 @Injectable()
-export class UsersService
+export class UserService
   extends BaseEntityService<User>
   implements OnApplicationBootstrap {
   constructor(
@@ -97,18 +97,6 @@ export class UsersService
     await this.mailToValidSignUp(user)
 
     return user
-  }
-
-  async findOrCreate(email: string, password): Promise<User> {
-    this.logger.verbose('findOrCreate')
-    const userInDb = await this.findByEmail(email)
-    if (userInDb) {
-      return userInDb
-    }
-    return this.createAndSave({
-      email,
-      password,
-    })
   }
 
   async getUserById (id: number): Promise<User> {

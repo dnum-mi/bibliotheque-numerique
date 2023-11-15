@@ -17,7 +17,7 @@ import sudoUserConfig from '@/config/sudo-user.config'
 import { DemarcheModule } from './modules/demarches/demarche.module'
 import { DossierModule } from './modules/dossiers/dossier.module'
 import { LoggerModule } from './shared/modules/logger/logger.module'
-import { UsersModule } from './modules/users/users.module'
+import { UserModule } from './modules/users/user.module'
 import { FileModule } from './modules/files/file.module'
 import { pluginsModules } from './plugins'
 import { JobLogModule } from './modules/job-log/job-log.module'
@@ -54,11 +54,11 @@ import { RoleGuard } from '@/modules/users/providers/guards/role.guard'
     DsApiModule,
     XlsxModule,
     TypeOrmModule.forRootAsync(typeormFactoryLoader),
-    UsersModule,
+    UserModule,
     DemarcheModule,
     DossierModule,
     AuthModule,
-    UsersModule,
+    UserModule,
     FileModule,
     HealthModule,
     CustomFilterModule,

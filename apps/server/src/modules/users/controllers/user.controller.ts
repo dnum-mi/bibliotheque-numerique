@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
-import { UsersService } from '../providers/users.service'
+import { UserService } from '../providers/user.service'
 import {
   CreateUserDto,
   UpdateUserPasswordDto,
@@ -30,8 +30,8 @@ import { User } from '../objects/user.entity'
 
 @ApiTags('Users')
 @Controller('users')
-export class UsersController {
-  constructor (private readonly usersService: UsersService, private logger: LoggerService) {
+export class UserController {
+  constructor (private readonly usersService: UserService, private logger: LoggerService) {
     this.logger.setContext(this.constructor.name)
   }
 
@@ -74,15 +74,6 @@ export class UsersController {
   getProfile(@CurrentUser() user: User): Promise<UserOutputDto> {
     this.logger.verbose('getProfile')
     return this.usersService.enrichProfileWithDemarche(user)
-  }
-
-  @Get('/:id')
-  @Role(Roles.admin)
-  async getUserById (
-    @Param('id', ParseIntPipe) id: number,
-  ): Promise<UserOutputDto> {
-    this.logger.verbose('getUserById')
-    return this.usersService.getUserById(id)
   }
 
   @Post('/reset-password')
