@@ -5,12 +5,12 @@ import { ISendMailOptions, MailerService } from '@nestjs-modules/mailer'
 import { JwtService } from '@nestjs/jwt'
 import { jwtConstants } from '@/modules/auth/objects/constants'
 import { faker } from '@faker-js/faker/locale/fr'
-import { UsersService } from '@/modules/users/providers/users.service'
+import { UserService } from '@/modules/users/providers/user.service'
 
 describe('users (e2e)', () => {
   let app: INestApplication
   let mailerService: MailerService
-  let userService: UsersService
+  let userService: UserService
   let cookies: Cookies
 
   beforeAll(async () => {
@@ -18,7 +18,7 @@ describe('users (e2e)', () => {
     await testingModule.init()
     app = testingModule.app
     mailerService = testingModule.mailerService as MailerService
-    userService = await app.resolve(UsersService)
+    userService = await app.resolve(UserService)
     cookies = testingModule.cookies
   })
   beforeEach(() => {

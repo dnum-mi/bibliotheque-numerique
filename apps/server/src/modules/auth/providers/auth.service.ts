@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
-import { UsersService } from '../../users/providers/users.service'
+import { UserService } from '../../users/providers/user.service'
 import * as bcrypt from 'bcrypt'
 import { User } from '@/modules/users/objects/user.entity'
 import { CredentialsInputDto, UserOutputDto } from '@biblio-num/shared'
@@ -7,7 +7,7 @@ import { LoggerService } from '@/shared/modules/logger/logger.service'
 
 @Injectable()
 export class AuthService {
-  constructor (private usersService: UsersService, private logger: LoggerService) {}
+  constructor (private usersService: UserService, private logger: LoggerService) {}
 
   async validateUser (email: string, password: string): Promise<User | undefined> {
     this.logger.verbose('validateUser')

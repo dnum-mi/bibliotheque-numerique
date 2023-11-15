@@ -2,13 +2,13 @@ import { UpdateUserPasswordDto } from '@biblio-num/shared'
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { Observable } from 'rxjs'
-import { UsersService } from '../users.service'
+import { UserService } from '../user.service'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 
 @Injectable()
 export class UpdatePasswordGuard implements CanActivate {
   constructor (private readonly jwtService: JwtService,
-    private readonly userService: UsersService,
+    private readonly userService: UserService,
     protected logger: LoggerService,
   ) {
     this.logger.setContext(this.constructor.name)

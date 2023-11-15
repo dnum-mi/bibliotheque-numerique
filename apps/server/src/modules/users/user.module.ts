@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
-import { UsersController } from './controllers/users.controller'
-import { UsersService } from './providers/users.service'
+import { UserController } from './controllers/user.controller'
+import { UserService } from './providers/user.service'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { User } from '@/modules/users/objects/user.entity'
 import { JwtModule } from '@nestjs/jwt'
@@ -27,8 +27,8 @@ import { DemarcheModule } from '@/modules/demarches/demarche.module'
     SendMailModule,
     DemarcheModule,
   ],
-  controllers: [UsersController],
-  providers: [UsersService],
-  exports: [UsersService],
+  controllers: [UserController],
+  providers: [UserService],
+  exports: [UserService],
 })
-export class UsersModule {}
+export class UserModule {}
