@@ -1,4 +1,4 @@
-const fakeExcelDateFunding = '11/11/2022'
+const fakeExcelDateFunding = 45288 // Date to string: '28/12/2023'
 const fakeExcelContributorPersonalityType = 'PM'
 const fakeExcelNativeContry = 'AUTRICHE'
 const fakeExcelNatureFunding = 'RP'

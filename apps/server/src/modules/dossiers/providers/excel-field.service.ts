@@ -27,6 +27,7 @@ import { ExcelData, ExcelDataCell, ExcelDataRow } from '@/shared/types/excel-dat
 
 @Injectable()
 export class ExcelFieldService extends BaseEntityService<Field> {
+  regexNumbers = /^[0-9]+$/
   constructor(
     @InjectRepository(Field) protected repo: Repository<Field>,
     protected logger: LoggerService,
@@ -135,7 +136,7 @@ export class ExcelFieldService extends BaseEntityService<Field> {
         null,
         dossierId,
         String(validatedRow[0]),
-        new Date(validatedRow[0]),
+        validatedRow[0] === null ? null : this._getDateByString(validatedRow[0].toString()),
         null,
         i,
       ),
@@ -211,12 +212,33 @@ export class ExcelFieldService extends BaseEntityService<Field> {
 
   _validateCellDate(cell: ExcelDataCell): ExcelDataCell {
     this.logger.verbose('_validateExcelRowDateFunding')
+    if (!this.regexNumbers.test(cell.toString())) {
+      this.logger.warn('Date funding format is not valid')
+      return null
+    }
     const datePattern = /^(\d{2})\/(\d{2})\/(\d{4})$/
-    if (!datePattern.test(cell.toString())) {
+    const stringDate = this._formatCellDate(cell)
+    if (!datePattern.test(stringDate)) {
       this.logger.warn('Date funding is not valid')
       return null
     }
-    return cell
+    return stringDate
+  }
+
+  _formatCellDate(serialDate): string {
+    this.logger.verbose('_formatCellDate')
+    const date = new Date((serialDate - 25569) * 86400 * 1000)
+    return date.getDate().toString().padStart(2, '0') +
+      '/' +
+      (date.getMonth() + 1).toString().padStart(2, '0') +
+      '/' +
+      date.getFullYear()
+  }
+
+  _getDateByString(dateString: string): Date {
+    this.logger.verbose('_getDateByString')
+    const [day, month, year] = dateString.split('/').map(Number)
+    return new Date(Date.UTC(year, month - 1, day))
   }
 
   _validateCellByList(cell: ExcelDataCell, authorizedList: string[]): ExcelDataCell {
@@ -230,9 +252,8 @@ export class ExcelFieldService extends BaseEntityService<Field> {
 
   _validateCellAmount(cell: ExcelDataCell): ExcelDataCell {
     this.logger.verbose('_validateCellAmount')
-    const regexChiffres = /^[0-9]+$/
 
-    if (!regexChiffres.test(cell.toString())) {
+    if (!this.regexNumbers.test(cell.toString())) {
       this.logger.warn('Cell amount format is not valid')
     } else if (Number(cell) < 0) {
       this.logger.warn('Cell amount is < 0')

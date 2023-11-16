@@ -19,7 +19,8 @@ import { ExcelFieldService } from '@/modules/dossiers/providers/excel-field.serv
 import { Field } from '@/modules/dossiers/objects/entities/field.entity'
 import { ExcelDataRow } from '@/shared/types/excel-data.type'
 
-const fakeExcelDateFunding = '11/11/2022'
+const fakeExcelDateFundingNumber = 45288
+const fakeExcelDateFundingString = '28/12/2023'
 const fakeExcelContributorPersonalityType = 'PM'
 const fakeExcelNativeContry = 'AUTRICHE'
 const fakeExcelNatureFunding = 'RP'
@@ -33,7 +34,7 @@ const fakeDossierTotalAmount = fakeChampTotalAmount + fakeExcelTotalAmount
 
 const fakeExcelData = [
   [
-    fakeExcelDateFunding,
+    fakeExcelDateFundingNumber,
     fakeExcelContributorPersonalityType,
     fakeExcelNativeContry,
     fakeExcelNatureFunding,
@@ -42,7 +43,7 @@ const fakeExcelData = [
     fakeExcelAmount,
   ],
   [
-    fakeExcelDateFunding,
+    fakeExcelDateFundingNumber,
     fakeExcelContributorPersonalityType,
     fakeExcelNativeContry,
     fakeExcelNatureFunding,
@@ -59,8 +60,8 @@ const expectedExcelFixFieldsChildren1 = [
     formatFunctionRef: null,
     type: 'date',
     fieldSource: fixFieldsExcelDateFunding.source,
-    stringValue: fakeExcelDateFunding,
-    dateValue: new Date(fakeExcelDateFunding),
+    stringValue: fakeExcelDateFundingString,
+    dateValue: new Date((fakeExcelDateFundingNumber - 25569) * 86400 * 1000),
     numberValue: null,
     dsChampType: null,
     dossierId: 42,
@@ -167,8 +168,8 @@ const expectedExcelFixFieldsChildren2 = [
     formatFunctionRef: null,
     type: 'date',
     fieldSource: fixFieldsExcelDateFunding.source,
-    stringValue: fakeExcelDateFunding,
-    dateValue: new Date(fakeExcelDateFunding),
+    stringValue: fakeExcelDateFundingString,
+    dateValue: new Date((fakeExcelDateFundingNumber - 25569) * 86400 * 1000),
     numberValue: null,
     dsChampType: null,
     dossierId: 42,
@@ -294,7 +295,7 @@ const expectedExcelFixFieldsChildrenWithError = [
     type: 'date',
     fieldSource: fixFieldsExcelDateFunding.source,
     stringValue: 'null',
-    dateValue: new Date(null),
+    dateValue: null,
     numberValue: null,
     dsChampType: null,
     dossierId: 42,
@@ -600,7 +601,7 @@ describe('ExcelFieldService', () => {
 
   it('should create scenario for excel champs: format ContributorPersonalityType with error', () => {
     const row: ExcelDataRow = [
-      fakeExcelDateFunding,
+      fakeExcelDateFundingNumber,
       '',
       fakeExcelNativeContry,
       fakeExcelNatureFunding,
@@ -616,7 +617,7 @@ describe('ExcelFieldService', () => {
 
   it('should create scenario for excel champs: formate NativeContry with error', () => {
     const row: ExcelDataRow = [
-      fakeExcelDateFunding,
+      fakeExcelDateFundingNumber,
       fakeExcelContributorPersonalityType,
       'France',
       'bad nature funding',
@@ -641,7 +642,7 @@ describe('ExcelFieldService', () => {
 
   it('should create scenario for excel champs: Amount > 15300', () => {
     const row: ExcelDataRow = [
-      fakeExcelDateFunding,
+      fakeExcelDateFundingNumber,
       fakeExcelContributorPersonalityType,
       fakeExcelNativeContry,
       fakeExcelNatureFunding,
@@ -671,7 +672,7 @@ describe('ExcelFieldService', () => {
 
   it('should create scenario for excel champs: Amount < 0', () => {
     const row: ExcelDataRow = [
-      fakeExcelDateFunding,
+      fakeExcelDateFundingNumber,
       fakeExcelContributorPersonalityType,
       fakeExcelNativeContry,
       fakeExcelNatureFunding,
@@ -701,7 +702,7 @@ describe('ExcelFieldService', () => {
 
   it('should create scenario for excel champs: Amount is a string', () => {
     const row: ExcelDataRow = [
-      fakeExcelDateFunding,
+      fakeExcelDateFundingNumber,
       fakeExcelContributorPersonalityType,
       fakeExcelNativeContry,
       fakeExcelNatureFunding,
@@ -771,6 +772,20 @@ describe('ExcelFieldService', () => {
     const result = await service.createFieldsAmounts(42, expectedExcelFixFieldsDates as unknown as Field)
     expect(result).toMatchObject(
       expectedAmountWithoutChampsFixFieldsDates,
+    )
+  })
+
+  it('Should get good format date', async () => {
+    const result = await service._formatCellDate(fakeExcelDateFundingNumber)
+    expect(result).toEqual(
+      fakeExcelDateFundingString,
+    )
+  })
+
+  it('Should get good Date by String', async () => {
+    const result = await service._getDateByString('28/12/2023')
+    expect(result).toEqual(
+      new Date('2023-12-28'),
     )
   })
 })
