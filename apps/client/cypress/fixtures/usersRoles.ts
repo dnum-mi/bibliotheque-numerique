@@ -1,12 +1,12 @@
 import type { IRole, PaginatedDto, UserOutputDto } from '@biblio-num/shared'
 import { faker } from '@faker-js/faker/locale/fr'
 
-const noRole:IRole = {
+const noRole: IRole = {
   label: null,
   options: [],
 }
 
-const adminRole:IRole = {
+const adminRole: IRole = {
   label: 'admin',
   options: [
     {
@@ -22,7 +22,7 @@ const adminRole:IRole = {
   ],
 }
 
-const instructeurRole:IRole = {
+const instructeurRole: IRole = {
   label: 'instructor',
   options: [
     {
@@ -49,13 +49,13 @@ export const createRandomUser = (id?: number): UserOutputDto => ({
 const adminUsersFn = () => Array.from({ length: faker.datatype.number({ min: 1, max: 3 }) }, createRandomUser)
   .map(user => ({
     ...user,
-    role: instructeurRole,
+    role: adminRole,
   }))
 
 const instructeurUsersFn = () => Array.from({ length: faker.datatype.number({ min: 1, max: 5 }) }, createRandomUser)
   .map(user => ({
     ...user,
-    role: adminRole,
+    role: instructeurRole,
   }))
 
 export const getPaginatedUsers = () => {
