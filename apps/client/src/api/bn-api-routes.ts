@@ -1,9 +1,9 @@
 export const authRoute = '/auth'
 export const signInRoute = `${authRoute}/sign-in` // TODO: devrait s’appeler `/token` ou '/session' une route doit être un nom, pas un verbe
 
-export const rolesRoute = '/roles'
-export const assignRoleRoute = '/roles/assign' // TODO: ne devrait pas contenir de verbe (assign)
-export const unassignRoleRoute = '/roles/unassign' // TODO: ne devrait pas contenir de verbe (unassign)
+// export const rolesRoute = '/roles'
+// export const assignRoleRoute = '/roles/assign' // TODO: ne devrait pas contenir de verbe (assign)
+// export const unassignRoleRoute = '/roles/unassign' // TODO: ne devrait pas contenir de verbe (unassign)
 export const getRoleByIdRoute = (roleId: number) => `/roles/${roleId}`
 
 export const demarchesRoute = '/demarches'
@@ -21,6 +21,7 @@ export const usersRoutes = '/users'
 export const usersListRoute = `${usersRoutes}/list`
 export const getUserByIdRoute = (id: number) => `${usersRoutes}/${id}`
 export const profileRoute = `${usersRoutes}/me`
+export const updateRoleRoute = (id: number) => `${getUserByIdRoute(id)}/role`
 
 export const dossierSearch = '/dossiers-search'
 export const fieldsSearch = '/fields-search'

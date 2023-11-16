@@ -26,17 +26,15 @@ import type {
   PaginatedUserDto,
   MyProfileOutputDto,
   UserWithEditableRole,
+  RolesKeys,
+  UpdateOneRoleOptionDto,
 } from '@biblio-num/shared'
 
 import {
-  assignRoleRoute,
   demarchesRoute,
   getDemarcheByIdRoute,
   getDemarcheConfigurationRoute,
-  getRoleByIdRoute,
   getUpdateOneMappingColumnRoute,
-  rolesRoute,
-  unassignRoleRoute,
   getCustomFiltersRoute,
   getOneCustomFiltersRoute,
   getOneCustomFiltersStats,
@@ -53,6 +51,7 @@ import {
   getOrganismeByRnfRoute,
   organismesListRoute,
   usersListRoute,
+  updateRoleRoute,
 } from './bn-api-routes'
 import {
   authRoute,
@@ -240,6 +239,14 @@ export const usersApiClient = {
       }
       throw error
     }
+  },
+
+  async updateUserRole (id: number, role: RolesKeys) {
+    await apiClientInstance.put(updateRoleRoute(id), { role })
+  },
+
+  async updateUserDemarchesRole (id: number, dto: UpdateOneRoleOptionDto) {
+    await apiClientInstance.patch(updateRoleRoute(id), dto)
   },
 }
 
