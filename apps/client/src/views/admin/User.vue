@@ -60,7 +60,7 @@ const roleOptions = [
 ]
 const updateRole = async (event: string) => {
   // roleSelected.value = event
-  await useUserStore.updateRole(event)
+  await userStore.updateRole(event)
 }
 // #endregion
 
@@ -162,35 +162,43 @@ const demarchesRoles = computed<DemarchesRoles[]>(() => {
     .filter(type => type.children && type.children.length)
 })
 
-const demarchesRolesChanged = ref<DemarchesRoles[]>([])
+// const demarchesRoles = ref<DemarchesRoles[]>([])
 
 const updateCheckTypeByChild = (id: number) => {
   if (!role.value || !role.value[id]?.types) return
   role.value[id].types.forEach((type: string) => {
-    const objType = demarchesRolesChanged.value.filter(dr => dr.name === type)[0]
+    const objType = demarchesRoles.value.filter(dr => dr.name === type)[0]
     if (!objType || !objType.children) return
     objType.value = isAllCheck(objType.children)
   })
 }
 
-const updateTypeDemarche = ({ name, checked, dr }: { name: string, checked: boolean, dr:DemarchesRoles}) => {
+const updateTypeDemarche = async ({ name, checked, dr }: { name: string, checked: boolean, dr:DemarchesRoles}) => {
   dr.value = checked
-  if (checked) {
-    dr.children?.forEach(child => { updateDemarche({ name, id: child.options.id, checked, d: child }) })
-    dr.key = getRandomId(name)
+  if (!checked || !dr.children) return
+  await Promise.all(dr.children?.map(
+    child => updateDemarche({ name, id: child.options.id, checked, d: child, reloadUser: false }),
+  ))
+  dr.key = getRandomId(name)
+  if (user.value?.id) {
+    await userStore.loadUserById(user.value?.id)
   }
 }
 
-const updateDemarche = ({ name, id, checked, d }: { name: string, id: number, checked: boolean, d:DemarcheRole }) => {
+const updateDemarche = async ({ name, id, checked, d, reloadUser = true }: { name: string, id: number, checked: boolean, d:DemarcheRole, reloadUser?: boolean }) => {
   d.options.checked = checked
   updateCheckTypeByChild(id)
+  await userStore.updateUserDemarchesRole({
+    demarcheId: d.options.id,
+    checked,
+  }, reloadUser)
 }
 
 const onClickDemarches = (elt: DemarchesRoles | DemarcheRole) => {
   if (elt.attrs.disabled) {
     return
   }
-  demarchesRolesChanged.value.forEach((dr) => {
+  demarchesRoles.value.forEach((dr) => {
     dr.attrs.class = null
     dr.children?.forEach(d => { d.attrs.class = null })
   })
@@ -232,13 +240,15 @@ onMounted(async () => {
   if (id) {
     await userStore.loadUserById(id)
     roleSelected.value = userStore.selectedUser?.originalUser?.role.label || ''
-    demarchesRolesChanged.value = demarchesRoles.value
   }
 })
 </script>
 
 <template>
-  <div class="flex flex-row  gap-4 fr-p-2w flex-wrap bn-sub-title">
+  {{ selectedUser }}
+  <div
+    class="flex flex-row  gap-4 fr-p-2w flex-wrap bn-sub-title"
+  >
     <div>
       <label class="bn-fiche-sub-title--label">Courriel</label>
       <span class="text-xl">{{ user?.email }}</span>
@@ -257,7 +267,9 @@ onMounted(async () => {
     </div>
   </div>
 
-  <div class="fr-container">
+  <div
+    class="fr-container"
+  >
     <div class="fr-grid-row">
       <div class="fr-col-2 fr-pt-2w">
         <h6>
@@ -275,7 +287,7 @@ onMounted(async () => {
           Démarches
         </h6>
         <div
-          v-for="dr in demarchesRolesChanged"
+          v-for="dr in demarchesRoles"
           :key="dr.name"
         >
           <div

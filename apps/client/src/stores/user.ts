@@ -11,6 +11,8 @@ import type {
   PaginationUserDto,
   MyProfileOutputDto,
   UserWithEditableRole,
+  RolesKeys,
+  UpdateOneRoleOptionDto,
 } from '@biblio-num/shared'
 
 // TODO: enum Roles dans packages/shared n'est pas récupérable
@@ -61,9 +63,23 @@ export const useUserStore = defineStore('user', () => {
   const loadUserById = async (id: number) => {
     if (!hasAdminAccess.value) return
     selectedUser.value = await bnApiClient.getUserById(id)
-    if (!selectedUser.value) return
+    return selectedUser.value
     // TODO: A voir quel utiliter
-    users.value.set(selectedUser.value.user.id, selectedUser.value.user)
+    // users.value.set(selectedUser.value.user.id, selectedUser.value.user)
+  }
+
+  const updateRole = async (role: RolesKeys) => {
+    const id = selectedUser.value?.user.id
+    if (!id) throw new Error("L'Utilisateur n'a pas été selectionné.")
+    await bnApiClient.updateUserRole(id, role)
+    await loadUserById(id)
+  }
+
+  const updateUserDemarchesRole = async (demarchesRoles: UpdateOneRoleOptionDto, reloadUser: boolean) => {
+    const id = selectedUser.value?.user.id
+    if (!id) throw new Error("L'Utilisateur n'a pas été selectionné.")
+    await bnApiClient.updateUserDemarchesRole(id, demarchesRoles)
+    if (reloadUser) await loadUserById(id)
   }
 
   return {
@@ -81,6 +97,8 @@ export const useUserStore = defineStore('user', () => {
     loadMyProfile,
     listUsers,
     loadUserById,
+    updateRole,
+    updateUserDemarchesRole,
     getUsersRole,
     resetUser,
   }
