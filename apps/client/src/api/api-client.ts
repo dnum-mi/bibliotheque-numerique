@@ -22,6 +22,7 @@ import type {
   PaginationUserDto,
   ICustomFilter,
   IDossier,
+  PaginatedUserDto,
   IUser,
   ICustomFilter,
 } from '@biblio-num/shared'
@@ -258,7 +259,7 @@ export const usersApiClient = {
     return response?.data
   },
 
-  listUsers: async (dto: PaginationUserDto) => {
+  listUsers: async (dto: PaginationUserDto): Promise<PaginatedUserDto> => {
     const response = await apiClientInstance.post(usersListRoute, dto)
     return response.data
   },
