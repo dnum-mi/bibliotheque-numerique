@@ -8,7 +8,7 @@ describe('Home', () => {
     })
     const users = getPaginatedUsers()
     userNumber = users.data.length
-    cy.intercept('POST', 'api/users', users)
+    cy.intercept('POST', 'api/users/list', users)
   })
 
   it('list users', () => {
