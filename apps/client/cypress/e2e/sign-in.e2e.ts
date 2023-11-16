@@ -13,7 +13,7 @@ describe('Home', () => {
     cy.intercept({ method: 'GET', url: '/api/demarches' }, []).as('demarches')
     cy.intercept({ method: 'POST', url: '/api/organismes/list' }, {}).as('organismes')
     cy.intercept({ method: 'GET', url: '/api/custom-filters' }, []).as('customFilters')
-    cy.intercept({ method: 'POST', url: '/api/users' }, []).as('fetchUsers')
+    cy.intercept({ method: 'POST', url: '/api/users/list' }, []).as('fetchUsers')
     cy.intercept({ method: 'GET', url: '/api/users/me', times: 1 }, { statusCode: 403 }).as('notProfile')
   })
 
