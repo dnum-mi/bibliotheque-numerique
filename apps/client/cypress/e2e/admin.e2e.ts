@@ -32,6 +32,7 @@ describe('Home', () => {
   })
 
   it.only('update user with no role', () => {
+    // #region test - get user no role
     cy.intercept({
       method: 'GET',
       url: '/api/users/444',
@@ -51,7 +52,9 @@ describe('Home', () => {
       .parent()
       .children('input')
       .should('be.disabled')
+    // #endregion
 
+    // #region test - update user role to admin
     const roleSelected = {
       ...noRoleUserSelected,
       user: {
@@ -89,7 +92,9 @@ describe('Home', () => {
       .parent()
       .children('input')
       .should('be.checked')
+    // #endregion
 
+    // #region test - update user role to demarche
     const roleSelected2 = {
       ...roleSelected,
       demarcheHash: {
@@ -162,7 +167,7 @@ describe('Home', () => {
       method: 'GET',
       url: '/api/users/444',
       times: 1,
-    }, { body: roleSelected3 }).as('userSelected444-3')
+    }, { body: roleSelected3 }).as('userSelected444')
 
     cy.intercept({
       method: 'PATCH',
@@ -184,5 +189,68 @@ describe('Home', () => {
       .parent()
       .children('input')
       .should('be.checked')
+
+    cy.get('label')
+      .should('contain', 'Demarche 3')
+      .contains('Demarche 3')
+      .parent()
+      .children('input')
+      .should('not.be.checked')
+    // #endregion
+
+    const roleSelected4 = {
+      ...roleSelected3,
+      demarcheHash: {
+        ...roleSelected3.demarcheHash,
+        1: {
+          ...roleSelected3.demarcheHash['1'],
+          checked: true,
+        },
+      },
+    }
+
+    cy.intercept({
+      method: 'GET',
+      url: '/api/users/444',
+      times: 2,
+    }, { body: roleSelected4 }).as('userSelected444')
+
+    cy.intercept({
+      method: 'PATCH',
+      url: '/api/users/444/role',
+      times: 2,
+    }, { statusCode: 200 }).as('patchUserSelected444')
+
+    cy.get('label')
+      .should('contain', 'Demarche 1')
+      .contains('Demarche 1')
+      .parent()
+      .parent()
+      .click()
+
+    cy.get('h6')
+      .should('contain', 'Localisation')
+      .contains('Localisation')
+      .parent()
+      .then(($parent) => {
+        cy.wrap($parent)
+          .should('not.contain', 'National')
+          .should('not.contain', 'Préfecture(s)')
+      })
+
+    cy.get('label')
+      .should('contain', 'Demarche 1')
+      .contains('Demarche 1')
+      .click()
+
+    cy.get('h6')
+      .should('contain', 'Localisation')
+      .contains('Localisation')
+      .parent()
+      .then(($parent) => {
+        cy.wrap($parent)
+          .should('contain', 'National')
+          .should('contain', 'Préfecture(s)')
+      })
   })
 })
