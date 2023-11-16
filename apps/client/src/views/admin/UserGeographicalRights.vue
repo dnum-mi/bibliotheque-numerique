@@ -2,6 +2,7 @@
 import type { PrefectureOptions } from '@biblio-num/shared'
 import type { DsfrTagProps } from '@gouvminint/vue-dsfr/types/components/DsfrTag/DsfrTag.vue'
 import { computed, ref } from 'vue'
+import { LocalizationOptions, type LocalizationOptionsKeys } from './localization.enum'
 
 const props = defineProps<{
   geographicalRights: PrefectureOptions
@@ -15,18 +16,18 @@ const localizationOptions = computed(() => [
   {
     label: 'National',
     name: 'localization',
-    value: 'national',
+    value: LocalizationOptions.national,
     disabled: !props.geographicalRights.national.editable,
   },
   {
     label: 'Préfecture(s)',
     name: 'localization',
-    value: 'prefectures',
+    value: LocalizationOptions.prefectures,
     disabled: (!props.geographicalRights.national.editable && props.geographicalRights.national.value),
   },
 ])
 
-const localizationOption = computed<string | undefined>(
+const localizationOption = computed<LocalizationOptionsKeys | undefined>(
   () => {
     return props.geographicalRights.national.value
       ? localizationOptions.value[0].value
@@ -67,7 +68,7 @@ const prefecturesToAdd = computed<DsfrTagProps[]>(
     ),
 )
 
-const updateCheckedLocalization = (loc: string) => {
+const updateCheckedLocalization = (loc: LocalizationOptionsKeys) => {
   // TODO: emit localization change action nation or prefecture
   emit('update:localization', loc)
 }
