@@ -1,5 +1,11 @@
 <script lang="ts" setup>
-import type { IRole, OrganismeTypeKeys, PrefectureOptions, UserOutputDto, UserWithEditableRole, OneDemarcheRoleOption } from '@biblio-num/shared'
+import type {
+  OrganismeTypeKeys,
+  PrefectureOptions,
+  UserOutputDto,
+  UserWithEditableRole,
+  OneDemarcheRoleOption,
+} from '@biblio-num/shared'
 import { onMounted, ref, computed } from 'vue'
 import { useUserStore } from '@/stores'
 import { useRoute } from 'vue-router'
@@ -8,6 +14,7 @@ import DemarcheLocalization from './DemarcheLocalization.vue'
 import { getRandomId } from '@gouvminint/vue-dsfr'
 
 import UserGeographicalRights from './UserGeographicalRights.vue'
+import { LocalizationOptions, type LocalizationOptionsKeys } from './localization.enum'
 
 // #region Types, Mapping, Enum
 type DemarcheHtmlAttrs = {
@@ -238,6 +245,29 @@ const geographicalRights = computed<GeographicalRights | null>(() => {
     disabled: demarcheOrTypeSelected.value.value,
   })
 })
+
+const udpateLocalization = async (loc: LocalizationOptionsKeys) => {
+  // TODO: Message d'erreur a mettre
+  if (!demarcheOrTypeSelected.value) return null
+
+  if ('options' in demarcheOrTypeSelected.value) {
+    await userStore.updateUserDemarchesRole({
+      demarcheId: demarcheOrTypeSelected.value.options.id,
+      national: loc === LocalizationOptions.national,
+    }, true)
+    return
+  }
+
+  await (demarcheOrTypeSelected.value as DemarchesRoles).children?.map((child) =>
+    userStore.updateUserDemarchesRole({
+      demarcheId: child.options.id,
+      national: loc === LocalizationOptions.national,
+    }, false),
+  )
+  if (user.value?.id) {
+    await userStore.loadUserById(user.value?.id)
+  }
+}
 // #endregion
 
 onMounted(async () => {
@@ -357,6 +387,7 @@ onMounted(async () => {
           v-if="!!(geographicalRights && geographicalRights.disabled)"
           :key="keyLocalization"
           :geographical-rights="geographicalRights"
+          @update:localization="udpateLocalization($event)"
         />
       </div>
     </div>
