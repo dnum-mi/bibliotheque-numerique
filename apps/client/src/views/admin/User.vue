@@ -59,7 +59,6 @@ const roleOptions = [
   },
 ]
 const updateRole = async (event: string) => {
-  // roleSelected.value = event
   await userStore.updateRole(event)
 }
 // #endregion
@@ -131,7 +130,7 @@ const demarchesRoles = computed<DemarchesRoles[]>(() => {
         return {
           options: d,
           attrs: {
-            class: null,
+            class: ((demarcheOrTypeSelected.value as DemarcheRole)?.options?.id === d.id) ? demarcheOrTypeSelected.value?.attrs.class || null : null,
             disabled: !canEditDemarche(d),
           },
         }
@@ -154,15 +153,13 @@ const demarchesRoles = computed<DemarchesRoles[]>(() => {
       commonPrefectureAddables,
       commonPrefectureDeletables,
       attrs: {
-        class: null,
+        class: ((demarcheOrTypeSelected.value as DemarchesRoles)?.name === type) ? demarcheOrTypeSelected.value?.attrs.class || null : null,
         disabled: children?.some(d => !canEditDemarche(d.options)),
       },
     }
   })
     .filter(type => type.children && type.children.length)
 })
-
-// const demarchesRoles = ref<DemarchesRoles[]>([])
 
 const updateCheckTypeByChild = (id: number) => {
   if (!role.value || !role.value[id]?.types) return
@@ -194,6 +191,8 @@ const updateDemarche = async ({ name, id, checked, d, reloadUser = true }: { nam
   }, reloadUser)
 }
 
+const demarcheOrTypeSelected = ref< DemarchesRoles | DemarcheRole | null>(null)
+
 const onClickDemarches = (elt: DemarchesRoles | DemarcheRole) => {
   if (elt.attrs.disabled) {
     return
@@ -203,21 +202,7 @@ const onClickDemarches = (elt: DemarchesRoles | DemarcheRole) => {
     dr.children?.forEach(d => { d.attrs.class = null })
   })
   elt.attrs.class = 'fr-background-contrast--info'
-  if ('options' in elt) {
-    geographicalRights.value = elt.options.prefectureOptions
-  } else {
-    geographicalRights.value = {
-      national: {
-        value: elt.localization?.national.value ?? false,
-        editable: elt.localization?.national.editable ?? false,
-      },
-      prefectures: {
-        value: elt.commonPrefectureValues,
-        addable: elt.commonPrefectureAddables,
-        deletable: elt.commonPrefectureDeletables,
-      },
-    }
-  }
+  demarcheOrTypeSelected.value = elt
 }
 
 const canEditDemarche = (d: OneDemarcheRoleOption) => !!(
@@ -227,11 +212,32 @@ const canEditDemarche = (d: OneDemarcheRoleOption) => !!(
 
 // #endregion
 
-// #region view locatlization
+// #region view localization
 const keyLocalization = ref<string>(getRandomId('location'))
 keyLocalization.value = getRandomId('location')
 
-const geographicalRights = ref<PrefectureOptions | null>(null)
+type GeographicalRights = PrefectureOptions & { disabled?: boolean }
+const geographicalRights = computed<GeographicalRights | null>(() => {
+  if (!demarcheOrTypeSelected.value) return null
+  if ('options' in demarcheOrTypeSelected.value) {
+    return ({
+      ...demarcheOrTypeSelected.value.options.prefectureOptions,
+      disabled: demarcheOrTypeSelected.value.options.checked,
+    })
+  }
+  return ({
+    national: {
+      value: demarcheOrTypeSelected.value.localization?.national.value ?? false,
+      editable: demarcheOrTypeSelected.value.localization?.national.editable ?? false,
+    },
+    prefectures: {
+      value: demarcheOrTypeSelected.value.commonPrefectureValues,
+      addable: demarcheOrTypeSelected.value.commonPrefectureAddables,
+      deletable: demarcheOrTypeSelected.value.commonPrefectureDeletables,
+    },
+    disabled: demarcheOrTypeSelected.value.value,
+  })
+})
 // #endregion
 
 onMounted(async () => {
@@ -348,7 +354,7 @@ onMounted(async () => {
           Localisation
         </h6>
         <UserGeographicalRights
-          v-if="!!geographicalRights"
+          v-if="!!(geographicalRights && geographicalRights.disabled)"
           :key="keyLocalization"
           :geographical-rights="geographicalRights"
         />

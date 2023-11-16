@@ -64,8 +64,6 @@ export const useUserStore = defineStore('user', () => {
     if (!hasAdminAccess.value) return
     selectedUser.value = await bnApiClient.getUserById(id)
     return selectedUser.value
-    // TODO: A voir quel utiliter
-    // users.value.set(selectedUser.value.user.id, selectedUser.value.user)
   }
 
   const updateRole = async (role: RolesKeys) => {
