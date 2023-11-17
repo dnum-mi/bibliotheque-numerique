@@ -33,7 +33,6 @@ export class FileService {
       endpoint: this.configService.get('file.awsDefaultS3Url'),
       region: this.configService.get('file.awsS3Region'),
       s3ForcePathStyle: true,
-      signatureVersion: 'v4',
     })
     this.bucketName = this.configService.get('file.awsDefaultS3Bucket')!
     this.authorizedExtensions = this.configService.get('file.authorizedExtensions')!

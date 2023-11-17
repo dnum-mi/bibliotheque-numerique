@@ -36,7 +36,6 @@ export class FileStorageService extends BaseEntityService {
       endpoint: this.config.get('file.awsDefaultS3Url'),
       region: this.config.get('file.awsS3Region'),
       s3ForcePathStyle: true,
-      signatureVersion: 'v4',
     })
     this.bucketName = this.config.get('file.awsDefaultS3Bucket')!
     this.authorizedExtensions = this.config.get('file.authorizedExtensions')!
