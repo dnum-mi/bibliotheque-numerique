@@ -16,6 +16,8 @@ import { getRandomId } from '@gouvminint/vue-dsfr'
 import UserGeographicalRights from './UserGeographicalRights.vue'
 import { LocalizationOptions, type LocalizationOptionsKeys } from './localization.enum'
 
+import UserRole from './UserRole.vue'
+
 // #region Types, Mapping, Enum
 type DemarcheHtmlAttrs = {
   class?: string | null
@@ -38,7 +40,7 @@ type DemarchesRoles = {
   attrs: DemarcheHtmlAttrs
 }
 
-const typeOrganismeLabel = {
+const typeOrganismeLabel: Record<OrganismeTypeKeys, string> = {
   [OrganismeType.ARUP]: 'Associations reconnues d’utilité publique (ARUP)',
   [OrganismeType.CULTE]: 'Associations cultuelles (Cultes)',
   [OrganismeType.FDD]: 'Fonds de dotation (FDD)',
@@ -51,24 +53,7 @@ const typeOrganismeLabel = {
 const userStore = useUserStore()
 const selectedUser = computed<UserWithEditableRole | null>(() => userStore.selectedUser)
 const user = computed<UserOutputDto|undefined>(() => selectedUser.value?.originalUser)
-const role = computed<Record<number, OneDemarcheRoleOption>| undefined>(() => selectedUser.value?.demarcheHash)
-
-// #region View Role
-const roleSelected = ref<string>('')
-const roleOptions = [
-  {
-    label: 'Administrateur',
-    value: Roles.admin,
-  },
-  {
-    label: 'Instructeur',
-    value: Roles.instructor,
-  },
-]
-const updateRole = async (event: string) => {
-  await userStore.updateRole(event)
-}
-// #endregion
+const demarcheHash = computed<Record<number, OneDemarcheRoleOption>| undefined>(() => selectedUser.value?.demarcheHash)
 
 // #region View Demarches
 const isAllCheck = (children: DemarcheRole[]):boolean => children.reduce((val, demarche) => {
@@ -105,11 +90,11 @@ const getCommonPrefectureOptionGetter = (children: DemarcheRole[]) => (prop: 'ad
 }
 
 const organismeTypes = computed(() => [
-  ...new Set(Object.values(role.value || {}).map(({ types }) => types.length ? types : [OrganismeType.unknown]).flat()),
+  ...new Set(Object.values(demarcheHash.value || {}).map(({ types }) => types.length ? types : [OrganismeType.unknown]).flat()),
 ])
 
 const demarchesRoles = computed<DemarchesRoles[]>(() => {
-  if (!role.value) return []
+  if (!demarcheHash.value) return []
 
   return organismeTypes.value.map((type) => {
     const localization: PrefectureOptions = {
@@ -123,9 +108,9 @@ const demarchesRoles = computed<DemarchesRoles[]>(() => {
         deletable: [],
       },
     }
-    const children = Object.values(role.value || {})
+    const children = Object.values(demarcheHash.value || {})
       .concat(
-        Object.values(role.value || {})
+        Object.values(demarcheHash.value || {})
           .filter(demarcheOption => demarcheOption.types.length === 0)
           .map(dOpts => ({ ...dOpts, types: [OrganismeType.unknown] })),
       )
@@ -169,8 +154,8 @@ const demarchesRoles = computed<DemarchesRoles[]>(() => {
 })
 
 const updateCheckTypeByChild = (id: number) => {
-  if (!role.value || !role.value[id]?.types) return
-  role.value[id].types.forEach((type: string) => {
+  if (!demarcheHash.value || !demarcheHash.value[id]?.types) return
+  demarcheHash.value[id].types.forEach((type: string) => {
     const objType = demarchesRoles.value.filter(dr => dr.name === type)[0]
     if (!objType || !objType.children) return
     objType.value = isAllCheck(objType.children)
@@ -275,7 +260,6 @@ onMounted(async () => {
   const id = Number(params.id)
   if (id) {
     await userStore.loadUserById(id)
-    roleSelected.value = userStore.selectedUser?.originalUser?.role.label || ''
   }
 })
 </script>
@@ -311,12 +295,7 @@ onMounted(async () => {
         <h6>
           Rôle
         </h6>
-        <DsfrRadioButtonSet
-          v-model="roleSelected"
-          name="role"
-          :options="roleOptions"
-          @update:model-value="updateRole($event as string)"
-        />
+        <UserRole />
       </div>
       <div class="fr-col-6 fr-pt-2w">
         <h6>
