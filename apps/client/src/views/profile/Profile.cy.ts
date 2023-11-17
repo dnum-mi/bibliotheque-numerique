@@ -1,9 +1,9 @@
 import { useUserStore } from '@/stores'
-import { createRandomAdmin } from './__tests__/users'
+import { createRandomAdmin } from '../__tests__/users'
 
 import Profile from './Profile.vue'
 import { createPinia } from 'pinia'
-import { ASK_RESET_PWD_SUCCESS } from '../messages'
+import { ASK_RESET_PWD_SUCCESS } from '../../messages'
 
 // TODO: A refaire avec le nouveau model
 describe.skip('<Profile />', () => {

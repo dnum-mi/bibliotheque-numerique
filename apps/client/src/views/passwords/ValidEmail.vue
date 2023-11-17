@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import apiClient from '../api/api-client'
-import type { ErrorvalidateEmail } from '../api/ErrorValidEmail'
+import apiClient from '../../api/api-client'
+import type { ErrorvalidateEmail } from '../../api/ErrorValidEmail'
 
 const props = defineProps<{ token: string }>()
 const message = ref('Validation en cours...')
