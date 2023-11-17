@@ -35,7 +35,7 @@ describe('Home', () => {
     // #region test - get user no role
     cy.intercept({
       method: 'GET',
-      url: '/api/users/444',
+      url: '/api/users/444/role',
       times: 1,
 
     }, { body: noRoleUserSelected }).as('userSelected444')
@@ -58,9 +58,9 @@ describe('Home', () => {
     const roleSelected = {
       ...noRoleUserSelected,
       user: {
-        ...noRoleUserSelected.user,
+        ...noRoleUserSelected.originalUser,
         role: {
-          ...noRoleUserSelected.user.role,
+          ...noRoleUserSelected.originalUser.role,
           label: 'admin',
         },
       },
@@ -68,7 +68,7 @@ describe('Home', () => {
 
     cy.intercept({
       method: 'GET',
-      url: '/api/users/444',
+      url: '/api/users/444/role',
       times: 1,
     }, { body: roleSelected }).as('userSelected444')
     cy.intercept({
@@ -112,7 +112,7 @@ describe('Home', () => {
 
     cy.intercept({
       method: 'GET',
-      url: '/api/users/444',
+      url: '/api/users/444/role',
       times: 1,
     }, { body: roleSelected2 }).as('userSelected444')
 
@@ -165,7 +165,7 @@ describe('Home', () => {
 
     cy.intercept({
       method: 'GET',
-      url: '/api/users/444',
+      url: '/api/users/444/role',
       times: 1,
     }, { body: roleSelected3 }).as('userSelected444')
 
@@ -211,7 +211,7 @@ describe('Home', () => {
 
     cy.intercept({
       method: 'GET',
-      url: '/api/users/444',
+      url: '/api/users/444/role',
       times: 2,
     }, { body: roleSelected4 }).as('userSelected444')
 
