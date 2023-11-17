@@ -79,18 +79,18 @@ const routes: RouterOptions['routes'] = [
     name: routeNames.SIGNIN,
     path: '/sign_in',
     beforeEnter: [isNotAuthenticatedGuard],
-    component: () => import('@/views/Signin.vue'),
+    component: () => import('@/views/authentification/Signin.vue'),
   },
   {
     name: routeNames.SIGNUP,
     path: '/sign_up',
     beforeEnter: [isNotAuthenticatedGuard],
-    component: () => import('@/views/Signup.vue'),
+    component: () => import('@/views/authentification/Signup.vue'),
   },
   {
     name: routeNames.PROFILE,
     path: '/profile',
-    component: () => import('@/views/Profile.vue'),
+    component: () => import('@/views/profile/Profile.vue'),
     meta: {
       needsAuth: true,
     },
@@ -107,7 +107,7 @@ const routes: RouterOptions['routes'] = [
   {
     name: routeNames.LOGOUT,
     path: '/logout',
-    component: () => import('@/views/Logout.vue'),
+    component: () => import('@/views/authentification/Logout.vue'),
     meta: {
       needsAuth: true,
     },
@@ -183,13 +183,13 @@ const routes: RouterOptions['routes'] = [
   {
     path: '/update-password/:token',
     name: routeNames.UPDATE_PASSWORD,
-    component: () => import('@/views/UpdatePassword.vue'),
+    component: () => import('@/views/passwords/UpdatePassword.vue'),
     props: true,
   },
   {
     path: '/reset-password',
     name: routeNames.RESET_PASSWORD,
-    component: () => import('@/views/ResetPassword.vue'),
+    component: () => import('@/views/passwords/ResetPassword.vue'),
   },
   {
     path: '/:pathMatch(.*)*',
@@ -199,7 +199,7 @@ const routes: RouterOptions['routes'] = [
   {
     path: '/valid-email/:token',
     name: routeNames.VALIDE_MAIL,
-    component: () => import('@/views/ValidEmail.vue'),
+    component: () => import('@/views/passwords/ValidEmail.vue'),
     props: true,
 
   },

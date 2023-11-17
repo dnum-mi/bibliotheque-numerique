@@ -62,7 +62,7 @@ import BiblioNumDataTableAgGrid from '@/components/BiblioNumDataTableAgGrid.vue'
 import type { IRole } from '@/shared/interfaces'
 import apiClient from '@/api/api-client'
 import type { ResetPasswordInputDto } from '@biblio-num/shared'
-import { ASK_RESET_PWD_SUCCESS } from '../messages'
+import { ASK_RESET_PWD_SUCCESS } from '../../messages'
 
 const userStore = useUserStore()
 const datas = userStore.currentUser

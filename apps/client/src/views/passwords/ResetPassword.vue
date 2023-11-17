@@ -62,7 +62,7 @@ import { z } from 'zod'
 import type { ResetPasswordInputDto } from '@biblio-num/shared'
 import apiClient from '@/api/api-client'
 import { ref } from 'vue'
-import { ASK_RESET_PWD_SUCCESS } from '../messages'
+import { ASK_RESET_PWD_SUCCESS } from '../../messages'
 
 const validationSchema = toTypedSchema(z.object({
   email: z.string({ required_error: 'Veuillez saisir votre adresse courriel' })

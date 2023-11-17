@@ -2,7 +2,7 @@ import Logout from './Logout.vue'
 
 import { createPinia } from 'pinia'
 import { useUserStore } from '@/stores'
-import { createRandomUser } from './__tests__/users'
+import { createRandomUser } from '../__tests__/users'
 
 describe('<Logout />', () => {
   it('renders', () => {

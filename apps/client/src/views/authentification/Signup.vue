@@ -10,7 +10,7 @@ import type { CreateUserDto } from '@biblio-num/shared'
 import apiClient from '@/api/api-client'
 import { passwordValidator } from '@/utils/password.validator'
 import { REQUIRED_FIELD_MESSAGE } from '@/messages'
-import LayoutAccueil from '../components/Layout/LayoutAccueil.vue'
+import LayoutAccueil from '../../components/Layout/LayoutAccueil.vue'
 import ToggleInputPassword from '@/components/ToggleInputPassword.vue'
 import PasswordHint from '@/components/PasswordHint.vue'
 
