@@ -16,7 +16,7 @@ import {
   UserOutputDto,
   Roles,
   PaginationUserDto,
-  PaginatedUserDto,
+  PaginatedUserDto, IUser,
 } from '@biblio-num/shared'
 import { UpdatePasswordGuard } from '@/modules/users/providers/guards/update-password.guard'
 import { ValidSignUpGuard } from '@/modules/users/providers/guards/validate-sign-up.guard'
@@ -62,9 +62,9 @@ export class UserController {
   @HttpCode(200)
   @Role(Roles.admin)
   @ApiResponse({ status: 200 })
-  async listUsers (@Body() dto: PaginationUserDto): Promise<PaginatedUserDto> {
+  async listUsers (@Body() dto: PaginationUserDto, @CurrentUser() user: IUser): Promise<PaginatedUserDto> {
     this.logger.verbose('listUsers')
-    return this.usersService.listUsers(dto)
+    return this.usersService.listUsers(dto, user)
   }
 
   @Get('/me')

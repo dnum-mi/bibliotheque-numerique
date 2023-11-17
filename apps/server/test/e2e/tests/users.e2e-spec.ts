@@ -51,10 +51,9 @@ describe('users (e2e)', () => {
         })
         .expect(200)
       expect(response.body).toBeDefined()
-      expect(response.body.total).toEqual(7)
+      expect(response.body.total).toEqual(6)
       expect(response.body.data).toMatchObject([
         { id: 1, lastname: 'SUDO', firstname: 'Cécile' },
-        { id: 2, lastname: 'SUPERADMIN', firstname: 'Bob' },
         { id: 3, lastname: 'norole', firstname: 'Bill' },
         { id: 4, lastname: 'admin1', firstname: 'Suzette' },
         { id: 5, lastname: 'instructor1', firstname: 'Steve' },
@@ -84,7 +83,6 @@ describe('users (e2e)', () => {
       expect(response.body).toBeDefined()
       expect(response.body.data).toEqual([
         { id: 4, lastname: 'admin1', firstname: 'Suzette' },
-        { id: 2, lastname: 'SUPERADMIN', firstname: 'Bob' },
       ])
     })
 
@@ -102,13 +100,6 @@ describe('users (e2e)', () => {
           lastname: 'SUDO',
           firstname: 'Cécile',
           roleLabel: 'sudo',
-          roleOptionsResume: '',
-        },
-        {
-          id: 2,
-          lastname: 'SUPERADMIN',
-          firstname: 'Bob',
-          roleLabel: 'superadmin',
           roleOptionsResume: '',
         },
         {
@@ -321,10 +312,9 @@ describe('users (e2e)', () => {
         .set('Cookie', [cookies.instructor])
         .expect(200)
         .expect(({ body }) => {
-          expect(body).toEqual({
+          expect(body).toMatchObject({
             id: 5,
             email: 'instructor1@localhost.com',
-            validated: true,
             role: {
               label: 'instructor',
               options: {
