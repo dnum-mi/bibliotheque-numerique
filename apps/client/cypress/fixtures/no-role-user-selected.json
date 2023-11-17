@@ -1,5 +1,5 @@
 {
-  "user": {
+  "originalUser": {
     "id": 444,
     "email": "prenom.nom@example.com",
     "lastname": "nom",
@@ -10,12 +10,14 @@
       "options": {}
     } 
   },
+  "possibleRoles": ["admin", "instuctror"],
+  "deletable": true,
   "demarcheHash": {
     "1": {
       "id": 1,
       "checked": false,
-      "checkable": true,
-      "label": "Demarche 1",
+      "editable": true,
+      "title": "Demarche 1",
       "types": ["CULTE", "FDD"],
       "prefectureOptions": {
         "national": {
@@ -32,8 +34,8 @@
     "3": {
       "id": 3,
       "checked": false,
-      "checkable": true,
-      "label": "Demarche 3",
+      "editable": true,
+      "title": "Demarche 3",
       "types": ["ARUP", "FDD"],
       "prefectureOptions": {
         "national": {
@@ -50,8 +52,8 @@
     "4": {
       "id": 4,
       "checked": false,
-      "checkable": false,
-      "label": "Demarche 4",
+      "editable": false,
+      "title": "Demarche 4",
       "types": ["FE"],
       "prefectureOptions": {
         "national": {
@@ -68,8 +70,8 @@
     "5": {
       "id": 5,
       "checked": false,
-      "checkable": true,
-      "label": "Demarche 5",
+      "editable": true,
+      "title": "Demarche 5",
       "types": ["FE"],
       "prefectureOptions": {
         "national": {
@@ -86,8 +88,8 @@
     "6": {
       "id": 6,
       "checked": false,
-      "checkable": true,
-      "label": "Demarche 6",
+      "editable": true,
+      "title": "Demarche 6",
       "types": ["ARUP"],
       "prefectureOptions": {
         "national": {
@@ -104,8 +106,8 @@
     "7": {
       "id": 7,
       "checked": false,
-      "checkable": true,
-      "label": "Demarche 7",
+      "editable": true,
+      "title": "Demarche 7",
       "types": ["FRUP"],
       "prefectureOptions": {
         "national": {
@@ -122,8 +124,8 @@
     "8": {
       "id": 8,
       "checked": false,
-      "checkable": true,
-      "label": "Demarche 8",
+      "editable": true,
+      "title": "Demarche 8",
       "types": ["FRUP"],
       "prefectureOptions": {
         "national": {
@@ -140,8 +142,8 @@
     "9": {
       "id": 9,
       "checked": false,
-      "checkable": true,
-      "label": "Demarche 9",
+      "editable": true,
+      "title": "Demarche 9",
       "types": [],
       "prefectureOptions": {
         "national": {
@@ -158,8 +160,8 @@
     "10": {
       "id": 10,
       "checked": false,
-      "checkable": false,
-      "label": "Demarche 10",
+      "editable": false,
+      "title": "Demarche 10",
       "types": [],
       "prefectureOptions": {
         "national": {
