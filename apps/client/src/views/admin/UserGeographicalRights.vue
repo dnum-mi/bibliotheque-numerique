@@ -10,6 +10,8 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   'update:localization': [payload?: string],
+  'update:removePrefecture': [payload?: string],
+  'update:addPrefecture': [payload?: string],
 }>()
 
 const localizationOptions = computed(() => [
@@ -34,7 +36,11 @@ const localizationOption = computed<LocalizationOptionsKeys | undefined>(
       : localizationOptions.value[1].value
   },
 )
-const localizationSelected = ref<string | undefined>(localizationOption.value)
+const disabledAddPrefectures = computed<boolean>(() => {
+  return props.geographicalRights.national.value === true
+},
+)
+// const localizationSelected = ref<string | undefined>(localizationOption.value)
 
 const prefectures = computed<DsfrTagProps[]>(() => [
   props.geographicalRights.prefectures?.value.map<DsfrTagProps>(
@@ -58,28 +64,28 @@ const prefecturesToAdd = computed<DsfrTagProps[]>(
     .filter((pref) => !props.geographicalRights.prefectures.value.includes(pref))
     .map<DsfrTagProps>(
       (pref) => ({
-        class: 'tag-button',
+        class: disabledAddPrefectures.value ? '' : 'tag-button',
         label: pref,
         tagName: 'button',
         onClick: () => {
           addPrefecture(pref)
         },
+        disabled: disabledAddPrefectures.value,
       }),
     ),
 )
 
 const updateCheckedLocalization = (loc: LocalizationOptionsKeys) => {
-  // TODO: emit localization change action nation or prefecture
   emit('update:localization', loc)
 }
 
 const removePrefecture = (pref: string) => {
   // TODO: call  to remove prefecture
-  console.log(pref)
+  emit('update:removePrefecture', pref)
 }
 
 const addPrefecture = (pref: string) => {
-  console.log(pref)
+  emit('update:addPrefecture', pref)
 }
 
 const newPrefecture = ref<string>('')
@@ -93,7 +99,7 @@ const newPrefecture = ref<string>('')
     :label="option.label"
     :name="option.name"
     :value="option.value"
-    :model-value="localizationSelected"
+    :model-value="localizationOption"
     :disabled="option.disabled"
     @update:model-value="updateCheckedLocalization(option.value as string)"
   />
