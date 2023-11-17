@@ -31,8 +31,10 @@ describe('Home', () => {
     cy.url().should('match', /\/user\/\d/)
   })
 
-  it.only('update user with no role', () => {
+  it('update user with no role', () => {
     // #region test - get user no role
+
+    cy.intercept('api/users/me', { fixture: 'admin-profile' }).as('me')
     cy.intercept({
       method: 'GET',
       url: '/api/users/444/role',
@@ -212,13 +214,13 @@ describe('Home', () => {
     cy.intercept({
       method: 'GET',
       url: '/api/users/444/role',
-      times: 2,
+      times: 1,
     }, { body: roleSelected4 }).as('userSelected444')
 
     cy.intercept({
       method: 'PATCH',
       url: '/api/users/444/role',
-      times: 2,
+      times: 1,
     }, { statusCode: 200 }).as('patchUserSelected444')
 
     cy.get('label')
@@ -251,6 +253,153 @@ describe('Home', () => {
         cy.wrap($parent)
           .should('contain', 'National')
           .should('contain', 'Préfecture(s)')
+
+        const roleSelected5 = {
+          ...roleSelected4,
+          demarcheHash: {
+            ...roleSelected4.demarcheHash,
+            1: {
+              ...roleSelected4.demarcheHash['1'],
+              prefectureOptions: {
+                ...roleSelected4.demarcheHash['1'].prefectureOptions,
+                national: {
+                  ...roleSelected4.demarcheHash['1'].prefectureOptions.national,
+                  value: true,
+                },
+              },
+            },
+          },
+        }
+
+        cy.intercept({
+          method: 'GET',
+          url: '/api/users/444/role',
+          times: 1,
+        }, { body: roleSelected5 }).as('userSelected444National')
+
+        cy.wrap($parent).contains('National')
+          .click()
+
+        cy.wait('@userSelected444National')
+        cy.wrap($parent)
+          .contains('National')
+          .parent()
+          .children('input')
+          .should('be.checked')
+
+        cy.wrap($parent)
+          .contains('Préfecture(s)')
+          .parent()
+          .children('input')
+          .should('not.be.checked')
+
+        const roleSelected6 = {
+          ...roleSelected5,
+          demarcheHash: {
+            ...roleSelected5.demarcheHash,
+            1: {
+              ...roleSelected5.demarcheHash['1'],
+              prefectureOptions: {
+                ...roleSelected5.demarcheHash['1'].prefectureOptions,
+                national: {
+                  ...roleSelected5.demarcheHash['1'].prefectureOptions.national,
+                  value: false,
+                },
+              },
+            },
+          },
+        }
+
+        cy.intercept({
+          method: 'GET',
+          url: '/api/users/444/role',
+          times: 1,
+        }, { body: roleSelected6 }).as('userSelected444')
+
+        cy.intercept({
+          method: 'PATCH',
+          url: '/api/users/444/role',
+          times: 1,
+        }, { statusCode: 200 }).as('patchUserSelected444')
+
+        cy.wrap($parent).contains('Préfecture(s)')
+          .click()
+
+        cy.wait('@userSelected444')
+
+        const roleSelected7 = {
+          ...roleSelected6,
+          demarcheHash: {
+            ...roleSelected6.demarcheHash,
+            1: {
+              ...roleSelected6.demarcheHash['1'],
+              prefectureOptions: {
+                ...roleSelected6.demarcheHash['1'].prefectureOptions,
+                prefectures: {
+                  ...roleSelected6.demarcheHash['1'].prefectureOptions.prefectures,
+                  value: ['75'],
+                },
+              },
+            },
+          },
+        }
+
+        cy.intercept({
+          method: 'GET',
+          url: '/api/users/444/role',
+          times: 1,
+        }, { body: roleSelected7 }).as('userSelected444')
+
+        cy.intercept({
+          method: 'PATCH',
+          url: '/api/users/444/role',
+          times: 1,
+        }, { statusCode: 200 }).as('patchUserSelected444')
+
+        cy.wrap($parent).should('contain', '75')
+          .contains('75')
+          .should('have.class', 'tag-button')
+          .click()
+
+        cy.wait('@userSelected444')
+
+        const roleSelected8 = {
+          ...roleSelected7,
+          demarcheHash: {
+            ...roleSelected7.demarcheHash,
+            1: {
+              ...roleSelected7.demarcheHash['1'],
+              prefectureOptions: {
+                ...roleSelected7.demarcheHash['1'].prefectureOptions,
+                prefectures: {
+                  ...roleSelected7.demarcheHash['1'].prefectureOptions.prefectures,
+                  value: [],
+                },
+              },
+            },
+          },
+        }
+
+        cy.intercept({
+          method: 'GET',
+          url: '/api/users/444/role',
+          times: 1,
+        }, { body: roleSelected8 }).as('userSelected444')
+
+        cy.intercept({
+          method: 'PATCH',
+          url: '/api/users/444/role',
+          times: 1,
+        }, { statusCode: 200 }).as('patchUserSelected444')
+
+        cy.wrap($parent).should('contain', '75')
+          .contains('75')
+          .should('have.class', 'fr-tag--dismiss')
+          .click()
+        cy.wait('@userSelected444')
+        cy.wrap($parent).should('contain', '75')
+          .contains('75')
+          .should('have.class', 'tag-button')
       })
   })
 })

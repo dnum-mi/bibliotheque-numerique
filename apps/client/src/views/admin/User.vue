@@ -5,6 +5,7 @@ import type {
   UserOutputDto,
   UserWithEditableRole,
   OneDemarcheRoleOption,
+  PrefectureKeys,
 } from '@biblio-num/shared'
 import { onMounted, ref, computed } from 'vue'
 import { useUserStore } from '@/stores'
@@ -17,7 +18,6 @@ import UserGeographicalRights from './UserGeographicalRights.vue'
 import { LocalizationOptions, type LocalizationOptionsKeys } from './localization.enum'
 
 import UserRole from './UserRole.vue'
-
 // #region Types, Mapping, Enum
 type DemarcheHtmlAttrs = {
   class?: string | null
@@ -54,7 +54,7 @@ const userStore = useUserStore()
 const selectedUser = computed<UserWithEditableRole | null>(() => userStore.selectedUser)
 const user = computed<UserOutputDto|undefined>(() => selectedUser.value?.originalUser)
 const demarcheHash = computed<Record<number, OneDemarcheRoleOption>| undefined>(() => selectedUser.value?.demarcheHash)
-
+const keySelectUser = computed<string>(() => userStore.keySelectUser)
 // #region View Demarches
 const isAllCheck = (children: DemarcheRole[]):boolean => children.reduce((val, demarche) => {
   return (val &&= demarche.options.checked)
@@ -206,53 +206,86 @@ const canEditDemarche = (d: OneDemarcheRoleOption) => !!(
 
 // #region view localization
 const keyLocalization = ref<string>(getRandomId('location'))
-keyLocalization.value = getRandomId('location')
 
 type GeographicalRights = PrefectureOptions & { disabled?: boolean }
 const geographicalRights = computed<GeographicalRights | null>(() => {
   if (!demarcheOrTypeSelected.value) return null
   if ('options' in demarcheOrTypeSelected.value) {
+    const id:number = demarcheOrTypeSelected.value.options.id
+    if (!demarcheHash.value) return null
     return ({
-      ...demarcheOrTypeSelected.value.options.prefectureOptions,
-      disabled: demarcheOrTypeSelected.value.options.checked,
+      ...demarcheHash.value[id].prefectureOptions,
+      disabled: demarcheHash.value[id].checked,
     })
   }
+
+  const drSelected = demarchesRoles.value.find(dr => dr.name === (demarcheOrTypeSelected.value as DemarchesRoles).name)
   return ({
     national: {
-      value: demarcheOrTypeSelected.value.localization?.national.value ?? false,
-      editable: demarcheOrTypeSelected.value.localization?.national.editable ?? false,
+      value: drSelected?.localization?.national.value ?? false,
+      editable: drSelected?.localization?.national.editable ?? false,
     },
     prefectures: {
-      value: demarcheOrTypeSelected.value.commonPrefectureValues,
-      addable: demarcheOrTypeSelected.value.commonPrefectureAddables,
-      deletable: demarcheOrTypeSelected.value.commonPrefectureDeletables,
+      value: drSelected?.commonPrefectureValues,
+      addable: drSelected?.commonPrefectureAddables,
+      deletable: drSelected?.commonPrefectureDeletables,
     },
-    disabled: demarcheOrTypeSelected.value.value,
+    disabled: drSelected?.value,
   })
 })
 
-const udpateLocalization = async (loc: LocalizationOptionsKeys) => {
-  // TODO: Message d'erreur a mettre
+const udpateLocalizationFn = async (optionLoc: { national: boolean} | {
+    prefecture: {
+        key: PrefectureKeys,
+        toAdd: boolean,
+      }
+    },
+) => {
   if (!demarcheOrTypeSelected.value) return null
 
   if ('options' in demarcheOrTypeSelected.value) {
     await userStore.updateUserDemarchesRole({
       demarcheId: demarcheOrTypeSelected.value.options.id,
-      national: loc === LocalizationOptions.national,
+      ...optionLoc,
     }, true)
+
     return
   }
 
   await (demarcheOrTypeSelected.value as DemarchesRoles).children?.map((child) =>
     userStore.updateUserDemarchesRole({
       demarcheId: child.options.id,
-      national: loc === LocalizationOptions.national,
+      ...optionLoc,
     }, false),
   )
   if (user.value?.id) {
     await userStore.loadUserById(user.value?.id)
   }
 }
+
+const udpateLocalization = (loc: LocalizationOptionsKeys) => {
+  // TODO: Message d'erreur a mettre
+  return udpateLocalizationFn({ national: loc === LocalizationOptions.national })
+}
+
+const addPrefecture = (prefecture: string) => {
+  return udpateLocalizationFn({
+    prefecture: {
+      key: prefecture,
+      toAdd: true,
+    },
+  })
+}
+
+const removePrefecture = (prefecture: string) => {
+  return udpateLocalizationFn({
+    prefecture: {
+      key: prefecture,
+      toAdd: false,
+    },
+  })
+}
+
 // #endregion
 
 onMounted(async () => {
@@ -265,8 +298,8 @@ onMounted(async () => {
 </script>
 
 <template>
-  {{ selectedUser }}
   <div
+    :key="keySelectUser"
     class="flex flex-row  gap-4 fr-p-2w flex-wrap bn-sub-title"
   >
     <div>
@@ -364,9 +397,11 @@ onMounted(async () => {
         </h6>
         <UserGeographicalRights
           v-if="!!(geographicalRights && geographicalRights.disabled)"
-          :key="keyLocalization"
+          :key="keySelectUser"
           :geographical-rights="geographicalRights"
           @update:localization="udpateLocalization($event)"
+          @update:add-prefecture="addPrefecture($event)"
+          @update:remove-prefecture="removePrefecture($event)"
         />
       </div>
     </div>

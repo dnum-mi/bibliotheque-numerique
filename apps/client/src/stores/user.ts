@@ -14,6 +14,7 @@ import type {
   RolesKeys,
   UpdateOneRoleOptionDto,
 } from '@biblio-num/shared'
+import { getRandomId } from '@gouvminint/vue-dsfr'
 
 // TODO: enum Roles dans packages/shared n'est pas récupérable
 const RolesAdmins = ['admin', 'sudo', 'superadmin']
@@ -23,7 +24,7 @@ export const useUserStore = defineStore('user', () => {
   const myProfile = ref<MyProfileOutputDto | null>(null)
   const users = ref<Map<number, UserOutputDto>>(new Map<number, UserOutputDto>())
   const selectedUser = ref<UserWithEditableRole | null>(null)
-
+  const keySelectUser = ref<string>(getRandomId('user-selected'))
   const loaded = ref(false)
 
   const isAuthenticated = computed(() => !!currentUser.value)
@@ -63,6 +64,8 @@ export const useUserStore = defineStore('user', () => {
   const loadUserById = async (id: number) => {
     if (!hasAdminAccess.value) return
     selectedUser.value = await bnApiClient.getUserRoleById(id)
+    keySelectUser.value = getRandomId('user-selected')
+    console.log(keySelectUser.value)
     return selectedUser.value
   }
 
@@ -90,6 +93,7 @@ export const useUserStore = defineStore('user', () => {
     hasAdminAccess,
     canManageRoles,
     canAccessDemarches,
+    keySelectUser,
     login,
     logout,
     loadMyProfile,
