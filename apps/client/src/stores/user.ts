@@ -83,6 +83,12 @@ export const useUserStore = defineStore('user', () => {
     if (reloadUser) await loadUserById(id)
   }
 
+  const removeRole = async () => {
+    const id = selectedUser.value?.originalUser.id
+    if (!id) throw new Error("L'Utilisateur n'a pas été selectionné.")
+    await bnApiClient.removeRole(id)
+    await loadUserById(id)
+  }
   return {
     currentUser,
     myProfile,
@@ -103,5 +109,6 @@ export const useUserStore = defineStore('user', () => {
     updateUserDemarchesRole,
     getUsersRole,
     resetUser,
+    removeRole,
   }
 })
