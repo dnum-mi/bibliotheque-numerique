@@ -10,7 +10,7 @@ describe('<DemarcheGrpInstructeurs />', () => {
     const demarcheStore = useDemarcheStore()
     const user = createRandomUser()
     // Prevent api calls
-    cy.stub(apiClient, 'fetchCurrentUser').returns(Promise.resolve(user))
+    cy.stub(apiClient, 'fetchMyProfile').returns(Promise.resolve(user))
 
     const demarche = generateDemarche()
     cy.stub(apiClient, 'getDemarche').withArgs(demarche.id)
