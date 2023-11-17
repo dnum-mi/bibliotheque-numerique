@@ -253,6 +253,10 @@ export const usersApiClient = {
   async updateUserDemarchesRole (id: number, dto: UpdateOneRoleOptionDto) {
     await apiClientInstance.patch(getUserRoleByIdRoute(id), dto)
   },
+
+  async removeRole (id:number) {
+    await apiClientInstance.delete(getUserRoleByIdRoute(id))
+  },
 }
 
 export const dossiersApiClient = {

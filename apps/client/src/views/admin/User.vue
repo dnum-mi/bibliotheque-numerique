@@ -175,6 +175,7 @@ const updateTypeDemarche = async ({ name, checked, dr }: { name: string, checked
 }
 
 const updateDemarche = async ({ name, id, checked, d, reloadUser = true }: { name: string, id: number, checked: boolean, d:DemarcheRole, reloadUser?: boolean }) => {
+  console.log('updateDemarche', checked)
   d.options.checked = checked
   updateCheckTypeByChild(id)
   await userStore.updateUserDemarchesRole({
@@ -189,18 +190,18 @@ const onClickDemarches = (elt: DemarchesRoles | DemarcheRole) => {
   if (elt.attrs.disabled) {
     return
   }
+
   demarchesRoles.value.forEach((dr) => {
     dr.attrs.class = null
     dr.children?.forEach(d => { d.attrs.class = null })
   })
+
   elt.attrs.class = 'fr-background-contrast--info'
   demarcheOrTypeSelected.value = elt
+  console.log('onClickDemarches', elt)
 }
 
-const canEditDemarche = (d: OneDemarcheRoleOption) => !!(
-  d.prefectureOptions.national.editable ||
-  d.prefectureOptions.prefectures.addable.length ||
-  d.prefectureOptions.prefectures.deletable.length)
+const canEditDemarche = (d: OneDemarcheRoleOption) => d.editable
 
 // #endregion
 
