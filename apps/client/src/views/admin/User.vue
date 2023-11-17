@@ -119,10 +119,15 @@ const demarchesRoles = computed<DemarchesRoles[]>(() => {
         localization.national.value &&= d.prefectureOptions.national.value
         localization.national.editable &&= d.prefectureOptions.national.editable
 
+        let newClass: string |null | undefined = null
+        if ((noRefdemarcheOrTypeSelected as DemarcheRole)?.options?.id === d.id) {
+          newClass = noRefdemarcheOrTypeSelected?.attrs.class
+        }
+
         return {
           options: d,
           attrs: {
-            class: ((demarcheOrTypeSelected.value as DemarcheRole)?.options?.id === d.id) ? demarcheOrTypeSelected.value?.attrs.class || null : null,
+            class: newClass ?? null,
             disabled: !canEditDemarche(d),
           },
         }
@@ -134,6 +139,12 @@ const demarchesRoles = computed<DemarchesRoles[]>(() => {
     const commonPrefectureValues: string[] = getCommonPrefectureOptionsFor('value')
     const commonPrefectureAddables: string[] = getCommonPrefectureOptionsFor('addable')
     const commonPrefectureDeletables: string[] = getCommonPrefectureOptionsFor('deletable')
+
+    let newClass: string |null | undefined = null
+    if ((noRefdemarcheOrTypeSelected as DemarchesRoles)?.name === type) {
+      newClass = noRefdemarcheOrTypeSelected?.attrs.class
+    }
+
     return {
       label: typeOrganismeLabel[type] || typeOrganismeLabel[OrganismeType.unknown],
       name: type,
@@ -145,7 +156,7 @@ const demarchesRoles = computed<DemarchesRoles[]>(() => {
       commonPrefectureAddables,
       commonPrefectureDeletables,
       attrs: {
-        class: ((demarcheOrTypeSelected.value as DemarchesRoles)?.name === type) ? demarcheOrTypeSelected.value?.attrs.class || null : null,
+        class: newClass ?? null,
         disabled: children?.some(d => !canEditDemarche(d.options)),
       },
     }
@@ -175,7 +186,6 @@ const updateTypeDemarche = async ({ name, checked, dr }: { name: string, checked
 }
 
 const updateDemarche = async ({ name, id, checked, d, reloadUser = true }: { name: string, id: number, checked: boolean, d:DemarcheRole, reloadUser?: boolean }) => {
-  console.log('updateDemarche', checked)
   d.options.checked = checked
   updateCheckTypeByChild(id)
   await userStore.updateUserDemarchesRole({
@@ -185,6 +195,7 @@ const updateDemarche = async ({ name, id, checked, d, reloadUser = true }: { nam
 }
 
 const demarcheOrTypeSelected = ref< DemarchesRoles | DemarcheRole | null>(null)
+let noRefdemarcheOrTypeSelected: DemarchesRoles | DemarcheRole
 
 const onClickDemarches = (elt: DemarchesRoles | DemarcheRole) => {
   if (elt.attrs.disabled) {
@@ -198,7 +209,7 @@ const onClickDemarches = (elt: DemarchesRoles | DemarcheRole) => {
 
   elt.attrs.class = 'fr-background-contrast--info'
   demarcheOrTypeSelected.value = elt
-  console.log('onClickDemarches', elt)
+  noRefdemarcheOrTypeSelected = elt
 }
 
 const canEditDemarche = (d: OneDemarcheRoleOption) => d.editable
@@ -209,31 +220,32 @@ const canEditDemarche = (d: OneDemarcheRoleOption) => d.editable
 const keyLocalization = ref<string>(getRandomId('location'))
 
 type GeographicalRights = PrefectureOptions & { disabled?: boolean }
-const geographicalRights = computed<GeographicalRights | null>(() => {
-  if (!demarcheOrTypeSelected.value) return null
-  if ('options' in demarcheOrTypeSelected.value) {
-    const id:number = demarcheOrTypeSelected.value.options.id
-    if (!demarcheHash.value) return null
-    return ({
-      ...demarcheHash.value[id].prefectureOptions,
-      disabled: demarcheHash.value[id].checked,
-    })
-  }
+const geographicalRights = computed<GeographicalRights | null>(
+  () => {
+    if (!demarcheOrTypeSelected.value) return null
+    if ('options' in demarcheOrTypeSelected.value) {
+      const id:number = demarcheOrTypeSelected.value.options.id
+      if (!demarcheHash.value) return null
+      return ({
+        ...demarcheHash.value[id].prefectureOptions,
+        disabled: demarcheHash.value[id].checked,
+      })
+    }
 
-  const drSelected = demarchesRoles.value.find(dr => dr.name === (demarcheOrTypeSelected.value as DemarchesRoles).name)
-  return ({
-    national: {
-      value: drSelected?.localization?.national.value ?? false,
-      editable: drSelected?.localization?.national.editable ?? false,
-    },
-    prefectures: {
-      value: drSelected?.commonPrefectureValues,
-      addable: drSelected?.commonPrefectureAddables,
-      deletable: drSelected?.commonPrefectureDeletables,
-    },
-    disabled: drSelected?.value,
+    const drSelected = demarchesRoles.value.find(dr => dr.name === (demarcheOrTypeSelected.value as DemarchesRoles).name)
+    return ({
+      national: {
+        value: drSelected?.localization?.national.value ?? false,
+        editable: drSelected?.localization?.national.editable ?? false,
+      },
+      prefectures: {
+        value: drSelected?.commonPrefectureValues,
+        addable: drSelected?.commonPrefectureAddables,
+        deletable: drSelected?.commonPrefectureDeletables,
+      },
+      disabled: drSelected?.value,
+    })
   })
-})
 
 const udpateLocalizationFn = async (optionLoc: { national: boolean} | {
     prefecture: {
