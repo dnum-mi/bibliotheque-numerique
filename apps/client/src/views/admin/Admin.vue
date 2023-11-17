@@ -1,4 +1,3 @@
-
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -101,23 +100,11 @@ const onSelectionChanged = (event: SelectionChangedEvent) => {
 </script>
 
 <template>
-  <LayoutList>
-    <template #title>
-      <div class="bn-banner  bn-list-admin">
-        <span
-          class="fr-p-1w"
-        >
-          <VIcon
-            name="ri-user-settings-line"
-            aria-hidden="true"
-          />
-        </span>
-        <h6 class="bn-list-admin  fr-m-0">
-          Administration des permissions
-        </h6>
-      </div>
-    </template>
-
+  <LayoutList
+    title="Administration des roles"
+    title-bg-color="var(--green-tilleul-verveine-sun-418-moon-817)"
+    title-icon="ri-user-settings-line"
+  >
     <ag-grid-server-side
       ref="agGridComponent"
       :column-defs="columnDefs"

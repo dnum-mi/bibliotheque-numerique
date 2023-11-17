@@ -33,18 +33,11 @@ const agGridComponent = ref()
 </script>
 
 <template>
-  <LayoutList>
-    <template #title>
-      <div class="bn-banner  bn-banner--organisme">
-        <span
-          class="fr-icon-search-line fr-p-1w"
-          aria-hidden="true"
-        />
-        <h6 class="bn-banner-title  fr-p-1w  fr-m-0">
-          Rechercher un organisme
-        </h6>
-      </div>
-    </template>
+  <LayoutList
+    title="Recherche un organisme"
+    title-bg-color="var(--border-plain-grey)"
+    title-icon="fr-icon-search-line"
+  >
     <div class="">
       <ag-grid-server-side
         ref="agGridComponent"

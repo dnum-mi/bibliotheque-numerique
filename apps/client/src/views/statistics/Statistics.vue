@@ -5,18 +5,11 @@ import LayoutList from '@/components/Layout/LayoutList.vue'
 </script>
 
 <template>
-  <LayoutList>
-    <template #title>
-      <div class="bn-banner  bn-banner--profile">
-        <span
-          class="fr-icon-table-fill  fr-p-1w"
-          aria-hidden="true"
-        />
-        <h6 class="bn-banner-title  fr-p-1w  fr-m-0">
-          Statistiques
-        </h6>
-      </div>
-    </template>
+  <LayoutList
+    title="Statistiques"
+    title-bg-color="var(--red-marianne-850-200)"
+    title-icon="fr-icon-table-fill"
+  >
     <div class="cards  fr-container">
       <StatisticsCard />
     </div>
@@ -24,7 +17,4 @@ import LayoutList from '@/components/Layout/LayoutList.vue'
 </template>
 
 <style scoped>
-.cards {
-  @apply flex  gap-4  flex-wrap  justify-between  my-4  max-w-[12];
-}
 </style>
