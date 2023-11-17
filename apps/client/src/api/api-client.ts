@@ -51,7 +51,7 @@ import {
   getOrganismeByRnfRoute,
   organismesListRoute,
   usersListRoute,
-  updateRoleRoute,
+  getUserRoleByIdRoute,
 } from './bn-api-routes'
 import {
   authRoute,
@@ -222,6 +222,11 @@ export const usersApiClient = {
     return response.data
   },
 
+  async getUserRoleById (id: number): Promise<UserWithEditableRole | null> {
+    const response = await apiClientInstance.get(getUserRoleByIdRoute(id))
+    return response.data
+  },
+
   async resetPassword (resetPasswordInput: ResetPasswordInputDto) {
     apiClientAuthInstance.post('/users/reset-password', resetPasswordInput)
   },
@@ -242,11 +247,11 @@ export const usersApiClient = {
   },
 
   async updateUserRole (id: number, role: RolesKeys) {
-    await apiClientInstance.put(updateRoleRoute(id), { role })
+    await apiClientInstance.put(getUserRoleByIdRoute(id), { role })
   },
 
   async updateUserDemarchesRole (id: number, dto: UpdateOneRoleOptionDto) {
-    await apiClientInstance.patch(updateRoleRoute(id), dto)
+    await apiClientInstance.patch(getUserRoleByIdRoute(id), dto)
   },
 }
 

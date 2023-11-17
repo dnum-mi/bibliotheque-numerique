@@ -62,19 +62,19 @@ export const useUserStore = defineStore('user', () => {
 
   const loadUserById = async (id: number) => {
     if (!hasAdminAccess.value) return
-    selectedUser.value = await bnApiClient.getUserById(id)
+    selectedUser.value = await bnApiClient.getUserRoleById(id)
     return selectedUser.value
   }
 
   const updateRole = async (role: RolesKeys) => {
-    const id = selectedUser.value?.user.id
+    const id = selectedUser.value?.originalUser.id
     if (!id) throw new Error("L'Utilisateur n'a pas été selectionné.")
     await bnApiClient.updateUserRole(id, role)
     await loadUserById(id)
   }
 
   const updateUserDemarchesRole = async (demarchesRoles: UpdateOneRoleOptionDto, reloadUser: boolean) => {
-    const id = selectedUser.value?.user.id
+    const id = selectedUser.value?.originalUser.id
     if (!id) throw new Error("L'Utilisateur n'a pas été selectionné.")
     await bnApiClient.updateUserDemarchesRole(id, demarchesRoles)
     if (reloadUser) await loadUserById(id)
