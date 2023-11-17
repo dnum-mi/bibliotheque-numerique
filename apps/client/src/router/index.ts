@@ -218,7 +218,7 @@ router.beforeEach((to) => { // Cf. https://github.com/vueuse/head pour des trans
 router.beforeEach(async (to, from) => {
   const userStore = useUserStore()
   if (!userStore.loaded) {
-    await userStore.loadCurrentUser()
+    await userStore.loadMyProfile()
   }
 
   const role = userStore.currentUser?.role

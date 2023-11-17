@@ -7,11 +7,28 @@ import { LoggerService } from '@/shared/modules/logger/logger.service'
 
 @Injectable()
 export class AuthService {
-  constructor (private usersService: UserService, private logger: LoggerService) {}
+  constructor(
+    private usersService: UserService,
+    private logger: LoggerService,
+  ) {}
 
-  async validateUser (email: string, password: string): Promise<User | undefined> {
+  async validateUser(
+    email: string,
+    password: string,
+  ): Promise<User | undefined> {
     this.logger.verbose('validateUser')
-    const user: User = await this.usersService.findByEmail(email, ['id', 'email', 'password', 'validated', 'role'])
+    const user: User = await this.usersService.findByEmail(email, [
+      'id',
+      'email',
+      'lastname',
+      'firstname',
+      'job',
+      'validated',
+      'password',
+      'role',
+      'createAt',
+      'updateAt',
+    ])
     if (!user) {
       throw new NotFoundException('User not found')
     }
@@ -24,12 +41,18 @@ export class AuthService {
     }
     this.logger.debug('User connected')
     this.logger.debug(user)
+    delete user.validated
+    delete user.password
     return user
   }
 
-  async login (dto: CredentialsInputDto): Promise<UserOutputDto> {
+  async login(dto: CredentialsInputDto): Promise<UserOutputDto> {
     this.logger.verbose(`login (${dto.email})`)
-    const findUser: User = await this.usersService.findByEmail(dto.email, ['id', 'email', 'role'])
+    const findUser: User = await this.usersService.findByEmail(dto.email, [
+      'id',
+      'email',
+      'role',
+    ])
     // eslint-disable-next-line
     // @ts-ignore TODO: role refacto
     return {
