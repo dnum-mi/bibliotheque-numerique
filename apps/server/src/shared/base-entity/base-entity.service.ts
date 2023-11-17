@@ -70,7 +70,7 @@ export abstract class BaseEntityService<T extends BaseEntity = BaseEntity> {
     return result
   }
 
-  async paginate<Y>(dto: PaginationDto<Y>): Promise<PaginatedDto<Y>> {
+  async paginate<Y>(dto: PaginationDto<Y>, specificWhere?: FindOptionsWhere<Y>): Promise<PaginatedDto<Y>> {
     this.logger.verbose('paginate')
     if (!this.fieldTypeHash) {
       throw new Error('You must define a fieldTypeHash to use the paginate method')
@@ -78,6 +78,10 @@ export abstract class BaseEntityService<T extends BaseEntity = BaseEntity> {
     const query = this.repo.createQueryBuilder('o')
     if (dto.filters) {
       query.where(buildFilterQuery(dto.filters, this.fieldTypeHash))
+    }
+    this.repository.find()
+    if (specificWhere) {
+      query.andWhere(specificWhere)
     }
     const count = await query.getCount()
     if (dto.sorts?.length) {

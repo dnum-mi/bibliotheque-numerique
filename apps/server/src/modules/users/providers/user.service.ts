@@ -5,7 +5,7 @@ import {
   OnApplicationBootstrap,
 } from '@nestjs/common'
 import { User } from '../objects/user.entity'
-import { FindOneOptions, In, Repository } from 'typeorm'
+import { FindOneOptions, In, Not, Repository } from 'typeorm'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -19,7 +19,7 @@ import {
   MyProfileOutputDto,
   AgGridUserDto,
   IRole, OrganismeTypeKeys,
-  PaginatedDto,
+  PaginatedDto, IUser,
 } from '@biblio-num/shared'
 import { UserFieldTypeHashConst } from '@/modules/users/objects/consts/user-field-type-hash.const'
 import { DemarcheService } from '@/modules/demarches/providers/services/demarche.service'
@@ -169,7 +169,7 @@ export class UserService
     return Object.entries(typeHash).map(([type, count]) => `${type} (${count})`).join(', ')
   }
 
-  async listUsers (dto: PaginationUserDto): Promise<PaginatedUserDto> {
+  async listUsers (dto: PaginationUserDto, currentUser: IUser): Promise<PaginatedUserDto> {
     this.logger.verbose('listUsers')
     const labelIndex = dto.columns.indexOf('roleLabel')
     const optionIndex = dto.columns.indexOf('roleOptionsResume')
@@ -178,7 +178,10 @@ export class UserService
       dto.columns.push('role')
       dto.columns = dto.columns.filter((c) => c !== 'roleLabel' && c !== 'roleOptionsResume')
     }
-    const paginated: PaginatedDto<AgGridUserDto & { role: IRole}> = await this.paginate(dto)
+    const specificConditions = {
+      id: Not(currentUser.id),
+    }
+    const paginated: PaginatedDto<AgGridUserDto & { role: IRole}> = await this.paginate(dto, specificConditions)
     if (userAskedForRole) {
       const demarcheIds = paginated.data
         .map((user) => Object.keys(user.role?.options))
