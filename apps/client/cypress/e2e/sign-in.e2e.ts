@@ -68,23 +68,23 @@ describe('Home', () => {
     cy.get('.fr-header').should('not.contain', 'Statistiques')
     cy.get('.fr-header').should('not.contain', 'Administration')
 
-    cy.intercept({ method: 'GET', url: '/api/users/me', times: 5 }, noneProfile).as('fetchProfile')
+    cy.intercept({ method: 'GET', url: '/api/users/me', times: 1 }, noneProfile).as('fetchProfile')
     cy.visit('/demarches')
     cy.wait('@fetchProfile')
     cy.url().should('include', '/profile')
-
+    cy.intercept({ method: 'GET', url: '/api/users/me', times: 1 }, noneProfile).as('fetchProfile')
     cy.visit('/organismes')
     cy.wait('@fetchProfile')
     cy.url().should('include', '/profile')
-
+    cy.intercept({ method: 'GET', url: '/api/users/me', times: 1 }, noneProfile).as('fetchProfile')
     cy.visit('/statistiques')
     cy.wait('@fetchProfile')
     cy.url().should('include', '/profile')
-
+    cy.intercept({ method: 'GET', url: '/api/users/me', times: 1 }, noneProfile).as('fetchProfile')
     cy.visit('/admin')
     cy.wait('@fetchProfile')
     cy.url().should('include', '/profile')
-
+    cy.intercept({ method: 'GET', url: '/api/users/me', times: 1 }, noneProfile).as('fetchProfile')
     cy.visit('/demarches/1/dossiers')
     cy.wait('@fetchProfile')
     cy.url().should('include', '/profile')
