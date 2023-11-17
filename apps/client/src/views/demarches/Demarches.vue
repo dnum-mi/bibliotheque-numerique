@@ -8,6 +8,7 @@ import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import OrganismeBadgesRenderer from '@/components/Badges/OrganismeBadgesRenderer.vue'
 import { routeNames } from '@/router/route-names'
+import LayoutBanner from '@/components/Layout/LayoutBanner.vue'
 
 const demarcheStore = useDemarcheStore()
 const router = useRouter()
@@ -76,18 +77,11 @@ const rowStyle = { cursor: 'pointer' }
 </script>
 
 <template>
-  <LayoutList>
-    <template #title>
-      <div class="bn-banner  bn-banner--demarche">
-        <span
-          class="fr-icon-search-line fr-p-1w"
-          aria-hidden="true"
-        />
-        <h6 class="bn-banner-title fr-p-1w fr-m-0">
-          Rechercher une démarche
-        </h6>
-      </div>
-    </template>
+  <LayoutList
+    title="Recherche une démarche"
+    title-bg-color="var(--artwork-minor-blue-france)"
+    title-icon="fr-icon-search-line"
+  >
     <BiblioNumDataTableAgGrid
       :headers="headersJson"
       action-title="Voir les détails de la démarche"

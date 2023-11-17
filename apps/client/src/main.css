@@ -33,7 +33,7 @@ body,
 }
 
 .bn-banner--organisme {
-  --bn-bg-title-banner: var(--border-plain-grey);
+  --bn-bg-title-banner: var(--artwork-background-red-marianne);
   --bn-text-title-banner: var(--background-default-grey);
 }
 
