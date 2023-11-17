@@ -1,4 +1,5 @@
 import axios, { AxiosError, type AxiosResponse } from 'axios'
+import { useRouter } from 'vue-router'
 
 import useToaster from '@/composables/use-toaster'
 
@@ -23,8 +24,7 @@ import type {
   ICustomFilter,
   IDossier,
   PaginatedUserDto,
-  IUser,
-  ICustomFilter,
+  MyProfileOutputDto,
 } from '@biblio-num/shared'
 
 import {
@@ -64,7 +64,6 @@ import type { IRoleForm } from '@/shared/interfaces'
 
 import { ErrorvalidateEmail } from './ErrorValidEmail'
 import { routeNames } from '../router/route-names'
-import { returnToSignIn } from '@/shared/auth-utils'
 
 const updatePasswordFeedback = {
   401: 'Le token est absent, veuillez fournir un token valide',
@@ -90,12 +89,10 @@ export const apiClientAuthInstance = axios.create({
 })
 
 const toaster = useToaster()
+const router = useRouter()
 apiClientInstance.interceptors.response.use(r => r, (error) => {
-  if (error.response == null) {
-    return error
-  }
   if ([401, 403].includes(error.response.status)) {
-    toaster.addMessage({ id: 'auth', type: 'warning', description: 'Vous n’êtes plus connecté, veuillez vous réauthentifier' })
+    toaster.addMessage({ type: 'warning', description: 'Vous n’êtes plus connecté, veuillez vous réauthentifier' })
     router.push({ name: routeNames.SIGNIN, query: { redirect: location.href.replace(location.origin, '') } })
     return error.response
   }
@@ -104,8 +101,8 @@ apiClientInstance.interceptors.response.use(r => r, (error) => {
     return null
   }
   if (error.response.status >= 500) {
+    toaster.addErrorMessage(error.response.data?.message ?? 'Une erreur inconnue est survenue')
     import.meta.env.DEV && console.error(error)
-    toaster.addErrorMessage({ id: '500', description: 'Une erreur inconnue est survenue. L’administrateur a été prévenu' })
   }
 })
 
@@ -254,9 +251,13 @@ export const usersApiClient = {
     return apiClientInstance.delete(authRoute)
   },
 
-  async fetchCurrentUser (): Promise<UserOutputDto | null> {
-    const response = await apiClientInstance.get(profileRoute)
-    return response?.data
+  async fetchMyProfile (): Promise<MyProfileOutputDto | null> {
+    try {
+      const response = await apiClientInstance.get(profileRoute)
+      return response.data
+    } catch (error) {
+      return null
+    }
   },
 
   listUsers: async (dto: PaginationUserDto): Promise<PaginatedUserDto> => {
@@ -279,7 +280,7 @@ export const usersApiClient = {
         validate: true,
         token,
       }
-      await apiClientInstance.post('/users/valid-email', validateEmail)
+      const response = await apiClientInstance.post('/users/valid-email', validateEmail)
     } catch (error) {
       if (error && error instanceof AxiosError) {
         throw new ErrorvalidateEmail(error)
@@ -323,7 +324,7 @@ export const customFiltersApiClient = {
 
   createOneCustomFilter: async (dto: CreateCustomFilterDto, demarcheId: number) => {
     const response = await apiClientInstance.post(getDemarcheCustomFilterRoute(demarcheId), dto)
-    return response?.data
+    return response.data
   },
 
   updateOneCustomFilter: async (id: number, dto: PatchCustomFilterDto) => {

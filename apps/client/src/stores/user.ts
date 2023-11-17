@@ -9,6 +9,7 @@ import type {
   CredentialsInputDto,
   UserOutputDto,
   PaginationUserDto,
+  MyProfileOutputDto,
 } from '@biblio-num/shared'
 
 // TODO: enum Roles dans packages/shared n'est pas récupérable
@@ -16,6 +17,7 @@ const RolesAdmins = ['admin', 'sudo', 'superadmin']
 
 export const useUserStore = defineStore('user', () => {
   const currentUser = ref<UserOutputDto | null>(null)
+  const myProfile = ref<MyProfileOutputDto | null>(null)
   const users = ref<Map<number, UserOutputDto>>(new Map<number, UserOutputDto>())
   const loaded = ref(false)
 
@@ -37,8 +39,9 @@ export const useUserStore = defineStore('user', () => {
     resetUser()
   }
 
-  const loadCurrentUser = async () => {
-    const user = await bnApiClient.fetchCurrentUser()
+  const loadMyProfile = async () => {
+    myProfile.value = await bnApiClient.fetchMyProfile()
+    currentUser.value = myProfile.value
     loaded.value = true
     if (!user) {
       currentUser.value = null
@@ -61,6 +64,7 @@ export const useUserStore = defineStore('user', () => {
 
   return {
     currentUser,
+    myProfile,
     users,
     loaded,
     isAuthenticated,
@@ -69,7 +73,7 @@ export const useUserStore = defineStore('user', () => {
     canAccessDemarches,
     login,
     logout,
-    loadCurrentUser,
+    loadMyProfile,
     listUsers,
     loadUserById,
     getUsersRole,
