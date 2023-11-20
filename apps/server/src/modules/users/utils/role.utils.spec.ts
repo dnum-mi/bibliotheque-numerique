@@ -77,6 +77,10 @@ const dumbUserFromRole = (role: IRole): IUser => ({
   role,
 })
 
+const sudo: IUser = dumbUserFromRole({
+  label: Roles.sudo,
+  options: {},
+})
 const superAdmin: IUser = dumbUserFromRole({
   label: Roles.superadmin,
   options: {},
@@ -635,6 +639,11 @@ describe('RoleUtils', () => {
 
     it('Should return empty array if target is superadmin', () => {
       expect(generateRoleAttributionList(superAdmin, superAdmin)).toEqual([])
+    })
+
+    it('Should return complete array if editor is sudo', () => {
+      expect(generateRoleAttributionList(sudo, emptyAdmin))
+        .toEqual([Roles.superadmin, Roles.admin, Roles.instructor])
     })
 
     it('Should return complete array if editor is superadmin', () => {
