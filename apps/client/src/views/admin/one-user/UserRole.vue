@@ -1,17 +1,19 @@
 <script lang="ts" setup>
+import type { HTMLAttributes } from 'vue'
 import { computed, ref } from 'vue'
 import type { RolesKeys, UserWithEditableRole } from '@biblio-num/shared'
 
 import { Roles } from '@/biblio-num/shared'
 import { useUserStore } from '@/stores'
 import DsfrWarningButton from '@/components/dsfr-extends/dsfr-warning-button.vue'
+import type { DsfrRadioButtonProps } from '@gouvminint/vue-dsfr/types/components/DsfrRadioButton/DsfrRadioButton.vue'
 
 const userStore = useUserStore()
 const selectedEditableUser = computed<UserWithEditableRole | null>(() => userStore.selectedEditableUser)
 
 const role = computed<RolesKeys | ''>(() => selectedEditableUser.value?.originalUser.role.label || '')
 
-const allRoleOptions = [
+const allRoleOptions: DsfrRadioButtonProps[] = [
   {
     label: 'Super Administrateur',
     value: Roles.superadmin,
@@ -26,9 +28,14 @@ const allRoleOptions = [
   },
 ]
 
-const roleOptions = computed<{ label: string; value: RolesKeys }[]>(() => {
-  return allRoleOptions.filter((roleOption) => selectedEditableUser.value?.possibleRoles.includes(roleOption.value))
-})
+const roleOptions = computed<Array<DsfrRadioButtonProps & HTMLAttributes>>(() =>
+  allRoleOptions.map((roleOption) => ({
+    ...roleOption,
+    disabled: !selectedEditableUser.value?.possibleRoles.includes('' + roleOption.value),
+  })),
+)
+
+console.log(roleOptions.value)
 
 const updateRole = async (event: string) => {
   await userStore.updateRole(event)
@@ -51,7 +58,7 @@ const isModalOpen = ref(false)
   />
 
   <DsfrWarningButton
-    :disabled="role === ''"
+    :disabled="!selectedEditableUser?.deletable"
     icon="ri-close-line"
     label="Retirer le rôle"
     @click="isModalOpen = true"

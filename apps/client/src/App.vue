@@ -91,7 +91,7 @@ const router = useRouter()
 const route = useRoute()
 
 const getQuickLinks = () => {
-  const role = userStore.currentUser?.role.label
+  const role = userStore.currentUser?.role?.label
   if (!role) return []
   return isSuperiorOrSimilar(Roles.instructor, role)
     ? [
