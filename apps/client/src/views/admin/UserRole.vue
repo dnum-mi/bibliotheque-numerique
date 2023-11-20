@@ -1,14 +1,15 @@
 <script lang="ts" setup>
+import { computed, ref } from 'vue'
 import type { RolesKeys, UserWithEditableRole } from '@biblio-num/shared'
+
 import { Roles } from '@/biblio-num/shared'
 import { useUserStore } from '@/stores'
-import { computed } from 'vue'
 import DsfrWarningButton from '@/components/dsfr-extends/dsfr-warning-button.vue'
 
 const userStore = useUserStore()
 const selectedUser = computed<UserWithEditableRole | null>(() => userStore.selectedUser)
 
-const role = computed<RolesKeys|''>(() => selectedUser.value?.originalUser.role.label || '')
+const role = computed<RolesKeys | ''>(() => selectedUser.value?.originalUser.role.label || '')
 
 const allRoleOptions = [
   {
@@ -25,8 +26,8 @@ const allRoleOptions = [
   },
 ]
 
-const roleOptions = computed<{label: string, value: RolesKeys}[]>(() => {
-  return allRoleOptions.filter(roleOption => selectedUser.value?.possibleRoles.includes(roleOption.value))
+const roleOptions = computed<{ label: string; value: RolesKeys }[]>(() => {
+  return allRoleOptions.filter((roleOption) => selectedUser.value?.possibleRoles.includes(roleOption.value))
 })
 
 const updateRole = async (event: string) => {
@@ -35,12 +36,15 @@ const updateRole = async (event: string) => {
 
 const onRemoveRole = async () => {
   await userStore.removeRole()
+  isModalOpen.value = false
 }
+
+const isModalOpen = ref(false)
 </script>
 
 <template>
   <DsfrRadioButtonSet
-    v-model="role"
+    :model-value="role"
     name="role"
     :options="roleOptions"
     @update:model-value="updateRole($event as string)"
@@ -49,10 +53,30 @@ const onRemoveRole = async () => {
   <DsfrWarningButton
     :disabled="role === ''"
     icon="ri-close-line"
-    label="Retirer son role"
-    @click="onRemoveRole()"
+    label="Retirer le rôle"
+    @click="isModalOpen = true"
   />
+
+  <DsfrModal
+    :opened="isModalOpen"
+    title="Retirer le rôle"
+    :actions="[
+      { label: 'Retirer le rôle', onClick: onRemoveRole },
+      { label: 'Annuler', onClick: () => (isModalOpen = false), secondary: true },
+    ]"
+    @close="isModalOpen = false"
+  >
+    <p class="m-1">
+      Vous vous apprêtez à retirer tous les rôles de
+      <strong>{{ selectedUser?.originalUser.firstname }} {{ selectedUser?.originalUser.lastname }}</strong>.
+    </p>
+    <p class="m-1">
+      Cette action est irréversible.
+    </p>
+    <p class="m-1">
+      Êtes-vous sûr de vouloir continuer ?
+    </p>
+  </DsfrModal>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

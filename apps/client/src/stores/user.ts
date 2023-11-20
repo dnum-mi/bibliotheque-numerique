@@ -65,7 +65,6 @@ export const useUserStore = defineStore('user', () => {
     if (!hasAdminAccess.value) return
     selectedUser.value = await bnApiClient.getUserRoleById(id)
     keySelectUser.value = getRandomId('user-selected')
-    console.log(keySelectUser.value)
     return selectedUser.value
   }
 
