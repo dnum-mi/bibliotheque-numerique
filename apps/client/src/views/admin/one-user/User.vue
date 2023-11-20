@@ -405,7 +405,10 @@ const removePrefecture = (prefecture: string) => {
             <hr class="fr-hr fr-mt-2w">
           </div>
         </template>
-        <div v-else>
+        <div
+          v-else
+          data-testid="noRoleSelectedMessage"
+        >
           Vous devez d'abord sélectionner un rôle avant de pouvoir paramétrer les options.
         </div>
       </div>

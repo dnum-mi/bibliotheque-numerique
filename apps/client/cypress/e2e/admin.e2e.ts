@@ -47,19 +47,13 @@ describe('Home', () => {
     cy.wait('@userSelected444')
     cy.get('[type=radio]').should('not.be.checked')
 
-    cy.get('[type=checkbox]').should('not.be.checked')
-    cy.get('div')
-      .should('contain', 'Demarche 4')
-      .contains('Demarche 4')
-      .parent()
-      .children('input')
-      .should('be.disabled')
+    cy.get('[data-testid=noRoleSelectedMessage]').should('contain', 'Vous devez d\'abord sélectionner un rôle ')
     // #endregion
 
     // #region test - update user role to admin
     const roleSelected = {
       ...noRoleUserSelected,
-      user: {
+      originalUser: {
         ...noRoleUserSelected.originalUser,
         role: {
           ...noRoleUserSelected.originalUser.role,
@@ -92,7 +86,10 @@ describe('Home', () => {
       .should('contain', 'Administrateur')
       .contains('Administrateur')
       .parent()
-      .children('input')
+      .find('input')
+      .should('not.be.checked')
+
+    cy.get('input[value=admin]')
       .should('be.checked')
     // #endregion
 
@@ -124,31 +121,17 @@ describe('Home', () => {
       times: 2,
     }, { statusCode: 200 }).as('patchUserSelected444')
 
-    cy.get('label')
-      .should('contain', 'ARUP')
-      .contains('ARUP')
-      .parent()
-      .click()
+    cy.get('input[name=ARUP]')
+      .click({ force: true })
 
     cy.wait('@userSelected444')
     cy.wait('@patchUserSelected444')
 
-    cy.get('label')
-      .should('contain', 'ARUP')
-      .contains('ARUP')
-      .parent()
-      .children('input')
+    cy.get('input[name=ARUP]')
       .should('be.checked')
 
-    cy.get('label')
-      .should('contain', 'Demarche 3')
-      .filter(':contains(Demarche 3)')
-      .then(($label) => {
-        cy.wrap($label)
-          .parent()
-          .children('input')
-          .should('be.checked')
-      })
+    cy.get('input[name=3]')
+      .should('be.checked')
 
     const roleSelected3 = {
       ...roleSelected2,
@@ -177,26 +160,16 @@ describe('Home', () => {
       times: 2,
     }, { statusCode: 200 }).as('patchUserSelected444')
 
-    cy.get('label')
-      .should('contain', 'Demarche 5')
-      .contains('Demarche 5')
-      .click()
+    cy.get('input[name=5]')
+      .click({ force: true })
 
     cy.wait('@userSelected444')
     cy.wait('@patchUserSelected444')
 
-    cy.get('label')
-      .should('contain', 'Demarche 5')
-      .contains('Demarche 5')
-      .parent()
-      .children('input')
+    cy.get('input[name=5]')
       .should('be.checked')
 
-    cy.get('label')
-      .should('contain', 'Demarche 3')
-      .contains('Demarche 3')
-      .parent()
-      .children('input')
+    cy.get('input[name=3]')
       .should('not.be.checked')
     // #endregion
 
@@ -223,6 +196,7 @@ describe('Home', () => {
       times: 1,
     }, { statusCode: 200 }).as('patchUserSelected444')
 
+    // Clic sur la ligne de la demarche 1 (pas la checkbox)
     cy.get('label')
       .should('contain', 'Demarche 1')
       .contains('Demarche 1')
@@ -230,7 +204,7 @@ describe('Home', () => {
       .parent()
       .click()
 
-    cy.get('h6')
+    cy.get('h5')
       .should('contain', 'Localisation')
       .contains('Localisation')
       .parent()
@@ -240,12 +214,12 @@ describe('Home', () => {
           .should('not.contain', 'Préfecture(s)')
       })
 
-    cy.get('label')
-      .should('contain', 'Demarche 1')
-      .contains('Demarche 1')
-      .click()
+    // Clic sur la première checkbox Demarche 1 (elle est dans 2 catégories)
+    cy.get('input[name="1"]')
+      .first()
+      .click({ force: true })
 
-    cy.get('h6')
+    cy.get('h5')
       .should('contain', 'Localisation')
       .contains('Localisation')
       .parent()
@@ -337,7 +311,7 @@ describe('Home', () => {
                 ...roleSelected6.demarcheHash['1'].prefectureOptions,
                 prefectures: {
                   ...roleSelected6.demarcheHash['1'].prefectureOptions.prefectures,
-                  value: ['75'],
+                  value: ['D75'],
                 },
               },
             },
@@ -379,6 +353,7 @@ describe('Home', () => {
             },
           },
         }
+        cy.log(JSON.stringify(roleSelected8.demarcheHash['1'].prefectureOptions.prefectures))
 
         cy.intercept({
           method: 'GET',

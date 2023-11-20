@@ -3,14 +3,14 @@
     "id": 444,
     "email": "prenom.nom@example.com",
     "lastname": "nom",
-    "firstname": "pernom",
+    "firstname": "prenom",
     "password": "password",
     "role": {
       "label": "",
       "options": {}
     } 
   },
-  "possibleRoles": ["admin", "instuctror"],
+  "possibleRoles": ["superadmin", "admin", "instructor"],
   "deletable": true,
   "demarcheHash": {
     "1": {
