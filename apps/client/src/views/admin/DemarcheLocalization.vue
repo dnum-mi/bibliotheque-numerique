@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { PrefectureOptions } from '@biblio-num/shared'
 
 withDefaults(defineProps<Partial<{
   national: boolean
@@ -12,6 +11,7 @@ withDefaults(defineProps<Partial<{
 </script>
 
 <template>
+  <!--  NATIONAL -->
   <div
     v-if="national"
     class="flex  no-wrap  gap-1"
@@ -23,14 +23,15 @@ withDefaults(defineProps<Partial<{
       no-icon
     />
   </div>
+  <!--  Prefectures -->
   <div
     v-else
-    class="flex  no-wrap  gap-1"
+    class="flex  gap-1  overflow-auto"
   >
     <DsfrBadge
       v-for="pref in prefectures"
       :key="pref"
-      :label="pref"
+      :label="pref.substring(1)"
       type="success"
       small
       no-icon

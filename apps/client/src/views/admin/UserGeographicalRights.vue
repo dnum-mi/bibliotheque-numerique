@@ -1,17 +1,18 @@
 <script setup lang="ts">
-import type { PrefectureOptions } from '@biblio-num/shared'
+import type { PrefectureKeys, PrefectureOptions } from '@biblio-num/shared'
 import type { DsfrTagProps } from '@gouvminint/vue-dsfr/types/components/DsfrTag/DsfrTag.vue'
 import { computed, ref } from 'vue'
 import { LocalizationOptions, type LocalizationOptionsKeys } from './localization.enum'
+import { listOfPrefectures } from '@/biblio-num/shared'
 
 const props = defineProps<{
-  geographicalRights: PrefectureOptions
+  geographicalRights: PrefectureOptions;
 }>()
 
 const emit = defineEmits<{
-  'update:localization': [payload?: string],
-  'update:removePrefecture': [payload?: string],
-  'update:addPrefecture': [payload?: string],
+  'update:localization': [payload?: string];
+  'update:removePrefecture': [payload?: string];
+  'update:addPrefecture': [payload?: string];
 }>()
 
 const localizationOptions = computed(() => [
@@ -25,54 +26,58 @@ const localizationOptions = computed(() => [
     label: 'Préfecture(s)',
     name: 'localization',
     value: LocalizationOptions.prefectures,
-    disabled: (!props.geographicalRights.national.editable && props.geographicalRights.national.value),
+    disabled: !props.geographicalRights.national.editable && props.geographicalRights.national.value,
   },
 ])
 
-const localizationOption = computed<LocalizationOptionsKeys | undefined>(
-  () => {
-    return props.geographicalRights.national.value
-      ? localizationOptions.value[0].value
-      : localizationOptions.value[1].value
-  },
-)
+const localizationOption = computed<LocalizationOptionsKeys | undefined>(() => {
+  return props.geographicalRights.national.value ? localizationOptions.value[0].value : localizationOptions.value[1].value
+})
 const disabledAddPrefectures = computed<boolean>(() => {
-  return props.geographicalRights.national.value === true
-},
-)
+  return props.geographicalRights.national.value
+})
 // const localizationSelected = ref<string | undefined>(localizationOption.value)
 
-const prefectures = computed<DsfrTagProps[]>(() => [
-  props.geographicalRights.prefectures?.value.map<DsfrTagProps>(
-    (value) => props.geographicalRights.prefectures.deletable.includes(value)
-      ? ({
-          label: value,
-          tagName: 'button',
-          class: 'fr-tag--dismiss',
-          onClick: () => {
-            removePrefecture(value)
-          },
-        })
-      : ({
-          label: value,
-        }),
-  ),
-].flat())
+const isDeletable = (option: PrefectureOptions, prefecture: PrefectureKeys): boolean =>
+  option.national.editable || option.prefectures?.deletable.includes(prefecture)
 
-const prefecturesToAdd = computed<DsfrTagProps[]>(
-  () => props.geographicalRights.prefectures?.addable
-    .filter((pref) => !props.geographicalRights.prefectures.value.includes(pref))
-    .map<DsfrTagProps>(
-      (pref) => ({
-        class: disabledAddPrefectures.value ? '' : 'tag-button',
-        label: pref,
-        tagName: 'button',
-        onClick: () => {
-          addPrefecture(pref)
-        },
-        disabled: disabledAddPrefectures.value,
-      }),
+const prefectures = computed<DsfrTagProps[]>(() =>
+  [
+    props.geographicalRights.prefectures?.value.map<DsfrTagProps>((value) =>
+      isDeletable(props.geographicalRights, value)
+        ? {
+            label: value.substring(1),
+            tagName: 'button',
+            class: 'fr-tag--dismiss',
+            onClick: () => {
+              removePrefecture(value)
+            },
+          }
+        : {
+            label: value.substring(1),
+          },
     ),
+  ].flat(),
+)
+
+const possiblePrefectures = computed<PrefectureKeys[]>(() => {
+  const a = props.geographicalRights.national.editable ? listOfPrefectures : props.geographicalRights.prefectures?.addable
+  console.log(a)
+  return a
+})
+
+const prefecturesToAdd = computed<DsfrTagProps[]>(() =>
+  possiblePrefectures.value
+    .filter((pref) => !props.geographicalRights.prefectures.value.includes(pref))
+    .map<DsfrTagProps>((pref) => ({
+      class: disabledAddPrefectures.value ? '' : 'tag-button',
+      label: pref.substring(1),
+      tagName: 'button',
+      onClick: () => {
+        addPrefecture(pref)
+      },
+      disabled: disabledAddPrefectures.value,
+    })),
 )
 
 const updateCheckedLocalization = (loc: LocalizationOptionsKeys) => {
@@ -104,19 +109,11 @@ const newPrefecture = ref<string>('')
     @update:model-value="updateCheckedLocalization(option.value as string)"
   />
   <div>
-    <DsfrTags
-      :tags="prefectures"
-    />
+    <DsfrTags :tags="prefectures" />
 
-    <fieldset
-      v-if="prefecturesToAdd?.length"
-    >
-      <legend>
-        Préfectures disponibles
-      </legend>
-      <DsfrTags
-        :tags="prefecturesToAdd"
-      />
+    <fieldset v-if="prefecturesToAdd?.length">
+      <legend>Préfectures disponibles</legend>
+      <DsfrTags :tags="prefecturesToAdd" />
     </fieldset>
   </div>
 </template>

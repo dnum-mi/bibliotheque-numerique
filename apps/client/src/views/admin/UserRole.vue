@@ -48,6 +48,7 @@ const onRemoveRole = async () => {
 
   <DsfrWarningButton
     :disabled="role === ''"
+    icon="ri-close-line"
     label="Retirer son role"
     @click="onRemoveRole()"
   />

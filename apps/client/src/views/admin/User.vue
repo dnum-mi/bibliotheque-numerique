@@ -349,61 +349,72 @@ onMounted(async () => {
         <h5>
           Démarches
         </h5>
-        <div
-          v-for="dr in demarchesRoles"
-          :key="dr.name"
-        >
+        <template v-if="selectedUser?.originalUser.role.label">
           <div
-            class="flex flex-row justify-between fr-py-2w rounded-lg"
-            :class="dr.attrs?.class"
-            @click="onClickDemarches(dr)"
+            v-for="dr in demarchesRoles"
+            :key="dr.name"
           >
-            <DsfrCheckbox
-              class="font-bold fr-px-2v"
-              :label="dr.label"
-              :name="dr.name"
-              :model-value="dr.value"
-              :disabled="dr.attrs.disabled"
-              @update:model-value="updateTypeDemarche({ name: dr.name, checked: $event, dr})"
-            />
-            <DemarcheLocalization
-              v-if="dr.localization || dr.commonPrefectureValues"
-              :key="dr.key"
-              class="fr-px-2v"
-              :national="dr.localization?.national.value"
-              :prefectures="dr.commonPrefectureValues"
-            />
-          </div>
-          <div v-if="dr.children">
             <div
-              v-for="d in dr.children"
-              :key="d.options.id"
-              class="p-l-4 fr-py-2v rounded-lg"
-              :class="d.attrs?.class || ''"
+              class="flex flex-row justify-between fr-py-2w rounded-lg"
+              :class="dr.attrs?.class"
+              @click="onClickDemarches(dr)"
             >
+              <DsfrCheckbox
+                class="font-bold fr-px-2v"
+                :label="''"
+                :name="dr.name"
+                :model-value="dr.value"
+                :disabled="dr.attrs.disabled"
+                @update:model-value="updateTypeDemarche({ name: dr.name, checked: $event, dr})"
+              />
+              <label class="flex-shrink-0  flex-grow  cursor-pointer">
+                {{ dr.label }}
+              </label>
+              <DemarcheLocalization
+                v-if="dr.localization || dr.commonPrefectureValues"
+                :key="dr.key"
+                class="fr-px-2v"
+                :national="dr.localization?.national.value"
+                :prefectures="dr.commonPrefectureValues"
+              />
+            </div>
+            <div v-if="dr.children">
               <div
-                class="flex  flex-row  justify-between  py-2"
-                @click="onClickDemarches(d)"
+                v-for="d in dr.children"
+                :key="d.options.id"
+                class="p-l-4 fr-py-2v rounded-lg"
+                :class="d.attrs?.class || ''"
               >
-                <DsfrCheckbox
-                  :key="dr.key"
-                  :label="d.options.title"
-                  class="fr-px-2v"
-                  :name="d.options.id.toString()"
-                  :model-value="d.options.checked"
-                  :disabled="d.attrs.disabled"
-                  @update:model-value="updateDemarche({ name: dr.name, id: d.options.id,checked: $event, d })"
-                />
-                <DemarcheLocalization
-                  v-if="d.options.prefectureOptions"
-                  class="fr-px-2v"
-                  :national="d.options.prefectureOptions.national.value"
-                  :prefectures="d.options.prefectureOptions.prefectures.value"
-                />
+                <div
+                  class="flex  flex-row  justify-between  py-2"
+                  @click="onClickDemarches(d)"
+                >
+                  <DsfrCheckbox
+                    :key="dr.key"
+                    :label="''"
+                    class="fr-px-2v"
+                    :name="d.options.id.toString()"
+                    :model-value="d.options.checked"
+                    :disabled="d.attrs.disabled"
+                    @update:model-value="updateDemarche({ name: dr.name, id: d.options.id,checked: $event, d })"
+                  />
+                  <label class="flex-shrink-0  flex-grow  cursor-pointer">
+                    {{ d.options.title }}
+                  </label>
+                  <DemarcheLocalization
+                    v-if="d.options.prefectureOptions"
+                    class="fr-px-2v"
+                    :national="d.options.prefectureOptions.national.value"
+                    :prefectures="d.options.prefectureOptions.prefectures.value"
+                  />
+                </div>
               </div>
             </div>
+            <hr class="fr-hr fr-mt-2w">
           </div>
-          <hr class="fr-hr fr-mt-2w">
+        </template>
+        <div v-else>
+          Vous devez d'abord sélectionner un rôle avant de pouvoir paramétrer les options.
         </div>
       </div>
       <div class="w-1/4 fr-p-4v">
