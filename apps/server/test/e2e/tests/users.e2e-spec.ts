@@ -51,13 +51,11 @@ describe('users (e2e)', () => {
         })
         .expect(200)
       expect(response.body).toBeDefined()
-      expect(response.body.total).toEqual(6)
+      expect(response.body.total).toEqual(4)
       expect(response.body.data).toMatchObject([
-        { id: 1, lastname: 'SUDO', firstname: 'Cécile' },
         { id: 3, lastname: 'norole', firstname: 'Bill' },
         { id: 4, lastname: 'admin1', firstname: 'Suzette' },
         { id: 5, lastname: 'instructor1', firstname: 'Steve' },
-        { id: 6, lastname: 'sudo', firstname: 'sudo' },
         { id: 7, lastname: 'norole', firstname: 'Titouan' },
       ])
     })
@@ -96,13 +94,6 @@ describe('users (e2e)', () => {
         .expect(200)
       expect(response.body.data).toMatchObject([
         {
-          id: 1,
-          lastname: 'SUDO',
-          firstname: 'Cécile',
-          roleLabel: 'sudo',
-          roleOptionsResume: '',
-        },
-        {
           id: 3,
           lastname: 'norole',
           firstname: 'Bill',
@@ -122,13 +113,6 @@ describe('users (e2e)', () => {
           firstname: 'Steve',
           roleLabel: 'instructor',
           roleOptionsResume: 'ARUP (2), FDD (1)',
-        },
-        {
-          id: 6,
-          lastname: 'sudo',
-          firstname: 'sudo',
-          roleLabel: 'sudo',
-          roleOptionsResume: '',
         },
         {
           id: 7,

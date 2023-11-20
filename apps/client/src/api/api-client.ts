@@ -287,7 +287,7 @@ export const dossiersApiClient = {
 export const customFiltersApiClient = {
   getCustomFilters: async (): Promise<ICustomFilter[]> => {
     const response = await apiClientInstance.get(getCustomFiltersRoute())
-    return response.data
+    return response?.data
   },
 
   getCustomFiltersByDemarche: async (demarcheId: number): Promise<ICustomFilter[]> => {

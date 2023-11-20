@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
 import { Cookies, TestingModuleFactory } from '../common/testing-module.factory'
 import { UserService } from '@/modules/users/providers/user.service'
-import { IRole, Prefecture, Roles, UpdateOneRoleOptionDto } from '@biblio-num/shared'
+import { IRole, Roles, UpdateOneRoleOptionDto } from '@biblio-num/shared'
 
 describe('users (e2e)', () => {
   let app: INestApplication
@@ -274,7 +274,7 @@ describe('users (e2e)', () => {
           demarcheId: 1,
           prefecture: {
             toAdd: false,
-            key: Prefecture.D75,
+            key: 'D75',
           },
         } as UpdateOneRoleOptionDto)
         .expect(200)
