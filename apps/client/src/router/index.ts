@@ -128,7 +128,7 @@ const routes: RouterOptions['routes'] = [
       },
       {
         name: routeNames.USER,
-        path: '/selectedUser/:id',
+        path: '/user/:id',
         component: () => import('@/views/admin/one-user/User.vue'),
         beforeEnter: async (to: RouteLocationNormalized, from, next: NavigationGuardNext) => {
           await useUserStore().loadUserById(parseInt(to.params.id as string))

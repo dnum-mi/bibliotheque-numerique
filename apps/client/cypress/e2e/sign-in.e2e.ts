@@ -54,7 +54,7 @@ describe('Home', () => {
     cy.url().should('include', '/demarches/3/dossiers').should('not.include', '/sign_in')
   })
 
-  it('should sign-in of user with no role', () => {
+  it('should sign in user with no role', () => {
     cy.visit('/sign_in')
     cy.wait('@notProfile')
     cy.intercept({ method: 'POST', url: '/api/auth/sign-in', times: 1 }, noneProfile).as('signIn')
