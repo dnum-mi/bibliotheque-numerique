@@ -3,6 +3,7 @@ import type { RolesKeys, UserWithEditableRole } from '@biblio-num/shared'
 import { Roles } from '@/biblio-num/shared'
 import { useUserStore } from '@/stores'
 import { computed } from 'vue'
+import DsfrWarningButton from '@/components/dsfr-extends/dsfr-warning-button.vue'
 
 const userStore = useUserStore()
 const selectedUser = computed<UserWithEditableRole | null>(() => userStore.selectedUser)
@@ -11,16 +12,16 @@ const role = computed<RolesKeys|''>(() => selectedUser.value?.originalUser.role.
 
 const allRoleOptions = [
   {
+    label: 'Super Administrateur',
+    value: Roles.superadmin,
+  },
+  {
     label: 'Administrateur',
     value: Roles.admin,
   },
   {
     label: 'Instructeur',
     value: Roles.instructor,
-  },
-  {
-    label: 'super administrateur',
-    value: Roles.superadmin,
   },
 ]
 
@@ -46,10 +47,12 @@ const onRemoveRole = async () => {
     @update:model-value="updateRole($event as string)"
   />
 
-  <DsfrButton
+  <DsfrWarningButton
     :disabled="role === ''"
     label="Retirer son role"
-    secondary
     @click="onRemoveRole()"
   />
 </template>
+
+<style scoped>
+</style>

@@ -336,17 +336,19 @@ onMounted(async () => {
   <div
     class="fr-container"
   >
-    <div class="fr-grid-row">
-      <div class="fr-col-2 fr-pt-2w">
-        <h6>
+    <div class="flex flex-row gap-10">
+      <div class="w-1/4 fr-p-4v">
+        <h5>
           Rôle
-        </h6>
-        <UserRole />
+        </h5>
+        <div class="fr-pl-4v">
+          <UserRole />
+        </div>
       </div>
-      <div class="fr-col-6 fr-pt-2w">
-        <h6>
+      <div class="w-1/2 fr-p-4v">
+        <h5>
           Démarches
-        </h6>
+        </h5>
         <div
           v-for="dr in demarchesRoles"
           :key="dr.name"
@@ -404,18 +406,20 @@ onMounted(async () => {
           <hr class="fr-hr fr-mt-2w">
         </div>
       </div>
-      <div class="fr-col-4 fr-pt-2w fr-pl-2w">
-        <h6>
+      <div class="w-1/4 fr-p-4v">
+        <h5>
           Localisation
-        </h6>
-        <UserGeographicalRights
-          v-if="!!(geographicalRights && geographicalRights.disabled)"
-          :key="keySelectUser"
-          :geographical-rights="geographicalRights"
-          @update:localization="udpateLocalization($event)"
-          @update:add-prefecture="addPrefecture($event)"
-          @update:remove-prefecture="removePrefecture($event)"
-        />
+        </h5>
+        <div class="fr-pl-4v">
+          <UserGeographicalRights
+            v-if="!!(geographicalRights && geographicalRights.disabled)"
+            :key="keySelectUser"
+            :geographical-rights="geographicalRights"
+            @update:localization="udpateLocalization($event)"
+            @update:add-prefecture="addPrefecture($event)"
+            @update:remove-prefecture="removePrefecture($event)"
+          />
+        </div>
       </div>
     </div>
   </div>
