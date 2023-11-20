@@ -164,7 +164,7 @@ export const generateRoleAttributionList = (
   if (target.role.label === Roles.superadmin) {
     return []
   }
-  if (editor.role.label === Roles.superadmin) {
+  if (isSuperiorOrSimilar(Roles.superadmin, editor.role.label)) {
     return [Roles.superadmin, Roles.admin, Roles.instructor]
   }
   return _isTargetRoleOptionContainedInAdminRoleOption(
