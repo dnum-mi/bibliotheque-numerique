@@ -64,7 +64,7 @@ export const generateUserWithEditableRole = (
     ]),
   )
   if (isBelowSuperAdmin(target.role.label)) {
-    if (editor.role.label === Roles.superadmin) {
+    if (isSuperiorOrSimilar(Roles.superadmin, editor.role.label)) {
       Object.values(hash).forEach((value) => {
         value.editable = true
         value.prefectureOptions.national.editable = true
