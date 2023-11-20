@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import iconRoundMarianne from '@/assets/icone-ronde-marianne.png'
-import { formatForMessageDate } from '@/utils'
 
 type Message = {
     id: number
