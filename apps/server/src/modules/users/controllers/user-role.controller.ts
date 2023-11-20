@@ -53,7 +53,12 @@ export class UserRoleController {
     @Body() dto: UpdateOneRoleOptionDto,
   ): Promise<void> {
     this.logger.verbose('getTargetUserWithEditableRole')
-    if (!isSuperiorOrSimilar(role.label, Roles.superadmin) && !isEditionAllowed(dto, tuwer)) {
+    if (!tuwer.originalUser.role.label) {
+      throw new ForbiddenException(
+        'Target user need to have a role',
+      )
+    }
+    if (!isSuperiorOrSimilar(Roles.superadmin, role.label) && !isEditionAllowed(dto, tuwer)) {
       throw new ForbiddenException(
         'You are not allowed to perform this operation',
       )

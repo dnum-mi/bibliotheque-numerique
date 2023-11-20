@@ -586,6 +586,20 @@ describe('RoleUtils', () => {
         editable,
       )).toBeFalsy()
     })
+    it('Should be able to check add pref if national', () => {
+      const editable = { ...openEditionForEmptyInstructor }
+      editable.demarcheHash[1].prefectureOptions.national.editable = true
+      expect(isEditionAllowed(
+        {
+          demarcheId: 1,
+          prefecture: {
+            toAdd: true,
+            key: Prefecture.D57,
+          },
+        } as UpdateOneRoleOptionDto,
+        editable,
+      )).toBeTruthy()
+    })
     it('Should be able to check add pref', () => {
       const editable = { ...openEditionForEmptyInstructor }
       editable.demarcheHash[1].prefectureOptions.prefectures.addable = [Prefecture.D57]

@@ -50,7 +50,7 @@ export class RoleService {
     } else if (!dto.prefecture?.toAdd) {
       role.options[dto.demarcheId].prefectures = role.options[
         dto.demarcheId
-      ].prefectures.filter((key) => key === dto.prefecture.key)
+      ].prefectures.filter((key) => key !== dto.prefecture.key)
     }
     await this.userService.repository.update(
       { id: uwer.originalUser.id },
