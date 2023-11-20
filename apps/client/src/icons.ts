@@ -10,7 +10,6 @@ export {
   RiBarChartBoxLine,
   RiChat3Line,
   RiArrowGoBackLine,
-  RiBarChartBoxLine,
   RiCheckLine,
   RiCheckboxBlankCircleLine,
   RiCheckboxCircleFill,

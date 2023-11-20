@@ -32,7 +32,7 @@ const demarcheQuickLink: QuickLink = {
   label: 'Démarches',
   to: { name: routeNames.DEMARCHES },
   icon: 'ri-file-list-2-fill',
-  iconAttrs: { title: 'Démarches', ...iconPropsRedColor },
+  iconAttrs: { title: 'Démarches' },
 }
 
 const unauthenticatedQuickLinks: QuickLink[] = [
@@ -68,7 +68,7 @@ const authenticatedQuickLinksDefault: QuickLink[] = [
     label: 'Déconnexion',
     to: { name: routeNames.LOGOUT },
     icon: 'ri-logout-box-r-line',
-    iconAttrs: { title: 'Déconnexion', ...iconColor, ...iconPropsRedColor },
+    iconAttrs: { title: 'Déconnexion', ...iconPropsRedColor },
   },
 ]
 
@@ -83,7 +83,7 @@ const manageRolesQuickLink = {
   label: 'Administration',
   to: { name: routeNames.ADMIN },
   icon: 'ri-shield-star-line',
-  iconAttrs: { ...iconColor, title: 'Administration', ...iconPropsRedColor },
+  iconAttrs: { title: 'Administration', ...iconPropsRedColor },
 }
 
 const userStore = useUserStore()
