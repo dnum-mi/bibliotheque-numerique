@@ -70,10 +70,16 @@ export abstract class BaseEntityService<T extends BaseEntity = BaseEntity> {
     return result
   }
 
-  async paginate<Y>(dto: PaginationDto<Y>, specificWhere?: FindOptionsWhere<Y>, specificInlineWhere: string[] = []): Promise<PaginatedDto<Y>> {
+  async paginate<Y>(
+    dto: PaginationDto<Y>,
+    specificWhere?: FindOptionsWhere<Y>,
+    specificInlineWhere: string[] = [],
+  ): Promise<PaginatedDto<Y>> {
     this.logger.verbose('paginate')
     if (!this.fieldTypeHash) {
-      throw new Error('You must define a fieldTypeHash to use the paginate method')
+      throw new Error(
+        'You must define a fieldTypeHash to use the paginate method',
+      )
     }
     const query = this.repo.createQueryBuilder('o')
     if (dto.filters) {
@@ -88,18 +94,17 @@ export abstract class BaseEntityService<T extends BaseEntity = BaseEntity> {
     }
     const count = await query.getCount()
     if (dto.sorts?.length) {
-      dto.sorts.forEach(sort => {
+      dto.sorts.forEach((sort) => {
         query.addOrderBy(`o.${sort.key}`, sort.order)
       })
     } else {
       query.addOrderBy('o.id', 'ASC')
     }
     query.limit(dto.perPage || 20)
-    query.offset((dto.perPage * (dto.page - 1)) || 0)
+    query.offset(dto.perPage * (dto.page - 1) || 0)
     if (dto.columns?.length) {
-      query.select(dto.columns.map(c => `o.${String(c)}`).concat(['o.id']))
+      query.select(dto.columns.map((c) => `o.${String(c)}`).concat(['o.id']))
     }
-    console.log(query.getSql())
     return query.getMany().then((data) => {
       return {
         data,

@@ -200,7 +200,7 @@ export class UserService
       }
     > = await this.paginate(dto, specificConditions, [
       // ⚠️ "o" correspond to the alias o in pagination function.
-      `"o".role ->> 'label' != '${Roles.sudo}' OR "o".role ->> 'label' IS NULL`,
+      `("o".role ->> 'label' != '${Roles.sudo}' OR "o".role ->> 'label' IS NULL)`,
     ])
     if (userAskedForRole) {
       const demarcheIds = paginated.data
