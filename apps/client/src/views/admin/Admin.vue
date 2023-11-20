@@ -6,7 +6,7 @@ import LayoutList from '@/components/Layout/LayoutList.vue'
   <LayoutList
     title="Administration des roles"
     title-bg-color="var(--green-tilleul-verveine-sun-418-moon-817)"
-    title-icon="ri-user-settings-line"
+    title-icon="fr-icon-user-setting-line"
   >
     <router-view />
   </LayoutList>

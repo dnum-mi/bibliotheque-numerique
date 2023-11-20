@@ -66,7 +66,7 @@ onMounted(async () => {
 
 <template>
   <div class="flex  gap-2  flex-grow  overflow-auto">
-    <div class="flex-basis-[60%]  overflow-auto">
+    <div class="flex-basis-[60%]  flex-grow  overflow-auto">
       <LayoutFiche
         title-bg-color="var(--blue-france-main-525)"
         title-fg-color="var(--text-inverted-grey)"
@@ -123,6 +123,7 @@ onMounted(async () => {
       </LayoutFiche>
     </div>
     <DossierMessagerie
+      v-if="messages?.length"
       class="flex-basis-[40%]  fr-pr-2v  overflow-y-auto"
       :messages="messages"
     />

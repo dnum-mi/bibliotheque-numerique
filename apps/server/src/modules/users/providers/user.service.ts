@@ -18,8 +18,11 @@ import {
   PaginationUserDto,
   MyProfileOutputDto,
   AgGridUserDto,
-  IRole, OrganismeTypeKeys,
-  PaginatedDto, IUser,
+  IRole,
+  OrganismeTypeKeys,
+  PaginatedDto,
+  IUser,
+  Roles,
 } from '@biblio-num/shared'
 import { UserFieldTypeHashConst } from '@/modules/users/objects/consts/user-field-type-hash.const'
 import { DemarcheService } from '@/modules/demarches/providers/services/demarche.service'
@@ -99,7 +102,7 @@ export class UserService
     return user
   }
 
-  async getUserById (id: number): Promise<User> {
+  async getUserById(id: number): Promise<User> {
     this.logger.verbose('getUserById')
     return this.findOneById(id).then((user) => {
       if (!user) {
@@ -158,7 +161,10 @@ export class UserService
     await this.repo.update(user.id, { validated: true })
   }
 
-  private _generateRoleResume(role: IRole, demarcheHash: Record<number, {types: OrganismeTypeKeys[]}>): string {
+  private _generateRoleResume(
+    role: IRole,
+    demarcheHash: Record<number, { types: OrganismeTypeKeys[] }>,
+  ): string {
     this.logger.verbose('_generateRoleResume')
     const typeHash: Record<OrganismeTypeKeys, number> = {}
     Object.keys(role.options).forEach((demarcheId) => {
@@ -166,22 +172,36 @@ export class UserService
         typeHash[type] = typeHash[type] ? typeHash[type] + 1 : 1
       })
     })
-    return Object.entries(typeHash).map(([type, count]) => `${type} (${count})`).join(', ')
+    return Object.entries(typeHash)
+      .map(([type, count]) => `${type} (${count})`)
+      .join(', ')
   }
 
-  async listUsers (dto: PaginationUserDto, currentUser: IUser): Promise<PaginatedUserDto> {
+  async listUsers(
+    dto: PaginationUserDto,
+    currentUser: IUser,
+  ): Promise<PaginatedUserDto> {
     this.logger.verbose('listUsers')
     const labelIndex = dto.columns.indexOf('roleLabel')
     const optionIndex = dto.columns.indexOf('roleOptionsResume')
     const userAskedForRole = labelIndex !== -1 || optionIndex !== -1
     if (userAskedForRole) {
       dto.columns.push('role')
-      dto.columns = dto.columns.filter((c) => c !== 'roleLabel' && c !== 'roleOptionsResume')
+      dto.columns = dto.columns.filter(
+        (c) => c !== 'roleLabel' && c !== 'roleOptionsResume',
+      )
     }
     const specificConditions = {
       id: Not(currentUser.id),
     }
-    const paginated: PaginatedDto<AgGridUserDto & { role: IRole}> = await this.paginate(dto, specificConditions)
+    const paginated: PaginatedDto<
+      AgGridUserDto & {
+        role: IRole
+      }
+    > = await this.paginate(dto, specificConditions, [
+      // ⚠️ "o" correspond to the alias o in pagination function.
+      `"o".role ->> 'label' != '${Roles.sudo}' OR "o".role ->> 'label' IS NULL`,
+    ])
     if (userAskedForRole) {
       const demarcheIds = paginated.data
         .map((user) => Object.keys(user.role?.options))
@@ -190,10 +210,13 @@ export class UserService
         where: { id: In(demarcheIds) },
         select: ['id', 'types'],
       })
-      const demarcheHash = Object.fromEntries(sds.map(sd => [sd.id, sd]))
+      const demarcheHash = Object.fromEntries(sds.map((sd) => [sd.id, sd]))
       const users = paginated.data.map((user) => {
         user.roleLabel = user.role.label
-        user.roleOptionsResume = this._generateRoleResume(user.role, demarcheHash)
+        user.roleOptionsResume = this._generateRoleResume(
+          user.role,
+          demarcheHash,
+        )
         delete user.role
         return user
       })
