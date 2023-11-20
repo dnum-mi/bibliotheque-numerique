@@ -5,12 +5,11 @@ import type {
   UserOutputDto,
   UserWithEditableRole,
   OneDemarcheRoleOption,
-  PrefectureKeys,
+  OnePrefectureUpdateDto,
 } from '@biblio-num/shared'
-import { onMounted, ref, computed } from 'vue'
+import { ref, computed } from 'vue'
 import { useUserStore } from '@/stores'
-import { useRoute } from 'vue-router'
-import { OrganismeType, Roles } from '@/biblio-num/shared'
+import { OrganismeType } from '@/biblio-num/shared'
 import DemarcheLocalization from './DemarcheLocalization.vue'
 import { getRandomId } from '@gouvminint/vue-dsfr'
 
@@ -39,6 +38,7 @@ type DemarchesRoles = {
   children?: DemarcheRole[];
   attrs: DemarcheHtmlAttrs;
 };
+type GeographicalRights = PrefectureOptions & { disabled?: boolean };
 
 const typeOrganismeLabel: Record<OrganismeTypeKeys, string> = {
   [OrganismeType.ARUP]: 'Associations reconnues d’utilité publique (ARUP)',
@@ -50,11 +50,12 @@ const typeOrganismeLabel: Record<OrganismeTypeKeys, string> = {
 }
 // #endregion
 
+const props = defineProps<{ selectedEditableUser: UserWithEditableRole }>()
 const userStore = useUserStore()
-const selectedUser = computed<UserWithEditableRole | null>(() => userStore.selectedUser)
-const user = computed<UserOutputDto | undefined>(() => selectedUser.value?.originalUser)
-const demarcheHash = computed<Record<number, OneDemarcheRoleOption> | undefined>(() => selectedUser.value?.demarcheHash)
+const selectedUser = computed<UserOutputDto>(() => props.selectedEditableUser.originalUser)
+const demarcheHash = computed<Record<number, OneDemarcheRoleOption>>(() => props.selectedEditableUser.demarcheHash)
 const keySelectUser = computed<string>(() => userStore.keySelectUser)
+const loading = computed<boolean>(() => userStore.selectedEditableUserLoading)
 // #region View Demarches
 const isAllCheck = (children: DemarcheRole[]): boolean =>
   children.reduce((val, demarche) => {
@@ -93,20 +94,19 @@ const getCommonPrefectureOptionGetter = (children: DemarcheRole[]) => (prop: 'ad
       commonPrefectureAddables.push(...childOptions[prop])
     }
   }
-  return commonPrefectureAddables
+  return [...new Set(commonPrefectureAddables)]
 }
 
 const organismeTypes = computed(() => [
   ...new Set(
     Object.values(demarcheHash.value || {})
       .map(({ types }) => (types.length ? types : [OrganismeType.unknown]))
-      .flat(),
+      .flat()
+      .sort((a, b) => (a === OrganismeType.unknown ? 1 : b === OrganismeType.unknown ? -1 : 0)),
   ),
 ])
 
 const demarchesRoles = computed<DemarchesRoles[]>(() => {
-  if (!demarcheHash.value) return []
-
   return organismeTypes.value
     .map((type) => {
       const localization: PrefectureOptions = {
@@ -132,15 +132,15 @@ const demarchesRoles = computed<DemarchesRoles[]>(() => {
           localization.national.editable &&= d.prefectureOptions.national.editable
 
           let newClass: string | null | undefined = null
-          if ((noRefdemarcheOrTypeSelected as DemarcheRole)?.options?.id === d.id) {
-            newClass = noRefdemarcheOrTypeSelected?.attrs.class
+          if ((noRefDemarcheOrTypeSelected as DemarcheRole)?.options?.id === d.id) {
+            newClass = noRefDemarcheOrTypeSelected?.attrs.class
           }
 
           return {
             options: d,
             attrs: {
               class: newClass ?? null,
-              disabled: !canEditDemarche(d),
+              disabled: !d.editable,
             },
           }
         })
@@ -153,8 +153,8 @@ const demarchesRoles = computed<DemarchesRoles[]>(() => {
       const commonPrefectureDeletables: string[] = getCommonPrefectureOptionsFor('deletable')
 
       let newClass: string | null | undefined = null
-      if ((noRefdemarcheOrTypeSelected as DemarchesRoles)?.name === type) {
-        newClass = noRefdemarcheOrTypeSelected?.attrs.class
+      if ((noRefDemarcheOrTypeSelected as DemarchesRoles)?.name === type) {
+        newClass = noRefDemarcheOrTypeSelected?.attrs.class
       }
 
       return {
@@ -169,15 +169,15 @@ const demarchesRoles = computed<DemarchesRoles[]>(() => {
         commonPrefectureDeletables,
         attrs: {
           class: newClass ?? null,
-          disabled: children?.some((d) => !canEditDemarche(d.options)),
+          disabled: children?.some((d) => !d.options.editable),
         },
       }
     })
     .filter((type) => type.children && type.children.length)
 })
 
-const updateCheckTypeByChild = (id: number) => {
-  if (!demarcheHash.value || !demarcheHash.value[id]?.types) return
+const deduceCheckTypeFromChild = (id: number) => {
+  if (!demarcheHash.value[id]?.types) return
   demarcheHash.value[id].types.forEach((type: string) => {
     const objType = demarchesRoles.value.filter((dr) => dr.name === type)[0]
     if (!objType || !objType.children) return
@@ -185,42 +185,30 @@ const updateCheckTypeByChild = (id: number) => {
   })
 }
 
-const updateTypeDemarche = async ({ name, checked, dr }: { name: string; checked: boolean; dr: DemarchesRoles }) => {
+const checkAllTypeChildren = async ({ name, checked, dr }: { name: string; checked: boolean; dr: DemarchesRoles }) => {
   dr.value = checked
   if (!checked || !dr.children) return
-  await Promise.all(dr.children?.map((child) => updateDemarche({ name, id: child.options.id, checked, d: child, reloadUser: false })))
+  await Promise.all(dr.children?.map((child) => checkOneDemarche({ id: child.options.id, checked, d: child, reloadUser: false })))
   dr.key = getRandomId(name)
-  if (user.value?.id) {
-    await userStore.loadUserById(user.value?.id)
+  if (selectedUser.value?.id) {
+    await userStore.loadUserById(selectedUser.value?.id)
   }
 }
 
-const updateDemarche = async ({
-  name,
-  id,
-  checked,
-  d,
-  reloadUser = true,
-}: {
-  name: string;
-  id: number;
-  checked: boolean;
-  d: DemarcheRole;
-  reloadUser?: boolean;
-}) => {
-  d.options.checked = checked
-  updateCheckTypeByChild(id)
-  await userStore.updateUserDemarchesRole(
+const checkOneDemarche = async (obj: { id: number; checked: boolean; d: DemarcheRole; reloadUser?: boolean }) => {
+  obj.d.options.checked = obj.checked
+  deduceCheckTypeFromChild(obj.id)
+  await userStore.updateUserOneRoleOption(
     {
-      demarcheId: d.options.id,
-      checked,
+      demarcheId: obj.d.options.id,
+      checked: obj.checked,
     },
-    reloadUser,
+    obj.reloadUser ?? true,
   )
 }
 
 const demarcheOrTypeSelected = ref<DemarchesRoles | DemarcheRole | null>(null)
-let noRefdemarcheOrTypeSelected: DemarchesRoles | DemarcheRole
+let noRefDemarcheOrTypeSelected: DemarchesRoles | DemarcheRole
 
 const onClickDemarches = (elt: DemarchesRoles | DemarcheRole) => {
   if (elt.attrs.disabled) {
@@ -236,17 +224,12 @@ const onClickDemarches = (elt: DemarchesRoles | DemarcheRole) => {
 
   elt.attrs.class = 'fr-background-contrast--info'
   demarcheOrTypeSelected.value = elt
-  noRefdemarcheOrTypeSelected = elt
+  noRefDemarcheOrTypeSelected = elt
 }
-
-const canEditDemarche = (d: OneDemarcheRoleOption) => d.editable
 
 // #endregion
 
 // #region view localization
-const keyLocalization = ref<string>(getRandomId('location'))
-
-type GeographicalRights = PrefectureOptions & { disabled?: boolean };
 const geographicalRights = computed<GeographicalRights | null>(() => {
   if (!demarcheOrTypeSelected.value) return null
   if ('options' in demarcheOrTypeSelected.value) {
@@ -270,79 +253,58 @@ const geographicalRights = computed<GeographicalRights | null>(() => {
       deletable: drSelected?.commonPrefectureDeletables,
     },
     disabled: drSelected?.value,
-  }
+  } as GeographicalRights
 })
 
-const udpateLocalizationFn = async (
-  optionLoc:
-    | { national: boolean }
-    | {
-        prefecture: {
-          key: PrefectureKeys;
-          toAdd: boolean;
-        };
-      },
-) => {
+const _updateGeographicalRight = async (optionLoc: { national?: boolean; prefecture?: OnePrefectureUpdateDto }) => {
   if (!demarcheOrTypeSelected.value) return null
 
-  if ('options' in demarcheOrTypeSelected.value) {
-    await userStore.updateUserDemarchesRole(
+  const demarcheSelected: DemarcheRole | null = 'options' in demarcheOrTypeSelected.value ? demarcheOrTypeSelected.value : null
+  const typeSelected: DemarchesRoles | null = 'options' in demarcheOrTypeSelected.value ? null : demarcheOrTypeSelected.value
+
+  if (demarcheSelected) {
+    await userStore.updateUserOneRoleOption(
       {
-        demarcheId: demarcheOrTypeSelected.value.options.id,
+        demarcheId: demarcheSelected.options.id,
         ...optionLoc,
       },
       true,
     )
-
-    return
-  }
-
-  await (demarcheOrTypeSelected.value as DemarchesRoles).children?.map((child) =>
-    userStore.updateUserDemarchesRole(
-      {
-        demarcheId: child.options.id,
-        ...optionLoc,
-      },
-      false,
-    ),
-  )
-  if (user.value?.id) {
-    await userStore.loadUserById(user.value?.id)
+  } else if (typeSelected) {
+    await Promise.all(
+      (typeSelected.children ?? []).map((child) =>
+        userStore.updateUserOneRoleOption(
+          {
+            demarcheId: child.options.id,
+            ...optionLoc,
+          },
+          false,
+        ),
+      ),
+    )
+    await userStore.loadUserById(selectedUser.value?.id)
   }
 }
 
-const udpateLocalization = (loc: LocalizationOptionsKeys) => {
-  // TODO: Message d'erreur a mettre
-  return udpateLocalizationFn({ national: loc === LocalizationOptions.national })
-}
+const updatePrefecture = (option: OnePrefectureUpdateDto) => _updateGeographicalRight({ prefecture: option })
+
+const updateNational = (loc: LocalizationOptionsKeys) => _updateGeographicalRight({ national: loc === LocalizationOptions.national })
 
 const addPrefecture = (prefecture: string) => {
-  return udpateLocalizationFn({
-    prefecture: {
-      key: prefecture,
-      toAdd: true,
-    },
+  return updatePrefecture({
+    key: prefecture,
+    toAdd: true,
   })
 }
 
 const removePrefecture = (prefecture: string) => {
-  return udpateLocalizationFn({
-    prefecture: {
-      key: prefecture,
-      toAdd: false,
-    },
+  return updatePrefecture({
+    key: prefecture,
+    toAdd: false,
   })
 }
 
 // #endregion
-
-onMounted(async () => {
-  const params = useRoute()?.params
-  const id = Number(params.id)
-  if (id) {
-    await userStore.loadUserById(id)
-  }
-})
 </script>
 
 <template>
@@ -352,20 +314,23 @@ onMounted(async () => {
   >
     <div>
       <label class="bn-fiche-sub-title--label">Courriel</label>
-      <span class="text-xl">{{ user?.email }}</span>
+      <span class="text-xl">{{ selectedUser.email }}</span>
     </div>
-    <div v-if="!!user?.firstname || !!user?.lastname">
+    <div v-if="!!selectedUser?.firstname || !!selectedUser?.lastname">
       <label class="bn-fiche-sub-title--label">Nom complet</label>
-      <span class="text-xl">{{ user?.firstname || "" }} {{ user?.lastname || "" }}</span>
+      <span class="text-xl">{{ selectedUser.firstname || "" }} {{ selectedUser.lastname || "" }}</span>
     </div>
-    <div v-if="!!user?.job">
+    <div v-if="!!selectedUser?.job">
       <label class="bn-fiche-sub-title--label">fonction</label>
-      <span class="text-xl">{{ user?.job }}</span>
+      <span class="text-xl">{{ selectedUser.job }}</span>
     </div>
   </div>
 
-  <div class="fr-container">
-    <div class="flex flex-row gap-10">
+  <div class="fr-container relative">
+    <div
+      class="flex flex-row gap-10"
+      :class="{ 'blur-2': loading }"
+    >
       <div class="w-1/4 fr-p-4v">
         <h5>Rôle</h5>
         <div class="fr-pl-4v">
@@ -374,7 +339,7 @@ onMounted(async () => {
       </div>
       <div class="w-1/2 fr-p-4v">
         <h5>Démarches</h5>
-        <template v-if="selectedUser?.originalUser.role.label">
+        <template v-if="selectedEditableUser?.originalUser.role.label">
           <div
             v-for="dr in demarchesRoles"
             :key="dr.name"
@@ -390,7 +355,7 @@ onMounted(async () => {
                 :name="dr.name"
                 :model-value="dr.value"
                 :disabled="dr.attrs.disabled"
-                @update:model-value="updateTypeDemarche({ name: dr.name, checked: $event, dr })"
+                @update:model-value="checkAllTypeChildren({ name: dr.name, checked: $event, dr })"
               />
               <label class="flex-shrink-0 flex-grow cursor-pointer">
                 {{ dr.label }}
@@ -422,7 +387,7 @@ onMounted(async () => {
                     :name="d.options.id.toString()"
                     :model-value="d.options.checked"
                     :disabled="d.attrs.disabled"
-                    @update:model-value="updateDemarche({ name: dr.name, id: d.options.id, checked: $event, d })"
+                    @update:model-value="checkOneDemarche({ id: d.options.id, checked: $event, d })"
                   />
                   <label class="flex-shrink-0 flex-grow cursor-pointer">
                     {{ d.options.title }}
@@ -451,11 +416,32 @@ onMounted(async () => {
             v-if="!!(geographicalRights && geographicalRights.disabled)"
             :key="keySelectUser"
             :geographical-rights="geographicalRights"
-            @update:localization="udpateLocalization($event)"
+            @update:localization="updateNational($event)"
             @update:add-prefecture="addPrefecture($event)"
             @update:remove-prefecture="removePrefecture($event)"
           />
         </div>
+      </div>
+    </div>
+    <div
+      v-if="loading"
+      class="absolute w-full h-full top-0 left-0 opacity-30 bg-dark flex justify-center"
+    />
+    <div
+      v-if="loading"
+      class="absolute w-full top-0 left-0 flex justify-center"
+    >
+      <div class="flex flex-col justify-center items-center">
+        <VIcon
+          class="mt-50"
+          name="ri-refresh-line"
+          color="white"
+          scale="10"
+          animation="spin"
+        />
+        <p class="text-white text-3xl">
+          chargement en cours...
+        </p>
       </div>
     </div>
   </div>
@@ -467,6 +453,6 @@ onMounted(async () => {
 }
 
 :deep(input[type="checkbox"]:disabled + label) {
-  color: var(--text-grey);
+  color: var(--text-default-grey);
 }
 </style>

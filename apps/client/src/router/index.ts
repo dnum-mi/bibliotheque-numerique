@@ -1,14 +1,15 @@
+import type {
+  NavigationGuardNext,
+  RouteLocationNormalized,
+  RouterOptions,
+} from 'vue-router'
 import {
   createRouter,
   createWebHistory,
-  type RouterOptions,
 } from 'vue-router'
 
 import { useUserStore } from '@/stores'
 import {
-  hasAdminAccessGuard,
-  canManageRolesGuard,
-  canAccessDemarchesGuard,
   isAuthenticatedGuard,
   isNotAuthenticatedGuard,
   canAccessByRoleGuard,
@@ -127,8 +128,16 @@ const routes: RouterOptions['routes'] = [
       },
       {
         name: routeNames.USER,
-        path: '/user/:id',
-        component: () => import('@/views/admin/User.vue'),
+        path: '/selectedUser/:id',
+        component: () => import('@/views/admin/one-user/User.vue'),
+        beforeEnter: async (to: RouteLocationNormalized, from, next: NavigationGuardNext) => {
+          await useUserStore().loadUserById(parseInt(to.params.id as string))
+          if (!useUserStore().selectedEditableUser) {
+            next({ name: routeNames.Page_404 })
+          }
+          next(true)
+        },
+        props: () => ({ selectedEditableUser: useUserStore().selectedEditableUser }),
       },
 
     ],

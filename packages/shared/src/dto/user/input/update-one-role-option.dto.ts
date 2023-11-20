@@ -1,7 +1,7 @@
 import { Prefecture, PrefectureKeys } from '../../../enums'
 import { IsBoolean, IsEnum, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator'
 
-class updateOnePrefecture {
+export class OnePrefectureUpdateDto {
   @IsBoolean()
   toAdd: boolean
 
@@ -23,5 +23,5 @@ export class UpdateOneRoleOptionDto {
 
   @IsOptional()
   @ValidateNested()
-  prefecture?: updateOnePrefecture
+  prefecture?: OnePrefectureUpdateDto
 }

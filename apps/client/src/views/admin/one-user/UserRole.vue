@@ -7,9 +7,9 @@ import { useUserStore } from '@/stores'
 import DsfrWarningButton from '@/components/dsfr-extends/dsfr-warning-button.vue'
 
 const userStore = useUserStore()
-const selectedUser = computed<UserWithEditableRole | null>(() => userStore.selectedUser)
+const selectedEditableUser = computed<UserWithEditableRole | null>(() => userStore.selectedEditableUser)
 
-const role = computed<RolesKeys | ''>(() => selectedUser.value?.originalUser.role.label || '')
+const role = computed<RolesKeys | ''>(() => selectedEditableUser.value?.originalUser.role.label || '')
 
 const allRoleOptions = [
   {
@@ -27,7 +27,7 @@ const allRoleOptions = [
 ]
 
 const roleOptions = computed<{ label: string; value: RolesKeys }[]>(() => {
-  return allRoleOptions.filter((roleOption) => selectedUser.value?.possibleRoles.includes(roleOption.value))
+  return allRoleOptions.filter((roleOption) => selectedEditableUser.value?.possibleRoles.includes(roleOption.value))
 })
 
 const updateRole = async (event: string) => {
@@ -68,7 +68,7 @@ const isModalOpen = ref(false)
   >
     <p class="m-1">
       Vous vous apprêtez à retirer tous les rôles de
-      <strong>{{ selectedUser?.originalUser.firstname }} {{ selectedUser?.originalUser.lastname }}</strong>.
+      <strong>{{ selectedEditableUser?.originalUser.firstname }} {{ selectedEditableUser?.originalUser.lastname }}</strong>.
     </p>
     <p class="m-1">
       Cette action est irréversible.
