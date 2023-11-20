@@ -123,13 +123,13 @@ const printField = (field: Field): string => {
           <div class="flex flex-col one-col-height">
             <role-badge
               class="mb-5"
-              :role="user?.role.label"
+              :role="user?.role?.label"
               :small="false"
             />
           </div>
           <hr class="fr-mt-1v">
           <div
-            v-for="option in user?.role.options"
+            v-for="option in user?.role?.options"
             :key="option.demarche.id"
           >
             <div class="flex flex-col one-col-height">

@@ -1,5 +1,4 @@
 import axios, { AxiosError, type AxiosResponse } from 'axios'
-import { useRouter } from 'vue-router'
 
 import useToaster from '@/composables/use-toaster'
 
@@ -60,10 +59,11 @@ import {
   signInRoute,
   usersRoutes,
 } from '@/api/bn-api-routes'
-import type { IRoleForm } from '@/shared/interfaces'
 
 import { ErrorvalidateEmail } from './ErrorValidEmail'
 import { routeNames } from '../router/route-names'
+import router from '@/router'
+import { useUserStore } from '@/stores'
 
 const updatePasswordFeedback = {
   401: 'Le token est absent, veuillez fournir un token valide',
@@ -89,12 +89,16 @@ export const apiClientAuthInstance = axios.create({
 })
 
 const toaster = useToaster()
-const router = useRouter()
 apiClientInstance.interceptors.response.use(r => r, (error) => {
-  if ([401, 403].includes(error.response.status)) {
+  if (error.response.status === 401) {
     toaster.addMessage({ type: 'warning', description: 'Vous n’êtes plus connecté, veuillez vous réauthentifier' })
+    useUserStore().forceResetUser()
     router.push({ name: routeNames.SIGNIN, query: { redirect: location.href.replace(location.origin, '') } })
-    return error.response
+    return null
+  }
+  if (error.response.status === 403) {
+    toaster.addMessage({ type: 'warning', description: 'Vous n’avez pas les droits de faire cette opération' })
+    return null
   }
   if (error.response.status >= 400 && error.response.status < 500) {
     toaster.addErrorMessage(error.response.data.message)

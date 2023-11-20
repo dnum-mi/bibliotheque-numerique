@@ -37,7 +37,7 @@ export const useUserStore = defineStore('user', () => {
     currentUser.value = await bnApiClient.loginUser(loginForm)
   }
 
-  const resetUser = () => {
+  const forceResetUser = () => {
     currentUser.value = null
   }
 
@@ -115,8 +115,8 @@ export const useUserStore = defineStore('user', () => {
     loadUserById,
     updateRole,
     getUsersRole,
-    resetUser,
     updateUserOneRoleOption,
     removeRole,
+    forceResetUser,
   }
 })
