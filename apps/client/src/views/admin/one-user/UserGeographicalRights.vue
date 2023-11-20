@@ -10,9 +10,9 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  'update:localization': [payload?: string];
-  'update:removePrefecture': [payload?: string];
-  'update:addPrefecture': [payload?: string];
+  'update:localization': [payload: LocalizationOptionsKeys];
+  'update:removePrefecture': [payload: string];
+  'update:addPrefecture': [payload: string];
 }>()
 
 const localizationOptions = computed(() => [

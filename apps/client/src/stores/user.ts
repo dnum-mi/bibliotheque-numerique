@@ -20,11 +20,12 @@ import { getRandomId } from '@gouvminint/vue-dsfr'
 const RolesAdmins = ['admin', 'sudo', 'superadmin']
 
 export const useUserStore = defineStore('user', () => {
+  const selectedEditableUserLoading = ref(false)
   const currentUser = ref<UserOutputDto | null>(null)
   const myProfile = ref<MyProfileOutputDto | null>(null)
   const users = ref<Map<number, UserOutputDto>>(new Map<number, UserOutputDto>())
-  const selectedUser = ref<UserWithEditableRole | null>(null)
-  const keySelectUser = ref<string>(getRandomId('user-selected'))
+  const selectedEditableUser = ref<UserWithEditableRole | null>(null)
+  const keySelectUser = ref<string>(getRandomId('selectedUser-selected'))
   const loaded = ref(false)
 
   const isAuthenticated = computed(() => !!currentUser.value)
@@ -62,29 +63,36 @@ export const useUserStore = defineStore('user', () => {
   }
 
   const loadUserById = async (id: number) => {
+    selectedEditableUserLoading.value = true
     if (!hasAdminAccess.value) return
-    selectedUser.value = await bnApiClient.getUserRoleById(id)
-    keySelectUser.value = getRandomId('user-selected')
-    return selectedUser.value
+    selectedEditableUser.value = await bnApiClient.getUserRoleById(id)
+    keySelectUser.value = getRandomId('selectedUser-selected')
+    selectedEditableUserLoading.value = false
+    return selectedEditableUser.value
   }
 
   const updateRole = async (role: RolesKeys) => {
-    const id = selectedUser.value?.originalUser.id
-    if (!id) throw new Error("L'Utilisateur n'a pas été selectionné.")
+    selectedEditableUserLoading.value = true
+    const id = selectedEditableUser.value?.originalUser.id
+    if (!id) throw new Error('L\'Utilisateur n\'a pas été selectionné.')
     await bnApiClient.updateUserRole(id, role)
     await loadUserById(id)
   }
 
-  const updateUserDemarchesRole = async (demarchesRoles: UpdateOneRoleOptionDto, reloadUser: boolean) => {
-    const id = selectedUser.value?.originalUser.id
-    if (!id) throw new Error("L'Utilisateur n'a pas été selectionné.")
+  const updateUserOneRoleOption = async (demarchesRoles: UpdateOneRoleOptionDto, reloadUser: boolean): Promise<void> => {
+    selectedEditableUserLoading.value = true
+    const id = selectedEditableUser.value?.originalUser.id
+    if (!id) throw new Error('L\'Utilisateur n\'a pas été selectionné.')
     await bnApiClient.updateUserDemarchesRole(id, demarchesRoles)
-    if (reloadUser) await loadUserById(id)
+    if (reloadUser) {
+      await loadUserById(id)
+    }
   }
 
   const removeRole = async () => {
-    const id = selectedUser.value?.originalUser.id
-    if (!id) throw new Error("L'Utilisateur n'a pas été selectionné.")
+    selectedEditableUserLoading.value = true
+    const id = selectedEditableUser.value?.originalUser.id
+    if (!id) throw new Error('L\'Utilisateur n\'a pas été selectionné.')
     await bnApiClient.removeRole(id)
     await loadUserById(id)
   }
@@ -92,22 +100,23 @@ export const useUserStore = defineStore('user', () => {
     currentUser,
     myProfile,
     users,
-    selectedUser,
+    selectedEditableUser,
     loaded,
     isAuthenticated,
     hasAdminAccess,
     canManageRoles,
     canAccessDemarches,
     keySelectUser,
+    selectedEditableUserLoading,
     login,
     logout,
     loadMyProfile,
     listUsers,
     loadUserById,
     updateRole,
-    updateUserDemarchesRole,
     getUsersRole,
     resetUser,
+    updateUserOneRoleOption,
     removeRole,
   }
 })
