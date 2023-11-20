@@ -11,7 +11,7 @@ import {
 import {
   generateRoleAttributionList,
   generateUserWithEditableRole,
-  isEditionAllowed,
+  isEditionAllowed, threeRoles,
 } from '@/modules/users/utils/role.utils'
 
 /* region MOCK DEMARCHES */
@@ -643,12 +643,12 @@ describe('RoleUtils', () => {
 
     it('Should return complete array if editor is sudo', () => {
       expect(generateRoleAttributionList(sudo, emptyAdmin))
-        .toEqual([Roles.superadmin, Roles.admin, Roles.instructor])
+        .toEqual(threeRoles)
     })
 
     it('Should return complete array if editor is superadmin', () => {
       expect(generateRoleAttributionList(superAdmin, emptyAdmin))
-        .toEqual([Roles.superadmin, Roles.admin, Roles.instructor])
+        .toEqual(threeRoles)
     })
 
     it('Should return admin and instructor if target is contained', () => {
@@ -782,6 +782,11 @@ describe('RoleUtils', () => {
       })
       expect(generateRoleAttributionList(alice, bob))
         .toEqual([Roles.instructor, Roles.admin])
+    })
+
+    it('Should return all role if target is superadmin and editor is sudo', () => {
+      expect(generateRoleAttributionList(sudo, superAdmin))
+        .toEqual(threeRoles)
     })
   })
 })

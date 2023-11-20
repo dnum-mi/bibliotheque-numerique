@@ -13,6 +13,8 @@ import {
 } from '@biblio-num/shared'
 import { isDefined } from 'class-validator'
 
+export const threeRoles = [Roles.superadmin, Roles.admin, Roles.instructor]
+
 const _oneDemarcheRoleOptionNotEditable = (
   demarche: SmallDemarcheOutputDto,
   option: IRoleOption | undefined,
@@ -96,7 +98,7 @@ export const generateUserWithEditableRole = (
   return {
     originalUser: target,
     possibleRoles,
-    deletable: isRoleDeletable(target.role.label, possibleRoles),
+    deletable: isRoleDeletable(possibleRoles),
     demarcheHash: hash,
   }
 }
@@ -161,11 +163,14 @@ export const generateRoleAttributionList = (
   if (!isSuperiorOrSimilar(Roles.admin, editor.role.label)) {
     throw new Error('Only an admin can generate role attribution list')
   }
+  if (editor.role.label === Roles.sudo) {
+    return threeRoles
+  }
   if (target.role.label === Roles.superadmin) {
     return []
   }
   if (isSuperiorOrSimilar(Roles.superadmin, editor.role.label)) {
-    return [Roles.superadmin, Roles.admin, Roles.instructor]
+    return threeRoles
   }
   return _isTargetRoleOptionContainedInAdminRoleOption(
     editor.role.options,
@@ -176,6 +181,5 @@ export const generateRoleAttributionList = (
 }
 
 export const isRoleDeletable = (
-  targetRole: RolesKeys,
   possibleRoles: RolesKeys[],
-): boolean => (targetRole === Roles.superadmin ? false : !!possibleRoles.length)
+): boolean => (!!possibleRoles.length)
