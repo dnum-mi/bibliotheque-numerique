@@ -26,7 +26,6 @@ const allRoleOptions = [
 ]
 
 const roleOptions = computed<{label: string, value: RolesKeys}[]>(() => {
-  if (userStore.currentUser?.role.label === Roles.sudo) return allRoleOptions
   return allRoleOptions.filter(roleOption => selectedUser.value?.possibleRoles.includes(roleOption.value))
 })
 

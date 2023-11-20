@@ -86,7 +86,7 @@ export class UserRoleController {
   ): Promise<void> {
     this.logger.verbose('putUserRoleLabel')
     const roleList = generateRoleAttributionList(editor, target)
-    if (!isRoleDeletable(target.role.label, roleList)) {
+    if (!isRoleDeletable(roleList)) {
       throw new ForbiddenException(
         'You are not allowed to perform this operation',
       )
