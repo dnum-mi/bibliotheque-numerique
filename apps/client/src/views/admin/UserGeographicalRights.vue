@@ -60,11 +60,9 @@ const prefectures = computed<DsfrTagProps[]>(() =>
   ].flat(),
 )
 
-const possiblePrefectures = computed<PrefectureKeys[]>(() => {
-  const a = props.geographicalRights.national.editable ? listOfPrefectures : props.geographicalRights.prefectures?.addable
-  console.log(a)
-  return a
-})
+const possiblePrefectures = computed<PrefectureKeys[]>(() =>
+  props.geographicalRights.national.editable ? listOfPrefectures : props.geographicalRights.prefectures?.addable,
+)
 
 const prefecturesToAdd = computed<DsfrTagProps[]>(() =>
   possiblePrefectures.value
