@@ -2,7 +2,7 @@
 import type { RolesKeys } from '@biblio-num/shared'
 import { computed } from 'vue'
 
-withDefaults(defineProps<{ role: RolesKeys | null, small: boolean }>(), {
+withDefaults(defineProps<{ role?: RolesKeys, small?: boolean }>(), {
   role: 'norole',
   small: true,
 })

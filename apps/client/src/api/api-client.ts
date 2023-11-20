@@ -135,7 +135,7 @@ export const demarchesApiClient = {
 
   getDemarches: async () => {
     const response = await apiClientInstance.get(demarchesRoute)
-    return response.data
+    return response?.data
   },
 
   getSmallDemarches: async () => {

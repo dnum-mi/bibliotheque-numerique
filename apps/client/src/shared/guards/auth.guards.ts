@@ -43,8 +43,6 @@ export function canAccessDemarchesGuard () {
 
 export function isNotAuthenticatedGuard () {
   const userStore = useUserStore()
-  console.log(userStore.currentUser)
-  console.log(userStore.isAuthenticated)
   if (userStore.isAuthenticated) {
     return '/'
   }

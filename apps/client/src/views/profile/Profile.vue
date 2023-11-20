@@ -146,7 +146,7 @@ const printField = (field: Field): string => {
                 v-else
                 class="flex-1"
               >
-                {{ option.prefectures.join(", ") }}
+                {{ option.prefectures.map(p => p.substring(1)).join(", ") }}
               </div>
             </div>
             <hr class="fr-mt-1v">

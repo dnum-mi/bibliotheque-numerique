@@ -1,9 +1,5 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-
-import type { CredentialsInputDto, UserOutputDto } from '@biblio-num/shared'
-
-import type { User } from '@/shared/interfaces'
 import bnApiClient from '@/api/api-client'
 import type {
   CredentialsInputDto,
@@ -43,18 +39,13 @@ export const useUserStore = defineStore('user', () => {
 
   const logout = async () => {
     await bnApiClient.logoutUser()
-    resetUser()
+    forceResetUser()
   }
 
   const loadMyProfile = async () => {
     myProfile.value = await bnApiClient.fetchMyProfile()
     currentUser.value = myProfile.value
     loaded.value = true
-    if (!user) {
-      currentUser.value = null
-      return
-    }
-    currentUser.value = user
   }
 
   const listUsers = async (dto: PaginationUserDto) => {
@@ -114,7 +105,6 @@ export const useUserStore = defineStore('user', () => {
     listUsers,
     loadUserById,
     updateRole,
-    getUsersRole,
     updateUserOneRoleOption,
     removeRole,
     forceResetUser,
