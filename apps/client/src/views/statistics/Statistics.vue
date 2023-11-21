@@ -10,7 +10,7 @@ import LayoutList from '@/components/Layout/LayoutList.vue'
     title-bg-color="var(--red-marianne-850-200)"
     title-icon="fr-icon-table-fill"
   >
-    <div class="cards  fr-container">
+    <div class="cards  fr-m-5v">
       <StatisticsCard />
     </div>
   </LayoutList>

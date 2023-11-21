@@ -22,8 +22,6 @@ export const useUserStore = defineStore('user', () => {
   const users = ref<Map<number, UserOutputDto>>(new Map<number, UserOutputDto>())
   const selectedEditableUser = ref<UserWithEditableRole | null>(null)
   const keySelectUser = ref<string>(getRandomId('selectedUser-selected'))
-  const loaded = ref(false)
-
   const isAuthenticated = computed(() => !!currentUser.value)
   const hasAdminAccess = computed(() => !!(currentUser.value?.role?.label && RolesAdmins.includes(currentUser.value?.role?.label)))
   const canManageRoles = computed(() => hasAdminAccess.value)
@@ -45,7 +43,6 @@ export const useUserStore = defineStore('user', () => {
   const loadMyProfile = async () => {
     myProfile.value = await bnApiClient.fetchMyProfile()
     currentUser.value = myProfile.value
-    loaded.value = true
   }
 
   const listUsers = async (dto: PaginationUserDto) => {
@@ -92,7 +89,6 @@ export const useUserStore = defineStore('user', () => {
     myProfile,
     users,
     selectedEditableUser,
-    loaded,
     isAuthenticated,
     hasAdminAccess,
     canManageRoles,

@@ -130,7 +130,7 @@ const printField = (field: Field): string => {
           <hr class="fr-mt-1v">
           <div
             v-for="option in user?.role?.options"
-            :key="option.demarche.id"
+            :key="option.demarche?.id"
           >
             <div class="flex flex-col one-col-height">
               <div class="flex-1">

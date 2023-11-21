@@ -103,8 +103,8 @@ onMounted(async () => {
           class="fr-link fr-icon-arrow-right-line fr-link--icon-right"
           :to="{
             name: 'DemarcheDossiers',
-            params: { id: card?.demarche.id },
-            query: { customFilter: card?.customFilter.id },
+            params: { demarcheId: card?.demarche.id },
+            query: { customDisplayId: card?.customFilter.id },
           }"
         >
           Visualiser la liste

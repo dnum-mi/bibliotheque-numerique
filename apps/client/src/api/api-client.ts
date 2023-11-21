@@ -91,7 +91,7 @@ export const apiClientAuthInstance = axios.create({
 const toaster = useToaster()
 apiClientInstance.interceptors.response.use(r => r, (error) => {
   if (error.response.status === 401) {
-    toaster.addMessage({ type: 'warning', description: 'Vous n’êtes plus connecté, veuillez vous réauthentifier' })
+    toaster.addMessage({ id: 'auth', type: 'warning', description: 'Vous n’êtes plus connecté, veuillez vous réauthentifier' })
     useUserStore().forceResetUser()
     router.push({ name: routeNames.SIGNIN, query: { redirect: location.href.replace(location.origin, '') } })
     return null
@@ -106,7 +106,7 @@ apiClientInstance.interceptors.response.use(r => r, (error) => {
   }
   if (error.response.status >= 500) {
     toaster.addErrorMessage(error.response.data?.message ?? 'Une erreur inconnue est survenue')
-    import.meta.env.DEV && console.error(error)
+    console.error(error)
   }
 })
 
@@ -130,7 +130,7 @@ export const demarchesApiClient = {
 
   getDemarche: async (id: number) => {
     const response = await apiClientInstance.get(getDemarcheByIdRoute(id))
-    return response.data
+    return response?.data
   },
 
   getDemarches: async () => {

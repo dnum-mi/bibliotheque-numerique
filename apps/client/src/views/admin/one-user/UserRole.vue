@@ -35,8 +35,6 @@ const roleOptions = computed<Array<DsfrRadioButtonProps & HTMLAttributes>>(() =>
   })),
 )
 
-console.log(roleOptions.value)
-
 const updateRole = async (event: string) => {
   await userStore.updateRole(event)
 }
