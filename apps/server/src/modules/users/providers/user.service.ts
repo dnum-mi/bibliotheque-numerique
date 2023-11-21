@@ -65,7 +65,7 @@ export class UserService
         firstname: 'sudo',
         lastname: 'sudo',
         skipHashPassword: true,
-        role: { label: 'sudo', options: [] },
+        role: { label: 'sudo', options: {} },
       },
       { conflictPaths: ['email'] },
     )
