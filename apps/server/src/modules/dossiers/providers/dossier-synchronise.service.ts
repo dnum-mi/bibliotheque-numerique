@@ -179,6 +179,7 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
   ): Promise<void> {
     this.logger.verbose('synchroniseOneDossier')
     const jsonDossier = await this._formatFileData(originalJsonDossier)
+    const prefecture = this._findPrefecture(jsonDossier)
     const upsert = await this.repo.upsert(
       {
         demarche: { id: demarche.id },
@@ -186,7 +187,7 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
         dsDataJson: jsonDossier,
         state: jsonDossier.state,
         dateDepot: jsonDossier.dateDepot,
-        prefecture: this._findPrefecture(jsonDossier),
+        prefecture,
       },
       {
         conflictPaths: ['sourceId', 'demarche'],
@@ -195,14 +196,14 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
     )
     const id = upsert.identifiers[0].id
     const fields = await this.fieldService.overwriteFieldsFromDataJson(
-      jsonDossier,
+      { ...jsonDossier, prefecture }, // TODO: find a more elegant way to have prefecture
       id,
       demarche.mappingColumns,
     )
     try {
       await this._linkOrganisme(id, fields)
     } catch (e) {
-      this.logger.error('Couldnt link organisme to this dossier.')
+      this.logger.error('Couldn\'t link organisme to this dossier.')
       this.logger.error(e)
     }
     if (demarche.identification === IdentificationDemarche.FE) {

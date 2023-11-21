@@ -6,6 +6,7 @@ export const FormatFunctionRef = {
   rnf: 'rnf',
   rna: 'rna',
   file: 'file',
+  prefecture: 'prefecture',
 }
 
 export type FormatFunctionRefKeys =

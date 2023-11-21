@@ -105,8 +105,8 @@ export const Prefecture = {
   D986: '986 - Wallis-et-Futuna',
   D987: '987 - Polynésie Française',
   D988: '988 - Nouvelle-Calédonie',
-}
+} as const
 
-export type PrefectureKeys = (typeof Prefecture)[keyof typeof Prefecture]
+export type PrefectureKeys = keyof typeof Prefecture
 
 export const listOfPrefectures = Object.keys(Prefecture)
