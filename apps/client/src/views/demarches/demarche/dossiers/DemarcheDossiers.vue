@@ -191,8 +191,7 @@ const createFilter = async ({ filterName = '', totals = '' }: { filterName?: str
     createCustomFilterDto.totals = totals === 'Aucun total' ? [] : [totals]
   }
   try {
-    await customFilterStore.createCustomFilter(createCustomFilterDto, demarche.value.id)
-    const filterId = customFilters.value.find((f) => f.name === filterName)?.id || null
+    const filterId = await customFilterStore.createCustomFilter(createCustomFilterDto, demarche.value.id)
     selectFilter(filterId)
     customDisplayOperationSuccess.value = true
   } catch (error) {

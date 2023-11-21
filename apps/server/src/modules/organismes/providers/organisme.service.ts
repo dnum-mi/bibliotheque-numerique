@@ -11,10 +11,9 @@ import {
   IRnaOutput,
   IRnfOutput,
   OrganismeType,
-  PaginatedOrganismeDto,
+  PaginatedDto,
   PaginationDto,
 } from '@biblio-num/shared'
-import { buildFilterQuery } from '@/shared/utils/common-search.utils'
 import { OrganismeFieldTypeHash } from '@/modules/organismes/objects/const/organisme-field-type-hash.const'
 
 @Injectable()
@@ -25,7 +24,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     protected readonly rnfService: RnfService,
     protected readonly rnaService: RnaService,
   ) {
-    super(repo, logger)
+    super(repo, logger, OrganismeFieldTypeHash)
     this.logger.setContext(this.constructor.name)
   }
 
@@ -115,28 +114,8 @@ export class OrganismeService extends BaseEntityService<Organisme> {
 
   async listOrganisme(
     dto: PaginationDto<IOrganisme>,
-  ): Promise<PaginatedOrganismeDto> {
+  ): Promise<PaginatedDto<IOrganisme>> {
     this.logger.verbose('listOrganisme')
-    const query = this.repo.createQueryBuilder('o')
-    if (dto.filters) {
-      query.where(buildFilterQuery(dto.filters, OrganismeFieldTypeHash))
-    }
-    const count = await query.getCount()
-    if (dto.sorts?.length) {
-      dto.sorts.forEach(sort => {
-        query.addOrderBy(`o.${sort.key}`, sort.order)
-      })
-    }
-    query.limit(dto.perPage || 20)
-    query.offset((dto.perPage * (dto.page - 1)) || 0)
-    if (dto.columns?.length) {
-      query.select(dto.columns.map(c => `o.${c}`).concat(['o.id']))
-    }
-    return query.getMany().then((data) => {
-      return {
-        data,
-        total: count,
-      } as PaginatedOrganismeDto
-    })
+    return this.paginate<IOrganisme>(dto)
   }
 }

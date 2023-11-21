@@ -7,21 +7,21 @@ import {
   Param,
   ParseIntPipe,
   Post,
-  UseGuards,
 } from '@nestjs/common'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
-import { IOrganisme, LeanDossierOutputDto, PaginatedOrganismeDto, PaginationDto } from '@biblio-num/shared'
-import { DossierService } from '@/modules/dossiers/providers/dossier.service'
 import {
-  PermissionsGuard,
-  RequirePermissions,
-} from '@/modules/roles/providers/permissions.guard'
-import { PermissionName } from '@/shared/types/Permission.type'
+  IOrganisme,
+  LeanDossierOutputDto,
+  PaginatedDto,
+  PaginationDto,
+  Roles,
+} from '@biblio-num/shared'
+import { DossierService } from '@/modules/dossiers/providers/dossier.service'
 import { OrganismeService } from '@/modules/organismes/providers/organisme.service'
+import { Role } from '@/modules/users/providers/decorators/role.decorator'
 
 @ApiTags('Demarches')
-@UseGuards(PermissionsGuard)
 @Controller('organismes')
 export class OrganismeController {
   constructor(
@@ -34,25 +34,30 @@ export class OrganismeController {
 
   @Post('list')
   @HttpCode(200)
+  @Role(Roles.instructor)
   @ApiResponse({ status: 200 })
-  @RequirePermissions({ name: PermissionName.ACCESS_DEMARCHE })
-  async listOrganisme(@Body() dto: PaginationDto<IOrganisme>): Promise<PaginatedOrganismeDto> {
+  async listOrganisme(
+    @Body() dto: PaginationDto<IOrganisme>,
+  ): Promise<PaginatedDto<IOrganisme>> {
+    this.logger.verbose('listOrganisme')
     return this.organismeService.listOrganisme(dto)
   }
 
   @Get(':organismeId/dossiers')
-  @RequirePermissions({ name: PermissionName.ACCESS_DEMARCHE })
+  @Role(Roles.instructor)
   async getOrganismeDossiers(
     @Param('organismeId') id: string,
   ): Promise<LeanDossierOutputDto[]> {
+    this.logger.verbose('getOrganismeDossiers')
     return this.dossierService.getOrganismeDossiers(+id)
   }
 
   @Get(':organismeId')
-  @RequirePermissions({ name: PermissionName.ACCESS_DEMARCHE })
+  @Role(Roles.instructor)
   async getOrganisme(
     @Param('organismeId', ParseIntPipe) id: number,
   ): Promise<IOrganisme> {
+    this.logger.verbose('getOrganisme')
     if (isNaN(id)) {
       throw new BadRequestException('Invalid id')
     }
@@ -60,18 +65,20 @@ export class OrganismeController {
   }
 
   @Get('rna/:organismeIdRna')
-  @RequirePermissions({ name: PermissionName.ACCESS_DEMARCHE })
+  @Role(Roles.instructor)
   async getOrganismeWithRna(
     @Param('organismeIdRna') idRna: string,
   ): Promise<IOrganisme> {
+    this.logger.verbose('getOrganismeWithRna')
     return this.organismeService.findOneOrThrow({ where: { idRna } })
   }
 
   @Get('rnf/:organismeIdRnf')
-  @RequirePermissions({ name: PermissionName.ACCESS_DEMARCHE })
+  @Role(Roles.instructor)
   async getOrganismeWithRnf(
     @Param('organismeIdRnf') idRnf: string,
   ): Promise<IOrganisme> {
+    this.logger.verbose('getOrganismeWithRnf')
     return this.organismeService.findOneOrThrow({ where: { idRnf } })
   }
 }

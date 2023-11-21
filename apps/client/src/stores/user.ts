@@ -1,74 +1,108 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-
-import type { CredentialsInputDto, UserOutputDto } from '@biblio-num/shared'
-
-import type { User } from '@/shared/interfaces'
 import bnApiClient from '@/api/api-client'
-import { RoleName } from '@/shared/types/Permission.type'
+import type {
+  CredentialsInputDto,
+  UserOutputDto,
+  PaginationUserDto,
+  MyProfileOutputDto,
+  UserWithEditableRole,
+  RolesKeys,
+  UpdateOneRoleOptionDto,
+} from '@biblio-num/shared'
+import { getRandomId } from '@gouvminint/vue-dsfr'
+
+// TODO: enum Roles dans packages/shared n'est pas récupérable
+const RolesAdmins = ['admin', 'sudo', 'superadmin']
 
 export const useUserStore = defineStore('user', () => {
-  const currentUser = ref<User | null>(null)
+  const selectedEditableUserLoading = ref(false)
+  const currentUser = ref<UserOutputDto | null>(null)
+  const myProfile = ref<MyProfileOutputDto | null>(null)
   const users = ref<Map<number, UserOutputDto>>(new Map<number, UserOutputDto>())
-  const loaded = ref(false)
-
+  const selectedEditableUser = ref<UserWithEditableRole | null>(null)
+  const keySelectUser = ref<string>(getRandomId('selectedUser-selected'))
   const isAuthenticated = computed(() => !!currentUser.value)
-  const hasAdminAccess = computed(() => !!(currentUser.value?.roles.some(role => role.name === RoleName.ADMIN)))
-  const canManageRoles = computed(() => !!currentUser.value?.roles?.find(role => role.name === RoleName.ADMIN || role?.permissions?.find(permission => permission?.name === 'CREATE_ROLE')))
-  const canAccessDemarches = computed(() => !!currentUser.value?.roles?.find(role => role.name === RoleName.ADMIN || role?.permissions?.find(permission => permission?.name === 'ACCESS_DEMARCHE')))
+  const hasAdminAccess = computed(() => !!(currentUser.value?.role?.label && RolesAdmins.includes(currentUser.value?.role?.label)))
+  const canManageRoles = computed(() => hasAdminAccess.value)
+  const canAccessDemarches = computed(() => !!(currentUser.value?.role?.label))
 
   const login = async (loginForm: CredentialsInputDto) => {
     currentUser.value = await bnApiClient.loginUser(loginForm)
   }
 
-  const resetUser = () => {
+  const forceResetUser = () => {
     currentUser.value = null
   }
 
   const logout = async () => {
     await bnApiClient.logoutUser()
-    resetUser()
+    forceResetUser()
   }
 
-  const loadCurrentUser = async () => {
-    const user = await bnApiClient.fetchCurrentUser()
-    loaded.value = true
-    if (!user) {
-      currentUser.value = null
-      return
-    }
-    currentUser.value = user
+  const loadMyProfile = async () => {
+    myProfile.value = await bnApiClient.fetchMyProfile()
+    currentUser.value = myProfile.value
   }
 
-  const loadUsers = async () => {
+  const listUsers = async (dto: PaginationUserDto) => {
     if (!hasAdminAccess.value) return
-    const userArr = await bnApiClient.getUsers()
-    if (!userArr) return
-    for (const user of userArr) {
-      users.value.set(user.id, user)
-    }
+    return bnApiClient.listUsers(dto)
   }
 
   const loadUserById = async (id: number) => {
+    selectedEditableUserLoading.value = true
     if (!hasAdminAccess.value) return
-    const user = await bnApiClient.getUserById(id)
-    if (!user) return
-    users.value.set(user.id, user)
+    selectedEditableUser.value = await bnApiClient.getUserRoleById(id)
+    keySelectUser.value = getRandomId('selectedUser-selected')
+    selectedEditableUserLoading.value = false
+    return selectedEditableUser.value
   }
 
+  const updateRole = async (role: RolesKeys) => {
+    selectedEditableUserLoading.value = true
+    const id = selectedEditableUser.value?.originalUser.id
+    if (!id) throw new Error('L\'Utilisateur n\'a pas été selectionné.')
+    await bnApiClient.updateUserRole(id, role)
+    await loadUserById(id)
+  }
+
+  const updateUserOneRoleOption = async (demarchesRoles: UpdateOneRoleOptionDto, reloadUser: boolean): Promise<void> => {
+    selectedEditableUserLoading.value = true
+    const id = selectedEditableUser.value?.originalUser.id
+    if (!id) throw new Error('L\'Utilisateur n\'a pas été selectionné.')
+    await bnApiClient.updateUserDemarchesRole(id, demarchesRoles)
+    if (reloadUser) {
+      await loadUserById(id)
+    }
+  }
+
+  const removeRole = async () => {
+    selectedEditableUserLoading.value = true
+    const id = selectedEditableUser.value?.originalUser.id
+    if (!id) throw new Error('L\'Utilisateur n\'a pas été selectionné.')
+    await bnApiClient.removeRole(id)
+    await loadUserById(id)
+  }
   return {
     currentUser,
+    myProfile,
     users,
-    loaded,
+    selectedEditableUser,
     isAuthenticated,
     hasAdminAccess,
     canManageRoles,
     canAccessDemarches,
+    keySelectUser,
+    selectedEditableUserLoading,
     login,
     logout,
-    loadCurrentUser,
-    loadUsers,
+    loadMyProfile,
+    listUsers,
     loadUserById,
-    resetUser,
+    updateRole,
+    updateUserOneRoleOption,
+    removeRole,
+    forceResetUser,
   }
 })

@@ -1,34 +1,24 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { In, Repository } from 'typeorm'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
-import { ConfigService } from '@nestjs/config'
-import { PermissionName } from '@/shared/types/Permission.type'
-import { TConfig } from '@/config/configuration'
 import { Demarche } from '../../objects/entities/demarche.entity'
-import { User } from '../../../users/entities/user.entity'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { InjectRepository } from '@nestjs/typeorm'
-import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere'
 import { fixFieldsByIdentificationDictionary } from '../../../dossiers/objects/constante/fix-field.dictionnary'
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
 import { UpdateDemarcheDto } from '@/modules/demarches/objects/dtos/update-demarche.dto'
+import { IRole, isBelowSuperAdmin, Roles, SmallDemarcheOutputDto } from '@biblio-num/shared'
+import { FindManyOptions } from 'typeorm/find-options/FindManyOptions'
+import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere'
 
 @Injectable()
 export class DemarcheService extends BaseEntityService<Demarche> {
   constructor(
-    private configService: ConfigService,
     protected logger: LoggerService,
     @InjectRepository(Demarche) repo: Repository<Demarche>,
   ) {
     super(repo, logger)
     this.logger.setContext(this.constructor.name)
-  }
-
-  async findById(id: number): Promise<Demarche> {
-    this.logger.verbose('findById')
-    return super.findOneById(id, {
-      dossiers: true,
-    })
   }
 
   async findByDsId(id: number, select?: (keyof Demarche)[]): Promise<Demarche> {
@@ -42,56 +32,39 @@ export class DemarcheService extends BaseEntityService<Demarche> {
     return query.getOne()
   }
 
-  async findWithPermissions(
-    user: User,
-    filter: FindOptionsWhere<Demarche> = {},
+  async findAllSmallDemarche(): Promise<SmallDemarcheOutputDto[]> {
+    return this.findMultipleSmallDemarche({}, { label: Roles.superadmin, options: null })
+  }
+
+  async findMultipleSmallDemarche(
+    filter: FindManyOptions<Demarche> = {},
+    role: IRole,
+  ): Promise<SmallDemarcheOutputDto[]> {
+    return this.findMultipleDemarche(
+      { ...filter, select: ['id', 'title', 'dsDataJson', 'types'] },
+      role,
+    ).then((demarches) => {
+      return demarches.map((d) => ({
+        id: d.id,
+        title: d.title,
+        types: d.types,
+        dsId: d.dsDataJson?.number,
+      }))
+    })
+  }
+
+  async findMultipleDemarche(
+    filter: FindManyOptions<Demarche> = {},
+    role: IRole = { label: Roles.superadmin, options: null },
   ): Promise<Demarche[]> {
-    this.logger.verbose('findWithPermissions')
-    const query = {
-      ...filter,
-    }
-    const ruleIds = this.getRulesFromUserPermissions(user)
-    if (ruleIds) {
-      query.id = In(ruleIds)
-    }
-    return super.findWithFilter(query)
-  }
-
-  withPermissions(user: User, filter: Demarche): boolean {
-    this.logger.verbose('findOneWithPermissions')
-    const ruleIds = this.getRulesFromUserPermissions(user)
-    if (!ruleIds) {
-      return true
-    }
-    if (ruleIds.length > 0 && ruleIds.some((ruleId) => ruleId === filter.id)) {
-      return true
-    }
-    return false
-  }
-
-  public getRulesFromUserPermissions(user: User): number[] | void {
-    this.logger.verbose('getRulesFromUserPermissions')
-    const { roles } = user
-    let demarcheIds: number[] = []
-    for (const role of roles) {
-      if (
-        role.name ===
-        this.configService.get<TConfig['defaultAdmin']['roleName']>(
-          'defaultAdmin.roleName',
-        )
-      ) {
-        return
+    this.logger.verbose('findMultipleDemarche')
+    if (isBelowSuperAdmin(role.label)) {
+      const allowedIds: FindOptionsWhere<Demarche> = {
+        id: In(Object.keys(role.options)),
       }
-      const permissionAccessDemarche = role.permissions.find(
-        (p) => p.name === PermissionName.ACCESS_DEMARCHE,
-      )
-      if (permissionAccessDemarche) {
-        demarcheIds = demarcheIds.concat(
-          permissionAccessDemarche?.options?.demarcheIds || [],
-        )
-      }
+      filter.where = [...[filter.where ?? []].flat(), allowedIds]
     }
-    return demarcheIds
+    return this.repo.find(filter)
   }
 
   async updateDemarche(
@@ -105,11 +78,13 @@ export class DemarcheService extends BaseEntityService<Demarche> {
       updateQuery.types = dto.types
     }
     const { mappingColumns, identification: identificationOrigin } = demarche
-    const mappingEntries = fixFieldsByIdentificationDictionary[dto.identification] || []
-    const mappingEntriesOrigin = fixFieldsByIdentificationDictionary[identificationOrigin] || []
+    const mappingEntries =
+      fixFieldsByIdentificationDictionary[dto.identification] || []
+    const mappingEntriesOrigin =
+      fixFieldsByIdentificationDictionary[identificationOrigin] || []
     if (dto.identification !== undefined) {
       updateQuery.mappingColumns = mappingColumns
-        .filter(mc => !mappingEntriesOrigin.find(mc2 => mc2.id === mc.id))
+        .filter((mc) => !mappingEntriesOrigin.find((mc2) => mc2.id === mc.id))
         .concat(mappingEntries)
     }
     updateQuery.identification = dto.identification

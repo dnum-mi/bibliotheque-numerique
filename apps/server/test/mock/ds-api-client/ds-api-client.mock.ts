@@ -9,6 +9,7 @@ import {
 import {
   demarcheWithRnfAndRnaDataMock
 } from './data/demarche-with-rnf-and-rna.data.mock'
+import { demarcheWithPrefectureMock } from './data/demarche-with-prefecture.mock'
 
 export const dsApiClientMock = {
   demarcheDossierWithCustomChamp: jest
@@ -21,6 +22,8 @@ export const dsApiClientMock = {
           return smallDemarcheAndDossierFinancementEtrangerDataMock();
         case 101:
           return demarcheWithRnfAndRnaDataMock;
+        case 102:
+          return demarcheWithPrefectureMock;
         default:
           return null;
       }

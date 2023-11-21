@@ -1,24 +1,27 @@
+<script lang="ts" setup>
+import LayoutBanner from '@/components/Layout/LayoutBanner.vue'
+withDefaults(defineProps<{
+  titleBgColor: string
+  titleIcon: string
+  title: string
+}>(), {
+  titleBgColor: 'var(--background-action-high-beige-gris-galet-active)',
+  titleIcon: 'fr-icon-search-line',
+  title: 'Pas de titre',
+})
+</script>
 <template>
-  <div
-    class="fr-container"
-  >
-    <div class="fr-grid-row">
-      <div class="bn-list-title fr-col-12">
-        <slot name="title" />
-      </div>
-    </div>
-    <div class="bn-list-table fr-col-12">
+  <div class="flex flex-col">
+    <LayoutBanner
+      :title="title"
+      :title-bg-color="titleBgColor"
+      :title-icon="titleIcon"
+    />
+    <div class="flex-grow">
       <slot name="default" />
     </div>
   </div>
 </template>
 
 <style scoped>
-.fr-container {
-  padding: 0;
-}
-
-.bn-list-title {
-  height: 5.5rem;
-}
 </style>

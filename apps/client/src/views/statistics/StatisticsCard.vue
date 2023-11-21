@@ -9,7 +9,6 @@ import OrganismeBadge from '@/components/Badges/OrganismeBadge.vue'
 
 const props = defineProps<{
   filterId: number;
-  demarcheId: number;
 }>()
 
 const card = ref<ICustomFilterStat>()
@@ -26,7 +25,7 @@ const onDelete = () => {
 
 onMounted(async () => {
   if (props.filterId) {
-    card.value = await apiClient.getCustomFilterStats(props.filterId, props.demarcheId)
+    card.value = await apiClient.getCustomFilterStats(props.filterId)
   }
 })
 </script>
@@ -104,8 +103,8 @@ onMounted(async () => {
           class="fr-link fr-icon-arrow-right-line fr-link--icon-right"
           :to="{
             name: 'DemarcheDossiers',
-            params: { id: card?.demarche.id },
-            query: { customFilter: card?.customFilter.id },
+            params: { demarcheId: card?.demarche.id },
+            query: { customDisplayId: card?.customFilter.id },
           }"
         >
           Visualiser la liste

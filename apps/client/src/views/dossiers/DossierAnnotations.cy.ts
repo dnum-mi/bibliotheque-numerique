@@ -7,15 +7,9 @@ import { generateDossierDS } from '@/views/__tests__/dossiers'
 
 describe('<DossierAnnotations />', () => {
   it('renders', () => {
-    const extensions = {
-      use: [
-        VueDsfr,
-      ],
-    }
-
     const datas = generateDossierDS()
 
-    cy.mount(DossierAnnotations, { extensions, props: { datas } })
+    cy.mount(DossierAnnotations, { props: { annotations: datas.annotations } })
 
     cy.get('label').then(($label) => {
       datas.annotations.forEach(({ label, stringValue }, idx) => {

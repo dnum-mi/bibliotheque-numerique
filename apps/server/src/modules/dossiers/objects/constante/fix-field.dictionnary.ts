@@ -6,16 +6,16 @@ import {
   FormatFunctionRef,
   MappingColumn,
 } from '@biblio-num/shared'
-import { Dossier as TDossier } from '@dnum-mi/ds-api-client'
 // eslint-disable-next-line max-len
 import { fixFieldsInstructionTime } from '@/plugins/instruction_time/instruction_times/constante/fix-field-instrucation-times.dictionnary'
 import {
   fixFieldsAmounts,
   fixFieldsExcelChamps,
 } from '@/modules/dossiers/objects/constante/fix-field-excel-champ.dictionnary'
+import { TDossierWithPrefecture } from '@/modules/dossiers/providers/field.service'
 
 type FixFieldValueGetter = (
-  dossier: Partial<TDossier>,
+  dossier: TDossierWithPrefecture,
 ) => string | number | boolean | Date | null
 
 export const fixFields: MappingColumn[] = [
@@ -40,6 +40,7 @@ export const fixFields: MappingColumn[] = [
     originalLabel: 'préfecture',
     type: FieldType.string,
     source: FieldSource.fixField,
+    formatFunctionRef: FormatFunctionRef.prefecture,
   },
   {
     id: '9863ce70-6378-4d7e-aca9-b81fb7b97c11',
@@ -67,7 +68,7 @@ export const fixFields: MappingColumn[] = [
 export const fixFieldValueFunctions: Record<string, FixFieldValueGetter> = {
   '96151176-4624-4706-b861-722d2e53545d': (dossier) => dossier.number,
   '1a4b62c4-b81f-4e83-ac34-f6d601b8a8d4': (dossier) => dossier.state,
-  '9863ce70-6378-4d7e-aca9-b81fb7b97c10': () => 'Unknown',
+  '9863ce70-6378-4d7e-aca9-b81fb7b97c10': (dossier) => dossier.prefecture,
   '9863ce70-6378-4d7e-aca9-b81fb7b97c11': (dossier) => dossier.dateDepot,
   '9863ce70-6378-4d7e-aca9-b81fb7b97c12': (dossier) =>
     dossier.datePassageEnInstruction,

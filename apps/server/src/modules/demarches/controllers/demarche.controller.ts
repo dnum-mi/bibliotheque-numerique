@@ -3,39 +3,28 @@ import {
   Body,
   Controller,
   Get,
-  HttpException,
-  HttpStatus,
-  NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
   Post,
-  Request,
-  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { DemarcheService } from '../providers/services/demarche.service'
-import {
-  PermissionsGuard,
-  RequirePermissions,
-} from '../../roles/providers/permissions.guard'
-import { PermissionName } from '@/shared/types/Permission.type'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { Demarche } from '../objects/entities/demarche.entity'
-import { Dossier } from '../../dossiers/objects/entities/dossier.entity'
 import { DemarcheSynchroniseService } from '../providers/services/demarche-synchronise.service'
-import { Roles, RolesGuard } from '../../roles/providers/roles.guard'
-import { User } from '../../users/entities/user.entity'
 import {
   DemarcheOutputDto,
-  demarcheOutputDtoKeys,
 } from '@/modules/demarches/objects/dtos/demarche-output.dto'
-import { CurrentUser } from '@/modules/users/decorators/current-user.decorator'
-import { SmallDemarcheOutputDto, CreateDemarcheDto } from '@biblio-num/shared'
+import { SmallDemarcheOutputDto, CreateDemarcheDto, Roles, IRole } from '@biblio-num/shared'
 import { UpdateDemarcheDto } from '@/modules/demarches/objects/dtos/update-demarche.dto'
+import { Role } from '@/modules/users/providers/decorators/role.decorator'
+import { CurrentUserRole } from '@/modules/users/providers/decorators/current-user-role.decorator'
+import { CurrentDemarcheInterceptor } from '@/modules/demarches/providers/interceptors/current-demarche.interceptor'
+import { CurrentDemarche } from '@/modules/demarches/providers/decorators/current-demarche.decorator'
 
 @ApiTags('Demarches')
-@UseGuards(PermissionsGuard)
 @Controller('demarches')
 export class DemarcheController {
   constructor(
@@ -46,71 +35,32 @@ export class DemarcheController {
     this.logger.setContext(this.constructor.name)
   }
 
-  @UseGuards(RolesGuard)
-  @Roles('admin')
   @Get('small')
-  async allSmallDemarche(): Promise<SmallDemarcheOutputDto[]> {
+  @Role(Roles.instructor)
+  async allSmallDemarche(@CurrentUserRole() role: IRole): Promise<SmallDemarcheOutputDto[]> {
     this.logger.verbose('allSmallDemarche')
-    return this.demarcheService.repository
-      .find({ select: ['id', 'title', 'dsDataJson', 'types'] })
-      .then((demarches) => {
-        return demarches.map((d) => ({
-          id: d.id,
-          title: d.title,
-          types: d.types,
-          dsId: d.dsDataJson?.number,
-        }))
-      })
+    return this.demarcheService.findMultipleSmallDemarche({}, role)
   }
 
   @Get()
-  @RequirePermissions({ name: PermissionName.ACCESS_DEMARCHE })
-  async getDemarches(@CurrentUser() user: User): Promise<Demarche[]> {
+  @Role(Roles.instructor)
+  async getDemarches(@CurrentUserRole() role: IRole): Promise<Demarche[]> {
     this.logger.verbose('getDemarches')
-    return this.demarcheService.findWithPermissions(user)
+    return this.demarcheService.findMultipleDemarche({}, role)
   }
 
-  @Get(':id')
-  @RequirePermissions({ name: PermissionName.ACCESS_DEMARCHE })
+  @Get(':demarcheId')
+  @Role(Roles.instructor)
+  @UseInterceptors(CurrentDemarcheInterceptor)
   async getDemarcheById(
-    @Request() req,
-    @Param('id', ParseIntPipe) id: number,
+    @CurrentDemarche() demarche: Demarche,
   ): Promise<DemarcheOutputDto> {
     this.logger.verbose('getDemarcheById')
-    const ruleIds = this.demarcheService.getRulesFromUserPermissions(req.user)
-    if (
-      ruleIds &&
-      ruleIds.length > 0 &&
-      !ruleIds.find((ruleId) => ruleId === id)
-    ) {
-      throw new HttpException(
-        `Not authorized access for demarche id: ${id}`,
-        HttpStatus.FORBIDDEN,
-      )
-    }
-
-    return this.demarcheService.findOneOrThrow({
-      where: { id },
-      select: demarcheOutputDtoKeys,
-    })
-  }
-
-  // TODO: delete
-  @Get(':id/deprecated/dossiers')
-  @RequirePermissions({ name: PermissionName.ACCESS_DEMARCHE })
-  async getDemarcheDossiersById(
-    @Param('id', ParseIntPipe) id: number,
-  ): Promise<Dossier[]> {
-    this.logger.verbose('getDemarcheDossiersById')
-    const demarche = await this.demarcheService.findById(id)
-    if (!demarche) {
-      throw new NotFoundException(`Demarche id: ${id} not found`)
-    }
-    return demarche.dossiers
+    return demarche
   }
 
   @Post('create')
-  @Roles('admin') // TODO: superadmin
+  @Role(Roles.sudo)
   async create(@Body() dto: CreateDemarcheDto): Promise<{ message: string }> {
     this.logger.verbose('create')
     await this.demarcheSynchroniseService.createAndSynchronise(
@@ -121,7 +71,7 @@ export class DemarcheController {
   }
 
   @Post('synchro-dossiers')
-  @Roles('admin') // TODO: superadmin
+  @Role(Roles.sudo)
   async synchroDossiers(
     @Body('idDs', ParseIntPipe) idDs: number,
   ): Promise<{ message: string }> {
@@ -131,8 +81,8 @@ export class DemarcheController {
   }
 
   @Patch(':id')
-  @Roles('admin') // TODO: superadmin
-  async updateIdendtication(
+  @Role(Roles.sudo)
+  async updateIdentification(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateDemarcheDto,
   ): Promise<{ message: string }> {

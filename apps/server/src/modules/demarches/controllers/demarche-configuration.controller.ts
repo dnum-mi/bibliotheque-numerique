@@ -1,22 +1,30 @@
-import { Body, Controller, Get, NotFoundException, Param, Patch, UseGuards, UseInterceptors } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  Patch,
+  UseInterceptors,
+} from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { DemarcheService } from '../providers/services/demarche.service'
-import { PermissionsGuard, RequirePermissions } from '../../roles/providers/permissions.guard'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
-import { PermissionName } from '@/shared/types/Permission.type'
 import { CurrentDemarcheInterceptor } from '../providers/interceptors/current-demarche.interceptor'
 import { Demarche } from '../objects/entities/demarche.entity'
 import { CurrentDemarche } from '../providers/decorators/current-demarche.decorator'
-import { MappingColumn, UpdateOneFieldConfigurationDto } from '@biblio-num/shared'
+import {
+  MappingColumn, Roles,
+  UpdateOneFieldConfigurationDto,
+} from '@biblio-num/shared'
+import { Role } from '@/modules/users/providers/decorators/role.decorator'
 
 @ApiTags('Demarches')
 @ApiTags('Configurations')
-@UseGuards(PermissionsGuard) // TODO: only admin can update configuration ?
-@RequirePermissions({ name: PermissionName.ACCESS_DEMARCHE })
 @UseInterceptors(CurrentDemarcheInterceptor)
 @Controller('demarches/:demarcheId/configurations')
 export class DemarcheConfigurationController {
-  constructor (
+  constructor(
     private readonly demarcheService: DemarcheService,
     private readonly logger: LoggerService,
   ) {
@@ -24,20 +32,24 @@ export class DemarcheConfigurationController {
   }
 
   @Get()
-  async getDemarcheConfiguration (@CurrentDemarche() demarche: Partial<Demarche>): Promise<MappingColumn[]> {
+  @Role(Roles.admin)
+  async getDemarcheConfiguration(
+    @CurrentDemarche() demarche: Demarche,
+  ): Promise<MappingColumn[]> {
     this.logger.verbose('getDemarcheConfiguration')
     return demarche.mappingColumns
   }
 
   @Patch(':fieldId')
-  async updateOneFieldConfiguration (
-    @CurrentDemarche() demarche: Partial<Demarche>,
+  @Role(Roles.admin)
+  async updateOneFieldConfiguration(
+    @CurrentDemarche() demarche: Demarche,
     @Param('fieldId') fieldId: string,
     @Body() dto: UpdateOneFieldConfigurationDto,
   ): Promise<boolean> {
     this.logger.verbose('updateOneFieldConfiguration')
     const field = demarche.mappingColumns
-      .map((m) => [m, ...m.children ?? []])
+      .map((m) => [m, ...(m.children ?? [])])
       .flat(1)
       .find((f) => f.id === fieldId)
     if (!field) {

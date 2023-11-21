@@ -1,30 +1,72 @@
+<script lang="ts" setup>
+import { onBeforeUnmount, ref, onMounted } from 'vue'
+
+withDefaults(defineProps<{
+  titleBgColor?: string
+  titleFgColor?: string
+  subtitleBgColor?: string
+  subtitleFgColor?: string
+}>(), {
+  titleBgColor: 'var(--background-default-grey)',
+  titleFgColor: 'var(--text-default-grey)',
+  subtitleBgColor: 'var(--background-default-grey)',
+  subtitleFgColor: 'var(--text-default-grey)',
+})
+
+const mainEl = ref<HTMLElement | null>(null)
+const isAtBottom = ref(true)
+
+const checkBottomScroll = () => {
+  const { scrollHeight, scrollTop, clientHeight } = mainEl.value as HTMLElement
+  isAtBottom.value = scrollHeight - scrollTop === clientHeight
+}
+
+onMounted(() => {
+  mainEl.value?.addEventListener('scroll', checkBottomScroll)
+  setTimeout(checkBottomScroll, 300)
+})
+onBeforeUnmount(() => {
+  mainEl.value?.removeEventListener('scroll', checkBottomScroll)
+})
+</script>
+
 <template>
-  <div>
-    <div class="flex flex-col justify-between w-full h-full">
-      <div class="flex flex-col gap-3 w-full grow">
-        <div class="bn-fiche-title fr-p-3w">
-          <slot name="title" />
-        </div>
-        <div class="bn-fiche-sub-title fr-p-2w">
-          <slot name="sub-title" />
-        </div>
-        <div class="grow">
-          <slot name="content" />
-        </div>
+  <div class="flex  flex-col  justify-between  w-full  h-full  overflow-y-auto">
+    <div
+      ref="mainEl"
+      class="flex  flex-col  gap-3  w-full  h-full  overflow-y-auto"
+    >
+      <div class="bn-fiche-title  fr-p-3w">
+        <slot name="title" />
       </div>
-      <div class="w-full">
-        <slot name="footer" />
+      <div class="bn-fiche-sub-title  fr-p-2w">
+        <slot name="sub-title" />
+      </div>
+      <div>
+        <slot name="content" />
       </div>
     </div>
+    <footer
+      class="footer  w-full  fr-p-2w  text-center"
+      :class="{'raised-top-shadow': !isAtBottom}"
+    >
+      <slot name="footer" />
+    </footer>
   </div>
 </template>
 
 <style scoped>
 .bn-fiche-title {
-  background-color: var(--background-alt-grey);
+  background-color: v-bind(titleBgColor);
+  color: v-bind(titleFgColor);
 }
 
 .bn-fiche-sub-title {
-  background-color: var(--background-alt-grey);
+  background-color: v-bind(subtitleBgColor);
+  color: v-bind(subtitleFgColor);
+}
+
+.footer {
+  transition: all 0.3s ease-in-out;
 }
 </style>

@@ -7,6 +7,8 @@ import type { IDemarche } from '@biblio-num/shared'
 import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import OrganismeBadgesRenderer from '@/components/Badges/OrganismeBadgesRenderer.vue'
+import { routeNames } from '@/router/route-names'
+import LayoutBanner from '@/components/Layout/LayoutBanner.vue'
 
 const demarcheStore = useDemarcheStore()
 const router = useRouter()
@@ -67,7 +69,7 @@ onMounted(async () => {
 })
 
 const selectDemarche = (row:IDemarche[]) => {
-  router.push({ name: 'DemarcheDossiers', params: { id: row[0].id } })
+  router.push({ name: routeNames.DEMARCHE_DOSSIERS, params: { demarcheId: row[0].id } })
 }
 
 const rowStyle = { cursor: 'pointer' }
@@ -75,18 +77,11 @@ const rowStyle = { cursor: 'pointer' }
 </script>
 
 <template>
-  <LayoutList>
-    <template #title>
-      <div class="bn-list-search bn-list-search-demarche">
-        <span
-          class="fr-icon-search-line fr-p-1w"
-          aria-hidden="true"
-        />
-        <h6 class="bn-list-search-title-demarche fr-p-1w fr-m-0">
-          Rechercher une démarche
-        </h6>
-      </div>
-    </template>
+  <LayoutList
+    title="Recherche une démarche"
+    title-bg-color="var(--artwork-minor-blue-france)"
+    title-icon="fr-icon-search-line"
+  >
     <BiblioNumDataTableAgGrid
       :headers="headersJson"
       action-title="Voir les détails de la démarche"

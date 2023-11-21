@@ -11,3 +11,10 @@ export const dateToStringFr = (value: Date | string | number | undefined): strin
     ? (new Date(value)).toLocaleDateString(LOCALE_FOR_DATE_TIME)
     : ''
 }
+
+export const getDateFormatter = (
+  locale: string = LOCALE_FOR_DATE_TIME,
+  options: Intl.DateTimeFormatOptions = { dateStyle: 'long', timeStyle: 'medium' },
+) => (date: Date) => new Intl.DateTimeFormat(locale, options).format(date)
+
+export const formatForMessageDate = getDateFormatter()

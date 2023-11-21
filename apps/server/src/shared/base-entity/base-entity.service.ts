@@ -5,24 +5,33 @@ import { FindOptionsRelations } from 'typeorm/find-options/FindOptionsRelations'
 import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere'
 import { NotFoundException } from '@nestjs/common'
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
+import { FieldTypeKeys, PaginatedDto, PaginationDto } from '@biblio-num/shared'
+import { buildFilterQuery } from '@/shared/utils/common-search.utils'
 
 export abstract class BaseEntityService<T extends BaseEntity = BaseEntity> {
   /* eslint-disable  @typescript-eslint/no-explicit-any */
 
-  constructor (protected readonly repo: Repository<T>, protected readonly logger: LoggerService) {}
+  constructor(
+    protected readonly repo: Repository<T>,
+    protected readonly logger: LoggerService,
+    private readonly fieldTypeHash?: Record<string, FieldTypeKeys>,
+  ) {}
 
   // TODO: repository should not be used outside the service. When refacto is complete, this should be deleted
-  public get repository (): Repository<T> {
+  public get repository(): Repository<T> {
     this.logger.verbose('get repository')
     return this.repo
   }
 
-  async createAndSave (obj: DeepPartial<T>): Promise<T> {
+  async createAndSave(obj: DeepPartial<T>): Promise<T> {
     this.logger.verbose('createAndSave')
     return this.repo.save(this.repo.create(obj))
   }
 
-  async findWithFilter (filter: FindOptionsWhere<T>, relations?: FindOptionsRelations<T>): Promise<T[]> {
+  async findWithFilter(
+    filter: FindOptionsWhere<T>,
+    relations?: FindOptionsRelations<T>,
+  ): Promise<T[]> {
     this.logger.verbose('findWithFilter')
     const query: Record<string, any> = {}
     if (relations) {
@@ -34,12 +43,15 @@ export abstract class BaseEntityService<T extends BaseEntity = BaseEntity> {
     return this.repo.find(query)
   }
 
-  async findAll (relations?: FindOptionsRelations<T>): Promise<T[]> {
+  async findAll(relations?: FindOptionsRelations<T>): Promise<T[]> {
     this.logger.verbose('findAll')
     return this.findWithFilter({}, relations)
   }
 
-  async findOneById (id: number, relations?: FindOptionsRelations<T>): Promise<T> {
+  async findOneById(
+    id: number,
+    relations?: FindOptionsRelations<T>,
+  ): Promise<T> {
     this.logger.verbose('findOneById')
     const query: Record<string, any> = { where: { id } }
     if (relations) {
@@ -49,7 +61,7 @@ export abstract class BaseEntityService<T extends BaseEntity = BaseEntity> {
     return this.repo.findOne(query as FindOneOptions<T>)
   }
 
-  async findOneOrThrow (options: FindOneOptions<T>): Promise<T> {
+  async findOneOrThrow(options: FindOneOptions<T>): Promise<T> {
     const result = await this.repo.findOne(options)
     if (!result) {
       this.logger.debug(`Query object: ${JSON.stringify(options.where)}`)
@@ -58,9 +70,63 @@ export abstract class BaseEntityService<T extends BaseEntity = BaseEntity> {
     return result
   }
 
-  async updateOrThrow(id: number, data: QueryDeepPartialEntity<T>): Promise<boolean>
-  async updateOrThrow(query: FindOptionsWhere<T>, data: QueryDeepPartialEntity<T>): Promise<boolean>
-  async updateOrThrow(idOrQuery: number | FindOptionsWhere<T>, data: QueryDeepPartialEntity<T>): Promise<boolean> {
+  async paginate<Y>(
+    dto: PaginationDto<Y>,
+    specificWhere?: FindOptionsWhere<Y>,
+    specificInlineWhere: string[] = [],
+  ): Promise<PaginatedDto<Y>> {
+    this.logger.verbose('paginate')
+    if (!this.fieldTypeHash) {
+      throw new Error(
+        'You must define a fieldTypeHash to use the paginate method',
+      )
+    }
+    const query = this.repo.createQueryBuilder('o')
+    if (dto.filters) {
+      query.where(buildFilterQuery(dto.filters, this.fieldTypeHash))
+    }
+    this.repository.find()
+    if (specificWhere) {
+      query.andWhere(specificWhere)
+    }
+    if (specificInlineWhere.length) {
+      query.andWhere(specificInlineWhere.join(' AND '))
+    }
+    const count = await query.getCount()
+    if (dto.sorts?.length) {
+      dto.sorts.forEach((sort) => {
+        query.addOrderBy(`o.${sort.key}`, sort.order)
+      })
+    } else {
+      query.addOrderBy('o.id', 'ASC')
+    }
+    query.limit(dto.perPage || 20)
+    query.offset(dto.perPage * (dto.page - 1) || 0)
+    if (dto.columns?.length) {
+      query.select(dto.columns.map((c) => `o.${String(c)}`).concat(['o.id']))
+    }
+    return query.getMany().then((data) => {
+      return {
+        data,
+        total: count,
+      } as unknown as PaginatedDto<Y>
+    })
+  }
+
+  async updateOrThrow(
+    id: number,
+    data: QueryDeepPartialEntity<T>,
+  ): Promise<boolean>
+
+  async updateOrThrow(
+    query: FindOptionsWhere<T>,
+    data: QueryDeepPartialEntity<T>,
+  ): Promise<boolean>
+
+  async updateOrThrow(
+    idOrQuery: number | FindOptionsWhere<T>,
+    data: QueryDeepPartialEntity<T>,
+  ): Promise<boolean> {
     this.logger.verbose('updateOrThrow')
     let query
     if (typeof idOrQuery === 'number') {
@@ -70,7 +136,9 @@ export abstract class BaseEntityService<T extends BaseEntity = BaseEntity> {
     }
     const result = await this.repo.update(query, data)
     if (result.affected === 0) {
-      throw new NotFoundException(`${this.repo.metadata.name} not found for update.`)
+      throw new NotFoundException(
+        `${this.repo.metadata.name} not found for update.`,
+      )
     }
 
     return true

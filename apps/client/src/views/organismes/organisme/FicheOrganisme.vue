@@ -1,14 +1,12 @@
 <script lang="ts" setup>
 import { ref, onMounted, computed } from 'vue'
-import { dateToStringFr } from '@/utils'
+import { dateToStringFr, copyCurrentUrlInClipboard } from '@/utils'
 
 import LayoutFiche from '@/components/Layout/LayoutFiche.vue'
 import ListeDossier from './ListeDossier.vue'
 import OrganismeBadge from '@/components/Badges/OrganismeBadge.vue'
 import InfoContact from '@/components/InfoContact.vue'
 import { type OrganismeIdType, useOrganismeStore } from '@/stores/organisme'
-
-import useToaster from '@/composables/use-toaster'
 
 const props = withDefaults(defineProps<{ id: string; idType: OrganismeIdType }>(), {})
 
@@ -28,21 +26,10 @@ const tabTitles = [
     panelId: 'tab-content-0',
   },
 ]
-const toaster = useToaster()
-const currentUrl = ref(window.location.href)
 const selectedTabIndex = ref(0)
 
 function selectTab (idx: number) {
   selectedTabIndex.value = idx
-}
-
-const copyLink = async () => {
-  try {
-    await navigator.clipboard.writeText(currentUrl.value)
-    toaster.addSuccessMessage({ description: 'Le lien a été copié.' })
-  } catch (error) {
-    toaster.addErrorMessage({ description: "Le lien n'a pas été copié." })
-  }
 }
 
 const isLoading = ref(false)
@@ -65,9 +52,13 @@ onMounted(async () => {
   </div>
   <div
     v-if="organisme && !isLoading"
-    class="flex flex-row gap-8 h-full p-4"
+    class="flex  flex-grow  gap-2  h-full  overflow-auto"
   >
-    <LayoutFiche class="w-1/2">
+    <LayoutFiche
+      class="flex-basis-[60%]  overflow-auto"
+      title-bg-color="var(--grey-200-850)"
+      title-fg-color="var(--text-inverted-grey)"
+    >
       <template #title>
         <OrganismeBadge
           :type="organisme.type"
@@ -109,7 +100,7 @@ onMounted(async () => {
         </div>
       </template>
       <template #content>
-        <div class="w-full h-full">
+        <div class="w-full h-full pl-4">
           <DsfrTabs
             tab-list-name="tabs-fiche"
             :tab-titles="tabTitles"
@@ -137,8 +128,8 @@ onMounted(async () => {
                 <InfoContact
                   :name="organisme.title"
                   :info="organisme.addressLabel"
-                  :emails="organisme.email"
-                  :phones="organisme.phoneNumber"
+                  :email="organisme.email ?? ''"
+                  :phone="organisme.phoneNumber ?? ''"
                 />
               </div>
             </DsfrTabContent>
@@ -146,23 +137,19 @@ onMounted(async () => {
         </div>
       </template>
       <template #footer>
-        <footer class="footer">
-          <div class="flex align-center justify-center fr-card--shadow">
-            <DsfrButton
-              :style="{ width: '50%' }"
-              class="m-4 p-4 flex justify-center"
-              label="Copier le lien"
-              icon="ri-arrow-go-back-fill"
-              :icon-right="true"
-              secondary
-              @click="copyLink()"
-            />
-          </div>
-        </footer>
+        <DsfrButton
+          :style="{ width: '50%' }"
+          class="flex  justify-center"
+          label="Copier le lien"
+          icon="ri-links-line"
+          icon-right
+          secondary
+          @click="copyCurrentUrlInClipboard()"
+        />
       </template>
     </LayoutFiche>
 
-    <div class="w-1/2 flex flex-col">
+    <div class="flex-basis-[40%]  overflow-auto  flex  flex-col">
       <div class="fr-p-3w flex align-center gap-3">
         <div class="bn-icon--green-archipel">
           <span
@@ -180,5 +167,3 @@ onMounted(async () => {
     </div>
   </div>
 </template>
-
-<style scoped></style>

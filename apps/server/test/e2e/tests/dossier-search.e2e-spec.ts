@@ -1,19 +1,18 @@
 import { INestApplication } from '@nestjs/common'
-import { TestingModuleFactory } from '../common/testing-module.factory'
+import { Cookies, TestingModuleFactory } from '../common/testing-module.factory'
 import { dataSource } from '../data-source-e2e.typeorm'
 import * as request from 'supertest'
-import { getAdminCookie } from '../common/get-admin-cookie'
 import * as dayjs from 'dayjs'
 
 describe('Dossier listing', () => {
   let app: INestApplication
-  let adminCookie: string
+  let cookies: Cookies
 
   beforeAll(async () => {
     const testingModule = new TestingModuleFactory()
     await testingModule.init()
     app = testingModule.app
-    adminCookie = await getAdminCookie(app)
+    cookies = testingModule.cookies
   })
 
   afterAll(async () => {
@@ -21,26 +20,46 @@ describe('Dossier listing', () => {
     await dataSource.destroy()
   })
 
-  it('shoud return 403 if not connected', () => {
+  it('Should return 401 if not connected', () => {
     return request(app.getHttpServer())
       .post('/demarches/1/dossiers-search')
+      .send({
+        idDs: 42,
+      })
+      .expect(401)
+  })
+
+  it('Should return 403', () => {
+    return request(app.getHttpServer())
+      .post('/demarches/1/dossiers-search')
+      .set('Cookie', [cookies.norole])
       .send({
         idDs: 42,
       })
       .expect(403)
   })
 
-  it('shoud return 404 if demarche doesnt exist', () => {
+  it('Should return 403 wrong demarche', () => {
+    return request(app.getHttpServer())
+      .post('/demarches/2/dossiers-search')
+      .set('Cookie', [cookies.instructor])
+      .send({
+        idDs: 42,
+      })
+      .expect(403)
+  })
+
+  it('Should return 404 if demarche doesnt exist', () => {
     return request(app.getHttpServer())
       .get('/demarches/13847/dossiers-search')
-      .set('Cookie', [adminCookie])
+      .set('Cookie', [cookies.superadmin])
       .expect(404)
   })
 
   it('Should return 400 if query is empty', () => {
     return request(app.getHttpServer())
       .post('/demarches/1/dossiers-search')
-      .set('Cookie', [adminCookie])
+      .set('Cookie', [cookies.superadmin])
       .expect(400)
   })
 
@@ -51,7 +70,7 @@ describe('Dossier listing', () => {
         page: -1,
         columns: ['I01', 'I02', 'I03'],
       })
-      .set('Cookie', [adminCookie])
+      .set('Cookie', [cookies.superadmin])
       .expect(400)
   })
 
@@ -62,7 +81,7 @@ describe('Dossier listing', () => {
         columns: ['I01', 'I02', 'I03'],
         perPage: 500,
       })
-      .set('Cookie', [adminCookie])
+      .set('Cookie', [cookies.superadmin])
       .expect(400)
   })
 
@@ -73,7 +92,7 @@ describe('Dossier listing', () => {
         columns: ['I01', 'I02', 'I03'],
         sorts: [{ toto: 'I03', order: 'ASC' }],
       })
-      .set('Cookie', [adminCookie])
+      .set('Cookie', [cookies.superadmin])
       .expect(400)
   })
 
@@ -84,7 +103,7 @@ describe('Dossier listing', () => {
         columns: ['I01', 'I02', 'I03'],
         sorts: [{ key: 'I04', order: 'ASC' }],
       })
-      .set('Cookie', [adminCookie])
+      .set('Cookie', [cookies.superadmin])
       .expect(400)
   })
 
@@ -103,7 +122,7 @@ describe('Dossier listing', () => {
           },
         },
       })
-      .set('Cookie', [adminCookie])
+      .set('Cookie', [cookies.superadmin])
       .expect(400)
   })
 
@@ -114,7 +133,7 @@ describe('Dossier listing', () => {
         .send({
           columns: ['I01', 'I02', 'I03', 'I09'],
         })
-        .set('Cookie', [adminCookie])
+        .set('Cookie', [cookies.superadmin])
         // .expect(200)
         .expect(({ body }) => {
           expect(body.total).toEqual(10)
@@ -168,7 +187,7 @@ describe('Dossier listing', () => {
         perPage: 5,
         columns: ['I01', 'I02', 'I03', 'I08', 'I09'],
       })
-      .set('Cookie', [adminCookie])
+      .set('Cookie', [cookies.superadmin])
       .expect(200)
       .expect(({ body }) => {
         expect(body.total).toEqual(10)
@@ -227,7 +246,7 @@ describe('Dossier listing', () => {
         columns: ['I01', 'I02', 'I03', 'I08', 'I09'],
         sorts: [{ key: 'I03', order: 'ASC' }],
       })
-      .set('Cookie', [adminCookie])
+      .set('Cookie', [cookies.superadmin])
       .expect(200)
       .expect(({ body }) => {
         expect(body.total).toEqual(10)
@@ -349,7 +368,7 @@ describe('Dossier listing', () => {
           columns: ['I01', 'I02', 'I03'],
           filters: { I01: badFilter },
         })
-        .set('Cookie', [adminCookie])
+        .set('Cookie', [cookies.superadmin])
         .expect(400)
     })
   })
@@ -369,7 +388,7 @@ describe('Dossier listing', () => {
           },
         },
       })
-      .set('Cookie', [adminCookie])
+      .set('Cookie', [cookies.superadmin])
       .expect(200)
       .then(({ body }) => {
         expect(body.data).toEqual([
@@ -436,7 +455,7 @@ describe('Dossier listing', () => {
           },
         },
       })
-      .set('Cookie', [adminCookie])
+      .set('Cookie', [cookies.superadmin])
       .expect(200)
       .then(({ body }) => {
         expect(body.data).toEqual([
@@ -482,7 +501,7 @@ describe('Dossier listing', () => {
           },
         },
       })
-      .set('Cookie', [adminCookie])
+      .set('Cookie', [cookies.superadmin])
       .expect(200)
       .then(({ body }) => {
         expect(body.data).toEqual([
@@ -526,7 +545,7 @@ describe('Dossier listing', () => {
           },
         },
       })
-      .set('Cookie', [adminCookie])
+      .set('Cookie', [cookies.superadmin])
       .expect(200)
       .then(({ body }) => {
         expect(body.data).toEqual([

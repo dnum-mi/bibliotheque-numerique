@@ -4,10 +4,6 @@ body,
   height: 100%;
 }
 
-.h-full {
-  min-height: 100%;
-}
-
 .ag-theme-alpine {
   --ag-selected-tab-underline-width: 2px;
   --ag-selected-tab-underline-transition-speed: 0.5s;
@@ -18,47 +14,45 @@ body,
 .fr-container {
   max-width: 100%;
 }
-  
 
-/* Style Biblitique Numerique */
-.bn-list-search {
-  height: 100%;
-  display: flex;
-  align-items: center;
+/* Style Bibliothèque Numerique */
+.bn-banner {
+  --at-apply: h-full  flex  items-center  p-4;
+  /* Default colors */
+  --bn-bg-title-banner: var(--grey-200-850);
+  --bn-text-title-banner: var(--background-default-grey);
+ 
+  /* Bg and text colors */
+  background-color: var(--bn-bg-title-banner);
+  color: var(--bn-text-title-banner);
 }
-.bn-list-search-profile {
-  background-color: var(--border-plain-green-bourgeon);
+
+.bn-banner--profile {
+  --bn-bg-title-banner: var(--border-plain-green-bourgeon);
+  --bn-text-title-banner: var(--background-default-grey);
+}
+
+.bn-banner--organisme {
+  --bn-bg-title-banner: var(--artwork-background-red-marianne);
+  --bn-text-title-banner: var(--background-default-grey);
+}
+
+.bn-banner--demarche {
+  --bn-bg-title-banner: var(--artwork-minor-blue-france);
+  --bn-text-title-banner: var(--background-default-grey);
+}
+
+.bn-banner--dossier {
+  --bn-bg-title-banner: var(--artwork-minor-blue-france);
+  --bn-text-title-banner: var(--background-default-grey);
+}
+
+.bn-banner-title {
   color: var(--background-default-grey);
 }
 
-.bn-list-search-organisme {
-  background-color: var(--border-plain-grey);
-  color: var(--background-default-grey);
-}
-
-.bn-list-search-demarche {
-  background-color: var(--artwork-minor-blue-france);
-  color: var(--background-default-grey);
-}
-
-.bn-list-search-dossier {
-  background-color: var(--artwork-minor-blue-france);
-  color: var(--background-default-grey);
-}
-
-.bn-list-search-title-profile {
-  color: var(--background-default-grey);
-}
-
-.bn-list-search-title-organisme {
-  color: var(--background-default-grey);
-}
-
-.bn-list-search-title-demarche {
-  color: var(--background-default-grey);
-}
-
-.bn-list-search-title-dossier {
+.bn-list-admin {
+  background-color: var(--green-tilleul-verveine-sun-418-moon-817);
   color: var(--background-default-grey);
 }
 

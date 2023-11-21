@@ -5,7 +5,7 @@ defineProps<{
     email: string,
     body: string,
     createdAt: string,
-    attachment: {
+    attachment?: {
       url: string,
       filename: string,
       byteSizeBigInt: string,

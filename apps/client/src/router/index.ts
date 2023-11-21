@@ -1,164 +1,46 @@
-import { createRouter, createWebHistory, type RouterOptions } from 'vue-router'
+import type {
+  RouterOptions,
+} from 'vue-router'
+import {
+  createRouter,
+  createWebHistory,
+} from 'vue-router'
 
 import { useUserStore } from '@/stores'
-import { hasAdminAccessGuard, canManageRolesGuard, canAccessDemarchesGuard, isAuthenticatedGuard, isNotAuthenticatedGuard } from '@/shared/guards'
+import {
+  canAccessByRoleGuard,
+  canAccessByDemarcheGuard,
+} from '@/shared/guards'
 
+import { routeNames } from './route-names'
+import type { RolesKeys } from '@biblio-num/shared'
+import { demarchesRoutes } from '@/router/demarches.route'
+import { aboutRoute } from '@/router/about.route'
+import { authRoutes } from '@/router/auth.route'
+import { dossierRoute } from '@/router/dossier.route'
+import { adminRoute } from '@/router/admin.route'
+import { profileRoute } from '@/router/profile.route'
+import { organismeRoute } from '@/router/organisme.route'
+import { passwordRoutes } from '@/router/password.route'
+import { statisticRoute } from '@/router/statistic.route'
 const MAIN_TITLE = 'Bibliothèque Numérique'
 
 export const SIGN_IN_ROUTE_NAME = 'SignIn'
 
 const routes: RouterOptions['routes'] = [
-  {
-    name: 'Home',
-    path: '/',
-    meta: {
-      needsAuth: true,
-    },
-    redirect: { name: 'Demarches' },
-    children: [],
-  },
-  {
-    name: 'About',
-    path: '/a-propos',
-    component: () => import('@/views/AboutUs.vue'),
-  },
-  {
-    name: 'Dossiers',
-    path: '/dossiers/:id',
-    component: () => import('@/views/dossiers/Dossier.vue'),
-    meta: {
-      needsAuth: true,
-    },
-  },
-  {
-    path: '/demarches',
-    beforeEnter: [canAccessDemarchesGuard],
-    children: [
-      {
-        path: '',
-        name: 'Demarches',
-        component: () => import('@/views/demarches/Demarches.vue'),
-      },
-      {
-        path: ':id/dossiers',
-        name: 'DemarcheDossiers',
-        component: () => import('@/views/demarches/demarche/Demarche.vue'),
-        props: (route) => ({
-          id: route.params.id,
-          customDisplayId: route.query.customDisplayId,
-        }),
-        meta: {
-          needsAuth: true,
-        },
-      },
-    ],
-  },
-  {
-    name: SIGN_IN_ROUTE_NAME,
-    path: '/sign_in',
-    beforeEnter: [isNotAuthenticatedGuard],
-    component: () => import('@/views/Signin.vue'),
-  },
-  {
-    name: 'SignUp',
-    path: '/sign_up',
-    beforeEnter: [isNotAuthenticatedGuard],
-    component: () => import('@/views/Signup.vue'),
-  },
-  {
-    name: 'Profile',
-    path: '/profile',
-    component: () => import('@/views/Profile.vue'),
-    meta: {
-      needsAuth: true,
-    },
-  },
-  {
-    name: 'Statistiques',
-    path: '/statistiques',
-    component: () => import('@/views/statistics/Statistics.vue'),
-    meta: {
-      needsAuth: true,
-    },
-  },
-  {
-    name: 'LogOut',
-    path: '/logout',
-    component: () => import('@/views/Logout.vue'),
-    meta: {
-      needsAuth: true,
-    },
-  },
-  {
-    name: 'User',
-    path: '/user/:id',
-    beforeEnter: [hasAdminAccessGuard],
-    component: () => import('@/views/admin/User.vue'),
-  },
-  {
-    name: 'Admin',
-    path: '/admin',
-    beforeEnter: [canManageRolesGuard],
-    component: () => import('@/views/admin/Admin.vue'),
-  },
-  {
-    name: 'Role',
-    path: '/role/:id',
-    beforeEnter: [canManageRolesGuard],
-    component: () => import('@/views/admin/Role.vue'),
-    props: (route) => ({
-      id: Number(route.params.id),
-    }),
-  },
-  {
-    name: 'Organismes',
-    path: '/organismes',
-    meta: {
-      needsAuth: true,
-    },
-    children: [
-      {
-        name: 'ListeOrganismes',
-        path: '',
-        component: () => import('@/views/organismes/list/ListeOrganismes.vue'),
-      },
-      {
-        name: 'FicheOrganisme',
-        path: ':id',
-        component: () => import('@/views/organismes/organisme/FicheOrganisme.vue'),
-        props: (route) => {
-          const id = route.params.id
-          const idType = route.query.idType || 'Id'
-          return {
-            id,
-            idType,
-          }
-        },
-      },
-    ],
-  },
-  {
-    path: '/update-password/:token',
-    name: 'UpdatePassword',
-    component: () => import('@/views/UpdatePassword.vue'),
-    props: true,
-  },
-  {
-    path: '/reset-password',
-    name: 'ResetPassword',
-    component: () => import('@/views/ResetPassword.vue'),
-  },
+  demarchesRoutes,
+  dossierRoute,
+  organismeRoute,
+  adminRoute,
+  aboutRoute,
+  profileRoute,
+  statisticRoute,
+  ...authRoutes,
+  ...passwordRoutes,
   {
     path: '/:pathMatch(.*)*',
-    name: '404',
+    name: routeNames.Page_404,
     component: () => import('@/views/Error404.vue'),
-  },
-  {
-    path: '/valid-email/:token',
-    name: 'ValidEmail',
-    component: () => import('@/views/ValidEmail.vue'),
-    props: true,
-
   },
 ]
 
@@ -167,19 +49,28 @@ const router = createRouter({
   routes,
 })
 
-router.beforeEach((to) => { // Cf. https://github.com/vueuse/head pour des transformations avancées de Head
+router.beforeEach(async (to, from) => {
+  // Cf. https://github.com/vueuse/head pour des transformations avancées de Head
   const specificTitle = to.meta.title ? `${to.meta.title} - ` : ''
   document.title = `${specificTitle}${MAIN_TITLE}`
-})
 
-router.beforeEach(async (to, from) => {
   const userStore = useUserStore()
-  if (!userStore.loaded) {
-    await userStore.loadCurrentUser()
+  if (to.name === routeNames.PROFILE || (!to.meta.skipAuth && !userStore.isAuthenticated)) {
+    await userStore.loadMyProfile()
   }
-  if (to.meta?.needsAuth) {
-    return isAuthenticatedGuard()
-  }
+
+  const role = userStore.currentUser?.role
+  if (canAccessByRoleGuard(
+          to.meta?.roleLevel as RolesKeys | undefined,
+          role?.label as RolesKeys | undefined,
+  ) &&
+    canAccessByDemarcheGuard(
+      to.meta?.needsDemarchesId as boolean | undefined,
+      to.params?.demarcheId as string | undefined,
+      role,
+    )
+  ) return true
+  return { name: routeNames.PROFILE }
 })
 
 export default router
