@@ -10,6 +10,10 @@ describe('users (e2e)', () => {
   let cookies: Cookies
   let user5OriginalRole: IRole
 
+  const resetUser5 = async (): Promise<void> => {
+    await userService.repository.update({ id: 5 }, { role: user5OriginalRole })
+  }
+
   beforeAll(async () => {
     const testingModule = new TestingModuleFactory()
     await testingModule.init()
@@ -17,10 +21,6 @@ describe('users (e2e)', () => {
     userService = await app.resolve(UserService)
     cookies = testingModule.cookies
     user5OriginalRole = (await userService.findOneById(5)).role
-  })
-  // reset user 5 role as before
-  afterEach(async () => {
-    await userService.repository.update({ id: 5 }, { role: user5OriginalRole })
   })
 
   afterAll(async () => {
@@ -140,6 +140,8 @@ describe('users (e2e)', () => {
   })
 
   describe('PATCH /users/:targetUserId/role', () => {
+    afterEach(resetUser5)
+
     it('Should return error 401', async () => {
       await request(app.getHttpServer()) //
         .patch('/users/1/role')
@@ -287,6 +289,8 @@ describe('users (e2e)', () => {
   })
 
   describe('PUT /users/:targetUserId/role', () => {
+    afterEach(resetUser5)
+
     it('Should return error 401', async () => {
       await request(app.getHttpServer()) //
         .put('/users/1/role')
@@ -330,6 +334,8 @@ describe('users (e2e)', () => {
   })
 
   describe('DELETE /users/:targetUserId/role', () => {
+    afterEach(resetUser5)
+
     it('Should return error 401', async () => {
       await request(app.getHttpServer()) //
         .delete('/users/1/role')

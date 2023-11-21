@@ -16,12 +16,15 @@ import {
   FieldTypeKeys,
   FormatFunctionRef,
   FormatFunctionRefKeys,
-  MappingColumn, PrefectureKeys,
+  MappingColumn,
+  PrefectureKeys,
 } from '@biblio-num/shared'
 import { RawChamp } from '@/shared/types/raw-champ.type'
 import { PieceJustificativeChamp } from '@dnum-mi/ds-api-client'
 
-export type TDossierWithPrefecture = Partial<TDossier> & {prefecture: PrefectureKeys}
+export type TDossierWithPrefecture = Partial<TDossier> & {
+  prefecture?: PrefectureKeys
+}
 
 @Injectable()
 export class FieldService extends BaseEntityService<Field> {
@@ -33,9 +36,7 @@ export class FieldService extends BaseEntityService<Field> {
     this.logger.setContext(this.constructor.name)
   }
 
-  static giveString(
-    champ: RawChamp,
-  ): string {
+  static giveString(champ: RawChamp): string {
     if (champ.__typename === DsChampType.PieceJustificativeChamp) {
       return (champ as unknown as PieceJustificativeChamp).file?.url ?? ''
     } else {
@@ -239,9 +240,12 @@ export class FieldService extends BaseEntityService<Field> {
     })
   }
 
-  private async _queryGiveFieldType(
-    fieldsId: string[],
-  ): Promise<{ sourceId: string; type: FieldTypeKeys }[]> {
+  private async _queryGiveFieldType(fieldsId: string[]): Promise<
+    {
+      sourceId: string
+      type: FieldTypeKeys
+    }[]
+  > {
     return this.repo
       .createQueryBuilder()
       .select('"sourceId"')
