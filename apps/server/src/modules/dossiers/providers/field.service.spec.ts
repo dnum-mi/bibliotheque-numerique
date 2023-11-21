@@ -1,8 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { loggerServiceMock } from '../../../../test/mock/logger-service.mock'
-import { FieldService } from './field.service'
-import { Dossier as TDossier } from '@dnum-mi/ds-api-client/dist/@types/types'
+import { FieldService, TDossierWithPrefecture } from './field.service'
 import { fixFields } from '../objects/constante/fix-field.dictionnary'
 import { FieldSource, FieldType, FormatFunctionRef, MappingColumn } from '@biblio-num/shared'
 import { Field } from '../objects/entities/field.entity'
@@ -139,8 +138,8 @@ const expectClassicalFixFields = (status?: string) => [
     label: 'préfecture',
     type: 'string',
     fieldSource: 'fix-field',
-    formatFunctionRef: undefined,
-    stringValue: 'Unknown',
+    formatFunctionRef: FormatFunctionRef.prefecture,
+    stringValue: '',
     dateValue: null,
     numberValue: null,
     dossierId: 42,
@@ -187,7 +186,7 @@ describe('FieldService', () => {
       datePassageEnInstruction: dayjs('2022-10-13T10:04:29').toISOString(),
       datePassageEnConstruction: dayjs('2022-10-13T10:04:29').toISOString(),
     }
-    const fields = await service.overwriteFieldsFromDataJson(raw as Partial<TDossier>, 42, fakeMappingColumnHash)
+    const fields = await service.overwriteFieldsFromDataJson(raw as TDossierWithPrefecture, 42, fakeMappingColumnHash)
     expect(fields).toEqual([
       ...expectClassicalFixFields(),
       ...expectedFixFieldsDates(42, raw.dateDepot, raw.datePassageEnInstruction, raw.datePassageEnConstruction),
@@ -211,7 +210,7 @@ describe('FieldService', () => {
         },
       ],
     }
-    const fields = await service.overwriteFieldsFromDataJson(raw as Partial<TDossier>, 42, fakeMappingColumnHash)
+    const fields = await service.overwriteFieldsFromDataJson(raw as TDossierWithPrefecture, 42, fakeMappingColumnHash)
     expect(fields).toMatchObject([
       ...expectClassicalFixFields(),
       ...expectedFixFieldsDates(42),
@@ -249,7 +248,7 @@ describe('FieldService', () => {
         },
       ],
     }
-    const fields = await service.overwriteFieldsFromDataJson(raw as Partial<TDossier>, 42, fakeMappingColumnHash)
+    const fields = await service.overwriteFieldsFromDataJson(raw as TDossierWithPrefecture, 42, fakeMappingColumnHash)
     expect(fields).toMatchObject([
       ...expectClassicalFixFields(),
       ...expectedFixFieldsDates(42),
@@ -284,7 +283,7 @@ describe('FieldService', () => {
         },
       ],
     }
-    const fields = await service.overwriteFieldsFromDataJson(raw as Partial<TDossier>, 42, fakeMappingColumnHash)
+    const fields = await service.overwriteFieldsFromDataJson(raw as TDossierWithPrefecture, 42, fakeMappingColumnHash)
     expect(fields).toMatchObject([
       ...expectClassicalFixFields(),
       ...expectedFixFieldsDates(42),
@@ -378,7 +377,7 @@ describe('FieldService', () => {
         },
       ],
     }
-    const fields = await service.overwriteFieldsFromDataJson(raw as Partial<TDossier>, 42, fakeMappingColumnHash)
+    const fields = await service.overwriteFieldsFromDataJson(raw as TDossierWithPrefecture, 42, fakeMappingColumnHash)
     expect(fields).toMatchObject([
       ...expectClassicalFixFields(raw.state),
       ...expectedFixFieldsDates(42),

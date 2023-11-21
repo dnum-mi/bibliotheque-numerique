@@ -17,6 +17,7 @@ import { FieldService } from '@/modules/dossiers/providers/field.service'
 import { DemarcheService } from '@/modules/demarches/providers/services/demarche.service'
 import { In } from 'typeorm'
 import { InstructionTimesService } from '@/plugins/instruction_time/instruction_times/instruction_times.service'
+import { FormatFunctionRef } from '@biblio-num/shared'
 
 const expectedFixFieldsTotalAmount = (): Partial<Field>[] => [
   {
@@ -474,8 +475,8 @@ describe('Syncronisation ', () => {
             label: 'préfecture',
             type: 'string',
             fieldSource: 'fix-field',
-            formatFunctionRef: null,
-            stringValue: 'Unknown',
+            formatFunctionRef: FormatFunctionRef.prefecture,
+            stringValue: '',
             dateValue: null,
             numberValue: null,
             parentRowIndex: null,

@@ -182,6 +182,7 @@ describe('Generating demarche mapping columns', () => {
         columnLabel: 'Préfecture',
         id: '9863ce70-6378-4d7e-aca9-b81fb7b97c10',
         originalLabel: 'préfecture',
+        formatFunctionRef: FormatFunctionRef.prefecture,
         source: 'fix-field',
         type: 'string',
       },
