@@ -15,7 +15,7 @@ import { IUser, IRole } from '@biblio-num/shared'
 
 const defaultRole: IRole = {
   label: null,
-  options: [],
+  options: {},
 }
 
 @Entity({ name: 'users' })

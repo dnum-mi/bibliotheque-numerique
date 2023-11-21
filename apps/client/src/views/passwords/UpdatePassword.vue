@@ -5,6 +5,7 @@ import { useRouter } from 'vue-router'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useField, useForm } from 'vee-validate'
 import { z } from 'zod'
+
 import { DsfrAlert } from '@gouvminint/vue-dsfr'
 
 import apiClient from '@/api/api-client'
@@ -13,6 +14,7 @@ import { passwordValidator } from '@/utils/password.validator'
 import useToaster from '@/composables/use-toaster'
 import ToggleInputPassword from '@/components/ToggleInputPassword.vue'
 import { routeNames } from '@/router/route-names'
+import PasswordHint from '@/components/PasswordHint.vue'
 
 const props = defineProps<{ token: string }>()
 
@@ -47,7 +49,7 @@ const onSubmit = handleSubmit(async () => {
   alertDescription.value = 'Votre mot de passe a été changé.'
   alertType.value = 'success'
   toaster.addSuccessMessage({ description: 'Votre mot de passe a été changé.' })
-  router.push({ name: routeNames.HOME })
+  router.push({ name: routeNames.DEMARCHES })
 })
 
 const onCloseAlert = () => {

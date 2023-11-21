@@ -81,7 +81,7 @@ const statisticsQuickLink: QuickLink = {
 
 const manageRolesQuickLink = {
   label: 'Administration',
-  to: { name: routeNames.ADMIN },
+  to: { name: routeNames.LIST_USERS },
   icon: 'ri-shield-star-line',
   iconAttrs: { title: 'Administration', ...iconPropsRedColor },
 }
