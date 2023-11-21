@@ -42,7 +42,7 @@ describe('Home', () => {
 
     }, { body: noRoleUserSelected }).as('userSelected444')
 
-    cy.visit('/user/444')
+    cy.visit('/admin/user/444')
     cy.wait('@me')
     cy.wait('@userSelected444')
     cy.get('[type=radio]').should('not.be.checked')

@@ -64,6 +64,7 @@ import { ErrorvalidateEmail } from './ErrorValidEmail'
 import { routeNames } from '../router/route-names'
 import router from '@/router'
 import { useUserStore } from '@/stores'
+import type { RouteLocationMatched, RouteLocationRaw } from 'vue-router'
 
 const updatePasswordFeedback = {
   401: 'Le token est absent, veuillez fournir un token valide',
@@ -93,7 +94,11 @@ apiClientInstance.interceptors.response.use(r => r, (error) => {
   if (error.response.status === 401) {
     toaster.addMessage({ id: 'auth', type: 'warning', description: 'Vous n’êtes plus connecté, veuillez vous réauthentifier' })
     useUserStore().forceResetUser()
-    router.push({ name: routeNames.SIGNIN, query: { redirect: location.href.replace(location.origin, '') } })
+    const routeTo: RouteLocationRaw = { name: routeNames.SIGNIN }
+    if (!router.currentRoute.value.meta.skipAuth) {
+      routeTo.query = { redirect: location.href.replace(location.origin, '') }
+    }
+    router.push(routeTo)
     return null
   }
   if (error.response.status === 403) {
