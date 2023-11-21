@@ -15,11 +15,30 @@ import { RnaService } from '@/modules/organismes/providers/rna.service'
 import { rnaServiceMock } from '../../mock/rna-service/rna-service.mock'
 import { ExcelService } from '@/modules/dossiers/providers/excel.service'
 import { excelServiceMock } from '../../mock/excel-service/excel-service.mock'
+import { RolesKeys } from '@biblio-num/shared'
+import { getAnyCookie } from './get-any-cookie'
+
+export type Cookies = Record<RolesKeys | 'norole', string>
 
 export class TestingModuleFactory {
   app: INestApplication
   mailerService = mailerServiceMock
   fileService: FileService
+  _cookies: Cookies
+
+  get cookies (): Cookies {
+    return this._cookies
+  }
+
+  private async _setCookies (): Promise<void> {
+    this._cookies = {
+      sudo: await getAnyCookie(this.app, 'sudo@localhost.com'),
+      superadmin: await getAnyCookie(this.app, 'superadmin@localhost.com'),
+      admin: await getAnyCookie(this.app, 'admin1@localhost.com'),
+      instructor: await getAnyCookie(this.app, 'instructor1@localhost.com'),
+      norole: await getAnyCookie(this.app, 'norole@localhost.com'),
+    } as Cookies
+  }
 
   async init (): Promise<void> {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -43,5 +62,6 @@ export class TestingModuleFactory {
     await configMain(this.app)
     this.fileService = moduleFixture.get<FileService>(FileService)
     await this.app.init()
+    await this._setCookies()
   }
 }

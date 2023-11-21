@@ -17,8 +17,11 @@ import { FileService } from '../../files/providers/file.service'
 import { FieldService } from './field.service'
 import { InstructionTimesService } from '@/plugins/instruction_time/instruction_times/instruction_times.service'
 import { Demarche } from '../../demarches/objects/entities/demarche.entity'
-import { isFileChamp, isRepetitionChamp } from '@/shared/modules/ds-api/objects/ds-champ.utils'
-import { IdentificationDemarche } from '@biblio-num/shared'
+import {
+  isFileChamp,
+  isRepetitionChamp,
+} from '@/shared/modules/ds-api/objects/ds-champ.utils'
+import { IdentificationDemarche, Prefecture, PrefectureKeys } from '@biblio-num/shared'
 import { DsChampType } from '@/shared/modules/ds-api/objects/ds-champ-type.enum'
 import { OrganismeService } from '@/modules/organismes/providers/organisme.service'
 import { Field } from '@/modules/dossiers/objects/entities/field.entity'
@@ -26,7 +29,7 @@ import { ExcelFieldService } from '@/modules/dossiers/providers/excel-field.serv
 
 @Injectable()
 export class DossierSynchroniseService extends BaseEntityService<Dossier> {
-  constructor (
+  constructor(
     @InjectRepository(Dossier) protected readonly repo: Repository<Dossier>,
     protected readonly logger: LoggerService,
     private configService: ConfigService,
@@ -41,7 +44,7 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
   }
 
   /* region private */
-  private async copyDsFile (file: TFile): Promise<string> {
+  private async copyDsFile(file: TFile): Promise<string> {
     this.logger.verbose('copyDsFile')
     const copy = await this.fileService.copyRemoteFile(
       file.url,
@@ -50,12 +53,12 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
       file.contentType,
       file.filename,
     )
-    return `${this.configService.get('protocol')}://${this.configService.get('appHost')}${this.configService.get(
-      'appPath',
-    )}/files/${copy.id}`
+    return `${this.configService.get('protocol')}://${this.configService.get(
+      'appHost',
+    )}${this.configService.get('appPath')}/files/${copy.id}`
   }
 
-  private async _formatFileMessage (originalMessage: Message): Promise<Message> {
+  private async _formatFileMessage(originalMessage: Message): Promise<Message> {
     this.logger.debug('_formatFileMessage')
     const message = { ...originalMessage }
     if (originalMessage.attachments?.length) {
@@ -68,7 +71,7 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
     return message
   }
 
-  private async _formatFileChamp (originalChamp: Champ): Promise<Champ> {
+  private async _formatFileChamp(originalChamp: Champ): Promise<Champ> {
     this.logger.debug(`_formatFileChamp (${originalChamp.label})`)
     const champ = { ...originalChamp }
     // eslint-disable-next-line dot-notation
@@ -76,7 +79,9 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
     if (isFileChamp(originalChamp)) {
       const fileChamp = originalChamp as PieceJustificativeChamp
       if (fileChamp.files?.length || fileChamp.file) {
-        const files = [...(fileChamp.files ?? []), ...[fileChamp.file]].filter((a) => !!a)
+        const files = [...(fileChamp.files ?? []), ...[fileChamp.file]].filter(
+          (a) => !!a,
+        )
         await Promise.all(
           files.map(async (file) => {
             file.url = await this.copyDsFile(file)
@@ -88,46 +93,93 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
       rChamp.rows = await Promise.all(
         rChamp.rows.map(async (row) => ({
           ...row,
-          champs: await Promise.all(row.champs.map(async (champ: Champ) => await this._formatFileChamp(champ))),
+          champs: await Promise.all(
+            row.champs.map(
+              async (champ: Champ) => await this._formatFileChamp(champ),
+            ),
+          ),
         })),
       )
     }
     return champ
   }
 
-  private async _formatFileData (dossier: TDossier): Promise<TDossier> {
+  private async _formatFileData(dossier: TDossier): Promise<TDossier> {
     this.logger.verbose('_formatFileData')
     return {
       ...dossier,
-      champs: await Promise.all(dossier.champs.map(async (champ: Champ) => await this._formatFileChamp(champ))),
-      annotations: await Promise.all(
-        dossier.annotations.map(async (champ: Champ) => await this._formatFileChamp(champ)),
+      champs: await Promise.all(
+        dossier.champs.map(
+          async (champ: Champ) => await this._formatFileChamp(champ),
+        ),
       ),
-      messages: await Promise.all(dossier.messages.map(async (message) => await this._formatFileMessage(message))),
+      annotations: await Promise.all(
+        dossier.annotations.map(
+          async (champ: Champ) => await this._formatFileChamp(champ),
+        ),
+      ),
+      messages: await Promise.all(
+        dossier.messages.map(
+          async (message) => await this._formatFileMessage(message),
+        ),
+      ),
     }
   }
 
-  private async _linkOrganisme (idDossier: number, fields: Field[]): Promise<void> {
+  private async _linkOrganisme(
+    idDossier: number,
+    fields: Field[],
+  ): Promise<void> {
     this.logger.verbose('_linkOrganisme')
     for (const field of fields) {
-      if (field.dsChampType === DsChampType.RnfChamp && field.stringValue.length) {
-        const idOrganisme = await this.organismeService.associateOrganismeFromRnf(field.stringValue)
-        await this.repo.update({ id: idDossier }, { organisme: { id: idOrganisme } })
+      if (
+        field.dsChampType === DsChampType.RnfChamp &&
+        field.stringValue.length
+      ) {
+        const idOrganisme =
+          await this.organismeService.associateOrganismeFromRnf(
+            field.stringValue,
+          )
+        await this.repo.update(
+          { id: idDossier },
+          { organisme: { id: idOrganisme } },
+        )
         break
       }
-      if (field.dsChampType === DsChampType.RnaChamp && field.stringValue.length) {
-        const idOrganisme = await this.organismeService.associateOrganismeFromRna(field.stringValue)
-        await this.repo.update({ id: idDossier }, { organisme: { id: idOrganisme } })
+      if (
+        field.dsChampType === DsChampType.RnaChamp &&
+        field.stringValue.length
+      ) {
+        const idOrganisme =
+          await this.organismeService.associateOrganismeFromRna(
+            field.stringValue,
+          )
+        await this.repo.update(
+          { id: idDossier },
+          { organisme: { id: idOrganisme } },
+        )
         break
       }
     }
+  }
+
+  private _findPrefecture(dossier: TDossier): PrefectureKeys | null {
+    this.logger.verbose('_findPrefecture')
+    const label = dossier.groupeInstructeur?.label ?? ''
+    const startLabel = label.split('-')?.[0].trim() ?? ''
+    const finalLabel = 'D' + startLabel
+    return Prefecture[finalLabel] ? finalLabel : null
   }
 
   /* endregion */
 
-  async synchroniseOneDossier (originalJsonDossier: TDossier, demarche: Demarche): Promise<void> {
+  async synchroniseOneDossier(
+    originalJsonDossier: TDossier,
+    demarche: Demarche,
+  ): Promise<void> {
     this.logger.verbose('synchroniseOneDossier')
     const jsonDossier = await this._formatFileData(originalJsonDossier)
+    const prefecture = this._findPrefecture(jsonDossier)
     const upsert = await this.repo.upsert(
       {
         demarche: { id: demarche.id },
@@ -135,7 +187,7 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
         dsDataJson: jsonDossier,
         state: jsonDossier.state,
         dateDepot: jsonDossier.dateDepot,
-        prefecture: 'unknown',
+        prefecture,
       },
       {
         conflictPaths: ['sourceId', 'demarche'],
@@ -143,11 +195,15 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
       },
     )
     const id = upsert.identifiers[0].id
-    const fields = await this.fieldService.overwriteFieldsFromDataJson(jsonDossier, id, demarche.mappingColumns)
+    const fields = await this.fieldService.overwriteFieldsFromDataJson(
+      { ...jsonDossier, prefecture }, // TODO: find a more elegant way to have prefecture
+      id,
+      demarche.mappingColumns,
+    )
     try {
       await this._linkOrganisme(id, fields)
     } catch (e) {
-      this.logger.error('Couldnt link organisme to this dossier.')
+      this.logger.error('Couldn\'t link organisme to this dossier.')
       this.logger.error(e)
     }
     if (demarche.identification === IdentificationDemarche.FE) {
@@ -156,6 +212,8 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
       await this.excelFieldService.proccessByDossierId(id)
     }
 
-    this.logger.log(`Successfully synchronised dossier ${id} (dsId: ${jsonDossier.number})`)
+    this.logger.log(
+      `Successfully synchronised dossier ${id} (dsId: ${jsonDossier.number})`,
+    )
   }
 }

@@ -9,7 +9,7 @@ export interface IOrganisme {
   email: string
   phoneNumber: string
   dateCreation: Date
-  dateDissolution: Date
+  dateDissolution?: Date | null
   idRna: string | null
   rnaJson: IRnaOutput | null
   idRnf: string | null

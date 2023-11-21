@@ -12,6 +12,7 @@ import DemarcheConfigurations from '@/views/demarches/demarche/configuration/Dem
 import LayoutList from '@/components/Layout/LayoutList.vue'
 import type { DsfrTabItemProps } from '@gouvminint/vue-dsfr/types/components/DsfrTabs/DsfrTabItem.vue'
 import DemarcheDossiers from '@/views/demarches/demarche/dossiers/DemarcheDossiers.vue'
+import LayoutBanner from '@/components/Layout/LayoutBanner.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -19,11 +20,11 @@ const demarcheStore = useDemarcheStore()
 const userStore = useUserStore()
 
 const demarche = computed<IDemarche | undefined>(() => demarcheStore.currentDemarche)
-const props = defineProps<{ id: string, customDisplayId?: string }>()
+const props = defineProps<{ demarcheId: string, customDisplayId?: string }>()
 
 onMounted(async () => {
-  if (props.id) {
-    await demarcheStore.getDemarche(Number(props.id))
+  if (props.demarcheId) {
+    await demarcheStore.getDemarche(Number(props.demarcheId))
   }
 })
 
@@ -62,15 +63,10 @@ onMounted(() => {
   <LayoutList
     v-if="demarche"
     class="fr-pb-2w"
+    :title="`${demarche.title} - N°${demarche.dsDataJson?.number || ''}`"
+    title-bg-color="var(--artwork-minor-blue-france)"
+    title-icon=""
   >
-    <template #title>
-      <div class="bn-list-search bn-list-search-dossier">
-        <h6 class="bn-list-search-title-dossier fr-p-1w fr-m-0">
-          {{ demarche.title }} - N° {{ demarche.dsDataJson?.number || "" }}
-        </h6>
-      </div>
-    </template>
-
     <DsfrTabs
       :key="selectedTabIndex"
       tab-list-name="tabs-dossier"

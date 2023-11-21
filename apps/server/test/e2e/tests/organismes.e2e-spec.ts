@@ -1,10 +1,10 @@
 import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
 import { dataSource } from '../data-source-e2e.typeorm'
-import { TestingModuleFactory } from '../common/testing-module.factory'
-import { getUserCookie } from '../common/get-user-cookie'
+import { Cookies, TestingModuleFactory } from '../common/testing-module.factory'
 import { PaginationDto } from '@biblio-num/shared'
 import { Organisme } from '@/modules/organismes/objects/organisme.entity'
+import { OrganismeService } from '@/modules/organismes/providers/organisme.service'
 
 // those object matches fixtures
 const renault = {
@@ -58,13 +58,15 @@ const bmw = {
 
 describe('Organismes (e2e)', () => {
   let app: INestApplication
-  let cookie: string
+  let cookies: Cookies
+  let organismeService: OrganismeService
 
   beforeAll(async () => {
     const testingModule = new TestingModuleFactory()
     await testingModule.init()
     app = testingModule.app
-    cookie = await getUserCookie(app, 'test.demarche.2@localhost.com')
+    organismeService = await app.resolve(OrganismeService)
+    cookies = testingModule.cookies
   })
 
   afterAll(async () => {
@@ -73,28 +75,35 @@ describe('Organismes (e2e)', () => {
   })
 
   describe('GET /organismes/:id', () => {
+    it('Should give 401', async () => {
+      return request(app.getHttpServer()).get('/organismes/1').expect(401)
+    })
+
     it('Should give 403', async () => {
-      return request(app.getHttpServer()).get('/organismes/1').expect(403)
+      return request(app.getHttpServer())
+        .get('/organismes/1')
+        .set('Cookie', [cookies.norole])
+        .expect(403)
     })
 
     it('Should give 404', async () => {
       return request(app.getHttpServer())
         .get('/organismes/1234')
-        .set('Cookie', [cookie])
+        .set('Cookie', [cookies.instructor])
         .expect(404)
     })
 
     it('Should give 400', async () => {
       return request(app.getHttpServer())
         .get('/organismes/undefined')
-        .set('Cookie', [cookie])
+        .set('Cookie', [cookies.instructor])
         .expect(400)
     })
 
     it('Should get an organisme', async () => {
       return request(app.getHttpServer())
         .get('/organismes/2')
-        .set('Cookie', [cookie])
+        .set('Cookie', [cookies.instructor])
         .expect(200)
         .then(({ body }) => {
           expect(body).toMatchObject(renault)
@@ -103,30 +112,37 @@ describe('Organismes (e2e)', () => {
   })
 
   describe('GET /organismes/rna/:id', () => {
+    it('Should give 401', async () => {
+      return request(app.getHttpServer())
+        .get('/organismes/rna/W001')
+        .expect(401)
+    })
+
     it('Should give 403', async () => {
       return request(app.getHttpServer())
         .get('/organismes/rna/W001')
+        .set('Cookie', [cookies.norole])
         .expect(403)
     })
 
     it('Should give 404', async () => {
       return request(app.getHttpServer())
         .get('/organismes/rna/w1234')
-        .set('Cookie', [cookie])
+        .set('Cookie', [cookies.instructor])
         .expect(404)
     })
 
     it('Should give 400', async () => {
       return request(app.getHttpServer())
         .get('/organismes/rna')
-        .set('Cookie', [cookie])
+        .set('Cookie', [cookies.instructor])
         .expect(400)
     })
 
     it('Should get an organisme', async () => {
       return request(app.getHttpServer())
         .get('/organismes/rna/W001')
-        .set('Cookie', [cookie])
+        .set('Cookie', [cookies.instructor])
         .expect(200)
         .then(({ body }) => {
           expect(body).toMatchObject(bmw)
@@ -135,29 +151,36 @@ describe('Organismes (e2e)', () => {
   })
 
   describe('GET /organismes/rnf/:id', () => {
+    it('Should give 401', async () => {
+      return request(app.getHttpServer())
+        .get('/organismes/rnf/F001')
+        .expect(401)
+    })
+
     it('Should give 403', async () => {
       return request(app.getHttpServer())
         .get('/organismes/rnf/F001')
+        .set('Cookie', [cookies.norole])
         .expect(403)
     })
     it('Should give 404', async () => {
       return request(app.getHttpServer())
         .get('/organismes/rnf/f1234')
-        .set('Cookie', [cookie])
+        .set('Cookie', [cookies.instructor])
         .expect(404)
     })
 
     it('Should give 400', async () => {
       return request(app.getHttpServer())
         .get('/organismes/rna')
-        .set('Cookie', [cookie])
+        .set('Cookie', [cookies.instructor])
         .expect(400)
     })
 
     it('Should get an organisme', async () => {
       return request(app.getHttpServer())
         .get('/organismes/rnf/F001')
-        .set('Cookie', [cookie])
+        .set('Cookie', [cookies.instructor])
         .expect(200)
         .then(({ body }) => {
           expect(body).toMatchObject(renault)
@@ -166,23 +189,29 @@ describe('Organismes (e2e)', () => {
   })
 
   describe('GET /organismes/:id/dossier', () => {
+    it('Should give 401', async () => {
+      return request(app.getHttpServer())
+        .get('/organismes/1/dossiers')
+        .expect(401)
+    })
+
     it('Should give 403', async () => {
       return request(app.getHttpServer())
         .get('/organismes/1/dossiers')
+        .set('Cookie', [cookies.norole])
         .expect(403)
     })
-
     it('Should give 400', async () => {
       return request(app.getHttpServer())
         .get('/organismes/undefined/dossiers')
-        .set('Cookie', [cookie])
+        .set('Cookie', [cookies.instructor])
         .expect(400)
     })
 
     it('Should return no dossier', async () => {
       return request(app.getHttpServer())
         .get('/organismes/1234/dossiers')
-        .set('Cookie', [cookie])
+        .set('Cookie', [cookies.instructor])
         .expect(200)
         .then(({ body }) => {
           expect(body).toEqual([])
@@ -192,7 +221,7 @@ describe('Organismes (e2e)', () => {
     it('Should return 2 dossiers', async () => {
       return request(app.getHttpServer())
         .get('/organismes/1/dossiers')
-        .set('Cookie', [cookie])
+        .set('Cookie', [cookies.instructor])
         .expect(200)
         .then(({ body }) => {
           expect(body).toEqual([
@@ -200,14 +229,14 @@ describe('Organismes (e2e)', () => {
               demarcheTitle: 'Déclaration de financement étranger',
               depotDate: null,
               id: 12,
-              prefecture: null,
+              prefecture: 'D57',
               state: 'accepte',
             },
             {
               demarcheTitle: 'Déclaration de financement étranger',
               depotDate: null,
               id: 11,
-              prefecture: null,
+              prefecture: 'D75',
               state: 'accepte',
             },
           ])
@@ -216,20 +245,32 @@ describe('Organismes (e2e)', () => {
   })
 
   describe('POST /organismes/list', () => {
-    it('Should give 403', async () => {
-      return request(app.getHttpServer()).post('/organismes/list').expect(403)
+    let numberOfOrganisme: number
+
+    beforeAll(async () => {
+      numberOfOrganisme = await organismeService.repository.count()
     })
 
+    it('Should give 401', async () => {
+      return request(app.getHttpServer()).post('/organismes/list').expect(401)
+    })
+
+    it('Should give 403', async () => {
+      return request(app.getHttpServer())
+        .post('/organismes/list')
+        .set('Cookie', [cookies.norole])
+        .expect(403)
+    })
     it('Should give title of organisme in order', async () => {
       return request(app.getHttpServer())
         .post('/organismes/list')
-        .set('Cookie', [cookie])
+        .set('Cookie', [cookies.instructor])
         .send({
           columns: ['title'],
         } as PaginationDto<Organisme>)
         .expect(200)
         .then(({ body }) => {
-          expect(body.total).toEqual(10)
+          expect(body.total).toEqual(numberOfOrganisme)
           expect(body.data).toMatchObject([
             { title: 'Bmw' },
             { title: 'Renault' },
@@ -248,13 +289,13 @@ describe('Organismes (e2e)', () => {
     it('Should select correctly in pagination', async () => {
       return request(app.getHttpServer())
         .post('/organismes/list')
-        .set('Cookie', [cookie])
+        .set('Cookie', [cookies.instructor])
         .send({
           columns: ['title'],
         } as PaginationDto<Organisme>)
         .expect(200)
         .then(({ body }) => {
-          expect(body.total).toEqual(10)
+          expect(body.total).toEqual(numberOfOrganisme)
           expect(body.data).toMatchObject([
             { title: 'Bmw' },
             { title: 'Renault' },
@@ -273,7 +314,7 @@ describe('Organismes (e2e)', () => {
     it('Should paginate correctly in pagination', async () => {
       return request(app.getHttpServer())
         .post('/organismes/list')
-        .set('Cookie', [cookie])
+        .set('Cookie', [cookies.instructor])
         .send({
           columns: ['title'],
           page: 2,
@@ -281,7 +322,7 @@ describe('Organismes (e2e)', () => {
         } as PaginationDto<Organisme>)
         .expect(200)
         .then(({ body }) => {
-          expect(body.total).toEqual(10)
+          expect(body.total).toEqual(numberOfOrganisme)
           expect(body.data).toMatchObject([
             { title: 'Ford' },
             { title: 'Nissan' },
@@ -295,7 +336,7 @@ describe('Organismes (e2e)', () => {
     it('Should sort correctly in pagination', async () => {
       return request(app.getHttpServer())
         .post('/organismes/list')
-        .set('Cookie', [cookie])
+        .set('Cookie', [cookies.instructor])
         .send({
           columns: ['title'],
           sorts: [{ key: 'title', order: 'DESC' }],
@@ -304,7 +345,7 @@ describe('Organismes (e2e)', () => {
         })
         .expect(200)
         .then(({ body }) => {
-          expect(body.total).toEqual(10)
+          expect(body.total).toEqual(numberOfOrganisme)
           expect(body.data).toMatchObject([
             { title: 'Hyundai' },
             { title: 'Honda' },
@@ -318,7 +359,7 @@ describe('Organismes (e2e)', () => {
     it('Should filter correctly in pagination', async () => {
       return request(app.getHttpServer())
         .post('/organismes/list')
-        .set('Cookie', [cookie])
+        .set('Cookie', [cookies.instructor])
         .send({
           columns: ['title'],
           filters: {

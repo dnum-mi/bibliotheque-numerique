@@ -17,7 +17,7 @@ import { FieldService } from '@/modules/dossiers/providers/field.service'
 import {
   fixFieldInstructionTimeDelay,
   fixFieldInstructionTimeStatus,
-} from './constante/fix-field-instrucation-times.dictionnary'
+} from './constante/fix-field-instrucation-times.dictionnary'
 
 type TIntructionTime = {
   [keyInstructionTime.DATE_REQUEST1]?: Date | null;

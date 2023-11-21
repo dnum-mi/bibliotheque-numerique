@@ -5,7 +5,7 @@ items:
     state: "published"
     title: "Déclaration de financement étranger"
     identification: "FE"
-    type: "ARUP"
+    types: ["ARUP","FDD"]
     mappingColumns: [
       { "id": "I01", "columnLabel": "Identifiant", "type": "string" },
       { "id": "I02", "columnLabel": "Moment", "type": "date" },
@@ -26,8 +26,10 @@ items:
     dsDataJson: {number: 76}
   configurationDemarche:
     id: 2
+    state: "published"
     title: 'Démarche de test pour les configurations'
     dsDataJson: {number: 77}
+    types: ["ARUP","FRUP"]
     mappingColumns: [
       {
         id: '01',
@@ -49,20 +51,20 @@ items:
     state: "published"
     title: "Déclaration de financement étranger"
     identification: "FE"
-    type: "ARUP"
+    types: ["FE","FDD"]
     dsDataJson: { number: 2}
   demarche-number-3:
     id: 4
     state: "published"
     title: "Déclaration de financement étranger"
     identification: "FE"
-    type: "ARUP"
+    types: ["CULTE"]
     dsDataJson: { number: 3 }
   demarche-update-identification:
     id: 5
     state: "published"
     title: "[UPDATE-IDENTIFICATION] Déclaration de financement étranger"
-    type: "ARUP"
+    types: ["ARUP"]
     mappingColumns: [
       {"id":"I01", "columnLabel":"Identifiant"},
       {"id":"I02", "columnLabel":"Moment"},
@@ -80,7 +82,7 @@ items:
     id: 6
     state: "published"
     title: "[DELETE-IDENTIFICATION] Déclaration de financement étranger"
-    type: "ARUP"
+    types: ["ARUP"]
     identification: "FE"
     mappingColumns: [
     {
@@ -115,7 +117,7 @@ items:
     id: 7
     state: "published"
     title: "[UNDEFINED-IDENTIFICATION] Déclaration de financement étranger"
-    type: "ARUP"
+    types: ["ARUP", "FDD"]
     identification: "FE"
     mappingColumns: [
     {

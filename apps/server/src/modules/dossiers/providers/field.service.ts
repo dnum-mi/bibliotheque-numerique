@@ -16,10 +16,12 @@ import {
   FieldTypeKeys,
   FormatFunctionRef,
   FormatFunctionRefKeys,
-  MappingColumn,
+  MappingColumn, PrefectureKeys,
 } from '@biblio-num/shared'
 import { RawChamp } from '@/shared/types/raw-champ.type'
 import { PieceJustificativeChamp } from '@dnum-mi/ds-api-client'
+
+export type TDossierWithPrefecture = Partial<TDossier> & {prefecture: PrefectureKeys}
 
 @Injectable()
 export class FieldService extends BaseEntityService<Field> {
@@ -151,7 +153,7 @@ export class FieldService extends BaseEntityService<Field> {
   private _createFieldsFromFixFields(
     dossierId: number,
     columnHash: Record<string, MappingColumn>,
-    dataJson?: Partial<TDossier>,
+    dataJson?: TDossierWithPrefecture,
   ): CreateFieldDto[] {
     this.logger.verbose('_createFieldsFromFixFields')
     return Object.keys(fixFieldValueFunctions).map((fixFieldId) => {
@@ -177,7 +179,7 @@ export class FieldService extends BaseEntityService<Field> {
   }
 
   private _createFieldsFromDataJson(
-    dataJson: Partial<TDossier>,
+    dataJson: TDossierWithPrefecture,
     dossierId: number,
     columnHash: Record<string, MappingColumn>,
   ): CreateFieldDto[] {
@@ -200,7 +202,7 @@ export class FieldService extends BaseEntityService<Field> {
   }
 
   async overwriteFieldsFromDataJson(
-    dataJson: Partial<TDossier>,
+    dataJson: TDossierWithPrefecture,
     dossierId: number,
     mappingColumns: MappingColumn[],
   ): Promise<Field[]> {

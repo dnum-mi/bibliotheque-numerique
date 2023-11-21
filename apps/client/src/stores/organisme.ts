@@ -2,7 +2,7 @@ import { ref, type Ref } from 'vue'
 import { defineStore } from 'pinia'
 
 import apiClient from '@/api/api-client'
-import type { IOrganisme, PaginatedOrganismeDto, PaginationDto } from '@biblio-num/shared'
+import type { IOrganisme, PaginatedDto, PaginationDto } from '@biblio-num/shared'
 
 export type OrganismeIdType = 'Rna' | 'Rnf' | 'Id'
 
@@ -18,7 +18,7 @@ export const useOrganismeStore = defineStore('organisme', () => {
     organisme.value = await apiClient[`getOrganismeBy${type}`](id)
   }
 
-  const loadOrganismes = async (dto: PaginationDto<IOrganisme>): Promise<PaginatedOrganismeDto> => {
+  const loadOrganismes = async (dto: PaginationDto<IOrganisme>): Promise<PaginatedDto<IOrganisme>> => {
     return apiClient.getOrganismes(dto)
   }
 

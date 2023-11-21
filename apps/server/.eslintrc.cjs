@@ -44,6 +44,7 @@ module.exports = {
       },
     ],
     'space-before-function-paren': 0,
+    'no-case-declarations': 'off',
   },
   overrides: [
     {

@@ -6,7 +6,7 @@ import {
   ICustomFilter,
   SortDto,
 } from '@biblio-num/shared'
-import { User } from '@/modules/users/entities/user.entity'
+import { User } from '@/modules/users/objects/user.entity'
 import { Demarche } from '../../../demarches/objects/entities/demarche.entity'
 
 export type FiltersInCustomFilter = Record<keyof DynamicKeys, FilterDto> | null

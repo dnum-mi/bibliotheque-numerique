@@ -6,6 +6,7 @@ import type { FormatFunctionRefKeys } from '@biblio-num/shared'
 
 import delayStateBadge from '@/components/Badges/DelayStateBadge.vue'
 import AgGridAttachmentCell from '@/components/ag-grid/AgGridAttachmentCell.vue'
+import { Prefecture, type PrefectureKeys } from '@/biblio-num/shared'
 
 // TODO: check into @biblio-num/shared
 const FieldType = {
@@ -80,6 +81,12 @@ const getFlagURL = (countryName: string) => {
   return `/countries-svg/${slug}.svg`
 }
 /* endregion */
+
+/* region Prefecture */
+const getPrefecture = (prefecture: PrefectureKeys) => {
+  return Prefecture[prefecture]
+}
+/* endregion */
 </script>
 
 <template>
@@ -140,6 +147,11 @@ const getFlagURL = (countryName: string) => {
       <!-- BOOLEAN -->
       <template v-else-if="type === 'boolean'">
         {{ cellValue ? 'Oui': 'Non' }}
+      </template>
+
+      <!-- BOOLEAN -->
+      <template v-else-if="ffr === 'prefecture'">
+        {{ getPrefecture(cellValue) }}
       </template>
 
       <!-- ComponentRenderer-->

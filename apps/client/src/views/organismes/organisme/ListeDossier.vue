@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 
 import apiClient from '@/api/api-client'
 import useToaster from '@/composables/use-toaster'
+import { routeNames } from '@/router/route-names'
 
 const router = useRouter()
 
@@ -72,12 +73,12 @@ watch(() => props.organismeId, updateListeDossiers, { immediate: true })
       :style="{ cursor: 'pointer' }"
       @click="
         () => {
-          router.push({ name: 'Dossiers', params: { id: row[0] } });
+          router.push({ name: routeNames.DOSSIERS, params: { id: row[0] } });
         }
       "
       @keyup.enter="
         () => {
-          router.push({ name: 'Dossiers', params: { id: row[0] } });
+          router.push({ name: routeNames.DOSSIERS, params: { id: row[0] } });
         }
       "
     >

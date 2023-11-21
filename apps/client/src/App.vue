@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, onErrorCaptured, type Ref } from 'vue'
+import { ref, watch, onErrorCaptured } from 'vue'
 import { useRegisterSW } from 'virtual:pwa-register/vue'
 import { useRouter, useRoute } from 'vue-router'
 import { AxiosError } from 'axios'
@@ -9,12 +9,15 @@ import { useUserStore } from '@/stores'
 
 import AppToaster from '@/components/AppToaster.vue'
 import ReloadPrompt from '@/components/ReloadPrompt.vue'
+import { routeNames } from '@/router/route-names'
+import { Roles, isSuperiorOrSimilar } from '@/biblio-num/shared'
 
 const serviceTitle = 'Bibliothèque Numérique'
 const serviceDescription = 'Recherchez une démarche, un dossier, un organisme'
 const logoText = ['Ministère', 'de l’intérieur', 'et des outre-mer']
 
-const iconColor = { color: 'var(--red-marianne-425-625)' }
+const redColor = 'var(--red-marianne-425-625)'
+const iconPropsRedColor = { color: redColor }
 
 type QuickLink = {
   label: string;
@@ -23,11 +26,11 @@ type QuickLink = {
   iconAttrs?: Record<string, string>;
 }
 
-const quickLinks: Ref<QuickLink[]> = ref([])
+const quickLinks = ref<QuickLink[]>([])
 
 const demarcheQuickLink: QuickLink = {
   label: 'Démarches',
-  to: { name: 'Demarches' },
+  to: { name: routeNames.DEMARCHES },
   icon: 'ri-file-list-2-fill',
   iconAttrs: { title: 'Démarches' },
 }
@@ -35,79 +38,82 @@ const demarcheQuickLink: QuickLink = {
 const unauthenticatedQuickLinks: QuickLink[] = [
   {
     label: 'Se connecter',
-    to: { name: 'SignIn' },
+    to: { name: routeNames.SIGNIN },
     icon: 'ri-lock-line',
-    iconAttrs: { title: 'Se connecter' },
+    iconAttrs: { title: 'Se connecter', ...iconPropsRedColor },
   },
   {
     label: 'S’enregistrer',
-    to: { name: 'SignUp' },
+    to: { name: routeNames.SIGNUP },
     icon: 'ri-user-line',
-    iconAttrs: { title: 'S’enregistrer' },
+    iconAttrs: { title: 'S’enregistrer', ...iconPropsRedColor },
   },
 ]
 
-const authenticatedQuickLinksPart1: QuickLink[] = [
-  {
-    label: 'Organismes',
-    to: { name: 'ListeOrganismes' },
-    icon: 'ri-file-list-2-line',
-    iconAttrs: { title: 'Organismes' },
-  },
-]
+const organismesQuickLink: QuickLink = {
+  label: 'Organismes',
+  to: { name: routeNames.LISTE_ORGANISMES },
+  icon: 'ri-file-list-2-line',
+  iconAttrs: { title: 'Organismes' },
+}
 
-const authenticatedQuickLinksPart2: QuickLink[] = [
+const authenticatedQuickLinksDefault: QuickLink[] = [
   {
     label: 'Mon profil',
-    to: { name: 'Profile' },
+    to: { name: routeNames.PROFILE },
     icon: 'ri-account-circle-line',
     iconAttrs: { title: 'Mon profil' },
   },
   {
     label: 'Déconnexion',
-    to: { name: 'LogOut' },
+    to: { name: routeNames.LOGOUT },
     icon: 'ri-logout-box-r-line',
-    iconAttrs: { title: 'Déconnexion', ...iconColor },
+    iconAttrs: { title: 'Déconnexion', ...iconPropsRedColor },
   },
 ]
 
-const authenticatedQuickLinksPart3: QuickLink[] = [
-  {
-    label: 'Statistiques',
-    to: { name: 'Statistiques' },
-    icon: 'ri-bar-chart-box-line',
-    iconAttrs: { title: 'Statistiques' },
-  },
-]
+const statisticsQuickLink: QuickLink = {
+  label: 'Statistiques',
+  to: { name: routeNames.STATISTIQUES },
+  icon: 'ri-bar-chart-box-line',
+  iconAttrs: { title: 'Statistiques' },
+}
 
 const manageRolesQuickLink = {
   label: 'Administration',
-  to: { name: 'Admin' },
+  to: { name: routeNames.LIST_USERS },
   icon: 'ri-shield-star-line',
-  iconAttrs: { ...iconColor, title: 'Administration' },
+  iconAttrs: { title: 'Administration', ...iconPropsRedColor },
 }
 
 const userStore = useUserStore()
 const router = useRouter()
 const route = useRoute()
 
+const getQuickLinks = () => {
+  const role = userStore.currentUser?.role?.label
+  if (!role) return []
+  return isSuperiorOrSimilar(Roles.instructor, role)
+    ? [
+        demarcheQuickLink,
+        organismesQuickLink,
+        statisticsQuickLink,
+        ...(isSuperiorOrSimilar(Roles.admin, role) ? [manageRolesQuickLink] : []),
+      ]
+    : []
+}
+
 watch([() => userStore.isAuthenticated, route], async () => {
   await router.isReady()
 
-  const isCurrentRoute = ({ to }: QuickLink) => to !== route.path && to?.name !== route.name
-
   if (userStore.isAuthenticated) {
     quickLinks.value = [
-      ...(userStore.canAccessDemarches ? [demarcheQuickLink] : []),
-      ...authenticatedQuickLinksPart1,
-      ...authenticatedQuickLinksPart3,
-      ...(userStore.canManageRoles ? [manageRolesQuickLink] : []),
-      ...authenticatedQuickLinksPart2,
+      ...getQuickLinks(),
+      ...authenticatedQuickLinksDefault,
     ]
   } else {
-    quickLinks.value = [
-      ...unauthenticatedQuickLinks.filter(isCurrentRoute),
-    ]
+    const isCurrentRoute = ({ to }: QuickLink) => to !== route.path && to?.name !== route.name
+    quickLinks.value = unauthenticatedQuickLinks.filter(isCurrentRoute)
   }
 })
 
@@ -167,9 +173,9 @@ onErrorCaptured((error: Error | AxiosError) => {
       :quick-links="quickLinks"
     />
 
-    <div class="grow w-full">
+    <main class="flex  flex-col  grow  w-full  h-full  min-h-0  overflow-auto">
       <router-view />
-    </div>
+    </main>
   </div>
 
   <AppToaster
@@ -186,6 +192,17 @@ onErrorCaptured((error: Error | AxiosError) => {
 </template>
 
 <style scoped>
+#app {
+  height: 100% !important;
+  display: flex;
+  flex-direction: column;
+}
+
+.raised-top-shadow {
+  background-color: var(--background-raised-grey);
+  filter: drop-shadow(0 -3px 5px var(--shadow-color));
+}
+
 @media screen and (max-width: 1400px) {
   :deep(.fr-header__tools-links .fr-btn) {
     padding: 0.25rem !important;
