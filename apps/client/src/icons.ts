@@ -37,4 +37,5 @@ export {
   RiSortDesc,
   RiSubtractLine,
   RiUserSettingsLine,
+  RiToolsFill,
 } from 'oh-vue-icons/icons'
