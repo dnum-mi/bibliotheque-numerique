@@ -1,6 +1,7 @@
 export const routeNames = {
   ABOUT: 'About',
   ADMIN: 'Admin',
+  CONFIGURATION_DEMARCHES: 'Configuration',
   DEMARCHES: 'Démarches',
   DEMARCHE_DOSSIERS: 'DemarcheDossiers',
   DOSSIERS: 'Dossiers',
