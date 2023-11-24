@@ -86,6 +86,13 @@ const manageRolesQuickLink = {
   iconAttrs: { title: 'Administration', ...iconPropsRedColor },
 }
 
+const configurationQuickLink = {
+  label: 'Configuration',
+  to: { name: routeNames.CONFIGURATION_DEMARCHES },
+  icon: 'ri-tools-fill',
+  iconAttrs: { title: 'Configuration', ...iconPropsRedColor },
+}
+
 const userStore = useUserStore()
 const router = useRouter()
 const route = useRoute()
@@ -99,6 +106,7 @@ const getQuickLinks = () => {
         organismesQuickLink,
         statisticsQuickLink,
         ...(isSuperiorOrSimilar(Roles.admin, role) ? [manageRolesQuickLink] : []),
+        ...(isSuperiorOrSimilar(Roles.sudo, role) ? [configurationQuickLink] : []),
       ]
     : []
 }
