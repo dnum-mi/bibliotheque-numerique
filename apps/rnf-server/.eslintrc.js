@@ -29,6 +29,17 @@ module.exports = {
     'no-useless-constructor': 'off',
     'no-irregular-whitespace': 'off',
     'comma-dangle': ['error', 'always-multiline'],
+    'spaced-comment': [
+      'error',
+      'always',
+      {
+        markers: [
+          '#region',
+          '#endregion',
+          '/',
+        ],
+      },
+    ],
     indent: [
       'error',
       2,

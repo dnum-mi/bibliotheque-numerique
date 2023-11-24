@@ -28,7 +28,7 @@ const props = defineProps<{
   }
 }>()
 
-/* region all cell */
+//#region all cell
 const cellValues = computed(() => {
   const cellValuesAsArray = Array.isArray(props.params.value) ? props.params.value : [props.params.value]
   return cellValuesAsArray.map((cv) => {
@@ -51,9 +51,9 @@ const componentRenderer = computed(() => {
   if (props.params.column?.formatFunctionRef === 'delay-status') return delayStateBadge
   return null
 })
-/* endregion */
+//#endregion
 
-/* region STATUS */
+//#region STATUS
 type dsfrType = 'success' | 'error' | 'warning' | 'info' | 'new';
 const statusDictionary: Record<string, { label: string; type: dsfrType }> = {
   accepte: { label: 'Accepté', type: 'success' },
@@ -68,11 +68,11 @@ const giveStatusLabel = (status: string): string => {
 const giveStatusType = (status: string): dsfrType => {
   return statusDictionary[status]?.type || 'info'
 }
-/* endregion */
+//#endregion
 
 const formattedNumber = computed(() => new Intl.NumberFormat('fr-FR').format(Number(props.params.value)))
 
-/* region PAYS region */
+//#region PAYS region
 const getFlagURL = (countryName: string) => {
   if (!countryName?.length) {
     return ''
@@ -80,13 +80,13 @@ const getFlagURL = (countryName: string) => {
   const slug = slugify(countryName, { lower: true, strict: true })
   return `/countries-svg/${slug}.svg`
 }
-/* endregion */
+//#endregion
 
-/* region Prefecture */
+//#region Prefecture
 const getPrefecture = (prefecture: PrefectureKeys) => {
   return Prefecture[prefecture]
 }
-/* endregion */
+//#endregion
 </script>
 
 <template>

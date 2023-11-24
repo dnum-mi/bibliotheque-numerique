@@ -20,6 +20,17 @@ module.exports = {
     'no-irregular-whitespace': 'warn',
     '@typescript-eslint/ban-ts-comment': ['error', { 'ts-ignore': 'allow-with-description' }],
     'no-case-declarations': 'off',
+    'spaced-comment': [
+      'error',
+      'always',
+      {
+        markers: [
+          '#region',
+          '#endregion',
+          '/',
+        ],
+      },
+    ],
   },
   overrides: [
     {

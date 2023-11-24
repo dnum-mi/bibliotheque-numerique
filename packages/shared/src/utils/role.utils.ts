@@ -1,7 +1,7 @@
 import { PrefectureKeys, Roles, RolesKeys } from '../enums'
 import { IRole } from '../interfaces'
 
-/* region Compare roles */
+//#region Compare roles
 export const RoleHierarchy: { [key in RolesKeys]: number } = {
   sudo: 0,
   superadmin: 1,
@@ -19,7 +19,7 @@ export const isSuperiorOrSimilar = (
 
 export const isBelowSuperAdmin = (key: RolesKeys) => !isSuperiorOrSimilar(Roles.superadmin, key)
 export const isAtLeastAdmin = (key: RolesKeys) => isSuperiorOrSimilar(Roles.admin, key)
-/* endregion */
+//#endregion
 
 export const canAccessDemarche = (id: number, role:IRole): boolean =>
   isSuperiorOrSimilar(Roles.superadmin, role.label) || !!role.options[id]

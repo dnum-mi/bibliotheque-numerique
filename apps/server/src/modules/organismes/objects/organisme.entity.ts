@@ -58,7 +58,7 @@ export class Organisme extends BaseEntity implements IOrganisme {
   @JoinColumn()
   dossiers?: Dossier[]
 
-  /* region RNA */
+  //#region RNA
   @Column({
     type: 'varchar',
     nullable: true,
@@ -71,9 +71,9 @@ export class Organisme extends BaseEntity implements IOrganisme {
     nullable: true,
   })
   rnaJson: IRnaOutput
-  /* endregion */
+  //#endregion
 
-  /* region RNF */
+  //#region RNF
   @Column({
     type: 'varchar',
     nullable: true,
@@ -86,9 +86,9 @@ export class Organisme extends BaseEntity implements IOrganisme {
     nullable: true,
   })
   rnfJson: IRnfOutput
-  /* endregion */
+  //#endregion
 
-  /* region Address */
+  //#region Address
   @Column({
     type: 'varchar',
     nullable: true,
@@ -154,5 +154,5 @@ export class Organisme extends BaseEntity implements IOrganisme {
     nullable: true,
   })
   addressRegionCode: string | null
-  /* endregion */
+  //#endregion
 }
