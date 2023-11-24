@@ -43,6 +43,7 @@ export const useUserStore = defineStore('user', () => {
   const loadMyProfile = async () => {
     myProfile.value = await bnApiClient.fetchMyProfile()
     currentUser.value = myProfile.value
+    return !!currentUser.value
   }
 
   const listUsers = async (dto: PaginationUserDto) => {

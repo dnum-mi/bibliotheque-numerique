@@ -56,7 +56,10 @@ router.beforeEach(async (to, from) => {
 
   const userStore = useUserStore()
   if (to.name === routeNames.PROFILE || (!to.meta.skipAuth && !userStore.isAuthenticated)) {
-    await userStore.loadMyProfile()
+    const isOk: boolean = await userStore.loadMyProfile()
+    if (!isOk) {
+      return false
+    }
   }
 
   const role = userStore.currentUser?.role
