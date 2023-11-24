@@ -175,7 +175,7 @@ const onGridReady = (event: GridReadyEvent) => {
   columnApi.value = event.columnApi
 }
 
-/* region Filter events */
+//#region Filter events
 const customDisplayOperationSuccess = ref(true)
 const createFilter = async ({ filterName = '', totals = '' }: { filterName?: string, totals?: string }) => {
   customDisplayOperationSuccess.value = false
@@ -293,7 +293,7 @@ const selectFilter = async (id: number | null) => {
     throw new Error('Le filtre sélectionné n’existe pas')
   }
 }
-/* endregion */
+//#endregion
 
 const download = () => {
   demarcheStore.exportCurrentDemarcheDossiers(groupByDossier.value, paginationDto.value)

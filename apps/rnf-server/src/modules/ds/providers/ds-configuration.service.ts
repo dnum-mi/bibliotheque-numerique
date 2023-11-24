@@ -16,7 +16,7 @@ import { CronService } from '@/modules/cron/cron.service'
 
 @Injectable()
 export class DsConfigurationService implements OnModuleInit {
-  /* region GETTERS */
+  //#region GETTERS
   private _configuration: DsConfigurationEntity
   get configuration(): DsConfigurationEntity {
     return this._configuration
@@ -35,7 +35,7 @@ export class DsConfigurationService implements OnModuleInit {
     return this.mappersAndKeys.rnfFieldKeys
   }
 
-  /* endregion */
+  //#endregion
 
   constructor(
     private logger: LoggerService,
@@ -46,7 +46,7 @@ export class DsConfigurationService implements OnModuleInit {
     this.logger.setContext(this.constructor.name)
   }
 
-  /* region private */
+  //#region private
   private _initMappersAndKeys(): MappersAndKeys {
     this.logger.verbose('_initMappers')
     return {
@@ -112,7 +112,7 @@ export class DsConfigurationService implements OnModuleInit {
     return this.prisma.dSConfiguration.findFirst({ where: { id: 1 } })
   }
 
-  /* endregion */
+  //#endregion
 
   getMapperFromDemarcheDsId(demarcheDsId: number | string): Mapper {
     this.logger.verbose('getMapperFromDemarcheDsId')

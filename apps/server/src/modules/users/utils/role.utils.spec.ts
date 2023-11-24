@@ -14,7 +14,7 @@ import {
   isEditionAllowed, threeRoles,
 } from '@/modules/users/utils/role.utils'
 
-/* region MOCK DEMARCHES */
+//#region MOCK DEMARCHES
 /*
    CULTE
       Démarche 1
@@ -59,9 +59,9 @@ const allSmallDemarches: SmallDemarcheOutputDto[] = [
     title: 'Démarche 5',
   },
 ]
-/* endregion */
+//#endregion
 
-/* region MOCK USER */
+//#region MOCK USER
 let useless = 100
 
 const dumbUserFromRole = (role: IRole): IUser => ({
@@ -93,7 +93,7 @@ const emptyInstructor: IUser = dumbUserFromRole({
   label: Roles.instructor,
   options: {},
 })
-/* endregion */
+//#endregion
 
 describe('RoleUtils', () => {
   describe('generateUserWithEditableRole', () => {

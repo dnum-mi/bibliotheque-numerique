@@ -31,6 +31,17 @@ module.exports = {
     'no-irregular-whitespace': 'warn',
     'comma-dangle': ['error', 'always-multiline'],
     'no-dupe-class-members': 'off',
+    'spaced-comment': [
+      'error',
+      'always',
+      {
+        markers: [
+          '#region',
+          '#endregion',
+          '/',
+        ],
+      },
+    ],
     indent: [
       'error',
       2,
