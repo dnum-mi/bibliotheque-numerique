@@ -18,6 +18,17 @@ module.exports = {
     'jsx-quotes': [2, 'prefer-double'],
     'comma-dangle': [2, 'always-multiline'],
     'no-irregular-whitespace': 1,
+    'spaced-comment': [
+      'error',
+      'always',
+      {
+        markers: [
+          '#region',
+          '#endregion',
+          '/',
+        ],
+      },
+    ],
   },
   overrides: [
     {

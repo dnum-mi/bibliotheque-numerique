@@ -105,15 +105,15 @@ describe('Home', () => {
 
     cy.intercept({ method: 'GET', url: '/api/users/me', times: 5 }, instructorProfile).as('fetchProfile')
 
-    // #region Check organismes
+    //#region Check organismes
     cy.get('.fr-header').should('contain', 'Organismes')
       .contains('Organismes')
       .click()
     // cy.wait('@fetchProfile')
     cy.wait('@organismes')
     cy.url().should('include', '/organismes')
-    // #endregion
-    // #region Check démarches
+    //#endregion
+    //#region Check démarches
     cy.get('.fr-header')
       .should('contain', 'Démarches')
       .contains('Démarches')
@@ -121,21 +121,21 @@ describe('Home', () => {
     // cy.wait('@fetchProfile')
     cy.wait('@demarches')
     cy.url().should('include', '/demarches')
-    // #endregion
-    // #region Check Statistiques
+    //#endregion
+    //#region Check Statistiques
     cy.get('.fr-header')
       .should('contain', 'Statistiques')
       .contains('Statistiques')
       .click()
     cy.wait('@customFilters')
     cy.url().should('include', '/statistiques')
-    // #endregion
-    // #region Check Administration
+    //#endregion
+    //#region Check Administration
     cy.get('.fr-header').should('not.contain', 'Administration')
     cy.visit('/admin')
     cy.wait('@fetchProfile')
     cy.url().should('include', '/profile')
-    // #endregion
+    //#endregion
   })
 
   it('should sign-in of a admin-local', () => {

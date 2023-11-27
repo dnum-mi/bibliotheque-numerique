@@ -32,7 +32,7 @@ describe('Home', () => {
   })
 
   it('update user with no role', () => {
-    // #region test - get user no role
+    //#region test - get user no role
 
     cy.intercept('api/users/me', { fixture: 'admin-profile' }).as('me')
     cy.intercept({
@@ -48,9 +48,9 @@ describe('Home', () => {
     cy.get('[type=radio]').should('not.be.checked')
 
     cy.get('[data-testid=noRoleSelectedMessage]').should('contain', 'Vous devez d\'abord sélectionner un rôle ')
-    // #endregion
+    //#endregion
 
-    // #region test - update user role to admin
+    //#region test - update user role to admin
     const roleSelected = {
       ...noRoleUserSelected,
       originalUser: {
@@ -91,9 +91,9 @@ describe('Home', () => {
 
     cy.get('input[value=admin]')
       .should('be.checked')
-    // #endregion
+    //#endregion
 
-    // #region test - update user role to demarche
+    //#region test - update user role to demarche
     const roleSelected2 = {
       ...roleSelected,
       demarcheHash: {
@@ -171,7 +171,7 @@ describe('Home', () => {
 
     cy.get('input[name=3]')
       .should('not.be.checked')
-    // #endregion
+    //#endregion
 
     const roleSelected4 = {
       ...roleSelected3,
