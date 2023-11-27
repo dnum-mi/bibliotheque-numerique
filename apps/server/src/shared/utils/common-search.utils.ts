@@ -17,9 +17,9 @@ import {
 import { BadRequestException } from '@nestjs/common'
 import { FiltersInCustomFilter } from '@/modules/custom-filters/objects/entities/custom-filter.entity'
 
-/* region FILTERS */
+//#region FILTERS
 
-/* region TEXT FILTER */
+//#region TEXT FILTER
 const _buildOneTextFilter = (
   key: string,
   filter: TextFilterConditionDto,
@@ -46,9 +46,9 @@ const _buildOneTextFilter = (
     )
   }
 }
-/* endregion */
+//#endregion
 
-/* region DATE FILTER */
+//#region DATE FILTER
 const dateSqlOperators = {
   [DateFilterConditions.Equals]: '=',
   [DateFilterConditions.NotEqual]: '!=',
@@ -70,9 +70,9 @@ const _buildOneDateFilter = (
   key = _adaptKeyForArray(key, isArray, prefix)
   return `(${key} ${dateSqlOperator} '${filter.filter}'${isArray ? ')' : ''})`
 }
-/* endregion */
+//#endregion
 
-/* region NUMBER FILTER */
+//#region NUMBER FILTER
 const numberSqlOperators = {
   [NumberFilterConditions.Equals]: '=',
   [NumberFilterConditions.NotEqual]: '!=',
@@ -96,9 +96,9 @@ const _buildOneNumberFilter = (
   key = _adaptKeyForArray(key, isArray, prefix)
   return `(${key} ${numberSqlOperator} ${filter.filter}${isArray ? ')' : ''})`
 }
-/* endregion */
+//#endregion
 
-/* region ENUM FILTER */
+//#region ENUM FILTER
 const _buildOneEnumFilter = (
   key: string,
   filter: EnumFilterConditionDto,
@@ -108,7 +108,7 @@ const _buildOneEnumFilter = (
   key = _adaptKeyForArray(key, isArray, prefix)
   return `(${key} IN (${filter.filter.map((s) => `'${s}'`).join(',')})${isArray ? ')' : ''})`
 }
-/* endregion */
+//#endregion
 
 const _adaptKeyForArray = (
   key: string,
@@ -191,9 +191,9 @@ export const buildFilterQueryWithWhere = (
   const query = buildFilterQuery(filters, typeHash, isArray)
   return query ? `WHERE ${query}` : ''
 }
-/* endregion */
+//#endregion
 
-/* region Search utils */
+//#region Search utils
 
 const fieldTypeDict = {
   [FieldType.date]: 'dateValue',
@@ -234,9 +234,9 @@ export const adjustDto = (dto: SearchDossierDto): SearchDossierDto => {
     filters: newFilter,
   }
 }
-/* endregion */
+//#endregion
 
-/* region French filter dictionnaries */
+//#region French filter dictionnaries
 
 export const dictionaryHumanReadableOperatorsNumber = {
   [NumberFilterConditions.Equals]: 'Égal à:',
@@ -308,4 +308,4 @@ export const fromCustomFilterToHumanReadableFilter = (
     : []
 }
 
-/* endregion */
+//#endregion

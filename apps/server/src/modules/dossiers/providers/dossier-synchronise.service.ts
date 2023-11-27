@@ -43,7 +43,7 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
     this.logger.setContext(this.constructor.name)
   }
 
-  /* region private */
+  //#region private
   private async copyDsFile(file: TFile): Promise<string> {
     this.logger.verbose('copyDsFile')
     const copy = await this.fileService.copyRemoteFile(
@@ -171,7 +171,7 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
     return Prefecture[finalLabel] ? finalLabel : null
   }
 
-  /* endregion */
+  //#endregion
 
   async synchroniseOneDossier(
     originalJsonDossier: TDossier,

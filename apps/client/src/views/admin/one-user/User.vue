@@ -17,7 +17,7 @@ import UserGeographicalRights from './UserGeographicalRights.vue'
 import { LocalizationOptions, type LocalizationOptionsKeys } from './localization.enum'
 
 import UserRole from './UserRole.vue'
-// #region Types, Mapping, Enum
+//#region Types, Mapping, Enum
 type DemarcheHtmlAttrs = {
   class?: string | null;
   disabled?: boolean | null;
@@ -48,7 +48,7 @@ const typeOrganismeLabel: Record<OrganismeTypeKeys, string> = {
   [OrganismeType.FRUP]: 'Fondations reconnues d’utilité publique (FRUP)',
   [OrganismeType.unknown]: 'Type d’organisme inconnu',
 }
-// #endregion
+//#endregion
 
 const props = defineProps<{ selectedEditableUser: UserWithEditableRole }>()
 const userStore = useUserStore()
@@ -56,7 +56,7 @@ const selectedUser = computed<UserOutputDto>(() => props.selectedEditableUser.or
 const demarcheHash = computed<Record<number, OneDemarcheRoleOption>>(() => props.selectedEditableUser.demarcheHash)
 const keySelectUser = computed<string>(() => userStore.keySelectUser)
 const loading = computed<boolean>(() => userStore.selectedEditableUserLoading)
-// #region View Demarches
+//#region View Demarches
 const isAllCheck = (children: DemarcheRole[]): boolean =>
   children.reduce((val, demarche) => {
     return (val &&= demarche.options.checked)
@@ -227,9 +227,9 @@ const onClickDemarches = (elt: DemarchesRoles | DemarcheRole) => {
   noRefDemarcheOrTypeSelected = elt
 }
 
-// #endregion
+//#endregion
 
-// #region view localization
+//#region view localization
 const geographicalRights = computed<GeographicalRights | null>(() => {
   if (!demarcheOrTypeSelected.value) return null
   if ('options' in demarcheOrTypeSelected.value) {
@@ -304,7 +304,7 @@ const removePrefecture = (prefecture: string) => {
   })
 }
 
-// #endregion
+//#endregion
 </script>
 
 <template>

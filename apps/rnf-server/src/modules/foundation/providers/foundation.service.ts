@@ -47,7 +47,7 @@ export class FoundationService extends BaseEntityService {
     this.logger.setContext(this.constructor.name)
   }
 
-  /* region Create Foundation */
+  //#region Create Foundation
   private async _findIdOfCollision(
     dto: CreateFoundationDto,
   ): Promise<{ id: number }[]> {
@@ -185,9 +185,9 @@ export class FoundationService extends BaseEntityService {
     return persons
   }
 
-  /* endregion */
+  //#endregion
 
-  /* region Get foundations */
+  //#region Get foundations
 
   private _cascadeGetFoundation(): Prisma.FoundationInclude {
     this.logger.verbose('_cascadeGetFoundation')
@@ -257,9 +257,9 @@ export class FoundationService extends BaseEntityService {
     })
   }
 
-  /* endregion */
+  //#endregion
 
-  /* region update foundation */
+  //#region update foundation
   public async triggerAllRefresh() {
     this.logger.log('Refreshing foundation')
     await this.triggerFeModificationRefresh()
@@ -435,5 +435,5 @@ export class FoundationService extends BaseEntityService {
     }
   }
 
-  /* endregion */
+  //#endregion
 }

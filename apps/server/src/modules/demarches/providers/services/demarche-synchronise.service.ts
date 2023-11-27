@@ -42,7 +42,7 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
     this.logger.setContext(this.constructor.name)
   }
 
-  /* region private */
+  //#region private
   private async _synchroniseAllDossier(
     dossiers: TDossier[],
     demarche: Demarche,
@@ -150,7 +150,7 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
     )
   }
 
-  /* endregion */
+  //#endregion
 
   public async createAndSynchronise(
     dsId: number,
