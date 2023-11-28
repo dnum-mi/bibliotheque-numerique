@@ -13,10 +13,10 @@ import { RnfService } from '@/modules/organismes/providers/rnf.service'
 import { rnfServiceMock } from '../../mock/rnf-service/rnf-service.mock'
 import { RnaService } from '@/modules/organismes/providers/rna.service'
 import { rnaServiceMock } from '../../mock/rna-service/rna-service.mock'
-import { ExcelService } from '@/modules/dossiers/providers/excel.service'
-import { excelServiceMock } from '../../mock/excel-service/excel-service.mock'
+import { xlsxServiceMock } from '../../mock/excel-service/excel-service.mock'
 import { RolesKeys } from '@biblio-num/shared'
 import { getAnyCookie } from './get-any-cookie'
+import { XlsxService } from '@/shared/modules/xlsx/xlsx.service'
 
 export type Cookies = Record<RolesKeys | 'norole', string>
 
@@ -54,8 +54,8 @@ export class TestingModuleFactory {
       .useValue(rnfServiceMock)
       .overrideProvider(RnaService)
       .useValue(rnaServiceMock)
-      .overrideProvider(ExcelService)
-      .useValue(excelServiceMock)
+      .overrideProvider(XlsxService)
+      .useValue(xlsxServiceMock)
       .compile()
 
     this.app = moduleFixture.createNestApplication()

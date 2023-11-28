@@ -1,54 +1,61 @@
 import { Injectable } from '@nestjs/common'
-import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
-import { Field } from '../objects/entities/field.entity'
-import { InjectRepository } from '@nestjs/typeorm'
+import { Field } from '@/modules/dossiers/objects/entities/field.entity'
 import { Repository } from 'typeorm'
-import { LoggerService } from '@/shared/modules/logger/logger.service'
+import { CreateFieldDto } from '@/modules/dossiers/objects/dto/fields/create-field.dto'
 import {
-  DsChampType,
-} from '@/shared/modules/ds-api/objects/ds-champ-type.enum'
-import { CreateFieldDto } from '../objects/dto/fields/create-field.dto'
-import {
-  FormatFunctionRef, FieldTypeKeys, FieldSource, MappingColumn,
-  contributorPersonalityTypeKeys, nativeCountryKeys, characterFundingKeys,
-  natureFundingKeys, paymentMethodKeys,
+  FormatFunctionRef,
+  FieldTypeKeys,
+  FieldSource,
+  MappingColumn,
+  contributorPersonalityTypeKeys,
+  nativeCountryKeys,
+  characterFundingKeys,
+  natureFundingKeys,
+  paymentMethodKeys,
 } from '@biblio-num/shared'
 import {
-  fixFieldChampsTotalAmount, fixFieldDossierTotalAmount, fixFieldExcelTotalAmount,
+  fixFieldChampsTotalAmount,
+  fixFieldDossierTotalAmount,
+  fixFieldExcelTotalAmount,
   fixFieldsExcelAmount,
-  fixFieldsExcelChamp, fixFieldsExcelCharacterFunding, fixFieldsExcelContributorPersonalityType,
-  fixFieldsExcelDateFunding, fixFieldsExcelNativeCountry, fixFieldsExcelNatureFunding, fixFieldsExcelPaymentMethod,
+  fixFieldsExcelChamp,
+  fixFieldsExcelCharacterFunding,
+  fixFieldsExcelContributorPersonalityType,
+  fixFieldsExcelDateFunding,
+  fixFieldsExcelNativeCountry,
+  fixFieldsExcelNatureFunding,
+  fixFieldsExcelPaymentMethod,
 } from '@/modules/dossiers/objects/constante/fix-field-excel-champ.dictionnary'
-import { ExcelService } from '@/modules/dossiers/providers/excel.service'
 import { ConfigService } from '@nestjs/config'
 import { RawChamp } from '@/shared/types/raw-champ.type'
 import { PieceJustificativeChamp } from '@dnum-mi/ds-api-client'
-import { ExcelData, ExcelDataCell, ExcelDataRow } from '@/shared/types/excel-data.type'
+import {
+  ExcelData,
+  ExcelDataCell,
+  ExcelDataRow,
+} from '@/shared/types/excel-data.type'
+import { XlsxService } from '@/shared/modules/xlsx/xlsx.service'
+import { DsChampType } from '@/shared/modules/ds-api/objects/ds-champ-type.enum'
+import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
+import { LoggerService } from '@/shared/modules/logger/logger.service'
+import { InjectRepository } from '@nestjs/typeorm'
 
 @Injectable()
-export class ExcelFieldService extends BaseEntityService<Field> {
+export class DossierSynchroniseExcelService extends BaseEntityService<Field> {
   regexNumbers = /^[0-9]+$/
+
   constructor(
     @InjectRepository(Field) protected repo: Repository<Field>,
     protected logger: LoggerService,
-    private excelService: ExcelService,
+    private xlsxService: XlsxService,
     private configService: ConfigService,
   ) {
     super(repo, logger)
     this.logger.setContext(this.constructor.name)
   }
 
-  async proccessByDossierId(id: number): Promise<void> {
-    this.logger.verbose('proccessByDossierId')
-
-    await this.createFieldsAmounts(
-      id, await this.createFieldsFromRawJson(id),
-    )
-  }
-
-  async createFieldsFromRawJson(
-    dossierId: number,
-  ): Promise<Field> {
+  //#region PRIVATE
+  async createFieldsFromRawJson(dossierId: number): Promise<Field> {
     this.logger.verbose('createFieldsFromRawJson')
 
     const excelField: Field = await this._findExcelFieldByDossierId(dossierId)
@@ -66,7 +73,7 @@ export class ExcelFieldService extends BaseEntityService<Field> {
     }
 
     const rawJson = excelField.rawJson as RawChamp
-    const field :CreateFieldDto = await this._createFieldsFromExcelFile(
+    const field: CreateFieldDto = await this._createFieldsFromExcelFile(
       rawJson,
       dossierId,
       fileUrl,
@@ -96,20 +103,23 @@ export class ExcelFieldService extends BaseEntityService<Field> {
   ): Promise<CreateFieldDto> {
     this.logger.verbose('_createFieldsFromExcelFile')
 
-    if (champ.id !== this.configService.get<string>('excel-import.excelChampId')) {
+    if (
+      champ.id !== this.configService.get<string>('excel-import.excelChampId')
+    ) {
       this.logger.verbose('Champ id is not the excel champ id')
       return null
     }
 
-    const excelData: ExcelData = await this.excelService.readExcelFileFromS3(fileUrl)
+    const excelData: ExcelData =
+      await this.xlsxService.readExcelFileFromS3(fileUrl)
     if (!excelData.length) {
       this.logger.warn('Excel file is empty')
       return null
     }
 
-    const childrenData = excelData.map((row, i) =>
-      this._createFieldsFromExcelRow(row, dossierId, i),
-    ).flat()
+    const childrenData = excelData
+      .map((row, i) => this._createFieldsFromExcelRow(row, dossierId, i))
+      .flat()
 
     return {
       sourceId: fixFieldsExcelChamp.id,
@@ -127,7 +137,11 @@ export class ExcelFieldService extends BaseEntityService<Field> {
     } as CreateFieldDto
   }
 
-  _createFieldsFromExcelRow(row: ExcelDataRow, dossierId: number, i: number): CreateFieldDto[] {
+  _createFieldsFromExcelRow(
+    row: ExcelDataRow,
+    dossierId: number,
+    i: number,
+  ): CreateFieldDto[] {
     this.logger.verbose('_createFieldsFromExcelRow')
     const validatedRow = this._validateExcelRow(row)
     return [
@@ -136,7 +150,9 @@ export class ExcelFieldService extends BaseEntityService<Field> {
         null,
         dossierId,
         String(validatedRow[0]),
-        validatedRow[0] === null ? null : this._getDateByString(validatedRow[0].toString()),
+        validatedRow[0] === null
+          ? null
+          : this._getDateByString(validatedRow[0].toString()),
         null,
         i,
       ),
@@ -228,11 +244,13 @@ export class ExcelFieldService extends BaseEntityService<Field> {
   _formatCellDate(serialDate): string {
     this.logger.verbose('_formatCellDate')
     const date = new Date((serialDate - 25569) * 86400 * 1000)
-    return date.getDate().toString().padStart(2, '0') +
+    return (
+      date.getDate().toString().padStart(2, '0') +
       '/' +
       (date.getMonth() + 1).toString().padStart(2, '0') +
       '/' +
       date.getFullYear()
+    )
   }
 
   _getDateByString(dateString: string): Date {
@@ -241,7 +259,10 @@ export class ExcelFieldService extends BaseEntityService<Field> {
     return new Date(Date.UTC(year, month - 1, day))
   }
 
-  _validateCellByList(cell: ExcelDataCell, authorizedList: string[]): ExcelDataCell {
+  _validateCellByList(
+    cell: ExcelDataCell,
+    authorizedList: string[],
+  ): ExcelDataCell {
     this.logger.verbose('_validateCellByList')
     if (!authorizedList.includes(cell.toString())) {
       this.logger.warn('Cell is not valid')
@@ -272,7 +293,8 @@ export class ExcelFieldService extends BaseEntityService<Field> {
     stringValue: string,
     dateValue: Date | null,
     numberValue: number | null,
-    parentRowIndex: number): CreateFieldDto {
+    parentRowIndex: number,
+  ): CreateFieldDto {
     this.logger.verbose('_fixFieldExcelRow')
     return this._fixFieldWithoutChildren(
       fixFieldMapping.id,
@@ -288,13 +310,19 @@ export class ExcelFieldService extends BaseEntityService<Field> {
     )
   }
 
-  async createFieldsAmounts(dossierId: number, excelFixField: Field): Promise<Field[]> {
+  async createFieldsAmounts(
+    dossierId: number,
+    excelFixField: Field,
+  ): Promise<Field[]> {
     this.logger.verbose('createFieldsAmounts')
 
-    const totalAmountFields: number = Number((await this._sumAmountFields(dossierId)).sum)
-    const totalAmountExcleFileds: number = this._sumAmountExcelFields(excelFixField)
+    const totalAmountFields: number = Number(
+      (await this._sumAmountFields(dossierId)).sum,
+    )
+    const totalAmountExcleFileds: number =
+      this._sumAmountExcelFields(excelFixField)
 
-    const fields :CreateFieldDto[] = await this._createFieldsTotalAmount(
+    const fields: CreateFieldDto[] = await this._createFieldsTotalAmount(
       dossierId,
       totalAmountFields,
       totalAmountExcleFileds,
@@ -311,10 +339,15 @@ export class ExcelFieldService extends BaseEntityService<Field> {
       .createQueryBuilder('field')
       .select('SUM(field.numberValue)', 'sum')
       .where('field.dossierId = :dossierId', { dossierId })
-      .andWhere('field.fieldSource = :fieldSource', { fieldSource: FieldSource.champs })
-      .andWhere('field.dsChampType = :dsChampType', { dsChampType: DsChampType.IntegerNumberChamp })
-      .andWhere('field.sourceId = :sourceId',
-        { sourceId: this.configService.get<string>('excel-import.amountChampId') })
+      .andWhere('field.fieldSource = :fieldSource', {
+        fieldSource: FieldSource.champs,
+      })
+      .andWhere('field.dsChampType = :dsChampType', {
+        dsChampType: DsChampType.IntegerNumberChamp,
+      })
+      .andWhere('field.sourceId = :sourceId', {
+        sourceId: this.configService.get<string>('excel-import.amountChampId'),
+      })
       .andWhere('field.numberValue IS NOT NULL')
       .getRawOne()
   }
@@ -339,13 +372,29 @@ export class ExcelFieldService extends BaseEntityService<Field> {
   ): Promise<CreateFieldDto[]> {
     this.logger.verbose('_createFieldsTotalAmount')
     return [
-      this._fixFieldTotalAmount(fixFieldDossierTotalAmount, dossierId, totalAmountFields + totalAmountExcleFileds),
-      this._fixFieldTotalAmount(fixFieldChampsTotalAmount, dossierId, totalAmountFields),
-      this._fixFieldTotalAmount(fixFieldExcelTotalAmount, dossierId, totalAmountExcleFileds),
+      this._fixFieldTotalAmount(
+        fixFieldDossierTotalAmount,
+        dossierId,
+        totalAmountFields + totalAmountExcleFileds,
+      ),
+      this._fixFieldTotalAmount(
+        fixFieldChampsTotalAmount,
+        dossierId,
+        totalAmountFields,
+      ),
+      this._fixFieldTotalAmount(
+        fixFieldExcelTotalAmount,
+        dossierId,
+        totalAmountExcleFileds,
+      ),
     ]
   }
 
-  private _fixFieldTotalAmount(fixFieldMapping: MappingColumn, dossierId: number, amount: number): CreateFieldDto {
+  private _fixFieldTotalAmount(
+    fixFieldMapping: MappingColumn,
+    dossierId: number,
+    amount: number,
+  ): CreateFieldDto {
     this.logger.verbose('_fixFieldTotalAmount')
     return this._fixFieldWithoutChildren(
       fixFieldMapping.id,
@@ -389,5 +438,11 @@ export class ExcelFieldService extends BaseEntityService<Field> {
       children: null,
       rawJson: null,
     }
+  }
+  //#endregion
+
+  async synchroniseExcel(dossierId: number): Promise<void> {
+    this.logger.verbose('synchroniseExcel')
+    await this.createFieldsAmounts(dossierId, await this.createFieldsFromRawJson(dossierId))
   }
 }

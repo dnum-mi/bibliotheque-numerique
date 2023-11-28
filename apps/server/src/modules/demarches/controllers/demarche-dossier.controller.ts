@@ -3,8 +3,8 @@ import { ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { CurrentDemarcheInterceptor } from '../providers/interceptors/current-demarche.interceptor'
 import { Demarche } from '../objects/entities/demarche.entity'
-import { DossierSearchService } from '../../dossiers/providers/dossier-search.service'
-import { FieldSearchService } from '../../dossiers/providers/field-search.service'
+import { DossierSearchService } from '../../dossiers/providers/search/dossier-search.service'
+import { FieldSearchService } from '../../dossiers/providers/search/field-search.service'
 import {
   DossierSearchOutputDto,
   FieldSearchOutputDto,
