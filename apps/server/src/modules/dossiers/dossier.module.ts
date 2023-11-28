@@ -8,16 +8,25 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { Dossier } from './objects/entities/dossier.entity'
 import { Field } from './objects/entities/field.entity'
 import { FieldService } from './providers/field.service'
-import { DossierSynchroniseService } from './providers/dossier-synchronise.service'
-import { DossierSearchService } from './providers/dossier-search.service'
-import { FieldSearchService } from './providers/field-search.service'
+import { DossierSynchroniseService } from './providers/synchronization/dossier-synchronise.service'
+import { DossierSearchService } from './providers/search/dossier-search.service'
+import { FieldSearchService } from './providers/search/field-search.service'
 import { OrganismeModule } from '@/modules/organismes/organisme.module'
-import { ExcelService } from '@/modules/dossiers/providers/excel.service'
-import { ExcelFieldService } from '@/modules/dossiers/providers/excel-field.service'
+import {
+  DossierSynchroniseExcelService,
+} from '@/modules/dossiers/providers/synchronization/excel/dossier-synchronise-excel.service'
+import { XlsxModule } from '@/shared/modules/xlsx/xlsx.module'
+import {
+  DossierSynchroniseFileService,
+} from '@/modules/dossiers/providers/synchronization/file/dossier-synchronize-file.service'
+import {
+  DossierSynchroniseOrganismeService,
+} from '@/modules/dossiers/providers/synchronization/organisme/dossier-synchronise-organisme.service'
 
 @Module({
   imports: [
     FileModule,
+    XlsxModule,
     forwardRef(() => InstructionTimesModule),
     forwardRef(() => DemarcheModule),
     forwardRef(() => OrganismeModule),
@@ -26,21 +35,24 @@ import { ExcelFieldService } from '@/modules/dossiers/providers/excel-field.serv
   controllers: [DossierController],
   providers: [
     DossierService,
-    DossierSearchService,
-    DossierSynchroniseService,
     FieldService,
+
+    DossierSearchService,
     FieldSearchService,
-    ExcelService,
-    ExcelFieldService,
+
+    DossierSynchroniseService,
+    DossierSynchroniseFileService,
+    DossierSynchroniseExcelService,
+    DossierSynchroniseOrganismeService,
   ],
   exports: [
     DossierService,
-    DossierSearchService,
-    DossierSynchroniseService,
     FieldService,
+
+    DossierSearchService,
     FieldSearchService,
-    ExcelService,
-    ExcelFieldService,
+
+    DossierSynchroniseService,
   ],
 })
 export class DossierModule {}

@@ -27,7 +27,7 @@ const fakeExcelData = [
   ],
 ]
 
-export const excelServiceMock = {
+export const xlsxServiceMock = {
   readExcelFileFromS3: jest
     .fn()
     .mockResolvedValue(fakeExcelData),
