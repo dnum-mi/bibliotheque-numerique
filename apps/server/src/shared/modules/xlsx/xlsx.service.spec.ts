@@ -1,13 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { loggerServiceMock } from '../../../../test/mock/logger-service.mock'
-import { ExcelService } from '@/modules/dossiers/providers/excel.service'
 import { ConfigModule } from '@nestjs/config'
 import excelImportConfig from '@/config/excel-import.config'
 import { FileService } from '@/modules/files/providers/file.service'
+import { XlsxService } from '@/shared/modules/xlsx/xlsx.service'
 
-describe('ExcelService', () => {
-  let service: ExcelService
+describe('XlsxService', () => {
+  let service: XlsxService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -19,7 +19,7 @@ describe('ExcelService', () => {
         }),
       ],
       controllers: [],
-      providers: [ExcelService],
+      providers: [XlsxService],
     })
       .useMocker((token) => {
         if (token === LoggerService) {
@@ -32,7 +32,7 @@ describe('ExcelService', () => {
       })
       .compile()
 
-    service = module.get<ExcelService>(ExcelService)
+    service = module.get<XlsxService>(XlsxService)
   })
 
   it('should be defined', () => {

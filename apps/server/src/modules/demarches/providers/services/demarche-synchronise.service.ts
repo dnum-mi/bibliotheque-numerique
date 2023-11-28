@@ -15,7 +15,7 @@ import {
   DsApiClient,
 } from '@dnum-mi/ds-api-client'
 import { DemarcheService } from './demarche.service'
-import { DossierSynchroniseService } from '../../../dossiers/providers/dossier-synchronise.service'
+import { DossierSynchroniseService } from '../../../dossiers/providers/synchronization/dossier-synchronise.service'
 import { getFixFieldsByIdentification } from '../../../dossiers/objects/constante/fix-field.dictionnary'
 import {
   giveFormatFunctionRefFromDsChampType,
