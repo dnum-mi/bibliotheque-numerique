@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
-import { loggerServiceMock } from '../../../../test/mock/logger-service.mock'
+import { loggerServiceMock } from '../../../../../../test/mock/logger-service.mock'
 import { FormatFunctionRef } from '@biblio-num/shared'
 import {
   fixFieldChampsTotalAmount,
@@ -12,12 +12,14 @@ import {
 } from '@/modules/dossiers/objects/constante/fix-field-excel-champ.dictionnary'
 import { excelChampsLabel } from '@/modules/dossiers/objects/constante/excel-champ.enum'
 import { DsChampType } from '@/shared/modules/ds-api/objects/ds-champ-type.enum'
-import { ExcelService } from '@/modules/dossiers/providers/excel.service'
 import excelImportConfig from '@/config/excel-import.config'
 import { ConfigModule } from '@nestjs/config'
-import { ExcelFieldService } from '@/modules/dossiers/providers/excel-field.service'
+import {
+  DossierSynchroniseExcelService,
+} from '@/modules/dossiers/providers/synchronization/excel/dossier-synchronise-excel.service'
 import { Field } from '@/modules/dossiers/objects/entities/field.entity'
 import { ExcelDataRow } from '@/shared/types/excel-data.type'
+import { XlsxService } from '@/shared/modules/xlsx/xlsx.service'
 
 const fakeExcelDateFundingNumber = 45288
 const fakeExcelDateFundingString = '28/12/2023'
@@ -539,8 +541,8 @@ const expectedAmountWithoutChampsFixFieldsDates = [
   },
 ]
 
-describe('ExcelFieldService', () => {
-  let service: ExcelFieldService
+describe('DossierSyncroniseExcel', () => {
+  let service: DossierSynchroniseExcelService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -552,7 +554,7 @@ describe('ExcelFieldService', () => {
         }),
       ],
       controllers: [],
-      providers: [ExcelFieldService],
+      providers: [DossierSynchroniseExcelService],
     })
       .useMocker((token) => {
         if (token === 'FieldRepository') {
@@ -561,7 +563,7 @@ describe('ExcelFieldService', () => {
           }
         } else if (token === LoggerService) {
           return loggerServiceMock
-        } else if (token === ExcelService) {
+        } else if (token === XlsxService) {
           return {
             readExcelFileFromS3: jest.fn().mockResolvedValue(fakeExcelData),
           }
@@ -569,7 +571,7 @@ describe('ExcelFieldService', () => {
       })
       .compile()
 
-    service = module.get<ExcelFieldService>(ExcelFieldService)
+    service = module.get<DossierSynchroniseExcelService>(DossierSynchroniseExcelService)
   })
 
   it('should be defined', () => {

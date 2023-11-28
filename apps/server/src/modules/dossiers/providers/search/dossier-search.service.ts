@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { Repository } from 'typeorm'
-import { Dossier } from '../objects/entities/dossier.entity'
+import { Dossier } from '../../objects/entities/dossier.entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
-import { Demarche } from '../../demarches/objects/entities/demarche.entity'
+import { Demarche } from '../../../demarches/objects/entities/demarche.entity'
 import {
   adjustDto,
   buildFilterQueryWithWhere,
@@ -12,7 +12,7 @@ import {
   buildSortQuery,
   deduceFieldToQueryFromType,
 } from '@/shared/utils/common-search.utils'
-import { FieldService } from './field.service'
+import { FieldService } from '../field.service'
 import {
   DossierSearchOutputDto,
   FieldTypeKeys,
