@@ -30,34 +30,37 @@ describe('Home', () => {
     cy.get('#password').type('A1etsn*!etisan34')
     cy.get('[type=submit]').click()
     cy.wait('@adminSignIn')
-    cy.url().should('include', '/demarches')
-    cy.get('[row-id=1]').find('.ag-cell-value').first().as('firstCellFirstLine').should('contain', '5')
+    cy.url().should('eq', `${Cypress.config().baseUrl}/`)
+    cy.get('[row-id=1]')
+      .find('.ag-cell-value')
+      .first().as('firstCellFirstLine')
+      .should('contain', '5')
     cy.get('@firstCellFirstLine').click()
-    cy.url().should('include', '/demarches/3/dossiers')
+    cy.url().should('include', '/3/dossiers')
 
     // Perte de connexion et se reconnecte, doit être redirigé vers la page désirée juste après la connexion
     cy.intercept({ method: 'GET', url: '/api/users/me', middleware: true, times: 1 }, (req, res) => {
       req.reply({ statusCode: 401, body: { message: 'Unauthorized' } })
     }).as('getMyProfile')
-    cy.visit('/demarches/3/dossiers')
+    cy.visit('/3/dossiers')
     cy.wait('@getMyProfile')
-    cy.url().should('include', '/sign_in?redirect=/demarches')
+    cy.url().should('include', '/sign_in?redirect=/3/dossiers')
 
     cy.intercept({ method: 'POST', url: '/api/auth/sign-in', times: 1 }, adminProfile).as('adminSignIn')
     cy.get('#email').type('louis.dubois@gmail.com')
     cy.get('#password').type('A1etsn*!etisan34')
     cy.get('[type=submit]').click()
-    cy.wait('@adminProfile')
     cy.wait('@adminSignIn')
     cy.wait('@customFilters')
     cy.wait('@fieldsSearch')
-    cy.url().should('include', '/demarches/3/dossiers').should('not.include', '/sign_in')
+    cy.url().should('include', '/3/dossiers').should('not.include', '/sign_in')
   })
 
   it('should sign in user with no role', () => {
     cy.visit('/sign_in')
-    cy.wait('@notProfile')
-    cy.intercept({ method: 'POST', url: '/api/auth/sign-in', times: 1 }, noneProfile).as('signIn')
+    cy.intercept({ method: 'POST', url: '/api/auth/sign-in', times: 1 }, { body: noneProfile }).as('signIn')
+    cy.intercept({ method: 'GET', url: '/api/users/me', times: 1 }, { body: noneProfile }).as('fetchProfile')
+
     cy.get('#email').type('louis.dubois@gmail.com')
     cy.get('#password').type('A1etsn*!etisan34')
     cy.get('[type=submit]').click()
@@ -68,31 +71,30 @@ describe('Home', () => {
     cy.get('.fr-header').should('not.contain', 'Statistiques')
     cy.get('.fr-header').should('not.contain', 'Administration')
 
-    cy.intercept({ method: 'GET', url: '/api/users/me', times: 1 }, noneProfile).as('fetchProfile')
-    cy.visit('/demarches')
+    cy.intercept({ method: 'GET', url: '/api/users/me', times: 2 }, { body: noneProfile }).as('fetchProfile')
+    cy.visit('/')
     cy.wait('@fetchProfile')
     cy.url().should('include', '/profile')
-    cy.intercept({ method: 'GET', url: '/api/users/me', times: 1 }, noneProfile).as('fetchProfile')
+    cy.intercept({ method: 'GET', url: '/api/users/me', times: 2 }, { body: noneProfile }).as('fetchProfile')
     cy.visit('/organismes')
     cy.wait('@fetchProfile')
     cy.url().should('include', '/profile')
-    cy.intercept({ method: 'GET', url: '/api/users/me', times: 1 }, noneProfile).as('fetchProfile')
+    cy.intercept({ method: 'GET', url: '/api/users/me', times: 2 }, { body: noneProfile }).as('fetchProfile')
     cy.visit('/statistiques')
     cy.wait('@fetchProfile')
     cy.url().should('include', '/profile')
-    cy.intercept({ method: 'GET', url: '/api/users/me', times: 1 }, noneProfile).as('fetchProfile')
+    cy.intercept({ method: 'GET', url: '/api/users/me', times: 2 }, { body: noneProfile }).as('fetchProfile')
     cy.visit('/admin')
     cy.wait('@fetchProfile')
     cy.url().should('include', '/profile')
-    cy.intercept({ method: 'GET', url: '/api/users/me', times: 1 }, noneProfile).as('fetchProfile')
-    cy.visit('/demarches/1/dossiers')
+    cy.intercept({ method: 'GET', url: '/api/users/me', times: 2 }, { body: noneProfile }).as('fetchProfile')
+    cy.visit('/1/dossiers')
     cy.wait('@fetchProfile')
     cy.url().should('include', '/profile')
   })
 
   it('should sign-in of a instructor', () => {
     cy.visit('/sign_in')
-    cy.wait('@notProfile')
 
     cy.intercept({ method: 'POST', url: '/api/auth/sign-in', times: 1 }, instructorProfile).as('signIn')
 
@@ -101,7 +103,7 @@ describe('Home', () => {
     cy.get('[type=submit]').click()
     cy.wait('@signIn')
     cy.wait('@demarches')
-    cy.url().should('include', '/demarches')
+    cy.url().should('eq', `${Cypress.config().baseUrl}/`)
 
     cy.intercept({ method: 'GET', url: '/api/users/me', times: 5 }, instructorProfile).as('fetchProfile')
 
@@ -120,7 +122,7 @@ describe('Home', () => {
       .click()
     // cy.wait('@fetchProfile')
     cy.wait('@demarches')
-    cy.url().should('include', '/demarches')
+    cy.url().should('eq', `${Cypress.config().baseUrl}/`)
     //#endregion
     //#region Check Statistiques
     cy.get('.fr-header')
@@ -140,13 +142,12 @@ describe('Home', () => {
 
   it('should sign-in of a admin-local', () => {
     cy.visit('/sign_in')
-    cy.wait('@notProfile')
     cy.intercept({ method: 'POST', url: '/api/auth/sign-in', times: 1 }, adminLocalProfile).as('signIn')
     cy.get('#email').type('louis.dubois@gmail.com')
     cy.get('#password').type('A1etsn*!etisan34')
     cy.get('[type=submit]').click()
     cy.wait('@signIn')
-    cy.url().should('include', '/demarches')
+    cy.url().should('eq', `${Cypress.config().baseUrl}/`)
     cy.intercept({ method: 'GET', url: '/api/demarches', times: 1 }, demarches).as('demarches')
     cy.get('.fr-header').should('contain', 'Démarches')
     cy.get('.fr-header').should('contain', 'Organismes')
@@ -159,7 +160,7 @@ describe('Home', () => {
 
     cy.intercept({ method: 'GET', url: '/api/demarches/1', times: 1 }, {}).as('dossiers1')
     cy.intercept({ method: 'GET', url: '/api/users/me', times: 1 }, adminLocalProfile).as('fetchProfile')
-    cy.visit('/demarches/1/dossiers')
+    cy.visit('/1/dossiers')
     cy.wait('@fetchProfile')
     cy.wait('@dossiers1')
     cy.url().should('include', '/dossiers')
