@@ -108,7 +108,7 @@ const expectedFixFieldsExcel = (): Partial<Field>[] => [
     stringValue: 'PM',
     dateValue: null,
     numberValue: null,
-    parentRowIndex: 1,
+    parentRowIndex: 0,
     label: 'Excel: Type de personnalité du contributeur',
     rawJson: null,
   },
@@ -121,7 +121,7 @@ const expectedFixFieldsExcel = (): Partial<Field>[] => [
     stringValue: 'PM',
     dateValue: null,
     numberValue: null,
-    parentRowIndex: 0,
+    parentRowIndex: 1,
     label: 'Excel: Type de personnalité du contributeur',
     rawJson: null,
   },
@@ -160,7 +160,7 @@ const expectedFixFieldsExcel = (): Partial<Field>[] => [
     stringValue: 'RP',
     dateValue: null,
     numberValue: null,
-    parentRowIndex: 0,
+    parentRowIndex: 1,
     label: 'Excel: Nature du financement',
     rawJson: null,
   },
@@ -173,7 +173,7 @@ const expectedFixFieldsExcel = (): Partial<Field>[] => [
     stringValue: 'RP',
     dateValue: null,
     numberValue: null,
-    parentRowIndex: 1,
+    parentRowIndex: 0,
     label: 'Excel: Nature du financement',
     rawJson: null,
   },
@@ -186,7 +186,7 @@ const expectedFixFieldsExcel = (): Partial<Field>[] => [
     stringValue: 'D',
     dateValue: null,
     numberValue: null,
-    parentRowIndex: 1,
+    parentRowIndex: 0,
     label: 'Excel: Caractère du financement',
     rawJson: null,
   },
@@ -199,7 +199,7 @@ const expectedFixFieldsExcel = (): Partial<Field>[] => [
     stringValue: 'D',
     dateValue: null,
     numberValue: null,
-    parentRowIndex: 0,
+    parentRowIndex: 1,
     label: 'Excel: Caractère du financement',
     rawJson: null,
   },
@@ -238,7 +238,7 @@ const expectedFixFieldsExcel = (): Partial<Field>[] => [
     stringValue: '1000',
     dateValue: null,
     numberValue: 1000,
-    parentRowIndex: 1,
+    parentRowIndex: 0,
     label: 'Excel: Montant ou valeur à déclarer en euros',
     rawJson: null,
   },
@@ -251,7 +251,7 @@ const expectedFixFieldsExcel = (): Partial<Field>[] => [
     stringValue: '1000',
     dateValue: null,
     numberValue: 1000,
-    parentRowIndex: 0,
+    parentRowIndex: 1,
     label: 'Excel: Montant ou valeur à déclarer en euros',
     rawJson: null,
   },
@@ -439,7 +439,7 @@ describe('Syncronisation ', () => {
         })
       })
       .then((fields) => {
-        expect(fields.length).toEqual(40)
+        expect(fields.length).toEqual(39)
         expect(fields).toMatchObject([
           {
             fieldSource: 'fix-field',
@@ -486,19 +486,6 @@ describe('Syncronisation ', () => {
           ...expectedFixFieldsDates(42),
           ...expectedFixFieldsExcel(),
           ...expectedFixFieldsTotalAmount(),
-          {
-            fieldSource: 'champs',
-            dsChampType: 'TextChamp',
-            type: 'string',
-            formatFunctionRef: null,
-            sourceId: 'Q2hhbXAtMTA0Mw==',
-            stringValue: "C'est du chocolat.",
-            dateValue: null,
-            numberValue: null,
-            parentId: null,
-            parentRowIndex: null,
-            label: 'Informations relatives au bénéficiaire du financement',
-          },
           {
             fieldSource: 'champs',
             dsChampType: 'RnaChamp',
@@ -646,10 +633,10 @@ describe('Syncronisation ', () => {
             label: 'Une annotation',
           },
         ])
-        expect(fields[26].parentId).toEqual(fields[30].id)
-        expect(fields[27].parentId).toEqual(fields[30].id)
-        expect(fields[28].parentId).toEqual(fields[30].id)
-        expect(fields[29].parentId).toEqual(fields[30].id)
+        expect(fields[25].parentId).toEqual(fields[29].id)
+        expect(fields[26].parentId).toEqual(fields[29].id)
+        expect(fields[27].parentId).toEqual(fields[29].id)
+        expect(fields[28].parentId).toEqual(fields[29].id)
 
         expect(fields).toEqual(
           expect.not.arrayContaining([

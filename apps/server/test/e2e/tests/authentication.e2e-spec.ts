@@ -40,7 +40,7 @@ describe('Auth (e2e)', () => {
       await request(app.getHttpServer())
         .post('/auth/sign-in')
         .send({
-          email: 'admin@localhost.com',
+          email: 'testpwd@localhost.com',
           password: 'badpassword',
         })
         .expect(404)

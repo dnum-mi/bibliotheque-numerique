@@ -214,6 +214,7 @@ describe('Generating demarche mapping columns', () => {
         formatFunctionRef: null,
         source: 'champs',
         type: 'string',
+        isHeader: true,
       },
       {
         id: 'Q2hhbXAtMTA0Mw==',
@@ -222,6 +223,7 @@ describe('Generating demarche mapping columns', () => {
         formatFunctionRef: null,
         source: 'champs',
         type: 'string',
+        isHeader: false,
       },
       {
         id: 'Q2hhbXAtMzI=',
@@ -230,6 +232,7 @@ describe('Generating demarche mapping columns', () => {
         formatFunctionRef: 'rna',
         source: 'champs',
         type: 'string',
+        isHeader: false,
       },
       {
         id: 'Q2hhbXAtMzM=',
@@ -238,14 +241,16 @@ describe('Generating demarche mapping columns', () => {
         formatFunctionRef: null,
         source: 'champs',
         type: 'string',
+        isHeader: false,
       },
       {
         id: 'Q2hhbXAtNTY=',
         originalLabel: 'Chargement du fichier complété à partir du modèle',
         columnLabel: null,
-        formatFunctionRef: "file",
+        formatFunctionRef: 'file',
         source: 'champs',
         type: 'file',
+        isHeader: false,
       },
       {
         id: 'Q2hhbXAtMTA0OA==',
@@ -255,6 +260,7 @@ describe('Generating demarche mapping columns', () => {
         formatFunctionRef: null,
         source: 'champs',
         type: 'string',
+        isHeader: false,
         children: [
           {
             id: 'Q2hhbXAtMTA0OQ==',
@@ -263,6 +269,7 @@ describe('Generating demarche mapping columns', () => {
             formatFunctionRef: FormatFunctionRef.country,
             source: 'champs',
             type: 'string',
+            isHeader: false,
           },
           {
             id: 'Q2hhbXAtMTA1MA==',
@@ -271,15 +278,17 @@ describe('Generating demarche mapping columns', () => {
             formatFunctionRef: null,
             source: 'champs',
             type: 'number',
+            isHeader: false,
           },
           {
             id: 'Q2hhbXAtMTA1MQ==',
             originalLabel:
               'Bien vouloir joindre un document listant les personnes mises à disposition',
             columnLabel: null,
-            formatFunctionRef: "file",
+            formatFunctionRef: 'file',
             source: 'champs',
             type: 'file',
+            isHeader: false,
           },
         ],
       },
@@ -290,6 +299,7 @@ describe('Generating demarche mapping columns', () => {
         formatFunctionRef: null,
         source: 'champs',
         type: 'string',
+        isHeader: false,
       },
       {
         id: 'Q2hhbXAtODc=',
@@ -299,6 +309,7 @@ describe('Generating demarche mapping columns', () => {
         formatFunctionRef: null,
         source: 'annotation',
         type: 'string',
+        isHeader: false,
       },
       {
         id: 'Q2hhbXAtODg=',
@@ -308,6 +319,7 @@ describe('Generating demarche mapping columns', () => {
         formatFunctionRef: null,
         source: 'annotation',
         type: 'date',
+        isHeader: false,
       },
       {
         id: 'Q2hhbXAtNTQ0',
@@ -316,6 +328,7 @@ describe('Generating demarche mapping columns', () => {
         formatFunctionRef: null,
         source: 'annotation',
         type: 'string',
+        isHeader: false,
       },
     ])
   })
