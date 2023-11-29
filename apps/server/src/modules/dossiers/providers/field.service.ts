@@ -100,13 +100,17 @@ export class FieldService extends BaseEntityService<Field> {
     this.logger.debug(`parentRow: ${parentRow}`)
     if (!champs.length) return []
     const fields: CreateFieldDto[] = []
-    champs.forEach((champ) => {
+    for (const champ of champs) {
       this.logger.debug(`champ: ${JSON.stringify(champ.label)}`)
+      this.logger.debug(`champ: ${JSON.stringify(champ.__typename)}`)
       if (!champ.__typename || !champ.id || !champ.label) {
         this.logger.warn(`champ is not valid: ${JSON.stringify(champ)}`)
       } else {
         const id = champ.champDescriptor?.id ?? champ.id
         const columnRef = columnHash[id]
+        if (columnRef.isHeader) {
+          continue
+        }
         const dsType = this._extractDsChampType(
           champ,
           columnRef.formatFunctionRef,
@@ -147,7 +151,7 @@ export class FieldService extends BaseEntityService<Field> {
               : null,
         } as CreateFieldDto)
       }
-    })
+    }
     return fields
   }
 

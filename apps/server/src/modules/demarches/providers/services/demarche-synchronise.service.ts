@@ -85,6 +85,7 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
         id: cd.id,
         originalLabel: cd.label,
         columnLabel: originalRenameHash[cd.id] || null,
+        isHeader: cd.__typename === 'HeaderSectionChampDescriptor',
         formatFunctionRef: giveFormatFunctionRefFromDsChampType(cd),
         source,
         type: giveTypeFromDsChampType(cd.__typename, true),
