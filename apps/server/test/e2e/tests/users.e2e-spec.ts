@@ -42,7 +42,7 @@ describe('users (e2e)', () => {
         .expect(403)
     })
 
-    it('Should return a list of user', async () => {
+    it('Should return a list of user 1', async () => {
       const response = await request(app.getHttpServer())
         .post('/users/list')
         .set('Cookie', [cookies.superadmin])
@@ -51,16 +51,17 @@ describe('users (e2e)', () => {
         })
         .expect(200)
       expect(response.body).toBeDefined()
-      expect(response.body.total).toEqual(4)
+      expect(response.body.total).toEqual(5)
       expect(response.body.data).toMatchObject([
         { id: 3, lastname: 'norole', firstname: 'Bill' },
         { id: 4, lastname: 'admin1', firstname: 'Suzette' },
         { id: 5, lastname: 'instructor1', firstname: 'Steve' },
+        { id: 6, lastname: 'admin', firstname: 'Jean' },
         { id: 7, lastname: 'norole', firstname: 'Titouan' },
       ])
     })
 
-    it('Should return a list of user', async () => {
+    it('Should return a list of user 2', async () => {
       const response = await request(app.getHttpServer())
         .post('/users/list')
         .set('Cookie', [cookies.superadmin])
@@ -81,6 +82,7 @@ describe('users (e2e)', () => {
       expect(response.body).toBeDefined()
       expect(response.body.data).toEqual([
         { id: 4, lastname: 'admin1', firstname: 'Suzette' },
+        { id: 6, lastname: 'admin', firstname: 'Jean' },
       ])
     })
 
@@ -115,6 +117,13 @@ describe('users (e2e)', () => {
           roleOptionsResume: 'ARUP (2), FDD (1)',
         },
         {
+          id: 6,
+          lastname: 'admin',
+          firstname: 'Jean',
+          roleLabel: null,
+          roleOptionsResume: '',
+        },
+        {
           id: 7,
           lastname: 'norole',
           firstname: 'Titouan',
@@ -127,7 +136,7 @@ describe('users (e2e)', () => {
 
   describe('POST /users/reset-password', () => {
     it('Should send a mail to reset password with e-mail correct', async () => {
-      const email = 'admin@localhost.com'
+      const email = 'testpwd@localhost.com'
       let to: string
       let subject: string
       jest
@@ -261,7 +270,7 @@ describe('users (e2e)', () => {
     })
 
     it('Should return error 409 if user already exists', async () => {
-      const email = 'admin@localhost.com'
+      const email = 'testpwd@localhost.com'
       await request(app.getHttpServer())
         .post('/users')
         .send({
