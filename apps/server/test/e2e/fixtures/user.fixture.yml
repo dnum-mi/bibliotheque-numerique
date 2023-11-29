@@ -54,8 +54,8 @@ items:
     role: { label: "instructor", options: { 1: { national: false, prefectures: [ 'D75' ] }, 5: { national: false, prefectures: [ 'D57' ] } } }
     validated: true
   testPwdUser:
-    id: 10
-    email: admin@localhost.com
+    id: 6
+    email: testpwd@localhost.com
     firstname: Jean
     lastname: admin
     password: password
@@ -64,7 +64,7 @@ items:
     role: { label: null, options: { } }
     validated: true
   testNoValidUser:
-    id: 12
+    id: 7
     email: test.no.valid@localhost.com
     firstname: Titouan
     lastname: norole
