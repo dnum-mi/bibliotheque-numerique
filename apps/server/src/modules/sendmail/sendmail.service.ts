@@ -1,49 +1,73 @@
 import { Injectable } from '@nestjs/common'
 import { MailerService } from '@nestjs-modules/mailer'
 import { LoggerService } from '../../shared/modules/logger/logger.service'
+import { ConfigService } from '@nestjs/config'
 
 @Injectable()
 export class SendMailService {
-  constructor (private readonly mailerService: MailerService, private readonly logger: LoggerService) {
+  constructor(
+    private readonly mailerService: MailerService,
+    private readonly logger: LoggerService,
+    private readonly config: ConfigService,
+  ) {
     this.logger.setContext(this.constructor.name)
   }
 
-  public async welcome (to: string): Promise<void> {
+  private async _commonSend(
+    email: string,
+    firstname: string,
+    lastname: string,
+    link: string,
+    template: 'resetPwd' | 'validSignUp',
+  ): Promise<void> {
+    const subject =
+      template === 'resetPwd'
+        ? 'Modifier son mot de passe'
+        : 'Confirmer votre inscription'
     await this.mailerService.sendMail({
-      to,
-      subject: 'Bienvenue',
-      template: 'welcome',
+      to: email,
+      subject,
+      template,
       context: {
-        email: to,
+        link,
+        email,
+        firstname,
+        lastname,
+        appUrl: this.config.get('appFrontUrl'),
+        supportEmail: this.config.get('supportEmail'),
       },
     })
-    this.logger.log(`Send Mail ${to}`)
+    this.logger.log(`Send Mail to ${email} with the subject ${subject}`)
   }
 
   // TODO: A vérifier l'utilité et template à completer
-  public async resetPwd (to: string, urlResetLink: string): Promise<void> {
-    const subject = 'Modifier son mot de passe'
-    await this.mailerService.sendMail({
-      to,
-      subject,
-      template: 'resetPwd',
-      context: {
-        urlResetLink,
-      },
-    })
-    this.logger.log(`Send Mail to ${to} with the subject ${subject}`)
+  public async resetPwd(
+    email: string,
+    firstname: string,
+    lastname: string,
+    urlResetLink: string,
+  ): Promise<void> {
+    return this._commonSend(
+      email,
+      firstname,
+      lastname,
+      urlResetLink,
+      'resetPwd',
+    )
   }
 
-  public async validSignUp (to: string, urlValidLink: string): Promise<void> {
-    const subject = 'Confirmer votre inscription'
-    await this.mailerService.sendMail({
-      to,
-      subject,
-      template: 'validSignUp',
-      context: {
-        urlValidLink,
-      },
-    })
-    this.logger.log(`Send Mail to ${to} with the subject ${subject}`)
+  public async validSignUp(
+    email: string,
+    firstname: string,
+    lastname: string,
+    urlResetLink: string,
+  ): Promise<void> {
+    return this._commonSend(
+      email,
+      firstname,
+      lastname,
+      urlResetLink,
+      'validSignUp',
+    )
   }
 }

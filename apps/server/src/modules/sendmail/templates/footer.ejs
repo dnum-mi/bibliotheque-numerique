@@ -1,3 +1,33 @@
-<br>
-<p align="right" class="pagebottom-content-left"><span style="color:rgba(0,0,0, 0.54)">&copy; <%= new Date().getFullYear(); %> - Bibliotéque Numérique</span>
-</p>
+<div class="separator"></div>
+<div class="footer-container">
+    <p class="nomargin">
+        <%= locals.supportEmail %>
+    </p>
+    <p class="nomargin">
+        Ministère de l'intérieur - Bibliothèque numérique
+    </p>
+</div>
+
+
+<style type="text/css">
+
+  .nomargin {
+    margin: 0;
+  }
+
+  .separator {
+    background-color: rgba(128, 128, 128, 0.36);
+    width: calc(100% - 60px);
+    height: 2px;
+    border-radius: 50%;
+    margin: 10px 30px;
+  }
+
+  .footer-container {
+    text-align: right;
+    margin-top: 50px;
+    color: grey;
+    margin-right: 20px;
+    padding: 0;
+  }
+</style>
