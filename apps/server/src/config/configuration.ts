@@ -7,6 +7,7 @@ export type TConfig = {
   appHost: string;
   appPath: string;
   appFrontUrl: string;
+  supportEmail: string;
   httpProxy: string;
   log: {
     date_format: string;
@@ -29,6 +30,7 @@ export default () : TConfig => ({
   appHost: process.env.APP_HOST || 'localhost:3000',
   appPath: process.env.APP_PATH || '',
   appFrontUrl: process.env.APP_FRONT_URL || 'http://localhost:8080',
+  supportEmail: process.env.SUPPORT_EMAIL || 'contact@bibliotheque-numerique.interieur.gouv.fr',
   httpProxy: process.env.http_proxy || '',
   log: {
     date_format: process.env.LOG_DATE_FORMAT || 'DD/MM/YYYY HH:mm:ss',
