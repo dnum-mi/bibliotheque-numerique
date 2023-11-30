@@ -134,15 +134,19 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
     delete raw.dossiers
     const toUpdate = {
       lastSynchronisedAt: new Date(),
-      title: raw.title,
-      state: raw.state,
-      types: demarche.types || [],
-      mappingColumns: this._generateMappingColumns(
-        raw,
-        demarche.mappingColumns,
-        demarche.identification,
-      ),
-      dsDataJson: raw,
+      ...((raw.datePublication !== demarche.dsDataJson.datePublication)
+        ? {
+          title: raw.title,
+          state: raw.state,
+          types: demarche.types || [],
+          mappingColumns: this._generateMappingColumns(
+            raw,
+            demarche.mappingColumns,
+            demarche.identification,
+          ),
+          dsDataJson: raw,
+        }
+        : {}),
     }
     await this.repo.update({ id: demarche.id }, toUpdate)
     await this._synchroniseAllDossier(dossiers, { ...demarche, ...toUpdate })
