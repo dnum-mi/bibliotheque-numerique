@@ -4,7 +4,7 @@ import {
   IdentificationDemarcheKeys,
   OrganismeType,
   OrganismeTypeKeys,
-} from '@biblio-num/shared'
+} from '../../enums'
 
 export class UpdateDemarcheDto {
   @IsOptional()

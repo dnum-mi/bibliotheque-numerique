@@ -6,8 +6,13 @@ import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { InjectRepository } from '@nestjs/typeorm'
 import { fixFieldsByIdentificationDictionary } from '../../../dossiers/objects/constante/fix-field.dictionnary'
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
-import { UpdateDemarcheDto } from '@/modules/demarches/objects/dtos/update-demarche.dto'
-import { IRole, isBelowSuperAdmin, Roles, SmallDemarcheOutputDto } from '@biblio-num/shared'
+import {
+  IRole,
+  isBelowSuperAdmin,
+  Roles,
+  SmallDemarcheOutputDto,
+  UpdateDemarcheDto,
+} from '@biblio-num/shared'
 import { FindManyOptions } from 'typeorm/find-options/FindManyOptions'
 import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere'
 
