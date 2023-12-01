@@ -64,6 +64,14 @@ test_rnf_back:
   extends:
     - .node:sonar
 
+test_http_proxy:
+  variables:
+    WORKING_DIR: apps/http-proxy
+  stage: test-sonar
+  allow_failure: true
+  extends:
+    - .node:sonar
+
 test_docker_front:
   variables:
     WORKING_DIR: 'apps/client'
@@ -106,6 +114,17 @@ test_docker_rnf_back:
   extends:
     - .docker:test
 
+test_docker_http_proxy:
+  image: docker:stable
+  variables:
+    WORKING_DIR: 'apps/http-proxy'
+    IMAGE_NAME: 'http-proxy'
+    DOCKERFILE: 'Dockerfile'
+  stage: docker-test
+  allow_failure: true
+  extends:
+    - .docker:test
+
 docker_build_front:
   variables:
     WORKING_DIR: 'apps/client'
@@ -137,6 +156,16 @@ docker_build_rnf_back:
   variables:
     WORKING_DIR: 'apps/rnf-server'
     IMAGE_NAME: 'rnf-back'
+    DOCKERFILE: 'Dockerfile'
+  stage: docker-build
+  extends:
+    - .kaniko:simple-build-push
+
+
+docker_build_http_proxy:
+  variables:
+    WORKING_DIR: 'apps/http-proxy'
+    IMAGE_NAME: 'http-proxy'
     DOCKERFILE: 'Dockerfile'
   stage: docker-build
   extends:
