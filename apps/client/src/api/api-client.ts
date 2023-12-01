@@ -27,6 +27,8 @@ import type {
   UserWithEditableRole,
   RolesKeys,
   UpdateOneRoleOptionDto,
+  IDemarche,
+  SmallDemarcheOutputDto,
 } from '@biblio-num/shared'
 
 import {
@@ -137,7 +139,7 @@ export const demarchesApiClient = {
     return response?.data
   },
 
-  getSmallDemarches: async () => {
+  getSmallDemarches: async (): Promise<SmallDemarcheOutputDto[]> => {
     return (await apiClientInstance.get(smallDemarchesRoutes)).data
   },
 
