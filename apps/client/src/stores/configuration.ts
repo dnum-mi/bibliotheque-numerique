@@ -21,7 +21,7 @@ export const useConfigurationStore = defineStore('Configuration', () => {
     return demarches.value
   }
 
-  const addDemarches = async (idDs: number|null, identification?: IdentificationDemarcheKeys, types?: OrganismeTypeKeys[]) => {
+  const addDemarches = async (idDs: number|null, identification?: IdentificationDemarcheKeys | null, types?: OrganismeTypeKeys[]) => {
     if (!idDs) throw new Error('id DS non saisi')
 
     const dto: CreateDemarcheDto = {
@@ -39,11 +39,13 @@ export const useConfigurationStore = defineStore('Configuration', () => {
     await synchronizeDossiers(idDs).finally(() => { fetching.value = false })
   }
 
-  const updateDemarche = async (idDs: number|null, identification?: IdentificationDemarcheKeys, types?: OrganismeTypeKeys[]) => {
+  const updateDemarche = async (idDs: number|null, identification?: IdentificationDemarcheKeys | null, types?: OrganismeTypeKeys[]) => {
     if (!idDs) throw new Error('id DS non saisi')
     const dto: UpdateDemarcheDto = {
-      identification,
       types,
+    }
+    if (identification !== undefined) {
+      dto.identification = identification
     }
     const demarche = demarches.value.find((d) => d.dsId === idDs)
     if (!demarche) throw new Error(`Démarche ${idDs} non trouvée`)
