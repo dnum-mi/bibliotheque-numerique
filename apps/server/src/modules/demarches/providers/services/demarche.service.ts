@@ -46,7 +46,7 @@ export class DemarcheService extends BaseEntityService<Demarche> {
     role: IRole,
   ): Promise<SmallDemarcheOutputDto[]> {
     return this.findMultipleDemarche(
-      { ...filter, select: ['id', 'title', 'dsDataJson', 'types'] },
+      { ...filter, select: ['id', 'title', 'dsDataJson', 'types', 'identification'] },
       role,
     ).then((demarches) => {
       return demarches.map((d) => ({
@@ -54,6 +54,7 @@ export class DemarcheService extends BaseEntityService<Demarche> {
         title: d.title,
         types: d.types,
         dsId: d.dsDataJson?.number,
+        identification: d.identification,
       }))
     })
   }
