@@ -19,3 +19,8 @@ export const patchDemarche = async (id: number, dto: UpdateDemarcheDto) => {
   const response = await apiClientInstance.patch(getDemarcheByIdRoute(id), dto)
   return response.data
 }
+
+export const getWorkersLogs = async () => {
+  const response = await apiClientInstance.get('/job-log')
+  return response.data
+}
