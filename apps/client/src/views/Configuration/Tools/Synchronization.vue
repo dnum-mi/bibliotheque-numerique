@@ -12,7 +12,7 @@ const configurationStore = useConfigurationStore()
 const idDsString = ref('')
 const idDs = computed<number| null>(() => Number(idDsString.value) ?? null)
 
-const identifcation = ref<IdentificationDemarcheKeys>()
+const identification = ref<string>()
 
 const typesString = ref('')
 const types = computed<OrganismeTypeKeys[]>(() => typesString.value ? JSON.parse(typesString.value) : undefined)
@@ -20,8 +20,35 @@ const types = computed<OrganismeTypeKeys[]>(() => typesString.value ? JSON.parse
 const demarches = computed<SmallDemarcheOutputDto[]>(() => configurationStore.demarches)
 const loading = computed<boolean>(() => configurationStore.fetching)
 
+const identificationOptions = [
+  {
+    text: 'Pas de modification',
+    value: '',
+  },
+  {
+    text: "Pour le calcul de délai d'instruction",
+    value: 'FE',
+  },
+  {
+    text: 'Aucune valeur',
+    value: 'null',
+  },
+
+]
+
+const identificationValue = computed<IdentificationDemarcheKeys| null | undefined>(() => {
+  switch (identification.value) {
+    case '':
+      return undefined
+    case 'null':
+      return null
+    default:
+      return identification.value
+  }
+})
+
 const onClickCreateDemarche = async () => {
-  await configurationStore.addDemarches(idDs.value, identifcation.value)
+  await configurationStore.addDemarches(idDs.value, identificationValue.value)
 }
 
 const onClickSynchroDossiers = async () => {
@@ -29,7 +56,7 @@ const onClickSynchroDossiers = async () => {
 }
 
 const onClickUpdateDemarche = async () => {
-  await configurationStore.updateDemarche(idDs.value, identifcation.value, types.value)
+  await configurationStore.updateDemarche(idDs.value, identificationValue.value, types.value)
 }
 
 onMounted(async () => {
@@ -48,18 +75,16 @@ const expandedId = ref()
     <DsfrInputGroup
       v-model="idDsString"
       type="number"
-      label="Dèmarche"
+      label="Démarche"
       hint="Numéro de dèmarche DS"
       label-visible
     />
-    <DsfrInputGroup
-      v-model="identifcation"
-      type="text"
+    <DsfrSelect
+      v-model="identification"
       label="Identification"
-      label-visible
-      hint="format: FE"
+      :options="identificationOptions"
+      description="format: FE ou null(pour supprimer)"
     />
-
     <DsfrInputGroup
       v-model="typesString"
       type="text"
@@ -95,7 +120,7 @@ const expandedId = ref()
     <DsfrTable class="w-full text-center">
       <thead>
         <th>id</th>
-        <th>N°Dèmarche</th>
+        <th>N°Démarche</th>
         <th>Titre</th>
         <th>Types</th>
       </thead>
