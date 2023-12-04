@@ -18,7 +18,8 @@ export class RnfService {
     if (!isRnfLuhnValid(idRnf)) {
       throw new Error('RNF ID is invalid')
     }
-    return axios.get(`${this.config.get('RNF_API_URL')}/api/foundations/${idRnf}`)
+    return axios
+      .get(`${this.config.get('RNF_API_URL')}/api/foundations/${idRnf}`)
       .then(response => {
         return response.data
       })

@@ -76,6 +76,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
   async associateOrganismeFromRna(idRna: string): Promise<number> {
     this.logger.verbose(`associateOrganismeFromRna ${idRna}`)
     const raw: IRnaOutput = await this.rnaService.getAssociation(idRna)
+    this.logger.debug(`raw: ${JSON.stringify(raw)}`)
     if (!raw) {
       throw new Error('No association found with this RNA.')
     }
