@@ -5,7 +5,7 @@ import type {
   OrganismeTypeKeys,
   SmallDemarcheOutputDto,
 } from '@biblio-num/shared'
-import { useConfigurationStore } from '../../../stores/configuration'
+import { useConfigurationStore } from '@/stores/configuration'
 
 const configurationStore = useConfigurationStore()
 
@@ -48,7 +48,7 @@ const identificationValue = computed<IdentificationDemarcheKeys| null | undefine
 })
 
 const onClickCreateDemarche = async () => {
-  await configurationStore.addDemarches(idDs.value, identificationValue.value)
+  await configurationStore.addDemarches(idDs.value, identificationValue.value, types.value)
 }
 
 const onClickSynchroDossiers = async () => {

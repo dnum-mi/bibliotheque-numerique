@@ -28,6 +28,7 @@ export const useConfigurationStore = defineStore('Configuration', () => {
       idDs,
     } as CreateDemarcheDto
     if (identification) dto.identification = identification
+    if (types) dto.types = types
     fetching.value = true
     await createDemarche(dto).finally(() => { fetching.value = false })
     await loadDemarches().finally(() => { fetching.value = false })
