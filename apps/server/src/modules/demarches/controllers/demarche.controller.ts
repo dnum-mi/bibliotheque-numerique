@@ -72,6 +72,7 @@ export class DemarcheController {
     await this.demarcheSynchroniseService.createAndSynchronise(
       dto.idDs,
       dto.identification,
+      dto.types,
     )
     return { message: `Demarche with DS id ${dto.idDs} has been created.` }
   }

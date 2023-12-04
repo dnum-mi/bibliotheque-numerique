@@ -27,6 +27,7 @@ import {
   FieldSourceKeys,
   type IdentificationDemarcheKeys,
   MappingColumn,
+  OrganismeTypeKeys,
 } from '@biblio-num/shared'
 
 @Injectable()
@@ -160,6 +161,7 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
   public async createAndSynchronise(
     dsId: number,
     identification: IdentificationDemarcheKeys | undefined,
+    types: OrganismeTypeKeys[] | undefined,
   ): Promise<void> {
     this.logger.verbose('createAndSynchronise')
     const raw = await this.dsApiClient.demarcheDossierWithCustomChamp(dsId)
@@ -175,7 +177,7 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
       lastSynchronisedAt: new Date(),
       title: raw.demarche.title,
       state: raw.demarche.state ?? 'no-state',
-      types: [],
+      types: types || [],
       mappingColumns: this._generateMappingColumns(
         raw.demarche,
         [],
