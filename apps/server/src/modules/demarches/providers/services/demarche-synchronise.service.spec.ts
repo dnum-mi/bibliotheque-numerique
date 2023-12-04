@@ -3,8 +3,11 @@ import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { loggerServiceMock } from '../../../../../test/mock/logger-service.mock'
 import { DemarcheSynchroniseService } from './demarche-synchronise.service'
 import { Test, TestingModule } from '@nestjs/testing'
-import { Demarche } from '@dnum-mi/ds-api-client'
-import { FormatFunctionRef } from '@biblio-num/shared'
+import { Demarche as TDemarche} from '@dnum-mi/ds-api-client'
+import { FormatFunctionRef, MappingColumn } from '@biblio-num/shared'
+// import { Demarche as TDemarche, Revision} from '@dnum-mi/ds-api-client/dist/@types/generated-types'
+import { faker } from '@faker-js/faker'
+import { DsApiClient } from '@dnum-mi/ds-api-client'
 
 const fakeDemarche = {
   activeRevision: {
@@ -137,6 +140,186 @@ const fakeDemarche = {
   },
 }
 
+const mappingColumnExpected = [
+  {
+    id: '96151176-4624-4706-b861-722d2e53545d',
+    columnLabel: 'ID',
+    originalLabel: 'Id démarche simplifié',
+    type: 'number',
+    source: 'fix-field',
+  },
+  {
+    id: '1a4b62c4-b81f-4e83-ac34-f6d601b8a8d4',
+    columnLabel: 'Status',
+    originalLabel: 'Status',
+    type: 'enum',
+    formatFunctionRef: 'status',
+    source: 'fix-field',
+  },
+  {
+    columnLabel: 'Préfecture',
+    id: '9863ce70-6378-4d7e-aca9-b81fb7b97c10',
+    originalLabel: 'préfecture',
+    formatFunctionRef: FormatFunctionRef.prefecture,
+    source: 'fix-field',
+    type: 'string',
+  },
+  {
+    id: '9863ce70-6378-4d7e-aca9-b81fb7b97c11',
+    columnLabel: null,
+    originalLabel: 'Date de dépot',
+    type: 'date',
+    source: 'fix-field',
+  },
+  {
+    id: '9863ce70-6378-4d7e-aca9-b81fb7b97c12',
+    columnLabel: null,
+    originalLabel: 'Date de passage en instruction',
+    type: 'date',
+    source: 'fix-field',
+  },
+  {
+    id: '9863ce70-6378-4d7e-aca9-b81fb7b97c13',
+    columnLabel: null,
+    originalLabel: 'Date de passage en construction',
+    type: 'date',
+    source: 'fix-field',
+  },
+  {
+    id: 'Q2hhbXAtMzE=',
+    originalLabel: 'Informations de base',
+    columnLabel: null,
+    formatFunctionRef: null,
+    source: 'champs',
+    type: 'string',
+    isHeader: true,
+  },
+  {
+    id: 'Q2hhbXAtMTA0Mw==',
+    originalLabel: "Quel est l'organisme bénéficiaire de la déclaration ?",
+    columnLabel: null,
+    formatFunctionRef: null,
+    source: 'champs',
+    type: 'string',
+    isHeader: false,
+  },
+  {
+    id: 'Q2hhbXAtMzI=',
+    originalLabel: "Saisir le n°RNA de l'association",
+    columnLabel: null,
+    formatFunctionRef: 'rna',
+    source: 'champs',
+    type: 'string',
+    isHeader: false,
+  },
+  {
+    id: 'Q2hhbXAtMzM=',
+    originalLabel: 'Où trouver mon n°RNA ?',
+    columnLabel: null,
+    formatFunctionRef: null,
+    source: 'champs',
+    type: 'string',
+    isHeader: false,
+  },
+  {
+    id: 'Q2hhbXAtNTY=',
+    originalLabel: 'Chargement du fichier complété à partir du modèle',
+    columnLabel: null,
+    formatFunctionRef: 'file',
+    source: 'champs',
+    type: 'file',
+    isHeader: false,
+  },
+  {
+    id: 'Q2hhbXAtMTA0OA==',
+    originalLabel:
+      "Déclaration d'un financement d'un montant supérieur à 15 300 €",
+    columnLabel: null,
+    formatFunctionRef: null,
+    source: 'champs',
+    type: 'string',
+    isHeader: false,
+    children: [
+      {
+        id: 'Q2hhbXAtMTA0OQ==',
+        originalLabel: "Pays d'origine du financement",
+        columnLabel: null,
+        formatFunctionRef: FormatFunctionRef.country,
+        source: 'champs',
+        type: 'string',
+        isHeader: false,
+      },
+      {
+        id: 'Q2hhbXAtMTA1MA==',
+        originalLabel: 'Montant du financement',
+        columnLabel: null,
+        formatFunctionRef: null,
+        source: 'champs',
+        type: 'number',
+        isHeader: false,
+      },
+      {
+        id: 'Q2hhbXAtMTA1MQ==',
+        originalLabel:
+          'Bien vouloir joindre un document listant les personnes mises à disposition',
+        columnLabel: null,
+        formatFunctionRef: 'file',
+        source: 'champs',
+        type: 'file',
+        isHeader: false,
+      },
+    ],
+  },
+  {
+    id: 'Q2hhbXAtMTA0Nw==',
+    originalLabel: 'Numéro de quelque chose',
+    columnLabel: null,
+    formatFunctionRef: null,
+    source: 'champs',
+    type: 'string',
+    isHeader: false,
+  },
+  {
+    id: 'Q2hhbXAtODc=',
+    originalLabel:
+      'Association déclarée cultuelle dans télédéclaration loi CRPR ?',
+    columnLabel: null,
+    formatFunctionRef: null,
+    source: 'annotation',
+    type: 'string',
+    isHeader: false,
+  },
+  {
+    id: 'Q2hhbXAtODg=',
+    originalLabel:
+      "Si oui, date d'entrée en vigueur de la qualité cultuelle",
+    columnLabel: null,
+    formatFunctionRef: null,
+    source: 'annotation',
+    type: 'date',
+    isHeader: false,
+  },
+  {
+    id: 'Q2hhbXAtNTQ0',
+    originalLabel: "Délai d'instruction",
+    columnLabel: null,
+    formatFunctionRef: null,
+    source: 'annotation',
+    type: 'string',
+    isHeader: false,
+  },
+]
+
+const dsApiClientMock = {
+  demarcheDossierWithCustomChamp: jest.fn()
+}
+
+let demarcheRepoUpdate = (query, toUpdate) => {
+  console.log(demarcheRepoUpdate)
+}
+const demarcheRepositoryMock = {
+  update: (query, toUpdate) => demarcheRepoUpdate(query, toUpdate)
+}
 describe('Generating demarche mapping columns', () => {
   let service: DemarcheSynchroniseService
 
@@ -147,10 +330,16 @@ describe('Generating demarche mapping columns', () => {
       providers: [DemarcheSynchroniseService],
     })
       .useMocker((token) => {
-        if (token === LoggerService) {
-          return loggerServiceMock
+        switch(token) {
+          case LoggerService:
+            return loggerServiceMock
+          case DsApiClient:
+            return dsApiClientMock
+          case "DemarcheRepository":
+            return demarcheRepositoryMock
+          default:
+            return {}
         }
-        return {}
       })
       .compile()
 
@@ -160,176 +349,97 @@ describe('Generating demarche mapping columns', () => {
   it('Should create a correct mapping column', () => {
     expect(
       service['_generateMappingColumns'](
-        fakeDemarche as unknown as Partial<Demarche>,
+        fakeDemarche as unknown as Partial<TDemarche>,
       ),
-    ).toEqual([
-      {
-        id: '96151176-4624-4706-b861-722d2e53545d',
-        columnLabel: 'ID',
-        originalLabel: 'Id démarche simplifié',
-        type: 'number',
-        source: 'fix-field',
-      },
-      {
-        id: '1a4b62c4-b81f-4e83-ac34-f6d601b8a8d4',
-        columnLabel: 'Status',
-        originalLabel: 'Status',
-        type: 'enum',
-        formatFunctionRef: 'status',
-        source: 'fix-field',
-      },
-      {
-        columnLabel: 'Préfecture',
-        id: '9863ce70-6378-4d7e-aca9-b81fb7b97c10',
-        originalLabel: 'préfecture',
-        formatFunctionRef: FormatFunctionRef.prefecture,
-        source: 'fix-field',
-        type: 'string',
-      },
-      {
-        id: '9863ce70-6378-4d7e-aca9-b81fb7b97c11',
-        columnLabel: null,
-        originalLabel: 'Date de dépot',
-        type: 'date',
-        source: 'fix-field',
-      },
-      {
-        id: '9863ce70-6378-4d7e-aca9-b81fb7b97c12',
-        columnLabel: null,
-        originalLabel: 'Date de passage en instruction',
-        type: 'date',
-        source: 'fix-field',
-      },
-      {
-        id: '9863ce70-6378-4d7e-aca9-b81fb7b97c13',
-        columnLabel: null,
-        originalLabel: 'Date de passage en construction',
-        type: 'date',
-        source: 'fix-field',
-      },
-      {
-        id: 'Q2hhbXAtMzE=',
-        originalLabel: 'Informations de base',
-        columnLabel: null,
-        formatFunctionRef: null,
-        source: 'champs',
-        type: 'string',
-        isHeader: true,
-      },
-      {
-        id: 'Q2hhbXAtMTA0Mw==',
-        originalLabel: "Quel est l'organisme bénéficiaire de la déclaration ?",
-        columnLabel: null,
-        formatFunctionRef: null,
-        source: 'champs',
-        type: 'string',
-        isHeader: false,
-      },
-      {
-        id: 'Q2hhbXAtMzI=',
-        originalLabel: "Saisir le n°RNA de l'association",
-        columnLabel: null,
-        formatFunctionRef: 'rna',
-        source: 'champs',
-        type: 'string',
-        isHeader: false,
-      },
-      {
-        id: 'Q2hhbXAtMzM=',
-        originalLabel: 'Où trouver mon n°RNA ?',
-        columnLabel: null,
-        formatFunctionRef: null,
-        source: 'champs',
-        type: 'string',
-        isHeader: false,
-      },
-      {
-        id: 'Q2hhbXAtNTY=',
-        originalLabel: 'Chargement du fichier complété à partir du modèle',
-        columnLabel: null,
-        formatFunctionRef: 'file',
-        source: 'champs',
-        type: 'file',
-        isHeader: false,
-      },
-      {
-        id: 'Q2hhbXAtMTA0OA==',
-        originalLabel:
-          "Déclaration d'un financement d'un montant supérieur à 15 300 €",
-        columnLabel: null,
-        formatFunctionRef: null,
-        source: 'champs',
-        type: 'string',
-        isHeader: false,
-        children: [
-          {
-            id: 'Q2hhbXAtMTA0OQ==',
-            originalLabel: "Pays d'origine du financement",
-            columnLabel: null,
-            formatFunctionRef: FormatFunctionRef.country,
-            source: 'champs',
-            type: 'string',
-            isHeader: false,
+    ).toEqual(mappingColumnExpected)
+  })
+
+  it('Should updat demarche when there is one re-publubication', (done) => {
+    const dateCreation = faker.date.past().toISOString()
+    const datePublication = faker.date.recent().toISOString()
+    const datePublicationfuture = faker.date.future().toISOString()
+    const lastSynchronisedAt = faker.date.past().toISOString()
+    const types= []
+    const identification=null
+    const mappingColumns = mappingColumnExpected as MappingColumn[]
+
+    dsApiClientMock.demarcheDossierWithCustomChamp.mockResolvedValueOnce({
+        demarche: {
+          ...fakeDemarche,
+          dossiers: {
+            nodes:[]
           },
-          {
-            id: 'Q2hhbXAtMTA1MA==',
-            originalLabel: 'Montant du financement',
-            columnLabel: null,
-            formatFunctionRef: null,
-            source: 'champs',
-            type: 'number',
-            isHeader: false,
+          datePublication: datePublicationfuture,
+        }
+      })
+
+    demarcheRepoUpdate = (query, toUpdate) => {
+      try {
+        expect(toUpdate).toHaveProperty('lastSynchronisedAt')
+        expect(toUpdate).toHaveProperty('mappingColumns')
+      }
+      finally {
+        done()
+      }
+    }
+    service['_synchroniseOneDemarche'](
+      {
+        //@ts-ignore
+        lastSynchronisedAt,
+        types,
+        identification,
+        mappingColumns,
+        dsDataJson: {
+          datePublication,
+          //@ts-ignore
+          activeRevision:{ id: "1", dateCreation, ...fakeDemarche.activeRevision }
+        },
+      },
+      1,
+    )
+  })
+
+  it('Should not modify Demarche when tha date publication is no changed', (done) => {
+    const dateCreation = faker.date.past().toISOString()
+    const datePublication = faker.date.recent().toISOString()
+    const lastSynchronisedAt = faker.date.past().toISOString()
+    const types= []
+    const identification=null
+    const mappingColumns = mappingColumnExpected as MappingColumn[]
+
+    dsApiClientMock.demarcheDossierWithCustomChamp.mockResolvedValueOnce({
+        demarche: {
+          ...fakeDemarche,
+          dossiers: {
+            nodes:[]
           },
-          {
-            id: 'Q2hhbXAtMTA1MQ==',
-            originalLabel:
-              'Bien vouloir joindre un document listant les personnes mises à disposition',
-            columnLabel: null,
-            formatFunctionRef: 'file',
-            source: 'champs',
-            type: 'file',
-            isHeader: false,
-          },
-        ],
-      },
+          datePublication,
+        }
+      })
+
+    demarcheRepoUpdate = (query, toUpdate) => {
+      try {
+        expect(toUpdate).toHaveProperty('lastSynchronisedAt')
+        expect(toUpdate).not.toHaveProperty('mappingColumns')
+      }
+      finally {
+        done()
+      }
+    }
+    service['_synchroniseOneDemarche'](
       {
-        id: 'Q2hhbXAtMTA0Nw==',
-        originalLabel: 'Numéro de quelque chose',
-        columnLabel: null,
-        formatFunctionRef: null,
-        source: 'champs',
-        type: 'string',
-        isHeader: false,
+        //@ts-ignore
+        lastSynchronisedAt,
+        types,
+        identification,
+        mappingColumns,
+        dsDataJson: {
+          datePublication,
+          //@ts-ignore
+          activeRevision:{ id: "1", dateCreation, ...fakeDemarche.activeRevision }
+        },
       },
-      {
-        id: 'Q2hhbXAtODc=',
-        originalLabel:
-          'Association déclarée cultuelle dans télédéclaration loi CRPR ?',
-        columnLabel: null,
-        formatFunctionRef: null,
-        source: 'annotation',
-        type: 'string',
-        isHeader: false,
-      },
-      {
-        id: 'Q2hhbXAtODg=',
-        originalLabel:
-          "Si oui, date d'entrée en vigueur de la qualité cultuelle",
-        columnLabel: null,
-        formatFunctionRef: null,
-        source: 'annotation',
-        type: 'date',
-        isHeader: false,
-      },
-      {
-        id: 'Q2hhbXAtNTQ0',
-        originalLabel: "Délai d'instruction",
-        columnLabel: null,
-        formatFunctionRef: null,
-        source: 'annotation',
-        type: 'string',
-        isHeader: false,
-      },
-    ])
+      1,
+    )
   })
 })
