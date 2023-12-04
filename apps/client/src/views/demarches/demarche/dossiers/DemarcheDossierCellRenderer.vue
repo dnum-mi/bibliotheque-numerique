@@ -7,6 +7,7 @@ import type { FormatFunctionRefKeys } from '@biblio-num/shared'
 import delayStateBadge from '@/components/Badges/DelayStateBadge.vue'
 import AgGridAttachmentCell from '@/components/ag-grid/AgGridAttachmentCell.vue'
 import { Prefecture, type PrefectureKeys } from '@/biblio-num/shared'
+import { firstUpperCase } from '@/utils/first-upper-case'
 
 // TODO: check into @biblio-num/shared
 const FieldType = {
@@ -119,24 +120,23 @@ const getPrefecture = (prefecture: PrefectureKeys) => {
         />
       </template>
 
-      <!-- RNF -->
-      <template v-else-if="ffr === 'rnf' && cellValue">
-        <RouterLink
-          :to="{ name: 'FicheOrganisme', params: { id: cellValue }, query: { idType: 'Rnf' } }"
-          @click.stop
-        >
-          {{ cellValue }}
-        </RouterLink>
-      </template>
-
-      <!-- RNA -->
-      <template v-else-if="ffr === 'rna' && cellValue">
-        <RouterLink
-          :to="{ name: 'FicheOrganisme', params: { id: cellValue }, query: {idType: 'Rna'} }"
-          @click.stop
-        >
-          {{ cellValue }}
-        </RouterLink>
+      <!-- RNF & RNA -->
+      <template v-else-if="['rnf', 'rna'].includes(ffr) && cellValue">
+        <template v-if="cellValue.substring(0, 5) === 'ERROR'">
+          <span
+            class="text-red-500 cursor-not-allowed"
+          >
+            ⚠️ {{ cellValue.substring(7) }}
+          </span>
+        </template>
+        <template v-else>
+          <RouterLink
+            :to="{ name: 'FicheOrganisme', params: { id: cellValue }, query: { idType: firstUpperCase(ffr) } }"
+            @click.stop
+          >
+            {{ cellValue }}
+          </RouterLink>
+        </template>
       </template>
 
       <!-- File -->

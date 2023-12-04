@@ -6,7 +6,10 @@ import { IRnaOutput } from '@biblio-num/shared'
 
 @Injectable()
 export class RnaService {
-  constructor(protected logger: LoggerService, private readonly config: ConfigService) {
+  constructor(
+    protected logger: LoggerService,
+    private readonly config: ConfigService,
+  ) {
     this.logger.setContext(this.constructor.name)
   }
 
@@ -15,16 +18,20 @@ export class RnaService {
   }
 
   private get defaultQueryArgs(): string {
-    return `context=biblio_numerique&object=biblio_numerique&recipient=${this.config.get('rna.recipient')}`
+    return `context=biblio_numerique&object=biblio_numerique&recipient=${this.config.get(
+      'rna.recipient',
+    )}`
   }
 
   async getAssociation(idRna: string): Promise<IRnaOutput> {
-    return axios.get(`${this.rnaUrl}/${idRna}?${this.defaultQueryArgs}`, {
-      headers: {
-        Authorization: `Bearer ${this.config.get('rna.token')}`,
-      },
-    }).then(response => {
-      return response.data.data
-    })
+    return axios
+      .get(`${this.rnaUrl}/${idRna}?${this.defaultQueryArgs}`, {
+        headers: {
+          Authorization: `Bearer ${this.config.get('rna.token')}`,
+        },
+      })
+      .then((response) => {
+        return response.data.data
+      })
   }
 }
