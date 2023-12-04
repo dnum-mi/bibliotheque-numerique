@@ -64,6 +64,11 @@ onMounted(async () => {
 })
 
 const expandedId = ref()
+const onSelected = (demarche: SmallDemarcheOutputDto) => {
+  idDsString.value = demarche.dsId.toString() || ''
+  identification.value = demarche.identification || ''
+  typesString.value = demarche.types ? JSON.stringify(demarche.types) : ''
+}
 </script>
 
 <template>
@@ -79,18 +84,21 @@ const expandedId = ref()
       hint="Numéro de dèmarche DS"
       label-visible
     />
-    <DsfrSelect
+
+    <DsfrInputGroup
       v-model="identification"
+      type="text"
       label="Identification"
-      :options="identificationOptions"
-      description="format: FE ou null(pour supprimer)"
+      hint="Format: FE (calcul de délai d'instruction) ou null (Supprime la valeur) ou rien"
+      label-visible
     />
+
     <DsfrInputGroup
       v-model="typesString"
       type="text"
       label="types"
       label-visible
-      hint="format: ex: [ &quot;ARUP&quot;, &quot;CUTLTE&quot;, &quot;FE&quot;, &quot;FDD&quot;, &quot;FRUP&quot; ]"
+      hint="Format: ex: [ &quot;ARUP&quot;, &quot;CUTLTE&quot;, &quot;FE&quot;, &quot;FDD&quot;, &quot;FRUP&quot; ]"
     />
   </div>
   <div class="flex flex-row gap-2">
@@ -129,6 +137,7 @@ const expandedId = ref()
         <tr
           v-for="demarche in demarches"
           :key="demarche.id"
+          @click="onSelected(demarche)"
         >
           <td>
             {{ demarche.id }}
