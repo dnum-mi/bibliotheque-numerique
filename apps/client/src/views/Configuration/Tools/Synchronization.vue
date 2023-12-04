@@ -123,6 +123,7 @@ const expandedId = ref()
         <th>N°Démarche</th>
         <th>Titre</th>
         <th>Types</th>
+        <th>Identification</th>
       </thead>
       <tbody>
         <tr
@@ -135,6 +136,7 @@ const expandedId = ref()
           <td>{{ demarche.dsId }}</td>
           <td>{{ demarche.title }}</td>
           <td>{{ demarche.types }}</td>
+          <td>{{ demarche.identification }}</td>
         </tr>
       </tbody>
     </DsfrTable>

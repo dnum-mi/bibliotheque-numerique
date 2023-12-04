@@ -76,7 +76,7 @@ describe('Demarches (e2e)', () => {
           const nbr = await demarcheService.repository.count()
           expect(body.length).toEqual(nbr)
           body.forEach((d) => {
-            expect(Object.keys(d)).toEqual(['id', 'title', 'types', 'dsId'])
+            expect(Object.keys(d)).toEqual(['id', 'title', 'types', 'dsId', 'identification'])
           })
         })
     })
