@@ -3,19 +3,23 @@ import { ref, computed, onMounted } from 'vue'
 import type {
   IdentificationDemarcheKeys,
   OrganismeTypeKeys,
+  SmallDemarcheOutputDto,
 } from '@biblio-num/shared'
 import { useConfigurationStore } from '../../../stores/configuration'
 
 const configurationStore = useConfigurationStore()
 
 const idDsString = ref('')
-const identifcation = ref<IdentificationDemarcheKeys>()
 const idDs = computed<number| null>(() => Number(idDsString.value) ?? null)
+
+const identifcation = ref<IdentificationDemarcheKeys>()
+
 const typesString = ref('')
 const types = computed<OrganismeTypeKeys[]>(() => typesString.value ? JSON.parse(typesString.value) : undefined)
 
-// const demarches = computed<SmallDemarcheOutputDto[]>(() => configurationStore.demarches)
+const demarches = computed<SmallDemarcheOutputDto[]>(() => configurationStore.demarches)
 const loading = computed<boolean>(() => configurationStore.fetching)
+
 const onClickCreateDemarche = async () => {
   await configurationStore.addDemarches(idDs.value, identifcation.value)
 }
@@ -31,12 +35,14 @@ const onClickUpdateDemarche = async () => {
 onMounted(async () => {
   await configurationStore.loadDemarches()
 })
+
+const expandedId = ref()
 </script>
 
 <template>
   <h6>Synchronisation d'une démarche</h6>
   <span v-if="loading">
-    ...En cours de traitement
+    En cours de chargement...
   </span>
   <div class="flex flex-row gap-2">
     <DsfrInputGroup
@@ -79,4 +85,33 @@ onMounted(async () => {
       @click="onClickUpdateDemarche()"
     />
   </div>
+
+  <DsfrAccordion
+    class="fr-pt-2w"
+    title="Les démarches"
+    :expanded-id="expandedId"
+    @expand="expandedId = $event"
+  >
+    <DsfrTable class="w-full text-center">
+      <thead>
+        <th>id</th>
+        <th>N°Dèmarche</th>
+        <th>Titre</th>
+        <th>Types</th>
+      </thead>
+      <tbody>
+        <tr
+          v-for="demarche in demarches"
+          :key="demarche.id"
+        >
+          <td>
+            {{ demarche.id }}
+          </td>
+          <td>{{ demarche.dsId }}</td>
+          <td>{{ demarche.title }}</td>
+          <td>{{ demarche.types }}</td>
+        </tr>
+      </tbody>
+    </DsfrTable>
+  </DsfrAccordion>
 </template>
