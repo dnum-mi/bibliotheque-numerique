@@ -23,6 +23,7 @@ import { profileRoute } from '@/router/profile.route'
 import { organismeRoute } from '@/router/organisme.route'
 import { passwordRoutes } from '@/router/password.route'
 import { statisticRoute } from '@/router/statistic.route'
+import { configurationRoute } from './confiuration.route'
 const MAIN_TITLE = 'Bibliothèque Numérique'
 
 export const SIGN_IN_ROUTE_NAME = 'SignIn'
@@ -37,6 +38,7 @@ const routes: RouterOptions['routes'] = [
   statisticRoute,
   ...authRoutes,
   ...passwordRoutes,
+  configurationRoute,
   {
     path: '/:pathMatch(.*)*',
     name: routeNames.Page_404,

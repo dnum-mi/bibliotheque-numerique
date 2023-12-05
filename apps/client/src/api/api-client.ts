@@ -27,6 +27,8 @@ import type {
   UserWithEditableRole,
   RolesKeys,
   UpdateOneRoleOptionDto,
+  IDemarche,
+  SmallDemarcheOutputDto,
 } from '@biblio-num/shared'
 
 import {
@@ -127,12 +129,6 @@ const downloadAFile = (response: AxiosResponse) => {
 }
 
 export const demarchesApiClient = {
-  getDemarcheByDsId: async (id: number) => {
-    const url = `${demarchesRoute}/ds/${id}`
-    const response = await apiClientInstance.get(url)
-    return response.data
-  },
-
   getDemarche: async (id: number) => {
     const response = await apiClientInstance.get(getDemarcheByIdRoute(id))
     return response?.data
@@ -143,7 +139,7 @@ export const demarchesApiClient = {
     return response?.data
   },
 
-  getSmallDemarches: async () => {
+  getSmallDemarches: async (): Promise<SmallDemarcheOutputDto[]> => {
     return (await apiClientInstance.get(smallDemarchesRoutes)).data
   },
 
