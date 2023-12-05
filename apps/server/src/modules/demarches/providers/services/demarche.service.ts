@@ -6,8 +6,13 @@ import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { InjectRepository } from '@nestjs/typeorm'
 import { fixFieldsByIdentificationDictionary } from '../../../dossiers/objects/constante/fix-field.dictionnary'
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
-import { UpdateDemarcheDto } from '@/modules/demarches/objects/dtos/update-demarche.dto'
-import { IRole, isBelowSuperAdmin, Roles, SmallDemarcheOutputDto } from '@biblio-num/shared'
+import {
+  IRole,
+  isBelowSuperAdmin,
+  Roles,
+  SmallDemarcheOutputDto,
+  UpdateDemarcheDto,
+} from '@biblio-num/shared'
 import { FindManyOptions } from 'typeorm/find-options/FindManyOptions'
 import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere'
 
@@ -41,7 +46,7 @@ export class DemarcheService extends BaseEntityService<Demarche> {
     role: IRole,
   ): Promise<SmallDemarcheOutputDto[]> {
     return this.findMultipleDemarche(
-      { ...filter, select: ['id', 'title', 'dsDataJson', 'types'] },
+      { ...filter, select: ['id', 'title', 'dsDataJson', 'types', 'identification'] },
       role,
     ).then((demarches) => {
       return demarches.map((d) => ({
@@ -49,6 +54,7 @@ export class DemarcheService extends BaseEntityService<Demarche> {
         title: d.title,
         types: d.types,
         dsId: d.dsDataJson?.number,
+        identification: d.identification,
       }))
     })
   }

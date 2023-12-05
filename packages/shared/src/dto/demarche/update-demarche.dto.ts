@@ -4,13 +4,13 @@ import {
   IdentificationDemarcheKeys,
   OrganismeType,
   OrganismeTypeKeys,
-} from '@biblio-num/shared'
+} from '../../enums'
 
 export class UpdateDemarcheDto {
   @IsOptional()
   @ValidateIf((o) => o.identification !== null)
   @IsEnum(IdentificationDemarche)
-  identification?: IdentificationDemarcheKeys
+  identification?: IdentificationDemarcheKeys | null
 
   @IsOptional()
   @ValidateIf((o) => o.types !== null)
