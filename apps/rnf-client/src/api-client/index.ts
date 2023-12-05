@@ -13,17 +13,25 @@ async function fetchRnfId(dossierId: number, instructeurEmail: string, force: bo
     }),
   })
   if (!res.ok && res.status !== 409) {
-    const errorBody = await res.json().catch(() => res.text())
-    if (errorBody.statusCode === 403) {
+    if (res.status === 403) {
       throw new Error("Cette adresse courriel ne semble pas être l'email d'un instructeur de ce dossier.")
     }
-    if (errorBody.statusCode === 424) {
+    if (res.status === 424) {
       throw new Error('Ce dossier ne semble pas exister ou bien ne pas correspondre à une création')
     }
-    if (errorBody.statusCode === 400) {
+    if (res.status === 400) {
       throw new Error('La démarche associé à ce dossier ne permet pas de créer un identifiant RNF')
     }
-    throw new Error(await res.text())
+
+    let text
+    if(res.headers.get('Content-Type')?.includes('application/json')){
+      const json = await res.json()
+      text = json.message
+    } else {
+      text = await res.text()
+    }
+
+    throw new Error( text || "Une Erreur inconnue s'est produite, Veuillez contacter l'administrateur")
   }
   return res
 }
