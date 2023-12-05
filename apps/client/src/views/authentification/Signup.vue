@@ -118,7 +118,7 @@ const { value: passwordValue, errorMessage: passwordError } = useField<string>('
               <DsfrInput
                 id="job"
                 v-model="jobValue"
-                label="Intitulé du poste"
+                label="Intitulé de la fonction"
                 label-visible
                 placeholder="Premier ministre"
                 type="text"

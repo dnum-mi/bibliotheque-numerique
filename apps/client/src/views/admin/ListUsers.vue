@@ -43,7 +43,7 @@ const columnDefs = ref<BNColDef[]>([
   },
   {
     ...baseColDef,
-    headerName: 'Intitulé de poste',
+    headerName: 'Intitulé de la fonction',
     field: 'job',
   },
   {
