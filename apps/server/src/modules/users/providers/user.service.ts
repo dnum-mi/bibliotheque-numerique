@@ -125,6 +125,8 @@ export class UserService
     const { appUrl, jwtForUrl } = this.createJwtOnUrl({ user: userInDb.id })
     await this.sendMailService.resetPwd(
       email,
+      userInDb.firstname,
+      userInDb.lastname,
       `${appUrl}/update-password/${jwtForUrl}`,
     )
   }
@@ -149,6 +151,8 @@ export class UserService
     const { appUrl, jwtForUrl } = this.createJwtOnUrl({ user: userInDb.email })
     await this.sendMailService.validSignUp(
       userInDb.email,
+      userInDb.lastname,
+      userInDb.firstname,
       `${appUrl}/valid-email/${jwtForUrl}`,
     )
   }

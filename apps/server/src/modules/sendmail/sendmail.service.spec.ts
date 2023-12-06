@@ -3,16 +3,15 @@ import { SendMailService } from './sendmail.service'
 import { SendMailModule } from './sendmail.module'
 import * as SMTPTransport from 'nodemailer/lib/smtp-transport'
 import MailMessage from 'nodemailer/lib/mailer/mail-message'
-import { LoggerService } from '../../shared/modules/logger/logger.service'
+import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { loggerServiceMock } from '../../../test/mock/logger-service.mock'
+import { ConfigService } from '@nestjs/config'
 
 /**
  * Code spyOnSmtpSend is from https://github.com/nest-modules/mailer/blob/master/lib/mailer.service.spec.ts
  * Common testing code for spying on the SMTPTransport's send() implementation
  */
-// TODO: fixe type
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function spyOnSmtpSend (onMail: (mail: MailMessage) => void) {
+const spyOnSmtpSend = (onMail: (mail: MailMessage) => void): jest.SpyInstance => {
   return jest
     .spyOn(SMTPTransport.prototype, 'send')
     .mockImplementation(function (
@@ -44,6 +43,10 @@ describe('SendMailService', () => {
       .useMocker((token) => {
         if (token === LoggerService) {
           return loggerServiceMock
+        } else if (token === ConfigService) {
+          return {
+            get: () => 'fake-conf',
+          }
         }
       })
       .compile()
@@ -60,14 +63,15 @@ describe('SendMailService', () => {
     spyOnSmtpSend((obj: MailMessage) => {
       result = obj
     })
-    await service.welcome(email)
+    await service.validSignUp(email, 'some-first-name', 'some-last-name', 'some-url')
     expect(result).toBeDefined()
     expect(result).toHaveProperty('data')
     expect(result.data).toHaveProperty('to', email)
     expect(result.data).toHaveProperty('from', 'defaults@test.com')
-    expect(result.data).toHaveProperty('subject', expect.stringMatching(/Bienvenue/))
-    expect(result.data).toHaveProperty('html', expect.stringMatching(/Bibliothèque Numérique/))
-    expect(result.data).toHaveProperty('html', expect.stringMatching('Bienvenue'))
-    expect(result.data).toHaveProperty('html', expect.stringMatching(new RegExp(email)))
+    expect(result.data).toHaveProperty('subject', expect.stringMatching(/Confirmer votre inscription/))
+    expect(result.data.html.match(new RegExp(email))).toBeTruthy()
+    expect(result.data.html.match(/some-first-name/)).toBeTruthy()
+    expect(result.data.html.match(/SOME-LAST-NAME/)).toBeTruthy()
+    expect(result.data.html.match(/some-url/)).toBeTruthy()
   })
 })
