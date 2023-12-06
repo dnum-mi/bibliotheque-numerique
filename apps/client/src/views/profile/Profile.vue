@@ -39,7 +39,7 @@ const fields: Field[] = [
     userKey: 'email',
   },
   {
-    title: 'Intitulé du poste',
+    title: 'Intitulé de la fonction',
     userKey: 'job',
   },
 ]
