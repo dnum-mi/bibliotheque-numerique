@@ -21,9 +21,10 @@ const validationSchema = toTypedSchema(z.object({
   lastname: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).min(2, 'Ceci ne semble pas être un nom'),
   email: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).email('Ceci semble être une adresse email invalide'),
   password: passwordValidator,
+  job: z.string().nullish(),
 }))
 
-const { handleSubmit } = useForm({
+const { handleSubmit } = useForm<CreateUserDto>({
   validationSchema,
 })
 
