@@ -126,7 +126,7 @@ const getPrefecture = (prefecture: PrefectureKeys) => {
           <span
             class="text-red-500 cursor-not-allowed"
           >
-            ⚠️ {{ cellValue.substring(7) }}
+            ⚠️ {{ cellValue.substring(6) }}
           </span>
         </template>
         <template v-else>
