@@ -4,21 +4,8 @@ import { LoggerService as LS } from '@nestjs/common/services/logger.service'
 
 @Injectable()
 export class LoggerService extends ConsoleLogger implements LS {
-  private _logs: string[] = []
-  private _isRegisteringLog = false
-
   constructor(private readonly configService: ConfigService) {
     super()
-  }
-
-  startRegisteringLogs(): void {
-    this._logs = []
-    this._isRegisteringLog = true
-  }
-
-  stopRegisteringLog(): string[] {
-    this._isRegisteringLog = false
-    return this._logs
   }
 
   private _formatMessage(message: unknown): string {
@@ -35,13 +22,6 @@ export class LoggerService extends ConsoleLogger implements LS {
     message: string | object | Error,
     logFunctionKey: 'log' | 'warn' | 'debug' | 'error' | 'verbose',
   ): void {
-    if (this._isRegisteringLog) {
-      this._logs.push(JSON.stringify(message))
-      if (this._logs.length > 1000) {
-        this.warn('Stack of logs is now more than 1000 lines')
-        this._logs.shift()
-      }
-    }
     super[logFunctionKey](this._formatMessage(message))
   }
 

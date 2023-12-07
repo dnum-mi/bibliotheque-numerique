@@ -7,7 +7,6 @@ import { ConfigService } from '@nestjs/config'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { SchedulerRegistry } from '@nestjs/schedule'
 import { CronJob } from 'cron'
-import { JobLogService } from '../job-log/providers/job-log.service'
 import { JobNames } from './job-name.enum'
 import { DemarcheSynchroniseService } from '../demarches/providers/services/demarche-synchronise.service'
 import { TMapperJobs } from './mapper-jobs.type'
@@ -19,7 +18,6 @@ export class CronService implements OnApplicationBootstrap, OnModuleInit {
     private config: ConfigService,
     private logger: LoggerService,
     private schedulerRegistry: SchedulerRegistry,
-    private jobLogService: JobLogService,
     private demarcheSynchroniseService: DemarcheSynchroniseService,
     private instructionTimesService: InstructionTimesService,
   ) {
@@ -76,24 +74,11 @@ export class CronService implements OnApplicationBootstrap, OnModuleInit {
   }
 
   private async _fetchData(fromScratch = false): Promise<void> {
-    const jobLog = await this.jobLogService.createJobLog(
-      JobNames.FETCH_DATA_FROM_DS,
-    )
-    // TODO: replace the behavior here when we have true logs.
-    this.logger.startRegisteringLogs()
     this.logger.log("Synchronising all demarche with 'Démarches simplifiées'.")
-    let error = false
     try {
       await this.demarcheSynchroniseService.synchroniseAllDemarches(fromScratch)
     } catch (e) {
-      error = true
       this.logger.error(e)
-      const logs = this.logger.stopRegisteringLog()
-      this.jobLogService.setJobLogFailure(jobLog.id, logs.join('\n'))
-    }
-    if (!error) {
-      const logs = this.logger.stopRegisteringLog()
-      this.jobLogService.setJobLogSuccess(jobLog.id, logs.join('\n'))
     }
     this.logger.log('End synchronising.')
   }
