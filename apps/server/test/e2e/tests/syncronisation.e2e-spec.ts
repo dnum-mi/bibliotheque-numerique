@@ -492,7 +492,7 @@ describe('Syncronisation ', () => {
             type: 'string',
             formatFunctionRef: 'rna',
             sourceId: 'Q2hhbXAtMTA0NQ==',
-            stringValue: 'W123456789',
+            stringValue: 'ERROR-W123456789',
             dateValue: null,
             numberValue: null,
             parentId: null,
