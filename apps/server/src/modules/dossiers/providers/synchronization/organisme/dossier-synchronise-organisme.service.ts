@@ -11,10 +11,29 @@ import { InjectRepository } from '@nestjs/typeorm'
 export class DossierSynchroniseOrganismeService {
   constructor(
     @InjectRepository(Dossier) protected readonly repo: Repository<Dossier>,
+    @InjectRepository(Field) protected readonly fieldRepo: Repository<Field>,
     private logger: LoggerService,
     private readonly organismeService: OrganismeService,
   ) {
     this.logger.setContext(this.constructor.name)
+  }
+
+  private async _synchroniseOneField(field: Field, idDossier: number): Promise<void> {
+    this.logger.verbose('_synchroniseRnf')
+    try {
+      const idOrganisme = await field.dsChampType === DsChampType.RnaChamp
+        ? await this.organismeService.associateOrganismeFromRna(field.stringValue)
+        : await this.organismeService.associateOrganismeFromRnf(field.stringValue)
+      await this.repo.update(
+        { id: idDossier },
+        { organisme: { id: idOrganisme } },
+      )
+    } catch (e) {
+      this.logger.error(e)
+      await this.fieldRepo.update({ id: field.id }, { stringValue: 'ERROR-' + field.stringValue })
+      // correct this catch + throw code when managing syncronising error on higher level
+      throw e
+    }
   }
 
   async synchroniseOrganismes(
@@ -24,31 +43,12 @@ export class DossierSynchroniseOrganismeService {
     this.logger.verbose('synchroniseOrganismes')
     for (const field of fields) {
       if (
-        field.dsChampType === DsChampType.RnfChamp &&
+        [DsChampType.RnaChamp, DsChampType.RnfChamp].includes(
+          field.dsChampType,
+        ) &&
         field.stringValue.length
       ) {
-        const idOrganisme =
-          await this.organismeService.associateOrganismeFromRnf(
-            field.stringValue,
-          )
-        await this.repo.update(
-          { id: idDossier },
-          { organisme: { id: idOrganisme } },
-        )
-        break
-      }
-      if (
-        field.dsChampType === DsChampType.RnaChamp &&
-        field.stringValue.length
-      ) {
-        const idOrganisme =
-          await this.organismeService.associateOrganismeFromRna(
-            field.stringValue,
-          )
-        await this.repo.update(
-          { id: idDossier },
-          { organisme: { id: idOrganisme } },
-        )
+        await this._synchroniseOneField(field, idDossier)
         break
       }
     }
