@@ -11,7 +11,6 @@ import loggerConfig from './config/logger.config'
 import { LoggerModule } from './shared/modules/logger/logger.module'
 import { CronModule } from './modules/cron/cron.module'
 import { ScheduleModule } from '@nestjs/schedule'
-import { JobLogModule } from './modules/job-log/job-log.module'
 import { typeormFactoryLoader } from './shared/utils/typeorm-factory-loader'
 import { DsApiModule } from './shared/modules/ds-api/ds-api.module'
 
@@ -27,7 +26,6 @@ import { DsApiModule } from './shared/modules/ds-api/ds-api.module'
     ScheduleModule.forRoot(),
     DsApiModule,
     CronModule,
-    JobLogModule,
   ],
   controllers: [],
   providers: [],
