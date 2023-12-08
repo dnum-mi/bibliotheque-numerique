@@ -61,7 +61,6 @@
   "dependencies": {
     "@biblio-num/shared": "workspace:^",
     "@dnum-mi/ds-api-client": "^1.6.2",
-    "@nest-middlewares/morgan": "^7.0.1",
     "@nestjs-modules/mailer": "^1.9.1",
     "@nestjs/axios": "^3.0.0",
     "@nestjs/common": "^10.2.7",
