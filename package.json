@@ -70,7 +70,8 @@
     "test:only": "NODE_ENV='test' turbo test",
     "test:rnf-client": "turbo test --filter=rnf-client",
     "test:rnf-server": "turbo test --filter=rnf-server",
-    "test:server": "turbo test --filter=server"
+    "test:server": "turbo test --filter=server",
+    "commitlint": "commitlint --edit"
   },
   "repository": {
     "type": "git",
@@ -83,6 +84,8 @@
   },
   "homepage": "https://github.com/dnum-mi/bibliotheque_numerique#readme",
   "devDependencies": {
+    "@commitlint/cli": "18.4.3",
+    "@commitlint/config-conventional": "18.4.3",
     "husky": "8.0.3"
   },
   "dependencies": {
