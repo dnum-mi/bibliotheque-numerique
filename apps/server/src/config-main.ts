@@ -11,6 +11,7 @@ import { AxiosExceptionFilter } from './shared/exceptions/filters/axios-exceptio
 import { CustomValidationPipe } from '@/shared/pipe/custom-validation.pipe'
 import { CustomValidationExceptionFilter } from '@/shared/exceptions/filters/custom-validation-exception.filter'
 import { APP_NAME_TOKEN } from '@/shared/modules/logger/logger.const'
+import { LoggingInterceptor } from '@/shared/modules/logger/logging.interceptor'
 
 export const configMain = async (app: INestApplication, configService?: ConfigService): Promise<void> => {
   const loggerService = await app.resolve<LoggerService>(LoggerService)
@@ -51,6 +52,11 @@ export const configMain = async (app: INestApplication, configService?: ConfigSe
     new CustomValidationExceptionFilter(httpAdapterHost, customValidationErrorLogger),
   )
   app.useGlobalPipes(new CustomValidationPipe())
+  if (!configService.get('isTest') && !configService.get('isDev')) {
+    const globalRequestLoggerService = new LoggerService(configService, appNameToken)
+    globalRequestLoggerService.setContext('GlobalRequestInterceptor')
+    app.useGlobalInterceptors(new LoggingInterceptor(globalRequestLoggerService))
+  }
   app.use(passport.initialize())
   app.use(passport.session())
 }
