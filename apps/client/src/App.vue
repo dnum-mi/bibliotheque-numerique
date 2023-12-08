@@ -11,6 +11,7 @@ import AppToaster from '@/components/AppToaster.vue'
 import ReloadPrompt from '@/components/ReloadPrompt.vue'
 import { routeNames } from '@/router/route-names'
 import { Roles, isSuperiorOrSimilar } from '@/biblio-num/shared'
+import { logInServer } from '@/utils/log.utils'
 
 const serviceTitle = 'Bibliothèque Numérique'
 const serviceDescription = 'Recherchez une démarche, un dossier, un organisme'
@@ -141,6 +142,9 @@ const close = async () => {
 const toaster = useToaster()
 
 onErrorCaptured((error: Error | AxiosError) => {
+  if (import.meta.env.PROD) {
+    logInServer(error.stack, 'error')
+  }
   if (error instanceof AxiosError) {
     if (error?.response && error?.response?.status) {
       const status = error.response.status

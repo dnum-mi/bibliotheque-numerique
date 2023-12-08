@@ -27,7 +27,6 @@ import type {
   UserWithEditableRole,
   RolesKeys,
   UpdateOneRoleOptionDto,
-  IDemarche,
   SmallDemarcheOutputDto,
   UpdateProfileDto,
 } from '@biblio-num/shared'
@@ -67,7 +66,7 @@ import { ErrorvalidateEmail } from './ErrorValidEmail'
 import { routeNames } from '../router/route-names'
 import router from '@/router'
 import { useUserStore } from '@/stores'
-import type { RouteLocationMatched, RouteLocationRaw } from 'vue-router'
+import type { RouteLocationRaw } from 'vue-router'
 
 const updatePasswordFeedback = {
   401: 'Le token est absent, veuillez fournir un token valide',
