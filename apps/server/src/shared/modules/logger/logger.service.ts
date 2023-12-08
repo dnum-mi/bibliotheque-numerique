@@ -26,15 +26,16 @@ export class LoggerService extends ConsoleLogger implements LS {
   ): void {
     const messageString = this._stringifyMessage(message)
     if (!this.configService.get('isTest') && !this.configService.get('isDev')) {
-      let logObject = {
+      let logObject: object = {
         application: this.appName,
         level: logFunctionKey,
         context: this.context,
         timestamp: new Date().toISOString(),
-        messageString,
       }
       if (typeof message === 'object') {
         logObject = { ...logObject, ...message }
+      } else {
+        logObject = { ...logObject, message: messageString }
       }
       console.log(logObject)
     } else {
