@@ -1,10 +1,12 @@
-import { ConsoleLogger, Injectable } from '@nestjs/common'
+import { ConsoleLogger, Inject, Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { LoggerService as LS } from '@nestjs/common/services/logger.service'
+import { APP_NAME_TOKEN } from '@/shared/modules/logger/logger.const'
 
 @Injectable()
 export class LoggerService extends ConsoleLogger implements LS {
-  constructor(private readonly configService: ConfigService) {
+  constructor(private readonly configService: ConfigService,
+              @Inject(APP_NAME_TOKEN) private readonly appName: string) {
     super()
   }
 
@@ -25,7 +27,7 @@ export class LoggerService extends ConsoleLogger implements LS {
     const messageString = this._stringifyMessage(message)
     if (!this.configService.get('isTest') && !this.configService.get('isDev')) {
       let logObject = {
-        application: 'bibliotheque-numerique-api',
+        application: this.appName,
         level: logFunctionKey,
         context: this.context,
         timestamp: new Date().toISOString(),

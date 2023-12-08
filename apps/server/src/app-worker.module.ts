@@ -13,6 +13,7 @@ import { CronModule } from './modules/cron/cron.module'
 import { ScheduleModule } from '@nestjs/schedule'
 import { typeormFactoryLoader } from './shared/utils/typeorm-factory-loader'
 import { DsApiModule } from './shared/modules/ds-api/ds-api.module'
+import { APP_NAME_TOKEN } from '@/shared/modules/logger/logger.const'
 
 @Module({
   imports: [
@@ -21,13 +22,18 @@ import { DsApiModule } from './shared/modules/ds-api/ds-api.module'
       cache: true,
       load: [configuration, dsConfig, fileConfig, loggerConfig, smtpConfig],
     }),
-    LoggerModule,
+    LoggerModule.forRoot('bibliotheque-numerique-worker'),
     TypeOrmModule.forRootAsync(typeormFactoryLoader),
     ScheduleModule.forRoot(),
     DsApiModule,
     CronModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_NAME_TOKEN,
+      useValue: 'bibliotheque-numerique-worker',
+    },
+  ],
 })
 export class AppWorkerModule {}

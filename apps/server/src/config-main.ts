@@ -10,9 +10,11 @@ import { AllExceptionsFilter } from './shared/exceptions/filters/all-exception.f
 import { AxiosExceptionFilter } from './shared/exceptions/filters/axios-exception.filter'
 import { CustomValidationPipe } from '@/shared/pipe/custom-validation.pipe'
 import { CustomValidationExceptionFilter } from '@/shared/exceptions/filters/custom-validation-exception.filter'
+import { APP_NAME_TOKEN } from '@/shared/modules/logger/logger.const'
 
 export const configMain = async (app: INestApplication, configService?: ConfigService): Promise<void> => {
   const loggerService = await app.resolve<LoggerService>(LoggerService)
+  const appNameToken = app.get(APP_NAME_TOKEN)
   configService = configService ?? app.get(ConfigService)
   loggerService.setContext('Nestjs-main')
   app.useLogger(loggerService)
@@ -32,13 +34,13 @@ export const configMain = async (app: INestApplication, configService?: ConfigSe
   let axiosFailedErrorLogger: LoggerService = loggerService
   let customValidationErrorLogger: LoggerService = loggerService
   if (!configService.get('isTest')) {
-    exceptionFilterLogger = new LoggerService(configService)
+    exceptionFilterLogger = new LoggerService(configService, appNameToken)
     exceptionFilterLogger.setContext('AllExceptionsFilter')
-    queryFailedFilterLogger = new LoggerService(configService)
+    queryFailedFilterLogger = new LoggerService(configService, appNameToken)
     queryFailedFilterLogger.setContext('QueryFailedFilter')
-    axiosFailedErrorLogger = new LoggerService(configService)
+    axiosFailedErrorLogger = new LoggerService(configService, appNameToken)
     axiosFailedErrorLogger.setContext('AxiosExceptionFilter')
-    customValidationErrorLogger = new LoggerService(configService)
+    customValidationErrorLogger = new LoggerService(configService, appNameToken)
     customValidationErrorLogger.setContext('CustomValidationExceptionFilter')
   }
   // order is important here, from most generic to most specific
