@@ -111,7 +111,7 @@ export class FoundationService extends BaseEntityService {
     forceCreation?: boolean,
   ): Promise<FoundationEntity> {
     this.logger.verbose('CreateFoundation')
-    const code = dto.address.departmentCode
+    const code = dto.address && dto.address.departmentCode
     if (!dto.address || !code) {
       throw new BadRequestException(
         'An address with its departmentCode is required.',
