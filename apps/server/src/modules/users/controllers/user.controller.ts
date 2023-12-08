@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get, HttpCode,
+  Patch,
   Post,
   Put,
   Request,
@@ -17,6 +18,7 @@ import {
   Roles,
   PaginationUserDto,
   PaginatedUserDto, IUser,
+  UpdateProfileDto,
 } from '@biblio-num/shared'
 import { UpdatePasswordGuard } from '@/modules/users/providers/guards/update-password.guard'
 import { ValidSignUpGuard } from '@/modules/users/providers/guards/validate-sign-up.guard'
@@ -88,5 +90,13 @@ export class UserController {
   async validSignUp (@Request() req): Promise<void> {
     this.logger.verbose('validSignUp')
     return await this.usersService.validEmail(req.user)
+  }
+
+  @Patch('/me')
+  @Role('any')
+  async updateProfile(@Body() dto: UpdateProfileDto, @CurrentUser() user: User): Promise<boolean> {
+    this.logger.verbose('updateProfile')
+    await this.usersService.updateOrThrow(user.id, dto)
+    return true
   }
 }

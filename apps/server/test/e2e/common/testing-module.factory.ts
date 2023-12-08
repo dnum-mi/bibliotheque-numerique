@@ -26,6 +26,8 @@ export class TestingModuleFactory {
   fileService: FileService
   _cookies: Cookies
 
+  readonly emailInstructor: string = 'instructor1@localhost.com'
+
   get cookies (): Cookies {
     return this._cookies
   }
@@ -35,7 +37,7 @@ export class TestingModuleFactory {
       sudo: await getAnyCookie(this.app, 'sudo@localhost.com'),
       superadmin: await getAnyCookie(this.app, 'superadmin@localhost.com'),
       admin: await getAnyCookie(this.app, 'admin1@localhost.com'),
-      instructor: await getAnyCookie(this.app, 'instructor1@localhost.com'),
+      instructor: await getAnyCookie(this.app, this.emailInstructor),
       norole: await getAnyCookie(this.app, 'norole@localhost.com'),
     } as Cookies
   }
