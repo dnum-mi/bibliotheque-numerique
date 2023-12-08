@@ -8,7 +8,7 @@ export class LoggerService extends ConsoleLogger implements LS {
     super()
   }
 
-  private _formatMessage(message: unknown): string {
+  private _stringifyMessage(message: unknown): string {
     if (typeof message === 'string') {
       return message
     } else if (message instanceof Error) {
@@ -22,7 +22,22 @@ export class LoggerService extends ConsoleLogger implements LS {
     message: string | object | Error,
     logFunctionKey: 'log' | 'warn' | 'debug' | 'error' | 'verbose',
   ): void {
-    super[logFunctionKey](this._formatMessage(message))
+    const messageString = this._stringifyMessage(message)
+    if (!this.configService.get('isTest') && !this.configService.get('isDev')) {
+      let logObject = {
+        application: 'bibliotheque-numerique-api',
+        level: logFunctionKey,
+        context: this.context,
+        timestamp: new Date().toISOString(),
+        messageString,
+      }
+      if (typeof message === 'object') {
+        logObject = { ...logObject, ...message }
+      }
+      console.log(logObject)
+    } else {
+      super[logFunctionKey](messageString)
+    }
   }
 
   log(message: string | object): void {
