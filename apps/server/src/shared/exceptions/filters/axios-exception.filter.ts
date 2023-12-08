@@ -13,7 +13,7 @@ export class AxiosExceptionFilter implements ExceptionFilter {
     const { httpAdapter } = this.httpAdapterHost
 
     const ctx = host.switchToHttp()
-    this.logger.error(`424 Axios error: ${exception.message}`)
+    this.logger.error(exception)
     this.logger.debug(JSON.stringify(exception.response.data))
     httpAdapter.reply(
       ctx.getResponse(),
