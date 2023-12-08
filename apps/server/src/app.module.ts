@@ -49,7 +49,7 @@ import { RoleGuard } from '@/modules/users/providers/guards/role.guard'
         sudoUserConfig,
       ],
     }),
-    LoggerModule.forRoot('bibliotheque-numerique-api'),
+    LoggerModule.forRoot('api'),
     DsApiModule,
     XlsxModule,
     TypeOrmModule.forRootAsync(typeormFactoryLoader),
