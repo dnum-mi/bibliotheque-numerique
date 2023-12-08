@@ -2,35 +2,33 @@ import { ConsoleLogger, Inject, Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { LoggerService as LS } from '@nestjs/common/services/logger.service'
 import { APP_NAME_TOKEN } from '@/shared/modules/logger/logger.const'
-import * as winston from 'winston'
+import * as Winston from 'winston'
 import * as DailyRotateFile from 'winston-daily-rotate-file'
-import { format } from 'winston'
+import { log } from 'winston'
 
 @Injectable()
 export class LoggerService extends ConsoleLogger implements LS {
-  private fileLogger: winston.Logger
+  private fileLogger: Winston.Logger
+  private clientFileLogger: Winston.Logger
 
-  constructor(private readonly configService: ConfigService,
-              @Inject(APP_NAME_TOKEN) private readonly appName: string) {
-    super()
-    if (this.configService.get('LOG_TO_FILE') === 'true') {
-      this.fileLogger = winston.createLogger({
-        transports: [
-          new DailyRotateFile({
-            filename: `logs/${this.appName}-%DATE%.log`,
-            datePattern: 'YYYY-MM-DD',
-            zippedArchive: true,
-            maxSize: '20m',
-            maxFiles: '14d',
-          }),
-        ],
-        level: 'debug',
-        format: winston.format.combine(
-          winston.format.timestamp(),
-          winston.format.json(),
-        ),
-      })
-    }
+  //#region Private
+  private _createLogger(appName: string): Winston.Logger {
+    return Winston.createLogger({
+      transports: [
+        new DailyRotateFile({
+          filename: `logs/${appName}-%DATE%.log`,
+          datePattern: 'YYYY-MM-DD',
+          zippedArchive: true,
+          maxSize: '20m',
+          maxFiles: '14d',
+        }),
+      ],
+      level: 'debug',
+      format: Winston.format.combine(
+        Winston.format.timestamp(),
+        Winston.format.json(),
+      ),
+    })
   }
 
   private _stringifyMessage(message: unknown): string {
@@ -75,6 +73,27 @@ export class LoggerService extends ConsoleLogger implements LS {
       console.log(logObject)
     } else {
       super[logFunctionKey](messageString)
+    }
+  }
+  //#endregion
+
+  constructor(
+    private readonly configService: ConfigService,
+    @Inject(APP_NAME_TOKEN) private readonly appName: string,
+  ) {
+    super()
+    if (this.configService.get('LOG_TO_FILE') === 'true') {
+      this.fileLogger = this._createLogger(this.appName)
+      this.clientFileLogger = this._createLogger('client')
+    }
+  }
+
+  logClient(dto: object, level: 'info' | 'error' | 'warn'): void {
+    if (this.configService.get('LOG_TO_FILE') === 'true') {
+      this.clientFileLogger.log(level, dto)
+    }
+    if (!this.configService.get('isTest') && !this.configService.get('isDev')) {
+      console.log(JSON.stringify({ ...dto, level }))
     }
   }
 
