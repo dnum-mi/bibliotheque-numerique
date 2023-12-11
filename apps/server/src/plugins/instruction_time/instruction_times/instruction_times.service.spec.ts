@@ -26,8 +26,7 @@ import { DsApiModule } from "@/shared/modules/ds-api/ds-api.module";
 import { FieldService } from "@/modules/dossiers/providers/field.service";
 import { Field } from "@/modules/dossiers/objects/entities/field.entity";
 import { fixFieldInstructionTimeDelay, fixFieldInstructionTimeStatus } from "./constante/fix-field-instrucation-times.dictionnary";
-import { CustomFilterModule } from '@/modules/custom-filters/custom-filter.module'
-import { DemarcheModule } from '@/modules/demarches/demarche.module'
+import { LoggerModule } from '@/shared/modules/logger/logger.module'
 
 describe("InstructionTimesService", () => {
   let service: InstructionTimesService;
@@ -49,7 +48,7 @@ describe("InstructionTimesService", () => {
           cache: true,
           load: [configuration, dsConfig, fileConfig, instructionTimeMappingConfig],
         }),
-
+        LoggerModule.forRoot('api'),
       ],
       providers: [InstructionTimesService],
     }).useMocker(() => ({})).compile();

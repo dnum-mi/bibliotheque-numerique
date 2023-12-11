@@ -19,6 +19,7 @@ export class LoggingInterceptor implements NestInterceptor {
     const response = httpContext.getResponse()
     const { method, url, headers, httpVersion, socket } = request
     const userAgent = headers['user-agent']
+    const forwardedFor = headers['x-forwarded-for']
     const remoteAddress = socket.remoteAddress
     const contentLength = response.getHeader('content-length') || 0
     const user = request.user || null
@@ -37,6 +38,7 @@ export class LoggingInterceptor implements NestInterceptor {
           remoteAddress,
           httpVersion,
           contentLength,
+          forwardedFor,
           user: user
             ? {
               id: user.id,
