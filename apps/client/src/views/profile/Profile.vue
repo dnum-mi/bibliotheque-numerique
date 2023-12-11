@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import LayoutBanner from '@/components/Layout/LayoutBanner.vue'
 import { useUserStore } from '@/stores'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, reactive } from 'vue'
 import type { MyProfileOutputDto } from '@biblio-num/shared'
 import { dateToStringFr } from '@/utils'
 import RoleBadge from '@/components/Badges/RoleBadge.vue'
@@ -9,20 +9,28 @@ import type { ResetPasswordInputDto } from '@biblio-num/shared/types/dto/user/re
 import apiClient from '@/api/api-client'
 import { ASK_RESET_PWD_SUCCESS } from '@/messages'
 import type { DsfrAlertType } from '@gouvminint/vue-dsfr/types/components/DsfrAlert/DsfrAlert.vue'
+import EditableField from './EditableField.vue'
 
 const store = useUserStore()
 const user = computed<MyProfileOutputDto | null>(() => store.myProfile)
 
-type Field = { title: string; userKey: keyof MyProfileOutputDto; parseFct?: (v: string) => string };
+type Field = {
+  title: string;
+  userKey: keyof MyProfileOutputDto;
+  parseFct?: (v: string) => string;
+  editable?: boolean;
+};
 
-const fields: Field[] = [
+const fields = reactive<Field[]>([
   {
     title: 'Nom',
     userKey: 'lastname',
+    editable: true,
   },
   {
     title: 'Prénom',
     userKey: 'firstname',
+    editable: true,
   },
   {
     title: 'Création',
@@ -41,8 +49,9 @@ const fields: Field[] = [
   {
     title: 'Intitulé de la fonction',
     userKey: 'job',
+    editable: true,
   },
-]
+])
 
 const alertTitle = ref('')
 const alertDescription = ref('')
@@ -63,6 +72,13 @@ onMounted(() => {
 const printField = (field: Field): string => {
   const value = `${user.value?.[field.userKey]}`
   return field.parseFct ? field.parseFct(value) : value
+}
+
+const updateProfile = async (field: Field, newText: string) => {
+  if (!newText) return
+  await store.changeMyProfile({
+    [field.userKey]: newText,
+  })
 }
 </script>
 
@@ -88,7 +104,16 @@ const printField = (field: Field): string => {
               <div class="flex-1">
                 <strong>{{ field.title }}</strong>
               </div>
-              <div class="flex-1">
+              <div v-if="field.editable">
+                <EditableField
+                  :text="printField(field)"
+                  @update-new-value="updateProfile(field, $event)"
+                />
+              </div>
+              <div
+                v-else
+                class="flex-1"
+              >
                 {{ printField(field) }}
               </div>
             </div>
