@@ -4,7 +4,7 @@ import { LoggerService as LS } from '@nestjs/common/services/logger.service'
 import { APP_NAME_TOKEN } from '@/shared/modules/logger/logger.const'
 import * as Winston from 'winston'
 import * as DailyRotateFile from 'winston-daily-rotate-file'
-import { log } from 'winston'
+import { LogElkFormat } from '@/shared/modules/logger/log-elk-format.interface'
 
 @Injectable()
 export class LoggerService extends ConsoleLogger implements LS {
@@ -41,9 +41,11 @@ export class LoggerService extends ConsoleLogger implements LS {
     }
   }
 
-  private _logToFile(level: string, message: string): void {
-    if (this.fileLogger) {
-      this.fileLogger.log({ level: level === 'log' ? 'info' : level, message })
+  private _logToFile(logElk: LogElkFormat, transporter: 'client' | 'default'): void {
+    const level = logElk.level === 'log' ? 'info' : logElk.level
+    const logger = transporter === 'client' ? this.clientFileLogger : this.fileLogger
+    if (logger) {
+      logger.log({ ...logElk, level })
     }
   }
 
@@ -52,21 +54,22 @@ export class LoggerService extends ConsoleLogger implements LS {
     logFunctionKey: 'log' | 'warn' | 'debug' | 'error' | 'verbose',
   ): void {
     const messageString = this._stringifyMessage(message)
-    let logObject: object = {
+    const logObject: LogElkFormat = {
       application: this.appName,
       level: logFunctionKey,
       context: this.context,
       timestamp: new Date().toISOString(),
+      message: '',
     }
 
     if (typeof message === 'object') {
-      logObject = { ...logObject, ...message }
+      logObject.payload = message
     } else {
-      logObject = { ...logObject, message: messageString }
+      logObject.message = message
     }
 
     if (this.configService.get('LOG_TO_FILE') === 'true') {
-      this._logToFile(logFunctionKey, JSON.stringify(logObject))
+      this._logToFile(logObject, 'default')
     }
 
     if (!this.configService.get('isTest') && !this.configService.get('isDev')) {
@@ -90,7 +93,13 @@ export class LoggerService extends ConsoleLogger implements LS {
 
   logClient(dto: object, level: 'info' | 'error' | 'warn'): void {
     if (this.configService.get('LOG_TO_FILE') === 'true') {
-      this.clientFileLogger.log(level, dto)
+      this._logToFile({
+        application: 'client',
+        timestamp: new Date().toISOString(),
+        level,
+        message: '',
+        payload: dto,
+      }, 'client')
     }
     if (!this.configService.get('isTest') && !this.configService.get('isDev')) {
       console.log(JSON.stringify({ ...dto, level }))

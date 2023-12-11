@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import LayoutList from '@/components/Layout/LayoutList.vue'
 import Synchronization from './Tools/Synchronization.vue'
-
-throw new Error('toto')
-
 </script>
 <template>
   <LayoutList

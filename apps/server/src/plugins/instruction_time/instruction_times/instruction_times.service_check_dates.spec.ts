@@ -16,6 +16,7 @@ import { Dossier } from '../../../modules/dossiers/objects/entities/dossier.enti
 import dsConfig from '../../../config/ds.config'
 import fileConfig from '../../../config/file.config'
 import { DsApiModule } from '../../../shared/modules/ds-api/ds-api.module'
+import { LoggerModule } from '@/shared/modules/logger/logger.module'
 
 describe('InstructionTimesService, Check Date', () => {
   let service: InstructionTimesService
@@ -34,6 +35,7 @@ describe('InstructionTimesService, Check Date', () => {
           cache: true,
           load: [configuration, dsConfig, fileConfig, instructionTimeMappingConfig],
         }),
+        LoggerModule.forRoot('api'),
       ],
       providers: [InstructionTimesService],
     })

@@ -32,13 +32,14 @@ services:
       - 50000:50000/udp
       - 9600:9600
     environment:
+      LOGSTASH_ENABLE_MULTIPLE_PIPELINES: true
       discovery.seed_hosts: logstash
       LS_JAVA_OPTS: -Xms256m -Xmx256m
     networks:
       - elk
     depends_on:
       - elasticsearch
-    command: logstash -f /usr/share/logstash/pipeline/logstash-bn-api.config
+    command: logstash -f /usr/share/logstash/pipeline
 
   kibana:
     build:
