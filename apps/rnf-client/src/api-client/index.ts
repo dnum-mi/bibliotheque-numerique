@@ -13,16 +13,6 @@ async function fetchRnfId(dossierId: number, instructeurEmail: string, force: bo
     }),
   })
   if (!res.ok && res.status !== 409) {
-    if (res.status === 403) {
-      throw new Error("Cette adresse courriel ne semble pas être l'email d'un instructeur de ce dossier.")
-    }
-    if (res.status === 424) {
-      throw new Error('Ce dossier ne semble pas exister ou bien ne pas correspondre à une création')
-    }
-    if (res.status === 400) {
-      throw new Error('La démarche associé à ce dossier ne permet pas de créer un identifiant RNF')
-    }
-
     let text
     if(res.headers.get('Content-Type')?.includes('application/json')){
       const json = await res.json()
@@ -30,6 +20,21 @@ async function fetchRnfId(dossierId: number, instructeurEmail: string, force: bo
     } else {
       text = await res.text()
     }
+
+    if (res.status === 403) {
+      throw new Error("Cette adresse courriel ne semble pas être l'email d'un instructeur de ce dossier.")
+    }
+    if (res.status === 424) {
+      throw new Error('Ce dossier ne semble pas exister ou bien ne pas correspondre à une création')
+    }
+    if (res.status === 400) {
+
+      if(text === 'An address with its departmentCode is required.') {
+        throw new Error('L\'adresse dans ce dossier est incomplet.')
+      }
+      throw new Error('La démarche associé à ce dossier ne permet pas de créer un identifiant RNF')
+    }
+
 
     throw new Error( text || "Une Erreur inconnue s'est produite, Veuillez contacter l'administrateur")
   }
