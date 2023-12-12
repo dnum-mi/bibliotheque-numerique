@@ -1,4 +1,4 @@
-FROM node:lts as base
+FROM node:20.10.0 as base
 
 RUN npm config set proxy "$http_proxy" && \
     npm config set https-proxy "$https_proxy" && \
@@ -14,7 +14,7 @@ USER node
 COPY . .
 RUN turbo prune --scope=@biblio-num/client --docker
 
-FROM node:lts AS builder
+FROM node:20.10.0 AS builder
 
 RUN npm config set proxy "$http_proxy" && \
     npm config set https-proxy "$https_proxy" && \

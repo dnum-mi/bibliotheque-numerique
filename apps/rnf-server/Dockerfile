@@ -1,4 +1,4 @@
-FROM node:lts as dev-base
+FROM node:20.10.0 as dev-base
 
 WORKDIR /app
 RUN chown node:root /app
@@ -39,7 +39,7 @@ RUN pnpm run build:rnf-server
 CMD ["pnpm", "run", "dev:rnf-server-in-docker"]
 
 
-FROM bitnami/node:18.16.0 as production
+FROM bitnami/node:20.10.0 as production
 
 RUN npm config set proxy "$http_proxy" && \
     npm config set https-proxy "$https_proxy" && \
