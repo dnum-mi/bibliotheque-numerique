@@ -71,9 +71,9 @@ export class UserController {
 
   @Get('/me')
   @Role('any')
-  getProfile(@CurrentUser() user: User): Promise<UserOutputDto> {
-    this.logger.verbose('getProfile')
-    return this.usersService.enrichProfileWithDemarche(user)
+  async getProfile(@CurrentUser() user: User): Promise<UserOutputDto> {
+    this.logger.verbose({ fn: 'getProfile' })
+    return this.usersService.profile(user)
   }
 
   @Post('/reset-password')
