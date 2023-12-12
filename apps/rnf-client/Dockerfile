@@ -1,4 +1,4 @@
-FROM node:20.10.0 as base
+FROM docker.io/node:20.10.0 as base
 
 RUN npm config set proxy "$http_proxy" && \
     npm config set https-proxy "$https_proxy" && \
@@ -14,7 +14,7 @@ USER node
 COPY . .
 RUN turbo prune --scope=rnf-client --docker
 
-FROM node:20.10.0 AS builder
+FROM docker.io/node:20.10.0 AS builder
 
 RUN npm config set proxy "$http_proxy" && \
     npm config set https-proxy "$https_proxy" && \
