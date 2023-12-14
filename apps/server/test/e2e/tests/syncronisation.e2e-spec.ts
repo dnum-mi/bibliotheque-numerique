@@ -16,7 +16,7 @@ import { DossierService } from '@/modules/dossiers/providers/dossier.service'
 import { FieldService } from '@/modules/dossiers/providers/field.service'
 import { DemarcheService } from '@/modules/demarches/providers/services/demarche.service'
 import { In } from 'typeorm'
-import { InstructionTimesService } from '@/plugins/instruction_time/instruction_times/instruction_times.service'
+import { InstructionTimesService } from '@/modules/instruction_time/instruction_times.service'
 import { FormatFunctionRef } from '@biblio-num/shared'
 
 const expectedFixFieldsTotalAmount = (): Partial<Field>[] => [

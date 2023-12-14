@@ -13,13 +13,13 @@ import rnaConfig from './config/rna.config'
 import rnfConfig from './config/rnf.config'
 import excelImportConfig from './config/excel-import.config'
 import sudoUserConfig from '@/config/sudo-user.config'
+import instructionTimeMappingConfig from '@/config/instructionTimeMapping.config'
 
 import { DemarcheModule } from './modules/demarches/demarche.module'
 import { DossierModule } from './modules/dossiers/dossier.module'
 import { LoggerModule } from './shared/modules/logger/logger.module'
 import { UserModule } from './modules/users/user.module'
 import { FileModule } from './modules/files/file.module'
-import { pluginsModules } from './plugins'
 import { typeormFactoryLoader } from './shared/utils/typeorm-factory-loader'
 import { HealthModule } from './modules/health/health.module'
 import { AuthModule } from './modules/auth/auth.module'
@@ -29,6 +29,7 @@ import { XlsxModule } from '@/shared/modules/xlsx/xlsx.module'
 import { OrganismeModule } from '@/modules/organismes/organisme.module'
 import { APP_GUARD } from '@nestjs/core'
 import { RoleGuard } from '@/modules/users/providers/guards/role.guard'
+import { InstructionTimesModule } from '@/modules/instruction_time/instruction_times.module'
 
 @Module({
   imports: [
@@ -47,12 +48,13 @@ import { RoleGuard } from '@/modules/users/providers/guards/role.guard'
         rnfConfig,
         excelImportConfig,
         sudoUserConfig,
+        instructionTimeMappingConfig,
       ],
     }),
+    TypeOrmModule.forRootAsync(typeormFactoryLoader),
     LoggerModule.forRoot('api'),
     DsApiModule,
     XlsxModule,
-    TypeOrmModule.forRootAsync(typeormFactoryLoader),
     UserModule,
     DemarcheModule,
     DossierModule,
@@ -62,7 +64,7 @@ import { RoleGuard } from '@/modules/users/providers/guards/role.guard'
     HealthModule,
     CustomFilterModule,
     OrganismeModule,
-    ...pluginsModules,
+    InstructionTimesModule,
   ],
   controllers: [],
   providers: [

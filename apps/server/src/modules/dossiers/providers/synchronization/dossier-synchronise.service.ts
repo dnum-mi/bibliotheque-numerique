@@ -6,7 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { Dossier as TDossier } from '@dnum-mi/ds-api-client'
 import { FieldService } from '../field.service'
-import { InstructionTimesService } from '@/plugins/instruction_time/instruction_times/instruction_times.service'
+import { InstructionTimesService } from '@/modules/instruction_time/instruction_times.service'
 import { Demarche } from '@/modules/demarches/objects/entities/demarche.entity'
 import {
   IdentificationDemarche,
