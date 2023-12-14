@@ -2,8 +2,8 @@ import { Dossier } from '../../../src/modules/dossiers/objects/entities/dossier.
 import { faker } from '@faker-js/faker/locale/fr'
 import {
   EInstructionTimeState,
-} from '../../../src/plugins/instruction_time/instruction_times/types/IntructionTime.type'
-import { InstructionTime } from '../../../src/plugins/instruction_time/instruction_times/instruction_time.entity'
+} from '@/modules/instruction_time/types/IntructionTime.type'
+import { InstructionTime } from '@/modules/instruction_time/instruction_time.entity'
 
 export function getFakeInstructionTime (dossier: Dossier): Partial<InstructionTime> {
   return {

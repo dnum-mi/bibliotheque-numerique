@@ -10,7 +10,7 @@ import { CronJob } from 'cron'
 import { JobNames } from './job-name.enum'
 import { DemarcheSynchroniseService } from '../demarches/providers/services/demarche-synchronise.service'
 import { TMapperJobs } from './mapper-jobs.type'
-import { InstructionTimesService } from '@/plugins/instruction_time/instruction_times/instruction_times.service'
+import { InstructionTimesService } from '@/modules/instruction_time/instruction_times.service'
 
 @Injectable()
 export class CronService implements OnApplicationBootstrap, OnModuleInit {

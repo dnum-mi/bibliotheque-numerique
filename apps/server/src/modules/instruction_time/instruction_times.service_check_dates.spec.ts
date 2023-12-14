@@ -6,17 +6,16 @@ import { DataSource } from 'typeorm'
 import { faker } from '@faker-js/faker/locale/fr'
 
 import { InstructionTimesService } from './instruction_times.service'
-import configuration from '../../../config/configuration'
-import instructionTimeMappingConfig, { keyInstructionTime } from '../config/instructionTimeMapping.config'
+import configuration from '../../config/configuration'
+import instructionTimeMappingConfig, { keyInstructionTime } from '../../config/instructionTimeMapping.config'
 import MockDate from 'mockdate'
-import { typeormFactoryLoader } from '../../../shared/utils/typeorm-factory-loader'
+import { typeormFactoryLoader } from '../../shared/utils/typeorm-factory-loader'
 import { InstructionTime } from './instruction_time.entity'
-import { DossierModule } from '../../../modules/dossiers/dossier.module'
-import { Dossier } from '../../../modules/dossiers/objects/entities/dossier.entity'
-import dsConfig from '../../../config/ds.config'
-import fileConfig from '../../../config/file.config'
-import { DsApiModule } from '../../../shared/modules/ds-api/ds-api.module'
-import { LoggerModule } from '@/shared/modules/logger/logger.module'
+import { DossierModule } from '../dossiers/dossier.module'
+import { Dossier } from '../dossiers/objects/entities/dossier.entity'
+import dsConfig from '../../config/ds.config'
+import fileConfig from '../../config/file.config'
+import { DsApiModule } from '../../shared/modules/ds-api/ds-api.module'
 
 describe('InstructionTimesService, Check Date', () => {
   let service: InstructionTimesService
@@ -35,7 +34,6 @@ describe('InstructionTimesService, Check Date', () => {
           cache: true,
           load: [configuration, dsConfig, fileConfig, instructionTimeMappingConfig],
         }),
-        LoggerModule.forRoot('api'),
       ],
       providers: [InstructionTimesService],
     })
