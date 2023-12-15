@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, watch, onErrorCaptured, computed, onMounted, type Ref } from 'vue'
-import { useRegisterSW } from 'virtual:pwa-register/vue'
 import { useRouter, useRoute } from 'vue-router'
 import { AxiosError } from 'axios'
 
@@ -8,7 +7,6 @@ import useToaster from '@/composables/use-toaster.js'
 import { useCustomFilterStore, useUserStore } from '@/stores'
 
 import AppToaster from '@/components/AppToaster.vue'
-import ReloadPrompt from '@/components/ReloadPrompt.vue'
 import { routeNames } from '@/router/route-names'
 import { Roles, isSuperiorOrSimilar } from '@/biblio-num/shared'
 import { logInServer } from '@/utils/log.utils'
@@ -153,17 +151,6 @@ watch([() => userStore.isAuthenticated, route], async () => {
 
 const searchQuery = ref('')
 
-const {
-  offlineReady,
-  needRefresh,
-  updateServiceWorker,
-} = useRegisterSW()
-
-const close = async () => {
-  offlineReady.value = false
-  needRefresh.value = false
-}
-
 const toaster = useToaster()
 
 onErrorCaptured((error: Error | AxiosError) => {
@@ -240,13 +227,6 @@ onErrorCaptured((error: Error | AxiosError) => {
   <AppToaster
     :messages="toaster.messages"
     @close-message="toaster.removeMessage($event)"
-  />
-
-  <ReloadPrompt
-    :offline-ready="offlineReady"
-    :need-refresh="needRefresh"
-    @close="close()"
-    @update-service-worker="updateServiceWorker()"
   />
 </template>
 
