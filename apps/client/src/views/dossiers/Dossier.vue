@@ -9,7 +9,7 @@ import LayoutFiche from '@/components/Layout/LayoutFiche.vue'
 import DossierInformations from './DossierInformations.vue'
 import DossierDemande from './DossierDemande.vue'
 import DossierAnnotations from './DossierAnnotations.vue'
-import DossierMessages from './DossierMessages.vue'
+import AttachmentList from '@/components/AttachmentList.vue'
 import DossierHeader from './DossierHeader.vue'
 import DossierMessagerie from './DossierMessagerie.vue'
 import { copyCurrentUrlInClipboard, formatForMessageDate } from '@/utils'
@@ -38,20 +38,25 @@ const attachments = computed(
     }, []),
 )
 
+const hasAnnotations = computed(() => !!annotations.value?.length)
+const hasAttachments = computed(() => !!attachments.value?.length)
+
 const tabTitles = computed(() => [
   {
     title: 'Demande',
   },
-  ...annotations.value?.length
+  ...hasAnnotations.value
     ? [{ title: 'Annotations privées' }]
     : [],
-  ...attachments.value?.length
+  ...hasAttachments.value
     ? [{ title: `Pièces jointes (${attachments.value.length})` }]
     : [],
 ])
 const initialSelectedIndex = 0
-const selectedTabIndex = ref(0)
+const selectedTabIndex = ref(initialSelectedIndex)
+const asc = ref(true)
 function selectTab (idx:number) {
+  asc.value = selectedTabIndex.value < idx
   selectedTabIndex.value = idx
 }
 
@@ -92,6 +97,7 @@ onMounted(async () => {
               panel-id="tab-content-0"
               tab-id="tab-0"
               :selected="selectedTabIndex === 0"
+              :asc="asc"
             >
               <DossierDemande :datas="dossierDS" />
             </DsfrTabContent>
@@ -99,15 +105,17 @@ onMounted(async () => {
               panel-id="tab-content-1"
               tab-id="tab-1"
               :selected="selectedTabIndex === 1"
+              :asc="asc"
             >
               <DossierAnnotations :annotations="annotations" />
             </DsfrTabContent>
             <DsfrTabContent
               panel-id="tab-content-2"
               tab-id="tab-2"
-              :selected="selectedTabIndex === 2"
+              :selected="selectedTabIndex === (hasAnnotations ? 2 : 1)"
+              :asc="asc"
             >
-              <DossierMessages :datas="dossierDS" />
+              <AttachmentList :files="attachments" />
             </DsfrTabContent>
           </DsfrTabs>
         </template>
