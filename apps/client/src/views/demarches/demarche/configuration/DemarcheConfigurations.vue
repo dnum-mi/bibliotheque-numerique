@@ -1,103 +1,403 @@
 <script lang="ts" setup>
-import { computed, nextTick, ref } from 'vue'
-import { useDemarcheStore } from '@/stores'
-import DemarcheConfigurationMappingColumn from '@/views/demarches/demarche/configuration/DemarcheConfigurationMappingColumn.vue'
+import { computed, ref, onMounted, watch } from 'vue'
+import { useDebounceFn, useLocalStorage } from '@vueuse/core'
+
 import type { MappingColumn } from '@biblio-num/shared'
 
-const title = 'La configuration'
+import { useDemarcheStore } from '@/stores'
+
+import DemarcheConfigurationSelectableItem from './DemarcheConfigurationSelectableItem.vue'
+import DemarcheConfigurationSelectedItem from './DemarcheConfigurationSelectedItem.vue'
 
 const demarcheStore = useDemarcheStore()
 const demarcheConfiguration = computed<MappingColumn[]>(() => demarcheStore.currentDemarcheConfiguration)
 
-// after update, array is re-arrange. For user comfort, we scroll to the updated element and blink it
-const mappingColumnContainerRef = ref(null)
-const handleColumnUpdated = async (id: string) => {
-  await nextTick()
-  const element = document.querySelector<HTMLElement>(`[data-id="${id}"]`)
-  if (!element) return
+const getDefaultConfParts = () => ({
+  champs: {
+    meta: {
+      id: 'champs',
+      label: 'Champs Démarche Simplifiée',
+    },
+    data: {} as Record<string, {
+      id: string
+      label: string
+      children?: MappingColumn[]
+    }>,
+  },
+  annotations: {
+    meta: {
+      id: 'annotations',
+      label: 'Annotations privées',
+    },
+    data: [] as MappingColumn[],
+  },
+  'fix-field': {
+    meta: {
+      id: 'fix-field',
+      label: 'Données BN',
+    },
+    data: [] as MappingColumn[],
+  },
+})
 
-  const elementTop = (element.getBoundingClientRect().top + window.scrollY)
-  const viewportHeight = window.innerHeight
-  const elementHeight = element.offsetHeight
+const confParts = ref(getDefaultConfParts())
 
-  const scrollTo = elementTop - (viewportHeight / 2) + (elementHeight / 2)
+const updateDataGroup = () => {
+  let groupId = 'no-section'
 
-  window.scrollTo({
-    top: scrollTo,
-    behavior: 'smooth', // for smooth scrolling
-  })
+  confParts.value = getDefaultConfParts()
+  const acc = confParts.value.champs.data
+  for (const mappingColumn of demarcheConfiguration.value) {
+    if (mappingColumn.source === 'champs') {
+      groupId = mappingColumn.isHeader ? mappingColumn.id : groupId
+      if (!acc[groupId]) {
+        acc[groupId] = {
+          id: groupId,
+          label: mappingColumn.isHeader ? (mappingColumn.columnLabel || mappingColumn.originalLabel) : 'Sans en-tête',
+          children: [],
+        }
+      }
 
-  element.classList.add('background-blue')
-  setTimeout(() => {
-    element.classList.remove('background-blue')
-    element.classList.add('background-transparent')
-  }, 1)
-  setTimeout(() => {
-    element.classList.remove('background-transparent')
-  }, 10000)
+      if (!mappingColumn.isHeader) {
+        acc[groupId].children.push(mappingColumn)
+      }
+
+      // confParts.value[mappingColumn.source as 'champs'].data.push(mappingColumn)
+    } else if (['annotations', 'fix-field'].includes(mappingColumn.source)) {
+      confParts.value[mappingColumn.source as 'annotations' | 'fix-field'].data.push(mappingColumn)
+    }
+  }
 }
+
+onMounted(() => {
+  updateDataGroup()
+})
+watch(demarcheConfiguration, () => {
+  updateDataGroup()
+})
+
+const selectedPartId = useLocalStorage('dem-conf-ds-part', Object.keys(confParts.value)[0])
+
+const buttons = computed(() => Object.entries(confParts.value).map(([_, { meta: { label, id } }]) => ({
+  label,
+  value: id,
+  secondary: id !== selectedPartId.value,
+})))
+
+const cdsExpandedId = ref<string | undefined>('cds-1')
+
+const saveOneMappingColumn = async (id: string, label: string | null) => {
+  await demarcheStore.updateOneMappingColumn(id, label)
+}
+const saveOneMappingColumnDebounced = useDebounceFn(saveOneMappingColumn, 300)
+
 </script>
 
 <template>
-  <div>
-    <h3 class="fr-text-title--blue-france">
-      {{ title }}
-    </h3>
-    <div class="fr-text--alt fr-pb-3w">
-      Sélectionnez les champs ou les annotations privées afin de les afficher dans la liste des dossiers de cette démarche.
-    </div>
-
-    <div
-      ref="mappingColumnContainerRef"
-      class="fr-pb-3v"
-    >
-      <div class="fr-grid-row">
-        <div class="fr-col-1 fr-p-2v">
-          <label class="fr-text--bold" />
+  <div class="flex -m-t-[2rem]">
+    <div class="flex-basis-[50%]  flex-shrink-0  pt-6  pr-8  border-r-2  border-r-[var(--grey-925-125)]  border-r-solid">
+      <header>
+        <h4>
+          Champs à sélectionner
+        </h4>
+        <div
+          class="flex  mb-4  w-[100%]  no-wrap  min-w-[400px]"
+          role="tablist"
+        >
+          <DsfrButton
+            v-for="button in buttons"
+            :key="button.value"
+            role="tab"
+            class="button-text-xs  flex-grow  justify-center"
+            v-bind="button"
+            :aria-controls="`content-${button.value}`"
+            @click="selectedPartId = button.value"
+          />
         </div>
-        <div class="fr-col-1 fr-p-2v">
-          <label class="fr-text--bold"> Type Champs</label>
-        </div>
-        <div class="fr-col-5 fr-p-2v">
-          <label class="fr-text--bold"> Libellé origine</label>
-        </div>
-        <div class="fr-col-5 fr-p-2v">
-          <label class="fr-text--bold"> Libellé personnalisé</label>
-        </div>
-      </div>
-      <div
-        v-for="mappingColumn in demarcheConfiguration"
-        :key="mappingColumn.id"
-        :data-id="mappingColumn.id"
-        class="fr-grid-row fr-m-1v"
+      </header>
+      <section
+        id="content-champs"
+        tabindex="0"
+        class="tabpane"
+        :class="{ active: selectedPartId === Object.keys(confParts)[0] }"
+        role="tabpanel"
+        :aria-selected="selectedPartId === Object.keys(confParts)[0]"
+        aria-labelledby="tab-champs"
       >
-        <DemarcheConfigurationMappingColumn
-          :mapping-column="mappingColumn"
-          @column-updated="handleColumnUpdated(mappingColumn.id)"
-        />
-        <template v-if="mappingColumn.children?.length">
-          <template
-            v-for="childMappingColumn of mappingColumn.children"
-            :key="childMappingColumn.id"
+        <h5>Champs démarche simplifiée</h5>
+        <DsfrAccordion
+          v-for="([key, section]) of Object.entries(confParts.champs.data)"
+          :id="key"
+          :key="key"
+          :expanded-id="cdsExpandedId"
+          :title="section.label"
+          @expand="cdsExpandedId = $event"
+        >
+          <ul class="list-none">
+            <li
+              v-for="champ of section.children"
+              :key="champ.id"
+              class="flex  items-center  justify-between  p-2"
+            >
+              <template v-if="champ.children?.length">
+                <div>
+                  <h6 class="fr-text--md">
+                    {{ champ.originalLabel }}
+                  </h6>
+                  <ul class="list-none">
+                    <li
+                      v-for="child of champ.children"
+                      :key="child.id"
+                      class="flex  items-center  justify-between  p-2"
+                    >
+                      <DemarcheConfigurationSelectableItem
+                        :champ="child"
+                        @toggle-check="saveOneMappingColumn(child.id, $event ? child.originalLabel : null)"
+                      />
+                    </li>
+                  </ul>
+                </div>
+              </template>
+              <template v-else>
+                <DemarcheConfigurationSelectableItem
+                  :champ="champ"
+                  @toggle-check="saveOneMappingColumn(champ.id, $event ? champ.originalLabel : null)"
+                />
+              </template>
+            </li>
+          </ul>
+        </DsfrAccordion>
+      </section>
+      <section
+        id="content-annotations"
+        tabindex="0"
+        class="tabpane"
+        :class="{ active: selectedPartId === Object.keys(confParts)[1] }"
+        role="tabpanel"
+        :aria-selected="selectedPartId === Object.keys(confParts)[1]"
+        aria-labelledby="tab-annotations"
+      >
+        <h5>Annotations privées</h5>
+        <ul class="list-none">
+          <li
+            v-for="champ of confParts.annotations.data"
+            :key="champ.id"
+            class="flex  items-center  justify-between  p-2"
           >
-            <DemarcheConfigurationMappingColumn
-              :mapping-column="childMappingColumn"
-              is-children
-              @column-updated="handleColumnUpdated(mappingColumn.id)"
+            <template v-if="champ.children?.length">
+              <div>
+                <h6 class="fr-text--md">
+                  {{ champ.originalLabel }}
+                </h6>
+                <ul class="list-none">
+                  <li
+                    v-for="child of champ.children"
+                    :key="child.id"
+                    class="flex  items-center  justify-between  p-2"
+                  >
+                    <DemarcheConfigurationSelectableItem
+                      :champ="child"
+                      @toggle-check="saveOneMappingColumn(child.id, $event ? child.originalLabel : null)"
+                    />
+                  </li>
+                </ul>
+              </div>
+            </template>
+            <template v-else>
+              <DemarcheConfigurationSelectableItem
+                :champ="champ"
+                @toggle-check="saveOneMappingColumn(champ.id, $event ? champ.originalLabel : null)"
+              />
+            </template>
+          </li>
+        </ul>
+      </section>
+      <section
+        id="content-fix-field"
+        tabindex="0"
+        class="tabpane"
+        :class="{ active: selectedPartId === Object.keys(confParts)[2] }"
+        role="tabpanel"
+        :aria-selected="selectedPartId === Object.keys(confParts)[2]"
+        aria-labelledby="tab-fix-field"
+      >
+        <h5>Données BN</h5>
+        <ul class="list-none">
+          <li
+            v-for="champ of confParts['fix-field'].data"
+            :key="champ.id"
+            class="flex  items-center  justify-between  p-2"
+          >
+            <template v-if="champ.children?.length">
+              <div>
+                <h6 class="fr-text--md">
+                  {{ champ.originalLabel }}
+                </h6>
+                <ul class="list-none">
+                  <li
+                    v-for="child of champ.children"
+                    :key="child.id"
+                    class="flex  items-center  justify-between  p-2"
+                  >
+                    <DemarcheConfigurationSelectableItem
+                      :champ="child"
+                      @toggle-check="saveOneMappingColumn(child.id, $event ? child.originalLabel : null)"
+                    />
+                  </li>
+                </ul>
+              </div>
+            </template>
+            <template v-else>
+              <DemarcheConfigurationSelectableItem
+                :champ="champ"
+                @toggle-check="saveOneMappingColumn(champ.id, $event ? champ.originalLabel : null)"
+              />
+            </template>
+          </li>
+        </ul>
+      </section>
+    </div>
+    <div class="flex-basis-[50%]  p-t-6  bg-[var(--grey-975-75)]">
+      <h4 class="fr-container">
+        Champs sélectionnés pour l’affichage des colonnes
+      </h4>
+      <hr>
+      <div class="fr-container">
+        <div
+          v-for="([key, group]) of Object.entries(confParts)"
+          :key="key"
+          class="fr-mb-4w"
+        >
+          <h5 class="fr-ml-2w  fr-mb-1v  text-[var(--blue-france-sun-113-625)]  fr-text--md">
+            {{ group.meta.label }}
+          </h5>
+          <template
+            v-if="Array.isArray(group.data)"
+          >
+            <VIcon
+              v-if="!group.data?.some(champ => champ.columnLabel || (champ.children?.length && champ.children.some(chp => chp.columnLabel)))"
+              class="fr-ml-6w  fr-mt-1w"
+              name="ri-subtract-line"
+              title="Aucun champ sélectionné dans cette partie"
             />
+
+            <template
+              v-for="champ of group.data"
+              :key="champ.id"
+            >
+              <div
+                v-if="champ.columnLabel || (champ.children?.length && champ.children.some(chp => chp.columnLabel))"
+                class="fr-pl-6w  fr-my-2w  flex  justify-between  items-center"
+              >
+                <div v-if="champ.children?.length">
+                  <h6 class="fr-text--md">
+                    {{ champ.originalLabel }}
+                  </h6>
+
+                  <template
+                    v-for="childChamp of champ.children"
+                    :key="childChamp.id"
+                  >
+                    <DemarcheConfigurationSelectedItem
+                      v-if="childChamp.columnLabel"
+                      class="fr-my-2w  fr-ml-2w"
+                      :champ="childChamp"
+                      @remove="saveOneMappingColumn(childChamp.id, null)"
+                      @update:model-value="saveOneMappingColumnDebounced(childChamp.id, $event)"
+                    />
+                  </template>
+                </div>
+                <DemarcheConfigurationSelectedItem
+                  v-else
+                  :champ="champ"
+                  @remove="saveOneMappingColumn(champ.id, null)"
+                  @update:model-value="saveOneMappingColumnDebounced(champ.id, $event)"
+                />
+              </div>
+            </template>
           </template>
-        </template>
+          <template v-else>
+            <div
+              v-for="(child, childKey) in group.data"
+              :key="childKey"
+            >
+              <h6 class="fr-ml-4w  fr-mt-2w  fr-mb-0  text-[var(--blue-france-sun-113-625)]  fr-text--md  font-400">
+                {{ child.label }}
+              </h6>
+
+              <VIcon
+                v-if="!child.children?.some(champ => champ.columnLabel || (champ.children?.length && champ.children.some(chp => chp.columnLabel)))"
+                class="fr-ml-6w  fr-mt-1w"
+                name="ri-subtract-line"
+                title="Aucun champ sélectionné dans cette partie"
+              />
+
+              <template
+                v-for="champ of child.children"
+                :key="champ.id"
+              >
+                <div
+                  v-if="champ.columnLabel || (champ.children?.length && champ.children.some(chp => chp.columnLabel))"
+                  class="fr-pl-6w  fr-my-2w  flex  justify-between  items-center"
+                >
+                  <div v-if="champ.children?.length">
+                    <h6 class="fr-text--md">
+                      {{ champ.originalLabel }}
+                    </h6>
+                    <template
+                      v-for="childChamp of champ.children"
+                      :key="childChamp.id"
+                    >
+                      <DemarcheConfigurationSelectedItem
+                        v-if="childChamp.columnLabel"
+                        class="fr-my-2w  fr-ml-2w"
+                        :champ="childChamp"
+                        @remove="saveOneMappingColumn(childChamp.id, null)"
+                        @update:model-value="saveOneMappingColumnDebounced(childChamp.id, $event)"
+                      />
+                    </template>
+                  </div>
+                  <DemarcheConfigurationSelectedItem
+                    v-else
+                    :champ="champ"
+                    @remove="saveOneMappingColumn(champ.id, null)"
+                    @update:model-value="saveOneMappingColumnDebounced(champ.id, $event)"
+                  />
+                </div>
+              </template>
+            </div>
+          </template>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
-<style>
-.background-blue {
-  background: var(--artwork-minor-blue-france);
+<style scoped>
+.button-text-xs {
+  font-size: 0.875rem;
 }
-.background-transparent {
-  background: transparent;
-  transition: background-color 3s ease-in;
+
+:deep(.fr-badge) {
+  --text-default-grey: var(--grey-625-425);
+}
+
+.tabpane {
+  position: relative;
+  opacity: 0;
+  max-height: 0;
+  top: 1rem;
+}
+.active {
+  display: block;
+  opacity: 1;
+  transition: all 0.5s ease;
+  max-height: none;
+  top: 0;
+}
+.ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>
