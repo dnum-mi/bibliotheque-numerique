@@ -20,7 +20,6 @@ import { LoggerModule } from './shared/modules/logger/logger.module'
 import { UserModule } from './modules/users/user.module'
 import { FileModule } from './modules/files/file.module'
 import { pluginsModules } from './plugins'
-import { JobLogModule } from './modules/job-log/job-log.module'
 import { typeormFactoryLoader } from './shared/utils/typeorm-factory-loader'
 import { HealthModule } from './modules/health/health.module'
 import { AuthModule } from './modules/auth/auth.module'
@@ -50,7 +49,7 @@ import { RoleGuard } from '@/modules/users/providers/guards/role.guard'
         sudoUserConfig,
       ],
     }),
-    LoggerModule,
+    LoggerModule.forRoot('api'),
     DsApiModule,
     XlsxModule,
     TypeOrmModule.forRootAsync(typeormFactoryLoader),
@@ -64,9 +63,6 @@ import { RoleGuard } from '@/modules/users/providers/guards/role.guard'
     CustomFilterModule,
     OrganismeModule,
     ...pluginsModules,
-
-    // TODO: AppModule use JobModule for now to retrieve JobLogService
-    JobLogModule,
   ],
   controllers: [],
   providers: [

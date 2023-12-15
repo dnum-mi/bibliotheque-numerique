@@ -28,6 +28,7 @@
     "dev:server-in-docker": "turbo dev:in-docker --filter=server",
     "dev:worker-in-docker": "turbo dev:worker-in-docker --filter=server",
     "docker:adminer": "docker compose --profile adminer -f apps/server/docker-compose.yml up -d",
+    "docker:elk": "docker compose -f apps/elk/docker-compose.yml up -d",
     "docker:build:http-proxy": "docker build -t rnf-http-proxy:latest -f apps/http-proxy/Dockerfile .",
     "docker:build:http-proxy:check": "sh ci/scripts/check_http.sh 8088",
     "docker:build:http-proxy:run": "docker run -d -p 0.0.0.0:8088:8080 --name rnf-http-proxy --network biblio-num-network --env-file apps/http-proxy/.env-rnf.local rnf-http-proxy:latest",

@@ -1,5 +1,6 @@
 export type TConfig = {
   env: string;
+  name: string;
   isDev: boolean;
   isTest: boolean;
   protocol: string;
@@ -23,7 +24,8 @@ export type TConfig = {
 
 export default () : TConfig => ({
   env: process.env.NODE_ENV || 'development',
-  isDev: ['dev', 'development', 'local'].includes(process.env.NODE_ENV),
+  name: process.env.APP_NAME || 'bibliotheque-numerique-api',
+  isDev: ['local'].includes(process.env.NODE_ENV),
   isTest: ['test', 'test-unit', 'test-e2e'].includes(process.env.NODE_ENV),
   protocol: process.env.PROTOCOL || 'http',
   port: parseInt(process.env.PORT, 10) || 3000,
