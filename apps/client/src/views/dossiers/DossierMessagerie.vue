@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import iconRoundMarianne from '@/assets/icone-ronde-marianne.png'
+import { getIconNameFromFilename } from '@/utils/attachments-extensions-icons'
 import sanitizeHtml from 'sanitize-html'
 
 type Message = {
@@ -19,32 +20,6 @@ type DossierMessagerieProps = {
 }
 
 defineProps<DossierMessagerieProps>()
-
-const extensions = {
-  pdf: 'fa-regular-file-pdf',
-  'doc docx odt ods': 'fa-regular-file-word',
-  'xsl xslx csv': 'fa-regular-file-excel',
-  'jpg jpeg png gif': 'fa-regular-file-image',
-  default: 'ri-attachment-line',
-}
-
-const getIconNameFromExtension = (ext?: string) => {
-  if (ext == null) {
-    return extensions.default
-  }
-  if (getIconNameFromExtension.memo[ext]) {
-    return getIconNameFromExtension.memo[ext]
-  }
-  const icon = Object.entries(extensions).find(([extensions]) => extensions.split(' ').includes(ext))
-  const iconName = getIconNameFromExtension.memo[ext ?? ''] = (icon?.[1] ?? extensions.default)
-  return iconName
-}
-getIconNameFromExtension.memo = {} as Record<string, string>
-
-const getIconNameFromFilename = (filename: string) => {
-  const ext = filename.split('.').at(-1)
-  return getIconNameFromExtension(ext)
-}
 </script>
 
 <template>
@@ -116,7 +91,7 @@ const getIconNameFromFilename = (filename: string) => {
                 <VIcon
                   class="fr-mr-1v"
                   :name="getIconNameFromFilename(file.name)"
-                  color="var(--blue-france-sun-113-625)"
+                  fill="var(--blue-france-sun-113-625)"
                 />
                 <span>{{ file.name }}</span>
                 <em class="text-[var(--grey-625-425)]"> - {{ file.size }}</em>
