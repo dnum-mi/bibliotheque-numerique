@@ -6,13 +6,16 @@ import { JwtService } from '@nestjs/jwt'
 import { jwtConstants } from '@/modules/auth/objects/constants'
 import { faker } from '@faker-js/faker/locale/fr'
 import { UserService } from '@/modules/users/providers/user.service'
+import { UpdateProfileDto } from '@biblio-num/shared'
+import { dataSource } from '../data-source-e2e.typeorm'
+import { User } from '../../../src/modules/users/objects/user.entity'
 
 describe('users (e2e)', () => {
   let app: INestApplication
   let mailerService: MailerService
   let userService: UserService
   let cookies: Cookies
-
+  let emailInstructorConnected: string
   beforeAll(async () => {
     const testingModule = new TestingModuleFactory()
     await testingModule.init()
@@ -20,6 +23,7 @@ describe('users (e2e)', () => {
     mailerService = testingModule.mailerService as MailerService
     userService = await app.resolve(UserService)
     cookies = testingModule.cookies
+    emailInstructorConnected = testingModule.emailInstructor
   })
   beforeEach(() => {
     jest.spyOn(mailerService, 'sendMail').mockClear()
@@ -282,7 +286,7 @@ describe('users (e2e)', () => {
     })
   })
 
-  describe('GET /users/me', () => {
+  describe('GET and PATCH /users/me', () => {
     it('Should return 401 if user is not connected', async () => {
       await request(app.getHttpServer()).get('/users/me').expect(401)
     })
@@ -337,6 +341,26 @@ describe('users (e2e)', () => {
             },
           })
         })
+    })
+
+    it('Should update user connected', async () => {
+      const { id, firstname, job } = await dataSource.manager.findOne(User, { where: { email: emailInstructorConnected } })
+
+      const dataToUpdate: UpdateProfileDto = {
+        job: 'testeur',
+        firstname: 'testPrenom',
+      }
+
+      await request(app.getHttpServer())
+        .patch('/users/me')
+        .send(dataToUpdate)
+        .set('Cookie', [cookies.instructor])
+        .expect(200)
+
+      const userUpdated = await dataSource.manager.findOne(User, { where: { email: emailInstructorConnected } })
+      expect(userUpdated).toMatchObject(dataToUpdate)
+      await dataSource.manager.update(User,
+        { id }, { firstname, job })
     })
   })
 })

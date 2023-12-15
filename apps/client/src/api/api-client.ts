@@ -29,6 +29,7 @@ import type {
   UpdateOneRoleOptionDto,
   IDemarche,
   SmallDemarcheOutputDto,
+  UpdateProfileDto,
 } from '@biblio-num/shared'
 
 import {
@@ -217,7 +218,11 @@ export const usersApiClient = {
     }
   },
 
-  listUsers: async (dto: PaginationUserDto): Promise<PaginatedUserDto> => {
+  async updateMyProfile (dto: UpdateProfileDto) {
+    await apiClientInstance.patch(profileRoute, dto)
+  },
+
+  async listUsers (dto: PaginationUserDto): Promise<PaginatedUserDto> {
     const response = await apiClientInstance.post(usersListRoute, dto)
     return response.data
   },
@@ -262,6 +267,7 @@ export const usersApiClient = {
   async removeRole (id:number) {
     await apiClientInstance.delete(getUserRoleByIdRoute(id))
   },
+
 }
 
 export const dossiersApiClient = {
