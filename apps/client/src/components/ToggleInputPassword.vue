@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-
 withDefaults(defineProps<{
   modelValue?: string
   passwordError?: string

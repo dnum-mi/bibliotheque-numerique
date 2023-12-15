@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
+import type { Demandeur, PersonnePhysique, TDossier } from '@biblio-num/shared'
+
 import DossierMessage from './DossierMessage.vue'
 import { getInitialsFromName } from '@/utils/name-to-initials'
-import type { Demandeur, PersonnePhysique, TDossier } from '@biblio-num/shared'
 
 type PopulatedDossier = TDossier & { demandeur: Demandeur & PersonnePhysique & { email: string } } | Record<string, never>
 

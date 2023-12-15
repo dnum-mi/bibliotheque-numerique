@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { useRouter } from 'vue-router'
-
 import type { IDossier, IOrganisme } from '@biblio-num/shared'
 
 import OrganismeBadge from '@/components/Badges/OrganismeBadge.vue'

@@ -1,6 +1,3 @@
-import { defineStore } from 'pinia'
-import { ref } from 'vue'
-
 import type { DossierOutputDto } from '@biblio-num/shared'
 
 import apiClient from '@/api/api-client'

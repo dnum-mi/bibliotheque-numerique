@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue'
-
 import type { ICustomFilterStat } from '@biblio-num/shared'
 
 import { formatCurrency, frenchFormatNumber } from '@/utils/french-number'

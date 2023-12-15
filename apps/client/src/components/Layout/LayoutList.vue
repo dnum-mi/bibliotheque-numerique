@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import LayoutBanner from '@/components/Layout/LayoutBanner.vue'
+
 withDefaults(defineProps<{
   titleBgColor: string
   titleIcon: string

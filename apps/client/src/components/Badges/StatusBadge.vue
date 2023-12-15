@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
-
 const statusDictionary = {
   accepte: { label: 'Accepté', type: 'success' },
   en_construction: { label: 'En construction', type: 'new' },

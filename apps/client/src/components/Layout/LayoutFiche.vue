@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { onBeforeUnmount, ref, onMounted } from 'vue'
-
 withDefaults(defineProps<{
   titleBgColor?: string
   titleFgColor?: string

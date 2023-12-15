@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
-
 import CheckRenderer from './CheckRenderer.vue'
 
 const props = defineProps<{

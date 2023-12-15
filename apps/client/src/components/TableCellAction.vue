@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import type { TIconFunction } from '@/shared/types/DataTable.type'
-import { computed } from 'vue'
 
 const props = defineProps<{
   label:string,

@@ -1,10 +1,5 @@
 import 'virtual:uno.css'
 
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
-
-import VueDsfr from '@gouvminint/vue-dsfr'
-
 import App from './App.vue'
 import router from './router'
 
@@ -28,9 +23,10 @@ import '@/ag-grid-dsfr.css'
 // We use statusBadge in DsfrTable
 import StatusBadge from './components/Badges/StatusBadge.vue'
 
+addIcons(...Object.values(icons))
+
 createApp(App)
   .use(createPinia())
   .component('StatusBadge', StatusBadge)
   .use(router)
-  .use(VueDsfr, { icons: Object.values(icons) })
   .mount('#app')

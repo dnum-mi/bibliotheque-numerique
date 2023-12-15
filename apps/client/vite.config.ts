@@ -5,6 +5,15 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import svgLoader from 'vite-svg-loader'
 import UnoCSS from 'unocss/vite'
+import AutoImport from 'unplugin-auto-import/vite'
+import Components from 'unplugin-vue-components/vite'
+import {
+  vueDsfrAutoimportPreset,
+  ohVueIconAutoimportPreset,
+  vueDsfrComponentResolver,
+} from '@gouvminint/vue-dsfr'
+
+const isCypress = process.env.CYPRESS === 'true'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -12,6 +21,37 @@ export default defineConfig({
     vue(),
     svgLoader(),
     UnoCSS(),
+    AutoImport({
+      include: [
+        /\.[tj]sx?$/,
+        /\.vue$/, /\.vue\?vue/,
+      ],
+      imports: [
+        'vue',
+        'vue-router',
+        'pinia',
+        ...(isCypress ? [] : ['vitest']),
+        vueDsfrAutoimportPreset,
+        ohVueIconAutoimportPreset,
+      ],
+      vueTemplate: true,
+      dts: './src/auto-imports.d.ts',
+      eslintrc: {
+        enabled: true,
+        filepath: './.eslintrc-auto-import.json',
+        globalsPropValue: true,
+      },
+    }),
+    Components({
+      extensions: ['vue'],
+      dirs: ['src/components'],
+      // allow auto import and register components
+      include: [/\.vue$/, /\.vue\?vue/],
+      dts: './src/components.d.ts',
+      resolvers: [
+        vueDsfrComponentResolver,
+      ],
+    }),
   ],
   base: process.env.BASE_URL || '/',
   server: {

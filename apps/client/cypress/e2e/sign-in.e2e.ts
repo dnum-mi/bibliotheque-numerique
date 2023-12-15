@@ -7,7 +7,7 @@ import noneProfile from '../fixtures/none-profile.json'
 import instructorProfile from '../fixtures/instructor-profile.json'
 import adminLocalProfile from '../fixtures/admin-local-profile.json'
 
-describe('Home', () => {
+describe('Sign in', () => {
   beforeEach(() => {
     cy.intercept({ method: 'GET', url: '/api/users/me' }, {}).as('notProfile')
     cy.intercept({ method: 'GET', url: '/api/demarches' }, []).as('demarches')
@@ -93,7 +93,7 @@ describe('Home', () => {
     cy.url().should('include', '/profile')
   })
 
-  it('should sign-in of a instructor', () => {
+  it('should sign in user as instructor', () => {
     cy.visit('/sign_in')
 
     cy.intercept({ method: 'POST', url: '/api/auth/sign-in', times: 1 }, instructorProfile).as('signIn')
@@ -140,7 +140,7 @@ describe('Home', () => {
     //#endregion
   })
 
-  it('should sign-in of a admin-local', () => {
+  it('should sign in user as admin-local', () => {
     cy.visit('/sign_in')
     cy.intercept({ method: 'POST', url: '/api/auth/sign-in', times: 1 }, adminLocalProfile).as('signIn')
     cy.get('#email').type('louis.dubois@gmail.com')

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
-import StatusBadge from './StatusBadge.vue'
 import type { ICellRendererParams } from 'ag-grid-community'
+
+import StatusBadge from './StatusBadge.vue'
 
 const props = defineProps<{ params: ICellRendererParams }>()
 

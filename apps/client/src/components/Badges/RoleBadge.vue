@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import type { RolesKeys } from '@biblio-num/shared'
-import { computed } from 'vue'
 
 withDefaults(defineProps<{ role?: RolesKeys, small?: boolean }>(), {
   role: 'norole',
