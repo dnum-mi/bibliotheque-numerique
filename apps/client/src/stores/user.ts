@@ -9,6 +9,7 @@ import type {
   UserWithEditableRole,
   RolesKeys,
   UpdateOneRoleOptionDto,
+  UpdateProfileDto,
 } from '@biblio-num/shared'
 import { getRandomId } from '@gouvminint/vue-dsfr'
 
@@ -44,6 +45,11 @@ export const useUserStore = defineStore('user', () => {
     myProfile.value = await bnApiClient.fetchMyProfile()
     currentUser.value = myProfile.value
     return !!currentUser.value
+  }
+
+  const changeMyProfile = async (dto: UpdateProfileDto) => {
+    await bnApiClient.updateMyProfile(dto)
+    await loadMyProfile()
   }
 
   const listUsers = async (dto: PaginationUserDto) => {
@@ -85,6 +91,7 @@ export const useUserStore = defineStore('user', () => {
     await bnApiClient.removeRole(id)
     await loadUserById(id)
   }
+
   return {
     currentUser,
     myProfile,
@@ -105,5 +112,6 @@ export const useUserStore = defineStore('user', () => {
     updateUserOneRoleOption,
     removeRole,
     forceResetUser,
+    changeMyProfile,
   }
 })

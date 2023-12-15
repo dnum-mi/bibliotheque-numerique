@@ -232,6 +232,11 @@ export class UserService
     return paginated
   }
 
+  async profile(user: User): Promise<MyProfileOutputDto> {
+    const foundUser = await this.findOneOrThrow({ where: { id: user.id } })
+    return this.enrichProfileWithDemarche(foundUser)
+  }
+
   async enrichProfileWithDemarche(user: User): Promise<MyProfileOutputDto> {
     const demarcheIds = Object.keys(user.role.options)
     const smallDemarches = await this.demarcheService.findMultipleSmallDemarche(
