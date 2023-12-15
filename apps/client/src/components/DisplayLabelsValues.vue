@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { IDemarche } from '@biblio-num/shared'
 import { computed } from 'vue'
 
 type LabelData = {
@@ -11,10 +12,10 @@ type LabelsData = LabelData[]
 const props = withDefaults(defineProps<{
     title: string,
     prefixId: string,
-    datas?: Record<string, unknown>[],
+    datas?: Partial<IDemarche['dsDataJson']>,
     labels?: LabelsData,
   }>(), {
-  datas: () => [],
+  datas: () => ({}),
   labels: () => [],
 })
 
