@@ -61,7 +61,6 @@
   "dependencies": {
     "@biblio-num/shared": "workspace:^",
     "@dnum-mi/ds-api-client": "^1.6.2",
-    "@nest-middlewares/morgan": "^7.0.1",
     "@nestjs-modules/mailer": "^1.9.1",
     "@nestjs/axios": "^3.0.0",
     "@nestjs/common": "^10.2.7",
@@ -96,6 +95,8 @@
     "rxjs": "^7.8.1",
     "typeorm": "^0.3.17",
     "uuid": "^9.0.1",
+    "winston": "3.11.0",
+    "winston-daily-rotate-file": "4.7.1",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {

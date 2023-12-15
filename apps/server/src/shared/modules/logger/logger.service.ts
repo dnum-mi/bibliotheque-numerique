@@ -1,27 +1,37 @@
-import { ConsoleLogger, Injectable } from '@nestjs/common'
+import { ConsoleLogger, Inject, Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { LoggerService as LS } from '@nestjs/common/services/logger.service'
+import { APP_NAME_TOKEN } from '@/shared/modules/logger/logger.const'
+import * as Winston from 'winston'
+import * as DailyRotateFile from 'winston-daily-rotate-file'
+import { LogElkFormat } from '@/shared/modules/logger/log-elk-format.interface'
 
 @Injectable()
 export class LoggerService extends ConsoleLogger implements LS {
-  private _logs: string[] = []
-  private _isRegisteringLog = false
+  private fileLogger: Winston.Logger
+  private clientFileLogger: Winston.Logger
 
-  constructor(private readonly configService: ConfigService) {
-    super()
+  //#region Private
+  private _createLogger(appName: string): Winston.Logger {
+    return Winston.createLogger({
+      transports: [
+        new DailyRotateFile({
+          filename: `logs/${appName}-%DATE%.log`,
+          datePattern: 'YYYY-MM-DD',
+          zippedArchive: true,
+          maxSize: '20m',
+          maxFiles: '14d',
+        }),
+      ],
+      level: 'debug',
+      format: Winston.format.combine(
+        Winston.format.timestamp(),
+        Winston.format.json(),
+      ),
+    })
   }
 
-  startRegisteringLogs(): void {
-    this._logs = []
-    this._isRegisteringLog = true
-  }
-
-  stopRegisteringLog(): string[] {
-    this._isRegisteringLog = false
-    return this._logs
-  }
-
-  private _formatMessage(message: unknown): string {
+  private _stringifyMessage(message: unknown): string {
     if (typeof message === 'string') {
       return message
     } else if (message instanceof Error) {
@@ -31,18 +41,69 @@ export class LoggerService extends ConsoleLogger implements LS {
     }
   }
 
+  private _logToFile(logElk: LogElkFormat, transporter: 'client' | 'default'): void {
+    const level = logElk.level === 'log' ? 'info' : logElk.level
+    const logger = transporter === 'client' ? this.clientFileLogger : this.fileLogger
+    if (logger) {
+      logger.log({ ...logElk, level })
+    }
+  }
+
   private _commonLogFunction(
     message: string | object | Error,
     logFunctionKey: 'log' | 'warn' | 'debug' | 'error' | 'verbose',
   ): void {
-    if (this._isRegisteringLog) {
-      this._logs.push(JSON.stringify(message))
-      if (this._logs.length > 1000) {
-        this.warn('Stack of logs is now more than 1000 lines')
-        this._logs.shift()
-      }
+    const messageString = this._stringifyMessage(message)
+    const logObject: LogElkFormat = {
+      application: this.appName,
+      level: logFunctionKey,
+      context: this.context,
+      timestamp: new Date().toISOString(),
+      message: '',
     }
-    super[logFunctionKey](this._formatMessage(message))
+
+    if (typeof message === 'object') {
+      logObject.payload = message
+    } else {
+      logObject.message = message
+    }
+
+    if (this.configService.get('LOG_TO_FILE') === 'true') {
+      this._logToFile(logObject, 'default')
+    }
+
+    if (!this.configService.get('isTest') && !this.configService.get('isDev')) {
+      console.log(logObject)
+    } else {
+      super[logFunctionKey](messageString)
+    }
+  }
+  //#endregion
+
+  constructor(
+    private readonly configService: ConfigService,
+    @Inject(APP_NAME_TOKEN) private readonly appName: string,
+  ) {
+    super()
+    if (this.configService.get('LOG_TO_FILE') === 'true') {
+      this.fileLogger = this._createLogger(this.appName)
+      this.clientFileLogger = this._createLogger('client')
+    }
+  }
+
+  logClient(dto: object, level: 'info' | 'error' | 'warn'): void {
+    if (this.configService.get('LOG_TO_FILE') === 'true') {
+      this._logToFile({
+        application: 'client',
+        timestamp: new Date().toISOString(),
+        level,
+        message: '',
+        payload: dto,
+      }, 'client')
+    }
+    if (!this.configService.get('isTest') && !this.configService.get('isDev')) {
+      console.log(JSON.stringify({ ...dto, level }))
+    }
   }
 
   log(message: string | object): void {
