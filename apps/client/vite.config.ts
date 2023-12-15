@@ -2,7 +2,6 @@
 import { fileURLToPath, URL } from 'url'
 
 import { defineConfig } from 'vite'
-import { VitePWA } from 'vite-plugin-pwa'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import svgLoader from 'vite-svg-loader'
@@ -14,11 +13,6 @@ export default defineConfig({
     vue(),
     vueJsx(),
     svgLoader(),
-    VitePWA({
-      workbox: {
-        navigateFallbackDenylist: [/^\/api/],
-      },
-    }),
     UnoCSS(),
   ],
   base: process.env.BASE_URL || '/',
