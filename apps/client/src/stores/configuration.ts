@@ -1,6 +1,3 @@
-import { defineStore } from 'pinia'
-import { ref } from 'vue'
-
 import type {
   CreateDemarcheDto,
   IdentificationDemarcheKeys,
@@ -8,6 +5,7 @@ import type {
   SmallDemarcheOutputDto,
   UpdateDemarcheDto,
 } from '@biblio-num/shared'
+
 import { demarchesApiClient } from '../api/api-client'
 import { createDemarche, patchDemarche, synchronizeDossiers } from '../api/sudo-api-client'
 

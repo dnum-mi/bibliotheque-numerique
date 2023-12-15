@@ -1,3 +1,38 @@
+<script lang="ts" setup>
+import { toTypedSchema } from '@vee-validate/zod'
+import { useField, useForm } from 'vee-validate'
+import { z } from 'zod'
+import type { ResetPasswordInputDto } from '@biblio-num/shared'
+
+import apiClient from '@/api/api-client'
+import { ASK_RESET_PWD_SUCCESS } from '../../messages'
+
+const validationSchema = toTypedSchema(z.object({
+  email: z.string({ required_error: 'Veuillez saisir votre adresse courriel' })
+    .nonempty('Veuillez saisir votre adresse courriel')
+    .email('L’adresse courriel ne semble pas valide'),
+}))
+
+const { handleSubmit, handleReset } = useForm({
+  validationSchema,
+})
+
+const { value: emailValue, errorMessage: emailError } = useField<string>('email')
+const alertTitle = ref('')
+const alertDescription = ref('')
+const openAlert = ref(false)
+
+const onSubmit = handleSubmit(async (formValue : ResetPasswordInputDto) => {
+  await apiClient.resetPassword(formValue)
+  openAlert.value = true
+  alertDescription.value = ASK_RESET_PWD_SUCCESS
+})
+
+const closeAlert = () => {
+  openAlert.value = false
+}
+</script>
+
 <template>
   <LayoutAccueil>
     <div class="fr-container fr-m-5w">
@@ -54,38 +89,3 @@
     </div>
   </LayoutAccueil>
 </template>
-
-<script lang="ts" setup>
-import { toTypedSchema } from '@vee-validate/zod'
-import { useField, useForm } from 'vee-validate'
-import { z } from 'zod'
-import type { ResetPasswordInputDto } from '@biblio-num/shared'
-import apiClient from '@/api/api-client'
-import { ref } from 'vue'
-import { ASK_RESET_PWD_SUCCESS } from '../../messages'
-
-const validationSchema = toTypedSchema(z.object({
-  email: z.string({ required_error: 'Veuillez saisir votre adresse courriel' })
-    .nonempty('Veuillez saisir votre adresse courriel')
-    .email('L’adresse courriel ne semble pas valide'),
-}))
-
-const { handleSubmit, handleReset } = useForm({
-  validationSchema,
-})
-
-const { value: emailValue, errorMessage: emailError } = useField<string>('email')
-const alertTitle = ref('')
-const alertDescription = ref('')
-const openAlert = ref(false)
-
-const onSubmit = handleSubmit(async (formValue : ResetPasswordInputDto) => {
-  await apiClient.resetPassword(formValue)
-  openAlert.value = true
-  alertDescription.value = ASK_RESET_PWD_SUCCESS
-})
-
-const closeAlert = () => {
-  openAlert.value = false
-}
-</script>

@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { computed, ref, watch, onErrorCaptured, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
 import { AxiosError } from 'axios'
 
 import useToaster from '@/composables/use-toaster.js'

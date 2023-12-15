@@ -10,9 +10,10 @@ import type {
   SelectionChangedEvent,
 } from 'ag-grid-community'
 import type { GridOptions, SetFilterModel } from 'ag-grid-enterprise'
-import { gridOptionFactory } from '@/components/ag-grid/server-side/grid-option-factory'
-import { ref } from 'vue'
+
 import type { DynamicKeys, PaginationDto } from '@biblio-num/shared'
+
+import { gridOptionFactory } from '@/components/ag-grid/server-side/grid-option-factory'
 import {
   fromAggToBackendFilter,
   fromAggToBackendSort,
@@ -54,7 +55,7 @@ const columnApi = ref<ColumnApi | undefined>()
 
 const refresh = () => {
   if (gridApi.value) {
-    gridApi.value.refreshServerSide({ purge: true })
+    setTimeout(() => gridApi.value?.refreshServerSide({ purge: true }))
   }
 }
 

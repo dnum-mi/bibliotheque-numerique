@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import { getActivePinia } from 'pinia'
 import type { Pinia, Store } from 'pinia'
-import { useRouter } from 'vue-router'
+
 import useToaster from '@/composables/use-toaster.js'
 import { useUserStore, useCustomFilterStore } from '@/stores'
 
-import { onMounted } from 'vue'
 import { routeNames } from '@/router/route-names'
 
 const userStore = useUserStore()

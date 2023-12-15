@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
 import { useDemarcheStore } from '@/stores'
 
 const demarcheStore = useDemarcheStore()

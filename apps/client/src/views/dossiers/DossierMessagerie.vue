@@ -1,7 +1,8 @@
 <script lang="ts" setup>
+import sanitizeHtml from 'sanitize-html'
+
 import iconRoundMarianne from '@/assets/icone-ronde-marianne.png'
 import { getIconNameFromFilename } from '@/utils/attachments-extensions-icons'
-import sanitizeHtml from 'sanitize-html'
 
 type Message = {
     id: number

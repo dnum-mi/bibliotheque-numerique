@@ -1,8 +1,7 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
+import type { DossierStateKeys } from '@biblio-num/shared'
 
 import { stateToFr } from '@/utils'
-import type { DossierStateKeys } from '@biblio-num/shared'
 
 const props = defineProps<{
   params: {

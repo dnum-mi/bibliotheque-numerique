@@ -1,7 +1,4 @@
 <script lang="ts" setup>
-// AppToaster
-import { DsfrAlert } from '@gouvminint/vue-dsfr'
-
 import type { Message } from '@/composables/use-toaster'
 
 defineProps<{ messages: Message[] }>()

@@ -1,7 +1,5 @@
 
 <script setup lang="ts">
-import { ref, type Ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useField, useForm } from 'vee-validate'
 import { z } from 'zod'

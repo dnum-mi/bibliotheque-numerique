@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { File } from '@dnum-mi/ds-api-client'
+
 import { getIconNameFromFilename } from '@/utils/attachments-extensions-icons'
 
 defineProps<{

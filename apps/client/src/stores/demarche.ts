@@ -1,6 +1,3 @@
-import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
-
 import apiClient from '@/api/api-client'
 
 import type {
