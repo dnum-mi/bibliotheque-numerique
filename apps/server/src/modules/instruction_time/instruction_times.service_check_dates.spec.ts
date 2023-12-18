@@ -16,6 +16,7 @@ import { Dossier } from '../dossiers/objects/entities/dossier.entity'
 import dsConfig from '../../config/ds.config'
 import fileConfig from '../../config/file.config'
 import { DsApiModule } from '../../shared/modules/ds-api/ds-api.module'
+import { LoggerModule } from '@/shared/modules/logger/logger.module'
 
 describe('InstructionTimesService, Check Date', () => {
   let service: InstructionTimesService
@@ -29,6 +30,7 @@ describe('InstructionTimesService, Check Date', () => {
         TypeOrmModule.forFeature([InstructionTime, Dossier]),
         DossierModule,
         DsApiModule,
+        LoggerModule.forRoot('api'),
         ConfigModule.forRoot({
           isGlobal: true,
           cache: true,
