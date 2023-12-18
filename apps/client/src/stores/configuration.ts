@@ -14,6 +14,7 @@ import { createDemarche, patchDemarche, synchronizeDossiers } from '../api/sudo-
 export const useConfigurationStore = defineStore('Configuration', () => {
   const demarches = ref<SmallDemarcheOutputDto[]>([])
   const fetching = ref<boolean>(false)
+
   const loadDemarches = async () => {
     fetching.value = true
     demarches.value = await demarchesApiClient.getSmallDemarches()
@@ -55,7 +56,13 @@ export const useConfigurationStore = defineStore('Configuration', () => {
     await loadDemarches().finally(() => { fetching.value = false })
   }
 
+  const $reset = () => {
+    demarches.value = []
+    fetching.value = false
+  }
+
   return {
+    $reset,
     demarches,
     fetching,
     loadDemarches,

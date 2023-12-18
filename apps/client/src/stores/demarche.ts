@@ -19,6 +19,7 @@ export const useDemarcheStore = defineStore('demarche', () => {
   const currentDemarche = ref<IDemarche>()
   const currentDemarcheDossiers = ref<DossierSearchOutputDto | FieldSearchOutputDto>({ total: 0, data: [] })
   const currentDemarcheConfiguration = ref<MappingColumnWithoutChildren[]>([])
+
   const currentDemarcheFlatConfiguration = computed<FrontMappingColumn[]>(() => currentDemarcheConfiguration.value
     .map((c: MappingColumn) => c.children?.length ? c.children.map(c => ({ ...c, isChild: true })) : [c])
     .flat(1)
@@ -86,7 +87,17 @@ export const useDemarcheStore = defineStore('demarche', () => {
     }
   }
 
+  const $reset = () => {
+    demarches.value = []
+    currentDemarche.value = undefined
+    currentDemarcheDossiers.value = { total: 0, data: [] }
+    currentDemarcheConfiguration.value = []
+    fetching.value = false
+    currentDemarcheConfigurationHash.value = {}
+  }
+
   return {
+    $reset,
     demarches,
     currentDemarche,
     currentDemarcheConfiguration,
