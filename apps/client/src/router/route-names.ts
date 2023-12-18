@@ -20,4 +20,5 @@ export const routeNames = {
   UPDATE_PASSWORD: 'UpdatePassword',
   USER: 'User',
   VALIDE_MAIL: 'ValidEmail',
+  ACCESSIBILITY: 'Accessibility',
 } as const
