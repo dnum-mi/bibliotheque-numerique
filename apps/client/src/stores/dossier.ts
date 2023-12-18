@@ -15,7 +15,11 @@ export const useDossierStore = defineStore('dossier', () => {
     if (result) dossier.value = result
   }
 
+  const $reset = () => {
+    dossier.value = undefined
+  }
   return {
+    $reset,
     dossier,
     getDossier,
   }

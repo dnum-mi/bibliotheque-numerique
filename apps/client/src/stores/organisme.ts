@@ -22,7 +22,12 @@ export const useOrganismeStore = defineStore('organisme', () => {
     return apiClient.getOrganismes(dto)
   }
 
+  const $reset = () => {
+    organisme.value = undefined
+    organismes.value = []
+  }
   return {
+    $reset,
     organisme,
     organismes,
     loadOrganisme,

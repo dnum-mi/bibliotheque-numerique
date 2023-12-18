@@ -17,6 +17,15 @@ import { getRandomId } from '@gouvminint/vue-dsfr'
 const RolesAdmins = ['admin', 'sudo', 'superadmin']
 
 export const useUserStore = defineStore('user', () => {
+  const $reset = () => {
+    selectedEditableUserLoading.value = false
+    currentUser.value = null
+    myProfile.value = null
+    users.value = new Map<number, UserOutputDto>()
+    selectedEditableUser.value = null
+    keySelectUser.value = getRandomId('selectedUser-selected')
+  }
+
   const selectedEditableUserLoading = ref(false)
   const currentUser = ref<UserOutputDto | null>(null)
   const myProfile = ref<MyProfileOutputDto | null>(null)
@@ -34,6 +43,7 @@ export const useUserStore = defineStore('user', () => {
 
   const forceResetUser = () => {
     currentUser.value = null
+    $reset()
   }
 
   const logout = async () => {
@@ -93,6 +103,7 @@ export const useUserStore = defineStore('user', () => {
   }
 
   return {
+    $reset,
     currentUser,
     myProfile,
     users,
