@@ -11,12 +11,12 @@ export class UserOutputDto extends OmitType(CreateUserDto, ['password']) {
   @ApiProperty({
     description: 'Date de modification de l\'utilisateur',
   })
-  updateAt: Date
+  updatedAt: Date
 
   @ApiProperty({
     description: 'Date de créatino de l\'utilisateur',
   })
-  createAt: Date
+  createdAt: Date
 
   @ApiProperty({
     description: 'Role de l\'utilisateur',

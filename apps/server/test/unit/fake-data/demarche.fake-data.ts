@@ -9,6 +9,6 @@ export const getFakeDemarche = (): Demarche =>
     dossiers: [],
     typeOrganisme: faker.string.sample(),
     mappingColumns: [],
-    createAt: faker.date.past(),
-    updateAt: faker.date.past(),
+    createdAt: faker.date.past(),
+    updatedAt: faker.date.past(),
   } as unknown as Demarche)

@@ -61,8 +61,8 @@ describe('file-storage (e2e)', () => {
       jest.spyOn(fileService, 'findFileStorage').mockResolvedValue(
         {
           id: fileUuid,
-          createAt: new Date(),
-          updateAt: new Date(),
+          createdAt: new Date(),
+          updatedAt: new Date(),
           name: '0855e52f3ad28137d4a69.jpg',
           path: 'http://127.0.0.1:9000/rnfbucket/0855e52f3ad28137d4a69.jpg',
           originalName: 'test.jpg',
