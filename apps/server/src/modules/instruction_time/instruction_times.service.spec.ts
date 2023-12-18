@@ -29,6 +29,7 @@ import {
   fixFieldInstructionTimeDelay,
   fixFieldInstructionTimeStatus,
 } from './constante/fix-field-instrucation-times.dictionnary'
+import { LoggerModule } from '@/shared/modules/logger/logger.module'
 
 describe('InstructionTimesService', () => {
   let service: InstructionTimesService
@@ -45,6 +46,7 @@ describe('InstructionTimesService', () => {
         TypeOrmModule.forFeature([InstructionTime, Dossier]),
         DossierModule,
         DsApiModule,
+        LoggerModule.forRoot('api'),
         ConfigModule.forRoot({
           isGlobal: true,
           cache: true,
