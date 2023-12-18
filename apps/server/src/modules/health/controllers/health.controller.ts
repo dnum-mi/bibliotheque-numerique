@@ -5,6 +5,8 @@ import { HealthCheckResult } from '@nestjs/terminus/dist/health-check/health-che
 import { HealthIndicatorResult } from '@nestjs/terminus/dist/health-indicator'
 import { PublicRoute } from '@/modules/users/providers/decorators/public-route.decorator'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
+import { VersionHealthIndicator } from '@/modules/health/providers/version-health.indicator'
+import { EnvironmentHealthIndicator } from '@/modules/health/providers/environment-health.indicator'
 
 @ApiTags('Health')
 @Controller('health')
@@ -13,6 +15,8 @@ export class HealthController {
     private health: HealthCheckService,
     private db: TypeOrmHealthIndicator,
     private readonly logger: LoggerService,
+    private versionIndicator: VersionHealthIndicator,
+    private environmentIndicator: EnvironmentHealthIndicator,
   ) {
     this.logger.setContext(this.constructor.name)
   }
@@ -22,6 +26,11 @@ export class HealthController {
   @HealthCheck()
   check (): Promise<HealthCheckResult> {
     this.logger.verbose('Health check')
-    return this.health.check([(): Promise<HealthIndicatorResult> => this.db.pingCheck('database')])
+
+    return this.health.check([
+      (): Promise<HealthIndicatorResult> => this.db.pingCheck('database'),
+      (): Promise<HealthIndicatorResult> => this.versionIndicator.isHealthy('version'),
+      (): Promise<HealthIndicatorResult> => this.environmentIndicator.isHealthy('environment'),
+    ])
   }
 }
