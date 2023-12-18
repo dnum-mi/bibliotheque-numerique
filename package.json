@@ -94,7 +94,7 @@
     "turbo": "1.10.16"
   },
   "volta": {
-    "node": "18.16.0"
+    "node": "18.19.0"
   },
   "pnpm": {
     "overrides": {

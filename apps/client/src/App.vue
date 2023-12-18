@@ -1,21 +1,45 @@
 <script setup lang="ts">
-import { ref, watch, onErrorCaptured } from 'vue'
+import { ref, watch, onErrorCaptured, computed, onMounted, type Ref } from 'vue'
 import { useRegisterSW } from 'virtual:pwa-register/vue'
 import { useRouter, useRoute } from 'vue-router'
 import { AxiosError } from 'axios'
 
 import useToaster from '@/composables/use-toaster.js'
-import { useUserStore } from '@/stores'
+import { useCustomFilterStore, useUserStore } from '@/stores'
 
 import AppToaster from '@/components/AppToaster.vue'
 import ReloadPrompt from '@/components/ReloadPrompt.vue'
 import { routeNames } from '@/router/route-names'
 import { Roles, isSuperiorOrSimilar } from '@/biblio-num/shared'
 import { logInServer } from '@/utils/log.utils'
+import apiClient from '@/api/api-client'
+import { type EnvTextKeys, envTextMapping, defaultEnv } from '@/shared/types'
 
+const version = ref('0.0.0')
+const runEnv = ref(defaultEnv) as Ref<EnvTextKeys>
+
+onMounted(async () => {
+  try {
+    const healthJson = await apiClient.getHealth()
+    console.log(healthJson)
+    version.value = healthJson.info?.version.version
+    runEnv.value = healthJson.info?.environment.environment
+  } catch (error) {
+    toaster.addErrorMessage({ description: 'une erreur est survenue à la déconnexion' })
+  }
+})
+const envStyle = computed(() => `env_${runEnv.value}`)
 const serviceTitle = 'Bibliothèque Numérique'
 const serviceDescription = 'Recherchez une démarche, un dossier, un organisme'
 const logoText = ['Ministère', 'de l’intérieur', 'et des outre-mer']
+const ecosystemLinks = [
+  { label: 'demarches-simplifiees.fr', href: 'https://www.demarches-simplifiees.fr' },
+  { label: 'API - Répertoire National des Associations', href: 'https://entreprise.api.gouv.fr/catalogue/ministere_interieur/rna' },
+  { label: 'Répertoire National des Fondations', href: 'https://rnf.interieur.rie.gouv.fr' },
+]
+const mandatoryLinks = [
+  { label: 'Accessibilité : non conforme', to: '/accessibility' },
+]
 
 const redColor = 'var(--red-marianne-425-625)'
 const iconPropsRedColor = { color: redColor }
@@ -177,6 +201,13 @@ onErrorCaptured((error: Error | AxiosError) => {
 
 <template>
   <div class="flex flex-col h-full w-full">
+    <div
+      v-if="runEnv != defaultEnv"
+      :class="envStyle"
+      class="flex justify-center items-center font-bold text-lg h-6"
+    >
+      Environnement: {{ envTextMapping[runEnv] }}
+    </div>
     <DsfrHeader
       v-model="searchQuery"
       :service-title="serviceTitle"
@@ -187,6 +218,21 @@ onErrorCaptured((error: Error | AxiosError) => {
 
     <main class="flex  flex-col  grow  w-full  h-full  min-h-0  overflow-auto">
       <router-view />
+      <DsfrFooter
+        a11y-compliance="partiellement conforme"
+        :mandatory-links="mandatoryLinks"
+        :logo-text="logoText"
+        :ecosystem-links="ecosystemLinks"
+      >
+        <template #description>
+          <div
+            class="flex gap-2 justify-end"
+          >
+            Environnement: {{ envTextMapping[runEnv] }}
+            <br>Version: {{ version }}
+          </div>
+        </template>
+      </DsfrFooter>
     </main>
   </div>
 
@@ -213,6 +259,18 @@ onErrorCaptured((error: Error | AxiosError) => {
 .raised-top-shadow {
   background-color: var(--background-raised-grey);
   filter: drop-shadow(0 -3px 5px var(--shadow-color));
+}
+
+.env_development {
+  background-color: rgba(112, 255, 104, 0.8);
+}
+
+.env_staging {
+  background-color: #00bbc3;
+}
+
+.env_preproduction {
+  background-color: rgba(242, 81, 250, 0.73);
 }
 
 @media screen and (max-width: 1400px) {

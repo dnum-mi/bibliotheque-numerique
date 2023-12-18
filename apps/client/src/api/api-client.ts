@@ -52,7 +52,7 @@ import {
   getOrganismeByRnfRoute,
   organismesListRoute,
   usersListRoute,
-  getUserRoleByIdRoute,
+  getUserRoleByIdRoute, healthRoute,
 } from './bn-api-routes'
 import {
   authRoute,
@@ -321,10 +321,18 @@ export const customFiltersApiClient = {
   },
 }
 
+export const healthApiClient = {
+  getHealth: async () => {
+    const response = await apiClientInstance.get(healthRoute)
+    return response.data
+  },
+}
+
 export default {
   ...demarchesApiClient,
   ...organismeApiClient,
   ...usersApiClient,
   ...dossiersApiClient,
   ...customFiltersApiClient,
+  ...healthApiClient,
 }
