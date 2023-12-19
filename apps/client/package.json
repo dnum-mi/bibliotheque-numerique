@@ -1,6 +1,6 @@
 {
   "name": "@biblio-num/client",
-  "version": "0.0.0",
+  "version": "1.7.0",
   "scripts": {
     "build": "vue-tsc --noEmit && vite build",
     "dev": "vite",
