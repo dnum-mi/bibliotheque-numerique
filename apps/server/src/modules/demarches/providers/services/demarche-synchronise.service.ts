@@ -135,7 +135,7 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
     delete raw.dossiers
     const toUpdate = {
       lastSynchronisedAt: new Date(),
-      ...((raw.datePublication !== demarche.dsDataJson.datePublication)
+      ...((raw.dateDerniereModification !== demarche.dsDataJson.dateDerniereModification)
         ? {
           title: raw.title,
           state: raw.state,
