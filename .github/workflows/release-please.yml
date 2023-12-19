@@ -50,9 +50,3 @@ jobs:
           # Update the PR.
           git commit --amend --no-edit
           git push -f
-      - name: Install dependencies
-        run: npm ci
-        if: ${{ steps.release.outputs.release_created }}
-      - name: Build docker images
-        run: |
-          echo "TODO: Build docker images"
