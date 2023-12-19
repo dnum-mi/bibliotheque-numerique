@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import iconRoundMarianne from '@/assets/icone-ronde-marianne.png'
+import sanitizeHtml from 'sanitize-html'
 
 type Message = {
     id: number
@@ -102,9 +103,10 @@ const getIconNameFromFilename = (filename: string) => {
                 {{ message.date }}
               </span>
             </header>
-            <div class="text-sm">
-              {{ message.body }}
-            </div>
+            <div
+              class="text-sm"
+              v-html="sanitizeHtml(message.body)"
+            />
             <footer class="fr-my-2v  text-sm  flex  gap-2  flex-wrap">
               <div
                 v-for="(file, j) of message.attachments"
