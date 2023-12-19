@@ -171,7 +171,7 @@ export const generateOrganisme = (): IOrganisme => ({
 })
 
 export const generateDossier = (): IDossier & { organisme: IOrganisme } => ({
-  id: +faker.string.numeric(),
+  id: +faker.string.numeric({ length: { min: 2, max: 5 } }),
   dsDataJson: generateDossierDS(),
   demarche: {
     title: faker.word.noun(),

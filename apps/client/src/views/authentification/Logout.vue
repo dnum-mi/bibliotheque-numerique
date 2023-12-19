@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { getActivePinia } from 'pinia'
+import type { Pinia, Store } from 'pinia'
 import { useRouter } from 'vue-router'
 import useToaster from '@/composables/use-toaster.js'
 import { useUserStore, useCustomFilterStore } from '@/stores'
@@ -10,10 +12,18 @@ const userStore = useUserStore()
 const router = useRouter()
 const toaster = useToaster()
 
+interface ExtendedPinia extends Pinia {
+  _s: Map<string, Store>;
+}
+
 onMounted(async () => {
   useCustomFilterStore().$reset()
   try {
     await userStore.logout()
+    const activePinia = getActivePinia() as ExtendedPinia
+    activePinia._s.forEach(store => {
+      store.$reset()
+    })
   } catch (error) {
     toaster.addErrorMessage({ description: 'une erreur est survenue à la déconnexion' })
   }

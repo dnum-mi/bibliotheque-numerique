@@ -8,8 +8,7 @@ describe('<Dossier />', () => {
   it('renders', () => {
     const dossierStore = useDossierStore()
     const dossier = generateDossier()
-
-    cy.stub(apiClient, 'getDossier').withArgs(+dossier.id).resolves(dossier)
+    cy.stub(apiClient, 'getDossier').withArgs(+dossier.id).resolves(dossier).as('stubGetDossier')
     const dossierDS = dossier.dsDataJson
     cy.then(() => {
       dossierStore.getDossier(+dossier.id)
@@ -17,6 +16,7 @@ describe('<Dossier />', () => {
 
     cy.mountWithPinia(Dossier)
 
+    cy.get('@stubGetDossier').should('be.called')
     cy.get('.bn-fiche-title').should('contain', `${dossierDS.number}`)
     cy.get('.bn-fiche-sub-title').should('contain', `${dossierDS.state?.toUpperCase()}`)
   })
