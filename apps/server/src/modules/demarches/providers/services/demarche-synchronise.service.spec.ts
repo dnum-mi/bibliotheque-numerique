@@ -357,7 +357,9 @@ describe('Generating demarche mapping columns', () => {
   it('Should updat demarche when there is one re-publubication', (done) => {
     const dateCreation = faker.date.past().toISOString()
     const datePublication = faker.date.recent().toISOString()
+    const dateDerniereModification = datePublication
     const datePublicationfuture = faker.date.future().toISOString()
+    const dateDerniereModificationFuture = datePublicationfuture
     const lastSynchronisedAt = faker.date.past().toISOString()
     const types= []
     const identification=null
@@ -370,6 +372,7 @@ describe('Generating demarche mapping columns', () => {
             nodes:[]
           },
           datePublication: datePublicationfuture,
+          dateDerniereModification: dateDerniereModificationFuture
         }
       })
 
@@ -391,6 +394,7 @@ describe('Generating demarche mapping columns', () => {
         mappingColumns,
         dsDataJson: {
           datePublication,
+          dateDerniereModification,
           //@ts-ignore
           activeRevision:{ id: "1", dateCreation, ...fakeDemarche.activeRevision }
         },
@@ -402,6 +406,7 @@ describe('Generating demarche mapping columns', () => {
   it('Should not modify Demarche when tha date publication is no changed', (done) => {
     const dateCreation = faker.date.past().toISOString()
     const datePublication = faker.date.recent().toISOString()
+    const dateDerniereModification = datePublication
     const lastSynchronisedAt = faker.date.past().toISOString()
     const types= []
     const identification=null
@@ -414,6 +419,7 @@ describe('Generating demarche mapping columns', () => {
             nodes:[]
           },
           datePublication,
+          dateDerniereModification,
         }
       })
 
@@ -435,6 +441,7 @@ describe('Generating demarche mapping columns', () => {
         mappingColumns,
         dsDataJson: {
           datePublication,
+          dateDerniereModification,
           //@ts-ignore
           activeRevision:{ id: "1", dateCreation, ...fakeDemarche.activeRevision }
         },
