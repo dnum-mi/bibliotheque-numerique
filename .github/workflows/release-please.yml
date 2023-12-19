@@ -38,6 +38,7 @@ jobs:
           git checkout "$BRANCH"
           VERSION=$(jq -r .version package.json)
           yq e -i ".version |= \"$VERSION\"" apps/server/package.json
+          yq e -i ".version |= \"$VERSION\"" apps/server/src/version.json
           yq e -i ".version |= \"$VERSION\"" apps/client/package.json
           yq e -i ".version |= \"$VERSION\"" apps/rnf-server/package.json
           yq e -i ".version |= \"$VERSION\"" apps/rnf-client/package.json
