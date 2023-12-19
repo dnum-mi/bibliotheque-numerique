@@ -71,8 +71,7 @@ const giveStatusType = (status: string): dsfrType => {
 }
 //#endregion
 
-const formattedNumber = computed(() => new Intl.NumberFormat('fr-FR').format(Number(props.params.value)))
-
+const formattedNumber = (value: string) => new Intl.NumberFormat('fr-FR').format(Number(value))
 //#region PAYS region
 const getFlagURL = (countryName: string) => {
   if (!countryName?.length) {
@@ -168,7 +167,7 @@ const getPrefecture = (prefecture: PrefectureKeys) => {
           v-if="params.column.type === FieldType.number"
           class="block  text-right"
         >
-          {{ formattedNumber }}
+          {{ formattedNumber(cellValue) }}
         </span>
         <template v-else>
           {{ cellValue ?? '' }}
