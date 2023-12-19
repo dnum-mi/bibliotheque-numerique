@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { HealthIndicator, HealthIndicatorResult, HealthCheckError } from '@nestjs/terminus'
-import * as packageJson from '../../../../package.json'
+import * as versionJson from '../../../version.json'
 
 @Injectable()
 export class VersionHealthIndicator extends HealthIndicator {
   async isHealthy(key: string): Promise<HealthIndicatorResult> {
-    const version = packageJson.version
+    const version = versionJson.version
     const result: HealthIndicatorResult = this.getStatus(key, true, { version })
 
     if (version) {
