@@ -21,4 +21,5 @@ export const routeNames = {
   USER: 'User',
   VALIDE_MAIL: 'ValidEmail',
   ACCESSIBILITY: 'Accessibility',
+  COOKIES: 'Cookies',
 } as const

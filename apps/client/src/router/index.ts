@@ -25,6 +25,7 @@ import { passwordRoutes } from '@/router/password.route'
 import { statisticRoute } from '@/router/statistic.route'
 import { configurationRoute } from './confiuration.route'
 import { accessibilityRoute } from '@/router/accessibility.route'
+import { cookiesRoute } from '@/router/cookies.route'
 const MAIN_TITLE = 'Bibliothèque Numérique'
 
 export const SIGN_IN_ROUTE_NAME = 'SignIn'
@@ -41,6 +42,7 @@ const routes: RouterOptions['routes'] = [
   ...passwordRoutes,
   configurationRoute,
   accessibilityRoute,
+  cookiesRoute,
   {
     path: '/:pathMatch(.*)*',
     name: routeNames.Page_404,

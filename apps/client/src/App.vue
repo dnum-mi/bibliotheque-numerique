@@ -21,7 +21,6 @@ const runEnv = ref(defaultEnv) as Ref<EnvTextKeys>
 onMounted(async () => {
   try {
     const healthJson = await apiClient.getHealth()
-    console.log(healthJson)
     version.value = healthJson.info?.version.version
     runEnv.value = healthJson.info?.environment.environment
   } catch (error) {
@@ -33,12 +32,14 @@ const serviceTitle = 'Bibliothèque Numérique'
 const serviceDescription = 'Recherchez une démarche, un dossier, un organisme'
 const logoText = ['Ministère', 'de l’intérieur', 'et des outre-mer']
 const ecosystemLinks = [
-  { label: 'demarches-simplifiees.fr', href: 'https://www.demarches-simplifiees.fr' },
+  { label: 'Demarches-simplifiees.fr', href: 'https://www.demarches-simplifiees.fr' },
   { label: 'API - Répertoire National des Associations', href: 'https://entreprise.api.gouv.fr/catalogue/ministere_interieur/rna' },
   { label: 'Répertoire National des Fondations', href: 'https://rnf.interieur.rie.gouv.fr' },
+  { label: 'Cloud π Native', href: 'https://cloud-pi-native.fr/' },
 ]
 const mandatoryLinks = [
   { label: 'Accessibilité : non conforme', to: '/accessibility' },
+  { label: 'Gestion des cookies', to: '/cookies' },
 ]
 
 const redColor = 'var(--red-marianne-425-625)'
