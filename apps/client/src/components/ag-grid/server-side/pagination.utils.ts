@@ -28,8 +28,10 @@ export const fromAggToBackendFilter = <T>(filterModel: Record<string, FilterMode
   if (entries.length) {
     const filters: Record<string, FilterDto> = {}
     entries.forEach(([key, value]) => {
+      console.log(value)
       switch (true) {
-        case ('condition1' in value):
+        case ('condition1' in value): // there is two conditions
+          delete value.conditions
           filters[key] = value as FilterDto
           break
         case value.filterType === 'date':
@@ -56,15 +58,26 @@ export const fromAggToBackendFilter = <T>(filterModel: Record<string, FilterMode
           }
           break
         }
-        default:
-        {
-          const v = value as TextFilterModel | NumberFilterModel
+        case value.filterType === 'number': {
+          const v = value as NumberFilterModel
           filters[key] = {
             filterType: v.filterType as string,
             condition1: {
               filter: v.filter,
               type: v.type,
-            } as TextFilterConditionDto | NumberFilterConditionDto,
+            } as NumberFilterConditionDto,
+          }
+          break
+        }
+        default:
+        {
+          const v = value as TextFilterModel
+          filters[key] = {
+            filterType: v.filterType as string,
+            condition1: {
+              filter: v.filter,
+              type: v.type,
+            } as TextFilterConditionDto,
           }
           break
         }
