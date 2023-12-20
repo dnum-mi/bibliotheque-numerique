@@ -24,9 +24,9 @@ const getDefaultConfParts = () => ({
       children?: MappingColumn[]
     }>,
   },
-  annotations: {
+  annotation: {
     meta: {
-      id: 'annotations',
+      id: 'annotation',
       label: 'Annotations privées',
     },
     data: [] as MappingColumn[],
@@ -63,8 +63,8 @@ const updateDataGroup = () => {
       }
 
       // confParts.value[mappingColumn.source as 'champs'].data.push(mappingColumn)
-    } else if (['annotations', 'fix-field'].includes(mappingColumn.source)) {
-      confParts.value[mappingColumn.source as 'annotations' | 'fix-field'].data.push(mappingColumn)
+    } else if (['annotation', 'fix-field'].includes(mappingColumn.source)) {
+      confParts.value[mappingColumn.source as 'annotation' | 'fix-field'].data.push(mappingColumn)
     }
   }
 }
@@ -90,7 +90,6 @@ const saveOneMappingColumn = async (id: string, label: string | null) => {
   await demarcheStore.updateOneMappingColumn(id, label)
 }
 const saveOneMappingColumnDebounced = useDebounceFn(saveOneMappingColumn, 300)
-
 </script>
 
 <template>
@@ -180,7 +179,7 @@ const saveOneMappingColumnDebounced = useDebounceFn(saveOneMappingColumn, 300)
         <h5>Annotations privées</h5>
         <ul class="list-none">
           <li
-            v-for="champ of confParts.annotations.data"
+            v-for="champ of confParts.annotation.data"
             :key="champ.id"
             class="flex  items-center  justify-between  p-2"
           >
