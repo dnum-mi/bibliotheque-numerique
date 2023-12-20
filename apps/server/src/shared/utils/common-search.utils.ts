@@ -27,6 +27,7 @@ const _buildOneTextFilter = (
   prefix?: string,
 ): string => {
   const key = _adaptKeyForArray(originalKey, isArray, prefix)
+  const item = isArray ? 'item' : key
   switch (filter.type) {
   case TextFilterConditions.Contains:
     return `(${key} ILIKE '%${filter.filter}%')${isArray ? ')' : ''}`
@@ -37,9 +38,9 @@ const _buildOneTextFilter = (
   case TextFilterConditions.EndsWith:
     return `(${key} ILIKE '%${filter.filter}')${isArray ? ')' : ''}`
   case TextFilterConditions.Blank:
-    return `(${key} IS NULL OR ${key} = '')${isArray ? ')' : ''}`
+    return `(${key} IS NULL OR ${item} = '')${isArray ? ')' : ''}`
   case TextFilterConditions.NotBlank:
-    return `(${key} IS NOT NULL OR ${key} != '')${isArray ? ')' : ''}`
+    return `(${key} IS NOT NULL OR ${item} != '')${isArray ? ')' : ''}`
   default:
     throw new BadRequestException(
       `Unknown string filter condition: ${filter.type}`,

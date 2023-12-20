@@ -4,8 +4,8 @@ export abstract class BaseEntity {
   id: number
 
   @CreateDateColumn({ type: 'timestamp' })
-  createdAt: Date // TODO: this should be createdAt (with a 'd')
+  createdAt: Date
 
   @UpdateDateColumn({ type: 'timestamp' })
-  updatedAt: Date // TODO: this should be updatedAt (with a 'd')
+  updatedAt: Date
 }
