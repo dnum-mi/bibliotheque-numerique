@@ -86,7 +86,7 @@ describe('Common search utils', () => {
             },
             { I09: 'string' },
           ),
-        ).toEqual('(("I09" IS NULL OR item = ""))')
+        ).toEqual('(("I09" IS NULL OR "I09" = \'\'))')
       })
 
       it('Should build filter for "notBlank"', () => {
@@ -103,7 +103,7 @@ describe('Common search utils', () => {
             },
             { I09: 'string' },
           ),
-        ).toEqual('(("I09" IS NOT NULL OR item != ""))')
+        ).toEqual('(("I09" IS NOT NULL OR "I09" != \'\'))')
       })
     })
     describe('Array text filters', () => {
@@ -203,7 +203,7 @@ describe('Common search utils', () => {
             true,
           ),
         ).toEqual(
-          '((EXISTS (SELECT 1 FROM UNNEST("I09") AS item WHERE item IS NULL OR item = "")))',
+          '((EXISTS (SELECT 1 FROM UNNEST("I09") AS item WHERE item IS NULL OR item = \'\')))',
         )
       })
 
@@ -223,7 +223,7 @@ describe('Common search utils', () => {
             true,
           ),
         ).toEqual(
-          '((EXISTS (SELECT 1 FROM UNNEST("I09") AS item WHERE item IS NOT NULL OR item != "")))',
+          '((EXISTS (SELECT 1 FROM UNNEST("I09") AS item WHERE item IS NOT NULL OR item != \'\')))',
         )
       })
     })
