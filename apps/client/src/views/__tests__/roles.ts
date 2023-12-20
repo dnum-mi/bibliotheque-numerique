@@ -15,8 +15,8 @@ export const createRandomRole = (): IRole => ({
   name: faker.word.noun({ length: { min: 6, max: 10 } }),
   permissions: getRandomPermissions(),
   description: faker.lorem.lines(10),
-  createAt: faker.date.past().toISOString(),
-  updateAt: faker.date.past().toISOString(),
+  createdAt: faker.date.past().toISOString(),
+  updatedAt: faker.date.past().toISOString(),
 })
 
 export const createRandomRoles = (count: number): IRole[] =>

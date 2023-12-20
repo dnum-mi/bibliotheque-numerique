@@ -11,6 +11,6 @@ export interface IUser {
   role: IRole
   validated: boolean
   customFilters?: ICustomFilter[]
-  updateAt: Date
-  createAt: Date
+  updatedAt: Date
+  createdAt: Date
 }

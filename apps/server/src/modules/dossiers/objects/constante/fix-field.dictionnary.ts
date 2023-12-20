@@ -7,7 +7,7 @@ import {
   MappingColumn,
 } from '@biblio-num/shared'
 // eslint-disable-next-line max-len
-import { fixFieldsInstructionTime } from '@/plugins/instruction_time/instruction_times/constante/fix-field-instrucation-times.dictionnary'
+import { fixFieldsInstructionTime } from '@/modules/instruction_time/constante/fix-field-instrucation-times.dictionnary'
 import {
   fixFieldsAmounts,
   fixFieldsExcelChamps,

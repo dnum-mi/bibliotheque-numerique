@@ -26,8 +26,8 @@ export class AuthService {
       'validated',
       'password',
       'role',
-      'createAt',
-      'updateAt',
+      'createdAt',
+      'updatedAt',
     ])
     if (!user) {
       throw new NotFoundException('User not found')

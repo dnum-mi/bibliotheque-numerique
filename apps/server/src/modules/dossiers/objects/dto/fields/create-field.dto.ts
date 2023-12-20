@@ -5,8 +5,8 @@ import { Field } from '../../entities/field.entity'
 export class CreateFieldDto extends OmitType(Field, [
   'id',
   'dossier',
-  'createAt',
-  'updateAt',
+  'createdAt',
+  'updatedAt',
   'children',
   'parentId',
 ] as const) {

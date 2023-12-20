@@ -43,8 +43,8 @@ export class UserController {
     return {
       id: user.id,
       email: user.email,
-      createAt: user.createAt,
-      updateAt: user.updateAt,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
       lastname: user.lastname,
       firstname: user.firstname,
       job: user.job,
