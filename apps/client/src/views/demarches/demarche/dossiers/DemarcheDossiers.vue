@@ -62,7 +62,7 @@ const groupByDossier = ref(hasNoRepeatableField.value)
 
 watchEffect(() => {
   if (hasNoRepeatableField.value) {
-    groupByDossier.value = false
+    groupByDossier.value = true
   }
 })
 
