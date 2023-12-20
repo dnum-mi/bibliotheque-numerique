@@ -20,6 +20,6 @@ export const UserFieldTypeHashConst: Record<
   lastname: 'string',
   firstname: 'string',
   job: 'string',
-  createAt: 'date',
-  updateAt: 'date',
+  createdAt: 'date',
+  updatedAt: 'date',
 }

@@ -72,8 +72,8 @@ const dumbUserFromRole = (role: IRole): IUser => ({
   firstname: 'useless',
   validated: true,
   password: 'useless',
-  updateAt: new Date(),
-  createAt: new Date(),
+  updatedAt: new Date(),
+  createdAt: new Date(),
   role,
 })
 

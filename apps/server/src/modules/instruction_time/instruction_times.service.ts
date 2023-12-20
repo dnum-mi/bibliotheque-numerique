@@ -6,7 +6,7 @@ import { In, Repository } from 'typeorm'
 import dayjs, { type Dayjs } from '@/shared/utils/dayjs'
 
 import { LoggerService } from '@/shared/modules/logger/logger.service'
-import { TInstructionTimeMappingConfig, keyInstructionTime } from '../config/instructionTimeMapping.config'
+import { TInstructionTimeMappingConfig, keyInstructionTime } from '../../config/instructionTimeMapping.config'
 import { EInstructionTimeState, EInstructionTimeStateKey } from './types/IntructionTime.type'
 import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
 import { InstructionTime } from './instruction_time.entity'
@@ -68,9 +68,9 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
   ) {
     super(repo, logger)
     this.logger.setContext(this.constructor.name)
-    this.nbDaysAfterInstruction = this.configService.get('NB_DAYS_AFTER_INSTRUCTION')
-    this.nbDaysAfterExtension = this.configService.get('NB_DAYS_AFTER_EXTENSION')
-    this.nbDaysAfterIntentOpposition = this.configService.get('NB_DAYS_AFTER_INTENT_OPPOSITION')
+    this.nbDaysAfterInstruction = this.configService.get('instructionTime').NB_DAYS_AFTER_INSTRUCTION
+    this.nbDaysAfterExtension = this.configService.get('instructionTime').NB_DAYS_AFTER_EXTENSION
+    this.nbDaysAfterIntentOpposition = this.configService.get('instructionTime').NB_DAYS_AFTER_INTENT_OPPOSITION
   }
 
   async findByDossierId (id: number): Promise<InstructionTime> {
@@ -91,8 +91,8 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
   getMappingInstructionTimeByDossier (dossier: Dossier): TIntructionTime {
     const instructionTimeMapping =
       this.configService.get<TInstructionTimeMappingConfig['instructionTimeMappingConfig']>(
-        'instructionTimeMappingConfig',
-      )
+        'instructionTime',
+      ).instructionTimeMappingConfig
     const annotations = dossier.dsDataJson.annotations
     const result = {}
     for (const annotationLabelKey of Object.keys(instructionTimeMapping)) {

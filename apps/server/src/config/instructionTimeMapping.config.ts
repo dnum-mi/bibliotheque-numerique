@@ -1,3 +1,5 @@
+import { registerAs } from '@nestjs/config'
+
 export const keyInstructionTime = {
   DATE_REQUEST1: 'DateRequest1',
   DATE_RECEIPT1: 'DateReceipt1',
@@ -15,7 +17,7 @@ export type TInstructionTimeMappingConfig = {
   NB_DAYS_AFTER_INTENT_OPPOSITION: number;
 };
 
-const config = (): TInstructionTimeMappingConfig => ({
+export default registerAs('instructionTime', () => ({
   instructionTimeMappingConfig: {
     [keyInstructionTime.DATE_REQUEST1]: 'Date de la première demande de pièces',
     [keyInstructionTime.DATE_RECEIPT1]: 'Date de réception des pièces de la première demande',
@@ -28,6 +30,4 @@ const config = (): TInstructionTimeMappingConfig => ({
   NB_DAYS_AFTER_INSTRUCTION: 60,
   NB_DAYS_AFTER_EXTENSION: 120,
   NB_DAYS_AFTER_INTENT_OPPOSITION: 30,
-})
-
-export default config
+}))

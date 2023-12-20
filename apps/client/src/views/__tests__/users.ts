@@ -29,8 +29,8 @@ export const createRandomAdmin = (): User => ({
     name: RoleName.ADMIN,
     description: 'Administrator',
     permissions: [],
-    createAt: faker.date.past().toISOString(),
-    updateAt: faker.date.past().toISOString(),
+    createdAt: faker.date.past().toISOString(),
+    updatedAt: faker.date.past().toISOString(),
   }],
 })
 
@@ -44,8 +44,8 @@ export const createRandomUserWithoutCreateRole = (): User => ({
     name: RoleName.ADMIN_LOCAL,
     description: 'Administrator local',
     permissions: [],
-    createAt: faker.date.past().toISOString(),
-    updateAt: faker.date.past().toISOString(),
+    createdAt: faker.date.past().toISOString(),
+    updatedAt: faker.date.past().toISOString(),
   }],
 })
 export const createRandomUserWithCreateRole = (): User => ({
@@ -58,7 +58,7 @@ export const createRandomUserWithCreateRole = (): User => ({
     name: RoleName.ADMIN_LOCAL,
     description: 'Administrator local',
     permissions: [{ name: 'CREATE_ROLE' }],
-    createAt: faker.date.past().toISOString(),
-    updateAt: faker.date.past().toISOString(),
+    createdAt: faker.date.past().toISOString(),
+    updatedAt: faker.date.past().toISOString(),
   }],
 })
