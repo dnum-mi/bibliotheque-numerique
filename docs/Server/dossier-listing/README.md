@@ -102,6 +102,7 @@ WITH repeatedCTE AS (
         f."stringValue",
         f."dateValue",
         f."numberValue",
+        f."parentId"
         COALESCE(ROW_NUMBER() OVER (PARTITION BY f."dossierId", f."sourceId" ORDER BY f."parentRowIndex"), 0) AS maxRowNbr
     FROM fields f
     INNER JOIN dossiers d ON f."dossierId" = d.id
@@ -139,7 +140,7 @@ nonRepeatedCTE AS (
                      CASE WHEN r."sourceId" = 'I09' THEN r."stringValue" END)) AS "I09"
     FROM nonRepeatedCTE n
     LEFT JOIN repeatedCTE r ON n."dossierId" = r."dossierId"
-    GROUP BY n."dossierId", r.maxRowNbr
+    GROUP BY n."dossierId", r.maxRowNbr, r."parentId"
 ),
 
 countedCTE AS (
@@ -178,7 +179,7 @@ Extracts fields that do not repeat.
   - Select `"stringValue"` or `"numberValue"` or `"dateValue"` based on the type for each ID. We did a first simple query to find thoses types.
 - This means it dynamically adjusts based on whether a field is repeated or not, taking into account the presence or absence of a `parentRowIndex`.
 - The `LEFT JOIN` on `dossierId` ensures that every non-repeated field is presented alongside its corresponding repeated field if present.
-- The `GROUP BY` clause groups by `dossierId` and `maxRowNbr` to make sure each unique field combination gets its own row.
+- The `GROUP BY` clause groups by `dossierId` and `maxRowNbr` and `parentId` to make sure each unique field combination gets its own row.
 
 ##### `counted` CTE
 
