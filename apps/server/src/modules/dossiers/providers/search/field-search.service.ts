@@ -49,7 +49,8 @@ export class FieldSearchService extends BaseEntityService<Field> {
           f."sourceId",
           f."stringValue",
           f."dateValue",
-          f."numberValue"
+          f."numberValue",
+          f."parentId"
           ${repeatedLine}
         FROM fields f
         INNER JOIN dossiers d ON f."dossierId" = d.id
@@ -93,7 +94,7 @@ export class FieldSearchService extends BaseEntityService<Field> {
     .join(',')}
         FROM nonRepeatedCTE n
         LEFT JOIN repeatedCTE r ON n."dossierId" = r."dossierId"
-        GROUP BY n."dossierId", r.maxRowNbr
+        GROUP BY n."dossierId", r.maxRowNbr, r."parentId"
       )
     `
   }
