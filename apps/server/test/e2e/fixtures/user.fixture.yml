@@ -6,8 +6,8 @@ items:
     firstname: Cécile
     lastname: SUDO
     password: password
-    createdAt: 2023-06-12T06:54:45.000Z
-    updatedAt: 2023-06-12T06:54:45.000Z
+    createdAt: "2023-06-12T06:54:45.000Z"
+    updatedAt: "2023-06-12T06:54:45.000Z"
     role: {
       "label": "sudo",
       "options": [ ],
@@ -19,8 +19,8 @@ items:
     firstname: Bob
     lastname: SUPERADMIN
     password: password
-    createdAt: 2023-06-12T06:54:45.000Z
-    updatedAt: 2023-06-12T06:54:45.000Z
+    createdAt: "2023-06-12T06:54:45.000Z"
+    updatedAt: "2023-06-12T06:54:45.000Z"
     role: { label: "superadmin", options: { } }
     validated: true
   noRoleUser:
@@ -29,8 +29,8 @@ items:
     firstname: Bill
     lastname: norole
     password: password
-    createdAt: 2023-06-12T06:54:45.000Z
-    updatedAt: 2023-06-12T06:54:45.000Z
+    createdAt: "2023-06-12T06:54:45.000Z"
+    updatedAt: "2023-06-12T06:54:45.000Z"
     role: { label: null, options: { } }
     validated: true
   admin1User:
@@ -39,8 +39,8 @@ items:
     firstname: Suzette
     lastname: admin1
     password: password
-    createdAt: 2023-06-12T06:54:45.000Z
-    updatedAt: 2023-06-12T06:54:45.000Z
+    createdAt: "2023-06-12T06:54:45.000Z"
+    updatedAt: "2023-06-12T06:54:45.000Z"
     role: { label: "admin", options: { 2: { national: false, prefectures: [ 'D75' ] } } }
     validated: true
   instructor1User:
@@ -49,8 +49,8 @@ items:
     firstname: Steve
     lastname: instructor1
     password: password
-    createdAt: 2023-06-12T06:54:45.000Z
-    updatedAt: 2023-06-12T06:54:45.000Z
+    createdAt: "2023-06-12T06:54:45.000Z"
+    updatedAt: "2023-06-12T06:54:45.000Z"
     role: { label: "instructor", options: { 1: { national: false, prefectures: [ 'D75' ] }, 5: { national: false, prefectures: [ 'D57' ] } } }
     validated: true
   testPwdUser:
@@ -59,8 +59,8 @@ items:
     firstname: Jean
     lastname: admin
     password: password
-    createdAt: 2023-06-12T06:54:45.000Z
-    updatedAt: 2023-06-12T06:54:45.000Z
+    createdAt: "2023-06-12T06:54:45.000Z"
+    updatedAt: "2023-06-12T06:54:45.000Z"
     role: { label: null, options: { } }
     validated: true
   testNoValidUser:
@@ -69,7 +69,7 @@ items:
     firstname: Titouan
     lastname: norole
     password: password
-    createdAt: 2023-06-12T06:54:45.000Z
-    updatedAt: 2023-06-12T06:54:45.000Z
+    createdAt: "2023-06-12T06:54:45.000Z"
+    updatedAt: "2023-06-12T06:54:45.000Z"
     role: { label: null, options: { } }
     validated: false
