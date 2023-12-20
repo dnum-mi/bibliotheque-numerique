@@ -328,9 +328,13 @@ const apiCall = (dto: PaginationDto<unknown>) => {
       />
     </div>
 
-    <div class="flex justify-between no-label-on-toggle items-center fr-pl-2w">
+    <div
+      class="flex justify-between no-label-on-toggle items-center fr-pl-2w"
+    >
       <div class="flex gap-2">
-        <div>
+        <div
+          v-if="!hasNoRepeatableField"
+        >
           <DsfrButton
             :tertiary="groupByDossier"
             :class="{ 'opacity-70': groupByDossier }"
