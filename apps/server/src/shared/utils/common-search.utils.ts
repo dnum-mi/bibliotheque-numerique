@@ -21,12 +21,12 @@ import { FiltersInCustomFilter } from '@/modules/custom-filters/objects/entities
 
 //#region TEXT FILTER
 const _buildOneTextFilter = (
-  key: string,
+  originalKey: string,
   filter: TextFilterConditionDto,
   isArray = false,
   prefix?: string,
 ): string => {
-  key = _adaptKeyForArray(key, isArray, prefix)
+  const key = _adaptKeyForArray(originalKey, isArray, prefix)
   switch (filter.type) {
   case TextFilterConditions.Contains:
     return `(${key} ILIKE '%${filter.filter}%')${isArray ? ')' : ''}`
@@ -37,9 +37,9 @@ const _buildOneTextFilter = (
   case TextFilterConditions.EndsWith:
     return `(${key} ILIKE '%${filter.filter}')${isArray ? ')' : ''}`
   case TextFilterConditions.Blank:
-    return `(${key} IS NULL OR item = "")${isArray ? ')' : ''}`
+    return `(${key} IS NULL OR ${key} = '')${isArray ? ')' : ''}`
   case TextFilterConditions.NotBlank:
-    return `(${key} IS NOT NULL OR item != "")${isArray ? ')' : ''}`
+    return `(${key} IS NOT NULL OR ${key} != '')${isArray ? ')' : ''}`
   default:
     throw new BadRequestException(
       `Unknown string filter condition: ${filter.type}`,

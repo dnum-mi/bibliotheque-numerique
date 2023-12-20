@@ -18,8 +18,8 @@ export class TextFilterConditionDto {
   @IsEnum(TextFilterConditions)
   type: TextFilterConditionsKeys
 
-  @IsDefined()
-  filter: string
+  @IsOptional()
+  filter?: string
 }
 
 export class FilterTextDto {
