@@ -34,12 +34,12 @@ const fields = reactive<Field[]>([
   },
   {
     title: 'Création',
-    userKey: 'createAt',
+    userKey: 'createdAt',
     parseFct: dateToStringFr,
   },
   {
     title: 'Dernière modification',
-    userKey: 'updateAt',
+    userKey: 'updatedAt',
     parseFct: dateToStringFr,
   },
   {
