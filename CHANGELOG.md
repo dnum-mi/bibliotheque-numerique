@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.8.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v1.7.0...v1.8.0) (2023-12-22)
+
+
+### Features
+
+* :sparkles: display attachments in demarche dossier ([ab63fac](https://github.com/dnum-mi/bibliotheque_numerique/commit/ab63facaf806f293e9c86665a25e66db47c9984c))
+* :sparkles: redesign configuration page ([5345c38](https://github.com/dnum-mi/bibliotheque_numerique/commit/5345c382a08a3e7033bb29bc3996bc90aa5c7730))
+
+
+### Bug Fixes
+
+* annonation privee is singular in mapping column source ([ed9e243](https://github.com/dnum-mi/bibliotheque_numerique/commit/ed9e243479ea809fe04cfbb51de8d877bfe32151))
+* blank filter string is working ([9dfd078](https://github.com/dnum-mi/bibliotheque_numerique/commit/9dfd0789b40f4606c72b4fd1b375f9377a6de9a9))
+* call endpoint dossier-search when a demarche have not repeatable fields ([1e474ee](https://github.com/dnum-mi/bibliotheque_numerique/commit/1e474ee459b4c3b886762a051dc5cb5bb68b2fba))
+* createdAt and UpdatedAt from new migration db ([d6c63bc](https://github.com/dnum-mi/bibliotheque_numerique/commit/d6c63bc632e1dfcbc5c481891eaad3cfde648495))
+* del not work code in release action ([72cf5ce](https://github.com/dnum-mi/bibliotheque_numerique/commit/72cf5cee05f2a5cc0336367363dec8494ef3ac97))
+* fields-search now separated multiple repeatble fields ([680ba34](https://github.com/dnum-mi/bibliotheque_numerique/commit/680ba343c28d44a7c17322d0c16341f2aea9f98a))
+* no display switch by vue by dossier ([641e1ea](https://github.com/dnum-mi/bibliotheque_numerique/commit/641e1eae7bf35ba0a90a6835eb0bda5f1893363a))
+* update a good default hashed password ([9a7f396](https://github.com/dnum-mi/bibliotheque_numerique/commit/9a7f3967a79e4d4569c868a6796e137a435c540a))
+
 ## [1.7.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v1.6.15...v1.7.0) (2023-12-19)
 
 
