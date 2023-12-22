@@ -18,7 +18,7 @@ export const useDemarcheStore = defineStore('demarche', () => {
   const demarches = ref<IDemarche[]>([])
   const currentDemarche = ref<IDemarche>()
   const currentDemarcheDossiers = ref<DossierSearchOutputDto | FieldSearchOutputDto>({ total: 0, data: [] })
-  const currentDemarcheConfiguration = ref<MappingColumnWithoutChildren[]>([])
+  const currentDemarcheConfiguration = ref<MappingColumn[]>([])
 
   const currentDemarcheFlatConfiguration = computed<FrontMappingColumn[]>(() => currentDemarcheConfiguration.value
     .map((c: MappingColumn) => c.children?.length ? c.children.map(c => ({ ...c, isChild: true })) : [c])
@@ -28,11 +28,7 @@ export const useDemarcheStore = defineStore('demarche', () => {
   const currentDemarcheConfigurationHash = ref<Record<string, MappingColumn>>({})
 
   const _setConfiguration = (configuration: MappingColumn[]) => {
-    currentDemarcheConfiguration.value = configuration.sort((c1, c2) => {
-      const c1Label = !!c1.columnLabel || !!c1?.children?.find((c) => !!c.columnLabel)
-      const c2Label = !!c2.columnLabel || !!c2?.children?.find((c) => !!c.columnLabel)
-      return c1Label && !c2Label ? -1 : 1
-    })
+    currentDemarcheConfiguration.value = configuration
     currentDemarcheConfigurationHash.value = Object.fromEntries(configuration
       .filter((c) => c.columnLabel) // filter out empty columnLabel
       .map((c) => [c.id, c]))
