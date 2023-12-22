@@ -9,7 +9,6 @@ import type { PaginationUserDto } from '@biblio-num/shared'
 import { dateToStringFr } from '@/utils'
 import { useUserStore } from '@/stores'
 import type { BNColDef } from '@/components/ag-grid/server-side/bn-col-def.interface'
-import LayoutList from '@/components/Layout/LayoutList.vue'
 import AgGridServerSide from '@/components/ag-grid/server-side/AgGridServerSide.vue'
 import { baseColDef } from '@/components/ag-grid/server-side/columndef-base'
 import RoleBadgesRenderer from '@/components/Badges/RoleBadgesRenderer.vue'
@@ -71,14 +70,14 @@ const columnDefs = ref<BNColDef[]>([
   {
     ...baseColDef,
     headerName: 'Création',
-    field: 'createAt',
+    field: 'createdAt',
     filter: 'agDateColumnFilter',
     valueFormatter: ({ value }) => dateToStringFr(value),
   },
   {
     ...baseColDef,
     headerName: 'Modification',
-    field: 'updateAt',
+    field: 'updatedAt',
     filter: 'agDateColumnFilter',
     valueFormatter: ({ value }) => dateToStringFr(value),
   },
