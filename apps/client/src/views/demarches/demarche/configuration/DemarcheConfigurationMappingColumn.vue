@@ -42,55 +42,52 @@ watch(checked, (newValue) => {
   }
   save(props.mappingColumn.id, labelBN.value ?? null)
 })
+
+const uncheck = (id: string) => {
+  console.log('uncheck', id)
+}
 </script>
 
 <template>
   <div
-    class="fr-col-1 fr-p-2v"
+    class="fr-p-2v  flex  justify-between  items-center"
   >
-    <DsfrCheckbox
-      v-if="!isParent"
-      :id="`display-${props.mappingColumn.id}`"
-      v-model="checked"
-      :name="props.mappingColumn.id"
-      class="fr-pt-2v  flex  justify-center"
-      :class="{ 'fr-ml-10v': isChildren }"
-      @click="focusOnInput()"
-    />
-    <span
-      v-if="isParent"
-      class="fr-icon-table-fill  fr-icon--md  fr-pt-3v  fr-mr-2v  flex  justify-center  align-center"
-      aria-hidden="true"
-      title="Type de champ: Bloc Répétable"
-    />
-  </div>
-  <div class="fr-col-1  flex  items-center">
-    <DsfrBadge
-      :id="`type-${props.mappingColumn.id}`"
-      :label="isParent ? 'Répétable' : mappingColumn.type?.toUpperCase() || ''"
-      small
-      type="info"
-      class="fr-mr-1w"
-    />
-  </div>
-  <div class="fr-col-5  fr-p-2v  flex  items-center">
-    <p
-      :id="`labelSource-${props.mappingColumn.id}`"
-      class="fr-m-0  ellipsis"
-      :title="mappingColumn.originalLabel"
-    >
-      {{ mappingColumn.originalLabel }}
-    </p>
-  </div>
-  <div class="fr-col-5  fr-p-2v">
-    <DsfrInput
-      :id="`labelBN-${props.mappingColumn.id}`"
-      ref="labelBNInput"
-      v-model="labelBN"
-      class="fr-m-0"
-      :disabled="!checked"
-      @update:model-value="save(props.mappingColumn.id, labelBN ?? null)"
-    />
+    <div class="flex  gap-8  items-center">
+      <div>
+        <DsfrButton
+          :id="`display-${props.mappingColumn.id}`"
+          :name="props.mappingColumn.id"
+          icon="ri-close-line"
+          size="sm"
+          icon-only
+          style="padding: 0.175rem  0.375rem"
+          @click="uncheck(props.mappingColumn.id)"
+        />
+      </div>
+      <span
+        v-if="isParent"
+        class="fr-icon-table-fill  fr-icon--md  fr-pt-3v  fr-mr-2v  flex  justify-center  align-center"
+        aria-hidden="true"
+        title="Type de champ: Bloc Répétable"
+      />
+      <p
+        :id="`labelSource-${props.mappingColumn.id}`"
+        class="fr-m-0  ellipsis  text-lg  line-height-[2rem]"
+        :title="mappingColumn.originalLabel"
+      >
+        {{ mappingColumn.originalLabel }}
+      </p>
+    </div>
+    <div class="fr-col-5">
+      <DsfrInput
+        :id="`labelBN-${props.mappingColumn.id}`"
+        ref="labelBNInput"
+        v-model="labelBN"
+        class="fr-m-0"
+        :disabled="!checked"
+        @update:model-value="save(props.mappingColumn.id, labelBN ?? null)"
+      />
+    </div>
   </div>
 </template>
 

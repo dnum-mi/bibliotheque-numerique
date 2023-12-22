@@ -10,9 +10,8 @@ import DemarcheService from '@/views/demarches/demarche/information/DemarcheServ
 import DemarcheInformations from '@/views/demarches/demarche/information/DemarcheInformations.vue'
 import DemarcheConfigurations from '@/views/demarches/demarche/configuration/DemarcheConfigurations.vue'
 import LayoutList from '@/components/Layout/LayoutList.vue'
-import type { DsfrTabItemProps } from '@gouvminint/vue-dsfr/types/components/DsfrTabs/DsfrTabItem.vue'
+import type { DsfrTabItemProps } from '@gouvminint/vue-dsfr'
 import DemarcheDossiers from '@/views/demarches/demarche/dossiers/DemarcheDossiers.vue'
-import LayoutBanner from '@/components/Layout/LayoutBanner.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -28,8 +27,7 @@ onMounted(async () => {
   }
 })
 
-/* #region Tab management */
-
+//#region Tab management */
 const tabTitles: ComputedRef<(DsfrTabItemProps & { title: string })[]> = computed(() => [
   {
     panelId: 'pan-1',
@@ -56,7 +54,7 @@ onMounted(() => {
     selectTab(tabTitles.value.findIndex((tabTitle) => route.hash.slice(1) === tabTitle.title) || 0)
   }
 })
-/* #endregion */
+//#endregion */
 </script>
 
 <template>
@@ -110,7 +108,9 @@ onMounted(() => {
         :selected="selectedTabIndex === 2"
       >
         <template v-if="selectedTabIndex === 2">
-          <DemarcheConfigurations />
+          <KeepAlive>
+            <DemarcheConfigurations />
+          </KeepAlive>
         </template>
       </DsfrTabContent>
     </DsfrTabs>
