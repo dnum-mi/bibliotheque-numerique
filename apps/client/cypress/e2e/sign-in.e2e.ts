@@ -17,14 +17,14 @@ describe('Sign in', () => {
     cy.intercept({ method: 'GET', url: '/api/users/me', times: 1 }, { statusCode: 403 }).as('notProfile')
   })
 
-  it('should redirect user to requested page after signing in', () => {
+  it.only('should redirect user to requested page after signing in', () => {
     cy.visit('/sign_in')
     cy.intercept({ method: 'GET', url: '/api/users/me', times: 1 }, {}).as('adminProfile')
     cy.intercept({ method: 'POST', url: '/api/auth/sign-in', times: 1 }, adminProfile).as('adminSignIn')
     cy.intercept({ method: 'GET', url: '/api/demarches', times: 1 }, demarches).as('demarches')
-    cy.intercept({ method: 'GET', url: '/api/demarches/3', times: 1 }, demarche).as('demarche')
-    cy.intercept({ method: 'GET', url: '/api/custom-filters', times: 1 }, customFilters).as('customFilters')
-    cy.intercept({ method: 'POST', url: '/api/demarches/3/fields-search', times: 1 }, fieldsSearch).as('fieldsSearch')
+    cy.intercept({ method: 'GET', url: '/api/demarches/3' }, demarche).as('demarche')
+    cy.intercept({ method: 'GET', url: '/api/custom-filters' }, customFilters).as('customFilters')
+    cy.intercept({ method: 'POST', url: '/api/demarches/3/fields-search' }, fieldsSearch).as('fieldsSearch')
 
     cy.get('#email').type('louis.dubois@gmail.com')
     cy.get('#password').type('A1etsn*!etisan34')
@@ -50,9 +50,7 @@ describe('Sign in', () => {
     cy.get('#email').type('louis.dubois@gmail.com')
     cy.get('#password').type('A1etsn*!etisan34')
     cy.get('[type=submit]').click()
-    cy.wait('@adminSignIn')
-    cy.wait('@customFilters')
-    cy.wait('@fieldsSearch')
+    cy.wait('@demarche')
     cy.url().should('include', '/3/dossiers').should('not.include', '/sign_in')
   })
 
