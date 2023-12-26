@@ -1,8 +1,4 @@
 <script lang="ts" setup>
-
-import { DsfrInput } from '@gouvminint/vue-dsfr'
-import { ref } from 'vue'
-
 const props = defineProps<{
   optionName: string,
   defaultOption: number | number[],

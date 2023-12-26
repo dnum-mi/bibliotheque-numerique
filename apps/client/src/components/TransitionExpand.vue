@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-
 const forceRepaint = (element: HTMLElement) => {
   // Force repaint to make sure the
   // animation is triggered correctly.

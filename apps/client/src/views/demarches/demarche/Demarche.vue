@@ -1,8 +1,7 @@
 <script lang="ts" setup>
-import { useRoute, useRouter } from 'vue-router'
-import { computed, type ComputedRef, onMounted, ref } from 'vue'
-
 import type { IDemarche } from '@biblio-num/shared'
+
+import type { DsfrTabItemProps } from '@gouvminint/vue-dsfr'
 
 import { useDemarcheStore, useUserStore } from '@/stores'
 import GroupInstructeurs from '@/views/demarches/demarche/information/DemarcheGrpInstructeurs.vue'
@@ -10,7 +9,6 @@ import DemarcheService from '@/views/demarches/demarche/information/DemarcheServ
 import DemarcheInformations from '@/views/demarches/demarche/information/DemarcheInformations.vue'
 import DemarcheConfigurations from '@/views/demarches/demarche/configuration/DemarcheConfigurations.vue'
 import LayoutList from '@/components/Layout/LayoutList.vue'
-import type { DsfrTabItemProps } from '@gouvminint/vue-dsfr'
 import DemarcheDossiers from '@/views/demarches/demarche/dossiers/DemarcheDossiers.vue'
 
 const route = useRoute()
@@ -28,7 +26,7 @@ onMounted(async () => {
 })
 
 //#region Tab management */
-const tabTitles: ComputedRef<(DsfrTabItemProps & { title: string })[]> = computed(() => [
+const tabTitles = computed<(DsfrTabItemProps & { title: string })[]>(() => [ // eslint-disable-line no-extra-parens
   {
     panelId: 'pan-1',
     tabId: 'tab-1',
@@ -82,7 +80,7 @@ onMounted(() => {
       >
         <DemarcheDossiers
           v-if="selectedTabIndex === 0"
-          :id="id"
+          id="demarche-dossiers"
           :custom-display-id="customDisplayId"
         />
       </DsfrTabContent>

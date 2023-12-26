@@ -1,5 +1,5 @@
-import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { getRandomId } from '@gouvminint/vue-dsfr'
+
 import bnApiClient from '@/api/api-client'
 import type {
   CredentialsInputDto,
@@ -11,7 +11,6 @@ import type {
   UpdateOneRoleOptionDto,
   UpdateProfileDto,
 } from '@biblio-num/shared'
-import { getRandomId } from '@gouvminint/vue-dsfr'
 
 // TODO: enum Roles dans packages/shared n'est pas récupérable
 const RolesAdmins = ['admin', 'sudo', 'superadmin']

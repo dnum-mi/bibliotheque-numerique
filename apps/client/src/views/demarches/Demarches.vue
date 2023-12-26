@@ -1,14 +1,12 @@
 <script lang="ts" setup>
+import type { IDemarche } from '@biblio-num/shared'
+
+import { dateToStringFr } from '@/utils'
+import { useDemarcheStore } from '@/stores/demarche'
+import { routeNames } from '@/router/route-names'
+import OrganismeBadgesRenderer from '@/components/Badges/OrganismeBadgesRenderer.vue'
 import BiblioNumDataTableAgGrid from '@/components/BiblioNumDataTableAgGrid.vue'
 import LayoutList from '@/components/Layout/LayoutList.vue'
-import { useDemarcheStore } from '@/stores/demarche'
-import { dateToStringFr } from '@/utils'
-import type { IDemarche } from '@biblio-num/shared'
-import { computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import OrganismeBadgesRenderer from '@/components/Badges/OrganismeBadgesRenderer.vue'
-import { routeNames } from '@/router/route-names'
-import LayoutBanner from '@/components/Layout/LayoutBanner.vue'
 
 const demarcheStore = useDemarcheStore()
 const router = useRouter()
@@ -73,7 +71,6 @@ const selectDemarche = (row:IDemarche[]) => {
 }
 
 const rowStyle = { cursor: 'pointer' }
-
 </script>
 
 <template>

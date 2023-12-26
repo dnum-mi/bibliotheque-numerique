@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import type { IDemarche } from '@biblio-num/shared'
-import { computed } from 'vue'
 
 type LabelData = {
   text: string,

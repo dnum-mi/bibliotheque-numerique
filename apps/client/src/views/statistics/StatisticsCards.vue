@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-
-import { DsfrButton } from '@gouvminint/vue-dsfr'
 import StatisticCard from './StatisticsCard.vue'
 
 import { useCustomFilterStore } from '@/stores/custom-filters'

@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
-
 import DisplayLabelsValues from '@/components/DisplayLabelsValues.vue'
 import { DemarcheStateMapping } from '@/utils/demarche-mapping'
 import type { KeyDemarcheStateMapping } from '@/shared/types/Demarche.type'

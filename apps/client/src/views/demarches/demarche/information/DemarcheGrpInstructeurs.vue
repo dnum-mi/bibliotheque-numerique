@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
 import { useDemarcheStore } from '@/stores'
 
 const expandedId = ref<string>()

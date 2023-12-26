@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import DisplayLabelsValues from '@/components/DisplayLabelsValues.vue'
-import { computed } from 'vue'
 
 const props = withDefaults(defineProps<{
     datas?: object

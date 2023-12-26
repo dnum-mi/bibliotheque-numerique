@@ -1,7 +1,5 @@
 <script lang="ts" setup>
 import { type SelectionChangedEvent } from 'ag-grid-community'
-import { useRouter } from 'vue-router'
-import { ref } from 'vue'
 
 import type { IOrganisme, PaginationDto } from '@biblio-num/shared'
 

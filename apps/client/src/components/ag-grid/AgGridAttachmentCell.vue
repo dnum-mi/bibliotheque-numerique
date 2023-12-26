@@ -1,9 +1,6 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
-
 const props = defineProps<{ params: { value: { url: string } } }>()
 const href = computed(() => props.params.value.url)
-
 </script>
 
 <template>

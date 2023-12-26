@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import type { MyProfileOutputDto } from '@biblio-num/shared'
+
 import LayoutBanner from '@/components/Layout/LayoutBanner.vue'
 import { useUserStore } from '@/stores'
-import { computed, onMounted, ref, reactive } from 'vue'
-import type { MyProfileOutputDto } from '@biblio-num/shared'
 import { dateToStringFr } from '@/utils'
 import RoleBadge from '@/components/Badges/RoleBadge.vue'
 import type { ResetPasswordInputDto } from '@biblio-num/shared/types/dto/user/reset-password-input.dto'

@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
-
 import type { TDossier } from '@biblio-num/shared'
 
 import { dateTimeToStringFr } from '@/utils'
