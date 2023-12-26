@@ -7,6 +7,7 @@ module.exports = {
     'plugin:vue/vue3-recommended',
     '@vue/eslint-config-typescript/recommended',
     'standard',
+    './.eslintrc-auto-import.json',
   ],
   env: {
     'vue/setup-compiler-macros': true,

@@ -78,10 +78,10 @@ jobs:
     steps:
       - name: Checks-out repository
         uses: actions/checkout@v3
-      - name: Use Node.js 18.x.x
+      - name: Use Node.js 20.x.x
         uses: actions/setup-node@v3
         with:
-          node-version: "18"
+          node-version: "20"
       - name: run test FRONT
         run: |
             npm i -g pnpm
@@ -179,10 +179,10 @@ jobs:
     steps:
       - name: Checks-out repository
         uses: actions/checkout@v3
-      - name: Use Node.js 18.x.x
+      - name: Use Node.js 20.x.x
         uses: actions/setup-node@v3
         with:
-          node-version: "18"
+          node-version: "20"
       - name: run build
         run: |
           npm i -g pnpm

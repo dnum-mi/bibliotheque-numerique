@@ -7,7 +7,7 @@ import noneProfile from '../fixtures/none-profile.json'
 import instructorProfile from '../fixtures/instructor-profile.json'
 import adminLocalProfile from '../fixtures/admin-local-profile.json'
 
-describe('Home', () => {
+describe('Sign in', () => {
   beforeEach(() => {
     cy.intercept({ method: 'GET', url: '/api/users/me' }, {}).as('notProfile')
     cy.intercept({ method: 'GET', url: '/api/demarches' }, []).as('demarches')
@@ -17,14 +17,14 @@ describe('Home', () => {
     cy.intercept({ method: 'GET', url: '/api/users/me', times: 1 }, { statusCode: 403 }).as('notProfile')
   })
 
-  it('should redirect user to requested page after signing in', () => {
+  it.only('should redirect user to requested page after signing in', () => {
     cy.visit('/sign_in')
     cy.intercept({ method: 'GET', url: '/api/users/me', times: 1 }, {}).as('adminProfile')
     cy.intercept({ method: 'POST', url: '/api/auth/sign-in', times: 1 }, adminProfile).as('adminSignIn')
     cy.intercept({ method: 'GET', url: '/api/demarches', times: 1 }, demarches).as('demarches')
-    cy.intercept({ method: 'GET', url: '/api/demarches/3', times: 1 }, demarche).as('demarche')
-    cy.intercept({ method: 'GET', url: '/api/custom-filters', times: 1 }, customFilters).as('customFilters')
-    cy.intercept({ method: 'POST', url: '/api/demarches/3/fields-search', times: 1 }, fieldsSearch).as('fieldsSearch')
+    cy.intercept({ method: 'GET', url: '/api/demarches/3' }, demarche).as('demarche')
+    cy.intercept({ method: 'GET', url: '/api/custom-filters' }, customFilters).as('customFilters')
+    cy.intercept({ method: 'POST', url: '/api/demarches/3/fields-search' }, fieldsSearch).as('fieldsSearch')
 
     cy.get('#email').type('louis.dubois@gmail.com')
     cy.get('#password').type('A1etsn*!etisan34')
@@ -50,9 +50,7 @@ describe('Home', () => {
     cy.get('#email').type('louis.dubois@gmail.com')
     cy.get('#password').type('A1etsn*!etisan34')
     cy.get('[type=submit]').click()
-    cy.wait('@adminSignIn')
-    cy.wait('@customFilters')
-    cy.wait('@fieldsSearch')
+    cy.wait('@demarche')
     cy.url().should('include', '/3/dossiers').should('not.include', '/sign_in')
   })
 
@@ -93,7 +91,7 @@ describe('Home', () => {
     cy.url().should('include', '/profile')
   })
 
-  it('should sign-in of a instructor', () => {
+  it('should sign in user as instructor', () => {
     cy.visit('/sign_in')
 
     cy.intercept({ method: 'POST', url: '/api/auth/sign-in', times: 1 }, instructorProfile).as('signIn')
@@ -140,7 +138,7 @@ describe('Home', () => {
     //#endregion
   })
 
-  it('should sign-in of a admin-local', () => {
+  it('should sign in user as admin-local', () => {
     cy.visit('/sign_in')
     cy.intercept({ method: 'POST', url: '/api/auth/sign-in', times: 1 }, adminLocalProfile).as('signIn')
     cy.get('#email').type('louis.dubois@gmail.com')

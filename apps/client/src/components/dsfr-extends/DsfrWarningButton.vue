@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { DsfrButtonProps } from '@gouvminint/vue-dsfr/types/components/DsfrButton/DsfrButton.vue'
-const props = defineProps<DsfrButtonProps>()
 
+defineProps<DsfrButtonProps>()
 </script>
 
 <template>

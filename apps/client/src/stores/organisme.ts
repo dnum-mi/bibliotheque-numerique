@@ -1,8 +1,6 @@
-import { ref, type Ref } from 'vue'
-import { defineStore } from 'pinia'
+import type { IOrganisme, PaginatedDto, PaginationDto } from '@biblio-num/shared'
 
 import apiClient from '@/api/api-client'
-import type { IOrganisme, PaginatedDto, PaginationDto } from '@biblio-num/shared'
 
 export type OrganismeIdType = 'Rna' | 'Rnf' | 'Id'
 

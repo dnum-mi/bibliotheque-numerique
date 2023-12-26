@@ -2,7 +2,6 @@
 import { z } from 'zod'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useField, useForm } from 'vee-validate'
-import { useRoute, useRouter } from 'vue-router'
 
 import type { CredentialsInputDto } from '@biblio-num/shared'
 import LayoutAccueil from '@/components/Layout/LayoutAccueil.vue'

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { ICellRendererParams } from 'ag-grid-community'
-import { computed } from 'vue'
+
 import RoleBadge from '@/components/Badges/RoleBadge.vue'
 
 const props = defineProps<{ params: ICellRendererParams }>()

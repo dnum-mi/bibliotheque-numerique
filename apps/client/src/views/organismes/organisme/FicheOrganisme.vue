@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { ref, onMounted, computed } from 'vue'
 import { dateToStringFr, copyCurrentUrlInClipboard } from '@/utils'
 
 import LayoutFiche from '@/components/Layout/LayoutFiche.vue'

@@ -1,7 +1,4 @@
 <script lang="ts" setup>
-import { ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
-
 import apiClient from '@/api/api-client'
 import useToaster from '@/composables/use-toaster'
 import { routeNames } from '@/router/route-names'

@@ -1,7 +1,7 @@
 import { getPaginatedUsers } from '../utils/usersRoles'
 import noRoleUserSelected from '../fixtures/no-role-user-selected.json'
 
-describe('Home', () => {
+describe('Admin', () => {
   before(() => {
     cy.fixture('admin-profile').then((user) => {
       cy.intercept('api/users/me', user).as('me')

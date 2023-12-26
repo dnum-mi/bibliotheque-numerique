@@ -1,7 +1,4 @@
 <script lang="ts" setup>
-import { useRoute } from 'vue-router'
-import { computed, onMounted, ref } from 'vue'
-
 import type { Champ, DossierOutputDto, PieceJustificativeChamp, DossierMessage } from '@biblio-num/shared'
 
 import { useDossierStore } from '@/stores/dossier'

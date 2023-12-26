@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
 import { z } from 'zod'
 import { AxiosError } from 'axios'
 import { toTypedSchema } from '@vee-validate/zod'

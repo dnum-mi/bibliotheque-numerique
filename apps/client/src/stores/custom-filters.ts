@@ -1,5 +1,3 @@
-import { defineStore } from 'pinia'
-import { ref, type Ref } from 'vue'
 import type { CreateCustomFilterDto, PatchCustomFilterDto, ICustomFilter } from '@biblio-num/shared'
 
 import apiClient from '@/api/api-client'

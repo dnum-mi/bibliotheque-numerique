@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
 import apiClient from '../../api/api-client'
 import type { ErrorvalidateEmail } from '../../api/ErrorValidEmail'
 

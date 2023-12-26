@@ -5,7 +5,7 @@ import type { RolesKeys, UserWithEditableRole } from '@biblio-num/shared'
 
 import { Roles } from '@/biblio-num/shared'
 import { useUserStore } from '@/stores'
-import DsfrWarningButton from '@/components/dsfr-extends/dsfr-warning-button.vue'
+import DsfrWarningButton from '@/components/dsfr-extends/DsfrWarningButton.vue'
 import type { DsfrRadioButtonProps } from '@gouvminint/vue-dsfr/types/components/DsfrRadioButton/DsfrRadioButton.vue'
 
 const userStore = useUserStore()

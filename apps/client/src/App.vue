@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import { ref, watch, onErrorCaptured, computed, onMounted, type Ref } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
 import { AxiosError } from 'axios'
 
 import useToaster from '@/composables/use-toaster.js'
-import { useCustomFilterStore, useUserStore } from '@/stores'
+import { useUserStore } from '@/stores'
 
 import AppToaster from '@/components/AppToaster.vue'
 import { routeNames } from '@/router/route-names'
@@ -14,7 +12,7 @@ import apiClient from '@/api/api-client'
 import { type EnvTextKeys, envTextMapping, defaultEnv } from '@/shared/types'
 
 const version = ref('0.0.0')
-const runEnv = ref(defaultEnv) as Ref<EnvTextKeys>
+const runEnv = ref<EnvTextKeys>(defaultEnv)
 
 onMounted(async () => {
   try {
@@ -144,7 +142,7 @@ watch([() => userStore.isAuthenticated, route], async () => {
       ...authenticatedQuickLinksDefault,
     ]
   } else {
-    const isCurrentRoute = ({ to }: QuickLink) => to !== route.path && to?.name !== route.name
+    const isCurrentRoute = ({ to }: QuickLink) => to !== route.path && (typeof to === 'object' && to?.name !== route.name)
     quickLinks.value = unauthenticatedQuickLinks.filter(isCurrentRoute)
   }
 })
