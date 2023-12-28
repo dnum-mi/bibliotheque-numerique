@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { ICustomFilterStat } from '@biblio-num/shared'
+import type { ICustomFilter, ICustomFilterStat } from '@biblio-num/shared'
 
 import { formatCurrency, frenchFormatNumber } from '@/utils/french-number'
 import apiClient from '@/api/api-client'
@@ -7,10 +7,7 @@ import OrganismeBadge from '@/components/Badges/OrganismeBadge.vue'
 
 const props = defineProps<{
   filterId: number
-  displayInfo: {
-    id: number
-    name: string
-  },
+  displayInfo: ICustomFilter,
   lazyLoad?: boolean
 }>()
 
@@ -48,13 +45,13 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="w-full  h-full  min-h-[400px]">
+  <div class="w-full min-h-[300px]">
     <div v-if="errorGetFilter">
       {{ errorGetFilter }}
     </div>
     <div
       v-else
-      class="flex  flex-col  gap-8  w-full  h-full"
+      class="flex  flex-col  gap-4"
     >
       <!-- HEADER -->
       <div class="flex flex-row gap-2 justify-between">
@@ -67,7 +64,7 @@ onMounted(() => {
         </div>
         <p
           v-if="loading"
-          class="w-full h-full flex justify-center align-center"
+          class="w-full flex justify-center align-center"
         >
           <em>
             Chargement de&nbsp;
@@ -120,7 +117,7 @@ onMounted(() => {
               <p class="uppercase m-0 text-sm text-gray-400 fr-text--bold">
                 {{ total.label }}
               </p>
-              <p class="text-4xl m-0">
+              <p class="text-2xl m-0">
                 {{ isFinancement(total.label) ? formatCurrency(total.total) : frenchFormatNumber(total.total) }}
               </p>
             </li>
