@@ -99,6 +99,7 @@ export class DossierSearchService extends BaseEntityService<Dossier> {
   ): Promise<DossierSearchOutputDto> {
     this.logger.verbose('search')
     const typeHash = await this.fieldService.giveFieldType(dto.columns as string[])
+    dto.columns = dto.columns.filter((c) => !!typeHash[c])
     dto = adjustDto(dto)
     const query = `WITH
       ${this._buildAggregatedCTE(demarche.id, typeHash)},

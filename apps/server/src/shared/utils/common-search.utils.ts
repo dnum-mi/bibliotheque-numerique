@@ -17,6 +17,10 @@ import {
 import { BadRequestException } from '@nestjs/common'
 import { FiltersInCustomFilter } from '@/modules/custom-filters/objects/entities/custom-filter.entity'
 
+const _manualFilterValueEscapingMechanism = (str: string): string => {
+  return str.replace("'", "''")
+}
+
 //#region FILTERS
 
 //#region TEXT FILTER
@@ -28,15 +32,16 @@ const _buildOneTextFilter = (
 ): string => {
   const key = _adaptKeyForArray(originalKey, isArray, prefix)
   const item = isArray ? 'item' : key
+  const escapedFilter = _manualFilterValueEscapingMechanism(filter.filter)
   switch (filter.type) {
   case TextFilterConditions.Contains:
-    return `(${key} ILIKE '%${filter.filter}%')${isArray ? ')' : ''}`
+    return `(${key} ILIKE '%${escapedFilter}%')${isArray ? ')' : ''}`
   case TextFilterConditions.NotContains:
-    return `(${key} NOT ILIKE '%${filter.filter}%')${isArray ? ')' : ''}`
+    return `(${key} NOT ILIKE '%${escapedFilter}%')${isArray ? ')' : ''}`
   case TextFilterConditions.StartsWith:
-    return `(${key} ILIKE '${filter.filter}%')${isArray ? ')' : ''}`
+    return `(${key} ILIKE '${escapedFilter}%')${isArray ? ')' : ''}`
   case TextFilterConditions.EndsWith:
-    return `(${key} ILIKE '%${filter.filter}')${isArray ? ')' : ''}`
+    return `(${key} ILIKE '%${escapedFilter}')${isArray ? ')' : ''}`
   case TextFilterConditions.Blank:
     return `(${key} IS NULL OR ${item} = '')${isArray ? ')' : ''}`
   case TextFilterConditions.NotBlank:
@@ -107,7 +112,9 @@ const _buildOneEnumFilter = (
   prefix?: string,
 ): string => {
   key = _adaptKeyForArray(key, isArray, prefix)
-  return `(${key} IN (${filter.filter.map((s) => `'${s}'`).join(',')})${isArray ? ')' : ''})`
+  return `(${key} IN (${filter.filter
+    .map((s) => `'${_manualFilterValueEscapingMechanism(s)}'`)
+    .join(',')})${isArray ? ')' : ''})`
 }
 //#endregion
 
@@ -176,6 +183,7 @@ export const buildFilterQuery = (
     return ''
   } else {
     return Object.keys(filters)
+      .filter((key) => !!typeHash[key])
       .map(
         (key) =>
           `(${buildOneFilter(key, filters[key], typeHash[key], isArray)})`,
