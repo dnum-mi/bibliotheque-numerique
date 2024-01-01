@@ -38,6 +38,10 @@ describe('<Signup />', () => {
     cy.get('@submitBtn').should('be.disabled')
     cy.get('#password').type('IsVeryComplicatedPassword#077')
     cy.get('.fr-error-text').should('not.exist')
+    cy.get('@submitBtn').should('be.disabled')
+
+    cy.get('#job').type('Ministre')
+    cy.get('.fr-error-text').should('not.exist')
     cy.get('@submitBtn').should('not.be.disabled')
   })
 })
