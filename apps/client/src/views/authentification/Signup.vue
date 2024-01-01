@@ -20,7 +20,7 @@ const validationSchema = toTypedSchema(z.object({
   lastname: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).min(2, 'Ceci ne semble pas être un nom'),
   email: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).email('Ceci semble être une adresse email invalide'),
   password: passwordValidator,
-  job: z.string().nullish(),
+  job: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).min(2, 'Cet intitulé est trop court.'),
 }))
 
 const { handleSubmit } = useForm<CreateUserDto>({
@@ -121,7 +121,12 @@ const { value: passwordValue, errorMessage: passwordError } = useField<string>('
                 label="Intitulé de la fonction"
                 label-visible
                 type="text"
-              />
+                required
+              >
+                <template #required-tip>
+                  <em class="required-label"> *</em>
+                </template>
+              </DsfrInput>
             </DsfrInputGroup>
 
             <!-- EMAIL -->
