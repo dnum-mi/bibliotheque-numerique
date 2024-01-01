@@ -17,9 +17,10 @@ export class CreateUserDto {
 
   @ApiProperty({
     description: 'Métier de l’utilisateur',
-    nullable: true,
+    nullable: false,
   })
-  job: string | null
+  @IsNotEmpty()
+  job: string
 
   @ApiProperty({
     description: 'Adresse courriel de l’utilisateur',
