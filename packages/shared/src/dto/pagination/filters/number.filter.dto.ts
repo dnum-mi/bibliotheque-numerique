@@ -1,4 +1,4 @@
-import { IsDefined, IsEnum, IsOptional, ValidateNested } from 'class-validator'
+import { IsDefined, IsEnum, IsNumber, IsOptional, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
 
 export const NumberFilterConditions = {
@@ -19,9 +19,11 @@ export class NumberFilterConditionDto {
   type: NumberFilterConditionsKeys
 
   @IsDefined()
+  @IsNumber()
   filter: number
 
   @IsOptional()
+  @IsNumber()
   filterTo?: number
 }
 

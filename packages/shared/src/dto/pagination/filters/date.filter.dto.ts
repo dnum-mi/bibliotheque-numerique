@@ -1,4 +1,4 @@
-import { IsDefined, IsEnum, IsOptional, ValidateNested } from 'class-validator'
+import { IsDate, IsDateString, IsDefined, IsEnum, IsOptional, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
 
 export const DateFilterConditions = {
@@ -16,10 +16,12 @@ export class DateFilterConditionDto {
   type: DateFilterConditionsKeys
 
   @IsDefined()
-  filter: number | string
+  @IsDateString()
+  filter: null | string
 
   @IsOptional()
-  filterTo?: number | string
+  @IsDateString()
+  filterTo?: null | string
 }
 
 export class FilterDateDto {
