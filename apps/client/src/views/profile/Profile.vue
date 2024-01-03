@@ -89,7 +89,7 @@ const updateProfile = async (field: Field, newText: string) => {
       title-bg-color="var(--border-plain-green-bourgeon)"
       title-icon="fr-icon-profil-line"
     />
-    <div class="flex">
+    <div class="flex  fr-pb-4w">
       <div class="max-width-container fr-mt-md-20v flex flex-row gap-20">
         <!-- Information utilisateur -->
         <div class="flex-1">
