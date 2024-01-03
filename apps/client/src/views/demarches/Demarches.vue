@@ -10,7 +10,7 @@ import LayoutList from '@/components/Layout/LayoutList.vue'
 
 const demarcheStore = useDemarcheStore()
 const router = useRouter()
-const headersJson = [
+const headers = [
   {
     value: 'id',
     type: 'hidden',
@@ -58,9 +58,14 @@ const headersJson = [
   },
 ]
 
-const rowData = computed<IDemarche[]>(() => (Array.isArray(demarcheStore.demarches) ? demarcheStore.demarches : []).map<IDemarche>(
-  (d: IDemarche) => ({ ...d?.dsDataJson, types: d?.types, id: d.id } as IDemarche)),
-)
+// Avoids the error: "AG Grid: cannot get grid to draw rows when it is in the middle of drawing rows."
+const rowData = ref<IDemarche[]>([])
+watch(() => demarcheStore.demarches, () => {
+  rowData.value = Array.isArray(demarcheStore.demarches)
+    ? demarcheStore.demarches
+    : []
+        .map<IDemarche>((d: IDemarche) => ({ ...d?.dsDataJson, types: d?.types, id: d.id } as IDemarche))
+})
 
 onMounted(async () => {
   await demarcheStore.getDemarches()
@@ -80,7 +85,7 @@ const rowStyle = { cursor: 'pointer' }
     title-icon="fr-icon-search-line"
   >
     <BiblioNumDataTableAgGrid
-      :headers="headersJson"
+      :headers="headers"
       action-title="Voir les détails de la démarche"
       :row-data="rowData"
       floating-filter

@@ -30,8 +30,8 @@ const logoText = ['Ministère', 'de l’intérieur', 'et des outre-mer']
 const ecosystemLinks = [
   { label: 'Demarches-simplifiees.fr', href: 'https://www.demarches-simplifiees.fr' },
   { label: 'API - Répertoire National des Associations', href: 'https://entreprise.api.gouv.fr/catalogue/ministere_interieur/rna' },
-  { label: 'Répertoire National des Fondations', href: 'https://rnf.interieur.rie.gouv.fr' },
-  { label: 'Cloud π Native', href: 'https://cloud-pi-native.fr/' },
+  // { label: 'Répertoire National des Fondations', href: 'https://rnf.interieur.rie.gouv.fr' },
+  // { label: 'Cloud π Native', href: 'https://cloud-pi-native.fr/' },
 ]
 const mandatoryLinks = [
   { label: 'Accessibilité : non conforme', to: '/accessibility' },
@@ -204,22 +204,24 @@ onErrorCaptured((error: Error | AxiosError) => {
 
     <main class="flex  flex-col  grow  w-full  h-full  min-h-0  overflow-auto">
       <router-view />
-      <DsfrFooter
-        a11y-compliance="partiellement conforme"
-        :mandatory-links="mandatoryLinks"
-        :logo-text="logoText"
-        :ecosystem-links="ecosystemLinks"
-      >
-        <template #description>
-          <div
-            class="flex gap-2 justify-end"
-          >
-            Environnement: {{ envTextMapping[runEnv] }}
-            <br>Version: {{ version }}
-          </div>
-        </template>
-      </DsfrFooter>
     </main>
+
+    <AppDsfrFooter
+      a11y-compliance="partiellement conforme"
+      :mandatory-links="mandatoryLinks"
+      :logo-text="logoText"
+      :ecosystem-links="ecosystemLinks"
+      licence-text=""
+    >
+      <template #description>
+        <div
+          class="flex gap-2 justify-end"
+        >
+          Environnement: <strong>{{ envTextMapping[runEnv] }}</strong> /
+          <strong>v{{ version }}</strong>
+        </div>
+      </template>
+    </AppDsfrFooter>
   </div>
 
   <AppToaster

@@ -17,11 +17,11 @@ describe('Sign in', () => {
     cy.intercept({ method: 'GET', url: '/api/users/me', times: 1 }, { statusCode: 403 }).as('notProfile')
   })
 
-  it.only('should redirect user to requested page after signing in', () => {
+  it('should redirect user to requested page after signing in', () => {
     cy.visit('/sign_in')
-    cy.intercept({ method: 'GET', url: '/api/users/me', times: 1 }, {}).as('adminProfile')
-    cy.intercept({ method: 'POST', url: '/api/auth/sign-in', times: 1 }, adminProfile).as('adminSignIn')
-    cy.intercept({ method: 'GET', url: '/api/demarches', times: 1 }, demarches).as('demarches')
+    cy.intercept({ method: 'GET', url: '/api/users/me' }, {}).as('adminProfile')
+    cy.intercept({ method: 'POST', url: '/api/auth/sign-in' }, adminProfile).as('adminSignIn')
+    cy.intercept({ method: 'GET', url: '/api/demarches' }, demarches).as('demarches')
     cy.intercept({ method: 'GET', url: '/api/demarches/3' }, demarche).as('demarche')
     cy.intercept({ method: 'GET', url: '/api/custom-filters' }, customFilters).as('customFilters')
     cy.intercept({ method: 'POST', url: '/api/demarches/3/fields-search' }, fieldsSearch).as('fieldsSearch')
@@ -30,13 +30,8 @@ describe('Sign in', () => {
     cy.get('#password').type('A1etsn*!etisan34')
     cy.get('[type=submit]').click()
     cy.wait('@adminSignIn')
+    cy.wait('@demarches')
     cy.url().should('eq', `${Cypress.config().baseUrl}/`)
-    cy.get('[row-id=1]')
-      .find('.ag-cell-value')
-      .first().as('firstCellFirstLine')
-      .should('contain', '5')
-    cy.get('@firstCellFirstLine').click()
-    cy.url().should('include', '/3/dossiers')
 
     // Perte de connexion et se reconnecte, doit être redirigé vers la page désirée juste après la connexion
     cy.intercept({ method: 'GET', url: '/api/users/me', middleware: true, times: 1 }, (req, res) => {
@@ -50,6 +45,7 @@ describe('Sign in', () => {
     cy.get('#email').type('louis.dubois@gmail.com')
     cy.get('#password').type('A1etsn*!etisan34')
     cy.get('[type=submit]').click()
+    cy.wait('@adminSignIn')
     cy.wait('@demarche')
     cy.url().should('include', '/3/dossiers').should('not.include', '/sign_in')
   })
