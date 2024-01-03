@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import StatisticCard from './StatisticsCard.vue'
+import { useStorage } from '@vueuse/core'
+
+import type { ICustomFilter } from '@biblio-num/shared'
 
 import { useCustomFilterStore } from '@/stores/custom-filters'
-import type { IFilter } from 'ag-grid-community'
+import StatisticCard from './StatisticsCard.vue'
+import { useDemarcheStore } from '@/stores'
 
 const customFilterStore = useCustomFilterStore()
 
 const customFilters = computed(() => customFilterStore.customFilters || [])
 const customFilterToDelete = ref()
-const showModal = (customFilter: IFilter) => {
+const showModal = (customFilter: ICustomFilter) => {
   customFilterToDelete.value = customFilter
 }
 
@@ -17,49 +20,121 @@ const deleteFilter = (id: number) => {
   customFilterToDelete.value = undefined
 }
 
-onMounted(async () => {
-  await customFilterStore.getCustomFilters()
+onMounted(customFilterStore.getCustomFilters)
+
+type DisplaysByDemarche = Record<number, {id: number; label: string, displays: {id: number; label: string}[]}>
+const demarcheStore = useDemarcheStore()
+const displaysByDemarche = ref<DisplaysByDemarche>({})
+const updateDemarcheList = () => {
+  displaysByDemarche.value = customFilters.value.reduce((acc, curr) => {
+    const id = curr.demarcheId
+    acc[id] ??= {
+      id,
+      label: demarcheStore.demarches.find((demarche) => id === demarche.id)?.title ?? 'Sans titre',
+      displays: [] as unknown as DisplaysByDemarche[number]['displays'],
+    }
+    acc[id].displays.push({ id: curr.id, label: curr.name })
+    return acc
+  }, {} as DisplaysByDemarche)
+}
+watchEffect(updateDemarcheList)
+const selectedDemarches = useStorage<string[]>('selected-dem-stat', [])
+const selectedCustomFilters = computed(() => selectedDemarches.value.map((id) => displaysByDemarche.value[+id]?.displays ?? []).flat())
+
+const updateSelectedDemarches = ($event: string, demarcheId: string): void => {
+  selectedDemarches.value = $event
+    ? [...selectedDemarches.value, demarcheId]
+    : selectedDemarches.value.filter((id) => id !== demarcheId)
+}
+
+let statHeaderEl: HTMLElement, mainEl: HTMLElement, bannerEl: HTMLElement
+const updateTopHeader = () => {
+  if (mainEl && statHeaderEl && bannerEl) {
+    statHeaderEl.style.top = `${Math.max(0, mainEl?.scrollTop - bannerEl.offsetHeight) ?? 0}px`
+  }
+}
+
+onMounted(() => {
+  demarcheStore.getDemarches()
+
+  statHeaderEl = document.querySelector('.statistics-header') as HTMLElement
+  mainEl = document.querySelector('main') as HTMLElement
+  bannerEl = document.querySelector('.banner-height') as HTMLElement
+  mainEl?.addEventListener('scroll', updateTopHeader)
+})
+onUnmounted(() => {
+  mainEl?.removeEventListener('scroll', updateTopHeader)
 })
 </script>
 
 <template>
-  <div class="grid-container">
-    <div
-      v-for="customFilter of customFilters"
-      :key="customFilter.id"
-    >
-      <StatisticCard
-        v-if="customFilter.demarcheId"
-        :filter-id="customFilter.id"
-        class="fr-p-3w w-full h-full fr-card--shadow"
-        @delete="showModal"
+  <div class="relative">
+    <header class="statistics-header">
+      <p>Charger les stats de :</p>
+      <DsfrCheckbox
+        v-for="(displaysInDemarche, demarcheId) in displaysByDemarche"
+        :key="demarcheId"
+        small
+        :model-value="selectedDemarches.includes(demarcheId)"
+        :label="displaysInDemarche.label"
+        @update:model-value="updateSelectedDemarches($event, demarcheId)"
       />
-    </div>
-  </div>
-
-  <template v-if="customFilterToDelete">
-    <DsfrModal
-      :opened="customFilterToDelete"
-      :title="`Supprimer le filtre personnalisé ${customFilterToDelete?.name}`"
-      @close="customFilterToDelete = undefined"
+    </header>
+    <div
+      class="grid-container"
     >
-      <p>Êtes-vous sûr·e de vouloir supprimer ce filtre personnalisé ?</p>
-
-      <div class="flex gap-2 justify-end">
-        <DsfrButton
-          class="alert"
-          @click="deleteFilter(customFilterToDelete.id)"
-        >
-          Supprimer <span class="fr-icon-delete-line" />
-        </DsfrButton>
-        <DsfrButton @click="customFilterToDelete = undefined">
-          Annuler
-        </DsfrButton>
+      <div
+        v-for="customFilter of selectedCustomFilters"
+        :key="customFilter.id"
+      >
+        <StatisticCard
+          :data-stat-id="customFilter.id"
+          :filter-id="customFilter.id"
+          :display-info="customFilter"
+          load-immediately
+          class="fr-p-3w w-full h-full fr-card--shadow card"
+          @delete="showModal"
+        />
       </div>
-    </DsfrModal>
-  </template>
+    </div>
+
+    <template v-if="customFilterToDelete">
+      <DsfrModal
+        :opened="customFilterToDelete"
+        :title="`Supprimer le filtre personnalisé ${customFilterToDelete?.name}`"
+        @close="customFilterToDelete = undefined"
+      >
+        <p>Êtes-vous sûr·e de vouloir supprimer ce filtre personnalisé ?</p>
+
+        <div class="flex gap-2 justify-end">
+          <DsfrButton
+            class="alert"
+            @click="deleteFilter(customFilterToDelete.id)"
+          >
+            Supprimer <span class="fr-icon-delete-line" />
+          </DsfrButton>
+          <DsfrButton @click="customFilterToDelete = undefined">
+            Annuler
+          </DsfrButton>
+        </div>
+      </DsfrModal>
+    </template>
+  </div>
 </template>
+
 <style scoped>
+.statistics-header {
+  position: absolute;
+  top: 0;
+  z-index: 1;
+  right: 0;
+  padding: 0.5rem;
+  align-self: flex-start;
+  overflow-y: auto;
+  width: 284px;
+  background-color: var(--grey-950-100);
+  border: 1px solid var(--grey-925-125);
+}
 .alert {
   --hover: var(--error-425-625);
   --active: var(--error-425-625);
@@ -67,7 +142,7 @@ onMounted(async () => {
 }
 
 .grid-container {
-  margin-inline: auto;
+  width: calc(100% - 300px);
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;

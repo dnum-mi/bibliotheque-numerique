@@ -1,12 +1,14 @@
 <script lang="ts" setup>
-import type { ICustomFilterStat } from '@biblio-num/shared'
+import type { ICustomFilter, ICustomFilterStat } from '@biblio-num/shared'
 
 import { formatCurrency, frenchFormatNumber } from '@/utils/french-number'
 import apiClient from '@/api/api-client'
 import OrganismeBadge from '@/components/Badges/OrganismeBadge.vue'
 
 const props = defineProps<{
-  filterId: number;
+  filterId: number
+  displayInfo: ICustomFilter,
+  lazyLoad?: boolean
 }>()
 
 const card = ref<ICustomFilterStat>()
@@ -21,32 +23,58 @@ const onDelete = () => {
   emit('delete', card.value?.customFilter)
 }
 
-onMounted(async () => {
+const loaded = ref(false)
+const loading = ref(false)
+const load = async () => {
   if (props.filterId) {
+    loading.value = true
     card.value = await apiClient.getCustomFilterStats(props.filterId)
+    loading.value = false
+    loaded.value = true
+  }
+}
+
+defineExpose({
+  load,
+})
+onMounted(() => {
+  if (props.filterId && !props.lazyLoad) {
+    load()
   }
 })
 </script>
 
 <template>
-  <div class="w-full h-full">
+  <div class="w-full min-h-[300px]">
     <div v-if="errorGetFilter">
       {{ errorGetFilter }}
     </div>
     <div
       v-else
-      class="flex flex-col gap-8 w-full h-full"
+      class="flex  flex-col  gap-4"
     >
       <!-- HEADER -->
       <div class="flex flex-row gap-2 justify-between">
         <div class="flex gap-2">
           <OrganismeBadge
-            v-for="type in card?.demarche.types"
-            :key="type"
-            :type="type"
+            v-for="demarcheType of card?.demarche.types"
+            :key="demarcheType"
+            :type="demarcheType"
           />
         </div>
-        <p class="uppercase m-0 text-sm text-gray-400 fr-text--bold">
+        <p
+          v-if="loading"
+          class="w-full flex justify-center align-center"
+        >
+          <em>
+            Chargement de&nbsp;
+          </em>
+          <strong>{{ displayInfo.label }}</strong>...
+        </p>
+        <p
+          v-else
+          class="uppercase m-0 text-sm text-gray-400 fr-text--bold"
+        >
           [N° DS: <span class="text-gray-700">{{ card?.demarche.dsId }}</span>] {{ card?.demarche.title }}
         </p>
       </div>
@@ -54,9 +82,11 @@ onMounted(async () => {
       <div class="flex flex-row justify-between">
         <span class="fr-text--bold text-xl"> {{ card?.customFilter.name }}</span>
         <button
+          v-if="card?.customFilter"
           type="button"
           class="fr-icon-delete-line fr-text-default--warning"
           aria-hidden="true"
+          title="Supprimer le filtre personnalisé (attention, cette action est irréversible)"
           @click.prevent="onDelete"
         />
       </div>
@@ -87,7 +117,7 @@ onMounted(async () => {
               <p class="uppercase m-0 text-sm text-gray-400 fr-text--bold">
                 {{ total.label }}
               </p>
-              <p class="text-4xl m-0">
+              <p class="text-2xl m-0">
                 {{ isFinancement(total.label) ? formatCurrency(total.total) : frenchFormatNumber(total.total) }}
               </p>
             </li>

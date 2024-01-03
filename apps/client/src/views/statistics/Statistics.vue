@@ -1,6 +1,6 @@
 
 <script setup lang="ts">
-import StatisticsCard from './StatisticsCards.vue'
+import StatisticsCards from './StatisticsCards.vue'
 import LayoutList from '@/components/Layout/LayoutList.vue'
 </script>
 
@@ -11,10 +11,7 @@ import LayoutList from '@/components/Layout/LayoutList.vue'
     title-icon="fr-icon-table-fill"
   >
     <div class="cards  fr-m-5v">
-      <StatisticsCard />
+      <StatisticsCards />
     </div>
   </LayoutList>
 </template>
-
-<style scoped>
-</style>
