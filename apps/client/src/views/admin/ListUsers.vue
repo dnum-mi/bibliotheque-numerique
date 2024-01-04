@@ -22,9 +22,17 @@ const columnDefs = ref<BNColDef[]>([
     hide: true,
   },
   {
+    headerName: 'Ver.',
+    field: 'validated',
+    width: 70,
+    suppressMenu: true,
+    cellRenderer: ({ value }) => (value ? '✅' : '❌'),
+  },
+  {
     ...baseColDef,
     headerName: 'Courriel',
     field: 'email',
+    width: 200,
   },
   {
     ...baseColDef,
