@@ -120,8 +120,9 @@ export class FieldSearchService extends BaseEntityService<Field> {
     complete = false,
   ): Promise<FieldSearchOutputDto> {
     this.logger.verbose('search')
-    const cols = dto.columns as string[]
+    let cols = dto.columns as string[]
     const typeHash = await this.fieldService.giveFieldType(cols)
+    cols = cols.filter((col) => !!typeHash[col])
     dto = adjustDto(dto)
     const query = `WITH
       ${this._buildRepeatedCTE(demarche.id, cols)},
