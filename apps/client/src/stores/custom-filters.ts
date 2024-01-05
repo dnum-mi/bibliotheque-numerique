@@ -25,7 +25,6 @@ export const useCustomFilterStore = defineStore('custom-filter', () => {
 
   const updateCustomFilter = async (id: number, dto: PatchCustomFilterDto) => {
     await apiClient.updateOneCustomFilter(id, dto)
-    console.log(currentDemarcheId)
     if (currentDemarcheId) {
       await getCustomFiltersByDemarche(currentDemarcheId)
     }

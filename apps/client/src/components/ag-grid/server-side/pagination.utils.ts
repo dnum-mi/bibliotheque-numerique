@@ -28,7 +28,6 @@ export const fromAggToBackendFilter = <T>(filterModel: Record<string, FilterMode
   if (entries.length) {
     const filters: Record<string, FilterDto> = {}
     entries.forEach(([key, value]) => {
-      console.log(value)
       switch (true) {
         case ('condition1' in value): // there is two conditions
           delete value.conditions
