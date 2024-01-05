@@ -43,4 +43,5 @@ export {
   RiToolsFill,
   RiUserLine,
   RiUserSettingsLine,
+  RiFileWarningFill,
 } from 'oh-vue-icons/icons'
