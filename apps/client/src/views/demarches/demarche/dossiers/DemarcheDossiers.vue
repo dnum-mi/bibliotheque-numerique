@@ -215,7 +215,8 @@ const updateFilter = async () => {
     selectedCustomFilter.value.sorts = paginationDto.value.sorts
     selectedCustomFilter.value.filters = paginationDto.value.filters || undefined
     try {
-      const dto = { ...selectedCustomFilter.value }
+      const dto = { ...selectedCustomFilter.value, disabledColumns: undefined }
+      dto.filters = dto.filters || null
       await customFilterStore.updateCustomFilter(selectedCustomFilter.value.id, dto)
       selectedCustomFilter.value = customFiltersWithErrors.value.find((cf) => cf.id === selectedCustomFilter.value?.id) || null
       customDisplayOperationSuccess.value = true
