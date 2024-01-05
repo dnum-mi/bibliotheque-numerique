@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import type { ICustomFilter } from '@biblio-num/shared'
 import { watch, computed, ref } from 'vue'
+import type { CustomFilterWithErrors } from '@/views/demarches/demarche/dossiers/custom-filter-with-errors.type'
+import type { ICustomFilterWithError } from '@biblio-num/shared/types/interfaces/custom-filters/custom-filters.interface'
 
 export type TotalsAllowed = {
   id: string,
@@ -8,9 +9,9 @@ export type TotalsAllowed = {
 }
 
 const props = withDefaults(defineProps<{
-  displays?: ICustomFilter[],
+  displays?: CustomFilterWithErrors[],
   paginationChanged?: boolean
-  selectedDisplay?: ICustomFilter | null,
+  selectedDisplay?: ICustomFilterWithError | null,
   totalsAllowed?: TotalsAllowed[]
   operationSuccess?: boolean
 }>(), {
@@ -43,7 +44,6 @@ const filterLabelGroups = {
     button: 'Enregistrer',
     input: 'Nommer le nouvel affichage',
     icon: 'ri-save-line',
-    totals: 'Sélectionner la colonne pour le total numéraire',
     submitFn () {
       emit('createDisplay', { filterName: inputFilterName.value, totals: inputFilterTotals.value })
     },
@@ -53,7 +53,6 @@ const filterLabelGroups = {
     button: 'Enregistrer',
     input: 'Nommer l’affichage personnalisé',
     icon: 'ri-save-line',
-    totals: 'Sélectionner la colonne pour le total numéraire',
     submitFn () {
       emit('createDisplay', { filterName: inputFilterName.value, totals: inputFilterTotals.value })
     },
@@ -63,7 +62,6 @@ const filterLabelGroups = {
     button: 'Enregistrer',
     input: 'Renommer l’affichage personnalisé',
     icon: 'ri-edit-line',
-    totals: 'Sélectionner la colonne pour le total numéraire',
     submitFn () {
       emit('updateDisplayName', { filterName: inputFilterName.value, totals: inputFilterTotals.value })
     },
@@ -73,7 +71,15 @@ const filterLabelGroups = {
     button: 'Supprimer',
     icon: 'ri-delete-bin-line',
     input: 'Supprimer l’affichage personnalisé',
-    totals: 'Sélectionner la colonne pour le total numéraire',
+    submitFn () {
+      emit('deleteDisplay')
+    },
+  },
+  warning: {
+    title: 'Erreur: affichage obsolète',
+    button: 'Ok',
+    icon: 'ri-file-warning-fill',
+    input: 'Affichage obsolète',
     submitFn () {
       emit('deleteDisplay')
     },
@@ -134,7 +140,21 @@ const update = () => {
 </script>
 
 <template>
-  <div class="flex justify-end h-24">
+  <div class="flex justify-end items-center h-24">
+    <DsfrButton
+      v-if="selectedDisplay?.disabledColumns?.length"
+      class="fr-mx-2v fr-mt-2v fr-error-border"
+      type="submit"
+      no-outline
+      secondary
+      title="Affichage obselète, veuillez le mettre à jour"
+      @click="openDisplayModal('warning')"
+    >
+      <VIcon
+        scale="1.5"
+        name="ri-file-warning-fill"
+      />
+    </DsfrButton>
     <DsfrSelect
       :model-value="selectedDisplay?.id"
       label="Sélectionner un affichage"
@@ -184,6 +204,7 @@ const update = () => {
     @close="closeFilterModal"
   >
     <form
+      v-if="filterModalType !== 'warning'"
       class="flex flex-col gap-8"
       @submit.prevent="saveCurrentFilter()"
     >
@@ -201,7 +222,7 @@ const update = () => {
         <DsfrSelect
           v-if="filterModalType !== 'delete'"
           v-model="inputFilterTotals"
-          :label="filterLabelGroup.totals"
+          :label="'Sélectionner la colonne pour le total numéraire'"
           :options="totalsAllowedOptions"
         />
       </div>
@@ -224,10 +245,29 @@ const update = () => {
         />
       </div>
     </form>
+    <div v-else>
+      <p>
+        Cette affichage est désormais <strong>obselète</strong>. <br>
+        Cela signifie qu'une ou plusieurs des colonnes utilisées dans cet affichage ont été supprimées par l'administrateur dans la configuration de la démarche.
+        <br>
+        Veuillez le supprimer, ou le mettre à jour.
+      </p>
+      <DsfrButton
+        type="submit"
+        :label="'Ok'"
+        class="float-right mb-5"
+        @click="closeFilterModal()"
+      />
+    </div>
   </DsfrModal>
 </template>
 
 <style scoped>
+.fr-error-border:not(:disabled) {
+  box-shadow: none;
+  color: var(--border-plain-error);
+}
+
 .fr-error-bg:not(:disabled) {
   background-color: var(--border-plain-error);
   color: #fff;

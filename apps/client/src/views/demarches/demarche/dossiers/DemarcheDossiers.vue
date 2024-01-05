@@ -14,7 +14,7 @@ import type {
 import type {
   CreateCustomFilterDto,
   ICustomFilter,
-  IDemarche,
+  IDemarche, MappingColumn,
   PaginationDto,
   PatchCustomFilterDto,
 } from '@biblio-num/shared'
@@ -31,6 +31,8 @@ import { backendFilterToAggFilter } from '@/components/ag-grid/server-side/pagin
 import { getAgGridFilterFromFieldType } from '@/components/ag-grid/server-side/filters.utils'
 import type { BNColDef } from '@/components/ag-grid/server-side/bn-col-def.interface'
 import DemarcheDossiersDisplays, { type TotalsAllowed } from './DemarcheDossiersDisplays.vue'
+import type { CustomFilterWithErrors } from '@/views/demarches/demarche/dossiers/custom-filter-with-errors.type'
+import type { ICustomFilterWithError } from '@biblio-num/shared/types/interfaces/custom-filters/custom-filters.interface'
 
 type DemarcheDossiersProps = {
   id: string
@@ -45,9 +47,16 @@ const gridApi = ref<GridApi>()
 const columnApi = ref<ColumnApi>()
 const demarche = computed<IDemarche>(() => demarcheStore.currentDemarche as IDemarche)
 const demarcheConfiguration = computed<FrontMappingColumn[]>(() => demarcheStore.currentDemarcheFlatConfiguration)
+const demarcheConfigurationHash = computed<Record<string, MappingColumn>>(() => demarcheStore.currentDemarcheConfigurationHash)
 const customFilterStore = useCustomFilterStore()
 const customFilters = computed<ICustomFilter[]>(() => customFilterStore.customFilters as ICustomFilter[])
-const selectedCustomFilter = ref<ICustomFilter | null>(null)
+const customFiltersWithErrors = computed<CustomFilterWithErrors[]>(() => customFilters.value.map((cf) => ({
+  ...cf,
+  disabledColumns: Object.keys(cf.filters || {})
+    .concat(cf.sorts?.map((s) => s.key) || [])
+    .filter((key) => !demarcheConfigurationHash.value[key]),
+})))
+const selectedCustomFilter = ref<ICustomFilterWithError | null>(null)
 const totalsAllowed = computed<TotalsAllowed[] | undefined>(
   () => demarcheConfiguration.value
     .filter(mapping => mapping.type === 'number' && mapping.id !== '96151176-4624-4706-b861-722d2e53545d')
@@ -128,7 +137,7 @@ const onSelectionChanged = ($event: SelectionChangedEvent) => {
 
 onMounted(async () => {
   computeColumnsDef()
-  await customFilterStore.getCustomFilters()
+  await customFilterStore.getCustomFiltersByDemarche(demarche.value.id)
 })
 
 watch(demarche, async (newValue) => {
@@ -206,7 +215,9 @@ const updateFilter = async () => {
     selectedCustomFilter.value.sorts = paginationDto.value.sorts
     selectedCustomFilter.value.filters = paginationDto.value.filters || undefined
     try {
-      await customFilterStore.updateCustomFilter(selectedCustomFilter.value.id, selectedCustomFilter.value)
+      const dto = { ...selectedCustomFilter.value, disabledColumns: undefined }
+      await customFilterStore.updateCustomFilter(selectedCustomFilter.value.id, dto)
+      selectedCustomFilter.value = customFiltersWithErrors.value.find((cf) => cf.id === selectedCustomFilter.value?.id) || null
       customDisplayOperationSuccess.value = true
     } catch (error) {
       import.meta.env.DEV && console.warn(error)
@@ -281,7 +292,7 @@ const selectFilter = async (id: number | null) => {
   if (customFilterStore.customFilters.length === 0) {
     await customFilterStore.getCustomFiltersByDemarche(demarche.value.id)
   }
-  selectedCustomFilter.value = customFilters.value.find((cf) => cf.id === id) || null
+  selectedCustomFilter.value = customFiltersWithErrors.value.find((cf) => cf.id === id) || null
   if (selectedCustomFilter.value) {
     groupByDossier.value = selectedCustomFilter.value?.groupByDossier
     paginationDto.value.columns = selectedCustomFilter.value?.columns
@@ -355,8 +366,8 @@ const apiCall = (dto: PaginationDto<unknown>) => {
         </div>
       </div>
       <DemarcheDossiersDisplays
-        :displays="customFilters as ICustomFilter[]"
-        :selected-display="selectedCustomFilter as ICustomFilter"
+        :displays="customFiltersWithErrors as ICustomFilterWithError[]"
+        :selected-display="selectedCustomFilter as ICustomFilterWithError"
         :pagination-changed="paginationChanged"
         :totals-allowed="totalsAllowed"
         :operation-success="customDisplayOperationSuccess"
