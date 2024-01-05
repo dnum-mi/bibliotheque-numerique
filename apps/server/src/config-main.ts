@@ -12,6 +12,7 @@ import { CustomValidationPipe } from '@/shared/pipe/custom-validation.pipe'
 import { CustomValidationExceptionFilter } from '@/shared/exceptions/filters/custom-validation-exception.filter'
 import { APP_NAME_TOKEN } from '@/shared/modules/logger/logger.const'
 import { LoggingInterceptor } from '@/shared/modules/logger/logging.interceptor'
+import { EntityNotFoundErrorFilter } from '@/shared/exceptions/filters/entity-not-found-error.filter'
 
 export const configMain = async (app: INestApplication, configService?: ConfigService): Promise<void> => {
   const loggerService = await app.resolve<LoggerService>(LoggerService)
@@ -34,6 +35,7 @@ export const configMain = async (app: INestApplication, configService?: ConfigSe
   let queryFailedFilterLogger: LoggerService = loggerService
   let axiosFailedErrorLogger: LoggerService = loggerService
   let customValidationErrorLogger: LoggerService = loggerService
+  let entityNotFoundErrorLogger: LoggerService = loggerService
   if (!configService.get('isTest')) {
     exceptionFilterLogger = new LoggerService(configService, appNameToken)
     exceptionFilterLogger.setContext('AllExceptionsFilter')
@@ -43,6 +45,8 @@ export const configMain = async (app: INestApplication, configService?: ConfigSe
     axiosFailedErrorLogger.setContext('AxiosExceptionFilter')
     customValidationErrorLogger = new LoggerService(configService, appNameToken)
     customValidationErrorLogger.setContext('CustomValidationExceptionFilter')
+    entityNotFoundErrorLogger = new LoggerService(configService, appNameToken)
+    entityNotFoundErrorLogger.setContext('EntityNotFoundErrorFilter')
   }
   // order is important here, from most generic to most specific
   app.useGlobalFilters(
@@ -50,6 +54,7 @@ export const configMain = async (app: INestApplication, configService?: ConfigSe
     new QueryFailedFilter(httpAdapterHost, queryFailedFilterLogger),
     new AxiosExceptionFilter(httpAdapterHost, axiosFailedErrorLogger),
     new CustomValidationExceptionFilter(httpAdapterHost, customValidationErrorLogger),
+    new EntityNotFoundErrorFilter(httpAdapterHost, entityNotFoundErrorLogger),
   )
   app.useGlobalPipes(new CustomValidationPipe())
   if (!configService.get('isTest') && !configService.get('isDev')) {
