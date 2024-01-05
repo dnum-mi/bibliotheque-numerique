@@ -72,7 +72,6 @@ export class CustomFilterController {
     @CurrentUserId() userId: number,
   ): Promise<boolean> {
     this.logger.verbose('createOneFilter')
-    dto.filters = dto.filters || null
     return this.service.updateOrThrow({ id: filterId, userId }, dto)
   }
 }
