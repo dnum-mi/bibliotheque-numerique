@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.9.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v1.8.0...v1.9.0) (2024-01-05)
+
+
+### Features
+
+* ✨ use custom footer ([f669a69](https://github.com/dnum-mi/bibliotheque_numerique/commit/f669a6991817529cece88d41266111afad8bf983))
+* admin can now see if user is verified ([b951c88](https://github.com/dnum-mi/bibliotheque_numerique/commit/b951c88230d90c8dcfa41fd75a09da2acf7c0fd5))
+* job name in signup is now required. ([5ce6af4](https://github.com/dnum-mi/bibliotheque_numerique/commit/5ce6af4678d109ee60242e346b5bd5137ea2f99f))
+* update page accessibility ([61bd123](https://github.com/dnum-mi/bibliotheque_numerique/commit/61bd1233c73ebbe03046f00d46b1e93a5cc44484))
+* user is now aware of obselet 'affichage' ([69c3799](https://github.com/dnum-mi/bibliotheque_numerique/commit/69c379946be62b6ba07d2fe66983f51cec89d8a1))
+
+
+### Bug Fixes
+
+* :bug: fix e2e tests ([f868c81](https://github.com/dnum-mi/bibliotheque_numerique/commit/f868c810d59affbaae717fd22f2cb96a38332ca2))
+* 🐛 corrige le test de connexion ([3d5fa82](https://github.com/dnum-mi/bibliotheque_numerique/commit/3d5fa821ebfbf557dd181a41a3064771959d2b66))
+* 🐛 Fix ag-grid error ([2ad10f5](https://github.com/dnum-mi/bibliotheque_numerique/commit/2ad10f56797a51ea2033554d78556571ab309cb8))
+* dont reset filter by default, let front control it ([10caa17](https://github.com/dnum-mi/bibliotheque_numerique/commit/10caa17eda31ee20d83119cb6904b300d566ff82))
+* give orginal name of column in affichage if columnLabel has been unchecked ([87aa90f](https://github.com/dnum-mi/bibliotheque_numerique/commit/87aa90f955d3054bce81a9df4040acfdb0ca4020))
+* preventing sql injection on the searchs requests ([541e23d](https://github.com/dnum-mi/bibliotheque_numerique/commit/541e23d1dc7093835fb834d8f72beb50dd25f756))
+
 ## [1.8.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v1.7.0...v1.8.0) (2023-12-22)
 
 
