@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import type { MyProfileOutputDto } from '@biblio-num/shared'
+import type { DsfrAlertType } from '@gouvminint/vue-dsfr/types/components/DsfrAlert/DsfrAlert.vue'
+
+import type { ResetPasswordInputDto } from '@biblio-num/shared/types/dto/user/reset-password-input.dto'
 
 import LayoutBanner from '@/components/Layout/LayoutBanner.vue'
 import { useUserStore } from '@/stores'
 import { dateToStringFr } from '@/utils'
 import RoleBadge from '@/components/Badges/RoleBadge.vue'
-import type { ResetPasswordInputDto } from '@biblio-num/shared/types/dto/user/reset-password-input.dto'
 import apiClient from '@/api/api-client'
 import { ASK_RESET_PWD_SUCCESS } from '@/messages'
-import type { DsfrAlertType } from '@gouvminint/vue-dsfr/types/components/DsfrAlert/DsfrAlert.vue'
 import EditableField from './EditableField.vue'
 
 const store = useUserStore()
@@ -63,6 +64,8 @@ const onClick = async () => {
   alertType.value = 'info'
   openAlert.value = true
   alertDescription.value = ASK_RESET_PWD_SUCCESS
+  await nextTick()
+  document.getElementById('reset-alert')?.scrollIntoView({ behavior: 'smooth' })
 }
 
 onMounted(() => {
@@ -100,7 +103,7 @@ const updateProfile = async (field: Field, newText: string) => {
             v-for="field in fields"
             :key="field.userKey"
           >
-            <div class="flex flex-col one-col-height">
+            <div class="flex flex-col">
               <div class="flex-1">
                 <strong>{{ field.title }}</strong>
               </div>
@@ -122,6 +125,7 @@ const updateProfile = async (field: Field, newText: string) => {
           <!-- CHANGE PASSWORD -->
           <div class="flex flex-col one-col-height">
             <DsfrButton
+              :disabled="openAlert"
               class="fr-mb-2w"
               type="buttonType"
               label="Modifier mon mot de passe"
@@ -131,13 +135,14 @@ const updateProfile = async (field: Field, newText: string) => {
             />
 
             <DsfrAlert
+              id="reset-alert"
               class="fr-col-12 fr-pm-2w"
               :title="alertTitle"
               :description="alertDescription"
               :type="alertType"
               :closed="!openAlert"
               closeable
-              @close="() => (openAlert = false)"
+              @close="() => { openAlert = false }"
             />
           </div>
         </div>
@@ -186,9 +191,5 @@ const updateProfile = async (field: Field, newText: string) => {
 .max-width-container {
   width: 1000px;
   margin: 0 auto;
-}
-
-.one-col-height {
-  height: 50px;
 }
 </style>
