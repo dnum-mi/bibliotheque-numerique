@@ -34,8 +34,8 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     if (!raw) {
       throw new Error('No association found with this RNF.')
     }
-    const __extractAddressField = (field: string): string | null =>
-      raw.address[field] || null
+    const __extractAddressField = (field: string): string =>
+      raw.address[field] || ''
     const upsert = await this.repo.upsert(
       {
         idRnf,
@@ -82,10 +82,16 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     }
     const a = raw.adresse_siege || null
     const addressStreetAddress = a
-      ? `${a?.numero_voie} ${a?.type_voie} ${a?.libelle_voie}`
+      ? ['numero_voie', 'type_voie', 'libelle_voie']
+        .map((k) => a[k])
+        .filter((a) => !!a)
+        .join(' ')
       : null
     const addressLabel = a
-      ? `${addressStreetAddress} ${a?.code_postal} ${a?.commune}`
+      ? `${addressStreetAddress} ${['code_postal', 'commune']
+        .map((k) => a[k])
+        .filter((a) => !!a)
+        .join(' ')}`
       : null
     const upsert = await this.repo.upsert(
       {
