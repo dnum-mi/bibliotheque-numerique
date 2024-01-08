@@ -88,7 +88,7 @@ const updateProfile = async (field: Field, newText: string) => {
 <template>
   <div class="flex flex-col">
     <LayoutBanner
-      title="Mon profile"
+      title="Mon profil"
       title-bg-color="var(--border-plain-green-bourgeon)"
       title-icon="fr-icon-profil-line"
     />
