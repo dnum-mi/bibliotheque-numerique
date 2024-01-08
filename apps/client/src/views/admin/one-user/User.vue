@@ -350,7 +350,7 @@ const removePrefecture = (prefecture: string) => {
               @click="onClickDemarches(dr)"
             >
               <DsfrCheckbox
-                class="font-bold fr-px-2v"
+                class="font-bold fr-px-2v  flex-auto"
                 :label="''"
                 :name="dr.name"
                 :model-value="dr.value"
@@ -383,7 +383,7 @@ const removePrefecture = (prefecture: string) => {
                   <DsfrCheckbox
                     :key="dr.key"
                     :label="''"
-                    class="fr-px-2v"
+                    class="fr-px-2v  flex-auto"
                     :name="d.options.id.toString()"
                     :model-value="d.options.checked"
                     :disabled="d.attrs.disabled"
@@ -457,5 +457,10 @@ const removePrefecture = (prefecture: string) => {
 
 :deep(input[type="checkbox"]:disabled + label) {
   color: var(--text-default-grey);
+}
+
+.flex-auto {
+  flex-grow: 0 !important;
+  flex-basis: auto !important;
 }
 </style>
