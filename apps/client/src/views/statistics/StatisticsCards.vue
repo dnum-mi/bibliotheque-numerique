@@ -68,9 +68,23 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="relative">
+  <div v-if="!displaysByDemarche || !Object.values(displaysByDemarche)?.length">
+    <div class="text-center">
+      <p class="fr-text--lg">
+        Vous n’avez pas encore créé d’affichage personnalisé.
+      </p>
+
+      <em class="fr-text--md">
+        (Une "tuile" par affichage personnalisé pourra être affichée ici avec ses statistiques)
+      </em>
+    </div>
+  </div>
+  <div
+    v-else
+    class="relative"
+  >
     <header class="statistics-header">
-      <p>Charger les stats de :</p>
+      <p>Charger les statistiques des démarches suivantes :</p>
       <DsfrCheckbox
         v-for="(displaysInDemarche, demarcheId) in displaysByDemarche"
         :key="demarcheId"
@@ -100,7 +114,7 @@ onUnmounted(() => {
 
     <template v-if="customFilterToDelete">
       <DsfrModal
-        :opened="customFilterToDelete"
+        :opened="!!customFilterToDelete"
         :title="`Supprimer le filtre personnalisé ${customFilterToDelete?.name}`"
         @close="customFilterToDelete = undefined"
       >
