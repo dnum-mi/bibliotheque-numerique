@@ -18,7 +18,7 @@ import { BadRequestException } from '@nestjs/common'
 import { FiltersInCustomFilter } from '@/modules/custom-filters/objects/entities/custom-filter.entity'
 
 const _manualFilterValueEscapingMechanism = (str: string): string => {
-  return str.replace("'", "''")
+  return str ? str.replace("'", "''") : str
 }
 
 //#region FILTERS
