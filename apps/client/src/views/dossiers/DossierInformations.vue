@@ -13,7 +13,7 @@ const prefecture = computed(() => props.datas.groupeInstructeur?.label.toUpperCa
 const depot = computed(() => dateTimeToStringFr(props.datas.dateDepot) || '')
 const instruction = computed(() => dateTimeToStringFr(props.datas.datePassageEnInstruction) || '')
 const publication = computed(() => '')
-const etat = computed(() => props.datas?.state?.toUpperCase() || '')
+const etat = computed(() => props.datas?.state || '')
 </script>
 
 <template>
@@ -37,7 +37,7 @@ const etat = computed(() => props.datas?.state?.toUpperCase() || '')
       </div>
       <div class="fr-col-2">
         <label class="bn-fiche-sub-title--label">ÉTAT</label>
-        <span class="bn-fiche-sub-title--text fr-badge fr-badge--info fr-badge--no-icon">{{ etat }}</span>
+        <StatusBadge :status="etat" />
       </div>
     </div>
   </div>
