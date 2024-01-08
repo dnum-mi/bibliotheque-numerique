@@ -254,3 +254,4 @@ Vous pouvez désormais interroger l’API du serveur en utilisant dans VSCode le
 ## Utilisation de `api.http` depuis IntelliJ
 
 Depuis Webstorm ou un autre IDE de JetBrains, regarder la [documentation officielle](https://www.jetbrains.com/help/idea/http-client-in-product-code-editor.html).
+
