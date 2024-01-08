@@ -7,9 +7,9 @@ const groupInstructeurs = computed(() => demarcheStore.currentDemarche?.dsDataJs
 </script>
 
 <template>
-  <div class="fr-container">
+  <div class="fr-container  fr-mb-2w">
     <h3>
-      Groupe Instructeurs
+      Groupes Instructeurs
     </h3>
 
     <DsfrAccordionsGroup
