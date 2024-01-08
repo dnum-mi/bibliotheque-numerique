@@ -357,7 +357,7 @@ const removePrefecture = (prefecture: string) => {
                 :disabled="dr.attrs.disabled"
                 @update:model-value="checkAllTypeChildren({ name: dr.name, checked: $event, dr })"
               />
-              <label class="flex-shrink-0 flex-grow cursor-pointer">
+              <label class="flex-shrink-0 flex-grow cursor-pointer fr-text--bold">
                 {{ dr.label }}
               </label>
               <div class="fr-px-2v">
