@@ -230,37 +230,6 @@ export class FieldService extends BaseEntityService<Field> {
     return this.repo.save(fields)
   }
 
-  async giveFieldType(
-    fieldsId: string[],
-  ): Promise<Record<string, FieldTypeKeys>> {
-    this.logger.verbose('giveFieldType')
-    return await this._queryGiveFieldType(fieldsId).then((result) => {
-      return Object.fromEntries(
-        result.map((r: { sourceId: string; type: FieldTypeKeys }) => [
-          r.sourceId,
-          r.type,
-        ]),
-      )
-    })
-  }
-
-  private async _queryGiveFieldType(fieldsId: string[]): Promise<
-    {
-      sourceId: string
-      type: FieldTypeKeys
-    }[]
-  > {
-    return this.repo
-      .createQueryBuilder()
-      .select('"sourceId"')
-      .distinct(true)
-      .addSelect('type')
-      .where('"sourceId" IN (:...sourceids)', {
-        sourceids: fieldsId.map((id) => id),
-      })
-      .getRawMany()
-  }
-
   async upsert(
     field: Pick<Field, 'sourceId' | 'dossierId'> & Partial<Field>,
   ): Promise<Field[]> {

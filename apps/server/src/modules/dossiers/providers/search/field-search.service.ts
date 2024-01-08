@@ -19,6 +19,7 @@ import {
   FieldTypeKeys,
   SearchDossierDto,
 } from '@biblio-num/shared'
+import { fromMappingColumnArrayToTypeHash } from '@/modules/demarches/utils/demarche.utils'
 
 @Injectable()
 export class FieldSearchService extends BaseEntityService<Field> {
@@ -120,13 +121,9 @@ export class FieldSearchService extends BaseEntityService<Field> {
     complete = false,
   ): Promise<FieldSearchOutputDto> {
     this.logger.verbose('search')
-    console.log(dto)
     let cols = dto.columns as string[]
-    const typeHash = await this.fieldService.giveFieldType(cols)
-    console.log(typeHash)
-    console.log(cols)
+    const typeHash = fromMappingColumnArrayToTypeHash(demarche.mappingColumns)
     cols = cols.filter((col) => !!typeHash[col])
-    console.log(cols)
     dto = adjustDto(dto)
     const query = `WITH
       ${this._buildRepeatedCTE(demarche.id, cols)},
@@ -136,7 +133,6 @@ export class FieldSearchService extends BaseEntityService<Field> {
       SELECT * FROM countedCTE
       ${complete ? '' : buildPaginationQuery(dto.page || 1, dto.perPage || 5)}
     `
-    console.log(query)
     const result = await this.repo.query(query)
     if (!result[0]) {
       return { total: 0, data: [] }

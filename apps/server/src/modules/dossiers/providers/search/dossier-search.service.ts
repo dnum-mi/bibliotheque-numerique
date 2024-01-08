@@ -20,6 +20,7 @@ import {
   MappingColumn,
   SearchDossierDto,
 } from '@biblio-num/shared'
+import { fromMappingColumnArrayToTypeHash } from '@/modules/demarches/utils/demarche.utils'
 
 @Injectable()
 export class DossierSearchService extends BaseEntityService<Dossier> {
@@ -98,11 +99,12 @@ export class DossierSearchService extends BaseEntityService<Dossier> {
     complete = false,
   ): Promise<DossierSearchOutputDto> {
     this.logger.verbose('search')
-    const typeHash = await this.fieldService.giveFieldType(dto.columns as string[])
+    const typeHash = fromMappingColumnArrayToTypeHash(demarche.mappingColumns)
     dto.columns = dto.columns.filter((c) => !!typeHash[c])
     dto = adjustDto(dto)
+    const onlySelectedColumnsTypeHash = Object.fromEntries(dto.columns.map(c => [c, typeHash[c]]))
     const query = `WITH
-      ${this._buildAggregatedCTE(demarche.id, typeHash)},
+      ${this._buildAggregatedCTE(demarche.id, onlySelectedColumnsTypeHash)},
       ${this._buildCountCTE(dto.filters, typeHash)}
       SELECT *, (SELECT nbrRows FROM countCTE) as total
       FROM aggregatedCTE
