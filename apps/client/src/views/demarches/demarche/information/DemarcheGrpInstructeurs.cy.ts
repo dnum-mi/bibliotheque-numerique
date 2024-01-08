@@ -21,7 +21,7 @@ describe('<DemarcheGrpInstructeurs />', () => {
 
     cy.mountWithPinia(DemarcheGrpInstructeurs)
 
-    cy.get('h3').should('contain', 'Groupe Instructeurs')
+    cy.get('h3').should('contain', 'Groupes Instructeurs')
     cy.get('section').then($section => {
       for (const grp of demarche.dsDataJson?.groupeInstructeurs) {
         cy.wrap($section)
