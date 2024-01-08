@@ -11,7 +11,7 @@ import { from, Observable, switchMap } from 'rxjs'
 import { IRole, isBelowSuperAdmin } from '@biblio-num/shared'
 
 const no404 = (): void => {
-  throw new NotFoundException('No demarche with this id.')
+  throw new NotFoundException('La démarche est introuvable')
 }
 const no403 = (): void => {
   throw new ForbiddenException('You are not allowed to access this demarche.')

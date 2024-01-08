@@ -65,7 +65,7 @@ export abstract class BaseEntityService<T extends BaseEntity = BaseEntity> {
     const result = await this.repo.findOne(options)
     if (!result) {
       this.logger.debug(`Query object: ${JSON.stringify(options.where)}`)
-      throw new NotFoundException('Cannot find resource.')
+      throw new NotFoundException('Ressource introuvable')
     }
     return result
   }

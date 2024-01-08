@@ -107,6 +107,10 @@ apiClientInstance.interceptors.response.use(r => r, (error) => {
     toaster.addMessage({ type: 'warning', description: 'Vous n’avez pas les droits de faire cette opération' })
     return null
   }
+  if (error.response.status === 404) {
+    toaster.addErrorMessage(error.response.data.message)
+    throw error
+  }
   if (error.response.status >= 400 && error.response.status < 500) {
     toaster.addErrorMessage(error.response.data.message)
     return null
@@ -128,10 +132,19 @@ const downloadAFile = (response: AxiosResponse) => {
   return response.data
 }
 
+const getOrRedirectTo404 = async (route: string) => {
+  try {
+    return (await apiClientInstance.get(route)).data
+  } catch (e) {
+    if (e instanceof AxiosError && e.response?.status === 404) {
+      router.push({ name: routeNames.Page_404 })
+    }
+  }
+}
+
 export const demarchesApiClient = {
   getDemarche: async (id: number) => {
-    const response = await apiClientInstance.get(getDemarcheByIdRoute(id))
-    return response?.data
+    return getOrRedirectTo404(getDemarcheByIdRoute(id))
   },
 
   getDemarches: async () => {
@@ -165,18 +178,15 @@ export const organismeApiClient = {
   },
 
   getOrganismeById: async (organismeId: string): Promise<IOrganisme> => {
-    const response = await apiClientInstance.get(getOrganismeByIdRoute(+organismeId))
-    return response.data
+    return getOrRedirectTo404(getOrganismeByIdRoute(+organismeId))
   },
 
   getOrganismeByRna: async (organismeIdRna: string): Promise<IOrganisme> => {
-    const response = await apiClientInstance.get(getOrganismeByRnaRoute(organismeIdRna))
-    return response.data
+    return getOrRedirectTo404(getOrganismeByRnaRoute(organismeIdRna))
   },
 
   getOrganismeByRnf: async (organismeIdRnf: string): Promise<IOrganisme> => {
-    const response = await apiClientInstance.get(getOrganismeByRnfRoute(organismeIdRnf))
-    return response.data
+    return getOrRedirectTo404(getOrganismeByRnfRoute(organismeIdRnf))
   },
 }
 
@@ -274,8 +284,7 @@ export const dossiersApiClient = {
     return apiClientInstance.patch(getUpdateOneMappingColumnRoute(demarcheId, fieldId), dto)
   },
 
-  getDossier: async (id: number): Promise<IDossier> =>
-    (await apiClientInstance.get(getDossierByIdRoute(id))).data,
+  getDossier: async (id: number): Promise<IDossier> => getOrRedirectTo404(getDossierByIdRoute(id)),
 
   getOrganismeDossiers: async (organismeId: number): Promise<LeanDossierOutputDto[]> =>
     (await apiClientInstance.get(getOrganismeDossiers(organismeId))).data,
