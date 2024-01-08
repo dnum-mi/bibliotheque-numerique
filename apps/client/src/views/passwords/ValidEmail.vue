@@ -19,52 +19,57 @@ onMounted(async () => {
 <template>
   <LayoutAccueil>
     <div class="fr-container fr-m-5w">
-      <div
-        class="fr-container fr-grid-row"
+      <h5
+        class="fr-text-title--blue-france"
+        style="text-align:center"
       >
-        <div class="fr-col-1" />
-        <div class="fr-col-10">
-          <h5
-            class="mb-20 fr-text-title--blue-france"
-            style="text-align:center"
-          >
-            Confirmation votre inscription
-          </h5>
+        Confirmation de votre inscription
+      </h5>
 
-          <h6 style="text-align:center">
-            {{ message }}
-          </h6>
+      <p style="text-align:center">
+        {{ message }}
+      </p>
 
-          <div v-if="status === 1 || status === 409">
-            <p
-              class="fr-text--lead  fr-mb-3w"
-              style="text-align:center"
-            >
-              Vous pouvez vous connecter.
-            </p>
+      <div
+        v-if="status === 0"
+        style="text-align:center"
+      >
+        <router-link
+          to="/sign_in"
+          class="fr-btn"
+        >
+          Se connecter
+        </router-link>
+      </div>
 
-            <ul
-              class="fr-btns-group  fr-btns-group--inline-md"
-              style="justify-content:center"
+      <div v-if="status === 1 || status === 409">
+        <p
+          class="fr-text--lead  fr-mb-3w"
+          style="text-align:center"
+        >
+          Vous pouvez vous connecter.
+        </p>
+
+        <ul
+          class="fr-btns-group  fr-btns-group--inline-md"
+          style="justify-content:center"
+        >
+          <li>
+            <RouterLink
+              class="fr-btn"
+              to="/"
             >
-              <li>
-                <RouterLink
-                  class="fr-btn"
-                  to="/"
-                >
-                  Se connecter
-                </RouterLink>
-              </li>
-            </ul>
-            <div
-              class="fr-m-4w"
-              style="text-align:center"
-            >
-              <router-link :to="{ name: 'ResetPassword' }">
-                Mot de passe oublié ?
-              </router-link>
-            </div>
-          </div>
+              Se connecter
+            </RouterLink>
+          </li>
+        </ul>
+        <div
+          class="fr-m-4w"
+          style="text-align:center"
+        >
+          <router-link :to="{ name: 'ResetPassword' }">
+            Mot de passe oublié ?
+          </router-link>
         </div>
       </div>
     </div>
