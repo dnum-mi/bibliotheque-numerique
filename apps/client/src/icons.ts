@@ -32,6 +32,7 @@ export {
   RiHome4Line,
   RiIndeterminateCircleLine,
   RiLinksLine,
+  RiLockLine,
   RiLogoutBoxRLine,
   RiPencilLine,
   RiRefreshLine,
