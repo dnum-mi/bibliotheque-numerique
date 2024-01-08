@@ -80,7 +80,7 @@ const { value: passwordValue, errorMessage: passwordError } = useField<string>('
                 v-model="firstnameValue"
                 label="Prénom"
                 label-visible
-                placeholder="Dubois"
+                placeholder="Louis"
                 type="text"
                 required
               >
@@ -100,7 +100,7 @@ const { value: passwordValue, errorMessage: passwordError } = useField<string>('
                 v-model="lastnameValue"
                 label="Nom"
                 label-visible
-                placeholder="Louis"
+                placeholder="Dubois"
                 type="text"
                 required
               >

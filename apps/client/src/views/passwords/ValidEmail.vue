@@ -8,7 +8,7 @@ const status = ref(0)
 onMounted(async () => {
   try {
     await apiClient.validEmail(props.token)
-    message.value = 'Votre adresse courriel est validé.'
+    message.value = 'Votre adresse courriel est validée.'
     status.value = 0
   } catch (error) {
     message.value = (error as Error).message
