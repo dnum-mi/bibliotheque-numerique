@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.9.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v1.9.0...v1.9.1) (2024-01-08)
+
+
+### Bug Fixes
+
+* ✏️ fix typos on obsolete ([a84ab15](https://github.com/dnum-mi/bibliotheque_numerique/commit/a84ab1575a5b1565139796ae64edb80e43337f07))
+* 🐛 fix blank-page-on-new-version bug ([e92038d](https://github.com/dnum-mi/bibliotheque_numerique/commit/e92038ddbab8c08f7a81c9e24d73215213bce682))
+* 🐛 fix missing icon ([d4ccdfa](https://github.com/dnum-mi/bibliotheque_numerique/commit/d4ccdfaf2466f2a15ce002526491fae33bea77e3))
+* 🐛 fix quick links in header ([d90680f](https://github.com/dnum-mi/bibliotheque_numerique/commit/d90680f41ba7d427baa32283a079e98693e39865))
+* 🚸 improve ui/ux if no custom filters for user ([0f39441](https://github.com/dnum-mi/bibliotheque_numerique/commit/0f394410a9f3fc9a45c371fd5b5531adca6170eb))
+* add config instrutcion time for worker ([7184462](https://github.com/dnum-mi/bibliotheque_numerique/commit/7184462398ea193fc866c65015b7ff70b372a929))
+* error de test sur client ([3e34901](https://github.com/dnum-mi/bibliotheque_numerique/commit/3e34901deb895040c8a823d4d89c4b44c71032fe))
+* reverse fistname and lastname in mail to validate inscription ([a18c677](https://github.com/dnum-mi/bibliotheque_numerique/commit/a18c677d79f0f9e6f2cd4d1107f52f75d1f2ba8c))
+
 ## [1.9.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v1.8.0...v1.9.0) (2024-01-05)
 
 ### Features
