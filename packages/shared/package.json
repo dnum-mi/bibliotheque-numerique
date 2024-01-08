@@ -1,6 +1,6 @@
 {
   "name": "@biblio-num/shared",
-  "version": "1.9.1",
+  "version": "1.9.2",
   "description": "Types partagés entre le back et le front",
   "author": "Ministère de l’intérieur",
   "exports": {

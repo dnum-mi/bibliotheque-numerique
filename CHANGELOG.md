@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.9.2](https://github.com/dnum-mi/bibliotheque_numerique/compare/v1.9.1...v1.9.2) (2024-01-08)
+
+
+### Bug Fixes
+
+* 🐛 redirect to 404 page if resource not found ([fb44ee0](https://github.com/dnum-mi/bibliotheque_numerique/commit/fb44ee02852e07e1e34248a20dc5ddddb57c8ac6))
+* 🐛 reset store data appropriately (before get) ([4cf5dab](https://github.com/dnum-mi/bibliotheque_numerique/commit/4cf5dab759170407fb38164ede6929e777652215))
+* categories of demarche is in bold ([846da79](https://github.com/dnum-mi/bibliotheque_numerique/commit/846da7931bfc31521465f9081a2daec8607b5d79))
+* component test of fiche dossier for the value Etat ([761f153](https://github.com/dnum-mi/bibliotheque_numerique/commit/761f153ca5a91b340ac29aadae2c5c65a23be834))
+* direct user to connection on valid email ([8665313](https://github.com/dnum-mi/bibliotheque_numerique/commit/86653131c029140fc6d037a7c87b036fa1d433a0))
+* liste demarche number and dates ([b58820f](https://github.com/dnum-mi/bibliotheque_numerique/commit/b58820fea6977cb4aff40766e0e759012e59d930))
+* not empty or empty filter.filter for string filter in dossier listing ([cd1b016](https://github.com/dnum-mi/bibliotheque_numerique/commit/cd1b016c4a23e8d6002c7a4692fa3e276387e695))
+* null in RNA address ([c6d19e5](https://github.com/dnum-mi/bibliotheque_numerique/commit/c6d19e50a0ce4c43a89fd56981af50074d138b74))
+* oui ou non instead of false or true in fiche dossier ([6fbfe10](https://github.com/dnum-mi/bibliotheque_numerique/commit/6fbfe100b390a50971ae5a4347fa27e79a15b998))
+* use mapping column in search providers instead of looking from type with a query request on field table. ([c78f7bb](https://github.com/dnum-mi/bibliotheque_numerique/commit/c78f7bb818888f4f3410164aade64826d33952cf))
+* using status badge in dossier header ([3b8acba](https://github.com/dnum-mi/bibliotheque_numerique/commit/3b8acba7ed65d2027f36cd10dcab60c5f88bf2d1))
+
 ## [1.9.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v1.9.0...v1.9.1) (2024-01-08)
 
 
