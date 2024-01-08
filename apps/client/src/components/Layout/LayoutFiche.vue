@@ -15,7 +15,7 @@ const mainEl = ref<HTMLElement | null>(null)
 const isAtBottom = ref(true)
 
 const checkBottomScroll = () => {
-  const { scrollHeight, scrollTop, clientHeight } = mainEl.value as HTMLElement
+  const { scrollHeight, scrollTop, clientHeight } = mainEl.value as HTMLElement ?? {}
   isAtBottom.value = scrollHeight - scrollTop === clientHeight
 }
 

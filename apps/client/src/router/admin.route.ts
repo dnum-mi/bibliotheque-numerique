@@ -22,7 +22,11 @@ export const adminRoute = {
       path: 'user/:id',
       component: () => import('@/views/admin/one-user/User.vue'),
       beforeEnter: async (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
-        await useUserStore().loadUserById(parseInt(to.params.id as string))
+        try {
+          await useUserStore().loadUserById(parseInt(to.params.id as string))
+        } catch (e) {
+          next({ name: routeNames.Page_404 })
+        }
         if (!useUserStore().selectedEditableUser) {
           next({ name: routeNames.Page_404 })
         }
