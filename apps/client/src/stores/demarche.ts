@@ -47,6 +47,7 @@ export const useDemarcheStore = defineStore('demarche', () => {
   const fetching = ref(false)
   const getDemarche = async (idDemarche: number) => {
     fetching.value = true
+    currentDemarche.value = undefined
     const result = await apiClient.getDemarche(idDemarche)
     if (result) {
       currentDemarche.value = result
@@ -66,7 +67,7 @@ export const useDemarcheStore = defineStore('demarche', () => {
         : await apiClient.searchDemarcheFields(currentDemarche.value.id, dto)
       return currentDemarcheDossiers.value
     } else {
-      throw new Error("Can't search without a current demarche")
+      throw new Error('Veuillez d’abord sélectionner une démarche')
     }
   }
 
@@ -76,7 +77,7 @@ export const useDemarcheStore = defineStore('demarche', () => {
         ? await apiClient.exportDemarcheDossiers(currentDemarche.value.id, dto)
         : await apiClient.exportDemarcheFields(currentDemarche.value.id, dto)
     } else {
-      throw new Error("Can't search without a current demarche")
+      throw new Error('Veuillez d’abord sélectionner une démarche')
     }
   }
 
