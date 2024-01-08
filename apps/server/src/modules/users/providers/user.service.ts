@@ -151,8 +151,8 @@ export class UserService
     const { appUrl, jwtForUrl } = this.createJwtOnUrl({ user: userInDb.email })
     await this.sendMailService.validSignUp(
       userInDb.email,
-      userInDb.lastname,
       userInDb.firstname,
+      userInDb.lastname,
       `${appUrl}/valid-email/${jwtForUrl}`,
     )
   }
