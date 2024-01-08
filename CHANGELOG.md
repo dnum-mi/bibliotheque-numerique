@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v1.9.2...v2.0.0) (2024-01-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* **database:** version 2.0.0
+
+### Features
+
+* **database:** passage en production ([2ed09fa](https://github.com/dnum-mi/bibliotheque_numerique/commit/2ed09fae3cb62c55b065d9ad02a493cdce3d3649))
+
 ## [1.9.2](https://github.com/dnum-mi/bibliotheque_numerique/compare/v1.9.1...v1.9.2) (2024-01-08)
 
 
