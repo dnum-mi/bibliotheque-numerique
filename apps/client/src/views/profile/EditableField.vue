@@ -26,7 +26,7 @@ const onSave = () => {
 <template>
   <div
     v-if="!editing"
-    class="flex flex-row"
+    class="flex  items-center"
   >
     <span class="flex-1">{{ text }}</span>
     <DsfrButton
