@@ -18,7 +18,7 @@ const headers = [
   },
   {
     text: 'N° Démarche DS',
-    value: 'number',
+    value: 'dsDataJson.number',
     type: 'number',
     width: 200,
   },
@@ -36,7 +36,7 @@ const headers = [
   },
   {
     text: 'Créé le',
-    value: 'dateCreation',
+    value: 'dsDataJson.dateCreation',
     parseFn: dateToStringFr,
     type: 'date',
     width: 200,
@@ -51,7 +51,7 @@ const headers = [
   // },
   {
     text: 'Publié le',
-    value: 'datePublication',
+    value: 'dsDataJson.datePublication',
     parseFn: dateToStringFr,
     type: 'date',
     width: 200,
