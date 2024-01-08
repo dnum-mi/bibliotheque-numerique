@@ -119,7 +119,7 @@ const userStore = useUserStore()
 const router = useRouter()
 const route = useRoute()
 
-const getQuickLinks = () => {
+const minimalQuickLinks = computed(() => {
   const role = userStore.currentUser?.role?.label
   if (!role) return []
   return isSuperiorOrSimilar(Roles.instructor, role)
@@ -131,14 +131,14 @@ const getQuickLinks = () => {
         ...(isSuperiorOrSimilar(Roles.sudo, role) ? [configurationQuickLink] : []),
       ]
     : []
-}
+})
 
 watch([() => userStore.isAuthenticated, route], async () => {
   await router.isReady()
 
   if (userStore.isAuthenticated) {
     quickLinks.value = [
-      ...getQuickLinks(),
+      ...minimalQuickLinks.value,
       ...authenticatedQuickLinksDefault,
     ]
   } else {
