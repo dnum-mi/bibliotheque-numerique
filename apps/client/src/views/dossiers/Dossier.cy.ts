@@ -1,6 +1,6 @@
 import Dossier from './Dossier.vue'
 import { useDossierStore } from '@/stores/dossier'
-import { generateDossier } from '@/views/__tests__/dossiers'
+import { generateDossier, statusDictionary } from '@/views/__tests__/dossiers'
 
 import apiClient from '@/api/api-client'
 
@@ -18,6 +18,6 @@ describe('<Dossier />', () => {
 
     cy.get('@stubGetDossier').should('be.called')
     cy.get('.bn-fiche-title').should('contain', `${dossierDS.number}`)
-    cy.get('.bn-fiche-sub-title').should('contain', `${dossierDS.state?.toUpperCase()}`)
+    cy.get('.fr-badge').should('contain', `${dossierDS.state ? statusDictionary[dossierDS.state] : ''}`)
   })
 })

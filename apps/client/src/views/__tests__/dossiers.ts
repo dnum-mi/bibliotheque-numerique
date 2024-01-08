@@ -180,3 +180,11 @@ export const generateDossier = (): IDossier & { organisme: IOrganisme } => ({
 })
 
 export const generateDossiers = () => Array.from({ length: faker.datatype.number({ min: 1, max: 20 }) }, () => generateDossier())
+
+export const statusDictionary = {
+  accepte: 'Accepté',
+  en_construction: 'En construction',
+  en_instruction: 'En instruction',
+  refuse: 'Refusé',
+  sans_suite: 'Sans suite',
+} as const

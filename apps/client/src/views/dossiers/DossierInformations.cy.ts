@@ -1,7 +1,7 @@
 import '@gouvminint/vue-dsfr/styles'
 import '@/main.css'
 
-import { generateDossierDS } from '@/views/__tests__/dossiers'
+import { generateDossierDS, statusDictionary } from '@/views/__tests__/dossiers'
 
 import DossierInformations from './DossierInformations.vue'
 import { dateTimeToStringFr } from '@/utils/date-to-string'
@@ -33,7 +33,7 @@ describe('<DossierInformations />', () => {
       cy.wrap($label).contains('DÉPÔT').next().should('contain', dateTimeToStringFr(datas.dateDepot))
       cy.wrap($label).contains('INSTRUCTION').next().should('contain', dateTimeToStringFr(datas.datePassageEnInstruction))
       cy.wrap($label).contains('PUBLICATION').next().should('contain', '')
-      cy.wrap($label).contains('ÉTAT').next().should('contain', datas.state?.toUpperCase())
+      cy.wrap($label).contains('ÉTAT').next().should('contain', datas.state ? statusDictionary[datas.state] : '')
     })
   })
 })
