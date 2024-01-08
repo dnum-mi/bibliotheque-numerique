@@ -43,7 +43,7 @@ describe('CurrentDemarcheInterceptor', () => {
         executionContext,
         next,
       ),
-    ).toThrowError('No demarche with this id.')
+    ).toThrowError('La démarche est introuvable')
   })
 
   it('Should throw a NotFoundException if demarcheId does not exist', () => {
@@ -58,7 +58,7 @@ describe('CurrentDemarcheInterceptor', () => {
         executionContext,
         next,
       ).toPromise(),
-    ).rejects.toThrowError('No demarche with this id.')
+    ).rejects.toThrowError('La démarche est introuvable')
   })
 
   it('Should give demarche for superadmin', () => {

@@ -17,7 +17,7 @@ export const useCustomFilterStore = defineStore('custom-filter', () => {
   const createCustomFilter = async (dto: CreateCustomFilterDto, demarcheId: number): Promise<number> => {
     const customDisplay = await apiClient.createOneCustomFilter(dto, demarcheId)
     if (customDisplay == null) {
-      throw new Error('Custom filter creation failed')
+      throw new Error('La création de l’affichage personnalisé a échoué')
     }
     await getCustomFiltersByDemarche(demarcheId)
     return customDisplay.id

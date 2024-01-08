@@ -8,8 +8,9 @@ export const useDossierStore = defineStore('dossier', () => {
     if (!idDossier) {
       return
     }
+    dossier.value = undefined
     const result = await apiClient.getDossier(idDossier)
-    if (result) dossier.value = result
+    dossier.value = result
   }
 
   const $reset = () => {
