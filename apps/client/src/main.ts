@@ -20,6 +20,9 @@ import 'ag-grid-community/styles/ag-grid.css'
 import 'ag-grid-community/styles/ag-theme-material.css'
 import '@/ag-grid-dsfr.css'
 
+// Code à supprimer en mars 2024 semaines quand plus aucun utilisateur n'aura l'ancien service worker
+import './unregister.js'
+
 // We use statusBadge in DsfrTable
 import StatusBadge from './components/Badges/StatusBadge.vue'
 
