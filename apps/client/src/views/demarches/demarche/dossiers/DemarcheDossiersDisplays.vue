@@ -76,7 +76,7 @@ const filterLabelGroups = {
     },
   },
   warning: {
-    title: 'Erreur: affichage obsolète',
+    title: 'Erreur : affichage obsolète',
     button: 'Ok',
     icon: 'ri-file-warning-fill',
     input: 'Affichage obsolète',
@@ -147,7 +147,7 @@ const update = () => {
       type="submit"
       no-outline
       secondary
-      title="Affichage obselète, veuillez le mettre à jour"
+      title="Affichage obsolète, veuillez le mettre à jour"
       @click="openDisplayModal('warning')"
     >
       <VIcon
@@ -247,7 +247,7 @@ const update = () => {
     </form>
     <div v-else>
       <p>
-        Cette affichage est désormais <strong>obselète</strong>. <br>
+        Cette affichage est désormais <strong>obsolète</strong>. <br>
         Cela signifie qu'une ou plusieurs des colonnes utilisées dans cet affichage ont été supprimées par l'administrateur dans la configuration de la démarche.
         <br>
         Veuillez le supprimer, ou le mettre à jour.

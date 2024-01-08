@@ -2,15 +2,13 @@
 
 ## [1.9.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v1.8.0...v1.9.0) (2024-01-05)
 
-
 ### Features
 
 * ✨ use custom footer ([f669a69](https://github.com/dnum-mi/bibliotheque_numerique/commit/f669a6991817529cece88d41266111afad8bf983))
 * admin can now see if user is verified ([b951c88](https://github.com/dnum-mi/bibliotheque_numerique/commit/b951c88230d90c8dcfa41fd75a09da2acf7c0fd5))
 * job name in signup is now required. ([5ce6af4](https://github.com/dnum-mi/bibliotheque_numerique/commit/5ce6af4678d109ee60242e346b5bd5137ea2f99f))
 * update page accessibility ([61bd123](https://github.com/dnum-mi/bibliotheque_numerique/commit/61bd1233c73ebbe03046f00d46b1e93a5cc44484))
-* user is now aware of obselet 'affichage' ([69c3799](https://github.com/dnum-mi/bibliotheque_numerique/commit/69c379946be62b6ba07d2fe66983f51cec89d8a1))
-
+* user is now aware of obsolete 'affichage' ([69c3799](https://github.com/dnum-mi/bibliotheque_numerique/commit/69c379946be62b6ba07d2fe66983f51cec89d8a1))
 
 ### Bug Fixes
 
@@ -23,12 +21,10 @@
 
 ## [1.8.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v1.7.0...v1.8.0) (2023-12-22)
 
-
 ### Features
 
 * :sparkles: display attachments in demarche dossier ([ab63fac](https://github.com/dnum-mi/bibliotheque_numerique/commit/ab63facaf806f293e9c86665a25e66db47c9984c))
 * :sparkles: redesign configuration page ([5345c38](https://github.com/dnum-mi/bibliotheque_numerique/commit/5345c382a08a3e7033bb29bc3996bc90aa5c7730))
-
 
 ### Bug Fixes
 
@@ -43,7 +39,6 @@
 
 ## [1.7.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v1.6.15...v1.7.0) (2023-12-19)
 
-
 ### Features
 
 * add footer in template and show version run-env accessibility in app ([cea6d64](https://github.com/dnum-mi/bibliotheque_numerique/commit/cea6d645c422a6668669b5c29f6d38f24ebbe9f1))
@@ -52,7 +47,6 @@
 * **Profile:** endpoint to update profile in sever ([50a2162](https://github.com/dnum-mi/bibliotheque_numerique/commit/50a2162b2dd34b279352b88cbfdbe61b54084b40))
 * **Profile:** get porofile user updated without logout ([bfcedd7](https://github.com/dnum-mi/bibliotheque_numerique/commit/bfcedd7a2edcd05311a2589ce272df723b99a690))
 * **Profile:** udpate profile in api client and store ([db02305](https://github.com/dnum-mi/bibliotheque_numerique/commit/db023056c6078f4ad912b9519d772e89eda4c735))
-
 
 ### Bug Fixes
 
