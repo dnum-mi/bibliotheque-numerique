@@ -7,6 +7,7 @@ import dsConfig from './config/ds.config'
 import smtpConfig from './config/smtp.config'
 import fileConfig from './config/file.config'
 import loggerConfig from './config/logger.config'
+import instructionTimeMappingConfig from '@/config/instructionTimeMapping.config'
 
 import { LoggerModule } from './shared/modules/logger/logger.module'
 import { CronModule } from './modules/cron/cron.module'
@@ -19,7 +20,14 @@ import { DsApiModule } from './shared/modules/ds-api/ds-api.module'
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
-      load: [configuration, dsConfig, fileConfig, loggerConfig, smtpConfig],
+      load: [
+        configuration,
+        dsConfig,
+        fileConfig,
+        loggerConfig,
+        smtpConfig,
+        instructionTimeMappingConfig,
+      ],
     }),
     LoggerModule.forRoot('worker'),
     TypeOrmModule.forRootAsync(typeormFactoryLoader),
