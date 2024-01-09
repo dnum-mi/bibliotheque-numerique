@@ -31,8 +31,8 @@ const totalsAllowedOptions = computed(() => [
 // eslint-disable-next-line func-call-spacing
 const emit = defineEmits<{
   (event: 'selectDisplay', filterId: number | null) : void
-  (event: 'createDisplay', filter: { filterName?: string, totals?: string }) : void
-  (event: 'updateDisplayName', filter: { filterName?: string, totals?: string }) : void
+  (event: 'createDisplay', filter: { filterName?: string, totals?: string[] }) : void
+  (event: 'updateDisplayName', filter: { filterName?: string, totals?: string[] }) : void
   (event: 'updateDisplay') : void
   (event: 'deleteDisplay') : void
 }>()
@@ -89,7 +89,7 @@ const filterLabelGroups = {
 type FilterModalType = keyof typeof filterLabelGroups;
 const inputFilterName = ref('')
 const filterModalType = ref<FilterModalType>('create')
-const inputFilterTotals = ref<string>()
+const inputFilterTotals = ref<string[]>([])
 const filterModalOpen = ref(false)
 const operationSucceeded = computed(() => props.operationSuccess)
 
@@ -112,7 +112,7 @@ const openDisplayModal = (modalType: FilterModalType) => {
   } else {
     inputFilterName.value = modalType === 'create' ? '' : (currentDisplay.value?.name || '')
   }
-  inputFilterTotals.value = modalType === 'create' ? undefined : (currentDisplay.value?.totals?.[0] ?? '')
+  inputFilterTotals.value = modalType === 'create' ? [] : (currentDisplay.value?.totals ?? [])
 }
 const saveCurrentFilter = () => {
   filterLabelGroup.value.submitFn()
@@ -221,8 +221,15 @@ const update = () => {
 
         <DsfrSelect
           v-if="filterModalType !== 'delete'"
-          v-model="inputFilterTotals"
+          v-model="inputFilterTotals[0]"
           :label="'Sélectionner la colonne pour le total numéraire'"
+          :options="totalsAllowedOptions"
+        />
+
+        <DsfrSelect
+          v-if="filterModalType !== 'delete'"
+          v-model="inputFilterTotals[1]"
+          :label="'Sélectionner la colonne pour le deuxième total numéraire'"
           :options="totalsAllowedOptions"
         />
       </div>
