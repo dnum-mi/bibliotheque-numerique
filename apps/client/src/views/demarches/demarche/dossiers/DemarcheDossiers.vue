@@ -186,7 +186,7 @@ const onGridReady = (event: GridReadyEvent) => {
 
 //#region Filter events
 const customDisplayOperationSuccess = ref(true)
-const createFilter = async ({ filterName = '', totals = '' }: { filterName?: string, totals?: string }) => {
+const createFilter = async ({ filterName = '', totals = [] }: { filterName?: string, totals?: string[] }) => {
   customDisplayOperationSuccess.value = false
   const createCustomFilterDto: CreateCustomFilterDto = {
     name: filterName,
@@ -197,7 +197,7 @@ const createFilter = async ({ filterName = '', totals = '' }: { filterName?: str
   }
 
   if (totals) {
-    createCustomFilterDto.totals = totals === 'Aucun total' ? [] : [totals]
+    createCustomFilterDto.totals = totals.filter(tt => tt !== 'Aucun total')
   }
   try {
     const filterId = await customFilterStore.createCustomFilter(createCustomFilterDto, demarche.value.id)
@@ -242,14 +242,14 @@ const deleteFilter = async () => {
   }
 }
 
-const updateFilterName = async ({ filterName = '', totals = '' }) => {
+const updateFilterName = async ({ filterName = '', totals = [] }) => {
   customDisplayOperationSuccess.value = false
   if (selectedCustomFilter.value) {
     const dto: PatchCustomFilterDto = {
       name: filterName,
     }
     if (totals) {
-      dto.totals = totals === 'Aucun total' ? [] : [totals]
+      dto.totals = totals.filter(tt => tt !== 'Aucun total')
     }
     dto.columns = paginationDto.value.columns
     try {
