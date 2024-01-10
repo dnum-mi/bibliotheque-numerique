@@ -237,7 +237,7 @@ export class FoundationService extends BaseEntityService {
 
   async getFoundationsByRnfIds(
     rnfIds: string[],
-    updatedAfter: Date | undefined,
+    updatedAfter: string | undefined,
   ): Promise<FoundationOutputDto[]> {
     this.logger.verbose('getFoundationsByRnfIds')
     const where: {
@@ -246,7 +246,7 @@ export class FoundationService extends BaseEntityService {
     } = { rnfId: { in: rnfIds } }
     if (updatedAfter) {
       where.updatedAt = {
-        gte: updatedAfter,
+        gte: new Date(updatedAfter),
       }
     }
     return this.prisma.foundation.findMany({

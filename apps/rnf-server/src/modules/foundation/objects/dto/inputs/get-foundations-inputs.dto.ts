@@ -10,5 +10,5 @@ export class GetFoundationsInputDto {
   @IsOptional()
   @IsDateString()
   @ApiProperty({ description: "Lister seulement celles qui ont été modifiées depuis 'date'." })
-    date?: Date
+    date?: string
 }
