@@ -97,7 +97,7 @@ const onSelected = (demarche: SmallDemarcheOutputDto) => {
       type="text"
       label="types"
       label-visible
-      hint="Format: ex: [ &quot;ARUP&quot;, &quot;CUTLTE&quot;, &quot;FE&quot;, &quot;FDD&quot;, &quot;FRUP&quot; ]"
+      hint="Format: ex: [ &quot;ARUP&quot;, &quot;CULTE&quot;, &quot;FE&quot;, &quot;FDD&quot;, &quot;FRUP&quot; ]"
     />
   </div>
   <div class="flex flex-row gap-2">
