@@ -1,7 +1,7 @@
 import { type IFilterDef } from 'ag-grid-community'
 import type { FormatFunctionRefKeys } from '@biblio-num/shared'
 
-import { DossierState } from '../../../utils'
+import { DossierState } from '@/utils'
 import StatusBadgesRenderer from '../../Badges/StatusBadgesRenderer.vue'
 import type { Component } from 'vue'
 
@@ -9,7 +9,7 @@ const fieldTypesDict = {
   file: 'agTextColumnFilter',
   string: 'agTextColumnFilter',
   number: 'agNumberColumnFilter',
-  date: 'agDateColumnFilter',
+  date: 'agMultiColumnFilter',
   boolean: 'agSetColumnFilter',
   enum: 'agSetColumnFilter',
   default: 'agTextColumnFilter',
@@ -39,6 +39,23 @@ export const getAgGridFilterFromFieldType = (fieldType?: keyof typeof fieldTypes
 
     if (formatFunctionRef && filterCellRender[formatFunctionRef]) {
       filter.filterParams.cellRenderer = filterCellRender[formatFunctionRef]
+    }
+  }
+
+  if (fieldType === 'date') {
+    filter.filterParams = {
+      filters: [
+        {
+          filter: 'agDateColumnFilter',
+          display: 'accordion',
+          title: 'Filtre par date',
+        },
+        {
+          filter: 'customDateFilter',
+          display: 'accordion',
+          title: 'Filtre par période',
+        },
+      ],
     }
   }
   return filter

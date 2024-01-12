@@ -358,6 +358,27 @@ describe('Dossier listing', () => {
         filter: 'toto',
       },
     },
+    {
+      filterType: 'date',
+      condition1: {
+        type: 'greaterThan',
+        filter: 't0to',
+      },
+    },
+    {
+      filterType: 'date',
+      condition1: {
+        type: 'GreaterThan',
+        filter: '2024-01-12T11:37:54.000Z',
+      },
+    },
+    {
+      filterType: 'date',
+      condition1: {
+        type: 'since',
+        filter: 'ThreeWeeks',
+      },
+    },
   ]
 
   badFilters.forEach((badFilter, i) => {

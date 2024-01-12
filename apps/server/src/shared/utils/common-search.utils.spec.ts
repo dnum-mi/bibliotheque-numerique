@@ -1,5 +1,6 @@
 import { buildFilterQuery } from './common-search.utils'
 import { DateFilterConditions } from '@biblio-num/shared'
+import * as dayjs from 'dayjs'
 
 describe('Common search utils', () => {
   describe('Text filters', () => {
@@ -333,6 +334,24 @@ describe('Common search utils', () => {
             { dateField: 'date' },
           ),
         ).toEqual('(("dateField" > \'2023-01-01\'))')
+      })
+
+      it('Should build filter for date since condition', () => {
+        const oneYearBeforeNow = dayjs().subtract(1, 'year').format()
+        expect(
+          buildFilterQuery(
+            {
+              dateField: {
+                filterType: 'date',
+                condition1: {
+                  type: DateFilterConditions.Since,
+                  sinceWhen: 'OneYear',
+                },
+              },
+            },
+            { dateField: 'date' },
+          ),
+        ).toEqual('(("dateField" > \'' + oneYearBeforeNow + '\'))')
       })
     })
     describe('Array date filters', () => {
