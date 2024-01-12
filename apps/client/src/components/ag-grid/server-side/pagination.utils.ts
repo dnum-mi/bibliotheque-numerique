@@ -6,23 +6,66 @@ import type {
   SortDto,
   TextFilterConditionDto,
 } from '@biblio-num/shared'
-import type {
-  DateFilterModel,
-  NumberFilterModel,
-  SetFilterModel,
-  SortModelItem,
-  TextFilterModel,
+import {
+  type DateFilterModel,
+  type IMultiFilterModel,
+  type NumberFilterModel,
+  type SetFilterModel,
+  type SortModelItem,
+  type TextFilterModel,
 } from 'ag-grid-community'
 import type { AgGridCommon } from 'ag-grid-community/dist/lib/interfaces/iCommon'
 
-export const fromAggToBackendSort = (sortModel: SortModelItem[]): SortDto[] => {
-  return sortModel.map((sort) => ({
-    key: sort.colId,
-    order: sort.sort === 'asc' ? 'ASC' : 'DESC',
-  }))
+type FilterModel = Parameters<AgGridCommon<unknown, unknown>['api']['setFilterModel']>[0]
+
+const _fromAggDateFilterToBackendFilter = (filter: DateFilterModel): FilterDto => ({
+  filterType: filter.filterType as string,
+  condition1: {
+    filter: filter.dateFrom,
+    filterTo: filter.dateTo,
+    type: filter.type,
+  } as DateFilterConditionDto,
+})
+
+const _fromAggSetFilterToBackendFilter = (filter: SetFilterModel): FilterDto => ({
+  filterType: filter.filterType as string,
+  condition1: {
+    filter: filter.values,
+  } as EnumFilterConditionDto,
+})
+
+const _fromAggNumberFilterToBackendFilter = (filter: NumberFilterModel): FilterDto => ({
+  filterType: filter.filterType as string,
+  condition1: {
+    filter: filter.filter,
+    type: filter.type,
+  } as NumberFilterConditionDto,
+})
+
+const _fromAggStringFilterToBackendFilter = (filter: TextFilterModel): FilterDto => ({
+  filterType: filter.filterType as string,
+  condition1: {
+    filter: filter.filter,
+    type: filter.type,
+  } as TextFilterConditionDto,
+})
+
+// multi filter now is only used for date
+const _fromAggMultiFilterToBackendFilter = (filter: IMultiFilterModel): FilterDto => {
+  const sinceValue = filter.filterModels?.[1]?.value
+  if (sinceValue) {
+    return {
+      filterType: 'date',
+      condition1: {
+        sinceWhen: sinceValue,
+        type: 'since',
+      } as DateFilterConditionDto,
+    }
+  } else {
+    return _fromAggDateFilterToBackendFilter(filter.filterModels?.[0] as DateFilterModel)
+  }
 }
 
-type FilterModel = Parameters<AgGridCommon<unknown, unknown>['api']['setFilterModel']>[0]
 export const fromAggToBackendFilter = <T>(filterModel: Record<string, FilterModel>): Record<keyof T, FilterDto> | null => {
   const entries = Object.entries(filterModel)
   if (entries.length) {
@@ -33,51 +76,26 @@ export const fromAggToBackendFilter = <T>(filterModel: Record<string, FilterMode
           delete value.conditions
           filters[key] = value as FilterDto
           break
-        case value.filterType === 'date':
-        {
-          const v = value as DateFilterModel
-          filters[key] = {
-            filterType: v.filterType as string,
-            condition1: {
-              filter: v.dateFrom as string,
-              filterTo: v.dateTo,
-              type: v.type,
-            } as DateFilterConditionDto,
-          }
+        case value.filterType === 'date': {
+          filters[key] = _fromAggDateFilterToBackendFilter(value as DateFilterModel)
           break
         }
-        case value.filterType === 'set':
-        {
-          const v = value as SetFilterModel
-          filters[key] = {
-            filterType: v.filterType as string,
-            condition1: {
-              filter: v.values,
-            } as EnumFilterConditionDto,
-          }
+        case value.filterType === 'set': {
+          filters[key] = _fromAggSetFilterToBackendFilter(value as SetFilterModel)
           break
         }
         case value.filterType === 'number': {
-          const v = value as NumberFilterModel
-          filters[key] = {
-            filterType: v.filterType as string,
-            condition1: {
-              filter: v.filter,
-              type: v.type,
-            } as NumberFilterConditionDto,
-          }
+          filters[key] = _fromAggNumberFilterToBackendFilter(value as NumberFilterModel)
           break
         }
-        default:
-        {
-          const v = value as TextFilterModel
-          filters[key] = {
-            filterType: v.filterType as string,
-            condition1: {
-              filter: v.filter,
-              type: v.type,
-            } as TextFilterConditionDto,
-          }
+        // multi for now is only used for date
+        case value.filterType === 'multi': {
+          filters[key] = _fromAggMultiFilterToBackendFilter(value as IMultiFilterModel)
+          break
+        }
+        case value.filterType === 'text':
+        default: {
+          filters[key] = _fromAggStringFilterToBackendFilter(value as TextFilterModel)
           break
         }
       }
@@ -88,6 +106,13 @@ export const fromAggToBackendFilter = <T>(filterModel: Record<string, FilterMode
   }
 }
 
+export const fromAggToBackendSort = (sortModel: SortModelItem[]): SortDto[] => {
+  return sortModel.map((sort) => ({
+    key: sort.colId,
+    order: sort.sort === 'asc' ? 'ASC' : 'DESC',
+  }))
+}
+
 export const backendFilterToAggFilter = (filters: Record<string, FilterDto>): FilterModel => {
   const entries = Object.entries(filters)
   if (entries.length) {
@@ -95,6 +120,16 @@ export const backendFilterToAggFilter = (filters: Record<string, FilterDto>): Fi
     entries.forEach(([key, value]) => {
       if (value.condition2) {
         aggFilters[key] = filters[key]
+      } if (value.filterType === 'date' && value.condition1?.type === 'since') {
+        aggFilters[key] = {
+          filterType: 'multi',
+          filterModels: [
+            null,
+            {
+              value: (value.condition1 as DateFilterConditionDto).sinceWhen,
+            },
+          ],
+        }
       } else {
         aggFilters[key] = {
           filterType: value.filterType,
