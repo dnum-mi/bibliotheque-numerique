@@ -186,6 +186,43 @@ const mappingColumnExpected = [
     source: 'fix-field',
   },
   {
+    "children": [
+      {
+        "columnLabel": null,
+        "id": "6d516e67-3218-49f4-8a88-ca5045ad9c70",
+        "originalLabel": "Demandeur: Civilité",
+        "source": "fix-field",
+        "type": "string",
+      },
+      {
+        "columnLabel": null,
+        "id": "6d516e67-3218-49f4-8a88-ca5045ad9c71",
+        "originalLabel": "Demandeur: Nom",
+        "source": "fix-field",
+        "type": "string",
+      },
+      {
+        "columnLabel": null,
+        "id": "6d516e67-3218-49f4-8a88-ca5045ad9c72",
+        "originalLabel": "Demandeur: Prénom",
+        "source": "fix-field",
+        "type": "string",
+      },
+      {
+        "columnLabel": null,
+        "id": "6d516e67-3218-49f4-8a88-ca5045ad9c73",
+        "originalLabel": "Demandeur: Date de naissance",
+        "source": "fix-field",
+        "type": "date",
+      },
+    ],
+    "columnLabel": null,
+    "id": "6d516e67-3218-49f4-8a88-ca5045ad9c6e",
+    "originalLabel": "Demandeur",
+    "source": "fix-field",
+    "type": "string",
+  },
+  {
     id: 'Q2hhbXAtMzE=',
     originalLabel: 'Informations de base',
     columnLabel: null,

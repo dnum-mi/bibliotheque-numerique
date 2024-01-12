@@ -305,6 +305,63 @@ const expectedFixFieldsDates = (
   },
 ]
 
+//#region personne physique
+const expectedFixFieldPersonnePhysique = [
+  {
+    fieldSource: 'fix-field',
+    dsChampType: null,
+    formatFunctionRef: null,
+    label: 'Demandeur: Civilité',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9c70',
+    stringValue: '',
+    type: 'string',
+  },
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur: Nom',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9c71',
+    stringValue: '',
+    type: 'string',
+  },
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur: Prénom',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9c72',
+    stringValue: '',
+    type: 'string',
+  },
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur: Date de naissance',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9c73',
+    stringValue: '',
+    type: 'date',
+  }]
+const nbFiledsDmandeurPersonnePhysique = expectedFixFieldPersonnePhysique.length
+//#endregion
+
 describe('Syncronisation ', () => {
   let app: INestApplication
   let cookies: Cookies
@@ -439,8 +496,9 @@ describe('Syncronisation ', () => {
         })
       })
       .then((fields) => {
-        expect(fields.length).toEqual(39)
-        expect(fields).toMatchObject([
+        expect(fields.length).toEqual(39 + nbFiledsDmandeurPersonnePhysique)
+
+        const expectedFields = [
           {
             fieldSource: 'fix-field',
             dsChampType: null,
@@ -632,11 +690,17 @@ describe('Syncronisation ', () => {
             parentRowIndex: null,
             label: 'Une annotation',
           },
-        ])
-        expect(fields[25].parentId).toEqual(fields[29].id)
-        expect(fields[26].parentId).toEqual(fields[29].id)
-        expect(fields[27].parentId).toEqual(fields[29].id)
-        expect(fields[28].parentId).toEqual(fields[29].id)
+        ]
+
+        expect(fields).toMatchObject(
+          expect.arrayContaining(expectedFields.map(field => expect.objectContaining(field))),
+        )
+        const fieldParent = fields.find(field => field.label === 'Liste de course')
+        const fieldChilds = fields.filter(field => field.label === 'Légume' || field.label === 'Fruit')
+
+        fieldChilds.forEach(fieldChild => {
+          expect(fieldChild.parentId).toEqual(fieldParent.id)
+        })
 
         expect(fields).toEqual(
           expect.not.arrayContaining([
@@ -648,6 +712,12 @@ describe('Syncronisation ', () => {
             }),
           ]),
         )
+
+        // Demandeur: Personne Physique
+        expect(fields).toMatchObject(
+          expect.arrayContaining(
+            expectedFixFieldPersonnePhysique.map(field => expect.objectContaining(field)),
+          ))
       })
       .then(() => {
         return dataSource.manager.find(Field, {
