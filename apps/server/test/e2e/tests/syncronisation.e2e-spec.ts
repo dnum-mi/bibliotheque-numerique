@@ -359,9 +359,517 @@ const expectedFixFieldPersonnePhysique = [
     stringValue: '',
     type: 'date',
   }]
-const nbFiledsDmandeurPersonnePhysique = expectedFixFieldPersonnePhysique.length
+const nbFieldsDmandeurPersonnePhysique = expectedFixFieldPersonnePhysique.length
 //#endregion
 
+//#region personne moral
+const expectedFixFieldsAsso = [
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur-Association: Date creation',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9c81',
+    stringValue: '',
+    type: 'date',
+  },
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur-Association: Date declaration',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9c82',
+    stringValue: '',
+    type: 'date',
+  },
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur-Association: Date publication',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9c83',
+    stringValue: '',
+    type: 'date',
+  },
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur-Association: Objet',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9c84',
+    stringValue: '',
+    type: 'string',
+  },
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur-Association: RNA',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9c85',
+    stringValue: '',
+    type: 'string',
+  },
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur-Association: Titre',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9c86',
+    stringValue: '',
+    type: 'string',
+  },
+]
+const expectedFixFieldsEntreprise = [
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur-Entreprise: Nom',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9d01',
+    stringValue: '',
+    type: 'string',
+  },
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur-Entreprise: Prénom',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9d02',
+    stringValue: '',
+    type: 'string',
+  },
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur-Entreprise: Nom commercial',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9d03',
+    stringValue: '',
+    type: 'string',
+  },
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur-Entreprise: Raison sociale',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9d04',
+    stringValue: '',
+    type: 'string',
+  },
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur-Entreprise: Siren',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9d05',
+    stringValue: '',
+    type: 'string',
+  },
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur-Entreprise: Siret siege social',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9d06',
+    stringValue: '',
+    type: 'string',
+  },
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur-Entreprise: numero TVA intracommunautaire',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9d07',
+    stringValue: '',
+    type: 'string',
+  },
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur-Entreprise: Forme juridique',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9d08',
+    stringValue: '',
+    type: 'string',
+  },
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur-Entreprise: Forme juridique code',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9d09',
+    stringValue: '',
+    type: 'string',
+  },
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur-Entreprise: Adresse',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9d0a',
+    stringValue: '',
+    type: 'string',
+  },
+  //#region  TODO: Voir l'utilité et Tester le récupération des fichiers dans l'object demandeur
+  // {
+  //   dsChampType: null,
+  //   fieldSource: 'fix-field',
+  //   formatFunctionRef: null,
+  //   label: 'Demandeur-Entreprise: Attestation fiscale',
+  //   numberValue: null,
+  //   parentId: null,
+  //   parentRowIndex: null,
+  //   rawJson: null,
+  //   sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9d0b',
+  //   stringValue: '',
+  //   type: 'file',
+  // },
+  // {
+  //   dsChampType: null,
+  //   fieldSource: 'fix-field',
+  //   formatFunctionRef: null,
+  //   label: 'Demandeur-Entreprise: Attestation sociale',
+  //   numberValue: null,
+  //   parentId: null,
+  //   parentRowIndex: null,
+  //   rawJson: null,
+  //   sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9d0c',
+  //   stringValue: '',
+  //   type: 'file',
+  // },
+  //#endregion
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur-Entreprise: Capital sociale',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9d0d',
+    stringValue: '',
+    type: 'number',
+  },
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur-Entreprise: Code effectif entreprise',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9d0e',
+    stringValue: '',
+    type: 'string',
+  },
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur-Entreprise: Date de création',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9d0f',
+    stringValue: '',
+    type: 'date',
+  },
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur-Entreprise: Etat administratif',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9d30',
+    stringValue: '',
+    type: 'string',
+  },
+]
+const expectedFixFieldsAddress = [
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur-Adresse: Libellé complet de l’adresse',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9e00',
+    stringValue: '',
+    type: 'string',
+  },
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur-Adresse: Code INSEE de la commune',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9e01',
+    stringValue: '',
+    type: 'string',
+  },
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur-Adresse: Nom de la commune',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9e02',
+    stringValue: '',
+    type: 'string',
+  },
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur-Adresse: N° de département',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9e03',
+    stringValue: '',
+    type: 'string',
+  },
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur-Adresse: Nom de département',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9e04',
+    stringValue: '',
+    type: 'string',
+  },
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur-Adresse: Code postal',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9e05',
+    stringValue: '',
+    type: 'string',
+  },
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur-Adresse: N° de region',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9e06',
+    stringValue: '',
+    type: 'string',
+  },
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur-Adresse: Nom de région',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9e07',
+    stringValue: '',
+    type: 'string',
+  },
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur-Adresse: Numéro éventuel et nom de voie ou lieu dit',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9e08',
+    stringValue: '',
+    type: 'string',
+  },
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur-Adresse: Nom de voie ou lieu dit',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9e09',
+    stringValue: '',
+    type: 'string',
+  },
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur-Adresse: Numéro avec indice de répétition éventuel (bis, ter, A, B)',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9e0a',
+    stringValue: '',
+    type: 'string',
+  },
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur-Adresse: Type',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9e0b',
+    stringValue: '',
+    type: 'string',
+  },
+
+]
+const expectedFixFieldsPersMoral = [
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur: Libelle NAF',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9c91',
+    stringValue: '',
+    type: 'string',
+  },
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur: NAF',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9c93',
+    stringValue: '',
+    type: 'string',
+  },
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur: SIRET',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9c94',
+    stringValue: '',
+    type: 'string',
+  },
+  {
+    dsChampType: null,
+    fieldSource: 'fix-field',
+    formatFunctionRef: null,
+    label: 'Demandeur: Siege social',
+    numberValue: null,
+    parentId: null,
+    parentRowIndex: null,
+    rawJson: null,
+    sourceId: '6d516e67-3218-49f4-8a88-ca5045ad9c95',
+    stringValue: '',
+    type: 'string',
+  },
+]
+
+//#endregion
 describe('Syncronisation ', () => {
   let app: INestApplication
   let cookies: Cookies
@@ -496,7 +1004,13 @@ describe('Syncronisation ', () => {
         })
       })
       .then((fields) => {
-        expect(fields.length).toEqual(39 + nbFiledsDmandeurPersonnePhysique)
+        expect(fields.length).toEqual(39 +
+                                      nbFieldsDmandeurPersonnePhysique +
+                                      expectedFixFieldsAddress.length +
+                                      expectedFixFieldsAsso.length +
+                                      expectedFixFieldsEntreprise.length +
+                                      expectedFixFieldsPersMoral.length,
+        )
 
         const expectedFields = [
           {
@@ -923,5 +1437,171 @@ describe('Syncronisation ', () => {
           .where("\"dsDataJson\"->>'number' = :id", { id: '102' })
           .execute()
       })
+  })
+
+  it('Should get Demandeur to synchronize demarche', async () => {
+    const res = await request(app.getHttpServer())
+      .post('/demarches/create')
+      .set('Cookie', [cookies.sudo])
+      .send({
+        idDs: 200,
+      })
+      .expect(201)
+
+    expect(res.body).toEqual({
+      message: 'Demarche with DS id 200 has been created.',
+    })
+
+    const fields = await dataSource.manager.find(Field, {
+      where: { dossier: { sourceId: '200' }, sourceId: In(expectedFixFieldPersonnePhysique.map(ff => ff.sourceId)) },
+      order: { sourceId: 'ASC', stringValue: 'ASC' },
+    })
+
+    const expectedFieldsDemandeurPhysique:Partial<Field>[] = [
+      {
+        stringValue: 'M',
+        label: 'Demandeur: Civilité',
+      },
+      {
+        stringValue: 'Michel',
+        label: 'Demandeur: Nom',
+      },
+      {
+        stringValue: 'MARTIN',
+        label: 'Demandeur: Prénom',
+      },
+    ]
+
+    expect(fields).toMatchObject(
+      expect.arrayContaining(expectedFieldsDemandeurPhysique.map(field => expect.objectContaining(field))),
+    )
+  })
+
+  it('Should get Demandeur Moral to synchronize demarche', async () => {
+    const res = await request(app.getHttpServer())
+      .post('/demarches/create')
+      .set('Cookie', [cookies.sudo])
+      .send({
+        idDs: 300,
+      })
+      .expect(201)
+
+    expect(res.body).toEqual({
+      message: 'Demarche with DS id 300 has been created.',
+    })
+
+    const fields = await dataSource.manager.find(Field, {
+      where: {
+        dossier: { sourceId: '300' },
+        sourceId: In([
+          ...expectedFixFieldsPersMoral,
+          ...expectedFixFieldsAddress,
+          ...expectedFixFieldsAsso,
+          ...expectedFixFieldsEntreprise,
+        ].map(ff => ff.sourceId)),
+      },
+    })
+
+    const expectedAddress = [
+      {
+        label: 'Demandeur-Adresse: Libellé complet de l’adresse',
+        stringValue: '149 RTE de la Prêle 01150 Sainte-Julie',
+      },
+      {
+        label: 'Demandeur-Adresse: Code postal',
+        stringValue: '01150',
+      },
+      {
+        label: 'Demandeur-Adresse: Nom de la commune',
+        stringValue: 'Sainte-Julie',
+      },
+      {
+        label: 'Demandeur-Adresse: Type',
+        stringValue: 'RTE',
+      },
+      {
+        label: 'Demandeur-Adresse: Numéro éventuel et nom de voie ou lieu dit',
+        stringValue: '149 RTE de la Prêle',
+      },
+      {
+        label: 'Demandeur-Adresse: Numéro avec indice de répétition éventuel (bis, ter, A, B)',
+        stringValue: '149',
+      },
+      {
+        label: 'Demandeur-Adresse: Nom de voie ou lieu dit',
+        stringValue: 'de la Prêle',
+      },
+      {
+        label: 'Demandeur-Adresse: Nom de département',
+        stringValue: '',
+      },
+      {
+        label: 'Demandeur-Adresse: N° de département',
+        stringValue: '',
+      },
+      {
+        label: 'Demandeur-Adresse: Nom de région',
+        stringValue: '',
+      },
+      {
+        label: 'Demandeur-Adresse: N° de region',
+        stringValue: '',
+      },
+      {
+        label: 'Demandeur-Adresse: Code INSEE de la commune',
+        stringValue: '',
+      },
+    ]
+
+    const fieldsAddress = fields.filter(f => f.label.match(/Demandeur-Adresse:.*/))
+    expect(fieldsAddress).toHaveLength(expectedAddress.length)
+
+    expectedAddress.forEach(expectedValue => {
+      expect(fieldsAddress.find(f => f.label === expectedValue.label)).toMatchObject(
+        expectedValue,
+      )
+    })
+
+    const expectedAsso = [
+      { label: 'Demandeur-Association: Date creation', dateValue: new Date('2020-07-26T04:24:48.000Z') },
+      { label: 'Demandeur-Association: Date declaration', dateValue: new Date('2020-07-26T04:25:48.000Z') },
+      { label: 'Demandeur-Association: Date publication', dateValue: new Date('2020-07-26T04:26:48.000Z') },
+      { label: 'Demandeur-Association: Objet', stringValue: 'testeur' },
+      { label: 'Demandeur-Association: RNA', stringValue: 'W011006231' },
+      { label: 'Demandeur-Association: Titre', stringValue: 'MAIN DANS LA MAIN' },
+    ]
+
+    const fieldsAsso = fields.filter(f => f.label.match(/Demandeur-Association:.*/))
+    expect(fieldsAsso).toHaveLength(expectedAsso.length)
+    expectedAsso.forEach(expectedValue => {
+      expect(fieldsAsso.find(f => f.label === expectedValue.label)).toMatchObject(
+        expectedValue,
+      )
+    })
+
+    const expectedEntreprise = [
+      { label: 'Demandeur-Entreprise: Capital social', stringValue: '' },
+      { label: 'Demandeur-Entreprise: Code effectif entreprise', stringValue: '' },
+      { label: 'Demandeur-Entreprise: Date de création', dateValue: new Date('2020-07-21T04:26:48.000Z') },
+      { label: 'Demandeur-Entreprise: Etat administratif', stringValue: '' },
+      { label: 'Demandeur-Entreprise: Forme juridique', stringValue: '' },
+      { label: 'Demandeur-Entreprise: Forme juridique code', stringValue: '' },
+      { label: 'Demandeur-Entreprise: Adresse', stringValue: '149 RTE de la Prêle 01150 Sainte-Julie' },
+      { label: 'Demandeur-Entreprise: Nom', stringValue: 'BN' },
+      { label: 'Demandeur-Entreprise: Nom commercial', stringValue: 'Bibliothéque numérique' },
+      { label: 'Demandeur-Entreprise: numero TVA intracommunautaire', stringValue: '' },
+      { label: 'Demandeur-Entreprise: Prénom', stringValue: '' },
+      { label: 'Demandeur-Entreprise: Raison sociale', stringValue: '' },
+      { label: 'Demandeur-Entreprise: Siren', stringValue: '432992584' },
+      { label: 'Demandeur-Entreprise: Siret siege social', stringValue: '43299258400016' },
+    ]
+
+    const fieldsEntrprise = fields.filter(f => f.label.match(/Demandeur-Entreprise:.*/))
+    expect(fieldsEntrprise).toHaveLength(expectedEntreprise.length)
+    expectedEntreprise.forEach(expectedValue => {
+      expect(fieldsEntrprise.find(f => f.label === expectedValue.label)).toMatchObject(
+        expectedValue,
+      )
+    })
   })
 })
