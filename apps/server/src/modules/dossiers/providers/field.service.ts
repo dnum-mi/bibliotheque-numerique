@@ -164,15 +164,17 @@ export class FieldService extends BaseEntityService<Field> {
     return Object.keys(fixFieldValueFunctions).map((fixFieldId) => {
       const value: string =
         fixFieldValueFunctions[fixFieldId](dataJson)?.toString() ?? ''
+      const columnHashSelected = columnHash[fixFieldId]
+      if (!columnHashSelected) return null
       return {
-        ...this._extractColumnRefFieldInformation(columnHash[fixFieldId]),
+        ...this._extractColumnRefFieldInformation(columnHashSelected),
         stringValue: value.toString(),
         dateValue: FieldService.giveDateOrNull(
-          columnHash[fixFieldId].type,
+          columnHashSelected.type,
           value,
         ),
         numberValue: FieldService.giveNumberOrNull(
-          columnHash[fixFieldId].type,
+          columnHashSelected.type,
           value,
         ),
         dossierId,
@@ -180,7 +182,7 @@ export class FieldService extends BaseEntityService<Field> {
         rawJson: null,
         dsChampType: null,
       }
-    })
+    }).filter(dto => dto)
   }
 
   private _createFieldsFromDataJson(
