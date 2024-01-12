@@ -12,11 +12,8 @@ import {
   fixFieldsAmounts,
   fixFieldsExcelChamps,
 } from '@/modules/dossiers/objects/constante/fix-field-excel-champ.dictionnary'
-import { TDossierWithPrefecture } from '@/modules/dossiers/providers/field.service'
-
-type FixFieldValueGetter = (
-  dossier: TDossierWithPrefecture,
-) => string | number | boolean | Date | null
+import { FixFieldValueGetter } from './fixfieldValueGetter.'
+import { fixFieldValueFunctionsDemandeur, fixFieldsDemandeur } from './fix-field-demandeur.dictionnary'
 
 export const fixFields: MappingColumn[] = [
   {
@@ -74,6 +71,7 @@ export const fixFieldValueFunctions: Record<string, FixFieldValueGetter> = {
     dossier.datePassageEnInstruction,
   '9863ce70-6378-4d7e-aca9-b81fb7b97c13': (dossier) =>
     dossier.datePassageEnConstruction,
+  ...fixFieldValueFunctionsDemandeur,
 }
 
 export const fixFieldsDemarcheFE: MappingColumn[] = [
@@ -90,6 +88,7 @@ export const getFixFieldsByIdentification = (
   identification?: IdentificationDemarcheKeys,
 ): MappingColumn[] => [
   ...fixFields,
+  ...fixFieldsDemandeur,
   ...(identification === IdentificationDemarche.FE
     ? fixFieldsByIdentificationDictionary[identification]
     : []),
