@@ -5,18 +5,19 @@ import LayoutFiche from '@/components/Layout/LayoutFiche.vue'
 import ListeDossier from './ListeDossier.vue'
 import OrganismeBadge from '@/components/Badges/OrganismeBadge.vue'
 import InfoContact from '@/components/InfoContact.vue'
-import { type OrganismeIdType, useOrganismeStore } from '@/stores/organisme'
+import { type OrganismeIdType, useOrganismeStore, useUserStore } from '@/stores'
 
 const props = withDefaults(defineProps<{ id: string; idType: OrganismeIdType }>(), {})
 
 const organismeStore = useOrganismeStore()
+const userStore = useUserStore()
 
 const organisme = computed(() => organismeStore.organisme)
 const prefecture = computed(
   () => `${organismeStore.organisme?.addressPostalCode?.substring(0, 2) || ''} ${organismeStore.organisme?.addressCityName || ''}`,
 )
 const creation = computed(() => dateToStringFr(organisme.value?.dateCreation))
-const dissolution = computed(() => dateToStringFr(organisme.value?.dateDissolution))
+const dissolution = computed(() => dateToStringFr(organisme.value?.dateDissolution ?? undefined))
 
 const tabTitles = [
   {
@@ -30,6 +31,8 @@ const selectedTabIndex = ref(0)
 function selectTab (idx: number) {
   selectedTabIndex.value = idx
 }
+
+const role = computed(() => userStore.currentUser.role)
 
 const isLoading = ref(false)
 onMounted(async () => {
@@ -148,7 +151,7 @@ onMounted(async () => {
       </template>
     </LayoutFiche>
 
-    <div class="flex-basis-[40%]  overflow-auto  flex  flex-col">
+    <div class="flex-basis-[40%]  overflow-auto  flex  flex-col  fr-pr-2w">
       <div class="fr-p-3w flex align-center gap-3">
         <div class="bn-icon--green-archipel">
           <span
@@ -161,7 +164,10 @@ onMounted(async () => {
         </h4>
       </div>
       <div class="w-full">
-        <ListeDossier :organisme-id="organisme.id" />
+        <ListeDossier
+          :organisme-id="organisme.id"
+          :role="role"
+        />
       </div>
     </div>
   </div>
