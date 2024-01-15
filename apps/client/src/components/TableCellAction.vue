@@ -35,6 +35,7 @@ const showElt = () => {
   props.params.context.showElt(props.params.data)
 }
 </script>
+
 <template>
   <DsfrButton
     v-show="show"
