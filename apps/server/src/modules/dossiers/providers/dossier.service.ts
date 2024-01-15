@@ -32,15 +32,16 @@ export class DossierService extends BaseEntityService<Dossier> {
       )
       .innerJoin('d.organisme', 'organisme', 'organisme.id = d.organismeId')
       .where('organisme.id = :organismeId', { organismeId })
-      .select(['d', 'demarche.title'])
+      .select(['d', 'demarche.title', 'demarche.id'])
       .getMany()
       .then(dossiers => {
-        return dossiers.map(d => ({
-          id: d.id,
-          demarcheTitle: d.demarche.title,
-          prefecture: d.prefecture,
-          state: d.state,
-          depotDate: d.dateDepot,
+        return dossiers.map(dossier => ({
+          id: dossier.id,
+          demarcheId: dossier.demarche.id,
+          demarcheTitle: dossier.demarche.title,
+          prefecture: dossier.prefecture,
+          state: dossier.state,
+          depotDate: dossier.dateDepot,
         }))
       })
   }

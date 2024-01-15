@@ -112,7 +112,7 @@ onMounted(async () => {
               :selected="selectedTabIndex === (hasAnnotations ? 2 : 1)"
               :asc="asc"
             >
-              <AttachmentList :files="attachments" />
+              <AttachmentList :files="attachments ?? []" />
             </DsfrTabContent>
           </DsfrTabs>
         </template>

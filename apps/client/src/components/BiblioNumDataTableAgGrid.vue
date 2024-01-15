@@ -1,5 +1,8 @@
 <script lang="ts" setup>
 import { AgGridVue } from 'ag-grid-vue3'
+import type { SelectionChangedEvent, GridReadyEvent } from 'ag-grid-community'
+import type { RowStyle } from 'ag-grid-enterprise'
+import type { AgGridCommon } from 'ag-grid-community/dist/lib/interfaces/iCommon'
 
 import { agGridFilterDict, type AgGridFilterKey, type Action, type HeaderDataTable } from '@/shared/types'
 import TableCellAction from './TableCellAction.vue'
@@ -10,9 +13,6 @@ import { localeTextAgGrid } from './ag-grid/agGridOptions'
 
 import AgGridMultiValueCell from './ag-grid/AgGridMultiValueCell.vue'
 import AgGridAttachmentCell from './ag-grid/AgGridAttachmentCell.vue'
-import type { SelectionChangedEvent, GridReadyEvent } from 'ag-grid-community'
-import type { RowStyle } from 'ag-grid-enterprise'
-import type { AgGridCommon } from 'ag-grid-community/dist/lib/interfaces/iCommon'
 
 const props = withDefaults(defineProps<{
     title?: string,
