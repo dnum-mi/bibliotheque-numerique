@@ -1,5 +1,24 @@
 # Changelog
 
+## [2.1.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.0.0...v2.1.0) (2024-01-16)
+
+
+### Features
+
+* ✨ handle click on dossier only when allowed ([f4ea015](https://github.com/dnum-mi/bibliotheque_numerique/commit/f4ea0153df1215f9f82e04195e542d17be780a03))
+* feat: fix-field Personne moral of demandeur ([2cf3445](https://github.com/dnum-mi/bibliotheque_numerique/commit/2cf344508d63409d06f19408cc6e3aced46e954d))
+* fix-field Personne physique of demandeur ([74b5019](https://github.com/dnum-mi/bibliotheque_numerique/commit/74b501907868e7ee86b8cccaab1b858d19bf13fa))
+* select a second total ([bd17940](https://github.com/dnum-mi/bibliotheque_numerique/commit/bd179403a13da1224e9ba837fc27a45c0c70c1f1))
+* test for fix-field personne physique of demandeur ([7447844](https://github.com/dnum-mi/bibliotheque_numerique/commit/7447844df10de6cdbba9b7b0a6791767247401fe))
+
+
+### Bug Fixes
+
+* convert the date string to JS Date to get list RNF by date ([a9626e7](https://github.com/dnum-mi/bibliotheque_numerique/commit/a9626e7680d0835c85a116b4250773fce16d3dff))
+* failed update mapping when the mapping-column donot have a fix-field ([eaf0523](https://github.com/dnum-mi/bibliotheque_numerique/commit/eaf052344c422d16e1e317c5ba86af0184f4b603))
+* to update mappingColumn when fix-field changed ([e4d056c](https://github.com/dnum-mi/bibliotheque_numerique/commit/e4d056c4372bafdf7d4f715dc62df4d4831e6065))
+* typo Type of demarches on Page Configure Application ([0e20f4b](https://github.com/dnum-mi/bibliotheque_numerique/commit/0e20f4b6a89b08f0ec0a825de91ef9a4741572f6))
+
 ## [2.0.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v1.9.2...v2.0.0) (2024-01-08)
 
 
