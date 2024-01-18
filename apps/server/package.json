@@ -79,6 +79,7 @@
     "class-validator": "^0.14.0",
     "colors": "^1.4.0",
     "cron": "^2.4.4",
+    "date-fns": "3.2.0",
     "dayjs": "^1.11.10",
     "dotenv": "^16.3.1",
     "dotenv-cli": "^7.3.0",
