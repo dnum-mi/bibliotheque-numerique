@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { Repository } from 'typeorm'
+import { IsNull, LessThan, Not, Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Organisme } from '@/modules/organismes/objects/organisme.entity'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
@@ -26,6 +26,40 @@ export class OrganismeService extends BaseEntityService<Organisme> {
   ) {
     super(repo, logger, OrganismeFieldTypeHash)
     this.logger.setContext(this.constructor.name)
+  }
+
+  rnfOutputToOrganisme (idRnf: string, raw: IRnfOutput): Partial<Organisme> {
+    const __extractAddressField = (field: string): string =>
+      raw.address[field] || ''
+
+    return {
+      idRnf,
+      title: raw.title,
+      dateCreation: new Date(raw.createdAt),
+      type: raw.type,
+      email: raw.email,
+      phoneNumber: raw.phone,
+      ...Object.fromEntries(
+        [
+          'label',
+          'postalCode',
+          'cityName',
+          'type',
+          'streetAddress',
+          'streetNumber',
+          'streetName',
+          'departmentName',
+          'departmentCode',
+          'regionName',
+          'regionCode',
+        ].map((field) => [
+          `address${field.charAt(0).toUpperCase()}${field.substring(1)}`,
+          __extractAddressField(field),
+        ]),
+      ),
+      dateDissolution: raw.dissolvedAt,
+      rnfJson: raw,
+    }
   }
 
   async associateOrganismeFromRnf(idRnf: string): Promise<number> {
@@ -124,5 +158,35 @@ export class OrganismeService extends BaseEntityService<Organisme> {
   ): Promise<PaginatedDto<IOrganisme>> {
     this.logger.verbose('listOrganisme')
     return this.paginate<IOrganisme>(dto)
+  }
+
+  async jobUpdateRNF(lastDate: Date):Promise<void> {
+    const date = lastDate
+    const rnfIds = await this.repo.find({
+      where: {
+        idRnf: Not(IsNull()),
+        updatedAt: LessThan(date),
+      },
+      order: {
+        updatedAt: 'ASC',
+      },
+      select: {
+        idRnf: true,
+      },
+    })
+
+    const nb = 10
+
+    for (let i = 0; i < rnfIds.length; i += nb) {
+      const raws = await this.rnfService.getListFundations({
+        rnfIds: rnfIds.slice(i, i + nb).map(org => org.idRnf),
+        date: date.toISOString(),
+      })
+
+      await Promise.all(raws.map((raw) => {
+        const idRnf = raw.rnfId
+        return this.repo.update({ idRnf }, this.rnfOutputToOrganisme(idRnf, raw))
+      }))
+    }
   }
 }
