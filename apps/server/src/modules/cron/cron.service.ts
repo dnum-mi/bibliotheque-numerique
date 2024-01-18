@@ -11,6 +11,7 @@ import { JobNames } from './job-name.enum'
 import { DemarcheSynchroniseService } from '../demarches/providers/services/demarche-synchronise.service'
 import { TMapperJobs } from './mapper-jobs.type'
 import { InstructionTimesService } from '@/modules/instruction_time/instruction_times.service'
+import { OrganismeService } from '@/modules/organismes/providers/organisme.service'
 
 @Injectable()
 export class CronService implements OnApplicationBootstrap, OnModuleInit {
@@ -20,6 +21,7 @@ export class CronService implements OnApplicationBootstrap, OnModuleInit {
     private schedulerRegistry: SchedulerRegistry,
     private demarcheSynchroniseService: DemarcheSynchroniseService,
     private instructionTimesService: InstructionTimesService,
+    private organismeService: OrganismeService,
   ) {
     this.logger.setContext(this.constructor.name)
     this.logger.log('Cron fetching data is set at: ')
@@ -46,6 +48,13 @@ export class CronService implements OnApplicationBootstrap, OnModuleInit {
         fct: this._instructionTimesCalculation,
         description: 'Fetching instruction times',
       },
+      {
+        name: JobNames.UPDATE_RNF,
+        cronTime: this.config.get('fetchOrgRnfInterval'),
+        fct: this.jobUpdateRNF,
+        description: 'Mise à jours des orgranismes',
+      },
+
     ]
 
     mapperJobs.forEach((mapper) => {
@@ -94,6 +103,23 @@ export class CronService implements OnApplicationBootstrap, OnModuleInit {
     } catch (error) {
       this.logger.error({
         message: `UPDATE-INSTRUCTION-TIMES-CALCULATION: ${error.message}`,
+        error,
+      })
+    }
+  }
+
+  dateUpdatedRNFStarted: Date
+
+  private async jobUpdateRNF(): Promise<void> {
+    this.logger.log("Synchronising all organisme from RNF'.")
+
+    try {
+      const now = new Date()
+      await this.organismeService.jobUpdateRNF(this.dateUpdatedRNFStarted)
+      this.dateUpdatedRNFStarted = now
+    } catch (error) {
+      this.logger.error({
+        message: `UPDATE-ORGANISME-RNF: ${error.message}`,
         error,
       })
     }

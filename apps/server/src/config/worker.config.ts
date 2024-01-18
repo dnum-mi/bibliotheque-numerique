@@ -4,6 +4,7 @@ export type TConfig = {
   fetchDataInterval: string;
   fetchOrgInterval: string;
   fetchDelayCalculation: string,
+  fetchOrgRnfInterval:string,
   fetchDataOnStartup: boolean;
   fetchDataOnStartupFromScratch: boolean;
   log: {
@@ -17,6 +18,7 @@ const config = (): TConfig => ({
   fetchDataInterval: process.env.WORKER_FETCH_DATA_INTERVAL || '0 0 1 * * *',
   fetchOrgInterval: process.env.WORKER_FETCH_ORG_INTERVAL || '0 0 1 * * *',
   fetchDelayCalculation: process.env.WORKER_DELAY_CALCUlATION || '0 0 2 * * *',
+  fetchOrgRnfInterval: process.env.WORKER_FETCH_ORG_RNF_INTERVAL || '0 0 1 * * *',
   fetchDataOnStartup: process.env.WORKER_FETCH_DATA_ON_STARTUP
     ? process.env.WORKER_FETCH_DATA_ON_STARTUP === 'true'
     : true,

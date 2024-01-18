@@ -4,12 +4,14 @@ import { DossierModule } from '../dossiers/dossier.module'
 import { DemarcheModule } from '../demarches/demarche.module'
 import { InstructionTimesModule } from '@/modules/instruction_time/instruction_times.module'
 import { XlsxModule } from '@/shared/modules/xlsx/xlsx.module'
+import { OrganismeModule } from '../organismes/organisme.module'
 
 @Module({
   imports: [
     DossierModule,
     DemarcheModule,
     InstructionTimesModule,
+    OrganismeModule,
     XlsxModule,
   ],
   controllers: [],
