@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config'
 import axios from 'axios'
 import { isRnfLuhnValid } from '@/shared/utils/rnf.utils'
 import { IRnfOutput } from '@biblio-num/shared'
+import { GetFoundationsInputDto } from '../objects/dto/get-foundations-inputs.dto'
 
 @Injectable()
 export class RnfService {
@@ -20,6 +21,18 @@ export class RnfService {
     }
     return axios
       .get(`${this.config.get('RNF_API_URL')}/api/foundations/${idRnf}`)
+      .then(response => {
+        return response.data
+      })
+  }
+
+  async getListFundations(args: GetFoundationsInputDto): Promise<IRnfOutput[]> {
+    const date = args.date ? `date=${args.date}&` : ''
+    const rnfIds = args.rnfIds.join('&rnfIds=')
+    const url = `${this.config.get('RNF_API_URL')}/api/foundations?${date}rnfIds=${rnfIds}`
+
+    return axios
+      .get(encodeURI(url))
       .then(response => {
         return response.data
       })
