@@ -11,20 +11,20 @@ export class FileStorage extends BaseEntity {
   declare id: string
 
   @Column({ type: 'varchar' })
-    name: string
+  name: string
 
   @Column({ type: 'varchar' })
-    path: string
+  path: string
 
   @Column({ type: 'varchar' })
-    originalName: string
+  originalName: string
 
   @Column({ type: 'varchar' })
-    checksum: string
+  checksum: string
 
   @Column({ type: 'int' })
-    byteSize: number
+  byteSize: number
 
   @Column({ type: 'varchar' })
-    mimeType: string
+  mimeType: string
 }
