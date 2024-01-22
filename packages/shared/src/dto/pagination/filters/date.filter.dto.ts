@@ -14,6 +14,9 @@ export const DateFilterConditions = {
   NotEqual: 'notEqual',
   LessThan: 'lessThan',
   GreaterThan: 'greaterThan',
+  Blank: 'blank',
+  NotBlank: 'notBlank',
+  Between: 'inRange',
   Since: 'since',
 }
 
@@ -29,7 +32,7 @@ export class DateFilterConditionDto {
   @IsEnum(DateRange)
   sinceWhen?: DateRangeKeys
 
-  @ValidateIf((o) => o.type !== DateFilterConditions.Since)
+  @ValidateIf((o) => o.type !== DateFilterConditions.Since && o.type !== DateFilterConditions.Blank && o.type !== DateFilterConditions.NotBlank)
   @IsDefined()
   @IsDateString()
   filter: null | string
