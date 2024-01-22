@@ -33,6 +33,7 @@ import type { BNColDef } from '@/components/ag-grid/server-side/bn-col-def.inter
 import DemarcheDossiersDisplays, { type TotalsAllowed } from './DemarcheDossiersDisplays.vue'
 import type { CustomFilterWithErrors } from '@/views/demarches/demarche/dossiers/custom-filter-with-errors.type'
 import type { ICustomFilterWithError } from '@biblio-num/shared/types/interfaces/custom-filters/custom-filters.interface'
+import CustomDateFilter from '@/components/ag-grid/custom-filters/CustomDateFilter.vue'
 
 type DemarcheDossiersProps = {
   id: string
@@ -116,7 +117,6 @@ const computeColumnsDef = () => {
         menuTabs: ['filterMenuTab'] as ColumnMenuTab[],
         cellRenderer: DemarcheDossierCellRenderer,
         cellRendererParams: { column },
-        // TODO: need to identify type of filter
         fieldType: column.type,
         sortable: column.formatFunctionRef !== 'file', // TODO use FormatFunctionRef.file
         suppressMenu: column.formatFunctionRef === 'file', // TODO use FormatFunctionRef.file

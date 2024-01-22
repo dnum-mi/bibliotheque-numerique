@@ -13,8 +13,12 @@ import {
   TextFilterConditions,
   UserFriendlyFilter,
   EnumFilterConditionDto,
+  DateRange,
+  DateRangeKeys,
 } from '@biblio-num/shared'
 import { BadRequestException } from '@nestjs/common'
+import * as dayjs from 'dayjs'
+import { ManipulateType } from 'dayjs'
 import { FiltersInCustomFilter } from '@/modules/custom-filters/objects/entities/custom-filter.entity'
 
 const _manualFilterValueEscapingMechanism = (str: string): string => {
@@ -60,7 +64,19 @@ const dateSqlOperators = {
   [DateFilterConditions.NotEqual]: '!=',
   [DateFilterConditions.LessThan]: '<',
   [DateFilterConditions.GreaterThan]: '>',
+  [DateFilterConditions.Since]: '>',
 }
+const rangeInDays: Record<DateRangeKeys, { unit: ManipulateType, value: number }> = {
+  [DateRange.TwentyFourHours]: { unit: 'day', value: 1 },
+  [DateRange.ThreeDays]: { unit: 'day', value: 3 },
+  [DateRange.OneWeek]: { unit: 'week', value: 1 },
+  [DateRange.TwoWeeks]: { unit: 'week', value: 2 },
+  [DateRange.OneMonth]: { unit: 'month', value: 1 },
+  [DateRange.ThreeMonths]: { unit: 'month', value: 3 },
+  [DateRange.SixMonths]: { unit: 'month', value: 6 },
+  [DateRange.OneYear]: { unit: 'year', value: 1 },
+}
+
 const _buildOneDateFilter = (
   key: string,
   filter: DateFilterConditionDto,
@@ -74,6 +90,10 @@ const _buildOneDateFilter = (
     )
   }
   key = _adaptKeyForArray(key, isArray, prefix)
+  if (filter.type === DateFilterConditions.Since) {
+    const range = rangeInDays[filter.sinceWhen]
+    filter.filter = dayjs().subtract(range.value, range.unit).format()
+  }
   return `(${key} ${dateSqlOperator} '${filter.filter}'${isArray ? ')' : ''})`
 }
 //#endregion
@@ -272,10 +292,23 @@ export const dictionaryHumanReadableOperatorsDate = {
   [DateFilterConditions.NotEqual]: 'En dehors du:',
   [DateFilterConditions.LessThan]: 'Avant le:',
   [DateFilterConditions.GreaterThan]: 'Après le:',
+  [DateFilterConditions.Since]: 'Depuis',
 }
 
 export const dictionnaryHumanReadableOperatorsEnum = {
   default: 'Contient: ',
+}
+
+// TODO: duplicata from front. Group it when we have two librairies
+const rangeDictionary: Record<DateRangeKeys, string> = {
+  TwentyFourHours: '24 heures',
+  ThreeDays: '3 jours',
+  OneWeek: '1 semaine',
+  TwoWeeks: '2 semaines',
+  OneMonth: '1 mois',
+  ThreeMonths: '3 mois',
+  SixMonths: '6 mois',
+  OneYear: '1 an',
 }
 
 // TODO: In_range, blank, no_blank
@@ -289,7 +322,6 @@ export const humanReadableOperator = (filterType, type): string =>
   dictionaryHumanReadableFilterType[filterType]?.[type || 'default'] || ''
 
 export const humanReadableFilter = (filter: FilterDto): string => {
-  // TODO: A faire
   return [filter.condition1, filter.condition2]
     .filter((c) => c)
     .map(
@@ -297,7 +329,7 @@ export const humanReadableFilter = (filter: FilterDto): string => {
         `${humanReadableOperator(filter.filterType, condition.type)} ${
           condition.filter instanceof Array
             ? condition.filter.join(', ')
-            : condition.filter
+            : condition.filter ?? rangeDictionary[(condition as DateFilterConditionDto).sinceWhen]
         }`,
     )
     .join(filter.operator ? (filter.operator === 'AND' ? ' et ' : ' ou ') : '')
