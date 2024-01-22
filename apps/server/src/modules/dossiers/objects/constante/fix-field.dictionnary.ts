@@ -12,7 +12,7 @@ import {
   fixFieldsAmounts,
   fixFieldsExcelChamps,
 } from '@/modules/dossiers/objects/constante/fix-field-excel-champ.dictionnary'
-import { FixFieldValueGetter } from './fixfieldValueGetter.'
+import { FixFieldValueGetter } from './fix-field-value-getter'
 import { fixFieldValueFunctionsDemandeur, fixFieldsDemandeur } from './fix-field-demandeur.dictionnary'
 
 export const fixFields: MappingColumn[] = [
