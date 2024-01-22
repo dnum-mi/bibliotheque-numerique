@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.2.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.1.0...v2.2.0) (2024-01-22)
+
+
+### Features
+
+* date filter can now accept a list of defined range ([a4b3983](https://github.com/dnum-mi/bibliotheque_numerique/commit/a4b3983f91760f55a48319815130be4c418b81f8))
+* **Worker Update Organisme:** add in cron to update organisme from RNF ([b2b761c](https://github.com/dnum-mi/bibliotheque_numerique/commit/b2b761cde9615260579ce30e9e44fa86d265be18))
+* **Worker Update Organisme:** get list fondation from RNF ([807e7c3](https://github.com/dnum-mi/bibliotheque_numerique/commit/807e7c35cb2721e019eee988dca40e9564b05a27))
+
+
+### Bug Fixes
+
+* query of filter for blank, not blank and in range ([37db3e0](https://github.com/dnum-mi/bibliotheque_numerique/commit/37db3e028b803d6a5c8b6049826214a1b5a25152))
+* translate to french name filter date of ag-grid ([55c3764](https://github.com/dnum-mi/bibliotheque_numerique/commit/55c3764fefe96e4ece3bba98ca67b6c9c43cbc62))
+
 ## [2.1.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.0.0...v2.1.0) (2024-01-16)
 
 
