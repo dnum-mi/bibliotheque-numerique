@@ -15,6 +15,7 @@ import {
   EnumFilterConditionDto,
   DateRange,
   DateRangeKeys,
+  DateFilterConditionsKeys,
 } from '@biblio-num/shared'
 import { BadRequestException } from '@nestjs/common'
 import * as dayjs from 'dayjs'
@@ -59,12 +60,27 @@ const _buildOneTextFilter = (
 //#endregion
 
 //#region DATE FILTER
-const dateSqlOperators = {
-  [DateFilterConditions.Equals]: '=',
-  [DateFilterConditions.NotEqual]: '!=',
-  [DateFilterConditions.LessThan]: '<',
-  [DateFilterConditions.GreaterThan]: '>',
-  [DateFilterConditions.Since]: '>',
+const dateSqlOperators: Record<DateFilterConditionsKeys, {
+  op: string
+  value: (filter: DateFilterConditionDto) => string
+}> = {
+  [DateFilterConditions.Equals]: { op: '=', value: (filter) => `'${filter.filter}'` },
+  [DateFilterConditions.NotEqual]: { op: '!=', value: (filter) => `'${filter.filter}'` },
+  [DateFilterConditions.LessThan]: { op: '<', value: (filter) => `'${filter.filter}'` },
+  [DateFilterConditions.GreaterThan]: { op: '>', value: (filter) => `'${filter.filter}'` },
+  [DateFilterConditions.Since]: {
+    op: '>',
+    value: (filter) => {
+      const range = rangeInDays[filter.sinceWhen]
+      filter.filter = dayjs().subtract(range.value, range.unit).format()
+      return `'${filter.filter}'`
+    },
+  },
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  [DateFilterConditions.Blank]: { op: 'ISNULL', value: (filter) => '' },
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  [DateFilterConditions.NotBlank]: { op: 'IS NOT NULL', value: (filter) => '' },
+  [DateFilterConditions.Between]: { op: 'BETWEEN', value: (filter) => `'${filter.filter}' AND '${filter.filterTo}'` },
 }
 const rangeInDays: Record<DateRangeKeys, { unit: ManipulateType, value: number }> = {
   [DateRange.TwentyFourHours]: { unit: 'day', value: 1 },
@@ -90,11 +106,7 @@ const _buildOneDateFilter = (
     )
   }
   key = _adaptKeyForArray(key, isArray, prefix)
-  if (filter.type === DateFilterConditions.Since) {
-    const range = rangeInDays[filter.sinceWhen]
-    filter.filter = dayjs().subtract(range.value, range.unit).format()
-  }
-  return `(${key} ${dateSqlOperator} '${filter.filter}'${isArray ? ')' : ''})`
+  return `(${key} ${dateSqlOperator.op} ${dateSqlOperator.value(filter)}${isArray ? ')' : ''})`
 }
 //#endregion
 
