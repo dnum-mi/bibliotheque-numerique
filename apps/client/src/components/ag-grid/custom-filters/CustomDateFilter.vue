@@ -1,4 +1,5 @@
-<script lang="ts" setup>
+<script lang="ts">
+// ⚠️ This is a custom filter for ag-grid, DO NOT make it a <script setup> as there is a bug with ag-grid and <script setup>
 import { type Ref, ref, watch } from 'vue'
 import type { DateRangeKeys } from '@biblio-num/shared'
 import { type IFilterParams } from 'ag-grid-community'
@@ -15,30 +16,45 @@ const rangeDictionary: Record<DateRangeKeys, string> = {
   OneYear: 'Depuis 1 an',
 }
 
-const props = defineProps<{ params: IFilterParams }>()
+export default {
+  props: {
+    params: {
+      type: Object as () => IFilterParams,
+      required: true,
+    },
+  },
+  setup (props) {
+    const selectedRange: RangeModel = ref(null)
 
-const selectedRange: RangeModel = ref(null)
+    watch(selectedRange, () => {
+      if (props.params.api) {
+        props.params.api.onFilterChanged()
+      }
+    })
 
-watch(selectedRange, () => {
-  if (props.params.api) {
-    props.params.api.onFilterChanged()
-  }
-})
+    //#region AgGrid methods
+    const isFilterActive = () => {
+      return selectedRange.value !== null
+    }
 
-//#region AgGrid methods
-const isFilterActive = () => {
-  return selectedRange.value !== null
+    const getModel = () => {
+      return { value: selectedRange.value }
+    }
+
+    const setModel = (model: RangeModel) => {
+      selectedRange.value = model?.value || null
+    }
+    //#endregion
+
+    return {
+      selectedRange,
+      rangeDictionary,
+      isFilterActive,
+      getModel,
+      setModel,
+    }
+  },
 }
-
-const getModel = () => {
-  return { value: selectedRange.value }
-}
-
-const setModel = (model: RangeModel) => {
-  selectedRange.value = model?.value || null
-}
-//#endregion
-
 </script>
 
 <template>
