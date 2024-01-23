@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.2](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.2.1...v2.2.2) (2024-01-23)
+
+
+### Bug Fixes
+
+* add config rna et rnf in worker ([2197276](https://github.com/dnum-mi/bibliotheque_numerique/commit/2197276138fbdc240f51c56b553620c4d8b4ebc8))
+
 ## [2.2.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.2.0...v2.2.1) (2024-01-23)
 
 
