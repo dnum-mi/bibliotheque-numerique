@@ -8,6 +8,8 @@ import smtpConfig from './config/smtp.config'
 import fileConfig from './config/file.config'
 import loggerConfig from './config/logger.config'
 import instructionTimeMappingConfig from '@/config/instructionTimeMapping.config'
+import rnaConfig from './config/rna.config'
+import rnfConfig from './config/rnf.config'
 
 import { LoggerModule } from './shared/modules/logger/logger.module'
 import { CronModule } from './modules/cron/cron.module'
@@ -27,6 +29,8 @@ import { DsApiModule } from './shared/modules/ds-api/ds-api.module'
         loggerConfig,
         smtpConfig,
         instructionTimeMappingConfig,
+        rnaConfig,
+        rnfConfig,
       ],
     }),
     LoggerModule.forRoot('worker'),
