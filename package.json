@@ -1,6 +1,6 @@
 {
   "name": "biblio-num",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Projet Bibliothèque numérique",
   "directories": {
     "doc": "docs"
