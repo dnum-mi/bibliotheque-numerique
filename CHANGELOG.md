@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.2.0...v2.2.1) (2024-01-23)
+
+
+### Bug Fixes
+
+* :bug: fix ag-grid custom-filter composition API bug ([60519ec](https://github.com/dnum-mi/bibliotheque_numerique/commit/60519ecd606528d62d29ffae6a3c7e56bb15ba9a))
+
 ## [2.2.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.1.0...v2.2.0) (2024-01-22)
 
 
