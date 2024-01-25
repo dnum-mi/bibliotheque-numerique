@@ -37,7 +37,7 @@
     "ag-grid-community": "^31.0.1",
     "ag-grid-enterprise": "^31.0.1",
     "ag-grid-vue3": "^31.0.1",
-    "axios": "^1.6.2",
+    "axios": "^1.6.6",
     "oh-vue-icons": "1.0.0-rc3",
     "pinia": "^2.1.7",
     "pretty-bytes": "^6.1.1",
