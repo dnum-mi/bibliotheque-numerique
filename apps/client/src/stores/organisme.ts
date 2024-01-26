@@ -20,6 +20,8 @@ export const useOrganismeStore = defineStore('organisme', () => {
     return apiClient.getOrganismes(dto)
   }
 
+  const exportOrganismes = async (dto: PaginationDto<IOrganisme>): Promise<void> => apiClient.exportOrganismes(dto)
+
   const $reset = () => {
     organisme.value = undefined
     organismes.value = []
@@ -30,5 +32,6 @@ export const useOrganismeStore = defineStore('organisme', () => {
     organismes,
     loadOrganisme,
     loadOrganismes,
+    exportOrganismes,
   }
 })

@@ -29,6 +29,7 @@ export const fieldsSearch = '/fields-search'
 
 export const organismesRoute = '/organismes'
 export const organismesListRoute = '/organismes/list'
+export const organismesListXlsxRoute = '/organismes/list/export/xlsx'
 export const getOrganismeDossiers = (organismeId: number) => `${organismesRoute}/${organismeId}/dossiers`
 export const getOrganismeByIdRoute = (organismeId: number) => `${organismesRoute}/${organismeId}`
 export const getOrganismeByRnaRoute = (organismeRna: string) => `${organismesRoute}/rna/${organismeRna}`

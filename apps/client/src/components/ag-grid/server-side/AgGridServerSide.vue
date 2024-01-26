@@ -8,6 +8,7 @@ import type {
   GridReadyEvent,
   IServerSideGetRowsParams,
   SelectionChangedEvent,
+  ColumnMovedEvent,
 } from 'ag-grid-community'
 import type { GridOptions, SetFilterModel } from 'ag-grid-enterprise'
 
@@ -90,7 +91,7 @@ const getRows = async (params: IServerSideGetRowsParams) => {
     const dto: PaginationDto<T> = {
       sorts: fromAggToBackendSort(params.request.sortModel),
       filters: fromAggToBackendFilter<T>(params.request.filterModel),
-      columns: params.columnApi
+      columns: params.api
         .getColumnState()
         .filter((state) => !state.hide)
         .map((state) => state.colId),
@@ -122,6 +123,17 @@ const onGridReady = (event: GridReadyEvent) => {
 defineExpose({
   refresh,
 })
+
+const onColumnMoved = (event: ColumnMovedEvent) => {
+  const dto = {
+    ...props.paginationDto,
+    columns: event.api
+      .getColumnState()
+      .filter((state) => !state.hide)
+      .map((state) => state.colId),
+  }
+  emit('update:paginationDto', dto)
+}
 </script>
 
 <template>
@@ -133,5 +145,6 @@ defineExpose({
     @grid-ready="onGridReady($event)"
     @column-visible="refresh()"
     @selection-changed="onSelectionChanged($event)"
+    @column-moved="onColumnMoved($event)"
   />
 </template>
