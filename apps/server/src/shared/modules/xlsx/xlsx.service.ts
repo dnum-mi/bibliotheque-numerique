@@ -20,6 +20,14 @@ export class XlsxService {
     this.logger.setContext(this.constructor.name)
   }
 
+  generateXlsxFileWithMapHeader(data:object[], mappingHeader:Record<string, string>, columns:string[]): ReadStream {
+    this.logger.verbose('generateXlsxFileWithMapHeader')
+    const newData = data.map(d => Object.fromEntries(
+      columns.map(c => [mappingHeader[c], d[c]]),
+    ))
+    return this.generateXlsxFile(newData)
+  }
+
   generateXlsxFile(data: object[]): ReadStream {
     this.logger.verbose('generateXlsxFile')
     const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data)

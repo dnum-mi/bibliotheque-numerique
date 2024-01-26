@@ -3,12 +3,14 @@ import {
   Body,
   Controller,
   Get,
+  Header,
   HttpCode,
   Param,
   ParseIntPipe,
   Post,
+  Res,
 } from '@nestjs/common'
-import { ApiResponse, ApiTags } from '@nestjs/swagger'
+import { ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import {
   IOrganisme,
@@ -16,10 +18,14 @@ import {
   PaginatedDto,
   PaginationDto,
   Roles,
+  mapOrganismeFieldHeader,
 } from '@biblio-num/shared'
 import { DossierService } from '@/modules/dossiers/providers/dossier.service'
 import { OrganismeService } from '@/modules/organismes/providers/organisme.service'
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
+import { xlsxContent } from '../../../shared/modules/xlsx/xlsx.constants'
+import { ServerResponse } from 'http'
+import { XlsxService } from '../../../shared/modules/xlsx/xlsx.service'
 
 @ApiTags('Demarches')
 @Controller('organismes')
@@ -28,6 +34,7 @@ export class OrganismeController {
     private readonly logger: LoggerService,
     private readonly dossierService: DossierService,
     private readonly organismeService: OrganismeService,
+    private readonly xlsxService: XlsxService,
   ) {
     this.logger.setContext(this.constructor.name)
   }
@@ -80,5 +87,20 @@ export class OrganismeController {
   ): Promise<IOrganisme> {
     this.logger.verbose('getOrganismeWithRnf')
     return this.organismeService.findOneOrThrow({ where: { idRnf } })
+  }
+
+  @Post('list/export/xlsx')
+  @HttpCode(200)
+  @Role(Roles.instructor)
+  @ApiOkResponse({ description: 'Excel file served successfully', content: xlsxContent })
+  @Header('Content-type', Object.keys(xlsxContent)[0])
+  @Header('Content-Disposition', 'export.xlsx')
+  async listOrganismeXlsx(
+    @Body() dto: PaginationDto<IOrganisme>,
+    @Res() res: ServerResponse,
+  ): Promise<void> {
+    this.logger.verbose('Export xlxs - listOrganisme')
+    const { data } = await this.organismeService.listOrganisme(dto)
+    this.xlsxService.generateXlsxFileWithMapHeader(data, mapOrganismeFieldHeader, dto.columns).pipe(res)
   }
 }
