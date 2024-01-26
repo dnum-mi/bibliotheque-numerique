@@ -18,15 +18,7 @@ import { XlsxService } from '@/shared/modules/xlsx/xlsx.service'
 import { ReadStream } from 'fs'
 import { fromMappingColumnArrayToLabelHash } from '../utils/demarche.utils'
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
-
-const xlsxContent = {
-  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': {
-    schema: {
-      type: 'string',
-      format: 'binary',
-    },
-  },
-}
+import { xlsxContent } from '../../../shared/modules/xlsx/xlsx.constants'
 
 @ApiTags('Demarches')
 @ApiTags('Dossiers')
