@@ -1,6 +1,6 @@
 import type { ColDef } from 'ag-grid-community'
 import OrganismeBadgesRenderer from '@/components/Badges/OrganismeBadgesRenderer.vue'
-
+import { mapOrganismeFieldHeader } from '@/biblio-num/shared'
 const baseColDef: ColDef = {
   filter: 'agTextColumnFilter',
   menuTabs: ['filterMenuTab'],
@@ -16,12 +16,12 @@ export const listOrganismeColumnDef: ColDef[] = [
   },
   {
     ...baseColDef,
-    headerName: 'Titre',
+    headerName: mapOrganismeFieldHeader.title,
     field: 'title',
     width: 350,
   },
   {
-    headerName: 'Type',
+    headerName: mapOrganismeFieldHeader.type,
     field: 'type',
     cellRenderer: OrganismeBadgesRenderer,
     filter: 'agTextColumnFilter',
@@ -30,35 +30,35 @@ export const listOrganismeColumnDef: ColDef[] = [
   },
   {
     ...baseColDef,
-    headerName: 'N° RNA',
+    headerName: mapOrganismeFieldHeader.idRna,
     field: 'idRna',
     width: 150,
   },
   {
     ...baseColDef,
-    headerName: 'N° RNF',
+    headerName: mapOrganismeFieldHeader.idRnf,
     field: 'idRnf',
     width: 150,
   },
   {
     ...baseColDef,
-    headerName: 'Ville',
+    headerName: mapOrganismeFieldHeader.addressCityName,
     field: 'addressCityName',
   },
   {
     ...baseColDef,
-    headerName: 'Code postal',
+    headerName: mapOrganismeFieldHeader.addressPostalCode,
     field: 'addressPostalCode',
     width: 150,
   },
   {
     ...baseColDef,
-    headerName: 'Email',
+    headerName: mapOrganismeFieldHeader.email,
     field: 'email',
   },
   {
     ...baseColDef,
-    headerName: 'Téléphone',
+    headerName: mapOrganismeFieldHeader.phoneNumber,
     field: 'phoneNumber',
   },
 ]

@@ -28,6 +28,11 @@ const onSelectionChanged = (event: SelectionChangedEvent) => {
 }
 
 const agGridComponent = ref()
+const paginationDto = ref()
+const download = () => {
+  return organismeStore.exportOrganismes(paginationDto.value)
+}
+
 </script>
 
 <template>
@@ -36,9 +41,19 @@ const agGridComponent = ref()
     title-bg-color="var(--border-plain-grey)"
     title-icon="fr-icon-search-line"
   >
+    <div class="flex justify-end m-2">
+      <DsfrButton
+        :label="'Télécharger'"
+        icon="ri-file-download-fill"
+        small
+        @click="download"
+      />
+    </div>
+
     <div class="">
       <ag-grid-server-side
         ref="agGridComponent"
+        v-model:pagination-dto="paginationDto"
         :column-defs="listOrganismeColumnDef"
         :on-selection-changed="onSelectionChanged"
         pre-condition

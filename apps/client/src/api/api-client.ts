@@ -52,7 +52,7 @@ import {
   getOrganismeByRnfRoute,
   organismesListRoute,
   usersListRoute,
-  getUserRoleByIdRoute, healthRoute,
+  getUserRoleByIdRoute, healthRoute, organismesListXlsxRoute,
 } from './bn-api-routes'
 import {
   authRoute,
@@ -187,6 +187,10 @@ export const organismeApiClient = {
 
   getOrganismeByRnf: async (organismeIdRnf: string): Promise<IOrganisme> => {
     return getOrRedirectTo404(getOrganismeByRnfRoute(organismeIdRnf))
+  },
+
+  exportOrganismes: async (dto: PaginationDto<IOrganisme>): Promise<void> => {
+    downloadAFile(await apiClientInstance.post(organismesListXlsxRoute, dto, { responseType: 'blob' }))
   },
 }
 
