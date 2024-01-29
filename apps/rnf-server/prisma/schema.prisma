@@ -33,6 +33,10 @@ model Foundation {
   dissolvedAt DateTime?
   phone       String
   email       String
+
+  //date de fin d'exercice
+  fiscalEndDateAt DateTime?
+
   // relations
   address     Address              @relation(fields: [addressId], references: [id])
   addressId   Int
@@ -50,6 +54,9 @@ model FoundationHistory {
   department    String
   title         String
   dissolvedAt   DateTime?
+
+  //date de fin d'exercice
+  fiscalEndDateAt DateTime?
 
   // Contact
   phone String
@@ -170,4 +177,5 @@ model DSConfiguration {
   fieldRegexPersonAddress           String   @default("#rnf-person-adresse-rnf#")
   fieldRegexPersonPhone             String   @default("#rnf-person-telephone-rnf#")
   fieldRegexAdministator            String   @default("#rnf-administrateur-rnf#")
+  fieldRegexFiscalEndDate           String   @default("#rnf-date-fin-exercice-rnf#")
 }
