@@ -184,6 +184,22 @@ services:
     networks:
       - biblio-num-network
 
+  redis:
+    profiles:
+      - dev
+    image: bitnami/redis:latest
+    container_name: redis
+    environment:
+      - REDIS_PASSWORD=redis
+    ports:
+      - 6379:6379
+    volumes:
+      - type: volume
+        source: biblio-num-redis-volume
+        target: /bitnami/redis/data
+    networks:
+      - biblio-num-network
+
 networks:
   biblio-num-network:
     name: biblio-num-network
@@ -197,3 +213,4 @@ volumes:
   biblio-num-db-volume:
   biblio-num-server-node_modules-volume:
   biblio-num-worker-node_modules-volume:
+  biblio-num-redis-volume:
