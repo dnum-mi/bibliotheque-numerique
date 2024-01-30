@@ -128,4 +128,8 @@ export class DsConfigurationEntity
   @IsString()
   @IsDefined()
   fieldRegexAdministator: string
+
+  @IsString()
+  @IsDefined()
+  fieldRegexFiscalEndDate: string
 }

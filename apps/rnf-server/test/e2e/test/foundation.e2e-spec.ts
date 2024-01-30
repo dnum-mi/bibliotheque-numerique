@@ -224,6 +224,7 @@ describe('Foundation Controller (e2e)', () => {
               regionName: 'Hauts-de-France',
               regionCode: '32',
             },
+            fiscalEndDateAt: new Date('2023-09-08'),
           })
         })
     })

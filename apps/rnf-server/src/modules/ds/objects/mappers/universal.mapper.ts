@@ -10,8 +10,7 @@ export const stringValue = (ch?: Champ | CustomChamp) =>
   ch?.stringValue ?? null
 
 export const dateValue = (ch?: DateChamp) =>
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  ch?.date ?? null
+  ch?.date ? new Date(ch.date as string) : null
 
 export const addressValue = (ch?: AddressChamp) => {
   if (!ch || ch.__typename !== 'AddressChamp' || !ch.address) {
@@ -65,4 +64,5 @@ export const universalMapper: Mapper = {
   personAddress: addressValue,
   personPhone: stringValue,
   personAdministrator: stringValue,
+  fiscalEndDateAt: dateValue,
 }
