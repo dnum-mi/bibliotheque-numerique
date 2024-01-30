@@ -57,16 +57,15 @@ export class DsMapperService {
 
     const champsHash =
       this.findChampsInDossier(rawDossier.champs, this.dsConfigurationService.rnfFieldKeys)
-
     const mapperWithOutPerson = this.mapperWithoutPerson(mapper)
-    const foudationDto: CreateFoundationDto = Object.fromEntries(
+    const foundationDto: CreateFoundationDto = Object.fromEntries(
       Object.keys(mapperWithOutPerson)
         .map((key) => [key, (mapperWithOutPerson)[key](champsHash[key])] as [string, string])
         .filter(([key, value]) => !!value),
     ) as unknown as CreateFoundationDto
 
-    foudationDto.personInFoundationToCreate = this.mapPersonInFoundationToDto(champsHash, mapper)
-    return foudationDto
+    foundationDto.personInFoundationToCreate = this.mapPersonInFoundationToDto(champsHash, mapper)
+    return foundationDto
   }
 
   mapperWithoutPerson(mapper: Mapper): Mapper {
@@ -116,8 +115,6 @@ export class DsMapperService {
       Object.keys(personMapper).map((key) => [personMapper[key], (mapper)[key](champsHash[key])] as [string, string])
         .filter(([key, value]) => !!value),
     ) as unknown as CreatePersonDto
-
-    personDto.bornAt = new Date(personDto.bornAt)
 
     // Todo: How to mapper this with role?
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

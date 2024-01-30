@@ -138,6 +138,7 @@ export class FoundationService extends BaseEntityService {
           rnfId: `in-creation-${new Date().getTime()}`,
           ...((await this._cascadeCreateFile(dto.status)) ?? {}),
           ...this._cascadeCreatePersons(dto),
+          fiscalEndDateAt: dto.fiscalEndDateAt,
         },
       })
 

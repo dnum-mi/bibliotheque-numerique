@@ -672,6 +672,17 @@ export const entrepriseDossierDataMock = {
         description: "lorem ipsum#rnf-person-telephone-rnf#",
       },
     },
+    {
+      id: "Q2hhbXAtMzUw",
+      __typename: "DateChamp",
+      label: "Date de fin d'exercice",
+      stringValue: "08 septembre 2023",
+      date: "2023-09-08",
+      champDescriptor: {
+        description: "lorem ipsum#rnf-date-fin-exercice-rnf#",
+      },
+
+    },
   ],
   annotations: [
     {
