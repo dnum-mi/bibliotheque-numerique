@@ -1,10 +1,10 @@
 import { NestFactory } from '@nestjs/core'
 import { ConfigService } from '@nestjs/config'
-import { AppModule } from './app.module'
-import { configMain } from './config-main'
+import { ApiModule } from './api.module'
+import { configMain } from '../../config-main'
 
 async function bootstrap (): Promise<void> {
-  const app = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create(ApiModule, {
     cors: true,
   })
 

@@ -18,6 +18,6 @@ $ nest g resource users
 > CREATE src/users/dto/create-user.input.ts (195 bytes)
 > CREATE src/users/dto/update-user.input.ts (281 bytes)
 > CREATE src/users/entities/user.entity.ts (187 bytes)
-> UPDATE src/app.module.ts (312 bytes)
+> UPDATE src/api.module.ts (312 bytes)
 ```
 

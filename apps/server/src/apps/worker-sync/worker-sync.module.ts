@@ -1,21 +1,21 @@
 import { Module } from '@nestjs/common'
-import { ConfigModule } from '@nestjs/config'
+import { ConfigModule, ConfigModuleOptions } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
 
-import configuration from './config/worker.config'
-import dsConfig from './config/ds.config'
-import smtpConfig from './config/smtp.config'
-import fileConfig from './config/file.config'
-import loggerConfig from './config/logger.config'
+import configuration from '../../config/worker.config'
+import dsConfig from '../../config/ds.config'
+import smtpConfig from '../../config/smtp.config'
+import fileConfig from '../../config/file.config'
+import loggerConfig from '../../config/logger.config'
 import instructionTimeMappingConfig from '@/config/instructionTimeMapping.config'
-import rnaConfig from './config/rna.config'
-import rnfConfig from './config/rnf.config'
+import rnaConfig from '../../config/rna.config'
+import rnfConfig from '../../config/rnf.config'
 
-import { LoggerModule } from './shared/modules/logger/logger.module'
-import { CronModule } from './modules/cron/cron.module'
+import { LoggerModule } from '@/shared/modules/logger/logger.module'
+import { CronModule } from '@/modules/cron/cron.module'
 import { ScheduleModule } from '@nestjs/schedule'
-import { typeormFactoryLoader } from './shared/utils/typeorm-factory-loader'
-import { DsApiModule } from './shared/modules/ds-api/ds-api.module'
+import { typeormFactoryLoader } from '@/shared/utils/typeorm-factory-loader'
+import { DsApiModule } from '@/shared/modules/ds-api/ds-api.module'
 
 @Module({
   imports: [
@@ -32,7 +32,7 @@ import { DsApiModule } from './shared/modules/ds-api/ds-api.module'
         rnaConfig,
         rnfConfig,
       ],
-    }),
+    } as ConfigModuleOptions),
     LoggerModule.forRoot('worker'),
     TypeOrmModule.forRootAsync(typeormFactoryLoader),
     ScheduleModule.forRoot(),
