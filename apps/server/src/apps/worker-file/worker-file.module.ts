@@ -23,10 +23,10 @@ import bullModuleFactoryLoader from '@/shared/queue-common/bull-module-factory-l
       ],
     } as ConfigModuleOptions),
     BullModule.forRootAsync(bullModuleFactoryLoader),
-    LoggerModule.forRoot('worker'),
+    LoggerModule.forRoot('worker-sync'),
     TypeOrmModule.forRootAsync(typeormFactoryLoader),
   ],
   controllers: [],
   providers: [],
 })
-export class WorkerSyncModule {}
+export class WorkerFileModule {}
