@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { AppModule } from '@/app.module'
+import { ApiModule } from '@/apps/api/api.module'
 import { configMain } from '@/config-main'
 import { INestApplication } from '@nestjs/common'
 import { DsApiClient } from '@dnum-mi/ds-api-client'
@@ -44,7 +44,7 @@ export class TestingModuleFactory {
 
   async init (): Promise<void> {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [ApiModule],
     })
       .overrideProvider(LoggerService)
       .useValue(loggerServiceMock)
