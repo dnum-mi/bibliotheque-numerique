@@ -14,6 +14,7 @@ import rnfConfig from '../../config/rnf.config'
 import excelImportConfig from '../../config/excel-import.config'
 import sudoUserConfig from '@/config/sudo-user.config'
 import instructionTimeMappingConfig from '@/config/instructionTimeMapping.config'
+import redisConfig from '@/config/redis.config'
 
 import { DemarcheModule } from '@/modules/demarches/demarche.module'
 import { DossierModule } from '@/modules/dossiers/dossier.module'
@@ -30,6 +31,8 @@ import { OrganismeModule } from '@/modules/organismes/organisme.module'
 import { APP_GUARD } from '@nestjs/core'
 import { RoleGuard } from '@/modules/users/providers/guards/role.guard'
 import { InstructionTimesModule } from '@/modules/instruction_time/instruction_times.module'
+import bullModuleFactoryLoader from '@/shared/queue-common/bull-module-factory-loader'
+import { BullModule } from '@nestjs/bull'
 
 @Module({
   imports: [
@@ -49,9 +52,11 @@ import { InstructionTimesModule } from '@/modules/instruction_time/instruction_t
         excelImportConfig,
         sudoUserConfig,
         instructionTimeMappingConfig,
+        redisConfig,
       ],
     } as ConfigModuleOptions),
     TypeOrmModule.forRootAsync(typeormFactoryLoader),
+    BullModule.forRootAsync(bullModuleFactoryLoader),
     LoggerModule.forRoot('api'),
     DsApiModule,
     XlsxModule,
