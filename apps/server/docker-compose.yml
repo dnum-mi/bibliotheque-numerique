@@ -187,6 +187,7 @@ services:
   redis:
     profiles:
       - dev
+      - simple-dev
     image: bitnami/redis:latest
     container_name: redis
     environment:
