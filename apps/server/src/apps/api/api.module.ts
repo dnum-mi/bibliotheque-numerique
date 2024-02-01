@@ -31,8 +31,9 @@ import { OrganismeModule } from '@/modules/organismes/organisme.module'
 import { APP_GUARD } from '@nestjs/core'
 import { RoleGuard } from '@/modules/users/providers/guards/role.guard'
 import { InstructionTimesModule } from '@/modules/instruction_time/instruction_times.module'
-import bullModuleFactoryLoader from '@/shared/queue-common/bull-module-factory-loader'
-import { BullModule } from '@nestjs/bull'
+import { CustomBullModule } from '@/shared/modules/custom-bull/custom-bull.module'
+import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.const'
+import { BullModule, BullModuleOptions } from '@nestjs/bull'
 
 @Module({
   imports: [
@@ -56,7 +57,8 @@ import { BullModule } from '@nestjs/bull'
       ],
     } as ConfigModuleOptions),
     TypeOrmModule.forRootAsync(typeormFactoryLoader),
-    BullModule.forRootAsync(bullModuleFactoryLoader),
+    CustomBullModule,
+    BullModule.registerQueue(...[{ name: QueueName.sync }, { name: QueueName.file }] as BullModuleOptions[]),
     LoggerModule.forRoot('api'),
     DsApiModule,
     XlsxModule,

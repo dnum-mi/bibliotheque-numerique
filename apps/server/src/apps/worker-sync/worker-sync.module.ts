@@ -1,32 +1,31 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigModuleOptions } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
-
 import configuration from '../../config/worker.config'
 import loggerConfig from '../../config/logger.config'
-
 import { LoggerModule } from '@/shared/modules/logger/logger.module'
 import { typeormFactoryLoader } from '@/shared/utils/typeorm-factory-loader'
 import redisConfig from '@/config/redis.config'
-import { BullModule } from '@nestjs/bull'
-import bullModuleFactoryLoader from '@/shared/queue-common/bull-module-factory-loader'
+import { CustomBullModule } from '@/shared/modules/custom-bull/custom-bull.module'
+import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.const'
+import { FakeProcessor } from '@/apps/worker-sync/processors/fake.processor'
+import { BullModule, BullModuleOptions } from '@nestjs/bull'
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
-      load: [
-        configuration,
-        loggerConfig,
-        redisConfig,
-      ],
+      load: [configuration, loggerConfig, redisConfig],
     } as ConfigModuleOptions),
-    BullModule.forRootAsync(bullModuleFactoryLoader),
-    LoggerModule.forRoot('worker'),
+    LoggerModule.forRoot('worker-sync'),
     TypeOrmModule.forRootAsync(typeormFactoryLoader),
+    CustomBullModule,
+    BullModule.registerQueue(...[{ name: QueueName.sync }, { name: QueueName.file }] as BullModuleOptions[]),
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    FakeProcessor,
+  ],
 })
 export class WorkerSyncModule {}

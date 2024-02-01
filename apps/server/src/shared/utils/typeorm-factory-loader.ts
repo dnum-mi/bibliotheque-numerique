@@ -1,17 +1,18 @@
-import { ConfigModule, ConfigService } from '@nestjs/config'
+import { ConfigModule, ConfigModuleOptions, ConfigService } from '@nestjs/config'
 import { LoggerModule } from '../modules/logger/logger.module'
 import { LoggerService } from '../modules/logger/logger.service'
 import { DataSource } from 'typeorm'
 import { DataSourceOptions } from 'typeorm/data-source/DataSourceOptions'
 import typeormNestConfig from '../../config/typeorm-nest.config'
 import configuration from '../../config/configuration'
+import { TypeOrmModuleAsyncOptions } from '@nestjs/typeorm'
 
-export const typeormFactoryLoader = {
+export const typeormFactoryLoader: TypeOrmModuleAsyncOptions = {
   imports: [
     ConfigModule.forRoot({
       cache: true,
       load: [configuration, typeormNestConfig],
-    }),
+    } as ConfigModuleOptions),
     LoggerModule,
   ],
   inject: [ConfigService, LoggerService],
