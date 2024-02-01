@@ -26,6 +26,7 @@ export const OrganismeFieldTypeHash: Record<
   addressRegionCode: 'string',
   dateCreation: 'date',
   dateDissolution: 'date',
+  fiscalEndDateAt: 'date',
   idRna: 'string',
   idRnf: 'string',
 }
