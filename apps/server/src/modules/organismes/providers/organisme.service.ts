@@ -50,7 +50,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
       {
         idRnf,
         title: raw.title,
-        dateCreation: raw.createdAt,
+        dateCreation: new Date(raw.createdAt),
         type: raw.type,
         email: raw.email,
         phoneNumber: raw.phone,
@@ -73,6 +73,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
           ]),
         ),
         dateDissolution: raw.dissolvedAt,
+        fiscalEndDateAt: raw.fiscalEndDateAt,
         rnfJson: raw,
       },
       {

@@ -54,6 +54,12 @@ export class Organisme extends BaseEntity implements IOrganisme {
   })
   dateDissolution: Date
 
+  @Column({
+    type: 'date',
+    nullable: true,
+  })
+  fiscalEndDateAt: Date
+
   @OneToMany(() => Dossier, (dossier) => dossier.organisme)
   @JoinColumn()
   dossiers?: Dossier[]

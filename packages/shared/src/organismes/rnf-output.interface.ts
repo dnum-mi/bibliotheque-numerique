@@ -8,6 +8,7 @@ export interface IRnfOutput {
   email: string
   phone: string
   dissolvedAt: Date | null
+  fiscalEndDateAt: Date | null
   status?: {
     uuid: string
     name: string
