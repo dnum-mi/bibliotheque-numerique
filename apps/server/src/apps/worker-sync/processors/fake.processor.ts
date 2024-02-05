@@ -12,6 +12,6 @@ export class FakeProcessor implements OnApplicationBootstrap {
     const job = await this.syncQueue.add('Fake job', {
       toto: 42,
     })
-    console.log('job created\n', job)
+    console.log(job)
   }
 }
