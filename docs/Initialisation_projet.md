@@ -78,7 +78,7 @@ CREATE server/tsconfig.build.json (97 bytes)
 CREATE server/tsconfig.json (546 bytes)
 CREATE server/src/app.controller.spec.ts (617 bytes)
 CREATE server/src/app.controller.ts (274 bytes)
-CREATE server/src/app.module.ts (249 bytes)
+CREATE server/src/api.module.ts (249 bytes)
 CREATE server/src/app.service.ts (142 bytes)
 CREATE server/src/main.ts (208 bytes)
 CREATE server/test/app.e2e-spec.ts (630 bytes)
@@ -98,7 +98,7 @@ $ cd server
 $ npm run start
 ```
 
-Attention la base de données doit être lancer. Vérifier si les variables dans src/app.module.ts soit correct pour permettre la connection à la BDD.
+Attention la base de données doit être lancer. Vérifier si les variables dans src/api.module.ts soit correct pour permettre la connection à la BDD.
 
 ### Lancer le serveur avec Docker
 ```
