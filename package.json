@@ -105,5 +105,7 @@
       "get-func-name@<2.0.1": ">=2.0.1",
       "@babel/traverse@<7.23.2": ">=7.23.2"
     }
-  }
+  },
+  "main": "index.js",
+  "keywords": []
 }

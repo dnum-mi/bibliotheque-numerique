@@ -18,7 +18,6 @@ declare module 'vue' {
     CheckRenderer: typeof import('./components/ag-grid/CheckRenderer.vue')['default']
     CprCheckRenderer: typeof import('./components/ag-grid/CprCheckRenderer.vue')['default']
     CustomDateFilter: typeof import('./components/ag-grid/custom-filters/CustomDateFilter.vue')['default']
-    CustomDateFilter2: typeof import('./components/ag-grid/custom-filters/CustomDateFilter2.vue')['default']
     DelayStateBadge: typeof import('./components/Badges/DelayStateBadge.vue')['default']
     DisplayLabelsValues: typeof import('./components/DisplayLabelsValues.vue')['default']
     DossierStateRenderer: typeof import('./components/ag-grid/DossierStateRenderer.vue')['default']
