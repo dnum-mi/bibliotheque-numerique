@@ -135,9 +135,9 @@ jobs:
             npm i -g pnpm
             pnpm i --frozen-lockfile
             pnpm run lint:server
-            pnpm run docker:db:up
+            pnpm run docker:ci:up
             pnpm run test:server
-            pnpm run docker:db:down
+            pnpm run docker:down
       - name: run build
         run: |
             pnpm run build:server
@@ -164,7 +164,7 @@ jobs:
           pnpm run lint:rnf-server
           pnpm run docker:db:up
           pnpm run test:rnf-server
-          pnpm run docker:db:down
+          pnpm run docker:down
       - name: run build
         run: |
           pnpm run build:rnf-server
@@ -231,11 +231,11 @@ jobs:
         run: |
           npm i -g pnpm
           pnpm run docker:build:server
-          pnpm run docker:db:up
+          pnpm run docker:ci:up
           pnpm run docker:build:server:run
           pnpm run docker:build:server:check
           pnpm run docker:build:server:stop
-          pnpm run docker:db:down
+          pnpm run docker:down
 
   docker-rnf-server:
     name: rnf-server - Build and Run docker image
@@ -258,4 +258,4 @@ jobs:
           pnpm run docker:db:up
           pnpm run docker:build:rnf-server:run
           pnpm run docker:build:rnf-server:stop
-          pnpm run docker:db:down
+          pnpm run docker:down
