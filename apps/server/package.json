@@ -1,7 +1,7 @@
 {
   "name": "@biblio-num/server",
   "version": "2.2.2",
-  "description": "",
+  "description": "Bibliothèque Numérique Server API",
   "author": "minint",
   "license": "UNLICENSED",
   "private": true,
@@ -67,6 +67,7 @@
   },
   "dependencies": {
     "@biblio-num/shared": "workspace:^",
+    "@biblio-num/shared-utils": "workspace:^",
     "@dnum-mi/ds-api-client": "^1.6.2",
     "@nestjs-modules/mailer": "^1.10.3",
     "@nestjs/axios": "^3.0.1",
@@ -153,6 +154,11 @@
     "vitest": "^0.34.6"
   },
   "volta": {
-    "node": "18.16.0"
-  }
+    "node": "20.11.0"
+  },
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "keywords": []
 }
