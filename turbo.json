@@ -38,7 +38,8 @@
     "dev": {
       "cache": false,
       "dependsOn": [
-        "^@biblio-num/shared#build"
+        "^@biblio-num/shared#build",
+        "^@biblio-num/shared-utils#build"
       ]
     },
     "dev:in-docker": {
@@ -50,7 +51,8 @@
     "dev:server": {
       "cache": false,
       "dependsOn": [
-        "^@biblio-num/shared#build"
+        "^@biblio-num/shared#build",
+        "^@biblio-num/shared-utils#build"
       ]
     },
     "dev:server-in-docker": {
@@ -87,7 +89,8 @@
     },
     "test": {
       "dependsOn": [
-        "^@biblio-num/shared#build"
+        "^@biblio-num/shared#build",
+        "^@biblio-num/shared-utils#build"
       ],
       "inputs": [
         "src/**/*.tsx",
