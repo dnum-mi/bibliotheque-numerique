@@ -9,7 +9,7 @@ export type SyncOneDemarchePayload = {
 
 export type SyncOneDossierPayload = {
   demarcheId: number
-  dossierId: number
+  dsDossierId: number
   fromScratch: boolean
 }
 
