@@ -16,6 +16,7 @@ import sudoUserConfig from '@/config/sudo-user.config'
 import instructionTimeMappingConfig from '@/config/instructionTimeMapping.config'
 import redisConfig from '@/config/redis.config'
 import cronConfig from '@/config/cron.config'
+import bullConfig from '@/config/bull.config'
 
 import { DemarcheModule } from '@/modules/demarches/demarche.module'
 import { DossierModule } from '@/modules/dossiers/dossier.module'
@@ -55,6 +56,7 @@ import { CronModule } from '@/modules/cron/cron.module'
         instructionTimeMappingConfig,
         redisConfig,
         cronConfig,
+        bullConfig,
       ],
     } as ConfigModuleOptions),
     TypeOrmModule.forRootAsync(typeormFactoryLoader),
