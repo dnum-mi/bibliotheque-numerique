@@ -13,6 +13,9 @@ import { DemarcheModule } from '@/modules/demarches/demarche.module'
 import dsConfig from '@/config/ds.config'
 import instructionTimeMappingConfig from '@/config/instructionTimeMapping.config'
 import { DemarcheProcessor } from '@/apps/worker-sync/processors/demarche.processor'
+import { DossierProcessor } from '@/apps/worker-sync/processors/dossier.processor'
+import { DossierModule } from '@/modules/dossiers/dossier.module'
+import bullConfig from '@/config/bull.config'
 
 @Module({
   imports: [
@@ -25,6 +28,7 @@ import { DemarcheProcessor } from '@/apps/worker-sync/processors/demarche.proces
         redisConfig,
         dsConfig,
         instructionTimeMappingConfig,
+        bullConfig,
       ],
     } as ConfigModuleOptions),
     LoggerModule.forRoot('worker-sync'),
@@ -37,8 +41,12 @@ import { DemarcheProcessor } from '@/apps/worker-sync/processors/demarche.proces
       ] as BullModuleOptions[]),
     ),
     DemarcheModule,
+    DossierModule,
   ],
   controllers: [],
-  providers: [DemarcheProcessor],
+  providers: [
+    DemarcheProcessor,
+    DossierProcessor,
+  ],
 })
 export class WorkerSyncModule {}

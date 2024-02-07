@@ -11,13 +11,19 @@ import redisConfig from '@/config/redis.config'
 import { CustomBullModule } from '@/shared/modules/custom-bull/custom-bull.module'
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
 import { BullModule, BullModuleOptions } from '@nestjs/bull'
+import bullConfig from '@/config/bull.config'
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
-      load: [configuration, loggerConfig, redisConfig],
+      load: [
+        configuration,
+        loggerConfig,
+        redisConfig,
+        bullConfig,
+      ],
     } as ConfigModuleOptions),
     LoggerModule.forRoot('worker-file'),
     TypeOrmModule.forRootAsync(typeormFactoryLoader),
