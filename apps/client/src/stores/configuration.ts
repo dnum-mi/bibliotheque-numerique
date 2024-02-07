@@ -7,7 +7,7 @@ import type {
 } from '@biblio-num/shared'
 
 import { demarchesApiClient } from '../api/api-client'
-import { createDemarche, patchDemarche, synchronizeDossiers } from '../api/sudo-api-client'
+import { createDemarche, patchDemarche, putSynchronizeOneDemarche } from '../api/sudo-api-client'
 
 export const useConfigurationStore = defineStore('Configuration', () => {
   const demarches = ref<SmallDemarcheOutputDto[]>([])
@@ -33,10 +33,10 @@ export const useConfigurationStore = defineStore('Configuration', () => {
     await loadDemarches().finally(() => { fetching.value = false })
   }
 
-  const synchroDossiers = async (idDs: number|null) => {
-    if (!idDs) throw new Error('id DS non saisi')
+  const synchronizeOneDemarche = async (demarcheId: number|null) => {
+    if (!demarcheId) throw new Error('id non saisi')
     fetching.value = true
-    await synchronizeDossiers(idDs).finally(() => { fetching.value = false })
+    await putSynchronizeOneDemarche(demarcheId).finally(() => { fetching.value = false })
   }
 
   const updateDemarche = async (idDs: number|null, identification?: IdentificationDemarcheKeys | null, types?: OrganismeTypeKeys[]) => {
@@ -65,7 +65,7 @@ export const useConfigurationStore = defineStore('Configuration', () => {
     fetching,
     loadDemarches,
     addDemarches,
-    synchroDossiers,
+    synchronizeOneDemarche,
     updateDemarche,
   }
 })

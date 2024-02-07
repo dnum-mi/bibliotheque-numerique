@@ -10,11 +10,14 @@ import { DemarcheDossierController } from './controllers/demarche-dossier.contro
 import { CustomFilterModule } from '@/modules/custom-filters/custom-filter.module'
 import { DemarcheCustomFilterController } from '@/modules/demarches/controllers/demarche-custom-filter.controller'
 import { DsApiModule } from '@/shared/modules/ds-api/ds-api.module'
+import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
+import { BullModule, BullModuleOptions } from '@nestjs/bull'
 
 @Module({
   imports: [
     forwardRef(() => DossierModule),
     TypeOrmModule.forFeature([Demarche]),
+    BullModule.registerQueue({ name: QueueName.sync } as BullModuleOptions),
     CustomFilterModule,
     DsApiModule,
   ],

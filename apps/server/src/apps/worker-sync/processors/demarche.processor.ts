@@ -8,12 +8,14 @@ import {
 } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
 import { Job, Queue } from 'bull'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
+import { DemarcheSynchroniseService } from '@/modules/demarches/providers/services/demarche-synchronise.service'
 
 @Processor(QueueName.sync)
 export class DemarcheProcessor {
   constructor(
     private readonly logger: LoggerService,
     private readonly demarcheService: DemarcheService,
+    private readonly demarcheSynchroniseService: DemarcheSynchroniseService,
     @InjectQueue(QueueName.sync) private readonly syncQueue: Queue,
   ) {
     this.logger.setContext(this.constructor.name)
@@ -34,6 +36,13 @@ export class DemarcheProcessor {
         fromScratch: job.data.fromScratch,
       } as SyncOneDemarchePayload)
     }
+    job.finished()
+  }
+
+  @Process(JobName.SyncOneDemarche)
+  async syncOneDemarche(job: Job<SyncOneDemarchePayload>): Promise<void> {
+    this.logger.verbose('sync one demarche')
+    await this.demarcheSynchroniseService.synchroniseOneDemarche(job.data.demarcheId, job.data.fromScratch)
     job.finished()
   }
 }
