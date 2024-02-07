@@ -15,6 +15,7 @@ import excelImportConfig from '../../config/excel-import.config'
 import sudoUserConfig from '@/config/sudo-user.config'
 import instructionTimeMappingConfig from '@/config/instructionTimeMapping.config'
 import redisConfig from '@/config/redis.config'
+import cronConfig from '@/config/cron.config'
 
 import { DemarcheModule } from '@/modules/demarches/demarche.module'
 import { DossierModule } from '@/modules/dossiers/dossier.module'
@@ -32,8 +33,7 @@ import { APP_GUARD } from '@nestjs/core'
 import { RoleGuard } from '@/modules/users/providers/guards/role.guard'
 import { InstructionTimesModule } from '@/modules/instruction_time/instruction_times.module'
 import { CustomBullModule } from '@/shared/modules/custom-bull/custom-bull.module'
-import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.const'
-import { BullModule, BullModuleOptions } from '@nestjs/bull'
+import { CronModule } from '@/modules/cron/cron.module'
 
 @Module({
   imports: [
@@ -54,11 +54,12 @@ import { BullModule, BullModuleOptions } from '@nestjs/bull'
         sudoUserConfig,
         instructionTimeMappingConfig,
         redisConfig,
+        cronConfig,
       ],
     } as ConfigModuleOptions),
     TypeOrmModule.forRootAsync(typeormFactoryLoader),
     CustomBullModule,
-    BullModule.registerQueue(...[{ name: QueueName.sync }, { name: QueueName.file }] as BullModuleOptions[]),
+    CronModule,
     LoggerModule.forRoot('api'),
     DsApiModule,
     XlsxModule,

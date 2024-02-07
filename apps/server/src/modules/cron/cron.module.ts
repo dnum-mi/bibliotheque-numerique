@@ -1,18 +1,11 @@
 import { Module } from '@nestjs/common'
 import { CronService } from './cron.service'
-import { DossierModule } from '../dossiers/dossier.module'
-import { DemarcheModule } from '../demarches/demarche.module'
-import { InstructionTimesModule } from '@/modules/instruction_time/instruction_times.module'
-import { XlsxModule } from '@/shared/modules/xlsx/xlsx.module'
-import { OrganismeModule } from '../organismes/organisme.module'
+import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
+import { BullModule, BullModuleOptions } from '@nestjs/bull'
 
 @Module({
   imports: [
-    DossierModule,
-    DemarcheModule,
-    InstructionTimesModule,
-    OrganismeModule,
-    XlsxModule,
+    BullModule.registerQueue(...[{ name: QueueName.sync }, { name: QueueName.file }] as BullModuleOptions[]),
   ],
   controllers: [],
   providers: [CronService],

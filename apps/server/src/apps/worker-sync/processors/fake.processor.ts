@@ -1,5 +1,5 @@
 import { InjectQueue, Processor } from '@nestjs/bull'
-import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.const'
+import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
 import { OnApplicationBootstrap } from '@nestjs/common'
 import { Queue } from 'bull'
 
