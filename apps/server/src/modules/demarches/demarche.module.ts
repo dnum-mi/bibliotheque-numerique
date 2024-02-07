@@ -9,12 +9,14 @@ import { DemarcheConfigurationController } from './controllers/demarche-configur
 import { DemarcheDossierController } from './controllers/demarche-dossier.controller'
 import { CustomFilterModule } from '@/modules/custom-filters/custom-filter.module'
 import { DemarcheCustomFilterController } from '@/modules/demarches/controllers/demarche-custom-filter.controller'
+import { DsApiModule } from '@/shared/modules/ds-api/ds-api.module'
 
 @Module({
   imports: [
     forwardRef(() => DossierModule),
     TypeOrmModule.forFeature([Demarche]),
     CustomFilterModule,
+    DsApiModule,
   ],
   controllers: [
     DemarcheController,
