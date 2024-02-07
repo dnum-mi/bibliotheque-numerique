@@ -121,15 +121,15 @@ jobs:
     needs: checks
     if: (!github.event.pull_request.draft) && (needs.checks.outputs.is_server_modified || needs.checks.outputs.is_shared_modified)
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
 
     steps:
       - name: Checks-out repository
         uses: actions/checkout@v3
-      - name: Use Node.js 18.x.x
+      - name: Use Node.js 20.x.x
         uses: actions/setup-node@v3
         with:
-          node-version: "18"
+          node-version: "20.11"
       - name: run tests BACK-END
         run: |
             npm i -g pnpm
