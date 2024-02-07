@@ -22,7 +22,7 @@ import { BullModule, BullModuleOptions } from '@nestjs/bull'
     LoggerModule.forRoot('worker-file'),
     TypeOrmModule.forRootAsync(typeormFactoryLoader),
     CustomBullModule,
-    BullModule.registerQueue({ name: QueueName.sync } as BullModuleOptions),
+    BullModule.registerQueue({ name: QueueName.file } as BullModuleOptions),
   ],
   controllers: [],
   providers: [],
