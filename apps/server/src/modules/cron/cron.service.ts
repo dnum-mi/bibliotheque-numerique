@@ -21,8 +21,6 @@ export class CronService implements OnApplicationBootstrap {
     @InjectQueue(QueueName.sync) private readonly syncQueue: Queue,
   ) {
     this.logger.setContext(this.constructor.name)
-    this.logger.log('Cron fetching data is set at: ')
-    this.logger.log(this.config.get('fetchDataInterval'))
   }
 
   private _loadCronJobTimes(): void {
@@ -50,13 +48,15 @@ export class CronService implements OnApplicationBootstrap {
   }
 
   private async _registerAllCronJobs(): Promise<void> {
+    this.logger.verbose('_registerAllCronJobs')
     this._loadCronJobTimes()
     for (const job of this.jobCron) {
       const existingJob = await this.syncQueue.getJob(job.name)
       if (existingJob) {
+        this.logger.debug('Remove an already existing job: ' + job.name)
         await existingJob.remove()
       }
-
+      this.logger.debug('adding job ' + job.name + ' with cron ' + job.cron)
       await this.syncQueue.add(job.name, job.payload || null, {
         jobId: 1,
         repeat: {
@@ -67,6 +67,7 @@ export class CronService implements OnApplicationBootstrap {
   }
 
   onApplicationBootstrap(): void {
+    this.logger.verbose('onApplicationBootStrap')
     this._registerAllCronJobs()
   }
 }
