@@ -164,15 +164,16 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
     types: OrganismeTypeKeys[] | undefined,
   ): Promise<void> {
     this.logger.verbose('createAndSynchronise')
+
+    // TODO: replace with only demarche and not its dossiers (when ds-api-client is over)
     const raw = await this.dsApiClient.demarcheDossierWithCustomChamp(dsId)
+
     if (!raw) {
       throw new NotFoundException(`Demarche with dsId ${dsId} not found.`)
     }
     if (await this.demarcheService.findByDsId(dsId)) {
       throw new BadRequestException(`Demarche with dsId ${dsId} already exist.`)
     }
-    const dossiers = [...raw.demarche.dossiers.nodes]
-    delete raw.demarche.dossiers
     const demarche = await this.repo.save({
       lastSynchronisedAt: new Date(),
       title: raw.demarche.title,
@@ -186,31 +187,18 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
       dsDataJson: raw.demarche,
       identification,
     })
-    await this._synchroniseAllDossier(dossiers, demarche)
+    await this.synchroniseOneDemarche(demarche.id, true)
   }
 
   public async synchroniseOneDemarche(
-    dsId: number,
+    demarcheId: number,
     fromScratch = false,
   ): Promise<void> {
     this.logger.verbose('synchroniseOneDemarche')
-    const demarche = await this.demarcheService.findByDsId(dsId)
+    const demarche = await this.demarcheService.findOneById(demarcheId)
     if (!demarche) {
-      throw new NotFoundException(`Demarche with dsId ${dsId} not found.`)
+      throw new NotFoundException(`Demarche with id ${demarcheId} not found.`)
     }
-    return this._synchroniseOneDemarche(demarche, dsId, fromScratch)
-  }
-
-  public async synchroniseAllDemarches(fromScratch = false): Promise<void[]> {
-    this.logger.verbose('synchroniseAllDemarches')
-    const demarches = await this.repo.find()
-    const promises = demarches.map((demarche) =>
-      this._synchroniseOneDemarche(
-        demarche,
-        demarche.dsDataJson.number,
-        fromScratch,
-      ),
-    )
-    return Promise.all(promises)
+    return this._synchroniseOneDemarche(demarche, demarcheId, fromScratch)
   }
 }

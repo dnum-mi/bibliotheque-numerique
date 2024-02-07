@@ -7,9 +7,12 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Put,
   UseInterceptors,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
+import { InjectQueue } from '@nestjs/bull'
+import { Queue } from 'bull'
 import { DemarcheService } from '../providers/services/demarche.service'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { Demarche } from '../objects/entities/demarche.entity'
@@ -29,6 +32,9 @@ import { Role } from '@/modules/users/providers/decorators/role.decorator'
 import { CurrentUserRole } from '@/modules/users/providers/decorators/current-user-role.decorator'
 import { CurrentDemarcheInterceptor } from '@/modules/demarches/providers/interceptors/current-demarche.interceptor'
 import { CurrentDemarche } from '@/modules/demarches/providers/decorators/current-demarche.decorator'
+import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
+import { JobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
+import { SyncOneDemarchePayload } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
 
 @ApiTags('Demarches')
 @Controller('demarches')
@@ -37,6 +43,7 @@ export class DemarcheController {
     private readonly demarcheService: DemarcheService,
     private readonly demarcheSynchroniseService: DemarcheSynchroniseService,
     private readonly logger: LoggerService,
+    @InjectQueue(QueueName.sync) private readonly syncQueue: Queue,
   ) {
     this.logger.setContext(this.constructor.name)
   }
@@ -77,20 +84,23 @@ export class DemarcheController {
     return { message: `Demarche with DS id ${dto.idDs} has been created.` }
   }
 
-  @Post('synchro-dossiers')
+  @Put(':demarcheId/sync')
   @Role(Roles.sudo)
-  async synchroDossiers(
-    @Body('idDs', ParseIntPipe) idDs: number,
-  ): Promise<{ message: string }> {
-    this.logger.verbose('synchroDossiers')
-    await this.demarcheSynchroniseService.synchroniseOneDemarche(idDs, true)
-    return { message: `Demarche with DS id ${idDs} has been synchronised.` }
+  async syncOneDemarcheFromScratch(
+    @Param('demarcheId', ParseIntPipe) demarcheId: number,
+  ): Promise<void> {
+    this.logger.verbose('syncOneDemarcheFromScratch')
+    this.logger.debug('Adding SyncOneDemarche job in queue')
+    await this.syncQueue.add(JobName.SyncOneDemarche, {
+      demarcheId,
+      fromScratch: true,
+    } as SyncOneDemarchePayload)
   }
 
-  @Patch(':id')
+  @Patch(':demarcheId')
   @Role(Roles.sudo)
   async updateIdentification(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('demarcheId', ParseIntPipe) id: number,
     @Body() dto: UpdateDemarcheDto,
   ): Promise<{ message: string }> {
     this.logger.verbose(`update identification of demarche ${id}`)
