@@ -16,7 +16,7 @@ POST {{baseUrl}}/demarches/create HTTP/1.1
 Content-Type: application/json
 
 {
-  "idDs": 35
+  "demarcheId": 35
 }
 
 ### Synchroniser le dossier
@@ -25,5 +25,5 @@ POST {{baseUrl}}/demarches/synchro-dossiers HTTP/1.1
 Content-Type: application/json
 
 {
-  "idDs": 38
+  "demarcheId": 38
 }
