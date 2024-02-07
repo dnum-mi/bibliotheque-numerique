@@ -73,6 +73,7 @@ services:
       - dev
       - simple-dev
       - db-only
+      - ci
     image: postgres:14.5
     container_name: biblio-num_db
     restart: always
@@ -188,6 +189,7 @@ services:
     profiles:
       - dev
       - simple-dev
+      - ci
     image: bitnami/redis:latest
     container_name: redis
     environment:
