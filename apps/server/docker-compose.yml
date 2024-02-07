@@ -196,13 +196,27 @@ services:
       - REDIS_PASSWORD=redis
     ports:
       - 6379:6379
-    volumes:
-      - type: volume
-        source: biblio-num-redis-volume
-        target: /bitnami/redis/data
     networks:
       - biblio-num-network
 
+  bullboard:
+    profiles:
+      - dev
+      - simple-dev
+    container_name: bullboard
+    image: deadly0/bull-board
+    restart: always
+    ports:
+      - 3001:3000
+    networks:
+      - biblio-num-network
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: redis
+      BULL_PREFIX: bull
+    depends_on:
+      - redis
 networks:
   biblio-num-network:
     name: biblio-num-network
@@ -216,4 +230,3 @@ volumes:
   biblio-num-db-volume:
   biblio-num-server-node_modules-volume:
   biblio-num-worker-node_modules-volume:
-  biblio-num-redis-volume:
