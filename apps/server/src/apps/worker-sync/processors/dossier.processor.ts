@@ -22,7 +22,7 @@ export class DossierProcessor {
   }
 
   @Process(JobName.SyncOneDossier)
-  async syncOneDemarche(job: Job<SyncOneDossierPayload>): Promise<void> {
+  async syncOneDossier(job: Job<SyncOneDossierPayload>): Promise<void> {
     this.logger.verbose('sync one dossier')
     const demarche = await this.demarcheService.findOneById(job.data.demarcheId)
     const tdossier = await this.dsApiClient.dossierWithCustomChamp(job.data.dsDossierId)

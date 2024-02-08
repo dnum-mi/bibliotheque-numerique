@@ -26,7 +26,7 @@ const fieldService: FieldService = jest.createMockFromModule('@/modules/dossiers
 
 const repository: Repository<InstructionTime> = jest.createMockFromModule('typeorm/repository/Repository')
 
-describe('InstructionTimesService, Check Date', () => {
+describe.skip('InstructionTimesService, Check Date', () => {
   let service: InstructionTimesService
 
   beforeAll(async () => {

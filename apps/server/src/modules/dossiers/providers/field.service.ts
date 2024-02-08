@@ -66,7 +66,6 @@ export class FieldService extends BaseEntityService<Field> {
     CreateFieldDto,
     'sourceId' | 'label' | 'formatFunctionRef' | 'type' | 'fieldSource'
   > {
-    this.logger.verbose('_extractColumnRefFieldInformation')
     return {
       sourceId: columnRef.id,
       label: columnRef.originalLabel,
@@ -228,7 +227,6 @@ export class FieldService extends BaseEntityService<Field> {
       columnHash,
     )
     await this.repo.delete({ dossierId })
-    // TODO: supprimer les fichiers S3
     return this.repo.save(fields)
   }
 

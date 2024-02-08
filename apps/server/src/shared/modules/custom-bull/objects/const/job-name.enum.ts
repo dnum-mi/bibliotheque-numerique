@@ -4,7 +4,8 @@ export const JobName = {
   SyncOneDossier: 'SyncOneDossier',
   SyncAllRnfOrganisme: 'SyncAllRnfOrganisme',
   SyncAllRnaOrganisme: 'SyncAllRnaOrganisme',
-  SyncOrCreateOneOrganisme: 'SyncOrCreateOneOrganisme',
+  SyncOneRnaOrganisme: 'SyncOneRnaOrganisme',
+  SyncOneRnfOrganisme: 'SyncOneRnfOrganisme',
   ComputeTimeTracking: 'ComputeTimeTracking',
   UploadFile: 'UploadFile',
 } as const

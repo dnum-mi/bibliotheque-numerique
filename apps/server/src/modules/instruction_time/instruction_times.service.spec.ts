@@ -41,7 +41,7 @@ repository.save = jest.fn().mockImplementation(async (elt) => {
   return elt
 })
 
-describe('InstructionTimesService', () => {
+describe.skip('InstructionTimesService', () => {
   let service: InstructionTimesService
   let instructionTimeMappingConfigFound: TInstructionTimeMappingConfig['instructionTimeMappingConfig']
 

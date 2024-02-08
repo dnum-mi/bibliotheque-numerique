@@ -15,7 +15,6 @@ import {
   DsApiClient,
 } from '@dnum-mi/ds-api-client'
 import { DemarcheService } from './demarche.service'
-import { DossierSynchroniseService } from '../../../dossiers/providers/synchronization/dossier-synchronise.service'
 import { getFixFieldsByIdentification } from '../../../dossiers/objects/constante/fix-field.dictionnary'
 import {
   giveFormatFunctionRefFromDsChampType,
@@ -42,7 +41,6 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
     private demarcheService: DemarcheService,
     @InjectRepository(Demarche) repo: Repository<Demarche>,
     private dsApiClient: DsApiClient,
-    private dossierSynchroniseService: DossierSynchroniseService,
     @InjectQueue(QueueName.sync) private readonly syncQueue: Queue,
   ) {
     super(repo, logger)
@@ -171,7 +169,8 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
     delete raw.dossiers
     const toUpdate = {
       lastSynchronisedAt: new Date(),
-      ...((raw.dateDerniereModification !== demarche.dsDataJson.dateDerniereModification || fromScratch)
+      ...(raw.dateDerniereModification !==
+        demarche.dsDataJson.dateDerniereModification || fromScratch
         ? {
           title: raw.title,
           state: raw.state,
