@@ -95,7 +95,7 @@
     "turbo": "1.10.16"
   },
   "volta": {
-    "node": "18.19.0"
+    "node": "20.11.0"
   },
   "pnpm": {
     "overrides": {
@@ -105,5 +105,7 @@
       "get-func-name@<2.0.1": ">=2.0.1",
       "@babel/traverse@<7.23.2": ">=7.23.2"
     }
-  }
+  },
+  "main": "index.js",
+  "keywords": []
 }

@@ -1,7 +1,12 @@
 import { NestFactory } from '@nestjs/core'
 import { ConfigService } from '@nestjs/config'
+
+import { add } from '@biblio-num/shared-utils'
+
 import { ApiModule } from './api.module'
 import { configMain } from '../../config-main'
+
+console.log(add(1, 2))
 
 async function bootstrap (): Promise<void> {
   const app = await NestFactory.create(ApiModule, {

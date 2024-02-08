@@ -5,6 +5,7 @@
   "compilerOptions": {
     "allowJs": true,
     "composite": true,
+    "noEmit": false,
     "baseUrl": ".",
     "moduleResolution": "node",
     "paths": {

@@ -1,0 +1,27 @@
+{
+  "name": "@biblio-num/shared-utils",
+  "version": "1.0.0",
+  "description": "Shared utils for BiblioNum",
+  "main": "./dist/index.cjs.js",
+  "module": "./dist/index.esm.js",
+  "types": "./dist/src",
+  "scripts": {
+    "test": "vitest",
+    "clean:dist": "rimraf dist types",
+    "dev": "tsup --watch",
+    "build": "run-s clean:dist build:only",
+    "build:only": "tsup"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^2.6.4",
+    "@microsoft/api-extractor": "7.39.4",
+    "eslint": "npm:eslint-ts-patch@^8.56.0-0",
+    "npm-run-all2": "6.1.2",
+    "rimraf": "^5.0.5",
+    "tsup": "8.0.1",
+    "typescript": "5.3.3"
+  },
+  "volta": {
+    "node": "20.11.0"
+  }
+}
