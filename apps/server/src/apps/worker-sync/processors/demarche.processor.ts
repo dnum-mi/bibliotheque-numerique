@@ -9,6 +9,7 @@ import {
 import { Job, Queue } from 'bull'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { DemarcheSynchroniseService } from '@/modules/demarches/providers/services/demarche-synchronise.service'
+import { ConfigService } from '@nestjs/config'
 
 @Processor(QueueName.sync)
 export class DemarcheProcessor {
@@ -16,6 +17,7 @@ export class DemarcheProcessor {
     private readonly logger: LoggerService,
     private readonly demarcheService: DemarcheService,
     private readonly demarcheSynchroniseService: DemarcheSynchroniseService,
+    private readonly configService: ConfigService,
     @InjectQueue(QueueName.sync) private readonly syncQueue: Queue,
   ) {
     this.logger.setContext(this.constructor.name)
