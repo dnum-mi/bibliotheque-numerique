@@ -6,7 +6,7 @@ export NODE_ENV='test-unit'
 clear
 echo "============================================\n======== Launching unit tests.. ============\n============================================"
 if [ "x$1" = "xdev" ]; then
-    dotenv -e ./test/.env.test jest -- --config ./test/unit/jest-unit.json --watch --silent=false
+    dotenv -e ./test/.env.test jest -- --config ./test/unit/jest-unit.json --watch --silent=false --detectOpenHandles
 elif [ "x$1" = "xcoverage" ]; then
     dotenv -e ./test/.env.test jest -- --config ./test/unit/jest-unit.json --silent=true --coverage=true
 else
