@@ -7,9 +7,12 @@ import { useUserStore } from '@/stores'
 import AppToaster from '@/components/AppToaster.vue'
 import { routeNames } from '@/router/route-names'
 import { Roles, isSuperiorOrSimilar } from '@/biblio-num/shared'
+import { add } from '@biblio-num/shared-utils'
 import { logInServer } from '@/utils/log.utils'
 import apiClient from '@/api/api-client'
 import { type EnvTextKeys, envTextMapping, defaultEnv } from '@/shared/types'
+
+console.log(add(40, 2))
 
 const version = ref('0.0.0')
 const runEnv = ref<EnvTextKeys>(defaultEnv)
