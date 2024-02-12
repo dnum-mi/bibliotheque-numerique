@@ -21,6 +21,8 @@ import { DossierProcessor } from '@/apps/worker-sync/processors/dossier.processo
 
 import { DossierModule } from '@/modules/dossiers/dossier.module'
 import { DemarcheModule } from '@/modules/demarches/demarche.module'
+import { InstructionTimeProcessor } from '@/apps/worker-sync/processors/instruction-time.processor'
+import { InstructionTimesModule } from '@/modules/instruction_time/instruction_times.module'
 
 @Module({
   imports: [
@@ -48,8 +50,13 @@ import { DemarcheModule } from '@/modules/demarches/demarche.module'
     ),
     DemarcheModule,
     DossierModule,
+    InstructionTimesModule,
   ],
   controllers: [],
-  providers: [DemarcheProcessor, DossierProcessor],
+  providers: [
+    DemarcheProcessor,
+    DossierProcessor,
+    InstructionTimeProcessor,
+  ],
 })
 export class WorkerSyncModule {}
