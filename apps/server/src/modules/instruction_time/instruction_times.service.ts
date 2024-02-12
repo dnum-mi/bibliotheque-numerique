@@ -140,7 +140,6 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
   async instructionTimeCalculationForAllDossier (): Promise<void> {
     this.logger.verbose('instructionTimeCalculationForAllDossier')
     const instructionTimes = await this.repo.find({ relations: { dossier: true } })
-
     await this.updateInstructionTimeToFields(instructionTimes)
   }
 
