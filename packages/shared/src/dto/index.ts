@@ -1,6 +1,7 @@
 export * from './custom-filters'
 export * from './demarche'
 export * from './dossier'
+export * from './files'
 export * from './organisme'
 export * from './pagination'
 export * from './user'
