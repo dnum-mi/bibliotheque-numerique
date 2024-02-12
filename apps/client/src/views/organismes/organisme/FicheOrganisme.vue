@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { dateToStringFr, copyCurrentUrlInClipboard } from '@/utils'
+import { useTabs } from '@gouvminint/vue-dsfr'
 
+import { dateToStringFr, copyCurrentUrlInClipboard } from '@/utils'
 import LayoutFiche from '@/components/Layout/LayoutFiche.vue'
 import ListeDossier from './ListeDossier.vue'
 import OrganismeBadge from '@/components/Badges/OrganismeBadge.vue'
@@ -8,6 +9,8 @@ import InfoContact from '@/components/InfoContact.vue'
 import { type OrganismeIdType, useOrganismeStore, useUserStore } from '@/stores'
 
 const props = withDefaults(defineProps<{ id: string; idType: OrganismeIdType }>(), {})
+
+const { ascendant, selected, select } = useTabs(true, 0)
 
 const organismeStore = useOrganismeStore()
 const userStore = useUserStore()
@@ -25,14 +28,15 @@ const tabTitles = [
     tabId: 'tab-0',
     panelId: 'tab-content-0',
   },
+  {
+    title: 'Pièces jointes',
+    tabId: 'tab-1',
+    panelId: 'tab-content-1',
+    tag: 'foo',
+  },
 ]
-const selectedTabIndex = ref(0)
 
-function selectTab (idx: number) {
-  selectedTabIndex.value = idx
-}
-
-const role = computed(() => userStore.currentUser.role)
+const role = computed(() => userStore.currentUser?.role)
 
 const isLoading = ref(false)
 onMounted(async () => {
@@ -106,14 +110,15 @@ onMounted(async () => {
           <DsfrTabs
             tab-list-name="tabs-fiche"
             :tab-titles="tabTitles"
-            :initial-selected-index="0"
+            :initial-selected-index="selected"
             class="h-full"
-            @select-tab="selectTab"
+            @select-tab="select"
           >
             <DsfrTabContent
               panel-id="tab-content-0"
               tab-id="tab-0"
-              :selected="selectedTabIndex === 0"
+              :selected="selected === 0"
+              :asc="ascendant"
             >
               <div class="flex flex-col gap-6">
                 <div class="flex flex-row gap-2 items-center">
@@ -134,6 +139,14 @@ onMounted(async () => {
                   :phone="organisme.phoneNumber ?? ''"
                 />
               </div>
+            </DsfrTabContent>
+            <DsfrTabContent
+              panel-id="tab-content-1"
+              tab-id="tab-1"
+              :selected="selected === 1"
+              :asc="ascendant"
+            >
+              <AttachedFileList :preselected-tags="['foo']" />
             </DsfrTabContent>
           </DsfrTabs>
         </div>
