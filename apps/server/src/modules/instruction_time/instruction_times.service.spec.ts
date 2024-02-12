@@ -1,79 +1,63 @@
 /* eslint-disable */
-import { Test, TestingModule } from '@nestjs/testing'
-import { TypeOrmModule } from '@nestjs/typeorm'
-import { ConfigModule, ConfigService } from '@nestjs/config'
+import { ConfigService } from '@nestjs/config'
 import { DossierState } from '@dnum-mi/ds-api-client/dist/@types/types'
+import { Repository } from 'typeorm/repository/Repository'
 import { faker } from '@faker-js/faker/locale/fr'
+import MockDate from 'mockdate'
 
 import dayjs from '../../shared/utils/dayjs'
 
 import { InstructionTimesService } from './instruction_times.service'
-import configuration from '../../config/configuration'
 import instructionTimeMappingConfig, {
   TInstructionTimeMappingConfig,
 } from '../../config/instructionTimeMapping.config'
 import { EInstructionTimeState } from './types/IntructionTime.type'
 import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
-import MockDate from 'mockdate'
-import { typeormFactoryLoader } from '@/shared/utils/typeorm-factory-loader'
 import { InstructionTime } from './instruction_time.entity'
 import { getFakeDossierTest } from '../../../test/unit/fake-data/dossier.fake-data'
 import { DossierService } from '@/modules/dossiers/providers/dossier.service'
-import { DossierModule } from '@/modules/dossiers/dossier.module'
-import fileConfig from '../../config/file.config'
-import dsConfig from '../../config/ds.config'
-import { DsApiModule } from '@/shared/modules/ds-api/ds-api.module'
 import { FieldService } from '@/modules/dossiers/providers/field.service'
 import { Field } from '@/modules/dossiers/objects/entities/field.entity'
 import {
   fixFieldInstructionTimeDelay,
   fixFieldInstructionTimeStatus,
 } from './constante/fix-field-instrucation-times.dictionnary'
-import { LoggerModule } from '@/shared/modules/logger/logger.module'
+import { LoggerService } from '@/shared/modules/logger/logger.service'
+
+
+const loggerService: LoggerService = jest.createMockFromModule<LoggerService>('@/shared/modules/logger/logger.service')
+loggerService.setContext = jest.fn()
+loggerService.verbose = jest.fn()
+
+const configService: ConfigService = jest.createMockFromModule('@nestjs/config/dist/config.service')
+configService.get = jest.fn().mockImplementation(instructionTimeMappingConfig)
+
+const dossierService: DossierService = jest.createMockFromModule('@/modules/dossiers/providers/dossier.service')
+
+const fieldService: FieldService = jest.createMockFromModule('@/modules/dossiers/providers/field.service')
+
+const repository: Repository<InstructionTime> = jest.createMockFromModule('typeorm/repository/Repository')
+repository.save = jest.fn().mockImplementation(async (elt) => {
+  return elt
+})
 
 describe('InstructionTimesService', () => {
   let service: InstructionTimesService
-  let dossierService: DossierService
-  let configService: ConfigService
   let instructionTimeMappingConfigFound: TInstructionTimeMappingConfig['instructionTimeMappingConfig']
-  let fieldService: FieldService
 
   beforeAll(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      imports: [
-        // TODO: typeorm should not be imported for unit test, neither should it be imported twice for connection and injection
-        TypeOrmModule.forRootAsync(typeormFactoryLoader),
-        TypeOrmModule.forFeature([InstructionTime, Dossier]),
-        DossierModule,
-        DsApiModule,
-        LoggerModule.forRoot('api'),
-        ConfigModule.forRoot({
-          isGlobal: true,
-          cache: true,
-          load: [
-            configuration,
-            dsConfig,
-            fileConfig,
-            instructionTimeMappingConfig,
-          ],
-        }),
-      ],
-      providers: [InstructionTimesService],
-    })
-      .useMocker(() => ({}))
-      .compile()
-
-    service = module.get<InstructionTimesService>(InstructionTimesService)
-    dossierService = module.get<DossierService>(DossierService)
-    configService = module.get<ConfigService>(ConfigService)
-    fieldService = module.get<FieldService>(FieldService)
-
+    service = new InstructionTimesService(
+      configService,
+      loggerService,
+      dossierService,
+      repository,
+      fieldService
+        )
     instructionTimeMappingConfigFound =
       configService.get('instructionTime').instructionTimeMappingConfig
   })
 
   afterEach(async () => {
-    await service.repository.delete({})
     MockDate.reset()
     jest.clearAllMocks()
   })
@@ -84,8 +68,7 @@ describe('InstructionTimesService', () => {
 
   it('It should return good annotations', async () => {
     const fakeDossier = getFakeDossierTest(null)
-    jest
-      .spyOn(dossierService, 'findOneById')
+    dossierService.findOneById = jest.fn()
       .mockResolvedValueOnce(fakeDossier as Dossier)
 
     fakeDossier.dsDataJson.annotations = [
@@ -170,15 +153,13 @@ describe('InstructionTimesService', () => {
     )
 
     const results = {}
-    const mockUpsert = jest
-      .spyOn(fieldService, 'upsert')
+    const mockUpsert = jest.fn()
       .mockImplementation(async (obj: Field): Promise<Field[]> => {
         results[obj.sourceId] = obj
         return [new Field()]
       })
-
-    jest
-      .spyOn(service.repository, 'find')
+    fieldService.upsert = mockUpsert
+    service.repository.find = jest.fn()
       .mockResolvedValueOnce(fakeInstrunctionTime as InstructionTime[])
 
     await service.instructionTimeCalculation(
@@ -963,17 +944,17 @@ describe('InstructionTimesService', () => {
     dataInstructionTime.endAt = dayjs(new Date()).add(60, 'day').toDate()
     dataInstructionTime.dossier = { id: 1 } as Dossier
     dataInstructionTime.state = EInstructionTimeState.IN_PROGRESS
-    jest
-      .spyOn(service.repository, 'find')
+    service.repository.find = jest.fn()
       .mockResolvedValueOnce([dataInstructionTime] as InstructionTime[])
 
     const results = {}
-    const mockUpsert = jest
-      .spyOn(fieldService, 'upsert')
+    const mockUpsert = jest.fn()
       .mockImplementation(async (obj: Field): Promise<Field[]> => {
         results[obj.sourceId] = obj
         return [new Field()]
       })
+
+    fieldService.upsert = mockUpsert
 
     await service.instructionTimeCalculation([dataInstructionTime.dossier.id])
 
@@ -1004,18 +985,16 @@ describe('InstructionTimesService', () => {
     dataInstructionTime.endAt = dayjs(new Date()).subtract(1, 'day').toDate()
     dataInstructionTime.dossier = { id: 1 } as Dossier
     dataInstructionTime.state = EInstructionTimeState.IN_PROGRESS
-    jest
-      .spyOn(service.repository, 'find')
+    service.repository.find = jest.fn()
       .mockResolvedValueOnce([dataInstructionTime] as InstructionTime[])
 
     const results = {}
-    const mockUpsert = jest
-      .spyOn(fieldService, 'upsert')
+    const mockUpsert = jest.fn()
       .mockImplementation(async (obj: Field): Promise<Field[]> => {
         results[obj.sourceId] = obj
         return [new Field()]
       })
-
+    fieldService.upsert = mockUpsert
     await service.instructionTimeCalculation([dataInstructionTime.dossier.id])
 
     expect(mockUpsert).toBeCalledTimes(1)
@@ -1043,18 +1022,16 @@ describe('InstructionTimesService', () => {
     dataInstructionTime.dossier = { id: 1 } as Dossier
     dataInstructionTime.state = EInstructionTimeState.SECOND_REQUEST
 
-    jest
-      .spyOn(service.repository, 'find')
+    service.repository.find = jest.fn()
       .mockResolvedValueOnce([dataInstructionTime] as InstructionTime[])
 
     const results = {}
-    const mockUpsert = jest
-      .spyOn(fieldService, 'upsert')
+    const mockUpsert = jest.fn()
       .mockImplementation(async (obj: Field): Promise<Field[]> => {
         results[obj.sourceId] = obj
         return [new Field()]
       })
-
+    fieldService.upsert = mockUpsert
     const result = await service.instructionTimeCalculation([
       dataInstructionTime.dossier.id,
     ])
@@ -1088,15 +1065,14 @@ describe('InstructionTimesService', () => {
     dataInstructionTime.state = EInstructionTimeState.INTENT_OPPO
 
     const results = {}
-    const mockUpsert = jest
-      .spyOn(fieldService, 'upsert')
+    const mockUpsert = jest.fn()
       .mockImplementation(async (obj: Field): Promise<Field[]> => {
         results[obj.sourceId] = obj
         return [new Field()]
       })
 
-    jest
-      .spyOn(service.repository, 'find')
+    fieldService.upsert = mockUpsert
+    service.repository.find = jest.fn()
       .mockResolvedValueOnce([dataInstructionTime] as InstructionTime[])
 
     await service.instructionTimeCalculation([dataInstructionTime.dossier.id])
@@ -1129,20 +1105,20 @@ describe('InstructionTimesService', () => {
     dataInstructionTime.dossier = { id: 1 } as Dossier
     dataInstructionTime.state = EInstructionTimeState.INTENT_OPPO
 
-    jest
-      .spyOn(service.repository, 'find')
-      .mockResolvedValueOnce([dataInstructionTime] as InstructionTime[])
+    service.repository.find = jest.fn()
+       .mockResolvedValueOnce([dataInstructionTime] as InstructionTime[])
 
     const results = {}
-    const mockUpsert = jest
-      .spyOn(fieldService, 'upsert')
+    const mockUpsert = jest.fn()
       .mockImplementation(async (obj: Field): Promise<Field[]> => {
         results[obj.sourceId] = obj
         return [new Field()]
       })
 
+    fieldService.upsert = mockUpsert
+
     await service.instructionTimeCalculation([dataInstructionTime.dossier.id])
-    expect(mockUpsert).toBeCalledTimes(2)
+    expect(fieldService.upsert).toBeCalledTimes(2)
 
     expect(results[fixFieldInstructionTimeDelay.id]).toMatchObject({
       sourceId: fixFieldInstructionTimeDelay.id,

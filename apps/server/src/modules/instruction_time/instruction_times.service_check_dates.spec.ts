@@ -1,57 +1,46 @@
-import { Test, TestingModule } from '@nestjs/testing'
-import { TypeOrmModule } from '@nestjs/typeorm'
-import { ConfigModule } from '@nestjs/config'
-import { DossierState } from '@dnum-mi/ds-api-client/dist/@types/types'
-import { DataSource } from 'typeorm'
+import { ConfigService } from '@nestjs/config'
+import { Repository } from 'typeorm'
 import { faker } from '@faker-js/faker/locale/fr'
+import MockDate from 'mockdate'
+
+import { DossierState } from '@dnum-mi/ds-api-client/dist/@types/types'
 
 import { InstructionTimesService } from './instruction_times.service'
-import configuration from '../../config/configuration'
 import instructionTimeMappingConfig, { keyInstructionTime } from '../../config/instructionTimeMapping.config'
-import MockDate from 'mockdate'
-import { typeormFactoryLoader } from '../../shared/utils/typeorm-factory-loader'
 import { InstructionTime } from './instruction_time.entity'
-import { DossierModule } from '../dossiers/dossier.module'
 import { Dossier } from '../dossiers/objects/entities/dossier.entity'
-import dsConfig from '../../config/ds.config'
-import fileConfig from '../../config/file.config'
-import { DsApiModule } from '../../shared/modules/ds-api/ds-api.module'
-import { LoggerModule } from '@/shared/modules/logger/logger.module'
+import { LoggerService } from '../../shared/modules/logger/logger.service'
+import { DossierService } from '../dossiers/providers/dossier.service'
+import { FieldService } from '../dossiers/providers/field.service'
+
+const loggerService: LoggerService = jest.createMockFromModule<LoggerService>('@/shared/modules/logger/logger.service')
+loggerService.setContext = jest.fn()
+loggerService.verbose = jest.fn()
+
+const configService: ConfigService = jest.createMockFromModule('@nestjs/config/dist/config.service')
+configService.get = jest.fn().mockImplementation(instructionTimeMappingConfig)
+
+const dossierService: DossierService = jest.createMockFromModule('@/modules/dossiers/providers/dossier.service')
+
+const fieldService: FieldService = jest.createMockFromModule('@/modules/dossiers/providers/field.service')
+
+const repository: Repository<InstructionTime> = jest.createMockFromModule('typeorm/repository/Repository')
 
 describe('InstructionTimesService, Check Date', () => {
   let service: InstructionTimesService
-  let dataSource: DataSource
 
   beforeAll(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      imports: [
-        // TODO: typeorm should not be imported for unit test, neither should it be imported twice for connection and injection
-        TypeOrmModule.forRootAsync(typeormFactoryLoader),
-        TypeOrmModule.forFeature([InstructionTime, Dossier]),
-        DossierModule,
-        DsApiModule,
-        LoggerModule.forRoot('api'),
-        ConfigModule.forRoot({
-          isGlobal: true,
-          cache: true,
-          load: [configuration, dsConfig, fileConfig, instructionTimeMappingConfig],
-        }),
-      ],
-      providers: [InstructionTimesService],
-    })
-      .useMocker(() => ({}))
-      .compile()
-
-    service = module.get<InstructionTimesService>(InstructionTimesService)
-    dataSource = module.get<DataSource>(DataSource)
+    service = new InstructionTimesService(
+      configService,
+      loggerService,
+      dossierService,
+      repository,
+      fieldService,
+    )
   })
 
   afterEach(async () => {
     MockDate.reset()
-    await service.repository.delete({})
-  })
-  afterAll(async () => {
-    await dataSource.destroy()
   })
 
   const fakerDossierInConstructionOrClos = (): DossierState =>
