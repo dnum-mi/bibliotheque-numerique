@@ -16,6 +16,7 @@ import type {
   CreateCustomFilterDto,
   PatchCustomFilterDto,
   ValidateEmailDto,
+  FileOutputDto,
   LeanDossierOutputDto,
   IOrganisme,
   PaginationDto,
@@ -29,6 +30,7 @@ import type {
   UpdateOneRoleOptionDto,
   SmallDemarcheOutputDto,
   UpdateProfileDto,
+  DynamicKeys,
 } from '@biblio-num/shared'
 
 import {
@@ -346,6 +348,14 @@ export const healthApiClient = {
   },
 }
 
+export const attachedFilesApiClient = {
+  getAttachedFiles: async (params: PaginationDto<DynamicKeys>): Promise<FileOutputDto[]> => {
+    console.log('getAttachedFiles()')
+    const response = await apiClientInstance.post('/files/list', params)
+    return response.data
+  },
+}
+
 export default {
   ...demarchesApiClient,
   ...organismeApiClient,
@@ -353,4 +363,5 @@ export default {
   ...dossiersApiClient,
   ...customFiltersApiClient,
   ...healthApiClient,
+  ...attachedFilesApiClient,
 }

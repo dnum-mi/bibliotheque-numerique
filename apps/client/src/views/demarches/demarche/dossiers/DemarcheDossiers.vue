@@ -31,8 +31,6 @@ import { getAgGridFilterFromFieldType } from '@/components/ag-grid/server-side/f
 import type { BNColDef } from '@/components/ag-grid/server-side/bn-col-def.interface'
 import DemarcheDossiersDisplays, { type TotalsAllowed } from './DemarcheDossiersDisplays.vue'
 import type { CustomFilterWithErrors } from '@/views/demarches/demarche/dossiers/custom-filter-with-errors.type'
-import type { ICustomFilterWithError } from '@biblio-num/shared/types/interfaces/custom-filters/custom-filters.interface'
-import CustomDateFilter from '@/components/ag-grid/custom-filters/CustomDateFilter.vue'
 
 type DemarcheDossiersProps = {
   id: string
@@ -55,7 +53,7 @@ const customFiltersWithErrors = computed<CustomFilterWithErrors[]>(() => customF
     .concat(cf.sorts?.map((s) => s.key) || [])
     .filter((key) => !demarcheConfigurationHash.value[key]),
 })))
-const selectedCustomFilter = ref<ICustomFilterWithError | null>(null)
+const selectedCustomFilter = ref<ICustomFilter | null>(null)
 const totalsAllowed = computed<TotalsAllowed[] | undefined>(
   () => demarcheConfiguration.value
     .filter(mapping => mapping.type === 'number' && mapping.id !== '96151176-4624-4706-b861-722d2e53545d')
@@ -364,8 +362,8 @@ const apiCall = (dto: PaginationDto<unknown>) => {
         </div>
       </div>
       <DemarcheDossiersDisplays
-        :displays="customFiltersWithErrors as ICustomFilterWithError[]"
-        :selected-display="selectedCustomFilter as ICustomFilterWithError"
+        :displays="customFiltersWithErrors as ICustomFilter[]"
+        :selected-display="selectedCustomFilter as ICustomFilter"
         :pagination-changed="paginationChanged"
         :totals-allowed="totalsAllowed"
         :operation-success="customDisplayOperationSuccess"
