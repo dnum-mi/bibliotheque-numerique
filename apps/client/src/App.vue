@@ -175,8 +175,8 @@ onErrorCaptured((error: Error | AxiosError) => {
       }
     }
   } else {
+    toaster.addErrorMessage({ description: error instanceof Error ? error.message : error })
     if (import.meta.env.DEV) {
-      toaster.addErrorMessage({ description: error instanceof Error ? error.message : error })
       console.error('Erreur inattendue:', error)
     }
   }
