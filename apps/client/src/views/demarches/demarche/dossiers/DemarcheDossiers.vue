@@ -4,7 +4,6 @@ import { useRouter, useRoute } from 'vue-router'
 import { useDebounceFn } from '@vueuse/core'
 import type { GridOptions } from 'ag-grid-enterprise'
 import type {
-  ColumnApi,
   ColumnMenuTab,
   GridApi,
   GridReadyEvent,
@@ -45,7 +44,6 @@ const demarcheStore = useDemarcheStore()
 const router = useRouter()
 const route = useRoute()
 const gridApi = ref<GridApi>()
-const columnApi = ref<ColumnApi>()
 const demarche = computed<IDemarche>(() => demarcheStore.currentDemarche as IDemarche)
 const demarcheConfiguration = computed<FrontMappingColumn[]>(() => demarcheStore.currentDemarcheFlatConfiguration)
 const demarcheConfigurationHash = computed<Record<string, MappingColumn>>(() => demarcheStore.currentDemarcheConfigurationHash)
@@ -150,18 +148,18 @@ watch(fetching, () => {
 })
 
 const resetAggState = () => {
-  if (gridApi.value && columnApi.value) {
+  if (gridApi.value) {
     gridApi.value.setFilterModel({})
-    columnApi.value?.resetColumnState()
+    gridApi.value.resetColumnState()
   }
 }
 
 const updateAggState = () => {
-  if (gridApi.value && columnApi.value) {
+  if (gridApi.value) {
     gridApi.value.setFilterModel(backendFilterToAggFilter(paginationDto.value.filters || {}))
-    const statesHash = Object.fromEntries(columnApi.value?.getColumnState().map((state) => [state.colId, state]))
+    const statesHash = Object.fromEntries(gridApi.value?.getColumnState().map((state) => [state.colId, state]))
     const sortHash = Object.fromEntries(paginationDto.value.sorts.map((sort) => [sort.key, sort]))
-    columnApi.value?.applyColumnState({
+    gridApi.value?.applyColumnState({
       state: paginationDto.value.columns.map((c) => {
         const result = {
           ...statesHash[c],
@@ -181,7 +179,6 @@ const updateAggState = () => {
 
 const onGridReady = (event: GridReadyEvent) => {
   gridApi.value = event.api
-  columnApi.value = event.columnApi
 }
 
 //#region Filter events

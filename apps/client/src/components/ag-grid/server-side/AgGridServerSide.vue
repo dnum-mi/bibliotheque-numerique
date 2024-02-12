@@ -1,10 +1,7 @@
 <script lang="ts" setup generic="T extends DynamicKeys">
 import { AgGridVue } from 'ag-grid-vue3'
-import {
-  ColumnApi,
-  GridApi,
-} from 'ag-grid-community'
 import type {
+  GridApi,
   GridReadyEvent,
   IServerSideGetRowsParams,
   SelectionChangedEvent,
@@ -52,7 +49,6 @@ const emit = defineEmits<{
 }>()
 
 const gridApi = ref<GridApi | undefined>()
-const columnApi = ref<ColumnApi | undefined>()
 
 const refresh = () => {
   if (gridApi.value) {
@@ -116,7 +112,6 @@ const gridOptions = {
 
 const onGridReady = (event: GridReadyEvent) => {
   gridApi.value = event.api
-  columnApi.value = event.columnApi
   emit('gridReady', event)
 }
 
@@ -137,7 +132,7 @@ const onColumnMoved = (event: ColumnMovedEvent) => {
 </script>
 
 <template>
-  <ag-grid-vue
+  <AgGridVue
     class="ag-theme-material"
     :column-defs="columnDefs"
     :grid-options="gridOptions"
