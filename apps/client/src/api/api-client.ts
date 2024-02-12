@@ -92,8 +92,17 @@ export const apiClientAuthInstance = axios.create({
 })
 
 const toaster = useToaster()
-apiClientInstance.interceptors.response.use(r => r, (error) => {
-  if (error.response.status === 401) {
+apiClientInstance.interceptors.response.use(r => r, (error: AxiosError<{ message?: string }>) => {
+  const status = error.response?.status
+  if (!status || status >= 500) {
+    toaster.addErrorMessage(error.response?.data?.message ?? 'Une erreur inconnue est survenue')
+    if (import.meta.env.DEV) {
+      toaster.addMessage({ description: 'Est-ce que le serveur est démarré ?', type: 'info' })
+    }
+    console.error(error)
+    return
+  }
+  if (status === 401) {
     toaster.addMessage({ id: 'auth', type: 'warning', description: 'Vous n’êtes plus connecté, veuillez vous réauthentifier' })
     useUserStore().forceResetUser()
     const routeTo: RouteLocationRaw = { name: routeNames.SIGNIN }
@@ -103,21 +112,17 @@ apiClientInstance.interceptors.response.use(r => r, (error) => {
     router.push(routeTo)
     return null
   }
-  if (error.response.status === 403) {
+  if (status === 403) {
     toaster.addMessage({ type: 'warning', description: 'Vous n’avez pas les droits de faire cette opération' })
     return null
   }
-  if (error.response.status === 404) {
-    toaster.addErrorMessage(error.response.data.message)
+  if (status === 404) {
+    toaster.addErrorMessage(error.response?.data?.message ?? 'Ressource introuvable')
     throw error
   }
-  if (error.response.status >= 400 && error.response.status < 500) {
-    toaster.addErrorMessage(error.response.data.message)
+  if (status >= 400 && status < 500 && error.response?.data?.message) {
+    toaster.addErrorMessage(error.response?.data?.message)
     return null
-  }
-  if (error.response.status >= 500) {
-    toaster.addErrorMessage(error.response.data?.message ?? 'Une erreur inconnue est survenue')
-    console.error(error)
   }
 })
 

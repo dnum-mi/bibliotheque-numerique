@@ -383,7 +383,7 @@ const apiCall = (dto: PaginationDto<unknown>) => {
       v-if="demarche && columnsDef"
       class="ag-grid-wrapper"
     >
-      <ag-grid-server-side
+      <AgGridServerSide
         ref="agGridComponent"
         v-model:pagination-dto="paginationDto"
         :column-defs="columnsDef"

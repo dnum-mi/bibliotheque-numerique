@@ -187,7 +187,7 @@ defineExpose({
   <h4 v-if="title">
     {{ title }}
   </h4>
-  <ag-grid-vue
+  <AgGridVue
     style="max-width: 100%; height: 690px"
     class="ag-theme-material"
     ensure-dom-order="true"
