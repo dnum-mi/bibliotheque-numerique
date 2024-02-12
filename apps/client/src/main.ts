@@ -28,6 +28,19 @@ import StatusBadge from './components/Badges/StatusBadge.vue'
 
 addIcons(...Object.values(icons))
 
+if (import.meta.env.DEV) {
+  const { worker } = await import('./mocks/browser')
+  await worker.start({
+    onUnhandledRequest: (request, print) => {
+      const url = request.url
+      if (!/\/api\//.test(url)) {
+        return
+      }
+      console.log('Unhandled request:', new URL(request.url).pathname)
+    },
+  })
+}
+
 createApp(App)
   .use(createPinia())
   .component('StatusBadge', StatusBadge)
