@@ -4,12 +4,6 @@ import { NodeEnvs } from '../shared/types/node-env.enum'
 
 export default registerAs('database', () => {
   switch (process.env.NODE_ENV) {
-  case NodeEnvs.TestUnit:
-    return {
-      ...options(),
-      database: 'biblio-num-unit',
-      synchronize: true,
-    }
   case NodeEnvs.TestE2E:
     return {
       ...options(),
