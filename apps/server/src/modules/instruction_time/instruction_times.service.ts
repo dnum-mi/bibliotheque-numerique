@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { Dossier as TDossier, DossierState } from '@dnum-mi/ds-api-client/dist/@types/types'
 import { In, Repository } from 'typeorm'
+
+import { Dossier as TDossier, DossierState } from '@dnum-mi/ds-api-client/dist/@types/types'
+import { Champ, DateChamp, DatetimeChamp } from '@dnum-mi/ds-api-client/dist/@types/generated-types'
 
 import dayjs, { type Dayjs } from '@/shared/utils/dayjs'
 
@@ -98,11 +100,16 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
     for (const annotationLabelKey of Object.keys(instructionTimeMapping)) {
       const annotation = annotations?.find(
         (annotation) => annotation.label === instructionTimeMapping[annotationLabelKey],
-        // TODO: fixe type
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ) as any
-      if (annotation && (annotation.datetime || annotation.date || annotation.stringValue)) {
-        result[annotationLabelKey] = dayjs(annotation.datetime || annotation.date || annotation.stringValue)
+      ) as Champ
+      if (annotation &&
+          ((annotation as DatetimeChamp).datetime ||
+            (annotation as DateChamp).date ||
+            annotation.stringValue)) {
+        result[annotationLabelKey] = dayjs(
+          (annotation as DatetimeChamp).datetime ||
+          (annotation as DateChamp).date ||
+          annotation.stringValue,
+        )
           .startOf('day')
           .toDate()
       } else {
@@ -207,9 +214,7 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
     )
   }
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  checkValidity (data: Partial<TDossier>, instructionTime: TIntructionTime) {
+  checkValidity (data: Partial<TDossier>, instructionTime: TIntructionTime): boolean {
     const messageError = `Erreur dans les déclarations de dates pour le dossier ${data.id}`
     const dateReceipt1stDemand = instructionTime[keyInstructionTime.DATE_RECEIPT1]
     const dateRequest1stDemand = instructionTime[keyInstructionTime.DATE_REQUEST1]
@@ -383,9 +388,7 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
     return await this.saveInInstruction(instructionTime, delay)
   }
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  private isDossierClosed (state) {
+  private isDossierClosed (state): boolean {
     return ![DossierState.EnConstruction, DossierState.EnInstruction].includes(state)
   }
 
@@ -404,26 +407,22 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
     return this.repo.save(instructionTime)
   }
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  private async saveInConstruction (instructionTime, datesForInstructionTimes) {
+  private async saveInConstruction (
+    instructionTime: InstructionTime,
+    datesForInstructionTimes: TIntructionTime) : Promise<InstructionTime> {
     if (datesForInstructionTimes[keyInstructionTime.DATE_REQUEST1]) {
       instructionTime.state = EInstructionTimeState.FIRST_REQUEST
     }
+    if (instructionTime.state === undefined) instructionTime.state = EInstructionTimeState.DEFAULT
     return await this.repo.save(instructionTime)
   }
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  private async saveIsClose (instructionTime) {
-    // TODO: faire quelque chose
+  private async saveIsClose (instructionTime: InstructionTime): Promise<InstructionTime> {
     instructionTime.state = EInstructionTimeState.DEFAULT
     return await this.repo.save(instructionTime)
   }
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  private delayDateReceipt2 (datesForInstructionTimes: TIntructionTime, delay: TDelay) {
+  private delayDateReceipt2 (datesForInstructionTimes: TIntructionTime, delay: TDelay) :void {
     delay.endAt = dayjs(datesForInstructionTimes.DateReceipt2)
       .startOf('day')
       .add(delay.endAt.diff(delay.stopAt, 'day'), 'day')
@@ -431,16 +430,12 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
     delay.state = EInstructionTimeState.SECOND_RECEIPT
   }
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  private delayDateRequest2 (datesForInstructionTimes: TIntructionTime, delay: TDelay) {
+  private delayDateRequest2 (datesForInstructionTimes: TIntructionTime, delay: TDelay) :void {
     delay.stopAt = dayjs(datesForInstructionTimes.DateRequest2)
     delay.state = EInstructionTimeState.SECOND_REQUEST
   }
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  private delayProrogation (datesForInstructionTimes: TIntructionTime, delay: TDelay) {
+  private delayProrogation (datesForInstructionTimes: TIntructionTime, delay: TDelay) :void {
     const timeProrogation = datesForInstructionTimes.BeginProrogationDate
     const remainingtime = delay.endAt.diff(timeProrogation, 'day')
     delay.endAt = dayjs(timeProrogation).add(this.nbDaysAfterExtension, 'day').add(remainingtime, 'day')
@@ -448,17 +443,13 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
     delay.state = EInstructionTimeState.IN_EXTENSION
   }
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  private dalayInstruction (dateStart: Dayjs, delay: TDelay) {
+  private dalayInstruction (dateStart: Dayjs, delay: TDelay) :void {
     delay.startAt = dateStart
     delay.endAt = dayjs(dateStart).add(this.nbDaysAfterInstruction, 'day')
     delay.state = EInstructionTimeState.IN_PROGRESS
   }
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  private delayOpposition (datesForInstructionTimes: TIntructionTime, delay: TDelay) {
+  private delayOpposition (datesForInstructionTimes: TIntructionTime, delay: TDelay) :void {
     delay.startAt = dayjs(datesForInstructionTimes.DateIntentOpposition)
     delay.endAt = delay.startAt.add(this.nbDaysAfterIntentOpposition, 'day')
 
