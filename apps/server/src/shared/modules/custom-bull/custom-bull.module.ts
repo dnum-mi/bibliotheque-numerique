@@ -17,6 +17,15 @@ import { BullModule, SharedBullAsyncConfiguration } from '@nestjs/bull'
           maxRetriesPerRequest: configService.get('redis.maxRetriesPerRequest'),
           maxLoadingRetryTime: configService.get('redis.maxLoadingRetryTime'),
         },
+        defaultJobOptions: {
+          removeOnComplete: configService.get('bull').removeOnComplete,
+          removeOnFail: configService.get('bull').removeOnFail,
+          attempts: configService.get('bull').retryAttempts,
+          backoff: {
+            type: configService.get('bull').retryExponentiel ? 'exponential' : 'fixed',
+            delay: configService.get('bull').retryDelay,
+          },
+        },
       }),
       inject: [ConfigService],
     } as SharedBullAsyncConfiguration),

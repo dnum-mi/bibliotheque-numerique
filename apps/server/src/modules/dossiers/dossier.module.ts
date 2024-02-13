@@ -19,9 +19,8 @@ import { XlsxModule } from '@/shared/modules/xlsx/xlsx.module'
 import {
   DossierSynchroniseFileService,
 } from '@/modules/dossiers/providers/synchronization/file/dossier-synchronize-file.service'
-import {
-  DossierSynchroniseOrganismeService,
-} from '@/modules/dossiers/providers/synchronization/organisme/dossier-synchronise-organisme.service'
+import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
+import { BullModule, BullModuleOptions } from '@nestjs/bull'
 
 @Module({
   imports: [
@@ -31,6 +30,12 @@ import {
     forwardRef(() => DemarcheModule),
     forwardRef(() => OrganismeModule),
     TypeOrmModule.forFeature([Dossier, Field]),
+    BullModule.registerQueue(
+      ...([
+        { name: QueueName.sync },
+        { name: QueueName.file },
+      ] as BullModuleOptions[]),
+    ),
   ],
   controllers: [DossierController],
   providers: [
@@ -43,7 +48,6 @@ import {
     DossierSynchroniseService,
     DossierSynchroniseFileService,
     DossierSynchroniseExcelService,
-    DossierSynchroniseOrganismeService,
   ],
   exports: [
     DossierService,

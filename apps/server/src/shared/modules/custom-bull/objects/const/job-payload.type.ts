@@ -9,18 +9,26 @@ export type SyncOneDemarchePayload = {
 
 export type SyncOneDossierPayload = {
   demarcheId: number
-  dossierId: number
+  dsDossierId: number
   fromScratch: boolean
 }
 
-export type SyncOrCreateOneOrganismePayload = {
-  organismeId: number;
-  rna?: string;
-  rnf?: string;
+export type SyncOneRnfOrganismePayload = {
+  dossierId: number;
+  rnf: string;
 }
+
+export type SyncOneRnaOrganismePayload = {
+  dossierId: number;
+  rna: string;
+}
+
+// TODO: this will be in file entity when file epic is done
+type sourceLabel = 'rnf' | 'rna' | 'ds-champ' | 'ds-annotation' | 'ds-message' | 'ds-demandeur' | 'bnum' | 'ds-attestation'
 
 export type UploadFilePayload = {
   dossierDsId: number
-  champDsId: string
-  isAttestation: boolean
+  originStringId?: string
+  originType: sourceLabel
+  index?: number
 }

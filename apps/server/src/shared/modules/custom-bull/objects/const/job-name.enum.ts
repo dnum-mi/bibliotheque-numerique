@@ -4,9 +4,9 @@ export const JobName = {
   SyncOneDossier: 'SyncOneDossier',
   SyncAllRnfOrganisme: 'SyncAllRnfOrganisme',
   SyncAllRnaOrganisme: 'SyncAllRnaOrganisme',
-  SyncOrCreateOneOrganisme: 'SyncOrCreateOneOrganisme',
+  SyncOneRnaOrganisme: 'SyncOneRnaOrganisme',
+  SyncOneRnfOrganisme: 'SyncOneRnfOrganisme',
   ComputeTimeTracking: 'ComputeTimeTracking',
   UploadFile: 'UploadFile',
-  TotoJob: 'TotoJob',
 } as const
 export type JobNameKeys = (typeof JobName)[keyof typeof JobName]
