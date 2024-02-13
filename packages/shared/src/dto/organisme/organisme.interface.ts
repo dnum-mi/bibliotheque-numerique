@@ -1,4 +1,4 @@
-import { OrganismeTypeKeys } from '../../enums'
+import { OrganismeTypeKeys } from '@biblio-num/shared-utils'
 import { IRnaOutput } from './rna-output.interface'
 import { IRnfOutput } from './rnf-output.interface'
 

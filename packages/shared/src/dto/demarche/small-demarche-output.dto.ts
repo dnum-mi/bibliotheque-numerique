@@ -1,5 +1,6 @@
 import { IDemarche } from '../../interfaces'
-import { IdentificationDemarcheKeys, OrganismeTypeKeys } from '../../enums'
+import { IdentificationDemarcheKeys } from '../../enums'
+import { OrganismeTypeKeys } from '@biblio-num/shared-utils'
 
 export class SmallDemarcheOutputDto implements Partial<IDemarche> {
   id: number
