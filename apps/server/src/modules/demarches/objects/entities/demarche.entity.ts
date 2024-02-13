@@ -4,7 +4,8 @@ import { BaseEntity } from '@/shared/base-entity/base.entity'
 import { Demarche as TDemarche } from '@dnum-mi/ds-api-client/dist/@types/generated-types'
 import { MappingColumn, IdentificationDemarche, IDemarche } from '@biblio-num/shared'
 import { CustomFilter } from '../../../custom-filters/objects/entities/custom-filter.entity'
-import type { IdentificationDemarcheKeys, OrganismeTypeKeys } from '@biblio-num/shared'
+import type { IdentificationDemarcheKeys } from '@biblio-num/shared'
+import type { OrganismeTypeKeys } from '@biblio-num/shared-utils'
 
 @Entity({ name: 'demarches' })
 export class Demarche extends BaseEntity implements IDemarche {
