@@ -1,13 +1,11 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
 import { BaseEntity } from '@/shared/base-entity/base.entity'
 import {
-  BnConfigurationKeyNames,
-  BnConfigurationMandatoryDataKeys,
-} from '@/modules/bn-configurations/objects/consts/bn-configuration-mandatory-data.const'
-import {
   BnConfigurationTypes,
   BnConfigurationTypesKeys,
-} from '@biblio-num/shared'
+  BnConfigurationKeyNames,
+  BnConfigurationMandatoryDataKeys,
+} from '@biblio-num/shared-utils'
 
 @Entity({ name: 'bn-configurations' })
 export class BnConfiguration extends BaseEntity {
