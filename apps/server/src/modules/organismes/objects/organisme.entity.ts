@@ -9,11 +9,14 @@ import { BaseEntity } from '@/shared/base-entity/base.entity'
 import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
 import {
   IOrganisme,
-  OrganismeType,
-  OrganismeTypeKeys,
   IRnaOutput,
   IRnfOutput,
 } from '@biblio-num/shared'
+
+import {
+  OrganismeType,
+  OrganismeTypeKeys,
+} from '@biblio-num/shared-utils'
 
 @Entity({ name: 'organismes' })
 export class Organisme extends BaseEntity implements IOrganisme {

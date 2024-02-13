@@ -19,11 +19,15 @@ import {
   MyProfileOutputDto,
   AgGridUserDto,
   IRole,
-  OrganismeTypeKeys,
   PaginatedDto,
   IUser,
   Roles,
 } from '@biblio-num/shared'
+
+import {
+  OrganismeTypeKeys,
+} from '@biblio-num/shared-utils'
+
 import { UserFieldTypeHashConst } from '@/modules/users/objects/consts/user-field-type-hash.const'
 import { DemarcheService } from '@/modules/demarches/providers/services/demarche.service'
 

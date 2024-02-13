@@ -10,10 +10,14 @@ import {
   IOrganisme,
   IRnaOutput,
   IRnfOutput,
-  OrganismeType,
   PaginatedDto,
   PaginationDto,
 } from '@biblio-num/shared'
+
+import {
+  OrganismeType,
+} from '@biblio-num/shared-utils'
+
 import { OrganismeFieldTypeHash } from '@/modules/organismes/objects/const/organisme-field-type-hash.const'
 import {
   SmallRnaOrganismeDto,

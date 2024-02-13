@@ -26,13 +26,14 @@ import {
   FieldSourceKeys,
   type IdentificationDemarcheKeys,
   MappingColumn,
-  OrganismeTypeKeys,
 } from '@biblio-num/shared'
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
 import { InjectQueue } from '@nestjs/bull'
 import { Queue } from 'bull'
 import { JobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
 import { SyncOneDossierPayload } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
+
+import { OrganismeTypeKeys } from '@biblio-num/shared-utils'
 
 @Injectable()
 export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
