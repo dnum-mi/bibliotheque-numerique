@@ -1,11 +1,13 @@
 import { IsArray, IsEnum, IsOptional, ValidateIf } from 'class-validator'
 import {
-  IdentificationDemarche,
-  IdentificationDemarcheKeys,
   OrganismeType,
   OrganismeTypeKeys,
-} from '../../enums'
+} from '@biblio-num/shared-utils'
 
+import {
+  IdentificationDemarche,
+  IdentificationDemarcheKeys,
+} from '../../enums'
 export class UpdateDemarcheDto {
   @IsOptional()
   @ValidateIf((o) => o.identification !== null)
