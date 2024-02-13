@@ -15,6 +15,7 @@ describe('Sign in', () => {
     cy.intercept({ method: 'GET', url: '/api/custom-filters' }, []).as('customFilters')
     cy.intercept({ method: 'POST', url: '/api/users/list' }, []).as('fetchUsers')
     cy.intercept({ method: 'GET', url: '/api/users/me', times: 1 }, { statusCode: 403 }).as('notProfile')
+    cy.intercept('api//health', { info: { } })
   })
 
   it('should redirect user to requested page after signing in', () => {
