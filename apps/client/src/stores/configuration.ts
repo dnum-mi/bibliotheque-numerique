@@ -1,7 +1,6 @@
 import type {
   CreateDemarcheDto,
   IdentificationDemarcheKeys,
-  OrganismeTypeKeys,
   SmallDemarcheOutputDto,
   UpdateDemarcheDto,
   BnConfigurationOutputDto,
@@ -10,6 +9,8 @@ import type {
 } from '@biblio-num/shared'
 
 import { bnConfigurationsApiClient, demarchesApiClient } from '../api/api-client'
+import type { OrganismeTypeKeys } from '@biblio-num/shared-utils'
+
 import { createDemarche, patchDemarche, putSynchronizeOneDemarche } from '../api/sudo-api-client'
 
 export const useConfigurationStore = defineStore('Configuration', () => {

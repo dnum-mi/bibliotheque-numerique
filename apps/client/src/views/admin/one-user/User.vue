@@ -1,15 +1,19 @@
 <script lang="ts" setup>
 import type {
-  OrganismeTypeKeys,
   PrefectureOptions,
   UserOutputDto,
   UserWithEditableRole,
   OneDemarcheRoleOption,
   OnePrefectureUpdateDto,
 } from '@biblio-num/shared'
+
+import type {
+  OrganismeTypeKeys,
+} from '@biblio-num/shared-utils'
+import { OrganismeType } from '@biblio-num/shared-utils'
+
 import { ref, computed } from 'vue'
 import { useUserStore } from '@/stores'
-import { OrganismeType } from '@/biblio-num/shared'
 import DemarcheLocalization from './DemarcheLocalization.vue'
 import { getRandomId } from '@gouvminint/vue-dsfr'
 
