@@ -4,20 +4,32 @@ import type {
   OrganismeTypeKeys,
   SmallDemarcheOutputDto,
   UpdateDemarcheDto,
+  BnConfigurationOutputDto,
+  CreateBnConfigurationDto,
+  UpdateBnConfigurationDto,
 } from '@biblio-num/shared'
 
-import { demarchesApiClient } from '../api/api-client'
+import { bnConfigurationsApiClient, demarchesApiClient } from '../api/api-client'
 import { createDemarche, patchDemarche, putSynchronizeOneDemarche } from '../api/sudo-api-client'
 
 export const useConfigurationStore = defineStore('Configuration', () => {
   const demarches = ref<SmallDemarcheOutputDto[]>([])
+  const bnConfigurations = ref<BnConfigurationOutputDto[]>([])
   const fetching = ref<boolean>(false)
+  const fetchingBnConfigurations = ref<boolean>(false)
 
   const loadDemarches = async () => {
     fetching.value = true
     demarches.value = await demarchesApiClient.getSmallDemarches()
     fetching.value = false
     return demarches.value
+  }
+
+  const loadBnConfigurations = async () => {
+    fetchingBnConfigurations.value = true
+    bnConfigurations.value = await bnConfigurationsApiClient.getBnConfigurations()
+    fetchingBnConfigurations.value = false
+    return bnConfigurations.value
   }
 
   const addDemarches = async (idDs: number|null, identification?: IdentificationDemarcheKeys | null, types?: OrganismeTypeKeys[]) => {
@@ -31,6 +43,20 @@ export const useConfigurationStore = defineStore('Configuration', () => {
     fetching.value = true
     await createDemarche(dto).finally(() => { fetching.value = false })
     await loadDemarches().finally(() => { fetching.value = false })
+  }
+
+  const addBnConfigurations = async (keyName: string, stringValue: string, valueType: string) => {
+    if (!keyName) throw new Error('keyName non saisi')
+    if (!stringValue) throw new Error('stringValue non saisi')
+    if (!valueType) throw new Error('valueType non saisi')
+    const dto: CreateBnConfigurationDto = {
+      keyName,
+      stringValue,
+      valueType,
+    }
+    fetchingBnConfigurations.value = true
+    await bnConfigurationsApiClient.createBnConfiguration(dto).finally(() => { fetchingBnConfigurations.value = false })
+    await loadBnConfigurations().finally(() => { fetchingBnConfigurations.value = false })
   }
 
   const synchronizeOneDemarche = async (demarcheId: number|null) => {
@@ -54,6 +80,18 @@ export const useConfigurationStore = defineStore('Configuration', () => {
     await loadDemarches().finally(() => { fetching.value = false })
   }
 
+  const updateBnConfigurations = async (id: number|undefined, keyName: string, stringValue: string, valueType: string) => {
+    if (id === undefined) throw new Error('id non saisi')
+    const dto: UpdateBnConfigurationDto = {
+      keyName,
+      stringValue,
+      valueType,
+    }
+    fetchingBnConfigurations.value = true
+    await bnConfigurationsApiClient.updateBnConfiguration(id, dto).finally(() => { fetchingBnConfigurations.value = false })
+    await loadBnConfigurations().finally(() => { fetchingBnConfigurations.value = false })
+  }
+
   const $reset = () => {
     demarches.value = []
     fetching.value = false
@@ -62,10 +100,15 @@ export const useConfigurationStore = defineStore('Configuration', () => {
   return {
     $reset,
     demarches,
+    bnConfigurations,
     fetching,
+    fetchingBnConfigurations,
     loadDemarches,
+    loadBnConfigurations,
     addDemarches,
+    addBnConfigurations,
     synchronizeOneDemarche,
     updateDemarche,
+    updateBnConfigurations,
   }
 })

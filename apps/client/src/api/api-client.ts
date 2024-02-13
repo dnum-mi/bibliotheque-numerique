@@ -31,6 +31,8 @@ import type {
   SmallDemarcheOutputDto,
   UpdateProfileDto,
   DynamicKeys,
+  CreateBnConfigurationDto,
+  UpdateBnConfigurationDto,
 } from '@biblio-num/shared'
 
 import {
@@ -54,7 +56,7 @@ import {
   getOrganismeByRnfRoute,
   organismesListRoute,
   usersListRoute,
-  getUserRoleByIdRoute, healthRoute, organismesListXlsxRoute,
+  getUserRoleByIdRoute, healthRoute, organismesListXlsxRoute, bnConfigurationsRoute,
 } from './bn-api-routes'
 import {
   authRoute,
@@ -344,6 +346,23 @@ export const customFiltersApiClient = {
 export const healthApiClient = {
   getHealth: async () => {
     const response = await apiClientInstance.get(healthRoute)
+    return response.data
+  },
+}
+
+export const bnConfigurationsApiClient = {
+  getBnConfigurations: async () => {
+    const response = await apiClientInstance.get(bnConfigurationsRoute)
+    return response.data
+  },
+
+  createBnConfiguration: async (dto: CreateBnConfigurationDto) => {
+    const response = await apiClientInstance.post(bnConfigurationsRoute, dto)
+    return response.data
+  },
+
+  updateBnConfiguration: async (id: number, dto: UpdateBnConfigurationDto) => {
+    const response = await apiClientInstance.patch(bnConfigurationsRoute + `/${id}`, dto)
     return response.data
   },
 }

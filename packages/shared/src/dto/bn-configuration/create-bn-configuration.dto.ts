@@ -1,20 +1,20 @@
 import { IsEnum, IsNotEmpty, IsString } from 'class-validator'
 import {
+  BnConfigurationKeyNames,
+  BnConfigurationMandatoryDataKeys,
   BnConfigurationTypes,
   BnConfigurationTypesKeys,
-} from '@biblio-num/shared'
+} from '@biblio-num/shared-utils'
 
 export class CreateBnConfigurationDto {
-  @IsString()
+  @IsEnum(BnConfigurationKeyNames)
   @IsNotEmpty()
-  keyName: string
+  keyName: BnConfigurationMandatoryDataKeys
 
-  @IsString()
   @IsNotEmpty()
   stringValue: string
 
   @IsEnum(BnConfigurationTypes)
-  @IsString()
   @IsNotEmpty()
   valueType: BnConfigurationTypesKeys
 }

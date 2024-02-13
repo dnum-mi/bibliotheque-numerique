@@ -64,3 +64,4 @@ export const states = {
 export const getIconPropsFromFileState = (state: keyof typeof states) => {
   return states[state]
 }
+export * from './bn-configurations'

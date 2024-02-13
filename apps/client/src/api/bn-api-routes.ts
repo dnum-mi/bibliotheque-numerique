@@ -44,3 +44,5 @@ export const dossierRoute = '/dossiers'
 export const getDossierByIdRoute = (id: number) => `${dossierRoute}/${id}`
 
 export const healthRoute = '/health'
+
+export const bnConfigurationsRoute = '/bn-configurations'
