@@ -2,22 +2,22 @@ import { http, HttpResponse } from 'msw'
 import type { FileOutputDto } from '@biblio-num/shared'
 
 export const handlers = [
-  http.get('/api/users/me', () => {
-    return HttpResponse.json({
-      createdAt: '2023-12-26T09:36:40.624Z',
-      updatedAt: '2023-12-26T09:36:40.624Z',
-      id: 1,
-      email: 'admin@example.com',
-      lastname: 'sudo',
-      firstname: 'sudo',
-      job: null,
-      validated: true,
-      role: {
-        label: 'sudo',
-        options: {},
-      },
-    })
-  }),
+  // http.get('/api/users/me', () => {
+  //   return HttpResponse.json({
+  //     createdAt: '2023-12-26T09:36:40.624Z',
+  //     updatedAt: '2023-12-26T09:36:40.624Z',
+  //     id: 1,
+  //     email: 'admin@example.com',
+  //     lastname: 'sudo',
+  //     firstname: 'sudo',
+  //     job: null,
+  //     validated: true,
+  //     role: {
+  //       label: 'sudo',
+  //       options: {},
+  //     },
+  //   })
+  // }),
   http.post('/api/files/list', () => {
     const files: {total: number, data: FileOutputDto[]} = {
       total: 4,

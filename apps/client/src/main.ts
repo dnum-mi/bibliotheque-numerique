@@ -28,7 +28,7 @@ import StatusBadge from './components/Badges/StatusBadge.vue'
 
 addIcons(...Object.values(icons))
 
-if (import.meta.env.DEV) {
+if (import.meta.env.DEV && import.meta.env.VITE_CYPRESS !== 'true') {
   const { worker } = await import('./mocks/browser')
   await worker.start({
     onUnhandledRequest: (request, print) => {
