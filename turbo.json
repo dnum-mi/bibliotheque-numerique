@@ -4,8 +4,8 @@
     "@biblio-num/client#test:e2e": {
       "cache": false,
       "dependsOn": [
-        "^@biblio-num/server#build",
-        "^@biblio-num/client#build"
+        "^@biblio-num/client#build",
+        "^@biblio-num/server#build"
       ],
       "inputs": [
         "src/**/*.tsx",
@@ -15,14 +15,19 @@
     },
     "@biblio-num/client#test:e2e:ci": {
       "dependsOn": [
-        "^@biblio-num/server#build",
-        "^@biblio-num/client#build"
+        "^@biblio-num/client#build",
+        "^@biblio-num/server#build"
       ],
       "inputs": [
         "src/**/*.tsx",
         "src/**/*.ts"
       ],
       "outputs": []
+    },
+    "@biblio-num/shared#build": {
+      "dependsOn": [
+        "^@biblio-num/shared-utils#build"
+      ]
     },
     "build": {
       "dependsOn": [
@@ -38,8 +43,8 @@
     "dev": {
       "cache": false,
       "dependsOn": [
-        "^@biblio-num/shared#build",
-        "^@biblio-num/shared-utils#build"
+        "^@biblio-num/shared-utils#build",
+        "^@biblio-num/shared#build"
       ]
     },
     "dev:in-docker": {
@@ -51,8 +56,8 @@
     "dev:server": {
       "cache": false,
       "dependsOn": [
-        "^@biblio-num/shared#build",
-        "^@biblio-num/shared-utils#build"
+        "^@biblio-num/shared-utils#build",
+        "^@biblio-num/shared#build"
       ]
     },
     "dev:server-in-docker": {
@@ -89,8 +94,8 @@
     },
     "test": {
       "dependsOn": [
-        "^@biblio-num/shared#build",
-        "^@biblio-num/shared-utils#build"
+        "^@biblio-num/shared-utils#build",
+        "^@biblio-num/shared#build"
       ],
       "inputs": [
         "src/**/*.tsx",
