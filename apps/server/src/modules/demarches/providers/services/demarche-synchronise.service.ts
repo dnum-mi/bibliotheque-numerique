@@ -15,7 +15,6 @@ import {
   DsApiClient,
 } from '@dnum-mi/ds-api-client'
 import { DemarcheService } from './demarche.service'
-import { DossierSynchroniseService } from '../../../dossiers/providers/synchronization/dossier-synchronise.service'
 import { getFixFieldsByIdentification } from '../../../dossiers/objects/constante/fix-field.dictionnary'
 import {
   giveFormatFunctionRefFromDsChampType,
@@ -29,6 +28,11 @@ import {
   MappingColumn,
   OrganismeTypeKeys,
 } from '@biblio-num/shared'
+import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
+import { InjectQueue } from '@nestjs/bull'
+import { Queue } from 'bull'
+import { JobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
+import { SyncOneDossierPayload } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
 
 @Injectable()
 export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
@@ -37,7 +41,7 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
     private demarcheService: DemarcheService,
     @InjectRepository(Demarche) repo: Repository<Demarche>,
     private dsApiClient: DsApiClient,
-    private dossierSynchroniseService: DossierSynchroniseService,
+    @InjectQueue(QueueName.sync) private readonly syncQueue: Queue,
   ) {
     super(repo, logger)
     this.logger.setContext(this.constructor.name)
@@ -46,23 +50,17 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
   //#region private
   private async _synchroniseAllDossier(
     dossiers: TDossier[],
-    demarche: Demarche,
+    demarcheId: number,
+    fromScratch: boolean,
   ): Promise<void> {
     this.logger.verbose('_synchroniseAllDossier')
-    await Promise.all(
-      dossiers.map(
-        async (dossier) =>
-          await this.dossierSynchroniseService
-            .synchroniseOneDossier(dossier, demarche)
-            // we don't want one miss-synchronise dossier to interrupt the whole process
-            .catch((err) => {
-              this.logger.error(
-                `Dossier ${dossier.id} (sourceId: ${dossier.number}) failed to synchronise: ${err.message}`,
-              )
-              this.logger.error(err)
-            }),
-      ),
-    )
+    for (const dossier of dossiers) {
+      await this.syncQueue.add(JobName.SyncOneDossier, {
+        demarcheId,
+        dsDossierId: dossier.number,
+        fromScratch,
+      } as SyncOneDossierPayload)
+    }
   }
 
   private _generateMappingColumns(
@@ -117,45 +115,6 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
     return result
   }
 
-  private async _synchroniseOneDemarche(
-    demarche: Demarche,
-    dsId: number,
-    fromScratch = false,
-  ): Promise<void> {
-    this.logger.verbose('_synchroniseOneDemarche')
-    const lastSyncronisedAt = fromScratch
-      ? new Date(0)
-      : demarche.lastSynchronisedAt
-    const result = await this.dsApiClient.demarcheDossierWithCustomChamp(
-      dsId,
-      lastSyncronisedAt,
-    )
-    const raw = result.demarche
-    const dossiers = [...raw.dossiers.nodes]
-    delete raw.dossiers
-    const toUpdate = {
-      lastSynchronisedAt: new Date(),
-      ...((raw.dateDerniereModification !== demarche.dsDataJson.dateDerniereModification || fromScratch)
-        ? {
-          title: raw.title,
-          state: raw.state,
-          types: demarche.types || [],
-          mappingColumns: this._generateMappingColumns(
-            raw,
-            demarche.mappingColumns,
-            demarche.identification,
-          ),
-          dsDataJson: raw,
-        }
-        : {}),
-    }
-    await this.repo.update({ id: demarche.id }, toUpdate)
-    await this._synchroniseAllDossier(dossiers, { ...demarche, ...toUpdate })
-    this.logger.log(
-      `successfully synchronised demarche (with Id DS: ${dsId}) and its dossiers`,
-    )
-  }
-
   //#endregion
 
   public async createAndSynchronise(
@@ -164,10 +123,9 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
     types: OrganismeTypeKeys[] | undefined,
   ): Promise<void> {
     this.logger.verbose('createAndSynchronise')
-
-    // TODO: replace with only demarche and not its dossiers (when ds-api-client is over)
-    const raw = await this.dsApiClient.demarcheDossierWithCustomChamp(dsId)
-
+    const raw = await this.dsApiClient.demarcheDossierIds(dsId)
+    const dossiers = raw.demarche.dossiers.nodes
+    delete raw.demarche.dossiers
     if (!raw) {
       throw new NotFoundException(`Demarche with dsId ${dsId} not found.`)
     }
@@ -187,7 +145,7 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
       dsDataJson: raw.demarche,
       identification,
     })
-    await this.synchroniseOneDemarche(demarche.id, true)
+    await this._synchroniseAllDossier(dossiers, demarche.id, true)
   }
 
   public async synchroniseOneDemarche(
@@ -199,6 +157,34 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
     if (!demarche) {
       throw new NotFoundException(`Demarche with id ${demarcheId} not found.`)
     }
-    return this._synchroniseOneDemarche(demarche, demarcheId, fromScratch)
+    const lastSyncronisedAt = fromScratch
+      ? new Date(0)
+      : demarche.lastSynchronisedAt
+    const result = await this.dsApiClient.demarcheDossierIds(
+      demarche.dsDataJson.number,
+      lastSyncronisedAt,
+    )
+    const raw = result.demarche
+    const dossiers = raw.dossiers.nodes
+    delete raw.dossiers
+    const toUpdate = {
+      lastSynchronisedAt: new Date(),
+      ...(raw.dateDerniereModification !==
+        demarche.dsDataJson.dateDerniereModification || fromScratch
+        ? {
+          title: raw.title,
+          state: raw.state,
+          types: demarche.types || [],
+          mappingColumns: this._generateMappingColumns(
+            raw,
+            demarche.mappingColumns,
+            demarche.identification,
+          ),
+          dsDataJson: raw,
+        }
+        : {}),
+    }
+    await this.repo.update({ id: demarche.id }, toUpdate)
+    await this._synchroniseAllDossier(dossiers, demarche.id, fromScratch)
   }
 }
