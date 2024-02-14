@@ -46,9 +46,9 @@ export const useConfigurationStore = defineStore('Configuration', () => {
   }
 
   const addBnConfigurations = async (keyName: string, stringValue: string, valueType: string) => {
-    if (!keyName) throw new Error('keyName non saisi')
-    if (!stringValue) throw new Error('stringValue non saisi')
-    if (!valueType) throw new Error('valueType non saisi')
+    if (!keyName) throw new Error('Nom de la configuration non saisi')
+    if (!stringValue) throw new Error('Valeur de la configuration non saisi')
+    if (!valueType) throw new Error('Type de valeur non saisi')
     const dto: CreateBnConfigurationDto = {
       keyName,
       stringValue,
