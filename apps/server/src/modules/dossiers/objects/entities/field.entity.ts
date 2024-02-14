@@ -10,8 +10,8 @@ import {
   FormatFunctionRef,
   FormatFunctionRefKeys,
 } from '@biblio-num/shared'
-import { Champ } from '@dnum-mi/ds-api-client/src/@types/types'
 import { Dossier } from './dossier.entity'
+import { CustomChamp } from '@dnum-mi/ds-api-client'
 
 export const fieldUniqueFields = ['dossierId', 'sourceId', 'parentRowIndex']
 
@@ -99,7 +99,7 @@ export class Field extends BaseEntity {
   label: string
 
   @Column({ type: 'jsonb', default: null, nullable: true })
-  rawJson: Partial<Champ> | null
+  rawJson: Partial<CustomChamp> | null
 
   @ManyToOne(() => Dossier, (dossier) => dossier.fields)
   dossier?: Dossier

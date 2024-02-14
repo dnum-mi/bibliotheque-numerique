@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 
 import { Repository } from 'typeorm'
 import { Queue } from 'bull'
-import { Dossier as TDossier } from '@dnum-mi/ds-api-client'
+import { DossierWithCustomChamp as TDossier } from '@dnum-mi/ds-api-client'
 
 import {
   IdentificationDemarche,
