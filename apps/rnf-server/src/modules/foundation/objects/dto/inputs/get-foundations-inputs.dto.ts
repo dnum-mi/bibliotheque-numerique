@@ -5,10 +5,12 @@ import { ApiProperty } from '@nestjs/swagger'
 export class GetFoundationsInputDto {
   @ApiProperty({ description: 'Liste des id(s) à sélectionner.' })
   @isRnfIdValid({ each: true })
-    rnfIds: string[]
+  rnfIds: string[]
 
   @IsOptional()
   @IsDateString()
-  @ApiProperty({ description: "Lister seulement celles qui ont été modifiées depuis 'date'." })
-    date?: string
+  @ApiProperty({
+    description: "Lister seulement celles qui ont été modifiées depuis 'date'.",
+  })
+  lastUpdatedAt?: string
 }
