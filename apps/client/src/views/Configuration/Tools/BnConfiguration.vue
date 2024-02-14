@@ -137,7 +137,7 @@ const onSelected = (bnConfig: BnConfigurationOutputDto) => {
     </DsfrTable>
   </div>
 
-  <!-- MODAL DE CREATION DE DEMARCHE -->
+  <!-- MODAL DE CREATION DE bnConfiguration -->
   <DsfrModal
     :opened="createModalOpen"
     :title="'Créer une bnConfiguration'"
