@@ -90,7 +90,7 @@ export class FoundationController {
   @ApiOperation({
     summary: "Recevoir l'ensemble des fondations modifiées depuis X.",
     description:
-      'Cette route est conceptuelle un GET,' +
+      'Cette route est conceptuellement un GET,' +
       " mais nous utilisons un post pour ne pas être limité sur le nombre d'id demandé en input à travers l'url.",
   })
   async getUpdatedFoundations(
