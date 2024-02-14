@@ -2,10 +2,10 @@ import {
   Body,
   Controller,
   ForbiddenException,
-  Get, HttpCode,
+  Get,
+  HttpCode,
   Param,
   Post,
-  Query,
 } from '@nestjs/common'
 import { LoggerService } from '@/shared/modules/logger/providers/logger.service'
 import { FoundationService } from '@/modules/foundation/providers/foundation.service'
@@ -18,7 +18,6 @@ import { ApiConflictResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { InfoDSOutputDto } from '../objects/dto/info-ds-output.dto'
 import { GetFoundationsInputDto } from '../objects/dto/inputs/get-foundations-inputs.dto'
 import { FoundationOutputDto } from '@/modules/foundation/objects/dto/outputs/foundation-output.dto'
-import { query } from 'express'
 
 @ApiTags('Foundation')
 @Controller('foundations')
