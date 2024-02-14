@@ -2,7 +2,7 @@ import {
   Body,
   Controller,
   ForbiddenException,
-  Get,
+  Get, HttpCode,
   Param,
   Post,
   Query,
@@ -18,6 +18,7 @@ import { ApiConflictResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { InfoDSOutputDto } from '../objects/dto/info-ds-output.dto'
 import { GetFoundationsInputDto } from '../objects/dto/inputs/get-foundations-inputs.dto'
 import { FoundationOutputDto } from '@/modules/foundation/objects/dto/outputs/foundation-output.dto'
+import { query } from 'express'
 
 @ApiTags('Foundation')
 @Controller('foundations')
@@ -71,8 +72,8 @@ export class FoundationController {
     return { rnfId: foundation.rnfId, ds }
   }
 
-  @Get('/:rnfId')
   // TODO: this route should be white listed for DS
+  @Get('/:rnfId')
   @ApiOperation({
     summary: 'Retourner la fondation correspondant au numéro RNF.',
   })
@@ -83,13 +84,22 @@ export class FoundationController {
     return this.service.getOneFoundation(params.rnfId)
   }
 
-  @Get('')
   // TODO: this route should be white listed for BNUM
-  @ApiOperation({ summary: 'Lister un ensemble de fondation connues.' })
-  async getFoundations(
-    @Query() query: GetFoundationsInputDto,
-  ): Promise<FoundationOutputDto[]> {
-    this.logger.verbose('getFoundations')
-    return this.service.getFoundationsByRnfIds(query.rnfIds, query.date)
+  @Post('/last-updated-list')
+  @HttpCode(200)
+  @ApiOperation({
+    summary: "Recevoir l'ensemble des fondations modifiées depuis X.",
+    description:
+      'Cette route est conceptuelle un GET,' +
+      " mais nous utilisons un post pour ne pas être limité sur le nombre d'id demandé en input à travers l'url.",
+  })
+  async getUpdatedFoundations(
+    @Body() body: GetFoundationsInputDto,
+  ): Promise<string[]> {
+    this.logger.verbose('getUpdatedFoundations')
+    return this.service.getLastUpdatedFoundations(
+      body.rnfIds,
+      body.lastUpdatedAt,
+    )
   }
 }
