@@ -24,8 +24,9 @@ export class RnaService {
   }
 
   async getAssociation(idRna: string): Promise<IRnaOutput> {
+    const url = `${this.rnaUrl}/${idRna}?${this.defaultQueryArgs}`
     return axios
-      .get(`${this.rnaUrl}/${idRna}?${this.defaultQueryArgs}`, {
+      .get(url, {
         headers: {
           Authorization: `Bearer ${this.config.get('rna.token')}`,
         },
