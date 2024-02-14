@@ -17,7 +17,10 @@ import { UpdateFoundationDto } from '@/modules/foundation/objects/dto/update-fou
 import { FoundationHistoryService } from '@/modules/foundation/providers/foundation-history.service'
 import { DossierState, DossierWithCustomChamp } from '@dnum-mi/ds-api-client'
 import { stringValue } from '@/modules/ds/objects/mappers/universal.mapper'
-import { IDsApiClientDemarche, DsService } from '@/modules/ds/providers/ds.service'
+import {
+  IDsApiClientDemarche,
+  DsService,
+} from '@/modules/ds/providers/ds.service'
 import { DsConfigurationService } from '@/modules/ds/providers/ds-configuration.service'
 import { DsMapperService } from '@/modules/ds/providers/ds-mapper.service'
 import { FileStorageService } from '@/modules/file-storage/providers/file-storage.service'
@@ -25,12 +28,16 @@ import { CreateFileStorageDto } from '@/shared/objects/file-storage/create-file.
 import { Prisma } from '@prisma/client'
 import { FoundationOutputDto } from '@/modules/foundation/objects/dto/outputs/foundation-output.dto'
 
+// import { FoundationWhereInput } from '.prisma/client'
+
 interface createNestedStatus {
   status: Prisma.FileStorageCreateNestedOneWithoutFoundationInput
 }
+
 interface updateNestedStatus {
   status: Prisma.FileStorageUpdateOneWithoutFoundationNestedInput
 }
+
 @Injectable()
 export class FoundationService extends BaseEntityService {
   constructor(
@@ -156,7 +163,9 @@ export class FoundationService extends BaseEntityService {
     })
   }
 
-  private _cascadeCreatePersons(dto: CreateFoundationDto): Prisma.FoundationCreateNestedOneWithoutPersonsInput {
+  private _cascadeCreatePersons(
+    dto: CreateFoundationDto,
+  ): Prisma.FoundationCreateNestedOneWithoutPersonsInput {
     this.logger.verbose('_cascadeCreatePersons')
     let persons = {}
     if (dto.personInFoundationToCreate) {
@@ -236,26 +245,27 @@ export class FoundationService extends BaseEntityService {
       })
   }
 
-  async getFoundationsByRnfIds(
+  async getLastUpdatedFoundations(
     rnfIds: string[],
     updatedAfter: string | undefined,
-  ): Promise<FoundationOutputDto[]> {
+  ): Promise<string[]> {
     this.logger.verbose('getFoundationsByRnfIds')
-    const where: {
-      rnfId: { in: string[] }
-      updatedAt?: { gte: Date }
-    } = { rnfId: { in: rnfIds } }
+    // TODO: Why can't I use FoundationWhereInput
+    // TODO:mconst where: FoundationWhereInput = { rnfId: { in: rnfIds } }
+    const where: { rnfId: { in: string[] }; updatedAt?: { gte: Date } } = {
+      rnfId: { in: rnfIds },
+    }
     if (updatedAfter) {
       where.updatedAt = {
         gte: new Date(updatedAfter),
       }
     }
-    return this.prisma.foundation.findMany({
-      where,
-      include: {
-        ...this._cascadeGetFoundation(),
-      },
-    })
+    return this.prisma.foundation
+      .findMany({
+        where,
+        select: { rnfId: true },
+      })
+      .then((foundations) => foundations.map((f) => f.rnfId))
   }
 
   //#endregion
@@ -305,7 +315,7 @@ export class FoundationService extends BaseEntityService {
 
   async updateFoundation(rnfId: string, dto: UpdateFoundationDto) {
     this.logger.verbose('updateFoundation')
-    const foundation = await this.getOneFoundation(rnfId) as FoundationEntity
+    const foundation = (await this.getOneFoundation(rnfId)) as FoundationEntity
     await this.historyService.newHistoryEntry(foundation)
     const cascadeFile = await this._cascadeCreateFile(dto.status)
     const cascadeUpdateFile: updateNestedStatus | undefined = cascadeFile
@@ -365,7 +375,9 @@ export class FoundationService extends BaseEntityService {
     }
   }
 
-  private checkIfRnfInAcceptedDossier(doss: DossierWithCustomChamp): string | null {
+  private checkIfRnfInAcceptedDossier(
+    doss: DossierWithCustomChamp,
+  ): string | null {
     const rnfChamp = this.dsMapperService.findChampsInDossier(doss.champs, {
       rnf: this.dsConfigurationService.rnfFieldKeys.rnfId,
     }).rnf
@@ -399,7 +411,10 @@ export class FoundationService extends BaseEntityService {
     }
   }
 
-  private async _lookForFoundationDissolution(name: string, dsDemarcheId: number) {
+  private async _lookForFoundationDissolution(
+    name: string,
+    dsDemarcheId: number,
+  ) {
     this.logger.verbose('_lookForFoundationDissolution')
     this.logger.log(`Checking for: ${name}`)
     let raw: IDsApiClientDemarche

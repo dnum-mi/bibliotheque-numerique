@@ -494,11 +494,10 @@ describe('Foundation Controller (e2e)', () => {
     })
   })
 
-  describe('GET /foundations', () => {
+  describe('POST /foundations/last-updated-list', () => {
     it('Should return 400 if bad argument', async () => {
       return request(app.getHttpServer())
-        .get('/api/foundations')
-        .send({})
+        .post('/api/foundations/last-updated-list')
         .expect(400)
     })
 
@@ -509,15 +508,15 @@ describe('Foundation Controller (e2e)', () => {
       })
       await insertDumbFoundation(prisma, { rnfId: '033-FDD-000001-06' })
       const { body: fondations } = await request(app.getHttpServer())
-        .get('/api/foundations')
-        .query({
+        .post('/api/foundations/last-updated-list')
+        .send({
           rnfIds: ['033-FDD-00002-08', '033-FDD-000001-06'],
-          date: new Date('2023-06-02'),
+          lastUpdatedAt: new Date('2023-06-02'),
         })
         .expect(200)
 
       expect(fondations).toHaveLength(1)
-      expect(fondations[0]).toHaveProperty('rnfId', '033-FDD-000001-06')
+      expect(fondations[0]).toEqual('033-FDD-000001-06')
     })
   })
 })
