@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { IsNull, LessThan, Not, Repository } from 'typeorm'
+import { IsNull, Not, Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Organisme } from '@/modules/organismes/objects/organisme.entity'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
@@ -15,6 +15,14 @@ import {
   PaginationDto,
 } from '@biblio-num/shared'
 import { OrganismeFieldTypeHash } from '@/modules/organismes/objects/const/organisme-field-type-hash.const'
+import {
+  SmallRnaOrganismeDto,
+  smallRnaOrganismeDtoKeys,
+} from '@/modules/organismes/objects/dto/small-rna-organisme.dto'
+import {
+  SmallRnfOrganismeDto,
+  smallRnfOrganismeDtoKeys,
+} from '@/modules/organismes/objects/dto/small-rnf-organisme.dto'
 
 @Injectable()
 export class OrganismeService extends BaseEntityService<Organisme> {
@@ -28,41 +36,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     this.logger.setContext(this.constructor.name)
   }
 
-  rnfOutputToOrganisme (idRnf: string, raw: IRnfOutput): Partial<Organisme> {
-    const __extractAddressField = (field: string): string =>
-      raw.address[field] || ''
-
-    return {
-      idRnf,
-      title: raw.title,
-      dateCreation: new Date(raw.createdAt),
-      type: raw.type,
-      email: raw.email,
-      phoneNumber: raw.phone,
-      ...Object.fromEntries(
-        [
-          'label',
-          'postalCode',
-          'cityName',
-          'type',
-          'streetAddress',
-          'streetNumber',
-          'streetName',
-          'departmentName',
-          'departmentCode',
-          'regionName',
-          'regionCode',
-        ].map((field) => [
-          `address${field.charAt(0).toUpperCase()}${field.substring(1)}`,
-          __extractAddressField(field),
-        ]),
-      ),
-      dateDissolution: raw.dissolvedAt,
-      rnfJson: raw,
-    }
-  }
-
-  async associateOrganismeFromRnf(idRnf: string): Promise<number> {
+  async upsertOrganismeRnf(idRnf: string): Promise<number> {
     this.logger.verbose(`associateOrganismeFromRnf ${idRnf}`)
     const raw: IRnfOutput = await this.rnfService.getFoundation(idRnf)
     if (!raw) {
@@ -107,7 +81,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     return upsert.identifiers[0].id
   }
 
-  async associateOrganismeFromRna(idRna: string): Promise<number> {
+  async upsertOrganismeRna(idRna: string): Promise<number> {
     this.logger.verbose(`associateOrganismeFromRna ${idRna}`)
     const raw: IRnaOutput = await this.rnaService.getAssociation(idRna)
     this.logger.debug(`raw: ${JSON.stringify(raw)}`)
@@ -153,40 +127,24 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     return upsert.identifiers[0].id
   }
 
+  async getAllRnaOrganisme(): Promise<SmallRnaOrganismeDto[]> {
+    return this.repository.find({
+      where: { idRna: Not(IsNull()) },
+      select: smallRnaOrganismeDtoKeys,
+    })
+  }
+
+  async getAllRnfOrganisme(): Promise<SmallRnfOrganismeDto[]> {
+    return this.repository.find({
+      where: { idRnf: Not(IsNull()) },
+      select: smallRnfOrganismeDtoKeys,
+    })
+  }
+
   async listOrganisme(
     dto: PaginationDto<IOrganisme>,
   ): Promise<PaginatedDto<IOrganisme>> {
     this.logger.verbose('listOrganisme')
     return this.paginate<IOrganisme>(dto)
-  }
-
-  async jobUpdateRNF(lastDate: Date):Promise<void> {
-    const date = lastDate
-    const rnfIds = await this.repo.find({
-      where: {
-        idRnf: Not(IsNull()),
-        updatedAt: LessThan(date),
-      },
-      order: {
-        updatedAt: 'ASC',
-      },
-      select: {
-        idRnf: true,
-      },
-    })
-
-    const nb = 10
-
-    for (let i = 0; i < rnfIds.length; i += nb) {
-      const raws = await this.rnfService.getListFundations({
-        rnfIds: rnfIds.slice(i, i + nb).map(org => org.idRnf),
-        date: date.toISOString(),
-      })
-
-      await Promise.all(raws.map((raw) => {
-        const idRnf = raw.rnfId
-        return this.repo.update({ idRnf }, this.rnfOutputToOrganisme(idRnf, raw))
-      }))
-    }
   }
 }

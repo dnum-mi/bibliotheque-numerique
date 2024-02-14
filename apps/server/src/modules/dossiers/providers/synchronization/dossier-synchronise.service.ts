@@ -28,12 +28,8 @@ import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
 import { Demarche } from '@/modules/demarches/objects/entities/demarche.entity'
 import { FieldService } from '@/modules/dossiers/providers/field.service'
 import { Field } from '@/modules/dossiers/objects/entities/field.entity'
-import {
-  DossierSynchroniseExcelService,
-} from '@/modules/dossiers/providers/synchronization/excel/dossier-synchronise-excel.service'
-import {
-  DossierSynchroniseFileService,
-} from '@/modules/dossiers/providers/synchronization/file/dossier-synchronize-file.service'
+import { DossierSynchroniseExcelService } from '@/modules/dossiers/providers/synchronization/excel/dossier-synchronise-excel.service'
+import { DossierSynchroniseFileService } from '@/modules/dossiers/providers/synchronization/file/dossier-synchronize-file.service'
 
 @Injectable()
 export class DossierSynchroniseService extends BaseEntityService<Dossier> {
@@ -103,7 +99,12 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
     const organismeField = fields.find((field: Field) => {
       return (
         field.stringValue.length &&
-        [DsChampType.RnaChamp, DsChampType.RnfChamp].includes(field.dsChampType)
+        ([DsChampType.RnaChamp, DsChampType.RnfChamp].includes(
+          field.dsChampType,
+        ) ||
+          field.rawJson?.champDescriptor?.description.match(
+            /.*#bn-rnf-field-bn#.*/,
+          ))
       )
     })
     if (organismeField) {
@@ -117,7 +118,7 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
         } as SyncOneRnaOrganismePayload)
       } else {
         this.logger.debug(
-          'Adding Organisme sync for rna: ' + organismeField.stringValue,
+          'Adding Organisme sync for rnf: ' + organismeField.stringValue,
         )
         this.syncQueue.add(JobName.SyncOneRnfOrganisme, {
           dossierId,
