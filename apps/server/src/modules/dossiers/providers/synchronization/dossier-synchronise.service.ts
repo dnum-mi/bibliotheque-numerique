@@ -28,8 +28,12 @@ import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
 import { Demarche } from '@/modules/demarches/objects/entities/demarche.entity'
 import { FieldService } from '@/modules/dossiers/providers/field.service'
 import { Field } from '@/modules/dossiers/objects/entities/field.entity'
-import { DossierSynchroniseExcelService } from '@/modules/dossiers/providers/synchronization/excel/dossier-synchronise-excel.service'
-import { DossierSynchroniseFileService } from '@/modules/dossiers/providers/synchronization/file/dossier-synchronize-file.service'
+import {
+  DossierSynchroniseExcelService,
+} from '@/modules/dossiers/providers/synchronization/excel/dossier-synchronise-excel.service'
+import {
+  DossierSynchroniseFileService,
+} from '@/modules/dossiers/providers/synchronization/file/dossier-synchronize-file.service'
 
 @Injectable()
 export class DossierSynchroniseService extends BaseEntityService<Dossier> {
