@@ -210,7 +210,7 @@ describe('FieldService', () => {
         },
       ],
     }
-    const fields = await service.overwriteFieldsFromDataJson(raw as TDossierWithPrefecture, 42, fakeMappingColumnHash)
+    const fields = await service.overwriteFieldsFromDataJson(raw as unknown as TDossierWithPrefecture, 42, fakeMappingColumnHash)
     expect(fields).toMatchObject([
       ...expectClassicalFixFields(),
       ...expectedFixFieldsDates(42),
@@ -248,7 +248,7 @@ describe('FieldService', () => {
         },
       ],
     }
-    const fields = await service.overwriteFieldsFromDataJson(raw as TDossierWithPrefecture, 42, fakeMappingColumnHash)
+    const fields = await service.overwriteFieldsFromDataJson(raw as unknown as TDossierWithPrefecture, 42, fakeMappingColumnHash)
     expect(fields).toMatchObject([
       ...expectClassicalFixFields(),
       ...expectedFixFieldsDates(42),
@@ -377,7 +377,7 @@ describe('FieldService', () => {
         },
       ],
     }
-    const fields = await service.overwriteFieldsFromDataJson(raw as TDossierWithPrefecture, 42, fakeMappingColumnHash)
+    const fields = await service.overwriteFieldsFromDataJson(raw as unknown as TDossierWithPrefecture, 42, fakeMappingColumnHash)
     expect(fields).toMatchObject([
       ...expectClassicalFixFields(raw.state),
       ...expectedFixFieldsDates(42),
