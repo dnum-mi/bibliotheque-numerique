@@ -4,7 +4,7 @@ import { Field } from '../objects/entities/field.entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
-import { Dossier as TDossier } from '@dnum-mi/ds-api-client/dist/@types/types'
+import { DossierWithCustomChamp as TDossier } from '@dnum-mi/ds-api-client/dist/@types/types'
 import {
   DsChampType,
   DsChampTypeKeys,
