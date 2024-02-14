@@ -6,7 +6,7 @@
   "module": "./dist/index.esm.js",
   "types": "./dist/src",
   "scripts": {
-    "test": "vitest",
+    "test": "vitest run",
     "clean:dist": "rimraf dist types",
     "dev": "tsup --watch",
     "build": "run-s clean:dist build:only",

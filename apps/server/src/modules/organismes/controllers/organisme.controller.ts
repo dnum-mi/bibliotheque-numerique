@@ -18,8 +18,9 @@ import {
   PaginatedDto,
   PaginationDto,
   Roles,
-  mapOrganismeFieldHeader,
 } from '@biblio-num/shared'
+import { mapOrganismeFieldHeader } from '@biblio-num/shared-utils'
+
 import { DossierService } from '@/modules/dossiers/providers/dossier.service'
 import { OrganismeService } from '@/modules/organismes/providers/organisme.service'
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
