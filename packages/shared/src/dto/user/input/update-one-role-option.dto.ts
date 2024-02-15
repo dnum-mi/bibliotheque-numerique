@@ -1,4 +1,5 @@
-import { Prefecture, PrefectureKeys } from '../../../enums'
+import { Prefecture } from '@biblio-num/shared-utils'
+import type { PrefectureKeys } from '@biblio-num/shared-utils'
 import { IsBoolean, IsEnum, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator'
 
 export class OnePrefectureUpdateDto {

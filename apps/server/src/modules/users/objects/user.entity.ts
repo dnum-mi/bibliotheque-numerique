@@ -11,7 +11,8 @@ import {
 import * as bcrypt from 'bcrypt'
 import { BaseEntity } from '@/shared/base-entity/base.entity'
 import { CustomFilter } from '@/modules/custom-filters/objects/entities/custom-filter.entity'
-import { IUser, IRole } from '@biblio-num/shared'
+import { IUser } from '@biblio-num/shared'
+import { IRole } from '@biblio-num/shared-utils'
 
 const defaultRole: IRole = {
   label: null,

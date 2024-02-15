@@ -1,4 +1,4 @@
-import { PrefectureKeys } from '../../enums'
+import type { PrefectureKeys } from '@biblio-num/shared-utils'
 
 export class LeanDossierOutputDto {
   id: number

@@ -8,7 +8,7 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { from, Observable, switchMap } from 'rxjs'
-import { IRole, isBelowSuperAdmin } from '@biblio-num/shared'
+import { IRole, isBelowSuperAdmin } from '@biblio-num/shared-utils'
 
 const no404 = (): void => {
   throw new NotFoundException('La démarche est introuvable')

@@ -1,5 +1,3 @@
 export * from './fields'
 export * from './common/date-range.enum'
-export * from './roles/roles.enum'
 export * from './demarches/identification-demarches'
-export * from './prefectures/prefectures.enum'

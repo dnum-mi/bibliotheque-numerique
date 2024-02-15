@@ -15,11 +15,13 @@ import {
   UpdateUserPasswordDto,
   ResetPasswordInputDto,
   UserOutputDto,
-  Roles,
   PaginationUserDto,
   PaginatedUserDto, IUser,
   UpdateProfileDto,
 } from '@biblio-num/shared'
+import {
+  Roles,
+} from '@biblio-num/shared-utils'
 import { UpdatePasswordGuard } from '@/modules/users/providers/guards/update-password.guard'
 import { ValidSignUpGuard } from '@/modules/users/providers/guards/validate-sign-up.guard'
 import { Role } from '@/modules/users/providers/decorators/role.decorator'

@@ -1,5 +1,5 @@
 import { SmallDemarcheOutputDto } from '../../demarche/small-demarche-output.dto'
-import { PrefectureKeys, RolesKeys } from '../../../enums'
+import type { PrefectureKeys, RolesKeys } from '@biblio-num/shared-utils'
 import { UserOutputDto } from './user-output.dto'
 
 export type PrefectureOptions = {

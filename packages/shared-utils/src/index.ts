@@ -1,3 +1,5 @@
 export * from './bn-configurations'
 export * from './files'
 export * from './organismes'
+export * from './prefectures'
+export * from './roles'

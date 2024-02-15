@@ -1,5 +1,5 @@
 import { DossierState, Dossier as TDossier } from '@dnum-mi/ds-api-client'
-import { PrefectureKeys } from '../enums'
+import type { PrefectureKeys } from '@biblio-num/shared-utils'
 import { IDemarche } from './demarche.interface'
 export { Champ, PieceJustificativeChamp, RepetitionChamp, PersonnePhysique, Demandeur, Dossier as TDossier } from '@dnum-mi/ds-api-client'
 

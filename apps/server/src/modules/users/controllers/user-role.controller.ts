@@ -2,13 +2,16 @@ import { Body, Controller, Delete, ForbiddenException, Get, Patch, Put, UseInter
 import { ApiTags } from '@nestjs/swagger'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import {
-  IRole,
-  isSuperiorOrSimilar, IUser,
-  Roles,
+  IUser,
   UpdateOneRoleOptionDto,
   UserWithEditableRole,
   UpdateUserRoleLabelInputDto,
 } from '@biblio-num/shared'
+import {
+  isSuperiorOrSimilar,
+  IRole,
+  Roles,
+} from '@biblio-num/shared-utils'
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
 import { TargetUserInterceptor } from '@/modules/users/providers/interceptors/target-user.interceptor'
 import { RoleService } from '@/modules/users/providers/role.service'

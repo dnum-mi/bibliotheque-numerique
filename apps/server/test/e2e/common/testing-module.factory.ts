@@ -14,7 +14,7 @@ import { rnfServiceMock } from '../../mock/rnf-service/rnf-service.mock'
 import { RnaService } from '@/modules/organismes/providers/rna.service'
 import { rnaServiceMock } from '../../mock/rna-service/rna-service.mock'
 import { xlsxServiceMock } from '../../mock/excel-service/excel-service.mock'
-import { RolesKeys } from '@biblio-num/shared'
+import { RolesKeys } from '@biblio-num/shared-utils'
 import { getAnyCookie } from './get-any-cookie'
 import { XlsxService } from '@/shared/modules/xlsx/xlsx.service'
 

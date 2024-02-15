@@ -17,9 +17,12 @@ import {
   LeanDossierOutputDto,
   PaginatedDto,
   PaginationDto,
-  Roles,
 } from '@biblio-num/shared'
-import { mapOrganismeFieldHeader } from '@biblio-num/shared-utils'
+
+import {
+  Roles,
+  mapOrganismeFieldHeader,
+} from '@biblio-num/shared-utils'
 
 import { DossierService } from '@/modules/dossiers/providers/dossier.service'
 import { OrganismeService } from '@/modules/organismes/providers/organisme.service'

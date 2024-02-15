@@ -7,12 +7,15 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { fixFieldsByIdentificationDictionary } from '../../../dossiers/objects/constante/fix-field.dictionnary'
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
 import {
-  IRole,
-  isBelowSuperAdmin,
-  Roles,
   SmallDemarcheOutputDto,
   UpdateDemarcheDto,
 } from '@biblio-num/shared'
+import {
+  isBelowSuperAdmin,
+  Roles,
+  IRole,
+} from '@biblio-num/shared-utils'
+
 import { FindManyOptions } from 'typeorm/find-options/FindManyOptions'
 import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere'
 
