@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { Repository } from 'typeorm'
@@ -13,6 +14,7 @@ export class BnConfigurationService extends BaseEntityService<BnConfiguration> {
   constructor(
     protected logger: LoggerService,
     @InjectRepository(BnConfiguration) repo: Repository<BnConfiguration>,
+    private readonly configService: ConfigService,
   ) {
     super(repo, logger)
     this.logger.setContext(this.constructor.name)
@@ -20,7 +22,11 @@ export class BnConfigurationService extends BaseEntityService<BnConfiguration> {
 
   async onApplicationBootstrap(): Promise<void> {
     this.logger.verbose('onApplicationBootstrap in bn-configuration.service')
-    await this.createMissingMandatoryData()
+    if (this.configService.get('createMissingMandatoryConfigurations')) {
+      await this.createMissingMandatoryData()
+    } else {
+      this.logger.log('Skipping create of missing mandatory data.')
+    }
   }
 
   async findByKeyName(keyName: string): Promise<BnConfiguration> {

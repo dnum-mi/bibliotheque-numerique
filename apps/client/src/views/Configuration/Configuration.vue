@@ -44,7 +44,6 @@ function selectTab (idx: number) {
     >
       <DsfrTabContent
         panel-id="pan-1"
-        class="small-padding-tab"
         tab-id="tab-1"
         :selected="selectedTabIndex === 0"
       >
@@ -56,7 +55,6 @@ function selectTab (idx: number) {
       </DsfrTabContent>
       <DsfrTabContent
         panel-id="pan-2"
-        class="small-padding-tab"
         tab-id="tab-2"
         :selected="selectedTabIndex === 1"
       >
