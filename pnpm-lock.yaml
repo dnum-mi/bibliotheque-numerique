@@ -739,9 +739,6 @@ importers:
 
   packages/shared:
     dependencies:
-      '@biblio-num/shared-utils':
-        specifier: workspace:^
-        version: link:../shared-utils
       '@nestjs/mapped-types':
         specifier: ^2.0.2
         version: 2.0.2(@nestjs/common@10.2.7)(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13)
@@ -754,6 +751,10 @@ importers:
       class-validator:
         specifier: ^0.14.0
         version: 0.14.0
+    optionalDependencies:
+      '@biblio-num/shared-utils':
+        specifier: workspace:^
+        version: link:../shared-utils
     devDependencies:
       '@dnum-mi/ds-api-client':
         specifier: ^1.6.2
@@ -788,6 +789,9 @@ importers:
       eslint:
         specifier: npm:eslint-ts-patch@^8.56.0-0
         version: /eslint-ts-patch@8.56.0-0
+      nodemon:
+        specifier: ^3.0.1
+        version: 3.0.1
       npm-run-all2:
         specifier: 6.1.2
         version: 6.1.2

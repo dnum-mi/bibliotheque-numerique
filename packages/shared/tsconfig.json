@@ -1,5 +1,5 @@
 {
-  "include": ["src/**/*.ts", "../shared-utils/src/roles/role.utils.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": ["dist/"],
   "compilerOptions": {
     "module": "commonjs",
@@ -13,6 +13,7 @@
     "allowSyntheticDefaultImports": true,
     "target": "es2020",
     "sourceMap": true,
+    "rootDir": "./src",
     "outDir": "./dist",
     "baseUrl": "./src",
     "incremental": true,
@@ -21,6 +22,7 @@
     "noImplicitAny": true,
     "strictBindCallApply": true,
     "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "tsBuildInfoFile": "./dist/.tsbuildinfo"
   }
 }
