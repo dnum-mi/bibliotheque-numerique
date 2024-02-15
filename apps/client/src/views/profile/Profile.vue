@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import type { MyProfileOutputDto } from '@biblio-num/shared'
+import type { MyProfileOutputDto, ResetPasswordInputDto } from '@biblio-num/shared'
 import type { DsfrAlertType } from '@gouvminint/vue-dsfr/types/components/DsfrAlert/DsfrAlert.vue'
-
-import type { ResetPasswordInputDto } from '@biblio-num/shared/types/dto/user/reset-password-input.dto'
 
 import LayoutBanner from '@/components/Layout/LayoutBanner.vue'
 import { useUserStore } from '@/stores'

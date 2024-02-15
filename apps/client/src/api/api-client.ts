@@ -7,7 +7,6 @@ import type {
   CredentialsInputDto,
   DossierSearchOutputDto,
   FieldSearchOutputDto,
-  MappingColumn,
   ResetPasswordInputDto,
   SearchDossierDto,
   UpdateOneFieldConfigurationDto,
@@ -18,14 +17,10 @@ import type {
   ValidateEmailDto,
   FileOutputDto,
   LeanDossierOutputDto,
-  IOrganisme,
   PaginationDto,
   PaginationUserDto,
-  ICustomFilter,
-  IDossier,
   PaginatedUserDto,
   MyProfileOutputDto,
-  UserWithEditableRole,
   UpdateOneRoleOptionDto,
   SmallDemarcheOutputDto,
   UpdateProfileDto,
@@ -35,6 +30,12 @@ import type {
 } from '@biblio-num/shared'
 
 import type {
+  UserWithEditableRole,
+  ICustomFilter,
+  IOrganisme,
+  MappingColumn,
+  IDossier,
+  DynamicKeys,
   RolesKeys,
 } from '@biblio-num/shared-utils'
 

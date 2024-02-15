@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { Demandeur, PersonnePhysique } from '@biblio-num/shared'
+import type { Demandeur, PersonnePhysique } from '@biblio-num/shared-utils'
 
 import { dateToStringFr } from '@/utils'
 

@@ -1,4 +1,4 @@
-import type { Demandeur, DossierStateKeys, IDossier, IOrganisme, TDossier } from '@biblio-num/shared'
+import type { Demandeur, DossierStateKeys, IDossier, IOrganisme, TDossier } from '@biblio-num/shared-utils'
 import { faker } from '@faker-js/faker/locale/fr'
 
 const getStateDossier = (): DossierStateKeys => { return faker.helpers.arrayElement(['accepte', 'en_construction', 'en_instruction']) }

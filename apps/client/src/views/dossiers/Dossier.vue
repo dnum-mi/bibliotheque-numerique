@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { Champ, DossierOutputDto, PieceJustificativeChamp, DossierMessage } from '@biblio-num/shared'
+import type { Champ, DossierOutputDto, PieceJustificativeChamp, DossierMessage } from '@biblio-num/shared-utils'
 
 import { useDossierStore } from '@/stores/dossier'
 import LayoutFiche from '@/components/Layout/LayoutFiche.vue'

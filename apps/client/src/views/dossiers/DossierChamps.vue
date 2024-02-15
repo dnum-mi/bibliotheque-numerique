@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { Champ } from '@biblio-num/shared'
+import type { Champ } from '@biblio-num/shared-utils'
 
 import DossierChamp from './DossierChamp.vue'
 

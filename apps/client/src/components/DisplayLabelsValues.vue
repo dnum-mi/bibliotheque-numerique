@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { IDemarche } from '@biblio-num/shared'
+import type { IDemarche } from '@biblio-num/shared-utils'
 
 type LabelData = {
   text: string,

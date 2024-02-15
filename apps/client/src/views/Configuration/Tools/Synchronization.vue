@@ -1,5 +1,8 @@
 <script lang="ts" setup>
-import type { IdentificationDemarcheKeys, OrganismeTypeKeys, SmallDemarcheOutputDto } from '@biblio-num/shared'
+import type {
+  SmallDemarcheOutputDto,
+} from '@biblio-num/shared'
+import type { IdentificationDemarcheKeys, OrganismeTypeKeys } from '@biblio-num/shared-utils'
 import { useConfigurationStore } from '@/stores/configuration'
 import { ref } from 'vue'
 

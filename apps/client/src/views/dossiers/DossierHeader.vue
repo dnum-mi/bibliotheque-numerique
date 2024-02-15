@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { IDossier, IOrganisme } from '@biblio-num/shared'
+import type { IDossier, IOrganisme } from '@biblio-num/shared-utils'
 
 import OrganismeBadge from '@/components/Badges/OrganismeBadge.vue'
 

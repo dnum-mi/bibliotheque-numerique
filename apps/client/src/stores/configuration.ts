@@ -1,6 +1,5 @@
 import type {
   CreateDemarcheDto,
-  IdentificationDemarcheKeys,
   SmallDemarcheOutputDto,
   UpdateDemarcheDto,
   BnConfigurationOutputDto,
@@ -9,7 +8,10 @@ import type {
 } from '@biblio-num/shared'
 
 import { bnConfigurationsApiClient, demarchesApiClient } from '../api/api-client'
-import type { OrganismeTypeKeys } from '@biblio-num/shared-utils'
+import type {
+  OrganismeTypeKeys,
+  IdentificationDemarcheKeys,
+} from '@biblio-num/shared-utils'
 
 import { createDemarche, patchDemarche, putSynchronizeOneDemarche } from '../api/sudo-api-client'
 

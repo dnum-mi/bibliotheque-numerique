@@ -1,4 +1,4 @@
-import type { DossierStateKeys } from '@biblio-num/shared'
+import type { DossierStateKeys } from '@biblio-num/shared-utils'
 
 export type DossierStateValue = {
   label: string,

@@ -1,4 +1,10 @@
-import type { IOrganisme, PaginatedDto, PaginationDto } from '@biblio-num/shared'
+import type {
+  PaginatedDto,
+  PaginationDto,
+} from '@biblio-num/shared'
+import type {
+  IOrganisme,
+} from '@biblio-num/shared-utils'
 
 import apiClient from '@/api/api-client'
 
