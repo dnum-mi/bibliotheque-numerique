@@ -5,8 +5,6 @@ import type {
 import type { PrefectureKeys } from '../prefectures'
 import type { IDemarche } from '../demarches'
 
-export { Champ, PieceJustificativeChamp, RepetitionChamp, PersonnePhysique, Demandeur, Dossier as TDossier } from '@dnum-mi/ds-api-client'
-
 export interface IDossier {
   id: number
   demarcheId: number
