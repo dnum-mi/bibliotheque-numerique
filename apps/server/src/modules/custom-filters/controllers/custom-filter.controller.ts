@@ -11,7 +11,8 @@ import {
 import { ApiTags } from '@nestjs/swagger'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { CustomFilter } from '@/modules/custom-filters/objects/entities/custom-filter.entity'
-import { ICustomFilter, ICustomFilterStat, PatchCustomFilterDto, Roles } from '@biblio-num/shared'
+import { ICustomFilter, ICustomFilterStat, PatchCustomFilterDto } from '@biblio-num/shared'
+import { Roles } from '@biblio-num/shared-utils'
 import { CustomFilterService } from '@/modules/custom-filters/providers/services/custom-filter.service'
 import {
   CurrentCustomFiltersInterceptor,

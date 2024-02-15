@@ -17,8 +17,10 @@ import {
   FormatFunctionRef,
   FormatFunctionRefKeys,
   MappingColumn,
-  PrefectureKeys,
 } from '@biblio-num/shared'
+import {
+  PrefectureKeys,
+} from '@biblio-num/shared-utils'
 import { RawChamp } from '@/shared/types/raw-champ.type'
 import { PieceJustificativeChamp } from '@dnum-mi/ds-api-client'
 

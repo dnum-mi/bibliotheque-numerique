@@ -1,16 +1,19 @@
 import {
-  isAtLeastAdmin,
   SmallDemarcheOutputDto,
   UserWithEditableRole,
   OneDemarcheRoleOption,
-  Roles,
-  isBelowSuperAdmin,
-  IRoleOption,
   IUser,
   UpdateOneRoleOptionDto,
-  RolesKeys,
-  isSuperiorOrSimilar,
 } from '@biblio-num/shared'
+import {
+  isAtLeastAdmin,
+  isBelowSuperAdmin,
+  IRoleOption,
+  isSuperiorOrSimilar,
+  RolesKeys,
+  Roles,
+} from '@biblio-num/shared-utils'
+
 import { isDefined } from 'class-validator'
 
 export const threeRoles = [Roles.superadmin, Roles.admin, Roles.instructor]

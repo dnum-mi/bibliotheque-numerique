@@ -23,10 +23,13 @@ import {
 import {
   SmallDemarcheOutputDto,
   CreateDemarcheDto,
-  Roles,
-  IRole,
   UpdateDemarcheDto,
 } from '@biblio-num/shared'
+
+import {
+  IRole,
+  Roles,
+} from '@biblio-num/shared-utils'
 
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
 import { CurrentUserRole } from '@/modules/users/providers/decorators/current-user-role.decorator'

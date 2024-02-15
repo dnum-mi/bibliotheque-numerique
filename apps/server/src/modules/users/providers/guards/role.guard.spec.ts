@@ -4,7 +4,7 @@ import { Reflector } from '@nestjs/core'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { ExecutionContext } from '@nestjs/common'
 import { PUBLIC_ROUTE_KEY } from '@/modules/users/providers/decorators/public-route.decorator'
-import { Roles } from '@biblio-num/shared'
+import { Roles } from '@biblio-num/shared-utils'
 import { ConfigService } from '@nestjs/config'
 import { ROLE_KEY } from '@/modules/users/providers/decorators/role.decorator'
 

@@ -1,7 +1,7 @@
 import type { RouteRecordRaw } from 'vue-router'
 
 import { routeNames } from '@/router/route-names'
-import { Roles } from '@/biblio-num/shared'
+import { Roles } from '@biblio-num/shared-utils'
 
 export const statisticRoute: RouteRecordRaw = {
   name: routeNames.STATISTIQUES,

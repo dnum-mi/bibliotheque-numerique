@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import type { IRole } from '@biblio-num/shared'
+import type { IRole } from '@biblio-num/shared-utils'
+import { canAccessDemarche } from '@biblio-num/shared-utils'
 
 import apiClient from '@/api/api-client'
 import useToaster from '@/composables/use-toaster'
 import { routeNames } from '@/router/route-names'
-import { canAccessDemarche } from '@/biblio-num/shared'
 
 const router = useRouter()
 

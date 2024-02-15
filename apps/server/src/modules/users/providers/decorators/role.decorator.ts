@@ -1,5 +1,5 @@
 import { CustomDecorator, SetMetadata } from '@nestjs/common'
-import { RolesKeys } from '@biblio-num/shared'
+import { RolesKeys } from '@biblio-num/shared-utils'
 
 export const ROLE_KEY = 'role'
 

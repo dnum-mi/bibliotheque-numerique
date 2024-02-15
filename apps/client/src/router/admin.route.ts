@@ -1,7 +1,7 @@
 import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
 
 import { routeNames } from '@/router/route-names'
-import { Roles } from '@/biblio-num/shared'
+import { Roles } from '@biblio-num/shared-utils'
 import { useUserStore } from '@/stores'
 
 export const adminRoute = {

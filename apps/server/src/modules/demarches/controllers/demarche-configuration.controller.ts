@@ -14,9 +14,12 @@ import { CurrentDemarcheInterceptor } from '../providers/interceptors/current-de
 import { Demarche } from '../objects/entities/demarche.entity'
 import { CurrentDemarche } from '../providers/decorators/current-demarche.decorator'
 import {
-  MappingColumn, Roles,
+  MappingColumn,
   UpdateOneFieldConfigurationDto,
 } from '@biblio-num/shared'
+import {
+  Roles,
+} from '@biblio-num/shared-utils'
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
 
 @ApiTags('Demarches')

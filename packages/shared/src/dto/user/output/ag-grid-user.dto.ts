@@ -1,4 +1,4 @@
-import { RolesKeys } from '../../../enums'
+import { RolesKeys } from '@biblio-num/shared-utils'
 
 export class AgGridUserDto {
   id: number

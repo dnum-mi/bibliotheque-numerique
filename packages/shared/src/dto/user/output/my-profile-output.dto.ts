@@ -1,7 +1,6 @@
 import { OmitType } from '@nestjs/swagger'
 import { UserOutputDto } from './user-output.dto'
-import { IRole, IRoleOption } from '../../../interfaces'
-import { RolesKeys } from '../../../enums'
+import { IRole, IRoleOption, RolesKeys } from '@biblio-num/shared-utils'
 import { SmallDemarcheOutputDto } from '../../demarche'
 
 class FrontFriendlyRoleOptionDto implements IRoleOption {

@@ -18,13 +18,13 @@ import {
   PaginationUserDto,
   MyProfileOutputDto,
   AgGridUserDto,
-  IRole,
   PaginatedDto,
   IUser,
-  Roles,
 } from '@biblio-num/shared'
 
 import {
+  Roles,
+  IRole,
   OrganismeTypeKeys,
 } from '@biblio-num/shared-utils'
 

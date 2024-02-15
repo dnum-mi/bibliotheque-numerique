@@ -1,4 +1,4 @@
-import { IRole } from './role.interface'
+import { IRole } from '@biblio-num/shared-utils'
 import { ICustomFilter } from './custom-filters.interface'
 
 export interface IUser {

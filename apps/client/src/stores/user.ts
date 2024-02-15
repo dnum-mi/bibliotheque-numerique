@@ -7,10 +7,13 @@ import type {
   PaginationUserDto,
   MyProfileOutputDto,
   UserWithEditableRole,
-  RolesKeys,
   UpdateOneRoleOptionDto,
   UpdateProfileDto,
 } from '@biblio-num/shared'
+
+import type {
+  RolesKeys,
+} from '@biblio-num/shared-utils'
 
 // TODO: enum Roles dans packages/shared n'est pas récupérable
 const RolesAdmins = ['admin', 'sudo', 'superadmin']

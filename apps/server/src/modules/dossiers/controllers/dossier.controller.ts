@@ -8,7 +8,7 @@ import { ApiTags } from '@nestjs/swagger'
 import { DossierService } from '../providers/dossier.service'
 import { Dossier } from '../objects/entities/dossier.entity'
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
-import { canAccessDemarche, canAccessPrefectureInDemarche, IRole, Roles } from '@biblio-num/shared'
+import { canAccessDemarche, canAccessPrefectureInDemarche, IRole, Roles } from '@biblio-num/shared-utils'
 import { CurrentUserRole } from '@/modules/users/providers/decorators/current-user-role.decorator'
 
 @ApiTags('Dossiers')

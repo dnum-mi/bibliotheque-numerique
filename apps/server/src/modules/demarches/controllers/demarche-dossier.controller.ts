@@ -9,9 +9,11 @@ import {
   DossierSearchOutputDto,
   FieldSearchOutputDto,
   MappingColumn,
-  Roles,
   SearchDossierDto,
 } from '@biblio-num/shared'
+import {
+  Roles,
+} from '@biblio-num/shared-utils'
 import { CurrentDemarche } from '@/modules/demarches/providers/decorators/current-demarche.decorator'
 import { ServerResponse } from 'http'
 import { XlsxService } from '@/shared/modules/xlsx/xlsx.service'

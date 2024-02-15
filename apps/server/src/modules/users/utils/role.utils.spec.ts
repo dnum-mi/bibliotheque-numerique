@@ -1,13 +1,13 @@
 import {
-  IRole,
   IUser,
   Prefecture,
-  Roles,
   SmallDemarcheOutputDto,
   UpdateOneRoleOptionDto,
   UserWithEditableRole,
 } from '@biblio-num/shared'
 import {
+  Roles,
+  IRole,
   OrganismeType,
 } from '@biblio-num/shared-utils'
 import {

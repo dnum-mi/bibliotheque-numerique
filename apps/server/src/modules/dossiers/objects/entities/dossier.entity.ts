@@ -14,7 +14,8 @@ import { BaseEntity } from '@/shared/base-entity/base.entity'
 import { Field } from './field.entity'
 import { Dossier as TDossier } from '@dnum-mi/ds-api-client/dist/@types/generated-types'
 import { Organisme } from '@/modules/organismes/objects/organisme.entity'
-import { IDossier, Prefecture, PrefectureKeys } from '@biblio-num/shared'
+import { IDossier } from '@biblio-num/shared'
+import { Prefecture, PrefectureKeys } from '@biblio-num/shared-utils'
 
 @Entity({ name: 'dossiers' })
 @Unique('UQ_DOSSIER', ['sourceId', 'demarche'])

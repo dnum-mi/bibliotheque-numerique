@@ -26,7 +26,6 @@ import type {
   PaginatedUserDto,
   MyProfileOutputDto,
   UserWithEditableRole,
-  RolesKeys,
   UpdateOneRoleOptionDto,
   SmallDemarcheOutputDto,
   UpdateProfileDto,
@@ -34,6 +33,10 @@ import type {
   CreateBnConfigurationDto,
   UpdateBnConfigurationDto,
 } from '@biblio-num/shared'
+
+import type {
+  RolesKeys,
+} from '@biblio-num/shared-utils'
 
 import {
   demarchesRoute,

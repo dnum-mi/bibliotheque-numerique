@@ -5,7 +5,7 @@ import {
 } from '@/shared/guards'
 
 import { routeNames } from './route-names'
-import type { RolesKeys } from '@biblio-num/shared'
+import type { RolesKeys } from '@biblio-num/shared-utils'
 import { demarchesRoutes } from '@/router/demarches.route'
 import { aboutRoute } from '@/router/about.route'
 import { authRoutes } from '@/router/auth.route'

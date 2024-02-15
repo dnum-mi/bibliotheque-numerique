@@ -9,10 +9,12 @@ import { DossierWithCustomChamp as TDossier } from '@dnum-mi/ds-api-client'
 import {
   IdentificationDemarche,
   IdentificationDemarcheKeys,
-  Prefecture,
-  PrefectureKeys,
 } from '@biblio-num/shared'
 
+import {
+  Prefecture,
+  PrefectureKeys,
+} from '@biblio-num/shared-utils'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { DsChampType } from '@/shared/modules/ds-api/objects/ds-champ-type.enum'
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
