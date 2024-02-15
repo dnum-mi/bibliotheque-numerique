@@ -20,6 +20,7 @@ export type TConfig = {
     email: string;
     roleName: string;
   }
+  createMissingMandatoryConfigurations: boolean;
 };
 
 export default () : TConfig => ({
@@ -44,4 +45,5 @@ export default () : TConfig => ({
     email: process.env.DEFAULT_SUDO_EMAIL,
     roleName: 'admin',
   },
+  createMissingMandatoryConfigurations: process.env.CREATE_MISSING_MANDATORY_CONFIGURATIONS === 'true' || true,
 })

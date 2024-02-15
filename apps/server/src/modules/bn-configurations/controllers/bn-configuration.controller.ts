@@ -1,7 +1,7 @@
 import {
   BadRequestException,
   Body,
-  Controller, Get, Param, Patch, Post,
+  Controller, Delete, Get, Param, Patch, Post,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
@@ -55,5 +55,13 @@ export class BnConfigurationController {
     this.logger.verbose('updateConfiguration')
     await this.configurationService.updateOrThrow(id, dto)
     return { message: `Configuration ${id} has been updated` }
+  }
+
+  @Delete(':id')
+  @Role(Roles.sudo)
+  async delete(@Param('id') id: number): Promise<{ message: string }> {
+    this.logger.verbose('deleteConfiguration')
+    await this.configurationService.remove(id)
+    return { message: `Configuration ${id} has been deleted` }
   }
 }
