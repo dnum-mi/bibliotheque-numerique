@@ -1,13 +1,16 @@
 import apiClient from '@/api/api-client'
 
 import type {
-  IDemarche,
-  MappingColumn,
-  MappingColumnWithoutChildren,
   DossierSearchOutputDto,
   FieldSearchOutputDto,
   SearchDossierDto,
 } from '@biblio-num/shared'
+
+import type {
+  IDemarche,
+  MappingColumn,
+  MappingColumnWithoutChildren,
+} from '@biblio-num/shared-utils'
 
 export type FrontMappingColumn = MappingColumnWithoutChildren & { isChild: boolean }
 

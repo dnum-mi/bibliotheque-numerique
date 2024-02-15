@@ -1,4 +1,11 @@
-import type { AgGridUserDto, IRole, PaginatedDto, UserOutputDto } from '@biblio-num/shared'
+import type {
+  AgGridUserDto,
+  PaginatedDto,
+  UserOutputDto,
+} from '@biblio-num/shared'
+import type {
+  IRole,
+} from '@biblio-num/shared-utils'
 import { faker } from '@faker-js/faker/locale/fr'
 
 const noRole: IRole = {

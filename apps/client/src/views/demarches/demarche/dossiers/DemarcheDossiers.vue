@@ -12,12 +12,15 @@ import type {
 
 import type {
   CreateCustomFilterDto,
-  ICustomFilter,
-  IDemarche, MappingColumn,
   PaginationDto,
   PatchCustomFilterDto,
 } from '@biblio-num/shared'
 
+import type {
+  ICustomFilter,
+  IDemarche,
+  MappingColumn,
+} from '@biblio-num/shared-utils'
 import {
   type FrontMappingColumn,
   useCustomFilterStore,

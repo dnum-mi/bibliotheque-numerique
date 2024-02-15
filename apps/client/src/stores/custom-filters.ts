@@ -1,4 +1,11 @@
-import type { CreateCustomFilterDto, PatchCustomFilterDto, ICustomFilter } from '@biblio-num/shared'
+import type {
+  CreateCustomFilterDto,
+  PatchCustomFilterDto,
+} from '@biblio-num/shared'
+
+import type {
+  ICustomFilter,
+} from '@biblio-num/shared-utils'
 
 import apiClient from '@/api/api-client'
 

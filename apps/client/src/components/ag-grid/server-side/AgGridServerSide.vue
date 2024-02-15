@@ -9,7 +9,8 @@ import type {
 } from 'ag-grid-community'
 import type { GridOptions, SetFilterModel } from 'ag-grid-enterprise'
 
-import type { DynamicKeys, PaginationDto } from '@biblio-num/shared'
+import type { PaginationDto } from '@biblio-num/shared'
+import type { DynamicKeys } from '@biblio-num/shared-utils'
 
 import { gridOptionFactory } from '@/components/ag-grid/server-side/grid-option-factory'
 import {

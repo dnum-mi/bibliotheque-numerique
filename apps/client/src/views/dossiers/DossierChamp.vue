@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { prettyByteSizeByString } from '@/utils'
 
-import type { PieceJustificativeChamp, RepetitionChamp } from '@biblio-num/shared'
+import type { PieceJustificativeChamp, RepetitionChamp } from '@biblio-num/shared-utils'
 
 import DossierChamps from './DossierChamps.vue'
 

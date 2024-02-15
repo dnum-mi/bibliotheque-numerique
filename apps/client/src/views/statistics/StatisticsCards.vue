@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useStorage } from '@vueuse/core'
 
-import type { ICustomFilter } from '@biblio-num/shared'
+import type { ICustomFilter } from '@biblio-num/shared-utils'
 
 import { useCustomFilterStore } from '@/stores/custom-filters'
 import StatisticCard from './StatisticsCard.vue'

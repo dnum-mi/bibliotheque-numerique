@@ -2,11 +2,14 @@
 import { computed } from 'vue'
 import slugify from 'slugify'
 
-import type { FormatFunctionRefKeys } from '@biblio-num/shared'
+import type {
+  FormatFunctionRefKeys,
+  Prefecture,
+  PrefectureKeys,
+} from '@biblio-num/shared-utils'
 
 import delayStateBadge from '@/components/Badges/DelayStateBadge.vue'
 import AgGridAttachmentCell from '@/components/ag-grid/AgGridAttachmentCell.vue'
-import { Prefecture, type PrefectureKeys } from '@biblio-num/shared-utils'
 import { firstUpperCase } from '@/utils/first-upper-case'
 
 // TODO: check into @biblio-num/shared
