@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import type { PrefectureKeys, PrefectureOptions } from '@biblio-num/shared'
+import type { PrefectureOptions } from '@biblio-num/shared'
+import type { PrefectureKeys } from '@biblio-num/shared-utils'
+import { listOfPrefectures } from '@biblio-num/shared-utils'
 import type { DsfrTagProps } from '@gouvminint/vue-dsfr/types/components/DsfrTag/DsfrTag.vue'
 import { computed, ref } from 'vue'
 import { LocalizationOptions, type LocalizationOptionsKeys } from './localization.enum'
-import { listOfPrefectures } from '@/biblio-num/shared'
 
 const props = defineProps<{
   geographicalRights: PrefectureOptions;

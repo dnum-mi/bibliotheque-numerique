@@ -21,8 +21,8 @@ export const Prefecture = {
   D19: '19 - Corrèze',
   D20A: '20A - Corse du Sud',
   D20B: '20B - Haute-Corse',
-  D21: "21 - Côte d'Or",
-  D22: "22 - Côtes d'Armor",
+  D21: '21 - Côte d\'Or',
+  D22: '22 - Côtes d\'Armor',
   D23: '23 - Creuse',
   D24: '24 - Dordogne',
   D25: '25 - Doubs',
@@ -95,7 +95,7 @@ export const Prefecture = {
   D92: '92 - Hauts-de-Seine',
   D93: '93 - Seine-Saint-Denis',
   D94: '94 - Val-de-Marne',
-  D95: "95 - Val-d'Oise",
+  D95: '95 - Val-d\'Oise',
   D971: '971 - Guadeloupe',
   D972: '972 - Martinique',
   D973: '973 - Guyane',
@@ -108,3 +108,5 @@ export const Prefecture = {
 }
 
 export type PrefectureKeys = (typeof Prefecture)[keyof typeof Prefecture]
+
+export const listOfPrefectures = Object.keys(Prefecture)

@@ -1,1 +1,0 @@
-export * from './prefectures.enum'
