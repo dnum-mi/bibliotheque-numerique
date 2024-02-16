@@ -1,8 +1,7 @@
 <script lang="ts" setup>
 import { type SelectionChangedEvent } from 'ag-grid-community'
 
-import type { PaginationDto } from '@biblio-num/shared'
-import type { IOrganisme } from '@biblio-num/shared-utils'
+import type { IPagination, IOrganisme } from '@biblio-num/shared-utils'
 
 import { useOrganismeStore } from '@/stores/organisme'
 import LayoutList from '@/components/Layout/LayoutList.vue'
@@ -13,7 +12,7 @@ const pageSize = 20
 const organismeStore = useOrganismeStore()
 const router = useRouter()
 
-const apiCall = async (params: PaginationDto<IOrganisme>) => {
+const apiCall = async (params: IPagination<IOrganisme>) => {
   return organismeStore.loadOrganismes(params)
 }
 

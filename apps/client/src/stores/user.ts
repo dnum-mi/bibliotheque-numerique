@@ -6,7 +6,7 @@ import type {
   IUserOutput,
   IPaginationUser,
   IMyProfileOutput,
-  UserWithEditableRole,
+  IUserWithEditableRole,
   IUpdateOneRoleOption,
   IUpdateProfile,
 
@@ -30,7 +30,7 @@ export const useUserStore = defineStore('user', () => {
   const currentUser = ref<IUserOutput | null>(null)
   const myProfile = ref<IMyProfileOutput | null>(null)
   const users = ref<Map<number, IUserOutput>>(new Map<number, IUserOutput>())
-  const selectedEditableUser = ref<UserWithEditableRole | null>(null)
+  const selectedEditableUser = ref<IUserWithEditableRole | null>(null)
   const keySelectUser = ref<string>(getRandomId('selectedUser-selected'))
   const isAuthenticated = computed(() => !!currentUser.value)
   const hasAdminAccess = computed(() => !!(currentUser.value?.role?.label && RolesAdmins.includes(currentUser.value?.role?.label)))

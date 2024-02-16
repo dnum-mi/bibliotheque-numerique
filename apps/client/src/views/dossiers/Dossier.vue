@@ -1,5 +1,13 @@
 <script lang="ts" setup>
-import type { Champ, DossierOutputDto, PieceJustificativeChamp, DossierMessage } from '@biblio-num/shared-utils'
+
+import type {
+  Champ,
+  Message as DossierMessage,
+  PieceJustificativeChamp,
+} from '@dnum-mi/ds-api-client'
+import type {
+  IDossier as IDossierOutput,
+} from '@biblio-num/shared-utils'
 
 import { useDossierStore } from '@/stores/dossier'
 import LayoutFiche from '@/components/Layout/LayoutFiche.vue'
@@ -12,10 +20,10 @@ import DossierMessagerie from './DossierMessagerie.vue'
 import { copyCurrentUrlInClipboard, formatForMessageDate } from '@/utils'
 
 const dossierStore = useDossierStore()
-const dossier = computed<DossierOutputDto | undefined>(() => dossierStore?.dossier)
-const dossierDS = computed<DossierOutputDto['dsDataJson'] | undefined>(() => dossier.value?.dsDataJson)
+const dossier = computed<IDossierOutput | undefined>(() => dossierStore?.dossier)
+const dossierDS = computed<IDossierOutput['dsDataJson'] | undefined>(() => dossier.value?.dsDataJson)
 
-const messages = computed(() => dossier.value?.dsDataJson.messages.map(({ id, createdAt, body, email, attachments, attachment }: DossierMessage) => ({
+const messages = computed(() => dossier.value?.dsDataJson.messages?.map(({ id, createdAt, body, email, attachments, attachment }: DossierMessage) => ({
   id,
   date: formatForMessageDate(new Date(createdAt)),
   email,
@@ -26,13 +34,12 @@ const messages = computed(() => dossier.value?.dsDataJson.messages.map(({ id, cr
 const annotations = computed(() => dossier.value?.dsDataJson.annotations)
 
 const attachments = computed(
-  () => dossierDS.value?.champs
-    .reduce((files: Champ[], champ: PieceJustificativeChamp) => {
-      if (champ.__typename === 'PieceJustificativeChamp' && champ.file != null) {
-        return [...files, champ.file]
-      }
-      return files
-    }, []),
+  () => dossierDS.value?.champs?.reduce((files: Champ[], champ: PieceJustificativeChamp) => {
+    if (champ.__typename === 'PieceJustificativeChamp' && champ.file != null) {
+      return [...files, champ.file]
+    }
+    return files
+  }, []),
 )
 
 const hasAnnotations = computed(() => !!annotations.value?.length)

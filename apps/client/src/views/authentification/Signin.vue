@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useField, useForm } from 'vee-validate'
 
-import type { CredentialsInputDto } from '@biblio-num/shared'
+import type { ICredentialsInput } from '@biblio-num/shared-utils'
 import LayoutAccueil from '@/components/Layout/LayoutAccueil.vue'
 import { useUserStore } from '@/stores'
 import ToggleInputPassword from '@/components/ToggleInputPassword.vue'
@@ -27,7 +27,7 @@ const toaster = useToaster()
 const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
-const submit = handleSubmit(async (formValue: CredentialsInputDto) => {
+const submit = handleSubmit(async (formValue: ICredentialsInput) => {
   try {
     toaster.removeMessage('auth')
     await userStore.login(formValue)

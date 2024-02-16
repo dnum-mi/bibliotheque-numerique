@@ -4,7 +4,7 @@ import { AxiosError } from 'axios'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useField, useForm, useIsFormDirty, useIsFormValid } from 'vee-validate'
 
-import type { CreateUserDto } from '@biblio-num/shared'
+import type { ICreateUser } from '@biblio-num/shared-utils'
 
 import apiClient from '@/api/api-client'
 import { passwordValidator } from '@/utils/password.validator'
@@ -23,7 +23,7 @@ const validationSchema = toTypedSchema(z.object({
   job: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).min(2, 'Cet intitulé est trop court.'),
 }))
 
-const { handleSubmit } = useForm<CreateUserDto>({
+const { handleSubmit } = useForm<ICreateUser>({
   validationSchema,
 })
 
@@ -31,7 +31,7 @@ const isDirty = useIsFormDirty()
 const isFormValid = useIsFormValid()
 
 const signInRoute = { name: 'SignIn' }
-const onSubmit = handleSubmit(async (formValue: CreateUserDto) => {
+const onSubmit = handleSubmit(async (formValue: ICreateUser) => {
   try {
     await apiClient.createUser(formValue)
     await router.push(signInRoute)

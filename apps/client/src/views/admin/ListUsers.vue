@@ -2,7 +2,7 @@
 <script lang="ts" setup>
 import type { SelectionChangedEvent } from 'ag-grid-community'
 
-import type { PaginationUserDto } from '@biblio-num/shared'
+import type { IPaginationUser } from '@biblio-num/shared-utils'
 
 import { dateToStringFr } from '@/utils'
 import { useUserStore } from '@/stores'
@@ -90,7 +90,7 @@ const columnDefs = ref<BNColDef[]>([
 ])
 
 const store = useUserStore()
-const apiCall = async (params: PaginationUserDto) => {
+const apiCall = async (params: IPaginationUser) => {
   return store.listUsers(params)
 }
 

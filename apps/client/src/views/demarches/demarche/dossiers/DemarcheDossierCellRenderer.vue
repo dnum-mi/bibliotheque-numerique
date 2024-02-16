@@ -2,10 +2,10 @@
 import { computed } from 'vue'
 import slugify from 'slugify'
 
-import type {
-  FormatFunctionRefKeys,
+import {
   Prefecture,
-  PrefectureKeys,
+  type FormatFunctionRefKeys,
+  type PrefectureKeys,
 } from '@biblio-num/shared-utils'
 
 import delayStateBadge from '@/components/Badges/DelayStateBadge.vue'

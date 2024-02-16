@@ -5,11 +5,10 @@ import type {
   PrefectureOptions,
   UserOutputDto,
   UserWithEditableRole,
-} from '@biblio-num/shared'
 
-import type {
   OrganismeTypeKeys,
 } from '@biblio-num/shared-utils'
+
 import {
   OrganismeType,
 } from '@biblio-num/shared-utils'

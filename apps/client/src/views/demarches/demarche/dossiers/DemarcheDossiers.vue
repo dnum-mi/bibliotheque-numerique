@@ -11,16 +11,14 @@ import type {
 } from 'ag-grid-community'
 
 import type {
-  CreateCustomFilterDto,
-  PaginationDto,
-  PatchCustomFilterDto,
-} from '@biblio-num/shared'
-
-import type {
+  ICreateCustomFilter,
+  IPagination,
+  IPatchCustomFilter,
   ICustomFilter,
   IDemarche,
-  MappingColumn,
+  IMappingColumn,
 } from '@biblio-num/shared-utils'
+
 import {
   type FrontMappingColumn,
   useCustomFilterStore,
@@ -47,7 +45,7 @@ const route = useRoute()
 const gridApi = ref<GridApi>()
 const demarche = computed<IDemarche>(() => demarcheStore.currentDemarche as IDemarche)
 const demarcheConfiguration = computed<FrontMappingColumn[]>(() => demarcheStore.currentDemarcheFlatConfiguration)
-const demarcheConfigurationHash = computed<Record<string, MappingColumn>>(() => demarcheStore.currentDemarcheConfigurationHash)
+const demarcheConfigurationHash = computed<Record<string, IMappingColumn>>(() => demarcheStore.currentDemarcheConfigurationHash)
 const customFilterStore = useCustomFilterStore()
 const customFilters = computed<ICustomFilter[]>(() => customFilterStore.customFilters as ICustomFilter[])
 const customFiltersWithErrors = computed<CustomFilterWithErrors[]>(() => customFilters.value.map((cf) => ({
@@ -186,7 +184,7 @@ const onGridReady = (event: GridReadyEvent) => {
 const customDisplayOperationSuccess = ref(true)
 const createFilter = async ({ filterName = '', totals = [] }: { filterName?: string, totals?: string[] }) => {
   customDisplayOperationSuccess.value = false
-  const createCustomFilterDto: CreateCustomFilterDto = {
+  const createCustomFilterDto: ICreateCustomFilter = {
     name: filterName,
     groupByDossier: groupByDossier.value,
     columns: paginationDto.value.columns,
@@ -243,7 +241,7 @@ const deleteFilter = async () => {
 const updateFilterName = async ({ filterName = '', totals = [] }) => {
   customDisplayOperationSuccess.value = false
   if (selectedCustomFilter.value) {
-    const dto: PatchCustomFilterDto = {
+    const dto: IPatchCustomFilter = {
       name: filterName,
     }
     if (totals) {
@@ -322,7 +320,7 @@ watch(paginationDto, async (newValue, oldValue) => {
     selectFilter(Number(route.query.customDisplayId))
   }
 })
-const apiCall = (dto: PaginationDto<unknown>) => {
+const apiCall = (dto: IPagination<unknown>) => {
   return demarcheStore.searchCurrentDemarcheDossiers(groupByDossier.value, dto)
 }
 </script>

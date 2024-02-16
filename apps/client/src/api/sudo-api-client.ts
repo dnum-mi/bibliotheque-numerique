@@ -1,6 +1,6 @@
 import type { ICreateDemarche, IUpdateDemarche } from '@biblio-num/shared-utils'
 import { demarchesRoute, getDemarcheByIdRoute } from './bn-api-routes'
-import { apiClientInstance, demarchesApiClient } from './api-client'
+import { apiClientInstance } from './api-client'
 
 const routeCreateDemarche = `${demarchesRoute}/create`
 const routeSynchroniseOneDemarche = (id: number) => `${demarchesRoute}/${id}/sync`
