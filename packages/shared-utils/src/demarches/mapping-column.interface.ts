@@ -1,8 +1,4 @@
-import type {
-  FieldSourceKeys,
-  FieldTypeKeys,
-  FormatFunctionRefKeys,
-} from '../dossiers'
+import type { FieldSourceKeys, FieldTypeKeys, FormatFunctionRefKeys } from '..'
 
 export interface IMappingColumnWithoutChildren {
   id: string

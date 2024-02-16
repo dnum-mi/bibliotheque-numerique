@@ -1,3 +1,7 @@
 export * from './fields'
 export * from './dossier.interface'
 export * from './dossier-state-keys'
+export * from './search-dossier.interface'
+export * from './field-search-output.interface'
+export * from './lean-dossier-output.interface'
+export * from './dossier-search-output.interface'

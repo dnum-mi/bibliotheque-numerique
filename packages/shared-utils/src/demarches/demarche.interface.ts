@@ -1,6 +1,6 @@
 import type { Demarche as TDemarche } from '@dnum-mi/ds-api-client'
 import type { OrganismeTypeKeys } from '../organismes'
-import type { IMappingColumn } from '.'
+import type { IMappingColumn } from './mapping-column.interface'
 
 export interface IDemarche {
   id: number
