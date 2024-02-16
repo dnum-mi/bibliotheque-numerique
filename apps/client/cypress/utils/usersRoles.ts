@@ -1,9 +1,8 @@
 import type {
-  AgGridUserDto,
-  PaginatedDto,
-  UserOutputDto,
-} from '@biblio-num/shared'
-import type {
+  IAgGridUser,
+  IPaginated,
+  IUserOutput,
+
   IRole,
 } from '@biblio-num/shared-utils'
 import { faker } from '@faker-js/faker/locale/fr'
@@ -43,7 +42,7 @@ const instructeurRole: IRole = {
   },
 }
 
-export const createRandomUser = (id?: number): AgGridUserDto => ({
+export const createRandomUser = (id?: number): IAgGridUser => ({
   id: id || faker.helpers.unique(faker.datatype.number, [1000]),
   lastname: faker.internet.userName(),
   firstname: faker.internet.userName(),
@@ -68,12 +67,12 @@ const instructeurUsersFn = () => Array.from({ length: faker.datatype.number({ mi
   }))
 
 export const getPaginatedUsers = () => {
-  const usersRoles:Partial<AgGridUserDto>[] = [
+  const usersRoles:Partial<IAgGridUser>[] = [
     ...Array.from({ length: faker.datatype.number({ min: 1, max: 5 }) }, createRandomUser),
     ...adminUsersFn(),
     ...instructeurUsersFn(),
   ]
-  const result: PaginatedDto<AgGridUserDto> = {
+  const result: IPaginated<IAgGridUser> = {
     total: usersRoles.length,
     data: usersRoles,
   }

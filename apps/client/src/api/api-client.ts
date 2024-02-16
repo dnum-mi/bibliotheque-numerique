@@ -3,33 +3,31 @@ import axios, { AxiosError, type AxiosResponse } from 'axios'
 import useToaster from '@/composables/use-toaster'
 
 import type {
-  CreateUserDto,
-  CredentialsInputDto,
-  DossierSearchOutputDto,
-  FieldSearchOutputDto,
-  ResetPasswordInputDto,
-  SearchDossierDto,
-  UpdateOneFieldConfigurationDto,
-  UpdateUserPasswordDto,
-  UserOutputDto,
-  CreateCustomFilterDto,
-  PatchCustomFilterDto,
-  ValidateEmailDto,
-  FileOutputDto,
-  LeanDossierOutputDto,
-  PaginationDto,
-  PaginationUserDto,
-  PaginatedUserDto,
-  MyProfileOutputDto,
-  UpdateOneRoleOptionDto,
-  SmallDemarcheOutputDto,
-  UpdateProfileDto,
-  DynamicKeys,
   CreateBnConfigurationDto,
   UpdateBnConfigurationDto,
 } from '@biblio-num/shared'
-
 import type {
+  ICreateUser,
+  ICredentialsInput,
+  IDossierSearchOutput,
+  IFieldSearchOutput,
+  IResetPasswordInput,
+  ISearchDossier,
+  IUpdateOneFieldConfiguration,
+  IUpdateUserPassword,
+  IUserOutput,
+  ICreateCustomFilter,
+  IPatchCustomFilter,
+  IValidateEmail,
+  IFileOutput,
+  ILeanDossierOutput,
+  IPagination,
+  IPaginationUser,
+  IPaginatedUser,
+  IMyProfileOutput,
+  IUpdateOneRoleOption,
+  ISmallDemarcheOutput,
+  IUpdateProfile,
   UserWithEditableRole,
   ICustomFilter,
   IOrganisme,
@@ -165,7 +163,7 @@ export const demarchesApiClient = {
     return response?.data
   },
 
-  getSmallDemarches: async (): Promise<SmallDemarcheOutputDto[]> => {
+  getSmallDemarches: async (): Promise<ISmallDemarcheOutput[]> => {
     return (await apiClientInstance.get(smallDemarchesRoutes)).data
   },
 
@@ -174,18 +172,18 @@ export const demarchesApiClient = {
     return response.data
   },
 
-  searchDemarcheFields: async (demarcheId: number, dto: SearchDossierDto): Promise<FieldSearchOutputDto> => {
+  searchDemarcheFields: async (demarcheId: number, dto: ISearchDossier): Promise<IFieldSearchOutput> => {
     const response = await apiClientInstance.post(getListDemarcheFieldRoute(demarcheId), dto)
     return response.data
   },
 
-  exportDemarcheFields: async (demarcheId: number, dto: SearchDossierDto): Promise<void> => {
+  exportDemarcheFields: async (demarcheId: number, dto: ISearchDossier): Promise<void> => {
     downloadAFile(await apiClientInstance.post(getXlsxDemarcheFieldRoute(demarcheId), dto, { responseType: 'blob' }))
   },
 }
 
 export const organismeApiClient = {
-  getOrganismes: async (dto: PaginationDto<IOrganisme>) => {
+  getOrganismes: async (dto: IPagination<IOrganisme>) => {
     const response = await apiClientInstance.post(organismesListRoute, dto)
     return response.data
   },
@@ -202,18 +200,18 @@ export const organismeApiClient = {
     return getOrRedirectTo404(getOrganismeByRnfRoute(organismeIdRnf))
   },
 
-  exportOrganismes: async (dto: PaginationDto<IOrganisme>): Promise<void> => {
+  exportOrganismes: async (dto: IPagination<IOrganisme>): Promise<void> => {
     downloadAFile(await apiClientInstance.post(organismesListXlsxRoute, dto, { responseType: 'blob' }))
   },
 }
 
 export const usersApiClient = {
-  async createUser (userData: CreateUserDto) {
+  async createUser (userData: ICreateUser) {
     const response = await apiClientInstance.post(usersRoutes, userData)
     return response.data
   },
 
-  async updatePassword (updateUserPassword: UpdateUserPasswordDto) {
+  async updatePassword (updateUserPassword: IUpdateUserPassword) {
     try {
       const response = await apiClientAuthInstance.put(usersRoutes, updateUserPassword)
       return response?.data
@@ -226,7 +224,7 @@ export const usersApiClient = {
     }
   },
 
-  async loginUser (loginForm: CredentialsInputDto): Promise<UserOutputDto> {
+  async loginUser (loginForm: ICredentialsInput): Promise<IUserOutput> {
     const response = await apiClientAuthInstance.post(signInRoute, loginForm, { withCredentials: true })
     return response.data
   },
@@ -235,7 +233,7 @@ export const usersApiClient = {
     return apiClientInstance.delete(authRoute)
   },
 
-  async fetchMyProfile (): Promise<MyProfileOutputDto | null> {
+  async fetchMyProfile (): Promise<IMyProfileOutput | null> {
     try {
       const response = await apiClientInstance.get(profileRoute)
       return response.data
@@ -244,11 +242,11 @@ export const usersApiClient = {
     }
   },
 
-  async updateMyProfile (dto: UpdateProfileDto) {
+  async updateMyProfile (dto: IUpdateProfile) {
     await apiClientInstance.patch(profileRoute, dto)
   },
 
-  async listUsers (dto: PaginationUserDto): Promise<PaginatedUserDto> {
+  async listUsers (dto: IPaginationUser): Promise<IPaginatedUser> {
     const response = await apiClientInstance.post(usersListRoute, dto)
     return response.data
   },
@@ -263,13 +261,13 @@ export const usersApiClient = {
     return response.data
   },
 
-  async resetPassword (resetPasswordInput: ResetPasswordInputDto) {
+  async resetPassword (resetPasswordInput: IResetPasswordInput) {
     apiClientAuthInstance.post('/users/reset-password', resetPasswordInput)
   },
 
   async validEmail (token: string) {
     try {
-      const validateEmail: ValidateEmailDto = {
+      const validateEmail: IValidateEmail = {
         validate: true,
         token,
       }
@@ -286,7 +284,7 @@ export const usersApiClient = {
     await apiClientInstance.put(getUserRoleByIdRoute(id), { role })
   },
 
-  async updateUserDemarchesRole (id: number, dto: UpdateOneRoleOptionDto) {
+  async updateUserDemarchesRole (id: number, dto: IUpdateOneRoleOption) {
     await apiClientInstance.patch(getUserRoleByIdRoute(id), dto)
   },
 
@@ -297,21 +295,21 @@ export const usersApiClient = {
 }
 
 export const dossiersApiClient = {
-  updateOneMappingColumn: async (demarcheId: number, fieldId: string, dto: UpdateOneFieldConfigurationDto) => {
+  updateOneMappingColumn: async (demarcheId: number, fieldId: string, dto: IUpdateOneFieldConfiguration) => {
     return apiClientInstance.patch(getUpdateOneMappingColumnRoute(demarcheId, fieldId), dto)
   },
 
   getDossier: async (id: number): Promise<IDossier> => getOrRedirectTo404(getDossierByIdRoute(id)),
 
-  getOrganismeDossiers: async (organismeId: number): Promise<LeanDossierOutputDto[]> =>
+  getOrganismeDossiers: async (organismeId: number): Promise<ILeanDossierOutput[]> =>
     (await apiClientInstance.get(getOrganismeDossiers(organismeId))).data,
 
-  searchDemarcheDossiers: async (demarcheId: number, dto: SearchDossierDto): Promise<DossierSearchOutputDto> => {
+  searchDemarcheDossiers: async (demarcheId: number, dto: ISearchDossier): Promise<IDossierSearchOutput> => {
     const response = await apiClientInstance.post(getListDemarcheDossierRoute(demarcheId), dto)
     return response.data
   },
 
-  exportDemarcheDossiers: async (demarcheId: number, dto: SearchDossierDto): Promise<void> => {
+  exportDemarcheDossiers: async (demarcheId: number, dto: ISearchDossier): Promise<void> => {
     downloadAFile(await apiClientInstance.post(getXlsxDemarcheDossierRoute(demarcheId), dto, { responseType: 'blob' }))
   },
 }
@@ -327,12 +325,12 @@ export const customFiltersApiClient = {
     return response.data
   },
 
-  createOneCustomFilter: async (dto: CreateCustomFilterDto, demarcheId: number) => {
+  createOneCustomFilter: async (dto: ICreateCustomFilter, demarcheId: number) => {
     const response = await apiClientInstance.post(getDemarcheCustomFilterRoute(demarcheId), dto)
     return response.data
   },
 
-  updateOneCustomFilter: async (id: number, dto: PatchCustomFilterDto) => {
+  updateOneCustomFilter: async (id: number, dto: IPatchCustomFilter) => {
     const response = await apiClientInstance.patch(getOneCustomFiltersRoute(id), dto)
     return response.data
   },
@@ -372,7 +370,7 @@ export const bnConfigurationsApiClient = {
 }
 
 export const attachedFilesApiClient = {
-  getAttachedFiles: async (params: PaginationDto<DynamicKeys>): Promise<FileOutputDto[]> => {
+  getAttachedFiles: async (params: IPagination<DynamicKeys>): Promise<IFileOutput[]> => {
     console.log('getAttachedFiles()')
     const response = await apiClientInstance.post('/files/list', params)
     return response.data

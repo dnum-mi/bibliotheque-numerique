@@ -1,8 +1,7 @@
 import type {
-  PaginatedDto,
-  PaginationDto,
-} from '@biblio-num/shared'
-import type {
+  IPaginated,
+  IPagination,
+
   IOrganisme,
 } from '@biblio-num/shared-utils'
 
@@ -22,11 +21,11 @@ export const useOrganismeStore = defineStore('organisme', () => {
     organisme.value = await apiClient[`getOrganismeBy${type}`](id)
   }
 
-  const loadOrganismes = async (dto: PaginationDto<IOrganisme>): Promise<PaginatedDto<IOrganisme>> => {
+  const loadOrganismes = async (dto: IPagination<IOrganisme>): Promise<IPaginated<IOrganisme>> => {
     return apiClient.getOrganismes(dto)
   }
 
-  const exportOrganismes = async (dto: PaginationDto<IOrganisme>): Promise<void> => apiClient.exportOrganismes(dto)
+  const exportOrganismes = async (dto: IPagination<IOrganisme>): Promise<void> => apiClient.exportOrganismes(dto)
 
   const $reset = () => {
     organisme.value = undefined

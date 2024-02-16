@@ -1,7 +1,4 @@
 import type {
-  CreateDemarcheDto,
-  SmallDemarcheOutputDto,
-  UpdateDemarcheDto,
   BnConfigurationOutputDto,
   CreateBnConfigurationDto,
   UpdateBnConfigurationDto,
@@ -9,6 +6,11 @@ import type {
 
 import { bnConfigurationsApiClient, demarchesApiClient } from '../api/api-client'
 import type {
+  ICreateDemarche,
+  ISmallDemarcheOutput,
+  IUpdateDemarche,
+
+  IdentificationDemarcheKeys,
   OrganismeTypeKeys,
   IdentificationDemarcheKeys,
 } from '@biblio-num/shared-utils'
@@ -16,8 +18,8 @@ import type {
 import { createDemarche, patchDemarche, putSynchronizeOneDemarche } from '../api/sudo-api-client'
 
 export const useConfigurationStore = defineStore('Configuration', () => {
-  const demarches = ref<SmallDemarcheOutputDto[]>([])
   const bnConfigurations = ref<BnConfigurationOutputDto[]>([])
+  const demarches = ref<ISmallDemarcheOutput[]>([])
   const fetching = ref<boolean>(false)
   const fetchingBnConfigurations = ref<boolean>(false)
 
@@ -38,9 +40,9 @@ export const useConfigurationStore = defineStore('Configuration', () => {
   const addDemarches = async (idDs: number|null, identification?: IdentificationDemarcheKeys | null, types?: OrganismeTypeKeys[]) => {
     if (!idDs) throw new Error('id DS non saisi')
 
-    const dto: CreateDemarcheDto = {
+    const dto: ICreateDemarche = {
       idDs,
-    } as CreateDemarcheDto
+    } as ICreateDemarche
     if (identification) dto.identification = identification
     if (types) dto.types = types
     fetching.value = true
@@ -70,7 +72,7 @@ export const useConfigurationStore = defineStore('Configuration', () => {
 
   const updateDemarche = async (idDs: number|null, identification?: IdentificationDemarcheKeys | null, types?: OrganismeTypeKeys[]) => {
     if (!idDs) throw new Error('id DS non saisi')
-    const dto: UpdateDemarcheDto = {
+    const dto: IUpdateDemarche = {
       types,
     }
     if (identification !== undefined) {

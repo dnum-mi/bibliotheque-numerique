@@ -1,9 +1,7 @@
 import type {
-  CreateCustomFilterDto,
-  PatchCustomFilterDto,
-} from '@biblio-num/shared'
+  ICreateCustomFilter,
+  IPatchCustomFilter,
 
-import type {
   ICustomFilter,
 } from '@biblio-num/shared-utils'
 
@@ -21,7 +19,7 @@ export const useCustomFilterStore = defineStore('custom-filter', () => {
     customFilters.value = await apiClient.getCustomFiltersByDemarche(demarcheId)
   }
 
-  const createCustomFilter = async (dto: CreateCustomFilterDto, demarcheId: number): Promise<number> => {
+  const createCustomFilter = async (dto: ICreateCustomFilter, demarcheId: number): Promise<number> => {
     const customDisplay = await apiClient.createOneCustomFilter(dto, demarcheId)
     if (customDisplay == null) {
       throw new Error('La création de l’affichage personnalisé a échoué')
@@ -30,7 +28,7 @@ export const useCustomFilterStore = defineStore('custom-filter', () => {
     return customDisplay.id
   }
 
-  const updateCustomFilter = async (id: number, dto: PatchCustomFilterDto) => {
+  const updateCustomFilter = async (id: number, dto: IPatchCustomFilter) => {
     await apiClient.updateOneCustomFilter(id, dto)
     if (currentDemarcheId) {
       await getCustomFiltersByDemarche(currentDemarcheId)

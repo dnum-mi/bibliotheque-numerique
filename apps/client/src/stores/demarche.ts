@@ -1,12 +1,10 @@
 import apiClient from '@/api/api-client'
 
 import type {
-  DossierSearchOutputDto,
-  FieldSearchOutputDto,
-  SearchDossierDto,
-} from '@biblio-num/shared'
+  IDossierSearchOutput,
+  IFieldSearchOutput,
+  ISearchDossier,
 
-import type {
   IDemarche,
   MappingColumn,
   MappingColumnWithoutChildren,
@@ -17,7 +15,7 @@ export type FrontMappingColumn = MappingColumnWithoutChildren & { isChild: boole
 export const useDemarcheStore = defineStore('demarche', () => {
   const demarches = ref<IDemarche[]>([])
   const currentDemarche = ref<IDemarche>()
-  const currentDemarcheDossiers = ref<DossierSearchOutputDto | FieldSearchOutputDto>({ total: 0, data: [] })
+  const currentDemarcheDossiers = ref<IDossierSearchOutput | IFieldSearchOutput>({ total: 0, data: [] })
   const currentDemarcheConfiguration = ref<MappingColumn[]>([])
 
   const currentDemarcheFlatConfiguration = computed<FrontMappingColumn[]>(() => currentDemarcheConfiguration.value
@@ -63,7 +61,7 @@ export const useDemarcheStore = defineStore('demarche', () => {
     demarches.value = await apiClient.getDemarches()
   }
 
-  const searchCurrentDemarcheDossiers = async (groupByDossier: boolean, dto: SearchDossierDto): Promise<DossierSearchOutputDto | FieldSearchOutputDto> => {
+  const searchCurrentDemarcheDossiers = async (groupByDossier: boolean, dto: ISearchDossier): Promise<IDossierSearchOutput | IFieldSearchOutput> => {
     if (currentDemarche.value) {
       currentDemarcheDossiers.value = groupByDossier
         ? await apiClient.searchDemarcheDossiers(currentDemarche.value.id, dto)
@@ -74,7 +72,7 @@ export const useDemarcheStore = defineStore('demarche', () => {
     }
   }
 
-  const exportCurrentDemarcheDossiers = async (groupByDossier: boolean, dto: SearchDossierDto): Promise<void> => {
+  const exportCurrentDemarcheDossiers = async (groupByDossier: boolean, dto: ISearchDossier): Promise<void> => {
     if (currentDemarche.value) {
       return groupByDossier
         ? await apiClient.exportDemarcheDossiers(currentDemarche.value.id, dto)
