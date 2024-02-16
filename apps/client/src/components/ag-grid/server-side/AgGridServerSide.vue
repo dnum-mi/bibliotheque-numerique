@@ -9,8 +9,7 @@ import type {
 } from 'ag-grid-community'
 import type { GridOptions, SetFilterModel } from 'ag-grid-enterprise'
 
-import type { PaginationDto } from '@biblio-num/shared'
-import type { DynamicKeys } from '@biblio-num/shared-utils'
+import type { DynamicKeys, IPagination } from '@biblio-num/shared-utils'
 
 import { gridOptionFactory } from '@/components/ag-grid/server-side/grid-option-factory'
 import {
@@ -24,9 +23,9 @@ const pageSize = 20
 
 const props = withDefaults(
   defineProps<{
-    paginationDto?: PaginationDto<T>;
+    paginationDto?: IPagination<T>;
     columnDefs: BNColDef[];
-    apiCall:(params: PaginationDto<T>) => Promise<{ total: number; data: T[] }>;
+    apiCall:(params: IPagination<T>) => Promise<{ total: number; data: T[] }>;
     onSelectionChanged: ($event: SelectionChangedEvent) => void;
     loading?: boolean;
     preCondition?: boolean;
@@ -46,7 +45,7 @@ const props = withDefaults(
 
 const emit = defineEmits<{
   'gridReady': [p: GridReadyEvent],
-  'update:paginationDto': [p: PaginationDto<T>],
+  'update:paginationDto': [p: IPagination<T>],
 }>()
 
 const gridApi = ref<GridApi | undefined>()
@@ -85,7 +84,7 @@ const getRows = async (params: IServerSideGetRowsParams) => {
 
   if (props.loading) return undefined
   if (props.preCondition) {
-    const dto: PaginationDto<T> = {
+    const dto: IPagination<T> = {
       sorts: fromAggToBackendSort(params.request.sortModel),
       filters: fromAggToBackendFilter<T>(params.request.filterModel),
       columns: params.api

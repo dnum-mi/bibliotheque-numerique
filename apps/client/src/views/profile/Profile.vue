@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { MyProfileOutputDto, ResetPasswordInputDto } from '@biblio-num/shared'
+import type { IMyProfileOutput, IResetPasswordInput } from '@biblio-num/shared-utils'
 import type { DsfrAlertType } from '@gouvminint/vue-dsfr/types/components/DsfrAlert/DsfrAlert.vue'
 
 import LayoutBanner from '@/components/Layout/LayoutBanner.vue'
@@ -11,11 +11,11 @@ import { ASK_RESET_PWD_SUCCESS } from '@/messages'
 import EditableField from './EditableField.vue'
 
 const store = useUserStore()
-const user = computed<MyProfileOutputDto | null>(() => store.myProfile)
+const user = computed<IMyProfileOutput | null>(() => store.myProfile)
 
 type Field = {
   title: string;
-  userKey: keyof MyProfileOutputDto;
+  userKey: keyof IMyProfileOutput;
   parseFct?: (v: string) => string;
   editable?: boolean;
 };
@@ -58,7 +58,7 @@ const openAlert = ref(false)
 const alertType = ref<DsfrAlertType>('info')
 
 const onClick = async () => {
-  await apiClient.resetPassword({ email: user.value?.email } as ResetPasswordInputDto)
+  await apiClient.resetPassword({ email: user.value?.email } as IResetPasswordInput)
   alertType.value = 'info'
   openAlert.value = true
   alertDescription.value = ASK_RESET_PWD_SUCCESS

@@ -28,10 +28,11 @@ import type {
   IUpdateOneRoleOption,
   ISmallDemarcheOutput,
   IUpdateProfile,
-  UserWithEditableRole,
+
+  IUserWithEditableRole,
   ICustomFilter,
   IOrganisme,
-  MappingColumn,
+  IMappingColumn,
   IDossier,
   DynamicKeys,
   RolesKeys,
@@ -167,7 +168,7 @@ export const demarchesApiClient = {
     return (await apiClientInstance.get(smallDemarchesRoutes)).data
   },
 
-  getDemarcheConfiguration: async (demarcheId: number): Promise<MappingColumn[]> => {
+  getDemarcheConfiguration: async (demarcheId: number): Promise<IMappingColumn[]> => {
     const response = await apiClientInstance.get(getDemarcheConfigurationRoute(demarcheId))
     return response.data
   },
@@ -251,12 +252,12 @@ export const usersApiClient = {
     return response.data
   },
 
-  async getUserById (id: number): Promise<UserWithEditableRole | null> {
+  async getUserById (id: number): Promise<IUserWithEditableRole | null> {
     const response = await apiClientInstance.get(getUserByIdRoute(id))
     return response.data
   },
 
-  async getUserRoleById (id: number): Promise<UserWithEditableRole | null> {
+  async getUserRoleById (id: number): Promise<IUserWithEditableRole | null> {
     const response = await apiClientInstance.get(getUserRoleByIdRoute(id))
     return response.data
   },

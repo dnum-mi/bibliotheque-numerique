@@ -1,8 +1,7 @@
 <script lang="ts" setup>
 import type { GridReadyEvent, GridApi, ColDef, GridOptions, AgGridEvent } from 'ag-grid-community'
 
-import type { PaginationDto } from '@biblio-num/shared'
-import type { DynamicKeys } from '@biblio-num/shared-utils'
+import type { IPagination, DynamicKeys } from '@biblio-num/shared-utils'
 import apiClient from '@/api/api-client'
 import MimeTypeCellRenderer from './MimeTypeCellRenderer.vue'
 import AttachedFileStateCellRenderer from './AttachedFileStateCellRenderer.vue'
@@ -75,7 +74,7 @@ const onSelectionChanged = (event: AgGridEvent) => {
     window.open(url, '_blank')
   }
 }
-const apiCall = async (params: PaginationDto<DynamicKeys>) => {
+const apiCall = async (params: IPagination<DynamicKeys>) => {
   fetching.value = true
   const res = await apiClient.getAttachedFiles({ tags: props.preselectedTags, ...params })
   fetching.value = false

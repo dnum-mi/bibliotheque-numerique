@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import type {
-  SmallDemarcheOutputDto,
-} from '@biblio-num/shared'
-import type { IdentificationDemarcheKeys, OrganismeTypeKeys } from '@biblio-num/shared-utils'
+  ISmallDemarcheOutput,
+  IdentificationDemarcheKeys, OrganismeTypeKeys,
+} from '@biblio-num/shared-utils'
 import { useConfigurationStore } from '@/stores/configuration'
 import { ref } from 'vue'
 
@@ -16,7 +16,7 @@ const identification = ref<string>()
 const typesString = ref('')
 const types = computed<OrganismeTypeKeys[]>(() => (typesString.value ? JSON.parse(typesString.value) : undefined))
 
-const demarches = computed<SmallDemarcheOutputDto[]>(() => configurationStore.demarches)
+const demarches = computed<ISmallDemarcheOutput[]>(() => configurationStore.demarches)
 const loading = computed<boolean>(() => configurationStore.fetching)
 
 const identificationValue = computed<IdentificationDemarcheKeys | null | undefined>(() => {
