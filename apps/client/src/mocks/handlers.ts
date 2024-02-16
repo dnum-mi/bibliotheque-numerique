@@ -1,5 +1,5 @@
 import { http, HttpResponse } from 'msw'
-import type { FileOutputDto } from '@biblio-num/shared'
+import type { IFileOutput } from '@biblio-num/shared-utils'
 
 export const handlers = [
   // http.get('/api/users/me', () => {
@@ -19,7 +19,7 @@ export const handlers = [
   //   })
   // }),
   http.post('/api/files/list', () => {
-    const files: {total: number, data: FileOutputDto[]} = {
+    const files: {total: number, data: IFileOutput[]} = {
       total: 4,
       data: [
         {

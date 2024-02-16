@@ -2,16 +2,14 @@ import { getRandomId } from '@gouvminint/vue-dsfr'
 
 import bnApiClient from '@/api/api-client'
 import type {
-  CredentialsInputDto,
-  UserOutputDto,
-  PaginationUserDto,
-  MyProfileOutputDto,
+  ICredentialsInput,
+  IUserOutput,
+  IPaginationUser,
+  IMyProfileOutput,
   UserWithEditableRole,
-  UpdateOneRoleOptionDto,
-  UpdateProfileDto,
-} from '@biblio-num/shared'
+  IUpdateOneRoleOption,
+  IUpdateProfile,
 
-import type {
   RolesKeys,
 } from '@biblio-num/shared-utils'
 
@@ -23,15 +21,15 @@ export const useUserStore = defineStore('user', () => {
     selectedEditableUserLoading.value = false
     currentUser.value = null
     myProfile.value = null
-    users.value = new Map<number, UserOutputDto>()
+    users.value = new Map<number, IUserOutput>()
     selectedEditableUser.value = null
     keySelectUser.value = getRandomId('selectedUser-selected')
   }
 
   const selectedEditableUserLoading = ref(false)
-  const currentUser = ref<UserOutputDto | null>(null)
-  const myProfile = ref<MyProfileOutputDto | null>(null)
-  const users = ref<Map<number, UserOutputDto>>(new Map<number, UserOutputDto>())
+  const currentUser = ref<IUserOutput | null>(null)
+  const myProfile = ref<IMyProfileOutput | null>(null)
+  const users = ref<Map<number, IUserOutput>>(new Map<number, IUserOutput>())
   const selectedEditableUser = ref<UserWithEditableRole | null>(null)
   const keySelectUser = ref<string>(getRandomId('selectedUser-selected'))
   const isAuthenticated = computed(() => !!currentUser.value)
@@ -39,7 +37,7 @@ export const useUserStore = defineStore('user', () => {
   const canManageRoles = computed(() => hasAdminAccess.value)
   const canAccessDemarches = computed(() => !!(currentUser.value?.role?.label))
 
-  const login = async (loginForm: CredentialsInputDto) => {
+  const login = async (loginForm: ICredentialsInput) => {
     currentUser.value = await bnApiClient.loginUser(loginForm)
   }
 
@@ -59,12 +57,12 @@ export const useUserStore = defineStore('user', () => {
     return !!currentUser.value
   }
 
-  const changeMyProfile = async (dto: UpdateProfileDto) => {
+  const changeMyProfile = async (dto: IUpdateProfile) => {
     await bnApiClient.updateMyProfile(dto)
     await loadMyProfile()
   }
 
-  const listUsers = async (dto: PaginationUserDto) => {
+  const listUsers = async (dto: IPaginationUser) => {
     if (!hasAdminAccess.value) return
     return bnApiClient.listUsers(dto)
   }
@@ -86,7 +84,7 @@ export const useUserStore = defineStore('user', () => {
     await loadUserById(id)
   }
 
-  const updateUserOneRoleOption = async (demarchesRoles: UpdateOneRoleOptionDto, reloadUser: boolean): Promise<void> => {
+  const updateUserOneRoleOption = async (demarchesRoles: IUpdateOneRoleOption, reloadUser: boolean): Promise<void> => {
     selectedEditableUserLoading.value = true
     const id = selectedEditableUser.value?.originalUser.id
     if (!id) throw new Error('L\'Utilisateur n\'a pas été selectionné.')
