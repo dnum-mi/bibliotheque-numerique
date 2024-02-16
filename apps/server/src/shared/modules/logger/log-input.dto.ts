@@ -1,6 +1,7 @@
 import { IsDefined, IsEnum, IsOptional, IsString } from 'class-validator'
+import { ILogInput } from './log-input.interface'
 
-export class LogInputDto {
+export class LogInputDto implements ILogInput {
   @IsString()
   @IsDefined()
   @IsEnum(['info', 'error', 'warn'])

@@ -1,14 +1,13 @@
 import { SortDto } from '@/shared/pagination/sort.dto'
-import { DynamicKeys } from '@biblio-num/shared-utils'
-import { FilterDto } from '@/shared/pagination/filters'
+import { DynamicKeys, ICustomFilter, IFilter } from '@biblio-num/shared-utils'
 
-export class CustomFilterOutputDto {
+export class CustomFilterOutputDto implements ICustomFilter {
   id: number
   name: string
   groupByDossier: boolean
   columns: string[]
   sorts: SortDto<DynamicKeys>[] | null
-  filters: Record<keyof DynamicKeys, FilterDto> | null
+  filters: Record<keyof DynamicKeys, IFilter> | null
   demarcheId: number
   totals: string[] | null
 }

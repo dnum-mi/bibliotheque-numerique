@@ -4,4 +4,7 @@ import { FilterTextDto, TextFilterConditionDto } from './string.filter.dto'
 import { EnumFilterConditionDto, FilterEnumDto } from './enum.filter.dto'
 
 export type FilterDto = FilterTextDto | FilterDateDto | FilterNumberDto | FilterEnumDto;
-export type FilterConditionDto = TextFilterConditionDto | NumberFilterConditionDto | EnumFilterConditionDto | DateFilterConditionDto
+export type FilterConditionDto = TextFilterConditionDto |
+  NumberFilterConditionDto |
+  EnumFilterConditionDto |
+  DateFilterConditionDto

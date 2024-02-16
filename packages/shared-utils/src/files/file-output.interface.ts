@@ -1,6 +1,6 @@
 import type { IFile } from './file.interface'
 
-export interface IFileOutput extends Partial<IFile> {
+export interface IFileOutput extends Omit<IFile, 'checksum'> {
   id: number
   createdAt: Date
   updatedAt: Date
@@ -15,6 +15,5 @@ export interface IFileOutput extends Partial<IFile> {
   dossierId?: number
   organismeId?: number
   uploaderId?: number
-
   url: string
 }

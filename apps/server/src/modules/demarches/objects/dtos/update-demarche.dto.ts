@@ -4,9 +4,10 @@ import {
   OrganismeTypeKeys,
   IdentificationDemarche,
   IdentificationDemarcheKeys,
+  IUpdateDemarche,
 } from '@biblio-num/shared-utils'
 
-export class UpdateDemarcheDto {
+export class UpdateDemarcheDto implements IUpdateDemarche {
   @IsOptional()
   @ValidateIf((o) => o.identification !== null)
   @IsEnum(IdentificationDemarche)

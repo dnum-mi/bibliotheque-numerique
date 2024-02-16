@@ -1,7 +1,8 @@
 import { ArrayNotEmpty, IsDefined, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
+import { IEnumFilterCondition, IFilterEnum } from '@biblio-num/shared-utils'
 
-export class EnumFilterConditionDto {
+export class EnumFilterConditionDto implements IEnumFilterCondition {
   type?: undefined
 
   @ArrayNotEmpty()
@@ -9,8 +10,8 @@ export class EnumFilterConditionDto {
   filter: string[]
 }
 
-export class FilterEnumDto {
-  filterType = 'set'
+export class FilterEnumDto implements IFilterEnum {
+  filterType: 'set'
 
   @IsDefined()
   @ValidateNested()

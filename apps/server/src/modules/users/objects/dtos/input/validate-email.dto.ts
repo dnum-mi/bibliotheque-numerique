@@ -1,7 +1,8 @@
+import { IValidateEmail } from '@biblio-num/shared-utils'
 import { ApiProperty } from '@nestjs/swagger'
 import { IsNotEmpty } from 'class-validator'
 
-export class ValidateEmailDto {
+export class ValidateEmailDto implements IValidateEmail {
   @ApiProperty({
     description: 'toujours vrai',
   })

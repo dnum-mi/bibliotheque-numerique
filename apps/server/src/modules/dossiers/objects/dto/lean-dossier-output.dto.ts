@@ -1,6 +1,6 @@
-import type { PrefectureKeys } from '@biblio-num/shared-utils'
+import type { ILeanDossierOutput, PrefectureKeys } from '@biblio-num/shared-utils'
 
-export class LeanDossierOutputDto {
+export class LeanDossierOutputDto implements ILeanDossierOutput {
   id: number
   demarcheId: number
   demarcheTitle: string

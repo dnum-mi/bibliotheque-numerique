@@ -6,7 +6,8 @@ import {
   IsOptional,
   IsString,
   Max,
-  Min, Validate, ValidateIf,
+  Min,
+  Validate,
   ValidateNested,
 } from 'class-validator'
 import { SortDto } from './sort.dto'
@@ -14,8 +15,9 @@ import { Type } from 'class-transformer'
 import { FilterDto } from './filters'
 import { IsValidFilter } from './filters/is-valid-filter.decorator'
 import { ColumnContainsKeyContraint } from './column-contains-key.contraint'
+import { IPagination } from '@biblio-num/shared-utils'
 
-export class PaginationDto<T> {
+export class PaginationDto<T> implements IPagination<T> {
   @IsOptional()
   @IsNumber()
   @Min(1)

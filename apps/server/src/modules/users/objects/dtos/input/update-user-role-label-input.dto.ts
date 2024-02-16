@@ -1,5 +1,5 @@
-import { RolesKeys } from '@biblio-num/shared-utils'
+import { IUpdateUserRoleLabelInput, RolesKeys } from '@biblio-num/shared-utils'
 
-export class UpdateUserRoleLabelInputDto {
+export class UpdateUserRoleLabelInputDto implements IUpdateUserRoleLabelInput {
   role: RolesKeys
 }

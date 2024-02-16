@@ -1,4 +1,3 @@
-
 import {
   isAtLeastAdmin,
   isBelowSuperAdmin,
@@ -7,10 +6,11 @@ import {
   RolesKeys,
   Roles,
   IUser,
+  OneDemarcheRoleOption,
 } from '@biblio-num/shared-utils'
 
 import { isDefined } from 'class-validator'
-import { OneDemarcheRoleOption, UserWithEditableRole } from '@/modules/users/objects/dtos/output'
+import { UserWithEditableRole } from '@/modules/users/objects/dtos/output'
 import { SmallDemarcheOutputDto } from '@/modules/demarches/objects/dtos/small-demarche-output.dto'
 import { UpdateOneRoleOptionDto } from '@/modules/users/objects/dtos/input'
 

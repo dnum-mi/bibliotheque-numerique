@@ -1,5 +1,6 @@
 import { IsDefined, IsEnum, IsOptional, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
+import { IFilterText, ITextFilterCondition } from '@biblio-num/shared-utils'
 
 export const TextFilterConditions = {
   Contains: 'contains',
@@ -13,7 +14,7 @@ export const TextFilterConditions = {
 export type TextFilterConditionsKeys =
   (typeof TextFilterConditions)[keyof typeof TextFilterConditions];
 
-export class TextFilterConditionDto {
+export class TextFilterConditionDto implements ITextFilterCondition {
   @IsDefined()
   @IsEnum(TextFilterConditions)
   type: TextFilterConditionsKeys
@@ -22,8 +23,8 @@ export class TextFilterConditionDto {
   filter?: string
 }
 
-export class FilterTextDto {
-  filterType = 'text'
+export class FilterTextDto implements IFilterText {
+  filterType: 'text'
 
   @IsDefined()
   @ValidateNested()
