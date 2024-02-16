@@ -9,7 +9,7 @@ import {
   FieldTypeKeys,
   FormatFunctionRef,
   FormatFunctionRefKeys,
-} from '@biblio-num/shared'
+} from '@biblio-num/shared-utils'
 import { Dossier } from './dossier.entity'
 import { CustomChamp } from '@dnum-mi/ds-api-client'
 

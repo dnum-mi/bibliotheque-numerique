@@ -1,6 +1,6 @@
 import { buildFilterQuery } from './common-search.utils'
-import { DateFilterConditions } from '@biblio-num/shared'
 import * as dayjs from 'dayjs'
+import { DateFilterConditions } from '@/shared/pagination/filters'
 
 describe('Common search utils', () => {
   describe('Text filters', () => {

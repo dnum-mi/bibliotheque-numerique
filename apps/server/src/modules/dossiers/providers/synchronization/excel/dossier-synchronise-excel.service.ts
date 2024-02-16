@@ -6,13 +6,12 @@ import {
   FormatFunctionRef,
   FieldTypeKeys,
   FieldSource,
-  MappingColumn,
   contributorPersonalityTypeKeys,
   nativeCountryKeys,
   characterFundingKeys,
   natureFundingKeys,
   paymentMethodKeys,
-} from '@biblio-num/shared'
+} from '@biblio-num/shared-utils'
 import {
   fixFieldChampsTotalAmount,
   fixFieldDossierTotalAmount,
@@ -39,6 +38,7 @@ import { DsChampType } from '@/shared/modules/ds-api/objects/ds-champ-type.enum'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { InjectRepository } from '@nestjs/typeorm'
+import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
 
 @Injectable()
 export class DossierSynchroniseExcelService extends BaseEntityService<Field> {

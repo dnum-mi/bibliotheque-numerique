@@ -1,16 +1,12 @@
 import { Body, Controller, Delete, ForbiddenException, Get, Patch, Put, UseInterceptors } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
-import {
-  IUser,
-  UpdateOneRoleOptionDto,
-  UserWithEditableRole,
-  UpdateUserRoleLabelInputDto,
-} from '@biblio-num/shared'
+
 import {
   isSuperiorOrSimilar,
   IRole,
   Roles,
+  IUser,
 } from '@biblio-num/shared-utils'
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
 import { TargetUserInterceptor } from '@/modules/users/providers/interceptors/target-user.interceptor'
@@ -23,6 +19,8 @@ import { generateRoleAttributionList, isEditionAllowed, isRoleDeletable } from '
 import { CurrentUserRole } from '@/modules/users/providers/decorators/current-user-role.decorator'
 import { TargetUser } from '@/modules/users/providers/decorators/target-user.decorator'
 import { CurrentUser } from '@/modules/users/providers/decorators/current-user.decorator'
+import { UserWithEditableRole } from '@/modules/users/objects/dtos/output'
+import { UpdateOneRoleOptionDto, UpdateUserRoleLabelInputDto } from '@/modules/users/objects/dtos/input'
 
 export const TARGET_USER_ID_PATH = 'targetUserId'
 

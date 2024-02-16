@@ -13,14 +13,13 @@ import {
   deduceFieldToQueryFromType,
 } from '@/shared/utils/common-search.utils'
 import { FieldService } from '../field.service'
-import {
-  DossierSearchOutputDto,
-  FieldTypeKeys,
-  FilterDto,
-  MappingColumn,
-  SearchDossierDto,
-} from '@biblio-num/shared'
+
 import { fromMappingColumnArrayToTypeHash } from '@/modules/demarches/utils/demarche.utils'
+import { FieldTypeKeys } from '@biblio-num/shared-utils'
+import { FilterDto } from '@/shared/pagination/filters'
+import { SearchDossierDto } from '@/modules/dossiers/objects/dto/search-dossier.dto'
+import { DossierSearchOutputDto } from '@/modules/dossiers/objects/dto/dossier-search-output.dto'
+import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
 
 @Injectable()
 export class DossierSearchService extends BaseEntityService<Dossier> {

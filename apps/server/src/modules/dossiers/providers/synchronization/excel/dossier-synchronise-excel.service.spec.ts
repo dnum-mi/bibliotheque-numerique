@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { loggerServiceMock } from '../../../../../../test/mock/logger-service.mock'
-import { FormatFunctionRef } from '@biblio-num/shared'
 import {
   fixFieldChampsTotalAmount,
   fixFieldDossierTotalAmount, fixFieldExcelTotalAmount,
@@ -20,6 +19,7 @@ import {
 import { Field } from '@/modules/dossiers/objects/entities/field.entity'
 import { ExcelDataRow } from '@/shared/types/excel-data.type'
 import { XlsxService } from '@/shared/modules/xlsx/xlsx.service'
+import { FormatFunctionRef } from '@biblio-num/shared-utils'
 
 const fakeExcelDateFundingNumber = 45288
 const fakeExcelDateFundingString = '28/12/2023'

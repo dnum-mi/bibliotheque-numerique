@@ -2,7 +2,6 @@ import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
 import { Cookies, TestingModuleFactory } from '../common/testing-module.factory'
 import { UserService } from '@/modules/users/providers/user.service'
-import { UpdateOneRoleOptionDto } from '@biblio-num/shared'
 import { IRole, Roles } from '@biblio-num/shared-utils'
 
 describe('users (e2e)', () => {

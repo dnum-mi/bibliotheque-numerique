@@ -4,7 +4,7 @@ import { Repository } from 'typeorm'
 import { Dossier } from '../objects/entities/dossier.entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
-import { LeanDossierOutputDto } from '@biblio-num/shared'
+import { LeanDossierOutputDto } from '@/modules/dossiers/objects/dto/lean-dossier-output.dto'
 
 @Injectable()
 export class DossierService extends BaseEntityService<Dossier> {

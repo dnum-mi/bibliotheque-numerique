@@ -1,19 +1,19 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, Unique } from 'typeorm'
 import { BaseEntity } from '@/shared/base-entity/base.entity'
+
 import {
   DynamicKeys,
-  FilterDto,
-  ICustomFilter,
-  SortDto,
-} from '@biblio-num/shared'
+} from '@biblio-num/shared-utils'
 import { User } from '@/modules/users/objects/user.entity'
 import { Demarche } from '../../../demarches/objects/entities/demarche.entity'
+import { SortDto } from '@/shared/pagination/sort.dto'
+import { FilterDto } from '@/shared/pagination/filters'
 
 export type FiltersInCustomFilter = Record<keyof DynamicKeys, FilterDto> | null
 
 @Entity()
 @Unique('UQ_CUSTOM_FILTERS', ['userId', 'name'])
-export class CustomFilter extends BaseEntity implements ICustomFilter {
+export class CustomFilter extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   declare id: number
 

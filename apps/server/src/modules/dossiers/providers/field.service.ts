@@ -11,18 +11,17 @@ import {
 } from '@/shared/modules/ds-api/objects/ds-champ-type.enum'
 import { CreateFieldDto } from '../objects/dto/fields/create-field.dto'
 import { fixFieldValueFunctions } from '../objects/constante/fix-field.dictionnary'
+
 import {
   FieldType,
   FieldTypeKeys,
   FormatFunctionRef,
   FormatFunctionRefKeys,
-  MappingColumn,
-} from '@biblio-num/shared'
-import {
   PrefectureKeys,
 } from '@biblio-num/shared-utils'
 import { RawChamp } from '@/shared/types/raw-champ.type'
 import { PieceJustificativeChamp } from '@dnum-mi/ds-api-client'
+import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
 
 export type TDossierWithPrefecture = Partial<TDossier> & {
   prefecture?: PrefectureKeys

@@ -1,26 +1,28 @@
 import {
-  DateFilterConditionDto,
-  DateFilterConditions,
   DynamicKeys,
   FieldType,
   FieldTypeKeys,
-  FilterDto,
-  NumberFilterConditionDto,
-  NumberFilterConditions,
-  SearchDossierDto,
-  SortDto,
-  TextFilterConditionDto,
-  TextFilterConditions,
   UserFriendlyFilter,
-  EnumFilterConditionDto,
   DateRange,
   DateRangeKeys,
-  DateFilterConditionsKeys,
-} from '@biblio-num/shared'
+} from '@biblio-num/shared-utils'
+
 import { BadRequestException } from '@nestjs/common'
 import * as dayjs from 'dayjs'
 import { ManipulateType } from 'dayjs'
 import { FiltersInCustomFilter } from '@/modules/custom-filters/objects/entities/custom-filter.entity'
+import {
+  DateFilterConditionDto,
+  DateFilterConditions,
+  DateFilterConditionsKeys,
+  EnumFilterConditionDto,
+  FilterDto, NumberFilterConditionDto,
+  NumberFilterConditions,
+  TextFilterConditionDto,
+  TextFilterConditions,
+} from '@/shared/pagination/filters'
+import { SortDto } from '@/shared/pagination/sort.dto'
+import { SearchDossierDto } from '@/modules/dossiers/objects/dto/search-dossier.dto'
 
 const _manualFilterValueEscapingMechanism = (str: string): string => {
   return str ? str.replace("'", "''") : str

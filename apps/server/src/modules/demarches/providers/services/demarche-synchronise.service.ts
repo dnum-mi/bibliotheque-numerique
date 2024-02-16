@@ -21,12 +21,13 @@ import {
   giveTypeFromDsChampType,
   isRepetitionChampDescriptor,
 } from '@/shared/modules/ds-api/objects/ds-champ.utils'
+
 import {
   FieldSource,
   FieldSourceKeys,
   type IdentificationDemarcheKeys,
-  MappingColumn,
-} from '@biblio-num/shared'
+} from '@biblio-num/shared-utils'
+
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
 import { InjectQueue } from '@nestjs/bull'
 import { Queue } from 'bull'
@@ -34,6 +35,7 @@ import { JobName } from '@/shared/modules/custom-bull/objects/const/job-name.enu
 import { SyncOneDossierPayload } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
 
 import { OrganismeTypeKeys } from '@biblio-num/shared-utils'
+import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
 
 @Injectable()
 export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {

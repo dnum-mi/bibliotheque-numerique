@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { ConfigService } from '@nestjs/config'
 import axios from 'axios'
-import { IRnaOutput } from '@biblio-num/shared'
+import { IRnaOutput } from '@biblio-num/shared-utils'
 
 @Injectable()
 export class RnaService {

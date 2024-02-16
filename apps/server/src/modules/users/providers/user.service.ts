@@ -12,24 +12,19 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { JwtService } from '@nestjs/jwt'
 import { ConfigService } from '@nestjs/config'
 import { SendMailService } from '../../sendmail/sendmail.service'
-import {
-  CreateUserDto,
-  PaginatedUserDto,
-  PaginationUserDto,
-  MyProfileOutputDto,
-  AgGridUserDto,
-  PaginatedDto,
-  IUser,
-} from '@biblio-num/shared'
 
 import {
   Roles,
   IRole,
   OrganismeTypeKeys,
+  IUser,
 } from '@biblio-num/shared-utils'
 
 import { UserFieldTypeHashConst } from '@/modules/users/objects/consts/user-field-type-hash.const'
 import { DemarcheService } from '@/modules/demarches/providers/services/demarche.service'
+import { CreateUserDto, PaginationUserDto } from '@/modules/users/objects/dtos/input'
+import { AgGridUserDto, MyProfileOutputDto, PaginatedUserDto } from '@/modules/users/objects/dtos/output'
+import { PaginatedDto } from '@/shared/pagination/paginated.dto'
 
 type jwtPlaylod = {
   user: string | number

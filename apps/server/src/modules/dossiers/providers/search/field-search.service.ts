@@ -14,12 +14,11 @@ import {
   deduceFieldToQueryFromType,
 } from '@/shared/utils/common-search.utils'
 import { FieldService } from '../field.service'
-import {
-  FieldSearchOutputDto,
-  FieldTypeKeys,
-  SearchDossierDto,
-} from '@biblio-num/shared'
+
 import { fromMappingColumnArrayToTypeHash } from '@/modules/demarches/utils/demarche.utils'
+import { FieldTypeKeys } from '@biblio-num/shared-utils'
+import { SearchDossierDto } from '@/modules/dossiers/objects/dto/search-dossier.dto'
+import { FieldSearchOutputDto } from '@/modules/dossiers/objects/dto/fields/field-search-output.dto'
 
 @Injectable()
 export class FieldSearchService extends BaseEntityService<Field> {

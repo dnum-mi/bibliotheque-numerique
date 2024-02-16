@@ -1,5 +1,0 @@
-export * from './search-dossier.dto'
-export * from './field-search-output.dto'
-export * from './dossier-search-output.dto'
-export * from './lean-dossier-output.dto'
-export * from './dossier-output.dto'

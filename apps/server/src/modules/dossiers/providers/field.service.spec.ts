@@ -3,7 +3,6 @@ import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { loggerServiceMock } from '../../../../test/mock/logger-service.mock'
 import { FieldService, TDossierWithPrefecture } from './field.service'
 import { fixFields } from '../objects/constante/fix-field.dictionnary'
-import { FieldSource, FieldType, FormatFunctionRef, MappingColumn } from '@biblio-num/shared'
 import { Field } from '../objects/entities/field.entity'
 
 import * as dayjs from 'dayjs'

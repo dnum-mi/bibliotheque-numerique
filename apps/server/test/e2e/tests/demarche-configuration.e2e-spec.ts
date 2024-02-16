@@ -3,7 +3,6 @@ import { Cookies, TestingModuleFactory } from '../common/testing-module.factory'
 import * as request from 'supertest'
 import { dataSource } from '../data-source-e2e.typeorm'
 import { DemarcheService } from '@/modules/demarches/providers/services/demarche.service'
-import { FieldType } from '@biblio-num/shared'
 
 describe('Configuration ', () => {
   let app: INestApplication

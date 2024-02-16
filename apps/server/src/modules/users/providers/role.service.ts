@@ -1,15 +1,14 @@
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { Injectable } from '@nestjs/common'
-import {
-  IUser,
-  UpdateOneRoleOptionDto,
-  UserWithEditableRole,
-} from '@biblio-num/shared'
+
 import {
   IRole,
+  IUser,
   Roles,
 } from '@biblio-num/shared-utils'
 import { UserService } from '@/modules/users/providers/user.service'
+import { UserWithEditableRole } from '@/modules/users/objects/dtos/output'
+import { UpdateOneRoleOptionDto } from '@/modules/users/objects/dtos/input'
 
 @Injectable()
 export class RoleService {

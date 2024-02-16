@@ -3,7 +3,7 @@ import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { ConfigService } from '@nestjs/config'
 import axios from 'axios'
 import { isRnfLuhnValid } from '@/shared/utils/rnf.utils'
-import { IRnfOutput } from '@biblio-num/shared'
+import { IRnfOutput } from '@biblio-num/shared-utils'
 import { GetUpdateFoundationInputDto } from '../objects/dto/get-updated-foundation-input.dto'
 
 @Injectable()

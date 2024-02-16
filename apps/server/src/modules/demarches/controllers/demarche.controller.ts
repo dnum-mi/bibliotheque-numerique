@@ -20,11 +20,6 @@ import { DemarcheSynchroniseService } from '../providers/services/demarche-synch
 import {
   DemarcheOutputDto,
 } from '@/modules/demarches/objects/dtos/demarche-output.dto'
-import {
-  SmallDemarcheOutputDto,
-  CreateDemarcheDto,
-  UpdateDemarcheDto,
-} from '@biblio-num/shared'
 
 import {
   IRole,
@@ -38,6 +33,9 @@ import { CurrentDemarche } from '@/modules/demarches/providers/decorators/curren
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
 import { JobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
 import { SyncOneDemarchePayload } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
+import { SmallDemarcheOutputDto } from '@/modules/demarches/objects/dtos/small-demarche-output.dto'
+import { CreateDemarcheDto } from '@/modules/demarches/objects/dtos/create-demarche.dto'
+import { UpdateDemarcheDto } from '@/modules/demarches/objects/dtos/update-demarche.dto'
 
 @ApiTags('Demarches')
 @Controller('demarches')

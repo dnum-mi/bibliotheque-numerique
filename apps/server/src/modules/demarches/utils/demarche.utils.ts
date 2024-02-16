@@ -1,4 +1,5 @@
-import { MappingColumn, FieldTypeKeys } from '@biblio-num/shared'
+import { FieldTypeKeys } from '@biblio-num/shared-utils'
+import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
 
 export type MappingColumnToHash<T> = Record<string, T>
 

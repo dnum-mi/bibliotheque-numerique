@@ -2,9 +2,9 @@ import { Body, Controller, Post } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
-import { LogInputDto } from '@biblio-num/shared'
 import { CurrentUser } from '@/modules/users/providers/decorators/current-user.decorator'
 import { User } from '@/modules/users/objects/user.entity'
+import { LogInputDto } from '@/shared/modules/logger/log-input.dto'
 
 @ApiTags('Log')
 @Role('any')

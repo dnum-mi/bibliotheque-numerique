@@ -1,10 +1,4 @@
-import {
-  SmallDemarcheOutputDto,
-  UserWithEditableRole,
-  OneDemarcheRoleOption,
-  IUser,
-  UpdateOneRoleOptionDto,
-} from '@biblio-num/shared'
+
 import {
   isAtLeastAdmin,
   isBelowSuperAdmin,
@@ -12,9 +6,13 @@ import {
   isSuperiorOrSimilar,
   RolesKeys,
   Roles,
+  IUser,
 } from '@biblio-num/shared-utils'
 
 import { isDefined } from 'class-validator'
+import { OneDemarcheRoleOption, UserWithEditableRole } from '@/modules/users/objects/dtos/output'
+import { SmallDemarcheOutputDto } from '@/modules/demarches/objects/dtos/small-demarche-output.dto'
+import { UpdateOneRoleOptionDto } from '@/modules/users/objects/dtos/input'
 
 export const threeRoles = [Roles.superadmin, Roles.admin, Roles.instructor]
 

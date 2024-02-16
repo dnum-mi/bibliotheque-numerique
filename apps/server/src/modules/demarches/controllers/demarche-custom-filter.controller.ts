@@ -6,10 +6,10 @@ import {
   UseInterceptors,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
+
 import {
-  CreateCustomFilterDto,
   ICustomFilter,
-} from '@biblio-num/shared'
+} from '@biblio-num/shared-utils'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { CurrentDemarcheInterceptor } from '../../demarches/providers/interceptors/current-demarche.interceptor'
 import { CurrentUserId } from '@/modules/users/providers/decorators/current-user-id.decorator'
@@ -22,6 +22,8 @@ import {
 } from '@/modules/custom-filters/providers/interceptors/current-custom-filters.interceptor'
 import { CustomFilters } from '@/modules/custom-filters/providers/decorator/current-custom-filters.decorator'
 import { CustomFilter } from '@/modules/custom-filters/objects/entities/custom-filter.entity'
+import { CreateCustomFilterDto } from '@/modules/custom-filters/objects/dtos/create-custom-filter.dto'
+import { CustomFilterOutputDto } from '@/modules/custom-filters/objects/dtos/custom-filter-output.dto'
 
 @ApiTags('Users')
 @ApiTags('Filters')
@@ -41,7 +43,7 @@ export class DemarcheCustomFilterController {
     @Body() dto: CreateCustomFilterDto,
     @CurrentUserId() userId: number,
     @CurrentDemarche() demarche: Demarche,
-  ): Promise<ICustomFilter> {
+  ): Promise<CustomFilterOutputDto> {
     this.logger.verbose('createOneFilter')
     return this.service
       .createAndSave({ ...dto, userId, demarcheId: demarche.id })
@@ -56,7 +58,7 @@ export class DemarcheCustomFilterController {
   @UseInterceptors(CurrentCustomFiltersInterceptor)
   async getMyCustomFiltersByDemarche(
     @CustomFilters() filters: CustomFilter[],
-  ): Promise<ICustomFilter[]> {
+  ): Promise<CustomFilterOutputDto[]> {
     this.logger.verbose('getMyCustomFilters')
     return filters
   }

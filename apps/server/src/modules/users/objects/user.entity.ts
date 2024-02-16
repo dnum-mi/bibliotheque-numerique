@@ -11,7 +11,6 @@ import {
 import * as bcrypt from 'bcrypt'
 import { BaseEntity } from '@/shared/base-entity/base.entity'
 import { CustomFilter } from '@/modules/custom-filters/objects/entities/custom-filter.entity'
-import { IUser } from '@biblio-num/shared'
 import { IRole } from '@biblio-num/shared-utils'
 
 const defaultRole: IRole = {
@@ -20,7 +19,7 @@ const defaultRole: IRole = {
 }
 
 @Entity({ name: 'users' })
-export class User extends BaseEntity implements IUser {
+export class User extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   declare id: number
 

@@ -12,16 +12,11 @@ import {
 } from '@nestjs/common'
 import { ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
-import {
-  IOrganisme,
-  LeanDossierOutputDto,
-  PaginatedDto,
-  PaginationDto,
-} from '@biblio-num/shared'
 
 import {
   Roles,
   mapOrganismeFieldHeader,
+  IOrganisme,
 } from '@biblio-num/shared-utils'
 
 import { DossierService } from '@/modules/dossiers/providers/dossier.service'
@@ -30,6 +25,9 @@ import { Role } from '@/modules/users/providers/decorators/role.decorator'
 import { xlsxContent } from '../../../shared/modules/xlsx/xlsx.constants'
 import { ServerResponse } from 'http'
 import { XlsxService } from '../../../shared/modules/xlsx/xlsx.service'
+import { PaginationDto } from '@/shared/pagination/pagination.dto'
+import { PaginatedDto } from '@/shared/pagination/paginated.dto'
+import { LeanDossierOutputDto } from '@/modules/dossiers/objects/dto/lean-dossier-output.dto'
 
 @ApiTags('Demarches')
 @Controller('organismes')

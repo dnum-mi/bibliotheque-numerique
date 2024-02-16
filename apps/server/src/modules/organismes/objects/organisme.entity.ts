@@ -11,9 +11,6 @@ import {
   IOrganisme,
   IRnaOutput,
   IRnfOutput,
-} from '@biblio-num/shared'
-
-import {
   OrganismeType,
   OrganismeTypeKeys,
 } from '@biblio-num/shared-utils'

@@ -6,15 +6,11 @@ import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { RnfService } from '@/modules/organismes/providers/rnf.service'
 import { RnaService } from '@/modules/organismes/providers/rna.service'
+
 import {
   IOrganisme,
   IRnaOutput,
   IRnfOutput,
-  PaginatedDto,
-  PaginationDto,
-} from '@biblio-num/shared'
-
-import {
   OrganismeType,
 } from '@biblio-num/shared-utils'
 
@@ -27,6 +23,8 @@ import {
   SmallRnfOrganismeDto,
   smallRnfOrganismeDtoKeys,
 } from '@/modules/organismes/objects/dto/small-rnf-organisme.dto'
+import { PaginationDto } from '@/shared/pagination/pagination.dto'
+import { PaginatedDto } from '@/shared/pagination/paginated.dto'
 
 @Injectable()
 export class OrganismeService extends BaseEntityService<Organisme> {

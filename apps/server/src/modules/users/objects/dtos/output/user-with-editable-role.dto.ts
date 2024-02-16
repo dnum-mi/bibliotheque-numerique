@@ -1,4 +1,4 @@
-import { SmallDemarcheOutputDto } from '../../demarche/small-demarche-output.dto'
+import { SmallDemarcheOutputDto } from '../../../../demarches/objects/dtos/small-demarche-output.dto'
 import type { PrefectureKeys, RolesKeys } from '@biblio-num/shared-utils'
 import { UserOutputDto } from './user-output.dto'
 

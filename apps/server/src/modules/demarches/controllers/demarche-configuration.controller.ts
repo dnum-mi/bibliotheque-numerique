@@ -13,14 +13,13 @@ import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { CurrentDemarcheInterceptor } from '../providers/interceptors/current-demarche.interceptor'
 import { Demarche } from '../objects/entities/demarche.entity'
 import { CurrentDemarche } from '../providers/decorators/current-demarche.decorator'
-import {
-  MappingColumn,
-  UpdateOneFieldConfigurationDto,
-} from '@biblio-num/shared'
+
 import {
   Roles,
 } from '@biblio-num/shared-utils'
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
+import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
+import { UpdateOneFieldConfigurationDto } from '@/modules/demarches/objects/dtos/update-one-field-configuration.dto'
 
 @ApiTags('Demarches')
 @ApiTags('Configurations')
