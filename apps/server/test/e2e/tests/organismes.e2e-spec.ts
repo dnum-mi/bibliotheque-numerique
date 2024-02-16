@@ -2,7 +2,6 @@ import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
 import { dataSource } from '../data-source-e2e.typeorm'
 import { Cookies, TestingModuleFactory } from '../common/testing-module.factory'
-import { PaginationDto } from '@biblio-num/shared'
 import { Organisme } from '@/modules/organismes/objects/organisme.entity'
 import { OrganismeService } from '@/modules/organismes/providers/organisme.service'
 

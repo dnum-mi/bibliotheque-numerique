@@ -6,10 +6,7 @@ import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { InjectRepository } from '@nestjs/typeorm'
 import { fixFieldsByIdentificationDictionary } from '../../../dossiers/objects/constante/fix-field.dictionnary'
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
-import {
-  SmallDemarcheOutputDto,
-  UpdateDemarcheDto,
-} from '@biblio-num/shared'
+
 import {
   isBelowSuperAdmin,
   Roles,
@@ -18,6 +15,8 @@ import {
 
 import { FindManyOptions } from 'typeorm/find-options/FindManyOptions'
 import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere'
+import { SmallDemarcheOutputDto } from '@/modules/demarches/objects/dtos/small-demarche-output.dto'
+import { UpdateDemarcheDto } from '@/modules/demarches/objects/dtos/update-demarche.dto'
 
 @Injectable()
 export class DemarcheService extends BaseEntityService<Demarche> {

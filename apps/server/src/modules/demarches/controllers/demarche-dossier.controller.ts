@@ -5,12 +5,7 @@ import { CurrentDemarcheInterceptor } from '../providers/interceptors/current-de
 import { Demarche } from '../objects/entities/demarche.entity'
 import { DossierSearchService } from '../../dossiers/providers/search/dossier-search.service'
 import { FieldSearchService } from '../../dossiers/providers/search/field-search.service'
-import {
-  DossierSearchOutputDto,
-  FieldSearchOutputDto,
-  MappingColumn,
-  SearchDossierDto,
-} from '@biblio-num/shared'
+
 import {
   Roles,
 } from '@biblio-num/shared-utils'
@@ -20,7 +15,11 @@ import { XlsxService } from '@/shared/modules/xlsx/xlsx.service'
 import { ReadStream } from 'fs'
 import { fromMappingColumnArrayToLabelHash } from '../utils/demarche.utils'
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
-import { xlsxContent } from '../../../shared/modules/xlsx/xlsx.constants'
+import { xlsxContent } from '@/shared/modules/xlsx/xlsx.constants'
+import { SearchDossierDto } from '@/modules/dossiers/objects/dto/search-dossier.dto'
+import { FieldSearchOutputDto } from '@/modules/dossiers/objects/dto/fields/field-search-output.dto'
+import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
+import { DossierSearchOutputDto } from '@/modules/dossiers/objects/dto/dossier-search-output.dto'
 
 @ApiTags('Demarches')
 @ApiTags('Dossiers')

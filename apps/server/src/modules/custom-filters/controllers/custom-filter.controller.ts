@@ -11,8 +11,7 @@ import {
 import { ApiTags } from '@nestjs/swagger'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { CustomFilter } from '@/modules/custom-filters/objects/entities/custom-filter.entity'
-import { ICustomFilter, ICustomFilterStat, PatchCustomFilterDto } from '@biblio-num/shared'
-import { Roles } from '@biblio-num/shared-utils'
+import { ICustomFilterStat, Roles } from '@biblio-num/shared-utils'
 import { CustomFilterService } from '@/modules/custom-filters/providers/services/custom-filter.service'
 import {
   CurrentCustomFiltersInterceptor,
@@ -21,6 +20,8 @@ import { CustomFilters } from '@/modules/custom-filters/providers/decorator/curr
 import { CurrentUserId } from '@/modules/users/providers/decorators/current-user-id.decorator'
 import { DeleteResult } from 'typeorm'
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
+import { PatchCustomFilterDto } from '@/modules/custom-filters/objects/dtos/patch-custom-filter.dto'
+import { CustomFilterOutputDto } from '@/modules/custom-filters/objects/dtos/custom-filter-output.dto'
 
 @ApiTags('Users')
 @ApiTags('Filters')
@@ -38,7 +39,7 @@ export class CustomFilterController {
   @UseInterceptors(CurrentCustomFiltersInterceptor)
   async getMyCustomFilters(
     @CustomFilters() filters: CustomFilter[],
-  ): Promise<ICustomFilter[]> {
+  ): Promise<CustomFilterOutputDto[]> {
     this.logger.verbose('getMyCustomFilters')
     return filters
   }

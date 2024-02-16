@@ -3,8 +3,8 @@ import {
   ValidatorConstraintInterface,
   ValidationArguments,
 } from 'class-validator'
-import { CreateCustomFilterDto } from '../custom-filters'
 import { SortDto } from './sort.dto'
+import { CreateCustomFilterDto } from '@/modules/custom-filters/objects/dtos/create-custom-filter.dto'
 
 // reduceExistInColumn
 const reic = (array: string[] | undefined, o: CreateCustomFilterDto) => {

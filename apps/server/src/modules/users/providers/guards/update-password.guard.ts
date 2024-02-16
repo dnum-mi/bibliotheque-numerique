@@ -1,9 +1,9 @@
-import { UpdateUserPasswordDto } from '@biblio-num/shared'
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { Observable } from 'rxjs'
 import { UserService } from '../user.service'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
+import { UpdateUserPasswordDto } from '@/modules/users/objects/dtos/input'
 
 @Injectable()
 export class UpdatePasswordGuard implements CanActivate {

@@ -6,7 +6,6 @@ import { JwtService } from '@nestjs/jwt'
 import { jwtConstants } from '@/modules/auth/objects/constants'
 import { faker } from '@faker-js/faker/locale/fr'
 import { UserService } from '@/modules/users/providers/user.service'
-import { UpdateProfileDto } from '@biblio-num/shared'
 import { dataSource } from '../data-source-e2e.typeorm'
 import { User } from '../../../src/modules/users/objects/user.entity'
 

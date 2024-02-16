@@ -1,20 +1,17 @@
 import {
-  IUser,
-  SmallDemarcheOutputDto,
-  UpdateOneRoleOptionDto,
-  UserWithEditableRole,
-} from '@biblio-num/shared'
-import {
   Roles,
   IRole,
   Prefecture,
-  OrganismeType,
+  OrganismeType, IUser,
 } from '@biblio-num/shared-utils'
 import {
   generateRoleAttributionList,
   generateUserWithEditableRole,
   isEditionAllowed, threeRoles,
 } from '@/modules/users/utils/role.utils'
+import { SmallDemarcheOutputDto } from '@/modules/demarches/objects/dtos/small-demarche-output.dto'
+import { UserWithEditableRole } from '@/modules/users/objects/dtos/output'
+import { UpdateOneRoleOptionDto } from '@/modules/users/objects/dtos/input'
 
 //#region MOCK DEMARCHES
 /*

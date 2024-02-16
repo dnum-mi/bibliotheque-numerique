@@ -1,5 +1,5 @@
 import { Organisme } from '@/modules/organismes/objects/organisme.entity'
-import { FieldTypeKeys } from '@biblio-num/shared'
+import { FieldTypeKeys } from '@biblio-num/shared-utils'
 
 // TODO: maybe there is an elegant way to have this.
 export const OrganismeFieldTypeHash: Record<

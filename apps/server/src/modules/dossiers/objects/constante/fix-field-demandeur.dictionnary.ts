@@ -1,7 +1,8 @@
-import { FieldSource, FieldType, MappingColumn } from '@biblio-num/shared'
+import { FieldSource, FieldType } from '@biblio-num/shared-utils'
 import { FixFieldValueGetter } from './fix-field-value-getter'
 import type { PersonnePhysique, PersonneMorale } from '@dnum-mi/ds-api-client'
 import { TDossierWithPrefecture } from '../../providers/field.service'
+import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
 
 const getFixFieldFnByMappingId = (
   mappingId: Record<string, string>,

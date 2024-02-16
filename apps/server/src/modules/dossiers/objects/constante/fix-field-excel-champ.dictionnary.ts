@@ -1,9 +1,10 @@
 import {
   FieldType,
-  MappingColumn,
-  FieldSource, FormatFunctionRef,
-} from '@biblio-num/shared'
+  FieldSource,
+  FormatFunctionRef,
+} from '@biblio-num/shared-utils'
 import { excelChampsLabel, totalAmountLable } from '@/modules/dossiers/objects/constante/excel-champ.enum'
+import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
 
 export const fixFieldsExcelChamp: MappingColumn = {
   id: '9863ce70-6378-4d7e-aca9-b81fb7b97b20',

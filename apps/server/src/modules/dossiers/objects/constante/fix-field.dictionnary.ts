@@ -1,11 +1,12 @@
-import type { IdentificationDemarcheKeys } from '@biblio-num/shared'
+
 import {
   IdentificationDemarche,
   FieldSource,
   FieldType,
   FormatFunctionRef,
-  MappingColumn,
-} from '@biblio-num/shared'
+  IdentificationDemarcheKeys,
+} from '@biblio-num/shared-utils'
+
 // eslint-disable-next-line max-len
 import { fixFieldsInstructionTime } from '@/modules/instruction_time/constante/fix-field-instrucation-times.dictionnary'
 import {
@@ -14,6 +15,7 @@ import {
 } from '@/modules/dossiers/objects/constante/fix-field-excel-champ.dictionnary'
 import { FixFieldValueGetter } from './fix-field-value-getter'
 import { fixFieldValueFunctionsDemandeur, fixFieldsDemandeur } from './fix-field-demandeur.dictionnary'
+import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
 
 export const fixFields: MappingColumn[] = [
   {

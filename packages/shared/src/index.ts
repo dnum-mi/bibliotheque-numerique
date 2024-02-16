@@ -1,7 +1,1 @@
-export * from './custom-filters'
-export * from './demarche'
-export * from './dossier'
-export * from './files'
-export * from './pagination'
-export * from './user'
-export * from './log'
+export const toto = 44
