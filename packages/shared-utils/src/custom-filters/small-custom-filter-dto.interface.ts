@@ -1,7 +1,7 @@
-import type { UserFriendlyFilter } from '../users'
+import type { IUserFriendlyFilter } from '../users'
 
-export interface SmallCustomFilterDto {
+export interface ISmallCustomFilter {
   id: number
   name: string
-  filters: UserFriendlyFilter[]
+  filters: IUserFriendlyFilter[]
 }

@@ -2,7 +2,7 @@ import {
   DynamicKeys,
   FieldType,
   FieldTypeKeys,
-  UserFriendlyFilter,
+  IUserFriendlyFilter,
   DateRange,
   DateRangeKeys,
 } from '@biblio-num/shared-utils'
@@ -352,7 +352,7 @@ export const humanReadableFilter = (filter: FilterDto): string => {
 export const fromCustomFilterToHumanReadableFilter = (
   ffc: FiltersInCustomFilter,
   mch: Record<string, string>,
-): UserFriendlyFilter[] => {
+): IUserFriendlyFilter[] => {
   return ffc
     ? Object.entries(ffc).map(([key, value]) => {
       return {

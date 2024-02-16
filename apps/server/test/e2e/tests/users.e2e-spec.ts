@@ -8,6 +8,7 @@ import { faker } from '@faker-js/faker/locale/fr'
 import { UserService } from '@/modules/users/providers/user.service'
 import { dataSource } from '../data-source-e2e.typeorm'
 import { User } from '../../../src/modules/users/objects/user.entity'
+import { UpdateProfileDto } from '@/modules/users/objects/dtos/input'
 
 describe('users (e2e)', () => {
   let app: INestApplication

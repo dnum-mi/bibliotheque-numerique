@@ -1,5 +1,5 @@
-export * from './organisme-type.enums'
 export * from './organismes.const'
 export * from './organisme.interface'
+export * from './organisme-type.enums'
 export * from './rna-output.interface'
 export * from './rnf-output.interface'

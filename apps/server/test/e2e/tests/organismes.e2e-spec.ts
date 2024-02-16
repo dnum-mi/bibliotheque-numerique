@@ -4,6 +4,7 @@ import { dataSource } from '../data-source-e2e.typeorm'
 import { Cookies, TestingModuleFactory } from '../common/testing-module.factory'
 import { Organisme } from '@/modules/organismes/objects/organisme.entity'
 import { OrganismeService } from '@/modules/organismes/providers/organisme.service'
+import { PaginationDto } from '@/shared/pagination/pagination.dto'
 
 // those object matches fixtures
 const renault = {

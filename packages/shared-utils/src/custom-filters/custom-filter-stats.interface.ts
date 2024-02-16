@@ -1,9 +1,9 @@
-import type { ISmallDemarcheOutput } from '../demarches/small-demarche-output.interface'
 import type { ITotal } from '../common'
-import type { SmallCustomFilterDto } from './small-custom-filter-dto.interface'
+import type { ISmallDemarcheOutput } from '../demarches'
+import type { ISmallCustomFilter } from './small-custom-filter-dto.interface'
 
 export interface ICustomFilterStat {
-  customFilter: SmallCustomFilterDto
+  customFilter: ISmallCustomFilter
   totals: ITotal[]
   demarche: ISmallDemarcheOutput
 }

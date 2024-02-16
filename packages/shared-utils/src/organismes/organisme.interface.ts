@@ -1,4 +1,6 @@
-import type { IRnaOutput, IRnfOutput, OrganismeTypeKeys } from '.'
+import type { OrganismeTypeKeys } from './organisme-type.enums'
+import type { IRnaOutput } from './rna-output.interface'
+import type { IRnfOutput } from './rnf-output.interface'
 
 export interface IOrganisme {
   id: number

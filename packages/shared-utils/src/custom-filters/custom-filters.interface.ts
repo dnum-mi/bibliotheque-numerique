@@ -1,10 +1,5 @@
-import type {
-  DynamicKeys,
-} from '../common'
-import type {
-  IFilter,
-  ISort,
-} from '.'
+import type { DynamicKeys } from '../common'
+import type { IFilter, ISort } from '../pagination'
 
 export interface ICustomFilter {
   id: number
@@ -12,7 +7,7 @@ export interface ICustomFilter {
   groupByDossier: boolean
   columns: string[]
   sorts: ISort<DynamicKeys>[] | null
-  filters: Record<keyof DynamicKeys, IFilter<unknown>> | null
+  filters: Record<keyof DynamicKeys, IFilter> | null
   demarcheId: number
   totals: string[] | null
 }

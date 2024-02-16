@@ -1,9 +1,6 @@
-import type {
-  DossierState,
-  Dossier as TDossier,
-} from '@dnum-mi/ds-api-client'
-import type { PrefectureKeys } from '../prefectures'
+import type { DossierState, Dossier as TDossier } from '@dnum-mi/ds-api-client'
 import type { IDemarche } from '../demarches'
+import type { PrefectureKeys } from '../prefectures'
 
 export interface IDossier {
   id: number

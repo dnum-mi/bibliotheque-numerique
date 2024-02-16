@@ -1,5 +1,5 @@
 import type { PrefectureKeys } from '../prefectures'
-import type { RolesKeys } from '.'
+import type { RolesKeys } from './roles.enum'
 
 export interface IRoleOption {
   national: boolean
