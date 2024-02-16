@@ -12,14 +12,14 @@ import { FilterEnumDto } from './enum.filter.dto'
 
 export function IsValidFilter (validationOptions?: ValidationOptions) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return (object: any, propertyName: string) => {
+  return (object: any, propertyName: string):void => {
     registerDecorator({
       name: 'isValidFilter',
       target: object.constructor,
       propertyName,
       options: validationOptions,
       validator: {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
         validate (value: any, args: ValidationArguments): boolean {
           if (typeof value !== 'object') {
             return false

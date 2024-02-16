@@ -7,9 +7,6 @@ import {
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
-import {
-  ICustomFilter,
-} from '@biblio-num/shared-utils'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { CurrentDemarcheInterceptor } from '../../demarches/providers/interceptors/current-demarche.interceptor'
 import { CurrentUserId } from '@/modules/users/providers/decorators/current-user-id.decorator'
