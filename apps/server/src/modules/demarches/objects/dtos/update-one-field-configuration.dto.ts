@@ -1,6 +1,7 @@
+import { IUpdateOneFieldConfiguration } from '@biblio-num/shared-utils'
 import { IsOptional, IsString, ValidateIf } from 'class-validator'
 
-export class UpdateOneFieldConfigurationDto {
+export class UpdateOneFieldConfigurationDto implements IUpdateOneFieldConfiguration {
   @ValidateIf(o => o.columnLabel !== undefined)
   @IsOptional()
   @IsString()

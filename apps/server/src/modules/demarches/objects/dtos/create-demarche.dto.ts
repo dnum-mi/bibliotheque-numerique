@@ -4,9 +4,10 @@ import {
   OrganismeTypeKeys,
   IdentificationDemarche,
   IdentificationDemarcheKeys,
+  ICreateDemarche,
 } from '@biblio-num/shared-utils'
 
-export class CreateDemarcheDto {
+export class CreateDemarcheDto implements ICreateDemarche {
   @IsNumber()
   idDs: number
 

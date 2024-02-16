@@ -1,5 +1,4 @@
 import {
-  IsDate,
   IsDateString,
   IsDefined,
   IsEnum,
@@ -7,7 +6,7 @@ import {
   ValidateNested,
 } from 'class-validator'
 import { Type } from 'class-transformer'
-import { DateRange, DateRangeKeys, IFilter } from '@biblio-num/shared-utils'
+import { DateRange, DateRangeKeys, IDateFilterCondition, IFilterDate } from '@biblio-num/shared-utils'
 
 export const DateFilterConditions = {
   Equals: 'equals',
@@ -23,7 +22,7 @@ export const DateFilterConditions = {
 export type DateFilterConditionsKeys =
   (typeof DateFilterConditions)[keyof typeof DateFilterConditions]
 
-export class DateFilterConditionDto {
+export class DateFilterConditionDto implements IDateFilterCondition {
   @IsDefined()
   @IsEnum(DateFilterConditions)
   type: DateFilterConditionsKeys
@@ -32,7 +31,9 @@ export class DateFilterConditionDto {
   @IsEnum(DateRange)
   sinceWhen?: DateRangeKeys
 
-  @ValidateIf((o) => o.type !== DateFilterConditions.Since && o.type !== DateFilterConditions.Blank && o.type !== DateFilterConditions.NotBlank)
+  @ValidateIf((o) => o.type !== DateFilterConditions.Since &&
+    o.type !== DateFilterConditions.Blank &&
+    o.type !== DateFilterConditions.NotBlank)
   @IsDefined()
   @IsDateString()
   filter: null | string
@@ -42,8 +43,8 @@ export class DateFilterConditionDto {
   filterTo?: null | string
 }
 
-export class FilterDateDto {
-  filterType = 'date'
+export class FilterDateDto implements IFilterDate {
+  filterType: 'date'
 
   @IsDefined()
   @ValidateNested()

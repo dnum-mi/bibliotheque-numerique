@@ -1,6 +1,6 @@
-import { IFile } from '@biblio-num/shared-utils'
+import { IFileOutput } from '@biblio-num/shared-utils'
 
-export class FileOutputDto implements Partial<IFile> {
+export class FileOutputDto implements IFileOutput {
   id: number
   createdAt: Date
   updatedAt: Date
@@ -15,6 +15,5 @@ export class FileOutputDto implements Partial<IFile> {
   dossierId?: number
   organismeId?: number
   uploaderId?: number
-
   url: string
 }

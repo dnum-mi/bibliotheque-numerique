@@ -1,4 +1,5 @@
 import { AgGridUserDto } from './ag-grid-user.dto'
 import { PaginatedDto } from '@/shared/pagination/paginated.dto'
+import { IPaginatedUser } from '@biblio-num/shared-utils'
 
-export class PaginatedUserDto extends PaginatedDto<AgGridUserDto> {}
+export class PaginatedUserDto extends PaginatedDto<AgGridUserDto> implements IPaginatedUser {}

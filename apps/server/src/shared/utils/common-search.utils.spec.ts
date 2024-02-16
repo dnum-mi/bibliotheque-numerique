@@ -1,6 +1,6 @@
 import { buildFilterQuery } from './common-search.utils'
 import * as dayjs from 'dayjs'
-import { DateFilterConditions } from '@/shared/pagination/filters'
+import { DateFilterConditions, FilterDateDto, FilterNumberDto } from '@/shared/pagination/filters'
 
 describe('Common search utils', () => {
   describe('Text filters', () => {
@@ -347,7 +347,7 @@ describe('Common search utils', () => {
                   type: DateFilterConditions.Since,
                   sinceWhen: 'OneYear',
                 },
-              },
+              } as FilterDateDto,
             },
             { dateField: 'date' },
           ),
@@ -447,9 +447,9 @@ describe('Common search utils', () => {
                 filterType: 'number',
                 condition1: {
                   type: 'equals',
-                  filter: '10',
+                  filter: 10,
                 },
-              },
+              } as FilterNumberDto,
             },
             { numberField: 'number' },
           ),
@@ -464,9 +464,9 @@ describe('Common search utils', () => {
                 filterType: 'number',
                 condition1: {
                   type: 'notEqual',
-                  filter: '10',
+                  filter: 10,
                 },
-              },
+              } as FilterNumberDto,
             },
             { numberField: 'number' },
           ),
@@ -481,9 +481,9 @@ describe('Common search utils', () => {
                 filterType: 'number',
                 condition1: {
                   type: 'lessThan',
-                  filter: '5',
+                  filter: 5,
                 },
-              },
+              } as FilterNumberDto,
             },
             { numberField: 'number' },
           ),
@@ -498,9 +498,9 @@ describe('Common search utils', () => {
                 filterType: 'number',
                 condition1: {
                   type: 'lessThanOrEqual',
-                  filter: '5',
+                  filter: 5,
                 },
-              },
+              } as FilterNumberDto,
             },
             { numberField: 'number' },
           ),
@@ -515,9 +515,9 @@ describe('Common search utils', () => {
                 filterType: 'number',
                 condition1: {
                   type: 'greaterThan',
-                  filter: '7',
+                  filter: 7,
                 },
-              },
+              } as FilterNumberDto,
             },
             { numberField: 'number' },
           ),
@@ -532,9 +532,9 @@ describe('Common search utils', () => {
                 filterType: 'number',
                 condition1: {
                   type: 'greaterThanOrEqual',
-                  filter: '8',
+                  filter: 8,
                 },
-              },
+              } as FilterNumberDto,
             },
             { numberField: 'number' },
           ),
@@ -550,9 +550,9 @@ describe('Common search utils', () => {
                 filterType: 'number',
                 condition1: {
                   type: 'equals',
-                  filter: '10',
+                  filter: 10,
                 },
-              },
+              } as FilterNumberDto,
             },
             { numberField: 'number' },
             true,
@@ -570,9 +570,9 @@ describe('Common search utils', () => {
                 filterType: 'number',
                 condition1: {
                   type: 'notEqual',
-                  filter: '10',
+                  filter: 10,
                 },
-              },
+              } as FilterNumberDto,
             },
             { numberField: 'number' },
             true,
@@ -590,9 +590,9 @@ describe('Common search utils', () => {
                 filterType: 'number',
                 condition1: {
                   type: 'lessThan',
-                  filter: '5',
+                  filter: 5,
                 },
-              },
+              } as FilterNumberDto,
             },
             { numberField: 'number' },
             true,
@@ -610,9 +610,9 @@ describe('Common search utils', () => {
                 filterType: 'number',
                 condition1: {
                   type: 'lessThanOrEqual',
-                  filter: '5',
+                  filter: 5,
                 },
-              },
+              } as FilterNumberDto,
             },
             { numberField: 'number' },
             true,
@@ -630,9 +630,9 @@ describe('Common search utils', () => {
                 filterType: 'number',
                 condition1: {
                   type: 'greaterThan',
-                  filter: '7',
+                  filter: 7,
                 },
-              },
+              } as FilterNumberDto,
             },
             { numberField: 'number' },
             true,
@@ -650,9 +650,9 @@ describe('Common search utils', () => {
                 filterType: 'number',
                 condition1: {
                   type: 'greaterThanOrEqual',
-                  filter: '8',
+                  filter: 8,
                 },
-              },
+              } as FilterNumberDto,
             },
             { numberField: 'number' },
             true,

@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsEmail, IsNotEmpty } from 'class-validator'
 import { IsPasswordStrongEnough } from './is-password-strong-enough'
+import { ICreateUser } from '@biblio-num/shared-utils'
 
-export class CreateUserDto {
+export class CreateUserDto implements ICreateUser {
   @ApiProperty({
     description: 'Prénom de l’utilisateur',
   })

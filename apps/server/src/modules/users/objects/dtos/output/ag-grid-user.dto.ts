@@ -1,6 +1,6 @@
-import { RolesKeys } from '@biblio-num/shared-utils'
+import { IAgGridUser, RolesKeys } from '@biblio-num/shared-utils'
 
-export class AgGridUserDto {
+export class AgGridUserDto implements IAgGridUser {
   id: number
   firstname: string
   lastname: string

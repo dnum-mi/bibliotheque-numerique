@@ -1,8 +1,8 @@
 import { Prefecture } from '@biblio-num/shared-utils'
-import type { PrefectureKeys } from '@biblio-num/shared-utils'
-import { IsBoolean, IsEnum, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator'
+import type { IOnePrefectureUpdate, IUpdateOneRoleOption, PrefectureKeys } from '@biblio-num/shared-utils'
+import { IsBoolean, IsEnum, IsNumber, IsOptional, ValidateNested } from 'class-validator'
 
-export class OnePrefectureUpdateDto {
+export class OnePrefectureUpdateDto implements IOnePrefectureUpdate {
   @IsBoolean()
   toAdd: boolean
 
@@ -10,7 +10,7 @@ export class OnePrefectureUpdateDto {
   key: PrefectureKeys
 }
 
-export class UpdateOneRoleOptionDto {
+export class UpdateOneRoleOptionDto implements IUpdateOneRoleOption {
   @IsNumber()
   demarcheId: number
 

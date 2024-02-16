@@ -1,5 +1,6 @@
 import { IsDefined, IsEnum, IsNumber, IsOptional, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
+import { IFilterNumber, INumberFilterCondition } from '@biblio-num/shared-utils'
 
 export const NumberFilterConditions = {
   Equals: 'equals',
@@ -13,7 +14,7 @@ export const NumberFilterConditions = {
 export type NumberFilterConditionsKeys =
   (typeof NumberFilterConditions)[keyof typeof NumberFilterConditions];
 
-export class NumberFilterConditionDto {
+export class NumberFilterConditionDto implements INumberFilterCondition {
   @IsDefined()
   @IsEnum(NumberFilterConditions)
   type: NumberFilterConditionsKeys
@@ -27,8 +28,8 @@ export class NumberFilterConditionDto {
   filterTo?: number
 }
 
-export class FilterNumberDto {
-  filterType = 'number'
+export class FilterNumberDto implements IFilterNumber {
+  filterType: 'number'
 
   @IsDefined()
   @ValidateNested()

@@ -3,7 +3,7 @@ import type { RolesKeys } from '../roles'
 import type { ISmallDemarcheOutput } from '../demarches'
 import type { IUserOutput } from './user-output.interface'
 
-export interface PrefectureOptions {
+export interface IPrefectureOptions {
   national: {
     value: boolean
     editable: boolean
@@ -18,10 +18,10 @@ export interface PrefectureOptions {
 export type OneDemarcheRoleOption = {
   checked: boolean
   editable: boolean
-  prefectureOptions: PrefectureOptions
+  prefectureOptions: IPrefectureOptions
 } & ISmallDemarcheOutput
 
-export interface UserWithEditableRole {
+export interface IUserWithEditableRole {
   originalUser: IUserOutput
   possibleRoles: RolesKeys[]
   deletable: boolean

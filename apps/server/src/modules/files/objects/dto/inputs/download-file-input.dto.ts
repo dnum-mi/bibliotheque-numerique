@@ -4,5 +4,5 @@ export class DownloadFileInputDto {
   @IsDefined()
   @IsString()
   @IsUUID()
-    uuid: string
+  uuid: string
 }
