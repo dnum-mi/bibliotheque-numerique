@@ -7,12 +7,13 @@ import { ApiTags } from '@nestjs/swagger'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
 import {
-  Roles,
   BnConfigurationOutputDto,
-  CreateBnConfigurationDto,
-  UpdateBnConfigurationDto,
-} from '@biblio-num/shared'
+} from '@/modules/bn-configurations/objects/dto/bn-configuration-output.dto'
+
 import { BnConfigurationService } from '@/modules/bn-configurations/providers/bn-configuration.service'
+import { CreateBnConfigurationDto } from '../objects/dto/create-bn-configuration.dto'
+import { UpdateBnConfigurationDto } from '../objects/dto/update-bn-configuration.dto'
+import { Roles } from '@biblio-num/shared-utils'
 
 @ApiTags('BnConfigurations')
 @Controller('bn-configurations')

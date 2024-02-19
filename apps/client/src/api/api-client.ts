@@ -3,10 +3,6 @@ import axios, { AxiosError, type AxiosResponse } from 'axios'
 import useToaster from '@/composables/use-toaster'
 
 import type {
-  CreateBnConfigurationDto,
-  UpdateBnConfigurationDto,
-} from '@biblio-num/shared'
-import type {
   ICreateUser,
   ICredentialsInput,
   IDossierSearchOutput,
@@ -36,6 +32,8 @@ import type {
   IDossier,
   DynamicKeys,
   RolesKeys,
+  ICreateBnConfiguration,
+  IUpdateBnConfiguration,
 } from '@biblio-num/shared-utils'
 
 import {
@@ -359,12 +357,12 @@ export const bnConfigurationsApiClient = {
     return response.data
   },
 
-  createBnConfiguration: async (dto: CreateBnConfigurationDto) => {
+  createBnConfiguration: async (dto: ICreateBnConfiguration) => {
     const response = await apiClientInstance.post(bnConfigurationsRoute, dto)
     return response.data
   },
 
-  updateBnConfiguration: async (id: number, dto: UpdateBnConfigurationDto) => {
+  updateBnConfiguration: async (id: number, dto: IUpdateBnConfiguration) => {
     const response = await apiClientInstance.patch(bnConfigurationsRoute + `/${id}`, dto)
     return response.data
   },

@@ -1,24 +1,19 @@
-import type {
-  BnConfigurationOutputDto,
-  CreateBnConfigurationDto,
-  UpdateBnConfigurationDto,
-} from '@biblio-num/shared'
-
 import { bnConfigurationsApiClient, demarchesApiClient } from '../api/api-client'
 import type {
+  IBnConfigurationOutput,
+  ICreateBnConfiguration,
   ICreateDemarche,
   ISmallDemarcheOutput,
+  IUpdateBnConfiguration,
   IUpdateDemarche,
-
   IdentificationDemarcheKeys,
   OrganismeTypeKeys,
-  IdentificationDemarcheKeys,
 } from '@biblio-num/shared-utils'
 
 import { createDemarche, patchDemarche, putSynchronizeOneDemarche } from '../api/sudo-api-client'
 
 export const useConfigurationStore = defineStore('Configuration', () => {
-  const bnConfigurations = ref<BnConfigurationOutputDto[]>([])
+  const bnConfigurations = ref<IBnConfigurationOutput[]>([])
   const demarches = ref<ISmallDemarcheOutput[]>([])
   const fetching = ref<boolean>(false)
   const fetchingBnConfigurations = ref<boolean>(false)
@@ -54,7 +49,7 @@ export const useConfigurationStore = defineStore('Configuration', () => {
     if (!keyName) throw new Error('Nom de la configuration non saisi')
     if (!stringValue) throw new Error('Valeur de la configuration non saisi')
     if (!valueType) throw new Error('Type de valeur non saisi')
-    const dto: CreateBnConfigurationDto = {
+    const dto: ICreateBnConfiguration = {
       keyName,
       stringValue,
       valueType,
@@ -87,7 +82,7 @@ export const useConfigurationStore = defineStore('Configuration', () => {
 
   const updateBnConfigurations = async (id: number|undefined, keyName: string, stringValue: string, valueType: string) => {
     if (id === undefined) throw new Error('id non saisi')
-    const dto: UpdateBnConfigurationDto = {
+    const dto: IUpdateBnConfiguration = {
       keyName,
       stringValue,
       valueType,
