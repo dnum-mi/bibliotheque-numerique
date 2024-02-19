@@ -4,9 +4,10 @@ import {
   BnConfigurationMandatoryDataKeys,
   BnConfigurationTypes,
   BnConfigurationTypesKeys,
+  IUpdateBnConfiguration,
 } from '@biblio-num/shared-utils'
 
-export class UpdateBnConfigurationDto {
+export class UpdateBnConfigurationDto implements IUpdateBnConfiguration {
   @IsOptional()
   @ValidateIf((o) => o.value !== null)
   @IsEnum(BnConfigurationKeyNames)

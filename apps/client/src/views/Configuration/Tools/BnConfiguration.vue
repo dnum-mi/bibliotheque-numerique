@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { useConfigurationStore } from '@/stores/configuration'
 import { ref } from 'vue'
-import type { BnConfigurationOutputDto } from '@biblio-num/shared'
-import type { BnConfigurationMandatoryDataKeys, BnConfigurationTypesKeys } from '@biblio-num/shared-utils'
+
+import type { BnConfigurationMandatoryDataKeys, BnConfigurationTypesKeys, IBnConfigurationOutput } from '@biblio-num/shared-utils'
 
 const configurationStore = useConfigurationStore()
 
@@ -14,7 +14,7 @@ const stringValue = ref<string>('')
 const valueTypeString = ref('')
 const valueType = computed<BnConfigurationTypesKeys[]>(() => (valueTypeString.value ? JSON.parse(valueTypeString.value) : undefined))
 
-const bnConfigurations = computed<BnConfigurationOutputDto[]>(() => configurationStore.bnConfigurations)
+const bnConfigurations = computed<IBnConfigurationOutput[]>(() => configurationStore.bnConfigurations)
 const loading = computed<boolean>(() => configurationStore.fetchingBnConfigurations)
 
 const keyNameValue = computed<BnConfigurationMandatoryDataKeys | null | undefined>(() => {
@@ -55,7 +55,7 @@ onMounted(async () => {
   await configurationStore.loadBnConfigurations()
 })
 
-const onSelected = (bnConfig: BnConfigurationOutputDto) => {
+const onSelected = (bnConfig: IBnConfigurationOutput) => {
   keyNameString.value = bnConfig.keyName.toString() || ''
   stringValue.value = bnConfig.stringValue || ''
   valueTypeString.value = bnConfig.valueType || ''
