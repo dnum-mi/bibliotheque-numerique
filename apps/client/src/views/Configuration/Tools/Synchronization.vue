@@ -2,7 +2,7 @@
 import type {
   ISmallDemarcheOutput,
   IdentificationDemarcheKeys, OrganismeTypeKeys,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 import { useConfigurationStore } from '@/stores/configuration'
 import { ref } from 'vue'
 

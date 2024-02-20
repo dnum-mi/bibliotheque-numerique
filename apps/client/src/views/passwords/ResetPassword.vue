@@ -2,7 +2,7 @@
 import { toTypedSchema } from '@vee-validate/zod'
 import { useField, useForm } from 'vee-validate'
 import { z } from 'zod'
-import type { IResetPasswordInput } from '@biblio-num/shared-utils'
+import type { IResetPasswordInput } from '@biblio-num/shared'
 
 import apiClient from '@/api/api-client'
 import { ASK_RESET_PWD_SUCCESS } from '../../messages'

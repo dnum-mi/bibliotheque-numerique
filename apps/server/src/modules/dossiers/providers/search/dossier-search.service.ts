@@ -15,7 +15,7 @@ import {
 import { FieldService } from '../field.service'
 
 import { fromMappingColumnArrayToTypeHash } from '@/modules/demarches/utils/demarche.utils'
-import { FieldTypeKeys } from '@biblio-num/shared-utils'
+import { FieldTypeKeys } from '@biblio-num/shared'
 import { FilterDto } from '@/shared/pagination/filters'
 import { SearchDossierDto } from '@/modules/dossiers/objects/dto/search-dossier.dto'
 import { DossierSearchOutputDto } from '@/modules/dossiers/objects/dto/dossier-search-output.dto'

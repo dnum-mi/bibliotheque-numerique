@@ -5,6 +5,7 @@ export default defineConfig({
   splitting: false,
   experimentalDts: true,
   clean: true,
+  sourcemap: true,
   format: ['cjs', 'esm'],
   outExtension({ format }) {
     return {

@@ -6,7 +6,7 @@ import {
   Prefecture,
   type FormatFunctionRefKeys,
   type PrefectureKeys,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 
 import delayStateBadge from '@/components/Badges/DelayStateBadge.vue'
 import AgGridAttachmentCell from '@/components/ag-grid/AgGridAttachmentCell.vue'

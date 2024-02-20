@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { DossierStateKeys } from '@biblio-num/shared-utils'
+import type { DossierStateKeys } from '@biblio-num/shared'
 
 import { stateToFr } from '@/utils'
 

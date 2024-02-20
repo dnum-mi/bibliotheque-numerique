@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { type SelectionChangedEvent } from 'ag-grid-community'
 
-import type { IPagination, IOrganisme } from '@biblio-num/shared-utils'
+import type { IPagination, IOrganisme } from '@biblio-num/shared'
 
 import { useOrganismeStore } from '@/stores/organisme'
 import LayoutList from '@/components/Layout/LayoutList.vue'

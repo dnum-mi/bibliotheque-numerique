@@ -1,6 +1,6 @@
 import { IsDefined, IsEnum, IsOptional, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
-import { IFilterText, ITextFilterCondition } from '@biblio-num/shared-utils'
+import { IFilterText, ITextFilterCondition } from '@biblio-num/shared'
 
 export const TextFilterConditions = {
   Contains: 'contains',

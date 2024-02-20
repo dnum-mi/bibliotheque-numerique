@@ -1,5 +1,5 @@
-import { Prefecture } from '@biblio-num/shared-utils'
-import type { IOnePrefectureUpdate, IUpdateOneRoleOption, PrefectureKeys } from '@biblio-num/shared-utils'
+import { Prefecture } from '@biblio-num/shared'
+import type { IOnePrefectureUpdate, IUpdateOneRoleOption, PrefectureKeys } from '@biblio-num/shared'
 import { IsBoolean, IsEnum, IsNumber, IsOptional, ValidateNested } from 'class-validator'
 
 export class OnePrefectureUpdateDto implements IOnePrefectureUpdate {

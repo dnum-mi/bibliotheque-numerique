@@ -8,7 +8,7 @@ import { DossierSearchService } from '../../../dossiers/providers/search/dossier
 import { fromCustomFilterToHumanReadableFilter } from '@/shared/utils/common-search.utils'
 import { fromMappingColumnArrayToLabelHash } from '../../../demarches/utils/demarche.utils'
 import { FieldSearchService } from '@/modules/dossiers/providers/search/field-search.service'
-import { ICustomFilterStat, ITotal } from '@biblio-num/shared-utils'
+import { ICustomFilterStat, ITotal } from '@biblio-num/shared'
 import { DossierSearchOutputDto } from '@/modules/dossiers/objects/dto/dossier-search-output.dto'
 import { FieldSearchOutputDto } from '@/modules/dossiers/objects/dto/fields/field-search-output.dto'
 

@@ -3,7 +3,7 @@ import { BaseEntity } from '@/shared/base-entity/base.entity'
 
 import {
   DynamicKeys,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 import { User } from '@/modules/users/objects/user.entity'
 import { Demarche } from '../../../demarches/objects/entities/demarche.entity'
 import { SortDto } from '@/shared/pagination/sort.dto'

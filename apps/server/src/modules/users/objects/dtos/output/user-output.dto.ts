@@ -1,6 +1,6 @@
 import { ApiProperty, OmitType } from '@nestjs/swagger'
 import { CreateUserDto } from '../input/create-user.dto'
-import { IRole, IUserOutput } from '@biblio-num/shared-utils'
+import { IRole, IUserOutput } from '@biblio-num/shared'
 
 export class UserOutputDto extends OmitType(CreateUserDto, ['password']) implements IUserOutput {
   @ApiProperty({

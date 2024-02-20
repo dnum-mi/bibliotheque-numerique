@@ -1,4 +1,4 @@
-import { IPaginated } from '@biblio-num/shared-utils'
+import { IPaginated } from '@biblio-num/shared'
 
 export class PaginatedDto<T> implements IPaginated<T> {
   total: number

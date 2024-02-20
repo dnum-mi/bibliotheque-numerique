@@ -5,7 +5,7 @@ import {
   FieldType,
   FormatFunctionRef,
   IdentificationDemarcheKeys,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 
 // eslint-disable-next-line max-len
 import { fixFieldsInstructionTime } from '@/modules/instruction_time/constante/fix-field-instrucation-times.dictionnary'

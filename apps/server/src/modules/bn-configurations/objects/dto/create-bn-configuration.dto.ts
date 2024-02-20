@@ -5,7 +5,7 @@ import {
   BnConfigurationTypes,
   BnConfigurationTypesKeys,
   ICreateBnConfiguration,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 
 export class CreateBnConfigurationDto implements ICreateBnConfiguration {
   @IsEnum(BnConfigurationKeyNames)

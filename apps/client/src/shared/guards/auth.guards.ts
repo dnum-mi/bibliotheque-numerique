@@ -3,11 +3,11 @@ import { useUserStore } from '@/stores'
 import type {
   IRole,
   RolesKeys,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 import {
   canAccessDemarche,
   isSuperiorOrSimilar,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 
 export function isNotAuthenticatedGuard () {
   const userStore = useUserStore()

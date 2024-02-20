@@ -17,7 +17,7 @@ import {
   Roles,
   mapOrganismeFieldHeader,
   IOrganisme,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 
 import { DossierService } from '@/modules/dossiers/providers/dossier.service'
 import { OrganismeService } from '@/modules/organismes/providers/organisme.service'

@@ -5,7 +5,7 @@ import type {
   INumberFilterCondition,
   ISort,
   ITextFilterCondition,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 import {
   type DateFilterModel,
   type IMultiFilterModel,

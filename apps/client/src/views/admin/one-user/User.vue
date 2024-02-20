@@ -7,11 +7,11 @@ import type {
   UserWithEditableRole,
 
   OrganismeTypeKeys,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 
 import {
   OrganismeType,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 
 import { useUserStore } from '@/stores'
 import { getRandomId } from '@gouvminint/vue-dsfr'

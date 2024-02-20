@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { watch, computed, ref } from 'vue'
 import type { CustomFilterWithErrors } from '@/views/demarches/demarche/dossiers/custom-filter-with-errors.type'
-import type { ICustomFilterWithError } from '@biblio-num/shared-utils'
+import type { ICustomFilterWithError } from '@biblio-num/shared'
 
 export type TotalsAllowed = {
   id: string,

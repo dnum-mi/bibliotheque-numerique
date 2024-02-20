@@ -26,7 +26,7 @@
     },
     "@biblio-num/shared#build": {
       "dependsOn": [
-        "^@biblio-num/shared-utils#build"
+        "^@biblio-num/shared#build"
       ]
     },
     "build": {
@@ -43,7 +43,6 @@
     "dev": {
       "cache": false,
       "dependsOn": [
-        "^@biblio-num/shared-utils#build",
         "^@biblio-num/shared#build"
       ]
     },
@@ -56,7 +55,6 @@
     "dev:server": {
       "cache": false,
       "dependsOn": [
-        "^@biblio-num/shared-utils#build",
         "^@biblio-num/shared#build"
       ]
     },
@@ -94,7 +92,6 @@
     },
     "test": {
       "dependsOn": [
-        "^@biblio-num/shared-utils#build",
         "^@biblio-num/shared#build"
       ],
       "inputs": [

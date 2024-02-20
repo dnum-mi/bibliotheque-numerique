@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker/locale/fr'
 import type { User } from '@/shared/interfaces'
-import type { ICredentialsInput } from '@biblio-num/shared-utils'
+import type { ICredentialsInput } from '@biblio-num/shared'
 import { RoleName } from '@/shared/types'
 
 export const createRandomUserForm = (): ICredentialsInput => ({

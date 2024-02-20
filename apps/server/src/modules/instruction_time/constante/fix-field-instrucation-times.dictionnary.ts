@@ -1,4 +1,4 @@
-import { FieldSource, FieldType, FormatFunctionRef } from '@biblio-num/shared-utils'
+import { FieldSource, FieldType, FormatFunctionRef } from '@biblio-num/shared'
 import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
 
 export const fixFieldInstructionTimeDelay: MappingColumn = {

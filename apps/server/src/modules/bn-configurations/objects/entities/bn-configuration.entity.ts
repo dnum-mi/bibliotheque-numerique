@@ -5,7 +5,7 @@ import {
   BnConfigurationTypesKeys,
   BnConfigurationKeyNames,
   BnConfigurationMandatoryDataKeys,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 
 @Entity({ name: 'bn-configurations' })
 export class BnConfiguration extends BaseEntity {

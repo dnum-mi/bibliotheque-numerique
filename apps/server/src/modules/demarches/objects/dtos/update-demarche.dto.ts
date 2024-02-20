@@ -5,7 +5,7 @@ import {
   IdentificationDemarche,
   IdentificationDemarcheKeys,
   IUpdateDemarche,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 
 export class UpdateDemarcheDto implements IUpdateDemarche {
   @IsOptional()

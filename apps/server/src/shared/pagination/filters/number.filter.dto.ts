@@ -1,6 +1,6 @@
 import { IsDefined, IsEnum, IsNumber, IsOptional, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
-import { IFilterNumber, INumberFilterCondition } from '@biblio-num/shared-utils'
+import { IFilterNumber, INumberFilterCondition } from '@biblio-num/shared'
 
 export const NumberFilterConditions = {
   Equals: 'equals',

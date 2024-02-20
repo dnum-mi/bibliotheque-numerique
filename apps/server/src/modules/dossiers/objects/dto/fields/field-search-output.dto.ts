@@ -1,4 +1,4 @@
-import { IFieldSearchOutput } from '@biblio-num/shared-utils'
+import { IFieldSearchOutput } from '@biblio-num/shared'
 
 export class FieldSearchOutputDto implements IFieldSearchOutput {
   total: number

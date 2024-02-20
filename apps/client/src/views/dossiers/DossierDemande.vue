@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { Demandeur, TDossier, Champ } from '@biblio-num/shared-utils'
+import type { Demandeur, TDossier, Champ } from '@biblio-num/shared'
 
 import { isPersonneMorale, isPersonnePhysique } from '@/utils/helperDemandeur'
 import DossierChamps from './DossierChamps.vue'

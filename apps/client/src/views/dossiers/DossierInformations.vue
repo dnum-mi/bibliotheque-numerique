@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { TDossier } from '@biblio-num/shared-utils'
+import type { TDossier } from '@biblio-num/shared'
 
 import { dateTimeToStringFr } from '@/utils'
 

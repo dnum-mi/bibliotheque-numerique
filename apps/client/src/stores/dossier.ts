@@ -1,4 +1,4 @@
-import type { IDossierOutput } from '@biblio-num/shared-utils'
+import type { IDossierOutput } from '@biblio-num/shared'
 
 import apiClient from '@/api/api-client'
 

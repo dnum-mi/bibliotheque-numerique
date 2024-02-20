@@ -5,7 +5,7 @@ import {
   IUserFriendlyFilter,
   DateRange,
   DateRangeKeys,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 
 import { BadRequestException } from '@nestjs/common'
 import * as dayjs from 'dayjs'
