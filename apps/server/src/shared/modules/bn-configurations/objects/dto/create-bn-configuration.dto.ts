@@ -1,21 +1,22 @@
-import { IsEnum, IsNotEmpty } from 'class-validator'
+import { IsEnum, IsString } from 'class-validator'
+
 import {
-  BnConfigurationKeyNames,
-  BnConfigurationMandatoryDataKeys,
-  BnConfigurationTypes,
-  BnConfigurationTypesKeys,
+  eBnConfiguration,
+  BnConfigurationKey,
   ICreateBnConfiguration,
+  BnConfigurationTypeKey,
+  eBnConfigurationType,
 } from '@biblio-num/shared'
 
 export class CreateBnConfigurationDto implements ICreateBnConfiguration {
-  @IsEnum(BnConfigurationKeyNames)
-  @IsNotEmpty()
-  keyName: BnConfigurationMandatoryDataKeys
+  @IsEnum(eBnConfiguration)
+  @IsString()
+  keyName: BnConfigurationKey | null
 
-  @IsNotEmpty()
+  @IsString()
   stringValue: string
 
-  @IsEnum(BnConfigurationTypes)
-  @IsNotEmpty()
-  valueType: BnConfigurationTypesKeys
+  @IsEnum(eBnConfigurationType)
+  @IsString()
+  valueType: BnConfigurationTypeKey | null
 }

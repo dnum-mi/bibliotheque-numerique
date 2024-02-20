@@ -1,7 +1,7 @@
-import type { BnConfigurationMandatoryDataKeys, BnConfigurationTypesKeys } from './enums'
+import type { BnConfigurationKey, BnConfigurationTypeKey } from './enums'
 
 export class IUpdateBnConfiguration {
-  keyName?: BnConfigurationMandatoryDataKeys | null
+  keyName?: BnConfigurationKey
   stringValue?: string
-  valueType?: BnConfigurationTypesKeys | null
+  valueType?: BnConfigurationTypeKey | null
 }
