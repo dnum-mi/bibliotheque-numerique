@@ -1,4 +1,4 @@
-import type { ICreateDemarche, IUpdateDemarche } from '@biblio-num/shared-utils'
+import type { ICreateDemarche, IUpdateDemarche } from '@biblio-num/shared'
 import { demarchesRoute, getDemarcheByIdRoute } from './bn-api-routes'
 import { apiClientInstance } from './api-client'
 

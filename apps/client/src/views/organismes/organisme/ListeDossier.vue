@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import type { IRole } from '@biblio-num/shared-utils'
-import { canAccessDemarche } from '@biblio-num/shared-utils'
+import type { IRole } from '@biblio-num/shared'
+import { canAccessDemarche } from '@biblio-num/shared'
 
 import apiClient from '@/api/api-client'
 import useToaster from '@/composables/use-toaster'

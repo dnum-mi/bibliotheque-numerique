@@ -1,55 +1,28 @@
 {
   "name": "@biblio-num/shared",
-  "version": "2.2.2",
-  "description": "Types partagés entre le back et le front",
-  "author": "Ministère de l’intérieur",
-  "exports": {
-    ".": {
-      "import": {
-        "types": "./types",
-        "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./types",
-        "default": "./dist/index.js"
-      }
-    }
-  },
-  "keywords": [
-    "types",
-    "dto"
-  ],
-  "license": "ISC",
-  "main": "dist/index.js",
+  "version": "1.0.0",
+  "description": "Shared lib for BiblioNum",
+  "main": "./dist/index.cjs.js",
+  "module": "./dist/index.esm.js",
+  "types": "./dist/src",
   "scripts": {
-    "build": "run-s clean:dist build:types",
-    "build:types": "tsc",
     "clean:dist": "rimraf dist types",
-    "dev": "nodemon --watch src --exec 'pnpm run build:types'",
-    "format": "eslint src/ --ext .ts --ignore-path ../../.gitignore --fix",
-    "lint": "eslint src/ --ext .ts --ignore-path ../../.gitignore",
-    "lint:staged": "eslint --ext .ts --ignore-path ../../.gitignore",
-    "test": "vitest run",
-    "test:watch": "vitest"
-  },
-  "types": "types/",
-  "dependencies": {
-    "@biblio-num/shared-utils": "workspace:^",
-    "@nestjs/mapped-types": "^2.0.2",
-    "@nestjs/swagger": "^7.1.13",
-    "class-transformer": "^0.5.1",
-    "class-validator": "^0.14.0"
+    "dev": "nodemon --watch src --exec 'tsup'",
+    "build": "run-s clean:dist build:only",
+    "build:only": "tsup"
   },
   "devDependencies": {
-    "@dnum-mi/ds-api-client": "^1.6.2",
-    "@nestjs/common": "^10.2.7",
+    "@antfu/eslint-config": "^2.6.4",
+    "@dnum-mi/ds-api-client": "^1.7.3",
+    "@microsoft/api-extractor": "7.39.4",
+    "eslint": "npm:eslint-ts-patch@^8.56.0-0",
     "nodemon": "^3.0.1",
+    "npm-run-all2": "6.1.2",
     "rimraf": "^5.0.5",
-    "typescript": "^5.2.2",
-    "vite": "^4.5.0",
-    "vitest": "^0.34.6"
+    "tsup": "8.0.1",
+    "typescript": "5.3.3"
   },
   "volta": {
-    "node": "18.16.0"
+    "node": "20.11.0"
   }
 }

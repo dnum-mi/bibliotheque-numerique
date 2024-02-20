@@ -7,7 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { BnConfiguration } from '@/modules/bn-configurations/objects/entities/bn-configuration.entity'
 import {
   BnConfigurationMandatoryData, BnConfigurationTypes,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 
 @Injectable()
 export class BnConfigurationService extends BaseEntityService<BnConfiguration> {

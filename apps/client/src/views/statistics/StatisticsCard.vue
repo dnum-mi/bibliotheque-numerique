@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { ICustomFilter, ICustomFilterStat } from '@biblio-num/shared-utils'
+import type { ICustomFilter, ICustomFilterStat } from '@biblio-num/shared'
 
 import { formatCurrency, frenchFormatNumber } from '@/utils/french-number'
 import apiClient from '@/api/api-client'

@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import type { PrefectureOptions } from '@biblio-num/shared'
-import type { PrefectureKeys } from '@biblio-num/shared-utils'
-import { listOfPrefectures } from '@biblio-num/shared-utils'
+import type { PrefectureOptions, PrefectureKeys } from '@biblio-num/shared'
+import { listOfPrefectures } from '@biblio-num/shared'
 import type { DsfrTagProps } from '@gouvminint/vue-dsfr/types/components/DsfrTag/DsfrTag.vue'
 import { computed, ref } from 'vue'
 import { LocalizationOptions, type LocalizationOptionsKeys } from './localization.enum'

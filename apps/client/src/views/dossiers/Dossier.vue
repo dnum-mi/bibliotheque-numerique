@@ -7,7 +7,7 @@ import type {
 } from '@dnum-mi/ds-api-client'
 import type {
   IDossier as IDossierOutput,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 
 import { useDossierStore } from '@/stores/dossier'
 import LayoutFiche from '@/components/Layout/LayoutFiche.vue'

@@ -8,7 +8,7 @@ import type {
   IDemarche,
   MappingColumn,
   MappingColumnWithoutChildren,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 
 export type FrontMappingColumn = MappingColumnWithoutChildren & { isChild: boolean }
 

@@ -6,7 +6,7 @@ import { useUserStore } from '@/stores'
 
 import AppToaster from '@/components/AppToaster.vue'
 import { routeNames } from '@/router/route-names'
-import { Roles, isSuperiorOrSimilar } from '@biblio-num/shared-utils'
+import { Roles, isSuperiorOrSimilar } from '@biblio-num/shared'
 import { logInServer } from '@/utils/log.utils'
 import apiClient from '@/api/api-client'
 import { type EnvTextKeys, envTextMapping, defaultEnv } from '@/shared/types'

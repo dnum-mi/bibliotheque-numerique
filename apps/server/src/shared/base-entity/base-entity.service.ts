@@ -6,7 +6,7 @@ import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere'
 import { NotFoundException } from '@nestjs/common'
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
 import { buildFilterQuery } from '@/shared/utils/common-search.utils'
-import { FieldTypeKeys } from '@biblio-num/shared-utils'
+import { FieldTypeKeys } from '@biblio-num/shared'
 import { PaginationDto } from '@/shared/pagination/pagination.dto'
 import { PaginatedDto } from '@/shared/pagination/paginated.dto'
 

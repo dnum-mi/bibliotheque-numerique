@@ -11,7 +11,7 @@ import type {
   IUpdateProfile,
 
   RolesKeys,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 
 // TODO: enum Roles dans packages/shared n'est pas récupérable
 const RolesAdmins = ['admin', 'sudo', 'superadmin']

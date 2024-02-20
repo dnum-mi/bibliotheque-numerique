@@ -6,7 +6,7 @@ import {
   ValidateNested,
 } from 'class-validator'
 import { Type } from 'class-transformer'
-import { DateRange, DateRangeKeys, IDateFilterCondition, IFilterDate } from '@biblio-num/shared-utils'
+import { DateRange, DateRangeKeys, IDateFilterCondition, IFilterDate } from '@biblio-num/shared'
 
 export const DateFilterConditions = {
   Equals: 'equals',

@@ -1,4 +1,4 @@
-import { FieldSource, FieldType } from '@biblio-num/shared-utils'
+import { FieldSource, FieldType } from '@biblio-num/shared'
 import { FixFieldValueGetter } from './fix-field-value-getter'
 import type { PersonnePhysique, PersonneMorale } from '@dnum-mi/ds-api-client'
 import { TDossierWithPrefecture } from '../../providers/field.service'

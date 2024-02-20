@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { IMyProfileOutput, IResetPasswordInput } from '@biblio-num/shared-utils'
+import type { IMyProfileOutput, IResetPasswordInput } from '@biblio-num/shared'
 import type { DsfrAlertType } from '@gouvminint/vue-dsfr/types/components/DsfrAlert/DsfrAlert.vue'
 
 import LayoutBanner from '@/components/Layout/LayoutBanner.vue'

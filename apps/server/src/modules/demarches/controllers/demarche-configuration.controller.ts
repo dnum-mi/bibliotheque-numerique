@@ -16,7 +16,7 @@ import { CurrentDemarche } from '../providers/decorators/current-demarche.decora
 
 import {
   Roles,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
 import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
 import { UpdateOneFieldConfigurationDto } from '@/modules/demarches/objects/dtos/update-one-field-configuration.dto'

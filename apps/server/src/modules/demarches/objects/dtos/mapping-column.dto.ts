@@ -4,7 +4,7 @@ import {
   FormatFunctionRefKeys,
   IMappingColumnWithoutChildren,
   IMappingColumn,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 
 export class MappingColumnWithoutChildren implements IMappingColumnWithoutChildren {
   id: string

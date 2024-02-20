@@ -2,9 +2,9 @@ import { Column, Entity, JoinTable, OneToMany, PrimaryGeneratedColumn } from 'ty
 import { Dossier } from '../../../dossiers/objects/entities/dossier.entity'
 import { BaseEntity } from '@/shared/base-entity/base.entity'
 import { Demarche as TDemarche } from '@dnum-mi/ds-api-client/dist/@types/generated-types'
-import { IdentificationDemarcheKeys, IdentificationDemarche, IDemarche } from '@biblio-num/shared-utils'
+import { IdentificationDemarcheKeys, IdentificationDemarche, IDemarche } from '@biblio-num/shared'
 import { CustomFilter } from '../../../custom-filters/objects/entities/custom-filter.entity'
-import type { OrganismeTypeKeys } from '@biblio-num/shared-utils'
+import type { OrganismeTypeKeys } from '@biblio-num/shared'
 import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
 
 @Entity({ name: 'demarches' })

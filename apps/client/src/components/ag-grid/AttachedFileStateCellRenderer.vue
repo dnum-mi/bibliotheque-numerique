@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { getIconPropsFromFileState } from '@biblio-num/shared-utils'
+import { getIconPropsFromFileState } from '@biblio-num/shared'
 
 const props = defineProps<{
   params: {

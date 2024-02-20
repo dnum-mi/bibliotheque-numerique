@@ -17,7 +17,7 @@ import type {
   ICustomFilter,
   IDemarche,
   IMappingColumn,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 
 import {
   type FrontMappingColumn,

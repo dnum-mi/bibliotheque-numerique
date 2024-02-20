@@ -2,7 +2,7 @@
 import sanitizeHtml from 'sanitize-html'
 
 import iconRoundMarianne from '@/assets/icone-ronde-marianne.png'
-import { getIconNameFromFilename } from '@biblio-num/shared-utils'
+import { getIconNameFromFilename } from '@biblio-num/shared'
 
 type Message = {
     id: number

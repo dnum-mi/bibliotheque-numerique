@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { getIconNameFromMimeType } from '@biblio-num/shared-utils'
+import { getIconNameFromMimeType } from '@biblio-num/shared'
 
 const props = defineProps<{
   params: {

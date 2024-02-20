@@ -30,7 +30,6 @@
   },
   "dependencies": {
     "@biblio-num/shared": "workspace:^",
-    "@biblio-num/shared-utils": "workspace:^",
     "@gouvfr/dsfr": "^1.11.0",
     "@gouvminint/vue-dsfr": "^5.8.0",
     "@vee-validate/zod": "^4.12.5",

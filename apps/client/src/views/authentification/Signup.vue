@@ -4,7 +4,7 @@ import { AxiosError } from 'axios'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useField, useForm, useIsFormDirty, useIsFormValid } from 'vee-validate'
 
-import type { ICreateUser } from '@biblio-num/shared-utils'
+import type { ICreateUser } from '@biblio-num/shared'
 
 import apiClient from '@/api/api-client'
 import { passwordValidator } from '@/utils/password.validator'

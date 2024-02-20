@@ -5,7 +5,7 @@ import {
   IRole,
   IUser,
   Roles,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 import { UserService } from '@/modules/users/providers/user.service'
 import { UserWithEditableRole } from '@/modules/users/objects/dtos/output'
 import { UpdateOneRoleOptionDto } from '@/modules/users/objects/dtos/input'

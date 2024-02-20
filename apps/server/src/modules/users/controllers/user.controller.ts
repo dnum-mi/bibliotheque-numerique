@@ -12,7 +12,7 @@ import {
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 import { UserService } from '../providers/user.service'
 
-import { IUser, Roles } from '@biblio-num/shared-utils'
+import { IUser, Roles } from '@biblio-num/shared'
 import { UpdatePasswordGuard } from '@/modules/users/providers/guards/update-password.guard'
 import { ValidSignUpGuard } from '@/modules/users/providers/guards/validate-sign-up.guard'
 import { Role } from '@/modules/users/providers/decorators/role.decorator'

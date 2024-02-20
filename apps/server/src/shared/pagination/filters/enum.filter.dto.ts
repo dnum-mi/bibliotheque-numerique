@@ -1,6 +1,6 @@
 import { ArrayNotEmpty, IsDefined, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
-import { IEnumFilterCondition, IFilterEnum } from '@biblio-num/shared-utils'
+import { IEnumFilterCondition, IFilterEnum } from '@biblio-num/shared'
 
 export class EnumFilterConditionDto implements IEnumFilterCondition {
   type?: undefined

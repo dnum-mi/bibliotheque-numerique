@@ -2,7 +2,7 @@
 <script lang="ts" setup>
 import type { SelectionChangedEvent } from 'ag-grid-community'
 
-import type { IPaginationUser } from '@biblio-num/shared-utils'
+import type { IPaginationUser } from '@biblio-num/shared'
 
 import { dateToStringFr } from '@/utils'
 import { useUserStore } from '@/stores'

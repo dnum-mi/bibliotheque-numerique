@@ -5,7 +5,7 @@ import {
   IdentificationDemarche,
   IdentificationDemarcheKeys,
   ICreateDemarche,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 
 export class CreateDemarcheDto implements ICreateDemarche {
   @IsNumber()
