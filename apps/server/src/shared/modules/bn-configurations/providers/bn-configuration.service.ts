@@ -4,7 +4,7 @@ import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
-import { BnConfiguration } from '@/modules/bn-configurations/objects/entities/bn-configuration.entity'
+import { BnConfiguration } from '@/shared/modules/bn-configurations/objects/entities/bn-configuration.entity'
 import {
   BnConfigurationMandatoryData, BnConfigurationTypes,
 } from '@biblio-num/shared'

@@ -8,9 +8,9 @@ import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
 import {
   BnConfigurationOutputDto,
-} from '@/modules/bn-configurations/objects/dto/bn-configuration-output.dto'
+} from '@/shared/modules/bn-configurations/objects/dto/bn-configuration-output.dto'
 
-import { BnConfigurationService } from '@/modules/bn-configurations/providers/bn-configuration.service'
+import { BnConfigurationService } from '@/shared/modules/bn-configurations/providers/bn-configuration.service'
 import { CreateBnConfigurationDto } from '../objects/dto/create-bn-configuration.dto'
 import { UpdateBnConfigurationDto } from '../objects/dto/update-bn-configuration.dto'
 import { Roles } from '@biblio-num/shared'
