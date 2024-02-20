@@ -1,30 +1,23 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity } from 'typeorm'
 import { BaseEntity } from '@/shared/base-entity/base.entity'
 import {
-  BnConfigurationTypes,
-  BnConfigurationTypesKeys,
-  BnConfigurationKeyNames,
-  BnConfigurationMandatoryDataKeys,
+  eBnConfiguration,
+  BnConfigurationKey,
+  BnConfigurationTypeKey,
+  eBnConfigurationType,
 } from '@biblio-num/shared'
 
 @Entity({ name: 'bn-configurations' })
 export class BnConfiguration extends BaseEntity {
-  @PrimaryGeneratedColumn('increment')
-  declare id: number
-
-  @Column(
-    {
-      type: 'enum',
-      nullable: false,
-      unique: true,
-      enum: BnConfigurationKeyNames,
-      transformer: {
-        from: (dbValue: string) => dbValue,
-        to: (entityValue: string) => entityValue.toUpperCase(),
-      },
-    },
-  )
-  keyName: BnConfigurationMandatoryDataKeys
+   @Column(
+     {
+       type: 'enum',
+       nullable: false,
+       unique: true,
+       enum: eBnConfiguration,
+     },
+   )
+  keyName: BnConfigurationKey
 
   @Column(
     'varchar',
@@ -38,10 +31,10 @@ export class BnConfiguration extends BaseEntity {
   @Column(
     {
       type: 'enum',
-      enum: BnConfigurationTypes,
+      enum: eBnConfigurationType,
       nullable: false,
-      default: BnConfigurationTypes.STRING,
+      default: eBnConfigurationType.string,
     },
   )
-  valueType: BnConfigurationTypesKeys
+  valueType: BnConfigurationTypeKey
 }

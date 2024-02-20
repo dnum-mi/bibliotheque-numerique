@@ -1,9 +1,13 @@
-export const BnConfigurationTypes = {
-  STRING: 'string',
-  NUMBER: 'number',
-  BOOLEAN: 'boolean',
-  JSON: 'json',
-  DATE: 'date',
-}
+import { createEnum } from '../../factories'
 
-export type BnConfigurationTypesKeys = (typeof BnConfigurationTypes)[keyof typeof BnConfigurationTypes]
+const bnConfigurationTypes = [
+  'string',
+  'number',
+  'boolean',
+  'json',
+  'date',
+] as const
+
+export type BnConfigurationTypeKey = typeof bnConfigurationTypes[number]
+
+export const eBnConfigurationType = createEnum(bnConfigurationTypes)
