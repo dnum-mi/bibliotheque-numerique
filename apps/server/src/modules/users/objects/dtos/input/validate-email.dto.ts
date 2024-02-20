@@ -1,4 +1,4 @@
-import { IValidateEmail } from '@biblio-num/shared-utils'
+import { IValidateEmail } from '@biblio-num/shared'
 import { ApiProperty } from '@nestjs/swagger'
 import { IsNotEmpty } from 'class-validator'
 

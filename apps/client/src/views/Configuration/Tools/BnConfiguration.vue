@@ -2,7 +2,7 @@
 import { useConfigurationStore } from '@/stores/configuration'
 import { ref } from 'vue'
 
-import type { BnConfigurationMandatoryDataKeys, BnConfigurationTypesKeys, IBnConfigurationOutput } from '@biblio-num/shared-utils'
+import type { BnConfigurationMandatoryDataKeys, BnConfigurationTypesKeys, IBnConfigurationOutput } from '@biblio-num/shared'
 
 const configurationStore = useConfigurationStore()
 

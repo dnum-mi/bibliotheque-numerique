@@ -6,7 +6,7 @@ import { fixFields } from '../objects/constante/fix-field.dictionnary'
 import { Field } from '../objects/entities/field.entity'
 
 import * as dayjs from 'dayjs'
-import { FieldSource, FieldType, FormatFunctionRef } from '@biblio-num/shared-utils'
+import { FieldSource, FieldType, FormatFunctionRef } from '@biblio-num/shared'
 import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
 
 const fakeMappingColumnHash: MappingColumn[] = [

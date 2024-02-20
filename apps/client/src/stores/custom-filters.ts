@@ -3,7 +3,7 @@ import type {
   IPatchCustomFilter,
 
   ICustomFilter,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 
 import apiClient from '@/api/api-client'
 

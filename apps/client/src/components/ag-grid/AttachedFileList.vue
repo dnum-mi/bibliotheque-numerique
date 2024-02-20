@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { GridReadyEvent, GridApi, ColDef, GridOptions, AgGridEvent } from 'ag-grid-community'
 
-import type { IPagination, DynamicKeys } from '@biblio-num/shared-utils'
+import type { IPagination, DynamicKeys } from '@biblio-num/shared'
 import apiClient from '@/api/api-client'
 import MimeTypeCellRenderer from './MimeTypeCellRenderer.vue'
 import AttachedFileStateCellRenderer from './AttachedFileStateCellRenderer.vue'

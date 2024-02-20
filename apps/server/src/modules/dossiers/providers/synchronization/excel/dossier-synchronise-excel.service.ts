@@ -11,7 +11,7 @@ import {
   characterFundingKeys,
   natureFundingKeys,
   paymentMethodKeys,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 import {
   fixFieldChampsTotalAmount,
   fixFieldDossierTotalAmount,

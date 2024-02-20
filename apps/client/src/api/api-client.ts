@@ -34,7 +34,7 @@ import type {
   RolesKeys,
   ICreateBnConfiguration,
   IUpdateBnConfiguration,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 
 import {
   demarchesRoute,

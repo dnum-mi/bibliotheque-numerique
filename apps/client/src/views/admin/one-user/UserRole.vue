@@ -1,10 +1,8 @@
 <script lang="ts" setup>
 import type { HTMLAttributes } from 'vue'
 import { computed, ref } from 'vue'
-import type { UserWithEditableRole } from '@biblio-num/shared'
-
-import type { RolesKeys } from '@biblio-num/shared-utils'
-import { Roles } from '@biblio-num/shared-utils'
+import type { UserWithEditableRole, RolesKeys } from '@biblio-num/shared'
+import { Roles } from '@biblio-num/shared'
 import { useUserStore } from '@/stores'
 import DsfrWarningButton from '@/components/dsfr-extends/DsfrWarningButton.vue'
 import type { DsfrRadioButtonProps } from '@gouvminint/vue-dsfr/types/components/DsfrRadioButton/DsfrRadioButton.vue'

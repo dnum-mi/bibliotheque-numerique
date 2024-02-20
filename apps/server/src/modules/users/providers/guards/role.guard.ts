@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { ROLE_KEY } from '../decorators/role.decorator'
-import { isSuperiorOrSimilar, RolesKeys } from '@biblio-num/shared-utils'
+import { isSuperiorOrSimilar, RolesKeys } from '@biblio-num/shared'
 import { PUBLIC_ROUTE_KEY } from '@/modules/users/providers/decorators/public-route.decorator'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 

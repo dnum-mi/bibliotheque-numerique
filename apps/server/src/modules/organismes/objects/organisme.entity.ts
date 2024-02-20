@@ -13,7 +13,7 @@ import {
   IRnfOutput,
   OrganismeType,
   OrganismeTypeKeys,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 
 @Entity({ name: 'organismes' })
 export class Organisme extends BaseEntity implements IOrganisme {

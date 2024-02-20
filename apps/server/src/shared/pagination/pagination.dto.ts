@@ -15,7 +15,7 @@ import { Type } from 'class-transformer'
 import { FilterDto } from './filters'
 import { IsValidFilter } from './filters/is-valid-filter.decorator'
 import { ColumnContainsKeyContraint } from './column-contains-key.contraint'
-import { IPagination } from '@biblio-num/shared-utils'
+import { IPagination } from '@biblio-num/shared'
 
 export class PaginationDto<T> implements IPagination<T> {
   @IsOptional()

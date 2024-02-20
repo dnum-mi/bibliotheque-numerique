@@ -1,5 +1,5 @@
 import { http, HttpResponse } from 'msw'
-import type { IFileOutput } from '@biblio-num/shared-utils'
+import type { IFileOutput } from '@biblio-num/shared'
 
 export const handlers = [
   // http.get('/api/users/me', () => {

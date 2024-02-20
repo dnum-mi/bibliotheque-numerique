@@ -1,4 +1,4 @@
-import { IAgGridUser, RolesKeys } from '@biblio-num/shared-utils'
+import { IAgGridUser, RolesKeys } from '@biblio-num/shared'
 
 export class AgGridUserDto implements IAgGridUser {
   id: number

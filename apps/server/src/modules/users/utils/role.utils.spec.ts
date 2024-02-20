@@ -3,7 +3,7 @@ import {
   IRole,
   Prefecture,
   OrganismeType, IUser,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 import {
   generateRoleAttributionList,
   generateUserWithEditableRole,

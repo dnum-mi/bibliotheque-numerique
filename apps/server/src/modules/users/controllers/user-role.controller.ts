@@ -7,7 +7,7 @@ import {
   IRole,
   Roles,
   IUser,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
 import { TargetUserInterceptor } from '@/modules/users/providers/interceptors/target-user.interceptor'
 import { RoleService } from '@/modules/users/providers/role.service'

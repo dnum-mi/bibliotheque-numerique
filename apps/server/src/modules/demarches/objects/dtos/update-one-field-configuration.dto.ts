@@ -1,4 +1,4 @@
-import { IUpdateOneFieldConfiguration } from '@biblio-num/shared-utils'
+import { IUpdateOneFieldConfiguration } from '@biblio-num/shared'
 import { IsOptional, IsString, ValidateIf } from 'class-validator'
 
 export class UpdateOneFieldConfigurationDto implements IUpdateOneFieldConfiguration {

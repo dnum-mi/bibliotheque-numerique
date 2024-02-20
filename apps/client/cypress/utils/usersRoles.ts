@@ -4,7 +4,7 @@ import type {
   IUserOutput,
 
   IRole,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 import { faker } from '@faker-js/faker/locale/fr'
 
 const noRole: IRole = {

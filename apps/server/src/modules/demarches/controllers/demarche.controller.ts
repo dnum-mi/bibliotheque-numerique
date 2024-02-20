@@ -24,7 +24,7 @@ import {
 import {
   IRole,
   Roles,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
 import { CurrentUserRole } from '@/modules/users/providers/decorators/current-user-role.decorator'

@@ -1,5 +1,5 @@
 import { Demarche } from '../entities/demarche.entity'
-import { IDemarche } from '@biblio-num/shared-utils'
+import { IDemarche } from '@biblio-num/shared'
 import { PickType } from '@nestjs/swagger'
 
 export const demarcheOutputDtoKeys: (keyof Demarche)[] = [

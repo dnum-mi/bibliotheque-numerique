@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { File } from '@dnum-mi/ds-api-client'
 
-import { getIconNameFromFilename } from '@biblio-num/shared-utils'
+import { getIconNameFromFilename } from '@biblio-num/shared'
 
 defineProps<{
   files: Array<File>

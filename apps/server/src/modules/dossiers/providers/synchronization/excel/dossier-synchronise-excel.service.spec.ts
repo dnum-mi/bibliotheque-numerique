@@ -19,7 +19,7 @@ import {
 import { Field } from '@/modules/dossiers/objects/entities/field.entity'
 import { ExcelDataRow } from '@/shared/types/excel-data.type'
 import { XlsxService } from '@/shared/modules/xlsx/xlsx.service'
-import { FormatFunctionRef } from '@biblio-num/shared-utils'
+import { FormatFunctionRef } from '@biblio-num/shared'
 
 const fakeExcelDateFundingNumber = 45288
 const fakeExcelDateFundingString = '28/12/2023'

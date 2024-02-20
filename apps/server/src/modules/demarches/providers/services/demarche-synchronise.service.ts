@@ -26,7 +26,7 @@ import {
   FieldSource,
   FieldSourceKeys,
   type IdentificationDemarcheKeys,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
 import { InjectQueue } from '@nestjs/bull'
@@ -34,7 +34,7 @@ import { Queue } from 'bull'
 import { JobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
 import { SyncOneDossierPayload } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
 
-import { OrganismeTypeKeys } from '@biblio-num/shared-utils'
+import { OrganismeTypeKeys } from '@biblio-num/shared'
 import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
 
 @Injectable()

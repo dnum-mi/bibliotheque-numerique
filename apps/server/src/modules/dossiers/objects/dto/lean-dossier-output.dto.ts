@@ -1,4 +1,4 @@
-import type { ILeanDossierOutput, PrefectureKeys } from '@biblio-num/shared-utils'
+import type { ILeanDossierOutput, PrefectureKeys } from '@biblio-num/shared'
 
 export class LeanDossierOutputDto implements ILeanDossierOutput {
   id: number

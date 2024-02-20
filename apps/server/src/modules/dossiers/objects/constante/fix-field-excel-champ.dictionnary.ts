@@ -2,7 +2,7 @@ import {
   FieldType,
   FieldSource,
   FormatFunctionRef,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 import { excelChampsLabel, totalAmountLable } from '@/modules/dossiers/objects/constante/excel-champ.enum'
 import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
 
