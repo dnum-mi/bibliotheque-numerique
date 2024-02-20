@@ -70,7 +70,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
-      '@biblio-num/shared-utils': '@biblio-num/shared-utils/dist/index.esm.js',
+      '@biblio-num/shared': '@biblio-num/shared/dist/index.esm.js',
     },
     dedupe: ['vue', 'oh-vue-icons'],
   },

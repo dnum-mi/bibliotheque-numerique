@@ -7,7 +7,7 @@ import {
   Roles,
   IUser,
   OneDemarcheRoleOption,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 
 import { isDefined } from 'class-validator'
 import { UserWithEditableRole } from '@/modules/users/objects/dtos/output'

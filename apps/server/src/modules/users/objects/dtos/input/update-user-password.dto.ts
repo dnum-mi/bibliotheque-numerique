@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsNotEmpty } from 'class-validator'
 import { IsPasswordStrongEnough } from './is-password-strong-enough'
-import { IUpdateUserPassword } from '@biblio-num/shared-utils'
+import { IUpdateUserPassword } from '@biblio-num/shared'
 
 export class UpdateUserPasswordDto implements IUpdateUserPassword {
   @ApiProperty({

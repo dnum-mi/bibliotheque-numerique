@@ -8,7 +8,7 @@ import { FieldSearchService } from '../../dossiers/providers/search/field-search
 
 import {
   Roles,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 import { CurrentDemarche } from '@/modules/demarches/providers/decorators/current-demarche.decorator'
 import { ServerResponse } from 'http'
 import { XlsxService } from '@/shared/modules/xlsx/xlsx.service'

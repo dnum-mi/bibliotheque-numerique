@@ -4,7 +4,7 @@ import {
   FormatFunctionRefKeys,
   FieldTypeKeys,
   FieldType,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 import { Champ, ChampDescriptor } from '@dnum-mi/ds-api-client'
 
 export const giveFormatFunctionRefFromDsChampType = (

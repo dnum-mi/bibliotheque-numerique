@@ -1,6 +1,6 @@
-import type { OneDemarcheRoleOption, RolesKeys } from '@biblio-num/shared-utils'
+import type { OneDemarcheRoleOption, RolesKeys } from '@biblio-num/shared'
 import { UserOutputDto } from './user-output.dto'
-import { IUserWithEditableRole } from '@biblio-num/shared-utils'
+import { IUserWithEditableRole } from '@biblio-num/shared'
 
 export class UserWithEditableRole implements IUserWithEditableRole {
   originalUser: UserOutputDto

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { Demandeur, PersonnePhysique, TDossier } from '@biblio-num/shared-utils'
+import type { Demandeur, PersonnePhysique, TDossier } from '@biblio-num/shared'
 
 import DossierMessage from './DossierMessage.vue'
 import { getInitialsFromName } from '@/utils/name-to-initials'

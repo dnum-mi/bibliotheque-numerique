@@ -13,7 +13,7 @@ import {
 import { BnConfigurationService } from '@/modules/bn-configurations/providers/bn-configuration.service'
 import { CreateBnConfigurationDto } from '../objects/dto/create-bn-configuration.dto'
 import { UpdateBnConfigurationDto } from '../objects/dto/update-bn-configuration.dto'
-import { Roles } from '@biblio-num/shared-utils'
+import { Roles } from '@biblio-num/shared'
 
 @ApiTags('BnConfigurations')
 @Controller('bn-configurations')

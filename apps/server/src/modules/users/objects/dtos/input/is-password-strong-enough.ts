@@ -4,7 +4,7 @@ import {
   isString,
   isLongerThan15,
   containsSpecialChars,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 
 // this function cannot be inside shared-utils because it uses class-validator
 export function IsPasswordStrongEnough (validationOptions?: ValidationOptions) {

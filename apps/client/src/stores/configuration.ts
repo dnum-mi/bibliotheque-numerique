@@ -8,7 +8,7 @@ import type {
   IUpdateDemarche,
   IdentificationDemarcheKeys,
   OrganismeTypeKeys,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 
 import { createDemarche, patchDemarche, putSynchronizeOneDemarche } from '../api/sudo-api-client'
 

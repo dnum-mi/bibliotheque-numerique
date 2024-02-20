@@ -1,7 +1,7 @@
 import type { RouteRecordRaw } from 'vue-router'
 
 import { routeNames } from '@/router/route-names'
-import { Roles } from '@biblio-num/shared-utils'
+import { Roles } from '@biblio-num/shared'
 
 export const configurationRoute: RouteRecordRaw = {
   name: routeNames.CONFIGURATION_DEMARCHES,

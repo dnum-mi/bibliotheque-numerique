@@ -1,4 +1,4 @@
-import { FieldTypeKeys } from '@biblio-num/shared-utils'
+import { FieldTypeKeys } from '@biblio-num/shared'
 import { User } from '../user.entity'
 
 // TODO: maybe there is an elegant way to have this.

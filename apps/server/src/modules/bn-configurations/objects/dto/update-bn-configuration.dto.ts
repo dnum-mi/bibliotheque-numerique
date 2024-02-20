@@ -5,7 +5,7 @@ import {
   BnConfigurationTypes,
   BnConfigurationTypesKeys,
   IUpdateBnConfiguration,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 
 export class UpdateBnConfigurationDto implements IUpdateBnConfiguration {
   @IsOptional()

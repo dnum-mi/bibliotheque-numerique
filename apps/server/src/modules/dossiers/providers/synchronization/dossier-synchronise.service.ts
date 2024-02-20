@@ -11,7 +11,7 @@ import {
   PrefectureKeys,
   IdentificationDemarche,
   IdentificationDemarcheKeys,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { DsChampType } from '@/shared/modules/ds-api/objects/ds-champ-type.enum'
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'

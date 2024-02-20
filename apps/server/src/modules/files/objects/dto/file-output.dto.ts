@@ -1,4 +1,4 @@
-import { IFileOutput } from '@biblio-num/shared-utils'
+import { IFileOutput } from '@biblio-num/shared'
 
 export class FileOutputDto implements IFileOutput {
   id: number

@@ -12,7 +12,7 @@ import {
   IRnaOutput,
   IRnfOutput,
   OrganismeType,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 
 import { OrganismeFieldTypeHash } from '@/modules/organismes/objects/const/organisme-field-type-hash.const'
 import {

@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useField, useForm } from 'vee-validate'
 
-import type { ICredentialsInput } from '@biblio-num/shared-utils'
+import type { ICredentialsInput } from '@biblio-num/shared'
 import LayoutAccueil from '@/components/Layout/LayoutAccueil.vue'
 import { useUserStore } from '@/stores'
 import ToggleInputPassword from '@/components/ToggleInputPassword.vue'

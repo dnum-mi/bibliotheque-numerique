@@ -1,5 +1,5 @@
 import { type IFilterDef } from 'ag-grid-community'
-import type { FormatFunctionRefKeys } from '@biblio-num/shared-utils'
+import type { FormatFunctionRefKeys } from '@biblio-num/shared'
 
 import { DossierState } from '@/utils'
 import StatusBadgesRenderer from '../../Badges/StatusBadgesRenderer.vue'

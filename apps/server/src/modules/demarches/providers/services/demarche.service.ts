@@ -11,7 +11,7 @@ import {
   isBelowSuperAdmin,
   Roles,
   IRole,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 
 import { FindManyOptions } from 'typeorm/find-options/FindManyOptions'
 import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere'

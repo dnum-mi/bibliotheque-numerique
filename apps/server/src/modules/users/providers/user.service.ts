@@ -18,7 +18,7 @@ import {
   IRole,
   OrganismeTypeKeys,
   IUser,
-} from '@biblio-num/shared-utils'
+} from '@biblio-num/shared'
 
 import { UserFieldTypeHashConst } from '@/modules/users/objects/consts/user-field-type-hash.const'
 import { DemarcheService } from '@/modules/demarches/providers/services/demarche.service'
