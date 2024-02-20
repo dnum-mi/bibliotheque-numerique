@@ -35,7 +35,7 @@ import { RoleGuard } from '@/modules/users/providers/guards/role.guard'
 import { InstructionTimesModule } from '@/modules/instruction_time/instruction_times.module'
 import { CustomBullModule } from '@/shared/modules/custom-bull/custom-bull.module'
 import { CronModule } from '@/modules/cron/cron.module'
-import { BnConfigurationModule } from '@/modules/bn-configurations/bn-configuration.module'
+import { BnConfigurationModule } from '@/shared/modules/bn-configurations/bn-configuration.module'
 
 @Module({
   imports: [
