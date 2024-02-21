@@ -7,7 +7,7 @@
   "types": "./dist/src",
   "scripts": {
     "clean:dist": "rimraf dist types",
-    "dev": "nodemon --watch src --exec 'tsup'",
+    "dev": "nodemon --exec 'tsup'",
     "build": "run-s clean:dist build:only",
     "build:only": "tsup"
   },
