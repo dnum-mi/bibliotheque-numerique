@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.4.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.3.1...v2.4.0) (2024-02-22)
+
+
+### Features
+
+* date fin exercice - add fiscalEndDateAt in db of bn ([c458094](https://github.com/dnum-mi/bibliotheque_numerique/commit/c458094a745b8fce398ed46eea6e70137ffd29a4))
+* date fin exercice - get fiscal end date from rnf to bn ([1ef65ab](https://github.com/dnum-mi/bibliotheque_numerique/commit/1ef65abc1d969d64e7168c119d3152c4cf249bba))
+
 ## [2.3.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.3.0...v2.3.1) (2024-02-22)
 
 
