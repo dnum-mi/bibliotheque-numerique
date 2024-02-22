@@ -1,10 +1,10 @@
 import { InjectQueue, Process, Processor } from '@nestjs/bull'
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
 import { DemarcheService } from '@/modules/demarches/providers/services/demarche.service'
-import { JobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
+import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
 import {
-  SyncAllDemarchePayload,
-  SyncOneDemarchePayload,
+  SyncAllDemarcheJobPayload,
+  SyncOneDemarcheJobPayload,
 } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
 import { Job, Queue } from 'bull'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
@@ -23,8 +23,8 @@ export class DemarcheProcessor {
     this.logger.setContext(this.constructor.name)
   }
 
-  @Process(JobName.SyncAllDemarche)
-  async syncAllDemarche(job: Job<SyncAllDemarchePayload>): Promise<void> {
+  @Process(eJobName.SyncAllDemarche)
+  async syncAllDemarche(job: Job<SyncAllDemarcheJobPayload>): Promise<void> {
     this.logger.verbose('sync all demarche')
     const demarcheIds = (
       await this.demarcheService.repository.find({
@@ -33,16 +33,16 @@ export class DemarcheProcessor {
     ).map((d) => d.id)
     for (const id of demarcheIds) {
       this.logger.debug('Adding job to sync demarche ' + id)
-      await this.syncQueue.add(JobName.SyncOneDemarche, {
+      await this.syncQueue.add(eJobName.SyncOneDemarche, {
         demarcheId: id,
         fromScratch: job.data.fromScratch,
-      } as SyncOneDemarchePayload)
+      } as SyncOneDemarcheJobPayload)
     }
     job.finished()
   }
 
-  @Process(JobName.SyncOneDemarche)
-  async syncOneDemarche(job: Job<SyncOneDemarchePayload>): Promise<void> {
+  @Process(eJobName.SyncOneDemarche)
+  async syncOneDemarche(job: Job<SyncOneDemarcheJobPayload>): Promise<void> {
     this.logger.verbose('sync one demarche')
     await this.demarcheSynchroniseService.synchroniseOneDemarche(job.data.demarcheId, job.data.fromScratch)
     job.finished()

@@ -3,17 +3,17 @@ import { ConfigService } from '@nestjs/config'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 
 import {
-  JobName,
-  JobNameKeys,
+  eJobName,
+  JobNameKey,
 } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
 import { InjectQueue } from '@nestjs/bull'
 import { Queue } from 'bull'
-import { SyncAllDemarchePayload } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
+import { SyncAllDemarcheJobPayload } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
 
 @Injectable()
 export class CronService implements OnApplicationBootstrap {
-  private jobCron: { name: JobNameKeys; cron: string, payload?: object }[] = []
+  private jobCron: { name: JobNameKey; cron: string, payload?: object }[] = []
 
   constructor(
     private config: ConfigService,
@@ -26,22 +26,22 @@ export class CronService implements OnApplicationBootstrap {
   private _loadCronJobTimes(): void {
     this.jobCron = [
       {
-        name: JobName.SyncAllDemarche,
+        name: eJobName.SyncAllDemarche,
         cron: this.config.get('cron').syncAllDemarche,
         payload: {
           fromScratch: false,
-        } as SyncAllDemarchePayload,
+        } as SyncAllDemarcheJobPayload,
       },
       {
-        name: JobName.SyncAllRnfOrganisme,
+        name: eJobName.SyncAllRnfOrganisme,
         cron: this.config.get('cron').syncAllRnfOrganisme,
       },
       {
-        name: JobName.SyncAllRnaOrganisme,
+        name: eJobName.SyncAllRnaOrganisme,
         cron: this.config.get('cron').syncAllRnaOrganisme,
       },
       {
-        name: JobName.ComputeTimeTracking,
+        name: eJobName.ComputeTimeTracking,
         cron: this.config.get('cron').computeTimeTracking,
       },
     ]

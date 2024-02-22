@@ -1,7 +1,12 @@
-import { CreateDateColumn, UpdateDateColumn } from 'typeorm'
+import {
+  CreateDateColumn,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm'
 
 export abstract class BaseEntity {
-  id: number
+  @PrimaryGeneratedColumn('increment')
+  declare id: number
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date

@@ -1,17 +1,18 @@
-import { Column, Entity, JoinTable, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity, JoinTable, OneToMany } from 'typeorm'
 import { Dossier } from '../../../dossiers/objects/entities/dossier.entity'
 import { BaseEntity } from '@/shared/base-entity/base.entity'
 import { Demarche as TDemarche } from '@dnum-mi/ds-api-client/dist/@types/generated-types'
-import { IdentificationDemarcheKeys, IdentificationDemarche, IDemarche } from '@biblio-num/shared'
-import { CustomFilter } from '../../../custom-filters/objects/entities/custom-filter.entity'
 import type { OrganismeTypeKeys } from '@biblio-num/shared'
+import {
+  IDemarche,
+  IdentificationDemarche,
+  IdentificationDemarcheKeys,
+} from '@biblio-num/shared'
+import { CustomFilter } from '../../../custom-filters/objects/entities/custom-filter.entity'
 import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
 
 @Entity({ name: 'demarches' })
 export class Demarche extends BaseEntity implements IDemarche {
-  @PrimaryGeneratedColumn('increment')
-  declare id: number
-
   @OneToMany(() => Dossier, (dossier) => dossier.demarche)
   dossiers: Dossier[]
 

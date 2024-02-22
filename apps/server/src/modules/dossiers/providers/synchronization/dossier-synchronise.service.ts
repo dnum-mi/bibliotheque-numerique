@@ -7,19 +7,19 @@ import { Queue } from 'bull'
 import { DossierWithCustomChamp as TDossier } from '@dnum-mi/ds-api-client'
 
 import {
-  Prefecture,
-  PrefectureKeys,
   IdentificationDemarche,
   IdentificationDemarcheKeys,
+  Prefecture,
+  PrefectureKeys,
 } from '@biblio-num/shared'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { DsChampType } from '@/shared/modules/ds-api/objects/ds-champ-type.enum'
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
-import { JobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
+import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import {
-  SyncOneRnaOrganismePayload,
-  SyncOneRnfOrganismePayload,
+  SyncOneRnaOrganismeJobPayload,
+  SyncOneRnfOrganismeJobPayload,
 } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
 
 import { InstructionTimesService } from '@/modules/instruction_time/instruction_times.service'
@@ -27,12 +27,7 @@ import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
 import { Demarche } from '@/modules/demarches/objects/entities/demarche.entity'
 import { FieldService } from '@/modules/dossiers/providers/field.service'
 import { Field } from '@/modules/dossiers/objects/entities/field.entity'
-import {
-  DossierSynchroniseExcelService,
-} from '@/modules/dossiers/providers/synchronization/excel/dossier-synchronise-excel.service'
-import {
-  DossierSynchroniseFileService,
-} from '@/modules/dossiers/providers/synchronization/file/dossier-synchronize-file.service'
+import { DossierSynchroniseFileService } from '@/modules/dossiers/providers/synchronization/file/dossier-synchronize-file.service'
 
 @Injectable()
 export class DossierSynchroniseService extends BaseEntityService<Dossier> {
@@ -41,7 +36,6 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
     protected readonly logger: LoggerService,
     private readonly fieldService: FieldService,
     private readonly fileSynchroniseService: DossierSynchroniseFileService,
-    private readonly excelSynchroniseService: DossierSynchroniseExcelService,
     private readonly instructionTimeService: InstructionTimesService,
     @InjectQueue(QueueName.sync) private readonly syncQueue: Queue,
   ) {
@@ -93,7 +87,6 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
       this.logger.debug('This demarche is FE')
       await this.instructionTimeService.proccessByDossierId(id)
       await this.instructionTimeService.instructionTimeCalculation([id])
-      await this.excelSynchroniseService.synchroniseExcel(id)
     }
   }
 
@@ -115,18 +108,18 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
         this.logger.debug(
           'Adding Organisme sync for rna: ' + organismeField.stringValue,
         )
-        this.syncQueue.add(JobName.SyncOneRnaOrganisme, {
+        this.syncQueue.add(eJobName.SyncOneRnaOrganisme, {
           dossierId,
           rna: organismeField.stringValue,
-        } as SyncOneRnaOrganismePayload)
+        } as SyncOneRnaOrganismeJobPayload)
       } else {
         this.logger.debug(
           'Adding Organisme sync for rnf: ' + organismeField.stringValue,
         )
-        this.syncQueue.add(JobName.SyncOneRnfOrganisme, {
+        this.syncQueue.add(eJobName.SyncOneRnfOrganisme, {
           dossierId,
           rnf: organismeField.stringValue,
-        } as SyncOneRnfOrganismePayload)
+        } as SyncOneRnfOrganismeJobPayload)
       }
     }
   }

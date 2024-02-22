@@ -1,10 +1,11 @@
+import { createEnum } from '../../factories'
+
 const fileTags = [
   'status',
-  'depot-de-compte',
-]
+  'account',
+  'excel-fe',
+] as const
 
 export type FileTagKey = (typeof fileTags)[number]
 
-export const eFileTag = Object.fromEntries(
-  fileTags.map(ft => [ft, ft]),
-) as Record<FileTagKey, FileTagKey>
+export const eFileTag = createEnum(fileTags)

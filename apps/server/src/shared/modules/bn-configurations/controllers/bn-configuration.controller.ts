@@ -13,7 +13,7 @@ import {
 import { BnConfigurationService } from '@/shared/modules/bn-configurations/providers/bn-configuration.service'
 import { CreateBnConfigurationDto } from '../objects/dto/create-bn-configuration.dto'
 import { UpdateBnConfigurationDto } from '../objects/dto/update-bn-configuration.dto'
-import { Roles, BnConfigurationKey } from '@biblio-num/shared'
+import { Roles, BnConfigurationKey, eBnConfiguration } from '@biblio-num/shared'
 
 @ApiTags('BnConfigurations')
 @Controller('bn-configurations')
@@ -38,6 +38,9 @@ export class BnConfigurationController {
     this.logger.verbose('getConfigurationByKey')
     if (!keyName) {
       throw new BadRequestException('keyName is required')
+    }
+    if (!eBnConfiguration[keyName]) {
+      throw new BadRequestException('keyName is invalid')
     }
     return this.configurationService.findByKeyName(keyName)
   }

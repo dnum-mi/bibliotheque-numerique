@@ -31,8 +31,8 @@ import {
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
 import { InjectQueue } from '@nestjs/bull'
 import { Queue } from 'bull'
-import { JobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
-import { SyncOneDossierPayload } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
+import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
+import { SyncOneDossierJobPayload } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
 
 import { OrganismeTypeKeys } from '@biblio-num/shared'
 import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
@@ -58,11 +58,11 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
   ): Promise<void> {
     this.logger.verbose('_synchroniseAllDossier')
     for (const dossier of dossiers) {
-      await this.syncQueue.add(JobName.SyncOneDossier, {
+      await this.syncQueue.add(eJobName.SyncOneDossier, {
         demarcheId,
         dsDossierId: dossier.number,
         fromScratch,
-      } as SyncOneDossierPayload)
+      } as SyncOneDossierJobPayload)
     }
   }
 
@@ -91,6 +91,7 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
         formatFunctionRef: giveFormatFunctionRefFromDsChampType(cd),
         source,
         type: giveTypeFromDsChampType(cd.__typename, true),
+        // @ts-ignore TODO: same problem with CustomChamp, can't cas
         ...(isRepetitionChampDescriptor(cd)
           ? {
             children: __fromDescriptorsToMappingColumn(

@@ -11,6 +11,7 @@ import {
   characterFundingKeys,
   natureFundingKeys,
   paymentMethodKeys,
+  eBnConfiguration,
 } from '@biblio-num/shared'
 import {
   fixFieldChampsTotalAmount,
@@ -25,9 +26,7 @@ import {
   fixFieldsExcelNatureFunding,
   fixFieldsExcelPaymentMethod,
 } from '@/modules/dossiers/objects/constante/fix-field-excel-champ.dictionnary'
-import { ConfigService } from '@nestjs/config'
-import { RawChamp } from '@/shared/types/raw-champ.type'
-import { PieceJustificativeChamp } from '@dnum-mi/ds-api-client'
+
 import {
   ExcelData,
   ExcelDataCell,
@@ -39,6 +38,8 @@ import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { InjectRepository } from '@nestjs/typeorm'
 import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
+import { File } from '@/modules/files/objects/entities/file.entity'
+import { BnConfigurationService } from '@/shared/modules/bn-configurations/providers/bn-configuration.service'
 
 @Injectable()
 export class DossierSynchroniseExcelService extends BaseEntityService<Field> {
@@ -48,77 +49,34 @@ export class DossierSynchroniseExcelService extends BaseEntityService<Field> {
     @InjectRepository(Field) protected repo: Repository<Field>,
     protected logger: LoggerService,
     private xlsxService: XlsxService,
-    private configService: ConfigService,
+    private readonly bnConfigurationService: BnConfigurationService,
   ) {
     super(repo, logger)
     this.logger.setContext(this.constructor.name)
   }
 
   //#region PRIVATE
-  async createFieldsFromRawJson(dossierId: number): Promise<Field> {
+  async createFields(file: File): Promise<Field> {
     this.logger.verbose('createFieldsFromRawJson')
-
-    const excelField: Field = await this._findExcelFieldByDossierId(dossierId)
-
-    if (!excelField?.rawJson) {
-      this.logger.error('excel field is not correct')
-      this.logger.debug(excelField)
-      return null
-    }
-
-    const fileUrl = (excelField.rawJson as PieceJustificativeChamp).file?.url
-    if (!fileUrl) {
-      this.logger.warn('Excel field fileUrl not found in rawJson')
-      return null
-    }
-
-    const rawJson = excelField.rawJson as RawChamp
-    const field: CreateFieldDto = await this._createFieldsFromExcelFile(
-      rawJson,
-      dossierId,
-      fileUrl,
-    )
+    const field: CreateFieldDto = await this._createFieldsFromExcelFile(file)
     if (!field) return null
-
-    this.logger.debug(field)
     return this.repo.save(field)
   }
 
-  async _findExcelFieldByDossierId(dossierId: number): Promise<Field> {
-    this.logger.verbose('_findExcelFieldByDossierId')
-    return await this.repo.findOne({
-      where: {
-        dossierId,
-        fieldSource: 'champs',
-        dsChampType: DsChampType.PieceJustificativeChamp,
-        sourceId: this.configService.get<string>('excel-import.excelChampId'),
-      },
-    })
-  }
-
   private async _createFieldsFromExcelFile(
-    champ: RawChamp,
-    dossierId: number,
-    fileUrl: string,
+    file: File,
   ): Promise<CreateFieldDto> {
     this.logger.verbose('_createFieldsFromExcelFile')
 
-    if (
-      champ.id !== this.configService.get<string>('excel-import.excelChampId')
-    ) {
-      this.logger.verbose('Champ id is not the excel champ id')
-      return null
-    }
-
     const excelData: ExcelData =
-      await this.xlsxService.readExcelFileFromS3(fileUrl)
+      await this.xlsxService.readExcelFileFromS3(file)
     if (!excelData.length) {
       this.logger.warn('Excel file is empty')
       return null
     }
 
     const childrenData = excelData
-      .map((row, i) => this._createFieldsFromExcelRow(row, dossierId, i))
+      .map((row, i) => this._createFieldsFromExcelRow(row, file.dossier.id, i))
       .flat()
 
     return {
@@ -131,7 +89,7 @@ export class DossierSynchroniseExcelService extends BaseEntityService<Field> {
       dateValue: null,
       numberValue: null,
       dsChampType: DsChampType.RepetitionChamp,
-      dossierId,
+      dossierId: file.dossier.id,
       parentRowIndex: null,
       children: childrenData,
     } as CreateFieldDto
@@ -346,7 +304,7 @@ export class DossierSynchroniseExcelService extends BaseEntityService<Field> {
         dsChampType: DsChampType.IntegerNumberChamp,
       })
       .andWhere('field.sourceId = :sourceId', {
-        sourceId: this.configService.get<string>('excel-import.amountChampId'),
+        sourceId: (await this.bnConfigurationService.findByKeyName(eBnConfiguration.FE_EXCEL_AMOUNT_CHAMP_ID)).stringValue,
       })
       .andWhere('field.numberValue IS NOT NULL')
       .getRawOne()
@@ -439,10 +397,14 @@ export class DossierSynchroniseExcelService extends BaseEntityService<Field> {
       rawJson: null,
     }
   }
+
   //#endregion
 
-  async synchroniseExcel(dossierId: number): Promise<void> {
+  async synchroniseExcel(file: File): Promise<void> {
     this.logger.verbose('synchroniseExcel')
-    await this.createFieldsAmounts(dossierId, await this.createFieldsFromRawJson(dossierId))
+    await this.createFieldsAmounts(
+      file.dossier.id,
+      await this.createFields(file),
+    )
   }
 }

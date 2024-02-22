@@ -1,19 +1,19 @@
-import { IFileOutput, SourceLabel, State } from '@biblio-num/shared'
+import { File } from '@/modules/files/objects/entities/file.entity'
+import { PickType } from '@nestjs/mapped-types'
+import { IFileOutput } from '@biblio-num/shared'
 
-export class FileOutputDto implements IFileOutput {
-  id: number
-  createdAt: Date
-  updatedAt: Date
-  label: string
-  originalLabel: string
-  byteSize: number
-  mimeType: string
-  state: State
-  sourceLabel: SourceLabel
-  sourceUploadedAt?: Date
-  tag: string
-  dossierId?: number
-  organismeId?: number
-  uploaderId?: number
-  url: string
-}
+export const fileOutputDtoKeys = [
+  'id',
+  'createdAt',
+  'updatedAt',
+  'label',
+  'originalLabel',
+  'mimeType',
+  'state',
+  'sourceLabel',
+  'sourceUploadedAt',
+  'tag',
+  'uuid',
+] satisfies (keyof File)[]
+
+export class FileOutputDto extends PickType(File, fileOutputDtoKeys) implements IFileOutput {}

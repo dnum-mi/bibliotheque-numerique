@@ -1,19 +1,14 @@
-import { SourceLabel, State, IFile } from './file.interface'
+import type { IBaseEntity } from '../../common/base-entity.interface'
+import type { FileMimeTypeKey, FileSourceLabelKey, FileTagKey } from '../enums'
+import type { StateKey } from '../../state'
 
-export interface IFileOutput extends Omit<IFile, 'checksum'> {
-  id: number
-  createdAt: Date
-  updatedAt: Date
+export interface IFileOutput extends IBaseEntity {
   label: string
   originalLabel: string
-  byteSize: number
-  mimeType: string
-  state: State
-  sourceLabel: SourceLabel
-  sourceUploadedAt?: Date
-  tag: string
-  dossierId?: number
-  organismeId?: number
-  uploaderId?: number
-  url: string
+  mimeType: FileMimeTypeKey
+  state: StateKey
+  sourceLabel: FileSourceLabelKey
+  sourceUploadedAt: Date | null
+  tag: FileTagKey
+  uuid: string
 }

@@ -4,7 +4,6 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm'
 import { DossierState } from '@dnum-mi/ds-api-client/dist/@types/types'
@@ -15,13 +14,11 @@ import { Field } from './field.entity'
 import { Dossier as TDossier } from '@dnum-mi/ds-api-client/dist/@types/generated-types'
 import { Organisme } from '@/modules/organismes/objects/organisme.entity'
 import { IDossier, Prefecture, PrefectureKeys } from '@biblio-num/shared'
+import { File } from '@/modules/files/objects/entities/file.entity'
 
 @Entity({ name: 'dossiers' })
 @Unique('UQ_DOSSIER', ['sourceId', 'demarche'])
 export class Dossier extends BaseEntity implements IDossier {
-  @PrimaryGeneratedColumn('increment')
-  declare id: number
-
   @Column({ nullable: false })
   demarcheId: number
 
@@ -56,4 +53,8 @@ export class Dossier extends BaseEntity implements IDossier {
     default: null,
   })
   prefecture: PrefectureKeys | null
+
+  @OneToMany(() => File, (file) => file)
+  @JoinColumn()
+  files?: File[]
 }

@@ -4,27 +4,32 @@ import * as XLSX from 'xlsx'
 import { join } from 'path'
 import { v4 } from 'uuid'
 import { createReadStream, promises as fsPromises, type ReadStream } from 'fs'
-import { FileService } from '@/modules/files/providers/file.service'
-import { ConfigService } from '@nestjs/config'
 import { ExcelData } from '@/shared/types/excel-data.type'
-import { FileStorage } from '@/modules/files/objects/entities/file-storage.entity'
-import stream, { Readable } from 'stream'
+import { File } from '@/modules/files/objects/entities/file.entity'
+import { Readable } from 'stream'
+import { S3Service } from '@/shared/modules/s3/s3.service'
+import { BnConfigurationService } from '@/shared/modules/bn-configurations/providers/bn-configuration.service'
+import { eBnConfiguration } from '@biblio-num/shared'
 
 @Injectable()
 export class XlsxService {
   constructor(
     protected readonly logger: LoggerService,
-    private readonly configService: ConfigService,
-    private readonly fileService: FileService,
+    private readonly bnConfigService: BnConfigurationService,
+    private readonly s3Service: S3Service,
   ) {
     this.logger.setContext(this.constructor.name)
   }
 
-  generateXlsxFileWithMapHeader(data:object[], mappingHeader:Record<string, string>, columns:string[]): ReadStream {
+  generateXlsxFileWithMapHeader(
+    data: object[],
+    mappingHeader: Record<string, string>,
+    columns: string[],
+  ): ReadStream {
     this.logger.verbose('generateXlsxFileWithMapHeader')
-    const newData = data.map(d => Object.fromEntries(
-      columns.map(c => [mappingHeader[c], d[c]]),
-    ))
+    const newData = data.map((d) =>
+      Object.fromEntries(columns.map((c) => [mappingHeader[c], d[c]])),
+    )
     return this.generateXlsxFile(newData)
   }
 
@@ -51,21 +56,16 @@ export class XlsxService {
     return await this.readExcelData(stream)
   }
 
-  async readExcelFileFromS3(filePath: string): Promise<ExcelData> {
+  async readExcelFileFromS3(file: File): Promise<ExcelData> {
     this.logger.verbose('readExcelFileFromS3')
-    this.logger.debug('filePath: ' + filePath)
-    const fileStorageId = filePath.split('/').pop()!
-    const file: { stream: stream.Readable; info: FileStorage } = await this.fileService.getFile(fileStorageId)
-    if (file.info.mimeType !== 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-      return []
-    }
-    return await this.readExcelData(file.stream)
+    const stream = await this.s3Service.getStreamedFile(file.uuid)
+    return await this.readExcelData(stream)
   }
 
   async readExcelData(stream: Readable): Promise<ExcelData> {
     this.logger.verbose('readExcelData')
-    const sheetName = this.configService.get<string>('excel-import.sheetName')
-    const range = this.configService.get<string>('excel-import.range')
+    const sheetName = (await this.bnConfigService.findByKeyName(eBnConfiguration.FE_EXCEL_IMPORT_SHEET_NAME)).stringValue
+    const range = (await this.bnConfigService.findByKeyName(eBnConfiguration.FE_EXCEL_IMPORT_RANGE)).stringValue
 
     const buffer = await this._streamToBuffer(stream)
     const workbook: XLSX.WorkBook = XLSX.read(buffer, { type: 'buffer' })
@@ -73,7 +73,10 @@ export class XlsxService {
     if (!sheet) {
       throw new Error(`Sheet "${sheetName}" not found`)
     }
-    const jsonData: ExcelData = XLSX.utils.sheet_to_json(sheet, { range, header: 1 })
+    const jsonData: ExcelData = XLSX.utils.sheet_to_json(sheet, {
+      range,
+      header: 1,
+    })
     const jsonDataClean: ExcelData = this._cleanData(jsonData)
     this.logger.verbose('File Data: ' + jsonDataClean)
     return jsonDataClean
@@ -81,7 +84,7 @@ export class XlsxService {
 
   _cleanData(data: ExcelData): ExcelData {
     this.logger.verbose('_cleanData')
-    return data.filter(row => row.length > 0)
+    return data.filter((row) => row.length > 0)
   }
 
   private async _streamToBuffer(stream: Readable): Promise<Buffer> {

@@ -5,7 +5,7 @@ import {
   FieldTypeKeys,
   FieldType,
 } from '@biblio-num/shared'
-import { Champ, ChampDescriptor } from '@dnum-mi/ds-api-client'
+import { ChampDescriptor, CustomChamp } from '@dnum-mi/ds-api-client'
 
 export const giveFormatFunctionRefFromDsChampType = (
   cd: ChampDescriptor,
@@ -49,12 +49,15 @@ export const giveTypeFromDsChampType = (
 }
 
 // eslint-disable-next-line dot-notation
-export const isRepetitionChamp = (champ: Champ): boolean =>
+export const isRepetitionChamp = (champ: CustomChamp): boolean =>
+  // @ts-ignore TODO: why __typename exist on Champ but not CustomChamp
   champ.__typename === DsChampType.RepetitionChamp
 
-export const isRepetitionChampDescriptor = (champ: Champ): boolean =>
+export const isRepetitionChampDescriptor = (champ: CustomChamp): boolean =>
+// @ts-ignore TODO: why __typename exist on Champ but not CustomChamp
   champ.__typename === DsChampType.RepetitionChamp + 'Descriptor'
 
-export const isFileChamp = (champ: Champ): boolean =>
+export const isFileChamp = (champ: CustomChamp): boolean =>
+  // @ts-ignore TODO: why __typename exist on Champ but not CustomChamp
   giveTypeFromDsChampType(champ.__typename as DsChampTypeKeys) ===
   FieldType.file

@@ -8,7 +8,6 @@ import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { loggerServiceMock } from '../../mock/logger-service.mock'
 import { mailerServiceMock } from '../../mock/mailer-service.mock'
 import { MailerService } from '@nestjs-modules/mailer'
-import { FileService } from '@/modules/files/providers/file.service'
 import { RnfService } from '@/modules/organismes/providers/rnf.service'
 import { rnfServiceMock } from '../../mock/rnf-service/rnf-service.mock'
 import { RnaService } from '@/modules/organismes/providers/rna.service'
@@ -17,13 +16,14 @@ import { xlsxServiceMock } from '../../mock/excel-service/excel-service.mock'
 import { RolesKeys } from '@biblio-num/shared'
 import { getAnyCookie } from './get-any-cookie'
 import { XlsxService } from '@/shared/modules/xlsx/xlsx.service'
+import { S3Service } from '@/shared/modules/s3/s3.service'
+import { s3ServiceMock } from '../../mock/s3-service/s3-service.mock'
 
 export type Cookies = Record<RolesKeys | 'norole', string>
 
 export class TestingModuleFactory {
   app: INestApplication
   mailerService = mailerServiceMock
-  fileService: FileService
   _cookies: Cookies
 
   readonly emailInstructor: string = 'instructor1@localhost.com'
@@ -58,11 +58,12 @@ export class TestingModuleFactory {
       .useValue(rnaServiceMock)
       .overrideProvider(XlsxService)
       .useValue(xlsxServiceMock)
+      .overrideProvider(S3Service)
+      .useValue(s3ServiceMock)
       .compile()
 
     this.app = moduleFixture.createNestApplication()
     await configMain(this.app)
-    this.fileService = moduleFixture.get<FileService>(FileService)
     await this.app.init()
     await this._setCookies()
   }

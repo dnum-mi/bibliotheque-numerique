@@ -23,9 +23,13 @@ export const BnConfigurationDefault: Record<
     stringValue: 'B4:H502',
     type: eBnConfigurationType.string,
   },
-  [eBnConfiguration.FILE_MAXIMUM_SIZE]: {
-    stringValue: 'Q2hhbXAtMTA1MA==',
+  [eBnConfiguration.FE_EXCEL_AMOUNT_CHAMP_ID]: {
+    stringValue: 'Q2hhbXAtNTg=',
     type: eBnConfigurationType.string,
+  },
+  [eBnConfiguration.FILE_MAXIMUM_SIZE]: {
+    stringValue: '5242880',
+    type: eBnConfigurationType.number,
   },
   [eBnConfiguration.LAST_ORGANISM_SYNC_AT]: {
     stringValue: addYears(new Date(), -1).toISOString(),

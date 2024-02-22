@@ -1,42 +1,35 @@
-export type SyncAllDemarchePayload = {
+import { File } from '@/modules/files/objects/entities/file.entity'
+
+export type SyncAllDemarcheJobPayload = {
   fromScratch: boolean
 }
 
-export type SyncOneDemarchePayload = {
+export type SyncOneDemarcheJobPayload = {
   demarcheId: number
   fromScratch: boolean
 }
 
-export type SyncOneDossierPayload = {
+export type SyncOneDossierJobPayload = {
   demarcheId: number
   dsDossierId: number
   fromScratch: boolean
 }
 
-export type SyncOneRnfOrganismePayload = {
+export type SyncOneRnfOrganismeJobPayload = {
   dossierId: number
   rnf: string
 }
 
-export type SyncOneRnaOrganismePayload = {
+export type SyncOneRnaOrganismeJobPayload = {
   dossierId: number
   rna: string
 }
 
-// TODO: this will be in file entity when file epic is done
-type sourceLabel =
-  | 'rnf'
-  | 'rna'
-  | 'ds-champ'
-  | 'ds-annotation'
-  | 'ds-message'
-  | 'ds-demandeur'
-  | 'bnum'
-  | 'ds-attestation'
+export type UploadDsFileJobPayload = {
+  dsDossierId: number
+  file: File
+}
 
-export type UploadFilePayload = {
-  dossierDsId: number
-  originStringId?: string
-  originType: sourceLabel
-  index?: number
+export type ComputeFeExcelJobPayload = {
+  file: File,
 }

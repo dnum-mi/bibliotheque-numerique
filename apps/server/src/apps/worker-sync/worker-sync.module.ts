@@ -23,11 +23,13 @@ import { DossierProcessor } from '@/apps/worker-sync/processors/dossier.processo
 
 import { DossierModule } from '@/modules/dossiers/dossier.module'
 import { DemarcheModule } from '@/modules/demarches/demarche.module'
-import { InstructionTimeProcessor } from '@/apps/worker-sync/processors/instruction-time.processor'
+import { BnConfigurationModule } from '@/shared/modules/bn-configurations/bn-configuration.module'
+import { FeProcessor } from '@/apps/worker-sync/processors/fe.processor'
 import { InstructionTimesModule } from '@/modules/instruction_time/instruction_times.module'
 import { OrganismeModule } from '@/modules/organismes/organisme.module'
 import { OrganismeProcessor } from '@/apps/worker-sync/processors/organisme.processor'
-import { WorkerSyncService } from '@/apps/worker-sync/worker-sync.service'
+import { S3Module } from '../../shared/modules/s3/s3.module'
+import fileConfig from '../../config/file.config'
 
 @Module({
   imports: [
@@ -43,6 +45,7 @@ import { WorkerSyncService } from '@/apps/worker-sync/worker-sync.service'
         bullConfig,
         rnaConfig,
         rnfConfig,
+        fileConfig,
       ],
     } as ConfigModuleOptions),
     LoggerModule.forRoot('worker-sync'),
@@ -59,13 +62,14 @@ import { WorkerSyncService } from '@/apps/worker-sync/worker-sync.service'
     DossierModule,
     InstructionTimesModule,
     OrganismeModule,
+    BnConfigurationModule,
+    S3Module,
   ],
   controllers: [],
   providers: [
-    WorkerSyncService,
     DemarcheProcessor,
     DossierProcessor,
-    InstructionTimeProcessor,
+    FeProcessor,
     OrganismeProcessor,
   ],
 })

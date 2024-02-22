@@ -1,8 +1,8 @@
 import { Process, Processor } from '@nestjs/bull'
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
-import { JobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
+import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
 import {
-  SyncOneDossierPayload,
+  SyncOneDossierJobPayload,
 } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
 import { Job } from 'bull'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
@@ -21,8 +21,8 @@ export class DossierProcessor {
     this.logger.setContext(this.constructor.name)
   }
 
-  @Process(JobName.SyncOneDossier)
-  async syncOneDossier(job: Job<SyncOneDossierPayload>): Promise<void> {
+  @Process(eJobName.SyncOneDossier)
+  async syncOneDossier(job: Job<SyncOneDossierJobPayload>): Promise<void> {
     this.logger.verbose('sync one dossier')
     const demarche = await this.demarcheService.findOneById(job.data.demarcheId)
     const tdossier = await this.dsApiClient.dossierWithCustomChamp(job.data.dsDossierId)
