@@ -41,7 +41,7 @@ importers:
         specifier: ^1.11.0
         version: 1.11.0
       '@gouvminint/vue-dsfr':
-        specifier: ^5.8.0
+        specifier: ^5.9.0
         version: 5.9.0(oh-vue-icons@1.0.0-rc3)(vue-router@4.2.5)(vue@3.4.15)
       '@vee-validate/zod':
         specifier: ^4.12.5
