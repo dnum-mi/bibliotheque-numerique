@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.3](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.4.2...v2.4.3) (2024-02-22)
+
+
+### Bug Fixes
+
+* add index.html for auth http proxy ([fa855cb](https://github.com/dnum-mi/bibliotheque_numerique/commit/fa855cb07fc95127bce4611a5ab300349a8e676f))
+
 ## [2.4.2](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.4.1...v2.4.2) (2024-02-22)
 
 
