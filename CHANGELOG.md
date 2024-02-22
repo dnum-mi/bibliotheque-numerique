@@ -1,5 +1,30 @@
 # Changelog
 
+## [2.3.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.2.2...v2.3.0) (2024-02-22)
+
+
+### Features
+
+* add basic auth for nginx http proxy ([222de27](https://github.com/dnum-mi/bibliotheque_numerique/commit/222de27854bfd50ff24d5b2c6a7a8ad9e44d8737))
+* add bn-configuration for client ([0103860](https://github.com/dnum-mi/bibliotheque_numerique/commit/0103860115c586e628a639bb6383478070f0079a))
+* add docker redis ([1bf8f1e](https://github.com/dnum-mi/bibliotheque_numerique/commit/1bf8f1e7bb5ab9d805caa2d61c30497dd869faad))
+* add new module bn-configuration for save the conf in db ([4a42db3](https://github.com/dnum-mi/bibliotheque_numerique/commit/4a42db37daefd0717b2f7f14faa5ca1f77913cc4))
+* add redis config ([bf2da00](https://github.com/dnum-mi/bibliotheque_numerique/commit/bf2da00917aa5179057a7b0ae9486f5ed8719473))
+* auto deploy to dev after release ([77022dc](https://github.com/dnum-mi/bibliotheque_numerique/commit/77022dce21bf08ccb55018f4f156076742a1ad3a))
+* date fin exercice: add fiscal end date into rnf-server ([70eb34b](https://github.com/dnum-mi/bibliotheque_numerique/commit/70eb34b37d5a87e04cd3ca2eac1d4b1e3331668b))
+* export organismes for client ([be2d85a](https://github.com/dnum-mi/bibliotheque_numerique/commit/be2d85a6d8507ef7b830c3e7b2130e698dfd3857))
+* export organismes for server ([73d6ed7](https://github.com/dnum-mi/bibliotheque_numerique/commit/73d6ed728c9c9c451430fac64082b0e33739d574))
+* new schema - date de fin exercice ([76ab6e7](https://github.com/dnum-mi/bibliotheque_numerique/commit/76ab6e7c7b468dc581f2b31bcfb514ad42290583))
+
+
+### Bug Fixes
+
+* add method delete for bn-configuration controller ([05fa31a](https://github.com/dnum-mi/bibliotheque_numerique/commit/05fa31a45ff01925fa62812b17ca02ee04d011a6))
+* createMissingMandatoryData config when app bootstrap ([0e2de2c](https://github.com/dnum-mi/bibliotheque_numerique/commit/0e2de2ccc6ec89065893402bd56faf0efc225a15))
+* move fonction of files of shared-utils ([a26fa1d](https://github.com/dnum-mi/bibliotheque_numerique/commit/a26fa1deacbc7054264560cfd9e58a2cdd5ff898))
+* to run server on PRDO (Why?) ([07babca](https://github.com/dnum-mi/bibliotheque_numerique/commit/07babca1147484773b770a586b80bea96dc62bcf))
+* update env and code for test:e2e ([e6f45fd](https://github.com/dnum-mi/bibliotheque_numerique/commit/e6f45fdf56eb0af4e197e1a1286b9c11598e1c73))
+
 ## [2.2.2](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.2.1...v2.2.2) (2024-01-23)
 
 
