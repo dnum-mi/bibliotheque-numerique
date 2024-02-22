@@ -1,6 +1,9 @@
 name: Build and deploy to integration
 
 on:
+  release:
+    created:
+      - dev
   workflow_dispatch:
 
 jobs:
