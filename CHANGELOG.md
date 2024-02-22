@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.2](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.4.1...v2.4.2) (2024-02-22)
+
+
+### Bug Fixes
+
+* run deploy to dev when release is created ([3c19a61](https://github.com/dnum-mi/bibliotheque_numerique/commit/3c19a6182d18a06a6242c8ff9a589a0ddca2ec1e))
+
 ## [2.4.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.3.1...v2.4.0) (2024-02-22)
 
 

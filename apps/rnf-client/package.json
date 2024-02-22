@@ -1,6 +1,6 @@
 {
   "name": "rnf-client",
-  "version": "2.4.0",
+  "version": "2.4.2",
   "private": true,
   "scripts": {
     "build": "run-p type-check build-only",
