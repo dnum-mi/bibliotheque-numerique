@@ -31,8 +31,8 @@ import { CurrentUserRole } from '@/modules/users/providers/decorators/current-us
 import { CurrentDemarcheInterceptor } from '@/modules/demarches/providers/interceptors/current-demarche.interceptor'
 import { CurrentDemarche } from '@/modules/demarches/providers/decorators/current-demarche.decorator'
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
-import { JobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
-import { SyncOneDemarchePayload } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
+import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
+import { SyncOneDemarcheJobPayload } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
 import { SmallDemarcheOutputDto } from '@/modules/demarches/objects/dtos/small-demarche-output.dto'
 import { CreateDemarcheDto } from '@/modules/demarches/objects/dtos/create-demarche.dto'
 import { UpdateDemarcheDto } from '@/modules/demarches/objects/dtos/update-demarche.dto'
@@ -92,10 +92,10 @@ export class DemarcheController {
   ): Promise<void> {
     this.logger.verbose('syncOneDemarcheFromScratch')
     this.logger.debug('Adding SyncOneDemarche job in queue')
-    await this.syncQueue.add(JobName.SyncOneDemarche, {
+    await this.syncQueue.add(eJobName.SyncOneDemarche, {
       demarcheId,
       fromScratch: true,
-    } as SyncOneDemarchePayload)
+    } as SyncOneDemarcheJobPayload)
   }
 
   @Patch(':demarcheId')

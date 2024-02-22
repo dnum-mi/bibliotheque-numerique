@@ -12,6 +12,10 @@ import { CustomBullModule } from '@/shared/modules/custom-bull/custom-bull.modul
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
 import { BullModule, BullModuleOptions } from '@nestjs/bull'
 import bullConfig from '@/config/bull.config'
+import dsConfig from '@/config/ds.config'
+import { DsApiModule } from '@/shared/modules/ds-api/ds-api.module'
+import fileConfig from '../../config/file.config'
+import { S3Module } from '../../shared/modules/s3/s3.module'
 
 @Module({
   imports: [
@@ -20,15 +24,24 @@ import bullConfig from '@/config/bull.config'
       cache: true,
       load: [
         configuration,
+        dsConfig,
         loggerConfig,
         redisConfig,
         bullConfig,
+        fileConfig,
       ],
     } as ConfigModuleOptions),
     LoggerModule.forRoot('worker-file'),
     TypeOrmModule.forRootAsync(typeormFactoryLoader),
     CustomBullModule,
-    BullModule.registerQueue({ name: QueueName.file } as BullModuleOptions),
+    BullModule.registerQueue(
+      ...([
+        { name: QueueName.sync },
+        { name: QueueName.file },
+      ] as BullModuleOptions[]),
+    ),
+    DsApiModule,
+    S3Module,
   ],
   controllers: [],
   providers: [],

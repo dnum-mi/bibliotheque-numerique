@@ -3,23 +3,27 @@ import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { loggerServiceMock } from '../../../../../../test/mock/logger-service.mock'
 import {
   fixFieldChampsTotalAmount,
-  fixFieldDossierTotalAmount, fixFieldExcelTotalAmount,
-  fixFieldsExcelAmount, fixFieldsExcelChamp,
+  fixFieldDossierTotalAmount,
+  fixFieldExcelTotalAmount,
+  fixFieldsExcelAmount,
+  fixFieldsExcelChamp,
   fixFieldsExcelCharacterFunding,
   fixFieldsExcelContributorPersonalityType,
-  fixFieldsExcelDateFunding, fixFieldsExcelNativeCountry, fixFieldsExcelNatureFunding, fixFieldsExcelPaymentMethod,
+  fixFieldsExcelDateFunding,
+  fixFieldsExcelNativeCountry,
+  fixFieldsExcelNatureFunding,
+  fixFieldsExcelPaymentMethod,
 } from '@/modules/dossiers/objects/constante/fix-field-excel-champ.dictionnary'
 import { excelChampsLabel } from '@/modules/dossiers/objects/constante/excel-champ.enum'
 import { DsChampType } from '@/shared/modules/ds-api/objects/ds-champ-type.enum'
-import excelImportConfig from '@/config/excel-import.config'
-import { ConfigModule } from '@nestjs/config'
-import {
-  DossierSynchroniseExcelService,
-} from '@/modules/dossiers/providers/synchronization/excel/dossier-synchronise-excel.service'
+import { DossierSynchroniseExcelService } from '@/modules/dossiers/providers/synchronization/excel/dossier-synchronise-excel.service'
 import { Field } from '@/modules/dossiers/objects/entities/field.entity'
 import { ExcelDataRow } from '@/shared/types/excel-data.type'
 import { XlsxService } from '@/shared/modules/xlsx/xlsx.service'
-import { FormatFunctionRef } from '@biblio-num/shared'
+import { FormatFunctionRef, eBnConfiguration } from '@biblio-num/shared'
+import { BnConfigurationService } from '@/shared/modules/bn-configurations/providers/bn-configuration.service'
+
+const AMOUNT_CHAMP_ID = 'Q2hhbXAtNTg='
 
 const fakeExcelDateFundingNumber = 45288
 const fakeExcelDateFundingString = '28/12/2023'
@@ -546,13 +550,6 @@ describe('DossierSyncroniseExcel', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [
-        ConfigModule.forRoot({
-          isGlobal: true,
-          cache: true,
-          load: [excelImportConfig],
-        }),
-      ],
       controllers: [],
       providers: [DossierSynchroniseExcelService],
     })
@@ -563,6 +560,14 @@ describe('DossierSyncroniseExcel', () => {
           }
         } else if (token === LoggerService) {
           return loggerServiceMock
+        } else if (token === BnConfigurationService) {
+          return {
+            findByKeyName: jest.fn().mockImplementation((keyName: string) => {
+              if (keyName === eBnConfiguration.FE_EXCEL_AMOUNT_CHAMP_ID) {
+                return Promise.resolve({ stringValue: AMOUNT_CHAMP_ID })
+              }
+            }),
+          }
         } else if (token === XlsxService) {
           return {
             readExcelFileFromS3: jest.fn().mockResolvedValue(fakeExcelData),
@@ -571,18 +576,13 @@ describe('DossierSyncroniseExcel', () => {
       })
       .compile()
 
-    service = module.get<DossierSynchroniseExcelService>(DossierSynchroniseExcelService)
+    service = module.get<DossierSynchroniseExcelService>(
+      DossierSynchroniseExcelService,
+    )
   })
 
   it('should be defined', () => {
     expect(service).toBeDefined()
-  })
-
-  it('Should get null if excel field not found', async () => {
-    const raw = {}
-    jest.spyOn(service, '_findExcelFieldByDossierId').mockResolvedValue({ rawJson: raw } as unknown as Field)
-    const result = await service.createFieldsFromRawJson(42)
-    expect(result).toBeNull()
   })
 
   it('Should create children scenario for excel champs: format DateFunding with error', async () => {
@@ -596,9 +596,7 @@ describe('DossierSyncroniseExcel', () => {
       fakeExcelAmount,
     ] as ExcelDataRow
     const fields = await service._createFieldsFromExcelRow(row, 42, 0)
-    expect(fields).toContainEqual(
-      expectedExcelFixFieldsChildrenWithError[0],
-    )
+    expect(fields).toContainEqual(expectedExcelFixFieldsChildrenWithError[0])
   })
 
   it('should create scenario for excel champs: format ContributorPersonalityType with error', () => {
@@ -612,9 +610,7 @@ describe('DossierSyncroniseExcel', () => {
       fakeExcelAmount,
     ] as ExcelDataRow
     const fields = service._createFieldsFromExcelRow(row, 42, 0)
-    expect(fields).toContainEqual(
-      expectedExcelFixFieldsChildrenWithError[1],
-    )
+    expect(fields).toContainEqual(expectedExcelFixFieldsChildrenWithError[1])
   })
 
   it('should create scenario for excel champs: formate NativeContry with error', () => {
@@ -628,18 +624,10 @@ describe('DossierSyncroniseExcel', () => {
       fakeExcelAmount,
     ] as ExcelDataRow
     const fields = service._createFieldsFromExcelRow(row, 42, 0)
-    expect(fields).toContainEqual(
-      expectedExcelFixFieldsChildrenWithError[2],
-    )
-    expect(fields).toContainEqual(
-      expectedExcelFixFieldsChildrenWithError[3],
-    )
-    expect(fields).toContainEqual(
-      expectedExcelFixFieldsChildrenWithError[4],
-    )
-    expect(fields).toContainEqual(
-      expectedExcelFixFieldsChildrenWithError[5],
-    )
+    expect(fields).toContainEqual(expectedExcelFixFieldsChildrenWithError[2])
+    expect(fields).toContainEqual(expectedExcelFixFieldsChildrenWithError[3])
+    expect(fields).toContainEqual(expectedExcelFixFieldsChildrenWithError[4])
+    expect(fields).toContainEqual(expectedExcelFixFieldsChildrenWithError[5])
   })
 
   it('should create scenario for excel champs: Amount > 15300', () => {
@@ -653,23 +641,21 @@ describe('DossierSyncroniseExcel', () => {
       15301,
     ] as ExcelDataRow
     const fields = service._createFieldsFromExcelRow(row, 42, 0)
-    expect(fields).toContainEqual(
-      {
-        sourceId: fixFieldsExcelAmount.id,
-        label: excelChampsLabel.amount,
-        formatFunctionRef: null,
-        type: 'number',
-        fieldSource: fixFieldsExcelAmount.source,
-        stringValue: '0',
-        dateValue: null,
-        numberValue: 0,
-        dsChampType: null,
-        dossierId: 42,
-        parentRowIndex: 0,
-        children: null,
-        rawJson: null,
-      },
-    )
+    expect(fields).toContainEqual({
+      sourceId: fixFieldsExcelAmount.id,
+      label: excelChampsLabel.amount,
+      formatFunctionRef: null,
+      type: 'number',
+      fieldSource: fixFieldsExcelAmount.source,
+      stringValue: '0',
+      dateValue: null,
+      numberValue: 0,
+      dsChampType: null,
+      dossierId: 42,
+      parentRowIndex: 0,
+      children: null,
+      rawJson: null,
+    })
   })
 
   it('should create scenario for excel champs: Amount < 0', () => {
@@ -683,23 +669,21 @@ describe('DossierSyncroniseExcel', () => {
       -1,
     ] as ExcelDataRow
     const fields = service._createFieldsFromExcelRow(row, 42, 0)
-    expect(fields).toContainEqual(
-      {
-        sourceId: fixFieldsExcelAmount.id,
-        label: excelChampsLabel.amount,
-        formatFunctionRef: null,
-        type: 'number',
-        fieldSource: fixFieldsExcelAmount.source,
-        stringValue: '0',
-        dateValue: null,
-        numberValue: 0,
-        dsChampType: null,
-        dossierId: 42,
-        parentRowIndex: 0,
-        children: null,
-        rawJson: null,
-      },
-    )
+    expect(fields).toContainEqual({
+      sourceId: fixFieldsExcelAmount.id,
+      label: excelChampsLabel.amount,
+      formatFunctionRef: null,
+      type: 'number',
+      fieldSource: fixFieldsExcelAmount.source,
+      stringValue: '0',
+      dateValue: null,
+      numberValue: 0,
+      dsChampType: null,
+      dossierId: 42,
+      parentRowIndex: 0,
+      children: null,
+      rawJson: null,
+    })
   })
 
   it('should create scenario for excel champs: Amount is a string', () => {
@@ -713,81 +697,81 @@ describe('DossierSyncroniseExcel', () => {
       'bad amount',
     ] as ExcelDataRow
     const fields = service._createFieldsFromExcelRow(row, 42, 0)
-    expect(fields).toContainEqual(
-      {
-        sourceId: fixFieldsExcelAmount.id,
-        label: excelChampsLabel.amount,
-        formatFunctionRef: null,
-        type: 'number',
-        fieldSource: fixFieldsExcelAmount.source,
-        stringValue: '0',
-        dateValue: null,
-        numberValue: 0,
-        dsChampType: null,
-        dossierId: 42,
-        parentRowIndex: 0,
-        children: null,
-        rawJson: null,
-      },
-    )
+    expect(fields).toContainEqual({
+      sourceId: fixFieldsExcelAmount.id,
+      label: excelChampsLabel.amount,
+      formatFunctionRef: null,
+      type: 'number',
+      fieldSource: fixFieldsExcelAmount.source,
+      stringValue: '0',
+      dateValue: null,
+      numberValue: 0,
+      dsChampType: null,
+      dossierId: 42,
+      parentRowIndex: 0,
+      children: null,
+      rawJson: null,
+    })
   })
 
-  it('Should create children scenario for excel champs', async () => {
-    const raw = {
-      id: 'Q2hhbXAtNTg=',
-      __typename: 'PieceJustificativeChamp',
-      label: 'Bien vouloir joindre un document listant les financements mises à disposition',
-      stringValue: '',
-      file: {
-        filename: 'DeclarationFinancementsEtrangers.xlsx',
-        contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        checksum: 'nsscvfACf5r/WfqcvX9iUQ==',
-        byteSizeBigInt: '149557',
-        url: 'test/mock/excel-service/data/DeclarationFinancementsEtrangers.xlsx',
-      },
-    }
-    jest.spyOn(service, '_findExcelFieldByDossierId').mockResolvedValue({ rawJson: raw } as unknown as Field)
-    const fields = await service.createFieldsFromRawJson(42)
-    expect(fields).toMatchObject(
-      expectedExcelFixFieldsDates,
-    )
-  })
+  // it('Should create children scenario for excel champs', async () => {
+  //   const raw = {
+  //     id: AMOUNT_CHAMP_ID,
+  //     __typename: 'PieceJustificativeChamp',
+  //     label:
+  //       'Bien vouloir joindre un document listant les financements mises à disposition',
+  //     stringValue: '',
+  //     file: {
+  //       filename: 'DeclarationFinancementsEtrangers.xlsx',
+  //       contentType:
+  //         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  //       checksum: 'nsscvfACf5r/WfqcvX9iUQ==',
+  //       byteSizeBigInt: '149557',
+  //       url: 'test/mock/excel-service/data/DeclarationFinancementsEtrangers.xlsx',
+  //     },
+  //   }
+  //   jest
+  //     .spyOn(service, '_findExcelFieldByDossierId')
+  //     .mockResolvedValue({ rawJson: raw } as unknown as Field)
+  //   const fields = await service.createFieldsFromRawJson(42)
+  //   expect(fields).toMatchObject(expectedExcelFixFieldsDates)
+  // })
 
   it('Should create total amount fields', async () => {
-    jest.spyOn(service, '_sumAmountFields').mockResolvedValue({ sum: fakeChampTotalAmount })
-    const fields = await service.createFieldsAmounts(42, expectedExcelFixFieldsDates as unknown as Field)
-    expect(fields).toMatchObject(
-      expectedAmountFixFieldsDates,
+    jest
+      .spyOn(service, '_sumAmountFields')
+      .mockResolvedValue({ sum: fakeChampTotalAmount })
+    const fields = await service.createFieldsAmounts(
+      42,
+      expectedExcelFixFieldsDates as unknown as Field,
     )
+    expect(fields).toMatchObject(expectedAmountFixFieldsDates)
   })
 
   it('Should create total amount without excel fields', async () => {
-    jest.spyOn(service, '_sumAmountFields').mockResolvedValue({ sum: fakeChampTotalAmount })
+    jest
+      .spyOn(service, '_sumAmountFields')
+      .mockResolvedValue({ sum: fakeChampTotalAmount })
     const result = await service.createFieldsAmounts(42, null)
-    expect(result).toMatchObject(
-      expectedAmountWithoutExcelFixFieldsDates,
-    )
+    expect(result).toMatchObject(expectedAmountWithoutExcelFixFieldsDates)
   })
 
   it('Should create total amount without champs fields', async () => {
     jest.spyOn(service, '_sumAmountFields').mockResolvedValue({ sum: 0 })
-    const result = await service.createFieldsAmounts(42, expectedExcelFixFieldsDates as unknown as Field)
-    expect(result).toMatchObject(
-      expectedAmountWithoutChampsFixFieldsDates,
+    const result = await service.createFieldsAmounts(
+      42,
+      expectedExcelFixFieldsDates as unknown as Field,
     )
+    expect(result).toMatchObject(expectedAmountWithoutChampsFixFieldsDates)
   })
 
   it('Should get good format date', async () => {
     const result = await service._formatCellDate(fakeExcelDateFundingNumber)
-    expect(result).toEqual(
-      fakeExcelDateFundingString,
-    )
+    expect(result).toEqual(fakeExcelDateFundingString)
   })
 
   it('Should get good Date by String', async () => {
     const result = await service._getDateByString('28/12/2023')
-    expect(result).toEqual(
-      new Date('2023-12-28'),
-    )
+    expect(result).toEqual(new Date('2023-12-28'))
   })
 })

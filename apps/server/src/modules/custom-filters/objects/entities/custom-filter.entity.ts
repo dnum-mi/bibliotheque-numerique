@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, Unique } from 'typeorm'
+import { Column, Entity, ManyToOne, Unique } from 'typeorm'
 import { BaseEntity } from '@/shared/base-entity/base.entity'
 
 import {
@@ -14,10 +14,7 @@ export type FiltersInCustomFilter = Record<keyof DynamicKeys, FilterDto> | null
 @Entity()
 @Unique('UQ_CUSTOM_FILTERS', ['userId', 'name'])
 export class CustomFilter extends BaseEntity {
-  @PrimaryGeneratedColumn('increment')
-  declare id: number
-
-  @Column({ type: 'varchar', default: 'Tableau personnalisé', nullable: false })
+ @Column({ type: 'varchar', default: 'Tableau personnalisé', nullable: false })
   name: string
 
   @Column({ type: 'boolean', default: false })

@@ -1,8 +1,7 @@
-const states = ['queued', 'uploading', 'uploaded', 'failed']
+import { createEnum } from '../factories'
+
+const states = ['queued', 'uploading', 'uploaded', 'failed'] as const
 
 export type StateKey = (typeof states)[number]
 
-export const eState = Object.fromEntries(states.map(s => [s, s])) as Record<
-  StateKey,
-  StateKey
->
+export const eState = createEnum(states)

@@ -1,0 +1,40 @@
+import { Process, Processor } from '@nestjs/bull'
+import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
+import {
+  ComputeFeExcelJobPayload,
+  SyncAllDemarcheJobPayload,
+} from '@/shared/modules/custom-bull/objects/const/job-payload.type'
+import { Job } from 'bull'
+import { LoggerService } from '@/shared/modules/logger/logger.service'
+import { InstructionTimesService } from '@/modules/instruction_time/instruction_times.service'
+import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
+import {
+  DossierSynchroniseExcelService,
+} from '@/modules/dossiers/providers/synchronization/excel/dossier-synchronise-excel.service'
+
+@Processor(QueueName.sync)
+export class FeProcessor {
+  constructor(
+    private readonly logger: LoggerService,
+    private readonly instructionTimesService: InstructionTimesService,
+    private readonly dossierExcelSynchroniseService: DossierSynchroniseExcelService,
+  ) {
+    this.logger.setContext(this.constructor.name)
+  }
+
+  @Process(eJobName.ComputeTimeTracking)
+  async computeTimeTracking(
+    job: Job<SyncAllDemarcheJobPayload>,
+  ): Promise<void> {
+    this.logger.verbose('computeTimeTracking')
+    await this.instructionTimesService.instructionTimeCalculationForAllDossier()
+    job.finished()
+  }
+
+  @Process(eJobName.ComputeFeExcel)
+  async computeFeExcel(job: Job<ComputeFeExcelJobPayload>): Promise<void> {
+    this.logger.verbose('computeFeExcel')
+    await this.dossierExcelSynchroniseService.synchroniseExcel(job.data.file)
+    job.finished()
+  }
+}

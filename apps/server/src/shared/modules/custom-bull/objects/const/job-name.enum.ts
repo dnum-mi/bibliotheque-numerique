@@ -1,13 +1,20 @@
-export const JobName = {
-  SyncAllDemarche: 'SyncAllDemarche',
-  SyncOneDemarche: 'SyncOneDemarche',
-  SyncOneDossier: 'SyncOneDossier',
-  SyncAllRnaOrganisme: 'SyncAllRnaOrganisme',
-  SyncAllRnfOrganisme: 'SyncAllRnfOrganisme',
-  SyncOneRnaOrganisme: 'SyncOneRnaOrganisme',
-  SyncOneRnfOrganisme: 'SyncOneRnfOrganisme',
-  ComputeTimeTracking: 'ComputeTimeTracking',
-  UploadFile: 'UploadFile',
-} as const
+import { createEnum } from '@biblio-num/shared'
 
-export type JobNameKeys = (typeof JobName)[keyof typeof JobName]
+const jobNames = [
+  'SyncAllDemarche',
+  'SyncOneDemarche',
+  'SyncOneDossier',
+  'SyncAllRnaOrganisme',
+  'SyncAllRnfOrganisme',
+  'SyncOneRnaOrganisme',
+  'SyncOneRnfOrganisme',
+  'ComputeTimeTracking',
+  'ComputeFeExcel',
+  'UploadDsFile',
+  'UploadRnaFiles',
+  'UploadRnfFiles',
+] as const
+
+export type JobNameKey = typeof jobNames[number]
+
+export const eJobName = createEnum(jobNames)

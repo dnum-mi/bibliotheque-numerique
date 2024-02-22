@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common'
+import { Injectable, OnApplicationBootstrap } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
@@ -9,7 +9,7 @@ import { BnConfigurationDefault } from '@/shared/modules/bn-configurations/objec
 import { BnConfigurationKey } from '@biblio-num/shared'
 
 @Injectable()
-export class BnConfigurationService extends BaseEntityService<BnConfiguration> {
+export class BnConfigurationService extends BaseEntityService<BnConfiguration> implements OnApplicationBootstrap {
   constructor(
     protected logger: LoggerService,
     @InjectRepository(BnConfiguration) repo: Repository<BnConfiguration>,
@@ -28,14 +28,14 @@ export class BnConfigurationService extends BaseEntityService<BnConfiguration> {
     }
   }
 
-  async findByKeyName(keyName: BnConfigurationKey): Promise<BnConfiguration> {
+  async findByKeyName(keyName: BnConfigurationKey): Promise<BnConfiguration | null> {
     this.logger.verbose('findByKeyName')
-    let configuration = await this.repo.findOneBy({ keyName })
+    const configuration = await this.repo.findOneBy({ keyName })
     if (!configuration) {
       this.logger.warn(
         `Configuration with keyName ${keyName} not found in database`,
       )
-      configuration = await this.findInDefaultConfiguration(keyName)
+      return null
     }
     return configuration
   }
@@ -48,32 +48,9 @@ export class BnConfigurationService extends BaseEntityService<BnConfiguration> {
     await this.repo.update({ keyName }, { stringValue })
   }
 
-  async findInDefaultConfiguration(
-    keyName: BnConfigurationKey,
-  ): Promise<BnConfiguration> {
-    this.logger.verbose('findInDefaultConfiguration')
-    const configMandatoryValue = BnConfigurationDefault[keyName]
-    if (!configMandatoryValue) {
-      this.logger.error(
-        `Configuration with keyName ${keyName} not found in default configuration`,
-      )
-      throw new BadRequestException(
-        `Configuration with keyName ${keyName} not found in default configuration`,
-      )
-    }
-    return {
-      id: 0,
-      keyName,
-      stringValue: configMandatoryValue.stringValue,
-      valueType: configMandatoryValue.type,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }
-  }
-
   private async createMissingMandatoryData(): Promise<void> {
     this.logger.verbose('createMissingMandatoryData')
-    for (const keyName in Object.keys(BnConfigurationDefault)) {
+    for (const keyName of Object.keys(BnConfigurationDefault)) {
       // @ts-ignore  enum bug again, TODO: why ?
       const configuration = await this.repo.findOneBy({ keyName })
       if (!configuration) {

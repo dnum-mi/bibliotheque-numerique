@@ -3,6 +3,7 @@ import * as request from 'supertest'
 import { Cookies, TestingModuleFactory } from '../common/testing-module.factory'
 import { faker } from '@faker-js/faker/locale/fr'
 import { dataSource } from '../data-source-e2e.typeorm'
+import { eBnConfiguration } from '@biblio-num/shared'
 
 describe('bn-configurations (e2e)', () => {
   let app: INestApplication
@@ -53,10 +54,10 @@ describe('bn-configurations (e2e)', () => {
         .get('/bn-configurations')
         .set('Cookie', [cookies.sudo])
         .expect(200)
-      expect(response.body).toEqual([
+      expect(response.body).toMatchObject([
         {
           id: 1,
-          keyName: 'EXCEL_IMPORT_SHEET_NAME',
+          keyName: eBnConfiguration.FE_EXCEL_IMPORT_SHEET_NAME,
           stringValue: 'sheet1',
           valueType: 'string',
           createdAt: expect.any(String),
@@ -64,7 +65,7 @@ describe('bn-configurations (e2e)', () => {
         },
         {
           id: 2,
-          keyName: 'EXCEL_IMPORT_RANGE',
+          keyName: eBnConfiguration.FE_EXCEL_IMPORT_RANGE,
           stringValue: 'A1:Z1000',
           valueType: 'string',
           createdAt: expect.any(String),
@@ -72,7 +73,7 @@ describe('bn-configurations (e2e)', () => {
         },
         {
           id: 3,
-          keyName: 'EXCEL_IMPORT_CHAMP_ID',
+          keyName: eBnConfiguration.FE_EXCEL_AMOUNT_CHAMP_ID,
           stringValue: 'Q2hhbXAtNTg=',
           valueType: 'string',
           createdAt: expect.any(String),
@@ -80,11 +81,19 @@ describe('bn-configurations (e2e)', () => {
         },
         {
           id: 4,
-          keyName: 'EXCEL_IMPORT_AMOUNT_CHAMP_ID',
-          stringValue: 'Q2hhbXAtMTA1MA==',
-          valueType: 'string',
           createdAt: expect.any(String),
           updatedAt: expect.any(String),
+          keyName: eBnConfiguration.FILE_MAXIMUM_SIZE,
+          stringValue: '5242880',
+          valueType: 'number',
+        },
+        {
+          id: 5,
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String),
+          keyName: eBnConfiguration.LAST_ORGANISM_SYNC_AT,
+          stringValue: expect.any(String),
+          valueType: 'date',
         },
       ])
     })
@@ -118,14 +127,21 @@ describe('bn-configurations (e2e)', () => {
         .expect(403)
     })
 
+    it('Should return 400 for bad keyName', async () => {
+      await request(app.getHttpServer())
+        .get('/bn-configurations/TOTO')
+        .set('Cookie', [cookies.sudo])
+        .expect(400)
+    })
+
     it('Should return configuration by keyName', async () => {
       const response = await request(app.getHttpServer())
-        .get('/bn-configurations/EXCEL_IMPORT_SHEET_NAME')
+        .get('/bn-configurations/FE_EXCEL_IMPORT_SHEET_NAME')
         .set('Cookie', [cookies.sudo])
         .expect(200)
       expect(response.body).toEqual({
         id: 1,
-        keyName: 'EXCEL_IMPORT_SHEET_NAME',
+        keyName: 'FE_EXCEL_IMPORT_SHEET_NAME',
         stringValue: 'sheet1',
         valueType: 'string',
         createdAt: expect.any(String),
@@ -135,7 +151,7 @@ describe('bn-configurations (e2e)', () => {
   })
 
   describe('POST /bn-configurations', () => {
-    const keyName = 'EXCEL_IMPORT_SHEET_NAME'
+    const keyName = 'FE_EXCEL_IMPORT_SHEET_NAME'
     const stringValue = faker.word.sample()
     const valueType = 'string'
 

@@ -3,7 +3,6 @@ import {
   Entity,
   JoinColumn,
   OneToMany,
-  PrimaryGeneratedColumn,
 } from 'typeorm'
 import { BaseEntity } from '@/shared/base-entity/base.entity'
 import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
@@ -14,17 +13,15 @@ import {
   OrganismeType,
   OrganismeTypeKeys,
 } from '@biblio-num/shared'
+import { File } from '@/modules/files/objects/entities/file.entity'
 
 @Entity({ name: 'organismes' })
 export class Organisme extends BaseEntity implements IOrganisme {
-  @PrimaryGeneratedColumn('increment')
-  declare id: number
-
-  @Column({
-    type: 'enum',
-    enum: OrganismeType,
-    default: OrganismeType.unknown,
-  })
+    @Column({
+      type: 'enum',
+      enum: OrganismeType,
+      default: OrganismeType.unknown,
+    })
   type: OrganismeTypeKeys
 
   @Column({
@@ -161,4 +158,8 @@ export class Organisme extends BaseEntity implements IOrganisme {
   })
   addressRegionCode: string | null
   //#endregion
+
+  @OneToMany(() => File, (file) => file)
+  @JoinColumn()
+  files?: File[]
 }

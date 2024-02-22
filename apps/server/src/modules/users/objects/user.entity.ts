@@ -6,7 +6,6 @@ import {
   Entity,
   JoinTable,
   OneToMany,
-  PrimaryGeneratedColumn,
 } from 'typeorm'
 import * as bcrypt from 'bcrypt'
 import { BaseEntity } from '@/shared/base-entity/base.entity'
@@ -20,9 +19,6 @@ const defaultRole: IRole = {
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
-  @PrimaryGeneratedColumn('increment')
-  declare id: number
-
   @Column({
     type: 'varchar',
     nullable: false,

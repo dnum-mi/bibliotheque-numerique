@@ -1,6 +1,6 @@
 /* eslint-disable no-use-before-define */
 import { BaseEntity } from '@/shared/base-entity/base.entity'
-import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique } from 'typeorm'
+import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, Unique } from 'typeorm'
 import { DsChampType, DsChampTypeKeys } from '@/shared/modules/ds-api/objects/ds-champ-type.enum'
 import {
   FieldSource,
@@ -18,9 +18,6 @@ export const fieldUniqueFields = ['dossierId', 'sourceId', 'parentRowIndex']
 @Entity('fields')
 @Unique('UQ_FIELD', fieldUniqueFields)
 export class Field extends BaseEntity {
-  @PrimaryGeneratedColumn('increment')
-  declare id: number
-
   @Column({
     type: 'enum',
     enum: FieldSource,

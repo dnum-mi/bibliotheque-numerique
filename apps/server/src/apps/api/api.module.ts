@@ -11,7 +11,6 @@ import smtpConfig from '../../config/smtp.config'
 import jwtConfig from '../../config/jwt.config'
 import rnaConfig from '../../config/rna.config'
 import rnfConfig from '../../config/rnf.config'
-import excelImportConfig from '../../config/excel-import.config'
 import sudoUserConfig from '@/config/sudo-user.config'
 import instructionTimeMappingConfig from '@/config/instructionTimeMapping.config'
 import redisConfig from '@/config/redis.config'
@@ -52,7 +51,6 @@ import { BnConfigurationModule } from '@/shared/modules/bn-configurations/bn-con
         jwtConfig,
         rnaConfig,
         rnfConfig,
-        excelImportConfig,
         sudoUserConfig,
         instructionTimeMappingConfig,
         redisConfig,

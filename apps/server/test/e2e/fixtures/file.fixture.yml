@@ -1,0 +1,15 @@
+entity: File
+items:
+  excel-financement:
+    id: 1
+    uuid: "bfa978f1-7337-49df-ae97-40d358afe5b9"
+    state: 'uploaded'
+    sourceLabel: 'ds-champ'
+    sourceStringId: 'useless-id'
+    tag: 'excel-fe'
+    mimeType: 'doc'
+    label: 'coucou'
+    checksum: 42
+    byteSize: 42
+    originalLabel: 'coucou.txt'
+

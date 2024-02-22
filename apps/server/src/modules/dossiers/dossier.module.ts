@@ -21,6 +21,7 @@ import {
 } from '@/modules/dossiers/providers/synchronization/file/dossier-synchronize-file.service'
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
 import { BullModule, BullModuleOptions } from '@nestjs/bull'
+import { BnConfigurationModule } from '@/shared/modules/bn-configurations/bn-configuration.module'
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { BullModule, BullModuleOptions } from '@nestjs/bull'
     forwardRef(() => InstructionTimesModule),
     forwardRef(() => DemarcheModule),
     forwardRef(() => OrganismeModule),
+    FileModule,
     TypeOrmModule.forFeature([Dossier, Field]),
     BullModule.registerQueue(
       ...([
@@ -36,15 +38,14 @@ import { BullModule, BullModuleOptions } from '@nestjs/bull'
         { name: QueueName.file },
       ] as BullModuleOptions[]),
     ),
+    BnConfigurationModule,
   ],
   controllers: [DossierController],
   providers: [
     DossierService,
     FieldService,
-
     DossierSearchService,
     FieldSearchService,
-
     DossierSynchroniseService,
     DossierSynchroniseFileService,
     DossierSynchroniseExcelService,
@@ -52,10 +53,9 @@ import { BullModule, BullModuleOptions } from '@nestjs/bull'
   exports: [
     DossierService,
     FieldService,
-
     DossierSearchService,
     FieldSearchService,
-
+    DossierSynchroniseExcelService,
     DossierSynchroniseService,
   ],
 })
