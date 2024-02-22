@@ -28,9 +28,12 @@ export const dossierSearch = '/dossiers-search'
 export const fieldsSearch = '/fields-search'
 
 export const organismesRoute = '/organismes'
-export const organismesListRoute = '/organismes/list'
-export const organismesListXlsxRoute = '/organismes/list/export/xlsx'
+export const organismesListRoute = `${organismesRoute}/list`
+export const organismesListXlsxRoute = `${organismesRoute}/list/export/xlsx`
 export const getOrganismeDossiers = (organismeId: number) => `${organismesRoute}/${organismeId}/dossiers`
+export const getOrganismeFilesSummaryRoute = (organismeId: string) => `${organismesRoute}/${organismeId}/files-summary`
+export const attachedFilesRoute = '/files/list'
+
 export const getOrganismeByIdRoute = (organismeId: number) => `${organismesRoute}/${organismeId}`
 export const getOrganismeByRnaRoute = (organismeRna: string) => `${organismesRoute}/rna/${organismeRna}`
 export const getOrganismeByRnfRoute = (organismeRnf: string) => `${organismesRoute}/rnf/${organismeRnf}`

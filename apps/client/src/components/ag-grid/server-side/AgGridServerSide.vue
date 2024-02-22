@@ -11,6 +11,8 @@ import type { GridOptions, SetFilterModel } from 'ag-grid-enterprise'
 
 import type { DynamicKeys, IPagination } from '@biblio-num/shared'
 
+import type { ApiCall } from './pagination.utils'
+
 import { gridOptionFactory } from '@/components/ag-grid/server-side/grid-option-factory'
 import {
   fromAggToBackendFilter,
@@ -25,8 +27,8 @@ const props = withDefaults(
   defineProps<{
     paginationDto?: IPagination<T>;
     columnDefs: BNColDef[];
-    apiCall:(params: IPagination<T>) => Promise<{ total: number; data: T[] }>;
-    onSelectionChanged: ($event: SelectionChangedEvent) => void;
+    apiCall: ApiCall<T>;
+    onSelectionChanged:($event: SelectionChangedEvent) => void;
     loading?: boolean;
     preCondition?: boolean;
     specificGridOption?: Partial<GridOptions>;

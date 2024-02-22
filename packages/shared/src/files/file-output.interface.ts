@@ -1,4 +1,4 @@
-import type { IFile } from './file.interface'
+import { SourceLabel, State, IFile } from './file.interface'
 
 export interface IFileOutput extends Omit<IFile, 'checksum'> {
   id: number
@@ -8,10 +8,10 @@ export interface IFileOutput extends Omit<IFile, 'checksum'> {
   originalLabel: string
   byteSize: number
   mimeType: string
-  state: 'queued' | 'uploading' | 'uploaded' | 'failed'
-  sourceLabel: 'rnf' | 'rna' | 'ds-champ' | 'ds-annotation' | 'ds-message' | 'ds-demandeur' | 'bnum'
+  state: State
+  sourceLabel: SourceLabel
   sourceUploadedAt?: Date
-  tags: string[]
+  tag: string
   dossierId?: number
   organismeId?: number
   uploaderId?: number

@@ -57,7 +57,12 @@ import {
   getOrganismeByRnfRoute,
   organismesListRoute,
   usersListRoute,
-  getUserRoleByIdRoute, healthRoute, organismesListXlsxRoute, bnConfigurationsRoute,
+  bnConfigurationsRoute,
+  getUserRoleByIdRoute,
+  healthRoute,
+  organismesListXlsxRoute,
+  attachedFilesRoute,
+  getOrganismeFilesSummaryRoute,
 } from './bn-api-routes'
 import {
   authRoute,
@@ -197,6 +202,10 @@ export const organismeApiClient = {
 
   getOrganismeByRnf: async (organismeIdRnf: string): Promise<IOrganisme> => {
     return getOrRedirectTo404(getOrganismeByRnfRoute(organismeIdRnf))
+  },
+
+  getOrganismeFilesSummary: async (organismeId: string): Promise<Record<string, number>> => {
+    return (await apiClientInstance.get(getOrganismeFilesSummaryRoute(organismeId))).data
   },
 
   exportOrganismes: async (dto: IPagination<IOrganisme>): Promise<void> => {
@@ -370,8 +379,7 @@ export const bnConfigurationsApiClient = {
 
 export const attachedFilesApiClient = {
   getAttachedFiles: async (params: IPagination<DynamicKeys>): Promise<IFileOutput[]> => {
-    console.log('getAttachedFiles()')
-    const response = await apiClientInstance.post('/files/list', params)
+    const response = await apiClientInstance.post(attachedFilesRoute, params)
     return response.data
   },
 }

@@ -1,3 +1,24 @@
+export const eStates = {
+  queued: 'queued',
+  uploading: 'uploading',
+  failed: 'failed',
+  uploaded: 'uploaded',
+} as const
+
+export type State = keyof typeof eStates
+
+export const eSourceLabels = {
+  rnf: 'rnf',
+  rna: 'rna',
+  'ds-champ': 'ds-champ',
+  'ds-annotation': 'ds-annotation',
+  'ds-message': 'ds-message',
+  'ds-demandeur': 'ds-demandeur',
+  bnum: 'bnum',
+} as const
+
+export type SourceLabel = keyof typeof eSourceLabels
+
 export interface IFile {
   id: number
   createdAt: Date
@@ -7,10 +28,10 @@ export interface IFile {
   checksum: string
   byteSize: number
   mimeType: string
-  state: 'queued' | 'uploading' | 'uploaded' | 'failed'
-  sourceLabel: 'rnf' | 'rna' | 'ds-champ' | 'ds-annotation' | 'ds-message' | 'ds-demandeur' | 'bnum'
+  state: State
+  sourceLabel: SourceLabel
   sourceUploadedAt?: Date
-  tags: string[]
+  tag: string
   dossierId?: number
   organismeId?: number
   uploaderId?: number
