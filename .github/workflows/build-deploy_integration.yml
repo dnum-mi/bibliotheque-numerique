@@ -2,8 +2,7 @@ name: Build and deploy to integration
 
 on:
   release:
-    created:
-      - dev
+    types: [released]
   workflow_dispatch:
 
 jobs:
