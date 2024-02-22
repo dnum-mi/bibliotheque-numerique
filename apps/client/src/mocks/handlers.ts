@@ -1,81 +1,64 @@
-import { http, HttpResponse } from 'msw'
-import type { IFileOutput } from '@biblio-num/shared'
+import { http, HttpResponse, type PathParams } from 'msw'
+import type { IFileOutput, FileOutputDto } from '@biblio-num/shared'
+
+const mimeTypes = {
+  'application/pdf': 'pdf',
+  'application/msword': 'doc docx odt ods',
+  'image/png': 'jpg jpeg png gif tiff tif',
+  'application/vnd.ms-excel': 'xls xlsx csv',
+}
+
+const getRandomValueFromArray = <T>(array: T[]): T => {
+  return array[Math.floor(Math.random() * array.length)]
+}
+
+const sourceLabels = ['rnf', 'rna', 'ds-champ', 'ds-annotation', 'ds-message', 'ds-demandeur', 'bnum'] as const
+const states = ['queued', 'uploading', 'failed', 'uploaded'] as const
+const tags = {
+  statuts: Math.floor(Math.random() * 30),
+  comptes: Math.floor(Math.random() * 30),
+  'rapport-activites': Math.floor(Math.random() * 30),
+  controles: Math.floor(Math.random() * 30),
+} as const
+
+const createRandomFileInfo = (tag: keyof typeof tags): FileOutputDto => {
+  const randomIndex = Math.floor(Math.random() * 3)
+  const [mimeType, extensions] = Object.entries(mimeTypes)[randomIndex]
+  const extension = getRandomValueFromArray(extensions.split(' '))
+  const filename = `${Math.random().toString(36).substring(7)}`
+  const label = `fichier-${filename}.${extension}`
+  const originalLabel = `${filename}.${extension}`
+  return {
+    id: Math.floor(Math.random() * 1000),
+    byteSize: Math.floor(Math.random() * 1000000),
+    createdAt: new Date(),
+    label,
+    mimeType,
+    originalLabel,
+    sourceLabel: getRandomValueFromArray(['bnum', 'bnum', ...sourceLabels, 'bnum', 'bnum', 'bnum']),
+    state: getRandomValueFromArray(['uploaded', ...states, 'uploaded']),
+    tag,
+    updatedAt: new Date(),
+    url: `http://localhost:8080/${label}.${getRandomValueFromArray(mimeTypes[mimeType].split(' '))}`,
+  }
+}
+
+const repeatFn = <T>(fn: (...args: unknown[]) => T) => (times: number): T[] => {
+  return Array.from({ length: times }, fn)
+}
+
+const createNFileInfo = (tag: keyof typeof tags) => repeatFn(() => createRandomFileInfo(tag))
 
 export const handlers = [
-  // http.get('/api/users/me', () => {
-  //   return HttpResponse.json({
-  //     createdAt: '2023-12-26T09:36:40.624Z',
-  //     updatedAt: '2023-12-26T09:36:40.624Z',
-  //     id: 1,
-  //     email: 'admin@example.com',
-  //     lastname: 'sudo',
-  //     firstname: 'sudo',
-  //     job: null,
-  //     validated: true,
-  //     role: {
-  //       label: 'sudo',
-  //       options: {},
-  //     },
-  //   })
-  // }),
-  http.post('/api/files/list', () => {
-    const files: {total: number, data: IFileOutput[]} = {
-      total: 4,
-      data: [
-        {
-          id: 1,
-          byteSize: 30234432,
-          createdAt: new Date('2023-11-04'),
-          label: 'un-fichier.pdf',
-          mimeType: 'application/pdf',
-          originalLabel: 'Label original',
-          sourceLabel: 'bnum',
-          state: 'uploaded',
-          tags: ['bar'],
-          updatedAt: new Date('2023-11-04'),
-          url: 'http://localhost:8080/pdf-sample.pdf',
-        },
-        {
-          id: 2,
-          byteSize: 4064789,
-          createdAt: new Date('2023-11-05'),
-          label: 'une-image.png',
-          mimeType: 'application/msword',
-          originalLabel: 'Label original',
-          sourceLabel: 'bnum',
-          state: 'failed',
-          tags: ['bar'],
-          updatedAt: new Date('2023-11-06'),
-          url: 'http://localhost:8080/icons/ms-icon-310x310.docx',
-        },
-        {
-          id: 3,
-          byteSize: 5064789,
-          createdAt: new Date('2023-11-10'),
-          label: 'une-autre-image.png',
-          mimeType: 'image/png',
-          originalLabel: 'Label original',
-          sourceLabel: 'ds-annotation',
-          state: 'uploading',
-          tags: ['bar'],
-          updatedAt: new Date('2023-11-11'),
-          url: 'http://localhost:8080/pdf-sample.pdf',
-        },
-        {
-          id: 4,
-          byteSize: 664789,
-          createdAt: new Date('2023-11-10'),
-          label: 'Image',
-          mimeType: 'application/vnd.ms-excel',
-          originalLabel: 'Label original',
-          sourceLabel: 'rnf',
-          state: 'queued',
-          tags: ['bar'],
-          updatedAt: new Date('2023-11-11'),
-          url: 'http://localhost:8080/pdf-sample.xlsx',
-        },
-      ],
-    }
-    return HttpResponse.json(files)
+  http.get<PathParams<'id'>>('/api/organismes/:id/files-summary', ({ params }) => {
+    // params.id
+    return HttpResponse.json(tags)
+  }),
+  http.post<PathParams, { tag: keyof typeof tags }, {total: number; data: FileOutputDto[]}>('/api/files/list', async ({ request }) => {
+    const { tag } = await request.json()
+    const number = tags[tag]
+    const files = createNFileInfo(tag)(number)
+    const res = { total: number, data: files }
+    return HttpResponse.json(res)
   }),
 ]

@@ -3,6 +3,7 @@ import type {
   IEnumFilterCondition,
   IFilter,
   INumberFilterCondition,
+  IPagination,
   ISort,
   ITextFilterCondition,
 } from '@biblio-num/shared'
@@ -15,6 +16,8 @@ import {
   type TextFilterModel,
 } from 'ag-grid-community'
 import type { AgGridCommon } from 'ag-grid-community/dist/lib/interfaces/iCommon'
+
+export type ApiCall<T> = (params: IPagination<T>) => Promise<T[]>
 
 type FilterModel = Parameters<AgGridCommon<unknown, unknown>['api']['setFilterModel']>[0]
 

@@ -15,7 +15,7 @@ import RoleBadgesRenderer from '@/components/Badges/RoleBadgesRenderer.vue'
 const agGridComponent = ref()
 const router = useRouter()
 
-const columnDefs = ref<BNColDef[]>([
+const columnDefs: BNColDef[] = [
   {
     headerName: 'id',
     field: 'id',
@@ -26,7 +26,7 @@ const columnDefs = ref<BNColDef[]>([
     field: 'validated',
     width: 70,
     suppressMenu: true,
-    cellRenderer: ({ value }) => (value ? '✅' : '❌'),
+    cellRenderer: ({ value }: { value: boolean }) => (value ? '✅' : '❌'),
   },
   {
     ...baseColDef,
@@ -78,16 +78,16 @@ const columnDefs = ref<BNColDef[]>([
     headerName: 'Création',
     field: 'createdAt',
     filter: 'agDateColumnFilter',
-    valueFormatter: ({ value }) => dateToStringFr(value),
+    valueFormatter: ({ value }: { value: string | number | Date }) => dateToStringFr(value),
   },
   {
     ...baseColDef,
     headerName: 'Modification',
     field: 'updatedAt',
     filter: 'agDateColumnFilter',
-    valueFormatter: ({ value }) => dateToStringFr(value),
+    valueFormatter: ({ value }: { value: string | number | Date }) => dateToStringFr(value),
   },
-])
+]
 
 const store = useUserStore()
 const apiCall = async (params: IPaginationUser) => {

@@ -1,4 +1,4 @@
-import { IFileOutput } from '@biblio-num/shared'
+import { IFileOutput, SourceLabel, State } from '@biblio-num/shared'
 
 export class FileOutputDto implements IFileOutput {
   id: number
@@ -8,10 +8,10 @@ export class FileOutputDto implements IFileOutput {
   originalLabel: string
   byteSize: number
   mimeType: string
-  state: 'queued' | 'uploading' | 'uploaded' | 'failed'
-  sourceLabel: 'rnf' | 'rna' | 'ds-champ' | 'ds-annotation' | 'ds-message' | 'ds-demandeur' | 'bnum'
+  state: State
+  sourceLabel: SourceLabel
   sourceUploadedAt?: Date
-  tags: string[]
+  tag: string
   dossierId?: number
   organismeId?: number
   uploaderId?: number

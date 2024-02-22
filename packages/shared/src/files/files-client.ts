@@ -38,7 +38,7 @@ export function getIconNameFromMimeType(mimeType?: string) {
   return iconName
 }
 
-export const states = {
+export const statesDict = {
   queued: {
     name: 'fa-hourglass-half',
     fill: 'var(--info-425-625)',
@@ -61,6 +61,6 @@ export const states = {
   },
 } as const
 
-export function getIconPropsFromFileState(state: keyof typeof states) {
-  return states[state]
+export function getIconPropsFromFileState(state: keyof typeof statesDict) {
+  return statesDict[state]
 }

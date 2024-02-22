@@ -1,12 +1,14 @@
 <script lang="ts" setup>
 import { useTabs } from '@gouvminint/vue-dsfr'
 
+import apiClient from '@/api/api-client'
 import { dateToStringFr, copyCurrentUrlInClipboard } from '@/utils'
 import LayoutFiche from '@/components/Layout/LayoutFiche.vue'
 import ListeDossier from './ListeDossier.vue'
 import OrganismeBadge from '@/components/Badges/OrganismeBadge.vue'
 import InfoContact from '@/components/InfoContact.vue'
 import { type OrganismeIdType, useOrganismeStore, useUserStore } from '@/stores'
+import AttachedFileList from '@/components/ag-grid/AttachedFileList.vue'
 
 const props = withDefaults(defineProps<{ id: string; idType: OrganismeIdType }>(), {})
 
@@ -20,23 +22,34 @@ const prefecture = computed(
   () => `${organismeStore.organisme?.addressPostalCode?.substring(0, 2) || ''} ${organismeStore.organisme?.addressCityName || ''}`,
 )
 const creation = computed(() => dateToStringFr(organisme.value?.dateCreation))
-const dissolution = computed(() => dateToStringFr(organisme.value?.dateDissolution ?? undefined))
+const dissolution = computed(() => dateToStringFr(organisme.value?.dateDissolution ?? undefined))
 
-const tabTitles = [
+const tagsDict = {
+  statuts: 'Statuts',
+  comptes: 'Comptes',
+  'rapport-activites': 'Rapport d’activités',
+  controles: 'Contrôles',
+} as const
+
+const tabTitles = computed(() => [
   {
-    title: 'Statuts',
+    title: 'Infos',
     tabId: 'tab-0',
     panelId: 'tab-content-0',
   },
-  {
-    title: 'Pièces jointes',
-    tabId: 'tab-1',
-    panelId: 'tab-content-1',
-    tag: 'foo',
-  },
-]
+  ...Object.entries(filesSummary.value).map((filesForTag, idx) => {
+    const [tag, count] = filesForTag
+    return {
+      title: `${tagsDict[tag]} (${count})`,
+      tabId: `tab-${idx + 1}`,
+      panelId: `tab-content-${idx + 1}`,
+    }
+  }),
+])
 
 const role = computed(() => userStore.currentUser?.role)
+
+const filesSummary = ref<Partial<Record<keyof typeof tagsDict, number>>>({})
 
 const isLoading = ref(false)
 onMounted(async () => {
@@ -46,6 +59,17 @@ onMounted(async () => {
   } finally {
     isLoading.value = false
   }
+  filesSummary.value = await apiClient.getOrganismeFilesSummary(props.id)
+})
+
+const tabs = ref<HTMLElement>()
+const redrawTabs = async () => {
+  await nextTick()
+  tabs.value.renderTabs()
+}
+
+watch(selected, () => {
+  redrawTabs()
 })
 </script>
 
@@ -108,6 +132,7 @@ onMounted(async () => {
       <template #content>
         <div class="w-full h-full pl-4">
           <DsfrTabs
+            ref="tabs"
             tab-list-name="tabs-fiche"
             :tab-titles="tabTitles"
             :initial-selected-index="selected"
@@ -141,12 +166,18 @@ onMounted(async () => {
               </div>
             </DsfrTabContent>
             <DsfrTabContent
-              panel-id="tab-content-1"
-              tab-id="tab-1"
-              :selected="selected === 1"
+              v-for="(tag, idx) in Object.keys(filesSummary)"
+              :key="tag"
+              :panel-id="`tab-content-${idx + 1}`"
+              :tab-id="`tab-${idx + 1}`"
+              :selected="selected === idx + 1"
               :asc="ascendant"
             >
-              <AttachedFileList :preselected-tags="['foo']" />
+              <AttachedFileList
+                :key="tag"
+                :tag="tag"
+                @grid-ready="redrawTabs()"
+              />
             </DsfrTabContent>
           </DsfrTabs>
         </div>
