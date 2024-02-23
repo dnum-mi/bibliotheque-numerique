@@ -94,6 +94,7 @@ services:
   adminer:
     profiles:
       - adminer
+      - dev
     image: adminer
     restart: always
     ports:
@@ -215,8 +216,30 @@ services:
       REDIS_PORT: 6379
       REDIS_PASSWORD: redis
       BULL_PREFIX: bull
+      USER_LOGIN: admin-bn
+      USER_PASSWORD: password
     depends_on:
       - redis
+
+  http-proxy-auth:
+    profiles:
+      - dev
+      - simple-dev
+    build:
+      context: ../../
+      dockerfile: ./apps/http-proxy/Dockerfile
+    container_name: http-proxy-auth
+    image: biblio-num/http-proxy-auth
+    restart: always
+    ports:
+      - 8888:8080
+    networks:
+      - biblio-num-network
+    environment:
+      TYPE_NGINX: basic-auth
+      BASIC_AUTH_USER_PASSWORD: 'admin-bn:$$apr1$$hjPQpN74$$S06f5oALFiHXEXFS77vjE1' # admin-bn:password, hash('password') = $apr1$hjPQpN74$S06f5oALFiHXEXFS77vjE1, replace $ with $$
+      ADMINER_PROXY_PASS: http://adminer:8080
+
 networks:
   biblio-num-network:
     name: biblio-num-network
