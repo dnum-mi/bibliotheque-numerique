@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.4](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.4.3...v2.4.4) (2024-02-23)
+
+
+### Bug Fixes
+
+* use bullboard self login, and not login for mailhog ([f2ea044](https://github.com/dnum-mi/bibliotheque_numerique/commit/f2ea0442c6ce9e8e74a4f7917e2040249457d5f3))
+
 ## [2.4.3](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.4.2...v2.4.3) (2024-02-22)
 
 
