@@ -210,7 +210,7 @@ export const organismeApiClient = {
     return (await apiClientInstance.get(getOrganismeFilesSummaryRoute(organismeId))).data
   },
 
-  getOrganismeFiles: (organismeId: string) => async (params: IPagination<IFileOutput>): Promise<IPaginated<IFileOutput[]>> => {
+  getOrganismeFiles: (organismeId: string) => async (params: IPagination<IFileOutput>): Promise<IPaginated<IFileOutput>> => {
     const response = await apiClientInstance.post(getOrganismeFilesRoute(organismeId), params)
     return response.data
   },

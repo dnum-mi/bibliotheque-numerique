@@ -54,7 +54,7 @@ export const handlers = [
     // params.id
     return HttpResponse.json(tags)
   }),
-  http.post<PathParams, { tag: keyof typeof tags }, {total: number; data: FileOutputDto[]}>('/api/files/list', async ({ request }) => {
+  http.post<PathParams, { tag: keyof typeof tags }, {total: number; data: FileOutputDto[]}>('/api/organismes/:id/files/list', async ({ request }) => {
     const { filters } = (await request.json()) as IPagination<IFileOutput>
     const tag = filters?.tag.condition1.filter[0]
     const number = tags[tag]
