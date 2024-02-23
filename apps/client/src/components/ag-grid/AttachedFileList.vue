@@ -1,9 +1,8 @@
 <script lang="ts" setup>
 import type { GridReadyEvent, GridApi, GridOptions, AgGridEvent } from 'ag-grid-community'
 
-import type { IFileOutput } from '@biblio-num/shared'
+import type { IFileOutput, IFilter, IFilterEnum, IPagination } from '@biblio-num/shared'
 
-import apiClient from '@/api/api-client'
 import type { ApiCall } from './server-side/pagination.utils'
 import type { BNColDef } from './server-side/bn-col-def.interface'
 import MimeTypeCellRenderer from './MimeTypeCellRenderer.vue'
@@ -11,6 +10,7 @@ import AttachedFileStateCellRenderer from './AttachedFileStateCellRenderer.vue'
 
 type AttachedFileListProps = {
   tag: string,
+  fnAttachedFiles: ApiCall<IFileOutput>
   columnsDef?: BNColDef[]
 }
 
@@ -82,9 +82,20 @@ const onSelectionChanged = (event: AgGridEvent) => {
     window.open(url, '_blank')
   }
 }
-const apiCall: ApiCall<IFileOutput> = async (params) => {
+const apiCall: ApiCall<IFileOutput> = async (params: IPagination<IFileOutput>) => {
   fetching.value = true
-  const res = await apiClient.getAttachedFiles({ tag: props.tag, ...params })
+
+  const filterTag:IFilterEnum = {
+    filterType: 'set',
+    condition1: { filter: [props.tag] },
+  }
+  const res = await props.fnAttachedFiles({
+    ...params,
+    filters: {
+      ...(params.filters),
+      tag: filterTag,
+    },
+  })
   fetching.value = false
   return res
 }

@@ -9,6 +9,8 @@ import OrganismeBadge from '@/components/Badges/OrganismeBadge.vue'
 import InfoContact from '@/components/InfoContact.vue'
 import { type OrganismeIdType, useOrganismeStore, useUserStore } from '@/stores'
 import AttachedFileList from '@/components/ag-grid/AttachedFileList.vue'
+import type { IFileOutput, IPagination } from '@biblio-num/shared'
+import type { ApiCall } from '../../../components/ag-grid/server-side/pagination.utils'
 
 const props = withDefaults(defineProps<{ id: string; idType: OrganismeIdType }>(), {})
 
@@ -71,6 +73,10 @@ const redrawTabs = async () => {
 watch(selected, () => {
   redrawTabs()
 })
+
+const fnAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutput>) => {
+  return apiClient.getOrganismeFiles(props.id)(params)
+}
 </script>
 
 <template>
@@ -175,6 +181,7 @@ watch(selected, () => {
             >
               <AttachedFileList
                 :key="tag"
+                :fn-attached-files="fnAttachedFiles"
                 :tag="tag"
                 @grid-ready="redrawTabs()"
               />

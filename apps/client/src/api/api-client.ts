@@ -34,6 +34,7 @@ import type {
   RolesKeys,
   ICreateBnConfiguration,
   IUpdateBnConfiguration,
+  IPaginated,
 } from '@biblio-num/shared'
 
 import {
@@ -63,6 +64,7 @@ import {
   organismesListXlsxRoute,
   attachedFilesRoute,
   getOrganismeFilesSummaryRoute,
+  getOrganismeFilesRoute,
 } from './bn-api-routes'
 import {
   authRoute,
@@ -206,6 +208,11 @@ export const organismeApiClient = {
 
   getOrganismeFilesSummary: async (organismeId: string): Promise<Record<string, number>> => {
     return (await apiClientInstance.get(getOrganismeFilesSummaryRoute(organismeId))).data
+  },
+
+  getOrganismeFiles: (organismeId: string) => async (params: IPagination<IFileOutput>): Promise<IPaginated<IFileOutput[]>> => {
+    const response = await apiClientInstance.post(getOrganismeFilesRoute(organismeId), params)
+    return response.data
   },
 
   exportOrganismes: async (dto: IPagination<IOrganisme>): Promise<void> => {

@@ -1,5 +1,5 @@
 import { http, HttpResponse, type PathParams } from 'msw'
-import type { IFileOutput, FileOutputDto } from '@biblio-num/shared'
+import type { IFileOutput, FileOutputDto, IPagination } from '@biblio-num/shared'
 
 const mimeTypes = {
   'application/pdf': 'pdf',
@@ -55,7 +55,8 @@ export const handlers = [
     return HttpResponse.json(tags)
   }),
   http.post<PathParams, { tag: keyof typeof tags }, {total: number; data: FileOutputDto[]}>('/api/files/list', async ({ request }) => {
-    const { tag } = await request.json()
+    const { filters } = (await request.json()) as IPagination<IFileOutput>
+    const tag = filters?.tag.condition1.filter[0]
     const number = tags[tag]
     const files = createNFileInfo(tag)(number)
     const res = { total: number, data: files }
