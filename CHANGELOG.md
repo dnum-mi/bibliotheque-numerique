@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.5](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.4.4...v2.4.5) (2024-02-23)
+
+
+### Bug Fixes
+
+* update start worker script for deployer ([a80571e](https://github.com/dnum-mi/bibliotheque_numerique/commit/a80571e198dfff8766e4427b0fade014009c7b1e))
+
 ## [2.4.4](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.4.3...v2.4.4) (2024-02-23)
 
 
