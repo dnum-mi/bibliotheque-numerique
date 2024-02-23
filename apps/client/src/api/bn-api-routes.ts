@@ -33,6 +33,7 @@ export const organismesListXlsxRoute = `${organismesRoute}/list/export/xlsx`
 export const getOrganismeDossiers = (organismeId: number) => `${organismesRoute}/${organismeId}/dossiers`
 export const getOrganismeFilesSummaryRoute = (organismeId: string) => `${organismesRoute}/${organismeId}/files-summary`
 export const attachedFilesRoute = '/files/list'
+export const getOrganismeFilesRoute = (organismeId: string) => `${organismesRoute}/${organismeId}/${attachedFilesRoute}`
 
 export const getOrganismeByIdRoute = (organismeId: number) => `${organismesRoute}/${organismeId}`
 export const getOrganismeByRnaRoute = (organismeRna: string) => `${organismesRoute}/rna/${organismeRna}`
