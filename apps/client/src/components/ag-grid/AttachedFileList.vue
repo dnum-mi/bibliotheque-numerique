@@ -84,20 +84,16 @@ const onSelectionChanged = (event: AgGridEvent) => {
 }
 const apiCall: ApiCall<IFileOutput> = async (params: IPagination<IFileOutput>) => {
   fetching.value = true
-
-  const filterTag:IFilterEnum = {
-    filterType: 'set',
-    condition1: { filter: [props.tag] },
+  if (props.tag) {
+    params.filters = {
+      ...(params.filters || {}),
+      tag: {
+        filterType: 'set',
+        condition1: { filter: [props.tag] },
+      },
+    }
   }
-  const res = await props.fnAttachedFiles({
-    ...params,
-    filters: {
-      ...(params.filters),
-      tag: filterTag,
-    },
-  })
-  fetching.value = false
-  return res
+  return await props.fnAttachedFiles(params).finally(() => { fetching.value = false })
 }
 </script>
 

@@ -11,6 +11,8 @@ import { type OrganismeIdType, useOrganismeStore, useUserStore } from '@/stores'
 import AttachedFileList from '@/components/ag-grid/AttachedFileList.vue'
 import type { IFileOutput, IPagination } from '@biblio-num/shared'
 import type { ApiCall } from '../../../components/ag-grid/server-side/pagination.utils'
+import { NumberFilterConditions } from '@biblio-num/shared'
+import type { IFilter } from 'ag-grid-community'
 
 const props = withDefaults(defineProps<{ id: string; idType: OrganismeIdType }>(), {})
 
@@ -75,8 +77,14 @@ watch(selected, () => {
 })
 
 const fnAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutput>) => {
+  params.filters = {
+    ...params.filters,
+    organismeId: { filterType: 'number', condition1: { type: NumberFilterConditions.Equals, filter: props.id } },
+  }
+
   return apiClient.getOrganismeFiles(props.id)(params)
 }
+
 </script>
 
 <template>
