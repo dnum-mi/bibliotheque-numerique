@@ -87,7 +87,10 @@
     "start:prod": {
       "cache": false
     },
-    "start:worker:prod": {
+    "start:worker-file:prod": {
+      "cache": false
+    },
+    "start:worker-sync:prod": {
       "cache": false
     },
     "test": {
