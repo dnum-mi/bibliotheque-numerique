@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { GridReadyEvent, GridApi, GridOptions, AgGridEvent } from 'ag-grid-community'
 
-import type { IFileOutput, IFilter, IFilterEnum, IPagination } from '@biblio-num/shared'
+import type { IFileOutput, IFilter, IPagination } from '@biblio-num/shared'
 
 import type { ApiCall } from './server-side/pagination.utils'
 import type { BNColDef } from './server-side/bn-col-def.interface'
@@ -12,10 +12,12 @@ type AttachedFileListProps = {
   tag: string,
   fnAttachedFiles: ApiCall<IFileOutput>
   columnsDef?: BNColDef[]
+  active?: boolean
 }
 
 const emit = defineEmits<{
   'grid-ready': [event: GridReadyEvent],
+  'files-fetched': [],
 }>()
 
 const props = withDefaults(defineProps<AttachedFileListProps>(), {
@@ -82,23 +84,27 @@ const onSelectionChanged = (event: AgGridEvent) => {
     window.open(url, '_blank')
   }
 }
+
 const apiCall: ApiCall<IFileOutput> = async (params: IPagination<IFileOutput>) => {
   fetching.value = true
   if (props.tag) {
     params.filters = {
-      ...(params.filters || {}),
+      ...(params.filters ?? {}),
       tag: {
         filterType: 'set',
         condition1: { filter: [props.tag] },
       },
-    }
+    } as Record<keyof IFileOutput, IFilter>
   }
-  return await props.fnAttachedFiles(params).finally(() => { fetching.value = false })
+  const files = await props.fnAttachedFiles(params).finally(() => { fetching.value = false })
+  emit('files-fetched')
+  return files
 }
 </script>
 
 <template>
   <AgGridServerSide
+    v-if="active"
     ref="agGridComponent"
     v-model:pagination-dto="paginationDto"
     :column-defs="columnsDef"

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useTabs } from '@gouvminint/vue-dsfr'
+import { useTabs, DsfrTabs } from '@gouvminint/vue-dsfr'
 
 import apiClient from '@/api/api-client'
 import { dateToStringFr, copyCurrentUrlInClipboard } from '@/utils'
@@ -9,10 +9,9 @@ import OrganismeBadge from '@/components/Badges/OrganismeBadge.vue'
 import InfoContact from '@/components/InfoContact.vue'
 import { type OrganismeIdType, useOrganismeStore, useUserStore } from '@/stores'
 import AttachedFileList from '@/components/ag-grid/AttachedFileList.vue'
-import type { IFileOutput, IPagination } from '@biblio-num/shared'
-import type { ApiCall } from '../../../components/ag-grid/server-side/pagination.utils'
+import type { IFileOutput, IPagination, IFilter, IRole } from '@biblio-num/shared'
 import { NumberFilterConditions } from '@biblio-num/shared'
-import type { IFilter } from 'ag-grid-community'
+import type { ApiCall } from '@/components/ag-grid/server-side/pagination.utils'
 
 const props = withDefaults(defineProps<{ id: string; idType: OrganismeIdType }>(), {})
 
@@ -42,7 +41,7 @@ const tabTitles = computed(() => [
     panelId: 'tab-content-0',
   },
   ...Object.entries(filesSummary.value).map((filesForTag, idx) => {
-    const [tag, count] = filesForTag
+    const [tag, count] = filesForTag as [keyof typeof tagsDict, number]
     return {
       title: `${tagsDict[tag]} (${count})`,
       tabId: `tab-${idx + 1}`,
@@ -51,7 +50,8 @@ const tabTitles = computed(() => [
   }),
 ])
 
-const role = computed(() => userStore.currentUser?.role)
+// TODO: use router to prevent user to access this page if not logged in or without the right role
+const role = computed<IRole | undefined>(() => userStore.currentUser?.role)
 
 const filesSummary = ref<Partial<Record<keyof typeof tagsDict, number>>>({})
 
@@ -66,25 +66,37 @@ onMounted(async () => {
   filesSummary.value = await apiClient.getOrganismeFilesSummary(props.id)
 })
 
-const tabs = ref<HTMLElement>()
+const tabs = ref<InstanceType<typeof DsfrTabs>>()
 const redrawTabs = async () => {
   await nextTick()
-  tabs.value.renderTabs()
+  await nextTick() // Yes, we need to call nextTick twice to make sure the tabs are rendered
+  tabs.value?.renderTabs()
 }
 
-watch(selected, () => {
+watch(selected, (idx) => {
+  if (idx > 0) {
+    const tag = Object.keys(filesSummary.value)[idx - 1]
+    activeTabs.value[tag] = true
+  }
   redrawTabs()
 })
+
+const activeTabs = ref<Record<string, boolean>>({})
 
 const fnAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutput>) => {
   params.filters = {
     ...params.filters,
-    organismeId: { filterType: 'number', condition1: { type: NumberFilterConditions.Equals, filter: props.id } },
-  }
+    organismeId: {
+      filterType: 'number',
+      condition1: {
+        type: NumberFilterConditions.Equals,
+        filter: +props.id,
+      },
+    },
+  } as Record<keyof IFileOutput, IFilter>
 
   return apiClient.getOrganismeFiles(props.id)(params)
 }
-
 </script>
 
 <template>
@@ -173,7 +185,7 @@ const fnAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutput>)
 
                 <InfoContact
                   :name="organisme.title"
-                  :info="organisme.addressLabel"
+                  :info="organisme.addressLabel ?? ''"
                   :email="organisme.email ?? ''"
                   :phone="organisme.phoneNumber ?? ''"
                 />
@@ -191,7 +203,8 @@ const fnAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutput>)
                 :key="tag"
                 :fn-attached-files="fnAttachedFiles"
                 :tag="tag"
-                @grid-ready="redrawTabs()"
+                :active="activeTabs[tag]"
+                @files-fetched="redrawTabs()"
               />
             </DsfrTabContent>
           </DsfrTabs>

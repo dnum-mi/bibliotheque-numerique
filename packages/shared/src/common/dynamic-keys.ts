@@ -3,5 +3,5 @@
     This is why we use this DynamicKeys type to have any string as keyof T for IPaginated
  */
 export interface DynamicKeys {
-  [key: string]: string
+  [key: string]: any
 }
