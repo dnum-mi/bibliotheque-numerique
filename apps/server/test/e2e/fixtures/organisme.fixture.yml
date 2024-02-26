@@ -2,6 +2,7 @@ entity: Organisme
 items:
   BMW:
     id: '1'
+    state: 'uploaded'
     type: 'ARUP'
     title: 'Bmw'
     addressType: "housenumber"
@@ -21,6 +22,7 @@ items:
     idRna: 'W001'
   Renault:
     id: '2'
+    state: 'uploaded'
     type: 'FRUP'
     title: 'Renault'
     addressType: "housenumber"
@@ -40,6 +42,7 @@ items:
     idRnf: 'F001'
   Peugeot:
     id: '3'
+    state: 'uploaded'
     type: 'FRUP'
     title: 'Peugeot'
     addressType: "housenumber"
@@ -59,6 +62,7 @@ items:
     idRnf: 'F002'
   Toyota:
     id: '4'
+    state: 'uploaded'
     type: 'ARUP'
     title: 'Toyota'
     addressType: "housenumber"
@@ -78,6 +82,7 @@ items:
     idRna: 'W002'
   Honda:
     id: '5'
+    state: 'uploaded'
     type: 'CULTE'
     title: 'Honda'
     addressType: "housenumber"
@@ -97,6 +102,7 @@ items:
     idRna: 'W003'
   Ford:
     id: '6'
+    state: 'uploaded'
     type: 'CULTE'
     title: 'Ford'
     addressType: "housenumber"
@@ -116,6 +122,7 @@ items:
     idRna: 'W004'
   Nissan:
     id: '7'
+    state: 'uploaded'
     type: 'FDD'
     title: 'Nissan'
     addressType: "housenumber"
@@ -135,6 +142,7 @@ items:
     idRnf: 'F003'
   Hyundai:
     id: '8'
+    state: 'uploaded'
     type: 'FDD'
     title: 'Hyundai'
     addressType: "housenumber"
@@ -154,6 +162,7 @@ items:
     idRnf: 'F004'
   Chevrolet:
     id: '9'
+    state: 'uploaded'
     type: 'FE'
     title: 'Chevrolet'
     addressType: "housenumber"
@@ -173,6 +182,7 @@ items:
     idRnf: 'F005'
   Subaru:
     id: '10'
+    state: 'uploaded'
     type: 'FE'
     title: 'Subaru'
     addressType: "housenumber"

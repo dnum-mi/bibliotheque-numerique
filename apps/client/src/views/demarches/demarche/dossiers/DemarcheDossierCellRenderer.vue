@@ -143,7 +143,7 @@ const getPrefecture = (prefecture: PrefectureKeys) => {
 
       <!-- File -->
       <template v-else-if="ffr === 'file' && cellValue">
-        <AgGridAttachmentCell :params="{ value: { url: cellValue } }" />
+        <AgGridAttachmentCell :params="{ value: { uuid: cellValue } }" />
       </template>
 
       <!-- BOOLEAN -->

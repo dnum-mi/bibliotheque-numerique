@@ -22,6 +22,9 @@ import {
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
 import { BullModule, BullModuleOptions } from '@nestjs/bull'
 import { BnConfigurationModule } from '@/shared/modules/bn-configurations/bn-configuration.module'
+import {
+  DossierSynchroniseOrganismeService,
+} from '@/modules/dossiers/providers/synchronization/organisme/dossier-synchronise-organisme.service'
 
 @Module({
   imports: [
@@ -49,6 +52,7 @@ import { BnConfigurationModule } from '@/shared/modules/bn-configurations/bn-con
     DossierSynchroniseService,
     DossierSynchroniseFileService,
     DossierSynchroniseExcelService,
+    DossierSynchroniseOrganismeService,
   ],
   exports: [
     DossierService,

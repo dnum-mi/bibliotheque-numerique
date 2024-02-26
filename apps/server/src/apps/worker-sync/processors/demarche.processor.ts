@@ -38,13 +38,11 @@ export class DemarcheProcessor {
         fromScratch: job.data.fromScratch,
       } as SyncOneDemarcheJobPayload)
     }
-    job.finished()
   }
 
   @Process(eJobName.SyncOneDemarche)
   async syncOneDemarche(job: Job<SyncOneDemarcheJobPayload>): Promise<void> {
     this.logger.verbose('sync one demarche')
     await this.demarcheSynchroniseService.synchroniseOneDemarche(job.data.demarcheId, job.data.fromScratch)
-    job.finished()
   }
 }

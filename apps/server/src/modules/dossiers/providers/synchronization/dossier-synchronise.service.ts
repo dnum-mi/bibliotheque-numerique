@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common'
-import { InjectQueue } from '@nestjs/bull'
 import { InjectRepository } from '@nestjs/typeorm'
 
 import { Repository } from 'typeorm'
-import { Queue } from 'bull'
 import { DossierWithCustomChamp as TDossier } from '@dnum-mi/ds-api-client'
 
 import {
@@ -13,21 +11,18 @@ import {
   PrefectureKeys,
 } from '@biblio-num/shared'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
-import { DsChampType } from '@/shared/modules/ds-api/objects/ds-champ-type.enum'
-import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
-import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
-import {
-  SyncOneRnaOrganismeJobPayload,
-  SyncOneRnfOrganismeJobPayload,
-} from '@/shared/modules/custom-bull/objects/const/job-payload.type'
 
 import { InstructionTimesService } from '@/modules/instruction_time/instruction_times.service'
 import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
 import { Demarche } from '@/modules/demarches/objects/entities/demarche.entity'
 import { FieldService } from '@/modules/dossiers/providers/field.service'
-import { Field } from '@/modules/dossiers/objects/entities/field.entity'
-import { DossierSynchroniseFileService } from '@/modules/dossiers/providers/synchronization/file/dossier-synchronize-file.service'
+import {
+  DossierSynchroniseFileService,
+} from '@/modules/dossiers/providers/synchronization/file/dossier-synchronize-file.service'
+import {
+  DossierSynchroniseOrganismeService,
+} from '@/modules/dossiers/providers/synchronization/organisme/dossier-synchronise-organisme.service'
 
 @Injectable()
 export class DossierSynchroniseService extends BaseEntityService<Dossier> {
@@ -36,8 +31,8 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
     protected readonly logger: LoggerService,
     private readonly fieldService: FieldService,
     private readonly fileSynchroniseService: DossierSynchroniseFileService,
+    private readonly dossierSynchroniseOrganisme: DossierSynchroniseOrganismeService,
     private readonly instructionTimeService: InstructionTimesService,
-    @InjectQueue(QueueName.sync) private readonly syncQueue: Queue,
   ) {
     super(repo, logger)
     this.logger.setContext(this.constructor.name)
@@ -90,40 +85,6 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
     }
   }
 
-  private _synchroniseOrganismes(fields: Field[], dossierId: number): void {
-    this.logger.verbose('_synchroniseOrganismes')
-    const organismeField = fields.find((field: Field) => {
-      return (
-        field.stringValue.length &&
-        ([DsChampType.RnaChamp, DsChampType.RnfChamp].includes(
-          field.dsChampType,
-        ) ||
-          field.rawJson?.champDescriptor?.description.match(
-            /.*#bn-rnf-field-bn#.*/,
-          ))
-      )
-    })
-    if (organismeField) {
-      if (organismeField.dsChampType === DsChampType.RnaChamp) {
-        this.logger.debug(
-          'Adding Organisme sync for rna: ' + organismeField.stringValue,
-        )
-        this.syncQueue.add(eJobName.SyncOneRnaOrganisme, {
-          dossierId,
-          rna: organismeField.stringValue,
-        } as SyncOneRnaOrganismeJobPayload)
-      } else {
-        this.logger.debug(
-          'Adding Organisme sync for rnf: ' + organismeField.stringValue,
-        )
-        this.syncQueue.add(eJobName.SyncOneRnfOrganisme, {
-          dossierId,
-          rnf: organismeField.stringValue,
-        } as SyncOneRnfOrganismeJobPayload)
-      }
-    }
-  }
-
   async synchroniseOneDossier(
     jsonDossier: TDossier,
     demarche: Demarche,
@@ -131,13 +92,20 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
     this.logger.verbose('synchroniseOneDossier')
     const prefecture = this._findPrefecture(jsonDossier)
     const id = await this._upsertDossier(jsonDossier, demarche.id, prefecture)
-    this.fileSynchroniseService.synchroniseFiles(jsonDossier, id)
     const fields = await this.fieldService.overwriteFieldsFromDataJson(
       { ...jsonDossier, prefecture }, // TODO: find a better way for prefecture
       id,
       demarche.mappingColumns,
     )
-    this._synchroniseOrganismes(fields, id)
+    const organismeId =
+      await this.dossierSynchroniseOrganisme.synchroniseOrganismeFromFields(
+        fields,
+        id,
+      )
+    if (organismeId) {
+      await this.repo.update({ id }, { organisme: { id: organismeId } })
+    }
+    await this.fileSynchroniseService.synchroniseFiles(fields, jsonDossier, id, organismeId)
     await this._FESpecificity(id, demarche.identification)
   }
 }

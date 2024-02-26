@@ -8,6 +8,7 @@ export const OrganismeFieldTypeHash: Record<
 > = {
   id: 'number',
   type: 'string',
+  state: 'string',
   title: 'string',
   email: 'string',
   createdAt: 'date',

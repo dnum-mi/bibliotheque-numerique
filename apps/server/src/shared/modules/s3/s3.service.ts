@@ -53,6 +53,7 @@ export class S3Service implements OnModuleInit {
   }
 
   public async downloadAndUploadToS3(url: string, uuid: string): Promise<SendData> {
+    this.logger.verbose('downloadAndUploadToS3')
     const stream = await this.httpService.axiosRef({
       url,
       method: 'GET',

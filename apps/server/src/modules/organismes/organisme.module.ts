@@ -16,6 +16,6 @@ import { XlsxModule } from '../../shared/modules/xlsx/xlsx.module'
   ],
   controllers: [OrganismeController],
   providers: [OrganismeService, RnaService, RnfService],
-  exports: [OrganismeService, RnfService],
+  exports: [OrganismeService, RnfService, RnaService],
 })
 export class OrganismeModule {}

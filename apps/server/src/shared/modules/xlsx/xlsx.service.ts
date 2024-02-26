@@ -64,7 +64,9 @@ export class XlsxService {
 
   async readExcelData(stream: Readable): Promise<ExcelData> {
     this.logger.verbose('readExcelData')
-    const sheetName = (await this.bnConfigService.findByKeyName(eBnConfiguration.FE_EXCEL_IMPORT_SHEET_NAME)).stringValue
+    const sheetName = (
+      await this.bnConfigService.findByKeyName(eBnConfiguration.FE_EXCEL_IMPORT_SHEET_NAME)
+    ).stringValue
     const range = (await this.bnConfigService.findByKeyName(eBnConfiguration.FE_EXCEL_IMPORT_RANGE)).stringValue
 
     const buffer = await this._streamToBuffer(stream)

@@ -88,7 +88,8 @@ const updatePasswordFeedback = {
   default: 'Une erreur inconnue est survenue',
 } as const
 
-const baseApiUrl = import.meta.env?.API_URL || '/api'
+export const baseApiUrl = import.meta.env?.API_URL || '/api'
+
 export const headers = {
   'Content-Type': 'application/json',
 }

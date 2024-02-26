@@ -304,7 +304,9 @@ export class DossierSynchroniseExcelService extends BaseEntityService<Field> {
         dsChampType: DsChampType.IntegerNumberChamp,
       })
       .andWhere('field.sourceId = :sourceId', {
-        sourceId: (await this.bnConfigurationService.findByKeyName(eBnConfiguration.FE_EXCEL_AMOUNT_CHAMP_ID)).stringValue,
+        sourceId: (
+          await this.bnConfigurationService.findByKeyName(eBnConfiguration.FE_EXCEL_AMOUNT_CHAMP_ID)
+        ).stringValue,
       })
       .andWhere('field.numberValue IS NOT NULL')
       .getRawOne()

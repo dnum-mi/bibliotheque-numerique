@@ -48,6 +48,7 @@ export {
   RiSubtractLine,
   RiToolsFill,
   RiUserLine,
+  RiCloseFill,
   RiUserSettingsLine,
   RiFileWarningFill,
   ViFileTypeExcel2,

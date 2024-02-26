@@ -16,22 +16,39 @@ export class RnfService {
   }
 
   async getFoundation(idRnf: string): Promise<IRnfOutput> {
-    if (!isRnfLuhnValid(idRnf)) {
-      throw new Error('RNF ID is invalid')
+    this.logger.verbose('getFoundation')
+    if (!idRnf || !isRnfLuhnValid(idRnf)) {
+      this.logger.error(
+        `RNF ID is invalid: ${idRnf}${
+          isRnfLuhnValid(idRnf) ? '' : ' (Luhn check failed)'
+        }`,
+      )
+      return null
     }
+
     return axios
       .get(`${this.config.get('rnf.url')}/api/foundations/${idRnf}`)
-      .then(response => {
+      .then((response) => {
         return response.data
+      })
+      .catch((e) => {
+        const code = e.response?.status
+        if (code === 404) {
+          return null
+        }
+        throw e
       })
   }
 
-  async getUpdatedFoundations(args: GetUpdateFoundationInputDto): Promise<string[]> {
-    const url = `${this.config.get('rnf.url')}/api/foundations/last-updated-list`
-    return axios
-      .post(encodeURI(url), args)
-      .then(response => {
-        return response.data
-      })
+  async getUpdatedFoundations(
+    args: GetUpdateFoundationInputDto,
+  ): Promise<string[]> {
+    this.logger.verbose('getUpdatedFoundations')
+    const url = `${this.config.get(
+      'rnf.url',
+    )}/api/foundations/last-updated-list`
+    return axios.post(encodeURI(url), args).then((response) => {
+      return response.data
+    })
   }
 }

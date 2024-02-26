@@ -1,3 +1,4 @@
+import type { StateKey } from '../state'
 import type { OrganismeTypeKeys } from './organisme-type.enums'
 import type { IRnaOutput } from './rna-output.interface'
 import type { IRnfOutput } from './rnf-output.interface'
@@ -5,16 +6,16 @@ import type { IRnfOutput } from './rnf-output.interface'
 export interface IOrganisme {
   id: number
   type: OrganismeTypeKeys
-  title: string
-  email: string
-  phoneNumber: string
-  dateCreation: Date
+  state: StateKey
+  title: string | null
+  email: string | null
+  phoneNumber: string | null
+  dateCreation: Date | null
   dateDissolution?: Date | null
   idRna: string | null
   rnaJson: IRnaOutput | null
   idRnf: string | null
   rnfJson: IRnfOutput | null
-
   addressLabel: string | null
   addressPostalCode: string | null
   addressCityName: string | null
