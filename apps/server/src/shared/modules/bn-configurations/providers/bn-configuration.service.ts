@@ -37,6 +37,7 @@ export class BnConfigurationService extends BaseEntityService<BnConfiguration> i
       )
       return null
     }
+    this.logger.debug(`Configuration ${keyName}: ${configuration.stringValue}`)
     return configuration
   }
 

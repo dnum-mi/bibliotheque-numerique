@@ -12,6 +12,7 @@ import {
   IRnaOutput,
   IRnfOutput,
   OrganismeType,
+  eState,
 } from '@biblio-num/shared'
 
 import { OrganismeFieldTypeHash } from '@/modules/organismes/objects/const/organisme-field-type-hash.const'
@@ -25,6 +26,9 @@ import {
 } from '@/modules/organismes/objects/dto/small-rnf-organisme.dto'
 import { PaginationDto } from '@/shared/pagination/pagination.dto'
 import { PaginatedDto } from '@/shared/pagination/paginated.dto'
+import { DossierService } from '@/modules/dossiers/providers/dossier.service'
+import { FindOneOptions } from 'typeorm/find-options/FindOneOptions'
+import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere'
 
 @Injectable()
 export class OrganismeService extends BaseEntityService<Organisme> {
@@ -33,22 +37,45 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     @InjectRepository(Organisme) repo: Repository<Organisme>,
     protected readonly rnfService: RnfService,
     protected readonly rnaService: RnaService,
+    protected readonly dossierService: DossierService,
   ) {
     super(repo, logger, OrganismeFieldTypeHash)
     this.logger.setContext(this.constructor.name)
   }
 
-  async upsertOrganismeRnf(idRnf: string): Promise<number> {
-    this.logger.verbose(`associateOrganismeFromRnf ${idRnf}`)
-    const raw: IRnfOutput = await this.rnfService.getFoundation(idRnf)
-    if (!raw) {
-      throw new Error('No association found with this RNF.')
+  private async _getOrCreateOrganismeCommun(
+    id: string,
+    key: 'idRnf' | 'idRna',
+  ): Promise<number> {
+    this.logger.debug(`from ${key}${id}`)
+    const org = await this.repo.findOne({ where: { [key]: id } })
+    if (org) {
+      return org.id
     }
+    return this.createAndSave({
+      [key]: id,
+      state: eState.queued,
+    }).then((o) => o.id)
+  }
+
+  async getOrCreateOrganismeIdFromRna(idRna: string): Promise<number> {
+    this.logger.verbose(`getOrCreateOrganismeIdFromRna ${idRna}`)
+    return this._getOrCreateOrganismeCommun(idRna, 'idRna')
+  }
+
+  async getOrCreateOrganismeIdFromRnf(idRnf: string): Promise<number> {
+    this.logger.verbose(`getOrCreateOrganismeIdFromRnf ${idRnf}`)
+    return this._getOrCreateOrganismeCommun(idRnf, 'idRnf')
+  }
+
+  async updateOrganismeFromRnf(idRnf: string, raw: IRnfOutput): Promise<void> {
+    this.logger.verbose(`updateOrganismeFromRnf ${idRnf}`)
     const __extractAddressField = (field: string): string =>
       raw.address[field] || ''
-    const upsert = await this.repo.upsert(
+    await this.repo.update(
+      { idRnf },
       {
-        idRnf,
+        state: eState.uploaded,
         title: raw.title,
         dateCreation: new Date(raw.createdAt),
         type: raw.type,
@@ -76,21 +103,11 @@ export class OrganismeService extends BaseEntityService<Organisme> {
         fiscalEndDateAt: raw.fiscalEndDateAt,
         rnfJson: raw,
       },
-      {
-        conflictPaths: ['idRnf'],
-        skipUpdateIfNoValuesChanged: false,
-      },
     )
-    return upsert.identifiers[0].id
   }
 
-  async upsertOrganismeRna(idRna: string): Promise<number> {
-    this.logger.verbose(`associateOrganismeFromRna ${idRna}`)
-    const raw: IRnaOutput = await this.rnaService.getAssociation(idRna)
-    this.logger.debug(`raw: ${JSON.stringify(raw)}`)
-    if (!raw) {
-      throw new Error('No association found with this RNA.')
-    }
+  async updateOrganismeFromRna(idRna: string, raw: IRnaOutput): Promise<void> {
+    this.logger.verbose(`updateOrganismeFromRna ${idRna}`)
     const a = raw.adresse_siege || null
     const addressStreetAddress = a
       ? ['numero_voie', 'type_voie', 'libelle_voie']
@@ -104,9 +121,12 @@ export class OrganismeService extends BaseEntityService<Organisme> {
         .filter((a) => !!a)
         .join(' ')}`
       : null
-    const upsert = await this.repo.upsert(
+    await this.repo.update(
       {
         idRna,
+      },
+      {
+        state: eState.uploaded,
         title: raw.nom,
         dateCreation: raw.date_creation,
         type: raw.reconnue_utilite_publique
@@ -122,24 +142,19 @@ export class OrganismeService extends BaseEntityService<Organisme> {
         dateDissolution: raw.date_dissolution,
         rnaJson: raw,
       },
-      {
-        conflictPaths: ['idRna'],
-        skipUpdateIfNoValuesChanged: false,
-      },
     )
-    return upsert.identifiers[0].id
   }
 
   async getAllRnaOrganisme(): Promise<SmallRnaOrganismeDto[]> {
     return this.repository.find({
-      where: { idRna: Not(IsNull()) },
+      where: { idRna: Not(IsNull()), state: eState.uploaded },
       select: smallRnaOrganismeDtoKeys,
     })
   }
 
   async getAllRnfOrganisme(): Promise<SmallRnfOrganismeDto[]> {
     return this.repository.find({
-      where: { idRnf: Not(IsNull()) },
+      where: { idRnf: Not(IsNull()), state: eState.uploaded },
       select: smallRnfOrganismeDtoKeys,
     })
   }
@@ -148,6 +163,21 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     dto: PaginationDto<IOrganisme>,
   ): Promise<PaginatedDto<IOrganisme>> {
     this.logger.verbose('listOrganisme')
-    return this.paginate<IOrganisme>(dto)
+    return this.paginate<IOrganisme>(dto, { state: eState.uploaded })
+  }
+
+  // TODO: why is onDelete: 'SET NULL' from typeorm not working ??!!!
+  async deleteOrganismeAndItsReferences(
+    where: FindOptionsWhere<Organisme>,
+  ): Promise<void> {
+    this.logger.verbose('deleteOrganismeAndItsReferences')
+    const org = await this.repo.findOne({ where, select: ['id'] })
+    if (org) {
+      await this.dossierService.repository.update(
+        { organisme: { id: org.id } },
+        { organisme: null },
+      )
+      await this.repo.delete(org.id)
+    }
   }
 }

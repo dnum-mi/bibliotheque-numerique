@@ -8,7 +8,6 @@ export class GetFoundationsInputDto {
   rnfIds: string[]
 
   @IsOptional()
-  @IsDateString()
   @ApiProperty({
     description: "Lister seulement celles qui ont été modifiées depuis 'date'.",
   })

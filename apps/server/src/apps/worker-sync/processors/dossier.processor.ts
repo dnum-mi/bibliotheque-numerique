@@ -27,6 +27,5 @@ export class DossierProcessor {
     const demarche = await this.demarcheService.findOneById(job.data.demarcheId)
     const tdossier = await this.dsApiClient.dossierWithCustomChamp(job.data.dsDossierId)
     await this.dossierSynchroniseService.synchroniseOneDossier(tdossier.dossier, demarche)
-    job.finished()
   }
 }

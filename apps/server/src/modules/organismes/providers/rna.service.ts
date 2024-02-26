@@ -23,7 +23,8 @@ export class RnaService {
     )}`
   }
 
-  async getAssociation(idRna: string): Promise<IRnaOutput> {
+  async getAssociation(idRna: string): Promise<IRnaOutput | null> {
+    this.logger.verbose('getAssociation')
     const url = `${this.rnaUrl}/${idRna}?${this.defaultQueryArgs}`
     return axios
       .get(url, {
@@ -33,6 +34,13 @@ export class RnaService {
       })
       .then((response) => {
         return response.data.data
+      })
+      .catch((e) => {
+        const code = e.response?.status
+        if (code === 404) {
+          return null
+        }
+        throw e
       })
   }
 }

@@ -4,7 +4,6 @@ import {
   eBnConfiguration,
   eBnConfigurationType,
 } from '@biblio-num/shared'
-import { addYears } from 'date-fns'
 
 type OneDefaultConfiguration = {
   stringValue: string
@@ -32,7 +31,7 @@ export const BnConfigurationDefault: Record<
     type: eBnConfigurationType.number,
   },
   [eBnConfiguration.LAST_ORGANISM_SYNC_AT]: {
-    stringValue: addYears(new Date(), -1).toISOString(),
+    stringValue: (new Date(0)).toISOString(),
     type: eBnConfigurationType.date,
   },
 }

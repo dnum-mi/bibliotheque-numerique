@@ -13,7 +13,7 @@ export const options = (): DataSourceOptions =>
     password: process.env.POSTGRES_PASSWORD || 'password',
     database: process.env.POSTGRES_DB || 'biblio-num',
     schema: process.env.POSTGRES_SCHEMA || 'public',
-    logging: false,
+    logging: ['error', 'warn', 'info', 'debug'],
     synchronize: false,
     migrationsTableName: 'migrations',
     entities: [resolve(__dirname, '../src/**/**.entity.{ts,js}')],

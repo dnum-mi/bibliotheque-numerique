@@ -12,6 +12,8 @@ import {
   IRnfOutput,
   OrganismeType,
   OrganismeTypeKeys,
+  eState,
+  StateKey,
 } from '@biblio-num/shared'
 import { File } from '@/modules/files/objects/entities/file.entity'
 
@@ -24,26 +26,34 @@ export class Organisme extends BaseEntity implements IOrganisme {
     })
   type: OrganismeTypeKeys
 
+  // TODO: a table state indeed ? uploaded = synchronised. uploading = synchronising
   @Column({
-    type: 'varchar',
-    nullable: false,
+    type: 'enum',
+    enum: eState,
+    default: eState.queued,
   })
-  title: string
+  state: StateKey
 
   @Column({
     type: 'varchar',
     nullable: true,
   })
-  email: string
+  title: string | null
 
   @Column({
     type: 'varchar',
     nullable: true,
   })
-  phoneNumber: string
+  email: string | null
 
-  @Column({ type: 'date' })
-  dateCreation: Date
+  @Column({
+    type: 'varchar',
+    nullable: true,
+  })
+  phoneNumber: string | null
+
+  @Column({ type: 'date', nullable: true })
+  dateCreation: Date | null
 
   @Column({
     type: 'date',
@@ -57,7 +67,9 @@ export class Organisme extends BaseEntity implements IOrganisme {
   })
   fiscalEndDateAt: Date
 
-  @OneToMany(() => Dossier, (dossier) => dossier.organisme)
+  @OneToMany(() => Dossier, (dossier) => dossier.organisme, {
+    onDelete: 'SET NULL',
+  })
   @JoinColumn()
   dossiers?: Dossier[]
 

@@ -50,3 +50,5 @@ export const getDossierByIdRoute = (id: number) => `${dossierRoute}/${id}`
 export const healthRoute = '/health'
 
 export const bnConfigurationsRoute = '/bn-configurations'
+
+export const getFileRoute = (uuid: string) => `/files/${uuid}`

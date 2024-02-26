@@ -15,18 +15,22 @@ export type SyncOneDossierJobPayload = {
   fromScratch: boolean
 }
 
-export type SyncOneRnfOrganismeJobPayload = {
-  dossierId: number
+export type SyncOneOrganismeJobPayload = {
+  dossierId?: number
+  fieldId?: number
+}
+
+export type SyncOneRnfOrganismeJobPayload = SyncOneOrganismeJobPayload & {
   rnf: string
 }
 
-export type SyncOneRnaOrganismeJobPayload = {
-  dossierId: number
+export type SyncOneRnaOrganismeJobPayload = SyncOneOrganismeJobPayload & {
   rna: string
 }
 
 export type UploadDsFileJobPayload = {
-  dsDossierId: number
+  dsDossierId: number,
+  fieldId?: number,
   file: File
 }
 

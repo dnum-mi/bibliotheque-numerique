@@ -5,12 +5,12 @@ const fileDsSourceLabels = [
   'ds-message',
   'ds-demandeur',
   'ds-attestation',
+  'ds-champ',
 ] as const
 
 const fileSourceLabels = [
   'rnf',
   'rna',
-  'ds-champ',
   ...fileDsSourceLabels,
 ] as const
 

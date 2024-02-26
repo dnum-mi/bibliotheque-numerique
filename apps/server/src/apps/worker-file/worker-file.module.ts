@@ -15,7 +15,11 @@ import bullConfig from '@/config/bull.config'
 import dsConfig from '@/config/ds.config'
 import { DsApiModule } from '@/shared/modules/ds-api/ds-api.module'
 import fileConfig from '../../config/file.config'
-import { S3Module } from '../../shared/modules/s3/s3.module'
+import { S3Module } from '@/shared/modules/s3/s3.module'
+import { FileProcessor } from '@/apps/worker-file/processor/file.processor'
+import { FileModule } from '@/modules/files/file.module'
+import { DossierModule } from '@/modules/dossiers/dossier.module'
+import instructionTimeMappingConfig from '@/config/instructionTimeMapping.config'
 
 @Module({
   imports: [
@@ -29,11 +33,13 @@ import { S3Module } from '../../shared/modules/s3/s3.module'
         redisConfig,
         bullConfig,
         fileConfig,
+        instructionTimeMappingConfig,
       ],
     } as ConfigModuleOptions),
     LoggerModule.forRoot('worker-file'),
     TypeOrmModule.forRootAsync(typeormFactoryLoader),
     CustomBullModule,
+    FileModule,
     BullModule.registerQueue(
       ...([
         { name: QueueName.sync },
@@ -42,8 +48,12 @@ import { S3Module } from '../../shared/modules/s3/s3.module'
     ),
     DsApiModule,
     S3Module,
+    DossierModule,
   ],
-  controllers: [],
-  providers: [],
+  controllers: [
+  ],
+  providers: [
+    FileProcessor,
+  ],
 })
 export class WorkerFileModule {}
