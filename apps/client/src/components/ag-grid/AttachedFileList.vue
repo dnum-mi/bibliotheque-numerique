@@ -10,7 +10,7 @@ import AttachedFileStateCellRenderer from './AttachedFileStateCellRenderer.vue'
 
 type AttachedFileListProps = {
   tag: string,
-  fnAttachedFiles: ApiCall<IFileOutput>
+  fetchAttachedFiles: ApiCall<IFileOutput>
   columnsDef?: BNColDef[]
   active?: boolean
 }
@@ -96,7 +96,7 @@ const apiCall: ApiCall<IFileOutput> = async (params: IPagination<IFileOutput>) =
       },
     } as Record<keyof IFileOutput, IFilter>
   }
-  const files = await props.fnAttachedFiles(params).finally(() => { fetching.value = false })
+  const files = await props.fetchAttachedFiles(params).finally(() => { fetching.value = false })
   emit('files-fetched')
   return files
 }

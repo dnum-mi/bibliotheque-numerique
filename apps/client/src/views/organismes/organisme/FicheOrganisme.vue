@@ -83,7 +83,7 @@ watch(selected, (idx) => {
 
 const activeTabs = ref<Record<string, boolean>>({})
 
-const fnAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutput>) => {
+const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutput>) => {
   params.filters = {
     ...params.filters,
     organismeId: {
@@ -201,7 +201,7 @@ const fnAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutput>)
             >
               <AttachedFileList
                 :key="tag"
-                :fn-attached-files="fnAttachedFiles"
+                :fetch-attached-files="fetchAttachedFiles"
                 :tag="tag"
                 :active="activeTabs[tag]"
                 @files-fetched="redrawTabs()"
