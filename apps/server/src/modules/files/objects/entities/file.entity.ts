@@ -73,6 +73,8 @@ export class File extends BaseEntity {
   @ManyToOne(() => Dossier, (doss) => doss.files)
   dossier: Dossier | null
 
-  @ManyToOne(() => Organisme, (org) => org.files)
+  @ManyToOne(() => Organisme, (org) => org.files, {
+    onDelete: 'SET NULL',
+  })
   organisme: Organisme | null
 }

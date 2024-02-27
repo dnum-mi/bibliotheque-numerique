@@ -13,7 +13,6 @@ import { BnConfigurationService } from '@/shared/modules/bn-configurations/provi
 import { eBnConfiguration } from '@biblio-num/shared'
 import { RnaService } from '@/modules/organismes/providers/rna.service'
 import { FieldService } from '@/modules/dossiers/providers/field.service'
-import { DossierService } from '@/modules/dossiers/providers/dossier.service'
 
 @Processor(QueueName.sync)
 export class OrganismeProcessor {
@@ -69,7 +68,7 @@ export class OrganismeProcessor {
     this.logger.debug(job.data)
     const rawRnf = await this.rnfService.getFoundation(job.data.rnf)
     if (rawRnf === null) {
-      await this.organismeService.deleteOrganismeAndItsReferences({ idRnf: job.data.rnf })
+      await this.organismeService.repository.delete({ idRnf: job.data.rnf })
       if (job.data.fieldId) {
         await this.fieldService.updateOrThrow(job.data.fieldId, {
           stringValue: `ERROR-${job.data.rnf}`,
@@ -87,7 +86,7 @@ export class OrganismeProcessor {
     this.logger.verbose('syncOneRnaOrganisme')
     const rawRna = await this.rnaService.getAssociation(job.data.rna)
     if (rawRna === null) {
-      await this.organismeService.deleteOrganismeAndItsReferences({ idRna: job.data.rna })
+      await this.organismeService.repository.delete({ idRna: job.data.rna })
       if (job.data.fieldId) {
         await this.fieldService.updateOrThrow(job.data.fieldId, {
           stringValue: `ERROR-${job.data.rna}`,
