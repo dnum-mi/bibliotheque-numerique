@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { RolesKeys } from '@biblio-num/shared'
+import type { RolesKeys } from '@biblio-num/shared/dist/src/index'
 
 withDefaults(defineProps<{ role?: RolesKeys, small?: boolean }>(), {
   role: 'norole',

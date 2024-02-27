@@ -5,7 +5,7 @@ import type { DsfrAlertType } from '@gouvminint/vue-dsfr/types/components/DsfrAl
 import LayoutBanner from '@/components/Layout/LayoutBanner.vue'
 import { useUserStore } from '@/stores'
 import { dateToStringFr } from '@/utils'
-import RoleBadge from '@/components/Badges/RoleBadge.vue'
+import RoleBadge from '@/components/Badges/role/RoleBadge.vue'
 import apiClient from '@/api/api-client'
 import { ASK_RESET_PWD_SUCCESS } from '@/messages'
 import EditableField from './EditableField.vue'

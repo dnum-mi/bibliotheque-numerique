@@ -4,6 +4,7 @@ export class UpsertDsFileDto {
   sourceStringId?: string
   sourceIndex?: number
   tag?: FileTagKey
+  fileName?: string
   originalLabel: string
   sourceLabel: FileDsSourceLabelKey
   organismeId?: number

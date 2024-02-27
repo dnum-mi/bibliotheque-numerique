@@ -1,5 +1,5 @@
 <script lang='ts' setup>
-import type { OrganismeTypeKeys } from '@biblio-num/shared'
+import type { OrganismeTypeKeys } from '@biblio-num/shared/dist/src/index'
 
 defineProps<{
   type: OrganismeTypeKeys

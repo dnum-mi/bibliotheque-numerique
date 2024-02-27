@@ -4,7 +4,7 @@ import type { IDemarche } from '@biblio-num/shared'
 import { dateToStringFr } from '@/utils'
 import { useDemarcheStore } from '@/stores/demarche'
 import { routeNames } from '@/router/route-names'
-import OrganismeBadgesRenderer from '@/components/Badges/OrganismeBadgesRenderer.vue'
+import OrganismeBadgesRenderer from '@/components/Badges/organisme/OrganismeBadgesRenderer.vue'
 import BiblioNumDataTableAgGrid from '@/components/BiblioNumDataTableAgGrid.vue'
 import LayoutList from '@/components/Layout/LayoutList.vue'
 

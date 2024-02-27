@@ -27,8 +27,6 @@ import {
 import { PaginationDto } from '@/shared/pagination/pagination.dto'
 import { PaginatedDto } from '@/shared/pagination/paginated.dto'
 import { DossierService } from '@/modules/dossiers/providers/dossier.service'
-import { FindOneOptions } from 'typeorm/find-options/FindOneOptions'
-import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere'
 
 @Injectable()
 export class OrganismeService extends BaseEntityService<Organisme> {

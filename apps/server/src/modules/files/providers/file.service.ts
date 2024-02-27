@@ -11,9 +11,11 @@ import {
 import {
   eFileMimeType,
   eState,
-  FileTagKey,
+  FileTabTagKey,
+  fileTabTags,
   StateKey,
   FileMimeTypeKey,
+  FileTagKey,
 } from '@biblio-num/shared'
 import { ChampDescriptor, File as TFile } from '@dnum-mi/ds-api-client'
 import { doesTextContainBnCode } from '@/shared/utils/bn-code.utils'
@@ -21,6 +23,7 @@ import { tagCodeDictionary } from '@/modules/files/objects/const/tag-dictionnary
 import { TagDefinition } from '@/modules/files/objects/types/tag-definition.type'
 import { UpsertDsFileDto } from '@/modules/files/objects/dto/input/upsert-ds-file.dto'
 import { v4 } from 'uuid'
+import { FileFieldTypeHash } from '@/modules/files/objects/const/file-field-type-hash.const'
 
 @Injectable()
 export class FileService extends BaseEntityService<File> {
@@ -28,7 +31,7 @@ export class FileService extends BaseEntityService<File> {
     protected logger: LoggerService,
     @InjectRepository(File) protected repo: Repository<File>,
   ) {
-    super(repo, logger)
+    super(repo, logger, FileFieldTypeHash)
     this.logger.setContext(this.constructor.name)
   }
 
@@ -120,7 +123,7 @@ export class FileService extends BaseEntityService<File> {
         state: eState.queued,
         tag: payload.tag,
         mimeType: eFileMimeType.unknown,
-        label: 'to-be-constructed',
+        label: payload.fileName || 'to-be-constructed',
         byteSize: -1,
         checksum: 'unknown',
         originalLabel: payload.originalLabel ?? 'to-be-constructed',
@@ -149,6 +152,25 @@ export class FileService extends BaseEntityService<File> {
   async updateState(id: number, state: StateKey): Promise<void> {
     this.logger.verbose('updateState')
     await this.repo.update({ id }, { state })
+  }
+
+  async getOrganismeFileSummary(
+    organismeId: number,
+  ): Promise<Record<FileTabTagKey, number>> {
+    this.logger.verbose('getOrganismeFileSummary')
+    const entries = await Promise.all(
+      fileTabTags.map((tag) =>
+        this.repo
+          .count({
+            where: {
+              organisme: { id: organismeId },
+              tag: tag as FileTagKey,
+            },
+          })
+          .then((count) => [tag, count]),
+      ),
+    )
+    return Object.fromEntries(entries) as Record<FileTabTagKey, number>
   }
 
   //#endregion

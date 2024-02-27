@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { IDossier, IOrganisme } from '@biblio-num/shared'
 
-import OrganismeBadge from '@/components/Badges/OrganismeBadge.vue'
+import OrganismeBadge from '@/components/Badges/organisme/OrganismeBadge.vue'
 
 type DossierHeaderProps = {
   dossier: IDossier & { organisme?: IOrganisme }

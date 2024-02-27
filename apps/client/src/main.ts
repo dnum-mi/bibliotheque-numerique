@@ -24,7 +24,8 @@ import '@/ag-grid-dsfr.css'
 import './unregister.js'
 
 // We use statusBadge in DsfrTable
-import StatusBadge from './components/Badges/StatusBadge.vue'
+import StatusBadge from './components/Badges/status/StatusBadge.vue'
+import FileTagBadge from '@/components/Badges/file-tag/FileTagBadge.vue'
 
 addIcons(...Object.values(icons))
 
@@ -44,5 +45,6 @@ if (import.meta.env.DEV && import.meta.env.VITE_CYPRESS !== 'true') {
 createApp(App)
   .use(createPinia())
   .component('StatusBadge', StatusBadge)
+  . component('FileTagBadge', FileTagBadge)
   .use(router)
   .mount('#app')

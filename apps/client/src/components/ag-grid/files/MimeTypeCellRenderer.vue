@@ -1,9 +1,10 @@
 <script lang="ts" setup>
-import { getIconNameFromMimeType } from '@biblio-num/shared'
+import type { FileMimeTypeKey } from '@biblio-num/shared/dist/src/index'
+import { getIconNameFromMimeType } from '@/components/ag-grid/files/file.utils'
 
 const props = defineProps<{
   params: {
-    value: string
+    value: FileMimeTypeKey
   }
 }>()
 

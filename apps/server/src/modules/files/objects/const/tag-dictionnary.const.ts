@@ -1,14 +1,14 @@
-import { eFileTag, FileTagKey } from '@biblio-num/shared'
+import { eFileTag, FileTagKey, dFileTabTagDictionary } from '@biblio-num/shared'
 import { TagDefinition } from '@/modules/files/objects/types/tag-definition.type'
 
 export const tagDictionary: Record<FileTagKey, TagDefinition> = {
   [eFileTag.status]: {
-    title: 'Status',
+    title: dFileTabTagDictionary[eFileTag.status],
     tag: eFileTag.status,
     code: 'status',
   },
   [eFileTag.account]: {
-    title: 'Dépôt de compte',
+    title: dFileTabTagDictionary[eFileTag.account],
     tag: eFileTag.account,
     code: 'depot-de-compte',
   },
