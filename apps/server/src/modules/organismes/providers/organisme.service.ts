@@ -165,19 +165,4 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     this.logger.verbose('listOrganisme')
     return this.paginate<IOrganisme>(dto, { state: eState.uploaded })
   }
-
-  // TODO: why is onDelete: 'SET NULL' from typeorm not working ??!!!
-  async deleteOrganismeAndItsReferences(
-    where: FindOptionsWhere<Organisme>,
-  ): Promise<void> {
-    this.logger.verbose('deleteOrganismeAndItsReferences')
-    const org = await this.repo.findOne({ where, select: ['id'] })
-    if (org) {
-      await this.dossierService.repository.update(
-        { organisme: { id: org.id } },
-        { organisme: null },
-      )
-      await this.repo.delete(org.id)
-    }
-  }
 }

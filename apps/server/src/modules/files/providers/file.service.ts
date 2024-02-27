@@ -113,6 +113,7 @@ export class FileService extends BaseEntityService<File> {
       this.logger.debug('Creating new file')
       return this.createAndSave({
         dossier: { id: payload.dossierId },
+        organisme: { id: payload.organismeId ?? null },
         sourceLabel: payload.sourceLabel,
         sourceIndex: payload.sourceIndex ?? null,
         sourceStringId: payload.sourceStringId ?? null,
