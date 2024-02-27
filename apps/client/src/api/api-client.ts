@@ -35,6 +35,7 @@ import type {
   ICreateBnConfiguration,
   IUpdateBnConfiguration,
   IPaginated,
+  FileTabTagKey,
 } from '@biblio-num/shared'
 
 import {
@@ -64,7 +65,7 @@ import {
   organismesListXlsxRoute,
   attachedFilesRoute,
   getOrganismeFilesSummaryRoute,
-  getOrganismeFilesRoute,
+  getOrganismeFilesRoute, getDossierFilesRoute,
 } from './bn-api-routes'
 import {
   authRoute,
@@ -207,12 +208,17 @@ export const organismeApiClient = {
     return getOrRedirectTo404(getOrganismeByRnfRoute(organismeIdRnf))
   },
 
-  getOrganismeFilesSummary: async (organismeId: string): Promise<Record<string, number>> => {
+  getOrganismeFilesSummary: async (organismeId: number): Promise<Record<FileTabTagKey, number>> => {
     return (await apiClientInstance.get(getOrganismeFilesSummaryRoute(organismeId))).data
   },
 
-  getOrganismeFiles: (organismeId: string) => async (params: IPagination<IFileOutput>): Promise<IPaginated<IFileOutput>> => {
+  getOrganismeFiles: (organismeId: number) => async (params: IPagination<IFileOutput>): Promise<IPaginated<IFileOutput>> => {
     const response = await apiClientInstance.post(getOrganismeFilesRoute(organismeId), params)
+    return response.data
+  },
+
+  getDossierFiles: (dossierId: number) => async (params: IPagination<IFileOutput>): Promise<IPaginated<IFileOutput>> => {
+    const response = await apiClientInstance.post(getDossierFilesRoute(dossierId), params)
     return response.data
   },
 

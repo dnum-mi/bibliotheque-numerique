@@ -2,7 +2,7 @@
 import sanitizeHtml from 'sanitize-html'
 
 import iconRoundMarianne from '@/assets/icone-ronde-marianne.png'
-import { getIconNameFromFilename } from '@biblio-num/shared'
+import { getIconNameFromMimeType } from '@/components/ag-grid/files/file.utils'
 
 type Message = {
     id: number
@@ -91,7 +91,6 @@ defineProps<DossierMessagerieProps>()
               >
                 <VIcon
                   class="fr-mr-1v"
-                  :name="getIconNameFromFilename(file.name)"
                   fill="var(--blue-france-sun-113-625)"
                 />
                 <span>{{ file.name }}</span>

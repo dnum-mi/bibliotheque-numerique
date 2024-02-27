@@ -7,14 +7,17 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { Organisme } from '@/modules/organismes/objects/organisme.entity'
 import { DossierModule } from '@/modules/dossiers/dossier.module'
 import { XlsxModule } from '../../shared/modules/xlsx/xlsx.module'
+import { FileModule } from '@/modules/files/file.module'
+import { OrganismeFileController } from '@/modules/organismes/controllers/organisme-file.controller'
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Organisme]),
     forwardRef(() => DossierModule),
     XlsxModule,
+    FileModule,
   ],
-  controllers: [OrganismeController],
+  controllers: [OrganismeController, OrganismeFileController],
   providers: [OrganismeService, RnaService, RnfService],
   exports: [OrganismeService, RnfService, RnaService],
 })

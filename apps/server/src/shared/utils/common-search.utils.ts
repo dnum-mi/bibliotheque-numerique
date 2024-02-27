@@ -25,6 +25,7 @@ import { SortDto } from '@/shared/pagination/sort.dto'
 import { SearchDossierDto } from '@/modules/dossiers/objects/dto/search-dossier.dto'
 
 const _manualFilterValueEscapingMechanism = (str: string): string => {
+  console.log(str)
   return str ? str.replace("'", "''") : str
 }
 

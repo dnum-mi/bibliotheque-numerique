@@ -1,18 +1,22 @@
 <script lang="ts" setup>
 import type { GridReadyEvent, GridApi, GridOptions, AgGridEvent } from 'ag-grid-community'
 
-import type { IFileOutput, IFilter, IPagination } from '@biblio-num/shared'
+import type { IFileOutput, IFilter, IPagination } from '@biblio-num/shared/dist/src/index'
 
-import type { ApiCall } from './server-side/pagination.utils'
-import type { BNColDef } from './server-side/bn-col-def.interface'
+import type { ApiCall } from '../server-side/pagination.utils'
+import type { BNColDef } from '../server-side/bn-col-def.interface'
 import MimeTypeCellRenderer from './MimeTypeCellRenderer.vue'
 import AttachedFileStateCellRenderer from './AttachedFileStateCellRenderer.vue'
+import { baseApiUrl } from '@/api/api-client'
+import { fileTabTags } from '@biblio-num/shared'
+import FileTagBadgeRenderer from '@/components/Badges/file-tag/FileTagBadgeRenderer.vue'
 
 type AttachedFileListProps = {
   tag: string,
   fetchAttachedFiles: ApiCall<IFileOutput>
   columnsDef?: BNColDef[]
   active?: boolean
+  withTabTag?: boolean
 }
 
 const emit = defineEmits<{
@@ -22,6 +26,14 @@ const emit = defineEmits<{
 
 const props = withDefaults(defineProps<AttachedFileListProps>(), {
   columnsDef: (): BNColDef[] => [
+    {
+      headerName: '',
+      field: 'state',
+      filter: 'agTextColumnFilter',
+      menuTabs: ['filterMenuTab'],
+      cellRenderer: AttachedFileStateCellRenderer,
+      width: 100,
+    },
     {
       headerName: 'Identifiant',
       field: 'fileId',
@@ -34,19 +46,14 @@ const props = withDefaults(defineProps<AttachedFileListProps>(), {
       field: 'sourceLabel',
       filter: 'agTextColumnFilter',
       menuTabs: ['filterMenuTab'],
-    },
-    {
-      headerName: 'État',
-      field: 'state',
-      filter: 'agTextColumnFilter',
-      menuTabs: ['filterMenuTab'],
-      cellRenderer: AttachedFileStateCellRenderer,
+      width: 200,
     },
     {
       headerName: 'Nom',
-      field: 'label',
+      field: 'originalLabel',
       filter: 'agTextColumnFilter',
       menuTabs: ['filterMenuTab'],
+      width: 400,
     },
     // {
     //   headerName: 'Nom original',
@@ -65,6 +72,8 @@ const props = withDefaults(defineProps<AttachedFileListProps>(), {
   ],
 })
 
+const columnsDef = ref<BNColDef[]>(props.columnsDef)
+
 const gridApi = ref<GridApi>()
 const onGridReady = (event: GridReadyEvent) => {
   gridApi.value = event.api
@@ -79,7 +88,7 @@ const specificGridOptions: Partial<GridOptions> = {
 }
 
 const onSelectionChanged = (event: AgGridEvent) => {
-  const url = event.api.getSelectedRows()?.[0]?.url
+  const url = `${baseApiUrl}/files/${event.api.getSelectedRows()?.[0]?.uuid}`
   if (url) {
     window.open(url, '_blank')
   }
@@ -87,6 +96,7 @@ const onSelectionChanged = (event: AgGridEvent) => {
 
 const apiCall: ApiCall<IFileOutput> = async (params: IPagination<IFileOutput>) => {
   fetching.value = true
+  params.columns = [...params.columns, 'uuid', 'tag']
   if (props.tag) {
     params.filters = {
       ...(params.filters ?? {}),
@@ -100,6 +110,24 @@ const apiCall: ApiCall<IFileOutput> = async (params: IPagination<IFileOutput>) =
   emit('files-fetched')
   return files
 }
+
+onMounted(() => {
+  if (props.withTabTag) {
+    columnsDef.value = [
+      ...columnsDef.value.slice(0, 2),
+      {
+        headerName: 'Tag',
+        field: 'tag',
+        filter: 'agSetColumFilter',
+        menuTabs: ['filterMenuTab'],
+        filterParams: { values: fileTabTags, cellRenderer: FileTagBadgeRenderer },
+        cellRenderer: FileTagBadgeRenderer,
+        width: 250,
+      },
+      ...columnsDef.value.slice(2),
+    ]
+  }
+})
 </script>
 
 <template>

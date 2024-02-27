@@ -9,7 +9,7 @@ import { useUserStore } from '@/stores'
 import type { BNColDef } from '@/components/ag-grid/server-side/bn-col-def.interface'
 import AgGridServerSide from '@/components/ag-grid/server-side/AgGridServerSide.vue'
 import { baseColDef } from '@/components/ag-grid/server-side/columndef-base'
-import RoleBadgesRenderer from '@/components/Badges/RoleBadgesRenderer.vue'
+import RoleBadgesRenderer from '@/components/Badges/role/RoleBadgesRenderer.vue'
 // const props = defineProps<{ }>()
 
 const agGridComponent = ref()

@@ -5,12 +5,12 @@ import apiClient from '@/api/api-client'
 import { dateToStringFr, copyCurrentUrlInClipboard } from '@/utils'
 import LayoutFiche from '@/components/Layout/LayoutFiche.vue'
 import ListeDossier from './ListeDossier.vue'
-import OrganismeBadge from '@/components/Badges/OrganismeBadge.vue'
+import OrganismeBadge from '@/components/Badges/organisme/OrganismeBadge.vue'
 import InfoContact from '@/components/InfoContact.vue'
 import { type OrganismeIdType, useOrganismeStore, useUserStore } from '@/stores'
-import AttachedFileList from '@/components/ag-grid/AttachedFileList.vue'
-import type { IFileOutput, IPagination, IFilter, IRole } from '@biblio-num/shared'
-import { NumberFilterConditions } from '@biblio-num/shared'
+import AttachedFileList from '@/components/ag-grid/files/AttachedFileList.vue'
+import type { IFileOutput, IPagination, IRole, FileTabTagKey } from '@biblio-num/shared'
+import { dFileTabTagDictionary } from '@biblio-num/shared'
 import type { ApiCall } from '@/components/ag-grid/server-side/pagination.utils'
 
 const props = withDefaults(defineProps<{ id: string; idType: OrganismeIdType }>(), {})
@@ -27,25 +27,17 @@ const prefecture = computed(
 const creation = computed(() => dateToStringFr(organisme.value?.dateCreation))
 const dissolution = computed(() => dateToStringFr(organisme.value?.dateDissolution ?? undefined))
 
-const tagsDict = {
-  statuts: 'Statuts',
-  comptes: 'Comptes',
-  'rapport-activites': 'Rapport d’activités',
-  controles: 'Contrôles',
-} as const
-
 const tabTitles = computed(() => [
   {
     title: 'Infos',
     tabId: 'tab-0',
     panelId: 'tab-content-0',
   },
-  ...Object.entries(filesSummary.value).map((filesForTag, idx) => {
-    const [tag, count] = filesForTag as [keyof typeof tagsDict, number]
+  ...Object.entries(filesSummary.value).map(([tag, count], index: number) => {
     return {
-      title: `${tagsDict[tag]} (${count})`,
-      tabId: `tab-${idx + 1}`,
-      panelId: `tab-content-${idx + 1}`,
+      title: `${dFileTabTagDictionary[tag as FileTabTagKey]} (${count})`,
+      tabId: `tab-${index + 1}`,
+      panelId: `tab-content-${index + 1}`,
     }
   }),
 ])
@@ -53,7 +45,7 @@ const tabTitles = computed(() => [
 // TODO: use router to prevent user to access this page if not logged in or without the right role
 const role = computed<IRole | undefined>(() => userStore.currentUser?.role)
 
-const filesSummary = ref<Partial<Record<keyof typeof tagsDict, number>>>({})
+const filesSummary = ref<Record<FileTabTagKey, number>>({})
 
 const isLoading = ref(false)
 onMounted(async () => {
@@ -63,7 +55,9 @@ onMounted(async () => {
   } finally {
     isLoading.value = false
   }
-  filesSummary.value = await apiClient.getOrganismeFilesSummary(props.id)
+  if (organisme.value) {
+    filesSummary.value = await apiClient.getOrganismeFilesSummary(organisme.value.id)
+  }
 })
 
 const tabs = ref<InstanceType<typeof DsfrTabs>>()
@@ -84,18 +78,11 @@ watch(selected, (idx) => {
 const activeTabs = ref<Record<string, boolean>>({})
 
 const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutput>) => {
-  params.filters = {
-    ...params.filters,
-    organismeId: {
-      filterType: 'number',
-      condition1: {
-        type: NumberFilterConditions.Equals,
-        filter: +props.id,
-      },
-    },
-  } as Record<keyof IFileOutput, IFilter>
-
-  return apiClient.getOrganismeFiles(props.id)(params)
+  if (organisme.value) {
+    return apiClient.getOrganismeFiles(organisme.value.id)(params)
+  } else {
+    console.log('pas d\'organisme')
+  }
 }
 </script>
 

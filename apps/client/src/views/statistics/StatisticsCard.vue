@@ -3,7 +3,7 @@ import type { ICustomFilter, ICustomFilterStat } from '@biblio-num/shared'
 
 import { formatCurrency, frenchFormatNumber } from '@/utils/french-number'
 import apiClient from '@/api/api-client'
-import OrganismeBadge from '@/components/Badges/OrganismeBadge.vue'
+import OrganismeBadge from '@/components/Badges/organisme/OrganismeBadge.vue'
 
 const props = defineProps<{
   filterId: number

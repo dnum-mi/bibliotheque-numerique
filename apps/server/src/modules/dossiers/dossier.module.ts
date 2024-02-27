@@ -25,6 +25,7 @@ import { BnConfigurationModule } from '@/shared/modules/bn-configurations/bn-con
 import {
   DossierSynchroniseOrganismeService,
 } from '@/modules/dossiers/providers/synchronization/organisme/dossier-synchronise-organisme.service'
+import { DossierFileController } from '@/modules/dossiers/controllers/dossier-file.controller'
 
 @Module({
   imports: [
@@ -43,7 +44,7 @@ import {
     ),
     BnConfigurationModule,
   ],
-  controllers: [DossierController],
+  controllers: [DossierController, DossierFileController],
   providers: [
     DossierService,
     FieldService,

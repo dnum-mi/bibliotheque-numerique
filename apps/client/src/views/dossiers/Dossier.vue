@@ -1,40 +1,38 @@
 <script lang="ts" setup>
-
-import type {
-  Champ,
-  Message as DossierMessage,
-  PieceJustificativeChamp,
-} from '@dnum-mi/ds-api-client'
-import type {
-  IDossier as IDossierOutput,
-} from '@biblio-num/shared'
+import type { Champ, Message as DossierMessage, PieceJustificativeChamp } from '@dnum-mi/ds-api-client'
+import type { IDossier as IDossierOutput, IFileOutput, IPagination } from '@biblio-num/shared'
 
 import { useDossierStore } from '@/stores/dossier'
 import LayoutFiche from '@/components/Layout/LayoutFiche.vue'
 import DossierInformations from './DossierInformations.vue'
 import DossierDemande from './DossierDemande.vue'
 import DossierAnnotations from './DossierAnnotations.vue'
-import AttachmentList from '@/components/AttachmentList.vue'
 import DossierHeader from './DossierHeader.vue'
 import DossierMessagerie from './DossierMessagerie.vue'
 import { copyCurrentUrlInClipboard, formatForMessageDate } from '@/utils'
+import apiClient from '@/api/api-client'
+import AttachedFileList from '@/components/ag-grid/files/AttachedFileList.vue'
+import { DsfrTabs } from '@gouvminint/vue-dsfr'
+import type { ApiCall } from '@/components/ag-grid/server-side/pagination.utils'
 
 const dossierStore = useDossierStore()
 const dossier = computed<IDossierOutput | undefined>(() => dossierStore?.dossier)
 const dossierDS = computed<IDossierOutput['dsDataJson'] | undefined>(() => dossier.value?.dsDataJson)
 
-const messages = computed(() => dossier.value?.dsDataJson.messages?.map(({ id, createdAt, body, email, attachments, attachment }: DossierMessage) => ({
-  id,
-  date: formatForMessageDate(new Date(createdAt)),
-  email,
-  body,
-  attachments: [...(attachments ?? []), ...(attachment ? [attachment] : [])],
-})))
+const messages = computed(() =>
+  dossier.value?.dsDataJson.messages?.map(({ id, createdAt, body, email, attachments, attachment }: DossierMessage) => ({
+    id,
+    date: formatForMessageDate(new Date(createdAt)),
+    email,
+    body,
+    attachments: [...(attachments ?? []), ...(attachment ? [attachment] : [])],
+  })),
+)
 
 const annotations = computed(() => dossier.value?.dsDataJson.annotations)
 
-const attachments = computed(
-  () => dossierDS.value?.champs?.reduce((files: Champ[], champ: PieceJustificativeChamp) => {
+const attachments = computed(() =>
+  dossierDS.value?.champs?.reduce((files: Champ[], champ: PieceJustificativeChamp) => {
     if (champ.__typename === 'PieceJustificativeChamp' && champ.file != null) {
       return [...files, champ.file]
     }
@@ -49,20 +47,39 @@ const tabTitles = computed(() => [
   {
     title: 'Demande',
   },
-  ...hasAnnotations.value
-    ? [{ title: 'Annotations privées' }]
-    : [],
-  ...hasAttachments.value
-    ? [{ title: `Pièces jointes (${attachments.value.length})` }]
-    : [],
+  ...(hasAnnotations.value ? [{ title: 'Annotations privées' }] : []),
+  ...(hasAttachments.value ? [{ title: `Pièces jointes (${attachments.value.length})` }] : []),
 ])
 const initialSelectedIndex = 0
 const selectedTabIndex = ref(initialSelectedIndex)
 const asc = ref(true)
-function selectTab (idx:number) {
+
+function selectTab (idx: number) {
   asc.value = selectedTabIndex.value < idx
   selectedTabIndex.value = idx
 }
+
+const tabs = ref<InstanceType<typeof DsfrTabs>>()
+const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutput>) => {
+  if (dossier.value) {
+    return apiClient.getDossierFiles(dossier.value.id)(params)
+  } else {
+    console.log('pas de dossier')
+  }
+}
+const redrawTabs = async () => {
+  await nextTick()
+  await nextTick() // Yes, we need to call nextTick twice to make sure the tabs are rendered
+  tabs.value?.renderTabs()
+}
+
+const hasFileTabBeenSelected = ref(false)
+watch(selectedTabIndex, () => {
+  if (selectedTabIndex.value === (hasAnnotations.value ? 2 : 1)) {
+    hasFileTabBeenSelected.value = true
+  }
+  redrawTabs()
+})
 
 onMounted(async () => {
   const params = useRoute()?.params
@@ -74,8 +91,8 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="flex  gap-2  flex-grow  overflow-auto">
-    <div class="flex-basis-[60%]  flex-grow  overflow-auto">
+  <div class="flex gap-2 flex-grow overflow-auto">
+    <div class="flex-basis-[60%] flex-grow overflow-auto">
       <LayoutFiche
         title-bg-color="var(--blue-france-main-525)"
         title-fg-color="var(--text-inverted-grey)"
@@ -119,7 +136,12 @@ onMounted(async () => {
               :selected="selectedTabIndex === (hasAnnotations ? 2 : 1)"
               :asc="asc"
             >
-              <AttachmentList :files="attachments ?? []" />
+              <AttachedFileList
+                :fetch-attached-files="fetchAttachedFiles"
+                :active="hasFileTabBeenSelected"
+                with-tab-tag
+                @files-fetched="redrawTabs()"
+              />
             </DsfrTabContent>
           </DsfrTabs>
         </template>
@@ -136,7 +158,7 @@ onMounted(async () => {
     </div>
     <DossierMessagerie
       v-if="messages?.length"
-      class="flex-basis-[40%]  fr-pr-2v  overflow-y-auto"
+      class="flex-basis-[40%] fr-pr-2v overflow-y-auto"
       :messages="messages"
     />
   </div>
@@ -144,13 +166,14 @@ onMounted(async () => {
 
 <style scoped>
 .messagerie {
-  --at-apply: p-4  border-l-solid  border-1  border-[var(--background-contrast-grey)];
+  --at-apply: p-4 border-l-solid border-1 border- [var(--background-contrast-grey)];
 }
 
 .fr-bg-grey {
-  --at-aply: bg-[var(--background-alt-grey)];
+  --at-aply: bg- [var(--background-alt-grey)];
 }
+
 .fr-bg-white {
-  --at-aply: bg-[var(--background-elevated-grey)];
+  --at-aply: bg- [var(--background-elevated-grey)];
 }
 </style>

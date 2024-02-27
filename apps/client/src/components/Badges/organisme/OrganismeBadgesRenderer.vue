@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import type { OrganismeTypeKeys } from '@biblio-num/shared'
+import type { OrganismeTypeKeys } from '@biblio-num/shared/dist/src/index'
 
-import OrganismeBadge from '@/components/Badges/OrganismeBadge.vue'
+import OrganismeBadge from '@/components/Badges/organisme/OrganismeBadge.vue'
 
 const props = defineProps<{ params: { value: OrganismeTypeKeys | OrganismeTypeKeys[] } }>()
 

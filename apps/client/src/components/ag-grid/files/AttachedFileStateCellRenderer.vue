@@ -1,9 +1,11 @@
 <script lang="ts" setup>
-import { getIconPropsFromFileState } from '@biblio-num/shared'
+
+import { getIconPropsFromFileState } from '@/components/ag-grid/files/file.utils'
+import type { StateKey } from '@biblio-num/shared'
 
 const props = defineProps<{
   params: {
-    value: string
+    value: StateKey
   }
 }>()
 
