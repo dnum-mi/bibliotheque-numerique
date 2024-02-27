@@ -91,21 +91,6 @@ export class LoggerService extends ConsoleLogger implements LS {
     }
   }
 
-  logClient(dto: object, level: 'info' | 'error' | 'warn'): void {
-    if (this.configService.get('LOG_TO_FILE') === 'true') {
-      this._logToFile({
-        application: 'client',
-        timestamp: new Date().toISOString(),
-        level,
-        message: '',
-        payload: dto,
-      }, 'client')
-    }
-    if (!this.configService.get('isTest') && !this.configService.get('isDev')) {
-      console.log(JSON.stringify({ ...dto, level }))
-    }
-  }
-
   log(message: string | object): void {
     if (this.configService.get('log.log')) {
       this._commonLogFunction(message, 'log')
