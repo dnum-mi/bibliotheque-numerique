@@ -4,12 +4,14 @@
   "description": "Shared lib for BiblioNum",
   "main": "./dist/index.cjs.js",
   "module": "./dist/index.esm.js",
-  "types": "./dist/src",
+  "types": "./types",
   "scripts": {
     "clean:dist": "rimraf dist types",
     "dev": "nodemon --exec 'tsup'",
     "build": "run-s clean:dist build:only",
-    "build:only": "tsup"
+    "build:only": "run-s build:tsup build:types",
+    "build:tsup": "tsup",
+    "build:types": "tsc --emitDeclarationOnly --declaration"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.6.4",
