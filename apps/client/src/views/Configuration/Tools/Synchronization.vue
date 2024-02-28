@@ -56,6 +56,12 @@ const onClickUpdateDemarche = async () => {
   await configurationStore.updateDemarche(demarcheId.value, identificationValue.value, types.value)
 }
 
+const onClickDeleteDemarche = async (demarcheId: number) => {
+  if (confirm('Voulez-vous vraiment supprimer cette démarche ?')) {
+    await configurationStore.deleteDemarche(demarcheId)
+  }
+}
+
 onMounted(async () => {
   await configurationStore.loadDemarches()
 })
@@ -121,6 +127,7 @@ onMounted(async () => {
         <th>Types</th>
         <th>Identification</th>
         <th>Synchronisation forcée</th>
+        <th>Supprimer</th>
       </thead>
       <tbody>
         <tr
@@ -139,6 +146,13 @@ onMounted(async () => {
               label="Forcer la synchronisation"
               secondary
               @click="onClickSynchronise(demarche.id)"
+            />
+          </td>
+          <td>
+            <DsfrButton
+              label="Supprimer"
+              secondary
+              @click="onClickDeleteDemarche(demarche.id)"
             />
           </td>
         </tr>

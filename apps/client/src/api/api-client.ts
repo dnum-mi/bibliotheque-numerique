@@ -65,7 +65,9 @@ import {
   organismesListXlsxRoute,
   attachedFilesRoute,
   getOrganismeFilesSummaryRoute,
-  getOrganismeFilesRoute, getDossierFilesRoute,
+  getOrganismeFilesRoute, 
+  getDossierFilesRoute,
+  deleteDemarcheByIdRoute,
 } from './bn-api-routes'
 import {
   authRoute,
@@ -187,6 +189,10 @@ export const demarchesApiClient = {
 
   exportDemarcheFields: async (demarcheId: number, dto: ISearchDossier): Promise<void> => {
     downloadAFile(await apiClientInstance.post(getXlsxDemarcheFieldRoute(demarcheId), dto, { responseType: 'blob' }))
+  },
+
+  deleteDemarche (id: number): Promise<void> {
+    return apiClientInstance.patch(deleteDemarcheByIdRoute(id))
   },
 }
 
