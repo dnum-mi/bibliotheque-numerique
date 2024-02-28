@@ -1,4 +1,4 @@
-import { Column, Entity, JoinTable, OneToMany } from 'typeorm'
+import { Column, DeleteDateColumn, Entity, JoinTable, OneToMany } from 'typeorm'
 import { Dossier } from '../../../dossiers/objects/entities/dossier.entity'
 import { BaseEntity } from '@/shared/base-entity/base.entity'
 import { Demarche as TDemarche } from '@dnum-mi/ds-api-client/dist/@types/generated-types'
@@ -47,4 +47,7 @@ export class Demarche extends BaseEntity implements IDemarche {
   @OneToMany(() => CustomFilter, (customFilter) => customFilter.demarche)
   @JoinTable()
   customFilters?: CustomFilter[]
+
+  @DeleteDateColumn()
+  deletedDate: Date | null
 }

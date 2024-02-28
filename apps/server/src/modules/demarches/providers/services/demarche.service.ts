@@ -98,4 +98,10 @@ export class DemarcheService extends BaseEntityService<Demarche> {
     updateQuery.identification = dto.identification
     await this.repo.update({ id }, updateQuery)
   }
+
+  async softDeleteDemarche(id: number): Promise<void> {
+    const demarche = await this.findOneOrThrow({ where: { id } })
+    if (!demarche) throw new NotFoundException(`demarche ${id} not found`)
+    await this.repo.softDelete(id)
+  }
 }

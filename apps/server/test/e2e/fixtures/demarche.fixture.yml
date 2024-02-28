@@ -148,4 +148,23 @@ items:
       {"id":"I10", "columnLabel":"Organismefinanceur"}
     ]
     dsDataJson: {number: 6}
+  demarche-delete-soft:
+    id: 8
+    state: "published"
+    title: "[SOFT-DELETE] Déclaration de financement étranger"
+    types: ["ARUP"]
+    identification: "FE"
+    mappingColumns: [
+      {"id":"I01", "columnLabel":"Identifiant"},
+      {"id":"I02", "columnLabel":"Moment"},
+      {"id":"I03", "columnLabel":"Titre"},
+      {"id":"I04", "columnLabel":"Consentement"},
+      {"id":"I05", "columnLabel":"Etat"},
+      {"id":"I06", "columnLabel":"Delais"},
+      {"id":"I07", "columnLabel":"Excel"},
+      {"id":"I08", "columnLabel":"Montant"},
+      {"id":"I09", "columnLabel":"Pays"},
+      {"id":"I10", "columnLabel":"Organismefinanceur"}
+    ]
+    dsDataJson: {number: 7}
 
