@@ -113,4 +113,16 @@ export class DemarcheController {
       message: `Demarche of id ${id} has been update with identification ${dto.identification} and types ${dto.types}.`,
     }
   }
+
+  @Patch(':demarcheId/soft-delete')
+  @Role(Roles.sudo)
+  async softDeleteDemarche(
+    @Param('demarcheId', ParseIntPipe) id: number,
+  ): Promise<{ message: string }> {
+    this.logger.verbose(`soft delete demarche ${id}`)
+    await this.demarcheService.softDeleteDemarche(id)
+    return {
+      message: `Demarche of id ${id} has been soft deleted.`,
+    }
+  }
 }

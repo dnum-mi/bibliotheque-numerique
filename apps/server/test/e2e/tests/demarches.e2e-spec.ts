@@ -205,4 +205,47 @@ describe('Demarches (e2e)', () => {
         .expect(400)
     })
   })
+
+  describe('Patch /demarche/:id/soft-delete', () => {
+    it('Should be 401', () => {
+      return request(app.getHttpServer())
+        .patch('/demarches/1/soft-delete')
+        .expect(401)
+    })
+
+    it('Patch should only be possible for sudo', () => {
+      return request(app.getHttpServer())
+        .patch('/demarches/1/soft-delete')
+        .set('Cookie', [cookies.admin])
+        .expect(403)
+    })
+
+    it('Should soft delete demarche', async () => {
+      const demarche = await dataSource.manager.findOne(Demarche, {
+        where: { title: Like('[SOFT-DELETE]%') },
+      })
+
+      const { body } = await request(app.getHttpServer())
+        .patch(`/demarches/${demarche.id}/soft-delete`)
+        .set('Cookie', [cookies.sudo])
+        .expect(200)
+
+      expect(body).toHaveProperty(
+        'message',
+        `Demarche of id ${demarche.id} has been soft deleted.`,
+      )
+
+      const demarche1 = await dataSource.manager.findOne(Demarche, {
+        where: { id: demarche.id },
+      })
+      expect(demarche1).toBeNull()
+    })
+
+    it('Should return 404 if demarche not found', async () => {
+      await request(app.getHttpServer())
+        .patch('/demarches/999/soft-delete')
+        .set('Cookie', [cookies.sudo])
+        .expect(404)
+    })
+  })
 })
