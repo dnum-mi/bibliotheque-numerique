@@ -16,6 +16,7 @@ export const getListDemarcheFieldRoute = (demarcheId: number) => `${getDemarcheB
 export const getXlsxDemarcheDossierRoute = (demarcheId: number) => `${getListDemarcheDossierRoute(demarcheId)}/export/xlsx`
 export const getXlsxDemarcheFieldRoute = (demarcheId: number) => `${getListDemarcheFieldRoute(demarcheId)}/export/xlsx`
 export const getDemarcheCustomFilterRoute = (demarcheId: number) => `${demarchesRoute}/${demarcheId}/custom-filters`
+export const deleteDemarcheByIdRoute = (demarcheId: number) => `${getDemarcheByIdRoute(demarcheId)}/soft-delete`
 
 export const usersRoutes = '/users'
 export const usersListRoute = `${usersRoutes}/list`

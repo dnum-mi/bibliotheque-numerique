@@ -92,6 +92,12 @@ export const useConfigurationStore = defineStore('Configuration', () => {
     await loadBnConfigurations().finally(() => { fetchingBnConfigurations.value = false })
   }
 
+  const deleteDemarche = async (id: number) => {
+    fetching.value = true
+    await demarchesApiClient.deleteDemarche(id).finally(() => { fetching.value = false })
+    await loadDemarches().finally(() => { fetching.value = false })
+  }
+
   const $reset = () => {
     demarches.value = []
     fetching.value = false
@@ -110,5 +116,6 @@ export const useConfigurationStore = defineStore('Configuration', () => {
     synchronizeOneDemarche,
     updateDemarche,
     updateBnConfigurations,
+    deleteDemarche,
   }
 })
