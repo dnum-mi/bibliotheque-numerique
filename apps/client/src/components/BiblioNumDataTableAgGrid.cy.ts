@@ -84,7 +84,9 @@ describe('<BiblioNumDataTable />', () => {
       },
       {
         id: 2,
-        testkey: {},
+        testkey: {
+
+        },
       },
     ]
 
@@ -111,21 +113,22 @@ describe('<BiblioNumDataTable />', () => {
     })
     cy.get('.ag-header-cell').should('contain', 'Test-Key')
 
-    datas.forEach(data => {
+    datas.forEach((data, index) => {
+      const row = `row${index}`
       cy.get('.ag-cell')
         .should('contain', data.id)
         .contains(data.id)
-        .parent()
-        .children().as('row')
-      if (data.testkey?.url) {
-        cy.get('@row')
-          .find('a')
-          .should('have.attr', 'href', data.testkey?.url)
+        .parent().as(row)
+      if (data.testkey.uuid) {
+        cy.get(`@${row}`)
+          .get('a')
+          .should('have.attr', 'href', `/api/files/${data.testkey?.uuid}`)
         return
       }
-      cy.get('@row')
-        .find('a')
-        .should('not.have.attr', 'href')
+      cy.get(`@${row}`).within(() => {
+        cy.get('a')
+          .should('not.exist')
+      })
     })
   })
 })
