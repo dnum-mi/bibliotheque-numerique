@@ -9,7 +9,7 @@ const href = computed(() => baseApiUrl + getFileRoute(props.params.value.uuid))
 </script>
 
 <template>
-  <div>
+  <div v-if="params.value.uuid">
     <template v-if="errorFile">
       <VIcon
         style="cursor: not-allowed; color: red"
