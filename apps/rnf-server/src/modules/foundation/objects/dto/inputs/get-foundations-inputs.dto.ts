@@ -1,4 +1,4 @@
-import { IsDateString, IsOptional } from 'class-validator'
+import { IsOptional } from 'class-validator'
 import { isRnfIdValid } from '../../../../../shared/validators/rnf-id/rnf-id.decorator'
 import { ApiProperty } from '@nestjs/swagger'
 
