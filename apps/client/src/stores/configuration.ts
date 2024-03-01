@@ -92,9 +92,9 @@ export const useConfigurationStore = defineStore('Configuration', () => {
     await loadBnConfigurations().finally(() => { fetchingBnConfigurations.value = false })
   }
 
-  const deleteDemarche = async (id: number) => {
+  const softDeleteDemarche = async (id: number) => {
     fetching.value = true
-    await demarchesApiClient.deleteDemarche(id).finally(() => { fetching.value = false })
+    await demarchesApiClient.softDeleteDemarche(id).finally(() => { fetching.value = false })
     await loadDemarches().finally(() => { fetching.value = false })
   }
 
@@ -116,6 +116,6 @@ export const useConfigurationStore = defineStore('Configuration', () => {
     synchronizeOneDemarche,
     updateDemarche,
     updateBnConfigurations,
-    deleteDemarche,
+    softDeleteDemarche,
   }
 })

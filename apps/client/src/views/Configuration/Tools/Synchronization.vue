@@ -56,9 +56,9 @@ const onClickUpdateDemarche = async () => {
   await configurationStore.updateDemarche(demarcheId.value, identificationValue.value, types.value)
 }
 
-const onClickDeleteDemarche = async (demarcheId: number) => {
+const onClickSoftDeleteDemarche = async (demarcheId: number) => {
   if (confirm('Voulez-vous vraiment supprimer cette démarche ?')) {
-    await configurationStore.deleteDemarche(demarcheId)
+    await configurationStore.softDeleteDemarche(demarcheId)
   }
 }
 
@@ -152,7 +152,7 @@ onMounted(async () => {
             <DsfrButton
               label="Supprimer"
               secondary
-              @click="onClickDeleteDemarche(demarche.id)"
+              @click="onClickSoftDeleteDemarche(demarche.id)"
             />
           </td>
         </tr>
