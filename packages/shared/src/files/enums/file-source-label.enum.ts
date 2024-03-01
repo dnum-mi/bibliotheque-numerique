@@ -1,6 +1,6 @@
 import { createEnum } from '../../factories'
 
-const fileDsSourceLabels = [
+export const fileDsSourceLabels = [
   'ds-annotation',
   'ds-message',
   'ds-demandeur',
