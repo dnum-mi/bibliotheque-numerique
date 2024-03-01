@@ -67,7 +67,7 @@ import {
   getOrganismeFilesSummaryRoute,
   getOrganismeFilesRoute,
   getDossierFilesRoute,
-  deleteDemarcheByIdRoute,
+  softDeleteDemarcheByIdRoute,
 } from './bn-api-routes'
 import {
   authRoute,
@@ -191,8 +191,8 @@ export const demarchesApiClient = {
     downloadAFile(await apiClientInstance.post(getXlsxDemarcheFieldRoute(demarcheId), dto, { responseType: 'blob' }))
   },
 
-  deleteDemarche (id: number): Promise<void> {
-    return apiClientInstance.patch(deleteDemarcheByIdRoute(id))
+  softDeleteDemarche (id: number): Promise<void> {
+    return apiClientInstance.patch(softDeleteDemarcheByIdRoute(id))
   },
 }
 
