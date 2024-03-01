@@ -29,6 +29,7 @@ items:
     }
     organisme: "@BMW"
   Dossier3:
+    id: 13
     demarche: "@configurationDemarche"
     state: "accepte"
     sourceId: "123458"
@@ -36,5 +37,27 @@ items:
     dsDataJson: {
       annotations: "I can see you",
       messages: "Big brother is watching you"
+    }
+    organisme: "@Hyundai"
+  DossierDeleteSoft1:
+    id: 14
+    demarche: "@demarche-delete-soft"
+    state: "accepte"
+    sourceId: "123459"
+    prefecture: "D57"
+    dsDataJson: {
+      annotations: "Message",
+      messages: "Hello world"
+    }
+    organisme: "@Hyundai"
+  DossierDeleteSoft2:
+    id: 15
+    demarche: "@demarche-delete-soft"
+    state: "accepte"
+    sourceId: "123459"
+    prefecture: "D57"
+    dsDataJson: {
+      annotations: "Message",
+      messages: "Hello world"
     }
     organisme: "@Hyundai"

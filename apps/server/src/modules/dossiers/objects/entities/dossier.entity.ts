@@ -1,5 +1,6 @@
 import {
   Column,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -57,4 +58,7 @@ export class Dossier extends BaseEntity implements IDossier {
   @OneToMany(() => File, (file) => file)
   @JoinColumn()
   files?: File[]
+
+  @DeleteDateColumn()
+  deletedDate: Date | null
 }
