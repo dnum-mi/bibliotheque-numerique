@@ -3,17 +3,14 @@ import sanitizeHtml from 'sanitize-html'
 
 import iconRoundMarianne from '@/assets/icone-ronde-marianne.png'
 import { getIconNameFromMimeType } from '@/components/ag-grid/files/file.utils'
+import type { File } from '@dnum-mi/ds-api-client'
 
 type Message = {
     id: number
     date: Date
     email: string
     body: string
-    attachments: {
-        name: string
-        size: string
-        url: string
-    }[]
+    attachments: File[]
 }
 
 type DossierMessagerieProps = {
@@ -93,8 +90,8 @@ defineProps<DossierMessagerieProps>()
                   class="fr-mr-1v"
                   fill="var(--blue-france-sun-113-625)"
                 />
-                <span>{{ file.name }}</span>
-                <em class="text-[var(--grey-625-425)]"> - {{ file.size }}</em>
+                <span>{{ file.filename }}</span>
+                <em class="text-[var(--grey-625-425)]"> - {{ file.byteSize }}</em>
               </div>
             </footer>
           </div>

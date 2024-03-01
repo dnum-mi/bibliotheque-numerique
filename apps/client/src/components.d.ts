@@ -23,6 +23,7 @@ declare module 'vue' {
     DelayStateBadge: typeof import('./components/Badges/DelayStateBadge.vue')['default']
     DisplayLabelsValues: typeof import('./components/DisplayLabelsValues.vue')['default']
     DossierStateRenderer: typeof import('./components/ag-grid/DossierStateRenderer.vue')['default']
+    DownloadFile: typeof import('./components/DownloadFile.vue')['default']
     DsfrAccordion: typeof import('@gouvminint/vue-dsfr')['DsfrAccordion']
     DsfrAccordionsGroup: typeof import('@gouvminint/vue-dsfr')['DsfrAccordionsGroup']
     DsfrAlert: typeof import('@gouvminint/vue-dsfr')['DsfrAlert']
