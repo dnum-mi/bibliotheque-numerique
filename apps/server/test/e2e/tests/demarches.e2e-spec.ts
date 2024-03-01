@@ -5,6 +5,7 @@ import { Cookies, TestingModuleFactory } from '../common/testing-module.factory'
 import { Demarche } from '@/modules/demarches/objects/entities/demarche.entity'
 import { Like } from 'typeorm'
 import { DemarcheService } from '@/modules/demarches/providers/services/demarche.service'
+import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
 
 describe('Demarches (e2e)', () => {
   let app: INestApplication
@@ -239,6 +240,11 @@ describe('Demarches (e2e)', () => {
         where: { id: demarche.id },
       })
       expect(demarche1).toBeNull()
+
+      const demarche1Dossiers: Dossier[] = await dataSource.manager.getRepository(Dossier).find({
+        where: { demarcheId: demarche.id },
+      })
+      expect(demarche1Dossiers).toEqual([])
     })
 
     it('Should return 404 if demarche not found', async () => {

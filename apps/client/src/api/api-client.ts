@@ -65,7 +65,7 @@ import {
   organismesListXlsxRoute,
   attachedFilesRoute,
   getOrganismeFilesSummaryRoute,
-  getOrganismeFilesRoute, 
+  getOrganismeFilesRoute,
   getDossierFilesRoute,
   deleteDemarcheByIdRoute,
 } from './bn-api-routes'

@@ -36,6 +36,7 @@ import { SyncOneDemarcheJobPayload } from '@/shared/modules/custom-bull/objects/
 import { SmallDemarcheOutputDto } from '@/modules/demarches/objects/dtos/small-demarche-output.dto'
 import { CreateDemarcheDto } from '@/modules/demarches/objects/dtos/create-demarche.dto'
 import { UpdateDemarcheDto } from '@/modules/demarches/objects/dtos/update-demarche.dto'
+import { DossierService } from '@/modules/dossiers/providers/dossier.service'
 
 @ApiTags('Demarches')
 @Controller('demarches')
@@ -43,6 +44,7 @@ export class DemarcheController {
   constructor(
     private readonly demarcheService: DemarcheService,
     private readonly demarcheSynchroniseService: DemarcheSynchroniseService,
+    private readonly dossierService: DossierService,
     private readonly logger: LoggerService,
     @InjectQueue(QueueName.sync) private readonly syncQueue: Queue,
   ) {
@@ -120,6 +122,7 @@ export class DemarcheController {
     @Param('demarcheId', ParseIntPipe) id: number,
   ): Promise<{ message: string }> {
     this.logger.verbose(`soft delete demarche ${id}`)
+    await this.dossierService.softDeleteDemarcheDossiers(id)
     await this.demarcheService.softDeleteDemarche(id)
     return {
       message: `Demarche of id ${id} has been soft deleted.`,

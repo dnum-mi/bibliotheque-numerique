@@ -45,4 +45,9 @@ export class DossierService extends BaseEntityService<Dossier> {
         }))
       })
   }
+
+  async softDeleteDemarcheDossiers(demarcheId: number): Promise<void> {
+    this.logger.verbose(`softDeleteDemarcheDossiers ${demarcheId}`)
+    await this.repo.softDelete({ demarcheId })
+  }
 }
