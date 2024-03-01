@@ -55,7 +55,7 @@ export class Dossier extends BaseEntity implements IDossier {
   })
   prefecture: PrefectureKeys | null
 
-  @OneToMany(() => File, (file) => file)
+  @OneToMany(() => File, (file) => file.dossier)
   @JoinColumn()
   files?: File[]
 
