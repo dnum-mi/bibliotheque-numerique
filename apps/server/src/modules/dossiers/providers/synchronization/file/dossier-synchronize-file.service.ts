@@ -97,25 +97,20 @@ export class DossierSynchroniseFileService {
     this.logger.verbose('synchroniseMessages')
     await Promise.all(
       dossier.messages
-        .filter((message) => message.attachments?.length || message.attachments)
-        .map((message) =>
-          [message.attachments, message.attachment]
-            .flat()
-            .filter((attachement) => attachement)
-            .map((a: TFile, index: number) =>
-              this._addSyncFileJob(
-                {
-                  dossierId,
-                  sourceStringId: message.id,
-                  organismeId,
-                  sourceLabel: eFileDsSourceLabel['ds-message'],
-                  sourceIndex: index,
-                  originalLabel: a.filename,
-                },
-                dossier.number,
-              ),
-            ),
-        )
+        .filter((message) => message.attachments?.length || message.attachment)
+        .map((message) => [...(message.attachments || []), message.attachment].map((a: TFile, index: number) =>
+          this._addSyncFileJob(
+            {
+              dossierId,
+              sourceStringId: message.id,
+              organismeId,
+              sourceLabel: eFileDsSourceLabel['ds-message'],
+              sourceIndex: index,
+              originalLabel: a.filename,
+            },
+            dossier.number,
+          ),
+        ))
         .flat(),
     )
   }
