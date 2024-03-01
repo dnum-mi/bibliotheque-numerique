@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { Demandeur, PersonnePhysique, TDossier } from '@biblio-num/shared'
+import type { Demandeur, PersonnePhysique, Dossier as TDossier } from '@dnum-mi/ds-api-client'
 
 import DossierMessage from './DossierMessage.vue'
 import { getInitialsFromName } from '@/utils/name-to-initials'
@@ -29,6 +29,7 @@ const demandeurInitials = computed(() => getInitialsFromName(props.datas?.demand
           :key="id"
           class="fr-col-12 fr-grid-row"
         >
+          {{ messages }}
           <DossierMessage
             data-cy="dossier-message"
             :email="email"

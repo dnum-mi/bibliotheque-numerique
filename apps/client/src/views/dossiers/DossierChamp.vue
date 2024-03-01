@@ -1,9 +1,8 @@
 <script lang="ts" setup>
-import { prettyByteSizeByString } from '@/utils'
-
-import type { PieceJustificativeChamp, RepetitionChamp } from '@biblio-num/shared'
+import type { PieceJustificativeChamp, RepetitionChamp } from '@dnum-mi/ds-api-client'
 
 import DossierChamps from './DossierChamps.vue'
+import DownloadFile from '@/components/DownloadFile.vue'
 
 defineProps<{
   champ: PieceJustificativeChamp & RepetitionChamp;
@@ -31,12 +30,8 @@ defineProps<{
         :id="champ.id"
         class="fr-text fr-mt-1w bn-champ--text"
       >
-        <a
-          download
-          :href="champ.file?.url"
-          target="_blank"
-          class="fr-link"
-        >{{ champ.file?.filename }} <span class="fr-text--xs">({{ prettyByteSizeByString(String(champ.file?.byteSizeBigInt)) }})</span></a>
+        <!-- {{ champ }} -->
+        <DownloadFile :file="champ.file" />
       </div>
       <!-- SI Repetable -->
       <DossierChamps

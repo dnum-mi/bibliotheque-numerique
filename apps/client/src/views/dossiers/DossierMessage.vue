@@ -1,15 +1,13 @@
 <script lang="ts" setup>
 import { dateTimeToStringFr, prettyByteSizeByString } from '@/utils'
+import DownloadFile from '@/components/DownloadFile.vue'
+import type { File } from '@dnum-mi/ds-api-client'
 
 defineProps<{
     email: string,
     body: string,
     createdAt: string,
-    attachment?: {
-      url: string,
-      filename: string,
-      byteSizeBigInt: string,
-    },
+    attachment?: File | null,
     demandeur: string | boolean,
   }>()
 </script>
@@ -48,6 +46,9 @@ defineProps<{
           <span
             class="fr-icon-file-line fr-icon--md fr-p-1w"
             aria-hidden="true"
+          />
+          <DownloadFile
+            :file="attachment"
           />
           <a
             download
