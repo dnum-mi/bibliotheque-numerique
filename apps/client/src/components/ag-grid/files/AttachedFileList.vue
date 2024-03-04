@@ -1,15 +1,16 @@
 <script lang="ts" setup>
 import type { GridReadyEvent, GridApi, GridOptions, AgGridEvent } from 'ag-grid-community'
 
-import type { IFileOutput, IFilter, IPagination } from '@biblio-num/shared/dist/src/index'
+import type { IFileOutput, IFilter, IPagination, StateKey } from '@biblio-num/shared'
 
 import type { ApiCall } from '../server-side/pagination.utils'
 import type { BNColDef } from '../server-side/bn-col-def.interface'
 import MimeTypeCellRenderer from './MimeTypeCellRenderer.vue'
 import AttachedFileStateCellRenderer from './AttachedFileStateCellRenderer.vue'
 import { baseApiUrl } from '@/api/api-client'
-import { fileTabTags } from '@biblio-num/shared'
+import { eState, fileTabTags } from '@biblio-num/shared'
 import FileTagBadgeRenderer from '@/components/Badges/file-tag/FileTagBadgeRenderer.vue'
+import useToaster, { type Message as ToasterMessage } from '@/composables/use-toaster'
 
 type AttachedFileListProps = {
   tag: string,
@@ -72,6 +73,8 @@ const props = withDefaults(defineProps<AttachedFileListProps>(), {
   ],
 })
 
+const toaster = useToaster()
+
 const columnsDef = ref<BNColDef[]>(props.columnsDef)
 
 const gridApi = ref<GridApi>()
@@ -88,10 +91,26 @@ const specificGridOptions: Partial<GridOptions> = {
 }
 
 const onSelectionChanged = (event: AgGridEvent) => {
-  const url = `${baseApiUrl}/files/${event.api.getSelectedRows()?.[0]?.uuid}`
-  if (url) {
-    window.open(url, '_blank')
+  const file = event.api.getSelectedRows()?.[0]
+
+  if (file?.state === eState.uploaded) {
+    const url = `${baseApiUrl}/files/${file?.uuid}`
+    if (url) {
+      window.open(url, '_blank')
+    }
+    return
   }
+  const state:StateKey = file?.state
+  const message: ToasterMessage = { description: `Le fichier ${file?.originalLabel} n'est pas téléchargeable`, type: 'warning' }
+
+  if (file?.state === eState.failed) {
+    message.description = `${message.description}. La récupération du fichier a échoué.`
+    message.type = 'error'
+  } else {
+    message.description = `${message.description}. La récupération du fichier est en cours.`
+  }
+
+  toaster.addMessage(message)
 }
 
 const apiCall: ApiCall<IFileOutput> = async (params: IPagination<IFileOutput>) => {
