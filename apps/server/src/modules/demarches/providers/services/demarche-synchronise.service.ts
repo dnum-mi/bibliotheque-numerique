@@ -34,7 +34,7 @@ import { Queue } from 'bull'
 import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
 import { SyncOneDossierJobPayload } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
 
-import { OrganismeTypeKeys } from '@biblio-num/shared'
+import { OrganismeTypeKey } from '@biblio-num/shared'
 import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
 
 @Injectable()
@@ -125,7 +125,7 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
   public async createAndSynchronise(
     dsId: number,
     identification: IdentificationDemarcheKeys | undefined,
-    types: OrganismeTypeKeys[] | undefined,
+    types: OrganismeTypeKey[] | undefined,
   ): Promise<void> {
     this.logger.verbose('createAndSynchronise')
     const raw = await this.dsApiClient.demarcheDossierIds(dsId)

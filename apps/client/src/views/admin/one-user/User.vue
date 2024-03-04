@@ -6,7 +6,7 @@ import type {
   UserOutputDto,
   UserWithEditableRole,
 
-  OrganismeTypeKeys,
+  OrganismeTypeKey,
 } from '@biblio-num/shared'
 
 import {
@@ -33,7 +33,7 @@ type DemarcheRole = {
 };
 type DemarchesRoles = {
   label: string;
-  name: OrganismeTypeKeys;
+  name: OrganismeTypeKey;
   value: boolean;
   key: string;
   localization?: PrefectureOptions;
@@ -45,7 +45,7 @@ type DemarchesRoles = {
 };
 type GeographicalRights = PrefectureOptions & { disabled?: boolean };
 
-const typeOrganismeLabel: Record<OrganismeTypeKeys, string> = {
+const typeOrganismeLabel: Record<OrganismeTypeKey, string> = {
   [OrganismeType.ARUP]: 'Associations reconnues d’utilité publique (ARUP)',
   [OrganismeType.CULTE]: 'Associations cultuelles (Cultes)',
   [OrganismeType.FDD]: 'Fonds de dotation (FDD)',
