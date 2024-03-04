@@ -11,7 +11,7 @@ import {
   IRnaOutput,
   IRnfOutput,
   OrganismeType,
-  OrganismeTypeKeys,
+  OrganismeTypeKey,
   eState,
   StateKey,
 } from '@biblio-num/shared'
@@ -24,7 +24,7 @@ export class Organisme extends BaseEntity implements IOrganisme {
       enum: OrganismeType,
       default: OrganismeType.unknown,
     })
-  type: OrganismeTypeKeys
+  type: OrganismeTypeKey
 
   // TODO: a table state indeed ? uploaded = synchronised. uploading = synchronising
   @Column({

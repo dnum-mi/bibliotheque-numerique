@@ -1,10 +1,23 @@
-export const OrganismeType = {
-  unknown: 'unknown',
-  FDD: 'FDD',
-  FE: 'FE',
-  FRUP: 'FRUP',
-  ARUP: 'ARUP',
-  CULTE: 'CULTE',
-}
+import { createEnum } from "../factories"
 
-export type OrganismeTypeKeys = (typeof OrganismeType)[keyof typeof OrganismeType]
+export const organismeTypes = [
+  'unknown',
+  'FDD',
+  'FE',
+  'FRUP',
+  'ARUP',
+  'CULTE',
+] as const
+
+export type OrganismeTypeKey = (typeof organismeTypes)[number]
+
+export const eOrganismeType = createEnum(organismeTypes)
+
+export const dOrganismeTypeDictionary: Record<OrganismeTypeKey, string> = {
+  [eOrganismeType.ARUP]: 'ARUP',
+  [eOrganismeType.CULTE]: 'CULTE',
+  [eOrganismeType.FDD]: 'FDD',
+  [eOrganismeType.FE]: 'FE',
+  [eOrganismeType.FRUP]: 'FRUP',
+  [eOrganismeType.unknown]: 'unknown',
+}

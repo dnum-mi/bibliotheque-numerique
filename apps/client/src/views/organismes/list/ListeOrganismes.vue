@@ -8,7 +8,6 @@ import LayoutList from '@/components/Layout/LayoutList.vue'
 import AgGridServerSide from '@/components/ag-grid/server-side/AgGridServerSide.vue'
 import { listOrganismeColumnDef } from '@/views/organismes/list/column-def.const'
 
-const pageSize = 20
 const organismeStore = useOrganismeStore()
 const router = useRouter()
 
@@ -32,7 +31,6 @@ const paginationDto = ref()
 const download = () => {
   return organismeStore.exportOrganismes(paginationDto.value)
 }
-
 </script>
 
 <template>

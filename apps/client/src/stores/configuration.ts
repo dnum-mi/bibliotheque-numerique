@@ -7,7 +7,7 @@ import type {
   IUpdateBnConfiguration,
   IUpdateDemarche,
   IdentificationDemarcheKeys,
-  OrganismeTypeKeys,
+  OrganismeTypeKey,
 } from '@biblio-num/shared'
 
 import { createDemarche, patchDemarche, putSynchronizeOneDemarche } from '../api/sudo-api-client'
@@ -32,7 +32,7 @@ export const useConfigurationStore = defineStore('Configuration', () => {
     return bnConfigurations.value
   }
 
-  const addDemarches = async (idDs: number|null, identification?: IdentificationDemarcheKeys | null, types?: OrganismeTypeKeys[]) => {
+  const addDemarches = async (idDs: number|null, identification?: IdentificationDemarcheKeys | null, types?: OrganismeTypeKey[]) => {
     if (!idDs) throw new Error('id DS non saisi')
 
     const dto: ICreateDemarche = {
@@ -65,7 +65,7 @@ export const useConfigurationStore = defineStore('Configuration', () => {
     await putSynchronizeOneDemarche(demarcheId).finally(() => { fetching.value = false })
   }
 
-  const updateDemarche = async (idDs: number|null, identification?: IdentificationDemarcheKeys | null, types?: OrganismeTypeKeys[]) => {
+  const updateDemarche = async (idDs: number|null, identification?: IdentificationDemarcheKeys | null, types?: OrganismeTypeKey[]) => {
     if (!idDs) throw new Error('id DS non saisi')
     const dto: IUpdateDemarche = {
       types,

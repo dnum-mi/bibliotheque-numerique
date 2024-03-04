@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { IRole } from '@biblio-num/shared'
+import type { ILeanDossierOutput, IRole } from '@biblio-num/shared'
 import { canAccessDemarche } from '@biblio-num/shared'
 
 import apiClient from '@/api/api-client'
@@ -8,7 +8,14 @@ import { routeNames } from '@/router/route-names'
 
 const router = useRouter()
 
-const columns = [
+type Column = {
+  field: string;
+  headerName: string;
+  hidden?: boolean;
+  getValue?: (value: string) => unknown;
+}
+
+const columns: Column[] = [
   {
     field: 'id',
     headerName: 'Id',
@@ -30,7 +37,7 @@ const columns = [
   {
     field: 'state',
     headerName: 'État',
-    getValue: (value: unknown) => ({ component: 'StatusBadge', status: value }),
+    getValue: (value: string) => ({ component: 'StatusBadge', status: value }),
   },
   {
     field: 'depotDate',
@@ -46,7 +53,7 @@ const props = defineProps<{
   organismeId: number;
 }>()
 
-const rowsdata = ref([])
+const rowsdata = ref<ILeanDossierOutput[]>([])
 
 const toaster = useToaster()
 

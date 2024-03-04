@@ -2,7 +2,7 @@ import { Column, DeleteDateColumn, Entity, JoinTable, OneToMany } from 'typeorm'
 import { Dossier } from '../../../dossiers/objects/entities/dossier.entity'
 import { BaseEntity } from '@/shared/base-entity/base.entity'
 import { Demarche as TDemarche } from '@dnum-mi/ds-api-client/dist/@types/generated-types'
-import type { OrganismeTypeKeys } from '@biblio-num/shared'
+import type { OrganismeTypeKey } from '@biblio-num/shared'
 import {
   IDemarche,
   IdentificationDemarche,
@@ -39,7 +39,7 @@ export class Demarche extends BaseEntity implements IDemarche {
     type: 'jsonb',
     default: '[]',
   })
-  types: OrganismeTypeKeys[]
+  types: OrganismeTypeKey[]
 
   @Column({ type: 'jsonb', default: '{}' })
   dsDataJson: Partial<TDemarche>
