@@ -58,17 +58,17 @@ export class DossierService extends BaseEntityService<Dossier> {
 
   transformValueFileOfDossier(dossier: Dossier, files: File[]): Dossier {
     this.logger.verbose('transformValueFileOfDossier')
-    if (dossier.dsDataJson.champs) {
+    if (dossier.dsDataJson.champs && Array.isArray(dossier.dsDataJson.champs)) {
       dossier.dsDataJson.champs.forEach(
         this.transformUrlToUuid(files.filter((f) => f.sourceLabel === eFileDsSourceLabel['ds-champ'])),
       )
     }
-    if (dossier.dsDataJson.annotations) {
+    if (dossier.dsDataJson.annotations && Array.isArray(dossier.dsDataJson.annotations)) {
       dossier.dsDataJson.annotations.forEach(
         this.transformUrlToUuid(files.filter((f) => f.sourceLabel === eFileDsSourceLabel['ds-annotation'])),
       )
     }
-    if (dossier.dsDataJson.messages) {
+    if (dossier.dsDataJson.messages && Array.isArray(dossier.dsDataJson.messages)) {
       dossier.dsDataJson.messages.forEach(
         this.transformUrlToUuidMessage(files.filter((f) => f.sourceLabel === eFileDsSourceLabel['ds-message'])),
       )
@@ -77,7 +77,6 @@ export class DossierService extends BaseEntityService<Dossier> {
     if (dossier.dsDataJson.attestation) {
       dossier.dsDataJson.attestation.url = files.find(f => f.sourceLabel === eFileDsSourceLabel['ds-attestation'])?.uuid
     }
-    console.dir({ champs: dossier.dsDataJson.champs }, { depth: 10 })
     return dossier
   }
 

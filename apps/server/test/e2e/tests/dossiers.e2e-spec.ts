@@ -2,6 +2,7 @@ import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
 import { dataSource } from '../data-source-e2e.typeorm'
 import { Cookies, TestingModuleFactory } from '../common/testing-module.factory'
+import { loggerServiceMock } from '../../mock/logger-service.mock'
 
 describe('Dossiers (e2e)', () => {
   let app: INestApplication
@@ -46,6 +47,8 @@ describe('Dossiers (e2e)', () => {
     })
 
     it('Should retrieve complete Dossier', async () => {
+      loggerServiceMock.setContext = jest.fn().mockImplementation(() => console.log('Should retrieve complete Dossier'))
+      loggerServiceMock.error = jest.fn().mockImplementation((e) => console.log(e))
       return await request(app.getHttpServer())
         .get('/dossiers/11')
         .set('Cookie', [cookies.instructor])
@@ -53,6 +56,9 @@ describe('Dossiers (e2e)', () => {
         .then(({ body }) => {
           expect(body.dsDataJson.annotations).toEqual('I can see you')
           expect(body.dsDataJson.messages).toEqual('Big brother is watching you')
+        }).finally(() => {
+          loggerServiceMock.setContext = jest.fn()
+          loggerServiceMock.error = jest.fn()
         })
     })
 
