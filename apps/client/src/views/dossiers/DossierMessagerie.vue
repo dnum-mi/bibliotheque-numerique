@@ -2,7 +2,6 @@
 import sanitizeHtml from 'sanitize-html'
 
 import iconRoundMarianne from '@/assets/icone-ronde-marianne.png'
-import { getIconNameFromMimeType } from '@/components/ag-grid/files/file.utils'
 import type { File } from '@dnum-mi/ds-api-client'
 
 type Message = {
@@ -15,9 +14,11 @@ type Message = {
 
 type DossierMessagerieProps = {
   messages?: Array<Message>
+  demandeurEmail?: string
 }
 
 defineProps<DossierMessagerieProps>()
+
 </script>
 
 <template>
@@ -58,7 +59,14 @@ defineProps<DossierMessagerieProps>()
           class="flex  gap-2"
         >
           <div class="flex  flex-shrink-0  justify-center  items-center  rounded-[50%]  h-[2rem]  w-[2rem]  bg-[var(--blue-france-sun-113-625)]">
+            <span
+              v-if="demandeurEmail === message.email"
+              class="fr-icon-account-line color-white"
+              aria-hidden="true"
+              role="presentation"
+            />
             <img
+              v-else
               role="presentation"
               alt=""
               :src="iconRoundMarianne"
@@ -86,12 +94,9 @@ defineProps<DossierMessagerieProps>()
                 :key="j"
                 class="fr-py-1v  fr-px-2v flex  items-center  bg-[#e8edff]"
               >
-                <VIcon
-                  class="fr-mr-1v"
-                  fill="var(--blue-france-sun-113-625)"
+                <DownloadFile
+                  :file="file"
                 />
-                <span>{{ file.filename }}</span>
-                <em class="text-[var(--grey-625-425)]"> - {{ file.byteSize }}</em>
               </div>
             </footer>
           </div>
