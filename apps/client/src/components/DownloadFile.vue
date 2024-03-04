@@ -7,7 +7,7 @@ import { baseApiUrl } from '../api/api-client'
 import { eState, type StateKey } from '@biblio-num/shared'
 
 const props = defineProps<{
-  file: File
+  file: File | null
 }>()
 
 const url = computed(() => `${baseApiUrl}${getFileRoute(props.file?.url)}`)
@@ -22,7 +22,7 @@ const downloadable = computed(() => (props.file as File & { state: StateKey})?.s
     target="_blank"
     class="fr-link"
   >{{ file?.filename }}
-    <span class="fr-text--xs">({{ prettyByteSizeByString(String(file?.byteSizeBigInt)) }})</span>
+    <em class="text-[var(--grey-625-425)]">({{ prettyByteSizeByString(String(file?.byteSizeBigInt)) }})</em>
   </a>
   <span v-else>{{ file?.filename }}
     <DsfrBadge
