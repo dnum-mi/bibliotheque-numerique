@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.2](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.6.1...v2.6.2) (2024-03-05)
+
+
+### Bug Fixes
+
+* set KUBERNETES_MEMORY_LIMIT to 5 go for build front in gitlab ([2796e8f](https://github.com/dnum-mi/bibliotheque_numerique/commit/2796e8fe74db1eb53074573b06bf7e5ce733445d))
+
 ## [2.6.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.6.0...v2.6.1) (2024-03-05)
 
 
