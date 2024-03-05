@@ -71,6 +71,10 @@ test_http_proxy:
   allow_failure: true
   extends:
     - .node:sonar
+  rules:
+    - changes:
+        - apps/http-proxy/**/*
+        - apps/http-proxy/Dockerfile
 
 test_elasticsearch:
   variables:
@@ -79,6 +83,10 @@ test_elasticsearch:
   allow_failure: true
   extends:
     - .node:sonar
+  rules:
+    - changes:
+        - apps/elk/elasticsearch/**/*
+        - apps/elk/elasticsearch/Dockerfile
 
 test_kibana:
   variables:
@@ -87,6 +95,10 @@ test_kibana:
   allow_failure: true
   extends:
     - .node:sonar
+  rules:
+    - changes:
+        - apps/elk/kibana/**/*
+        - apps/elk/kibana/Dockerfile
 
 test_logstash:
   variables:
@@ -95,6 +107,10 @@ test_logstash:
   allow_failure: true
   extends:
     - .node:sonar
+  rules:
+    - changes:
+        - apps/elk/logstash/**/*
+        - apps/elk/logstash/Dockerfile
 
 test_docker_front:
   variables:
@@ -148,6 +164,10 @@ test_docker_http_proxy:
   allow_failure: true
   extends:
     - .docker:test
+  rules:
+    - changes:
+        - apps/http-proxy/**/*
+        - apps/http-proxy/Dockerfile
 
 test_docker_elasticsearch:
   image: docker:stable
@@ -159,6 +179,10 @@ test_docker_elasticsearch:
   allow_failure: true
   extends:
     - .docker:test
+  rules:
+    - changes:
+        - apps/elk/elasticsearch/**/*
+        - apps/elk/elasticsearch/Dockerfile
 
 test_docker_kibana:
   image: docker:stable
@@ -170,6 +194,10 @@ test_docker_kibana:
   allow_failure: true
   extends:
     - .docker:test
+  rules:
+    - changes:
+        - apps/elk/kibana/**/*
+        - apps/elk/kibana/Dockerfile
 
 test_docker_logstash:
   image: docker:stable
@@ -181,6 +209,10 @@ test_docker_logstash:
   allow_failure: true
   extends:
     - .docker:test
+  rules:
+    - changes:
+        - apps/elk/logstash/**/*
+        - apps/elk/logstash/Dockerfile
 
 docker_build_front:
   variables:
@@ -227,6 +259,10 @@ docker_build_http_proxy:
   stage: docker-build
   extends:
     - .kaniko:simple-build-push
+  rules:
+    - changes:
+        - apps/http-proxy/**/*
+        - apps/http-proxy/Dockerfile
 
 
 docker_build_elasticsearch:
@@ -237,6 +273,10 @@ docker_build_elasticsearch:
   stage: docker-build
   extends:
     - .kaniko:simple-build-push
+  rules:
+    - changes:
+        - apps/elk/elasticsearch/**/*
+        - apps/elk/elasticsearch/Dockerfile
 
 
 docker_build_kibana:
@@ -247,7 +287,10 @@ docker_build_kibana:
   stage: docker-build
   extends:
     - .kaniko:simple-build-push
-
+  rules:
+    - changes:
+        - apps/elk/kibana/**/*
+        - apps/elk/kibana/Dockerfile
 
 docker_build_logstash:
   variables:
@@ -257,3 +300,7 @@ docker_build_logstash:
   stage: docker-build
   extends:
     - .kaniko:simple-build-push
+  rules:
+    - changes:
+        - apps/elk/logstash/**/*
+        - apps/elk/logstash/Dockerfile
