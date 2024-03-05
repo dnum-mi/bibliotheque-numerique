@@ -17,7 +17,7 @@ import {
   FileMimeTypeKey,
   FileTagKey,
 } from '@biblio-num/shared'
-import { ChampDescriptor, File as TFile } from '@dnum-mi/ds-api-client'
+import { File as TFile } from '@dnum-mi/ds-api-client'
 import { doesTextContainBnCode } from '@/shared/utils/bn-code.utils'
 import { tagCodeDictionary } from '@/modules/files/objects/const/tag-dictionnary.const'
 import { TagDefinition } from '@/modules/files/objects/types/tag-definition.type'
@@ -93,6 +93,15 @@ export class FileService extends BaseEntityService<File> {
         originalLabel: payload.originalLabel,
         dossier: { id: payload.dossierId },
         sourceStringId: payload.sourceStringId ?? null,
+      },
+      relations: ['dossier', 'organisme'],
+      select: {
+        dossier: {
+          id: true,
+        },
+        organisme: {
+          id: true,
+        },
       },
     })
   }
