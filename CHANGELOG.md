@@ -1,5 +1,38 @@
 # Changelog
 
+## [2.5.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.4.5...v2.5.0) (2024-03-05)
+
+
+### Features
+
+* ✨ get ready for files summary ([fb50395](https://github.com/dnum-mi/bibliotheque_numerique/commit/fb50395c9e82e69549f5fb2f5ca44a4f7ff06f03))
+* add soft-delete demarche in backend ([afa3eb9](https://github.com/dnum-mi/bibliotheque_numerique/commit/afa3eb9e767275c5e4ee763ccba410e0638416aa))
+* add soft-delete demarche in client ([50d66ad](https://github.com/dnum-mi/bibliotheque_numerique/commit/50d66adad95a6ee6eb70d6aef7e88c1315ba2da2))
+* add soft-delete dossier in backend ([8184523](https://github.com/dnum-mi/bibliotheque_numerique/commit/8184523c8930bfb66d78d0b1163b9cd0381d25bb))
+* del endpoint for get log ([de77ef4](https://github.com/dnum-mi/bibliotheque_numerique/commit/de77ef4e791f38a19e0b565d4da1658c881fd779))
+* file pagination ([3b9ac6f](https://github.com/dnum-mi/bibliotheque_numerique/commit/3b9ac6f1fd41028b6e4fc35adc2d74f157dccdeb))
+
+
+### Bug Fixes
+
+* build error because import DsfrButton ([7aecb5c](https://github.com/dnum-mi/bibliotheque_numerique/commit/7aecb5ccae88f24ff1f58b8ee59e335a839c3460))
+* change url of file in dossier before send to front ([64922f0](https://github.com/dnum-mi/bibliotheque_numerique/commit/64922f02e31e74b3259f13b7066fe0f63d043ad4))
+* debug in test e2e dossier-searche ([89c7385](https://github.com/dnum-mi/bibliotheque_numerique/commit/89c7385f3baefe1575aad65d3faadd030b6635cd))
+* dowload pj and add demandeur icon in messagearies ([501cabd](https://github.com/dnum-mi/bibliotheque_numerique/commit/501cabd2dd0f8e0502bb790c1ecb99c4ad012d8a))
+* download file in dossier on FRONT ([653d304](https://github.com/dnum-mi/bibliotheque_numerique/commit/653d30462770594079aa33db85fd4a590641fa42))
+* error in test-e2e to get annotations which is string ([a01f57a](https://github.com/dnum-mi/bibliotheque_numerique/commit/a01f57afc304f2dc2bf756823d191a4cdf50be42))
+* rename deleteDemarche to softDeleteDemarche ([0fb3024](https://github.com/dnum-mi/bibliotheque_numerique/commit/0fb3024932ce5160d834b5a0d4791dd7aed96ae2))
+* resolved migration to have cascade SET NULL when deleting organism ([7dd8130](https://github.com/dnum-mi/bibliotheque_numerique/commit/7dd813009e697965e2c5eb98c12ea1bdbf5afc0e))
+* route to organismes files ([d3b992b](https://github.com/dnum-mi/bibliotheque_numerique/commit/d3b992b00461b7cfbee2a54ce772531d867bb634))
+* synchro-file and join file and dossier ([81e2499](https://github.com/dnum-mi/bibliotheque_numerique/commit/81e24999ee2a5a9851739d4e798b3c9cf65624cf))
+* toaster for file with state no uploaded ([02d476d](https://github.com/dnum-mi/bibliotheque_numerique/commit/02d476d7ebefbe7fd8188719dc85b95efd298b33))
+* update route file list for organisme and callApi is generic ([44cdab5](https://github.com/dnum-mi/bibliotheque_numerique/commit/44cdab58d7705788d7e56147291ad5e465d2a1e7))
+
+
+### Performance Improvements
+
+* ⚡ only load file list when the tab is active ([28c0219](https://github.com/dnum-mi/bibliotheque_numerique/commit/28c0219608bcf60d2bc6bed81e4e124c34009015))
+
 ## [2.4.5](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.4.4...v2.4.5) (2024-02-23)
 
 
