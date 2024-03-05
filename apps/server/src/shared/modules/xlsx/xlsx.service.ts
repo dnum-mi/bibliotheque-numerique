@@ -6,7 +6,6 @@ import { v4 } from 'uuid'
 import { createReadStream, promises as fsPromises, type ReadStream } from 'fs'
 import { ExcelData } from '@/shared/types/excel-data.type'
 import { File } from '@/modules/files/objects/entities/file.entity'
-import { Readable } from 'stream'
 import { S3Service } from '@/shared/modules/s3/s3.service'
 import { BnConfigurationService } from '@/shared/modules/bn-configurations/providers/bn-configuration.service'
 import { eBnConfiguration } from '@biblio-num/shared'
@@ -49,27 +48,24 @@ export class XlsxService {
     return stream
   }
 
-  async readExcelFile(filePath: string): Promise<ExcelData> {
-    this.logger.verbose('readExcelFile')
-    this.logger.debug('filePath: ' + filePath)
-    const stream = createReadStream(filePath)
-    return await this.readExcelData(stream)
-  }
-
   async readExcelFileFromS3(file: File): Promise<ExcelData> {
     this.logger.verbose('readExcelFileFromS3')
-    const stream = await this.s3Service.getStreamedFile(file.uuid)
+    const stream = await this.s3Service.getCompleteFile(file.uuid)
     return await this.readExcelData(stream)
   }
 
-  async readExcelData(stream: Readable): Promise<ExcelData> {
+  async readExcelData(buffer: Buffer): Promise<ExcelData> {
     this.logger.verbose('readExcelData')
     const sheetName = (
-      await this.bnConfigService.findByKeyName(eBnConfiguration.FE_EXCEL_IMPORT_SHEET_NAME)
+      await this.bnConfigService.findByKeyName(
+        eBnConfiguration.FE_EXCEL_IMPORT_SHEET_NAME,
+      )
     ).stringValue
-    const range = (await this.bnConfigService.findByKeyName(eBnConfiguration.FE_EXCEL_IMPORT_RANGE)).stringValue
-
-    const buffer = await this._streamToBuffer(stream)
+    const range = (
+      await this.bnConfigService.findByKeyName(
+        eBnConfiguration.FE_EXCEL_IMPORT_RANGE,
+      )
+    ).stringValue
     const workbook: XLSX.WorkBook = XLSX.read(buffer, { type: 'buffer' })
     const sheet: XLSX.WorkSheet = workbook.Sheets[sheetName]
     if (!sheet) {
@@ -79,22 +75,6 @@ export class XlsxService {
       range,
       header: 1,
     })
-    const jsonDataClean: ExcelData = this._cleanData(jsonData)
-    this.logger.verbose('File Data: ' + jsonDataClean)
-    return jsonDataClean
-  }
-
-  _cleanData(data: ExcelData): ExcelData {
-    this.logger.verbose('_cleanData')
-    return data.filter((row) => row.length > 0)
-  }
-
-  private async _streamToBuffer(stream: Readable): Promise<Buffer> {
-    return new Promise((resolve, reject) => {
-      const chunks: never[] = []
-      stream.on('data', (chunk) => chunks.push(chunk as never))
-      stream.on('error', reject)
-      stream.on('end', () => resolve(Buffer.concat(chunks)))
-    })
+    return jsonData.filter((row) => row.length > 0)
   }
 }

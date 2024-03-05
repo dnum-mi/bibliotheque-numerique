@@ -96,7 +96,6 @@ export class FoundationController {
     @Body() body: GetFoundationsInputDto,
   ): Promise<string[]> {
     this.logger.verbose('getUpdatedFoundations')
-    console.log(body)
     return this.service.getLastUpdatedFoundations(
       body.rnfIds,
       body.lastUpdatedAt,

@@ -23,7 +23,6 @@ import { RawChamp } from '@/shared/types/raw-champ.type'
 import { PieceJustificativeChamp } from '@dnum-mi/ds-api-client'
 import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
 import { FieldWithMappingColumn } from '@/modules/dossiers/objects/types/field-with-mapping.column'
-import { async } from 'rxjs'
 
 export type TDossierWithPrefecture = Partial<TDossier> & {
   prefecture?: PrefectureKeys
@@ -232,12 +231,11 @@ export class FieldService extends BaseEntityService<Field> {
       columnHash,
     )
     await this.repo.delete({ dossierId })
-    return this.repo.save(fields).then((fields) =>
-      fields.map((f) => ({
-        ...f,
-        mappingColumn: columnHash[f.sourceId],
-      })),
-    )
+    const fs = await this.repo.save(fields)
+    return fs.map((f) => ({
+      ...f,
+      mappingColumn: columnHash[f.sourceId],
+    }))
   }
 
   async upsert(

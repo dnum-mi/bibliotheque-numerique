@@ -44,6 +44,12 @@ export class FileController {
       `attachment; filename="${FileService.buildCompleteName(smallFile)}"`,
     )
     const stream = await this.s3Service.getStreamedFile(uuid)
-    stream.pipe(response)
+    return new Promise((resolve, reject) => {
+      stream.on('error', (e) => {
+        reject(S3Service.manageS3StreamError(e))
+      })
+      stream.on('end', resolve)
+      stream.pipe(response)
+    })
   }
 }

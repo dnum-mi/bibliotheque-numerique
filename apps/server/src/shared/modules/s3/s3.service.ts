@@ -1,4 +1,10 @@
-import { Injectable, OnModuleInit } from '@nestjs/common'
+import {
+  HttpException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+  OnModuleInit,
+} from '@nestjs/common'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { ConfigService } from '@nestjs/config'
 import { S3 } from 'aws-sdk/clients/browser_default'
@@ -19,6 +25,14 @@ export class S3Service implements OnModuleInit {
     private logger: LoggerService,
   ) {
     this.logger.setContext(this.constructor.name)
+  }
+
+  static manageS3StreamError(err: Error): HttpException {
+    if (err.name?.startsWith('NoSuchKey')) {
+      return new NotFoundException('File not found')
+    } else {
+      return new InternalServerErrorException(err)
+    }
   }
 
   async onModuleInit(): Promise<void> {
@@ -43,13 +57,25 @@ export class S3Service implements OnModuleInit {
     //  )
   }
 
-  public async getStreamedFile(uuid: string): Promise<stream.Readable> {
+  public getStreamedFile(uuid: string): stream.Readable {
     return this.s3
       .getObject({
         Bucket: this.bucketName,
         Key: uuid,
       })
       .createReadStream()
+  }
+
+  public getCompleteFile(uuid: string): Promise<Buffer> {
+    return new Promise((resolve, reject) => {
+      const stream = this.getStreamedFile(uuid)
+      const chunks: never[] = []
+      stream.on('data', (chunk) => chunks.push(chunk as never))
+      stream.on('end', () => resolve(Buffer.concat(chunks)))
+      stream.on('error', (e) => {
+        reject(S3Service.manageS3StreamError(e))
+      })
+    })
   }
 
   public async downloadAndUploadToS3(url: string, uuid: string): Promise<SendData> {
