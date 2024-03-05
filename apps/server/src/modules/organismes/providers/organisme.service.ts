@@ -11,7 +11,8 @@ import {
   IOrganisme,
   IRnaOutput,
   IRnfOutput,
-  OrganismeType,
+  OrganismeTypeKey,
+  eOrganismeType,
   eState,
 } from '@biblio-num/shared'
 
@@ -76,7 +77,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
         state: eState.uploaded,
         title: raw.title,
         dateCreation: new Date(raw.createdAt),
-        type: raw.type,
+        type: raw.type as OrganismeTypeKey,
         email: raw.email,
         phoneNumber: raw.phone,
         ...Object.fromEntries(
@@ -128,8 +129,8 @@ export class OrganismeService extends BaseEntityService<Organisme> {
         title: raw.nom,
         dateCreation: raw.date_creation,
         type: raw.reconnue_utilite_publique
-          ? OrganismeType.ARUP
-          : OrganismeType.CULTE,
+          ? eOrganismeType.ARUP
+          : eOrganismeType.CULTE,
         addressLabel,
         addressPostalCode: a?.code_postal,
         addressCityName: a?.commune,

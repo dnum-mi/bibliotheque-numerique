@@ -1,12 +1,14 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
-import { BaseEntity } from '@/shared/base-entity/base.entity'
-import { FileMimeTypeKey, eFileMimeType, eState } from '@biblio-num/shared'
+
+import { FileExtensionKey, eFileExtension, eState } from '@biblio-num/shared'
 import {
   eFileSourceLabel,
   type FileSourceLabelKey,
   type FileTagKey,
   StateKey,
 } from '@biblio-num/shared'
+
+import { BaseEntity } from '@/shared/base-entity/base.entity'
 import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
 import { Organisme } from '@/modules/organismes/objects/organisme.entity'
 
@@ -29,10 +31,10 @@ export class File extends BaseEntity {
 
   @Column({
     type: 'enum',
-    enum: eFileMimeType,
-    default: eFileMimeType.unknown,
+    enum: eFileExtension,
+    default: eFileExtension.unknown,
   })
-  mimeType: FileMimeTypeKey
+  mimeType: FileExtensionKey
 
   // TODO: a table state indeed ?
   @Column({

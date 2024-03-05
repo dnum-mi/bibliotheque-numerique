@@ -1,6 +1,6 @@
 import { createEnum } from '../../factories'
 
-export const fileMimeTypes = [
+export const fileExtensions = [
   'unknown', // TODO: do we want to authorize any file type ?
   'png',
   'jpeg',
@@ -12,6 +12,6 @@ export const fileMimeTypes = [
   'docx',
 ] as const
 
-export type FileMimeTypeKey = (typeof fileMimeTypes)[number]
+export type FileExtensionKey = (typeof fileExtensions)[number]
 
-export const eFileMimeType = createEnum(fileMimeTypes)
+export const eFileExtension = createEnum(fileExtensions)

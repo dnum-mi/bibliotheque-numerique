@@ -1,14 +1,14 @@
 import { Repository } from 'typeorm'
+import { faker } from '@faker-js/faker'
+
+import { eFileDsSourceLabel, eState, fileExtensions } from '@biblio-num/shared'
+import { Champ, PieceJustificativeChamp, File as IFile } from '@dnum-mi/ds-api-client'
+
 import { DossierService } from './dossier.service'
 import { Dossier } from '../objects/entities/dossier.entity'
 import { LoggerService } from '../../../shared/modules/logger/logger.service'
 import { getFakeDossierTest } from '../../../../test/unit/fake-data/dossier.fake-data'
-import { PieceJustificativeChamp, File as IFile } from '@dnum-mi/ds-api-client'
-import { faker } from '@faker-js/faker'
 import { File } from '../../files/objects/entities/file.entity'
-import { eFileDsSourceLabel, eState } from '@biblio-num/shared'
-import { fileMimeTypes } from '@biblio-num/shared/src/files/enums/file-mime-type.enum'
-import { Champ } from '@dnum-mi/ds-api-client/dist/@types/generated-types'
 
 describe('dossier.service', () => {
   let service
@@ -42,6 +42,7 @@ describe('dossier.service', () => {
       ],
     }
     const champMock1: Champ = {
+      __typename: 'Champ',
       id: faker.string.alphanumeric(),
       label: faker.string.alphanumeric(),
     }
@@ -59,7 +60,7 @@ describe('dossier.service', () => {
       createdAt: faker.date.past(),
       id: faker.number.int(),
       label: faker.string.alphanumeric(),
-      mimeType: faker.helpers.arrayElement(fileMimeTypes),
+      mimeType: faker.helpers.arrayElement(fileExtensions),
       originalLabel: faker.string.alphanumeric(),
       sourceIndex: index,
       sourceLabel: eFileDsSourceLabel['ds-champ'],
