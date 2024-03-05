@@ -22,6 +22,8 @@ import {
 import { RawChamp } from '@/shared/types/raw-champ.type'
 import { PieceJustificativeChamp } from '@dnum-mi/ds-api-client'
 import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
+import { FieldWithMappingColumn } from '@/modules/dossiers/objects/types/field-with-mapping.column'
+import { async } from 'rxjs'
 
 export type TDossierWithPrefecture = Partial<TDossier> & {
   prefecture?: PrefectureKeys
@@ -161,28 +163,30 @@ export class FieldService extends BaseEntityService<Field> {
     dataJson?: TDossierWithPrefecture,
   ): CreateFieldDto[] {
     this.logger.verbose('_createFieldsFromFixFields')
-    return Object.keys(fixFieldValueFunctions).map((fixFieldId) => {
-      const value: string =
-        fixFieldValueFunctions[fixFieldId](dataJson)?.toString() ?? ''
-      const columnHashSelected = columnHash[fixFieldId]
-      if (!columnHashSelected) return null
-      return {
-        ...this._extractColumnRefFieldInformation(columnHashSelected),
-        stringValue: value.toString(),
-        dateValue: FieldService.giveDateOrNull(
-          columnHashSelected.type,
-          value,
-        ),
-        numberValue: FieldService.giveNumberOrNull(
-          columnHashSelected.type,
-          value,
-        ),
-        dossierId,
-        parentRowIndex: null,
-        rawJson: null,
-        dsChampType: null,
-      }
-    }).filter(dto => dto)
+    return Object.keys(fixFieldValueFunctions)
+      .map((fixFieldId) => {
+        const value: string =
+          fixFieldValueFunctions[fixFieldId](dataJson)?.toString() ?? ''
+        const columnHashSelected = columnHash[fixFieldId]
+        if (!columnHashSelected) return null
+        return {
+          ...this._extractColumnRefFieldInformation(columnHashSelected),
+          stringValue: value.toString(),
+          dateValue: FieldService.giveDateOrNull(
+            columnHashSelected.type,
+            value,
+          ),
+          numberValue: FieldService.giveNumberOrNull(
+            columnHashSelected.type,
+            value,
+          ),
+          dossierId,
+          parentRowIndex: null,
+          rawJson: null,
+          dsChampType: null,
+        }
+      })
+      .filter((dto) => dto)
   }
 
   private _createFieldsFromDataJson(
@@ -212,7 +216,7 @@ export class FieldService extends BaseEntityService<Field> {
     dataJson: TDossierWithPrefecture,
     dossierId: number,
     mappingColumns: MappingColumn[],
-  ): Promise<Field[]> {
+  ): Promise<FieldWithMappingColumn[]> {
     this.logger.verbose('createFieldsFromDataJsonWithTransaction')
     const columnHash: Record<string, MappingColumn> = Object.fromEntries(
       mappingColumns
@@ -228,7 +232,12 @@ export class FieldService extends BaseEntityService<Field> {
       columnHash,
     )
     await this.repo.delete({ dossierId })
-    return this.repo.save(fields)
+    return this.repo.save(fields).then((fields) =>
+      fields.map((f) => ({
+        ...f,
+        mappingColumn: columnHash[f.sourceId],
+      })),
+    )
   }
 
   async upsert(

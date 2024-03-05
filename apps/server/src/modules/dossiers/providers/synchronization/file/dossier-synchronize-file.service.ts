@@ -14,9 +14,9 @@ import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.en
 import { eFileDsSourceLabel, FieldType } from '@biblio-num/shared'
 import { FileService } from '@/modules/files/providers/file.service'
 import { UpsertDsFileDto } from '@/modules/files/objects/dto/input/upsert-ds-file.dto'
-import { Field } from '@/modules/dossiers/objects/entities/field.entity'
 import { isNumber } from 'class-validator'
 import { FieldService } from '@/modules/dossiers/providers/field.service'
+import { FieldWithMappingColumn } from '@/modules/dossiers/objects/types/field-with-mapping.column'
 
 @Injectable()
 export class DossierSynchroniseFileService {
@@ -53,7 +53,7 @@ export class DossierSynchroniseFileService {
   }
 
   private async synchroniseAllChamps(
-    fields: Field[],
+    fields: FieldWithMappingColumn[],
     dsDossierId: number,
     organismeId: number,
   ): Promise<void> {
@@ -61,21 +61,25 @@ export class DossierSynchroniseFileService {
     await Promise.all(
       fields
         .filter((field) => field.type === FieldType.file)
-        .map((field: Field) => {
-          const tag = FileService.getTagFromChampsDescriptor(
-            (field.rawJson as CustomChamp).champDescriptor,
+        .map((field: FieldWithMappingColumn) => {
+          const tag = FileService.getTagFromDescription(
+            (field.rawJson as CustomChamp).champDescriptor.description,
+          )
+          // if the demarche has been updated, we look for a tag in a more recent revision
+          const tag2 = FileService.getTagFromDescription(
+            field.mappingColumn.originalDescription,
           )
           const pjc = field.rawJson as PieceJustificativeChamp
           const files = pjc.files?.length ? pjc.files : [pjc.file]
           return files
-            .filter(f => !!f)
+            .filter((f) => !!f)
             .map((f: TFile, i: number) => {
               return this._addSyncFileJob(
                 {
                   dossierId: field.dossierId,
                   sourceStringId: field.sourceId,
                   organismeId,
-                  tag,
+                  tag: tag ?? tag2,
                   sourceIndex: i,
                   sourceLabel: eFileDsSourceLabel['ds-champ'],
                   originalLabel: f.filename,
@@ -134,7 +138,7 @@ export class DossierSynchroniseFileService {
   }
 
   public async synchroniseFiles(
-    fields: Field[],
+    fields: FieldWithMappingColumn[],
     dossier: TDossier,
     dossierId: number,
     organismeId?: number,

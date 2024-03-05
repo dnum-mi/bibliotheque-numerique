@@ -66,11 +66,11 @@ export class FileService extends BaseEntityService<File> {
     return `${smallFile.label}.${smallFile.mimeType}`
   }
 
-  static getTagFromChampsDescriptor(
-    champDescriptor: ChampDescriptor,
+  static getTagFromDescription(
+    description: string | undefined,
   ): FileTagKey | undefined {
-    if (champDescriptor.description?.length) {
-      const code = doesTextContainBnCode(champDescriptor.description)
+    if (description?.length) {
+      const code = doesTextContainBnCode(description)
       if (code) {
         const tagDefinition: TagDefinition = tagCodeDictionary[code]
         if (tagDefinition) {
