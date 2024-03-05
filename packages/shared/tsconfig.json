@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "incremental": true,
-    "tsBuildInfoFile": ".tsbuildinfo",
+    "tsBuildInfoFile": "node_modules/tmp/.tsbuildinfo",
     "target": "es2020",
     "lib": ["ES2022"],
     "emitDecoratorMetadata": true,

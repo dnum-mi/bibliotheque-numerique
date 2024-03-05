@@ -18,7 +18,7 @@
     "build:shared": "turbo build --filter=shared",
     "clean:dist": "turbo clean:dist",
     "commitlint": "commitlint --edit",
-    "dev": "turbo dev --filter=client --filter=server",
+    "dev": "FORCE_COLOR=1 turbo dev --filter client --filter server",
     "dev:all": "turbo dev",
     "dev:client": "turbo dev --filter=client",
     "dev:rnf": "turbo dev --filter=rnf-client --filter=rnf-server",
