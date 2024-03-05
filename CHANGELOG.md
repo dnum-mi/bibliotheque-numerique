@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.6.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.6.0...v2.6.1) (2024-03-05)
+
+
+### Bug Fixes
+
+* not change version for http-proxy image ([699bd74](https://github.com/dnum-mi/bibliotheque_numerique/commit/699bd747d7b40c52d1cda3394657ec133575d22c))
+* not change version for http-proxy image ([ed98818](https://github.com/dnum-mi/bibliotheque_numerique/commit/ed988187fdd90af0ad3f83ee0371e69d487c8ebe))
+
 ## [2.6.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.5.0...v2.6.0) (2024-03-05)
 
 
