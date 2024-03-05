@@ -133,8 +133,11 @@ export class FileService extends BaseEntityService<File> {
         uuid: v4(),
       })
     } else {
-      await this.updateState(existingFile.id, eState.queued)
-      return existingFile
+      return await this.repo.save({
+        ...existingFile,
+        state: eState.queued,
+        organisme: { id: payload.organismeId ?? null },
+      })
     }
   }
 
