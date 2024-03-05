@@ -87,6 +87,7 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
         id: cd.id,
         originalLabel: cd.label,
         columnLabel: originalRenameHash[cd.id] || null,
+        originalDescription: cd.description,
         isHeader: cd.__typename === 'HeaderSectionChampDescriptor',
         formatFunctionRef: giveFormatFunctionRefFromDsChampType(cd),
         source,
@@ -136,16 +137,13 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
     if (await this.demarcheService.findByDsId(dsId)) {
       throw new BadRequestException(`Demarche with dsId ${dsId} already exist.`)
     }
+    const mappingColumns = this._generateMappingColumns(raw.demarche, [], identification)
     const demarche = await this.repo.save({
       lastSynchronisedAt: new Date(),
       title: raw.demarche.title,
       state: raw.demarche.state ?? 'no-state',
       types: types || [],
-      mappingColumns: this._generateMappingColumns(
-        raw.demarche,
-        [],
-        identification,
-      ),
+      mappingColumns,
       dsDataJson: raw.demarche,
       identification,
     })
@@ -171,6 +169,7 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
     const raw = result.demarche
     const dossiers = raw.dossiers.nodes
     delete raw.dossiers
+    const mappingColumns = this._generateMappingColumns(raw, demarche.mappingColumns, demarche.identification)
     const toUpdate = {
       lastSynchronisedAt: new Date(),
       ...(raw.dateDerniereModification !==
@@ -179,11 +178,7 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
           title: raw.title,
           state: raw.state,
           types: demarche.types || [],
-          mappingColumns: this._generateMappingColumns(
-            raw,
-            demarche.mappingColumns,
-            demarche.identification,
-          ),
+          mappingColumns,
           dsDataJson: raw,
         }
         : {}),

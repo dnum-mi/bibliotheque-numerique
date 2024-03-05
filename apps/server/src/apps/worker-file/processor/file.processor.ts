@@ -35,15 +35,10 @@ export class FileProcessor {
     if (payload.file.sourceLabel === eFileSourceLabel['ds-attestation']) {
       files = await this.dsApiService.dossierAttestation(payload.dsDossierId)
     } else {
-      try {
-        files = await this.dsApiService.dossierFile(
-          payload.dsDossierId,
-          payload.file.sourceStringId,
-        )
-      } catch (e) {
-        console.log(e)
-        throw e
-      }
+      files = await this.dsApiService.dossierFile(
+        payload.dsDossierId,
+        payload.file.sourceStringId,
+      )
     }
     return files[payload.file.sourceIndex ?? 0] as TFile
   }

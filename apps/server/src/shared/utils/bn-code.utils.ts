@@ -1,4 +1,5 @@
-const BN_CODE_KEY = '([a-zA-Z-]+)'
+const ACCENTED_CHARS = 'àâäéèêëïîôöùûüçÀÂÄÉÈÊËÏÎÔÖÙÛÜÇ'
+const BN_CODE_KEY = `([a-zA-Z-${ACCENTED_CHARS}]+)`
 const BN_CODE_KEY_REGEX = new RegExp(BN_CODE_KEY)
 const BN_CODE_PARTICULE = 'bncode'
 export const BN_CODE_COMPLETE_REGEX = new RegExp(
