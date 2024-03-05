@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.5.0...v2.6.0) (2024-03-05)
+
+
+### Features
+
+* gitlab ci build image when is change ([9bcad9d](https://github.com/dnum-mi/bibliotheque_numerique/commit/9bcad9d081b702e2aac6d830bb440babe19df0cb))
+
 ## [2.5.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.4.5...v2.5.0) (2024-03-05)
 
 
