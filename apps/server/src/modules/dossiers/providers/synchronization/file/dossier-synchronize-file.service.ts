@@ -5,6 +5,7 @@ import {
   DossierWithCustomChamp as TDossier,
   File as TFile,
   PieceJustificativeChamp,
+  DossierState,
 } from '@dnum-mi/ds-api-client'
 import { InjectQueue } from '@nestjs/bull'
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
@@ -144,10 +145,11 @@ export class DossierSynchroniseFileService {
     organismeId?: number,
   ): Promise<void> {
     this.logger.verbose('synchroniseFiles')
+    const organsimeIdForAcceptedDossier = dossier.state === DossierState.Accepte ? organismeId : undefined
     await Promise.all([
-      this.synchroniseAllChamps(fields, dossier.number, organismeId),
-      this.synchroniseMessages(dossier, dossierId, organismeId),
-      this.synchroniseAttestation(dossier, dossierId, organismeId),
+      this.synchroniseAllChamps(fields, dossier.number, organsimeIdForAcceptedDossier),
+      this.synchroniseMessages(dossier, dossierId, organsimeIdForAcceptedDossier),
+      this.synchroniseAttestation(dossier, dossierId, organsimeIdForAcceptedDossier),
     ])
   }
 }
