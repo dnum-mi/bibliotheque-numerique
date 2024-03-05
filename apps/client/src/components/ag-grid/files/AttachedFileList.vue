@@ -1,14 +1,14 @@
 <script lang="ts" setup>
 import type { GridReadyEvent, GridApi, GridOptions, AgGridEvent } from 'ag-grid-community'
 
-import type { IFileOutput, IFilter, IPagination, StateKey } from '@biblio-num/shared'
+import type { IFileOutput, IFilter, IPagination, StateKey, FileDsSourceLabelKey } from '@biblio-num/shared'
+import { fileDsSourceLabels, dFileSourceLabelDictionary, fileExtensions, eState, fileTabTags } from '@biblio-num/shared'
 
 import type { ApiCall } from '../server-side/pagination.utils'
 import type { BNColDef } from '../server-side/bn-col-def.interface'
 import MimeTypeCellRenderer from './MimeTypeCellRenderer.vue'
 import AttachedFileStateCellRenderer from './AttachedFileStateCellRenderer.vue'
 import { baseApiUrl } from '@/api/api-client'
-import { eState, fileTabTags } from '@biblio-num/shared'
 import FileTagBadgeRenderer from '@/components/Badges/file-tag/FileTagBadgeRenderer.vue'
 import useToaster, { type Message as ToasterMessage } from '@/composables/use-toaster'
 
@@ -45,7 +45,12 @@ const props = withDefaults(defineProps<AttachedFileListProps>(), {
     {
       headerName: 'Source',
       field: 'sourceLabel',
-      filter: 'agTextColumnFilter',
+      filter: 'agSetColumnFilter',
+      filterParams: {
+        values: fileDsSourceLabels,
+        cellRenderer: (params: { value: FileDsSourceLabelKey }) => dFileSourceLabelDictionary[params.value] ?? 'Tout',
+      },
+      valueFormatter: (params: { value: FileDsSourceLabelKey }) => dFileSourceLabelDictionary[params.value],
       menuTabs: ['filterMenuTab'],
       width: 200,
     },
@@ -65,7 +70,25 @@ const props = withDefaults(defineProps<AttachedFileListProps>(), {
     {
       headerName: 'Type',
       field: 'mimeType',
-      filter: 'agTextColumnFilter',
+      filter: 'agSetColumnFilter',
+      filterParams: {
+        values: fileExtensions,
+        cellRenderer: MimeTypeCellRenderer,
+        cellRendererParams: {
+          displayText: true,
+          dict: {
+            doc: 'Word',
+            docx: 'Word 2007+',
+            xls: 'Excel',
+            xlsx: 'Excel 2007+',
+            pdf: 'PDF',
+            jpeg: 'Image JPEG',
+            jpg: 'Image JPEG',
+            png: 'Image PNG',
+            unknown: 'Inconnu',
+          },
+        },
+      },
       menuTabs: ['filterMenuTab'],
       cellRenderer: MimeTypeCellRenderer,
       cellStyle: { display: 'flex', 'align-items': 'center' },
@@ -100,7 +123,6 @@ const onSelectionChanged = (event: AgGridEvent) => {
     }
     return
   }
-  const state:StateKey = file?.state
   const message: ToasterMessage = { description: `Le fichier ${file?.originalLabel} n'est pas téléchargeable`, type: 'warning' }
 
   if (file?.state === eState.failed) {

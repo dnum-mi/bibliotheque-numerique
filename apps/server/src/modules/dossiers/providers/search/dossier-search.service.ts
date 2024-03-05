@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common'
-import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { Repository } from 'typeorm'
-import { Dossier } from '../../objects/entities/dossier.entity'
 import { InjectRepository } from '@nestjs/typeorm'
+
+import { FieldTypeKeys } from '@biblio-num/shared'
+
+import { LoggerService } from '@/shared/modules/logger/logger.service'
+import { Dossier } from '../../objects/entities/dossier.entity'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { Demarche } from '../../../demarches/objects/entities/demarche.entity'
 import {
@@ -13,9 +16,7 @@ import {
   deduceFieldToQueryFromType,
 } from '@/shared/utils/common-search.utils'
 import { FieldService } from '../field.service'
-
 import { fromMappingColumnArrayToTypeHash } from '@/modules/demarches/utils/demarche.utils'
-import { FieldTypeKeys } from '@biblio-num/shared'
 import { FilterDto } from '@/shared/pagination/filters'
 import { SearchDossierDto } from '@/modules/dossiers/objects/dto/search-dossier.dto'
 import { DossierSearchOutputDto } from '@/modules/dossiers/objects/dto/dossier-search-output.dto'

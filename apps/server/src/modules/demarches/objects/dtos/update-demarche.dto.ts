@@ -1,6 +1,6 @@
 import { IsArray, IsEnum, IsOptional, ValidateIf } from 'class-validator'
 import {
-  OrganismeType,
+  eOrganismeType,
   OrganismeTypeKey,
   IdentificationDemarche,
   IdentificationDemarcheKeys,
@@ -15,7 +15,7 @@ export class UpdateDemarcheDto implements IUpdateDemarche {
 
   @IsOptional()
   @ValidateIf((o) => o.types !== null)
-  @IsEnum(OrganismeType, { each: true })
+  @IsEnum(eOrganismeType, { each: true })
   @IsArray()
   types?: OrganismeTypeKey[]
 }

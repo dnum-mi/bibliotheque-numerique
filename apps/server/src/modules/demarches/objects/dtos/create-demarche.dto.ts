@@ -1,6 +1,6 @@
 import { IsArray, IsEnum, IsNumber, IsOptional } from 'class-validator'
 import {
-  OrganismeType,
+  eOrganismeType,
   OrganismeTypeKey,
   IdentificationDemarche,
   IdentificationDemarcheKeys,
@@ -16,7 +16,7 @@ export class CreateDemarcheDto implements ICreateDemarche {
   identification: IdentificationDemarcheKeys
 
   @IsOptional()
-  @IsEnum(OrganismeType, { each: true })
+  @IsEnum(eOrganismeType, { each: true })
   @IsArray()
   types: OrganismeTypeKey[]
 }

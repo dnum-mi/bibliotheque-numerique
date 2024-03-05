@@ -10,7 +10,7 @@ import {
   IOrganisme,
   IRnaOutput,
   IRnfOutput,
-  OrganismeType,
+  eOrganismeType,
   OrganismeTypeKey,
   eState,
   StateKey,
@@ -21,8 +21,8 @@ import { File } from '@/modules/files/objects/entities/file.entity'
 export class Organisme extends BaseEntity implements IOrganisme {
     @Column({
       type: 'enum',
-      enum: OrganismeType,
-      default: OrganismeType.unknown,
+      enum: eOrganismeType,
+      default: eOrganismeType.unknown,
     })
   type: OrganismeTypeKey
 
