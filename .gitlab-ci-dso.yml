@@ -256,6 +256,7 @@ docker_build_http_proxy:
     WORKING_DIR: 'apps/http-proxy'
     IMAGE_NAME: 'http-proxy'
     DOCKERFILE: 'Dockerfile'
+    TAG: latest
   stage: docker-build
   extends:
     - .kaniko:simple-build-push
