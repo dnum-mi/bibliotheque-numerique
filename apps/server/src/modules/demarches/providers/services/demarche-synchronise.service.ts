@@ -30,9 +30,12 @@ import {
 
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
 import { InjectQueue } from '@nestjs/bull'
-import { Queue } from 'bull'
+import { Job, Queue } from 'bull'
 import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
-import { SyncOneDossierJobPayload } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
+import {
+  SyncOneDemarcheJobPayload,
+  SyncOneDossierJobPayload,
+} from '@/shared/modules/custom-bull/objects/const/job-payload.type'
 
 import { OrganismeTypeKey } from '@biblio-num/shared'
 import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
@@ -153,6 +156,7 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
   public async synchroniseOneDemarche(
     demarcheId: number,
     fromScratch = false,
+    job?: Job<SyncOneDemarcheJobPayload>,
   ): Promise<void> {
     this.logger.verbose('synchroniseOneDemarche')
     const demarche = await this.demarcheService.findOneById(demarcheId)
@@ -166,9 +170,11 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
       demarche.dsDataJson.number,
       lastSyncronisedAt,
     )
+    job?.log(`lastSyncronisedAt: ${lastSyncronisedAt}`)
     const raw = result.demarche
     const dossiers = raw.dossiers.nodes
     delete raw.dossiers
+    job?.log(`dossiers=${JSON.stringify(dossiers)}`)
     const mappingColumns = this._generateMappingColumns(raw, demarche.mappingColumns, demarche.identification)
     const toUpdate = {
       lastSynchronisedAt: new Date(),
@@ -184,6 +190,7 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
         : {}),
     }
     await this.repo.update({ id: demarche.id }, toUpdate)
+    job?.log('demarche - updated')
     await this._synchroniseAllDossier(dossiers, demarche.id, fromScratch)
   }
 }
