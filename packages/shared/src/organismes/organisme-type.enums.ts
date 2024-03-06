@@ -19,5 +19,5 @@ export const dOrganismeTypeDictionary: Record<OrganismeTypeKey, string> = {
   [eOrganismeType.FDD]: 'FDD',
   [eOrganismeType.FE]: 'FE',
   [eOrganismeType.FRUP]: 'FRUP',
-  [eOrganismeType.unknown]: 'unknown',
+  [eOrganismeType.unknown]: 'Inconnu',
 }

@@ -18,7 +18,7 @@ import type { ApiCall } from '@/components/ag-grid/server-side/pagination.utils'
 const dossierStore = useDossierStore()
 const dossier = computed<IDossierOutput | undefined>(() => dossierStore?.dossier)
 const dossierDS = computed<IDossierOutput['dsDataJson'] | undefined>(() => dossier.value?.dsDataJson)
-const demadeurEmail = computed<string | undefined>(() => dossier.value?.dsDataJson.usager?.email)
+const demandeurEmail = computed<string | undefined>(() => dossier.value?.dsDataJson.usager?.email)
 
 const messages = computed(() =>
   dossier.value?.dsDataJson.messages?.map(({ id, createdAt, body, email, attachments, attachment }: DossierMessage) => ({
@@ -161,7 +161,7 @@ onMounted(async () => {
       v-if="messages?.length"
       class="flex-basis-[40%] fr-pr-2v overflow-y-auto"
       :messages="messages"
-      :demandeur-email="demadeurEmail"
+      :demandeur-email="demandeurEmail"
     />
   </div>
 </template>

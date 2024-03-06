@@ -18,7 +18,6 @@ import {
   FileExtensionKey,
   FileTagKey,
 } from '@biblio-num/shared'
-import { File as TFile, ChampDescriptor } from '@dnum-mi/ds-api-client'
 import { doesTextContainBnCode } from '@/shared/utils/bn-code.utils'
 import { tagCodeDictionary } from '@/modules/files/objects/const/tag-dictionnary.const'
 import { TagDefinition } from '@/modules/files/objects/types/tag-definition.type'

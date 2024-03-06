@@ -1,6 +1,6 @@
 import { createEnum } from '../factories'
 
-const states = ['queued', 'uploading', 'uploaded', 'failed'] as const
+export const states = ['queued', 'uploading', 'uploaded', 'failed'] as const
 
 export type StateKey = (typeof states)[number]
 
