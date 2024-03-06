@@ -44,7 +44,14 @@ export class Dossier extends BaseEntity implements IDossier {
   @Column({ type: 'jsonb', default: '{}' })
   dsDataJson: Partial<TDossier>
 
-  @ManyToOne(() => Organisme, (org) => org.dossiers)
+  @ManyToOne(() => Organisme, (org) => org.dossiers, {
+    onDelete: 'SET NULL',
+  })
+  @JoinColumn({
+    name: 'organismeId',
+    referencedColumnName: 'id',
+    foreignKeyConstraintName: 'FK_organisme',
+  })
   organisme?: Organisme | null
 
   @Column({

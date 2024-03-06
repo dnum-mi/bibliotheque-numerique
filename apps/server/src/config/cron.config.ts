@@ -1,6 +1,7 @@
 import { registerAs } from '@nestjs/config'
 
 export default registerAs('cron', () => ({
+  skipCronInitialization: process.env.CRON_SKIP_INITIALIZATION === 'true',
   syncAllDemarche: process.env.CRON_SYNC_ALL_DEMARCHE || '* 1 * * * *',
   syncAllRnfOrganisme: process.env.CRON_SYNC_RNF_ORGANISME || '* 1 * * * *',
   syncAllRnaOrganisme: process.env.CRON_SYNC_RNA_ORGANISME || '* 1 * * * *',

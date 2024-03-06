@@ -5,7 +5,7 @@ import { CurrentOrganismeInterceptor } from '@/modules/organismes/providers/curr
 import { PaginationFileDto } from '@/modules/files/objects/dto/pagination-file.dto'
 import { PaginatedFileDto } from '@/modules/files/objects/dto/paginated-file.dto'
 import { FileService } from '@/modules/files/providers/file.service'
-import { FileTabTagKey, Roles } from '@biblio-num/shared'
+import { FileTagKey, Roles } from '@biblio-num/shared'
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
 
 @ApiTags('Organisme')
@@ -37,7 +37,7 @@ export class OrganismeFileController {
   @Role(Roles.instructor)
   async getOrganismeFileSummary(
     @Param('organismeId') organismeId: number,
-  ): Promise<Record<FileTabTagKey, number>> {
+  ): Promise<Record<FileTagKey, number>> {
     this.logger.verbose('getOrganismeFileSummary')
     return this.fileService.getOrganismeFileSummary(organismeId)
   }
