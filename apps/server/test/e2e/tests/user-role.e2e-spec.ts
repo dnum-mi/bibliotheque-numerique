@@ -141,7 +141,9 @@ describe('users (e2e)', () => {
   })
 
   describe('PATCH /users/:targetUserId/role', () => {
-    afterEach(resetUser5)
+    afterEach(async () => {
+      await resetUser5()
+    })
 
     it('Should return error 401', async () => {
       await request(app.getHttpServer()) //
@@ -290,7 +292,9 @@ describe('users (e2e)', () => {
   })
 
   describe('PUT /users/:targetUserId/role', () => {
-    afterEach(resetUser5)
+    afterEach(async () => {
+      await resetUser5()
+    })
 
     it('Should return error 401', async () => {
       await request(app.getHttpServer()) //

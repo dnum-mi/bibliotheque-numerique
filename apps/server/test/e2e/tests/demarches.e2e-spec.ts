@@ -21,6 +21,7 @@ describe('Demarches (e2e)', () => {
   })
 
   afterAll(async () => {
+    console.log('oui oui je suis appelé')
     await app.close()
     await dataSource.destroy()
   })
@@ -94,8 +95,8 @@ describe('Demarches (e2e)', () => {
   })
 
   describe('Patch /demarche/:id', () => {
-    it('Should be 401', () => {
-      return request(app.getHttpServer())
+    it('Should be 401', async () => {
+      return request(await app.getHttpServer())
         .patch('/demarches/1')
         .send({
           identification: 'FE',
