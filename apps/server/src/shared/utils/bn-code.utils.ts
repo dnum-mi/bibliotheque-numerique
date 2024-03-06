@@ -14,5 +14,5 @@ export const fromStringToBnChampCode = (key: string): string => {
 }
 
 export const doesTextContainBnCode = (text: string): string | null => {
-  return text.match(BN_CODE_COMPLETE_REGEX)?.[3] ?? null
+  return text?.match(BN_CODE_COMPLETE_REGEX)?.[3] ?? null
 }

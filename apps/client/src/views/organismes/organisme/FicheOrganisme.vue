@@ -9,8 +9,8 @@ import OrganismeBadge from '@/components/Badges/organisme/OrganismeBadge.vue'
 import InfoContact from '@/components/InfoContact.vue'
 import { type OrganismeIdType, useOrganismeStore, useUserStore } from '@/stores'
 import AttachedFileList from '@/components/ag-grid/files/AttachedFileList.vue'
-import type { IFileOutput, IPagination, IRole, FileTabTagKey } from '@biblio-num/shared'
-import { dFileTabTagDictionary } from '@biblio-num/shared'
+import type { IFileOutput, IPagination, IRole, FileTagKey } from '@biblio-num/shared'
+import { dFileTabDictionary } from '@biblio-num/shared'
 import type { ApiCall } from '@/components/ag-grid/server-side/pagination.utils'
 
 const props = withDefaults(defineProps<{ id: string; idType: OrganismeIdType }>(), {})
@@ -35,7 +35,7 @@ const tabTitles = computed(() => [
   },
   ...Object.entries(filesSummary.value).map(([tag, count], index: number) => {
     return {
-      title: `${dFileTabTagDictionary[tag as FileTabTagKey]} (${count})`,
+      title: `${dFileTabDictionary[tag as FileTagKey]} (${count})`,
       tabId: `tab-${index + 1}`,
       panelId: `tab-content-${index + 1}`,
     }
@@ -45,7 +45,7 @@ const tabTitles = computed(() => [
 // TODO: use router to prevent user to access this page if not logged in or without the right role
 const role = computed<IRole | undefined>(() => userStore.currentUser?.role)
 
-const filesSummary = ref<Record<FileTabTagKey, number>>({})
+const filesSummary = ref<Record<FileTagKey, number>>({})
 
 const isLoading = ref(false)
 onMounted(async () => {
