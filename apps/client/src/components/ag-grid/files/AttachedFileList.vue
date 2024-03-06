@@ -2,7 +2,7 @@
 import type { GridReadyEvent, GridApi, GridOptions, AgGridEvent } from 'ag-grid-community'
 
 import type { IFileOutput, IFilter, IPagination, StateKey, FileDsSourceLabelKey } from '@biblio-num/shared'
-import { fileDsSourceLabels, dFileSourceLabelDictionary, fileExtensions, eState, fileTabTags } from '@biblio-num/shared'
+import { fileDsSourceLabels, dFileSourceLabelDictionary, fileExtensions, states, eState, fileTabTags } from '@biblio-num/shared'
 
 import type { ApiCall } from '../server-side/pagination.utils'
 import type { BNColDef } from '../server-side/bn-col-def.interface'
@@ -13,7 +13,7 @@ import FileTagBadgeRenderer from '@/components/Badges/file-tag/FileTagBadgeRende
 import useToaster, { type Message as ToasterMessage } from '@/composables/use-toaster'
 
 type AttachedFileListProps = {
-  tag: string,
+  tag?: string,
   fetchAttachedFiles: ApiCall<IFileOutput>
   columnsDef?: BNColDef[]
   active?: boolean
@@ -26,11 +26,20 @@ const emit = defineEmits<{
 }>()
 
 const props = withDefaults(defineProps<AttachedFileListProps>(), {
+  tag: undefined,
   columnsDef: (): BNColDef[] => [
     {
-      headerName: '',
+      headerName: 'État téléchargement',
       field: 'state',
-      filter: 'agTextColumnFilter',
+      filter: 'agSetColumnFilter',
+      filterParams: {
+        values: states,
+        suppressSelectAll: true,
+        cellRenderer: AttachedFileStateCellRenderer,
+        cellRendererParams: {
+          displayText: true,
+        },
+      },
       menuTabs: ['filterMenuTab'],
       cellRenderer: AttachedFileStateCellRenderer,
       width: 100,
@@ -74,6 +83,7 @@ const props = withDefaults(defineProps<AttachedFileListProps>(), {
       filterParams: {
         values: fileExtensions,
         cellRenderer: MimeTypeCellRenderer,
+        suppressSelectAll: true,
         cellRendererParams: {
           displayText: true,
           dict: {
