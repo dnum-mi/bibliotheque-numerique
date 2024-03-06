@@ -5,6 +5,7 @@ export interface IMappingColumnWithoutChildren {
   columnLabel?: string
   originalLabel: string
   isHeader?: boolean
+  originalDescription?: string
   type?: FieldTypeKeys
   formatFunctionRef?: FormatFunctionRefKeys | undefined
   source: FieldSourceKeys

@@ -56,20 +56,21 @@ export class DossierSynchroniseExcelService extends BaseEntityService<Field> {
   }
 
   //#region PRIVATE
-  async createFields(file: File): Promise<Field> {
-    this.logger.verbose('createFieldsFromRawJson')
-    const field: CreateFieldDto = await this._createFieldsFromExcelFile(file)
+  async createField(file: File): Promise<Field> {
+    this.logger.verbose('createField')
+    const field: CreateFieldDto = await this._createFieldFromExcelFile(file)
     if (!field) return null
     return this.repo.save(field)
   }
 
-  private async _createFieldsFromExcelFile(
+  private async _createFieldFromExcelFile(
     file: File,
   ): Promise<CreateFieldDto> {
     this.logger.verbose('_createFieldsFromExcelFile')
 
     const excelData: ExcelData =
       await this.xlsxService.readExcelFileFromS3(file)
+
     if (!excelData.length) {
       this.logger.warn('Excel file is empty')
       return null
@@ -404,9 +405,7 @@ export class DossierSynchroniseExcelService extends BaseEntityService<Field> {
 
   async synchroniseExcel(file: File): Promise<void> {
     this.logger.verbose('synchroniseExcel')
-    await this.createFieldsAmounts(
-      file.dossier.id,
-      await this.createFields(file),
-    )
+    const field = await this.createField(file)
+    await this.createFieldsAmounts(file.dossier.id, field)
   }
 }

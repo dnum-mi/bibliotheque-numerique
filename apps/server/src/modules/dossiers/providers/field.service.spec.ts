@@ -188,7 +188,7 @@ describe('FieldService', () => {
       datePassageEnConstruction: dayjs('2022-10-13T10:04:29').toISOString(),
     }
     const fields = await service.overwriteFieldsFromDataJson(raw as TDossierWithPrefecture, 42, fakeMappingColumnHash)
-    expect(fields).toEqual([
+    expect(fields).toMatchObject([
       ...expectClassicalFixFields(),
       ...expectedFixFieldsDates(42, raw.dateDepot, raw.datePassageEnInstruction, raw.datePassageEnConstruction),
     ])

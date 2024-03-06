@@ -5,6 +5,7 @@ const typeLabels = {
   text: 'Texte',
   number: 'Nombre',
   date: 'Date',
+  file: 'Fichier',
   state: 'État',
   boolean: 'Booléen',
   get default () {

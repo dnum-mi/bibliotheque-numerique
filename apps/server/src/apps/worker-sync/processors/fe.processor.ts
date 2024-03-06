@@ -28,6 +28,11 @@ export class FeProcessor {
   @Process(eJobName.ComputeFeExcel)
   async computeFeExcel(job: Job<ComputeFeExcelJobPayload>): Promise<void> {
     this.logger.verbose('computeFeExcel')
-    await this.dossierExcelSynchroniseService.synchroniseExcel(job.data.file)
+    try {
+      await this.dossierExcelSynchroniseService.synchroniseExcel(job.data.file)
+    } catch (e) {
+      this.logger.error(e)
+      return Promise.reject(e)
+    }
   }
 }
