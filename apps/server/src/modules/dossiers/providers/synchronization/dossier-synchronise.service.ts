@@ -23,6 +23,7 @@ import {
 import {
   DossierSynchroniseOrganismeService,
 } from '@/modules/dossiers/providers/synchronization/organisme/dossier-synchronise-organisme.service'
+import { FieldWithMappingColumn } from '@/modules/dossiers/objects/types/field-with-mapping.column'
 
 @Injectable()
 export class DossierSynchroniseService extends BaseEntityService<Dossier> {
@@ -92,7 +93,7 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
     this.logger.verbose('synchroniseOneDossier')
     const prefecture = this._findPrefecture(jsonDossier)
     const id = await this._upsertDossier(jsonDossier, demarche.id, prefecture)
-    const fields = await this.fieldService.overwriteFieldsFromDataJson(
+    const fields: FieldWithMappingColumn[] = await this.fieldService.overwriteFieldsFromDataJson(
       { ...jsonDossier, prefecture }, // TODO: find a better way for prefecture
       id,
       demarche.mappingColumns,

@@ -5,6 +5,7 @@ import { XlsxService } from '@/shared/modules/xlsx/xlsx.service'
 import { BnConfigurationService } from '@/shared/modules/bn-configurations/providers/bn-configuration.service'
 import { eBnConfiguration } from '@biblio-num/shared'
 import { S3Service } from '@/shared/modules/s3/s3.service'
+import * as fs from 'fs'
 
 const AMOUNT_CHAMP_ID = 'Q2hhbXAtNTg='
 const SHEET_NAME = 'Déclaration des FE'
@@ -51,23 +52,9 @@ describe('XlsxService', () => {
     expect(service).toBeDefined()
   })
 
-  it('should clean data', () => {
-    const data = [
-      [45288, 'Afghanistan', 'AUTRICHE', 'D', 'VB', 1000],
-      [45288, 'Afghanistan', 'AUTRICHE', 'D', 'VB', 1000],
-      [],
-      [],
-    ]
-    expect(service._cleanData(data as never[][])).toMatchObject([
-      [45288, 'Afghanistan', 'AUTRICHE', 'D', 'VB', 1000],
-      [45288, 'Afghanistan', 'AUTRICHE', 'D', 'VB', 1000],
-    ])
-  })
-
   it('should readExcelFile with data', async () => {
-    const result = await service.readExcelFile(
-      'test/mock/excel-service/data/DeclarationFinancementsEtrangers.xlsx',
-    )
+    const buffer = fs.readFileSync('test/mock/excel-service/data/DeclarationFinancementsEtrangers.xlsx')
+    const result = await service.readExcelData(buffer)
     expect(result).toMatchObject([
       [
         45288, // Date save by excel in number format

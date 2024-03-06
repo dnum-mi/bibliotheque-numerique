@@ -10,6 +10,7 @@ export class MappingColumnWithoutChildren implements IMappingColumnWithoutChildr
   id: string
   columnLabel?: string
   originalLabel: string
+  originalDescription?: string
   isHeader?: boolean
   type?: FieldTypeKeys
   formatFunctionRef?: FormatFunctionRefKeys | undefined
