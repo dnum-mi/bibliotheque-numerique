@@ -43,6 +43,6 @@ export class DemarcheProcessor {
   @Process(eJobName.SyncOneDemarche)
   async syncOneDemarche(job: Job<SyncOneDemarcheJobPayload>): Promise<void> {
     this.logger.verbose('sync one demarche')
-    await this.demarcheSynchroniseService.synchroniseOneDemarche(job.data.demarcheId, job.data.fromScratch)
+    await this.demarcheSynchroniseService.synchroniseOneDemarche(job.data.demarcheId, job.data.fromScratch, job)
   }
 }
