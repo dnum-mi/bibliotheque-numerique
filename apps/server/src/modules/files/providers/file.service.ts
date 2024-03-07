@@ -1,9 +1,9 @@
+import { Repository } from 'typeorm'
 import { Injectable } from '@nestjs/common'
 import { File } from '../objects/entities/file.entity'
 import type { File as TFile } from '@dnum-mi/ds-api-client'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import {
   SmallFileOutputDto,
@@ -133,8 +133,7 @@ export class FileService extends BaseEntityService<File> {
         uuid: v4(),
       })
     } else {
-      return await this.repo.save({
-        ...existingFile,
+      return await this.updateAndReturnById(existingFile.id, {
         state: eState.queued,
         organisme: { id: payload.organismeId ?? null },
       })

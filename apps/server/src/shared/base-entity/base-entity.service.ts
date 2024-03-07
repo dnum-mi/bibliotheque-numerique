@@ -146,6 +146,22 @@ export abstract class BaseEntityService<T extends BaseEntity = BaseEntity> {
     return true
   }
 
+  async updateAndReturnById(
+    id: number,
+    data: QueryDeepPartialEntity<T>,
+  ): Promise<T> {
+    this.logger.verbose('updateAndReturn')
+    const result = await this.repo
+      .createQueryBuilder()
+      .update(data)
+      .where('id = :id', { id })
+      .returning('*')
+      .updateEntity(true)
+      .execute()
+
+    return result.raw
+  }
+
   async remove(id: number): Promise<DeleteResult>
   async remove(query: FindOptionsWhere<T>): Promise<DeleteResult>
   async remove(idOrQuery: number | FindOptionsWhere<T>): Promise<DeleteResult> {
