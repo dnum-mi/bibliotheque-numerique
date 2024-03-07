@@ -7,7 +7,7 @@ export const OrganismeFieldTypeHash: Record<
   FieldTypeKeys
 > = {
   id: 'number',
-  type: 'string',
+  type: 'enum',
   state: 'string',
   title: 'string',
   email: 'string',

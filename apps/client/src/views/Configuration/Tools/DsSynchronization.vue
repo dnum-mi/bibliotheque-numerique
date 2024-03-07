@@ -1,10 +1,12 @@
 <script lang="ts" setup>
+import { ref } from 'vue'
+
 import type {
   ISmallDemarcheOutput,
-  IdentificationDemarcheKeys, OrganismeTypeKeys,
+  IdentificationDemarcheKeys, OrganismeTypeKey,
 } from '@biblio-num/shared'
+
 import { useConfigurationStore } from '@/stores/configuration'
-import { ref } from 'vue'
 
 const configurationStore = useConfigurationStore()
 
@@ -14,7 +16,7 @@ const demarcheId = computed<number | null>(() => Number(demarcheIdString.value) 
 const identification = ref<string>()
 
 const typesString = ref('')
-const types = computed<OrganismeTypeKeys[]>(() => (typesString.value ? JSON.parse(typesString.value) : undefined))
+const types = computed<OrganismeTypeKey[]>(() => (typesString.value ? JSON.parse(typesString.value) : undefined))
 
 const demarches = computed<ISmallDemarcheOutput[]>(() => configurationStore.demarches)
 const loading = computed<boolean>(() => configurationStore.fetching)
@@ -68,7 +70,10 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div :class="{ 'blur-2': loading }">
+  <div
+    :class="{ 'blur-2': loading }"
+    v-bind="$attrs"
+  >
     <div class="flex flex-row fr-mb-1w">
       <div class="flex-1">
         <h6>Modifier une démarche</h6>
@@ -116,10 +121,10 @@ onMounted(async () => {
     </div>
 
     <!-- LISTER LES DEMARCHES -->
-    <h6 class="fr-mt-3w">
-      Liste des démarches existantes
-    </h6>
-    <DsfrTable class="w-full text-center">
+    <DsfrTable
+      class="w-full text-center"
+      title="Liste des démarches existantes"
+    >
       <thead>
         <th>id</th>
         <th>N°Démarche</th>
@@ -189,18 +194,20 @@ onMounted(async () => {
     :title="'Créer une nouvelle démarche depuis DS'"
     @close="closeFilterModal"
   >
-    <DsfrInput
-      v-model="inputDsIdString"
-      type="text"
-      label="Numéro (id) de la démarche dans DS"
-      label-visible
-      class="mb-4"
-      placeholder="ex: 875678"
-    />
-    <DsfrButton
-      label="Créer"
-      class="float-right mb-5"
-      @click="createDemarche()"
-    />
+    <form @submit.prevent="createDemarche()">
+      <DsfrInput
+        v-model="inputDsIdString"
+        type="text"
+        label="Numéro (id) de la démarche dans DS"
+        label-visible
+        class="mb-4"
+        placeholder="ex: 875678"
+      />
+      <DsfrButton
+        label="Créer"
+        class="float-right mb-5"
+        type="submit"
+      />
+    </form>
   </DsfrModal>
 </template>

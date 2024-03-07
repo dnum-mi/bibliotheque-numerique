@@ -1,10 +1,12 @@
 <script lang="ts" setup>
-import type { FileMimeTypeKey } from '@biblio-num/shared/dist/src/index'
+import type { FileExtensionKey } from '@biblio-num/shared'
 import { getIconNameFromMimeType } from '@/components/ag-grid/files/file.utils'
 
 const props = defineProps<{
   params: {
-    value: FileMimeTypeKey
+    value: FileExtensionKey
+    displayText?: boolean
+    dict: Record<FileExtensionKey, string>
   }
 }>()
 
@@ -17,6 +19,8 @@ const iconName = computed(() => getIconNameFromMimeType(props.params.value))
       :name="iconName"
       scale="1.5"
       :title="props.params.value"
+      class="mr-1"
     />
+    {{ params.displayText ? params.dict[params.value] : '' }}
   </div>
 </template>

@@ -1,18 +1,18 @@
-import { type FileMimeTypeKey, eFileMimeType, type StateKey } from '@biblio-num/shared'
+import { type FileExtensionKey, eFileExtension, type StateKey } from '@biblio-num/shared'
 
-const mimeTypeIconDictionary:Record<FileMimeTypeKey, string> = {
-  [eFileMimeType.pdf]: 'vi-file-type-pdf2',
-  [eFileMimeType.doc]: 'vi-file-type-word2',
-  [eFileMimeType.docx]: 'vi-file-type-word2',
-  [eFileMimeType.xls]: 'vi-file-type-excel2',
-  [eFileMimeType.xlsx]: 'vi-file-type-excel2',
-  [eFileMimeType.png]: 'vi-file-type-image',
-  [eFileMimeType.jpeg]: 'vi-file-type-image',
-  [eFileMimeType.jpg]: 'vi-file-type-image',
-  [eFileMimeType.unknown]: 'ri-attachment-line',
+const mimeTypeIconDictionary:Record<FileExtensionKey, string> = {
+  [eFileExtension.pdf]: 'vi-file-type-pdf2',
+  [eFileExtension.doc]: 'vi-file-type-word2',
+  [eFileExtension.docx]: 'vi-file-type-word2',
+  [eFileExtension.xls]: 'vi-file-type-excel2',
+  [eFileExtension.xlsx]: 'vi-file-type-excel2',
+  [eFileExtension.png]: 'vi-file-type-image',
+  [eFileExtension.jpeg]: 'vi-file-type-image',
+  [eFileExtension.jpg]: 'vi-file-type-image',
+  [eFileExtension.unknown]: 'ri-attachment-line',
 }
 
-export function getIconNameFromMimeType (mimeType?: FileMimeTypeKey) {
+export function getIconNameFromMimeType (mimeType?: FileExtensionKey) {
   return mimeTypeIconDictionary[mimeType ?? 'unknown']
 }
 

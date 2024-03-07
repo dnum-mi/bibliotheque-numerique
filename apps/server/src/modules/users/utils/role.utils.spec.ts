@@ -2,7 +2,7 @@ import {
   Roles,
   IRole,
   Prefecture,
-  OrganismeType, IUser,
+  eOrganismeType, IUser,
 } from '@biblio-num/shared'
 import {
   generateRoleAttributionList,
@@ -30,25 +30,25 @@ const allSmallDemarches: SmallDemarcheOutputDto[] = [
   {
     id: 1,
     dsId: 1,
-    types: [OrganismeType.CULTE],
+    types: [eOrganismeType.CULTE],
     title: 'Démarche 1',
   },
   {
     id: 2,
     dsId: 2,
-    types: [OrganismeType.CULTE],
+    types: [eOrganismeType.CULTE],
     title: 'Démarche 2',
   },
   {
     id: 3,
     dsId: 3,
-    types: [OrganismeType.FDD],
+    types: [eOrganismeType.FDD],
     title: 'Démarche 3',
   },
   {
     id: 4,
     dsId: 4,
-    types: [OrganismeType.FDD, OrganismeType.FE],
+    types: [eOrganismeType.FDD, eOrganismeType.FE],
     title: 'Démarche 4',
   },
   {

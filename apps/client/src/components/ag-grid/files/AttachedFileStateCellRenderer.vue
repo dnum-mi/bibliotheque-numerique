@@ -6,14 +6,20 @@ import type { StateKey } from '@biblio-num/shared'
 const props = defineProps<{
   params: {
     value: StateKey
+    displayText?: boolean
   }
 }>()
 
 const iconProps = computed(() => getIconPropsFromFileState(props.params.value))
+const title = computed(() => (props.params.displayText && iconProps.value?.title) || '')
 </script>
 
 <template>
-  <VIcon
-    v-bind="iconProps"
-  />
+  <span class="fr-text--sm">
+    <VIcon
+      v-if="iconProps?.name"
+      v-bind="iconProps"
+    />
+    {{ title }}
+  </span>
 </template>

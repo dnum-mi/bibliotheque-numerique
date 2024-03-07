@@ -10,8 +10,8 @@ import {
   IOrganisme,
   IRnaOutput,
   IRnfOutput,
-  OrganismeType,
-  OrganismeTypeKeys,
+  eOrganismeType,
+  OrganismeTypeKey,
   eState,
   StateKey,
 } from '@biblio-num/shared'
@@ -21,10 +21,10 @@ import { File } from '@/modules/files/objects/entities/file.entity'
 export class Organisme extends BaseEntity implements IOrganisme {
     @Column({
       type: 'enum',
-      enum: OrganismeType,
-      default: OrganismeType.unknown,
+      enum: eOrganismeType,
+      default: eOrganismeType.unknown,
     })
-  type: OrganismeTypeKeys
+  type: OrganismeTypeKey
 
   // TODO: a table state indeed ? uploaded = synchronised. uploading = synchronising
   @Column({
