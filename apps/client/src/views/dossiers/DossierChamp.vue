@@ -28,10 +28,17 @@ defineProps<{
       <div
         v-if="champ.__typename == 'PieceJustificativeChamp'"
         :id="champ.id"
-        class="fr-text fr-mt-1w bn-champ--text"
+        class="fr-text fr-mt-1w bn-champ--text flex flex-col"
       >
         <!-- {{ champ }} -->
-        <DownloadFile :file="champ.file" />
+        <div
+          v-for="(file, index) in champ.files"
+          :key="index"
+        >
+          <DownloadFile
+            :file="file"
+          />
+        </div>
       </div>
       <!-- SI Repetable -->
       <DossierChamps
