@@ -34,8 +34,8 @@ const annotations = computed(() => dossier.value?.dsDataJson.annotations)
 
 const attachments = computed(() =>
   dossierDS.value?.champs?.reduce((files: Champ[], champ: PieceJustificativeChamp) => {
-    if (champ.__typename === 'PieceJustificativeChamp' && champ.file != null) {
-      return [...files, champ.file]
+    if (champ.__typename === 'PieceJustificativeChamp' && champ.files != null) {
+      return [...files, champ.files]
     }
     return files
   }, []),

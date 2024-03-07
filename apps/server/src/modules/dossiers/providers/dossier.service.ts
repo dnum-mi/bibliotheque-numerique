@@ -4,7 +4,7 @@ import { Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
 
 import { Champ, Message, PieceJustificativeChamp, RepetitionChamp } from '@dnum-mi/ds-api-client'
-import { eFileDsSourceLabel } from '@biblio-num/shared'
+import { eFileDsSourceLabel, eState } from '@biblio-num/shared'
 
 import { Dossier } from '../objects/entities/dossier.entity'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
@@ -81,17 +81,16 @@ export class DossierService extends BaseEntityService<Dossier> {
   }
 
   private setFileUrlToUuid = (id, files, fileCh, filesCh):void => {
-    const filesFound = files.filter((file) => file.sourceStringId === id)
-      .sort((file1, file2) => file1.sourceIndex - file2.sourceIndex)
-    if (!filesFound || !filesFound.length) return
     if (fileCh) {
-      fileCh.url = filesFound[0].uuid
-      fileCh.state = filesFound[0].state
+      const fileFound = files.find(file => file.sourceStringId === id && file.checksum === fileCh.checksum)
+      fileCh.url = fileFound?.uuid ?? ''
+      fileCh.state = fileFound?.state ?? eState.queued
     }
     if (filesCh) {
-      filesCh.forEach((file1, index) => {
-        file1.url = filesFound[index].uuid
-        file1.state = filesFound[index].state
+      filesCh.forEach((fileCh1) => {
+        const fileFound = files.find(file => file.sourceStringId === id && file.checksum === fileCh1.checksum)
+        fileCh1.url = fileFound?.uuid ?? ''
+        fileCh1.state = fileFound?.state ?? eState.queued
       })
     }
   }
