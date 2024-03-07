@@ -1,7 +1,7 @@
 import { getPaginatedUsers } from '../utils/usersRoles'
 import noRoleUserSelected from '../fixtures/no-role-user-selected.json'
 
-describe.skip('Admin', () => {
+describe('Admin', () => {
   beforeEach(() => {
     cy.fixture('admin-profile').then((user) => {
       cy.intercept('api/users/me', user).as('me')
@@ -34,7 +34,7 @@ describe.skip('Admin', () => {
 
   it('update user with no role', () => {
     //#region test - get user no role
-
+    cy.log('get user no role')
     cy.intercept('api/users/me', { fixture: 'admin-profile' }).as('me')
     cy.intercept({
       method: 'GET',
@@ -52,6 +52,7 @@ describe.skip('Admin', () => {
     //#endregion
 
     //#region test - update user role to admin
+    cy.log('update user role to admin')
     const roleSelected = {
       ...noRoleUserSelected,
       originalUser: {
@@ -95,6 +96,7 @@ describe.skip('Admin', () => {
     //#endregion
 
     //#region test - update user role to demarche
+    cy.log('update user role to demarche')
     const roleSelected2 = {
       ...roleSelected,
       demarcheHash: {
@@ -119,14 +121,14 @@ describe.skip('Admin', () => {
     cy.intercept({
       method: 'PATCH',
       url: '/api/users/444/role',
-      times: 2,
+      times: 1,
     }, { statusCode: 200 }).as('patchUserSelected444')
 
     cy.get('input[name=ARUP]')
       .click({ force: true })
 
-    cy.wait('@userSelected444')
     cy.wait('@patchUserSelected444')
+    cy.wait('@userSelected444')
 
     cy.get('input[name=ARUP]')
       .should('be.checked')
@@ -158,14 +160,14 @@ describe.skip('Admin', () => {
     cy.intercept({
       method: 'PATCH',
       url: '/api/users/444/role',
-      times: 2,
+      times: 1,
     }, { statusCode: 200 }).as('patchUserSelected444')
 
     cy.get('input[name=5]')
       .click({ force: true })
 
-    cy.wait('@userSelected444')
     cy.wait('@patchUserSelected444')
+    cy.wait('@userSelected444')
 
     cy.get('input[name=5]')
       .should('be.checked')
@@ -220,6 +222,9 @@ describe.skip('Admin', () => {
       .first()
       .click({ force: true })
 
+    cy.wait('@patchUserSelected444')
+    cy.wait('@userSelected444')
+
     cy.get('h5')
       .should('contain', 'Localisation')
       .contains('Localisation')
@@ -252,10 +257,20 @@ describe.skip('Admin', () => {
           times: 1,
         }, { body: roleSelected5 }).as('userSelected444National')
 
+        cy.intercept({
+          method: 'PATCH',
+          url: '/api/users/444/role',
+          times: 1,
+        }, { statusCode: 200 }).as('patchUserSelected444')
+
         cy.wrap($parent).contains('National')
           .click()
 
-        cy.wait('@userSelected444National')
+        cy.wait('@patchUserSelected444')
+        cy.wait('@userSelected444National').its('response.body').then(($body) => {
+          cy.log(JSON.stringify($body))
+        })
+
         cy.wrap($parent)
           .contains('National')
           .parent()
