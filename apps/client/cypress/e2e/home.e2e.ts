@@ -1,4 +1,9 @@
 describe('Home', () => {
+  beforeEach(() => {
+    cy.intercept({ method: 'GET', url: '/api/users/me' }, {})
+    cy.intercept('api//health', { info: { } })
+  })
+
   it('Title', () => {
     cy.visit('/')
       .get('.fr-header__service-title')
