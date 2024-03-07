@@ -1,11 +1,11 @@
 import type { StateKey } from '../state'
-import type { OrganismeTypeKeys } from './organisme-type.enums'
+import type { OrganismeTypeKey } from './organisme-type.enums'
 import type { IRnaOutput } from './rna-output.interface'
 import type { IRnfOutput } from './rnf-output.interface'
 
 export interface IOrganisme {
   id: number
-  type: OrganismeTypeKeys
+  type: OrganismeTypeKey
   state: StateKey
   title: string | null
   email: string | null

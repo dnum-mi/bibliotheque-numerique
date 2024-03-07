@@ -1,23 +1,22 @@
 <script setup lang="ts">
 import type { DsfrTabItemProps } from '@gouvminint/vue-dsfr'
 import LayoutList from '@/components/Layout/LayoutList.vue'
-import Synchronization from './Tools/Synchronization.vue'
+import DsSynchronization from './Tools/DsSynchronization.vue'
 import BnConfiguration from '@/views/Configuration/Tools/BnConfiguration.vue'
 
 const route = useRoute()
 const router = useRouter()
-const props = defineProps<{ demarcheId: string, customDisplayId?: string }>()
 
 const tabTitles: (DsfrTabItemProps & { title: string })[] = [
   {
     panelId: 'pan-1',
     tabId: 'tab-1',
-    title: 'Synchronization',
+    title: 'Synchronization DS',
   },
   {
     panelId: 'pan-2',
     tabId: 'tab-2',
-    title: 'BnConfigurations',
+    title: 'Configuration BN',
   },
 ]
 const selectedTabIndex = ref(0)
@@ -26,8 +25,8 @@ function selectTab (idx: number) {
   selectedTabIndex.value = idx
   router.push({ ...route, hash: '#' + tabTitles[idx].title })
 }
-
 </script>
+
 <template>
   <LayoutList
     title="Configuration"
@@ -47,10 +46,9 @@ function selectTab (idx: number) {
         tab-id="tab-1"
         :selected="selectedTabIndex === 0"
       >
-        <Synchronization
+        <DsSynchronization
           v-if="selectedTabIndex === 0"
           id="synchronization"
-          :custom-display-id="customDisplayId"
         />
       </DsfrTabContent>
       <DsfrTabContent
@@ -61,7 +59,6 @@ function selectTab (idx: number) {
         <BnConfiguration
           v-if="selectedTabIndex === 1"
           id="bn-configuration"
-          :custom-display-id="customDisplayId"
         />
       </DsfrTabContent>
     </DsfrTabs>

@@ -6,11 +6,11 @@ import type {
   UserOutputDto,
   UserWithEditableRole,
 
-  OrganismeTypeKeys,
+  OrganismeTypeKey,
 } from '@biblio-num/shared'
 
 import {
-  OrganismeType,
+  eOrganismeType,
 } from '@biblio-num/shared'
 
 import { useUserStore } from '@/stores'
@@ -33,7 +33,7 @@ type DemarcheRole = {
 };
 type DemarchesRoles = {
   label: string;
-  name: OrganismeTypeKeys;
+  name: OrganismeTypeKey;
   value: boolean;
   key: string;
   localization?: PrefectureOptions;
@@ -45,13 +45,13 @@ type DemarchesRoles = {
 };
 type GeographicalRights = PrefectureOptions & { disabled?: boolean };
 
-const typeOrganismeLabel: Record<OrganismeTypeKeys, string> = {
-  [OrganismeType.ARUP]: 'Associations reconnues d’utilité publique (ARUP)',
-  [OrganismeType.CULTE]: 'Associations cultuelles (Cultes)',
-  [OrganismeType.FDD]: 'Fonds de dotation (FDD)',
-  [OrganismeType.FE]: 'Fondations d’entreprises (FE)',
-  [OrganismeType.FRUP]: 'Fondations reconnues d’utilité publique (FRUP)',
-  [OrganismeType.unknown]: 'Type d’organisme inconnu',
+const typeOrganismeLabel: Record<OrganismeTypeKey, string> = {
+  [eOrganismeType.ARUP]: 'Associations reconnues d’utilité publique (ARUP)',
+  [eOrganismeType.CULTE]: 'Associations cultuelles (Cultes)',
+  [eOrganismeType.FDD]: 'Fonds de dotation (FDD)',
+  [eOrganismeType.FE]: 'Fondations d’entreprises (FE)',
+  [eOrganismeType.FRUP]: 'Fondations reconnues d’utilité publique (FRUP)',
+  [eOrganismeType.unknown]: 'Type d’organisme inconnu',
 }
 //#endregion
 
@@ -105,9 +105,9 @@ const getCommonPrefectureOptionGetter = (children: DemarcheRole[]) => (prop: 'ad
 const organismeTypes = computed(() => [
   ...new Set(
     Object.values(demarcheHash.value || {})
-      .map(({ types }) => (types.length ? types : [OrganismeType.unknown]))
+      .map(({ types }) => (types.length ? types : [eOrganismeType.unknown]))
       .flat()
-      .sort((a, b) => (a === OrganismeType.unknown ? 1 : b === OrganismeType.unknown ? -1 : 0)),
+      .sort((a, b) => (a === eOrganismeType.unknown ? 1 : b === eOrganismeType.unknown ? -1 : 0)),
   ),
 ])
 
@@ -129,7 +129,7 @@ const demarchesRoles = computed<DemarchesRoles[]>(() => {
         .concat(
           Object.values(demarcheHash.value || {})
             .filter((demarcheOption) => demarcheOption.types.length === 0)
-            .map((dOpts) => ({ ...dOpts, types: [OrganismeType.unknown] })),
+            .map((dOpts) => ({ ...dOpts, types: [eOrganismeType.unknown] })),
         )
         .filter((demarcheOption) => demarcheOption.types.includes(type))
         .map((d): DemarcheRole => {
@@ -163,7 +163,7 @@ const demarchesRoles = computed<DemarchesRoles[]>(() => {
       }
 
       return {
-        label: typeOrganismeLabel[type] || typeOrganismeLabel[OrganismeType.unknown],
+        label: typeOrganismeLabel[type] || typeOrganismeLabel[eOrganismeType.unknown],
         name: type,
         value,
         key: getRandomId(type),

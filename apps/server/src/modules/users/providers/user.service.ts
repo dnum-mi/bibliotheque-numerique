@@ -16,7 +16,7 @@ import { SendMailService } from '../../sendmail/sendmail.service'
 import {
   Roles,
   IRole,
-  OrganismeTypeKeys,
+  OrganismeTypeKey,
   IUser,
 } from '@biblio-num/shared'
 
@@ -166,10 +166,10 @@ export class UserService
 
   private _generateRoleResume(
     role: IRole,
-    demarcheHash: Record<number, { types: OrganismeTypeKeys[] }>,
+    demarcheHash: Record<number, { types: OrganismeTypeKey[] }>,
   ): string {
     this.logger.verbose('_generateRoleResume')
-    const typeHash: Record<OrganismeTypeKeys, number> = {}
+    const typeHash: Partial<Record<OrganismeTypeKey, number>> = {}
     Object.keys(role.options).forEach((demarcheId) => {
       demarcheHash[demarcheId].types.forEach((type) => {
         typeHash[type] = typeHash[type] ? typeHash[type] + 1 : 1

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { File } from '../objects/entities/file.entity'
+import type { File as TFile } from '@dnum-mi/ds-api-client'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
@@ -9,21 +10,31 @@ import {
   smallFileOutputKeys,
 } from '@/modules/files/objects/dto/output/small-file-output.dto'
 import {
-  eFileMimeType,
+  eFileExtension,
   eState,
   FileTabTagKey,
   fileTabTags,
   StateKey,
-  FileMimeTypeKey,
+  FileExtensionKey,
   FileTagKey,
 } from '@biblio-num/shared'
-import { File as TFile } from '@dnum-mi/ds-api-client'
 import { doesTextContainBnCode } from '@/shared/utils/bn-code.utils'
 import { tagCodeDictionary } from '@/modules/files/objects/const/tag-dictionnary.const'
 import { TagDefinition } from '@/modules/files/objects/types/tag-definition.type'
 import { UpsertDsFileDto } from '@/modules/files/objects/dto/input/upsert-ds-file.dto'
 import { v4 } from 'uuid'
 import { FileFieldTypeHash } from '@/modules/files/objects/const/file-field-type-hash.const'
+
+const dMimeTypeToExtensionDictionary: Record<string, FileExtensionKey> = {
+  'application/pdf': eFileExtension.pdf,
+  'image/jpeg': eFileExtension.jpeg,
+  'image/png': eFileExtension.png,
+  'application/msword': eFileExtension.doc,
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': eFileExtension.docx,
+  'application/vnd.ms-excel': eFileExtension.xls,
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': eFileExtension.xlsx,
+  default: eFileExtension.unknown,
+} as const
 
 @Injectable()
 export class FileService extends BaseEntityService<File> {
@@ -36,29 +47,12 @@ export class FileService extends BaseEntityService<File> {
   }
 
   //#region STATIC
-  static fromContentTypeToMimeType(contentType: string): FileMimeTypeKey {
-    switch (contentType) {
-    case 'application/pdf':
-      return eFileMimeType.pdf
-    case 'image/jpeg':
-      return eFileMimeType.jpeg
-    case 'image/png':
-      return eFileMimeType.png
-    case 'application/msword':
-      return eFileMimeType.doc
-    case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-      return eFileMimeType.docx
-    case 'application/vnd.ms-excel':
-      return eFileMimeType.xls
-    case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
-      return eFileMimeType.xlsx
-    default:
-      return eFileMimeType.unknown
-    }
+  static fromContentTypeToMimeType(mimeType: string): FileExtensionKey {
+    return dMimeTypeToExtensionDictionary[mimeType] ?? dMimeTypeToExtensionDictionary.default
   }
 
   static buildCompleteName(smallFile: SmallFileOutputDto): string {
-    if (smallFile.mimeType === eFileMimeType.unknown) {
+    if (smallFile.mimeType === eFileExtension.unknown) {
       const previousExtension = smallFile.originalLabel.match(/\.(\w+)$/)
       // TODO: handle unknown extension
       return `${smallFile.label}.${previousExtension?.[1] ?? 'unknown'}`
@@ -131,7 +125,7 @@ export class FileService extends BaseEntityService<File> {
         sourceStringId: payload.sourceStringId ?? null,
         state: eState.queued,
         tag: payload.tag,
-        mimeType: eFileMimeType.unknown,
+        mimeType: eFileExtension.unknown,
         label: payload.fileName || 'to-be-constructed',
         byteSize: -1,
         checksum: 'unknown',

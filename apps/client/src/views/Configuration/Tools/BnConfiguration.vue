@@ -1,32 +1,22 @@
 <script lang="ts" setup>
-import { useConfigurationStore } from '@/stores/configuration'
 import { ref } from 'vue'
 
-import type { BnConfigurationMandatoryDataKeys, BnConfigurationTypesKeys, IBnConfigurationOutput } from '@biblio-num/shared'
+import type { IBnConfigurationOutput } from '@biblio-num/shared'
+
+import { useConfigurationStore } from '@/stores/configuration'
 
 const configurationStore = useConfigurationStore()
 
 const keyNameString = ref('')
-const keyName = computed<string | null>(() => keyNameString.value ?? null)
+const keyName = computed<string | undefined>(() => keyNameString.value ?? undefined)
 
 const stringValue = ref<string>('')
 
 const valueTypeString = ref('')
-const valueType = computed<BnConfigurationTypesKeys[]>(() => (valueTypeString.value ? JSON.parse(valueTypeString.value) : undefined))
 
 const bnConfigurations = computed<IBnConfigurationOutput[]>(() => configurationStore.bnConfigurations)
 const loading = computed<boolean>(() => configurationStore.fetchingBnConfigurations)
 
-const keyNameValue = computed<BnConfigurationMandatoryDataKeys | null | undefined>(() => {
-  switch (keyName.value) {
-    case '':
-      return undefined
-    case 'null':
-      return null
-    default:
-      return keyName.value
-  }
-})
 const inputId = ref<number>()
 
 const inputKeyName = ref('')
@@ -112,10 +102,10 @@ const onSelected = (bnConfig: IBnConfigurationOutput) => {
     </div>
 
     <!-- LISTER LES DEMARCHES -->
-    <h6 class="fr-mt-3w">
-      Liste des configurations existantes
-    </h6>
-    <DsfrTable class="w-full text-center">
+    <DsfrTable
+      class="w-full text-center"
+      title="Liste des configurations existantes"
+    >
       <thead>
         <th>Id</th>
         <th>KeyName</th>
@@ -143,34 +133,36 @@ const onSelected = (bnConfig: IBnConfigurationOutput) => {
     :title="'Créer une bnConfiguration'"
     @close="closeFilterModal"
   >
-    <DsfrInput
-      v-model="inputKeyName"
-      type="text"
-      label="Nom de la configuration"
-      label-visible
-      class="mb-4"
-      placeholder="ex:EXCEL_IMPORT_SHEET_NAME"
-    />
-    <DsfrInput
-      v-model="inputStringValue"
-      type="text"
-      label="Valeur de la configuration"
-      label-visible
-      class="mb-4"
-      placeholder="ex:Sheet1"
-    />
-    <DsfrInput
-      v-model="inputValueType"
-      type="text"
-      label="Type de valeur"
-      label-visible
-      class="mb-4"
-      placeholder="ex:string"
-    />
-    <DsfrButton
-      label="Créer"
-      class="float-right mb-5"
-      @click="createBnConfiguration()"
-    />
+    <form @submit.prevent="createBnConfiguration()">
+      <DsfrInput
+        v-model="inputKeyName"
+        type="text"
+        label="Nom de la configuration"
+        label-visible
+        class="mb-4"
+        placeholder="ex:EXCEL_IMPORT_SHEET_NAME"
+      />
+      <DsfrInput
+        v-model="inputStringValue"
+        type="text"
+        label="Valeur de la configuration"
+        label-visible
+        class="mb-4"
+        placeholder="ex:Sheet1"
+      />
+      <DsfrInput
+        v-model="inputValueType"
+        type="text"
+        label="Type de valeur"
+        label-visible
+        class="mb-4"
+        placeholder="ex:string"
+      />
+      <DsfrButton
+        type="submit"
+        label="Créer"
+        class="float-right mb-5"
+      />
+    </form>
   </DsfrModal>
 </template>

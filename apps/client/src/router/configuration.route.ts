@@ -6,9 +6,8 @@ import { Roles } from '@biblio-num/shared'
 export const configurationRoute: RouteRecordRaw = {
   name: routeNames.CONFIGURATION_DEMARCHES,
   path: '/configuration',
-  component: () => import('@/views/Configuration/Configuration.vue'),
+  component: () => import('@/views/Configuration/MainConfiguration.vue'),
   meta: {
     roleLevel: Roles.sudo,
   },
-
 }
