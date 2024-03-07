@@ -73,8 +73,14 @@ describe('dossier.service', () => {
       updatedAt: faker.date.anytime(),
     })
     const filesMock: File[] = [
-      generateFile(1),
-      generateFile(0),
+      {
+        ...generateFile(1),
+        checksum: champMock.files[1].checksum,
+      },
+      {
+        ...generateFile(0),
+        checksum: champMock.files[0].checksum,
+      },
     ]
     const result = service.transformValueFileOfDossier(dossierMock, filesMock)
     expect(result.dsDataJson.champs[1].file.url).toBe(filesMock[1].uuid)
