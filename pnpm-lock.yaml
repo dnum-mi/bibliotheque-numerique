@@ -93,8 +93,8 @@ importers:
         specifier: ^6.0.0
         version: 6.0.0(cypress@13.6.4)(vue@3.4.15)
       '@dnum-mi/ds-api-client':
-        specifier: ^1.7.6
-        version: 1.7.6
+        specifier: ^1.7.7
+        version: 1.7.7
       '@faker-js/faker':
         specifier: ^8.4.0
         version: 8.4.0
@@ -350,7 +350,7 @@ importers:
     dependencies:
       '@dnum-mi/ds-api-client':
         specifier: ^1.6.2
-        version: 1.7.6
+        version: 1.7.8
       '@nestjs/axios':
         specifier: ^3.0.1
         version: 3.0.1(@nestjs/common@9.4.3)(axios@1.6.6)(reflect-metadata@0.1.13)(rxjs@7.8.1)
@@ -491,8 +491,8 @@ importers:
         specifier: workspace:^
         version: link:../../packages/shared
       '@dnum-mi/ds-api-client':
-        specifier: ^1.7.6
-        version: 1.7.6
+        specifier: ^1.7.8
+        version: 1.7.8
       '@nestjs-modules/mailer':
         specifier: ^1.10.3
         version: 1.10.3(@nestjs/common@10.2.7)(@nestjs/core@10.2.7)(nodemailer@6.9.6)
@@ -747,8 +747,8 @@ importers:
         specifier: ^2.6.4
         version: 2.6.4(@vue/compiler-sfc@3.4.15)(eslint-ts-patch@8.56.0-0)(typescript@5.3.3)
       '@dnum-mi/ds-api-client':
-        specifier: ^1.7.6
-        version: 1.7.6
+        specifier: ^1.7.8
+        version: 1.7.8
       '@microsoft/api-extractor':
         specifier: 7.39.4
         version: 7.39.4(@types/node@18.18.6)
@@ -3549,8 +3549,20 @@ packages:
       kuler: 2.0.0
     dev: false
 
-  /@dnum-mi/ds-api-client@1.7.6:
-    resolution: {integrity: sha512-1YT01up+LcsNB275NtrdhNVSdRfD68P0oPM2VKHHVtOLeKJP6gTKg+unIFs3mSLwWBCrYbfcH4WsmP9LPt2ung==}
+  /@dnum-mi/ds-api-client@1.7.7:
+    resolution: {integrity: sha512-F9JJ/csLwmPkiQq6+LzJzRmof2QUx6P7B5m6inpZ7MolpotWDgAlmS9X5wrGdjr+Z+qKWD4dcNBU6KlbRfyMxA==}
+    engines: {node: '>=16.0.0', npm: '>=7.10.0'}
+    dependencies:
+      graphql: 16.8.1
+      graphql-request: 6.1.0(graphql@16.8.1)
+      https-proxy-agent: 7.0.1
+    transitivePeerDependencies:
+      - encoding
+      - supports-color
+    dev: true
+
+  /@dnum-mi/ds-api-client@1.7.8:
+    resolution: {integrity: sha512-/9OUWe4fmLAi9AVFF8GrLNp4TeLuYk8czrkATDDho+sC+JB5BB/PkStuYA2H7K1KRv/E4uIKU5j1NPpEGGZ2mw==}
     engines: {node: '>=16.0.0', npm: '>=7.10.0'}
     dependencies:
       graphql: 16.8.1
