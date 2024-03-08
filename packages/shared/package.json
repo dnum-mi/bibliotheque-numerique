@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.6.4",
-    "@dnum-mi/ds-api-client": "^1.7.6",
+    "@dnum-mi/ds-api-client": "^1.7.8",
     "@microsoft/api-extractor": "7.39.4",
     "eslint": "npm:eslint-ts-patch@^8.56.0-0",
     "nodemon": "^3.0.1",

@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "@cypress/vue": "^6.0.0",
-    "@dnum-mi/ds-api-client": "^1.7.6",
+    "@dnum-mi/ds-api-client": "^1.7.7",
     "@faker-js/faker": "^8.4.0",
     "@rushstack/eslint-patch": "^1.7.2",
     "@testing-library/jest-dom": "^6.4.2",
