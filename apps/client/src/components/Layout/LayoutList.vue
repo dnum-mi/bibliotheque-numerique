@@ -11,6 +11,7 @@ withDefaults(defineProps<{
   title: 'Pas de titre',
 })
 </script>
+
 <template>
   <div class="flex flex-col flex-grow  min-h-[320px]">
     <LayoutBanner

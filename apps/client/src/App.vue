@@ -121,7 +121,7 @@ const route = useRoute()
 
 const minimalQuickLinks = computed(() => {
   const role = userStore.currentUser?.role?.label
-  if (!role) return []
+  if (!role) { return [] }
   return isSuperiorOrSimilar(Roles.instructor, role)
     ? [
         demarcheQuickLink,
@@ -182,13 +182,12 @@ onErrorCaptured((error: Error | AxiosError) => {
   }
   return false
 })
-
 </script>
 
 <template>
   <div class="flex flex-col h-full w-full">
     <div
-      v-if="runEnv != defaultEnv"
+      v-if="runEnv !== defaultEnv"
       :class="envStyle"
       class="flex justify-center items-center font-bold text-lg h-6"
     >

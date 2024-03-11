@@ -299,7 +299,7 @@ export const usersApiClient = {
         validate: true,
         token,
       }
-      const response = await apiClientInstance.post('/users/valid-email', validateEmail)
+      await apiClientInstance.post('/users/valid-email', validateEmail)
     } catch (error) {
       if (error && error instanceof AxiosError) {
         throw new ErrorvalidateEmail(error)
@@ -316,7 +316,7 @@ export const usersApiClient = {
     await apiClientInstance.patch(getUserRoleByIdRoute(id), dto)
   },
 
-  async removeRole (id:number) {
+  async removeRole (id: number) {
     await apiClientInstance.delete(getUserRoleByIdRoute(id))
   },
 
@@ -392,7 +392,7 @@ export const bnConfigurationsApiClient = {
   },
 
   updateBnConfiguration: async (id: number, dto: IUpdateBnConfiguration) => {
-    const response = await apiClientInstance.patch(bnConfigurationsRoute + `/${id}`, dto)
+    const response = await apiClientInstance.patch(`${bnConfigurationsRoute}/${id}`, dto)
     return response.data
   },
 }

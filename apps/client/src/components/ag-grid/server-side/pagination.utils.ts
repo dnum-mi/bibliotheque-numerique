@@ -8,13 +8,13 @@ import type {
   ISort,
   ITextFilterCondition,
 } from '@biblio-num/shared'
-import {
-  type DateFilterModel,
-  type IMultiFilterModel,
-  type NumberFilterModel,
-  type SetFilterModel,
-  type SortModelItem,
-  type TextFilterModel,
+import type {
+  DateFilterModel,
+  IMultiFilterModel,
+  NumberFilterModel,
+  SetFilterModel,
+  SortModelItem,
+  TextFilterModel,
 } from 'ag-grid-community'
 import type { AgGridCommon } from 'ag-grid-community/dist/lib/interfaces/iCommon'
 

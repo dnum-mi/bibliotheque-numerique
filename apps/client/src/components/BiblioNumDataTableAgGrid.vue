@@ -15,18 +15,18 @@ import AgGridMultiValueCell from './ag-grid/AgGridMultiValueCell.vue'
 import AgGridAttachmentCell from './ag-grid/AgGridAttachmentCell.vue'
 
 const props = withDefaults(defineProps<{
-    title?: string,
-    rowData?: Record<string, string | number>[],
-    actionTitle: string,
-    headers?: HeaderDataTable[],
-    pagination?: boolean,
-    paginationPageSize?: number,
-    withAction?: boolean,
-    rowSelection?: string,
-    floatingFilter?: boolean,
-    isHiddenSideBar?: boolean
-    rowStyle?: RowStyle
-  }>(), {
+  title?: string,
+  rowData?: Record<string, string | number>[],
+  actionTitle: string,
+  headers?: HeaderDataTable[],
+  pagination?: boolean,
+  paginationPageSize?: number,
+  withAction?: boolean,
+  rowSelection?: string,
+  floatingFilter?: boolean,
+  isHiddenSideBar?: boolean
+  rowStyle?: RowStyle
+}>(), {
   title: undefined,
   rowData: () => [],
   headers: () => [],
@@ -60,7 +60,7 @@ const getRendererAgGrid = (header: HeaderDataTable) => {
   const { renderer, type } = header
 
   const typeRenderer = renderer === agGridFilterDict.MULTI_VALUE ? agGridFilterDict.MULTI_VALUE : type
-  // @ts-ignore this uses dynamic key
+  // @ts-expect-error this uses dynamic key
   const agRenderer = toRenderer[typeRenderer]
   return agRenderer
 }
@@ -88,8 +88,8 @@ const columnDefs: ComputedRef<AgGridColumnDefs[]> = computed(() => {
     .map((header) => {
       const filter = getFilterAgGrid(header)
       const renderer = getRendererAgGrid(header) || {
-        cellRenderer: header.renderer ??
-        (header.parseFn
+        cellRenderer: header.renderer
+        ?? (header.parseFn
           ? (params: Record<string | symbol, unknown>) => header.parseFn?.(params.value)
           : undefined),
       }
@@ -199,7 +199,7 @@ defineExpose({
       sortable: true,
       resizable: true,
       filter: true,
-      enablePivot: false
+      enablePivot: false,
     }"
     :context="context"
     :side-bar="sideBar"

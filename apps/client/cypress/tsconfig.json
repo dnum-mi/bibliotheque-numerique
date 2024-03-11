@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
     "lib": ["es2017", "dom"],
-    "types": ["cypress"],
     "baseUrl": "..",
     "paths": {
       "@/*": ["./src/*"]
     },
     "resolveJsonModule": true,
+    "types": ["cypress"],
     "esModuleInterop": true
   },
   "include": ["./**/*"]

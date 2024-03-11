@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import type { GridReadyEvent, GridApi, GridOptions, AgGridEvent } from 'ag-grid-community'
 
-import type { IFileOutput, IFilter, IPagination, StateKey, FileDsSourceLabelKey } from '@biblio-num/shared'
-import { fileDsSourceLabels, dFileSourceLabelDictionary, fileExtensions, states, eState, fileTags } from '@biblio-num/shared'
+import type { IFileOutput, IFilter, IPagination, FileDsSourceLabelKey } from '@biblio-num/shared'
+import { fileDsSourceLabels, dFileSourceLabelDictionary, fileExtensions, states, eState, fileTabTags } from '@biblio-num/shared'
 
 import type { ApiCall } from '../server-side/pagination.utils'
 import type { BNColDef } from '../server-side/bn-col-def.interface'
@@ -11,19 +11,6 @@ import AttachedFileStateCellRenderer from './AttachedFileStateCellRenderer.vue'
 import { baseApiUrl } from '@/api/api-client'
 import FileTagBadgeRenderer from '@/components/Badges/file-tag/FileTagBadgeRenderer.vue'
 import useToaster, { type Message as ToasterMessage } from '@/composables/use-toaster'
-
-type AttachedFileListProps = {
-  tag?: string,
-  fetchAttachedFiles: ApiCall<IFileOutput>
-  columnsDef?: BNColDef[]
-  active?: boolean
-  withTabTag?: boolean
-}
-
-const emit = defineEmits<{
-  'grid-ready': [event: GridReadyEvent],
-  'files-fetched': [],
-}>()
 
 const props = withDefaults(defineProps<AttachedFileListProps>(), {
   tag: undefined,
@@ -106,6 +93,19 @@ const props = withDefaults(defineProps<AttachedFileListProps>(), {
   ],
 })
 
+const emit = defineEmits<{
+  'gridReady': [event: GridReadyEvent],
+  'filesFetched': [],
+}>()
+
+type AttachedFileListProps = {
+  tag?: string,
+  fetchAttachedFiles: ApiCall<IFileOutput>
+  columnsDef?: BNColDef[]
+  active?: boolean
+  withTabTag?: boolean
+}
+
 const toaster = useToaster()
 
 const columnsDef = ref<BNColDef[]>(props.columnsDef)
@@ -113,7 +113,7 @@ const columnsDef = ref<BNColDef[]>(props.columnsDef)
 const gridApi = ref<GridApi>()
 const onGridReady = (event: GridReadyEvent) => {
   gridApi.value = event.api
-  emit('grid-ready', event)
+  emit('gridReady', event)
 }
 const paginationDto = ref()
 const fetching = ref(false)
@@ -158,7 +158,7 @@ const apiCall: ApiCall<IFileOutput> = async (params: IPagination<IFileOutput>) =
     } as Record<keyof IFileOutput, IFilter>
   }
   const files = await props.fetchAttachedFiles(params).finally(() => { fetching.value = false })
-  emit('files-fetched')
+  emit('filesFetched')
   return files
 }
 
@@ -184,7 +184,6 @@ onMounted(() => {
 <template>
   <AgGridServerSide
     v-if="active"
-    ref="agGridComponent"
     v-model:pagination-dto="paginationDto"
     :column-defs="columnsDef"
     :loading="fetching"

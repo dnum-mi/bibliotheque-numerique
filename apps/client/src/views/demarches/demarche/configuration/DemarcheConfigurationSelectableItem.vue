@@ -1,6 +1,10 @@
 <script lang="ts" setup>
 import type { MappingColumn } from '@biblio-num/shared'
 
+defineProps<{ champ: MappingColumn }>()
+
+const emit = defineEmits(['toggleCheck'])
+
 const typeLabels = {
   text: 'Texte',
   number: 'Nombre',
@@ -16,21 +20,18 @@ const typeLabels = {
 const getFrenchTypeLabel = (type: keyof typeof typeLabels) => {
   return typeLabels[type] || typeLabels.default
 }
-
-defineProps<{ champ: MappingColumn }>()
-
-const emit = defineEmits(['toggleCheck'])
 </script>
 
 <template>
   <DsfrCheckbox
     :id="champ.id"
+    name="champ.originalLabel"
     :label="champ.originalLabel"
     :checked="!!champ.columnLabel"
     @update:model-value="emit('toggleCheck', $event)"
   />
   <DsfrBadge
     :label="getFrenchTypeLabel(champ.type)"
-    :type="'none'"
+    type="none"
   />
 </template>

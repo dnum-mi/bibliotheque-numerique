@@ -46,7 +46,7 @@ onBeforeUnmount(() => {
     </div>
     <footer
       class="footer  w-full  fr-p-2w  text-center"
-      :class="{'raised-top-shadow': !isAtBottom}"
+      :class="{ 'raised-top-shadow': !isAtBottom }"
     >
       <slot name="footer" />
     </footer>

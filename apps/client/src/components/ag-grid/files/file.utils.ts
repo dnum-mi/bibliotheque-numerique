@@ -1,6 +1,6 @@
 import { type FileExtensionKey, eFileExtension, type StateKey } from '@biblio-num/shared'
 
-const mimeTypeIconDictionary:Record<FileExtensionKey, string> = {
+const mimeTypeIconDictionary: Record<FileExtensionKey, string> = {
   [eFileExtension.pdf]: 'vi-file-type-pdf2',
   [eFileExtension.doc]: 'vi-file-type-word2',
   [eFileExtension.docx]: 'vi-file-type-word2',

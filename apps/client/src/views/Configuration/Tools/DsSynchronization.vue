@@ -3,7 +3,8 @@ import { ref } from 'vue'
 
 import type {
   ISmallDemarcheOutput,
-  IdentificationDemarcheKeys, OrganismeTypeKey,
+  IdentificationDemarcheKeys,
+  OrganismeTypeKey,
 } from '@biblio-num/shared'
 
 import { useConfigurationStore } from '@/stores/configuration'
@@ -76,7 +77,8 @@ const onClickUpdateDemarche = async () => {
 }
 
 const onClickSoftDeleteDemarche = async (demarcheId: number) => {
-  if (confirm('Voulez-vous vraiment supprimer cette démarche ?')) {
+  // TODO: use a modal instead of a confirm
+  if (confirm('Voulez-vous vraiment supprimer cette démarche ?')) { // eslint-disable-line no-alert
     await configurationStore.softDeleteDemarche(demarcheId)
   }
 }
@@ -214,7 +216,7 @@ onMounted(async () => {
   <!-- MODAL DE CREATION DE DEMARCHE -->
   <DsfrModal
     :opened="createModalOpen"
-    :title="'Créer une nouvelle démarche depuis DS'"
+    title="Créer une nouvelle démarche depuis DS"
     @close="closeFilterModal"
   >
     <form @submit.prevent="createDemarche()">

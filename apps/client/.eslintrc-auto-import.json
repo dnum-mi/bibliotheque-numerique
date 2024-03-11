@@ -4,11 +4,15 @@
     "ComponentPublicInstance": true,
     "ComputedRef": true,
     "EffectScope": true,
+    "ExtractDefaultPropTypes": true,
+    "ExtractPropTypes": true,
+    "ExtractPublicPropTypes": true,
     "InjectionKey": true,
     "OhVueIcon": true,
     "PropType": true,
     "Ref": true,
     "VNode": true,
+    "WritableComputedRef": true,
     "acceptHMRUpdate": true,
     "addIcons": true,
     "afterAll": true,
@@ -92,10 +96,6 @@
     "watch": true,
     "watchEffect": true,
     "watchPostEffect": true,
-    "watchSyncEffect": true,
-    "ExtractDefaultPropTypes": true,
-    "ExtractPropTypes": true,
-    "ExtractPublicPropTypes": true,
-    "WritableComputedRef": true
+    "watchSyncEffect": true
   }
 }

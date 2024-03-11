@@ -23,7 +23,7 @@ const selectedTabIndex = ref(0)
 
 function selectTab (idx: number) {
   selectedTabIndex.value = idx
-  router.push({ ...route, hash: '#' + tabTitles[idx].title })
+  router.push({ ...route, hash: `#${tabTitles[idx].title}` })
 }
 </script>
 

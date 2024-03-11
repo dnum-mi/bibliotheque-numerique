@@ -11,9 +11,10 @@ withDefaults(defineProps<{
   id: 'password',
 })
 
-const emit = defineEmits<{
+defineEmits<{
   'update:modelValue': [password: string],
 }>()
+
 const tmpType = ref('password')
 const tmpTitle = computed(() => (tmpType.value === 'password' ? 'Afficher le mot de passe' : 'Masquer le mot de passe'))
 const eyeIcon = computed(() => (tmpType.value === 'password' ? 'fr-icon-eye-fill' : 'fr-icon-eye-off-fill'))

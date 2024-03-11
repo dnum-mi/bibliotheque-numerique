@@ -12,7 +12,7 @@ const filterSelectAll = computed(() => {
 
 <template>
   <span v-if="filterSelectAll">{{ props.params.value }}</span>
-  <role-badge :role="params.value" />
+  <RoleBadge :role="params.value" />
 </template>
 
 <style>

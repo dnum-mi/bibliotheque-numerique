@@ -22,7 +22,7 @@ const deleteFilter = (id: number) => {
 
 onMounted(customFilterStore.getCustomFilters)
 
-type DisplaysByDemarche = Record<number, {id: number; label: string, displays: {id: number; label: string}[]}>
+type DisplaysByDemarche = Record<number, { id: number; label: string, displays: { id: number; label: string }[] }>
 const demarcheStore = useDemarcheStore()
 const displaysByDemarche = ref<DisplaysByDemarche>({})
 const updateDemarcheList = () => {

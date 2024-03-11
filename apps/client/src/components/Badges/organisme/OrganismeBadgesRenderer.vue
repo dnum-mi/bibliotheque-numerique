@@ -7,7 +7,7 @@ const props = defineProps<{ params: { value: OrganismeTypeKey | OrganismeTypeKey
 
 const types = computed(() => {
   const value = props.params.value
-  return value instanceof Array ? value : [value]
+  return Array.isArray(value) ? value : [value]
 })
 </script>
 

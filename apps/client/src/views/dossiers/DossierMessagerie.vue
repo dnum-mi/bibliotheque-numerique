@@ -5,11 +5,11 @@ import iconRoundMarianne from '@/assets/icone-ronde-marianne.png'
 import type { File } from '@dnum-mi/ds-api-client'
 
 type Message = {
-    id: number
-    date: Date
-    email: string
-    body: string
-    attachments: File[]
+  id: number
+  date: Date
+  email: string
+  body: string
+  attachments: File[]
 }
 
 type DossierMessagerieProps = {
@@ -18,7 +18,6 @@ type DossierMessagerieProps = {
 }
 
 defineProps<DossierMessagerieProps>()
-
 </script>
 
 <template>
@@ -26,7 +25,6 @@ defineProps<DossierMessagerieProps>()
     class="bg-[var(--background-default-grey)]  flex  flex-col  overflow-y-auto  h-full"
   >
     <div
-      ref="messagerie"
       class="flex  flex-col  overflow-y-auto  h-full"
     >
       <header class="flex  justify-between  items-center  gap-2  h-24">

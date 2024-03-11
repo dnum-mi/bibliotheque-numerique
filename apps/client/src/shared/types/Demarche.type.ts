@@ -11,13 +11,13 @@ export enum TypeDeChampDS {
   TEXT = 'text',
   REPETITION = 'repetition',
   PIECE_JUSTIFICATIVE = 'piece_justificative',
-  TITRE_IDENTITE = 'titre_identite'
+  TITRE_IDENTITE = 'titre_identite',
 }
 
 export enum ChampType {
   CHAMP = 'champ',
   ANNOTATION = 'annotation',
-  INSTRUCTION_TIME='instructionTime'
+  INSTRUCTION_TIME = 'instructionTime',
 }
 
 export enum ChampValueTypesKeys {
@@ -26,7 +26,7 @@ export enum ChampValueTypesKeys {
   DATE = 'date',
   PJ = 'pj',
   ON_ONE_ROW = 'onOneRow',
-  ON_ONE_OBJECT = 'onOneObject'
+  ON_ONE_OBJECT = 'onOneObject',
 }
 
 export const ChampValueBaseTypes = {
@@ -64,5 +64,5 @@ export const keytoTypeData = {
 export enum typeTable {
   DEFAULT = 'default',
   GROUP = 'group',
-  MULTILINE = 'multiline'
+  MULTILINE = 'multiline',
 }

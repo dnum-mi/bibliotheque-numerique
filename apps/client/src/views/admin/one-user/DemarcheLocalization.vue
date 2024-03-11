@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 withDefaults(defineProps<Partial<{
   national: boolean
   prefectures: string[]
@@ -7,7 +6,6 @@ withDefaults(defineProps<Partial<{
   national: false,
   prefectures: () => [],
 })
-
 </script>
 
 <template>

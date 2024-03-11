@@ -13,7 +13,7 @@ export default defineConfig({
     presetUno(),
     presetIcons({
       extraProperties: {
-        display: 'inline-block',
+        'display': 'inline-block',
         'vertical-align': 'middle',
       },
       scale: 1.2,

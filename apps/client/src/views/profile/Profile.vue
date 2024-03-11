@@ -18,7 +18,7 @@ type Field = {
   userKey: keyof IMyProfileOutput;
   parseFct?: (v: string) => string;
   editable?: boolean;
-};
+}
 
 const fields = reactive<Field[]>([
   {
@@ -76,7 +76,9 @@ const printField = (field: Field): string => {
 }
 
 const updateProfile = async (field: Field, newText: string) => {
-  if (!newText) return
+  if (!newText) {
+    return
+  }
   await store.changeMyProfile({
     [field.userKey]: newText,
   })
@@ -149,7 +151,7 @@ const updateProfile = async (field: Field, newText: string) => {
           <h4>Mon role</h4>
           <hr>
           <div class="flex flex-col one-col-height">
-            <role-badge
+            <RoleBadge
               class="mb-5"
               :role="user?.role?.label"
               :small="false"

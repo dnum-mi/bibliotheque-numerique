@@ -26,7 +26,7 @@ defineProps<{
       </label>
       <!-- SI Piece jointe -->
       <div
-        v-if="champ.__typename == 'PieceJustificativeChamp'"
+        v-if="champ.__typename === 'PieceJustificativeChamp'"
         :id="champ.id"
         class="fr-text fr-mt-1w bn-champ--text flex flex-col"
       >
@@ -42,12 +42,12 @@ defineProps<{
       </div>
       <!-- SI Repetable -->
       <DossierChamps
-        v-else-if="champ.__typename == 'RepetitionChamp'"
+        v-else-if="champ.__typename === 'RepetitionChamp'"
         :champs="champ.champs"
       />
       <!-- Si boolean -->
       <div
-        v-if="champ.__typename == 'CheckboxChamp'"
+        v-if="champ.__typename === 'CheckboxChamp'"
         :id="champ.id"
         class="fr-text fr-mt-1w bn-champ--text"
       >

@@ -27,6 +27,8 @@ const prefecture = computed(
 const creation = computed(() => dateToStringFr(organisme.value?.dateCreation))
 const dissolution = computed(() => dateToStringFr(organisme.value?.dateDissolution ?? undefined))
 
+const filesSummary = ref<Record<FileTagKey, number> | Record<string, never>>({})
+
 const tabTitles = computed(() => [
   {
     title: 'Infos',
@@ -44,8 +46,6 @@ const tabTitles = computed(() => [
 
 // TODO: use router to prevent user to access this page if not logged in or without the right role
 const role = computed<IRole | undefined>(() => userStore.currentUser?.role)
-
-const filesSummary = ref<Record<FileTagKey, number>>({})
 
 const isLoading = ref(false)
 onMounted(async () => {
@@ -67,6 +67,7 @@ const redrawTabs = async () => {
   tabs.value?.renderTabs()
 }
 
+const activeTabs = ref<Record<string, boolean>>({})
 watch(selected, (idx) => {
   if (idx > 0) {
     const tag = Object.keys(filesSummary.value)[idx - 1]
@@ -74,8 +75,6 @@ watch(selected, (idx) => {
   }
   redrawTabs()
 })
-
-const activeTabs = ref<Record<string, boolean>>({})
 
 const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutput>) => {
   if (organisme.value) {

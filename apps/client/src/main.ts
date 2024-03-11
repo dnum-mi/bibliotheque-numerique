@@ -3,13 +3,13 @@ import 'virtual:uno.css'
 import App from './App.vue'
 import router from './router'
 
-import '@gouvfr/dsfr/dist/core/core.main.min.css' // Le CSS minimal du DSFR
-import '@gouvfr/dsfr/dist/component/component.main.min.css' // Styles de tous les composants
-import '@gouvfr/dsfr/dist/utility/utility.main.min.css' // Classes utilitaires: les composants de VueDsfr en ont besoin
-import '@gouvminint/vue-dsfr/styles' // Les styles propres aux composants de VueDsfr
+import '@gouvfr/dsfr/dist/core/core.main.min.css'
+import '@gouvfr/dsfr/dist/component/component.main.min.css'
+import '@gouvfr/dsfr/dist/utility/utility.main.min.css'
+import '@gouvminint/vue-dsfr/styles'
 
-import '@gouvfr/dsfr/dist/scheme/scheme.min.css' // Facultatif: Si les thèmes sont utilisés (thème sombre, thème clair)
-import '@gouvfr/dsfr/dist/utility/icons/icons.min.css' // Facultatif: Si des icônes sont utilisées avec les classes "fr-icon-..."
+import '@gouvfr/dsfr/dist/scheme/scheme.min.css'
+import '@gouvfr/dsfr/dist/utility/icons/icons.min.css'
 
 import * as icons from './icons'
 
@@ -32,7 +32,7 @@ addIcons(...Object.values(icons))
 if (import.meta.env.DEV && import.meta.env.VITE_CYPRESS !== 'true') {
   const { worker } = await import('./mocks/browser')
   await worker.start({
-    onUnhandledRequest: (request, print) => {
+    onUnhandledRequest: (request) => {
       const url = request.url
       if (!/\/api\//.test(url)) {
         return

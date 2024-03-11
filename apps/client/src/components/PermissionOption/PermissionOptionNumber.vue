@@ -16,8 +16,10 @@ const onChange = (id: number, value: string) => {
     delete options.value[id]
     options.value = options.value.filter(String)
   }
-  emit('updateOption', props.optionName,
-    props.multiple ? options.value.map((v) => parseInt(v)) : parseInt(options.value[0]),
+  emit(
+    'updateOption',
+    props.optionName,
+    props.multiple ? options.value.map((v) => Number.parseInt(v)) : Number.parseInt(options.value[0]),
   )
 }
 </script>
@@ -26,14 +28,14 @@ const onChange = (id: number, value: string) => {
   <div class="multiple-input-number">
     <div
       v-for="n in (multiple ? options.length : 0) + 1"
-      :key="optionName+n"
+      :key="optionName + n"
       class="input-number"
     >
       <DsfrInput
-        :id="optionName+n"
-        :model-value="options[n-1]"
+        :id="optionName + n"
+        :model-value="options[n - 1]"
         type="number"
-        @update:model-value="(value: string) => onChange(n-1, value)"
+        @update:model-value="(value: string) => onChange(n - 1, value)"
       />
     </div>
   </div>

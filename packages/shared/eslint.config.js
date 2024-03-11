@@ -8,6 +8,14 @@ module.exports = antfu(
     rules: {
       'no-irregular-whitespace': 'off',
       curly: ['error', 'all'],
+      'vue/max-attributes-per-line': ['error', {
+        singleline: {
+          max: 1,
+        },
+        multiline: {
+          max: 1
+        }
+      }]
     },
   },
 )

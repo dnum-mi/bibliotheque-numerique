@@ -20,6 +20,14 @@ const props = withDefaults(defineProps<{
   totalsAllowed: () => [],
 })
 
+const emit = defineEmits<{
+  (event: 'selectDisplay', filterId: number | null): void
+  (event: 'createDisplay', filter: { filterName?: string, totals?: string[] }): void
+  (event: 'updateDisplayName', filter: { filterName?: string, totals?: string[] }): void
+  (event: 'updateDisplay'): void
+  (event: 'deleteDisplay'): void
+}>()
+
 const defaultTotalOption = { text: 'Veuillez choisir une colonne', value: undefined, disabled: true }
 const noTotalOption = { text: 'Aucun total', value: 'Aucun total' }
 const totalsAllowedOptions = computed(() => [
@@ -28,16 +36,15 @@ const totalsAllowedOptions = computed(() => [
   ...props.totalsAllowed.map(({ id, columnLabel }) => ({ text: columnLabel, value: id })),
 ])
 
-// eslint-disable-next-line func-call-spacing
-const emit = defineEmits<{
-  (event: 'selectDisplay', filterId: number | null) : void
-  (event: 'createDisplay', filter: { filterName?: string, totals?: string[] }) : void
-  (event: 'updateDisplayName', filter: { filterName?: string, totals?: string[] }) : void
-  (event: 'updateDisplay') : void
-  (event: 'deleteDisplay') : void
-}>()
-
 const currentDisplay = computed(() => props.selectedDisplay)
+
+type FilterModalType = keyof typeof filterLabelGroups
+const inputFilterName = ref('')
+const filterModalType = ref<FilterModalType>('create')
+const inputFilterTotals = ref<string[]>([])
+const filterModalOpen = ref(false)
+const operationSucceeded = computed(() => props.operationSuccess)
+
 const filterLabelGroups = {
   duplicate: {
     title: `Dupliquer l’affichage ${currentDisplay.value?.name}`,
@@ -86,13 +93,9 @@ const filterLabelGroups = {
   },
 } as const
 
-type FilterModalType = keyof typeof filterLabelGroups;
-const inputFilterName = ref('')
-const filterModalType = ref<FilterModalType>('create')
-const inputFilterTotals = ref<string[]>([])
-const filterModalOpen = ref(false)
-const operationSucceeded = computed(() => props.operationSuccess)
-
+const closeFilterModal = () => {
+  filterModalOpen.value = false
+}
 watch(operationSucceeded, (success: boolean) => {
   if (success) {
     filterModalOpen.value = false
@@ -100,9 +103,6 @@ watch(operationSucceeded, (success: boolean) => {
   }
 })
 
-const closeFilterModal = () => {
-  filterModalOpen.value = false
-}
 const filterLabelGroup = computed(() => filterLabelGroups[filterModalType.value])
 const openDisplayModal = (modalType: FilterModalType) => {
   filterModalOpen.value = true
@@ -222,14 +222,14 @@ const update = () => {
         <DsfrSelect
           v-if="filterModalType !== 'delete'"
           v-model="inputFilterTotals[0]"
-          :label="'Sélectionner la colonne pour le total numéraire'"
+          label="Sélectionner la colonne pour le total numéraire"
           :options="totalsAllowedOptions"
         />
 
         <DsfrSelect
           v-if="filterModalType !== 'delete'"
           v-model="inputFilterTotals[1]"
-          :label="'Sélectionner la colonne pour le deuxième total numéraire'"
+          label="Sélectionner la colonne pour le deuxième total numéraire"
           :options="totalsAllowedOptions"
         />
       </div>
@@ -244,7 +244,7 @@ const update = () => {
         />
         <DsfrButton
           type="submit"
-          :class="{'fr-error-bg': filterModalType === 'delete'}"
+          :class="{ 'fr-error-bg': filterModalType === 'delete' }"
           :label="filterLabelGroup.button"
           :icon="{ name: filterLabelGroup.icon }"
           icon-right
@@ -261,7 +261,7 @@ const update = () => {
       </p>
       <DsfrButton
         type="submit"
-        :label="'Ok'"
+        label="Ok"
         class="float-right mb-5"
         @click="closeFilterModal()"
       />

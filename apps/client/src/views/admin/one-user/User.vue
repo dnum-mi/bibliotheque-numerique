@@ -22,28 +22,31 @@ import UserGeographicalRights from './UserGeographicalRights.vue'
 import { LocalizationOptions, type LocalizationOptionsKeys } from './localization.enum'
 
 import UserRole from './UserRole.vue'
+
+const props = defineProps<{ selectedEditableUser: UserWithEditableRole }>()
+
 //#region Types, Mapping, Enum
 type DemarcheHtmlAttrs = {
-  class?: string | null;
-  disabled?: boolean | null;
-};
+  class?: string | null
+  disabled?: boolean | null
+}
 type DemarcheRole = {
-  options: OneDemarcheRoleOption;
-  attrs: DemarcheHtmlAttrs;
-};
+  options: OneDemarcheRoleOption
+  attrs: DemarcheHtmlAttrs
+}
 type DemarchesRoles = {
-  label: string;
-  name: OrganismeTypeKey;
-  value: boolean;
-  key: string;
-  localization?: PrefectureOptions;
-  commonPrefectureValues: string[];
-  commonPrefectureAddables: string[];
-  commonPrefectureDeletables: string[];
-  children?: DemarcheRole[];
-  attrs: DemarcheHtmlAttrs;
-};
-type GeographicalRights = PrefectureOptions & { disabled?: boolean };
+  label: string
+  name: OrganismeTypeKey
+  value: boolean
+  key: string
+  localization?: PrefectureOptions
+  commonPrefectureValues: string[]
+  commonPrefectureAddables: string[]
+  commonPrefectureDeletables: string[]
+  children?: DemarcheRole[]
+  attrs: DemarcheHtmlAttrs
+}
+type GeographicalRights = PrefectureOptions & { disabled?: boolean }
 
 const typeOrganismeLabel: Record<OrganismeTypeKey, string> = {
   [eOrganismeType.ARUP]: 'Associations reconnues d’utilité publique (ARUP)',
@@ -55,7 +58,6 @@ const typeOrganismeLabel: Record<OrganismeTypeKey, string> = {
 }
 //#endregion
 
-const props = defineProps<{ selectedEditableUser: UserWithEditableRole }>()
 const userStore = useUserStore()
 const selectedUser = computed<UserOutputDto>(() => props.selectedEditableUser.originalUser)
 const demarcheHash = computed<Record<number, OneDemarcheRoleOption>>(() => props.selectedEditableUser.demarcheHash)
@@ -182,17 +184,23 @@ const demarchesRoles = computed<DemarchesRoles[]>(() => {
 })
 
 const deduceCheckTypeFromChild = (id: number) => {
-  if (!demarcheHash.value[id]?.types) return
+  if (!demarcheHash.value[id]?.types) {
+    return
+  }
   demarcheHash.value[id].types.forEach((type: string) => {
     const objType = demarchesRoles.value.filter((dr) => dr.name === type)[0]
-    if (!objType || !objType.children) return
+    if (!objType || !objType.children) {
+      return
+    }
     objType.value = isAllCheck(objType.children)
   })
 }
 
 const checkAllTypeChildren = async ({ name, checked, dr }: { name: string; checked: boolean; dr: DemarchesRoles }) => {
   dr.value = checked
-  if (!checked || !dr.children) return
+  if (!checked || !dr.children) {
+    return
+  }
   await Promise.all(dr.children?.map((child) => checkOneDemarche({ id: child.options.id, checked, d: child, reloadUser: false })))
   dr.key = getRandomId(name)
   if (selectedUser.value?.id) {
@@ -236,10 +244,14 @@ const onClickDemarches = (elt: DemarchesRoles | DemarcheRole) => {
 
 //#region view localization
 const geographicalRights = computed<GeographicalRights | null>(() => {
-  if (!demarcheOrTypeSelected.value) return null
+  if (!demarcheOrTypeSelected.value) {
+    return null
+  }
   if ('options' in demarcheOrTypeSelected.value) {
     const id: number = demarcheOrTypeSelected.value.options.id
-    if (!demarcheHash.value) return null
+    if (!demarcheHash.value) {
+      return null
+    }
     return {
       ...demarcheHash.value[id].prefectureOptions,
       disabled: demarcheHash.value[id].checked,
@@ -262,7 +274,9 @@ const geographicalRights = computed<GeographicalRights | null>(() => {
 })
 
 const _updateGeographicalRight = async (optionLoc: { national?: boolean; prefecture?: OnePrefectureUpdateDto }) => {
-  if (!demarcheOrTypeSelected.value) return null
+  if (!demarcheOrTypeSelected.value) {
+    return null
+  }
 
   const demarcheSelected: DemarcheRole | null = 'options' in demarcheOrTypeSelected.value ? demarcheOrTypeSelected.value : null
   const typeSelected: DemarchesRoles | null = 'options' in demarcheOrTypeSelected.value ? null : demarcheOrTypeSelected.value
@@ -356,7 +370,7 @@ const removePrefecture = (prefecture: string) => {
             >
               <DsfrCheckbox
                 class="font-bold fr-px-2v  flex-auto"
-                :label="''"
+                label=""
                 :name="dr.name"
                 :model-value="dr.value"
                 :disabled="dr.attrs.disabled"
@@ -387,7 +401,7 @@ const removePrefecture = (prefecture: string) => {
                 >
                   <DsfrCheckbox
                     :key="dr.key"
-                    :label="''"
+                    label=""
                     class="fr-px-2v  flex-auto"
                     :name="d.options.id.toString()"
                     :model-value="d.options.checked"

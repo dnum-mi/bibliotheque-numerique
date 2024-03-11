@@ -9,7 +9,7 @@ const getRandomAlphaNum = () => {
 }
 
 const getRandomHtmlId = (prefix = '', suffix = '') => {
-  return (prefix ? prefix + '-' : '') + getRandomString(5) + (suffix ? '-' + suffix : '')
+  return (prefix ? `${prefix}-` : '') + getRandomString(5) + (suffix ? `-${suffix}` : '')
 }
 const getRandomString = (length: number) => {
   return Array.from({ length })

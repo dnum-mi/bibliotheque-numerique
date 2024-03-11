@@ -1,4 +1,4 @@
-export type EnvTextKeys = 'development' | 'staging' | 'preproduction' | 'production';
+export type EnvTextKeys = 'development' | 'staging' | 'preproduction' | 'production'
 export const envTextMapping: { [key in EnvTextKeys]: string } = {
   development: 'Développement',
   staging: 'Qualification',

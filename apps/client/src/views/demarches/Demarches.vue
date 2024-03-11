@@ -71,7 +71,7 @@ onMounted(async () => {
   await demarcheStore.getDemarches()
 })
 
-const selectDemarche = (row:IDemarche[]) => {
+const selectDemarche = (row: IDemarche[]) => {
   router.push({ name: routeNames.DEMARCHE_DOSSIERS, params: { demarcheId: row[0].id } })
 }
 

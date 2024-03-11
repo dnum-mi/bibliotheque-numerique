@@ -11,7 +11,7 @@ describe('<DossierChamps />', () => {
     cy.mount(DossierChamps, { props: { champs } })
 
     cy.get('label').then(($label) => {
-      champs.forEach(({ label, stringValue }, idx) => {
+      champs.forEach(({ stringValue }, idx) => {
         cy.wrap($label).eq(idx).next().should('contain', stringValue)
       })
     })

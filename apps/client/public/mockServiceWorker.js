@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-disable no-restricted-globals, prefer-arrow-callback, style/space-before-function-paren */
 /* tslint:disable */
 
 /**

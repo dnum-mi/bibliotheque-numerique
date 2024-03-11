@@ -1,3 +1,7 @@
+<script lang="ts" setup>
+import LayoutAccueil from '../components/Layout/LayoutAccueil.vue'
+</script>
+
 <template>
   <LayoutAccueil>
     <div class="fr-container">
@@ -36,7 +40,3 @@
     </div>
   </LayoutAccueil>
 </template>
-
-<script lang="ts" setup>
-import LayoutAccueil from '../components/Layout/LayoutAccueil.vue'
-</script>

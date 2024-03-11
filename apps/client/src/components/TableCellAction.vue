@@ -2,13 +2,13 @@
 import type { TIconFunction } from '@/shared/types/DataTable.type'
 
 const props = defineProps<{
-  label:string,
+  label: string,
   disabled: boolean,
   params: {
     data: unknown
     action: {
       icon: string
-      condition:(data: unknown) => boolean
+      condition: (data: unknown) => boolean
     }
     title: string
     context: { showElt: (data: unknown) => void }

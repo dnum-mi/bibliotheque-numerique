@@ -14,7 +14,7 @@ export const useCustomFilterStore = defineStore('custom-filter', () => {
     customFilters.value = await apiClient.getCustomFilters()
   }
 
-  const getCustomFiltersByDemarche = async (demarcheId:number) => {
+  const getCustomFiltersByDemarche = async (demarcheId: number) => {
     currentDemarcheId = demarcheId
     customFilters.value = await apiClient.getCustomFiltersByDemarche(demarcheId)
   }

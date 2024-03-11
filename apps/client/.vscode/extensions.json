@@ -24,6 +24,6 @@
 
     // CSS
     "csstools.postcss",
-    "stylelint.vscode-stylelint",
+    "stylelint.vscode-stylelint"
   ]
 }

@@ -19,20 +19,21 @@ import './commands'
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 
-import { createPinia, Pinia, setActivePinia } from 'pinia'
+import type { Pinia } from 'pinia'
+import { createPinia, setActivePinia } from 'pinia'
 import { mount } from 'cypress/vue'
 
 import VueDsfr from '@gouvminint/vue-dsfr'
 import '@/main.css'
 import 'virtual:uno.css'
 
-import '@gouvfr/dsfr/dist/core/core.main.min.css' // Le CSS minimal du DSFR
-import '@gouvfr/dsfr/dist/component/component.main.min.css' // Styles de tous les composants
-import '@gouvfr/dsfr/dist/utility/utility.main.min.css' // Classes utilitaires: les composants de VueDsfr en ont besoin
-import '@gouvminint/vue-dsfr/styles' // Les styles propres aux composants de VueDsfr
+import '@gouvfr/dsfr/dist/core/core.main.min.css'
+import '@gouvfr/dsfr/dist/component/component.main.min.css'
+import '@gouvfr/dsfr/dist/utility/utility.main.min.css'
+import '@gouvminint/vue-dsfr/styles'
 
-import '@gouvfr/dsfr/dist/scheme/scheme.min.css' // Facultatif: Si les thèmes sont utilisés (thème sombre, thème clair)
-import '@gouvfr/dsfr/dist/utility/icons/icons.min.css' // Facultatif: Si des icônes sont utilisées avec les classes "fr-icon-..."
+import '@gouvfr/dsfr/dist/scheme/scheme.min.css'
+import '@gouvfr/dsfr/dist/utility/icons/icons.min.css'
 
 import 'ag-grid-enterprise'
 import 'ag-grid-community/styles/ag-grid.css'
@@ -49,7 +50,7 @@ import type { DefineComponent } from 'vue'
 // Alternatively, can be defined in cypress/support/component.d.ts
 // with a <reference path="./component" /> at the top of your spec.
 declare module 'cypress' {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
+  // eslint-disable-next-line ts/no-namespace
   interface Chainable {
     mount: typeof mount
     mountWithPinia: typeof mountWithPinia
@@ -66,9 +67,7 @@ Cypress.Commands.add('mount', (component, options = {}) => {
     options.global.plugins = options.global.plugins || []
     options.global.plugins.push({
       install: (app) => {
-        app.use(VueDsfr,
-          { icons: Object.values(icons) },
-        )
+        app.use(VueDsfr, { icons: Object.values(icons) })
       },
     })
     options.global.plugins.push(router)
@@ -106,9 +105,7 @@ function mountWithPinia (
   options.global.plugins = options.global.plugins || []
   options.global.plugins.push({
     install: (app) => {
-      app.use(VueDsfr,
-        { icons: Object.values(icons) },
-      )
+      app.use(VueDsfr, { icons: Object.values(icons) })
     },
   }, pinia)
   options.global.plugins.push(router)

@@ -1,7 +1,6 @@
 import type {
   IAgGridUser,
   IPaginated,
-  IUserOutput,
 
   IRole,
 } from '@biblio-num/shared'
@@ -67,7 +66,7 @@ const instructeurUsersFn = () => Array.from({ length: faker.datatype.number({ mi
   }))
 
 export const getPaginatedUsers = () => {
-  const usersRoles:Partial<IAgGridUser>[] = [
+  const usersRoles: Partial<IAgGridUser>[] = [
     ...Array.from({ length: faker.datatype.number({ min: 1, max: 5 }) }, createRandomUser),
     ...adminUsersFn(),
     ...instructeurUsersFn(),

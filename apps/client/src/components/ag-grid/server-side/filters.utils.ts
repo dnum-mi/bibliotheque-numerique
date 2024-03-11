@@ -1,4 +1,4 @@
-import { type IFilterDef } from 'ag-grid-community'
+import type { IFilterDef } from 'ag-grid-community'
 import type { FormatFunctionRefKeys } from '@biblio-num/shared'
 
 import { DossierState } from '@/utils'
@@ -15,7 +15,7 @@ const fieldTypesDict = {
   default: 'agTextColumnFilter',
 } as const
 
-export const filterEnumvalues:Record<string, string[]> = {
+export const filterEnumvalues: Record<string, string[]> = {
   status: Object.keys(DossierState),
 }
 
@@ -25,7 +25,7 @@ export const filterCellRender: Record<string, Component> = {
 
 // TODO: use FieldType but enum from library doesn't work in front.
 export const getAgGridFilterFromFieldType = (fieldType?: keyof typeof fieldTypesDict, formatFunctionRef?: FormatFunctionRefKeys): IFilterDef => {
-  const filter:IFilterDef = {
+  const filter: IFilterDef = {
     filter: (fieldType && fieldTypesDict[fieldType]) || fieldTypesDict.default,
   }
 

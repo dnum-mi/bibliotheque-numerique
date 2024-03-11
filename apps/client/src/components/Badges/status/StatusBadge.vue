@@ -1,4 +1,8 @@
 <script lang="ts" setup>
+const props = defineProps<{
+  status: keyof typeof statusDictionary
+}>()
+
 const statusDictionary = {
   accepte: { label: 'Accepté', type: 'success' },
   en_construction: { label: 'En construction', type: 'new' },
@@ -6,10 +10,6 @@ const statusDictionary = {
   refuse: { label: 'Refusé', type: 'error' },
   sans_suite: { label: 'Sans suite', type: 'warning' },
 } as const
-
-const props = defineProps<{
-  status: keyof typeof statusDictionary
-}>()
 
 const statusLabel = computed(() => {
   return statusDictionary[props.status]?.label || props.status

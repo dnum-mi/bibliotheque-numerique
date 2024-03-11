@@ -102,7 +102,7 @@ const { value: passwordValue, errorMessage: passwordError } = useField<string>('
               class="fr-m-4w"
               style="text-align:center"
             >
-              <router-link :to="{name: 'SignUp'}">
+              <router-link :to="{ name: 'SignUp' }">
                 Pas encore inscrit ? Inscrivez-vous ici.
               </router-link>
             </div>

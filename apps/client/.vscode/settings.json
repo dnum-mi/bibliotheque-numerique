@@ -1,6 +1,12 @@
 {
+  // Disable the default formatter, use eslint instead
+  "prettier.enable": false,
+  "editor.formatOnSave": false,
+
+  // Auto fix
   "editor.codeActionsOnSave": {
-    "source.fixAll": "explicit"
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "never"
   },
   "emmet.includeLanguages": {
     "postcss": "css"
@@ -31,4 +37,22 @@
   "scss.validate": false,
   "[vue]": { "editor.defaultFormatter": "dbaeumer.vscode-eslint" },
   "[css]": { "editor.defaultFormatter": "stylelint.vscode-stylelint" },
+
+  // Enable the ESlint flat config support
+  "eslint.experimental.useFlatConfig": true,
+
+  // Enable eslint for all supported languages
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact",
+    "vue",
+    "html",
+    "markdown",
+    "json",
+    "jsonc",
+    "yaml",
+    "toml"
+  ]
 }

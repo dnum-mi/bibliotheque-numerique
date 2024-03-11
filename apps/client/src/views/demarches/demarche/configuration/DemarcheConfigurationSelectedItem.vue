@@ -7,7 +7,6 @@ const emit = defineEmits<{
   'remove': []
   'update:modelValue': [label: string]
 }>()
-
 </script>
 
 <template>
@@ -34,7 +33,6 @@ const emit = defineEmits<{
     <div class="fr-col-5  fr-px-2v">
       <DsfrInput
         :id="`labelBN-${champ.id}`"
-        ref="labelBNInput"
         :model-value="champ.columnLabel"
         class="fr-m-0"
         label-visible

@@ -1,7 +1,6 @@
 import UpdatePassword from './UpdatePassword.vue'
 
 const shortPassword = 'a'
-const simplePassword = 'abcd1234'
 const goodPassword = 'abcd1234ABCD#!*0123'
 const goodPassword2 = 'abcd1234ABCD#!*0124'
 
@@ -45,7 +44,7 @@ function failedTest (statusCode, message) {
   cy.intercept('PUT', '/api/users', (req) => {
     req.reply(statusCode, { body: { statusCode, message: 'erreur...' } })
   }).as('updatePassword')
-  cy.on('uncaught:exception', (err, runnable) => {
+  cy.on('uncaught:exception', (err /* , runnable*/) => {
     console.warn(err)
     expect(err.message).to.include(message)
     return true

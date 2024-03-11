@@ -94,7 +94,8 @@ describe('<BiblioNumDataTable />', () => {
       use: [
         {
           install: (app) => {
-            app.use(VueDsfr,
+            app.use(
+              VueDsfr,
               { icons: Object.values(icons) },
             )
           },

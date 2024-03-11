@@ -1,18 +1,18 @@
 {
   "extends": "@vue/tsconfig/tsconfig.dom.json",
-  "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
-  "exclude": ["@nestjs/websockets/socket-module"],
   "compilerOptions": {
     "composite": true,
-    "noEmit": false,
 
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
 
+    "lib": ["ES2020", "DOM"],
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     },
     "types": ["vitest/globals"],
-    "lib": ["ES2020", "DOM"]
-  }
+    "noEmit": false
+  },
+  "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
+  "exclude": ["@nestjs/websockets/socket-module"]
 }

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 const props = defineProps<{
   value: string
- }>()
+}>()
 
  type dsfrType = 'success' | 'error' | 'warning' | 'info' | 'new'
 
