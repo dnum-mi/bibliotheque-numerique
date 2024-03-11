@@ -23,7 +23,7 @@ export const adminRoute = {
       component: () => import('@/views/admin/one-user/User.vue'),
       beforeEnter: async (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
         try {
-          await useUserStore().loadUserById(parseInt(to.params.id as string))
+          await useUserStore().loadUserById(Number.parseInt(to.params.id as string))
         } catch (e) {
           next({ name: routeNames.Page_404 })
         }

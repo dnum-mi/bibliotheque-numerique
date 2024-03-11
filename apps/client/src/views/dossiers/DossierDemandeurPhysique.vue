@@ -3,11 +3,14 @@ import type { Demandeur, PersonnePhysique } from '@biblio-num/shared'
 
 import { dateToStringFr } from '@/utils'
 
-const props = withDefaults(defineProps<{
+const props = withDefaults(
+  defineProps<{
     datas?: Demandeur & PersonnePhysique | Record<string, never>;
-  }>(), {
-  datas: () => ({}),
-})
+  }>(),
+  {
+    datas: () => ({}),
+  },
+)
 
 const title = 'DemandeurDossier'
 const fieldsDemandeur = [
@@ -28,8 +31,8 @@ const fieldsDemandeur = [
     value: dateToStringFr(props.datas.dateDeNaissance),
   },
 ]
-
 </script>
+
 <template>
   <div
     :data-cy="`cy-${title}`"
@@ -37,7 +40,7 @@ const fieldsDemandeur = [
   >
     <div class="fr-grid-row">
       <div
-        v-for="{label, value} in fieldsDemandeur"
+        v-for="{ label, value } in fieldsDemandeur"
         :key="label"
         class="fr-col-3"
       >

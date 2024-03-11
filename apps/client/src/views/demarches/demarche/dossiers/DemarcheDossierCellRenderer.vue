@@ -12,16 +12,6 @@ import delayStateBadge from '@/components/Badges/DelayStateBadge.vue'
 import AgGridAttachmentCell from '@/components/ag-grid/AgGridAttachmentCell.vue'
 import { firstUpperCase } from '@/utils/first-upper-case'
 
-// TODO: check into @biblio-num/shared
-const FieldType = {
-  string: 'string',
-  number: 'number',
-  enum: 'enum',
-  date: 'date',
-  boolean: 'boolean',
-  file: 'file',
-} as const
-
 const props = defineProps<{
   params: {
     value: string
@@ -31,6 +21,16 @@ const props = defineProps<{
     }
   }
 }>()
+
+// TODO: check into @biblio-num/shared
+const FieldType = {
+  string: 'string',
+  number: 'number',
+  enum: 'enum',
+  date: 'date',
+  boolean: 'boolean',
+  file: 'file',
+} as const
 
 //#region all cell
 const cellValues = computed(() => {
@@ -52,14 +52,16 @@ const type = computed(() => {
 })
 
 const componentRenderer = computed(() => {
-  if (props.params.column?.formatFunctionRef === 'delay-status') return delayStateBadge
+  if (props.params.column?.formatFunctionRef === 'delay-status') {
+    return delayStateBadge
+  }
   return null
 })
 //#endregion
 
 //#region STATUS
-type dsfrType = 'success' | 'error' | 'warning' | 'info' | 'new';
-const statusDictionary: Record<string, { label: string; type: dsfrType }> = {
+type DsfrType = 'success' | 'error' | 'warning' | 'info' | 'new'
+const statusDictionary: Record<string, { label: string; type: DsfrType }> = {
   accepte: { label: 'Accepté', type: 'success' },
   en_construction: { label: 'En construction', type: 'new' },
   en_instruction: { label: 'En instruction', type: 'new' },
@@ -69,7 +71,7 @@ const statusDictionary: Record<string, { label: string; type: dsfrType }> = {
 const giveStatusLabel = (status: string): string => {
   return statusDictionary[status]?.label || status
 }
-const giveStatusType = (status: string): dsfrType => {
+const giveStatusType = (status: string): DsfrType => {
   return statusDictionary[status]?.type || 'info'
 }
 //#endregion
@@ -148,7 +150,7 @@ const getPrefecture = (prefecture: PrefectureKeys) => {
 
       <!-- BOOLEAN -->
       <template v-else-if="type === 'boolean'">
-        {{ cellValue ? 'Oui': 'Non' }}
+        {{ cellValue ? 'Oui' : 'Non' }}
       </template>
 
       <!-- BOOLEAN -->
@@ -156,7 +158,7 @@ const getPrefecture = (prefecture: PrefectureKeys) => {
         {{ getPrefecture(cellValue) }}
       </template>
 
-      <!-- ComponentRenderer-->
+      <!-- ComponentRenderer -->
       <template v-else-if="!!componentRenderer">
         <component
           :is="componentRenderer"
@@ -164,7 +166,7 @@ const getPrefecture = (prefecture: PrefectureKeys) => {
         />
       </template>
 
-      <!-- Default-->
+      <!-- Default -->
       <template v-else>
         <span
           v-if="params.column.type === FieldType.number"

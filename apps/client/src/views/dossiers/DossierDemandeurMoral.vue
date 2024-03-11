@@ -1,11 +1,14 @@
 <script lang="ts" setup>
 import DisplayLabelsValues from '@/components/DisplayLabelsValues.vue'
 
-const props = withDefaults(defineProps<{
+const props = withDefaults(
+  defineProps<{
     datas?: object
-  }>(), {
-  datas: () => ({}),
-})
+  }>(),
+  {
+    datas: () => ({}),
+  },
+)
 
 const title = 'DemandeurDossier'
 const labelsDemandeur = [
@@ -33,7 +36,7 @@ const labelsAdresses = [
     value: 'label',
   },
   {
-    text: "Type d'adresse",
+    text: 'Type d’adresse',
     value: 'type',
   },
   {
@@ -170,7 +173,6 @@ const labelAsssociation = [
 const address = computed(() => props.datas?.address || {})
 const entreprise = computed(() => props.datas?.entreprise || {})
 const association = computed(() => props.datas?.association || {})
-
 </script>
 
 <template>

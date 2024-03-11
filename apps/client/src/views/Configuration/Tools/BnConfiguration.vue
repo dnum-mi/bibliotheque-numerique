@@ -130,7 +130,7 @@ const onSelected = (bnConfig: IBnConfigurationOutput) => {
   <!-- MODAL DE CREATION DE bnConfiguration -->
   <DsfrModal
     :opened="createModalOpen"
-    :title="'Créer une bnConfiguration'"
+    title="Créer une bnConfiguration"
     @close="closeFilterModal"
   >
     <form @submit.prevent="createBnConfiguration()">

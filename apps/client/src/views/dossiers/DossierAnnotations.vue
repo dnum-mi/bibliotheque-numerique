@@ -3,13 +3,16 @@ import type { IDossier } from '@biblio-num/shared'
 
 import DossierChamps from './DossierChamps.vue'
 
-withDefaults(defineProps<{
+withDefaults(
+  defineProps<{
     annotations?: IDossier['dsDataJson']['annotations']
-  }>(), {
-  annotations: () => [],
-})
-
+  }>(),
+  {
+    annotations: () => [],
+  },
+)
 </script>
+
 <template>
   <div class="fr-container">
     <DossierChamps :champs="annotations" />

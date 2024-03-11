@@ -23,6 +23,6 @@ export const canAccessByRoleGuard = (
   return (!comparedTo || isSuperiorOrSimilar(comparedTo, toCompare ?? null))
 }
 
-export const canAccessByDemarcheGuard = (needDemarchesId?: boolean, demarcheId?:string, role?: IRole) => {
+export const canAccessByDemarcheGuard = (needDemarchesId?: boolean, demarcheId?: string, role?: IRole) => {
   return !needDemarchesId || (demarcheId && role && canAccessDemarche(+demarcheId, role))
 }

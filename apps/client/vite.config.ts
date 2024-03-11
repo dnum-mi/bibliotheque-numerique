@@ -1,5 +1,6 @@
 /// <reference types="vitest" />
-import { fileURLToPath, URL } from 'url'
+import { URL, fileURLToPath } from 'node:url'
+import process from 'node:process'
 
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
@@ -9,8 +10,8 @@ import UnoCSS from 'unocss/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import {
-  vueDsfrAutoimportPreset,
   ohVueIconAutoimportPreset,
+  vueDsfrAutoimportPreset,
   vueDsfrComponentResolver,
 } from '@gouvminint/vue-dsfr'
 
@@ -26,7 +27,8 @@ export default defineConfig({
     AutoImport({
       include: [
         /\.[tj]sx?$/,
-        /\.vue$/, /\.vue\?vue/,
+        /\.vue$/,
+        /\.vue\?vue/,
       ],
       imports: [
         'vue',
@@ -63,7 +65,7 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:3000',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
+        rewrite: path => path.replace(/^\/api/, ''),
       },
     },
   },

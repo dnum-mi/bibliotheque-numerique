@@ -11,7 +11,7 @@ type keyValidateEmailFeedback = keyof typeof validateEmailFeedback
 
 export class ErrorvalidateEmail extends Error {
   feedbackCode: keyValidateEmailFeedback
-  status: number|undefined
+  status: number | undefined
   constructor (error: AxiosError) {
     const feedbackCode = (String(error.response?.status)) as keyof typeof validateEmailFeedback
     super(validateEmailFeedback[feedbackCode] ?? validateEmailFeedback.default)

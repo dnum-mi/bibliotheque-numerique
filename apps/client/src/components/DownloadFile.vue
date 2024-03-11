@@ -1,4 +1,3 @@
-
 <script setup lang="ts">
 import type { File } from '@dnum-mi/ds-api-client'
 import { prettyByteSizeByString } from '@/utils'
@@ -11,7 +10,7 @@ const props = defineProps<{
 }>()
 
 const url = computed(() => `${baseApiUrl}${getFileRoute(props.file?.url)}`)
-const downloadable = computed(() => (props.file as File & { state: StateKey})?.state === eState.uploaded)
+const downloadable = computed(() => (props.file as File & { state: StateKey })?.state === eState.uploaded)
 </script>
 
 <template>

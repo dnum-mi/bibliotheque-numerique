@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 const props = defineProps<{
   text: string
- }>()
+}>()
 
 const emit = defineEmits<{
-  'updateNewValue': [text: string],
+  updateNewValue: [text: string],
 }>()
 
 const newText = ref<string>('')

@@ -13,7 +13,7 @@ const validationSchema = toTypedSchema(z.object({
     .email('L’adresse courriel ne semble pas valide'),
 }))
 
-const { handleSubmit, handleReset } = useForm({
+const { handleSubmit } = useForm({
   validationSchema,
 })
 
@@ -22,7 +22,7 @@ const alertTitle = ref('')
 const alertDescription = ref('')
 const openAlert = ref(false)
 
-const onSubmit = handleSubmit(async (formValue : IResetPasswordInput) => {
+const onSubmit = handleSubmit(async (formValue: IResetPasswordInput) => {
   await apiClient.resetPassword(formValue)
   openAlert.value = true
   alertDescription.value = ASK_RESET_PWD_SUCCESS

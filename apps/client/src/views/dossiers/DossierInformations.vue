@@ -3,11 +3,14 @@ import type { TDossier } from '@biblio-num/shared'
 
 import { dateTimeToStringFr } from '@/utils'
 
-const props = withDefaults(defineProps<{
+const props = withDefaults(
+  defineProps<{
     datas?: TDossier | Record<string, never>
-  }>(), {
-  datas: () => ({}),
-})
+  }>(),
+  {
+    datas: () => ({}),
+  },
+)
 
 const prefecture = computed(() => props.datas.groupeInstructeur?.label.toUpperCase() || '')
 const depot = computed(() => dateTimeToStringFr(props.datas.dateDepot) || '')

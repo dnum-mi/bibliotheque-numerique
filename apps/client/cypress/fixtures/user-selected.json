@@ -7,11 +7,13 @@
     "password": "password",
     "role": {
       "label": "admin",
-      "options": { "1": {
-          "national":false,
+      "options": {
+        "1": {
+          "national": false,
           "prefecture": ["75", "95"]
-      }}
-    } 
+        }
+      }
+    }
   },
   "possibleRoles": ["admin", "instuctror"],
   "deletable": true,
@@ -28,9 +30,9 @@
           "editable": true
         },
         "prefectures": {
-          "value": [ "75", "93"],
-          "deletable": [ "75", "93" ],
-          "addable": ["75", "92" ]
+          "value": ["75", "93"],
+          "deletable": ["75", "93"],
+          "addable": ["75", "92"]
         }
       }
     },
@@ -46,12 +48,12 @@
           "editable": true
         },
         "prefectures": {
-          "value": [ "93", "92" ],
-          "deletable": [ "75", "40" ],
-          "addable": [ "75", "93"]
+          "value": ["93", "92"],
+          "deletable": ["75", "40"],
+          "addable": ["75", "93"]
         }
       }
-    }, 
+    },
     "4": {
       "id": 4,
       "checked": true,
@@ -100,9 +102,9 @@
           "editable": false
         },
         "prefectures": {
-          "value": [ "93", "92" ],
-          "deletable": [ "75", "40" ],
-          "addable": [ "75", "93"]
+          "value": ["93", "92"],
+          "deletable": ["75", "40"],
+          "addable": ["75", "93"]
         }
       }
     },
@@ -118,9 +120,9 @@
           "editable": true
         },
         "prefectures": {
-          "value": [ ],
-          "deletable": [ ],
-          "addable": [ ]
+          "value": [],
+          "deletable": [],
+          "addable": []
         }
       }
     },
@@ -154,9 +156,9 @@
           "editable": true
         },
         "prefectures": {
-          "value": ["75","93"],
-          "deletable": ["75","93"],
-          "addable": ["75","93"]
+          "value": ["75", "93"],
+          "deletable": ["75", "93"],
+          "addable": ["75", "93"]
         }
       }
     },
@@ -172,9 +174,9 @@
           "editable": true
         },
         "prefectures": {
-          "value": ["75","93"],
-          "deletable": ["75","93"],
-          "addable": ["75","93"]
+          "value": ["75", "93"],
+          "deletable": ["75", "93"],
+          "addable": ["75", "93"]
         }
       }
     }

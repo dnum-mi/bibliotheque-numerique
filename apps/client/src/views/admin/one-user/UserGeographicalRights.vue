@@ -2,7 +2,7 @@
 import type { PrefectureOptions, PrefectureKeys } from '@biblio-num/shared'
 import { listOfPrefectures } from '@biblio-num/shared'
 import type { DsfrTagProps } from '@gouvminint/vue-dsfr/types/components/DsfrTag/DsfrTag.vue'
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { LocalizationOptions, type LocalizationOptionsKeys } from './localization.enum'
 
 const props = defineProps<{
@@ -90,8 +90,6 @@ const removePrefecture = (pref: string) => {
 const addPrefecture = (pref: string) => {
   emit('update:addPrefecture', pref)
 }
-
-const newPrefecture = ref<string>('')
 </script>
 
 <template>

@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker/locale/fr'
 
-const getTypeOrganisme = () => { return faker.helpers.arrayElement(['FDD', 'FE', 'ARUP', 'FRUP']) }
+const getTypeOrganisme = () => faker.helpers.arrayElement(['FDD', 'FE', 'ARUP', 'FRUP'])
 const getChampsDescriptor = () => ({
   id: faker.datatype.string(29),
   type: 'text',
@@ -49,7 +49,7 @@ export const generateDemarche = () => ({
       revision.annotationDescriptors.push({
         id: faker.datatype.string(29),
         type: 'text',
-        label: "Type d'organisme",
+        label: 'Type d\'organisme',
         options: null,
         required: false,
         description: getTypeOrganisme(),

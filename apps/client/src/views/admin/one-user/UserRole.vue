@@ -30,7 +30,7 @@ const allRoleOptions: DsfrRadioButtonProps[] = [
 const roleOptions = computed<Array<DsfrRadioButtonProps & HTMLAttributes>>(() =>
   allRoleOptions.map((roleOption) => ({
     ...roleOption,
-    disabled: !selectedEditableUser.value?.possibleRoles.includes('' + roleOption.value),
+    disabled: !selectedEditableUser.value?.possibleRoles.includes(String(roleOption.value)),
   })),
 )
 

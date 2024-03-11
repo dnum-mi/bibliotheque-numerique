@@ -20,7 +20,6 @@ defineProps<DsfrButtonProps>()
 </template>
 
 <style scoped>
-
 .warning-button:enabled {
   color: var(--red-marianne-425-625);
   border: 1px solid var(--red-marianne-425-625) !important;

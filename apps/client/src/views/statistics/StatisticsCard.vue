@@ -7,9 +7,11 @@ import OrganismeBadge from '@/components/Badges/organisme/OrganismeBadge.vue'
 
 const props = defineProps<{
   filterId: number
-  displayInfo: ICustomFilter,
+  displayInfo: ICustomFilter
   lazyLoad?: boolean
 }>()
+
+const emit = defineEmits(['delete'])
 
 const card = ref<ICustomFilterStat>()
 const errorGetFilter = ref<string>()
@@ -18,7 +20,6 @@ const isFinancement = (title: string) => {
   return title.toLowerCase().includes('financement')
 }
 
-const emit = defineEmits(['delete'])
 const onDelete = () => {
   emit('delete', card.value?.customFilter)
 }

@@ -6,6 +6,7 @@ import {
   mapOrganismeFieldHeader,
   type OrganismeTypeKey,
 } from '@biblio-num/shared'
+
 const baseColDef: ColDef = {
   filter: 'agTextColumnFilter',
   menuTabs: ['filterMenuTab'],
@@ -32,10 +33,10 @@ export const listOrganismeColumnDef: ColDef[] = [
     filter: 'agSetColumnFilter',
     filterParams: {
       values: organismeTypes,
-      cellRenderer: ({ value }: { value: OrganismeTypeKey}) => dOrganismeTypeDictionary[value],
+      cellRenderer: ({ value }: { value: OrganismeTypeKey }) => dOrganismeTypeDictionary[value],
       suppressSelectAll: true,
     },
-    valueFormatter: ({ value }: { value: OrganismeTypeKey}) => dOrganismeTypeDictionary[value],
+    valueFormatter: ({ value }: { value: OrganismeTypeKey }) => dOrganismeTypeDictionary[value],
     menuTabs: ['filterMenuTab'],
     width: 150,
   },

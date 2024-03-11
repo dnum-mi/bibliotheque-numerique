@@ -35,7 +35,7 @@ describe('Sign in', () => {
     cy.url().should('eq', `${Cypress.config().baseUrl}/`)
 
     // Perte de connexion et se reconnecte, doit être redirigé vers la page désirée juste après la connexion
-    cy.intercept({ method: 'GET', url: '/api/users/me', middleware: true, times: 1 }, (req, res) => {
+    cy.intercept({ method: 'GET', url: '/api/users/me', middleware: true, times: 1 }, (req) => {
       req.reply({ statusCode: 401, body: { message: 'Unauthorized' } })
     }).as('getMyProfile')
     cy.visit('/3/dossiers')

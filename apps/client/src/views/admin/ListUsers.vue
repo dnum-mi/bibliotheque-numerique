@@ -1,4 +1,3 @@
-
 <script lang="ts" setup>
 import type { SelectionChangedEvent } from 'ag-grid-community'
 
@@ -10,7 +9,6 @@ import type { BNColDef } from '@/components/ag-grid/server-side/bn-col-def.inter
 import AgGridServerSide from '@/components/ag-grid/server-side/AgGridServerSide.vue'
 import { baseColDef } from '@/components/ag-grid/server-side/columndef-base'
 import RoleBadgesRenderer from '@/components/Badges/role/RoleBadgesRenderer.vue'
-// const props = defineProps<{ }>()
 
 const agGridComponent = ref()
 const router = useRouter()
@@ -106,7 +104,7 @@ const onSelectionChanged = (event: SelectionChangedEvent) => {
 </script>
 
 <template>
-  <ag-grid-server-side
+  <AgGridServerSide
     ref="agGridComponent"
     :column-defs="columnDefs"
     pre-condition

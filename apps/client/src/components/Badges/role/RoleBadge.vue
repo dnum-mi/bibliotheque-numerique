@@ -13,13 +13,11 @@ const dictionary: Record<RolesKeys | 'norole', string> = {
   instructor: 'instructeur',
   norole: 'aucun role',
 }
-
-const toto = { label: null, options: { 5: { national: true, prefectures: [] }, 37: { national: false, prefectures: ['D57', 'D75'] } } }
 </script>
 
 <template>
   <DsfrBadge
-    :class="`custom-` + (role || 'norole')?.toLowerCase()"
+    :class="`custom-${(role || 'norole')?.toLowerCase()}`"
     :label="dictionary[role || 'norole']"
     type="info"
     :small="small"
@@ -28,7 +26,6 @@ const toto = { label: null, options: { 5: { national: true, prefectures: [] }, 3
 </template>
 
 <style>
-
 .custom-sudo {
   --text-default-info: white;
   --background-contrast-info: #C94444B5;

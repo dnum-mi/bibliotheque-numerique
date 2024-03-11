@@ -63,13 +63,13 @@ export const useUserStore = defineStore('user', () => {
   }
 
   const listUsers = async (dto: IPaginationUser) => {
-    if (!hasAdminAccess.value) return
+    if (!hasAdminAccess.value) { return }
     return bnApiClient.listUsers(dto)
   }
 
   const loadUserById = async (id: number) => {
     selectedEditableUserLoading.value = true
-    if (!hasAdminAccess.value) return
+    if (!hasAdminAccess.value) { return }
     selectedEditableUser.value = await bnApiClient.getUserRoleById(id)
     keySelectUser.value = getRandomId('selectedUser-selected')
     selectedEditableUserLoading.value = false
@@ -79,7 +79,7 @@ export const useUserStore = defineStore('user', () => {
   const updateRole = async (role: RolesKeys) => {
     selectedEditableUserLoading.value = true
     const id = selectedEditableUser.value?.originalUser.id
-    if (!id) throw new Error('L\'Utilisateur n\'a pas été selectionné.')
+    if (!id) { throw new Error('L\'Utilisateur n\'a pas été selectionné.') }
     await bnApiClient.updateUserRole(id, role)
     await loadUserById(id)
   }
@@ -87,7 +87,7 @@ export const useUserStore = defineStore('user', () => {
   const updateUserOneRoleOption = async (demarchesRoles: IUpdateOneRoleOption, reloadUser: boolean): Promise<void> => {
     selectedEditableUserLoading.value = true
     const id = selectedEditableUser.value?.originalUser.id
-    if (!id) throw new Error('L\'Utilisateur n\'a pas été selectionné.')
+    if (!id) { throw new Error('L\'Utilisateur n\'a pas été selectionné.') }
     await bnApiClient.updateUserDemarchesRole(id, demarchesRoles)
     if (reloadUser) {
       await loadUserById(id)
@@ -97,7 +97,7 @@ export const useUserStore = defineStore('user', () => {
   const removeRole = async () => {
     selectedEditableUserLoading.value = true
     const id = selectedEditableUser.value?.originalUser.id
-    if (!id) throw new Error('L\'Utilisateur n\'a pas été selectionné.')
+    if (!id) { throw new Error('L\'Utilisateur n\'a pas été selectionné.') }
     await bnApiClient.removeRole(id)
     await loadUserById(id)
   }

@@ -1,3 +1,5 @@
+/* eslint curly: 'off', 'antfu/if-newline': 'off' */
+
 // return true if two object are deeply similar
 // will consider undefined and null as equal
 export const deepAlmostEqual = (obj1: unknown, obj2: unknown): boolean => {
@@ -14,7 +16,7 @@ export const deepAlmostEqual = (obj1: unknown, obj2: unknown): boolean => {
   if (keys1.length !== keys2.length) return false
   for (const key of keys1) {
     if (!keys2.includes(key)) return false
-    // @ts-ignore Use dynamic key of unknown object
+    // @ts-expect-error Use dynamic key of unknown object
     if (!deepAlmostEqual(obj1[key], obj2[key])) return false
   }
   return true

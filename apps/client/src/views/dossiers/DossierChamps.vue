@@ -4,7 +4,7 @@ import type { Champ } from '@biblio-num/shared'
 import DossierChamp from './DossierChamp.vue'
 
 defineProps<{
-    champs?: Champ[]
+  champs?: Champ[]
 }>()
 </script>
 

@@ -5,7 +5,7 @@ import { RoleName } from '@/shared/types'
 
 export const createRandomUserForm = (): ICredentialsInput => ({
   email: faker.internet.email(),
-  password: faker.internet.password(15) + '1Ab*',
+  password: `${faker.internet.password({ length: 15 })}1Ab*`,
 })
 
 export const createRandomUser = (id?: number): User => ({

@@ -1,10 +1,10 @@
 {
-  "id":2,
-  "email":"instructor@example.com",
+  "id": 2,
+  "email": "instructor@example.com",
   "lastname": "nomInstructor",
   "firstname": "pernomInstructor",
   "role": {
     "label": "instructor",
     "options": []
-    } 
   }
+}

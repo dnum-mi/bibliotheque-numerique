@@ -9,11 +9,11 @@ type LabelData = {
 type LabelsData = LabelData[]
 
 const props = withDefaults(defineProps<{
-    title: string,
-    prefixId: string,
-    datas?: Partial<IDemarche['dsDataJson']>,
-    labels?: LabelsData,
-  }>(), {
+  title: string,
+  prefixId: string,
+  datas?: Partial<IDemarche['dsDataJson']>,
+  labels?: LabelsData,
+}>(), {
   datas: () => ({}),
   labels: () => [],
 })
@@ -22,10 +22,10 @@ const dataCy = props.title ? `cy-${props.title}` : ''
 
 type DataKey = keyof typeof props.datas
 interface IField {
-    id: string,
-    label: string,
-    value: string,
-  }
+  id: string,
+  label: string,
+  value: string,
+}
 const fields = computed<IField[]>(() => {
   return props.labels.map((labelElt: LabelData) => {
     const value = props.datas[labelElt?.value as DataKey]
@@ -47,7 +47,7 @@ const fields = computed<IField[]>(() => {
   >
     <div class="fr-grid-row">
       <div
-        v-for="{ id, label, value} in fields"
+        v-for="{ id, label, value } in fields"
         :key="id"
         class="fr-col-6 fr-grid-row"
       >

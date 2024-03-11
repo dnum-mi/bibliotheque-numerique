@@ -16,6 +16,7 @@ onMounted(async () => {
   }
 })
 </script>
+
 <template>
   <LayoutAccueil>
     <div class="fr-container fr-m-5w">

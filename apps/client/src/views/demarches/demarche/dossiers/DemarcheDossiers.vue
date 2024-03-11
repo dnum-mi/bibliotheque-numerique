@@ -65,6 +65,13 @@ const hasNoRepeatableField = computed(() => {
   return !demarcheStore.currentDemarche?.mappingColumns.some((m) => 'children' in m)
 })
 
+const paginationDto = ref()
+watch(paginationDto, async (newValue, oldValue) => {
+  if (!oldValue && newValue && route.query.customDisplayId) {
+    selectFilter(Number(route.query.customDisplayId))
+  }
+})
+
 const groupByDossier = ref(hasNoRepeatableField.value)
 
 watchEffect(() => {
@@ -143,7 +150,9 @@ watch(demarche, async (newValue) => {
 })
 
 watch(fetching, () => {
-  if (!fetching.value) agGridComponent.value?.refresh()
+  if (!fetching.value) {
+    agGridComponent.value?.refresh()
+  }
 })
 
 const resetAggState = () => {
@@ -314,12 +323,6 @@ const toggleView = useDebounceFn((isActive: boolean) => {
   agGridComponent.value?.refresh()
 })
 
-const paginationDto = ref()
-watch(paginationDto, async (newValue, oldValue) => {
-  if (!oldValue && newValue && route.query.customDisplayId) {
-    selectFilter(Number(route.query.customDisplayId))
-  }
-})
 const apiCall = (dto: IPagination<unknown>) => {
   return demarcheStore.searchCurrentDemarcheDossiers(groupByDossier.value, dto)
 }
@@ -329,7 +332,7 @@ const apiCall = (dto: IPagination<unknown>) => {
   <div :style="{ paddingBottom: '2rem' }">
     <div class="flex justify-end m-2">
       <DsfrButton
-        :label="'Télécharger'"
+        label="Télécharger"
         icon="ri-file-download-fill"
         small
         @click="download"

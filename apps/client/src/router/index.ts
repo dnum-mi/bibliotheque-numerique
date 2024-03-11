@@ -49,7 +49,7 @@ const router = createRouter({
   routes,
 })
 
-router.beforeEach(async (to, from) => {
+router.beforeEach(async (to) => {
   // Cf. https://github.com/vueuse/head pour des transformations avancées de Head
   const specificTitle = to.meta.title ? `${to.meta.title} - ` : ''
   document.title = `${specificTitle}${MAIN_TITLE}`
@@ -63,16 +63,17 @@ router.beforeEach(async (to, from) => {
   }
 
   const role = userStore.currentUser?.role
-  if (canAccessByRoleGuard(
-          to.meta?.roleLevel as RolesKeys | undefined,
-          role?.label as RolesKeys | undefined,
-  ) &&
-    canAccessByDemarcheGuard(
+  if (
+    canAccessByRoleGuard(
+      to.meta?.roleLevel as RolesKeys | undefined,
+      role?.label as RolesKeys | undefined,
+    )
+    && canAccessByDemarcheGuard(
       to.meta?.needsDemarchesId as boolean | undefined,
       to.params?.demarcheId as string | undefined,
       role,
     )
-  ) return true
+  ) { return true }
   return { name: routeNames.PROFILE }
 })
 

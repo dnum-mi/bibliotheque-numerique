@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { type SelectionChangedEvent } from 'ag-grid-community'
+import type { SelectionChangedEvent } from 'ag-grid-community'
 
 import type { IPagination, IOrganisme } from '@biblio-num/shared'
 
@@ -41,7 +41,7 @@ const download = () => {
   >
     <div class="flex justify-end m-2">
       <DsfrButton
-        :label="'Télécharger'"
+        label="Télécharger"
         icon="ri-file-download-fill"
         small
         @click="download"
@@ -49,7 +49,7 @@ const download = () => {
     </div>
 
     <div class="">
-      <ag-grid-server-side
+      <AgGridServerSide
         ref="agGridComponent"
         v-model:pagination-dto="paginationDto"
         :column-defs="listOrganismeColumnDef"

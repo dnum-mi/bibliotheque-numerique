@@ -1,12 +1,10 @@
 import { LOCALE_FOR_DATE_TIME } from '@/config'
 import '@gouvminint/vue-dsfr/styles'
 import '@/main.css'
-import { createPinia } from 'pinia'
 
 import DemarcheInformations from './DemarcheInformations.vue'
 import { generateDemarche } from '@/views/__tests__/demarches'
 import { useDemarcheStore } from '@/stores'
-import VueDsfr from '@gouvminint/vue-dsfr'
 
 describe('<DemarcheDescription />', () => {
   it('renders with props', () => {

@@ -1,26 +1,26 @@
 import type { ISetFilterParams, ValueFormatterFunc, ValueFormatterParams } from 'ag-grid-community'
 import type { Component } from 'vue'
 
-export type TIconFunction = (data: unknown) => string;
+export type TIconFunction = (data: unknown) => string
 
 export type Action = {
-  icon: string | TIconFunction;
-  condition?: (row: unknown) => boolean;
+  icon: string | TIconFunction
+  condition?: (row: unknown) => boolean
 }
 
 export type HeaderDataTable = {
-  text?: string,
-  action?: Action;
-  value?: string,
-  sortable?: boolean,
-  type?: string,
-  width?: number,
-  hide?: boolean,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  parseFn?: (value: unknown) => string,
-  filter?: string | ((value: unknown) => boolean),
-  renderer?: Component | string,
-  valueFormatter?: (params: ValueFormatterParams) => string | ValueFormatterFunc,
+  text?: string
+  action?: Action
+  value?: string
+  sortable?: boolean
+  type?: string
+  width?: number
+  hide?: boolean
+
+  parseFn?: (value: unknown) => string
+  filter?: string | ((value: unknown) => boolean)
+  renderer?: Component | string
+  valueFormatter?: (params: ValueFormatterParams) => string | ValueFormatterFunc
   filterParams?: ISetFilterParams
 }
 

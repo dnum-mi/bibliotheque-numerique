@@ -9,7 +9,7 @@ const cellValues = computed(() => {
 <template>
   <div>
     <span
-      v-for="(cellValue,index) in cellValues"
+      v-for="(cellValue, index) in cellValues"
       :key="index"
       class="ag-row"
       style="display: block; background-color: transparent;"

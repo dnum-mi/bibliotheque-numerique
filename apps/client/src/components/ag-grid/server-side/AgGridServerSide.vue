@@ -21,14 +21,12 @@ import {
 import type { BNColDef } from '@/components/ag-grid/server-side/bn-col-def.interface'
 import type { FilterModel } from '@/components/ag-grid/server-side/filter-model.interface'
 
-const pageSize = 20
-
 const props = withDefaults(
   defineProps<{
     paginationDto?: IPagination<T>;
     columnDefs: BNColDef[];
     apiCall: ApiCall<T>;
-    onSelectionChanged:($event: SelectionChangedEvent) => void;
+    onSelectionChanged: ($event: SelectionChangedEvent) => void;
     loading?: boolean;
     preCondition?: boolean;
     specificGridOption?: Partial<GridOptions>;
@@ -50,6 +48,8 @@ const emit = defineEmits<{
   'update:paginationDto': [p: IPagination<T>],
 }>()
 
+const pageSize = 20
+
 const gridApi = ref<GridApi | undefined>()
 
 const refresh = () => {
@@ -59,7 +59,7 @@ const refresh = () => {
 }
 
 const hasfilterEnumUnselectedAll = (filterModel: Record<string, FilterModel>) => {
-  const enumIds: (string| undefined)[] = props.columnDefs.filter(colDef =>
+  const enumIds: (string | undefined)[] = props.columnDefs.filter(colDef =>
     colDef.fieldType === 'enum',
   ).map(colDef => colDef.field)
 
@@ -68,10 +68,10 @@ const hasfilterEnumUnselectedAll = (filterModel: Record<string, FilterModel>) =>
   }
   for (const emunId of enumIds) {
     const filter = Object.entries(filterModel)
-      .find(([key, value]) => key === emunId &&
-                              value.filterType === 'set' &&
-                              !(value as SetFilterModel).values.length)
-    if (filter) return true
+      .find(([key, value]) => key === emunId
+      && value.filterType === 'set'
+      && !(value as SetFilterModel).values.length)
+    if (filter) { return true }
   }
   return false
 }
@@ -84,7 +84,7 @@ const getRows = async (params: IServerSideGetRowsParams) => {
     return
   }
 
-  if (props.loading) return undefined
+  if (props.loading) { return undefined }
   if (props.preCondition) {
     const dto: IPagination<T> = {
       sorts: fromAggToBackendSort(params.request.sortModel),

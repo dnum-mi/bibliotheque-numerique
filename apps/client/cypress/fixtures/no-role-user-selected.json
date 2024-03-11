@@ -8,7 +8,7 @@
     "role": {
       "label": "",
       "options": {}
-    } 
+    }
   },
   "possibleRoles": ["superadmin", "admin", "instructor"],
   "deletable": true,
@@ -25,9 +25,9 @@
           "editable": true
         },
         "prefectures": {
-          "value": [ ],
-          "deletable": [ "75", "93" ],
-          "addable": ["75", "92" ]
+          "value": [],
+          "deletable": ["75", "93"],
+          "addable": ["75", "92"]
         }
       }
     },
@@ -43,12 +43,12 @@
           "editable": true
         },
         "prefectures": {
-          "value": [  ],
-          "deletable": [ "75", "40" ],
-          "addable": [ "75", "93"]
+          "value": [],
+          "deletable": ["75", "40"],
+          "addable": ["75", "93"]
         }
       }
-    }, 
+    },
     "4": {
       "id": 4,
       "checked": false,
@@ -97,9 +97,9 @@
           "editable": false
         },
         "prefectures": {
-          "value": [ ],
-          "deletable": [ "75", "40" ],
-          "addable": [ "75", "93"]
+          "value": [],
+          "deletable": ["75", "40"],
+          "addable": ["75", "93"]
         }
       }
     },
@@ -115,9 +115,9 @@
           "editable": true
         },
         "prefectures": {
-          "value": [ ],
-          "deletable": [ ],
-          "addable": [ ]
+          "value": [],
+          "deletable": [],
+          "addable": []
         }
       }
     },
@@ -152,8 +152,8 @@
         },
         "prefectures": {
           "value": [],
-          "deletable": ["75","93"],
-          "addable": ["75","93"]
+          "deletable": ["75", "93"],
+          "addable": ["75", "93"]
         }
       }
     },
@@ -170,8 +170,8 @@
         },
         "prefectures": {
           "value": [],
-          "deletable": ["75","93"],
-          "addable": ["75","93"]
+          "deletable": ["75", "93"],
+          "addable": ["75", "93"]
         }
       }
     }

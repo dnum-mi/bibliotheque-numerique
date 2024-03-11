@@ -6,6 +6,11 @@ import apiClient from '@/api/api-client'
 import useToaster from '@/composables/use-toaster'
 import { routeNames } from '@/router/route-names'
 
+const props = defineProps<{
+  role: IRole;
+  organismeId: number;
+}>()
+
 const router = useRouter()
 
 type Column = {
@@ -48,11 +53,6 @@ const columns: Column[] = [
 
 const headers = columns.filter(({ hidden }) => !hidden).map(({ headerName }) => headerName)
 
-const props = defineProps<{
-  role: IRole;
-  organismeId: number;
-}>()
-
 const rowsdata = ref<ILeanDossierOutput[]>([])
 
 const toaster = useToaster()
@@ -72,7 +72,9 @@ const updateListeDossiers = async () => {
       if (canAccessDemarche(d.demarcheId, props.role)) {
         row.cursor = 'pointer'
         row.title = 'Cliquez pour accéder à ce dossier'
-        row.onClick = () => { router.push({ name: routeNames.DOSSIERS, params: { id: d.id } }) }
+        row.onClick = () => {
+          router.push({ name: routeNames.DOSSIERS, params: { id: d.id } })
+        }
       } else {
         row.cursor = 'not-allowed'
         row.title = 'Vous n’avez pas accès à cette démarche, ce dossier est donc inaccessible'

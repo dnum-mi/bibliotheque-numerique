@@ -11,13 +11,14 @@ import DemarcheConfigurations from '@/views/demarches/demarche/configuration/Dem
 import LayoutList from '@/components/Layout/LayoutList.vue'
 import DemarcheDossiers from '@/views/demarches/demarche/dossiers/DemarcheDossiers.vue'
 
+const props = defineProps<{ demarcheId: string, customDisplayId?: string }>()
+
 const route = useRoute()
 const router = useRouter()
 const demarcheStore = useDemarcheStore()
 const userStore = useUserStore()
 
 const demarche = computed<IDemarche | undefined>(() => demarcheStore.currentDemarche)
-const props = defineProps<{ demarcheId: string, customDisplayId?: string }>()
 
 onMounted(async () => {
   if (props.demarcheId) {
@@ -26,7 +27,7 @@ onMounted(async () => {
 })
 
 //#region Tab management */
-const tabTitles = computed<(DsfrTabItemProps & { title: string })[]>(() => [ // eslint-disable-line no-extra-parens
+const tabTitles = computed<(DsfrTabItemProps & { title: string })[]>(() => [
   {
     panelId: 'pan-1',
     tabId: 'tab-1',
@@ -43,7 +44,7 @@ const selectedTabIndex = ref(0)
 
 function selectTab (idx: number) {
   selectedTabIndex.value = idx
-  router.push({ ...route, hash: '#' + tabTitles.value[idx].title })
+  router.push({ ...route, hash: `#${tabTitles.value[idx].title}` })
 }
 
 onMounted(() => {

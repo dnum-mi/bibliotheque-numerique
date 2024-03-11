@@ -12,10 +12,10 @@ const labelKeys = {
 type keyOfLabelKeys = keyof typeof labelKeys
 type keyOfService = keyof typeof service.value
 interface IField {
-    id: string,
-    label: string,
-    value: string,
-  }
+  id: string,
+  label: string,
+  value: string,
+}
 const fields = computed<IField[]>(() => {
   return Object.keys(labelKeys).map<IField>((key) => ({
     id: `demarche-servie-${key}`,
@@ -24,7 +24,6 @@ const fields = computed<IField[]>(() => {
   }),
   )
 })
-
 </script>
 
 <template>
@@ -37,7 +36,7 @@ const fields = computed<IField[]>(() => {
     >
       <div class="fr-grid-row">
         <div
-          v-for="{ id, label, value} in fields"
+          v-for="{ id, label, value } in fields"
           :key="id"
           class="fr-col-6 "
         >

@@ -32,23 +32,23 @@ export const useConfigurationStore = defineStore('Configuration', () => {
     return bnConfigurations.value
   }
 
-  const addDemarches = async (idDs: number|null, identification?: IdentificationDemarcheKeys | null, types?: OrganismeTypeKey[]) => {
-    if (!idDs) throw new Error('id DS non saisi')
+  const addDemarches = async (idDs: number | null, identification?: IdentificationDemarcheKeys | null, types?: OrganismeTypeKey[]) => {
+    if (!idDs) { throw new Error('id DS non saisi') }
 
     const dto: ICreateDemarche = {
       idDs,
     } as ICreateDemarche
-    if (identification) dto.identification = identification
-    if (types) dto.types = types
+    if (identification) { dto.identification = identification }
+    if (types) { dto.types = types }
     fetching.value = true
     await createDemarche(dto).finally(() => { fetching.value = false })
     await loadDemarches().finally(() => { fetching.value = false })
   }
 
   const addBnConfigurations = async (keyName: string, stringValue: string, valueType: string) => {
-    if (!keyName) throw new Error('Nom de la configuration non saisi')
-    if (!stringValue) throw new Error('Valeur de la configuration non saisi')
-    if (!valueType) throw new Error('Type de valeur non saisi')
+    if (!keyName) { throw new Error('Nom de la configuration non saisi') }
+    if (!stringValue) { throw new Error('Valeur de la configuration non saisi') }
+    if (!valueType) { throw new Error('Type de valeur non saisi') }
     const dto: ICreateBnConfiguration = {
       keyName,
       stringValue,
@@ -59,14 +59,14 @@ export const useConfigurationStore = defineStore('Configuration', () => {
     await loadBnConfigurations().finally(() => { fetchingBnConfigurations.value = false })
   }
 
-  const synchronizeOneDemarche = async (demarcheId: number|null) => {
-    if (!demarcheId) throw new Error('id non saisi')
+  const synchronizeOneDemarche = async (demarcheId: number | null) => {
+    if (!demarcheId) { throw new Error('id non saisi') }
     fetching.value = true
     await putSynchronizeOneDemarche(demarcheId).finally(() => { fetching.value = false })
   }
 
-  const updateDemarche = async (idDs: number|null, identification?: IdentificationDemarcheKeys | null, types?: OrganismeTypeKey[]) => {
-    if (!idDs) throw new Error('id DS non saisi')
+  const updateDemarche = async (idDs: number | null, identification?: IdentificationDemarcheKeys | null, types?: OrganismeTypeKey[]) => {
+    if (!idDs) { throw new Error('id DS non saisi') }
     const dto: IUpdateDemarche = {
       types,
     }
@@ -74,14 +74,14 @@ export const useConfigurationStore = defineStore('Configuration', () => {
       dto.identification = identification
     }
     const demarche = demarches.value.find((d) => d.dsId === idDs)
-    if (!demarche) throw new Error(`Démarche ${idDs} non trouvée`)
+    if (!demarche) { throw new Error(`Démarche ${idDs} non trouvée`) }
     fetching.value = true
     await patchDemarche(demarche.id, dto).finally(() => { fetching.value = false })
     await loadDemarches().finally(() => { fetching.value = false })
   }
 
-  const updateBnConfigurations = async (id: number|undefined, keyName: string, stringValue: string, valueType: string) => {
-    if (id === undefined) throw new Error('id non saisi')
+  const updateBnConfigurations = async (id: number | undefined, keyName: string, stringValue: string, valueType: string) => {
+    if (id === undefined) { throw new Error('id non saisi') }
     const dto: IUpdateBnConfiguration = {
       keyName,
       stringValue,

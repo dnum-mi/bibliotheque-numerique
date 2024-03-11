@@ -8,11 +8,14 @@ import DossierDemandeurPhysique from './DossierDemandeurPhysique.vue'
 
 type PopulatedDossier = TDossier & { demandeur: Demandeur & { __typename: string } } | Record<string, never>
 
-const props = withDefaults(defineProps<{
+const props = withDefaults(
+  defineProps<{
     datas?: PopulatedDossier
-  }>(), {
-  datas: () => ({}),
-})
+  }>(),
+  {
+    datas: () => ({}),
+  },
+)
 
 const isDemandeurMorale = computed(() => isPersonneMorale((props.datas?.demandeur)?.__typename))
 const isDemandeurPhysique = computed(() => isPersonnePhysique((props.datas?.demandeur)?.__typename))
