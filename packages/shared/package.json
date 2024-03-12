@@ -6,16 +6,16 @@
   "module": "./dist/index.esm.js",
   "types": "./types",
   "scripts": {
-    "clean:dist": "rimraf dist types",
+    "clean:dist": "rimraf dist types node_modules/tmp/.tsbuildinfo",
     "dev": "nodemon --exec 'tsup'",
     "build": "run-s clean:dist build:only",
     "build:only": "run-s build:tsup build:types",
     "build:tsup": "tsup",
-    "build:types": "tsc --emitDeclarationOnly --declaration"
+    "build:types": "tsc --emitDeclarationOnly --declaration --outDir types"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.6.4",
-    "@dnum-mi/ds-api-client": "^1.7.3",
+    "@dnum-mi/ds-api-client": "^1.7.8",
     "@microsoft/api-extractor": "7.39.4",
     "eslint": "npm:eslint-ts-patch@^8.56.0-0",
     "nodemon": "^3.0.1",

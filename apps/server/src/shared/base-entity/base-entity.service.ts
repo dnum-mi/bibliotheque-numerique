@@ -159,7 +159,7 @@ export abstract class BaseEntityService<T extends BaseEntity = BaseEntity> {
       .updateEntity(true)
       .execute()
 
-    return result.raw
+    return result.raw[0]
   }
 
   async remove(id: number): Promise<DeleteResult>
