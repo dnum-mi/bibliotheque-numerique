@@ -72,8 +72,7 @@ export class DossierSynchroniseFileService {
           )
           const pjc = field.rawJson as PieceJustificativeChamp
           const files = pjc.files?.length ? pjc.files : [pjc.file]
-          return files
-            .filter((f) => !!f)
+          return files?.filter((f) => !!f)
             .map((f: TFile, i: number) => {
               return this._addSyncFileJob(
                 {
@@ -102,8 +101,8 @@ export class DossierSynchroniseFileService {
     this.logger.verbose('synchroniseMessages')
     await Promise.all(
       dossier.messages
-        .filter((message) => message.attachments?.length || message.attachment)
-        .map((message) => [...(message.attachments || []), message.attachment].map((a: TFile, index: number) =>
+        .filter((message) => message.attachments?.length)
+        .map((message) => message.attachments.map((a: TFile, index: number) =>
           this._addSyncFileJob(
             {
               dossierId,
@@ -114,10 +113,9 @@ export class DossierSynchroniseFileService {
               originalLabel: a.filename,
             },
             dossier.number,
-          ),
+          ))
+          .flat(),
         ))
-        .flat(),
-    )
   }
 
   private async synchroniseAttestation(
