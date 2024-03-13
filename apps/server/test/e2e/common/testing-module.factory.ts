@@ -18,6 +18,13 @@ import { getAnyCookie } from './get-any-cookie'
 import { XlsxService } from '@/shared/modules/xlsx/xlsx.service'
 import { S3Service } from '@/shared/modules/s3/s3.service'
 import { s3ServiceMock } from '../../mock/s3-service/s3-service.mock'
+import {
+  QueueName,
+  QueueNameKeys,
+} from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
+import { Queue } from 'bull'
+import { WorkerSyncModule } from '@/apps/worker-sync/worker-sync.module'
+import { WorkerFileModule } from '@/apps/worker-file/worker-file.module'
 
 export type Cookies = Record<RolesKeys | 'norole', string>
 
@@ -25,14 +32,23 @@ export class TestingModuleFactory {
   app: INestApplication
   mailerService = mailerServiceMock
   _cookies: Cookies
+  _queues: Record<QueueNameKeys, Queue>
 
   readonly emailInstructor: string = 'instructor1@localhost.com'
 
-  get cookies (): Cookies {
+  get cookies(): Cookies {
     return this._cookies
   }
 
-  private async _setCookies (): Promise<void> {
+  get syncQueue(): Queue {
+    return this._queues[QueueName.sync]
+  }
+
+  get fileQueue(): Queue {
+    return this._queues[QueueName.file]
+  }
+
+  private async _setCookies(): Promise<void> {
     this._cookies = {
       sudo: await getAnyCookie(this.app, 'sudo@localhost.com'),
       superadmin: await getAnyCookie(this.app, 'superadmin@localhost.com'),
@@ -42,9 +58,13 @@ export class TestingModuleFactory {
     } as Cookies
   }
 
-  async init (): Promise<void> {
+  async init(): Promise<void> {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [ApiModule],
+      imports: [
+        ApiModule,
+        WorkerSyncModule,
+        WorkerFileModule,
+      ],
     })
       .overrideProvider(LoggerService)
       .useValue(loggerServiceMock)
@@ -66,5 +86,9 @@ export class TestingModuleFactory {
     await configMain(this.app)
     await this.app.init()
     await this._setCookies()
+    this._queues = {
+      [QueueName.file]: this.app.get<Queue>(`BullQueue_${QueueName.file}`),
+      [QueueName.sync]: this.app.get<Queue>(`BullQueue_${QueueName.sync}`),
+    }
   }
 }

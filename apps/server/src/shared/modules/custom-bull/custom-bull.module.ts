@@ -12,6 +12,7 @@ import { BullModule, SharedBullAsyncConfiguration } from '@nestjs/bull'
       useFactory: async (configService: ConfigService) => ({
         redis: {
           host: configService.get('redis.host'),
+          database: configService.get('redis').index,
           password: configService.get('redis.password'),
           port: configService.get('redis.port'),
           maxRetriesPerRequest: configService.get('redis.maxRetriesPerRequest'),
