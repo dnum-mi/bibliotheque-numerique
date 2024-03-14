@@ -12,6 +12,7 @@ import {
 } from '@biblio-num/shared'
 import { Dossier } from './dossier.entity'
 import { CustomChamp } from '@dnum-mi/ds-api-client'
+import { FieldCodeKey } from '@/modules/dossiers/objects/constante/field-code.enum'
 
 export const fieldUniqueFields = ['dossierId', 'sourceId', 'parentRowIndex']
 
@@ -103,4 +104,12 @@ export class Field extends BaseEntity {
 
   @Column()
   dossierId: number
+
+  // we don't put enum in postgres to not run migration everytime we add a code. It's only a string
+  @Column({
+    type: 'varchar',
+    nullable: true,
+    default: null,
+  })
+  code: FieldCodeKey | null
 }

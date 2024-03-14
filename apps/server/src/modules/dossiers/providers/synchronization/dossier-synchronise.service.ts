@@ -23,7 +23,8 @@ import {
 import {
   DossierSynchroniseOrganismeService,
 } from '@/modules/dossiers/providers/synchronization/organisme/dossier-synchronise-organisme.service'
-import { FieldWithMappingColumn } from '@/modules/dossiers/objects/types/field-with-mapping.column'
+import { Field } from '@/modules/dossiers/objects/entities/field.entity'
+import { FieldCodeKey } from '@/modules/dossiers/objects/constante/field-code.enum'
 
 @Injectable()
 export class DossierSynchroniseService extends BaseEntityService<Dossier> {
@@ -93,7 +94,7 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
     this.logger.verbose('synchroniseOneDossier')
     const prefecture = this._findPrefecture(jsonDossier)
     const id = await this._upsertDossier(jsonDossier, demarche.id, prefecture)
-    const fields: FieldWithMappingColumn[] = await this.fieldService.overwriteFieldsFromDataJson(
+    const fields: Field[] = await this.fieldService.overwriteFieldsFromDataJson(
       { ...jsonDossier, prefecture }, // TODO: find a better way for prefecture
       id,
       demarche.mappingColumns,
@@ -106,7 +107,18 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
     if (organismeId) {
       await this.repo.update({ id }, { organisme: { id: organismeId } })
     }
-    await this.fileSynchroniseService.synchroniseFiles(fields, jsonDossier, id, organismeId)
+    // we need different precise values of dossier (corresponding to codes) to compute files labels.
+    // This hash will be used to find it easily
+    const fieldCodeHash = Object.fromEntries(
+      fields.filter((f) => !!f.code).map((f) => [f.code, f]),
+    ) as Record<FieldCodeKey, Field>
+    await this.fileSynchroniseService.synchroniseFiles(
+      fields,
+      fieldCodeHash,
+      jsonDossier,
+      id,
+      organismeId,
+    )
     await this._FESpecificity(id, demarche.identification)
   }
 }

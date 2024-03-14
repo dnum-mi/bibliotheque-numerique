@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import {
-  CustomChamp,
   DossierWithCustomChamp as TDossier,
   File as TFile,
   PieceJustificativeChamp,
@@ -17,7 +16,8 @@ import { FileService } from '@/modules/files/providers/file.service'
 import { UpsertDsFileDto } from '@/modules/files/objects/dto/input/upsert-ds-file.dto'
 import { isNumber } from 'class-validator'
 import { FieldService } from '@/modules/dossiers/providers/field.service'
-import { FieldWithMappingColumn } from '@/modules/dossiers/objects/types/field-with-mapping.column'
+import { Field } from '@/modules/dossiers/objects/entities/field.entity'
+import { FieldCodeKey } from '@/modules/dossiers/objects/constante/field-code.enum'
 
 @Injectable()
 export class DossierSynchroniseFileService {
@@ -34,6 +34,7 @@ export class DossierSynchroniseFileService {
     payload: UpsertDsFileDto,
     dsDossierId: number,
     fieldId?: number,
+    parentSourceId?: string,
   ): Promise<void> {
     this.logger.verbose('_addSyncFileJob')
     this.logger.debug(
@@ -49,43 +50,41 @@ export class DossierSynchroniseFileService {
       file,
       dsDossierId,
       fieldId,
+      parentSourceId,
     }
     await this.fileQueue.add(eJobName.UploadDsFile, jobPayload)
   }
 
   private async synchroniseAllChamps(
-    fields: FieldWithMappingColumn[],
-    dsDossierId: number,
+    fields: Field[],
+    fieldCodeHash: Record<FieldCodeKey, Field>,
+    dsDossier: TDossier,
     organismeId: number,
   ): Promise<void> {
     this.logger.verbose('synchroniseAllChamps')
     await Promise.all(
       fields
         .filter((field) => field.type === FieldType.file)
-        .map((field: FieldWithMappingColumn) => {
-          const tag = FileService.getTagFromDescription(
-            (field.rawJson as CustomChamp).champDescriptor.description,
-          )
-          // if the demarche has been updated, we look for a tag in a more recent revision
-          const tag2 = FileService.getTagFromDescription(
-            field.mappingColumn.originalDescription,
-          )
+        .map((field: Field) => {
+          const tagAndLabel = FileService.computeLabelAndTag(field, fieldCodeHash, dsDossier)
           const pjc = field.rawJson as PieceJustificativeChamp
+          const parentField = field.parentId && fields.filter(f => f.id === field.parentId)
           const files = pjc.files?.length ? pjc.files : [pjc.file]
           return files?.filter((f) => !!f)
             .map((f: TFile, i: number) => {
               return this._addSyncFileJob(
                 {
+                  ...tagAndLabel,
                   dossierId: field.dossierId,
-                  sourceStringId: field.sourceId,
+                  sourceStringId: pjc.id, // TODO: why not field.sourceId ?
                   organismeId,
-                  tag: tag ?? tag2,
                   sourceIndex: i,
                   sourceLabel: eFileDsSourceLabel['ds-champ'],
                   originalLabel: f.filename,
                 },
-                dsDossierId,
+                dsDossier.number,
                 field.id,
+                parentField?.[0]?.sourceId,
               )
             })
         })
@@ -137,17 +136,19 @@ export class DossierSynchroniseFileService {
   }
 
   public async synchroniseFiles(
-    fields: FieldWithMappingColumn[],
+    fields: Field[],
+    fieldCodeHash: Record<FieldCodeKey, Field>,
     dossier: TDossier,
     dossierId: number,
     organismeId?: number,
   ): Promise<void> {
     this.logger.verbose('synchroniseFiles')
-    const organsimeIdForAcceptedDossier = dossier.state === DossierState.Accepte ? organismeId : undefined
+    const organismeIdForAcceptedDossier = dossier.state === DossierState.Accepte ? organismeId : undefined
+    const flatFields = fields.flatMap(f => [f, ...(f.children || [])])
     await Promise.all([
-      this.synchroniseAllChamps(fields, dossier.number, organsimeIdForAcceptedDossier),
-      this.synchroniseMessages(dossier, dossierId, organsimeIdForAcceptedDossier),
-      this.synchroniseAttestation(dossier, dossierId, organsimeIdForAcceptedDossier),
+      this.synchroniseAllChamps(flatFields, fieldCodeHash, dossier, organismeIdForAcceptedDossier),
+      this.synchroniseMessages(dossier, dossierId, organismeIdForAcceptedDossier),
+      this.synchroniseAttestation(dossier, dossierId, organismeIdForAcceptedDossier),
     ])
   }
 }

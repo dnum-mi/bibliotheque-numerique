@@ -31,6 +31,7 @@ export type SyncOneRnaOrganismeJobPayload = SyncOneOrganismeJobPayload & {
 export type UploadDsFileJobPayload = {
   dsDossierId: number,
   fieldId?: number,
+  parentSourceId?: string,
   file: File
 }
 

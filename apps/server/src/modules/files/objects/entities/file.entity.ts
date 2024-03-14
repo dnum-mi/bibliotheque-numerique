@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
 
 import { FileExtensionKey, eFileExtension, eState } from '@biblio-num/shared'
 import {
@@ -72,11 +72,23 @@ export class File extends BaseEntity {
   @Column({ type: 'timestamp', nullable: true })
   sourceUploadedAt: Date | null
 
+  @Column({ nullable: true })
+  dossierId?: number | null
+
   @ManyToOne(() => Dossier, (doss) => doss.files)
+  @JoinColumn({ name: 'dossierId' })
   dossier: Dossier | null
+
+  @Column({ nullable: true })
+  organismeId?: number | null
 
   @ManyToOne(() => Organisme, (org) => org.files, {
     onDelete: 'SET NULL',
+  })
+  @JoinColumn({
+    name: 'organismeId',
+    referencedColumnName: 'id',
+    foreignKeyConstraintName: 'FK_organisme',
   })
   organisme: Organisme | null
 }

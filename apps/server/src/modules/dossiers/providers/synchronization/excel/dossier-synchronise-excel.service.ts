@@ -77,7 +77,7 @@ export class DossierSynchroniseExcelService extends BaseEntityService<Field> {
     }
 
     const childrenData = excelData
-      .map((row, i) => this._createFieldsFromExcelRow(row, file.dossier.id, i))
+      .map((row, i) => this._createFieldsFromExcelRow(row, file.dossierId, i))
       .flat()
 
     return {
@@ -90,7 +90,7 @@ export class DossierSynchroniseExcelService extends BaseEntityService<Field> {
       dateValue: null,
       numberValue: null,
       dsChampType: DsChampType.RepetitionChamp,
-      dossierId: file.dossier.id,
+      dossierId: file.dossierId,
       parentRowIndex: null,
       children: childrenData,
     } as CreateFieldDto
@@ -395,6 +395,7 @@ export class DossierSynchroniseExcelService extends BaseEntityService<Field> {
       numberValue,
       dsChampType: null,
       dossierId,
+      code: null,
       parentRowIndex,
       children: null,
       rawJson: null,
@@ -406,6 +407,6 @@ export class DossierSynchroniseExcelService extends BaseEntityService<Field> {
   async synchroniseExcel(file: File): Promise<void> {
     this.logger.verbose('synchroniseExcel')
     const field = await this.createField(file)
-    await this.createFieldsAmounts(file.dossier.id, field)
+    await this.createFieldsAmounts(file.dossierId, field)
   }
 }
