@@ -22,7 +22,7 @@ import {
 import { RawChamp } from '@/shared/types/raw-champ.type'
 import { PieceJustificativeChamp } from '@dnum-mi/ds-api-client'
 import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
-import { FieldWithMappingColumn } from '@/modules/dossiers/objects/types/field-with-mapping.column'
+import { doesTextContainBnCode } from '@/shared/utils/bn-code.utils'
 
 export type TDossierWithPrefecture = Partial<TDossier> & {
   prefecture?: PrefectureKeys
@@ -123,6 +123,9 @@ export class FieldService extends BaseEntityService<Field> {
         fields.push({
           ...this._extractColumnRefFieldInformation(columnRef),
           stringValue: FieldService.giveString(champ),
+          code:
+            doesTextContainBnCode(champ.champDescriptor?.description) ??
+            doesTextContainBnCode(columnRef.originalDescription),
           dateValue: FieldService.giveDateOrNull(
             columnRef.type,
             champ.stringValue,
@@ -183,6 +186,7 @@ export class FieldService extends BaseEntityService<Field> {
           parentRowIndex: null,
           rawJson: null,
           dsChampType: null,
+          code: null,
         }
       })
       .filter((dto) => dto)
@@ -215,7 +219,7 @@ export class FieldService extends BaseEntityService<Field> {
     dataJson: TDossierWithPrefecture,
     dossierId: number,
     mappingColumns: MappingColumn[],
-  ): Promise<FieldWithMappingColumn[]> {
+  ): Promise<Field[]> {
     this.logger.verbose('createFieldsFromDataJsonWithTransaction')
     const columnHash: Record<string, MappingColumn> = Object.fromEntries(
       mappingColumns
@@ -231,11 +235,7 @@ export class FieldService extends BaseEntityService<Field> {
       columnHash,
     )
     await this.repo.delete({ dossierId })
-    const fs = await this.repo.save(fields)
-    return fs.map((f) => ({
-      ...f,
-      mappingColumn: columnHash[f.sourceId],
-    }))
+    return this.repo.save(fields)
   }
 
   async upsert(

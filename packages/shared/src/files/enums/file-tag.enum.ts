@@ -1,27 +1,23 @@
 import { createEnum } from '../../factories'
 
-export const fileTabTags = [
+// all tags here create tab in organisme page
+export const fileTags = [
   'status',
   'account',
-] as const
-
-export type FileTabTagKey = (typeof fileTabTags)[number]
-export const eFileTabTag = createEnum(fileTabTags)
-
-export const dFileTabTagDictionary: Record<FileTabTagKey, string> = {
-  [eFileTabTag.status]: 'Status',
-  [eFileTabTag.account]: 'Dépôt de compte',
-}
-
-export const fileTags = [
-  ...fileTabTags,
-  'excel-fe',
+  'pv',
+  'judgment',
+  'activityReport',
+  'fe'
 ] as const
 
 export type FileTagKey = (typeof fileTags)[number]
 export const eFileTag = createEnum(fileTags)
 
-export const dFileTagDictionary: Record<FileTagKey, string> = {
-  ...dFileTabTagDictionary,
-  [eFileTag['excel-fe']]: 'Excel Financement < 15000',
+export const dFileTabDictionary: Record<FileTagKey, string> = {
+  [eFileTag.status]: 'Statuts',
+  [eFileTag.account]: 'Comptes',
+  [eFileTag.pv]: 'Procès verbal',
+  [eFileTag.judgment]: 'Jugement',
+  [eFileTag.activityReport]: 'Rapport d\'activité',
+  [eFileTag.fe]: 'Financement étranger',
 }

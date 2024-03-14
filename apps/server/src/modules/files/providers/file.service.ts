@@ -1,7 +1,7 @@
 import { Repository } from 'typeorm'
 import { Injectable } from '@nestjs/common'
 import { File } from '../objects/entities/file.entity'
-import type { File as TFile } from '@dnum-mi/ds-api-client'
+import type { File as TFile, Dossier as TDossier } from '@dnum-mi/ds-api-client'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { InjectRepository } from '@nestjs/typeorm'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
@@ -12,18 +12,18 @@ import {
 import {
   eFileExtension,
   eState,
-  FileTabTagKey,
-  fileTabTags,
   StateKey,
   FileExtensionKey,
-  FileTagKey,
+  FileTagKey, fileTags, eFileTag,
 } from '@biblio-num/shared'
-import { doesTextContainBnCode } from '@/shared/utils/bn-code.utils'
-import { tagCodeDictionary } from '@/modules/files/objects/const/tag-dictionnary.const'
-import { TagDefinition } from '@/modules/files/objects/types/tag-definition.type'
 import { UpsertDsFileDto } from '@/modules/files/objects/dto/input/upsert-ds-file.dto'
 import { v4 } from 'uuid'
 import { FileFieldTypeHash } from '@/modules/files/objects/const/file-field-type-hash.const'
+import { FieldCodeKey } from '@/modules/dossiers/objects/constante/field-code.enum'
+import { Field } from '@/modules/dossiers/objects/entities/field.entity'
+import {
+  dCodeToLabelsAndTag,
+} from '@/modules/files/objects/const/code-to-labels-and-tag.const'
 
 const dMimeTypeToExtensionDictionary: Record<string, FileExtensionKey> = {
   'application/pdf': eFileExtension.pdf,
@@ -60,17 +60,25 @@ export class FileService extends BaseEntityService<File> {
     return `${smallFile.label}.${smallFile.mimeType}`
   }
 
-  static getTagFromDescription(
-    description: string | undefined,
-  ): FileTagKey | undefined {
-    if (description?.length) {
-      const code = doesTextContainBnCode(description)
-      if (code) {
-        const tagDefinition: TagDefinition = tagCodeDictionary[code]
-        if (tagDefinition) {
-          return tagDefinition.tag
-        }
-      }
+  static computeLabelAndTag(
+    target: Field,
+    fieldCodeHash: Record<FieldCodeKey, Field>,
+    dsDossier: TDossier,
+  ): { label: string, tag: FileTagKey | null } {
+    const __nothing = {
+      tag: null,
+      label: (target.rawJson as TFile).filename,
+    }
+    if (!target.code) {
+      return __nothing
+    }
+    const element = dCodeToLabelsAndTag[target.code]
+    if (!element) {
+      return __nothing
+    }
+    return {
+      tag: element.tag,
+      label: element.labelFactory(target, fieldCodeHash, dsDossier),
     }
   }
 
@@ -126,7 +134,7 @@ export class FileService extends BaseEntityService<File> {
         state: eState.queued,
         tag: payload.tag,
         mimeType: eFileExtension.unknown,
-        label: payload.fileName || 'to-be-constructed',
+        label: payload.label || payload.originalLabel,
         byteSize: -1,
         checksum: 'unknown',
         originalLabel: payload.originalLabel ?? 'to-be-constructed',
@@ -135,7 +143,9 @@ export class FileService extends BaseEntityService<File> {
     } else {
       return await this.updateAndReturnById(existingFile.id, {
         state: eState.queued,
-        organisme: { id: payload.organismeId ?? null },
+        label: payload.label || payload.originalLabel,
+        tag: payload.tag,
+        organismeId: payload.organismeId ?? null,
       })
     }
   }
@@ -161,21 +171,23 @@ export class FileService extends BaseEntityService<File> {
 
   async getOrganismeFileSummary(
     organismeId: number,
-  ): Promise<Record<FileTabTagKey, number>> {
+  ): Promise<Record<FileTagKey, number>> {
     this.logger.verbose('getOrganismeFileSummary')
     const entries = await Promise.all(
-      fileTabTags.map((tag) =>
-        this.repo
-          .count({
-            where: {
-              organisme: { id: organismeId },
-              tag: tag as FileTagKey,
-            },
-          })
-          .then((count) => [tag, count]),
-      ),
+      fileTags
+        .filter((tag) => tag !== eFileTag.fe)
+        .map((tag) =>
+          this.repo
+            .count({
+              where: {
+                organisme: { id: organismeId },
+                tag: tag as FileTagKey,
+              },
+            })
+            .then((count) => [tag, count]),
+        ),
     )
-    return Object.fromEntries(entries) as Record<FileTabTagKey, number>
+    return Object.fromEntries(entries) as Record<FileTagKey, number>
   }
 
   //#endregion

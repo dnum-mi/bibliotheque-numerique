@@ -7,6 +7,7 @@ import type {
 } from '@biblio-num/shared'
 
 import { useConfigurationStore } from '@/stores/configuration'
+import { synchroniseOneDossier } from '@/api/sudo-api-client'
 
 const configurationStore = useConfigurationStore()
 
@@ -34,13 +35,29 @@ const identificationValue = computed<IdentificationDemarcheKeys | null | undefin
 
 const inputDsIdString = ref('')
 const inputDsId = computed(() => Number(inputDsIdString.value) ?? null)
+const inputSynchroniseDossierIdString = ref('')
+const inputSynchroniseDossierId = computed(() => Number(inputSynchroniseDossierIdString.value) ?? null)
 const createModalOpen = ref(false)
+const synchroniseModalOpen = ref(false)
 const onCreateDemarche = async () => {
   createModalOpen.value = true
+}
+const onSynchroniseDossier = async () => {
+  synchroniseModalOpen.value = true
+}
+const closeSynchroniseModal = async () => {
+  synchroniseModalOpen.value = false
 }
 
 const closeFilterModal = () => {
   createModalOpen.value = false
+}
+
+const synchroniseOneDossierFct = async () => {
+  if (inputSynchroniseDossierId.value) {
+    await synchroniseOneDossier(inputSynchroniseDossierId.value)
+  }
+  synchroniseModalOpen.value = false
 }
 
 const createDemarche = () => {
@@ -79,6 +96,12 @@ onMounted(async () => {
         <h6>Modifier une démarche</h6>
       </div>
       <div class="flex-1 text-right">
+        <DsfrButton
+          label="Synchroniser un dossier"
+          class="fr-m-0 fr-mr-1w"
+          primary
+          @click="onSynchroniseDossier()"
+        />
         <DsfrButton
           label="Créer une nouvelle démarche"
           class="fr-m-0"
@@ -205,6 +228,29 @@ onMounted(async () => {
       />
       <DsfrButton
         label="Créer"
+        class="float-right mb-5"
+        type="submit"
+      />
+    </form>
+  </DsfrModal>
+
+  <!-- MODAL DE SYNCHRONISATION DE DOSSIER -->
+  <DsfrModal
+    :opened="synchroniseModalOpen"
+    :title="'Synchroniser un dossier from scratch'"
+    @close="closeSynchroniseModal"
+  >
+    <form @submit.prevent="synchroniseOneDossierFct()">
+      <DsfrInput
+        v-model="inputSynchroniseDossierIdString"
+        type="text"
+        label="Numéro (id) du dossier dans BN"
+        label-visible
+        class="mb-4"
+        placeholder="ex: 875678"
+      />
+      <DsfrButton
+        label="Synchroniser"
         class="float-right mb-5"
         type="submit"
       />

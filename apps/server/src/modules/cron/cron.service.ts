@@ -68,6 +68,8 @@ export class CronService implements OnApplicationBootstrap {
 
   onApplicationBootstrap(): void {
     this.logger.verbose('onApplicationBootStrap')
-    this._registerAllCronJobs()
+    if (!this.config.get('cron').skipCronInitialization) {
+      this._registerAllCronJobs()
+    }
   }
 }

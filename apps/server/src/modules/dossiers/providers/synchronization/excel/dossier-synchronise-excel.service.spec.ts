@@ -74,6 +74,7 @@ const expectedExcelFixFieldsChildren1 = [
     parentRowIndex: 0,
     children: null,
     rawJson: null,
+    code: null,
   },
   {
     sourceId: fixFieldsExcelContributorPersonalityType.id,
@@ -89,6 +90,7 @@ const expectedExcelFixFieldsChildren1 = [
     parentRowIndex: 0,
     children: null,
     rawJson: null,
+    code: null,
   },
   {
     sourceId: fixFieldsExcelNativeCountry.id,
@@ -104,6 +106,7 @@ const expectedExcelFixFieldsChildren1 = [
     parentRowIndex: 0,
     children: null,
     rawJson: null,
+    code: null,
   },
   {
     sourceId: fixFieldsExcelNatureFunding.id,
@@ -119,6 +122,7 @@ const expectedExcelFixFieldsChildren1 = [
     parentRowIndex: 0,
     children: null,
     rawJson: null,
+    code: null,
   },
   {
     sourceId: fixFieldsExcelCharacterFunding.id,
@@ -134,6 +138,7 @@ const expectedExcelFixFieldsChildren1 = [
     parentRowIndex: 0,
     children: null,
     rawJson: null,
+    code: null,
   },
   {
     sourceId: fixFieldsExcelPaymentMethod.id,
@@ -149,6 +154,7 @@ const expectedExcelFixFieldsChildren1 = [
     parentRowIndex: 0,
     children: null,
     rawJson: null,
+    code: null,
   },
   {
     sourceId: fixFieldsExcelAmount.id,
@@ -164,6 +170,7 @@ const expectedExcelFixFieldsChildren1 = [
     parentRowIndex: 0,
     children: null,
     rawJson: null,
+    code: null,
   },
 ]
 
@@ -182,6 +189,7 @@ const expectedExcelFixFieldsChildren2 = [
     parentRowIndex: 1,
     children: null,
     rawJson: null,
+    code: null,
   },
   {
     sourceId: fixFieldsExcelContributorPersonalityType.id,
@@ -197,6 +205,7 @@ const expectedExcelFixFieldsChildren2 = [
     parentRowIndex: 1,
     children: null,
     rawJson: null,
+    code: null,
   },
   {
     sourceId: fixFieldsExcelNativeCountry.id,
@@ -212,6 +221,7 @@ const expectedExcelFixFieldsChildren2 = [
     parentRowIndex: 1,
     children: null,
     rawJson: null,
+    code: null,
   },
   {
     sourceId: fixFieldsExcelNatureFunding.id,
@@ -227,6 +237,7 @@ const expectedExcelFixFieldsChildren2 = [
     parentRowIndex: 1,
     children: null,
     rawJson: null,
+    code: null,
   },
   {
     sourceId: fixFieldsExcelCharacterFunding.id,
@@ -242,6 +253,7 @@ const expectedExcelFixFieldsChildren2 = [
     parentRowIndex: 1,
     children: null,
     rawJson: null,
+    code: null,
   },
   {
     sourceId: fixFieldsExcelPaymentMethod.id,
@@ -257,6 +269,7 @@ const expectedExcelFixFieldsChildren2 = [
     parentRowIndex: 1,
     children: null,
     rawJson: null,
+    code: null,
   },
   {
     sourceId: fixFieldsExcelAmount.id,
@@ -272,6 +285,7 @@ const expectedExcelFixFieldsChildren2 = [
     parentRowIndex: 1,
     children: null,
     rawJson: null,
+    code: null,
   },
 ]
 
@@ -308,6 +322,7 @@ const expectedExcelFixFieldsChildrenWithError = [
     parentRowIndex: 0,
     children: null,
     rawJson: null,
+    code: null,
   },
   {
     sourceId: fixFieldsExcelContributorPersonalityType.id,
@@ -323,6 +338,7 @@ const expectedExcelFixFieldsChildrenWithError = [
     parentRowIndex: 0,
     children: null,
     rawJson: null,
+    code: null,
   },
   {
     sourceId: fixFieldsExcelNativeCountry.id,
@@ -338,6 +354,7 @@ const expectedExcelFixFieldsChildrenWithError = [
     parentRowIndex: 0,
     children: null,
     rawJson: null,
+    code: null,
   },
   {
     sourceId: fixFieldsExcelNatureFunding.id,
@@ -353,6 +370,7 @@ const expectedExcelFixFieldsChildrenWithError = [
     parentRowIndex: 0,
     children: null,
     rawJson: null,
+    code: null,
   },
   {
     sourceId: fixFieldsExcelCharacterFunding.id,
@@ -368,6 +386,7 @@ const expectedExcelFixFieldsChildrenWithError = [
     parentRowIndex: 0,
     children: null,
     rawJson: null,
+    code: null,
   },
   {
     sourceId: fixFieldsExcelPaymentMethod.id,
@@ -383,6 +402,7 @@ const expectedExcelFixFieldsChildrenWithError = [
     parentRowIndex: 0,
     children: null,
     rawJson: null,
+    code: null,
   },
   {
     sourceId: fixFieldsExcelAmount.id,
@@ -398,6 +418,7 @@ const expectedExcelFixFieldsChildrenWithError = [
     parentRowIndex: 0,
     children: null,
     rawJson: null,
+    code: null,
   },
 ]
 
@@ -416,6 +437,7 @@ const expectedAmountFixFieldsDates = [
     parentRowIndex: null,
     children: null,
     rawJson: null,
+    code: null,
   },
   {
     sourceId: fixFieldChampsTotalAmount.id,
@@ -431,6 +453,7 @@ const expectedAmountFixFieldsDates = [
     parentRowIndex: null,
     children: null,
     rawJson: null,
+    code: null,
   },
   {
     sourceId: fixFieldExcelTotalAmount.id,
@@ -446,6 +469,7 @@ const expectedAmountFixFieldsDates = [
     parentRowIndex: null,
     children: null,
     rawJson: null,
+    code: null,
   },
 ]
 
@@ -464,6 +488,7 @@ const expectedAmountWithoutExcelFixFieldsDates = [
     parentRowIndex: null,
     children: null,
     rawJson: null,
+    code: null,
   },
   {
     sourceId: fixFieldChampsTotalAmount.id,
@@ -479,6 +504,7 @@ const expectedAmountWithoutExcelFixFieldsDates = [
     parentRowIndex: null,
     children: null,
     rawJson: null,
+    code: null,
   },
   {
     sourceId: fixFieldExcelTotalAmount.id,
@@ -494,6 +520,7 @@ const expectedAmountWithoutExcelFixFieldsDates = [
     parentRowIndex: null,
     children: null,
     rawJson: null,
+    code: null,
   },
 ]
 
@@ -512,6 +539,7 @@ const expectedAmountWithoutChampsFixFieldsDates = [
     parentRowIndex: null,
     children: null,
     rawJson: null,
+    code: null,
   },
   {
     sourceId: fixFieldChampsTotalAmount.id,
@@ -527,6 +555,7 @@ const expectedAmountWithoutChampsFixFieldsDates = [
     parentRowIndex: null,
     children: null,
     rawJson: null,
+    code: null,
   },
   {
     sourceId: fixFieldExcelTotalAmount.id,
@@ -542,6 +571,7 @@ const expectedAmountWithoutChampsFixFieldsDates = [
     parentRowIndex: null,
     children: null,
     rawJson: null,
+    code: null,
   },
 ]
 
@@ -655,6 +685,7 @@ describe('DossierSyncroniseExcel', () => {
       parentRowIndex: 0,
       children: null,
       rawJson: null,
+      code: null,
     })
   })
 
@@ -683,6 +714,7 @@ describe('DossierSyncroniseExcel', () => {
       parentRowIndex: 0,
       children: null,
       rawJson: null,
+      code: null,
     })
   })
 
@@ -711,6 +743,7 @@ describe('DossierSyncroniseExcel', () => {
       parentRowIndex: 0,
       children: null,
       rawJson: null,
+      code: null,
     })
   })
 

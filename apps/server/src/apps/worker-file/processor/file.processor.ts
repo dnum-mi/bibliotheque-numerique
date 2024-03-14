@@ -27,9 +27,10 @@ export class FileProcessor {
   }
 
   private async _getCorrespondingDsFile(
-    payload: UploadDsFileJobPayload,
+    job: Job<UploadDsFileJobPayload>,
   ): Promise<TFile> {
     this.logger.verbose('_getCorrespondingDsFile')
+    const payload = job.data
     this.logger.debug(payload)
     let files: TFile[]
     if (payload.file.sourceLabel === eFileSourceLabel['ds-attestation']) {
@@ -38,8 +39,11 @@ export class FileProcessor {
       files = await this.dsApiService.dossierFile(
         payload.dsDossierId,
         payload.file.sourceStringId,
+        payload.parentSourceId,
       )
     }
+    job.log(`nombre de fichiers trouvés: ${files?.length}`)
+    job.log(`nom des fichiers trouvés: ${files?.map(f => f.filename)}`)
     return files[payload.file.sourceIndex ?? 0] as TFile
   }
 
@@ -47,8 +51,9 @@ export class FileProcessor {
   async uploadDsFile(job: Job<UploadDsFileJobPayload>): Promise<void> {
     this.logger.verbose('uploadDsFile processor')
     await this.fileService.updateState(job.data.file.id, eState.uploading)
-    const dsFile = await this._getCorrespondingDsFile(job.data)
+    const dsFile = await this._getCorrespondingDsFile(job)
     this.logger.debug(dsFile)
+    job.progress(30)
     // do not re-upload same file
     if (dsFile.checksum !== job.data.file.checksum) {
       this.logger.debug('New file to upload')
@@ -76,11 +81,13 @@ export class FileProcessor {
       this.logger.debug('File already existing in  S3')
       await this.fileService.updateState(job.data.file.id, eState.uploaded)
     }
-    if (job.data.file.tag === eFileTag['excel-fe']) {
+    job.progress(90)
+    if (job.data.file.tag === eFileTag.fe) {
       this.logger.debug('Adding excel job')
       await this.syncQueue.add(eJobName.ComputeFeExcel, {
         file: job.data.file,
       } as ComputeFeExcelJobPayload)
     }
+    job.progress(100)
   }
 }

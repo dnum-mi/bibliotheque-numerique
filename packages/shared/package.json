@@ -7,7 +7,7 @@
   "types": "./types",
   "scripts": {
     "clean:dist": "rimraf dist types node_modules/tmp/.tsbuildinfo",
-    "dev": "nodemon --exec 'tsup'",
+    "dev": "nodemon --exec 'npm run build:only'",
     "build": "run-s clean:dist build:only",
     "build:only": "run-s build:tsup build:types",
     "build:tsup": "tsup",

@@ -32,7 +32,7 @@ export class Demarche extends BaseEntity implements IDemarche {
   @Column({ type: 'jsonb', default: '[]' })
   mappingColumns: MappingColumn[]
 
-  @Column({ type: 'timestamp', default: '2022-01-01' })
+  @Column({ type: 'timestamp', default: '2022-01-01 00:00:00' })
   lastSynchronisedAt: Date
 
   @Column({
