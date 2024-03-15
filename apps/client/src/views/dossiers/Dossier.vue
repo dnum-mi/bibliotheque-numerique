@@ -109,6 +109,7 @@ onMounted(async () => {
         </template>
         <template #content>
           <DsfrTabs
+            ref="tabs"
             class="fr-ml-2w"
             tab-list-name="tabs-dossier"
             :tab-titles="tabTitles"
@@ -124,6 +125,7 @@ onMounted(async () => {
               <DossierDemande :datas="dossierDS" />
             </DsfrTabContent>
             <DsfrTabContent
+              v-if="hasAnnotations"
               panel-id="tab-content-1"
               tab-id="tab-1"
               :selected="selectedTabIndex === 1"
@@ -132,9 +134,9 @@ onMounted(async () => {
               <DossierAnnotations :annotations="annotations" />
             </DsfrTabContent>
             <DsfrTabContent
-              panel-id="tab-content-2"
-              tab-id="tab-2"
-              :selected="selectedTabIndex === (hasAnnotations ? 2 : 1)"
+              :panel-id="`tab-content-${+hasAnnotations + 1}`"
+              :tab-id="`tab-${+hasAnnotations + 1}`"
+              :selected="selectedTabIndex === (+hasAnnotations + 1)"
               :asc="asc"
             >
               <AttachedFileList
