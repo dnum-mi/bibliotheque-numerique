@@ -2,7 +2,7 @@
 import type { GridReadyEvent, GridApi, GridOptions, AgGridEvent } from 'ag-grid-community'
 
 import type { IFileOutput, IFilter, IPagination, FileDsSourceLabelKey } from '@biblio-num/shared'
-import { fileDsSourceLabels, dFileSourceLabelDictionary, fileExtensions, states, eState, fileTabTags } from '@biblio-num/shared'
+import { fileDsSourceLabels, dFileSourceLabelDictionary, fileExtensions, states, eState, fileTags } from '@biblio-num/shared'
 
 import type { ApiCall } from '../server-side/pagination.utils'
 import type { BNColDef } from '../server-side/bn-col-def.interface'

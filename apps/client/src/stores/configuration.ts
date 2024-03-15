@@ -10,7 +10,7 @@ import type {
   OrganismeTypeKey,
 } from '@biblio-num/shared'
 
-import { createDemarche, patchDemarche, putSynchronizeOneDemarche, synchroniseOneDossier } from '../api/sudo-api-client'
+import { createDemarche, patchDemarche, putSynchronizeOneDemarche } from '../api/sudo-api-client'
 
 export const useConfigurationStore = defineStore('Configuration', () => {
   const bnConfigurations = ref<IBnConfigurationOutput[]>([])
