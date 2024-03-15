@@ -239,7 +239,7 @@ onMounted(async () => {
   <!-- MODAL DE SYNCHRONISATION DE DOSSIER -->
   <DsfrModal
     :opened="synchroniseModalOpen"
-    :title="'Synchroniser un dossier from scratch'"
+    title="Synchroniser un dossier from scratch"
     @close="closeSynchroniseModal"
   >
     <form @submit.prevent="synchroniseOneDossierFct()">
