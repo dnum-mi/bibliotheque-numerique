@@ -1,5 +1,6 @@
 import dosiser from '../fixtures/dossier.json'
 import files from '../fixtures/files.json'
+
 describe('Vue Dossier', () => {
   beforeEach(() => {
     cy.fixture('admin-profile').then((user) => {
