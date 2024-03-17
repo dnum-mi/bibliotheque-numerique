@@ -23,7 +23,7 @@ FileService.computeLabelAndTag = jest.fn().mockReturnValue({
   label: 'test-label',
   tag: 'test-tag',
 })
-const fieldService: FileService = jest.createMockFromModule(
+const fieldService: FieldService = jest.createMockFromModule(
   '@/modules/dossiers/providers/field.service',
 )
 let addQueue: { name: string; payload: never }[] = []

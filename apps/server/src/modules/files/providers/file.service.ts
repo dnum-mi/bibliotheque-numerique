@@ -78,7 +78,7 @@ export class FileService extends BaseEntityService<File> {
     }
     return {
       tag: element.tag,
-      label: element.labelFactory(target, fieldCodeHash, dsDossier),
+      label: element.labelFactory(fieldCodeHash, dsDossier),
     }
   }
 
