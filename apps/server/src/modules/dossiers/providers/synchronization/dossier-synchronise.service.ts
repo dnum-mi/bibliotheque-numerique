@@ -24,7 +24,6 @@ import {
   DossierSynchroniseOrganismeService,
 } from '@/modules/dossiers/providers/synchronization/organisme/dossier-synchronise-organisme.service'
 import { Field } from '@/modules/dossiers/objects/entities/field.entity'
-import { FieldCodeKey } from '@/modules/dossiers/objects/constante/field-code.enum'
 
 @Injectable()
 export class DossierSynchroniseService extends BaseEntityService<Dossier> {
@@ -107,18 +106,7 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
     if (organismeId) {
       await this.repo.update({ id }, { organisme: { id: organismeId } })
     }
-    // we need different precise values of dossier (corresponding to codes) to compute files labels.
-    // This hash will be used to find it easily
-    const fieldCodeHash = Object.fromEntries(
-      fields.filter((f) => !!f.code).map((f) => [f.code, f]),
-    ) as Record<FieldCodeKey, Field>
-    await this.fileSynchroniseService.synchroniseFiles(
-      fields,
-      fieldCodeHash,
-      jsonDossier,
-      id,
-      organismeId,
-    )
+    await this.fileSynchroniseService.synchroniseFiles(fields, jsonDossier, id, organismeId)
     await this._FESpecificity(id, demarche.identification)
   }
 }
