@@ -11,18 +11,17 @@ import * as dayjs from 'dayjs'
 type TagAndLabelFactory = {
   tag: FileTagKey
   labelFactory: (
-    targetField: Field,
-    fieldCodeHash?: Record<FieldCodeKey, Field>[],
+    fieldCodeHash?: Record<FieldCodeKey, Field>,
     jsonDossier?: TDossier,
   ) => string
 }
 
-const formatDate = (date: Date): string => {
+const formatDate = (date: Date = new Date(0)): string => {
   return dayjs(date?.toISOString()).format('DD.MM.YYYY')
 }
 
 const commonFileWithDateLabelFactory = (
-  fh: Record<FieldCodeKey, Field>[],
+  fh: Record<FieldCodeKey, Field>,
   dateCode: FieldCodeKey,
   suffix: string,
 ): string => {
@@ -36,7 +35,7 @@ const commonFileWithDateLabelFactory = (
 }
 
 const commonFileWithYearLabelFactory = (
-  fh: Record<FieldCodeKey, Field>[],
+  fh: Record<FieldCodeKey, Field>,
   dateCode: FieldCodeKey,
   suffix: string,
 ): string => {
@@ -53,28 +52,28 @@ export const dCodeToLabelsAndTag: Record<FileFieldCodeKey, TagAndLabelFactory> =
   {
     'file-fe-excel': {
       tag: eFileTag.fe,
-      labelFactory: (f, fh, d) => {
+      labelFactory: (fh, d) => {
         const date = formatDate(d.dateTraitement)
         return `${date}_Déclaration financement étranger`
       },
     },
     'file-initial-status': {
       tag: eFileTag.status,
-      labelFactory: (f, fh, d) => {
+      labelFactory: (fh, d) => {
         const date = formatDate(d.dateTraitement)
         return `${date}_Statuts initiaux`
       },
     },
     'file-extended-status': {
       tag: eFileTag.status,
-      labelFactory: (f, fh, d) => {
+      labelFactory: (fh, d) => {
         const date = formatDate(d.dateTraitement)
         return `${date}_Statuts prorogés`
       },
     },
     'file-extended-pv': {
       tag: eFileTag.pv,
-      labelFactory: (f, fh) => {
+      labelFactory: (fh) => {
         return commonFileWithDateLabelFactory(
           fh,
           eFieldCode['board-decision-at'],
@@ -84,7 +83,7 @@ export const dCodeToLabelsAndTag: Record<FileFieldCodeKey, TagAndLabelFactory> =
     },
     'file-updated-status': {
       tag: eFileTag.status,
-      labelFactory: (f, fh) => {
+      labelFactory: (fh) => {
         return commonFileWithDateLabelFactory(
           fh,
           eFieldCode['updated-status-at'],
@@ -94,7 +93,7 @@ export const dCodeToLabelsAndTag: Record<FileFieldCodeKey, TagAndLabelFactory> =
     },
     'file-status-update-pv': {
       tag: eFileTag.pv,
-      labelFactory: (f, fh) => {
+      labelFactory: (fh) => {
         return commonFileWithDateLabelFactory(
           fh,
           eFieldCode['updated-status-at'],
@@ -104,7 +103,7 @@ export const dCodeToLabelsAndTag: Record<FileFieldCodeKey, TagAndLabelFactory> =
     },
     'file-dissolution-pv': {
       tag: eFileTag.pv,
-      labelFactory: (f, fh) => {
+      labelFactory: (fh) => {
         return commonFileWithDateLabelFactory(
           fh,
           eFieldCode['dissolution-at'],
@@ -114,7 +113,7 @@ export const dCodeToLabelsAndTag: Record<FileFieldCodeKey, TagAndLabelFactory> =
     },
     'file-dissolution-judgment': {
       tag: eFileTag.judgment,
-      labelFactory: (f, fh) => {
+      labelFactory: (fh) => {
         return commonFileWithDateLabelFactory(
           fh,
           eFieldCode['dissolution-at'],
@@ -124,7 +123,7 @@ export const dCodeToLabelsAndTag: Record<FileFieldCodeKey, TagAndLabelFactory> =
     },
     'file-certified-account': {
       tag: eFileTag.account,
-      labelFactory: (f, fh) => {
+      labelFactory: (fh) => {
         return commonFileWithYearLabelFactory(
           fh,
           eFieldCode['account-year'],
@@ -134,7 +133,7 @@ export const dCodeToLabelsAndTag: Record<FileFieldCodeKey, TagAndLabelFactory> =
     },
     'file-public-ressources-account': {
       tag: eFileTag.account,
-      labelFactory: (f, fh) => {
+      labelFactory: (fh) => {
         return commonFileWithYearLabelFactory(
           fh,
           eFieldCode['account-year'],
@@ -144,7 +143,7 @@ export const dCodeToLabelsAndTag: Record<FileFieldCodeKey, TagAndLabelFactory> =
     },
     'file-budget-account': {
       tag: eFileTag.account,
-      labelFactory: (f, fh) => {
+      labelFactory: (fh) => {
         return commonFileWithYearLabelFactory(
           fh,
           eFieldCode['account-year'],
@@ -154,7 +153,7 @@ export const dCodeToLabelsAndTag: Record<FileFieldCodeKey, TagAndLabelFactory> =
     },
     'file-abrited-account': {
       tag: eFileTag.account,
-      labelFactory: (f, fh) => {
+      labelFactory: (fh) => {
         return commonFileWithYearLabelFactory(
           fh,
           eFieldCode['account-year'],
@@ -164,7 +163,7 @@ export const dCodeToLabelsAndTag: Record<FileFieldCodeKey, TagAndLabelFactory> =
     },
     'file-annual-report': {
       tag: eFileTag.activityReport,
-      labelFactory: (f, fh) => {
+      labelFactory: (fh) => {
         return commonFileWithYearLabelFactory(
           fh,
           eFieldCode['account-year'],
@@ -174,7 +173,7 @@ export const dCodeToLabelsAndTag: Record<FileFieldCodeKey, TagAndLabelFactory> =
     },
     'file-validated-account-pv': {
       tag: eFileTag.pv,
-      labelFactory: (f, fh) => {
+      labelFactory: (fh) => {
         return commonFileWithDateLabelFactory(
           fh,
           eFieldCode['validated-account-at'],
@@ -184,7 +183,7 @@ export const dCodeToLabelsAndTag: Record<FileFieldCodeKey, TagAndLabelFactory> =
     },
     'file-financial-state-account': {
       tag: eFileTag.account,
-      labelFactory: (f, fh) => {
+      labelFactory: (fh) => {
         return commonFileWithYearLabelFactory(
           fh,
           eFieldCode['account-year'],
@@ -194,7 +193,7 @@ export const dCodeToLabelsAndTag: Record<FileFieldCodeKey, TagAndLabelFactory> =
     },
     'file-certified-financial-state-account': {
       tag: eFileTag.account,
-      labelFactory: (f, fh) => {
+      labelFactory: (fh) => {
         return commonFileWithYearLabelFactory(
           fh,
           eFieldCode['account-year'],
@@ -204,7 +203,7 @@ export const dCodeToLabelsAndTag: Record<FileFieldCodeKey, TagAndLabelFactory> =
     },
     'file-fe-account': {
       tag: eFileTag.account,
-      labelFactory: (f, fh) => {
+      labelFactory: (fh) => {
         return commonFileWithYearLabelFactory(
           fh,
           eFieldCode['account-year'],
