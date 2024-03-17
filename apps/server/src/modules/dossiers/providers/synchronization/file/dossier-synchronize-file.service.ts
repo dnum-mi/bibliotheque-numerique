@@ -66,11 +66,17 @@ export class DossierSynchroniseFileService {
       fields
         .filter((field) => field.type === FieldType.file)
         .map((field: Field) => {
-          const tagAndLabel = FileService.computeLabelAndTag(field, fieldCodeHash, dsDossier)
+          const tagAndLabel = FileService.computeLabelAndTag(
+            field,
+            fieldCodeHash,
+            dsDossier,
+          )
           const pjc = field.rawJson as PieceJustificativeChamp
-          const parentField = field.parentId && fields.filter(f => f.id === field.parentId)
+          const parentField =
+            field.parentId && fields.find((f) => f.id === field.parentId)
           const files = pjc.files?.length ? pjc.files : [pjc.file]
-          return files?.filter((f) => !!f)
+          return files
+            ?.filter((f) => !!f)
             .map((f: TFile, i: number) => {
               return this._addSyncFileJob(
                 {
@@ -84,7 +90,7 @@ export class DossierSynchroniseFileService {
                 },
                 dsDossier.number,
                 field.id,
-                parentField?.[0]?.sourceId,
+                parentField?.sourceId,
               )
             })
         })
@@ -101,20 +107,24 @@ export class DossierSynchroniseFileService {
     await Promise.all(
       dossier.messages
         .filter((message) => message.attachments?.length)
-        .map((message) => message.attachments.map((a: TFile, index: number) =>
-          this._addSyncFileJob(
-            {
-              dossierId,
-              sourceStringId: message.id,
-              organismeId,
-              sourceLabel: eFileDsSourceLabel['ds-message'],
-              sourceIndex: index,
-              originalLabel: a.filename,
-            },
-            dossier.number,
-          ))
-          .flat(),
-        ))
+        .map((message) =>
+          message.attachments
+            .map((a: TFile, index: number) =>
+              this._addSyncFileJob(
+                {
+                  dossierId,
+                  sourceStringId: message.id,
+                  organismeId,
+                  sourceLabel: eFileDsSourceLabel['ds-message'],
+                  sourceIndex: index,
+                  originalLabel: a.filename,
+                },
+                dossier.number,
+              ),
+            )
+            .flat(),
+        ),
+    )
   }
 
   private async synchroniseAttestation(
@@ -137,18 +147,36 @@ export class DossierSynchroniseFileService {
 
   public async synchroniseFiles(
     fields: Field[],
-    fieldCodeHash: Record<FieldCodeKey, Field>,
     dossier: TDossier,
     dossierId: number,
     organismeId?: number,
   ): Promise<void> {
     this.logger.verbose('synchroniseFiles')
-    const organismeIdForAcceptedDossier = dossier.state === DossierState.Accepte ? organismeId : undefined
-    const flatFields = fields.flatMap(f => [f, ...(f.children || [])])
+    const organismeIdForAcceptedDossier =
+      dossier.state === DossierState.Accepte ? organismeId : undefined
+    const flatCodeFields = fields
+      .flatMap((f) => [f, ...(f.children || [])])
+      .filter((f) => !!f.code)
+    const fieldCodeHash = Object.fromEntries(
+      fields.filter((f) => !!f.code).map((f) => [f.code, f]),
+    ) as Record<FieldCodeKey, Field>
     await Promise.all([
-      this.synchroniseAllChamps(flatFields, fieldCodeHash, dossier, organismeIdForAcceptedDossier),
-      this.synchroniseMessages(dossier, dossierId, organismeIdForAcceptedDossier),
-      this.synchroniseAttestation(dossier, dossierId, organismeIdForAcceptedDossier),
+      this.synchroniseAllChamps(
+        flatCodeFields,
+        fieldCodeHash,
+        dossier,
+        organismeIdForAcceptedDossier,
+      ),
+      this.synchroniseMessages(
+        dossier,
+        dossierId,
+        organismeIdForAcceptedDossier,
+      ),
+      this.synchroniseAttestation(
+        dossier,
+        dossierId,
+        organismeIdForAcceptedDossier,
+      ),
     ])
   }
 }
