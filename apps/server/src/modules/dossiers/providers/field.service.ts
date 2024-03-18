@@ -247,4 +247,12 @@ export class FieldService extends BaseEntityService<Field> {
     })
     return result.generatedMaps as Field[]
   }
+
+  static getValueFromType(f: Field): string | number | Date | null | undefined {
+    switch (f.type) {
+    case 'date': return f.dateValue
+    case 'number': return f.numberValue
+    default: return f.stringValue
+    }
+  }
 }
