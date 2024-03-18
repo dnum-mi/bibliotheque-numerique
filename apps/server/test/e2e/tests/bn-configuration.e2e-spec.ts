@@ -156,7 +156,7 @@ describe('bn-configurations (e2e)', () => {
     const valueType = 'string'
 
     it('Should return error 401', async () => {
-      await request(app.getHttpServer())
+      await request(await app.getHttpServer())
         .post('/bn-configurations')
         .send({ keyName, stringValue, valueType })
         .expect(401)
@@ -203,7 +203,7 @@ describe('bn-configurations (e2e)', () => {
     const valueType = 'string'
 
     it('Should return error 401', async () => {
-      await request(app.getHttpServer())
+      await request(await app.getHttpServer())
         .patch(`/bn-configurations/${id}`)
         .send({ stringValue, valueType })
         .expect(401)
