@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { ConfigService } from '@nestjs/config'
-import { DossierState } from '@dnum-mi/ds-api-client/dist/@types/types'
+import { Champ, DossierState } from '@dnum-mi/ds-api-client/dist/@types/types'
 import { Repository } from 'typeorm/repository/Repository'
 import { faker } from '@faker-js/faker/locale/fr'
 import MockDate from 'mockdate'
@@ -8,9 +8,7 @@ import MockDate from 'mockdate'
 import dayjs from '../../shared/utils/dayjs'
 
 import { InstructionTimesService } from './instruction_times.service'
-import instructionTimeMappingConfig, {
-  TInstructionTimeMappingConfig,
-} from '../../config/instructionTimeMapping.config'
+
 import { EInstructionTimeState } from './types/IntructionTime.type'
 import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
 import { InstructionTime } from './instruction_time.entity'
@@ -23,11 +21,17 @@ import {
   fixFieldInstructionTimeStatus,
 } from './constante/fix-field-instrucation-times.dictionnary'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
+import { FieldSource, FieldType } from '@biblio-num/shared'
+import { DsChampType } from '../../shared/modules/ds-api/objects/ds-champ-type.enum'
+import { InstructionTimeCodeKey, eInstructionTimeCode } from '../dossiers/objects/constante/field-code.enum'
+import instructionTimeMappingConfig from '../../config/instructionTimeMapping.config'
+
 
 
 const loggerService: LoggerService = jest.createMockFromModule<LoggerService>('@/shared/modules/logger/logger.service')
 loggerService.setContext = jest.fn()
 loggerService.verbose = jest.fn()
+loggerService.error = jest.fn()
 
 const configService: ConfigService = jest.createMockFromModule('@nestjs/config/dist/config.service')
 configService.get = jest.fn().mockImplementation(instructionTimeMappingConfig)
@@ -40,10 +44,54 @@ const repository: Repository<InstructionTime> = jest.createMockFromModule('typeo
 repository.save = jest.fn().mockImplementation(async (elt) => {
   return elt
 })
+// @ts-ignore
+const instructionTimeMappingConfigLabel:Record<InstructionTimeCodeKey, string> =  {
+    [eInstructionTimeCode['first-demand-at']]: 'Date de la première demande de pièces',
+    [eInstructionTimeCode['first-demand-recieved-at']]: 'Date de réception des pièces de la première demande',
+    [eInstructionTimeCode['extention-began-at']]: 'Date de début de prorogation',
+    [eInstructionTimeCode['nb-days-extension']]: 'Durée de la prorogation',
+    [eInstructionTimeCode['second-demand-at']]: 'Date de deuxième demande de pièces complémentaires',
+    [eInstructionTimeCode['second-demand-recieved-at']]: 'Date de réception des pièces de la deuxième demande',
+    [eInstructionTimeCode['intent-to-oppose-at']]: "Date de l'intention d'opposition aux financements",
+  }
+// @ts-ignore
+const mappingLabelToCode:Record<string, InstructionTimeCodeKey> = Object.fromEntries(Object.entries(instructionTimeMappingConfigLabel).map(
+  ([key,label])=> [label, key]
+))
+
+  function mockFields(annotations: (Champ & { date?: string, datetime?: string})[], idDossier) {
+    let id=0
+    if(!annotations) {
+      fieldService.findWithFilter = jest.fn().mockResolvedValue([])
+      return
+    }
+    const fakefields:Field[] = annotations.map((a, idx) => ({
+      id: idx+1,
+      dateValue: ((a.date || a.datetime) && new Date(a.date || a.datetime)) || null,
+      label: a.label,
+      code: mappingLabelToCode[a.label] || null,
+
+      fieldSource: FieldSource.annotation,
+      dsChampType: DsChampType.DateChamp,
+      type: FieldType.date,
+      formatFunctionRef: null,
+      sourceId: faker.string.uuid(),
+      stringValue: "",
+      numberValue: null,
+      parentId: null,
+      parentRowIndex: null,
+      rawJson: {},
+      dossierId: idDossier,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }))
+
+    fieldService.findWithFilter = jest.fn().mockResolvedValue(fakefields)
+  }
+
 
 describe('InstructionTimesService', () => {
   let service: InstructionTimesService
-  let instructionTimeMappingConfigFound: TInstructionTimeMappingConfig['instructionTimeMappingConfig']
 
   beforeAll(async () => {
     service = new InstructionTimesService(
@@ -53,8 +101,6 @@ describe('InstructionTimesService', () => {
       repository,
       fieldService
         )
-    instructionTimeMappingConfigFound =
-      configService.get('instructionTime').instructionTimeMappingConfig
   })
 
   afterEach(async () => {
@@ -68,63 +114,82 @@ describe('InstructionTimesService', () => {
 
   it('It should return good annotations', async () => {
     const fakeDossier = getFakeDossierTest(null)
-    dossierService.findOneById = jest.fn()
-      .mockResolvedValueOnce(fakeDossier as Dossier)
+    let id=0
+    const fakefields:Field[] = [
+        {
+          id: ++id,
+          dateValue: new Date('2021-02-01T05:00:00.000Z'),
+          label: instructionTimeMappingConfigLabel['first-demand-recieved-at'],
+          code: eInstructionTimeCode['first-demand-recieved-at']
+        },
+        {
+          id: ++id,
+          dateValue: new Date('2021-04-02T05:00:00.000Z'),
+          label: instructionTimeMappingConfigLabel['second-demand-recieved-at'],
+          code: eInstructionTimeCode['second-demand-recieved-at'],
+        },
+        {
+          id: ++id,
+          dateValue: new Date('2021-01-01T05:00:00.000Z'),
+          label: instructionTimeMappingConfigLabel['first-demand-at'],
+          code: eInstructionTimeCode['first-demand-at']
+        },
+        {
+          id: ++id,
+          dateValue: new Date('2021-03-15T05:00:00.000Z'),
+          label: instructionTimeMappingConfigLabel['second-demand-at'],
+          code: eInstructionTimeCode['second-demand-at']
+        },
+        {
+          id: ++id,
+          dateValue: new Date('2021-07-01T00:00:00.000Z'),
+          label: instructionTimeMappingConfigLabel['nb-days-extension'],
+          code: eInstructionTimeCode['nb-days-extension']
+        },
+        {
+          id: ++id,
+          dateValue: new Date('2021-03-15T05:00:00.000Z'),
+          label: instructionTimeMappingConfigLabel['intent-to-oppose-at'],
+          code: eInstructionTimeCode['intent-to-oppose-at']
+        },
+      ].map(f => ({
+        ...f,
+        fieldSource: FieldSource.annotation,
+        dsChampType: DsChampType.DateChamp,
+        type: FieldType.date,
+        formatFunctionRef: null,
+        sourceId: faker.string.uuid(),
+        stringValue: "",
+        numberValue: null,
+        parentId: null,
+        parentRowIndex: null,
+        rawJson: {},
+        dossierId: fakeDossier.id,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }))
 
-    fakeDossier.dsDataJson.annotations = [
-      {
-        id: faker.string.uuid(),
-        date: '2021-02-01',
-        label: instructionTimeMappingConfigFound.DateReceipt1,
-      },
-      {
-        id: faker.string.uuid(),
-        date: '2021-04-02',
-        label: instructionTimeMappingConfigFound.DateReceipt2,
-      },
-      {
-        id: faker.string.uuid(),
-        date: '2021-01-01',
-        label: instructionTimeMappingConfigFound.DateRequest1,
-      },
-      {
-        id: faker.string.uuid(),
-        date: '2021-03-15',
-        label: instructionTimeMappingConfigFound.DateRequest2,
-      },
-      {
-        id: faker.string.uuid(),
-        datetime: '2021-07-01T00:00:00.000Z',
-        label: instructionTimeMappingConfigFound.DurationExtension,
-      },
-      {
-        id: faker.string.uuid(),
-        date: '2021-03-15',
-        label: instructionTimeMappingConfigFound.DateIntentOpposition,
-      },
-    ] as any
 
+    fieldService.findWithFilter = jest.fn().mockResolvedValue(fakefields)
     expect(
       await service.getMappingInstructionTimeByDossierId(fakeDossier.id),
     ).toEqual({
-      BeginProrogationDate: null,
-      DateReceipt1: dayjs('2021-02-01T00:00:00.000Z').startOf('day').toDate(),
-      DateReceipt2: dayjs('2021-04-02T00:00:00.000Z').startOf('day').toDate(),
-      DateRequest1: dayjs('2021-01-01T00:00:00.000Z').startOf('day').toDate(),
-      DateRequest2: dayjs('2021-03-15T00:00:00.000Z').startOf('day').toDate(),
-      DurationExtension: dayjs('2021-07-01T00:00:00.000Z')
+      [eInstructionTimeCode['extention-began-at']]: null,
+
+      [eInstructionTimeCode['first-demand-recieved-at']]: dayjs('2021-02-01T00:00:00.000Z').startOf('day').toDate(),
+      [eInstructionTimeCode['second-demand-recieved-at']]: dayjs('2021-04-02T00:00:00.000Z').startOf('day').toDate(),
+      [eInstructionTimeCode['first-demand-at']]: dayjs('2021-01-01T00:00:00.000Z').startOf('day').toDate(),
+      [eInstructionTimeCode['second-demand-at']]: dayjs('2021-03-15T00:00:00.000Z').startOf('day').toDate(),
+      [eInstructionTimeCode['nb-days-extension']]: dayjs('2021-07-01T00:00:00.000Z')
         .startOf('day')
         .toDate(),
-      DateIntentOpposition: dayjs('2021-03-15T00:00:00.000Z')
+      [eInstructionTimeCode['intent-to-oppose-at']]: dayjs('2021-03-15T00:00:00.000Z')
         .startOf('day')
         .toDate(),
     })
   })
 
   it('It should return good times instruction for a list a dossiers', async () => {
-    const instructionTimeMappingConfig =
-      configService.get('instructionTime').instructionTimeMappingConfig
-
     const fakeInstrunctionTime: Partial<InstructionTime>[] = Array.from(
       { length: 3 },
       (elt, idx) => {
@@ -137,7 +202,7 @@ describe('InstructionTimesService', () => {
             {
               id: faker.string.uuid(),
               date: '2021-02-01',
-              label: instructionTimeMappingConfig.DateRequest1,
+              label: instructionTimeMappingConfigLabel['first-demand-at'],
             },
           ] as any
 
@@ -210,32 +275,32 @@ describe('InstructionTimesService', () => {
             {
               id: faker.string.uuid(),
               date: '2023-01-01',
-              label: instructionTimeMappingConfigFound.DateRequest1,
+              label: instructionTimeMappingConfigLabel['first-demand-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateReceipt1,
+              label: instructionTimeMappingConfigLabel['first-demand-recieved-at'],
             },
             {
               id: faker.string.uuid(),
               datetime: null,
-              label: instructionTimeMappingConfigFound.BeginProrogationDate,
+              label: instructionTimeMappingConfigLabel['extention-began-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateRequest2,
+              label: instructionTimeMappingConfigLabel['second-demand-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateReceipt2,
+              label: instructionTimeMappingConfigLabel['second-demand-recieved-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateIntentOpposition,
+              label: instructionTimeMappingConfigLabel['intent-to-oppose-at'],
             },
           ],
         },
@@ -257,32 +322,32 @@ describe('InstructionTimesService', () => {
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateRequest1,
+              label: instructionTimeMappingConfigLabel['first-demand-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateReceipt1,
+              label: instructionTimeMappingConfigLabel['first-demand-recieved-at'],
             },
             {
               id: faker.string.uuid(),
               datetime: null,
-              label: instructionTimeMappingConfigFound.BeginProrogationDate,
+              label: instructionTimeMappingConfigLabel['extention-began-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateRequest2,
+              label: instructionTimeMappingConfigLabel['second-demand-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateReceipt2,
+              label: instructionTimeMappingConfigLabel['second-demand-recieved-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateIntentOpposition,
+              label: instructionTimeMappingConfigLabel['intent-to-oppose-at'],
             },
           ],
         },
@@ -303,32 +368,32 @@ describe('InstructionTimesService', () => {
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateRequest1,
+              label: instructionTimeMappingConfigLabel['first-demand-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateReceipt1,
+              label: instructionTimeMappingConfigLabel['first-demand-recieved-at'],
             },
             {
               id: faker.string.uuid(),
               datetime: null,
-              label: instructionTimeMappingConfigFound.BeginProrogationDate,
+              label: instructionTimeMappingConfigLabel['extention-began-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateRequest2,
+              label: instructionTimeMappingConfigLabel['second-demand-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateReceipt2,
+              label: instructionTimeMappingConfigLabel['second-demand-recieved-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateIntentOpposition,
+              label: instructionTimeMappingConfigLabel['intent-to-oppose-at'],
             },
           ],
         },
@@ -349,32 +414,32 @@ describe('InstructionTimesService', () => {
             {
               id: faker.string.uuid(),
               date: '2023-01-01',
-              label: instructionTimeMappingConfigFound.DateRequest1,
+              label: instructionTimeMappingConfigLabel['first-demand-at'],
             },
             {
               id: faker.string.uuid(),
               date: '2023-01-05',
-              label: instructionTimeMappingConfigFound.DateReceipt1,
+              label: instructionTimeMappingConfigLabel['first-demand-recieved-at'],
             },
             {
               id: faker.string.uuid(),
               datetime: null,
-              label: instructionTimeMappingConfigFound.BeginProrogationDate,
+              label: instructionTimeMappingConfigLabel['extention-began-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateReceipt2,
+              label: instructionTimeMappingConfigLabel['second-demand-recieved-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateRequest2,
+              label: instructionTimeMappingConfigLabel['second-demand-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateIntentOpposition,
+              label: instructionTimeMappingConfigLabel['intent-to-oppose-at'],
             },
           ],
         },
@@ -396,32 +461,32 @@ describe('InstructionTimesService', () => {
             {
               id: faker.string.uuid(),
               date: '2023-01-01',
-              label: instructionTimeMappingConfigFound.DateRequest1,
+              label: instructionTimeMappingConfigLabel['first-demand-at'],
             },
             {
               id: faker.string.uuid(),
               date: '2023-01-05',
-              label: instructionTimeMappingConfigFound.DateReceipt1,
+              label: instructionTimeMappingConfigLabel['first-demand-recieved-at'],
             },
             {
               id: faker.string.uuid(),
               datetime: null,
-              label: instructionTimeMappingConfigFound.BeginProrogationDate,
+              label: instructionTimeMappingConfigLabel['extention-began-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateRequest2,
+              label: instructionTimeMappingConfigLabel['second-demand-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateReceipt2,
+              label: instructionTimeMappingConfigLabel['second-demand-recieved-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateIntentOpposition,
+              label: instructionTimeMappingConfigLabel['intent-to-oppose-at'],
             },
           ],
         },
@@ -440,32 +505,32 @@ describe('InstructionTimesService', () => {
             {
               id: faker.string.uuid(),
               date: '2023-01-01',
-              label: instructionTimeMappingConfigFound.DateRequest1,
+              label: instructionTimeMappingConfigLabel['first-demand-at'],
             },
             {
               id: faker.string.uuid(),
               date: '2023-01-05',
-              label: instructionTimeMappingConfigFound.DateReceipt1,
+              label: instructionTimeMappingConfigLabel['first-demand-recieved-at'],
             },
             {
               id: faker.string.uuid(),
               datetime: null,
-              label: instructionTimeMappingConfigFound.BeginProrogationDate,
+              label: instructionTimeMappingConfigLabel['extention-began-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateReceipt2,
+              label: instructionTimeMappingConfigLabel['second-demand-recieved-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateRequest2,
+              label: instructionTimeMappingConfigLabel['second-demand-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateIntentOpposition,
+              label: instructionTimeMappingConfigLabel['intent-to-oppose-at'],
             },
           ],
         },
@@ -487,32 +552,32 @@ describe('InstructionTimesService', () => {
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateRequest1,
+              label: instructionTimeMappingConfigLabel['first-demand-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateReceipt1,
+              label: instructionTimeMappingConfigLabel['first-demand-recieved-at'],
             },
             {
               id: faker.string.uuid(),
               datetime: '2023-01-20',
-              label: instructionTimeMappingConfigFound.BeginProrogationDate,
+              label: instructionTimeMappingConfigLabel['extention-began-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateRequest2,
+              label: instructionTimeMappingConfigLabel['second-demand-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateReceipt2,
+              label: instructionTimeMappingConfigLabel['second-demand-recieved-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateIntentOpposition,
+              label: instructionTimeMappingConfigLabel['intent-to-oppose-at'],
             },
           ],
         },
@@ -531,32 +596,32 @@ describe('InstructionTimesService', () => {
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateRequest1,
+              label: instructionTimeMappingConfigLabel['first-demand-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateReceipt1,
+              label: instructionTimeMappingConfigLabel['first-demand-recieved-at'],
             },
             {
               id: faker.string.uuid(),
               datetime: '2023-01-20',
-              label: instructionTimeMappingConfigFound.BeginProrogationDate,
+              label: instructionTimeMappingConfigLabel['extention-began-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateRequest2,
+              label: instructionTimeMappingConfigLabel['second-demand-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateReceipt2,
+              label: instructionTimeMappingConfigLabel['second-demand-recieved-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateIntentOpposition,
+              label: instructionTimeMappingConfigLabel['intent-to-oppose-at'],
             },
           ],
         },
@@ -575,32 +640,32 @@ describe('InstructionTimesService', () => {
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateRequest1,
+              label: instructionTimeMappingConfigLabel['first-demand-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateReceipt1,
+              label: instructionTimeMappingConfigLabel['first-demand-recieved-at'],
             },
             {
               id: faker.string.uuid(),
               date: '2023-01-20',
-              label: instructionTimeMappingConfigFound.BeginProrogationDate,
+              label: instructionTimeMappingConfigLabel['extention-began-at'],
             },
             {
               id: faker.string.uuid(),
               date: '2023-01-22',
-              label: instructionTimeMappingConfigFound.DateRequest2,
+              label: instructionTimeMappingConfigLabel['second-demand-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateReceipt2,
+              label: instructionTimeMappingConfigLabel['second-demand-recieved-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateIntentOpposition,
+              label: instructionTimeMappingConfigLabel['intent-to-oppose-at'],
             },
           ],
         },
@@ -619,32 +684,32 @@ describe('InstructionTimesService', () => {
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateRequest1,
+              label: instructionTimeMappingConfigLabel['first-demand-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateReceipt1,
+              label: instructionTimeMappingConfigLabel['first-demand-recieved-at'],
             },
             {
               id: faker.string.uuid(),
               datetime: '2023-01-20',
-              label: instructionTimeMappingConfigFound.BeginProrogationDate,
+              label: instructionTimeMappingConfigLabel['extention-began-at'],
             },
             {
               id: faker.string.uuid(),
               datetime: '2023-01-22',
-              label: instructionTimeMappingConfigFound.DateRequest2,
+              label: instructionTimeMappingConfigLabel['second-demand-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateReceipt2,
+              label: instructionTimeMappingConfigLabel['second-demand-recieved-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateIntentOpposition,
+              label: instructionTimeMappingConfigLabel['intent-to-oppose-at'],
             },
           ],
         },
@@ -666,32 +731,32 @@ describe('InstructionTimesService', () => {
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateRequest1,
+              label: instructionTimeMappingConfigLabel['first-demand-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateReceipt1,
+              label: instructionTimeMappingConfigLabel['first-demand-recieved-at'],
             },
             {
               id: faker.string.uuid(),
               datetime: '2023-01-20',
-              label: instructionTimeMappingConfigFound.BeginProrogationDate,
+              label: instructionTimeMappingConfigLabel['extention-began-at'],
             },
             {
               id: faker.string.uuid(),
               datetime: '2023-01-22',
-              label: instructionTimeMappingConfigFound.DateRequest2,
+              label: instructionTimeMappingConfigLabel['second-demand-at'],
             },
             {
               id: faker.string.uuid(),
               datetime: '2023-01-25',
-              label: instructionTimeMappingConfigFound.DateReceipt2,
+              label: instructionTimeMappingConfigLabel['second-demand-recieved-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateIntentOpposition,
+              label: instructionTimeMappingConfigLabel['intent-to-oppose-at'],
             },
           ],
         },
@@ -713,32 +778,32 @@ describe('InstructionTimesService', () => {
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateRequest1,
+              label: instructionTimeMappingConfigLabel['first-demand-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateReceipt1,
+              label: instructionTimeMappingConfigLabel['first-demand-recieved-at'],
             },
             {
               id: faker.string.uuid(),
               datetime: '2023-01-20',
-              label: instructionTimeMappingConfigFound.BeginProrogationDate,
+              label: instructionTimeMappingConfigLabel['extention-began-at'],
             },
             {
               id: faker.string.uuid(),
               datetime: '2023-01-22',
-              label: instructionTimeMappingConfigFound.DateRequest2,
+              label: instructionTimeMappingConfigLabel['second-demand-at'],
             },
             {
               id: faker.string.uuid(),
               datetime: '2023-01-25',
-              label: instructionTimeMappingConfigFound.DateReceipt2,
+              label: instructionTimeMappingConfigLabel['second-demand-recieved-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateIntentOpposition,
+              label: instructionTimeMappingConfigLabel['intent-to-oppose-at'],
             },
           ],
         },
@@ -756,32 +821,32 @@ describe('InstructionTimesService', () => {
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateRequest1,
+              label: instructionTimeMappingConfigLabel['first-demand-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateReceipt1,
+              label: instructionTimeMappingConfigLabel['first-demand-recieved-at'],
             },
             {
               id: faker.string.uuid(),
               datetime: '2023-01-20',
-              label: instructionTimeMappingConfigFound.BeginProrogationDate,
+              label: instructionTimeMappingConfigLabel['extention-began-at'],
             },
             {
               id: faker.string.uuid(),
               datetime: '2023-01-22',
-              label: instructionTimeMappingConfigFound.DateRequest2,
+              label: instructionTimeMappingConfigLabel['second-demand-at'],
             },
             {
               id: faker.string.uuid(),
               datetime: '2023-01-25',
-              label: instructionTimeMappingConfigFound.DateReceipt2,
+              label: instructionTimeMappingConfigLabel['second-demand-recieved-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateIntentOpposition,
+              label: instructionTimeMappingConfigLabel['intent-to-oppose-at'],
             },
           ],
         },
@@ -804,32 +869,32 @@ describe('InstructionTimesService', () => {
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateRequest1,
+              label: instructionTimeMappingConfigLabel['first-demand-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateReceipt1,
+              label: instructionTimeMappingConfigLabel['first-demand-recieved-at'],
             },
             {
               id: faker.string.uuid(),
               datetime: '2023-01-20',
-              label: instructionTimeMappingConfigFound.BeginProrogationDate,
+              label: instructionTimeMappingConfigLabel['extention-began-at'],
             },
             {
               id: faker.string.uuid(),
               datetime: '2023-01-22',
-              label: instructionTimeMappingConfigFound.DateRequest2,
+              label: instructionTimeMappingConfigLabel['second-demand-at'],
             },
             {
               id: faker.string.uuid(),
               datetime: '2023-01-25',
-              label: instructionTimeMappingConfigFound.DateReceipt2,
+              label: instructionTimeMappingConfigLabel['second-demand-recieved-at'],
             },
             {
               id: faker.string.uuid(),
               date: '2023-01-28',
-              label: instructionTimeMappingConfigFound.DateIntentOpposition,
+              label: instructionTimeMappingConfigLabel['intent-to-oppose-at'],
             },
           ],
         },
@@ -852,32 +917,32 @@ describe('InstructionTimesService', () => {
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateRequest1,
+              label: instructionTimeMappingConfigLabel['first-demand-at'],
             },
             {
               id: faker.string.uuid(),
               date: null,
-              label: instructionTimeMappingConfigFound.DateReceipt1,
+              label: instructionTimeMappingConfigLabel['first-demand-recieved-at'],
             },
             {
               id: faker.string.uuid(),
               datetime: '2023-01-20',
-              label: instructionTimeMappingConfigFound.BeginProrogationDate,
+              label: instructionTimeMappingConfigLabel['extention-began-at'],
             },
             {
               id: faker.string.uuid(),
               datetime: '2023-01-22',
-              label: instructionTimeMappingConfigFound.DateRequest2,
+              label: instructionTimeMappingConfigLabel['second-demand-at'],
             },
             {
               id: faker.string.uuid(),
               datetime: '2023-01-25',
-              label: instructionTimeMappingConfigFound.DateReceipt2,
+              label: instructionTimeMappingConfigLabel['second-demand-recieved-at'],
             },
             {
               id: faker.string.uuid(),
               date: '2023-01-28',
-              label: instructionTimeMappingConfigFound.DateIntentOpposition,
+              label: instructionTimeMappingConfigLabel['intent-to-oppose-at'],
             },
           ],
         },
@@ -914,6 +979,9 @@ describe('InstructionTimesService', () => {
       instructionTime.dossier = new Dossier()
       instructionTime.dossier.dsDataJson = getFakeDossierTest(null).dsDataJson
       instructionTime.dossier.dsDataJson = data.dossier
+
+      mockFields(data.dossier.annotations, data.dossier.id)
+
       if (data.expected.now) {
         MockDate.set(data.expected.now)
       }

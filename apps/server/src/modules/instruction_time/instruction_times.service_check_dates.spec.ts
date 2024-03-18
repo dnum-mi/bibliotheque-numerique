@@ -6,12 +6,13 @@ import MockDate from 'mockdate'
 import { DossierState } from '@dnum-mi/ds-api-client/dist/@types/types'
 
 import { InstructionTimesService } from './instruction_times.service'
-import instructionTimeMappingConfig, { keyInstructionTime } from '../../config/instructionTimeMapping.config'
+import instructionTimeMappingConfig from '../../config/instructionTimeMapping.config'
 import { InstructionTime } from './instruction_time.entity'
 import { Dossier } from '../dossiers/objects/entities/dossier.entity'
 import { LoggerService } from '../../shared/modules/logger/logger.service'
 import { DossierService } from '../dossiers/providers/dossier.service'
 import { FieldService } from '../dossiers/providers/field.service'
+import { eInstructionTimeCode } from '../dossiers/objects/constante/field-code.enum'
 
 const loggerService: LoggerService = jest.createMockFromModule<LoggerService>('@/shared/modules/logger/logger.service')
 loggerService.setContext = jest.fn()
@@ -83,13 +84,13 @@ describe('InstructionTimesService, Check Date', () => {
     dossier.dsDataJson.state = state
     dossier.dsDataJson.datePassageEnInstruction = dateInstrution
     const instuctionTimes = {
-      id: 'dossier-test',
-      [keyInstructionTime.DATE_REQUEST1]: firstDemand,
-      [keyInstructionTime.DATE_RECEIPT1]: firstReceip,
-      [keyInstructionTime.BEGIN_PROROGATION_DATE]: dateProrogation,
-      [keyInstructionTime.DATE_REQUEST2]: secondDemand,
-      [keyInstructionTime.DATE_RECEIPT2]: secondReceip,
-      [keyInstructionTime.DATE_INTENT_OPPOSITION]: dateIntentOppo,
+      // id: 'dossier-test',
+      [eInstructionTimeCode['first-demand-at']]: firstDemand,
+      [eInstructionTimeCode['first-demand-recieved-at']]: firstReceip,
+      [eInstructionTimeCode['extention-began-at']]: dateProrogation,
+      [eInstructionTimeCode['second-demand-at']]: secondDemand,
+      [eInstructionTimeCode['second-demand-recieved-at']]: secondReceip,
+      [eInstructionTimeCode['intent-to-oppose-at']]: dateIntentOppo,
     }
     return service.checkValidity(dossier.dsDataJson, instuctionTimes)
   }
