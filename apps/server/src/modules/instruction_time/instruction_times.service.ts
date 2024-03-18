@@ -3,14 +3,13 @@ import { ConfigService } from '@nestjs/config'
 import { In, Repository } from 'typeorm'
 
 import { Dossier as TDossier, DossierState } from '@dnum-mi/ds-api-client/dist/@types/types'
-import { Champ, DateChamp, DatetimeChamp } from '@dnum-mi/ds-api-client/dist/@types/generated-types'
 
 import dayjs, { type Dayjs } from '@/shared/utils/dayjs'
 
 import { LoggerService } from '@/shared/modules/logger/logger.service'
-import { TInstructionTimeMappingConfig, keyInstructionTime } from '../../config/instructionTimeMapping.config'
+
 import { EInstructionTimeState, EInstructionTimeStateKey } from './types/IntructionTime.type'
-import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
+
 import { InstructionTime } from './instruction_time.entity'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -20,16 +19,14 @@ import {
   fixFieldInstructionTimeDelay,
   fixFieldInstructionTimeStatus,
 } from './constante/fix-field-instrucation-times.dictionnary'
+import { startOfDay } from 'date-fns'
+import {
+  eInstructionTimeCode,
+  InstructionTimeCodeKey,
+  instructionTimeCodes,
+} from '../dossiers/objects/constante/field-code.enum'
 
-type TIntructionTime = {
-  [keyInstructionTime.DATE_REQUEST1]?: Date | null;
-  [keyInstructionTime.DATE_RECEIPT1]?: Date | null;
-  [keyInstructionTime.BEGIN_PROROGATION_DATE]?: Date | null;
-  [keyInstructionTime.DURATION_EXTENSION]?: Date | null;
-  [keyInstructionTime.DATE_REQUEST2]?: Date | null;
-  [keyInstructionTime.DATE_RECEIPT2]?: Date | null;
-  [keyInstructionTime.DATE_INTENT_OPPOSITION]?: Date | null;
-};
+type TIntructionTime = Partial<Record<InstructionTimeCodeKey, Date | null>>
 
 type TDelay = {
   endAt: Dayjs;
@@ -90,38 +87,18 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
     return this.findByDossierId(idDossier)
   }
 
-  getMappingInstructionTimeByDossier (dossier: Dossier): TIntructionTime {
-    const instructionTimeMapping =
-      this.configService.get<TInstructionTimeMappingConfig['instructionTimeMappingConfig']>(
-        'instructionTime',
-      ).instructionTimeMappingConfig
-    const annotations = dossier.dsDataJson.annotations
-    const result = {}
-    for (const annotationLabelKey of Object.keys(instructionTimeMapping)) {
-      const annotation = annotations?.find(
-        (annotation) => annotation.label === instructionTimeMapping[annotationLabelKey],
-      ) as Champ
-      if (annotation &&
-          ((annotation as DatetimeChamp).datetime ||
-            (annotation as DateChamp).date ||
-            annotation.stringValue)) {
-        result[annotationLabelKey] = dayjs(
-          (annotation as DatetimeChamp).datetime ||
-          (annotation as DateChamp).date ||
-          annotation.stringValue,
-        )
-          .startOf('day')
-          .toDate()
-      } else {
-        result[annotationLabelKey] = null
-      }
-    }
-    return result
-  }
+  async getMappingInstructionTimeByDossierId(idDossier: number): Promise<TIntructionTime> {
+    const fieldsFound = await this.fieldService.findWithFilter({
+      dossierId: idDossier,
+      code: In(instructionTimeCodes),
+    })
 
-  async getMappingInstructionTimeByDossierId (idDossier: number): Promise<TIntructionTime> {
-    const dossier = await this.dossierService.findOneById(idDossier)
-    return this.getMappingInstructionTimeByDossier(dossier)
+    return Object.fromEntries(instructionTimeCodes.map(
+      (instructionTimeCode) => {
+        const f = fieldsFound.find(f => f.code === instructionTimeCode)
+        return [instructionTimeCode, (f?.dateValue && startOfDay(f?.dateValue)) || null]
+      },
+    ))
   }
 
   async instructionTimeCalculation (idDossiers: number[]): Promise<void> {
@@ -189,8 +166,6 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
     }))
   }
 
-  // TODO: fixe type
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   checkAndGetLastDates (date1: toCheckDate, date2: toCheckDate, messageError: string): toCheckDate {
     const dateBefore = date1?.date
     const dateAfter = date2?.date
@@ -215,8 +190,8 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
 
   checkValidity (data: Partial<TDossier>, instructionTime: TIntructionTime): boolean {
     const messageError = `Erreur dans les déclarations de dates pour le dossier ${data.id}`
-    const dateReceipt1stDemand = instructionTime[keyInstructionTime.DATE_RECEIPT1]
-    const dateRequest1stDemand = instructionTime[keyInstructionTime.DATE_REQUEST1]
+    const dateReceipt1stDemand = instructionTime[eInstructionTimeCode['first-demand-recieved-at']]
+    const dateRequest1stDemand = instructionTime[eInstructionTimeCode['first-demand-at']]
 
     if (data.state === DossierState.EnConstruction) {
       if (dateReceipt1stDemand) {
@@ -265,11 +240,11 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
 
     const isOk2ndDemand = this.checkAndGetLastDates(
       {
-        date: instructionTime[keyInstructionTime.DATE_REQUEST2],
+        date: instructionTime[eInstructionTimeCode['second-demand-at']],
         message: 'La date de demande de pièces',
       },
       {
-        date: instructionTime[keyInstructionTime.DATE_RECEIPT2],
+        date: instructionTime[eInstructionTimeCode['second-demand-recieved-at']],
         message: 'La date de reception de pièces',
       },
       // eslint-disable-next-line no-irregular-whitespace
@@ -279,7 +254,7 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
     const forDateStart = dateReceipt1stDemand ? forCheckDateReception1stDemand : forCheckDateInstruction
 
     const forDateProrogation = {
-      date: instructionTime[keyInstructionTime.BEGIN_PROROGATION_DATE],
+      date: instructionTime[eInstructionTimeCode['extention-began-at']],
       message: 'La date de prorogation',
     }
 
@@ -307,11 +282,11 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
     }
 
     const forDateIntentionOppo = {
-      date: instructionTime[keyInstructionTime.DATE_INTENT_OPPOSITION],
+      date: instructionTime[eInstructionTimeCode['intent-to-oppose-at']],
       message: "La date d'intention opposition",
     }
 
-    if (instructionTime[keyInstructionTime.BEGIN_PROROGATION_DATE]) {
+    if (instructionTime[eInstructionTimeCode['extention-began-at']]) {
       this.checkAndGetLastDates(forDateProrogation, forDateIntentionOppo, `${messageError}: `)
     }
 
@@ -348,7 +323,7 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
       return await this.saveIsClose(instructionTime)
     }
 
-    const datesForInstructionTimes = this.getMappingInstructionTimeByDossier(dossier)
+    const datesForInstructionTimes = await this.getMappingInstructionTimeByDossierId(dossier.id)
 
     try {
       this.checkValidity(dossier.dsDataJson, datesForInstructionTimes)
@@ -367,20 +342,21 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
 
     const delay = {} as TDelay
 
-    if (datesForInstructionTimes.DateIntentOpposition) {
+    if (datesForInstructionTimes['intent-to-oppose-at']) {
       this.delayOpposition(datesForInstructionTimes, delay)
     } else {
-      this.dalayInstruction(dayjs(datesForInstructionTimes.DateReceipt1 || datePassageEnInstruction), delay)
+      this.dalayInstruction(dayjs(datesForInstructionTimes['first-demand-recieved-at'] ||
+      datePassageEnInstruction), delay)
 
-      if (datesForInstructionTimes.BeginProrogationDate) {
+      if (datesForInstructionTimes['extention-began-at']) {
         this.delayProrogation(datesForInstructionTimes, delay)
       }
 
-      if (datesForInstructionTimes.DateRequest2) {
+      if (datesForInstructionTimes['second-demand-at']) {
         this.delayDateRequest2(datesForInstructionTimes, delay)
       }
 
-      if (datesForInstructionTimes.DateReceipt2) {
+      if (datesForInstructionTimes['second-demand-recieved-at']) {
         this.delayDateReceipt2(datesForInstructionTimes, delay)
       }
     }
@@ -409,7 +385,7 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
   private async saveInConstruction (
     instructionTime: InstructionTime,
     datesForInstructionTimes: TIntructionTime) : Promise<InstructionTime> {
-    if (datesForInstructionTimes[keyInstructionTime.DATE_REQUEST1]) {
+    if (datesForInstructionTimes[eInstructionTimeCode['first-demand-at']]) {
       instructionTime.state = EInstructionTimeState.FIRST_REQUEST
     }
     if (instructionTime.state === undefined) instructionTime.state = EInstructionTimeState.DEFAULT
@@ -422,7 +398,7 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
   }
 
   private delayDateReceipt2 (datesForInstructionTimes: TIntructionTime, delay: TDelay) :void {
-    delay.endAt = dayjs(datesForInstructionTimes.DateReceipt2)
+    delay.endAt = dayjs(datesForInstructionTimes['second-demand-at'])
       .startOf('day')
       .add(delay.endAt.diff(delay.stopAt, 'day'), 'day')
 
@@ -430,12 +406,12 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
   }
 
   private delayDateRequest2 (datesForInstructionTimes: TIntructionTime, delay: TDelay) :void {
-    delay.stopAt = dayjs(datesForInstructionTimes.DateRequest2)
+    delay.stopAt = dayjs(datesForInstructionTimes['second-demand-at'])
     delay.state = EInstructionTimeState.SECOND_REQUEST
   }
 
   private delayProrogation (datesForInstructionTimes: TIntructionTime, delay: TDelay) :void {
-    const timeProrogation = datesForInstructionTimes.BeginProrogationDate
+    const timeProrogation = datesForInstructionTimes['extention-began-at']
     const remainingtime = delay.endAt.diff(timeProrogation, 'day')
     delay.endAt = dayjs(timeProrogation).add(this.nbDaysAfterExtension, 'day').add(remainingtime, 'day')
 
@@ -449,7 +425,7 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
   }
 
   private delayOpposition (datesForInstructionTimes: TIntructionTime, delay: TDelay) :void {
-    delay.startAt = dayjs(datesForInstructionTimes.DateIntentOpposition)
+    delay.startAt = dayjs(datesForInstructionTimes['intent-to-oppose-at'])
     delay.endAt = delay.startAt.add(this.nbDaysAfterIntentOpposition, 'day')
 
     delay.state = EInstructionTimeState.INTENT_OPPO
