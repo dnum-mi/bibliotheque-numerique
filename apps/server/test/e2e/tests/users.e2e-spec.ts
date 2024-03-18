@@ -181,7 +181,7 @@ describe('users (e2e)', () => {
         .expect(401)
     })
 
-    it('Should 403 to update password with invalide token', async () => {
+    it('Should 403 to update password with invalid token', async () => {
       await request(app.getHttpServer()) //
         .put('/users')
         .send({ token: 'test' })

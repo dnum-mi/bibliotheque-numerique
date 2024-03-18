@@ -136,10 +136,7 @@ apiClientInstance.interceptors.response.use(r => r, (error: AxiosError<{ message
     toaster.addErrorMessage(error.response?.data?.message ?? 'Ressource introuvable')
     throw error
   }
-  if (status >= 400 && status < 500 && error.response?.data?.message) {
-    toaster.addErrorMessage(error.response?.data?.message)
-    return null
-  }
+  throw error
 })
 
 const downloadAFile = (response: AxiosResponse) => {

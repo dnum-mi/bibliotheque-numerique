@@ -1,11 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { SendMailService } from './sendmail.service'
-import { SendMailModule } from './sendmail.module'
+import { ConfigService } from '@nestjs/config'
 import * as SMTPTransport from 'nodemailer/lib/smtp-transport'
 import MailMessage from 'nodemailer/lib/mailer/mail-message'
+
+import { SendMailService } from './sendmail.service'
+import { SendMailModule } from './sendmail.module'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { loggerServiceMock } from '../../../test/mock/logger-service.mock'
-import { ConfigService } from '@nestjs/config'
 
 /**
  * Code spyOnSmtpSend is from https://github.com/nest-modules/mailer/blob/master/lib/mailer.service.spec.ts
