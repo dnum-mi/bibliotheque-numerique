@@ -20,8 +20,19 @@ export const fileFieldCodes = [
   'file-fe-excel',
 ] as const
 
+export const instructionTimeCodes = [
+  'first-demand-at',
+  'first-demand-recieved-at',
+  'extention-began-at',
+  'nb-days-extension',
+  'second-demand-at',
+  'second-demand-recieved-at',
+  'intent-to-oppose-at',
+] as const
+
 export const fieldCodes = [
   ...fileFieldCodes,
+  ...instructionTimeCodes,
 
   // date used to name files
   'board-decision-at',
@@ -33,6 +44,10 @@ export const fieldCodes = [
 
 export type FileFieldCodeKey = (typeof fileFieldCodes)[number]
 export const eFileFieldCode = createEnum(fileFieldCodes)
+
+export type InstructionTimeCodeKey = (typeof instructionTimeCodes)[number]
+export const eInstructionTimeCode:Record<InstructionTimeCodeKey, InstructionTimeCodeKey> =
+              createEnum(instructionTimeCodes)
 
 export type FieldCodeKey = (typeof fieldCodes)[number]
 export const eFieldCode = createEnum(fieldCodes)
