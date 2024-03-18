@@ -1,12 +1,14 @@
+import { Repository } from 'typeorm'
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
+import { InjectRepository } from '@nestjs/typeorm'
+
+import { BnConfigurationKey } from '@biblio-num/shared'
+
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
-import { Repository } from 'typeorm'
-import { InjectRepository } from '@nestjs/typeorm'
 import { BnConfiguration } from '@/shared/modules/bn-configurations/objects/entities/bn-configuration.entity'
 import { BnConfigurationDefault } from '@/shared/modules/bn-configurations/objects/const/bn-configuration-default.const'
-import { BnConfigurationKey } from '@biblio-num/shared'
 
 @Injectable()
 export class BnConfigurationService extends BaseEntityService<BnConfiguration> implements OnApplicationBootstrap {
@@ -52,7 +54,7 @@ export class BnConfigurationService extends BaseEntityService<BnConfiguration> i
   private async createMissingMandatoryData(): Promise<void> {
     this.logger.verbose('createMissingMandatoryData')
     for (const keyName of Object.keys(BnConfigurationDefault)) {
-      // @ts-ignore  enum bug again, TODO: why ?
+      // @ts-ignore enum bug again, TODO: why ?
       const configuration = await this.repo.findOneBy({ keyName })
       if (!configuration) {
         this.logger.debug(`Setting default configuration ${keyName}`)
