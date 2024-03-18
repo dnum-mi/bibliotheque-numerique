@@ -20,8 +20,8 @@ describe('Field search', () => {
     await dataSource.destroy()
   })
 
-  it('Should return 401 if not connected', () => {
-    return request(app.getHttpServer())
+  it('Should return 401 if not connected', async () => {
+    return request(await app.getHttpServer())
       .post('/demarches/1/fields-search')
       .send({
         idDs: 42,
