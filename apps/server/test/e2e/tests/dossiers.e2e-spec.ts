@@ -22,7 +22,9 @@ describe('Dossiers (e2e)', () => {
 
   describe('GET /dossiers/:id', () => {
     it('Should be 401', async () => {
-      return request(app.getHttpServer()).get('/dossiers/1').expect(401)
+      return request(await app.getHttpServer())
+        .get('/dossiers/1')
+        .expect(401)
     })
 
     it('Should be 404', async () => {
@@ -160,6 +162,42 @@ describe('Dossiers (e2e)', () => {
             data: [{ id: 2, label: 'coucou', tag: 'some-tag' }],
             total: 1,
           })
+        })
+    })
+  })
+
+  describe('GET /dossiers/:id/files/summary', () => {
+    const url = '/dossiers/16/files/summary'
+    it('Should be 401', async () => {
+      return request(app.getHttpServer())
+        .get(url)
+        .expect(401)
+    })
+
+    it('Should be 403 for no role', async () => {
+      return await request(app.getHttpServer())
+        .get(url)
+        .set('Cookie', [cookies.norole])
+        .expect(403)
+    })
+
+    it('Should return total of files of dossiers for admin', async () => {
+      return await request(app.getHttpServer())
+        .get(url)
+        .set('Cookie', [cookies.superadmin])
+        .expect(200)
+        .then(({ text }) => {
+          expect(text).toEqual('3')
+        })
+    })
+
+    it('Should return total files which are not from annotation and message', async () => {
+      return await request(app.getHttpServer())
+        .get(url)
+        .set('Cookie', [cookies.instructor]) // instructor has no rights on pref 57 for demarche 1, and dossier with id 16 is pref 57 for demarche 1
+        .expect(200)
+        .then(({ text }) => {
+          expect(text).toEqual('1')
         })
     })
   })

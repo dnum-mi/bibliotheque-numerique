@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm'
+import { In, Repository } from 'typeorm'
 import { Injectable } from '@nestjs/common'
 import { File } from '../objects/entities/file.entity'
 import type { File as TFile, Dossier as TDossier } from '@dnum-mi/ds-api-client'
@@ -14,7 +14,12 @@ import {
   eState,
   StateKey,
   FileExtensionKey,
-  FileTagKey, fileTags, eFileTag,
+  FileTagKey,
+  fileTags,
+  eFileTag,
+  FileDsSourceLabelKey,
+  eFileDsSourceLabel,
+  fileDsSourceLabels,
 } from '@biblio-num/shared'
 import { UpsertDsFileDto } from '@/modules/files/objects/dto/input/upsert-ds-file.dto'
 import { v4 } from 'uuid'
@@ -188,6 +193,25 @@ export class FileService extends BaseEntityService<File> {
         ),
     )
     return Object.fromEntries(entries) as Record<FileTagKey, number>
+  }
+
+  async getDossierFileSummary(
+    dossierId: number,
+    hasFullAccess: boolean,
+  ): Promise<number> {
+    this.logger.verbose('getDossierFileSummary')
+    const sourceLabels = hasFullAccess
+      ? fileDsSourceLabels
+      : fileDsSourceLabels.filter((label: FileDsSourceLabelKey) =>
+        !(eFileDsSourceLabel['ds-annotation'] === label || eFileDsSourceLabel['ds-message'] === label))
+
+    return await this.repo
+      .count({
+        where: {
+          dossierId,
+          sourceLabel: In(sourceLabels),
+        },
+      })
   }
 
   //#endregion
