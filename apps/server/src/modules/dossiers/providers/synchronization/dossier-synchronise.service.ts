@@ -24,6 +24,9 @@ import {
   DossierSynchroniseOrganismeService,
 } from '@/modules/dossiers/providers/synchronization/organisme/dossier-synchronise-organisme.service'
 import { Field } from '@/modules/dossiers/objects/entities/field.entity'
+import {
+  DossierSynchroniseExcelService,
+} from '@/modules/dossiers/providers/synchronization/excel/dossier-synchronise-excel.service'
 
 @Injectable()
 export class DossierSynchroniseService extends BaseEntityService<Dossier> {
@@ -34,6 +37,7 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
     private readonly fileSynchroniseService: DossierSynchroniseFileService,
     private readonly dossierSynchroniseOrganisme: DossierSynchroniseOrganismeService,
     private readonly instructionTimeService: InstructionTimesService,
+    private readonly dossierSynchroniseExcelService: DossierSynchroniseExcelService,
   ) {
     super(repo, logger)
     this.logger.setContext(this.constructor.name)
@@ -83,6 +87,7 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
       this.logger.debug('This demarche is FE')
       await this.instructionTimeService.proccessByDossierId(id)
       await this.instructionTimeService.instructionTimeCalculation([id])
+      await this.dossierSynchroniseExcelService.upsetFieldsAmounts(id, null)
     }
   }
 
