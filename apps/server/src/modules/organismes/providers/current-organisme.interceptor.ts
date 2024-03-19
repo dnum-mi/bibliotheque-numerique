@@ -7,7 +7,7 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { from, Observable, switchMap } from 'rxjs'
-import { IRole, isSuperiorOrSimilar, Roles } from '@biblio-num/shared'
+import { IRole, isAtLeastInstructor } from '@biblio-num/shared'
 import { OrganismeService } from '@/modules/organismes/providers/organisme.service'
 
 const no404 = (): void => {
@@ -36,7 +36,7 @@ export class CurrentOrganismeInterceptor implements NestInterceptor {
         }
         const currentUserRole: IRole = context.switchToHttp().getRequest().user
           ?.role
-        if (isSuperiorOrSimilar(currentUserRole.label, Roles.instructor)) {
+        if (!isAtLeastInstructor(currentUserRole.label)) {
           no403()
         }
         context.switchToHttp().getRequest().organisme = organisme
