@@ -1,4 +1,4 @@
-import dosiser from '../fixtures/dossier.json'
+import dosiser from '../fixtures/dossier-without-annotaions.json'
 import files from '../fixtures/files.json'
 
 describe('Vue Dossier', () => {
@@ -12,11 +12,12 @@ describe('Vue Dossier', () => {
   it('PJ', () => {
     cy.intercept({ method: 'GET', url: '/api/dossiers/1' }, dosiser).as('dossier')
     cy.intercept({ method: 'POST', url: '/api/dossiers/1/files/list' }, files).as('files')
+    cy.intercept({ method: 'GET', url: '/api/dossiers/1/files/summary' }, { body: files.total }).as('files-summary')
 
     cy.visit('/dossiers/1')
     cy.wait('@dossier')
     cy.get('.fr-tabs')
-      .should('contain', 'Pièces jointes')
+      .should('contain', `Pièces jointes (${files.total})`)
       .contains('Pièces jointes')
       .click()
     cy.wait('@files')

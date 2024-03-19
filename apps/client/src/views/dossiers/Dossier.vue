@@ -1,6 +1,12 @@
 <script lang="ts" setup>
-import type { Champ, Message as DossierMessage, PieceJustificativeChamp } from '@dnum-mi/ds-api-client'
-import type { IDossier as IDossierOutput, IFileOutput, IPagination } from '@biblio-num/shared'
+import type {
+  Message as DossierMessage,
+} from '@dnum-mi/ds-api-client'
+import type {
+  IDossier as IDossierOutput,
+  IFileOutput,
+  IPagination,
+} from '@biblio-num/shared'
 
 import { useDossierStore } from '@/stores/dossier'
 import LayoutFiche from '@/components/Layout/LayoutFiche.vue'
@@ -32,24 +38,15 @@ const messages = computed(() =>
 
 const annotations = computed(() => dossier.value?.dsDataJson.annotations)
 
-const attachments = computed(() =>
-  dossierDS.value?.champs?.reduce((files: Champ[], champ: PieceJustificativeChamp) => {
-    if (champ.__typename === 'PieceJustificativeChamp' && champ.files != null) {
-      return [...files, champ.files]
-    }
-    return files
-  }, []),
-)
-
 const hasAnnotations = computed(() => !!annotations.value?.length)
-const hasAttachments = computed(() => !!attachments.value?.length)
-
+const nbAttachments = ref(0)
+const hasAttachments = computed(() => !!nbAttachments.value)
 const tabTitles = computed(() => [
   {
     title: 'Demande',
   },
   ...(hasAnnotations.value ? [{ title: 'Annotations privées' }] : []),
-  ...(hasAttachments.value ? [{ title: `Pièces jointes (${attachments.value.length})` }] : []),
+  ...(hasAttachments.value ? [{ title: `Pièces jointes (${nbAttachments.value})` }] : []),
 ])
 const initialSelectedIndex = 0
 const selectedTabIndex = ref(initialSelectedIndex)
@@ -87,6 +84,7 @@ onMounted(async () => {
   const id = Number(params.id)
   if (id) {
     await dossierStore.getDossier(id)
+    nbAttachments.value = await apiClient.getDossierFilesSummary(id)
   }
 })
 </script>
