@@ -68,6 +68,7 @@ import {
   getOrganismeFilesRoute,
   getDossierFilesRoute,
   softDeleteDemarcheByIdRoute,
+  getDossierFilesSummaryRoute,
 } from './bn-api-routes'
 import {
   authRoute,
@@ -220,11 +221,6 @@ export const organismeApiClient = {
     return response.data
   },
 
-  getDossierFiles: (dossierId: number) => async (params: IPagination<IFileOutput>): Promise<IPaginated<IFileOutput>> => {
-    const response = await apiClientInstance.post(getDossierFilesRoute(dossierId), params)
-    return response.data
-  },
-
   exportOrganismes: async (dto: IPagination<IOrganisme>): Promise<void> => {
     downloadAFile(await apiClientInstance.post(organismesListXlsxRoute, dto, { responseType: 'blob' }))
   },
@@ -336,6 +332,15 @@ export const dossiersApiClient = {
 
   exportDemarcheDossiers: async (demarcheId: number, dto: ISearchDossier): Promise<void> => {
     downloadAFile(await apiClientInstance.post(getXlsxDemarcheDossierRoute(demarcheId), dto, { responseType: 'blob' }))
+  },
+
+  getDossierFiles: (dossierId: number) => async (params: IPagination<IFileOutput>): Promise<IPaginated<IFileOutput>> => {
+    const response = await apiClientInstance.post(getDossierFilesRoute(dossierId), params)
+    return response.data
+  },
+
+  getDossierFilesSummary: async (dossierId: number): Promise<number> => {
+    return (await apiClientInstance.get(getDossierFilesSummaryRoute(dossierId))).data
   },
 }
 
