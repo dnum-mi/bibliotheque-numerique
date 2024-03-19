@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { Field } from '@/modules/dossiers/objects/entities/field.entity'
-import { Repository } from 'typeorm'
+import { In, Repository } from 'typeorm'
 import { CreateFieldDto } from '@/modules/dossiers/objects/dto/fields/create-field.dto'
 import {
   FormatFunctionRef,
@@ -269,6 +269,26 @@ export class DossierSynchroniseExcelService extends BaseEntityService<Field> {
     )
   }
 
+  async upsetFieldsAmounts(
+    dossierId: number,
+    excelFixField: Field,
+    force = false,
+  ): Promise<Field[]> {
+    this.logger.verbose('upsetFieldsAmounts')
+
+    const totalAmountFields = await this._findTotalAmountFields(dossierId)
+
+    if (totalAmountFields.length > 0) {
+      this.logger.verbose('Total amount fields already exists')
+
+      if (!force) return [] // No need to update amount field, amount field already created by Excel file
+
+      this.logger.verbose('Force update total amount fields created by _FESpecificity()')
+      await this.repo.remove(totalAmountFields)
+    }
+    return this.createFieldsAmounts(dossierId, excelFixField)
+  }
+
   async createFieldsAmounts(
     dossierId: number,
     excelFixField: Field,
@@ -290,6 +310,20 @@ export class DossierSynchroniseExcelService extends BaseEntityService<Field> {
 
     this.logger.debug(fields)
     return this.repo.save(fields)
+  }
+
+  async _findTotalAmountFields(dossierId: number): Promise<Field[]> {
+    this.logger.verbose('_findAmountField')
+    return await this.repo.find({
+      where: {
+        dossierId,
+        sourceId: In([
+          fixFieldDossierTotalAmount.id,
+          fixFieldChampsTotalAmount.id,
+          fixFieldExcelTotalAmount.id,
+        ]),
+      },
+    })
   }
 
   async _sumAmountFields(dossierId: number): Promise<{ sum: number }> {
@@ -407,6 +441,6 @@ export class DossierSynchroniseExcelService extends BaseEntityService<Field> {
   async synchroniseExcel(file: File): Promise<void> {
     this.logger.verbose('synchroniseExcel')
     const field = await this.createField(file)
-    await this.createFieldsAmounts(file.dossierId, field)
+    await this.upsetFieldsAmounts(file.dossierId, field, true)
   }
 }
