@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   Post,
   UseInterceptors,
@@ -12,16 +13,15 @@ import { PaginatedFileDto } from '@/modules/files/objects/dto/paginated-file.dto
 import { FileService } from '@/modules/files/providers/file.service'
 import {
   Roles,
-  canAccessPrefectureInDemarche,
-  IRole,
   eFileSourceLabel,
 } from '@biblio-num/shared'
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
 import { CurrentDossierInterceptor } from '@/modules/dossiers/providers/current-dossier.interceptor'
 import { CurrentDossier } from '@/modules/dossiers/providers/current-dossier.decorator'
 import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
-import { CurrentUserRole } from '@/modules/users/providers/decorators/current-user-role.decorator'
 import { In, Not } from 'typeorm'
+
+import { hasFullCurrentDossierAcces } from '../providers/has-full-current-dossier-access.decorator'
 
 @ApiTags('Dossier')
 @ApiTags('Files')
@@ -40,15 +40,10 @@ export class DossierFileController {
   @Role(Roles.instructor)
   async listDossierFiles(
     @Body() dto: PaginationFileDto,
-    @CurrentUserRole() role: IRole,
+    @hasFullCurrentDossierAcces() canSeeAllFiles: boolean,
     @CurrentDossier() dossier: Dossier,
   ): Promise<PaginatedFileDto> {
     this.logger.verbose('listDossierFiles')
-    const canSeeAllFiles = canAccessPrefectureInDemarche(
-      dossier.prefecture,
-      role,
-      dossier.demarcheId,
-    )
     const specificWhere = canSeeAllFiles
       ? {}
       : {
@@ -60,5 +55,16 @@ export class DossierFileController {
     return this.fileService.paginate(dto, specificWhere, [
       `("o"."dossierId" = ${dossier.id})`,
     ])
+  }
+
+  @Get('summary')
+  @Role(Roles.instructor)
+  async getOrganismeFileSummary(
+    @CurrentDossier() dossier: Dossier,
+    @hasFullCurrentDossierAcces() hasFullAccess: boolean,
+  ): Promise<number> {
+    this.logger.verbose('getDossierFileSummary')
+
+    return this.fileService.getDossierFileSummary(dossier.id, hasFullAccess)
   }
 }
