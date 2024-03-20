@@ -85,6 +85,7 @@ export abstract class BaseEntityService<T extends BaseEntity = BaseEntity> {
     }
     const query = this.repo.createQueryBuilder('o')
     if (dto.filters) {
+      // TODO: check that the user is not using text filter for enum filter to prevent 500
       query.where(buildFilterQuery(dto.filters, this.fieldTypeHash))
     }
     this.repository.find()
