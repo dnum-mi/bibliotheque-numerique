@@ -11,8 +11,6 @@ import { S3 } from 'aws-sdk/clients/browser_default'
 import * as AWS from 'aws-sdk'
 import { HttpService } from '@nestjs/axios'
 import stream, { PassThrough } from 'stream'
-import { ManagedUpload } from 'aws-sdk/lib/s3/managed_upload'
-import SendData = ManagedUpload.SendData
 
 @Injectable()
 export class S3Service implements OnModuleInit {
@@ -78,19 +76,24 @@ export class S3Service implements OnModuleInit {
     })
   }
 
-  public async downloadAndUploadToS3(url: string, uuid: string): Promise<SendData> {
+  public async downloadAndUploadToS3(url: string, uuid: string): Promise<number> {
     this.logger.verbose('downloadAndUploadToS3')
     const stream = await this.httpService.axiosRef({
       url,
       method: 'GET',
       responseType: 'stream',
     })
+    let byteSize = 0
+    stream.data.on('data', (chunk) => {
+      byteSize += chunk.length
+    })
     const passThrough = new PassThrough()
     stream.data.pipe(passThrough)
-    return this.s3.upload({
+    await this.s3.upload({
       Bucket: this.bucketName,
       Key: uuid,
       Body: passThrough,
     }).promise()
+    return byteSize
   }
 }

@@ -9,6 +9,18 @@ interface IRnaAddress {
   commune: string | null
 }
 
+export interface iRnaDocument {
+  id: string
+  type: string
+  sous_type: {
+    code: string
+    libelle: string
+  }
+  date_depot: string
+  annee_depot: string
+  url: string
+}
+
 // RNA return more information, but we keep only what we need
 export interface IRnaOutput {
   rna: string
@@ -27,4 +39,5 @@ export interface IRnaOutput {
   siret_siege: IRnaAddress | null
   date_creation: string | null
   reconnue_utilite_publique: boolean
+  documents_rna: iRnaDocument[]
 }

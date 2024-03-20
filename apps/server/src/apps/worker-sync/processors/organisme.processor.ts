@@ -85,15 +85,27 @@ export class OrganismeProcessor {
   ): Promise<void> {
     this.logger.verbose('syncOneRnaOrganisme')
     const rawRna = await this.rnaService.getAssociation(job.data.rna)
+    job.progress(50)
+    job.log('Association retrieved from rna')
+    job.log(JSON.stringify(rawRna))
     if (rawRna === null) {
+      job.log('RnaId is null, deleting reference in database')
       await this.organismeService.repository.delete({ idRna: job.data.rna })
+      job.progress(75)
       if (job.data.fieldId) {
+        job.log('Putting field rna to ERROR-RNA')
         await this.fieldService.updateOrThrow(job.data.fieldId, {
           stringValue: `ERROR-${job.data.rna}`,
         })
       }
     } else {
       await this.organismeService.updateOrganismeFromRna(job.data.rna, rawRna)
+      job.log('Updated Organisme from rna')
+      job.progress(60)
+      await this.organismeService.synchroniseRnaFiles(job.data.rna, rawRna)
+      job.log('Rna files job created')
     }
+    job.progress(100)
+    throw new Error('dummy')
   }
 }

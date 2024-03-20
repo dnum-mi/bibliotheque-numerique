@@ -40,7 +40,7 @@ export class DossierSynchroniseFileService {
     this.logger.debug(
       `Adding sync file for champ ${payload.sourceStringId} (index: ${payload.sourceIndex})`,
     )
-    const file = await this.fileService.createIfNew(payload)
+    const file = await this.fileService.createFromDsIfNew(payload)
     if (isNumber(fieldId)) {
       await this.fieldService.updateOrThrow(fieldId, {
         stringValue: file.uuid,
