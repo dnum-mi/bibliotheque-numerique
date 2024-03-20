@@ -47,16 +47,25 @@ describe('Dossiers (e2e)', () => {
     })
 
     it('Should retrieve complete Dossier', async () => {
-      loggerServiceMock.setContext = jest.fn().mockImplementation(() => console.log('Should retrieve complete Dossier'))
-      loggerServiceMock.error = jest.fn().mockImplementation((e) => console.log(e))
+      loggerServiceMock.setContext = jest
+        .fn()
+        .mockImplementation(() =>
+          console.log('Should retrieve complete Dossier'),
+        )
+      loggerServiceMock.error = jest
+        .fn()
+        .mockImplementation((e) => console.log(e))
       return await request(app.getHttpServer())
         .get('/dossiers/11')
         .set('Cookie', [cookies.instructor])
         .expect(200)
         .then(({ body }) => {
           expect(body.dsDataJson.annotations).toEqual('I can see you')
-          expect(body.dsDataJson.messages).toEqual('Big brother is watching you')
-        }).finally(() => {
+          expect(body.dsDataJson.messages).toEqual(
+            'Big brother is watching you',
+          )
+        })
+        .finally(() => {
           loggerServiceMock.setContext = jest.fn()
           loggerServiceMock.error = jest.fn()
         })
@@ -70,6 +79,87 @@ describe('Dossiers (e2e)', () => {
         .then(({ body }) => {
           expect(body.dsDataJson.annotations).toEqual([])
           expect(body.dsDataJson.messages).toEqual([])
+        })
+    })
+  })
+
+  describe('GET /dossiers/:id/files', () => {
+    it('Should be 401', async () => {
+      return request(app.getHttpServer())
+        .post('/dossiers/16/files/list')
+        .expect(401)
+    })
+
+    it('Should be 403 for no role', async () => {
+      return await request(app.getHttpServer())
+        .post('/dossiers/16/files/list')
+        .set('Cookie', [cookies.norole])
+        .expect(403)
+    })
+
+    it('Should return all file for admin', async () => {
+      return await request(app.getHttpServer())
+        .post('/dossiers/16/files/list')
+        .set('Cookie', [cookies.superadmin])
+        .send({
+          limit: 10,
+          page: 1,
+          columns: ['id', 'label', 'tag'],
+        })
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toEqual({
+            data: [
+              { id: 2, label: 'coucou', tag: 'some-tag' },
+              { id: 3, label: 'salut', tag: 'some-other-tag' },
+              { id: 4, label: 'hi', tag: 'some-third-tag' },
+            ],
+            total: 3,
+          })
+        })
+    })
+
+    it('Should filter tag', async () => {
+      return await request(app.getHttpServer())
+        .post('/dossiers/16/files/list')
+        .set('Cookie', [cookies.superadmin])
+        .send({
+          limit: 10,
+          page: 1,
+          filters: {
+            tag: {
+              filterType: 'set',
+              condition1: {
+                filter: ['some-third-tag'],
+              },
+            },
+          },
+          columns: ['id', 'label', 'tag'],
+        })
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toEqual({
+            data: [{ id: 4, label: 'hi', tag: 'some-third-tag' }],
+            total: 1,
+          })
+        })
+    })
+
+    it('Should hide file from annotation and message', async () => {
+      return await request(app.getHttpServer())
+        .post('/dossiers/16/files/list')
+        .set('Cookie', [cookies.instructor]) // instructor has no rights on pref 57 for demarche 1, and dossier with id 16 is pref 57 for demarche 1
+        .send({
+          limit: 10,
+          page: 1,
+          columns: ['id', 'label', 'tag'],
+        })
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toEqual({
+            data: [{ id: 2, label: 'coucou', tag: 'some-tag' }],
+            total: 1,
+          })
         })
     })
   })

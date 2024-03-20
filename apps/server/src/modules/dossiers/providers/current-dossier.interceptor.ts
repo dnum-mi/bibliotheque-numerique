@@ -7,14 +7,14 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { from, Observable, switchMap } from 'rxjs'
-import { IRole, isSuperiorOrSimilar, Roles } from '@biblio-num/shared'
+import { IRole, isAtLeastInstructor } from '@biblio-num/shared'
 import { DossierService } from '@/modules/dossiers/providers/dossier.service'
 
 const no404 = (): void => {
-  throw new NotFoundException("L'organisme est introuvable")
+  throw new NotFoundException('Le dossier est introuvable')
 }
 const no403 = (): void => {
-  throw new ForbiddenException('You are not allowed to access this organisme.')
+  throw new ForbiddenException('You are not allowed to access this dossier.')
 }
 
 @Injectable()
@@ -36,7 +36,7 @@ export class CurrentDossierInterceptor implements NestInterceptor {
         }
         const currentUserRole: IRole = context.switchToHttp().getRequest().user
           ?.role
-        if (isSuperiorOrSimilar(currentUserRole.label, Roles.instructor)) {
+        if (!isAtLeastInstructor(currentUserRole.label)) {
           no403()
         }
         context.switchToHttp().getRequest().dossier = dossier

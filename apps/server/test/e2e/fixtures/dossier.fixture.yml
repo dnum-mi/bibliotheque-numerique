@@ -61,3 +61,14 @@ items:
       messages: "Hello world"
     }
     organisme: "@Hyundai"
+  DossierWithFiles:
+    id: 16
+    demarche: "@demarche-financement"
+    state: "accepte"
+    sourceId: "123461"
+    prefecture: "D57"
+    dsDataJson: {
+      annotations: "Message",
+      messages: "Hello world"
+    }
+    organisme: "@Chevrolet"

@@ -19,6 +19,7 @@ export function isSuperiorOrSimilar(Icompare: RolesKeys, toCompare: RolesKeys | 
 }
 
 export const isBelowSuperAdmin = (key: RolesKeys) => !isSuperiorOrSimilar(Roles.superadmin, key)
+export const isAtLeastInstructor = (key: RolesKeys) => isSuperiorOrSimilar(Roles.instructor, key)
 export const isAtLeastAdmin = (key: RolesKeys) => isSuperiorOrSimilar(Roles.admin, key)
 // #endregion
 

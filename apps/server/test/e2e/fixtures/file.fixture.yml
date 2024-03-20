@@ -12,4 +12,42 @@ items:
     checksum: 42
     byteSize: 42
     originalLabel: 'coucou.txt'
-
+  file-from-champ:
+    id: 2
+    uuid: "bfa978f1-7337-49df-ae97-40d358afe5b0"
+    state: 'uploaded'
+    sourceLabel: 'ds-champ'
+    sourceStringId: 'useless-id'
+    tag: 'some-tag'
+    mimeType: 'doc'
+    label: 'coucou'
+    checksum: 42
+    byteSize: 42
+    originalLabel: 'coucou.txt'
+    dossier: '@DossierWithFiles'
+  file-from-annotation:
+    id: 3
+    uuid: "bfa978f1-7337-49df-ae97-40d358afe5b1"
+    state: 'uploaded'
+    sourceLabel: 'ds-annotation'
+    sourceStringId: null
+    tag: 'some-other-tag'
+    mimeType: 'doc'
+    label: 'salut'
+    checksum: 42
+    byteSize: 42
+    originalLabel: 'salut.txt'
+    dossier: '@DossierWithFiles'
+  file-from-message:
+    id: 4
+    uuid: "bfa978f1-7337-49df-ae97-40d358afe5b2"
+    state: 'uploaded'
+    sourceLabel: 'ds-message'
+    sourceStringId: null
+    tag: 'some-third-tag'
+    mimeType: 'doc'
+    label: 'hi'
+    checksum: 42
+    byteSize: 42
+    originalLabel: 'hi.txt'
+    dossier: '@DossierWithFiles'
