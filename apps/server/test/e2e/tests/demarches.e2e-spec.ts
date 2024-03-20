@@ -26,37 +26,6 @@ describe('Demarches (e2e)', () => {
     await dataSource.destroy()
   })
 
-  describe('GET /demarches', () => {
-    it('Should be 401', async () => {
-      return request(app.getHttpServer()).get('/demarches').expect(401)
-    })
-    it('Should be 403', async () => {
-      return await request(app.getHttpServer())
-        .get('/demarches')
-        .set('Cookie', [cookies.norole])
-        .expect(403)
-    })
-
-    it('should be 200', async () => {
-      const { body } = await request(app.getHttpServer())
-        .get('/demarches')
-        .set('Cookie', [cookies.superadmin])
-        .expect(200)
-      const nbr = await demarcheService.repository.count()
-      expect(body).toHaveLength(nbr)
-    })
-
-    it('should only have my demarche', async () => {
-      const { body } = await request(app.getHttpServer())
-        .get('/demarches')
-        .set('Cookie', [cookies.instructor])
-        .expect(200)
-      expect(body).toHaveLength(2)
-      expect(body[0]).toHaveProperty('id', 1)
-      expect(body[1]).toHaveProperty('id', 5)
-    })
-  })
-
   describe('GET /demarches/small', () => {
     it('Should be 401', async () => {
       return request(app.getHttpServer()).get('/demarches/small').expect(401)

@@ -10,7 +10,7 @@ import adminLocalProfile from '../fixtures/admin-local-profile.json'
 describe('Sign in', () => {
   beforeEach(() => {
     cy.intercept({ method: 'GET', url: '/api/users/me' }, {}).as('notProfile')
-    cy.intercept({ method: 'GET', url: '/api/demarches' }, []).as('demarches')
+    cy.intercept({ method: 'GET', url: '/api/demarches/small' }, []).as('demarches')
     cy.intercept({ method: 'POST', url: '/api/organismes/list' }, {}).as('organismes')
     cy.intercept({ method: 'GET', url: '/api/custom-filters' }, []).as('customFilters')
     cy.intercept({ method: 'POST', url: '/api/users/list' }, []).as('fetchUsers')
@@ -22,7 +22,7 @@ describe('Sign in', () => {
     cy.visit('/sign_in')
     cy.intercept({ method: 'GET', url: '/api/users/me' }, {}).as('adminProfile')
     cy.intercept({ method: 'POST', url: '/api/auth/sign-in' }, adminProfile).as('adminSignIn')
-    cy.intercept({ method: 'GET', url: '/api/demarches' }, demarches).as('demarches')
+    cy.intercept({ method: 'GET', url: '/api/demarches/small' }, demarches).as('demarches')
     cy.intercept({ method: 'GET', url: '/api/demarches/3' }, demarche).as('demarche')
     cy.intercept({ method: 'GET', url: '/api/custom-filters' }, customFilters).as('customFilters')
     cy.intercept({ method: 'POST', url: '/api/demarches/3/fields-search' }, fieldsSearch).as('fieldsSearch')
