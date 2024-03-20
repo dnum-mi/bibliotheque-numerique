@@ -57,6 +57,8 @@ export class DemarcheService extends BaseEntityService<Demarche> {
         types: d.types,
         dsId: d.dsDataJson?.number,
         identification: d.identification,
+        dsCreatedAt: d.dsDataJson.dateCreation,
+        dsPublishedAt: d.dsDataJson.datePublication,
       }))
     })
   }

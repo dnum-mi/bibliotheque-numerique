@@ -8,4 +8,6 @@ export interface ISmallDemarcheOutput extends Partial<IDemarche> {
   types: OrganismeTypeKey[]
   dsId: number
   identification?: IdentificationDemarcheKeys | undefined
+  dsCreatedAt: Date
+  dsPublishedAt: Date
 }
