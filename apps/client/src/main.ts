@@ -15,7 +15,7 @@ import * as icons from './icons'
 
 import './main.css'
 
-import 'ag-grid-enterprise'
+import { LicenseManager } from 'ag-grid-enterprise'
 import 'ag-grid-community/styles/ag-grid.css'
 import 'ag-grid-community/styles/ag-theme-material.css'
 import '@/ag-grid-dsfr.css'
@@ -26,6 +26,8 @@ import './unregister.js'
 // We use statusBadge in DsfrTable
 import StatusBadge from './components/Badges/status/StatusBadge.vue'
 import FileTagBadge from '@/components/Badges/file-tag/FileTagBadge.vue'
+
+LicenseManager.setLicenseKey(import.meta.env.VITE_AG_GRID_LICENSE_KEY)
 
 addIcons(...Object.values(icons))
 
