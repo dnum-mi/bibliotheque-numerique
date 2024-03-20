@@ -35,6 +35,11 @@ export type UploadDsFileJobPayload = {
   file: File
 }
 
+export type UploadRnaFileJobPayload = {
+  file: File
+  rnaUrl: string
+}
+
 export type ComputeFeExcelJobPayload = {
   file: File,
 }

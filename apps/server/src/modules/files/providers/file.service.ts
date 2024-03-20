@@ -14,6 +14,8 @@ import {
   eState,
   StateKey,
   FileExtensionKey,
+  eFileSourceLabel,
+  iRnaDocument,
   FileTagKey,
   fileTags,
   eFileTag,
@@ -28,16 +30,21 @@ import { FieldCodeKey } from '@/modules/dossiers/objects/constante/field-code.en
 import { Field } from '@/modules/dossiers/objects/entities/field.entity'
 import {
   dCodeToLabelsAndTag,
+  formatDate,
 } from '@/modules/files/objects/const/code-to-labels-and-tag.const'
+import { UpsertRnaFileDto } from '@/modules/files/objects/dto/input/upser-rna-file.dto'
+import { dRnaCodeToLabelAndTag } from '@/modules/files/objects/const/rna-code-to-label-and-tag.const'
 
 const dMimeTypeToExtensionDictionary: Record<string, FileExtensionKey> = {
   'application/pdf': eFileExtension.pdf,
   'image/jpeg': eFileExtension.jpeg,
   'image/png': eFileExtension.png,
   'application/msword': eFileExtension.doc,
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': eFileExtension.docx,
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+    eFileExtension.docx,
   'application/vnd.ms-excel': eFileExtension.xls,
-  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': eFileExtension.xlsx,
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+    eFileExtension.xlsx,
   default: eFileExtension.unknown,
 } as const
 
@@ -53,7 +60,10 @@ export class FileService extends BaseEntityService<File> {
 
   //#region STATIC
   static fromContentTypeToMimeType(mimeType: string): FileExtensionKey {
-    return dMimeTypeToExtensionDictionary[mimeType] ?? dMimeTypeToExtensionDictionary.default
+    return (
+      dMimeTypeToExtensionDictionary[mimeType] ??
+      dMimeTypeToExtensionDictionary.default
+    )
   }
 
   static buildCompleteName(smallFile: SmallFileOutputDto): string {
@@ -69,7 +79,7 @@ export class FileService extends BaseEntityService<File> {
     target: Field,
     fieldCodeHash: Record<FieldCodeKey, Field>,
     dsDossier: TDossier,
-  ): { label: string, tag: FileTagKey | null } {
+  ): { label: string; tag: FileTagKey | null } {
     const __nothing = {
       tag: null,
       label: (target.rawJson as TFile).filename,
@@ -87,13 +97,33 @@ export class FileService extends BaseEntityService<File> {
     }
   }
 
+  static computeLabelAndTagForRna(doc: iRnaDocument): {
+    label: string
+    tag: FileTagKey | null
+  } {
+    const prefix = doc.date_depot
+      ? formatDate(new Date(doc.date_depot))
+      : doc.annee_depot ?? 'no-date'
+    const element = dRnaCodeToLabelAndTag[doc.sous_type?.code]
+    if (!element) {
+      return {
+        tag: eFileTag.other,
+        label: `${prefix}_${doc.sous_type?.libelle ?? 'document inconnu'}`,
+      }
+    }
+    return {
+      tag: element.tag,
+      label: `${prefix}_${element.label}`,
+    }
+  }
+
   //#endregion
 
   //#region PRIVATE
-  private async _findExistingFile(
+  private async _findDsExistingFile(
     payload: UpsertDsFileDto,
   ): Promise<File | null> {
-    this.logger.verbose('_findExistingFile')
+    this.logger.verbose('_findDsExistingFile')
     return this.repo.findOne({
       where: {
         sourceIndex: payload.sourceIndex,
@@ -113,6 +143,24 @@ export class FileService extends BaseEntityService<File> {
     })
   }
 
+  private async _findRnaExistingFile(
+    payload: UpsertRnaFileDto,
+  ): Promise<File | null> {
+    this.logger.verbose('_findRnaExistingFile')
+    return this.repo.findOne({
+      where: {
+        organismeId: payload.organismeId,
+        sourceStringId: payload.sourceStringId,
+      },
+      relations: ['organisme'],
+      select: {
+        organisme: {
+          id: true,
+        },
+      },
+    })
+  }
+
   //#endregion
 
   //#region public
@@ -125,9 +173,9 @@ export class FileService extends BaseEntityService<File> {
     })
   }
 
-  async createIfNew(payload: UpsertDsFileDto): Promise<File> {
-    this.logger.verbose('createIfNew')
-    const existingFile = await this._findExistingFile(payload)
+  async createFromDsIfNew(payload: UpsertDsFileDto): Promise<File> {
+    this.logger.verbose('createFromDsIfNew')
+    const existingFile = await this._findDsExistingFile(payload)
     if (!existingFile) {
       this.logger.debug('Creating new file')
       return this.createAndSave({
@@ -151,6 +199,34 @@ export class FileService extends BaseEntityService<File> {
         label: payload.label || payload.originalLabel,
         tag: payload.tag,
         organismeId: payload.organismeId ?? null,
+      })
+    }
+  }
+
+  async createFromRnaIfNew(payload: UpsertRnaFileDto): Promise<File> {
+    this.logger.verbose('createFromRnaIfNew')
+    const existingFile = await this._findRnaExistingFile(payload)
+    if (!existingFile) {
+      this.logger.debug('Creating new file')
+      return this.createAndSave({
+        organisme: { id: payload.organismeId },
+        sourceLabel: eFileSourceLabel.rna,
+        sourceIndex: null,
+        sourceStringId: payload.sourceStringId,
+        state: eState.queued,
+        tag: payload.tag,
+        mimeType: eFileExtension.pdf,
+        label: payload.label,
+        byteSize: -1,
+        checksum: 'unknown',
+        originalLabel: 'no-orginal-label-from-rna',
+        uuid: v4(),
+      })
+    } else {
+      return await this.updateAndReturnById(existingFile.id, {
+        state: eState.queued,
+        label: payload.label,
+        tag: payload.tag,
       })
     }
   }
