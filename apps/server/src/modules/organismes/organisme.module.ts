@@ -9,11 +9,19 @@ import { DossierModule } from '@/modules/dossiers/dossier.module'
 import { XlsxModule } from '../../shared/modules/xlsx/xlsx.module'
 import { FileModule } from '@/modules/files/file.module'
 import { OrganismeFileController } from '@/modules/organismes/controllers/organisme-file.controller'
+import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
+import { BullModule, BullModuleOptions } from '@nestjs/bull'
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Organisme]),
     forwardRef(() => DossierModule),
+    BullModule.registerQueue(
+      ...([
+        { name: QueueName.sync },
+        { name: QueueName.file },
+      ] as BullModuleOptions[]),
+    ),
     XlsxModule,
     FileModule,
   ],

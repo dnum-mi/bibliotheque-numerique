@@ -6,7 +6,7 @@ import {
   Header,
   HttpCode,
   Param,
-  ParseIntPipe,
+  ParseIntPipe, Patch,
   Post,
   Res,
 } from '@nestjs/common'
@@ -28,6 +28,13 @@ import { XlsxService } from '../../../shared/modules/xlsx/xlsx.service'
 import { PaginationDto } from '@/shared/pagination/pagination.dto'
 import { PaginatedDto } from '@/shared/pagination/paginated.dto'
 import { LeanDossierOutputDto } from '@/modules/dossiers/objects/dto/lean-dossier-output.dto'
+import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
+import {
+  SyncOneRnaOrganismeJobPayload, SyncOneRnfOrganismeJobPayload,
+} from '@/shared/modules/custom-bull/objects/const/job-payload.type'
+import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
+import { InjectQueue } from '@nestjs/bull'
+import { Queue } from 'bull'
 
 @ApiTags('Demarches')
 @Controller('organismes')
@@ -37,6 +44,7 @@ export class OrganismeController {
     private readonly dossierService: DossierService,
     private readonly organismeService: OrganismeService,
     private readonly xlsxService: XlsxService,
+    @InjectQueue(QueueName.sync) private readonly syncQueue: Queue,
   ) {
     this.logger.setContext(this.constructor.name)
   }
@@ -104,5 +112,23 @@ export class OrganismeController {
     this.logger.verbose('Export xlxs - listOrganisme')
     const { data } = await this.organismeService.listOrganisme(dto)
     this.xlsxService.generateXlsxFileWithMapHeader(data, mapOrganismeFieldHeader, dto.columns).pipe(res)
+  }
+
+  @Patch(':id/sync')
+  @Role(Roles.sudo)
+  async synchroniseOne(@Param('id') id: number): Promise<void> {
+    this.logger.verbose('synchroniseOne')
+    const smallOrg = await this.organismeService.findOneById(id)
+    if (smallOrg.idRna) {
+      await this.syncQueue.add(eJobName.SyncOneRnaOrganisme, {
+        rna: smallOrg.idRna,
+      } as SyncOneRnaOrganismeJobPayload)
+    } else if (smallOrg.idRnf) {
+      await this.syncQueue.add(eJobName.SyncOneRnfOrganisme, {
+        rnf: smallOrg.idRnf,
+      } as SyncOneRnfOrganismeJobPayload)
+    } else {
+      throw new Error('impossible de synchroniser cette organisme')
+    }
   }
 }
