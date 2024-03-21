@@ -89,6 +89,8 @@ beforeEach(() => {
 
   // Set current Pinia instance
   setActivePinia(pinia)
+
+  cy.intercept('/api/**', {})
 })
 // Example use:
 // cy.mount(MyComponent)
