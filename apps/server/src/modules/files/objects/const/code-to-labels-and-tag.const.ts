@@ -8,6 +8,8 @@ import { Field } from '@/modules/dossiers/objects/entities/field.entity'
 import { Dossier as TDossier } from '@dnum-mi/ds-api-client'
 import * as dayjs from 'dayjs'
 
+const noDatePlaceHolder = 'date-inconnue'
+
 type TagAndLabelFactory = {
   tag: FileTagKey
   labelFactory: (
@@ -28,10 +30,8 @@ const commonFileWithDateLabelFactory = (
   let date: Date
   if (fh[dateCode]) {
     date = fh[dateCode].dateValue
-  } else {
-    date = new Date(0)
   }
-  return `${formatDate(date)}_${suffix}`
+  return `${date ? formatDate(date) : noDatePlaceHolder}_${suffix}`
 }
 
 const commonFileWithYearLabelFactory = (
@@ -42,10 +42,8 @@ const commonFileWithYearLabelFactory = (
   let year: number
   if (eFieldCode[dateCode] && fh[dateCode]) {
     year = fh[dateCode].numberValue ?? parseInt(fh[dateCode].stringValue)
-  } else {
-    year = 1970
   }
-  return `${year}_${suffix}`
+  return `${year || noDatePlaceHolder}_${suffix}`
 }
 
 export const dCodeToLabelsAndTag: Record<FileFieldCodeKey, TagAndLabelFactory> =
@@ -53,21 +51,21 @@ export const dCodeToLabelsAndTag: Record<FileFieldCodeKey, TagAndLabelFactory> =
     'file-fe-excel': {
       tag: eFileTag.fe,
       labelFactory: (fh, d) => {
-        const date = formatDate(d.dateTraitement)
+        const date = d.dateTraitement ? formatDate(d.dateTraitement) : noDatePlaceHolder
         return `${date}_Déclaration financement étranger`
       },
     },
     'file-initial-status': {
       tag: eFileTag.status,
       labelFactory: (fh, d) => {
-        const date = formatDate(d.dateTraitement)
+        const date = d.dateTraitement ? formatDate(d.dateTraitement) : noDatePlaceHolder
         return `${date}_Statuts initiaux`
       },
     },
     'file-extended-status': {
       tag: eFileTag.status,
       labelFactory: (fh, d) => {
-        const date = formatDate(d.dateTraitement)
+        const date = d.dateTraitement ? formatDate(d.dateTraitement) : noDatePlaceHolder
         return `${date}_Statuts prorogés`
       },
     },
