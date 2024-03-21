@@ -57,13 +57,13 @@ export class FileProcessor {
     // do not re-upload same file
     if (dsFile.checksum !== job.data.file.checksum) {
       this.logger.debug('New file to upload')
-      await this.fileService.copyDsFileInformation(job.data.file.id, dsFile)
       const state = await this.s3Service
         .downloadAndUploadToS3(dsFile.url, job.data.file.uuid)
         .then(async () => {
           this.logger.log(
             `File ${job.data.file.uuid} uploaded to S3 (${job.data.file.originalLabel})`,
           )
+          await this.fileService.copyDsFileInformation(job.data.file.id, dsFile)
           return eState.uploaded
         })
         .catch(async (e) => {
