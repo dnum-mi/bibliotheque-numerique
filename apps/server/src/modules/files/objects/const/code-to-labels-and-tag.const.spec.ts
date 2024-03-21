@@ -16,7 +16,7 @@ describe('Field code to label', () => {
     })
   })
 
-  it('Date should be 1970 if no date traitement', () => {
+  it('Date should be date-inconnue if no date traitement', () => {
     const code = 'file-fe-excel'
     const tag = dCodeToLabelsAndTag[code].tag
     const labelFactory = dCodeToLabelsAndTag[code].labelFactory
@@ -26,10 +26,10 @@ describe('Field code to label', () => {
       {  } as TDossier,
     )
     expect(tag).toEqual(eFileTag.fe)
-    expect(label).toBe('01.01.1970_Déclaration financement étranger')
+    expect(label).toBe('date-inconnue_Déclaration financement étranger')
   })
 
-  it('Date should be 1970 if no date champs', () => {
+  it('Date should be date-inconnue if no date champs', () => {
     const code = 'file-extended-pv'
     const labelFactory = dCodeToLabelsAndTag[code].labelFactory
 
@@ -37,10 +37,10 @@ describe('Field code to label', () => {
       {} as Record<FieldCodeKey, Field>,
       { } as TDossier,
     )
-    expect(label).toBe('01.01.1970_PV prorogation')
+    expect(label).toBe('date-inconnue_PV prorogation')
   })
 
-  it('Year should be 1970 if no year', () => {
+  it('Year should be date-inconnue if no year', () => {
     const code = 'file-extended-pv'
     const labelFactory = dCodeToLabelsAndTag[code].labelFactory
 
@@ -48,7 +48,7 @@ describe('Field code to label', () => {
       {} as Record<FieldCodeKey, Field>,
       { } as TDossier,
     )
-    expect(label).toBe('01.01.1970_PV prorogation')
+    expect(label).toBe('date-inconnue_PV prorogation')
   })
 
   it('Code "file-fe-excel" should be correct', () => {
@@ -95,7 +95,7 @@ describe('Field code to label', () => {
     const labelFactory = dCodeToLabelsAndTag[code].labelFactory
 
     const label = labelFactory({} as Record<FieldCodeKey, Field>)
-    expect(label).toBe('1970_Rapport fondation abritante')
+    expect(label).toBe('date-inconnue_Rapport fondation abritante')
   })
 
   it('Code "file-updated-status" should be correct', () => {
