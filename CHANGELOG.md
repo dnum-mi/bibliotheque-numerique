@@ -1,5 +1,42 @@
 # Changelog
 
+## [2.7.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.6.2...v2.7.0) (2024-03-21)
+
+
+### Features
+
+* ✨ [#1180](https://github.com/dnum-mi/bibliotheque_numerique/issues/1180) set fixed list in ag-grid filters ([3a87400](https://github.com/dnum-mi/bibliotheque_numerique/commit/3a87400599d6d99bd562c4745c8c1681568e6d4f))
+* ✨ set fixed list of filters for types of organismes ([3d983b9](https://github.com/dnum-mi/bibliotheque_numerique/commit/3d983b90a2b63c543ac43c0e643b25f9f0051239))
+* All fields can have code. All tab for organisme files. Sudo can synchronise one dossier at a time. ([7d79ceb](https://github.com/dnum-mi/bibliotheque_numerique/commit/7d79ceb3980157dbe14a0b6e2ce878c2e2d01d7e))
+* instructor can only see files from its prefecture ([ab4698e](https://github.com/dnum-mi/bibliotheque_numerique/commit/ab4698ea6c8c180ff55859dc51e4b6da1b48773d))
+* synchronising files from rna to organisme ([4e5350b](https://github.com/dnum-mi/bibliotheque_numerique/commit/4e5350b4d8bc2f794e73f5519a2b1ebd0f71c9e6))
+
+
+### Bug Fixes
+
+* 🐛 properly throw error in interceptor ([9021681](https://github.com/dnum-mi/bibliotheque_numerique/commit/90216819d6d1e02add8dd9cd1a32ba8118ab1578))
+* acces files for instructeurs ([f478850](https://github.com/dnum-mi/bibliotheque_numerique/commit/f47885086c5898fe4e128a86fbb84652ec6623e0))
+* add function to update and return entity ([812fa0f](https://github.com/dnum-mi/bibliotheque_numerique/commit/812fa0f38e7702d04805127db1f036845d32d23d))
+* correct error from s3 and convert stream to buffer for excel ([fc29967](https://github.com/dnum-mi/bibliotheque_numerique/commit/fc29967bf0ee094613b5b6948d1967bebd45170d))
+* debug creation total amount fields ([74c1494](https://github.com/dnum-mi/bibliotheque_numerique/commit/74c149408b1eb4effdad8fefc2446e2519f335b7))
+* display correctly tab files in fiche dossier ([9c4de29](https://github.com/dnum-mi/bibliotheque_numerique/commit/9c4de298e72c48318bf7514a3f55b7b53575e86d))
+* display number files for one dossier with the role restriction ([336d635](https://github.com/dnum-mi/bibliotheque_numerique/commit/336d63552873cb32eb71af0d1a14c37542583e7e))
+* File type in configuration of demarche for front ([ac94abd](https://github.com/dnum-mi/bibliotheque_numerique/commit/ac94abd196e5237adb37479c5447e3889a6cbba5))
+* from upgrade ds-api-client ([4c9c8a2](https://github.com/dnum-mi/bibliotheque_numerique/commit/4c9c8a2a8abe482dcef2c1415e3141eddb370d44))
+* get entity updated ([589528c](https://github.com/dnum-mi/bibliotheque_numerique/commit/589528c13205b8d2dd9ebece0a50fa5182a884d6))
+* get files summary of one dossier ([d7477e4](https://github.com/dnum-mi/bibliotheque_numerique/commit/d7477e43c9f0eaf43e6911e8a01e6f42c1bdb817))
+* keep new description reference on mappingColumn to find new codes in description ([a7dc95b](https://github.com/dnum-mi/bibliotheque_numerique/commit/a7dc95bb5767b30c85aa00f57e7e8826b59f13da))
+* keycode instruction times in service ([e7516d1](https://github.com/dnum-mi/bibliotheque_numerique/commit/e7516d13cd3e514692e00497996633546fc34168))
+* listing demarche now return only necessary data ([509ed02](https://github.com/dnum-mi/bibliotheque_numerique/commit/509ed02446d12bfe73c47b7653121d280fcebf5f))
+* merge file into files by ds-api-client ([a485c23](https://github.com/dnum-mi/bibliotheque_numerique/commit/a485c23bbdcab0b7ea35d04d3da7c4575e9836d9))
+* patch flaky demarche e2e test ([56c9268](https://github.com/dnum-mi/bibliotheque_numerique/commit/56c9268a99df70612b53fb1402ed0c111e43d3c0))
+* set date-inconnue if there is a error in filed year ([fb320a1](https://github.com/dnum-mi/bibliotheque_numerique/commit/fb320a10c9fd2a6b03e8199be0bf618bb29b4509))
+* set organisme for only dossiers accpeted ([ed2fce1](https://github.com/dnum-mi/bibliotheque_numerique/commit/ed2fce11dd87c1721a578cbdb5ddbdc7dfe1bedd))
+* skipping e2e flaky admin test ([29e996f](https://github.com/dnum-mi/bibliotheque_numerique/commit/29e996f740fd3770d4c412b71c6b17b62d608049))
+* test-unit for get files with rewrite url ([7cf06f8](https://github.com/dnum-mi/bibliotheque_numerique/commit/7cf06f8066eca5690ee37f3db9a10b4101caea3c))
+* type of organisme for pagination to enum ([528d3c2](https://github.com/dnum-mi/bibliotheque_numerique/commit/528d3c270bfa4ac7ce0bfceeec9b7839042cb794))
+* update ds-api-client to get dossiers by updated Since ([78dd1cd](https://github.com/dnum-mi/bibliotheque_numerique/commit/78dd1cd91a0a45c8bda6243a39f4e17973bdaced))
+
 ## [2.6.2](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.6.1...v2.6.2) (2024-03-05)
 
 
