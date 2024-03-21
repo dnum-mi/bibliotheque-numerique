@@ -1,7 +1,7 @@
 import {
   Controller,
   ForbiddenException,
-  Get,
+  Get, NotFoundException,
   Param,
   Patch,
 } from '@nestjs/common'
@@ -86,6 +86,9 @@ export class DossierController {
         demarche: { id: true },
       },
     })
+    if (!smallDoss) {
+      throw new NotFoundException('Dossier not found')
+    }
     await this.syncQueue.add(eJobName.SyncOneDossier, {
       demarcheId: smallDoss.demarche.id,
       dsDossierId: smallDoss.dsDataJson.number,

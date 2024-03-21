@@ -97,7 +97,7 @@ describe('DossierSynchroniseFileService', () => {
   })
 
   beforeEach(() => {
-    fileService.createIfNew = createIfNewMock
+    fileService.createFromDsIfNew = createIfNewMock
     updateOrThrowMock = jest.fn().mockImplementation(async (p) => Promise.resolve(p))
     fieldService.updateOrThrow = updateOrThrowMock
     addQueue = []
@@ -127,7 +127,7 @@ describe('DossierSynchroniseFileService', () => {
       1,
       8,
     )
-    expect(fileService.createIfNew).not.toHaveBeenCalled()
+    expect(fileService.createFromDsIfNew).not.toHaveBeenCalled()
     expect(updateOrThrowMock).not.toHaveBeenCalled()
     expect(fileQueueAddMock).not.toHaveBeenCalled()
   })
@@ -141,7 +141,7 @@ describe('DossierSynchroniseFileService', () => {
     ]
     const dummyDossier = dummyTDossierFactory(DossierState.Accepte)
     await service.synchroniseFiles(fields, dummyDossier, 1, 8)
-    expect(fileService.createIfNew).not.toHaveBeenCalled()
+    expect(fileService.createFromDsIfNew).not.toHaveBeenCalled()
     expect(updateOrThrowMock).toHaveBeenCalledTimes(0)
     expect(fileQueueAddMock).not.toHaveBeenCalled()
   })
@@ -160,7 +160,7 @@ describe('DossierSynchroniseFileService', () => {
       sourceLabel: 'ds-champ',
       originalLabel: 'toto.png',
     }
-    expect(fileService.createIfNew).toHaveBeenCalledWith(expectedFilePayload)
+    expect(fileService.createFromDsIfNew).toHaveBeenCalledWith(expectedFilePayload)
     expect(updateOrThrowMock).toHaveBeenCalledTimes(1)
     expect(fileQueueAddMock).toHaveLastReturnedWith({
       name: 'UploadDsFile',
@@ -175,7 +175,7 @@ describe('DossierSynchroniseFileService', () => {
 
   it('should create two files from one file field champ', async () => {
     const both: any[] = []
-    fileService.createIfNew = jest.fn().mockImplementation(async (p) => {
+    fileService.createFromDsIfNew = jest.fn().mockImplementation(async (p) => {
       both.push(p)
       return Promise.resolve(p)
     })
@@ -222,7 +222,7 @@ describe('DossierSynchroniseFileService', () => {
 
   it('should create two files from repeatable field', async () => {
     const both: any[] = []
-    fileService.createIfNew = jest.fn().mockImplementation(async (p) => {
+    fileService.createFromDsIfNew = jest.fn().mockImplementation(async (p) => {
       both.push(p)
       return Promise.resolve(p)
     })
@@ -284,7 +284,7 @@ describe('DossierSynchroniseFileService', () => {
       sourceLabel: 'ds-champ',
       originalLabel: 'toto.png',
     }
-    expect(fileService.createIfNew).toHaveBeenCalledWith(expectedFilePayload)
+    expect(fileService.createFromDsIfNew).toHaveBeenCalledWith(expectedFilePayload)
     expect(updateOrThrowMock).toHaveBeenCalledTimes(1)
     expect(fileQueueAddMock).toHaveLastReturnedWith({
       name: 'UploadDsFile',
@@ -320,7 +320,7 @@ describe('DossierSynchroniseFileService', () => {
       sourceLabel: 'ds-message',
       originalLabel: 'toto.png',
     }
-    expect(fileService.createIfNew).toHaveBeenCalledWith(expectedFilePayload)
+    expect(fileService.createFromDsIfNew).toHaveBeenCalledWith(expectedFilePayload)
     expect(updateOrThrowMock).not.toHaveBeenCalled()
     expect(fileQueueAddMock).toHaveLastReturnedWith({
       name: 'UploadDsFile',
@@ -345,7 +345,7 @@ describe('DossierSynchroniseFileService', () => {
       sourceLabel: 'ds-attestation',
       originalLabel: 'toto.png',
     }
-    expect(fileService.createIfNew).toHaveBeenCalledWith(expectedFilePayload)
+    expect(fileService.createFromDsIfNew).toHaveBeenCalledWith(expectedFilePayload)
     expect(updateOrThrowMock).not.toHaveBeenCalled()
     expect(fileQueueAddMock).toHaveLastReturnedWith({
       name: 'UploadDsFile',

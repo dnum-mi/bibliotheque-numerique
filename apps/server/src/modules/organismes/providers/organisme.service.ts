@@ -14,6 +14,7 @@ import {
   OrganismeTypeKey,
   eOrganismeType,
   eState,
+  iRnaDocument,
 } from '@biblio-num/shared'
 
 import { OrganismeFieldTypeHash } from '@/modules/organismes/objects/const/organisme-field-type-hash.const'
@@ -28,6 +29,13 @@ import {
 import { PaginationDto } from '@/shared/pagination/pagination.dto'
 import { PaginatedDto } from '@/shared/pagination/paginated.dto'
 import { DossierService } from '@/modules/dossiers/providers/dossier.service'
+import { FileService } from '@/modules/files/providers/file.service'
+import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
+import { InjectQueue } from '@nestjs/bull'
+import { Queue } from 'bull'
+import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
+import { UploadRnaFileJobPayload } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
+import { RnaFileCodeKey, rnaFileCodes } from '@/modules/files/objects/const/rna-code-to-label-and-tag.const'
 
 @Injectable()
 export class OrganismeService extends BaseEntityService<Organisme> {
@@ -36,7 +44,9 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     @InjectRepository(Organisme) repo: Repository<Organisme>,
     protected readonly rnfService: RnfService,
     protected readonly rnaService: RnaService,
+    private readonly fileService: FileService,
     protected readonly dossierService: DossierService,
+    @InjectQueue(QueueName.file) private readonly fileQueue: Queue,
   ) {
     super(repo, logger, OrganismeFieldTypeHash)
     this.logger.setContext(this.constructor.name)
@@ -163,5 +173,32 @@ export class OrganismeService extends BaseEntityService<Organisme> {
   ): Promise<PaginatedDto<IOrganisme>> {
     this.logger.verbose('listOrganisme')
     return this.paginate<IOrganisme>(dto, { state: eState.uploaded })
+  }
+
+  async synchroniseRnaFiles(
+    rnaId: string,
+    rawRna: IRnaOutput,
+  ): Promise<void> {
+    this.logger.verbose('synchroniseRnaFiles')
+    if (rawRna.documents_rna?.length) {
+      const organismeId = await this.findOneOrThrow({ where: { idRna: rnaId }, select: ['id'] }).then((o) => o.id)
+      await Promise.all(
+        rawRna.documents_rna
+          .filter(doc => rnaFileCodes.includes(doc.sous_type?.code as RnaFileCodeKey))
+          .filter((doc) => !!doc.url)
+          .map(async (doc: iRnaDocument) => {
+            const tagAndLabel = FileService.computeLabelAndTagForRna(doc)
+            const file = await this.fileService.createFromRnaIfNew({
+              ...tagAndLabel,
+              organismeId,
+              sourceStringId: doc.id,
+            })
+            this.fileQueue.add(eJobName.UploadRnaFile, {
+              file,
+              rnaUrl: doc.url,
+            } as UploadRnaFileJobPayload)
+          }),
+      )
+    }
   }
 }

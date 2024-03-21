@@ -7,7 +7,8 @@ export const fileTags = [
   'pv',
   'judgment',
   'activityReport',
-  'fe'
+  'other',
+  'fe',
 ] as const
 
 export type FileTagKey = (typeof fileTags)[number]
@@ -19,5 +20,6 @@ export const dFileTabDictionary: Record<FileTagKey, string> = {
   [eFileTag.pv]: 'Procès verbal',
   [eFileTag.judgment]: 'Jugement',
   [eFileTag.activityReport]: 'Rapport d\'activité',
+  [eFileTag.other]: 'Autre',
   [eFileTag.fe]: 'Financement étranger',
 }

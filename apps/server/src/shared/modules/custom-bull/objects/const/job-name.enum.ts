@@ -11,8 +11,8 @@ const jobNames = [
   'ComputeTimeTracking',
   'ComputeFeExcel',
   'UploadDsFile',
-  'UploadRnaFiles',
-  'UploadRnfFiles',
+  'UploadRnaFile',
+  'UploadRnfFile',
 ] as const
 
 export type JobNameKey = typeof jobNames[number]
