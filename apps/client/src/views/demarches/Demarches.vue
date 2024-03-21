@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { IDemarche } from '@biblio-num/shared'
+import type { IDemarche, ISmallDemarcheOutput } from '@biblio-num/shared'
 
 import { dateToStringFr } from '@/utils'
 import { useDemarcheStore } from '@/stores/demarche'
@@ -18,7 +18,7 @@ const headers = [
   },
   {
     text: 'N° Démarche DS',
-    value: 'dsDataJson.number',
+    value: 'dsId',
     type: 'number',
     width: 200,
   },
@@ -36,22 +36,14 @@ const headers = [
   },
   {
     text: 'Créé le',
-    value: 'dsDataJson.dateCreation',
+    value: 'dsCreatedAt',
     parseFn: dateToStringFr,
     type: 'date',
     width: 200,
   },
-  // TODO: Fonction de recupération des nombres de dossiers
-  // {
-  //   text: 'Dossiers',
-  //   value: 'dossiers',
-  //   parseFn: (value:any) => {
-  //     return value?.nodes?.length
-  //   },
-  // },
   {
     text: 'Publié le',
-    value: 'dsDataJson.datePublication',
+    value: 'dsPublishedAt',
     parseFn: dateToStringFr,
     type: 'date',
     width: 200,
@@ -59,12 +51,9 @@ const headers = [
 ]
 
 // Avoids the error: "AG Grid: cannot get grid to draw rows when it is in the middle of drawing rows."
-const rowData = ref<IDemarche[]>([])
+const rowData = ref<ISmallDemarcheOutput[]>([])
 watch(() => demarcheStore.demarches, () => {
-  rowData.value = Array.isArray(demarcheStore.demarches)
-    ? demarcheStore.demarches
-    : []
-        .map<IDemarche>((d: IDemarche) => ({ ...d?.dsDataJson, types: d?.types, id: d.id } as IDemarche))
+  rowData.value = Array.isArray(demarcheStore.demarches) ? demarcheStore.demarches : []
 })
 
 onMounted(async () => {

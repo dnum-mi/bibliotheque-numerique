@@ -4,32 +4,37 @@ import type {
   IDossierSearchOutput,
   IFieldSearchOutput,
   ISearchDossier,
-
   IDemarche,
   MappingColumn,
   MappingColumnWithoutChildren,
+  ISmallDemarcheOutput,
 } from '@biblio-num/shared'
 
 export type FrontMappingColumn = MappingColumnWithoutChildren & { isChild: boolean }
 
 export const useDemarcheStore = defineStore('demarche', () => {
-  const demarches = ref<IDemarche[]>([])
+  const demarches = ref<ISmallDemarcheOutput[]>([])
   const currentDemarche = ref<IDemarche>()
   const currentDemarcheDossiers = ref<IDossierSearchOutput | IFieldSearchOutput>({ total: 0, data: [] })
   const currentDemarcheConfiguration = ref<MappingColumn[]>([])
 
-  const currentDemarcheFlatConfiguration = computed<FrontMappingColumn[]>(() => currentDemarcheConfiguration.value
-    .map((c: MappingColumn) => c.children?.length ? c.children.map(c => ({ ...c, isChild: true })) : [c])
-    .flat(1)
-    .filter(c => !!c.columnLabel) as FrontMappingColumn[])
+  const currentDemarcheFlatConfiguration = computed<FrontMappingColumn[]>(
+    () =>
+      currentDemarcheConfiguration.value
+        .map((c: MappingColumn) => (c.children?.length ? c.children.map((c) => ({ ...c, isChild: true })) : [c]))
+        .flat(1)
+        .filter((c) => !!c.columnLabel) as FrontMappingColumn[],
+  )
   // hash will be easier to manipulate
   const currentDemarcheConfigurationHash = ref<Record<string, MappingColumn>>({})
 
   const _setConfiguration = (configuration: MappingColumn[]) => {
     currentDemarcheConfiguration.value = configuration
-    currentDemarcheConfigurationHash.value = Object.fromEntries(configuration
-      .filter((c) => c.columnLabel) // filter out empty columnLabel
-      .map((c) => [c.id, c]))
+    currentDemarcheConfigurationHash.value = Object.fromEntries(
+      configuration
+        .filter((c) => c.columnLabel) // filter out empty columnLabel
+        .map((c) => [c.id, c]),
+    )
   }
 
   const updateOneMappingColumn = async (id: string, columnLabel: string | null): Promise<void> => {
@@ -58,10 +63,13 @@ export const useDemarcheStore = defineStore('demarche', () => {
   }
 
   const getDemarches = async () => {
-    demarches.value = await apiClient.getDemarches()
+    demarches.value = await apiClient.getSmallDemarches()
   }
 
-  const searchCurrentDemarcheDossiers = async (groupByDossier: boolean, dto: ISearchDossier): Promise<IDossierSearchOutput | IFieldSearchOutput> => {
+  const searchCurrentDemarcheDossiers = async (
+    groupByDossier: boolean,
+    dto: ISearchDossier,
+  ): Promise<IDossierSearchOutput | IFieldSearchOutput> => {
     if (currentDemarche.value) {
       currentDemarcheDossiers.value = groupByDossier
         ? await apiClient.searchDemarcheDossiers(currentDemarche.value.id, dto)

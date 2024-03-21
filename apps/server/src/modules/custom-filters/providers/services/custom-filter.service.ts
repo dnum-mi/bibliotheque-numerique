@@ -95,6 +95,8 @@ export class CustomFilterService extends BaseEntityService<CustomFilter> {
         types: customFilter.demarche.types,
         dsId: customFilter.demarche.dsDataJson.number,
         title: customFilter.demarche.title,
+        dsPublishedAt: customFilter.demarche.dsDataJson.datePublication,
+        dsCreatedAt: customFilter.demarche.dsDataJson.dateCreation,
       },
     }
   }

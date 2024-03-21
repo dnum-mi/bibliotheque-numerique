@@ -58,13 +58,6 @@ export class DemarcheController {
     return this.demarcheService.findMultipleSmallDemarche({}, role)
   }
 
-  @Get()
-  @Role(Roles.instructor)
-  async getDemarches(@CurrentUserRole() role: IRole): Promise<Demarche[]> {
-    this.logger.verbose('getDemarches')
-    return this.demarcheService.findMultipleDemarche({}, role)
-  }
-
   @Get(':demarcheId')
   @Role(Roles.instructor)
   @UseInterceptors(CurrentDemarcheInterceptor)
