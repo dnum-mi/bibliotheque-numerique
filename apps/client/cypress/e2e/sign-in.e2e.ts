@@ -42,12 +42,14 @@ describe('Sign in', () => {
     cy.wait('@getMyProfile')
     cy.url().should('include', '/sign_in?redirect=/3/dossiers')
 
+    cy.intercept({ method: 'GET', url: '/api/demarches/3/custom-filters' }, [])
     cy.intercept({ method: 'POST', url: '/api/auth/sign-in', times: 1 }, adminProfile).as('adminSignIn')
     cy.get('#email').type('louis.dubois@gmail.com')
     cy.get('#password').type('A1etsn*!etisan34')
     cy.get('[type=submit]').click()
     cy.wait('@adminSignIn')
     cy.wait('@demarche')
+
     cy.url().should('include', '/3/dossiers').should('not.include', '/sign_in')
   })
 
