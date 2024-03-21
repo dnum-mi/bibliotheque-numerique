@@ -10,4 +10,6 @@ export class SmallDemarcheOutputDto implements ISmallDemarcheOutput {
   types: OrganismeTypeKey[]
   dsId: number
   identification?: IdentificationDemarcheKeys | undefined
+  dsCreatedAt: Date
+  dsPublishedAt: Date
 }
