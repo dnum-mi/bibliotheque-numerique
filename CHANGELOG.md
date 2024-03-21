@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.7.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.7.0...v2.7.1) (2024-03-21)
+
+
+### Bug Fixes
+
+* delete dummy error ([519088b](https://github.com/dnum-mi/bibliotheque_numerique/commit/519088bd1744977e96c72dbae15e2ddc1b470d67))
+
 ## [2.7.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.6.2...v2.7.0) (2024-03-21)
 
 
