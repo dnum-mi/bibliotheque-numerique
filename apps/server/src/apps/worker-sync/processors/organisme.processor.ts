@@ -106,6 +106,5 @@ export class OrganismeProcessor {
       job.log('Rna files job created')
     }
     job.progress(100)
-    throw new Error('dummy')
   }
 }
