@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.7.2](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.7.1...v2.7.2) (2024-03-21)
+
+
+### Bug Fixes
+
+* upload checksum onl if s3 went correctly ([add9835](https://github.com/dnum-mi/bibliotheque_numerique/commit/add98357953ce6c4ff68e384600193249ce7bb50))
+
 ## [2.7.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.7.0...v2.7.1) (2024-03-21)
 
 
