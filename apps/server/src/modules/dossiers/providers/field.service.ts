@@ -109,6 +109,11 @@ export class FieldService extends BaseEntityService<Field> {
       } else {
         const id = champ.champDescriptor?.id ?? champ.id
         const columnRef = columnHash[id]
+        if (!columnRef) {
+          this.logger.debug(champ)
+          this.logger.warn(`There is no reference of ${id} in column hash`)
+          continue
+        }
         if (columnRef.isHeader) {
           continue
         }
@@ -116,10 +121,6 @@ export class FieldService extends BaseEntityService<Field> {
           champ,
           columnRef.formatFunctionRef,
         )
-        if (!columnRef) {
-          this.logger.debug(champ)
-          throw new Error(`There is no reference of ${id} in column hash`)
-        }
         fields.push({
           ...this._extractColumnRefFieldInformation(columnRef),
           stringValue: FieldService.giveString(champ),

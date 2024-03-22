@@ -455,4 +455,56 @@ describe('FieldService', () => {
       },
     ])
   })
+
+  it('Should create the fields even if one id champ is deleted in DS', async () => {
+    const raw = {
+      id: 'RG9zc2llci0xMzY=',
+      state: 'bientôt cuit',
+      number: 142,
+      champs: [
+        {
+          id: 'Q4hhbXAtMTA0Mw==',
+          __typename: 'DecimalNumberChamp',
+          label: 'Total de doritos dans le monde',
+          stringValue: '4569873456.123',
+          champDescriptor: {
+            id: 'Q4hhbXAtMTA0Mw==',
+          },
+        },
+        {
+          id: 'R4hhbXAtMTA0Mw==',
+          __typename: 'DecimalNumberChamp',
+          label: 'Total de doritos dans le monde',
+          stringValue: 'JE SUIS PAS UN NOMBRE HIHIHII HAHAHAHA',
+          champDescriptor: {
+            id: 'R4hhbXAtMTA0Mw==',
+          },
+        },
+      ],
+    }
+    const fields = await service.overwriteFieldsFromDataJson(raw as unknown as TDossierWithPrefecture, 42, fakeMappingColumnHash)
+    expect(fields).toMatchObject(expect.arrayContaining( [
+      expect.objectContaining({
+      sourceId: 'Q4hhbXAtMTA0Mw==',
+      label: 'Total de doritos dans le monde',
+      formatFunctionRef: null,
+      type: 'number',
+      fieldSource: 'champs',
+      stringValue: '4569873456.123',
+      dateValue: null,
+      numberValue: 4569873456.123,
+      dsChampType: 'DecimalNumberChamp',
+      dossierId: 42,
+      parentRowIndex: null,
+      children: null,
+    })]))
+    expect(fields.map(f => f.sourceId)).not.toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          sourceId: 'R4hhbXAtMTA0Mw==',
+        })
+      ])
+    );
+  })
+
 })
