@@ -30,7 +30,7 @@
     "dev:worker-in-docker": "turbo dev:worker-in-docker --filter=server",
     "docker:build:client": "docker build -t bn-client:latest --target production -f apps/client/Dockerfile .",
     "docker:build:client:check": "sh ci/scripts/check_http.sh 8080",
-    "docker:build:client:run": "docker run -d -p 0.0.0.0:8080:8080 --name bn-client  bn-client:latest",
+    "docker:build:client:run": "docker run -d -p 0.0.0.0:8080:8080 --name bn-client -e AG_GRID_LICENSE_KEY=myAgGridKye bn-client:latest",
     "docker:build:client:stop": "docker stop bn-client",
     "docker:build:http-proxy": "docker build -t rnf-http-proxy:latest -f apps/http-proxy/Dockerfile .",
     "docker:build:http-proxy:check": "sh ci/scripts/check_http.sh 8088",

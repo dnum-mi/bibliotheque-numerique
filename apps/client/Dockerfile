@@ -36,4 +36,10 @@ FROM bitnami/nginx:latest as production
 
 COPY --from=builder /app/apps/client/dist /app
 COPY --from=base /app/docker/nginx/bn-rnf.conf /opt/bitnami/nginx/conf/server_blocks/bn.conf
+COPY --from=base /app/apps/client/entrypoint.sh /entrypoint.sh
+
+USER root
+RUN chmod 774 /app/assets
+
+ENTRYPOINT ["/entrypoint.sh"]
 USER 1001
