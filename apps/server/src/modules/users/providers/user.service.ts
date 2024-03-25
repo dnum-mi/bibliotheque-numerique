@@ -171,7 +171,7 @@ export class UserService
     this.logger.verbose('_generateRoleResume')
     const typeHash: Partial<Record<OrganismeTypeKey, number>> = {}
     Object.keys(role.options).forEach((demarcheId) => {
-      demarcheHash[demarcheId].types.forEach((type) => {
+      demarcheHash[demarcheId]?.types.forEach((type) => {
         typeHash[type] = typeHash[type] ? typeHash[type] + 1 : 1
       })
     })
