@@ -250,10 +250,12 @@ export class UserService
       role: {
         ...user.role,
         options: Object.fromEntries(
-          Object.entries(user.role.options).map(([id, option]) => [
-            id,
-            { ...option, demarche: sdHash[id] },
-          ]),
+          Object.entries(user.role.options)
+            .filter(([id]) => sdHash[id] != null)
+            .map(([id, option]) => [
+              id,
+              { ...option, demarche: sdHash[id] },
+            ]),
         ),
       },
     }
