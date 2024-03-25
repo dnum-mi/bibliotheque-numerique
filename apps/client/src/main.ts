@@ -27,7 +27,9 @@ import './unregister.js'
 import StatusBadge from './components/Badges/status/StatusBadge.vue'
 import FileTagBadge from '@/components/Badges/file-tag/FileTagBadge.vue'
 
-LicenseManager.setLicenseKey(import.meta.env.VITE_AG_GRID_LICENSE_KEY)
+const agGridLicenseKey = '__AG_GRID_LICENSE_KEY__'
+
+LicenseManager.setLicenseKey(agGridLicenseKey)
 
 addIcons(...Object.values(icons))
 
