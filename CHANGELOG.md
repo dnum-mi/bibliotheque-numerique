@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.7.4](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.7.3...v2.7.4) (2024-03-26)
+
+
+### Bug Fixes
+
+* debug sed cmd in entrypoint.sh ([90ba956](https://github.com/dnum-mi/bibliotheque_numerique/commit/90ba95658ae650836b2e6815aac750691eb45b0f))
+
 ## [2.7.3](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.7.2...v2.7.3) (2024-03-26)
 
 
