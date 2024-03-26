@@ -8,7 +8,7 @@ import dayjs, { type Dayjs } from '@/shared/utils/dayjs'
 
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 
-import { EInstructionTimeState, EInstructionTimeStateKey } from './types/IntructionTime.type'
+import { EInstructionTimeState, EInstructionTimeStateKey, instructionTimeValueDictionary } from '@biblio-num/shared'
 
 import { InstructionTime } from './instruction_time.entity'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
@@ -37,19 +37,6 @@ type TDelay = {
 };
 
 type toCheckDate = { date: Date | undefined | null; message: string };
-
-const stringValueDictionary = {
-  [EInstructionTimeState.FIRST_REQUEST]: '1ère demande',
-  [EInstructionTimeState.FIRST_RECEIPT]: '1ère demande',
-  [EInstructionTimeState.INTENT_OPPO]: 'Intention opposition',
-  [EInstructionTimeState.IN_ERROR]: 'Erreur',
-  [EInstructionTimeState.IN_EXTENSION]: 'Prorogation',
-  [EInstructionTimeState.IN_PROGRESS]: 'Instruction',
-  [EInstructionTimeState.OUT_OF_DATE]: 'Délai expiré',
-  [EInstructionTimeState.SECOND_RECEIPT]: '2ème demande',
-  [EInstructionTimeState.SECOND_REQUEST]: '2ème demande',
-
-}
 
 @Injectable()
 export class InstructionTimesService extends BaseEntityService<InstructionTime> {
@@ -157,7 +144,7 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
         await this.fieldService.upsert({
           sourceId: fixFieldInstructionTimeStatus.id,
           dossierId: dossier.id,
-          stringValue: stringValueDictionary[delayStatus],
+          stringValue: instructionTimeValueDictionary[delayStatus],
           label: fixFieldInstructionTimeStatus.originalLabel,
           type: fixFieldInstructionTimeStatus.type,
           fieldSource: fixFieldInstructionTimeStatus.source,
