@@ -9,7 +9,7 @@ import dayjs from '../../shared/utils/dayjs'
 
 import { InstructionTimesService } from './instruction_times.service'
 
-import { EInstructionTimeState } from './types/IntructionTime.type'
+import { EInstructionTimeState } from '@biblio-num/shared'
 import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
 import { InstructionTime } from './instruction_time.entity'
 import { getFakeDossierTest } from '../../../test/unit/fake-data/dossier.fake-data'
