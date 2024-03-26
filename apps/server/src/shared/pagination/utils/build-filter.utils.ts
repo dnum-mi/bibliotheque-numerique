@@ -60,7 +60,7 @@ const _isFilterConsistent = async (
 }
 
 const _manualFilterValueEscapingMechanism = (str: string): string => {
-  return str ? str.replace("'", "''") : str
+  return str ? str.replace("'", "''") : (str === null ? '' : str)
 }
 
 const _adaptKeyForArray = (
