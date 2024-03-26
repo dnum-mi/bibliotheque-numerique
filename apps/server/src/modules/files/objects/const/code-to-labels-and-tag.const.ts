@@ -19,6 +19,9 @@ type TagAndLabelFactory = {
 }
 
 export const formatDate = (date: Date = new Date(0)): string => {
+  if (typeof date === 'string') {
+    date = new Date(date)
+  }
   return dayjs(date?.toISOString()).format('DD.MM.YYYY')
 }
 
