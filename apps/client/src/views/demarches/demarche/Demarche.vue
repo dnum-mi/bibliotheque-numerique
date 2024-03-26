@@ -38,7 +38,7 @@ const tabTitles = computed<(DsfrTabItemProps & { title: string })[]>(() => [
     tabId: 'tab-2',
     title: 'Information',
   },
-  ...(userStore.canManageRoles ? [{ title: 'Configuration', panelId: 'pan-3', tabId: 'tab-3' }] : []),
+  ...(userStore.CanConfigureDemarche(Number(props.demarcheId)) ? [{ title: 'Configuration', panelId: 'pan-3', tabId: 'tab-3' }] : []),
 ])
 const selectedTabIndex = ref(0)
 
@@ -101,7 +101,7 @@ onMounted(() => {
 
       <!-- Configurations -->
       <DsfrTabContent
-        v-if="userStore.canManageRoles"
+        v-if="userStore.CanConfigureDemarche(Number(props.demarcheId))"
         panel-id="pan-3"
         tab-id="tab-3"
         :selected="selectedTabIndex === 2"

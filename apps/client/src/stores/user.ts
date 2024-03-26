@@ -1,20 +1,21 @@
 import { getRandomId } from '@gouvminint/vue-dsfr'
 
 import bnApiClient from '@/api/api-client'
-import type {
-  ICredentialsInput,
-  IUserOutput,
-  IPaginationUser,
-  IMyProfileOutput,
-  IUserWithEditableRole,
-  IUpdateOneRoleOption,
-  IUpdateProfile,
-
-  RolesKeys,
+import {
+  type ICredentialsInput,
+  type IUserOutput,
+  type IPaginationUser,
+  type IMyProfileOutput,
+  type IUserWithEditableRole,
+  type IUpdateOneRoleOption,
+  type IUpdateProfile,
+  type RolesKeys,
+  Roles,
 } from '@biblio-num/shared'
 
-// TODO: enum Roles dans packages/shared n'est pas récupérable
-const RolesAdmins = ['admin', 'sudo', 'superadmin']
+const SuperAdminRoles = [Roles.superadmin, Roles.sudo]
+
+const AdminRoles = [...SuperAdminRoles, Roles.admin]
 
 export const useUserStore = defineStore('user', () => {
   const $reset = () => {
@@ -33,9 +34,8 @@ export const useUserStore = defineStore('user', () => {
   const selectedEditableUser = ref<IUserWithEditableRole | null>(null)
   const keySelectUser = ref<string>(getRandomId('selectedUser-selected'))
   const isAuthenticated = computed(() => !!currentUser.value)
-  const hasAdminAccess = computed(() => !!(currentUser.value?.role?.label && RolesAdmins.includes(currentUser.value?.role?.label)))
-  const canManageRoles = computed(() => hasAdminAccess.value)
-  const canAccessDemarches = computed(() => !!(currentUser.value?.role?.label))
+  const hasAdminAccess = computed(() => !!(currentUser.value?.role?.label && AdminRoles.includes(currentUser.value?.role?.label)))
+  const canAccessDemarches = computed(() => !!currentUser.value?.role?.label)
 
   const login = async (loginForm: ICredentialsInput) => {
     currentUser.value = await bnApiClient.loginUser(loginForm)
@@ -63,13 +63,17 @@ export const useUserStore = defineStore('user', () => {
   }
 
   const listUsers = async (dto: IPaginationUser) => {
-    if (!hasAdminAccess.value) { return }
+    if (!hasAdminAccess.value) {
+      return
+    }
     return bnApiClient.listUsers(dto)
   }
 
   const loadUserById = async (id: number) => {
     selectedEditableUserLoading.value = true
-    if (!hasAdminAccess.value) { return }
+    if (!hasAdminAccess.value) {
+      return
+    }
     selectedEditableUser.value = await bnApiClient.getUserRoleById(id)
     keySelectUser.value = getRandomId('selectedUser-selected')
     selectedEditableUserLoading.value = false
@@ -79,7 +83,9 @@ export const useUserStore = defineStore('user', () => {
   const updateRole = async (role: RolesKeys) => {
     selectedEditableUserLoading.value = true
     const id = selectedEditableUser.value?.originalUser.id
-    if (!id) { throw new Error('L\'Utilisateur n\'a pas été selectionné.') }
+    if (!id) {
+      throw new Error('L\'Utilisateur n\'a pas été selectionné.')
+    }
     await bnApiClient.updateUserRole(id, role)
     await loadUserById(id)
   }
@@ -87,7 +93,9 @@ export const useUserStore = defineStore('user', () => {
   const updateUserOneRoleOption = async (demarchesRoles: IUpdateOneRoleOption, reloadUser: boolean): Promise<void> => {
     selectedEditableUserLoading.value = true
     const id = selectedEditableUser.value?.originalUser.id
-    if (!id) { throw new Error('L\'Utilisateur n\'a pas été selectionné.') }
+    if (!id) {
+      throw new Error('L\'Utilisateur n\'a pas été selectionné.')
+    }
     await bnApiClient.updateUserDemarchesRole(id, demarchesRoles)
     if (reloadUser) {
       await loadUserById(id)
@@ -97,10 +105,16 @@ export const useUserStore = defineStore('user', () => {
   const removeRole = async () => {
     selectedEditableUserLoading.value = true
     const id = selectedEditableUser.value?.originalUser.id
-    if (!id) { throw new Error('L\'Utilisateur n\'a pas été selectionné.') }
+    if (!id) {
+      throw new Error('L\'Utilisateur n\'a pas été selectionné.')
+    }
     await bnApiClient.removeRole(id)
     await loadUserById(id)
   }
+
+  const CanConfigureDemarche = (demarcheId: number) =>
+    SuperAdminRoles.includes(currentUser.value?.role?.label)
+    || (currentUser.value?.role?.label === Roles.admin && currentUser.value?.role?.options[demarcheId]?.national)
 
   return {
     $reset,
@@ -110,7 +124,7 @@ export const useUserStore = defineStore('user', () => {
     selectedEditableUser,
     isAuthenticated,
     hasAdminAccess,
-    canManageRoles,
+    CanConfigureDemarche,
     canAccessDemarches,
     keySelectUser,
     selectedEditableUserLoading,
