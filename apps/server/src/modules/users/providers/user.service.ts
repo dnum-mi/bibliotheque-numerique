@@ -251,7 +251,7 @@ export class UserService
         ...user.role,
         options: Object.fromEntries(
           Object.entries(user.role.options)
-            .filter(([id]) => sdHash[id] != null)
+            .filter(([id]) => sdHash[id])
             .map(([id, option]) => [
               id,
               { ...option, demarche: sdHash[id] },
