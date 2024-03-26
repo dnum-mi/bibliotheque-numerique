@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.7.3](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.7.2...v2.7.3) (2024-03-26)
+
+
+### Bug Fixes
+
+* add licence ag grid ([1327984](https://github.com/dnum-mi/bibliotheque_numerique/commit/1327984f3ab322a427df0902df4aba471e180f33))
+* create the feilds even if one champ is not in mapping ([bff58f8](https://github.com/dnum-mi/bibliotheque_numerique/commit/bff58f8acd63aee8d6fe8dba9d2825e59ecbca82))
+* debug when user has demarche soft deleted ([c8e343b](https://github.com/dnum-mi/bibliotheque_numerique/commit/c8e343b9f33868dab93e3d5748e20640c1b7140a))
+* filter demarche with all cas 0 null undefined ([87a1f24](https://github.com/dnum-mi/bibliotheque_numerique/commit/87a1f24f9e9daeff2a4ffe059e174f9c984e9e5d))
+* not return demarche soft deleted for user profile ([6fe4bbb](https://github.com/dnum-mi/bibliotheque_numerique/commit/6fe4bbbbcb0962f24bbbd27561798821aecc9377))
+* use license key in var env ([664aa6a](https://github.com/dnum-mi/bibliotheque_numerique/commit/664aa6aa48304a92caf4afa93d339f1dbf59c820))
+
 ## [2.7.2](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.7.1...v2.7.2) (2024-03-21)
 
 
