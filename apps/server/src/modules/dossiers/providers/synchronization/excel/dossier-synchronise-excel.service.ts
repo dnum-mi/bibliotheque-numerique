@@ -12,6 +12,7 @@ import {
   natureFundingKeys,
   paymentMethodKeys,
   eBnConfiguration,
+  FormatFunctionRefKeys,
 } from '@biblio-num/shared'
 import {
   fixFieldChampsTotalAmount,
@@ -247,7 +248,7 @@ export class DossierSynchroniseExcelService extends BaseEntityService<Field> {
 
   private _fixFieldExcelRow(
     fixFieldMapping: MappingColumn,
-    formatFunctionRef: string,
+    formatFunctionRef: FormatFunctionRefKeys | null,
     dossierId: number,
     stringValue: string,
     dateValue: Date | null,
@@ -408,7 +409,7 @@ export class DossierSynchroniseExcelService extends BaseEntityService<Field> {
   private _fixFieldWithoutChildren(
     sourceId: string,
     label: string,
-    formatFunctionRef: string,
+    formatFunctionRef: FormatFunctionRefKeys | null,
     type: FieldTypeKeys,
     fieldSource: string,
     stringValue: string,
