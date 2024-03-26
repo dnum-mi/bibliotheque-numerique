@@ -217,10 +217,10 @@ describe('InstructionTimesService', () => {
       },
     )
 
-    const results = {}
+    const results = []
     const mockUpsert = jest.fn()
       .mockImplementation(async (obj: Field): Promise<Field[]> => {
-        results[obj.sourceId] = obj
+        results.push(obj)
         return [new Field()]
       })
     fieldService.upsert = mockUpsert
@@ -231,16 +231,40 @@ describe('InstructionTimesService', () => {
       fakeInstrunctionTime.map((d) => d.dossier.id),
     )
 
-    expect(mockUpsert).toBeCalledTimes(1)
-
-    expect(results[fixFieldInstructionTimeStatus.id]).toMatchObject({
-      sourceId: fixFieldInstructionTimeStatus.id,
-      dossierId: 2,
-      stringValue: '1ère demande',
-      label: fixFieldInstructionTimeStatus.originalLabel,
-      type: fixFieldInstructionTimeStatus.type,
-      fieldSource: fixFieldInstructionTimeStatus.source,
-    })
+    expect(mockUpsert).toBeCalledTimes(fakeInstrunctionTime.length * 2)
+    expect(results).toMatchObject(
+      expect.arrayContaining([
+        expect.objectContaining({
+          sourceId: fixFieldInstructionTimeStatus.id,
+          dossierId: 2,
+          stringValue: '1ère demande',
+          label: fixFieldInstructionTimeStatus.originalLabel,
+          type: fixFieldInstructionTimeStatus.type,
+          fieldSource: fixFieldInstructionTimeStatus.source,
+        })
+      ]))
+    expect(results).toMatchObject(
+      expect.arrayContaining([
+        expect.objectContaining({
+          sourceId: fixFieldInstructionTimeStatus.id,
+          dossierId: 1,
+          stringValue: '',
+          label: fixFieldInstructionTimeStatus.originalLabel,
+          type: fixFieldInstructionTimeStatus.type,
+          fieldSource: fixFieldInstructionTimeStatus.source,
+        })
+      ]))
+    expect(results).toMatchObject(
+      expect.arrayContaining([
+        expect.objectContaining({
+            sourceId: fixFieldInstructionTimeDelay.id,
+            dossierId: 1,
+            numberValue: 0,
+            label: fixFieldInstructionTimeDelay.originalLabel,
+            type: fixFieldInstructionTimeDelay.type,
+            fieldSource: fixFieldInstructionTimeDelay.source,
+        })
+      ]))
   })
 
   const millisecondsOfDay = 24 * 60 * 60 * 1000
@@ -1065,7 +1089,7 @@ describe('InstructionTimesService', () => {
     fieldService.upsert = mockUpsert
     await service.instructionTimeCalculation([dataInstructionTime.dossier.id])
 
-    expect(mockUpsert).toBeCalledTimes(1)
+    expect(mockUpsert).toBeCalledTimes(2)
 
     expect(results[fixFieldInstructionTimeStatus.id]).toMatchObject({
       sourceId: fixFieldInstructionTimeStatus.id,

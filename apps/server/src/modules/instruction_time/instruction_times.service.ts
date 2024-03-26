@@ -128,9 +128,17 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
         remainingTime = Math.max(0, dayjs(instructionTime.endAt).startOf('day').diff(dayjs().startOf('day'), 'days'))
       }
 
+      let value = 0
       if (remainingTime != null && remainingTime >= 0) {
-        const value = Math.round(remainingTime)
-        await this.fieldService.upsert({
+        value = Math.round(remainingTime)
+      }
+      let stringValue = ''
+      if (delayStatus) {
+        stringValue = instructionTimeValueDictionary[delayStatus]
+      }
+
+      await Promise.all([
+        this.fieldService.upsert({
           sourceId: fixFieldInstructionTimeDelay.id,
           dossierId: dossier.id,
           numberValue: value,
@@ -138,18 +146,16 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
           type: fixFieldInstructionTimeDelay.type,
           fieldSource: fixFieldInstructionTimeDelay.source,
           stringValue: `${value}`,
-        })
-      }
-      if (delayStatus) {
-        await this.fieldService.upsert({
+        }),
+        this.fieldService.upsert({
           sourceId: fixFieldInstructionTimeStatus.id,
           dossierId: dossier.id,
-          stringValue: instructionTimeValueDictionary[delayStatus],
+          stringValue,
           label: fixFieldInstructionTimeStatus.originalLabel,
           type: fixFieldInstructionTimeStatus.type,
           fieldSource: fixFieldInstructionTimeStatus.source,
-        })
-      }
+        }),
+      ])
     }))
   }
 
