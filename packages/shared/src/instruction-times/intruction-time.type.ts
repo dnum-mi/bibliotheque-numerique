@@ -1,3 +1,20 @@
+import { createEnum } from "../factories";
+
+export const instructionTimeState = [
+'FIRST_REQUEST',
+'FIRST_RECEIPT',
+'IN_PROGRESS',
+'OUT_OF_DATE',
+'IN_EXTENSION',
+'SECOND_REQUEST',
+'SECOND_RECEIPT',
+'INTENT_OPPO',
+'IN_ERROR',
+] as const
+
+export type InstructionTimeStateKey = (typeof instructionTimeState)[number]
+export const eInstructionTimeState = createEnum(instructionTimeState)
+
 export const EInstructionTimeState = {
   DEFAULT: '',
   FIRST_REQUEST: 'FIRST_REQUEST',
