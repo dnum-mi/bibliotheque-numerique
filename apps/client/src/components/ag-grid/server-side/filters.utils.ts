@@ -1,9 +1,10 @@
 import type { IFilterDef } from 'ag-grid-community'
-import type { FormatFunctionRefKeys } from '@biblio-num/shared'
+import { FormatFunctionRef, instructionTimeValues, type FormatFunctionRefKeys } from '@biblio-num/shared'
 
 import { DossierState } from '@/utils'
 import StatusBadgesRenderer from '../../Badges/status/StatusBadgesRenderer.vue'
 import type { Component } from 'vue'
+import DelayStateRenderer from '../../Badges/delay-state/DelayStateRenderer.vue'
 
 const fieldTypesDict = {
   file: 'agTextColumnFilter',
@@ -15,12 +16,14 @@ const fieldTypesDict = {
   default: 'agTextColumnFilter',
 } as const
 
-export const filterEnumvalues: Record<string, string[]> = {
-  status: Object.keys(DossierState),
+export const filterEnumvalues: Record<FormatFunctionRefKeys, string[]> = {
+  [FormatFunctionRef.status]: Object.keys(DossierState),
+  [FormatFunctionRef.delayStatus]: [...instructionTimeValues, ''],
 }
 
-export const filterCellRender: Record<string, Component> = {
-  status: StatusBadgesRenderer,
+export const filterCellRender: Record<FormatFunctionRefKeys, Component> = {
+  [FormatFunctionRef.status]: StatusBadgesRenderer,
+  [FormatFunctionRef.delayStatus]: DelayStateRenderer,
 }
 
 // TODO: use FieldType but enum from library doesn't work in front.

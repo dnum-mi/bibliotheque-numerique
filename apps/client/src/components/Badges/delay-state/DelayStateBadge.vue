@@ -1,18 +1,21 @@
 <script lang="ts" setup>
+import { eInstructionTimeValue } from '@biblio-num/shared'
+import type { InstructionTimeValueKey } from '@biblio-num/shared'
+
 const props = defineProps<{
-  value: string
+  value: InstructionTimeValueKey
 }>()
 
  type dsfrType = 'success' | 'error' | 'warning' | 'info' | 'new'
 
-const dictionary: Record<string, { label: string, type: dsfrType }> = {
-  '1ère demande': { label: '1ère demande', type: 'new' },
-  'Intention opposition': { label: 'Intention opposition', type: 'warning' },
-  Erreur: { label: 'Erreur', type: 'error' },
-  Prorogation: { label: 'Prorogation', type: 'warning' },
-  Instruction: { label: 'Instruction', type: 'info' },
-  'Délai expiré': { label: 'Délai expiré', type: 'error' },
-  '2ème demande': { label: '2ème demande', type: 'new' },
+const dictionary: Record<InstructionTimeValueKey, { label: string, type: dsfrType }> = {
+  [eInstructionTimeValue['1ère demande']]: { label: '1ère demande', type: 'new' },
+  [eInstructionTimeValue['Intention opposition']]: { label: 'Intention opposition', type: 'warning' },
+  [eInstructionTimeValue.Erreur]: { label: 'Erreur', type: 'error' },
+  [eInstructionTimeValue.Prorogation]: { label: 'Prorogation', type: 'warning' },
+  [eInstructionTimeValue.Instruction]: { label: 'Instruction', type: 'info' },
+  [eInstructionTimeValue['Délai expiré']]: { label: 'Délai expiré', type: 'error' },
+  [eInstructionTimeValue['2ème demande']]: { label: '2ème demande', type: 'new' },
 }
 
 const state = computed(() => {
