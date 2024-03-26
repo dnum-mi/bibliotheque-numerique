@@ -8,7 +8,7 @@ import {
   type PrefectureKeys,
 } from '@biblio-num/shared'
 
-import delayStateBadge from '@/components/Badges/DelayStateBadge.vue'
+import delayStateBadge from '@/components/Badges/delay-state/DelayStateBadge.vue'
 import AgGridAttachmentCell from '@/components/ag-grid/AgGridAttachmentCell.vue'
 import { firstUpperCase } from '@/utils/first-upper-case'
 
