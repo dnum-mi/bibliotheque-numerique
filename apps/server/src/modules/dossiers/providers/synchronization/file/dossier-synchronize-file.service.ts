@@ -154,6 +154,7 @@ export class DossierSynchroniseFileService {
     this.logger.verbose('synchroniseFiles')
     const organismeIdForAcceptedDossier =
       dossier.state === DossierState.Accepte ? organismeId : undefined
+    this.logger.debug('organisme: ' + organismeIdForAcceptedDossier)
     const flatCodeFields = fields
       .flatMap((f) => [f, ...(f.children || [])])
       .filter((f) => !!f.code)
