@@ -3,6 +3,76 @@ import { DateFilterConditions, FilterDateDto, FilterNumberDto } from '@/shared/p
 import { buildFilterQuery } from '@/shared/pagination/utils/build-filter.utils'
 
 describe('Build filter', () => {
+  describe('Common filter', () => {
+    it('Should not accept filter', async () => {
+      await expect(
+         buildFilterQuery(
+          {
+            I09: {
+              filterType: 'text',
+              condition1: {
+                type: 'contains',
+                filter: 'to',
+              },
+            },
+          },
+          { I09: 'number' },
+        )
+      ).rejects.toThrow('Your filter does not match the schema.')
+    })
+
+    it('Should not accept filter', () => {
+      expect(
+        () =>  buildFilterQuery(
+          {
+            I09: {
+              filterType: 'text',
+              condition1: {
+                type: 'contains',
+                filter: 'to',
+              },
+            },
+          },
+          { I09: 'enum' },
+        )
+      ).rejects.toThrow('Your filter does not match the schema.')
+    })
+
+    it('Should not accept filter', () => {
+      expect(
+        () =>  buildFilterQuery(
+          {
+            I09: {
+              filterType: 'text',
+              condition1: {
+                type: 'contains',
+                filter: 'to',
+              },
+            },
+          },
+          { I09: 'date' },
+        )
+      ).rejects.toThrow('Your filter does not match the schema.')
+    })
+
+    it('Should not accept filter', () => {
+      expect(
+        () =>  buildFilterQuery(
+          {
+            I09: {
+              filterType: 'number',
+              condition1: {
+                type: 'equal',
+                filter: 10,
+              },
+            },
+          },
+          { I09: 'string' },
+        )
+      ).rejects.toThrow('Your filter does not match the schema.')
+    })
+  })
+
   describe('Text filters', () => {
     describe('Normal text filters', () => {
       it('Should build filter for "contains"', () => {
@@ -19,7 +89,7 @@ describe('Build filter', () => {
             },
             { I09: 'string' },
           ),
-        ).toEqual('(("I09" ILIKE \'%to%\'))')
+        ).resolves.toEqual('(("I09" ILIKE \'%to%\'))')
       })
 
       it('Should build filter for "notContains"', () => {
@@ -36,7 +106,7 @@ describe('Build filter', () => {
             },
             { I09: 'string' },
           ),
-        ).toEqual('(("I09" NOT ILIKE \'%to%\'))')
+        ).resolves.toEqual('(("I09" NOT ILIKE \'%to%\'))')
       })
 
       it('Should build filter for "startsWith"', () => {
@@ -53,7 +123,7 @@ describe('Build filter', () => {
             },
             { I09: 'string' },
           ),
-        ).toEqual('(("I09" ILIKE \'to%\'))')
+        ).resolves.toEqual('(("I09" ILIKE \'to%\'))')
       })
 
       it('Should build filter for "endsWith"', () => {
@@ -70,7 +140,7 @@ describe('Build filter', () => {
             },
             { I09: 'string' },
           ),
-        ).toEqual('(("I09" ILIKE \'%to\'))')
+        ).resolves.toEqual('(("I09" ILIKE \'%to\'))')
       })
 
       it('Should build filter for "blank"', () => {
@@ -87,7 +157,7 @@ describe('Build filter', () => {
             },
             { I09: 'string' },
           ),
-        ).toEqual('(("I09" IS NULL OR "I09" = \'\'))')
+        ).resolves.toEqual('(("I09" IS NULL OR "I09" = \'\'))')
       })
 
       it('Should build filter for "notBlank"', () => {
@@ -104,9 +174,10 @@ describe('Build filter', () => {
             },
             { I09: 'string' },
           ),
-        ).toEqual('(("I09" IS NOT NULL OR "I09" != \'\'))')
+        ).resolves.toEqual('(("I09" IS NOT NULL OR "I09" != \'\'))')
       })
     })
+
     describe('Array text filters', () => {
       it('Should build filter for "contains"', () => {
         expect(
@@ -123,7 +194,7 @@ describe('Build filter', () => {
             { I09: 'string' },
             true,
           ),
-        ).toEqual(
+        ).resolves.toEqual(
           '((EXISTS (SELECT 1 FROM UNNEST("I09") AS item WHERE item ILIKE \'%to%\')))',
         )
       })
@@ -143,7 +214,7 @@ describe('Build filter', () => {
             { I09: 'string' },
             true,
           ),
-        ).toEqual(
+        ).resolves.toEqual(
           '((EXISTS (SELECT 1 FROM UNNEST("I09") AS item WHERE item NOT ILIKE \'%to%\')))',
         )
       })
@@ -163,7 +234,7 @@ describe('Build filter', () => {
             { I09: 'string' },
             true,
           ),
-        ).toEqual(
+        ).resolves.toEqual(
           '((EXISTS (SELECT 1 FROM UNNEST("I09") AS item WHERE item ILIKE \'to%\')))',
         )
       })
@@ -183,7 +254,7 @@ describe('Build filter', () => {
             { I09: 'string' },
             true,
           ),
-        ).toEqual(
+        ).resolves.toEqual(
           '((EXISTS (SELECT 1 FROM UNNEST("I09") AS item WHERE item ILIKE \'%to\')))',
         )
       })
@@ -203,7 +274,7 @@ describe('Build filter', () => {
             { I09: 'string' },
             true,
           ),
-        ).toEqual(
+        ).resolves.toEqual(
           '((EXISTS (SELECT 1 FROM UNNEST("I09") AS item WHERE item IS NULL OR item = \'\')))',
         )
       })
@@ -223,7 +294,7 @@ describe('Build filter', () => {
             { I09: 'string' },
             true,
           ),
-        ).toEqual(
+        ).resolves.toEqual(
           '((EXISTS (SELECT 1 FROM UNNEST("I09") AS item WHERE item IS NOT NULL OR item != \'\')))',
         )
       })
@@ -244,7 +315,7 @@ describe('Build filter', () => {
           },
           { I09: 'enum' },
         ),
-      ).toEqual('(("I09" IN (\'toto\',\'tata\')))')
+      ).resolves.toEqual('(("I09" IN (\'toto\',\'tata\')))')
     })
     it('Should build filter for array field', () => {
       expect(
@@ -260,7 +331,7 @@ describe('Build filter', () => {
           { I09: 'enum' },
           true,
         ),
-      ).toEqual(
+      ).resolves.toEqual(
         '((EXISTS (SELECT 1 FROM UNNEST("I09") AS item WHERE item IN (\'toto\'))))',
       )
     })
@@ -282,7 +353,7 @@ describe('Build filter', () => {
             },
             { dateField: 'date' },
           ),
-        ).toEqual('(("dateField" = \'2023-01-01\'))')
+        ).resolves.toEqual('(("dateField" = \'2023-01-01\'))')
       })
 
       it('Should build filter for date notEqual condition', () => {
@@ -299,7 +370,7 @@ describe('Build filter', () => {
             },
             { dateField: 'date' },
           ),
-        ).toEqual('(("dateField" != \'2023-01-01\'))')
+        ).resolves.toEqual('(("dateField" != \'2023-01-01\'))')
       })
 
       it('Should build filter for date less than condition', () => {
@@ -316,7 +387,7 @@ describe('Build filter', () => {
             },
             { dateField: 'date' },
           ),
-        ).toEqual('(("dateField" < \'2023-01-01\'))')
+        ).resolves.toEqual('(("dateField" < \'2023-01-01\'))')
       })
 
       it('Should build filter for date notEqual condition', () => {
@@ -333,7 +404,7 @@ describe('Build filter', () => {
             },
             { dateField: 'date' },
           ),
-        ).toEqual('(("dateField" > \'2023-01-01\'))')
+        ).resolves.toEqual('(("dateField" > \'2023-01-01\'))')
       })
 
       it('Should build filter for date since condition', () => {
@@ -351,7 +422,7 @@ describe('Build filter', () => {
             },
             { dateField: 'date' },
           ),
-        ).toEqual('(("dateField" > \'' + oneYearBeforeNow + '\'))')
+        ).resolves.toEqual('(("dateField" > \'' + oneYearBeforeNow + '\'))')
       })
     })
     describe('Array date filters', () => {
@@ -370,7 +441,7 @@ describe('Build filter', () => {
             { dateField: 'date' },
             true,
           ),
-        ).toEqual(
+        ).resolves.toEqual(
           '((EXISTS (SELECT 1 FROM UNNEST("dateField") AS item WHERE item = \'2023-01-01\')))',
         )
       })
@@ -390,7 +461,7 @@ describe('Build filter', () => {
             { dateField: 'date' },
             true,
           ),
-        ).toEqual(
+        ).resolves.toEqual(
           '((EXISTS (SELECT 1 FROM UNNEST("dateField") AS item WHERE item != \'2023-01-01\')))',
         )
       })
@@ -410,7 +481,7 @@ describe('Build filter', () => {
             { dateField: 'date' },
             true,
           ),
-        ).toEqual(
+        ).resolves.toEqual(
           '((EXISTS (SELECT 1 FROM UNNEST("dateField") AS item WHERE item < \'2023-01-01\')))',
         )
       })
@@ -430,7 +501,7 @@ describe('Build filter', () => {
             { dateField: 'date' },
             true,
           ),
-        ).toEqual(
+        ).resolves.toEqual(
           '((EXISTS (SELECT 1 FROM UNNEST("dateField") AS item WHERE item > \'2023-01-01\')))',
         )
       })
@@ -453,7 +524,7 @@ describe('Build filter', () => {
             },
             { numberField: 'number' },
           ),
-        ).toEqual('(("numberField" = 10))')
+        ).resolves.toEqual('(("numberField" = 10))')
       })
 
       it('Should build filter for number notEqual condition', () => {
@@ -470,7 +541,7 @@ describe('Build filter', () => {
             },
             { numberField: 'number' },
           ),
-        ).toEqual('(("numberField" != 10))')
+        ).resolves.toEqual('(("numberField" != 10))')
       })
 
       it('Should build filter for number lessThan condition', () => {
@@ -487,7 +558,7 @@ describe('Build filter', () => {
             },
             { numberField: 'number' },
           ),
-        ).toEqual('(("numberField" < 5))')
+        ).resolves.toEqual('(("numberField" < 5))')
       })
 
       it('Should build filter for number lessThanOrEqual condition', () => {
@@ -504,7 +575,7 @@ describe('Build filter', () => {
             },
             { numberField: 'number' },
           ),
-        ).toEqual('(("numberField" <= 5))')
+        ).resolves.toEqual('(("numberField" <= 5))')
       })
 
       it('Should build filter for number greaterThan condition', () => {
@@ -521,7 +592,7 @@ describe('Build filter', () => {
             },
             { numberField: 'number' },
           ),
-        ).toEqual('(("numberField" > 7))')
+        ).resolves.toEqual('(("numberField" > 7))')
       })
 
       it('Should build filter for number greaterThanOrEqual condition', () => {
@@ -538,7 +609,7 @@ describe('Build filter', () => {
             },
             { numberField: 'number' },
           ),
-        ).toEqual('(("numberField" >= 8))')
+        ).resolves.toEqual('(("numberField" >= 8))')
       })
     })
     describe('Array number filters', () => {
@@ -557,7 +628,7 @@ describe('Build filter', () => {
             { numberField: 'number' },
             true,
           ),
-        ).toEqual(
+        ).resolves.toEqual(
           '((EXISTS (SELECT 1 FROM UNNEST("numberField") AS item WHERE item = 10)))',
         )
       })
@@ -577,7 +648,7 @@ describe('Build filter', () => {
             { numberField: 'number' },
             true,
           ),
-        ).toEqual(
+        ).resolves.toEqual(
           '((EXISTS (SELECT 1 FROM UNNEST("numberField") AS item WHERE item != 10)))',
         )
       })
@@ -597,7 +668,7 @@ describe('Build filter', () => {
             { numberField: 'number' },
             true,
           ),
-        ).toEqual(
+        ).resolves.toEqual(
           '((EXISTS (SELECT 1 FROM UNNEST("numberField") AS item WHERE item < 5)))',
         )
       })
@@ -617,7 +688,7 @@ describe('Build filter', () => {
             { numberField: 'number' },
             true,
           ),
-        ).toEqual(
+        ).resolves.toEqual(
           '((EXISTS (SELECT 1 FROM UNNEST("numberField") AS item WHERE item <= 5)))',
         )
       })
@@ -637,7 +708,7 @@ describe('Build filter', () => {
             { numberField: 'number' },
             true,
           ),
-        ).toEqual(
+        ).resolves.toEqual(
           '((EXISTS (SELECT 1 FROM UNNEST("numberField") AS item WHERE item > 7)))',
         )
       })
@@ -657,7 +728,7 @@ describe('Build filter', () => {
             { numberField: 'number' },
             true,
           ),
-        ).toEqual(
+        ).resolves.toEqual(
           '((EXISTS (SELECT 1 FROM UNNEST("numberField") AS item WHERE item >= 8)))',
         )
       })
@@ -684,7 +755,7 @@ describe('Build filter', () => {
           },
           { I09: 'string' },
         ),
-      ).toEqual('(("I09" ILIKE \'%to%\') AND ("I09" NOT ILIKE \'%ti%\'))')
+      ).resolves.toEqual('(("I09" ILIKE \'%to%\') AND ("I09" NOT ILIKE \'%ti%\'))')
     })
 
     it('Should build filter for two conditions using "OR" operator', () => {
@@ -706,7 +777,7 @@ describe('Build filter', () => {
           },
           { I09: 'string' },
         ),
-      ).toEqual('(("I09" ILIKE \'to%\') OR ("I09" ILIKE \'%ti\'))')
+      ).resolves.toEqual('(("I09" ILIKE \'to%\') OR ("I09" ILIKE \'%ti\'))')
     })
 
     it('Should build filter for multiple fields using "AND" operator', () => {
@@ -739,7 +810,7 @@ describe('Build filter', () => {
           },
           true,
         ),
-      ).toEqual(
+      ).resolves.toEqual(
         // eslint-disable-next-line max-len
         '((EXISTS (SELECT 1 FROM UNNEST("I09") AS item WHERE item ILIKE \'%to%\'))) AND ((EXISTS (SELECT 1 FROM UNNEST("I08") AS item WHERE item > 10000)) OR (EXISTS (SELECT 1 FROM UNNEST("I08") AS item WHERE item > 20000)))',
       )

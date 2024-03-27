@@ -1,4 +1,4 @@
-import { IsDefined, IsEnum, IsNumber, IsOptional, ValidateNested } from 'class-validator'
+import { IsDefined, IsEnum, IsIn, IsNumber, IsOptional, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
 import { IFilterNumber, INumberFilterCondition } from '@biblio-num/shared'
 
@@ -29,6 +29,7 @@ export class NumberFilterConditionDto implements INumberFilterCondition {
 }
 
 export class FilterNumberDto implements IFilterNumber {
+  @IsIn(['number'])
   filterType: 'number'
 
   @IsDefined()
