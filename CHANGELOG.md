@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.8.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.7.4...v2.8.0) (2024-03-27)
+
+
+### Features
+
+* only national admin can configure demarche ([259ce32](https://github.com/dnum-mi/bibliotheque_numerique/commit/259ce32fda120fefd64390da2d49a1a95ab07bbd))
+
+
+### Bug Fixes
+
+* date traitement can be a string ([b1ae1fa](https://github.com/dnum-mi/bibliotheque_numerique/commit/b1ae1fa3a5176cb01d051ab3d5635966c0e7b8d1))
+
 ## [2.7.4](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.7.3...v2.7.4) (2024-03-26)
 
 
