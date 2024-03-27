@@ -11,13 +11,53 @@ import {
   DateFilterConditionDto,
   DateFilterConditions,
   DateFilterConditionsKeys,
-  EnumFilterConditionDto,
-  FilterDto,
+  EnumFilterConditionDto, FilterDateDto,
+  FilterDto, FilterEnumDto, FilterNumberDto, FilterTextDto,
   NumberFilterConditionDto,
   NumberFilterConditions,
   TextFilterConditionDto,
   TextFilterConditions,
 } from '@/shared/pagination/filters'
+import { validate } from 'class-validator'
+
+type filterFactory = (
+  key: string,
+  filter:
+    | TextFilterConditionDto
+    | DateFilterConditionDto
+    | NumberFilterConditionDto
+    | EnumFilterConditionDto,
+  isArray: boolean,
+  prefix?: string,
+) => string
+
+const _isFilterConsistent = async (
+  filters: Record<string, FilterDto>,
+  typeHash: Record<string, FieldTypeKeys>,
+): Promise<boolean> => {
+  const __common = async (Dto, key: string): Promise<boolean> => {
+    const obj = Object.assign(new Dto(), filters[key])
+    return validate(obj).then((errors) => !errors.length)
+  }
+  return filters
+    ? Promise.all(
+      Object.keys(filters).map(async (key) => {
+        switch (typeHash[key]) {
+        case FieldType.string:
+          return __common(FilterTextDto, key)
+        case FieldType.number:
+          return __common(FilterNumberDto, key)
+        case FieldType.enum:
+          return __common(FilterEnumDto, key)
+        case FieldType.date:
+          return __common(FilterDateDto, key)
+        default:
+          return false
+        }
+      }),
+    ).then(tab => tab.reduce((a, b) => a && b))
+    : true
+}
 
 const _manualFilterValueEscapingMechanism = (str: string): string => {
   return str ? str.replace("'", "''") : str
@@ -179,17 +219,6 @@ const _buildOneEnumFilter = (
 }
 //#endregion
 
-type filterFactory = (
-  key: string,
-  filter:
-    | TextFilterConditionDto
-    | DateFilterConditionDto
-    | NumberFilterConditionDto
-    | EnumFilterConditionDto,
-  isArray: boolean,
-  prefix?: string,
-) => string
-
 export const buildOneFilter = (
   key: string,
   filter: FilterDto,
@@ -223,11 +252,14 @@ export const buildOneFilter = (
   return result
 }
 
-export const buildFilterQuery = (
+export const buildFilterQuery = async (
   filters: Record<string, FilterDto>,
   typeHash: Record<string, FieldTypeKeys>,
   isArray = false,
-): string => {
+): Promise<string> => {
+  if (!(await _isFilterConsistent(filters, typeHash))) {
+    throw new BadRequestException('Your filter does not match the schema.')
+  }
   if (!filters || !Object.keys(filters).length) {
     return ''
   } else {
@@ -241,11 +273,11 @@ export const buildFilterQuery = (
   }
 }
 
-export const buildFilterQueryWithWhere = (
+export const buildFilterQueryWithWhere = async (
   filters: Record<string, FilterDto>,
   typeHash: Record<string, FieldTypeKeys>,
   isArray = false,
-): string => {
-  const query = buildFilterQuery(filters, typeHash, isArray)
+): Promise<string> => {
+  const query = await buildFilterQuery(filters, typeHash, isArray)
   return query ? `WHERE ${query}` : ''
 }
