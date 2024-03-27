@@ -5,10 +5,10 @@ import { FindOptionsRelations } from 'typeorm/find-options/FindOptionsRelations'
 import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere'
 import { NotFoundException } from '@nestjs/common'
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
-import { buildFilterQuery } from '@/shared/utils/common-search.utils'
 import { FieldTypeKeys } from '@biblio-num/shared'
 import { PaginationDto } from '@/shared/pagination/pagination.dto'
 import { PaginatedDto } from '@/shared/pagination/paginated.dto'
+import { buildFilterQuery } from '@/shared/pagination/utils/build-filter.utils'
 
 export abstract class BaseEntityService<T extends BaseEntity = BaseEntity> {
   /* eslint-disable  @typescript-eslint/no-explicit-any */

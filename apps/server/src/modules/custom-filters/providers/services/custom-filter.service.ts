@@ -5,12 +5,12 @@ import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { InjectRepository } from '@nestjs/typeorm'
 import { CustomFilter } from '@/modules/custom-filters/objects/entities/custom-filter.entity'
 import { DossierSearchService } from '../../../dossiers/providers/search/dossier-search.service'
-import { fromCustomFilterToHumanReadableFilter } from '@/shared/utils/common-search.utils'
 import { fromMappingColumnArrayToLabelHash } from '../../../demarches/utils/demarche.utils'
 import { FieldSearchService } from '@/modules/dossiers/providers/search/field-search.service'
 import { ICustomFilterStat, ITotal } from '@biblio-num/shared'
 import { DossierSearchOutputDto } from '@/modules/dossiers/objects/dto/dossier-search-output.dto'
 import { FieldSearchOutputDto } from '@/modules/dossiers/objects/dto/fields/field-search-output.dto'
+import { fromCustomFilterToHumanReadableFilter } from '@/shared/pagination/utils/search-dictionnaries.const'
 
 @Injectable()
 export class CustomFilterService extends BaseEntityService<CustomFilter> {

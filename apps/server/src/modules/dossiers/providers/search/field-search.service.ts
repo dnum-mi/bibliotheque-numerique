@@ -8,17 +8,17 @@ import { Demarche } from '../../../demarches/objects/entities/demarche.entity'
 import { Field } from '../../objects/entities/field.entity'
 import {
   adjustDto,
-  buildFilterQueryWithWhere,
   buildPaginationQuery,
   buildSortQuery,
   deduceFieldToQueryFromType,
-} from '@/shared/utils/common-search.utils'
+} from '@/shared/pagination/utils/common-search.utils'
 import { FieldService } from '../field.service'
 
 import { fromMappingColumnArrayToTypeHash } from '@/modules/demarches/utils/demarche.utils'
 import { FieldTypeKeys } from '@biblio-num/shared'
 import { SearchDossierDto } from '@/modules/dossiers/objects/dto/search-dossier.dto'
 import { FieldSearchOutputDto } from '@/modules/dossiers/objects/dto/fields/field-search-output.dto'
+import { buildFilterQueryWithWhere } from '@/shared/pagination/utils/build-filter.utils'
 
 @Injectable()
 export class FieldSearchService extends BaseEntityService<Field> {

@@ -10,17 +10,17 @@ import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { Demarche } from '../../../demarches/objects/entities/demarche.entity'
 import {
   adjustDto,
-  buildFilterQueryWithWhere,
   buildPaginationQuery,
   buildSortQuery,
   deduceFieldToQueryFromType,
-} from '@/shared/utils/common-search.utils'
+} from '@/shared/pagination/utils/common-search.utils'
 import { FieldService } from '../field.service'
 import { fromMappingColumnArrayToTypeHash } from '@/modules/demarches/utils/demarche.utils'
 import { FilterDto } from '@/shared/pagination/filters'
 import { SearchDossierDto } from '@/modules/dossiers/objects/dto/search-dossier.dto'
 import { DossierSearchOutputDto } from '@/modules/dossiers/objects/dto/dossier-search-output.dto'
 import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
+import { buildFilterQueryWithWhere } from '@/shared/pagination/utils/build-filter.utils'
 
 @Injectable()
 export class DossierSearchService extends BaseEntityService<Dossier> {

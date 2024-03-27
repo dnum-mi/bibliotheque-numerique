@@ -1,8 +1,8 @@
-import { buildFilterQuery } from './common-search.utils'
 import * as dayjs from 'dayjs'
 import { DateFilterConditions, FilterDateDto, FilterNumberDto } from '@/shared/pagination/filters'
+import { buildFilterQuery } from '@/shared/pagination/utils/build-filter.utils'
 
-describe('Common search utils', () => {
+describe('Build filter', () => {
   describe('Text filters', () => {
     describe('Normal text filters', () => {
       it('Should build filter for "contains"', () => {
