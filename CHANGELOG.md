@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.8.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.8.0...v2.8.1) (2024-03-28)
+
+
+### Bug Fixes
+
+* client docker, sed cmd in entrypoint.sh ([48ae71d](https://github.com/dnum-mi/bibliotheque_numerique/commit/48ae71d2807c4180c4d890b32eef6627d17da9dc))
+
 ## [2.8.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.7.4...v2.8.0) (2024-03-27)
 
 
