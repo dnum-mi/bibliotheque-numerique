@@ -1074,7 +1074,7 @@ items:
     label: "Excel"
     dossier: "@dossier8"
   # endregion
-  # region Dossier9
+  #  region Dossier9
   dossier9-identifiant:
     sourceId: "I01"
     dsChampType: "TextChamp"
@@ -1432,3 +1432,25 @@ items:
   # endregion
   # endregion
   # endregion
+  # # region Dossier17
+  dossier17-DelayState:
+    sourceId: "I11"
+    dsChampType: "TextChamp"
+    fieldSource: fix-field
+    type: string
+    stringValue: ""
+    parent: null
+    label: "Etat délai"
+    dossier: "@dossier17"
+  # endregion
+  # region Dossier18
+  dossier18-DelayState:
+    sourceId: "I11"
+    dsChampType: "TextChamp"
+    fieldSource: fix-field
+    type: string
+    stringValue: "Erreur"
+    parent: null
+    label: "Etat délai"
+    dossier: "@dossier18"
+  # # endregion

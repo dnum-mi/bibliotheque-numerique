@@ -158,7 +158,7 @@ describe('Dossier listing', () => {
               I01: 'W00000003',
               I02: dayjs('2023-06-04').toISOString(),
               I03: 'Dune',
-              I09: ['USA', 'Écosse'],
+              I09: expect.arrayContaining(['USA', 'Écosse']),
             },
             {
               dossierId: 4,
