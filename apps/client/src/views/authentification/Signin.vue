@@ -37,7 +37,7 @@ const submit = handleSubmit(async (formValue: ICredentialsInput) => {
     }
     router.push({ name: routeNames.DEMARCHES })
   } catch (e) {
-    setErrors({ password: 'Ces identifiants ne correspondent à aucun utilisateur' })
+    setErrors({ password: 'Votre courriel ou votre mot passe est incorrect. Vous pouvez réessayer ou réinitialiser votre mot de passe.' })
   }
 })
 
