@@ -367,4 +367,49 @@ describe('Field search', () => {
         })
       })
   })
+
+  it('Should only return dossiers with instruction times empty', async () => {
+    const { body } = await request(app.getHttpServer())
+      .post('/demarches/9/fields-search')
+      .send({
+        columns: ['I11'],
+      })
+      .set('Cookie', [cookies.superadmin])
+      .expect(200)
+
+    expect(body).toMatchObject({
+      total: 2,
+      data: expect.arrayContaining([
+        expect.objectContaining({ I11: '' }),
+        expect.objectContaining({ I11: 'Erreur' }),
+      ]),
+    })
+  })
+
+  it('Should only return dossiers with filter empty value for enum', async () => {
+    const { body } = await request(app.getHttpServer())
+      .post('/demarches/9/fields-search')
+      .send({
+        columns: ['I11'],
+        filters: {
+          I11: {
+            condition1: {
+              filter: [
+                null,
+              ],
+            },
+            filterType: 'set',
+          },
+        },
+      })
+      .set('Cookie', [cookies.superadmin])
+      .expect(200)
+
+    expect(body).toMatchObject({
+      total: 1,
+      data: expect.arrayContaining([
+        expect.objectContaining({ I11: '' }),
+      ]),
+    })
+  })
 })

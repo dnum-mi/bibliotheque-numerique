@@ -167,4 +167,14 @@ items:
       {"id":"I10", "columnLabel":"Organismefinanceur"}
     ]
     dsDataJson: {number: 7}
+  demarche-delay:
+    id: 9
+    state: "published"
+    title: "Déclaration de financement étranger avec etat delai"
+    identification: "FE"
+    types: ["CULTE"]
+    mappingColumns: [
+      { "id": "I11", "columnLabel": "Etat délai", "type": "enum" },
+    ]
+    dsDataJson: {number: 80}
 
