@@ -83,15 +83,9 @@ const aLicenceHref = computed(() => {
   return isExternalLink.value ? props.licenceTo : ''
 })
 
-const showMin = ref(true)
-const timeoutId = ref(0)
-const makeFooterMin = () => {
-  timeoutId.value = window.setTimeout(() => {
-    showMin.value = true
-  }, 1000)
-}
-const resetFooterMin = () => {
-  clearTimeout(timeoutId.value)
+const showMin = ref(false)
+const onToggle = () => {
+  showMin.value = !showMin.value
 }
 </script>
 
@@ -101,13 +95,11 @@ const resetFooterMin = () => {
     class="fr-footer"
     role="contentinfo"
     :class="{ 'fr-footer--min': showMin }"
-    @mouseleave="makeFooterMin()"
-    @mouseenter="resetFooterMin()"
   >
     <div
       v-if="showMin"
       class="fr-container  cursor-pointer"
-      @click="showMin = !showMin"
+      @click="onToggle()"
     >
       <slot name="description">
         {{ descText }}
@@ -117,9 +109,10 @@ const resetFooterMin = () => {
     <div
       v-else
       class="fr-container"
+      @click="onToggle()"
     >
       <div class="fr-footer__body">
-        <div class="fr-footer__bottom">
+        <div class="fr-footer__bottom" @click.stop="">
           <div class="fr-footer__brand fr-enlarge-link">
             <RouterLink
               :to="homeLink"
@@ -152,6 +145,7 @@ const resetFooterMin = () => {
               >
             </RouterLink>
           </div>
+
           <ul class="fr-footer__bottom-list  flex-end">
             <li
               v-for="(link, index) in allLinks"
@@ -174,6 +168,7 @@ const resetFooterMin = () => {
               </RouterLink>
             </li>
           </ul>
+
           <div
             v-if="licenceText"
             class="fr-footer__bottom-copy"
@@ -194,7 +189,7 @@ const resetFooterMin = () => {
             </p>
           </div>
         </div>
-        <div class="fr-footer__content">
+        <div class="fr-footer__content" @click.stop="">
           <p
             class="fr-footer__content-desc"
           >
