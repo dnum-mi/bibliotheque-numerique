@@ -5,6 +5,7 @@ import { APP_NAME_TOKEN } from '@/shared/modules/logger/logger.const'
 import * as Winston from 'winston'
 import * as DailyRotateFile from 'winston-daily-rotate-file'
 import { LogElkFormat } from '@/shared/modules/logger/log-elk-format.interface'
+import { ContextLoggerService } from '@/shared/modules/logger/context-logger.service'
 
 @Injectable()
 export class LoggerService extends ConsoleLogger implements LS {
@@ -41,9 +42,13 @@ export class LoggerService extends ConsoleLogger implements LS {
     }
   }
 
-  private _logToFile(logElk: LogElkFormat, transporter: 'client' | 'default'): void {
+  private _logToFile(
+    logElk: LogElkFormat,
+    transporter: 'client' | 'default',
+  ): void {
     const level = logElk.level === 'log' ? 'info' : logElk.level
-    const logger = transporter === 'client' ? this.clientFileLogger : this.fileLogger
+    const logger =
+      transporter === 'client' ? this.clientFileLogger : this.fileLogger
     if (logger) {
       logger.log({ ...logElk, level })
     }
@@ -72,17 +77,23 @@ export class LoggerService extends ConsoleLogger implements LS {
       this._logToFile(logObject, 'default')
     }
 
+    if (this.contextLog) {
+      this.contextLog.contextLog(logObject)
+    }
+
     if (!this.configService.get('isTest') && !this.configService.get('isDev')) {
       console.log(logObject)
     } else {
       super[logFunctionKey](messageString)
     }
   }
+
   //#endregion
 
   constructor(
     private readonly configService: ConfigService,
     @Inject(APP_NAME_TOKEN) private readonly appName: string,
+    private readonly contextLog?: ContextLoggerService,
   ) {
     super()
     if (this.configService.get('LOG_TO_FILE') === 'true') {

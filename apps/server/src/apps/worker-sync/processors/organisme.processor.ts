@@ -13,6 +13,10 @@ import { BnConfigurationService } from '@/shared/modules/bn-configurations/provi
 import { eBnConfiguration } from '@biblio-num/shared'
 import { RnaService } from '@/modules/organismes/providers/rna.service'
 import { FieldService } from '@/modules/dossiers/providers/field.service'
+import { ALS_INSTANCE } from '@/shared/modules/als/als.module'
+import { AsyncLocalStorage } from 'async_hooks'
+import { AsyncLocalStore } from '@/shared/modules/als/async-local-store.type'
+import { Inject } from '@nestjs/common'
 
 @Processor(QueueName.sync)
 export class OrganismeProcessor {
@@ -24,87 +28,98 @@ export class OrganismeProcessor {
     private readonly organismeService: OrganismeService,
     private readonly bnConfiguration: BnConfigurationService,
     @InjectQueue(QueueName.sync) private readonly syncQueue: Queue,
+    @Inject(ALS_INSTANCE)
+    private readonly als?: AsyncLocalStorage<AsyncLocalStore>,
   ) {
     this.logger.setContext(this.constructor.name)
   }
 
   @Process(eJobName.SyncAllRnaOrganisme)
-  async syncAllRnaOrganisme(): Promise<void> {
+  async syncAllRnaOrganisme(job: Job<never>): Promise<void> {
     // TODO: const rnas = await this.organismeService.getAllRnaOrganisme()
     // TODO: There is no way as of this time to have the last updated rna organisme from the rna api.
+    await this.als.run({ job }, async () => {})
   }
 
   @Process(eJobName.SyncAllRnfOrganisme)
-  async syncAllRnfOrganisme(): Promise<void> {
-    this.logger.verbose('syncAllRnfOrganisme')
-    const rnfs = await this.organismeService.getAllRnfOrganisme()
-    const lastSyncConfig = await this.bnConfiguration.findByKeyName(
-      eBnConfiguration.LAST_ORGANISM_SYNC_AT,
-    )
-    this.logger.log(`Synchronising all RNF since ${lastSyncConfig.stringValue}`)
-    const query: { rnfIds: string[]; lastUpdatedAt?: string } = {
-      rnfIds: rnfs.map((r) => r.idRnf),
-    }
-    if (lastSyncConfig.stringValue) {
-      query.lastUpdatedAt = lastSyncConfig.stringValue
-    }
-    const modifiedRnfIds = await this.rnfService.getUpdatedFoundations(query)
-    for (const rnfId of modifiedRnfIds) {
-      this.syncQueue.add(eJobName.SyncOneRnfOrganisme, {
-        rnf: rnfId,
-      } satisfies SyncOneRnfOrganismeJobPayload)
-    }
-    await this.bnConfiguration.setConfig(
-      eBnConfiguration.LAST_ORGANISM_SYNC_AT,
-      new Date().toISOString(),
-    )
+  async syncAllRnfOrganisme(job: Job<never>): Promise<void> {
+    await this.als.run({ job }, async () => {
+      this.logger.verbose('syncAllRnfOrganisme')
+      const rnfs = await this.organismeService.getAllRnfOrganisme()
+      const lastSyncConfig = await this.bnConfiguration.findByKeyName(
+        eBnConfiguration.LAST_ORGANISM_SYNC_AT,
+      )
+      this.logger.log(
+        `Synchronising all RNF since ${lastSyncConfig.stringValue}`,
+      )
+      const query: { rnfIds: string[]; lastUpdatedAt?: string } = {
+        rnfIds: rnfs.map((r) => r.idRnf),
+      }
+      if (lastSyncConfig.stringValue) {
+        query.lastUpdatedAt = lastSyncConfig.stringValue
+      }
+      const modifiedRnfIds = await this.rnfService.getUpdatedFoundations(query)
+      for (const rnfId of modifiedRnfIds) {
+        this.syncQueue.add(eJobName.SyncOneRnfOrganisme, {
+          rnf: rnfId,
+        } satisfies SyncOneRnfOrganismeJobPayload)
+      }
+      await this.bnConfiguration.setConfig(
+        eBnConfiguration.LAST_ORGANISM_SYNC_AT,
+        new Date().toISOString(),
+      )
+    })
   }
 
   @Process(eJobName.SyncOneRnfOrganisme)
   async syncOneRnfOrganisme(
     job: Job<SyncOneRnfOrganismeJobPayload>,
   ): Promise<void> {
-    this.logger.verbose('syncOneRnfOrganisme')
-    this.logger.debug(job.data)
-    const rawRnf = await this.rnfService.getFoundation(job.data.rnf)
-    if (rawRnf === null) {
-      await this.organismeService.repository.delete({ idRnf: job.data.rnf })
-      if (job.data.fieldId) {
-        await this.fieldService.updateOrThrow(job.data.fieldId, {
-          stringValue: `ERROR-${job.data.rnf}`,
-        })
+    await this.als.run({ job }, async () => {
+      this.logger.verbose('syncOneRnfOrganisme')
+      this.logger.debug(job.data)
+      const rawRnf = await this.rnfService.getFoundation(job.data.rnf)
+      if (rawRnf === null) {
+        await this.organismeService.repository.delete({ idRnf: job.data.rnf })
+        if (job.data.fieldId) {
+          await this.fieldService.updateOrThrow(job.data.fieldId, {
+            stringValue: `ERROR-${job.data.rnf}`,
+          })
+        }
+      } else {
+        await this.organismeService.updateOrganismeFromRnf(job.data.rnf, rawRnf)
       }
-    } else {
-      await this.organismeService.updateOrganismeFromRnf(job.data.rnf, rawRnf)
-    }
+    })
   }
 
   @Process(eJobName.SyncOneRnaOrganisme)
   async syncOneRnaOrganisme(
     job: Job<SyncOneRnaOrganismeJobPayload>,
   ): Promise<void> {
-    this.logger.verbose('syncOneRnaOrganisme')
-    const rawRna = await this.rnaService.getAssociation(job.data.rna)
-    job.progress(50)
-    job.log('Association retrieved from rna')
-    job.log(JSON.stringify(rawRna))
-    if (rawRna === null) {
-      job.log('RnaId is null, deleting reference in database')
-      await this.organismeService.repository.delete({ idRna: job.data.rna })
-      job.progress(75)
-      if (job.data.fieldId) {
-        job.log('Putting field rna to ERROR-RNA')
-        await this.fieldService.updateOrThrow(job.data.fieldId, {
-          stringValue: `ERROR-${job.data.rna}`,
-        })
+    await this.als.run({ job }, async () => {
+      this.logger.verbose('syncOneRnaOrganisme')
+      const rawRna = await this.rnaService.getAssociation(job.data.rna)
+      job.progress(50)
+      job.log('Association retrieved from rna')
+      job.log(JSON.stringify(rawRna))
+      if (rawRna === null) {
+        job.log('RnaId is null, deleting reference in database')
+        await this.organismeService.repository.delete({ idRna: job.data.rna })
+        job.progress(75)
+        if (job.data.fieldId) {
+          job.log('Putting field rna to ERROR-RNA')
+          await this.fieldService.updateOrThrow(job.data.fieldId, {
+            stringValue: `ERROR-${job.data.rna}`,
+          })
+        }
+      } else {
+        await this.organismeService.updateOrganismeFromRna(job.data.rna, rawRna)
+        job.log('Updated Organisme from rna')
+        job.progress(60)
+        await this.organismeService.synchroniseRnaFiles(job.data.rna, rawRna)
+        job.log('Rna files job created')
       }
-    } else {
-      await this.organismeService.updateOrganismeFromRna(job.data.rna, rawRna)
-      job.log('Updated Organisme from rna')
-      job.progress(60)
-      await this.organismeService.synchroniseRnaFiles(job.data.rna, rawRna)
-      job.log('Rna files job created')
-    }
-    job.progress(100)
+      job.progress(100)
+    })
   }
 }
