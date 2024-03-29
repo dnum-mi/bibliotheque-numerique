@@ -83,7 +83,7 @@ const aLicenceHref = computed(() => {
   return isExternalLink.value ? props.licenceTo : ''
 })
 
-const showMin = ref(false)
+const showMin = ref(true)
 const onToggle = () => {
   showMin.value = !showMin.value
 }
@@ -101,11 +101,23 @@ const onToggle = () => {
       class="fr-container  cursor-pointer"
       @click="onToggle()"
     >
-      <slot name="description">
-        {{ descText }}
-      </slot>
+      <div class="fr-footer__body">
+        <div class="fr-footer__bottom" @click.stop="">
+          <RouterLink
+            class="fr-footer__bottom-link lh-1.5rem!"
+            :to="mandatoryLinks[0].to ?? '#'"
+            :data-testid="mandatoryLinks[0].to"
+          >
+            {{ mandatoryLinks[0].label }}
+          </RouterLink>
+        </div>
+        <div class="fr-footer__content">
+          <slot name="description">
+            {{ descText }}
+          </slot>
+        </div>
+      </div>
     </div>
-
     <div
       v-else
       class="fr-container"
@@ -227,11 +239,11 @@ const onToggle = () => {
 }
 
 .fr-footer--min {
-  position: absolute;
-  bottom: 0;
+  /* position: absolute;
+  bottom: 0; */
   left: 50%;
   width: auto;
-  transform: translateX(-50%);
+  /* transform: translateX(-50%); */
   background-color: var(--background-raised-grey);
   font-size: 0.75rem;
   padding-top: 0;
