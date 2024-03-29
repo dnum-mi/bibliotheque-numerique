@@ -1,4 +1,4 @@
-import { IsDefined, IsEnum, IsOptional, ValidateNested } from 'class-validator'
+import { IsDefined, IsEnum, IsIn, IsOptional, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
 import { IFilterText, ITextFilterCondition } from '@biblio-num/shared'
 
@@ -24,6 +24,7 @@ export class TextFilterConditionDto implements ITextFilterCondition {
 }
 
 export class FilterTextDto implements IFilterText {
+  @IsIn(['text'])
   filterType: 'text'
 
   @IsDefined()

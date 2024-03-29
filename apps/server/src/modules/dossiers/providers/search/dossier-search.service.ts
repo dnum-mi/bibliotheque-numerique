@@ -10,17 +10,17 @@ import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { Demarche } from '../../../demarches/objects/entities/demarche.entity'
 import {
   adjustDto,
-  buildFilterQueryWithWhere,
   buildPaginationQuery,
   buildSortQuery,
   deduceFieldToQueryFromType,
-} from '@/shared/utils/common-search.utils'
+} from '@/shared/pagination/utils/common-search.utils'
 import { FieldService } from '../field.service'
 import { fromMappingColumnArrayToTypeHash } from '@/modules/demarches/utils/demarche.utils'
 import { FilterDto } from '@/shared/pagination/filters'
 import { SearchDossierDto } from '@/modules/dossiers/objects/dto/search-dossier.dto'
 import { DossierSearchOutputDto } from '@/modules/dossiers/objects/dto/dossier-search-output.dto'
 import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
+import { buildFilterQueryWithWhere } from '@/shared/pagination/utils/build-filter.utils'
 
 @Injectable()
 export class DossierSearchService extends BaseEntityService<Dossier> {
@@ -79,16 +79,16 @@ export class DossierSearchService extends BaseEntityService<Dossier> {
   }
 
   // count the number of row before pagination
-  private _buildCountCTE(
+  private async _buildCountCTE(
     filters: Record<string, FilterDto>,
     typeHash: Record<string, FieldTypeKeys>,
-  ): string {
+  ): Promise<string> {
     this.logger.verbose('_buildCountCTE')
     return `
       countCTE AS (
         SELECT COUNT(*) as nbrRows
         FROM aggregatedCTE
-        ${buildFilterQueryWithWhere(filters, typeHash, true)}
+        ${await buildFilterQueryWithWhere(filters, typeHash, true)}
       )
    `
   }
@@ -105,10 +105,10 @@ export class DossierSearchService extends BaseEntityService<Dossier> {
     const onlySelectedColumnsTypeHash = Object.fromEntries(dto.columns.map(c => [c, typeHash[c]]))
     const query = `WITH
       ${this._buildAggregatedCTE(demarche.id, onlySelectedColumnsTypeHash)},
-      ${this._buildCountCTE(dto.filters, typeHash)}
+      ${await this._buildCountCTE(dto.filters, typeHash)}
       SELECT *, (SELECT nbrRows FROM countCTE) as total
       FROM aggregatedCTE
-      ${buildFilterQueryWithWhere(dto.filters, typeHash, true)}
+      ${await buildFilterQueryWithWhere(dto.filters, typeHash, true)}
       ${buildSortQuery(dto.sorts)}
       ${complete ? '' : buildPaginationQuery(dto.page || 1, dto.perPage || 5)}
     `

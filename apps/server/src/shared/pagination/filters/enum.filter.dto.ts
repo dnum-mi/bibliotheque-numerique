@@ -1,4 +1,4 @@
-import { ArrayNotEmpty, IsDefined, ValidateNested } from 'class-validator'
+import { ArrayNotEmpty, IsDefined, IsIn, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
 import { IEnumFilterCondition, IFilterEnum } from '@biblio-num/shared'
 
@@ -11,6 +11,7 @@ export class EnumFilterConditionDto implements IEnumFilterCondition {
 }
 
 export class FilterEnumDto implements IFilterEnum {
+  @IsIn(['set'])
   filterType: 'set'
 
   @IsDefined()
