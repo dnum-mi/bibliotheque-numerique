@@ -8,17 +8,17 @@ import { Demarche } from '../../../demarches/objects/entities/demarche.entity'
 import { Field } from '../../objects/entities/field.entity'
 import {
   adjustDto,
-  buildFilterQueryWithWhere,
   buildPaginationQuery,
   buildSortQuery,
   deduceFieldToQueryFromType,
-} from '@/shared/utils/common-search.utils'
+} from '@/shared/pagination/utils/common-search.utils'
 import { FieldService } from '../field.service'
 
 import { fromMappingColumnArrayToTypeHash } from '@/modules/demarches/utils/demarche.utils'
 import { FieldTypeKeys } from '@biblio-num/shared'
 import { SearchDossierDto } from '@/modules/dossiers/objects/dto/search-dossier.dto'
 import { FieldSearchOutputDto } from '@/modules/dossiers/objects/dto/fields/field-search-output.dto'
+import { buildFilterQueryWithWhere } from '@/shared/pagination/utils/build-filter.utils'
 
 @Injectable()
 export class FieldSearchService extends BaseEntityService<Field> {
@@ -99,16 +99,16 @@ export class FieldSearchService extends BaseEntityService<Field> {
     `
   }
 
-  private _buildCountedCTE(
+  private async _buildCountedCTE(
     dto: SearchDossierDto,
     typeHash: Record<string, FieldTypeKeys>,
-  ): string {
+  ): Promise<string> {
     this.logger.verbose('_buildRepeatedCTE')
     return `
       countedCTE AS (
         SELECT *, COUNT(*) OVER () AS total
         FROM combinedCTE
-        ${buildFilterQueryWithWhere(dto.filters, typeHash)}
+        ${await buildFilterQueryWithWhere(dto.filters, typeHash)}
         ${buildSortQuery(dto.sorts)}
       )
     `
@@ -128,7 +128,7 @@ export class FieldSearchService extends BaseEntityService<Field> {
       ${this._buildRepeatedCTE(demarche.id, cols)},
       ${this._buildNonRepeatedCTE(demarche.id, cols)},
       ${this._buildCombinedCTE(cols, typeHash)},
-      ${this._buildCountedCTE(dto, typeHash)}
+      ${await this._buildCountedCTE(dto, typeHash)}
       SELECT * FROM countedCTE
       ${complete ? '' : buildPaginationQuery(dto.page || 1, dto.perPage || 5)}
     `

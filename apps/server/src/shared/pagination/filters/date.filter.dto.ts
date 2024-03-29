@@ -1,7 +1,7 @@
 import {
   IsDateString,
   IsDefined,
-  IsEnum,
+  IsEnum, IsIn,
   IsOptional, ValidateIf,
   ValidateNested,
 } from 'class-validator'
@@ -44,6 +44,7 @@ export class DateFilterConditionDto implements IDateFilterCondition {
 }
 
 export class FilterDateDto implements IFilterDate {
+  @IsIn(['date'])
   filterType: 'date'
 
   @IsDefined()

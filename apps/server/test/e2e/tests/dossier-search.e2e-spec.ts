@@ -134,7 +134,7 @@ describe('Dossier listing', () => {
           columns: ['I01', 'I02', 'I03', 'I09'],
         })
         .set('Cookie', [cookies.superadmin])
-        // .expect(200)
+        .expect(200)
         .expect(({ body }) => {
           expect(body.total).toEqual(10)
           expect(body.data.length).toEqual(5)
