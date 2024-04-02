@@ -1,5 +1,6 @@
 import type { StateKey } from '../state'
 import type { OrganismeTypeKey } from './organisme-type.enums'
+import { IPerson } from './person-interface'
 import type { IRnaOutput } from './rna-output.interface'
 import type { IRnfOutput } from './rnf-output.interface'
 
@@ -27,4 +28,5 @@ export interface IOrganisme {
   addressDepartmentCode: string | null
   addressRegionName: string | null
   addressRegionCode: string | null
+  persons: IPerson[]
 }
