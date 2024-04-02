@@ -80,15 +80,20 @@ export class DsMapperService {
     this.logger.verbose('mapPersonInFoundationToDto')
 
     const personInFoundationDto: CreatePersonInFoundationDto[] = []
-    if (!champsHash.personFirstName) {
-      return personInFoundationDto
-    }
+    // Declarant is not optional
+    // if (!champsHash.personFirstName) {
+    //   return personInFoundationDto
+    // }
 
     // Declarant
+    // TODO : Check if declarant is mandatory save in fundation, if not remove this condition
     const declarant: CreatePersonDto = this.mapPersonToDto(champsHash, mapper)
-    personInFoundationDto.push({ person: declarant, role: FoundationRole.DECLARANT })
+    if (declarant[personMapper.personFirstName] && declarant[personMapper.personLastName]) {
+      personInFoundationDto.push({ person: declarant, role: FoundationRole.DECLARANT })
+    }
 
     // Administrators
+    // TODO : put this in a function if we keep declarant mandatory
     if (!champsHash.personAdministrator) {
       return personInFoundationDto
     }

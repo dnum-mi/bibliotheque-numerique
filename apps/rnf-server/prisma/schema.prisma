@@ -19,6 +19,10 @@ enum FoundationRole {
   DECLARANT
   ADMIN
   MANAGER
+  MEMBER_BOARD_DIRECTOR
+  MEMBER_ADVISORY_COMMITTEE
+  FUND_EMPLOYEE
+  NOT_SPECIFIED
 }
 
 // ======================================== Foundation =====================================
