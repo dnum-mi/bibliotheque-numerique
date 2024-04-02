@@ -9,6 +9,8 @@ import {
   fddModificationMapper,
   feCreationMapper,
   feModificationMapper,
+  feAdministrationChangesMapper,
+  fddAdministrationChangesMapper,
 } from '@/modules/ds/objects/mappers'
 import { RnfFieldKey } from '@/modules/ds/objects/types/rnf-field-keys.type'
 import { Mapper } from '@/modules/ds/objects/types/mapper.type'
@@ -59,6 +61,10 @@ export class DsConfigurationService implements OnModuleInit {
           [this.configuration.dsDemarcheFEModificationId]: feModificationMapper,
           [this.configuration.dsDemarcheFDDModificationId]:
             fddModificationMapper,
+          [this.configuration.dsDemarcheFEAdministrationChangesId]:
+            feAdministrationChangesMapper,
+          [this.configuration.dsDemarcheFDDAdministrationChangesId]:
+            fddAdministrationChangesMapper,
         }),
       ),
       rnfFieldKeys: {

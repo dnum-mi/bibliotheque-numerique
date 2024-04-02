@@ -178,4 +178,6 @@ model DSConfiguration {
   fieldRegexPersonPhone             String   @default("#rnf-person-telephone-rnf#")
   fieldRegexAdministator            String   @default("#rnf-administrateur-rnf#")
   fieldRegexFiscalEndDate           String   @default("#rnf-date-fin-exercice-rnf#")
+  dsDemarcheFDDAdministrationChangesId Int @default(52)
+  dsDemarcheFEAdministrationChangesId  Int @default(55)
 }

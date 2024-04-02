@@ -132,4 +132,12 @@ export class DsConfigurationEntity
   @IsString()
   @IsDefined()
   fieldRegexFiscalEndDate: string
+
+  @IsNumber()
+  @IsDefined()
+  dsDemarcheFDDAdministrationChangesId: number
+
+  @IsNumber()
+  @IsDefined()
+  dsDemarcheFEAdministrationChangesId: number
 }
