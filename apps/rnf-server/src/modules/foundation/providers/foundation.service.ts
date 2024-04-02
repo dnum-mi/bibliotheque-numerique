@@ -277,6 +277,8 @@ export class FoundationService extends BaseEntityService {
     await this.triggerFddModificationRefresh()
     await this.triggerFeDissolution()
     await this.triggerFddDissolution()
+    await this.triggerFeAdministrationChanges()
+    await this.triggerFddAdministrationChanges()
     this.logger.log('Setting lastRefreshedAt')
     await this.dsConfigurationService.updateConfiguration({
       foundationRefreshedAt: new Date(),
@@ -310,6 +312,20 @@ export class FoundationService extends BaseEntityService {
     await this._lookForFoundationDissolution(
       'Dissolution of FDD',
       this.dsConfigurationService.configuration.dsDemarcheFDDDissolutionId,
+    )
+  }
+
+  public async triggerFeAdministrationChanges() {
+    await this._lookForFoundationAdministrationChanges(
+      'Administration changes of FE',
+      this.dsConfigurationService.configuration.dsDemarcheFEAdministrationChangesId,
+    )
+  }
+
+  public async triggerFddAdministrationChanges() {
+    await this._lookForFoundationAdministrationChanges(
+      'Administration changes of FDD',
+      this.dsConfigurationService.configuration.dsDemarcheFDDAdministrationChangesId,
     )
   }
 
@@ -440,6 +456,50 @@ export class FoundationService extends BaseEntityService {
             await this.updateFoundation(rnfId, {
               dissolvedAt: new Date(),
             })
+          } catch (e) {
+            this.logger.error(`Error while updating foundation ${rnfId}`)
+            this.logger.error(e as Error)
+          }
+        }
+      }
+    } else {
+      this.logger.debug('No dossier to update.')
+    }
+  }
+
+  private async _lookForFoundationAdministrationChanges(
+    name: string,
+    dsDemarcheId: number,
+  ) {
+    this.logger.verbose('_lookForFoundationAdministrationChanges')
+    this.logger.log(`Checking for: ${name}`)
+    let raw: IDsApiClientDemarche
+    try {
+      raw = await this.dsService.getOneDemarcheWithDossier(
+        dsDemarcheId,
+        this.dsConfigurationService.configuration.foundationRefreshedAt,
+      )
+    } catch (e) {
+      this.logger.error(`Error while fetching ${name}`)
+      this.logger.error(e as Error)
+      return
+    }
+    const dossiers = raw.demarche.dossiers.nodes
+    if (dossiers.length) {
+      for (const doss of dossiers) {
+        const rnfId = this.checkIfRnfInAcceptedDossier(doss)
+        console.log('rnfId', rnfId)
+        if (rnfId) {
+          this.logger.log(
+            `Updating foundation ${rnfId} because of dossier ${doss.number}`,
+          )
+          console.log(`Updating foundation ${rnfId} because of dossier ${doss.number}`)
+          try {
+            const dto = this.dsMapperService.mapDossierToDto(
+              doss,
+              this.dsConfigurationService.getMapperFromDemarcheDsId(dsDemarcheId),
+            )
+            await this.updateFoundation(rnfId, dto)
           } catch (e) {
             this.logger.error(`Error while updating foundation ${rnfId}`)
             this.logger.error(e as Error)

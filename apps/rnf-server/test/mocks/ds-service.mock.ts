@@ -6,6 +6,9 @@ import {
   demarcheDossierEntrepriseModificationDataMock,
 } from './datas/demarche-dossier-entreprise-modification.data.mock'
 import { demarcheDossierEntrepriseDissolutionDataMock } from './datas/demarche-dossier-entreprise-dissolution.mock'
+import {
+  demarcheDossierEntrepriseAdministrationChangesDataMock,
+} from './datas/demarche-dossier-entreprise-administration-changes.data.mock'
 
 const dossierNotFoundGraphQlError = {
   data: null,
@@ -73,6 +76,8 @@ export const dsServiceMock = {
       return demarcheDossierEntrepriseModificationDataMock
     case 54:
       return demarcheDossierEntrepriseDissolutionDataMock
+    case 55:
+      return demarcheDossierEntrepriseAdministrationChangesDataMock
     default:
       throw new DsApiError(dossierNotFoundGraphQlError)
     }

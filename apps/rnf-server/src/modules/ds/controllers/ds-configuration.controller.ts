@@ -54,6 +54,10 @@ export class DsConfigurationController {
       return this.foundationService.triggerFeDissolution()
     case 'fddDissolution':
       return this.foundationService.triggerFddDissolution()
+    case 'triggerFeAdministrationChanges':
+      return this.foundationService.triggerFeAdministrationChanges()
+    case 'triggerFddAdministrationChanges':
+      return this.foundationService.triggerFddAdministrationChanges()
     case 'all':
       return this.foundationService.triggerAllRefresh()
     }

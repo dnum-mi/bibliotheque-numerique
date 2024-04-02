@@ -10,6 +10,10 @@ import { insertDumbFoundation } from './tools'
 import {
   demarcheDossierEntrepriseDissolutionRnfId,
 } from '../../mocks/datas/demarche-dossier-entreprise-dissolution.mock'
+import {
+  demarcheDossierEntrepriseAdministrationChangesNewTitle,
+  demarcheDossierEntrepriseAdministrationChangesRnfId,
+} from '../../mocks/datas/demarche-dossier-entreprise-administration-changes.data.mock'
 
 describe('Ds Controller (e2e)', () => {
   let app: INestApplication
@@ -140,6 +144,22 @@ describe('Ds Controller (e2e)', () => {
           .expect(200)
         await prisma.foundation.findFirst({ where: { rnfId } }).then((f) => {
           expect(f?.dissolvedAt?.getTime()).toBeCloseTo(new Date().getTime(), -3)
+        })
+      })
+
+      it('feAdministrationChanges should change foundation', async () => {
+        const rnfId = demarcheDossierEntrepriseAdministrationChangesRnfId
+        await insertDumbFoundation(prisma, {
+          rnfId,
+          title: 'some title',
+          email: 'shouldNotChanged',
+        })
+        await request(app.getHttpServer())
+          .get('/api/ds-configuration/trigger-refresh?type=triggerFeAdministrationChanges')
+          .set('x-admin-token', 'e2e-test-admin-password')
+          .expect(200)
+        await prisma.foundation.findFirst({ where: { rnfId } }).then((f) => {
+          expect(f?.title).toEqual(demarcheDossierEntrepriseAdministrationChangesNewTitle)
         })
       })
     })
