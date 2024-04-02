@@ -342,6 +342,7 @@ export class FoundationService extends BaseEntityService {
         },
       }
       : undefined
+    const cascadeCreatePersons = this._cascadeCreatePersons(dto as CreateFoundationDto)
 
     // TODO: update persons
     delete dto.personInFoundationToCreate
@@ -354,6 +355,7 @@ export class FoundationService extends BaseEntityService {
         address: {
           update: dto.address,
         },
+        ...cascadeCreatePersons,
         ...cascadeUpdateFile,
       },
     })

@@ -11,7 +11,6 @@ import {
   demarcheDossierEntrepriseDissolutionRnfId,
 } from '../../mocks/datas/demarche-dossier-entreprise-dissolution.mock'
 import {
-  demarcheDossierEntrepriseAdministrationChangesNewTitle,
   demarcheDossierEntrepriseAdministrationChangesRnfId,
 } from '../../mocks/datas/demarche-dossier-entreprise-administration-changes.data.mock'
 
@@ -158,8 +157,11 @@ describe('Ds Controller (e2e)', () => {
           .get('/api/ds-configuration/trigger-refresh?type=triggerFeAdministrationChanges')
           .set('x-admin-token', 'e2e-test-admin-password')
           .expect(200)
-        await prisma.foundation.findFirst({ where: { rnfId } }).then((f) => {
-          expect(f?.title).toEqual(demarcheDossierEntrepriseAdministrationChangesNewTitle)
+        await prisma.foundation.findFirst({
+          where: { rnfId },
+          include: { persons: true },
+        }).then((f) => {
+          expect(f?.persons).toHaveLength(2)
         })
       })
     })
