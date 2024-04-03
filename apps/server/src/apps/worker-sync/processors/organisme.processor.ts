@@ -17,6 +17,7 @@ import { ALS_INSTANCE } from '@/shared/modules/als/als.module'
 import { AsyncLocalStorage } from 'async_hooks'
 import { AsyncLocalStore } from '@/shared/modules/als/async-local-store.type'
 import { Inject } from '@nestjs/common'
+import { differenceInMonths, isAfter } from 'date-fns'
 
 @Processor(QueueName.sync)
 export class OrganismeProcessor {
@@ -32,6 +33,59 @@ export class OrganismeProcessor {
     private readonly als?: AsyncLocalStorage<AsyncLocalStore>,
   ) {
     this.logger.setContext(this.constructor.name)
+  }
+
+  @Process(eJobName.ComputeOrganismeDDC)
+  async computeOrganismeDDC(job: Job<never>): Promise<void> {
+    await this.als.run({ job }, async () => {
+      this.logger.verbose('computeOrganismeDDC')
+      const currentYear = new Date().getFullYear()
+      const middleYear = new Date(`${currentYear}-06-01`)
+      const computingYear = isAfter(new Date(), middleYear) ? currentYear : currentYear - 1
+      this.logger.log('Computing year: ' + computingYear)
+      const nbrMonth = await this.bnConfiguration
+        .findByKeyName(eBnConfiguration.DDC_MONTH_BEFORE_MISSING)
+        .then((c) => parseInt(c.stringValue, 10))
+      job.progress(5)
+      const orgs =
+        await this.organismeService.getAllOrganismeWithoutYear(computingYear)
+      this.logger.log('Organisme without computing year: ' + orgs.length)
+      if (!orgs.length) {
+        job.finished()
+        return
+      }
+      job.progress(10)
+      let progress = 10
+      const step = 90 / orgs.length
+      const __oneMoreStep = ():void => {
+        progress += step
+        job.progress(progress)
+        if (progress >= 99) {
+          job.finished()
+        }
+      }
+      orgs.forEach((o) => {
+        const fiscalEndDateComputingYear = o.fiscalEndDateAt
+        fiscalEndDateComputingYear.setFullYear(computingYear)
+        if (differenceInMonths(new Date(), fiscalEndDateComputingYear) >= nbrMonth) {
+          this.logger.log('adding missing year to organisme with id ' + o.id)
+          this.organismeService.repository
+            .update(
+              { id: o.id },
+              {
+                missingDeclarationYears: [
+                  ...o.missingDeclarationYears,
+                  computingYear,
+                ],
+              },
+            )
+            .then(__oneMoreStep)
+        } else {
+          this.logger.debug('No missing year for organisme with id ' + o.id)
+          __oneMoreStep()
+        }
+      })
+    })
   }
 
   @Process(eJobName.SyncAllRnaOrganisme)
@@ -87,7 +141,11 @@ export class OrganismeProcessor {
           })
         }
       } else {
-        await this.organismeService.updateOrganismeFromRnf(job.data.rnf, rawRnf)
+        await this.organismeService.updateOrganismeFromRnf(
+          job.data.rnf,
+          rawRnf,
+          job.data.firstTime,
+        )
       }
     })
   }

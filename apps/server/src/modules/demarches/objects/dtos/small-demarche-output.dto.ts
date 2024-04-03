@@ -1,7 +1,7 @@
 import {
   ISmallDemarcheOutput,
   OrganismeTypeKey,
-  IdentificationDemarcheKeys,
+  IdentificationDemarcheKey,
 } from '@biblio-num/shared'
 
 export class SmallDemarcheOutputDto implements ISmallDemarcheOutput {
@@ -9,7 +9,7 @@ export class SmallDemarcheOutputDto implements ISmallDemarcheOutput {
   title: string
   types: OrganismeTypeKey[]
   dsId: number
-  identification?: IdentificationDemarcheKeys | undefined
+  identification?: IdentificationDemarcheKey | undefined
   dsCreatedAt: Date
   dsPublishedAt: Date
 }

@@ -13,6 +13,7 @@ const jobNames = [
   'UploadDsFile',
   'UploadRnaFile',
   'UploadRnfFile',
+  'ComputeOrganismeDDC',
 ] as const
 
 export type JobNameKey = typeof jobNames[number]

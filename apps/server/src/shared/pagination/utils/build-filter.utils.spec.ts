@@ -1,12 +1,17 @@
 import * as dayjs from 'dayjs'
-import { DateFilterConditions, FilterDateDto, FilterNumberDto } from '@/shared/pagination/filters'
+import {
+  DateFilterConditions,
+  FilterDateDto,
+  FilterNumberDto,
+} from '@/shared/pagination/filters'
 import { buildFilterQuery } from '@/shared/pagination/utils/build-filter.utils'
+import { FilterNumbersDto } from '@/shared/pagination/filters/numbers.filter.dto'
 
 describe('Build filter', () => {
   describe('Common filter', () => {
     it('Should not accept filter', async () => {
       await expect(
-         buildFilterQuery(
+        buildFilterQuery(
           {
             I09: {
               filterType: 'text',
@@ -17,13 +22,13 @@ describe('Build filter', () => {
             },
           },
           { I09: 'number' },
-        )
+        ),
       ).rejects.toThrow('Your filter does not match the schema.')
     })
 
     it('Should not accept filter', () => {
-      expect(
-        () =>  buildFilterQuery(
+      expect(() =>
+        buildFilterQuery(
           {
             I09: {
               filterType: 'text',
@@ -34,13 +39,13 @@ describe('Build filter', () => {
             },
           },
           { I09: 'enum' },
-        )
+        ),
       ).rejects.toThrow('Your filter does not match the schema.')
     })
 
     it('Should not accept filter', () => {
-      expect(
-        () =>  buildFilterQuery(
+      expect(() =>
+        buildFilterQuery(
           {
             I09: {
               filterType: 'text',
@@ -51,13 +56,13 @@ describe('Build filter', () => {
             },
           },
           { I09: 'date' },
-        )
+        ),
       ).rejects.toThrow('Your filter does not match the schema.')
     })
 
     it('Should not accept filter', () => {
-      expect(
-        () =>  buildFilterQuery(
+      expect(() =>
+        buildFilterQuery(
           {
             I09: {
               filterType: 'number',
@@ -68,7 +73,7 @@ describe('Build filter', () => {
             },
           },
           { I09: 'string' },
-        )
+        ),
       ).rejects.toThrow('Your filter does not match the schema.')
     })
   })
@@ -315,7 +320,7 @@ describe('Build filter', () => {
           },
           { I09: 'enum' },
         ),
-      ).resolves.toEqual('(("I09" IN (\'toto\',\'tata\')))')
+      ).resolves.toEqual("((\"I09\" IN ('toto','tata')))")
     })
     it('Should build filter for array field', () => {
       expect(
@@ -422,7 +427,7 @@ describe('Build filter', () => {
             },
             { dateField: 'date' },
           ),
-        ).resolves.toEqual('(("dateField" > \'' + oneYearBeforeNow + '\'))')
+        ).resolves.toEqual('(("dateField" > \'' + oneYearBeforeNow + "'))")
       })
     })
     describe('Array date filters', () => {
@@ -735,6 +740,78 @@ describe('Build filter', () => {
     })
   })
 
+  describe('Numbers filters', () => {
+    describe('Normal numbers filters', () => {
+      it('Should build filter for numbers with one number', () => {
+        expect(
+          buildFilterQuery(
+            {
+              numberField: {
+                filterType: 'numbers',
+                condition1: {
+                  filter: [10],
+                },
+              } as FilterNumbersDto,
+            },
+            { numberField: 'numbers' },
+          ),
+        ).resolves.toEqual('(("numberField" @> \'10\'))')
+      })
+
+      it('Should build filter for numbers with two number', () => {
+        expect(
+          buildFilterQuery(
+            {
+              numberField: {
+                filterType: 'numbers',
+                condition1: {
+                  filter: [10, 20],
+                },
+              } as FilterNumbersDto,
+            },
+            { numberField: 'numbers' },
+          ),
+        ).resolves.toEqual('(("numberField" @> \'10\' OR "numberField" @> \'20\'))')
+      })
+
+      it('Should build filter for numbers for empty', () => {
+        expect(
+          buildFilterQuery(
+            {
+              numberField: {
+                filterType: 'numbers',
+                condition1: {
+                  includeEmpty: true,
+                  filter: [],
+                },
+              } as FilterNumbersDto,
+            },
+            { numberField: 'numbers' },
+          ),
+        ).resolves.toEqual('(("numberField" = \'[]\'))')
+      })
+
+      it('Should build filter for numbers for empty and numbers', () => {
+        expect(
+          buildFilterQuery(
+            {
+              numberField: {
+                filterType: 'numbers',
+                condition1: {
+                  includeEmpty: true,
+                  filter: [42, 43],
+                },
+              } as FilterNumbersDto,
+            },
+            { numberField: 'numbers' },
+          ),
+        ).resolves.toEqual(
+          '(("numberField" @> \'42\' OR "numberField" @> \'43\' OR "numberField" = \'[]\'))',
+        )
+      })
+    })
+  })
+
   describe('Combined filters', () => {
     it('Should build filter for two conditions using "AND" operator', () => {
       expect(
@@ -755,7 +832,9 @@ describe('Build filter', () => {
           },
           { I09: 'string' },
         ),
-      ).resolves.toEqual('(("I09" ILIKE \'%to%\') AND ("I09" NOT ILIKE \'%ti%\'))')
+      ).resolves.toEqual(
+        '(("I09" ILIKE \'%to%\') AND ("I09" NOT ILIKE \'%ti%\'))',
+      )
     })
 
     it('Should build filter for two conditions using "OR" operator', () => {

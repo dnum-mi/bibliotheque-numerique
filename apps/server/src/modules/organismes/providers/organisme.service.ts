@@ -18,6 +18,7 @@ import {
   eOrganismeType,
   eState,
   iRnaDocument,
+  eBnConfiguration,
 } from '@biblio-num/shared'
 
 import { OrganismeFieldTypeHash } from '@/modules/organismes/objects/const/organisme-field-type-hash.const'
@@ -38,7 +39,11 @@ import { InjectQueue } from '@nestjs/bull'
 import { Queue } from 'bull'
 import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
 import { UploadRnaFileJobPayload } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
-import { RnaFileCodeKey, rnaFileCodes } from '@/modules/files/objects/const/rna-code-to-label-and-tag.const'
+import {
+  RnaFileCodeKey,
+  rnaFileCodes,
+} from '@/modules/files/objects/const/rna-code-to-label-and-tag.const'
+import { BnConfigurationService } from '@/shared/modules/bn-configurations/providers/bn-configuration.service'
 
 @Injectable()
 export class OrganismeService extends BaseEntityService<Organisme> {
@@ -50,6 +55,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     private readonly fileService: FileService,
     protected readonly dossierService: DossierService,
     @InjectQueue(QueueName.file) private readonly fileQueue: Queue,
+    private readonly bnConfiguration: BnConfigurationService,
   ) {
     super(repo, logger, OrganismeFieldTypeHash)
     this.logger.setContext(this.constructor.name)
@@ -58,74 +64,107 @@ export class OrganismeService extends BaseEntityService<Organisme> {
   private async _getOrCreateOrganismeCommun(
     id: string,
     key: 'idRnf' | 'idRna',
-  ): Promise<number> {
+  ): Promise<Organisme> {
     this.logger.debug(`from ${key}${id}`)
     const org = await this.repo.findOne({ where: { [key]: id } })
     if (org) {
-      return org.id
+      return org
     }
     return this.createAndSave({
       [key]: id,
       state: eState.queued,
-    }).then((o) => o.id)
+    })
   }
 
-  async getOrCreateOrganismeIdFromRna(idRna: string): Promise<number> {
+  private _formatPerson(rawPerson: IPersonRnf): IPerson {
+    const role = (rawPerson.roles && rawPerson.roles[0]) as PersonRoleKey || null
+    return {
+      ...rawPerson.person,
+      role,
+    } as IPerson
+  }
+
+  private _formatAddress(rawAddress: IRnfOutput['address']): Partial<Organisme> {
+    return Object.fromEntries(
+      [
+        'label',
+        'postalCode',
+        'cityName',
+        'type',
+        'streetAddress',
+        'streetNumber',
+        'streetName',
+        'departmentName',
+        'departmentCode',
+        'regionName',
+        'regionCode',
+      ].map((field) => [
+        `address${field.charAt(0).toUpperCase()}${field.substring(1)}`,
+        rawAddress[field] || '',
+      ]),
+    )
+  }
+
+  async getOrCreateOrganismeIdFromRna(idRna: string): Promise<Organisme> {
     this.logger.verbose(`getOrCreateOrganismeIdFromRna ${idRna}`)
     return this._getOrCreateOrganismeCommun(idRna, 'idRna')
   }
 
-  async getOrCreateOrganismeIdFromRnf(idRnf: string): Promise<number> {
+  async getOrCreateOrganismeIdFromRnf(idRnf: string): Promise<Organisme> {
     this.logger.verbose(`getOrCreateOrganismeIdFromRnf ${idRnf}`)
     return this._getOrCreateOrganismeCommun(idRnf, 'idRnf')
   }
 
-  async updateOrganismeFromRnf(idRnf: string, raw: IRnfOutput): Promise<void> {
-    this.logger.verbose(`updateOrganismeFromRnf ${idRnf}`)
-    const __extractAddressField = (field: string): string =>
-      raw.address[field] || ''
-
-    const formatPerson = (rawPerson:IPersonRnf):IPerson => {
-      const role = (rawPerson.roles && rawPerson.roles[0]) as PersonRoleKey || null
-      return {
-        ...rawPerson.person,
-        role,
-      } as IPerson
+  async getMissingYears(
+    createdAt: Date,
+    alreadyDeclaredYear?: number[],
+  ): Promise<number[]> {
+    this.logger.verbose('getMissingYears')
+    const configYear = await this.bnConfiguration
+      .findByKeyName(eBnConfiguration.DDC_FIRST_CONTROL_YEAR)
+      .then((c) => parseInt(c.stringValue, 10))
+    const creationYear = createdAt.getFullYear()
+    const biggerYear = Math.max(creationYear, configYear)
+    const currentYear = new Date().getFullYear()
+    const result = []
+    for (let i = biggerYear; i <= currentYear; i++) {
+      if (!alreadyDeclaredYear?.includes(i)) {
+        result.push(i)
+      }
     }
+    return result
+  }
 
-    await this.repo.update(
-      { idRnf },
-      {
-        state: eState.uploaded,
-        title: raw.title,
-        dateCreation: new Date(raw.createdAt),
-        type: raw.type as OrganismeTypeKey,
-        email: raw.email,
-        phoneNumber: raw.phone,
-        ...Object.fromEntries(
-          [
-            'label',
-            'postalCode',
-            'cityName',
-            'type',
-            'streetAddress',
-            'streetNumber',
-            'streetName',
-            'departmentName',
-            'departmentCode',
-            'regionName',
-            'regionCode',
-          ].map((field) => [
-            `address${field.charAt(0).toUpperCase()}${field.substring(1)}`,
-            __extractAddressField(field),
-          ]),
-        ),
-        dateDissolution: raw.dissolvedAt,
-        fiscalEndDateAt: raw.fiscalEndDateAt,
-        rnfJson: raw,
-        persons: raw.persons && raw.persons.length ? raw.persons.map(formatPerson) : [],
-      },
-    )
+  async updateOrganismeFromRnf(
+    idRnf: string,
+    raw: IRnfOutput,
+    firstTime = false,
+  ): Promise<void> {
+    this.logger.verbose(`updateOrganismeFromRnf ${idRnf}`)
+    const creationDate = new Date(raw.createdAt)
+    const toUpdate: Partial<Organisme> = {
+      state: eState.uploaded,
+      title: raw.title,
+      dateCreation: creationDate,
+      type: raw.type as OrganismeTypeKey,
+      email: raw.email,
+      phoneNumber: raw.phone,
+      ...this._formatAddress(raw.address),
+      dateDissolution: raw.dissolvedAt,
+      fiscalEndDateAt: raw.fiscalEndDateAt,
+      rnfJson: raw,
+      persons: raw.persons && raw.persons.length ? raw.persons.map(this._formatPerson) : [],
+    }
+    // TODO: this should not happen once all the date is on RNF
+    // TODO: this case is happening because we have conflict over RNF  data and BN data
+    if (firstTime) {
+      toUpdate.declarationYears = raw.alreadyDeclaredYear
+      toUpdate.missingDeclarationYears = await this.getMissingYears(
+        creationDate,
+        raw.alreadyDeclaredYear,
+      )
+    }
+    await this.repo.update({ idRnf }, toUpdate)
   }
 
   async updateOrganismeFromRna(idRna: string, raw: IRnaOutput): Promise<void> {
@@ -143,6 +182,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
         .filter((a) => !!a)
         .join(' ')}`
       : null
+    const creationDate = new Date(raw.date_creation)
     await this.repo.update(
       {
         idRna,
@@ -150,7 +190,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
       {
         state: eState.uploaded,
         title: raw.nom,
-        dateCreation: raw.date_creation,
+        dateCreation: creationDate,
         type: raw.reconnue_utilite_publique
           ? eOrganismeType.ARUP
           : eOrganismeType.CULTE,
@@ -163,10 +203,13 @@ export class OrganismeService extends BaseEntityService<Organisme> {
         addressStreetName: a?.libelle_voie,
         dateDissolution: raw.date_dissolution,
         rnaJson: raw,
+        declarationYears: [],
+        missingDeclarationYears: [],
       },
     )
   }
 
+  // TODO: cf organisme.processor
   async getAllRnaOrganisme(): Promise<SmallRnaOrganismeDto[]> {
     return this.repository.find({
       where: { idRna: Not(IsNull()), state: eState.uploaded },
@@ -188,16 +231,18 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     return this.paginate<IOrganisme>(dto, { state: eState.uploaded })
   }
 
-  async synchroniseRnaFiles(
-    rnaId: string,
-    rawRna: IRnaOutput,
-  ): Promise<void> {
+  async synchroniseRnaFiles(rnaId: string, rawRna: IRnaOutput): Promise<void> {
     this.logger.verbose('synchroniseRnaFiles')
     if (rawRna.documents_rna?.length) {
-      const organismeId = await this.findOneOrThrow({ where: { idRna: rnaId }, select: ['id'] }).then((o) => o.id)
+      const organismeId = await this.findOneOrThrow({
+        where: { idRna: rnaId },
+        select: ['id'],
+      }).then((o) => o.id)
       await Promise.all(
         rawRna.documents_rna
-          .filter(doc => rnaFileCodes.includes(doc.sous_type?.code as RnaFileCodeKey))
+          .filter((doc) =>
+            rnaFileCodes.includes(doc.sous_type?.code as RnaFileCodeKey),
+          )
           .filter((doc) => !!doc.url)
           .map(async (doc: iRnaDocument) => {
             const tagAndLabel = FileService.computeLabelAndTagForRna(doc)
@@ -213,5 +258,19 @@ export class OrganismeService extends BaseEntityService<Organisme> {
           }),
       )
     }
+  }
+
+  async getAllOrganismeWithoutYear(year: number): Promise<Organisme[]> {
+    this.logger.verbose('getAllOrganismeWithoutYear')
+    return this.repo
+      .createQueryBuilder('entity')
+      .where(
+        `NOT ("entity"."declarationYears" @> '${year}')`,
+      )
+      .andWhere(
+        `NOT("entity"."missingDeclarationYears" @> '${year}')`,
+      )
+      .andWhere('"entity"."idRnf" IS NOT NULL')
+      .getMany()
   }
 }

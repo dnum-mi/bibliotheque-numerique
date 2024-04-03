@@ -140,6 +140,7 @@ items:
     telephones: '6789012345'
     dateCreation: '2023-10-04T06:50:00.000Z'
     idRnf: 'F003'
+    missingDeclarationYears: []
   Hyundai:
     id: '8'
     state: 'uploaded'
@@ -160,6 +161,7 @@ items:
     telephones: '7890123456'
     dateCreation: '2023-10-04T06:52:00.000Z'
     idRnf: 'F004'
+    missingDeclarationYears: [2023, 2024]
   Chevrolet:
     id: '9'
     state: 'uploaded'
@@ -180,6 +182,7 @@ items:
     telephones: '8901234567'
     dateCreation: '2023-10-04T06:54:00.000Z'
     idRnf: 'F005'
+    missingDeclarationYears: [2020, 2021]
   Subaru:
     id: '10'
     state: 'uploaded'
@@ -200,4 +203,5 @@ items:
     telephones: '9012345678'
     dateCreation: '2023-10-04T06:56:00.000Z'
     idRnf: 'F006'
+    missingDeclarationYears: [2020, 2021, 2022, 2023, 2024]
 

@@ -3,7 +3,7 @@ import { FieldTypeKeys } from '@biblio-num/shared'
 
 // TODO: maybe there is an elegant way to have this.
 export const OrganismeFieldTypeHash: Record<
-  keyof Omit<Organisme, 'rnaJson' | 'rnfJson' | 'dossiers' | 'files' | 'persons'>,
+  keyof Omit<Organisme, 'rnaJson' | 'rnfJson' | 'dossiers' | 'files' | 'declarationYears' | 'persons'>,
   FieldTypeKeys
 > = {
   id: 'number',
@@ -28,6 +28,7 @@ export const OrganismeFieldTypeHash: Record<
   dateCreation: 'date',
   dateDissolution: 'date',
   fiscalEndDateAt: 'date',
+  missingDeclarationYears: 'numbers',
   idRna: 'string',
   idRnf: 'string',
 }

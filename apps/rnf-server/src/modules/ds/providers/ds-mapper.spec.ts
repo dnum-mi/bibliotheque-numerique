@@ -26,9 +26,9 @@ describe('DsMapperService & DsConfigurationService', () => {
         if (token === PrismaService) {
           return {
             dSConfiguration: {
-              findFirst: jest.fn().mockResolvedValue(
-                dsConfigurationServiceMock.configuration,
-              ),
+              findFirst: jest
+                .fn()
+                .mockResolvedValue(dsConfigurationServiceMock.configuration),
             },
           }
         }
@@ -37,7 +37,9 @@ describe('DsMapperService & DsConfigurationService', () => {
       .compile()
 
     service = module.get<DsMapperService>(DsMapperService)
-    await module.get<DsConfigurationService>(DsConfigurationService).onModuleInit()
+    await module
+      .get<DsConfigurationService>(DsConfigurationService)
+      .onModuleInit()
   })
 
   it('Should throw error if Demarche doesnt exist or champs are empty', () => {
@@ -85,6 +87,7 @@ describe('DsMapperService & DsConfigurationService', () => {
         regionCode: '33',
       },
       email: 'tata@gmail.com',
+      declarationYears: [],
       phone: '06 86 46 54 45',
       personInFoundationToCreate: [
         {

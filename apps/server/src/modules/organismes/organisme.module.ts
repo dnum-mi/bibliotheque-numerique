@@ -11,6 +11,7 @@ import { FileModule } from '@/modules/files/file.module'
 import { OrganismeFileController } from '@/modules/organismes/controllers/organisme-file.controller'
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
 import { BullModule, BullModuleOptions } from '@nestjs/bull'
+import { BnConfigurationModule } from '@/shared/modules/bn-configurations/bn-configuration.module'
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { BullModule, BullModuleOptions } from '@nestjs/bull'
     ),
     XlsxModule,
     FileModule,
+    BnConfigurationModule,
   ],
   controllers: [OrganismeController, OrganismeFileController],
   providers: [OrganismeService, RnaService, RnfService],

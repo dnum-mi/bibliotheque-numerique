@@ -1,17 +1,15 @@
 import type { ColDef } from 'ag-grid-community'
 import OrganismeBadgesRenderer from '@/components/Badges/organisme/OrganismeBadgesRenderer.vue'
-import {
-  organismeTypes,
-  dOrganismeTypeDictionary,
-  mapOrganismeFieldHeader,
-  type OrganismeTypeKey,
-} from '@biblio-num/shared'
+import { organismeTypes, dOrganismeTypeDictionary, mapOrganismeFieldHeader, type OrganismeTypeKey } from '@biblio-num/shared'
 
 const baseColDef: ColDef = {
   filter: 'agTextColumnFilter',
   menuTabs: ['filterMenuTab'],
   autoHeight: true,
 }
+
+const startYear = 2020 // should correcpond to the configuration  DDC_FIRST_CONTROL_YEAR
+const years = Array.from({ length: new Date().getFullYear() - startYear + 1 }, (_, i) => startYear + i)
 
 export const listOrganismeColumnDef: ColDef[] = [
   {
@@ -51,6 +49,17 @@ export const listOrganismeColumnDef: ColDef[] = [
     headerName: mapOrganismeFieldHeader.idRnf,
     field: 'idRnf',
     width: 150,
+  },
+  {
+    ...baseColDef,
+    headerName: mapOrganismeFieldHeader.missingYears,
+    filter: 'customNumbersFilter',
+    filterParams: {
+      numbers: years,
+    },
+    valueFormatter: ({ value }: { value: number[] }) => value.join(' - '),
+    cellStyle: { color: 'red', 'font-weight': 'bolder' },
+    field: 'missingDeclarationYears',
   },
   {
     ...baseColDef,
