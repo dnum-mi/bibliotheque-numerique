@@ -109,6 +109,7 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
         id,
       )
     if (organismeId) {
+      this.logger.log('Find an organisme: ' + organismeId)
       await this.repo.update({ id }, { organisme: { id: organismeId } })
     }
     await this.fileSynchroniseService.synchroniseFiles(fields, jsonDossier, id, organismeId)
