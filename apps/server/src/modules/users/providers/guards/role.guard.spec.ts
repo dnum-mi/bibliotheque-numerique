@@ -7,6 +7,7 @@ import { PUBLIC_ROUTE_KEY } from '@/modules/users/providers/decorators/public-ro
 import { Roles } from '@biblio-num/shared'
 import { ConfigService } from '@nestjs/config'
 import { ROLE_KEY } from '@/modules/users/providers/decorators/role.decorator'
+import { loggerServiceMock } from '../../../../../test/mock/logger-service.mock'
 
 describe('RoleGuard', () => {
   let guard: RoleGuard
@@ -15,10 +16,12 @@ describe('RoleGuard', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [RoleGuard, Reflector, LoggerService],
+      providers: [RoleGuard, Reflector],
     }).useMocker(token => {
       if (token === ConfigService) {
         return { get: jest.fn() }
+      } else if (token === LoggerService) {
+        return loggerServiceMock
       }
     }).compile()
 
