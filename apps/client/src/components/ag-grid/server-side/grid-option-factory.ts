@@ -1,6 +1,7 @@
 import { localeTextAgGrid } from '@/components/ag-grid/agGridOptions'
 import type { GridOptions, IServerSideGetRowsParams } from 'ag-grid-community'
 import CustomDateFilter from '@/components/ag-grid/custom-filters/CustomDateFilter.vue'
+import CustomNumbersFilter from '@/components/ag-grid/custom-filters/CustomNumbersFilter.vue'
 
 export const gridOptionFactory = (getRows: (params: IServerSideGetRowsParams) => void, pageSize: number): GridOptions => ({
   domLayout: 'autoHeight',
@@ -20,6 +21,7 @@ export const gridOptionFactory = (getRows: (params: IServerSideGetRowsParams) =>
   cacheBlockSize: pageSize,
   components: {
     customDateFilter: CustomDateFilter,
+    customNumbersFilter: CustomNumbersFilter,
   },
   sideBar: {
     toolPanels: [

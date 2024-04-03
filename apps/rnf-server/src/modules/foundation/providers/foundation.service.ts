@@ -142,6 +142,7 @@ export class FoundationService extends BaseEntityService {
           type: dto.type,
           phone: dto.phone,
           email: dto.email,
+          declarationYears: dto.declarationYears,
           department: code,
           address: {
             create: dto.address,
@@ -203,7 +204,6 @@ export class FoundationService extends BaseEntityService {
   //#endregion
 
   //#region Get foundations
-
   private _cascadeGetFoundation(): Prisma.FoundationInclude {
     this.logger.verbose('_cascadeGetFoundation')
     return {

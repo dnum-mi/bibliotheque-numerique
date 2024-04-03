@@ -13,6 +13,7 @@ export const createFoundationDtoKeys =
     'email',
     'phone',
     'fiscalEndDateAt',
+    'declarationYears',
   ] satisfies (keyof FoundationEntity)[]
 
 export class CreateFoundationDto extends PickType(FoundationEntity, createFoundationDtoKeys) {

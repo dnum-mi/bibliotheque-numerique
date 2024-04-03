@@ -5,8 +5,8 @@ import { Repository } from 'typeorm'
 import { DossierWithCustomChamp as TDossier } from '@dnum-mi/ds-api-client'
 
 import {
-  IdentificationDemarche,
-  IdentificationDemarcheKeys,
+  eIdentificationDemarche,
+  IdentificationDemarcheKey,
   Prefecture,
   PrefectureKeys,
 } from '@biblio-num/shared'
@@ -27,6 +27,7 @@ import { Field } from '@/modules/dossiers/objects/entities/field.entity'
 import {
   DossierSynchroniseExcelService,
 } from '@/modules/dossiers/providers/synchronization/excel/dossier-synchronise-excel.service'
+import { Organisme } from '@/modules/organismes/objects/organisme.entity'
 
 @Injectable()
 export class DossierSynchroniseService extends BaseEntityService<Dossier> {
@@ -80,14 +81,31 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
 
   private async _FESpecificity(
     id: number,
-    identification: IdentificationDemarcheKeys,
+    identification: IdentificationDemarcheKey,
   ): Promise<void> {
     this.logger.verbose('_FESpecificity')
-    if (identification === IdentificationDemarche.FE) {
+    if (identification === eIdentificationDemarche.FE) {
       this.logger.debug('This demarche is FE')
       await this.instructionTimeService.proccessByDossierId(id)
       await this.instructionTimeService.instructionTimeCalculation([id])
       await this.dossierSynchroniseExcelService.upsetFieldsAmounts(id, null)
+    }
+  }
+
+  private async _DDCSpecificity(
+    organisme: Organisme,
+    fields: Field[],
+    identification: IdentificationDemarcheKey,
+    dossier: TDossier,
+  ): Promise<void> {
+    this.logger.verbose('_DDCSpecificity')
+    if (identification === eIdentificationDemarche.DDC) {
+      this.logger.debug('This demarche is DDC')
+      await this.dossierSynchroniseOrganisme.updateDeclarationYearFromDossier(
+        dossier.state,
+        organisme,
+        fields,
+      )
     }
   }
 
@@ -103,16 +121,27 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
       id,
       demarche.mappingColumns,
     )
-    const organismeId =
+    const organisme =
       await this.dossierSynchroniseOrganisme.synchroniseOrganismeFromFields(
         fields,
         id,
       )
-    if (organismeId) {
-      this.logger.log('Find an organisme: ' + organismeId)
-      await this.repo.update({ id }, { organisme: { id: organismeId } })
+    if (organisme) {
+      this.logger.log('Find an organisme: ' + organisme.id)
+      await this.repo.update({ id }, { organisme: { id: organisme.id } })
+      await this._DDCSpecificity(
+        organisme,
+        fields,
+        demarche.identification,
+        jsonDossier,
+      )
     }
-    await this.fileSynchroniseService.synchroniseFiles(fields, jsonDossier, id, organismeId)
+    await this.fileSynchroniseService.synchroniseFiles(
+      fields,
+      jsonDossier,
+      id,
+      organisme?.id,
+    )
     await this._FESpecificity(id, demarche.identification)
   }
 }

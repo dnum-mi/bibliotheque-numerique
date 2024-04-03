@@ -1,9 +1,4 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  OneToMany,
-} from 'typeorm'
+import { Column, Entity, JoinColumn, OneToMany } from 'typeorm'
 import { BaseEntity } from '@/shared/base-entity/base.entity'
 import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
 import {
@@ -20,11 +15,11 @@ import { File } from '@/modules/files/objects/entities/file.entity'
 
 @Entity({ name: 'organismes' })
 export class Organisme extends BaseEntity implements IOrganisme {
-    @Column({
-      type: 'enum',
-      enum: eOrganismeType,
-      default: eOrganismeType.unknown,
-    })
+  @Column({
+    type: 'enum',
+    enum: eOrganismeType,
+    default: eOrganismeType.unknown,
+  })
   type: OrganismeTypeKey
 
   // TODO: a table state indeed ? uploaded = synchronised. uploading = synchronising
@@ -175,6 +170,12 @@ export class Organisme extends BaseEntity implements IOrganisme {
   @OneToMany(() => File, (file) => file)
   @JoinColumn()
   files?: File[]
+
+  @Column({ type: 'jsonb', default: '[]', nullable: false })
+  declarationYears: number[]
+
+  @Column({ type: 'jsonb', default: '[]', nullable: false })
+  missingDeclarationYears: number[]
 
   @Column({
     type: 'jsonb',

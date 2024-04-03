@@ -87,7 +87,6 @@ export abstract class BaseEntityService<T extends BaseEntity = BaseEntity> {
     if (dto.filters) {
       query.where(await buildFilterQuery(dto.filters, this.fieldTypeHash))
     }
-    this.repository.find()
     if (specificWhere) {
       query.andWhere(specificWhere)
     }

@@ -28,5 +28,7 @@ export interface IOrganisme {
   addressDepartmentCode: string | null
   addressRegionName: string | null
   addressRegionCode: string | null
+  declarationYears: number[]
+  missingDeclarationYears: number[]
   persons: IPerson[]
 }
