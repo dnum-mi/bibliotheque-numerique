@@ -28,14 +28,18 @@ import { CreateFileStorageDto } from '@/shared/objects/file-storage/create-file.
 import { Prisma } from '@prisma/client'
 import { FoundationOutputDto } from '@/modules/foundation/objects/dto/outputs/foundation-output.dto'
 
-// import { FoundationWhereInput } from '.prisma/client'
-
 interface createNestedStatus {
   status: Prisma.FileStorageCreateNestedOneWithoutFoundationInput
 }
 
 interface updateNestedStatus {
   status: Prisma.FileStorageUpdateOneWithoutFoundationNestedInput
+}
+
+export const FoundationChangeType = {
+  Modification: 'modification',
+  Dissolution: 'dissolution',
+  Administration: 'administration',
 }
 
 @Injectable()
@@ -287,50 +291,57 @@ export class FoundationService extends BaseEntityService {
 
   public async triggerFeModificationRefresh() {
     this.logger.verbose('triggerFeModificationRefresh')
-    await this._lookForFoundationModification(
+    await this._lookForFoundationChange(
       'Modification of FE',
       this.dsConfigurationService.configuration.dsDemarcheFEModificationId,
+      FoundationChangeType.Modification,
     )
   }
 
   public async triggerFddModificationRefresh() {
     this.logger.verbose('triggerFddModificationRefresh')
-    await this._lookForFoundationModification(
+    await this._lookForFoundationChange(
       'Modification of FDD',
       this.dsConfigurationService.configuration.dsDemarcheFDDModificationId,
+      FoundationChangeType.Modification,
     )
   }
 
   public async triggerFeDissolution() {
-    await this._lookForFoundationDissolution(
+    await this._lookForFoundationChange(
       'Dissolution of FE',
       this.dsConfigurationService.configuration.dsDemarcheFEDissolutionId,
+      FoundationChangeType.Dissolution,
     )
   }
 
   public async triggerFddDissolution() {
-    await this._lookForFoundationDissolution(
+    await this._lookForFoundationChange(
       'Dissolution of FDD',
       this.dsConfigurationService.configuration.dsDemarcheFDDDissolutionId,
+      FoundationChangeType.Dissolution,
     )
   }
 
   public async triggerFeAdministrationChanges() {
-    await this._lookForFoundationAdministrationChanges(
+    await this._lookForFoundationChange(
       'Administration changes of FE',
       this.dsConfigurationService.configuration.dsDemarcheFEAdministrationChangesId,
+      FoundationChangeType.Administration,
     )
   }
 
   public async triggerFddAdministrationChanges() {
-    await this._lookForFoundationAdministrationChanges(
+    await this._lookForFoundationChange(
       'Administration changes of FDD',
       this.dsConfigurationService.configuration.dsDemarcheFDDAdministrationChangesId,
+      FoundationChangeType.Administration,
     )
   }
 
   async updateFoundation(rnfId: string, dto: UpdateFoundationDto) {
     this.logger.verbose('updateFoundation')
+
     const foundation = (await this.getOneFoundation(rnfId)) as FoundationEntity
     await this.historyService.newHistoryEntry(foundation)
     const cascadeFile = await this._cascadeCreateFile(dto.status)
@@ -344,7 +355,6 @@ export class FoundationService extends BaseEntityService {
       : undefined
     const cascadeCreatePersons = this._cascadeCreatePersons(dto as CreateFoundationDto)
 
-    // TODO: update persons
     delete dto.personInFoundationToCreate
 
     return this.prisma.foundation.update({
@@ -359,38 +369,6 @@ export class FoundationService extends BaseEntityService {
         ...cascadeUpdateFile,
       },
     })
-  }
-
-  private async _lookForFoundationModification(
-    name: string,
-    dsDemarcheId: number,
-  ): Promise<void> {
-    this.logger.verbose('_lookForFoundationModification')
-    this.logger.log(`Checking for: ${name}`)
-    let raw: IDsApiClientDemarche
-    try {
-      raw = await this.dsService.getOneDemarcheWithDossier(
-        dsDemarcheId,
-        this.dsConfigurationService.configuration.foundationRefreshedAt,
-      )
-    } catch (e) {
-      this.logger.error(`Error while fetching ${name}`)
-      this.logger.error(e as Error)
-      return
-    }
-    const dossiers = raw.demarche.dossiers.nodes
-    if (dossiers.length) {
-      for (const doss of dossiers) {
-        try {
-          await this._updateOneFoundationWithDossier(doss, dsDemarcheId)
-        } catch (err) {
-          this.logger.error(`Error for dossier: ${doss.number}`)
-          this.logger.error(err as Error)
-        }
-      }
-    } else {
-      this.logger.debug('No dossier to update.')
-    }
   }
 
   private checkIfRnfInAcceptedDossier(
@@ -411,106 +389,63 @@ export class FoundationService extends BaseEntityService {
     return rnfId
   }
 
-  private async _updateOneFoundationWithDossier(
-    doss: DossierWithCustomChamp,
+  private async _lookForFoundationChange(
+    name: string,
     dsDemarcheId: number,
-  ): Promise<void> {
-    this.logger.verbose('_synchroniseOneDossier')
-    const rnfId = this.checkIfRnfInAcceptedDossier(doss)
-    if (rnfId) {
-      this.logger.verbose(
-        `Updating foundation ${rnfId} with dossier ${doss.number}`,
+    changeType: string,
+  ) {
+    this.logger.verbose('_lookForFoundationAdministrationChanges')
+    this.logger.log(`Checking for: ${name}`)
+
+    const dsDemarche: IDsApiClientDemarche = await this.dsService.getOneDemarcheWithDossier(
+      dsDemarcheId,
+      this.dsConfigurationService.configuration.foundationRefreshedAt,
+    )
+
+    const dossiers = dsDemarche.demarche.dossiers.nodes
+    if (!dossiers.length) {
+      this.logger.debug('No dossier to update.')
+      return
+    }
+
+    for (const dossier of dossiers) {
+      const rnfId = await this._checkRnfIdForFoundationChange(dossier)
+      if (!rnfId) {
+        continue
+      }
+      this.logger.log(
+        `Updating foundation ${rnfId} because of dossier ${dossier.number}`,
       )
-      const dto = this.dsMapperService.mapDossierToDto(
-        doss,
-        this.dsConfigurationService.getMapperFromDemarcheDsId(dsDemarcheId),
-      )
+
+      let dto: UpdateFoundationDto = {}
+      if (changeType === FoundationChangeType.Modification || changeType === FoundationChangeType.Administration) {
+        dto = this.dsMapperService.mapDossierToDto(
+          dossier,
+          this.dsConfigurationService.getMapperFromDemarcheDsId(dsDemarcheId),
+        )
+      } else if (changeType === FoundationChangeType.Dissolution) {
+        dto = { dissolvedAt: new Date() }
+      }
+
       await this.updateFoundation(rnfId, dto)
     }
   }
 
-  private async _lookForFoundationDissolution(
-    name: string,
-    dsDemarcheId: number,
-  ) {
-    this.logger.verbose('_lookForFoundationDissolution')
-    this.logger.log(`Checking for: ${name}`)
-    let raw: IDsApiClientDemarche
-    try {
-      raw = await this.dsService.getOneDemarcheWithDossier(
-        dsDemarcheId,
-        this.dsConfigurationService.configuration.foundationRefreshedAt,
-      )
-    } catch (e) {
-      this.logger.error(`Error while fetching ${name}`)
-      this.logger.error(e as Error)
-      return
+  private async _checkRnfIdForFoundationChange(dossier: DossierWithCustomChamp) {
+    this.logger.verbose('_checkRnfIdForFoundationChange')
+    const rnfId = this.checkIfRnfInAcceptedDossier(dossier)
+    if (!rnfId) {
+      this.logger.verbose('No RNF-ID in dossier or dossier not accepted')
+      return null
     }
-    const dossiers = raw.demarche.dossiers.nodes
-    if (dossiers.length) {
-      for (const doss of dossiers) {
-        const rnfId = this.checkIfRnfInAcceptedDossier(doss)
-        if (rnfId) {
-          this.logger.log(
-            `Dissolving foundation ${rnfId} because of dossier ${doss.number}`,
-          )
-          try {
-            await this.updateFoundation(rnfId, {
-              dissolvedAt: new Date(),
-            })
-          } catch (e) {
-            this.logger.error(`Error while updating foundation ${rnfId}`)
-            this.logger.error(e as Error)
-          }
-        }
-      }
-    } else {
-      this.logger.debug('No dossier to update.')
+    const foundation = await this.prisma.foundation.findFirst({
+      where: { rnfId, dissolvedAt: null },
+    })
+    if (!foundation) {
+      this.logger.verbose(`Foundation with rnfId ${rnfId} not found or dissolved`)
+      return null
     }
-  }
-
-  private async _lookForFoundationAdministrationChanges(
-    name: string,
-    dsDemarcheId: number,
-  ) {
-    this.logger.verbose('_lookForFoundationAdministrationChanges')
-    this.logger.log(`Checking for: ${name}`)
-    let raw: IDsApiClientDemarche
-    try {
-      raw = await this.dsService.getOneDemarcheWithDossier(
-        dsDemarcheId,
-        this.dsConfigurationService.configuration.foundationRefreshedAt,
-      )
-    } catch (e) {
-      this.logger.error(`Error while fetching ${name}`)
-      this.logger.error(e as Error)
-      return
-    }
-    const dossiers = raw.demarche.dossiers.nodes
-    if (dossiers.length) {
-      for (const doss of dossiers) {
-        const rnfId = this.checkIfRnfInAcceptedDossier(doss)
-        console.log('rnfId', rnfId)
-        if (rnfId) {
-          this.logger.log(
-            `Updating foundation ${rnfId} because of dossier ${doss.number}`,
-          )
-          console.log(`Updating foundation ${rnfId} because of dossier ${doss.number}`)
-          try {
-            const dto = this.dsMapperService.mapDossierToDto(
-              doss,
-              this.dsConfigurationService.getMapperFromDemarcheDsId(dsDemarcheId),
-            )
-            await this.updateFoundation(rnfId, dto)
-          } catch (e) {
-            this.logger.error(`Error while updating foundation ${rnfId}`)
-            this.logger.error(e as Error)
-          }
-        }
-      }
-    } else {
-      this.logger.debug('No dossier to update.')
-    }
+    return rnfId
   }
 
   //#endregion
