@@ -18,4 +18,8 @@ export class CreatePersonDto extends PickType(PersonEntity, createPersonDtoKeys)
   @ValidateNested()
   @IsString()
   civility: string
+
+  @ValidateNested()
+  @IsString()
+  role: string
 }

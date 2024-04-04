@@ -10,6 +10,7 @@ import { CreatePersonDto } from '@/modules/person/objects/dto/create-person.dto'
 import { FoundationRole } from '@prisma/client'
 import { TypeDeChamp } from '@dnum-mi/ds-api-client/dist/@types/generated-types'
 import { RawChamp } from '@/modules/ds/objects/types/raw-champ.type'
+import { roleMapper } from '@/modules/ds/objects/mappers'
 
 @Injectable()
 export class DsMapperService {
@@ -80,20 +81,7 @@ export class DsMapperService {
     this.logger.verbose('mapPersonInFoundationToDto')
 
     const personInFoundationDto: CreatePersonInFoundationDto[] = []
-    // Declarant is not optional
-    // if (!champsHash.personFirstName) {
-    //   return personInFoundationDto
-    // }
 
-    // Declarant
-    // TODO : Check if declarant is mandatory save in fundation, if not remove this condition
-    const declarant: CreatePersonDto = this.mapPersonToDto(champsHash, mapper)
-    if (declarant[personMapper.personFirstName] && declarant[personMapper.personLastName]) {
-      personInFoundationDto.push({ person: declarant, role: FoundationRole.DECLARANT })
-    }
-
-    // Administrators
-    // TODO : put this in a function if we keep declarant mandatory
     if (!champsHash.personAdministrator) {
       return personInFoundationDto
     }
@@ -105,7 +93,7 @@ export class DsMapperService {
         admin[personMapper.personPhone] = ''
         personInFoundationDto.push({
           person: admin,
-          role: FoundationRole.ADMIN,
+          role: roleMapper[admin.role] as FoundationRole,
         })
       })
     }
