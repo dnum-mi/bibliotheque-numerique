@@ -32,6 +32,7 @@ export const useDemarcheStore = defineStore('demarche', () => {
     currentDemarcheConfiguration.value = configuration
     currentDemarcheConfigurationHash.value = Object.fromEntries(
       configuration
+        .flatMap((c: MappingColumn) => (c.children?.length ? c.children.map((c) => ({ ...c, isChild: true })) : [c]))
         .filter((c) => c.columnLabel) // filter out empty columnLabel
         .map((c) => [c.id, c]),
     )
