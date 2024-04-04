@@ -46,4 +46,8 @@ export class InfoPersonInFoundationDto {
   @ValidateNested()
   @IsString()
   personAdministrator?: string
+
+  @ValidateNested()
+  @IsString()
+  personRole?: string
 }

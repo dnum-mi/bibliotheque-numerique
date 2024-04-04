@@ -114,5 +114,9 @@ export class UpdateDsConfigurationInputDto {
 
   @IsString()
   @IsOptional()
+  fieldRegexPersonRole: string
+
+  @IsString()
+  @IsOptional()
   fieldRegexAdministator: string
 }

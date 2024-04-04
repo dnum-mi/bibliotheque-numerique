@@ -127,6 +127,10 @@ export class DsConfigurationEntity
 
   @IsString()
   @IsDefined()
+  fieldRegexPersonRole: string
+
+  @IsString()
+  @IsDefined()
   fieldRegexAdministator: string
 
   @IsString()

@@ -63,6 +63,7 @@ export const universalMapper: Mapper = {
   personProfession: stringValue,
   personAddress: addressValue,
   personPhone: stringValue,
+  personRole: stringValue,
   personAdministrator: stringValue,
   fiscalEndDateAt: dateValue,
 }

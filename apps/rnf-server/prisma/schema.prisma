@@ -16,9 +16,6 @@ enum FoundationType {
 }
 
 enum FoundationRole {
-  DECLARANT
-  ADMIN
-  MANAGER
   MEMBER_BOARD_DIRECTOR
   MEMBER_ADVISORY_COMMITTEE
   FUND_EMPLOYEE
@@ -180,6 +177,7 @@ model DSConfiguration {
   fieldRegexPersonProfession        String   @default("#rnf-person-profession-rnf#")
   fieldRegexPersonAddress           String   @default("#rnf-person-adresse-rnf#")
   fieldRegexPersonPhone             String   @default("#rnf-person-telephone-rnf#")
+  fieldRegexPersonRole             String   @default("#rnf-person-role-rnf#")
   fieldRegexAdministator            String   @default("#rnf-administrateur-rnf#")
   fieldRegexFiscalEndDate           String   @default("#rnf-date-fin-exercice-rnf#")
   dsDemarcheFDDAdministrationChangesId Int @default(52)
