@@ -1,9 +1,9 @@
 import { createEnum } from "../factories"
 
 export const personRoles = [
-  'DECLARANT',
   'ADMIN',
-  'MANAGER'
+  'MANAGER',
+  'DECLARANT',
 ] as const
 
 export type PersonRoleKey = (typeof personRoles)[number]
