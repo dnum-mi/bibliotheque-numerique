@@ -12,6 +12,7 @@ import AttachedFileList from '@/components/ag-grid/files/AttachedFileList.vue'
 import type { IFileOutput, IPagination, IRole, FileTagKey } from '@biblio-num/shared'
 import { dFileTabDictionary } from '@biblio-num/shared'
 import type { ApiCall } from '@/components/ag-grid/server-side/pagination.utils'
+import FicheOrganismePersons from './FicheOrganismePersons.vue'
 
 const props = withDefaults(defineProps<{ id: string; idType: OrganismeIdType }>(), {})
 
@@ -175,6 +176,9 @@ const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutpu
                   :email="organisme.email ?? ''"
                   :phone="organisme.phoneNumber ?? ''"
                 />
+              </div>
+              <div class="p-t-6">
+                <FicheOrganismePersons :persons="organisme.persons" />
               </div>
             </DsfrTabContent>
             <DsfrTabContent
