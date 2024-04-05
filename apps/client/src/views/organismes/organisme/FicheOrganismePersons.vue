@@ -8,7 +8,9 @@ import { dateToStringFr } from '../../../utils'
 
 const props = defineProps<{ persons: IPerson[] }>()
 
+const creatorRoleKey = 'CREATOR'
 const roleDictionary = {
+  [creatorRoleKey]: 'Fondateurs',
   [ePersonRole.MEMBER_BOARD_DIRECTOR]: 'Conseillers d\'administration',
   [ePersonRole.MEMBER_ADVISORY_COMMITTEE]: 'Membres du comité consultatif',
   [ePersonRole.FUND_EMPLOYEE]: 'Employés',
@@ -25,10 +27,12 @@ const personsByRoles = computed<TPersonByRole[]>(() =>
   Object.entries(roleDictionary).map(([roleKey, roleValue]) => ({
     role: roleValue,
     persons: props.persons.filter(p => (
-      (p.role === roleKey)
-      || (roleKey === ePersonRole.NOT_SPECIFIED
-      && !roleDictionaryKey.includes(p.role))),
-    )
+      roleKey === creatorRoleKey
+        ? p.isFondateur
+        : (p.role === roleKey)
+        || (roleKey === ePersonRole.NOT_SPECIFIED
+        && !(p.role && roleDictionaryKey.includes(p.role)))
+    ))
       .map(person => ({
         ...person,
         fullName: `${person.firstName} ${person.lastName}`,
