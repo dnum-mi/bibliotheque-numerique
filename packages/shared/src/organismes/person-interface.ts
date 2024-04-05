@@ -1,8 +1,12 @@
 import { IAddress } from "./address.interface";
 import { PersonRoleKey } from "./person-role.enums";
 
-export interface IPerson {
-  role: PersonRoleKey,
+export interface IPerson extends IPersonBase{
+  role?: PersonRoleKey,
+  isFondateur?: Boolean,
+}
+
+export interface IPersonBase {
   createdAt: Date,
   updatedAt: Date,
   civility: string,
@@ -16,4 +20,3 @@ export interface IPerson {
   bornPlace: string,
   address: IAddress,
 }
-

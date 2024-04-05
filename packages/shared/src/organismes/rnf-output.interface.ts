@@ -1,9 +1,10 @@
 import { IAddress } from "./address.interface"
-import { IPerson } from "./person-interface"
+import { IPersonBase } from "./person-interface"
 
 export interface IPersonRnf {
   roles: string[],
-  person: Omit<IPerson, 'role'>
+  isFondateur: boolean,
+  person: IPersonBase,
 }
 
 export interface IRnfOutput {
