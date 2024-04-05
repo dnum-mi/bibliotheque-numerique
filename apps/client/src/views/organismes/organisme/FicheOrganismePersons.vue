@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import {
-  personRoles,
   type IPerson,
   ePersonRole,
 } from '@biblio-num/shared'
@@ -9,11 +8,13 @@ import { dateToStringFr } from '../../../utils'
 
 const props = defineProps<{ persons: IPerson[] }>()
 
-const roleDicto = {
-  [ePersonRole.ADMIN]: 'Adminstrateur',
-  [ePersonRole.MANAGER]: 'Manageur',
-  [ePersonRole.DECLARANT]: 'Déclarant',
+const roleDictionary = {
+  [ePersonRole.MEMBER_BOARD_DIRECTOR]: 'Conseillers d\'administration',
+  [ePersonRole.MEMBER_ADVISORY_COMMITTEE]: 'Membres du comité consultatif',
+  [ePersonRole.FUND_EMPLOYEE]: 'Employés',
+  [ePersonRole.NOT_SPECIFIED]: 'Autres',
 }
+const roleDictionaryKey = Object.keys(roleDictionary)
 type TPersonOrganisme = IPerson & { fullName: string }
 type TPersonByRole = {
   role: string,
@@ -21,9 +22,13 @@ type TPersonByRole = {
 }
 
 const personsByRoles = computed<TPersonByRole[]>(() =>
-  personRoles.map(role => ({
-    role: roleDicto[role],
-    persons: props.persons.filter(p => p.role === role)
+  Object.entries(roleDictionary).map(([roleKey, roleValue]) => ({
+    role: roleValue,
+    persons: props.persons.filter(p => (
+      (p.role === roleKey)
+      || (roleKey === ePersonRole.NOT_SPECIFIED
+      && !roleDictionaryKey.includes(p.role))),
+    )
       .map(person => ({
         ...person,
         fullName: `${person.firstName} ${person.lastName}`,
