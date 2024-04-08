@@ -3,7 +3,6 @@ import { PersonRoleKey } from "./person-role.enums";
 
 export interface IPerson extends IPersonBase{
   role?: PersonRoleKey,
-  isFondateur?: Boolean,
 }
 
 export interface IPersonBase {
@@ -18,5 +17,6 @@ export interface IPersonBase {
   nationality: string,
   bornAt: Date,
   bornPlace: string,
+  isFounder: boolean,
   address: IAddress,
 }

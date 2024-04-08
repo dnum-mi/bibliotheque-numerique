@@ -178,7 +178,7 @@ const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutpu
                 />
               </div>
               <div class="p-t-6">
-                <FicheOrganismePersons :persons="organisme.persons" />
+                <FicheOrganismePersons v-if="organisme.persons" :persons="organisme.persons" />
               </div>
             </DsfrTabContent>
             <DsfrTabContent
