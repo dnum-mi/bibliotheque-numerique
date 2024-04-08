@@ -28,7 +28,7 @@ const personsByRoles = computed<TPersonByRole[]>(() =>
     role: roleValue,
     persons: props.persons.filter(p => (
       roleKey === creatorRoleKey
-        ? p.isFondateur
+        ? p.isFounder
         : (p.role === roleKey)
         || (roleKey === ePersonRole.NOT_SPECIFIED
         && !(p.role && roleDictionaryKey.includes(p.role)))

@@ -3,7 +3,6 @@ import { IPersonBase } from "./person-interface"
 
 export interface IPersonRnf {
   roles: string[],
-  isFondateur: boolean,
   person: IPersonBase,
 }
 
