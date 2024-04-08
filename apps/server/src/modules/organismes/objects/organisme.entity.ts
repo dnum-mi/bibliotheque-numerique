@@ -14,6 +14,7 @@ import {
   OrganismeTypeKey,
   eState,
   StateKey,
+  IPerson,
 } from '@biblio-num/shared'
 import { File } from '@/modules/files/objects/entities/file.entity'
 
@@ -174,4 +175,10 @@ export class Organisme extends BaseEntity implements IOrganisme {
   @OneToMany(() => File, (file) => file)
   @JoinColumn()
   files?: File[]
+
+  @Column({
+    type: 'jsonb',
+    nullable: true,
+  })
+  persons: IPerson[]
 }
