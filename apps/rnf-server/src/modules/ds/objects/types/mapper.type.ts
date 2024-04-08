@@ -5,8 +5,8 @@ import { InfoPersonInFoundationDto } from '@/modules/foundation/objects/dto/info
 export type Mapper =
   Record<keyof CreateFoundationDto,
     (champs?: Champ | PieceJustificativeChamp | AddressChamp | DateChamp) =>
-      Record<string, string | number | null> | string | Date | null>
+      Record<string, string | number | null> | string | Date | boolean | null>
   &
   Record<keyof InfoPersonInFoundationDto,
     (champs?: Champ | PieceJustificativeChamp | AddressChamp | DateChamp) =>
-      Record<string, string | number | null> | string | Date | null>
+      Record<string, string | number | null> | string | Date | boolean | null>

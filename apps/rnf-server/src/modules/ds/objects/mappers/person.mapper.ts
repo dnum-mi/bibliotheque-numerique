@@ -11,6 +11,7 @@ export const personMapper: PersonMapper = {
   personProfession: 'profession',
   personAddress: 'address',
   personPhone: 'phone',
+  personIsFounder: 'isFounder',
   personRole: 'role',
   personAdministrator: 'administrator',
 }

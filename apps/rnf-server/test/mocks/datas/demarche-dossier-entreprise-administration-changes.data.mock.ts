@@ -1,6 +1,7 @@
 export const demarcheDossierEntrepriseAdministrationChangesRnfId = '042-FE-000002-00'
 export const demarcheDossierEntrepriseAdministrationChangesNewTitle = 'Un super titre'
 export const demarcheDossierEntrepriseAdministrationChangesAdminFirstName = 'Pierre'
+export const demarcheDossierEntrepriseAdministrationChangesAdminisFounder = true
 
 export const demarcheDossierEntrepriseAdministrationChangesDataMock = {
   demarche: {
@@ -253,13 +254,13 @@ export const demarcheDossierEntrepriseAdministrationChangesDataMock = {
                       id: 'Q2hhbXAtMTYwMnwwMUhURkM0RDY5RTRHSlkxWVBaQkYwOEVERg==',
                       __typename: 'CheckboxChamp',
                       label: 'Fondateur',
-                      stringValue: 'true',
+                      stringValue: demarcheDossierEntrepriseAdministrationChangesAdminisFounder.toString(),
                       checked: true,
                       champDescriptor: {
                         id: 'Q2hhbXAtMTYwMnwwMUhURkM0RDY5RTRHSlkxWVBaQkYwOEVERg==',
                         type: 'checkbox',
                         label: 'Fondateur',
-                        description: '',
+                        description: '<!-- #rnf-person-is-founder-rnf# -->',
                         required: true,
                         __typename: 'CheckboxChampDescriptor',
                         champDescriptors: null,
@@ -476,13 +477,13 @@ export const demarcheDossierEntrepriseAdministrationChangesDataMock = {
                       id: 'Q2hhbXAtMTYwMnwwMUhURkM2UDlFQVc0UzhBRldKNjhISEpFQQ==',
                       __typename: 'CheckboxChamp',
                       label: 'Fondateur',
-                      stringValue: 'false',
-                      checked: false,
+                      stringValue: demarcheDossierEntrepriseAdministrationChangesAdminisFounder.toString(),
+                      checked: true,
                       champDescriptor: {
                         id: 'Q2hhbXAtMTYwMnwwMUhURkM2UDlFQVc0UzhBRldKNjhISEpFQQ==',
                         type: 'checkbox',
                         label: 'Fondateur',
-                        description: '',
+                        description: '<!-- #rnf-person-is-founder-rnf# -->',
                         required: true,
                         __typename: 'CheckboxChampDescriptor',
                         champDescriptors: null,

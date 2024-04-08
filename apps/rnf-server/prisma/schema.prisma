@@ -105,6 +105,7 @@ model Person {
   nationality String
   bornAt      DateTime
   bornPlace   String
+  isFounder  Boolean  @default(false)
 
   address   Address @relation(fields: [addressId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   addressId Int
@@ -180,6 +181,7 @@ model DSConfiguration {
   fieldRegexPersonRole             String   @default("#rnf-person-role-rnf#")
   fieldRegexAdministator            String   @default("#rnf-administrateur-rnf#")
   fieldRegexFiscalEndDate           String   @default("#rnf-date-fin-exercice-rnf#")
+  fieldRegexPersonIsFounder         String   @default("#rnf-person-is-founder-rnf#")
   dsDemarcheFDDAdministrationChangesId Int @default(52)
   dsDemarcheFEAdministrationChangesId  Int @default(55)
 }
