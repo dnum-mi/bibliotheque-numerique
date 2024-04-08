@@ -11,6 +11,8 @@ import {
   demarcheDossierEntrepriseDissolutionRnfId,
 } from '../../mocks/datas/demarche-dossier-entreprise-dissolution.mock'
 import {
+  demarcheDossierEntrepriseAdministrationChangesAdminFirstName,
+  demarcheDossierEntrepriseAdministrationChangesAdminisFounder,
   demarcheDossierEntrepriseAdministrationChangesRnfId,
 } from '../../mocks/datas/demarche-dossier-entreprise-administration-changes.data.mock'
 
@@ -159,9 +161,24 @@ describe('Ds Controller (e2e)', () => {
           .expect(200)
         await prisma.foundation.findFirst({
           where: { rnfId },
-          include: { persons: true },
+          include: {
+            persons: {
+              select: {
+                person: {
+                  select: {
+                    firstName: true,
+                    isFounder: true,
+                  },
+                },
+              },
+            },
+          },
         }).then((f) => {
           expect(f?.persons).toHaveLength(2)
+          expect(f?.persons[0].person.firstName).toEqual(demarcheDossierEntrepriseAdministrationChangesAdminFirstName)
+          expect(f?.persons[1].person.firstName).toEqual(demarcheDossierEntrepriseAdministrationChangesAdminFirstName)
+          expect(f?.persons[1].person.isFounder).toEqual(demarcheDossierEntrepriseAdministrationChangesAdminisFounder)
+          expect(f?.persons[0].person.isFounder).toEqual(demarcheDossierEntrepriseAdministrationChangesAdminisFounder)
         })
       })
     })

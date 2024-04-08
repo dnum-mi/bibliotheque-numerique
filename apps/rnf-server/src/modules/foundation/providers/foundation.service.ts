@@ -185,6 +185,7 @@ export class FoundationService extends BaseEntityService {
                 nationality: personInFoundation.person.nationality,
                 profession: personInFoundation.person.profession,
                 phone: personInFoundation.person.phone,
+                isFounder: personInFoundation.person.isFounder,
                 email: '',
                 address: {
                   create: personInFoundation.person.address,

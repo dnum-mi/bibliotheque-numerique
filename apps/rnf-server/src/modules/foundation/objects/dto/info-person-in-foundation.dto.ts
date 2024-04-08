@@ -1,4 +1,4 @@
-import { IsDate, IsString, ValidateNested } from 'class-validator'
+import { IsBoolean, IsDate, IsString, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
 import { CreateAddressDto } from '@/shared/objects/address/create-address.dto'
 
@@ -42,6 +42,10 @@ export class InfoPersonInFoundationDto {
   @ValidateNested()
   @IsString()
   personPhone?: string
+
+  @ValidateNested()
+  @IsBoolean()
+  personIsFounder?: boolean
 
   @ValidateNested()
   @IsString()

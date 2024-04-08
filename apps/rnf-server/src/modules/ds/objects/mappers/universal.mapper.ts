@@ -12,6 +12,9 @@ export const stringValue = (ch?: Champ | CustomChamp) =>
 export const dateValue = (ch?: DateChamp) =>
   ch?.date ? new Date(ch.date as string) : null
 
+export const booleanValue = (ch?: Champ | CustomChamp) =>
+  ch?.stringValue === 'true' ?? false
+
 export const addressValue = (ch?: AddressChamp) => {
   if (!ch || ch.__typename !== 'AddressChamp' || !ch.address) {
     return null
@@ -63,6 +66,7 @@ export const universalMapper: Mapper = {
   personProfession: stringValue,
   personAddress: addressValue,
   personPhone: stringValue,
+  personIsFounder: booleanValue,
   personRole: stringValue,
   personAdministrator: stringValue,
   fiscalEndDateAt: dateValue,
