@@ -43,6 +43,7 @@ declare module 'vue' {
     DsfrTabContent: typeof import('@gouvminint/vue-dsfr')['DsfrTabContent']
     DsfrTable: typeof import('@gouvminint/vue-dsfr')['DsfrTable']
     DsfrTableCell: typeof import('@gouvminint/vue-dsfr')['DsfrTableCell']
+    DsfrTableHeader: typeof import('@gouvminint/vue-dsfr')['DsfrTableHeader']
     DsfrTabs: typeof import('@gouvminint/vue-dsfr')['DsfrTabs']
     DsfrTag: typeof import('@gouvminint/vue-dsfr')['DsfrTag']
     DsfrTags: typeof import('@gouvminint/vue-dsfr')['DsfrTags']
