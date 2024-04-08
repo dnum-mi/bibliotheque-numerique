@@ -9,9 +9,12 @@ import { RnaService } from '@/modules/organismes/providers/rna.service'
 
 import {
   IOrganisme,
+  IPerson,
+  IPersonRnf,
   IRnaOutput,
   IRnfOutput,
   OrganismeTypeKey,
+  PersonRoleKey,
   eOrganismeType,
   eState,
   iRnaDocument,
@@ -81,6 +84,15 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     this.logger.verbose(`updateOrganismeFromRnf ${idRnf}`)
     const __extractAddressField = (field: string): string =>
       raw.address[field] || ''
+
+    const formatPerson = (rawPerson:IPersonRnf):IPerson => {
+      const role = (rawPerson.roles && rawPerson.roles[0]) as PersonRoleKey || null
+      return {
+        ...rawPerson.person,
+        role,
+      } as IPerson
+    }
+
     await this.repo.update(
       { idRnf },
       {
@@ -111,6 +123,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
         dateDissolution: raw.dissolvedAt,
         fiscalEndDateAt: raw.fiscalEndDateAt,
         rnfJson: raw,
+        persons: raw.persons && raw.persons.length ? raw.persons.map(formatPerson) : [],
       },
     )
   }
