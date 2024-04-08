@@ -353,7 +353,7 @@ export class FoundationService extends BaseEntityService {
         },
       }
       : undefined
-    const cascadeCreatePersons = this._cascadeCreatePersons(dto as CreateFoundationDto)
+    const cascadeUpdatePersons = this._cascadeCreatePersons(dto as CreateFoundationDto)
 
     delete dto.personInFoundationToCreate
 
@@ -365,7 +365,7 @@ export class FoundationService extends BaseEntityService {
         address: {
           update: dto.address,
         },
-        ...cascadeCreatePersons,
+        ...cascadeUpdatePersons,
         ...cascadeUpdateFile,
       },
     })
@@ -394,7 +394,7 @@ export class FoundationService extends BaseEntityService {
     dsDemarcheId: number,
     changeType: string,
   ) {
-    this.logger.verbose('_lookForFoundationAdministrationChanges')
+    this.logger.verbose('_lookForFoundationChange')
     this.logger.log(`Checking for: ${name}`)
 
     const dsDemarche: IDsApiClientDemarche = await this.dsService.getOneDemarcheWithDossier(
