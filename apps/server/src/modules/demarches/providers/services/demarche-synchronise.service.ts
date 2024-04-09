@@ -25,7 +25,7 @@ import {
 import {
   FieldSource,
   FieldSourceKeys,
-  type IdentificationDemarcheKeys,
+  type IdentificationDemarcheKey,
 } from '@biblio-num/shared'
 
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
@@ -72,7 +72,7 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
   private _generateMappingColumns(
     dsDemarche: Partial<TDemarche>,
     originalMappingColumns: MappingColumn[] = [],
-    identification?: IdentificationDemarcheKeys,
+    identification?: IdentificationDemarcheKey,
   ): MappingColumn[] {
     this.logger.verbose('_generateMappingColumns')
     const revision = dsDemarche.publishedRevision ?? dsDemarche.activeRevision
@@ -127,7 +127,7 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
 
   public async createAndSynchronise(
     dsId: number,
-    identification: IdentificationDemarcheKeys | undefined,
+    identification: IdentificationDemarcheKey | undefined,
     types: OrganismeTypeKey[] | undefined,
   ): Promise<void> {
     this.logger.verbose('createAndSynchronise')

@@ -390,5 +390,71 @@ describe('Organismes (e2e)', () => {
           ])
         })
     })
+
+    it('Should filter correctly missingDeclarationYears in pagination 1', async () => {
+      await request(app.getHttpServer())
+        .post('/organismes/list')
+        .set('Cookie', [cookies.instructor])
+        .send({
+          columns: ['title', 'missingDeclarationYears'],
+          filters: {
+            missingDeclarationYears: {
+              filterType: 'numbers',
+              condition1: {
+                includeEmpty: true,
+                filter: [],
+              },
+            },
+          },
+        })
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.total).toEqual(7)
+        })
+    })
+
+    it('Should filter correctly missingDeclarationYears in pagination 2', async () => {
+      await request(app.getHttpServer())
+        .post('/organismes/list')
+        .set('Cookie', [cookies.instructor])
+        .send({
+          columns: ['title', 'missingDeclarationYears'],
+          filters: {
+            missingDeclarationYears: {
+              filterType: 'numbers',
+              condition1: {
+                includeEmpty: true,
+                filter: [2020],
+              },
+            },
+          },
+        })
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.total).toEqual(9)
+        })
+    })
+
+    it('Should filter correctly missingDeclarationYears in pagination 3', async () => {
+      await request(app.getHttpServer())
+        .post('/organismes/list')
+        .set('Cookie', [cookies.instructor])
+        .send({
+          columns: ['title', 'missingDeclarationYears'],
+          filters: {
+            missingDeclarationYears: {
+              filterType: 'numbers',
+              condition1: {
+                includeEmpty: false,
+                filter: [2023],
+              },
+            },
+          },
+        })
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.total).toEqual(2)
+        })
+    })
   })
 })

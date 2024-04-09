@@ -11,14 +11,22 @@ import {
   DateFilterConditionDto,
   DateFilterConditions,
   DateFilterConditionsKeys,
-  EnumFilterConditionDto, FilterDateDto,
-  FilterDto, FilterEnumDto, FilterNumberDto, FilterTextDto,
+  EnumFilterConditionDto,
+  FilterDateDto,
+  FilterDto,
+  FilterEnumDto,
+  FilterNumberDto,
+  FilterTextDto,
   NumberFilterConditionDto,
   NumberFilterConditions,
   TextFilterConditionDto,
   TextFilterConditions,
 } from '@/shared/pagination/filters'
 import { validate } from 'class-validator'
+import {
+  FilterNumbersDto,
+  NumbersFilterConditionDto,
+} from '@/shared/pagination/filters/numbers.filter.dto'
 
 type filterFactory = (
   key: string,
@@ -26,7 +34,8 @@ type filterFactory = (
     | TextFilterConditionDto
     | DateFilterConditionDto
     | NumberFilterConditionDto
-    | EnumFilterConditionDto,
+    | EnumFilterConditionDto
+    | NumbersFilterConditionDto,
   isArray: boolean,
   prefix?: string,
 ) => string
@@ -51,16 +60,18 @@ const _isFilterConsistent = async (
           return __common(FilterEnumDto, key)
         case FieldType.date:
           return __common(FilterDateDto, key)
+        case FieldType.numbers:
+          return __common(FilterNumbersDto, key)
         default:
           return false
         }
       }),
-    ).then(tab => tab.reduce((a, b) => a && b))
+    ).then((tab) => tab.reduce((a, b) => a && b))
     : true
 }
 
 const _manualFilterValueEscapingMechanism = (str: string): string => {
-  return str ? str.replace("'", "''") : (str === null ? '' : str)
+  return str ? str.replace("'", "''") : str === null ? '' : str
 }
 
 const _adaptKeyForArray = (
@@ -205,6 +216,26 @@ const _buildOneNumberFilter = (
 }
 //#endregion
 
+//#region NUMBERS FILTER
+const _buildOneNumbersFilter = (
+  key: string,
+  filter: NumbersFilterConditionDto,
+  isArray = false,
+  prefix?: string,
+): string => {
+  key = _adaptKeyForArray(key, isArray, prefix)
+  if (isArray) {
+    throw new Error('Array of numbers is not supported yet for array keys')
+  }
+  const numbers = filter.filter.filter((n) => !isNaN(n))
+  return `(${numbers.map((n) => `${key} @> '${n}'`).join(' OR ')}${
+    filter.includeEmpty
+      ? `${numbers.length ? ' OR ' : ''}${key} = '[]'`
+      : ''
+  })`
+}
+//#endregion
+
 //#region ENUM FILTER
 const _buildOneEnumFilter = (
   key: string,
@@ -236,6 +267,9 @@ export const buildOneFilter = (
     break
   case FieldType.enum:
     filterFactory = _buildOneEnumFilter
+    break
+  case FieldType.numbers:
+    filterFactory = _buildOneNumbersFilter
     break
   default:
     filterFactory = _buildOneTextFilter

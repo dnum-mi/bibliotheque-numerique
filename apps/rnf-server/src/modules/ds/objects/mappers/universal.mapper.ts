@@ -1,13 +1,13 @@
 import {
   Champ,
-  CustomChamp, DateChamp,
+  CustomChamp,
+  DateChamp,
   PieceJustificativeChamp,
 } from '@dnum-mi/ds-api-client'
 import { AddressChamp } from '@dnum-mi/ds-api-client/dist/@types/types'
 import { Mapper } from '@/modules/ds/objects/types/mapper.type'
 
-export const stringValue = (ch?: Champ | CustomChamp) =>
-  ch?.stringValue ?? null
+export const stringValue = (ch?: Champ | CustomChamp) => ch?.stringValue ?? null
 
 export const dateValue = (ch?: DateChamp) =>
   ch?.date ? new Date(ch.date as string) : null
@@ -42,6 +42,13 @@ export const universalMapper: Mapper = {
   phone: stringValue,
   type: stringValue,
   address: addressValue,
+  declarationYears: (champ) =>
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    (champ as unknown as { rows: { declarationYears: Champ }[] })?.rows
+      .map((row: { declarationYears: Champ }) =>
+        parseInt(row.declarationYears.stringValue!, 10),
+      )
+      .filter((y) => !isNaN(y)) ?? [],
   personInFoundationToCreate: () => null,
   status: (champ?: PieceJustificativeChamp) => {
     if (!champ?.file || champ.__typename !== 'PieceJustificativeChamp') {

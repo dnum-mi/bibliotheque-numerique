@@ -6,6 +6,8 @@ const bnConfigurations = [
   'FE_EXCEL_AMOUNT_CHAMP_ID',
   'FILE_MAXIMUM_SIZE',
   'LAST_ORGANISM_SYNC_AT',
+  'DDC_FIRST_CONTROL_YEAR',
+  'DDC_MONTH_BEFORE_MISSING'
 ] as const
 
 export type BnConfigurationKey = typeof bnConfigurations[number]

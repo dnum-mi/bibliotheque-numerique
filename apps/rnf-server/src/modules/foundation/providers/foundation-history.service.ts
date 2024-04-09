@@ -37,6 +37,8 @@ export class FoundationHistoryService extends BaseEntityService {
         persons: JSON.stringify(fe.persons),
         status: JSON.stringify(fe.status),
         historyNumber: await this.howManyVersion(fe.rnfId),
+        declarationYears: fe.declarationYears,
+        fiscalEndDateAt: fe.fiscalEndDateAt,
       },
     })
   }

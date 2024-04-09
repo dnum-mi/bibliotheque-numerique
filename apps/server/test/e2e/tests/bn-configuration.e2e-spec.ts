@@ -23,9 +23,7 @@ describe('bn-configurations (e2e)', () => {
 
   describe('GET /bn-configurations', () => {
     it('Should return error 401', async () => {
-      await request(app.getHttpServer())
-        .get('/bn-configurations')
-        .expect(401)
+      await request(app.getHttpServer()).get('/bn-configurations').expect(401)
     })
 
     it('Should return error 403 for instructor', async () => {
@@ -94,6 +92,22 @@ describe('bn-configurations (e2e)', () => {
           keyName: eBnConfiguration.LAST_ORGANISM_SYNC_AT,
           stringValue: expect.any(String),
           valueType: 'date',
+        },
+        {
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String),
+          id: 6,
+          keyName: eBnConfiguration.DDC_FIRST_CONTROL_YEAR,
+          stringValue: expect.any(String),
+          valueType: 'number',
+        },
+        {
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String),
+          id: 7,
+          keyName: eBnConfiguration.DDC_MONTH_BEFORE_MISSING,
+          stringValue: expect.any(String),
+          valueType: 'number',
         },
       ])
     })
@@ -187,13 +201,17 @@ describe('bn-configurations (e2e)', () => {
     })
 
     it('Should create configuration', async () => {
-      await request(app.getHttpServer()).delete('/bn-configurations/1').set('Cookie', [cookies.sudo])
+      await request(app.getHttpServer())
+        .delete('/bn-configurations/1')
+        .set('Cookie', [cookies.sudo])
       const response = await request(app.getHttpServer())
         .post('/bn-configurations')
         .set('Cookie', [cookies.sudo])
         .send({ keyName, stringValue, valueType })
         .expect(201)
-      expect(response.body).toEqual({ message: `Configuration ${keyName} has been created` })
+      expect(response.body).toEqual({
+        message: `Configuration ${keyName} has been created`,
+      })
     })
   })
 
@@ -239,7 +257,9 @@ describe('bn-configurations (e2e)', () => {
         .set('Cookie', [cookies.sudo])
         .send({ stringValue, valueType })
         .expect(200)
-      expect(response.body).toEqual({ message: `Configuration ${id} has been updated` })
+      expect(response.body).toEqual({
+        message: `Configuration ${id} has been updated`,
+      })
     })
   })
 
@@ -278,7 +298,9 @@ describe('bn-configurations (e2e)', () => {
         .delete(`/bn-configurations/${id}`)
         .set('Cookie', [cookies.sudo])
         .expect(200)
-      expect(response.body).toEqual({ message: `Configuration ${id} has been deleted` })
+      expect(response.body).toEqual({
+        message: `Configuration ${id} has been deleted`,
+      })
     })
   })
 })

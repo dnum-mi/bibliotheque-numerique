@@ -108,7 +108,7 @@ const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutpu
           class="mr-4"
           big
         />
-        <span class="fr-text--lead fr-text--bold">{{ organisme.idRna }} -</span>
+        <span class="fr-text--lead fr-text--bold">{{ organisme.idRna || organisme.idRnf }} - </span>
         <span class="fr-text--lead">{{ organisme.title }}</span>
       </template>
       <template #sub-title>

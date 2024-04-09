@@ -5,8 +5,8 @@ import { Demarche as TDemarche } from '@dnum-mi/ds-api-client/dist/@types/genera
 import type { OrganismeTypeKey } from '@biblio-num/shared'
 import {
   IDemarche,
-  IdentificationDemarche,
-  IdentificationDemarcheKeys,
+  eIdentificationDemarche,
+  IdentificationDemarcheKey,
 } from '@biblio-num/shared'
 import { CustomFilter } from '../../../custom-filters/objects/entities/custom-filter.entity'
 import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
@@ -24,10 +24,10 @@ export class Demarche extends BaseEntity implements IDemarche {
 
   @Column({
     type: 'enum',
-    enum: IdentificationDemarche,
+    enum: eIdentificationDemarche,
     nullable: true,
   })
-  identification: IdentificationDemarcheKeys
+  identification: IdentificationDemarcheKey
 
   @Column({ type: 'jsonb', default: '[]' })
   mappingColumns: MappingColumn[]

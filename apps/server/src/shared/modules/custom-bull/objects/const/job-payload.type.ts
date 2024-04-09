@@ -22,6 +22,7 @@ export type SyncOneOrganismeJobPayload = {
 
 export type SyncOneRnfOrganismeJobPayload = SyncOneOrganismeJobPayload & {
   rnf: string
+  firstTime?: boolean
 }
 
 export type SyncOneRnaOrganismeJobPayload = SyncOneOrganismeJobPayload & {

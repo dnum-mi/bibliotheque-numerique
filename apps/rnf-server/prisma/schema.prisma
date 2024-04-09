@@ -24,25 +24,26 @@ enum FoundationRole {
 
 // ======================================== Foundation =====================================
 model Foundation {
-  id          Int                  @id @default(autoincrement())
-  createdAt   DateTime             @default(now())
-  updatedAt   DateTime             @updatedAt
-  rnfId       String               @unique
-  type        FoundationType       @default(FDD)
+  id          Int            @id @default(autoincrement())
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  rnfId       String         @unique
+  type        FoundationType @default(FDD)
   department  String
   title       String
   dissolvedAt DateTime?
   phone       String
   email       String
 
-  //date de fin d'exercice
+  // date de fin d'exercice
   fiscalEndDateAt DateTime?
+  declarationYears Int[]
 
   // relations
-  address     Address              @relation(fields: [addressId], references: [id])
-  addressId   Int
-  persons     PersonInFoundation[]
-  status      FileStorage? @relation("FoundationStatus")
+  address   Address              @relation(fields: [addressId], references: [id])
+  addressId Int
+  persons   PersonInFoundation[]
+  status    FileStorage?         @relation("FoundationStatus")
 }
 
 model FoundationHistory {
@@ -56,8 +57,9 @@ model FoundationHistory {
   title         String
   dissolvedAt   DateTime?
 
-  //date de fin d'exercice
+  // date de fin d'exercice
   fiscalEndDateAt DateTime?
+  declarationYears Int[]
 
   // Contact
   phone String
@@ -139,8 +141,8 @@ model FileStorage {
   byteSize     Int
   mimeType     String
 
-  foundation      Foundation? @relation("FoundationStatus", fields: [foundationId], references: [id])
-  foundationId    Int? @unique
+  foundation   Foundation? @relation("FoundationStatus", fields: [foundationId], references: [id])
+  foundationId Int?        @unique
 }
 
 // ======================================== Ds Confifuation ================================
@@ -167,6 +169,7 @@ model DSConfiguration {
   fieldRegexPerson                  String   @default("#rnf-personne-rnf#")
   fieldRegexRnfId                   String   @default("#rnf-numero-rnf-rnf#")
   fieldRegexStatus                  String   @default("#rnf-status-rnf#")
+  fieldRegexDeclarationYears              String   @default("#rnf-declaration-years-rnf#")
   cronUpdateFrequency               String   @default("0 */5 * * * *")
   fieldRegexPersonQuality           String   @default("#rnf-person-qualite-rnf#")
   fieldRegexPersonCivility          String   @default("#rnf-person-civilite-rnf#")

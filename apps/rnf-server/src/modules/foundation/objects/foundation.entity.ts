@@ -1,5 +1,6 @@
 import { Foundation, FoundationType } from '@prisma/client'
 import {
+  IsArray,
   IsDate,
   IsDefined,
   IsEmail,
@@ -56,6 +57,11 @@ export class FoundationEntity extends BaseEntity implements Foundation {
   @IsOptional()
   @IsDate()
   fiscalEndDateAt: Date | null
+
+  @IsOptional()
+  @IsArray()
+  @IsNumber({}, { each: true })
+  declarationYears: number[]
 
   status?: FileStorageEntity | null
   address?: AddressEntity

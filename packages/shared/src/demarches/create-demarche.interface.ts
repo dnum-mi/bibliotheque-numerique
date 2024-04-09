@@ -1,8 +1,8 @@
 import type { OrganismeTypeKey } from '../organismes'
-import type { IdentificationDemarcheKeys } from './identification-demarches'
+import type { IdentificationDemarcheKey } from './identification-demarches'
 
 export interface ICreateDemarche {
   idDs: number
-  identification: IdentificationDemarcheKeys
+  identification: IdentificationDemarcheKey
   types: OrganismeTypeKey[]
 }
