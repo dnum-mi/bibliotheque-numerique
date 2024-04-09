@@ -179,15 +179,15 @@ export class FoundationService extends BaseEntityService {
           create: dto.personInFoundationToCreate.map((personInFoundation) => ({
             person: {
               create: {
-                lastName: personInFoundation.person.lastName,
-                firstName: personInFoundation.person.firstName,
-                bornAt: personInFoundation.person.bornAt,
-                bornPlace: personInFoundation.person.bornPlace,
-                nationality: personInFoundation.person.nationality,
-                profession: personInFoundation.person.profession,
-                phone: personInFoundation.person.phone,
-                isFounder: personInFoundation.person.isFounder,
-                email: '',
+                lastName: personInFoundation.person.lastName || '',
+                firstName: personInFoundation.person.firstName || '',
+                bornAt: personInFoundation.person.bornAt ?? null,
+                bornPlace: personInFoundation.person.bornPlace || '',
+                nationality: personInFoundation.person.nationality || '',
+                profession: personInFoundation.person.profession || '',
+                phone: personInFoundation.person.phone || '',
+                isFounder: personInFoundation.person.isFounder || false,
+                email: personInFoundation.person.email || '',
                 address: {
                   create: personInFoundation.person.address,
                 },
