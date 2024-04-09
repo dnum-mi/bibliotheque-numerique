@@ -36,7 +36,7 @@ export class PersonEntity extends BaseEntity implements PrismaPerson {
 
   @IsDate()
   @IsDefined()
-  bornAt: Date
+  bornAt: Date | null
 
   @IsString()
   @IsDefined()
