@@ -3,6 +3,7 @@ import type {
   IEnumFilterCondition,
   IFilter,
   INumberFilterCondition,
+  INumbersFilterCondition,
   IPaginated,
   IPagination,
   ISort,
@@ -29,6 +30,11 @@ const _fromAggDateFilterToBackendFilter = (filter: DateFilterModel): IFilter => 
     filterTo: filter.dateTo,
     type: filter.type,
   } as IDateFilterCondition,
+})
+
+const _fromCustomNumbersFilterToBackendFilter = (filter: INumbersFilterCondition): IFilter => ({
+  filterType: 'numbers',
+  condition1: filter,
 })
 
 const _fromAggSetFilterToBackendFilter = (filter: SetFilterModel): IFilter => ({
@@ -95,6 +101,10 @@ export const fromAggToBackendFilter = <T>(filterModel: Record<string, FilterMode
         // multi for now is only used for date
         case value.filterType === 'multi': {
           filters[key] = _fromAggMultiFilterToBackendFilter(value as IMultiFilterModel)
+          break
+        }
+        case value.filterType === 'numbers': {
+          filters[key] = _fromCustomNumbersFilterToBackendFilter(value as IMultiFilterModel)
           break
         }
         case value.filterType === 'text':

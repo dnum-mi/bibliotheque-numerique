@@ -2,16 +2,16 @@ import { IsArray, IsEnum, IsOptional, ValidateIf } from 'class-validator'
 import {
   eOrganismeType,
   OrganismeTypeKey,
-  IdentificationDemarche,
-  IdentificationDemarcheKeys,
+  eIdentificationDemarche,
+  IdentificationDemarcheKey,
   IUpdateDemarche,
 } from '@biblio-num/shared'
 
 export class UpdateDemarcheDto implements IUpdateDemarche {
   @IsOptional()
   @ValidateIf((o) => o.identification !== null)
-  @IsEnum(IdentificationDemarche)
-  identification?: IdentificationDemarcheKeys | null
+  @IsEnum(eIdentificationDemarche)
+  identification?: IdentificationDemarcheKey | null
 
   @IsOptional()
   @ValidateIf((o) => o.types !== null)

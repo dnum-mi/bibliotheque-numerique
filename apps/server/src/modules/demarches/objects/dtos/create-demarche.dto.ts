@@ -2,8 +2,8 @@ import { IsArray, IsEnum, IsNumber, IsOptional } from 'class-validator'
 import {
   eOrganismeType,
   OrganismeTypeKey,
-  IdentificationDemarche,
-  IdentificationDemarcheKeys,
+  eIdentificationDemarche,
+  IdentificationDemarcheKey,
   ICreateDemarche,
 } from '@biblio-num/shared'
 
@@ -12,8 +12,8 @@ export class CreateDemarcheDto implements ICreateDemarche {
   idDs: number
 
   @IsOptional()
-  @IsEnum(IdentificationDemarche)
-  identification: IdentificationDemarcheKeys
+  @IsEnum(eIdentificationDemarche)
+  identification: IdentificationDemarcheKey
 
   @IsOptional()
   @IsEnum(eOrganismeType, { each: true })

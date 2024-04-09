@@ -46,7 +46,7 @@ export class DsMapperService {
   }
 
   mapDossierToDto(rawDossier: DossierWithCustomChamp, mapper?: Mapper): CreateFoundationDto {
-    this.logger.verbose('mapDossierToFoundation')
+    this.logger.verbose('mapDossierToDto')
     if (!rawDossier.champs.length) {
       throw new BadRequestException('Dossier champs is empty.')
     }
@@ -58,10 +58,10 @@ export class DsMapperService {
 
     const champsHash =
       this.findChampsInDossier(rawDossier.champs, this.dsConfigurationService.rnfFieldKeys)
-    const mapperWithOutPerson = this.mapperWithoutPerson(mapper)
+    const mapperWithoutPerson = this.mapperWithoutPerson(mapper)
     const foundationDto: CreateFoundationDto = Object.fromEntries(
-      Object.keys(mapperWithOutPerson)
-        .map((key) => [key, (mapperWithOutPerson)[key](champsHash[key])] as [string, string])
+      Object.keys(mapperWithoutPerson)
+        .map((key) => [key, (mapperWithoutPerson)[key](champsHash[key])] as [string, string])
         .filter(([key, value]) => !!value),
     ) as unknown as CreateFoundationDto
 

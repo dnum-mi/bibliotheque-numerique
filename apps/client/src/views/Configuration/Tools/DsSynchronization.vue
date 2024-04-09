@@ -139,7 +139,7 @@ onMounted(async () => {
         v-model="demarcheIdString"
         type="number"
         label="Démarche"
-        hint="Id de la démarche dans BN"
+        hint="Id de la démarche dans DS"
         label-visible
       />
 
@@ -147,7 +147,7 @@ onMounted(async () => {
         v-model="identification"
         type="text"
         label="Identification"
-        hint="FE (calcul de délai d'instruction) ou null (Supprime la valeur)"
+        hint="FE ou DDC ou null (Supprime la valeur)"
         label-visible
       />
 

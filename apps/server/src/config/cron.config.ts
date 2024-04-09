@@ -6,4 +6,5 @@ export default registerAs('cron', () => ({
   syncAllRnfOrganisme: process.env.CRON_SYNC_RNF_ORGANISME || '* 1 * * * *',
   syncAllRnaOrganisme: process.env.CRON_SYNC_RNA_ORGANISME || '* 1 * * * *',
   computeTimeTracking: process.env.CRON_COMPUTE_TIME_TRACKING || '* 1 * * * *',
+  computeOrganismeDDC: process.env.CRON_COMPUTE_ORGANISME_DDC || '* 2 * * * *',
 }))

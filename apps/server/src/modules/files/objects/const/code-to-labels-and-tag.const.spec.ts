@@ -105,7 +105,7 @@ describe('Field code to label', () => {
 
     const label = labelFactory({
       ['updated-status-at']: { dateValue: new Date('2021-01-01') },
-    } as Record<FieldCodeKey, Field>)
+    } as unknown as Record<FieldCodeKey, Field>)
     expect(tag).toEqual(eFileTag.status)
     expect(label).toBe('01.01.2021_Statuts modifiés')
   })
@@ -117,7 +117,7 @@ describe('Field code to label', () => {
 
     const label = labelFactory({
       ['updated-status-at']: { dateValue: new Date('2021-01-01') },
-    } as Record<FieldCodeKey, Field>)
+    } as unknown as Record<FieldCodeKey, Field>)
     expect(tag).toEqual(eFileTag.pv)
     expect(label).toBe('01.01.2021_PV modification statutaire')
   })
@@ -129,7 +129,7 @@ describe('Field code to label', () => {
 
     const label = labelFactory({
       ['dissolution-at']: { dateValue: new Date('2021-01-01') },
-    } as Record<FieldCodeKey, Field>)
+    } as unknown as Record<FieldCodeKey, Field>)
     expect(tag).toEqual(eFileTag.pv)
     expect(label).toBe('01.01.2021_PV dissolution')
   })
@@ -141,7 +141,7 @@ describe('Field code to label', () => {
 
     const label = labelFactory({
       ['dissolution-at']: { dateValue: new Date('2021-01-01') },
-    } as Record<FieldCodeKey, Field>)
+    } as unknown as Record<FieldCodeKey, Field>)
     expect(tag).toEqual(eFileTag.judgment)
     expect(label).toBe('01.01.2021_Jugement dissolution')
   })
@@ -153,7 +153,7 @@ describe('Field code to label', () => {
 
     const label = labelFactory({
       ['account-year']: { numberValue: 2040 },
-    } as Record<FieldCodeKey, Field>)
+    } as unknown as Record<FieldCodeKey, Field>)
     expect(tag).toEqual(eFileTag.account)
     expect(label).toBe('2040_États financiers certifiés')
   })
@@ -165,7 +165,7 @@ describe('Field code to label', () => {
 
     const label = labelFactory({
       ['account-year']: { numberValue: 2040 },
-    } as Record<FieldCodeKey, Field>)
+    } as unknown as Record<FieldCodeKey, Field>)
     expect(tag).toEqual(eFileTag.account)
     expect(label).toBe('2040_Compte d\'emploi des ressources collectées auprès du public')
   })
@@ -177,7 +177,7 @@ describe('Field code to label', () => {
 
     const label = labelFactory({
       ['account-year']: { numberValue: 2040 },
-    } as Record<FieldCodeKey, Field>)
+    } as unknown as Record<FieldCodeKey, Field>)
     expect(tag).toEqual(eFileTag.account)
     expect(label).toBe('2040_Budget prévisionnel')
   })
@@ -189,7 +189,7 @@ describe('Field code to label', () => {
 
     const label = labelFactory({
       ['account-year']: { numberValue: 2040 },
-    } as Record<FieldCodeKey, Field>)
+    } as unknown as Record<FieldCodeKey, Field>)
     expect(tag).toEqual(eFileTag.account)
     expect(label).toBe('2040_Rapport fondation abritante')
   })
@@ -201,7 +201,7 @@ describe('Field code to label', () => {
 
     const label = labelFactory({
       ['account-year']: { numberValue: 2040 },
-    } as Record<FieldCodeKey, Field>)
+    } as unknown as Record<FieldCodeKey, Field>)
     expect(tag).toEqual(eFileTag.activityReport)
     expect(label).toBe('2040_Rapport d\'activité')
   })
@@ -213,7 +213,7 @@ describe('Field code to label', () => {
 
     const label = labelFactory({
       ['validated-account-at']: { dateValue: new Date('2021-01-01') },
-    } as Record<FieldCodeKey, Field>)
+    } as unknown as Record<FieldCodeKey, Field>)
     expect(tag).toEqual(eFileTag.pv)
     expect(label).toBe('01.01.2021_PV approbation comptes')
   })
@@ -225,7 +225,7 @@ describe('Field code to label', () => {
 
     const label = labelFactory({
       ['account-year']: { numberValue: 2040 },
-    } as Record<FieldCodeKey, Field>)
+    } as unknown as Record<FieldCodeKey, Field>)
     expect(tag).toEqual(eFileTag.account)
     expect(label).toBe('2040_État financiers')
   })
@@ -237,7 +237,7 @@ describe('Field code to label', () => {
 
     const label = labelFactory({
       ['account-year']: { numberValue: 2040 },
-    } as Record<FieldCodeKey, Field>)
+    } as unknown as Record<FieldCodeKey, Field>)
     expect(tag).toEqual(eFileTag.account)
     expect(label).toBe('2040_État financiers certifiés')
   })
@@ -249,7 +249,7 @@ describe('Field code to label', () => {
 
     const label = labelFactory({
       ['account-year']: { numberValue: 2040 },
-    } as Record<FieldCodeKey, Field>)
+    } as unknown as Record<FieldCodeKey, Field>)
     expect(tag).toEqual(eFileTag.account)
     expect(label).toBe('2040_Financements étrangers')
   })

@@ -1,10 +1,10 @@
 
 import {
-  IdentificationDemarche,
+  eIdentificationDemarche,
   FieldSource,
   FieldType,
   FormatFunctionRef,
-  IdentificationDemarcheKeys,
+  IdentificationDemarcheKey,
 } from '@biblio-num/shared'
 
 // eslint-disable-next-line max-len
@@ -83,15 +83,15 @@ export const fixFieldsDemarcheFE: MappingColumn[] = [
 ]
 
 export const fixFieldsByIdentificationDictionary = {
-  [IdentificationDemarche.FE]: fixFieldsDemarcheFE,
+  [eIdentificationDemarche.FE]: fixFieldsDemarcheFE,
 }
 
 export const getFixFieldsByIdentification = (
-  identification?: IdentificationDemarcheKeys,
+  identification?: IdentificationDemarcheKey,
 ): MappingColumn[] => [
   ...fixFields,
   ...fixFieldsDemandeur,
-  ...(identification === IdentificationDemarche.FE
+  ...(identification === eIdentificationDemarche.FE
     ? fixFieldsByIdentificationDictionary[identification]
     : []),
 ]

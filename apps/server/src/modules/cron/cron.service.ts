@@ -44,6 +44,10 @@ export class CronService implements OnApplicationBootstrap {
         name: eJobName.ComputeTimeTracking,
         cron: this.config.get('cron').computeTimeTracking,
       },
+      {
+        name: eJobName.ComputeOrganismeDDC,
+        cron: this.config.get('cron').computeOrganismeDDC,
+      },
     ]
   }
 
