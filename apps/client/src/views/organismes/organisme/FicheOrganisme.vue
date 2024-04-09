@@ -6,7 +6,6 @@ import { dateToStringFr, copyCurrentUrlInClipboard } from '@/utils'
 import LayoutFiche from '@/components/Layout/LayoutFiche.vue'
 import ListeDossier from './ListeDossier.vue'
 import OrganismeBadge from '@/components/Badges/organisme/OrganismeBadge.vue'
-import InfoContact from '@/components/InfoContact.vue'
 import { type OrganismeIdType, useOrganismeStore, useUserStore } from '@/stores'
 import AttachedFileList from '@/components/ag-grid/files/AttachedFileList.vue'
 import type { IFileOutput, IPagination, IRole, FileTagKey } from '@biblio-num/shared'
@@ -95,10 +94,10 @@ const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutpu
   </div>
   <div
     v-if="organisme && !isLoading"
-    class="flex  flex-grow  gap-2  h-full  overflow-auto"
+    class="flex flex-grow gap-2 h-full overflow-auto"
   >
     <LayoutFiche
-      class="flex-basis-[60%]  overflow-auto"
+      class="flex-basis-[60%] overflow-auto"
       title-bg-color="var(--grey-200-850)"
       title-fg-color="var(--text-inverted-grey)"
     >
@@ -110,37 +109,6 @@ const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutpu
         />
         <span class="fr-text--lead fr-text--bold">{{ organisme.idRna || organisme.idRnf }} - </span>
         <span class="fr-text--lead">{{ organisme.title }}</span>
-      </template>
-      <template #sub-title>
-        <div class="flex gap-4">
-          <div class="flex-grow">
-            <label class="bn-fiche-sub-title--label">SIÈGE SOCIAL</label>
-            <span class="bn-fiche-sub-title--text">{{ organisme.addressLabel }}</span>
-          </div>
-          <div class="flex-grow">
-            <label class="bn-fiche-sub-title--label">PRÉFECTURE</label>
-            <span class="bn-fiche-sub-title--text">{{ prefecture }}</span>
-          </div>
-          <div>
-            <label class="bn-fiche-sub-title--label">CRÉATION</label>
-            <span class="bn-fiche-sub-title--text">{{ creation }}</span>
-          </div>
-          <div>
-            <label class="bn-fiche-sub-title--label">ALERTE</label>
-            <DsfrBadge
-              no-icon
-              small
-              label="OK"
-            />
-          </div>
-          <div
-            v-if="dissolution"
-            class=""
-          >
-            <label class="bn-fiche-sub-title--label">DISSOLUTION</label>
-            <span class="bn-fiche-sub-title--text">{{ dissolution }}</span>
-          </div>
-        </div>
       </template>
       <template #content>
         <div class="w-full h-full pl-4">
@@ -159,26 +127,49 @@ const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutpu
               :asc="ascendant"
             >
               <div class="flex flex-col gap-6">
-                <div class="flex flex-row gap-2 items-center">
-                  <div class="fr-mr-2w bn-icon--blue-france-main-525">
-                    <span
-                      class="fr-icon-question-answer-line"
-                      aria-hidden="true"
+                <div class="flex gap-4">
+                  <div class="flex-grow">
+                    <label class="bn-fiche-sub-title--label">SIÈGE SOCIAL</label>
+                    <span class="bn-fiche-sub-title--text">{{ organisme.addressLabel }}</span>
+                  </div>
+                  <div class="flex-grow">
+                    <label class="bn-fiche-sub-title--label">TÉLÉPHONE</label>
+                    <span class="bn-fiche-sub-title--text">{{ organisme.phoneNumber }}</span>
+                  </div>
+                  <div class="flex-grow">
+                    <label class="bn-fiche-sub-title--label">COURRIEL</label>
+                    <span class="bn-fiche-sub-title--text">{{ organisme.email }}</span>
+                  </div>
+                  <div class="flex-grow">
+                    <label class="bn-fiche-sub-title--label">PRÉFECTURE</label>
+                    <span class="bn-fiche-sub-title--text">{{ prefecture }}</span>
+                  </div>
+                  <div class="flex-grow">
+                    <label class="bn-fiche-sub-title--label">CRÉATION</label>
+                    <span class="bn-fiche-sub-title--text">{{ creation }}</span>
+                  </div>
+                  <div>
+                    <label class="bn-fiche-sub-title--label">ALERTE</label>
+                    <DsfrBadge
+                      no-icon
+                      small
+                      label="OK"
                     />
                   </div>
-
-                  <span class="fr-text fr-text--bold">Adresse et contacts</span>
+                  <div
+                    v-if="dissolution"
+                    class=""
+                  >
+                    <label class="bn-fiche-sub-title--label">DISSOLUTION</label>
+                    <span class="bn-fiche-sub-title--text">{{ dissolution }}</span>
+                  </div>
                 </div>
-
-                <InfoContact
-                  :name="organisme.title"
-                  :info="organisme.addressLabel ?? ''"
-                  :email="organisme.email ?? ''"
-                  :phone="organisme.phoneNumber ?? ''"
-                />
               </div>
               <div class="p-t-6">
-                <FicheOrganismePersons v-if="organisme.persons" :persons="organisme.persons" />
+                <FicheOrganismePersons
+                  v-if="organisme.persons"
+                  :persons="organisme.persons"
+                />
               </div>
             </DsfrTabContent>
             <DsfrTabContent
@@ -203,7 +194,7 @@ const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutpu
       <template #footer>
         <DsfrButton
           :style="{ width: '50%' }"
-          class="flex  justify-center"
+          class="flex justify-center"
           label="Copier le lien"
           icon="ri-links-line"
           icon-right
@@ -213,7 +204,7 @@ const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutpu
       </template>
     </LayoutFiche>
 
-    <div class="flex-basis-[40%]  overflow-auto  flex  flex-col  fr-pr-2w">
+    <div class="flex-basis-[40%] overflow-auto flex flex-col fr-pr-2w">
       <div class="fr-p-3w flex align-center gap-3">
         <div class="bn-icon--green-archipel">
           <span
