@@ -354,21 +354,30 @@ export class FoundationService extends BaseEntityService {
         },
       }
       : undefined
-    const cascadeUpdatePersons = this._cascadeCreatePersons(dto as CreateFoundationDto)
 
-    delete dto.personInFoundationToCreate
+    return this.prisma.$transaction(async (prisma) => {
+      let cascadeUpdatePersons = {}
+      if (dto.personInFoundationToCreate && dto.personInFoundationToCreate.length > 0) {
+        this.logger.debug('The personInFoundation not empty')
+        cascadeUpdatePersons = this._cascadeCreatePersons(dto as CreateFoundationDto)
+        await prisma.personInFoundation.deleteMany({
+          where: { foundationId: foundation.id },
+        })
+      }
 
-    return this.prisma.foundation.update({
-      where: { rnfId },
-      // @ts-expect-error why ?
-      data: {
-        ...dto,
-        address: {
-          update: dto.address,
+      delete dto.personInFoundationToCreate
+      return prisma.foundation.update({
+        where: { rnfId },
+        // @ts-expect-error why ?
+        data: {
+          ...dto,
+          address: {
+            update: dto.address,
+          },
+          ...cascadeUpdatePersons,
+          ...cascadeUpdateFile,
         },
-        ...cascadeUpdatePersons,
-        ...cascadeUpdateFile,
-      },
+      })
     })
   }
 
