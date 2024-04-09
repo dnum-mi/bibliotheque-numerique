@@ -1,5 +1,42 @@
 # Changelog
 
+## [2.9.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.8.1...v2.9.0) (2024-04-09)
+
+
+### Features
+
+* add persons in migration and entity organisme ([b05d0d4](https://github.com/dnum-mi/bibliotheque_numerique/commit/b05d0d4d4424c54e72538864158c7ebd756a64e8))
+* adding decleration years on organisme ([7fcba42](https://github.com/dnum-mi/bibliotheque_numerique/commit/7fcba425b80f272c58f1daabd24f5e5297f8021f))
+* display persons of organisme ([aad1754](https://github.com/dnum-mi/bibliotheque_numerique/commit/aad17542fa25e3af928fc8604dfef5fe6dc9d5ec))
+* interface Organisme Person ([7d0d62a](https://github.com/dnum-mi/bibliotheque_numerique/commit/7d0d62a11d6380f626402c085a40f7b21bf4b47c))
+* rnf, add isfounder in person of foudation ([b303b52](https://github.com/dnum-mi/bibliotheque_numerique/commit/b303b52628f1b262d5cc2f2239dfe22513164907))
+* rnf, add new demarche administration changes for fdd and fe ([8d4631d](https://github.com/dnum-mi/bibliotheque_numerique/commit/8d4631d35fe372c805c23f99d463f621a8241061))
+* rnf, change person by demarche administration changes ([a2bf8ea](https://github.com/dnum-mi/bibliotheque_numerique/commit/a2bf8ea8fa06caffdc2bb19b703347ac9ad77b4f))
+* rnf, update ds-api-client for debug get dossier with champDescriptor ([ec9d45a](https://github.com/dnum-mi/bibliotheque_numerique/commit/ec9d45a2d276f1923468b5499c2ab7353d3bfd79))
+* rnf, update person foudation with new role ([6d4fad8](https://github.com/dnum-mi/bibliotheque_numerique/commit/6d4fad82b07c46f4286a0caf5e04bad8b9877507))
+
+
+### Bug Fixes
+
+* add filter enum for etat delai ([7608320](https://github.com/dnum-mi/bibliotheque_numerique/commit/760832017ac79c340bed2af74bd3c2e9135750e6))
+* add isFondateur and refacto person interface in libShared ([606522c](https://github.com/dnum-mi/bibliotheque_numerique/commit/606522c34c88e55e13bad41d49f8c6a6edefbf93))
+* add new type benificiaire ([a4959cb](https://github.com/dnum-mi/bibliotheque_numerique/commit/a4959cb97131b0cfc0bab5232cd6009b012839ca))
+* create fields instruction-time for dossiers without date instruction ([86dc3e0](https://github.com/dnum-mi/bibliotheque_numerique/commit/86dc3e08b2ac3c4161e18335df9820b96d45e42d))
+* display obsolete due to missing children ([50477b5](https://github.com/dnum-mi/bibliotheque_numerique/commit/50477b5f0c89fe744a0b81f0e8d2891b48260b7a))
+* footer mini ([7fe9c20](https://github.com/dnum-mi/bibliotheque_numerique/commit/7fe9c20f75bcd18f2bc3d665385b4167bf3ff8fe))
+* get organisme with person fron rnf ([dc01558](https://github.com/dnum-mi/bibliotheque_numerique/commit/dc01558b17154db20d4e8f1f005ecad6bd3d30d5))
+* list benificiaires and creators ([c6e05bd](https://github.com/dnum-mi/bibliotheque_numerique/commit/c6e05bd5e85b0de26fdf2ef14fa6f25446dbca71))
+* new wording regarding connection failure ([50d07bc](https://github.com/dnum-mi/bibliotheque_numerique/commit/50d07bc0f27840e43f34fe67d04ad66aeda007e6))
+* order person role of organisme ([c9bce1c](https://github.com/dnum-mi/bibliotheque_numerique/commit/c9bce1cc474d016e18a44db373512f19b3bb0d82))
+* rename isFondateur to isfounder in BN ([fad8851](https://github.com/dnum-mi/bibliotheque_numerique/commit/fad88515546b7af327e42d8c65c537e9b6399dd5))
+* resume redis after test-e2e ([b2444e4](https://github.com/dnum-mi/bibliotheque_numerique/commit/b2444e4e8a1d14dc4d47b69440a45b9e2e7ce944))
+* rnf, del old person when update foudation ([32d72cd](https://github.com/dnum-mi/bibliotheque_numerique/commit/32d72cd87eda8000dcc81ce61087f85899e1e03c))
+* rnf, regroup foundation change method in service ([3998ce4](https://github.com/dnum-mi/bibliotheque_numerique/commit/3998ce452d0d2ade0309d67d93452c5cb79803a4))
+* show footer on all pages ([4477465](https://github.com/dnum-mi/bibliotheque_numerique/commit/4477465ceb00ed609ae7786d226179df585d10f6))
+* type formatFunctionRef in fonction sync excel ([7ded3a0](https://github.com/dnum-mi/bibliotheque_numerique/commit/7ded3a012d789f3f2c3d6aaffc3b050e641afbcf))
+* update query of pagination to get dossiers when filter enum is select no value ([761a4b6](https://github.com/dnum-mi/bibliotheque_numerique/commit/761a4b69842fb0a706c7621bdf51c4b95fbe0cc2))
+* wording no role in profile page ([b6ba6e2](https://github.com/dnum-mi/bibliotheque_numerique/commit/b6ba6e2cf41d3111bcd63222b2ea42a41c2e89f0))
+
 ## [2.8.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.8.0...v2.8.1) (2024-03-28)
 
 
