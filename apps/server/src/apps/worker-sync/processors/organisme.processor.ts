@@ -66,6 +66,10 @@ export class OrganismeProcessor {
       }
       orgs.forEach((o) => {
         const fiscalEndDateComputingYear = o.fiscalEndDateAt
+        if (!fiscalEndDateComputingYear) {
+          __oneMoreStep()
+          return
+        }
         fiscalEndDateComputingYear.setFullYear(computingYear)
         if (differenceInMonths(new Date(), fiscalEndDateComputingYear) >= nbrMonth) {
           this.logger.log('adding missing year to organisme with id ' + o.id)
