@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.9.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.9.0...v2.9.1) (2024-04-09)
+
+
+### Bug Fixes
+
+* better design for organism file ([bc5feb4](https://github.com/dnum-mi/bibliotheque_numerique/commit/bc5feb43996c6a605aac416b71bf054d653b9c8e))
+* edge case when foundation has no fiscalendDate ([5251a6e](https://github.com/dnum-mi/bibliotheque_numerique/commit/5251a6ed6f7c92b5fc72c11137509f5b7772db73))
+* rnf: person field should not be mandatory ([e94b208](https://github.com/dnum-mi/bibliotheque_numerique/commit/e94b2080fd7b87f9fcedbbec30a6221ba3c85fbb))
+
 ## [2.9.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.8.1...v2.9.0) (2024-04-09)
 
 
