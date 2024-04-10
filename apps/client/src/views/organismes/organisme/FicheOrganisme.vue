@@ -9,7 +9,7 @@ import OrganismeBadge from '@/components/Badges/organisme/OrganismeBadge.vue'
 import { type OrganismeIdType, useOrganismeStore, useUserStore } from '@/stores'
 import AttachedFileList from '@/components/ag-grid/files/AttachedFileList.vue'
 import type { IFileOutput, IPagination, IRole, FileTagKey } from '@biblio-num/shared'
-import { dFileTabDictionary } from '@biblio-num/shared'
+import { Prefecture, dFileTabDictionary } from '@biblio-num/shared'
 import type { ApiCall } from '@/components/ag-grid/server-side/pagination.utils'
 import FicheOrganismePersons from './FicheOrganismePersons.vue'
 
@@ -21,8 +21,11 @@ const organismeStore = useOrganismeStore()
 const userStore = useUserStore()
 
 const organisme = computed(() => organismeStore.organisme)
-const prefecture = computed(
-  () => `${organismeStore.organisme?.addressPostalCode?.substring(0, 2) || ''} ${organismeStore.organisme?.addressCityName || ''}`,
+const prefecture = computed<string>(
+  () => {
+    const prefkey = `D${organismeStore.organisme?.addressPostalCode?.substring(0, 2) || ''}`
+    return Prefecture[prefkey as keyof typeof Prefecture] || ''
+  },
 )
 const creation = computed(() => dateToStringFr(organisme.value?.dateCreation))
 const dissolution = computed(() => dateToStringFr(organisme.value?.dateDissolution ?? undefined))
