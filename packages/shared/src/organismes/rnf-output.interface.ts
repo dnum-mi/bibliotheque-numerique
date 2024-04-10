@@ -26,7 +26,7 @@ export interface IRnfOutput {
     byteSize: number
     mimeType: string
   } | null
-  alreadyDeclaredYear: number[]
+  declarationYears: number[]
   address?: IAddress | null
   persons: IPersonRnf[]
 }

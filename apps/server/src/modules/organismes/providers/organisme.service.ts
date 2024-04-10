@@ -158,10 +158,10 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     // TODO: this should not happen once all the date is on RNF
     // TODO: this case is happening because we have conflict over RNF  data and BN data
     if (firstTime) {
-      toUpdate.declarationYears = raw.alreadyDeclaredYear
+      toUpdate.declarationYears = raw.declarationYears
       toUpdate.missingDeclarationYears = await this.getMissingYears(
         creationDate,
-        raw.alreadyDeclaredYear,
+        raw.declarationYears,
       )
     }
     await this.repo.update({ idRnf }, toUpdate)
