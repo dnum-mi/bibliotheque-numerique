@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.9.2](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.9.1...v2.9.2) (2024-04-10)
+
+
+### Bug Fixes
+
+* all log true by default ([2e76ff4](https://github.com/dnum-mi/bibliotheque_numerique/commit/2e76ff4ca2a7eeaf354ad7f0b0859d2877cc1404))
+* already declared years ([f36ca75](https://github.com/dnum-mi/bibliotheque_numerique/commit/f36ca7549c74138bbdb64bd5f760a5472ae36b4e))
+
 ## [2.9.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.9.0...v2.9.1) (2024-04-09)
 
 
