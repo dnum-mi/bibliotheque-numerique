@@ -26,7 +26,7 @@ describe('XlsxService', () => {
         } else if (token === BnConfigurationService) {
           return {
             findByKeyName: jest.fn().mockImplementation((keyName: string) => {
-              if (keyName === eBnConfiguration.FE_EXCEL_AMOUNT_CHAMP_ID) {
+              if (keyName === eBnConfiguration.FE_AMOUNT_CHAMP_TAG) {
                 return Promise.resolve({ stringValue: AMOUNT_CHAMP_ID })
               }
               if (keyName === eBnConfiguration.FE_EXCEL_IMPORT_SHEET_NAME) {
