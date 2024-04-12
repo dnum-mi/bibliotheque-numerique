@@ -10,9 +10,6 @@
 | APP_FRONT_URL | `<http://localhost:8080>` | L'URL de base de la bibliothèque numérique insérée dans les courriels | Oui
 | SUPPORT_EMAIL |`<contact@bibliotheque-numerique.interieur.gouv.fr>` | L'adresse de courriel du support technique | Oui
 | RUN_ENV | `development` | L'environnement d'exécution de l'application. Les valeurs possibles sont "staging", "preproduction", "production" ou "development" | Oui
-| APP_NAME | 'bibliotheque-numerique-api' | Nom de l'application | Non utilisé
-| APP_PATH | | Chemin de l'application, valant "/api" auparavant | Non utilisé
-| APP_HOST |`localhost:3000` | Hôte de l'application | Non utilisé
 | CREATE_MISSING_MANDATORY_CONFIGURATIONS | true | Si la valeur est `true`, la table de configuration est complété par les variables et les valeurs par défaut
 
 La variable `TYPEORM_FORCE_SYNCHRONIZE` n'est utilisée que pour forcer la synchronisation du schéma de la base de données et des entités si elle est définie sur `true`.
@@ -27,7 +24,6 @@ TYPEORM_FORCE_SYNCHRONIZE = false
 |-----|--------|------------ |-------------
 | JWT_SECRET| `"test"` | Secret pour décrypter les jetons JWT | Oui
 | JWT_EXPIRE_IN |  `15m` | Durée de validité du jeton pour la validation d'e-mail et la réinitialisation de mot de passe | Oui
-| LOG_DATE_FORMAT| `"DD/MM/YYYY HH:mm:ss"` | Format de date pour les logs | Non utilisé
 
 ## Session
 
