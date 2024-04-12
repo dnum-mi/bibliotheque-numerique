@@ -54,6 +54,10 @@ export class FoundationEntity extends BaseEntity implements Foundation {
   @IsDate()
   dissolvedAt: Date | null
 
+  @IsDefined()
+  @IsDate()
+  originalCreatedAt: Date
+
   @IsOptional()
   @IsDate()
   fiscalEndDateAt: Date | null

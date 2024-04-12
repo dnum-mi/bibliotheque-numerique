@@ -8,7 +8,8 @@ export interface IPersonRnf {
 
 export interface IRnfOutput {
   id: string
-  createdAt: string
+  createdAt: Date
+  originalCreatedAt: Date
   rnfId: string
   title: string
   type: string

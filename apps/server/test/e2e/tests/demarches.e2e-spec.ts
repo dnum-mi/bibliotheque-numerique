@@ -21,7 +21,6 @@ describe('Demarches (e2e)', () => {
   })
 
   afterAll(async () => {
-    console.log('oui oui je suis appelé')
     await app.close()
     await dataSource.destroy()
   })
