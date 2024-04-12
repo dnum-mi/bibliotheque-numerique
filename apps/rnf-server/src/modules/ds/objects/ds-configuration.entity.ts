@@ -1,6 +1,6 @@
 import { DSConfiguration } from '@prisma/client'
 import { BaseEntity } from '@/shared/base-entity/base.entity'
-import { IsDate, IsDefined, IsNumber, IsString } from 'class-validator'
+import { IsDate, IsDefined, IsNumber, IsOptional, IsString } from 'class-validator'
 
 export class DsConfigurationEntity
   extends BaseEntity
@@ -152,4 +152,8 @@ export class DsConfigurationEntity
   @IsNumber()
   @IsDefined()
   dsDemarcheFEAdministrationChangesId: number
+
+  @IsOptional()
+  @IsDate()
+  fieldRegexCreatedAt: string
 }

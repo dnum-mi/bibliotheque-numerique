@@ -24,16 +24,17 @@ enum FoundationRole {
 
 // ======================================== Foundation =====================================
 model Foundation {
-  id          Int            @id @default(autoincrement())
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
-  rnfId       String         @unique
-  type        FoundationType @default(FDD)
-  department  String
-  title       String
-  dissolvedAt DateTime?
-  phone       String
-  email       String
+  id                Int            @id @default(autoincrement())
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  rnfId             String         @unique
+  type              FoundationType @default(FDD)
+  department        String
+  title             String
+  dissolvedAt       DateTime?
+  phone             String
+  email             String
+  originalCreatedAt DateTime       @default(now())
 
   // date de fin d'exercice
   fiscalEndDateAt  DateTime?
@@ -47,15 +48,16 @@ model Foundation {
 }
 
 model FoundationHistory {
-  id            Int            @id @default(autoincrement())
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  rnfId         String
-  historyNumber Int
-  type          FoundationType @default(FDD)
-  department    String
-  title         String
-  dissolvedAt   DateTime?
+  id                Int            @id @default(autoincrement())
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  rnfId             String
+  historyNumber     Int
+  type              FoundationType @default(FDD)
+  department        String
+  title             String
+  dissolvedAt       DateTime?
+  originalCreatedAt DateTime       @default(now())
 
   // date de fin d'exercice
   fiscalEndDateAt  DateTime?
@@ -169,6 +171,7 @@ model DSConfiguration {
   fieldRegexPerson                     String   @default("#rnf-personne-rnf#")
   fieldRegexRnfId                      String   @default("#rnf-numero-rnf-rnf#")
   fieldRegexStatus                     String   @default("#rnf-status-rnf#")
+  fieldRegexCreatedAt                  String   @default("#rnf-date-creation-rnf#")
   fieldRegexDeclarationYears           String   @default("#rnf-declaration-years-rnf#")
   cronUpdateFrequency                  String   @default("0 */5 * * * *")
   fieldRegexPersonQuality              String   @default("#rnf-person-qualite-rnf#")
