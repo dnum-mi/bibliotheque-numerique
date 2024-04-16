@@ -6,8 +6,12 @@ import {
   IdentificationDemarcheKey,
   IUpdateDemarche,
 } from '@biblio-num/shared'
+import { PartialType, PickType } from '@nestjs/swagger'
+import { Demarche } from '@/modules/demarches/objects/entities/demarche.entity'
 
-export class UpdateDemarcheDto implements IUpdateDemarche {
+export class UpdateDemarcheDto
+  extends PartialType(PickType(Demarche, ['identification', 'types']))
+  implements IUpdateDemarche {
   @IsOptional()
   @ValidateIf((o) => o.identification !== null)
   @IsEnum(eIdentificationDemarche)

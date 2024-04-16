@@ -46,7 +46,7 @@ export class DossierService extends BaseEntityService<Dossier> {
           demarcheTitle: dossier.demarche.title,
           prefecture: dossier.prefecture,
           state: dossier.state,
-          depotDate: dossier.dateDepot,
+          dateDepot: dossier.dateDepot,
         }))
       })
   }
