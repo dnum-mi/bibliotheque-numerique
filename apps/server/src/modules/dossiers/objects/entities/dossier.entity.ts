@@ -16,10 +16,14 @@ import { Dossier as TDossier } from '@dnum-mi/ds-api-client/dist/@types/generate
 import { Organisme } from '@/modules/organismes/objects/organisme.entity'
 import { IDossier, Prefecture, PrefectureKeys } from '@biblio-num/shared'
 import { File } from '@/modules/files/objects/entities/file.entity'
+import { IsArray, IsEnum, IsOptional } from 'class-validator'
 
 @Entity({ name: 'dossiers' })
 @Unique('UQ_DOSSIER', ['sourceId', 'demarche'])
 export class Dossier extends BaseEntity implements IDossier {
+  @ApiProperty({
+    description: 'Id de la démarche du dossier',
+  })
   @Column({ nullable: false })
   demarcheId: number
 
@@ -31,16 +35,28 @@ export class Dossier extends BaseEntity implements IDossier {
   @JoinColumn()
   fields?: Field[]
 
+  @ApiProperty({
+    description: 'État du dossier provenant de démarche simplifié',
+  })
   @ApiProperty({ enum: DossierState })
   @Column({ type: 'varchar' })
   state: DossierState
 
+  @ApiProperty({
+    description: 'Id du dossier provenant de sa source. (100% DS pour le moment)',
+  })
   @Column({ nullable: false })
   sourceId: string
 
+  @ApiProperty({
+    description: 'date de dépôt du dossier sur démarche simplifié',
+  })
   @Column({ nullable: true, default: null })
   dateDepot: string
 
+  @ApiProperty({
+    description: 'json original téléchargé de démarche simplifié',
+  })
   @Column({ type: 'jsonb', default: '{}' })
   dsDataJson: Partial<TDossier>
 
@@ -54,6 +70,9 @@ export class Dossier extends BaseEntity implements IDossier {
   })
   organisme?: Organisme | null
 
+  @ApiProperty({
+    description: 'Préfecture à laquelle est rattachée le dossier',
+  })
   @Column({
     type: 'enum',
     enum: Object.keys(Prefecture),
