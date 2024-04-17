@@ -17,14 +17,9 @@ import { DemarcheService } from '../providers/services/demarche.service'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { Demarche } from '../objects/entities/demarche.entity'
 import { DemarcheSynchroniseService } from '../providers/services/demarche-synchronise.service'
-import {
-  DemarcheOutputDto,
-} from '@/modules/demarches/objects/dtos/demarche-output.dto'
+import { DemarcheOutputDto } from '@/modules/demarches/objects/dtos/demarche-output.dto'
 
-import {
-  IRole,
-  Roles,
-} from '@biblio-num/shared'
+import { IRole, Roles } from '@biblio-num/shared'
 
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
 import { CurrentUserRole } from '@/modules/users/providers/decorators/current-user-role.decorator'
@@ -37,6 +32,7 @@ import { SmallDemarcheOutputDto } from '@/modules/demarches/objects/dtos/small-d
 import { CreateDemarcheDto } from '@/modules/demarches/objects/dtos/create-demarche.dto'
 import { UpdateDemarcheDto } from '@/modules/demarches/objects/dtos/update-demarche.dto'
 import { DossierService } from '@/modules/dossiers/providers/dossier.service'
+import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.decorator'
 
 @ApiTags('Demarches')
 @Controller('demarches')
@@ -51,14 +47,31 @@ export class DemarcheController {
     this.logger.setContext(this.constructor.name)
   }
 
+  @UsualApiOperation({
+    summary: 'Retourne toutes les démarches.',
+    method: 'GET',
+    minimumRole: Roles.instructor,
+    supplement:
+      "Ne sont disponible que les démarches sur lesquelles l'utilisateur a des droits",
+    responseType: SmallDemarcheOutputDto,
+    isArray: true,
+  })
   @Get('small')
   @Role(Roles.instructor)
-  async allSmallDemarche(@CurrentUserRole() role: IRole): Promise<SmallDemarcheOutputDto[]> {
+  async allSmallDemarche(
+    @CurrentUserRole() role: IRole,
+  ): Promise<SmallDemarcheOutputDto[]> {
     this.logger.verbose('allSmallDemarche')
     return this.demarcheService.findMultipleSmallDemarche({}, role)
   }
 
   @Get(':demarcheId')
+  @UsualApiOperation({
+    summary: 'Retourne une démarche.',
+    method: 'GET',
+    minimumRole: Roles.instructor,
+    responseType: DemarcheOutputDto,
+  })
   @Role(Roles.instructor)
   @UseInterceptors(CurrentDemarcheInterceptor)
   async getDemarcheById(
@@ -69,19 +82,30 @@ export class DemarcheController {
   }
 
   @Post('create')
+  @UsualApiOperation({
+    summary: 'Créé une démarche.',
+    method: 'POST',
+    minimumRole: Roles.sudo,
+    responseType: null,
+  })
   @Role(Roles.sudo)
-  async create(@Body() dto: CreateDemarcheDto): Promise<{ message: string }> {
+  async create(@Body() dto: CreateDemarcheDto): Promise<void> {
     this.logger.verbose('create')
     await this.demarcheSynchroniseService.createAndSynchronise(
       dto.idDs,
       dto.identification,
       dto.types,
     )
-    return { message: `Demarche with DS id ${dto.idDs} has been created.` }
   }
 
   @Put(':demarcheId/sync')
   @Role(Roles.sudo)
+  @UsualApiOperation({
+    summary: "Force la synchronisation d'une démarche.",
+    method: 'PUT',
+    minimumRole: Roles.sudo,
+    responseType: null,
+  })
   async syncOneDemarcheFromScratch(
     @Param('demarcheId', ParseIntPipe) demarcheId: number,
   ): Promise<void> {
@@ -94,31 +118,37 @@ export class DemarcheController {
   }
 
   @Patch(':demarcheId')
+  @UsualApiOperation({
+    summary: "Modifie l'identification ou les types d'une démarche",
+    method: 'PATCH',
+    minimumRole: Roles.sudo,
+    responseType: null,
+  })
   @Role(Roles.sudo)
   async updateIdentification(
     @Param('demarcheId', ParseIntPipe) id: number,
     @Body() dto: UpdateDemarcheDto,
-  ): Promise<{ message: string }> {
+  ): Promise<void> {
     this.logger.verbose(`update identification of demarche ${id}`)
     await this.demarcheService.updateDemarche(id, dto)
     if (!Object.keys(dto).length) {
       throw new BadRequestException('Identification and types are undefined')
     }
-    return {
-      message: `Demarche of id ${id} has been update with identification ${dto.identification} and types ${dto.types}.`,
-    }
   }
 
   @Patch(':demarcheId/soft-delete')
+  @UsualApiOperation({
+    summary: 'Supprime une démarche (soft).',
+    method: 'PATCH',
+    minimumRole: Roles.sudo,
+    responseType: null,
+  })
   @Role(Roles.sudo)
   async softDeleteDemarche(
     @Param('demarcheId', ParseIntPipe) id: number,
-  ): Promise<{ message: string }> {
+  ): Promise<void> {
     this.logger.verbose(`soft delete demarche ${id}`)
     await this.dossierService.softDeleteDemarcheDossiers(id)
     await this.demarcheService.softDeleteDemarche(id)
-    return {
-      message: `Demarche of id ${id} has been soft deleted.`,
-    }
   }
 }

@@ -1,10 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  UseInterceptors,
-} from '@nestjs/common'
+import { Body, Controller, Get, Post, UseInterceptors } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
 import { LoggerService } from '@/shared/modules/logger/logger.service'
@@ -21,9 +15,9 @@ import { CustomFilters } from '@/modules/custom-filters/providers/decorator/curr
 import { CustomFilter } from '@/modules/custom-filters/objects/entities/custom-filter.entity'
 import { CreateCustomFilterDto } from '@/modules/custom-filters/objects/dtos/create-custom-filter.dto'
 import { CustomFilterOutputDto } from '@/modules/custom-filters/objects/dtos/custom-filter-output.dto'
+import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.decorator'
 
-@ApiTags('Users')
-@ApiTags('Filters')
+@ApiTags('Demarches', 'Affichages')
 @UseInterceptors(CurrentDemarcheInterceptor)
 @Controller('demarches/:demarcheId/custom-filters')
 export class DemarcheCustomFilterController {
@@ -35,6 +29,12 @@ export class DemarcheCustomFilterController {
   }
 
   @Post()
+  @UsualApiOperation({
+    summary: 'Créé un nouvel affichage.',
+    method: 'POST',
+    minimumRole: 'aucun',
+    responseType: CustomFilterOutputDto,
+  })
   @Role('any')
   async createOneFilter(
     @Body() dto: CreateCustomFilterDto,
@@ -51,6 +51,15 @@ export class DemarcheCustomFilterController {
   }
 
   @Get()
+  @UsualApiOperation({
+    summary: 'Retourne les affichages.',
+    supplement:
+      'Retourne les affichages pour chaque démarche de l’utilisateur.',
+    method: 'POST',
+    minimumRole: 'aucun',
+    responseType: CustomFilterOutputDto,
+    isArray: true,
+  })
   @Role('any')
   @UseInterceptors(CurrentCustomFiltersInterceptor)
   async getMyCustomFiltersByDemarche(

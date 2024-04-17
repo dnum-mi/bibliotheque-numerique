@@ -8,10 +8,10 @@ import {
   Patch,
   UseInterceptors,
 } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { CustomFilter } from '@/modules/custom-filters/objects/entities/custom-filter.entity'
-import { ICustomFilterStat, Roles } from '@biblio-num/shared'
+import { Roles } from '@biblio-num/shared'
 import { CustomFilterService } from '@/modules/custom-filters/providers/services/custom-filter.service'
 import {
   CurrentCustomFiltersInterceptor,
@@ -22,9 +22,10 @@ import { DeleteResult } from 'typeorm'
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
 import { PatchCustomFilterDto } from '@/modules/custom-filters/objects/dtos/patch-custom-filter.dto'
 import { CustomFilterOutputDto } from '@/modules/custom-filters/objects/dtos/custom-filter-output.dto'
+import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.decorator'
+import { CustomFilterStatsOutputDto } from '@/modules/custom-filters/objects/dtos/custom-filter-stats-output.dto'
 
-@ApiTags('Users')
-@ApiTags('Filters')
+@ApiTags('Users', 'Affichages')
 @Controller('custom-filters')
 export class CustomFilterController {
   constructor(
@@ -35,6 +36,13 @@ export class CustomFilterController {
   }
 
   @Get()
+  @UsualApiOperation({
+    summary: 'Retourne les affichages de l\'utilisateur courant.',
+    method: 'GET',
+    minimumRole: Roles.instructor,
+    responseType: CustomFilterOutputDto,
+    isArray: true,
+  })
   @Role(Roles.instructor)
   @UseInterceptors(CurrentCustomFiltersInterceptor)
   async getMyCustomFilters(
@@ -45,6 +53,17 @@ export class CustomFilterController {
   }
 
   @Delete('/:filterId')
+  @ApiOperation({
+    summary: 'Supprimer un affichage.',
+    description: 'Supprimer un affichage. Seulement un affichage que l\'utilisateur possède.',
+  })
+  @UsualApiOperation({
+    summary: 'Supprimer un affichage.',
+    method: 'DELETE',
+    minimumRole: Roles.instructor,
+    supplement: 'Seulement un affichage que l\'utilisateur possède.',
+    responseType: DeleteResult,
+  })
   @Role(Roles.instructor)
   async deleteOneFilter(
     @Param('filterId') filterId: number,
@@ -58,14 +77,28 @@ export class CustomFilterController {
   }
 
   @Get(':filterId/stats')
+  @UsualApiOperation({
+    summary: 'Retourne les statistiques d\'un affichage.',
+    method: 'GET',
+    minimumRole: Roles.instructor,
+    supplement: 'Seulement un affichage que l\'utilisateur possède.',
+    responseType: CustomFilterStatsOutputDto,
+  })
   @Role('any')
   async getStatistique(
     @Param('filterId') filterId: number,
     @CurrentUserId() userId: number,
-  ): Promise<ICustomFilterStat> {
+  ): Promise<CustomFilterStatsOutputDto> {
     return this.service.getStats(filterId, userId)
   }
 
+  @UsualApiOperation({
+    summary: 'Modifie un affichage.',
+    method: 'PATCH',
+    minimumRole: Roles.instructor,
+    supplement: 'Seulement un affichage que l\'utilisateur possède.',
+    responseType: null,
+  })
   @Patch(':filterId')
   @Role(Roles.instructor)
   async updateOneFilter(

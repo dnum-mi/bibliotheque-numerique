@@ -228,7 +228,7 @@ describe('Organismes (e2e)', () => {
             {
               demarcheId: 1,
               demarcheTitle: 'Déclaration de financement étranger',
-              depotDate: null,
+              dateDepot: null,
               id: 11,
               prefecture: 'D75',
               state: 'accepte',
@@ -236,7 +236,7 @@ describe('Organismes (e2e)', () => {
             {
               demarcheId: 1,
               demarcheTitle: 'Déclaration de financement étranger',
-              depotDate: null,
+              dateDepot: null,
               id: 12,
               prefecture: 'D57',
               state: 'accepte',

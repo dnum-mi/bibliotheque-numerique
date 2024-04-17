@@ -15,6 +15,7 @@ import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { LocalAuthGuard } from '@/modules/auth/providers/local.guard'
 import { CredentialsInputDto } from '@/modules/users/objects/dtos/input'
 import { UserOutputDto } from '@/modules/users/objects/dtos/output'
+import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.decorator'
 
 /* The TODO: of this file must be done after creating what nestjs calls "tests" */
 @ApiTags('Auth')
@@ -31,12 +32,24 @@ export class AuthController {
   @PublicRoute()
   @UseGuards(LocalAuthGuard)
   @Post('sign-in')
+  @UsualApiOperation({
+    summary: 'Se connecter.',
+    method: 'POST',
+    minimumRole: 'aucun',
+    responseType: UserOutputDto,
+  })
   async signIn(@Body() body: CredentialsInputDto): Promise<UserOutputDto> {
     this.logger.verbose('signIn')
     return this.authService.login(body)
   }
 
   @Delete('/')
+  @UsualApiOperation({
+    summary: 'Se déconnecter.',
+    method: 'DELETE',
+    minimumRole: 'aucun',
+    responseType: null,
+  })
   @PublicRoute()
   async logout(@Request() req, @Response() res, next): Promise<void> {
     this.logger.verbose('logout')

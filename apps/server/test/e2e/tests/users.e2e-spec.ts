@@ -154,7 +154,7 @@ describe('users (e2e)', () => {
           },
         )
       await request(app.getHttpServer()) //
-        .post('/users/reset-password')
+        .post('/users/me/reset-password')
         .send({
           email,
         })
@@ -165,7 +165,7 @@ describe('users (e2e)', () => {
 
     it('Should no send mail for reset password with e-mail no correct', async () => {
       await request(app.getHttpServer()) //
-        .post('/users/reset-password')
+        .post('/users/me/reset-password')
         .send({
           email: 'nouser@test.com',
         })
@@ -173,17 +173,17 @@ describe('users (e2e)', () => {
     })
   })
 
-  describe('PUT /users', () => {
+  describe('PUT /users/me/password', () => {
     it('Should return 401', async () => {
       await request(app.getHttpServer()) //
-        .put('/users')
+        .put('/users/me/password')
         .send({})
         .expect(401)
     })
 
     it('Should 403 to update password with invalid token', async () => {
       await request(app.getHttpServer()) //
-        .put('/users')
+        .put('/users/me/password')
         .send({ token: 'test' })
         .expect(403)
     })
@@ -203,7 +203,7 @@ describe('users (e2e)', () => {
       const jwtforurl = Buffer.from(jwt).toString('base64url')
 
       await request(app.getHttpServer()) //
-        .put('/users')
+        .put('/users/me/password')
         .send({
           password: 'Y,cqu;CQ.5]BcD3',
           token: jwtforurl,
@@ -221,7 +221,7 @@ describe('users (e2e)', () => {
       const jwtforurl = Buffer.from(jwt).toString('base64url')
 
       await request(app.getHttpServer()) //
-        .put('/users')
+        .put('/users/me/password')
         .send({
           token: jwtforurl,
         })

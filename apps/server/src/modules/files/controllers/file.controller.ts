@@ -12,6 +12,7 @@ import { S3Service } from '@/shared/modules/s3/s3.service'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { isUUID } from 'class-validator'
 import { Roles, eState } from '@biblio-num/shared'
+import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.decorator'
 
 @ApiTags('Files')
 @Controller('files')
@@ -24,6 +25,12 @@ export class FileController {
     this.logger.setContext(this.constructor.name)
   }
 
+  @UsualApiOperation({
+    summary: 'Télécharge un fichier à partir de son uuid.',
+    method: 'GET',
+    minimumRole: Roles.instructor,
+    responseType: null,
+  })
   @Get(':uuid')
   @Role(Roles.instructor)
   async download(

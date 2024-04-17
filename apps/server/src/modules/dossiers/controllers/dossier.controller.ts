@@ -1,7 +1,8 @@
 import {
   Controller,
   ForbiddenException,
-  Get, NotFoundException,
+  Get,
+  NotFoundException,
   Param,
   Patch,
 } from '@nestjs/common'
@@ -22,6 +23,7 @@ import { SyncOneDossierJobPayload } from '@/shared/modules/custom-bull/objects/c
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
 import { InjectQueue } from '@nestjs/bull'
 import { Queue } from 'bull'
+import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.decorator'
 
 @ApiTags('Dossiers')
 @Controller('dossiers')
@@ -35,6 +37,12 @@ export class DossierController {
   }
 
   @Get(':id')
+  @UsualApiOperation({
+    summary: 'Retourner un dossier.',
+    method: 'GET',
+    minimumRole: Roles.instructor,
+    responseType: Dossier,
+  })
   @Role(Roles.instructor)
   async findOne(
     @CurrentUserRole() role: IRole,
@@ -74,6 +82,12 @@ export class DossierController {
   }
 
   @Patch(':id/sync')
+  @UsualApiOperation({
+    summary: "Force la synchronisation d'un dossier.",
+    method: 'PATCH',
+    minimumRole: Roles.sudo,
+    responseType: null,
+  })
   @Role(Roles.sudo)
   async synchroniseOne(@Param('id') id: string): Promise<void> {
     this.logger.verbose('synchroniseOne')

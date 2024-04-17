@@ -31,6 +31,7 @@ export class Demarche extends BaseEntity implements IDemarche {
     description:
       'Est ce que la démarche a une identification particulière. FE ou DDC.' +
       ' Une identification particulière entraine des comportements spécifiques.',
+    enum: eIdentificationDemarche,
   })
   @IsOptional()
   @IsEnum(eIdentificationDemarche)
@@ -49,6 +50,7 @@ export class Demarche extends BaseEntity implements IDemarche {
 
   @ApiProperty({
     description: "Quel type d'organisme la démarche concerne",
+    enum: eOrganismeType,
   })
   @IsOptional()
   @IsEnum(eOrganismeType, { each: true })

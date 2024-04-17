@@ -43,7 +43,8 @@ implements IMappingColumnWithoutChildren {
 
   @ApiProperty({
     description:
-      'Fonction optionnelle de modification de l\'apparence des données pour ce champs. (Exemple: "country" = ajout d\'un drapeau pour les pays)',
+      "Fonction optionnelle de modification de l'apparence des données pour ce champs. " +
+      '(Exemple: "country" = ajout d\'un drapeau pour les pays)',
   })
   formatFunctionRef?: FormatFunctionRefKeys | undefined
 

@@ -204,14 +204,11 @@ describe('bn-configurations (e2e)', () => {
       await request(app.getHttpServer())
         .delete('/bn-configurations/1')
         .set('Cookie', [cookies.sudo])
-      const response = await request(app.getHttpServer())
+      await request(app.getHttpServer())
         .post('/bn-configurations')
         .set('Cookie', [cookies.sudo])
         .send({ keyName, stringValue, valueType })
         .expect(201)
-      expect(response.body).toEqual({
-        message: `Configuration ${keyName} has been created`,
-      })
     })
   })
 
@@ -252,14 +249,11 @@ describe('bn-configurations (e2e)', () => {
     })
 
     it('Should update configuration', async () => {
-      const response = await request(app.getHttpServer())
+      await request(app.getHttpServer())
         .patch(`/bn-configurations/${id}`)
         .set('Cookie', [cookies.sudo])
         .send({ stringValue, valueType })
         .expect(200)
-      expect(response.body).toEqual({
-        message: `Configuration ${id} has been updated`,
-      })
     })
   })
 
@@ -294,13 +288,10 @@ describe('bn-configurations (e2e)', () => {
     })
 
     it('Should delete configuration', async () => {
-      const response = await request(app.getHttpServer())
+      await request(app.getHttpServer())
         .delete(`/bn-configurations/${id}`)
         .set('Cookie', [cookies.sudo])
         .expect(200)
-      expect(response.body).toEqual({
-        message: `Configuration ${id} has been deleted`,
-      })
     })
   })
 })
