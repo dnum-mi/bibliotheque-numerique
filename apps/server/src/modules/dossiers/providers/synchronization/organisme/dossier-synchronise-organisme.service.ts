@@ -16,11 +16,13 @@ import { eFieldCode } from '@/modules/dossiers/objects/constante/field-code.enum
 import { Organisme } from '@/modules/organismes/objects/organisme.entity'
 import { pushIfMissing } from '@/shared/utils/array.utils'
 import { isNumber } from 'class-validator'
+import { FieldService } from '@/modules/dossiers/providers/field.service'
 
 @Injectable()
 export class DossierSynchroniseOrganismeService {
   constructor(
     private readonly logger: LoggerService,
+    private readonly fieldService: FieldService,
     private readonly organismeService: OrganismeService,
     @InjectQueue(QueueName.sync) private readonly syncQueue: Queue,
   ) {
@@ -52,6 +54,12 @@ export class DossierSynchroniseOrganismeService {
     if (!organismeField) {
       return
     }
+
+    await this.fieldService.repository.update({
+      id: organismeField.id,
+    }, {
+      stringValue: 'QUEUE-' + organismeField.stringValue,
+    })
 
     if (organismeField.dsChampType === DsChampType.RnaChamp) {
       organisme = await this.organismeService.getOrCreateOrganismeIdFromRna(
