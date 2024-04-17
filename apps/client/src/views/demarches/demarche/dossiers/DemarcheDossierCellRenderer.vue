@@ -133,6 +133,13 @@ const getPrefecture = (prefecture: PrefectureKeys) => {
             ⚠️ {{ cellValue.substring(6) }}
           </span>
         </template>
+        <template v-else-if="cellValue.substring(0, 5) === 'QUEUE'">
+          <span
+            class="fr-text-label--beige-gris-galet cursor-not-allowed"
+          >
+            ⌛️{{ cellValue.substring(6) }}
+          </span>
+        </template>
         <template v-else>
           <RouterLink
             :to="{ name: 'FicheOrganisme', params: { id: cellValue }, query: { idType: firstUpperCase(ffr) } }"
