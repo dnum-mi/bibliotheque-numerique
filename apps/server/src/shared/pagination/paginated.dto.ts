@@ -9,6 +9,17 @@ export class PaginatedDto<T> implements IPaginated<T> {
 
   @ApiProperty({
     description: 'Tableau des résultats pour la page donnée',
+    type: () => Object,
+    example: [
+      {
+        'name-of-my-column': 'text that contains my-text-to-search',
+        'name-of-my-other-column': 145,
+      },
+      {
+        'name-of-my-column': 'Another text that contains my-text-to-search',
+        'name-of-my-other-column': 123,
+      },
+    ],
   })
   data: Partial<T>[]
 }

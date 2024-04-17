@@ -69,6 +69,7 @@ import {
   getDossierFilesRoute,
   softDeleteDemarcheByIdRoute,
   getDossierFilesSummaryRoute,
+  usersPasswordRoute,
 } from './bn-api-routes'
 import {
   authRoute,
@@ -234,7 +235,7 @@ export const usersApiClient = {
 
   async updatePassword (updateUserPassword: IUpdateUserPassword) {
     try {
-      const response = await apiClientAuthInstance.put(usersRoutes, updateUserPassword)
+      const response = await apiClientAuthInstance.put(usersPasswordRoute, updateUserPassword)
       return response?.data
     } catch (error) {
       if (error && error instanceof AxiosError) {
@@ -283,7 +284,7 @@ export const usersApiClient = {
   },
 
   async resetPassword (resetPasswordInput: IResetPasswordInput) {
-    apiClientAuthInstance.post('/users/reset-password', resetPasswordInput)
+    apiClientAuthInstance.post('/users/me/reset-password', resetPasswordInput)
   },
 
   async validEmail (token: string) {
@@ -292,7 +293,7 @@ export const usersApiClient = {
         validate: true,
         token,
       }
-      await apiClientInstance.post('/users/valid-email', validateEmail)
+      await apiClientInstance.post('/users/me/valid-email', validateEmail)
     } catch (error) {
       if (error && error instanceof AxiosError) {
         throw new ErrorvalidateEmail(error)

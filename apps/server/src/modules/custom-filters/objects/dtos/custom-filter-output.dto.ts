@@ -24,12 +24,12 @@ export class CustomFilterOutputDto implements ICustomFilter {
   columns: string[]
 
   @ApiProperty({
-    description: 'Parametre de tri pour l\'affichage.',
+    description: 'Paramètre de tri pour l\'affichage.',
   })
   sorts: SortDto<DynamicKeys>[] | null
 
   @ApiProperty({
-    description: 'Parametre de filtrage pour l\'affichage',
+    description: 'Paramètre de filtrage pour l\'affichage',
   })
   filters: Record<keyof DynamicKeys, IFilter> | null
 

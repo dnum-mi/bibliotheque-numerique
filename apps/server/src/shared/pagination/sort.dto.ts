@@ -4,7 +4,8 @@ import { ApiProperty } from '@nestjs/swagger'
 
 export class SortDto<T = DynamicKeys> implements ISort<T> {
   @ApiProperty({
-    description: 'Clef du parent paginé. Doit être selectionnée dans les colonnes.',
+    description: 'Clef de l\'object paginé. Doit être selectionnée dans les colonnes.',
+    type: String,
   })
   @IsDefined()
   @IsString()

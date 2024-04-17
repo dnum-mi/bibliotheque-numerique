@@ -17,7 +17,7 @@ export type TextFilterConditionsKeys =
 
 export class TextFilterConditionDto implements ITextFilterCondition {
   @ApiProperty({
-    description: 'Clef de comparaison de text',
+    description: 'Clef de comparaison de texte',
   })
   @IsDefined()
   @IsEnum(TextFilterConditions)

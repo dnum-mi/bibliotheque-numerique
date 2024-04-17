@@ -22,8 +22,9 @@ import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
 import { In, Not } from 'typeorm'
 
 import { hasFullCurrentDossierAcces } from '../providers/has-full-current-dossier-access.decorator'
+import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.decorator'
 
-@ApiTags('Dossier')
+@ApiTags('Dossiers', 'Files')
 @ApiTags('Files')
 @UseInterceptors(CurrentDossierInterceptor)
 @Controller('dossiers/:dossierId/files')
@@ -36,6 +37,13 @@ export class DossierFileController {
   }
 
   @Post('list')
+  @UsualApiOperation({
+    summary: 'Retourne les fichiers d\'un dossier.',
+    method: 'POST',
+    minimumRole: Roles.instructor,
+    responseType: PaginatedFileDto,
+    isPagination: true,
+  })
   @HttpCode(200)
   @Role(Roles.instructor)
   async listDossierFiles(
@@ -58,8 +66,14 @@ export class DossierFileController {
   }
 
   @Get('summary')
+  @UsualApiOperation({
+    summary: 'Retourne le résumé des fichiers d\'un dossier.',
+    method: 'GET',
+    minimumRole: Roles.instructor,
+    responseType: Number,
+  })
   @Role(Roles.instructor)
-  async getOrganismeFileSummary(
+  async getDossierFileSummary(
     @CurrentDossier() dossier: Dossier,
     @hasFullCurrentDossierAcces() hasFullAccess: boolean,
   ): Promise<number> {

@@ -8,7 +8,7 @@ import { ASK_RESET_PWD_SUCCESS } from '../../messages'
 // TODO: A refaire avec le nouveau model
 describe.skip('<Profile />', () => {
   it('renders', () => {
-    cy.intercept('/api/users/reset-password', { success: true })
+    cy.intercept('/api/users/me/reset-password', { success: true })
 
     const pinia = createPinia()
     const useStore = useUserStore(pinia)

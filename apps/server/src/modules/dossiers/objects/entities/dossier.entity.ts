@@ -16,7 +16,6 @@ import { Dossier as TDossier } from '@dnum-mi/ds-api-client/dist/@types/generate
 import { Organisme } from '@/modules/organismes/objects/organisme.entity'
 import { IDossier, Prefecture, PrefectureKeys } from '@biblio-num/shared'
 import { File } from '@/modules/files/objects/entities/file.entity'
-import { IsArray, IsEnum, IsOptional } from 'class-validator'
 
 @Entity({ name: 'dossiers' })
 @Unique('UQ_DOSSIER', ['sourceId', 'demarche'])
@@ -43,7 +42,8 @@ export class Dossier extends BaseEntity implements IDossier {
   state: DossierState
 
   @ApiProperty({
-    description: 'Id du dossier provenant de sa source. (100% DS pour le moment)',
+    description:
+      'Numéro du dossier provenant de sa source. (100% DS pour le moment)',
   })
   @Column({ nullable: false })
   sourceId: string

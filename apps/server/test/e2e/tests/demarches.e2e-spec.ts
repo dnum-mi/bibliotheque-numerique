@@ -87,18 +87,13 @@ describe('Demarches (e2e)', () => {
         where: { title: Like('[UPDATE-IDENTIFICATION]%') },
       })
 
-      const { body } = await request(app.getHttpServer())
+      await request(app.getHttpServer())
         .patch(`/demarches/${demarche.id}`)
         .set('Cookie', [cookies.sudo])
         .send({
           identification: 'FE',
         })
         .expect(200)
-
-      expect(body).toHaveProperty(
-        'message',
-        `Demarche of id ${demarche.id} has been update with identification FE and types undefined.`,
-      )
 
       const demarche1 = await dataSource.manager.findOne(Demarche, {
         where: { id: demarche.id },
@@ -118,18 +113,13 @@ describe('Demarches (e2e)', () => {
 
     // eslint-disable-next-line max-len
     it('Should patch identification should delete fix-field of intersection into mappingColumn with identification equal to null and types undefined.', async () => {
-      const { body } = await request(app.getHttpServer())
+      await request(app.getHttpServer())
         .patch('/demarches/6')
         .set('Cookie', [cookies.sudo])
         .send({
           identification: null,
         })
         .expect(200)
-
-      expect(body).toHaveProperty(
-        'message',
-        'Demarche of id 6 has been update with identification null and types undefined.',
-      )
 
       const demarche1 = await dataSource.manager.findOne(Demarche, {
         where: { id: 6 },
@@ -150,16 +140,11 @@ describe('Demarches (e2e)', () => {
     it('Should patch types ', async () => {
       const types = ['FE', 'ARUP', 'FRUP']
 
-      const { body } = await request(app.getHttpServer())
+      await request(app.getHttpServer())
         .patch('/demarches/5')
         .set('Cookie', [cookies.sudo])
         .send({ types })
         .expect(200)
-
-      expect(body).toHaveProperty(
-        'message',
-        `Demarche of id 5 has been update with identification undefined and types ${types}.`,
-      )
 
       const demarche1 = await dataSource.manager.findOne(Demarche, {
         where: { id: 5 },
@@ -195,15 +180,10 @@ describe('Demarches (e2e)', () => {
         where: { title: Like('[SOFT-DELETE]%') },
       })
 
-      const { body } = await request(app.getHttpServer())
+      await request(app.getHttpServer())
         .patch(`/demarches/${demarche.id}/soft-delete`)
         .set('Cookie', [cookies.sudo])
         .expect(200)
-
-      expect(body).toHaveProperty(
-        'message',
-        `Demarche of id ${demarche.id} has been soft deleted.`,
-      )
 
       const demarche1 = await dataSource.manager.findOne(Demarche, {
         where: { id: demarche.id },

@@ -7,10 +7,11 @@ import { CustomFilter } from '@/modules/custom-filters/objects/entities/custom-f
 import { DossierSearchService } from '../../../dossiers/providers/search/dossier-search.service'
 import { fromMappingColumnArrayToLabelHash } from '../../../demarches/utils/demarche.utils'
 import { FieldSearchService } from '@/modules/dossiers/providers/search/field-search.service'
-import { ICustomFilterStat, ITotal } from '@biblio-num/shared'
+import { ITotal } from '@biblio-num/shared'
 import { DossierSearchOutputDto } from '@/modules/dossiers/objects/dto/dossier-search-output.dto'
 import { FieldSearchOutputDto } from '@/modules/dossiers/objects/dto/fields/field-search-output.dto'
 import { fromCustomFilterToHumanReadableFilter } from '@/shared/pagination/utils/search-dictionnaries.const'
+import { CustomFilterStatsOutputDto } from '@/modules/custom-filters/objects/dtos/custom-filter-stats-output.dto'
 
 @Injectable()
 export class CustomFilterService extends BaseEntityService<CustomFilter> {
@@ -51,7 +52,10 @@ export class CustomFilterService extends BaseEntityService<CustomFilter> {
     )
   }
 
-  async getStats(id: number, userId: number): Promise<ICustomFilterStat> {
+  async getStats(
+    id: number,
+    userId: number,
+  ): Promise<CustomFilterStatsOutputDto> {
     const customFilter = await this.findOneOrThrow({
       where: {
         user: { id: userId },
@@ -93,6 +97,7 @@ export class CustomFilterService extends BaseEntityService<CustomFilter> {
       demarche: {
         id: customFilter.demarche.id,
         types: customFilter.demarche.types,
+        identification: customFilter.demarche.identification,
         dsId: customFilter.demarche.dsDataJson.number,
         title: customFilter.demarche.title,
         dsPublishedAt: customFilter.demarche.dsDataJson.datePublication,

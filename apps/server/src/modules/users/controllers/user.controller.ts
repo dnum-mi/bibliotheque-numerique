@@ -1,36 +1,21 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  Patch,
-  Post,
-  Put,
-  Request,
-  UseGuards,
-} from '@nestjs/common'
+import { Body, Controller, HttpCode, Post } from '@nestjs/common'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 import { UserService } from '../providers/user.service'
 
 import { IUser, Roles } from '@biblio-num/shared'
-import { UpdatePasswordGuard } from '@/modules/users/providers/guards/update-password.guard'
-import { ValidSignUpGuard } from '@/modules/users/providers/guards/validate-sign-up.guard'
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
 import { PublicRoute } from '@/modules/users/providers/decorators/public-route.decorator'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { CurrentUser } from '@/modules/users/providers/decorators/current-user.decorator'
-import { User } from '../objects/user.entity'
 import {
   CreateUserDto,
   PaginationUserDto,
-  ResetPasswordInputDto,
-  UpdateProfileDto,
-  UpdateUserPasswordDto,
 } from '@/modules/users/objects/dtos/input'
 import {
   PaginatedUserDto,
   UserOutputDto,
 } from '@/modules/users/objects/dtos/output'
+import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.decorator'
 
 @ApiTags('Users')
 @Controller('users')
@@ -43,6 +28,12 @@ export class UserController {
   }
 
   @Post()
+  @UsualApiOperation({
+    summary: 'Créer un utilisateur.',
+    method: 'POST',
+    minimumRole: 'aucun',
+    responseType: UserOutputDto,
+  })
   @PublicRoute()
   async signUp(@Body() body: CreateUserDto): Promise<UserOutputDto> {
     this.logger.verbose('signUp')
@@ -59,18 +50,14 @@ export class UserController {
     }
   }
 
-  @Put()
-  @PublicRoute()
-  @UseGuards(UpdatePasswordGuard)
-  async updatePassword(
-    @Request() req,
-    @Body() body: UpdateUserPasswordDto,
-  ): Promise<void> {
-    this.logger.verbose('updatePassword')
-    await this.usersService.updatePassword(req.user, body.password)
-  }
-
   @Post('/list')
+  @UsualApiOperation({
+    summary: 'Lister les utilisateurs.',
+    method: 'POST',
+    minimumRole: Roles.admin,
+    isPagination: true,
+    responseType: null,
+  })
   @HttpCode(200)
   @Role(Roles.admin)
   @ApiResponse({ status: 200 })
@@ -80,39 +67,5 @@ export class UserController {
   ): Promise<PaginatedUserDto> {
     this.logger.verbose('listUsers')
     return this.usersService.listUsers(dto, user)
-  }
-
-  @Get('/me')
-  @Role('any')
-  async getProfile(@CurrentUser() user: User): Promise<UserOutputDto> {
-    this.logger.verbose({ fn: 'getProfile' })
-    return this.usersService.profile(user)
-  }
-
-  @Post('/reset-password')
-  @PublicRoute()
-  async resetPassword(@Body() body: ResetPasswordInputDto): Promise<boolean> {
-    this.logger.verbose('resetPassword')
-    await this.usersService.resetPassword(body.email)
-    return true
-  }
-
-  @Post('/valid-email')
-  @PublicRoute()
-  @UseGuards(ValidSignUpGuard)
-  async validSignUp(@Request() req): Promise<void> {
-    this.logger.verbose('validSignUp')
-    return await this.usersService.validEmail(req.user)
-  }
-
-  @Patch('/me')
-  @Role('any')
-  async updateProfile(
-    @Body() dto: UpdateProfileDto,
-    @CurrentUser() user: User,
-  ): Promise<boolean> {
-    this.logger.verbose('updateProfile')
-    await this.usersService.updateOrThrow(user.id, dto)
-    return true
   }
 }
