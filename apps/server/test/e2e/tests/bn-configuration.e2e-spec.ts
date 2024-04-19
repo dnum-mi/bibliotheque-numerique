@@ -71,8 +71,8 @@ describe('bn-configurations (e2e)', () => {
         },
         {
           id: 3,
-          keyName: eBnConfiguration.FE_EXCEL_AMOUNT_CHAMP_ID,
-          stringValue: 'Q2hhbXAtNTg=',
+          keyName: eBnConfiguration.FE_AMOUNT_CHAMP_TAG,
+          stringValue: 'fe-amount-champ',
           valueType: 'string',
           createdAt: expect.any(String),
           updatedAt: expect.any(String),
