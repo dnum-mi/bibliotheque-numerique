@@ -22,8 +22,8 @@ export const BnConfigurationDefault: Record<
     stringValue: 'B4:H502',
     type: eBnConfigurationType.string,
   },
-  [eBnConfiguration.FE_EXCEL_AMOUNT_CHAMP_ID]: {
-    stringValue: 'Q2hhbXAtNTg=',
+  [eBnConfiguration.FE_AMOUNT_CHAMP_TAG]: {
+    stringValue: 'fe-amount-champ',
     type: eBnConfigurationType.string,
   },
   [eBnConfiguration.FILE_MAXIMUM_SIZE]: {
