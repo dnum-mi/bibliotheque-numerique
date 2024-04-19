@@ -73,7 +73,7 @@ const onExpand = (idx: number, id: string) => {
         >
           <div class="w-full pl-0! pr-0! text-sm">
             <div class="flex flex-row">
-              <div class="flex-2/8 flex-col">
+              <div class="flex-2/8 flex-col pr-1">
                 <div class="flex-1 m-0! fr-text--xs fr-text--light">
                   Identité
                 </div>
@@ -81,7 +81,7 @@ const onExpand = (idx: number, id: string) => {
                   {{ person.fullName }}
                 </div>
               </div>
-              <div class="flex-2/8 flex-col">
+              <div class="flex-2/8 flex-col pr-1">
                 <div class="flex-1 m-0! fr-text--xs fr-text--light">
                   Naissance
                 </div>
@@ -89,7 +89,7 @@ const onExpand = (idx: number, id: string) => {
                   Née le {{ dateToStringFr(person.bornAt) }} à {{ person.bornPlace }}
                 </div>
               </div>
-              <div class="flex-3/8 flex-col">
+              <div class="flex-3/8 flex-col pr-1">
                 <div class="flex-1 m-0! fr-text--xs fr-text--light">
                   Addresse
                 </div>
@@ -97,7 +97,7 @@ const onExpand = (idx: number, id: string) => {
                   {{ person.address.label }}
                 </div>
               </div>
-              <div class="flex-1/8 flex-col">
+              <div class="flex-1/8 flex-col pr-1">
                 <div class="flex-1 m-0! fr-text--xs fr-text--light">
                   Nationalité
                 </div>
