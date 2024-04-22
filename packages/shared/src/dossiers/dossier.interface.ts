@@ -10,4 +10,5 @@ export interface IDossier {
   prefecture: PrefectureKeys | null
   sourceId: string
   dsDataJson: Partial<TDossier>
+  anonymisedAt: Date | null
 }

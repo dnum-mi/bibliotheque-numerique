@@ -24,7 +24,6 @@ import type {
   IUpdateOneRoleOption,
   ISmallDemarcheOutput,
   IUpdateProfile,
-
   IUserWithEditableRole,
   ICustomFilter,
   IOrganisme,
@@ -36,6 +35,7 @@ import type {
   IUpdateBnConfiguration,
   IPaginated,
   FileTabTagKey,
+  IDemarcheOption,
 } from '@biblio-num/shared'
 
 import {
@@ -69,15 +69,10 @@ import {
   getDossierFilesRoute,
   softDeleteDemarcheByIdRoute,
   getDossierFilesSummaryRoute,
+  getDemarcheOptionRoute,
   usersPasswordRoute,
 } from './bn-api-routes'
-import {
-  authRoute,
-  getUserByIdRoute,
-  profileRoute,
-  signInRoute,
-  usersRoutes,
-} from '@/api/bn-api-routes'
+import { authRoute, getUserByIdRoute, profileRoute, signInRoute, usersRoutes } from '@/api/bn-api-routes'
 
 import { ErrorvalidateEmail } from './ErrorValidEmail'
 import { routeNames } from '../router/route-names'
@@ -110,36 +105,39 @@ export const apiClientAuthInstance = axios.create({
 })
 
 const toaster = useToaster()
-apiClientInstance.interceptors.response.use(r => r, (error: AxiosError<{ message?: string }>) => {
-  const status = error.response?.status
-  if (!status || status >= 500) {
-    toaster.addErrorMessage(error.response?.data?.message ?? 'Une erreur inconnue est survenue')
-    if (import.meta.env.DEV) {
-      toaster.addMessage({ description: 'Est-ce que le serveur est démarré ?', type: 'info' })
+apiClientInstance.interceptors.response.use(
+  (r) => r,
+  (error: AxiosError<{ message?: string }>) => {
+    const status = error.response?.status
+    if (!status || status >= 500) {
+      toaster.addErrorMessage(error.response?.data?.message ?? 'Une erreur inconnue est survenue')
+      if (import.meta.env.DEV) {
+        toaster.addMessage({ description: 'Est-ce que le serveur est démarré ?', type: 'info' })
+      }
+      console.error(error)
+      return
     }
-    console.error(error)
-    return
-  }
-  if (status === 401) {
-    toaster.addMessage({ id: 'auth', type: 'warning', description: 'Vous n’êtes plus connecté, veuillez vous réauthentifier' })
-    useUserStore().forceResetUser()
-    const routeTo: RouteLocationRaw = { name: routeNames.SIGNIN }
-    if (!router.currentRoute.value.meta.skipAuth) {
-      routeTo.query = { redirect: location.href.replace(location.origin, '') }
+    if (status === 401) {
+      toaster.addMessage({ id: 'auth', type: 'warning', description: 'Vous n’êtes plus connecté, veuillez vous réauthentifier' })
+      useUserStore().forceResetUser()
+      const routeTo: RouteLocationRaw = { name: routeNames.SIGNIN }
+      if (!router.currentRoute.value.meta.skipAuth) {
+        routeTo.query = { redirect: location.href.replace(location.origin, '') }
+      }
+      router.push(routeTo)
+      return null
     }
-    router.push(routeTo)
-    return null
-  }
-  if (status === 403) {
-    toaster.addMessage({ type: 'warning', description: 'Vous n’avez pas les droits de faire cette opération' })
-    return null
-  }
-  if (status === 404) {
-    toaster.addErrorMessage(error.response?.data?.message ?? 'Ressource introuvable')
+    if (status === 403) {
+      toaster.addMessage({ type: 'warning', description: 'Vous n’avez pas les droits de faire cette opération' })
+      return null
+    }
+    if (status === 404) {
+      toaster.addErrorMessage(error.response?.data?.message ?? 'Ressource introuvable')
+      throw error
+    }
     throw error
-  }
-  throw error
-})
+  },
+)
 
 const downloadAFile = (response: AxiosResponse) => {
   const blob = new Blob([response.data], { type: response.headers['content-type'] })
@@ -181,6 +179,16 @@ export const demarchesApiClient = {
     return response.data
   },
 
+  getDemarcheOptions: async (demarcheId: number): Promise<IDemarcheOption> => {
+    const response = await apiClientInstance.get(getDemarcheOptionRoute(demarcheId))
+    return response.data
+  },
+
+  saveDemarcheOptions: async (demarcheId: number, dto: Partial<IDemarcheOption>): Promise<void> => {
+    console.log(getDemarcheOptionRoute(demarcheId), dto)
+    await apiClientInstance.patch(getDemarcheOptionRoute(demarcheId), dto)
+  },
+
   searchDemarcheFields: async (demarcheId: number, dto: ISearchDossier): Promise<IFieldSearchOutput> => {
     const response = await apiClientInstance.post(getListDemarcheFieldRoute(demarcheId), dto)
     return response.data
@@ -217,10 +225,12 @@ export const organismeApiClient = {
     return (await apiClientInstance.get(getOrganismeFilesSummaryRoute(organismeId))).data
   },
 
-  getOrganismeFiles: (organismeId: number) => async (params: IPagination<IFileOutput>): Promise<IPaginated<IFileOutput>> => {
-    const response = await apiClientInstance.post(getOrganismeFilesRoute(organismeId), params)
-    return response.data
-  },
+  getOrganismeFiles:
+    (organismeId: number) =>
+      async (params: IPagination<IFileOutput>): Promise<IPaginated<IFileOutput>> => {
+        const response = await apiClientInstance.post(getOrganismeFilesRoute(organismeId), params)
+        return response.data
+      },
 
   exportOrganismes: async (dto: IPagination<IOrganisme>): Promise<void> => {
     downloadAFile(await apiClientInstance.post(organismesListXlsxRoute, dto, { responseType: 'blob' }))
@@ -239,7 +249,7 @@ export const usersApiClient = {
       return response?.data
     } catch (error) {
       if (error && error instanceof AxiosError) {
-        const feedbackCode = (String(error.response?.status)) as keyof typeof updatePasswordFeedback
+        const feedbackCode = String(error.response?.status) as keyof typeof updatePasswordFeedback
         throw new Error(updatePasswordFeedback[feedbackCode] ?? updatePasswordFeedback.default)
       }
       throw error
@@ -313,7 +323,6 @@ export const usersApiClient = {
   async removeRole (id: number) {
     await apiClientInstance.delete(getUserRoleByIdRoute(id))
   },
-
 }
 
 export const dossiersApiClient = {
@@ -335,10 +344,12 @@ export const dossiersApiClient = {
     downloadAFile(await apiClientInstance.post(getXlsxDemarcheDossierRoute(demarcheId), dto, { responseType: 'blob' }))
   },
 
-  getDossierFiles: (dossierId: number) => async (params: IPagination<IFileOutput>): Promise<IPaginated<IFileOutput>> => {
-    const response = await apiClientInstance.post(getDossierFilesRoute(dossierId), params)
-    return response.data
-  },
+  getDossierFiles:
+    (dossierId: number) =>
+      async (params: IPagination<IFileOutput>): Promise<IPaginated<IFileOutput>> => {
+        const response = await apiClientInstance.post(getDossierFilesRoute(dossierId), params)
+        return response.data
+      },
 
   getDossierFilesSummary: async (dossierId: number): Promise<number> => {
     return (await apiClientInstance.get(getDossierFilesSummaryRoute(dossierId))).data

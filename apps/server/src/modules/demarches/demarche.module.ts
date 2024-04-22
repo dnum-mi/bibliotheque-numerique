@@ -12,6 +12,7 @@ import { DemarcheCustomFilterController } from '@/modules/demarches/controllers/
 import { DsApiModule } from '@/shared/modules/ds-api/ds-api.module'
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
 import { BullModule, BullModuleOptions } from '@nestjs/bull'
+import { DemarcheOptionController } from '@/modules/demarches/controllers/demarche-option.controller'
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { BullModule, BullModuleOptions } from '@nestjs/bull'
     DemarcheDossierController,
     DemarcheConfigurationController,
     DemarcheCustomFilterController,
+    DemarcheOptionController,
   ],
   providers: [DemarcheService, DemarcheSynchroniseService],
   exports: [DemarcheService, DemarcheSynchroniseService],

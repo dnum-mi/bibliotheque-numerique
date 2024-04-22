@@ -9,16 +9,18 @@ import { Dossier } from '../objects/entities/dossier.entity'
 import { LoggerService } from '../../../shared/modules/logger/logger.service'
 import { getFakeDossierTest } from '../../../../test/unit/fake-data/dossier.fake-data'
 import { File } from '../../files/objects/entities/file.entity'
+import { FieldService } from '@/modules/dossiers/providers/field.service'
 
 describe('dossier.service', () => {
   let service
   beforeAll(() => {
     const repository: Repository<Dossier> = jest.createMockFromModule('typeorm/repository/Repository')
     const loggerService: LoggerService = jest.createMockFromModule<LoggerService>('@/shared/modules/logger/logger.service')
+    const fieldService: FieldService = jest.createMockFromModule<FieldService>('@/modules/dossiers/providers/field.service')
     loggerService.setContext = jest.fn()
     loggerService.verbose = jest.fn()
 
-    service = new DossierService(repository, loggerService)
+    service = new DossierService(repository, fieldService, loggerService)
   })
 
   it('Should have new value in url of files', () => {

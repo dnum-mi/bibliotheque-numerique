@@ -10,6 +10,7 @@ export const demarchesRoute = '/demarches'
 export const smallDemarchesRoutes = `${demarchesRoute}/small`
 export const getDemarcheByIdRoute = (id: number) => `${demarchesRoute}/${id}`
 export const getDemarcheConfigurationRoute = (id: number) => `${getDemarcheByIdRoute(id)}/configurations`
+export const getDemarcheOptionRoute = (id: number) => `${getDemarcheByIdRoute(id)}/options`
 export const getUpdateOneMappingColumnRoute = (demarcheId: number, fieldId: string) => `${getDemarcheConfigurationRoute(demarcheId)}/${fieldId}`
 export const getListDemarcheDossierRoute = (demarcheId: number) => `${getDemarcheByIdRoute(demarcheId)}/dossiers-search`
 export const getListDemarcheFieldRoute = (demarcheId: number) => `${getDemarcheByIdRoute(demarcheId)}/fields-search`

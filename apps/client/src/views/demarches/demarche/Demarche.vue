@@ -10,8 +10,9 @@ import DemarcheInformations from '@/views/demarches/demarche/information/Demarch
 import DemarcheConfigurations from '@/views/demarches/demarche/configuration/DemarcheConfigurations.vue'
 import LayoutList from '@/components/Layout/LayoutList.vue'
 import DemarcheDossiers from '@/views/demarches/demarche/dossiers/DemarcheDossiers.vue'
+import DemarcheOptions from '@/views/demarches/demarche/options/DemarcheOptions.vue'
 
-const props = defineProps<{ demarcheId: string, customDisplayId?: string }>()
+const props = defineProps<{ demarcheId: string; customDisplayId?: string }>()
 
 const route = useRoute()
 const router = useRouter()
@@ -38,7 +39,16 @@ const tabTitles = computed<(DsfrTabItemProps & { title: string })[]>(() => [
     tabId: 'tab-2',
     title: 'Information',
   },
-  ...(userStore.CanConfigureDemarche(Number(props.demarcheId)) ? [{ title: 'Configuration', panelId: 'pan-3', tabId: 'tab-3' }] : []),
+  ...(userStore.CanConfigureDemarche(Number(props.demarcheId))
+    ? [
+        {
+          title: 'Configuration',
+          panelId: 'pan-3',
+          tabId: 'tab-3',
+        },
+        { title: 'Option', panelId: 'pan-4', tabId: 'tab-4' },
+      ]
+    : []),
 ])
 const selectedTabIndex = ref(0)
 
@@ -112,6 +122,20 @@ onMounted(() => {
           </KeepAlive>
         </template>
       </DsfrTabContent>
+
+      <!-- Options -->
+      <DsfrTabContent
+        v-if="userStore.CanConfigureDemarche(Number(props.demarcheId))"
+        panel-id="pan-4"
+        tab-id="tab-4"
+        :selected="selectedTabIndex === 3"
+      >
+        <template v-if="selectedTabIndex === 3">
+          <KeepAlive>
+            <DemarcheOptions />
+          </KeepAlive>
+        </template>
+      </DsfrTabContent>
     </DsfrTabs>
   </LayoutList>
 </template>
@@ -122,6 +146,6 @@ onMounted(() => {
 }
 
 .small-padding-tab {
-  padding:5px !important;
+  padding: 5px !important;
 }
 </style>

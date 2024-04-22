@@ -70,4 +70,15 @@ export class Demarche extends BaseEntity implements IDemarche {
 
   @DeleteDateColumn()
   deletedDate: Date | null
+
+  @ApiProperty({
+    description: 'Nombre de mois avant l\'anonymisation des données sensibles.',
+    nullable: true,
+  })
+  @Column({
+    type: 'integer',
+    default: null,
+    nullable: true,
+  })
+  nbrMonthAnonymisation: number
 }
