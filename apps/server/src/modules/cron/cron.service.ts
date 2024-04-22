@@ -48,6 +48,10 @@ export class CronService implements OnApplicationBootstrap {
         name: eJobName.ComputeOrganismeDDC,
         cron: this.config.get('cron').computeOrganismeDDC,
       },
+      {
+        name: eJobName.AnonymizeDossiers,
+        cron: this.config.get('cron').anonymiseDossiers,
+      },
     ]
   }
 

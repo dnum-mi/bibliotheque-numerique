@@ -1,20 +1,30 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
-import { Repository } from 'typeorm'
+import { In, Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
 
-import { Champ, Message, PieceJustificativeChamp, RepetitionChamp } from '@dnum-mi/ds-api-client'
+import {
+  Champ,
+  Message,
+  PieceJustificativeChamp,
+  RepetitionChamp,
+} from '@dnum-mi/ds-api-client'
 import { eFileDsSourceLabel, eState } from '@biblio-num/shared'
 
 import { Dossier } from '../objects/entities/dossier.entity'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { LeanDossierOutputDto } from '@/modules/dossiers/objects/dto/lean-dossier-output.dto'
 import { File } from '../../files/objects/entities/file.entity'
+import { FieldService } from '@/modules/dossiers/providers/field.service'
+import {
+  fixFieldValueFunctionsDemandeur,
+} from '@/modules/dossiers/objects/constante/fix-field-demandeur.dictionnary'
 
 @Injectable()
 export class DossierService extends BaseEntityService<Dossier> {
   constructor(
     @InjectRepository(Dossier) protected readonly repo: Repository<Dossier>,
+    private readonly fieldService: FieldService,
     protected readonly logger: LoggerService,
   ) {
     super(repo, logger)
@@ -39,8 +49,8 @@ export class DossierService extends BaseEntityService<Dossier> {
       .where('organisme.id = :organismeId', { organismeId })
       .select(['d', 'demarche.title', 'demarche.id'])
       .getMany()
-      .then(dossiers => {
-        return dossiers.map(dossier => ({
+      .then((dossiers) => {
+        return dossiers.map((dossier) => ({
           id: dossier.id,
           demarcheId: dossier.demarche.id,
           demarcheTitle: dossier.demarche.title,
@@ -60,35 +70,59 @@ export class DossierService extends BaseEntityService<Dossier> {
     this.logger.verbose('transformValueFileOfDossier')
     if (dossier.dsDataJson.champs && Array.isArray(dossier.dsDataJson.champs)) {
       dossier.dsDataJson.champs.forEach(
-        this.transformUrlToUuid(files.filter((f) => f.sourceLabel === eFileDsSourceLabel['ds-champ'])),
+        this.transformUrlToUuid(
+          files.filter((f) => f.sourceLabel === eFileDsSourceLabel['ds-champ']),
+        ),
       )
     }
-    if (dossier.dsDataJson.annotations && Array.isArray(dossier.dsDataJson.annotations)) {
+    if (
+      dossier.dsDataJson.annotations &&
+      Array.isArray(dossier.dsDataJson.annotations)
+    ) {
       dossier.dsDataJson.annotations.forEach(
-        this.transformUrlToUuid(files.filter((f) => f.sourceLabel === eFileDsSourceLabel['ds-annotation'])),
+        this.transformUrlToUuid(
+          files.filter(
+            (f) => f.sourceLabel === eFileDsSourceLabel['ds-annotation'],
+          ),
+        ),
       )
     }
-    if (dossier.dsDataJson.messages && Array.isArray(dossier.dsDataJson.messages)) {
+    if (
+      dossier.dsDataJson.messages &&
+      Array.isArray(dossier.dsDataJson.messages)
+    ) {
       dossier.dsDataJson.messages.forEach(
-        this.transformUrlToUuidMessage(files.filter((f) => f.sourceLabel === eFileDsSourceLabel['ds-message'])),
+        this.transformUrlToUuidMessage(
+          files.filter(
+            (f) => f.sourceLabel === eFileDsSourceLabel['ds-message'],
+          ),
+        ),
       )
     }
 
     if (dossier.dsDataJson.attestation) {
-      dossier.dsDataJson.attestation.url = files.find(f => f.sourceLabel === eFileDsSourceLabel['ds-attestation'])?.uuid
+      dossier.dsDataJson.attestation.url = files.find(
+        (f) => f.sourceLabel === eFileDsSourceLabel['ds-attestation'],
+      )?.uuid
     }
     return dossier
   }
 
-  private setFileUrlToUuid = (id, files, fileCh, filesCh):void => {
+  private setFileUrlToUuid = (id, files, fileCh, filesCh): void => {
     if (fileCh) {
-      const fileFound = files.find(file => file.sourceStringId === id && file.checksum === fileCh.checksum)
+      const fileFound = files.find(
+        (file) =>
+          file.sourceStringId === id && file.checksum === fileCh.checksum,
+      )
       fileCh.url = fileFound?.uuid ?? ''
       fileCh.state = fileFound?.state ?? eState.queued
     }
     if (filesCh) {
       filesCh.forEach((fileCh1) => {
-        const fileFound = files.find(file => file.sourceStringId === id && file.checksum === fileCh1.checksum)
+        const fileFound = files.find(
+          (file) =>
+            file.sourceStringId === id && file.checksum === fileCh1.checksum,
+        )
         fileCh1.url = fileFound?.uuid ?? ''
         fileCh1.state = fileFound?.state ?? eState.queued
       })
@@ -96,7 +130,7 @@ export class DossierService extends BaseEntityService<Dossier> {
   }
 
   private transformUrlToUuid(files: File[]) {
-    return (ch: Champ):void => {
+    return (ch: Champ): void => {
       if (ch.__typename === 'PieceJustificativeChamp') {
         const fileCh = (ch as PieceJustificativeChamp).file
         const filesCh = (ch as PieceJustificativeChamp).files
@@ -104,20 +138,49 @@ export class DossierService extends BaseEntityService<Dossier> {
       }
       if (ch.__typename === 'RepetitionChamp') {
         if ((ch as RepetitionChamp).champs) {
-          (ch as RepetitionChamp).champs.forEach(this.transformUrlToUuid(files))
+          ;(ch as RepetitionChamp).champs.forEach(
+            this.transformUrlToUuid(files),
+          )
         }
         if ((ch as RepetitionChamp).rows) {
-          (ch as RepetitionChamp).rows.forEach(row => row.champs.forEach(this.transformUrlToUuid(files)))
+          ;(ch as RepetitionChamp).rows.forEach((row) =>
+            row.champs.forEach(this.transformUrlToUuid(files)),
+          )
         }
       }
     }
   }
 
   private transformUrlToUuidMessage(files: File[]) {
-    return (m: Message):void => {
+    return (m: Message): void => {
       const fileCh = m.attachment
       const filesCh = m.attachments
       this.setFileUrlToUuid(m.id, files, fileCh, filesCh)
     }
+  }
+
+  async anonymiseDossierDemandeur(dossier: Dossier): Promise<void> {
+    this.logger.verbose(`anonymiseDossier ${dossier.id}`)
+
+    const anomymisedValue = 'Anonymised'
+    const demandeurKeys = ['nom', 'prenom', 'civilite']
+
+    demandeurKeys.forEach(key => {
+      if (Object.prototype.hasOwnProperty.call(dossier.dsDataJson.demandeur, key)) {
+        dossier.dsDataJson.demandeur[key] = anomymisedValue
+      }
+    })
+
+    await this.fieldService.repository.update({
+      dossierId: dossier.id,
+      sourceId: In(Object.keys(fixFieldValueFunctionsDemandeur)),
+    }, {
+      stringValue: anomymisedValue,
+      anonymisedAt: new Date(),
+    })
+    await this.repo.update(dossier.id, {
+      anonymisedAt: new Date(),
+      dsDataJson: dossier.dsDataJson,
+    })
   }
 }

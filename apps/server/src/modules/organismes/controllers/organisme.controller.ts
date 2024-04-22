@@ -10,7 +10,7 @@ import {
   Post,
   Res,
 } from '@nestjs/common'
-import { ApiOkResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 
 import {

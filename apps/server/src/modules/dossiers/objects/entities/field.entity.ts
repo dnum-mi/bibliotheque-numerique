@@ -112,4 +112,11 @@ export class Field extends BaseEntity {
     default: null,
   })
   code: FieldCodeKey | null
+
+  @Column({
+    type: 'timestamp',
+    default: null,
+    nullable: true,
+  })
+  anonymisedAt?: Date | null
 }

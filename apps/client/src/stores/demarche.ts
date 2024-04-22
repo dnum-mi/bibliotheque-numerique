@@ -5,34 +5,36 @@ import type {
   IFieldSearchOutput,
   ISearchDossier,
   IDemarche,
-  MappingColumn,
-  MappingColumnWithoutChildren,
+  IMappingColumn,
+  IMappingColumnWithoutChildren,
   ISmallDemarcheOutput,
+  IDemarcheOption,
 } from '@biblio-num/shared'
 
-export type FrontMappingColumn = MappingColumnWithoutChildren & { isChild: boolean }
+export type FrontIMappingColumn = IMappingColumnWithoutChildren & { isChild: boolean }
 
 export const useDemarcheStore = defineStore('demarche', () => {
   const demarches = ref<ISmallDemarcheOutput[]>([])
   const currentDemarche = ref<IDemarche>()
   const currentDemarcheDossiers = ref<IDossierSearchOutput | IFieldSearchOutput>({ total: 0, data: [] })
-  const currentDemarcheConfiguration = ref<MappingColumn[]>([])
+  const currentDemarcheConfiguration = ref<IMappingColumn[]>([])
+  const currentDemarcheOptions = ref<IDemarcheOption | null>(null)
 
-  const currentDemarcheFlatConfiguration = computed<FrontMappingColumn[]>(
+  const currentDemarcheFlatConfiguration = computed<FrontIMappingColumn[]>(
     () =>
       currentDemarcheConfiguration.value
-        .map((c: MappingColumn) => (c.children?.length ? c.children.map((c) => ({ ...c, isChild: true })) : [c]))
+        .map((c: IMappingColumn) => (c.children?.length ? c.children.map((c) => ({ ...c, isChild: true })) : [c]))
         .flat(1)
-        .filter((c) => !!c.columnLabel) as FrontMappingColumn[],
+        .filter((c) => !!c.columnLabel) as FrontIMappingColumn[],
   )
   // hash will be easier to manipulate
-  const currentDemarcheConfigurationHash = ref<Record<string, MappingColumn>>({})
+  const currentDemarcheConfigurationHash = ref<Record<string, IMappingColumn>>({})
 
-  const _setConfiguration = (configuration: MappingColumn[]) => {
+  const _setConfiguration = (configuration: IMappingColumn[]) => {
     currentDemarcheConfiguration.value = configuration
     currentDemarcheConfigurationHash.value = Object.fromEntries(
       configuration
-        .flatMap((c: MappingColumn) => (c.children?.length ? c.children.map((c) => ({ ...c, isChild: true })) : [c]))
+        .flatMap((c: IMappingColumn) => (c.children?.length ? c.children.map((c: IMappingColumnWithoutChildren) => ({ ...c, isChild: true })) : [c]))
         .filter((c) => c.columnLabel) // filter out empty columnLabel
         .map((c) => [c.id, c]),
     )
@@ -100,6 +102,19 @@ export const useDemarcheStore = defineStore('demarche', () => {
     currentDemarcheConfigurationHash.value = {}
   }
 
+  const getCurrentDemarcheOptions = async () => {
+    if (currentDemarche.value) {
+      currentDemarcheOptions.value = await apiClient.getDemarcheOptions(currentDemarche.value.id)
+    }
+  }
+
+  const saveDemarcheOptions = async (options: Partial<IDemarcheOption>) => {
+    if (currentDemarche.value && currentDemarcheOptions.value) {
+      await apiClient.saveDemarcheOptions(currentDemarche.value.id, options)
+      await getCurrentDemarcheOptions()
+    }
+  }
+
   return {
     $reset,
     demarches,
@@ -108,6 +123,7 @@ export const useDemarcheStore = defineStore('demarche', () => {
     currentDemarcheFlatConfiguration,
     currentDemarcheConfigurationHash,
     currentDemarcheDossiers,
+    currentDemarcheOptions,
     getDemarches,
     getCurrentDemarcheConfigurations,
     searchCurrentDemarcheDossiers,
@@ -115,5 +131,7 @@ export const useDemarcheStore = defineStore('demarche', () => {
     updateOneMappingColumn,
     exportCurrentDemarcheDossiers,
     fetching,
+    getCurrentDemarcheOptions,
+    saveDemarcheOptions,
   }
 })

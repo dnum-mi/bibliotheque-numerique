@@ -20,9 +20,6 @@ import 'ag-grid-community/styles/ag-grid.css'
 import 'ag-grid-community/styles/ag-theme-material.css'
 import '@/ag-grid-dsfr.css'
 
-// Code à supprimer en mars 2024 semaines quand plus aucun utilisateur n'aura l'ancien service worker
-import './unregister.js'
-
 // We use statusBadge in DsfrTable
 import StatusBadge from './components/Badges/status/StatusBadge.vue'
 import FileTagBadge from '@/components/Badges/file-tag/FileTagBadge.vue'
@@ -32,19 +29,6 @@ const agGridLicenseKey = '__AG_GRID_LICENSE_KEY__'
 LicenseManager.setLicenseKey(agGridLicenseKey)
 
 addIcons(...Object.values(icons))
-
-if (import.meta.env.DEV && import.meta.env.VITE_CYPRESS !== 'true') {
-  const { worker } = await import('./mocks/browser')
-  await worker.start({
-    onUnhandledRequest: (request) => {
-      const url = request.url
-      if (!/\/api\//.test(url)) {
-        return
-      }
-      console.log('Unhandled request:', new URL(request.url).pathname)
-    },
-  })
-}
 
 createApp(App)
   .use(createPinia())

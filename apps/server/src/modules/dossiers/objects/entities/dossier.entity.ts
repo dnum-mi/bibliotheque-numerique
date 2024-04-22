@@ -48,11 +48,11 @@ export class Dossier extends BaseEntity implements IDossier {
   @Column({ nullable: false })
   sourceId: string
 
+  @Column({ type: 'timestamp', nullable: true, default: null })
   @ApiProperty({
     description: 'date de dépôt du dossier sur démarche simplifié',
   })
-  @Column({ nullable: true, default: null })
-  dateDepot: string
+  dateDepot: Date
 
   @ApiProperty({
     description: 'json original téléchargé de démarche simplifié',
@@ -87,4 +87,16 @@ export class Dossier extends BaseEntity implements IDossier {
 
   @DeleteDateColumn()
   deletedDate: Date | null
+
+  @Column({
+    type: 'timestamp',
+    default: null,
+    nullable: true,
+  })
+  @ApiProperty({
+    description: 'Est ce que le dossier a été anonymisé.',
+    type: Date,
+    nullable: true,
+  })
+  anonymisedAt: Date | null
 }
