@@ -47,6 +47,12 @@ export class CronService implements OnModuleInit {
 
   private async _refreshFoundation() {
     this.logger.verbose('refreshFoundation')
-    await this.foundationService.triggerAllRefresh()
+    try {
+      await this.foundationService.triggerAllRefresh()
+    } catch (e) {
+      this.logger.error('Error during cron jobs')
+      // TODO: better error management
+      console.log(e)
+    }
   }
 }
