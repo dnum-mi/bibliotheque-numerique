@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.10.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.9.2...v2.10.0) (2024-04-23)
+
+
+### Features
+
+* anonymisation ([57a6974](https://github.com/dnum-mi/bibliotheque_numerique/commit/57a69740938dbc66bfeac2b0e9385230f676e5a2))
+* date creation inside DNR demarche ([a6a7981](https://github.com/dnum-mi/bibliotheque_numerique/commit/a6a79811777a825a772e694a5a5b562e4afc079b))
+
+
+### Bug Fixes
+
+* display prefecture of one organisme ([11ba33c](https://github.com/dnum-mi/bibliotheque_numerique/commit/11ba33c85e56120c977c39ed12b718222a1491a4))
+* espace between columns for persons in fiche organism ([3b1dea7](https://github.com/dnum-mi/bibliotheque_numerique/commit/3b1dea72ffcffa83db6d37a20d1bd5d196228160))
+* remove variable env useless ([00bb867](https://github.com/dnum-mi/bibliotheque_numerique/commit/00bb86745ccb74759b41dfe21ccdfa2729ce49d1))
+* replace FE_EXCEL_AMOUNT_CHAMP_ID by FE_AMOUNT_CHAMP_TAG in ds_configuration ([7fd940d](https://github.com/dnum-mi/bibliotheque_numerique/commit/7fd940dbd691e8b48dbf0438d16809cbffc75249))
+* variables name in env-exemple ([c103008](https://github.com/dnum-mi/bibliotheque_numerique/commit/c10300861a4894a81fca65e63eea6a34f9c39183))
+
 ## [2.9.2](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.9.1...v2.9.2) (2024-04-10)
 
 
