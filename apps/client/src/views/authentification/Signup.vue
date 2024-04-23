@@ -12,8 +12,10 @@ import { REQUIRED_FIELD_MESSAGE } from '@/messages'
 import LayoutAccueil from '../../components/Layout/LayoutAccueil.vue'
 import ToggleInputPassword from '@/components/ToggleInputPassword.vue'
 import PasswordHint from '@/components/PasswordHint.vue'
+import useToaster from '../../composables/use-toaster'
 
 const router = useRouter()
+const toaster = useToaster()
 
 const validationSchema = toTypedSchema(z.object({
   firstname: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).min(2, 'Ceci ne semble pas être un prénom'),
@@ -34,6 +36,7 @@ const signInRoute = { name: 'SignIn' }
 const onSubmit = handleSubmit(async (formValue: ICreateUser) => {
   try {
     await apiClient.createUser(formValue)
+    toaster.addSuccessMessage('Veuillez vérifier votre boîte de réception pour validation de votre compte. Si vous avez oublié votre mot de passe, vous pouvez le réinitialiser en utilisant l\'option de récupération de mot de passe.')
     await router.push(signInRoute)
   } catch (error) {
     if (error instanceof AxiosError) {
