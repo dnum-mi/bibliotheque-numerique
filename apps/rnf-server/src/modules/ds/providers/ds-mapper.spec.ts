@@ -167,6 +167,7 @@ describe('DsMapperService & DsConfigurationService', () => {
       },
       email: 'tulipe@gmail.com',
       phone: '07 89 89 89 89',
+      originalCreatedAt: new Date('1001-01-01'),
     })
   })
 })

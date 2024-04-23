@@ -48,20 +48,20 @@ export class Organisme extends BaseEntity implements IOrganisme {
   })
   phoneNumber: string | null
 
-  @Column({ type: 'date', nullable: true })
+  @Column({ type: 'timestamp', nullable: true })
   dateCreation: Date | null
 
   @Column({
-    type: 'date',
+    type: 'timestamp',
     nullable: true,
   })
-  dateDissolution: Date
+  dateDissolution: Date | null
 
   @Column({
-    type: 'date',
+    type: 'timestamp',
     nullable: true,
   })
-  fiscalEndDateAt: Date
+  fiscalEndDateAt: Date | null
 
   @OneToMany(() => Dossier, (dossier) => dossier.organisme, {
     onDelete: 'SET NULL',
@@ -96,7 +96,7 @@ export class Organisme extends BaseEntity implements IOrganisme {
     type: 'jsonb',
     nullable: true,
   })
-  rnfJson: IRnfOutput
+  rnfJson: IRnfOutput | null
   //#endregion
 
   //#region Address
@@ -179,7 +179,8 @@ export class Organisme extends BaseEntity implements IOrganisme {
 
   @Column({
     type: 'jsonb',
-    nullable: true,
+    default: '[]',
+    nullable: false,
   })
   persons: IPerson[]
 }

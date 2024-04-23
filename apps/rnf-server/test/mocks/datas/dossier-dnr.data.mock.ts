@@ -252,6 +252,17 @@ export const dnrDossierDataMock = {
         description: "lorem ipsum",
       },
     },
+    {
+      id: "Q2hhbXAtMTM3O!!!",
+      __typename: "DateChamp",
+      label: "Pour quelle année blabla",
+      stringValue: "1001-01-01",
+      date: "1001-01-01",
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum #rnf-date-creation-rnf# lorem ipsum",
+      },
+    },
   ],
   annotations: [
     {

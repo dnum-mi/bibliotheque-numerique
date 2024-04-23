@@ -77,4 +77,5 @@ export const universalMapper: Mapper = {
   personRole: stringValue,
   personAdministrator: stringValue,
   fiscalEndDateAt: dateValue,
+  originalCreatedAt: () => null,
 }

@@ -44,6 +44,7 @@ import {
   rnaFileCodes,
 } from '@/modules/files/objects/const/rna-code-to-label-and-tag.const'
 import { BnConfigurationService } from '@/shared/modules/bn-configurations/providers/bn-configuration.service'
+import { addYears } from 'date-fns'
 
 @Injectable()
 export class OrganismeService extends BaseEntityService<Organisme> {
@@ -125,9 +126,9 @@ export class OrganismeService extends BaseEntityService<Organisme> {
       .then((c) => parseInt(c.stringValue, 10))
     const creationYear = createdAt.getFullYear()
     const biggerYear = Math.max(creationYear, configYear)
-    const currentYear = new Date().getFullYear()
+    const lastCurrentYear = addYears(new Date(), -1).getFullYear()
     const result = []
-    for (let i = biggerYear; i <= currentYear; i++) {
+    for (let i = biggerYear; i <= lastCurrentYear; i++) {
       if (!alreadyDeclaredYear?.includes(i)) {
         result.push(i)
       }
@@ -141,11 +142,11 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     firstTime = false,
   ): Promise<void> {
     this.logger.verbose(`updateOrganismeFromRnf ${idRnf}`)
-    const creationDate = new Date(raw.createdAt)
+    const creationDate = new Date(raw.originalCreatedAt)
     const toUpdate: Partial<Organisme> = {
       state: eState.uploaded,
       title: raw.title,
-      dateCreation: creationDate,
+      dateCreation: raw.originalCreatedAt,
       type: raw.type as OrganismeTypeKey,
       email: raw.email,
       phoneNumber: raw.phone,

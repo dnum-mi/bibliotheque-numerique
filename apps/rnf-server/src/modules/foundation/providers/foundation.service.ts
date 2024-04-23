@@ -136,22 +136,26 @@ export class FoundationService extends BaseEntityService {
 
     return this.prisma.$transaction(async (prisma) => {
       this.logger.debug('Starting transaction')
-      const foundation = await prisma.foundation.create({
-        data: {
-          title: dto.title,
-          type: dto.type,
-          phone: dto.phone,
-          email: dto.email,
-          declarationYears: dto.declarationYears,
-          department: code,
-          address: {
-            create: dto.address,
-          },
-          rnfId: `in-creation-${new Date().getTime()}`,
-          ...((await this._cascadeCreateFile(dto.status)) ?? {}),
-          ...this._cascadeCreatePersons(dto),
-          fiscalEndDateAt: dto.fiscalEndDateAt,
+      const data: Prisma.FoundationCreateInput = {
+        title: dto.title,
+        type: dto.type,
+        phone: dto.phone,
+        email: dto.email,
+        declarationYears: dto.declarationYears,
+        department: code,
+        address: {
+          create: dto.address,
         },
+        rnfId: `in-creation-${new Date().getTime()}`,
+        ...((await this._cascadeCreateFile(dto.status)) ?? {}),
+        ...this._cascadeCreatePersons(dto),
+        fiscalEndDateAt: dto.fiscalEndDateAt,
+      }
+      if (dto.originalCreatedAt) {
+        data.originalCreatedAt = dto.originalCreatedAt
+      }
+      const foundation = await prisma.foundation.create({
+        data,
       })
 
       const index = await prisma.foundation.count({
