@@ -45,7 +45,7 @@ const columns: Column[] = [
     getValue: (value: string) => ({ component: 'StatusBadge', status: value }),
   },
   {
-    field: 'depotDate',
+    field: 'dateDepot',
     headerName: 'Dépôt',
     getValue: (value: string) => new Date(value).toLocaleDateString(),
   },

@@ -4,7 +4,7 @@ import ResetPassword from './ResetPassword.vue'
 
 describe('<ResetPassword />', () => {
   it('renders', () => {
-    cy.intercept('/api/users/reset-password', { success: true })
+    cy.intercept('/api/users/me/reset-password', { success: true })
 
     cy.mount(ResetPassword)
 

@@ -1,22 +1,7 @@
-import { IsEnum, IsString } from 'class-validator'
+import { ICreateBnConfiguration } from '@biblio-num/shared'
+import { PickType } from '@nestjs/swagger'
+import { BnConfiguration } from '@/shared/modules/bn-configurations/objects/entities/bn-configuration.entity'
 
-import {
-  eBnConfiguration,
-  BnConfigurationKey,
-  ICreateBnConfiguration,
-  BnConfigurationTypeKey,
-  eBnConfigurationType,
-} from '@biblio-num/shared'
-
-export class CreateBnConfigurationDto implements ICreateBnConfiguration {
-  @IsEnum(eBnConfiguration)
-  @IsString()
-  keyName: BnConfigurationKey | null
-
-  @IsString()
-  stringValue: string
-
-  @IsEnum(eBnConfigurationType)
-  @IsString()
-  valueType: BnConfigurationTypeKey | null
-}
+export class CreateBnConfigurationDto
+  extends PickType(BnConfiguration, ['keyName', 'stringValue', 'valueType'])
+  implements ICreateBnConfiguration {}

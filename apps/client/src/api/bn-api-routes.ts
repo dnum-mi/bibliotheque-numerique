@@ -19,6 +19,7 @@ export const getDemarcheCustomFilterRoute = (demarcheId: number) => `${demarches
 export const softDeleteDemarcheByIdRoute = (demarcheId: number) => `${getDemarcheByIdRoute(demarcheId)}/soft-delete`
 
 export const usersRoutes = '/users'
+export const usersPasswordRoute = `${usersRoutes}/me/password`
 export const usersListRoute = `${usersRoutes}/list`
 export const getUserByIdRoute = (id: number) => `${usersRoutes}/${id}`
 export const profileRoute = `${usersRoutes}/me`

@@ -10,7 +10,7 @@ import {
   Post,
   Res,
 } from '@nestjs/common'
-import { ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { ApiOkResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 
 import {
@@ -35,8 +35,10 @@ import {
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
 import { InjectQueue } from '@nestjs/bull'
 import { Queue } from 'bull'
+import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.decorator'
+import { Organisme } from '@/modules/organismes/objects/organisme.entity'
 
-@ApiTags('Demarches')
+@ApiTags('Organismes')
 @Controller('organismes')
 export class OrganismeController {
   constructor(
@@ -50,6 +52,13 @@ export class OrganismeController {
   }
 
   @Post('list')
+  @UsualApiOperation({
+    summary: 'Retourne une liste d\'organisme.',
+    method: 'POST',
+    minimumRole: Roles.instructor,
+    isPagination: true,
+    responseType: PaginatedDto<IOrganisme>,
+  })
   @HttpCode(200)
   @Role(Roles.instructor)
   @ApiResponse({ status: 200 })
@@ -61,6 +70,14 @@ export class OrganismeController {
   }
 
   @Get(':organismeId/dossiers')
+  @UsualApiOperation({
+    summary: 'Recevoir les dossiers d\'un organisme.',
+    method: 'GET',
+    minimumRole: Roles.instructor,
+    responseType: LeanDossierOutputDto,
+    isArray: true,
+    supplement: 'Pas de mécanisme de pagination.',
+  })
   @Role(Roles.instructor)
   async getOrganismeDossiers(
     @Param('organismeId') id: string,
@@ -69,6 +86,12 @@ export class OrganismeController {
     return this.dossierService.getOrganismeDossiers(+id)
   }
 
+  @UsualApiOperation({
+    summary: 'Retourner un organisme à partir de son ID.',
+    method: 'GET',
+    minimumRole: Roles.instructor,
+    responseType: Organisme,
+  })
   @Get(':organismeId')
   @Role(Roles.instructor)
   async getOrganisme(
@@ -81,6 +104,12 @@ export class OrganismeController {
     return this.organismeService.findOneOrThrow({ where: { id } })
   }
 
+  @UsualApiOperation({
+    summary: 'Retourner un organisme à partir de son RNA.',
+    method: 'GET',
+    minimumRole: Roles.instructor,
+    responseType: Organisme,
+  })
   @Get('rna/:organismeIdRna')
   @Role(Roles.instructor)
   async getOrganismeWithRna(
@@ -90,6 +119,12 @@ export class OrganismeController {
     return this.organismeService.findOneOrThrow({ where: { idRna } })
   }
 
+  @UsualApiOperation({
+    summary: 'Retourner un organisme à partir de son RNF.',
+    method: 'GET',
+    minimumRole: Roles.instructor,
+    responseType: Organisme,
+  })
   @Get('rnf/:organismeIdRnf')
   @Role(Roles.instructor)
   async getOrganismeWithRnf(
@@ -99,10 +134,21 @@ export class OrganismeController {
     return this.organismeService.findOneOrThrow({ where: { idRnf } })
   }
 
+  @ApiOperation({
+    summary: 'Retourner un export excel.',
+    description: 'Retourner un export excel de l\'ensemble des organismes à partir d\'un DTO de pagination.',
+  })
+  @UsualApiOperation({
+    summary: 'Retourner un export excel.',
+    supplement: 'L\'export excel correspond à tous les résultats de pagination sans les pages.',
+    method: 'GET',
+    minimumRole: Roles.instructor,
+    isPagination: true,
+    responseType: null,
+  })
   @Post('list/export/xlsx')
   @HttpCode(200)
   @Role(Roles.instructor)
-  @ApiOkResponse({ description: 'Excel file served successfully', content: xlsxContent })
   @Header('Content-type', Object.keys(xlsxContent)[0])
   @Header('Content-Disposition', 'export.xlsx')
   async listOrganismeXlsx(
@@ -114,6 +160,12 @@ export class OrganismeController {
     this.xlsxService.generateXlsxFileWithMapHeader(data, mapOrganismeFieldHeader, dto.columns).pipe(res)
   }
 
+  @UsualApiOperation({
+    summary: 'Forcer la synchronisation d\'un organisme.',
+    method: 'PATCH',
+    minimumRole: Roles.sudo,
+    responseType: null,
+  })
   @Patch(':id/sync')
   @Role(Roles.sudo)
   async synchroniseOne(@Param('id') id: number): Promise<void> {

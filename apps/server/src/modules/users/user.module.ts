@@ -9,6 +9,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 import { DemarcheModule } from '@/modules/demarches/demarche.module'
 import { RoleService } from '@/modules/users/providers/role.service'
 import { UserRoleController } from '@/modules/users/controllers/user-role.controller'
+import { UserMeController } from '@/modules/users/controllers/user-me.controller'
 
 @Module({
   imports: [
@@ -29,7 +30,7 @@ import { UserRoleController } from '@/modules/users/controllers/user-role.contro
     SendMailModule,
     DemarcheModule,
   ],
-  controllers: [UserController, UserRoleController],
+  controllers: [UserController, UserMeController, UserRoleController],
   providers: [UserService, RoleService],
   exports: [UserService],
 })
