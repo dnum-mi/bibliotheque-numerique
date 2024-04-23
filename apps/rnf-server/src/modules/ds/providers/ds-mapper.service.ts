@@ -25,8 +25,10 @@ export class DsMapperService {
     champs: CustomChamp[],
     regexHash: Record<string, RegExp>,
   ): Record<string, Champ> {
+    this.logger.verbose('findChampsInDossier')
     const champsHash = {}
     for (const champ of champs) {
+      this.logger.debug(champ.label)
       for (const key in regexHash) {
         if (champ.champDescriptor.description?.match(regexHash[key])) {
           if (champ.champDescriptor.type === TypeDeChamp.Repetition) {
@@ -61,7 +63,11 @@ export class DsMapperService {
     const mapperWithoutPerson = this.mapperWithoutPerson(mapper)
     const foundationDto: CreateFoundationDto = Object.fromEntries(
       Object.keys(mapperWithoutPerson)
-        .map((key) => [key, (mapperWithoutPerson)[key](champsHash[key])] as [string, string])
+        .map((key) => {
+          const result = (mapperWithoutPerson)[key](champsHash[key]) as string
+          this.logger.debug(`${key}: ${result}`)
+          return [key, result]
+        })
         .filter(([key, value]) => !!value),
     ) as unknown as CreateFoundationDto
 
@@ -70,6 +76,7 @@ export class DsMapperService {
   }
 
   mapperWithoutPerson(mapper: Mapper): Mapper {
+    this.logger.verbose('mapperWithoutPerson')
     const mapperWithOutPerson = { ...mapper }
     for (const key in personMapper) {
       delete mapperWithOutPerson[key]

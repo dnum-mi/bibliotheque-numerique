@@ -86,12 +86,7 @@ export class DsService {
     this.logger.verbose('getOneDossier')
     return this.dsApiClient
       .dossierWithCustomChamp(idDossier)
-      .then((response: { dossier: DossierWithCustomChamp }) => {
-        this.logger.debug(
-          'DS API response: ' + JSON.stringify(response.dossier),
-        )
-        return response.dossier
-      })
+      .then((response: { dossier: DossierWithCustomChamp }) => response.dossier)
   }
 
   async getOneDemarcheWithDossier(idDemarche: number, lastRefreshedAt: Date): Promise<IDsApiClientDemarche> {
