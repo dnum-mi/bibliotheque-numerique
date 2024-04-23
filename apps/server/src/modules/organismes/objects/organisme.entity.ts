@@ -12,9 +12,15 @@ import {
   IPerson,
 } from '@biblio-num/shared'
 import { File } from '@/modules/files/objects/entities/file.entity'
+import { ApiProperty } from '@nestjs/swagger'
 
 @Entity({ name: 'organismes' })
 export class Organisme extends BaseEntity implements IOrganisme {
+  @ApiProperty({
+    type: String,
+    enum: eOrganismeType,
+    default: eOrganismeType.unknown,
+  })
   @Column({
     type: 'enum',
     enum: eOrganismeType,
@@ -28,8 +34,17 @@ export class Organisme extends BaseEntity implements IOrganisme {
     enum: eState,
     default: eState.queued,
   })
+  @ApiProperty({
+    type: String,
+    enum: eState,
+    default: eState.queued,
+  })
   state: StateKey
 
+  @ApiProperty({
+    type: String,
+    nullable: true,
+  })
   @Column({
     type: 'varchar',
     nullable: true,
@@ -40,25 +55,45 @@ export class Organisme extends BaseEntity implements IOrganisme {
     type: 'varchar',
     nullable: true,
   })
+  @ApiProperty({
+    type: String,
+    nullable: true,
+  })
   email: string | null
 
   @Column({
     type: 'varchar',
     nullable: true,
   })
+  @ApiProperty({
+    type: String,
+    nullable: true,
+  })
   phoneNumber: string | null
 
   @Column({ type: 'timestamp', nullable: true })
+  @ApiProperty({
+    type: Date,
+    nullable: true,
+  })
   dateCreation: Date | null
 
   @Column({
     type: 'timestamp',
     nullable: true,
   })
+  @ApiProperty({
+    type: Date,
+    nullable: true,
+  })
   dateDissolution: Date | null
 
   @Column({
     type: 'timestamp',
+    nullable: true,
+  })
+  @ApiProperty({
+    type: Date,
     nullable: true,
   })
   fiscalEndDateAt: Date | null
@@ -75,10 +110,19 @@ export class Organisme extends BaseEntity implements IOrganisme {
     nullable: true,
     unique: true,
   })
+  @ApiProperty({
+    type: String,
+    nullable: true,
+  })
   idRna: string | null
 
   @Column({
     type: 'jsonb',
+    nullable: true,
+  })
+  @ApiProperty({
+    type: Object,
+    description: 'Json original reçu de RNA',
     nullable: true,
   })
   rnaJson: IRnaOutput
@@ -90,10 +134,19 @@ export class Organisme extends BaseEntity implements IOrganisme {
     nullable: true,
     unique: true,
   })
+  @ApiProperty({
+    type: String,
+    nullable: true,
+  })
   idRnf: string | null
 
   @Column({
     type: 'jsonb',
+    nullable: true,
+  })
+  @ApiProperty({
+    type: Object,
+    description: 'Json original reçu de RNF',
     nullable: true,
   })
   rnfJson: IRnfOutput | null
@@ -104,10 +157,18 @@ export class Organisme extends BaseEntity implements IOrganisme {
     type: 'varchar',
     nullable: true,
   })
+  @ApiProperty({
+    type: String,
+    nullable: true,
+  })
   addressLabel: string | null
 
   @Column({
     type: 'varchar',
+    nullable: true,
+  })
+  @ApiProperty({
+    type: String,
     nullable: true,
   })
   addressPostalCode: string | null
@@ -116,10 +177,18 @@ export class Organisme extends BaseEntity implements IOrganisme {
     type: 'varchar',
     nullable: true,
   })
+  @ApiProperty({
+    type: String,
+    nullable: true,
+  })
   addressCityName: string | null
 
   @Column({
     type: 'varchar',
+    nullable: true,
+  })
+  @ApiProperty({
+    type: String,
     nullable: true,
   })
   addressType: string | null
@@ -128,10 +197,18 @@ export class Organisme extends BaseEntity implements IOrganisme {
     type: 'varchar',
     nullable: true,
   })
+  @ApiProperty({
+    type: String,
+    nullable: true,
+  })
   addressStreetAddress: string | null
 
   @Column({
     type: 'varchar',
+    nullable: true,
+  })
+  @ApiProperty({
+    type: String,
     nullable: true,
   })
   addressStreetNumber: string | null
@@ -140,10 +217,18 @@ export class Organisme extends BaseEntity implements IOrganisme {
     type: 'varchar',
     nullable: true,
   })
+  @ApiProperty({
+    type: String,
+    nullable: true,
+  })
   addressStreetName: string | null
 
   @Column({
     type: 'varchar',
+    nullable: true,
+  })
+  @ApiProperty({
+    type: String,
     nullable: true,
   })
   addressDepartmentName: string | null
@@ -152,16 +237,28 @@ export class Organisme extends BaseEntity implements IOrganisme {
     type: 'varchar',
     nullable: true,
   })
+  @ApiProperty({
+    type: String,
+    nullable: true,
+  })
   addressDepartmentCode: string | null
 
   @Column({
     type: 'varchar',
     nullable: true,
   })
+  @ApiProperty({
+    type: String,
+    nullable: true,
+  })
   addressRegionName: string | null
 
   @Column({
     type: 'varchar',
+    nullable: true,
+  })
+  @ApiProperty({
+    type: String,
     nullable: true,
   })
   addressRegionCode: string | null
@@ -171,12 +268,24 @@ export class Organisme extends BaseEntity implements IOrganisme {
   @JoinColumn()
   files?: File[]
 
+  @ApiProperty({
+    type: Number,
+    isArray: true,
+  })
   @Column({ type: 'jsonb', default: '[]', nullable: false })
   declarationYears: number[]
 
+  @ApiProperty({
+    type: Number,
+    isArray: true,
+  })
   @Column({ type: 'jsonb', default: '[]', nullable: false })
   missingDeclarationYears: number[]
 
+  @ApiProperty({
+    type: Object,
+    description: 'Json original des personnes reçu de RNF',
+  })
   @Column({
     type: 'jsonb',
     default: '[]',

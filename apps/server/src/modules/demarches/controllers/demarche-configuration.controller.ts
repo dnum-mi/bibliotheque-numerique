@@ -14,12 +14,11 @@ import { CurrentDemarcheInterceptor } from '../providers/interceptors/current-de
 import { Demarche } from '../objects/entities/demarche.entity'
 import { CurrentDemarche } from '../providers/decorators/current-demarche.decorator'
 
-import {
-  Roles,
-} from '@biblio-num/shared'
+import { Roles } from '@biblio-num/shared'
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
 import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
 import { UpdateOneFieldConfigurationDto } from '@/modules/demarches/objects/dtos/update-one-field-configuration.dto'
+import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.decorator'
 
 @ApiTags('Demarches')
 @ApiTags('Configurations')
@@ -34,6 +33,13 @@ export class DemarcheConfigurationController {
   }
 
   @Get()
+  @UsualApiOperation({
+    summary: "Retourne la configuration d'une démarche.",
+    method: 'GET',
+    minimumRole: Roles.admin,
+    responseType: MappingColumn,
+    isArray: true,
+  })
   @Role(Roles.admin)
   async getDemarcheConfiguration(
     @CurrentDemarche() demarche: Demarche,
@@ -43,6 +49,15 @@ export class DemarcheConfigurationController {
   }
 
   @Patch(':fieldId')
+  @UsualApiOperation({
+    summary: "Modifie la configuration d'une démarche.",
+    method: 'PATCH',
+    minimumRole: Roles.admin,
+    supplement:
+      'Envoyer columnLabel null revient à ne pas sélectionner la colonne.' +
+      ' La renommer correspond à l\'action de la sélectionner et de la renommer.',
+    responseType: null,
+  })
   @Role(Roles.admin)
   async updateOneFieldConfiguration(
     @CurrentDemarche() demarche: Demarche,

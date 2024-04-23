@@ -6,5 +6,5 @@ export interface ILeanDossierOutput {
   demarcheTitle: string
   prefecture: PrefectureKeys
   state: string
-  depotDate: string
+  dateDepot: string
 }

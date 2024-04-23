@@ -31,6 +31,7 @@ const allSmallDemarches: SmallDemarcheOutputDto[] = [
     id: 1,
     dsId: 1,
     types: [eOrganismeType.CULTE],
+    identification: null,
     title: 'Démarche 1',
     dsCreatedAt: new Date(0),
     dsPublishedAt: new Date(0)
@@ -39,6 +40,7 @@ const allSmallDemarches: SmallDemarcheOutputDto[] = [
     id: 2,
     dsId: 2,
     types: [eOrganismeType.CULTE],
+    identification: null,
     title: 'Démarche 2',
     dsCreatedAt: new Date(0),
     dsPublishedAt: new Date(0)
@@ -47,6 +49,7 @@ const allSmallDemarches: SmallDemarcheOutputDto[] = [
     id: 3,
     dsId: 3,
     types: [eOrganismeType.FDD],
+    identification: null,
     title: 'Démarche 3',
     dsCreatedAt: new Date(0),
     dsPublishedAt: new Date(0)
@@ -55,6 +58,7 @@ const allSmallDemarches: SmallDemarcheOutputDto[] = [
     id: 4,
     dsId: 4,
     types: [eOrganismeType.FDD, eOrganismeType.FE],
+    identification: null,
     title: 'Démarche 4',
     dsCreatedAt: new Date(0),
     dsPublishedAt: new Date(0)
@@ -63,6 +67,7 @@ const allSmallDemarches: SmallDemarcheOutputDto[] = [
     id: 5,
     dsId: 5,
     types: [],
+    identification: null,
     title: 'Démarche 5',
     dsCreatedAt: new Date(0),
     dsPublishedAt: new Date(0)
