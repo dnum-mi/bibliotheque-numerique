@@ -170,6 +170,7 @@ services:
       - dev
       - simple-dev
       - tests-e2e
+      - s3-only
     image: quay.io/minio/minio:RELEASE.2023-01-20T02-05-44Z
     container_name: biblio-num_minio
     environment:
