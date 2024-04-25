@@ -1,257 +1,150 @@
-# Projet biblio-num
+# Bibliothéque Numérique
 
 ## Contexte
 
-La solution bibliothèque numérique proposée s’appuie et complète les outils de gestion de téléprocédures SVE (ministère de l’intérieur) et Démarches-Simplifiées (DINUM) afin de permettre suite à la phase d’instruction de démarches de déclaration, l’interaction multi-acteurs autour de ces données, afin d’en tirer des analyses et actions légales éventuelles.
+La solution Bibliothèque Numérique proposée s’appuie sur et complète les outils de gestion de téléprocédures SVE (ministère de l’intérieur) et [Démarches-Simplifiées](https://www.demarches-simplifiees.fr/) (DINUM) afin de permettre, suite à la phase d’instruction de démarches de déclaration, l’interaction multi-acteurs autour de ces données, afin d’en tirer des analyses et actions légales éventuelles.
 
-# Installation pour le développement
+Dans cette solution est incorporé un système de référence des fondations de dotations et d'entreprises, RNF.
 
-## Workspaces
+## Installation
 
-Le projet est construit avec des [workspaces pnpm](https://pnpm.io/workspaces).
+### Prérequis
 
-[Turborepo](https://turbo.build/repo) a été utilisé pour gérer les workspaces pnpm plus facilement.
+#### Les outils à installer
 
-## Premiers pas pour travailler sur la partie serveur
+- [Nodejs](https://nodejs.org/en/download/) *- environnement d'exécution javascript/typescript*
+- [Pnpm](https://pnpm.io/installation) *- gestionnaire de paquets et workspaces pour javascript*
+- [Docker](https://docs.docker.com/get-docker/) *- moteur d'exécution de conteneur*
 
-### Stack
+#### Les APIs externes pour les tests
 
-La stack choisie pour le Serveur (API RESTfull) :
+- Avoir un compte administrateur sur une instance de Démarches-Simplifiées
+- Avoir un token pour l'api RNA ([Documentation](https://entreprise.api.gouv.fr/developpeurs/openapi#tag/Informations-generales/paths/~1v4~1djepva~1api-association~1associations~1%7Bsiren_or_rna%7D/get))
 
-- Node.js
-- TypeScript
-- NestJS
-- S3
-- PostgreSQL
+### Lancer les applications
 
-Pour les tests :
+#### Architecture
 
-- Jest (bientôt Vitest) pour le harnais de test
-- Mailhog pour le mock d’un serveur SMTP
-- supertest pour les tests "end-to-end" (attention, ne pas confondre les tests "end-to-end" NestJS et les test End-to-end avec Cypress)
+Les outils et les serveurs sont lancé sous forme de conteneurs Docker
 
-### Dépendances
+##### Les serveurs
 
-Récupérer un token pour l’API de Démarches Simplifiées (DS). Aller sur le site de DS (IP privée, demander à l’équipe).
+- [Postgres](https://www.postgresql.org/) *- Le systeme de base de données relationnel*
+- [Redis](https://redis.io/) *- Pour le systeme de Queue*
+- [Minio](https://min.io/) *- Pour le systeme de stockage de fichiers S3*
+- [mailhog](https://github.com/mailhog/MailHog) *- un faux server SMTP pour récuper les e-mails*
 
-### Configurer les variables d’environment
+Vous aurez besoin de configurer (Access keys et Buckets) de Minio avant de lancer les applications.
 
-1. Copier le contenu de `server/.env-example` et le coller dans un fichier `server/.env`
-2. Créer un token pour l’API de Démarches Simplifiées (DS)
-3. Remplir toutes les variables d’environment
-
-### Lancer la base de données PostgreSQL
-
-Le plus simple est de lancer le serveur de base de données en lançant le conteneur par le docker-compose `server/docker-compose.yml`.
-
-Ce docker-compose avec le profile `simple-dev` lance le serveur de base de données et une interface web d’administration **adminer** accessible à <http://localhost:8010>.
-
-Pour ce faire, lancer le script npm `dev:docker` :
-
-```console
-pnpm run dev:docker
+```bash
+# Lancer les containeurs Minio
+pnpm run docker:s3:up
 ```
 
-### Lancer les scripts de création de données initiales
+##### Les outils
 
-Il faut maintenant le script de [migration](https://typeorm.io/migrations) de base de données (Pour créer toutes les structures de données):
+- [pgAdmin](https://www.pgadmin.org/) *- Outil d'administration de base données*
+- [Adminer](https://www.adminer.org/) *- Outil d'administration de base données léger*
+- [bull-board](https://github.com/felixmosh/bull-board) *- Outil de suivi de jobs et queues*
 
-```console
-cd apps/server/
-pnpm run typeorm:migration:run
-```
+#### En local
 
-## Conventions à respecter
+##### Construction global
 
-### Conventions de nommage
+``` bash
+# cloner le projet
+git clone  https://github.com/dnum-mi/bibliotheque_numerique.git
 
-#### Noms de branche git
+cd bibliotheque_numerique
 
-Le nom de branche doit être formé de la façon suivante :
+# installation des packages
+pnpm install
 
-`<feat|fix|tech|docs|refacto>_#<ticket_github>/<description-en-kebab-case>`
+# génération des entités de rnf
+pnpm generate-rnf
 
-Exemples :
-
-- `feat_#353/worker-logs`
-- `refacto_#360/reorganize-backend`
-
-#### Message de validation (*commit*)
-
-Les messages de validation git doivent respecter les conventions de [Commits Conventionnels](https://www.conventionalcommits.org/fr/v1.0.0/).
-
-les messages de commit sont acceptés en anglais ou en français.
-
-#### Noms de dossiers et fichiers
-
-Les noms des dossiers et des fichiers doivent impérativement être écrits en [kebab-case](https://www.freecodecamp.org/news/snake-case-vs-camel-case-vs-pascal-case-vs-kebab-case-whats-the-difference/) avec une seule exception : les noms de dossiers et de fichiers de composants Vue et des fichiers s’y afférents (fichiers de tests unitaires et de tests end-to-end, par exemple).
-
-##### Front
-
-Les noms de composants Vue doivent impérativement être formés d’au moins 2 mots, avec une seule exception : le composant `App.vue`.
-
-Exemple :
-
-```
-├── src
-│   ├── App.vue
-│   ├── components
-│   │   ├── BadgeTypeOrganisme.vue
-│   │   ├── BiblioNumDataTable.cy.ts
-│   │   ├── BiblioNumDataTable.vue
-│   │   ├── BiblioNumDataTableAgGrid.cy.ts
-│   │   ├── BiblioNumDataTableAgGrid.vue
-│   ├── stores
-│   │   ├── index.ts
-│   │   ├── role.ts
-│   │   └── user.ts
-```
-
-##### Back
-
-les noms des modules et fichiers associés de NestJS doivent respecter la convention du framework. Les noms sont au singulier: CatModule, CatService, CatController etc.
-La structure est la suivante :
-
-```
-├── src
-│   ├── modules
-│   │   ├── cat
-│   │   │   ├── controllers
-│   │   │   │   ├── cat.controller.ts
-│   │   │   │   ├── cat.controller.spec.ts
-│   │   │   ├── providers
-│   │   │   │   ├── cat.service.ts
-│   │   │   │   ├── cat.service.spec.ts
-│   │   │   ├── entity
-│   │   │   │   ├── cat.entity.ts
-│   │   │   ├── cat.module.ts
+#construction
+pnpm build
 
 ```
 
-#### Noms de variables
+##### Lancer Bibliothéque Numérique
 
-- variable booléenne : doit commencer par `is` (rarement `has`, `should` ou `can`) et être en `camelCase`  comme `isReallyTrue`
-- variable date : doit être préfixée par `Date` ou `At` et être en `camelCase`  comme `startDate` ou `lastModifiedAt`
-- variable array : doit être être au `pluriel`. Exemple: `cats: Array<Cat>`
-- fonction constructeur et classe : `PascalCase`
-- autre variable ou fonction : `camelCase`
-- constante : `SCREAMING_SNAKE_CASE`
+###### Server
 
-Les noms de variables et de fonctions (méthodes aussi) doivent être explicites, et donc potentiellement très long... Jusqu’à une certaine limite.
-
-Les noms de variable d’un seul caractères doivent être proscrits, sauf dans de (très très) rares cas, comme la fonction d’identité (`x => x`) ou des fonctions fléchées extrêmement simples.
-
-Les **noms de variable doivent être au maximum en anglais**, et **peuvent être en français dans certains cas** si la traduction prête à confusion ou trop difficile (`demarche` ou `dossier`) ou si c’est un mot réservé (`affaire` peut rester `affaire` pour ne pas utiliser `case` qui est un mot réservé du langage JavaScript - et donc TypeScript).
-
-#### Noms des endpoints
-
-le nom des **endpoints** doivent correspondres à la ressource au pluriel, et les quatres endpoint classiques doivent être:
-
-- POST /cats (pour créer un cat)
-- GET /cats (pour récupérer un tableaux de cats)
-- GET /cats/:id (pour récupérer un cat)
-- PATCH-PUT /cats/:id (pour modifier un cat)
-- DELETE /cats/:id (pour effacer un cat)
-
-## Développer sur le projet
-
-### Lancer les apps en dev
-
-#### Avec le minimum de conteneurs
-
-Le script du package.json `dev` lance le minimum de conteneurs :
-
-- Le serveur de base de données
-- Le serveur Mailhog
-- Le serveur S3
-
-Et ensuite sont lancés les applications `server` et `client`.
-
-Lancer à la racine du projet :
-
-```console
-pnpm run dev
+```bash
+# Mettre à jours les variables d'environnement de Biblithéque Numérique
+cp apps/server/.env-example apps/server/.env
 ```
 
-#### Avec le serveur dans un conteneur
+Complétez vos vairables d'environnements dans du fichier `.env` pour Biblithéque Numérqure  ([voir doc des variables d'environnement](./apps/server/variables_env.md))
 
-Le script du package.json `docker:dev` lance les mêmes conteneurs ainsi qu’un autre : un conteneur avec le serveur. Si le développeur souhaite développer dans un docker.
+```bash
+# Lancer les containeurs Postgres, redis, mailhog et Minio, si ce n'est pas fait
+pnpm run docker:simple-dev
 
-#### Les conteneurs additionnels
+# initialisation de la base de données de bibliothéques Numérique
+pnpm migration:run
 
-Le script `docker:adminer` lance un conteneur avec [adminer](https://www.adminer.org/), qui écoute sur le port **`8010`**.
-
-Le script `docker:pgadmin` lance un conteneur avec [pgadmin](https://www.pgadmin.org/), qui écoute sur le port **`3010`**.
-
-### Lancer les tests
-
-Le script **`test`** à la racine du projet lance les tests de tous les workspaces qui possèdent un script **`test`** dans le **`package.json`** (a priori tous, donc).
-
-```console
-pnpm run test
+# Lancer le server api en mode developpement
+pnpm dev:server
 ```
 
-### Lancer le lint
-
-Le script **`lint`** à la racine du projet lance la vérification statique du code de tous les workspaces qui possèdent un script **`lint`** dans le **`package.json`** (a priori tous, donc).
-
-```console
-pnpm run lint
+```bash
+# lancer le server worker de synchronisation des demarches et des ogranismes dans un autre terminal
+pnpm dev:dws
 ```
 
-#### Lancer les lint, tests et build du serveur uniquement
-
-Chaque workspace a normalement son lot de script `lint`, `test` et `build`, qui doivent être lancés depuis leur dossier.
-
-Pour le serveur et le client, il est possible de les lancer depuis la racine avec les scripts suivants :
-
-- Client
-
-```console
-pnpm run lint:client
+```bash
+# lancer le server worker de synchronisation des fichiers dans un autre terminal
+pnpm dev:dwf
 ```
 
-```console
-pnpm run test:client
+Vous pouvez pré-rempli la base de données avec le jeu de données présent dans ce répertoire [dumps](dumps/) dont les opérations pré-remplissage sont décrits dans [ici](docs/Server/database/README.md)
+
+###### Client
+
+A partir de la racine du projet
+
+```bash
+# Lancer le client en mode developpement
+pnpm dev:client
 ```
 
-```console
-pnpm run build:client
+##### Lancer RNF
+
+###### Server
+
+```bash
+# Mettre à jours les variables d'environnement de RNF
+cp apps/rnf-server/.env-example apps/rnf-server/.env
 ```
 
-- Serveur
+Complétez vos vairables d'environnements dans du fichier `.env` pour RNF ([voir doc des variables d'environnement](./apps/rnf-server/variables_env.md))
 
-```console
-pnpm run lint:server
+Lancer les génération de code des entités si n'a pas été fait
+
+```bash
+# Génerer les entités de RNF
+pnpm generate-rnf
 ```
 
-```console
-pnpm run test:server
+```bash
+# Lancer les containeurs Postgres, redis, mailhog et Minio, si ce n'est pas fait
+pnpm run docker:simple-dev
 ```
 
-```console
-pnpm run build:server
+```bash
+# initialisation de la base de données de RNF
+pnpm rnf-migration:run
+
+# Lancer le serveur en mode developpement
+pnpm dev:rnf-server
 ```
 
-## Configuration de REST Client (extension VSCode)
+###### Client
 
-Installer l’extension [REST client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client)
-
-Ajouter ces lignes dans vos settings :
-
-```json
-  "rest-client.environmentVariables": {
-    "local": {
-        "baseUrl": "http://localhost:3000",
-        "adminUser": "admin@example.com", // Doit correspondre à l’admin que vous avez créé
-        "adminPassword": "53CR37P455" // Doit correspondre au mot de passe de ce même utilisateur
-    }
-  },
+```bash
+# Lancer le client en mode developpement
+pnpm dev:rnf-client
 ```
-
-Vous pouvez désormais interroger l’API du serveur en utilisant dans VSCode le fichier `/apps/server/api.http`.
-
-## Utilisation de `api.http` depuis IntelliJ
-
-Depuis Webstorm ou un autre IDE de JetBrains, regarder la [documentation officielle](https://www.jetbrains.com/help/idea/http-client-in-product-code-editor.html).
-

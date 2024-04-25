@@ -25,11 +25,7 @@
       "outputs": []
     },
     "@biblio-num/server#dev": {
-      "cache": false,
-      "dependsOn": [
-        "^@biblio-num/server#dwf",
-        "^@biblio-num/server#dws"
-      ]
+      "cache": false
     },
     "build": {
       "dependsOn": [
@@ -43,16 +39,25 @@
       "cache": false
     },
     "dev": {
-      "cache": false
+      "cache": false,
+      "dependsOn": [
+        "^@biblio-num/shared#build"
+      ]
     },
     "dev:in-docker": {
       "cache": false
     },
     "dws": {
-      "cache": false
+      "cache": false,
+      "dependsOn": [
+        "^@biblio-num/shared#build"
+      ]
     },
     "dwf": {
-      "cache": false
+      "cache": false,
+      "dependsOn": [
+        "^@biblio-num/shared#build"
+      ]
     },
     "dev:rnf-server-in-docker": {
       "cache": false
@@ -60,9 +65,7 @@
     "dev:server": {
       "cache": false,
       "dependsOn": [
-        "^@biblio-num/shared#dev",
-        "^@biblio-num/server#dwf",
-        "^@biblio-num/server#dws"
+        "^@biblio-num/shared#build"
       ]
     },
     "dev:server-in-docker": {
@@ -72,6 +75,9 @@
       "cache": false
     },
     "generate-code": {
+      "cache": false
+    },
+    "migration:run": {
       "cache": false
     },
     "lint": {},
