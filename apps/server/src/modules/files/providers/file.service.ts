@@ -146,7 +146,7 @@ export class FileService extends BaseEntityService<File> {
   private async _findRnaExistingFile(
     payload: UpsertRnaFileDto,
   ): Promise<File | null> {
-    this.logger.verbose('_findRnaExistingFile')
+    this.logger.verbose(`_findRnaExistingFile (id: ${payload.sourceStringId})`)
     return this.repo.findOne({
       where: {
         organismeId: payload.organismeId,
@@ -203,7 +203,7 @@ export class FileService extends BaseEntityService<File> {
     }
   }
 
-  async createFromRnaIfNew(payload: UpsertRnaFileDto): Promise<File> {
+  async createFromRnaIfNew(payload: UpsertRnaFileDto): Promise<File | null> {
     this.logger.verbose('createFromRnaIfNew')
     const existingFile = await this._findRnaExistingFile(payload)
     if (!existingFile) {
@@ -223,11 +223,8 @@ export class FileService extends BaseEntityService<File> {
         uuid: v4(),
       })
     } else {
-      return await this.updateAndReturnById(existingFile.id, {
-        state: eState.queued,
-        label: payload.label,
-        tag: payload.tag,
-      })
+      this.logger.debug('File already uploaded')
+      return null
     }
   }
 
