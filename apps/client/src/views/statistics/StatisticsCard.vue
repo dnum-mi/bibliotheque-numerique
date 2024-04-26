@@ -52,7 +52,7 @@ onMounted(() => {
     </div>
     <div
       v-else
-      class="flex  flex-col  gap-4"
+      class="flex flex-col gap-4"
     >
       <!-- HEADER -->
       <div class="flex flex-row gap-2 justify-between">
@@ -67,9 +67,7 @@ onMounted(() => {
           v-if="loading"
           class="w-full flex justify-center align-center"
         >
-          <em>
-            Chargement de&nbsp;
-          </em>
+          <em> Chargement de&nbsp; </em>
           <strong>{{ displayInfo.label }}</strong>...
         </p>
         <p
@@ -102,7 +100,20 @@ onMounted(() => {
               <p class="uppercase m-0 text-sm text-gray-400 fr-text--bold">
                 {{ filter.label }}
               </p>
-              <p class="m-0 p-0 font-bold text-sm">
+              <!--  TODO: find a more generic way to print pretty filter  -->
+              <v-template v-if="filter.label === 'Status'">
+                <v-template v-for="f of filter.value.split(',')">
+                  <status-badge
+                    class="mr-2"
+                    :status="f.trim()"
+                    :is-small="true"
+                  />
+                </v-template>
+              </v-template>
+              <p
+                v-if="filter.label !== 'Status'"
+                class="m-0 p-0 font-bold text-sm"
+              >
                 {{ filter.value }}
               </p>
             </li>
