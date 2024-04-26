@@ -26,19 +26,15 @@ import {
   FieldSource,
   FieldSourceKeys,
   type IdentificationDemarcheKey,
+  OrganismeTypeKey,
 } from '@biblio-num/shared'
-
-import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
-import { InjectQueue } from '@nestjs/bull'
-import { Job, Queue } from 'bull'
-import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
+import { Job } from 'bull'
 import {
   SyncOneDemarcheJobPayload,
   SyncOneDossierJobPayload,
 } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
-
-import { OrganismeTypeKey } from '@biblio-num/shared'
 import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
+import { CustomBullService } from '@/shared/modules/custom-bull/custom-bull.service'
 
 @Injectable()
 export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
@@ -47,7 +43,7 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
     private demarcheService: DemarcheService,
     @InjectRepository(Demarche) repo: Repository<Demarche>,
     private dsApiClient: DsApiClient,
-    @InjectQueue(QueueName.sync) private readonly syncQueue: Queue,
+    private readonly customBullService: CustomBullService,
   ) {
     super(repo, logger)
     this.logger.setContext(this.constructor.name)
@@ -61,7 +57,7 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
   ): Promise<void> {
     this.logger.verbose('_synchroniseAllDossier')
     for (const dossier of dossiers) {
-      await this.syncQueue.add(eJobName.SyncOneDossier, {
+      await this.customBullService.addSyncOneDossierJob({
         demarcheId,
         dsDossierId: dossier.number,
         fromScratch,
@@ -140,7 +136,11 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
     if (await this.demarcheService.findByDsId(dsId)) {
       throw new BadRequestException(`Demarche with dsId ${dsId} already exist.`)
     }
-    const mappingColumns = this._generateMappingColumns(raw.demarche, [], identification)
+    const mappingColumns = this._generateMappingColumns(
+      raw.demarche,
+      [],
+      identification,
+    )
     const demarche = await this.repo.save({
       lastSynchronisedAt: new Date(),
       title: raw.demarche.title,
@@ -175,7 +175,11 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
     const dossiers = raw.dossiers.nodes
     delete raw.dossiers
     job?.log(`dossiers=${JSON.stringify(dossiers)}`)
-    const mappingColumns = this._generateMappingColumns(raw, demarche.mappingColumns, demarche.identification)
+    const mappingColumns = this._generateMappingColumns(
+      raw,
+      demarche.mappingColumns,
+      demarche.identification,
+    )
     const toUpdate = {
       lastSynchronisedAt: new Date(),
       ...(raw.dateDerniereModification !==

@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { loggerServiceMock } from '../../../../../../test/mock/logger-service.mock'
 import { OrganismeService } from '@/modules/organismes/providers/organisme.service'
-import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
 import { DossierSynchroniseOrganismeService } from '@/modules/dossiers/providers/synchronization/organisme/dossier-synchronise-organisme.service'
 import { Field } from '@/modules/dossiers/objects/entities/field.entity'
 import { DossierState } from '@dnum-mi/ds-api-client'
@@ -10,6 +9,7 @@ import { Mock } from 'vitest'
 import { Organisme } from '@/modules/organismes/objects/organisme.entity'
 import { eFieldCode } from '@/modules/dossiers/objects/constante/field-code.enum'
 import { FieldService } from '@/modules/dossiers/providers/field.service'
+import { CustomBullService } from '@/shared/modules/custom-bull/custom-bull.service'
 
 describe('DossierSynchroniseOrganismeService', () => {
   let service: DossierSynchroniseOrganismeService
@@ -37,9 +37,15 @@ describe('DossierSynchroniseOrganismeService', () => {
               update: updateFct,
             },
           }
-        } else if (token === `BullQueue_${QueueName.sync}`) {
+        } else if (token === CustomBullService) {
           return {
-            add: jest
+            addSyncOneRnaOrganismeJob: jest
+              .fn()
+              .mockImplementation((name: string, payload: never) => ({
+                name,
+                payload,
+              })),
+            addSyncOneRnfOrganismeJob: jest
               .fn()
               .mockImplementation((name: string, payload: never) => ({
                 name,

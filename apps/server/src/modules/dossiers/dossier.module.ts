@@ -26,6 +26,7 @@ import {
   DossierSynchroniseOrganismeService,
 } from '@/modules/dossiers/providers/synchronization/organisme/dossier-synchronise-organisme.service'
 import { DossierFileController } from '@/modules/dossiers/controllers/dossier-file.controller'
+import { CustomBullModule } from '@/shared/modules/custom-bull/custom-bull.module'
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { DossierFileController } from '@/modules/dossiers/controllers/dossier-fi
         { name: QueueName.file },
       ] as BullModuleOptions[]),
     ),
+    CustomBullModule,
     BnConfigurationModule,
   ],
   controllers: [DossierController, DossierFileController],

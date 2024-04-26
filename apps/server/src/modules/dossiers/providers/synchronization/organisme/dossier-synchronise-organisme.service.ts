@@ -2,14 +2,10 @@ import { Injectable } from '@nestjs/common'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { Field } from '@/modules/dossiers/objects/entities/field.entity'
 import { DsChampType } from '@/shared/modules/ds-api/objects/ds-champ-type.enum'
-import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
 import {
   SyncOneRnaOrganismeJobPayload,
   SyncOneRnfOrganismeJobPayload,
 } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
-import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
-import { InjectQueue } from '@nestjs/bull'
-import { Queue } from 'bull'
 import { OrganismeService } from '@/modules/organismes/providers/organisme.service'
 import { DossierState } from '@dnum-mi/ds-api-client'
 import { eFieldCode } from '@/modules/dossiers/objects/constante/field-code.enum'
@@ -17,6 +13,7 @@ import { Organisme } from '@/modules/organismes/objects/organisme.entity'
 import { pushIfMissing } from '@/shared/utils/array.utils'
 import { isNumber } from 'class-validator'
 import { FieldService } from '@/modules/dossiers/providers/field.service'
+import { CustomBullService } from '@/shared/modules/custom-bull/custom-bull.service'
 
 @Injectable()
 export class DossierSynchroniseOrganismeService {
@@ -24,7 +21,7 @@ export class DossierSynchroniseOrganismeService {
     private readonly logger: LoggerService,
     private readonly fieldService: FieldService,
     private readonly organismeService: OrganismeService,
-    @InjectQueue(QueueName.sync) private readonly syncQueue: Queue,
+    private readonly customBullService: CustomBullService,
   ) {
     this.logger.setContext(this.constructor.name)
   }
@@ -68,7 +65,7 @@ export class DossierSynchroniseOrganismeService {
       this.logger.debug(
         `Adding Organisme sync for rna:  ${organismeField.stringValue} (with id: ${organisme.id})`,
       )
-      this.syncQueue.add(eJobName.SyncOneRnaOrganisme, {
+      await this.customBullService.addSyncOneRnaOrganismeJob({
         dossierId,
         fieldId: organismeField.id,
         rna: organismeField.stringValue,
@@ -80,7 +77,7 @@ export class DossierSynchroniseOrganismeService {
       this.logger.debug(
         `Adding Organisme sync for rnf:  ${organismeField.stringValue} (with organismeId: ${organisme.id})`,
       )
-      this.syncQueue.add(eJobName.SyncOneRnfOrganisme, {
+      await this.customBullService.addSyncOneRnfOrganismeJob({
         dossierId,
         fieldId: organismeField.id,
         rnf: organismeField.stringValue,
