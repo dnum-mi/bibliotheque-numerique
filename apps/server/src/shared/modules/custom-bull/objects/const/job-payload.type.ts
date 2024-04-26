@@ -30,9 +30,9 @@ export type SyncOneRnaOrganismeJobPayload = SyncOneOrganismeJobPayload & {
 }
 
 export type UploadDsFileJobPayload = {
-  dsDossierId: number,
-  fieldId?: number,
-  parentSourceId?: string,
+  dsDossierId: number
+  fieldId?: number
+  parentSourceId?: string
   file: File
 }
 
@@ -42,5 +42,16 @@ export type UploadRnaFileJobPayload = {
 }
 
 export type ComputeFeExcelJobPayload = {
-  file: File,
+  file: File
 }
+
+export type AnyJobPayload =
+  | SyncAllDemarcheJobPayload
+  | SyncOneDemarcheJobPayload
+  | SyncOneDossierJobPayload
+  | SyncOneOrganismeJobPayload
+  | SyncOneRnfOrganismeJobPayload
+  | SyncOneRnaOrganismeJobPayload
+  | UploadDsFileJobPayload
+  | UploadRnaFileJobPayload
+  | ComputeFeExcelJobPayload
