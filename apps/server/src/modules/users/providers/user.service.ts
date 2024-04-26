@@ -87,11 +87,11 @@ export class UserService
     if (userInDb) {
       if (!userInDb.validated) {
         await this.mailToValidSignUp(userInDb)
+      } else {
+        await this.mailToAlreadyignUp(userInDb)
       }
-      throw new ConflictException({
-        message: 'User already exists',
-        data: { withEMailValidated: true },
-      })
+
+      return userInDb
     }
 
     const user = await this.createAndSave(body)
@@ -153,6 +153,16 @@ export class UserService
       userInDb.firstname,
       userInDb.lastname,
       `${appUrl}/valid-email/${jwtForUrl}`,
+    )
+  }
+
+  private async mailToAlreadyignUp(userInDb: User): Promise<void> {
+    const { appUrl, jwtForUrl } = this.createJwtOnUrl({ user: userInDb.id })
+    await this.sendMailService.alreadySignUp(
+      userInDb.email,
+      userInDb.firstname,
+      userInDb.lastname,
+      `${appUrl}/update-password/${jwtForUrl}`,
     )
   }
 
