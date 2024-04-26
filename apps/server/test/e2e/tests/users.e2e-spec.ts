@@ -273,8 +273,21 @@ describe('users (e2e)', () => {
       await userService.repository.delete({ email: fakeUser.email })
     })
 
-    it('Should return error 409 if user already exists', async () => {
+    it('Should return 200 if user already exists', async () => {
       const email = 'testpwd@localhost.com'
+      let to: string
+      let subject: string
+      jest
+        .spyOn(mailerService, 'sendMail')
+        .mockImplementation(
+          (sendMailOptions: ISendMailOptions): Promise<void> => {
+            expect(sendMailOptions).toBeDefined()
+            to = sendMailOptions.to as string
+            subject = sendMailOptions.subject
+            return // eslint-disable-line no-useless-return
+          },
+        )
+
       await request(app.getHttpServer())
         .post('/users')
         .send({
@@ -282,7 +295,11 @@ describe('users (e2e)', () => {
           password: 'ThisIs1ValidPassword#',
           email,
         })
-        .expect(409)
+        .expect(201)
+
+      expect(mailerService.sendMail).toBeCalled()
+      expect(to).toBe(email)
+      expect(subject).toBe('Déjà inscrit')
     })
   })
 
