@@ -17,6 +17,8 @@ export default antfu({
     'no-irregular-whitespace': 'off',
     'style/space-before-function-paren': ['error', 'always'],
     'vue/no-irregular-whitespace': 'off',
+    'vue/require-v-for-key': 'warn',
+    'vue/valid-v-for': 'warn',
     'sort-imports': 'off', // we should enable this
     'ts/consistent-type-definitions': 'off', // we should enable this
     'import/order': 'off', // we should enable this
