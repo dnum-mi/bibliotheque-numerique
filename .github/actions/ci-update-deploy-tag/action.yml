@@ -44,10 +44,10 @@ runs:
       working-directory: ${{ inputs.repo }}
       shell: bash
       run: |
-        sed -i "s|mi-bibliotheque-numerique/bibliotheque_numerique-front:.*$|mi-bibliotheque-numerique/bibliotheque_numerique-front:${{ steps.get_version.outputs.version }}|" ${{ inputs.path }}
-        sed -i "s|mi-bibliotheque-numerique/bibliotheque_numerique-back:.*$|mi-bibliotheque-numerique/bibliotheque_numerique-back:${{ steps.get_version.outputs.version }}|" ${{ inputs.path }}
-        sed -i "s|mi-bibliotheque-numerique/rnf-front:.*$|mi-bibliotheque-numerique/rnf-front:${{ steps.get_version.outputs.version }}|" ${{ inputs.path }}
-        sed -i "s|mi-bibliotheque-numerique/rnf-back:.*$|mi-bibliotheque-numerique/rnf-back:${{ steps.get_version.outputs.version }}|" ${{ inputs.path }}
+        sed -i "s|mi-biblionum/bibliotheque_numerique-front:.*$|mi-biblionum/bibliotheque_numerique-front:${{ steps.get_version.outputs.version }}|" ${{ inputs.path }}
+        sed -i "s|mi-biblionum/bibliotheque_numerique-back:.*$|mi-biblionum/bibliotheque_numerique-back:${{ steps.get_version.outputs.version }}|" ${{ inputs.path }}
+        sed -i "s|mi-biblionum/rnf-front:.*$|mi-biblionum/rnf-front:${{ steps.get_version.outputs.version }}|" ${{ inputs.path }}
+        sed -i "s|mi-biblionum/rnf-back:.*$|mi-biblionum/rnf-back:${{ steps.get_version.outputs.version }}|" ${{ inputs.path }}
 
     - name: Commit changes
       working-directory: ${{ inputs.repo }}
