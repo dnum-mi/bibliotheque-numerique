@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.11.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.10.0...v2.11.0) (2024-04-29)
+
+
+### Features
+
+* update for redeployer ([d6ce146](https://github.com/dnum-mi/bibliotheque_numerique/commit/d6ce146ccc4133222043dafb7139f82b9e9f02c8))
+
+
+### Bug Fixes
+
+* catching error rnf during crons ([acddade](https://github.com/dnum-mi/bibliotheque_numerique/commit/acddade1377f32fa90d8cd3bdb1b9dbc47f17682))
+* message of already registered ([eecd591](https://github.com/dnum-mi/bibliotheque_numerique/commit/eecd591a6fe69dd1714416273e1fd4b6da16b5ec))
+* update auto-imports ([4e96c75](https://github.com/dnum-mi/bibliotheque_numerique/commit/4e96c75e938141d1b0795fd42e3030506cdb0e59))
+
 ## [2.10.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.9.2...v2.10.0) (2024-04-23)
 
 
