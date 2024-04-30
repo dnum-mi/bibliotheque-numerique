@@ -148,3 +148,28 @@ pnpm dev:rnf-server
 # Lancer le client en mode developpement
 pnpm dev:rnf-client
 ```
+
+
+## Documentation du Code
+
+Certains chapitres de la Bibliothèque Numérique peuvent être difficiles à comprendre, c'est pourquoi il existe des documents spécifiques sur ces sujets. L'ensemble des documents techniques est listé ici : [Documentation Resana](https://resana.numerique.gouv.fr/public/perimetre/consulter/143946?openGed=4676651).
+
+Voici le contenu détaillé de ces documents :
+
+### Dossier *`Base de Données`* :
+Ce dossier contient les schémas des bases de données de RNF et de Bnum, ainsi qu'un fichier Markdown qui explique les différentes tables de Bnum.
+
+### Dossier *`Pagination des Dossiers`* :
+Ce dossier contient un fichier Markdown qui explique la pagination des dossiers, accompagné d'un fichier Excel avec de fausses données pour illustrer les exemples de code présents.
+
+### Dossier *`Structure du Code`* :
+Contient un fichier Markdown expliquant la structure du backend. Ce document devrait être le premier lu par un nouveau développeur cherchant à se familiariser avec le backend.
+
+### Dossier *`Synchronisation`* :
+Contient un fichier Markdown expliquant la synchronisation des données entre Bnum et DS. Ce dossier inclut également un sous-dossier *`Code`* qui explique le système de codes de synchronisation.
+
+### Dossier *`Configuration`* :
+Contient un fichier Markdown décrivant les différentes configurations de la table de Bnum.
+
+### Dossier *`Délais d'intruction`*:
+Contient un fichier Markdown expliquant les délais d'instruction.
