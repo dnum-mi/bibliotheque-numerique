@@ -23,6 +23,7 @@
     "test:unit": "test/unit/launch-unit-test.sh",
     "test:unit:dev": "test/unit/launch-unit-test.sh dev",
     "test:watch": "jest --watch",
+    "migration:run": "prisma migrate dev",
     "generate-code": "prisma generate",
     "dev:server": "nest start --debug 0.0.0.0:9229 --watch",
     "dev:in-docker": "run-s dev:server",
