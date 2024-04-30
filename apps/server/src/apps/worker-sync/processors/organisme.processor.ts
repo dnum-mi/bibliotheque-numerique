@@ -145,6 +145,9 @@ export class OrganismeProcessor {
           })
         }
       } else {
+        await this.fieldService.updateOrThrow(job.data.fieldId, {
+          stringValue: `${job.data.rnf}`,
+        })
         await this.organismeService.updateOrganismeFromRnf(
           job.data.rnf,
           rawRnf,
@@ -175,6 +178,9 @@ export class OrganismeProcessor {
           })
         }
       } else {
+        await this.fieldService.updateOrThrow(job.data.fieldId, {
+          stringValue: `${job.data.rna}`,
+        })
         await this.organismeService.updateOrganismeFromRna(job.data.rna, rawRna)
         job.log('Updated Organisme from rna')
         job.progress(60)

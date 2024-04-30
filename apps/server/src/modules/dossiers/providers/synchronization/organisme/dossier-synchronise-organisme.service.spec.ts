@@ -9,6 +9,7 @@ import { DossierState } from '@dnum-mi/ds-api-client'
 import { Mock } from 'vitest'
 import { Organisme } from '@/modules/organismes/objects/organisme.entity'
 import { eFieldCode } from '@/modules/dossiers/objects/constante/field-code.enum'
+import { FieldService } from '@/modules/dossiers/providers/field.service'
 
 describe('DossierSynchroniseOrganismeService', () => {
   let service: DossierSynchroniseOrganismeService
@@ -44,6 +45,12 @@ describe('DossierSynchroniseOrganismeService', () => {
                 name,
                 payload,
               })),
+          }
+        } else if (token === FieldService){
+          return {
+            repository: {
+              update: jest.fn().mockImplementation()
+            }
           }
         }
       })
