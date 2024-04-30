@@ -107,6 +107,12 @@ declare module 'vue' {
     readonly OhVueIcon: UnwrapRef<typeof import('oh-vue-icons')['OhVueIcon']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
     readonly addIcons: UnwrapRef<typeof import('oh-vue-icons')['addIcons']>
+    readonly afterAll: UnwrapRef<typeof import('vitest')['afterAll']>
+    readonly afterEach: UnwrapRef<typeof import('vitest')['afterEach']>
+    readonly assert: UnwrapRef<typeof import('vitest')['assert']>
+    readonly beforeAll: UnwrapRef<typeof import('vitest')['beforeAll']>
+    readonly beforeEach: UnwrapRef<typeof import('vitest')['beforeEach']>
+    readonly chai: UnwrapRef<typeof import('vitest')['chai']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly createApp: UnwrapRef<typeof import('vue')['createApp']>
     readonly createPinia: UnwrapRef<typeof import('pinia')['createPinia']>
@@ -114,7 +120,9 @@ declare module 'vue' {
     readonly defineAsyncComponent: UnwrapRef<typeof import('vue')['defineAsyncComponent']>
     readonly defineComponent: UnwrapRef<typeof import('vue')['defineComponent']>
     readonly defineStore: UnwrapRef<typeof import('pinia')['defineStore']>
+    readonly describe: UnwrapRef<typeof import('vitest')['describe']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
+    readonly expect: UnwrapRef<typeof import('vitest')['expect']>
     readonly getActivePinia: UnwrapRef<typeof import('pinia')['getActivePinia']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
@@ -124,6 +132,7 @@ declare module 'vue' {
     readonly isReactive: UnwrapRef<typeof import('vue')['isReactive']>
     readonly isReadonly: UnwrapRef<typeof import('vue')['isReadonly']>
     readonly isRef: UnwrapRef<typeof import('vue')['isRef']>
+    readonly it: UnwrapRef<typeof import('vitest')['it']>
     readonly mapActions: UnwrapRef<typeof import('pinia')['mapActions']>
     readonly mapGetters: UnwrapRef<typeof import('pinia')['mapGetters']>
     readonly mapState: UnwrapRef<typeof import('pinia')['mapState']>
@@ -157,6 +166,8 @@ declare module 'vue' {
     readonly shallowReadonly: UnwrapRef<typeof import('vue')['shallowReadonly']>
     readonly shallowRef: UnwrapRef<typeof import('vue')['shallowRef']>
     readonly storeToRefs: UnwrapRef<typeof import('pinia')['storeToRefs']>
+    readonly suite: UnwrapRef<typeof import('vitest')['suite']>
+    readonly test: UnwrapRef<typeof import('vitest')['test']>
     readonly toRaw: UnwrapRef<typeof import('vue')['toRaw']>
     readonly toRef: UnwrapRef<typeof import('vue')['toRef']>
     readonly toRefs: UnwrapRef<typeof import('vue')['toRefs']>
@@ -172,6 +183,8 @@ declare module 'vue' {
     readonly useScheme: UnwrapRef<typeof import('@gouvminint/vue-dsfr')['useScheme']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
     readonly useTabs: UnwrapRef<typeof import('@gouvminint/vue-dsfr')['useTabs']>
+    readonly vi: UnwrapRef<typeof import('vitest')['vi']>
+    readonly vitest: UnwrapRef<typeof import('vitest')['vitest']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>
     readonly watchEffect: UnwrapRef<typeof import('vue')['watchEffect']>
     readonly watchPostEffect: UnwrapRef<typeof import('vue')['watchPostEffect']>
@@ -185,6 +198,12 @@ declare module '@vue/runtime-core' {
     readonly OhVueIcon: UnwrapRef<typeof import('oh-vue-icons')['OhVueIcon']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
     readonly addIcons: UnwrapRef<typeof import('oh-vue-icons')['addIcons']>
+    readonly afterAll: UnwrapRef<typeof import('vitest')['afterAll']>
+    readonly afterEach: UnwrapRef<typeof import('vitest')['afterEach']>
+    readonly assert: UnwrapRef<typeof import('vitest')['assert']>
+    readonly beforeAll: UnwrapRef<typeof import('vitest')['beforeAll']>
+    readonly beforeEach: UnwrapRef<typeof import('vitest')['beforeEach']>
+    readonly chai: UnwrapRef<typeof import('vitest')['chai']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly createApp: UnwrapRef<typeof import('vue')['createApp']>
     readonly createPinia: UnwrapRef<typeof import('pinia')['createPinia']>
@@ -192,7 +211,9 @@ declare module '@vue/runtime-core' {
     readonly defineAsyncComponent: UnwrapRef<typeof import('vue')['defineAsyncComponent']>
     readonly defineComponent: UnwrapRef<typeof import('vue')['defineComponent']>
     readonly defineStore: UnwrapRef<typeof import('pinia')['defineStore']>
+    readonly describe: UnwrapRef<typeof import('vitest')['describe']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
+    readonly expect: UnwrapRef<typeof import('vitest')['expect']>
     readonly getActivePinia: UnwrapRef<typeof import('pinia')['getActivePinia']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
@@ -202,6 +223,7 @@ declare module '@vue/runtime-core' {
     readonly isReactive: UnwrapRef<typeof import('vue')['isReactive']>
     readonly isReadonly: UnwrapRef<typeof import('vue')['isReadonly']>
     readonly isRef: UnwrapRef<typeof import('vue')['isRef']>
+    readonly it: UnwrapRef<typeof import('vitest')['it']>
     readonly mapActions: UnwrapRef<typeof import('pinia')['mapActions']>
     readonly mapGetters: UnwrapRef<typeof import('pinia')['mapGetters']>
     readonly mapState: UnwrapRef<typeof import('pinia')['mapState']>
@@ -235,6 +257,8 @@ declare module '@vue/runtime-core' {
     readonly shallowReadonly: UnwrapRef<typeof import('vue')['shallowReadonly']>
     readonly shallowRef: UnwrapRef<typeof import('vue')['shallowRef']>
     readonly storeToRefs: UnwrapRef<typeof import('pinia')['storeToRefs']>
+    readonly suite: UnwrapRef<typeof import('vitest')['suite']>
+    readonly test: UnwrapRef<typeof import('vitest')['test']>
     readonly toRaw: UnwrapRef<typeof import('vue')['toRaw']>
     readonly toRef: UnwrapRef<typeof import('vue')['toRef']>
     readonly toRefs: UnwrapRef<typeof import('vue')['toRefs']>
@@ -250,6 +274,8 @@ declare module '@vue/runtime-core' {
     readonly useScheme: UnwrapRef<typeof import('@gouvminint/vue-dsfr')['useScheme']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
     readonly useTabs: UnwrapRef<typeof import('@gouvminint/vue-dsfr')['useTabs']>
+    readonly vi: UnwrapRef<typeof import('vitest')['vi']>
+    readonly vitest: UnwrapRef<typeof import('vitest')['vitest']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>
     readonly watchEffect: UnwrapRef<typeof import('vue')['watchEffect']>
     readonly watchPostEffect: UnwrapRef<typeof import('vue')['watchPostEffect']>
