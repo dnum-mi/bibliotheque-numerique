@@ -252,10 +252,12 @@ export class OrganismeService extends BaseEntityService<Organisme> {
               organismeId,
               sourceStringId: doc.id,
             })
-            this.fileQueue.add(eJobName.UploadRnaFile, {
-              file,
-              rnaUrl: doc.url,
-            } as UploadRnaFileJobPayload)
+            if (file) {
+              this.fileQueue.add(eJobName.UploadRnaFile, {
+                file,
+                rnaUrl: doc.url,
+              } as UploadRnaFileJobPayload)
+            }
           }),
       )
     }
