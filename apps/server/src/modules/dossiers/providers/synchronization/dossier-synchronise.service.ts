@@ -47,7 +47,10 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
   private _findPrefecture(dossier: TDossier): PrefectureKeys | null {
     this.logger.verbose('_findPrefecture')
     const label = dossier.groupeInstructeur?.label ?? ''
-    const startLabel = label.split('-')?.[0].trim() ?? ''
+    const longSplit = label.split('–')
+    const shortSplit = label.split('-')
+    const focusSplit = longSplit.length > shortSplit.length ? longSplit : shortSplit
+    const startLabel = focusSplit?.[0].trim() ?? ''
     const finalLabel = 'D' + startLabel
     const pref = Prefecture[finalLabel] ? finalLabel : null
     this.logger.debug(`Prefecture: ${pref}`)
