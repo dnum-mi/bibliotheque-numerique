@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.11.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.11.0...v2.11.1) (2024-05-02)
+
+
+### Bug Fixes
+
+* prefecture name now works with both different hyphens (– OR -) ([94a8fe9](https://github.com/dnum-mi/bibliotheque_numerique/commit/94a8fe9dd5f0af093f9c99bdd930746bdfdf86ec))
+* pretty status in filter in statistics cards ([46a350a](https://github.com/dnum-mi/bibliotheque_numerique/commit/46a350aab6d4bae036ef86af4181a0bbb6711a9a))
+
 ## [2.11.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.10.0...v2.11.0) (2024-04-29)
 
 
