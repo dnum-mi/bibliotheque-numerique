@@ -9,5 +9,5 @@ if [ "x$1" = "xdev" ]; then
 elif [ "x$1" = "xcoverage" ]; then
     dotenv -e ./test/.env.test jest -- --config ./test/unit/jest-unit.json --silent=true --coverage=true
 else
-    dotenv -e ./test/.env.test jest -- --config ./test/unit/jest-unit.json --silent=true --detectOpenHandles
+    dotenv -e ./test/.env.test jest -- --config ./test/unit/jest-unit.json --silent=true --detectOpenHandles --forceExit
 fi
