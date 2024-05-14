@@ -42,7 +42,7 @@ export class FieldService extends BaseEntityService<Field> {
     if (champ.__typename === DsChampType.PieceJustificativeChamp) {
       return (champ as unknown as PieceJustificativeChamp).file?.url ?? ''
     } else {
-      return champ.stringValue
+      return champ.stringValue ?? ''
     }
   }
 

@@ -232,6 +232,53 @@ describe('FieldService', () => {
     ])
   })
 
+  it('Should is empty string if stringValue from DS is null', async () => {
+    const fakeMappingCHash: MappingColumn[] = [
+      {
+        type: FieldType.file,
+        id: 'Q4hhbXAtMTA0Mw==',
+        formatFunctionRef: null,
+        source: FieldSource.champs,
+        columnLabel: null,
+        originalLabel: 'votre passeport',
+      },
+    ]
+
+    const raw = {
+      id: 'RG9zc2llci0xMzY=',
+      state: 'bientôt cuit',
+      number: 142,
+      champs: [
+        {
+          id: 'Q4hhbXAtMTA0Mw==',
+          __typename: 'TitreIdentiteChamp',
+          label: 'votre passeport',
+          stringValue: null,
+          champDescriptor: {
+            id: 'Q4hhbXAtMTA0Mw==',
+          },
+        },
+      ],
+    }
+    const fields = await service.overwriteFieldsFromDataJson(raw as unknown as TDossierWithPrefecture, 42, fakeMappingCHash)
+    expect(fields).toMatchObject([
+      {
+        sourceId: 'Q4hhbXAtMTA0Mw==',
+        label: 'votre passeport',
+        formatFunctionRef: null,
+        type: 'file',
+        fieldSource: 'champs',
+        stringValue: '',
+        dateValue: null,
+        numberValue: null,
+        dsChampType: 'TitreIdentiteChamp',
+        dossierId: 42,
+        parentRowIndex: null,
+        children: null,
+      },
+    ])
+
+  })
   it('Should not crash if number champ is wrong', async () => {
     const raw = {
       id: 'RG9zc2llci0xMzY=',
