@@ -235,8 +235,11 @@ export class FieldService extends BaseEntityService<Field> {
       dossierId,
       columnHash,
     )
-    await this.repo.delete({ dossierId })
-    return this.repo.save(fields)
+
+    return this.repo.manager.transaction(async (transactionManager) => {
+      await transactionManager.delete(Field, { dossierId })
+      return transactionManager.save(Field, fields)
+    })
   }
 
   async upsert(
