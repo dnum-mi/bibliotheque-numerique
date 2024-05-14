@@ -33,7 +33,7 @@ describe('Demarche sync processors', () => {
       .expect(403)
   })
 
-  it.only('Calling sync one demarche should add a job into queue', async () => {
+  it('Calling sync one demarche should add a job into queue', async () => {
     expect(await syncQueue.count()).toEqual(0)
     await request(app.getHttpServer())
       .put('/demarches/1/sync')
