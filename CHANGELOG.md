@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.12.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.11.1...v2.12.0) (2024-05-16)
+
+
+### Features
+
+* unicity of synchronising dossier and organisme ([ccd43f7](https://github.com/dnum-mi/bibliotheque_numerique/commit/ccd43f73ef9c69d69cef7e597e8595f80ca0556d))
+
+
+### Bug Fixes
+
+* null value convert to empty string value for stringValue of Fields ([6fe4348](https://github.com/dnum-mi/bibliotheque_numerique/commit/6fe434864f378b23ffa87e5b735a67609a71ae5e))
+
 ## [2.11.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.11.0...v2.11.1) (2024-05-02)
 
 
