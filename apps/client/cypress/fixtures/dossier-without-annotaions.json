@@ -497,8 +497,8 @@
         "id": "1a4b62c4-b81f-4e83-ac34-f6d601b8a8d4",
         "type": "enum",
         "source": "fix-field",
-        "columnLabel": "Status",
-        "originalLabel": "Status",
+        "columnLabel": "Statut",
+        "originalLabel": "Statut",
         "formatFunctionRef": "status"
       },
       {
