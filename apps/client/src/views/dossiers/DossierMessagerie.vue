@@ -41,13 +41,6 @@ defineProps<DossierMessagerieProps>()
             :label="messages?.length"
           />
         </div>
-        <div>
-          <DsfrButton
-            type="button"
-            label="Accéder à la TLD"
-            secondary
-          />
-        </div>
       </header>
       <article
         v-for="(message, idx) of messages"
