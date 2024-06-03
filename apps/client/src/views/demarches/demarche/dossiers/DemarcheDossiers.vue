@@ -20,7 +20,7 @@ import type {
 } from '@biblio-num/shared'
 
 import {
-  type FrontMappingColumn,
+  type FrontIMappingColumn,
   useCustomFilterStore,
   useDemarcheStore,
 } from '@/stores'
@@ -44,7 +44,7 @@ const router = useRouter()
 const route = useRoute()
 const gridApi = ref<GridApi>()
 const demarche = computed<IDemarche>(() => demarcheStore.currentDemarche as IDemarche)
-const demarcheConfiguration = computed<FrontMappingColumn[]>(() => demarcheStore.currentDemarcheFlatConfiguration)
+const demarcheConfiguration = computed<FrontIMappingColumn[]>(() => demarcheStore.currentDemarcheFlatConfiguration)
 const demarcheConfigurationHash = computed<Record<string, IMappingColumn>>(() => demarcheStore.currentDemarcheConfigurationHash)
 const customFilterStore = useCustomFilterStore()
 const customFilters = computed<ICustomFilter[]>(() => customFilterStore.customFilters as ICustomFilter[])
@@ -112,7 +112,7 @@ const computeColumnsDef = () => {
       filter: 'agNumberColumnFilter',
       menuTabs: ['filterMenuTab'],
     },
-    ...demarcheConfiguration.value.map((column: FrontMappingColumn) => {
+    ...demarcheConfiguration.value.map((column: FrontIMappingColumn) => {
       return {
         headerName: column.columnLabel,
         field: column.id,
