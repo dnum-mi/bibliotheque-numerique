@@ -122,7 +122,7 @@ const expectClassicalFixFields = (status?: string) => [
   },
   {
     sourceId: '1a4b62c4-b81f-4e83-ac34-f6d601b8a8d4',
-    label: 'Status',
+    label: 'Statut',
     formatFunctionRef: 'status',
     type: 'enum',
     fieldSource: 'fix-field',
