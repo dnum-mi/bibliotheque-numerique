@@ -11,7 +11,7 @@ const tabTitles: (DsfrTabItemProps & { title: string })[] = [
   {
     panelId: 'pan-1',
     tabId: 'tab-1',
-    title: 'Synchronization DS',
+    title: 'Synchronisation DS',
   },
   {
     panelId: 'pan-2',
