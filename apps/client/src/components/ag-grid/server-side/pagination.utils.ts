@@ -134,7 +134,8 @@ export const backendFilterToAggFilter = (filters: Record<string, IFilter>): Filt
     entries.forEach(([key, value]) => {
       if (value.condition2) {
         aggFilters[key] = filters[key]
-      } if (value.filterType === 'date' && value.condition1?.type === 'since') {
+      }
+      if (value.filterType === 'date' && value.condition1?.type === 'since') {
         aggFilters[key] = {
           filterType: 'multi',
           filterModels: [
@@ -144,6 +145,12 @@ export const backendFilterToAggFilter = (filters: Record<string, IFilter>): Filt
             },
           ],
         }
+      } else if (value.filterType === 'set') {
+        aggFilters[key] = {
+          filterType: value.filterType,
+          values: value.condition1.filter,
+          type: value.condition1.type,
+        }
       } else {
         aggFilters[key] = {
           filterType: value.filterType,
@@ -152,6 +159,7 @@ export const backendFilterToAggFilter = (filters: Record<string, IFilter>): Filt
         }
       }
     })
+
     return aggFilters
   } else {
     return {}
