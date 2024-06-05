@@ -21,6 +21,7 @@ export const DsChampType = {
   SiretChamp: 'SiretChamp',
   TextChamp: 'TextChamp',
   TitreIdentiteChamp: 'TitreIdentiteChamp',
+  YesNoChamp: 'YesNoChamp',
 
   // technically those are TextChamp for DS, with RNA or RNF ChampDescriptor
   RnaChamp: 'RnaChamp',

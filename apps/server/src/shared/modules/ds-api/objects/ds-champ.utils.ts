@@ -31,6 +31,7 @@ export const giveTypeFromDsChampType = (
   forDescriptor = false,
 ): FieldTypeKeys => {
   switch (type) {
+  case DsChampType.YesNoChamp + (forDescriptor ? 'Descriptor' : ''):
   case DsChampType.CheckboxChamp + (forDescriptor ? 'Descriptor' : ''):
     return FieldType.boolean
   case DsChampType.DatetimeChamp + (forDescriptor ? 'Descriptor' : ''):
