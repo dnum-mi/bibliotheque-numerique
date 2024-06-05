@@ -40,7 +40,7 @@ const _fromCustomNumbersFilterToBackendFilter = (filter: INumbersFilterCondition
 const _fromAggSetFilterToBackendFilter = (filter: SetFilterModel): IFilter => ({
   filterType: 'set',
   condition1: {
-    filter: filter.values,
+    filter: filter.values && filter.values.length > 0 ? filter.values : [''],
   } as IEnumFilterCondition,
 })
 

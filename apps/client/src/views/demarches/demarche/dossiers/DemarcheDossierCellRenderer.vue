@@ -157,7 +157,7 @@ const getPrefecture = (prefecture: PrefectureKeys) => {
 
       <!-- BOOLEAN -->
       <template v-else-if="type === 'boolean'">
-        {{ cellValue ? 'Oui' : 'Non' }}
+        {{ cellValue === 'true' ? 'Oui' : 'Non' }}
       </template>
 
       <!-- BOOLEAN -->

@@ -56,6 +56,7 @@ const _isFilterConsistent = async (
           return __common(FilterTextDto, key)
         case FieldType.number:
           return __common(FilterNumberDto, key)
+        case FieldType.boolean:
         case FieldType.enum:
           return __common(FilterEnumDto, key)
         case FieldType.date:
@@ -265,6 +266,7 @@ export const buildOneFilter = (
   case FieldType.number:
     filterFactory = _buildOneNumberFilter
     break
+  case FieldType.boolean:
   case FieldType.enum:
     filterFactory = _buildOneEnumFilter
     break
