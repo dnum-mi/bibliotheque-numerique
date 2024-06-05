@@ -43,6 +43,7 @@ export const getAgGridFilterFromFieldType = (fieldType?: keyof typeof fieldTypes
     if (formatFunctionRef && filterCellRender[formatFunctionRef]) {
       filter.filterParams.cellRenderer = filterCellRender[formatFunctionRef]
     }
+    return filter
   }
 
   if (fieldType === 'date') {
@@ -60,6 +61,18 @@ export const getAgGridFilterFromFieldType = (fieldType?: keyof typeof fieldTypes
         },
       ],
     }
+    return filter
   }
+
+  if (fieldType === 'boolean') {
+    filter.filterParams = {
+      values: ['true', 'false'],
+      valueFormatter: (params) => (params.value === 'true' ? 'Oui' : 'Non'),
+      suppressMiniFilter: true,
+    }
+
+    return filter
+  }
+
   return filter
 }
