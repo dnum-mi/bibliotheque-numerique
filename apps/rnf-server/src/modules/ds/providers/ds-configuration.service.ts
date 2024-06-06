@@ -151,4 +151,12 @@ export class DsConfigurationService implements OnModuleInit {
     }
     return true
   }
+
+  getAnnotationIdByDemarcheId(demarcheId: number) : string | undefined {
+    return ({
+      [this.configuration.dsDemarcheFDDCreationId]: this.configuration.dsDemarcheFDDCreationAnnotationId,
+      [this.configuration.dsDemarcheFECreationId]: this.configuration.dsDemarcheFECreationAnnotationId,
+      [this.configuration.dsDemarcheDNRId]: this.configuration.dsDemarcheDNRAnnotationId,
+    }[demarcheId])
+  }
 }

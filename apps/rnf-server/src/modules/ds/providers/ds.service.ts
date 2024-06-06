@@ -8,8 +8,8 @@ import {
   DsApiClient,
 } from '@dnum-mi/ds-api-client'
 import { LoggerService } from '@/shared/modules/logger/providers/logger.service'
-import { FoundationType } from '@prisma/client'
 import { DsConfigurationService } from '@/modules/ds/providers/ds-configuration.service'
+import { InfoDSOutputDto } from '../../foundation/objects/dto/info-ds-output.dto'
 
 export interface IDsApiClientDemarche {
   demarche: Partial<Demarche> & {
@@ -40,30 +40,24 @@ export class DsService {
     }
   }
 
-  private _giveAnnotationId(ft: FoundationType) {
-    switch (ft) {
-    case FoundationType.FE:
-      return this.dsConfigurationService.configuration
-        .dsDemarcheFECreationAnnotationId
-    case FoundationType.FDD:
-      return this.dsConfigurationService.configuration
-        .dsDemarcheFDDCreationAnnotationId
-    case FoundationType.FRUP: // TODO:
-      return 'someId'
-    }
-  }
-
   async writeRnfIdInPrivateAnnotation(
     dossierGraphQlId: string,
     instructeurId: string,
-    foundationType: FoundationType,
     rnfId: string,
+    ds: InfoDSOutputDto,
   ): Promise<void> {
     this.logger.verbose('writeRnfIdInPrivateAnnotation')
+    if (!ds.demarcheId) {
+      throw new Error('DemarcheId is missing.')
+    }
+    const annotationId = this.dsConfigurationService.getAnnotationIdByDemarcheId(ds.demarcheId)
+    if (!annotationId) {
+      throw new Error(`Configuration error, not annotation id for demarche ${ds.demarcheId}`)
+    }
     const input: DossierModifierAnnotationTextInput = {
       dossierId: dossierGraphQlId,
       instructeurId,
-      annotationId: this._giveAnnotationId(foundationType),
+      annotationId,
       value: rnfId,
     }
     this.logger.debug('input: ' + JSON.stringify(input))

@@ -66,8 +66,8 @@ export class FoundationController {
     await this.dsService.writeRnfIdInPrivateAnnotation(
       rawDossier.id,
       instructeurId,
-      foundation.type,
       foundation.rnfId,
+      ds,
     )
     return { rnfId: foundation.rnfId, ds }
   }
