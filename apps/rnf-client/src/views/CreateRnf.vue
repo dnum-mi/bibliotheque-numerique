@@ -179,18 +179,18 @@ const closePersonsModal = () => {
       <template v-if="typeof deepGet(foundation, prop, '') != 'object'">
         <p class="break-word">{{ deepGet(foundation, prop, '') }}</p>
       </template>
-      <template v-else-if="Array.isArray(deepGet(foundation, prop, '')) && deepGet(foundation, prop, '').length > 0">
+      <template v-else-if="Array.isArray(deepGet(foundation, prop, '')) && deepGet(foundation, prop, '')?.length > 0">
         <p class="break-word">
           <a :ref="personsModal" href="#" label="Voir les personnes" @click="openPersonsModal(deepGet(foundation, prop, ''))">
             Voir les personnes
           </a>
         </p>
       </template>
-      <template v-else-if="deepGet(foundation, prop, '').fileUrl || deepGet(foundation, prop, '').uuid">
+      <template v-else-if="deepGet(foundation, prop, '')?.fileUrl || deepGet(foundation, prop, '')?.uuid">
         <p class="break-word">
           <a
             download
-            :href="deepGet(foundation, prop, '').fileUrl || `/api/files/${deepGet(foundation, prop, '').uuid}`"
+            :href="deepGet(foundation, prop, '')?.fileUrl || `/api/files/${deepGet(foundation, prop, '')?.uuid}`"
             target="_blank"
           >
             Voir les statuts
