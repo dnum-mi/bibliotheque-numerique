@@ -10,7 +10,7 @@ RUN npm config set proxy "$http_proxy" && \
     npm config set https-proxy "$https_proxy" && \
     npm config set noproxy "$no_proxy"
 
-RUN npm i -g turbo
+RUN npm i -g turbo@1.10.16
 
 USER node
 COPY . .
@@ -23,7 +23,7 @@ RUN npm config set proxy "$http_proxy" && \
     npm config set https-proxy "$https_proxy" && \
     npm config set noproxy "$no_proxy"
 
-RUN npm i -g pnpm
+RUN npm i -g pnpm@8.12.1
 USER node
 
 # First install the dependencies (as they change less often)
@@ -48,7 +48,7 @@ RUN set +o nounset && \
 
 WORKDIR /app
 
-RUN npm i -g pnpm
+RUN npm i -g pnpm@8.12.1
 
 COPY --from=base /app/out/json/ .
 COPY --from=base /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
