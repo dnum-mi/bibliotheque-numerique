@@ -51,10 +51,10 @@ export const universalMapper: Mapper = {
       .filter((y) => !isNaN(y)) ?? [],
   personInFoundationToCreate: () => null,
   status: (champ?: PieceJustificativeChamp) => {
-    if (!champ?.file || champ.__typename !== 'PieceJustificativeChamp') {
+    if (!(champ?.file || champ?.files[0]) || champ.__typename !== 'PieceJustificativeChamp') {
       return null
     }
-    const file = champ.file
+    const file = champ.file || champ.files[0]
     return {
       fileUrl: file.url,
       originalName: file.filename,
