@@ -94,7 +94,7 @@ const onExpand = (idx: number, id: string) => {
                   Addresse
                 </div>
                 <div class="flex-1 fr-text--bold">
-                  {{ person.address.label }}
+                  {{ person.address?.label }}
                 </div>
               </div>
               <div class="flex-1/8 flex-col pr-1">
