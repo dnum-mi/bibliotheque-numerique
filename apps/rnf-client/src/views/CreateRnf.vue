@@ -265,25 +265,45 @@ const closePersonsModal = () => {
         <div class="fr-container">
           <div class="fr-grid-row">
             <div
-              class="fr-col-3 cursor-pointer"
+              class="fr-col-3 cursor-pointer current"
               @click="resetSelectedFoundation()"
             >
-              <h6 class="text-center">Demande d’inscription au RNF</h6>
-              <p class="fr-text--bold">
-                <span class="bullet fr-mr-2v fr-ml-n2v"
-                  ><span
+
+              <h6 class="text-center">
+                <span class="bullet fr-mr-2v fr-ml-n2v text-lg bg-[#0063cb]">
+                <span
                     class="fr-icon-bank-line"
                     aria-hidden="true"
-                  ></span></span
-                >{{ currentFoundation.title }}
-              </p>
+                  ></span>
+                </span>
+                Demande d’inscription au RNF
+              </h6>
+              <DsfrRadioButton
+                    v-model="selectedFoundation"
+                    :label="currentFoundation.title"
+                    name="collisions"
+                    value=""
+                  />
+              <br />
+
+              <!-- <p class="fr-text--bold">
+                {{ currentFoundation.title }}
+              </p> -->
               <ReuseTemplate
                 :foundation="currentFoundation"
                 :dictionnaire="dictCurrentFoundation"
               />
             </div>
             <div class="fr-col-9">
-              <h6 class="text-center">Sélectionner la structure identique ou créer un nouvel ID</h6>
+              <h6 class="text-center">
+                <span class="bullet fr-mr-2v fr-ml-n2v text-lg9 bg-[#6a6af4]">
+                  <span
+                    class="fr-icon-government-line"
+                    aria-hidden="true"
+                  ></span>
+                </span>
+                Sélectionner la structure identique
+              </h6>
               <div class="collisions">
                 <div
                   v-for="foundation of rnfClient.collisions"
@@ -354,7 +374,12 @@ const closePersonsModal = () => {
   padding: 1rem;
 }
 
+
 .collision :deep(.fr-radio-group > .fr-label) {
+  font-weight: bold;
+}
+
+.current :deep(.fr-radio-group > .fr-label) {
   font-weight: bold;
 }
 
@@ -371,7 +396,6 @@ const closePersonsModal = () => {
 }
 
 .bullet {
-  background-color: var(--border-plain-info);
   color: white;
   padding: 0.25rem;
   padding-top: 0.125rem;
