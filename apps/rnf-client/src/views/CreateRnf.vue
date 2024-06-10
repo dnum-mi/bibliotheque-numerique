@@ -39,11 +39,12 @@ const validationSchema = toTypedSchema(
   z.object({
     dossierId: z
       .string()
-      .nonempty('Veuillez saisir le numéro de dossier')
+      .min(1, { message: 'Veuillez saisir le numéro de dossier' })
       .refine((value) => Number(value), {
         message: 'Le numéro de dossier ne doit être composé que de chiffres',
       }),
-    email: z.string().nonempty('Veuillez saisir une adresse courriel').email('L’adresse courriel ne semble pas valide'),
+    email: z.string({ required_error:'Veuillez saisir une adresse courriel' })
+            .email('L’adresse courriel ne semble pas valide'),
   }),
 )
 
@@ -51,7 +52,7 @@ const { handleSubmit, handleReset } = useForm({
   validationSchema,
 })
 
-const { value: instructeurEmail, errorMessage: emailError } = useField<string>('email')
+const { value: instructeurEmail, errorMessage: emailError, handleChange } = useField<string>('email', undefined, { validateOnValueUpdate: false})
 const { value: dossierId, errorMessage: dossierIdError } = useField<string>('dossierId')
 
 const onSubmit = handleSubmit(async (values) => {
@@ -216,11 +217,11 @@ const closePersonsModal = () => {
         class="flex flex-col items-center rnf-content"
         @submit.prevent="onSubmit($event)"
       >
-        <DsfrInputGroup
-          label-visible
-          :error-message="dossierIdError || emailError"
-        >
-          <p>
+        <p>
+          <DsfrInputGroup
+            label-visible
+            :error-message="dossierIdError"
+          >
             <DsfrInput
               v-model="dossierId"
               autofocus
@@ -229,17 +230,22 @@ const closePersonsModal = () => {
               label-visible
               :placeholder="dossierInputPlaceholder"
             />
-          </p>
-          <p>
+          </DsfrInputGroup>
+          <DsfrInputGroup
+            label-visible
+            :error-message="emailError"
+          >
             <DsfrInput
               v-model="instructeurEmail"
               type="email"
               :label="emailInputLabel"
               label-visible
               :placeholder="emailInputPlaceholder"
+              @blur="handleChange"
             />
-          </p>
-        </DsfrInputGroup>
+          </DsfrInputGroup>
+        </p>
+
 
         <div class="flex flex-row">
           <p class="text-center">
