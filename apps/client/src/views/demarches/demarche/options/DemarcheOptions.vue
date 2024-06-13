@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import { useDemarcheStore } from '@/stores'
+import type { anonymisationEventKey } from '@biblio-num/shared'
+import { eAnonymisationEvent } from '@biblio-num/shared'
 
 const demarcheStore = useDemarcheStore()
 
@@ -9,25 +11,56 @@ const nbrMonthAnonymisation = computed(() => Number(nbrMonthAnonymisationString.
 onMounted(async () => {
   await demarcheStore.getCurrentDemarcheOptions()
   nbrMonthAnonymisationString.value = `${demarcheStore.currentDemarcheOptions?.nbrMonthAnonymisation}` ?? ''
+  anonymizationEventSelected.value = demarcheStore.currentDemarcheOptions?.anonymizationEvent ?? eAnonymisationEvent.DepotDate
+  isOnAllDossiersOfOrganisme.value = demarcheStore.currentDemarcheOptions?.isOnAllDossiersOfOrganisme ?? false
 })
 
 const saveOption = () => {
-  demarcheStore.saveDemarcheOptions({ nbrMonthAnonymisation: nbrMonthAnonymisation.value })
+  demarcheStore.saveDemarcheOptions({
+    nbrMonthAnonymisation: nbrMonthAnonymisation.value,
+    anonymizationEvent: anonymizationEventSelected.value,
+    isOnAllDossiersOfOrganisme: isOnAllDossiersOfOrganisme.value,
+  })
 }
+const anonymizationEventList = [
+  {
+    text: 'Aprés le dépot',
+    value: eAnonymisationEvent.DepotDate,
+  },
+  {
+    text: 'Aprés la décision',
+    value: eAnonymisationEvent.DecisionDate,
+  },
+  {
+    text: 'Aprés l\'acceptation',
+    value: eAnonymisationEvent.AcceptedDate,
+  },
+]
+const anonymizationEventSelected = ref<anonymisationEventKey>(eAnonymisationEvent.DepotDate)
+const isOnAllDossiersOfOrganisme = ref(false)
 </script>
 
 <template>
   <div class="flex flex-col mb-10">
     <!-- NBR MONTH ANONYMISATION  -->
-    <div class="flex flex-row items-center gap-2 m-1">
-      <div class="width-200">
-        <DsfrInput
-          v-model="nbrMonthAnonymisationString"
-          type="number"
+    <div class="flex flex-row gap-10 align-baseline">
+      <DsfrInputGroup
+        v-model="nbrMonthAnonymisationString"
+        type="number"
+        label="Nombres de mois avant anonymisation"
+        label-visible
+      />
+      <DsfrSelect
+        v-model="anonymizationEventSelected"
+        label="Sélectionner le declencheur d'un anonymisation"
+        :options="anonymizationEventList"
+      />
+      <div class="content-center ml-auto">
+        <DsfrCheckbox
+          v-model="isOnAllDossiersOfOrganisme"
+          label="Appliquer à tous les dossiers d'organisme"
+          name="onAllDossierOfOrganisme"
         />
-      </div>
-      <div class="flex-grow mt-2">
-        Nombres de mois avant anonymisation
       </div>
     </div>
 
