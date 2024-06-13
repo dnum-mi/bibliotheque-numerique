@@ -55,6 +55,8 @@ describe('Option ', () => {
       .then(({ body }) => {
         expect(body).toEqual({
           nbrMonthAnonymisation: null,
+          anonymizationEvent: 'DepotDate',
+          isOnAllDossiersOfOrganisme: false,
         })
       })
   })

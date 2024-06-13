@@ -38,6 +38,8 @@ export class DemarcheOptionController {
     this.logger.verbose('getDemarcheOption')
     return {
       nbrMonthAnonymisation: demarche.nbrMonthAnonymisation,
+      isOnAllDossiersOfOrganisme: demarche.isOnAllDossiersOfOrganisme,
+      anonymizationEvent: demarche.anonymizationEvent,
     }
   }
 
