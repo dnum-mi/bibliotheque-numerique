@@ -279,22 +279,35 @@ export class FoundationService extends BaseEntityService {
 
   //#endregion
 
+  private async handleCronJob(triggerFunction, jobName: string) {
+    try {
+      await triggerFunction()
+    } catch (e) {
+      this.logger.error(`Error during cron job ${jobName}`)
+      this.logger.error(e as Error)
+      console.log(e)
+    }
+  }
+
   //#region update foundation
   public async triggerAllRefresh() {
     this.logger.log('Refreshing foundation')
-    await this.triggerFeModificationRefresh()
-    await this.triggerFddModificationRefresh()
-    await this.triggerFeDissolution()
-    await this.triggerFddDissolution()
-    await this.triggerFeAdministrationChanges()
-    await this.triggerFddAdministrationChanges()
+    await this.handleCronJob(this.triggerFeModificationRefresh.bind(this), 'FE-Modification')
+    await this.handleCronJob(this.triggerFddModificationRefresh.bind(this), 'FDD-Modification')
+    await this.handleCronJob(this.triggerFeDissolution.bind(this), 'FE-Dissolution')
+    await this.handleCronJob(this.triggerFddDissolution.bind(this), 'FDD-Dissolution')
+    await this.handleCronJob(this.triggerFeAdministrationChanges.bind(this), 'FE-Administration')
+    await this.handleCronJob(this.triggerFddAdministrationChanges.bind(this), 'FDD-Administration')
+
     this.logger.log('Setting lastRefreshedAt')
     await this.dsConfigurationService.updateConfiguration({
       foundationRefreshedAt: new Date(),
     })
   }
 
-  public async triggerFeModificationRefresh() {
+  // Function to execute the cron job
+
+  public async triggerFeModificationRefresh(): Promise<void> {
     this.logger.verbose('triggerFeModificationRefresh')
     await this._lookForFoundationChange(
       'Modification of FE',
@@ -303,7 +316,7 @@ export class FoundationService extends BaseEntityService {
     )
   }
 
-  public async triggerFddModificationRefresh() {
+  public async triggerFddModificationRefresh(): Promise<void> {
     this.logger.verbose('triggerFddModificationRefresh')
     await this._lookForFoundationChange(
       'Modification of FDD',
@@ -312,7 +325,7 @@ export class FoundationService extends BaseEntityService {
     )
   }
 
-  public async triggerFeDissolution() {
+  public async triggerFeDissolution(): Promise<void> {
     await this._lookForFoundationChange(
       'Dissolution of FE',
       this.dsConfigurationService.configuration.dsDemarcheFEDissolutionId,
@@ -320,7 +333,7 @@ export class FoundationService extends BaseEntityService {
     )
   }
 
-  public async triggerFddDissolution() {
+  public async triggerFddDissolution(): Promise<void> {
     await this._lookForFoundationChange(
       'Dissolution of FDD',
       this.dsConfigurationService.configuration.dsDemarcheFDDDissolutionId,
@@ -328,7 +341,7 @@ export class FoundationService extends BaseEntityService {
     )
   }
 
-  public async triggerFeAdministrationChanges() {
+  public async triggerFeAdministrationChanges(): Promise<void> {
     await this._lookForFoundationChange(
       'Administration changes of FE',
       this.dsConfigurationService.configuration.dsDemarcheFEAdministrationChangesId,
@@ -336,7 +349,7 @@ export class FoundationService extends BaseEntityService {
     )
   }
 
-  public async triggerFddAdministrationChanges() {
+  public async triggerFddAdministrationChanges(): Promise<void> {
     await this._lookForFoundationChange(
       'Administration changes of FDD',
       this.dsConfigurationService.configuration.dsDemarcheFDDAdministrationChangesId,
@@ -423,25 +436,31 @@ export class FoundationService extends BaseEntityService {
     }
 
     for (const dossier of dossiers) {
-      const rnfId = await this._checkRnfIdForFoundationChange(dossier)
-      if (!rnfId) {
-        continue
-      }
-      this.logger.log(
-        `Updating foundation ${rnfId} because of dossier ${dossier.number}`,
-      )
-
-      let dto: UpdateFoundationDto = {}
-      if (changeType === FoundationChangeType.Modification || changeType === FoundationChangeType.Administration) {
-        dto = this.dsMapperService.mapDossierToDto(
-          dossier,
-          this.dsConfigurationService.getMapperFromDemarcheDsId(dsDemarcheId),
+      let rnfId: string | null = null
+      try {
+        rnfId = await this._checkRnfIdForFoundationChange(dossier)
+        if (!rnfId) {
+          continue
+        }
+        this.logger.log(
+          `Updating foundation ${rnfId} because of dossier ${dossier.number}`,
         )
-      } else if (changeType === FoundationChangeType.Dissolution) {
-        dto = { dissolvedAt: new Date() }
-      }
 
-      await this.updateFoundation(rnfId, dto)
+        let dto: UpdateFoundationDto = {}
+        if (changeType === FoundationChangeType.Modification || changeType === FoundationChangeType.Administration) {
+          dto = this.dsMapperService.mapDossierToDto(
+            dossier,
+            this.dsConfigurationService.getMapperFromDemarcheDsId(dsDemarcheId),
+          )
+        } else if (changeType === FoundationChangeType.Dissolution) {
+          dto = { dissolvedAt: new Date() }
+        }
+
+        await this.updateFoundation(rnfId, dto)
+      } catch (e) {
+        this.logger.error(`Error updating dossier ${dossier.number} and foundation ${rnfId ?? 'no value'}`)
+        this.logger.error(e as Error)
+      }
     }
   }
 
