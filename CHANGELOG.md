@@ -1,5 +1,29 @@
 # Changelog
 
+## [2.12.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.12.0...v2.12.1) (2024-06-14)
+
+
+### Bug Fixes
+
+* add type yes-no from DS ([46c9a62](https://github.com/dnum-mi/bibliotheque_numerique/commit/46c9a6206c01dffd54260b21997c5f99bb536ae1))
+* build docker for packageManager missing in package.json ([2eb0d75](https://github.com/dnum-mi/bibliotheque_numerique/commit/2eb0d75a308af4d3127e1004476c08b9cbe0fcda))
+* catch error by job for no stop others jobs ([84c4f9e](https://github.com/dnum-mi/bibliotheque_numerique/commit/84c4f9ec8fa545bd6f00d986af5e5b446eadb429))
+* display collision even if there are not files ([3c5c62c](https://github.com/dnum-mi/bibliotheque_numerique/commit/3c5c62cd23704c9a546ef491375f5f783eb33bac))
+* filter ag-grid for boolean ([0ce1354](https://github.com/dnum-mi/bibliotheque_numerique/commit/0ce1354b6d3a17719871c6c2c0da4d481cef6216))
+* fix: build docker for packageManager missing in package.json for rnf ([34fa7c2](https://github.com/dnum-mi/bibliotheque_numerique/commit/34fa7c245e27c3b8afc808843e369c51e3d0a3f2))
+* new design front collison ([d4d6d21](https://github.com/dnum-mi/bibliotheque_numerique/commit/d4d6d2125530da15daecf21bb58305b32ea63b2a))
+* not message from adress null in fiche organisme ([7aa73b7](https://github.com/dnum-mi/bibliotheque_numerique/commit/7aa73b7292ea3a0ad5e29529f058afb3246ef747))
+* remove button to link TLD in front ([f36ef39](https://github.com/dnum-mi/bibliotheque_numerique/commit/f36ef398a1b6ad9ca93cdd4c356bbc7e84fafbd3))
+* rename of types ([a62e064](https://github.com/dnum-mi/bibliotheque_numerique/commit/a62e064e4172f58a7e569f68769c17df20eae2c5))
+* set filter into ag-grid from server ([76959a7](https://github.com/dnum-mi/bibliotheque_numerique/commit/76959a7da1fba5fcab8eee4cfdb5eaee4ac70a0a))
+* split error messages of inputs  on front RNF ([d449736](https://github.com/dnum-mi/bibliotheque_numerique/commit/d449736fc8190383aca528723ff5aa79d402df00))
+* transaction for error entity field building from DS ([d295982](https://github.com/dnum-mi/bibliotheque_numerique/commit/d2959826d8c5dd5b37aef14c713ef3f4fd6df02b))
+* update nestjs/swagger in rnf ([e283350](https://github.com/dnum-mi/bibliotheque_numerique/commit/e28335001bb2d88e567b08e2b1d224e0801c0fbc))
+* upload first file from ds ([4438c4d](https://github.com/dnum-mi/bibliotheque_numerique/commit/4438c4d1e15ddf29f09508110fe4186f3113c298))
+* wording - Status ([c475780](https://github.com/dnum-mi/bibliotheque_numerique/commit/c475780a39e4b0763a51f888e007ea11439714d0))
+* wording - syncchronization ([871667b](https://github.com/dnum-mi/bibliotheque_numerique/commit/871667b3a7f90c9cf23aa7a67ede7e90d13d4000))
+* write annotation private by demarcheId ([c8d3408](https://github.com/dnum-mi/bibliotheque_numerique/commit/c8d3408573b7b1548c44007799b0baeb1fc13f99))
+
 ## [2.12.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.11.1...v2.12.0) (2024-05-16)
 
 
