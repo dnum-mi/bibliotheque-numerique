@@ -7,14 +7,20 @@ import {
   IDemarche,
   eIdentificationDemarche,
   IdentificationDemarcheKey,
+  IDemarcheOption,
+  anonymisationEventKey,
+  eAnonymisationEvent,
 } from '@biblio-num/shared'
 import { CustomFilter } from '../../../custom-filters/objects/entities/custom-filter.entity'
 import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
 import { ApiProperty } from '@nestjs/swagger'
 import { IsArray, IsEnum, IsOptional } from 'class-validator'
 
+interface IDemarcheWithOptions extends IDemarche, IDemarcheOption {
+
+}
 @Entity({ name: 'demarches' })
-export class Demarche extends BaseEntity implements IDemarche {
+export class Demarche extends BaseEntity implements IDemarcheWithOptions {
   @OneToMany(() => Dossier, (dossier) => dossier.demarche)
   dossiers: Dossier[]
 
@@ -81,4 +87,25 @@ export class Demarche extends BaseEntity implements IDemarche {
     nullable: true,
   })
   nbrMonthAnonymisation: number
+
+  @ApiProperty({
+    description: 'Declecheur de l\'anonymisation des données sensibles.',
+    nullable: false,
+  })
+  @Column({
+    type: 'enum',
+    enum: eAnonymisationEvent,
+    nullable: true,
+  })
+  anonymizationEvent: anonymisationEventKey
+
+  @ApiProperty({
+    description: 'Périmètre de l\'anonymisation des données sensibles.',
+    nullable: true,
+  })
+  @Column({
+    nullable: true,
+    type: 'boolean',
+  })
+  isOnAllDossiersOfOrganisme: boolean
 }
