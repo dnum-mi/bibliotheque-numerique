@@ -291,7 +291,7 @@ export class FoundationService extends BaseEntityService {
 
   //#region update foundation
   public async triggerAllRefresh() {
-    this.logger.log('Refreshing foundation')
+    this.logger.log(`Refreshing foundation at ${this.dsConfigurationService.configuration.foundationRefreshedAt}`)
     await this.handleCronJob(this.triggerFeModificationRefresh.bind(this), 'FE-Modification')
     await this.handleCronJob(this.triggerFddModificationRefresh.bind(this), 'FDD-Modification')
     await this.handleCronJob(this.triggerFeDissolution.bind(this), 'FE-Dissolution')
@@ -406,9 +406,9 @@ export class FoundationService extends BaseEntityService {
     }).rnf
     let rnfId: string | null = stringValue(rnfChamp)
     if (!rnfId) {
-      this.logger.debug(`No RNF-ID in dossier (nbrDossier: ${doss.number})`)
+      this.logger.warn(`No RNF-ID in dossier (nbrDossier: ${doss.number})`)
     } else if (doss.state !== DossierState.Accepte) {
-      this.logger.debug(
+      this.logger.warn(
         `Dossier (nbrDossier: ${doss.number}) is not accepted. (${doss.state})`,
       )
       rnfId = null
@@ -430,8 +430,10 @@ export class FoundationService extends BaseEntityService {
     )
 
     const dossiers = dsDemarche.demarche.dossiers.nodes
+    this.logger.log(`${dossiers.length} dosssiers found`)
     if (!dossiers.length) {
-      this.logger.debug('No dossier to update.')
+      this.logger.debug(`${name}: No dossier to update.
+        ${this.dsConfigurationService.configuration.foundationRefreshedAt}`)
       return
     }
 
@@ -460,6 +462,7 @@ export class FoundationService extends BaseEntityService {
       } catch (e) {
         this.logger.error(`Error updating dossier ${dossier.number} and foundation ${rnfId ?? 'no value'}`)
         this.logger.error(e as Error)
+        console.log(e)
       }
     }
   }
@@ -468,7 +471,7 @@ export class FoundationService extends BaseEntityService {
     this.logger.verbose('_checkRnfIdForFoundationChange')
     const rnfId = this.checkIfRnfInAcceptedDossier(dossier)
     if (!rnfId) {
-      this.logger.verbose('No RNF-ID in dossier or dossier not accepted')
+      this.logger.verbose(`No RNF-ID in dossier ${dossier.number} or dossier not accepted`)
       return null
     }
     const foundation = await this.prisma.foundation.findFirst({
