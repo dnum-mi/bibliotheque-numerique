@@ -18,7 +18,20 @@ export const booleanValue = (ch?: Champ | CustomChamp) =>
 
 export const addressValue = (ch?: AddressChamp) => {
   if (!ch || ch.__typename !== 'AddressChamp' || !ch.address) {
-    return null
+    return {
+      label: ch?.stringValue ?? '',
+      type: '',
+      streetAddress: null,
+      streetNumber: null,
+      streetName: null,
+      postalCode: '',
+      cityName: '',
+      cityCode: '',
+      departmentName: null,
+      departmentCode: '',
+      regionName: null,
+      regionCode: null,
+    }
   }
   const address = ch.address
   return {
