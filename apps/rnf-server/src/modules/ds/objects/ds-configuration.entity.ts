@@ -156,4 +156,8 @@ export class DsConfigurationEntity
   @IsOptional()
   @IsDate()
   fieldRegexCreatedAt: string
+
+  @IsString()
+  @IsDefined()
+  fieldRegexDepartment: string
 }

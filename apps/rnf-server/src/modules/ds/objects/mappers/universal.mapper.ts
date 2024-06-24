@@ -3,6 +3,7 @@ import {
   CustomChamp,
   DateChamp,
   PieceJustificativeChamp,
+  DepartementChamp,
 } from '@dnum-mi/ds-api-client'
 import { AddressChamp } from '@dnum-mi/ds-api-client/dist/@types/types'
 import { Mapper } from '@/modules/ds/objects/types/mapper.type'
@@ -78,4 +79,5 @@ export const universalMapper: Mapper = {
   personAdministrator: stringValue,
   fiscalEndDateAt: dateValue,
   originalCreatedAt: () => null,
+  department: (ch?: Champ | DepartementChamp) => ch?.stringValue?.split('-')[0] ?? null,
 }

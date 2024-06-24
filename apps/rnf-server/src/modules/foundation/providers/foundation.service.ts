@@ -122,13 +122,13 @@ export class FoundationService extends BaseEntityService {
     forceCreation?: boolean,
   ): Promise<FoundationEntity> {
     this.logger.verbose('CreateFoundation')
-    const code = dto.address && dto.address.departmentCode
-    if (!dto.address || !code) {
+    const code = dto.department
+    if (!code) {
       throw new BadRequestException(
-        'An address with its departmentCode is required.',
+        'Department is required.',
       )
     }
-    this.logger.debug(`department found: ${dto.address.departmentCode}`)
+    this.logger.debug(`department found: ${dto.department}`)
     dto.phone = formatPhoneNumber(dto.phone)
     if (!forceCreation) {
       await this._findCollision(dto, ds)
