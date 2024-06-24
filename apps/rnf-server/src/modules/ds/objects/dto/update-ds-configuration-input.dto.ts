@@ -119,4 +119,8 @@ export class UpdateDsConfigurationInputDto {
   @IsString()
   @IsOptional()
   fieldRegexAdministator: string
+
+  @IsString()
+  @IsOptional()
+  fieldRegexDepartment: string
 }

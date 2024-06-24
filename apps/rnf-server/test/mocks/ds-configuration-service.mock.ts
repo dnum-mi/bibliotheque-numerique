@@ -34,6 +34,7 @@ export const dsConfigurationServiceMock = {
     fieldRegexAdministator: '#rnf-administrateur-rnf#',
     fieldRegexFiscalEndDate: '#rnf-date-fin-exercice-rnf#',
     fieldRegexCreatedAt: '#rnf-date-creation-rnf#',
+    fieldRegexDepartment: '#rnf-department-rnf#',
   },
   getMapperFromDemarcheDsId: jest.fn().mockImplementation((n) => {
     switch (`${n}`) {

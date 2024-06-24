@@ -72,6 +72,7 @@ describe('DsMapperService & DsConfigurationService', () => {
       title:
         'Je suis un titre compliqué avec des espaces et des accents et des MajUsCules',
       type: 'FDD',
+      department: '33',
       address: {
         label: '11 Rue Pelleport 33800 Bordeaux',
         type: 'housenumber',

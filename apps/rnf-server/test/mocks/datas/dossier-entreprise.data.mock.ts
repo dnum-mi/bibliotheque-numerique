@@ -120,6 +120,20 @@ export const entrepriseDossierDataMock = {
       },
     },
     {
+      id: "Q2hhbXAtMTg1Mw==",
+      __typename: "DepartementChamp",
+      label: "Département du siège de votre structure :",
+      stringValue: "59 - Nord",
+      departement: {
+        name: "Nord",
+        code: "59",
+      },
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum#rnf-department-rnf#lorem ipsum",
+      },
+    },
+    {
       id: "Q2hhbXAtMjk1",
       __typename: "AddressChamp",
       label: "Adresse du siège social de la fondation d'entreprise",

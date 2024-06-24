@@ -94,6 +94,7 @@ export class DsConfigurationService implements OnModuleInit {
         fiscalEndDateAt: new RegExp(`.*${this.configuration.fieldRegexFiscalEndDate}.*`),
         declarationYears: new RegExp(`.*${this.configuration.fieldRegexDeclarationYears}.*`),
         originalCreatedAt: new RegExp(`.*${this.configuration.fieldRegexCreatedAt}.*`),
+        department: new RegExp(`.*${this.configuration.fieldRegexDepartment}.*`),
       },
     }
   }

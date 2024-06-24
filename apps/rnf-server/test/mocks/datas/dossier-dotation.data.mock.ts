@@ -119,6 +119,20 @@ export const dotationDossierDataMock = {
       },
     },
     {
+      id: "Q2hhbXAtMTg1Mw==",
+      __typename: "DepartementChamp",
+      label: "Département du siège de votre structure :",
+      stringValue: "33 - Gironde",
+      departement: {
+        name: "Gironde",
+        code: "33",
+      },
+      // TODO: replace this with real value of getCustomChamp
+      champDescriptor: {
+        description: "lorem ipsum#rnf-department-rnf#lorem ipsum",
+      },
+    },
+    {
       id: "Q2hhbXAtOTE=",
       __typename: "AddressChamp",
       label: "Adresse du siège social du fonds de dotation",
