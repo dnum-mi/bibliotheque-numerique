@@ -29,8 +29,8 @@ async function fetchRnfId(dossierId: number, instructeurEmail: string, force: bo
     }
     if (res.status === 400) {
 
-      if(text === 'An address with its departmentCode is required.') {
-        throw new Error('L\'adresse dans ce dossier est incomplet.')
+      if(text === 'Department is required.') {
+        throw new Error('Le département est manquant ou erroné.')
       }
       throw new Error('La démarche associé à ce dossier ne permet pas de créer un identifiant RNF')
     }
