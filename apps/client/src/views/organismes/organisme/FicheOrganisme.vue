@@ -12,6 +12,7 @@ import type { IFileOutput, IPagination, IRole, FileTagKey } from '@biblio-num/sh
 import { Prefecture, dFileTabDictionary } from '@biblio-num/shared'
 import type { ApiCall } from '@/components/ag-grid/server-side/pagination.utils'
 import FicheOrganismePersons from './FicheOrganismePersons.vue'
+import TooltipAddress from './TooltipAddress.vue'
 
 const props = withDefaults(defineProps<{ id: string; idType: OrganismeIdType }>(), {})
 
@@ -133,7 +134,10 @@ const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutpu
                 <div class="flex gap-4">
                   <div class="flex-grow">
                     <label class="bn-fiche-sub-title--label">SIÈGE SOCIAL</label>
-                    <span class="bn-fiche-sub-title--text">{{ organisme.addressLabel }}</span>
+                    <TooltipAddress :show="!!(organisme.addressLabel && !organisme.addressType)" />
+                    <span class="bn-fiche-sub-title--text">
+                      {{ organisme.addressLabel }}
+                    </span>
                   </div>
                   <div class="flex-grow">
                     <label class="bn-fiche-sub-title--label">TÉLÉPHONE</label>
