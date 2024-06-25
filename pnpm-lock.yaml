@@ -43,8 +43,8 @@ importers:
         specifier: ^1.11.2
         version: 1.11.2
       '@gouvminint/vue-dsfr':
-        specifier: ^5.10.3
-        version: 5.10.3(oh-vue-icons@1.0.0-rc3)(vue-router@4.3.0)(vue@3.4.21)
+        specifier: ^5.17.4
+        version: 5.17.4(oh-vue-icons@1.0.0-rc3)(vue-router@4.3.0)(vue@3.4.21)
       '@vee-validate/zod':
         specifier: ^4.12.6
         version: 4.12.6(vue@3.4.21)
@@ -4338,13 +4338,13 @@ packages:
       esbuild-linux-64: 0.15.18
     dev: false
 
-  /@gouvminint/vue-dsfr@5.10.3(oh-vue-icons@1.0.0-rc3)(vue-router@4.3.0)(vue@3.4.21):
-    resolution: {integrity: sha512-uEErFBXb55mTqAZI8ZJmhB1k1j6dbKIDgsrwmCuFc+2FKpsKWRynikm/5Eud10gAD6lUNigqS1QsrVgnGF6P0w==}
-    engines: {node: '>=18.x.x', npm: '>=8.x.x'}
+  /@gouvminint/vue-dsfr@5.17.4(oh-vue-icons@1.0.0-rc3)(vue-router@4.3.0)(vue@3.4.21):
+    resolution: {integrity: sha512-guVhLTTdJXDRIL79ym2AjILmoX9EqF385cCtjyWYjq+6lr3kKwQGNGHjjVgxCAL0/dyPh2Pk7A0C9zQl10SDQw==}
+    engines: {node: '>=20.x.x', npm: '>=10.x.x'}
     peerDependencies:
       oh-vue-icons: 1.0.0-rc3
-      vue: ^3.3.4
-      vue-router: ^4.2.4
+      vue: ^3.4.27
+      vue-router: ^4.3.2
     dependencies:
       '@gouvfr/dsfr': 1.11.2
       focus-trap: 7.5.4
