@@ -22,7 +22,7 @@ describe('<UpdatePassword />', () => {
       .type(goodPassword)
     cy.get('#confirmPassword').type(goodPassword2)
     cy.get('button[type=submit]').click()
-    cy.get('[data-cy=confirm-password]').should('contain.text', 'Les mots de passe ne correspondent pas')
+    cy.get('.fr-messages-group').should('contain.text', 'Les mots de passe ne correspondent pas')
 
     cy.get('#confirmPassword')
       .clear()
