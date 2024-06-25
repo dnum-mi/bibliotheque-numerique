@@ -472,8 +472,8 @@ importers:
         specifier: workspace:^
         version: link:../../packages/shared
       '@dnum-mi/ds-api-client':
-        specifier: ^1.7.9
-        version: 1.7.9
+        specifier: ^1.7.12
+        version: 1.7.12
       '@nestjs-modules/mailer':
         specifier: ^1.11.2
         version: 1.11.2(@nestjs/common@10.2.7)(@nestjs/core@10.2.7)(nodemailer@6.9.13)
@@ -3726,6 +3726,18 @@ packages:
       - supports-color
     dev: false
 
+  /@dnum-mi/ds-api-client@1.7.12:
+    resolution: {integrity: sha512-yLqAh7bHijIGlntTpHNTX50Vt5l4rTK2oRj5sQZIzvAo28kJW2+7u8eXec0wHHUi+RFT7vUb/JCbos4HVQSHPA==}
+    engines: {node: '>=16.0.0', npm: '>=7.10.0'}
+    dependencies:
+      graphql: 16.8.1
+      graphql-request: 6.1.0(graphql@16.8.1)
+      https-proxy-agent: 7.0.1
+    transitivePeerDependencies:
+      - encoding
+      - supports-color
+    dev: false
+
   /@dnum-mi/ds-api-client@1.7.8:
     resolution: {integrity: sha512-/9OUWe4fmLAi9AVFF8GrLNp4TeLuYk8czrkATDDho+sC+JB5BB/PkStuYA2H7K1KRv/E4uIKU5j1NPpEGGZ2mw==}
     engines: {node: '>=16.0.0', npm: '>=7.10.0'}
@@ -3748,6 +3760,7 @@ packages:
     transitivePeerDependencies:
       - encoding
       - supports-color
+    dev: true
 
   /@es-joy/jsdoccomment@0.41.0:
     resolution: {integrity: sha512-aKUhyn1QI5Ksbqcr3fFJj16p99QdjUxXAEuFst1Z47DRyoiMwivIH9MV/ARcJOCXVjPfjITciej8ZD2O/6qUmw==}
