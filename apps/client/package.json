@@ -31,7 +31,7 @@
   "dependencies": {
     "@biblio-num/shared": "workspace:^",
     "@gouvfr/dsfr": "^1.11.2",
-    "@gouvminint/vue-dsfr": "^5.10.3",
+    "@gouvminint/vue-dsfr": "^5.17.4",
     "@vee-validate/zod": "^4.12.6",
     "@vueuse/core": "^10.9.0",
     "ag-grid-community": "^31.0.3",
