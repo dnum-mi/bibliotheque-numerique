@@ -92,5 +92,5 @@ export const universalMapper: Mapper = {
   personAdministrator: stringValue,
   fiscalEndDateAt: dateValue,
   originalCreatedAt: () => null,
-  department: (ch?: Champ | DepartementChamp) => ch?.stringValue?.split('-')[0] ?? null,
+  department: (ch?: DepartementChamp) => ch?.departement?.code ?? null,
 }

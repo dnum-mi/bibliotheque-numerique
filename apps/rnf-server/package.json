@@ -30,7 +30,7 @@
     "test:e2e:one": "dotenv -e ./test/.env.test jest -- --config ./test/e2e/jest-e2e.json"
   },
   "dependencies": {
-    "@dnum-mi/ds-api-client": "^1.7.11",
+    "@dnum-mi/ds-api-client": "^1.7.12",
     "@nestjs/axios": "^3.0.2",
     "@nestjs/common": "^9.4.3",
     "@nestjs/config": "^2.3.4",
