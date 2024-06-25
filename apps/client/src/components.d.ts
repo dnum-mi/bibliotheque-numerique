@@ -45,6 +45,7 @@ declare module 'vue' {
     DsfrTabs: typeof import('@gouvminint/vue-dsfr')['DsfrTabs']
     DsfrTag: typeof import('@gouvminint/vue-dsfr')['DsfrTag']
     DsfrTags: typeof import('@gouvminint/vue-dsfr')['DsfrTags']
+    DsfrTooltip: typeof import('@gouvminint/vue-dsfr')['DsfrTooltip']
     DsfrWarningButton: typeof import('./components/dsfr-extends/DsfrWarningButton.vue')['default']
     FileTagBadge: typeof import('./components/Badges/file-tag/FileTagBadge.vue')['default']
     FileTagBadgeRenderer: typeof import('./components/Badges/file-tag/FileTagBadgeRenderer.vue')['default']

@@ -2,6 +2,7 @@
 import { type IPerson, ePersonRole } from '@biblio-num/shared'
 import { DsfrAccordion } from '@gouvminint/vue-dsfr'
 import { dateToStringFr } from '../../../utils'
+import TooltipAddress from './TooltipAddress.vue'
 
 const props = defineProps<{ persons: IPerson[] }>()
 
@@ -93,8 +94,11 @@ const onExpand = (idx: number, id: string) => {
                 <div class="flex-1 m-0! fr-text--xs fr-text--light">
                   Addresse
                 </div>
-                <div class="flex-1 fr-text--bold">
-                  {{ person.address?.label }}
+                <div class="flex-1">
+                  <TooltipAddress :show="person.address && !person.address?.type" />
+                  <span class="fr-text--bold">
+                    {{ person.address?.label }}
+                  </span>
                 </div>
               </div>
               <div class="flex-1/8 flex-col pr-1">
