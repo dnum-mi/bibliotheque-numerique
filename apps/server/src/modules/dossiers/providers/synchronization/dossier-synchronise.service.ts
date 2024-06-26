@@ -71,6 +71,7 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
         state: jsonDossier.state,
         dateDepot: jsonDossier.dateDepot,
         prefecture,
+        dateTraitement: jsonDossier.dateTraitement ?? null,
       },
       {
         conflictPaths: ['sourceId', 'demarche'],
