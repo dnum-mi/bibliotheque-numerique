@@ -145,9 +145,11 @@ export class OrganismeProcessor {
           })
         }
       } else {
-        await this.fieldService.updateOrThrow(job.data.fieldId, {
-          stringValue: `${job.data.rnf}`,
-        })
+        if (job.data.fieldId) {
+          await this.fieldService.updateOrThrow(job.data.fieldId, {
+            stringValue: `${job.data.rnf}`,
+          })
+        }
         await this.organismeService.updateOrganismeFromRnf(
           job.data.rnf,
           rawRnf,
