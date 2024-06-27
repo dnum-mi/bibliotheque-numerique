@@ -1,5 +1,25 @@
 # Changelog
 
+## [2.13.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.12.1...v2.13.0) (2024-06-27)
+
+
+### Features
+
+* icon and message for incorrect address ([c170a55](https://github.com/dnum-mi/bibliotheque_numerique/commit/c170a552ccc4dbe98ce45fe41ec753923d9981f0))
+* **rnf:** get department from department champs ([5638a9f](https://github.com/dnum-mi/bibliotheque_numerique/commit/5638a9f5dab1b509f6d6f128db0655f081a8988c))
+* **rnf:** save incorrect address ([88208e6](https://github.com/dnum-mi/bibliotheque_numerique/commit/88208e6021dff5165e2fce82c969740f7b91abe1))
+
+
+### Bug Fixes
+
+* add log in rnf-back ([d49ade1](https://github.com/dnum-mi/bibliotheque_numerique/commit/d49ade1ff6e1b50e583cd33a29284d128572a13d))
+* **BN:** update fondation even if there are not field ([e7c3540](https://github.com/dnum-mi/bibliotheque_numerique/commit/e7c35403b9cbf680c70e097b9855c4be289edd2e))
+* debug gitlab-ci-dso for DSO ([4d78ada](https://github.com/dnum-mi/bibliotheque_numerique/commit/4d78adac70b1de705fe2a46c91ce3a4e4e7d1b1c))
+* DepartementChamps from ds-api-client ([3aa3be1](https://github.com/dnum-mi/bibliotheque_numerique/commit/3aa3be1f057440b6646982933c41f862f325a805))
+* message for department missing ([25eff37](https://github.com/dnum-mi/bibliotheque_numerique/commit/25eff3709a607faf1e85e4841583b1273bbca9aa))
+* test components ([4f97aff](https://github.com/dnum-mi/bibliotheque_numerique/commit/4f97affd7c06625749f75d49f2cec621ffebc032))
+* update vue-dsfr ([0d005e6](https://github.com/dnum-mi/bibliotheque_numerique/commit/0d005e6774d52f1f52e60a36beeed397e8751e10))
+
 ## [2.12.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.12.0...v2.12.1) (2024-06-14)
 
 
