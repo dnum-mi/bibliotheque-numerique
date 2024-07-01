@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.13.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.13.0...v2.13.1) (2024-07-01)
+
+
+### Bug Fixes
+
+* remove unicity job for dossier ([1c521dd](https://github.com/dnum-mi/bibliotheque_numerique/commit/1c521dd370c1259dcfa9f2b29368e10726842db6))
+
 ## [2.13.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.12.1...v2.13.0) (2024-06-27)
 
 
