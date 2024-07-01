@@ -11,7 +11,6 @@ import {
 } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
 import {
   AnyJobPayload,
-  SyncOneDossierJobPayload,
   SyncOneRnaOrganismeJobPayload,
   SyncOneRnfOrganismeJobPayload,
 } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
@@ -56,17 +55,6 @@ export class CustomBullService {
       })
       await this.redisService.checkAndSet(redisKey, this.configService.get('bull').resyncMinutes * 60)
     }
-  }
-
-  public async addSyncOneDossierJob(
-    payload: SyncOneDossierJobPayload,
-  ): Promise<void> {
-    return this._addIfNotExists(
-      QueueName.sync,
-      eJobName.SyncOneDossier,
-      `dsid:${payload.dsDossierId.toString()}`,
-      payload,
-    )
   }
 
   public async addSyncOneRnfOrganismeJob(
