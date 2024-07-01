@@ -28,13 +28,15 @@ import {
   type IdentificationDemarcheKey,
   OrganismeTypeKey,
 } from '@biblio-num/shared'
-import { Job } from 'bull'
+import { Job, Queue } from 'bull'
 import {
   SyncOneDemarcheJobPayload,
   SyncOneDossierJobPayload,
 } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
 import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
-import { CustomBullService } from '@/shared/modules/custom-bull/custom-bull.service'
+import { InjectQueue } from '@nestjs/bull'
+import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
+import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
 
 @Injectable()
 export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
@@ -43,7 +45,8 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
     private demarcheService: DemarcheService,
     @InjectRepository(Demarche) repo: Repository<Demarche>,
     private dsApiClient: DsApiClient,
-    private readonly customBullService: CustomBullService,
+    @InjectQueue(QueueName.sync)
+    private readonly syncQueue: Queue,
   ) {
     super(repo, logger)
     this.logger.setContext(this.constructor.name)
@@ -57,7 +60,7 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
   ): Promise<void> {
     this.logger.verbose('_synchroniseAllDossier')
     for (const dossier of dossiers) {
-      await this.customBullService.addSyncOneDossierJob({
+      await this.syncQueue.add(eJobName.SyncOneDossier, {
         demarcheId,
         dsDossierId: dossier.number,
         fromScratch,
