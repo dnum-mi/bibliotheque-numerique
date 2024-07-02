@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.14.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.13.1...v2.14.0) (2024-07-02)
+
+
+### Features
+
+* build image by sequential ([85c5927](https://github.com/dnum-mi/bibliotheque_numerique/commit/85c5927479e0b9db78090bcd74c6bcde62a169de))
+
+
+### Bug Fixes
+
+* change REGISTRY_URL in ci dso ([5ac1b06](https://github.com/dnum-mi/bibliotheque_numerique/commit/5ac1b06fff7c42ae6e320ae32fcc725fe96b0594))
+
 ## [2.13.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.13.0...v2.13.1) (2024-07-01)
 
 
