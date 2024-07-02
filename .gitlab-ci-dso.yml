@@ -23,9 +23,17 @@ variables:
 
 stages:
   - read-secret
-  - test-sonar
+  - test-sonar-front
+  - test-sonar-rnf-front
+  - test-sonar-back
+  - test-sonar-rnf-back
+  - test-sonar-http-proxy
   - docker-test
-  - docker-build
+  - docker-build-front
+  - docker-build-rnf-front
+  - docker-build-back
+  - docker-build-rnf-back
+  - docker-build-http-proxy
 
 read_secret:
   stage: read-secret
@@ -35,7 +43,7 @@ read_secret:
 test_front:
   variables:
     WORKING_DIR: apps/client
-  stage: test-sonar
+  stage: test-sonar-front
   allow_failure: true
   extends:
     - .node:sonar
@@ -43,7 +51,7 @@ test_front:
 test_rnf_front:
   variables:
     WORKING_DIR: apps/rnf-client
-  stage: test-sonar
+  stage: test-sonar-rnf-front
   allow_failure: true
   extends:
     - .node:sonar
@@ -51,7 +59,7 @@ test_rnf_front:
 test_back:
   variables:
     WORKING_DIR: apps/server
-  stage: test-sonar
+  stage: test-sonar-back
   allow_failure: true
   extends:
     - .node:sonar
@@ -59,7 +67,7 @@ test_back:
 test_rnf_back:
   variables:
     WORKING_DIR: apps/rnf-server
-  stage: test-sonar
+  stage: test-sonar-rnf-back
   allow_failure: true
   extends:
     - .node:sonar
@@ -67,7 +75,7 @@ test_rnf_back:
 test_http_proxy:
   variables:
     WORKING_DIR: apps/http-proxy
-  stage: test-sonar
+  stage: test-sonar-http-proxy
   allow_failure: true
   extends:
     - .node:sonar
@@ -76,41 +84,41 @@ test_http_proxy:
         - apps/http-proxy/**/*
         - apps/http-proxy/Dockerfile
 
-test_elasticsearch:
-  variables:
-    WORKING_DIR: apps/elk/elasticsearch
-  stage: test-sonar
-  allow_failure: true
-  extends:
-    - .node:sonar
-  rules:
-    - changes:
-        - apps/elk/elasticsearch/**/*
-        - apps/elk/elasticsearch/Dockerfile
-
-test_kibana:
-  variables:
-    WORKING_DIR: apps/elk/kibana
-  stage: test-sonar
-  allow_failure: true
-  extends:
-    - .node:sonar
-  rules:
-    - changes:
-        - apps/elk/kibana/**/*
-        - apps/elk/kibana/Dockerfile
-
-test_logstash:
-  variables:
-    WORKING_DIR: apps/elk/logstash
-  stage: test-sonar
-  allow_failure: true
-  extends:
-    - .node:sonar
-  rules:
-    - changes:
-        - apps/elk/logstash/**/*
-        - apps/elk/logstash/Dockerfile
+#test_elasticsearch:
+#  variables:
+#    WORKING_DIR: apps/elk/elasticsearch
+#  stage: test-sonar
+#  allow_failure: true
+#  extends:
+#    - .node:sonar
+#  rules:
+#    - changes:
+#        - apps/elk/elasticsearch/**/*
+#        - apps/elk/elasticsearch/Dockerfile
+#
+#test_kibana:
+#  variables:
+#    WORKING_DIR: apps/elk/kibana
+#  stage: test-sonar
+#  allow_failure: true
+#  extends:
+#    - .node:sonar
+#  rules:
+#    - changes:
+#        - apps/elk/kibana/**/*
+#        - apps/elk/kibana/Dockerfile
+#
+#test_logstash:
+#  variables:
+#    WORKING_DIR: apps/elk/logstash
+#  stage: test-sonar
+#  allow_failure: true
+#  extends:
+#    - .node:sonar
+#  rules:
+#    - changes:
+#        - apps/elk/logstash/**/*
+#        - apps/elk/logstash/Dockerfile
 
 test_docker_front:
   variables:
@@ -169,50 +177,50 @@ test_docker_http_proxy:
         - apps/http-proxy/**/*
         - apps/http-proxy/Dockerfile
 
-test_docker_elasticsearch:
-  image: docker:stable
-  variables:
-    WORKING_DIR: 'apps/elk/elasticsearch'
-    IMAGE_NAME: 'elasticsearch'
-    DOCKERFILE: 'Dockerfile'
-  stage: docker-test
-  allow_failure: true
-  extends:
-    - .docker:test
-  rules:
-    - changes:
-        - apps/elk/elasticsearch/**/*
-        - apps/elk/elasticsearch/Dockerfile
-
-test_docker_kibana:
-  image: docker:stable
-  variables:
-    WORKING_DIR: 'apps/elk/kibana'
-    IMAGE_NAME: 'kibana'
-    DOCKERFILE: 'Dockerfile'
-  stage: docker-test
-  allow_failure: true
-  extends:
-    - .docker:test
-  rules:
-    - changes:
-        - apps/elk/kibana/**/*
-        - apps/elk/kibana/Dockerfile
-
-test_docker_logstash:
-  image: docker:stable
-  variables:
-    WORKING_DIR: 'apps/elk/logstash'
-    IMAGE_NAME: 'logstash'
-    DOCKERFILE: 'Dockerfile'
-  stage: docker-test
-  allow_failure: true
-  extends:
-    - .docker:test
-  rules:
-    - changes:
-        - apps/elk/logstash/**/*
-        - apps/elk/logstash/Dockerfile
+#test_docker_elasticsearch:
+#  image: docker:stable
+#  variables:
+#    WORKING_DIR: 'apps/elk/elasticsearch'
+#    IMAGE_NAME: 'elasticsearch'
+#    DOCKERFILE: 'Dockerfile'
+#  stage: docker-test
+#  allow_failure: true
+#  extends:
+#    - .docker:test
+#  rules:
+#    - changes:
+#        - apps/elk/elasticsearch/**/*
+#        - apps/elk/elasticsearch/Dockerfile
+#
+#test_docker_kibana:
+#  image: docker:stable
+#  variables:
+#    WORKING_DIR: 'apps/elk/kibana'
+#    IMAGE_NAME: 'kibana'
+#    DOCKERFILE: 'Dockerfile'
+#  stage: docker-test
+#  allow_failure: true
+#  extends:
+#    - .docker:test
+#  rules:
+#    - changes:
+#        - apps/elk/kibana/**/*
+#        - apps/elk/kibana/Dockerfile
+#
+#test_docker_logstash:
+#  image: docker:stable
+#  variables:
+#    WORKING_DIR: 'apps/elk/logstash'
+#    IMAGE_NAME: 'logstash'
+#    DOCKERFILE: 'Dockerfile'
+#  stage: docker-test
+#  allow_failure: true
+#  extends:
+#    - .docker:test
+#  rules:
+#    - changes:
+#        - apps/elk/logstash/**/*
+#        - apps/elk/logstash/Dockerfile
 
 docker_build_front:
   variables:
@@ -220,7 +228,7 @@ docker_build_front:
     IMAGE_NAME: 'bibliotheque_numerique-front'
     DOCKERFILE: 'Dockerfile'
     KUBERNETES_MEMORY_LIMIT: '5Gi'
-  stage: docker-build
+  stage: docker-build-front
   extends:
     - .kaniko:simple-build-push
 
@@ -229,7 +237,7 @@ docker_build_rnf_front:
     WORKING_DIR: 'apps/rnf-client'
     IMAGE_NAME: 'rnf-front'
     DOCKERFILE: 'Dockerfile'
-  stage: docker-build
+  stage: docker-build-rnf-front
   extends:
     - .kaniko:simple-build-push
 
@@ -238,7 +246,7 @@ docker_build_back:
     WORKING_DIR: 'apps/server'
     IMAGE_NAME: 'bibliotheque_numerique-back'
     DOCKERFILE: 'Dockerfile'
-  stage: docker-build
+  stage: docker-build-back
   extends:
     - .kaniko:simple-build-push
 
@@ -247,7 +255,7 @@ docker_build_rnf_back:
     WORKING_DIR: 'apps/rnf-server'
     IMAGE_NAME: 'rnf-back'
     DOCKERFILE: 'Dockerfile'
-  stage: docker-build
+  stage: docker-build-rnf-back
   extends:
     - .kaniko:simple-build-push
 
@@ -258,7 +266,7 @@ docker_build_http_proxy:
     IMAGE_NAME: 'http-proxy'
     DOCKERFILE: 'Dockerfile'
     TAG: latest
-  stage: docker-build
+  stage: docker-build-http-proxy
   extends:
     - .kaniko:simple-build-push
   rules:
@@ -267,42 +275,42 @@ docker_build_http_proxy:
         - apps/http-proxy/Dockerfile
 
 
-docker_build_elasticsearch:
-  variables:
-    WORKING_DIR: 'apps/elk/elasticsearch'
-    IMAGE_NAME: 'elasticsearch'
-    DOCKERFILE: 'Dockerfile'
-  stage: docker-build
-  extends:
-    - .kaniko:simple-build-push
-  rules:
-    - changes:
-        - apps/elk/elasticsearch/**/*
-        - apps/elk/elasticsearch/Dockerfile
-
-
-docker_build_kibana:
-  variables:
-    WORKING_DIR: 'apps/elk/kibana'
-    IMAGE_NAME: 'kibana'
-    DOCKERFILE: 'Dockerfile'
-  stage: docker-build
-  extends:
-    - .kaniko:simple-build-push
-  rules:
-    - changes:
-        - apps/elk/kibana/**/*
-        - apps/elk/kibana/Dockerfile
-
-docker_build_logstash:
-  variables:
-    WORKING_DIR: 'apps/elk/logstash'
-    IMAGE_NAME: 'logstash'
-    DOCKERFILE: 'Dockerfile'
-  stage: docker-build
-  extends:
-    - .kaniko:simple-build-push
-  rules:
-    - changes:
-        - apps/elk/logstash/**/*
-        - apps/elk/logstash/Dockerfile
+#docker_build_elasticsearch:
+#  variables:
+#    WORKING_DIR: 'apps/elk/elasticsearch'
+#    IMAGE_NAME: 'elasticsearch'
+#    DOCKERFILE: 'Dockerfile'
+#  stage: docker-build
+#  extends:
+#    - .kaniko:simple-build-push
+#  rules:
+#    - changes:
+#        - apps/elk/elasticsearch/**/*
+#        - apps/elk/elasticsearch/Dockerfile
+#
+#
+#docker_build_kibana:
+#  variables:
+#    WORKING_DIR: 'apps/elk/kibana'
+#    IMAGE_NAME: 'kibana'
+#    DOCKERFILE: 'Dockerfile'
+#  stage: docker-build
+#  extends:
+#    - .kaniko:simple-build-push
+#  rules:
+#    - changes:
+#        - apps/elk/kibana/**/*
+#        - apps/elk/kibana/Dockerfile
+#
+#docker_build_logstash:
+#  variables:
+#    WORKING_DIR: 'apps/elk/logstash'
+#    IMAGE_NAME: 'logstash'
+#    DOCKERFILE: 'Dockerfile'
+#  stage: docker-build
+#  extends:
+#    - .kaniko:simple-build-push
+#  rules:
+#    - changes:
+#        - apps/elk/logstash/**/*
+#        - apps/elk/logstash/Dockerfile
