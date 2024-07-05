@@ -37,7 +37,7 @@ const columns: Column[] = [
   },
   {
     field: 'prefecture',
-    headerName: 'Préfecture',
+    headerName: 'Service instructeur',
   },
   {
     field: 'state',
