@@ -44,6 +44,25 @@ export class UpdateDsConfigurationInputDto {
   @IsOptional()
   dsDemarcheDNRAnnotationId: string
 
+  //#region FRUP
+  @IsNumber()
+  @IsOptional()
+  dsDemarcheFRUPCreationId: number
+
+  @IsString()
+  @IsOptional()
+  dsDemarcheFRUPCreationAnnotationId: string
+
+  @IsNumber()
+  @IsOptional()
+  dsDemarcheFRUPModificationId: number
+
+  @IsNumber()
+  @IsOptional()
+  dsDemarcheFRUPDissolutionId: number
+  //#endregion FRUP
+
+  //#region regex code champs
   @IsString()
   @IsOptional()
   fieldRegexTitle: string
@@ -123,4 +142,6 @@ export class UpdateDsConfigurationInputDto {
   @IsString()
   @IsOptional()
   fieldRegexDepartment: string
+
+  //#endregion regex code champs
 }

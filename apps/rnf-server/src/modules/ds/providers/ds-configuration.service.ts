@@ -11,6 +11,8 @@ import {
   feModificationMapper,
   feAdministrationChangesMapper,
   fddAdministrationChangesMapper,
+  frupModificationMapper,
+  frupCreationMapper,
 } from '@/modules/ds/objects/mappers'
 import { RnfFieldKey } from '@/modules/ds/objects/types/rnf-field-keys.type'
 import { Mapper } from '@/modules/ds/objects/types/mapper.type'
@@ -65,6 +67,10 @@ export class DsConfigurationService implements OnModuleInit {
             feAdministrationChangesMapper,
           [this.configuration.dsDemarcheFDDAdministrationChangesId]:
             fddAdministrationChangesMapper,
+          // frup
+          [this.configuration.dsDemarcheFRUPCreationId]:
+            frupCreationMapper,
+          [this.configuration.dsDemarcheFRUPModificationId]: frupModificationMapper,
         }),
       ),
       rnfFieldKeys: {
@@ -158,6 +164,7 @@ export class DsConfigurationService implements OnModuleInit {
       [this.configuration.dsDemarcheFDDCreationId]: this.configuration.dsDemarcheFDDCreationAnnotationId,
       [this.configuration.dsDemarcheFECreationId]: this.configuration.dsDemarcheFECreationAnnotationId,
       [this.configuration.dsDemarcheDNRId]: this.configuration.dsDemarcheDNRAnnotationId,
+      [this.configuration.dsDemarcheFRUPCreationId]: this.configuration.dsDemarcheFRUPCreationAnnotationId,
     }[demarcheId])
   }
 }
