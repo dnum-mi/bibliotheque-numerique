@@ -188,7 +188,11 @@ model DSConfiguration {
   fieldRegexAdministator               String   @default("#rnf-administrateur-rnf#")
   fieldRegexFiscalEndDate              String   @default("#rnf-date-fin-exercice-rnf#")
   fieldRegexPersonIsFounder            String   @default("#rnf-person-is-founder-rnf#")
-  fieldRegexDepartment                 String   @default("#rnf-department-rnf#")
+  fieldRegexDepartment                 String   @default("#rnf-departement-rnf#")
   dsDemarcheFDDAdministrationChangesId Int      @default(52)
   dsDemarcheFEAdministrationChangesId  Int      @default(55)
+  dsDemarcheFRUPCreationId             Int      @default(70)
+  dsDemarcheFRUPCreationAnnotationId   String   @default("Q2hhbXAtMTczMw==")
+  dsDemarcheFRUPModificationId         Int      @default(71)
+  dsDemarcheFRUPDissolutionId          Int      @default(72)
 }

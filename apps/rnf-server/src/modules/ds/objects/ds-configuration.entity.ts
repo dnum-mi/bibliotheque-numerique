@@ -49,6 +49,7 @@ export class DsConfigurationEntity
   @IsDefined()
   dsDemarcheDNRAnnotationId: string
 
+  //#region regex code champs
   @IsString()
   @IsDefined()
   fieldRegexTitle: string
@@ -145,6 +146,16 @@ export class DsConfigurationEntity
   @IsDefined()
   fieldRegexDeclarationYears: string
 
+  @IsOptional()
+  @IsDate()
+  fieldRegexCreatedAt: string
+
+  @IsString()
+  @IsDefined()
+  fieldRegexDepartment: string
+
+  //#endregion regex code champs
+
   @IsNumber()
   @IsDefined()
   dsDemarcheFDDAdministrationChangesId: number
@@ -153,11 +164,23 @@ export class DsConfigurationEntity
   @IsDefined()
   dsDemarcheFEAdministrationChangesId: number
 
-  @IsOptional()
-  @IsDate()
-  fieldRegexCreatedAt: string
+  //#region FRUP
+  @IsNumber()
+  @IsDefined()
+  dsDemarcheFRUPCreationId: number
 
   @IsString()
   @IsDefined()
-  fieldRegexDepartment: string
+  dsDemarcheFRUPCreationAnnotationId: string
+
+  @IsNumber()
+  @IsDefined()
+  dsDemarcheFRUPModificationId: number
+
+  @IsNumber()
+  @IsNumber()
+  @IsDefined()
+  dsDemarcheFRUPDissolutionId: number
+
+  //#endregion FRUP
 }
