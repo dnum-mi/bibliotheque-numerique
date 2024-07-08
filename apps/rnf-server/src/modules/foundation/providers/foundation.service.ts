@@ -306,7 +306,7 @@ export class FoundationService extends BaseEntityService {
   }
 
   // Function to execute the cron job
-
+  //#region trigger
   public async triggerFeModificationRefresh(): Promise<void> {
     this.logger.verbose('triggerFeModificationRefresh')
     await this._lookForFoundationChange(
@@ -356,6 +356,25 @@ export class FoundationService extends BaseEntityService {
       FoundationChangeType.Administration,
     )
   }
+
+  public async triggerFrupModificationRefresh(): Promise<void> {
+    this.logger.verbose('triggerFddModificationRefresh')
+    await this._lookForFoundationChange(
+      'Modification of FRUP',
+      this.dsConfigurationService.configuration.dsDemarcheFRUPModificationId,
+      FoundationChangeType.Modification,
+    )
+  }
+
+  public async triggerFrupDissolution(): Promise<void> {
+    await this._lookForFoundationChange(
+      'Dissolution of FRUP',
+      this.dsConfigurationService.configuration.dsDemarcheFRUPDissolutionId,
+      FoundationChangeType.Dissolution,
+    )
+  }
+
+  //#endregion trigger
 
   async updateFoundation(rnfId: string, dto: UpdateFoundationDto) {
     this.logger.verbose('updateFoundation')
