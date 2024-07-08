@@ -129,7 +129,7 @@ export const dotationDossierDataMock = {
       },
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum#rnf-department-rnf#lorem ipsum",
+        description: "lorem ipsum#rnf-departement-rnf#lorem ipsum",
       },
     },
     {
