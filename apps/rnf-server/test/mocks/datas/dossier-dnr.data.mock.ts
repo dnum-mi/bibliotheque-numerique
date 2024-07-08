@@ -121,7 +121,7 @@ export const dnrDossierDataMock = {
       stringValue: "59 - Nord",
       // TODO: replace this with real value of getCustomChamp
       champDescriptor: {
-        description: "lorem ipsum#rnf-department-rnf#lorem ipsum",
+        description: "lorem ipsum#rnf-departement-rnf#lorem ipsum",
       },
       departement: {
         name: "Nord",
