@@ -1,6 +1,6 @@
 import { Mapper } from '@/modules/ds/objects/types/mapper.type'
-import { frupCreationMapper } from './frup-creation.mapper'
+import { frupMapper } from './frup.mapper'
 
 export const frupModificationMapper: Mapper = {
-  ...frupCreationMapper,
+  ...frupMapper,
 }

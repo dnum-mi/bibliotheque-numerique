@@ -270,6 +270,10 @@ export const dnrDossierDataMock = {
       __typename: "TextChamp",
       label: "Référence du fonds de dotation",
       stringValue: "",
+      champDescriptor: {
+        description: "lorem ipsum",
+      },
+
     },
   ],
 } as unknown as Partial<Dossier>;

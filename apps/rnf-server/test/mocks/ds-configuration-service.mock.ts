@@ -35,6 +35,11 @@ export const dsConfigurationServiceMock = {
     fieldRegexFiscalEndDate: '#rnf-date-fin-exercice-rnf#',
     fieldRegexCreatedAt: '#rnf-date-creation-rnf#',
     fieldRegexDepartment: '#rnf-departement-rnf#',
+    dsDemarcheFRUPCreationId: 71,
+    dsDemarcheFRUPCreationAnnotationId: 'Q2hhbXAtMTczMw==',
+    dsDemarcheFRUPModificationId: 53,
+    dsDemarcheFRUPDissolutionId: 54,
+
   },
   getMapperFromDemarcheDsId: jest.fn().mockImplementation((n) => {
     switch (`${n}`) {
