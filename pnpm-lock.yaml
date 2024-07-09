@@ -330,8 +330,8 @@ importers:
   apps/rnf-server:
     dependencies:
       '@dnum-mi/ds-api-client':
-        specifier: ^1.7.12
-        version: 1.7.12
+        specifier: ^1.7.13
+        version: 1.7.13
       '@nestjs/axios':
         specifier: ^3.0.2
         version: 3.0.2(@nestjs/common@9.4.3)(axios@1.6.8)(rxjs@7.8.1)
@@ -3714,8 +3714,8 @@ packages:
       kuler: 2.0.0
     dev: false
 
-  /@dnum-mi/ds-api-client@1.7.12:
-    resolution: {integrity: sha512-yLqAh7bHijIGlntTpHNTX50Vt5l4rTK2oRj5sQZIzvAo28kJW2+7u8eXec0wHHUi+RFT7vUb/JCbos4HVQSHPA==}
+  /@dnum-mi/ds-api-client@1.7.13:
+    resolution: {integrity: sha512-nAKIUIB2qG4aOln/UkBar5MWnvYUkUATVyaLLz0iWSnrUw9Obu7GBdY/17h+CgW3Q+LogFYWyHYCIIowNZfcJA==}
     engines: {node: '>=16.0.0', npm: '>=7.10.0'}
     dependencies:
       graphql: 16.8.1
