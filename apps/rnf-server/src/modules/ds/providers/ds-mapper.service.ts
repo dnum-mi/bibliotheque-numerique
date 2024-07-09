@@ -59,7 +59,10 @@ export class DsMapperService {
     }
 
     const champsHash =
-      this.findChampsInDossier(rawDossier.champs, this.dsConfigurationService.rnfFieldKeys)
+      this.findChampsInDossier([
+        ...rawDossier.champs,
+        ...(rawDossier.annotations || []),
+      ], this.dsConfigurationService.rnfFieldKeys)
     const mapperWithoutPerson = this.mapperWithoutPerson(mapper)
     const foundationDto: CreateFoundationDto = Object.fromEntries(
       Object.keys(mapperWithoutPerson)

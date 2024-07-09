@@ -798,6 +798,10 @@ export const dotationDossierDataMock = {
       __typename: "TextChamp",
       label: "N° unique de l'organisme",
       stringValue: "",
+      champDescriptor: {
+        description: "lorem ipsum",
+      },
+
     },
   ],
 } as unknown as Partial<Dossier>;

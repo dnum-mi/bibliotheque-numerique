@@ -46,6 +46,7 @@ export class FoundationController {
     const instructeurId = rawDossier.instructeurs.find(
       (i) => i.email === dto.email,
     )?.id
+
     if (!instructeurId) {
       throw new ForbiddenException(
         "This instructeur's email is not linked to this dossier.",

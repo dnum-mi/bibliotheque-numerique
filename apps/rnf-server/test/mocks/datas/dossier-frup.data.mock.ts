@@ -1,9 +1,9 @@
 /* eslint-disable */
 import { Dossier } from "@dnum-mi/ds-api-client";
 
-export const entrepriseDossierDataMock = {
-  id: "RG9zc2llci02NQ==",
-  number: 65,
+export const frupDossierDataMock = {
+  id: "RG9zc2llci0zMjE=",
+  number: 321,
   archived: false,
   state: "en_instruction",
   dateDerniereModification: "2023-01-04T13:18:13+01:00",
@@ -17,11 +17,11 @@ export const entrepriseDossierDataMock = {
   motivationAttachment: null,
   attestation: null,
   pdf: {
-    filename: "dossier-65.pdf",
+    filename: "dossier-321.pdf",
     contentType: "application/pdf",
     checksum: "",
     byteSize: "0",
-    url: "https://fakeurl/api/v2/dossiers/pdf/BAh7CEkiCGdpZAY6BkVUSSIpZ2lkOi8vdHBzL0Rvc3NpZXIvNjU_ZXhwaXJlc19pbj0zNjAwBjsAVEkiDHB1cnBvc2UGOwBUSSILYXBpX3YyBjsAVEkiD2V4cGlyZXNfYXQGOwBUSSIdMjAyMy0wNi0wNFQxMDo0NzozMy43MjlaBjsAVA==--c1449925772da6bb56ae3b19e664fad2cdc36cb8",
+    url: "https://fakeurl/api/v2/dossiers/pdf/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaEpJaXBuYVdRNkx5OTBjSE12Ukc5emMybGxjaTh6TWpFL1pYaHdhWEpsYzE5cGJqMHpOakF3QmpvR1JWUT0iLCJleHAiOiIyMDI0LTA3LTA5VDExOjA2OjQ4LjQ5OVoiLCJwdXIiOiJhcGlfdjIifX0=--f7f2519b87e4c48e616cb4ce21dd6ccb6f338b07",
   },
   usager: {
     email: "titi@gmail.com",
@@ -37,7 +37,7 @@ export const entrepriseDossierDataMock = {
       },
       {
         id: "SW5zdHJ1Y3RldXItMg==",
-        email: "titi@gmail.com",
+        email: "tito@gmail.com",
       },
     ],
   },
@@ -52,8 +52,8 @@ export const entrepriseDossierDataMock = {
       id: "UHJvY2VkdXJlUmV2aXNpb24tNDU=",
     },
     id: "UHJvY2VkdXJlLTEy",
-    number: 12,
-    title: "Création d'une fondation d'entreprise (national)",
+    number: 70,
+    title: "Création d'une fondation d'utilité publique",
     description:
       "Les articles 19 à 19-12 de la loi n° 87-571 du 23 juillet 1987 sur le développement du mécénat organisent les règles relatives aux fondations d'entreprises.\r\n\r\nLa fondation d'entreprise est une personne morale de droit privé à but non lucratif qui reçoit et gère des biens et droits de toute nature qui lui sont apportés à titre gratuit et irrévocable et les utilise en vue de la réalisation d'une œuvre d'intérêt général.\r\n\r\nCette procédure permet de solliciter l'autorisation de création d'une fondation d'entreprise.\r\n\r\nSeules les fondations d'entreprise fixant leur siège à Paris  peuvent engager cette procédure dématérialisée.\r\n\r\nSeuls les fondateurs ou personnes mandatées par eux peuvent effectuer cette procédure.",
     state: "publiee",
@@ -71,7 +71,7 @@ export const entrepriseDossierDataMock = {
   instructeurs: [
     {
       id: "SW5zdHJ1Y3RldXItMg==",
-      email: "titi@gmail.com",
+      email: "tito@gmail.com",
     },
   ],
   traitements: [
@@ -702,7 +702,7 @@ export const entrepriseDossierDataMock = {
     {
       id: "Q2hhbXAtMzIx",
       __typename: "TextChamp",
-      label: "Référence de la fondation d'entreprise",
+      label: "Référence de la fondation d'utilité public",
       stringValue: "",
       champDescriptor: {
         description: "lorem ipsum",
@@ -774,7 +774,7 @@ export const entrepriseDossierDataMock = {
     {
       id: "Q2hhbXAtMzI2",
       __typename: "TextChamp",
-      label: "Analyse statutaire de la fondation d'entreprise",
+      label: "Analyse statutaire de la fondation d'utilité public",
       stringValue: "",
       champDescriptor: {
         description: "lorem ipsum",
@@ -1030,5 +1030,17 @@ export const entrepriseDossierDataMock = {
       },
 
     },
+    {
+      id: "Q2hhbXAtNTk5",
+      __typename: "DateChamp",
+      label: "Date de création",
+      stringValue: "13 septembre 2023",
+      date: "2023-09-13",
+      champDescriptor: {
+        description: "lorem ipsum#rnf-date-creation-rnf#lorem ipsum",
+      },
+
+    },
+
   ],
 } as unknown as Partial<Dossier>;

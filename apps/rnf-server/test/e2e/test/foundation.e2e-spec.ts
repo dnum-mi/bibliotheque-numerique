@@ -230,6 +230,55 @@ describe('Foundation Controller (e2e)', () => {
         })
     })
 
+    it('Should create a new foundation with public utility', async () => {
+      const result = await request(app.getHttpServer())
+        .post('/api/foundations')
+        .send({
+          dossierId: 321,
+          email: 'tito@gmail.com',
+        })
+        .expect(201)
+      expect(result.body).toEqual({
+        rnfId: '059-FRUP-00001-08',
+        ds: {
+          demarcheId: 70,
+          dossierId: 321,
+        },
+      })
+      await prisma.foundation
+        .findFirst({
+          where: { rnfId: '059-FRUP-00001-08' },
+          include: { address: true },
+        })
+        .then((a) => {
+          expect(a).toMatchObject({
+            id: 1,
+            rnfId: '059-FRUP-00001-08',
+            type: 'FRUP',
+            department: '59',
+            title: 'Test demo',
+            addressId: 1,
+            address: {
+              id: 1,
+              label: '1 Square Wannoschot 59800 Lille',
+              type: 'housenumber',
+              streetAddress: '1 Square Wannoschot',
+              streetNumber: '1',
+              streetName: 'Square Wannoschot',
+              postalCode: '59800',
+              cityName: 'Lille',
+              cityCode: '59350',
+              departmentName: 'Nord',
+              departmentCode: '59',
+              regionName: 'Hauts-de-France',
+              regionCode: '32',
+            },
+            fiscalEndDateAt: new Date('2023-09-08'),
+            originalCreatedAt: new Date('2023-09-13'),
+          })
+        })
+    })
+
     it('Should create a new foundation with demande numéro rnf', async () => {
       const result = await request(app.getHttpServer())
         .post('/api/foundations')

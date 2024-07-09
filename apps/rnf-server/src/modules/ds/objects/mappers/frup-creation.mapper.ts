@@ -1,8 +1,11 @@
-import { FoundationType } from '@prisma/client'
 import { Mapper } from '@/modules/ds/objects/types/mapper.type'
-import { universalMapper } from '@/modules/ds/objects/mappers/universal.mapper'
+import { DateChamp } from '@dnum-mi/ds-api-client'
+import { frupMapper } from './frup.mapper'
 
 export const frupCreationMapper: Mapper = {
-  ...universalMapper,
-  type: () => FoundationType.FRUP as string,
+  ...frupMapper,
+  originalCreatedAt: (ch: DateChamp) => {
+    return ch.date ? new Date(ch.date as string) : null
+  },
+
 }

@@ -9,6 +9,7 @@ import { demarcheDossierEntrepriseDissolutionDataMock } from './datas/demarche-d
 import {
   demarcheDossierEntrepriseAdministrationChangesDataMock,
 } from './datas/demarche-dossier-entreprise-administration-changes.data.mock'
+import { frupDossierDataMock } from './datas/dossier-frup.data.mock'
 
 const dossierNotFoundGraphQlError = {
   data: null,
@@ -66,6 +67,8 @@ export const dsServiceMock = {
       return injectionSqlDossier
     case 37:
       return badDossier
+    case 321:
+      return frupDossierDataMock
     default:
       throw new DsApiError(dossierNotFoundGraphQlError)
     }
