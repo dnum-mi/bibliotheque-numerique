@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.15.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.14.0...v2.15.0) (2024-07-11)
+
+
+### Features
+
+* add functions and mappers to create, to update and dissolve FRUP ([562dbe9](https://github.com/dnum-mi/bibliotheque_numerique/commit/562dbe9d07f6c113472fab5958b7f7cddcbb0604))
+* add in controller the trigger to update and to dissolve FRUP ([824d0de](https://github.com/dnum-mi/bibliotheque_numerique/commit/824d0de3e080cabebea8294ba2bd7a2bd77b32b0))
+* add mingration, schema, entity for FRUP into db rnf ([1060e41](https://github.com/dnum-mi/bibliotheque_numerique/commit/1060e410b281d770cc0062bb184a53312fb4cfb0))
+* mapper get code from annotations (date creation FRUP) ([5fa47fb](https://github.com/dnum-mi/bibliotheque_numerique/commit/5fa47fb8c8b6e693554efa15532e6ec3a1e1288c))
+
+
+### Bug Fixes
+
+* test-e2e for frup ([76f60cc](https://github.com/dnum-mi/bibliotheque_numerique/commit/76f60ccee23a8f818a1ecee84742bd611e97d2ba))
+* wording prefecture to service instructeur ([a699e7e](https://github.com/dnum-mi/bibliotheque_numerique/commit/a699e7eadfae0bc3d569c313260fbd660f14091d))
+
 ## [2.14.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.13.1...v2.14.0) (2024-07-02)
 
 
