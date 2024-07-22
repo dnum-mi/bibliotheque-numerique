@@ -3,7 +3,8 @@ import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-nam
 import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
 import {
   ComputeFeExcelJobPayload,
-  UploadDsFileJobPayload, UploadRnaFileJobPayload,
+  UploadDsFileJobPayload,
+  UploadRnaFileJobPayload,
 } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
 import { Job, Queue } from 'bull'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
@@ -26,7 +27,8 @@ export class FileProcessor {
     private readonly fileService: FileService,
     private readonly fieldService: FieldService,
     @InjectQueue(QueueName.sync) private readonly syncQueue: Queue,
-    @Inject(ALS_INSTANCE) private readonly als?: AsyncLocalStorage<AsyncLocalStore>,
+    @Inject(ALS_INSTANCE)
+    private readonly als?: AsyncLocalStorage<AsyncLocalStore>,
   ) {
     this.logger.setContext(this.constructor.name)
   }
@@ -48,7 +50,7 @@ export class FileProcessor {
       )
     }
     job.log(`nombre de fichiers trouvés: ${files?.length}`)
-    job.log(`nom des fichiers trouvés: ${files?.map(f => f.filename)}`)
+    job.log(`nom des fichiers trouvés: ${files?.map((f) => f.filename)}`)
     return files[payload.file.sourceIndex ?? 0] as TFile
   }
 
@@ -69,7 +71,10 @@ export class FileProcessor {
             this.logger.log(
               `File ${job.data.file.uuid} uploaded to S3 (${job.data.file.originalLabel})`,
             )
-            await this.fileService.copyDsFileInformation(job.data.file.id, dsFile)
+            await this.fileService.copyDsFileInformation(
+              job.data.file.id,
+              dsFile,
+            )
             return eState.uploaded
           })
           .catch(async (e) => {
@@ -106,7 +111,10 @@ export class FileProcessor {
       const state = await this.s3Service
         .downloadAndUploadToS3(job.data.rnaUrl, job.data.file.uuid)
         .then(async (byteSize) => {
-          await this.fileService.repository.update({ id: job.data.file.id }, { byteSize })
+          await this.fileService.repository.update(
+            { id: job.data.file.id },
+            { byteSize },
+          )
           this.logger.log(
             `File ${job.data.file.uuid} uploaded to S3 (${job.data.file.label}) from RNA`,
           )

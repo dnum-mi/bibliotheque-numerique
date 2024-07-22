@@ -3,8 +3,13 @@ import {
   QueueName,
   QueueNameKeys,
 } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
-import { InjectQueue } from '@nestjs/bull'
-import { Queue } from 'bull'
+import {
+  InjectQueue,
+  OnGlobalQueueError,
+  OnGlobalQueueFailed,
+  Processor,
+} from '@nestjs/bull'
+import { Job, Queue } from 'bull'
 import {
   eJobName,
   JobNameKey,
@@ -19,6 +24,8 @@ import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { ConfigService } from '@nestjs/config'
 
 @Injectable()
+@Processor(QueueName.file)
+@Processor(QueueName.sync)
 export class CustomBullService {
   constructor(
     private readonly logger: LoggerService,
@@ -28,6 +35,17 @@ export class CustomBullService {
     private readonly configService: ConfigService,
   ) {
     this.logger.setContext(this.constructor.name)
+  }
+
+  @OnGlobalQueueError()
+  handlerQueueError (error: Error):void {
+    this.logger.error(error)
+  }
+
+  @OnGlobalQueueFailed()
+  async handleQueueFailed(jobId: number, errorMessage: string): Promise<void> {
+    const job: Job = await this.syncQueue.getJob(jobId) ?? await this.fileQueue.getJob(jobId)
+    this.logger.error(new Error(`Job ${job?.name} (id:${job?.id || jobId}) with error: ${errorMessage}.`))
   }
 
   private _getQueue(name: QueueNameKeys): Queue {

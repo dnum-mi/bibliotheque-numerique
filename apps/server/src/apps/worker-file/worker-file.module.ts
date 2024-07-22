@@ -39,13 +39,13 @@ import instructionTimeMappingConfig from '@/config/instructionTimeMapping.config
     LoggerModule.forRoot('worker-file'),
     TypeOrmModule.forRootAsync(typeormFactoryLoader),
     CustomBullModule,
-    FileModule,
     BullModule.registerQueue(
       ...([
         { name: QueueName.sync },
         { name: QueueName.file },
       ] as BullModuleOptions[]),
     ),
+    FileModule,
     DsApiModule,
     S3Module,
     DossierModule,
