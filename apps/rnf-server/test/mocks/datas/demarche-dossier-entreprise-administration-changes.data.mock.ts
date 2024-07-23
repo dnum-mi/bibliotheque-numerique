@@ -493,7 +493,7 @@ export const demarcheDossierEntrepriseAdministrationChangesDataMock = {
                       id: 'Q2hhbXAtMTYwM3wwMUhURkM2UDlFQVc0UzhBRldKNjhISEpFQQ==',
                       __typename: 'TextChamp',
                       label: "Rattachement de la personne déclarée à l'administration du fon",
-                      stringValue: 'Membre du comité consultatif',
+                      stringValue: 'Membre du conseil de surveillance',
                       champDescriptor: {
                         id: 'Q2hhbXAtMTYwM3wwMUhURkM2UDlFQVc0UzhBRldKNjhISEpFQQ==',
                         type: 'text',
