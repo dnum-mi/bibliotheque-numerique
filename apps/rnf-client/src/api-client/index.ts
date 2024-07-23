@@ -22,7 +22,7 @@ async function fetchRnfId(dossierId: number, instructeurEmail: string, force: bo
     }
 
     if (res.status === 403) {
-      throw new Error("Cette adresse courriel ne semble pas être l'email d'un instructeur de ce dossier.")
+      throw new Error("Soit votre dossier n'est pas au statut \"en instruction\" soit l'adresse mail est erronée.")
     }
     if (res.status === 424) {
       throw new Error('Ce dossier ne semble pas exister ou bien ne pas correspondre à une création')
