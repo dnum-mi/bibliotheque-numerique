@@ -8,7 +8,7 @@ export const dotationDossierDataMock = {
   id: "RG9zc2llci0xNw==",
   number: 17,
   archived: false,
-  state: "sans_suite",
+  state: "en_instruction",
   dateDerniereModification: "2022-12-05T16:34:36+01:00",
   dateDepot: "2022-10-19T10:17:20+02:00",
   datePassageEnConstruction: "2022-10-19T10:17:20+02:00",
