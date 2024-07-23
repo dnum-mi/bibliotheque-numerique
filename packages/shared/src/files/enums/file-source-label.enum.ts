@@ -6,6 +6,7 @@ export const fileDsSourceLabels = [
   'ds-demandeur',
   'ds-attestation',
   'ds-champ',
+  'ds-motivation'
 ] as const
 
 export const fileSourceLabels = [
@@ -29,4 +30,5 @@ export const dFileSourceLabelDictionary: Record<FileSourceLabelKey, string> = {
   [eFileSourceLabel['ds-demandeur']]: 'Demandeur DS',
   [eFileSourceLabel['ds-attestation']]: 'Attestation DS',
   [eFileSourceLabel['ds-champ']]: 'Champ DS',
+  [eFileSourceLabel['ds-motivation']]: 'Motivation DS',
 }
