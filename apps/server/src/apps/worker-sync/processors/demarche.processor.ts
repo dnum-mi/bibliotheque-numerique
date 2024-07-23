@@ -37,6 +37,7 @@ export class DemarcheProcessor {
           select: ['id'],
         })
       ).map((d) => d.id)
+      this.logger.log(`${demarcheIds?.length} to synchronize`)
       for (const id of demarcheIds) {
         this.logger.debug('Adding job to sync demarche ' + id)
         await this.syncQueue.add(eJobName.SyncOneDemarche, {
