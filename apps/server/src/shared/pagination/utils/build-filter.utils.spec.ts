@@ -358,7 +358,7 @@ describe('Build filter', () => {
             },
             { dateField: 'date' },
           ),
-        ).resolves.toEqual('(("dateField" = \'2023-01-01\'))')
+        ).resolves.toEqual('((DATE("dateField") = \'2023-01-01\'))')
       })
 
       it('Should build filter for date notEqual condition', () => {
@@ -375,7 +375,7 @@ describe('Build filter', () => {
             },
             { dateField: 'date' },
           ),
-        ).resolves.toEqual('(("dateField" != \'2023-01-01\'))')
+        ).resolves.toEqual('((DATE("dateField") != \'2023-01-01\'))')
       })
 
       it('Should build filter for date less than condition', () => {
@@ -392,7 +392,7 @@ describe('Build filter', () => {
             },
             { dateField: 'date' },
           ),
-        ).resolves.toEqual('(("dateField" < \'2023-01-01\'))')
+        ).resolves.toEqual('((DATE("dateField") < \'2023-01-01\'))')
       })
 
       it('Should build filter for date notEqual condition', () => {
@@ -409,7 +409,7 @@ describe('Build filter', () => {
             },
             { dateField: 'date' },
           ),
-        ).resolves.toEqual('(("dateField" > \'2023-01-01\'))')
+        ).resolves.toEqual('((DATE("dateField") > \'2023-01-01\'))')
       })
 
       it('Should build filter for date since condition', () => {
@@ -427,7 +427,7 @@ describe('Build filter', () => {
             },
             { dateField: 'date' },
           ),
-        ).resolves.toEqual('(("dateField" > \'' + oneYearBeforeNow + "'))")
+        ).resolves.toEqual('((DATE("dateField") > \'' + oneYearBeforeNow + "'))")
       })
     })
     describe('Array date filters', () => {
@@ -447,7 +447,7 @@ describe('Build filter', () => {
             true,
           ),
         ).resolves.toEqual(
-          '((EXISTS (SELECT 1 FROM UNNEST("dateField") AS item WHERE item = \'2023-01-01\')))',
+          '((EXISTS (SELECT 1 FROM UNNEST("dateField") AS item WHERE DATE(item) = \'2023-01-01\')))',
         )
       })
 
@@ -467,7 +467,7 @@ describe('Build filter', () => {
             true,
           ),
         ).resolves.toEqual(
-          '((EXISTS (SELECT 1 FROM UNNEST("dateField") AS item WHERE item != \'2023-01-01\')))',
+          '((EXISTS (SELECT 1 FROM UNNEST("dateField") AS item WHERE DATE(item) != \'2023-01-01\')))',
         )
       })
 
@@ -487,7 +487,7 @@ describe('Build filter', () => {
             true,
           ),
         ).resolves.toEqual(
-          '((EXISTS (SELECT 1 FROM UNNEST("dateField") AS item WHERE item < \'2023-01-01\')))',
+          '((EXISTS (SELECT 1 FROM UNNEST("dateField") AS item WHERE DATE(item) < \'2023-01-01\')))',
         )
       })
 
@@ -507,7 +507,7 @@ describe('Build filter', () => {
             true,
           ),
         ).resolves.toEqual(
-          '((EXISTS (SELECT 1 FROM UNNEST("dateField") AS item WHERE item > \'2023-01-01\')))',
+          '((EXISTS (SELECT 1 FROM UNNEST("dateField") AS item WHERE DATE(item) > \'2023-01-01\')))',
         )
       })
     })
