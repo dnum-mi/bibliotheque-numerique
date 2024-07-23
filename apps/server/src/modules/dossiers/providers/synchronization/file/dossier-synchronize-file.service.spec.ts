@@ -356,4 +356,29 @@ describe('DossierSynchroniseFileService', () => {
       },
     })
   })
+  it('should create file from motivation attached', async () => {
+    const fields = []
+    const dummyDossier = {
+      ...dummyTDossierFactory(DossierState.Accepte),
+      motivationAttachment: { filename: 'toto.png' },
+    } as TDossier
+    await service.synchroniseFiles(fields, dummyDossier, 1, 8)
+    const expectedFilePayload = {
+      dossierId: 1,
+      organismeId: 8,
+      sourceLabel: 'ds-motivation',
+      originalLabel: 'toto.png',
+    }
+    expect(fileService.createFromDsIfNew).toHaveBeenCalledWith(expectedFilePayload)
+    expect(updateOrThrowMock).not.toHaveBeenCalled()
+    expect(fileQueueAddMock).toHaveLastReturnedWith({
+      name: 'UploadDsFile',
+      payload: {
+        file: expectedFilePayload,
+        dsDossierId: 42,
+        parentSourceId: undefined,
+      },
+    })
+  })
+
 })

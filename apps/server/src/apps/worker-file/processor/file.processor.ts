@@ -40,9 +40,14 @@ export class FileProcessor {
     const payload = job.data
     this.logger.debug(payload)
     let files: TFile[]
-    if (payload.file.sourceLabel === eFileSourceLabel['ds-attestation']) {
+    switch (payload.file.sourceLabel) {
+    case eFileSourceLabel['ds-attestation']:
       files = await this.dsApiService.dossierAttestation(payload.dsDossierId)
-    } else {
+      break
+    case eFileSourceLabel['ds-motivation']:
+      files = await this.dsApiService.dossierMotivationAttachment(payload.dsDossierId)
+      break
+    default:
       files = await this.dsApiService.dossierFile(
         payload.dsDossierId,
         payload.file.sourceStringId,

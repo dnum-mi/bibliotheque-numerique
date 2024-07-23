@@ -148,6 +148,24 @@ export class DossierSynchroniseFileService {
     }
   }
 
+  private async synchroniseMotivationAttached(
+    dossier: TDossier,
+    dossierId: number,
+    organismeId: number,
+  ): Promise<void> {
+    if (dossier.motivationAttachment) {
+      await this._addSyncFileJob(
+        {
+          dossierId,
+          organismeId,
+          sourceLabel: eFileDsSourceLabel['ds-motivation'],
+          originalLabel: dossier.motivationAttachment.filename,
+        },
+        dossier.number,
+      )
+    }
+  }
+
   public async synchroniseFiles(
     fields: Field[],
     dossier: TDossier,
@@ -181,6 +199,12 @@ export class DossierSynchroniseFileService {
         dossierId,
         organismeIdForAcceptedDossier,
       ),
+      this.synchroniseMotivationAttached(
+        dossier,
+        dossierId,
+        organismeIdForAcceptedDossier,
+      ),
+
     ])
   }
 }
