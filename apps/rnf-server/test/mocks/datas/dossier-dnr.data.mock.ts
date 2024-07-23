@@ -5,7 +5,7 @@ export const dnrDossierDataMock = {
   id: "RG9zc2llci0xMzU=",
   number: 135,
   archived: false,
-  state: "en_construction",
+  state: "en_instruction",
   dateDerniereModification: "2023-07-05T09:22:42+02:00",
   dateDepot: "2023-07-05T09:22:42+02:00",
   datePassageEnConstruction: "2023-07-05T09:22:42+02:00",

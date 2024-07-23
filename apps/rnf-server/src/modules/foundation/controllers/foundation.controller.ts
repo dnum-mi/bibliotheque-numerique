@@ -18,6 +18,7 @@ import { ApiConflictResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { InfoDSOutputDto } from '../objects/dto/info-ds-output.dto'
 import { GetFoundationsInputDto } from '../objects/dto/inputs/get-foundations-inputs.dto'
 import { FoundationOutputDto } from '@/modules/foundation/objects/dto/outputs/foundation-output.dto'
+import { DossierState } from '@dnum-mi/ds-api-client'
 
 @ApiTags('Foundation')
 @Controller('foundations')
@@ -43,11 +44,12 @@ export class FoundationController {
   ): Promise<RnfIdOutputDto> {
     this.logger.verbose('createNewFoundation')
     const rawDossier = await this.dsService.getOneDossier(dto.dossierId)
+    const isEnInstrution = rawDossier.state === DossierState.EnInstruction
     const instructeurId = rawDossier.instructeurs.find(
       (i) => i.email === dto.email,
     )?.id
 
-    if (!instructeurId) {
+    if (!instructeurId || !isEnInstrution) {
       throw new ForbiddenException(
         "This instructeur's email is not linked to this dossier.",
       )
