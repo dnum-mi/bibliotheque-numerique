@@ -186,9 +186,9 @@ export class DossierSynchroniseExcelService extends BaseEntityService<Field> {
     ] as ExcelDataRow
   }
 
-  _validateCellDate(cell: ExcelDataCell): ExcelDataCell {
+  _validateCellDate(cell: ExcelDataCell | undefined): ExcelDataCell {
     this.logger.verbose('_validateExcelRowDateFunding')
-    if (!this.regexNumbers.test(cell.toString())) {
+    if (!cell || !this.regexNumbers.test(cell.toString())) {
       this.logger.warn('Date funding format is not valid')
       return null
     }
@@ -220,21 +220,21 @@ export class DossierSynchroniseExcelService extends BaseEntityService<Field> {
   }
 
   _validateCellByList(
-    cell: ExcelDataCell,
+    cell: ExcelDataCell | undefined,
     authorizedList: string[],
   ): ExcelDataCell {
     this.logger.verbose('_validateCellByList')
-    if (!authorizedList.includes(cell.toString())) {
+    if (!cell || !authorizedList.includes(cell.toString())) {
       this.logger.warn('Cell is not valid')
       return null
     }
     return cell
   }
 
-  _validateCellAmount(cell: ExcelDataCell): ExcelDataCell {
+  _validateCellAmount(cell: ExcelDataCell | undefined): ExcelDataCell {
     this.logger.verbose('_validateCellAmount')
 
-    if (!this.regexNumbers.test(cell.toString())) {
+    if (!cell || !this.regexNumbers.test(cell.toString())) {
       this.logger.warn('Cell amount format is not valid')
     } else if (Number(cell) < 0) {
       this.logger.warn('Cell amount is < 0')
