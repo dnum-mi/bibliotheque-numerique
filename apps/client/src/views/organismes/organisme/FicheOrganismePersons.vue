@@ -88,7 +88,7 @@ const onExpand = (idx: number, id: string) => {
                   Naissance
                 </div>
                 <div class="flex-1 fr-text--bold">
-                  Née le {{ dateToStringFr(person.bornAt) }} à {{ person.bornPlace }}
+                  Née le {{ dateToStringFr(person.bornAt) }} {{ person.bornPlace ?? `à ${person.bornPlace}: ''` }}
                 </div>
               </div>
               <div class="flex-3/8 flex-col pr-1">
