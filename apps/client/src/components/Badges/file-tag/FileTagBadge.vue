@@ -6,10 +6,10 @@ const props = defineProps<{
 }>()
 
 const statusLabel = computed(() => {
-  return dFileTabDictionary[props.tag]
+  return dFileTabDictionary[props.tag] || 'Sans tag'
 })
 const statusType = computed(() => {
-  return 'info'
+  return dFileTabDictionary[props.tag] ? 'info' : 'new'
 })
 </script>
 
