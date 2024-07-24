@@ -79,11 +79,12 @@ const _adaptKeyForArray = (
   key: string,
   isArray = false,
   prefix?: string,
+  forDate: boolean = false,
 ): string => {
   const keyWithPrefix = `${prefix ? `${prefix}.` : ''}"${key}"`
   return isArray
-    ? `EXISTS (SELECT 1 FROM UNNEST(${keyWithPrefix}) AS item WHERE item`
-    : `${keyWithPrefix}`
+    ? `EXISTS (SELECT 1 FROM UNNEST(${keyWithPrefix}) AS item WHERE ${forDate ? 'DATE(item)' : 'item'}`
+    : `${forDate ? `DATE(${keyWithPrefix})` : keyWithPrefix}`
 }
 
 //#region TEXT FILTER
@@ -184,7 +185,7 @@ const _buildOneDateFilter = (
       `Unknown date filter condition: ${filter.type}`,
     )
   }
-  key = _adaptKeyForArray(key, isArray, prefix)
+  key = _adaptKeyForArray(key, isArray, prefix, true)
   return `(${key} ${dateSqlOperator.op} ${dateSqlOperator.value(filter)}${
     isArray ? ')' : ''
   })`
