@@ -1030,5 +1030,21 @@ export const entrepriseDossierDataMock = {
       },
 
     },
+    {
+      id: "Q2hhbXAtNDM1NzM1Nw==",
+      date: "2024-07-09",
+      label: "Date de publication au JO du décret portant création",
+      __typename: "DateChamp",
+      stringValue: "09 juillet 2024",
+      champDescriptor: {
+          "id": "Q2hhbXAtNDM1NzM1Nw==",
+          "type": "date",
+          "label": "Date de publication au JO du décret portant création",
+          "required": false,
+          "__typename": "DateChampDescriptor",
+          "description": "<!-- #rnf-date-creation-rnf# -->",
+          "champDescriptors": null
+      }
+    },
   ],
 } as unknown as Partial<Dossier>;

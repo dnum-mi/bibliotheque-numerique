@@ -25,7 +25,7 @@ import { DsConfigurationService } from '@/modules/ds/providers/ds-configuration.
 import { DsMapperService } from '@/modules/ds/providers/ds-mapper.service'
 import { FileStorageService } from '@/modules/file-storage/providers/file-storage.service'
 import { CreateFileStorageDto } from '@/shared/objects/file-storage/create-file.dto'
-import { Prisma } from '@prisma/client'
+import { FoundationType, Prisma } from '@prisma/client'
 import { FoundationOutputDto } from '@/modules/foundation/objects/dto/outputs/foundation-output.dto'
 
 interface createNestedStatus {
@@ -128,6 +128,13 @@ export class FoundationService extends BaseEntityService {
         'Department is required.',
       )
     }
+    if (!dto.originalCreatedAt) {
+      throw new BadRequestException(
+        `${dto.type === FoundationType.FRUP ? 'FRUP: ' : ''}orginal created date is requied`,
+
+      )
+    }
+
     this.logger.debug(`department found: ${dto.department}`)
     dto.phone = formatPhoneNumber(dto.phone)
     if (!forceCreation) {

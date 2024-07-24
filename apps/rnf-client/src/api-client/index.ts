@@ -29,10 +29,16 @@ async function fetchRnfId(dossierId: number, instructeurEmail: string, force: bo
     }
     if (res.status === 400) {
 
-      if(text === 'Department is required.') {
-        throw new Error('Le département est manquant ou erroné.')
+      switch(text) {
+        case 'Department is required.':
+          throw new Error('Le département est manquant ou erroné.')
+        case 'FRUP: orginal created date is requied':
+          throw new Error('Donnée manquante: La date de publication pour les FRUP.')
+        case 'orginal created date is requied':
+          throw new Error('Donnée manquante: La date de la décision pour un FDD ou une FE')
+        default:
+          throw new Error('La démarche associé à ce dossier ne permet pas de créer un identifiant RNF')
       }
-      throw new Error('La démarche associé à ce dossier ne permet pas de créer un identifiant RNF')
     }
 
 
