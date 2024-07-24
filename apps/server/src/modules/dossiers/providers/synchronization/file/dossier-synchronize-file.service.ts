@@ -11,7 +11,7 @@ import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-nam
 import { Queue } from 'bull'
 import { UploadDsFileJobPayload } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
 import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
-import { eFileDsSourceLabel, FieldType } from '@biblio-num/shared'
+import { eFileDsSourceLabel, FieldSource, FieldType } from '@biblio-num/shared'
 import { FileService } from '@/modules/files/providers/file.service'
 import { UpsertDsFileDto } from '@/modules/files/objects/dto/input/upsert-ds-file.dto'
 import { isNumber } from 'class-validator'
@@ -85,7 +85,10 @@ export class DossierSynchroniseFileService {
                   sourceStringId: pjc.id, // TODO: why not field.sourceId ?
                   organismeId,
                   sourceIndex: i,
-                  sourceLabel: eFileDsSourceLabel['ds-champ'],
+                  sourceLabel:
+                    field.fieldSource === FieldSource.annotation
+                      ? eFileDsSourceLabel['ds-annotation']
+                      : eFileDsSourceLabel['ds-champ'],
                   originalLabel: f.filename,
                 },
                 dsDossier.number,
@@ -154,10 +157,10 @@ export class DossierSynchroniseFileService {
     this.logger.verbose('synchroniseFiles')
     const organismeIdForAcceptedDossier =
       dossier.state === DossierState.Accepte ? organismeId : undefined
-    this.logger.log('organismeIdForAcceptedDossier: ' + organismeIdForAcceptedDossier)
-    const flatCodeFields = fields
-      .flatMap((f) => [f, ...(f.children || [])])
-      .filter((f) => !!f.code)
+    this.logger.log(
+      'organismeIdForAcceptedDossier: ' + organismeIdForAcceptedDossier,
+    )
+    const flatCodeFields = fields.flatMap((f) => [f, ...(f.children || [])])
     const fieldCodeHash = Object.fromEntries(
       fields.filter((f) => !!f.code).map((f) => [f.code, f]),
     ) as Record<FieldCodeKey, Field>
