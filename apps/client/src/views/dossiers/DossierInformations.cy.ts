@@ -8,7 +8,7 @@ import { dateTimeToStringFr } from '@/utils/date-to-string'
 
 describe('<DossierInformations />', () => {
   const labelValues = [
-    'PRÉFECTURE',
+    'SERVICE INSTRUCTEUR',
     'DÉPÔT',
     'INSTRUCTION',
     'PUBLICATION',
@@ -29,7 +29,7 @@ describe('<DossierInformations />', () => {
     const datas = generateDossierDS()
     cy.mount(DossierInformations, { props: { datas } })
     cy.get('label').then(($label) => {
-      cy.wrap($label).contains('PRÉFECTURE').next().should('contain', datas.groupeInstructeur?.label.toUpperCase())
+      cy.wrap($label).contains('SERVICE INSTRUCTEUR').next().should('contain', datas.groupeInstructeur?.label.toUpperCase())
       cy.wrap($label).contains('DÉPÔT').next().should('contain', dateTimeToStringFr(datas.dateDepot))
       cy.wrap($label).contains('INSTRUCTION').next().should('contain', dateTimeToStringFr(datas.datePassageEnInstruction))
       cy.wrap($label).contains('PUBLICATION').next().should('contain', '')
