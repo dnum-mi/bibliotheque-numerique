@@ -9,6 +9,7 @@ import { File } from '@/modules/files/objects/entities/file.entity'
 import { S3Service } from '@/shared/modules/s3/s3.service'
 import { BnConfigurationService } from '@/shared/modules/bn-configurations/providers/bn-configuration.service'
 import { eBnConfiguration } from '@biblio-num/shared'
+import { isArray } from 'class-validator'
 
 @Injectable()
 export class XlsxService {
@@ -27,7 +28,7 @@ export class XlsxService {
   ): ReadStream {
     this.logger.verbose('generateXlsxFileWithMapHeader')
     const newData = data.map((d) =>
-      Object.fromEntries(columns.map((c) => [mappingHeader[c], d[c]])),
+      Object.fromEntries(columns.map((c) => [mappingHeader[c], isArray(d[c]) ? d[c].join(', ') : d[c]])),
     )
     return this.generateXlsxFile(newData)
   }
