@@ -156,7 +156,7 @@ export class OrganismeController {
     @Res() res: ServerResponse,
   ): Promise<void> {
     this.logger.verbose('Export xlxs - listOrganisme')
-    const { data } = await this.organismeService.listOrganisme(dto)
+    const { data } = await this.organismeService.listOrganisme(dto, true)
     this.xlsxService.generateXlsxFileWithMapHeader(data, mapOrganismeFieldHeader, dto.columns).pipe(res)
   }
 

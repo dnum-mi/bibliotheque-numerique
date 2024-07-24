@@ -76,6 +76,7 @@ export abstract class BaseEntityService<T extends BaseEntity = BaseEntity> {
     dto: PaginationDto<Y>,
     specificWhere?: FindOptionsWhere<Y>,
     specificInlineWhere: string[] = [],
+    skipLimit: boolean = false,
   ): Promise<PaginatedDto<Y>> {
     this.logger.verbose('paginate')
     if (!this.fieldTypeHash) {
@@ -101,8 +102,10 @@ export abstract class BaseEntityService<T extends BaseEntity = BaseEntity> {
     } else {
       query.addOrderBy('o.id', 'ASC')
     }
-    query.limit(dto.perPage || 20)
-    query.offset(dto.perPage * (dto.page - 1) || 0)
+    if (!skipLimit) {
+      query.limit(dto.perPage || 20)
+      query.offset(dto.perPage * (dto.page - 1) || 0)
+    }
     if (dto.columns?.length) {
       query.select(dto.columns.map((c) => `o.${String(c)}`).concat(['o.id']))
     }

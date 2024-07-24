@@ -227,9 +227,11 @@ export class OrganismeService extends BaseEntityService<Organisme> {
 
   async listOrganisme(
     dto: PaginationDto<IOrganisme>,
+    skipLimit: boolean = false,
   ): Promise<PaginatedDto<IOrganisme>> {
     this.logger.verbose('listOrganisme')
-    return this.paginate<IOrganisme>(dto, { state: eState.uploaded })
+    // TODO: change uploaded to synchronised.
+    return this.paginate<IOrganisme>(dto, { state: eState.uploaded }, [], skipLimit)
   }
 
   async synchroniseRnaFiles(rnaId: string, rawRna: IRnaOutput): Promise<void> {
