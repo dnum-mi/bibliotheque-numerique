@@ -23,7 +23,7 @@ const etat = computed(() => props.datas?.state || '')
   <div class="fr-pl-2v">
     <div class="fr-grid-row">
       <div class="fr-col-2">
-        <label class="bn-fiche-sub-title--label">PRÉFECTURE</label>
+        <label class="bn-fiche-sub-title--label">SERVICE INSTRUCTEUR</label>
         <span class="bn-fiche-sub-title--text">{{ prefecture }}</span>
       </div>
       <div class="fr-col-2">
