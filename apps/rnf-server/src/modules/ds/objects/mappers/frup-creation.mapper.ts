@@ -4,8 +4,8 @@ import { frupMapper } from './frup.mapper'
 
 export const frupCreationMapper: Mapper = {
   ...frupMapper,
-  originalCreatedAt: (ch: DateChamp) => {
-    return ch.date ? new Date(ch.date as string) : null
+  originalCreatedAt: (ch: DateChamp | undefined) => {
+    return ch?.date ? new Date(ch.date as string) : null
   },
 
 }

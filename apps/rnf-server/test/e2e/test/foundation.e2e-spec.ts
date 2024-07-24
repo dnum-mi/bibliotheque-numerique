@@ -140,6 +140,7 @@ describe('Foundation Controller (e2e)', () => {
           email: 'toto@gmail.com',
         })
         .expect(201)
+
       expect(result.body).toEqual({
         rnfId: '033-FDD-00001-02',
         ds: {

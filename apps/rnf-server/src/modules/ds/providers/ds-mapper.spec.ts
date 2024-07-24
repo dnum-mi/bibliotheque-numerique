@@ -90,6 +90,7 @@ describe('DsMapperService & DsConfigurationService', () => {
       email: 'tata@gmail.com',
       declarationYears: [],
       phone: '06 86 46 54 45',
+      originalCreatedAt: new Date('2024-07-09'),
       personInFoundationToCreate: [
         {
           person: {
