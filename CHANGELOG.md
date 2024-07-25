@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.16.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.15.0...v2.16.0) (2024-07-25)
+
+
+### Features
+
+* **bn:** add new qualities director ([5ebd7df](https://github.com/dnum-mi/bibliotheque_numerique/commit/5ebd7df2fb97793930a2d2eddad4df747d527b29))
+* get motivation attachment from ds ([2a318c0](https://github.com/dnum-mi/bibliotheque_numerique/commit/2a318c0c20d6e64965a3f0d124efd63d6b81f866))
+* **rnf:** add creation date of foundation for all demarche of creation ([d5a4ba2](https://github.com/dnum-mi/bibliotheque_numerique/commit/d5a4ba22a3e9d5a952a1c1a2ce143c06aa64b3fd))
+* **rnf:** add new qualities director ([f573090](https://github.com/dnum-mi/bibliotheque_numerique/commit/f573090b25bb2093d157b352bc891be0b94e5a0f))
+
+
+### Bug Fixes
+
+* create number rnf for dossier in instruction only ([a10fc7b](https://github.com/dnum-mi/bibliotheque_numerique/commit/a10fc7bab934631bd5f7ea9484787c2ff653459c))
+* make filter date work wether its a date or a datetime ([dc46a65](https://github.com/dnum-mi/bibliotheque_numerique/commit/dc46a65c7594d087dc6cd0ebfdca2082f580e65e))
+* migration for yes-no champs for type dsChampType of field ([d18197e](https://github.com/dnum-mi/bibliotheque_numerique/commit/d18197e726dd53e871992c71a50bd2aaa3a7089f))
+* no limit when download organisme xlsx ([056da72](https://github.com/dnum-mi/bibliotheque_numerique/commit/056da728c195efc51d5af73d4abe99b130906dbf))
+* syntax error on missingDeclarationYears column name inside hash ([380f83a](https://github.com/dnum-mi/bibliotheque_numerique/commit/380f83a5ac3dc5dfc9dc879381c4624c9498c2a2))
+* typo, renaming error ([fb9dbd0](https://github.com/dnum-mi/bibliotheque_numerique/commit/fb9dbd07f3ca870cdf07855e7293487c27d7787f))
+* wording ([339d33f](https://github.com/dnum-mi/bibliotheque_numerique/commit/339d33f9201766357d31a79880c9bbbe65e3bdc3))
+
 ## [2.15.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.14.0...v2.15.0) (2024-07-11)
 
 
