@@ -4,7 +4,7 @@ import { Field } from '../objects/entities/field.entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
-import { DossierWithCustomChamp as TDossier } from '@dnum-mi/ds-api-client/dist/@types/types'
+import { DateChamp, DossierWithCustomChamp as TDossier } from '@dnum-mi/ds-api-client/dist/@types/types'
 import {
   DsChampType,
   DsChampTypeKeys,
@@ -129,7 +129,7 @@ export class FieldService extends BaseEntityService<Field> {
             doesTextContainBnCode(columnRef.originalDescription),
           dateValue: FieldService.giveDateOrNull(
             columnRef.type,
-            champ.stringValue,
+            (champ as DateChamp).date || champ.stringValue,
           ),
           numberValue: FieldService.giveNumberOrNull(
             columnRef.type,
