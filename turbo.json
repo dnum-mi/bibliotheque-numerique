@@ -1,6 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "pipeline": {
+  "tasks": {
     "@biblio-num/client#test:e2e": {
       "cache": false,
       "dependsOn": [
