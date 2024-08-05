@@ -6,7 +6,7 @@ RUN npm config set proxy "$http_proxy" && \
 
 WORKDIR /app
 
-RUN npm i -g turbo@1.10.16 pnpm@8.12.1
+RUN npm i -g turbo@2.0.11 pnpm@8.12.1
 
 RUN chown node:node /app
 USER node
