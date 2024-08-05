@@ -6,13 +6,13 @@ RUN npm config set proxy "$http_proxy" && \
 
 WORKDIR /app
 
-RUN npm i -g turbo@1.10.16 pnpm@8.12.1
+RUN npm i -g turbo@2.0.11 pnpm@8.12.1
 
 RUN chown node:node /app
 USER node
 
 COPY . .
-RUN turbo prune --scope=rnf-client --docker
+RUN turbo prune --scope=@biblio-num/rnf-client --docker
 
 FROM docker.io/node:20.10.0 AS builder
 

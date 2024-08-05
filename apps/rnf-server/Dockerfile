@@ -10,7 +10,7 @@ RUN npm config set proxy "$http_proxy" && \
     npm config set https-proxy "$https_proxy" && \
     npm config set noproxy "$no_proxy"
 
-RUN npm i -g turbo@1.10.16
+RUN npm i -g turbo@2.0.11
 
 USER node
 COPY . .
