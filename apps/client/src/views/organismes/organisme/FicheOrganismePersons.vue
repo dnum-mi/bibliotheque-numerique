@@ -93,7 +93,7 @@ const onExpand = (idx: number, id: string) => {
               </div>
               <div class="flex-3/8 flex-col pr-1">
                 <div class="flex-1 m-0! fr-text--xs fr-text--light">
-                  Addresse
+                  Adresse
                 </div>
                 <div class="flex-1">
                   <TooltipAddress :show="person.address && !person.address?.type" />
