@@ -2,7 +2,7 @@
 import { computed, ref, onMounted, watch } from 'vue'
 import { useDebounceFn, useLocalStorage } from '@vueuse/core'
 
-import type { MappingColumn } from '@biblio-num/shared'
+import type { IMappingColumn } from '@biblio-num/shared'
 
 import { useDemarcheStore } from '@/stores'
 
@@ -10,7 +10,7 @@ import DemarcheConfigurationSelectableItem from './DemarcheConfigurationSelectab
 import DemarcheConfigurationSelectedItem from './DemarcheConfigurationSelectedItem.vue'
 
 const demarcheStore = useDemarcheStore()
-const demarcheConfiguration = computed<MappingColumn[]>(() => demarcheStore.currentDemarcheConfiguration)
+const demarcheConfiguration = computed<IMappingColumn[]>(() => demarcheStore.currentDemarcheConfiguration)
 
 const getDefaultConfParts = () => ({
   champs: {
@@ -21,7 +21,7 @@ const getDefaultConfParts = () => ({
     data: {} as Record<string, {
       id: string
       label: string
-      children?: MappingColumn[]
+      children?: IMappingColumn[]
     }>,
   },
   annotation: {
@@ -29,14 +29,14 @@ const getDefaultConfParts = () => ({
       id: 'annotation',
       label: 'Annotations privées',
     },
-    data: [] as MappingColumn[],
+    data: [] as IMappingColumn[],
   },
   'fix-field': {
     meta: {
       id: 'fix-field',
       label: 'Données BN',
     },
-    data: [] as MappingColumn[],
+    data: [] as IMappingColumn[],
   },
 })
 
@@ -59,7 +59,7 @@ const updateDataGroup = () => {
       }
 
       if (!mappingColumn.isHeader) {
-        acc[groupId].children.push(mappingColumn)
+        acc[groupId].children?.push(mappingColumn)
       }
 
       // confParts.value[mappingColumn.source as 'champs'].data.push(mappingColumn)
