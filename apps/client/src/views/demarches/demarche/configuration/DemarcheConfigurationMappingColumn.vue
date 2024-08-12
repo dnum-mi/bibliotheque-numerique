@@ -3,11 +3,11 @@ import { useDebounceFn } from '@vueuse/core'
 import { ref, watch } from 'vue'
 
 import { useDemarcheStore } from '@/stores'
-import type { MappingColumn } from '@biblio-num/shared'
+import type { IMappingColumn } from '@biblio-num/shared'
 
 const props = defineProps<{
   isChildren?: boolean;
-  mappingColumn: MappingColumn;
+  mappingColumn: IMappingColumn;
 }>()
 
 const emits = defineEmits(['columnUpdated'])

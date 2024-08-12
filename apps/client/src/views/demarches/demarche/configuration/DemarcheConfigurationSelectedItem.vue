@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import type { MappingColumn } from '@biblio-num/shared'
+import type { IMappingColumn } from '@biblio-num/shared'
 
-defineProps<{ champ: MappingColumn }>()
+defineProps<{ champ: IMappingColumn }>()
 
 const emit = defineEmits<{
   'remove': []
