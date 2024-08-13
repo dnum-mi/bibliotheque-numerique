@@ -36,6 +36,8 @@ import type {
   IPaginated,
   FileTabTagKey,
   IDemarcheOption,
+  IMappingAnonymizedChamp,
+  IUpdateAnonymedChamp,
 } from '@biblio-num/shared'
 
 import {
@@ -71,6 +73,7 @@ import {
   getDossierFilesSummaryRoute,
   getDemarcheOptionRoute,
   usersPasswordRoute,
+  getDemarcheAnonymizeRoute,
 } from './bn-api-routes'
 import { authRoute, getUserByIdRoute, profileRoute, signInRoute, usersRoutes } from '@/api/bn-api-routes'
 
@@ -185,7 +188,6 @@ export const demarchesApiClient = {
   },
 
   saveDemarcheOptions: async (demarcheId: number, dto: Partial<IDemarcheOption>): Promise<void> => {
-    console.log(getDemarcheOptionRoute(demarcheId), dto)
     await apiClientInstance.patch(getDemarcheOptionRoute(demarcheId), dto)
   },
 
@@ -200,6 +202,15 @@ export const demarchesApiClient = {
 
   softDeleteDemarche (id: number): Promise<void> {
     return apiClientInstance.patch(softDeleteDemarcheByIdRoute(id))
+  },
+
+  getAnonymizedChamps: async (id: number): Promise<IMappingAnonymizedChamp[]> => {
+    const response = await apiClientInstance.get(getDemarcheAnonymizeRoute(id))
+    return response.data
+  },
+
+  updateOneMappingAnonymized (id: number, dto: IUpdateAnonymedChamp) {
+    return apiClientInstance.patch(getDemarcheAnonymizeRoute(id), dto)
   },
 }
 

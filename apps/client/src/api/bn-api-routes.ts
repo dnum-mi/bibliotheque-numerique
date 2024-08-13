@@ -18,6 +18,7 @@ export const getXlsxDemarcheDossierRoute = (demarcheId: number) => `${getListDem
 export const getXlsxDemarcheFieldRoute = (demarcheId: number) => `${getListDemarcheFieldRoute(demarcheId)}/export/xlsx`
 export const getDemarcheCustomFilterRoute = (demarcheId: number) => `${demarchesRoute}/${demarcheId}/custom-filters`
 export const softDeleteDemarcheByIdRoute = (demarcheId: number) => `${getDemarcheByIdRoute(demarcheId)}/soft-delete`
+export const getDemarcheAnonymizeRoute = (id: number) => `${getDemarcheOptionRoute(id)}/field/anonymized`
 
 export const usersRoutes = '/users'
 export const usersPasswordRoute = `${usersRoutes}/me/password`
