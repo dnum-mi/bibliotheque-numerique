@@ -1,14 +1,10 @@
 import type { FieldSourceKeys, FieldTypeKeys, IMappingColumn } from '..'
 
-export interface IMappingAnonymousWithoutChildren
+export interface IMappingAnonymizedChampWithoutChildren
   extends Pick<IMappingColumn, 'id'|'originalLabel'|'isHeader'|'originalDescription'|'type'|'source' > {
 
 }
 
-export interface IMappingAnonymous extends IMappingAnonymousWithoutChildren {
-  children?: IMappingAnonymousWithoutChildren[]
-}
-
-export interface IMappingAnonymousSelected extends IMappingAnonymous {
-
+export interface IMappingAnonymizedChamp extends IMappingAnonymizedChampWithoutChildren {
+  children?: IMappingAnonymizedChampWithoutChildren[]
 }
