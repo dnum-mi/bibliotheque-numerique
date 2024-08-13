@@ -53,7 +53,10 @@ export class DossierProcessor {
     await this.als.run({ job }, async () => {
       this.logger.log('anonymise dossiers')
       const demarches = await this.demarcheService.repository.find({
-        where: { nbrMonthAnonymisation: Not(IsNull()) },
+        where: {
+          nbrMonthAnonymisation: Not(IsNull()),
+          anonymizationEvent: Not(IsNull()),
+        },
       })
       job.progress(10)
       this.logger.debug(
