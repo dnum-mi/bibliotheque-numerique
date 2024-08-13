@@ -1,7 +1,10 @@
 <script lang="ts" setup>
 import type { IMappingColumn } from '@biblio-num/shared'
 
-defineProps<{ champ: IMappingColumn }>()
+defineProps<{
+  champ: IMappingColumn
+  isSelectedFn: (ch: IMappingColumn) => boolean
+}>()
 
 const emit = defineEmits(['toggleCheck'])
 
@@ -27,7 +30,7 @@ const getFrenchTypeLabel = (type: keyof typeof typeLabels) => {
     :id="champ.id"
     name="champ.originalLabel"
     :label="champ.originalLabel"
-    :checked="!!champ.columnLabel"
+    :checked="isSelectedFn(champ)"
     @update:model-value="emit('toggleCheck', $event)"
   />
   <DsfrBadge

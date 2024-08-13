@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { IMappingColumn } from '@biblio-num/shared'
 
-defineProps<{ champ: IMappingColumn }>()
+defineProps<{ champ: IMappingColumn, canChangeLabel: boolean }>()
 
 const emit = defineEmits<{
   'remove': []
@@ -30,7 +30,7 @@ const emit = defineEmits<{
     >
       {{ champ.originalLabel }}
     </p>
-    <div class="fr-col-5  fr-px-2v">
+    <div v-if="canChangeLabel" class="fr-col-5  fr-px-2v">
       <DsfrInput
         :id="`labelBN-${champ.id}`"
         :model-value="champ.columnLabel"
