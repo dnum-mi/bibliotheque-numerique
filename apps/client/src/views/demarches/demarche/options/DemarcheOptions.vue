@@ -6,6 +6,7 @@ import { anonymisationEvents, eAnonymisationEvent } from '@biblio-num/shared'
 import { z } from 'zod'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useField } from 'vee-validate'
+import SelectAnonymousChamps from './SelectAnonymousChamps.vue'
 
 const demarcheStore = useDemarcheStore()
 
@@ -111,6 +112,8 @@ const onUpdateNbMonth = async (nb: string) => {
       </div>
     </div>
   </div>
+  <hr>
+  <SelectAnonymousChamps />
 </template>
 
 <style scoped>

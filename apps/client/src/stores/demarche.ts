@@ -9,6 +9,7 @@ import type {
   IMappingColumnWithoutChildren,
   ISmallDemarcheOutput,
   IDemarcheOption,
+  IMappingAnonymizedChamp,
 } from '@biblio-num/shared'
 
 export type FrontIMappingColumn = IMappingColumnWithoutChildren & { isChild: boolean }
@@ -19,6 +20,7 @@ export const useDemarcheStore = defineStore('demarche', () => {
   const currentDemarcheDossiers = ref<IDossierSearchOutput | IFieldSearchOutput>({ total: 0, data: [] })
   const currentDemarcheConfiguration = ref<IMappingColumn[]>([])
   const currentDemarcheOptions = ref<IDemarcheOption | null>(null)
+  const currentAnonymizedChamps = ref<IMappingAnonymizedChamp[]>([])
 
   const currentDemarcheFlatConfiguration = computed<FrontIMappingColumn[]>(
     () =>
@@ -115,6 +117,19 @@ export const useDemarcheStore = defineStore('demarche', () => {
     }
   }
 
+  const getAnonymizedChamps = async () => {
+    if (currentDemarche.value) {
+      currentAnonymizedChamps.value = await apiClient.getAnonymizedChamps(currentDemarche.value.id)
+    }
+  }
+
+  const updateOneMappingAnonymizedChamp = async (id: string, columnLabel: string | null): Promise<void> => {
+    if (currentDemarche.value) {
+      await apiClient.updateOneMappingAnonymized(currentDemarche.value.id, { id, add: !!columnLabel })
+      getAnonymizedChamps()
+    }
+  }
+
   return {
     $reset,
     demarches,
@@ -124,6 +139,7 @@ export const useDemarcheStore = defineStore('demarche', () => {
     currentDemarcheConfigurationHash,
     currentDemarcheDossiers,
     currentDemarcheOptions,
+    currentAnonymizedChamps,
     getDemarches,
     getCurrentDemarcheConfigurations,
     searchCurrentDemarcheDossiers,
@@ -133,5 +149,7 @@ export const useDemarcheStore = defineStore('demarche', () => {
     fetching,
     getCurrentDemarcheOptions,
     saveDemarcheOptions,
+    updateOneMappingAnonymizedChamp,
+    getAnonymizedChamps,
   }
 })
