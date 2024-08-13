@@ -1,4 +1,4 @@
-export interface IUpdateAnonymedChamp {
+export interface IUpdateAnonymizedChamp {
   id: String,
   add: Boolean
 }
