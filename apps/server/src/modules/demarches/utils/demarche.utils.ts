@@ -1,5 +1,6 @@
 import { FieldTypeKeys } from '@biblio-num/shared'
-import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
+import { MappingColumn, MappingColumnWithoutChildren } from '@/modules/demarches/objects/dtos/mapping-column.dto'
+import { MappingAnonymizedWithoutChildren } from '@/modules/demarches/objects/dtos/mapping-anonymized.dto'
 
 export type MappingColumnToHash<T> = Record<string, T>
 
@@ -33,3 +34,11 @@ export const fromMappingColumnArrayToLabelHash =
   fromMappingColumnArrayToHashFactory<string>(
     prop('columnLabel', 'originalLabel'),
   )
+
+export function findField(mappingColumns: MappingColumn[], fieldId: string)
+  : MappingColumnWithoutChildren | MappingAnonymizedWithoutChildren | undefined {
+  return mappingColumns
+    .map((m) => [m, ...(m.children ?? [])])
+    .flat(1)
+    .find((f) => f.id === fieldId)
+}
