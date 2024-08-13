@@ -58,7 +58,7 @@ const isOnAllDossiersOfOrganisme = ref(false)
       <div class="content-center ml-auto">
         <DsfrCheckbox
           v-model="isOnAllDossiersOfOrganisme"
-          label="Appliquer à tous les dossiers d'organisme"
+          label="Appliquer à tous les dossiers de l'organisme"
           name="onAllDossierOfOrganisme"
         />
       </div>
