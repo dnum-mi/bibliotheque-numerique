@@ -102,7 +102,7 @@ export class Dossier extends BaseEntity implements IDossier {
 
   @Column({ type: 'timestamp', nullable: true, default: null })
   @ApiProperty({
-    description: 'Le dernier date de traitement du dossier sur démarche simplifié',
+    description: 'La dernière date de traitement du dossier sur Démarches simplifiées.',
   })
   dateTraitement: Date | null
 }
