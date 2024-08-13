@@ -13,6 +13,7 @@ import {
 } from '@biblio-num/shared'
 import { CustomFilter } from '../../../custom-filters/objects/entities/custom-filter.entity'
 import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
+import { MappingAnonymized } from '@/modules/demarches/objects/dtos/mapping-anonymized.dto'
 import { ApiProperty } from '@nestjs/swagger'
 import { IsArray, IsEnum, IsOptional } from 'class-validator'
 
@@ -50,6 +51,9 @@ export class Demarche extends BaseEntity implements IDemarcheWithOptions {
 
   @Column({ type: 'jsonb', default: '[]' })
   mappingColumns: MappingColumn[]
+
+  @Column({ type: 'jsonb', default: '[]' })
+  mappingAnonymized: MappingAnonymized[]
 
   @Column({ type: 'timestamp', default: '2022-01-01 00:00:00' })
   lastSynchronisedAt: Date

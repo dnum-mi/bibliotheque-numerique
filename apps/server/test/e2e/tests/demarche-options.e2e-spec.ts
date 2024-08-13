@@ -82,4 +82,79 @@ describe('Option ', () => {
     const d = await demarcheService.findOneById(2)
     expect(d.nbrMonthAnonymisation).toBe(12)
   })
+
+  it('Patch - Should return 400 for add anonymized field id', async () => {
+    return request(app.getHttpServer())
+      .patch('/demarches/2/options/field/anonymized')
+      .set('Cookie', [cookies.admin])
+      .send({
+        truc: '',
+      })
+      .expect(400)
+  })
+
+  it('Patch - Should return 400 for add anonymized field id', async () => {
+    return request(app.getHttpServer())
+      .patch('/demarches/2/options/field/anonymized')
+      .set('Cookie', [cookies.admin])
+      .send({
+        id: '02',
+        add: '',
+      })
+      .expect(400)
+  })
+
+  it('Patch - Should return 403 for add anonymized field id', async () => {
+    return request(app.getHttpServer())
+      .patch('/demarches/2/options/field/anonymized')
+      .set('Cookie', [cookies.instructor])
+      .send({
+        id: '02',
+        add: true,
+      })
+      .expect(403)
+  })
+
+  it('Patch - Should return 200 for add anonymized field id', async () => {
+    return request(app.getHttpServer())
+      .patch('/demarches/2/options/field/anonymized')
+      .set('Cookie', [cookies.admin])
+      .send({
+        id: '02',
+        add: true,
+      })
+      .expect(200)
+  })
+
+  it('Patch - Should return 200 for remove anonymized field id', async () => {
+    request(app.getHttpServer())
+      .patch('/demarches/2/options/field/anonymized')
+      .set('Cookie', [cookies.admin])
+      .send({
+        id: '02',
+        add: true,
+      })
+    return request(app.getHttpServer())
+      .patch('/demarches/2/options/field/anonymized')
+      .set('Cookie', [cookies.admin])
+      .send({
+        id: '02',
+        add: false,
+      })
+      .expect(200)
+  })
+
+  it('Get - Should return 200 for anonymized fields', async () => {
+    return request(app.getHttpServer())
+      .get('/demarches/2/options/field/anonymized')
+      .set('Cookie', [cookies.admin])
+      .expect(200)
+  })
+
+  it('Get - Should return 403 for anonymized fields', async () => {
+    return request(app.getHttpServer())
+      .get('/demarches/2/options/field/anonymized')
+      .set('Cookie', [cookies.instructor])
+      .expect(403)
+  })
 })
