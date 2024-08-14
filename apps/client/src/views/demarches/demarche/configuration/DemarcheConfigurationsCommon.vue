@@ -10,9 +10,11 @@ import DemarcheConfigurationSelectedItem from './DemarcheConfigurationSelectedIt
 const props = withDefaults(defineProps<{
   currentDemarcheConfiguration: IMappingColumn[]
   isSelectedFn: (ch: IMappingColumn) => boolean
-  canChangeLabel: boolean
+  canChangeLabel: boolean,
+  selectedTitle: string,
 }>(), {
   canChangeLabel: true,
+  selectedTitle: 'Champs sélectionnés pour l’affichage des colonnes',
 })
 
 const emit = defineEmits<{
@@ -20,6 +22,27 @@ const emit = defineEmits<{
 }>()
 
 const demarcheConfiguration = computed<IMappingColumn[]>(() => props.currentDemarcheConfiguration)
+
+interface IMeta {
+  id: string,
+  label: string,
+}
+interface IMappingColumnConfPart {
+  meta: IMeta,
+  data: IMappingColumn[]
+}
+interface IConfParts {
+  champs: {
+    meta: IMeta,
+    data: Record<string, {
+      id: string
+      label: string
+      children?: IMappingColumn[]
+    }>
+  },
+  annotation: IMappingColumnConfPart,
+  'fix-field'?: IMappingColumnConfPart
+}
 const getDefaultConfParts = () => ({
   champs: {
     meta: {
@@ -48,7 +71,7 @@ const getDefaultConfParts = () => ({
   },
 })
 
-const confParts = ref(getDefaultConfParts())
+const confParts = ref<IConfParts>(getDefaultConfParts())
 
 const updateDataGroup = () => {
   let groupId = 'no-section'
@@ -72,7 +95,11 @@ const updateDataGroup = () => {
 
       // confParts.value[mappingColumn.source as 'champs'].data.push(mappingColumn)
     } else if (['annotation', 'fix-field'].includes(mappingColumn.source)) {
-      confParts.value[mappingColumn.source as 'annotation' | 'fix-field'].data.push(mappingColumn)
+      confParts.value[mappingColumn.source as 'annotation' | 'fix-field']?.data.push(mappingColumn)
+    }
+
+    if (!confParts.value['fix-field']?.data.length) {
+      delete confParts.value['fix-field']
     }
   }
 }
@@ -224,6 +251,7 @@ const saveOneMappingColumnDebounced = useDebounceFn(saveOneMappingColumn, 300)
         </ul>
       </section>
       <section
+        v-if="confParts['fix-field']"
         id="content-fix-field"
         tabindex="0"
         class="tabpane"
@@ -272,7 +300,7 @@ const saveOneMappingColumnDebounced = useDebounceFn(saveOneMappingColumn, 300)
     </div>
     <div class="flex-basis-[50%]  p-t-6  bg-[var(--grey-975-75)]">
       <h4 class="fr-container">
-        Champs sélectionnés pour l’affichage des colonnes
+        {{ selectedTitle }}
       </h4>
       <hr>
       <div class="fr-container">
@@ -288,7 +316,7 @@ const saveOneMappingColumnDebounced = useDebounceFn(saveOneMappingColumn, 300)
             v-if="Array.isArray(group.data)"
           >
             <VIcon
-              v-if="!group.data?.some(champ => champ.columnLabel || (champ.children?.length && champ.children.some(chp => chp.columnLabel)))"
+              v-if="!group.data?.some(champ => isSelectedFn(champ) || (champ.children?.length && champ.children.some(chp => isSelectedFn(champ))))"
               class="fr-ml-6w  fr-mt-1w"
               name="ri-subtract-line"
               title="Aucun champ sélectionné dans cette partie"
@@ -385,6 +413,7 @@ const saveOneMappingColumnDebounced = useDebounceFn(saveOneMappingColumn, 300)
             </div>
           </template>
         </div>
+        <slot name="otherSelected" />
       </div>
     </div>
   </div>
