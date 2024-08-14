@@ -77,11 +77,11 @@ export class DemarcheOptionController {
     this.logger.verbose('updateOneFieldAnonymized')
     const fieldAnonymized = findField(demarche.mappingAnonymized, dto.id)
     if (!fieldAnonymized && dto.add) {
+      // Add field
       const field = findField(demarche.mappingColumns, dto.id)
       if (!field) {
         throw new NotFoundException('No field with this id')
       }
-      // add field
       demarche.mappingAnonymized.push({
         id: dto.id,
         columnLabel: '',
@@ -89,21 +89,9 @@ export class DemarcheOptionController {
         source: field.source,
       } as MappingAnonymizedWithoutChildren)
     } else if (fieldAnonymized && !dto.add) {
-      // remove field
+      // Remove field
       const index = demarche.mappingAnonymized.findIndex((f) => f.id === dto.id)
-      if (index >= 0) {
-        demarche.mappingAnonymized.splice(index, 1)
-      } else {
-        const parent = demarche.mappingAnonymized.find((m) =>
-          m.children?.some((c) => c.id === dto.id),
-        )
-        if (parent) {
-          const index = parent.children?.findIndex((c) => c.id === dto.id)
-          if (index >= 0) {
-            parent.children?.splice(index, 1)
-          }
-        }
-      }
+      demarche.mappingAnonymized.splice(index, 1)
     }
     return this.demarcheService.updateOrThrow(demarche.id, demarche)
   }
