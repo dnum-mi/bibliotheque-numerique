@@ -1,4 +1,6 @@
 import { File } from '@/modules/files/objects/entities/file.entity'
+import { Demarche } from '@/modules/demarches/objects/entities/demarche.entity'
+import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
 
 export type SyncAllDemarcheJobPayload = {
   fromScratch: boolean
@@ -43,6 +45,17 @@ export type UploadRnaFileJobPayload = {
 
 export type ComputeFeExcelJobPayload = {
   file: File
+}
+
+export type AnonymiseOneDemarcheJobPayload = {
+  demarche: Demarche
+  demarches: Demarche[]
+  oneDemarcheStep: number
+}
+
+export type AnonymiseOneDossierJobPayload = {
+  dossier: Dossier
+  demarche: Demarche
 }
 
 export type AnyJobPayload =

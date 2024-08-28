@@ -1,8 +1,11 @@
-import { Process, Processor } from '@nestjs/bull'
+import { InjectQueue, Process, Processor } from '@nestjs/bull'
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
 import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
-import { SyncOneDossierJobPayload } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
-import { Job } from 'bull'
+import {
+  AnonymiseOneDemarcheJobPayload, AnonymiseOneDossierJobPayload,
+  SyncOneDossierJobPayload,
+} from '@/shared/modules/custom-bull/objects/const/job-payload.type'
+import { Job, Queue } from 'bull'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { DossierSynchroniseService } from '@/modules/dossiers/providers/synchronization/dossier-synchronise.service'
 import { DemarcheService } from '@/modules/demarches/providers/services/demarche.service'
@@ -25,6 +28,7 @@ export class DossierProcessor {
     private readonly dsApiClient: DsApiClient,
     private readonly dossierService: DossierService,
     private readonly dossierSynchroniseService: DossierSynchroniseService,
+    @InjectQueue(QueueName.sync) private readonly syncQueue: Queue,
     @Inject(ALS_INSTANCE)
     private readonly als?: AsyncLocalStorage<AsyncLocalStore>,
   ) {
@@ -48,10 +52,10 @@ export class DossierProcessor {
     })
   }
 
-  @Process(eJobName.AnonymizeDossiers)
-  async anonymiseDossiers(job: Job): Promise<void> {
+  @Process(eJobName.AnonymiseAll)
+  async anonymiseAll(job: Job<never>): Promise<void> {
     await this.als.run({ job }, async () => {
-      this.logger.log('anonymise dossiers')
+      this.logger.log('anonymise all')
       const demarches = await this.demarcheService.repository.find({
         where: {
           nbrMonthAnonymisation: Not(IsNull()),
@@ -63,57 +67,86 @@ export class DossierProcessor {
         `${demarches.length} demarches with anonymisation found`,
       )
       const oneDemarcheStep = 90 / demarches.length
-      const now = new Date()
       for (const demarche of demarches) {
-        const limitDate = addMonths(now, -demarche.nbrMonthAnonymisation)
-        const whereQuery: FindManyOptions<Dossier>['where'] = {}
-        switch (demarche.anonymizationEvent) {
-        case eAnonymisationEvent.DepotDate:
-          whereQuery.dateDepot = LessThan(limitDate)
-          break
-        case eAnonymisationEvent.AcceptedDate:
-          whereQuery.dateTraitement = LessThan(limitDate)
-          whereQuery.state = DossierState.Accepte
-          break
-        case eAnonymisationEvent.DecisionDate:
-          whereQuery.dateTraitement = LessThan(limitDate)
-          whereQuery.state = In([DossierState.Accepte, DossierState.Refuse, DossierState.SansSuite])
-          break
-        default:
-          this.logger.warn(`unknown event (${
-            demarche.anonymizationEvent}) to anonymise demarche ${demarche.dsDataJson.number}`)
-          continue
-        }
+        await this.syncQueue.add(eJobName.AnonymiseOneDemarche, {
+          demarche,
+          demarches,
+          oneDemarcheStep,
+        } as AnonymiseOneDemarcheJobPayload)
+        job.progress(job.progress() + oneDemarcheStep)
+      }
+    })
+  }
 
-        let dossiers = await this.dossierService.repository.find({
+  @Process(eJobName.AnonymiseOneDemarche)
+  async anonymiseOneDemarche(job: Job<AnonymiseOneDemarcheJobPayload>): Promise<void> {
+    await this.als.run({ job }, async () => {
+      const demarche = job.data.demarche
+      this.logger.log('anonymise one demarche: ' + demarche.id)
+      const demarches = job.data.demarches
+      const limitDate = addMonths(new Date(), -demarche.nbrMonthAnonymisation)
+      const whereQuery: FindManyOptions<Dossier>['where'] = {}
+      switch (demarche.anonymizationEvent) {
+      case eAnonymisationEvent.DepotDate:
+        whereQuery.dateDepot = LessThan(limitDate)
+        break
+      case eAnonymisationEvent.AcceptedDate:
+        whereQuery.dateTraitement = LessThan(limitDate)
+        whereQuery.state = DossierState.Accepte
+        break
+      case eAnonymisationEvent.DecisionDate:
+        whereQuery.dateTraitement = LessThan(limitDate)
+        whereQuery.state = In([DossierState.Accepte, DossierState.Refuse, DossierState.SansSuite])
+        break
+      default:
+        this.logger.warn(`unknown event (${
+          demarche.anonymizationEvent}) to anonymise demarche ${demarche.dsDataJson.number}`)
+        return
+      }
+      let dossiers = await this.dossierService.repository.find({
+        where: {
+          anonymisedAt: null,
+          demarcheId: demarche.id,
+          ...whereQuery,
+        },
+        select: ['id', 'dsDataJson', 'demarcheId'],
+      })
+
+      if (demarche.isOnAllDossiersOfOrganisme) {
+        const dossiersOfOrg = await this.dossierService.repository.find({
           where: {
             anonymisedAt: null,
-            demarcheId: demarche.id,
-            ...whereQuery,
+            demarcheId: In(demarches.map(d => d.id)),
+            organisme: { id: In([...new Set(dossiers.map(d => d.organisme.id))]) },
           },
-          select: ['id', 'dsDataJson'],
+
+          select: ['id', 'dsDataJson', 'demarcheId'],
         })
-
-        if (demarche.isOnAllDossiersOfOrganisme) {
-          const dossiersOfOrg = await this.dossierService.repository.find({
-            where: {
-              anonymisedAt: null,
-              demarcheId: In(demarches.map(d => d.id)),
-              organisme: { id: In([...new Set(dossiers.map(d => d.organisme.id))]) },
-            },
-
-            select: ['id', 'dsDataJson'],
-          })
-          dossiers = dossiers.concat(dossiersOfOrg)
-        }
-
-        const dossierStep = oneDemarcheStep / dossiers.length
-        for (const dossier of dossiers) {
-          await this.dossierService.anonymiseDossierDemandeur(dossier)
-
-          job.progress(job.progress() + dossierStep)
-        }
+        dossiers = dossiers.concat(dossiersOfOrg)
       }
+
+      const dossierStep = job.data.oneDemarcheStep / dossiers.length
+      for (const dossier of dossiers) {
+        const dossierDemarche = demarches.find(d => d.id === dossier.demarcheId)
+
+        await this.syncQueue.add(eJobName.AnonymiseOneDossier, {
+          dossier,
+          demarche: dossierDemarche,
+        } as AnonymiseOneDossierJobPayload)
+
+        job.progress(job.progress() + dossierStep)
+      }
+    })
+  }
+
+  @Process(eJobName.AnonymiseOneDossier)
+  async anonymiseOneDossier(job: Job<AnonymiseOneDossierJobPayload>): Promise<void> {
+    await this.als.run({ job }, async () => {
+      this.logger.log('anonymise one dossier: ' + job.data.dossier.id)
+      await this.dossierService.anonymiseDossier(
+        job.data.dossier,
+        job.data.demarche.mappingAnonymized,
+      )
     })
   }
 }
