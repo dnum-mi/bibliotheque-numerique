@@ -9,7 +9,7 @@ import {
   PieceJustificativeChamp,
   RepetitionChamp,
 } from '@dnum-mi/ds-api-client'
-import { eFileDsSourceLabel, eState } from '@biblio-num/shared'
+import { eFileDsSourceLabel, eState, anomymisedStringValue, anomymisedFileValue } from '@biblio-num/shared'
 
 import { Dossier } from '../objects/entities/dossier.entity'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
@@ -19,6 +19,7 @@ import { FieldService } from '@/modules/dossiers/providers/field.service'
 import {
   fixFieldValueFunctionsDemandeur,
 } from '@/modules/dossiers/objects/constante/fix-field-demandeur.dictionnary'
+import { MappingAnonymized } from '@/modules/demarches/objects/dtos/mapping-anonymized.dto'
 
 @Injectable()
 export class DossierService extends BaseEntityService<Dossier> {
@@ -159,28 +160,119 @@ export class DossierService extends BaseEntityService<Dossier> {
     }
   }
 
-  async anonymiseDossierDemandeur(dossier: Dossier): Promise<void> {
+  async anonymiseDossier(
+    dossier: Dossier,
+    mappingAnonymized: MappingAnonymized[],
+  ): Promise<void> {
     this.logger.verbose(`anonymiseDossier ${dossier.id}`)
 
-    const anomymisedValue = 'Anonymised'
+    await this.anonymiseDemandeur(dossier)
+
+    if (mappingAnonymized.length !== 0) {
+      await this.anonymiseChampsAndAnnotations(dossier, mappingAnonymized)
+    }
+  }
+
+  private async anonymiseDemandeur(dossier: Dossier): Promise<void> {
+    this.logger.verbose(`anonymiseDemandeur ${dossier.id}`)
     const demandeurKeys = ['nom', 'prenom', 'civilite']
 
+    // Anonymise demandeur in dsDataJson
     demandeurKeys.forEach(key => {
       if (Object.prototype.hasOwnProperty.call(dossier.dsDataJson.demandeur, key)) {
-        dossier.dsDataJson.demandeur[key] = anomymisedValue
+        dossier.dsDataJson.demandeur[key] = anomymisedStringValue
       }
     })
 
+    // Anonymise demandeur in fields
     await this.fieldService.repository.update({
       dossierId: dossier.id,
       sourceId: In(Object.keys(fixFieldValueFunctionsDemandeur)),
     }, {
-      stringValue: anomymisedValue,
+      stringValue: anomymisedStringValue,
       anonymisedAt: new Date(),
     })
+
     await this.repo.update(dossier.id, {
       anonymisedAt: new Date(),
       dsDataJson: dossier.dsDataJson,
     })
+  }
+
+  private async anonymiseChampsAndAnnotations(
+    dossier: Dossier,
+    mappingAnonymized: MappingAnonymized[],
+  ): Promise<void> {
+    this.logger.verbose(`anonymiseDossier for champs and annotations: ${mappingAnonymized}`)
+
+    // Anonymise champs and annotations
+    mappingAnonymized.forEach((mapping) => {
+      if (mapping.source === 'champs') {
+        this.anonymiseChampOrAnnotation(dossier, mapping, 'champs')
+      } else if (mapping.source === 'annotation') {
+        this.anonymiseChampOrAnnotation(dossier, mapping, 'annotations')
+      }
+    })
+
+    // Anonymise data in fields
+    await this.fieldService.repository.update({
+      dossierId: dossier.id,
+      sourceId: In(mappingAnonymized.map((mapping) => mapping.id)),
+    }, {
+      stringValue: anomymisedStringValue,
+      dateValue: null,
+      numberValue: null,
+      rawJson: null,
+      anonymisedAt: new Date(),
+    })
+
+    await this.repo.update(dossier.id, {
+      anonymisedAt: new Date(),
+      dsDataJson: dossier.dsDataJson,
+    })
+  }
+
+  private async anonymiseChampOrAnnotation(
+    dossier: Dossier,
+    mapping: MappingAnonymized,
+    dsDataJsonKey: string,
+  ): Promise<void> {
+    this.logger.verbose(`anonymiseChampOrAnnotation for dossier: ${dossier.id}, mappingAnonymized: ${mapping}`)
+    if (dossier.dsDataJson[dsDataJsonKey]) {
+      dossier.dsDataJson[dsDataJsonKey].forEach((champ) => {
+        if (champ.id === mapping.id) { // Anonymise champ
+          this.logger.debug(`Anonymise champ ${champ.id}`)
+          champ.stringValue = anomymisedStringValue
+          this.tryAnonymiseFile(champ)
+        } else if (champ.__typename === 'RepetitionChamp') { // Anonymise sub champ of repetition champ
+          const subChampIdsAnonymise = []
+          champ.rows.forEach((row) => {
+            row.champs.forEach((ch) => {
+              if (ch.champDescriptor.id === mapping.id) {
+                this.logger.debug(`Anonymise sub champ of repetition champ ${champ.id}`)
+                subChampIdsAnonymise.push(ch.id)
+                ch.stringValue = anomymisedStringValue
+                this.tryAnonymiseFile(ch)
+              }
+            })
+          })
+          champ.champs.forEach((ch) => {
+            if (subChampIdsAnonymise.includes(ch.id)) {
+              ch.stringValue = anomymisedStringValue
+              this.tryAnonymiseFile(ch)
+            }
+          })
+        }
+      })
+    }
+  }
+
+  private async tryAnonymiseFile(champ): Promise<void> {
+    this.logger.verbose(`tryAnonymiseFile champId: ${champ.id}`)
+    if (champ.__typename === 'PieceJustificativeChamp') {
+      champ.files.forEach((file) => {
+        file.url = anomymisedFileValue
+      })
+    }
   }
 }

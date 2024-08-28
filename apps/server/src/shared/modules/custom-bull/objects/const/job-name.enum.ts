@@ -14,7 +14,9 @@ const jobNames = [
   'UploadRnaFile',
   'UploadRnfFile',
   'ComputeOrganismeDDC',
-  'AnonymizeDossiers',
+  'AnonymiseAll',
+  'AnonymiseOneDemarche',
+  'AnonymiseOneDossier',
 ] as const
 
 export type JobNameKey = typeof jobNames[number]
