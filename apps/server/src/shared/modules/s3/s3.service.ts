@@ -96,4 +96,13 @@ export class S3Service implements OnModuleInit {
     }).promise()
     return byteSize
   }
+
+  public async deleteFile(uuid: string): Promise<void> {
+    await this.s3
+      .deleteObject({
+        Bucket: this.bucketName,
+        Key: uuid,
+      })
+      .promise()
+  }
 }

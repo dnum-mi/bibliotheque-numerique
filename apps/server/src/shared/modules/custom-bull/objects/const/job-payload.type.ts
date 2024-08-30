@@ -58,6 +58,10 @@ export type AnonymiseOneDossierJobPayload = {
   demarche: Demarche
 }
 
+export type DeleteS3FilesJobPayload = {
+  files: File[]
+}
+
 export type AnyJobPayload =
   | SyncAllDemarcheJobPayload
   | SyncOneDemarcheJobPayload
