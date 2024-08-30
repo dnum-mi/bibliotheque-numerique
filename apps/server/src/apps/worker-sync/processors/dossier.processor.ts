@@ -2,7 +2,7 @@ import { InjectQueue, Process, Processor } from '@nestjs/bull'
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
 import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
 import {
-  AnonymiseOneDemarcheJobPayload, AnonymiseOneDossierJobPayload,
+  AnonymiseOneDemarcheJobPayload, AnonymiseOneDossierJobPayload, DeleteS3FilesJobPayload,
   SyncOneDossierJobPayload,
 } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
 import { Job, Queue } from 'bull'
@@ -29,6 +29,7 @@ export class DossierProcessor {
     private readonly dossierService: DossierService,
     private readonly dossierSynchroniseService: DossierSynchroniseService,
     @InjectQueue(QueueName.sync) private readonly syncQueue: Queue,
+    @InjectQueue(QueueName.file) private readonly fileQueue: Queue,
     @Inject(ALS_INSTANCE)
     private readonly als?: AsyncLocalStorage<AsyncLocalStore>,
   ) {
@@ -110,6 +111,7 @@ export class DossierProcessor {
           ...whereQuery,
         },
         select: ['id', 'dsDataJson', 'demarcheId'],
+        relations: ['files'],
       })
 
       if (demarche.isOnAllDossiersOfOrganisme) {
@@ -121,6 +123,7 @@ export class DossierProcessor {
           },
 
           select: ['id', 'dsDataJson', 'demarcheId'],
+          relations: ['files'],
         })
         dossiers = dossiers.concat(dossiersOfOrg)
       }
@@ -147,6 +150,9 @@ export class DossierProcessor {
         job.data.dossier,
         job.data.demarche.mappingAnonymized,
       )
+      await this.fileQueue.add(eJobName.DeleteS3Files, {
+        files: job.data.dossier.files,
+      } as DeleteS3FilesJobPayload)
     })
   }
 }

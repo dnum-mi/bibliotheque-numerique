@@ -9,7 +9,13 @@ import {
   PieceJustificativeChamp,
   RepetitionChamp,
 } from '@dnum-mi/ds-api-client'
-import { eFileDsSourceLabel, eState, anomymisedStringValue, anomymisedFileValue } from '@biblio-num/shared'
+import {
+  eFileDsSourceLabel,
+  eState,
+  anomymisedStringValue,
+  anomymisedFileValue,
+  anomymisedFileUuid,
+} from '@biblio-num/shared'
 
 import { Dossier } from '../objects/entities/dossier.entity'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
@@ -243,7 +249,7 @@ export class DossierService extends BaseEntityService<Dossier> {
         if (champ.id === mapping.id) { // Anonymise champ
           this.logger.debug(`Anonymise champ ${champ.id}`)
           champ.stringValue = anomymisedStringValue
-          this.tryAnonymiseFile(champ)
+          this.tryAnonymiseFile(champ, dossier.files)
         } else if (champ.__typename === 'RepetitionChamp') { // Anonymise sub champ of repetition champ
           const subChampIdsAnonymise = []
           champ.rows.forEach((row) => {
@@ -252,14 +258,14 @@ export class DossierService extends BaseEntityService<Dossier> {
                 this.logger.debug(`Anonymise sub champ of repetition champ ${champ.id}`)
                 subChampIdsAnonymise.push(ch.id)
                 ch.stringValue = anomymisedStringValue
-                this.tryAnonymiseFile(ch)
+                this.tryAnonymiseFile(ch, dossier.files)
               }
             })
           })
           champ.champs.forEach((ch) => {
             if (subChampIdsAnonymise.includes(ch.id)) {
               ch.stringValue = anomymisedStringValue
-              this.tryAnonymiseFile(ch)
+              this.tryAnonymiseFile(ch, dossier.files)
             }
           })
         }
@@ -267,11 +273,22 @@ export class DossierService extends BaseEntityService<Dossier> {
     }
   }
 
-  private async tryAnonymiseFile(champ): Promise<void> {
-    this.logger.verbose(`tryAnonymiseFile champId: ${champ.id}`)
+  private async tryAnonymiseFile(champ, files): Promise<void> {
     if (champ.__typename === 'PieceJustificativeChamp') {
+      this.logger.verbose(`tryAnonymiseFile champId: ${champ.id}`)
       champ.files.forEach((file) => {
-        file.url = anomymisedFileValue
+        file.filename = anomymisedFileValue
+        files.forEach(async (fileFound) => {
+          if (fileFound.sourceStringId === champ.id) {
+            this.logger.debug(`Anonymise file ${fileFound.id}`)
+            await this.repo.manager.update(File, { id: fileFound.id }, {
+              label: anomymisedFileValue,
+              uuid: anomymisedFileUuid,
+            })
+            // Mark file anonymised and keep the uuid for deletion in S3
+            fileFound.label = anomymisedFileValue
+          }
+        })
       })
     }
   }

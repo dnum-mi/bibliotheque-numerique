@@ -2,14 +2,14 @@ import { InjectQueue, Process, Processor } from '@nestjs/bull'
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
 import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
 import {
-  ComputeFeExcelJobPayload,
+  ComputeFeExcelJobPayload, DeleteS3FilesJobPayload,
   UploadDsFileJobPayload,
   UploadRnaFileJobPayload,
 } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
 import { Job, Queue } from 'bull'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { DsApiClient, File as TFile } from '@dnum-mi/ds-api-client'
-import { eFileSourceLabel, eState, eFileTag } from '@biblio-num/shared'
+import { eFileSourceLabel, eState, eFileTag, anomymisedFileValue } from '@biblio-num/shared'
 import { S3Service } from '@/shared/modules/s3/s3.service'
 import { FileService } from '@/modules/files/providers/file.service'
 import { FieldService } from '@/modules/dossiers/providers/field.service'
@@ -130,6 +130,19 @@ export class FileProcessor {
           return eState.failed
         })
       await this.fileService.updateState(job.data.file.id, state)
+    })
+  }
+
+  @Process(eJobName.DeleteS3Files)
+  async deleteS3Files(job: Job<DeleteS3FilesJobPayload>): Promise<void> {
+    await this.als.run({ job }, async () => {
+      this.logger.log('delete s3 files')
+      for (const file of job.data.files) {
+        if (file.label === anomymisedFileValue) {
+          this.logger.debug(`Anonymised file ${file.uuid} to delete`)
+          await this.s3Service.deleteFile(file.uuid)
+        }
+      }
     })
   }
 }
