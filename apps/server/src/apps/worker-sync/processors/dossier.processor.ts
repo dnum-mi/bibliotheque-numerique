@@ -72,10 +72,10 @@ export class DossierProcessor {
         await this.syncQueue.add(eJobName.AnonymiseOneDemarche, {
           demarche,
           demarches,
-          oneDemarcheStep,
         } as AnonymiseOneDemarcheJobPayload)
         job.progress(job.progress() + oneDemarcheStep)
       }
+      job.progress(100)
     })
   }
 
@@ -128,7 +128,7 @@ export class DossierProcessor {
         dossiers = dossiers.concat(dossiersOfOrg)
       }
 
-      const dossierStep = job.data.oneDemarcheStep / dossiers.length
+      const dossierStep = 100 / dossiers.length
       for (const dossier of dossiers) {
         const dossierDemarche = demarches.find(d => d.id === dossier.demarcheId)
 
@@ -139,6 +139,7 @@ export class DossierProcessor {
 
         job.progress(job.progress() + dossierStep)
       }
+      job.progress(100)
     })
   }
 
@@ -150,9 +151,11 @@ export class DossierProcessor {
         job.data.dossier,
         job.data.demarche.mappingAnonymized,
       )
+      job.progress(50)
       await this.fileQueue.add(eJobName.DeleteS3Files, {
         files: job.data.dossier.files,
       } as DeleteS3FilesJobPayload)
+      job.progress(100)
     })
   }
 }
