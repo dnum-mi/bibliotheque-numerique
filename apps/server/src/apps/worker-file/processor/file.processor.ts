@@ -9,7 +9,7 @@ import {
 import { Job, Queue } from 'bull'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { DsApiClient, File as TFile } from '@dnum-mi/ds-api-client'
-import { eFileSourceLabel, eState, eFileTag, anomymisedFileValue } from '@biblio-num/shared'
+import { eFileSourceLabel, eState, eFileTag, anonymisedFileValue } from '@biblio-num/shared'
 import { S3Service } from '@/shared/modules/s3/s3.service'
 import { FileService } from '@/modules/files/providers/file.service'
 import { FieldService } from '@/modules/dossiers/providers/field.service'
@@ -138,7 +138,7 @@ export class FileProcessor {
     await this.als.run({ job }, async () => {
       this.logger.log('delete s3 files')
       for (const file of job.data.files) {
-        if (file.label === anomymisedFileValue) {
+        if (file.label === anonymisedFileValue) {
           this.logger.debug(`Anonymised file ${file.uuid} to delete`)
           await this.s3Service.deleteFile(file.uuid)
         }

@@ -12,9 +12,9 @@ import {
 import {
   eFileDsSourceLabel,
   eState,
-  anomymisedStringValue,
-  anomymisedFileValue,
-  anomymisedFileUuid,
+  anonymisedStringValue,
+  anonymisedFileValue,
+  anonymisedFileUuid,
 } from '@biblio-num/shared'
 
 import { Dossier } from '../objects/entities/dossier.entity'
@@ -186,7 +186,7 @@ export class DossierService extends BaseEntityService<Dossier> {
     // Anonymise demandeur in dsDataJson
     demandeurKeys.forEach(key => {
       if (Object.prototype.hasOwnProperty.call(dossier.dsDataJson.demandeur, key)) {
-        dossier.dsDataJson.demandeur[key] = anomymisedStringValue
+        dossier.dsDataJson.demandeur[key] = anonymisedStringValue
       }
     })
 
@@ -195,7 +195,7 @@ export class DossierService extends BaseEntityService<Dossier> {
       dossierId: dossier.id,
       sourceId: In(Object.keys(fixFieldValueFunctionsDemandeur)),
     }, {
-      stringValue: anomymisedStringValue,
+      stringValue: anonymisedStringValue,
       anonymisedAt: new Date(),
     })
 
@@ -225,12 +225,22 @@ export class DossierService extends BaseEntityService<Dossier> {
       dossierId: dossier.id,
       sourceId: In(mappingAnonymized.map((mapping) => mapping.id)),
     }, {
-      stringValue: anomymisedStringValue,
+      stringValue: anonymisedStringValue,
       dateValue: null,
       numberValue: null,
       rawJson: null,
       anonymisedAt: new Date(),
     })
+
+    const fileIds = dossier.files
+      .filter(file => file.label === anonymisedFileValue)
+      .map(file => file.id)
+    if (fileIds.length > 0) {
+      await this.repo.manager.update(File, { id: In(fileIds) }, {
+        label: anonymisedFileValue,
+        uuid: anonymisedFileUuid,
+      })
+    }
 
     await this.repo.update(dossier.id, {
       anonymisedAt: new Date(),
@@ -238,17 +248,17 @@ export class DossierService extends BaseEntityService<Dossier> {
     })
   }
 
-  private async anonymiseChampOrAnnotation(
+  private anonymiseChampOrAnnotation(
     dossier: Dossier,
     mapping: MappingAnonymized,
     dsDataJsonKey: string,
-  ): Promise<void> {
+  ): void {
     this.logger.verbose(`anonymiseChampOrAnnotation for dossier: ${dossier.id}, mappingAnonymized: ${mapping}`)
     if (dossier.dsDataJson[dsDataJsonKey]) {
       dossier.dsDataJson[dsDataJsonKey].forEach((champ) => {
         if (champ.id === mapping.id) { // Anonymise champ
           this.logger.debug(`Anonymise champ ${champ.id}`)
-          champ.stringValue = anomymisedStringValue
+          champ.stringValue = anonymisedStringValue
           this.tryAnonymiseFile(champ, dossier.files)
         } else if (champ.__typename === 'RepetitionChamp') { // Anonymise sub champ of repetition champ
           const subChampIdsAnonymise = []
@@ -257,14 +267,14 @@ export class DossierService extends BaseEntityService<Dossier> {
               if (ch.champDescriptor.id === mapping.id) {
                 this.logger.debug(`Anonymise sub champ of repetition champ ${champ.id}`)
                 subChampIdsAnonymise.push(ch.id)
-                ch.stringValue = anomymisedStringValue
+                ch.stringValue = anonymisedStringValue
                 this.tryAnonymiseFile(ch, dossier.files)
               }
             })
           })
           champ.champs.forEach((ch) => {
             if (subChampIdsAnonymise.includes(ch.id)) {
-              ch.stringValue = anomymisedStringValue
+              ch.stringValue = anonymisedStringValue
               this.tryAnonymiseFile(ch, dossier.files)
             }
           })
@@ -273,20 +283,16 @@ export class DossierService extends BaseEntityService<Dossier> {
     }
   }
 
-  private async tryAnonymiseFile(champ, files): Promise<void> {
+  private tryAnonymiseFile(champ, files): void {
     if (champ.__typename === 'PieceJustificativeChamp') {
       this.logger.verbose(`tryAnonymiseFile champId: ${champ.id}`)
       champ.files.forEach((file) => {
-        file.filename = anomymisedFileValue
-        files.forEach(async (fileFound) => {
+        file.filename = anonymisedFileValue
+        files.forEach((fileFound) => {
           if (fileFound.sourceStringId === champ.id) {
             this.logger.debug(`Anonymise file ${fileFound.id}`)
-            await this.repo.manager.update(File, { id: fileFound.id }, {
-              label: anomymisedFileValue,
-              uuid: anomymisedFileUuid,
-            })
             // Mark file anonymised and keep the uuid for deletion in S3
-            fileFound.label = anomymisedFileValue
+            fileFound.label = anonymisedFileValue
           }
         })
       })

@@ -50,7 +50,6 @@ export type ComputeFeExcelJobPayload = {
 export type AnonymiseOneDemarcheJobPayload = {
   demarche: Demarche
   demarches: Demarche[]
-  oneDemarcheStep: number
 }
 
 export type AnonymiseOneDossierJobPayload = {
