@@ -86,4 +86,120 @@ items:
     sourceId: "18"
     dsDataJson: "{}"
     organisme: "@Subaru"
+  DossierAnonymize:
+    id: 19
+    demarche: "@demarche-anonymize"
+    state: "accepte"
+    sourceId: "123462"
+    prefecture: "D57"
+    dateDepot: "2020-01-01 15:59:18.000"
+    dsDataJson: {
+      champs: [
+        {
+          "__typename": "Champ",
+          "id": "Q2hhbXAtNDE2Mjg0NQ==",
+          "label": "Nom",
+          "stringValue": "Paul",
+          "champDescriptor":
+            {
+              "id": "Q2hhbXAtNDE2Mjg0NQ==",
+              "label": "Nom",
+              "type": "text",
+              "required": "false",
+              "__typename": "TextChampDescriptor",
+              "description": "nom de famille"
+            }
+        },
+        {
+          "__typename": "Champ",
+          "id": "Q2hhbXAtNDE2Mjg0NW==",
+          "label": "Prénom",
+          "stringValue": "Jean",
+          "champDescriptor":
+            {
+              "id": "Q2hhbXAtNDE2Mjg0NW==",
+              "label": "Prénom",
+              "type": "text",
+              "required": "false",
+              "__typename": "TextChampDescriptor",
+              "description": "prénom"
+            }
+        },
+        {
+          "__typename": "Champ",
+          "id": "Q2hhbXAtNDE2Mjg0Ng==",
+          "label": "Age",
+          "stringValue": "10",
+          "champDescriptor":
+            {
+              "id": "Q2hhbXAtNDE2Mjg0Ng==",
+              "label": "Age",
+              "type": "text",
+              "required": "false",
+              "__typename": "TextChampDescriptor",
+              "description": "Age"
+            }
+        },
+        {
+          __typename: "RepetitionChamp",
+          "id": "Q2hhbXAtMjg2NjAyNw==",
+          "label": "Personnes",
+          "stringValue": "",
+          "champDescriptor":
+            {
+              "id": "Q2hhbXAtMjg2NjAyNw==",
+              "label": "Personnes",
+              "type": "repetition",
+              "required": "false",
+              __typename: "RepetitionChampDescriptor",
+              "description": "Personnes"
+            },
+          "rows": [
+            {
+              "champs": [
+                {
+                  "__typename": "Champ",
+                  "id": "Q2hhbXAtMzg2MjczN3wwMUhYWTI5WlQ1QjJZRDQ4NFFFRlFBN0VGSA==",
+                  "label": "Nom",
+                  "stringValue": "Paul",
+                  "champDescriptor":
+                    {
+                      "id": "Q2hhbXAtNDE2Mjg0NN==",
+                      "label": "Nom",
+                      "type": "text",
+                      "required": "false",
+                      "__typename": "TextChampDescriptor",
+                      "description": "nom de famille"
+                    }
+                },
+                {
+                  "__typename": "Champ",
+                  "id": "Q2hhbXAtMjg2NjAzOHwwMUhYWTI5WlQ1QjJZRDQ4NFFFRlFBN0VGSA==",
+                  "label": "Prénom",
+                  "stringValue": "Jean",
+                  "champDescriptor":
+                    {
+                      "id": "Q2hhbXAtNDE2Mjg0NM==",
+                      "label": "Prénom",
+                      "type": "text",
+                      "required": "false",
+                      "__typename": "TextChampDescriptor",
+                      "description": "prénom"
+                    }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      demandeur: {
+        __typename: "PersonnePhysique",
+        nom: "Paul",
+        prenom: "Jean-louis",
+        civilite: "Mme"
+      },
+      annotations: "Message",
+      messages: "Hello world"
+    }
+    organisme: "@Chevrolet"
 

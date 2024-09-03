@@ -177,4 +177,22 @@ items:
       { "id": "I11", "columnLabel": "Etat délai", "type": "enum" },
     ]
     dsDataJson: {number: 80}
+  demarche-anonymize:
+    id: 10
+    state: "published"
+    title: "Déclaration dossier anonymize"
+    mappingColumns: [
+      { "id": "I12", "columnLabel": "Anonymize", "type": "string" },
+    ]
+    dsDataJson: {number: 81}
+    nbrMonthAnonymisation: 0
+    anonymizationEvent: "DepotDate"
+    mappingAnonymized: [
+      { "id": "Q2hhbXAtNDE2Mjg0NQ==", "columnLabel": "", "originalLabel": "nom", "source": "champs" },
+      { "id": "Q2hhbXAtNDE2Mjg0NW==", "columnLabel": "", "originalLabel": "prenom", "source": "champs" },
+      { "id": "Q2hhbXAtNDE2Mjg0NN==", "columnLabel": "", "originalLabel": "nom", "source": "champs" },
+      { "id": "Q2hhbXAtNDE2Mjg0NM==", "columnLabel": "", "originalLabel": "prenom", "source": "champs" },
+    ]
+    isOnAllDossiersOfOrganisme: false
+
 

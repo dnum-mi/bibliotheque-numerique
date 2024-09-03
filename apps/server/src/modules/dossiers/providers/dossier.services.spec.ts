@@ -87,4 +87,5 @@ describe('dossier.service', () => {
     const result = service.transformValueFileOfDossier(dossierMock, filesMock)
     expect(result.dsDataJson.champs[1].file.url).toBe(filesMock[1].uuid)
   })
+
 })
