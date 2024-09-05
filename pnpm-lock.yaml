@@ -13,6 +13,11 @@ overrides:
   tar@<6.2.1: '>=6.2.1'
   formidable@<3.2.4: '>=3.2.4'
 
+patchedDependencies:
+  typeorm-fixtures-cli@3.1.0:
+    hash: dladkqqe72tc3codtp3avtm6jq
+    path: patches/typeorm-fixtures-cli@3.1.0.patch
+
 importers:
 
   .:
@@ -717,7 +722,7 @@ importers:
         version: 4.2.0
       typeorm-fixtures-cli:
         specifier: ^3.1.0
-        version: 3.1.0(typeorm@0.3.17)
+        version: 3.1.0(patch_hash=dladkqqe72tc3codtp3avtm6jq)(typeorm@0.3.17)
       typescript:
         specifier: ~5.1.6
         version: 5.1.6
@@ -3714,8 +3719,8 @@ packages:
       kuler: 2.0.0
     dev: false
 
-  /@dnum-mi/ds-api-client@1.7.13:
-    resolution: {integrity: sha512-nAKIUIB2qG4aOln/UkBar5MWnvYUkUATVyaLLz0iWSnrUw9Obu7GBdY/17h+CgW3Q+LogFYWyHYCIIowNZfcJA==}
+  /@dnum-mi/ds-api-client@1.7.12:
+    resolution: {integrity: sha512-yLqAh7bHijIGlntTpHNTX50Vt5l4rTK2oRj5sQZIzvAo28kJW2+7u8eXec0wHHUi+RFT7vUb/JCbos4HVQSHPA==}
     engines: {node: '>=16.0.0', npm: '>=7.10.0'}
     dependencies:
       graphql: 16.8.1
@@ -3726,8 +3731,8 @@ packages:
       - supports-color
     dev: false
 
-  /@dnum-mi/ds-api-client@1.7.12:
-    resolution: {integrity: sha512-yLqAh7bHijIGlntTpHNTX50Vt5l4rTK2oRj5sQZIzvAo28kJW2+7u8eXec0wHHUi+RFT7vUb/JCbos4HVQSHPA==}
+  /@dnum-mi/ds-api-client@1.7.13:
+    resolution: {integrity: sha512-nAKIUIB2qG4aOln/UkBar5MWnvYUkUATVyaLLz0iWSnrUw9Obu7GBdY/17h+CgW3Q+LogFYWyHYCIIowNZfcJA==}
     engines: {node: '>=16.0.0', npm: '>=7.10.0'}
     dependencies:
       graphql: 16.8.1
@@ -20698,7 +20703,7 @@ packages:
   /typedarray@0.0.6:
     resolution: {integrity: sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==}
 
-  /typeorm-fixtures-cli@3.1.0(typeorm@0.3.17):
+  /typeorm-fixtures-cli@3.1.0(patch_hash=dladkqqe72tc3codtp3avtm6jq)(typeorm@0.3.17):
     resolution: {integrity: sha512-DS0xNBaigK7QE4DLDuwJSqshXEH/Ux9jX78wSo95EQY9vqP7q2xyubuRDcv87t7OpaVLh6x1EnyWK0PhcI7LdA==}
     hasBin: true
     requiresBuild: true
@@ -20721,6 +20726,7 @@ packages:
       typeorm: 0.3.17(ioredis@5.4.1)(pg@8.11.3)(ts-node@10.9.1)
       yargs: 17.7.2
     dev: true
+    patched: true
 
   /typeorm@0.3.17(ioredis@5.4.1)(pg@8.11.3)(ts-node@10.9.1):
     resolution: {integrity: sha512-UDjUEwIQalO9tWw9O2A4GU+sT3oyoUXheHJy4ft+RFdnRdQctdQ34L9SqE2p7LdwzafHx1maxT+bqXON+Qnmig==}
