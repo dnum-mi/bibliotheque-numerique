@@ -1454,3 +1454,352 @@ items:
     label: "Etat délai"
     dossier: "@dossier18"
   # # endregion
+  # #region dossier anonymisation
+  DossierAnonymize-nom:
+    sourceId: "Q2hhbXAtNDE2Mjg0NQ=="
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Paul"
+    parent: null
+    label: "Nom"
+    dossier: "@DossierAnonymize"
+    rawJson: {
+          "__typename": "Champ",
+          "id": "Q2hhbXAtNDE2Mjg0NQ==",
+          "label": "Nom",
+          "stringValue": "Paul",
+          "champDescriptor":
+            {
+              "id": "Q2hhbXAtNDE2Mjg0NQ==",
+              "label": "Nom",
+              "type": "text",
+              "required": "false",
+              "__typename": "TextChampDescriptor",
+              "description": "nom de famille"
+            }
+        }
+  DossierAnonymize-prenom:
+    sourceId: "Q2hhbXAtNDE2Mjg0NW=="
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Jean"
+    parent: null
+    label: "Prénom"
+    dossier: "@DossierAnonymize"
+    rawJson:         {
+          "__typename": "Champ",
+          "id": "Q2hhbXAtNDE2Mjg0NW==",
+          "label": "Prénom",
+          "stringValue": "Jean",
+          "champDescriptor":
+            {
+              "id": "Q2hhbXAtNDE2Mjg0NW==",
+              "label": "Prénom",
+              "type": "text",
+              "required": "false",
+              "__typename": "TextChampDescriptor",
+              "description": "prénom"
+            }
+        }
+  DossierAnonymize-age:
+    sourceId: "Q2hhbXAtNDE2Mjg0Ng=="
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "10"
+    parent: null
+    label: "Age"
+    dossier: "@DossierAnonymize"
+    rawJson: {
+          "__typename": "Champ",
+          "id": "Q2hhbXAtNDE2Mjg0Ng==",
+          "label": "Age",
+          "stringValue": "10",
+          "champDescriptor":
+            {
+              "id": "Q2hhbXAtNDE2Mjg0Ng==",
+              "label": "Age",
+              "type": "text",
+              "required": "false",
+              "__typename": "TextChampDescriptor",
+              "description": "Age"
+            }
+        }
+  DossierAnonymize-RepetitionChamp:
+    sourceId: "I11"
+    fieldSource: champs
+    dsChampType: RepetitionChamp
+    type: string
+    stringValue: ""
+    parent: null
+    label: "Personnes"
+    dossier: "@DossierAnonymize"
+    rawJson: {
+          __typename: "RepetitionChamp",
+          "id": "Q2hhbXAtMjg2NjAyNw==",
+          "label": "Personnes",
+          "stringValue": "",
+          "champDescriptor":
+            {
+              "id": "Q2hhbXAtMjg2NjAyNw==",
+              "label": "Personnes",
+              "type": "repetition",
+              "required": "false",
+              __typename: "RepetitionChampDescriptor",
+              "description": "Personnes"
+            },
+          "rows": [
+            {
+              "champs": [
+                {
+                  "__typename": "Champ",
+                  "id": "Q2hhbXAtMzg2MjczN3wwMUhYWTI5WlQ1QjJZRDQ4NFFFRlFBN0VGSA==",
+                  "label": "Nom",
+                  "stringValue": "Paul",
+                  "champDescriptor":
+                    {
+                      "id": "Q2hhbXAtNDE2Mjg0NN==",
+                      "label": "Nom",
+                      "type": "text",
+                      "required": "false",
+                      "__typename": "TextChampDescriptor",
+                      "description": "nom de famille"
+                    }
+                },
+                {
+                  "__typename": "Champ",
+                  "id": "Q2hhbXAtMjg2NjAzOHwwMUhYWTI5WlQ1QjJZRDQ4NFFFRlFBN0VGSA==",
+                  "label": "Prénom",
+                  "stringValue": "Jean",
+                  "champDescriptor":
+                    {
+                      "id": "Q2hhbXAtNDE2Mjg0NM==",
+                      "label": "Prénom",
+                      "type": "text",
+                      "required": "false",
+                      "__typename": "TextChampDescriptor",
+                      "description": "prénom"
+                    }
+                },
+                {
+                  "__typename": "Champ",
+                  "id": "Q2hhbXAtMjg2NjEzOHwwMUhYWTI5WlQ1QjJZRDQ4NFFFRlFBN0VGSA==",
+                  "label": "Age",
+                  "stringValue": "10",
+                  "champDescriptor":
+                    {
+                      "id": "Q2hhbXAtNTE2Mzg0NQ==",
+                      "label": "Age",
+                      "type": "text",
+                      "required": "false",
+                      "__typename": "TextChampDescriptor",
+                      "description": "age"
+                    }
+                }
+
+              ]
+            },
+            {
+              "champs": [
+                {
+                  "__typename": "Champ",
+                  "id": "Q2hhbXAtMzg2MjczOXwwMUhYWTI5WlQ1QjJZRDQ4NFFFRlFBN0VGSA==",
+                  "label": "Nom",
+                  "stringValue": "Paul2",
+                  "champDescriptor":
+                    {
+                      "id": "Q2hhbXAtNDE2Mjg0NN==",
+                      "label": "Nom",
+                      "type": "text",
+                      "required": "false",
+                      "__typename": "TextChampDescriptor",
+                      "description": "nom de famille"
+                    }
+                },
+                {
+                  "__typename": "Champ",
+                  "id": "Q2hhbXAtMzg2Mjc0MHwwMUhYWTI5WlQ1QjJZRDQ4NFFFRlFBN0VGSA==",
+                  "label": "Prénom",
+                  "stringValue": "Jean2",
+                  "champDescriptor":
+                    {
+                      "id": "Q2hhbXAtNDE2Mjg0NM==",
+                      "label": "Prénom",
+                      "type": "text",
+                      "required": "false",
+                      "__typename": "TextChampDescriptor",
+                      "description": "prénom"
+                    }
+                },
+                {
+                  "__typename": "Champ",
+                  "id": "Q2hhbXAtMjg2NjEzOXwwMUhYWTI5WlQ1QjJZRDQ4NFFFRlFBN0VGSA==",
+                  "label": "Age",
+                  "stringValue": "11",
+                  "champDescriptor":
+                    {
+                      "id": "Q2hhbXAtNTE2Mzg0NQ==",
+                      "label": "Age",
+                      "type": "text",
+                      "required": "false",
+                      "__typename": "TextChampDescriptor",
+                      "description": "age"
+                    }
+                }
+              ]
+            }
+          ]
+        }
+  DossierAnonymize-RC-1-1:
+    sourceId: "Q2hhbXAtNDE2Mjg0NN=="
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Paul"
+    parent: "@DossierAnonymize-RepetitionChamp"
+    parentRowIndex: 0
+    label: "Nom"
+    dossier: "@DossierAnonymize"
+    rawJson: {
+                  "__typename": "Champ",
+                  "id": "Q2hhbXAtMzg2MjczN3wwMUhYWTI5WlQ1QjJZRDQ4NFFFRlFBN0VGSA==",
+                  "label": "Nom",
+                  "stringValue": "Paul",
+                  "champDescriptor":
+                    {
+                      "id": "Q2hhbXAtNDE2Mjg0NN==",
+                      "label": "Nom",
+                      "type": "text",
+                      "required": "false",
+                      "__typename": "TextChampDescriptor",
+                      "description": "nom de famille"
+                    }
+                }
+  DossierAnonymize-RC-1-2:
+    sourceId: "Q2hhbXAtNDE2Mjg0NM=="
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Jean"
+    parent: "@DossierAnonymize-RepetitionChamp"
+    parentRowIndex: 0
+    label: "Prénom"
+    dossier: "@DossierAnonymize"
+    rawJson: {
+                  "__typename": "Champ",
+                  "id": "Q2hhbXAtMjg2NjAzOHwwMUhYWTI5WlQ1QjJZRDQ4NFFFRlFBN0VGSA==",
+                  "label": "Prénom",
+                  "stringValue": "Jean",
+                  "champDescriptor":
+                    {
+                      "id": "Q2hhbXAtNDE2Mjg0NM==",
+                      "label": "Prénom",
+                      "type": "text",
+                      "required": "false",
+                      "__typename": "TextChampDescriptor",
+                      "description": "prénom"
+                    }
+                }
+  DossierAnonymize-RC-1-3:
+    sourceId: "Q2hhbXAtNTE2Mzg0NQ=="
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "10"
+    parent: "@DossierAnonymize-RepetitionChamp"
+    parentRowIndex: 0
+    label: "Age"
+    dossier: "@DossierAnonymize"
+    rawJson: {
+                  "__typename": "Champ",
+                  "id": "Q2hhbXAtMjg2NjEzOHwwMUhYWTI5WlQ1QjJZRDQ4NFFFRlFBN0VGSA==",
+                  "label": "Age",
+                  "stringValue": "10",
+                  "champDescriptor":
+                    {
+                      "id": "Q2hhbXAtNTE2Mzg0NQ==",
+                      "label": "Age",
+                      "type": "text",
+                      "required": "false",
+                      "__typename": "TextChampDescriptor",
+                      "description": "age"
+                    }
+                }
+  DossierAnonymize-RC-2-1:
+    sourceId: "Q2hhbXAtNDE2Mjg0NN=="
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Paul2"
+    parent: "@DossierAnonymize-RepetitionChamp"
+    parentRowIndex: 1
+    label: "Nom"
+    dossier: "@DossierAnonymize"
+    rawJson: {
+                  "__typename": "Champ",
+                  "id": "Q2hhbXAtMzg2MjczOXwwMUhYWTI5WlQ1QjJZRDQ4NFFFRlFBN0VGSA==",
+                  "label": "Nom",
+                  "stringValue": "Paul2",
+                  "champDescriptor":
+                    {
+                      "id": "Q2hhbXAtNDE2Mjg0NN==",
+                      "label": "Nom",
+                      "type": "text",
+                      "required": "false",
+                      "__typename": "TextChampDescriptor",
+                      "description": "nom de famille"
+                    }
+                }
+  DossierAnonymize-RC-2-2:
+    sourceId: "Q2hhbXAtNDE2Mjg0NM=="
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "Jean2"
+    parent: "@DossierAnonymize-RepetitionChamp"
+    parentRowIndex: 1
+    label: "Prénom"
+    dossier: "@DossierAnonymize"
+    rawJson: {
+                  "__typename": "Champ",
+                  "id": "Q2hhbXAtMzg2Mjc0MHwwMUhYWTI5WlQ1QjJZRDQ4NFFFRlFBN0VGSA==",
+                  "label": "Prénom",
+                  "stringValue": "Jean2",
+                  "champDescriptor":
+                    {
+                      "id": "Q2hhbXAtNDE2Mjg0NM==",
+                      "label": "Prénom",
+                      "type": "text",
+                      "required": "false",
+                      "__typename": "TextChampDescriptor",
+                      "description": "prénom"
+                    }
+                }
+  DossierAnonymize-RC-2-3:
+    sourceId: "Q2hhbXAtNTE2Mzg0NQ=="
+    dsChampType: "TextChamp"
+    fieldSource: champs
+    type: string
+    stringValue: "11"
+    parent: "@DossierAnonymize-RepetitionChamp"
+    parentRowIndex: 1
+    label: "Age"
+    dossier: "@DossierAnonymize"
+    rawJson: {
+                  "__typename": "Champ",
+                  "id": "Q2hhbXAtMjg2NjEzOXwwMUhYWTI5WlQ1QjJZRDQ4NFFFRlFBN0VGSA==",
+                  "label": "Age",
+                  "stringValue": "11",
+                  "champDescriptor":
+                    {
+                      "id": "Q2hhbXAtNTE2Mzg0NQ==",
+                      "label": "Age",
+                      "type": "text",
+                      "required": "false",
+                      "__typename": "TextChampDescriptor",
+                      "description": "age"
+                    }
+                }
+   # endregion dossier19
