@@ -186,7 +186,73 @@ items:
                       "__typename": "TextChampDescriptor",
                       "description": "prénom"
                     }
+                },
+                {
+                  "__typename": "Champ",
+                  "id": "Q2hhbXAtMjg2NjEzOHwwMUhYWTI5WlQ1QjJZRDQ4NFFFRlFBN0VGSA==",
+                  "label": "Age",
+                  "stringValue": "10",
+                  "champDescriptor":
+                    {
+                      "id": "Q2hhbXAtNTE2Mzg0NQ==",
+                      "label": "Age",
+                      "type": "text",
+                      "required": "false",
+                      "__typename": "TextChampDescriptor",
+                      "description": "age"
+                    }
                 }
+
+              ]
+            },
+            {
+              "champs": [
+                {
+                  "__typename": "Champ",
+                  "id": "Q2hhbXAtMzg2MjczOXwwMUhYWTI5WlQ1QjJZRDQ4NFFFRlFBN0VGSA==",
+                  "label": "Nom",
+                  "stringValue": "Paul2",
+                  "champDescriptor":
+                    {
+                      "id": "Q2hhbXAtNDE2Mjg0NN==",
+                      "label": "Nom",
+                      "type": "text",
+                      "required": "false",
+                      "__typename": "TextChampDescriptor",
+                      "description": "nom de famille"
+                    }
+                },
+                {
+                  "__typename": "Champ",
+                  "id": "Q2hhbXAtMzg2Mjc0MHwwMUhYWTI5WlQ1QjJZRDQ4NFFFRlFBN0VGSA==",
+                  "label": "Prénom",
+                  "stringValue": "Jean2",
+                  "champDescriptor":
+                    {
+                      "id": "Q2hhbXAtNDE2Mjg0NM==",
+                      "label": "Prénom",
+                      "type": "text",
+                      "required": "false",
+                      "__typename": "TextChampDescriptor",
+                      "description": "prénom"
+                    }
+                },
+                {
+                  "__typename": "Champ",
+                  "id": "Q2hhbXAtMjg2NjEzOXwwMUhYWTI5WlQ1QjJZRDQ4NFFFRlFBN0VGSA==",
+                  "label": "Age",
+                  "stringValue": "11",
+                  "champDescriptor":
+                    {
+                      "id": "Q2hhbXAtNTE2Mzg0NQ==",
+                      "label": "Age",
+                      "type": "text",
+                      "required": "false",
+                      "__typename": "TextChampDescriptor",
+                      "description": "age"
+                    }
+                }
+
               ]
             }
           ]
