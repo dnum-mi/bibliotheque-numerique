@@ -262,7 +262,7 @@ export class DossierService extends BaseEntityService<Dossier> {
           this.tryAnonymiseFile(champ, dossier.files)
         } else if (champ.__typename === 'RepetitionChamp') { // Anonymise sub champ of repetition champ
           const subChampIdsAnonymise = []
-          champ.rows.forEach((row) => {
+          champ.rows?.forEach((row) => {
             row.champs.forEach((ch) => {
               if (ch.champDescriptor.id === mapping.id) {
                 this.logger.debug(`Anonymise sub champ of repetition champ ${champ.id}`)
@@ -272,7 +272,7 @@ export class DossierService extends BaseEntityService<Dossier> {
               }
             })
           })
-          champ.champs.forEach((ch) => {
+          champ.champs?.forEach((ch) => {
             if (subChampIdsAnonymise.includes(ch.id)) {
               ch.stringValue = anonymisedStringValue
               this.tryAnonymiseFile(ch, dossier.files)
