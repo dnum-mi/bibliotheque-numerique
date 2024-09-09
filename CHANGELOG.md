@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.17.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.17.0...v2.17.1) (2024-09-09)
+
+
+### Bug Fixes
+
+* build container rnf-server ([1b631b2](https://github.com/dnum-mi/bibliotheque_numerique/commit/1b631b2a9971d5d335f68dbf961ad8d5958701c1))
+
 ## [2.17.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.16.0...v2.17.0) (2024-09-09)
 
 
