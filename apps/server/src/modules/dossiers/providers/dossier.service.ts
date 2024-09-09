@@ -221,9 +221,13 @@ export class DossierService extends BaseEntityService<Dossier> {
     })
 
     // Anonymise data in fields
-    await this.fieldService.repository.update({
+    const fields = await this.fieldService.findWithFilter({
       dossierId: dossier.id,
       sourceId: In(mappingAnonymized.map((mapping) => mapping.id)),
+    })
+
+    await this.fieldService.repository.update({
+      id: In(fields.flatMap(f => f.parentId ? [f.parentId, f.id] : f.id)),
     }, {
       stringValue: anonymisedStringValue,
       dateValue: null,

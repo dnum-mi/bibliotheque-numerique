@@ -133,9 +133,12 @@ describe('Dossier sync processors', () => {
 
     const field = fieldsAnonymise.find(fa => fa.dsChampType === 'RepetitionChamp')
     expect(field).toBeDefined()
-    // TODO: Fix to do for the anonymization field of type RepetitionChamp
-    // expect(field.anonymisedAt).toBe(expect.any(Date))
-    // expect(field.rawJson).toBeNull()
+
+    expect(field).toMatchObject({
+      anonymisedAt: expect.any(Date),
+      rawJson: null,
+      dsChampType: 'RepetitionChamp',
+    })
 
     expect(fieldsAnonymise).toEqual(expect.arrayContaining([
       expect.objectContaining({
