@@ -1,5 +1,40 @@
 # Changelog
 
+## [2.17.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.16.0...v2.17.0) (2024-09-09)
+
+
+### Features
+
+* add configuration anonymization ([d90b0af](https://github.com/dnum-mi/bibliotheque_numerique/commit/d90b0af754dea6c7f886e296e74cdea64c5728e6))
+* add mapping anonymized in demarche and api for patch and get ([dceda37](https://github.com/dnum-mi/bibliotheque_numerique/commit/dceda3744056c43a3c553e21f6925a62abd37cd0))
+* **anonymization-champs:** entity and migration ([22a751f](https://github.com/dnum-mi/bibliotheque_numerique/commit/22a751f2b3f788a49bed05d1f290cca3f4014c30))
+* **anonymization-chmaps:** :wip: add new configuation event for anonymization ([957ad7d](https://github.com/dnum-mi/bibliotheque_numerique/commit/957ad7d60ad65f04912607828d97904a5d5be81a))
+* job and service for anonymisation the champs and annotations in dossier ([4307864](https://github.com/dnum-mi/bibliotheque_numerique/commit/430786487bfab0958d9c6f272bc7f4a03ef1235e))
+* migration for anonymisation ([90891d4](https://github.com/dnum-mi/bibliotheque_numerique/commit/90891d439d7fb1b1d2f0fc430e039669f654ce02))
+* no display fix-field and champs deleted in mappngColumn for anonymization ([fad9a72](https://github.com/dnum-mi/bibliotheque_numerique/commit/fad9a7219a05c401fba81b5679fbb8a16e9c668a))
+* set dateTraiment when synchronisation ([57349f5](https://github.com/dnum-mi/bibliotheque_numerique/commit/57349f5378bc440712bc1a8e9f2ab21e85fd72d7))
+* shared interface anonymization ([e247c96](https://github.com/dnum-mi/bibliotheque_numerique/commit/e247c9626ac8d2dc184aec4be22058be0832de4e))
+
+
+### Bug Fixes
+
+* add or remove all anonymized field in array ([cce9aaf](https://github.com/dnum-mi/bibliotheque_numerique/commit/cce9aaf6e2fe7fb6d881b8183a80607feaf50835))
+* **anonymization:** anonymize field of type repetitionChamp ([137e1be](https://github.com/dnum-mi/bibliotheque_numerique/commit/137e1be44de3508bf9d038a87ae073f840e16b9f))
+* **anonymization:** repetitionChamp use rows in new version or champs in old version ([448967a](https://github.com/dnum-mi/bibliotheque_numerique/commit/448967a8c8988c586f35ff3be664cbc7db63fc95))
+* **anonymization:** test-e2e for fields without repetitionChamp ([7927541](https://github.com/dnum-mi/bibliotheque_numerique/commit/792754103af7528c9ed0a00cfb0e7a22ae5e8e00))
+* can disable anonymisation for one demarche ([60e77dd](https://github.com/dnum-mi/bibliotheque_numerique/commit/60e77dd30196d8a07318381cd4d4c5b1d66648a5))
+* cron job run by event ([8c746ac](https://github.com/dnum-mi/bibliotheque_numerique/commit/8c746ac8b06a77670497059d6729c0e2caea03b3))
+* datas of anonymization can to be NULL ([60a7428](https://github.com/dnum-mi/bibliotheque_numerique/commit/60a742841c52a73ce6e5d10bd0762329c1fbe49f))
+* delete anomymised file in S3 ([08c324b](https://github.com/dnum-mi/bibliotheque_numerique/commit/08c324bd30fc80757fa8cf69ca69cb743c98dccd))
+* get date from dateChamp to dateValue of field ([1e59f8d](https://github.com/dnum-mi/bibliotheque_numerique/commit/1e59f8dd3df0b93c7f236f1e66755728be4c6620))
+* model of anonymization ([d3359e1](https://github.com/dnum-mi/bibliotheque_numerique/commit/d3359e1f66e5a137b6aec8d6aa76e14a11dc27f7))
+* optimise code for anonymise ([fc05c80](https://github.com/dnum-mi/bibliotheque_numerique/commit/fc05c8017e729ac5b60e1299240a4c41a969af54))
+* rename type MappingColunm ([56e55db](https://github.com/dnum-mi/bibliotheque_numerique/commit/56e55db9054075b9338f0b3258c261298d5e2ad0))
+* test e2e for anonymise ([1e2a007](https://github.com/dnum-mi/bibliotheque_numerique/commit/1e2a0079dc2353017131fc328232049e7ca05fb7))
+* update ds-api-client ([3cdecef](https://github.com/dnum-mi/bibliotheque_numerique/commit/3cdecef6a362423920f3eb3d08dbac38b9cc5b14))
+* wording ([2054edb](https://github.com/dnum-mi/bibliotheque_numerique/commit/2054edbc74c809ef54140c1ba77ceedc9f6fc836))
+* wording in fiche organisme ([ec8defa](https://github.com/dnum-mi/bibliotheque_numerique/commit/ec8defa15994eebf92616797be8b8e5e8447134d))
+
 ## [2.16.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.15.0...v2.16.0) (2024-07-25)
 
 
