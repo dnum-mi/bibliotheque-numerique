@@ -1,5 +1,5 @@
 {
-  "name": "rnf-client",
+  "name": "@biblio-num/rnf-client",
   "version": "2.17.1",
   "private": true,
   "scripts": {
