@@ -28,7 +28,7 @@ USER node
 
 # First install the dependencies (as they change less often)
 COPY --from=base --chown=node:root /app/out/json/ .
-COPY --from=base --chown=node:root /app/pnpm-lock.yaml ./pnpm-lock.yaml
+COPY --from=base --chown=node:root /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=base --chown=node:root /app/out/pnpm-workspace.yaml ./pnpm-workspace.yaml
 RUN pnpm install --frozen-lockfile
 COPY --from=base --chown=node:root /app/out/full/ .
