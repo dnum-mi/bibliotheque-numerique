@@ -13,7 +13,7 @@ describe('Dossier sync processors', () => {
   let dossierService: DossierService
   let fieldService: FieldService
   let syncQueue: Queue
-  const anomymisedValue = 'Anonymised'
+  const anomymisedValue = 'Anonymisé'
   const demandeurKeys = ['nom', 'prenom', 'civilite']
 
   beforeEach(async () => {
