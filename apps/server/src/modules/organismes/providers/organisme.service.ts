@@ -21,6 +21,8 @@ import {
   eBnConfiguration,
   ISiafRnfOutput,
   IAddress,
+  ISiafAssociationOutput,
+  ISiafFondationOutput,
 } from '@biblio-num/shared'
 
 import { OrganismeFieldTypeHash } from '@/modules/organismes/objects/const/organisme-field-type-hash.const'
@@ -48,6 +50,7 @@ import {
 import { BnConfigurationService } from '@/shared/modules/bn-configurations/providers/bn-configuration.service'
 import { addYears } from 'date-fns'
 import { getCodeByRegionName } from '../utils/utils.regions'
+import { SiafService } from './siaf.service'
 
 @Injectable()
 export class OrganismeService extends BaseEntityService<Organisme> {
@@ -56,6 +59,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     @InjectRepository(Organisme) repo: Repository<Organisme>,
     protected readonly rnfService: RnfService,
     protected readonly rnaService: RnaService,
+    protected readonly siafService: SiafService,
     private readonly fileService: FileService,
     protected readonly dossierService: DossierService,
     @InjectQueue(QueueName.file) private readonly fileQueue: Queue,
@@ -236,6 +240,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
 
   async updateOrganismeFromRna(idRna: string, raw: IRnaOutput): Promise<void> {
     this.logger.verbose(`updateOrganismeFromRna ${idRna}`)
+    // TODO: A factoriser
     const a = raw.adresse_siege || null
     const addressStreetAddress = a
       ? ['numero_voie', 'type_voie', 'libelle_voie']
@@ -343,5 +348,25 @@ export class OrganismeService extends BaseEntityService<Organisme> {
       )
       .andWhere('"entity"."idRnf" IS NOT NULL')
       .getMany()
+  }
+
+  async getAssocationFromSiaf(idRna: string): Promise< ISiafAssociationOutput | null> {
+    this.logger.verbose('getAssocationFromSiaf')
+    const enableSiaf = await this.bnConfiguration.getValueByKeyName(eBnConfiguration.ENABLE_SIAF)
+    if (!enableSiaf) return null
+    const fromSiaf = await this.siafService.getAssociation(idRna)
+    this.logger.debug({ FN: 'getAssocationFromSiaf', idRna })
+    if (!fromSiaf) return null
+    return fromSiaf.associations
+  }
+
+  async getFondationFromSiaf(idRnf: string): Promise<ISiafFondationOutput | null> {
+    this.logger.verbose('getFondationFromSiaf')
+    const enableSiaf = await this.bnConfiguration.getValueByKeyName(eBnConfiguration.ENABLE_SIAF)
+    if (!enableSiaf) return null
+    const fromSiaf = await this.siafService.getFoundation(idRnf)
+    this.logger.debug({ FN: 'getFondationFromSiaf', idRnf })
+    if (!fromSiaf) return null
+    return fromSiaf.fondations
   }
 }

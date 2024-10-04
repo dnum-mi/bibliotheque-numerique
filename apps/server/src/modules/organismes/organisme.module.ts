@@ -12,6 +12,7 @@ import { OrganismeFileController } from '@/modules/organismes/controllers/organi
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
 import { BullModule, BullModuleOptions } from '@nestjs/bull'
 import { BnConfigurationModule } from '@/shared/modules/bn-configurations/bn-configuration.module'
+import { SiafService } from './providers/siaf.service'
 
 @Module({
   imports: [
@@ -28,7 +29,7 @@ import { BnConfigurationModule } from '@/shared/modules/bn-configurations/bn-con
     BnConfigurationModule,
   ],
   controllers: [OrganismeController, OrganismeFileController],
-  providers: [OrganismeService, RnaService, RnfService],
-  exports: [OrganismeService, RnfService, RnaService],
+  providers: [OrganismeService, RnaService, RnfService, SiafService],
+  exports: [OrganismeService, RnfService, RnaService, SiafService],
 })
 export class OrganismeModule {}
