@@ -38,6 +38,7 @@ import type {
   IDemarcheOption,
   IMappingAnonymizedChamp,
   IUpdateAnonymedChamp,
+  IOrganismeOutput,
 } from '@biblio-num/shared'
 
 import {
@@ -220,15 +221,15 @@ export const organismeApiClient = {
     return response.data
   },
 
-  getOrganismeById: async (organismeId: string): Promise<IOrganisme> => {
+  getOrganismeById: async (organismeId: string): Promise<IOrganismeOutput> => {
     return getOrRedirectTo404(getOrganismeByIdRoute(+organismeId))
   },
 
-  getOrganismeByRna: async (organismeIdRna: string): Promise<IOrganisme> => {
+  getOrganismeByRna: async (organismeIdRna: string): Promise<IOrganismeOutput> => {
     return getOrRedirectTo404(getOrganismeByRnaRoute(organismeIdRna))
   },
 
-  getOrganismeByRnf: async (organismeIdRnf: string): Promise<IOrganisme> => {
+  getOrganismeByRnf: async (organismeIdRnf: string): Promise<IOrganismeOutput> => {
     return getOrRedirectTo404(getOrganismeByRnfRoute(organismeIdRnf))
   },
 

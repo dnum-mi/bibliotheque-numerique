@@ -5,6 +5,7 @@ import {
   Get,
   Header,
   HttpCode,
+  NotFoundException,
   Param,
   ParseIntPipe, Patch,
   Post,
@@ -17,6 +18,8 @@ import {
   Roles,
   mapOrganismeFieldHeader,
   IOrganisme,
+  IOrganismeOutput,
+  typeCategorieOrganisme,
 } from '@biblio-num/shared'
 
 import { DossierService } from '@/modules/dossiers/providers/dossier.service'
@@ -96,12 +99,33 @@ export class OrganismeController {
   @Role(Roles.instructor)
   async getOrganisme(
     @Param('organismeId', ParseIntPipe) id: number,
-  ): Promise<IOrganisme> {
+  ): Promise<IOrganismeOutput> {
     this.logger.verbose('getOrganisme')
     if (isNaN(id)) {
       throw new BadRequestException('Invalid id')
     }
-    return this.organismeService.findOneOrThrow({ where: { id } })
+
+    const bn = await this.organismeService.findOneOrThrow({ where: { id } })
+    if (bn.idRna) {
+      return {
+        bn,
+        siaf: await this.organismeService.getAssocationFromSiaf(bn.idRna),
+        type: typeCategorieOrganisme.rna,
+      }
+    } else if (bn.idRnf) {
+      return {
+        bn,
+        siaf: await this.organismeService.getFondationFromSiaf(bn.idRnf),
+        type: typeCategorieOrganisme.rnf,
+      }
+    } else {
+      this.logger.warn(`Numéro RNA et Numéro RNF manquant pour l'organisme ${id}`)
+      return {
+        bn,
+        siaf: null,
+        type: typeCategorieOrganisme.unknown,
+      }
+    }
   }
 
   @UsualApiOperation({
@@ -114,9 +138,27 @@ export class OrganismeController {
   @Role(Roles.instructor)
   async getOrganismeWithRna(
     @Param('organismeIdRna') idRna: string,
-  ): Promise<IOrganisme> {
+  ): Promise<IOrganismeOutput> {
     this.logger.verbose('getOrganismeWithRna')
-    return this.organismeService.findOneOrThrow({ where: { idRna } })
+    const organisme: IOrganismeOutput = {
+      bn: null,
+      siaf: null,
+      type: typeCategorieOrganisme.rna,
+    }
+    const results = await Promise.allSettled([
+      this.organismeService.findOneOrThrow({ where: { idRna } }),
+      this.organismeService.getAssocationFromSiaf(idRna),
+    ])
+    results.forEach((result, index) => {
+      result.status === 'rejected'
+        ? this.logger.warn(`${(index === 0 ? 'bn' : 'siaf')}: ${result.reason}`)
+        : organisme[index === 0 ? 'bn' : 'siaf'] = result.value
+    })
+
+    if (!organisme.bn && !organisme.siaf) {
+      throw new NotFoundException(`L'association ${idRna} non trouvé`)
+    }
+    return organisme
   }
 
   @UsualApiOperation({
@@ -129,9 +171,26 @@ export class OrganismeController {
   @Role(Roles.instructor)
   async getOrganismeWithRnf(
     @Param('organismeIdRnf') idRnf: string,
-  ): Promise<IOrganisme> {
+  ): Promise<IOrganismeOutput> {
     this.logger.verbose('getOrganismeWithRnf')
-    return this.organismeService.findOneOrThrow({ where: { idRnf } })
+    const organisme: IOrganismeOutput = {
+      bn: null,
+      siaf: null,
+      type: typeCategorieOrganisme.rnf,
+    }
+    const results = await Promise.allSettled([
+      this.organismeService.findOneOrThrow({ where: { idRnf } }),
+      this.organismeService.getFondationFromSiaf(idRnf),
+    ])
+    results.forEach((result, index) => {
+      result.status === 'rejected'
+        ? this.logger.warn(`${(index === 0 ? 'bn' : 'siaf')}: ${result.reason}`)
+        : organisme[index === 0 ? 'bn' : 'siaf'] = result.value
+    })
+    if (!organisme.bn && !organisme.siaf) {
+      throw new NotFoundException(`La fondation ${idRnf} non trouvé`)
+    }
+    return organisme
   }
 
   @ApiOperation({

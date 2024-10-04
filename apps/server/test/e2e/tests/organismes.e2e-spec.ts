@@ -5,6 +5,7 @@ import { Cookies, TestingModuleFactory } from '../common/testing-module.factory'
 import { Organisme } from '@/modules/organismes/objects/organisme.entity'
 import { OrganismeService } from '@/modules/organismes/providers/organisme.service'
 import { PaginationDto } from '@/shared/pagination/pagination.dto'
+import { typeCategorieOrganisme } from '@biblio-num/shared'
 
 // those object matches fixtures
 const renault = {
@@ -106,7 +107,11 @@ describe('Organismes (e2e)', () => {
         .set('Cookie', [cookies.instructor])
         .expect(200)
         .then(({ body }) => {
-          expect(body).toMatchObject(renault)
+          expect(body).toMatchObject({
+            bn: renault,
+            siaf: null,
+            type: typeCategorieOrganisme.rnf,
+          })
         })
     })
   })
@@ -145,7 +150,11 @@ describe('Organismes (e2e)', () => {
         .set('Cookie', [cookies.instructor])
         .expect(200)
         .then(({ body }) => {
-          expect(body).toMatchObject(bmw)
+          expect(body).toMatchObject({
+            bn: bmw,
+            siaf: null,
+            type: typeCategorieOrganisme.rna,
+          })
         })
     })
   })
@@ -183,7 +192,11 @@ describe('Organismes (e2e)', () => {
         .set('Cookie', [cookies.instructor])
         .expect(200)
         .then(({ body }) => {
-          expect(body).toMatchObject(renault)
+          expect(body).toMatchObject({
+            bn: renault,
+            siaf: null,
+            type: typeCategorieOrganisme.rnf,
+          })
         })
     })
   })

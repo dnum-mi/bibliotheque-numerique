@@ -117,6 +117,14 @@ describe('bn-configurations (e2e)', () => {
           stringValue: 'false',
           valueType: 'boolean',
         },
+        {
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String),
+          id: 9,
+          keyName: eBnConfiguration.ENABLE_SIAF,
+          stringValue: 'false',
+          valueType: 'boolean',
+        },
       ])
     })
   })

@@ -7,6 +7,7 @@ import { useOrganismeStore } from '@/stores/organisme'
 import LayoutList from '@/components/Layout/LayoutList.vue'
 import AgGridServerSide from '@/components/ag-grid/server-side/AgGridServerSide.vue'
 import { listOrganismeColumnDef } from '@/views/organismes/list/column-def.const'
+import type { OrganismeIdType } from '@/stores'
 
 const organismeStore = useOrganismeStore()
 const router = useRouter()
@@ -16,12 +17,14 @@ const apiCall = async (params: IPagination<IOrganisme>) => {
 }
 
 const onSelectionChanged = (event: SelectionChangedEvent) => {
-  const id = event.api.getSelectedRows()?.[0]?.id
+  const selection = event.api.getSelectedRows()?.[0]
+  const id = selection?.idRna || selection?.idRnf
   if (id) {
+    const idType: OrganismeIdType = (selection?.idRna ? 'Rna' : 'Rnf') satisfies OrganismeIdType
     router.push({
       name: 'FicheOrganisme',
       params: { id },
-      query: { idType: 'Id' },
+      query: { idType },
     })
   }
 }

@@ -44,6 +44,8 @@ export const getDossierFilesSummaryRoute = (dossierId: number) => `${dossierRout
 export const getOrganismeByIdRoute = (organismeId: number) => `${organismesRoute}/${organismeId}`
 export const getOrganismeByRnaRoute = (organismeRna: string) => `${organismesRoute}/rna/${organismeRna}`
 export const getOrganismeByRnfRoute = (organismeRnf: string) => `${organismesRoute}/rnf/${organismeRnf}`
+export const getAssociationRoute = (organismeRna: string) => `${organismesRoute}/association/${organismeRna}`
+export const getFoundationRoute = (organismeRnf: string) => `${organismesRoute}/fondation/${organismeRnf}`
 
 export const customFiltersRoute = '/custom-filters'
 export const getCustomFiltersRoute = () => customFiltersRoute

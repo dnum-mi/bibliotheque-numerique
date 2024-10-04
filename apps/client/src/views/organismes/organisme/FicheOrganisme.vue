@@ -8,11 +8,13 @@ import ListeDossier from './ListeDossier.vue'
 import OrganismeBadge from '@/components/Badges/organisme/OrganismeBadge.vue'
 import { type OrganismeIdType, useOrganismeStore, useUserStore } from '@/stores'
 import AttachedFileList from '@/components/ag-grid/files/AttachedFileList.vue'
-import type { IFileOutput, IPagination, IRole, FileTagKey } from '@biblio-num/shared'
+import type { IFileOutput, IPagination, IRole, FileTagKey, ISiafFondationOutput, ISiafAssociationOutput } from '@biblio-num/shared'
 import { Prefecture, dFileTabDictionary } from '@biblio-num/shared'
 import type { ApiCall } from '@/components/ag-grid/server-side/pagination.utils'
 import FicheOrganismePersons from './FicheOrganismePersons.vue'
 import TooltipAddress from './TooltipAddress.vue'
+import FicheInfoAssociaiton from './FicheInfoAssociaiton.vue'
+import FicheInfoFondation from './FicheInfoFondation.vue'
 
 const props = withDefaults(defineProps<{ id: string; idType: OrganismeIdType }>(), {})
 
@@ -22,9 +24,11 @@ const organismeStore = useOrganismeStore()
 const userStore = useUserStore()
 
 const organisme = computed(() => organismeStore.organisme)
+const organismeSiaf = computed(() => organismeStore.organismeSiaf)
+const hasSiaf = computed(() => !!organismeStore.organismeSiaf)
 const prefecture = computed<string>(
   () => {
-    const prefkey = `D${organismeStore.organisme?.addressPostalCode?.substring(0, 2) || ''}`
+    const prefkey = `D${organisme.value?.addressPostalCode?.substring(0, 2) || ''}`
     return Prefecture[prefkey as keyof typeof Prefecture] || ''
   },
 )
@@ -33,20 +37,31 @@ const dissolution = computed(() => dateToStringFr(organisme.value?.dateDissoluti
 
 const filesSummary = ref<Record<FileTagKey, number> | Record<string, never>>({})
 
-const tabTitles = computed(() => [
-  {
-    title: 'Infos',
-    tabId: 'tab-0',
-    panelId: 'tab-content-0',
-  },
-  ...Object.entries(filesSummary.value).map(([tag, count], index: number) => {
-    return {
-      title: `${dFileTabDictionary[tag as FileTagKey]} (${count})`,
-      tabId: `tab-${index + 1}`,
-      panelId: `tab-content-${index + 1}`,
-    }
-  }),
-])
+const tabTitles = computed(() => {
+  let headers = []
+
+  if (hasSiaf.value) {
+    headers.push({
+      title: 'Infos-SIAF',
+      tabId: 'tab-0',
+      panelId: 'tab-content-0',
+    })
+  }
+  if (organisme.value) {
+    headers = headers.concat([{
+      title: 'Infos',
+      tabId: 'tab-1',
+      panelId: 'tab-content-1',
+    }, ...Object.entries(filesSummary.value).map(([tag, count], index: number) => {
+      return {
+        title: `${dFileTabDictionary[tag as FileTagKey]} (${count})`,
+        tabId: `tab-${index + 2}`,
+        panelId: `tab-content-${index + 2}`,
+      }
+    })])
+  }
+  return headers
+})
 
 // TODO: use router to prevent user to access this page if not logged in or without the right role
 const role = computed<IRole | undefined>(() => userStore.currentUser?.role)
@@ -54,6 +69,7 @@ const role = computed<IRole | undefined>(() => userStore.currentUser?.role)
 const isLoading = ref(false)
 onMounted(async () => {
   isLoading.value = true
+
   try {
     await organismeStore.loadOrganisme(props.id, props.idType)
   } finally {
@@ -93,27 +109,38 @@ const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutpu
   <div v-if="isLoading">
     Chargement en cours, veuillez patienter...
   </div>
-  <div v-else-if="!organisme">
+  <div v-else-if="!(organisme || hasSiaf)">
     Organisme introuvable (id {{ idType }} {{ id }})
   </div>
   <div
-    v-if="organisme && !isLoading"
+    v-if="(organisme || hasSiaf) && !isLoading"
     class="flex flex-grow gap-2 h-full overflow-auto"
   >
     <LayoutFiche
-      class="flex-basis-[60%] overflow-auto"
+      :class="organisme?.id ? 'flex-basis-[60%]' : 'flex-basis-[99%]'"
+      class="overflow-auto"
       title-bg-color="var(--grey-200-850)"
       title-fg-color="var(--text-inverted-grey)"
     >
-      <template #title>
+      <template v-if="organisme" #title>
         <OrganismeBadge
-          :type="organisme.type"
+          :type="organisme?.type"
           class="mr-4"
           big
         />
-        <span class="fr-text--lead fr-text--bold">{{ organisme.idRna || organisme.idRnf }} - </span>
-        <span class="fr-text--lead">{{ organisme.title }}</span>
+        <span class="fr-text--lead fr-text--bold">{{ organisme?.idRna || organisme?.idRnf }} - </span>
+        <span class="fr-text--lead">{{ organisme?.title }}</span>
       </template>
+      <template v-else #title>
+        <OrganismeBadge
+          :type="(organismeSiaf as ISiafFondationOutput)?.identite.type_fondation || 'CULTE'"
+          class="mr-4"
+          big
+        />
+        <span class="fr-text--lead fr-text--bold">{{ (organismeSiaf as ISiafAssociationOutput)?.identite.id_rna || (organismeSiaf as ISiafFondationOutput)?.identite.id_rnf }} - </span>
+        <span class="fr-text--lead">{{ organismeSiaf?.identite.nom }}</span>
+      </template>
+
       <template #content>
         <div class="w-full h-full pl-4">
           <DsfrTabs
@@ -125,27 +152,37 @@ const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutpu
             @select-tab="select"
           >
             <DsfrTabContent
+              v-if="organismeSiaf"
               panel-id="tab-content-0"
               tab-id="tab-0"
               :selected="selected === 0"
+              :asc="ascendant"
+            >
+              <FicheInfoAssociaiton v-if="idType === 'Rna'" :organisme-raf="(organismeSiaf as ISiafAssociationOutput)" />
+              <FicheInfoFondation v-if="idType === 'Rnf'" :organisme-raf="(organismeSiaf as ISiafFondationOutput)" />
+            </DsfrTabContent>
+            <DsfrTabContent
+              panel-id="tab-content-1"
+              tab-id="tab-1"
+              :selected="selected === (hasSiaf ? 1 : 0)"
               :asc="ascendant"
             >
               <div class="flex flex-col gap-6">
                 <div class="flex gap-4">
                   <div class="flex-grow">
                     <label class="bn-fiche-sub-title--label">SIÈGE SOCIAL</label>
-                    <TooltipAddress :show="!!(organisme.addressLabel && !organisme.addressType)" />
+                    <TooltipAddress :show="!!(organisme?.addressLabel && !organisme?.addressType)" />
                     <span class="bn-fiche-sub-title--text">
-                      {{ organisme.addressLabel }}
+                      {{ organisme?.addressLabel }}
                     </span>
                   </div>
                   <div class="flex-grow">
                     <label class="bn-fiche-sub-title--label">TÉLÉPHONE</label>
-                    <span class="bn-fiche-sub-title--text">{{ organisme.phoneNumber }}</span>
+                    <span class="bn-fiche-sub-title--text">{{ organisme?.phoneNumber }}</span>
                   </div>
                   <div class="flex-grow">
                     <label class="bn-fiche-sub-title--label">COURRIEL</label>
-                    <span class="bn-fiche-sub-title--text">{{ organisme.email }}</span>
+                    <span class="bn-fiche-sub-title--text">{{ organisme?.email }}</span>
                   </div>
                   <div class="flex-grow">
                     <label class="bn-fiche-sub-title--label">PRÉFECTURE</label>
@@ -174,17 +211,17 @@ const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutpu
               </div>
               <div class="p-t-6">
                 <FicheOrganismePersons
-                  v-if="organisme.persons"
-                  :persons="organisme.persons"
+                  v-if="organisme?.persons"
+                  :persons="organisme?.persons"
                 />
               </div>
             </DsfrTabContent>
             <DsfrTabContent
               v-for="(tag, idx) in Object.keys(filesSummary)"
               :key="tag"
-              :panel-id="`tab-content-${idx + 1}`"
-              :tab-id="`tab-${idx + 1}`"
-              :selected="selected === idx + 1"
+              :panel-id="`tab-content-${idx + 2}`"
+              :tab-id="`tab-${idx + 2}`"
+              :selected="selected === idx + 1 + (hasSiaf ? 1 : 0)"
               :asc="ascendant"
             >
               <AttachedFileList
@@ -211,7 +248,7 @@ const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutpu
       </template>
     </LayoutFiche>
 
-    <div class="flex-basis-[40%] overflow-auto flex flex-col fr-pr-2w">
+    <div v-if="organisme?.id" class="flex-basis-[40%] overflow-auto flex flex-col fr-pr-2w">
       <div class="fr-p-3w flex align-center gap-3">
         <div class="bn-icon--green-archipel">
           <span
@@ -225,7 +262,7 @@ const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutpu
       </div>
       <div class="w-full">
         <ListeDossier
-          :organisme-id="organisme.id"
+          :organisme-id="organisme?.id"
           :role="role"
         />
       </div>

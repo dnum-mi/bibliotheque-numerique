@@ -8,7 +8,8 @@ const bnConfigurations = [
   'LAST_ORGANISM_SYNC_AT',
   'DDC_FIRST_CONTROL_YEAR',
   'DDC_MONTH_BEFORE_MISSING',
-  'ENABLE_RNF_SIAF'
+  'ENABLE_RNF_SIAF',
+  'ENABLE_SIAF'
 ] as const
 
 export type BnConfigurationKey = typeof bnConfigurations[number]

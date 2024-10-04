@@ -46,4 +46,8 @@ export const BnConfigurationDefault: Record<
     stringValue: 'false',
     type: eBnConfigurationType.boolean,
   },
+  [eBnConfiguration.ENABLE_SIAF]: {
+    stringValue: 'false',
+    type: eBnConfigurationType.boolean,
+  },
 }
