@@ -35,7 +35,6 @@ export class FoundationController {
   @Post('')
   // TODO: this route should be white listed for RNF FRONT
   @ApiOperation({ summary: 'Créer une fondation.' })
-
   @ApiConflictResponse({
     description: 'Une ou des fondations similaires ont été trouvées.',
   })
