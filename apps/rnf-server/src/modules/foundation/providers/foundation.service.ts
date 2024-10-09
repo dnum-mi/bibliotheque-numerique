@@ -8,7 +8,10 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { CreateFoundationDto } from '@/modules/foundation/objects/dto/create-foundation.dto'
-import { createRnfId } from '@/shared/utils/rnf-id.utils'
+import {
+  createRnfId,
+  FountationInformationToCreateRnf,
+} from '@/shared/utils/rnf-id.utils'
 import { formatPhoneNumber } from '@/shared/utils/number.utils'
 import { CollisionException } from '@/shared/exceptions/collision.exception'
 import { ConfigService } from '@nestjs/config'
@@ -59,6 +62,19 @@ export class FoundationService extends BaseEntityService {
   }
 
   //#region Create Foundation
+  private _createRnfIfWithTestDigit(
+    dto: FountationInformationToCreateRnf,
+  ): string {
+    // except for production, we use a marker digit inside the department to encode it is not a **real** RNF-ID
+    if (this.config.get('runEnv') !== 'production') {
+      const d = dto.foundation.department
+      /* if len = 3 it means that the department is DROM, like 9XX => We transform it to 4XX.
+       Otherwise we just add 5. Paris becomes => 575 */
+      dto.foundation.department = d.length === 3 ? '4' + d.slice(1) : '5' + d
+    }
+    return createRnfId(dto)
+  }
+
   private async _findIdOfCollision(
     dto: CreateFoundationDto,
   ): Promise<{ id: number }[]> {
@@ -67,17 +83,25 @@ export class FoundationService extends BaseEntityService {
     return this.prisma.$queryRaw`
       SELECT "Foundation".id, "Address".label
       FROM "Foundation"
-      LEFT JOIN "Address" ON "Foundation"."addressId" = "Address".id
-      WHERE
-        "Foundation"."type"::text = ${dto.type} AND
-        (
-            "Foundation"."email" = ${dto.email} OR
-            "Foundation"."phone" = ${dto.phone} OR
-            "Address"."label" = ${dto.address.label} OR
-            similarity(
-                lower(unaccent(replace("Foundation"."title", ' ', ''))),
-                lower(unaccent(replace(${dto.title}, ' ', '')))
-            ) > ${this.config.get('foundationTitleSimilarityThreshold')}
+             LEFT JOIN "Address" ON "Foundation"."addressId" = "Address".id
+      WHERE "Foundation"."type"::text = ${dto.type}
+        AND
+          (
+        "Foundation"."email" = ${dto.email}
+         OR
+        "Foundation"."phone" = ${dto.phone}
+         OR
+        "Address"."label" = ${dto.address.label}
+         OR
+        similarity(
+        lower (unaccent(replace("Foundation"."title"
+          , ' '
+          , '')))
+          , lower (unaccent(replace(${dto.title}
+          , ' '
+          , '')))
+        )
+          > ${this.config.get('foundationTitleSimilarityThreshold')}
         );
     ` as Promise<{ id: number }[]>
   }
@@ -124,14 +148,13 @@ export class FoundationService extends BaseEntityService {
     this.logger.verbose('CreateFoundation')
     const code = dto.department
     if (!code) {
-      throw new BadRequestException(
-        'Department is required.',
-      )
+      throw new BadRequestException('Department is required.')
     }
     if (!dto.originalCreatedAt) {
       throw new BadRequestException(
-        `${dto.type === FoundationType.FRUP ? 'FRUP: ' : ''}orginal created date is requied`,
-
+        `${
+          dto.type === FoundationType.FRUP ? 'FRUP: ' : ''
+        }orginal created date is requied`,
       )
     }
 
@@ -168,7 +191,7 @@ export class FoundationService extends BaseEntityService {
       const index = await prisma.foundation.count({
         where: { type: dto.type, department: code },
       })
-      const rnfId = createRnfId({ foundation, index })
+      const rnfId = this._createRnfIfWithTestDigit({ foundation, index })
       await prisma.foundation.update({
         where: { id: foundation.id },
         data: { rnfId },
@@ -298,13 +321,33 @@ export class FoundationService extends BaseEntityService {
 
   //#region update foundation
   public async triggerAllRefresh() {
-    this.logger.log(`Refreshing foundation at ${this.dsConfigurationService.configuration.foundationRefreshedAt}`)
-    await this.handleCronJob(this.triggerFeModificationRefresh.bind(this), 'FE-Modification')
-    await this.handleCronJob(this.triggerFddModificationRefresh.bind(this), 'FDD-Modification')
-    await this.handleCronJob(this.triggerFeDissolution.bind(this), 'FE-Dissolution')
-    await this.handleCronJob(this.triggerFddDissolution.bind(this), 'FDD-Dissolution')
-    await this.handleCronJob(this.triggerFeAdministrationChanges.bind(this), 'FE-Administration')
-    await this.handleCronJob(this.triggerFddAdministrationChanges.bind(this), 'FDD-Administration')
+    this.logger.log(
+      `Refreshing foundation at ${this.dsConfigurationService.configuration.foundationRefreshedAt}`,
+    )
+    await this.handleCronJob(
+      this.triggerFeModificationRefresh.bind(this),
+      'FE-Modification',
+    )
+    await this.handleCronJob(
+      this.triggerFddModificationRefresh.bind(this),
+      'FDD-Modification',
+    )
+    await this.handleCronJob(
+      this.triggerFeDissolution.bind(this),
+      'FE-Dissolution',
+    )
+    await this.handleCronJob(
+      this.triggerFddDissolution.bind(this),
+      'FDD-Dissolution',
+    )
+    await this.handleCronJob(
+      this.triggerFeAdministrationChanges.bind(this),
+      'FE-Administration',
+    )
+    await this.handleCronJob(
+      this.triggerFddAdministrationChanges.bind(this),
+      'FDD-Administration',
+    )
 
     this.logger.log('Setting lastRefreshedAt')
     await this.dsConfigurationService.updateConfiguration({
@@ -351,7 +394,8 @@ export class FoundationService extends BaseEntityService {
   public async triggerFeAdministrationChanges(): Promise<void> {
     await this._lookForFoundationChange(
       'Administration changes of FE',
-      this.dsConfigurationService.configuration.dsDemarcheFEAdministrationChangesId,
+      this.dsConfigurationService.configuration
+        .dsDemarcheFEAdministrationChangesId,
       FoundationChangeType.Administration,
     )
   }
@@ -359,7 +403,8 @@ export class FoundationService extends BaseEntityService {
   public async triggerFddAdministrationChanges(): Promise<void> {
     await this._lookForFoundationChange(
       'Administration changes of FDD',
-      this.dsConfigurationService.configuration.dsDemarcheFDDAdministrationChangesId,
+      this.dsConfigurationService.configuration
+        .dsDemarcheFDDAdministrationChangesId,
       FoundationChangeType.Administration,
     )
   }
@@ -400,9 +445,14 @@ export class FoundationService extends BaseEntityService {
 
     return this.prisma.$transaction(async (prisma) => {
       let cascadeUpdatePersons = {}
-      if (dto.personInFoundationToCreate && dto.personInFoundationToCreate.length > 0) {
+      if (
+        dto.personInFoundationToCreate &&
+        dto.personInFoundationToCreate.length > 0
+      ) {
         this.logger.debug('The personInFoundation not empty')
-        cascadeUpdatePersons = this._cascadeCreatePersons(dto as CreateFoundationDto)
+        cascadeUpdatePersons = this._cascadeCreatePersons(
+          dto as CreateFoundationDto,
+        )
         await prisma.personInFoundation.deleteMany({
           where: { foundationId: foundation.id },
         })
@@ -450,10 +500,11 @@ export class FoundationService extends BaseEntityService {
     this.logger.verbose('_lookForFoundationChange')
     this.logger.log(`Checking for: ${name}`)
 
-    const dsDemarche: IDsApiClientDemarche = await this.dsService.getOneDemarcheWithDossier(
-      dsDemarcheId,
-      this.dsConfigurationService.configuration.foundationRefreshedAt,
-    )
+    const dsDemarche: IDsApiClientDemarche =
+      await this.dsService.getOneDemarcheWithDossier(
+        dsDemarcheId,
+        this.dsConfigurationService.configuration.foundationRefreshedAt,
+      )
 
     const dossiers = dsDemarche.demarche.dossiers.nodes
     this.logger.log(`${dossiers.length} dosssiers found`)
@@ -475,7 +526,10 @@ export class FoundationService extends BaseEntityService {
         )
 
         let dto: UpdateFoundationDto = {}
-        if (changeType === FoundationChangeType.Modification || changeType === FoundationChangeType.Administration) {
+        if (
+          changeType === FoundationChangeType.Modification ||
+          changeType === FoundationChangeType.Administration
+        ) {
           dto = this.dsMapperService.mapDossierToDto(
             dossier,
             this.dsConfigurationService.getMapperFromDemarcheDsId(dsDemarcheId),
@@ -486,25 +540,35 @@ export class FoundationService extends BaseEntityService {
 
         await this.updateFoundation(rnfId, dto)
       } catch (e) {
-        this.logger.error(`Error updating dossier ${dossier.number} and foundation ${rnfId ?? 'no value'}`)
+        this.logger.error(
+          `Error updating dossier ${dossier.number} and foundation ${
+            rnfId ?? 'no value'
+          }`,
+        )
         this.logger.error(e as Error)
         console.log(e)
       }
     }
   }
 
-  private async _checkRnfIdForFoundationChange(dossier: DossierWithCustomChamp) {
+  private async _checkRnfIdForFoundationChange(
+    dossier: DossierWithCustomChamp,
+  ) {
     this.logger.verbose('_checkRnfIdForFoundationChange')
     const rnfId = this.checkIfRnfInAcceptedDossier(dossier)
     if (!rnfId) {
-      this.logger.verbose(`No RNF-ID in dossier ${dossier.number} or dossier not accepted`)
+      this.logger.verbose(
+        `No RNF-ID in dossier ${dossier.number} or dossier not accepted`,
+      )
       return null
     }
     const foundation = await this.prisma.foundation.findFirst({
       where: { rnfId, dissolvedAt: null },
     })
     if (!foundation) {
-      this.logger.verbose(`Foundation with rnfId ${rnfId} not found or dissolved`)
+      this.logger.verbose(
+        `Foundation with rnfId ${rnfId} not found or dissolved`,
+      )
       return null
     }
     return rnfId
