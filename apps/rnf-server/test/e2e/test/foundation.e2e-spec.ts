@@ -3,6 +3,7 @@ import * as request from 'supertest'
 import { PrismaService } from '@/shared/modules/prisma/providers/prisma.service'
 import { testingModuleFactory } from '../testing-module.factory'
 import { insertDumbFoundation } from './tools'
+import { ConfigService } from '@nestjs/config'
 
 const createFoundationDtoFromDossier17 = {
   title:
@@ -142,7 +143,7 @@ describe('Foundation Controller (e2e)', () => {
         .expect(201)
 
       expect(result.body).toEqual({
-        rnfId: '033-FDD-00001-02',
+        rnfId: '533-FDD-00001-04',
         ds: {
           dossierId: 17,
           demarcheId: 37,
@@ -150,13 +151,13 @@ describe('Foundation Controller (e2e)', () => {
       })
       await prisma.foundation
         .findFirst({
-          where: { rnfId: '033-FDD-00001-02' },
+          where: { rnfId: '533-FDD-00001-04' },
           include: { address: true },
         })
         .then((a) => {
           expect(a).toMatchObject({
             id: 1,
-            rnfId: '033-FDD-00001-02',
+            rnfId: '533-FDD-00001-04',
             type: 'FDD',
             department: '33',
             title:
@@ -192,7 +193,7 @@ describe('Foundation Controller (e2e)', () => {
         })
         .expect(201)
       expect(result.body).toEqual({
-        rnfId: '059-FE-00001-04',
+        rnfId: '559-FE-00001-06',
         ds: {
           demarcheId: 12,
           dossierId: 65,
@@ -200,13 +201,13 @@ describe('Foundation Controller (e2e)', () => {
       })
       await prisma.foundation
         .findFirst({
-          where: { rnfId: '059-FE-00001-04' },
+          where: { rnfId: '559-FE-00001-06' },
           include: { address: true },
         })
         .then((a) => {
           expect(a).toMatchObject({
             id: 1,
-            rnfId: '059-FE-00001-04',
+            rnfId: '559-FE-00001-06',
             type: 'FE',
             department: '59',
             title: 'Test demo',
@@ -240,7 +241,7 @@ describe('Foundation Controller (e2e)', () => {
         })
         .expect(201)
       expect(result.body).toEqual({
-        rnfId: '059-FRUP-00001-08',
+        rnfId: '559-FRUP-00001-10',
         ds: {
           demarcheId: 70,
           dossierId: 321,
@@ -248,13 +249,13 @@ describe('Foundation Controller (e2e)', () => {
       })
       await prisma.foundation
         .findFirst({
-          where: { rnfId: '059-FRUP-00001-08' },
+          where: { rnfId: '559-FRUP-00001-10' },
           include: { address: true },
         })
         .then((a) => {
           expect(a).toMatchObject({
             id: 1,
-            rnfId: '059-FRUP-00001-08',
+            rnfId: '559-FRUP-00001-10',
             type: 'FRUP',
             department: '59',
             title: 'Test demo',
@@ -281,6 +282,62 @@ describe('Foundation Controller (e2e)', () => {
     })
 
     it('Should create a new foundation with demande numéro rnf', async () => {
+      const result = await request(app.getHttpServer())
+        .post('/api/foundations')
+        .send({
+          dossierId: 135,
+          email: 'jojo@gmail.com',
+        })
+        .expect(201)
+      expect(result.body).toEqual({
+        rnfId: '559-FRUP-00001-10',
+        ds: {
+          demarcheId: 43,
+          dossierId: 135,
+        },
+      })
+      await prisma.foundation
+        .findFirst({
+          where: { rnfId: '559-FRUP-00001-10' },
+          include: { address: true },
+        })
+        .then((a) => {
+          expect(a).toMatchObject({
+            id: 1,
+            title: 'Fondation des tulipes',
+            type: 'FRUP',
+            address: {
+              label: '3 Rue Colbert 59800 Lille',
+              type: 'housenumber',
+              streetAddress: '3 Rue Colbert',
+              streetNumber: '3',
+              streetName: 'Rue Colbert',
+              postalCode: '59800',
+              cityName: 'Lille',
+              cityCode: '59350',
+              departmentName: 'Nord',
+              departmentCode: '59',
+              regionName: 'Hauts-de-France',
+              regionCode: '32',
+            },
+            email: 'tulipe@gmail.com',
+            phone: '+33789898989',
+          })
+        })
+    })
+
+    it('Should create a new foundation without test digit', async () => {
+      const configService = app.get(ConfigService)
+      const originalGet = configService.get.bind(configService)
+      const spy = jest
+        .spyOn(app.get(ConfigService), 'get')
+        .mockImplementation((key: string) => {
+          if (key === 'runEnv') {
+            return 'production'
+          }
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+          return originalGet(key)
+        })
       const result = await request(app.getHttpServer())
         .post('/api/foundations')
         .send({
@@ -323,6 +380,7 @@ describe('Foundation Controller (e2e)', () => {
             phone: '+33789898989',
           })
         })
+      spy.mockRestore()
     })
   })
 
@@ -415,11 +473,10 @@ describe('Foundation Controller (e2e)', () => {
           dossierId: 17,
           email: 'toto@gmail.com',
         })
-        .then(res => {
-          console.log(res)
+        .then((res) => {
           expect(res.statusCode).toBe(409)
         })
-        //  .expect(409)
+      //  .expect(409)
 
       await request(app.getHttpServer())
         .post('/api/foundations')
@@ -433,7 +490,7 @@ describe('Foundation Controller (e2e)', () => {
         expect(count).toEqual(2)
       })
       await prisma.foundation.findMany({}).then((fs) => {
-        expect(fs[1].rnfId).toEqual('033-FDD-00002-08')
+        expect(fs[1].rnfId).toEqual('533-FDD-00002-10')
       })
     })
   })
