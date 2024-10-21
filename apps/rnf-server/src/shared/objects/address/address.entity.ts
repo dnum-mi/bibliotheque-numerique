@@ -1,46 +1,119 @@
 import { IsDefined, IsString } from 'class-validator'
 import { Address } from '@prisma/client'
 import { BaseEntity } from '@/shared/base-entity/base.entity'
+import { ApiProperty } from '@nestjs/swagger'
 
 export class AddressEntity extends BaseEntity implements Address {
   @IsString()
   @IsDefined()
-    label: string
+  @ApiProperty(
+    {
+      description: 'L\'adresse complète',
+      type: String,
+    },
+  )
+  label: string
 
   @IsString()
   @IsDefined()
-    type: string
+  @ApiProperty(
+    {
+      description: 'Le type de l\'adresse',
+      type: String,
+    },
+  )
+  type: string
 
   @IsString()
-    streetAddress: string | null
+  @ApiProperty(
+    {
+      description: 'Le complément d\'adresse',
+      type: String,
+    },
+  )
+  streetAddress: string | null
 
   @IsString()
-    streetNumber: string | null
+  @ApiProperty(
+    {
+      description: 'Le numéro de rue',
+      type: String,
+    },
+  )
+  streetNumber: string | null
 
   @IsString()
-    streetName: string | null
+  @ApiProperty(
+    {
+      description: 'Le nom de rue',
+      type: String,
+    },
+  )
+  streetName: string | null
 
   @IsString()
   @IsDefined()
-    postalCode: string
+  @ApiProperty(
+    {
+      description: 'Le code postal',
+      type: String,
+    },
+  )
+  postalCode: string
 
   @IsString()
   @IsDefined()
-    cityName: string
+  @ApiProperty(
+    {
+      description: 'Le nom de la ville',
+      type: String,
+    },
+  )
+  cityName: string
 
   @IsString()
   @IsDefined()
-    cityCode: string
+  @ApiProperty(
+    {
+      description: 'Le code de la ville',
+      type: String,
+    },
+  )
+  cityCode: string
 
   @IsString()
-    departmentName: string | null
+  @ApiProperty(
+    {
+      description: 'Le nom du département',
+      type: String,
+    },
+  )
+  departmentName: string | null
 
   @IsString()
-    departmentCode: string
+  @ApiProperty(
+    {
+      description: 'Le code du département',
+      type: String,
+    },
+  )
+  departmentCode: string
 
   @IsString()
-    regionName: string | null
+  @ApiProperty(
+    {
+      description: 'Le nom de la région',
+      type: String,
+    },
+  )
+  regionName: string | null
 
   @IsString()
-    regionCode: string | null
+  @ApiProperty(
+    {
+      description: 'Le code de la région',
+      type: String,
+    },
+  )
+  regionCode: string | null
 }
