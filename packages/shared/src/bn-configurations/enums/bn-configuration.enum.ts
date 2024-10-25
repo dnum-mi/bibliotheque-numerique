@@ -7,7 +7,8 @@ const bnConfigurations = [
   'FILE_MAXIMUM_SIZE',
   'LAST_ORGANISM_SYNC_AT',
   'DDC_FIRST_CONTROL_YEAR',
-  'DDC_MONTH_BEFORE_MISSING'
+  'DDC_MONTH_BEFORE_MISSING',
+  'ENABLE_RNF_SIAF'
 ] as const
 
 export type BnConfigurationKey = typeof bnConfigurations[number]

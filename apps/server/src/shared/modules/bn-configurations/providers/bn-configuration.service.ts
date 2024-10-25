@@ -65,4 +65,15 @@ export class BnConfigurationService extends BaseEntityService<BnConfiguration> i
       }
     }
   }
+
+  async getValueByKeyName(keyName: BnConfigurationKey): Promise< string| boolean | number | Date | object | null> {
+    const bnConf = await this.findByKeyName(keyName)
+    switch (bnConf.valueType) {
+    case 'string': return bnConf.stringValue
+    case 'boolean': return bnConf.stringValue === 'true'
+    case 'date': return new Date(bnConf.stringValue)
+    case 'number' : return Number(bnConf.stringValue)
+    default: return bnConf.stringValue
+    }
+  }
 }
