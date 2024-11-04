@@ -3,7 +3,7 @@ import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { ConfigService } from '@nestjs/config'
 import axios from 'axios'
 import { isRnfLuhnValid } from '@/shared/utils/rnf.utils'
-import { IRnfOutput } from '@biblio-num/shared'
+import { IRnfOutput, ISiafRnfOutput } from '@biblio-num/shared'
 import { GetUpdateFoundationInputDto } from '../objects/dto/get-updated-foundation-input.dto'
 
 @Injectable()
@@ -15,7 +15,7 @@ export class RnfService {
     this.logger.setContext(this.constructor.name)
   }
 
-  async getFoundation(idRnf: string): Promise<IRnfOutput> {
+  async getFoundation(idRnf: string, enbleRnfSiaf: boolean): Promise<IRnfOutput | ISiafRnfOutput> {
     this.logger.verbose('getFoundation')
     if (!idRnf || !isRnfLuhnValid(idRnf)) {
       this.logger.error(
@@ -26,8 +26,12 @@ export class RnfService {
       return null
     }
 
+    const url = enbleRnfSiaf
+      ? `${this.config.get('rnf.siafUrl')}/foundations/${idRnf}`
+      : `${this.config.get('rnf.url')}/api/foundations/${idRnf}`
+
     return axios
-      .get(`${this.config.get('rnf.url')}/api/foundations/${idRnf}`)
+      .get(url)
       .then((response) => {
         return response.data
       })
@@ -42,11 +46,17 @@ export class RnfService {
 
   async getUpdatedFoundations(
     args: GetUpdateFoundationInputDto,
+    enbleRnfSiaf: boolean,
   ): Promise<string[]> {
     this.logger.verbose('getUpdatedFoundations')
-    const url = `${this.config.get(
-      'rnf.url',
-    )}/api/foundations/last-updated-list`
+    const url = enbleRnfSiaf
+      ? `${this.config.get(
+        'rnf.siafUrl',
+      )}/foundations/last-updated-list`
+      : `${this.config.get(
+        'rnf.url',
+      )}/api/foundations/last-updated-list`
+
     return axios.post(encodeURI(url), args).then((response) => {
       return response.data
     })
