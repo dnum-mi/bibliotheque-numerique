@@ -19,6 +19,8 @@ import {
   eState,
   iRnaDocument,
   eBnConfiguration,
+  ISiafRnfOutput,
+  IAddress,
 } from '@biblio-num/shared'
 
 import { OrganismeFieldTypeHash } from '@/modules/organismes/objects/const/organisme-field-type-hash.const'
@@ -45,6 +47,7 @@ import {
 } from '@/modules/files/objects/const/rna-code-to-label-and-tag.const'
 import { BnConfigurationService } from '@/shared/modules/bn-configurations/providers/bn-configuration.service'
 import { addYears } from 'date-fns'
+import { getCodeByRegionName } from '../utils/utils.regions'
 
 @Injectable()
 export class OrganismeService extends BaseEntityService<Organisme> {
@@ -85,6 +88,32 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     } as IPerson
   }
 
+  private _formatPersonSIAFRNF(rawPerson: ISiafRnfOutput['persons'][number]): IPerson {
+    return {
+      ...Object.fromEntries(
+        [
+          'createdAt',
+          'updatedAt',
+          'civility',
+          'lastName',
+          'firstName',
+          'email',
+          'phone',
+          'profession',
+          'nationality',
+          'bornAt',
+          'bornPlace',
+          'isFounder',
+          'role',
+        ].map((field) => [
+          field,
+          rawPerson[field] || '',
+        ]),
+      ),
+      address: this._formatAddressSIAFRNF(rawPerson.address),
+    } as IPerson
+  }
+
   private _formatAddress(rawAddress: IRnfOutput['address']): Partial<Organisme> {
     return Object.fromEntries(
       [
@@ -104,6 +133,34 @@ export class OrganismeService extends BaseEntityService<Organisme> {
         rawAddress[field] || '',
       ]),
     )
+  }
+
+  private _formatAddressSIAFRNF(rawAddress: ISiafRnfOutput['address'] | undefined): IAddress {
+    const contextSplit = rawAddress?.gouvAddress?.context?.split(',')
+    const codeDepAndRegion = {
+      departmentName: '',
+      departmentCode: '',
+      regionName: '',
+      regionCode: '',
+    }
+    if (contextSplit) {
+      codeDepAndRegion.departmentName = contextSplit[1] || ''
+      codeDepAndRegion.departmentCode = contextSplit[0] || ''
+      codeDepAndRegion.regionName = contextSplit[2] || ''
+      codeDepAndRegion.regionCode = getCodeByRegionName(contextSplit[2]) || ''
+    }
+
+    return {
+      label: rawAddress?.gouvAddress?.label || rawAddress?.dsStringValue || '',
+      postalCode: rawAddress?.gouvAddress?.postcode || '',
+      cityName: rawAddress?.gouvAddress?.city || '',
+      cityCode: rawAddress?.gouvAddress?.citycode || '',
+      type: rawAddress?.gouvAddress?.type || '',
+      streetAddress: rawAddress?.gouvAddress?.street || '',
+      streetNumber: rawAddress?.gouvAddress?.housenumber || '',
+      streetName: rawAddress?.gouvAddress?.name || '',
+      ...codeDepAndRegion,
+    }
   }
 
   async getOrCreateOrganismeIdFromRna(idRna: string): Promise<Organisme> {
@@ -138,24 +195,33 @@ export class OrganismeService extends BaseEntityService<Organisme> {
 
   async updateOrganismeFromRnf(
     idRnf: string,
-    raw: IRnfOutput,
+    raw: IRnfOutput | ISiafRnfOutput,
     firstTime = false,
+    enabledSiaf = false,
   ): Promise<void> {
     this.logger.verbose(`updateOrganismeFromRnf ${idRnf}`)
+
     const creationDate = new Date(raw.originalCreatedAt)
     const toUpdate: Partial<Organisme> = {
       state: eState.uploaded,
       title: raw.title,
       dateCreation: raw.originalCreatedAt,
-      type: raw.type as OrganismeTypeKey,
+      type: enabledSiaf ? (raw as ISiafRnfOutput).foundationType : (raw as IRnfOutput).type as OrganismeTypeKey,
       email: raw.email,
       phoneNumber: raw.phone,
-      ...this._formatAddress(raw.address),
-      dateDissolution: raw.dissolvedAt,
+      ...this._formatAddress(enabledSiaf
+        ? this._formatAddressSIAFRNF((raw as ISiafRnfOutput).address)
+        : (raw as IRnfOutput).address),
+      dateDissolution: enabledSiaf ? (raw as ISiafRnfOutput).dissolved.dissolvedAt : (raw as IRnfOutput).dissolvedAt,
       fiscalEndDateAt: raw.fiscalEndDateAt,
       rnfJson: raw,
-      persons: raw.persons && raw.persons.length ? raw.persons.map(this._formatPerson) : [],
+      persons: raw.persons && raw.persons.length
+        ? raw.persons.map((p) => enabledSiaf
+          ? this._formatPersonSIAFRNF(p)
+          : this._formatPerson(p))
+        : [],
     }
+
     // TODO: this should not happen once all the date is on RNF
     // TODO: this case is happening because we have conflict over RNF  data and BN data
     if (firstTime) {

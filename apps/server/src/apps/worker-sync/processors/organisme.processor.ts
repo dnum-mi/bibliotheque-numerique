@@ -10,7 +10,7 @@ import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { OrganismeService } from '@/modules/organismes/providers/organisme.service'
 import { RnfService } from '@/modules/organismes/providers/rnf.service'
 import { BnConfigurationService } from '@/shared/modules/bn-configurations/providers/bn-configuration.service'
-import { eBnConfiguration } from '@biblio-num/shared'
+import { eBnConfiguration, IRnfOutput } from '@biblio-num/shared'
 import { RnaService } from '@/modules/organismes/providers/rna.service'
 import { FieldService } from '@/modules/dossiers/providers/field.service'
 import { ALS_INSTANCE } from '@/shared/modules/als/als.module'
@@ -103,6 +103,7 @@ export class OrganismeProcessor {
   async syncAllRnfOrganisme(job: Job<never>): Promise<void> {
     await this.als.run({ job }, async () => {
       this.logger.verbose('syncAllRnfOrganisme')
+      const enbleRnfSiaf = await this.bnConfiguration.getValueByKeyName(eBnConfiguration.ENABLE_RNF_SIAF)
       const rnfs = await this.organismeService.getAllRnfOrganisme()
       const lastSyncConfig = await this.bnConfiguration.findByKeyName(
         eBnConfiguration.LAST_ORGANISM_SYNC_AT,
@@ -116,7 +117,8 @@ export class OrganismeProcessor {
       if (lastSyncConfig.stringValue) {
         query.lastUpdatedAt = lastSyncConfig.stringValue
       }
-      const modifiedRnfIds = await this.rnfService.getUpdatedFoundations(query)
+
+      const modifiedRnfIds = await this.rnfService.getUpdatedFoundations(query, enbleRnfSiaf as boolean)
       for (const rnfId of modifiedRnfIds) {
         this.syncQueue.add(eJobName.SyncOneRnfOrganisme, {
           rnf: rnfId,
@@ -136,7 +138,9 @@ export class OrganismeProcessor {
     await this.als.run({ job }, async () => {
       this.logger.verbose('syncOneRnfOrganisme')
       this.logger.debug(job.data)
-      const rawRnf = await this.rnfService.getFoundation(job.data.rnf)
+      const enbleRnfSiaf = await this.bnConfiguration.getValueByKeyName(eBnConfiguration.ENABLE_RNF_SIAF)
+      const rawRnf = await this.rnfService.getFoundation(job.data.rnf, enbleRnfSiaf as boolean)
+
       if (rawRnf === null) {
         await this.organismeService.repository.delete({ idRnf: job.data.rnf })
         if (job.data.fieldId) {
@@ -150,10 +154,12 @@ export class OrganismeProcessor {
             stringValue: `${job.data.rnf}`,
           })
         }
+
         await this.organismeService.updateOrganismeFromRnf(
           job.data.rnf,
-          rawRnf,
-          job.data.firstTime,
+            rawRnf as IRnfOutput,
+            job.data.firstTime,
+            enbleRnfSiaf as boolean,
         )
       }
     })
