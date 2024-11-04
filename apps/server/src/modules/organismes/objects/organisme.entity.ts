@@ -10,6 +10,7 @@ import {
   eState,
   StateKey,
   IPerson,
+  ISiafRnfOutput,
 } from '@biblio-num/shared'
 import { File } from '@/modules/files/objects/entities/file.entity'
 import { ApiProperty } from '@nestjs/swagger'
@@ -149,7 +150,7 @@ export class Organisme extends BaseEntity implements IOrganisme {
     description: 'Json original reçu de RNF',
     nullable: true,
   })
-  rnfJson: IRnfOutput | null
+  rnfJson: IRnfOutput | ISiafRnfOutput | null
   //#endregion
 
   //#region Address

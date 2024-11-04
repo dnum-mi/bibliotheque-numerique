@@ -1,3 +1,4 @@
+import { ISiafRnfOutput } from './siaf/siaf-rnf-output.interface'
 import type { StateKey } from '../state'
 import type { OrganismeTypeKey } from './organisme-type.enums'
 import { IPerson } from './person-interface'
@@ -16,7 +17,7 @@ export interface IOrganisme {
   idRna: string | null
   rnaJson: IRnaOutput | null
   idRnf: string | null
-  rnfJson: IRnfOutput | null
+  rnfJson: IRnfOutput | ISiafRnfOutput |null
   addressLabel: string | null
   addressPostalCode: string | null
   addressCityName: string | null
