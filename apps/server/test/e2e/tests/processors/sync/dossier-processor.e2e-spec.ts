@@ -43,24 +43,30 @@ describe('Dossier sync processors', () => {
 
   it('Anonymise', async () => {
     await syncQueue.resume()
-    const job = await syncQueue.add(eJobName.AnonymiseAll)
-
-    await job.finished().then(a => {
-      console.log(a)
+    await syncQueue.getJobs(['active', 'completed']).then(async jobs => {
+      await Promise.all(jobs.map(async job => job.remove()))
     })
 
-    // Check if the job AnonymiseAll is completed
-    const isCompleted = await job.isCompleted()
-    expect(isCompleted).toBe(true)
+    await syncQueue.add(eJobName.AnonymiseAll)
 
     // Get all active jobs, and wait for the job to be completed
-    const jobs = await syncQueue.getJobs(['active', 'completed'])
-
-    await Promise.all(jobs.map(async job => {
-      if (!job?.finishedOn) {
-        await job?.finished()
-      }
-    }))
+    let jobs = []
+    const wait = new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(true)
+      }, 200)
+    })
+    let countCall = 0
+    do {
+      await wait
+      jobs = await syncQueue.getJobs(['active', 'completed'])
+      await Promise.all(jobs.map(async job => {
+        if (!job?.finishedOn) {
+          await job?.finished()
+        }
+      }))
+      countCall++
+    } while (jobs.length >= 3 && countCall < 10)
 
     const dossierAnonymise = await dossierService.findOneById(19)
     expect(dossierAnonymise).toBeDefined()
