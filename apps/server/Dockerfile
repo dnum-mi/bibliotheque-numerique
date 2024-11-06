@@ -58,6 +58,7 @@ ENV NODE_ENV=production
 RUN pnpm install --frozen-lockfile --production
 # Turbo needs this directory, even with --no-cache...
 RUN mkdir -p /app/node_modules/.cache/turbo/
+RUN mkdir -p /app/.turbo/cache
 COPY --from=builder /app/turbo.json .
 COPY --from=builder /app/packages ./packages
 COPY --from=builder /app/apps ./apps
