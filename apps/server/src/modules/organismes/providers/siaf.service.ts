@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { LoggerService } from '../../../shared/modules/logger/logger.service'
 import { ConfigService } from '@nestjs/config'
 import type { ISiafAssociationOutput, ISiafFondationOutput } from '@biblio-num/shared'
-import axios from 'axios'
+import axios, { AxiosInstance } from 'axios'
 
 export interface IAssociations {
   associations: ISiafAssociationOutput
@@ -12,62 +12,40 @@ export interface IFondations {
 }
 @Injectable()
 export class SiafService {
+  axios: AxiosInstance
+
   constructor(
     protected logger: LoggerService,
     private readonly config: ConfigService,
   ) {
     this.logger.setContext(this.constructor.name)
-  }
-
-  private get siafAssicaitonsUrl(): string {
-    return `${this.config.get('siaf.url')}/associations`
-  }
-
-  // TODO: A valider avec hub
-  private get siafFondationsUrl(): string {
-    return `${this.config.get('siaf.url')}/fondations`
+    this.axios = axios.create({
+      baseURL: this.config.get('siaf.url'),
+      headers: {
+        'X-API-KEY': `${this.config.get('siaf.key')}`,
+        'Content-Type': 'application/json',
+      },
+    })
+    this.axios.interceptors.response.use(reponse => reponse.data, e => {
+      const code = e.response?.status
+      if (code === 404) {
+        return null
+      }
+      throw e
+    })
   }
 
   async getAssociation(idRna: string): Promise<IAssociations | null> {
     this.logger.verbose('SIAF-getAssociation')
-    const url = `${this.siafAssicaitonsUrl}/${idRna}`
-    return axios
-      .get(url, {
-        headers: {
-          'X-API-KEY': `${this.config.get('siaf.key')}`,
-        },
-      })
-      .then((response) => {
-        return response.data
-      })
-      .catch((e) => {
-        const code = e.response?.status
-        if (code === 404) {
-          return null
-        }
-        throw e
-      })
+    const url = `/associations/${idRna}`
+    return this.axios
+      .get(url)
   }
 
   async getFoundation(idRnf: string): Promise<IFondations | null> {
     this.logger.verbose('SIAF-getFondation')
-    const url = `${this.siafFondationsUrl}/${idRnf}`
-    return axios
-      .get(url, {
-        headers: {
-          'X-API-KEY': `${this.config.get('siaf.key')}`,
-        },
-      })
-      .then((response) => {
-        console.log(response)
-        return response.data
-      })
-      .catch((e) => {
-        const code = e.response?.status
-        if (code === 404) {
-          return null
-        }
-        throw e
-      })
+    const url = `/fondations/${idRnf}`
+    return this.axios
+      .get(url)
   }
 }
