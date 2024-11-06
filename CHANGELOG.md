@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.18.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.18.0...v2.18.1) (2024-11-06)
+
+
+### Bug Fixes
+
+* run turbo in pod of kube ([e01923a](https://github.com/dnum-mi/bibliotheque_numerique/commit/e01923aa7953329e8a2a7c7c6d9bb4c04d5ea326))
+
 ## [2.18.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.17.1...v2.18.0) (2024-11-06)
 
 
