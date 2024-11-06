@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.18.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.17.1...v2.18.0) (2024-11-06)
+
+
+### Features
+
+* add ApiProperty for get foundation by idRnf ([e18224a](https://github.com/dnum-mi/bibliotheque_numerique/commit/e18224ab81ba20d78fde16acd20109aeb75c1f8e))
+* add config get url siaf-rnf ([8def52d](https://github.com/dnum-mi/bibliotheque_numerique/commit/8def52d44ada69735a3a6cb29ba1089b2e8f0d4a))
+* adding test digit inside rnf for qualification ([0e6a918](https://github.com/dnum-mi/bibliotheque_numerique/commit/0e6a918fbc1b419383e77d5b2e9b2765512d846e))
+* configuration for rnf-siaf ([4148887](https://github.com/dnum-mi/bibliotheque_numerique/commit/414888780333cd8ea14bca359adbd049416acf8b))
+* interfaces model from rnf-siaf ([cd618d3](https://github.com/dnum-mi/bibliotheque_numerique/commit/cd618d30fe3aed0b16cd0e1fdc9d502b58457113))
+* rnf api http-proxy for switch staging or prod ([ef7e6d1](https://github.com/dnum-mi/bibliotheque_numerique/commit/ef7e6d1f92aa38fca9d42ddb579bc4133a9661fe))
+* update entity for model siaf-rnf ([07a90e4](https://github.com/dnum-mi/bibliotheque_numerique/commit/07a90e4035b1d1a37602bb9c9128d99109ccb8d9))
+* update syncho rnf to synchro rnf-siaf ([eee07aa](https://github.com/dnum-mi/bibliotheque_numerique/commit/eee07aa3cc46ad8c3c9e8208709c5db5b1d30f8a))
+
+
+### Bug Fixes
+
+* fr word for anonymise ([d1f7109](https://github.com/dnum-mi/bibliotheque_numerique/commit/d1f7109c349de495a5dc81669cd4fd45b558bb0c))
+* get env when start with turbo ([78d00e9](https://github.com/dnum-mi/bibliotheque_numerique/commit/78d00e93ea77c7845f7085957dc79f2bd12ffaaa))
+* test-e2e anonymization ([04019b8](https://github.com/dnum-mi/bibliotheque_numerique/commit/04019b8a272b2a8bcec115dcfdb0c5eb981b9923))
+
 ## [2.17.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.17.0...v2.17.1) (2024-09-09)
 
 
