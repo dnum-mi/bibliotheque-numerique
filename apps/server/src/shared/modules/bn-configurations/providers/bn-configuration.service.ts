@@ -67,6 +67,7 @@ export class BnConfigurationService extends BaseEntityService<BnConfiguration> i
   }
 
   async getValueByKeyName(keyName: BnConfigurationKey): Promise< string| boolean | number | Date | object | null> {
+    console.log('___TEST', keyName)
     const bnConf = await this.findByKeyName(keyName)
     switch (bnConf.valueType) {
     case 'string': return bnConf.stringValue

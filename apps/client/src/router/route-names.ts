@@ -7,6 +7,7 @@ export const routeNames = {
   DOSSIERS: 'Dossiers',
   FICHE_ORGANISME: 'FicheOrganisme',
   LISTE_ORGANISMES: 'ListeOrganismes',
+  SEARCH_ORGANISMES: 'SearchOrganismes',
   LIST_USERS: 'ListUsers',
   LOGOUT: 'LogOut',
   ORGANISMES: 'Organismes',

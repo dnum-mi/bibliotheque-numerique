@@ -1,0 +1,94 @@
+<script lang="ts" setup>
+import { organismeTypes, type ISiafAssociationOutput, type ISiafFondationOutput, type ISiafSearchOrganismeResponseOutput } from '@biblio-num/shared'
+import apiClient from '../../../api/api-client'
+import { routeNames } from '../../../router/route-names'
+import type { OrganismeIdType } from '../../../stores'
+
+const router = useRouter()
+const inputSearch = ref('')
+const results = ref<ISiafSearchOrganismeResponseOutput[]>([])
+const onSearch = async () => {
+  results.value = await apiClient.searchOrganisme(inputSearch.value)
+}
+
+const headers = [
+  'Numéro RNA / RNF',
+  'Titre',
+  'Type',
+  'Ville',
+  'Code postal',
+  'Action',
+]
+
+const rows = computed(() => {
+  return results.value.map((result) => {
+    const assocation = result.entity as ISiafAssociationOutput
+    const fondation = result.entity as ISiafFondationOutput
+
+    const idRna = assocation.identite.id_rna
+    const idRnf = fondation.identite.id_rnf
+    const id = idRna || idRnf
+    const idType: OrganismeIdType = (idRna ? 'Rna' : 'Rnf') satisfies OrganismeIdType
+    const subType = fondation.identite.type_fondation || organismeTypes[5]
+    const codePostal = idType === 'Rna' ? assocation.coordonnees.adresse_siege.cp : fondation.coordonnees.adresse.cp
+    const ville = idType === 'Rna' ? assocation.coordonnees.adresse_siege.commune : fondation.coordonnees.adresse.commune
+    return {
+      rowData: [
+        id,
+        result.entity.identite.nom,
+        {
+          component: 'OrganismeBadge',
+          type: subType,
+        },
+        ville,
+        codePostal,
+
+        {
+          component: 'DsfrButton',
+          label: 'Voir',
+          icon: 'fr-icon-eye-line',
+          onClick: () => {
+            router.push({
+              name: routeNames.FICHE_ORGANISME,
+              params: { id: id as string },
+              query: { idType },
+            })
+          },
+        },
+      ],
+    }
+  })
+})
+</script>
+
+<template>
+  <LayoutList
+    title="Rechercher dans le reférentiel des assocations et des fondations "
+    title-bg-color="var(--border-plain-grey)"
+    title-icon="fr-icon-search-line"
+  >
+    <div class="p-8">
+      <form @submit.prevent="onSearch">
+        <DsfrSearchBar
+          v-model="inputSearch"
+          label="Recherche un numéro, un titre, une description ..."
+          @search="onSearch"
+        />
+      </form>
+
+      <DsfrTable
+        v-if="results?.length"
+        class="w-full"
+        title="Résultats de la recherche"
+        :headers="headers"
+        :rows="rows"
+      />
+      <div v-else>
+        <em class="text-gray-400">Veuillez saisir une recherche</em>
+      </div>
+      <div v-for="result in results" :key="result.entity.identite.id_rna || result.entity.identite.id_rnf">
+        {{ result }}
+      </div>
+    </div>
+  </LayoutList>
+</template>

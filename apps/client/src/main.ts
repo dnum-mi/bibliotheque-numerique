@@ -10,6 +10,7 @@ import '@gouvminint/vue-dsfr/styles'
 
 import '@gouvfr/dsfr/dist/scheme/scheme.min.css'
 import '@gouvfr/dsfr/dist/utility/icons/icons.min.css'
+import { DsfrButton } from '@gouvminint/vue-dsfr'
 
 import * as icons from './icons'
 
@@ -23,6 +24,7 @@ import '@/ag-grid-dsfr.css'
 // We use statusBadge in DsfrTable
 import StatusBadge from './components/Badges/status/StatusBadge.vue'
 import FileTagBadge from '@/components/Badges/file-tag/FileTagBadge.vue'
+import OrganismeBadge from './components/Badges/organisme/OrganismeBadge.vue'
 
 const agGridLicenseKey = '__AG_GRID_LICENSE_KEY__'
 
@@ -32,6 +34,8 @@ addIcons(...Object.values(icons))
 
 createApp(App)
   .use(createPinia())
+  .component('DsfrButton', DsfrButton)
+  .component('OrganismeBadge', OrganismeBadge)
   .component('StatusBadge', StatusBadge)
   . component('FileTagBadge', FileTagBadge)
   .use(router)

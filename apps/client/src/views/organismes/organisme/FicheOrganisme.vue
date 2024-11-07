@@ -42,7 +42,7 @@ const tabTitles = computed(() => {
 
   if (hasSiaf.value) {
     headers.push({
-      title: 'Infos-SIAF',
+      title: 'RAF',
       tabId: 'tab-0',
       panelId: 'tab-content-0',
     })

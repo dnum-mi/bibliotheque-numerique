@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { LoggerService } from '../../../shared/modules/logger/logger.service'
 import { ConfigService } from '@nestjs/config'
-import type { ISiafAssociationOutput, ISiafFondationOutput } from '@biblio-num/shared'
+import type { ISiafAssociationOutput, ISiafFondationOutput, ISiafSearchOrganismeOutput } from '@biblio-num/shared'
 import axios, { AxiosInstance } from 'axios'
 
 export interface IAssociations {
@@ -45,6 +45,13 @@ export class SiafService {
   async getFoundation(idRnf: string): Promise<IFondations | null> {
     this.logger.verbose('SIAF-getFondation')
     const url = `/fondations/${idRnf}`
+    return this.axios
+      .get(url)
+  }
+
+  async searchOrganisme(sentence: string): Promise<ISiafSearchOrganismeOutput | null> {
+    this.logger.verbose('SIAF-search')
+    const url = `${this.config.get('siaf.url')}/generic/full_text_search/${sentence}`
     return this.axios
       .get(url)
   }

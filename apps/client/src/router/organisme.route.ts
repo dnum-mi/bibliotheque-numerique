@@ -34,5 +34,13 @@ export const organismeRoute: RouteRecordRaw = {
         roleLevel: Roles.instructor,
       },
     },
+    {
+      name: routeNames.SEARCH_ORGANISMES,
+      path: 'search',
+      component: () => import('@/views/organismes/search/searchOrganismes.vue'),
+      meta: {
+        roleLevel: Roles.instructor,
+      },
+    },
   ],
 }

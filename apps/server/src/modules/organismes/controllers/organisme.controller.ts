@@ -20,6 +20,7 @@ import {
   IOrganisme,
   IOrganismeOutput,
   typeCategorieOrganisme,
+  ISiafSearchOrganismeResponseOutput,
 } from '@biblio-num/shared'
 
 import { DossierService } from '@/modules/dossiers/providers/dossier.service'
@@ -241,5 +242,18 @@ export class OrganismeController {
     } else {
       throw new Error('impossible de synchroniser cette organisme')
     }
+  }
+
+  @UsualApiOperation({
+    summary: 'Rechercher un organisme.',
+    method: 'GET',
+    minimumRole: Roles.instructor,
+    responseType: Organisme,
+  })
+  @Get('search/:sentence')
+  @Role(Roles.instructor)
+  async searchOrganisme(@Param('sentence') sentence: string): Promise<ISiafSearchOrganismeResponseOutput[]> {
+    this.logger.verbose('searchOrganisme')
+    return this.organismeService.searchOrganismes(sentence)
   }
 }
