@@ -46,7 +46,7 @@ export const getOrganismeByRnaRoute = (organismeRna: string) => `${organismesRou
 export const getOrganismeByRnfRoute = (organismeRnf: string) => `${organismesRoute}/rnf/${organismeRnf}`
 export const getAssociationRoute = (organismeRna: string) => `${organismesRoute}/association/${organismeRna}`
 export const getFoundationRoute = (organismeRnf: string) => `${organismesRoute}/fondation/${organismeRnf}`
-
+export const searchOrganisme = (sentence: string) => `${organismesRoute}/search/${sentence}`
 export const customFiltersRoute = '/custom-filters'
 export const getCustomFiltersRoute = () => customFiltersRoute
 export const getOneCustomFiltersRoute = (id: number) => `/custom-filters/${id}`
@@ -60,3 +60,4 @@ export const healthRoute = '/health'
 export const bnConfigurationsRoute = '/bn-configurations'
 
 export const getFileRoute = (uuid: string) => `/files/${uuid}`
+export const enableSiafRoute = `${bnConfigurationsRoute}/enable-siaf`

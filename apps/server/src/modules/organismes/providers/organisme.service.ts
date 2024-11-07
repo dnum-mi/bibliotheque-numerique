@@ -23,6 +23,7 @@ import {
   IAddress,
   ISiafAssociationOutput,
   ISiafFondationOutput,
+  ISiafSearchOrganismeResponseOutput,
 } from '@biblio-num/shared'
 
 import { OrganismeFieldTypeHash } from '@/modules/organismes/objects/const/organisme-field-type-hash.const'
@@ -368,5 +369,12 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     this.logger.debug({ FN: 'getFondationFromSiaf', idRnf })
     if (!fromSiaf) return null
     return fromSiaf.fondations
+  }
+
+  async searchOrganismes(sentence: string): Promise<ISiafSearchOrganismeResponseOutput[] | null> {
+    this.logger.verbose('searchOrganismes')
+    const enableSiaf = await this.bnConfiguration.getValueByKeyName(eBnConfiguration.ENABLE_SIAF)
+    if (!enableSiaf) return null
+    return (await this.siafService.searchOrganisme(sentence))?.search_response
   }
 }

@@ -8,8 +8,11 @@ import LayoutList from '@/components/Layout/LayoutList.vue'
 import AgGridServerSide from '@/components/ag-grid/server-side/AgGridServerSide.vue'
 import { listOrganismeColumnDef } from '@/views/organismes/list/column-def.const'
 import type { OrganismeIdType } from '@/stores'
+import { routeNames } from '../../../router/route-names'
+import { useConfigurationStore } from '../../../stores/configuration'
 
 const organismeStore = useOrganismeStore()
+const bnConfigStore = useConfigurationStore()
 const router = useRouter()
 
 const apiCall = async (params: IPagination<IOrganisme>) => {
@@ -22,7 +25,7 @@ const onSelectionChanged = (event: SelectionChangedEvent) => {
   if (id) {
     const idType: OrganismeIdType = (selection?.idRna ? 'Rna' : 'Rnf') satisfies OrganismeIdType
     router.push({
-      name: 'FicheOrganisme',
+      name: routeNames.FICHE_ORGANISME,
       params: { id },
       query: { idType },
     })
@@ -34,6 +37,17 @@ const paginationDto = ref()
 const download = () => {
   return organismeStore.exportOrganismes(paginationDto.value)
 }
+
+const enableSiaf = computed(() => bnConfigStore.enableSiaf)
+const toSearch = () => {
+  router.push({
+    name: routeNames.SEARCH_ORGANISMES,
+  })
+}
+
+onMounted(async () => {
+  await bnConfigStore.getEnableSiaf()
+})
 </script>
 
 <template>
@@ -42,7 +56,14 @@ const download = () => {
     title-bg-color="var(--border-plain-grey)"
     title-icon="fr-icon-search-line"
   >
-    <div class="flex justify-end m-2">
+    <div class="flex justify-between m-2">
+      <DsfrButton
+        v-if="enableSiaf"
+        label="Recherche dans le référentiel (RAF)"
+        icon="fr-icon-search-line"
+        small
+        @click="toSearch"
+      />
       <DsfrButton
         label="Télécharger"
         icon="ri-file-download-fill"

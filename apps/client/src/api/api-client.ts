@@ -39,6 +39,7 @@ import type {
   IMappingAnonymizedChamp,
   IUpdateAnonymedChamp,
   IOrganismeOutput,
+  ISiafSearchOrganismeResponseOutput,
 } from '@biblio-num/shared'
 
 import {
@@ -75,6 +76,8 @@ import {
   getDemarcheOptionRoute,
   usersPasswordRoute,
   getDemarcheAnonymizeRoute,
+  searchOrganisme,
+  enableSiafRoute,
 } from './bn-api-routes'
 import { authRoute, getUserByIdRoute, profileRoute, signInRoute, usersRoutes } from '@/api/bn-api-routes'
 
@@ -246,6 +249,10 @@ export const organismeApiClient = {
 
   exportOrganismes: async (dto: IPagination<IOrganisme>): Promise<void> => {
     downloadAFile(await apiClientInstance.post(organismesListXlsxRoute, dto, { responseType: 'blob' }))
+  },
+
+  searchOrganisme: (sentence: string): Promise<ISiafSearchOrganismeResponseOutput[]> => {
+    return getOrRedirectTo404(searchOrganisme(sentence))
   },
 }
 
@@ -421,6 +428,12 @@ export const bnConfigurationsApiClient = {
     const response = await apiClientInstance.patch(`${bnConfigurationsRoute}/${id}`, dto)
     return response.data
   },
+
+  getEnableSiaf: async () => {
+    const response = await apiClientInstance.get(enableSiafRoute)
+    return response.data
+  },
+
 }
 
 export const attachedFilesApiClient = {

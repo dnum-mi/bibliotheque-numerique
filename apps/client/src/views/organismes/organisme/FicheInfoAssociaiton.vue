@@ -42,6 +42,9 @@ const typeOrganisme = computed(() => organismeTypes[5])
 <template>
   <div class="flex flex-col gap-6">
     <div class="flex gap-4">
+      <span class="italic">Données anti-datées de juin 2023</span>
+    </div>
+    <div class="flex gap-4">
       <div class="flex-grow">
         <label class="bn-fiche-sub-title--label uppercase">Type</label>
         <OrganismeBadge

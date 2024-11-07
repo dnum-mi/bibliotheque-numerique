@@ -43,6 +43,19 @@ export class BnConfigurationController {
     return this.configurationService.findAll()
   }
 
+  @Get('enable-siaf')
+  @UsualApiOperation({
+    summary: 'siaf est-il actif?',
+    method: 'GET',
+    minimumRole: Roles.instructor,
+    responseType: null,
+  })
+  @Role(Roles.instructor)
+  async getEnableSiaf(): Promise<boolean> {
+    this.logger.verbose('getEnableSiaf')
+    return (await this.configurationService.getValueByKeyName(eBnConfiguration.ENABLE_SIAF)) as boolean
+  }
+
   @UsualApiOperation({
     summary: 'Retourne une configuration.',
     method: 'GET',
