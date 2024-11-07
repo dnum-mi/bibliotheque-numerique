@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.19.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.18.1...v2.19.0) (2024-11-07)
+
+
+### Features
+
+* configuration env for SIAF ([588c5a1](https://github.com/dnum-mi/bibliotheque_numerique/commit/588c5a14ac7f4708dd89ff1ebb95ffb284daa91c))
+* get organisme from hub ([0f4e234](https://github.com/dnum-mi/bibliotheque_numerique/commit/0f4e2341ec2ef23363082861b3a5a1ee6c019d03))
+* search in register of association and foundation ([be30bba](https://github.com/dnum-mi/bibliotheque_numerique/commit/be30bba1040ac9204fd0b8a94f0066e3f92df54f))
+
+
+### Bug Fixes
+
+* migration enableRnfSiaf and enableSiaf ([d375d29](https://github.com/dnum-mi/bibliotheque_numerique/commit/d375d298bb04222dfa4dd4814bffbb03c3c98214))
+
 ## [2.18.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.18.0...v2.18.1) (2024-11-06)
 
 
