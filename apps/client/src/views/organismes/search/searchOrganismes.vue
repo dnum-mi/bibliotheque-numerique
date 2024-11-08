@@ -6,7 +6,7 @@ import type { OrganismeIdType } from '../../../stores'
 
 const router = useRouter()
 const inputSearch = ref('')
-const results = ref<ISiafSearchOrganismeResponseOutput[]>([])
+const results = ref<ISiafSearchOrganismeResponseOutput[] | undefined>(undefined)
 const onSearch = async () => {
   results.value = await apiClient.searchOrganisme(inputSearch.value)
 }
@@ -21,7 +21,7 @@ const headers = [
 ]
 
 const rows = computed(() => {
-  return results.value.map((result) => {
+  return results?.value?.map((result) => {
     const assocation = result.entity as ISiafAssociationOutput
     const fondation = result.entity as ISiafFondationOutput
 
@@ -83,12 +83,6 @@ const rows = computed(() => {
         :headers="headers"
         :rows="rows"
       />
-      <div v-else>
-        <em class="text-gray-400">Veuillez saisir une recherche</em>
-      </div>
-      <div v-for="result in results" :key="result.entity.identite.id_rna || result.entity.identite.id_rnf">
-        {{ result }}
-      </div>
     </div>
   </LayoutList>
 </template>
