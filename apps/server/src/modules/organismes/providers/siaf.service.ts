@@ -20,9 +20,9 @@ export class SiafService {
   ) {
     this.logger.setContext(this.constructor.name)
     this.axios = axios.create({
-      baseURL: this.config.get('siaf.url'),
+      baseURL: this.config.get('siafHub.url'),
       headers: {
-        'X-API-KEY': `${this.config.get('siaf.key')}`,
+        'X-API-KEY': `${this.config.get('siafHub.key')}`,
         'Content-Type': 'application/json',
       },
     })
@@ -51,7 +51,7 @@ export class SiafService {
 
   async searchOrganisme(sentence: string): Promise<ISiafSearchOrganismeOutput | null> {
     this.logger.verbose('SIAF-search')
-    const url = `${this.config.get('siaf.url')}/generic/full_text_search/${sentence}`
+    const url = `${this.config.get('siafHub.url')}/generic/full_text_search/${sentence}`
     return this.axios
       .get(url)
   }
