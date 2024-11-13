@@ -3,7 +3,7 @@ import type { SelectionChangedEvent } from 'ag-grid-community'
 
 import type { IPagination, IOrganisme } from '@biblio-num/shared'
 
-import { useOrganismeStore } from '@/stores/organisme'
+import { EOrganismeIdType, useOrganismeStore } from '@/stores/organisme'
 import LayoutList from '@/components/Layout/LayoutList.vue'
 import AgGridServerSide from '@/components/ag-grid/server-side/AgGridServerSide.vue'
 import { listOrganismeColumnDef } from '@/views/organismes/list/column-def.const'
@@ -23,7 +23,7 @@ const onSelectionChanged = (event: SelectionChangedEvent) => {
   const selection = event.api.getSelectedRows()?.[0]
   const id = selection?.idRna || selection?.idRnf
   if (id) {
-    const idType: OrganismeIdType = (selection?.idRna ? 'Rna' : 'Rnf') satisfies OrganismeIdType
+    const idType: OrganismeIdType = (selection?.idRna ? EOrganismeIdType.Rna : EOrganismeIdType.Rnf) satisfies OrganismeIdType
     router.push({
       name: routeNames.FICHE_ORGANISME,
       params: { id },

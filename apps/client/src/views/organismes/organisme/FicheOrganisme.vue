@@ -6,7 +6,7 @@ import { dateToStringFr, copyCurrentUrlInClipboard } from '@/utils'
 import LayoutFiche from '@/components/Layout/LayoutFiche.vue'
 import ListeDossier from './ListeDossier.vue'
 import OrganismeBadge from '@/components/Badges/organisme/OrganismeBadge.vue'
-import { type OrganismeIdType, useOrganismeStore, useUserStore } from '@/stores'
+import { EOrganismeIdType, type OrganismeIdType, useOrganismeStore, useUserStore } from '@/stores'
 import AttachedFileList from '@/components/ag-grid/files/AttachedFileList.vue'
 import type { IFileOutput, IPagination, IRole, FileTagKey, ISiafFondationOutput, ISiafAssociationOutput } from '@biblio-num/shared'
 import { Prefecture, dFileTabDictionary } from '@biblio-num/shared'
@@ -158,8 +158,8 @@ const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutpu
               :selected="selected === 0"
               :asc="ascendant"
             >
-              <FicheInfoAssociaiton v-if="idType === 'Rna'" :organisme-raf="(organismeSiaf as ISiafAssociationOutput)" />
-              <FicheInfoFondation v-if="idType === 'Rnf'" :organisme-raf="(organismeSiaf as ISiafFondationOutput)" />
+              <FicheInfoAssociaiton v-if="idType === EOrganismeIdType.Rna" :organisme-raf="(organismeSiaf as ISiafAssociationOutput)" />
+              <FicheInfoFondation v-if="idType === EOrganismeIdType.Rnf" :organisme-raf="(organismeSiaf as ISiafFondationOutput)" />
             </DsfrTabContent>
             <DsfrTabContent
               panel-id="tab-content-1"

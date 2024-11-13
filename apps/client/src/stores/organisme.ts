@@ -11,6 +11,11 @@ import type {
 import apiClient from '@/api/api-client'
 
 export type OrganismeIdType = 'Rna' | 'Rnf' | 'Id'
+export enum EOrganismeIdType {
+  Rna = 'Rna',
+  Rnf = 'Rnf',
+  Id = 'Id',
+}
 
 export const useOrganismeStore = defineStore('organisme', () => {
   const organisme = ref<IOrganisme | undefined>(undefined)

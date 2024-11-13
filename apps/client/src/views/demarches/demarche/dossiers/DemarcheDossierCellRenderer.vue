@@ -11,6 +11,7 @@ import {
 import delayStateBadge from '@/components/Badges/delay-state/DelayStateBadge.vue'
 import AgGridAttachmentCell from '@/components/ag-grid/AgGridAttachmentCell.vue'
 import { firstUpperCase } from '@/utils/first-upper-case'
+import { routeNames } from '@/router/route-names'
 
 const props = defineProps<{
   params: {
@@ -142,7 +143,7 @@ const getPrefecture = (prefecture: PrefectureKeys) => {
         </template>
         <template v-else>
           <RouterLink
-            :to="{ name: 'FicheOrganisme', params: { id: cellValue }, query: { idType: firstUpperCase(ffr) } }"
+            :to="{ name: routeNames.FICHE_ORGANISME, params: { id: cellValue }, query: { idType: firstUpperCase(ffr) } }"
             @click.stop
           >
             {{ cellValue }}
