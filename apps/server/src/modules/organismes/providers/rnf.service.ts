@@ -27,7 +27,7 @@ export class RnfService {
     }
 
     const url = enbleRnfSiaf
-      ? `${this.config.get('rnf.siafUrl')}/foundations/${idRnf}`
+      ? `${this.config.get('rnf.siafUrl')}/foundations/${idRnf}/complete`
       : `${this.config.get('rnf.url')}/api/foundations/${idRnf}`
 
     return axios
