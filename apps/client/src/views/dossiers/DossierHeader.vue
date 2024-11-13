@@ -2,6 +2,8 @@
 import type { IDossier, IOrganisme } from '@biblio-num/shared'
 
 import OrganismeBadge from '@/components/Badges/organisme/OrganismeBadge.vue'
+import { routeNames } from '@/router/route-names'
+import { EOrganismeIdType } from '@/stores'
 
 type DossierHeaderProps = {
   dossier: IDossier & { organisme?: IOrganisme }
@@ -10,12 +12,13 @@ type DossierHeaderProps = {
 defineProps<DossierHeaderProps>()
 
 const router = useRouter()
-const goToOrganisme = (id: number) => {
+const goToOrganisme = (idRna: string | null, idRnf: string | null) => {
+  const id = idRna || idRnf
+  const idType = idRna ? EOrganismeIdType.Rna : EOrganismeIdType.Rnf
   router.push({
-    name: 'FicheOrganisme',
-    params: {
-      id: String(id),
-    },
+    name: routeNames.FICHE_ORGANISME,
+    params: { id },
+    query: { idType },
   })
 }
 </script>
@@ -48,7 +51,7 @@ const goToOrganisme = (id: number) => {
         label="Fiche organisme"
         secondary
         class="white-bg"
-        @click="goToOrganisme(dossier.organisme.id)"
+        @click="goToOrganisme(dossier.organisme.idRna, dossier.organisme.idRnf)"
       />
     </div>
   </header>

@@ -2,7 +2,7 @@
 import { organismeTypes, type ISiafAssociationOutput, type ISiafFondationOutput, type ISiafSearchOrganismeResponseOutput } from '@biblio-num/shared'
 import apiClient from '../../../api/api-client'
 import { routeNames } from '../../../router/route-names'
-import type { OrganismeIdType } from '../../../stores'
+import { EOrganismeIdType, type OrganismeIdType } from '../../../stores'
 
 const router = useRouter()
 const inputSearch = ref('')
@@ -28,10 +28,10 @@ const rows = computed(() => {
     const idRna = assocation.identite.id_rna
     const idRnf = fondation.identite.id_rnf
     const id = idRna || idRnf
-    const idType: OrganismeIdType = (idRna ? 'Rna' : 'Rnf') satisfies OrganismeIdType
+    const idType: OrganismeIdType = (idRna ? EOrganismeIdType.Rna : EOrganismeIdType.Rnf) satisfies OrganismeIdType
     const subType = fondation.identite.type_fondation || organismeTypes[5]
-    const codePostal = idType === 'Rna' ? assocation.coordonnees.adresse_siege.cp : fondation.coordonnees.adresse.cp
-    const ville = idType === 'Rna' ? assocation.coordonnees.adresse_siege.commune : fondation.coordonnees.adresse.commune
+    const codePostal = idType === EOrganismeIdType.Rna ? assocation.coordonnees.adresse_siege.cp : fondation.coordonnees.adresse.cp
+    const ville = idType === EOrganismeIdType.Rna ? assocation.coordonnees.adresse_siege.commune : fondation.coordonnees.adresse.commune
     return {
       rowData: [
         id,
