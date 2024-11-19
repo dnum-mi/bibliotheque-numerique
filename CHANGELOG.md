@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.20.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.19.0...v2.20.0) (2024-11-19)
+
+
+### Features
+
+* add qualification ci ([62a2571](https://github.com/dnum-mi/bibliotheque_numerique/commit/62a2571f91adac13660746b39f9faf0d0a8bf8ae))
+
+
+### Bug Fixes
+
+* new endpoint from  rnf-siaf ([511d422](https://github.com/dnum-mi/bibliotheque_numerique/commit/511d4228d75b8f9e78ac3ba9ea2cf4f001f2bd86))
+* remove search results raw data in front ([b06423e](https://github.com/dnum-mi/bibliotheque_numerique/commit/b06423ede5fb0cec932810154a855015947f4532))
+* rename variable env of siaf ([52e4fdf](https://github.com/dnum-mi/bibliotheque_numerique/commit/52e4fdf6969a91aac4165d76dec3c502c9f10f49))
+* show fiche organisme fron fiche dossier ([59643c0](https://github.com/dnum-mi/bibliotheque_numerique/commit/59643c042253af5d87eb861b99f9a528b7be7f7a))
+
 ## [2.19.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.18.1...v2.19.0) (2024-11-07)
 
 

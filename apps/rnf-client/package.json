@@ -1,6 +1,6 @@
 {
   "name": "@biblio-num/rnf-client",
-  "version": "2.19.0",
+  "version": "2.20.0",
   "private": true,
   "scripts": {
     "build": "run-p type-check build-only",
