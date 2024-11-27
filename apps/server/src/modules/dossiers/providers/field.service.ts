@@ -28,6 +28,10 @@ export type TDossierWithPrefecture = Partial<TDossier> & {
   prefecture?: PrefectureKeys
 }
 
+// Définition des limites des types SQL
+const SQL_INT_MIN = -2147483648
+const SQL_INT_MAX = 2147483647
+
 @Injectable()
 export class FieldService extends BaseEntityService<Field> {
   constructor(
@@ -46,11 +50,15 @@ export class FieldService extends BaseEntityService<Field> {
     }
   }
 
-  static giveNumberOrNull(
+  private _giveNumberOrNull(
     type: FieldTypeKeys,
     stringValue: string,
   ): number | null {
     const number = type === FieldType.number ? parseFloat(stringValue) : null
+    if (number > SQL_INT_MAX || number < SQL_INT_MIN) {
+      this.logger.error(`Number in field is TOO BIG: ${number}. Setting -1 to not crash db.`)
+      return -1
+    }
     return number && !isNaN(number) ? number : null
   }
 
@@ -131,7 +139,7 @@ export class FieldService extends BaseEntityService<Field> {
             columnRef.type,
             (champ as DateChamp).date || champ.stringValue,
           ),
-          numberValue: FieldService.giveNumberOrNull(
+          numberValue: this._giveNumberOrNull(
             columnRef.type,
             champ.stringValue,
           ),
@@ -179,7 +187,7 @@ export class FieldService extends BaseEntityService<Field> {
             columnHashSelected.type,
             value,
           ),
-          numberValue: FieldService.giveNumberOrNull(
+          numberValue: this._giveNumberOrNull(
             columnHashSelected.type,
             value,
           ),
@@ -254,9 +262,12 @@ export class FieldService extends BaseEntityService<Field> {
 
   static getValueFromType(f: Field): string | number | Date | null | undefined {
     switch (f.type) {
-    case 'date': return f.dateValue
-    case 'number': return f.numberValue
-    default: return f.stringValue
+    case 'date':
+      return f.dateValue
+    case 'number':
+      return f.numberValue
+    default:
+      return f.stringValue
     }
   }
 }
