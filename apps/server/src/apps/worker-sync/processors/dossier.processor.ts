@@ -39,7 +39,7 @@ export class DossierProcessor {
   @Process(eJobName.SyncOneDossier)
   async syncOneDossier(job: Job<SyncOneDossierJobPayload>): Promise<void> {
     await this.als.run({ job }, async () => {
-      this.logger.log('sync one dossier')
+      this.logger.log(`Sync one dossier (dossier:${job.data.dsDossierId}) (demarche:${job.data.demarcheId})`)
       const demarche = await this.demarcheService.findOneById(
         job.data.demarcheId,
       )
