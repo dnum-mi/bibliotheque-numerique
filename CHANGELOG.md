@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.20.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.20.0...v2.20.1) (2024-11-28)
+
+
+### Bug Fixes
+
+* preventing db crash on BIG INT ([22ea2d9](https://github.com/dnum-mi/bibliotheque_numerique/commit/22ea2d915bb6f02217233aab7954332002b59f0d))
+
 ## [2.20.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.19.0...v2.20.0) (2024-11-19)
 
 
