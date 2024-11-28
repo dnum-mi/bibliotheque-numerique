@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.21.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.20.1...v2.21.0) (2024-11-28)
+
+
+### Features
+
+* use dockerhub for build image ([eaf1762](https://github.com/dnum-mi/bibliotheque_numerique/commit/eaf1762932066307256cfd0330e6ef7e7f057a91))
+
 ## [2.20.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.20.0...v2.20.1) (2024-11-28)
 
 
