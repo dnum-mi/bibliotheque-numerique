@@ -39,6 +39,8 @@ read_secret:
   stage: read-secret
   extends:
     - .vault:read_secret
+  artifacts:
+    expire_in: 30min
 
 test_front:
   variables:
@@ -228,6 +230,7 @@ docker_build_front:
     IMAGE_NAME: 'bibliotheque_numerique-front'
     DOCKERFILE: 'Dockerfile'
     KUBERNETES_MEMORY_LIMIT: '5Gi'
+    EXTRA_BUILD_ARGS: --registry-mirror=$REGISTRY_MIRROR
   stage: docker-build-front
   extends:
     - .kaniko:simple-build-push
@@ -237,6 +240,7 @@ docker_build_rnf_front:
     WORKING_DIR: 'apps/rnf-client'
     IMAGE_NAME: 'rnf-front'
     DOCKERFILE: 'Dockerfile'
+    EXTRA_BUILD_ARGS: --registry-mirror=$REGISTRY_MIRROR
   stage: docker-build-rnf-front
   extends:
     - .kaniko:simple-build-push
@@ -246,6 +250,7 @@ docker_build_back:
     WORKING_DIR: 'apps/server'
     IMAGE_NAME: 'bibliotheque_numerique-back'
     DOCKERFILE: 'Dockerfile'
+    EXTRA_BUILD_ARGS: --registry-mirror=$REGISTRY_MIRROR
   stage: docker-build-back
   extends:
     - .kaniko:simple-build-push
@@ -255,6 +260,7 @@ docker_build_rnf_back:
     WORKING_DIR: 'apps/rnf-server'
     IMAGE_NAME: 'rnf-back'
     DOCKERFILE: 'Dockerfile'
+    EXTRA_BUILD_ARGS: --registry-mirror=$REGISTRY_MIRROR
   stage: docker-build-rnf-back
   extends:
     - .kaniko:simple-build-push
@@ -265,6 +271,7 @@ docker_build_http_proxy:
     WORKING_DIR: 'apps/http-proxy'
     IMAGE_NAME: 'http-proxy'
     DOCKERFILE: 'Dockerfile'
+    EXTRA_BUILD_ARGS: --registry-mirror=$REGISTRY_MIRROR
     TAG: latest
   stage: docker-build-http-proxy
   extends:
