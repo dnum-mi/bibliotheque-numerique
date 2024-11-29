@@ -4,6 +4,10 @@ export default antfu({
   ignores: ['node_modules', '**/node_modules/**', 'dist', '**/dist/**'],
 }, {
   rules: {
+    'perfectionist/sort-imports': 'off',
+    'perfectionist/sort-named-imports': 'off',
+    'unicorn/no-new-array': 'off',
+    'unicorn/new-for-builtins': 'off',
     'vue/custom-event-name-casing': 'warn', // we should enable this as error
     'antfu/if-newline': 'warn', // we should enable this as error
     'no-console': 'warn', // we should enable this as error

@@ -6,7 +6,7 @@ export const dateTimeToStringFr = (value: string | number): string => {
     : ''
 }
 
-export const dateToStringFr = (value: Date | string | number | undefined): string => {
+export const dateToStringFr = (value: Date | string | number | undefined | null): string => {
   return value
     ? (new Date(value)).toLocaleDateString(LOCALE_FOR_DATE_TIME)
     : ''

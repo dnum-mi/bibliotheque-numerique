@@ -22,9 +22,9 @@ const addressFn = (address: ISiafAssociationOutput['coordonnees']['adresse_siege
   const arrayAddressBuild2: addressbuild[] = ['cp', 'commune']
   return address
     ? `${addressStreetAddress} ${arrayAddressBuild2
-        .map((k) => address[k])
-        .filter((address) => !!address)
-        .join(' ')}`
+      .map((k) => address[k])
+      .filter((address) => !!address)
+      .join(' ')}`
     : null
 }
 

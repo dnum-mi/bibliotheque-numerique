@@ -22,7 +22,7 @@ onMounted(async () => {
     activePinia._s.forEach(store => {
       store.$reset()
     })
-  } catch (error) {
+  } catch {
     toaster.addErrorMessage({ description: 'une erreur est survenue à la déconnexion' })
   }
   router.push({ name: routeNames.SIGNIN })

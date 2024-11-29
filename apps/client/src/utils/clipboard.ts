@@ -14,7 +14,7 @@ export const copyCurrentUrlInClipboard = async () => {
   try {
     await navigator.clipboard.writeText(window?.location.href)
     toaster.addSuccessMessage({ description: COPIED_IN_CLIPBOARD })
-  } catch (error) {
+  } catch {
     toaster.addErrorMessage({ description: UNABLE_TO_COPY_IN_CLIPBOARD })
   }
 }

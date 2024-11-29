@@ -2,7 +2,7 @@
 const forceRepaint = (element: HTMLElement) => {
   // Force repaint to make sure the
   // animation is triggered correctly.
-  getComputedStyle(element).height // eslint-disable-line no-unused-expressions
+  getComputedStyle(element).height // eslint-disable-line ts/no-unused-expressions
 }
 
 const enter = (element: HTMLElement) => {

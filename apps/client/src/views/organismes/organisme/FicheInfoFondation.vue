@@ -6,7 +6,7 @@ import FicheInfoPersonnes from './FicheInfoPersonnes.vue'
 const props = defineProps<{ organismeRaf: ISiafFondationOutput }>()
 
 const createdAt = computed(() => dateToStringFr(props.organismeRaf.identite.date_crea as string))
-const disovledAt = computed(() => dateToStringFr(props.organismeRaf.identite.date_dissolution as string))
+const dissolvedAt = computed(() => dateToStringFr(props.organismeRaf.identite.date_dissolution as string))
 const updatedAt = computed(() => dateToStringFr(props.organismeRaf.identite.date_modif_rna as string))
 const addressFn = (address: ISiafFondationOutput['coordonnees']['adresse']) => {
   if (!address) {
@@ -23,9 +23,9 @@ const addressFn = (address: ISiafFondationOutput['coordonnees']['adresse']) => {
   const arrayAddressBuild2: addressbuild[] = ['cp', 'commune']
   return address
     ? `${addressStreetAddress} ${arrayAddressBuild2
-        .map((k) => address[k])
-        .filter((address) => !!address)
-        .join(' ')}`
+      .map((k) => address[k])
+      .filter((address) => !!address)
+      .join(' ')}`
     : null
 }
 
@@ -35,7 +35,7 @@ const prefectureFn = (address: ISiafFondationOutput['coordonnees']['adresse']) =
   return Prefecture[prefkey as keyof typeof Prefecture] || ''
 }
 const prefecture = computed(() => prefectureFn(props.organismeRaf.coordonnees.adresse))
-const typeOrganisme = computed(() => props.organismeRaf?.identite.type_fondation)
+const typeOrganisme = computed(() => props.organismeRaf?.identite.type_fondation as 'FDD' | 'FE' | 'FRUP' | 'ARUP' | 'CULTE')
 </script>
 
 <template>
@@ -109,7 +109,7 @@ const typeOrganisme = computed(() => props.organismeRaf?.identite.type_fondation
       <div class="flex-grow">
         <label class="bn-fiche-sub-title--label uppercase">Dissoute le</label>
         <span class="bn-fiche-sub-title--text">
-          {{ disovledAt }}
+          {{ dissolvedAt }}
         </span>
       </div>
     </div>

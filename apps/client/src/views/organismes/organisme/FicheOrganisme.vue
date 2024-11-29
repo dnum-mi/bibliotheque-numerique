@@ -13,7 +13,7 @@ import { Prefecture, dFileTabDictionary } from '@biblio-num/shared'
 import type { ApiCall } from '@/components/ag-grid/server-side/pagination.utils'
 import FicheOrganismePersons from './FicheOrganismePersons.vue'
 import TooltipAddress from './TooltipAddress.vue'
-import FicheInfoAssociaiton from './FicheInfoAssociaiton.vue'
+import FicheInfoAssociation from './FicheInfoAssociation.vue'
 import FicheInfoFondation from './FicheInfoFondation.vue'
 
 const props = withDefaults(defineProps<{ id: string; idType: OrganismeIdType }>(), {})
@@ -48,17 +48,20 @@ const tabTitles = computed(() => {
     })
   }
   if (organisme.value) {
-    headers = headers.concat([{
-      title: 'Infos',
-      tabId: 'tab-1',
-      panelId: 'tab-content-1',
-    }, ...Object.entries(filesSummary.value).map(([tag, count], index: number) => {
-      return {
-        title: `${dFileTabDictionary[tag as FileTagKey]} (${count})`,
-        tabId: `tab-${index + 2}`,
-        panelId: `tab-content-${index + 2}`,
-      }
-    })])
+    headers = headers.concat([
+      {
+        title: 'Infos',
+        tabId: 'tab-1',
+        panelId: 'tab-content-1',
+      },
+      ...Object.entries(filesSummary.value).map(([tag, count], index: number) => {
+        return {
+          title: `${dFileTabDictionary[tag as FileTagKey]} (${count})`,
+          tabId: `tab-${index + 2}`,
+          panelId: `tab-content-${index + 2}`,
+        }
+      }),
+    ])
   }
   return headers
 })
@@ -103,6 +106,11 @@ const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutpu
     console.log('pas d\'organisme')
   }
 }
+//#region map
+const mapCenter = computed(() => organisme.value?.rnfJson?.address?.coordinates)
+const zoom = ref(12)
+const mapCard = ref<HTMLElement>()
+//#endregion map
 </script>
 
 <template>
@@ -158,7 +166,7 @@ const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutpu
               :selected="selected === 0"
               :asc="ascendant"
             >
-              <FicheInfoAssociaiton v-if="idType === EOrganismeIdType.Rna" :organisme-raf="(organismeSiaf as ISiafAssociationOutput)" />
+              <FicheInfoAssociation v-if="idType === EOrganismeIdType.Rna" :organisme-raf="(organismeSiaf as ISiafAssociationOutput)" />
               <FicheInfoFondation v-if="idType === EOrganismeIdType.Rnf" :organisme-raf="(organismeSiaf as ISiafFondationOutput)" />
             </DsfrTabContent>
             <DsfrTabContent
@@ -167,33 +175,33 @@ const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutpu
               :selected="selected === (hasSiaf ? 1 : 0)"
               :asc="ascendant"
             >
-              <div class="flex flex-col gap-6">
-                <div class="flex gap-4">
-                  <div class="flex-grow">
-                    <label class="bn-fiche-sub-title--label">SIÈGE SOCIAL</label>
+              <div class="flex">
+                <div class="flex gap-4 w-full  flex-wrap">
+                  <div class="flex-grow  flex-basis-[26%] flex-shrink-0">
+                    <label class="bn-fiche-sub-title--label uppercase">Siège Social</label>
                     <TooltipAddress :show="!!(organisme?.addressLabel && !organisme?.addressType)" />
                     <span class="bn-fiche-sub-title--text">
                       {{ organisme?.addressLabel }}
                     </span>
                   </div>
-                  <div class="flex-grow">
-                    <label class="bn-fiche-sub-title--label">TÉLÉPHONE</label>
+                  <div class="flex-grow  flex-basis-[26%] flex-shrink-0">
+                    <label class="bn-fiche-sub-title--label uppercase">Téléphone</label>
                     <span class="bn-fiche-sub-title--text">{{ organisme?.phoneNumber }}</span>
                   </div>
-                  <div class="flex-grow">
-                    <label class="bn-fiche-sub-title--label">COURRIEL</label>
+                  <div class="flex-grow  flex-basis-[26%] flex-shrink-0">
+                    <label class="bn-fiche-sub-title--label uppercase">COURRIEL</label>
                     <span class="bn-fiche-sub-title--text">{{ organisme?.email }}</span>
                   </div>
-                  <div class="flex-grow">
-                    <label class="bn-fiche-sub-title--label">PRÉFECTURE</label>
+                  <div class="flex-grow  flex-basis-[26%] flex-shrink-0">
+                    <label class="bn-fiche-sub-title--label uppercase">PRÉFECTURE</label>
                     <span class="bn-fiche-sub-title--text">{{ prefecture }}</span>
                   </div>
-                  <div class="flex-grow">
-                    <label class="bn-fiche-sub-title--label">CRÉATION</label>
+                  <div class="flex-grow  flex-basis-[26%] flex-shrink-0">
+                    <label class="bn-fiche-sub-title--label uppercase">CRÉATION</label>
                     <span class="bn-fiche-sub-title--text">{{ creation }}</span>
                   </div>
-                  <div>
-                    <label class="bn-fiche-sub-title--label">ALERTE</label>
+                  <div class="flex-grow  flex-basis-[26%] flex-shrink-0">
+                    <label class="bn-fiche-sub-title--label uppercase">ALERTE</label>
                     <DsfrBadge
                       no-icon
                       small
@@ -202,11 +210,23 @@ const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutpu
                   </div>
                   <div
                     v-if="dissolution"
-                    class=""
+                    class="flex-grow  flex-basis-[26%] flex-shrink-0"
                   >
-                    <label class="bn-fiche-sub-title--label">DISSOLUTION</label>
+                    <label class="bn-fiche-sub-title--label uppercase">Dissolution</label>
                     <span class="bn-fiche-sub-title--text">{{ dissolution }}</span>
                   </div>
+                </div>
+                <div v-if="mapCenter" class="flex-basis-[30%] flex-shrink-0  flex-grow-0  flex flex-col gap-2">
+                  <DsfrButton
+                    type="button"
+                    icon="ri-focus-3-line"
+                    secondary
+                    class="rounded-full self-end"
+                    icon-only
+                    @click="$refs.mapCard.resetCenter(mapCenter)"
+                  />
+
+                  <MapCard ref="mapCard" :zoom :center="mapCenter" pin-marker  style="height: 200px; width: 250px;" />
                 </div>
               </div>
               <div class="p-t-6">

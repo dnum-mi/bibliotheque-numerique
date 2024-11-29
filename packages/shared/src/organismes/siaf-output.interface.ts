@@ -22,7 +22,7 @@ interface IIdentiteAssociation extends IIdentiteCommun{
 }
 interface IIdentiteFondation extends IIdentiteCommun {
   id_rnf: String,
-  type_fondation: string
+  type_fondation: "FDD" | "FE" | "FRUP"
 }
 
 interface ICoordonneesCommon {

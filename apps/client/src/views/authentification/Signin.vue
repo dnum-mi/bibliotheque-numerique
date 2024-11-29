@@ -36,7 +36,7 @@ const submit = handleSubmit(async (formValue: ICredentialsInput) => {
       return
     }
     router.push({ name: routeNames.DEMARCHES })
-  } catch (e) {
+  } catch {
     setErrors({ password: 'Votre courriel ou votre mot passe est incorrect. Vous pouvez réessayer ou réinitialiser votre mot de passe.' })
   }
 })

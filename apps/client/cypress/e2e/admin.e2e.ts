@@ -263,8 +263,7 @@ describe('Admin', () => {
           times: 1,
         }, { statusCode: 200 }).as('patchUserSelected444')
 
-        cy.wrap($parent).contains('National')
-          .click()
+        cy.wrap($parent).contains('National').click()
 
         cy.wait('@patchUserSelected444')
         cy.wait('@userSelected444National').its('response.body').then(($body) => {
@@ -312,8 +311,7 @@ describe('Admin', () => {
           times: 1,
         }, { statusCode: 200 }).as('patchUserSelected444')
 
-        cy.wrap($parent).contains('Préfecture(s)')
-          .click()
+        cy.wrap($parent).contains('Préfecture(s)').click()
 
         cy.wait('@userSelected444')
 
@@ -346,7 +344,8 @@ describe('Admin', () => {
           times: 1,
         }, { statusCode: 200 }).as('patchUserSelected444')
 
-        cy.wrap($parent).should('contain', '75')
+        cy.wrap($parent)
+          .should('contain', '75')
           .contains('75')
           .should('have.class', 'tag-button')
           .click()
@@ -383,14 +382,9 @@ describe('Admin', () => {
           times: 1,
         }, { statusCode: 200 }).as('patchUserSelected444')
 
-        cy.wrap($parent).should('contain', '75')
-          .contains('75')
-          .should('have.class', 'fr-tag--dismiss')
-          .click()
+        cy.wrap($parent).should('contain', '75').contains('75').should('have.class', 'fr-tag--dismiss').click()
         cy.wait('@userSelected444')
-        cy.wrap($parent).should('contain', '75')
-          .contains('75')
-          .should('have.class', 'tag-button')
+        cy.wrap($parent).should('contain', '75').contains('75').should('have.class', 'tag-button')
       })
   })
 })

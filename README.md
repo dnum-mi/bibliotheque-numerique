@@ -100,7 +100,7 @@ pnpm dev:dws
 pnpm dev:dwf
 ```
 
-Vous pouvez pré-rempli la base de données avec le jeu de données présent dans ce répertoire [dumps](dumps/) dont les opérations pré-remplissage sont décrits dans [ici](docs/Server/database/README.md)
+Vous pouvez pré-remplir la base de données avec le jeu de données présent dans ce répertoire [dumps](dumps/) dont les opérations pré-remplissage sont décrits dans [ici](docs/Server/database/README.md)
 
 ###### Client
 

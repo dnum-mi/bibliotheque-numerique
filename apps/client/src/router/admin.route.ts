@@ -24,7 +24,7 @@ export const adminRoute = {
       beforeEnter: async (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
         try {
           await useUserStore().loadUserById(Number.parseInt(to.params.id as string))
-        } catch (e) {
+        } catch {
           next({ name: routeNames.Page_404 })
         }
         if (!useUserStore().selectedEditableUser) {

@@ -7,5 +7,5 @@ export const passwordValidator = z.string({ required_error: PASSWORD_NO_EMPTY_ME
   .min(15, PASSWORD_MESSAGE)
   .regex(/[a-z]/, PASSWORD_MESSAGE)
   .regex(/[A-Z]/, PASSWORD_MESSAGE)
-  .regex(/[0-9]/, PASSWORD_MESSAGE)
+  .regex(/\d/, PASSWORD_MESSAGE)
   .regex(/[!@#$%^&*()\-_=+[{\]}\\|;:'",<.>/?]/, PASSWORD_MESSAGE)

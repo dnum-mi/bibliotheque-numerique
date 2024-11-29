@@ -34,10 +34,10 @@ import type {
   ICreateBnConfiguration,
   IUpdateBnConfiguration,
   IPaginated,
-  FileTabTagKey,
+  FileTagKey,
   IDemarcheOption,
   IMappingAnonymizedChamp,
-  IUpdateAnonymedChamp,
+  IUpdateAnonymizedChamp,
   IOrganismeOutput,
   ISiafSearchOrganismeResponseOutput,
 } from '@biblio-num/shared'
@@ -213,7 +213,7 @@ export const demarchesApiClient = {
     return response.data
   },
 
-  updateOneMappingAnonymized (id: number, dto: IUpdateAnonymedChamp) {
+  updateOneMappingAnonymized (id: number, dto: IUpdateAnonymizedChamp) {
     return apiClientInstance.patch(getDemarcheAnonymizeRoute(id), dto)
   },
 }
@@ -236,7 +236,7 @@ export const organismeApiClient = {
     return getOrRedirectTo404(getOrganismeByRnfRoute(organismeIdRnf))
   },
 
-  getOrganismeFilesSummary: async (organismeId: number): Promise<Record<FileTabTagKey, number>> => {
+  getOrganismeFilesSummary: async (organismeId: number): Promise<Record<FileTagKey, number>> => {
     return (await apiClientInstance.get(getOrganismeFilesSummaryRoute(organismeId))).data
   },
 
@@ -288,7 +288,7 @@ export const usersApiClient = {
     try {
       const response = await apiClientInstance.get(profileRoute)
       return response.data
-    } catch (error) {
+    } catch {
       return null
     }
   },

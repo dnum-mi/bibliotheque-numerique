@@ -81,7 +81,7 @@ const updateListeDossiers = async () => {
       }
       return row
     })
-  } catch (error) {
+  } catch {
     toaster.addErrorMessage({ description: 'Impossible de récupérer la liste des dossiers de cet organisme' })
   }
 }
