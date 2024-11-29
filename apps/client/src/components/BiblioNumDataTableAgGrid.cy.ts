@@ -119,7 +119,8 @@ describe('<BiblioNumDataTable />', () => {
       cy.get('.ag-cell')
         .should('contain', data.id)
         .contains(data.id)
-        .parent().as(row)
+        .parent()
+        .as(row)
       if (data.testkey.uuid) {
         cy.get(`@${row}`)
           .get('a')

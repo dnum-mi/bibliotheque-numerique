@@ -69,8 +69,8 @@ const hasfilterEnumUnselectedAll = (filterModel: Record<string, FilterModel>) =>
   for (const emunId of enumIds) {
     const filter = Object.entries(filterModel)
       .find(([key, value]) => key === emunId
-      && value.filterType === 'set'
-      && !(value as SetFilterModel).values.length)
+        && value.filterType === 'set'
+        && !(value as SetFilterModel).values.length)
     if (filter) { return true }
   }
   return false
@@ -100,7 +100,7 @@ const getRows = async (params: IServerSideGetRowsParams) => {
     try {
       const response = await props.apiCall(dto)
       params.success({ rowData: response.data, rowCount: response.total })
-    } catch (error) {
+    } catch {
       params.fail()
     }
   } else {

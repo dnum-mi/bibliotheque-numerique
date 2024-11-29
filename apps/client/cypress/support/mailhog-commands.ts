@@ -63,7 +63,7 @@ Cypress.Commands.add('getValidationLink', { prevSubject: true }, (mail) => {
     const encodedValidationLink = htmlPart.substring(htmlPart.indexOf('<a href='), htmlPart.indexOf('</a>') + 4)
 
     const validationLink = decodePrintable(encodedValidationLink)
-    const link = validationLink.replace(/<a href="(https?:\/\/(?:[-a-z0-9]+)(?::\d+)?(\/[^"]+))" rel="notrack">.*/, '$1')
+    const link = validationLink.replace(/<a href="(https?:\/\/[-a-z0-9]+(?::\d+)?(\/[^"]+))" rel="notrack">.*/, '$1')
     return link
   })
 })
@@ -77,7 +77,7 @@ Cypress.Commands.add('getResetLink', { prevSubject: true }, (mail) => {
     const encodedResetLink = htmlPart.substring(htmlPart.indexOf('<a href='), htmlPart.indexOf('</a>') + 4)
 
     const resetLink = decodePrintable(encodedResetLink)
-    const link = resetLink.replace(/<a href="(https?:\/\/(?:[-a-z0-9]+)(?::\d+)?(\/[^"]+))" rel="notrack">.*/, '$1')
+    const link = resetLink.replace(/<a href="(https?:\/\/[-a-z0-9]+(?::\d+)?(\/[^"]+))" rel="notrack">.*/, '$1')
     return link
   })
 })

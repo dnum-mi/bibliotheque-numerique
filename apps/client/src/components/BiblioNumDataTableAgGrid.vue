@@ -89,9 +89,9 @@ const columnDefs: ComputedRef<AgGridColumnDefs[]> = computed(() => {
       const filter = getFilterAgGrid(header)
       const renderer = getRendererAgGrid(header) || {
         cellRenderer: header.renderer
-        ?? (header.parseFn
-          ? (params: Record<string | symbol, unknown>) => header.parseFn?.(params.value)
-          : undefined),
+          ?? (header.parseFn
+            ? (params: Record<string | symbol, unknown>) => header.parseFn?.(params.value)
+            : undefined),
       }
       return {
         floatingFilter: props.floatingFilter,

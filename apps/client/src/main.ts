@@ -15,6 +15,9 @@ import { DsfrButton } from '@gouvminint/vue-dsfr'
 import * as icons from './icons'
 
 import './main.css'
+import 'vue3-openlayers/styles.css'
+
+import OpenLayersMap from 'vue3-openlayers'
 
 import { LicenseManager } from 'ag-grid-enterprise'
 import 'ag-grid-community/styles/ag-grid.css'
@@ -34,6 +37,7 @@ addIcons(...Object.values(icons))
 
 createApp(App)
   .use(createPinia())
+  .use(OpenLayersMap)
   .component('DsfrButton', DsfrButton)
   .component('OrganismeBadge', OrganismeBadge)
   .component('StatusBadge', StatusBadge)

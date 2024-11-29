@@ -13,7 +13,9 @@ describe('<DemarcheGrpInstructeurs />', () => {
     cy.stub(apiClient, 'fetchMyProfile').returns(Promise.resolve(user))
 
     const demarche = generateDemarche()
-    cy.stub(apiClient, 'getDemarche').withArgs(demarche.id)
+    cy
+      .stub(apiClient, 'getDemarche')
+      .withArgs(demarche.id)
       .returns(Promise.resolve(demarche))
     cy.then(() => {
       demarcheStore.getDemarche(demarche.id)
