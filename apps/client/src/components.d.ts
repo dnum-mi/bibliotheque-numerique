@@ -11,7 +11,6 @@ declare module 'vue' {
     AgGridMultiValueCell: typeof import('./components/ag-grid/AgGridMultiValueCell.vue')['default']
     AgGridServerSide: typeof import('./components/ag-grid/server-side/AgGridServerSide.vue')['default']
     AppDsfrFooter: typeof import('./components/AppDsfrFooter.vue')['default']
-    AppMap: typeof import('./components/AppMap.vue')['default']
     AppToaster: typeof import('./components/AppToaster.vue')['default']
     AttachedFileList: typeof import('./components/ag-grid/files/AttachedFileList.vue')['default']
     AttachedFileStateCellRenderer: typeof import('./components/ag-grid/files/AttachedFileStateCellRenderer.vue')['default']
