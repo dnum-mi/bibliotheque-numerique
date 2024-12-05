@@ -111,6 +111,11 @@ const mapCenter = computed(() => organisme.value?.rnfJson?.address?.coordinates)
 const zoom = ref(12)
 const mapCard = ref<HTMLElement>()
 //#endregion map
+
+const objectDescription = computed(() => organisme.value?.rnfJson.objectDescription)
+const internationalAction = computed(() => organisme.value?.rnfJson.internationalAction)
+const generalInterest = computed(() => organisme.value?.rnfJson.generalInterest)
+const dueDate = computed(() => new Intl.DateTimeFormat('fr-FR').format(new Date(organisme.value?.rnfJson.dueDate)))
 </script>
 
 <template>
@@ -175,64 +180,98 @@ const mapCard = ref<HTMLElement>()
               :selected="selected === (hasSiaf ? 1 : 0)"
               :asc="ascendant"
             >
-              <div class="flex">
-                <div class="flex gap-4 w-full  flex-wrap">
-                  <div class="flex-grow  flex-basis-[26%] flex-shrink-0">
-                    <label class="bn-fiche-sub-title--label uppercase">Siège Social</label>
-                    <TooltipAddress :show="!!(organisme?.addressLabel && !organisme?.addressType)" />
-                    <span class="bn-fiche-sub-title--text">
-                      {{ organisme?.addressLabel }}
-                    </span>
-                  </div>
-                  <div class="flex-grow  flex-basis-[26%] flex-shrink-0">
-                    <label class="bn-fiche-sub-title--label uppercase">Téléphone</label>
-                    <span class="bn-fiche-sub-title--text">{{ organisme?.phoneNumber }}</span>
-                  </div>
-                  <div class="flex-grow  flex-basis-[26%] flex-shrink-0">
-                    <label class="bn-fiche-sub-title--label uppercase">COURRIEL</label>
-                    <span class="bn-fiche-sub-title--text">{{ organisme?.email }}</span>
-                  </div>
-                  <div class="flex-grow  flex-basis-[26%] flex-shrink-0">
-                    <label class="bn-fiche-sub-title--label uppercase">PRÉFECTURE</label>
-                    <span class="bn-fiche-sub-title--text">{{ prefecture }}</span>
-                  </div>
-                  <div class="flex-grow  flex-basis-[26%] flex-shrink-0">
-                    <label class="bn-fiche-sub-title--label uppercase">CRÉATION</label>
-                    <span class="bn-fiche-sub-title--text">{{ creation }}</span>
-                  </div>
-                  <div class="flex-grow  flex-basis-[26%] flex-shrink-0">
-                    <label class="bn-fiche-sub-title--label uppercase">ALERTE</label>
-                    <DsfrBadge
-                      no-icon
-                      small
-                      label="OK"
-                    />
-                  </div>
-                  <div
-                    v-if="dissolution"
-                    class="flex-grow  flex-basis-[26%] flex-shrink-0"
-                  >
-                    <label class="bn-fiche-sub-title--label uppercase">Dissolution</label>
-                    <span class="bn-fiche-sub-title--text">{{ dissolution }}</span>
+              <div class="flex gap-2">
+                <div class="main-info-container">
+                  <div class="main-info">
+                    <div>
+                      <label class="bn-fiche-sub-title--label uppercase">Siège Social</label>
+                      <TooltipAddress :show="!!(organisme?.addressLabel && !organisme?.addressType)" />
+                      <span class="bn-fiche-sub-title--text">
+                        {{ organisme?.addressLabel }}
+                      </span>
+                    </div>
+                    <div>
+                      <label class="bn-fiche-sub-title--label uppercase">Téléphone</label>
+                      <span class="bn-fiche-sub-title--text">{{ organisme?.phoneNumber }}</span>
+                    </div>
+                    <div>
+                      <label class="bn-fiche-sub-title--label uppercase">COURRIEL</label>
+                      <span class="bn-fiche-sub-title--text">{{ organisme?.email }}</span>
+                    </div>
+                    <div>
+                      <label class="bn-fiche-sub-title--label uppercase">PRÉFECTURE</label>
+                      <span class="bn-fiche-sub-title--text">{{ prefecture }}</span>
+                    </div>
+                    <div>
+                      <label class="bn-fiche-sub-title--label uppercase">CRÉATION</label>
+                      <span class="bn-fiche-sub-title--text">{{ creation }}</span>
+                    </div>
+                    <div>
+                      <label class="bn-fiche-sub-title--label uppercase">ALERTE</label>
+                      <DsfrBadge
+                        no-icon
+                        small
+                        label="OK"
+                      />
+                    </div>
+                    <div
+                      v-if="dissolution"
+                    >
+                      <label class="bn-fiche-sub-title--label uppercase">Dissolution</label>
+                      <span class="bn-fiche-sub-title--text">{{ dissolution }}</span>
+                    </div>
+                    <div
+                      v-if="objectDescription"
+                    >
+                      <label class="bn-fiche-sub-title--label uppercase">Object</label>
+                      <span class="bn-fiche-sub-title--text">{{ objectDescription }}</span>
+                    </div>
+                    <div>
+                      <label class="bn-fiche-sub-title--label uppercase">Activité à l’international</label>
+                      <span class="bn-fiche-sub-title--text">
+                        <template v-if="typeof internationalAction === 'boolean'">
+                          {{ internationalAction }}
+                        </template>
+                        <em v-else class="text-gray-400">Non renseigné</em>
+                      </span>
+                    </div>
+                    <div>
+                      <label class="bn-fiche-sub-title--label uppercase">Date du terme</label>
+                      <span class="bn-fiche-sub-title--text">
+                        <template v-if="dueDate">
+                          {{ dueDate }}
+                        </template>
+                        <em v-else class="text-gray-400">Non renseigné</em>
+                      </span>
+                    </div>
+                    <div>
+                      <label class="bn-fiche-sub-title--label uppercase">Intérêt général</label>
+                      <span class="bn-fiche-sub-title--text">
+                        <template v-if="generalInterest">
+                          {{ generalInterest }}
+                        </template>
+                        <em v-else class="text-gray-400">Non renseigné</em>
+                      </span>
+                    </div>
                   </div>
                 </div>
-                <div v-if="mapCenter" class="flex-basis-[30%] flex-shrink-0  flex-grow-0  flex flex-col gap-2">
+                <div v-if="mapCenter" class="flex-basis-[30%]  flex-shrink-0  flex-grow-0  relative">
+                  <MapCard ref="mapCard" :zoom :center="mapCenter" pin-marker style="height: 200px; width: 250px;" />
                   <DsfrButton
                     type="button"
                     icon="ri-focus-3-line"
-                    secondary
-                    class="rounded-full self-end"
+                    tertiary
+                    title="Recentrer la carte"
+                    class="rounded-full self-end absolute top-0 right-0"
                     icon-only
                     @click="$refs.mapCard.resetCenter(mapCenter)"
                   />
-
-                  <MapCard ref="mapCard" :zoom :center="mapCenter" pin-marker  style="height: 200px; width: 250px;" />
                 </div>
               </div>
               <div class="p-t-6">
                 <FicheOrganismePersons
                   v-if="organisme?.persons"
-                  :persons="organisme?.persons"
+                  :persons="organisme?.persons.map((person, idx) => ({ ...organisme?.rnfJson?.persons[idx], ...person }))"
                 />
               </div>
             </DsfrTabContent>
@@ -289,3 +328,22 @@ const mapCard = ref<HTMLElement>()
     </div>
   </div>
 </template>
+
+<style scoped>
+.main-info-container {
+  width: 100%;
+  container-type: inline-size;
+}
+.main-info {
+  display: grid;
+  gap: 1rem;
+  --columns: repeat(3, 1fr); /* Définit une variable CSS pour les colonnes */
+  grid-template-columns: var(--columns); /* Utilise la variable CSS pour définir les colonnes */
+}
+
+@container (min-width: 48rem) {
+  .main-info {
+    --columns: repeat(4, 1fr);
+  }
+}
+</style>
