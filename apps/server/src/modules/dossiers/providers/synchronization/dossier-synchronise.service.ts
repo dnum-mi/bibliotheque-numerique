@@ -47,10 +47,10 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
   private _findPrefecture(dossier: TDossier): PrefectureKeys | null {
     this.logger.verbose('_findPrefecture')
     const label = dossier.groupeInstructeur?.label ?? ''
-    const longSplit = label.split('–')
-    const shortSplit = label.split('-')
-    const focusSplit = longSplit.length > shortSplit.length ? longSplit : shortSplit
-    const startLabel = focusSplit?.[0].trim() ?? ''
+    const regexGroupInstructeur = /(\s*)(\d?\d[\dAB])(\s*)([-–])(.*)/
+    const resultRegex = label.match(regexGroupInstructeur)
+    if (!resultRegex) return null
+    const startLabel = resultRegex[2]
     const finalLabel = 'D' + startLabel
     const pref = Prefecture[finalLabel] ? finalLabel : null
     this.logger.debug(`Prefecture: ${pref}`)
