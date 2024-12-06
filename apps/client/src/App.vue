@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { AxiosError } from 'axios'
-
-import useToaster from '@/composables/use-toaster.js'
-import { useUserStore } from '@/stores'
+import apiClient from '@/api/api-client'
 
 import AppToaster from '@/components/AppToaster.vue'
+import useToaster from '@/composables/use-toaster.js'
+
 import { routeNames } from '@/router/route-names'
-import { Roles, isSuperiorOrSimilar } from '@biblio-num/shared'
+import { defaultEnv, type EnvTextKeys, envTextMapping } from '@/shared/types'
+import { useUserStore } from '@/stores'
 import { logInServer } from '@/utils/log.utils'
-import apiClient from '@/api/api-client'
-import { type EnvTextKeys, envTextMapping, defaultEnv } from '@/shared/types'
+import { isSuperiorOrSimilar, Roles } from '@biblio-num/shared'
+import { AxiosError } from 'axios'
 
 const version = ref('0.0.0')
 const runEnv = ref<EnvTextKeys>(defaultEnv)
@@ -19,14 +19,14 @@ onMounted(async () => {
     const healthJson = await apiClient.getHealth()
     version.value = healthJson.info?.version.version
     runEnv.value = healthJson.info?.environment.environment
-  } catch (error) {
+  } catch {
     toaster.addErrorMessage({ description: 'une erreur est survenue à la déconnexion' })
   }
 })
 const envStyle = computed(() => `env_${runEnv.value}`)
 const serviceTitle = 'Bibliothèque Numérique'
-const serviceDescription = 'Recherchez une démarche, un dossier, un organisme'
-const logoText = ['Ministère', 'de l’intérieur', 'et des outre-mer']
+const serviceDescription = 'Rechercher une démarche, un dossier, un organisme'
+const logoText = ['Ministère', 'de l’intérieur']
 const ecosystemLinks = [
   { label: 'Demarches-simplifiees.fr', href: 'https://www.demarches-simplifiees.fr' },
   { label: 'API - Répertoire National des Associations', href: 'https://entreprise.api.gouv.fr/catalogue/ministere_interieur/rna' },
