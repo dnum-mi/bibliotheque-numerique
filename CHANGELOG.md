@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.21.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.21.0...v2.21.1) (2024-12-09)
+
+
+### Bug Fixes
+
+* [#1538](https://github.com/dnum-mi/bibliotheque_numerique/issues/1538) - service instructeur no show in list dossiers ([bc3e1ab](https://github.com/dnum-mi/bibliotheque_numerique/commit/bc3e1ab13ea11f9117d169c5eff9b8996ac1d81e))
+* [#1542](https://github.com/dnum-mi/bibliotheque_numerique/issues/1542): update description title and logo MI ([e8ff1c5](https://github.com/dnum-mi/bibliotheque_numerique/commit/e8ff1c5a63844a007fa65887e295afafd0abfc21))
+* synchronization rna by ask admin-tech ([120d5db](https://github.com/dnum-mi/bibliotheque_numerique/commit/120d5db4c2f9a869747416c379d99be386b321af))
+
 ## [2.21.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.20.1...v2.21.0) (2024-11-28)
 
 
