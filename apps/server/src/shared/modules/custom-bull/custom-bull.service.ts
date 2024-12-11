@@ -38,7 +38,7 @@ export class CustomBullService {
   }
 
   @OnGlobalQueueError()
-  handlerQueueError (error: Error):void {
+  handlerQueueError(error: Error): void {
     this.logger.error(error)
   }
 
@@ -66,11 +66,10 @@ export class CustomBullService {
     this.logger.debug(`queueName: ${queueName}, jobName: ${jobName}, key: ${key}`)
     const redisKey = this._buildRedisKey(jobName, key)
     const exist = await this.redisService.getKey(redisKey)
+    this.logger.debug(exist)
     if (!exist) {
       this.logger.debug('job doesnt exist, adding it to the queue')
-      await this._getQueue(queueName).add(jobName, payload, {
-        jobId: redisKey,
-      })
+      await this._getQueue(queueName).add(jobName, payload)
       await this.redisService.checkAndSet(redisKey, this.configService.get('bull').resyncMinutes * 60)
     }
   }
