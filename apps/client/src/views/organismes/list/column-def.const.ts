@@ -36,30 +36,19 @@ export const listOrganismeColumnDef: ColDef[] = [
     },
     valueFormatter: ({ value }: { value: OrganismeTypeKey }) => dOrganismeTypeDictionary[value],
     menuTabs: ['filterMenuTab'],
-    width: 150,
+    width: 100,
   },
   {
     ...baseColDef,
     headerName: mapOrganismeFieldHeader.idRna,
     field: 'idRna',
-    width: 150,
+    width: 200,
   },
   {
     ...baseColDef,
     headerName: mapOrganismeFieldHeader.idRnf,
     field: 'idRnf',
-    width: 150,
-  },
-  {
-    ...baseColDef,
-    headerName: mapOrganismeFieldHeader.missingYears,
-    filter: 'customNumbersFilter',
-    filterParams: {
-      numbers: years,
-    },
-    valueFormatter: ({ value }: { value: number[] }) => value.join(' - '),
-    cellStyle: { color: 'red', 'font-weight': 'bolder' },
-    field: 'missingDeclarationYears',
+    width: 200,
   },
   {
     ...baseColDef,
@@ -81,5 +70,16 @@ export const listOrganismeColumnDef: ColDef[] = [
     ...baseColDef,
     headerName: mapOrganismeFieldHeader.phoneNumber,
     field: 'phoneNumber',
+  },
+  {
+    ...baseColDef,
+    headerName: mapOrganismeFieldHeader.missingYears,
+    filter: 'customNumbersFilter',
+    filterParams: {
+      numbers: years,
+    },
+    valueFormatter: ({ value }: { value: number[] }) => value.join(' - '),
+    cellStyle: { color: 'red', 'font-weight': 'bolder' },
+    field: 'missingDeclarationYears',
   },
 ]
