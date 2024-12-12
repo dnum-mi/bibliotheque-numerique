@@ -32,4 +32,10 @@ export class RedisService {
     this.logger.debug(`key: ${key}`)
     return this.redisClient.get(key)
   }
+
+  async initkeys(partern: string): Promise<void> {
+    const keys = await this.redisClient.keys(partern)
+
+    await Promise.all(keys.map(key => this.redisClient.del(key)))
+  }
 }

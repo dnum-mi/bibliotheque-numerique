@@ -30,6 +30,7 @@ import { OrganismeModule } from '@/modules/organismes/organisme.module'
 import { OrganismeProcessor } from '@/apps/worker-sync/processors/organisme.processor'
 import { S3Module } from '@/shared/modules/s3/s3.module'
 import fileConfig from '../../config/file.config'
+import { WokerSyncService } from './woker-sync.service'
 
 @Module({
   imports: [
@@ -71,6 +72,7 @@ import fileConfig from '../../config/file.config'
     DossierProcessor,
     FeProcessor,
     OrganismeProcessor,
+    WokerSyncService,
   ],
 })
 export class WorkerSyncModule {}

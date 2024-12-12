@@ -97,4 +97,14 @@ export class CustomBullService {
       payload,
     )
   }
+
+  public async initkeys(): Promise<void> {
+    this.logger.verbose('initkeys')
+    const patternKeyRnf = this._buildRedisKey(eJobName.SyncOneRnfOrganisme, 'rnf:*')
+    const patternKeyRna = this._buildRedisKey(eJobName.SyncOneRnaOrganisme, 'rna:*')
+    await Promise.all([
+      this.redisService.initkeys(patternKeyRnf),
+      this.redisService.initkeys(patternKeyRna),
+    ])
+  }
 }
