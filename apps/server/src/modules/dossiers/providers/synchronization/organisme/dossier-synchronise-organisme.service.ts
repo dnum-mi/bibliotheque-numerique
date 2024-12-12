@@ -51,12 +51,12 @@ export class DossierSynchroniseOrganismeService {
     if (!organismeField) {
       return
     }
-
-    await this.fieldService.repository.update({
-      id: organismeField.id,
-    }, {
-      stringValue: 'QUEUE-' + organismeField.stringValue,
-    })
+    // TODO: Trouver un mellieux solution - queue présent même s'il n'y a pas raison
+    // await this.fieldService.repository.update({
+    //   id: organismeField.id,
+    // }, {
+    //   stringValue: 'QUEUE-' + organismeField.stringValue,
+    // })
 
     if (organismeField.dsChampType === DsChampType.RnaChamp) {
       organisme = await this.organismeService.getOrCreateOrganismeIdFromRna(
@@ -84,6 +84,7 @@ export class DossierSynchroniseOrganismeService {
         firstTime: !organisme.rnfJson,
       } satisfies SyncOneRnfOrganismeJobPayload)
     }
+
     return organisme
   }
 
