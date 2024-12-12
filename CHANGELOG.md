@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.21.2](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.21.1...v2.21.2) (2024-12-12)
+
+
+### Bug Fixes
+
+* job-id is useless and prevent re-sync ([f6f3c96](https://github.com/dnum-mi/bibliotheque_numerique/commit/f6f3c96a16a342f4477173d677ba90d61c59e036))
+* remove queue for organismes synchronization ([9c4fbb1](https://github.com/dnum-mi/bibliotheque_numerique/commit/9c4fbb130c02af0219b936feb4154bc2642c4895))
+
 ## [2.21.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.21.0...v2.21.1) (2024-12-09)
 
 
