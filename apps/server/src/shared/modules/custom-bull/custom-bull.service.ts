@@ -61,7 +61,7 @@ export class CustomBullService {
     jobName: JobNameKey,
     key: string,
     payload: AnyJobPayload,
-  ): Promise<void> {
+  ): Promise<boolean> {
     this.logger.verbose('_addIfNotExists')
     this.logger.debug(`queueName: ${queueName}, jobName: ${jobName}, key: ${key}`)
     const redisKey = this._buildRedisKey(jobName, key)
@@ -71,12 +71,14 @@ export class CustomBullService {
       this.logger.debug('job doesnt exist, adding it to the queue')
       await this._getQueue(queueName).add(jobName, payload)
       await this.redisService.checkAndSet(redisKey, this.configService.get('bull').resyncMinutes * 60)
+      return true
     }
+    return false
   }
 
   public async addSyncOneRnfOrganismeJob(
     payload: SyncOneRnfOrganismeJobPayload,
-  ): Promise<void> {
+  ): Promise<boolean> {
     return this._addIfNotExists(
       QueueName.sync,
       eJobName.SyncOneRnfOrganisme,
@@ -87,7 +89,7 @@ export class CustomBullService {
 
   public async addSyncOneRnaOrganismeJob(
     payload: SyncOneRnaOrganismeJobPayload,
-  ): Promise<void> {
+  ): Promise<boolean> {
     return this._addIfNotExists(
       QueueName.sync,
       eJobName.SyncOneRnaOrganisme,
