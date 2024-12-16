@@ -16,9 +16,9 @@ const addressFn = (address: ISiafFondationOutput['coordonnees']['adresse']) => {
   const arrayAddressBuild1: addressbuild[] = ['num_voie', 'type_voie', 'voie']
   const addressStreetAddress = address
     ? arrayAddressBuild1
-      .map((k) => address[k])
-      .filter((address) => !!address)
-      .join(' ')
+        .map((k) => address[k])
+        .filter((address) => !!address)
+        .join(' ')
     : null
   const arrayAddressBuild2: addressbuild[] = ['cp', 'commune']
   return address

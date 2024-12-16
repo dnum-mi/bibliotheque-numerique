@@ -159,7 +159,7 @@ const updateProfile = async (field: Field, newText: string) => {
 
             <div v-if="!user?.role?.label" class="fr-callout p-4!">
               <span class="block">Vous n'avez pas de rôle ?</span>
-              <span > Contacter votre administrateur.</span>
+              <span> Contacter votre administrateur.</span>
             </div>
           </div>
           <hr class="fr-mt-1v">
