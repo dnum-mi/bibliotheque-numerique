@@ -25,10 +25,10 @@ Cypress.Commands.add('getLastMail', (infos) => {
     .then(mails => mails.concat(fakeMails))
     .then(mails => infos && infos.recipient
       ? mails.filter(mail =>
-        mail.To.map(
-          recipientObj => `${recipientObj.Mailbox}@${recipientObj.Domain}`,
-        ).includes(infos.recipient),
-      )
+          mail.To.map(
+            recipientObj => `${recipientObj.Mailbox}@${recipientObj.Domain}`,
+          ).includes(infos.recipient),
+        )
       : mails,
     )
     .then(mails => infos && infos.subjectContains
