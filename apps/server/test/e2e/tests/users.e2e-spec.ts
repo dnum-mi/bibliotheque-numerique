@@ -173,17 +173,17 @@ describe('users (e2e)', () => {
     })
   })
 
-  describe('PUT /users/me/password', () => {
+  describe('PUT /users/me/update-password', () => {
     it('Should return 401', async () => {
       await request(app.getHttpServer()) //
-        .put('/users/me/password')
+        .put('/users/me/update-password')
         .send({})
         .expect(401)
     })
 
     it('Should 403 to update password with invalid token', async () => {
       await request(app.getHttpServer()) //
-        .put('/users/me/password')
+        .put('/users/me/update-password')
         .send({ token: 'test' })
         .expect(403)
     })
@@ -203,7 +203,7 @@ describe('users (e2e)', () => {
       const jwtforurl = Buffer.from(jwt).toString('base64url')
 
       await request(app.getHttpServer()) //
-        .put('/users/me/password')
+        .put('/users/me/update-password')
         .send({
           password: 'Y,cqu;CQ.5]BcD3',
           token: jwtforurl,
@@ -221,7 +221,7 @@ describe('users (e2e)', () => {
       const jwtforurl = Buffer.from(jwt).toString('base64url')
 
       await request(app.getHttpServer()) //
-        .put('/users/me/password')
+        .put('/users/me/update-password')
         .send({
           token: jwtforurl,
         })
