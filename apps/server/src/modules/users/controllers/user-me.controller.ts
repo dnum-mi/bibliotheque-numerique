@@ -48,7 +48,8 @@ export class UserMeController {
     return this.usersService.profile(user)
   }
 
-  @Put('/me/password')
+  // Ne pas utiliser endpoint "/password", bloquer dans MI
+  @Put('/me/update-password')
   @UsualApiOperation({
     summary: 'Mettre à jour son mot de passe.',
     method: 'PUT',

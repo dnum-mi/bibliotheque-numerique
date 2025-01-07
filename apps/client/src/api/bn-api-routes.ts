@@ -21,7 +21,7 @@ export const softDeleteDemarcheByIdRoute = (demarcheId: number) => `${getDemarch
 export const getDemarcheAnonymizeRoute = (id: number) => `${getDemarcheOptionRoute(id)}/field/anonymized`
 
 export const usersRoutes = '/users'
-export const usersPasswordRoute = `${usersRoutes}/me/password`
+export const usersPasswordRoute = `${usersRoutes}/me/update-password`
 export const usersListRoute = `${usersRoutes}/list`
 export const getUserByIdRoute = (id: number) => `${usersRoutes}/${id}`
 export const profileRoute = `${usersRoutes}/me`
