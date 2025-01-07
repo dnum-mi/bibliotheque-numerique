@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.21.3](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.21.2...v2.21.3) (2025-01-07)
+
+
+### Bug Fixes
+
+* delete existing job cron ([2be82c8](https://github.com/dnum-mi/bibliotheque_numerique/commit/2be82c82f9eb9652334de5e1476003b36c849614))
+* init keys redis to synchro organisme by dossier ([e98a85b](https://github.com/dnum-mi/bibliotheque_numerique/commit/e98a85b590037ce9c7bd655b6dabafd1c4c7d895))
+* set new endpoint password ([067f6a4](https://github.com/dnum-mi/bibliotheque_numerique/commit/067f6a4216cc9148d5964d19fbc6fee5785ccef6))
+
 ## [2.21.2](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.21.1...v2.21.2) (2024-12-12)
 
 
