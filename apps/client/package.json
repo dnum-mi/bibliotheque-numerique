@@ -71,7 +71,7 @@
     "@vitejs/plugin-vue": "^5.2.1",
     "@vue/test-utils": "^2.4.6",
     "@vue/tsconfig": "^0.7.0",
-    "cypress": "^13.16.0",
+    "cypress": "13.8.0",
     "eslint": "^9.15.0",
     "eslint-plugin-cypress": "^4.1.0",
     "jsdom": "^25.0.1",
