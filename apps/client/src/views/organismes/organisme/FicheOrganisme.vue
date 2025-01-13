@@ -112,10 +112,10 @@ const zoom = ref(12)
 const mapCard = ref<HTMLElement>()
 //#endregion map
 
-const objectDescription = computed(() => organisme.value?.rnfJson.objectDescription)
-const internationalAction = computed(() => organisme.value?.rnfJson.internationalAction)
-const generalInterest = computed(() => organisme.value?.rnfJson.generalInterest)
-const dueDate = computed(() => new Intl.DateTimeFormat('fr-FR').format(new Date(organisme.value?.rnfJson.dueDate)))
+const objectDescription = computed(() => organisme.value?.rnfJson?.objectDescription)
+const internationalAction = computed(() => organisme.value?.rnfJson?.internationalAction)
+const generalInterest = computed(() => organisme.value?.rnfJson?.generalInterest)
+const dueDate = computed(() => organisme.value?.rnfJson?.dueDate ? new Intl.DateTimeFormat('fr-FR').format(new Date(organisme.value?.rnfJson?.dueDate)) : undefined)
 </script>
 
 <template>
