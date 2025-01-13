@@ -24,15 +24,11 @@ variables:
 stages:
   - read-secret
   - test-sonar-front
-#  - test-sonar-rnf-front
   - test-sonar-back
-  #  - test-sonar-rnf-back
   - test-sonar-http-proxy
   - docker-test
   - docker-build-front
-#  - docker-build-rnf-front
   - docker-build-back
-#  - docker-build-rnf-back
   - docker-build-http-proxy
 
 read_secret:
@@ -50,14 +46,6 @@ test_front:
   extends:
     - .node:sonar
 
-#test_rnf_front:
-#  variables:
-#    WORKING_DIR: apps/rnf-client
-#  stage: test-sonar-rnf-front
-#  allow_failure: true
-#  extends:
-#    - .node:sonar
-
 test_back:
   variables:
     WORKING_DIR: apps/server
@@ -65,14 +53,6 @@ test_back:
   allow_failure: true
   extends:
     - .node:sonar
-
-#test_rnf_back:
-#  variables:
-#    WORKING_DIR: apps/rnf-server
-#  stage: test-sonar-rnf-back
-#  allow_failure: true
-#  extends:
-#    - .node:sonar
 
 test_http_proxy:
   variables:
@@ -132,16 +112,6 @@ test_docker_front:
   extends:
     - .docker:test
 
-#test_docker_rnf_front:
-#  variables:
-#    WORKING_DIR: 'apps/rnf-client'
-#    IMAGE_NAME: 'rnf-front'
-#    DOCKERFILE: 'Dockerfile'
-#  stage: docker-test
-#  allow_failure: true
-#  extends:
-#    - .docker:test
-
 test_docker_back:
   image: docker:stable
   variables:
@@ -152,17 +122,6 @@ test_docker_back:
   allow_failure: true
   extends:
     - .docker:test
-
-#test_docker_rnf_back:
-#  image: docker:stable
-#  variables:
-#    WORKING_DIR: 'apps/rnf-server'
-#    IMAGE_NAME: 'rnf-back'
-#    DOCKERFILE: 'Dockerfile'
-#  stage: docker-test
-#  allow_failure: true
-#  extends:
-#    - .docker:test
 
 test_docker_http_proxy:
   image: docker:stable
@@ -235,16 +194,6 @@ docker_build_front:
   extends:
     - .kaniko:simple-build-push
 
-#docker_build_rnf_front:
-#  variables:
-#    WORKING_DIR: 'apps/rnf-client'
-#    IMAGE_NAME: 'rnf-front'
-#    DOCKERFILE: 'Dockerfile'
-#    EXTRA_BUILD_ARGS: --registry-mirror=$REGISTRY_MIRROR
-#  stage: docker-build-rnf-front
-#  extends:
-#    - .kaniko:simple-build-push
-
 docker_build_back:
   variables:
     WORKING_DIR: 'apps/server'
@@ -254,17 +203,6 @@ docker_build_back:
   stage: docker-build-back
   extends:
     - .kaniko:simple-build-push
-
-#docker_build_rnf_back:
-#  variables:
-#    WORKING_DIR: 'apps/rnf-server'
-#    IMAGE_NAME: 'rnf-back'
-#    DOCKERFILE: 'Dockerfile'
-#    EXTRA_BUILD_ARGS: --registry-mirror=$REGISTRY_MIRROR
-#  stage: docker-build-rnf-back
-#  extends:
-#    - .kaniko:simple-build-push
-
 
 docker_build_http_proxy:
   variables:

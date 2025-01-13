@@ -20,14 +20,6 @@
     "packages/shared": {
       "release-type": "node",
       "include-component-in-tag": true
-    },
-    "apps/rnf-client": {
-      "release-type": "node",
-      "include-component-in-tag": true
-    },
-    "apps/rnf-server": {
-      "release-type": "node",
-      "include-component-in-tag": true
     }
   },
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"

@@ -1,9 +1,0 @@
-{
-  "extends": "@vue/tsconfig/tsconfig.json",
-  "include": ["env.d.ts", "vite.config.*", "vitest.config.*", "cypress.config.*", "playwright.config.*"],
-  "exclude": ["node_modules", "**/*.spec.ts"],
-  "compilerOptions": {
-    "composite": true,
-    "types": ["node", "vitest/globals"]
-  }
-}

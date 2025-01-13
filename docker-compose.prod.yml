@@ -53,31 +53,6 @@ services:
       DS_API_TOKEN: ${DS_API_TOKEN}
       FORCE_COLOR: 1
 
-  rnf-server:
-    profiles:
-      - prod
-    build:
-      target: production
-      context: .
-      dockerfile: ./apps/rnf-server/Dockerfile
-    image: biblio-num/rnf-server:prod
-    container_name: biblio-num-prod_rnf_server
-    depends_on:
-      - db
-    ports:
-      - 3001:3001
-    networks:
-      - biblio-num-prod-network
-    environment:
-      DATABASE_HOST: db
-      DATABASE_DB: rnf
-      DATABASE_USERNAME: user
-      DATABASE_PASSWORD: password
-      DATABASE_PORT: 5432
-      DS_API_URL: ${DS_API_URL}
-      DS_API_TOKEN: ${DS_API_TOKEN}
-      FORCE_COLOR: 1
-
   db:
     profiles:
       - prod
@@ -106,20 +81,6 @@ services:
       dockerfile: ./apps/client/Dockerfile
     image: biblio-num/client:prod
     container_name: biblio-num-prod_client
-    ports:
-      - 8080:8080
-    networks:
-      - biblio-num-prod-network
-
-  rnf-client:
-    profiles:
-      - prod
-    build:
-      target: production
-      context: .
-      dockerfile: ./apps/rnf-client/Dockerfile
-    image: biblio-num/rnf-client:prod
-    container_name: biblio-num-prod_rnf_client
     ports:
       - 8080:8080
     networks:

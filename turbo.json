@@ -60,9 +60,6 @@
         "^@biblio-num/shared#build"
       ]
     },
-    "dev:rnf-server-in-docker": {
-      "cache": false
-    },
     "dev:server": {
       "cache": false,
       "dependsOn": [
