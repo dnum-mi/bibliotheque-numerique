@@ -87,7 +87,14 @@ jobs:
             npm i -g pnpm@8.12.1
             pnpm i --frozen-lockfile
             pnpm run lint:client
-            pnpm run test:client
+            # pnpm run test:client
+      - name: run test unit
+        run: |
+          pnpm run build:shared
+          cd apps/client
+          pnpm run test:unit
+          pnpm run test:ct:ci
+          pnpm run dev:e2e:ci
       - name: run build
         run: |
             pnpm run build:client
