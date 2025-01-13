@@ -17,8 +17,6 @@ jobs:
     outputs:
       is_client_modified: ${{ steps.is_client.outputs.is_client_modified }}
       is_server_modified: ${{ steps.is_server.outputs.is_server_modified }}
-      is_rnf_client_modified: ${{ steps.is_rnf_client.outputs.is_rnf_client_modified }}
-      is_rnf_server_modified: ${{ steps.is_rnf_server.outputs.is_rnf_server_modified }}
       is_shared_modified: ${{ steps.is_shared.outputs.is_shared_modified }}
     steps:
       - name: Checks-out repository
@@ -46,27 +44,11 @@ jobs:
             is_server_modified="true"
           fi
           echo "is_server_modified=$is_server_modified" >> $GITHUB_OUTPUT
-      - name: Récupérer si apps/rnf-client a été modifié
-        id: is_rnf_client
-        run: |
-          if git log HEAD...origin/$GITHUB_BASE_REF --name-only --pretty=format: | sort -u | grep -E -q '^(apps/rnf-client)/'; then
-            is_rnf_client_modified="true"
-          fi
-          echo "is_rnf_client_modified=$is_rnf_client_modified" >> $GITHUB_OUTPUT
-      - name: Récupérer si apps/rnf-server a été modifié
-        id: is_rnf_server
-        run: |
-          if git log HEAD...origin/$GITHUB_BASE_REF --name-only --pretty=format: | sort -u | grep -E -q '^(apps/rnf-server)/'; then
-            is_rnf_server_modified="true"
-          fi
-          echo "is_rnf_server_modified=$is_rnf_server_modified" >> $GITHUB_OUTPUT
       - name: Recap
         run: |
           echo "is_client_modified: ${{ steps.is_client.outputs.is_client_modified }}"
           echo "is_server_modified: ${{ steps.is_server.outputs.is_server_modified }}"
           echo "is_shared_modified: ${{ steps.is_shared.outputs.is_shared_modified }}"
-          echo "is_rnf_client_modified: ${{ steps.is_rnf_client.outputs.is_rnf_client_modified }}"
-          echo "is_rnf_server_modified: ${{ steps.is_rnf_server.outputs.is_rnf_server_modified }}"
 
   client:
     name: client - Run tests
@@ -99,30 +81,6 @@ jobs:
         run: |
             pnpm run build:client
 
-  rnf-client:
-    needs: checks
-    if: (!github.event.pull_request.draft) && needs.checks.outputs.is_rnf_client_modified
-    name: rnf-client - Run tests
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    steps:
-      - name: Checks-out repository
-        uses: actions/checkout@v3
-      - name: Use Node.js 20.x.x
-        uses: actions/setup-node@v3
-        with:
-          node-version: "20"
-      - name: run test FRONT
-        run: |
-          npm i -g pnpm@8.12.1
-          pnpm i --frozen-lockfile
-          pnpm run lint:rnf-client
-          pnpm run test:rnf-client
-      - name: run build
-        run: |
-          pnpm run build:rnf-client
-
   server:
     name: server - Run tests
     needs: checks
@@ -149,33 +107,6 @@ jobs:
         run: |
             pnpm run build:server
 
-  rnf-server:
-    name: rnf-server - Run tests
-    needs: checks
-    if: (!github.event.pull_request.draft) && needs.checks.outputs.is_rnf_server_modified
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    steps:
-      - name: Checks-out repository
-        uses: actions/checkout@v3
-      - name: Use Node.js 20.x.x
-        uses: actions/setup-node@v3
-        with:
-          node-version: "20"
-      - name: run tests BACK-END
-        run: |
-          npm i -g pnpm@8.12.1
-          pnpm i --frozen-lockfile
-          pnpm run generate-rnf
-          pnpm run lint:rnf-server
-          pnpm run docker:db:up
-          pnpm run test:rnf-server
-          pnpm run docker:down
-      - name: run build
-        run: |
-          pnpm run build:rnf-server
-
   docker-client:
     name: client - Build and Run docker image
     needs: checks
@@ -197,28 +128,6 @@ jobs:
           pnpm run docker:build:client:run
           pnpm run docker:build:client:check
           pnpm run docker:build:client:stop
-
-  docker-rnf-client:
-    name: rnf-client - Build and Run docker image
-    needs: checks
-    if: (!github.event.pull_request.draft) && needs.checks.outputs.is_rnf_client_modified
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    steps:
-      - name: Checks-out repository
-        uses: actions/checkout@v3
-      - name: Use Node.js 20.x.x
-        uses: actions/setup-node@v3
-        with:
-          node-version: "20"
-      - name: run build
-        run: |
-          npm i -g pnpm@8.12.1
-          pnpm run docker:build:rnf-client
-          pnpm run docker:build:rnf-client:run
-          pnpm run docker:build:rnf-client:check
-          pnpm run docker:build:rnf-client:stop
 
   docker-server:
     name: server - Build and Run docker image
@@ -242,27 +151,4 @@ jobs:
           pnpm run docker:build:server:run
           pnpm run docker:build:server:check
           pnpm run docker:build:server:stop
-          pnpm run docker:down
-
-  docker-rnf-server:
-    name: rnf-server - Build and Run docker image
-    needs: checks
-    if: (!github.event.pull_request.draft) && needs.checks.outputs.is_rnf_server_modified
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    steps:
-      - name: Checks-out repository
-        uses: actions/checkout@v3
-      - name: Use Node.js 20.x.x
-        uses: actions/setup-node@v3
-        with:
-          node-version: "20"
-      - name: run build
-        run: |
-          npm i -g pnpm@8.12.1
-          pnpm run docker:build:rnf-server
-          pnpm run docker:db:up
-          pnpm run docker:build:rnf-server:run
-          pnpm run docker:build:rnf-server:stop
           pnpm run docker:down
