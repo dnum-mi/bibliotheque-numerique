@@ -41,8 +41,18 @@ const instructeurRole: IRole = {
   },
 }
 
+let idUsers: number[]
+const getIdUsers = () => {
+  if (!idUsers) {
+    idUsers = faker.helpers.uniqueArray(faker.number.int, 100)
+  }
+  return idUsers
+}
+const getUniqueIdUser = () => {
+  return getIdUsers().shift()
+}
 export const createRandomUser = (id?: number): IAgGridUser => ({
-  id: id || faker.helpers.unique(faker.datatype.number, [1000]),
+  id: id || getUniqueIdUser(),
   lastname: faker.internet.userName(),
   firstname: faker.internet.userName(),
   email: faker.internet.email(),
@@ -51,14 +61,14 @@ export const createRandomUser = (id?: number): IAgGridUser => ({
   roleOptionsResume: 'FDD(2), FE(5)',
 })
 
-const adminUsersFn = () => Array.from({ length: faker.datatype.number({ min: 1, max: 3 }) }, createRandomUser)
+const adminUsersFn = () => Array.from({ length: faker.number.int({ min: 1, max: 3 }) }, createRandomUser)
   .map(user => ({
     ...user,
     roleLabel: adminRole.label,
     roleOptionsResume: 'FDD(2), FE(5)',
   }))
 
-const instructeurUsersFn = () => Array.from({ length: faker.datatype.number({ min: 1, max: 5 }) }, createRandomUser)
+const instructeurUsersFn = () => Array.from({ length: faker.number.int({ min: 1, max: 5 }) }, createRandomUser)
   .map(user => ({
     ...user,
     role: instructeurRole.label,
@@ -67,7 +77,7 @@ const instructeurUsersFn = () => Array.from({ length: faker.datatype.number({ mi
 
 export const getPaginatedUsers = () => {
   const usersRoles: Partial<IAgGridUser>[] = [
-    ...Array.from({ length: faker.datatype.number({ min: 1, max: 5 }) }, createRandomUser),
+    ...Array.from({ length: faker.number.int({ min: 1, max: 5 }) }, createRandomUser),
     ...adminUsersFn(),
     ...instructeurUsersFn(),
   ]

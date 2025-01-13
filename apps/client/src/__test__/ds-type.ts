@@ -5,5 +5,5 @@ export const getFileObjectExample = () => ({
   checksum: faker.string.sample(),
   filename: faker.system.fileName(),
   contentType: faker.system.mimeType(),
-  byteSizeBigInt: faker.datatype.bigInt(),
+  byteSizeBigInt: faker.number.bigInt(),
 })

@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker/locale/fr'
 
 const getTypeOrganisme = () => faker.helpers.arrayElement(['FDD', 'FE', 'ARUP', 'FRUP'])
 const getChampsDescriptor = () => ({
-  id: faker.datatype.string(29),
+  id: faker.string.nanoid(29),
   type: 'text',
   label: faker.lorem.sentence(),
   options: null,
@@ -11,23 +11,23 @@ const getChampsDescriptor = () => ({
   champDescriptors: null,
 })
 const getRevision = () => ({
-  id: faker.datatype.string(29),
-  champDescriptors: Array.from({ length: faker.datatype.number({ min: 0, max: 20 }) }, getChampsDescriptor),
-  annotationDescriptors: Array.from({ length: faker.datatype.number({ min: 0, max: 20 }) }, getChampsDescriptor),
+  id: faker.string.nanoid(29),
+  champDescriptors: Array.from({ length: faker.number.int({ min: 0, max: 20 }) }, getChampsDescriptor),
+  annotationDescriptors: Array.from({ length: faker.number.int({ min: 0, max: 20 }) }, getChampsDescriptor),
 })
-const getRevisions = () => Array.from({ length: faker.datatype.number({ min: 1, max: 20 }) }, getRevision)
+const getRevisions = () => Array.from({ length: faker.number.int({ min: 1, max: 20 }) }, getRevision)
 
 export const generateDemarche = () => ({
-  id: faker.datatype.number(),
+  id: faker.number.int(),
   state: 'publiee',
   title: faker.lorem.sentence(5),
   typeOrganisme: getTypeOrganisme(),
   lastSynchronisedAt: faker.date.past().toISOString(),
   dsDataJson: {
-    id: faker.datatype.string(29),
+    id: faker.string.nanoid(29),
     state: 'publiee',
     title: faker.lorem.sentence(5),
-    number: faker.datatype.number(),
+    number: faker.number.int(),
     declarative: 'accepte',
     description: faker.lorem.sentence(5),
     dateCreation: faker.date.past().toISOString(),
@@ -36,9 +36,9 @@ export const generateDemarche = () => ({
     dateDepublication: faker.date.past().toISOString(),
     dateDerniereModification: faker.date.past().toISOString(),
     service: {
-      id: faker.datatype.string(29),
+      id: faker.string.nanoid(29),
       nom: 'DLPAJ',
-      siret: faker.random.numeric(14),
+      siret: faker.string.numeric(14),
       organisme: 'Direction des libertés publiques et des affaires juridiques',
       typeOrganisme: 'administration_centrale',
     },
@@ -47,7 +47,7 @@ export const generateDemarche = () => ({
     publishedRevision: () => {
       const revision = getRevision()
       revision.annotationDescriptors.push({
-        id: faker.datatype.string(29),
+        id: faker.string.nanoid(29),
         type: 'text',
         label: 'Type d\'organisme',
         options: null,
@@ -57,16 +57,16 @@ export const generateDemarche = () => ({
       })
       return revision
     },
-    groupeInstructeurs: Array.from({ length: faker.datatype.number({ min: 1, max: 20 }) }, () => ({
-      id: faker.datatype.string(29),
-      label: faker.random.words(5),
-      number: faker.datatype.number(),
-      instructeurs: Array.from({ length: faker.datatype.number({ min: 1, max: 20 }) }, () => ({
-        id: faker.datatype.string(29),
+    groupeInstructeurs: Array.from({ length: faker.number.int({ min: 1, max: 20 }) }, () => ({
+      id: faker.string.nanoid(29),
+      label: faker.lorem.words(5),
+      number: faker.number.int(),
+      instructeurs: Array.from({ length: faker.number.int({ min: 1, max: 20 }) }, () => ({
+        id: faker.string.nanoid(29),
         email: faker.internet.email(),
       })),
     })),
   },
 })
 
-export const generateDemarches = () => Array.from({ length: faker.datatype.number({ min: 1, max: 20 }) }, () => generateDemarche())
+export const generateDemarches = () => Array.from({ length: faker.number.int({ min: 1, max: 20 }) }, () => generateDemarche())

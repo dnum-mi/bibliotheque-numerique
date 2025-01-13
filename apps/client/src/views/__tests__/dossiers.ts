@@ -5,10 +5,10 @@ const getStateDossier = (): DossierStateKeys => faker.helpers.arrayElement(['acc
 const getTypeDemandeur = () => faker.helpers.arrayElement(['PersonneMorale', 'PersonnePhysique'])
 
 export const getChamps = () => {
-  return Array(faker.datatype.number({ min: 1, max: 20 })).fill({}).map(() => ({
-    id: faker.datatype.string(20),
-    label: faker.random.word(),
-    stringValue: faker.random.words(),
+  return Array(faker.number.int({ min: 1, max: 20 })).fill({}).map(() => ({
+    id: faker.string.nanoid(20),
+    label: faker.lorem.word(),
+    stringValue: faker.lorem.words(),
   }))
 }
 const getTypeAddress = () => {
@@ -30,9 +30,9 @@ export const getDemandeurMorale = () => ({
     type: getTypeAddress(),
     streetAddress: faker.location.streetAddress(),
     streetNumber: faker.location.street(),
-    streetName: faker.location.streetName(),
+    streetName: faker.location.street(),
     postalCode: faker.location.zipCode(),
-    cityName: faker.location.cityName(),
+    cityName: faker.location.city(),
     cityCode: faker.location.zipCode(),
     departmentName: faker.location.state(),
     departmentCode: faker.location.zipCode(),
@@ -62,7 +62,7 @@ export const getDemandeurMorale = () => ({
     dateDeclaration: faker.date.past().toDateString(),
     datePublication: faker.date.past().toDateString(),
     objet: faker.company.catchPhrase(),
-    rna: `W${faker.random.numeric(9)}`,
+    rna: `W${faker.string.numeric(9)}`,
     titre: faker.company.name(),
   },
 })
@@ -102,7 +102,7 @@ export const generateDossierDSByTypeDemandeur = (__typename: string, demandeurTe
   groupeInstructeur: {
     id: faker.string.numeric(20),
     number: faker.number.int(),
-    label: faker.address.cityName(),
+    label: faker.location.city(),
   },
   traitements: [
     {
@@ -179,7 +179,7 @@ export const generateDossier = (): IDossier & { organisme: IOrganisme } => ({
   organisme: generateOrganisme(),
 })
 
-export const generateDossiers = () => Array.from({ length: faker.datatype.number({ min: 1, max: 20 }) }, () => generateDossier())
+export const generateDossiers = () => Array.from({ length: faker.number.int({ min: 1, max: 20 }) }, () => generateDossier())
 
 export const statusDictionary = {
   accepte: 'Accepté',
