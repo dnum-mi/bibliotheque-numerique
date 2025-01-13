@@ -23,7 +23,7 @@ RUN npm config set proxy "$http_proxy" && \
 
 WORKDIR /app
 
-RUN npm i -g pnpm
+RUN npm i -g pnpm@8.12.1
 
 RUN chown node:root /app
 USER node
@@ -48,7 +48,7 @@ RUN set +o nounset && \
 
 WORKDIR /app
 
-RUN npm i -g pnpm
+RUN npm i -g pnpm@8.12.1
 
 COPY --from=base /app/out/json/ .
 COPY --from=base /app/out/pnpm-lock.yaml ./pnpm-lock.yaml

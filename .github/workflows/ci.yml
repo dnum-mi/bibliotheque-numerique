@@ -84,7 +84,7 @@ jobs:
           node-version: "20"
       - name: run test FRONT
         run: |
-            npm i -g pnpm
+            npm i -g pnpm@8.12.1
             pnpm i --frozen-lockfile
             pnpm run lint:client
             pnpm run test:client
@@ -108,7 +108,7 @@ jobs:
           node-version: "20"
       - name: run test FRONT
         run: |
-          npm i -g pnpm
+          npm i -g pnpm@8.12.1
           pnpm i --frozen-lockfile
           pnpm run lint:rnf-client
           pnpm run test:rnf-client
@@ -132,7 +132,7 @@ jobs:
           node-version: "20.11"
       - name: run tests BACK-END
         run: |
-            npm i -g pnpm
+            npm i -g pnpm@8.12.1
             pnpm i --frozen-lockfile
             pnpm run lint:server
             pnpm run docker:ci:up
@@ -158,7 +158,7 @@ jobs:
           node-version: "20"
       - name: run tests BACK-END
         run: |
-          npm i -g pnpm
+          npm i -g pnpm@8.12.1
           pnpm i --frozen-lockfile
           pnpm run generate-rnf
           pnpm run lint:rnf-server
@@ -185,7 +185,7 @@ jobs:
           node-version: "20"
       - name: run build
         run: |
-          npm i -g pnpm
+          npm i -g pnpm@8.12.1
           pnpm run docker:build:client
           pnpm run docker:build:client:run
           pnpm run docker:build:client:check
@@ -207,7 +207,7 @@ jobs:
           node-version: "20"
       - name: run build
         run: |
-          npm i -g pnpm
+          npm i -g pnpm@8.12.1
           pnpm run docker:build:rnf-client
           pnpm run docker:build:rnf-client:run
           pnpm run docker:build:rnf-client:check
@@ -229,7 +229,7 @@ jobs:
           node-version: "20"
       - name: run build
         run: |
-          npm i -g pnpm
+          npm i -g pnpm@8.12.1
           pnpm run docker:build:server
           pnpm run docker:ci:up
           pnpm run docker:build:server:run
@@ -253,7 +253,7 @@ jobs:
           node-version: "20"
       - name: run build
         run: |
-          npm i -g pnpm
+          npm i -g pnpm@8.12.1
           pnpm run docker:build:rnf-server
           pnpm run docker:db:up
           pnpm run docker:build:rnf-server:run
