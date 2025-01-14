@@ -1,5 +1,25 @@
 # Changelog
 
+## [2.22.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.21.3...v2.22.0) (2025-01-14)
+
+
+### Features
+
+* ✨ [#1530](https://github.com/dnum-mi/bibliotheque_numerique/issues/1530) ajoute une carte dans fiche info organisme ([2678ecc](https://github.com/dnum-mi/bibliotheque_numerique/commit/2678ecc055b262f29d7fe5f62e12bb298a8c0892))
+* disable build rnf image in gitlab ci ([59155b6](https://github.com/dnum-mi/bibliotheque_numerique/commit/59155b6725440758fb9b57c7ed735b61138efc57))
+* **FicheOrganisme:** ✨ [#1530](https://github.com/dnum-mi/bibliotheque_numerique/issues/1530) ajout autres infos dans fiche info ([346f6bc](https://github.com/dnum-mi/bibliotheque_numerique/commit/346f6bc91bf3b7dd36028347e41ae21bdb78fb98))
+* **rnf:** del rnf ([8dc5c78](https://github.com/dnum-mi/bibliotheque_numerique/commit/8dc5c78f45f67de754c23eb2b11777428edc481c))
+
+
+### Bug Fixes
+
+* add module tsconfig for node 20 ([b5f765f](https://github.com/dnum-mi/bibliotheque_numerique/commit/b5f765fe74e978556edf6a5f2f76137f84347fbb))
+* error to read properties from undefined ([43c1f12](https://github.com/dnum-mi/bibliotheque_numerique/commit/43c1f12413d9880a1a2841f78ab7b07ae70f6966))
+* fix code from linter ([079741b](https://github.com/dnum-mi/bibliotheque_numerique/commit/079741b8258c133ef5202afe055f9d1b7ea2d79a))
+* pnpm to v8.12.1 ([50ef7ba](https://github.com/dnum-mi/bibliotheque_numerique/commit/50ef7ba1b083b3345262a788883ed9248dd79021))
+* replace function of fakerJs deprecated ([ea61420](https://github.com/dnum-mi/bibliotheque_numerique/commit/ea61420b14e02ae7bf972ebe197a51c3e9308a4d))
+* **rnf:** debug release-please and clean rnf in docs ([eb75fa1](https://github.com/dnum-mi/bibliotheque_numerique/commit/eb75fa1a909d7e7b26cdc557d87e6fca8435081e))
+
 ## [2.21.3](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.21.2...v2.21.3) (2025-01-07)
 
 
