@@ -60,9 +60,6 @@ cd bibliotheque_numerique
 # installation des packages
 pnpm install
 
-# génération des entités de rnf
-pnpm generate-rnf
-
 #construction
 pnpm build
 
@@ -111,45 +108,6 @@ A partir de la racine du projet
 pnpm dev:client
 ```
 
-##### Lancer RNF
-
-###### Server
-
-```bash
-# Mettre à jours les variables d'environnement de RNF
-cp apps/rnf-server/.env-example apps/rnf-server/.env
-```
-
-Complétez vos vairables d'environnements dans du fichier `.env` pour RNF ([voir doc des variables d'environnement](./apps/rnf-server/variables_env.md))
-
-Lancer les génération de code des entités si n'a pas été fait
-
-```bash
-# Génerer les entités de RNF
-pnpm generate-rnf
-```
-
-```bash
-# Lancer les containeurs Postgres, redis, mailhog et Minio, si ce n'est pas fait
-pnpm run docker:simple-dev
-```
-
-```bash
-# initialisation de la base de données de RNF
-pnpm rnf-migration:run
-
-# Lancer le serveur en mode developpement
-pnpm dev:rnf-server
-```
-
-###### Client
-
-```bash
-# Lancer le client en mode developpement
-pnpm dev:rnf-client
-```
-
-
 ## Documentation du Code
 
 Certains chapitres de la Bibliothèque Numérique peuvent être difficiles à comprendre, c'est pourquoi il existe des documents spécifiques sur ces sujets. L'ensemble des documents techniques est listé ici : [Documentation Resana](https://resana.numerique.gouv.fr/public/perimetre/consulter/143946?openGed=4676651).
@@ -157,7 +115,7 @@ Certains chapitres de la Bibliothèque Numérique peuvent être difficiles à co
 Voici le contenu détaillé de ces documents :
 
 ### Dossier *`Base de Données`* :
-Ce dossier contient les schémas des bases de données de RNF et de Bnum, ainsi qu'un fichier Markdown qui explique les différentes tables de Bnum.
+Ce dossier contient les schémas des bases de données de Bnum, ainsi qu'un fichier Markdown qui explique les différentes tables de Bnum.
 
 ### Dossier *`Pagination des Dossiers`* :
 Ce dossier contient un fichier Markdown qui explique la pagination des dossiers, accompagné d'un fichier Excel avec de fausses données pour illustrer les exemples de code présents.
