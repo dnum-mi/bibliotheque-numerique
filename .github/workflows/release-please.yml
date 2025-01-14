@@ -40,8 +40,6 @@ jobs:
           yq e -i ".version |= \"$VERSION\"" apps/server/package.json
           yq e -i ".version |= \"$VERSION\"" apps/server/src/version.json
           yq e -i ".version |= \"$VERSION\"" apps/client/package.json
-          yq e -i ".version |= \"$VERSION\"" apps/rnf-server/package.json
-          yq e -i ".version |= \"$VERSION\"" apps/rnf-client/package.json
           yq e -i ".version |= \"$VERSION\"" packages/shared/package.json
           git add -A
           # Emulate the author of the existing commit (the bot).
