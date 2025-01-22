@@ -26,6 +26,7 @@ export const usersListRoute = `${usersRoutes}/list`
 export const getUserByIdRoute = (id: number) => `${usersRoutes}/${id}`
 export const profileRoute = `${usersRoutes}/me`
 export const getUserRoleByIdRoute = (id: number) => `${getUserByIdRoute(id)}/role`
+export const updateRolesRoute = (id: number) => `${getUserRoleByIdRoute(id)}/many`
 // export const updateRoleRoute = (id: number) => `${getUserByIdRoute(id)}/role`
 
 export const dossierSearch = '/dossiers-search'

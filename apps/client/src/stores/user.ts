@@ -102,6 +102,18 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
+  const updateUserRolesOption = async (demarchesRoles: IUpdateOneRoleOption[], reloadUser: boolean): Promise<void> => {
+    selectedEditableUserLoading.value = true
+    const id = selectedEditableUser.value?.originalUser.id
+    if (!id) {
+      throw new Error('L\'Utilisateur n\'a pas été selectionné.')
+    }
+    await bnApiClient.updateUserDemarchesRoles(id, demarchesRoles)
+    if (reloadUser) {
+      await loadUserById(id)
+    }
+  }
+
   const removeRole = async () => {
     selectedEditableUserLoading.value = true
     const id = selectedEditableUser.value?.originalUser.id
@@ -138,5 +150,6 @@ export const useUserStore = defineStore('user', () => {
     removeRole,
     forceResetUser,
     changeMyProfile,
+    updateUserRolesOption,
   }
 })

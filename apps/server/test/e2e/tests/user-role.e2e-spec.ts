@@ -198,6 +198,40 @@ describe('users (e2e)', () => {
       })
     })
 
+    it('Should patch user role: check many demarches', async () => {
+      await request(app.getHttpServer()) //
+        .patch('/users/5/role/many')
+        .set('Cookie', [cookies.superadmin])
+        .send([{
+          demarcheId: '3',
+          checked: true,
+        }, {
+          demarcheId: '4',
+          checked: true,
+        }, {
+          demarcheId: '6',
+          checked: true,
+        }])
+        .expect(200)
+
+      const user = await userService.findOneById(5)
+      expect(user.role.options).toEqual({
+        ...user.role.options,
+        3: {
+          national: false,
+          prefectures: [],
+        },
+        4: {
+          national: false,
+          prefectures: [],
+        },
+        6: {
+          national: false,
+          prefectures: [],
+        },
+      })
+    })
+
     it('Should patch user role: check national', async () => {
       await request(app.getHttpServer()) //
         .patch('/users/5/role')

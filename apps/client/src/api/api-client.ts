@@ -78,6 +78,7 @@ import {
   getDemarcheAnonymizeRoute,
   searchOrganisme,
   enableSiafRoute,
+  updateRolesRoute,
 } from './bn-api-routes'
 import { authRoute, getUserByIdRoute, profileRoute, signInRoute, usersRoutes } from '@/api/bn-api-routes'
 
@@ -337,6 +338,10 @@ export const usersApiClient = {
 
   async updateUserDemarchesRole (id: number, dto: IUpdateOneRoleOption) {
     await apiClientInstance.patch(getUserRoleByIdRoute(id), dto)
+  },
+
+  async updateUserDemarchesRoles (id: number, dtos: IUpdateOneRoleOption[]) {
+    await apiClientInstance.patch(updateRolesRoute(id), dtos)
   },
 
   async removeRole (id: number) {
