@@ -32,6 +32,14 @@ export class RoleService {
   ): Promise<void> {
     this.logger.verbose('patchOneRole')
     const role = uwer.originalUser.role
+    this._manageRoleToUpdateRole(dto, role)
+    await this.userService.repository.update(
+      { id: uwer.originalUser.id },
+      { role },
+    )
+  }
+
+  private _manageRoleToUpdateRole(dto: UpdateOneRoleOptionDto, role: IRole): void {
     if (dto.checked === false) {
       role.options[dto.demarcheId] = undefined
     } else if (dto.checked === true) {
@@ -49,10 +57,20 @@ export class RoleService {
     } else if (dto.prefecture?.toAdd) {
       role.options[dto.demarcheId].prefectures.push(dto.prefecture.key)
     } else if (!dto.prefecture?.toAdd) {
-      role.options[dto.demarcheId].prefectures = role.options[
-        dto.demarcheId
-      ].prefectures.filter((key) => key !== dto.prefecture.key)
+      role.options[dto.demarcheId].prefectures = role.options[dto.demarcheId].prefectures
+        .filter((key) => key !== dto.prefecture.key)
     }
+  }
+
+  public async patchOneRoles(
+    uwer: UserWithEditableRole,
+    dtos: UpdateOneRoleOptionDto[],
+  ): Promise<void> {
+    this.logger.verbose('patchOneRole')
+    const role = uwer.originalUser.role
+    dtos.forEach(dto => {
+      this._manageRoleToUpdateRole(dto, role)
+    })
     await this.userService.repository.update(
       { id: uwer.originalUser.id },
       { role },

@@ -99,6 +99,39 @@ export class UserRoleController {
     return this.service.patchOneRole(tuwer, dto)
   }
 
+  @Patch('many')
+  @UsualApiOperation({
+    summary: "Modifie plusieurs roles d'un utilisateur.",
+    method: 'POST',
+    minimumRole: Roles.admin,
+    responseType: UserWithEditableRole,
+    supplement:
+      "Le format des rôles retourné exprime la possibilité pour l'utilisateur qui les demande de les modifier" +
+      ' ou non en fonction de ses droits. Cette route fournira donc des résultats différents en fonction du rôle de' +
+      " l'utilisateur qui la demande.",
+  })
+  @UseInterceptors(AllDemarcheInterceptor)
+  async patchTargetUserWithEditableRoles(
+    @CurrentUserRole() role: IRole,
+    @TargetUserWithEditableRole() tuwer: UserWithEditableRole,
+    @Body() dtos: UpdateOneRoleOptionDto[],
+  ): Promise<void> {
+    this.logger.verbose('getTargetUserWithEditableRole')
+    if (!tuwer.originalUser.role.label) {
+      throw new ForbiddenException('Target user need to have a role')
+    }
+    if (
+      !isSuperiorOrSimilar(Roles.superadmin, role.label) &&
+      !dtos.reduce((acc, dto) => acc && isEditionAllowed(dto, tuwer), true)
+    ) {
+      throw new ForbiddenException(
+        'You are not allowed to perform this operation',
+      )
+    }
+
+    return this.service.patchOneRoles(tuwer, dtos)
+  }
+
   @Put()
   @UsualApiOperation({
     summary: "Modifie les rôle d'un utilisateur.",

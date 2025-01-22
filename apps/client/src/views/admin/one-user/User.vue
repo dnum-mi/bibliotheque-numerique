@@ -201,7 +201,15 @@ const checkAllTypeChildren = async ({ name, checked, dr }: { name: string; check
   if (!checked || !dr.children) {
     return
   }
-  await Promise.all(dr.children?.map((child) => checkOneDemarche({ id: child.options.id, checked, d: child, reloadUser: false })))
+  await userStore.updateUserRolesOption(dr.children?.map((child) => {
+    child.options.checked = checked
+    deduceCheckTypeFromChild(child.options.id)
+    return {
+      demarcheId: child.options.id,
+      checked,
+    }
+  }), false)
+
   dr.key = getRandomId(name)
   if (selectedUser.value?.id) {
     await userStore.loadUserById(selectedUser.value?.id)

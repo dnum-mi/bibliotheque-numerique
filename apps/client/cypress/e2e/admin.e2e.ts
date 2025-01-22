@@ -120,7 +120,7 @@ describe('Admin', () => {
 
     cy.intercept({
       method: 'PATCH',
-      url: '/api/users/444/role',
+      url: '/api/users/444/role/many',
       times: 1,
     }, { statusCode: 200 }).as('patchUserSelected444')
 
