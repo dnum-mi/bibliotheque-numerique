@@ -1,6 +1,7 @@
 import type { ColDef } from 'ag-grid-community'
 import OrganismeBadgesRenderer from '@/components/Badges/organisme/OrganismeBadgesRenderer.vue'
-import { organismeTypes, dOrganismeTypeDictionary, mapOrganismeFieldHeader, type OrganismeTypeKey } from '@biblio-num/shared'
+import { organismeTypes, dOrganismeTypeDictionary, mapOrganismeFieldHeader } from '@biblio-num/shared'
+import type { OrganismeTypeKey } from '@biblio-num/shared'
 
 const baseColDef: ColDef = {
   filter: 'agTextColumnFilter',

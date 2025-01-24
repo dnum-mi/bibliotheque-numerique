@@ -14,17 +14,17 @@
     "build:types": "tsc --emitDeclarationOnly --declaration --outDir types"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^2.6.4",
+    "@antfu/eslint-config": "^4.1.0",
     "@dnum-mi/ds-api-client": "^1.7.8",
     "@microsoft/api-extractor": "7.39.4",
     "eslint": "npm:eslint-ts-patch@^8.56.0-0",
     "nodemon": "^3.0.1",
     "npm-run-all2": "6.1.2",
     "rimraf": "^5.0.5",
-    "tsup": "8.0.1",
+    "tsup": "8.3.6",
     "typescript": "5.3.3"
   },
   "volta": {
-    "node": "20.11.0"
+    "node": "22.13.1"
   }
 }

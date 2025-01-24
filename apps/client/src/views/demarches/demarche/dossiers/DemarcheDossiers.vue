@@ -19,8 +19,10 @@ import type {
   IMappingColumn,
 } from '@biblio-num/shared'
 
+import type {
+  FrontIMappingColumn,
+} from '@/stores'
 import {
-  type FrontIMappingColumn,
   useCustomFilterStore,
   useDemarcheStore,
 } from '@/stores'
@@ -30,7 +32,8 @@ import AgGridServerSide from '@/components/ag-grid/server-side/AgGridServerSide.
 import { backendFilterToAggFilter } from '@/components/ag-grid/server-side/pagination.utils'
 import { getAgGridFilterFromFieldType } from '@/components/ag-grid/server-side/filters.utils'
 import type { BNColDef } from '@/components/ag-grid/server-side/bn-col-def.interface'
-import DemarcheDossiersDisplays, { type TotalsAllowed } from './DemarcheDossiersDisplays.vue'
+import DemarcheDossiersDisplays from './DemarcheDossiersDisplays.vue'
+import type { TotalsAllowed } from './DemarcheDossiersDisplays.vue'
 import type { CustomFilterWithErrors } from '@/views/demarches/demarche/dossiers/custom-filter-with-errors.type'
 
 type DemarcheDossiersProps = {

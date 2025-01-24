@@ -1,8 +1,10 @@
 <script lang="ts" setup>
-import { organismeTypes, type ISiafAssociationOutput, type ISiafFondationOutput, type ISiafSearchOrganismeResponseOutput } from '@biblio-num/shared'
+import { organismeTypes } from '@biblio-num/shared'
+import type { ISiafAssociationOutput, ISiafFondationOutput, ISiafSearchOrganismeResponseOutput } from '@biblio-num/shared'
 import apiClient from '../../../api/api-client'
 import { routeNames } from '../../../router/route-names'
-import { EOrganismeIdType, type OrganismeIdType } from '../../../stores'
+import { EOrganismeIdType } from '../../../stores'
+import type { OrganismeIdType } from '../../../stores'
 
 const router = useRouter()
 const inputSearch = ref('')

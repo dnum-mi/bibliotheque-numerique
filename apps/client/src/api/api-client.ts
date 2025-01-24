@@ -1,5 +1,5 @@
-import axios, { AxiosError, type AxiosResponse } from 'axios'
-
+import axios, { AxiosError } from 'axios'
+import type { AxiosResponse } from 'axios'
 import useToaster from '@/composables/use-toaster'
 
 import type {

@@ -60,13 +60,13 @@ jobs:
     steps:
       - name: Checks-out repository
         uses: actions/checkout@v3
-      - name: Use Node.js 20.x.x
+      - name: Use Node.js 22.x.x
         uses: actions/setup-node@v3
         with:
-          node-version: "20"
+          node-version: "22"
       - name: run test FRONT
         run: |
-            npm i -g pnpm@8.12.1
+            npm i -g pnpm@9.15.4
             pnpm i --frozen-lockfile
             pnpm run lint:client
             # pnpm run test:client
@@ -91,13 +91,13 @@ jobs:
     steps:
       - name: Checks-out repository
         uses: actions/checkout@v3
-      - name: Use Node.js 20.x.x
+      - name: Use Node.js 22.x.x
         uses: actions/setup-node@v3
         with:
-          node-version: "20.11"
+          node-version: "22"
       - name: run tests BACK-END
         run: |
-            npm i -g pnpm@8.12.1
+            npm i -g pnpm@9.15.4
             pnpm i --frozen-lockfile
             pnpm run lint:server
             pnpm run docker:ci:up
@@ -117,13 +117,13 @@ jobs:
     steps:
       - name: Checks-out repository
         uses: actions/checkout@v3
-      - name: Use Node.js 20.x.x
+      - name: Use Node.js 22.x.x
         uses: actions/setup-node@v3
         with:
-          node-version: "20"
+          node-version: "22"
       - name: run build
         run: |
-          npm i -g pnpm@8.12.1
+          npm i -g pnpm@9.15.4
           pnpm run docker:build:client
           pnpm run docker:build:client:run
           pnpm run docker:build:client:check
@@ -139,13 +139,13 @@ jobs:
     steps:
       - name: Checks-out repository
         uses: actions/checkout@v3
-      - name: Use Node.js 20.x.x
+      - name: Use Node.js 22.x.x
         uses: actions/setup-node@v3
         with:
-          node-version: "20"
+          node-version: "22"
       - name: run build
         run: |
-          npm i -g pnpm@8.12.1
+          npm i -g pnpm@9.15.4
           pnpm run docker:build:server
           pnpm run docker:ci:up
           pnpm run docker:build:server:run

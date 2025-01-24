@@ -1,4 +1,4 @@
-FROM docker.io/node:20.11.0 as base
+FROM docker.io/node:22.13.1 as base
 
 RUN npm config set proxy "$http_proxy" && \
     npm config set https-proxy "$https_proxy" && \
@@ -6,7 +6,7 @@ RUN npm config set proxy "$http_proxy" && \
 
 WORKDIR /app
 
-RUN npm i -g turbo@2.0.11
+RUN npm i -g turbo@2.3.4
 
 RUN chown node:root /app
 USER node
@@ -15,7 +15,7 @@ COPY . .
 RUN turbo prune --scope=@biblio-num/server --docker
 
 
-FROM docker.io/node:20.11.0 AS builder
+FROM docker.io/node:22.13.1 AS builder
 
 RUN npm config set proxy "$http_proxy" && \
     npm config set https-proxy "$https_proxy" && \
@@ -23,7 +23,7 @@ RUN npm config set proxy "$http_proxy" && \
 
 WORKDIR /app
 
-RUN npm i -g pnpm@8.12.1
+RUN npm i -g pnpm@9.15.4
 
 RUN chown node:root /app
 USER node
@@ -39,7 +39,7 @@ RUN pnpm run build:server
 CMD ["pnpm", "run", "dev:server-in-docker"]
 
 
-FROM bitnami/node:20 as production
+FROM bitnami/node:22.13.1 as production
 
 RUN set +o nounset && \
     npm config set proxy "$http_proxy" && \
@@ -48,7 +48,7 @@ RUN set +o nounset && \
 
 WORKDIR /app
 
-RUN npm i -g pnpm@8.12.1
+RUN npm i -g pnpm@9.15.4
 
 COPY --from=base /app/out/json/ .
 COPY --from=base /app/out/pnpm-lock.yaml ./pnpm-lock.yaml

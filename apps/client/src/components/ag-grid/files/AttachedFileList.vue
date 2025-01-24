@@ -10,7 +10,8 @@ import MimeTypeCellRenderer from './MimeTypeCellRenderer.vue'
 import AttachedFileStateCellRenderer from './AttachedFileStateCellRenderer.vue'
 import { baseApiUrl } from '@/api/api-client'
 import FileTagBadgeRenderer from '@/components/Badges/file-tag/FileTagBadgeRenderer.vue'
-import useToaster, { type Message as ToasterMessage } from '@/composables/use-toaster'
+import useToaster from '@/composables/use-toaster'
+import type { Message as ToasterMessage } from '@/composables/use-toaster'
 
 const props = withDefaults(defineProps<AttachedFileListProps>(), {
   tag: undefined,

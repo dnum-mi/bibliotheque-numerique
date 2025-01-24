@@ -3,7 +3,8 @@ import type { File } from '@dnum-mi/ds-api-client'
 import { prettyByteSizeByString } from '@/utils'
 import { getFileRoute } from '../api/bn-api-routes'
 import { baseApiUrl } from '../api/api-client'
-import { eState, type StateKey } from '@biblio-num/shared'
+import { eState } from '@biblio-num/shared'
+import type { StateKey } from '@biblio-num/shared'
 
 const props = defineProps<{
   file: File | null

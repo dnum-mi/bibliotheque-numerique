@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { dateToStringFr } from '@/utils'
-import { organismeTypes, Prefecture, type ISiafAssociationOutput } from '@biblio-num/shared'
+import { organismeTypes, Prefecture } from '@biblio-num/shared'
+import type { ISiafAssociationOutput } from '@biblio-num/shared'
 
 const props = defineProps<{ organismeRaf: ISiafAssociationOutput }>()
 

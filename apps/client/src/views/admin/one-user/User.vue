@@ -5,7 +5,6 @@ import type {
   PrefectureOptions,
   UserOutputDto,
   UserWithEditableRole,
-
   OrganismeTypeKey,
 } from '@biblio-num/shared'
 
@@ -19,7 +18,8 @@ import { computed, ref } from 'vue'
 import DemarcheLocalization from './DemarcheLocalization.vue'
 
 import UserGeographicalRights from './UserGeographicalRights.vue'
-import { LocalizationOptions, type LocalizationOptionsKeys } from './localization.enum'
+import { LocalizationOptions } from './localization.enum'
+import type { LocalizationOptionsKeys } from './localization.enum'
 
 import UserRole from './UserRole.vue'
 

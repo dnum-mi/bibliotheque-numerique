@@ -18,7 +18,8 @@ import { statisticRoute } from '@/router/statistic.route'
 import { accessibilityRoute } from '@/router/accessibility.route'
 import { cookiesRoute } from '@/router/cookies.route'
 import { configurationRoute } from './configuration.route'
-import { createRouter, createWebHistory, type RouterOptions } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
+import type { RouterOptions } from 'vue-router'
 
 const MAIN_TITLE = 'Bibliothèque Numérique'
 

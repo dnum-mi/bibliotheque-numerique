@@ -4,8 +4,10 @@ import slugify from 'slugify'
 
 import {
   Prefecture,
-  type FormatFunctionRefKeys,
-  type PrefectureKeys,
+} from '@biblio-num/shared'
+import type {
+  FormatFunctionRefKeys,
+  PrefectureKeys,
 } from '@biblio-num/shared'
 
 import delayStateBadge from '@/components/Badges/delay-state/DelayStateBadge.vue'
