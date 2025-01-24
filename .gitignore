@@ -339,3 +339,6 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,node,macos,intellij,visualstudiocode,turbo
+
+# pnpm
+.pnpm-store
