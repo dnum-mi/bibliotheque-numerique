@@ -1,6 +1,7 @@
 <script lang="ts">
 // ⚠️ This is a custom filter for ag-grid, DO NOT make it a <script setup> as there is a bug with ag-grid and <script setup>
-import { type Ref, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
+import type { Ref } from 'vue'
 import type { INumbersFilterCondition } from '@biblio-num/shared'
 import type { IFilterParams } from 'ag-grid-community'
 

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { dFileTabDictionary, type FileTagKey } from '@biblio-num/shared'
+import { dFileTabDictionary } from '@biblio-num/shared'
+import type { FileTagKey } from '@biblio-num/shared'
 
 const props = defineProps<{
   tag: FileTagKey

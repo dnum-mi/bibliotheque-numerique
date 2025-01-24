@@ -1,15 +1,18 @@
 import { getRandomId } from '@gouvminint/vue-dsfr'
 
 import bnApiClient from '@/api/api-client'
+import type {
+  ICredentialsInput,
+  IUserOutput,
+  IPaginationUser,
+  IMyProfileOutput,
+  IUserWithEditableRole,
+  IUpdateOneRoleOption,
+  IUpdateProfile,
+  RolesKeys,
+} from '@biblio-num/shared'
+
 import {
-  type ICredentialsInput,
-  type IUserOutput,
-  type IPaginationUser,
-  type IMyProfileOutput,
-  type IUserWithEditableRole,
-  type IUpdateOneRoleOption,
-  type IUpdateProfile,
-  type RolesKeys,
   Roles,
 } from '@biblio-num/shared'
 

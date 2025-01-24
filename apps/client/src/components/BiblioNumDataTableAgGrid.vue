@@ -4,7 +4,8 @@ import type { SelectionChangedEvent, GridReadyEvent } from 'ag-grid-community'
 import type { RowStyle } from 'ag-grid-enterprise'
 import type { AgGridCommon } from 'ag-grid-community/dist/lib/interfaces/iCommon'
 
-import { agGridFilterDict, type AgGridFilterKey, type Action, type HeaderDataTable } from '@/shared/types'
+import { agGridFilterDict } from '@/shared/types'
+import type { AgGridFilterKey, Action, HeaderDataTable } from '@/shared/types'
 import TableCellAction from './TableCellAction.vue'
 import { PAGINATION_PAGE_SIZE } from '@/config'
 

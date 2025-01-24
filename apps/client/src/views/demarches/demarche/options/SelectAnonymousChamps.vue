@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { FieldSource, type IMappingAnonymizedChamp, type IMappingColumn } from '@biblio-num/shared'
+import { FieldSource } from '@biblio-num/shared'
+import type { IMappingAnonymizedChamp, IMappingColumn } from '@biblio-num/shared'
 import demarcheConfigurationVue from '../configuration/DemarcheConfigurationsCommon.vue'
 import { useDemarcheStore } from '@/stores'
 import DemarcheConfigurationSelectedItem from '../configuration/DemarcheConfigurationSelectedItem.vue'

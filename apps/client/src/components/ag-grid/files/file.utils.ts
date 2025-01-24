@@ -1,4 +1,5 @@
-import { type FileExtensionKey, eFileExtension, type StateKey } from '@biblio-num/shared'
+import { eFileExtension } from '@biblio-num/shared'
+import type { FileExtensionKey, StateKey } from '@biblio-num/shared'
 
 const mimeTypeIconDictionary: Record<FileExtensionKey, string> = {
   [eFileExtension.pdf]: 'vi-file-type-pdf2',

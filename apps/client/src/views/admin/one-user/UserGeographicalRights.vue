@@ -3,7 +3,8 @@ import type { PrefectureOptions, PrefectureKeys } from '@biblio-num/shared'
 import { listOfPrefectures } from '@biblio-num/shared'
 import type { DsfrTagProps } from '@gouvminint/vue-dsfr/types/components/DsfrTag/DsfrTag.vue'
 import { computed } from 'vue'
-import { LocalizationOptions, type LocalizationOptionsKeys } from './localization.enum'
+import { LocalizationOptions } from './localization.enum'
+import type { LocalizationOptionsKeys } from './localization.enum'
 
 const props = defineProps<{
   geographicalRights: PrefectureOptions;

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { dateToStringFr } from '@/utils'
-import { organismeTypes, Prefecture, type ISiafFondationOutput } from '@biblio-num/shared'
+import { organismeTypes, Prefecture } from '@biblio-num/shared'
+import type { ISiafFondationOutput } from '@biblio-num/shared'
 import FicheInfoPersonnes from './FicheInfoPersonnes.vue'
 
 const props = defineProps<{ organismeRaf: ISiafFondationOutput }>()

@@ -1,4 +1,4 @@
-FROM docker.io/node:20.11.0 as base
+FROM docker.io/node:22.13.1 as base
 
 RUN npm config set proxy "$http_proxy" && \
     npm config set https-proxy "$https_proxy" && \
@@ -6,7 +6,7 @@ RUN npm config set proxy "$http_proxy" && \
 
 WORKDIR /app
 
-RUN npm i -g turbo@2.0.11 pnpm@8.12.1
+RUN npm i -g turbo@2.3.4 pnpm@9.15.4
 
 RUN chown node:node /app
 USER node
@@ -14,7 +14,7 @@ USER node
 COPY . .
 RUN turbo prune --scope=@biblio-num/client --docker
 
-FROM docker.io/node:20.11.0 AS builder
+FROM docker.io/node:22.13.1 AS builder
 
 RUN npm config set proxy "$http_proxy" && \
     npm config set https-proxy "$https_proxy" && \
@@ -22,7 +22,7 @@ RUN npm config set proxy "$http_proxy" && \
 
 WORKDIR /app
 
-RUN npm i -g pnpm@8.12.1
+RUN npm i -g pnpm@9.15.4
 
 # First install the dependencies (as they change less often)
 COPY .gitignore .gitignore
