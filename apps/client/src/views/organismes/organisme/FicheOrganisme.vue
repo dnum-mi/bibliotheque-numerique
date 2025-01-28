@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { useTabs, DsfrTabs } from '@gouvminint/vue-dsfr'
+import type { DsfrBadgeProps } from '@gouvminint/vue-dsfr'
 
 import apiClient from '@/api/api-client'
 import { dateToStringFr, copyCurrentUrlInClipboard } from '@/utils'
@@ -116,7 +117,26 @@ const mapCard = ref<HTMLElement>()
 const objectDescription = computed(() => organisme.value?.rnfJson?.objectDescription)
 const internationalAction = computed(() => organisme.value?.rnfJson?.internationalAction)
 const generalInterest = computed(() => organisme.value?.rnfJson?.generalInterest)
-const dueDate = computed(() => organisme.value?.rnfJson?.dueDate ? new Intl.DateTimeFormat('fr-FR').format(new Date(organisme.value?.rnfJson?.dueDate)) : undefined)
+const dueDate = computed(() => organisme.value?.rnfJson?.dueDate ? new Intl.DateTimeFormat('fr-FR').format(new Date(organisme.value?.rnfJson?.dueDate)) : 'Illimitée')
+const stateOfFilingOfAccounts = computed<{
+  label: string,
+  type: DsfrBadgeProps['type']
+}>(() => !organisme.value?.missingDeclarationYears?.length
+  ? {
+      label: 'OK',
+      type: 'info',
+    }
+  : {
+      label: 'HORS DELAI',
+      type: 'error',
+    })
+
+const fiscalEndDateAt = computed(() => {
+  return organisme.value?.rnfJson?.fiscalEndDateAt && new Intl.DateTimeFormat('fr-FR', {
+    day: '2-digit',
+    month: '2-digit',
+  }).format(new Date(organisme.value?.rnfJson?.fiscalEndDateAt))
+})
 </script>
 
 <template>
@@ -208,12 +228,17 @@ const dueDate = computed(() => organisme.value?.rnfJson?.dueDate ? new Intl.Date
                       <span class="bn-fiche-sub-title--text">{{ creation }}</span>
                     </div>
                     <div>
-                      <label class="bn-fiche-sub-title--label uppercase">ALERTE</label>
+                      <label class="bn-fiche-sub-title--label uppercase">Dépôt des comptes</label>
                       <DsfrBadge
                         no-icon
                         small
-                        label="OK"
+                        :label="stateOfFilingOfAccounts.label"
+                        :type="stateOfFilingOfAccounts.type"
                       />
+                    </div>
+                    <div>
+                      <label class="bn-fiche-sub-title--label uppercase">Date de clôture comptable</label>
+                      <span class="bn-fiche-sub-title--text">{{ fiscalEndDateAt }}</span>
                     </div>
                     <div
                       v-if="dissolution"
@@ -221,17 +246,12 @@ const dueDate = computed(() => organisme.value?.rnfJson?.dueDate ? new Intl.Date
                       <label class="bn-fiche-sub-title--label uppercase">Dissolution</label>
                       <span class="bn-fiche-sub-title--text">{{ dissolution }}</span>
                     </div>
-                    <div
-                      v-if="objectDescription"
-                    >
-                      <label class="bn-fiche-sub-title--label uppercase">Object</label>
-                      <span class="bn-fiche-sub-title--text">{{ objectDescription }}</span>
-                    </div>
                     <div>
                       <label class="bn-fiche-sub-title--label uppercase">Activité à l’international</label>
                       <span class="bn-fiche-sub-title--text">
+                        {{ internationalAction }}
                         <template v-if="typeof internationalAction === 'boolean'">
-                          {{ internationalAction }}
+                          {{ internationalAction ? 'Oui' : 'Non' }}
                         </template>
                         <em v-else class="text-gray-400">Non renseigné</em>
                       </span>
@@ -245,8 +265,15 @@ const dueDate = computed(() => organisme.value?.rnfJson?.dueDate ? new Intl.Date
                         <em v-else class="text-gray-400">Non renseigné</em>
                       </span>
                     </div>
-                    <div>
-                      <label class="bn-fiche-sub-title--label uppercase">Intérêt général</label>
+                    <div
+                      v-if="objectDescription"
+                      class="grid-col-span-3"
+                    >
+                      <label class="bn-fiche-sub-title--label uppercase">Objet</label>
+                      <span class="bn-fiche-sub-title--text">{{ objectDescription }}</span>
+                    </div>
+                    <div class="grid-col-span-3">
+                      <label class="bn-fiche-sub-title--label uppercase">Caractère de l'activité d’intérêt général</label>
                       <span class="bn-fiche-sub-title--text">
                         <template v-if="generalInterest">
                           {{ generalInterest }}
