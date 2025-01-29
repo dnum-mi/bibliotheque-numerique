@@ -11,7 +11,7 @@ export interface IFondations {
   fondations: ISiafFondationOutput
 }
 @Injectable()
-export class SiafService {
+export class HubService {
   axios: AxiosInstance
 
   constructor(
@@ -36,23 +36,23 @@ export class SiafService {
   }
 
   async getAssociation(idRna: string): Promise<IAssociations | null> {
-    this.logger.verbose('SIAF-getAssociation')
-    const url = `/associations/${idRna}`
+    this.logger.verbose('HUB-getAssociation')
+    const path = `/associations/${idRna}`
     return this.axios
-      .get(url)
+      .get(path)
   }
 
   async getFoundation(idRnf: string): Promise<IFondations | null> {
-    this.logger.verbose('SIAF-getFondation')
-    const url = `/fondations/${idRnf}`
+    this.logger.verbose('HUB-getFondation')
+    const path = `/fondations/${idRnf}`
     return this.axios
-      .get(url)
+      .get(path)
   }
 
   async searchOrganisme(sentence: string): Promise<ISiafSearchOrganismeOutput | null> {
-    this.logger.verbose('SIAF-search')
-    const url = `${this.config.get('siafHub.url')}/generic/full_text_search/${sentence}`
+    this.logger.verbose('HUB-search')
+    const path = `/generic/full_text_search/${sentence}`
     return this.axios
-      .get(url)
+      .get(path)
   }
 }
