@@ -1,5 +1,6 @@
 import { IOrganisme } from "./organisme.interface";
-import { ISiafAssociationOutput, ISiafFondationOutput } from "./hub-output.interface";
+import { ISiafRnaOutput } from "./siaf/siaf-rna-output.interface";
+import { ISiafRnfOutput } from "./siaf/siaf-rnf-output.interface";
 
 export enum  typeCategorieOrganisme {
   rna,
@@ -8,6 +9,6 @@ export enum  typeCategorieOrganisme {
 }
 export interface  IOrganismeOutput {
   bn: Partial<IOrganisme>,
-  siaf: Partial<ISiafAssociationOutput | ISiafFondationOutput>
+  siaf: Partial<ISiafRnaOutput | ISiafRnfOutput>
   type: typeCategorieOrganisme
 }

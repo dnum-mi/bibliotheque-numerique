@@ -1,3 +1,5 @@
+// TODO: fichier à supprimer aprés la mise à jours du hub
+
 interface IAdresse {
   label: string,
   num_voie: string,
