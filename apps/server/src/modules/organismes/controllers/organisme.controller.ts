@@ -129,6 +129,14 @@ export class OrganismeController {
     }
   }
 
+  private _getValueFromPromiseSettle<T>(type:string, result: PromiseSettledResult<T>):T|null {
+    if (result.status === 'rejected') {
+      this.logger.warn(`${type}: ${result.reason}`)
+      return null
+    }
+    return result.value
+  }
+
   @UsualApiOperation({
     summary: 'Retourner un organisme à partir de son RNA.',
     method: 'GET',
@@ -141,20 +149,16 @@ export class OrganismeController {
     @Param('organismeIdRna') idRna: string,
   ): Promise<IOrganismeOutput> {
     this.logger.verbose('getOrganismeWithRna')
-    const organisme: IOrganismeOutput = {
-      bn: null,
-      siaf: null,
-      type: typeCategorieOrganisme.rna,
-    }
     const results = await Promise.allSettled([
       this.organismeService.findOneOrThrow({ where: { idRna } }),
       this.organismeService.getAssocationFromSiaf(idRna),
     ])
-    results.forEach((result, index) => {
-      result.status === 'rejected'
-        ? this.logger.warn(`${(index === 0 ? 'bn' : 'siaf')}: ${result.reason}`)
-        : organisme[index === 0 ? 'bn' : 'siaf'] = result.value
-    })
+
+    const organisme: IOrganismeOutput = {
+      bn: this._getValueFromPromiseSettle('bn', results[0]),
+      siaf: this._getValueFromPromiseSettle('siaf', results[1]),
+      type: typeCategorieOrganisme.rna,
+    }
 
     if (!organisme.bn && !organisme.siaf) {
       throw new NotFoundException(`L'association ${idRna} non trouvé`)
@@ -174,20 +178,17 @@ export class OrganismeController {
     @Param('organismeIdRnf') idRnf: string,
   ): Promise<IOrganismeOutput> {
     this.logger.verbose('getOrganismeWithRnf')
-    const organisme: IOrganismeOutput = {
-      bn: null,
-      siaf: null,
-      type: typeCategorieOrganisme.rnf,
-    }
     const results = await Promise.allSettled([
       this.organismeService.findOneOrThrow({ where: { idRnf } }),
       this.organismeService.getFondationFromSiaf(idRnf),
     ])
-    results.forEach((result, index) => {
-      result.status === 'rejected'
-        ? this.logger.warn(`${(index === 0 ? 'bn' : 'siaf')}: ${result.reason}`)
-        : organisme[index === 0 ? 'bn' : 'siaf'] = result.value
-    })
+
+    const organisme: IOrganismeOutput = {
+      bn: this._getValueFromPromiseSettle('bn', results[0]),
+      siaf: this._getValueFromPromiseSettle('siaf', results[1]),
+      type: typeCategorieOrganisme.rnf,
+    }
+
     if (!organisme.bn && !organisme.siaf) {
       throw new NotFoundException(`La fondation ${idRnf} non trouvé`)
     }

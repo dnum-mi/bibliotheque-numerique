@@ -1,14 +1,18 @@
 import { Injectable } from '@nestjs/common'
 import { LoggerService } from '../../../shared/modules/logger/logger.service'
 import { ConfigService } from '@nestjs/config'
-import type { ISiafAssociationOutput, ISiafFondationOutput, ISiafSearchOrganismeOutput } from '@biblio-num/shared'
+import type {
+  ISiafRnaOutput,
+  ISiafRnfOutput,
+  ISiafSearchOrganismeOutput,
+} from '@biblio-num/shared'
 import axios, { AxiosInstance } from 'axios'
 
 export interface IAssociations {
-  associations: ISiafAssociationOutput
+  associations: ISiafRnaOutput
 }
 export interface IFondations {
-  fondations: ISiafFondationOutput
+  fondations: ISiafRnfOutput
 }
 @Injectable()
 export class HubService {
@@ -35,14 +39,14 @@ export class HubService {
     })
   }
 
-  async getAssociation(idRna: string): Promise<IAssociations | null> {
+  async getAssociation(idRna: string): Promise<IAssociations | ISiafRnaOutput | null> {
     this.logger.verbose('HUB-getAssociation')
     const path = `/associations/${idRna}`
     return this.axios
       .get(path)
   }
 
-  async getFoundation(idRnf: string): Promise<IFondations | null> {
+  async getFoundation(idRnf: string): Promise<IFondations | ISiafRnfOutput | null> {
     this.logger.verbose('HUB-getFondation')
     const path = `/fondations/${idRnf}`
     return this.axios
