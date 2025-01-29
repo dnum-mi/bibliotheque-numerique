@@ -51,7 +51,7 @@ import {
 import { BnConfigurationService } from '@/shared/modules/bn-configurations/providers/bn-configuration.service'
 import { addYears } from 'date-fns'
 import { getCodeByRegionName } from '../utils/utils.regions'
-import { SiafService } from './hub.service'
+import { HubService } from './hub.service'
 
 @Injectable()
 export class OrganismeService extends BaseEntityService<Organisme> {
@@ -60,7 +60,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     @InjectRepository(Organisme) repo: Repository<Organisme>,
     protected readonly rnfService: RnfService,
     protected readonly rnaService: RnaService,
-    protected readonly siafService: SiafService,
+    protected readonly siafService: HubService,
     private readonly fileService: FileService,
     protected readonly dossierService: DossierService,
     @InjectQueue(QueueName.file) private readonly fileQueue: Queue,
