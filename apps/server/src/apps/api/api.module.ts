@@ -36,7 +36,7 @@ import { InstructionTimesModule } from '@/modules/instruction_time/instruction_t
 import { CustomBullModule } from '@/shared/modules/custom-bull/custom-bull.module'
 import { CronModule } from '@/modules/cron/cron.module'
 import { BnConfigurationModule } from '@/shared/modules/bn-configurations/bn-configuration.module'
-import siafConfig from '../../config/siaf.config'
+import siafHubConfig from '../../config/siaf-hub.config'
 
 @Module({
   imports: [
@@ -53,7 +53,7 @@ import siafConfig from '../../config/siaf.config'
         jwtConfig,
         rnaConfig,
         rnfConfig,
-        siafConfig,
+        siafHubConfig,
         sudoUserConfig,
         instructionTimeMappingConfig,
         redisConfig,

@@ -1,4 +1,4 @@
-import { ISiafAssociationOutput, ISiafFondationOutput } from "./siaf-output.interface"
+import { ISiafAssociationOutput, ISiafFondationOutput } from "./hub-output.interface"
 
 
 export enum EEntityTypeSearchOrganisme {
