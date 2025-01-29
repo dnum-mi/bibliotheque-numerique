@@ -1,6 +1,7 @@
 // Traduit du schema de SIAF RNF
 import { PersonRoleKey } from '../person-role.enums';
 import {FoundationTypeKey} from './foundation-type.enum'
+import { IAddress, IDissolved, IStatus } from './siaf-common-output.interface';
 
 enum eFileMimeType {
   unknown = "unkown", // TODO: do we want to authorize any file type ?
@@ -11,43 +12,6 @@ enum eFileMimeType {
   xls = "application/vnd.ms-excel",
   doc = "application/msword",
   docx= "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-}
-
-interface File {
-  id: string
-  name: string
-  checksum: string
-  byteSize: number
-  mimeType: string //eFileMimeType;
-}
-interface Dissolved {
-  dissolvedAt: Date | undefined;
-  verbalProcess: File | undefined;
-  mandatLetter: File | undefined;
-  otherFiles: File[]
-}
-interface Status {
-  file: File | undefined
-}
-
-interface GouvAddress {
-  label: string
-  housenumber: string | undefined
-  id: string | undefined
-  banId: string | undefined
-  name: string | undefined
-  postcode: string | undefined
-  citycode: string | undefined
-  context: string | undefined
-  type: string | undefined
-  street: string | undefined
-  city: string | undefined;
-}
-
-interface Address {
-  dsStringValue: string | undefined;
-  coordinates: [number, number] | undefined;
-  gouvAddress: GouvAddress | undefined;
 }
 
 interface Person  {
@@ -62,7 +26,7 @@ interface Person  {
   bornPlace:string | undefined
   isFounder:boolean
   role: PersonRoleKey
-  address: Address
+  address: IAddress
 }
 
 export interface ISiafRnfOutput {
@@ -73,11 +37,17 @@ export interface ISiafRnfOutput {
   websites: string[]
   foundationType: FoundationTypeKey
   department: string
+  originalDepartment: string
   originalCreatedAt: Date
-  dissolved: Dissolved
-  status: Status | undefined
-  address: Address | undefined
+  dissolved: IDissolved
+  status: IStatus | undefined
+  address: IAddress | undefined
   fiscalEndDateAt: Date | null
   declarationYears: number[]
   persons: Person[]
+  objectDescription?: string
+  dueDate?: Date
+  generalInterest?: string
+  internationalAction?: boolean
+
 }
