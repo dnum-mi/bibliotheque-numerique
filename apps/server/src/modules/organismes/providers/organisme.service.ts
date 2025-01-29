@@ -51,7 +51,7 @@ import {
 import { BnConfigurationService } from '@/shared/modules/bn-configurations/providers/bn-configuration.service'
 import { addYears } from 'date-fns'
 import { getCodeByRegionName } from '../utils/utils.regions'
-import { SiafService } from './siaf.service'
+import { SiafService } from './hub.service'
 
 @Injectable()
 export class OrganismeService extends BaseEntityService<Organisme> {

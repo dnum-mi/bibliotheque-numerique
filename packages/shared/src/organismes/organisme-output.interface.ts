@@ -1,5 +1,5 @@
 import { IOrganisme } from "./organisme.interface";
-import { ISiafAssociationOutput, ISiafFondationOutput } from "./siaf-output.interface";
+import { ISiafAssociationOutput, ISiafFondationOutput } from "./hub-output.interface";
 
 export enum  typeCategorieOrganisme {
   rna,
