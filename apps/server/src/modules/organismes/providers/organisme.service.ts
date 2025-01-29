@@ -21,9 +21,8 @@ import {
   eBnConfiguration,
   ISiafRnfOutput,
   IAddress,
-  ISiafAssociationOutput,
-  ISiafFondationOutput,
   ISiafSearchOrganismeResponseOutput,
+  ISiafRnaOutput,
 } from '@biblio-num/shared'
 
 import { OrganismeFieldTypeHash } from '@/modules/organismes/objects/const/organisme-field-type-hash.const'
@@ -351,24 +350,32 @@ export class OrganismeService extends BaseEntityService<Organisme> {
       .getMany()
   }
 
-  async getAssocationFromSiaf(idRna: string): Promise< ISiafAssociationOutput | null> {
+  async getAssocationFromSiaf(idRna: string): Promise< ISiafRnaOutput | null> {
     this.logger.verbose('getAssocationFromSiaf')
     const enableSiaf = await this.bnConfiguration.getValueByKeyName(eBnConfiguration.ENABLE_SIAF)
     if (!enableSiaf) return null
     const fromSiaf = await this.siafService.getAssociation(idRna)
     this.logger.debug({ FN: 'getAssocationFromSiaf', idRna })
     if (!fromSiaf) return null
-    return fromSiaf.associations
+    if ('associations' in fromSiaf) {
+      return fromSiaf.associations
+    } else {
+      return fromSiaf
+    }
   }
 
-  async getFondationFromSiaf(idRnf: string): Promise<ISiafFondationOutput | null> {
+  async getFondationFromSiaf(idRnf: string): Promise<ISiafRnfOutput | null> {
     this.logger.verbose('getFondationFromSiaf')
     const enableSiaf = await this.bnConfiguration.getValueByKeyName(eBnConfiguration.ENABLE_SIAF)
     if (!enableSiaf) return null
     const fromSiaf = await this.siafService.getFoundation(idRnf)
     this.logger.debug({ FN: 'getFondationFromSiaf', idRnf })
     if (!fromSiaf) return null
-    return fromSiaf.fondations
+    if ('fondations' in fromSiaf) {
+      return fromSiaf.fondations
+    } else {
+      return fromSiaf
+    }
   }
 
   async searchOrganismes(sentence: string): Promise<ISiafSearchOrganismeResponseOutput[] | null> {
