@@ -227,6 +227,12 @@ const fiscalEndDateAt = computed(() => {
                       <label class="bn-fiche-sub-title--label uppercase">CRÉATION</label>
                       <span class="bn-fiche-sub-title--text">{{ creation }}</span>
                     </div>
+                    <div
+                      v-if="dissolution"
+                    >
+                      <label class="bn-fiche-sub-title--label uppercase">Dissolution</label>
+                      <span class="bn-fiche-sub-title--text">{{ dissolution }}</span>
+                    </div>
                     <div>
                       <label class="bn-fiche-sub-title--label uppercase">Dépôt des comptes</label>
                       <DsfrBadge
@@ -237,14 +243,8 @@ const fiscalEndDateAt = computed(() => {
                       />
                     </div>
                     <div>
-                      <label class="bn-fiche-sub-title--label uppercase">Date de clôture comptable</label>
+                      <label class="bn-fiche-sub-title--label uppercase">Date de clôture des comptes</label>
                       <span class="bn-fiche-sub-title--text">{{ fiscalEndDateAt }}</span>
-                    </div>
-                    <div
-                      v-if="dissolution"
-                    >
-                      <label class="bn-fiche-sub-title--label uppercase">Dissolution</label>
-                      <span class="bn-fiche-sub-title--text">{{ dissolution }}</span>
                     </div>
                     <div>
                       <label class="bn-fiche-sub-title--label uppercase">Activité à l’international</label>
