@@ -79,6 +79,8 @@ import {
   searchOrganisme,
   enableSiafRoute,
   updateRolesRoute,
+  proconnectSignInRoute,
+  proconnectCallbackRoute,
 } from './bn-api-routes'
 import { authRoute, getUserByIdRoute, profileRoute, signInRoute, usersRoutes } from '@/api/bn-api-routes'
 
@@ -318,13 +320,13 @@ export const usersApiClient = {
   },
 
   async loginWithProconnect () {
-    const response = await apiClientAuthInstance.get('/auth/proconnect')
+    const response = await apiClientAuthInstance.get(proconnectSignInRoute)
     return response.data
   },
 
   async ProConnectCallback (code: string, state: string, iss: string) {
     const response = await apiClientAuthInstance.post(
-      '/auth/proconnect/callback',
+      proconnectCallbackRoute,
       {
         code,
         state,
