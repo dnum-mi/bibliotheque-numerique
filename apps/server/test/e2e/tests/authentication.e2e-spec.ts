@@ -1,7 +1,8 @@
 import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
-import { dataSource } from '../data-source-e2e.typeorm'
 import { TestingModuleFactory } from '../common/testing-module.factory'
+import { AuthService } from '@/modules/auth/providers/auth.service'
+import { dataSource } from '../data-source-e2e.typeorm'
 
 const adminFixtureUser = {
   id: 4,
@@ -13,11 +14,19 @@ const adminFixtureUser = {
 
 describe('Auth (e2e)', () => {
   let app: INestApplication
+  let authService: AuthService
 
   beforeAll(async () => {
     const testingModule = new TestingModuleFactory()
     await testingModule.init()
     app = testingModule.app
+
+    authService = app.get(AuthService)
+
+    jest.spyOn(authService, 'fetchUserinfo').mockResolvedValue({
+      email: adminFixtureUser.email,
+      access_token: 'mockAccessToken123',
+    })
   })
 
   afterAll(async () => {
@@ -76,9 +85,53 @@ describe('Auth (e2e)', () => {
 
   describe('DELETE /auth', () => {
     it('Should return 200 on disconnection', async () => {
-      await request(app.getHttpServer()) //
+      await request(app.getHttpServer())
         .delete('/auth')
         .expect(200)
+    })
+  })
+
+  describe('GET /auth/proconnect', () => {
+    it('Should return 200 and the proconnect URL', async () => {
+      await request(app.getHttpServer())
+        .get('/auth/proconnect')
+        .expect(200)
+        .expect(({ body }) => {
+          expect(body).toHaveProperty('url')
+          expect(body.url).toBeTruthy()
+        })
+    })
+  })
+
+  describe('POST /auth/proconnect/callback', () => {
+    it('Should return 200 and the user info on callback', async () => {
+      await request(app.getHttpServer())
+        .post('/auth/proconnect/callback')
+        .expect(201)
+        .expect(({ body }) => {
+          expect(body.email).toBe(adminFixtureUser.email)
+        })
+    })
+
+    it('Should create a new user when user does not exist', async () => {
+      jest.spyOn(authService, 'fetchUserinfo').mockResolvedValue({
+        email: 'newuser@localhost.com',
+        given_name: 'New',
+        family_name: 'User',
+        access_token: 'mockAccessToken123',
+      })
+
+      await request(app.getHttpServer())
+        .post('/auth/proconnect/callback')
+        .expect(201)
+        .expect(({ body }) => {
+          expect(body).toMatchObject({
+            email: 'newuser@localhost.com',
+            firstname: 'New',
+            lastname: 'User',
+            job: '',
+          })
+        })
     })
   })
 })

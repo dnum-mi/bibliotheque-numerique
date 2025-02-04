@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   HttpCode,
   Post,
   Request,
@@ -60,5 +61,30 @@ export class AuthController {
 
       res.send({ success: true })
     })
+  }
+
+  @PublicRoute()
+  @Get('proconnect')
+  @UsualApiOperation({
+    summary: 'Récupérer proconnect url',
+    method: 'GET',
+    minimumRole: 'aucun',
+    responseType: null,
+  })
+  async getProconnectUrl(@Request() req, @Response() res): Promise<{ url: string }> {
+    const { url } = this.authService.proconnect(req)
+    return res.json({ url })
+  }
+
+  @PublicRoute()
+  @Post('proconnect/callback')
+  @UsualApiOperation({
+    summary: 'Proconnect callback',
+    method: 'POST',
+    minimumRole: 'aucun',
+    responseType: UserOutputDto,
+  })
+  async proconnectCallback(@Request() req): Promise<UserOutputDto> {
+    return this.authService.proconnectCallback(req)
   }
 }

@@ -317,6 +317,24 @@ export const usersApiClient = {
     apiClientAuthInstance.post('/users/me/reset-password', resetPasswordInput)
   },
 
+  async loginWithProconnect () {
+    const response = await apiClientAuthInstance.get('/auth/proconnect')
+    return response.data
+  },
+
+  async ProConnectCallback (code: string, state: string, iss: string) {
+    const response = await apiClientAuthInstance.post(
+      '/auth/proconnect/callback',
+      {
+        code,
+        state,
+        iss,
+      },
+    )
+
+    return response.data
+  },
+
   async validEmail (token: string) {
     try {
       const validateEmail: IValidateEmail = {

@@ -12,6 +12,7 @@ import type {
   RolesKeys,
 } from '@biblio-num/shared'
 
+
 import {
   Roles,
 } from '@biblio-num/shared'
@@ -42,6 +43,10 @@ export const useUserStore = defineStore('user', () => {
 
   const login = async (loginForm: ICredentialsInput) => {
     currentUser.value = await bnApiClient.loginUser(loginForm)
+  }
+
+  const loginWithProconnect = async (code: string, state: string, iss: string) => {
+    currentUser.value = await bnApiClient.ProConnectCallback(code, state, iss)
   }
 
   const forceResetUser = () => {
@@ -144,6 +149,7 @@ export const useUserStore = defineStore('user', () => {
     keySelectUser,
     selectedEditableUserLoading,
     login,
+    loginWithProconnect,
     logout,
     loadMyProfile,
     listUsers,
