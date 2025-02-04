@@ -12,7 +12,6 @@ import type {
   RolesKeys,
 } from '@biblio-num/shared'
 
-
 import {
   Roles,
 } from '@biblio-num/shared'
