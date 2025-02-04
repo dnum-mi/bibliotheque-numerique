@@ -51,6 +51,8 @@ interface IGroupement {
 
 export interface ISiafRnaOutput {
   id: string;
+  createdAt: Date
+  updatedAt: Date
   title: string;
   titles: string[];
   emails: string[];

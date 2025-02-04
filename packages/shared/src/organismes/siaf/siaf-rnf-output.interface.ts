@@ -22,11 +22,16 @@ interface Person  {
   phone:string | undefined
   profession:string
   nationality:string
-  bornAt: Date | undefined
+  bornAt: Date
   bornPlace:string | undefined
   isFounder:boolean
   role: PersonRoleKey
   address: IAddress
+  residenceCountry: string;
+  entryDate?: Date;
+  exitDate?: Date;
+  jobPosition: string;
+
 }
 
 export interface ISiafRnfOutput {
@@ -49,5 +54,6 @@ export interface ISiafRnfOutput {
   dueDate?: Date
   generalInterest?: string
   internationalAction?: boolean
-
+  createdAt: Date
+  updatedAt: Date
 }
