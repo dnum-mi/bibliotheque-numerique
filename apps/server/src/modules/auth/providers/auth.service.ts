@@ -26,7 +26,7 @@ export class AuthService {
     clientId: this.configService.get('auth').client_id,
     client_secret: this.configService.get('auth').client_secret,
     redirect_uri: this.configService.get('auth').redirect_uri,
-    discoveryUrl: this.configService.get('auth').discoveryUrl,
+    discovery_url: this.configService.get('auth').discovery_url,
   }
 
   constructor(
@@ -36,7 +36,7 @@ export class AuthService {
   ) {}
 
   async onModuleInit(): Promise<void> {
-    const issuer = await Issuer.discover(this.config.discoveryUrl)
+    const issuer = await Issuer.discover(this.config.discovery_url)
     this.client = new issuer.Client({
       client_id: this.config.clientId,
       client_secret: this.config.client_secret,
