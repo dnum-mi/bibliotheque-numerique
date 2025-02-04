@@ -5,6 +5,15 @@ import { isNotAuthenticatedGuard } from '@/shared/guards'
 
 export const authRoutes: RouteRecordRaw[] = [
   {
+    name: routeNames.PROCONNECT_CALLBACK,
+    path: '/login-callback',
+    beforeEnter: [isNotAuthenticatedGuard],
+    component: () => import('@/views/authentification/ProConnectCallback.vue'),
+    meta: {
+      skipAuth: true,
+    },
+  },
+  {
     name: routeNames.SIGNIN,
     path: '/sign_in',
     beforeEnter: [isNotAuthenticatedGuard],

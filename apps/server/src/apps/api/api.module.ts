@@ -16,6 +16,7 @@ import instructionTimeMappingConfig from '@/config/instructionTimeMapping.config
 import redisConfig from '@/config/redis.config'
 import cronConfig from '@/config/cron.config'
 import bullConfig from '@/config/bull.config'
+import authConfig from '@/config/auth.config'
 
 import { DemarcheModule } from '@/modules/demarches/demarche.module'
 import { DossierModule } from '@/modules/dossiers/dossier.module'
@@ -58,6 +59,7 @@ import siafConfig from '../../config/siaf.config'
         redisConfig,
         cronConfig,
         bullConfig,
+        authConfig,
       ],
     } as ConfigModuleOptions),
     TypeOrmModule.forRootAsync(typeormFactoryLoader),

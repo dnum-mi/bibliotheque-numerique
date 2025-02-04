@@ -23,4 +23,5 @@ export const routeNames = {
   VALIDE_MAIL: 'ValidEmail',
   ACCESSIBILITY: 'Accessibility',
   COOKIES: 'Cookies',
+  PROCONNECT_CALLBACK: 'ProConnectCallback',
 } as const

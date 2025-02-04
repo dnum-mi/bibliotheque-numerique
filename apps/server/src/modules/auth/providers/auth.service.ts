@@ -1,17 +1,49 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  Injectable, NotFoundException,
+} from '@nestjs/common'
 import { UserService } from '../../users/providers/user.service'
 import * as bcrypt from 'bcrypt'
 import { User } from '@/modules/users/objects/user.entity'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { CredentialsInputDto } from '@/modules/users/objects/dtos/input'
 import { UserOutputDto } from '@/modules/users/objects/dtos/output'
+import { Issuer, Client, generators } from 'openid-client'
+import { promisify } from 'util'
+import { randomBytes } from 'crypto'
+import { ConfigService } from '@nestjs/config'
+
+interface UserinfoResponse {
+  email?: string;
+  given_name?: string;
+  family_name?: string;
+  access_token?: string;
+}
 
 @Injectable()
 export class AuthService {
+  private client: Client
+  private config = {
+    clientId: this.configService.get('auth').client_id,
+    client_secret: this.configService.get('auth').client_secret,
+    redirect_uri: this.configService.get('auth').redirect_uri,
+    discoveryUrl: this.configService.get('auth').discoveryUrl,
+  }
+
   constructor(
     private usersService: UserService,
     private logger: LoggerService,
+    private readonly configService: ConfigService,
   ) {}
+
+  async onModuleInit(): Promise<void> {
+    const issuer = await Issuer.discover(this.config.discoveryUrl)
+    this.client = new issuer.Client({
+      client_id: this.config.clientId,
+      client_secret: this.config.client_secret,
+      redirect_uris: [this.config.redirect_uri],
+      response_types: ['code'],
+    })
+  }
 
   async validateUser(
     email: string,
@@ -60,6 +92,74 @@ export class AuthService {
       id: findUser.id,
       email: findUser.email,
       role: findUser.role,
+    }
+  }
+
+  proconnect(req): { url: string } {
+    const state = generators.state()
+    const nonce = generators.nonce()
+    req.session.nonce = nonce
+    if (!this.client) {
+      throw new NotFoundException('OpenID Client is not initialized')
+    }
+
+    const authorizationUrl = this.client.authorizationUrl({
+      scope: 'openid profile email',
+      state,
+      nonce,
+    })
+
+    return { url: authorizationUrl }
+  }
+
+  public async fetchUserinfo(req): Promise<UserinfoResponse> {
+    const params = this.client.callbackParams(req)
+    const tokenResponse = await this.client.callback(
+      this.config.redirect_uri,
+      params,
+      { state: req.body.state, nonce: req.session.nonce },
+    )
+
+    const userinfoResponse = await this.client.userinfo(tokenResponse.access_token)
+    return userinfoResponse
+  }
+
+  async proconnectCallback(req): Promise<UserOutputDto> {
+    const userinfoResponse = await this.fetchUserinfo(req)
+
+    const { email } = userinfoResponse
+    if (!email) {
+      throw new Error('No email found in userinfo')
+    }
+
+    let user = await this.usersService.findByEmail(email, [
+      'id', 'email', 'validated', 'password', 'role',
+      'firstname', 'lastname', 'job', 'createdAt', 'updatedAt',
+    ])
+
+    if (!user) {
+      user = await this.usersService.createAndSave({
+        email,
+        firstname: userinfoResponse.given_name || '',
+        lastname: userinfoResponse.family_name || '',
+        job: '',
+        password: randomBytes(12).toString('base64').slice(0, 12).replace(/\W/g, 'A'),
+        validated: true,
+      })
+    }
+
+    const logInUser = promisify(req.logIn).bind(req)
+    await logInUser(user)
+
+    return {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      firstname: user.firstname,
+      lastname: user.lastname,
+      job: user.job,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
     }
   }
 }
