@@ -19,4 +19,7 @@ export interface IPersonBase {
   bornPlace: string,
   isFounder: boolean,
   address: IAddress,
+  entryDate?: Date,
+  exitDate?: Date;
+  jobPosition: string;
 }
