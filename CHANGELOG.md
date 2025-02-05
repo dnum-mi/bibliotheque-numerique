@@ -1,5 +1,25 @@
 # Changelog
 
+## [2.23.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.22.0...v2.23.0) (2025-02-05)
+
+
+### Features
+
+* **1491:** add SSO on BN ([90e9109](https://github.com/dnum-mi/bibliotheque_numerique/commit/90e9109daff59530990fe92d22075f3d8ffe83cb))
+* fix linter ([bb0b237](https://github.com/dnum-mi/bibliotheque_numerique/commit/bb0b237a275ade152b13cfb93151c9ac8f067658))
+* fix pnpm-lock ([836d7a5](https://github.com/dnum-mi/bibliotheque_numerique/commit/836d7a5597cf420c7e6fa00a9e1eef26122a1011))
+* improve wording ([2329c9a](https://github.com/dnum-mi/bibliotheque_numerique/commit/2329c9a62a9afba801f2e6e0f1d4206073ae8e6d))
+
+
+### Bug Fixes
+
+* add one category of demarche in role of user ([4d74dbe](https://github.com/dnum-mi/bibliotheque_numerique/commit/4d74dbe1868bc189277229c4e21e9290fcdfe2ef))
+* debug ci, add default conf for proconnect ([55cb890](https://github.com/dnum-mi/bibliotheque_numerique/commit/55cb8908682490a1702b0fb09a62a1073b2396d5))
+* update gitignore for pnpm store ([c99c411](https://github.com/dnum-mi/bibliotheque_numerique/commit/c99c4117bc2b85d96234a97bf97467edcf6d878e))
+* update openid-client version for proconnect, and gestion error for client ([6739d7c](https://github.com/dnum-mi/bibliotheque_numerique/commit/6739d7cb08224f3c97a889843291cf5766d02c1a))
+* wording for data missing ([ef7bb04](https://github.com/dnum-mi/bibliotheque_numerique/commit/ef7bb04c62306f013c8136b6c0a84f298cb32717))
+* wording in fiche organisme ([a5feb6d](https://github.com/dnum-mi/bibliotheque_numerique/commit/a5feb6def5b3c88f6bb103ea7a238fa7592ad475))
+
 ## [2.22.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.21.3...v2.22.0) (2025-01-14)
 
 
