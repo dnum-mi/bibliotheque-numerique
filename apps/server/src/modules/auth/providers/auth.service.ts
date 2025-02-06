@@ -1,4 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  BadRequestException,
+  Injectable, NotFoundException,
+} from '@nestjs/common'
 import { UserService } from '../../users/providers/user.service'
 import * as bcrypt from 'bcrypt'
 import { User } from '@/modules/users/objects/user.entity'
@@ -22,10 +25,10 @@ interface UserinfoResponse {
 export class AuthService {
   private client: Client
   private config: {
-    clientId: string;
-    client_secret: string;
-    redirect_uri: string;
-    discovery_url: string;
+    clientId: string,
+    client_secret: string,
+    redirect_uri: string,
+    discovery_url: string,
     userinfo_signed_response_alg: string;
   }
 
@@ -36,6 +39,7 @@ export class AuthService {
   ) {}
 
   async onModuleInit(): Promise<void> {
+    const issuer = await Issuer.discover(this.configService.get('auth').discovery_url)
     this.config = {
       clientId: this.configService.get('auth').client_id,
       client_secret: this.configService.get('auth').client_secret,
@@ -68,6 +72,12 @@ export class AuthService {
       this.logger.error("Couldn't initialize OpenID client")
       this.logger.error(e)
     }
+    this.client = new issuer.Client({
+      client_id: this.config.clientId,
+      client_secret: this.config.client_secret,
+      redirect_uris: [this.config.redirect_uri],
+      response_types: ['code'],
+    })
   }
 
   async validateUser(
@@ -120,10 +130,11 @@ export class AuthService {
     }
   }
 
-  proconnect(req): { url: string } {
+  proconnect(session): { url: string } {
     const state = generators.state()
     const nonce = generators.nonce()
-    req.session.nonce = nonce
+    session.nonce = nonce
+
     if (!this.client) {
       throw new NotFoundException('OpenID Client is not initialized')
     }
@@ -151,19 +162,18 @@ export class AuthService {
   async proconnectCallback(req): Promise<UserOutputDto> {
     const userinfoResponse = await this.fetchUserinfo(req)
 
-    const { email } = userinfoResponse
-    if (!email) {
-      throw new Error('No email found in userinfo')
+    if (!userinfoResponse.email) {
+      throw new BadRequestException('Email not provided')
     }
 
-    let user = await this.usersService.findByEmail(email, [
+    let user: User = await this.usersService.findByEmail(userinfoResponse.email, [
       'id', 'email', 'validated', 'password', 'role',
       'firstname', 'lastname', 'job', 'createdAt', 'updatedAt',
     ])
 
     if (!user) {
       user = await this.usersService.createAndSave({
-        email,
+        email: userinfoResponse.email,
         firstname: userinfoResponse.given_name || '',
         lastname: userinfoResponse.family_name || '',
         job: '',
