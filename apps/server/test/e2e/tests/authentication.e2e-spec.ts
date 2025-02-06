@@ -1,4 +1,4 @@
-import { INestApplication } from '@nestjs/common'
+import { INestApplication, NotFoundException } from '@nestjs/common'
 import * as request from 'supertest'
 import { TestingModuleFactory } from '../common/testing-module.factory'
 import { AuthService } from '@/modules/auth/providers/auth.service'
@@ -92,6 +92,18 @@ describe('Auth (e2e)', () => {
   })
 
   describe('GET /auth/proconnect', () => {
+    it('Should throw an error if the OpenID client is not initialized', async () => {
+      jest.spyOn(authService, 'proconnect').mockImplementationOnce(() => {
+        throw new NotFoundException('OpenID Client is not initialized')
+      })
+
+      await request(app.getHttpServer())
+        .get('/auth/proconnect')
+        .expect(404)
+        .expect(({ body }) => {
+          expect(body.message).toBe('OpenID Client is not initialized')
+        })
+    })
     it('Should return 200 and the proconnect URL', async () => {
       await request(app.getHttpServer())
         .get('/auth/proconnect')
@@ -110,6 +122,21 @@ describe('Auth (e2e)', () => {
         .expect(201)
         .expect(({ body }) => {
           expect(body.email).toBe(adminFixtureUser.email)
+        })
+    })
+
+    it('Should throw an error if no email is found in userinfo', async () => {
+      jest.spyOn(authService, 'fetchUserinfo').mockResolvedValue({
+        given_name: 'New',
+        family_name: 'User',
+        access_token: 'mockAccessToken123',
+      })
+
+      await request(app.getHttpServer())
+        .post('/auth/proconnect/callback')
+        .expect(400)
+        .expect(({ body }) => {
+          expect(body.message).toBe('Email not provided')
         })
     })
 
