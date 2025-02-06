@@ -30,6 +30,7 @@ export class AuthService {
     redirect_uri: string,
     discovery_url: string,
     userinfo_signed_response_alg: string;
+    enable_sso: string,
   }
 
   constructor(
@@ -46,6 +47,7 @@ export class AuthService {
       redirect_uri: this.configService.get('auth').redirect_uri,
       discovery_url: this.configService.get('auth').discovery_url,
       userinfo_signed_response_alg: this.configService.get('auth').userinfo_signed_response_alg,
+      enable_sso: this.configService.get('auth').enable_sso
     }
     try {
       const proxyUrl = this.configService.get('httpProxy')
@@ -131,6 +133,9 @@ export class AuthService {
   }
 
   proconnect(session): { url: string } {
+    if (!JSON.parse(this.config.enable_sso)) {
+      throw new NotFoundException('SSO not enabled')
+    }
     const state = generators.state()
     const nonce = generators.nonce()
     session.nonce = nonce
@@ -160,6 +165,9 @@ export class AuthService {
   }
 
   async proconnectCallback(req): Promise<UserOutputDto> {
+    if (!JSON.parse(this.config.enable_sso)) {
+      throw new NotFoundException('SSO not enabled')
+    }
     const userinfoResponse = await this.fetchUserinfo(req)
 
     if (!userinfoResponse.email) {

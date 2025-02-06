@@ -9,7 +9,7 @@ import { useUserStore } from '@/stores'
 import ToggleInputPassword from '@/components/ToggleInputPassword.vue'
 import { routeNames } from '@/router/route-names'
 import useToaster from '@/composables/use-toaster'
-import ProconnectButton from '@/assets/proconnect-button.svg'
+import ProConnect from '@/components/ProConnect.vue'
 
 const REQUIRED_FIELD_MESSAGE = 'Ce champ est requis'
 
@@ -32,18 +32,18 @@ const toaster = useToaster()
 const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
+const proConnectUrl = ref<string>()
 
-const loginWithProconnect = async () => {
+onMounted(async () => {
   try {
     const { url } = await apiClient.loginWithProconnect()
-    window.location.href = url
+    proConnectUrl.value = url
   } catch {
-    setErrors({
-      password:
-        'Erreur lors de la connexion avec Proconnect',
-    })
+    if (import.meta.env.DEV) {
+      console.log('Pas de ProConnect disponible')
+    }
   }
-}
+})
 
 const submit = handleSubmit(async (formValue: ICredentialsInput) => {
   try {
@@ -131,52 +131,46 @@ const { value: passwordValue, errorMessage: passwordError } = useField<string>('
                   Mot de passe oublié ?
                 </router-link>
               </div>
-
-              <div class="separator">
-                <hr>
-                <span class="separator-or">ou</span>
-                <hr>
-              </div>
-              <div>
-                <ProconnectButton class="proconnect-button" @click="loginWithProconnect" />
-                <span class="proconnect-sr-only">S'identifier avec ProConnect</span>
-                <p>
-                  <a
-                    href="https://www.proconnect.gouv.fr/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title="Qu’est-ce que ProConnect ? - nouvelle fenêtre"
-                  >
-                    Qu’est-ce que ProConnect ?
-                  </a>
-                </p>
-              </div>
             </div>
           </form>
+          <<<<<<< HEAD
 
           <div class="separator">
-            <hr>
-            <span class="separator-or">ou</span>
-            <hr>
-          </div>
+            =======
+            <div v-if="proConnectUrl" class="separator">
+              >>>>>>> e118c6c6 (feat: add feature flag)
+              <hr>
+              <span class="separator-or">ou</span>
+              <hr>
+            </div>
+            <<<<<<< HEAD
 
-          <div class="text-center">
-            <button class="proconnect-button" @click="loginWithProconnect">
-              <span class="proconnect-sr-only">S'identifier avec ProConnect</span>
-            </button>
-            <p>
-              <a
-                href="https://www.proconnect.gouv.fr/"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Qu’est-ce que ProConnect ? - nouvelle fenêtre"
-              >
-                Qu’est-ce que ProConnect ?
-              </a>
-            </p>
+            <div class="text-center">
+              <button class="proconnect-button" @click="loginWithProconnect">
+                <span class="proconnect-sr-only">S'identifier avec ProConnect</span>
+              </button>
+              <p>
+                <a
+                  href="https://www.proconnect.gouv.fr/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="Qu’est-ce que ProConnect ? - nouvelle fenêtre"
+                >
+                  Qu’est-ce que ProConnect ?
+                </a>
+              </p>
+              =======
+              <div class="flex justify-center">
+                <ProConnect
+                  v-if="proConnectUrl"
+                  :url="proConnectUrl"
+                />
+                >>>>>>> e118c6c6 (feat: add feature flag)
+              </div>
+            </div>
+            <div class="fr-col-1" />
           </div>
         </div>
-        <div class="fr-col-1" />
       </div>
     </div>
   </LayoutAccueil>
@@ -204,28 +198,5 @@ const { value: passwordValue, errorMessage: passwordError } = useField<string>('
   margin-bottom: 16px;
   font-weight: bold;
   color: #999;
-}
-
-.proconnect-sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border-width: 0;
-}
-
-.proconnect-button {
-    margin-bottom: 16px;
-    background-color: transparent !important;
-    background-position: 50% 50%;
-    background-repeat: no-repeat;
-    width: 214px;
-    height: 56px;
-    border: none;
-    cursor: pointer;
 }
 </style>
