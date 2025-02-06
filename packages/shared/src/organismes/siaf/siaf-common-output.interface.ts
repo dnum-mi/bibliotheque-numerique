@@ -42,7 +42,7 @@ interface IDsAddress {
   regionCode: string;
 }
 
-export interface IAddress {
+export interface ISiafAddress {
   dsStringValue: string | undefined;
   coordinates: [number, number] | undefined;
   dsAddress?: IDsAddress

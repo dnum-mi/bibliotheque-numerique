@@ -1,4 +1,4 @@
-import { IAddress, IDissolved, IFile, IStatus } from "./siaf-common-output.interface";
+import { ISiafAddress, IDissolved, IFile, IStatus } from "./siaf-common-output.interface";
 
 interface ICategoryObjectSocial {
   code: string;
@@ -36,7 +36,7 @@ interface IRnaAddress {
   kind: string;
   address: IRnaAdrgAddress | IRnaAdrsAddress;
 }
-interface IAddressRna extends IAddress {
+interface IAddressRna extends ISiafAddress {
   rnaAddress?: IRnaAddress;
 }
 

@@ -33,6 +33,7 @@ export class HubService {
     this.axios.interceptors.response.use(reponse => reponse.data, e => {
       const code = e.response?.status
       if (code === 404) {
+        this.logger.warn(e)
         return null
       }
       throw e
@@ -48,9 +49,15 @@ export class HubService {
 
   async getFoundation(idRnf: string): Promise<IFondations | ISiafRnfOutput | null> {
     this.logger.verbose('HUB-getFondation')
-    const path = `/fondations/${idRnf}`
+    const path = `/foundations/${idRnf}/complete`
+    // const path = `/fondations/${idRnf}`
     return this.axios
-      .get(path)
+      .get<IFondations | ISiafRnfOutput>(path)
+      .then(response => {
+        return response as unknown as IFondations | ISiafRnfOutput
+      }).catch(error => {
+        throw error
+      })
   }
 
   async searchOrganisme(sentence: string): Promise<ISiafSearchOrganismeOutput | null> {

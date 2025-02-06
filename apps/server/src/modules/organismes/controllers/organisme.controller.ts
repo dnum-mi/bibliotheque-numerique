@@ -110,13 +110,21 @@ export class OrganismeController {
     if (bn.idRna) {
       return {
         bn,
-        siaf: await this.organismeService.getAssocationFromSiaf(bn.idRna),
+        siaf: await this.organismeService.getAssocationFromSiaf(bn.idRna)
+          .then(siaf => siaf).catch(reason => {
+            this.logger.warn(`HUB-RNA: ${reason}`)
+            return null
+          }),
         type: typeCategorieOrganisme.rna,
       }
     } else if (bn.idRnf) {
       return {
         bn,
-        siaf: await this.organismeService.getFondationFromSiaf(bn.idRnf),
+        siaf: await this.organismeService.getFondationFromSiaf(bn.idRnf)
+          .then(siaf => siaf).catch(reason => {
+            this.logger.warn(`HUB-RNF: ${reason}`)
+            return null
+          }),
         type: typeCategorieOrganisme.rnf,
       }
     } else {
@@ -131,7 +139,7 @@ export class OrganismeController {
 
   private _getValueFromPromiseSettle<T>(type:string, result: PromiseSettledResult<T>):T|null {
     if (result.status === 'rejected') {
-      this.logger.warn(`${type}: ${result.reason}`)
+      this.logger.warn(`HUB-${type}: ${result.reason}`)
       return null
     }
     return result.value
@@ -149,17 +157,17 @@ export class OrganismeController {
     @Param('organismeIdRna') idRna: string,
   ): Promise<IOrganismeOutput> {
     this.logger.verbose('getOrganismeWithRna')
-    const results = await Promise.allSettled([
-      this.organismeService.findOneOrThrow({ where: { idRna } }),
-      this.organismeService.getAssocationFromSiaf(idRna),
-    ])
+    // const results = await Promise.allSettled([
+    //   this.organismeService.findOneOrThrow({ where: { idRna } }),
+    //   this.organismeService.getAssocationFromSiaf(idRna),
+    // ])
 
-    const organisme: IOrganismeOutput = {
-      bn: this._getValueFromPromiseSettle('bn', results[0]),
-      siaf: this._getValueFromPromiseSettle('siaf', results[1]),
-      type: typeCategorieOrganisme.rna,
-    }
-
+    // const organisme: IOrganismeOutput = {
+    //   bn: this._getValueFromPromiseSettle('bn', results[0]),
+    //   siaf: this._getValueFromPromiseSettle('siaf', results[1]),
+    //   type: typeCategorieOrganisme.rna,
+    // }
+    const organisme = await this.organismeService.getOrganismeRnaFromAllServer(idRna)
     if (!organisme.bn && !organisme.siaf) {
       throw new NotFoundException(`L'association ${idRna} non trouvé`)
     }
@@ -178,17 +186,8 @@ export class OrganismeController {
     @Param('organismeIdRnf') idRnf: string,
   ): Promise<IOrganismeOutput> {
     this.logger.verbose('getOrganismeWithRnf')
-    const results = await Promise.allSettled([
-      this.organismeService.findOneOrThrow({ where: { idRnf } }),
-      this.organismeService.getFondationFromSiaf(idRnf),
-    ])
 
-    const organisme: IOrganismeOutput = {
-      bn: this._getValueFromPromiseSettle('bn', results[0]),
-      siaf: this._getValueFromPromiseSettle('siaf', results[1]),
-      type: typeCategorieOrganisme.rnf,
-    }
-
+    const organisme = await this.organismeService.getOrganismeRnfFromAllServer(idRnf)
     if (!organisme.bn && !organisme.siaf) {
       throw new NotFoundException(`La fondation ${idRnf} non trouvé`)
     }

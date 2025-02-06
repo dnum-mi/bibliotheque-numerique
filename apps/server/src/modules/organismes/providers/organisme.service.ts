@@ -23,6 +23,9 @@ import {
   IAddress,
   ISiafSearchOrganismeResponseOutput,
   ISiafRnaOutput,
+  IOrganismeOutput,
+  typeCategorieOrganisme,
+  Prefecture,
 } from '@biblio-num/shared'
 
 import { OrganismeFieldTypeHash } from '@/modules/organismes/objects/const/organisme-field-type-hash.const'
@@ -51,6 +54,7 @@ import { BnConfigurationService } from '@/shared/modules/bn-configurations/provi
 import { addYears } from 'date-fns'
 import { getCodeByRegionName } from '../utils/utils.regions'
 import { HubService } from './hub.service'
+import { IOrganismeOutputDto } from '@biblio-num/shared/src/organismes/organsime-output-dto.interface'
 
 @Injectable()
 export class OrganismeService extends BaseEntityService<Organisme> {
@@ -350,6 +354,11 @@ export class OrganismeService extends BaseEntityService<Organisme> {
       .getMany()
   }
 
+  /**
+   * TODO: Pour avoir la possibilité à se connecter avec le RAF et le HUB sans la variable env pour les distinguer,
+   * pour le hub la structure contient la clé associations
+   * TODO: A terme, bn doit-être connecter avec le hub
+  */
   async getAssocationFromSiaf(idRna: string): Promise< ISiafRnaOutput | null> {
     this.logger.verbose('getAssocationFromSiaf')
     const enableSiaf = await this.bnConfiguration.getValueByKeyName(eBnConfiguration.ENABLE_SIAF)
@@ -364,12 +373,17 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     }
   }
 
+  /**
+   * TODO: Pour avoir la possibilité à se connecter avec le RAF et le HUB sans la variable env pour les distinguer,
+   * pour le hub la structure contient la clé fondations
+   * TODO: A terme, bn doit-être connecter avec le hub
+  */
   async getFondationFromSiaf(idRnf: string): Promise<ISiafRnfOutput | null> {
     this.logger.verbose('getFondationFromSiaf')
     const enableSiaf = await this.bnConfiguration.getValueByKeyName(eBnConfiguration.ENABLE_SIAF)
     if (!enableSiaf) return null
     const fromSiaf = await this.siafService.getFoundation(idRnf)
-    this.logger.debug({ FN: 'getFondationFromSiaf', idRnf })
+    this.logger.debug({ FN: 'getFondationFromSiaf', idRnf, found: !!fromSiaf })
     if (!fromSiaf) return null
     if ('fondations' in fromSiaf) {
       return fromSiaf.fondations
@@ -383,5 +397,181 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     const enableSiaf = await this.bnConfiguration.getValueByKeyName(eBnConfiguration.ENABLE_SIAF)
     if (!enableSiaf) return null
     return (await this.siafService.searchOrganisme(sentence))?.search_response
+  }
+
+  private _getValueFromPromiseSettle<T>(type:string, result: PromiseSettledResult<T>):T|null {
+    if (result.status === 'rejected') {
+      this.logger.warn(`HUB-${type}: ${result.reason}`)
+      return null
+    }
+    return result.value
+  }
+
+  private _prefectureFn (cp: string): string {
+    const prefkey = `D${cp.substring(0, 2) || ''}`
+    return Prefecture[prefkey as keyof typeof Prefecture] || ''
+  }
+
+  private _transformRnfToOrganismeDto (organisme: Organisme): IOrganismeOutputDto {
+    return {
+      ...organisme,
+      siege: {
+        coordinates: (organisme?.rnfJson as ISiafRnfOutput)?.address?.coordinates,
+        prefecture: this._prefectureFn(organisme?.addressPostalCode),
+        isVerified: !!(organisme?.addressType),
+      },
+      objectDescription: (organisme?.rnfJson as ISiafRnfOutput)?.objectDescription,
+      dueDate: (organisme?.rnfJson as ISiafRnfOutput)?.dueDate,
+      generalInterest: (organisme?.rnfJson as ISiafRnfOutput)?.generalInterest,
+      internationalAction: (organisme?.rnfJson as ISiafRnfOutput)?.internationalAction,
+      createdAt: (organisme?.rnfJson as ISiafRnfOutput)?.createdAt,
+      updatedAt: (organisme?.rnfJson as ISiafRnfOutput)?.updatedAt,
+      fiscalEndDateAt: (organisme?.rnfJson as ISiafRnfOutput)?.fiscalEndDateAt,
+    }
+  }
+
+  private _transformToPerson (person: ISiafRnfOutput['persons'][0]): IPerson {
+    return {
+      ...person,
+      civility: person?.civility || '',
+      // lastName: person?.lastName,
+      // firstName: person?.firstName,
+      // profession: person?.profession,
+      // nationality: person?.nationality,
+      // bornAt: person?.bornAt,
+      bornPlace: person?.bornPlace || '',
+      // isFounder: person?.isFounder,
+      address: {
+        label: person.address.dsStringValue || '',
+        type: person.address.gouvAddress?.type || person.address.dsAddress?.type || '',
+        streetAddress: person.address.gouvAddress?.street || person.address.dsAddress?.streetAddress || '',
+        streetNumber: person.address.gouvAddress?.housenumber || person.address.dsAddress?.streetNumber || '',
+        streetName: person.address.gouvAddress?.name || person.address.dsAddress?.streetName || '',
+        postalCode: person.address.gouvAddress?.postcode || person.address.dsAddress?.postalCode || '',
+        departmentName: person.address.dsAddress?.departmentName || '',
+        cityName: person.address.dsAddress?.cityName || '',
+        cityCode: person.address.dsAddress?.cityCode || '',
+        departmentCode: person.address.dsAddress?.departmentCode || '',
+        regionName: person.address.dsAddress?.regionName || '',
+        regionCode: person.address.dsAddress?.regionCode || '',
+      },
+      email: person.email || '',
+      phone: person.phone || '',
+      createdAt: new Date(-1),
+      updatedAt: new Date(-1),
+    // role: person.role as PersonRoleKey,
+    // entryDate: person.entryDate,
+    // exitDate: person.exitDate
+    }
+  }
+
+  private _transformSiafRnfToOrganismeDto (organisme: ISiafRnfOutput): IOrganismeOutputDto {
+    return {
+      idRnf: organisme.id,
+      type: organisme.foundationType,
+      title: organisme.title,
+      email: organisme.email,
+      phoneNumber: organisme.phone,
+      declarationYears: organisme.declarationYears,
+      dateDissolution: organisme.dissolved.dissolvedAt,
+      dateCreation: organisme.originalCreatedAt,
+      rnfJson: organisme,
+      addressLabel: organisme.address.dsStringValue,
+      siege: {
+        coordinates: organisme?.address?.coordinates,
+        prefecture: this._prefectureFn(organisme.address?.dsAddress?.postalCode ||
+          organisme.address?.dsAddress?.postalCode),
+        isVerified: !!(organisme.address?.dsAddress?.type || organisme.address?.gouvAddress),
+      },
+      websites: organisme?.websites?.join(','),
+      objectDescription: organisme?.objectDescription,
+      dueDate: organisme.dueDate,
+      generalInterest: organisme.generalInterest,
+      internationalAction: organisme.internationalAction,
+      createdAt: organisme?.createdAt,
+      updatedAt: organisme?.updatedAt,
+      fiscalEndDateAt: organisme.fiscalEndDateAt,
+      persons: organisme.persons.map(this._transformToPerson),
+    } as IOrganismeOutputDto
+  }
+
+  async getOrganismeRnfFromAllServer(idRnf: string): Promise<IOrganismeOutput> {
+    this.logger.verbose('getOrganismeRnfFromAllServer')
+    const results = await Promise.allSettled([
+      this.findOneOrThrow({ where: { idRnf } }),
+      this.getFondationFromSiaf(idRnf),
+    ])
+    const bn = this._getValueFromPromiseSettle('bn', results[0])
+    const siaf = this._getValueFromPromiseSettle('siaf', results[1])
+
+    return {
+      bn: bn && this._transformRnfToOrganismeDto(bn),
+      siaf: siaf && {
+        ...this._transformSiafRnfToOrganismeDto(siaf),
+        // TODO: A faire mieux pour le cas où la fondation n'est pas enregistré dans bn
+        missingDeclarationYears: bn?.missingDeclarationYears || [],
+      },
+      type: typeCategorieOrganisme.rnf,
+    }
+  }
+
+  private _transformRnaToOrganismeDto (organisme: Organisme): IOrganismeOutputDto {
+    return {
+      ...organisme,
+      siege: {
+        prefecture: this._prefectureFn(organisme?.addressPostalCode),
+        isVerified: !!(organisme?.addressType),
+      },
+    }
+  }
+
+  private _transformSiafRnaToOrganismeDto (organisme: ISiafRnaOutput): IOrganismeOutputDto {
+    const addressSiege = organisme.addresses[1]
+    const addressGestion = organisme.addresses[0]
+
+    return {
+      idRna: organisme.id,
+      type: 'CULTE',
+      siret: organisme.siret,
+      title: organisme.title,
+      email: organisme.emails.join(', '),
+      phoneNumber: organisme.phones.join(', '),
+      dateDissolution: organisme.dissolved?.dissolvedAt,
+      dateCreation: organisme.createdAt,
+      rnaJson: organisme,
+      addressLabel: addressSiege?.gouvAddress?.label,
+      siege: {
+        coordinates: addressSiege?.coordinates,
+        prefecture: this._prefectureFn(addressSiege?.gouvAddress?.postcode || addressSiege?.dsAddress?.postalCode),
+        isVerified: !!(addressSiege?.gouvAddress || addressSiege?.dsAddress),
+      },
+      gestion: {
+        addressLabel: addressGestion?.gouvAddress?.label,
+        coordinates: addressGestion?.coordinates,
+        isVerified: !!(addressGestion?.gouvAddress || addressGestion?.dsAddress),
+        prefecture: this._prefectureFn(addressGestion?.gouvAddress?.postcode || addressGestion?.dsAddress?.postalCode),
+      },
+      websites: organisme?.websites?.join(','),
+      objectDescription: organisme?.objetSocial?.description,
+      generalInterest: [...new Set(organisme?.objetSocial?.categories.flatMap(c => c.descriptions))].join(','),
+      createdAt: organisme?.createdAt,
+      updatedAt: organisme?.updatedAt,
+    } as IOrganismeOutputDto
+  }
+
+  async getOrganismeRnaFromAllServer(idRna: string): Promise<IOrganismeOutput> {
+    this.logger.verbose('getOrganismeRnfFromAllServer')
+    const results = await Promise.allSettled([
+      this.findOneOrThrow({ where: { idRna } }),
+      this.getAssocationFromSiaf(idRna),
+    ])
+    const bn = this._getValueFromPromiseSettle('bn', results[0])
+    const siaf = this._getValueFromPromiseSettle('siaf', results[1])
+
+    return {
+      bn: bn && this._transformRnaToOrganismeDto(bn),
+      siaf: siaf && this._transformSiafRnaToOrganismeDto(siaf),
+      type: typeCategorieOrganisme.rna,
+    }
   }
 }

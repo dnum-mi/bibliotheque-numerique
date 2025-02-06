@@ -1,22 +1,20 @@
 <script lang="ts" setup>
 import { useTabs, DsfrTabs } from '@gouvminint/vue-dsfr'
-import type { DsfrBadgeProps } from '@gouvminint/vue-dsfr'
 
 import apiClient from '@/api/api-client'
-import { dateToStringFr, copyCurrentUrlInClipboard } from '@/utils'
+import { copyCurrentUrlInClipboard } from '@/utils'
 import LayoutFiche from '@/components/Layout/LayoutFiche.vue'
 import ListeDossier from './ListeDossier.vue'
 import OrganismeBadge from '@/components/Badges/organisme/OrganismeBadge.vue'
 import { EOrganismeIdType, useOrganismeStore, useUserStore } from '@/stores'
 import type { OrganismeIdType } from '@/stores'
 import AttachedFileList from '@/components/ag-grid/files/AttachedFileList.vue'
-import type { IFileOutput, IPagination, IRole, FileTagKey, ISiafFondationOutput, ISiafAssociationOutput } from '@biblio-num/shared'
-import { Prefecture, dFileTabDictionary } from '@biblio-num/shared'
+import type { IFileOutput, IPagination, IRole, FileTagKey, ISiafAssociationOutput, IOrganismeOutputDto } from '@biblio-num/shared'
+import { dFileTabDictionary } from '@biblio-num/shared'
 import type { ApiCall } from '@/components/ag-grid/server-side/pagination.utils'
-import FicheOrganismePersons from './FicheOrganismePersons.vue'
-import TooltipAddress from './TooltipAddress.vue'
 import FicheInfoAssociation from './FicheInfoAssociation.vue'
 import FicheInfoFondation from './FicheInfoFondation.vue'
+import FicheOrganismeInfo from './FicheOrganismeInfo.vue'
 
 const props = withDefaults(defineProps<{ id: string; idType: OrganismeIdType }>(), {})
 
@@ -28,14 +26,6 @@ const userStore = useUserStore()
 const organisme = computed(() => organismeStore.organisme)
 const organismeSiaf = computed(() => organismeStore.organismeSiaf)
 const hasSiaf = computed(() => !!organismeStore.organismeSiaf)
-const prefecture = computed<string>(
-  () => {
-    const prefkey = `D${organisme.value?.addressPostalCode?.substring(0, 2) || ''}`
-    return Prefecture[prefkey as keyof typeof Prefecture] || ''
-  },
-)
-const creation = computed(() => dateToStringFr(organisme.value?.dateCreation))
-const dissolution = computed(() => dateToStringFr(organisme.value?.dateDissolution ?? undefined))
 
 const filesSummary = ref<Record<FileTagKey, number> | Record<string, never>>({})
 
@@ -108,35 +98,6 @@ const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutpu
     console.log('pas d\'organisme')
   }
 }
-//#region map
-const mapCenter = computed(() => organisme.value?.rnfJson?.address?.coordinates)
-const zoom = ref(12)
-const mapCard = ref<HTMLElement>()
-//#endregion map
-
-const objectDescription = computed(() => organisme.value?.rnfJson?.objectDescription)
-const internationalAction = computed(() => organisme.value?.rnfJson?.internationalAction)
-const generalInterest = computed(() => organisme.value?.rnfJson?.generalInterest)
-const dueDate = computed(() => organisme.value?.rnfJson?.dueDate ? new Intl.DateTimeFormat('fr-FR').format(new Date(organisme.value?.rnfJson?.dueDate)) : 'Illimitée')
-const stateOfFilingOfAccounts = computed<{
-  label: string,
-  type: DsfrBadgeProps['type']
-}>(() => !organisme.value?.missingDeclarationYears?.length
-  ? {
-      label: 'OK',
-      type: 'info',
-    }
-  : {
-      label: 'HORS DELAI',
-      type: 'error',
-    })
-
-const fiscalEndDateAt = computed(() => {
-  return organisme.value?.rnfJson?.fiscalEndDateAt && new Intl.DateTimeFormat('fr-FR', {
-    day: '2-digit',
-    month: '2-digit',
-  }).format(new Date(organisme.value?.rnfJson?.fiscalEndDateAt))
-})
 </script>
 
 <template>
@@ -167,12 +128,12 @@ const fiscalEndDateAt = computed(() => {
       </template>
       <template v-else #title>
         <OrganismeBadge
-          :type="(organismeSiaf as ISiafFondationOutput)?.identite.type_fondation || 'CULTE'"
+          :type="(organismeSiaf as IOrganismeOutputDto)?.type || 'CULTE'"
           class="mr-4"
           big
         />
-        <span class="fr-text--lead fr-text--bold">{{ (organismeSiaf as ISiafAssociationOutput)?.identite.id_rna || (organismeSiaf as ISiafFondationOutput)?.identite.id_rnf }} - </span>
-        <span class="fr-text--lead">{{ organismeSiaf?.identite.nom }}</span>
+        <span class="fr-text--lead fr-text--bold">{{ (organismeSiaf as ISiafAssociationOutput)?.identite?.id_rna || (organismeSiaf as IOrganismeOutputDto)?.idRnf }} - </span>
+        <span class="fr-text--lead">{{ (organismeSiaf as ISiafAssociationOutput)?.identite?.nom || (organismeSiaf as IOrganismeOutputDto).title }}</span>
       </template>
 
       <template #content>
@@ -193,7 +154,7 @@ const fiscalEndDateAt = computed(() => {
               :asc="ascendant"
             >
               <FicheInfoAssociation v-if="idType === EOrganismeIdType.Rna" :organisme-raf="(organismeSiaf as ISiafAssociationOutput)" />
-              <FicheInfoFondation v-if="idType === EOrganismeIdType.Rnf" :organisme-raf="(organismeSiaf as ISiafFondationOutput)" />
+              <FicheInfoFondation v-if="idType === EOrganismeIdType.Rnf" :organisme-raf="organismeSiaf as IOrganismeOutputDto" />
             </DsfrTabContent>
             <DsfrTabContent
               panel-id="tab-content-1"
@@ -201,107 +162,7 @@ const fiscalEndDateAt = computed(() => {
               :selected="selected === (hasSiaf ? 1 : 0)"
               :asc="ascendant"
             >
-              <div class="flex gap-2">
-                <div class="main-info-container">
-                  <div class="main-info">
-                    <div>
-                      <label class="bn-fiche-sub-title--label uppercase">Siège Social</label>
-                      <TooltipAddress :show="!!(organisme?.addressLabel && !organisme?.addressType)" />
-                      <span class="bn-fiche-sub-title--text">
-                        {{ organisme?.addressLabel }}
-                      </span>
-                    </div>
-                    <div>
-                      <label class="bn-fiche-sub-title--label uppercase">Téléphone</label>
-                      <span class="bn-fiche-sub-title--text">{{ organisme?.phoneNumber }}</span>
-                    </div>
-                    <div>
-                      <label class="bn-fiche-sub-title--label uppercase">COURRIEL</label>
-                      <span class="bn-fiche-sub-title--text">{{ organisme?.email }}</span>
-                    </div>
-                    <div>
-                      <label class="bn-fiche-sub-title--label uppercase">PRÉFECTURE</label>
-                      <span class="bn-fiche-sub-title--text">{{ prefecture }}</span>
-                    </div>
-                    <div>
-                      <label class="bn-fiche-sub-title--label uppercase">CRÉATION</label>
-                      <span class="bn-fiche-sub-title--text">{{ creation }}</span>
-                    </div>
-                    <div
-                      v-if="dissolution"
-                    >
-                      <label class="bn-fiche-sub-title--label uppercase">Dissolution</label>
-                      <span class="bn-fiche-sub-title--text">{{ dissolution }}</span>
-                    </div>
-                    <div>
-                      <label class="bn-fiche-sub-title--label uppercase">Dépôt des comptes</label>
-                      <DsfrBadge
-                        no-icon
-                        small
-                        :label="stateOfFilingOfAccounts.label"
-                        :type="stateOfFilingOfAccounts.type"
-                      />
-                    </div>
-                    <div>
-                      <label class="bn-fiche-sub-title--label uppercase">Date de clôture des comptes</label>
-                      <span class="bn-fiche-sub-title--text">{{ fiscalEndDateAt }}</span>
-                    </div>
-                    <div>
-                      <label class="bn-fiche-sub-title--label uppercase">Activité à l’international</label>
-                      <span class="bn-fiche-sub-title--text">
-                        {{ internationalAction }}
-                        <template v-if="typeof internationalAction === 'boolean'">
-                          {{ internationalAction ? 'Oui' : 'Non' }}
-                        </template>
-                        <em v-else class="text-gray-400">Non renseigné</em>
-                      </span>
-                    </div>
-                    <div>
-                      <label class="bn-fiche-sub-title--label uppercase">Date du terme</label>
-                      <span class="bn-fiche-sub-title--text">
-                        <template v-if="dueDate">
-                          {{ dueDate }}
-                        </template>
-                        <em v-else class="text-gray-400">Non renseigné</em>
-                      </span>
-                    </div>
-                    <div
-                      v-if="objectDescription"
-                      class="grid-col-span-3"
-                    >
-                      <label class="bn-fiche-sub-title--label uppercase">Objet</label>
-                      <span class="bn-fiche-sub-title--text">{{ objectDescription }}</span>
-                    </div>
-                    <div class="grid-col-span-3">
-                      <label class="bn-fiche-sub-title--label uppercase">Caractère de l'activité d’intérêt général</label>
-                      <span class="bn-fiche-sub-title--text">
-                        <template v-if="generalInterest">
-                          {{ generalInterest }}
-                        </template>
-                        <em v-else class="text-gray-400">Non renseigné</em>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <div v-if="mapCenter" class="flex-basis-[30%]  flex-shrink-0  flex-grow-0  relative">
-                  <MapCard ref="mapCard" :zoom :center="mapCenter" pin-marker style="height: 200px; width: 250px;" />
-                  <DsfrButton
-                    type="button"
-                    icon="ri-focus-3-line"
-                    tertiary
-                    title="Recentrer la carte"
-                    class="rounded-full self-end absolute top-0 right-0"
-                    icon-only
-                    @click="$refs.mapCard.resetCenter(mapCenter)"
-                  />
-                </div>
-              </div>
-              <div class="p-t-6">
-                <FicheOrganismePersons
-                  v-if="organisme?.persons"
-                  :persons="organisme?.persons.map((person, idx) => ({ ...organisme?.rnfJson?.persons[idx], ...person }))"
-                />
-              </div>
+              <FicheOrganismeInfo :organisme="organisme" />
             </DsfrTabContent>
             <DsfrTabContent
               v-for="(tag, idx) in Object.keys(filesSummary)"
@@ -356,22 +217,3 @@ const fiscalEndDateAt = computed(() => {
     </div>
   </div>
 </template>
-
-<style scoped>
-.main-info-container {
-  width: 100%;
-  container-type: inline-size;
-}
-.main-info {
-  display: grid;
-  gap: 1rem;
-  --columns: repeat(3, 1fr); /* Définit une variable CSS pour les colonnes */
-  grid-template-columns: var(--columns); /* Utilise la variable CSS pour définir les colonnes */
-}
-
-@container (min-width: 48rem) {
-  .main-info {
-    --columns: repeat(4, 1fr);
-  }
-}
-</style>
