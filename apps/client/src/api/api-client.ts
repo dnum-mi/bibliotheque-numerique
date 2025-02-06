@@ -324,7 +324,7 @@ export const usersApiClient = {
     return response.data
   },
 
-  async ProConnectCallback (code: string, state: string, iss: string) {
+  async proConnectCallback (code: string, state: string, iss: string) {
     const response = await apiClientAuthInstance.post(
       proconnectCallbackRoute,
       {

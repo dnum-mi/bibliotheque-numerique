@@ -45,7 +45,7 @@ export const useUserStore = defineStore('user', () => {
   }
 
   const loginWithProconnect = async (code: string, state: string, iss: string) => {
-    currentUser.value = await bnApiClient.ProConnectCallback(code, state, iss)
+    currentUser.value = await bnApiClient.proConnectCallback(code, state, iss)
   }
 
   const forceResetUser = () => {
