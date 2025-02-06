@@ -1,38 +1,43 @@
 <script lang="ts" setup>
-import type { IPersonne, PersonRoleKey } from '@biblio-num/shared'
+import type { IPerson, ISiafRnfOutput } from '@biblio-num/shared'
 import FicheOrganismePersons from './FicheOrganismePersons.vue'
 
-const props = defineProps<{ personnes: IPersonne[] }>()
-const transformToPerson = (personne: IPersonne): IPerson => ({
-  civility: personne.civilite,
-  lastName: personne.nom,
-  firstName: personne.prenom,
-  profession: personne.profession,
-  nationality: personne.nationalite,
-  bornAt: new Date(personne.date_naissance),
-  bornPlace: personne.lieu_naissance,
-  isFounder: personne.fondateur,
+type ISiafRnfPersons = ISiafRnfOutput['persons']
+const props = defineProps<{ persons: ISiafRnfPersons }>()
+
+const transformToPerson = (person: ISiafRnfPersons[0]): IPerson => ({
+  ...person,
+  civility: person?.civility || '',
+  // lastName: person?.lastName,
+  // firstName: person?.firstName,
+  // profession: person?.profession,
+  // nationality: person?.nationality,
+  // bornAt: person?.bornAt,
+  bornPlace: person?.bornPlace || '',
+  // isFounder: person?.isFounder,
   address: {
-    label: personne.adresse.label,
-    type: personne.adresse.type_voie,
-    streetAddress: personne.adresse.voie,
-    streetNumber: personne.adresse.num_voie,
-    streetName: personne.adresse.voie,
-    postalCode: personne.adresse.cp,
-    departmentName: personne.adresse.commune,
-    cityName: '',
-    cityCode: '',
-    departmentCode: '',
-    regionName: '',
-    regionCode: '',
+    label: person.address.dsStringValue || '',
+    type: person.address.gouvAddress?.type || person.address.dsAddress?.type || '',
+    streetAddress: person.address.gouvAddress?.street || person.address.dsAddress?.streetAddress || '',
+    streetNumber: person.address.gouvAddress?.housenumber || person.address.dsAddress?.streetNumber || '',
+    streetName: person.address.gouvAddress?.name || person.address.dsAddress?.streetName || '',
+    postalCode: person.address.gouvAddress?.postcode || person.address.dsAddress?.postalCode || '',
+    departmentName: person.address.dsAddress?.departmentName || '',
+    cityName: person.address.dsAddress?.cityName || '',
+    cityCode: person.address.dsAddress?.cityCode || '',
+    departmentCode: person.address.dsAddress?.departmentCode || '',
+    regionName: person.address.dsAddress?.regionName || '',
+    regionCode: person.address.dsAddress?.regionCode || '',
   },
-  email: '',
-  phone: '',
+  email: person.email || '',
+  phone: person.phone || '',
   createdAt: new Date(-1),
   updatedAt: new Date(-1),
-  role: personne.role as PersonRoleKey,
+  // role: person.role as PersonRoleKey,
+  // entryDate: person.entryDate,
+  // exitDate: person.exitDate
 })
-const persons = computed(() => props.personnes.map(transformToPerson))
+const persons = computed(() => props.persons.map(transformToPerson))
 </script>
 
 <template>

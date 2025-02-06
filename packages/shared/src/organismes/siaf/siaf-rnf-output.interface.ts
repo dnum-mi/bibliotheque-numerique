@@ -1,7 +1,7 @@
 // Traduit du schema de SIAF RNF
 import { PersonRoleKey } from '../person-role.enums';
 import {FoundationTypeKey} from './foundation-type.enum'
-import { IAddress, IDissolved, IStatus } from './siaf-common-output.interface';
+import { ISiafAddress, IDissolved, IStatus } from './siaf-common-output.interface';
 
 enum eFileMimeType {
   unknown = "unkown", // TODO: do we want to authorize any file type ?
@@ -26,7 +26,7 @@ interface Person  {
   bornPlace:string | undefined
   isFounder:boolean
   role: PersonRoleKey
-  address: IAddress
+  address: ISiafAddress
   residenceCountry: string;
   entryDate?: Date;
   exitDate?: Date;
@@ -46,7 +46,7 @@ export interface ISiafRnfOutput {
   originalCreatedAt: Date
   dissolved: IDissolved
   status: IStatus | undefined
-  address: IAddress | undefined
+  address: ISiafAddress | undefined
   fiscalEndDateAt: Date | null
   declarationYears: number[]
   persons: Person[]

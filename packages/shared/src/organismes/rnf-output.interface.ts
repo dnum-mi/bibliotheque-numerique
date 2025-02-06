@@ -5,7 +5,7 @@ export interface IPersonRnf {
   roles: string[],
   person: IPersonBase,
 }
-
+//TODO: A supprimer, l'ancien RNF n'existe plus
 export interface IRnfOutput {
   id: string
   createdAt: Date

@@ -4,7 +4,9 @@ import type { OrganismeTypeKey } from './organisme-type.enums'
 import { IPerson } from './person-interface'
 import type { IRnaOutput } from './rna-output.interface'
 import type { IRnfOutput } from './rnf-output.interface'
+import { ISiafRnaOutput } from './siaf/siaf-rna-output.interface'
 
+//TODO: a revoir aprés la connection avec le hub défnitif
 export interface IOrganisme {
   id: number
   type: OrganismeTypeKey
@@ -15,9 +17,9 @@ export interface IOrganisme {
   dateCreation: Date | null
   dateDissolution?: Date | null
   idRna: string | null
-  rnaJson: IRnaOutput | null
+  rnaJson: ISiafRnaOutput | IRnaOutput | null
   idRnf: string | null
-  rnfJson: IRnfOutput | ISiafRnfOutput |null
+  rnfJson: ISiafRnfOutput | IRnfOutput |null
   addressLabel: string | null
   addressPostalCode: string | null
   addressCityName: string | null

@@ -4,8 +4,9 @@ import type {
 
   IOrganisme,
   ISiafAssociationOutput,
-  ISiafFondationOutput,
+
   IOrganismeOutput,
+  IOrganismeOutputDto,
 } from '@biblio-num/shared'
 
 import apiClient from '@/api/api-client'
@@ -20,7 +21,7 @@ export enum EOrganismeIdType {
 export const useOrganismeStore = defineStore('organisme', () => {
   const organisme = ref<IOrganisme | undefined>(undefined)
   const organismes = ref<Partial<IOrganisme>[]>([])
-  const organismeSiaf = ref<ISiafAssociationOutput | ISiafFondationOutput | undefined>(undefined)
+  const organismeSiaf = ref<IOrganismeOutputDto | ISiafAssociationOutput | undefined>(undefined)
 
   const loadOrganisme = async (id: string, type: OrganismeIdType) => {
     if (!id) {
@@ -31,7 +32,7 @@ export const useOrganismeStore = defineStore('organisme', () => {
 
     const organismeOutput: IOrganismeOutput = await apiClient[`getOrganismeBy${type}`](id)
     organisme.value = organismeOutput?.bn as IOrganisme
-    organismeSiaf.value = organismeOutput?.siaf as ISiafAssociationOutput | ISiafFondationOutput
+    organismeSiaf.value = organismeOutput?.siaf as IOrganismeOutputDto | ISiafAssociationOutput
   }
 
   const loadOrganismes = async (dto: IPagination<IOrganisme>): Promise<IPaginated<IOrganisme>> => {
