@@ -7,7 +7,8 @@ import { User } from '@/modules/users/objects/user.entity'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { CredentialsInputDto } from '@/modules/users/objects/dtos/input'
 import { UserOutputDto } from '@/modules/users/objects/dtos/output'
-import { Issuer, Client, generators } from 'openid-client'
+import { Issuer, Client, generators, custom } from 'openid-client'
+import { HttpsProxyAgent } from 'https-proxy-agent'
 import { promisify } from 'util'
 import { randomBytes } from 'crypto'
 import { ConfigService } from '@nestjs/config'
@@ -36,6 +37,14 @@ export class AuthService {
   ) {}
 
   async onModuleInit(): Promise<void> {
+    const proxyUrl = this.configService.get('httpProxy')
+
+    const proxyAgent = new HttpsProxyAgent(proxyUrl)
+
+    custom.setHttpOptionsDefaults({
+      // @ts-ignore ça existe
+      agent: proxyAgent,
+    })
     const issuer = await Issuer.discover(this.config.discovery_url)
     this.client = new issuer.Client({
       client_id: this.config.clientId,
@@ -120,6 +129,7 @@ export class AuthService {
       { state: req.body.state, nonce: req.session.nonce },
     )
 
+    console.log(tokenResponse)
     const userinfoResponse = await this.client.userinfo(tokenResponse.access_token)
     return userinfoResponse
   }
