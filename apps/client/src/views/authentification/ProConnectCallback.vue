@@ -18,6 +18,7 @@ const proConnectCallback = async () => {
       throw new Error('Invalid proconnect code, state or iss')
     }
   } catch (e) {
+    console.log(e)
     router.push({ name: routeNames.SIGNIN })
   }
 }
