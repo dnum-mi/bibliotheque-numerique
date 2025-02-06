@@ -10,9 +10,7 @@ const userStore = useUserStore()
 
 const proConnectCallback = async () => {
   try {
-    const code = route.query.code as string | undefined
-    const state = route.query.state as string | undefined
-    const iss = route.query.iss as string | undefined
+    const { code, state, iss } = route.query as { code?: string, state?: string, iss?: string }
     if (code && state && iss) {
       await userStore.loginWithProconnect(code, state, iss)
       router.push({ name: routeNames.DEMARCHES })
@@ -20,7 +18,6 @@ const proConnectCallback = async () => {
       throw new Error('Invalid proconnect code, state or iss')
     }
   } catch (e) {
-    console.error(e)
     router.push({ name: routeNames.SIGNIN })
   }
 }
