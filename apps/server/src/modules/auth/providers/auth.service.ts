@@ -1,13 +1,11 @@
-import {
-  Injectable, NotFoundException,
-} from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { UserService } from '../../users/providers/user.service'
 import * as bcrypt from 'bcrypt'
 import { User } from '@/modules/users/objects/user.entity'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { CredentialsInputDto } from '@/modules/users/objects/dtos/input'
 import { UserOutputDto } from '@/modules/users/objects/dtos/output'
-import { Issuer, Client, generators, custom } from 'openid-client'
+import { Client, custom, generators, Issuer } from 'openid-client'
 import { HttpsProxyAgent } from 'https-proxy-agent'
 import { promisify } from 'util'
 import { randomBytes } from 'crypto'
@@ -37,21 +35,30 @@ export class AuthService {
   ) {}
 
   async onModuleInit(): Promise<void> {
-    const proxyUrl = this.configService.get('httpProxy')
+    try {
+      const proxyUrl = this.configService.get('httpProxy')
+      if (proxyUrl) {
+        this.logger.log(`Using proxy: ${proxyUrl} for OpenID client`)
+        const proxyAgent = new HttpsProxyAgent(proxyUrl)
+        custom.setHttpOptionsDefaults({
+          // @ts-ignore ça existe
+          agent: proxyAgent,
+        })
+      } else {
+        this.logger.log('No proxy for OpenID client')
+      }
 
-    const proxyAgent = new HttpsProxyAgent(proxyUrl)
-
-    custom.setHttpOptionsDefaults({
-      // @ts-ignore ça existe
-      agent: proxyAgent,
-    })
-    const issuer = await Issuer.discover(this.config.discovery_url)
-    this.client = new issuer.Client({
-      client_id: this.config.clientId,
-      client_secret: this.config.client_secret,
-      redirect_uris: [this.config.redirect_uri],
-      response_types: ['code'],
-    })
+      const issuer = await Issuer.discover(this.config.discovery_url)
+      this.client = new issuer.Client({
+        client_id: this.config.clientId,
+        client_secret: this.config.client_secret,
+        redirect_uris: [this.config.redirect_uri],
+        response_types: ['code'],
+      })
+    } catch (e) {
+      this.logger.error("Couldn't initialize OpenID client")
+      this.logger.error(e)
+    }
   }
 
   async validateUser(
@@ -129,9 +136,7 @@ export class AuthService {
       { state: req.body.state, nonce: req.session.nonce },
     )
 
-    console.log(tokenResponse)
-    const userinfoResponse = await this.client.userinfo(tokenResponse.access_token)
-    return userinfoResponse
+    return await this.client.userinfo(tokenResponse.access_token)
   }
 
   async proconnectCallback(req): Promise<UserOutputDto> {
