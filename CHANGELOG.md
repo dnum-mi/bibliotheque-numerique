@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.23.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.23.0...v2.23.1) (2025-02-07)
+
+
+### Bug Fixes
+
+* add proxy for sso ([d6cad5f](https://github.com/dnum-mi/bibliotheque_numerique/commit/d6cad5f1b3aa91c41247a466ae82a79d13ed6133))
+* gestion error init Proconnect with proxy ([2bcc3bb](https://github.com/dnum-mi/bibliotheque_numerique/commit/2bcc3bb4a6e6dc0c950b4dbe2b43360bad2e7972))
+* move proconnect - front ([74c2da9](https://github.com/dnum-mi/bibliotheque_numerique/commit/74c2da92b3c8fdf5e228523f6f5761111d8f996a))
+* use algoritm json for open-id connect ([563dab1](https://github.com/dnum-mi/bibliotheque_numerique/commit/563dab18a9aaf301407cf2cf72998fa93110911a))
+
 ## [2.23.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.22.0...v2.23.0) (2025-02-05)
 
 
