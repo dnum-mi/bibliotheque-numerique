@@ -113,31 +113,8 @@ const { value: passwordValue, errorMessage: passwordError } = useField<string>('
                 Se connecter
               </DsfrButton>
 
-              <div class="separator">
-                <hr>
-                <span class="separator-or">ou</span>
-                <hr>
-              </div>
-
-              <div>
-                <button class="proconnect-button" @click="loginWithProconnect">
-                  <span class="proconnect-sr-only">S'identifier avec ProConnect</span>
-                </button>
-                <p>
-                  <a
-                    href="https://www.proconnect.gouv.fr/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title="Qu’est-ce que ProConnect ? - nouvelle fenêtre"
-                  >
-                    Qu’est-ce que ProConnect ?
-                  </a>
-                </p>
-              </div>
-              <div class="separator">
-                <hr>
-              </div>
               <div
+                class="pt-4"
                 style="text-align:center;"
               >
                 <router-link :to="{ name: 'SignUp' }">
@@ -155,6 +132,28 @@ const { value: passwordValue, errorMessage: passwordError } = useField<string>('
               </div>
             </div>
           </form>
+
+          <div class="separator">
+            <hr>
+            <span class="separator-or">ou</span>
+            <hr>
+          </div>
+
+          <div  class="text-center">
+            <button class="proconnect-button" @click="loginWithProconnect">
+              <span class="proconnect-sr-only">S'identifier avec ProConnect</span>
+            </button>
+            <p>
+              <a
+                href="https://www.proconnect.gouv.fr/"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Qu’est-ce que ProConnect ? - nouvelle fenêtre"
+              >
+                Qu’est-ce que ProConnect ?
+              </a>
+            </p>
+          </div>
         </div>
         <div class="fr-col-1" />
       </div>
