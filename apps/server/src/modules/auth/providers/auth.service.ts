@@ -21,11 +21,12 @@ interface UserinfoResponse {
 @Injectable()
 export class AuthService {
   private client: Client
-  private config = {
-    clientId: this.configService.get('auth').client_id,
-    client_secret: this.configService.get('auth').client_secret,
-    redirect_uri: this.configService.get('auth').redirect_uri,
-    discovery_url: this.configService.get('auth').discovery_url,
+  private config: {
+    clientId: string;
+    client_secret: string;
+    redirect_uri: string;
+    discovery_url: string;
+    userinfo_signed_response_alg: string;
   }
 
   constructor(
@@ -35,6 +36,13 @@ export class AuthService {
   ) {}
 
   async onModuleInit(): Promise<void> {
+    this.config = {
+      clientId: this.configService.get('auth').client_id,
+      client_secret: this.configService.get('auth').client_secret,
+      redirect_uri: this.configService.get('auth').redirect_uri,
+      discovery_url: this.configService.get('auth').discovery_url,
+      userinfo_signed_response_alg: this.configService.get('auth').userinfo_signed_response_alg,
+    }
     try {
       const proxyUrl = this.configService.get('httpProxy')
       if (proxyUrl) {
@@ -54,6 +62,7 @@ export class AuthService {
         client_secret: this.config.client_secret,
         redirect_uris: [this.config.redirect_uri],
         response_types: ['code'],
+        userinfo_signed_response_alg: this.config.userinfo_signed_response_alg,
       })
     } catch (e) {
       this.logger.error("Couldn't initialize OpenID client")
