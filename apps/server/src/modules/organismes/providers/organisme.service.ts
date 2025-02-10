@@ -409,6 +409,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
   }
 
   private _prefectureFn (cp: string): string {
+    if (!cp) return ''
     const prefkey = `D${cp.substring(0, 2) || ''}`
     return Prefecture[prefkey as keyof typeof Prefecture] || ''
   }
