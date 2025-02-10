@@ -26,6 +26,7 @@ import {
   IOrganismeOutput,
   typeCategorieOrganisme,
   Prefecture,
+  ISiafAssociationOutput,
 } from '@biblio-num/shared'
 
 import { OrganismeFieldTypeHash } from '@/modules/organismes/objects/const/organisme-field-type-hash.const'
@@ -359,7 +360,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
    * pour le hub la structure contient la clé associations
    * TODO: A terme, bn doit-être connecter avec le hub
   */
-  async getAssocationFromSiaf(idRna: string): Promise< ISiafRnaOutput | null> {
+  async getAssocationFromSiaf(idRna: string): Promise< ISiafRnaOutput | ISiafAssociationOutput | null> {
     this.logger.verbose('getAssocationFromSiaf')
     const enableSiaf = await this.bnConfiguration.getValueByKeyName(eBnConfiguration.ENABLE_SIAF)
     if (!enableSiaf) return null
@@ -559,6 +560,62 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     } as IOrganismeOutputDto
   }
 
+  // TODO: A supprimer aprés la mise du hub pour les association
+  private _transformSiafHubAssociationToOrganismeDto (organisme: ISiafAssociationOutput): IOrganismeOutputDto {
+    const addressFn = (address: ISiafAssociationOutput['coordonnees']['adresse_siege']): string => {
+      if (!address) {
+        return null
+      }
+      type addressbuild = keyof ISiafAssociationOutput['coordonnees']['adresse_siege']
+      const arrayAddressBuild1: addressbuild[] = ['num_voie', 'type_voie', 'voie']
+      const addressStreetAddress = address
+        ? arrayAddressBuild1.map((k) => address[k])
+          .filter((address) => !!address)
+          .join(' ')
+        : null
+      const arrayAddressBuild2: addressbuild[] = ['cp', 'commune']
+      return address
+        ? `${addressStreetAddress} ${arrayAddressBuild2
+          .map((k) => address[k])
+          .filter((address) => !!address)
+          .join(' ')}`
+        : null
+    }
+
+    const addressSiegeLabel = organisme.coordonnees?.adresse_siege?.label ||
+      addressFn(organisme.coordonnees?.adresse_siege)
+    const addressGestionLabel = organisme.coordonnees?.adresse_gestion?.label ||
+    addressFn(organisme.coordonnees?.adresse_gestion)
+
+    return {
+      idRna: organisme.identite.id_rna,
+      type: 'CULTE',
+      siret: organisme.identite.siret,
+      sigle: organisme.identite.sigle,
+      title: organisme.identite.nom,
+      email: organisme.coordonnees.courriel,
+      phoneNumber: organisme.coordonnees.telephone,
+      dateDissolution: new Date(organisme.identite.date_dissolution),
+      dateCreation: new Date(organisme.identite.date_crea),
+      rnaJson: organisme,
+      addressLabel: addressSiegeLabel,
+      siege: {
+        isVerified: !!organisme.coordonnees?.adresse_siege?.type_voie,
+        prefecture: this._prefectureFn(organisme.coordonnees?.adresse_siege?.cp),
+      },
+      gestion: {
+        addressLabel: addressGestionLabel,
+        isVerified: !!organisme.coordonnees?.adresse_gestion?.type_voie,
+        prefecture: this._prefectureFn(organisme.coordonnees?.adresse_gestion?.cp),
+      },
+      websites: organisme.coordonnees.site_web,
+      objectDescription: organisme.activites.objet,
+      generalInterest: organisme.activites.domaine,
+      createdAt: new Date(organisme?.identite?.date_crea),
+      updatedAt: new Date(organisme?.identite.date_modif_rna),
+    } as IOrganismeOutputDto
+  }
+
   async getOrganismeRnaFromAllServer(idRna: string): Promise<IOrganismeOutput> {
     this.logger.verbose('getOrganismeRnfFromAllServer')
     const results = await Promise.allSettled([
@@ -567,11 +624,22 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     ])
     const bn = this._getValueFromPromiseSettle('bn', results[0])
     const siaf = this._getValueFromPromiseSettle('siaf', results[1])
-
-    return {
+    const out = {
       bn: bn && this._transformRnaToOrganismeDto(bn),
-      siaf: siaf && this._transformSiafRnaToOrganismeDto(siaf),
       type: typeCategorieOrganisme.rna,
+    } as IOrganismeOutput
+
+    if (!siaf) {
+      return {
+        ...out,
+        siaf: null,
+      }
     }
+    if ('identite' in siaf) {
+      out.siaf = this._transformSiafHubAssociationToOrganismeDto(siaf as ISiafAssociationOutput)
+    } else {
+      out.siaf = this._transformSiafRnaToOrganismeDto(siaf as ISiafRnaOutput)
+    }
+    return out
   }
 }

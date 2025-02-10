@@ -20,17 +20,17 @@ interface IIdentiteCommun {
   siret: string
 }
 interface IIdentiteAssociation extends IIdentiteCommun{
-  id_rna: String,
+  id_rna: string,
 }
 interface IIdentiteFondation extends IIdentiteCommun {
-  id_rnf: String,
+  id_rnf: string,
   type_fondation: "FDD" | "FE" | "FRUP"
 }
 
 interface ICoordonneesCommon {
-  courriel: String,
-  telephone: String,
-  site_web: String
+  courriel: string,
+  telephone: string,
+  site_web: string
 }
 
 interface ICoordonneesAssociation extends ICoordonneesCommon {
@@ -56,8 +56,8 @@ export interface IPersonne {
 }
 interface ISiafCommunOutput {
   activites: {
-    objet: String,
-    domaine: String
+    objet: string,
+    domaine: string
   },
   personnes: IPersonne[]
 }
