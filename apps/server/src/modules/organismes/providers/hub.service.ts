@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { LoggerService } from '../../../shared/modules/logger/logger.service'
 import { ConfigService } from '@nestjs/config'
 import type {
+  ISiafAssociationOutput,
   ISiafRnaOutput,
   ISiafRnfOutput,
   ISiafSearchOrganismeOutput,
@@ -9,7 +10,7 @@ import type {
 import axios, { AxiosInstance } from 'axios'
 
 export interface IAssociations {
-  associations: ISiafRnaOutput
+  associations: ISiafRnaOutput | ISiafAssociationOutput
 }
 export interface IFondations {
   fondations: ISiafRnfOutput

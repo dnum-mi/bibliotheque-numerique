@@ -5,6 +5,7 @@ import { IPerson } from './person-interface'
 import type { IRnaOutput } from './rna-output.interface'
 import type { IRnfOutput } from './rnf-output.interface'
 import { ISiafRnaOutput } from './siaf/siaf-rna-output.interface'
+import { ISiafAssociationOutput } from './hub-output.interface'
 
 //TODO: a revoir aprés la connection avec le hub défnitif
 export interface IOrganisme {
@@ -17,7 +18,7 @@ export interface IOrganisme {
   dateCreation: Date | null
   dateDissolution?: Date | null
   idRna: string | null
-  rnaJson: ISiafRnaOutput | IRnaOutput | null
+  rnaJson: ISiafRnaOutput | ISiafAssociationOutput | IRnaOutput | null
   idRnf: string | null
   rnfJson: ISiafRnfOutput | IRnfOutput |null
   addressLabel: string | null
