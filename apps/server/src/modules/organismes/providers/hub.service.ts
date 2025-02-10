@@ -50,8 +50,7 @@ export class HubService {
 
   async getFoundation(idRnf: string): Promise<IFondations | ISiafRnfOutput | null> {
     this.logger.verbose('HUB-getFondation')
-    const path = `/foundations/${idRnf}/complete`
-    // const path = `/fondations/${idRnf}`
+    const path = `/fondations/${idRnf}`
     return this.axios
       .get<IFondations | ISiafRnfOutput>(path)
       .then(response => {
