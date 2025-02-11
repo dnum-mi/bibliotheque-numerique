@@ -16,7 +16,7 @@ import {
 } from '@gouvminint/vue-dsfr'
 
 const isCypress = process.env.CYPRESS === 'true'
-const proxyTargetUrl = 'http://localhost:3001'
+const proxyTargetUrl = process.env.PROXY_TARGET_URL || 'http://localhost:3000'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -61,7 +61,7 @@ export default defineConfig({
   base: process.env.BASE_URL || '/',
   server: {
     host: '0.0.0.0',
-    port: 3000,
+    port: 8080,
     proxy: {
       '/api': {
         target: proxyTargetUrl,
