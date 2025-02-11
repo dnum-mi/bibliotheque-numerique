@@ -47,7 +47,7 @@ export class AuthService {
       redirect_uri: this.configService.get('auth').redirect_uri,
       discovery_url: this.configService.get('auth').discovery_url,
       userinfo_signed_response_alg: this.configService.get('auth').userinfo_signed_response_alg,
-      enable_sso: this.configService.get('auth').enable_sso
+      enable_sso: this.configService.get('auth').enable_sso,
     }
     try {
       const proxyUrl = this.configService.get('httpProxy')
