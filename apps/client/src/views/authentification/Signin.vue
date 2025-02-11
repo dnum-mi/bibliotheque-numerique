@@ -115,7 +115,6 @@ const { value: passwordValue, errorMessage: passwordError } = useField<string>('
               </DsfrButton>
 
               <div
-                class="pt-4"
                 style="text-align:center; margin-top: 15px"
               >
                 <router-link :to="{ name: 'SignUp' }">
@@ -133,44 +132,19 @@ const { value: passwordValue, errorMessage: passwordError } = useField<string>('
               </div>
             </div>
           </form>
-          <<<<<<< HEAD
-
-          <div class="separator">
-            =======
-            <div v-if="proConnectUrl" class="separator">
-              >>>>>>> e118c6c6 (feat: add feature flag)
-              <hr>
-              <span class="separator-or">ou</span>
-              <hr>
-            </div>
-            <<<<<<< HEAD
-
-            <div class="text-center">
-              <button class="proconnect-button" @click="loginWithProconnect">
-                <span class="proconnect-sr-only">S'identifier avec ProConnect</span>
-              </button>
-              <p>
-                <a
-                  href="https://www.proconnect.gouv.fr/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title="Qu’est-ce que ProConnect ? - nouvelle fenêtre"
-                >
-                  Qu’est-ce que ProConnect ?
-                </a>
-              </p>
-              =======
-              <div class="flex justify-center">
-                <ProConnect
-                  v-if="proConnectUrl"
-                  :url="proConnectUrl"
-                />
-                >>>>>>> e118c6c6 (feat: add feature flag)
-              </div>
-            </div>
-            <div class="fr-col-1" />
+          <div v-if="proConnectUrl" class="separator">
+            <hr>
+            <span class="separator-or">ou</span>
+            <hr>
+          </div>
+          <div class="flex justify-center">
+            <ProConnect
+              v-if="proConnectUrl"
+              :url="proConnectUrl"
+            />
           </div>
         </div>
+        <div class="fr-col-1" />
       </div>
     </div>
   </LayoutAccueil>
