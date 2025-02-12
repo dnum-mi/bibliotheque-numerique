@@ -25,12 +25,12 @@ interface UserinfoResponse {
 export class AuthService {
   private client: Client
   private config: {
-    clientId: string,
-    client_secret: string,
-    redirect_uri: string,
-    discovery_url: string,
+    clientId: string;
+    client_secret: string;
+    redirect_uri: string;
+    discovery_url: string;
     userinfo_signed_response_alg: string;
-    enable_sso: string,
+    enable_sso: string;
   }
 
   constructor(
