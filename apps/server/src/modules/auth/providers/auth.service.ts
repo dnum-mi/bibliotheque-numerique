@@ -1,6 +1,6 @@
 import {
   BadRequestException,
-  Injectable, NotFoundException,
+  Injectable, InternalServerErrorException, NotFoundException,
 } from '@nestjs/common'
 import { UserService } from '../../users/providers/user.service'
 import * as bcrypt from 'bcrypt'
@@ -40,7 +40,6 @@ export class AuthService {
   ) {}
 
   async onModuleInit(): Promise<void> {
-    const issuer = await Issuer.discover(this.configService.get('auth').discovery_url)
     this.config = {
       clientId: this.configService.get('auth').client_id,
       client_secret: this.configService.get('auth').client_secret,
@@ -74,12 +73,6 @@ export class AuthService {
       this.logger.error("Couldn't initialize OpenID client")
       this.logger.error(e)
     }
-    this.client = new issuer.Client({
-      client_id: this.config.clientId,
-      client_secret: this.config.client_secret,
-      redirect_uris: [this.config.redirect_uri],
-      response_types: ['code'],
-    })
   }
 
   async validateUser(
@@ -134,7 +127,7 @@ export class AuthService {
 
   proconnect(session): { url: string } {
     if (!JSON.parse(this.config.enable_sso)) {
-      throw new NotFoundException('SSO not enabled')
+      throw new InternalServerErrorException('SSO not enabled')
     }
     const state = generators.state()
     const nonce = generators.nonce()
@@ -166,7 +159,7 @@ export class AuthService {
 
   async proconnectCallback(req): Promise<UserOutputDto> {
     if (!JSON.parse(this.config.enable_sso)) {
-      throw new NotFoundException('SSO not enabled')
+      throw new InternalServerErrorException('SSO not enabled')
     }
     const userinfoResponse = await this.fetchUserinfo(req)
 
@@ -175,7 +168,7 @@ export class AuthService {
     }
 
     let user: User = await this.usersService.findByEmail(userinfoResponse.email, [
-      'id', 'email', 'validated', 'password', 'role',
+      'id', 'email', 'validated', 'role',
       'firstname', 'lastname', 'job', 'createdAt', 'updatedAt',
     ])
 
