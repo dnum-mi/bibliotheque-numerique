@@ -120,7 +120,7 @@ export class OrganismeController {
     } else if (bn.idRnf) {
       return {
         bn,
-        siaf: await this.organismeService.getFondationFromSiaf(bn.idRnf)
+        siaf: await this.organismeService.getFoundationFromSiaf(bn.idRnf)
           .then(siaf => siaf).catch(reason => {
             this.logger.warn(`HUB-RNF: ${reason}`)
             return null

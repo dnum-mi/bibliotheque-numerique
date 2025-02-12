@@ -379,12 +379,12 @@ export class OrganismeService extends BaseEntityService<Organisme> {
    * pour le hub la structure contient la clé fondations
    * TODO: A terme, bn doit-être connecter avec le hub
   */
-  async getFondationFromSiaf(idRnf: string): Promise<ISiafRnfOutput | null> {
-    this.logger.verbose('getFondationFromSiaf')
+  async getFoundationFromSiaf(idRnf: string): Promise<ISiafRnfOutput | null> {
+    this.logger.verbose('getFoundationFromSiaf')
     const enableSiaf = await this.bnConfiguration.getValueByKeyName(eBnConfiguration.ENABLE_SIAF)
     if (!enableSiaf) return null
     const fromSiaf = await this.siafService.getFoundation(idRnf)
-    this.logger.debug({ FN: 'getFondationFromSiaf', idRnf, found: !!fromSiaf })
+    this.logger.debug({ FN: 'getFoundationFromSiaf', idRnf, found: !!fromSiaf })
     if (!fromSiaf) return null
     if ('fondations' in fromSiaf) {
       return fromSiaf.fondations
@@ -501,7 +501,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     this.logger.verbose('getOrganismeRnfFromAllServer')
     const results = await Promise.allSettled([
       this.findOneOrThrow({ where: { idRnf } }),
-      this.getFondationFromSiaf(idRnf),
+      this.getFoundationFromSiaf(idRnf),
     ])
     const bn = this._getValueFromPromiseSettle('bn', results[0])
     const siaf = this._getValueFromPromiseSettle('siaf', results[1])
