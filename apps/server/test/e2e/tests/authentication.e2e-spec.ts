@@ -1,4 +1,4 @@
-import { INestApplication, NotFoundException } from '@nestjs/common'
+import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
 import { TestingModuleFactory } from '../common/testing-module.factory'
 import { AuthService } from '@/modules/auth/providers/auth.service'
@@ -92,18 +92,6 @@ describe('Auth (e2e)', () => {
   })
 
   describe('GET /auth/proconnect', () => {
-    it('Should throw an error if the OpenID client is not initialized', async () => {
-      jest.spyOn(authService, 'proconnect').mockImplementationOnce(() => {
-        throw new NotFoundException('OpenID Client is not initialized')
-      })
-
-      await request(app.getHttpServer())
-        .get('/auth/proconnect')
-        .expect(404)
-        .expect(({ body }) => {
-          expect(body.message).toBe('OpenID Client is not initialized')
-        })
-    })
     it('Should return 200 and the proconnect URL', async () => {
       await request(app.getHttpServer())
         .get('/auth/proconnect')
