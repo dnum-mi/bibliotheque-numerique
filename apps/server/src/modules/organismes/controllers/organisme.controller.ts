@@ -157,16 +157,6 @@ export class OrganismeController {
     @Param('organismeIdRna') idRna: string,
   ): Promise<IOrganismeOutput> {
     this.logger.verbose('getOrganismeWithRna')
-    // const results = await Promise.allSettled([
-    //   this.organismeService.findOneOrThrow({ where: { idRna } }),
-    //   this.organismeService.getAssocationFromSiaf(idRna),
-    // ])
-
-    // const organisme: IOrganismeOutput = {
-    //   bn: this._getValueFromPromiseSettle('bn', results[0]),
-    //   siaf: this._getValueFromPromiseSettle('siaf', results[1]),
-    //   type: typeCategorieOrganisme.rna,
-    // }
     const organisme = await this.organismeService.getOrganismeRnaFromAllServer(idRna)
     if (!organisme.bn && !organisme.siaf) {
       throw new NotFoundException(`L'association ${idRna} non trouvé`)
