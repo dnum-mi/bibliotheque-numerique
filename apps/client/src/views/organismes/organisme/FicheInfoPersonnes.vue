@@ -8,13 +8,7 @@ const props = defineProps<{ persons: ISiafRnfPersons }>()
 const transformToPerson = (person: ISiafRnfPersons[0]): IPerson => ({
   ...person,
   civility: person?.civility || '',
-  // lastName: person?.lastName,
-  // firstName: person?.firstName,
-  // profession: person?.profession,
-  // nationality: person?.nationality,
-  // bornAt: person?.bornAt,
   bornPlace: person?.bornPlace || '',
-  // isFounder: person?.isFounder,
   address: {
     label: person.address.dsStringValue || '',
     type: person.address.gouvAddress?.type || person.address.dsAddress?.type || '',
@@ -33,9 +27,6 @@ const transformToPerson = (person: ISiafRnfPersons[0]): IPerson => ({
   phone: person.phone || '',
   createdAt: new Date(-1),
   updatedAt: new Date(-1),
-  // role: person.role as PersonRoleKey,
-  // entryDate: person.entryDate,
-  // exitDate: person.exitDate
 })
 const persons = computed(() => props.persons.map(transformToPerson))
 </script>

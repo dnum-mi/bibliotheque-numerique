@@ -6,20 +6,20 @@ export interface IPerson extends IPersonBase{
 }
 
 export interface IPersonBase {
-  createdAt: Date,
-  updatedAt: Date,
-  civility: string,
-  lastName: string,
-  firstName: string,
-  email: string,
-  phone: string,
-  profession: string,
-  nationality: string,
-  bornAt: Date,
-  bornPlace: string,
-  isFounder: boolean,
-  address: IAddress,
-  entryDate?: Date,
+  createdAt: Date;
+  updatedAt: Date;
+  civility: string;
+  lastName: string;
+  firstName: string;
+  email: string;
+  phone: string;
+  profession: string;
+  nationality: string;
+  bornAt: Date;
+  bornPlace: string;
+  isFounder: boolean;
+  address: IAddress;
+  entryDate?: Date;
   exitDate?: Date;
   jobPosition: string;
 }
