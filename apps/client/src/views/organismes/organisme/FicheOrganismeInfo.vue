@@ -133,11 +133,13 @@ const fiscalEndDateAt = computed(() => {
           class="grid-col-span-4"
         >
           <label class="bn-fiche-sub-title--label uppercase">Objet</label>
-          <span class="bn-fiche-sub-title--text">{{ objectDescription }}</span>
+          <span class="bn-fiche-sub-title--text max-h-20 overflow-auto whitespace-pre-wrap block">
+            {{ objectDescription }}
+          </span>
         </div>
         <div class="grid-col-span-4">
           <label class="bn-fiche-sub-title--label uppercase">Caractère de l'activité d’intérêt général</label>
-          <span class="bn-fiche-sub-title--text">
+          <span class="bn-fiche-sub-title--text max-h-20 overflow-auto whitespace-pre-wrap block">
             <template v-if="generalInterest">
               {{ generalInterest }}
             </template>
