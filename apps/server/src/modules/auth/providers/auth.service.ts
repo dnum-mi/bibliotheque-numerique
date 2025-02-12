@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  BadRequestException,
+  Injectable, InternalServerErrorException, NotFoundException,
+  OnModuleInit,
+} from '@nestjs/common'
 import { UserService } from '../../users/providers/user.service'
 import * as bcrypt from 'bcrypt'
 import { User } from '@/modules/users/objects/user.entity'
@@ -19,16 +23,8 @@ interface UserinfoResponse {
 }
 
 @Injectable()
-export class AuthService {
+export class AuthService implements OnModuleInit {
   private client: Client
-  private config: {
-    clientId: string;
-    client_secret: string;
-    redirect_uri: string;
-    discovery_url: string;
-    userinfo_signed_response_alg: string;
-  }
-
   constructor(
     private usersService: UserService,
     private logger: LoggerService,
@@ -36,13 +32,6 @@ export class AuthService {
   ) {}
 
   async onModuleInit(): Promise<void> {
-    this.config = {
-      clientId: this.configService.get('auth').client_id,
-      client_secret: this.configService.get('auth').client_secret,
-      redirect_uri: this.configService.get('auth').redirect_uri,
-      discovery_url: this.configService.get('auth').discovery_url,
-      userinfo_signed_response_alg: this.configService.get('auth').userinfo_signed_response_alg,
-    }
     try {
       const proxyUrl = this.configService.get('httpProxy')
       if (proxyUrl) {
@@ -56,13 +45,13 @@ export class AuthService {
         this.logger.log('No proxy for OpenID client')
       }
 
-      const issuer = await Issuer.discover(this.config.discovery_url)
+      const issuer = await Issuer.discover(this.configService.get('auth').discoveryUrl)
       this.client = new issuer.Client({
-        client_id: this.config.clientId,
-        client_secret: this.config.client_secret,
-        redirect_uris: [this.config.redirect_uri],
+        client_id: this.configService.get('auth').clientId,
+        client_secret: this.configService.get('auth').clientSecret,
+        redirect_uris: [this.configService.get('auth').redirectUri],
         response_types: ['code'],
-        userinfo_signed_response_alg: this.config.userinfo_signed_response_alg,
+        userinfo_signed_response_alg: this.configService.get('auth').userinfoSignedResponseAlg,
       })
     } catch (e) {
       this.logger.error("Couldn't initialize OpenID client")
@@ -120,11 +109,17 @@ export class AuthService {
     }
   }
 
-  proconnect(req): { url: string } {
+  proconnect(session): { url: string } {
+    if (this.configService.get('auth').disableSso) {
+      this.logger.verbose('SSO not enabled')
+      throw new InternalServerErrorException('SSO not enabled')
+    }
     const state = generators.state()
     const nonce = generators.nonce()
-    req.session.nonce = nonce
+    session.nonce = nonce
+
     if (!this.client) {
+      this.logger.verbose('OpenID Client is not initialized')
       throw new NotFoundException('OpenID Client is not initialized')
     }
 
@@ -140,7 +135,7 @@ export class AuthService {
   public async fetchUserinfo(req): Promise<UserinfoResponse> {
     const params = this.client.callbackParams(req)
     const tokenResponse = await this.client.callback(
-      this.config.redirect_uri,
+      this.configService.get('auth').redirectUri,
       params,
       { state: req.body.state, nonce: req.session.nonce },
     )
@@ -149,21 +144,24 @@ export class AuthService {
   }
 
   async proconnectCallback(req): Promise<UserOutputDto> {
+    if (this.configService.get('auth').disableSso) {
+      this.logger.verbose('SSO not enabled')
+      throw new InternalServerErrorException('SSO not enabled')
+    }
     const userinfoResponse = await this.fetchUserinfo(req)
 
-    const { email } = userinfoResponse
-    if (!email) {
-      throw new Error('No email found in userinfo')
+    if (!userinfoResponse.email) {
+      throw new BadRequestException('Email not provided')
     }
 
-    let user = await this.usersService.findByEmail(email, [
-      'id', 'email', 'validated', 'password', 'role',
+    let user: User = await this.usersService.findByEmail(userinfoResponse.email, [
+      'id', 'email', 'validated', 'role',
       'firstname', 'lastname', 'job', 'createdAt', 'updatedAt',
     ])
 
     if (!user) {
       user = await this.usersService.createAndSave({
-        email,
+        email: userinfoResponse.email,
         firstname: userinfoResponse.given_name || '',
         lastname: userinfoResponse.family_name || '',
         job: '',
