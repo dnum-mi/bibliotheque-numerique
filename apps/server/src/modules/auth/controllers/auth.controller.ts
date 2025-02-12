@@ -7,6 +7,7 @@ import {
   Post,
   Request,
   Response,
+  Session,
   UseGuards,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
@@ -71,9 +72,9 @@ export class AuthController {
     minimumRole: 'aucun',
     responseType: null,
   })
-  async getProconnectUrl(@Request() req, @Response() res): Promise<{ url: string }> {
-    const { url } = this.authService.proconnect(req)
-    return res.json({ url })
+  async getProconnectUrl(@Session() session): Promise<{ url: string }> {
+    const { url } = this.authService.proconnect(session)
+    return { url }
   }
 
   @PublicRoute()

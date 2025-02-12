@@ -113,6 +113,21 @@ describe('Auth (e2e)', () => {
         })
     })
 
+    it('Should throw an error if no email is found in userinfo', async () => {
+      jest.spyOn(authService, 'fetchUserinfo').mockResolvedValue({
+        given_name: 'New',
+        family_name: 'User',
+        access_token: 'mockAccessToken123',
+      })
+
+      await request(app.getHttpServer())
+        .post('/auth/proconnect/callback')
+        .expect(400)
+        .expect(({ body }) => {
+          expect(body.message).toBe('Email not provided')
+        })
+    })
+
     it('Should create a new user when user does not exist', async () => {
       jest.spyOn(authService, 'fetchUserinfo').mockResolvedValue({
         email: 'newuser@localhost.com',
