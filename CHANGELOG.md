@@ -1,5 +1,36 @@
 # Changelog
 
+## [2.24.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.23.1...v2.24.0) (2025-02-13)
+
+
+### Features
+
+* add feature flag ([5757849](https://github.com/dnum-mi/bibliotheque_numerique/commit/5757849e1425c6a36393d1ac6cb5c6cc28c80614))
+* enable by default sso ([c189d0c](https://github.com/dnum-mi/bibliotheque_numerique/commit/c189d0cc82ea12719ecb5a2a5cd6243e9397ccf3))
+* update association of format RAF in server ([8fc6ede](https://github.com/dnum-mi/bibliotheque_numerique/commit/8fc6edee115fc2c2a53027326dec82c7695de0f6))
+* update config and improvements on sso ([a416a49](https://github.com/dnum-mi/bibliotheque_numerique/commit/a416a49372fb987dadcf976a5f0291f601f573ac))
+* update fiche organisme for  hub - code refactoring ([3a0e3fe](https://github.com/dnum-mi/bibliotheque_numerique/commit/3a0e3fec8d509731e6694d83139aadbba4ef81ed))
+* update interface to insert association of RAF ([7ee79cc](https://github.com/dnum-mi/bibliotheque_numerique/commit/7ee79cc79d86a9b7e71bca7571fda38c48aeee6b))
+* update proconnect button ([4523e31](https://github.com/dnum-mi/bibliotheque_numerique/commit/4523e31028f59db736b08d5d3cbf1b6036327d7a))
+
+
+### Bug Fixes
+
+* bug undefined in fiche organisme ([f4016c1](https://github.com/dnum-mi/bibliotheque_numerique/commit/f4016c14308992c5465d12cd8cfb753efcb00089))
+* change wording and remove default config ([342e9e6](https://github.com/dnum-mi/bibliotheque_numerique/commit/342e9e61cd1709844321d4ff701bf27017ff7490))
+* conflicts ([a1dcd7a](https://github.com/dnum-mi/bibliotheque_numerique/commit/a1dcd7aa8105cac130dbe0e13e95570d414f6f27))
+* conflicts on vite.config.ts ([e97acea](https://github.com/dnum-mi/bibliotheque_numerique/commit/e97acea9fc44b5d697c027881dde5901e6f24dc5))
+* linter ([e93e6ff](https://github.com/dnum-mi/bibliotheque_numerique/commit/e93e6ff3347541eff9e077bd376735dbd3004c5b))
+* objet and "Caractère ..." are in 4 lines max otherwise display scroll bar ([076afd5](https://github.com/dnum-mi/bibliotheque_numerique/commit/076afd5d618ab03e281fbc115d22d2e5b72ef7d1))
+* refacto fiche association for hub v0.0.9 ([6287dfd](https://github.com/dnum-mi/bibliotheque_numerique/commit/6287dfd9f6f3b8c209da35de9c658ada7e8b555b))
+* remove comment useless ([83012f3](https://github.com/dnum-mi/bibliotheque_numerique/commit/83012f3ee0b8e836e43c820d826cb92dcb453239))
+* remove duplicate client and useless test ([d2636d8](https://github.com/dnum-mi/bibliotheque_numerique/commit/d2636d84cba0c3ad0ff7315f1188190137117abc))
+* remove proconnect svg ([0422ac8](https://github.com/dnum-mi/bibliotheque_numerique/commit/0422ac8669aaf9f21a7f3fb3bb0a60b426eb53a0))
+* rename function get foundation from hub ([f8aece4](https://github.com/dnum-mi/bibliotheque_numerique/commit/f8aece4ea54a45ad9c55ea3e6539c864ae7ac752))
+* typo on typescript ([29631d3](https://github.com/dnum-mi/bibliotheque_numerique/commit/29631d3154b19f87c9ea46642f9a47b2e632d449))
+* update interface for foundation ([99ea903](https://github.com/dnum-mi/bibliotheque_numerique/commit/99ea903516d539a010ca1136eaee8576f81ce0a0))
+* update sso discovery url ([a566993](https://github.com/dnum-mi/bibliotheque_numerique/commit/a5669939c0ecc772714ed8b4e04880593d152e5d))
+
 ## [2.23.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.23.0...v2.23.1) (2025-02-07)
 
 
