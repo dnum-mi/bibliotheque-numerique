@@ -85,6 +85,17 @@ const onExpand = (idx: number, id: string) => {
                   {{ person.fullName }}
                 </div>
               </div>
+              <div class="grid-8-cols__large flex-col">
+                <div class="flex-1 m-0! fr-text--xs fr-text--light">
+                  Adresse
+                </div>
+                <div class="flex-1">
+                  <TooltipAddress :show="person.address && !person.address?.type" />
+                  <span class="fr-text--bold">
+                    {{ person.address?.label }} {{ person.residenceCountry?.toUpperCase() }}
+                  </span>
+                </div>
+              </div>
               <div class="grid-8-cols__medium">
                 <div class="flex-1 m-0! fr-text--xs fr-text--light">
                   Naissance
@@ -93,31 +104,13 @@ const onExpand = (idx: number, id: string) => {
                   Née le {{ dateToStringFr(person.bornAt) }} {{ person.bornPlace ?? `à ${person.bornPlace}: ''` }}
                 </div>
               </div>
-              <div class="grid-8-cols__large flex-col">
-                <div class="flex-1 m-0! fr-text--xs fr-text--light">
-                  Adresse
-                </div>
-                <div class="flex-1">
-                  <TooltipAddress :show="person.address && !person.address?.type" />
-                  <span class="fr-text--bold">
-                    {{ person.address?.label }}
-                  </span>
-                </div>
-              </div>
+
               <div class="flex-1/8 flex-col">
                 <div class="flex-1 m-0! fr-text--xs fr-text--light">
                   Nationalité
                 </div>
                 <div class="flex-1 fr-text--bold">
                   {{ person.nationality }}
-                </div>
-              </div>
-              <div class="grid-8-cols__medium flex-grow-0">
-                <div class="flex-1 m-0! fr-text--xs fr-text--light">
-                  Pays de résidence
-                </div>
-                <div class="flex-1 fr-text--bold">
-                  {{ person.residenceCountry }}
                 </div>
               </div>
               <div class="grid-8-cols__medium flex-col">
@@ -131,7 +124,18 @@ const onExpand = (idx: number, id: string) => {
                   <em v-else>Non renseigné</em>
                 </div>
               </div>
-              <div class="grid-8-cols__large">
+              <div class="grid-8-cols__large flex-col">
+                <div class="flex-1 m-0! fr-text--xs fr-text--light">
+                  Metier
+                </div>
+                <div class="flex-1 fr-text--bold">
+                  <template v-if="person.profession">
+                    {{ person.profession }}
+                  </template>
+                  <em v-else>Non renseigné</em>
+                </div>
+              </div>
+              <div class="grid-8-cols__medium flex-col">
                 <div class="flex-1 m-0! fr-text--xs fr-text--light">
                   Date d’entrée dans l’administration
                 </div>
@@ -139,7 +143,7 @@ const onExpand = (idx: number, id: string) => {
                   {{ person.entryDate }}
                 </div>
               </div>
-              <div v-if="person.exitDate" class="large flex-col">
+              <div class="flex-1/8 flex-col">
                 <div class="flex-1 m-0! fr-text--xs fr-text--light">
                   Date de sortie
                 </div>
