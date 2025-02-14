@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.24.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.24.0...v2.24.1) (2025-02-14)
+
+
+### Bug Fixes
+
+* add profession of person in fiche organisme ([7168772](https://github.com/dnum-mi/bibliotheque_numerique/commit/7168772e2dfb8dd7e306f0059e758d5ec1efcf74))
+
 ## [2.24.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.23.1...v2.24.0) (2025-02-13)
 
 
