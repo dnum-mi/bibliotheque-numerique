@@ -9,8 +9,15 @@ import OrganismeBadge from '@/components/Badges/organisme/OrganismeBadge.vue'
 import { EOrganismeIdType, useOrganismeStore, useUserStore } from '@/stores'
 import type { OrganismeIdType } from '@/stores'
 import AttachedFileList from '@/components/ag-grid/files/AttachedFileList.vue'
-import type { IFileOutput, IPagination, IRole, FileTagKey, ISiafAssociationOutput, IOrganismeOutputDto } from '@biblio-num/shared'
-import { dFileTabDictionary } from '@biblio-num/shared'
+import type {
+  IFileOutput,
+  IPagination,
+  IRole,
+  FileTagKey,
+  ISiafAssociationOutput,
+  IOrganismeOutputDto,
+} from '@biblio-num/shared'
+import { dFileTabDictionary, eOrganismeType } from '@biblio-num/shared'
 import type { ApiCall } from '@/components/ag-grid/server-side/pagination.utils'
 import FicheInfoAssociation from './FicheInfoAssociation.vue'
 import FicheInfoFondation from './FicheInfoFondation.vue'
@@ -23,16 +30,26 @@ const { ascendant, selected, select } = useTabs(true, 0)
 const organismeStore = useOrganismeStore()
 const userStore = useUserStore()
 
-const organisme = computed(() => organismeStore.organisme)
+const organisme = computed(() => organismeStore.organisme as IOrganismeOutputDto)
 const organismeSiaf = computed(() => organismeStore.organismeSiaf)
 const hasSiaf = computed(() => !!organismeStore.organismeSiaf)
+const hasSiafAssociation = computed(() => {
+  const organisme = organismeSiaf.value as IOrganismeOutputDto | undefined
+  const types = [eOrganismeType.ARUP, eOrganismeType.CULTE]
+  return !!(organisme && types.includes(organisme.type as typeof types[number]))
+})
+const hasSiafFoundation = computed(() => {
+  const organisme = organismeSiaf.value as IOrganismeOutputDto | undefined
+  const types = [eOrganismeType.FDD, eOrganismeType.FE, eOrganismeType.FRUP]
+  return !!(organisme && types.includes(organisme.type as typeof types[number]))
+})
 
 const filesSummary = ref<Record<FileTagKey, number> | Record<string, never>>({})
 
 const tabTitles = computed(() => {
   let headers = []
 
-  if (hasSiaf.value) {
+  if (hasSiafAssociation.value) {
     headers.push({
       title: 'RAF',
       tabId: 'tab-0',
@@ -147,29 +164,29 @@ const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutpu
             @select-tab="select"
           >
             <DsfrTabContent
-              v-if="organismeSiaf"
+              v-if="hasSiafAssociation"
               panel-id="tab-content-0"
               tab-id="tab-0"
               :selected="selected === 0"
               :asc="ascendant"
             >
-              <FicheInfoAssociation v-if="idType === EOrganismeIdType.Rna" :organisme-raf="(organismeSiaf as ISiafAssociationOutput)" />
-              <FicheInfoFondation v-if="idType === EOrganismeIdType.Rnf" :organisme-raf="organismeSiaf as IOrganismeOutputDto" />
+              <FicheInfoAssociation v-if="idType === EOrganismeIdType.Rna" :organisme-raf="(organismeSiaf as IOrganismeOutputDto)" />
             </DsfrTabContent>
             <DsfrTabContent
               panel-id="tab-content-1"
               tab-id="tab-1"
-              :selected="selected === (hasSiaf ? 1 : 0)"
+              :selected="selected === (hasSiafAssociation ? 1 : 0)"
               :asc="ascendant"
             >
-              <FicheOrganismeInfo :organisme="organisme" />
+              <FicheInfoFondation v-if="hasSiafFoundation && organismeSiaf" :organisme-raf="organismeSiaf as IOrganismeOutputDto" />
+              <FicheOrganismeInfo v-else :organisme="organisme" :type="idType" />
             </DsfrTabContent>
             <DsfrTabContent
               v-for="(tag, idx) in Object.keys(filesSummary)"
               :key="tag"
               :panel-id="`tab-content-${idx + 2}`"
               :tab-id="`tab-${idx + 2}`"
-              :selected="selected === idx + 1 + (hasSiaf ? 1 : 0)"
+              :selected="selected === idx + 1 + (hasSiafAssociation ? 1 : 0)"
               :asc="ascendant"
             >
               <AttachedFileList
