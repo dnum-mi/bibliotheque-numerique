@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.24.2](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.24.1...v2.24.2) (2025-02-18)
+
+
+### Bug Fixes
+
+* del CI/CD for OVH staging ([8ec0ac9](https://github.com/dnum-mi/bibliotheque_numerique/commit/8ec0ac953b3394e70e32e333119b2af0e2451845))
+* show tab raf only for foundation ([b960ec0](https://github.com/dnum-mi/bibliotheque_numerique/commit/b960ec0c007d1de6ac52de4d8ddd9e6dda640097))
+
 ## [2.24.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.24.0...v2.24.1) (2025-02-14)
 
 
