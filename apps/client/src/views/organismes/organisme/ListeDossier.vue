@@ -61,6 +61,7 @@ const updateListeDossiers = async () => {
   try {
     const dossiers = await apiClient.getOrganismeDossiers(props.organismeId)
     rowsdata.value = dossiers.map((d) => {
+      d.prefecture = d.prefecture.replace(/^D/, '')
       const row: unknown[] & { cursor?: string; title?: string; onClick: (event: MouseEvent) => void } = columns
         .filter(({ hidden }) => !hidden)
         .map(({ field, getValue }) => {
