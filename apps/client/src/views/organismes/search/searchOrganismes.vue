@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { organismeTypes, EEntityTypeSearchOrganisme } from '@biblio-num/shared'
-import type { ISiafAssociationOutput, ISiafFondationOutput, ISiafSearchOrganismeResponseOutput } from '@biblio-num/shared'
+import type { ISiafSearchOrganismeResponseOutput } from '@biblio-num/shared'
 import apiClient from '../../../api/api-client'
 import { routeNames } from '../../../router/route-names'
 import { EOrganismeIdType } from '../../../stores'
