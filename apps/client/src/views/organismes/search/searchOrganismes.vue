@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { organismeTypes } from '@biblio-num/shared'
+import { organismeTypes, EEntityTypeSearchOrganisme } from '@biblio-num/shared'
 import type { ISiafAssociationOutput, ISiafFondationOutput, ISiafSearchOrganismeResponseOutput } from '@biblio-num/shared'
 import apiClient from '../../../api/api-client'
 import { routeNames } from '../../../router/route-names'
@@ -24,20 +24,21 @@ const headers = [
 
 const rows = computed(() => {
   return results?.value?.map((result) => {
-    const assocation = result.entity as ISiafAssociationOutput
-    const fondation = result.entity as ISiafFondationOutput
+    const id = result.entity.id
+    const idType: OrganismeIdType
+  = (result.entity_type as EEntityTypeSearchOrganisme) === EEntityTypeSearchOrganisme.fondation
+    ? EOrganismeIdType.Rnf
+    : EOrganismeIdType.Rna
+    const subType = result.entity.foundationType || organismeTypes[5]
+    const address = result.entity.address?.dsStringValue || ''
+    const codePostalMatch = address.match(/\b\d{5}\b/)
+    const codePostal = codePostalMatch ? codePostalMatch[0] : 'N/A'
+    const ville = codePostalMatch ? address.split(codePostalMatch[0])[1].trim() : 'N/A'
 
-    const idRna = assocation.identite.id_rna
-    const idRnf = fondation.identite.id_rnf
-    const id = idRna || idRnf
-    const idType: OrganismeIdType = (idRna ? EOrganismeIdType.Rna : EOrganismeIdType.Rnf) satisfies OrganismeIdType
-    const subType = fondation.identite.type_fondation || organismeTypes[5]
-    const codePostal = idType === EOrganismeIdType.Rna ? assocation.coordonnees.adresse_siege.cp : fondation.coordonnees.adresse.cp
-    const ville = idType === EOrganismeIdType.Rna ? assocation.coordonnees.adresse_siege.commune : fondation.coordonnees.adresse.commune
     return {
       rowData: [
         id,
-        result.entity.identite.nom,
+        result.entity.title,
         {
           component: 'OrganismeBadge',
           type: subType,
