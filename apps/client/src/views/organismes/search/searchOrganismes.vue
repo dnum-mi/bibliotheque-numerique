@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { organismeTypes } from '@biblio-num/shared'
-import type { ISiafRnaOutput, ISiafRnfOutput } from '@biblio-num/shared'
+import { organismeTypes, EEntityTypeSearchOrganisme } from '@biblio-num/shared'
+import type { ISiafAssociationEntity, ISiafFondationEntity, ISiafSearchOrganismeResponseOutput } from '@biblio-num/shared'
 import apiClient from '../../../api/api-client'
 import { routeNames } from '../../../router/route-names'
 import { EOrganismeIdType } from '../../../stores'
@@ -8,26 +8,9 @@ import type { OrganismeIdType } from '../../../stores'
 
 const router = useRouter()
 const inputSearch = ref('')
-const results = ref<(ISiafRnaOutput | ISiafRnfOutput)[] | undefined>(undefined)
-
+const results = ref<ISiafSearchOrganismeResponseOutput[] | undefined>(undefined)
 const onSearch = async () => {
-  const response = await apiClient.searchOrganisme(inputSearch.value)
-  results.value = response.map(({ entity }) => {
-    if ('foundationType' in entity && 'websites' in entity) {
-      return {
-        ...entity,
-        originalCreatedAt: new Date(entity.originalCreatedAt),
-        createdAt: new Date(entity.createdAt),
-        updatedAt: new Date(entity.updatedAt),
-      } as unknown as ISiafRnfOutput
-    } else {
-      return {
-        ...entity,
-        createdAt: new Date(entity.createdAt),
-        updatedAt: new Date(entity.updatedAt),
-      } as unknown as ISiafRnaOutput
-    }
-  })
+  results.value = await apiClient.searchOrganisme(inputSearch.value)
 }
 
 const headers = [
@@ -41,36 +24,41 @@ const headers = [
 
 const rows = computed(() => {
   return results?.value?.map((result) => {
-    const id = result.id
-    const idType: OrganismeIdType = 'foundationType' in result ? EOrganismeIdType.Rnf : EOrganismeIdType.Rna
+    const id = result.entity.id
+    const idType: OrganismeIdType
+      = (result.entity_type as EEntityTypeSearchOrganisme) === EEntityTypeSearchOrganisme.Fondation
+        ? EOrganismeIdType.Rnf
+        : EOrganismeIdType.Rna
 
-    const subType = 'foundationType' in result ? result.foundationType || organismeTypes[5] : organismeTypes[5]
+    const subType
+      = result.entity_type === EEntityTypeSearchOrganisme.Fondation
+        ? (result.entity as ISiafFondationEntity).foundationType || organismeTypes[5]
+        : organismeTypes[5]
 
     let codePostal = 'N/A'
     let ville = 'N/A'
 
-    if ('foundationType' in result) {
-      const entity = result as ISiafRnfOutput
+    if (result.entity_type === 'fondation') {
+      const entity = result.entity as ISiafFondationEntity
       const address = entity.address?.dsStringValue || ''
       const codePostalMatch = address.match(/\b\d{5}\b/)
       codePostal = codePostalMatch ? codePostalMatch[0] : 'N/A'
       ville = codePostalMatch ? address.split(codePostalMatch[0])[1].trim() : 'N/A'
-    } else {
-      const entity = result as ISiafRnaOutput
+    } else if (result.entity_type === 'association') {
+      const entity = result.entity as ISiafAssociationEntity
       const addresses = entity.addresses
+
       if (addresses.length > 0 && addresses[0].rnaAddress?.address) {
         const rnaAddress = addresses[0].rnaAddress.address
         codePostal = rnaAddress.codepostal || 'N/A'
-        if ('achemine' in rnaAddress) {
-          ville = rnaAddress.achemine || 'N/A'
-        }
+        ville = rnaAddress.achemine || 'N/A'
       }
     }
 
     return {
       rowData: [
         id,
-        result.title,
+        result.entity.title,
         {
           component: 'OrganismeBadge',
           type: subType,
@@ -97,7 +85,7 @@ const rows = computed(() => {
 
 <template>
   <LayoutList
-    title="Rechercher dans le référentiel des associations et des fondations"
+    title="Rechercher dans le reférentiel des assocations et des fondations "
     title-bg-color="var(--border-plain-grey)"
     title-icon="fr-icon-search-line"
   >
@@ -105,7 +93,7 @@ const rows = computed(() => {
       <form @submit.prevent="onSearch">
         <DsfrSearchBar
           v-model="inputSearch"
-          label="Rechercher un numéro, un titre, une description ..."
+          label="Recherche un numéro, un titre, une description ..."
           @search="onSearch"
         />
       </form>
