@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { organismeTypes } from '@biblio-num/shared'
-import type { ISiafAssociationOutput, ISiafFondationOutput, ISiafSearchOrganismeResponseOutput } from '@biblio-num/shared'
+import { organismeTypes, EEntityTypeSearchOrganisme } from '@biblio-num/shared'
+import type { ISiafAssociationEntity, ISiafFondationEntity, ISiafSearchOrganismeResponseOutput } from '@biblio-num/shared'
 import apiClient from '../../../api/api-client'
 import { routeNames } from '../../../router/route-names'
 import { EOrganismeIdType } from '../../../stores'
@@ -24,27 +24,47 @@ const headers = [
 
 const rows = computed(() => {
   return results?.value?.map((result) => {
-    const assocation = result.entity as ISiafAssociationOutput
-    const fondation = result.entity as ISiafFondationOutput
+    const id = result.entity.id
+    const idType: OrganismeIdType
+      = (result.entity_type as EEntityTypeSearchOrganisme) === EEntityTypeSearchOrganisme.Fondation
+        ? EOrganismeIdType.Rnf
+        : EOrganismeIdType.Rna
 
-    const idRna = assocation.identite.id_rna
-    const idRnf = fondation.identite.id_rnf
-    const id = idRna || idRnf
-    const idType: OrganismeIdType = (idRna ? EOrganismeIdType.Rna : EOrganismeIdType.Rnf) satisfies OrganismeIdType
-    const subType = fondation.identite.type_fondation || organismeTypes[5]
-    const codePostal = idType === EOrganismeIdType.Rna ? assocation.coordonnees.adresse_siege.cp : fondation.coordonnees.adresse.cp
-    const ville = idType === EOrganismeIdType.Rna ? assocation.coordonnees.adresse_siege.commune : fondation.coordonnees.adresse.commune
+    const subType
+      = result.entity_type === EEntityTypeSearchOrganisme.Fondation
+        ? (result.entity as ISiafFondationEntity).foundationType || organismeTypes[5]
+        : organismeTypes[5]
+
+    let codePostal = 'N/A'
+    let ville = 'N/A'
+
+    if (result.entity_type === 'fondation') {
+      const entity = result.entity as ISiafFondationEntity
+      const address = entity.address?.dsStringValue || ''
+      const codePostalMatch = address.match(/\b\d{5}\b/)
+      codePostal = codePostalMatch ? codePostalMatch[0] : 'N/A'
+      ville = codePostalMatch ? address.split(codePostalMatch[0])[1].trim() : 'N/A'
+    } else if (result.entity_type === 'association') {
+      const entity = result.entity as ISiafAssociationEntity
+      const addresses = entity.addresses
+
+      if (addresses.length > 0 && addresses[0].rnaAddress?.address) {
+        const rnaAddress = addresses[0].rnaAddress.address
+        codePostal = rnaAddress.codepostal || 'N/A'
+        ville = rnaAddress.achemine || 'N/A'
+      }
+    }
+
     return {
       rowData: [
         id,
-        result.entity.identite.nom,
+        result.entity.title,
         {
           component: 'OrganismeBadge',
           type: subType,
         },
         ville,
         codePostal,
-
         {
           component: 'DsfrButton',
           label: 'Voir',

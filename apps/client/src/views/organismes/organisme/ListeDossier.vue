@@ -61,7 +61,7 @@ const updateListeDossiers = async () => {
   try {
     const dossiers = await apiClient.getOrganismeDossiers(props.organismeId)
     rowsdata.value = dossiers.map((d) => {
-      d.prefecture = d.prefecture.replace(/^D/, '')
+      d.prefecture = d.prefecture?.replace(/^D/, '')
       const row: unknown[] & { cursor?: string; title?: string; onClick: (event: MouseEvent) => void } = columns
         .filter(({ hidden }) => !hidden)
         .map(({ field, getValue }) => {
@@ -82,7 +82,8 @@ const updateListeDossiers = async () => {
       }
       return row
     })
-  } catch {
+  } catch (error) {
+    console.log(error)
     toaster.addErrorMessage({ description: 'Impossible de récupérer la liste des dossiers de cet organisme' })
   }
 }
