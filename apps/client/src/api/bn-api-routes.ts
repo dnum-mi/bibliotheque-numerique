@@ -33,7 +33,7 @@ export const updateRolesRoute = (id: number) => `${getUserRoleByIdRoute(id)}/man
 
 export const dossierSearch = '/dossiers-search'
 export const fieldsSearch = '/fields-search'
-
+export const dossierRoute = '/dossiers'
 export const organismesRoute = '/organismes'
 export const organismesListRoute = `${organismesRoute}/list`
 export const organismesListXlsxRoute = `${organismesRoute}/list/export/xlsx`
@@ -55,7 +55,6 @@ export const getCustomFiltersRoute = () => customFiltersRoute
 export const getOneCustomFiltersRoute = (id: number) => `/custom-filters/${id}`
 export const getOneCustomFiltersStats = (id: number) => `${getOneCustomFiltersRoute(id)}/stats`
 
-export const dossierRoute = '/dossiers'
 export const getDossierByIdRoute = (id: number) => `${dossierRoute}/${id}`
 
 export const healthRoute = '/health'

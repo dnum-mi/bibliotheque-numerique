@@ -69,11 +69,6 @@ const hasNoRepeatableField = computed(() => {
 })
 
 const paginationDto = ref()
-watch(paginationDto, async (newValue, oldValue) => {
-  if (!oldValue && newValue && route.query.customDisplayId) {
-    selectFilter(Number(route.query.customDisplayId))
-  }
-})
 
 const groupByDossier = ref(hasNoRepeatableField.value)
 
@@ -95,6 +90,7 @@ const paginationChanged = computed(() => {
 })
 
 const fetching = computed(() => demarcheStore.fetching)
+const agGridComponent = ref()
 
 const specificGridOptions: GridOptions = {
   onDragStopped: () => {
@@ -194,27 +190,7 @@ const onGridReady = (event: GridReadyEvent) => {
 
 //#region Filter events
 const customDisplayOperationSuccess = ref(true)
-const createFilter = async ({ filterName = '', totals = [] }: { filterName?: string, totals?: string[] }) => {
-  customDisplayOperationSuccess.value = false
-  const createCustomFilterDto: ICreateCustomFilter = {
-    name: filterName,
-    groupByDossier: groupByDossier.value,
-    columns: paginationDto.value.columns,
-    sorts: paginationDto.value.sorts,
-    filters: paginationDto.value.filters || undefined,
-  }
 
-  if (totals) {
-    createCustomFilterDto.totals = totals.filter(tt => tt !== 'Aucun total')
-  }
-  try {
-    const filterId = await customFilterStore.createCustomFilter(createCustomFilterDto, demarche.value.id)
-    selectFilter(filterId)
-    customDisplayOperationSuccess.value = true
-  } catch (error) {
-    import.meta.env.DEV && console.warn(error)
-  }
-}
 const updateFilter = async () => {
   customDisplayOperationSuccess.value = false
   if (selectedCustomFilter.value) {
@@ -284,13 +260,6 @@ const addCurrentFilterToRoute = () => {
   })
 }
 
-watch(() => props.customDisplayId, async (newDisplayId, oldDisplayId) => {
-  if (newDisplayId === oldDisplayId) {
-    return
-  }
-  selectFilter(newDisplayId ? Number(newDisplayId) : null)
-})
-
 const selectFilter = async (id: number | null) => {
   if (id === null) {
     selectedCustomFilter.value = null
@@ -313,13 +282,46 @@ const selectFilter = async (id: number | null) => {
     throw new Error('Le filtre sélectionné n’existe pas')
   }
 }
+
+const createFilter = async ({ filterName = '', totals = [] }: { filterName?: string, totals?: string[] }) => {
+  customDisplayOperationSuccess.value = false
+  const createCustomFilterDto: ICreateCustomFilter = {
+    name: filterName,
+    groupByDossier: groupByDossier.value,
+    columns: paginationDto.value.columns,
+    sorts: paginationDto.value.sorts,
+    filters: paginationDto.value.filters || undefined,
+  }
+
+  if (totals) {
+    createCustomFilterDto.totals = totals.filter(tt => tt !== 'Aucun total')
+  }
+  try {
+    const filterId = await customFilterStore.createCustomFilter(createCustomFilterDto, demarche.value.id)
+    selectFilter(filterId)
+    customDisplayOperationSuccess.value = true
+  } catch (error) {
+    import.meta.env.DEV && console.warn(error)
+  }
+}
+
+watch(paginationDto, async (newValue, oldValue) => {
+  if (!oldValue && newValue && route.query.customDisplayId) {
+    selectFilter(Number(route.query.customDisplayId))
+  }
+})
+
+watch(() => props.customDisplayId, async (newDisplayId, oldDisplayId) => {
+  if (newDisplayId === oldDisplayId) {
+    return
+  }
+  selectFilter(newDisplayId ? Number(newDisplayId) : null)
+})
 //#endregion
 
 const download = () => {
   demarcheStore.exportCurrentDemarcheDossiers(groupByDossier.value, paginationDto.value)
 }
-
-const agGridComponent = ref()
 
 const toggleView = useDebounceFn((isActive: boolean) => {
   groupByDossier.value = isActive

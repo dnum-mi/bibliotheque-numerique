@@ -71,12 +71,13 @@ const hasfilterEnumUnselectedAll = (filterModel: Record<string, FilterModel>) =>
       .find(([key, value]) => key === emunId
         && value.filterType === 'set'
         && !(value as SetFilterModel).values.length)
-    if (filter) { return true }
+    if (filter) {
+      return true
+    }
   }
   return false
 }
 
-// function called by aggrid in SSR mode to fetch its data
 const getRows = async (params: IServerSideGetRowsParams) => {
   const hasFilterEnumEmpty = hasfilterEnumUnselectedAll(params.request.filterModel)
   if (hasFilterEnumEmpty) {
@@ -84,7 +85,9 @@ const getRows = async (params: IServerSideGetRowsParams) => {
     return
   }
 
-  if (props.loading) { return undefined }
+  if (props.loading) {
+    return undefined
+  }
   if (props.preCondition) {
     const dto: IPagination<T> = {
       sorts: fromAggToBackendSort(params.request.sortModel),

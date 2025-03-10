@@ -61,8 +61,6 @@ const tabs = ref<InstanceType<typeof DsfrTabs>>()
 const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutput>) => {
   if (dossier.value) {
     return apiClient.getDossierFiles(dossier.value.id)(params)
-  } else {
-    console.log('pas de dossier')
   }
 }
 const redrawTabs = async () => {

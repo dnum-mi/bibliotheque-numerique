@@ -9,6 +9,7 @@ import { useField } from 'vee-validate'
 import SelectAnonymousChamps from './SelectAnonymousChamps.vue'
 
 const demarcheStore = useDemarcheStore()
+const isOnAllDossiersOfOrganisme = ref(false)
 
 const anonymizationEventSelected = ref<anonymisationEventKey | null>(null)
 const maxNbMonth = 2147483647
@@ -23,7 +24,9 @@ onMounted(async () => {
 })
 
 const saveOption = () => {
-  if (nbMonthError.value) { return }
+  if (nbMonthError.value) {
+    return
+  }
   demarcheStore.saveDemarcheOptions({
     nbrMonthAnonymisation: nbrMonthAnonymisation.value,
     anonymizationEvent: (anonymizationEventSelected.value as string) === 'null' ? null : anonymizationEventSelected.value,
@@ -49,7 +52,6 @@ const anonymizationEventList = [
   },
 ]
 
-const isOnAllDossiersOfOrganisme = ref(false)
 const isEnabledAnonymize = computed(() => (!!demarcheStore.currentDemarcheOptions?.anonymizationEvent && !!demarcheStore.currentDemarcheOptions?.nbrMonthAnonymisation))
 const enabledAnonymize = computed(() => (anonymisationEvents.includes(anonymizationEventSelected.value as unknown as anonymisationEventKey)))
 const onUpdateAnonymizationEvent = async (event) => {
