@@ -150,7 +150,8 @@ describe('Dossiers (e2e)', () => {
     it('Should hide file from annotation and message', async () => {
       return await request(app.getHttpServer())
         .post('/dossiers/16/files/list')
-        .set('Cookie', [cookies.instructor]) // instructor has no rights on pref 57 for demarche 1, and dossier with id 16 is pref 57 for demarche 1
+        // instructor has no rights on pref 57 for demarche 1, and dossier with id 16 is pref 57 for demarche 1
+        .set('Cookie', [cookies.instructor])
         .send({
           limit: 10,
           page: 1,
@@ -194,7 +195,8 @@ describe('Dossiers (e2e)', () => {
     it('Should return total files which are not from annotation and message', async () => {
       return await request(app.getHttpServer())
         .get(url)
-        .set('Cookie', [cookies.instructor]) // instructor has no rights on pref 57 for demarche 1, and dossier with id 16 is pref 57 for demarche 1
+        // instructor has no rights on pref 57 for demarche 1, and dossier with id 16 is pref 57 for demarche 1
+        .set('Cookie', [cookies.instructor])
         .expect(200)
         .then(({ text }) => {
           expect(text).toEqual('1')
