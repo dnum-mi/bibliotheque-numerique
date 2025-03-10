@@ -111,8 +111,6 @@ watch(selected, (idx) => {
 const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutput>) => {
   if (organisme.value) {
     return apiClient.getOrganismeFiles(organisme.value.id)(params)
-  } else {
-    console.log('pas d\'organisme')
   }
 }
 </script>

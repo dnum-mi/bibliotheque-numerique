@@ -17,10 +17,6 @@ export function getIconNameFromMimeType (mimeType?: FileExtensionKey) {
   return mimeTypeIconDictionary[mimeType ?? 'unknown']
 }
 
-export const getIconPropsFromFileState = (state: StateKey) => {
-  return statesDict[state]
-}
-
 export const statesDict: Record<StateKey, {
   name: string
   fill: string
@@ -46,4 +42,8 @@ export const statesDict: Record<StateKey, {
     fill: 'var(--success-425-625)',
     title: 'Téléversé',
   },
+}
+
+export const getIconPropsFromFileState = (state: StateKey) => {
+  return statesDict[state]
 }

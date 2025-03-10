@@ -42,16 +42,16 @@ export const useDemarcheStore = defineStore('demarche', () => {
     )
   }
 
+  const getCurrentDemarcheConfigurations = async () => {
+    if (currentDemarche.value) {
+      _setConfiguration(await apiClient.getDemarcheConfiguration(currentDemarche.value.id))
+    }
+  }
+
   const updateOneMappingColumn = async (id: string, columnLabel: string | null): Promise<void> => {
     if (currentDemarche.value) {
       await apiClient.updateOneMappingColumn(currentDemarche.value.id, id, { columnLabel: columnLabel ?? null })
       await getCurrentDemarcheConfigurations()
-    }
-  }
-
-  const getCurrentDemarcheConfigurations = async () => {
-    if (currentDemarche.value) {
-      _setConfiguration(await apiClient.getDemarcheConfiguration(currentDemarche.value.id))
     }
   }
 

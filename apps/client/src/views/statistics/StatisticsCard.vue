@@ -29,15 +29,19 @@ const loading = ref(false)
 const load = async () => {
   if (props.filterId) {
     loading.value = true
-    card.value = await apiClient.getCustomFilterStats(props.filterId)
-    loading.value = false
-    loaded.value = true
+    try {
+      card.value = await apiClient.getCustomFilterStats(props.filterId)
+    } finally {
+      loading.value = false
+      loaded.value = true
+    }
   }
 }
 
 defineExpose({
   load,
 })
+
 onMounted(() => {
   if (props.filterId && !props.lazyLoad) {
     load()
@@ -50,82 +54,44 @@ onMounted(() => {
     <div v-if="errorGetFilter">
       {{ errorGetFilter }}
     </div>
-    <div
-      v-else
-      class="flex flex-col gap-4"
-    >
-      <!-- HEADER -->
+    <div v-else class="flex flex-col gap-4">
       <div class="flex flex-row gap-2 justify-between">
         <div class="flex gap-2">
-          <OrganismeBadge
-            v-for="demarcheType of card?.demarche.types"
-            :key="demarcheType"
-            :type="demarcheType"
-          />
+          <OrganismeBadge v-for="demarcheType in card?.demarche.types" :key="demarcheType" :type="demarcheType" />
         </div>
-        <p
-          v-if="loading"
-          class="w-full flex justify-center align-center"
-        >
+        <p v-if="loading" class="w-full flex justify-center align-center">
           <em> Chargement de&nbsp; </em>
           <strong>{{ displayInfo.label }}</strong>...
         </p>
-        <p
-          v-else
-          class="uppercase m-0 text-sm text-gray-400 fr-text--bold"
-        >
+        <p v-else class="uppercase m-0 text-sm text-gray-400 fr-text--bold">
           [N° DS: <span class="text-gray-700">{{ card?.demarche.dsId }}</span>] {{ card?.demarche.title }}
         </p>
       </div>
-      <!-- TITLE -->
       <div class="flex flex-row justify-between">
-        <span class="fr-text--bold text-xl"> {{ card?.customFilter.name }}</span>
-        <button
-          v-if="card?.customFilter"
-          type="button"
-          class="fr-icon-delete-line fr-text-default--warning"
-          aria-hidden="true"
-          title="Supprimer le filtre personnalisé (attention, cette action est irréversible)"
-          @click.prevent="onDelete"
-        />
+        <span class="fr-text--bold text-xl">{{ card?.customFilter.name }}</span>
+        <button v-if="card?.customFilter" type="button" class="fr-icon-delete-line fr-text-default--warning" aria-hidden="true" title="Supprimer le filtre personnalisé (attention, cette action est irréversible)" @click.prevent="onDelete" />
       </div>
-      <!-- CONTENT -->
       <div class="flex flex-row justify-between">
         <div>
           <ul class="list-none flex flex-col gap-4">
-            <li
-              v-for="filter of card?.customFilter.filters"
-              :key="filter.label"
-            >
+            <li v-for="filter in card?.customFilter.filters" :key="filter.label">
               <p class="uppercase m-0 text-sm text-gray-400 fr-text--bold">
                 {{ filter.label }}
               </p>
-              <!--  TODO: find a more generic way to print pretty filter  -->
-              <v-template v-if="filter.label === 'Status'">
-                <v-template v-for="f of filter.value.split(',')">
-                  <status-badge
-                    class="mr-2"
-                    :status="f.trim()"
-                    :is-small="true"
-                  />
-                </v-template>
-              </v-template>
-              <p
-                v-if="filter.label !== 'Status'"
-                class="m-0 p-0 font-bold text-sm"
-              >
+              <template v-if="filter.label === 'Status'">
+                <template v-for="f in filter.value.split(',')" :key="f">
+                  <status-badge class="mr-2" :status="f.trim()" :is-small="true" />
+                </template>
+              </template>
+              <p v-if="filter.label !== 'Status'" class="m-0 p-0 font-bold text-sm">
                 {{ filter.value }}
               </p>
             </li>
           </ul>
         </div>
-
         <div class="w-1/3">
           <ul class="list-none pl-0 flex flex-col gap-4">
-            <li
-              v-for="total of card?.totals"
-              :key="total.label"
-            >
+            <li v-for="total in card?.totals" :key="total.label">
               <p class="uppercase m-0 text-sm text-gray-400 fr-text--bold">
                 {{ total.label }}
               </p>
@@ -136,17 +102,8 @@ onMounted(() => {
           </ul>
         </div>
       </div>
-      <!-- FOOTER -->
       <div class="flex justify-end mt-4">
-        <RouterLink
-          v-if="card"
-          class="fr-link fr-icon-arrow-right-line fr-link--icon-right"
-          :to="{
-            name: 'DemarcheDossiers',
-            params: { demarcheId: card?.demarche.id },
-            query: { customDisplayId: card?.customFilter.id },
-          }"
-        >
+        <RouterLink v-if="card" class="fr-link fr-icon-arrow-right-line fr-link--icon-right" :to="{ name: 'DemarcheDossiers', params: { demarcheId: card?.demarche.id }, query: { customDisplayId: card?.customFilter.id } }">
           Visualiser la liste
         </RouterLink>
       </div>

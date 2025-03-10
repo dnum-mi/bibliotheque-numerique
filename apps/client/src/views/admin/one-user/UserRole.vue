@@ -34,6 +34,8 @@ const roleOptions = computed<Array<DsfrRadioButtonProps & HTMLAttributes>>(() =>
   })),
 )
 
+const isModalOpen = ref(false)
+
 const updateRole = async (event: string) => {
   await userStore.updateRole(event)
 }
@@ -42,8 +44,6 @@ const onRemoveRole = async () => {
   await userStore.removeRole()
   isModalOpen.value = false
 }
-
-const isModalOpen = ref(false)
 </script>
 
 <template>
