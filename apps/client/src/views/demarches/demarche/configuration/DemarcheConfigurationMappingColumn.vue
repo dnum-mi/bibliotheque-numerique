@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useDebounceFn } from '@vueuse/core'
 import { ref, watch } from 'vue'
-
+import useToaster from '@/composables/use-toaster.js'
 import { useDemarcheStore } from '@/stores'
 import type { IMappingColumn } from '@biblio-num/shared'
 
@@ -16,6 +16,7 @@ const labelBNInput = ref<HTMLElement | null | undefined>()
 const labelBN = ref<string | undefined>(props.mappingColumn.columnLabel)
 const checked = ref(!!labelBN.value)
 const isParent = !props.isChildren && props.mappingColumn.children?.length
+const toaster = useToaster()
 
 const focusOnInput = () => {
   if (checked.value) {
@@ -32,7 +33,7 @@ const save = useDebounceFn(async (id: string, label: string | null) => {
   if (label) {
     emits('columnUpdated')
   }
-  // TODO: un petit toast pour le comfort utilisateur
+  toaster.addMessage({ description: 'Changement effectué avec succès', type: 'info' })
 }, 2000)
 
 watch(checked, (newValue) => {

@@ -859,8 +859,8 @@ describe('Build filter', () => {
       ).resolves.toEqual('(("I09" ILIKE \'to%\') OR ("I09" ILIKE \'%ti\'))')
     })
 
-    it('Should build filter for multiple fields using "AND" operator', () => {
-      expect(
+    it('Should build filter for multiple fields using "AND" operator', async () => {
+      await expect(
         buildFilterQuery(
           {
             I09: {
@@ -888,10 +888,9 @@ describe('Build filter', () => {
             I08: 'number',
           },
           true,
-        ),
+        )
       ).resolves.toEqual(
-        `((EXISTS (SELECT 1 FROM UNNEST("I09") AS item WHERE item ILIKE \'%to%\'))) 
-          AND ((EXISTS (SELECT 1 FROM UNNEST("I08") AS item WHERE item > 10000)) OR (EXISTS (SELECT 1 FROM UNNEST("I08") AS item WHERE item > 20000)))`,
+        `((EXISTS (SELECT 1 FROM UNNEST("I09") AS item WHERE item ILIKE '%to%'))) AND ((EXISTS (SELECT 1 FROM UNNEST("I08") AS item WHERE item > 10000)) OR (EXISTS (SELECT 1 FROM UNNEST("I08") AS item WHERE item > 20000)))`
       )
     })
   })
