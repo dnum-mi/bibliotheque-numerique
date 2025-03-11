@@ -859,8 +859,8 @@ describe('Build filter', () => {
       ).resolves.toEqual('(("I09" ILIKE \'to%\') OR ("I09" ILIKE \'%ti\'))')
     })
 
-    it('Should build filter for multiple fields using "AND" operator', async () => {
-      await expect(
+    it('Should build filter for multiple fields using "AND" operator', () => {
+      expect(
         buildFilterQuery(
           {
             I09: {
