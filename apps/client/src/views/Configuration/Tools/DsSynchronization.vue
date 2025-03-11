@@ -2,12 +2,12 @@
 import { ref } from 'vue'
 
 import type { ISmallDemarcheOutput, IdentificationDemarcheKeys, OrganismeTypeKey } from '@biblio-num/shared'
-
+import ModalConfirm from '@/components/ModalConfirm.vue'
 import { useConfigurationStore } from '@/stores/configuration'
 import { synchroniseOneDossier, synchroniseOneOrganisme } from '@/api/sudo-api-client'
 
 const configurationStore = useConfigurationStore()
-
+const modalRef = ref<InstanceType<typeof ModalConfirm> | null>(null)
 const demarcheIdString = ref('')
 const demarcheId = computed<number | null>(() => Number(demarcheIdString.value) ?? null)
 
@@ -93,8 +93,11 @@ const onClickUpdateDemarche = async () => {
 }
 
 const onClickSoftDeleteDemarche = async (demarcheId: number) => {
-  // TODO: use a modal instead of a confirm
-  if (confirm('Voulez-vous vraiment supprimer cette démarche ?')) { // eslint-disable-line no-alert
+  if (!modalRef.value) {
+    return
+  }
+  const confirmed = await modalRef.value.open()
+  if (confirmed) {
     await configurationStore.softDeleteDemarche(demarcheId)
   }
 }
@@ -168,6 +171,7 @@ onMounted(async () => {
     </div>
 
     <!-- LISTER LES DEMARCHES -->
+    <ModalConfirm ref="modalRef" message="Voulez-vous vraiment supprimer cette démarche ?" />
     <DsfrTable
       class="w-full text-center"
       title="Liste des démarches existantes"
