@@ -4,6 +4,7 @@ import { ref } from 'vue'
 import type { ISmallDemarcheOutput, IdentificationDemarcheKeys, OrganismeTypeKey } from '@biblio-num/shared'
 import { useConfigurationStore } from '@/stores/configuration'
 import { synchroniseOneDossier, synchroniseOneOrganisme } from '@/api/sudo-api-client'
+import ModalConfirm from '@/components/ModalConfirm.vue'
 
 const configurationStore = useConfigurationStore()
 const demarcheIdString = ref('')
@@ -173,13 +174,12 @@ onMounted(async () => {
     </div>
 
     <!-- LISTER LES DEMARCHES -->
-    <DsfrModal
+    <ModalConfirm
       :opened="isModalOpen"
       title="Supprimer la démarche"
-      :actions="[
-        { label: 'Supprimer', onClick: onConfirmDelete },
-        { label: 'Annuler', onClick: () => (isModalOpen = false), secondary: true },
-      ]"
+      confirm-label="Supprimer"
+      cancel-label="Annuler"
+      @confirm="onConfirmDelete"
       @close="isModalOpen = false"
     >
       <p class="m-1">
@@ -191,7 +191,7 @@ onMounted(async () => {
       <p class="m-1">
         Êtes-vous sûr de vouloir continuer ?
       </p>
-    </DsfrModal>
+    </ModalConfirm>
     <DsfrTable
       class="w-full text-center"
       title="Liste des démarches existantes"

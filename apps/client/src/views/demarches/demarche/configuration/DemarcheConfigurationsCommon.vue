@@ -18,7 +18,7 @@ const props = withDefaults(defineProps<{
 })
 
 const emit = defineEmits<{
-  'saveOne': [{ id: string, label: string | null }]
+  'save-one': [{ id: string, label: string | null }]
 }>()
 
 const demarcheConfiguration = computed<IMappingColumn[]>(() => props.currentDemarcheConfiguration)
@@ -122,7 +122,7 @@ const buttons = computed(() => Object.entries(confParts.value).map(([_, { meta: 
 const cdsExpandedId = ref<string | undefined>('cds-1')
 
 const saveOneMappingColumn = async (id: string, label: string | null) => {
-  emit('saveOne', { id, label })
+  emit('save-one', { id, label })
 }
 const saveOneMappingColumnDebounced = useDebounceFn(saveOneMappingColumn, 300)
 </script>
