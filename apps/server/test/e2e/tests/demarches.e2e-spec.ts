@@ -111,28 +111,23 @@ describe('Demarches (e2e)', () => {
       )
     })
 
-    // eslint-disable-next-line max-len
-    it('Should patch identification should delete fix-field of intersection into mappingColumn with identification equal to null and types undefined.', async () => {
+    it(`Should patch identification and remove fix-field of intersection in mappingColumn when 
+      identification is null and types are undefined.`, async () => {
       await request(app.getHttpServer())
         .patch('/demarches/6')
         .set('Cookie', [cookies.sudo])
-        .send({
-          identification: null,
-        })
+        .send({ identification: null })
         .expect(200)
 
       const demarche1 = await dataSource.manager.findOne(Demarche, {
         where: { id: 6 },
       })
+
       expect(demarche1).toHaveProperty('identification', null)
       expect(demarche1.mappingColumns).toEqual(
         expect.not.arrayContaining([
-          expect.objectContaining({
-            id: 'ca6b1946-efe2-448d-b9e3-645829093dc5',
-          }),
-          expect.objectContaining({
-            id: 'ca6b1946-efe2-448d-b9e3-645829093dc6',
-          }),
+          expect.objectContaining({ id: 'ca6b1946-efe2-448d-b9e3-645829093dc5' }),
+          expect.objectContaining({ id: 'ca6b1946-efe2-448d-b9e3-645829093dc6' }),
         ]),
       )
     })

@@ -158,7 +158,9 @@ const apiCall: ApiCall<IFileOutput> = async (params: IPagination<IFileOutput>) =
       },
     } as Record<keyof IFileOutput, IFilter>
   }
-  const files = await props.fetchAttachedFiles(params).finally(() => { fetching.value = false })
+  const files = await props.fetchAttachedFiles(params).finally(() => {
+    fetching.value = false
+  })
   emit('filesFetched')
   return files
 }

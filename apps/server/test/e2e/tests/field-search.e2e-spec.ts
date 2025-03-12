@@ -369,7 +369,7 @@ describe('Field search', () => {
   })
 
   it('Should only return dossiers with instruction times empty', async () => {
-    const { body } = await request(app.getHttpServer())
+    const { body } = await request(app.getHttpServer())
       .post('/demarches/9/fields-search')
       .send({
         columns: ['I11'],
@@ -387,7 +387,7 @@ describe('Field search', () => {
   })
 
   it('Should only return dossiers with filter empty value for enum', async () => {
-    const { body } = await request(app.getHttpServer())
+    const { body } = await request(app.getHttpServer())
       .post('/demarches/9/fields-search')
       .send({
         columns: ['I11'],

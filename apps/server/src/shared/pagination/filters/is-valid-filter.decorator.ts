@@ -1,7 +1,6 @@
 import {
   registerDecorator,
   validateSync,
-  ValidationArguments,
   ValidationOptions,
 } from 'class-validator'
 import { plainToClass } from 'class-transformer'
@@ -20,8 +19,8 @@ export function IsValidFilter (validationOptions?: ValidationOptions) {
       propertyName,
       options: validationOptions,
       validator: {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
-        validate (value: any, args: ValidationArguments): boolean {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        validate (value: any): boolean {
           if (typeof value !== 'object') {
             return false
           }

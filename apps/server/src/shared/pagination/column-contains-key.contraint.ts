@@ -31,8 +31,7 @@ export class ColumnContainsKeyContraint implements ValidatorConstraintInterface 
     return reic(array, o)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  defaultMessage (args: ValidationArguments):string {
+  defaultMessage ():string {
     return 'The selected columns does not contain the column you are trying to use.'
   }
 }

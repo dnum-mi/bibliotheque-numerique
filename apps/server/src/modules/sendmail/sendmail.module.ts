@@ -1,18 +1,24 @@
-// TODO: Remove this eslint-disable
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Module } from '@nestjs/common'
-import { MailerModule } from '@nestjs-modules/mailer'
+import { MailerModule, MailerOptions } from '@nestjs-modules/mailer'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter'
 
 import { SendMailService } from './sendmail.service'
 import { NodeEnvs } from '../../shared/types/node-env.enum'
 
+interface SmtpConfig {
+  host: string
+  port: number
+  from?: string
+  user?: string
+  pass?: string
+}
+
 @Module({
   imports: [
     MailerModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => {
+      useFactory: (configService: ConfigService): MailerOptions => {
         const templatePath = process.env.NODE_ENV === NodeEnvs.TestUnit ? __dirname : 'dist/modules/sendmail'
         const template = {
           dir: `${templatePath}/templates`,
@@ -35,8 +41,8 @@ import { NodeEnvs } from '../../shared/types/node-env.enum'
           }
         }
 
-        const { host, port, from, user, pass } = configService.get('smtp')
-        const transport: Record<string, any> = {
+        const { host, port, from, user, pass } = configService.get<SmtpConfig>('smtp')
+        const transport: MailerOptions['transport'] = {
           host,
           port,
         }
@@ -50,7 +56,7 @@ import { NodeEnvs } from '../../shared/types/node-env.enum'
           }
         }
 
-        const options: Record<string, any> = {
+        const options: MailerOptions = {
           transport,
           template,
         }

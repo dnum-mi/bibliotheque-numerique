@@ -8,13 +8,14 @@ const getRandomAlphaNum = () => {
   return alphanum[randomIndex]
 }
 
-const getRandomHtmlId = (prefix = '', suffix = '') => {
-  return (prefix ? `${prefix}-` : '') + getRandomString(5) + (suffix ? `-${suffix}` : '')
-}
 const getRandomString = (length: number) => {
   return Array.from({ length })
     .map(getRandomAlphaNum)
     .join('')
+}
+
+const getRandomHtmlId = (prefix = '', suffix = '') => {
+  return (prefix ? `${prefix}-` : '') + getRandomString(5) + (suffix ? `-${suffix}` : '')
 }
 
 export type Message = {

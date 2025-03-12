@@ -150,10 +150,8 @@ const dateSqlOperators: Record<
       return `'${filter.filter}'`
     },
   },
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  [DateFilterConditions.Blank]: { op: 'ISNULL', value: (filter) => '' },
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  [DateFilterConditions.NotBlank]: { op: 'IS NOT NULL', value: (filter) => '' },
+  [DateFilterConditions.Blank]: { op: 'ISNULL', value: () => '' },
+  [DateFilterConditions.NotBlank]: { op: 'IS NOT NULL', value: () => '' },
   [DateFilterConditions.Between]: {
     op: 'BETWEEN',
     value: (filter) => `'${filter.filter}' AND '${filter.filterTo}'`,

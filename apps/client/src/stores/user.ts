@@ -21,15 +21,6 @@ const SuperAdminRoles = [Roles.superadmin, Roles.sudo]
 const AdminRoles = [...SuperAdminRoles, Roles.admin]
 
 export const useUserStore = defineStore('user', () => {
-  const $reset = () => {
-    selectedEditableUserLoading.value = false
-    currentUser.value = null
-    myProfile.value = null
-    users.value = new Map<number, IUserOutput>()
-    selectedEditableUser.value = null
-    keySelectUser.value = getRandomId('selectedUser-selected')
-  }
-
   const selectedEditableUserLoading = ref(false)
   const currentUser = ref<IUserOutput | null>(null)
   const myProfile = ref<IMyProfileOutput | null>(null)
@@ -39,6 +30,15 @@ export const useUserStore = defineStore('user', () => {
   const isAuthenticated = computed(() => !!currentUser.value)
   const hasAdminAccess = computed(() => !!(currentUser.value?.role?.label && AdminRoles.includes(currentUser.value?.role?.label)))
   const canAccessDemarches = computed(() => !!currentUser.value?.role?.label)
+
+  const $reset = () => {
+    selectedEditableUserLoading.value = false
+    currentUser.value = null
+    myProfile.value = null
+    users.value = new Map<number, IUserOutput>()
+    selectedEditableUser.value = null
+    keySelectUser.value = getRandomId('selectedUser-selected')
+  }
 
   const login = async (loginForm: ICredentialsInput) => {
     currentUser.value = await bnApiClient.loginUser(loginForm)

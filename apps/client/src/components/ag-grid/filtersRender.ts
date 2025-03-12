@@ -3,7 +3,9 @@ import { agGridFilterDict } from '@/shared/types'
 
 export const filterParamsDate = {
   comparator: (filterLocalDateAtMidnight: Date, cellValue: string) => {
-    if (cellValue == null) { return -1 }
+    if (cellValue == null) {
+      return -1
+    }
     const cellDate = new Date(cellValue)
     if (filterLocalDateAtMidnight.getTime() === cellDate.getTime()) {
       return 0
