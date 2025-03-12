@@ -57,7 +57,7 @@ const typeOrganismeLabel: Record<OrganismeTypeKey, string> = {
   [eOrganismeType.unknown]: 'Type d’organisme inconnu',
 }
 //#endregion
-
+let noRefDemarcheOrTypeSelected: DemarchesRoles | DemarcheRole
 const userStore = useUserStore()
 const selectedUser = computed<UserOutputDto>(() => props.selectedEditableUser.originalUser)
 const demarcheHash = computed<Record<number, OneDemarcheRoleOption>>(() => props.selectedEditableUser.demarcheHash)
@@ -229,7 +229,6 @@ const checkOneDemarche = async (obj: { id: number; checked: boolean; d: Demarche
 }
 
 const demarcheOrTypeSelected = ref<DemarchesRoles | DemarcheRole | null>(null)
-let noRefDemarcheOrTypeSelected: DemarchesRoles | DemarcheRole
 
 const onClickDemarches = (elt: DemarchesRoles | DemarcheRole) => {
   if (elt.attrs.disabled) {

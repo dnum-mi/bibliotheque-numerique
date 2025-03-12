@@ -2,17 +2,17 @@
 import { ref } from 'vue'
 
 import type { ISmallDemarcheOutput, IdentificationDemarcheKeys, OrganismeTypeKey } from '@biblio-num/shared'
-
 import { useConfigurationStore } from '@/stores/configuration'
 import { synchroniseOneDossier, synchroniseOneOrganisme } from '@/api/sudo-api-client'
+import ModalConfirm from '@/components/ModalConfirm.vue'
 
 const configurationStore = useConfigurationStore()
-
 const demarcheIdString = ref('')
 const demarcheId = computed<number | null>(() => Number(demarcheIdString.value) ?? null)
 
 const identification = ref<string>()
-
+const isModalOpen = ref(false)
+const selectedDemarcheId = ref<number | null>(null)
 const typesString = ref('')
 const types = computed<OrganismeTypeKey[]>(() => (typesString.value ? JSON.parse(typesString.value) : undefined))
 
@@ -92,11 +92,17 @@ const onClickUpdateDemarche = async () => {
   await configurationStore.updateDemarche(demarcheId.value, identificationValue.value, types.value)
 }
 
-const onClickSoftDeleteDemarche = async (demarcheId: number) => {
-  // TODO: use a modal instead of a confirm
-  if (confirm('Voulez-vous vraiment supprimer cette démarche ?')) { // eslint-disable-line no-alert
-    await configurationStore.softDeleteDemarche(demarcheId)
+const onClickSoftDeleteDemarche = (demarcheId: number) => {
+  selectedDemarcheId.value = demarcheId
+  isModalOpen.value = true
+}
+
+const onConfirmDelete = async () => {
+  if (selectedDemarcheId.value !== null) {
+    await configurationStore.softDeleteDemarche(selectedDemarcheId.value)
   }
+  isModalOpen.value = false
+  selectedDemarcheId.value = null
 }
 
 onMounted(async () => {
@@ -168,6 +174,24 @@ onMounted(async () => {
     </div>
 
     <!-- LISTER LES DEMARCHES -->
+    <ModalConfirm
+      :opened="isModalOpen"
+      title="Supprimer la démarche"
+      confirm-label="Supprimer"
+      cancel-label="Annuler"
+      @confirm="onConfirmDelete"
+      @close="isModalOpen = false"
+    >
+      <p class="m-1">
+        Vous vous apprêtez à supprimer la démarche sélectionnée.
+      </p>
+      <p class="m-1">
+        Cette action est irréversible.
+      </p>
+      <p class="m-1">
+        Êtes-vous sûr de vouloir continuer ?
+      </p>
+    </ModalConfirm>
     <DsfrTable
       class="w-full text-center"
       title="Liste des démarches existantes"

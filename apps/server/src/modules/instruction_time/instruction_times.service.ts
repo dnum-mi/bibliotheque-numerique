@@ -240,8 +240,7 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
         date: instructionTime[eInstructionTimeCode['second-demand-recieved-at']],
         message: 'La date de reception de pièces',
       },
-      // eslint-disable-next-line no-irregular-whitespace
-      `${messageError} pour la deuxième demande :`,
+      `${messageError} pour la deuxième demande:`,
     )
 
     const forDateStart = dateReceipt1stDemand ? forCheckDateReception1stDemand : forCheckDateInstruction

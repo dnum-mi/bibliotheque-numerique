@@ -14,6 +14,7 @@ import { AxiosError } from 'axios'
 
 const version = ref('0.0.0')
 const runEnv = ref<EnvTextKeys>(defaultEnv)
+const toaster = useToaster()
 
 onMounted(async () => {
   try {
@@ -122,7 +123,9 @@ const route = useRoute()
 
 const minimalQuickLinks = computed(() => {
   const role = userStore.currentUser?.role?.label
-  if (!role) { return [] }
+  if (!role) {
+    return []
+  }
   return isSuperiorOrSimilar(Roles.instructor, role)
     ? [
         demarcheQuickLink,
@@ -150,8 +153,6 @@ watch([() => userStore.isAuthenticated, route], async () => {
 
 const searchQuery = ref('')
 
-const toaster = useToaster()
-
 onErrorCaptured((error: Error | AxiosError) => {
   if (import.meta.env.PROD) {
     logInServer(error.stack, 'error')
@@ -171,7 +172,6 @@ onErrorCaptured((error: Error | AxiosError) => {
       const errorMessage = errorMessages[status as keyof typeof errorMessages] || 'Erreur inconnue. Veuillez réessayer.'
       toaster.addErrorMessage({ description: errorMessage })
       if (import.meta.env.DEV) {
-        console.log(status)
         console.error(`Erreur HTTP [${status}]: ${errorMessage}`)
       }
     }

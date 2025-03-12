@@ -16,6 +16,19 @@ const emit = defineEmits<{
   'update:addPrefecture': [payload: string];
 }>()
 
+const updateCheckedLocalization = (loc: LocalizationOptionsKeys) => {
+  emit('update:localization', loc)
+}
+
+const removePrefecture = (pref: string) => {
+  // TODO: call  to remove prefecture
+  emit('update:removePrefecture', pref)
+}
+
+const addPrefecture = (pref: string) => {
+  emit('update:addPrefecture', pref)
+}
+
 const localizationOptions = computed(() => [
   {
     label: 'National',
@@ -78,19 +91,6 @@ const prefecturesToAdd = computed<DsfrTagProps[]>(() =>
       disabled: disabledAddPrefectures.value,
     })),
 )
-
-const updateCheckedLocalization = (loc: LocalizationOptionsKeys) => {
-  emit('update:localization', loc)
-}
-
-const removePrefecture = (pref: string) => {
-  // TODO: call  to remove prefecture
-  emit('update:removePrefecture', pref)
-}
-
-const addPrefecture = (pref: string) => {
-  emit('update:addPrefecture', pref)
-}
 </script>
 
 <template>

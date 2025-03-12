@@ -6,8 +6,8 @@ import {
   IdentificationDemarcheKey,
 } from '@biblio-num/shared'
 
-// eslint-disable-next-line max-len
-import { fixFieldsInstructionTime } from '@/modules/instruction_time/constante/fix-field-instrucation-times.dictionnary'
+import { fixFieldsInstructionTime }
+  from '@/modules/instruction_time/constante/fix-field-instrucation-times.dictionnary'
 import {
   fixFieldsAmounts,
   fixFieldsExcelChamps,

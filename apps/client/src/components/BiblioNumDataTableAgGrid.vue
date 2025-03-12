@@ -163,7 +163,9 @@ const gridApi = ref<AgGridCommon<unknown, unknown>['api']>() // Optional - for a
 const columnApi = ref<AgGridCommon<unknown, unknown>['columnApi']>() // Optional - for accessing Grid's API
 
 const onGridReady = (params: GridReadyEvent) => {
-  watchEffect(() => { params.api.setRowData(props.rowData) })
+  watchEffect(() => {
+    params.api.setRowData(props.rowData)
+  })
   gridApi.value = params.api
   columnApi.value = params.columnApi
 }
