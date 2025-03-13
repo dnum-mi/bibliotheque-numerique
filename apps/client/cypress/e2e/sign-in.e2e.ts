@@ -2,52 +2,56 @@ import demarches from '../fixtures/demarches.json'
 import demarche from '../fixtures/demarche.json'
 import fieldsSearch from '../fixtures/fields-search.json'
 import customFilters from '../fixtures/custom-filters.json'
-import adminProfile from '../fixtures/admin-profile.json'
 import noneProfile from '../fixtures/none-profile.json'
 import instructorProfile from '../fixtures/instructor-profile.json'
 import adminLocalProfile from '../fixtures/admin-local-profile.json'
+import adminProfile from '../fixtures/admin-profile.json'
 
 describe('Sign in', () => {
   beforeEach(() => {
-    cy.intercept({ method: 'GET', url: '/api/users/me' }, {}).as('notProfile')
     cy.intercept({ method: 'GET', url: '/api/demarches/small' }, []).as('demarches')
     cy.intercept({ method: 'POST', url: '/api/organismes/list' }, {}).as('organismes')
     cy.intercept({ method: 'GET', url: '/api/custom-filters' }, []).as('customFilters')
+    cy.intercept({ method: 'GET', url: '/api/auth/proconnect' }, []).as('proconnect')
     cy.intercept({ method: 'POST', url: '/api/users/list' }, []).as('fetchUsers')
-    cy.intercept({ method: 'GET', url: '/api/users/me', times: 1 }, { statusCode: 403 }).as('notProfile')
     cy.intercept('api//health', { info: { } })
   })
 
   it('should redirect user to requested page after signing in', () => {
     cy.visit('/sign_in')
-    cy.intercept({ method: 'GET', url: '/api/users/me' }, {}).as('adminProfile')
-    cy.intercept({ method: 'POST', url: '/api/auth/sign-in' }, adminProfile).as('adminSignIn')
+    cy.intercept({ method: 'GET', url: '/api/users/me' }, adminLocalProfile)
+    cy.intercept({ method: 'DELETE', url: '/api/auth/logout' }, {})
+    cy.intercept({ method: 'GET', url: '/api/bn-configurations/enable-siaf' }, {})
+    cy.intercept({ method: 'POST', url: '/api/auth/sign-in' }, { accessToken: 'abcd' })
     cy.intercept({ method: 'GET', url: '/api/demarches/small' }, demarches).as('demarches')
     cy.intercept({ method: 'GET', url: '/api/demarches/3' }, demarche).as('demarche')
     cy.intercept({ method: 'GET', url: '/api/custom-filters' }, customFilters).as('customFilters')
     cy.intercept({ method: 'POST', url: '/api/demarches/3/fields-search' }, fieldsSearch).as('fieldsSearch')
-
+    cy.intercept({ method: 'POST', url: '/api/refresh' }, (req) => {
+      req.reply({ statusCode: 401, body: { message: 'Unauthorized' } })
+    })
     cy.get('#email').type('louis.dubois@gmail.com')
     cy.get('#password').type('A1etsn*!etisan34')
     cy.get('[type=submit]').click()
-    cy.wait('@adminSignIn')
     cy.wait('@demarches')
     cy.url().should('eq', `${Cypress.config().baseUrl}/`)
+    cy.intercept({ method: 'POST', url: '/api/refresh', times: 1 }, (req) => {
+      req.reply({ statusCode: 401, body: { message: 'Unauthorized' } })
+    })
 
     // Perte de connexion et se reconnecte, doit être redirigé vers la page désirée juste après la connexion
     cy.intercept({ method: 'GET', url: '/api/users/me', middleware: true, times: 1 }, (req) => {
       req.reply({ statusCode: 401, body: { message: 'Unauthorized' } })
     }).as('getMyProfile')
+    cy.intercept({ method: 'GET', url: '/api/users/me' }, adminProfile)
     cy.visit('/3/dossiers')
     cy.wait('@getMyProfile')
     cy.url().should('include', '/sign_in?redirect=/3/dossiers')
 
     cy.intercept({ method: 'GET', url: '/api/demarches/3/custom-filters' }, [])
-    cy.intercept({ method: 'POST', url: '/api/auth/sign-in', times: 1 }, adminProfile).as('adminSignIn')
     cy.get('#email').type('louis.dubois@gmail.com')
     cy.get('#password').type('A1etsn*!etisan34')
     cy.get('[type=submit]').click()
-    cy.wait('@adminSignIn')
     cy.wait('@demarche')
 
     cy.url().should('include', '/3/dossiers').should('not.include', '/sign_in')
@@ -55,8 +59,8 @@ describe('Sign in', () => {
 
   it('should sign in user with no role', () => {
     cy.visit('/sign_in')
-    cy.intercept({ method: 'POST', url: '/api/auth/sign-in', times: 1 }, { body: noneProfile }).as('signIn')
-    cy.intercept({ method: 'GET', url: '/api/users/me', times: 1 }, { body: noneProfile }).as('fetchProfile')
+    cy.intercept({ method: 'POST', url: '/api/auth/sign-in', times: 1 }, { accessToken: 'abcd' }).as('signIn')
+    cy.intercept({ method: 'GET', url: '/api/users/me', times: 5 }, noneProfile)
 
     cy.get('#email').type('louis.dubois@gmail.com')
     cy.get('#password').type('A1etsn*!etisan34')
@@ -93,16 +97,15 @@ describe('Sign in', () => {
   it('should sign in user as instructor', () => {
     cy.visit('/sign_in')
 
-    cy.intercept({ method: 'POST', url: '/api/auth/sign-in', times: 1 }, instructorProfile).as('signIn')
-
+    cy.intercept({ method: 'POST', url: '/api/auth/sign-in', times: 1 }, { accessToken: 'abcd' })
+    cy.intercept({ method: 'GET', url: '/api/users/me' }, instructorProfile)
+    cy.intercept({ method: 'GET', url: '/api/demarches', times: 1 }, demarches).as('demarches')
+    cy.intercept({ method: 'GET', url: '/api/bn-configurations/enable-siaf' }, {})
     cy.get('#email').type('louis.dubois@gmail.com')
     cy.get('#password').type('A1etsn*!etisan34')
     cy.get('[type=submit]').click()
-    cy.wait('@signIn')
     cy.wait('@demarches')
     cy.url().should('eq', `${Cypress.config().baseUrl}/`)
-
-    cy.intercept({ method: 'GET', url: '/api/users/me', times: 5 }, instructorProfile).as('fetchProfile')
 
     //#region Check organismes
     cy.get('.fr-header')
@@ -133,14 +136,14 @@ describe('Sign in', () => {
     //#region Check Administration
     cy.get('.fr-header').should('not.contain', 'Administration')
     cy.visit('/admin')
-    cy.wait('@fetchProfile')
     cy.url().should('include', '/profile')
     //#endregion
   })
 
   it('should sign in user as admin-local', () => {
     cy.visit('/sign_in')
-    cy.intercept({ method: 'POST', url: '/api/auth/sign-in', times: 1 }, adminLocalProfile).as('signIn')
+    cy.intercept({ method: 'POST', url: '/api/auth/sign-in', times: 1 }, { accessToken: 'abcd' }).as('signIn')
+    cy.intercept({ method: 'GET', url: '/api/users/me', times: 1 }, adminLocalProfile)
     cy.get('#email').type('louis.dubois@gmail.com')
     cy.get('#password').type('A1etsn*!etisan34')
     cy.get('[type=submit]').click()

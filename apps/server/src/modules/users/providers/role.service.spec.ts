@@ -12,6 +12,7 @@ describe("role.service", ()=> {
     userService.repository = {
       update: jest.fn()
     }
+    userService.deleteUserRefreshTokens = jest.fn().mockResolvedValue(undefined);
     service = new RoleService(loggerServiceMock, userService)
   })
 

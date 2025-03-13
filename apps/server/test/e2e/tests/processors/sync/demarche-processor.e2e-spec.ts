@@ -1,4 +1,4 @@
-import { Cookies, TestingModuleFactory } from '../../../common/testing-module.factory'
+import { Tokens, TestingModuleFactory } from '../../../common/testing-module.factory'
 import { dataSource } from '../../../data-source-e2e.typeorm'
 import { INestApplication } from '@nestjs/common'
 import { Queue } from 'bull'
@@ -7,14 +7,14 @@ import * as request from 'supertest'
 describe('Demarche sync processors', () => {
   let app: INestApplication
   let syncQueue: Queue
-  let cookies: Cookies
+  let tokens: Tokens
 
   beforeAll(async () => {
     const testingModule = new TestingModuleFactory()
     await testingModule.init()
     app = testingModule.app
     syncQueue = testingModule.syncQueue
-    cookies = testingModule.cookies
+    tokens = testingModule.tokens
     syncQueue.empty()
     syncQueue.pause()
   })
@@ -29,7 +29,7 @@ describe('Demarche sync processors', () => {
   it('Only sudo can call synchronisation', () => {
     return request(app.getHttpServer())
       .put(`/demarches/${1}/sync`)
-      .set('Cookie', [cookies.superadmin])
+      .set('Authorization', `Bearer ${tokens.superadmin}`)
       .expect(403)
   })
 
@@ -37,7 +37,7 @@ describe('Demarche sync processors', () => {
     expect(await syncQueue.count()).toEqual(0)
     await request(app.getHttpServer())
       .put('/demarches/1/sync')
-      .set('Cookie', [cookies.sudo])
+      .set('Authorization', `Bearer ${tokens.sudo}`)
       .expect(200)
 
     console.log(await syncQueue.getJobCounts())

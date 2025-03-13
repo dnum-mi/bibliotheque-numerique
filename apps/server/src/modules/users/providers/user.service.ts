@@ -25,6 +25,7 @@ import { DemarcheService } from '@/modules/demarches/providers/services/demarche
 import { CreateUserDto, PaginationUserDto } from '@/modules/users/objects/dtos/input'
 import { AgGridUserDto, MyProfileOutputDto, PaginatedUserDto } from '@/modules/users/objects/dtos/output'
 import { PaginatedDto } from '@/shared/pagination/paginated.dto'
+import { RefreshToken } from '../objects/refresh-token.entity'
 
 type jwtPlaylod = {
   user: string | number
@@ -141,9 +142,14 @@ export class UserService
     return { appUrl, jwtForUrl }
   }
 
+  public async deleteUserRefreshTokens(userId: number): Promise<void> {
+    await this.repo.manager.getRepository(RefreshToken).delete({ user: { id: userId } })
+  }
+
   async updatePassword(user: User, password: string): Promise<void> {
     user.password = password
     await this.repo.save(user)
+    await this.deleteUserRefreshTokens(user.id)
   }
 
   private async mailToValidSignUp(userInDb: User): Promise<void> {

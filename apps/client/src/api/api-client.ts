@@ -11,7 +11,6 @@ import type {
   ISearchDossier,
   IUpdateOneFieldConfiguration,
   IUpdateUserPassword,
-  IUserOutput,
   ICreateCustomFilter,
   IPatchCustomFilter,
   IValidateEmail,
@@ -79,10 +78,11 @@ import {
   searchOrganisme,
   enableSiafRoute,
   updateRolesRoute,
-  proconnectSignInRoute,
-  proconnectCallbackRoute,
+  proConnectSignInRoute,
+  proConnectCallbackRoute,
+  refreshTokensRoute,
 } from './bn-api-routes'
-import { authRoute, getUserByIdRoute, profileRoute, signInRoute, usersRoutes } from '@/api/bn-api-routes'
+import { getUserByIdRoute, profileRoute, signInRoute, logoutRoute, usersRoutes } from '@/api/bn-api-routes'
 
 import { ErrorvalidateEmail } from './ErrorValidEmail'
 import { routeNames } from '../router/route-names'
@@ -107,6 +107,7 @@ export const headers = {
 export const apiClientInstance = axios.create({
   baseURL: baseApiUrl,
   headers,
+  withCredentials: true,
 })
 
 export const apiClientAuthInstance = axios.create({
@@ -115,9 +116,12 @@ export const apiClientAuthInstance = axios.create({
 })
 
 const toaster = useToaster()
+let refreshingToken = false
+let pendingRequests: (() => void)[] = []
+
 apiClientInstance.interceptors.response.use(
   (r) => r,
-  (error: AxiosError<{ message?: string }>) => {
+  async (error: AxiosError<{ message?: string }>) => {
     const status = error.response?.status
     if (!status || status >= 500) {
       toaster.addErrorMessage(error.response?.data?.message ?? 'Une erreur inconnue est survenue')
@@ -127,26 +131,73 @@ apiClientInstance.interceptors.response.use(
       console.error(error)
       return
     }
+
     if (status === 401) {
-      toaster.addMessage({ id: 'auth', type: 'warning', description: 'Vous n’êtes plus connecté, veuillez vous réauthentifier' })
-      useUserStore().forceResetUser()
-      const routeTo: RouteLocationRaw = { name: routeNames.SIGNIN }
-      if (!router.currentRoute.value.meta.skipAuth) {
-        routeTo.query = { redirect: location.href.replace(location.origin, '') }
+      const originalRequest = error.config
+      if (!originalRequest) {
+        throw error
       }
-      router.push(routeTo)
-      return null
+
+      if (refreshingToken) {
+        return new Promise((resolve) => {
+          pendingRequests.push(() => resolve(apiClientInstance(originalRequest)))
+        })
+      }
+
+      refreshingToken = true
+
+      try {
+        const userStore = useUserStore()
+        await userStore.refreshTokens()
+        refreshingToken = false
+
+        pendingRequests.forEach((callback) => callback())
+        pendingRequests = []
+
+        return apiClientInstance(originalRequest)
+      } catch (e) {
+        console.log(e)
+        refreshingToken = false
+        pendingRequests = []
+
+        toaster.addMessage({ id: 'auth', type: 'warning', description: 'Vous n’êtes plus connecté, veuillez vous réauthentifier' })
+        useUserStore().logout()
+
+        const routeTo: RouteLocationRaw = { name: routeNames.SIGNIN }
+        if (!router.currentRoute.value.meta.skipAuth) {
+          routeTo.query = { redirect: location.href.replace(location.origin, '') }
+        }
+        router.push(routeTo)
+        return null
+      }
     }
+
     if (status === 403) {
       toaster.addMessage({ type: 'warning', description: 'Vous n’avez pas les droits de faire cette opération' })
       return null
     }
+
     if (status === 404) {
       toaster.addErrorMessage(error.response?.data?.message ?? 'Ressource introuvable')
       throw error
     }
+
     throw error
   },
+)
+
+apiClientInstance.interceptors.request.use(
+  (config) => {
+    const userStore = useUserStore()
+    const accessToken = userStore.accessToken
+
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`
+    }
+
+    return config
+  },
+  (error) => Promise.reject(error),
 )
 
 const downloadAFile = (response: AxiosResponse) => {
@@ -278,13 +329,18 @@ export const usersApiClient = {
     }
   },
 
-  async loginUser (loginForm: ICredentialsInput): Promise<IUserOutput> {
+  async loginUser (loginForm: ICredentialsInput): Promise<{ accessToken: string }> {
     const response = await apiClientAuthInstance.post(signInRoute, loginForm, { withCredentials: true })
     return response.data
   },
 
-  logoutUser () {
-    return apiClientInstance.delete(authRoute)
+  async logoutUser (): Promise<void> {
+    return apiClientInstance.delete(logoutRoute, { withCredentials: true })
+  },
+
+  async refreshTokens (): Promise<{ accessToken: string }> {
+    const response = await apiClientAuthInstance.post(refreshTokensRoute, {}, { withCredentials: true })
+    return response.data
   },
 
   async fetchMyProfile (): Promise<IMyProfileOutput | null> {
@@ -320,13 +376,13 @@ export const usersApiClient = {
   },
 
   async loginWithProconnect () {
-    const response = await apiClientAuthInstance.get(proconnectSignInRoute)
+    const response = await apiClientAuthInstance.get(proConnectSignInRoute)
     return response.data
   },
 
-  async proConnectCallback (code: string, state: string, iss: string) {
+  async proConnectCallback (code: string, state: string, iss: string): Promise<{ accessToken: string }> {
     const response = await apiClientAuthInstance.post(
-      proconnectCallbackRoute,
+      proConnectCallbackRoute,
       {
         code,
         state,

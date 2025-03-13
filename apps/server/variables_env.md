@@ -22,14 +22,10 @@ TYPEORM_FORCE_SYNCHRONIZE = false
 
 | Nom | Valeur | Description | Obligatoire
 |-----|--------|------------ |-------------
-| JWT_SECRET| `"test"` | Secret pour décrypter les jetons JWT | Oui
+| AUTH_JWT_SECRET| `"test"` | Secret pour décrypter les jetons JWT | Oui
 | JWT_EXPIRE_IN |  `15m` | Durée de validité du jeton pour la validation d'e-mail et la réinitialisation de mot de passe | Oui
-
-## Session
-
-| Nom | Valeur | Description | Obligatoire
-|-----|--------|------------ |------------
-| SESSION_SECRET| `"test"` | Secret pour décrypter les cookies | Oui
+| AUTH_JWT_EXPIRE_IN |  `1h` | Durée de validité du jeton pour la connexion
+| AUTH_JWT_REFRESH_EXPIRE_IN |  `7d` | Durée de validité du jeton de refresh pour la connexion
 
 ## Administrateur technique
 

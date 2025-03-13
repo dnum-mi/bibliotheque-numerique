@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { Logger, Module } from '@nestjs/common'
 import { ConfigModule, ConfigModuleOptions } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
 
@@ -37,6 +37,7 @@ import { CustomBullModule } from '@/shared/modules/custom-bull/custom-bull.modul
 import { CronModule } from '@/modules/cron/cron.module'
 import { BnConfigurationModule } from '@/shared/modules/bn-configurations/bn-configuration.module'
 import siafHubConfig from '../../config/siaf-hub.config'
+import { JwtAuthGuard } from '@/modules/auth/providers/jwt-auth.guard'
 
 @Module({
   imports: [
@@ -82,6 +83,11 @@ import siafHubConfig from '../../config/siaf-hub.config'
   ],
   controllers: [],
   providers: [
+    Logger,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
     {
       provide: APP_GUARD,
       useClass: RoleGuard,

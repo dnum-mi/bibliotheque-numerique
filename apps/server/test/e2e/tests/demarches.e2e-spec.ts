@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
 import { dataSource } from '../data-source-e2e.typeorm'
-import { Cookies, TestingModuleFactory } from '../common/testing-module.factory'
+import { Tokens, TestingModuleFactory } from '../common/testing-module.factory'
 import { Demarche } from '@/modules/demarches/objects/entities/demarche.entity'
 import { Like } from 'typeorm'
 import { DemarcheService } from '@/modules/demarches/providers/services/demarche.service'
@@ -9,7 +9,7 @@ import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
 
 describe('Demarches (e2e)', () => {
   let app: INestApplication
-  let cookies: Cookies
+  let tokens: Tokens
   let demarcheService: DemarcheService
 
   beforeAll(async () => {
@@ -17,7 +17,7 @@ describe('Demarches (e2e)', () => {
     await testingModule.init()
     app = testingModule.app
     demarcheService = await app.resolve(DemarcheService)
-    cookies = testingModule.cookies
+    tokens = testingModule.tokens
   })
 
   afterAll(async () => {
@@ -33,14 +33,14 @@ describe('Demarches (e2e)', () => {
     it('Should be 403', async () => {
       return await request(app.getHttpServer())
         .get('/demarches/small')
-        .set('Cookie', [cookies.norole])
+        .set('Authorization', `Bearer ${tokens.norole}`)
         .expect(403)
     })
 
     it('Should Get small should return only title and id', async () => {
       return request(app.getHttpServer())
         .get('/demarches/small')
-        .set('Cookie', [cookies.superadmin])
+        .set('Authorization', `Bearer ${tokens.superadmin}`)
         .expect(200)
         .then(async ({ body }) => {
           const nbr = await demarcheService.repository.count()
@@ -54,7 +54,7 @@ describe('Demarches (e2e)', () => {
     it('should only have my demarche', async () => {
       const { body } = await request(app.getHttpServer())
         .get('/demarches/small')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(200)
       expect(body).toHaveLength(2)
       expect(body[0]).toHaveProperty('id', 1)
@@ -75,7 +75,7 @@ describe('Demarches (e2e)', () => {
     it('Patch should only be possible for sudo', () => {
       return request(app.getHttpServer())
         .patch('/demarches/1')
-        .set('Cookie', [cookies.admin])
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .send({
           identification: 'FE',
         })
@@ -89,7 +89,7 @@ describe('Demarches (e2e)', () => {
 
       await request(app.getHttpServer())
         .patch(`/demarches/${demarche.id}`)
-        .set('Cookie', [cookies.sudo])
+        .set('Authorization', `Bearer ${tokens.sudo}`)
         .send({
           identification: 'FE',
         })
@@ -115,7 +115,7 @@ describe('Demarches (e2e)', () => {
       identification is null and types are undefined.`, async () => {
       await request(app.getHttpServer())
         .patch('/demarches/6')
-        .set('Cookie', [cookies.sudo])
+        .set('Authorization', `Bearer ${tokens.sudo}`)
         .send({ identification: null })
         .expect(200)
 
@@ -137,7 +137,7 @@ describe('Demarches (e2e)', () => {
 
       await request(app.getHttpServer())
         .patch('/demarches/5')
-        .set('Cookie', [cookies.sudo])
+        .set('Authorization', `Bearer ${tokens.sudo}`)
         .send({ types })
         .expect(200)
 
@@ -150,7 +150,7 @@ describe('Demarches (e2e)', () => {
     it('Should patch identification should return 400 if identification and type is undefined', async () => {
       await request(app.getHttpServer())
         .patch('/demarches/7')
-        .set('Cookie', [cookies.sudo])
+        .set('Authorization', `Bearer ${tokens.sudo}`)
         .send({})
         .expect(400)
     })
@@ -166,7 +166,7 @@ describe('Demarches (e2e)', () => {
     it('Patch should only be possible for sudo', () => {
       return request(app.getHttpServer())
         .patch('/demarches/1/soft-delete')
-        .set('Cookie', [cookies.admin])
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .expect(403)
     })
 
@@ -177,7 +177,7 @@ describe('Demarches (e2e)', () => {
 
       await request(app.getHttpServer())
         .patch(`/demarches/${demarche.id}/soft-delete`)
-        .set('Cookie', [cookies.sudo])
+        .set('Authorization', `Bearer ${tokens.sudo}`)
         .expect(200)
 
       const demarche1 = await dataSource.manager.findOne(Demarche, {
@@ -194,7 +194,7 @@ describe('Demarches (e2e)', () => {
     it('Should return 404 if demarche not found', async () => {
       await request(app.getHttpServer())
         .patch('/demarches/999/soft-delete')
-        .set('Cookie', [cookies.sudo])
+        .set('Authorization', `Bearer ${tokens.sudo}`)
         .expect(404)
     })
   })

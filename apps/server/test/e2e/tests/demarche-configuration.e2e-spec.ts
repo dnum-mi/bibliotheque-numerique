@@ -1,5 +1,5 @@
 import { INestApplication } from '@nestjs/common'
-import { Cookies, TestingModuleFactory } from '../common/testing-module.factory'
+import { Tokens, TestingModuleFactory } from '../common/testing-module.factory'
 import * as request from 'supertest'
 import { dataSource } from '../data-source-e2e.typeorm'
 import { DemarcheService } from '@/modules/demarches/providers/services/demarche.service'
@@ -7,7 +7,7 @@ import { FieldType } from '@biblio-num/shared'
 
 describe('Configuration ', () => {
   let app: INestApplication
-  let cookies: Cookies
+  let tokens: Tokens
   let demarcheService: DemarcheService
 
   beforeAll(async () => {
@@ -15,7 +15,7 @@ describe('Configuration ', () => {
     await testingModule.init()
     app = testingModule.app
     demarcheService = await testingModule.app.resolve(DemarcheService)
-    cookies = testingModule.cookies
+    tokens = testingModule.tokens
   })
 
   afterAll(async () => {
@@ -32,28 +32,28 @@ describe('Configuration ', () => {
   it('GET - Should return 403 for instructor', async () => {
     return request(app.getHttpServer())
       .get('/demarches/1/configurations')
-      .set('Cookie', [cookies.instructor])
+      .set('Authorization', `Bearer ${tokens.instructor}`)
       .expect(403)
   })
 
   it('GET - Should return 403 on admin to other demarche', async () => {
     return request(app.getHttpServer())
       .get('/demarches/1/configurations')
-      .set('Cookie', [cookies.admin])
+      .set('Authorization', `Bearer ${tokens.admin}`)
       .expect(403)
   })
 
   it('GET - Should return 404 on configurations', async () => {
     return request(app.getHttpServer())
       .get('/demarches/8765/configurations')
-      .set('Cookie', [cookies.superadmin])
+      .set('Authorization', `Bearer ${tokens.superadmin}`)
       .expect(404)
   })
 
   it('GET - Should return 200 and configurations', async () => {
     return request(app.getHttpServer())
       .get('/demarches/2/configurations')
-      .set('Cookie', [cookies.admin])
+      .set('Authorization', `Bearer ${tokens.admin}`)
       .expect(200)
       .then(({ body }) => {
         expect(body).toEqual([
@@ -78,7 +78,7 @@ describe('Configuration ', () => {
   it('Patch /:fieldId - Should return 400', async () => {
     return request(app.getHttpServer())
       .patch('/demarches/2/configurations/01')
-      .set('Cookie', [cookies.admin])
+      .set('Authorization', `Bearer ${tokens.admin}`)
       .send({
         columnLabel: 456,
       })
@@ -88,7 +88,7 @@ describe('Configuration ', () => {
   it('Patch /:fieldId - Should return 400', async () => {
     return request(app.getHttpServer())
       .patch('/demarches/2/configurations/01')
-      .set('Cookie', [cookies.admin])
+      .set('Authorization', `Bearer ${tokens.admin}`)
       .expect(200)
   })
 
@@ -112,7 +112,7 @@ describe('Configuration ', () => {
     ]
     await request(app.getHttpServer())
       .patch('/demarches/2/configurations/01')
-      .set('Cookie', [cookies.admin])
+      .set('Authorization', `Bearer ${tokens.admin}`)
       .send({
         columnLabel: newLabel,
       })
@@ -120,7 +120,7 @@ describe('Configuration ', () => {
       .then(() => {
         return request(app.getHttpServer())
           .get('/demarches/2/configurations')
-          .set('Cookie', [cookies.admin])
+          .set('Authorization', `Bearer ${tokens.admin}`)
           .expect(200)
       })
       .then(({ body }) => {

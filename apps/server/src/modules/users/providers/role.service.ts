@@ -24,6 +24,7 @@ export class RoleService {
       role.options = {}
     }
     await this.userService.updateOrThrow(user.id, { role })
+    await this.userService.deleteUserRefreshTokens(user.id)
   }
 
   public async patchOneRole(
@@ -37,6 +38,7 @@ export class RoleService {
       { id: uwer.originalUser.id },
       { role },
     )
+    await this.userService.deleteUserRefreshTokens(uwer.originalUser.id)
   }
 
   private _manageRoleToUpdateRole(dto: UpdateOneRoleOptionDto, role: IRole): void {
@@ -75,5 +77,6 @@ export class RoleService {
       { id: uwer.originalUser.id },
       { role },
     )
+    await this.userService.deleteUserRefreshTokens(uwer.originalUser.id)
   }
 }

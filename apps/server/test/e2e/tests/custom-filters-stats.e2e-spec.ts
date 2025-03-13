@@ -5,13 +5,13 @@ import { dataSource } from '../data-source-e2e.typeorm'
 
 describe('statistique', () => {
   let app: INestApplication
-  let cookie: string
+  let token: string
 
   beforeAll(async () => {
     const testingModule = new TestingModuleFactory()
     await testingModule.init()
     app = testingModule.app
-    cookie = testingModule.cookies.instructor
+    token = testingModule.tokens.instructor
   })
 
   afterAll(async () => {
@@ -22,7 +22,7 @@ describe('statistique', () => {
   it('Should return nb dossiers', async () => {
     const { body } = await request(app.getHttpServer())
       .get('/custom-filters/4/stats')
-      .set('Cookie', [cookie])
+      .set('Authorization', `Bearer ${token}`)
       .expect(200)
 
     expect(body).toMatchObject({
@@ -61,7 +61,7 @@ describe('statistique', () => {
   it('Should return nb champs and montant', async () => {
     const { body } = await request(app.getHttpServer())
       .get('/custom-filters/5/stats')
-      .set('Cookie', [cookie])
+      .set('Authorization', `Bearer ${token}`)
       .expect(200)
 
     expect(body).toMatchObject({
@@ -96,7 +96,7 @@ describe('statistique', () => {
   it('Should return nb dossiers and montant', async () => {
     const { body } = await request(app.getHttpServer())
       .get('/custom-filters/6/stats')
-      .set('Cookie', [cookie])
+      .set('Authorization', `Bearer ${token}`)
       .expect(200)
 
     expect(body).toMatchObject({

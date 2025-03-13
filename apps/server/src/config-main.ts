@@ -1,6 +1,4 @@
 import * as passport from 'passport'
-import * as session from 'express-session'
-import { sessionSecret } from './modules/auth/objects/constants'
 import { INestApplication } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { LoggerService } from './shared/modules/logger/logger.service'
@@ -13,6 +11,7 @@ import { CustomValidationExceptionFilter } from '@/shared/exceptions/filters/cus
 import { APP_NAME_TOKEN } from '@/shared/modules/logger/logger.const'
 import { LoggingInterceptor } from '@/shared/modules/logger/logging.interceptor'
 import { EntityNotFoundErrorFilter } from '@/shared/exceptions/filters/entity-not-found-error.filter'
+import * as cookieParser from 'cookie-parser'
 
 export const configMain = async (app: INestApplication, configService?: ConfigService): Promise<void> => {
   const loggerService = await app.resolve<LoggerService>(LoggerService)
@@ -21,16 +20,6 @@ export const configMain = async (app: INestApplication, configService?: ConfigSe
   loggerService.setContext('Nestjs-main')
   app.useLogger(loggerService)
   const httpAdapterHost = app.get(HttpAdapterHost)
-  app.use(
-    session({
-      secret: sessionSecret.secret,
-      resave: false,
-      saveUninitialized: false,
-      cookie: {
-        maxAge: configService ? configService.get<number>('cookie.maxAge') : 3600000,
-      },
-    }),
-  )
   let exceptionFilterLogger: LoggerService = loggerService
   let queryFailedFilterLogger: LoggerService = loggerService
   let axiosFailedErrorLogger: LoggerService = loggerService
@@ -63,5 +52,5 @@ export const configMain = async (app: INestApplication, configService?: ConfigSe
     app.useGlobalInterceptors(new LoggingInterceptor(globalRequestLoggerService))
   }
   app.use(passport.initialize())
-  app.use(passport.session())
+  app.use(cookieParser())
 }

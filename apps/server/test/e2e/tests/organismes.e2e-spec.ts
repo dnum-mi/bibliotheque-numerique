@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
 import { dataSource } from '../data-source-e2e.typeorm'
-import { Cookies, TestingModuleFactory } from '../common/testing-module.factory'
+import { Tokens, TestingModuleFactory } from '../common/testing-module.factory'
 import { Organisme } from '@/modules/organismes/objects/organisme.entity'
 import { OrganismeService } from '@/modules/organismes/providers/organisme.service'
 import { PaginationDto } from '@/shared/pagination/pagination.dto'
@@ -59,7 +59,7 @@ const bmw = {
 
 describe('Organismes (e2e)', () => {
   let app: INestApplication
-  let cookies: Cookies
+  let tokens: Tokens
   let organismeService: OrganismeService
 
   beforeAll(async () => {
@@ -67,7 +67,7 @@ describe('Organismes (e2e)', () => {
     await testingModule.init()
     app = testingModule.app
     organismeService = await app.resolve(OrganismeService)
-    cookies = testingModule.cookies
+    tokens = testingModule.tokens
   })
 
   afterAll(async () => {
@@ -83,28 +83,28 @@ describe('Organismes (e2e)', () => {
     it('Should give 403', async () => {
       return request(app.getHttpServer())
         .get('/organismes/1')
-        .set('Cookie', [cookies.norole])
+        .set('Authorization', `Bearer ${tokens.norole}`)
         .expect(403)
     })
 
     it('Should give 404', async () => {
       return request(app.getHttpServer())
         .get('/organismes/1234')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(404)
     })
 
     it('Should give 400', async () => {
       return request(app.getHttpServer())
         .get('/organismes/undefined')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(400)
     })
 
     it('Should get an organisme', async () => {
       return request(app.getHttpServer())
         .get('/organismes/2')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(200)
         .then(({ body }) => {
           expect(body).toMatchObject({
@@ -126,28 +126,28 @@ describe('Organismes (e2e)', () => {
     it('Should give 403', async () => {
       return request(app.getHttpServer())
         .get('/organismes/rna/W001')
-        .set('Cookie', [cookies.norole])
+        .set('Authorization', `Bearer ${tokens.norole}`)
         .expect(403)
     })
 
     it('Should give 404', async () => {
       return request(app.getHttpServer())
         .get('/organismes/rna/w1234')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(404)
     })
 
     it('Should give 400', async () => {
       return request(app.getHttpServer())
         .get('/organismes/rna')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(400)
     })
 
     it('Should get an organisme', async () => {
       return request(app.getHttpServer())
         .get('/organismes/rna/W001')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(200)
         .then(({ body }) => {
           expect(body).toMatchObject({
@@ -169,27 +169,27 @@ describe('Organismes (e2e)', () => {
     it('Should give 403', async () => {
       return request(app.getHttpServer())
         .get('/organismes/rnf/F001')
-        .set('Cookie', [cookies.norole])
+        .set('Authorization', `Bearer ${tokens.norole}`)
         .expect(403)
     })
     it('Should give 404', async () => {
       return request(app.getHttpServer())
         .get('/organismes/rnf/f1234')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(404)
     })
 
     it('Should give 400', async () => {
       return request(app.getHttpServer())
         .get('/organismes/rna')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(400)
     })
 
     it('Should get an organisme', async () => {
       return request(app.getHttpServer())
         .get('/organismes/rnf/F001')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(200)
         .then(({ body }) => {
           expect(body).toMatchObject({
@@ -211,20 +211,20 @@ describe('Organismes (e2e)', () => {
     it('Should give 403', async () => {
       return request(app.getHttpServer())
         .get('/organismes/1/dossiers')
-        .set('Cookie', [cookies.norole])
+        .set('Authorization', `Bearer ${tokens.norole}`)
         .expect(403)
     })
     it('Should give 400', async () => {
       return request(app.getHttpServer())
         .get('/organismes/undefined/dossiers')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(400)
     })
 
     it('Should return no dossier', async () => {
       return request(app.getHttpServer())
         .get('/organismes/1234/dossiers')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(200)
         .then(({ body }) => {
           expect(body).toEqual([])
@@ -234,7 +234,7 @@ describe('Organismes (e2e)', () => {
     it('Should return 2 dossiers', async () => {
       return request(app.getHttpServer())
         .get('/organismes/1/dossiers')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(200)
         .then(({ body }) => {
           expect(body).toEqual([
@@ -273,13 +273,13 @@ describe('Organismes (e2e)', () => {
     it('Should give 403', async () => {
       return request(app.getHttpServer())
         .post('/organismes/list')
-        .set('Cookie', [cookies.norole])
+        .set('Authorization', `Bearer ${tokens.norole}`)
         .expect(403)
     })
     it('Should give title of organisme in order', async () => {
       return request(app.getHttpServer())
         .post('/organismes/list')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .send({
           columns: ['title'],
         } as PaginationDto<Organisme>)
@@ -304,7 +304,7 @@ describe('Organismes (e2e)', () => {
     it('Should select correctly in pagination', async () => {
       return request(app.getHttpServer())
         .post('/organismes/list')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .send({
           columns: ['title'],
         } as PaginationDto<Organisme>)
@@ -329,7 +329,7 @@ describe('Organismes (e2e)', () => {
     it('Should paginate correctly in pagination', async () => {
       return request(app.getHttpServer())
         .post('/organismes/list')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .send({
           columns: ['title'],
           page: 2,
@@ -351,7 +351,7 @@ describe('Organismes (e2e)', () => {
     it('Should sort correctly in pagination', async () => {
       return request(app.getHttpServer())
         .post('/organismes/list')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .send({
           columns: ['title'],
           sorts: [{ key: 'title', order: 'DESC' }],
@@ -374,7 +374,7 @@ describe('Organismes (e2e)', () => {
     it('Should filter correctly in pagination', async () => {
       return request(app.getHttpServer())
         .post('/organismes/list')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .send({
           columns: ['title'],
           filters: {
@@ -407,7 +407,7 @@ describe('Organismes (e2e)', () => {
     it('Should filter correctly missingDeclarationYears in pagination 1', async () => {
       await request(app.getHttpServer())
         .post('/organismes/list')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .send({
           columns: ['title', 'missingDeclarationYears'],
           filters: {
@@ -429,7 +429,7 @@ describe('Organismes (e2e)', () => {
     it('Should filter correctly missingDeclarationYears in pagination 2', async () => {
       await request(app.getHttpServer())
         .post('/organismes/list')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .send({
           columns: ['title', 'missingDeclarationYears'],
           filters: {
@@ -451,7 +451,7 @@ describe('Organismes (e2e)', () => {
     it('Should filter correctly missingDeclarationYears in pagination 3', async () => {
       await request(app.getHttpServer())
         .post('/organismes/list')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .send({
           columns: ['title', 'missingDeclarationYears'],
           filters: {

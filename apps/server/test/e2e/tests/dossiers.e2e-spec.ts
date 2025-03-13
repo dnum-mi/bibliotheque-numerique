@@ -1,18 +1,18 @@
 import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
 import { dataSource } from '../data-source-e2e.typeorm'
-import { Cookies, TestingModuleFactory } from '../common/testing-module.factory'
+import { Tokens, TestingModuleFactory } from '../common/testing-module.factory'
 import { loggerServiceMock } from '../../mock/logger-service.mock'
 
 describe('Dossiers (e2e)', () => {
   let app: INestApplication
-  let cookies: Cookies
+  let tokens: Tokens
 
   beforeAll(async () => {
     const testingModule = new TestingModuleFactory()
     await testingModule.init()
     app = testingModule.app
-    cookies = testingModule.cookies
+    tokens = testingModule.tokens
   })
 
   afterAll(async () => {
@@ -22,7 +22,7 @@ describe('Dossiers (e2e)', () => {
 
   describe('GET /dossiers/:id', () => {
     it('Should be 401', async () => {
-      return request(await app.getHttpServer())
+      return request(app.getHttpServer())
         .get('/dossiers/1')
         .expect(401)
     })
@@ -30,42 +30,36 @@ describe('Dossiers (e2e)', () => {
     it('Should be 404', async () => {
       return request(app.getHttpServer())
         .get('/dossiers/12547')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(404)
     })
 
     it('Should be 403 for no role', async () => {
-      return await request(app.getHttpServer())
+      return request(app.getHttpServer())
         .get('/dossiers/1')
-        .set('Cookie', [cookies.norole])
+        .set('Authorization', `Bearer ${tokens.norole}`)
         .expect(403)
     })
 
     it('Should be 403 for instructor without demarche', async () => {
-      return await request(app.getHttpServer())
+      return request(app.getHttpServer())
         .get('/dossiers/13')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(403)
     })
 
     it('Should retrieve complete Dossier', async () => {
-      loggerServiceMock.setContext = jest
-        .fn()
-        .mockImplementation(() =>
-          console.log('Should retrieve complete Dossier'),
-        )
-      loggerServiceMock.error = jest
-        .fn()
-        .mockImplementation((e) => console.log(e))
-      return await request(app.getHttpServer())
+      loggerServiceMock.setContext = jest.fn().mockImplementation(() =>
+        console.log('Should retrieve complete Dossier'),
+      )
+      loggerServiceMock.error = jest.fn().mockImplementation((e) => console.log(e))
+      return request(app.getHttpServer())
         .get('/dossiers/11')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(200)
         .then(({ body }) => {
           expect(body.dsDataJson.annotations).toEqual('I can see you')
-          expect(body.dsDataJson.messages).toEqual(
-            'Big brother is watching you',
-          )
+          expect(body.dsDataJson.messages).toEqual('Big brother is watching you')
         })
         .finally(() => {
           loggerServiceMock.setContext = jest.fn()
@@ -74,9 +68,9 @@ describe('Dossiers (e2e)', () => {
     })
 
     it('Should retrieve Dossier without annotation and messages', async () => {
-      return await request(app.getHttpServer())
+      return request(app.getHttpServer())
         .get('/dossiers/12')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(200)
         .then(({ body }) => {
           expect(body.dsDataJson.annotations).toEqual([])
@@ -93,16 +87,16 @@ describe('Dossiers (e2e)', () => {
     })
 
     it('Should be 403 for no role', async () => {
-      return await request(app.getHttpServer())
+      return request(app.getHttpServer())
         .post('/dossiers/16/files/list')
-        .set('Cookie', [cookies.norole])
+        .set('Authorization', `Bearer ${tokens.norole}`)
         .expect(403)
     })
 
     it('Should return all file for admin', async () => {
-      return await request(app.getHttpServer())
+      return request(app.getHttpServer())
         .post('/dossiers/16/files/list')
-        .set('Cookie', [cookies.superadmin])
+        .set('Authorization', `Bearer ${tokens.superadmin}`)
         .send({
           limit: 10,
           page: 1,
@@ -122,9 +116,9 @@ describe('Dossiers (e2e)', () => {
     })
 
     it('Should filter tag', async () => {
-      return await request(app.getHttpServer())
+      return request(app.getHttpServer())
         .post('/dossiers/16/files/list')
-        .set('Cookie', [cookies.superadmin])
+        .set('Authorization', `Bearer ${tokens.superadmin}`)
         .send({
           limit: 10,
           page: 1,
@@ -148,10 +142,10 @@ describe('Dossiers (e2e)', () => {
     })
 
     it('Should hide file from annotation and message', async () => {
-      return await request(app.getHttpServer())
+      return request(app.getHttpServer())
         .post('/dossiers/16/files/list')
         // instructor has no rights on pref 57 for demarche 1, and dossier with id 16 is pref 57 for demarche 1
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .send({
           limit: 10,
           page: 1,
@@ -176,16 +170,16 @@ describe('Dossiers (e2e)', () => {
     })
 
     it('Should be 403 for no role', async () => {
-      return await request(app.getHttpServer())
+      return request(app.getHttpServer())
         .get(url)
-        .set('Cookie', [cookies.norole])
+        .set('Authorization', `Bearer ${tokens.norole}`)
         .expect(403)
     })
 
     it('Should return total of files of dossiers for admin', async () => {
-      return await request(app.getHttpServer())
+      return request(app.getHttpServer())
         .get(url)
-        .set('Cookie', [cookies.superadmin])
+        .set('Authorization', `Bearer ${tokens.superadmin}`)
         .expect(200)
         .then(({ text }) => {
           expect(text).toEqual('3')
@@ -193,10 +187,10 @@ describe('Dossiers (e2e)', () => {
     })
 
     it('Should return total files which are not from annotation and message', async () => {
-      return await request(app.getHttpServer())
+      return request(app.getHttpServer())
         .get(url)
         // instructor has no rights on pref 57 for demarche 1, and dossier with id 16 is pref 57 for demarche 1
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(200)
         .then(({ text }) => {
           expect(text).toEqual('1')

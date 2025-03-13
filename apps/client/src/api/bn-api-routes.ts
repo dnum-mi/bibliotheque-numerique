@@ -1,7 +1,9 @@
 export const authRoute = '/auth'
+export const logoutRoute = `${authRoute}/logout`
 export const signInRoute = `${authRoute}/sign-in` // TODO: devrait s’appeler `/token` ou '/session' une route doit être un nom, pas un verbe
-export const proconnectSignInRoute = `${authRoute}/proconnect`
-export const proconnectCallbackRoute = `${authRoute}/proconnect/callback`
+export const proConnectSignInRoute = `${authRoute}/proconnect`
+export const proConnectCallbackRoute = `${authRoute}/proconnect/callback`
+export const refreshTokensRoute = `${authRoute}/refresh`
 
 // export const rolesRoute = '/roles'
 // export const assignRoleRoute = '/roles/assign' // TODO: ne devrait pas contenir de verbe (assign)

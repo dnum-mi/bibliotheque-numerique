@@ -32,7 +32,6 @@ declare module 'vue' {
     DsfrBadge: typeof import('@gouvminint/vue-dsfr')['DsfrBadge']
     DsfrButton: typeof import('@gouvminint/vue-dsfr')['DsfrButton']
     DsfrCheckbox: typeof import('@gouvminint/vue-dsfr')['DsfrCheckbox']
-    DsfrFranceConnect: typeof import('@gouvminint/vue-dsfr')['DsfrFranceConnect']
     DsfrHeader: typeof import('@gouvminint/vue-dsfr')['DsfrHeader']
     DsfrInput: typeof import('@gouvminint/vue-dsfr')['DsfrInput']
     DsfrInputGroup: typeof import('@gouvminint/vue-dsfr')['DsfrInputGroup']

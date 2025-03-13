@@ -7,9 +7,6 @@ export type TConfig = {
   appFrontUrl: string;
   supportEmail: string;
   httpProxy: string;
-  cookie: {
-    maxAge: number;
-  },
   defaultAdmin: {
     email: string;
     roleName: string;
@@ -26,9 +23,6 @@ export default () : TConfig => ({
   appFrontUrl: process.env.APP_FRONT_URL || 'http://localhost:8080',
   supportEmail: process.env.SUPPORT_EMAIL || 'contact@bibliotheque-numerique.interieur.gouv.fr',
   httpProxy: process.env.http_proxy || '',
-  cookie: {
-    maxAge: 3600000,
-  },
   defaultAdmin: {
     email: process.env.DEFAULT_SUDO_EMAIL,
     roleName: 'admin',
