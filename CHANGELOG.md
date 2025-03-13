@@ -1,5 +1,35 @@
 # Changelog
 
+## [2.25.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.24.2...v2.25.0) (2025-03-13)
+
+
+### Features
+
+* add jwt authentification ([62f2b5d](https://github.com/dnum-mi/bibliotheque_numerique/commit/62f2b5daad3b65a11a7e889dd6f6cd476e0beeb3))
+* remove eslint warning, eslint ignore and add confirmation modal ([c9630a1](https://github.com/dnum-mi/bibliotheque_numerique/commit/c9630a1678a47354997c6bf8e16981c405134e33))
+* remove eslint warning, eslint ignore and add confirmation modal ([c9630a1](https://github.com/dnum-mi/bibliotheque_numerique/commit/c9630a1678a47354997c6bf8e16981c405134e33))
+* remove first letter from prefecture ([23bfa3d](https://github.com/dnum-mi/bibliotheque_numerique/commit/23bfa3d74c72273046b0398dd2136c022ea5a288))
+
+
+### Bug Fixes
+
+* adress for associations ([fb0fda7](https://github.com/dnum-mi/bibliotheque_numerique/commit/fb0fda7968cfe18d451c3c73df30f4f3653ab845))
+* linter ([92caaf9](https://github.com/dnum-mi/bibliotheque_numerique/commit/92caaf9adc2a8c154247193046c5330b86afb9d3))
+* linter client ([887c2cb](https://github.com/dnum-mi/bibliotheque_numerique/commit/887c2cb366384c90b5655e5882307d9ff8b426e1))
+* linter server ([d080b94](https://github.com/dnum-mi/bibliotheque_numerique/commit/d080b9437bd0ec542e9ea68061ad804276bfc642))
+* organism search ([4209ecb](https://github.com/dnum-mi/bibliotheque_numerique/commit/4209ecbce4e5347bcac765c2053a2386a9bf6381))
+* organism search ([4209ecb](https://github.com/dnum-mi/bibliotheque_numerique/commit/4209ecbce4e5347bcac765c2053a2386a9bf6381))
+* organism search ([71e60ad](https://github.com/dnum-mi/bibliotheque_numerique/commit/71e60adc2138610d657f8bbcf2a0583d4fb55105))
+* readd comment and create modal confirm component ([72bf6a6](https://github.com/dnum-mi/bibliotheque_numerique/commit/72bf6a682265823831891a5d8b151ee3b48a1c68))
+* remove typescript exceptions ([a0cb73e](https://github.com/dnum-mi/bibliotheque_numerique/commit/a0cb73eb67926afb703137a5b09bd8afae4b6dfd))
+* remove useless async ([5a59b2b](https://github.com/dnum-mi/bibliotheque_numerique/commit/5a59b2b0b0ebb312850972e8fee84abf8f83bd01))
+* replace confirm by confirmModal ([778211c](https://github.com/dnum-mi/bibliotheque_numerique/commit/778211cf9967a42e0898a733046146baa9383558))
+* show dossier when prefecture is null ([242129e](https://github.com/dnum-mi/bibliotheque_numerique/commit/242129ed1228a6232c45f379c8fe937a923ecc21))
+* typescript ([2966f89](https://github.com/dnum-mi/bibliotheque_numerique/commit/2966f890666630f333da9bbde895a1e69384708b))
+* typescript any in sendMail ([10f8f2a](https://github.com/dnum-mi/bibliotheque_numerique/commit/10f8f2ad5a4c88f82978d2a1625a175b25138eb9))
+* typescript interface ([ba8b7da](https://github.com/dnum-mi/bibliotheque_numerique/commit/ba8b7dad52c3ab646259570fe931562eacfcf04e))
+* use DsfrModal ([80fe7a8](https://github.com/dnum-mi/bibliotheque_numerique/commit/80fe7a8a395ec9294f0b5aa594f2adaf11bf44be))
+
 ## [2.24.2](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.24.1...v2.24.2) (2025-02-18)
 
 
