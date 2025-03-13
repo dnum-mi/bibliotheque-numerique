@@ -32,7 +32,10 @@ USER node
 COPY --from=base --chown=node:root /app/out/json/ .
 COPY --from=base --chown=node:root /app/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=base --chown=node:root /app/out/pnpm-workspace.yaml ./pnpm-workspace.yaml
+COPY --from=base --chown=node:root /app/apps/server/vendor/xlsx-0.20.3.tgz ./apps/server/vendor/xlsx-0.20.3.tgz
 RUN pnpm install --frozen-lockfile
+RUN rm -r ./apps/server/vendor
+
 COPY --from=base --chown=node:root /app/out/full/ .
 RUN pnpm run build:server
 
@@ -53,9 +56,13 @@ RUN npm i -g pnpm@9.15.4
 COPY --from=base /app/out/json/ .
 COPY --from=base /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=base /app/out/pnpm-workspace.yaml ./pnpm-workspace.yaml
+COPY --from=base /app/apps/server/vendor/xlsx-0.20.3.tgz ./apps/server/vendor/xlsx-0.20.3.tgz
+
 ENV CI=true
 ENV NODE_ENV=production
 RUN pnpm install --frozen-lockfile --production
+RUN rm -r ./apps/server/vendor
+
 # Turbo needs this directory, even with --no-cache...
 RUN mkdir -p /app/node_modules/.cache/turbo/
 RUN mkdir -p /app/.turbo/cache
