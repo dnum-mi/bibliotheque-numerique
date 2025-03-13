@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.25.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.25.0...v2.25.1) (2025-03-13)
+
+
+### Bug Fixes
+
+* debug ci scaleway ([46de4ce](https://github.com/dnum-mi/bibliotheque_numerique/commit/46de4cebd3b9d19ac8f72aadd219673f5b7be8a7))
+
 ## [2.25.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.24.2...v2.25.0) (2025-03-13)
 
 
