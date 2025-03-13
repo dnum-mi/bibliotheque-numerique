@@ -43,9 +43,29 @@
       "cache": false,
       "dependsOn": [
         "^@biblio-num/shared#build"
-      ]
+      ],
+      "persistent": true
+    },
+    "dev:client": {
+      "cache": false,
+      "dependsOn": [
+        "^@biblio-num/shared#build"
+      ],
+      "persistent": true
     },
     "dev:in-docker": {
+      "cache": false
+    },
+    "dev:server": {
+      "cache": false,
+      "dependsOn": [
+        "^@biblio-num/shared#build"
+      ]
+    },
+    "dev:server-in-docker": {
+      "cache": false
+    },
+    "dev:worker-in-docker": {
       "cache": false
     },
     "dws": {
@@ -59,18 +79,6 @@
       "dependsOn": [
         "^@biblio-num/shared#build"
       ]
-    },
-    "dev:server": {
-      "cache": false,
-      "dependsOn": [
-        "^@biblio-num/shared#build"
-      ]
-    },
-    "dev:server-in-docker": {
-      "cache": false
-    },
-    "dev:worker-in-docker": {
-      "cache": false
     },
     "generate-code": {
       "cache": false
