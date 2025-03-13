@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
-import { Cookies, TestingModuleFactory } from '../common/testing-module.factory'
+import { Tokens, TestingModuleFactory } from '../common/testing-module.factory'
 import { UserService } from '@/modules/users/providers/user.service'
 import { IRole, Roles } from '@biblio-num/shared'
 import { UpdateOneRoleOptionDto } from '@/modules/users/objects/dtos/input'
@@ -8,7 +8,7 @@ import { UpdateOneRoleOptionDto } from '@/modules/users/objects/dtos/input'
 describe('users (e2e)', () => {
   let app: INestApplication
   let userService: UserService
-  let cookies: Cookies
+  let tokens: Tokens
   let user5OriginalRole: IRole
 
   const resetUser5 = async (): Promise<void> => {
@@ -20,7 +20,7 @@ describe('users (e2e)', () => {
     await testingModule.init()
     app = testingModule.app
     userService = await app.resolve(UserService)
-    cookies = testingModule.cookies
+    tokens = testingModule.tokens
     user5OriginalRole = (await userService.findOneById(5)).role
   })
 
@@ -38,14 +38,14 @@ describe('users (e2e)', () => {
     it('Should return 403 for instructor', async () => {
       await request(app.getHttpServer()) //
         .get('/users/1/role')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(403)
     })
 
     it('Should return correct user with editable role', async () => {
       const response = await request(app.getHttpServer()) //
         .get('/users/5/role')
-        .set('Cookie', [cookies.superadmin])
+        .set('Authorization', `Bearer ${tokens.superadmin}`)
         .expect(200)
       expect(response.body).toMatchObject({
         originalUser: {
@@ -154,14 +154,14 @@ describe('users (e2e)', () => {
     it('Should return 403 for instructor', async () => {
       await request(app.getHttpServer()) //
         .patch('/users/1/role')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(403)
     })
 
     it('Should return 400', async () => {
       await request(app.getHttpServer()) //
         .patch('/users/5/role')
-        .set('Cookie', [cookies.superadmin])
+        .set('Authorization', `Bearer ${tokens.superadmin}`)
         .send({
           demarcheId: 'toto',
           checked: false,
@@ -172,7 +172,7 @@ describe('users (e2e)', () => {
     it('Should patch user role: unchecked demarche', async () => {
       await request(app.getHttpServer()) //
         .patch('/users/5/role')
-        .set('Cookie', [cookies.superadmin])
+        .set('Authorization', `Bearer ${tokens.superadmin}`)
         .send({
           demarcheId: 1,
           checked: false,
@@ -185,7 +185,7 @@ describe('users (e2e)', () => {
     it('Should patch user role: check demarche', async () => {
       await request(app.getHttpServer()) //
         .patch('/users/5/role')
-        .set('Cookie', [cookies.superadmin])
+        .set('Authorization', `Bearer ${tokens.superadmin}`)
         .send({
           demarcheId: 3,
           checked: true,
@@ -201,7 +201,7 @@ describe('users (e2e)', () => {
     it('Should patch user role: check many demarches', async () => {
       await request(app.getHttpServer()) //
         .patch('/users/5/role/many')
-        .set('Cookie', [cookies.superadmin])
+        .set('Authorization', `Bearer ${tokens.superadmin}`)
         .send([{
           demarcheId: '3',
           checked: true,
@@ -235,7 +235,8 @@ describe('users (e2e)', () => {
     it('Should patch user role: check national', async () => {
       await request(app.getHttpServer()) //
         .patch('/users/5/role')
-        .set('Cookie', [cookies.superadmin])
+        .set('Authorization', `Bearer ${tokens.superadmin}`)
+
         .send({
           demarcheId: 1,
           national: true,
@@ -273,7 +274,7 @@ describe('users (e2e)', () => {
       )
       await request(app.getHttpServer()) //
         .patch('/users/5/role')
-        .set('Cookie', [cookies.superadmin])
+        .set('Authorization', `Bearer ${tokens.superadmin}`)
         .send({
           demarcheId: 2,
           national: false,
@@ -289,7 +290,7 @@ describe('users (e2e)', () => {
     it('Should patch user role: add prefecture', async () => {
       await request(app.getHttpServer()) //
         .patch('/users/5/role')
-        .set('Cookie', [cookies.superadmin])
+        .set('Authorization', `Bearer ${tokens.superadmin}`)
         .send({
           demarcheId: 1,
           prefecture: {
@@ -308,7 +309,7 @@ describe('users (e2e)', () => {
     it('Should patch user role: delete prefecture', async () => {
       await request(app.getHttpServer()) //
         .patch('/users/5/role')
-        .set('Cookie', [cookies.superadmin])
+        .set('Authorization', `Bearer ${tokens.superadmin}`)
         .send({
           demarcheId: 1,
           prefecture: {
@@ -339,14 +340,14 @@ describe('users (e2e)', () => {
     it('Should return 403 for instructor', async () => {
       await request(app.getHttpServer()) //
         .put('/users/1/role')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(403)
     })
 
     it('Should return 200', async () => {
       await request(app.getHttpServer()) //
         .put('/users/5/role')
-        .set('Cookie', [cookies.superadmin])
+        .set('Authorization', `Bearer ${tokens.superadmin}`)
         .send({
           role: Roles.superadmin,
         })
@@ -360,7 +361,7 @@ describe('users (e2e)', () => {
     it('Should return 200', async () => {
       await request(app.getHttpServer()) //
         .put('/users/5/role')
-        .set('Cookie', [cookies.superadmin])
+        .set('Authorization', `Bearer ${tokens.superadmin}`)
         .send({
           role: Roles.admin,
         })
@@ -384,14 +385,14 @@ describe('users (e2e)', () => {
     it('Should return 403 for instructor', async () => {
       await request(app.getHttpServer()) //
         .delete('/users/1/role')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(403)
     })
 
     it('Should return 200', async () => {
       await request(app.getHttpServer()) //
         .delete('/users/5/role')
-        .set('Cookie', [cookies.superadmin])
+        .set('Authorization', `Bearer ${tokens.superadmin}`)
         .expect(200)
       expect((await userService.findOneById(5)).role).toEqual({
         label: null,

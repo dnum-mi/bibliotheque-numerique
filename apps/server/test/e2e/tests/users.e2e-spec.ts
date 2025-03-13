@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
-import { Cookies, TestingModuleFactory } from '../common/testing-module.factory'
+import { Tokens, TestingModuleFactory } from '../common/testing-module.factory'
 import { ISendMailOptions, MailerService } from '@nestjs-modules/mailer'
 import { JwtService } from '@nestjs/jwt'
 import { jwtConstants } from '@/modules/auth/objects/constants'
@@ -14,7 +14,7 @@ describe('users (e2e)', () => {
   let app: INestApplication
   let mailerService: MailerService
   let userService: UserService
-  let cookies: Cookies
+  let tokens: Tokens
   let emailInstructorConnected: string
   beforeAll(async () => {
     const testingModule = new TestingModuleFactory()
@@ -22,7 +22,7 @@ describe('users (e2e)', () => {
     app = testingModule.app
     mailerService = testingModule.mailerService as MailerService
     userService = await app.resolve(UserService)
-    cookies = testingModule.cookies
+    tokens = testingModule.tokens
     emailInstructorConnected = testingModule.emailInstructor
   })
   beforeEach(() => {
@@ -42,14 +42,14 @@ describe('users (e2e)', () => {
     it('Should return 403 for instructor', async () => {
       await request(app.getHttpServer()) //
         .post('/users/list')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(403)
     })
 
     it('Should return a list of user 1', async () => {
       const response = await request(app.getHttpServer())
         .post('/users/list')
-        .set('Cookie', [cookies.superadmin])
+        .set('Authorization', `Bearer ${tokens.superadmin}`)
         .send({
           columns: ['firstname', 'lastname'],
         })
@@ -68,7 +68,7 @@ describe('users (e2e)', () => {
     it('Should return a list of user 2', async () => {
       const response = await request(app.getHttpServer())
         .post('/users/list')
-        .set('Cookie', [cookies.superadmin])
+        .set('Authorization', `Bearer ${tokens.superadmin}`)
         .send({
           columns: ['firstname', 'lastname'],
           sorts: [{ key: 'firstname', order: 'DESC' }],
@@ -93,7 +93,7 @@ describe('users (e2e)', () => {
     it('Should return a list of user with role resume', async () => {
       const response = await request(app.getHttpServer())
         .post('/users/list')
-        .set('Cookie', [cookies.superadmin])
+        .set('Authorization', `Bearer ${tokens.superadmin}`)
         .send({
           columns: ['firstname', 'lastname', 'roleLabel', 'roleOptionsResume'],
         })
@@ -311,7 +311,7 @@ describe('users (e2e)', () => {
     it('Should return 200 if user is connected', async () => {
       await request(app.getHttpServer())
         .get('/users/me')
-        .set('Cookie', [cookies.admin])
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .expect(200)
         .expect(({ body }) => {
           expect(body).toMatchObject({
@@ -323,7 +323,7 @@ describe('users (e2e)', () => {
     it('Should return pretty role with demarche name', async () => {
       await request(app.getHttpServer())
         .get('/users/me')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(200)
         .expect(({ body }) => {
           expect(body).toMatchObject({
@@ -370,8 +370,8 @@ describe('users (e2e)', () => {
 
       await request(app.getHttpServer())
         .patch('/users/me')
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .send(dataToUpdate)
-        .set('Cookie', [cookies.instructor])
         .expect(200)
 
       const userUpdated = await dataSource.manager.findOne(User, { where: { email: emailInstructorConnected } })

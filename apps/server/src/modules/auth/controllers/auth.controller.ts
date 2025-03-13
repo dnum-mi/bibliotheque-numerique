@@ -1,80 +1,116 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
-  HttpCode,
   Post,
   Request,
-  Response,
-  Session,
-  UseGuards,
+  HttpCode,
+  Res,
+  Req,
+  Delete,
 } from '@nestjs/common'
+import { Request as ExpressRequest } from 'express'
 import { ApiTags } from '@nestjs/swagger'
 import { AuthService } from '../providers/auth.service'
 import { PublicRoute } from '@/modules/users/providers/decorators/public-route.decorator'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
-import { LocalAuthGuard } from '@/modules/auth/providers/local.guard'
-import { CredentialsInputDto } from '@/modules/users/objects/dtos/input'
-import { UserOutputDto } from '@/modules/users/objects/dtos/output'
+import { AuthResponseDto, AuthProconnectResponseDto, UserOutputDto } from '@/modules/users/objects/dtos/output'
 import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.decorator'
+import { ConfigService } from '@nestjs/config'
 
-/* The TODO: of this file must be done after creating what nestjs calls "tests" */
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(
     private authService: AuthService,
     private logger: LoggerService,
+    private readonly configService: ConfigService,
   ) {
     this.logger.setContext(this.constructor.name)
   }
 
-  @HttpCode(200)
-  @PublicRoute()
-  @UseGuards(LocalAuthGuard)
-  @Post('sign-in')
-  @UsualApiOperation({
-    summary: 'Se connecter.',
-    method: 'POST',
-    minimumRole: 'aucun',
-    responseType: UserOutputDto,
-  })
-  async signIn(@Body() body: CredentialsInputDto): Promise<UserOutputDto> {
-    this.logger.verbose('signIn')
-    return this.authService.login(body)
+  private setRefreshTokenCookie(res, refreshToken: string): void {
+    const jwtRefreshExpireIn = this.configService.get('auth').jwtRefreshExpireIn
+    const days = parseInt(jwtRefreshExpireIn, 10)
+    const maxAge = (days * 24 * 60 * 60 * 1000) + 1000
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      maxAge,
+    })
   }
 
-  @Delete('/')
+  @PublicRoute()
+  @Delete('logout')
+  @HttpCode(200)
   @UsualApiOperation({
-    summary: 'Se déconnecter.',
+    summary: 'Logout user',
     method: 'DELETE',
     minimumRole: 'aucun',
     responseType: null,
   })
-  @PublicRoute()
-  async logout(@Request() req, @Response() res, next): Promise<void> {
-    this.logger.verbose('logout')
-    req.logout(function (err) {
-      if (err) {
-        return next(err)
-      }
+  async logout(@Req() req, @Res() res): Promise<void> {
+    await this.authService.logout(req.cookies?.refreshToken)
 
-      res.send({ success: true })
+    res.clearCookie('refreshToken', {
+      httpOnly: true,
     })
+
+    res.send()
+  }
+
+  @PublicRoute()
+  @Post('sign-in')
+  @HttpCode(200)
+  @UsualApiOperation({
+    summary: 'Login with email and password',
+    method: 'POST',
+    minimumRole: 'aucun',
+    responseType: AuthResponseDto,
+  })
+  async login(
+    @Body() { email, password }: { email: string; password: string },
+    @Res() res,
+  ): Promise<void> {
+    const { accessToken, refreshToken } = await this.authService.login(email, password)
+    this.setRefreshTokenCookie(res, refreshToken)
+    res.send({ accessToken })
+  }
+
+  @PublicRoute()
+  @Post('refresh')
+  @HttpCode(200)
+  @UsualApiOperation({
+    summary: 'Refresh token endpoint',
+    method: 'POST',
+    minimumRole: 'aucun',
+    responseType: AuthResponseDto,
+  })
+  async refresh(
+    @Req() req,
+    @Res() res,
+  ): Promise<void> {
+    const { accessToken, refreshToken } = await this.authService.refreshToken(req.cookies.refreshToken)
+    this.setRefreshTokenCookie(res, refreshToken)
+    res.send({ accessToken })
   }
 
   @PublicRoute()
   @Get('proconnect')
   @UsualApiOperation({
-    summary: 'Récupérer proconnect url',
+    summary: 'Get proconnect url',
     method: 'GET',
     minimumRole: 'aucun',
-    responseType: null,
+    responseType: AuthProconnectResponseDto,
   })
-  async getProconnectUrl(@Session() session): Promise<{ url: string }> {
-    const { url } = this.authService.proconnect(session)
-    return { url }
+  async getProConnectUrl(
+    @Res() res,
+  ): Promise<void> {
+    const { token, url } = this.authService.proconnect()
+    res.cookie('auth_token', token, {
+      httpOnly: true,
+      maxAge: this.configService.get('auth').proConnectAuthTokenMaxAge,
+    })
+    res.send({ url })
   }
 
   @PublicRoute()
@@ -85,7 +121,12 @@ export class AuthController {
     minimumRole: 'aucun',
     responseType: UserOutputDto,
   })
-  async proconnectCallback(@Request() req): Promise<UserOutputDto> {
-    return this.authService.proconnectCallback(req)
+  async proConnectCallback(
+    @Request() req: ExpressRequest,
+    @Res() res,
+  ): Promise<void> {
+    const { accessToken, refreshToken } = await this.authService.proconnectCallback(req)
+    this.setRefreshTokenCookie(res, refreshToken)
+    res.send({ accessToken })
   }
 }

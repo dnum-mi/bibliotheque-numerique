@@ -14,7 +14,7 @@ import { RnaService } from '@/modules/organismes/providers/rna.service'
 import { rnaServiceMock } from '../../mock/rna-service/rna-service.mock'
 import { xlsxServiceMock } from '../../mock/excel-service/excel-service.mock'
 import { RolesKeys } from '@biblio-num/shared'
-import { getAnyCookie } from './get-any-cookie'
+import { getAnyToken } from './get-any-token'
 import { XlsxService } from '@/shared/modules/xlsx/xlsx.service'
 import { S3Service } from '@/shared/modules/s3/s3.service'
 import { s3ServiceMock } from '../../mock/s3-service/s3-service.mock'
@@ -26,18 +26,18 @@ import { Queue } from 'bull'
 import { WorkerSyncModule } from '@/apps/worker-sync/worker-sync.module'
 import { WorkerFileModule } from '@/apps/worker-file/worker-file.module'
 
-export type Cookies = Record<RolesKeys | 'norole', string>
+export type Tokens = Record<RolesKeys | 'norole', string>
 
 export class TestingModuleFactory {
   app: INestApplication
   mailerService = mailerServiceMock
-  _cookies: Cookies
+  _tokens: Tokens
   _queues: Record<QueueNameKeys, Queue>
 
   readonly emailInstructor: string = 'instructor1@localhost.com'
 
-  get cookies(): Cookies {
-    return this._cookies
+  get tokens(): Tokens {
+    return this._tokens
   }
 
   get syncQueue(): Queue {
@@ -48,14 +48,14 @@ export class TestingModuleFactory {
     return this._queues[QueueName.file]
   }
 
-  private async _setCookies(): Promise<void> {
-    this._cookies = {
-      sudo: await getAnyCookie(this.app, 'sudo@localhost.com'),
-      superadmin: await getAnyCookie(this.app, 'superadmin@localhost.com'),
-      admin: await getAnyCookie(this.app, 'admin1@localhost.com'),
-      instructor: await getAnyCookie(this.app, this.emailInstructor),
-      norole: await getAnyCookie(this.app, 'norole@localhost.com'),
-    } as Cookies
+  private async _setTokens(): Promise<void> {
+    this._tokens = {
+      sudo: await getAnyToken(this.app, 'sudo@localhost.com'),
+      superadmin: await getAnyToken(this.app, 'superadmin@localhost.com'),
+      admin: await getAnyToken(this.app, 'admin1@localhost.com'),
+      instructor: await getAnyToken(this.app, this.emailInstructor),
+      norole: await getAnyToken(this.app, 'norole@localhost.com'),
+    } as Tokens
   }
 
   async init(): Promise<void> {
@@ -85,7 +85,7 @@ export class TestingModuleFactory {
     this.app = moduleFixture.createNestApplication()
     await configMain(this.app)
     await this.app.init()
-    await this._setCookies()
+    await this._setTokens()
     this._queues = {
       [QueueName.file]: this.app.get<Queue>(`BullQueue_${QueueName.file}`),
       [QueueName.sync]: this.app.get<Queue>(`BullQueue_${QueueName.sync}`),

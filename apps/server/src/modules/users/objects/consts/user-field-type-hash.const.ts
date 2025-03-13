@@ -22,4 +22,5 @@ export const UserFieldTypeHashConst: Record<
   job: 'string',
   createdAt: 'date',
   updatedAt: 'date',
+  refreshTokens: 'string',
 }

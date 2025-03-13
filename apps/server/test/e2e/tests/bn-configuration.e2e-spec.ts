@@ -1,19 +1,19 @@
 import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
-import { Cookies, TestingModuleFactory } from '../common/testing-module.factory'
+import { Tokens, TestingModuleFactory } from '../common/testing-module.factory'
 import { faker } from '@faker-js/faker/locale/fr'
 import { dataSource } from '../data-source-e2e.typeorm'
 import { eBnConfiguration } from '@biblio-num/shared'
 
 describe('bn-configurations (e2e)', () => {
   let app: INestApplication
-  let cookies: Cookies
+  let tokens: Tokens
 
   beforeAll(async () => {
     const testingModule = new TestingModuleFactory()
     await testingModule.init()
     app = testingModule.app
-    cookies = testingModule.cookies
+    tokens = testingModule.tokens
   })
 
   afterAll(async () => {
@@ -29,28 +29,28 @@ describe('bn-configurations (e2e)', () => {
     it('Should return error 403 for instructor', async () => {
       await request(app.getHttpServer())
         .get('/bn-configurations')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(403)
     })
 
     it('Should return error 403 for admin', async () => {
       await request(app.getHttpServer())
         .get('/bn-configurations')
-        .set('Cookie', [cookies.admin])
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .expect(403)
     })
 
     it('Should return error 403 for superadmin', async () => {
       await request(app.getHttpServer())
         .get('/bn-configurations')
-        .set('Cookie', [cookies.superadmin])
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .expect(403)
     })
 
     it('Should return all configurations', async () => {
       const response = await request(app.getHttpServer())
         .get('/bn-configurations')
-        .set('Cookie', [cookies.sudo])
+        .set('Authorization', `Bearer ${tokens.sudo}`)
         .expect(200)
       expect(response.body).toMatchObject([
         {
@@ -139,35 +139,35 @@ describe('bn-configurations (e2e)', () => {
     it('Should return error 403 for instructor', async () => {
       await request(app.getHttpServer())
         .get('/bn-configurations/EXCEL_IMPORT_SHEET_NAME')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(403)
     })
 
     it('Should return error 403 for admin', async () => {
       await request(app.getHttpServer())
         .get('/bn-configurations/EXCEL_IMPORT_SHEET_NAME')
-        .set('Cookie', [cookies.admin])
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .expect(403)
     })
 
     it('Should return error 403 for superadmin', async () => {
       await request(app.getHttpServer())
         .get('/bn-configurations/EXCEL_IMPORT_SHEET_NAME')
-        .set('Cookie', [cookies.superadmin])
+        .set('Authorization', `Bearer ${tokens.superadmin}`)
         .expect(403)
     })
 
     it('Should return 400 for bad keyName', async () => {
       await request(app.getHttpServer())
         .get('/bn-configurations/TOTO')
-        .set('Cookie', [cookies.sudo])
+        .set('Authorization', `Bearer ${tokens.sudo}`)
         .expect(400)
     })
 
     it('Should return configuration by keyName', async () => {
       const response = await request(app.getHttpServer())
         .get('/bn-configurations/FE_EXCEL_IMPORT_SHEET_NAME')
-        .set('Cookie', [cookies.sudo])
+        .set('Authorization', `Bearer ${tokens.sudo}`)
         .expect(200)
       expect(response.body).toEqual({
         id: 1,
@@ -195,7 +195,7 @@ describe('bn-configurations (e2e)', () => {
     it('Should return error 403 for instructor', async () => {
       await request(app.getHttpServer())
         .post('/bn-configurations')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .send({ keyName, stringValue, valueType })
         .expect(403)
     })
@@ -203,7 +203,7 @@ describe('bn-configurations (e2e)', () => {
     it('Should return error 403 for admin', async () => {
       await request(app.getHttpServer())
         .post('/bn-configurations')
-        .set('Cookie', [cookies.admin])
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .send({ keyName, stringValue, valueType })
         .expect(403)
     })
@@ -211,7 +211,7 @@ describe('bn-configurations (e2e)', () => {
     it('Should return error 403 for superadmin', async () => {
       await request(app.getHttpServer())
         .post('/bn-configurations')
-        .set('Cookie', [cookies.superadmin])
+        .set('Authorization', `Bearer ${tokens.superadmin}`)
         .send({ keyName, stringValue, valueType })
         .expect(403)
     })
@@ -219,10 +219,10 @@ describe('bn-configurations (e2e)', () => {
     it('Should create configuration', async () => {
       await request(app.getHttpServer())
         .delete('/bn-configurations/1')
-        .set('Cookie', [cookies.sudo])
+        .set('Authorization', `Bearer ${tokens.sudo}`)
       await request(app.getHttpServer())
         .post('/bn-configurations')
-        .set('Cookie', [cookies.sudo])
+        .set('Authorization', `Bearer ${tokens.sudo}`)
         .send({ keyName, stringValue, valueType })
         .expect(201)
     })
@@ -243,7 +243,7 @@ describe('bn-configurations (e2e)', () => {
     it('Should return error 403 for instructor', async () => {
       await request(app.getHttpServer())
         .patch(`/bn-configurations/${id}`)
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .send({ stringValue, valueType })
         .expect(403)
     })
@@ -251,7 +251,7 @@ describe('bn-configurations (e2e)', () => {
     it('Should return error 403 for admin', async () => {
       await request(app.getHttpServer())
         .patch(`/bn-configurations/${id}`)
-        .set('Cookie', [cookies.admin])
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .send({ stringValue, valueType })
         .expect(403)
     })
@@ -259,7 +259,7 @@ describe('bn-configurations (e2e)', () => {
     it('Should return error 403 for superadmin', async () => {
       await request(app.getHttpServer())
         .patch(`/bn-configurations/${id}`)
-        .set('Cookie', [cookies.superadmin])
+        .set('Authorization', `Bearer ${tokens.superadmin}`)
         .send({ stringValue, valueType })
         .expect(403)
     })
@@ -267,7 +267,7 @@ describe('bn-configurations (e2e)', () => {
     it('Should update configuration', async () => {
       await request(app.getHttpServer())
         .patch(`/bn-configurations/${id}`)
-        .set('Cookie', [cookies.sudo])
+        .set('Authorization', `Bearer ${tokens.sudo}`)
         .send({ stringValue, valueType })
         .expect(200)
     })
@@ -285,28 +285,28 @@ describe('bn-configurations (e2e)', () => {
     it('Should return error 403 for instructor', async () => {
       await request(app.getHttpServer())
         .delete(`/bn-configurations/${id}`)
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(403)
     })
 
     it('Should return error 403 for admin', async () => {
       await request(app.getHttpServer())
         .delete(`/bn-configurations/${id}`)
-        .set('Cookie', [cookies.admin])
+        .set('Authorization', `Bearer ${tokens.admin}`)
         .expect(403)
     })
 
     it('Should return error 403 for superadmin', async () => {
       await request(app.getHttpServer())
         .delete(`/bn-configurations/${id}`)
-        .set('Cookie', [cookies.superadmin])
+        .set('Authorization', `Bearer ${tokens.superadmin}`)
         .expect(403)
     })
 
     it('Should delete configuration', async () => {
       await request(app.getHttpServer())
         .delete(`/bn-configurations/${id}`)
-        .set('Cookie', [cookies.sudo])
+        .set('Authorization', `Bearer ${tokens.sudo}`)
         .expect(200)
     })
   })

@@ -1,12 +1,12 @@
 import { INestApplication } from '@nestjs/common'
-import { Cookies, TestingModuleFactory } from '../common/testing-module.factory'
+import { Tokens, TestingModuleFactory } from '../common/testing-module.factory'
 import * as request from 'supertest'
 import { dataSource } from '../data-source-e2e.typeorm'
 import { DemarcheService } from '@/modules/demarches/providers/services/demarche.service'
 
 describe('Option ', () => {
   let app: INestApplication
-  let cookies: Cookies
+  let tokens: Tokens
   let demarcheService: DemarcheService
 
   beforeAll(async () => {
@@ -14,7 +14,7 @@ describe('Option ', () => {
     await testingModule.init()
     app = testingModule.app
     demarcheService = await testingModule.app.resolve(DemarcheService)
-    cookies = testingModule.cookies
+    tokens = testingModule.tokens
   })
 
   afterAll(async () => {
@@ -29,28 +29,28 @@ describe('Option ', () => {
   it('GET - Should return 403 for instructor', async () => {
     return request(app.getHttpServer())
       .get('/demarches/1/options')
-      .set('Cookie', [cookies.instructor])
+      .set('Authorization', `Bearer ${tokens.instructor}`)
       .expect(403)
   })
 
   it('GET - Should return 403 on admin to other demarche', async () => {
     return request(app.getHttpServer())
       .get('/demarches/1/options')
-      .set('Cookie', [cookies.admin])
+      .set('Authorization', `Bearer ${tokens.admin}`)
       .expect(403)
   })
 
   it('GET - Should return 404 on configurations', async () => {
     return request(app.getHttpServer())
       .get('/demarches/8765/options')
-      .set('Cookie', [cookies.superadmin])
+      .set('Authorization', `Bearer ${tokens.superadmin}`)
       .expect(404)
   })
 
   it('GET - Should return 200 and configurations', async () => {
     return request(app.getHttpServer())
       .get('/demarches/2/options')
-      .set('Cookie', [cookies.admin])
+      .set('Authorization', `Bearer ${tokens.admin}`)
       .expect(200)
       .then(({ body }) => {
         expect(body).toEqual({
@@ -64,7 +64,7 @@ describe('Option ', () => {
   it('Patch - Should return 400', async () => {
     return request(app.getHttpServer())
       .patch('/demarches/2/options')
-      .set('Cookie', [cookies.admin])
+      .set('Authorization', `Bearer ${tokens.admin}`)
       .send({
         truc: 456,
       })
@@ -74,7 +74,7 @@ describe('Option ', () => {
   it('Patch nbrMonth - Should return 200', async () => {
     await request(app.getHttpServer())
       .patch('/demarches/2/options')
-      .set('Cookie', [cookies.admin])
+      .set('Authorization', `Bearer ${tokens.admin}`)
       .send({
         nbrMonthAnonymisation: 12,
       })
@@ -86,7 +86,7 @@ describe('Option ', () => {
   it('Patch - Should return 400 for add anonymized field id', async () => {
     return request(app.getHttpServer())
       .patch('/demarches/2/options/field/anonymized')
-      .set('Cookie', [cookies.admin])
+      .set('Authorization', `Bearer ${tokens.admin}`)
       .send({
         truc: '',
       })
@@ -96,7 +96,7 @@ describe('Option ', () => {
   it('Patch - Should return 400 for add anonymized field id', async () => {
     return request(app.getHttpServer())
       .patch('/demarches/2/options/field/anonymized')
-      .set('Cookie', [cookies.admin])
+      .set('Authorization', `Bearer ${tokens.admin}`)
       .send({
         id: '02',
         add: '',
@@ -107,7 +107,7 @@ describe('Option ', () => {
   it('Patch - Should return 403 for add anonymized field id', async () => {
     return request(app.getHttpServer())
       .patch('/demarches/2/options/field/anonymized')
-      .set('Cookie', [cookies.instructor])
+      .set('Authorization', `Bearer ${tokens.instructor}`)
       .send({
         id: '02',
         add: true,
@@ -118,7 +118,7 @@ describe('Option ', () => {
   it('Patch - Should return 200 for add anonymized field id', async () => {
     return request(app.getHttpServer())
       .patch('/demarches/2/options/field/anonymized')
-      .set('Cookie', [cookies.admin])
+      .set('Authorization', `Bearer ${tokens.admin}`)
       .send({
         id: '02',
         add: true,
@@ -129,14 +129,14 @@ describe('Option ', () => {
   it('Patch - Should return 200 for remove anonymized field id', async () => {
     request(app.getHttpServer())
       .patch('/demarches/2/options/field/anonymized')
-      .set('Cookie', [cookies.admin])
+      .set('Authorization', `Bearer ${tokens.admin}`)
       .send({
         id: '02',
         add: true,
       })
     return request(app.getHttpServer())
       .patch('/demarches/2/options/field/anonymized')
-      .set('Cookie', [cookies.admin])
+      .set('Authorization', `Bearer ${tokens.admin}`)
       .send({
         id: '02',
         add: false,
@@ -147,14 +147,14 @@ describe('Option ', () => {
   it('Get - Should return 200 for anonymized fields', async () => {
     return request(app.getHttpServer())
       .get('/demarches/2/options/field/anonymized')
-      .set('Cookie', [cookies.admin])
+      .set('Authorization', `Bearer ${tokens.admin}`)
       .expect(200)
   })
 
   it('Get - Should return 403 for anonymized fields', async () => {
     return request(app.getHttpServer())
       .get('/demarches/2/options/field/anonymized')
-      .set('Cookie', [cookies.instructor])
+      .set('Authorization', `Bearer ${tokens.instructor}`)
       .expect(403)
   })
 })

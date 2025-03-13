@@ -1,14 +1,14 @@
 import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
 import { dataSource } from '../data-source-e2e.typeorm'
-import { Cookies, TestingModuleFactory } from '../common/testing-module.factory'
+import { Tokens, TestingModuleFactory } from '../common/testing-module.factory'
 import { CustomFilterService } from '@/modules/custom-filters/providers/services/custom-filter.service'
 import { CustomFilter } from '@/modules/custom-filters/objects/entities/custom-filter.entity'
 import { Demarche } from '@/modules/demarches/objects/entities/demarche.entity'
 
 describe('Custom filters (e2e)', () => {
   let app: INestApplication
-  let cookies: Cookies
+  let tokens: Tokens
   let filterService: CustomFilterService
   const customFilterFromFixture = {
     id: 1,
@@ -45,7 +45,7 @@ describe('Custom filters (e2e)', () => {
     filterService = await app.resolve<CustomFilterService>(CustomFilterService)
     await filterService.remove({ name: 'Superman' })
     await filterService.remove({ name: 'Superman 2' })
-    cookies = testingModule.cookies
+    tokens = testingModule.tokens
     demarchesCount = await dataSource.manager.count(Demarche)
   })
 
@@ -62,7 +62,7 @@ describe('Custom filters (e2e)', () => {
     it('Should give 403', async () => {
       return request(app.getHttpServer())
         .get('/custom-filters')
-        .set('Cookie', [cookies.norole])
+        .set('Authorization', `Bearer ${tokens.norole}`)
         .expect(403)
     })
 
@@ -73,7 +73,7 @@ describe('Custom filters (e2e)', () => {
 
       return request(app.getHttpServer())
         .get('/custom-filters')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(200)
         .then(({ body }) => {
           expect(body instanceof Array).toBeTruthy()
@@ -94,7 +94,7 @@ describe('Custom filters (e2e)', () => {
     it('Should give 403 of demarche 2', async () => {
       return request(app.getHttpServer())
         .get('/demarches/2/custom-filters')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(403)
     })
 
@@ -104,7 +104,7 @@ describe('Custom filters (e2e)', () => {
       })
       return request(app.getHttpServer())
         .get('/demarches/1/custom-filters')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(200)
         .then(({ body }) => {
           expect(body instanceof Array).toBeTruthy()
@@ -117,7 +117,7 @@ describe('Custom filters (e2e)', () => {
     it('Should return my filters of demarche 5', async () => {
       return request(app.getHttpServer())
         .get('/demarches/5/custom-filters')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(200)
         .then(({ body }) => {
           expect(body).toMatchObject([customFilterFromFixture2])
@@ -127,7 +127,7 @@ describe('Custom filters (e2e)', () => {
     it('Should give 404 with demarche no existing', async () => {
       return request(app.getHttpServer())
         .get(`/demarches/${demarchesCount + 10}/custom-filters`)
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(404)
     })
   })
@@ -142,14 +142,14 @@ describe('Custom filters (e2e)', () => {
     it('Should give 403 of demarche 2', async () => {
       return request(app.getHttpServer())
         .post('/demarches/2/custom-filters')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(403)
     })
 
     it('Should give 400 with keys of totals not in columns', async () => {
       return request(app.getHttpServer())
         .post('/demarches/1/custom-filters')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .send({
           name: 'Superman',
           groupByDossier: true,
@@ -176,7 +176,7 @@ describe('Custom filters (e2e)', () => {
       }
       return request(app.getHttpServer())
         .post('/demarches/1/custom-filters')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .send(filter)
         .expect(201)
         .then(async ({ body }) => {
@@ -206,7 +206,7 @@ describe('Custom filters (e2e)', () => {
       }
       return request(app.getHttpServer())
         .post('/demarches/1/custom-filters')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .send(filter)
         .expect(201)
         .then(async ({ body }) => {
@@ -235,7 +235,7 @@ describe('Custom filters (e2e)', () => {
       }
       return request(app.getHttpServer())
         .post(`/demarches/${demarchesCount + 10}/custom-filters`)
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .send(filter)
         .expect(404)
     })
@@ -243,7 +243,7 @@ describe('Custom filters (e2e)', () => {
     it('Should return 400 without name', () => {
       return request(app.getHttpServer())
         .post('/demarches/1/custom-filters')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .send()
         .expect(400)
     })
@@ -251,7 +251,7 @@ describe('Custom filters (e2e)', () => {
     it('Should return 400 if columns is incorrect', () => {
       return request(app.getHttpServer())
         .post('/demarches/1/custom-filters')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .send({
           name: 'no columns',
         })
@@ -261,7 +261,7 @@ describe('Custom filters (e2e)', () => {
     it('Should return 400 if sort is incorrect', () => {
       return request(app.getHttpServer())
         .post('/demarches/1/custom-filters')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .send({
           name: 'wrong sort',
           columns: ['toto', 'tata'],
@@ -338,7 +338,7 @@ describe('Custom filters (e2e)', () => {
       it(`Should return 400 if filter is incorrect (p-${i})`, () => {
         return request(app.getHttpServer())
           .post('/demarches/1/custom-filters')
-          .set('Cookie', [cookies.instructor])
+          .set('Authorization', `Bearer ${tokens.instructor}`)
           .send({
             name: 'badFilter',
             columns: ['I01', 'I02', 'I03'],
@@ -360,7 +360,7 @@ describe('Custom filters (e2e)', () => {
       }
       return request(app.getHttpServer())
         .post('/demarches/1/custom-filters/')
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .send(filter)
         .expect(409)
     })
@@ -375,7 +375,7 @@ describe('Custom filters (e2e)', () => {
       } as Partial<CustomFilter>)
       await request(app.getHttpServer())
         .patch(`/custom-filters/${toUpdateFilter.id}`)
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .send({
           name: 'new name',
         })
@@ -404,7 +404,7 @@ describe('Custom filters (e2e)', () => {
       const filterId = filter.id
       return request(app.getHttpServer())
         .delete('/custom-filters/' + filter.id)
-        .set('Cookie', [cookies.instructor])
+        .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(200)
         .then(async () => {
           const filter = await filterService.repository.findOne({

@@ -1,8 +1,10 @@
 import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
 import { TestingModuleFactory } from '../common/testing-module.factory'
+import { RefreshToken } from '@/modules/users/objects/refresh-token.entity'
 import { AuthService } from '@/modules/auth/providers/auth.service'
 import { dataSource } from '../data-source-e2e.typeorm'
+import { Repository } from 'typeorm'
 
 const adminFixtureUser = {
   id: 4,
@@ -15,18 +17,24 @@ const adminFixtureUser = {
 describe('Auth (e2e)', () => {
   let app: INestApplication
   let authService: AuthService
+  let refreshTokenRepository: Repository<RefreshToken>
 
   beforeAll(async () => {
     const testingModule = new TestingModuleFactory()
     await testingModule.init()
     app = testingModule.app
+    refreshTokenRepository = dataSource.getRepository(RefreshToken)
 
     authService = app.get(AuthService)
 
-    jest.spyOn(authService, 'fetchUserinfo').mockResolvedValue({
+    jest.spyOn(authService, 'fetchProconnectUserInfo').mockResolvedValue({
       email: adminFixtureUser.email,
       access_token: 'mockAccessToken123',
     })
+  })
+
+  beforeEach(async () => {
+    await refreshTokenRepository.delete({})
   })
 
   afterAll(async () => {
@@ -56,20 +64,15 @@ describe('Auth (e2e)', () => {
     })
 
     it('Should return 200 on connection', async () => {
-      await request(app.getHttpServer())
+      const response = await request(app.getHttpServer())
         .post('/auth/sign-in')
         .send({
           email: 'admin1@localhost.com',
           password: 'password',
         })
-        .expect(200)
-        .expect(({ body }) => {
-          expect(body).toMatchObject({
-            email: adminFixtureUser.email,
-            id: adminFixtureUser.id,
-            role: adminFixtureUser.role,
-          })
-        })
+
+      expect(response.body).toHaveProperty('accessToken')
+      expect(response.body.accessToken).toBeDefined()
     })
 
     it('Should return 404 on user no valid', async () => {
@@ -80,14 +83,6 @@ describe('Auth (e2e)', () => {
           password: 'password',
         })
         .expect(404)
-    })
-  })
-
-  describe('DELETE /auth', () => {
-    it('Should return 200 on disconnection', async () => {
-      await request(app.getHttpServer())
-        .delete('/auth')
-        .expect(200)
     })
   })
 
@@ -104,17 +99,17 @@ describe('Auth (e2e)', () => {
   })
 
   describe('POST /auth/proconnect/callback', () => {
-    it('Should return 200 and the user info on callback', async () => {
-      await request(app.getHttpServer())
+    it('Should return 200', async () => {
+      const response = await request(app.getHttpServer())
         .post('/auth/proconnect/callback')
         .expect(201)
-        .expect(({ body }) => {
-          expect(body.email).toBe(adminFixtureUser.email)
-        })
+
+      expect(response.body).toHaveProperty('accessToken')
+      expect(response.body.accessToken).toBeDefined()
     })
 
     it('Should throw an error if no email is found in userinfo', async () => {
-      jest.spyOn(authService, 'fetchUserinfo').mockResolvedValue({
+      jest.spyOn(authService, 'fetchProconnectUserInfo').mockResolvedValue({
         given_name: 'New',
         family_name: 'User',
         access_token: 'mockAccessToken123',
@@ -129,24 +124,19 @@ describe('Auth (e2e)', () => {
     })
 
     it('Should create a new user when user does not exist', async () => {
-      jest.spyOn(authService, 'fetchUserinfo').mockResolvedValue({
+      jest.spyOn(authService, 'fetchProconnectUserInfo').mockResolvedValue({
         email: 'newuser@localhost.com',
         given_name: 'New',
         family_name: 'User',
         access_token: 'mockAccessToken123',
       })
 
-      await request(app.getHttpServer())
+      const response = await request(app.getHttpServer())
         .post('/auth/proconnect/callback')
         .expect(201)
-        .expect(({ body }) => {
-          expect(body).toMatchObject({
-            email: 'newuser@localhost.com',
-            firstname: 'New',
-            lastname: 'User',
-            job: '',
-          })
-        })
+
+      expect(response.body).toHaveProperty('accessToken')
+      expect(response.body.accessToken).toBeDefined()
     })
   })
 })

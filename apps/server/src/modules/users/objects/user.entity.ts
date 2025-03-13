@@ -9,6 +9,7 @@ import {
 } from 'typeorm'
 import * as bcrypt from 'bcrypt'
 import { BaseEntity } from '@/shared/base-entity/base.entity'
+import { RefreshToken } from './refresh-token.entity'
 import { CustomFilter } from '@/modules/custom-filters/objects/entities/custom-filter.entity'
 import { IRole } from '@biblio-num/shared'
 
@@ -90,4 +91,7 @@ export class User extends BaseEntity {
   @OneToMany(() => CustomFilter, (customFilter) => customFilter.user)
   @JoinTable()
   customFilters?: CustomFilter[]
+
+  @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user, { cascade: true })
+  refreshTokens: RefreshToken[]
 }

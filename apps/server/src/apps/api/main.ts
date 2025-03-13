@@ -1,6 +1,5 @@
 import { NestFactory } from '@nestjs/core'
 import { ConfigService } from '@nestjs/config'
-
 import { ApiModule } from './api.module'
 import { configMain } from '../../config-main'
 

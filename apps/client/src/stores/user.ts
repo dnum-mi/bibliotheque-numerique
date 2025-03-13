@@ -30,6 +30,7 @@ export const useUserStore = defineStore('user', () => {
   const isAuthenticated = computed(() => !!currentUser.value)
   const hasAdminAccess = computed(() => !!(currentUser.value?.role?.label && AdminRoles.includes(currentUser.value?.role?.label)))
   const canAccessDemarches = computed(() => !!currentUser.value?.role?.label)
+  const accessToken = ref<string | null>(null)
 
   const $reset = () => {
     selectedEditableUserLoading.value = false
@@ -41,11 +42,13 @@ export const useUserStore = defineStore('user', () => {
   }
 
   const login = async (loginForm: ICredentialsInput) => {
-    currentUser.value = await bnApiClient.loginUser(loginForm)
+    const { accessToken: token } = await bnApiClient.loginUser(loginForm)
+    accessToken.value = token
   }
 
   const loginWithProconnect = async (code: string, state: string, iss: string) => {
-    currentUser.value = await bnApiClient.proConnectCallback(code, state, iss)
+    const { accessToken: token } = await bnApiClient.proConnectCallback(code, state, iss)
+    accessToken.value = token
   }
 
   const forceResetUser = () => {
@@ -53,9 +56,14 @@ export const useUserStore = defineStore('user', () => {
     $reset()
   }
 
+  const refreshTokens = async () => {
+    const { accessToken: token } = await bnApiClient.refreshTokens()
+    accessToken.value = token
+  }
+
   const logout = async () => {
-    await bnApiClient.logoutUser()
     forceResetUser()
+    await bnApiClient.logoutUser()
   }
 
   const loadMyProfile = async () => {
@@ -142,6 +150,7 @@ export const useUserStore = defineStore('user', () => {
     users,
     selectedEditableUser,
     isAuthenticated,
+    accessToken,
     hasAdminAccess,
     CanConfigureDemarche,
     canAccessDemarches,
@@ -159,5 +168,6 @@ export const useUserStore = defineStore('user', () => {
     forceResetUser,
     changeMyProfile,
     updateUserRolesOption,
+    refreshTokens,
   }
 })
