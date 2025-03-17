@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { IsNull, Not, Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Organisme } from '@/modules/organismes/objects/organisme.entity'
@@ -642,5 +642,22 @@ export class OrganismeService extends BaseEntityService<Organisme> {
       out.siaf = this._transformSiafRnaToOrganismeDto(siaf as ISiafRnaOutput)
     }
     return out
+  }
+
+  async deleteOrganismeIfNotInDossiers(id: number): Promise<string> {
+    this.logger.verbose('deleteOrganisme')
+    const numberOrganisme = await this.findOneOrThrow({ where: { id } })
+      .then((o) => o.idRna || o.idRnf)
+    const dossiersFound = await this.dossierService.findWithFilter({ organisme: { id } })
+    if (dossiersFound.length > 0) {
+      throw new BadRequestException('Organisme is used in dossiers')
+    }
+    await this.fileService.deleteByOrganismeIdOnly(id)
+    const deleted = await this.repo.delete(id)
+    if (!deleted.affected) {
+      throw new BadRequestException('Organisme not found')
+    }
+    this.logger.log(`Organisme ${numberOrganisme} ${id} deleted`)
+    return numberOrganisme
   }
 }

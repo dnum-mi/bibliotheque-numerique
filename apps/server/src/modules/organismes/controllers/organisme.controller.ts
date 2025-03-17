@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   Header,
   HttpCode,
@@ -245,5 +246,18 @@ export class OrganismeController {
   async searchOrganisme(@Param('sentence') sentence: string): Promise<ISiafSearchOrganismeResponseOutput[]> {
     this.logger.verbose('searchOrganisme')
     return this.organismeService.searchOrganismes(sentence)
+  }
+
+  @UsualApiOperation({
+    summary: 'Supprimer un organisme.',
+    method: 'DELETE',
+    minimumRole: Roles.sudo,
+    responseType: String,
+  })
+  @Delete(':id')
+  @Role(Roles.sudo)
+  async deleteOrganisme(@Param('id') id: number): Promise<string> {
+    this.logger.verbose('deleteOrganisme')
+    return this.organismeService.deleteOrganismeIfNotInDossiers(id)
   }
 }
