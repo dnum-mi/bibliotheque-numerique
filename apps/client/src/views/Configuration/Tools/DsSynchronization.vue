@@ -3,8 +3,9 @@ import { ref } from 'vue'
 
 import type { ISmallDemarcheOutput, IdentificationDemarcheKeys, OrganismeTypeKey } from '@biblio-num/shared'
 import { useConfigurationStore } from '@/stores/configuration'
-import { synchroniseOneDossier, synchroniseOneOrganisme } from '@/api/sudo-api-client'
+import { deleteOneOrganisme, synchroniseOneDossier, synchroniseOneOrganisme } from '@/api/sudo-api-client'
 import ModalConfirm from '@/components/ModalConfirm.vue'
+import useToaster from '@/composables/use-toaster'
 
 const configurationStore = useConfigurationStore()
 const demarcheIdString = ref('')
@@ -29,6 +30,8 @@ const identificationValue = computed<IdentificationDemarcheKeys | null | undefin
       return identification.value
   }
 })
+
+const toaster = useToaster()
 
 //#region CREATE DEMARCHE
 const inputDsIdString = ref('')
@@ -70,6 +73,7 @@ const synchroniseOneDossierFct = async () => {
 const inputSynchroniseOrganismeIdString = ref('')
 const inputSynchroniseOrganismeId = computed(() => Number(inputSynchroniseOrganismeIdString.value) ?? null)
 const synchroniseOrganismeModalOpen = ref(false)
+
 const onSynchroniseOrganisme = async () => {
   synchroniseOrganismeModalOpen.value = true
 }
@@ -81,6 +85,25 @@ const synchroniseOneOrganismeFct = async () => {
     await synchroniseOneOrganisme(inputSynchroniseOrganismeId.value)
   }
   synchroniseOrganismeModalOpen.value = false
+}
+//#endregion
+
+//#region DELETE ORGANISME
+const inputDeleteOrganismeIdString = ref('')
+const inputDeleteOrganismeId = computed(() => Number(inputDeleteOrganismeIdString.value) ?? null)
+const deleteOrganismeModalOpen = ref(false)
+
+const onDeleteOrganisme = async () => {
+  deleteOrganismeModalOpen.value = true
+}
+const closeDeleteOrganismeModal = async () => {
+  deleteOrganismeModalOpen.value = false
+}
+const deleteOneOrganismeFct = async () => {
+  if (inputDeleteOrganismeId.value) {
+    const orgDelted = await deleteOneOrganisme(inputDeleteOrganismeId.value)
+    toaster.addSuccessMessage(`Organisme ${orgDelted} supprimé`)
+  }
 }
 //#endregion
 
@@ -120,6 +143,12 @@ onMounted(async () => {
         <h6>Modifier une démarche</h6>
       </div>
       <div class="flex-1/2 flex gap-2 items-center">
+        <DsfrButton
+          label="Supprimer un organisme"
+          class="flex-1"
+          primary
+          @click="onDeleteOrganisme()"
+        />
         <DsfrButton
           label="Synchroniser un organisme"
           class="flex-1"
@@ -322,6 +351,29 @@ onMounted(async () => {
       />
       <DsfrButton
         label="Synchroniser"
+        class="float-right mb-5"
+        type="submit"
+      />
+    </form>
+  </DsfrModal>
+
+  <!-- MODAL DE DELETE DE ORGANISME -->
+  <DsfrModal
+    :opened="deleteOrganismeModalOpen"
+    title="Delete un organisme from scratch"
+    @close="closeDeleteOrganismeModal"
+  >
+    <form @submit.prevent="deleteOneOrganismeFct()">
+      <DsfrInput
+        v-model="inputDeleteOrganismeIdString"
+        type="text"
+        label="Numéro (id) du organisme dans BN"
+        label-visible
+        class="mb-4"
+        placeholder="ex: 875678"
+      />
+      <DsfrButton
+        label="Supprimer"
         class="float-right mb-5"
         type="submit"
       />
