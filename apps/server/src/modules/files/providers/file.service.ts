@@ -286,6 +286,10 @@ export class FileService extends BaseEntityService<File> {
         },
       })
   }
-
   //#endregion
+
+  async deleteByOrganismeIdOnly(organismeId: number): Promise<void> {
+    this.logger.verbose('deleteByOrganismeId')
+    await this.repo.delete({ organismeId, dossierId: null })
+  }
 }
