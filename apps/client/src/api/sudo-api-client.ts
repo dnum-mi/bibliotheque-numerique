@@ -22,6 +22,10 @@ export const synchroniseOneOrganisme = async (id: number) => {
   return response.data
 }
 
+export const deleteOneOrganisme = async (id: number) => {
+  const response = await apiClientInstance.delete(`${organismesRoute}/${id}`)
+  return response.data
+}
 export const putSynchronizeOneDemarche = async (demarcheId: number) => {
   const response = await apiClientInstance.put(routeSynchroniseOneDemarche(demarcheId))
   return response.data
