@@ -237,12 +237,12 @@ export const demarchesApiClient = {
 
   getDemarcheConfiguration: async (demarcheId: number): Promise<IMappingColumn[]> => {
     const response = await apiClientInstance.get(getDemarcheConfigurationRoute(demarcheId))
-    return response.data
+    return response?.data
   },
 
   getDemarcheOptions: async (demarcheId: number): Promise<IDemarcheOption> => {
     const response = await apiClientInstance.get(getDemarcheOptionRoute(demarcheId))
-    return response.data
+    return response?.data
   },
 
   saveDemarcheOptions: async (demarcheId: number, dto: Partial<IDemarcheOption>): Promise<void> => {
@@ -251,7 +251,7 @@ export const demarchesApiClient = {
 
   searchDemarcheFields: async (demarcheId: number, dto: ISearchDossier): Promise<IFieldSearchOutput> => {
     const response = await apiClientInstance.post(getListDemarcheFieldRoute(demarcheId), dto)
-    return response.data
+    return response?.data
   },
 
   exportDemarcheFields: async (demarcheId: number, dto: ISearchDossier): Promise<void> => {
@@ -264,7 +264,7 @@ export const demarchesApiClient = {
 
   getAnonymizedChamps: async (id: number): Promise<IMappingAnonymizedChamp[]> => {
     const response = await apiClientInstance.get(getDemarcheAnonymizeRoute(id))
-    return response.data
+    return response?.data
   },
 
   updateOneMappingAnonymized (id: number, dto: IUpdateAnonymizedChamp) {
@@ -275,7 +275,7 @@ export const demarchesApiClient = {
 export const organismeApiClient = {
   getOrganismes: async (dto: IPagination<IOrganisme>) => {
     const response = await apiClientInstance.post(organismesListRoute, dto)
-    return response.data
+    return response?.data
   },
 
   getOrganismeById: async (organismeId: string): Promise<IOrganismeOutput> => {
@@ -298,7 +298,7 @@ export const organismeApiClient = {
     (organismeId: number) =>
       async (params: IPagination<IFileOutput>): Promise<IPaginated<IFileOutput>> => {
         const response = await apiClientInstance.post(getOrganismeFilesRoute(organismeId), params)
-        return response.data
+        return response?.data
       },
 
   exportOrganismes: async (dto: IPagination<IOrganisme>): Promise<void> => {
@@ -313,7 +313,7 @@ export const organismeApiClient = {
 export const usersApiClient = {
   async createUser (userData: ICreateUser) {
     const response = await apiClientInstance.post(usersRoutes, userData)
-    return response.data
+    return response?.data
   },
 
   async updatePassword (updateUserPassword: IUpdateUserPassword) {
@@ -346,7 +346,7 @@ export const usersApiClient = {
   async fetchMyProfile (): Promise<IMyProfileOutput | null> {
     try {
       const response = await apiClientInstance.get(profileRoute)
-      return response.data
+      return response?.data
     } catch {
       return null
     }
@@ -358,17 +358,17 @@ export const usersApiClient = {
 
   async listUsers (dto: IPaginationUser): Promise<IPaginatedUser> {
     const response = await apiClientInstance.post(usersListRoute, dto)
-    return response.data
+    return response?.data
   },
 
   async getUserById (id: number): Promise<IUserWithEditableRole | null> {
     const response = await apiClientInstance.get(getUserByIdRoute(id))
-    return response.data
+    return response?.data
   },
 
   async getUserRoleById (id: number): Promise<IUserWithEditableRole | null> {
     const response = await apiClientInstance.get(getUserRoleByIdRoute(id))
-    return response.data
+    return response?.data
   },
 
   async resetPassword (resetPasswordInput: IResetPasswordInput) {
@@ -377,7 +377,7 @@ export const usersApiClient = {
 
   async loginWithProconnect () {
     const response = await apiClientAuthInstance.get(proConnectSignInRoute)
-    return response.data
+    return response?.data
   },
 
   async proConnectCallback (code: string, state: string, iss: string): Promise<{ accessToken: string }> {
@@ -390,7 +390,7 @@ export const usersApiClient = {
       },
     )
 
-    return response.data
+    return response?.data
   },
 
   async validEmail (token: string) {
@@ -437,7 +437,7 @@ export const dossiersApiClient = {
 
   searchDemarcheDossiers: async (demarcheId: number, dto: ISearchDossier): Promise<IDossierSearchOutput> => {
     const response = await apiClientInstance.post(getListDemarcheDossierRoute(demarcheId), dto)
-    return response.data
+    return response?.data
   },
 
   exportDemarcheDossiers: async (demarcheId: number, dto: ISearchDossier): Promise<void> => {
@@ -448,7 +448,7 @@ export const dossiersApiClient = {
     (dossierId: number) =>
       async (params: IPagination<IFileOutput>): Promise<IPaginated<IFileOutput>> => {
         const response = await apiClientInstance.post(getDossierFilesRoute(dossierId), params)
-        return response.data
+        return response?.data
       },
 
   getDossierFilesSummary: async (dossierId: number): Promise<number> => {
@@ -464,55 +464,55 @@ export const customFiltersApiClient = {
 
   getCustomFiltersByDemarche: async (demarcheId: number): Promise<ICustomFilter[]> => {
     const response = await apiClientInstance.get(getDemarcheCustomFilterRoute(demarcheId))
-    return response.data
+    return response?.data
   },
 
   createOneCustomFilter: async (dto: ICreateCustomFilter, demarcheId: number) => {
     const response = await apiClientInstance.post(getDemarcheCustomFilterRoute(demarcheId), dto)
-    return response.data
+    return response?.data
   },
 
   updateOneCustomFilter: async (id: number, dto: IPatchCustomFilter) => {
     const response = await apiClientInstance.patch(getOneCustomFiltersRoute(id), dto)
-    return response.data
+    return response?.data
   },
 
   deleteOneCustomFilter: async (id: number) => {
     const response = await apiClientInstance.delete(getOneCustomFiltersRoute(id))
-    return response.data
+    return response?.data
   },
   getCustomFilterStats: async (id: number) => {
     const response = await apiClientInstance.get(getOneCustomFiltersStats(id))
-    return response.data
+    return response?.data
   },
 }
 
 export const healthApiClient = {
   getHealth: async () => {
     const response = await apiClientInstance.get(healthRoute)
-    return response.data
+    return response?.data
   },
 }
 
 export const bnConfigurationsApiClient = {
   getBnConfigurations: async () => {
     const response = await apiClientInstance.get(bnConfigurationsRoute)
-    return response.data
+    return response?.data
   },
 
   createBnConfiguration: async (dto: ICreateBnConfiguration) => {
     const response = await apiClientInstance.post(bnConfigurationsRoute, dto)
-    return response.data
+    return response?.data
   },
 
   updateBnConfiguration: async (id: number, dto: IUpdateBnConfiguration) => {
     const response = await apiClientInstance.patch(`${bnConfigurationsRoute}/${id}`, dto)
-    return response.data
+    return response?.data
   },
 
   getEnableSiaf: async () => {
     const response = await apiClientInstance.get(enableSiafRoute)
-    return response.data
+    return response?.data
   },
 
 }
@@ -520,7 +520,7 @@ export const bnConfigurationsApiClient = {
 export const attachedFilesApiClient = {
   getAttachedFiles: async (params: IPagination<DynamicKeys>): Promise<IFileOutput[]> => {
     const response = await apiClientInstance.post(attachedFilesRoute, params)
-    return response.data
+    return response?.data
   },
 }
 
