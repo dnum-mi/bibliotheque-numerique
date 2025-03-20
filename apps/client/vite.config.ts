@@ -8,12 +8,13 @@ import svgLoader from 'vite-svg-loader'
 import CommonJS from 'vite-plugin-commonjs'
 import UnoCSS from 'unocss/vite'
 import AutoImport from 'unplugin-auto-import/vite'
+import type { Options } from 'unplugin-auto-import/types'
 import Components from 'unplugin-vue-components/vite'
+
 import {
-  ohVueIconAutoimportPreset,
   vueDsfrAutoimportPreset,
   vueDsfrComponentResolver,
-} from '@gouvminint/vue-dsfr'
+} from '@gouvminint/vue-dsfr/meta'
 
 const isCypress = process.env.CYPRESS === 'true'
 const proxyTargetUrl = process.env.PROXY_TARGET_URL || 'http://localhost:3000'
@@ -37,8 +38,7 @@ export default defineConfig({
         'pinia',
         ...(isCypress ? [] : ['vitest']),
         vueDsfrAutoimportPreset,
-        ohVueIconAutoimportPreset,
-      ],
+      ] as Options['imports'],
       vueTemplate: true,
       dts: './src/auto-imports.d.ts',
       eslintrc: {

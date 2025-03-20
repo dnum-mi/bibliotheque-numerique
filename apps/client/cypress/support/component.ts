@@ -23,7 +23,6 @@ import type { Pinia } from 'pinia'
 import { createPinia, setActivePinia } from 'pinia'
 import { mount } from 'cypress/vue'
 
-import VueDsfr from '@gouvminint/vue-dsfr'
 import '@/main.css'
 import 'virtual:uno.css'
 
@@ -39,8 +38,6 @@ import 'ag-grid-enterprise'
 import 'ag-grid-community/styles/ag-grid.css'
 import 'ag-grid-community/styles/ag-theme-material.css'
 import '@/ag-grid-dsfr.css'
-
-import * as icons from '@/icons'
 
 import router from '@/router'
 import type { DefineComponent } from 'vue'
@@ -65,11 +62,6 @@ Cypress.Commands.add('mount', (component, options = {}) => {
 
   if (!options.extensions) {
     options.global.plugins = options.global.plugins || []
-    options.global.plugins.push({
-      install: (app) => {
-        app.use(VueDsfr, { icons: Object.values(icons) })
-      },
-    })
     options.global.plugins.push(router)
   }
 
@@ -105,11 +97,9 @@ function mountWithPinia (
   options.global.stubs = options.global.stubs || {}
 
   options.global.plugins = options.global.plugins || []
-  options.global.plugins.push({
-    install: (app) => {
-      app.use(VueDsfr, { icons: Object.values(icons) })
-    },
-  }, pinia)
+  options.global.plugins.push(
+    pinia,
+  )
   options.global.plugins.push(router)
 
   return mount(Comp, options)

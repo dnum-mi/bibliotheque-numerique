@@ -75,10 +75,9 @@ onMounted(() => {
     title-icon=""
   >
     <DsfrTabs
-      :key="selectedTabIndex"
+      v-model="selectedTabIndex"
       tab-list-name="tabs-dossier"
       :tab-titles="tabTitles"
-      :initial-selected-index="selectedTabIndex"
       class="fr-pt-5w"
       @select-tab="selectTab"
     >

@@ -18,10 +18,12 @@ import DossierMessagerie from './DossierMessagerie.vue'
 import { copyCurrentUrlInClipboard, formatForMessageDate } from '@/utils'
 import apiClient from '@/api/api-client'
 import AttachedFileList from '@/components/ag-grid/files/AttachedFileList.vue'
-import { DsfrTabs } from '@gouvminint/vue-dsfr'
 import type { ApiCall } from '@/components/ag-grid/server-side/pagination.utils'
+import type { DsfrTabs } from '@gouvminint/vue-dsfr'
 
 const dossierStore = useDossierStore()
+
+const isReady = ref(false) // Utiliser pour ordonner les tabs - sinon la tabulation de l'annotation est sélectionnée quand on clique sur une pièce jointe
 const dossier = computed<IDossierOutput | undefined>(() => dossierStore?.dossier)
 const dossierDS = computed<IDossierOutput['dsDataJson'] | undefined>(() => dossier.value?.dsDataJson)
 const demandeurEmail = computed<string | undefined>(() => dossier.value?.dsDataJson.usager?.email)
@@ -38,26 +40,39 @@ const messages = computed(() =>
 
 const annotations = computed(() => dossier.value?.dsDataJson.annotations)
 
-const hasAnnotations = computed(() => !!annotations.value?.length)
+const hasAnnotations = computed(() => !!annotations.value?.length && isReady.value)
 const nbAttachments = ref(0)
 const hasAttachments = computed(() => !!nbAttachments.value)
-const tabTitles = computed(() => [
-  {
-    title: 'Demande',
-  },
-  ...(hasAnnotations.value ? [{ title: 'Annotations privées' }] : []),
-  ...(hasAttachments.value ? [{ title: `Pièces jointes (${nbAttachments.value})` }] : []),
-])
+const tabTitles = computed(() => {
+  return [
+    {
+      title: 'Demande',
+      component: 'DossierDemande',
+    },
+    ...(hasAnnotations.value ? [{ title: 'Annotations privées', component: 'DossierAnnotations' }] : []),
+    ...(hasAttachments.value && !!dossier.value ? [{ title: `Pièces jointes (${nbAttachments.value})`, component: 'AttachedFileList' }] : []),
+  ]
+})
 const initialSelectedIndex = 0
 const selectedTabIndex = ref(initialSelectedIndex)
-const asc = ref(true)
-
-function selectTab (idx: number) {
-  asc.value = selectedTabIndex.value < idx
-  selectedTabIndex.value = idx
-}
 
 const tabs = ref<InstanceType<typeof DsfrTabs>>()
+
+const selectPrevious = () => {
+  const newIndex = selectedTabIndex.value === 0 ? tabTitles.value.length - 1 : selectedTabIndex.value - 1
+  selectedTabIndex.value = newIndex
+}
+const selectNext = () => {
+  const newIndex = selectedTabIndex.value === tabTitles.value.length - 1 ? 0 : selectedTabIndex.value + 1
+  selectedTabIndex.value = newIndex
+}
+const selectFirst = () => {
+  selectedTabIndex.value = 0
+}
+const selectLast = () => {
+  selectedTabIndex.value = tabTitles.value.length - 1
+}
+
 const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutput>) => {
   if (dossier.value) {
     return apiClient.getDossierFiles(dossier.value.id)(params)
@@ -69,13 +84,14 @@ const redrawTabs = async () => {
   tabs.value?.renderTabs()
 }
 
-const hasFileTabBeenSelected = ref(false)
-watch(selectedTabIndex, () => {
-  if (selectedTabIndex.value === (hasAnnotations.value ? 2 : 1)) {
-    hasFileTabBeenSelected.value = true
-  }
-  redrawTabs()
-})
+// TODO: Pour redessiner Ag-grid, Vérifier si c'est toujours utile
+// const hasFileTabBeenSelected = ref(false)
+// watch(selectedTabIndex, () => {
+//   if (selectedTabIndex.value === (hasAnnotations.value ? 2 : 1)) {
+//     hasFileTabBeenSelected.value = true
+//   }
+//   redrawTabs()
+// })
 
 onMounted(async () => {
   const params = useRoute()?.params
@@ -83,6 +99,7 @@ onMounted(async () => {
   if (id) {
     await dossierStore.getDossier(id)
     nbAttachments.value = await apiClient.getDossierFilesSummary(id)
+    isReady.value = true
   }
 })
 </script>
@@ -104,40 +121,49 @@ onMounted(async () => {
           <DossierInformations :datas="dossierDS" />
         </template>
         <template #content>
+          <!-- @select-tab="selectTab" -->
           <DsfrTabs
             ref="tabs"
+            v-model="selectedTabIndex"
+            :tab-titles="tabTitles"
             class="fr-ml-2w"
             tab-list-name="tabs-dossier"
-            :tab-titles="tabTitles"
-            :initial-selected-index="initialSelectedIndex"
-            @select-tab="selectTab"
           >
+            <template #tab-items>
+              <DsfrTabItem
+                v-for="(tab, index) of tabTitles"
+                :key="`tab-${index}`"
+                :tab-id="`tab-${index}`"
+                :panel-id="`tab-content-${index}`"
+                @click="selectedTabIndex = index;"
+                @next="selectNext()"
+                @previous="selectPrevious()"
+                @first="selectFirst()"
+                @last="selectLast()"
+              >
+                {{ tab.title }}
+              </DsfrTabItem>
+            </template>
+
             <DsfrTabContent
-              panel-id="tab-content-0"
-              tab-id="tab-0"
-              :selected="selectedTabIndex === 0"
-              :asc="asc"
+              v-for="(tab, index) of tabTitles"
+              :key="`tab-content-${index}`"
+              :panel-id="`tab-content-${index}`"
+              :tab-id="`tab-${index}`"
             >
-              <DossierDemande :datas="dossierDS" />
-            </DsfrTabContent>
-            <DsfrTabContent
-              v-if="hasAnnotations"
-              panel-id="tab-content-1"
-              tab-id="tab-1"
-              :selected="selectedTabIndex === 1"
-              :asc="asc"
-            >
-              <DossierAnnotations :annotations="annotations" />
-            </DsfrTabContent>
-            <DsfrTabContent
-              :panel-id="`tab-content-${+hasAnnotations + 1}`"
-              :tab-id="`tab-${+hasAnnotations + 1}`"
-              :selected="selectedTabIndex === (+hasAnnotations + 1)"
-              :asc="asc"
-            >
+              <DossierDemande
+                v-if="tab.component === 'DossierDemande'"
+                :datas="dossierDS"
+              />
+              <DossierAnnotations
+                v-if="tab.component === 'DossierAnnotations'"
+                :annotations="annotations"
+              />
+              <!-- :active="hasFileTabBeenSelected" -->
               <AttachedFileList
+                v-if="tab.component === 'AttachedFileList'"
                 :fetch-attached-files="fetchAttachedFiles"
-                :active="hasFileTabBeenSelected"
+                :active="true"
                 with-tab-tag
                 @files-fetched="redrawTabs()"
               />
