@@ -1,18 +1,18 @@
 <script lang="ts" setup>
 import type { HTMLAttributes } from 'vue'
 import { computed, ref } from 'vue'
-import type { UserWithEditableRole, RolesKeys } from '@biblio-num/shared'
+import type { IUserWithEditableRole, RolesKeys } from '@biblio-num/shared'
 import { Roles } from '@biblio-num/shared'
 import { useUserStore } from '@/stores'
 import DsfrWarningButton from '@/components/dsfr-extends/DsfrWarningButton.vue'
-import type { DsfrRadioButtonProps } from '@gouvminint/vue-dsfr/types/components/DsfrRadioButton/DsfrRadioButton.vue'
+import type { DsfrRadioButtonProps } from '@gouvminint/vue-dsfr'
 
 const userStore = useUserStore()
-const selectedEditableUser = computed<UserWithEditableRole | null>(() => userStore.selectedEditableUser)
+const selectedEditableUser = computed<IUserWithEditableRole | null>(() => userStore.selectedEditableUser)
 
 const role = computed<RolesKeys | ''>(() => selectedEditableUser.value?.originalUser.role.label || '')
-
-const allRoleOptions: DsfrRadioButtonProps[] = [
+type tRoleOption = Omit<DsfrRadioButtonProps, 'modelValue'>
+const allRoleOptions: tRoleOption[] = [
   {
     label: 'Super Administrateur',
     value: Roles.superadmin,
@@ -27,7 +27,7 @@ const allRoleOptions: DsfrRadioButtonProps[] = [
   },
 ]
 
-const roleOptions = computed<Array<DsfrRadioButtonProps & HTMLAttributes>>(() =>
+const roleOptions = computed<Array<tRoleOption & HTMLAttributes>>(() =>
   allRoleOptions.map((roleOption) => ({
     ...roleOption,
     disabled: !selectedEditableUser.value?.possibleRoles.includes(String(roleOption.value)),

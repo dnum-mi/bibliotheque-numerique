@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import type {
   OneDemarcheRoleOption,
-  OnePrefectureUpdateDto,
-  PrefectureOptions,
-  UserOutputDto,
-  UserWithEditableRole,
+  IOnePrefectureUpdate,
+  IPrefectureOptions,
+  IUserOutput,
+  IUserWithEditableRole,
   OrganismeTypeKey,
 } from '@biblio-num/shared'
 
@@ -23,7 +23,7 @@ import type { LocalizationOptionsKeys } from './localization.enum'
 
 import UserRole from './UserRole.vue'
 
-const props = defineProps<{ selectedEditableUser: UserWithEditableRole }>()
+const props = defineProps<{ selectedEditableUser: IUserWithEditableRole }>()
 
 //#region Types, Mapping, Enum
 type DemarcheHtmlAttrs = {
@@ -39,14 +39,14 @@ type DemarchesRoles = {
   name: OrganismeTypeKey
   value: boolean
   key: string
-  localization?: PrefectureOptions
+  localization?: IPrefectureOptions
   commonPrefectureValues: string[]
   commonPrefectureAddables: string[]
   commonPrefectureDeletables: string[]
   children?: DemarcheRole[]
   attrs: DemarcheHtmlAttrs
 }
-type GeographicalRights = PrefectureOptions & { disabled?: boolean }
+type GeographicalRights = IPrefectureOptions & { disabled?: boolean }
 
 const typeOrganismeLabel: Record<OrganismeTypeKey, string> = {
   [eOrganismeType.ARUP]: 'Associations reconnues d’utilité publique (ARUP)',
@@ -59,7 +59,7 @@ const typeOrganismeLabel: Record<OrganismeTypeKey, string> = {
 //#endregion
 let noRefDemarcheOrTypeSelected: DemarchesRoles | DemarcheRole
 const userStore = useUserStore()
-const selectedUser = computed<UserOutputDto>(() => props.selectedEditableUser.originalUser)
+const selectedUser = computed<IUserOutput>(() => props.selectedEditableUser.originalUser)
 const demarcheHash = computed<Record<number, OneDemarcheRoleOption>>(() => props.selectedEditableUser.demarcheHash)
 const keySelectUser = computed<string>(() => userStore.keySelectUser)
 const loading = computed<boolean>(() => userStore.selectedEditableUserLoading)
@@ -116,7 +116,7 @@ const organismeTypes = computed(() => [
 const demarchesRoles = computed<DemarchesRoles[]>(() => {
   return organismeTypes.value
     .map((type) => {
-      const localization: PrefectureOptions = {
+      const localization: IPrefectureOptions = {
         national: {
           value: true,
           editable: true,
@@ -280,7 +280,7 @@ const geographicalRights = computed<GeographicalRights | null>(() => {
   } as GeographicalRights
 })
 
-const _updateGeographicalRight = async (optionLoc: { national?: boolean; prefecture?: OnePrefectureUpdateDto }) => {
+const _updateGeographicalRight = async (optionLoc: { national?: boolean; prefecture?: IOnePrefectureUpdate }) => {
   if (!demarcheOrTypeSelected.value) {
     return null
   }
@@ -296,23 +296,21 @@ const _updateGeographicalRight = async (optionLoc: { national?: boolean; prefect
       },
       true,
     )
-  } else if (typeSelected) {
-    await Promise.all(
-      (typeSelected.children ?? []).map((child) =>
-        userStore.updateUserOneRoleOption(
-          {
-            demarcheId: child.options.id,
-            ...optionLoc,
-          },
-          false,
-        ),
-      ),
+  } else if (typeSelected && typeSelected.children) {
+    await userStore.updateUserRolesOption(
+      typeSelected.children?.map((child) => {
+        return {
+          demarcheId: child.options.id,
+          ...optionLoc,
+        }
+      }),
+      false,
     )
     await userStore.loadUserById(selectedUser.value?.id)
   }
 }
 
-const updatePrefecture = (option: OnePrefectureUpdateDto) => _updateGeographicalRight({ prefecture: option })
+const updatePrefecture = (option: IOnePrefectureUpdate) => _updateGeographicalRight({ prefecture: option })
 
 const updateNational = (loc: LocalizationOptionsKeys) => _updateGeographicalRight({ national: loc === LocalizationOptions.national })
 
