@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { IMappingColumn } from '@biblio-num/shared'
-import demarcheConfigurationVue from './DemarcheConfigurationsCommon.vue'
+import DemarcheConfigurationCommon from './DemarcheConfigurationsCommon.vue'
 import { useDemarcheStore } from '@/stores'
 
 const demarcheStore = useDemarcheStore()
@@ -12,7 +12,7 @@ const saveOne = async (event: { id: string, label: string | null }) => {
 </script>
 
 <template>
-  <demarcheConfigurationVue
+  <DemarcheConfigurationCommon
     :current-demarche-configuration="demarcheConfiguration"
     :is-selected-fn="(ch) => !!ch.columnLabel"
     @save-one="saveOne"

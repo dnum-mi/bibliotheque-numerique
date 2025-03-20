@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { useDemarcheStore } from '@/stores'
 
-const expandedId = ref<string>()
 const demarcheStore = useDemarcheStore()
 const groupInstructeurs = computed(() => demarcheStore.currentDemarche?.dsDataJson?.groupeInstructeurs || [])
+const activeAccordion = ref<number>()
 </script>
 
 <template>
@@ -14,25 +14,22 @@ const groupInstructeurs = computed(() => demarcheStore.currentDemarche?.dsDataJs
 
     <DsfrAccordionsGroup
       v-if="groupInstructeurs && groupInstructeurs.length"
+      v-model="activeAccordion"
       data-cy="cy-grpInstucteur"
     >
-      <li>
-        <DsfrAccordion
-          v-for="{ number, label, instructeurs } in groupInstructeurs"
-          :key="number"
-          :title="label"
-          :expanded-id="expandedId"
-          @expand="expandedId = $event"
+      <DsfrAccordion
+        v-for="{ number, label, instructeurs } in groupInstructeurs"
+        :key="number"
+        :title="label"
+      >
+        <div
+          v-for=" instructeur in instructeurs"
+          :key="instructeur?.id"
+          class="fr-p-3v"
         >
-          <div
-            v-for=" instructeur in instructeurs"
-            :key="instructeur?.id"
-            class="fr-p-3v"
-          >
-            {{ instructeur?.email }}
-          </div>
-        </DsfrAccordion>
-      </li>
+          {{ instructeur?.email }}
+        </div>
+      </DsfrAccordion>
     </DsfrAccordionsGroup>
   </div>
 </template>

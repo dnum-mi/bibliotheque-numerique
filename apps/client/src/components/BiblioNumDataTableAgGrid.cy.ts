@@ -1,8 +1,6 @@
 import '@gouvminint/vue-dsfr/styles'
-import VueDsfr from '@gouvminint/vue-dsfr'
 
 import '../main.css'
-import * as icons from '../icons'
 
 import { getDateISO } from '../utils/__tests__/fake-data'
 import { dateToStringFr } from '@/utils/date-to-string'
@@ -90,21 +88,7 @@ describe('<BiblioNumDataTable />', () => {
       },
     ]
 
-    const extensions = {
-      use: [
-        {
-          install: (app) => {
-            app.use(
-              VueDsfr,
-              { icons: Object.values(icons) },
-            )
-          },
-        },
-      ],
-    }
-
     cy.mount(BiblioNumDataTable, {
-      extensions,
       props: {
         title: 'Test',
         rowData: datas,

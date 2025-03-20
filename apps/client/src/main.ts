@@ -9,10 +9,10 @@ import '@gouvfr/dsfr/dist/utility/utility.main.min.css'
 import '@gouvminint/vue-dsfr/styles'
 
 import '@gouvfr/dsfr/dist/scheme/scheme.min.css'
-import '@gouvfr/dsfr/dist/utility/icons/icons.min.css'
 import { DsfrButton } from '@gouvminint/vue-dsfr'
 
-import * as icons from './icons'
+import collections from './icon-collections'
+import { addCollection } from '@iconify/vue'
 
 import './main.css'
 import 'vue3-openlayers/styles.css'
@@ -33,14 +33,15 @@ const agGridLicenseKey = '__AG_GRID_LICENSE_KEY__'
 
 LicenseManager.setLicenseKey(agGridLicenseKey)
 
-addIcons(...Object.values(icons))
-
+for (const collection of collections) {
+  addCollection(collection)
+}
 createApp(App)
   .use(createPinia())
   .use(OpenLayersMap)
   .component('DsfrButton', DsfrButton)
   .component('OrganismeBadge', OrganismeBadge)
   .component('StatusBadge', StatusBadge)
-  . component('FileTagBadge', FileTagBadge)
+  .component('FileTagBadge', FileTagBadge)
   .use(router)
   .mount('#app')

@@ -34,10 +34,9 @@ function selectTab (idx: number) {
     title-icon="fr-icon-settings-5-line"
   >
     <DsfrTabs
-      :key="selectedTabIndex"
+      v-model="selectedTabIndex"
       tab-list-name="tabConfig"
       :tab-titles="tabTitles"
-      :initial-selected-index="selectedTabIndex"
       class="fr-pt-5w"
       @select-tab="selectTab"
     >

@@ -10,8 +10,8 @@ import DemarcheConfigurationSelectedItem from './DemarcheConfigurationSelectedIt
 const props = withDefaults(defineProps<{
   currentDemarcheConfiguration: IMappingColumn[]
   isSelectedFn: (ch: IMappingColumn) => boolean
-  canChangeLabel: boolean,
-  selectedTitle: string,
+  canChangeLabel?: boolean,
+  selectedTitle?: string,
 }>(), {
   canChangeLabel: true,
   selectedTitle: 'Champs sélectionnés pour l’affichage des colonnes',
@@ -319,7 +319,7 @@ const saveOneMappingColumnDebounced = useDebounceFn(saveOneMappingColumn, 300)
               v-if="!group.data?.some(champ => isSelectedFn(champ) || (champ.children?.length && champ.children.some(chp => isSelectedFn(champ))))"
               class="fr-ml-6w  fr-mt-1w"
               name="ri-subtract-line"
-              title="Aucun champ sélectionné dans cette partie"
+              label="Aucun champ sélectionné dans cette partie"
             />
 
             <template
@@ -372,7 +372,7 @@ const saveOneMappingColumnDebounced = useDebounceFn(saveOneMappingColumn, 300)
                 v-if="!child.children?.some(champ => champ.columnLabel || (champ.children?.length && champ.children.some(chp => chp.columnLabel)))"
                 class="fr-ml-6w  fr-mt-1w"
                 name="ri-subtract-line"
-                title="Aucun champ sélectionné dans cette partie"
+                label="Aucun champ sélectionné dans cette partie"
               />
 
               <template

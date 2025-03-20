@@ -1,4 +1,4 @@
-import type { Demandeur, DossierStateKeys, IDossier, IOrganisme, TDossier } from '@biblio-num/shared'
+import type { Demandeur, DossierStateKeys, IDossier, IOrganisme, IOrganismeOutputDto, TDossier } from '@biblio-num/shared'
 import { faker } from '@faker-js/faker/locale/fr'
 
 const getStateDossier = (): DossierStateKeys => faker.helpers.arrayElement(['accepte', 'en_construction', 'en_instruction'])
@@ -145,11 +145,12 @@ export const generateDossierDS = (): TDossier => {
 export const generateDossierDSPersonneMorale = () => generateDossierDSByTypeDemandeur('PersonneMorale', getDemandeurMorale())
 export const generateDossierDSPersonnePhysique = () => generateDossierDSByTypeDemandeur('PersonnePhysique', getDemandeurPhysique())
 export const getRandomOrganismeType = () => faker.helpers.arrayElement(['unknown', 'FDD', 'FE', 'FRUP', 'ARUP', 'CULTE'])
-export const generateOrganisme = (): IOrganisme => ({
+export const generateOrganisme = (): IOrganismeOutputDto => ({
+
   id: faker.number.int(),
   title: faker.company.name(),
   type: getRandomOrganismeType(),
-  idRna: null,
+  idRna: `W${faker.string.numeric(9)}`,
   rnaJson: null,
   idRnf: null,
   rnfJson: null,
@@ -168,6 +169,52 @@ export const generateOrganisme = (): IOrganisme => ({
   phoneNumber: faker.phone.number(),
   dateCreation: new Date(faker.date.past().toISOString()),
   dateDissolution: null,
+  declarationYears: Array(faker.number.int({ min: 1, max: 5 })).fill(0).map(() => faker.date.past().getFullYear()),
+  missingDeclarationYears: Array(faker.number.int({ min: 1, max: 5 })).fill(0).map(() => faker.date.past().getFullYear()),
+  persons: Array(faker.number.int({ min: 1, max: 5 })).fill(0).map(() => ({
+    civilite: faker.helpers.arrayElement(['M.', 'Mme', 'Mlle']),
+    nom: faker.person.lastName(),
+    prenom: faker.person.firstName(),
+    address: {
+      label: faker.location.streetAddress(),
+      type: faker.helpers.arrayElement(['housenumber', 'street', 'municipality', 'locality']),
+      streetAddress: faker.location.streetAddress(),
+      streetNumber: faker.location.street(),
+      streetName: faker.location.street(),
+      postalCode: faker.location.zipCode(),
+      cityName: faker.location.city(),
+      cityCode: faker.location.zipCode(),
+      departmentName: faker.location.state(),
+      departmentCode: faker.location.zipCode(),
+      regionName: faker.location.state(),
+      regionCode: faker.string.numeric(2),
+    },
+    bornAt: faker.date.past().toISOString(),
+    email: faker.internet.email(),
+    phoneNumber: faker.phone.number(),
+    bornPlace: faker.location.city(),
+  })),
+  websites: faker.internet.url(),
+  objectDescription: faker.lorem.paragraph(),
+  dueDate: faker.date.future(),
+  generalInterest: faker.lorem.paragraph(),
+  internationalAction: faker.datatype.boolean(),
+  createdAt: new Date(faker.date.past().toISOString()),
+  updatedAt: new Date(faker.date.past().toISOString()),
+  fiscalEndDateAt: new Date(faker.date.past().toISOString()),
+  sigle: faker.company.name(),
+  siret: faker.string.numeric(14),
+  siege: {
+    coordinates: [faker.address.longitude(), faker.address.latitude()],
+    prefecture: faker.location.city(),
+    isVerified: faker.datatype.boolean(),
+  },
+  gestion: {
+    addressLabel: faker.location.streetAddress(),
+    coordinates: [faker.address.longitude(), faker.address.latitude()],
+    prefecture: faker.location.city(),
+    isVerified: faker.datatype.boolean(),
+  },
 })
 
 export const generateDossier = (): IDossier & { organisme: IOrganisme } => ({

@@ -155,9 +155,9 @@ const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutpu
         <div class="w-full h-full pl-4">
           <DsfrTabs
             ref="tabs"
+            v-model="selected"
             tab-list-name="tabs-fiche"
             :tab-titles="tabTitles"
-            :initial-selected-index="selected"
             class="h-full"
             @select-tab="select"
           >

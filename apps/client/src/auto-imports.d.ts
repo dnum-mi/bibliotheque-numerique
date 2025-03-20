@@ -110,9 +110,7 @@ declare module 'vue' {
   interface GlobalComponents {}
   interface ComponentCustomProperties {
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
-    readonly OhVueIcon: UnwrapRef<typeof import('oh-vue-icons')['OhVueIcon']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
-    readonly addIcons: UnwrapRef<typeof import('oh-vue-icons')['addIcons']>
     readonly afterAll: UnwrapRef<typeof import('vitest')['afterAll']>
     readonly afterEach: UnwrapRef<typeof import('vitest')['afterEach']>
     readonly assert: UnwrapRef<typeof import('vitest')['assert']>
