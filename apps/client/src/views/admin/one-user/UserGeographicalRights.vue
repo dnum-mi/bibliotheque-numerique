@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type { PrefectureOptions, PrefectureKeys } from '@biblio-num/shared'
+import type { IPrefectureOptions, PrefectureKeys } from '@biblio-num/shared'
 import { listOfPrefectures } from '@biblio-num/shared'
-import type { DsfrTagProps } from '@gouvminint/vue-dsfr/types/components/DsfrTag/DsfrTag.vue'
+import type { DsfrTagProps } from '@gouvminint/vue-dsfr'
 import { computed } from 'vue'
 import { LocalizationOptions } from './localization.enum'
 import type { LocalizationOptionsKeys } from './localization.enum'
 
 const props = defineProps<{
-  geographicalRights: PrefectureOptions;
+  geographicalRights: IPrefectureOptions;
 }>()
 
 const emit = defineEmits<{
@@ -52,7 +52,7 @@ const disabledAddPrefectures = computed<boolean>(() => {
 })
 // const localizationSelected = ref<string | undefined>(localizationOption.value)
 
-const isDeletable = (option: PrefectureOptions, prefecture: PrefectureKeys): boolean =>
+const isDeletable = (option: IPrefectureOptions, prefecture: PrefectureKeys): boolean =>
   option.national.editable || option.prefectures?.deletable.includes(prefecture)
 
 const prefectures = computed<DsfrTagProps[]>(() =>
