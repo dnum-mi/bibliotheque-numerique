@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.25.2](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.25.1...v2.25.2) (2025-03-21)
+
+
+### Bug Fixes
+
+* delete organisme in FRONT ([0eb3eb8](https://github.com/dnum-mi/bibliotheque_numerique/commit/0eb3eb8cf7b2ab525281cc0046b97c5bcc2cbb3f))
+* delete organisme in server ([a0c035a](https://github.com/dnum-mi/bibliotheque_numerique/commit/a0c035a02c3996062da1881c554f42be0ebd193b))
+* download file ([#1659](https://github.com/dnum-mi/bibliotheque_numerique/issues/1659)) ([26692a2](https://github.com/dnum-mi/bibliotheque_numerique/commit/26692a245760f01b0e3e399e1adf2f049fbbfa92))
+* download file ([#1659](https://github.com/dnum-mi/bibliotheque_numerique/issues/1659)) ([26692a2](https://github.com/dnum-mi/bibliotheque_numerique/commit/26692a245760f01b0e3e399e1adf2f049fbbfa92))
+* jwt env variables ([7aba3bf](https://github.com/dnum-mi/bibliotheque_numerique/commit/7aba3bf5e4fa665a6915ce6393d494d07bf99dab))
+* replace npm xlsx ([#1657](https://github.com/dnum-mi/bibliotheque_numerique/issues/1657)) ([4bacc2f](https://github.com/dnum-mi/bibliotheque_numerique/commit/4bacc2fe0e8da7757e2cf2ab0c45eef4ecfa2382))
+* run dev:client in project root ([9a08fdb](https://github.com/dnum-mi/bibliotheque_numerique/commit/9a08fdbd0a1d36d4040e9a5a2fd585ef06778a5a))
+* the message null has no properties ([54fe26b](https://github.com/dnum-mi/bibliotheque_numerique/commit/54fe26b0e846e3fa462acbd930f6dd5e0f53819a))
+* update dependency Vue-dsfr v8 ([#1647](https://github.com/dnum-mi/bibliotheque_numerique/issues/1647)) ([3130402](https://github.com/dnum-mi/bibliotheque_numerique/commit/31304024ea03aca20255af2682e7d16dd1a74a87))
+
 ## [2.25.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.25.0...v2.25.1) (2025-03-13)
 
 
