@@ -107,7 +107,7 @@ export const headers = {
 export const apiClientInstance = axios.create({
   baseURL: baseApiUrl,
   headers,
-  withCredentials: true,
+  withCredentials: false, // no refresh token inside normal request
 })
 
 export const apiClientAuthInstance = axios.create({
