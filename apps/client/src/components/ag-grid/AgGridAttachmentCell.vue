@@ -1,15 +1,24 @@
 <script lang="ts" setup>
 import { getFileRoute } from '@/api/bn-api-routes'
 import { baseApiUrl } from '@/api/api-client'
+import { downloadFile } from '@/utils/downloadFile'
 
 const props = defineProps<{ params: { value: { uuid: string } } }>()
-// BAUDOIN ici: (pas testé)
+
 const errorFile = computed(() => props.params.value.uuid === 'ERROR')
-const href = computed(() => baseApiUrl + getFileRoute(props.params.value.uuid))
+const fileUuid = computed(() => props.params.value.uuid)
+const href = computed(() => baseApiUrl + getFileRoute(fileUuid.value))
+
+const handleDownload = async () => {
+  if (!fileUuid.value) {
+    return
+  }
+  await downloadFile(fileUuid.value)
+}
 </script>
 
 <template>
-  <div v-if="params.value.uuid">
+  <div v-if="fileUuid">
     <template v-if="errorFile">
       <VIcon
         style="cursor: not-allowed; color: red"
@@ -23,7 +32,7 @@ const href = computed(() => baseApiUrl + getFileRoute(props.params.value.uuid))
         target="_blank"
         style="background-image: none"
         class="attachment"
-        @click.stop
+        @click.prevent.stop="handleDownload"
       >
         <VIcon name="ri-external-link-fill" />
       </a>
