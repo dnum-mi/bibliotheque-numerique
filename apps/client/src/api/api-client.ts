@@ -174,6 +174,9 @@ apiClientInstance.interceptors.response.use(
 
     if (status === 403) {
       toaster.addMessage({ type: 'warning', description: 'Vous n’avez pas les droits de faire cette opération' })
+      useUserStore().logout()
+      const routeTo: RouteLocationRaw = { name: routeNames.SIGNIN }
+      router.push(routeTo)
       return null
     }
 
