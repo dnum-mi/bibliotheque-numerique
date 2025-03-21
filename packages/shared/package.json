@@ -1,6 +1,6 @@
 {
   "name": "@biblio-num/shared",
-  "version": "2.25.1",
+  "version": "2.25.2",
   "description": "Shared lib for BiblioNum",
   "main": "./dist/index.cjs.js",
   "module": "./dist/index.esm.js",
