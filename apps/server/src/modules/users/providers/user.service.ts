@@ -148,6 +148,7 @@ export class UserService
 
   async updatePassword(user: User, password: string): Promise<void> {
     user.password = password
+    user.validated = true // changing password via mail = verifying mail
     await this.repo.save(user)
     await this.deleteUserRefreshTokens(user.id)
   }
