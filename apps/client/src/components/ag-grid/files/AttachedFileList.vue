@@ -1,17 +1,15 @@
 <script lang="ts" setup>
 import type { GridReadyEvent, GridApi, GridOptions, AgGridEvent } from 'ag-grid-community'
-
 import type { IFileOutput, IFilter, IPagination, FileDsSourceLabelKey } from '@biblio-num/shared'
 import { fileDsSourceLabels, dFileSourceLabelDictionary, fileExtensions, states, eState, fileTags } from '@biblio-num/shared'
-
 import type { ApiCall } from '../server-side/pagination.utils'
 import type { BNColDef } from '../server-side/bn-col-def.interface'
 import MimeTypeCellRenderer from './MimeTypeCellRenderer.vue'
 import AttachedFileStateCellRenderer from './AttachedFileStateCellRenderer.vue'
-import { baseApiUrl } from '@/api/api-client'
 import FileTagBadgeRenderer from '@/components/Badges/file-tag/FileTagBadgeRenderer.vue'
 import useToaster from '@/composables/use-toaster'
 import type { Message as ToasterMessage } from '@/composables/use-toaster'
+import { downloadFile } from '@/utils/downloadFile'
 
 const props = withDefaults(defineProps<AttachedFileListProps>(), {
   tag: undefined,
@@ -108,14 +106,14 @@ type AttachedFileListProps = {
 }
 
 const toaster = useToaster()
-
 const columnsDef = ref<BNColDef[]>(props.columnsDef)
-
 const gridApi = ref<GridApi>()
+
 const onGridReady = (event: GridReadyEvent) => {
   gridApi.value = event.api
   emit('gridReady', event)
 }
+
 const paginationDto = ref()
 const fetching = ref(false)
 
@@ -124,17 +122,17 @@ const specificGridOptions: Partial<GridOptions> = {
   sideBar: null,
 }
 
-const onSelectionChanged = (event: AgGridEvent) => {
+const onSelectionChanged = async (event: AgGridEvent) => {
   const file = event.api.getSelectedRows()?.[0]
-
   if (file?.state === eState.uploaded) {
-    const url = `${baseApiUrl}/files/${file?.uuid}`
-    if (url) {
-      window.open(url, '_blank')
-    }
+    await downloadFile(file.uuid)
     return
   }
-  const message: ToasterMessage = { description: `Le fichier ${file?.originalLabel} n'est pas téléchargeable`, type: 'warning' }
+
+  const message: ToasterMessage = {
+    description: `Le fichier ${file?.originalLabel} n'est pas téléchargeable`,
+    type: 'warning',
+  }
 
   if (file?.state === eState.failed) {
     message.description = `${message.description}. La récupération du fichier a échoué.`

@@ -156,7 +156,7 @@ apiClientInstance.interceptors.response.use(
 
         return apiClientInstance(originalRequest)
       } catch (e) {
-        console.log(e)
+        console.error(e)
         refreshingToken = false
         pendingRequests = []
 
@@ -521,6 +521,11 @@ export const attachedFilesApiClient = {
   getAttachedFiles: async (params: IPagination<DynamicKeys>): Promise<IFileOutput[]> => {
     const response = await apiClientInstance.post(attachedFilesRoute, params)
     return response?.data
+  },
+
+  getAttachmentFile: async (uuid: string) => {
+    const response = await apiClientInstance.get(`/files/${uuid}`, { responseType: 'blob' })
+    return response
   },
 }
 
