@@ -174,25 +174,22 @@ export class AuthService implements OnModuleInit {
 
   async refreshToken(oldRefreshToken: string): Promise<AuthResponseDto> {
     this.logger.verbose('refreshToken')
-    try {
-      const payload = this.jwtService.verify(oldRefreshToken)
+    const payload = this.jwtService.verify(oldRefreshToken)
 
-      const existingToken = await this.refreshTokenRepository.findOne({
-        where: { refreshToken: oldRefreshToken, user: { id: payload.sub } },
-        relations: ['user'],
-      })
+    const existingToken = await this.refreshTokenRepository.findOne({
+      where: { refreshToken: oldRefreshToken, user: { id: payload.sub } },
+      relations: ['user'],
+    })
 
-      if (!existingToken) {
-        throw new UnauthorizedException('Invalid refresh token')
-      }
-      await this.refreshTokenRepository.delete(existingToken.id)
-      const { accessToken, refreshToken }: AuthResponseDto = await this.createTokens(
-        payload.sub, payload.email, false,
-      )
-      return { accessToken, refreshToken }
-    } catch (e) {
-      throw new UnauthorizedException('Invalid refresh token')
+    if (!existingToken) {
+      this.logger.warn(`user ${payload.sub}: refresh token not found`)
+      throw new UnauthorizedException('Not authorized')
     }
+    await this.refreshTokenRepository.delete(existingToken.id)
+    const { accessToken, refreshToken }: AuthResponseDto = await this.createTokens(
+      payload.sub, payload.email, false,
+    )
+    return { accessToken, refreshToken }
   }
 
   proconnect(): { url: string; token: string } {
