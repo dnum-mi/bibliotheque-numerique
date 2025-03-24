@@ -52,10 +52,7 @@ export class AuthController {
   async logout(@Req() req, @Res() res): Promise<void> {
     await this.authService.logout(req.cookies?.refreshToken)
 
-    res.clearCookie('refreshToken', {
-      httpOnly: true,
-    })
-
+    res.clearCookie('refreshToken')
     res.send()
   }
 
