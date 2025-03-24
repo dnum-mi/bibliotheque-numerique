@@ -12,6 +12,7 @@ import { APP_NAME_TOKEN } from '@/shared/modules/logger/logger.const'
 import { LoggingInterceptor } from '@/shared/modules/logger/logging.interceptor'
 import { EntityNotFoundErrorFilter } from '@/shared/exceptions/filters/entity-not-found-error.filter'
 import * as cookieParser from 'cookie-parser'
+import { JWTExceptionFilter } from './shared/exceptions/filters/jwt-exception.filter'
 
 export const configMain = async (app: INestApplication, configService?: ConfigService): Promise<void> => {
   const loggerService = await app.resolve<LoggerService>(LoggerService)
@@ -25,6 +26,7 @@ export const configMain = async (app: INestApplication, configService?: ConfigSe
   let axiosFailedErrorLogger: LoggerService = loggerService
   let customValidationErrorLogger: LoggerService = loggerService
   let entityNotFoundErrorLogger: LoggerService = loggerService
+  let jwtFailedErrorLogger: LoggerService = loggerService
   if (!configService.get('isTest')) {
     exceptionFilterLogger = new LoggerService(configService, appNameToken)
     exceptionFilterLogger.setContext('AllExceptionsFilter')
@@ -36,12 +38,15 @@ export const configMain = async (app: INestApplication, configService?: ConfigSe
     customValidationErrorLogger.setContext('CustomValidationExceptionFilter')
     entityNotFoundErrorLogger = new LoggerService(configService, appNameToken)
     entityNotFoundErrorLogger.setContext('EntityNotFoundErrorFilter')
+    jwtFailedErrorLogger = new LoggerService(configService, appNameToken)
+    jwtFailedErrorLogger.setContext('JWTExceptionFilter')
   }
   // order is important here, from most generic to most specific
   app.useGlobalFilters(
     new AllExceptionsFilter(httpAdapterHost, exceptionFilterLogger),
     new QueryFailedFilter(httpAdapterHost, queryFailedFilterLogger),
     new AxiosExceptionFilter(httpAdapterHost, axiosFailedErrorLogger),
+    new JWTExceptionFilter(httpAdapterHost, jwtFailedErrorLogger),
     new CustomValidationExceptionFilter(httpAdapterHost, customValidationErrorLogger),
     new EntityNotFoundErrorFilter(httpAdapterHost, entityNotFoundErrorLogger),
   )
