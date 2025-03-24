@@ -97,22 +97,11 @@ export class AuthService implements OnModuleInit {
   async logout(refreshToken: string): Promise<void> {
     this.logger.verbose('logout')
 
-    try {
-      const payload = this.jwtService.verify(refreshToken)
-      const userId = payload.sub
-      const existingToken = await this.refreshTokenRepository.findOne({
-        where: { refreshToken, user: { id: userId } },
-        relations: ['user'],
-      })
-
-      if (!existingToken) {
-        throw new NotFoundException('refresh token not found')
-      }
-
-      await this.refreshTokenRepository.delete({ refreshToken })
-    } catch (e) {
-      throw new BadRequestException('Invalid refresh token')
+    if (!refreshToken) {
+      this.logger.warn('refresh token is undefined')
+      return
     }
+    await this.refreshTokenRepository.delete({ refreshToken })
   }
 
   public async fetchProconnectUserInfo(req): Promise<UserinfoResponse> {
