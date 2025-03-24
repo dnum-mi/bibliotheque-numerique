@@ -52,6 +52,11 @@ export class CronService implements OnApplicationBootstrap {
         name: eJobName.AnonymiseAll,
         cron: this.config.get('cron').anonymiseDossiers,
       },
+      {
+        name: eJobName.CleanDb,
+        cron: this.config.get('cron').cleanDb,
+      },
+
     ]
   }
 

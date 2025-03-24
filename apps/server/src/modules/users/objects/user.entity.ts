@@ -9,7 +9,7 @@ import {
 } from 'typeorm'
 import * as bcrypt from 'bcrypt'
 import { BaseEntity } from '@/shared/base-entity/base.entity'
-import { RefreshToken } from './refresh-token.entity'
+import { RefreshToken } from '../../refresh-token/refresh-token.entity'
 import { CustomFilter } from '@/modules/custom-filters/objects/entities/custom-filter.entity'
 import {
   IRole,
