@@ -161,8 +161,7 @@ apiClientInstance.interceptors.response.use(
         pendingRequests = []
 
         toaster.addMessage({ id: 'auth', type: 'warning', description: 'Vous n’êtes plus connecté, veuillez vous réauthentifier' })
-        useUserStore().logout()
-
+        useUserStore().forceResetUser()
         const routeTo: RouteLocationRaw = { name: routeNames.SIGNIN }
         if (!router.currentRoute.value.meta.skipAuth) {
           routeTo.query = { redirect: location.href.replace(location.origin, '') }
