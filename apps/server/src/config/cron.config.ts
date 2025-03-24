@@ -8,4 +8,5 @@ export default registerAs('cron', () => ({
   computeTimeTracking: process.env.CRON_COMPUTE_TIME_TRACKING || '0 1 * * * *',
   computeOrganismeDDC: process.env.CRON_COMPUTE_ORGANISME_DDC || '0 2 * * * *',
   anonymiseDossiers: process.env.CRON_ANONYMISE_DOSSIER || '0 3 * * * *',
+  cleanDb: process.env.CRON_CLEAN_DB || '0 0 * * * *',
 }))
