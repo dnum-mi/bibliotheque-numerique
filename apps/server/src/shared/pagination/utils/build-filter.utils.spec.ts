@@ -321,6 +321,21 @@ describe('Build filter', () => {
           { I09: 'enum' },
         ),
       ).resolves.toEqual("((\"I09\" IN ('toto','tata')))")
+      expect(
+        expect(
+          buildFilterQuery(
+            {
+              I09: {
+                filterType: 'set',
+                condition1: {
+                  filter: [''],
+                },
+              },
+            },
+            { I09: 'enum' },
+          ),
+        ).rejects.toThrow('Empty string is not a correct enum value.')
+      )
     })
     it('Should build filter for array field', () => {
       expect(

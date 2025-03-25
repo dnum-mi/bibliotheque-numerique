@@ -8,7 +8,7 @@ import {
   eIdentificationDemarche,
   IdentificationDemarcheKey,
   Prefecture,
-  PrefectureKeys,
+  PrefectureKey,
 } from '@biblio-num/shared'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
@@ -44,7 +44,7 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
     this.logger.setContext(this.constructor.name)
   }
 
-  private _findPrefecture(dossier: TDossier): PrefectureKeys | null {
+  private _findPrefecture(dossier: TDossier): PrefectureKey | null {
     this.logger.verbose('_findPrefecture')
     const label = dossier.groupeInstructeur?.label ?? ''
     const regexGroupInstructeur = /(\s*)(\d?\d[\dAB])(\s*)([-–])(.*)/
@@ -54,13 +54,13 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
     const finalLabel = 'D' + startLabel
     const pref = Prefecture[finalLabel] ? finalLabel : null
     this.logger.debug(`Prefecture: ${pref}`)
-    return pref
+    return pref as PrefectureKey
   }
 
   private async _upsertDossier(
     jsonDossier: TDossier,
     demarcheId: number,
-    prefecture: PrefectureKeys | null,
+    prefecture: PrefectureKey | null,
   ): Promise<number> {
     this.logger.verbose('_upsertDossier')
     const upsert = await this.repo.upsert(

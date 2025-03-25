@@ -2,7 +2,7 @@ import {
   IPrefectureOptions,
   OneDemarcheRoleOption,
   RolesKeys,
-  PrefectureKeys,
+  PrefectureKey,
   IUserWithEditableRole,
   Prefecture,
 } from '@biblio-num/shared'
@@ -18,7 +18,7 @@ class PrefectureDto {
     enum: Prefecture,
     isArray: true,
   })
-  value: PrefectureKeys[]
+  value: PrefectureKey[]
 
   @ApiProperty({
     description:
@@ -27,7 +27,7 @@ class PrefectureDto {
     enum: Prefecture,
     isArray: true,
   })
-  deletable: PrefectureKeys[]
+  deletable: PrefectureKey[]
 
   @ApiProperty({
     description:
@@ -36,7 +36,7 @@ class PrefectureDto {
     enum: Prefecture,
     isArray: true,
   })
-  addable: PrefectureKeys[]
+  addable: PrefectureKey[]
 }
 
 class NationalDto {
@@ -69,9 +69,9 @@ class PrefectureOptionsDto implements IPrefectureOptions {
     type: PrefectureDto,
   })
   prefectures: {
-    value: PrefectureKeys[]
-    deletable: PrefectureKeys[]
-    addable: PrefectureKeys[]
+    value: PrefectureKey[]
+    deletable: PrefectureKey[]
+    addable: PrefectureKey[]
   }
 }
 

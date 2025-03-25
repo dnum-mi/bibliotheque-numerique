@@ -11,6 +11,7 @@ export const UserFieldTypeHashConst: Record<
     | 'validated'
     | 'hashPassword'
     | 'customFilters'
+    | 'refreshTokens'
     | 'removeSkipHashPasswordReference'
   >,
   FieldTypeKeys
@@ -22,5 +23,5 @@ export const UserFieldTypeHashConst: Record<
   job: 'string',
   createdAt: 'date',
   updatedAt: 'date',
-  refreshTokens: 'string',
+  prefecture: 'enum',
 }

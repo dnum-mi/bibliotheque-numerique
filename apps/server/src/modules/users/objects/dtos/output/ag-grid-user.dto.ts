@@ -1,4 +1,4 @@
-import { IAgGridUser, RolesKeys } from '@biblio-num/shared'
+import { IAgGridUser, VerbosePrefecture, RolesKeys } from '@biblio-num/shared'
 
 export class AgGridUserDto implements IAgGridUser {
   id: number
@@ -8,4 +8,5 @@ export class AgGridUserDto implements IAgGridUser {
   job: string
   roleLabel: RolesKeys
   roleOptionsResume: string
+  prefecture: VerbosePrefecture
 }
