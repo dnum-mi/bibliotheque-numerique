@@ -1,4 +1,4 @@
-import type { PrefectureKeys } from '../prefectures'
+import type { PrefectureKey } from '../prefectures'
 import type { RolesKeys } from '../roles'
 import type { ISmallDemarcheOutput } from '../demarches'
 import type { IUserOutput } from './user-output.interface'
@@ -9,9 +9,9 @@ export interface IPrefectureOptions {
     editable: boolean
   }
   prefectures: {
-    value: PrefectureKeys[]
-    deletable: PrefectureKeys[]
-    addable: PrefectureKeys[]
+    value: PrefectureKey[]
+    deletable: PrefectureKey[]
+    addable: PrefectureKey[]
   }
 }
 

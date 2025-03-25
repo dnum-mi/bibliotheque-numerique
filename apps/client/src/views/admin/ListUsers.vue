@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { SelectionChangedEvent } from 'ag-grid-community'
 
+import { listOfVerbosePrefecture } from '@biblio-num/shared'
 import type { IPaginationUser } from '@biblio-num/shared'
 
 import { dateToStringFr } from '@/utils'
@@ -30,19 +31,31 @@ const columnDefs: BNColDef[] = [
     ...baseColDef,
     headerName: 'Courriel',
     field: 'email',
+    width: 250,
+  },
+  {
+    ...baseColDef,
+    headerName: 'Préfecture',
+    field: 'prefecture',
+    fieldType: 'enum',
+    filter: 'agSetColumnFilter',
+    filterParams: {
+      values: listOfVerbosePrefecture,
+      suppressMiniFilter: true,
+    },
+    width: 250,
+  },
+  {
+    ...baseColDef,
+    headerName: 'Nom de famille',
+    field: 'lastname',
     width: 200,
   },
   {
     ...baseColDef,
     headerName: 'Prénom',
     field: 'firstname',
-    width: 150,
-  },
-  {
-    ...baseColDef,
-    headerName: 'Nom de famille',
-    field: 'lastname',
-    width: 150,
+    width: 200,
   },
   {
     ...baseColDef,
@@ -53,7 +66,7 @@ const columnDefs: BNColDef[] = [
     ...baseColDef,
     headerName: 'Rôle',
     field: 'roleLabel',
-    width: 300,
+    width: 200,
     sortable: false,
     cellRenderer: RoleBadgesRenderer,
     filter: 'agSetColumnFilter',
@@ -76,6 +89,7 @@ const columnDefs: BNColDef[] = [
     headerName: 'Création',
     field: 'createdAt',
     filter: 'agDateColumnFilter',
+    width: 150,
     valueFormatter: ({ value }: { value: string | number | Date }) => dateToStringFr(value),
   },
   {
@@ -83,6 +97,7 @@ const columnDefs: BNColDef[] = [
     headerName: 'Modification',
     field: 'updatedAt',
     filter: 'agDateColumnFilter',
+    width: 150,
     valueFormatter: ({ value }: { value: string | number | Date }) => dateToStringFr(value),
   },
 ]

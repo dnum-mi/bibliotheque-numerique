@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsEmail, IsNotEmpty } from 'class-validator'
+import { IsEmail, IsEnum, IsNotEmpty } from 'class-validator'
 import { IsPasswordStrongEnough } from './is-password-strong-enough'
-import { ICreateUser } from '@biblio-num/shared'
+import { ICreateUser, VerbosePrefecture, listOfVerbosePrefecture } from '@biblio-num/shared'
 
 export class CreateUserDto implements ICreateUser {
   @ApiProperty({
@@ -36,4 +36,12 @@ export class CreateUserDto implements ICreateUser {
   @IsNotEmpty({ message: 'Veuillez remplir le mot de passe' })
   @IsPasswordStrongEnough({ message: 'Ce mot de passe n’est pas assez fort' })
   password: string
+
+  @ApiProperty({
+    description: 'Préfecture de l\'utilisateur',
+    enum: listOfVerbosePrefecture,
+  })
+  @IsEnum(listOfVerbosePrefecture)
+  @IsNotEmpty()
+  prefecture: VerbosePrefecture
 }

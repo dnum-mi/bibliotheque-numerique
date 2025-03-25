@@ -1,11 +1,11 @@
 import { OmitType } from '@nestjs/swagger'
 import { UserOutputDto } from './user-output.dto'
-import { IMyProfileOutput, IRole, IRoleOption, RolesKeys } from '@biblio-num/shared'
+import { IMyProfileOutput, IRole, IRoleOption, RolesKeys, PrefectureKey } from '@biblio-num/shared'
 import { SmallDemarcheOutputDto } from '@/modules/demarches/objects/dtos/small-demarche-output.dto'
 
 class FrontFriendlyRoleOptionDto implements IRoleOption {
   national: boolean
-  prefectures: string[]
+  prefectures: PrefectureKey[]
   demarche: SmallDemarcheOutputDto
 }
 

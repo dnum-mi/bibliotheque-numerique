@@ -24,6 +24,7 @@ export const createRandomUser = (id?: number): User => ({
   firstName: faker.internet.userName(),
   lastName: faker.internet.userName(),
   email: faker.internet.email(),
+  prefecture: '75 - Paris',
   roles: [],
 })
 
@@ -35,6 +36,7 @@ export const createRandomAdmin = (): User => ({
   firstName: faker.internet.userName(),
   lastName: faker.internet.userName(),
   email: faker.internet.email(),
+  prefecture: '75 - Paris',
   roles: [{
     id: 1,
     name: RoleName.ADMIN,

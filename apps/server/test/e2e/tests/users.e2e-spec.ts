@@ -235,6 +235,7 @@ describe('users (e2e)', () => {
       lastname: 'De la jungle',
       firstname: 'George',
       job: 'King',
+      prefecture: '75 - Paris',
     }
 
     it('Should return error 400 if email is not valid', async () => {
@@ -273,7 +274,7 @@ describe('users (e2e)', () => {
       await userService.repository.delete({ email: fakeUser.email })
     })
 
-    it('Should return 200 if user already exists', async () => {
+    it('Should send deja inscrit if user already exist', async () => {
       const email = 'testpwd@localhost.com'
       let to: string
       let subject: string

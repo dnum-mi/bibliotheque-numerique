@@ -7,7 +7,7 @@ import {
 } from '@biblio-num/shared'
 import type {
   FormatFunctionRefKeys,
-  PrefectureKeys,
+  PrefectureKey,
 } from '@biblio-num/shared'
 
 import delayStateBadge from '@/components/Badges/delay-state/DelayStateBadge.vue'
@@ -91,7 +91,7 @@ const getFlagURL = (countryName: string) => {
 //#endregion
 
 //#region Prefecture
-const getPrefecture = (prefecture: PrefectureKeys) => {
+const getPrefecture = (prefecture: PrefectureKey) => {
   return Prefecture[prefecture]
 }
 //#endregion

@@ -88,6 +88,7 @@ const dumbUserFromRole = (role: IRole): IUser => ({
   password: 'useless',
   updatedAt: new Date(),
   createdAt: new Date(),
+  prefecture: '75 - Paris',
   role,
 })
 
@@ -230,7 +231,7 @@ describe('RoleUtils', () => {
           },
           3: {
             national: false,
-            prefectures: [Prefecture.D57, Prefecture.D75],
+            prefectures: ['D57', 'D75'],
           },
         },
       })
@@ -314,7 +315,7 @@ describe('RoleUtils', () => {
         options: {
           1: {
             national: false,
-            prefectures: [Prefecture.D57],
+            prefectures: ['D57'],
           },
         },
       })
@@ -333,7 +334,7 @@ describe('RoleUtils', () => {
             editable: true,
           },
           prefectures: {
-            value: [Prefecture.D57],
+            value: ['D57'],
             deletable: [],
             addable: [],
           },
@@ -347,7 +348,7 @@ describe('RoleUtils', () => {
         options: {
           1: {
             national: false,
-            prefectures: [Prefecture.D57, Prefecture.D75],
+            prefectures: ['D57', 'D75'],
           },
         },
       })
@@ -368,7 +369,7 @@ describe('RoleUtils', () => {
           prefectures: {
             value: [],
             deletable: [],
-            addable: [Prefecture.D57, Prefecture.D75],
+            addable: ['D57', 'D75'],
           },
         },
       })
@@ -380,7 +381,7 @@ describe('RoleUtils', () => {
         options: {
           1: {
             national: false,
-            prefectures: [Prefecture.D57, Prefecture.D75],
+            prefectures: ['D57', 'D75'],
           },
         },
       })
@@ -389,7 +390,7 @@ describe('RoleUtils', () => {
         options: {
           1: {
             national: false,
-            prefectures: [Prefecture.D57, Prefecture.D75],
+            prefectures: ['D57', 'D75'],
           },
         },
       })
@@ -408,8 +409,8 @@ describe('RoleUtils', () => {
             editable: false,
           },
           prefectures: {
-            value: [Prefecture.D57, Prefecture.D75],
-            deletable: [Prefecture.D57, Prefecture.D75],
+            value: ['D57', 'D75'],
+            deletable: ['D57', 'D75'],
             addable: [],
           },
         },
@@ -422,7 +423,7 @@ describe('RoleUtils', () => {
         options: {
           1: {
             national: false,
-            prefectures: [Prefecture.D57, Prefecture.D75],
+            prefectures: ['D57', 'D75'],
           },
         },
       })
@@ -464,7 +465,7 @@ describe('RoleUtils', () => {
         options: {
           1: {
             national: false,
-            prefectures: [Prefecture.D57, Prefecture.D75],
+            prefectures: ["D57", 'D75'],
           },
         },
       })
@@ -473,7 +474,7 @@ describe('RoleUtils', () => {
         options: {
           1: {
             national: false,
-            prefectures: [Prefecture.D57, Prefecture.D30],
+            prefectures: ['D57', 'D30'],
           },
         },
       })
@@ -492,9 +493,9 @@ describe('RoleUtils', () => {
             editable: false,
           },
           prefectures: {
-            value: [Prefecture.D57, Prefecture.D30],
-            deletable: [Prefecture.D57],
-            addable: [Prefecture.D75],
+            value: ['D57', 'D30'],
+            deletable: ['D57'],
+            addable: ['D75'],
           },
         },
       })
@@ -588,13 +589,13 @@ describe('RoleUtils', () => {
     })
     it('Shouldn\'t be able to check add pref', () => {
       const editable = { ...openEditionForEmptyInstructor }
-      editable.demarcheHash[1].prefectureOptions.prefectures.addable = [Prefecture.D57]
+      editable.demarcheHash[1].prefectureOptions.prefectures.addable = ['D57']
       expect(isEditionAllowed(
         {
           demarcheId: 1,
           prefecture: {
             toAdd: true,
-            key: Prefecture.D75,
+            key: 'D75',
           },
         } as UpdateOneRoleOptionDto,
         editable,
@@ -608,7 +609,7 @@ describe('RoleUtils', () => {
           demarcheId: 1,
           prefecture: {
             toAdd: true,
-            key: Prefecture.D57,
+            key: 'D57',
           },
         } as UpdateOneRoleOptionDto,
         editable,
@@ -616,13 +617,13 @@ describe('RoleUtils', () => {
     })
     it('Should be able to check add pref', () => {
       const editable = { ...openEditionForEmptyInstructor }
-      editable.demarcheHash[1].prefectureOptions.prefectures.addable = [Prefecture.D57]
+      editable.demarcheHash[1].prefectureOptions.prefectures.addable = ['D57']
       expect(isEditionAllowed(
         {
           demarcheId: 1,
           prefecture: {
             toAdd: true,
-            key: Prefecture.D57,
+            key: 'D57',
           },
         } as UpdateOneRoleOptionDto,
         editable,
@@ -630,13 +631,13 @@ describe('RoleUtils', () => {
     })
     it('Shouldn\'t be able to check del pref', () => {
       const editable = { ...openEditionForEmptyInstructor }
-      editable.demarcheHash[1].prefectureOptions.prefectures.deletable = [Prefecture.D57]
+      editable.demarcheHash[1].prefectureOptions.prefectures.deletable = ['D57']
       expect(isEditionAllowed(
         {
           demarcheId: 1,
           prefecture: {
             toAdd: false,
-            key: Prefecture.D75,
+            key: 'D75',
           },
         } as UpdateOneRoleOptionDto,
         editable,
@@ -644,13 +645,13 @@ describe('RoleUtils', () => {
     })
     it('Should be able to check del pref', () => {
       const editable = { ...openEditionForEmptyInstructor }
-      editable.demarcheHash[1].prefectureOptions.prefectures.deletable = [Prefecture.D75]
+      editable.demarcheHash[1].prefectureOptions.prefectures.deletable = ['D75']
       expect(isEditionAllowed(
         {
           demarcheId: 1,
           prefecture: {
             toAdd: false,
-            key: Prefecture.D75,
+            key: 'D75',
           },
         } as UpdateOneRoleOptionDto,
         editable,
@@ -694,7 +695,7 @@ describe('RoleUtils', () => {
           },
           3: {
             national: false,
-            prefectures: [Prefecture.D57, Prefecture.D75],
+            prefectures: ['D57', 'D75'],
           },
         },
       })
@@ -721,7 +722,7 @@ describe('RoleUtils', () => {
           },
           3: {
             national: false,
-            prefectures: [Prefecture.D57, Prefecture.D75],
+            prefectures: ['D57', 'D75'],
           },
         },
       })
@@ -730,7 +731,7 @@ describe('RoleUtils', () => {
         options: {
           1: {
             national: false,
-            prefectures: [Prefecture.D57],
+            prefectures: ['D57'],
           },
           3: {
             national: true,
@@ -752,7 +753,7 @@ describe('RoleUtils', () => {
           },
           3: {
             national: false,
-            prefectures: [Prefecture.D57, Prefecture.D75],
+            prefectures: ['D57', 'D75'],
           },
         },
       })
@@ -765,7 +766,7 @@ describe('RoleUtils', () => {
           },
           3: {
             national: false,
-            prefectures: [Prefecture.D75, Prefecture.D30],
+            prefectures: ['D75', 'D30'],
           },
         },
       })
@@ -783,11 +784,11 @@ describe('RoleUtils', () => {
           },
           3: {
             national: false,
-            prefectures: [Prefecture.D57, Prefecture.D75],
+            prefectures: ['D57', 'D75'],
           },
           4: {
             national: false,
-            prefectures: [Prefecture.D30],
+            prefectures: ['D30'],
           },
         },
       })
@@ -800,7 +801,7 @@ describe('RoleUtils', () => {
           },
           3: {
             national: false,
-            prefectures: [Prefecture.D57, Prefecture.D75, Prefecture.D30],
+            prefectures: ['D57', 'D75', 'D30'],
           },
           4: {
             national: true,

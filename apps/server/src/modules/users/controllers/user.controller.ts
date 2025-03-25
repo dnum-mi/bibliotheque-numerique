@@ -38,16 +38,10 @@ export class UserController {
   async signUp(@Body() body: CreateUserDto): Promise<UserOutputDto> {
     this.logger.verbose('signUp')
     const user = await this.usersService.create(body)
-    return {
-      id: user.id,
-      email: user.email,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-      lastname: user.lastname,
-      firstname: user.firstname,
-      job: user.job,
-      role: user.role,
-    }
+    return Object.fromEntries(
+      ['id', 'email', 'createdAt', 'updatedAt', 'lastname', 'firstname', 'job', 'role', 'prefecture']
+        .map(key => [key, user[key]]),
+    ) as UserOutputDto
   }
 
   @Post('/list')

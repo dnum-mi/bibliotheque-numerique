@@ -17,7 +17,7 @@ import {
   FieldTypeKeys,
   FormatFunctionRef,
   FormatFunctionRefKeys,
-  PrefectureKeys,
+  PrefectureKey,
 } from '@biblio-num/shared'
 import { RawChamp } from '@/shared/types/raw-champ.type'
 import { PieceJustificativeChamp } from '@dnum-mi/ds-api-client'
@@ -25,7 +25,7 @@ import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.d
 import { doesTextContainBnCode } from '@/shared/utils/bn-code.utils'
 
 export type TDossierWithPrefecture = Partial<TDossier> & {
-  prefecture?: PrefectureKeys
+  prefecture?: PrefectureKey
 }
 
 // Définition des limites des types SQL

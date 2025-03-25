@@ -1,4 +1,5 @@
 import type { RolesKeys } from '../roles'
+import { VerbosePrefecture } from '../prefectures'
 
 export interface IAgGridUser {
   id: number
@@ -8,4 +9,5 @@ export interface IAgGridUser {
   job: string
   roleLabel: RolesKeys
   roleOptionsResume: string
+  prefecture: VerbosePrefecture
 }

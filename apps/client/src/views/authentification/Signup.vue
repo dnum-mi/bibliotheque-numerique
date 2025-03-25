@@ -4,7 +4,8 @@ import { AxiosError } from 'axios'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useField, useForm, useIsFormDirty, useIsFormValid } from 'vee-validate'
 
-import type { ICreateUser } from '@biblio-num/shared'
+import { listOfPrefectureKeys, listOfVerbosePrefecture } from '@biblio-num/shared'
+import type { ICreateUser, PrefectureKey } from '@biblio-num/shared'
 
 import apiClient from '@/api/api-client'
 import { passwordValidator } from '@/utils/password.validator'
@@ -23,6 +24,7 @@ const validationSchema = toTypedSchema(z.object({
   email: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).email('Ceci semble être une adresse email invalide'),
   password: passwordValidator,
   job: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).min(2, 'Cet intitulé est trop court.'),
+  prefecture: z.enum(listOfVerbosePrefecture, { required_error: REQUIRED_FIELD_MESSAGE }),
 }))
 
 const { handleSubmit } = useForm<ICreateUser>({
@@ -52,6 +54,7 @@ const { value: lastnameValue, errorMessage: lastnameError } = useField<string>('
 const { value: jobValue, errorMessage: jobError } = useField<string>('job')
 const { value: emailValue, errorMessage: emailError } = useField<string>('email')
 const { value: passwordValue, errorMessage: passwordError } = useField<string>('password')
+const { value: prefectureValue, errorMessage: prefectureError } = useField<PrefectureKey>('prefecture')
 </script>
 
 <template>
@@ -130,6 +133,32 @@ const { value: passwordValue, errorMessage: passwordError } = useField<string>('
                   <em class="required-label"> *</em>
                 </template>
               </DsfrInput>
+            </DsfrInputGroup>
+
+            <!-- prefecture -->
+            <DsfrInputGroup
+              :is-valid="prefectureError"
+              :error-message="prefectureError"
+            >
+              <DsfrSelect
+                id="prefecture"
+                v-model="prefectureValue"
+                label="Préfecture"
+                :options="listOfVerbosePrefecture"
+                label-visible
+                required
+              >
+                <option
+                  v-for="key in listOfPrefectureKeys"
+                  :key="key"
+                  :value="key"
+                >
+                  {{ key.substring(1) }}
+                </option>
+              </DsfrSelect>
+              <template #required-tip>
+                <em class="required-label"> *</em>
+              </template>
             </DsfrInputGroup>
 
             <!-- EMAIL -->
