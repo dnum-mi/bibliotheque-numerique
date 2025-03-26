@@ -31,8 +31,6 @@ import { OrganismeProcessor } from '@/apps/worker-sync/processors/organisme.proc
 import { S3Module } from '@/shared/modules/s3/s3.module'
 import fileConfig from '../../config/file.config'
 import { WokerSyncService } from './woker-sync.service'
-import { ServerProcessor } from './processors/server.processor'
-import { RefreshTokenModule } from '../../modules/refresh-token/refresh-token.module'
 
 @Module({
   imports: [
@@ -67,7 +65,6 @@ import { RefreshTokenModule } from '../../modules/refresh-token/refresh-token.mo
     OrganismeModule,
     BnConfigurationModule,
     S3Module,
-    RefreshTokenModule,
   ],
   controllers: [],
   providers: [
@@ -76,7 +73,6 @@ import { RefreshTokenModule } from '../../modules/refresh-token/refresh-token.mo
     FeProcessor,
     OrganismeProcessor,
     WokerSyncService,
-    ServerProcessor,
   ],
 })
 export class WorkerSyncModule {}
