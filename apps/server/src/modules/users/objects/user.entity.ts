@@ -6,10 +6,11 @@ import {
   Entity,
   JoinTable,
   OneToMany,
+  OneToOne,
 } from 'typeorm'
 import * as bcrypt from 'bcrypt'
 import { BaseEntity } from '@/shared/base-entity/base.entity'
-import { RefreshToken } from './refresh-token.entity'
+import { RefreshToken } from '../../auth/objects/refresh-token.entity'
 import { CustomFilter } from '@/modules/custom-filters/objects/entities/custom-filter.entity'
 import {
   IRole,
@@ -110,6 +111,6 @@ export class User extends BaseEntity {
   @JoinTable()
   customFilters?: CustomFilter[]
 
-  @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user, { cascade: true })
-  refreshTokens: RefreshToken[]
+  @OneToOne(() => RefreshToken, (refreshToken) => refreshToken.user, { cascade: true })
+  refreshToken: RefreshToken[]
 }

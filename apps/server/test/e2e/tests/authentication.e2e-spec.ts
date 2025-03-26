@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
 import { TestingModuleFactory } from '../common/testing-module.factory'
-import { RefreshToken } from '@/modules/users/objects/refresh-token.entity'
+import { RefreshToken } from '@/modules/auth/objects/refresh-token.entity'
 import { AuthService } from '@/modules/auth/providers/auth.service'
 import { dataSource } from '../data-source-e2e.typeorm'
 import { Repository } from 'typeorm'
