@@ -6,7 +6,7 @@ import {
   OnModuleInit,
   UnauthorizedException,
 } from '@nestjs/common'
-import { RefreshToken } from '../../users/objects/refresh-token.entity'
+import { RefreshToken } from '../objects/refresh-token.entity'
 import { UserService } from '../../users/providers/user.service'
 import * as bcrypt from 'bcrypt'
 import { User } from '@/modules/users/objects/user.entity'
@@ -174,7 +174,7 @@ export class AuthService implements OnModuleInit {
       this.logger.warn(`user ${payload.sub}: refresh token not found`)
       throw new UnauthorizedException('Not authorized')
     }
-    await this.refreshTokenRepository.delete(existingToken.id)
+    await this.refreshTokenRepository.delete(existingToken.refreshToken)
     const { accessToken, refreshToken }: AuthResponseDto = await this.createTokens(
       payload.sub, payload.email, false,
     )

@@ -13,6 +13,7 @@ export const UserFieldTypeHashConst: Record<
     | 'customFilters'
     | 'refreshTokens'
     | 'removeSkipHashPasswordReference'
+    | 'refreshToken'
   >,
   FieldTypeKeys
 > = {
