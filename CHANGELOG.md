@@ -1,5 +1,24 @@
 # Changelog
 
+## [2.26.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.25.2...v2.26.0) (2025-03-26)
+
+
+### Features
+
+* delete refresh token expiered ([871f9d5](https://github.com/dnum-mi/bibliotheque_numerique/commit/871f9d5b094e1c2dbae9ec9acdb38ad48be6fdbd))
+* Prefecture inside user - Harmonising prefecture in app ([1c62147](https://github.com/dnum-mi/bibliotheque_numerique/commit/1c621470afb3028c5520ed477d050e3388a98312))
+
+
+### Bug Fixes
+
+* changing password validate email too ([157df75](https://github.com/dnum-mi/bibliotheque_numerique/commit/157df757937e67c37feca6b841db7288e97c8bd8))
+* clear cookies after status 401 ([697b94d](https://github.com/dnum-mi/bibliotheque_numerique/commit/697b94d4b1315061310534473b3c6569510d07b7))
+* do not send refresh token inside all request ([0eb7140](https://github.com/dnum-mi/bibliotheque_numerique/commit/0eb7140bb1bd52b3b70c4a6a24fcefa25a0c564c))
+* instantly disconnect a user on 403 ([d59cac5](https://github.com/dnum-mi/bibliotheque_numerique/commit/d59cac5e3365ae5dbf54436e7bc88c3093deb029))
+* interceptor jwt error ([688366b](https://github.com/dnum-mi/bibliotheque_numerique/commit/688366b0c180d333364401a79415de7c7cb0cc62))
+* remove try catch of logout endpoint ([3932435](https://github.com/dnum-mi/bibliotheque_numerique/commit/39324358c6709a39a1fa6a843117e869a7cca058))
+* remove try catch of refresh endpoint ([5701434](https://github.com/dnum-mi/bibliotheque_numerique/commit/5701434f68020460efccdfad70fb1491839cdfe5))
+
 ## [2.25.2](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.25.1...v2.25.2) (2025-03-21)
 
 
