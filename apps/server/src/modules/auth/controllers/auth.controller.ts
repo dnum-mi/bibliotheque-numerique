@@ -17,6 +17,7 @@ import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { AuthResponseDto, AuthProconnectResponseDto, UserOutputDto } from '@/modules/users/objects/dtos/output'
 import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.decorator'
 import { ConfigService } from '@nestjs/config'
+import { Role } from '@/modules/users/providers/decorators/role.decorator'
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -39,7 +40,7 @@ export class AuthController {
     })
   }
 
-  @PublicRoute()
+  @Role('any')
   @Delete('logout')
   @HttpCode(200)
   @UsualApiOperation({
@@ -50,11 +51,7 @@ export class AuthController {
   })
   async logout(@Req() req, @Res() res): Promise<void> {
     await this.authService.logout(req.cookies?.refreshToken)
-
-    res.clearCookie('refreshToken', {
-      httpOnly: true,
-    })
-
+    res.clearCookie('refreshToken')
     res.send()
   }
 

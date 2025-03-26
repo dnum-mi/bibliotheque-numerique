@@ -8,7 +8,7 @@ import { AuthController } from './controllers/auth.controller'
 import { JwtStrategy } from '@/modules/auth/providers/jwt.strategy'
 import { UserModule } from '../users/user.module'
 import { JwtAuthGuard } from './providers/jwt-auth.guard'
-import { RefreshToken } from '../users/objects/refresh-token.entity'
+import { RefreshToken } from './objects/refresh-token.entity'
 
 @Module({
   imports: [

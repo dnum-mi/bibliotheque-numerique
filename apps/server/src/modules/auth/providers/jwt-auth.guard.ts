@@ -1,35 +1,46 @@
-import { Injectable, ExecutionContext, UnauthorizedException, Logger } from '@nestjs/common'
+import {
+  Injectable,
+  ExecutionContext,
+  UnauthorizedException,
+  Logger,
+} from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
 import { RolesKeys } from '@biblio-num/shared'
 import { PUBLIC_ROUTE_KEY } from '@/modules/users/providers/decorators/public-route.decorator'
 import { Reflector } from '@nestjs/core'
 import { Request } from 'express'
+import { Observable } from 'rxjs'
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
-  constructor(private reflector: Reflector, private readonly logger: Logger) {
+  constructor(
+    private reflector: Reflector,
+    private readonly logger: Logger,
+  ) {
     super()
   }
 
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-    const publicRoute = this.reflector.get<RolesKeys>(PUBLIC_ROUTE_KEY, context.getHandler())
+  canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+    const publicRoute = this.reflector.get<RolesKeys>(
+      PUBLIC_ROUTE_KEY,
+      context.getHandler(),
+    )
     if (publicRoute) {
       return true
     }
 
-    const request = context.switchToHttp().getRequest<Request & {
-      cookies?: Record<string, string>, headers: Record<string, string> }>()
+    const request = context.switchToHttp().getRequest<
+      Request & {
+        cookies?: Record<string, string>
+        headers: Record<string, string>
+      }
+    >()
 
     if (!request.headers.authorization) {
-      throw new UnauthorizedException('No access token found.')
+      this.logger.warn('No access token found.')
+      throw new UnauthorizedException()
     }
 
-    try {
-      await super.canActivate(context)
-      return true
-    } catch (error) {
-      this.logger.error('Authentication failed', error)
-      throw new UnauthorizedException('Invalid token or not authenticated.')
-    }
+    return super.canActivate(context)
   }
 }
