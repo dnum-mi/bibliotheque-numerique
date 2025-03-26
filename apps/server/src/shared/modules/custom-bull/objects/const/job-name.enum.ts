@@ -18,7 +18,6 @@ const jobNames = [
   'AnonymiseOneDemarche',
   'AnonymiseOneDossier',
   'DeleteS3Files',
-  'CleanDb',
 ] as const
 
 export type JobNameKey = typeof jobNames[number]

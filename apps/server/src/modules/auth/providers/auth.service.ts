@@ -6,25 +6,22 @@ import {
   OnModuleInit,
   UnauthorizedException,
 } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
-import { JwtService } from '@nestjs/jwt'
-import { InjectRepository } from '@nestjs/typeorm'
+import { RefreshToken } from '../../users/objects/refresh-token.entity'
+import { UserService } from '../../users/providers/user.service'
 import * as bcrypt from 'bcrypt'
-import { randomBytes } from 'crypto'
-import { HttpsProxyAgent } from 'https-proxy-agent'
-import { Client, custom, generators, Issuer } from 'openid-client'
-import { Repository } from 'typeorm'
-
+import { User } from '@/modules/users/objects/user.entity'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import {
-  CustomJwtSignOptions,
-  DecodedToken,
-  UserinfoResponse,
-} from '@/modules/auth/auth.types'
-import { RefreshToken } from '@/modules/refresh-token/refresh-token.entity'
-import { UserService } from '@/modules/users/providers/user.service'
-import { AuthResponseDto } from '@/modules/users/objects/dtos/output'
-import { User } from '@/modules/users/objects/user.entity'
+  AuthResponseDto,
+} from '@/modules/users/objects/dtos/output'
+import { Client, custom, generators, Issuer } from 'openid-client'
+import { HttpsProxyAgent } from 'https-proxy-agent'
+import { randomBytes } from 'crypto'
+import { ConfigService } from '@nestjs/config'
+import { JwtService } from '@nestjs/jwt'
+import { UserinfoResponse, DecodedToken, CustomJwtSignOptions } from '@/modules/auth/auth.types'
+import { Repository } from 'typeorm'
+import { InjectRepository } from '@nestjs/typeorm'
 
 @Injectable()
 export class AuthService implements OnModuleInit {
@@ -56,17 +53,14 @@ export class AuthService implements OnModuleInit {
       const issuer = await Issuer.discover(
         this.configService.get('auth').discoveryUrl,
       )
-      const clientMetadata = {
+      this.client = new issuer.Client({
         client_id: this.configService.get('auth').clientId,
         client_secret: this.configService.get('auth').clientSecret,
         redirect_uris: [this.configService.get('auth').redirectUri],
         response_types: ['code'],
-        userinfo_signed_response_alg: this.configService.get('auth').userinfoSignedResponseAlg,
-      }
-      if (this.configService.get('isDev')) {
-        delete clientMetadata.userinfo_signed_response_alg
-      }
-      this.client = new issuer.Client(clientMetadata)
+        userinfo_signed_response_alg:
+          this.configService.get('auth').userinfoSignedResponseAlg,
+      })
     } catch (e) {
       this.logger.error("Couldn't initialize OpenID client")
       this.logger.error(e)
@@ -158,13 +152,10 @@ export class AuthService implements OnModuleInit {
 
     const accessToken = this.jwtService.sign(payload, accessOptions)
     const refreshToken = this.jwtService.sign({ ...payload, iat: Math.floor(Date.now() / 1000) }, refreshOptions)
-    const decodeReshesToken = this.jwtService.decode(refreshToken)
-
     await this.refreshTokenRepository.save({
       user: { id: userId },
       refreshToken,
       connectWithSso: fromProConnect,
-      expieredAt: new Date(decodeReshesToken.exp * 1000),
     })
 
     return { accessToken, refreshToken }

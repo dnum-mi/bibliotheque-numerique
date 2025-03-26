@@ -25,7 +25,7 @@ import { DemarcheService } from '@/modules/demarches/providers/services/demarche
 import { CreateUserDto, PaginationUserDto } from '@/modules/users/objects/dtos/input'
 import { AgGridUserDto, MyProfileOutputDto, PaginatedUserDto } from '@/modules/users/objects/dtos/output'
 import { PaginatedDto } from '@/shared/pagination/paginated.dto'
-import { RefreshToken } from '../../refresh-token/refresh-token.entity'
+import { RefreshToken } from '../objects/refresh-token.entity'
 
 type jwtPlaylod = {
   user: string | number

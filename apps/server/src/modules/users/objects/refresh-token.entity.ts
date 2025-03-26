@@ -1,5 +1,5 @@
 import { Entity, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn } from 'typeorm'
-import { User } from '@/modules/users/objects/user.entity'
+import { User } from './user.entity'
 
 @Entity({ name: 'refresh_tokens' })
 export class RefreshToken {
@@ -20,7 +20,4 @@ export class RefreshToken {
 
   @UpdateDateColumn()
   updatedAt: Date
-
-  @Column({ type: 'timestamp', nullable: true })
-  expieredAt: Date | number
 }
