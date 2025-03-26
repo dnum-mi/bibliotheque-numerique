@@ -1,12 +1,11 @@
 import {
-  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
   OnModuleInit,
   UnauthorizedException,
 } from '@nestjs/common'
-import { RefreshToken } from '../../users/objects/refresh-token.entity'
+import { RefreshToken } from '../objects/refresh-token.entity'
 import { UserService } from '../../users/providers/user.service'
 import * as bcrypt from 'bcrypt'
 import { User } from '@/modules/users/objects/user.entity'
@@ -22,6 +21,7 @@ import { JwtService } from '@nestjs/jwt'
 import { UserinfoResponse, DecodedToken, CustomJwtSignOptions } from '@/modules/auth/auth.types'
 import { Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
+import { Prefecture, PrefectureDictionary } from '@biblio-num/shared'
 
 @Injectable()
 export class AuthService implements OnModuleInit {
@@ -37,6 +37,7 @@ export class AuthService implements OnModuleInit {
   ) {}
 
   async onModuleInit(): Promise<void> {
+    this.logger.verbose('onModuleInit')
     try {
       const proxyUrl = this.configService.get('httpProxy')
       if (proxyUrl) {
@@ -71,7 +72,7 @@ export class AuthService implements OnModuleInit {
     email: string,
     password: string,
   ): Promise<AuthResponseDto> {
-    this.logger.verbose('validateUser')
+    this.logger.verbose('login')
     const user: User = await this.usersService.findByEmail(email, [
       'id',
       'validated',
@@ -79,74 +80,31 @@ export class AuthService implements OnModuleInit {
       'email',
     ])
     if (!user) {
-      throw new NotFoundException('User not found')
+      this.logger.warn('Email not found')
+      throw new NotFoundException()
     }
     if (!user.validated) {
-      throw new NotFoundException('Invalid e-mail')
+      this.logger.warn('User not validated')
+      throw new NotFoundException()
     }
 
     const isMatch: boolean = await bcrypt.compare(password, user.password)
     if (!isMatch) {
-      throw new NotFoundException('Invalid credentials')
+      this.logger.warn('Password incorrect')
+      throw new NotFoundException()
     }
     this.logger.debug('User connected')
     this.logger.debug({ id: user.id, email: user.email, validated: user.validated })
     return this.createTokens(user.id, user.email, false)
   }
 
-  async logout(refreshToken: string): Promise<void> {
+  async logout(refreshToken?: string): Promise<void> {
     this.logger.verbose('logout')
-
-    try {
-      const payload = this.jwtService.verify(refreshToken)
-      const userId = payload.sub
-      const existingToken = await this.refreshTokenRepository.findOne({
-        where: { refreshToken, user: { id: userId } },
-        relations: ['user'],
-      })
-
-      if (!existingToken) {
-        throw new NotFoundException('refresh token not found')
-      }
-
-      await this.refreshTokenRepository.delete({ refreshToken })
-    } catch (e) {
-      throw new BadRequestException('Invalid refresh token')
+    if (!refreshToken) {
+      this.logger.warn('refresh token is undefined')
+      return
     }
-  }
-
-  public async fetchProconnectUserInfo(req): Promise<UserinfoResponse> {
-    this.logger.verbose('fetchProconnectUserInfo')
-    const params = this.client.callbackParams(req)
-    const jwtToken = req.cookies?.auth_token
-
-    if (!jwtToken) {
-      throw new BadRequestException('Missing authentication token')
-    }
-
-    let decodedToken: DecodedToken
-    try {
-      decodedToken = this.jwtService.verify<DecodedToken>(jwtToken, {
-        secret: this.configService.get('auth').jwtSecret,
-      })
-    } catch (error) {
-      throw new BadRequestException('Invalid authentication token')
-    }
-
-    const { state, nonce } = decodedToken
-    if (!state || !nonce) {
-      throw new BadRequestException(
-        'Missing required parameters: state or nonce',
-      )
-    }
-
-    const tokenResponse = await this.client.callback(
-      this.configService.get('auth').redirectUri,
-      params,
-      { state, nonce },
-    )
-
-    return await this.client.userinfo(tokenResponse.access_token)
+    await this.refreshTokenRepository.delete({ refreshToken })
   }
 
   async createTokens(userId: number, userEmail: string, fromProConnect: boolean = false)
@@ -163,6 +121,7 @@ export class AuthService implements OnModuleInit {
 
     const accessToken = this.jwtService.sign(payload, accessOptions)
     const refreshToken = this.jwtService.sign({ ...payload, iat: Math.floor(Date.now() / 1000) }, refreshOptions)
+    await this.refreshTokenRepository.delete({ user: { id: userId } })
     await this.refreshTokenRepository.save({
       user: { id: userId },
       refreshToken,
@@ -174,25 +133,52 @@ export class AuthService implements OnModuleInit {
 
   async refreshToken(oldRefreshToken: string): Promise<AuthResponseDto> {
     this.logger.verbose('refreshToken')
-    try {
-      const payload = this.jwtService.verify(oldRefreshToken)
+    const payload = this.jwtService.verify(oldRefreshToken)
 
-      const existingToken = await this.refreshTokenRepository.findOne({
-        where: { refreshToken: oldRefreshToken, user: { id: payload.sub } },
-        relations: ['user'],
-      })
+    const existingToken = await this.refreshTokenRepository.findOne({
+      where: { refreshToken: oldRefreshToken, user: { id: payload.sub } },
+      relations: ['user'],
+    })
 
-      if (!existingToken) {
-        throw new UnauthorizedException('Invalid refresh token')
-      }
-      await this.refreshTokenRepository.delete(existingToken.id)
-      const { accessToken, refreshToken }: AuthResponseDto = await this.createTokens(
-        payload.sub, payload.email, false,
-      )
-      return { accessToken, refreshToken }
-    } catch (e) {
-      throw new UnauthorizedException('Invalid refresh token')
+    if (!existingToken) {
+      this.logger.warn(`user ${payload.sub}: refresh token not found`)
+      throw new UnauthorizedException()
     }
+    await this.refreshTokenRepository.delete(existingToken.refreshToken)
+    const { accessToken, refreshToken }: AuthResponseDto = await this.createTokens(
+      payload.sub, payload.email, false,
+    )
+    return { accessToken, refreshToken }
+  }
+
+  //#region 📍------ PRO CONNECT ------ 📍
+  public async fetchProconnectUserInfo(req): Promise<UserinfoResponse> {
+    this.logger.verbose('fetchProconnectUserInfo')
+    const params = this.client.callbackParams(req)
+    const jwtToken = req.cookies?.auth_token
+
+    if (!jwtToken) {
+      this.logger.warn('Missing authentication token')
+      throw new UnauthorizedException()
+    }
+
+    const decodedToken = this.jwtService.verify<DecodedToken>(jwtToken, {
+      secret: this.configService.get('auth').jwtSecret,
+    })
+
+    const { state, nonce } = decodedToken
+    if (!state || !nonce) {
+      this.logger.warn('Missing required parameters: state or nonce')
+      throw new UnauthorizedException()
+    }
+
+    const tokenResponse = await this.client.callback(
+      this.configService.get('auth').redirectUri,
+      params,
+      { state, nonce },
+    )
+
+    return await this.client.userinfo(tokenResponse.access_token)
   }
 
   proconnect(): { url: string; token: string } {
@@ -202,7 +188,7 @@ export class AuthService implements OnModuleInit {
     }
 
     if (!this.client) {
-      throw new NotFoundException('OpenID Client is not initialized')
+      throw new InternalServerErrorException('OpenID Client is not initialized')
     }
 
     const state = generators.state()
@@ -228,7 +214,8 @@ export class AuthService implements OnModuleInit {
     const userinfoResponse = await this.fetchProconnectUserInfo(req)
 
     if (!userinfoResponse.email) {
-      throw new BadRequestException('Email not provided')
+      this.logger.warn('Email not provided')
+      throw new UnauthorizedException()
     }
 
     let user: User = await this.usersService.findByEmail(
@@ -242,6 +229,7 @@ export class AuthService implements OnModuleInit {
         firstname: userinfoResponse.given_name || '',
         lastname: userinfoResponse.family_name || '',
         job: '',
+        prefecture: PrefectureDictionary[Prefecture.D75],
         password: randomBytes(12)
           .toString('base64')
           .slice(0, 12)
@@ -252,4 +240,5 @@ export class AuthService implements OnModuleInit {
 
     return this.createTokens(user.id, user.email, true)
   }
+  //#endregion
 }

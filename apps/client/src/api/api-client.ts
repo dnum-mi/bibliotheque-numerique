@@ -107,7 +107,7 @@ export const headers = {
 export const apiClientInstance = axios.create({
   baseURL: baseApiUrl,
   headers,
-  withCredentials: true,
+  withCredentials: false, // no refresh token inside normal request
 })
 
 export const apiClientAuthInstance = axios.create({
@@ -161,8 +161,7 @@ apiClientInstance.interceptors.response.use(
         pendingRequests = []
 
         toaster.addMessage({ id: 'auth', type: 'warning', description: 'Vous n’êtes plus connecté, veuillez vous réauthentifier' })
-        useUserStore().logout()
-
+        useUserStore().forceResetUser()
         const routeTo: RouteLocationRaw = { name: routeNames.SIGNIN }
         if (!router.currentRoute.value.meta.skipAuth) {
           routeTo.query = { redirect: location.href.replace(location.origin, '') }
@@ -174,6 +173,9 @@ apiClientInstance.interceptors.response.use(
 
     if (status === 403) {
       toaster.addMessage({ type: 'warning', description: 'Vous n’avez pas les droits de faire cette opération' })
+      useUserStore().logout()
+      const routeTo: RouteLocationRaw = { name: routeNames.SIGNIN }
+      router.push(routeTo)
       return null
     }
 
