@@ -1,5 +1,5 @@
 // #region Compare roles
-import type { PrefectureKeys } from '../prefectures'
+import type { PrefectureKey } from '../prefectures'
 import type { RolesKeys } from './roles.enum'
 import { Roles } from './roles.enum'
 import type { IRole } from './role.interface'
@@ -27,7 +27,7 @@ export function canAccessDemarche(id: number, role: IRole): boolean {
   return isSuperiorOrSimilar(Roles.superadmin, role.label) || !!role.options[id]
 }
 
-export function canAccessPrefectureInDemarche(prefecture: PrefectureKeys, role: IRole, demarcheId: number): boolean {
+export function canAccessPrefectureInDemarche(prefecture: PrefectureKey, role: IRole, demarcheId: number): boolean {
   return isSuperiorOrSimilar(Roles.superadmin, role.label)
     || role.options[demarcheId]?.national
     || role.options[demarcheId]?.prefectures?.includes(prefecture)

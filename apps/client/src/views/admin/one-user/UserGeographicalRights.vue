@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import type { IPrefectureOptions, PrefectureKeys } from '@biblio-num/shared'
-import { listOfPrefectures } from '@biblio-num/shared'
+import type { IPrefectureOptions, PrefectureKey } from '@biblio-num/shared'
+import { listOfPrefectureKeys } from '@biblio-num/shared'
 import type { DsfrTagProps } from '@gouvminint/vue-dsfr'
 import { computed } from 'vue'
 import { LocalizationOptions } from './localization.enum'
 import type { LocalizationOptionsKeys } from './localization.enum'
+import { useField } from 'vee-validate'
 
 const props = defineProps<{
   geographicalRights: IPrefectureOptions;
@@ -15,6 +16,8 @@ const emit = defineEmits<{
   'update:removePrefecture': [payload: string];
   'update:addPrefecture': [payload: string];
 }>()
+
+const { value: prefectureValue, errorMessage: prefectureError } = useField<PrefectureKey>('prefecture')
 
 const updateCheckedLocalization = (loc: LocalizationOptionsKeys) => {
   emit('update:localization', loc)
@@ -52,7 +55,7 @@ const disabledAddPrefectures = computed<boolean>(() => {
 })
 // const localizationSelected = ref<string | undefined>(localizationOption.value)
 
-const isDeletable = (option: IPrefectureOptions, prefecture: PrefectureKeys): boolean =>
+const isDeletable = (option: IPrefectureOptions, prefecture: PrefectureKey): boolean =>
   option.national.editable || option.prefectures?.deletable.includes(prefecture)
 
 const prefectures = computed<DsfrTagProps[]>(() =>
@@ -74,8 +77,8 @@ const prefectures = computed<DsfrTagProps[]>(() =>
   ].flat(),
 )
 
-const possiblePrefectures = computed<PrefectureKeys[]>(() =>
-  props.geographicalRights.national.editable ? listOfPrefectures : props.geographicalRights.prefectures?.addable,
+const possiblePrefectures = computed<PrefectureKey[]>(() =>
+  props.geographicalRights.national.editable ? listOfPrefectureKeys : props.geographicalRights.prefectures?.addable,
 )
 
 const prefecturesToAdd = computed<DsfrTagProps[]>(() =>
@@ -113,6 +116,31 @@ const prefecturesToAdd = computed<DsfrTagProps[]>(() =>
       <DsfrTags :tags="prefecturesToAdd" />
     </fieldset>
   </div>
+
+  <!-- prefecture -->
+  <DsfrInputGroup
+    :is-valid="prefectureError"
+    :error-message="prefectureError"
+  >
+    <DsfrSelect
+      id="prefecture"
+      v-model="prefectureValue"
+      label="Préfecture"
+      label-visible
+      required
+    >
+      <option
+        v-for="key in listOfPrefectureKeys"
+        :key="key"
+        :value="key"
+      >
+        {{ key.substring(1) }} <!-- Affiche par exemple "75" -->
+      </option>
+    </DsfrSelect>
+    <template #required-tip>
+      <em class="required-label"> *</em>
+    </template>
+  </DsfrInputGroup>
 </template>
 
 <style scope>

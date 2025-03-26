@@ -1,4 +1,4 @@
-import type { ILeanDossierOutput, PrefectureKeys } from '@biblio-num/shared'
+import type { ILeanDossierOutput, PrefectureKey } from '@biblio-num/shared'
 import { ApiProperty, PickType } from '@nestjs/swagger'
 import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
 import { DossierState } from '@dnum-mi/ds-api-client'
@@ -17,7 +17,7 @@ export class LeanDossierOutputDto
   })
   demarcheTitle: string
 
-  prefecture: PrefectureKeys
+  prefecture: PrefectureKey
   state: DossierState
   dateDepot: Date
 }
