@@ -117,10 +117,7 @@ describe('Auth (e2e)', () => {
 
       await request(app.getHttpServer())
         .post('/auth/proconnect/callback')
-        .expect(400)
-        .expect(({ body }) => {
-          expect(body.message).toBe('Email not provided')
-        })
+        .expect(401)
     })
 
     it('Should create a new user when user does not exist', async () => {

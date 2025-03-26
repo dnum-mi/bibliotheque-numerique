@@ -17,7 +17,7 @@ export class JWTExceptionFilter implements ExceptionFilter {
     const { httpAdapter } = this.httpAdapterHost
 
     const ctx = host.switchToHttp()
-    this.logger.error(exception)
+    this.logger.warn(exception)
     // this.logger.debug(JSON.stringify(exception.response?.data))
     const res = ctx.getResponse()
     res.clearCookie('refreshToken')
