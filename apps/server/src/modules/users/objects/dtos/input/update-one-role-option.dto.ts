@@ -2,7 +2,7 @@ import { Prefecture } from '@biblio-num/shared'
 import type {
   IOnePrefectureUpdate,
   IUpdateOneRoleOption,
-  PrefectureKeys,
+  PrefectureKey,
 } from '@biblio-num/shared'
 import {
   IsBoolean,
@@ -25,7 +25,7 @@ export class OnePrefectureUpdateDto implements IOnePrefectureUpdate {
     enum: Prefecture,
   })
   @IsEnum(Prefecture)
-  key: PrefectureKeys
+  key: PrefectureKey
 }
 
 export class UpdateOneRoleOptionDto implements IUpdateOneRoleOption {

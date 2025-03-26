@@ -1,5 +1,6 @@
 import type { IRole } from '../roles'
 import type { ICustomFilter } from '../custom-filters'
+import { VerbosePrefecture } from '../prefectures'
 
 export interface IUser {
   id: number
@@ -13,4 +14,5 @@ export interface IUser {
   customFilters?: ICustomFilter[]
   updatedAt: Date
   createdAt: Date
+  prefecture: VerbosePrefecture
 }

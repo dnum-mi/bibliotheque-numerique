@@ -11,7 +11,14 @@ import * as bcrypt from 'bcrypt'
 import { BaseEntity } from '@/shared/base-entity/base.entity'
 import { RefreshToken } from './refresh-token.entity'
 import { CustomFilter } from '@/modules/custom-filters/objects/entities/custom-filter.entity'
-import { IRole } from '@biblio-num/shared'
+import {
+  IRole,
+  listOfVerbosePrefecture,
+  VerbosePrefecture,
+  PrefectureDictionary,
+  Prefecture,
+} from '@biblio-num/shared'
+import { ApiProperty } from '@nestjs/swagger'
 
 const defaultRole: IRole = {
   label: null,
@@ -72,6 +79,17 @@ export class User extends BaseEntity {
     default: defaultRole,
   })
   role: IRole
+
+  @ApiProperty({
+    description: 'Préfecture à laquelle est rattachée le user.',
+  })
+  @Column({
+    type: 'enum',
+    enum: listOfVerbosePrefecture,
+    nullable: false,
+    default: PrefectureDictionary[Prefecture.D75],
+  })
+  prefecture: VerbosePrefecture
 
   skipHashPassword: boolean = false
 

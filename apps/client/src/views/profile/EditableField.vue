@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 const props = defineProps<{
   text: string
+  choices?: string[]
 }>()
 
 const emit = defineEmits<{
@@ -46,7 +47,14 @@ const onSave = () => {
     v-else
     class="flex flex-row"
   >
+    <DsfrSelect
+      v-if="choices"
+      v-model="newText"
+      class="w-full"
+      :options="choices"
+    />
     <DsfrInput
+      v-else
       v-model="newText"
       type="text"
     />

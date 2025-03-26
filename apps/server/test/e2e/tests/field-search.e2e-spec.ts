@@ -386,8 +386,8 @@ describe('Field search', () => {
     })
   })
 
-  it('Should only return dossiers with filter empty value for enum', async () => {
-    const { body } = await request(app.getHttpServer())
+  it('Should return 400 for empty enum filter', async () => {
+    await request(app.getHttpServer())
       .post('/demarches/9/fields-search')
       .send({
         columns: ['I11'],
@@ -403,13 +403,6 @@ describe('Field search', () => {
         },
       })
       .set('Authorization', `Bearer ${tokens.superadmin}`)
-      .expect(200)
-
-    expect(body).toMatchObject({
-      total: 1,
-      data: expect.arrayContaining([
-        expect.objectContaining({ I11: '' }),
-      ]),
-    })
+      .expect(400)
   })
 })

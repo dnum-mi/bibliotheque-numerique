@@ -14,7 +14,7 @@ import { BaseEntity } from '@/shared/base-entity/base.entity'
 import { Field } from './field.entity'
 import { Dossier as TDossier } from '@dnum-mi/ds-api-client/dist/@types/generated-types'
 import { Organisme } from '@/modules/organismes/objects/organisme.entity'
-import { IDossier, Prefecture, PrefectureKeys } from '@biblio-num/shared'
+import { IDossier, Prefecture, PrefectureKey } from '@biblio-num/shared'
 import { File } from '@/modules/files/objects/entities/file.entity'
 
 @Entity({ name: 'dossiers' })
@@ -79,7 +79,7 @@ export class Dossier extends BaseEntity implements IDossier {
     nullable: true,
     default: null,
   })
-  prefecture: PrefectureKeys | null
+  prefecture: PrefectureKey | null
 
   @OneToMany(() => File, (file) => file.dossier)
   @JoinColumn()

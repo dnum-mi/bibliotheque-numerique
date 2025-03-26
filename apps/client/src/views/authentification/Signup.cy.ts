@@ -42,6 +42,10 @@ describe('<Signup />', () => {
 
     cy.get('#job').type('Ministre')
     cy.get('.fr-error-text').should('not.exist')
+    cy.get('@submitBtn').should('be.disabled')
+
+    cy.get('#prefecture').select('75 - Paris')
+    cy.get('.fr-error-text').should('not.exist')
     cy.get('@submitBtn').should('not.be.disabled')
   })
 })

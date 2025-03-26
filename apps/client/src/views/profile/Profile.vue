@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { IMyProfileOutput, IResetPasswordInput } from '@biblio-num/shared'
+import { listOfVerbosePrefecture } from '@biblio-num/shared'
 import type { DsfrAlertType } from '@gouvminint/vue-dsfr/types/components/DsfrAlert/DsfrAlert.vue'
 
 import LayoutBanner from '@/components/Layout/LayoutBanner.vue'
@@ -16,6 +17,7 @@ const user = computed<IMyProfileOutput | null>(() => store.myProfile)
 type Field = {
   title: string;
   userKey: keyof IMyProfileOutput;
+  enum?: string[];
   parseFct?: (v: string) => string;
   editable?: boolean;
 }
@@ -50,6 +52,12 @@ const fields = reactive<Field[]>([
     userKey: 'job',
     editable: true,
   },
+  {
+    title: 'Préfecture',
+    userKey: 'prefecture',
+    enum: listOfVerbosePrefecture,
+    editable: true,
+  },
 ])
 
 const alertTitle = ref('')
@@ -71,8 +79,8 @@ onMounted(() => {
 })
 
 const printField = (field: Field): string => {
-  const value = `${user.value?.[field.userKey]}`
-  return field.parseFct ? field.parseFct(value) : value
+  const value = `${user.value?.[field.userKey] || ''}`
+  return field.parseFct ? field.parseFct(value) : value || ''
 }
 
 const updateProfile = async (field: Field, newText: string) => {
@@ -98,7 +106,7 @@ const updateProfile = async (field: Field, newText: string) => {
         <div class="flex-1">
           <h4>Mes informations de connexion</h4>
           <hr>
-          <!-- EACH FIELDSS -->
+          <!-- EACH FIELDS -->
           <div
             v-for="field in fields"
             :key="field.userKey"
@@ -110,6 +118,7 @@ const updateProfile = async (field: Field, newText: string) => {
               <div v-if="field.editable">
                 <EditableField
                   :text="printField(field)"
+                  :choices="field.enum"
                   @update-new-value="updateProfile(field, $event)"
                 />
               </div>

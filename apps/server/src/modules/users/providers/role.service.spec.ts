@@ -26,6 +26,7 @@ describe("role.service", ()=> {
         lastname: 'test-nom',
         firstname: 'test-prenom',
         job: 'testeur',
+        prefecture: '75 - Paris',
         role: {
           label: 'instructor',
           options: {
@@ -198,7 +199,6 @@ describe("role.service", ()=> {
       { demarcheId: 5, checked: true },
     ]
 
-    console.log(userService.repository)
     jest.spyOn(userService.repository, 'update').mockImplementation(
       // @ts-ignore
       async (criteria, partialEntity) => {

@@ -1,8 +1,8 @@
-import type { PrefectureKeys } from '../prefectures'
+import type { PrefectureKey } from '../prefectures'
 
 export interface IOnePrefectureUpdate {
   toAdd: boolean
-  key: PrefectureKeys
+  key: PrefectureKey
 }
 
 export interface IUpdateOneRoleOption {
