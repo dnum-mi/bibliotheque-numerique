@@ -31,7 +31,11 @@ export class RnfService {
       : `${this.config.get('rnf.url')}/api/foundations/${idRnf}`
 
     return axios
-      .get(url)
+      .get(url, {
+        headers: {
+          'x-user-token': this.config.get('rnf.siafToken'),
+        },
+      })
       .then((response) => {
         return response.data
       })
@@ -57,7 +61,15 @@ export class RnfService {
         'rnf.url',
       )}/api/foundations/last-updated-list`
 
-    return axios.post(encodeURI(url), args).then((response) => {
+    return axios.post(
+      encodeURI(url),
+      args,
+      {
+        headers: {
+          'x-user-token': this.config.get('rnf.siafToken'),
+        },
+      },
+    ).then((response) => {
       return response.data
     })
   }
