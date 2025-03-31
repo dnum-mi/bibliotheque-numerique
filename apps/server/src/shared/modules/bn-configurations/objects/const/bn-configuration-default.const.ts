@@ -42,10 +42,6 @@ export const BnConfigurationDefault: Record<
     stringValue: '6',
     type: eBnConfigurationType.number,
   },
-  [eBnConfiguration.ENABLE_RNF_SIAF]: {
-    stringValue: 'false',
-    type: eBnConfigurationType.boolean,
-  },
   [eBnConfiguration.ENABLE_SIAF]: {
     stringValue: 'false',
     type: eBnConfigurationType.boolean,

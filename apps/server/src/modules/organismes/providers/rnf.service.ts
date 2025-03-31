@@ -15,7 +15,7 @@ export class RnfService {
     this.logger.setContext(this.constructor.name)
   }
 
-  async getFoundation(idRnf: string, enbleRnfSiaf: boolean): Promise<IRnfOutput | ISiafRnfOutput> {
+  async getFoundation(idRnf: string): Promise<IRnfOutput | ISiafRnfOutput> {
     this.logger.verbose('getFoundation')
     if (!idRnf || !isRnfLuhnValid(idRnf)) {
       this.logger.error(
@@ -26,9 +26,7 @@ export class RnfService {
       return null
     }
 
-    const url = enbleRnfSiaf
-      ? `${this.config.get('rnf.siafUrl')}/foundations/${idRnf}/complete`
-      : `${this.config.get('rnf.url')}/api/foundations/${idRnf}`
+    const url = `${this.config.get('rnf.siafUrl')}/foundations/${idRnf}/complete`
 
     return axios
       .get(url, {
@@ -50,16 +48,11 @@ export class RnfService {
 
   async getUpdatedFoundations(
     args: GetUpdateFoundationInputDto,
-    enbleRnfSiaf: boolean,
   ): Promise<string[]> {
     this.logger.verbose('getUpdatedFoundations')
-    const url = enbleRnfSiaf
-      ? `${this.config.get(
-        'rnf.siafUrl',
-      )}/foundations/last-updated-list`
-      : `${this.config.get(
-        'rnf.url',
-      )}/api/foundations/last-updated-list`
+    const url = `${this.config.get(
+      'rnf.siafUrl',
+    )}/foundations/last-updated-list`
 
     return axios.post(
       encodeURI(url),
