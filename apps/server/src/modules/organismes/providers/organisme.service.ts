@@ -13,7 +13,6 @@ import {
   IPersonRnf,
   IRnaOutput,
   IRnfOutput,
-  OrganismeTypeKey,
   PersonRoleKey,
   eOrganismeType,
   eState,
@@ -206,7 +205,6 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     idRnf: string,
     raw: IRnfOutput | ISiafRnfOutput,
     firstTime = false,
-    enabledSiaf = false,
   ): Promise<void> {
     this.logger.verbose(`updateOrganismeFromRnf ${idRnf}`)
 
@@ -215,19 +213,15 @@ export class OrganismeService extends BaseEntityService<Organisme> {
       state: eState.uploaded,
       title: raw.title,
       dateCreation: raw.originalCreatedAt,
-      type: enabledSiaf ? (raw as ISiafRnfOutput).foundationType : (raw as IRnfOutput).type as OrganismeTypeKey,
+      type: (raw as ISiafRnfOutput).foundationType,
       email: raw.email,
       phoneNumber: raw.phone,
-      ...this._formatAddress(enabledSiaf
-        ? this._formatAddressSIAFRNF((raw as ISiafRnfOutput).address)
-        : (raw as IRnfOutput).address),
-      dateDissolution: enabledSiaf ? (raw as ISiafRnfOutput).dissolved.dissolvedAt : (raw as IRnfOutput).dissolvedAt,
+      ...this._formatAddress(this._formatAddressSIAFRNF((raw as ISiafRnfOutput).address)),
+      dateDissolution: (raw as ISiafRnfOutput).dissolved.dissolvedAt,
       fiscalEndDateAt: raw.fiscalEndDateAt,
       rnfJson: raw,
       persons: raw.persons && raw.persons.length
-        ? raw.persons.map((p) => enabledSiaf
-          ? this._formatPersonSIAFRNF(p)
-          : this._formatPerson(p))
+        ? raw.persons.map((p) => this._formatPersonSIAFRNF(p))
         : [],
     }
 
