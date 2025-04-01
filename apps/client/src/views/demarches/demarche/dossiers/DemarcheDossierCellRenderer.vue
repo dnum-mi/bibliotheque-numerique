@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import slugify from 'slugify'
 
 import {
-  Prefecture,
+  PrefectureDictionary,
 } from '@biblio-num/shared'
 import type {
   FormatFunctionRefKeys,
@@ -92,7 +92,7 @@ const getFlagURL = (countryName: string) => {
 
 //#region Prefecture
 const getPrefecture = (prefecture: PrefectureKey) => {
-  return Prefecture[prefecture]
+  return PrefectureDictionary[prefecture]
 }
 //#endregion
 </script>
