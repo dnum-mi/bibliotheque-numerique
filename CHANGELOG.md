@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.26.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.26.0...v2.26.1) (2025-04-01)
+
+
+### Bug Fixes
+
+* add token for api SIAF ([bec121c](https://github.com/dnum-mi/bibliotheque_numerique/commit/bec121c309b440e092f51e377ebef797c264f81a))
+* correct prefecture label inside list ([bcda41a](https://github.com/dnum-mi/bibliotheque_numerique/commit/bcda41a016740b149bf22423beacf9d56c272482))
+
 ## [2.26.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.25.2...v2.26.0) (2025-03-26)
 
 
