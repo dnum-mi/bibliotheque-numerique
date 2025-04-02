@@ -74,7 +74,7 @@ export const listOrganismeColumnDef: ColDef[] = [
   },
   {
     ...baseColDef,
-    headerName: mapOrganismeFieldHeader.missingYears,
+    headerName: mapOrganismeFieldHeader.missingDeclarationYears,
     filter: 'customNumbersFilter',
     filterParams: {
       numbers: years,
