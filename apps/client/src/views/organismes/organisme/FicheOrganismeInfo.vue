@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { DsfrBadgeProps } from '@gouvminint/vue-dsfr'
-import { dateToStringFr } from '@/utils'
+import { dateToStringFr, getPrefecture } from '@/utils'
 
 import FicheOrganismePersons from './FicheOrganismePersons.vue'
 import TooltipAddress from './TooltipAddress.vue'
@@ -10,7 +10,7 @@ import type { OrganismeIdType } from '@/stores'
 const props = defineProps<{ organisme: IOrganismeOutputDto, type: OrganismeIdType }>()
 
 const isAddressNotVerified = computed(() => !props.organisme?.siege?.isVerified)
-const prefecture = computed<string>(() => props.organisme?.siege?.prefecture)
+const prefecture = computed<string>(() => getPrefecture(props.organisme?.siege?.prefecture))
 const creation = computed(() => dateToStringFr(props.organisme?.dateCreation))
 const dissolution = computed(() => dateToStringFr(props.organisme?.dateDissolution ?? undefined))
 const modifiedAt = computed(() => dateToStringFr(props.organisme?.updatedAt ?? undefined))
@@ -70,7 +70,7 @@ const fiscalEndDateAt = computed(() => {
           <div>
             <label class="bn-fiche-sub-title--label uppercase">Préfecture du gestion</label>
             <span class="bn-fiche-sub-title--text">
-              {{ organisme.gestion.prefecture }}
+              {{ getPrefecture(organisme.gestion.prefecture) }}
             </span>
           </div>
         </template>
