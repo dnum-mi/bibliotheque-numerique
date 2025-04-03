@@ -82,20 +82,32 @@ export class UserService
     })
   }
 
-  async create(body: CreateUserDto): Promise<User> {
+  async create(dto: CreateUserDto): Promise<User> {
     this.logger.verbose('create')
-    const userInDb = await this.findByEmail(body.email)
+    const userInDb = await this.findByEmail(
+      dto.email,
+      ['id', 'email', 'firstname', 'lastname', 'password', 'validated'], // override select to have password
+    )
     if (userInDb) {
+      if (userInDb.password === 'user-imported-from-excel') {
+        userInDb.password = dto.password
+        await userInDb.hashPassword()
+        delete dto.password
+        await this.repo.update({
+          email: dto.email,
+        }, { ...userInDb, ...dto })
+        delete userInDb.password
+      }
       if (!userInDb.validated) {
         await this.mailToValidSignUp(userInDb)
       } else {
-        await this.mailToAlreadyignUp(userInDb)
+        await this.mailToAlreadySignUp(userInDb)
       }
 
       return userInDb
     }
 
-    const user = await this.createAndSave(body)
+    const user = await this.createAndSave(dto)
 
     await this.mailToValidSignUp(user)
 
@@ -163,7 +175,7 @@ export class UserService
     )
   }
 
-  private async mailToAlreadyignUp(userInDb: User): Promise<void> {
+  private async mailToAlreadySignUp(userInDb: User): Promise<void> {
     const { appUrl, jwtForUrl } = this.createJwtOnUrl({ user: userInDb.id })
     await this.sendMailService.alreadySignUp(
       userInDb.email,

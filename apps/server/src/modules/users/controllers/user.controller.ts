@@ -1,7 +1,6 @@
-import { Body, Controller, HttpCode, Post } from '@nestjs/common'
+import { BadRequestException, Body, Controller, HttpCode, Post, UploadedFile, UseInterceptors } from '@nestjs/common'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 import { UserService } from '../providers/user.service'
-
 import { IUser, Roles } from '@biblio-num/shared'
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
 import { PublicRoute } from '@/modules/users/providers/decorators/public-route.decorator'
@@ -16,6 +15,11 @@ import {
   UserOutputDto,
 } from '@/modules/users/objects/dtos/output'
 import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.decorator'
+import { FileInterceptor } from '@nestjs/platform-express'
+import { XlsxService } from '@/shared/modules/xlsx/xlsx.service'
+import { type Express } from 'express'
+import { UserImportService } from '@/modules/users/providers/user-import.service'
+import { ExcelUser } from '@/modules/users/objects/types/excel-user.type'
 
 @ApiTags('Users')
 @Controller('users')
@@ -23,6 +27,8 @@ export class UserController {
   constructor(
     private readonly usersService: UserService,
     private logger: LoggerService,
+    private readonly xlsxService: XlsxService,
+    private readonly userImportService: UserImportService,
   ) {
     this.logger.setContext(this.constructor.name)
   }
@@ -61,5 +67,27 @@ export class UserController {
   ): Promise<PaginatedUserDto> {
     this.logger.verbose('listUsers')
     return this.usersService.listUsers(dto, user)
+  }
+
+  @Post('/import')
+  @UsualApiOperation({
+    summary: 'Import une liste d\'utilisateur. Fichier attendu: form data nommé users, format xlsx.',
+    method: 'POST',
+    minimumRole: Roles.sudo,
+    responseType: Boolean,
+  })
+  @UseInterceptors(FileInterceptor('users'))
+  @HttpCode(201)
+  @Role(Roles.sudo)
+  async importUsers(
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<boolean> {
+    this.logger.verbose('importUsers')
+    if (!file?.buffer) {
+      throw new BadRequestException('File buffer not found.')
+    }
+    const data = this.xlsxService.returnFirstData(file.buffer)
+    this.logger.debug(data)
+    return this.userImportService.createUserFromExcelData(data as unknown as ExcelUser[])
   }
 }

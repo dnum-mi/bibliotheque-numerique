@@ -10,6 +10,7 @@ import { DemarcheModule } from '@/modules/demarches/demarche.module'
 import { RoleService } from '@/modules/users/providers/role.service'
 import { UserRoleController } from '@/modules/users/controllers/user-role.controller'
 import { UserMeController } from '@/modules/users/controllers/user-me.controller'
+import { UserImportService } from '@/modules/users/providers/user-import.service'
 
 @Module({
   imports: [
@@ -31,7 +32,7 @@ import { UserMeController } from '@/modules/users/controllers/user-me.controller
     DemarcheModule,
   ],
   controllers: [UserController, UserMeController, UserRoleController],
-  providers: [UserService, RoleService],
+  providers: [UserService, RoleService, UserImportService],
   exports: [UserService],
 })
 export class UserModule {}
