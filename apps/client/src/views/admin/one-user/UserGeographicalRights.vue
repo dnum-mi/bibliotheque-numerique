@@ -5,7 +5,6 @@ import type { DsfrTagProps } from '@gouvminint/vue-dsfr'
 import { computed } from 'vue'
 import { LocalizationOptions } from './localization.enum'
 import type { LocalizationOptionsKeys } from './localization.enum'
-import { useField } from 'vee-validate'
 
 const props = defineProps<{
   geographicalRights: IPrefectureOptions;
@@ -16,8 +15,6 @@ const emit = defineEmits<{
   'update:removePrefecture': [payload: string];
   'update:addPrefecture': [payload: string];
 }>()
-
-const { value: prefectureValue, errorMessage: prefectureError } = useField<PrefectureKey>('prefecture')
 
 const updateCheckedLocalization = (loc: LocalizationOptionsKeys) => {
   emit('update:localization', loc)
@@ -109,38 +106,16 @@ const prefecturesToAdd = computed<DsfrTagProps[]>(() =>
     @update:model-value="updateCheckedLocalization(option.value as string)"
   />
   <div>
-    <DsfrTags :tags="prefectures" />
+    <DsfrTags
+      class="m-r-0!"
+      :tags="prefectures"
+    />
 
     <fieldset v-if="prefecturesToAdd?.length">
       <legend>Préfectures disponibles</legend>
       <DsfrTags :tags="prefecturesToAdd" />
     </fieldset>
   </div>
-
-  <!-- prefecture -->
-  <DsfrInputGroup
-    :is-valid="prefectureError"
-    :error-message="prefectureError"
-  >
-    <DsfrSelect
-      id="prefecture"
-      v-model="prefectureValue"
-      label="Préfecture"
-      label-visible
-      required
-    >
-      <option
-        v-for="key in listOfPrefectureKeys"
-        :key="key"
-        :value="key"
-      >
-        {{ key.substring(1) }} <!-- Affiche par exemple "75" -->
-      </option>
-    </DsfrSelect>
-    <template #required-tip>
-      <em class="required-label"> *</em>
-    </template>
-  </DsfrInputGroup>
 </template>
 
 <style scope>
