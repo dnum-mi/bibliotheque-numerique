@@ -25,24 +25,19 @@ describe('dossier.service', () => {
 
   it('Should have new value in url of files', () => {
     const generateDsFile = (): IFile => ({
-      byteSize: faker.number.int(),
-      byteSizeBigInt: faker.number.bigInt(),
       checksum: faker.string.alpha(),
-      contentType: faker.system.mimeType(),
-      filename: faker.system.commonFileName(),
       url: faker.internet.url(),
-    })
-    const fistFile = generateDsFile()
-    const champMock:PieceJustificativeChamp = {
+    } as IFile)
+    const firstFile = generateDsFile()
+    const pieceJustificativeChampMock:PieceJustificativeChamp = {
       __typename: 'PieceJustificativeChamp',
       id: faker.string.alphanumeric(),
-      label: faker.string.alphanumeric(),
-      file: fistFile,
+      file: firstFile,
       files: [
-        fistFile,
+        firstFile,
         generateDsFile(),
       ],
-    }
+    } as PieceJustificativeChamp
     const champMock1: Champ = {
       __typename: 'Champ',
       id: faker.string.alphanumeric(),
@@ -51,37 +46,24 @@ describe('dossier.service', () => {
     const dossierMock = getFakeDossierTest({
       champs: [
         champMock1,
-        champMock as Champ,
+        pieceJustificativeChampMock as Champ,
       ],
     })
 
     const generateFile = (index): File => ({
-      byteSize: faker.number.int(),
-      checksum: faker.string.alphanumeric(),
-      dossier: { id: faker.number.int() } as Dossier,
-      createdAt: faker.date.past(),
-      id: faker.number.int(),
-      label: faker.string.alphanumeric(),
-      mimeType: faker.helpers.arrayElement(fileExtensions),
-      originalLabel: faker.string.alphanumeric(),
       sourceIndex: index,
       sourceLabel: eFileDsSourceLabel['ds-champ'],
-      sourceStringId: champMock.id,
+      sourceStringId: pieceJustificativeChampMock.id,
       uuid: faker.string.uuid(),
-      organisme: null,
-      sourceUploadedAt: faker.date.anytime(),
-      state: eState.queued,
-      tag: null,
-      updatedAt: faker.date.anytime(),
-    })
+    } as File)
     const filesMock: File[] = [
       {
         ...generateFile(1),
-        checksum: champMock.files[1].checksum,
+        checksum: pieceJustificativeChampMock.files[1].checksum,
       },
       {
         ...generateFile(0),
-        checksum: champMock.files[0].checksum,
+        checksum: pieceJustificativeChampMock.files[0].checksum,
       },
     ]
     const result = service.transformValueFileOfDossier(dossierMock, filesMock)

@@ -78,4 +78,11 @@ export class XlsxService {
     })
     return jsonData.filter((row) => row.length > 0)
   }
+
+  // return the first sheet and the first 1000 of any xlsx file
+  returnFirstData(buffer: Buffer): ExcelData {
+    const workbook: XLSX.WorkBook = XLSX.read(buffer, { type: 'buffer' })
+    const sheetName: string = Object.keys(workbook.Sheets)[0]
+    return XLSX.utils.sheet_to_json(workbook.Sheets[sheetName])
+  }
 }
