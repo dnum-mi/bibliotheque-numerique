@@ -44,7 +44,7 @@ export class RoleService {
   private _manageRoleToUpdateRole(dto: UpdateOneRoleOptionDto, role: IRole): void {
     if (dto.checked === false) {
       role.options[dto.demarcheId] = undefined
-    } else if (dto.checked === true) {
+    } else if (dto.checked === true && !role.options[dto.demarcheId]) {
       role.options[dto.demarcheId] = {
         national: false,
         prefectures: [],
@@ -56,11 +56,11 @@ export class RoleService {
       }
     } else if (dto.national === false) {
       role.options[dto.demarcheId].national = false
-    } else if (dto.prefecture?.toAdd) {
+    } else if (dto.prefecture?.toAdd && !role.options[dto.demarcheId].prefectures.includes(dto.prefecture.key)) {
       role.options[dto.demarcheId].prefectures.push(dto.prefecture.key)
     } else if (!dto.prefecture?.toAdd) {
       role.options[dto.demarcheId].prefectures = role.options[dto.demarcheId].prefectures
-        .filter((key) => key !== dto.prefecture.key)
+        .filter((key) => key !== dto.prefecture?.key)
     }
   }
 
