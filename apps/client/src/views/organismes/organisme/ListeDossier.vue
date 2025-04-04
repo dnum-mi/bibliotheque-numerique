@@ -5,6 +5,7 @@ import { canAccessDemarche } from '@biblio-num/shared'
 import apiClient from '@/api/api-client'
 import useToaster from '@/composables/use-toaster'
 import { routeNames } from '@/router/route-names'
+import { getPrefecture } from '../../../utils'
 
 const props = defineProps<{
   role: IRole;
@@ -38,6 +39,7 @@ const columns: Column[] = [
   {
     field: 'prefecture',
     headerName: 'Service instructeur',
+    getValue: getPrefecture,
   },
   {
     field: 'state',
@@ -61,12 +63,11 @@ const updateListeDossiers = async () => {
   try {
     const dossiers = await apiClient.getOrganismeDossiers(props.organismeId)
     rowsdata.value = dossiers.map((d) => {
-      d.prefecture = d.prefecture?.replace(/^D/, '')
       const row: unknown[] & { cursor?: string; title?: string; onClick: (event: MouseEvent) => void } = columns
         .filter(({ hidden }) => !hidden)
         .map(({ field, getValue }) => {
           if (getValue) {
-            return getValue(d[field])
+            return getValue(d[field]) || '-'
           }
           return d[field] ?? '-'
         })
