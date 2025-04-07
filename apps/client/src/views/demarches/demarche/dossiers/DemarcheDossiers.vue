@@ -335,15 +335,6 @@ const apiCall = (dto: IPagination<unknown>) => {
 
 <template>
   <div :style="{ paddingBottom: '2rem' }">
-    <div class="flex justify-end m-2">
-      <DsfrButton
-        label="Télécharger"
-        icon="ri-file-download-fill"
-        small
-        @click="download"
-      />
-    </div>
-
     <div
       class="flex justify-between no-label-on-toggle items-center fr-pl-2w"
     >
@@ -369,6 +360,12 @@ const apiCall = (dto: IPagination<unknown>) => {
             Vue par dossier
           </DsfrButton>
         </div>
+        <DsfrButton
+          label="Télécharger"
+          icon="ri-file-download-fill"
+          small
+          @click="download"
+        />
       </div>
       <DemarcheDossiersDisplays
         :displays="customFiltersWithErrors as ICustomFilter[]"
