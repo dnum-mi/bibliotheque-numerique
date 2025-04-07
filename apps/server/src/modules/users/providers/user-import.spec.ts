@@ -8,6 +8,7 @@ import { BadRequestException } from '@nestjs/common'
 import { ExcelUser } from '@/modules/users/objects/types/excel-user.type'
 import { loggerServiceMock } from '../../../../test/mock/logger-service.mock'
 import { Repository } from 'typeorm'
+import { RefreshToken } from '@/modules/auth/objects/refresh-token.entity'
 
 describe('UserImportService', () => {
   let service: UserImportService
@@ -24,6 +25,8 @@ describe('UserImportService', () => {
       release: jest.fn(),
       manager: {
         save: jest.fn(),
+        update: jest.fn(),
+        delete: jest.fn(),
       },
     }
 
@@ -49,6 +52,8 @@ describe('UserImportService', () => {
               },
             },
             create: jest.fn(),
+            exist: jest.fn(),
+            findOne: jest.fn(),
           },
         },
       ],
@@ -238,6 +243,45 @@ describe('UserImportService', () => {
         skipHashPassword: true,
         validated: false,
       })
+      expect(mockQueryRunner.commitTransaction).toHaveBeenCalled()
+      expect(mockQueryRunner.release).toHaveBeenCalled()
+
+      expect(result).toBe(true)
+    })
+
+    it('should only modify role of existing user', async () => {
+      const user: ExcelUser = {
+        Email: 'jane.doe@mail.com',
+        Nom: 'Doe',
+        Prénom: 'Jane',
+        Poste: 'Chargée de mission',
+        Préfecture: '75',
+        Role: 'admin',
+        'Liste des démarches': '42',
+        'Liste des départements': '75',
+      }
+      demarcheService.findMultipleDemarche.mockResolvedValue([
+        //@ts-ignore
+        { id: 1, dsDataJson: { number: '42' } },
+      ])
+      userRepo.findOne.mockResolvedValue({id:42} as User)
+
+      const result = await service.createUserFromExcelData([user])
+
+      expect(mockQueryRunner.connect).toHaveBeenCalled()
+      expect(mockQueryRunner.startTransaction).toHaveBeenCalled()
+      expect(mockQueryRunner.manager.update).toHaveBeenCalledWith(User, {email: user.Email},{
+        role: {
+          label: 'admin',
+          options: {
+            1: {
+              national: false,
+              prefectures: ['D75'],
+            },
+          },
+        },
+      })
+      expect(mockQueryRunner.manager.delete).toHaveBeenCalledWith(RefreshToken, {user: 42})
       expect(mockQueryRunner.commitTransaction).toHaveBeenCalled()
       expect(mockQueryRunner.release).toHaveBeenCalled()
 
