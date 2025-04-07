@@ -155,13 +155,17 @@ const update = () => {
         name="ri-file-warning-fill"
       />
     </DsfrButton>
-    <DsfrSelect
-      :model-value="selectedDisplay?.id"
-      label="Sélectionner un affichage"
-      default-unselected-text="Aucun affichage sélectionné"
-      :options="filterList"
-      @update:model-value="onSelectFilterChange($event)"
-    />
+    <DsfrTooltip
+      content="Sélectionner un affichage"
+      on-hover
+    >
+      <DsfrSelect
+        :model-value="selectedDisplay?.id"
+        default-unselected-text="Aucun affichage sélectionné"
+        :options="filterList"
+        @update:model-value="onSelectFilterChange($event)"
+      />
+    </DsfrTooltip>
     <div class="fr-mx-2v fr-mt-2v flex justify-center items-center gap-2">
       <DsfrButton
         type="submit"

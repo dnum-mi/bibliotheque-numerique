@@ -25,6 +25,7 @@ onMounted(async () => {
     toaster.addErrorMessage({ description: 'une erreur est survenue à la déconnexion' })
   }
 })
+
 const envStyle = computed(() => `env_${runEnv.value}`)
 const serviceTitle = 'Bibliothèque Numérique'
 const serviceDescription = 'Rechercher une démarche, un dossier, un organisme'
@@ -160,7 +161,6 @@ onErrorCaptured((error: Error | AxiosError) => {
   if (error instanceof AxiosError) {
     if (error?.response && error?.response?.status) {
       const status = error.response.status
-
       const errorMessages = {
         400: 'Requête invalide. Veuillez vérifier vos données.',
         401: 'Vous n’êtes plus connecté. Veuillez vous connecter pour accéder à cette ressource.',
@@ -168,7 +168,6 @@ onErrorCaptured((error: Error | AxiosError) => {
         404: 'Ressource non trouvée.',
         500: 'Erreur interne du serveur. Veuillez contacter votre administrateur.',
       } as const
-
       const errorMessage = errorMessages[status as keyof typeof errorMessages] || 'Erreur inconnue. Veuillez réessayer.'
       toaster.addErrorMessage({ description: errorMessage })
       if (import.meta.env.DEV) {
@@ -183,6 +182,21 @@ onErrorCaptured((error: Error | AxiosError) => {
   }
   return false
 })
+
+const isSmallScreen = ref(false)
+
+const updateScreenSize = () => {
+  isSmallScreen.value = window.innerWidth <= 1200 && window.innerHeight <= 780
+}
+
+onMounted(() => {
+  updateScreenSize()
+  window.addEventListener('resize', updateScreenSize)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', updateScreenSize)
+})
 </script>
 
 <template>
@@ -194,15 +208,16 @@ onErrorCaptured((error: Error | AxiosError) => {
     >
       Environnement: {{ envTextMapping[runEnv] }}
     </div>
+
     <DsfrHeader
       v-model="searchQuery"
       :service-title="serviceTitle"
-      :service-description="serviceDescription"
       :logo-text="logoText"
       :quick-links="quickLinks"
+      v-bind="isSmallScreen ? {} : { 'service-description': serviceDescription }"
     />
 
-    <main class="flex  flex-col  grow  w-full  h-full  min-h-0  overflow-auto">
+    <main class="flex flex-col grow w-full h-full min-h-0 overflow-auto">
       <router-view />
     </main>
 
@@ -214,9 +229,7 @@ onErrorCaptured((error: Error | AxiosError) => {
       licence-text=""
     >
       <template #description>
-        <div
-          class="flex gap-2 justify-end"
-        >
+        <div class="flex gap-2 justify-end">
           Environnement: <strong>{{ envTextMapping[runEnv] }}</strong> /
           <strong>v{{ version }}</strong>
         </div>
