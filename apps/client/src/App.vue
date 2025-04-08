@@ -286,4 +286,14 @@ onBeforeUnmount(() => {
     overflow: hidden !important;
   }
 }
+
+@media (min-width: 62em) and (max-width: 1280px) and (max-height: 780px) {
+  :deep(.fr-header__body-row) {
+    padding: 0.50em 0 !important;
+  }
+
+  :deep(.fr-header__service-title) {
+    font-size: 14px !important;
+  }
+}
 </style>
