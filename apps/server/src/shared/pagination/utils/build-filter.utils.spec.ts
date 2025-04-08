@@ -181,6 +181,23 @@ describe('Build filter', () => {
           ),
         ).resolves.toEqual('(("I09" IS NOT NULL OR "I09" != \'\'))')
       })
+
+      it('Should build filter for "notEqual"', () => {
+        expect(
+          buildFilterQuery(
+            {
+              I09: {
+                filterType: 'text',
+                condition1: {
+                  type: 'notEqual',
+                  filter: 'toto',
+                },
+              },
+            },
+            { I09: 'string' },
+          ),
+        ).resolves.toEqual('(("I09" != \'toto\'))')
+      })
     })
 
     describe('Array text filters', () => {
@@ -301,6 +318,26 @@ describe('Build filter', () => {
           ),
         ).resolves.toEqual(
           '((EXISTS (SELECT 1 FROM UNNEST("I09") AS item WHERE item IS NOT NULL OR item != \'\')))',
+        )
+      })
+
+      it('Should build filter for "notEqual"', () => {
+        expect(
+          buildFilterQuery(
+            {
+              I09: {
+                filterType: 'text',
+                condition1: {
+                  type: 'notEqual',
+                  filter: 'toto',
+                },
+              },
+            },
+            { I09: 'string' },
+            true,
+          ),
+        ).resolves.toEqual(
+          '((EXISTS (SELECT 1 FROM UNNEST("I09") AS item WHERE item != \'toto\')))',
         )
       })
     })

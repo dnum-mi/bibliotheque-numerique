@@ -98,6 +98,8 @@ const _buildOneTextFilter = (
   const item = isArray ? 'item' : key
   const escapedFilter = _manualFilterValueEscapingMechanism(filter.filter)
   switch (filter.type) {
+  case TextFilterConditions.NotEqual:
+    return `(${key} != '${escapedFilter}')${isArray ? ')' : ''}`
   case TextFilterConditions.Contains:
     return `(${key} ILIKE '%${escapedFilter}%')${isArray ? ')' : ''}`
   case TextFilterConditions.NotContains:
@@ -197,9 +199,6 @@ const numberSqlOperators = {
   [NumberFilterConditions.LessThan]: '<',
   [NumberFilterConditions.GreaterThan]: '>',
   [NumberFilterConditions.LessThanOrEqual]: '<=',
-  [NumberFilterConditions.GreaterThanOrEqual]: '>=',
-  [NumberFilterConditions.GreaterThanOrEqual]: '>=',
-  [NumberFilterConditions.GreaterThanOrEqual]: '>=',
   [NumberFilterConditions.GreaterThanOrEqual]: '>=',
 }
 const _buildOneNumberFilter = (
