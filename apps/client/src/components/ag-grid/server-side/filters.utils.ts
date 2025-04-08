@@ -75,5 +75,21 @@ export const getAgGridFilterFromFieldType = (fieldType?: keyof typeof fieldTypes
     return filter
   }
 
+  if (fieldType === 'number') {
+    filter.filterParams = {
+      ...filter.filterParams,
+      filterOptions: [
+        'equals',
+        'notEqual',
+        'greaterThan',
+        'greaterThanOrEqual',
+        'lessThan',
+        'lessThanOrEqual',
+        'blank',
+        'notBlank',
+      ],
+    }
+  }
+
   return filter
 }
