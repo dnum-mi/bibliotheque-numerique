@@ -76,8 +76,8 @@ const _fromAggMultiFilterToBackendFilter = (filter: IMultiFilterModel): IFilter 
   }
 }
 
-export const fromAggToBackendFilter = <T>(filterModel: Record<string, FilterModel>): Record<keyof T, IFilter> | null => {
-  const entries = Object.entries(filterModel)
+export const fromAggToBackendFilter = <T>(filterModel: Record<string, FilterModel>, allowedColumnIds: string[]): Record<keyof T, IFilter> | null => {
+  const entries = Object.entries(filterModel).filter(entry => allowedColumnIds.includes(entry[0]))
   if (entries.length) {
     const filters: Record<string, IFilter> = {}
     entries.forEach(([key, value]) => {
@@ -120,11 +120,13 @@ export const fromAggToBackendFilter = <T>(filterModel: Record<string, FilterMode
   }
 }
 
-export const fromAggToBackendSort = (sortModel: SortModelItem[]): ISort[] => {
-  return sortModel.map((sort) => ({
-    key: sort.colId,
-    order: sort.sort === 'asc' ? 'ASC' : 'DESC',
-  }))
+export const fromAggToBackendSort = (sortModel: SortModelItem[], allowedColumnIds: string[]): ISort[] => {
+  return sortModel
+    .filter((sort) => allowedColumnIds.includes(sort.colId))
+    .map((sort) => ({
+      key: sort.colId,
+      order: sort.sort === 'asc' ? 'ASC' : 'DESC',
+    }))
 }
 
 export const backendFilterToAggFilter = (filters: Record<string, IFilter>): FilterModel => {

@@ -84,14 +84,14 @@ const getRows = async (params: IServerSideGetRowsParams) => {
     params.success({ rowData: [], rowCount: 0 })
     return
   }
-
   if (props.loading) {
     return undefined
   }
+  const selectedColumnsIds = params.api.getAllDisplayedColumns().map(col => col.getColId())
   if (props.preCondition) {
     const dto: IPagination<T> = {
-      sorts: fromAggToBackendSort(params.request.sortModel),
-      filters: fromAggToBackendFilter<T>(params.request.filterModel),
+      sorts: fromAggToBackendSort(params.request.sortModel, selectedColumnsIds),
+      filters: fromAggToBackendFilter<T>(params.request.filterModel, selectedColumnsIds),
       columns: params.api
         .getColumnState()
         .filter((state) => !state.hide)
