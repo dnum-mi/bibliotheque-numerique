@@ -198,6 +198,9 @@ const numberSqlOperators = {
   [NumberFilterConditions.GreaterThan]: '>',
   [NumberFilterConditions.LessThanOrEqual]: '<=',
   [NumberFilterConditions.GreaterThanOrEqual]: '>=',
+  [NumberFilterConditions.GreaterThanOrEqual]: '>=',
+  [NumberFilterConditions.GreaterThanOrEqual]: '>=',
+  [NumberFilterConditions.GreaterThanOrEqual]: '>=',
 }
 const _buildOneNumberFilter = (
   key: string,
@@ -205,13 +208,16 @@ const _buildOneNumberFilter = (
   isArray = false,
   prefix?: string,
 ): string => {
+  key = _adaptKeyForArray(key, isArray, prefix)
+  if (filter.type === NumberFilterConditions.Empty || filter.type === NumberFilterConditions.NotEmpty) {
+    return `(${key} IS ${filter.type === NumberFilterConditions.NotEmpty ? 'NOT ' : ''}NULL${isArray ? ')' : ''})`
+  }
   const numberSqlOperator = numberSqlOperators[filter.type]
   if (!numberSqlOperator) {
     throw new BadRequestException(
       `Unknown number filter condition: ${filter.type}`,
     )
   }
-  key = _adaptKeyForArray(key, isArray, prefix)
   return `(${key} ${numberSqlOperator} ${filter.filter}${isArray ? ')' : ''})`
 }
 //#endregion
