@@ -4,9 +4,9 @@ import { User } from '@/modules/users/objects/user.entity'
 import { Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
 import { IRole, IRoleOption, PrefectureDictionary, PrefectureKey, Roles } from '@biblio-num/shared'
-import { CreateUserDto } from '@/modules/users/objects/dtos/input'
 import { DemarcheService } from '@/modules/demarches/providers/services/demarche.service'
 import { ExcelUser } from '@/modules/users/objects/types/excel-user.type'
+import { RefreshToken } from '@/modules/auth/objects/refresh-token.entity'
 
 @Injectable()
 export class UserImportService {
@@ -72,7 +72,7 @@ export class UserImportService {
     return role
   }
 
-  private formatUser(user: ExcelUser, allDemarcheRecord: Record<string, number>): CreateUserDto {
+  private formatUser(user: ExcelUser, allDemarcheRecord: Record<string, number>): User {
     const prefecture = PrefectureDictionary['D' + user['Préfecture'].toString()]
     if (!prefecture) {
       throw new Error(`This prefecture doesn't exist: ${prefecture}`)
@@ -86,7 +86,7 @@ export class UserImportService {
       role: this.formatRole(user.Role, user['Liste des démarches'], user['Liste des départements'], allDemarcheRecord),
       password: 'user-imported-from-excel',
       validated: false,
-    } as CreateUserDto
+    } as User
   }
 
   async createUserFromExcelData(users: ExcelUser[]): Promise<boolean> {
@@ -103,10 +103,18 @@ export class UserImportService {
       for (const excelUser of users) {
         const formatedUser = this.formatUser(excelUser, allDemarcheRecord)
         this.logger.debug(formatedUser)
-        const user = this.repo.create(formatedUser)
-        user.skipHashPassword = true
-        await queryRunner.manager.save(user)
-        this.logger.log('User imported: ' + user.email)
+        const existingUser = await this.repo.findOne({ where: { email: formatedUser.email }, select: ['id'] })
+        if (existingUser) {
+          await queryRunner.manager.update(User, { email: formatedUser.email }, {
+            role: formatedUser.role,
+          })
+          await queryRunner.manager.delete(RefreshToken, { user: existingUser.id })
+        } else {
+          const user = this.repo.create(formatedUser)
+          user.skipHashPassword = true
+          await queryRunner.manager.save(user)
+          this.logger.log('User imported: ' + user.email)
+        }
       }
 
       await queryRunner.commitTransaction()
