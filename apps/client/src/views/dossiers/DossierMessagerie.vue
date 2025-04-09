@@ -28,7 +28,7 @@ defineProps<DossierMessagerieProps>()
       class="flex  flex-col  overflow-y-auto  h-full"
     >
       <header class="flex  justify-between  items-center  gap-2  h-24">
-        <div class="flex  items-center  gap-2">
+        <div class="flex  items-center  gap-2  fr-pb-4w">
           <div class="flex  justify-center  items-center  rounded-[50%]  h-[2rem]  w-[2rem]  bg-[var(--blue-france-sun-113-625)]">
             <VIcon
               name="ri-chat-3-line"

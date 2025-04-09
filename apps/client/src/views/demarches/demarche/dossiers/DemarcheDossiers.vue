@@ -336,7 +336,7 @@ const apiCall = (dto: IPagination<unknown>) => {
 <template>
   <div :style="{ paddingBottom: '2rem' }">
     <div
-      class="flex justify-between no-label-on-toggle items-center fr-pl-2w"
+      class="flex justify-between no-label-on-toggle items-center bn-dynamic-small-p"
     >
       <div class="flex gap-2">
         <div
@@ -363,6 +363,7 @@ const apiCall = (dto: IPagination<unknown>) => {
         <DsfrButton
           label="Télécharger"
           icon="ri-file-download-fill"
+          class="fr-ml-5w"
           small
           @click="download"
         />

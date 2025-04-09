@@ -32,12 +32,12 @@ onBeforeUnmount(() => {
   <div class="flex  flex-col  justify-between  w-full  h-full  overflow-y-auto">
     <div
       ref="mainEl"
-      class="flex  flex-col  gap-3  w-full  h-full  overflow-y-auto"
+      class="flex  flex-col  w-full  h-full  overflow-y-auto gap-1"
     >
       <div class="bn-fiche-title  fr-p-3w">
         <slot name="title" />
       </div>
-      <div class="bn-fiche-sub-title  fr-p-2w">
+      <div class="bn-fiche-sub-title  bn-dynamic-big-p">
         <slot name="sub-title" />
       </div>
       <div>

@@ -26,12 +26,12 @@ const champs = computed<Champ[]>(() => props.datas?.champs as Champ[])
 <template>
   <div class="fr-container">
     <div class="fr-grid-row fr-mb-5v">
-      <h5 class="">
+      <h6 class="">
         <span
           class="fr-icon-account-line fr-icon--lg fr-mr-2w bn-ellipse bn-ellipse-account"
           aria-hidden="true"
         />Identité du déclarant
-      </h5>
+      </h6>
       <DossierDemandeurMoral
         v-if="isDemandeurMorale"
         :datas="demandeur"
@@ -43,12 +43,12 @@ const champs = computed<Champ[]>(() => props.datas?.champs as Champ[])
     </div>
     <hr class="fr-mt-4w">
     <div class="fr-grid-row fr-mb-5v">
-      <h5>
+      <h6>
         <span
           class="fr-icon-file-text-line fr-icon--lg fr-mr-2w bn-ellipse bn-ellipse-file-text"
           aria-hidden="true"
         />Formulaire
-      </h5>
+      </h6>
       <DossierChamps :champs="champs " />
     </div>
   </div>

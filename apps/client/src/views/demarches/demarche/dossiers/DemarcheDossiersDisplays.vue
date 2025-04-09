@@ -140,7 +140,7 @@ const update = () => {
 </script>
 
 <template>
-  <div class="flex justify-end items-center h-24">
+  <div class="flex justify-end items-center">
     <DsfrButton
       v-if="selectedDisplay?.disabledColumns?.length"
       class="fr-mx-2v fr-mt-2v fr-error-border"

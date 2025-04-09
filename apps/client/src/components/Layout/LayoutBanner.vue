@@ -42,15 +42,16 @@ withDefaults(
 .title-size {
   font-size: 20px;
 }
-@media screen and (max-width: 1200px) and (max-height: 780px) {
+
+ @media screen and (max-height: 780px) {
   .banner-height {
     height: 40px;
   }
   .icon-size {
-    font-size: 12px;
+    font-size: 1em;
   }
   .title-size {
-    font-size: 10px;
+    font-size: 1em;
   }
-}
+ }
 </style>
