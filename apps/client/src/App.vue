@@ -25,6 +25,7 @@ onMounted(async () => {
     toaster.addErrorMessage({ description: 'une erreur est survenue à la déconnexion' })
   }
 })
+
 const envStyle = computed(() => `env_${runEnv.value}`)
 const serviceTitle = 'Bibliothèque Numérique'
 const serviceDescription = 'Rechercher une démarche, un dossier, un organisme'
@@ -160,7 +161,6 @@ onErrorCaptured((error: Error | AxiosError) => {
   if (error instanceof AxiosError) {
     if (error?.response && error?.response?.status) {
       const status = error.response.status
-
       const errorMessages = {
         400: 'Requête invalide. Veuillez vérifier vos données.',
         401: 'Vous n’êtes plus connecté. Veuillez vous connecter pour accéder à cette ressource.',
@@ -168,7 +168,6 @@ onErrorCaptured((error: Error | AxiosError) => {
         404: 'Ressource non trouvée.',
         500: 'Erreur interne du serveur. Veuillez contacter votre administrateur.',
       } as const
-
       const errorMessage = errorMessages[status as keyof typeof errorMessages] || 'Erreur inconnue. Veuillez réessayer.'
       toaster.addErrorMessage({ description: errorMessage })
       if (import.meta.env.DEV) {
@@ -187,36 +186,28 @@ onErrorCaptured((error: Error | AxiosError) => {
 
 <template>
   <div class="flex flex-col h-full w-full">
-    <div
-      v-if="runEnv !== defaultEnv"
-      :class="envStyle"
-      class="flex justify-center items-center font-bold text-lg h-6"
-    >
-      Environnement: {{ envTextMapping[runEnv] }}
-    </div>
     <DsfrHeader
       v-model="searchQuery"
       :service-title="serviceTitle"
-      :service-description="serviceDescription"
       :logo-text="logoText"
       :quick-links="quickLinks"
+      :service-description="serviceDescription"
     />
 
-    <main class="flex  flex-col  grow  w-full  h-full  min-h-0  overflow-auto">
+    <main class="flex flex-col grow w-full h-full min-h-0 overflow-auto">
       <router-view />
     </main>
 
     <AppDsfrFooter
       a11y-compliance="partiellement conforme"
       :mandatory-links="mandatoryLinks"
+      :class="envStyle"
       :logo-text="logoText"
       :ecosystem-links="ecosystemLinks"
       licence-text=""
     >
       <template #description>
-        <div
-          class="flex gap-2 justify-end"
-        >
+        <div class="flex gap-2 justify-end">
           Environnement: <strong>{{ envTextMapping[runEnv] }}</strong> /
           <strong>v{{ version }}</strong>
         </div>
@@ -243,15 +234,18 @@ onErrorCaptured((error: Error | AxiosError) => {
 }
 
 .env_development {
-  background-color: rgba(112, 255, 104, 0.8);
+  color: white !important;
+  background-color: rgba(2, 117, 0, 0.42);
 }
 
 .env_staging {
-  background-color: #00bbc3;
+  color: white !important;
+  background-color: #006165;
 }
 
 .env_preproduction {
-  background-color: rgba(242, 81, 250, 0.73);
+  color: white !important;
+  background-color: rgba(124, 0, 131, 0.61);
 }
 
 @media screen and (max-width: 1400px) {
@@ -271,6 +265,29 @@ onErrorCaptured((error: Error | AxiosError) => {
     width: 30px !important;
     height: 30px !important;
     overflow: hidden !important;
+  }
+}
+
+@media screen and (max-height: 780px) {
+  body {
+    font-size: 1rem !important;
+  }
+
+  :deep(.fr-header__body-row) {
+    padding: 0.50em 0 !important;
+  }
+
+  :deep(.fr-header__service-title) {
+    font-size: 14px !important;
+  }
+  :deep(.fr-header__service-title) {
+    font-size: 14px !important;
+  }
+  :deep(.fr-header__service-tagline) {
+    display: none;
+  }
+  :deep(.fr-logo::after) {
+    display:none !important;
   }
 }
 </style>

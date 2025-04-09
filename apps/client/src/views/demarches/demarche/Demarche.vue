@@ -78,7 +78,7 @@ onMounted(() => {
       v-model="selectedTabIndex"
       tab-list-name="tabs-dossier"
       :tab-titles="tabTitles"
-      class="fr-pt-5w"
+      class="bn-dynamic-big-pt"
       @select-tab="selectTab"
     >
       <!-- Dossiers -->

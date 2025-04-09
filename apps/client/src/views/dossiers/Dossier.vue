@@ -15,7 +15,7 @@ import DossierDemande from './DossierDemande.vue'
 import DossierAnnotations from './DossierAnnotations.vue'
 import DossierHeader from './DossierHeader.vue'
 import DossierMessagerie from './DossierMessagerie.vue'
-import { copyCurrentUrlInClipboard, formatForMessageDate } from '@/utils'
+import { formatForMessageDate } from '@/utils'
 import apiClient from '@/api/api-client'
 import AttachedFileList from '@/components/ag-grid/files/AttachedFileList.vue'
 import type { ApiCall } from '@/components/ag-grid/server-side/pagination.utils'
@@ -170,20 +170,11 @@ onMounted(async () => {
             </DsfrTabContent>
           </DsfrTabs>
         </template>
-        <template #footer>
-          <DsfrButton
-            type="button"
-            label="Copier le lien"
-            icon="ri-links-line"
-            secondary
-            @click="copyCurrentUrlInClipboard()"
-          />
-        </template>
       </LayoutFiche>
     </div>
     <DossierMessagerie
       v-if="messages?.length"
-      class="flex-basis-[40%] fr-pr-2v overflow-y-auto"
+      class="flex-basis-[40%] fr-pr-2v overflow-y-auto bn-dynamic-small-p"
       :messages="messages"
       :demandeur-email="demandeurEmail"
     />
