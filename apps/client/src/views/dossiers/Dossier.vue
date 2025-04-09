@@ -174,7 +174,7 @@ onMounted(async () => {
     </div>
     <DossierMessagerie
       v-if="messages?.length"
-      class="flex-basis-[40%] fr-pr-2v overflow-y-auto"
+      class="flex-basis-[40%] fr-pr-2v overflow-y-auto bn-dynamic-small-p"
       :messages="messages"
       :demandeur-email="demandeurEmail"
     />

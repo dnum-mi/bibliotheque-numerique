@@ -182,39 +182,16 @@ onErrorCaptured((error: Error | AxiosError) => {
   }
   return false
 })
-
-const isSmallScreen = ref(false)
-
-const updateScreenSize = () => {
-  isSmallScreen.value = window.innerWidth <= 1200 && window.innerHeight <= 780
-}
-
-onMounted(() => {
-  updateScreenSize()
-  window.addEventListener('resize', updateScreenSize)
-})
-
-onBeforeUnmount(() => {
-  window.removeEventListener('resize', updateScreenSize)
-})
 </script>
 
 <template>
   <div class="flex flex-col h-full w-full">
-    <div
-      v-if="runEnv !== defaultEnv"
-      :class="envStyle"
-      class="flex justify-center items-center font-bold text-lg h-6"
-    >
-      Environnement: {{ envTextMapping[runEnv] }}
-    </div>
-
     <DsfrHeader
       v-model="searchQuery"
       :service-title="serviceTitle"
       :logo-text="logoText"
       :quick-links="quickLinks"
-      v-bind="isSmallScreen ? {} : { 'service-description': serviceDescription }"
+      :service-description="serviceDescription"
     />
 
     <main class="flex flex-col grow w-full h-full min-h-0 overflow-auto">
@@ -224,6 +201,7 @@ onBeforeUnmount(() => {
     <AppDsfrFooter
       a11y-compliance="partiellement conforme"
       :mandatory-links="mandatoryLinks"
+      :class="envStyle"
       :logo-text="logoText"
       :ecosystem-links="ecosystemLinks"
       licence-text=""
@@ -256,15 +234,18 @@ onBeforeUnmount(() => {
 }
 
 .env_development {
-  background-color: rgba(112, 255, 104, 0.8);
+  color: white !important;
+  background-color: rgba(2, 117, 0, 0.42);
 }
 
 .env_staging {
-  background-color: #00bbc3;
+  color: white !important;
+  background-color: #006165;
 }
 
 .env_preproduction {
-  background-color: rgba(242, 81, 250, 0.73);
+  color: white !important;
+  background-color: rgba(124, 0, 131, 0.61);
 }
 
 @media screen and (max-width: 1400px) {
@@ -287,13 +268,26 @@ onBeforeUnmount(() => {
   }
 }
 
-@media (min-width: 62em) and (max-width: 1280px) and (max-height: 780px) {
+@media screen and (max-height: 780px) {
+  body {
+    font-size: 1rem !important;
+  }
+
   :deep(.fr-header__body-row) {
     padding: 0.50em 0 !important;
   }
 
   :deep(.fr-header__service-title) {
     font-size: 14px !important;
+  }
+  :deep(.fr-header__service-title) {
+    font-size: 14px !important;
+  }
+  :deep(.fr-header__service-tagline) {
+    display: none;
+  }
+  :deep(.fr-logo::after) {
+    display:none !important;
   }
 }
 </style>

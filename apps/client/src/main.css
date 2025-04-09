@@ -199,3 +199,38 @@ body,
   width: fit-content;
   padding-right: 1rem;
 }
+
+/* =============== SIZES =============== */
+.bn-dynamic-big-p {
+  padding: 2rem;
+}
+
+.bn-dynamic-big-pt {
+  padding-top: 2rem;
+}
+
+.bn-dynamic-small-p {
+  padding: 1rem;
+}
+
+.bn-dynamic-small-pt {
+  padding-top: 1rem;
+}
+
+@media screen and (max-height: 780px) {
+  .bn-dynamic-big-p {
+    padding: 1rem;
+  }
+
+  .bn-dynamic-big-pt {
+    padding-top: 1rem;
+  }
+
+  .bn-dynamic-small-p {
+    padding: 0;
+  }
+
+  .bn-dynamic-small-pt {
+    padding-top: 0;
+  }
+}
