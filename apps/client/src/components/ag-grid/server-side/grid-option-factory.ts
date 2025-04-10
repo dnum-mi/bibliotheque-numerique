@@ -4,7 +4,6 @@ import CustomDateFilter from '@/components/ag-grid/custom-filters/CustomDateFilt
 import CustomNumbersFilter from '@/components/ag-grid/custom-filters/CustomNumbersFilter.vue'
 
 export const gridOptionFactory = (getRows: (params: IServerSideGetRowsParams) => void, pageSize: number): GridOptions => ({
-  domLayout: 'autoHeight',
   localeText: localeTextAgGrid,
   suppressMenuHide: true,
   rowModelType: 'serverSide',

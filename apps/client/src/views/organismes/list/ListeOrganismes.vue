@@ -72,15 +72,14 @@ onMounted(async () => {
       />
     </div>
 
-    <div class="">
-      <AgGridServerSide
-        ref="agGridComponent"
-        v-model:pagination-dto="paginationDto"
-        :column-defs="listOrganismeColumnDef"
-        :on-selection-changed="onSelectionChanged"
-        pre-condition
-        :api-call="apiCall"
-      />
-    </div>
+    <AgGridServerSide
+      ref="agGridComponent"
+      v-model:pagination-dto="paginationDto"
+      class="h-[95%]"
+      :column-defs="listOrganismeColumnDef"
+      :on-selection-changed="onSelectionChanged"
+      pre-condition
+      :api-call="apiCall"
+    />
   </LayoutList>
 </template>

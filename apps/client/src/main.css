@@ -201,6 +201,13 @@ body,
 }
 
 /* =============== SIZES =============== */
+.bn-scroll-parent {
+  overflow: auto !important;
+  min-height: 0 !important;
+  height: 100% !important;
+}
+
+
 .bn-dynamic-big-p {
   padding: 2rem;
 }

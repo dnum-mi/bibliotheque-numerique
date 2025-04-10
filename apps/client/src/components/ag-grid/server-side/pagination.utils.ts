@@ -17,7 +17,8 @@ import type {
   SortModelItem,
   TextFilterModel,
 } from 'ag-grid-community'
-import type { AgGridCommon } from 'ag-grid-community/dist/lib/interfaces/iCommon'
+
+import type { AgGridCommon } from 'ag-grid-community/dist/types/core/interfaces/iCommon'
 
 export type ApiCall<T> = (params: IPagination<T>) => Promise<IPaginated<T>>
 

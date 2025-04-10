@@ -28,7 +28,6 @@ import {
 } from '@/stores'
 import DemarcheDossierCellRenderer from '@/views/demarches/demarche/dossiers/DemarcheDossierCellRenderer.vue'
 import { deepAlmostEqual, selectKeysInObject } from '@/utils/object'
-import AgGridServerSide from '@/components/ag-grid/server-side/AgGridServerSide.vue'
 import { backendFilterToAggFilter } from '@/components/ag-grid/server-side/pagination.utils'
 import { getAgGridFilterFromFieldType } from '@/components/ag-grid/server-side/filters.utils'
 import type { BNColDef } from '@/components/ag-grid/server-side/bn-col-def.interface'
@@ -334,10 +333,8 @@ const apiCall = (dto: IPagination<unknown>) => {
 </script>
 
 <template>
-  <div :style="{ paddingBottom: '2rem' }">
-    <div
-      class="flex justify-between no-label-on-toggle items-center bn-dynamic-small-p"
-    >
+  <div class="bn-scroll-parent flex flex-col">
+    <div class="flex flex-shrink-0 justify-between no-label-on-toggle items-center bn-dynamic-small-p">
       <div class="flex gap-2">
         <div
           v-if="!hasNoRepeatableField"
@@ -381,15 +378,14 @@ const apiCall = (dto: IPagination<unknown>) => {
         @select-display="selectFilter($event)"
       />
     </div>
-    <div
-      v-if="demarche && columnsDef"
-      class="ag-grid-wrapper"
-    >
+    <div class="flex-grow">
       <AgGridServerSide
+        v-if="demarche && columnsDef"
         ref="agGridComponent"
         v-model:pagination-dto="paginationDto"
         :column-defs="columnsDef"
         :loading="fetching"
+        class="h-full"
         :pre-condition="!!demarche"
         :specific-grid-option="specificGridOptions"
         :on-selection-changed="onSelectionChanged"
