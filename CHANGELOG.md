@@ -1,5 +1,30 @@
 # Changelog
 
+## [2.27.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.26.1...v2.27.0) (2025-04-10)
+
+
+### Features
+
+* filter number accepte blank and notBlank ([e372afe](https://github.com/dnum-mi/bibliotheque_numerique/commit/e372afe972e03870104c8bca679d26d0eef54cdb))
+* import users by excel file ([3c16b2c](https://github.com/dnum-mi/bibliotheque_numerique/commit/3c16b2c0ab755c52f68a2f39abdca1309f3b3ca8))
+* importing an existing user update its role. ([6f79592](https://github.com/dnum-mi/bibliotheque_numerique/commit/6f795920b7369c7ee263560815fdafd7075609c9))
+* update design for smaller screen ([76daa53](https://github.com/dnum-mi/bibliotheque_numerique/commit/76daa53776cb0fd1bac607ac98a0687d8278a79e))
+* upgrade the page of manage role of users ([d923daa](https://github.com/dnum-mi/bibliotheque_numerique/commit/d923daa8276245673fd7cda2675091a4ebe3eca3))
+
+
+### Bug Fixes
+
+* cypresse error in dossier demande vue ([ce3de2c](https://github.com/dnum-mi/bibliotheque_numerique/commit/ce3de2c05fffa36c4cc4bb40b46d794e217597a9))
+* del rnf config ([e105b25](https://github.com/dnum-mi/bibliotheque_numerique/commit/e105b25f7564c64e5898a0e4d2ca1e3a931bfb8a))
+* do not filter or sort column if unselected ([8a1f5fa](https://github.com/dnum-mi/bibliotheque_numerique/commit/8a1f5fa998ffbf33648d3ee93d0867c3d14bf33b))
+* migration db to remove ENABLE_RNF_SIAF ([370491e](https://github.com/dnum-mi/bibliotheque_numerique/commit/370491e9fb7b7563e173fd0fdc9bb1c55dbbb0b3))
+* naming on organism header ([08db0de](https://github.com/dnum-mi/bibliotheque_numerique/commit/08db0de1e43f9835c60ca28e3c227b5c435c0e5a))
+* no more in-range for number filters ([5ae6e1f](https://github.com/dnum-mi/bibliotheque_numerique/commit/5ae6e1f5508dedf172292e77fb985bf3e96931a3))
+* notEqual filter ([0712bfe](https://github.com/dnum-mi/bibliotheque_numerique/commit/0712bfe74a057810051e966c415b02dede1b26b1))
+* remove button on dossier & improve navbar on small screen ([0c30616](https://github.com/dnum-mi/bibliotheque_numerique/commit/0c306161588d1d8e8b5c27bc619f4ba317a2baba))
+* wording prefecture in fiche organisme ([ede38be](https://github.com/dnum-mi/bibliotheque_numerique/commit/ede38beee7cacf1de22a01ad579cef6d06f4f5be))
+* wording service instructor in list dossier of fiche organisme ([3795de0](https://github.com/dnum-mi/bibliotheque_numerique/commit/3795de08d5e26087ca162e5d45453adfe604a86f))
+
 ## [2.26.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.26.0...v2.26.1) (2025-04-01)
 
 
