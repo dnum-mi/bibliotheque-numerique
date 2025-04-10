@@ -1,4 +1,4 @@
-import { IsDefined, IsEnum, IsIn, IsNumber, IsOptional, ValidateNested } from 'class-validator'
+import { IsDefined, IsEnum, IsIn, IsNumber, IsOptional, ValidateIf, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
 import { IFilterNumber, INumberFilterCondition } from '@biblio-num/shared'
 import { ApiProperty } from '@nestjs/swagger'
@@ -10,6 +10,8 @@ export const NumberFilterConditions = {
   LessThanOrEqual: 'lessThanOrEqual',
   GreaterThan: 'greaterThan',
   GreaterThanOrEqual: 'greaterThanOrEqual',
+  Empty: 'blank',
+  NotEmpty: 'notBlank',
 }
 
 export type NumberFilterConditionsKeys =
@@ -26,6 +28,7 @@ export class NumberFilterConditionDto implements INumberFilterCondition {
   @ApiProperty({
     description: 'Nombre à comparer',
   })
+  @ValidateIf(o => !['blank', 'notBlank'].includes(o.type))
   @IsDefined()
   @IsNumber()
   filter: number
