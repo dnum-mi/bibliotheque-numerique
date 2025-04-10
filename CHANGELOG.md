@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.27.2](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.27.1...v2.27.2) (2025-04-10)
+
+
+### Bug Fixes
+
+* autorize show tabs in demarche view ([3c1d7a6](https://github.com/dnum-mi/bibliotheque_numerique/commit/3c1d7a6044f1028eace904d931583592a361da31))
+
 ## [2.27.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.27.0...v2.27.1) (2025-04-10)
 
 
