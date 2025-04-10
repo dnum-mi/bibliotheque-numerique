@@ -13,14 +13,14 @@ withDefaults(defineProps<{
 </script>
 
 <template>
-  <div class="flex flex-col flex-grow  min-h-[320px]">
+  <div class="flex  flex-col  min-h-[320px]  h-full">
     <LayoutBanner
       :title="title"
       :title-bg-color="titleBgColor"
       :title-icon="titleIcon"
       class="flex-shrink-0"
     />
-    <div class="flex-grow  fr-pb-4w">
+    <div class="flex-grow  bn-scroll-parent">
       <slot name="default" />
     </div>
   </div>

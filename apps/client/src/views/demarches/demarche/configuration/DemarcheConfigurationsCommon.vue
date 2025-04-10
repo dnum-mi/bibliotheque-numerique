@@ -128,7 +128,7 @@ const saveOneMappingColumnDebounced = useDebounceFn(saveOneMappingColumn, 300)
 </script>
 
 <template>
-  <div class="flex -m-t-[2rem]">
+  <div class="flex fr-pl-2w">
     <div class="flex-basis-[50%]  flex-shrink-0  pt-6  pr-8  border-r-2  border-r-[var(--grey-925-125)]  border-r-solid">
       <header>
         <h4>

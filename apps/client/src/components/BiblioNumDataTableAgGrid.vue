@@ -191,8 +191,7 @@ defineExpose({
     {{ title }}
   </h4>
   <AgGridVue
-    style="max-width: 100%; height: 690px"
-    class="ag-theme-material"
+    class="ag-theme-material m-w-full h-full"
     ensure-dom-order="true"
     :column-defs="columnDefs"
     :row-data="rowData"

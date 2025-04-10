@@ -121,6 +121,7 @@ const onSelectionChanged = (event: SelectionChangedEvent) => {
 <template>
   <AgGridServerSide
     ref="agGridComponent"
+    class="h-full"
     :column-defs="columnDefs"
     pre-condition
     :api-call="apiCall"

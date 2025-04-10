@@ -75,10 +75,10 @@ const onUpdateNbMonth = async (nb: string) => {
 
 <template>
   <div
-    class="flex justify-center items-center font-bold text-lg h-6 pb-6"
+    class="flex justify-center items-center font-bold text-lg p-4"
   >
-    <span v-if="isEnabledAnonymize" class="fr-icon-check-line text-green-9">L'opération d'anoymisation est active pour tous les dossiers de cette démarche</span>
-    <span v-else class="fr-icon-close-line text-amber"> L'opération d'anoymisation est en arrete pour tous les dossiers de cette démarche</span>
+    <span v-if="isEnabledAnonymize" class="fr-icon-check-line text-green-9">L'opération d'anonymisation est active pour tous les dossiers de cette démarche</span>
+    <span v-else class="fr-icon-close-line text-amber"> L'opération d'anonymisation est en arrêt pour tous les dossiers de cette démarche</span>
   </div>
   <div class="flex flex-col mb-10">
     <!-- NBR MONTH ANONYMISATION  -->
