@@ -181,6 +181,23 @@ describe('Build filter', () => {
           ),
         ).resolves.toEqual('(("I09" IS NOT NULL OR "I09" != \'\'))')
       })
+
+      it('Should build filter for "notEqual"', () => {
+        expect(
+          buildFilterQuery(
+            {
+              I09: {
+                filterType: 'text',
+                condition1: {
+                  type: 'notEqual',
+                  filter: 'toto',
+                },
+              },
+            },
+            { I09: 'string' },
+          ),
+        ).resolves.toEqual('(("I09" != \'toto\'))')
+      })
     })
 
     describe('Array text filters', () => {
@@ -301,6 +318,26 @@ describe('Build filter', () => {
           ),
         ).resolves.toEqual(
           '((EXISTS (SELECT 1 FROM UNNEST("I09") AS item WHERE item IS NOT NULL OR item != \'\')))',
+        )
+      })
+
+      it('Should build filter for "notEqual"', () => {
+        expect(
+          buildFilterQuery(
+            {
+              I09: {
+                filterType: 'text',
+                condition1: {
+                  type: 'notEqual',
+                  filter: 'toto',
+                },
+              },
+            },
+            { I09: 'string' },
+            true,
+          ),
+        ).resolves.toEqual(
+          '((EXISTS (SELECT 1 FROM UNNEST("I09") AS item WHERE item != \'toto\')))',
         )
       })
     })
@@ -631,7 +668,40 @@ describe('Build filter', () => {
           ),
         ).resolves.toEqual('(("numberField" >= 8))')
       })
+
+      it('Should build filter for number blank condition', () => {
+        expect(
+          buildFilterQuery(
+            {
+              numberField: {
+                filterType: 'number',
+                condition1: {
+                  type: 'blank'
+                },
+              } as FilterNumberDto,
+            },
+            { numberField: 'number' },
+          ),
+        ).resolves.toEqual('(("numberField" IS NULL))')
+      })
+
+      it('Should build filter for number notBlank condition', () => {
+        expect(
+          buildFilterQuery(
+            {
+              numberField: {
+                filterType: 'number',
+                condition1: {
+                  type: 'notBlank'
+                },
+              } as FilterNumberDto,
+            },
+            { numberField: 'number' },
+          ),
+        ).resolves.toEqual('(("numberField" IS NOT NULL))')
+      })
     })
+
     describe('Array number filters', () => {
       it('Should build filter for number equals condition', () => {
         expect(
@@ -751,6 +821,40 @@ describe('Build filter', () => {
         ).resolves.toEqual(
           '((EXISTS (SELECT 1 FROM UNNEST("numberField") AS item WHERE item >= 8)))',
         )
+      })
+
+      it('Should build filter for number blank condition', () => {
+        expect(
+          buildFilterQuery(
+            {
+              numberField: {
+                filterType: 'number',
+                condition1: {
+                  type: 'blank'
+                },
+              } as FilterNumberDto,
+            },
+            { numberField: 'number' },
+            true,
+          ),
+        ).resolves.toEqual('((EXISTS (SELECT 1 FROM UNNEST("numberField") AS item WHERE item IS NULL)))')
+      })
+
+      it('Should build filter for number notBlank condition', () => {
+        expect(
+          buildFilterQuery(
+            {
+              numberField: {
+                filterType: 'number',
+                condition1: {
+                  type: 'notBlank'
+                },
+              } as FilterNumberDto,
+            },
+            { numberField: 'number' },
+            true
+          ),
+        ).resolves.toEqual('((EXISTS (SELECT 1 FROM UNNEST("numberField") AS item WHERE item IS NOT NULL)))')
       })
     })
   })

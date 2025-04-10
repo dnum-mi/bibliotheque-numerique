@@ -10,6 +10,7 @@ export const TextFilterConditions = {
   EndsWith: 'endsWith',
   Blank: 'blank',
   NotBlank: 'notBlank',
+  NotEqual: 'notEqual',
 }
 
 export type TextFilterConditionsKeys =

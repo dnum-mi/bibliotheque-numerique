@@ -98,6 +98,8 @@ const _buildOneTextFilter = (
   const item = isArray ? 'item' : key
   const escapedFilter = _manualFilterValueEscapingMechanism(filter.filter)
   switch (filter.type) {
+  case TextFilterConditions.NotEqual:
+    return `(${key} != '${escapedFilter}')${isArray ? ')' : ''}`
   case TextFilterConditions.Contains:
     return `(${key} ILIKE '%${escapedFilter}%')${isArray ? ')' : ''}`
   case TextFilterConditions.NotContains:
@@ -205,13 +207,16 @@ const _buildOneNumberFilter = (
   isArray = false,
   prefix?: string,
 ): string => {
+  key = _adaptKeyForArray(key, isArray, prefix)
+  if (filter.type === NumberFilterConditions.Empty || filter.type === NumberFilterConditions.NotEmpty) {
+    return `(${key} IS ${filter.type === NumberFilterConditions.NotEmpty ? 'NOT ' : ''}NULL${isArray ? ')' : ''})`
+  }
   const numberSqlOperator = numberSqlOperators[filter.type]
   if (!numberSqlOperator) {
     throw new BadRequestException(
       `Unknown number filter condition: ${filter.type}`,
     )
   }
-  key = _adaptKeyForArray(key, isArray, prefix)
   return `(${key} ${numberSqlOperator} ${filter.filter}${isArray ? ')' : ''})`
 }
 //#endregion
