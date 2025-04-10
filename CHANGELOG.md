@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.27.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.27.0...v2.27.1) (2025-04-10)
+
+
+### Bug Fixes
+
+* resize ag-grid ([1eaa092](https://github.com/dnum-mi/bibliotheque_numerique/commit/1eaa09297664d5fae8caf8d3a14b5912dd77b35c))
+
 ## [2.27.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.26.1...v2.27.0) (2025-04-10)
 
 
