@@ -407,8 +407,12 @@ const removePrefecture = (prefecture: IOnePrefectureUpdate['key']) => {
       <label class="bn-fiche-sub-title--label">Nom complet</label>
       <span class="text-xl">{{ selectedUser.firstname || "" }} {{ selectedUser.lastname || "" }}</span>
     </div>
+    <div v-if="!!selectedUser?.prefecture">
+      <label class="bn-fiche-sub-title--label">Préfecture</label>
+      <span class="text-xl">{{ selectedUser.prefecture }}</span>
+    </div>
     <div v-if="!!selectedUser?.job">
-      <label class="bn-fiche-sub-title--label">fonction</label>
+      <label class="bn-fiche-sub-title--label">Fonction</label>
       <span class="text-xl">{{ selectedUser.job }}</span>
     </div>
   </div>
