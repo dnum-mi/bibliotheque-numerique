@@ -107,7 +107,7 @@ const translateValueTo = computed(() => values[String(!asc?.value)])
       <Transition name="slide-fade" mode="in-out">
         <!-- Configurations -->
         <div
-          v-show="userStore.CanConfigureDemarche(Number(props.demarcheId)) && selectedTabIndex === 2"
+          v-if="userStore.CanConfigureDemarche(Number(props.demarcheId)) && selectedTabIndex === 2"
           class="flex-grow bn-scroll-parent"
         >
           <KeepAlive>
@@ -118,7 +118,7 @@ const translateValueTo = computed(() => values[String(!asc?.value)])
       <Transition name="slide-fade" mode="in-out">
         <!-- Options -->
         <div
-          v-show="userStore.CanConfigureDemarche(Number(props.demarcheId)) && selectedTabIndex === 3"
+          v-if="userStore.CanConfigureDemarche(Number(props.demarcheId)) && selectedTabIndex === 3"
           class="flex-grow bn-scroll-parent"
         >
           <KeepAlive>
