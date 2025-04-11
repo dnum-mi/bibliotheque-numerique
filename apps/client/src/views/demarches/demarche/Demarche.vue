@@ -81,51 +81,61 @@ const translateValueTo = computed(() => values[String(!asc?.value)])
         :small="false"
         class="simulate-tabs"
       />
-      <Transition name="slide-fade" mode="in-out">
-        <!-- Dossiers -->
-        <div
-          v-show="selectedTabIndex === 0"
-          class="flex-grow bn-scroll-parent"
-        >
-          <DemarcheDossiers
-            id="demarche-dossiers"
-            :custom-display-id="customDisplayId"
-          />
-        </div>
-      </Transition>
-      <Transition name="slide-fade" mode="in-out">
-        <!-- Informations -->
-        <div
-          v-show="selectedTabIndex === 1"
-          class="flex-grow bn-scroll-parent"
-        >
-          <DemarcheInformations class="fr-pt-3w" />
-          <DemarcheService class="fr-pt-5w" />
-          <GroupInstructeurs class="fr-pt-5w" />
-        </div>
-      </Transition>
-      <Transition name="slide-fade" mode="in-out">
-        <!-- Configurations -->
-        <div
-          v-if="userStore.CanConfigureDemarche(Number(props.demarcheId)) && selectedTabIndex === 2"
-          class="flex-grow bn-scroll-parent"
-        >
-          <KeepAlive>
-            <DemarcheConfigurations />
-          </KeepAlive>
-        </div>
-      </Transition>
-      <Transition name="slide-fade" mode="in-out">
-        <!-- Options -->
-        <div
-          v-if="userStore.CanConfigureDemarche(Number(props.demarcheId)) && selectedTabIndex === 3"
-          class="flex-grow bn-scroll-parent"
-        >
-          <KeepAlive>
-            <DemarcheOptions />
-          </KeepAlive>
-        </div>
-      </Transition>
+      <div class="flex flex-row h-full fr-pl-1w fr-pr-1w">
+        <Transition name="slide-fade" mode="in-out">
+          <!-- Dossiers -->
+          <div
+            v-show="selectedTabIndex === 0"
+            class="flex-grow bn-scroll-parent"
+          >
+            <DemarcheDossiers
+              id="demarche-dossiers"
+              :custom-display-id="customDisplayId"
+            />
+          </div>
+        </Transition>
+        <Transition name="slide-fade" mode="in-out">
+          <!-- Informations -->
+          <div
+            v-show="selectedTabIndex === 1"
+            class="flex-grow bn-scroll-parent"
+          >
+            <DemarcheInformations class="fr-pt-3w" />
+            <DemarcheService class="fr-pt-5w" />
+            <GroupInstructeurs class="fr-pt-5w" />
+          </div>
+        </Transition>
+        <Transition name="slide-fade" mode="in-out">
+          <!-- Configurations -->
+          <template
+            v-if="userStore.CanConfigureDemarche(Number(props.demarcheId))"
+          >
+            <div
+              v-show="selectedTabIndex === 2"
+              class="flex-grow bn-scroll-parent"
+            >
+              <KeepAlive>
+                <DemarcheConfigurations />
+              </KeepAlive>
+            </div>
+          </template>
+        </Transition>
+        <Transition name="slide-fade" mode="in-out">
+          <!-- Options -->
+          <template
+            v-if="userStore.CanConfigureDemarche(Number(props.demarcheId))"
+          >
+            <div
+              v-show="selectedTabIndex === 3"
+              class="flex-grow bn-scroll-parent"
+            >
+              <KeepAlive>
+                <DemarcheOptions />
+              </KeepAlive>
+            </div>
+          </template>
+        </Transition>
+      </div>
     </div>
   </LayoutList>
 </template>
@@ -134,6 +144,7 @@ const translateValueTo = computed(() => values[String(!asc?.value)])
 .simulate-tabs {
   position: relative;
   border-bottom: 1px solid var(--border-default-grey);
+  padding-left: 1rem;
 }
 
 :deep(.fr-segmented__elements) {
@@ -167,11 +178,11 @@ const translateValueTo = computed(() => values[String(!asc?.value)])
 }
 
 .slide-fade-enter-active {
-  transition: all 0.3s ease-out;
+  transition: all 0.2s linear;
 }
 
 .slide-fade-leave-active {
-  transition: all 0.3s ease-out;
+  transition: all 0.2s linear;
 }
 
 .slide-fade-enter-from {
