@@ -56,30 +56,31 @@ onMounted(async () => {
     title-bg-color="var(--border-plain-grey)"
     title-icon="fr-icon-search-line"
   >
-    <div class="flex justify-between m-2">
-      <DsfrButton
-        v-if="enableSiaf"
-        label="Recherche dans le référentiel (RAF)"
-        icon="fr-icon-search-line"
-        small
-        @click="toSearch"
-      />
-      <DsfrButton
-        label="Télécharger"
-        icon="ri-file-download-fill"
-        small
-        @click="download"
+    <div class="flex flex-col h-full">
+      <div class="flex justify-between m-2">
+        <DsfrButton
+          v-if="enableSiaf"
+          label="Recherche dans le référentiel (RAF)"
+          icon="fr-icon-search-line"
+          small
+          @click="toSearch"
+        />
+        <DsfrButton
+          label="Télécharger"
+          icon="ri-file-download-fill"
+          small
+          @click="download"
+        />
+      </div>
+      <AgGridServerSide
+        ref="agGridComponent"
+        v-model:pagination-dto="paginationDto"
+        class="h-full"
+        :column-defs="listOrganismeColumnDef"
+        :on-selection-changed="onSelectionChanged"
+        pre-condition
+        :api-call="apiCall"
       />
     </div>
-
-    <AgGridServerSide
-      ref="agGridComponent"
-      v-model:pagination-dto="paginationDto"
-      class="h-[95%]"
-      :column-defs="listOrganismeColumnDef"
-      :on-selection-changed="onSelectionChanged"
-      pre-condition
-      :api-call="apiCall"
-    />
   </LayoutList>
 </template>
