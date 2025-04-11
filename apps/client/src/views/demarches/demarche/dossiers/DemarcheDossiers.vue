@@ -57,7 +57,7 @@ const customFiltersWithErrors = computed<CustomFilterWithErrors[]>(() =>
     disabledColumns: Object.keys(cf.filters || {})
       .concat(Array.isArray(cf.sorts) ? cf.sorts.map((s) => s.key) : [])
       .filter((key) => !demarcheConfigurationHash.value[key]),
-  }))
+  })),
 )
 const selectedCustomFilter = ref<ICustomFilter | null>(null)
 const totalsAllowed = computed<TotalsAllowed[] | undefined>(
