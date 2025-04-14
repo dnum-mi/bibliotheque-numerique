@@ -1,5 +1,6 @@
 import type {
   IDateFilterCondition,
+  IFilterDate,
   IEnumFilterCondition,
   IFilter,
   INumberFilterCondition,
@@ -130,6 +131,26 @@ export const fromAggToBackendSort = (sortModel: SortModelItem[], allowedColumnId
     }))
 }
 
+const _aggFilterToAggFilterByDate = (filter: IFilterDate): FilterModel => ({
+  filterType: 'multi',
+  filterModels: filter.condition1.type !== 'since'
+    ? [
+        {
+          filterType: 'date',
+          type: filter.condition1.type,
+          dateFrom: filter.condition1.filter,
+          dateTo: filter.condition1.filterTo,
+        },
+        null,
+      ]
+    : [
+        null,
+        {
+          value: filter.condition1.sinceWhen,
+        },
+      ],
+})
+
 export const backendFilterToAggFilter = (filters: Record<string, IFilter>): FilterModel => {
   const entries = Object.entries(filters)
   if (entries.length) {
@@ -138,16 +159,8 @@ export const backendFilterToAggFilter = (filters: Record<string, IFilter>): Filt
       if (value.condition2) {
         aggFilters[key] = filters[key]
       }
-      if (value.filterType === 'date' && value.condition1?.type === 'since') {
-        aggFilters[key] = {
-          filterType: 'multi',
-          filterModels: [
-            null,
-            {
-              value: (value.condition1 as IDateFilterCondition).sinceWhen,
-            },
-          ],
-        }
+      if (value.filterType === 'date') {
+        aggFilters[key] = _aggFilterToAggFilterByDate(value)
       } else if (value.filterType === 'set') {
         aggFilters[key] = {
           filterType: value.filterType,
@@ -157,12 +170,11 @@ export const backendFilterToAggFilter = (filters: Record<string, IFilter>): Filt
       } else {
         aggFilters[key] = {
           filterType: value.filterType,
-          filter: value.condition1.filter,
           type: value.condition1.type,
+          filter: value.condition1.filter,
         }
       }
     })
-
     return aggFilters
   } else {
     return {}
