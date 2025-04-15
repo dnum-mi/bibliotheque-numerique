@@ -104,6 +104,9 @@ export class UserImportService {
         const formatedUser = this.formatUser(excelUser, allDemarcheRecord)
         this.logger.debug(formatedUser)
         const existingUser = await this.repo.findOne({ where: { email: formatedUser.email }, select: ['id'] })
+        if (existingUser && existingUser.role.label === Roles.sudo) {
+          continue
+        }
         if (existingUser) {
           await queryRunner.manager.update(User, { email: formatedUser.email }, {
             role: formatedUser.role,
