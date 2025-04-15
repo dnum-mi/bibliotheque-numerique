@@ -162,11 +162,11 @@ const translateValueTo = computed(() => values[String(!asc?.value)])
   background: var(--background-action-low-blue-france-hover) !important;
 }
 
-:deep(input:hover+label) {
+.simulate-tabs :deep(input:hover+label) {
   background: var(--background-action-low-blue-france-hover) !important;
 }
 
-:deep(input:checked+label) {
+.simulate-tabs :deep(input:checked+label) {
   background: white;
   color: var(--border-active-blue-france) !important;
   border: none;

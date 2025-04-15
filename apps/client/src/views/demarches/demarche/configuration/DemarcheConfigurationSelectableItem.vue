@@ -28,9 +28,9 @@ const getFrenchTypeLabel = (type: keyof typeof typeLabels) => {
 <template>
   <DsfrCheckbox
     :id="champ.id"
+    :model-value="isSelectedFn(champ)"
     name="champ.originalLabel"
     :label="champ.originalLabel"
-    :checked="isSelectedFn(champ)"
     @update:model-value="emit('toggleCheck', $event)"
   />
   <DsfrBadge
