@@ -1,7 +1,7 @@
 <script lang='ts' setup>
 import type { IDemarche } from '@biblio-num/shared'
 
-import { DsfrSegmentedSet } from '@gouvminint/vue-dsfr'
+import { DsfrSegmentedSet, getRandomString } from '@gouvminint/vue-dsfr'
 
 import { useDemarcheStore, useUserStore } from '@/stores'
 import LayoutList from '@/components/Layout/LayoutList.vue'
@@ -46,8 +46,12 @@ const tabTitles = computed<{ value: number, label: string }[]>(() => [
 ])
 const selectedTabIndex = ref(0)
 const asc = ref(false)
+const demarcheDossiersKey = ref(`demarche-dossiers-${getRandomString(5)}`)
 
 watch(selectedTabIndex, (newValue, oldValue) => {
+  if (newValue === 0) {
+    demarcheDossiersKey.value = `demarche-dossiers-${getRandomString(5)}`
+  }
   asc.value = newValue > oldValue
   router.push({ ...route, hash: `#${tabTitles.value[newValue].label}` })
 })
@@ -90,6 +94,7 @@ const translateValueTo = computed(() => values[String(!asc?.value)])
           >
             <DemarcheDossiers
               id="demarche-dossiers"
+              :key="demarcheDossiersKey"
               :custom-display-id="customDisplayId"
             />
           </div>
