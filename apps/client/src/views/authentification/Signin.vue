@@ -48,7 +48,12 @@ onMounted(async () => {
 const submit = handleSubmit(async (formValue: ICredentialsInput) => {
   try {
     toaster.removeMessage('auth')
-    await userStore.login(formValue)
+    const message = await userStore.login(formValue)
+
+    if (message) {
+      toaster.addSuccessMessage('Un e-mail vous a été envoyé. Veuillez vérifier votre boîte de réception et suivre les instructions pour vous connecter.')
+      return
+    }
     if (route.query.redirect) {
       router.push(route.query.redirect as string)
       return

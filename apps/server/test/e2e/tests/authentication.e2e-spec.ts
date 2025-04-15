@@ -5,6 +5,7 @@ import { RefreshToken } from '@/modules/auth/objects/refresh-token.entity'
 import { AuthService } from '@/modules/auth/providers/auth.service'
 import { dataSource } from '../data-source-e2e.typeorm'
 import { Repository } from 'typeorm'
+import { SendMailService } from '@/modules/sendmail/sendmail.service'
 
 const adminFixtureUser = {
   id: 4,
@@ -53,6 +54,26 @@ describe('Auth (e2e)', () => {
         .expect(404)
     })
 
+    it('Should send a login email for admin user', async () => {
+      const sendMailSpy = jest.spyOn(app.get<SendMailService>(SendMailService), 'loginWithVerifyAuth').mockResolvedValue()
+
+      await request(app.getHttpServer())
+        .post('/auth/sign-in')
+        .send({
+          email: 'admin1@localhost.com',
+          password: 'password',
+        })
+        .expect(200)
+
+      expect(sendMailSpy).toHaveBeenCalledWith(
+        'admin1@localhost.com',
+        'Suzette',
+        'admin1',
+        expect.stringMatching(/^https?:\/\/.*\/verify-auth\/.+$/),
+        expect.stringMatching(/15 minute\(s\)/),
+      )
+    })
+
     it('Should return 404 on bad password', async () => {
       await request(app.getHttpServer())
         .post('/auth/sign-in')
@@ -71,8 +92,10 @@ describe('Auth (e2e)', () => {
           password: 'password',
         })
 
-      expect(response.body).toHaveProperty('accessToken')
-      expect(response.body.accessToken).toBeDefined()
+      expect(response.status).toBe(200)
+      expect(response.body).toEqual({
+        message: 'Un lien de réinitialisation a été envoyé à votre adresse email.',
+      })
     })
 
     it('Should return 404 on user no valid', async () => {

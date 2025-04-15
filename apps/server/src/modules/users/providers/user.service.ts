@@ -26,6 +26,7 @@ import { CreateUserDto, PaginationUserDto } from '@/modules/users/objects/dtos/i
 import { AgGridUserDto, MyProfileOutputDto, PaginatedUserDto } from '@/modules/users/objects/dtos/output'
 import { PaginatedDto } from '@/shared/pagination/paginated.dto'
 import { RefreshToken } from '../../auth/objects/refresh-token.entity'
+import { durationToString } from '@/shared/utils/bn-code.utils'
 
 type jwtPlaylod = {
   user: string | number
@@ -134,24 +135,27 @@ export class UserService
       this.logger.warn(`Reset password: Cannot find user ${email}`)
       return
     }
-    const { appUrl, jwtForUrl } = this.createJwtOnUrl({ user: userInDb.id })
+    const { appUrl, jwtForUrl, duration } = this.createJwtOnUrl({ user: userInDb.id })
     await this.sendMailService.resetPwd(
       email,
       userInDb.firstname,
       userInDb.lastname,
       `${appUrl}/update-password/${jwtForUrl}`,
+      duration,
     )
   }
 
-  private createJwtOnUrl(playload: jwtPlaylod): {
+  public createJwtOnUrl(playload: jwtPlaylod): {
     appUrl: string
     jwtForUrl: string
+    duration: string
   } {
     const jwt = this.jwtService.sign(playload)
     // jwt does not go natively in url. We had to transform it in base64
     const jwtForUrl = Buffer.from(jwt).toString('base64url')
     const appUrl = this.configService.get('appFrontUrl')
-    return { appUrl, jwtForUrl }
+    const duration = durationToString(this.configService.get('jwt').expiresIn)
+    return { appUrl, jwtForUrl, duration }
   }
 
   public async deleteUserRefreshTokens(userId: number): Promise<void> {
@@ -166,22 +170,24 @@ export class UserService
   }
 
   private async mailToValidSignUp(userInDb: User): Promise<void> {
-    const { appUrl, jwtForUrl } = this.createJwtOnUrl({ user: userInDb.email })
+    const { appUrl, jwtForUrl, duration } = this.createJwtOnUrl({ user: userInDb.email })
     await this.sendMailService.validSignUp(
       userInDb.email,
       userInDb.firstname,
       userInDb.lastname,
       `${appUrl}/valid-email/${jwtForUrl}`,
+      duration,
     )
   }
 
   private async mailToAlreadySignUp(userInDb: User): Promise<void> {
-    const { appUrl, jwtForUrl } = this.createJwtOnUrl({ user: userInDb.id })
+    const { appUrl, jwtForUrl, duration } = this.createJwtOnUrl({ user: userInDb.id })
     await this.sendMailService.alreadySignUp(
       userInDb.email,
       userInDb.firstname,
       userInDb.lastname,
       `${appUrl}/update-password/${jwtForUrl}`,
+      duration,
     )
   }
 

@@ -14,6 +14,15 @@ export const authRoutes: RouteRecordRaw[] = [
     },
   },
   {
+    name: routeNames.DOUBLE_AUTH,
+    path: '/verify-auth/:token',
+    component: () => import('@/views/authentification/VerifyAuth.vue'),
+    props: true,
+    meta: {
+      skipAuth: true,
+    },
+  },
+  {
     name: routeNames.SIGNIN,
     path: '/sign_in',
     beforeEnter: [isNotAuthenticatedGuard],

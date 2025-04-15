@@ -64,7 +64,7 @@ describe('SendMailService', () => {
     spyOnSmtpSend((obj: MailMessage) => {
       result = obj
     })
-    await service.validSignUp(email, 'some-first-name', 'some-last-name', 'some-url')
+    await service.validSignUp(email, 'some-first-name', 'some-last-name', 'some-url', '15 minute(s)')
     expect(result).toBeDefined()
     expect(result).toHaveProperty('data')
     expect(result.data).toHaveProperty('to', email)

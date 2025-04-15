@@ -7,7 +7,7 @@ export default registerAs('auth', () => ({
   discoveryUrl: process.env.AUTH_DISCOVERY_URL || 'https://identite-sandbox.proconnect.gouv.fr',
   userinfoSignedResponseAlg: process.env.AUTH_USERINFO_SIGNED_RESPONSE_ALG || 'RS256',
   disableSso: process.env.AUTH_DISABLE_SSO === 'true' || false,
-  jwtSecret: process.env.AUTH_JWT_SECRET || 'jwtsecret',
+  jwtSecret: process.env.AUTH_JWT_SECRET,
   jwtExpireIn: process.env.AUTH_JWT_EXPIRE_IN || '1h',
   jwtRefreshExpireIn: process.env.AUTH_JWT_REFRESH_EXPIRE_IN || '7d',
   expirationTokenProconnect: process.env.AUTH_TOKEN_PROCONNECT_EXPIRE_IN || '5m',

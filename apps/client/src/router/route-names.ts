@@ -24,4 +24,5 @@ export const routeNames = {
   ACCESSIBILITY: 'Accessibility',
   COOKIES: 'Cookies',
   PROCONNECT_CALLBACK: 'ProConnectCallback',
+  DOUBLE_AUTH: 'VerifyAuth',
 } as const

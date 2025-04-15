@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { UserService } from '../providers/user.service'
-import { UpdatePasswordGuard } from '@/modules/users/providers/guards/update-password.guard'
+import { CheckEmailTokenGuard } from '@/modules/users/providers/guards/check-email-token'
 import { ValidSignUpGuard } from '@/modules/users/providers/guards/validate-sign-up.guard'
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
 import { PublicRoute } from '@/modules/users/providers/decorators/public-route.decorator'
@@ -59,7 +59,7 @@ export class UserMeController {
     responseType: null,
   })
   @PublicRoute()
-  @UseGuards(UpdatePasswordGuard)
+  @UseGuards(CheckEmailTokenGuard)
   async updatePassword(
     @Request() req,
     @Body() body: UpdateUserPasswordDto,
