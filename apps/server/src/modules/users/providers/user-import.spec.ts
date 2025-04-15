@@ -125,12 +125,7 @@ describe('UserImportService', () => {
         validDemarcheIds,
       )
       expect(role.options['1'].national).toBe(true)
-      const role2 = service['formatRole'](
-        'admin',
-        '42',
-        '4',
-        validDemarcheIds,
-      )
+      const role2 = service['formatRole']('admin', '42', '4', validDemarcheIds)
       expect(role2.options['1'].prefectures).toEqual(['D04'])
       const role3 = service['formatRole'](
         'admin',
@@ -138,7 +133,12 @@ describe('UserImportService', () => {
         '4; 5;0;12',
         validDemarcheIds,
       )
-      expect(role3.options['1'].prefectures).toEqual(['D04', 'D05', 'D00', 'D12'])
+      expect(role3.options['1'].prefectures).toEqual([
+        'D04',
+        'D05',
+        'D00',
+        'D12',
+      ])
     })
   })
 
@@ -212,7 +212,6 @@ describe('UserImportService', () => {
         'Liste des départements': '75',
       }
 
-
       demarcheService.findMultipleDemarche.mockResolvedValue([
         //@ts-ignore
         { id: 1, dsDataJson: { number: '42' } },
@@ -264,24 +263,34 @@ describe('UserImportService', () => {
         //@ts-ignore
         { id: 1, dsDataJson: { number: '42' } },
       ])
-      userRepo.findOne.mockResolvedValue({id:42} as User)
+      userRepo.findOne.mockResolvedValue({
+        id: 42,
+        role: { label: 'instructor' },
+      } as User)
 
       const result = await service.createUserFromExcelData([user])
 
       expect(mockQueryRunner.connect).toHaveBeenCalled()
       expect(mockQueryRunner.startTransaction).toHaveBeenCalled()
-      expect(mockQueryRunner.manager.update).toHaveBeenCalledWith(User, {email: user.Email},{
-        role: {
-          label: 'admin',
-          options: {
-            1: {
-              national: false,
-              prefectures: ['D75'],
+      expect(mockQueryRunner.manager.update).toHaveBeenCalledWith(
+        User,
+        { email: user.Email },
+        {
+          role: {
+            label: 'admin',
+            options: {
+              1: {
+                national: false,
+                prefectures: ['D75'],
+              },
             },
           },
         },
-      })
-      expect(mockQueryRunner.manager.delete).toHaveBeenCalledWith(RefreshToken, {user: 42})
+      )
+      expect(mockQueryRunner.manager.delete).toHaveBeenCalledWith(
+        RefreshToken,
+        { user: 42 },
+      )
       expect(mockQueryRunner.commitTransaction).toHaveBeenCalled()
       expect(mockQueryRunner.release).toHaveBeenCalled()
 
