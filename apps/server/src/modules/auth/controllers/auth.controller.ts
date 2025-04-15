@@ -8,6 +8,7 @@ import {
   Res,
   Req,
   Delete,
+  UseGuards,
 } from '@nestjs/common'
 import { Request as ExpressRequest } from 'express'
 import { ApiTags } from '@nestjs/swagger'
@@ -18,6 +19,7 @@ import { AuthResponseDto, AuthProconnectResponseDto, UserOutputDto } from '@/mod
 import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.decorator'
 import { ConfigService } from '@nestjs/config'
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
+import { CheckEmailTokenGuard } from '@/modules/users/providers/guards/check-email-token'
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -38,6 +40,25 @@ export class AuthController {
       httpOnly: true,
       maxAge,
     })
+  }
+
+  @UseGuards(CheckEmailTokenGuard)
+  @PublicRoute()
+  @Post('verify-auth')
+  @HttpCode(200)
+  @UsualApiOperation({
+    summary: 'Login with double auth',
+    method: 'POST',
+    minimumRole: 'aucun',
+    responseType: AuthResponseDto,
+  })
+  async loginWithVerifyAuth(
+    @Request() req,
+    @Res() res,
+  ): Promise<void> {
+    const { accessToken, refreshToken } = await this.authService.loginWithVerifyAuth(req.user.id, req.user.email)
+    this.setRefreshTokenCookie(res, refreshToken)
+    res.send({ accessToken })
   }
 
   @Role('any')
@@ -68,7 +89,14 @@ export class AuthController {
     @Body() { email, password }: { email: string; password: string },
     @Res() res,
   ): Promise<void> {
-    const { accessToken, refreshToken } = await this.authService.login(email, password)
+    const result = await this.authService.login(email, password)
+
+    if (!result) {
+      res.send({ message: 'Un lien de réinitialisation a été envoyé à votre adresse email.' })
+      return
+    }
+
+    const { accessToken, refreshToken } = result
     this.setRefreshTokenCookie(res, refreshToken)
     res.send({ accessToken })
   }

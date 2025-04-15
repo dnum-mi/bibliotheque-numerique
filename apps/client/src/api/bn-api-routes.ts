@@ -1,5 +1,6 @@
 export const authRoute = '/auth'
 export const logoutRoute = `${authRoute}/logout`
+export const verifyAuthRoute = `${authRoute}/verify-auth`
 export const signInRoute = `${authRoute}/sign-in` // TODO: devrait s’appeler `/token` ou '/session' une route doit être un nom, pas un verbe
 export const proConnectSignInRoute = `${authRoute}/proconnect`
 export const proConnectCallbackRoute = `${authRoute}/proconnect/callback`

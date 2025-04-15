@@ -5,23 +5,27 @@ import {
   OnModuleInit,
   UnauthorizedException,
 } from '@nestjs/common'
-import { RefreshToken } from '../objects/refresh-token.entity'
-import { UserService } from '../../users/providers/user.service'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Repository } from 'typeorm'
 import * as bcrypt from 'bcrypt'
-import { User } from '@/modules/users/objects/user.entity'
-import { LoggerService } from '@/shared/modules/logger/logger.service'
-import {
-  AuthResponseDto,
-} from '@/modules/users/objects/dtos/output'
+import { randomBytes } from 'crypto'
 import { Client, custom, generators, Issuer } from 'openid-client'
 import { HttpsProxyAgent } from 'https-proxy-agent'
-import { randomBytes } from 'crypto'
+import { Roles, Prefecture, PrefectureDictionary } from '@biblio-num/shared'
+import { RefreshToken } from '../objects/refresh-token.entity'
+import { User } from '@/modules/users/objects/user.entity'
+import { UserService } from '../../users/providers/user.service'
+import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
-import { UserinfoResponse, DecodedToken, CustomJwtSignOptions } from '@/modules/auth/auth.types'
-import { Repository } from 'typeorm'
-import { InjectRepository } from '@nestjs/typeorm'
-import { Prefecture, PrefectureDictionary } from '@biblio-num/shared'
+import { SendMailService } from '@/modules/sendmail/sendmail.service'
+import { AuthResponseDto } from '@/modules/users/objects/dtos/output'
+import {
+  UserinfoResponse,
+  DecodedToken,
+  CustomJwtSignOptions,
+} from '@/modules/auth/auth.types'
+import { durationToString } from '@/shared/utils/bn-code.utils'
 
 @Injectable()
 export class AuthService implements OnModuleInit {
@@ -32,6 +36,7 @@ export class AuthService implements OnModuleInit {
     private logger: LoggerService,
     private readonly configService: ConfigService,
     private jwtService: JwtService,
+    private sendMailService: SendMailService,
     @InjectRepository(RefreshToken)
     private refreshTokenRepository: Repository<RefreshToken>,
   ) {}
@@ -68,21 +73,31 @@ export class AuthService implements OnModuleInit {
     }
   }
 
-  async login(
+  async loginWithVerifyAuth(
+    id: number,
     email: string,
-    password: string,
   ): Promise<AuthResponseDto> {
+    return this.createTokens(id, email, false)
+  }
+
+  async login(email: string, password: string): Promise<AuthResponseDto | undefined> {
     this.logger.verbose('login')
+
     const user: User = await this.usersService.findByEmail(email, [
       'id',
       'validated',
       'password',
       'email',
+      'firstname',
+      'lastname',
+      'role',
     ])
+
     if (!user) {
       this.logger.warn('Email not found')
       throw new NotFoundException()
     }
+
     if (!user.validated) {
       this.logger.warn('User not validated')
       throw new NotFoundException()
@@ -93,9 +108,38 @@ export class AuthService implements OnModuleInit {
       this.logger.warn('Password incorrect')
       throw new NotFoundException()
     }
+
+    if ([Roles.admin, Roles.superadmin].includes(user.role?.label)) {
+      await this.send2FAEmail(user, email)
+      return
+    }
+
     this.logger.debug('User connected')
     this.logger.debug({ id: user.id, email: user.email, validated: user.validated })
+
     return this.createTokens(user.id, user.email, false)
+  }
+
+  private async send2FAEmail(user: User, email: string): Promise<void> {
+    this.logger.verbose('send2FAEmail')
+    // do not use the createJwtOnUrl of userService, we want the auth service context for the secret
+    const expiresIn = this.configService.get('jwt').expiresIn
+    const tokenOptions: CustomJwtSignOptions = {
+      expiresIn,
+    }
+    const jwtForUrl =
+      Buffer.from(
+        this.jwtService.sign({ user: user.id }, tokenOptions),
+      ).toString('base64url')
+    const appUrl = this.configService.get('appFrontUrl')
+
+    await this.sendMailService.loginWithVerifyAuth(
+      email,
+      user.firstname,
+      user.lastname,
+      `${appUrl}/verify-auth/${jwtForUrl}`,
+      durationToString(expiresIn),
+    )
   }
 
   async logout(refreshToken?: string): Promise<void> {

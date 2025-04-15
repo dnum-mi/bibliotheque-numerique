@@ -42,7 +42,18 @@ export const useUserStore = defineStore('user', () => {
   }
 
   const login = async (loginForm: ICredentialsInput) => {
-    const { accessToken: token } = await bnApiClient.loginUser(loginForm)
+    const response = await bnApiClient.loginUser(loginForm)
+
+    if ('accessToken' in response) {
+      const { accessToken: token } = response
+      accessToken.value = token
+    }
+
+    return response.message
+  }
+
+  const loginWithVerifyAuth = async (tokenValue: string) => {
+    const { accessToken: token } = await bnApiClient.loginWithVerifyAuth(tokenValue)
     accessToken.value = token
   }
 
@@ -157,6 +168,7 @@ export const useUserStore = defineStore('user', () => {
     keySelectUser,
     selectedEditableUserLoading,
     login,
+    loginWithVerifyAuth,
     loginWithProconnect,
     logout,
     loadMyProfile,

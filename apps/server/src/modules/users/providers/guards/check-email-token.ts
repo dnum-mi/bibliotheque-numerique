@@ -6,7 +6,7 @@ import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { UpdateUserPasswordDto } from '@/modules/users/objects/dtos/input'
 
 @Injectable()
-export class UpdatePasswordGuard implements CanActivate {
+export class CheckEmailTokenGuard implements CanActivate {
   constructor (private readonly jwtService: JwtService,
     private readonly userService: UserService,
     protected logger: LoggerService,

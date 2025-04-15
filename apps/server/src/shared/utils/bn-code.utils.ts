@@ -16,3 +16,18 @@ export const fromStringToBnChampCode = (key: string): string => {
 export const doesTextContainBnCode = (text: string): string | null => {
   return text?.match(BN_CODE_COMPLETE_REGEX)?.[3] ?? null
 }
+
+export const durationToString = (expiresIn: string): string => {
+  const unités = {
+    s: 'seconde(s)',
+    m: 'minute(s)',
+    h: 'heure(s)',
+    d: 'jour(s)',
+  }
+
+  const match = expiresIn.match(/^(\d+)([smhd])$/)
+  if (!match) return 'Format non reconnu'
+
+  const [, nombre, unité] = match
+  return `${nombre} ${unités[unité]}`
+}

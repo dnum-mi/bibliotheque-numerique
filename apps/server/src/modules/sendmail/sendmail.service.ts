@@ -8,6 +8,7 @@ const tempateNames = [
   'resetPwd',
   'validSignUp',
   'alreadySignUp',
+  'loginWithVerifyAuth',
 ] as const
 
 type templateNameKey = typeof tempateNames[number]
@@ -29,11 +30,13 @@ export class SendMailService {
     lastname: string,
     link: string,
     template: templateNameKey,
+    duration?: string,
   ): Promise<void> {
     const subjects = {
       [eTemplateName.resetPwd]: 'Modifier son mot de passe',
       [eTemplateName.validSignUp]: 'Confirmer votre inscription',
       [eTemplateName.alreadySignUp]: 'Déjà inscrit',
+      [eTemplateName.loginWithVerifyAuth]: 'Confirmer votre connexion',
     }
     const subject = subjects[template]
     await this.mailerService.sendMail({
@@ -47,6 +50,7 @@ export class SendMailService {
         lastname,
         appUrl: this.config.get('appFrontUrl'),
         supportEmail: this.config.get('supportEmail'),
+        duration,
       },
     })
     this.logger.log(`Send Mail to ${email} with the subject ${subject}`)
@@ -58,6 +62,7 @@ export class SendMailService {
     firstname: string,
     lastname: string,
     urlResetLink: string,
+    duration: string,
   ): Promise<void> {
     return this._commonSend(
       email,
@@ -65,6 +70,24 @@ export class SendMailService {
       lastname,
       urlResetLink,
       eTemplateName.resetPwd,
+      duration,
+    )
+  }
+
+  public async loginWithVerifyAuth(
+    email: string,
+    firstname: string,
+    lastname: string,
+    urlResetLink: string,
+    duration: string,
+  ): Promise<void> {
+    return this._commonSend(
+      email,
+      firstname,
+      lastname,
+      urlResetLink,
+      eTemplateName.loginWithVerifyAuth,
+      duration,
     )
   }
 
@@ -73,6 +96,7 @@ export class SendMailService {
     firstname: string,
     lastname: string,
     urlResetLink: string,
+    duration: string,
   ): Promise<void> {
     return this._commonSend(
       email,
@@ -80,6 +104,7 @@ export class SendMailService {
       lastname,
       urlResetLink,
       eTemplateName.validSignUp,
+      duration,
     )
   }
 
@@ -88,6 +113,7 @@ export class SendMailService {
     firstname: string,
     lastname: string,
     urlResetLink: string,
+    duration: string,
   ): Promise<void> {
     return this._commonSend(
       email,
@@ -95,6 +121,7 @@ export class SendMailService {
       lastname,
       urlResetLink,
       eTemplateName.alreadySignUp,
+      duration,
     )
   }
 }

@@ -82,7 +82,7 @@ import {
   proConnectCallbackRoute,
   refreshTokensRoute,
 } from './bn-api-routes'
-import { getUserByIdRoute, profileRoute, signInRoute, logoutRoute, usersRoutes } from '@/api/bn-api-routes'
+import { getUserByIdRoute, profileRoute, signInRoute, verifyAuthRoute, logoutRoute, usersRoutes } from '@/api/bn-api-routes'
 
 import { ErrorvalidateEmail } from './ErrorValidEmail'
 import { routeNames } from '../router/route-names'
@@ -331,8 +331,13 @@ export const usersApiClient = {
     }
   },
 
-  async loginUser (loginForm: ICredentialsInput): Promise<{ accessToken: string }> {
-    const response = await apiClientAuthInstance.post(signInRoute, loginForm, { withCredentials: true })
+  async loginUser (loginForm: ICredentialsInput): Promise<{ accessToken: string, message?: string }> {
+    const response = await apiClientAuthInstance.post(signInRoute, loginForm)
+    return response.data
+  },
+
+  async loginWithVerifyAuth (token: string): Promise<{ accessToken: string }> {
+    const response = await apiClientAuthInstance.post(verifyAuthRoute, { token })
     return response.data
   },
 

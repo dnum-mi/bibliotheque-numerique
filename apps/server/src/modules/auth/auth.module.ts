@@ -3,12 +3,14 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 import { JwtModule } from '@nestjs/jwt'
 import { PassportModule } from '@nestjs/passport'
 import { TypeOrmModule } from '@nestjs/typeorm'
+
 import { AuthService } from './providers/auth.service'
 import { AuthController } from './controllers/auth.controller'
 import { JwtStrategy } from '@/modules/auth/providers/jwt.strategy'
 import { UserModule } from '../users/user.module'
 import { JwtAuthGuard } from './providers/jwt-auth.guard'
 import { RefreshToken } from './objects/refresh-token.entity'
+import { SendMailService } from '@/modules/sendmail/sendmail.service'
 
 @Module({
   imports: [
@@ -24,7 +26,7 @@ import { RefreshToken } from './objects/refresh-token.entity'
       }),
     }),
   ],
-  providers: [AuthService, JwtStrategy, JwtAuthGuard, Logger],
+  providers: [AuthService, JwtStrategy, JwtAuthGuard, Logger, SendMailService],
   controllers: [AuthController],
   exports: [AuthService, JwtAuthGuard],
 })
