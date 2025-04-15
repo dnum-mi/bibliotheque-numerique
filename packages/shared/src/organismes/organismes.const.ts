@@ -4,7 +4,7 @@ export const mapOrganismeFieldHeader = {
   type: 'Type',
   idRna: 'N° RNA',
   idRnf: 'N° RNF',
-  missingDeclarationYears: 'Années manquantes',
+  missingDeclarationYears: 'Exercices manquants',
   addressCityName: 'Ville',
   addressPostalCode: 'Code postal',
   email: 'Email',
