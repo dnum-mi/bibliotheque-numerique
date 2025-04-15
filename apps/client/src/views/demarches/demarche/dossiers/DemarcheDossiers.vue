@@ -50,12 +50,14 @@ const demarcheConfiguration = computed<FrontIMappingColumn[]>(() => demarcheStor
 const demarcheConfigurationHash = computed<Record<string, IMappingColumn>>(() => demarcheStore.currentDemarcheConfigurationHash)
 const customFilterStore = useCustomFilterStore()
 const customFilters = computed<ICustomFilter[]>(() => customFilterStore.customFilters as ICustomFilter[])
-const customFiltersWithErrors = computed<CustomFilterWithErrors[]>(() => customFilters.value.map((cf) => ({
-  ...cf,
-  disabledColumns: Object.keys(cf.filters || {})
-    .concat(cf.sorts?.map((s) => s.key) || [])
-    .filter((key) => !demarcheConfigurationHash.value[key]),
-})))
+const customFiltersWithErrors = computed<CustomFilterWithErrors[]>(() =>
+  (customFilters.value || []).map((cf) => ({
+    ...cf,
+    disabledColumns: Object.keys(cf.filters || {})
+      .concat(Array.isArray(cf.sorts) ? cf.sorts.map((s) => s.key) : [])
+      .filter((key) => !demarcheConfigurationHash.value[key]),
+  })),
+)
 const selectedCustomFilter = ref<ICustomFilter | null>(null)
 const totalsAllowed = computed<TotalsAllowed[] | undefined>(
   () => demarcheConfiguration.value
