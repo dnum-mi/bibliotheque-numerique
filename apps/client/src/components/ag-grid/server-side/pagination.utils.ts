@@ -9,10 +9,15 @@ import type {
   IPagination,
   ISort,
   ITextFilterCondition,
+  IFilterEnum,
+  IFilterNumber,
+  IFilterText,
 } from '@biblio-num/shared'
 import type {
   DateFilterModel,
+  ICombinedSimpleModel,
   IMultiFilterModel,
+  JoinOperator,
   NumberFilterModel,
   SetFilterModel,
   SortModelItem,
@@ -20,19 +25,34 @@ import type {
 } from 'ag-grid-community'
 
 import type { AgGridCommon } from 'ag-grid-community/dist/types/core/interfaces/iCommon'
+import type { ISimpleFilterModel } from 'ag-grid-enterprise'
 
 export type ApiCall<T> = (params: IPagination<T>) => Promise<IPaginated<T>>
 
 type FilterModel = Parameters<AgGridCommon<unknown, unknown>['api']['setFilterModel']>[0]
 
-const _fromAggDateFilterToBackendFilter = (filter: DateFilterModel): IFilter => ({
-  filterType: 'date',
-  condition1: {
-    filter: filter.dateFrom,
-    filterTo: filter.dateTo,
-    type: filter.type,
-  } as IDateFilterCondition,
-})
+const _fromAggDateFilterToBackendFilterOfCondition = (filter: DateFilterModel): IDateFilterCondition => ({
+  filter: filter.dateFrom,
+  filterTo: filter.dateTo,
+  type: filter.type,
+} as IDateFilterCondition)
+
+const _fromAggDateFilterToBackendFilter = (filter: DateFilterModel | ICombinedSimpleModel<DateFilterModel>): IFilter => {
+  if ((filter as ICombinedSimpleModel<DateFilterModel>).operator) {
+    const combinedFilter = filter as ICombinedSimpleModel<DateFilterModel>
+    return {
+      filterType: 'date',
+      condition1: _fromAggDateFilterToBackendFilterOfCondition(combinedFilter.condition1),
+      condition2: _fromAggDateFilterToBackendFilterOfCondition(combinedFilter.condition2),
+      operator: combinedFilter.operator,
+    }
+  } else {
+    return ({
+      filterType: 'date',
+      condition1: _fromAggDateFilterToBackendFilterOfCondition(filter as DateFilterModel),
+    })
+  }
+}
 
 const _fromCustomNumbersFilterToBackendFilter = (filter: INumbersFilterCondition): IFilter => ({
   filterType: 'numbers',
@@ -74,7 +94,7 @@ const _fromAggMultiFilterToBackendFilter = (filter: IMultiFilterModel): IFilter 
       } as IDateFilterCondition,
     }
   } else {
-    return _fromAggDateFilterToBackendFilter(filter.filterModels?.[0] as DateFilterModel)
+    return _fromAggDateFilterToBackendFilter(filter.filterModels?.[0])
   }
 }
 
@@ -131,15 +151,32 @@ export const fromAggToBackendSort = (sortModel: SortModelItem[], allowedColumnId
     }))
 }
 
-const _aggFilterToAggFilterByDate = (filter: IFilterDate): FilterModel => ({
+const _aggFilterToAggFilterByDate = (filter: IFilterDate): IMultiFilterModel => ({
   filterType: 'multi',
   filterModels: filter.condition1.type !== 'since'
     ? [
         {
           filterType: 'date',
-          type: filter.condition1.type,
-          dateFrom: filter.condition1.filter,
-          dateTo: filter.condition1.filterTo,
+          ...('condition2' in filter
+            ? {
+                conditions: [{
+                  filterType: 'date',
+                  type: filter.condition1.type,
+                  dateFrom: filter.condition1.filter,
+                  dateTo: filter.condition1.filterTo,
+                }, {
+                  filterType: 'date',
+                  type: filter.condition2?.type,
+                  dateFrom: filter.condition2?.filter,
+                  dateTo: filter.condition2?.filterTo,
+                }],
+                operator: filter.operator as unknown as JoinOperator,
+              }
+            : {
+                type: filter.condition1.type,
+                dateFrom: filter.condition1.filter,
+                dateTo: filter.condition1.filterTo,
+              }),
         },
         null,
       ]
@@ -151,32 +188,87 @@ const _aggFilterToAggFilterByDate = (filter: IFilterDate): FilterModel => ({
       ],
 })
 
+const _aggFilterToAggFilterBySet = (filter: IFilterEnum): SetFilterModel | ICombinedSimpleModel<SetFilterModel> => ({
+  filterType: 'set',
+  values: filter.condition1.filter,
+})
+
+const _aggFilterToAggFilterByNumber = (filter: IFilterNumber): NumberFilterModel | ICombinedSimpleModel<NumberFilterModel> => ({
+  filterType: 'number',
+  ...('condition2' in filter
+    ? {
+        conditions: [{
+          filterType: 'number',
+          ...filter.condition1,
+        }, {
+          filterType: 'number',
+          ...filter.condition2,
+        }],
+        operator: filter.operator as unknown as JoinOperator,
+      }
+    : {
+        type: filter.condition1.type as ISimpleFilterModel['type'],
+        filter: filter.condition1.filter,
+        filterTo: filter.condition1.filterTo,
+      }),
+})
+
+const _aggFilterToAggFilterByText = (filter: IFilterText): TextFilterModel | ICombinedSimpleModel<TextFilterModel> => ({
+  filterType: 'text',
+  ...('condition2' in filter
+    ? {
+        conditions: [{
+          filterType: 'text',
+          type: filter.condition1.type as ISimpleFilterModel['type'],
+          filter: filter.condition1.filter,
+        }, {
+          filterType: 'text',
+          type: filter.condition2?.type as ISimpleFilterModel['type'],
+          filter: filter.condition2?.filter,
+        }],
+        operator: filter.operator as unknown as JoinOperator,
+      }
+    : {
+        type: filter.condition1.type as ISimpleFilterModel['type'],
+        filter: filter.condition1.filter,
+      }),
+})
+
+const _transformToAggFilter = (filter: IFilter): FilterModel => {
+  switch (filter.filterType) {
+    case 'date':
+      return _aggFilterToAggFilterByDate(filter as IFilterDate)
+    case 'set':
+      return _aggFilterToAggFilterBySet(filter as IFilterEnum)
+    case 'number':
+      return _aggFilterToAggFilterByNumber(filter as IFilterNumber)
+    case 'text':
+      return _aggFilterToAggFilterByText(filter as IFilterText)
+    default:
+      return {
+        filterType: filter.filterType,
+        ...('condition2' in filter
+          ? {
+              conditions: [
+                {
+                  filterType: filter.filterType,
+                  ...filter.condition1,
+                },
+                {
+                  filterType: filter.filterType,
+                  ...(filter.condition2 || {}),
+                },
+              ],
+              operator: filter.operator as unknown as JoinOperator,
+            }
+          : { filterModel: filter.condition1 }),
+      }
+  }
+}
+
 export const backendFilterToAggFilter = (filters: Record<string, IFilter>): FilterModel => {
   const entries = Object.entries(filters)
-  if (entries.length) {
-    const aggFilters: FilterModel = {}
-    entries.forEach(([key, value]) => {
-      if (value.condition2) {
-        aggFilters[key] = filters[key]
-      }
-      if (value.filterType === 'date') {
-        aggFilters[key] = _aggFilterToAggFilterByDate(value)
-      } else if (value.filterType === 'set') {
-        aggFilters[key] = {
-          filterType: value.filterType,
-          values: value.condition1.filter,
-          type: value.condition1.type,
-        }
-      } else {
-        aggFilters[key] = {
-          filterType: value.filterType,
-          type: value.condition1.type,
-          filter: value.condition1.filter,
-        }
-      }
-    })
-    return aggFilters
-  } else {
-    return {}
-  }
+    .map(([key, value]) => [key, _transformToAggFilter(value)])
+
+  return Object.fromEntries(entries) as FilterModel
 }
