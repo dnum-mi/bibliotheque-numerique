@@ -63,7 +63,7 @@ describe('Auth (e2e)', () => {
           email: 'admin1@localhost.com',
           password: 'password',
         })
-        .expect(200)
+        .expect(423)
 
       expect(sendMailSpy).toHaveBeenCalledWith(
         'admin1@localhost.com',
@@ -84,7 +84,15 @@ describe('Auth (e2e)', () => {
         .expect(404)
     })
 
-    it('Should return 200 on connection', async () => {
+    it('Should return a 429 and lock message when loginAttempts reach 3', async () => {
+      const sendMailSpy = jest.spyOn(app.get<SendMailService>(SendMailService), 'resetPasswordAfterThreeAttempts').mockResolvedValue()
+
+      await dataSource.query(`
+        UPDATE "users"
+        SET "loginAttempts" = 3, "validated" = true
+        WHERE email = 'admin1@localhost.com'
+      `)
+
       const response = await request(app.getHttpServer())
         .post('/auth/sign-in')
         .send({
@@ -92,10 +100,36 @@ describe('Auth (e2e)', () => {
           password: 'password',
         })
 
-      expect(response.status).toBe(200)
-      expect(response.body).toEqual({
-        message: 'Un lien de réinitialisation a été envoyé à votre adresse email.',
-      })
+      expect(response.status).toBe(429)
+      expect(response.body.message).toContain('temporairement bloqué')
+      expect(response.body.message).toContain('Un courriel vous a été envoyé')
+
+      expect(sendMailSpy).toHaveBeenCalledWith(
+        'admin1@localhost.com',
+        'Suzette',
+        'admin1',
+        expect.stringMatching(/^https?:\/\/.*\/update-password\/.+$/),
+        expect.stringMatching(/15 minute\(s\)/),
+      )
+
+      await dataSource.query(`
+        UPDATE "users"
+        SET "loginAttempts" = 0
+        WHERE email = 'admin1@localhost.com'
+      `)
+    })
+
+    it('Should return 423 on connection', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/auth/sign-in')
+        .send({
+          email: 'admin1@localhost.com',
+          password: 'password',
+        })
+
+      expect(response.status).toBe(423)
+      expect(response.body.message).toEqual('Pour valider votre connexion, veuillez cliquer sur le lien sécurisé.Un courriel vous a été envoyé pour connecter',
+      )
     })
 
     it('Should return 404 on user no valid', async () => {

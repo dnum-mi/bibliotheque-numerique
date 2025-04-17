@@ -9,6 +9,7 @@ const tempateNames = [
   'validSignUp',
   'alreadySignUp',
   'loginWithVerifyAuth',
+  'resetPasswordAfterThreeAttempts',
 ] as const
 
 type templateNameKey = typeof tempateNames[number]
@@ -37,6 +38,7 @@ export class SendMailService {
       [eTemplateName.validSignUp]: 'Confirmer votre inscription',
       [eTemplateName.alreadySignUp]: 'Déjà inscrit',
       [eTemplateName.loginWithVerifyAuth]: 'Confirmer votre connexion',
+      [eTemplateName.resetPasswordAfterThreeAttempts]: 'Votre compte a été temporairement bloqué — Action requise',
     }
     const subject = subjects[template]
     await this.mailerService.sendMail({
@@ -87,6 +89,23 @@ export class SendMailService {
       lastname,
       urlResetLink,
       eTemplateName.loginWithVerifyAuth,
+      duration,
+    )
+  }
+
+  public async resetPasswordAfterThreeAttempts(
+    email: string,
+    firstname: string,
+    lastname: string,
+    urlResetLink: string,
+    duration: string,
+  ): Promise<void> {
+    return this._commonSend(
+      email,
+      firstname,
+      lastname,
+      urlResetLink,
+      eTemplateName.resetPasswordAfterThreeAttempts,
       duration,
     )
   }

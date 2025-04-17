@@ -90,12 +90,6 @@ export class AuthController {
     @Res() res,
   ): Promise<void> {
     const result = await this.authService.login(email, password)
-
-    if (!result) {
-      res.send({ message: 'Un lien de réinitialisation a été envoyé à votre adresse email.' })
-      return
-    }
-
     const { accessToken, refreshToken } = result
     this.setRefreshTokenCookie(res, refreshToken)
     res.send({ accessToken })

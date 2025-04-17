@@ -46,25 +46,40 @@ onMounted(async () => {
 })
 
 const submit = handleSubmit(async (formValue: ICredentialsInput) => {
-  try {
-    toaster.removeMessage('auth')
-    const message = await userStore.login(formValue)
+  toaster.removeMessage('auth')
+  const response = await userStore.login(formValue)
 
-    if (message) {
-      toaster.addSuccessMessage('Un e-mail vous a été envoyé. Veuillez vérifier votre boîte de réception et suivre les instructions pour vous connecter.')
+  if ('error' in response) {
+    const error = response.error
+
+    if (error.response?.status === 429) {
+      toaster.addErrorMessage('Suite à de nombreuses tentatives échouées, votre compte a été temporairement bloqué. Un courriel vous a été envoyé.')
       return
     }
-    if (route.query.redirect) {
-      router.push(route.query.redirect as string)
+
+    if (error.response?.status === 423) {
+      toaster.addSuccessMessage('Un courriel vous a été envoyé. Veuillez vérifier votre boîte de réception et suivre les instructions pour vous connecter.')
       return
     }
-    router.push({ name: routeNames.DEMARCHES })
-  } catch {
+
     setErrors({
       password:
         'Votre courriel ou votre mot passe est incorrect. Vous pouvez réessayer ou réinitialiser votre mot de passe.',
     })
+    return
   }
+
+  if (response?.message) {
+    toaster.addErrorMessage(response.message)
+    return
+  }
+
+  if (route.query.redirect) {
+    router.push(route.query.redirect as string)
+    return
+  }
+
+  router.push({ name: routeNames.DEMARCHES })
 })
 
 const { value: emailValue, errorMessage: emailError } = useField<string>('email')

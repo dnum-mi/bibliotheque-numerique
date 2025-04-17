@@ -68,6 +68,13 @@ export class User extends BaseEntity {
   password: string
 
   @Column({
+    type: 'integer',
+    nullable: false,
+    default: 0,
+  })
+  loginAttempts: number
+
+  @Column({
     type: 'boolean',
     nullable: false,
     default: false,
