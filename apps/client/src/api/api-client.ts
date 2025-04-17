@@ -331,9 +331,18 @@ export const usersApiClient = {
     }
   },
 
-  async loginUser (loginForm: ICredentialsInput): Promise<{ accessToken: string, message?: string }> {
-    const response = await apiClientAuthInstance.post(signInRoute, loginForm)
-    return response.data
+  async loginUser (
+    loginForm: ICredentialsInput,
+  ): Promise<
+    | { accessToken: string; message?: string }
+    | { error: AxiosError }
+    > {
+    try {
+      const response = await apiClientAuthInstance.post(signInRoute, loginForm)
+      return response.data
+    } catch (error) {
+      return { error: error as AxiosError }
+    }
   },
 
   async loginWithVerifyAuth (token: string): Promise<{ accessToken: string }> {

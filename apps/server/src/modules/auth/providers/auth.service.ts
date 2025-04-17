@@ -1,10 +1,13 @@
 import {
+  HttpException,
+  HttpStatus,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
   OnModuleInit,
   UnauthorizedException,
 } from '@nestjs/common'
+
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import * as bcrypt from 'bcrypt'
@@ -80,7 +83,7 @@ export class AuthService implements OnModuleInit {
     return this.createTokens(id, email, false)
   }
 
-  async login(email: string, password: string): Promise<AuthResponseDto | undefined> {
+  async login(email: string, password: string): Promise<AuthResponseDto> {
     this.logger.verbose('login')
 
     const user: User = await this.usersService.findByEmail(email, [
@@ -91,8 +94,20 @@ export class AuthService implements OnModuleInit {
       'firstname',
       'lastname',
       'role',
+      'loginAttempts',
     ])
 
+    this.validateUser(user)
+    await this.validatePassword(user, email, password)
+    await this.validate2FA(user, email)
+
+    this.logger.debug('User connected')
+    this.logger.debug({ id: user.id, email: user.email, validated: user.validated })
+
+    return this.createTokens(user.id, user.email, false)
+  }
+
+  private validateUser(user: User): void {
     if (!user) {
       this.logger.warn('Email not found')
       throw new NotFoundException()
@@ -102,6 +117,14 @@ export class AuthService implements OnModuleInit {
       this.logger.warn('User not validated')
       throw new NotFoundException()
     }
+  }
+
+  private async validatePassword(user: User, email: string, password: string): Promise<void> {
+    this.logger.verbose('validatePassword')
+    if (user.role?.label !== Roles.sudo) {
+      await this.checkLoginAttempts(user, email)
+      await this.usersService.updateLoginAttempts(user.id, user.loginAttempts + 1)
+    }
 
     const isMatch: boolean = await bcrypt.compare(password, user.password)
     if (!isMatch) {
@@ -109,15 +132,42 @@ export class AuthService implements OnModuleInit {
       throw new NotFoundException()
     }
 
+    await this.usersService.updateLoginAttempts(user.id, 0)
+  }
+
+  private async validate2FA(user: User, email: string): Promise<void> {
+    this.logger.verbose('validate2FA')
     if ([Roles.admin, Roles.superadmin].includes(user.role?.label)) {
       await this.send2FAEmail(user, email)
+      throw new HttpException(
+        'Pour valider votre connexion, veuillez cliquer sur le lien sécurisé.' +
+        'Un courriel vous a été envoyé pour connecter',
+        HttpStatus.LOCKED,
+      )
+    }
+  }
+
+  private async checkLoginAttempts(user: User, email: string): Promise<void> {
+    this.logger.verbose('checkLoginAttempts')
+    if (user.loginAttempts < 3) {
       return
     }
 
-    this.logger.debug('User connected')
-    this.logger.debug({ id: user.id, email: user.email, validated: user.validated })
+    this.logger.debug('User blocked')
+    const { appUrl, jwtForUrl, duration } = this.usersService.createJwtOnUrl({ user: user.id })
+    await this.sendMailService.resetPasswordAfterThreeAttempts(
+      email,
+      user.firstname,
+      user.lastname,
+      `${appUrl}/update-password/${jwtForUrl}`,
+      duration,
+    )
 
-    return this.createTokens(user.id, user.email, false)
+    throw new HttpException(
+      'Suite à de nombreuses tentatives échouées, votre compte a été temporairement bloqué. ' +
+      'Un courriel vous a été envoyé pour mettre à jour votre mot de passe.',
+      HttpStatus.TOO_MANY_REQUESTS,
+    )
   }
 
   private async send2FAEmail(user: User, email: string): Promise<void> {

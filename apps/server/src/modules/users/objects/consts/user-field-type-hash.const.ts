@@ -11,9 +11,10 @@ export const UserFieldTypeHashConst: Record<
     | 'validated'
     | 'hashPassword'
     | 'customFilters'
-    | 'refreshTokens'
     | 'removeSkipHashPasswordReference'
+    | 'refreshTokens'
     | 'refreshToken'
+    | 'loginAttempts'
   >,
   FieldTypeKeys
 > = {

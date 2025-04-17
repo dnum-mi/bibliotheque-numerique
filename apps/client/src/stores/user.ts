@@ -49,7 +49,7 @@ export const useUserStore = defineStore('user', () => {
       accessToken.value = token
     }
 
-    return response.message
+    return response
   }
 
   const loginWithVerifyAuth = async (tokenValue: string) => {

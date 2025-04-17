@@ -115,6 +115,10 @@ export class UserService
     return user
   }
 
+  async updateLoginAttempts(userId: number, attempts: number): Promise<void> {
+    await this.repo.update(userId, { loginAttempts: attempts })
+  }
+
   async getUserById(id: number): Promise<User> {
     this.logger.verbose('getUserById')
     return this.findOneById(id).then((user) => {
@@ -167,6 +171,7 @@ export class UserService
     user.validated = true // changing password via mail = verifying mail
     await this.repo.save(user)
     await this.deleteUserRefreshTokens(user.id)
+    await this.updateLoginAttempts(user.id, 0)
   }
 
   private async mailToValidSignUp(userInDb: User): Promise<void> {
