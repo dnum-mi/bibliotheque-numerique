@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.28.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.27.2...v2.28.0) (2025-04-17)
+
+
+### Features
+
+* add double authentification on admin ([#1685](https://github.com/dnum-mi/bibliotheque_numerique/issues/1685)) ([26fc291](https://github.com/dnum-mi/bibliotheque_numerique/commit/26fc2917e865aa2373cd24a7bb65773de54c834c))
+* add send mail on failure after three login attempts ([#1692](https://github.com/dnum-mi/bibliotheque_numerique/issues/1692)) ([a6e809e](https://github.com/dnum-mi/bibliotheque_numerique/commit/a6e809e6355e9aa03971032a26c23dae6877b5af))
+
+
+### Bug Fixes
+
+* add prefecture of user in the page of manage role ([436b27a](https://github.com/dnum-mi/bibliotheque_numerique/commit/436b27a13893051be86297642e898f6a7936bfec))
+* do not override sudo while importing ([d2fa0ae](https://github.com/dnum-mi/bibliotheque_numerique/commit/d2fa0ae968a5af86c30028a296f6b2d911317e63))
+* transition tabs in list dossiers ([583f431](https://github.com/dnum-mi/bibliotheque_numerique/commit/583f431a70909a33266a5c83703a0c17844de1c0))
+* update heigth of list organisme ([c725c3a](https://github.com/dnum-mi/bibliotheque_numerique/commit/c725c3ab4e0b16e9350e0f66998610708ba0d233))
+
 ## [2.27.2](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.27.1...v2.27.2) (2025-04-10)
 
 
