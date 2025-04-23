@@ -14,6 +14,7 @@ describe('Sign in', () => {
     cy.intercept({ method: 'GET', url: '/api/custom-filters' }, []).as('customFilters')
     cy.intercept({ method: 'GET', url: '/api/auth/proconnect' }, []).as('proconnect')
     cy.intercept({ method: 'POST', url: '/api/users/list' }, []).as('fetchUsers')
+    cy.intercept({ method: 'GET', url: '/api/users/me' }, { statusCode: 403 })
     cy.intercept('api//health', { info: { } })
   })
 
@@ -143,7 +144,7 @@ describe('Sign in', () => {
   it('should sign in user as admin-local', () => {
     cy.visit('/sign_in')
     cy.intercept({ method: 'POST', url: '/api/auth/sign-in', times: 1 }, { accessToken: 'abcd' }).as('signIn')
-    cy.intercept({ method: 'GET', url: '/api/users/me', times: 1 }, adminLocalProfile)
+    cy.intercept({ method: 'GET', url: '/api/users/me', times: 2 }, adminLocalProfile).as('fetchProfileAdmin')
     cy.get('#email').type('louis.dubois@gmail.com')
     cy.get('#password').type('A1etsn*!etisan34')
     cy.get('[type=submit]').click()
