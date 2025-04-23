@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.28.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.28.0...v2.28.1) (2025-04-23)
+
+
+### Features
+
+* save display on localStorage ([228c719](https://github.com/dnum-mi/bibliotheque_numerique/commit/228c7190c29b44d313e63c1fa4f8e0ea06501836))
+
+
+### Bug Fixes
+
+* filter date saved for ag-grid ([65c5bd8](https://github.com/dnum-mi/bibliotheque_numerique/commit/65c5bd812eea06aa148c7b3a2836fdc6515c1cff))
+* filter with operator AND and OR ([76d710f](https://github.com/dnum-mi/bibliotheque_numerique/commit/76d710f8a79c987c2553cdb84031807ba8ec6431))
+* select filter ([91dfd45](https://github.com/dnum-mi/bibliotheque_numerique/commit/91dfd4567c28a3c89b2389f6c5ae9e58bebbcfbc))
+* select filter ([#1750](https://github.com/dnum-mi/bibliotheque_numerique/issues/1750)) ([91dfd45](https://github.com/dnum-mi/bibliotheque_numerique/commit/91dfd4567c28a3c89b2389f6c5ae9e58bebbcfbc))
+* selected configuration of demarche ([b0ba038](https://github.com/dnum-mi/bibliotheque_numerique/commit/b0ba038b0056e31e2eafda823aaa06f13c106e2a))
+* update list of columns of dossiers in after modified configuration ([0752cc1](https://github.com/dnum-mi/bibliotheque_numerique/commit/0752cc1b117be1d4f518dc6a20f0f8ac12d1cc4a))
+* wording - list of organismes ([064194f](https://github.com/dnum-mi/bibliotheque_numerique/commit/064194f21bc3d5d72b30e908f6ca9e185408e76b))
+
 ## [2.28.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.27.2...v2.28.0) (2025-04-17)
 
 
