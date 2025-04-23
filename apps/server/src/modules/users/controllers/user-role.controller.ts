@@ -10,11 +10,11 @@ import {
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
-
 import { isSuperiorOrSimilar, IRole, Roles, IUser } from '@biblio-num/shared'
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
 import { TargetUserInterceptor } from '@/modules/users/providers/interceptors/target-user.interceptor'
 import { RoleService } from '@/modules/users/providers/role.service'
+import { UserService } from '@/modules/users/providers/user.service'
 import { AllDemarcheInterceptor } from '@/modules/demarches/providers/interceptors/all-demarche.interceptor'
 import {
   TargetUserWithEditableRole,
@@ -44,6 +44,7 @@ export class UserRoleController {
   constructor(
     private readonly logger: LoggerService,
     private readonly service: RoleService,
+    private readonly userService: UserService,
   ) {
     this.logger.setContext(this.constructor.name)
   }

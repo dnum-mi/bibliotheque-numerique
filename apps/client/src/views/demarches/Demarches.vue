@@ -7,6 +7,7 @@ import { routeNames } from '@/router/route-names'
 import OrganismeBadgesRenderer from '@/components/Badges/organisme/OrganismeBadgesRenderer.vue'
 import BiblioNumDataTableAgGrid from '@/components/BiblioNumDataTableAgGrid.vue'
 import LayoutList from '@/components/Layout/LayoutList.vue'
+import { useUserStore } from '@/stores'
 
 const demarcheStore = useDemarcheStore()
 const router = useRouter()
@@ -49,7 +50,7 @@ const headers = [
     width: 200,
   },
 ]
-
+const userStore = useUserStore()
 // Avoids the error: "AG Grid: cannot get grid to draw rows when it is in the middle of drawing rows."
 const rowData = ref<ISmallDemarcheOutput[]>([])
 watch(() => demarcheStore.demarches, () => {
@@ -58,6 +59,7 @@ watch(() => demarcheStore.demarches, () => {
 
 onMounted(async () => {
   await demarcheStore.getDemarches()
+  await userStore.loadMyProfile()
 })
 
 const selectDemarche = (row: IDemarche[]) => {
