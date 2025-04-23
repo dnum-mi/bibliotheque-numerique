@@ -1,4 +1,4 @@
-import { localeTextAgGrid } from './agGridOptions'
+import { localeTextAgGrid } from './ag-grid-fr-dictionnary.ts'
 import { agGridFilterDict } from '@/shared/types'
 
 export const filterParamsDate = {

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { ref, computed, watchEffect, onMounted, watch } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { ref, computed, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { useDebounceFn } from '@vueuse/core'
 import type { GridOptions } from 'ag-grid-enterprise'
 import type {
@@ -35,49 +35,58 @@ import DemarcheDossiersDisplays from './DemarcheDossiersDisplays.vue'
 import type { TotalsAllowed } from './DemarcheDossiersDisplays.vue'
 import type { CustomFilterWithErrors } from '@/views/demarches/demarche/dossiers/custom-filter-with-errors.type'
 
-type DemarcheDossiersProps = {
-  id: string
-  customDisplayId?: string
-}
-const props = defineProps<DemarcheDossiersProps>()
-
 const demarcheStore = useDemarcheStore()
 const router = useRouter()
 const route = useRoute()
 const gridApi = ref<GridApi>()
+const agGridComponent = ref()
 const demarche = computed<IDemarche>(() => demarcheStore.currentDemarche as IDemarche)
 const demarcheConfiguration = computed<FrontIMappingColumn[]>(() => demarcheStore.currentDemarcheFlatConfiguration)
 const demarcheConfigurationHash = computed<Record<string, IMappingColumn>>(() => demarcheStore.currentDemarcheConfigurationHash)
-const customFilterStore = useCustomFilterStore()
-const customFilters = computed<ICustomFilter[]>(() => customFilterStore.customFilters as ICustomFilter[])
-const customFiltersWithErrors = computed<CustomFilterWithErrors[]>(() =>
-  (customFilters.value || []).map((cf) => ({
+const customDisplayStore = useCustomFilterStore()
+const customDisplay = computed<ICustomFilter[]>(() => customDisplayStore.customFilters as ICustomFilter[])
+const customDisplayWithErrors = computed<CustomFilterWithErrors[]>(() =>
+  (customDisplay.value || []).map((cf) => ({
     ...cf,
     disabledColumns: Object.keys(cf.filters || {})
       .concat(Array.isArray(cf.sorts) ? cf.sorts.map((s) => s.key) : [])
       .filter((key) => !demarcheConfigurationHash.value[key]),
   })),
 )
-const selectedCustomFilter = ref<ICustomFilter | null>(null)
+const selectedCustomDisplay = ref<ICustomFilter | null>(null)
 const totalsAllowed = computed<TotalsAllowed[] | undefined>(
   () => demarcheConfiguration.value
     .filter(mapping => mapping.type === 'number' && mapping.id !== '96151176-4624-4706-b861-722d2e53545d')
     .map((mapping) => ({ id: mapping.id, columnLabel: mapping.columnLabel } as TotalsAllowed)),
 )
 
+//#region 📍------ LOCAL STORAGE ------ 📍
+const localStoragePaginationKey = computed(() => `agGrid.demarche-${route.params.demarcheId}.dossiers.pagination`)
+const localStorageGroupByKey = computed(() => `agGrid.demarche-${route.params.demarcheId}.dossiers.groupBy`)
+const localStorageDisplayIdKey = computed(() => `agGrid.demarche-${route.params.demarcheId}.dossiers.currentDisplayId`)
+//#endregion
+
+//#region 📍------ GROUP BY DOSSIER ------ 📍
 const hasNoRepeatableField = computed(() => {
   return !demarcheStore.currentDemarche?.mappingColumns.some((m) => 'children' in m)
 })
-
-const paginationDto = ref()
-
 const groupByDossier = ref(hasNoRepeatableField.value)
 
-watchEffect(() => {
-  if (hasNoRepeatableField.value) {
-    groupByDossier.value = true
-  }
+const apiCall = (dto: IPagination<unknown>) => {
+  return demarcheStore.searchCurrentDemarcheDossiers(groupByDossier.value, dto)
+}
+
+const toggleView = useDebounceFn((isActive: boolean) => {
+  groupByDossier.value = isActive
+  agGridComponent.value?.refresh()
 })
+
+watch(groupByDossier, (value) => {
+  localStorage.setItem(localStorageGroupByKey.value, `${value}`)
+})
+//#endregion
+
+const paginationDto = ref({} as IPagination<any>)
 
 const paginationChanged = computed(() => {
   const keys = ['columns', 'filters', 'sorts']
@@ -86,16 +95,15 @@ const paginationChanged = computed(() => {
       ...selectKeysInObject(paginationDto.value, keys),
       groupByDossier: groupByDossier.value,
     },
-    selectKeysInObject(selectedCustomFilter.value || {}, [...keys, 'groupByDossier']),
+    selectKeysInObject(selectedCustomDisplay.value || {}, [...keys, 'groupByDossier']),
   )
 })
 
 const fetching = computed(() => demarcheStore.fetching)
-const agGridComponent = ref()
 
 const specificGridOptions: GridOptions = {
   onDragStopped: () => {
-    if (selectedCustomFilter.value) {
+    if (selectedCustomDisplay.value) {
       agGridComponent.value.refresh()
     }
   },
@@ -139,14 +147,9 @@ const onSelectionChanged = ($event: SelectionChangedEvent) => {
   }
 }
 
-onMounted(async () => {
-  computeColumnsDef()
-  await customFilterStore.getCustomFiltersByDemarche(demarche.value.id)
-})
-
 watch(demarche, async (newValue) => {
   computeColumnsDef()
-  await customFilterStore.getCustomFiltersByDemarche(newValue.id)
+  await customDisplayStore.getCustomFiltersByDemarche(newValue.id)
 })
 
 watch(fetching, () => {
@@ -189,21 +192,21 @@ const onGridReady = (event: GridReadyEvent) => {
   gridApi.value = event.api
 }
 
-//#region Filter events
+//#region 📍------ CUSTOM DISPLAY ------ 📍
 const customDisplayOperationSuccess = ref(true)
 
-const updateFilter = async () => {
+const updateDisplay = async () => {
   customDisplayOperationSuccess.value = false
-  if (selectedCustomFilter.value) {
-    selectedCustomFilter.value.groupByDossier = groupByDossier.value
-    selectedCustomFilter.value.columns = paginationDto.value.columns
-    selectedCustomFilter.value.sorts = paginationDto.value.sorts
-    selectedCustomFilter.value.filters = paginationDto.value.filters || undefined
+  if (selectedCustomDisplay.value) {
+    selectedCustomDisplay.value.groupByDossier = groupByDossier.value
+    selectedCustomDisplay.value.columns = paginationDto.value.columns
+    selectedCustomDisplay.value.sorts = paginationDto.value.sorts
+    selectedCustomDisplay.value.filters = paginationDto.value.filters || undefined
     try {
-      const dto = { ...selectedCustomFilter.value, disabledColumns: undefined }
+      const dto = { ...selectedCustomDisplay.value, disabledColumns: undefined }
       dto.filters = dto.filters || null
-      await customFilterStore.updateCustomFilter(selectedCustomFilter.value.id, dto)
-      selectedCustomFilter.value = customFiltersWithErrors.value.find((cf) => cf.id === selectedCustomFilter.value?.id) || null
+      await customDisplayStore.updateCustomFilter(selectedCustomDisplay.value.id, dto)
+      selectedCustomDisplay.value = customDisplayWithErrors.value.find((cf) => cf.id === selectedCustomDisplay.value?.id) || null
       customDisplayOperationSuccess.value = true
     } catch (error) {
       import.meta.env.DEV && console.warn(error)
@@ -212,24 +215,25 @@ const updateFilter = async () => {
     throw new Error('Aucun affichage sélectionné, impossible de mettre à jour l’affichage personnalisé')
   }
 }
-const deleteFilter = async () => {
+
+const deleteDisplay = async () => {
   customDisplayOperationSuccess.value = false
-  if (selectedCustomFilter.value) {
+  if (selectedCustomDisplay.value) {
     try {
-      await customFilterStore.deleteCustomFilter(selectedCustomFilter.value?.id)
-      selectedCustomFilter.value = null
+      await customDisplayStore.deleteCustomFilter(selectedCustomDisplay.value?.id)
+      selectedCustomDisplay.value = null
       resetAggState()
       customDisplayOperationSuccess.value = true
     } catch (error) {
       import.meta.env.DEV && console.warn(error)
     }
-    await customFilterStore.getCustomFiltersByDemarche(demarche.value.id)
+    await customDisplayStore.getCustomFiltersByDemarche(demarche.value.id)
   }
 }
 
-const updateFilterName = async ({ filterName = '', totals = [] }) => {
+const updateDisplayName = async ({ filterName = '', totals = [] }) => {
   customDisplayOperationSuccess.value = false
-  if (selectedCustomFilter.value) {
+  if (selectedCustomDisplay.value) {
     const dto: IPatchCustomFilter = {
       name: filterName,
     }
@@ -238,9 +242,9 @@ const updateFilterName = async ({ filterName = '', totals = [] }) => {
     }
     dto.columns = paginationDto.value.columns
     try {
-      await customFilterStore.updateCustomFilter(selectedCustomFilter.value.id, dto)
-      selectedCustomFilter.value.name = filterName
-      selectedCustomFilter.value.totals = dto.totals ?? null
+      await customDisplayStore.updateCustomFilter(selectedCustomDisplay.value.id, dto)
+      selectedCustomDisplay.value.name = filterName
+      selectedCustomDisplay.value.totals = dto.totals ?? null
       customDisplayOperationSuccess.value = false
     } catch (error) {
       import.meta.env.DEV && console.warn(error)
@@ -248,43 +252,32 @@ const updateFilterName = async ({ filterName = '', totals = [] }) => {
   }
 }
 
-const addCurrentFilterToRoute = () => {
-  const query: Record<string, string | number | undefined> = {
-    ...route.query,
-    customDisplayId: selectedCustomFilter.value?.id,
-  }
-  if (selectedCustomFilter.value == null) {
-    delete query.customDisplayId
-  }
-  router.push({
-    query,
-  })
-}
-
-const selectFilter = async (id: number | null) => {
+const selectDisplay = async (id: number | null) => {
   if (id === null) {
-    selectedCustomFilter.value = null
+    selectedCustomDisplay.value = null
     resetAggState()
-    addCurrentFilterToRoute()
+    localStorage.removeItem(localStorageGroupByKey.value)
+    localStorage.removeItem(localStorageDisplayIdKey.value)
+    groupByDossier.value = false
     return
   }
-  if (customFilterStore.customFilters.length === 0) {
-    await customFilterStore.getCustomFiltersByDemarche(demarche.value.id)
+  if (customDisplayStore.customFilters.length === 0) {
+    await customDisplayStore.getCustomFiltersByDemarche(demarche.value.id)
   }
-  selectedCustomFilter.value = customFiltersWithErrors.value.find((cf) => cf.id === id) || null
-  if (selectedCustomFilter.value) {
-    groupByDossier.value = selectedCustomFilter.value?.groupByDossier
-    paginationDto.value.columns = selectedCustomFilter.value?.columns
-    paginationDto.value.sorts = selectedCustomFilter.value?.sorts || []
-    paginationDto.value.filters = selectedCustomFilter.value?.filters || null
+  selectedCustomDisplay.value = customDisplayWithErrors.value.find((cf) => cf.id === id) || null
+  if (selectedCustomDisplay.value) {
+    groupByDossier.value = selectedCustomDisplay.value?.groupByDossier
+    paginationDto.value.columns = selectedCustomDisplay.value?.columns
+    paginationDto.value.sorts = selectedCustomDisplay.value?.sorts || []
+    paginationDto.value.filters = selectedCustomDisplay.value?.filters || null
     updateAggState()
-    addCurrentFilterToRoute()
+    localStorage.setItem(localStorageDisplayIdKey.value, `${selectedCustomDisplay.value.id}`)
   } else {
     throw new Error('Le filtre sélectionné n’existe pas')
   }
 }
 
-const createFilter = async ({ filterName = '', totals = [] }: { filterName?: string, totals?: string[] }) => {
+const createDisplay = async ({ filterName = '', totals = [] }: { filterName?: string, totals?: string[] }) => {
   customDisplayOperationSuccess.value = false
   const createCustomFilterDto: ICreateCustomFilter = {
     name: filterName,
@@ -298,40 +291,33 @@ const createFilter = async ({ filterName = '', totals = [] }: { filterName?: str
     createCustomFilterDto.totals = totals.filter(tt => tt !== 'Aucun total')
   }
   try {
-    const filterId = await customFilterStore.createCustomFilter(createCustomFilterDto, demarche.value.id)
-    selectFilter(filterId)
+    const filterId = await customDisplayStore.createCustomFilter(createCustomFilterDto, demarche.value.id)
+    selectDisplay(filterId)
     customDisplayOperationSuccess.value = true
   } catch (error) {
     import.meta.env.DEV && console.warn(error)
   }
 }
-
-watch(paginationDto, async (newValue, oldValue) => {
-  if (!oldValue && newValue && route.query.customDisplayId) {
-    selectFilter(Number(route.query.customDisplayId))
-  }
-})
-
-watch(() => props.customDisplayId, async (newDisplayId, oldDisplayId) => {
-  if (newDisplayId === oldDisplayId) {
-    return
-  }
-  selectFilter(newDisplayId ? Number(newDisplayId) : null)
-})
 //#endregion
 
 const download = () => {
   demarcheStore.exportCurrentDemarcheDossiers(groupByDossier.value, paginationDto.value)
 }
 
-const toggleView = useDebounceFn((isActive: boolean) => {
-  groupByDossier.value = isActive
-  agGridComponent.value?.refresh()
-})
+const readyToLoadAgGrid = ref<boolean>(false)
 
-const apiCall = (dto: IPagination<unknown>) => {
-  return demarcheStore.searchCurrentDemarcheDossiers(groupByDossier.value, dto)
-}
+onMounted(async () => {
+  computeColumnsDef()
+  await customDisplayStore.getCustomFiltersByDemarche(demarche.value.id)
+  if (localStorage.getItem(localStorageGroupByKey.value) === 'true') {
+    groupByDossier.value = true
+  }
+  const displayIdKey = Number.parseInt(localStorage.getItem(localStorageDisplayIdKey.value) || '-1')
+  if (displayIdKey > -1) {
+    selectedCustomDisplay.value = customDisplayWithErrors.value.find((cf) => cf.id === displayIdKey) || null
+  }
+  readyToLoadAgGrid.value = true
+})
 </script>
 
 <template>
@@ -368,21 +354,21 @@ const apiCall = (dto: IPagination<unknown>) => {
         />
       </div>
       <DemarcheDossiersDisplays
-        :displays="customFiltersWithErrors as ICustomFilter[]"
-        :selected-display="selectedCustomFilter as ICustomFilter"
+        :displays="customDisplayWithErrors as ICustomFilter[]"
+        :selected-display="selectedCustomDisplay as ICustomFilter"
         :pagination-changed="paginationChanged"
         :totals-allowed="totalsAllowed"
         :operation-success="customDisplayOperationSuccess"
-        @create-display="createFilter($event)"
-        @update-display="updateFilter()"
-        @update-display-name="updateFilterName($event)"
-        @delete-display="deleteFilter()"
-        @select-display="selectFilter($event)"
+        @create-display="createDisplay($event)"
+        @update-display="updateDisplay()"
+        @update-display-name="updateDisplayName($event)"
+        @delete-display="deleteDisplay()"
+        @select-display="selectDisplay($event)"
       />
     </div>
     <div class="flex-grow">
       <AgGridServerSide
-        v-if="demarche && columnsDef"
+        v-if="demarche && columnsDef && readyToLoadAgGrid"
         ref="agGridComponent"
         v-model:pagination-dto="paginationDto"
         :column-defs="columnsDef"
@@ -392,6 +378,7 @@ const apiCall = (dto: IPagination<unknown>) => {
         :specific-grid-option="specificGridOptions"
         :on-selection-changed="onSelectionChanged"
         :api-call="apiCall"
+        :local-storage-key="localStoragePaginationKey"
         @grid-ready="onGridReady($event)"
       />
     </div>

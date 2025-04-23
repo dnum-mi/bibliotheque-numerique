@@ -30,6 +30,7 @@
     "typecheck": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false"
   },
   "dependencies": {
+    "@ag-grid-community/locale": "33.2.4",
     "@biblio-num/shared": "workspace:^",
     "@gouvfr/dsfr": "^1.13.0",
     "@gouvminint/vue-dsfr": "^8.3.0",

@@ -10,7 +10,7 @@ import TableCellAction from './TableCellAction.vue'
 import { PAGINATION_PAGE_SIZE } from '@/config'
 
 import { filterToApply } from './ag-grid/filtersRender'
-import { localeTextAgGrid } from './ag-grid/agGridOptions'
+import { localeTextAgGrid } from './ag-grid/ag-grid-fr-dictionnary.ts'
 
 import AgGridMultiValueCell from './ag-grid/AgGridMultiValueCell.vue'
 import AgGridAttachmentCell from './ag-grid/AgGridAttachmentCell.vue'
