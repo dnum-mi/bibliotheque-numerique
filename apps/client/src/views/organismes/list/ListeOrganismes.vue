@@ -79,6 +79,7 @@ onMounted(async () => {
         :column-defs="listOrganismeColumnDef"
         :on-selection-changed="onSelectionChanged"
         pre-condition
+        local-storage-key="agGrid.organismes.state"
         :api-call="apiCall"
       />
     </div>

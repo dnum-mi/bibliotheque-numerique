@@ -126,5 +126,6 @@ const onSelectionChanged = (event: SelectionChangedEvent) => {
     pre-condition
     :api-call="apiCall"
     :on-selection-changed="onSelectionChanged"
+    local-storage-key="users"
   />
 </template>
