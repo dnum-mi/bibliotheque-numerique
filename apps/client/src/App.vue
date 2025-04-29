@@ -33,6 +33,10 @@ const logoText = ['Ministère', 'de l’intérieur']
 const ecosystemLinks = [
   { label: 'Demarches-simplifiees.fr', href: 'https://www.demarches-simplifiees.fr' },
   { label: 'API - Répertoire National des Associations', href: 'https://entreprise.api.gouv.fr/catalogue/ministere_interieur/rna' },
+  {
+    label: 'Intranet DLPAJ',
+    href: 'https://intranet.dlpaj.minint.fr/index.php/associations-et-fondations//systeme-d-information-des-associations-et-fondations-siaf',
+  },
   // { label: 'Répertoire National des Fondations', href: 'https://rnf.interieur.rie.gouv.fr' },
   // { label: 'Cloud π Native', href: 'https://cloud-pi-native.fr/' },
 ]
@@ -45,10 +49,10 @@ const redColor = 'var(--red-marianne-425-625)'
 const iconPropsRedColor = { color: redColor }
 
 type QuickLink = {
-  label: string;
-  to: { name: string; } | string;
-  icon?: string;
-  iconAttrs?: Record<string, string>;
+  label: string
+  to: { name: string } | string
+  icon?: string
+  iconAttrs?: Record<string, string>
 }
 
 const quickLinks = ref<QuickLink[]>([])
@@ -142,12 +146,9 @@ watch([() => userStore.isAuthenticated, route], async () => {
   await router.isReady()
 
   if (userStore.isAuthenticated) {
-    quickLinks.value = [
-      ...minimalQuickLinks.value,
-      ...authenticatedQuickLinksDefault,
-    ]
+    quickLinks.value = [...minimalQuickLinks.value, ...authenticatedQuickLinksDefault]
   } else {
-    const isCurrentRoute = ({ to }: QuickLink) => to !== route.path && (typeof to === 'object' && to?.name !== route.name)
+    const isCurrentRoute = ({ to }: QuickLink) => to !== route.path && typeof to === 'object' && to?.name !== route.name
     quickLinks.value = unauthenticatedQuickLinks.filter(isCurrentRoute)
   }
 })
@@ -274,7 +275,7 @@ onErrorCaptured((error: Error | AxiosError) => {
   }
 
   :deep(.fr-header__body-row) {
-    padding: 0.50em 0 !important;
+    padding: 0.5em 0 !important;
   }
 
   :deep(.fr-header__service-title) {
@@ -287,7 +288,7 @@ onErrorCaptured((error: Error | AxiosError) => {
     display: none;
   }
   :deep(.fr-logo::after) {
-    display:none !important;
+    display: none !important;
   }
 }
 </style>
