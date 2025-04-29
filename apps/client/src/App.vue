@@ -35,7 +35,7 @@ const ecosystemLinks = [
   { label: 'API - Répertoire National des Associations', href: 'https://entreprise.api.gouv.fr/catalogue/ministere_interieur/rna' },
   {
     label: 'Intranet DLPAJ',
-    href: 'https://intranet.dlpaj.minint.fr/index.php/associations-et-fondations//systeme-d-information-des-associations-et-fondations-siaf',
+    href: 'https://intranet.dlpaj.minint.fr/index.php/associations-et-fondations/systeme-d-information-des-associations-et-fondations-siaf',
   },
   // { label: 'Répertoire National des Fondations', href: 'https://rnf.interieur.rie.gouv.fr' },
   // { label: 'Cloud π Native', href: 'https://cloud-pi-native.fr/' },
