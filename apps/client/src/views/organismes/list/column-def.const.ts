@@ -32,8 +32,7 @@ export const listOrganismeColumnDef: ColDef[] = [
     filter: 'agSetColumnFilter',
     filterParams: {
       values: organismeTypes,
-      cellRenderer: ({ value }: { value: OrganismeTypeKey }) => dOrganismeTypeDictionary[value],
-      suppressSelectAll: true,
+      valueFormatter: ({ value }: { value: OrganismeTypeKey }) => dOrganismeTypeDictionary[value],
     },
     valueFormatter: ({ value }: { value: OrganismeTypeKey }) => dOrganismeTypeDictionary[value],
     menuTabs: ['filterMenuTab'],
