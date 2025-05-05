@@ -19,10 +19,10 @@ export const doesTextContainBnCode = (text: string): string | null => {
 
 export const durationToString = (expiresIn: string): string => {
   const unités = {
-    s: 'seconde(s)',
-    m: 'minute(s)',
-    h: 'heure(s)',
-    d: 'jour(s)',
+    s: 'secondes',
+    m: 'minutes',
+    h: 'heure',
+    d: 'jours',
   }
 
   const match = expiresIn.match(/^(\d+)([smhd])$/)

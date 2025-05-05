@@ -8,7 +8,6 @@
 | http_proxy | | Le proxy pour communiquer avec les API extérieures | Non
 | PROTOCOL |`http` | Le protocole de transfert utilisé | Oui
 | APP_FRONT_URL | `<http://localhost:8080>` | L'URL de base de la bibliothèque numérique insérée dans les courriels | Oui
-| SUPPORT_EMAIL |`<contact@bibliotheque-numerique.interieur.gouv.fr>` | L'adresse de courriel du support technique | Oui
 | RUN_ENV | `development` | L'environnement d'exécution de l'application. Les valeurs possibles sont "staging", "preproduction", "production" ou "development" | Oui
 | CREATE_MISSING_MANDATORY_CONFIGURATIONS | true | Si la valeur est `true`, la table de configuration est complété par les variables et les valeurs par défaut
 

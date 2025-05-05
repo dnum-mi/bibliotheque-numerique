@@ -51,7 +51,7 @@ export class SendMailService {
         firstname,
         lastname,
         appUrl: this.config.get('appFrontUrl'),
-        supportEmail: this.config.get('supportEmail'),
+        supportFormUrl: this.config.get('supportFormUrl'),
         duration,
       },
     })
