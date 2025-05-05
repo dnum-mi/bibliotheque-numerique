@@ -70,7 +70,7 @@ describe('Auth (e2e)', () => {
         'Suzette',
         'admin1',
         expect.stringMatching(/^https?:\/\/.*\/verify-auth\/.+$/),
-        expect.stringMatching(/15 minute\(s\)/),
+        expect.stringMatching(/^15 minutes$/),
       )
     })
 
@@ -109,7 +109,7 @@ describe('Auth (e2e)', () => {
         'Suzette',
         'admin1',
         expect.stringMatching(/^https?:\/\/.*\/update-password\/.+$/),
-        expect.stringMatching(/15 minute\(s\)/),
+        expect.stringMatching(/^15 minutes$/),
       )
 
       await dataSource.query(`

@@ -5,7 +5,7 @@ export type TConfig = {
   protocol: string;
   port: number;
   appFrontUrl: string;
-  supportEmail: string;
+  supportFormUrl: string;
   httpProxy: string;
   defaultAdmin: {
     email: string;
@@ -21,7 +21,8 @@ export default () : TConfig => ({
   protocol: process.env.PROTOCOL || 'http',
   port: parseInt(process.env.PORT, 10) || 3000,
   appFrontUrl: process.env.APP_FRONT_URL || 'http://localhost:8080',
-  supportEmail: process.env.SUPPORT_EMAIL || 'contact@bibliotheque-numerique.interieur.gouv.fr',
+  supportFormUrl: process.env.SUPPORT_FORM_URL ||
+    'https://www.demarches-simplifiees.fr/commencer/siaf-support-technique-et-juridique-aux-prefectures',
   httpProxy: process.env.http_proxy || '',
   defaultAdmin: {
     email: process.env.DEFAULT_SUDO_EMAIL,
