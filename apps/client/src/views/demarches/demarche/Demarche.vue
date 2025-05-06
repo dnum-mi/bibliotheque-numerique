@@ -39,7 +39,7 @@ const tabTitles = computed<{ value: number, label: string }[]>(() => [
   },
   ...(userStore.CanConfigureDemarche(Number(props.demarcheId))
     ? [
-        { value: 2, label: 'Configuration' },
+        { value: 2, label: 'Paramétrage d\'affichage' },
         { value: 3, label: 'Options' },
       ]
     : []),

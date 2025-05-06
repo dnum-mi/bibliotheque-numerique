@@ -52,9 +52,9 @@ onMounted(async () => {
 
 <template>
   <LayoutList
-    title="Recherche un organisme"
+    title="Liste des organismes"
     title-bg-color="var(--border-plain-grey)"
-    title-icon="fr-icon-search-line"
+    title-icon="fr-icon-building-line"
   >
     <div class="flex flex-col h-full">
       <div class="flex justify-between m-2">

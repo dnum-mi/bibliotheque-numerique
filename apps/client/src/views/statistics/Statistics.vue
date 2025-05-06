@@ -7,7 +7,7 @@ import LayoutList from '@/components/Layout/LayoutList.vue'
   <LayoutList
     title="Statistiques"
     title-bg-color="var(--red-marianne-850-200)"
-    title-icon="fr-icon-table-fill"
+    title-icon="fr-icon-bar-chart-box-fill"
   >
     <div class="cards  fr-m-5v">
       <StatisticsCards />

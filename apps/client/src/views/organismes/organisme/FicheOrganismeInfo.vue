@@ -82,10 +82,6 @@ const fiscalEndDateAt = computed(() => {
           <label class="bn-fiche-sub-title--label uppercase">COURRIEL</label>
           <span class="bn-fiche-sub-title--text">{{ organisme?.email }}</span>
         </div>
-        <div>
-          <label class="bn-fiche-sub-title--label uppercase">Site web</label>
-          <span class="bn-fiche-sub-title--text">{{ organisme?.websites }}</span>
-        </div>
         <div class="grid-col-start-1">
           <label class="bn-fiche-sub-title--label uppercase">Création</label>
           <span class="bn-fiche-sub-title--text">{{ creation }}</span>
