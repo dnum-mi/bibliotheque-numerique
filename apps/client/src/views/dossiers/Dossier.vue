@@ -37,12 +37,14 @@ const messages = computed(() =>
     attachments: [...(attachments ?? []), ...(attachment ? [attachment] : [])],
   })),
 )
+const hasMessages = computed(() => !!messages.value?.length && isReady.value)
 
 const annotations = computed(() => dossier.value?.dsDataJson.annotations)
-
 const hasAnnotations = computed(() => !!annotations.value?.length && isReady.value)
+
 const nbAttachments = ref(0)
 const hasAttachments = computed(() => !!nbAttachments.value)
+
 const tabTitles = computed(() => {
   return [
     {
@@ -51,6 +53,7 @@ const tabTitles = computed(() => {
     },
     ...(hasAnnotations.value ? [{ title: 'Annotations privées', component: 'DossierAnnotations' }] : []),
     ...(hasAttachments.value && !!dossier.value ? [{ title: `Pièces jointes (${nbAttachments.value})`, component: 'AttachedFileList' }] : []),
+    ...(hasMessages.value && !!dossier.value ? [{ title: `Messagerie (${messages?.value?.length})`, component: 'DossierMessagerie' }] : []),
   ]
 })
 const initialSelectedIndex = 0
@@ -167,17 +170,16 @@ onMounted(async () => {
                 with-tab-tag
                 @files-fetched="redrawTabs()"
               />
+              <DossierMessagerie
+                v-if="tab.component === 'DossierMessagerie'"
+                :messages="messages"
+                :demandeur-email="demandeurEmail"
+              />
             </DsfrTabContent>
           </DsfrTabs>
         </template>
       </LayoutFiche>
     </div>
-    <DossierMessagerie
-      v-if="messages?.length"
-      class="flex-basis-[40%] fr-pr-2v overflow-y-auto bn-dynamic-small-p"
-      :messages="messages"
-      :demandeur-email="demandeurEmail"
-    />
   </div>
 </template>
 

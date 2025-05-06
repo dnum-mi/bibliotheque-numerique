@@ -36,10 +36,6 @@ defineProps<DossierMessagerieProps>()
             />
           </div>
           <strong>Messagerie</strong>
-          <DsfrTag
-            v-if="messages"
-            :label="messages?.length"
-          />
         </div>
       </header>
       <article
