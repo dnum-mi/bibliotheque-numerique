@@ -63,10 +63,10 @@ const componentRenderer = computed(() => {
 //#endregion
 
 //#region STATUS
-type DsfrType = 'success' | 'error' | 'warning' | 'info' | 'new'
+type DsfrType = 'success' | 'error' | 'warning' | 'info' | 'new' | 'purple-glycine'
 const statusDictionary: Record<string, { label: string; type: DsfrType }> = {
   accepte: { label: 'Accepté', type: 'success' },
-  en_construction: { label: 'En construction', type: 'new' },
+  en_construction: { label: 'En construction', type: 'purple-glycine' },
   en_instruction: { label: 'En instruction', type: 'new' },
   refuse: { label: 'Refusé', type: 'error' },
   sans_suite: { label: 'sans_suite', type: 'warning' },
