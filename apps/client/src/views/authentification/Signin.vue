@@ -79,7 +79,7 @@ const submit = handleSubmit(async (formValue: ICredentialsInput) => {
     return
   }
 
-  router.push({ name: routeNames.DEMARCHES })
+  router.push({ name: routeNames.DEFAULT })
 })
 
 const { value: emailValue, errorMessage: emailError } = useField<string>('email')

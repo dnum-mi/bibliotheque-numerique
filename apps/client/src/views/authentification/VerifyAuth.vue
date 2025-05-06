@@ -12,7 +12,7 @@ const userStore = useUserStore()
 const VerifyAuth = async () => {
   try {
     await userStore.loginWithVerifyAuth(props.token)
-    router.push({ name: routeNames.DEMARCHES })
+    router.push({ name: routeNames.DEFAULT })
   } catch (e) {
     console.log(e)
     router.push({ name: routeNames.SIGNIN })

@@ -46,7 +46,7 @@ const onSubmit = handleSubmit(async () => {
   alertDescription.value = 'Votre mot de passe a été changé.'
   alertType.value = 'success'
   toaster.addSuccessMessage({ description: 'Votre mot de passe a été changé.' })
-  router.push({ name: routeNames.DEMARCHES })
+  router.push({ name: routeNames.DEFAULT })
 })
 
 const onCloseAlert = () => {
