@@ -13,7 +13,7 @@ const proConnectCallback = async () => {
     const { code, state, iss } = route.query as { code?: string, state?: string, iss?: string }
     if (code && state && iss) {
       await userStore.loginWithProconnect(code, state, iss)
-      router.push({ name: routeNames.DEMARCHES })
+      router.push({ name: routeNames.DEFAULT })
     } else {
       throw new Error('Invalid proconnect code, state or iss')
     }

@@ -4,7 +4,7 @@ import { routeNames } from '@/router/route-names'
 import { Roles } from '@biblio-num/shared'
 
 export const demarchesRoutes: RouteRecordRaw = {
-  path: '/',
+  path: '/demarches',
   children: [
     {
       path: '',

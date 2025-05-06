@@ -130,8 +130,8 @@ const minimalQuickLinks = computed(() => {
   }
   return isSuperiorOrSimilar(Roles.instructor, role)
     ? [
-        demarcheQuickLink,
         organismesQuickLink,
+        demarcheQuickLink,
         statisticsQuickLink,
         ...(isSuperiorOrSimilar(Roles.admin, role) ? [manageRolesQuickLink] : []),
         ...(isSuperiorOrSimilar(Roles.sudo, role) ? [configurationQuickLink] : []),

@@ -10,7 +10,6 @@ export const routeNames = {
   SEARCH_ORGANISMES: 'SearchOrganismes',
   LIST_USERS: 'ListUsers',
   LOGOUT: 'LogOut',
-  ORGANISMES: 'Organismes',
   PROFILE: 'Profile',
   Page_404: '404',
   RESET_PASSWORD: 'ResetPassword',
@@ -25,4 +24,5 @@ export const routeNames = {
   COOKIES: 'Cookies',
   PROCONNECT_CALLBACK: 'ProConnectCallback',
   DOUBLE_AUTH: 'VerifyAuth',
+  DEFAULT: 'ListeOrganismes',
 } as const

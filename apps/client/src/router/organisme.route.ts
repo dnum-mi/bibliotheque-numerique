@@ -4,8 +4,7 @@ import { routeNames } from '@/router/route-names'
 import { Roles } from '@biblio-num/shared'
 
 export const organismeRoute: RouteRecordRaw = {
-  name: routeNames.ORGANISMES,
-  path: '/organismes',
+  path: '/',
   meta: {
     roleLevel: Roles.instructor,
   },
