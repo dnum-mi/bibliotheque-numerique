@@ -71,9 +71,9 @@ const rowStyle = { cursor: 'pointer' }
 
 <template>
   <LayoutList
-    title="Recherche une démarche"
+    title="Liste des démarches"
     title-bg-color="var(--artwork-minor-blue-france)"
-    title-icon="fr-icon-search-line"
+    title-icon="fr-icon-article-fill"
   >
     <BiblioNumDataTableAgGrid
       :headers="headers"

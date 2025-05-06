@@ -45,9 +45,6 @@ const mandatoryLinks = [
   { label: 'Gestion des cookies', to: '/cookies' },
 ]
 
-const redColor = 'var(--red-marianne-425-625)'
-const iconPropsRedColor = { color: redColor }
-
 type QuickLink = {
   label: string
   to: { name: string } | string
@@ -60,7 +57,7 @@ const quickLinks = ref<QuickLink[]>([])
 const demarcheQuickLink: QuickLink = {
   label: 'Démarches',
   to: { name: routeNames.DEMARCHES },
-  icon: 'ri-file-list-2-fill',
+  icon: 'fr-icon-article-fill',
   iconAttrs: { title: 'Démarches' },
 }
 
@@ -68,21 +65,21 @@ const unauthenticatedQuickLinks: QuickLink[] = [
   {
     label: 'Se connecter',
     to: { name: routeNames.SIGNIN },
-    icon: 'ri-lock-line',
-    iconAttrs: { title: 'Se connecter', ...iconPropsRedColor },
+    icon: 'fr-icon-lock-line',
+    iconAttrs: { title: 'Se connecter' },
   },
   {
     label: 'S’enregistrer',
     to: { name: routeNames.SIGNUP },
-    icon: 'ri-user-line',
-    iconAttrs: { title: 'S’enregistrer', ...iconPropsRedColor },
+    icon: 'fr-icon-user-line',
+    iconAttrs: { title: 'S’enregistrer' },
   },
 ]
 
 const organismesQuickLink: QuickLink = {
   label: 'Organismes',
   to: { name: routeNames.LISTE_ORGANISMES },
-  icon: 'ri-file-list-2-line',
+  icon: 'fr-icon-building-line',
   iconAttrs: { title: 'Organismes' },
 }
 
@@ -90,36 +87,36 @@ const authenticatedQuickLinksDefault: QuickLink[] = [
   {
     label: 'Mon profil',
     to: { name: routeNames.PROFILE },
-    icon: 'ri-account-circle-line',
+    icon: 'fr-icon-profil-line',
     iconAttrs: { title: 'Mon profil' },
   },
   {
     label: 'Déconnexion',
     to: { name: routeNames.LOGOUT },
-    icon: 'ri-logout-box-r-line',
-    iconAttrs: { title: 'Déconnexion', ...iconPropsRedColor },
+    icon: 'fr-icon-logout-box-r-line',
+    iconAttrs: { title: 'Déconnexion' },
   },
 ]
 
 const statisticsQuickLink: QuickLink = {
   label: 'Statistiques',
   to: { name: routeNames.STATISTIQUES },
-  icon: 'ri-bar-chart-box-line',
+  icon: 'fr-icon-bar-chart-box-fill',
   iconAttrs: { title: 'Statistiques' },
 }
 
 const manageRolesQuickLink = {
   label: 'Administration',
   to: { name: routeNames.LIST_USERS },
-  icon: 'ri-shield-star-line',
-  iconAttrs: { title: 'Administration', ...iconPropsRedColor },
+  icon: 'fr-icon-user-setting-line',
+  iconAttrs: { title: 'Administration' },
 }
 
 const configurationQuickLink = {
   label: 'Configuration',
   to: { name: routeNames.CONFIGURATION_DEMARCHES },
-  icon: 'ri-tools-fill',
-  iconAttrs: { title: 'Configuration', ...iconPropsRedColor },
+  icon: 'fr-icon-settings-5-line',
+  iconAttrs: { title: 'Configuration' },
 }
 
 const userStore = useUserStore()
