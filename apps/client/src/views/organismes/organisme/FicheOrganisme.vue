@@ -2,7 +2,6 @@
 import { useTabs, DsfrTabs } from '@gouvminint/vue-dsfr'
 
 import apiClient from '@/api/api-client'
-import { copyCurrentUrlInClipboard } from '@/utils'
 import LayoutFiche from '@/components/Layout/LayoutFiche.vue'
 import ListeDossier from './ListeDossier.vue'
 import OrganismeBadge from '@/components/Badges/organisme/OrganismeBadge.vue'
@@ -197,17 +196,6 @@ const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutpu
             </DsfrTabContent>
           </DsfrTabs>
         </div>
-      </template>
-      <template #footer>
-        <DsfrButton
-          :style="{ width: '50%' }"
-          class="flex justify-center"
-          label="Copier le lien"
-          icon="ri-links-line"
-          icon-right
-          secondary
-          @click="copyCurrentUrlInClipboard()"
-        />
       </template>
     </LayoutFiche>
 
