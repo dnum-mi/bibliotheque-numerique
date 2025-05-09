@@ -5,7 +5,7 @@ items:
     state: "published"
     title: "Déclaration de financement étranger"
     identification: "FE"
-    types: ["ARUP","FDD"]
+    types: ["ASSO","FDD"]
     mappingColumns: [
       { "id": "I01", "columnLabel": "Identifiant", "type": "string" },
       { "id": "I02", "columnLabel": "Moment", "type": "date" },
@@ -29,7 +29,7 @@ items:
     state: "published"
     title: 'Démarche de test pour les configurations'
     dsDataJson: {number: 77}
-    types: ["ARUP","FRUP"]
+    types: ["ASSO","FRUP"]
     mappingColumns: [
       {
         id: '01',
@@ -58,13 +58,13 @@ items:
     state: "published"
     title: "Déclaration de financement étranger"
     identification: "FE"
-    types: ["CULTE"]
+    types: ["ASSO"]
     dsDataJson: { number: 3 }
   demarche-update-identification:
     id: 5
     state: "published"
     title: "[UPDATE-IDENTIFICATION] Déclaration de financement étranger"
-    types: ["ARUP"]
+    types: ["ASSO"]
     mappingColumns: [
       {"id":"I01", "columnLabel":"Identifiant"},
       {"id":"I02", "columnLabel":"Moment"},
@@ -82,7 +82,7 @@ items:
     id: 6
     state: "published"
     title: "[DELETE-IDENTIFICATION] Déclaration de financement étranger"
-    types: ["ARUP"]
+    types: ["ASSO"]
     identification: "FE"
     mappingColumns: [
     {
@@ -117,7 +117,7 @@ items:
     id: 7
     state: "published"
     title: "[UNDEFINED-IDENTIFICATION] Déclaration de financement étranger"
-    types: ["ARUP", "FDD"]
+    types: ["ASSO", "FDD"]
     identification: "FE"
     mappingColumns: [
     {
@@ -152,7 +152,7 @@ items:
     id: 8
     state: "published"
     title: "[SOFT-DELETE] Déclaration de financement étranger"
-    types: ["ARUP"]
+    types: ["ASSO"]
     identification: "FE"
     mappingColumns: [
       {"id":"I01", "columnLabel":"Identifiant"},
@@ -172,7 +172,7 @@ items:
     state: "published"
     title: "Déclaration de financement étranger avec etat delai"
     identification: "FE"
-    types: ["CULTE"]
+    types: ["ASSO"]
     mappingColumns: [
       { "id": "I11", "columnLabel": "Etat délai", "type": "enum" },
     ]

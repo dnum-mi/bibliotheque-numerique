@@ -34,7 +34,7 @@ const renault = {
 }
 const bmw = {
   id: 1,
-  type: 'ARUP',
+  type: 'ASSO',
   title: 'Bmw',
   email: null,
   phoneNumber: null,

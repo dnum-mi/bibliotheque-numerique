@@ -36,7 +36,7 @@
       "checked": false,
       "editable": true,
       "title": "Demarche 3",
-      "types": ["ARUP", "FDD"],
+      "types": ["ASSO", "FDD"],
       "prefectureOptions": {
         "national": {
           "value": false,
@@ -90,7 +90,7 @@
       "checked": false,
       "editable": true,
       "title": "Demarche 6",
-      "types": ["ARUP"],
+      "types": ["ASSO"],
       "prefectureOptions": {
         "national": {
           "value": false,

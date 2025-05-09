@@ -111,14 +111,14 @@ describe('users (e2e)', () => {
           lastname: 'admin1',
           firstname: 'Suzette',
           roleLabel: 'admin',
-          roleOptionsResume: 'ARUP (1), FRUP (1)',
+          roleOptionsResume: 'ASSO (1), FRUP (1)',
         },
         {
           id: 5,
           lastname: 'instructor1',
           firstname: 'Steve',
           roleLabel: 'instructor',
-          roleOptionsResume: 'ARUP (2), FDD (1)',
+          roleOptionsResume: 'ASSO (2), FDD (1)',
         },
         {
           id: 6,
@@ -340,7 +340,7 @@ describe('users (e2e)', () => {
                   demarche: {
                     id: 1,
                     title: 'Déclaration de financement étranger',
-                    types: ['ARUP', 'FDD'],
+                    types: ['ASSO', 'FDD'],
                     dsId: 76,
                   },
                 },
@@ -351,7 +351,7 @@ describe('users (e2e)', () => {
                     id: 5,
                     title:
                       '[UPDATE-IDENTIFICATION] Déclaration de financement étranger',
-                    types: ['ARUP'],
+                    types: ['ASSO'],
                     dsId: 4,
                   },
                 },

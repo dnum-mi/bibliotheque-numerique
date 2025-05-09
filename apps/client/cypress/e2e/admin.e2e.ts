@@ -124,13 +124,13 @@ describe('Admin', () => {
       times: 1,
     }, { statusCode: 200 }).as('patchUserSelected444')
 
-    cy.get('input[name=ARUP]')
+    cy.get('input[name=ASSO]')
       .click({ force: true })
 
     cy.wait('@patchUserSelected444')
     cy.wait('@userSelected444')
 
-    cy.get('input[name=ARUP]')
+    cy.get('input[name=ASSO]')
       .should('be.checked')
 
     cy.get('input[name=3]')

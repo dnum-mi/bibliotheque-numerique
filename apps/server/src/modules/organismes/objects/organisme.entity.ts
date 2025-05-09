@@ -20,12 +20,12 @@ export class Organisme extends BaseEntity implements IOrganisme {
   @ApiProperty({
     type: String,
     enum: eOrganismeType,
-    default: eOrganismeType.unknown,
+    default: eOrganismeType.ASSO,
   })
   @Column({
     type: 'enum',
     enum: eOrganismeType,
-    default: eOrganismeType.unknown,
+    default: eOrganismeType.ASSO,
   })
   type: OrganismeTypeKey
 

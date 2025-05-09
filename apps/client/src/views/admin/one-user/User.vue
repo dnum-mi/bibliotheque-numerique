@@ -9,13 +9,10 @@ import type {
   IUpdateOneRoleOption,
 } from '@biblio-num/shared'
 
-import {
-  eOrganismeType,
-  listOfPrefectureKeys,
-} from '@biblio-num/shared'
+import { eOrganismeType, listOfPrefectureKeys } from '@biblio-num/shared'
 
 import { useUserStore } from '@/stores'
-import { getRandomId } from '@gouvminint/vue-dsfr'
+import { useRandomId } from '@gouvminint/vue-dsfr'
 import { computed, ref } from 'vue'
 import DemarcheLocalization from './DemarcheLocalization.vue'
 
@@ -28,6 +25,8 @@ import UserRole from './UserRole.vue'
 const props = defineProps<{ selectedEditableUser: IUserWithEditableRole }>()
 
 //#region Types, Mapping, Enum
+type ExtendedOrganismeTypeKey = OrganismeTypeKey | 'unknown'
+
 type DemarcheHtmlAttrs = {
   class?: string | null
   disabled?: boolean | null
@@ -38,7 +37,7 @@ type DemarcheRole = {
 }
 type DemarchesRoles = {
   label: string
-  name: OrganismeTypeKey
+  name: ExtendedOrganismeTypeKey
   value: boolean
   key: string
   localization?: IPrefectureOptions
@@ -50,13 +49,12 @@ type DemarchesRoles = {
 }
 type GeographicalRights = IPrefectureOptions & { enabled?: boolean }
 
-const typeOrganismeLabel: Record<OrganismeTypeKey, string> = {
-  [eOrganismeType.ARUP]: 'Associations reconnues d’utilité publique (ARUP)',
-  [eOrganismeType.CULTE]: 'Associations cultuelles (Cultes)',
+const typeOrganismeLabel: Record<OrganismeTypeKey, string> & { default: string } = {
+  [eOrganismeType.ASSO]: 'Associations',
   [eOrganismeType.FDD]: 'Fonds de dotation (FDD)',
   [eOrganismeType.FE]: 'Fondations d’entreprises (FE)',
   [eOrganismeType.FRUP]: 'Fondations reconnues d’utilité publique (FRUP)',
-  [eOrganismeType.unknown]: 'Type d’organisme inconnu',
+  default: 'Type d’organisme inconnu',
 }
 //#endregion
 let noRefDemarcheOrTypeSelected: DemarchesRoles | DemarcheRole | DemarchesRoles[]
@@ -66,12 +64,10 @@ const demarcheHash = computed<Record<number, OneDemarcheRoleOption>>(() => props
 const keySelectUser = computed<string>(() => userStore.keySelectUser)
 const loading = computed<boolean>(() => userStore.selectedEditableUserLoading)
 //#region Tous les démarches
-const allDemarchesRolesChildren = computed(() => demarchesRoles.value
-  .flatMap(dr => dr.children)
-  .filter(children => !!children))
+const allDemarchesRolesChildren = computed(() => demarchesRoles.value.flatMap((dr) => dr.children).filter((children) => !!children))
 
 const selectedAllDemarchesAttr = ref<string | null>(null)
-const isAllDemarches = computed(() => !allDemarchesRolesChildren.value.some(child => !child.options.checked))
+const isAllDemarches = computed(() => !allDemarchesRolesChildren.value.some((child) => !child.options.checked))
 // #endRegion
 
 //#region View Demarches
@@ -81,91 +77,79 @@ const isAllCheck = (children: DemarcheRole[]): boolean =>
   }, true)
 
 const getCommonPrefectureOptionGetter = (children: DemarcheRole[]) => (prop: 'addable' | 'value' | 'deletable') => {
-  return children.map(child => child.options.prefectureOptions.prefectures[prop])
-    .reduce((acc, cur) => {
-      return cur.filter(pref => acc.includes(pref))
-    }, [...listOfPrefectureKeys])
+  return children
+    .map((child) => child.options.prefectureOptions.prefectures[prop])
+    .reduce(
+      (acc, cur) => {
+        return cur.filter((pref) => acc.includes(pref))
+      },
+      [...listOfPrefectureKeys],
+    )
 }
 
-const organismeTypes = computed(() => [
-  ...new Set(
-    Object.values(demarcheHash.value || {})
-      .map(({ types }) => (types.length ? types : [eOrganismeType.unknown]))
-      .flat()
-      .sort((a, b) => (a === eOrganismeType.unknown ? 1 : b === eOrganismeType.unknown ? -1 : 0)),
-  ),
-])
+const mapDemarchToRole = (demarcheOption: OneDemarcheRoleOption): DemarcheRole => {
+  const selectedId = (noRefDemarcheOrTypeSelected as DemarcheRole)?.options?.id
+  return {
+    options: demarcheOption,
+    attrs: {
+      class: selectedId === demarcheOption.id && !Array.isArray(noRefDemarcheOrTypeSelected) ? noRefDemarcheOrTypeSelected?.attrs?.class : null,
+      disabled: !demarcheOption.editable,
+    },
+  }
+}
+
+const buildDemarchesGroup = (type: ExtendedOrganismeTypeKey, demarches: OneDemarcheRoleOption[]): DemarchesRoles => {
+  const children = demarches.map(mapDemarchToRole)
+  const value = isAllCheck(children)
+  const getCommonPrefectureOptionsFor = getCommonPrefectureOptionGetter(children)
+
+  const localization: IPrefectureOptions = {
+    national: {
+      value: children.every((d) => d.options.prefectureOptions.national.value),
+      editable: children.every((d) => d.options.prefectureOptions.national.editable),
+    },
+    prefectures: {
+      value: getCommonPrefectureOptionsFor('value'),
+      addable: getCommonPrefectureOptionsFor('addable'),
+      deletable: getCommonPrefectureOptionsFor('deletable'),
+    },
+  }
+
+  return {
+    label: type === 'unknown' ? typeOrganismeLabel.default : typeOrganismeLabel[type] || typeOrganismeLabel.default,
+    name: type,
+    value,
+    key: useRandomId(type),
+    localization,
+    children,
+    commonPrefectureValues: localization.prefectures.value,
+    commonPrefectureAddables: localization.prefectures.addable,
+    commonPrefectureDeletables: localization.prefectures.deletable,
+    attrs: {
+      class: (noRefDemarcheOrTypeSelected && 'name' in noRefDemarcheOrTypeSelected && noRefDemarcheOrTypeSelected.name === type)
+        ? noRefDemarcheOrTypeSelected.attrs?.class
+        : null,
+      disabled: children.some((d) => !d.options.editable),
+    },
+  }
+}
+
+const organismeTypes = computed(() => [...new Set(Object.values(demarcheHash.value || {}).flatMap(({ types }) => types))].sort())
 
 const demarchesRoles = computed<DemarchesRoles[]>(() => {
-  return organismeTypes.value
-    .map((type) => {
-      const localization: IPrefectureOptions = {
-        national: {
-          value: true,
-          editable: true,
-        },
-        prefectures: {
-          value: [],
-          addable: [],
-          deletable: [],
-        },
-      }
-      const children = Object.values(demarcheHash.value || {})
-        .concat(
-          Object.values(demarcheHash.value || {})
-            .filter((demarcheOption) => demarcheOption.types.length === 0)
-            .map((dOpts) => ({ ...dOpts, types: [eOrganismeType.unknown] })),
-        )
-        .filter((demarcheOption) => demarcheOption.types.includes(type))
-        .filter(d => d.editable)
-        .map((d): DemarcheRole => {
-          localization.national.value &&= d.prefectureOptions.national.value
-          localization.national.editable &&= d.prefectureOptions.national.editable
+  const allDemarches = Object.values(demarcheHash.value || {})
 
-          let newClass: string | null | undefined = null
-          if ((noRefDemarcheOrTypeSelected as DemarcheRole)?.options?.id === d.id) {
-            newClass = noRefDemarcheOrTypeSelected?.attrs.class
-          }
+  const roles = organismeTypes.value.map((type) => {
+    const typedDemarches = allDemarches.filter((demarcheOption) => demarcheOption.types.includes(type))
+    return buildDemarchesGroup(type, typedDemarches)
+  })
 
-          return {
-            options: d,
-            attrs: {
-              class: newClass ?? null,
-              disabled: !d.editable,
-            },
-          }
-        })
+  const untyped = allDemarches.filter((demarcheOption) => demarcheOption.types.length === 0 && demarcheOption.editable)
+  if (untyped.length) {
+    roles.push(buildDemarchesGroup('unknown', untyped))
+  }
 
-      const value = isAllCheck(children)
-
-      const getCommonPrefectureOptionsFor = getCommonPrefectureOptionGetter(children)
-
-      const commonPrefectureValues: string[] = getCommonPrefectureOptionsFor('value')
-      const commonPrefectureAddables: string[] = getCommonPrefectureOptionsFor('addable')
-      const commonPrefectureDeletables: string[] = getCommonPrefectureOptionsFor('deletable')
-
-      let newClass: string | null | undefined = null
-      if ((noRefDemarcheOrTypeSelected as DemarchesRoles)?.name === type) {
-        newClass = noRefDemarcheOrTypeSelected?.attrs.class
-      }
-
-      return {
-        label: typeOrganismeLabel[type] || typeOrganismeLabel[eOrganismeType.unknown],
-        name: type,
-        value,
-        key: getRandomId(type),
-        localization,
-        children,
-        commonPrefectureValues,
-        commonPrefectureAddables,
-        commonPrefectureDeletables,
-        attrs: {
-          class: newClass ?? null,
-          disabled: children?.some((d) => !d.options.editable),
-        },
-      }
-    })
-    .filter((type) => type.children && type.children.length)
+  return roles
 })
 
 const deduceCheckTypeFromChild = (id: number) => {
@@ -186,16 +170,19 @@ const checkAllTypeChildren = async ({ name, checked, dr }: { name: string; check
   if (!checked || !dr.children) {
     return
   }
-  await userStore.updateUserRolesOption(dr.children?.map((child) => {
-    child.options.checked = checked
-    deduceCheckTypeFromChild(child.options.id)
-    return {
-      demarcheId: child.options.id,
-      checked,
-    }
-  }), false)
+  await userStore.updateUserRolesOption(
+    dr.children?.map((child) => {
+      child.options.checked = checked
+      deduceCheckTypeFromChild(child.options.id)
+      return {
+        demarcheId: child.options.id,
+        checked,
+      }
+    }),
+    false,
+  )
 
-  dr.key = getRandomId(name)
+  dr.key = useRandomId(name)
   if (selectedUser.value?.id) {
     await userStore.loadUserById(selectedUser.value?.id)
   }
@@ -240,12 +227,13 @@ const onClickDemarches = (elt: DemarchesRoles | DemarcheRole) => {
 
 //#region Tous les démarches
 const checkAllDemarches = async (checked: boolean) => {
-  if (!checked) { return }
-  const demarchesToUpdate: IUpdateOneRoleOption[] = allDemarchesRolesChildren.value
-    .flatMap(children => ({
-      demarcheId: children.options.id,
-      checked: true,
-    }))
+  if (!checked) {
+    return
+  }
+  const demarchesToUpdate: IUpdateOneRoleOption[] = allDemarchesRolesChildren.value.flatMap((children) => ({
+    demarcheId: children.options.id,
+    checked: true,
+  }))
 
   await userStore.updateUserRolesOption(demarchesToUpdate, false)
 
@@ -297,29 +285,34 @@ const geographicalRights = computed<GeographicalRights | null>(() => {
   }
 
   return demarchesRoles.value
-    .flatMap(dr => dr.children)
-    .filter(child => !!child)
-    .reduce((acc, cur) => {
-      acc.national.editable &&= cur.options.prefectureOptions.national.editable
-      acc.national.value &&= cur.options.prefectureOptions.national.value
+    .flatMap((dr) => dr.children)
+    .filter((child) => !!child)
+    .reduce(
+      (acc, cur) => {
+        acc.national.editable &&= cur.options.prefectureOptions.national.editable
+        acc.national.value &&= cur.options.prefectureOptions.national.value
 
-      acc.prefectures.value = acc.prefectures.value.filter(pref => cur.options.prefectureOptions.prefectures.value.includes(pref))
-      acc.prefectures.deletable = acc.prefectures.deletable.filter(pref => cur.options.prefectureOptions.prefectures.deletable.includes(pref))
-      acc.prefectures.addable = acc.prefectures.addable.filter(pref => cur.options.prefectureOptions.prefectures.addable.includes(pref))
+        acc.prefectures.value = acc.prefectures.value.filter((pref) => cur.options.prefectureOptions.prefectures.value.includes(pref))
+        acc.prefectures.deletable = acc.prefectures.deletable.filter((pref) =>
+          cur.options.prefectureOptions.prefectures.deletable.includes(pref),
+        )
+        acc.prefectures.addable = acc.prefectures.addable.filter((pref) => cur.options.prefectureOptions.prefectures.addable.includes(pref))
 
-      return acc
-    }, {
-      national: {
-        value: true,
-        editable: true,
+        return acc
       },
-      prefectures: {
-        value: demarchesRoles.value[0]?.commonPrefectureValues,
-        addable: demarchesRoles.value[0]?.commonPrefectureAddables,
-        deletable: demarchesRoles.value[0]?.commonPrefectureDeletables,
-      },
-      enabled: isAllDemarches.value,
-    } as GeographicalRights)
+      {
+        national: {
+          value: true,
+          editable: true,
+        },
+        prefectures: {
+          value: demarchesRoles.value[0]?.commonPrefectureValues,
+          addable: demarchesRoles.value[0]?.commonPrefectureAddables,
+          deletable: demarchesRoles.value[0]?.commonPrefectureDeletables,
+        },
+        enabled: isAllDemarches.value,
+      } as GeographicalRights,
+    )
 })
 
 const _updateGeographicalRight = async (optionLoc: { national?: boolean; prefecture?: IOnePrefectureUpdate }) => {
@@ -328,7 +321,7 @@ const _updateGeographicalRight = async (optionLoc: { national?: boolean; prefect
   }
 
   const demarcheSelected: DemarcheRole | null = 'options' in demarcheOrTypeSelected.value ? demarcheOrTypeSelected.value : null
-  const typeSelected: DemarchesRoles | null = 'options' in demarcheOrTypeSelected.value ? null : demarcheOrTypeSelected.value as DemarchesRoles
+  const typeSelected: DemarchesRoles | null = 'options' in demarcheOrTypeSelected.value ? null : (demarcheOrTypeSelected.value as DemarchesRoles)
 
   if (demarcheSelected) {
     await userStore.updateUserOneRoleOption(
@@ -351,10 +344,10 @@ const _updateGeographicalRight = async (optionLoc: { national?: boolean; prefect
     await userStore.loadUserById(selectedUser.value?.id)
   } else if (Array.isArray(demarcheOrTypeSelected.value) && demarcheOrTypeSelected.value[0].label) {
     const childrenChecked = demarcheOrTypeSelected.value
-      .flatMap(dr => dr.children)
-      .filter(child => !!child)
-      .filter(child => child.options.checked)
-      .flatMap(child => child.options.id)
+      .flatMap((dr) => dr.children)
+      .filter((child) => !!child)
+      .filter((child) => child.options.checked)
+      .flatMap((child) => child.options.id)
 
     if (!childrenChecked) {
       return
@@ -405,7 +398,7 @@ const removePrefecture = (prefecture: IOnePrefectureUpdate['key']) => {
     </div>
     <div v-if="!!selectedUser?.firstname || !!selectedUser?.lastname">
       <label class="bn-fiche-sub-title--label">Nom complet</label>
-      <span class="text-xl">{{ selectedUser.firstname || "" }} {{ selectedUser.lastname || "" }}</span>
+      <span class="text-xl">{{ selectedUser.firstname || '' }} {{ selectedUser.lastname || '' }}</span>
     </div>
     <div v-if="!!selectedUser?.prefecture">
       <label class="bn-fiche-sub-title--label">Préfecture</label>
@@ -429,9 +422,7 @@ const removePrefecture = (prefecture: IOnePrefectureUpdate['key']) => {
         </div>
       </div>
       <div class="fb-1/2 flex-grow-0 flex-shrink-0 fr-py-4v">
-        <h5 class="">
-          Démarches
-        </h5>
+        <h5 class="">Démarches</h5>
 
         <div
           class="flex no-flex-grow-for-checkboxes"
@@ -445,18 +436,14 @@ const removePrefecture = (prefecture: IOnePrefectureUpdate['key']) => {
             :model-value="isAllDemarches"
             @update:model-value="checkAllDemarches($event)"
           />
-          <label
-            class="cursor-pointer  text-ellipsis  overflow-hidden  whitespace-nowrap"
-          >
-            Toutes les démarches
-          </label>
+          <label class="cursor-pointer text-ellipsis overflow-hidden whitespace-nowrap"> Toutes les démarches </label>
         </div>
 
         <template v-if="selectedEditableUser?.originalUser.role.label">
           <fieldset
             v-for="dr in demarchesRoles"
             :key="dr.name"
-            class="my-2  rounded  border-1  border-solid  border-gray-400  max-w-full"
+            class="my-2 rounded border-1 border-solid border-gray-400 max-w-full"
           >
             <legend
               class="flex flex-row justify-between rounded-lg no-margin-bottom"
@@ -464,7 +451,7 @@ const removePrefecture = (prefecture: IOnePrefectureUpdate['key']) => {
               @click="onClickDemarches(dr)"
             >
               <DsfrCheckbox
-                class="fr-px-2v  flex-auto"
+                class="fr-px-2v flex-auto"
                 :name="dr.name"
                 :model-value="dr.value"
                 :disabled="dr.attrs.disabled"
@@ -509,7 +496,10 @@ const removePrefecture = (prefecture: IOnePrefectureUpdate['key']) => {
                     :disabled="d.attrs.disabled"
                     @update:model-value="checkOneDemarche({ id: d.options.id, checked: $event, d })"
                   />
-                  <label :title="d.options.title" class="cursor-pointer  text-ellipsis  overflow-hidden  whitespace-nowrap">
+                  <label
+                    :title="d.options.title"
+                    class="cursor-pointer text-ellipsis overflow-hidden whitespace-nowrap"
+                  >
                     {{ d.options.dsId }} - {{ d.options.title }}
                   </label>
                   <DemarcheLocalization
@@ -536,9 +526,12 @@ const removePrefecture = (prefecture: IOnePrefectureUpdate['key']) => {
             Localisation
             <span
               v-if="!!(geographicalRights && geographicalRights.enabled)"
-              class="fr-text--md "
+              class="fr-text--md"
             >
-              : {{ (demarcheOrTypeSelected as DemarchesRoles)?.label || (demarcheOrTypeSelected as DemarcheRole)?.options?.title || 'Toutes les démarches' }}
+              :
+              {{
+                (demarcheOrTypeSelected as DemarchesRoles)?.label || (demarcheOrTypeSelected as DemarcheRole)?.options?.title || 'Toutes les démarches'
+              }}
             </span>
           </h5>
           <div class="fr-pl-4v overflow-y-auto max-h-md">
@@ -570,9 +563,7 @@ const removePrefecture = (prefecture: IOnePrefectureUpdate['key']) => {
           scale="10"
           animation="spin"
         />
-        <p class="text-white text-3xl">
-          chargement en cours...
-        </p>
+        <p class="text-white text-3xl">chargement en cours...</p>
       </div>
     </div>
   </div>
@@ -583,7 +574,7 @@ const removePrefecture = (prefecture: IOnePrefectureUpdate['key']) => {
   background-color: var(--background-alt-grey);
 }
 
-:deep(input[type="checkbox"]:disabled + label) {
+:deep(input[type='checkbox']:disabled + label) {
   color: var(--text-default-grey);
 }
 

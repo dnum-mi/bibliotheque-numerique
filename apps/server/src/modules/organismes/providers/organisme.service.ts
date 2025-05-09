@@ -262,9 +262,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
         state: eState.uploaded,
         title: raw.nom,
         dateCreation: creationDate,
-        type: raw.reconnue_utilite_publique
-          ? eOrganismeType.ARUP
-          : eOrganismeType.CULTE,
+        type: eOrganismeType.ASSO,
         addressLabel,
         addressPostalCode: a?.code_postal,
         addressCityName: a?.commune,
@@ -527,7 +525,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
 
     return {
       idRna: organisme.id,
-      type: 'CULTE',
+      type: eOrganismeType.ASSO,
       siret: organisme.siret,
       title: organisme.title,
       email: organisme.emails.join(', '),
@@ -584,7 +582,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
 
     return {
       idRna: organisme.identite.id_rna,
-      type: 'CULTE',
+      type: eOrganismeType.ASSO,
       siret: organisme.identite.siret,
       sigle: organisme.identite.sigle,
       title: organisme.identite.nom,

@@ -18,7 +18,7 @@ defineProps<{
 </template>
 
 <style scoped>
-.custom-culte {
+.custom-asso {
   --text-default-success: var(--text-action-high-yellow-moutarde);
   --background-contrast-success: var(--background-contrast-yellow-moutarde);
 }
@@ -33,7 +33,6 @@ defineProps<{
   --background-contrast-success: #fef4f2;
 }
 
-.custom-arup,
 .custom-frup {
   --text-default-success: #66673d;
   --background-contrast-success: var(--green-tilleul-verveine-975-75);
