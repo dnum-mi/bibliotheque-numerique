@@ -34,8 +34,7 @@ const organismeSiaf = computed(() => organismeStore.organismeSiaf)
 const hasSiaf = computed(() => !!organismeStore.organismeSiaf)
 const hasSiafAssociation = computed(() => {
   const organisme = organismeSiaf.value as IOrganismeOutputDto | undefined
-  const types = [eOrganismeType.ARUP, eOrganismeType.CULTE]
-  return !!(organisme && types.includes(organisme.type as typeof types[number]))
+  return !!(organisme && organisme.type === eOrganismeType.ASSO)
 })
 const hasSiafFoundation = computed(() => {
   const organisme = organismeSiaf.value as IOrganismeOutputDto | undefined
@@ -142,7 +141,7 @@ const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutpu
       </template>
       <template v-else #title>
         <OrganismeBadge
-          :type="(organismeSiaf as IOrganismeOutputDto)?.type || 'CULTE'"
+          :type="(organismeSiaf as IOrganismeOutputDto)?.type"
           class="mr-4"
           big
         />

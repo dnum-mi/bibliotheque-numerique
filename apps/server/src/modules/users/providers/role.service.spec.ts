@@ -43,7 +43,7 @@ describe("role.service", ()=> {
         '1': {
           id: 1,
           title: 'Demarche 1',
-          types: [ 'ARUP', 'CULTE', 'FE', 'FDD', 'FRUP' ],
+          types: [ 'ASSO', 'FE', 'FDD', 'FRUP' ],
           dsId: 5,
           identification: 'FE',
           dsCreatedAt: new Date('2022-10-11T09:43:49+02:00'),

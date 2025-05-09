@@ -3,7 +3,7 @@ items:
   BMW:
     id: '1'
     state: 'uploaded'
-    type: 'ARUP'
+    type: 'ASSO'
     title: 'Bmw'
     addressType: "housenumber"
     addressLabel: "4 Rue Judaïque 33000 Bordeaux"
@@ -63,7 +63,7 @@ items:
   Toyota:
     id: '4'
     state: 'uploaded'
-    type: 'ARUP'
+    type: 'ASSO'
     title: 'Toyota'
     addressType: "housenumber"
     addressLabel: "7 Rue des Archives 75003 Paris"
@@ -83,7 +83,7 @@ items:
   Honda:
     id: '5'
     state: 'uploaded'
-    type: 'CULTE'
+    type: 'ASSO'
     title: 'Honda'
     addressType: "housenumber"
     addressLabel: "8 Rue Montorgueil 75001 Paris"
@@ -103,7 +103,7 @@ items:
   Ford:
     id: '6'
     state: 'uploaded'
-    type: 'CULTE'
+    type: 'ASSO'
     title: 'Ford'
     addressType: "housenumber"
     addressLabel: "9 Rue de la Pompe 75116 Paris"

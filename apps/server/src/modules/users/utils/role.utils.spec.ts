@@ -30,7 +30,7 @@ const allSmallDemarches: SmallDemarcheOutputDto[] = [
   {
     id: 1,
     dsId: 1,
-    types: [eOrganismeType.CULTE],
+    types: [eOrganismeType.ASSO],
     identification: null,
     title: 'Démarche 1',
     dsCreatedAt: new Date(0),
@@ -39,7 +39,7 @@ const allSmallDemarches: SmallDemarcheOutputDto[] = [
   {
     id: 2,
     dsId: 2,
-    types: [eOrganismeType.CULTE],
+    types: [eOrganismeType.ASSO],
     identification: null,
     title: 'Démarche 2',
     dsCreatedAt: new Date(0),

@@ -3,7 +3,7 @@ import type { IOrganismeOutputDto, ISiafRnfOutput } from '@biblio-num/shared'
 import FicheOrganismeInfo from './FicheOrganismeInfo.vue'
 
 const props = defineProps<{ organismeRaf: IOrganismeOutputDto }>()
-const typeOrganisme = computed(() => (props.organismeRaf?.rnfJson as ISiafRnfOutput)?.foundationType as 'FDD' | 'FE' | 'FRUP' | 'ARUP' | 'CULTE')
+const typeOrganisme = computed(() => (props.organismeRaf?.rnfJson as ISiafRnfOutput)?.foundationType as 'FDD' | 'FE' | 'FRUP' | 'ASSO')
 </script>
 
 <template>

@@ -111,7 +111,7 @@ describe('Demarches (e2e)', () => {
       )
     })
 
-    it(`Should patch identification and remove fix-field of intersection in mappingColumn when 
+    it(`Should patch identification and remove fix-field of intersection in mappingColumn when
       identification is null and types are undefined.`, async () => {
       await request(app.getHttpServer())
         .patch('/demarches/6')
@@ -133,7 +133,7 @@ describe('Demarches (e2e)', () => {
     })
 
     it('Should patch types ', async () => {
-      const types = ['FE', 'ARUP', 'FRUP']
+      const types = ['FE', 'ASSO', 'FRUP']
 
       await request(app.getHttpServer())
         .patch('/demarches/5')

@@ -3,7 +3,6 @@ import { createEnum } from "../../factories"
 
 // all tags here create tab in organisme page
 export const foundationType = [
-  'unknown',
   'FDD',
   'FE',
   'FRUP',

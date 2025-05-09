@@ -191,7 +191,7 @@ onMounted(async () => {
         type="text"
         label="types"
         label-visible
-        hint="liste: [ &quot;ARUP&quot;, &quot;CULTE&quot;, &quot;FE&quot;, &quot;FDD&quot;, &quot;FRUP&quot; ]"
+        hint="liste: [ &quot;ASSO&quot;, &quot;FE&quot;, &quot;FDD&quot;, &quot;FRUP&quot; ]"
       />
     </div>
     <div class="flex flex-row gap-2">

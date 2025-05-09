@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker/locale/fr'
 
-const getTypeOrganisme = () => faker.helpers.arrayElement(['FDD', 'FE', 'ARUP', 'FRUP'])
+const getTypeOrganisme = () => faker.helpers.arrayElement(['FDD', 'FE', 'ASSO', 'FRUP'])
 const getChampsDescriptor = () => ({
   id: faker.string.nanoid(29),
   type: 'text',
