@@ -15,7 +15,7 @@ export class UpdateOrganismeTypeEnumReplaceArupCulteByAsso1745849929815
     `)
 
     await queryRunner.query(`
-      CREATE TYPE organismes_type_enum AS ENUM ('FDD', 'FE', 'FRUP', 'ASSO');
+      CREATE TYPE "public"."organismes_type_enum" AS ENUM('unknown', 'FDD', 'FE', 'FRUP', 'ASSO')
     `)
 
     await queryRunner.query(`
@@ -28,7 +28,7 @@ export class UpdateOrganismeTypeEnumReplaceArupCulteByAsso1745849929815
     `)
 
     await queryRunner.query(`
-      ALTER TABLE organismes ALTER COLUMN type SET DEFAULT 'ASSO';
+      ALTER TABLE organismes ALTER COLUMN type SET DEFAULT 'unknown';
     `)
 
     await queryRunner.query(`

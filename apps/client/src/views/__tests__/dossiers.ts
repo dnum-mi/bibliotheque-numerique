@@ -144,7 +144,7 @@ export const generateDossierDS = (): TDossier => {
 
 export const generateDossierDSPersonneMorale = () => generateDossierDSByTypeDemandeur('PersonneMorale', getDemandeurMorale())
 export const generateDossierDSPersonnePhysique = () => generateDossierDSByTypeDemandeur('PersonnePhysique', getDemandeurPhysique())
-export const getRandomOrganismeType = () => faker.helpers.arrayElement(['FDD', 'FE', 'FRUP', 'ASSO'])
+export const getRandomOrganismeType = () => faker.helpers.arrayElement(['unknown', 'FDD', 'FE', 'FRUP', 'ASSO'])
 export const generateOrganisme = (): IOrganismeOutputDto => ({
 
   id: faker.number.int(),
