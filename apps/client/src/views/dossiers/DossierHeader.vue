@@ -25,18 +25,18 @@ const goToOrganisme = (idRna: string | null, idRnf: string | null) => {
 
 <template>
   <header
-    class="flex  justify-between  gap-2"
+    class="flex justify-between gap-2"
   >
-    <div class="flex  flex-col  justify-center">
+    <div class="flex flex-col justify-center">
       <h2
         v-if="dossier.organisme"
-        class="m-0  p-0  text-lg  text-[var(--text-inverted-grey)]"
+        class="m-0 p-0 text-lg text-[var(--text-inverted-grey)]"
       >
         {{ dossier.organisme?.id }} -
         <span class="font-normal">{{ dossier.organisme?.title }}</span>
       </h2>
       <div
-        class="flex  gap-2  text-sm"
+        class="flex gap-2 text-sm"
       >
         <OrganismeBadge
           :type="dossier.organisme?.type"

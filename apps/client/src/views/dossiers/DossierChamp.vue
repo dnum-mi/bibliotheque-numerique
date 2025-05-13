@@ -1,11 +1,10 @@
 <script lang="ts" setup>
-import type { PieceJustificativeChamp, RepetitionChamp } from '@dnum-mi/ds-api-client'
-
 import DossierChamps from './DossierChamps.vue'
 import DownloadFile from '@/components/DownloadFile.vue'
+import type { ChampWithDescriptor } from './composables/useGroupedChamps'
 
 defineProps<{
-  champ: PieceJustificativeChamp & RepetitionChamp;
+  champ: ChampWithDescriptor
 }>()
 </script>
 
@@ -13,14 +12,13 @@ defineProps<{
   <div
     v-if="champ"
     data-cy="dossier-champ"
-    class="fr-mb-1w fr-col-12"
+    class="fr-col-12 fr-py-2v fr-px-4v"
   >
-    <hr class="fr-mt-3w fr-pb-1w">
-    <div class="fr-mx-7w">
+    <div>
       <!-- LABEL -->
       <label
         :for="champ.id"
-        class="fr-text--bold fr-text--lg bn-champ--text"
+        class="bn-champ--text"
       >
         {{ champ.label }}
       </label>
@@ -28,39 +26,41 @@ defineProps<{
       <div
         v-if="champ.__typename === 'PieceJustificativeChamp'"
         :id="champ.id"
-        class="fr-text fr-mt-1w bn-champ--text flex flex-col"
+        class="fr-text--bold fr-text bn-champ--text flex flex-col"
       >
         <!-- {{ champ }} -->
         <div
           v-for="(file, index) in champ.files"
           :key="index"
         >
-          <DownloadFile
-            :file="file"
-          />
+          <DownloadFile :file="file" />
         </div>
       </div>
-      <!-- SI Repetable -->
-      <DossierChamps
-        v-else-if="champ.__typename === 'RepetitionChamp'"
-        :champs="champ.champs"
-      />
+
       <!-- Si boolean -->
       <div
         v-if="champ.__typename === 'CheckboxChamp'"
         :id="champ.id"
-        class="fr-text fr-mt-1w bn-champ--text"
+        class="fr-text--bold fr-text bn-champ--text"
       >
-        {{ champ.stringValue === "true" ? "Oui" : "Non" }}
+        <p>{{ champ.stringValue === 'true' ? 'Oui' : 'Non' }}</p>
+      </div>
+
+      <!-- SI Repetable -->
+      <div
+        v-else-if="champ.__typename === 'RepetitionChamp'"
+        class="fr-background-alt--grey fr-p-3v"
+      >
+        <DossierChamps :champs="champ.champs" />
       </div>
 
       <!-- Par défault -->
       <div
         v-else
         :id="champ.id"
-        class="fr-text fr-mt-1w bn-champ--text"
+        class="fr-text--bold fr-text"
       >
-        {{ champ.stringValue }}
+        <p>{{ champ.stringValue }}</p>
       </div>
     </div>
   </div>
