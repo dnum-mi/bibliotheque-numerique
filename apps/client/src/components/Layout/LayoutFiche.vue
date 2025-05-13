@@ -40,7 +40,7 @@ onBeforeUnmount(() => {
       <div class="bn-fiche-sub-title  bn-dynamic-big-p">
         <slot name="sub-title" />
       </div>
-      <div>
+      <div class="h-full">
         <slot name="content" />
       </div>
     </div>
