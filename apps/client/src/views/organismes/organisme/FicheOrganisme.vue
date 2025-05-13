@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { useTabs, DsfrTabs } from '@gouvminint/vue-dsfr'
-
 import apiClient from '@/api/api-client'
 import LayoutFiche from '@/components/Layout/LayoutFiche.vue'
 import ListeDossier from './ListeDossier.vue'
@@ -24,8 +22,6 @@ import FicheOrganismeInfo from './FicheOrganismeInfo.vue'
 
 const props = withDefaults(defineProps<{ id: string; idType: OrganismeIdType }>(), {})
 
-const { ascendant, selected, select } = useTabs(true, 0)
-
 const organismeStore = useOrganismeStore()
 const userStore = useUserStore()
 
@@ -44,35 +40,6 @@ const hasSiafFoundation = computed(() => {
 
 const filesSummary = ref<Record<FileTagKey, number> | Record<string, never>>({})
 
-const tabTitles = computed(() => {
-  let headers = []
-
-  if (hasSiafAssociation.value) {
-    headers.push({
-      title: 'RAF',
-      tabId: 'tab-0',
-      panelId: 'tab-content-0',
-    })
-  }
-  if (organisme.value) {
-    headers = headers.concat([
-      {
-        title: 'Infos',
-        tabId: 'tab-1',
-        panelId: 'tab-content-1',
-      },
-      ...Object.entries(filesSummary.value).map(([tag, count], index: number) => {
-        return {
-          title: `${dFileTabDictionary[tag as FileTagKey]} (${count})`,
-          tabId: `tab-${index + 2}`,
-          panelId: `tab-content-${index + 2}`,
-        }
-      }),
-    ])
-  }
-  return headers
-})
-
 // TODO: use router to prevent user to access this page if not logged in or without the right role
 const role = computed<IRole | undefined>(() => userStore.currentUser?.role)
 
@@ -90,27 +57,42 @@ onMounted(async () => {
   }
 })
 
-const tabs = ref<InstanceType<typeof DsfrTabs>>()
-const redrawTabs = async () => {
-  await nextTick()
-  await nextTick() // Yes, we need to call nextTick twice to make sure the tabs are rendered
-  tabs.value?.renderTabs()
-}
-
-const activeTabs = ref<Record<string, boolean>>({})
-watch(selected, (idx) => {
-  if (idx > 0) {
-    const tag = Object.keys(filesSummary.value)[idx - 1]
-    activeTabs.value[tag] = true
-  }
-  redrawTabs()
-})
-
 const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutput>) => {
   if (organisme.value) {
     return apiClient.getOrganismeFiles(organisme.value.id)(params)
   }
 }
+
+// TODO: A factoriser BEGIN
+const selectedTabIndex = ref(hasSiafAssociation.value ? 0 : 1)
+const tabTitles = computed<{ value: number, label: string }[]>(() => {
+  let headers = []
+
+  if (hasSiafAssociation.value) {
+    headers.push({
+      label: 'RAF',
+      value: 0,
+    })
+  }
+
+  if (organisme.value) {
+    headers = headers.concat([
+      {
+        label: 'Infos',
+        value: 1,
+      },
+      ...Object.entries(filesSummary.value).map(([tag, count], index: number) => {
+        return {
+          label: `${dFileTabDictionary[tag as FileTagKey]} (${count})`,
+          value: index + 2,
+        }
+      }),
+    ])
+  }
+  return headers
+})
+
+// TODO: A factoriser END
 </script>
 
 <template>
@@ -151,49 +133,74 @@ const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutpu
 
       <template #content>
         <div class="w-full h-full pl-4">
-          <DsfrTabs
-            ref="tabs"
-            v-model="selected"
-            tab-list-name="tabs-fiche"
-            :tab-titles="tabTitles"
-            class="h-full"
-            @select-tab="select"
-          >
-            <DsfrTabContent
-              v-if="hasSiafAssociation"
-              panel-id="tab-content-0"
-              tab-id="tab-0"
-              :selected="selected === 0"
-              :asc="ascendant"
+          <!-- TODO à factoriser BEGIN -->
+          <DsfrSegmentedSet
+            v-model="selectedTabIndex"
+            :inline="false"
+            :options="tabTitles"
+            :small="false"
+            class="simulate-tabs"
+          />
+
+          <div class="flex flex-row h-full fr-pl-1w fr-pr-1w">
+            <Transition
+              name="slide-fade"
+              mode="in-out"
             >
-              <FicheInfoAssociation v-if="idType === EOrganismeIdType.Rna" :organisme-raf="(organismeSiaf as IOrganismeOutputDto)" />
-            </DsfrTabContent>
-            <DsfrTabContent
-              panel-id="tab-content-1"
-              tab-id="tab-1"
-              :selected="selected === (hasSiafAssociation ? 1 : 0)"
-              :asc="ascendant"
+              <template
+                v-if="hasSiafAssociation"
+              >
+                <div
+                  v-show="selectedTabIndex === 0"
+                  class="flex-grow bn-scroll-parent fr-pt-2w"
+                >
+                  <FicheInfoAssociation v-if="idType === EOrganismeIdType.Rna" :organisme-raf="(organismeSiaf as IOrganismeOutputDto)" />
+                </div>
+              </template>
+            </Transition>
+
+            <Transition
+              name="slide-fade"
+              mode="in-out"
             >
-              <FicheInfoFondation v-if="hasSiafFoundation && organismeSiaf" :organisme-raf="organismeSiaf as IOrganismeOutputDto" />
-              <FicheOrganismeInfo v-else :organisme="organisme" :type="idType" />
-            </DsfrTabContent>
-            <DsfrTabContent
+              <div
+                v-show="selectedTabIndex === 1"
+                class="flex-grow bn-scroll-parent fr-pt-2w"
+              >
+                <FicheInfoFondation
+                  v-if="hasSiafFoundation && organismeSiaf"
+                  :organisme-raf="organismeSiaf as IOrganismeOutputDto"
+                />
+                <FicheOrganismeInfo
+                  v-else
+                  :organisme="organisme"
+                  :type="idType"
+                />
+              </div>
+            </Transition>
+
+            <Transition
               v-for="(tag, idx) in Object.keys(filesSummary)"
               :key="tag"
-              :panel-id="`tab-content-${idx + 2}`"
-              :tab-id="`tab-${idx + 2}`"
-              :selected="selected === idx + 1 + (hasSiafAssociation ? 1 : 0)"
-              :asc="ascendant"
+              name="slide-fade"
+              mode="in-out"
             >
-              <AttachedFileList
-                :key="tag"
-                :fetch-attached-files="fetchAttachedFiles"
-                :tag="tag"
-                :active="activeTabs[tag]"
-                @files-fetched="redrawTabs()"
-              />
-            </DsfrTabContent>
-          </DsfrTabs>
+              <div
+                v-show="selectedTabIndex === idx + 2"
+                class="flex-grow bn-scroll-parent fr-pt-2w"
+              >
+                <AttachedFileList
+                  :key="tag"
+                  class="h-full"
+                  :fetch-attached-files="fetchAttachedFiles"
+                  :tag="tag"
+                  :active="selectedTabIndex === idx + 2"
+                />
+              </div>
+            </Transition>
+          </div>
+
+        <!-- TODO à factoriser END -->
         </div>
       </template>
     </LayoutFiche>
@@ -219,3 +226,61 @@ const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutpu
     </div>
   </div>
 </template>
+
+<style scoped>
+/* TODO: A factoriser BEGIN*/
+.simulate-tabs {
+  position: relative;
+  border-bottom: 1px solid var(--border-default-grey);
+  padding-left: 1rem;
+}
+
+:deep(.fr-segmented__elements) {
+  gap: 0.5rem;
+  box-shadow: none !important;
+}
+
+:deep(.fr-segmented__element) {
+  border-radius: 0;
+  background: var(--background-action-low-blue-france);
+  font-weight: bolder !important;
+}
+
+:deep(.fr-segmented__element:hover) {
+  background: var(--background-action-low-blue-france-hover) !important;
+}
+
+.simulate-tabs :deep(input:hover+label) {
+  background: var(--background-action-low-blue-france-hover) !important;
+}
+
+.simulate-tabs :deep(input:checked+label) {
+  background: white;
+  color: var(--border-active-blue-france) !important;
+  border: none;
+  border-radius: 0;
+  border-inline: 1px solid var(--border-default-grey);
+  border-bottom: 1px solid white;
+  margin-bottom: -1px;
+  box-shadow: 0 -2px 0 0 var(--border-active-blue-france) !important;
+}
+
+.slide-fade-enter-active {
+  transition: all 0.2s linear;
+}
+
+.slide-fade-leave-active {
+  transition: all 0.2s linear;
+}
+
+.slide-fade-enter-from {
+  transform: translateX(v-bind(translateValueFrom));
+  opacity: 0;
+}
+
+.slide-fade-leave-to {
+  transform: translateX(v-bind(translateValueTo));
+  opacity: 0;
+}
+/* TODO: A factoriser END*/
+</style>
