@@ -9,10 +9,11 @@ import { isPersonneMorale } from '@/utils/helperDemandeur'
 describe('<DossierDemande />', () => {
   it('renders', () => {
     const datas = generateDossierDS()
+
     cy.mount(DossierDemande, { props: { datas } })
     // TODO: A completer
     // Test demandeur
-    cy.get('h6').should('contain', 'Identité du déclarant')
+    cy.get('h2').should('contain', 'Identité du déclarant')
     if (isPersonneMorale(datas.demandeur.__typename)) {
       cy.get('label').contains('Siret').next().should('contain', datas.demandeur.siret)
     } else {

@@ -7,9 +7,7 @@ import DossierSection from './DossierSection.vue'
 import DossierSidemenu from './DossierSidemenu.vue'
 import DossierChamps from './DossierChamps.vue'
 
-const {
-  annotations = [],
-} = defineProps<{
+const { annotations = [] } = defineProps<{
   annotations?: IDossier['dsDataJson']['annotations']
 }>()
 

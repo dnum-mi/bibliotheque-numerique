@@ -51,7 +51,7 @@ const { groupedChamps, expandedSections, toggleSection, smoothScroll, menuItems 
 
         <div class="fr-mb-4w">
           <h2 class="fr-h6 fr-background-alt--grey fr-mb-4w">
-            <div class="flex-grow fr-py-3v fr-px-2w">Identité du demandeur</div>
+            <div class="flex-grow fr-py-3v fr-px-2w">Identité du déclarant</div>
           </h2>
           <DossierDemandeurMoral
             v-if="isDemandeurMorale"
