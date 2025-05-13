@@ -1,10 +1,9 @@
 <script lang="ts" setup>
-import type { Champ } from '@biblio-num/shared'
-
+import type { ChampWithDescriptor } from './composables/useGroupedChamps'
 import DossierChamp from './DossierChamp.vue'
 
 defineProps<{
-  champs?: Champ[]
+  champs?: ChampWithDescriptor[]
 }>()
 </script>
 

@@ -1,12 +1,15 @@
 <script lang="ts" setup>
-import type { Demandeur, TDossier, Champ } from '@biblio-num/shared'
-
 import { isPersonneMorale, isPersonnePhysique } from '@/utils/helperDemandeur'
-import DossierChamps from './DossierChamps.vue'
+import { dateTimeToStringLongFr } from '@/utils/date-to-string'
 import DossierDemandeurMoral from './DossierDemandeurMoral.vue'
 import DossierDemandeurPhysique from './DossierDemandeurPhysique.vue'
+import type { Demandeur, Dossier } from '@dnum-mi/ds-api-client'
+import { useGroupedChamps } from './composables/useGroupedChamps'
+import type { ChampWithDescriptor } from './composables/useGroupedChamps'
+import DossierSection from './DossierSection.vue'
+import DossierSidemenu from './DossierSidemenu.vue'
 
-type PopulatedDossier = TDossier & { demandeur: Demandeur & { __typename: string } } | Record<string, never>
+type PopulatedDossier = (Dossier & { demandeur: Demandeur & { __typename: string } }) | Record<string, never>
 
 const props = withDefaults(
   defineProps<{
@@ -17,39 +20,65 @@ const props = withDefaults(
   },
 )
 
-const isDemandeurMorale = computed(() => isPersonneMorale((props.datas?.demandeur)?.__typename))
-const isDemandeurPhysique = computed(() => isPersonnePhysique((props.datas?.demandeur)?.__typename))
+const isDemandeurMorale = computed(() => isPersonneMorale(props.datas?.demandeur?.__typename))
+const isDemandeurPhysique = computed(() => isPersonnePhysique(props.datas?.demandeur?.__typename))
+const depositDate = computed(() => props.datas?.dateDepot)
 const demandeur = computed(() => props.datas?.demandeur)
-const champs = computed<Champ[]>(() => props.datas?.champs as Champ[])
+const champs = computed(() => (Array.isArray(props.datas?.champs) ? (props.datas.champs as ChampWithDescriptor[]) : []))
+
+const { groupedChamps, expandedSections, toggleSection, smoothScroll, menuItems } = useGroupedChamps(() => champs.value)
 </script>
 
 <template>
   <div class="fr-container">
-    <div class="fr-grid-row fr-mb-5v">
-      <h6 class="">
-        <span
-          class="fr-icon-account-line fr-icon--lg fr-mr-2w bn-ellipse bn-ellipse-account"
-          aria-hidden="true"
-        />Identité du déclarant
-      </h6>
-      <DossierDemandeurMoral
-        v-if="isDemandeurMorale"
-        :datas="demandeur"
-      />
-      <DossierDemandeurPhysique
-        v-if="isDemandeurPhysique"
-        :datas="demandeur"
-      />
-    </div>
-    <hr class="fr-mt-4w">
-    <div class="fr-grid-row fr-mb-5v">
-      <h6>
-        <span
-          class="fr-icon-file-text-line fr-icon--lg fr-mr-2w bn-ellipse bn-ellipse-file-text"
-          aria-hidden="true"
-        />Formulaire
-      </h6>
-      <DossierChamps :champs="champs " />
+    <div class="fr-grid-row fr-grid-row--center tab-content">
+      <template v-if="menuItems.length">
+        <DossierSidemenu
+          :menu-items="menuItems"
+          :smooth-scroll="smoothScroll"
+        />
+      </template>
+      <div class="fr-col-12 fr-col-xl-9">
+        <div class="fr-mb-4w">
+          <h2 class="fr-h6 fr-background-alt--grey fr-mb-4w">
+            <div class="flex-grow fr-py-3v fr-px-2w">Date de dépôt du dossier</div>
+          </h2>
+          <div class="fr-container">
+            <p>Déposé le {{ dateTimeToStringLongFr(depositDate) }}</p>
+          </div>
+        </div>
+
+        <div class="fr-mb-4w">
+          <h2 class="fr-h6 fr-background-alt--grey fr-mb-4w">
+            <div class="flex-grow fr-py-3v fr-px-2w">Identité du demandeur</div>
+          </h2>
+          <DossierDemandeurMoral
+            v-if="isDemandeurMorale"
+            :datas="demandeur"
+          />
+          <DossierDemandeurPhysique
+            v-if="isDemandeurPhysique"
+            :datas="demandeur"
+          />
+        </div>
+
+        <div class="counter-start-header-section fr-mb-4w">
+          <h2 class="fr-h6 fr-background-alt--grey fr-mb-4w">
+            <div class="flex-grow fr-py-3v fr-px-2w">Sections du fomulaire</div>
+          </h2>
+          <DossierSection
+            :sections="groupedChamps"
+            :expanded-sections="expandedSections"
+            :toggle-section="toggleSection"
+          />
+        </div>
+      </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.counter-start-header-section {
+  counter-reset: h2;
+}
+</style>

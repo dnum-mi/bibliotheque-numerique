@@ -5,7 +5,7 @@ import { dateToStringFr } from '@/utils'
 
 const props = withDefaults(
   defineProps<{
-    datas?: Demandeur & PersonnePhysique | Record<string, never>;
+    datas?: (Demandeur & PersonnePhysique) | Record<string, never>
   }>(),
   {
     datas: () => ({}),
@@ -38,16 +38,21 @@ const fieldsDemandeur = [
     :data-cy="`cy-${title}`"
     class="fr-container"
   >
-    <div class="fr-grid-row">
+    <div class="fr-grid-col">
       <div
         v-for="{ label, value } in fieldsDemandeur"
         :key="label"
         class="fr-col-3"
       >
-        <label class="fr-text--bold"> {{ label }} </label>
-        <div class="fr-text fr-mt-4v">
+        <label
+          :for="label"
+          class="fr-text--sm bn-champ--text"
+        >
+          {{ label }}
+        </label>
+        <p class="fr-text--bold">
           {{ value }}
-        </div>
+        </p>
       </div>
     </div>
   </div>

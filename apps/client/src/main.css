@@ -17,11 +17,11 @@ body,
 
 /* Style Bibliothèque Numerique */
 .bn-banner {
-  --at-apply: h-full  flex  items-center  p-4;
+  --at-apply: h-full flex items-center p-4;
   /* Default colors */
   --bn-bg-title-banner: var(--grey-200-850);
   --bn-text-title-banner: var(--background-default-grey);
- 
+
   /* Bg and text colors */
   background-color: var(--bn-bg-title-banner);
   color: var(--bn-text-title-banner);
@@ -57,7 +57,7 @@ body,
 }
 
 .bn-fiche-space-left {
-  padding-left: 8%
+  padding-left: 8%;
 }
 
 .bn-list-contact {
@@ -91,21 +91,23 @@ body,
 .bn-champ--text {
   font-family: 'Marianne';
   font-style: normal;
+  font-weight: 300;
+  font-size: 0.8rem;
 }
 
-.bn-message--text{
+.bn-message--text {
   font-family: 'Marianne';
   font-style: normal;
 }
-.bn-message-date--text{
+.bn-message-date--text {
   color: #666666;
 }
-.bn-message-body--text{
+.bn-message-body--text {
   color: #161616;
 }
 
 .bn-icon--green-archipel {
-  background-color: #58C5CF;
+  background-color: #58c5cf;
   border-radius: 100%;
   color: var(--grey-1000-50);
   width: 2rem;
@@ -116,7 +118,7 @@ body,
 
 .bn-icon--green-archipel > span {
   position: relative;
-  top: 0.25rem
+  top: 0.25rem;
 }
 
 .bn-icon--blue-france-main-525 {
@@ -131,11 +133,11 @@ body,
 
 .bn-icon--blue-france-main-525 > span {
   position: relative;
-  top: 0.25rem
+  top: 0.25rem;
 }
 
 .bn-icon--pink-macaron-950-active {
-  background-color:rgb(252,176,162);
+  background-color: rgb(252, 176, 162);
   border-radius: 100%;
   color: var(--grey-1000-50);
   width: 2rem;
@@ -145,16 +147,16 @@ body,
 }
 .bn-icon--pink-macaron-950-active > span {
   position: relative;
-  top: 0.25rem
+  top: 0.25rem;
 }
 
 .bn-text--shadow {
   color: var(--grey-50-1000);
-  text-shadow: #818080 0.1em 0.3em 0.34em
+  text-shadow: #818080 0.1em 0.3em 0.34em;
 }
 
 .bn-ellipse {
-  box-sizing: border-box; 
+  box-sizing: border-box;
   clip-path: ellipse(50% 50%);
 }
 .bn-ellipse-name {
@@ -164,7 +166,7 @@ body,
   font-size: 1.25rem;
   line-height: 1.75rem;
   color: var(--grey-1000-50);
-  background: #C2B24C;
+  background: #c2b24c;
   width: 3rem;
   height: 3rem;
   border-radius: 50%;
@@ -206,7 +208,6 @@ body,
   min-height: 0 !important;
   height: 100% !important;
 }
-
 
 .bn-dynamic-big-p {
   padding: 2rem;
