@@ -3,7 +3,7 @@ import type { ChampDescriptor } from '@dnum-mi/ds-api-client'
 
 export type ChampWithDescriptor = IChamp & {
   champDescriptor: ChampDescriptor
-  champs: ChampWithDescriptor[]
+  champs?: ChampWithDescriptor[]
 }
 
 export interface Section {
@@ -24,11 +24,12 @@ export function useGroupedChamps (champsInput: () => ChampWithDescriptor[]) {
 
     let hasSection = false
     for (const champ of champs) {
-      if (!champ?.champDescriptor) {
+      const descriptor = champ?.champDescriptor
+      if (!descriptor) {
         continue
       }
 
-      if (champ.champDescriptor.type === 'header_section') {
+      if (descriptor.type === 'header_section') {
         hasSection = true
         if (currentSection) {
           sections.push(currentSection)

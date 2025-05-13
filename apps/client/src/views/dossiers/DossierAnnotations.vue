@@ -5,6 +5,7 @@ import { useGroupedChamps } from './composables/useGroupedChamps'
 import type { ChampWithDescriptor } from './composables/useGroupedChamps'
 import DossierSection from './DossierSection.vue'
 import DossierSidemenu from './DossierSidemenu.vue'
+import DossierChamps from './DossierChamps.vue'
 
 const { annotations } = withDefaults(
   defineProps<{
@@ -33,7 +34,11 @@ const { groupedChamps, expandedSections, toggleSection, smoothScroll, menuItems 
           :sections="groupedChamps"
           :expanded-sections="expandedSections"
           :toggle-section="toggleSection"
-        />
+        >
+          <template #champs="contents">
+            <DossierChamps :champs="contents.champs" />
+          </template>
+        </DossierSection>
       </div>
     </div>
   </div>
