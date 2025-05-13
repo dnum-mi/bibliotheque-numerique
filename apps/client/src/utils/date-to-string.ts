@@ -8,7 +8,11 @@ export const dateToStringFr = (value: Date | string | number | undefined | null)
   return value ? new Intl.DateTimeFormat(LOCALE_FOR_DATE_TIME).format(new Date(value)) : ''
 }
 
-export const dateTimeToStringLongFr = (value: string | number): string => {
+export const dateTimeToFormatedStringFr = (value: string | number): string => {
+  if (!value) {
+    return ''
+  }
+
   const formatter = new Intl.DateTimeFormat(LOCALE_FOR_DATE_TIME, {
     day: '2-digit',
     month: 'long',
@@ -24,9 +28,10 @@ export const dateTimeToStringLongFr = (value: string | number): string => {
   return `${partMap.day} ${partMap.month} ${partMap.year} ${partMap.hour}:${partMap.minute}`
 }
 
-export const getDateFormatter = (locale: string = LOCALE_FOR_DATE_TIME, options: Intl.DateTimeFormatOptions = { dateStyle: 'long', timeStyle: 'medium' }) =>
-  (date: Date) => {
-    return new Intl.DateTimeFormat(locale, options).format(date)
-  }
+export const getDateFormatter
+  = (locale: string = LOCALE_FOR_DATE_TIME, options: Intl.DateTimeFormatOptions = { dateStyle: 'long', timeStyle: 'medium' }) =>
+    (date: Date) => {
+      return new Intl.DateTimeFormat(locale, options).format(date)
+    }
 
 export const formatForMessageDate = getDateFormatter()

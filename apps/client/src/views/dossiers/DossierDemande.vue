@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { isPersonneMorale, isPersonnePhysique } from '@/utils/helperDemandeur'
-import { dateTimeToStringLongFr } from '@/utils/date-to-string'
+import { dateTimeToFormatedStringFr } from '@/utils/date-to-string'
 import DossierDemandeurMoral from './DossierDemandeurMoral.vue'
 import DossierDemandeurPhysique from './DossierDemandeurPhysique.vue'
 import type { Demandeur, Dossier } from '@dnum-mi/ds-api-client'
@@ -8,6 +8,7 @@ import { useGroupedChamps } from './composables/useGroupedChamps'
 import type { ChampWithDescriptor } from './composables/useGroupedChamps'
 import DossierSection from './DossierSection.vue'
 import DossierSidemenu from './DossierSidemenu.vue'
+import DossierChamps from './DossierChamps.vue'
 
 type PopulatedDossier = (Dossier & { demandeur: Demandeur & { __typename: string } }) | Record<string, never>
 
@@ -44,7 +45,7 @@ const { groupedChamps, expandedSections, toggleSection, smoothScroll, menuItems 
             <div class="flex-grow fr-py-3v fr-px-2w">Date de dépôt du dossier</div>
           </h2>
           <div class="fr-container">
-            <p>Déposé le {{ dateTimeToStringLongFr(depositDate) }}</p>
+            <p>Déposé le {{ dateTimeToFormatedStringFr(depositDate || '') }}</p>
           </div>
         </div>
 
@@ -70,7 +71,11 @@ const { groupedChamps, expandedSections, toggleSection, smoothScroll, menuItems 
             :sections="groupedChamps"
             :expanded-sections="expandedSections"
             :toggle-section="toggleSection"
-          />
+          >
+            <template #champs="contents">
+              <DossierChamps :champs="contents.champs" />
+            </template>
+          </DossierSection>
         </div>
       </div>
     </div>

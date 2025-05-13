@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import DossierChamps from './DossierChamps.vue'
 import type { Section } from './composables/useGroupedChamps'
 
 defineProps<{
@@ -40,11 +39,17 @@ defineProps<{
         v-show="expandedSections.includes(section.header.id)"
         :id="`section-content-${section.header.id}`"
       >
-        <DossierChamps :champs="section.contents" />
+        <slot
+          name="champs"
+          :champs="section.contents"
+        />
       </div>
     </template>
     <template v-else>
-      <DossierChamps :champs="section.contents" />
+      <slot
+        name="champs"
+        :champs="section.contents"
+      />
     </template>
   </div>
 </template>
