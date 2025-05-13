@@ -19,7 +19,7 @@ import { formatForMessageDate } from '@/utils'
 import apiClient from '@/api/api-client'
 import AttachedFileList from '@/components/ag-grid/files/AttachedFileList.vue'
 import type { ApiCall } from '@/components/ag-grid/server-side/pagination.utils'
-import type { DsfrTabs } from '@gouvminint/vue-dsfr'
+import { DsfrSegmentedSet } from '@gouvminint/vue-dsfr'
 
 const dossierStore = useDossierStore()
 
@@ -45,56 +45,11 @@ const hasAnnotations = computed(() => !!annotations.value?.length && isReady.val
 const nbAttachments = ref(0)
 const hasAttachments = computed(() => !!nbAttachments.value)
 
-const tabTitles = computed(() => {
-  return [
-    {
-      title: 'Demande',
-      component: 'DossierDemande',
-    },
-    ...(hasAnnotations.value ? [{ title: 'Annotations privées', component: 'DossierAnnotations' }] : []),
-    ...(hasAttachments.value && !!dossier.value ? [{ title: `Pièces jointes (${nbAttachments.value})`, component: 'AttachedFileList' }] : []),
-    ...(hasMessages.value && !!dossier.value ? [{ title: `Messagerie (${messages?.value?.length})`, component: 'DossierMessagerie' }] : []),
-  ]
-})
-const initialSelectedIndex = 0
-const selectedTabIndex = ref(initialSelectedIndex)
-
-const tabs = ref<InstanceType<typeof DsfrTabs>>()
-
-const selectPrevious = () => {
-  const newIndex = selectedTabIndex.value === 0 ? tabTitles.value.length - 1 : selectedTabIndex.value - 1
-  selectedTabIndex.value = newIndex
-}
-const selectNext = () => {
-  const newIndex = selectedTabIndex.value === tabTitles.value.length - 1 ? 0 : selectedTabIndex.value + 1
-  selectedTabIndex.value = newIndex
-}
-const selectFirst = () => {
-  selectedTabIndex.value = 0
-}
-const selectLast = () => {
-  selectedTabIndex.value = tabTitles.value.length - 1
-}
-
 const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutput>) => {
   if (dossier.value) {
     return apiClient.getDossierFiles(dossier.value.id)(params)
   }
 }
-const redrawTabs = async () => {
-  await nextTick()
-  await nextTick() // Yes, we need to call nextTick twice to make sure the tabs are rendered
-  tabs.value?.renderTabs()
-}
-
-// TODO: Pour redessiner Ag-grid, Vérifier si c'est toujours utile
-// const hasFileTabBeenSelected = ref(false)
-// watch(selectedTabIndex, () => {
-//   if (selectedTabIndex.value === (hasAnnotations.value ? 2 : 1)) {
-//     hasFileTabBeenSelected.value = true
-//   }
-//   redrawTabs()
-// })
 
 onMounted(async () => {
   const params = useRoute()?.params
@@ -105,6 +60,20 @@ onMounted(async () => {
     isReady.value = true
   }
 })
+
+// TODO: A factoriser BEGIN
+const selectedTabIndex = ref(0)
+const showMessages = computed(() => hasMessages.value && !!dossier.value)
+const showAttachments = computed(() => hasAttachments.value && !!dossier.value)
+
+const tabTitles = computed<{ value: number, label: string }[]>(() => [
+  { value: 0, label: 'Demande' },
+  ...(hasAnnotations.value ? [{ value: 1, label: 'Annotations privées' }] : []),
+  ...(showAttachments.value ? [{ value: 2, label: `Pièces jointes (${nbAttachments.value})` }] : []),
+  ...(showMessages.value ? [{ value: 3, label: `Messagerie (${messages?.value?.length})` }] : []),
+])
+
+// TODO: A factoriser END
 </script>
 
 <template>
@@ -125,58 +94,88 @@ onMounted(async () => {
         </template>
         <template #content>
           <!-- @select-tab="selectTab" -->
-          <DsfrTabs
-            ref="tabs"
-            v-model="selectedTabIndex"
-            :tab-titles="tabTitles"
-            class="fr-ml-2w"
-            tab-list-name="tabs-dossier"
-          >
-            <template #tab-items>
-              <DsfrTabItem
-                v-for="(tab, index) of tabTitles"
-                :key="`tab-${index}`"
-                :tab-id="`tab-${index}`"
-                :panel-id="`tab-content-${index}`"
-                @click="selectedTabIndex = index;"
-                @next="selectNext()"
-                @previous="selectPrevious()"
-                @first="selectFirst()"
-                @last="selectLast()"
-              >
-                {{ tab.title }}
-              </DsfrTabItem>
-            </template>
 
-            <DsfrTabContent
-              v-for="(tab, index) of tabTitles"
-              :key="`tab-content-${index}`"
-              :panel-id="`tab-content-${index}`"
-              :tab-id="`tab-${index}`"
+          <!-- TODO: a factoriser BEGIN -->
+          <DsfrSegmentedSet
+            v-model="selectedTabIndex"
+            :inline="false"
+            :options="tabTitles"
+            :small="false"
+            class="simulate-tabs"
+          />
+          <div class="flex flex-row h-full fr-pl-1w fr-pr-1w">
+            <Transition
+              name="slide-fade"
+              mode="in-out"
             >
-              <DossierDemande
-                v-if="tab.component === 'DossierDemande'"
-                :datas="dossierDS"
-              />
-              <DossierAnnotations
-                v-if="tab.component === 'DossierAnnotations'"
-                :annotations="annotations"
-              />
-              <!-- :active="hasFileTabBeenSelected" -->
-              <AttachedFileList
-                v-if="tab.component === 'AttachedFileList'"
-                :fetch-attached-files="fetchAttachedFiles"
-                :active="true"
-                with-tab-tag
-                @files-fetched="redrawTabs()"
-              />
-              <DossierMessagerie
-                v-if="tab.component === 'DossierMessagerie'"
-                :messages="messages"
-                :demandeur-email="demandeurEmail"
-              />
-            </DsfrTabContent>
-          </DsfrTabs>
+              <!-- Dossiers -->
+              <div
+                v-show="selectedTabIndex === 0"
+                class="flex-grow bn-scroll-parent fr-pt-2w"
+              >
+                <DossierDemande
+                  id="dossier-demande"
+                  :datas="dossierDS"
+                />
+              </div>
+            </Transition>
+            <Transition
+              name="slide-fade"
+              mode="in-out"
+            >
+              <template
+                v-if="hasAnnotations"
+              >
+                <div
+                  v-show="selectedTabIndex === 1"
+                  class="flex-grow bn-scroll-parent fr-pt-2w"
+                >
+                  <DossierAnnotations
+                    :annotations="annotations"
+                  />
+                </div>
+              </template>
+            </Transition>
+            <Transition
+              name="slide-fade"
+              mode="in-out"
+            >
+              <template
+                v-if="showAttachments"
+              >
+                <div
+                  v-show="selectedTabIndex === 2"
+                  class="flex-grow bn-scroll-parent fr-pt-2w"
+                >
+                  <AttachedFileList
+                    class="h-full"
+                    :fetch-attached-files="fetchAttachedFiles"
+                    :active="selectedTabIndex === 2"
+                    with-tab-tag
+                  />
+                </div>
+              </template>
+            </Transition>
+            <Transition
+              name="slide-fade"
+              mode="in-out"
+            >
+              <template
+                v-if="showMessages"
+              >
+                <div
+                  v-show="selectedTabIndex === 3"
+                  class="flex-grow bn-scroll-parent fr-pt-2w"
+                >
+                  <DossierMessagerie
+                    :messages="messages"
+                    :demandeur-email="demandeurEmail"
+                  />
+                </div>
+              </template>
+            </Transition>
+          </div>
+          <!-- TODO: a factoriser END -->
         </template>
       </LayoutFiche>
     </div>
@@ -195,4 +194,60 @@ onMounted(async () => {
 .fr-bg-white {
   --at-aply: bg- [var(--background-elevated-grey)];
 }
+
+/* TODO: A factoriser BEGIN*/
+.simulate-tabs {
+  position: relative;
+  border-bottom: 1px solid var(--border-default-grey);
+  padding-left: 1rem;
+}
+
+:deep(.fr-segmented__elements) {
+  gap: 0.5rem;
+  box-shadow: none !important;
+}
+
+:deep(.fr-segmented__element) {
+  border-radius: 0;
+  background: var(--background-action-low-blue-france);
+  font-weight: bolder !important;
+}
+
+:deep(.fr-segmented__element:hover) {
+  background: var(--background-action-low-blue-france-hover) !important;
+}
+
+.simulate-tabs :deep(input:hover+label) {
+  background: var(--background-action-low-blue-france-hover) !important;
+}
+
+.simulate-tabs :deep(input:checked+label) {
+  background: white;
+  color: var(--border-active-blue-france) !important;
+  border: none;
+  border-radius: 0;
+  border-inline: 1px solid var(--border-default-grey);
+  border-bottom: 1px solid white;
+  margin-bottom: -1px;
+  box-shadow: 0 -2px 0 0 var(--border-active-blue-france) !important;
+}
+
+.slide-fade-enter-active {
+  transition: all 0.2s linear;
+}
+
+.slide-fade-leave-active {
+  transition: all 0.2s linear;
+}
+
+.slide-fade-enter-from {
+  transform: translateX(v-bind(translateValueFrom));
+  opacity: 0;
+}
+
+.slide-fade-leave-to {
+  transform: translateX(v-bind(translateValueTo));
+  opacity: 0;
+}
+/* TODO: A factoriser END*/
 </style>
