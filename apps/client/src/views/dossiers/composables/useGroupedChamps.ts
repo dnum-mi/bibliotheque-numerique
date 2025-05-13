@@ -23,13 +23,9 @@ export function useGroupedChamps (champsInput: () => ChampWithDescriptor[]) {
     const noSectionContents: ChampWithDescriptor[] = []
 
     let hasSection = false
-    for (const champ of champs) {
-      const descriptor = champ?.champDescriptor
-      if (!descriptor) {
-        continue
-      }
 
-      if (descriptor.type === 'header_section') {
+    for (const champ of champs) {
+      if (champ?.champDescriptor?.type === 'header_section') {
         hasSection = true
         if (currentSection) {
           sections.push(currentSection)
