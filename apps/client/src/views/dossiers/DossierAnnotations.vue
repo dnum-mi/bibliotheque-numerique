@@ -7,14 +7,11 @@ import DossierSection from './DossierSection.vue'
 import DossierSidemenu from './DossierSidemenu.vue'
 import DossierChamps from './DossierChamps.vue'
 
-const { annotations } = withDefaults(
-  defineProps<{
-    annotations?: IDossier['dsDataJson']['annotations']
-  }>(),
-  {
-    annotations: () => [],
-  },
-)
+const {
+  annotations = [],
+} = defineProps<{
+  annotations?: IDossier['dsDataJson']['annotations']
+}>()
 
 const champs = computed(() => (Array.isArray(annotations) ? (annotations as ChampWithDescriptor[]) : []))
 const { groupedChamps, expandedSections, toggleSection, smoothScroll, menuItems } = useGroupedChamps(() => champs.value)
