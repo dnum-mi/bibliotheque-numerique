@@ -1,5 +1,25 @@
 # Changelog
 
+## [2.29.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.28.1...v2.29.0) (2025-05-14)
+
+
+### Features
+
+* correction of authentification email and support url  ([22121a1](https://github.com/dnum-mi/bibliotheque_numerique/commit/22121a165d4d742681e40543e5a6ac2251a54431))
+* reverse menu order, set defaut page to organisme list ([0c3ab98](https://github.com/dnum-mi/bibliotheque_numerique/commit/0c3ab98f1e5381e34e245b59155498c075ef9c3f))
+
+
+### Bug Fixes
+
+* del copy link in organisme file ([e9a3944](https://github.com/dnum-mi/bibliotheque_numerique/commit/e9a3944ebaaf509cc3bdd2df0cef32ea16f1ff39))
+* set text for blanks of ag grid filtre ([5bf301f](https://github.com/dnum-mi/bibliotheque_numerique/commit/5bf301f8814d1223392e7d299bad84c90c33775f))
+* show message of dossier in tabContent ([a894c19](https://github.com/dnum-mi/bibliotheque_numerique/commit/a894c1963c05a2317aab4a362368116f266cdbb7))
+* show PJ in page Fiche organisme ([c539264](https://github.com/dnum-mi/bibliotheque_numerique/commit/c5392641d1828db070bd79227ef8acd19e77b3fd))
+* show pj in the page dossier ([#1774](https://github.com/dnum-mi/bibliotheque_numerique/issues/1774)) ([673fdf0](https://github.com/dnum-mi/bibliotheque_numerique/commit/673fdf0f75a145240cff481779cb9c01c8073dc1))
+* update the types of organisme ([fc97bd1](https://github.com/dnum-mi/bibliotheque_numerique/commit/fc97bd1d1d5d62125924657643a5465c7bad34ff))
+* use same color DS for dossier state ([d37cca8](https://github.com/dnum-mi/bibliotheque_numerique/commit/d37cca83e036bb862f7b9b669c9ca3e61201b596))
+* use same dsfr icon in menu and each page ([a621a8d](https://github.com/dnum-mi/bibliotheque_numerique/commit/a621a8d139ad11bba8481dcf2cc3544906f1d2fe))
+
 ## [2.28.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.28.0...v2.28.1) (2025-04-23)
 
 
