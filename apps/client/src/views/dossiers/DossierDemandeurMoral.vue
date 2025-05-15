@@ -176,7 +176,7 @@ const association = computed(() => props.datas?.association || {})
 </script>
 
 <template>
-  <div class="fr-container">
+  <div class="fr-px-4v">
     <DisplayLabelsValues
       :title="title"
       prefix-id="dossier-demandeur"

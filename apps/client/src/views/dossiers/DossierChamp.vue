@@ -3,9 +3,13 @@ import DossierChamps from './DossierChamps.vue'
 import DownloadFile from '@/components/DownloadFile.vue'
 import type { ChampWithDescriptor } from './composables/useGroupedChamps'
 
-defineProps<{
+const props = defineProps<{
   champ: ChampWithDescriptor
 }>()
+
+const champType = computed(() => {
+  return props.champ.__typename
+})
 </script>
 
 <template>
@@ -18,50 +22,56 @@ defineProps<{
       <!-- LABEL -->
       <label
         :for="champ.id"
+        v-if="champType !== 'RepetitionChamp'"
         class="bn-champ--text"
       >
         {{ champ.label }}
       </label>
       <!-- SI Piece jointe -->
-      <div
-        v-if="champ.__typename === 'PieceJustificativeChamp'"
-        :id="champ.id"
-        class="fr-text--bold fr-text bn-champ--text flex flex-col"
-      >
-        <!-- {{ champ }} -->
+      <template v-if="champType === 'PieceJustificativeChamp'">
         <div
-          v-for="(file, index) in champ.files"
-          :key="index"
+          :id="champ.id"
+          class="fr-text--bold fr-text bn-champ--text flex flex-col fr-pb-2w"
         >
-          <DownloadFile :file="file" />
+          <!-- {{ champ }} -->
+          <div
+            v-for="(file, index) in champ.files"
+            :key="index"
+          >
+            <DownloadFile :file="file" />
+          </div>
         </div>
-      </div>
+      </template>
 
       <!-- Si boolean -->
-      <div
-        v-if="champ.__typename === 'CheckboxChamp'"
+      <p
+        v-else-if="champType === 'CheckboxChamp'"
         :id="champ.id"
         class="fr-text--bold fr-text bn-champ--text"
       >
-        <p>{{ champ.stringValue === 'true' ? 'Oui' : 'Non' }}</p>
-      </div>
+        {{ champ.stringValue === 'true' ? 'Oui' : 'Non' }}
+      </p>
 
       <!-- SI Repetable -->
-      <div
-        v-else-if="champ.__typename === 'RepetitionChamp'"
-        class="fr-background-alt--grey fr-p-3v"
-      >
-        <DossierChamps :champs="champ.champs" />
-      </div>
+      <template v-else-if="champType === 'RepetitionChamp'">
+        <div
+          class="fr-background-alt--grey fr-p-2w fr-my-3w fr-ml-1w"
+          v-for="(row, idx) in champ.rows"
+          :key="idx"
+        >
+          <p class="fr-text--bold">{{ champ.label }} {{ champ.rows.length > 1 ? idx + 1 : '' }} :</p>
+          <DossierChamps :champs="row.champs" />
+        </div>
+      </template>
 
       <!-- Par défault -->
-      <div
+      <p
         v-else
         :id="champ.id"
         class="fr-text--bold fr-text"
       >
-        <p>{{ champ.stringValue }}</p>
-      </div>
+        {{ champ.stringValue }}
+      </p>
     </div>
   </div>
 </template>

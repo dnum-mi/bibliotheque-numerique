@@ -11,7 +11,13 @@ export interface Section {
   contents: ChampWithDescriptor[]
 }
 
-export function useGroupedChamps (champsInput: () => ChampWithDescriptor[]) {
+export interface MenuItem {
+  id: string
+  text: string
+  to: string
+}
+
+export function useGroupedChamps(champsInput: () => ChampWithDescriptor[]) {
   const groupedChamps = computed<Section[]>(() => {
     const champs = champsInput()
     if (!Array.isArray(champs)) {
@@ -58,7 +64,7 @@ export function useGroupedChamps (champsInput: () => ChampWithDescriptor[]) {
     return sections
   })
 
-  const menuItems = computed(() =>
+  const menuItems = computed<MenuItem[]>(() =>
     groupedChamps.value
       .filter((s) => s.header)
       .map((s) => ({

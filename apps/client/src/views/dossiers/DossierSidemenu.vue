@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import type { MenuItem } from './composables/useGroupedChamps';
+
 defineProps<{
-  menuItems: { id: string; text: string; to: string }[]
+  menuItems: MenuItem[]
   smoothScroll: (id: string) => void
 }>()
 </script>
