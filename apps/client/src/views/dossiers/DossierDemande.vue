@@ -32,7 +32,7 @@ const { groupedChamps, expandedSections, toggleSection, smoothScroll, menuItems 
 
 <template>
   <div class="fr-container">
-    <div class="fr-grid-row fr-grid-row--center tab-content">
+    <div class="fr-grid-row fr-grid-row--center">
       <template v-if="menuItems.length">
         <DossierSidemenu
           :menu-items="menuItems"
@@ -41,18 +41,14 @@ const { groupedChamps, expandedSections, toggleSection, smoothScroll, menuItems 
       </template>
       <div class="fr-col-12 fr-col-xl-9">
         <div class="fr-mb-4w">
-          <h2 class="fr-h6 fr-background-alt--grey fr-mb-4w">
-            <div class="flex-grow fr-py-3v fr-px-2w">Date de dépôt du dossier</div>
-          </h2>
-          <div class="fr-container">
+          <h2 class="fr-h6 fr-background-alt--grey fr-mb-4w fr-py-3v fr-px-2w">Date de dépôt du dossier</h2>
+          <div class="fr-px-4v">
             <p>Déposé le {{ dateTimeToFormatedStringFr(depositDate || '') }}</p>
           </div>
         </div>
 
         <div class="fr-mb-4w">
-          <h2 class="fr-h6 fr-background-alt--grey fr-mb-4w">
-            <div class="flex-grow fr-py-3v fr-px-2w">Identité du déclarant</div>
-          </h2>
+          <h2 class="fr-h6 fr-background-alt--grey fr-mb-4w fr-py-3v fr-px-2w">Identité du déclarant</h2>
           <DossierDemandeurMoral
             v-if="isDemandeurMorale"
             :datas="demandeur"
@@ -64,9 +60,7 @@ const { groupedChamps, expandedSections, toggleSection, smoothScroll, menuItems 
         </div>
 
         <div class="counter-start-header-section fr-mb-4w">
-          <h2 class="fr-h6 fr-background-alt--grey fr-mb-4w">
-            <div class="flex-grow fr-py-3v fr-px-2w">Sections du fomulaire</div>
-          </h2>
+          <h2 class="fr-h6 fr-background-alt--grey fr-mb-4w fr-py-3v fr-px-2w">Sections du fomulaire</h2>
           <DossierSection
             :sections="groupedChamps"
             :expanded-sections="expandedSections"

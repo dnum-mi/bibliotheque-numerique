@@ -17,7 +17,7 @@ const { groupedChamps, expandedSections, toggleSection, smoothScroll, menuItems 
 
 <template>
   <div class="fr-container">
-    <div class="fr-grid-row fr-grid-row--center tab-content">
+    <div class="fr-grid-row fr-grid-row--center">
       <template v-if="menuItems.length">
         <DossierSidemenu
           :menu-items="menuItems"

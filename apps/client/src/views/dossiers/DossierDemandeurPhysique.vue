@@ -36,7 +36,7 @@ const fieldsDemandeur = [
 <template>
   <div
     :data-cy="`cy-${title}`"
-    class="fr-container"
+    class="fr-px-4v"
   >
     <div class="fr-grid-col">
       <div
