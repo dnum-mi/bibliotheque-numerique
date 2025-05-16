@@ -17,7 +17,7 @@ export interface MenuItem {
   to: string
 }
 
-export function useGroupedChamps(champsInput: () => ChampWithDescriptor[]) {
+export function useGroupedChamps (champsInput: () => ChampWithDescriptor[]) {
   const groupedChamps = computed<Section[]>(() => {
     const champs = champsInput()
     if (!Array.isArray(champs)) {
