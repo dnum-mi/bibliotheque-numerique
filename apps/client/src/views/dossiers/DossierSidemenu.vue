@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { MenuItem } from './composables/useGroupedChamps';
+import type { MenuItem } from './composables/useGroupedChamps'
 
 defineProps<{
   menuItems: MenuItem[]

@@ -9,31 +9,31 @@ defineProps<{
 </script>
 
 <template>
-  <div
+  <section
     v-for="(section, index) in sections"
     :key="section.header?.id || index"
-    class="counter-h2"
+    class="counter-h2 w-full"
   >
     <template v-if="section.header">
-      <div class="flex bn-ds-section">
+      <div class="bn-ds-section">
         <h2
           :id="section.header.id"
-          class="section-2 header-section fr-m-0 fr-text--md fr-px-4v flex-grow fr-text-action-high--blue-france fr-py-2w"
+          class="flex w-full fr-m-0"
         >
-          {{ section.header.label }}
+          <button
+            type="button"
+            :aria-expanded="expandedSections.includes(section.header.id)"
+            :aria-label="expandedSections.includes(section.header.id) ? 'Réduire la section' : 'Déplier la section'"
+            class="fr-btn fr-btn--tertiary-no-outline fr-btn--md inline-flex flex-grow w-full fr-py-2w fr-m-0 fr-text--md fr-px-4v"
+            @click="toggleSection(section.header.id)"
+          >
+            <span class="section-title">{{ section.header.label }}</span>
+            <span
+              :class="[expandedSections.includes(section.header.id) ? 'fr-icon-arrow-up-s-line' : 'fr-icon-arrow-down-s-line']"
+              aria-hidden="true"
+            />
+          </button>
         </h2>
-        <DsfrButton
-          no-outline
-          tertiary
-          :aria-expanded="expandedSections.includes(section.header.id)"
-          :aria-label="expandedSections.includes(section.header.id) ? 'Réduire la section' : 'Déplier la section'"
-          @click="toggleSection(section.header.id)"
-        >
-          <span
-            :class="[expandedSections.includes(section.header.id) ? 'fr-icon-arrow-up-s-line' : 'fr-icon-arrow-down-s-line']"
-            aria-hidden="true"
-          />
-        </DsfrButton>
       </div>
       <div
         v-show="expandedSections.includes(section.header.id)"
@@ -51,7 +51,7 @@ defineProps<{
         :champs="section.contents"
       />
     </template>
-  </div>
+  </section>
 </template>
 
 <style scoped>
@@ -59,12 +59,20 @@ defineProps<{
   counter-reset: h3;
 }
 
-.header-section.section-2::before {
+.section-title {
+  text-align: start;
+  flex-grow: 1;
+  color: var(--text-action-high-blue-france);
+  font-weight: 600;
+}
+
+.section-title::before {
   counter-increment: h2;
   content: counter(h2) '. ';
 }
 
 .bn-ds-section {
   border-top: 1px solid var(--border-default-grey);
+  position: relative;
 }
 </style>
