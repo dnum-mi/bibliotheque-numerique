@@ -138,7 +138,7 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
       }
 
       await Promise.all([
-        this.fieldService.upsert({
+        this.fieldService.deleteAndSave({
           sourceId: fixFieldInstructionTimeDelay.id,
           dossierId: dossier.id,
           numberValue: value,
@@ -146,14 +146,17 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
           type: fixFieldInstructionTimeDelay.type,
           fieldSource: fixFieldInstructionTimeDelay.source,
           stringValue: `${value}`,
+          parentRowIndex: null,
         }),
-        this.fieldService.upsert({
+        this.fieldService.deleteAndSave({
           sourceId: fixFieldInstructionTimeStatus.id,
           dossierId: dossier.id,
           stringValue,
           label: fixFieldInstructionTimeStatus.originalLabel,
           type: fixFieldInstructionTimeStatus.type,
           fieldSource: fixFieldInstructionTimeStatus.source,
+          parentRowIndex: null,
+
         }),
       ])
     }))

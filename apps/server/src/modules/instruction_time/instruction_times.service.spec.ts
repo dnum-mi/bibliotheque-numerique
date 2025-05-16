@@ -223,7 +223,7 @@ describe('InstructionTimesService', () => {
         results.push(obj)
         return [new Field()]
       })
-    fieldService.upsert = mockUpsert
+    fieldService.deleteAndSave = mockUpsert
     service.repository.find = jest.fn()
       .mockResolvedValueOnce(fakeInstrunctionTime as InstructionTime[])
 
@@ -1046,7 +1046,7 @@ describe('InstructionTimesService', () => {
         return [new Field()]
       })
 
-    fieldService.upsert = mockUpsert
+    fieldService.deleteAndSave = mockUpsert
 
     await service.instructionTimeCalculation([dataInstructionTime.dossier.id])
 
@@ -1086,7 +1086,7 @@ describe('InstructionTimesService', () => {
         results[obj.sourceId] = obj
         return [new Field()]
       })
-    fieldService.upsert = mockUpsert
+    fieldService.deleteAndSave = mockUpsert
     await service.instructionTimeCalculation([dataInstructionTime.dossier.id])
 
     expect(mockUpsert).toBeCalledTimes(2)
@@ -1123,7 +1123,7 @@ describe('InstructionTimesService', () => {
         results[obj.sourceId] = obj
         return [new Field()]
       })
-    fieldService.upsert = mockUpsert
+    fieldService.deleteAndSave = mockUpsert
     const result = await service.instructionTimeCalculation([
       dataInstructionTime.dossier.id,
     ])
@@ -1163,7 +1163,7 @@ describe('InstructionTimesService', () => {
         return [new Field()]
       })
 
-    fieldService.upsert = mockUpsert
+    fieldService.deleteAndSave = mockUpsert
     service.repository.find = jest.fn()
       .mockResolvedValueOnce([dataInstructionTime] as InstructionTime[])
 
@@ -1207,10 +1207,10 @@ describe('InstructionTimesService', () => {
         return [new Field()]
       })
 
-    fieldService.upsert = mockUpsert
+    fieldService.deleteAndSave = mockUpsert
 
     await service.instructionTimeCalculation([dataInstructionTime.dossier.id])
-    expect(fieldService.upsert).toBeCalledTimes(2)
+    expect(fieldService.deleteAndSave).toBeCalledTimes(2)
 
     expect(results[fixFieldInstructionTimeDelay.id]).toMatchObject({
       sourceId: fixFieldInstructionTimeDelay.id,
