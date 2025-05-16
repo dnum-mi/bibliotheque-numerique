@@ -250,14 +250,24 @@ export class FieldService extends BaseEntityService<Field> {
     })
   }
 
-  async upsert(
+  async deleteAndSave(
     field: Pick<Field, 'sourceId' | 'dossierId'> & Partial<Field>,
-  ): Promise<Field[]> {
-    const result = await this.repo.upsert(field, {
-      conflictPaths: ['sourceId', 'dossierId', 'parentRowIndex'],
-      skipUpdateIfNoValuesChanged: true,
+  ): Promise<Field> {
+    return this.repo.manager.transaction(async (transactionManager) => {
+      const query = transactionManager.createQueryBuilder(Field, 'field')
+        .delete()
+        .from(Field)
+        .where('sourceId = :sourceId', { sourceId: field.sourceId })
+        .andWhere('dossierId = :dossierId', { dossierId: field.dossierId })
+
+      if (field.parentRowIndex !== undefined && field.parentRowIndex !== null) {
+        query.andWhere('parentRowIndex = :parentRowIndex', { parentRowIndex: field.parentRowIndex })
+      } else {
+        query.andWhere('parentRowIndex IS NULL')
+      }
+      await query.execute()
+      return transactionManager.save(Field, field)
     })
-    return result.generatedMaps as Field[]
   }
 
   static getValueFromType(f: Field): string | number | Date | null | undefined {
