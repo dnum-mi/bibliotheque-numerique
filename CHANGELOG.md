@@ -1,5 +1,24 @@
 # Changelog
 
+## [2.30.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.29.0...v2.30.0) (2025-05-20)
+
+
+### Features
+
+* add date formatting to long string fr format ([c8b571d](https://github.com/dnum-mi/bibliotheque_numerique/commit/c8b571d72e87b9e79b1a6f386eddd81d1be461ce))
+* add DossierChamps component like slot into DossierSection ([438bc5f](https://github.com/dnum-mi/bibliotheque_numerique/commit/438bc5f2c40de3d5103d63f6acdebb935fe9b5ef))
+* add DossierSection and DossierSidemenu components with grouped champs functionality ([f5e1ec3](https://github.com/dnum-mi/bibliotheque_numerique/commit/f5e1ec39cdb3319dfe97b238141cb0dcbdc6a96c))
+* implement grouped champs functionality in Dossier components and improve layout styles ([97f6961](https://github.com/dnum-mi/bibliotheque_numerique/commit/97f6961906f0e0290aa0230443196833dfae2c75))
+* update Dossier views for improved layout and type handling ([5a433a6](https://github.com/dnum-mi/bibliotheque_numerique/commit/5a433a6f7aba21dce4bf5d1c1caaec70c0a96753))
+
+
+### Bug Fixes
+
+* add new departments in shared ([6215ce0](https://github.com/dnum-mi/bibliotheque_numerique/commit/6215ce0253f50929c5841dc0d80bd6aa9d833b44))
+* decrement remainin time ([#1771](https://github.com/dnum-mi/bibliotheque_numerique/issues/1771)) ([105a090](https://github.com/dnum-mi/bibliotheque_numerique/commit/105a09062fa921ee9d686ffc50ac9d59be14ccb0))
+* delete cron job existing to update ([99fc97b](https://github.com/dnum-mi/bibliotheque_numerique/commit/99fc97be2d5ee7dcdb7472d932d98d58ecb2e3a8))
+* migration to add new departments ([5ed0d85](https://github.com/dnum-mi/bibliotheque_numerique/commit/5ed0d8591832183734007187f226c2e7be798e52))
+
 ## [2.29.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.28.1...v2.29.0) (2025-05-14)
 
 
