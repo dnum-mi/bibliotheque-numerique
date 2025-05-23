@@ -13,3 +13,6 @@ export function containsAtLeastOneOf (chars: string) {
 
 export const isLongerThan15 = isLongerThan(15)
 export const containsSpecialChars = containsAtLeastOneOf('!@#$%^&*()-_=+[{]}|;:\'",<.>/?') // TODO: Check the special characters to be
+export const containsNumber = containsAtLeastOneOf('1234567890')
+export const containsUppercase = containsAtLeastOneOf('QWERTYUIOPASDFGHJKLZXCVBNM')
+export const containsLowercase = containsAtLeastOneOf('qwertyuiopasdfghjklzxcvbnm')
