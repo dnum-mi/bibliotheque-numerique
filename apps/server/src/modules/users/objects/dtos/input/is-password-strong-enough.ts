@@ -4,6 +4,9 @@ import {
   isString,
   isLongerThan15,
   containsSpecialChars,
+  containsNumber,
+  containsUppercase,
+  containsLowercase,
 } from '@biblio-num/shared'
 
 // this function cannot be inside shared-utils because it uses class-validator
@@ -21,6 +24,9 @@ export function IsPasswordStrongEnough (validationOptions?: ValidationOptions) {
             isString,
             isLongerThan15,
             containsSpecialChars,
+            containsNumber,
+            containsUppercase,
+            containsLowercase,
           ]
             .every(fn => fn(value))
         },

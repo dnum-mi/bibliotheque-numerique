@@ -12,7 +12,11 @@ export class UpdateUserPasswordDto implements IUpdateUserPassword {
     message:
     'Veuillez indiquer le nouveau mot de passe',
   })
-  @IsPasswordStrongEnough({ message: 'Ce mot de passe n’est pas assez fort' })
+  @IsPasswordStrongEnough({
+    message: 'Ce mot de passe n’est pas assez fort. ' +
+      'Veuillez avoir au moins: \n - 15 caractères\n - une majuscule\n ' +
+      '- une minuscule\n - un chiffre\n - un caractère spécial',
+  })
   password: string
 
   @ApiProperty({

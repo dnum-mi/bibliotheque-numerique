@@ -212,6 +212,30 @@ describe('users (e2e)', () => {
       await userService.repository.update({ id: 2 }, { password: oldPassword })
     })
 
+    it('Should 400 to update password too weak', async () => {
+      const oldPassword = await userService.repository
+        .findOne({
+          where: { id: 2 },
+          select: ['password'],
+        })
+        .then((user) => user.password)
+      const jwtService = new JwtService({
+        secret: jwtConstants.secret,
+        signOptions: { expiresIn: '1m' },
+      })
+      const jwt = jwtService.sign({ user: 2 })
+      const jwtforurl = Buffer.from(jwt).toString('base64url')
+
+      await request(app.getHttpServer()) //
+        .put('/users/me/update-password')
+        .send({
+          password: 'aaabbbcccdddqqq',
+          token: jwtforurl,
+        })
+        .expect(400)
+      await userService.repository.update({ id: 2 }, { password: oldPassword })
+    })
+
     it('Should 400 to update password without password', async () => {
       const jwtService = new JwtService({
         secret: jwtConstants.secret,
