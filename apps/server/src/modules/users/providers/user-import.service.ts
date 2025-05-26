@@ -116,6 +116,11 @@ export class UserImportService {
     )
 
     try {
+      const emails = users.map(user => user.Email)
+      const uniqueEmails = new Set(emails)
+      if (emails.length !== uniqueEmails.size) {
+        throw new BadRequestException('Duplicate emails found in the excel data.')
+      }
       for (const excelUser of users) {
         const formatedUser = this.formatUser(excelUser, allDemarcheRecord)
         this.logger.debug('formatedUser: ' + formatedUser)
