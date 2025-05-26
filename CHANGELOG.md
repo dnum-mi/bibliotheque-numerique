@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.30.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.30.0...v2.30.1) (2025-05-26)
+
+
+### Bug Fixes
+
+* debug formatPrefecture and add log when run user-import ([96763de](https://github.com/dnum-mi/bibliotheque_numerique/commit/96763dee4bf14b1185e6521d533c9f1141e69174))
+* update code department of Corse ([4f728a7](https://github.com/dnum-mi/bibliotheque_numerique/commit/4f728a7ff89b019d582e67ff05d9fd901272a9c9))
+* user-import check email is unique in excel data ([96e07bc](https://github.com/dnum-mi/bibliotheque_numerique/commit/96e07bc88ac67b2df83354ac26672210bbf98d33))
+
 ## [2.30.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.29.0...v2.30.0) (2025-05-20)
 
 
