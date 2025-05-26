@@ -41,10 +41,10 @@ describe('dossoier-synchronise.service', () => {
     const service  = new DossierSynchroniseService(undefined, logger, undefined, undefined, undefined, undefined,undefined)
     const result = service['_findPrefecture']({
         groupeInstructeur: {
-          label :'20A - Corse du Sud'
+          label :'2A - Corse du Sud'
       }} as TDossier)
 
-      expect(result).toBe('D20A')
+      expect(result).toBe('D2A')
   })
 
 })

@@ -402,7 +402,13 @@ export class OrganismeService extends BaseEntityService<Organisme> {
 
   private _prefectureFn (cp: string): string {
     if (!cp) return ''
-    const prefkey = `D${cp.substring(0, 2) || ''}`
+    let prefkey = ''
+    if ((+cp.substring(0, 3) >= 200) && (+cp.substring(0, 3) <= 201)) {
+      prefkey = 'D2A' // Corse du Sud
+    } else if (+cp.substring(0, 3) >= 202 && +cp.substring(0, 3) <= 209) {
+      prefkey = 'D2B' // Haute-Corse
+    } else prefkey = `D${cp.substring(0, 2) || ''}`
+
     return Prefecture[prefkey as keyof typeof Prefecture] || ''
   }
 
