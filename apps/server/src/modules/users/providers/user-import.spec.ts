@@ -200,6 +200,41 @@ describe('UserImportService', () => {
       )
     })
 
+    it('should throw BadRequestException if duplicate emails are found', async () => {
+      const users: ExcelUser[] = [
+        {
+          Email: 'jane.doe@mail.com',
+          Nom: 'Doe',
+          Prénom: 'Jane',
+          Poste: 'Chargée de mission',
+          Préfecture: '75',
+          Role: 'admin',
+          'Liste des démarches': '42',
+          'Liste des départements': '75',
+        },
+        {
+          Email: 'jane.doe@mail.com',
+          Nom: 'Doe',
+          Prénom: 'Jane',
+          Poste: 'Chargée de mission',
+          Préfecture: '75',
+          Role: 'admin',
+          'Liste des démarches': '42',
+          'Liste des départements': '75',
+        }
+      ]
+      demarcheService.findMultipleDemarche.mockResolvedValue([
+        //@ts-ignore
+        { id: 1, dsDataJson: { number: '42' } },
+      ])
+      userRepo.findOne.mockResolvedValue(null)
+      await expect(service.createUserFromExcelData(users)).rejects
+        .toThrow(new BadRequestException("Duplicate emails found in the excel data."))
+      expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled()
+      expect(mockQueryRunner.release).toHaveBeenCalled()
+
+    })
+
     it('should import users correctly and commit the transaction', async () => {
       const user: ExcelUser = {
         Email: 'jane.doe@mail.com',
