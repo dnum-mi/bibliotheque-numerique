@@ -80,13 +80,13 @@ describe('UserImportService', () => {
     it('should throw if department does not exist', () => {
       expect(() =>
         service['formatRole']('admin', '42', '999', validDemarcheIds),
-      ).toThrow('Department D999 does not exist')
+      ).toThrow('Department key D999 does not exist')
     })
 
     it('should throw if one of multiple departments is invalid', () => {
       expect(() =>
         service['formatRole']('admin', '42', '75;999', validDemarcheIds),
-      ).toThrow('Department D999 does not exist')
+      ).toThrow('Department key D999 does not exist')
     })
 
     it('should throw if demarche id does not exist', () => {
@@ -149,7 +149,7 @@ describe('UserImportService', () => {
       } as ExcelUser
 
       expect(() => service['formatUser'](fakeUser, {})).toThrow(
-        `This prefecture doesn't exist: undefined`,
+        `Prefecture key D999 does not exist`,
       )
     })
 

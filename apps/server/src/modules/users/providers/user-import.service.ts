@@ -18,7 +18,7 @@ export class UserImportService {
     this.logger.setContext(this.constructor.name)
   }
 
-  private formatDepartment(department: string | number): PrefectureKey {
+  private formatWithPrefectureKey(department: string | number): string {
     let result: string
     if (typeof department === 'string') {
       const d: string = department.trim()
@@ -26,10 +26,23 @@ export class UserImportService {
     } else if (typeof department === 'number') {
       result = 'D' + (department < 10 ? '0' + department : department.toString())
     }
-    if (!PrefectureDictionary[result]) {
-      throw new Error(`Department ${result} does not exist`)
+    return result
+  }
+
+  private formatDepartment(department: string | number): PrefectureKey {
+    const departmentKey = this.formatWithPrefectureKey(department)
+    if (!PrefectureDictionary[departmentKey]) {
+      throw new Error(`Department key ${departmentKey} does not exist`)
     }
-    return result as unknown as PrefectureKey
+    return departmentKey as unknown as PrefectureKey
+  }
+
+  private formatPrefecture(prefecture: string | number): PrefectureKey {
+    const prefectureKey = this.formatWithPrefectureKey(prefecture)
+    if (!PrefectureDictionary[prefectureKey]) {
+      throw new Error(`Prefecture key ${prefectureKey} does not exist`)
+    }
+    return prefectureKey as unknown as PrefectureKey
   }
 
   private formatRole(
@@ -73,7 +86,10 @@ export class UserImportService {
   }
 
   private formatUser(user: ExcelUser, allDemarcheRecord: Record<string, number>): User {
-    const prefecture = PrefectureDictionary['D' + user['Préfecture'].toString()]
+    const prefecture =
+      PrefectureDictionary[
+        this.formatPrefecture(user['Préfecture'].toString())
+      ]
     if (!prefecture) {
       throw new Error(`This prefecture doesn't exist: ${prefecture}`)
     }
@@ -102,9 +118,10 @@ export class UserImportService {
     try {
       for (const excelUser of users) {
         const formatedUser = this.formatUser(excelUser, allDemarcheRecord)
-        this.logger.debug(formatedUser)
+        this.logger.debug('formatedUser: ' + formatedUser)
         const existingUser = await this.repo.findOne({ where: { email: formatedUser.email }, select: ['id'] })
-        if (existingUser && existingUser.role.label === Roles.sudo) {
+        this.logger.debug('existingUser: ' + existingUser)
+        if (existingUser && existingUser.role?.label === Roles.sudo) {
           continue
         }
         if (existingUser) {
@@ -115,6 +132,7 @@ export class UserImportService {
         } else {
           const user = this.repo.create(formatedUser)
           user.skipHashPassword = true
+          this.logger.log('Create user: ' + JSON.stringify(user))
           await queryRunner.manager.save(user)
           this.logger.log('User imported: ' + user.email)
         }
