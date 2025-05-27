@@ -224,11 +224,23 @@ export class DossierSynchroniseExcelService extends BaseEntityService<Field> {
     authorizedList: string[],
   ): ExcelDataCell {
     this.logger.verbose('_validateCellByList')
-    if (!cell || !authorizedList.includes(cell.toString())) {
+    if (!cell) {
       this.logger.warn('Cell is not valid')
       return null
     }
-    return cell
+
+    const cellValue = cell.toString().trim()
+
+    const matchedValue = authorizedList.find(
+      (value) => value.toLowerCase() === cellValue.toLowerCase(),
+    )
+    if (!matchedValue) {
+      this.logger.warn(
+        `Cell value "${cellValue}" is not valid`,
+      )
+      return null
+    }
+    return matchedValue
   }
 
   _validateCellAmount(cell: ExcelDataCell | undefined): ExcelDataCell {
