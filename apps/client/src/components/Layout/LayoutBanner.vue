@@ -15,7 +15,7 @@ withDefaults(
 
 <template>
   <div
-    class="flex items-center banner-height fr-pl-3w"
+    class="flex items-center banner-height fr-px-3w"
     :style="{ backgroundColor: titleBgColor }"
   >
     <span
@@ -23,7 +23,7 @@ withDefaults(
       class="text-color icon-size"
       aria-hidden="true"
     />
-    <h6 class="m-0 fr-ml-1w text-color title-size">
+    <h6 class="m-0 text-color title-size">
       {{ title }}
     </h6>
   </div>

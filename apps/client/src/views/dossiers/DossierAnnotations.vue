@@ -24,7 +24,7 @@ const { groupedChamps, expandedSections, toggleSection, smoothScroll, menuItems 
           :smooth-scroll="smoothScroll"
         />
       </template>
-      <div class="counter-start-header-section fr-col-12 fr-col-xl-9">
+      <div class="counter-start-header-section fr-col-12 fr-col-xl-9 py-4">
         <DossierSection
           :sections="groupedChamps"
           :expanded-sections="expandedSections"

@@ -135,7 +135,8 @@ onMounted(async () => {
 
 <template>
   <div
-    :class="{ 'blur-2': loading }"
+    class="fr-p-3v"
+    :class="[{ 'blur-2': loading }]"
     v-bind="$attrs"
   >
     <div class="flex flex-row fr-mb-1w">
@@ -191,7 +192,7 @@ onMounted(async () => {
         type="text"
         label="types"
         label-visible
-        hint="liste: [ &quot;ASSO&quot;, &quot;FE&quot;, &quot;FDD&quot;, &quot;FRUP&quot; ]"
+        hint="liste: [ 'ASSO', 'FE', 'FDD', 'FRUP' ]"
       />
     </div>
     <div class="flex flex-row gap-2">
@@ -211,15 +212,9 @@ onMounted(async () => {
       @confirm="onConfirmDelete"
       @close="isModalOpen = false"
     >
-      <p class="m-1">
-        Vous vous apprêtez à supprimer la démarche sélectionnée.
-      </p>
-      <p class="m-1">
-        Cette action est irréversible.
-      </p>
-      <p class="m-1">
-        Êtes-vous sûr de vouloir continuer ?
-      </p>
+      <p class="m-1">Vous vous apprêtez à supprimer la démarche sélectionnée.</p>
+      <p class="m-1">Cette action est irréversible.</p>
+      <p class="m-1">Êtes-vous sûr de vouloir continuer ?</p>
     </ModalConfirm>
     <DsfrTable
       class="w-full text-center"
@@ -282,9 +277,7 @@ onMounted(async () => {
         scale="10"
         animation="spin"
       />
-      <p class="text-white text-3xl">
-        chargement en cours...
-      </p>
+      <p class="text-white text-3xl">chargement en cours...</p>
     </div>
   </div>
 

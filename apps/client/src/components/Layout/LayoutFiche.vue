@@ -32,23 +32,23 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="flex flex-col justify-between w-full h-full overflow-y-auto">
+  <div class="flex flex-col justify-between w-full h-full overflow-hidden">
     <div
       ref="mainEl"
-      class="flex flex-col w-full h-full overflow-y-auto gap-1"
+      class="flex flex-col w-full h-full overflow-hidden gap-1"
     >
-      <div class="bn-fiche-title fr-p-2w">
+      <div class="bn-fiche-title fr-p-3w">
         <slot name="title" />
       </div>
-      <div class="bn-fiche-sub-title bn-dynamic-big-p">
+      <div class="bn-fiche-sub-title fr-py-1w fr-px-3w">
         <slot name="sub-title" />
       </div>
-      <div class="h-full">
+      <div class="h-full overflow-hidden">
         <slot name="content" />
       </div>
     </div>
     <footer
-      class="footer w-full text-center"
+      class="footer text-center"
       :class="{ 'raised-top-shadow': !isAtBottom }"
     >
       <slot name="footer" />
