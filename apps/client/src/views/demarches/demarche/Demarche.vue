@@ -1,8 +1,5 @@
-<script lang='ts' setup>
+<script lang="ts" setup>
 import type { IDemarche } from '@biblio-num/shared'
-
-import { DsfrSegmentedSet, getRandomString } from '@gouvminint/vue-dsfr'
-
 import { useDemarcheStore, useUserStore } from '@/stores'
 import LayoutList from '@/components/Layout/LayoutList.vue'
 import GroupInstructeurs from '@/views/demarches/demarche/information/DemarcheGrpInstructeurs.vue'
@@ -11,11 +8,10 @@ import DemarcheInformations from '@/views/demarches/demarche/information/Demarch
 import DemarcheConfigurations from '@/views/demarches/demarche/configuration/DemarcheConfigurations.vue'
 import DemarcheDossiers from '@/views/demarches/demarche/dossiers/DemarcheDossiers.vue'
 import DemarcheOptions from '@/views/demarches/demarche/options/DemarcheOptions.vue'
+import { getRandomString } from '@gouvminint/vue-dsfr'
 
 const props = defineProps<{ demarcheId: string; customDisplayId?: string }>()
 
-const route = useRoute()
-const router = useRouter()
 const demarcheStore = useDemarcheStore()
 const userStore = useUserStore()
 
@@ -27,47 +23,16 @@ onMounted(async () => {
   }
 })
 
-//#region Tab management */
-const tabTitles = computed<{ value: number, label: string }[]>(() => [
-  {
-    value: 0,
-    label: 'Dossiers',
-  },
-  {
-    value: 1,
-    label: 'Information',
-  },
-  ...(userStore.CanConfigureDemarche(Number(props.demarcheId))
-    ? [
-        { value: 2, label: 'Paramétrage d\'affichage' },
-        { value: 3, label: 'Options' },
-      ]
-    : []),
-])
-const selectedTabIndex = ref(0)
-const asc = ref(false)
+const currentDemarcheTab = ref<string | undefined>('dossiers')
 const demarcheDossiersKey = ref(`demarche-dossiers-${getRandomString(5)}`)
 
-watch(selectedTabIndex, (newValue, oldValue) => {
-  if (newValue === 0) {
+const canConfigureDemarche = computed(() => userStore.CanConfigureDemarche(Number(props.demarcheId)))
+
+const handleTabChanged = (newTabId?: string) => {
+  if (newTabId === 'dossiers') {
     demarcheDossiersKey.value = `demarche-dossiers-${getRandomString(5)}`
   }
-  asc.value = newValue > oldValue
-  router.push({ ...route, hash: `#${tabTitles.value[newValue].label}` })
-})
-
-onMounted(() => {
-  // The optional chaining operator is here for component testing, where route is nullish
-  if (route?.hash.slice(1).length) {
-    selectedTabIndex.value = tabTitles.value.findIndex((tabTitle) => route.hash.slice(1) === tabTitle.label) || 0
-  }
-})
-const values = { true: '100%', false: '-100%' }
-// @ts-expect-error this will be fine
-const translateValueFrom = computed(() => values[String(asc?.value)])
-// @ts-expect-error this will be fine
-const translateValueTo = computed(() => values[String(!asc?.value)])
-//#endregion */
+}
 </script>
 
 <template>
@@ -77,126 +42,47 @@ const translateValueTo = computed(() => values[String(!asc?.value)])
     title-bg-color="var(--artwork-minor-blue-france)"
     title-icon=""
   >
-    <div class="flex flex-col bn-scroll-parent bn-dynamic-big-pt">
-      <DsfrSegmentedSet
-        v-model="selectedTabIndex"
-        :inline="false"
-        :options="tabTitles"
-        :small="false"
-        class="simulate-tabs"
-      />
-      <div class="flex flex-row h-full fr-pl-1w fr-pr-1w">
-        <Transition name="slide-fade" mode="in-out">
-          <!-- Dossiers -->
-          <div
-            v-show="selectedTabIndex === 0"
-            class="flex-grow bn-scroll-parent"
-          >
-            <DemarcheDossiers
-              id="demarche-dossiers"
-              :key="demarcheDossiersKey"
-              :custom-display-id="customDisplayId"
-            />
-          </div>
-        </Transition>
-        <Transition name="slide-fade" mode="in-out">
-          <!-- Informations -->
-          <div
-            v-show="selectedTabIndex === 1"
-            class="flex-grow bn-scroll-parent"
-          >
-            <DemarcheInformations class="fr-pt-3w" />
-            <DemarcheService class="fr-pt-5w" />
-            <GroupInstructeurs class="fr-pt-5w" />
-          </div>
-        </Transition>
-        <Transition name="slide-fade" mode="in-out">
-          <!-- Configurations -->
-          <template
-            v-if="userStore.CanConfigureDemarche(Number(props.demarcheId))"
-          >
-            <div
-              v-show="selectedTabIndex === 2"
-              class="flex-grow bn-scroll-parent"
-            >
-              <KeepAlive>
-                <DemarcheConfigurations />
-              </KeepAlive>
-            </div>
-          </template>
-        </Transition>
-        <Transition name="slide-fade" mode="in-out">
-          <!-- Options -->
-          <template
-            v-if="userStore.CanConfigureDemarche(Number(props.demarcheId))"
-          >
-            <div
-              v-show="selectedTabIndex === 3"
-              class="flex-grow bn-scroll-parent"
-            >
-              <KeepAlive>
-                <DemarcheOptions />
-              </KeepAlive>
-            </div>
-          </template>
-        </Transition>
-      </div>
-    </div>
+    <BnTabsContainer
+      v-model="currentDemarcheTab"
+      default-tab-id="dossiers"
+      @tab-changed="handleTabChanged"
+    >
+      <BnTab
+        id="dossiers"
+        title="Dossiers"
+      >
+        <DemarcheDossiers
+          id="demarche-dossiers"
+          :key="demarcheDossiersKey"
+          :custom-display-id="customDisplayId"
+        />
+      </BnTab>
+      <BnTab
+        id="information"
+        title="Information"
+      >
+        <DemarcheInformations class="fr-pt-3w" />
+        <DemarcheService class="fr-pt-5w" />
+        <GroupInstructeurs class="fr-pt-5w" />
+      </BnTab>
+      <BnTab
+        v-if="canConfigureDemarche"
+        id="parametrage"
+        title="Paramètrage d'affichage"
+      >
+        <KeepAlive>
+          <DemarcheConfigurations />
+        </KeepAlive>
+      </BnTab>
+      <BnTab
+        v-if="canConfigureDemarche"
+        id="options"
+        title="Options"
+      >
+        <KeepAlive>
+          <DemarcheOptions />
+        </KeepAlive>
+      </BnTab>
+    </BnTabsContainer>
   </LayoutList>
 </template>
-
-<style scoped>
-.simulate-tabs {
-  position: relative;
-  border-bottom: 1px solid var(--border-default-grey);
-  padding-left: 1rem;
-}
-
-:deep(.fr-segmented__elements) {
-  gap: 0.5rem;
-  box-shadow: none !important;
-}
-
-:deep(.fr-segmented__element) {
-  border-radius: 0;
-  background: var(--background-action-low-blue-france);
-  font-weight: bolder !important;
-}
-
-:deep(.fr-segmented__element:hover) {
-  background: var(--background-action-low-blue-france-hover) !important;
-}
-
-.simulate-tabs :deep(input:hover+label) {
-  background: var(--background-action-low-blue-france-hover) !important;
-}
-
-.simulate-tabs :deep(input:checked+label) {
-  background: white;
-  color: var(--border-active-blue-france) !important;
-  border: none;
-  border-radius: 0;
-  border-inline: 1px solid var(--border-default-grey);
-  border-bottom: 1px solid white;
-  margin-bottom: -1px;
-  box-shadow: 0 -2px 0 0 var(--border-active-blue-france) !important;
-}
-
-.slide-fade-enter-active {
-  transition: all 0.2s linear;
-}
-
-.slide-fade-leave-active {
-  transition: all 0.2s linear;
-}
-
-.slide-fade-enter-from {
-  transform: translateX(v-bind(translateValueFrom));
-  opacity: 0;
-}
-
-.slide-fade-leave-to {
-  transform: translateX(v-bind(translateValueTo));
-  opacity: 0;
-}
-</style>

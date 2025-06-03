@@ -54,7 +54,7 @@ const onSelected = (bnConfig: IBnConfigurationOutput) => {
 </script>
 
 <template>
-  <div :class="{ 'blur-2': loading }">
+  <div class="fr-p-3v" :class="{ 'blur-2': loading }">
     <div class="flex flex-row fr-mb-1w">
       <div class="flex-1">
         <h6>Modifier une configuration</h6>

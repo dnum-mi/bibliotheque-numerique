@@ -16,7 +16,7 @@ describe('Vue Dossier', () => {
 
     cy.visit('/dossiers/1')
     cy.wait('@dossier')
-    cy.get('.fr-segmented__element')
+    cy.get('[role="tab"]')
       .should('contain', `Pièces jointes (${files.total})`)
       .contains('Pièces jointes')
       .click()

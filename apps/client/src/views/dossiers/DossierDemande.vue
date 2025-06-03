@@ -39,7 +39,7 @@ const { groupedChamps, expandedSections, toggleSection, smoothScroll, menuItems 
           :smooth-scroll="smoothScroll"
         />
       </template>
-      <div class="fr-col-12 fr-col-xl-9">
+      <div class="fr-col-12 fr-col-xl-9 py-4">
         <div class="fr-mb-4w">
           <h2 class="fr-h6 fr-background-alt--grey fr-mb-4w fr-py-3v fr-px-2w">Date de dépôt du dossier</h2>
           <div class="fr-px-4v">

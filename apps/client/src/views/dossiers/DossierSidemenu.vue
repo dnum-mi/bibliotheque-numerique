@@ -10,9 +10,9 @@ defineProps<{
 <template>
   <div
     id="summary"
-    class="fr-col-12 fr-col-xl-3 sticky-sidemenu"
+    class="fr-col-12 fr-col-xl-3"
   >
-    <ul class="fr-sidemenu__list fr-hidden fr-unhidden-xl">
+    <ul class="fr-sidemenu sticky-sidemenu fr-hidden fr-unhidden-xl">
       <li
         v-for="(item, index) in menuItems"
         :key="index"
@@ -33,14 +33,8 @@ defineProps<{
 
 <style scoped>
 .sticky-sidemenu {
-  padding-right: 2rem;
   position: sticky;
   top: 2em;
-  max-height: 100vh;
-}
-
-.fr-sidemenu__list {
-  list-style: none;
 }
 
 [href] {

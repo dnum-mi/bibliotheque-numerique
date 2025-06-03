@@ -22,7 +22,7 @@ defineProps<DossierMessagerieProps>()
 
 <template>
   <section
-    class="bg-[var(--background-default-grey)]  flex  flex-col  overflow-y-auto  h-full"
+    class="bg-[var(--background-default-grey)]  flex  flex-col  overflow-y-auto  h-full p-4"
   >
     <div
       class="flex  flex-col  overflow-y-auto  h-full"
