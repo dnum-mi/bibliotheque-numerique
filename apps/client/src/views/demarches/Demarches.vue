@@ -8,7 +8,9 @@ import OrganismeBadgesRenderer from '@/components/Badges/organisme/OrganismeBadg
 import BiblioNumDataTableAgGrid from '@/components/BiblioNumDataTableAgGrid.vue'
 import LayoutList from '@/components/Layout/LayoutList.vue'
 import { useUserStore } from '@/stores'
+import { useActiveFilter } from '@/components/ag-grid/active-filters/useActiveFilter'
 
+const agGridComponent = ref<InstanceType<typeof BiblioNumDataTableAgGrid> | null>(null)
 const demarcheStore = useDemarcheStore()
 const router = useRouter()
 const headers = [
@@ -53,9 +55,12 @@ const headers = [
 const userStore = useUserStore()
 // Avoids the error: "AG Grid: cannot get grid to draw rows when it is in the middle of drawing rows."
 const rowData = ref<ISmallDemarcheOutput[]>([])
-watch(() => demarcheStore.demarches, () => {
-  rowData.value = Array.isArray(demarcheStore.demarches) ? demarcheStore.demarches : []
-})
+watch(
+  () => demarcheStore.demarches,
+  () => {
+    rowData.value = Array.isArray(demarcheStore.demarches) ? demarcheStore.demarches : []
+  },
+)
 
 onMounted(async () => {
   await demarcheStore.getDemarches()
@@ -67,6 +72,8 @@ const selectDemarche = (row: IDemarche[]) => {
 }
 
 const rowStyle = { cursor: 'pointer' }
+
+const { activeFilters, onFiltersUpdated, handleClearAllFilters, handleRemoveFilter } = useActiveFilter(agGridComponent)
 </script>
 
 <template>
@@ -75,14 +82,28 @@ const rowStyle = { cursor: 'pointer' }
     title-bg-color="var(--artwork-minor-blue-france)"
     title-icon="fr-icon-article-fill"
   >
-    <BiblioNumDataTableAgGrid
-      :headers="headers"
-      action-title="Voir les détails de la démarche"
-      :row-data="rowData"
-      floating-filter
-      row-selection="single"
-      :row-style="rowStyle"
-      @selection-changed="selectDemarche"
-    />
+    <div class="flex flex-col h-full">
+      <div class="py-2 px-4">
+        <ActiveFiltersDropdown
+          v-if="activeFilters.length > 0"
+          :filters="activeFilters"
+          :column-definitions="headers"
+          @request-remove-filter="handleRemoveFilter"
+          @request-clear-all="handleClearAllFilters"
+        />
+      </div>
+
+      <BiblioNumDataTableAgGrid
+        ref="agGridComponent"
+        :headers="headers"
+        action-title="Voir les détails de la démarche"
+        :row-data="rowData"
+        floating-filter
+        row-selection="single"
+        :row-style="rowStyle"
+        @selection-changed="selectDemarche"
+        @filters-updated="onFiltersUpdated"
+      />
+    </div>
   </LayoutList>
 </template>

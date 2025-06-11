@@ -10,6 +10,7 @@ import type { BNColDef } from '@/components/ag-grid/server-side/bn-col-def.inter
 import AgGridServerSide from '@/components/ag-grid/server-side/AgGridServerSide.vue'
 import { baseColDef } from '@/components/ag-grid/server-side/columndef-base'
 import RoleBadgesRenderer from '@/components/Badges/role/RoleBadgesRenderer.vue'
+import { useActiveFilter } from '@/components/ag-grid/active-filters/useActiveFilter'
 
 const agGridComponent = ref()
 const router = useRouter()
@@ -116,16 +117,33 @@ const onSelectionChanged = (event: SelectionChangedEvent) => {
     })
   }
 }
+
+const { activeFilters, onFiltersUpdated, handleClearAllFilters, handleRemoveFilter } = useActiveFilter(agGridComponent)
 </script>
 
 <template>
-  <AgGridServerSide
-    ref="agGridComponent"
-    class="h-full"
-    :column-defs="columnDefs"
-    pre-condition
-    :api-call="apiCall"
-    :on-selection-changed="onSelectionChanged"
-    local-storage-key="users"
-  />
+  <div class="flex flex-col h-full">
+    <div
+      v-if="activeFilters.length > 0"
+      class="py-2 px-4"
+    >
+      <ActiveFiltersDropdown
+        :filters="activeFilters"
+        :column-definitions="columnDefs"
+        @request-remove-filter="handleRemoveFilter"
+        @request-clear-all="handleClearAllFilters"
+      />
+    </div>
+
+    <AgGridServerSide
+      ref="agGridComponent"
+      class="h-full"
+      :column-defs="columnDefs"
+      pre-condition
+      :api-call="apiCall"
+      :on-selection-changed="onSelectionChanged"
+      local-storage-key="users"
+      @filters-updated="onFiltersUpdated"
+    />
+  </div>
 </template>

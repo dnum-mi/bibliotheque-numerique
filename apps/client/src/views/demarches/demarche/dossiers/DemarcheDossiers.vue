@@ -3,29 +3,12 @@ import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useDebounceFn } from '@vueuse/core'
 import type { GridOptions } from 'ag-grid-enterprise'
-import type {
-  ColumnMenuTab,
-  GridApi,
-  GridReadyEvent,
-  SelectionChangedEvent,
-} from 'ag-grid-community'
+import type { ColumnMenuTab, GridApi, GridReadyEvent, SelectionChangedEvent } from 'ag-grid-community'
 
-import type {
-  ICreateCustomFilter,
-  IPagination,
-  IPatchCustomFilter,
-  ICustomFilter,
-  IDemarche,
-  IMappingColumn,
-} from '@biblio-num/shared'
+import type { ICreateCustomFilter, IPagination, IPatchCustomFilter, ICustomFilter, IDemarche, IMappingColumn } from '@biblio-num/shared'
 
-import type {
-  FrontIMappingColumn,
-} from '@/stores'
-import {
-  useCustomFilterStore,
-  useDemarcheStore,
-} from '@/stores'
+import type { FrontIMappingColumn } from '@/stores'
+import { useCustomFilterStore, useDemarcheStore } from '@/stores'
 import DemarcheDossierCellRenderer from '@/views/demarches/demarche/dossiers/DemarcheDossierCellRenderer.vue'
 import { deepAlmostEqual, selectKeysInObject } from '@/utils/object'
 import { backendFilterToAggFilter } from '@/components/ag-grid/server-side/pagination.utils'
@@ -34,6 +17,7 @@ import type { BNColDef } from '@/components/ag-grid/server-side/bn-col-def.inter
 import DemarcheDossiersDisplays from './DemarcheDossiersDisplays.vue'
 import type { TotalsAllowed } from './DemarcheDossiersDisplays.vue'
 import type { CustomFilterWithErrors } from '@/views/demarches/demarche/dossiers/custom-filter-with-errors.type'
+import { useActiveFilter } from '@/components/ag-grid/active-filters/useActiveFilter'
 
 const demarcheStore = useDemarcheStore()
 const router = useRouter()
@@ -54,10 +38,10 @@ const customDisplayWithErrors = computed<CustomFilterWithErrors[]>(() =>
   })),
 )
 const selectedCustomDisplay = ref<ICustomFilter | null>(null)
-const totalsAllowed = computed<TotalsAllowed[] | undefined>(
-  () => demarcheConfiguration.value
-    .filter(mapping => mapping.type === 'number' && mapping.id !== '96151176-4624-4706-b861-722d2e53545d')
-    .map((mapping) => ({ id: mapping.id, columnLabel: mapping.columnLabel } as TotalsAllowed)),
+const totalsAllowed = computed<TotalsAllowed[] | undefined>(() =>
+  demarcheConfiguration.value
+    .filter((mapping) => mapping.type === 'number' && mapping.id !== '96151176-4624-4706-b861-722d2e53545d')
+    .map((mapping) => ({ id: mapping.id, columnLabel: mapping.columnLabel }) as TotalsAllowed),
 )
 
 //#region 📍------ LOCAL STORAGE ------ 📍
@@ -238,13 +222,13 @@ const updateDisplayName = async ({ filterName = '', totals = [] }) => {
       name: filterName,
     }
     if (totals) {
-      dto.totals = totals.filter(tt => tt !== 'Aucun total')
+      dto.totals = totals.filter((tt) => tt !== 'Aucun total')
     }
     dto.columns = paginationDto.value.columns
     try {
       await customDisplayStore.updateCustomFilter(selectedCustomDisplay.value.id, dto)
       selectedCustomDisplay.value.name = filterName
-      selectedCustomDisplay.value.totals = dto.totals ?? null
+      selectedCustomDisplay.value.totals = dto.totals ?? null
       customDisplayOperationSuccess.value = false
     } catch (error) {
       import.meta.env.DEV && console.warn(error)
@@ -277,7 +261,7 @@ const selectDisplay = async (id: number | null) => {
   }
 }
 
-const createDisplay = async ({ filterName = '', totals = [] }: { filterName?: string, totals?: string[] }) => {
+const createDisplay = async ({ filterName = '', totals = [] }: { filterName?: string; totals?: string[] }) => {
   customDisplayOperationSuccess.value = false
   const createCustomFilterDto: ICreateCustomFilter = {
     name: filterName,
@@ -288,7 +272,7 @@ const createDisplay = async ({ filterName = '', totals = [] }: { filterName?: st
   }
 
   if (totals) {
-    createCustomFilterDto.totals = totals.filter(tt => tt !== 'Aucun total')
+    createCustomFilterDto.totals = totals.filter((tt) => tt !== 'Aucun total')
   }
   try {
     const filterId = await customDisplayStore.createCustomFilter(createCustomFilterDto, demarche.value.id)
@@ -318,15 +302,40 @@ onMounted(async () => {
   }
   readyToLoadAgGrid.value = true
 })
+
+const { activeFilters, onFiltersUpdated, handleRemoveFilter } = useActiveFilter(agGridComponent)
+
+const customHandleClearAllFilters = async () => {
+  if (selectedCustomDisplay.value && typeof selectedCustomDisplay.value.id === 'number') {
+    await selectDisplay(selectedCustomDisplay.value.id)
+  } else {
+    resetAggState()
+    paginationDto.value.filters = null
+    paginationDto.value.sorts = []
+  }
+}
+
+const clearAllFiltersButtonLabel = computed(() => {
+  return selectedCustomDisplay.value ? 'Réinitialiser les filtres' : 'Tout supprimer'
+})
+
+const quickFilterValueTranslations: Record<string, string> = {
+  TwentyFourHours: 'depuis 24 heures',
+  ThreeDays: 'depuis 3 jours',
+  OneWeek: 'depuis 1 semaine',
+  TwoWeeks: 'depuis 2 semaines',
+  OneMonth: 'depuis 1 mois',
+  ThreeMonths: 'depuis 3 mois',
+  SixMonths: 'depuis 6 mois',
+  OneYear: 'depuis 1 an',
+}
 </script>
 
 <template>
   <div class="bn-scroll-parent flex flex-col">
     <div class="flex flex-shrink-0 justify-between no-label-on-toggle items-center bn-dynamic-small-p">
       <div class="flex gap-2">
-        <div
-          v-if="!hasNoRepeatableField"
-        >
+        <div v-if="!hasNoRepeatableField">
           <DsfrButton
             :tertiary="groupByDossier"
             :class="{ 'opacity-70': groupByDossier }"
@@ -351,6 +360,15 @@ onMounted(async () => {
           class="fr-ml-5w"
           small
           @click="download"
+        />
+        <ActiveFiltersDropdown
+          v-if="columnsDef && (activeFilters.length > 0 || selectedCustomDisplay)"
+          :filters="activeFilters"
+          :column-definitions="columnsDef"
+          :quick-filter-value-translations="quickFilterValueTranslations"
+          :clear-all-button-label="clearAllFiltersButtonLabel"
+          @request-remove-filter="handleRemoveFilter"
+          @request-clear-all="customHandleClearAllFilters"
         />
       </div>
       <DemarcheDossiersDisplays
@@ -380,6 +398,7 @@ onMounted(async () => {
         :api-call="apiCall"
         :local-storage-key="localStoragePaginationKey"
         @grid-ready="onGridReady($event)"
+        @filters-updated="onFiltersUpdated"
       />
     </div>
   </div>
@@ -387,7 +406,7 @@ onMounted(async () => {
 
 <style scoped>
 :deep(.fr-toggle label::before) {
-  content: "" !important;
+  content: '' !important;
 }
 
 :deep(.ag-paging-panel) {

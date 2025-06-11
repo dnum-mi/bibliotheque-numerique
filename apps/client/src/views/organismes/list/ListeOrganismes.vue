@@ -10,6 +10,7 @@ import { listOrganismeColumnDef } from '@/views/organismes/list/column-def.const
 import type { OrganismeIdType } from '@/stores'
 import { routeNames } from '../../../router/route-names'
 import { useConfigurationStore } from '../../../stores/configuration'
+import { useActiveFilter } from '@/components/ag-grid/active-filters/useActiveFilter'
 
 const organismeStore = useOrganismeStore()
 const bnConfigStore = useConfigurationStore()
@@ -48,6 +49,8 @@ const toSearch = () => {
 onMounted(async () => {
   await bnConfigStore.getEnableSiaf()
 })
+
+const { activeFilters, onFiltersUpdated, handleClearAllFilters, handleRemoveFilter } = useActiveFilter(agGridComponent)
 </script>
 
 <template>
@@ -57,7 +60,7 @@ onMounted(async () => {
     title-icon="fr-icon-building-line"
   >
     <div class="flex flex-col h-full">
-      <div class="flex justify-between m-2">
+      <div class="flex gap-3 m-2">
         <DsfrButton
           v-if="enableSiaf"
           label="Recherche dans le référentiel (RAF)"
@@ -71,6 +74,13 @@ onMounted(async () => {
           small
           @click="download"
         />
+        <ActiveFiltersDropdown
+          v-if="activeFilters.length > 0"
+          :filters="activeFilters"
+          :column-definitions="listOrganismeColumnDef"
+          @request-remove-filter="handleRemoveFilter"
+          @request-clear-all="handleClearAllFilters"
+        />
       </div>
       <AgGridServerSide
         ref="agGridComponent"
@@ -81,6 +91,7 @@ onMounted(async () => {
         pre-condition
         local-storage-key="agGrid.organismes.state"
         :api-call="apiCall"
+        @filters-updated="onFiltersUpdated"
       />
     </div>
   </LayoutList>
