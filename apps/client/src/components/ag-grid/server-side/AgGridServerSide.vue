@@ -1,35 +1,27 @@
 <script lang="ts" setup generic="T extends DynamicKeys">
 import { AgGridVue } from 'ag-grid-vue3'
-import type {
-  GridApi,
-  GridReadyEvent,
-  IServerSideGetRowsParams,
-  SelectionChangedEvent,
-} from 'ag-grid-community'
+import type { FilterChangedEvent, GridApi, GridReadyEvent, IServerSideGetRowsParams, SelectionChangedEvent } from 'ag-grid-community'
 import type { ColumnMovedEvent, GridOptions, SetFilterModel } from 'ag-grid-enterprise'
 
 import type { DynamicKeys, IPagination } from '@biblio-num/shared'
 import type { ApiCall } from './pagination.utils'
 
 import { gridOptionFactory } from '@/components/ag-grid/server-side/grid-option-factory'
-import {
-  fromAggToBackendFilter,
-  fromAggToBackendSort,
-  backendFilterToAggFilter,
-} from '@/components/ag-grid/server-side/pagination.utils'
+import { fromAggToBackendFilter, fromAggToBackendSort, backendFilterToAggFilter } from '@/components/ag-grid/server-side/pagination.utils'
 import type { BNColDef } from '@/components/ag-grid/server-side/bn-col-def.interface'
 import type { FilterModel } from '@/components/ag-grid/server-side/filter-model.interface'
+import type { AgGridFilterModel, DisplayActiveFilter } from '../active-filters/activeFilters.type'
 
 const props = withDefaults(
   defineProps<{
-    paginationDto?: IPagination<T>;
-    columnDefs: BNColDef[];
-    apiCall: ApiCall<T>;
-    onSelectionChanged: ($event: SelectionChangedEvent) => void;
-    loading?: boolean;
-    preCondition?: boolean;
-    specificGridOption?: Partial<GridOptions>;
-    localStorageKey?: string;
+    paginationDto?: IPagination<T>
+    columnDefs: BNColDef[]
+    apiCall: ApiCall<T>
+    onSelectionChanged: ($event: SelectionChangedEvent) => void
+    loading?: boolean
+    preCondition?: boolean
+    specificGridOption?: Partial<GridOptions>
+    localStorageKey?: string
   }>(),
   {
     paginationDto: () => ({
@@ -47,8 +39,9 @@ const props = withDefaults(
 //#endregion
 
 const emit = defineEmits<{
-  'gridReady': [p: GridReadyEvent],
-  'update:paginationDto': [p: IPagination<T>],
+  gridReady: [p: GridReadyEvent]
+  'update:paginationDto': [p: IPagination<T>]
+  filtersUpdated: [filters: DisplayActiveFilter[]]
 }>()
 
 //#region 📍------ ON CLICK ------ 📍
@@ -72,7 +65,8 @@ const onClick = (event: SelectionChangedEvent) => {
   // do not load the line if the user click outside filter to close the filter
   if (!filterAreOpened.value) {
     props.onSelectionChanged(event)
-  } else { // next time we click we want to load the line
+  } else {
+    // next time we click we want to load the line
     filterAreOpened.value = false
   }
 }
@@ -113,7 +107,7 @@ const restoreFromLocalStorage = () => {
 
     gridApi.value.setFilterModel(backendFilterToAggFilter(dto.filters || {}))
 
-    const stateHash = Object.fromEntries(gridApi.value.getColumnState().map(c => [c.colId, c]))
+    const stateHash = Object.fromEntries(gridApi.value.getColumnState().map((c) => [c.colId, c]))
     const sortHash = Object.fromEntries(dto.sorts.map((s) => [s.key, s]))
 
     gridApi.value.applyColumnState({
@@ -139,19 +133,15 @@ const restoreFromLocalStorage = () => {
 //#endregion
 
 const hasfilterEnumUnselectedAll = (filterModel: Record<string, FilterModel>) => {
-  const enumIds: (string | undefined)[] = props.columnDefs
-    .filter(colDef => colDef.fieldType === 'enum')
-    .map(colDef => colDef.field)
+  const enumIds: (string | undefined)[] = props.columnDefs.filter((colDef) => colDef.fieldType === 'enum').map((colDef) => colDef.field)
 
   if (!enumIds) {
     return false
   }
 
   for (const emunId of enumIds) {
-    const filter = Object.entries(filterModel).find(([key, value]) =>
-      key === emunId
-      && value.filterType === 'set'
-      && !(value as SetFilterModel).values.length,
+    const filter = Object.entries(filterModel).find(
+      ([key, value]) => key === emunId && value.filterType === 'set' && !(value as SetFilterModel).values.length,
     )
     if (filter) {
       return true
@@ -167,9 +157,11 @@ const getRows = async (params: IServerSideGetRowsParams) => {
     params.success({ rowData: [], rowCount: 0 })
     return
   }
-  if (props.loading) { return }
+  if (props.loading) {
+    return
+  }
 
-  const selectedColumnsIds = params.api.getAllDisplayedColumns().map(col => col.getColId())
+  const selectedColumnsIds = params.api.getAllDisplayedColumns().map((col) => col.getColId())
 
   if (props.preCondition) {
     const dto: IPagination<T> = {
@@ -201,15 +193,45 @@ const gridOptions = {
   ...props.specificGridOption,
 }
 
+const notifyFilterChanged = () => {
+  if (gridApi.value) {
+    const filterModel = gridApi.value.getFilterModel() as AgGridFilterModel
+    const filters: DisplayActiveFilter[] = []
+    for (const colId in filterModel) {
+      if (Object.prototype.hasOwnProperty.call(filterModel, colId)) {
+        filters.push({ colId, ...filterModel[colId] })
+      }
+    }
+    emit('filtersUpdated', filters)
+  }
+}
+
+const onFilterChanged = (_event: FilterChangedEvent) => {
+  notifyFilterChanged()
+}
+
+const clearAllFilters = () => {
+  if (gridApi.value) {
+    gridApi.value.setFilterModel(null)
+  }
+}
+
+const removeFilter = async (colId: string) => {
+  if (gridApi.value) {
+    const filterInstance = await gridApi.value.getColumnFilterInstance(colId)
+    if (filterInstance) {
+      filterInstance.setModel(null)
+      gridApi.value.onFilterChanged()
+    }
+  }
+}
+
 const onGridReady = (event: GridReadyEvent) => {
   gridApi.value = event.api
   emit('gridReady', event)
   restoreFromLocalStorage()
+  notifyFilterChanged()
 }
-
-defineExpose({
-  refresh,
-})
 
 const onColumnMoved = (event: ColumnMovedEvent) => {
   if (event.finished) {
@@ -223,18 +245,27 @@ onMounted(() => {
     label.textContent = 'Nombre d’éléments par page'
   }
 })
+
+defineExpose({
+  refresh,
+  clearAllFilters,
+  removeFilter,
+})
 </script>
 
 <template>
-  <AgGridVue
-    class="ag-theme-material"
-    :column-defs="columnDefs"
-    :grid-options="gridOptions"
-    :row-style="{ cursor: 'pointer' }"
-    @grid-ready="onGridReady($event)"
-    @column-moved="onColumnMoved($event)"
-    @column-visible="refresh()"
-    @selection-changed="onClick($event)"
-    @filter-opened="filterAreOpened = true"
-  />
+  <div class="h-full flex flex-col">
+    <AgGridVue
+      class="ag-theme-material m-w-full h-full"
+      :column-defs="columnDefs"
+      :grid-options="gridOptions"
+      :row-style="{ cursor: 'pointer' }"
+      @grid-ready="onGridReady($event)"
+      @column-moved="onColumnMoved($event)"
+      @column-visible="refresh()"
+      @selection-changed="onClick($event)"
+      @filter-opened="filterAreOpened = true"
+      @filter-changed="onFilterChanged"
+    />
+  </div>
 </template>

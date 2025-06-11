@@ -8,6 +8,9 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    ActiveFilters: typeof import('./components/ag-grid/ActiveFiltersDisplay.vue')['default']
+    ActiveFiltersDisplay: typeof import('./components/ag-grid/ActiveFiltersDisplay.vue')['default']
+    ActiveFiltersDropdown: typeof import('./components/ag-grid/active-filters/ActiveFiltersDropdown.vue')['default']
     AgGridAttachmentCell: typeof import('./components/ag-grid/AgGridAttachmentCell.vue')['default']
     AgGridMultiValueCell: typeof import('./components/ag-grid/AgGridMultiValueCell.vue')['default']
     AgGridServerSide: typeof import('./components/ag-grid/server-side/AgGridServerSide.vue')['default']
