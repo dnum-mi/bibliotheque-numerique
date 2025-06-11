@@ -40,7 +40,7 @@ const localizationOptions = computed(() => [
     label: 'Préfecture(s)',
     name: 'localization',
     value: LocalizationOptions.prefectures,
-    disabled: !props.geographicalRights.national.editable && props.geographicalRights.national.value,
+    disabled: !props.geographicalRights.national.editable && !props.geographicalRights.national.value,
   },
 ])
 
