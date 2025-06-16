@@ -11,6 +11,8 @@ import {
 import { BaseEntity } from '@/shared/base-entity/base.entity'
 import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
 import { Organisme } from '@/modules/organismes/objects/organisme.entity'
+import { eFileStorageIn, FileStorageInKey } from '../const/file-storage-in.enum'
+import { ApiProperty } from '@nestjs/swagger'
 
 @Entity()
 export class File extends BaseEntity {
@@ -91,4 +93,16 @@ export class File extends BaseEntity {
     foreignKeyConstraintName: 'FK_organisme',
   })
   organisme: Organisme | null
+
+  @Column({
+    type: 'enum',
+    enum: eFileStorageIn,
+    default: eFileStorageIn.S3,
+  })
+  @ApiProperty({
+    type: String,
+    enum: eFileStorageIn,
+    default: eFileStorageIn.S3,
+  })
+  storageIn: FileStorageInKey
 }

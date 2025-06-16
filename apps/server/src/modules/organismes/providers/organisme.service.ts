@@ -53,7 +53,7 @@ import {
 import { BnConfigurationService } from '@/shared/modules/bn-configurations/providers/bn-configuration.service'
 import { addYears } from 'date-fns'
 import { getCodeByRegionName } from '../utils/utils.regions'
-import { HubService } from './hub.service'
+import { HubService } from '@/modules/hub/providers/hub.service'
 import { IOrganismeOutputDto } from '@biblio-num/shared/src/organismes/organsime-output-dto.interface'
 
 @Injectable()
@@ -63,7 +63,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     @InjectRepository(Organisme) repo: Repository<Organisme>,
     protected readonly rnfService: RnfService,
     protected readonly rnaService: RnaService,
-    protected readonly siafService: HubService,
+    protected readonly hubService: HubService,
     private readonly fileService: FileService,
     protected readonly dossierService: DossierService,
     @InjectQueue(QueueName.file) private readonly fileQueue: Queue,
@@ -350,13 +350,13 @@ export class OrganismeService extends BaseEntityService<Organisme> {
   /**
    * TODO: Pour avoir la possibilité à se connecter avec le RAF et le HUB sans la variable env pour les distinguer,
    * pour le hub la structure contient la clé associations
-   * TODO: A terme, bn doit-être connecter avec le hub
+   * TODO: A la fin, bn doit être connecter avec le hub
   */
-  async getAssocationFromSiaf(idRna: string): Promise< ISiafRnaOutput | ISiafAssociationOutput | null> {
-    this.logger.verbose('getAssocationFromSiaf')
+  async getAssocationFromHub(idRna: string): Promise< ISiafRnaOutput | ISiafAssociationOutput | null> {
+    this.logger.verbose('getAssocationFromHub')
     const enableSiaf = await this.bnConfiguration.getValueByKeyName(eBnConfiguration.ENABLE_SIAF)
     if (!enableSiaf) return null
-    const fromSiaf = await this.siafService.getAssociation(idRna)
+    const fromSiaf = await this.hubService.getAssociation(idRna)
     this.logger.debug({ FN: 'getAssocationFromSiaf', idRna })
     if (!fromSiaf) return null
     if ('associations' in fromSiaf) {
@@ -371,11 +371,11 @@ export class OrganismeService extends BaseEntityService<Organisme> {
    * pour le hub la structure contient la clé fondations
    * TODO: A terme, bn doit-être connecter avec le hub
   */
-  async getFoundationFromSiaf(idRnf: string): Promise<ISiafRnfOutput | null> {
-    this.logger.verbose('getFoundationFromSiaf')
+  async getFoundationFromHub(idRnf: string): Promise<ISiafRnfOutput | null> {
+    this.logger.verbose('getFoundationFromHub')
     const enableSiaf = await this.bnConfiguration.getValueByKeyName(eBnConfiguration.ENABLE_SIAF)
     if (!enableSiaf) return null
-    const fromSiaf = await this.siafService.getFoundation(idRnf)
+    const fromSiaf = await this.hubService.getFoundation(idRnf)
     this.logger.debug({ FN: 'getFoundationFromSiaf', idRnf, found: !!fromSiaf })
     if (!fromSiaf) return null
     if ('fondations' in fromSiaf) {
@@ -389,7 +389,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     this.logger.verbose('searchOrganismes')
     const enableSiaf = await this.bnConfiguration.getValueByKeyName(eBnConfiguration.ENABLE_SIAF)
     if (!enableSiaf) return null
-    return (await this.siafService.searchOrganisme(sentence))?.search_response
+    return (await this.hubService.searchOrganisme(sentence))?.search_response
   }
 
   private _getValueFromPromiseSettle<T>(type:string, result: PromiseSettledResult<T>):T|null {
@@ -499,7 +499,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     this.logger.verbose('getOrganismeRnfFromAllServer')
     const results = await Promise.allSettled([
       this.findOneOrThrow({ where: { idRnf } }),
-      this.getFoundationFromSiaf(idRnf),
+      this.getFoundationFromHub(idRnf),
     ])
     const bn = this._getValueFromPromiseSettle('bn', results[0])
     const siaf = this._getValueFromPromiseSettle('siaf', results[1])
@@ -619,7 +619,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     this.logger.verbose('getOrganismeRnfFromAllServer')
     const results = await Promise.allSettled([
       this.findOneOrThrow({ where: { idRna } }),
-      this.getAssocationFromSiaf(idRna),
+      this.getAssocationFromHub(idRna),
     ])
     const bn = this._getValueFromPromiseSettle('bn', results[0])
     const siaf = this._getValueFromPromiseSettle('siaf', results[1])

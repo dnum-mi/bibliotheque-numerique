@@ -12,7 +12,7 @@ import { OrganismeFileController } from '@/modules/organismes/controllers/organi
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
 import { BullModule, BullModuleOptions } from '@nestjs/bull'
 import { BnConfigurationModule } from '@/shared/modules/bn-configurations/bn-configuration.module'
-import { HubService } from './providers/hub.service'
+import { HubModule } from '@/modules/hub/hub.module'
 
 @Module({
   imports: [
@@ -27,9 +27,10 @@ import { HubService } from './providers/hub.service'
     XlsxModule,
     FileModule,
     BnConfigurationModule,
+    HubModule,
   ],
   controllers: [OrganismeController, OrganismeFileController],
-  providers: [OrganismeService, RnaService, RnfService, HubService],
-  exports: [OrganismeService, RnfService, RnaService, HubService],
+  providers: [OrganismeService, RnaService, RnfService],
+  exports: [OrganismeService, RnfService, RnaService],
 })
 export class OrganismeModule {}

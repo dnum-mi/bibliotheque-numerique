@@ -12,6 +12,8 @@ items:
     checksum: 42
     byteSize: 42
     originalLabel: 'coucou.txt'
+    storageIn: 'S3'
+
   file-from-champ:
     id: 2
     uuid: "bfa978f1-7337-49df-ae97-40d358afe5b0"
@@ -25,6 +27,8 @@ items:
     byteSize: 42
     originalLabel: 'coucou.txt'
     dossier: '@DossierWithFiles'
+    storageIn: 'S3'
+
   file-from-annotation:
     id: 3
     uuid: "bfa978f1-7337-49df-ae97-40d358afe5b1"
@@ -38,6 +42,8 @@ items:
     byteSize: 42
     originalLabel: 'salut.txt'
     dossier: '@DossierWithFiles'
+    storageIn: 'S3'
+
   file-from-message:
     id: 4
     uuid: "bfa978f1-7337-49df-ae97-40d358afe5b2"
@@ -51,3 +57,19 @@ items:
     byteSize: 42
     originalLabel: 'hi.txt'
     dossier: '@DossierWithFiles'
+    storageIn: 'S3'
+
+  file-from-hub:
+    id: 5
+    uuid: "bfa978f1-7337-49df-ae97-40d358afe5c0"
+    state: 'uploaded'
+    sourceLabel: 'rna'
+    sourceStringId: null
+    tag: 'some-third-tag'
+    mimeType: 'doc'
+    label: 'yo'
+    checksum: 42
+    byteSize: 42
+    originalLabel: 'yo.txt'
+    organisme: '@Hyundai'
+    storageIn: 'HUB'

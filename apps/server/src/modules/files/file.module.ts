@@ -5,9 +5,15 @@ import { FileService } from './providers/file.service'
 import { HttpModule } from '@nestjs/axios'
 import { S3Module } from '@/shared/modules/s3/s3.module'
 import { File } from '@/modules/files/objects/entities/file.entity'
+import { HubModule } from '../hub/hub.module'
 
 @Module({
-  imports: [HttpModule, TypeOrmModule.forFeature([File]), S3Module],
+  imports: [
+    HttpModule,
+    TypeOrmModule.forFeature([File]),
+    S3Module,
+    HubModule,
+  ],
   controllers: [FileController],
   providers: [FileService],
   exports: [FileService],
