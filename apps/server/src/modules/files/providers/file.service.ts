@@ -8,6 +8,8 @@ import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import {
   SmallFileOutputDto,
   smallFileOutputKeys,
+  SmallFileOutputWithOrganismeDto,
+  smallOrganisme,
 } from '@/modules/files/objects/dto/output/small-file-output.dto'
 import {
   eFileExtension,
@@ -164,12 +166,17 @@ export class FileService extends BaseEntityService<File> {
   //#endregion
 
   //#region public
-  async findOneWithUuid(uuid: string): Promise<SmallFileOutputDto> {
+  async findOneWithUuid(uuid: string): Promise<SmallFileOutputDto | SmallFileOutputWithOrganismeDto> {
     this.logger.verbose('findOneWithUuid')
     this.logger.debug(`UUID: ${uuid}`)
     return this.findOneOrThrow({
       where: { uuid },
-      select: smallFileOutputKeys,
+      relations: ['organisme'],
+      select: {
+        id: true, // Bug TypeOrm; id is need to query with relations
+        ...(Object.fromEntries(smallFileOutputKeys.map(p => [p, true]))),
+        organisme: Object.fromEntries(smallOrganisme.map(p => [p, true])),
+      },
     })
   }
 

@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Controller,
   Get,
+  NotFoundException,
   Param,
   Response,
 } from '@nestjs/common'
@@ -13,6 +14,8 @@ import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { isUUID } from 'class-validator'
 import { Roles, eState } from '@biblio-num/shared'
 import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.decorator'
+import { eFileStorageIn } from '../objects/const/file-storage-in.enum'
+import { HubService } from '@/modules/hub/providers/hub.service'
 
 @ApiTags('Files')
 @Controller('files')
@@ -21,6 +24,7 @@ export class FileController {
     private readonly logger: LoggerService,
     private readonly s3Service: S3Service,
     private readonly filesService: FileService,
+    private readonly hubService: HubService,
   ) {
     this.logger.setContext(this.constructor.name)
   }
@@ -50,9 +54,33 @@ export class FileController {
       'Content-Disposition',
       `attachment; filename="${FileService.buildCompleteName(smallFile)}"`,
     )
-    const stream = await this.s3Service.getStreamedFile(uuid)
+
+    let stream
+    if (smallFile.storageIn === eFileStorageIn.HUB) {
+      // TODO: variable d'environnement pour le hub est false => sortir
+      if (!smallFile.organisme || !(smallFile.organisme.idRna || smallFile.organisme.idRnf)) {
+        throw new NotFoundException('Le fichier n\'est pas relié à un organisme')
+      }
+      if (smallFile.organisme.idRna) {
+        // TODO: variable d'environnement pour le hub ASSOCIATION est false => sortir
+        stream = await this.hubService.getAssociationFile(smallFile.organisme.idRna, uuid)
+      }
+
+      if (smallFile.organisme.idRnf) {
+        // TODO: variable d'environnement pour le hub ASSOCIATION est false => sortir
+        stream = await this.hubService.getFoundationFile(smallFile.organisme.idRnf, uuid)
+      }
+    } else {
+      stream = await this.s3Service.getStreamedFile(uuid)
+    }
     return new Promise((resolve, reject) => {
       stream.on('error', (e) => {
+        if (smallFile.storageIn === eFileStorageIn.HUB) {
+          this.logger.error('Error while streaming file from HUB')
+          this.logger.error(e)
+          reject(new NotFoundException('File not found'))
+          return
+        }
         reject(S3Service.manageS3StreamError(e))
       })
       stream.on('end', resolve)

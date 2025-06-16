@@ -42,6 +42,7 @@ import { InjectQueue } from '@nestjs/bull'
 import { Queue } from 'bull'
 import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.decorator'
 import { Organisme } from '@/modules/organismes/objects/organisme.entity'
+import { HubService } from '@/modules/hub/providers/hub.service'
 
 @ApiTags('Organismes')
 @Controller('organismes')
@@ -49,6 +50,7 @@ export class OrganismeController {
   constructor(
     private readonly logger: LoggerService,
     private readonly dossierService: DossierService,
+    private readonly hubService: HubService,
     private readonly organismeService: OrganismeService,
     private readonly xlsxService: XlsxService,
     @InjectQueue(QueueName.sync) private readonly syncQueue: Queue,
@@ -111,7 +113,7 @@ export class OrganismeController {
     if (bn.idRna) {
       return {
         bn,
-        siaf: await this.organismeService.getAssocationFromSiaf(bn.idRna)
+        siaf: await this.organismeService.getAssocationFromHub(bn.idRna)
           .then(siaf => siaf).catch(reason => {
             this.logger.warn(`HUB-RNA: ${reason}`)
             return null
@@ -121,7 +123,7 @@ export class OrganismeController {
     } else if (bn.idRnf) {
       return {
         bn,
-        siaf: await this.organismeService.getFoundationFromSiaf(bn.idRnf)
+        siaf: await this.organismeService.getFoundationFromHub(bn.idRnf)
           .then(siaf => siaf).catch(reason => {
             this.logger.warn(`HUB-RNF: ${reason}`)
             return null
@@ -136,14 +138,6 @@ export class OrganismeController {
         type: typeCategorieOrganisme.unknown,
       }
     }
-  }
-
-  private _getValueFromPromiseSettle<T>(type:string, result: PromiseSettledResult<T>):T|null {
-    if (result.status === 'rejected') {
-      this.logger.warn(`HUB-${type}: ${result.reason}`)
-      return null
-    }
-    return result.value
   }
 
   @UsualApiOperation({

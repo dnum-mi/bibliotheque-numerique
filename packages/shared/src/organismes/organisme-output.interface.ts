@@ -4,9 +4,9 @@ import { ISiafRnaOutput } from "./siaf/siaf-rna-output.interface";
 import { ISiafRnfOutput } from "./siaf/siaf-rnf-output.interface";
 
 export enum  typeCategorieOrganisme {
-  rna,
-  rnf,
-  unknown
+  rna = 'rna',
+  rnf ='rnf',
+  unknown = 'unknown',
 }
 //TOOD: en fonctionnement nominal il doit avoir que IOrganismeOutput=IOrganismeOutputDto pour le client
 export interface  IOrganismeOutput {

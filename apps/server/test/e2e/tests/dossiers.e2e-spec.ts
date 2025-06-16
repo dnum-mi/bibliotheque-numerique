@@ -3,6 +3,8 @@ import * as request from 'supertest'
 import { dataSource } from '../data-source-e2e.typeorm'
 import { Tokens, TestingModuleFactory } from '../common/testing-module.factory'
 import { loggerServiceMock } from '../../mock/logger-service.mock'
+import { File } from '../../../src/modules/files/objects/entities/file.entity'
+import { In, IsNull, Not } from 'typeorm'
 
 describe('Dossiers (e2e)', () => {
   let app: INestApplication
@@ -94,6 +96,11 @@ describe('Dossiers (e2e)', () => {
     })
 
     it('Should return all file for admin', async () => {
+      // id dans les fixtures ne sont pas conservé et change dynamiquement
+      const expectedData = await dataSource.manager.find(File, {
+        where: { dossierId: Not(IsNull()) },
+        select: ['id', 'label', 'tag'],
+      })
       return request(app.getHttpServer())
         .post('/dossiers/16/files/list')
         .set('Authorization', `Bearer ${tokens.superadmin}`)
@@ -105,17 +112,19 @@ describe('Dossiers (e2e)', () => {
         .expect(200)
         .then(({ body }) => {
           expect(body).toEqual({
-            data: [
-              { id: 2, label: 'coucou', tag: 'some-tag' },
-              { id: 3, label: 'salut', tag: 'some-other-tag' },
-              { id: 4, label: 'hi', tag: 'some-third-tag' },
-            ],
+            data: expectedData,
             total: 3,
           })
         })
     })
 
     it('Should filter tag', async () => {
+      // id n'est pas celui de la fixture.
+      const expectedData = await dataSource.manager.find(File, {
+        where: { label: In(['hi']) },
+        select: ['id', 'label', 'tag'],
+      })
+
       return request(app.getHttpServer())
         .post('/dossiers/16/files/list')
         .set('Authorization', `Bearer ${tokens.superadmin}`)
@@ -135,13 +144,19 @@ describe('Dossiers (e2e)', () => {
         .expect(200)
         .then(({ body }) => {
           expect(body).toEqual({
-            data: [{ id: 4, label: 'hi', tag: 'some-third-tag' }],
+            data: expectedData,
             total: 1,
           })
         })
     })
 
     it('Should hide file from annotation and message', async () => {
+      // id dans les fixtures ne sont pas conservé et change dynamiquement
+      const expectedData = await dataSource.manager.find(File, {
+        where: { uuid: 'bfa978f1-7337-49df-ae97-40d358afe5b0' },
+        select: ['id', 'label', 'tag'],
+      })
+
       return request(app.getHttpServer())
         .post('/dossiers/16/files/list')
         // instructor has no rights on pref 57 for demarche 1, and dossier with id 16 is pref 57 for demarche 1
@@ -154,7 +169,7 @@ describe('Dossiers (e2e)', () => {
         .expect(200)
         .then(({ body }) => {
           expect(body).toEqual({
-            data: [{ id: 2, label: 'coucou', tag: 'some-tag' }],
+            data: expectedData,
             total: 1,
           })
         })
