@@ -92,14 +92,7 @@
       "typeorm-fixtures-cli@3.1.0": "patches/typeorm-fixtures-cli@3.1.0.patch"
     },
     "overrides": {
-      "nodemailer@<=6.9.8": ">=6.9.9",
-      "braces@<3.0.3": ">=3.0.3",
-      "pug@<=3.0.2": ">=3.0.3",
-      "micromatch@<4.0.8": ">=4.0.8",
-      "rollup@<2.79.2": ">=2.79.2",
-      "cross-spawn@<6.0.6": ">=6.0.6",
-      "cross-spawn@>=7.0.0 <7.0.5": ">=7.0.5",
-      "path-to-regexp@>=2.0.0 <3.3.0": ">=3.3.0"
+      "esbuild@<=0.24.2": ">=0.25.0"
     }
   },
   "packageManager": "pnpm@9.15.4"
