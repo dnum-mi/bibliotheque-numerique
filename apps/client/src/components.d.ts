@@ -8,8 +8,6 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    ActiveFilters: typeof import('./components/ag-grid/ActiveFiltersDisplay.vue')['default']
-    ActiveFiltersDisplay: typeof import('./components/ag-grid/ActiveFiltersDisplay.vue')['default']
     ActiveFiltersDropdown: typeof import('./components/ag-grid/active-filters/ActiveFiltersDropdown.vue')['default']
     AgGridAttachmentCell: typeof import('./components/ag-grid/AgGridAttachmentCell.vue')['default']
     AgGridMultiValueCell: typeof import('./components/ag-grid/AgGridMultiValueCell.vue')['default']
@@ -46,18 +44,9 @@ declare module 'vue' {
     DsfrRadioButton: typeof import('@gouvminint/vue-dsfr')['DsfrRadioButton']
     DsfrRadioButtonSet: typeof import('@gouvminint/vue-dsfr')['DsfrRadioButtonSet']
     DsfrSearchBar: typeof import('@gouvminint/vue-dsfr')['DsfrSearchBar']
-    DsfrSegmentedSet: typeof import('@gouvminint/vue-dsfr')['DsfrSegmentedSet']
     DsfrSelect: typeof import('@gouvminint/vue-dsfr')['DsfrSelect']
-    DsfrSideMenu: typeof import('@gouvminint/vue-dsfr')['DsfrSideMenu']
-    DsfrSideMenuItem: typeof import('@gouvminint/vue-dsfr')['DsfrSideMenuItem']
-    DsfrSideMenuLink: typeof import('@gouvminint/vue-dsfr')['DsfrSideMenuLink']
-    DsfrSideMenuList: typeof import('@gouvminint/vue-dsfr')['DsfrSideMenuList']
-    DsfrSideMenuListItem: typeof import('@gouvminint/vue-dsfr')['DsfrSideMenuListItem']
-    DsfrTabContent: typeof import('@gouvminint/vue-dsfr')['DsfrTabContent']
-    DsfrTabItem: typeof import('@gouvminint/vue-dsfr')['DsfrTabItem']
     DsfrTable: typeof import('@gouvminint/vue-dsfr')['DsfrTable']
     DsfrTableCell: typeof import('@gouvminint/vue-dsfr')['DsfrTableCell']
-    DsfrTabs: typeof import('@gouvminint/vue-dsfr')['DsfrTabs']
     DsfrTags: typeof import('@gouvminint/vue-dsfr')['DsfrTags']
     DsfrTooltip: typeof import('@gouvminint/vue-dsfr')['DsfrTooltip']
     DsfrWarningButton: typeof import('./components/dsfr-extends/DsfrWarningButton.vue')['default']
