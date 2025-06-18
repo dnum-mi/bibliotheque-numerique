@@ -8,7 +8,10 @@ const bnConfigurations = [
   'LAST_ORGANISM_SYNC_AT',
   'DDC_FIRST_CONTROL_YEAR',
   'DDC_MONTH_BEFORE_MISSING',
-  'ENABLE_SIAF'
+  'ENABLE_SIAF', // TODO: A supprimer à apres avoir finit le syncho hub
+  'ENABLE_HUB_SEARCH',
+  'SYNC_RNA_VIA_HUB',
+  'SYNC_RNF_VIA_HUB',
 ] as const
 
 export type BnConfigurationKey = typeof bnConfigurations[number]

@@ -42,8 +42,22 @@ export const BnConfigurationDefault: Record<
     stringValue: '6',
     type: eBnConfigurationType.number,
   },
+  // TODO: A supprimer
   [eBnConfiguration.ENABLE_SIAF]: {
     stringValue: 'false',
     type: eBnConfigurationType.boolean,
   },
+  [eBnConfiguration.ENABLE_HUB_SEARCH]: {
+    stringValue: 'false',
+    type: eBnConfigurationType.boolean,
+  },
+  [eBnConfiguration.SYNC_RNA_VIA_HUB]: {
+    stringValue: 'false',
+    type: eBnConfigurationType.boolean,
+  },
+  [eBnConfiguration.SYNC_RNF_VIA_HUB]: {
+    stringValue: 'false',
+    type: eBnConfigurationType.boolean,
+  },
+
 }
