@@ -117,6 +117,30 @@ describe('bn-configurations (e2e)', () => {
           stringValue: 'false',
           valueType: 'boolean',
         },
+        {
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String),
+          id: 9,
+          keyName: eBnConfiguration.ENABLE_HUB_SEARCH,
+          stringValue: 'false',
+          valueType: 'boolean',
+        },
+        {
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String),
+          id: 10,
+          keyName: eBnConfiguration.SYNC_RNA_VIA_HUB,
+          stringValue: 'false',
+          valueType: 'boolean',
+        },
+        {
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String),
+          id: 11,
+          keyName: eBnConfiguration.SYNC_RNF_VIA_HUB,
+          stringValue: 'false',
+          valueType: 'boolean',
+        },
       ])
     })
   })
