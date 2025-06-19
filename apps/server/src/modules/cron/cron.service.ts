@@ -59,12 +59,20 @@ export class CronService implements OnApplicationBootstrap {
     this.logger.verbose('_registerAllCronJobs')
     this._loadCronJobTimes()
     const delayedJobs = await this.syncQueue.getJobs(['delayed'])
+    const repeatableJobs = await this.syncQueue.getRepeatableJobs()
     for (const job of this.jobCron) {
       const delayedJobsName = delayedJobs.filter(j => j.name === job.name)
       if (delayedJobsName.length) {
-        this.logger.debug('Remove an already existing job: ' + job.name)
+        this.logger.debug('Remove an already existing job in delayed: ' + job.name)
         await Promise.all(delayedJobsName.map(async (j) => j.remove()))
       }
+      const repeatableJobsByJob = repeatableJobs.filter(j => j.name === job.name)
+      if (repeatableJobsByJob.length) {
+        this.logger.debug('Remove an already existing job in repeatable: ' + job.name)
+        await Promise.all(repeatableJobsByJob.map(j => this.syncQueue.removeRepeatableByKey(j.key)))
+      }
+      await this.syncQueue.removeRepeatableByKey(`${job.name}:.*`)
+
       this.logger.debug('adding job ' + job.name + ' with cron ' + job.cron)
       await this.syncQueue.add(job.name, job.payload || null, {
         jobId: 1,
