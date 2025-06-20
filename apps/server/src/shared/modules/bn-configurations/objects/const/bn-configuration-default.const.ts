@@ -34,6 +34,10 @@ export const BnConfigurationDefault: Record<
     stringValue: (new Date(0)).toISOString(),
     type: eBnConfigurationType.date,
   },
+  [eBnConfiguration.LAST_FOUNDATION_SYNC_AT]: {
+    stringValue: (new Date(0)).toISOString(),
+    type: eBnConfigurationType.date,
+  },
   [eBnConfiguration.DDC_FIRST_CONTROL_YEAR]: {
     stringValue: '2020',
     type: eBnConfigurationType.number,

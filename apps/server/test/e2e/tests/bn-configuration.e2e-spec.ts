@@ -54,7 +54,7 @@ describe('bn-configurations (e2e)', () => {
         .expect(200)
       expect(response.body).toMatchObject([
         {
-          id: 1,
+          id: expect.any(Number),
           keyName: eBnConfiguration.FE_EXCEL_IMPORT_SHEET_NAME,
           stringValue: 'sheet1',
           valueType: 'string',
@@ -62,7 +62,7 @@ describe('bn-configurations (e2e)', () => {
           updatedAt: expect.any(String),
         },
         {
-          id: 2,
+          id: expect.any(Number),
           keyName: eBnConfiguration.FE_EXCEL_IMPORT_RANGE,
           stringValue: 'A1:Z1000',
           valueType: 'string',
@@ -70,7 +70,7 @@ describe('bn-configurations (e2e)', () => {
           updatedAt: expect.any(String),
         },
         {
-          id: 3,
+          id: expect.any(Number),
           keyName: eBnConfiguration.FE_AMOUNT_CHAMP_TAG,
           stringValue: 'fe-amount-champ',
           valueType: 'string',
@@ -78,7 +78,7 @@ describe('bn-configurations (e2e)', () => {
           updatedAt: expect.any(String),
         },
         {
-          id: 4,
+          id: expect.any(Number),
           createdAt: expect.any(String),
           updatedAt: expect.any(String),
           keyName: eBnConfiguration.FILE_MAXIMUM_SIZE,
@@ -86,7 +86,7 @@ describe('bn-configurations (e2e)', () => {
           valueType: 'number',
         },
         {
-          id: 5,
+          id: expect.any(Number),
           createdAt: expect.any(String),
           updatedAt: expect.any(String),
           keyName: eBnConfiguration.LAST_ORGANISM_SYNC_AT,
@@ -94,9 +94,17 @@ describe('bn-configurations (e2e)', () => {
           valueType: 'date',
         },
         {
+          id: expect.any(Number),
           createdAt: expect.any(String),
           updatedAt: expect.any(String),
-          id: 6,
+          keyName: eBnConfiguration.LAST_FOUNDATION_SYNC_AT,
+          stringValue: expect.any(String),
+          valueType: 'date',
+        },
+        {
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String),
+          id: expect.any(Number),
           keyName: eBnConfiguration.DDC_FIRST_CONTROL_YEAR,
           stringValue: expect.any(String),
           valueType: 'number',
@@ -104,7 +112,7 @@ describe('bn-configurations (e2e)', () => {
         {
           createdAt: expect.any(String),
           updatedAt: expect.any(String),
-          id: 7,
+          id: expect.any(Number),
           keyName: eBnConfiguration.DDC_MONTH_BEFORE_MISSING,
           stringValue: expect.any(String),
           valueType: 'number',
@@ -112,7 +120,7 @@ describe('bn-configurations (e2e)', () => {
         {
           createdAt: expect.any(String),
           updatedAt: expect.any(String),
-          id: 8,
+          id: expect.any(Number),
           keyName: eBnConfiguration.ENABLE_SIAF,
           stringValue: 'false',
           valueType: 'boolean',
@@ -120,7 +128,7 @@ describe('bn-configurations (e2e)', () => {
         {
           createdAt: expect.any(String),
           updatedAt: expect.any(String),
-          id: 9,
+          id: expect.any(Number),
           keyName: eBnConfiguration.ENABLE_HUB_SEARCH,
           stringValue: 'false',
           valueType: 'boolean',
@@ -128,7 +136,7 @@ describe('bn-configurations (e2e)', () => {
         {
           createdAt: expect.any(String),
           updatedAt: expect.any(String),
-          id: 10,
+          id: expect.any(Number),
           keyName: eBnConfiguration.SYNC_RNA_VIA_HUB,
           stringValue: 'false',
           valueType: 'boolean',
@@ -136,7 +144,7 @@ describe('bn-configurations (e2e)', () => {
         {
           createdAt: expect.any(String),
           updatedAt: expect.any(String),
-          id: 11,
+          id: expect.any(Number),
           keyName: eBnConfiguration.SYNC_RNF_VIA_HUB,
           stringValue: 'false',
           valueType: 'boolean',
