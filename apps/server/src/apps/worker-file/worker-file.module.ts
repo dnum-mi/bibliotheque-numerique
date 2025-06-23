@@ -20,6 +20,7 @@ import { FileProcessor } from '@/apps/worker-file/processor/file.processor'
 import { FileModule } from '@/modules/files/file.module'
 import { DossierModule } from '@/modules/dossiers/dossier.module'
 import instructionTimeMappingConfig from '@/config/instructionTimeMapping.config'
+import siafHubConfig from '../../config/siaf-hub.config'
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import instructionTimeMappingConfig from '@/config/instructionTimeMapping.config
         bullConfig,
         fileConfig,
         instructionTimeMappingConfig,
+        siafHubConfig,
       ],
     } as ConfigModuleOptions),
     LoggerModule.forRoot('worker-file'),

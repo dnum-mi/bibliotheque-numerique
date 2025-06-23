@@ -9,6 +9,7 @@ import type {
 } from '@biblio-num/shared'
 import axios, { AxiosInstance } from 'axios'
 import { Stream } from 'node:stream'
+import { ILastFoundationOuptut } from '../last-foundation-output.type'
 
 export interface IAssociations {
   associations: ISiafRnaOutput | ISiafAssociationOutput
@@ -38,6 +39,7 @@ export class HubService {
         'Content-Type': 'application/json',
       },
     })
+
     this.axios.interceptors.response.use(response => response.data, e => {
       const code = e.response?.status
       if (code === 404) {
@@ -84,6 +86,18 @@ export class HubService {
   async getFoundationFile(id: string, uuid: string): Promise<Stream> {
     this.logger.verbose('HUB-getFoundationFile')
     return this._getFileToStream(id, uuid, ePathCompletedOrganismeByType.foundation)
+  }
+
+  async getLastImportedFoundations(lastUpdatedAt: string, scrollId?: string):Promise<ILastFoundationOuptut> {
+    this.logger.verbose('getLastImportedFoundations')
+    const dateLastUpdatedAt = new Date(lastUpdatedAt)
+    if (!dateLastUpdatedAt) throw new Error(`${lastUpdatedAt} is not date format`)
+    const timeStampLastUpdatedAt = Math.trunc(dateLastUpdatedAt.getTime() / 1000)
+    let path = `${ePathCompletedOrganismeByType.foundation}/last_received_fondations/${timeStampLastUpdatedAt}`
+    if (scrollId) {
+      path += `?scroll_id=${scrollId}`
+    }
+    return this.axios.get(path)
   }
   //#endregion FOUNDATIONS
 

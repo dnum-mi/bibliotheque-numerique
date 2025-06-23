@@ -56,6 +56,7 @@ import { BnConfigurationService } from '@/shared/modules/bn-configurations/provi
 import { addYears } from 'date-fns'
 import { getCodeByRegionName } from '../utils/utils.regions'
 import { HubService } from '@/modules/hub/providers/hub.service'
+import { GetUpdateFoundationInputDto } from '../objects/dto/get-updated-foundation-input.dto'
 
 @Injectable()
 export class OrganismeService extends BaseEntityService<Organisme> {
@@ -749,5 +750,30 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     }
     this.logger.log(`Organisme ${numberOrganisme} ${id} deleted`)
     return numberOrganisme
+  }
+
+  async getLastUpdatedFndations(args: GetUpdateFoundationInputDto): Promise<string[]> {
+    this.logger.log('getLastUpdatedFndations')
+    const rnfIds:string[] = []
+    let scrollId:string|undefined
+    let max
+    let count = 0
+    do {
+      const results = await this.hubService.getLastImportedFoundations(args.lastUpdatedAt, scrollId)
+      scrollId = results?.scroll_id
+      if (results?.fondations) {
+        rnfIds.concat(results.fondations?.map(f => f.id).filter(id => args.rnfIds.includes(id)))
+        max = results.total_records
+        count += results.fondations.length
+      }
+      // TODO: A vérifier l'utiliter
+      // (est-ce que le total records le nombre complet des documents ou seulement ceux de la reponse )
+      if (count >= max) {
+        break
+      }
+    }
+    while (scrollId)
+
+    return rnfIds
   }
 }

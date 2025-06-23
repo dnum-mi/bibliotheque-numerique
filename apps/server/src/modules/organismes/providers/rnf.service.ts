@@ -3,7 +3,7 @@ import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { ConfigService } from '@nestjs/config'
 import axios from 'axios'
 import { isRnfLuhnValid } from '@/shared/utils/rnf.utils'
-import { IRnfOutput, ISiafRnfOutput, ISiafRnfHistoryOutput } from '@biblio-num/shared'
+import { ISiafRnfOutput, ISiafRnfHistoryOutput } from '@biblio-num/shared'
 import { GetUpdateFoundationInputDto } from '../objects/dto/get-updated-foundation-input.dto'
 
 @Injectable()
@@ -15,7 +15,7 @@ export class RnfService {
     this.logger.setContext(this.constructor.name)
   }
 
-  async getFoundation(idRnf: string): Promise<IRnfOutput | ISiafRnfOutput> {
+  async getFoundation(idRnf: string): Promise<ISiafRnfOutput> {
     this.logger.verbose('getFoundation')
     if (!idRnf || !isRnfLuhnValid(idRnf)) {
       this.logger.error(
