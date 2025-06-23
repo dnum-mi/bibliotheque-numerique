@@ -10,7 +10,7 @@ import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { OrganismeService } from '@/modules/organismes/providers/organisme.service'
 import { RnfService } from '@/modules/organismes/providers/rnf.service'
 import { BnConfigurationService } from '@/shared/modules/bn-configurations/providers/bn-configuration.service'
-import { eBnConfiguration, IRnfOutput } from '@biblio-num/shared'
+import { eBnConfiguration, ISiafRnfOutput } from '@biblio-num/shared'
 import { RnaService } from '@/modules/organismes/providers/rna.service'
 import { FieldService } from '@/modules/dossiers/providers/field.service'
 import { ALS_INSTANCE } from '@/shared/modules/als/als.module'
@@ -105,8 +105,11 @@ export class OrganismeProcessor {
       this.logger.verbose('syncAllRnfOrganisme')
       const rnfs = await this.organismeService.getAllRnfOrganisme()
       const lastSyncConfig = await this.bnConfiguration.findByKeyName(
-        eBnConfiguration.LAST_ORGANISM_SYNC_AT,
+        eBnConfiguration.LAST_FOUNDATION_SYNC_AT,
       )
+
+      const isSyncRnfViaHub = await this.bnConfiguration.getValueByKeyName(eBnConfiguration.SYNC_RNF_VIA_HUB)
+
       this.logger.log(
         `Synchronising all RNF since ${lastSyncConfig.stringValue}`,
       )
@@ -117,15 +120,21 @@ export class OrganismeProcessor {
         query.lastUpdatedAt = lastSyncConfig.stringValue
       }
 
-      const modifiedRnfIds = await this.rnfService.getUpdatedFoundations(query)
+      const dateNow = new Date().toISOString()
+      let modifiedRnfIds:string[] = []
+      if (isSyncRnfViaHub) {
+        modifiedRnfIds = await this.organismeService.getLastUpdatedFndations(query)
+      } else {
+        modifiedRnfIds = await this.rnfService.getUpdatedFoundations(query)
+      }
       for (const rnfId of modifiedRnfIds) {
-        this.syncQueue.add(eJobName.SyncOneRnfOrganisme, {
+        await this.syncQueue.add(eJobName.SyncOneRnfOrganisme, {
           rnf: rnfId,
         } satisfies SyncOneRnfOrganismeJobPayload)
       }
       await this.bnConfiguration.setConfig(
-        eBnConfiguration.LAST_ORGANISM_SYNC_AT,
-        new Date().toISOString(),
+        eBnConfiguration.LAST_FOUNDATION_SYNC_AT,
+        dateNow,
       )
     })
   }
@@ -137,9 +146,17 @@ export class OrganismeProcessor {
     await this.als.run({ job }, async () => {
       this.logger.verbose('syncOneRnfOrganisme')
       this.logger.debug(job.data)
-      const rawRnf = await this.rnfService.getFoundation(job.data.rnf)
+      const isSyncRnfViaHub = await this.bnConfiguration.getValueByKeyName(eBnConfiguration.SYNC_RNF_VIA_HUB)
+      let rawRnf:ISiafRnfOutput = null
+
+      if (isSyncRnfViaHub) {
+        rawRnf = await this.organismeService.getFoundationFromHub(job.data.rnf)
+      } else {
+        rawRnf = await this.rnfService.getFoundation(job.data.rnf)
+      }
 
       if (rawRnf === null) {
+        this.logger.warn(`The foundation ${job.data.rnf} is not found. The foundation is deleting`)
         await this.organismeService.repository.delete({ idRnf: job.data.rnf })
         if (job.data.fieldId) {
           await this.fieldService.updateOrThrow(job.data.fieldId, {
@@ -155,8 +172,8 @@ export class OrganismeProcessor {
 
         await this.organismeService.updateOrganismeFromRnf(
           job.data.rnf,
-            rawRnf as IRnfOutput,
-            job.data.firstTime,
+          rawRnf,
+          job.data.firstTime,
         )
       }
     })

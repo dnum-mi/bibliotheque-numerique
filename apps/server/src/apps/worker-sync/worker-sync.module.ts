@@ -31,6 +31,7 @@ import { OrganismeProcessor } from '@/apps/worker-sync/processors/organisme.proc
 import { S3Module } from '@/shared/modules/s3/s3.module'
 import fileConfig from '../../config/file.config'
 import { WokerSyncService } from './woker-sync.service'
+import siafHubConfig from '../../config/siaf-hub.config'
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { WokerSyncService } from './woker-sync.service'
         rnaConfig,
         rnfConfig,
         fileConfig,
+        siafHubConfig,
       ],
     } as ConfigModuleOptions),
     LoggerModule.forRoot('worker-sync'),
