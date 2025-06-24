@@ -20,7 +20,7 @@ export interface IOrganisme {
   idRna: string | null
   rnaJson: ISiafRnaOutput | ISiafAssociationOutput | IRnaOutput | null
   idRnf: string | null
-  rnfJson: ISiafRnfOutput | IRnfOutput |null
+  rnfJson: ISiafRnfOutput | null
   addressLabel: string | null
   addressPostalCode: string | null
   addressCityName: string | null

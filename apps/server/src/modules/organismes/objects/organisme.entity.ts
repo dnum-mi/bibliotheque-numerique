@@ -4,7 +4,6 @@ import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
 import {
   IOrganisme,
   IRnaOutput,
-  IRnfOutput,
   eOrganismeType,
   OrganismeTypeKey,
   eState,
@@ -150,7 +149,7 @@ export class Organisme extends BaseEntity implements IOrganisme {
     description: 'Json original reçu de RNF',
     nullable: true,
   })
-  rnfJson: IRnfOutput | ISiafRnfOutput | null
+  rnfJson: ISiafRnfOutput | null
   //#endregion
 
   //#region Address
