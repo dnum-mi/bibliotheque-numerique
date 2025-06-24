@@ -12,7 +12,6 @@ import {
   IPerson,
   IPersonRnf,
   IRnaOutput,
-  IRnfOutput,
   PersonRoleKey,
   eOrganismeType,
   eState,
@@ -125,7 +124,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
   }
 
   private _formatAddress(
-    rawAddress: IRnfOutput['address'],
+    rawAddress: IAddress,
   ): Partial<Organisme> {
     return Object.fromEntries(
       [
@@ -209,7 +208,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
 
   async updateOrganismeFromRnf(
     idRnf: string,
-    raw: IRnfOutput | ISiafRnfOutput,
+    raw: ISiafRnfOutput,
     firstTime = false,
   ): Promise<void> {
     this.logger.verbose(`updateOrganismeFromRnf ${idRnf}`)
