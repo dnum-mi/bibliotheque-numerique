@@ -104,6 +104,9 @@ importers:
       sanitize-html:
         specifier: ^2.14.0
         version: 2.14.0
+      shepherd.js:
+        specifier: 14.5.0
+        version: 14.5.0
       slugify:
         specifier: ^1.6.6
         version: 1.6.6
@@ -116,6 +119,9 @@ importers:
       vue-router:
         specifier: ^4.5.0
         version: 4.5.0(vue@3.5.13(typescript@5.4.5))
+      vue-shepherd:
+        specifier: 5.0.1
+        version: 5.0.1(vue@3.5.13(typescript@5.4.5))
       vue3-openlayers:
         specifier: 11.6.2
         version: 11.6.2(ol-contextmenu@5.5.0(ol@10.2.1))(ol-ext@4.0.24(ol@10.2.1))(ol@10.2.1)(vue@3.5.13(typescript@5.4.5))
@@ -1934,10 +1940,21 @@ packages:
   '@faker-js/faker@8.2.0':
     resolution: {integrity: sha512-VacmzZqVxdWdf9y64lDOMZNDMM/FQdtM9IsaOPKOm2suYwEatb8VkdHqOzXcDnZbk7YDE2BmsJmy/2Hmkn563g==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0, npm: '>=6.14.13'}
+    deprecated: Please update to a newer version
 
   '@faker-js/faker@9.2.0':
     resolution: {integrity: sha512-ulqQu4KMr1/sTFIYvqSdegHT8NIkt66tFAkugGnHA+1WAfEn6hMzNR+svjXGFRVLnapxvej67Z/LwchFrnLBUg==}
     engines: {node: '>=18.0.0', npm: '>=9.0.0'}
+    deprecated: Please update to a newer version
+
+  '@floating-ui/core@1.7.1':
+    resolution: {integrity: sha512-azI0DrjMMfIug/ExbBaeDVJXcY0a7EPvPjb2xAJPa4HeimBX+Z18HK8QQR3jb6356SnDDdxx+hinMLcJEDdOjw==}
+
+  '@floating-ui/dom@1.7.1':
+    resolution: {integrity: sha512-cwsmW/zyw5ltYTUeeYJ60CnQuPqmGwuGVhG9w0PRaRKkAyi38BT5CKrpIbb+jtahSwUl04cWzSx9ZOIxeS6RsQ==}
+
+  '@floating-ui/utils@0.2.9':
+    resolution: {integrity: sha512-MDWhGtE+eHw5JW7lq4qhc5yRLS11ERl1c7Z6Xd0a58DozHES6EnNNwUWbMiG4J9Cgj053Bhk8zvlhFYKVhULwg==}
 
   '@gouvfr/dsfr@1.13.0':
     resolution: {integrity: sha512-I6JLYfE63dogk5qOx69gMfW/bKsm+daFgfx2QX75isbKBy5khlJdVxOD0A6ohvywvUJlEcZTmVK8rNHeVvGmgw==}
@@ -5330,6 +5347,10 @@ packages:
   deep-is@0.1.4:
     resolution: {integrity: sha512-oIPzksmTg4/MriiaYGO+okXDT7ztn/w3Eptv/+gSIdMdKsJo0u4CfYNFJPy+4SKMuCqGw2wxnA+URMg3t8a/bQ==}
 
+  deepmerge-ts@7.1.5:
+    resolution: {integrity: sha512-HOJkrhaYsweh+W+e74Yn7YStZOilkoPb6fycpwNLKzSPtruFs48nYis0zy5yJz1+ktUhHxoRDJ27RQAWLIJVJw==}
+    engines: {node: '>=16.0.0'}
+
   deepmerge@4.3.1:
     resolution: {integrity: sha512-3sUqbMEc77XqpdNO7FRyRog+eW3ph+GYCbj+rK+uYyRMuwsVy0rMiVtPn+QJlKFvWP/1PYpapqYn0Me2knFn+A==}
     engines: {node: '>=0.10.0'}
@@ -8097,6 +8118,7 @@ packages:
   multer@1.4.5-lts.1:
     resolution: {integrity: sha512-ywPWvcDMeH+z9gQq5qYHCCy+ethsk4goepZ45GLD63fOu0YcNecQxi64nDs3qluZB+murG3/D4dJ7+dGctcCQQ==}
     engines: {node: '>= 6.0.0'}
+    deprecated: Multer 1.x is impacted by a number of vulnerabilities, which have been patched in 2.x. You should upgrade to the latest 2.x version.
 
   mute-stream@2.0.0:
     resolution: {integrity: sha512-WWdIxpyjEn+FhQJQQv9aQAYlHoNVdzIzUySNV1gHUPDSdZJ3yZn7pAAbQcV7B56Mvu881q9FZV+0Vx2xC44VWA==}
@@ -9318,6 +9340,10 @@ packages:
     resolution: {integrity: sha512-AzqKpGKjrj7EM6rKVQEPpB288oCfnrEIuyoT9cyF4nmGa7V8Zk6f7RRqYisX8X9m+Q7bd632aZW4ky7EhbQztA==}
     engines: {node: '>= 0.4'}
 
+  shepherd.js@14.5.0:
+    resolution: {integrity: sha512-23yBjWnrEeaCHFVUukPNol/K0pdvq6NgyqxDeq1qfJuNhxTHpiAvqTB9ULUogndBcGxfkyTRud95PpUyZwGAGQ==}
+    engines: {node: 18.* || >= 20}
+
   side-channel-list@1.0.0:
     resolution: {integrity: sha512-FCLHtRD/gnpCiCHEiJLOwdmFP+wzCmDEkc9y7NsYxeF4u7Btsn1ZuwgwJGxImImHicJArLP4R0yX4c2KCrMrTA==}
     engines: {node: '>= 0.4'}
@@ -10534,6 +10560,12 @@ packages:
     resolution: {integrity: sha512-HDuk+PuH5monfNuY+ct49mNmkCRK4xJAV9Ts4z9UFc4rzdDnxQLyCMGGc8pKhZhHTVzfanpNwB/lwqevcBwI4w==}
     peerDependencies:
       vue: ^3.2.0
+
+  vue-shepherd@5.0.1:
+    resolution: {integrity: sha512-7EzP7SW89zoG9PnsT5ZKw/6kMq1EFR5KoMuEI3aekVVNFZst4//BvYG78hkvXGgMO2K/4TVKEn2R63711bvSeA==}
+    engines: {node: 18.* || >= 20}
+    peerDependencies:
+      vue: '>=3.0.0'
 
   vue-tsc@2.1.10:
     resolution: {integrity: sha512-RBNSfaaRHcN5uqVqJSZh++Gy/YUzryuv9u1aFWhsammDJXNtUiJMNoJ747lZcQ68wUQFx6E73y4FY3D8E7FGMA==}
@@ -12808,6 +12840,17 @@ snapshots:
   '@faker-js/faker@8.2.0': {}
 
   '@faker-js/faker@9.2.0': {}
+
+  '@floating-ui/core@1.7.1':
+    dependencies:
+      '@floating-ui/utils': 0.2.9
+
+  '@floating-ui/dom@1.7.1':
+    dependencies:
+      '@floating-ui/core': 1.7.1
+      '@floating-ui/utils': 0.2.9
+
+  '@floating-ui/utils@0.2.9': {}
 
   '@gouvfr/dsfr@1.13.0': {}
 
@@ -16871,6 +16914,8 @@ snapshots:
     optional: true
 
   deep-is@0.1.4: {}
+
+  deepmerge-ts@7.1.5: {}
 
   deepmerge@4.3.1: {}
 
@@ -22156,6 +22201,12 @@ snapshots:
 
   shell-quote@1.8.2: {}
 
+  shepherd.js@14.5.0:
+    dependencies:
+      '@floating-ui/dom': 1.7.1
+      '@scarf/scarf': 1.4.0
+      deepmerge-ts: 7.1.5
+
   side-channel-list@1.0.0:
     dependencies:
       es-errors: 1.3.0
@@ -23582,6 +23633,11 @@ snapshots:
   vue-router@4.5.0(vue@3.5.13(typescript@5.4.5)):
     dependencies:
       '@vue/devtools-api': 6.6.4
+      vue: 3.5.13(typescript@5.4.5)
+
+  vue-shepherd@5.0.1(vue@3.5.13(typescript@5.4.5)):
+    dependencies:
+      shepherd.js: 14.5.0
       vue: 3.5.13(typescript@5.4.5)
 
   vue-tsc@2.1.10(typescript@5.4.5):

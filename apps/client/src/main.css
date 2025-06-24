@@ -1,3 +1,5 @@
+@import 'shepherd.js/dist/css/shepherd.css';
+
 html,
 body,
 #app {
@@ -241,4 +243,65 @@ body,
   .bn-dynamic-small-pt {
     padding-top: 0;
   }
+}
+
+/* Shepherd tour styles */
+.shepherd-element {
+  @extend .fr-card;
+  @extend .fr-card--no-arrow;
+
+  box-shadow: var(--lifted-shadow);
+  max-width: 450px;
+  border-radius: 0;
+}
+
+/* On désactive les boutons par défaut de Shepherd, car on va utiliser DsfrButton */
+.shepherd-footer {
+  display: none !important;
+}
+
+.shepherd-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background-color: transparent;
+  border-bottom: none;
+  border-radius: 0%;
+}
+
+.shepherd-header .shepherd-title {
+  flex-grow: 1;
+  flex-shrink: 1;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  margin: 0;
+  font-family: 'Marianne', arial, sans-serif;
+  font-weight: 700;
+  color: var(--text-title-grey);
+  font-size: 1.25rem;
+  line-height: 1.4;
+}
+
+.shepherd-header .shepherd-cancel-icon {
+  flex-shrink: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+
+.shepherd-text {
+  font-family: 'Marianne', arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.75rem;
+  color: var(--text-default-grey);
+}
+
+.shepherd-text p {
+  margin-bottom: 1rem;
+}
+
+.shepherd-modal-overlay {
+  background: rgba(0, 0, 0, 0.75);
 }
