@@ -18,6 +18,8 @@ import DemarcheDossiersDisplays from './DemarcheDossiersDisplays.vue'
 import type { TotalsAllowed } from './DemarcheDossiersDisplays.vue'
 import type { CustomFilterWithErrors } from '@/views/demarches/demarche/dossiers/custom-filter-with-errors.type'
 import { useActiveFilter } from '@/components/ag-grid/active-filters/useActiveFilter'
+import { useTour } from '@/composables/use-tour'
+import { filterTourSteps } from './TutoFilterDossier'
 
 const demarcheStore = useDemarcheStore()
 const router = useRouter()
@@ -43,6 +45,15 @@ const totalsAllowed = computed<TotalsAllowed[] | undefined>(() =>
     .filter((mapping) => mapping.type === 'number' && mapping.id !== '96151176-4624-4706-b861-722d2e53545d')
     .map((mapping) => ({ id: mapping.id, columnLabel: mapping.columnLabel }) as TotalsAllowed),
 )
+
+const { startTour } = useTour({
+  tourId: 'dossier-display-filter-tour', // Clé unique pour ce tour
+  steps: filterTourSteps,
+})
+
+const startTutorial = () => {
+  startTour()
+}
 
 //#region 📍------ LOCAL STORAGE ------ 📍
 const localStoragePaginationKey = computed(() => `agGrid.demarche-${route.params.demarcheId}.dossiers.pagination`)
@@ -361,8 +372,17 @@ const quickFilterValueTranslations: Record<string, string> = {
           small
           @click="download"
         />
+        <DsfrButton
+          id="help-button"
+          label="Lancer le tutoriel"
+          icon="ri-question-mark"
+          icon-only
+          small
+          primary
+          @click="startTutorial"
+        />
         <ActiveFiltersDropdown
-          v-if="columnsDef && (activeFilters.length > 0 || selectedCustomDisplay)"
+          v-if="columnsDef"
           :filters="activeFilters"
           :column-definitions="columnsDef"
           :quick-filter-value-translations="quickFilterValueTranslations"

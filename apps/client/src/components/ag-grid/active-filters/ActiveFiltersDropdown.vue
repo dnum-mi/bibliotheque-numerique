@@ -278,6 +278,7 @@ onBeforeUnmount(() => {
       data-controller="dataController"
     >
       <DsfrButton
+        id="active-filters-dropdown-trigger"
         :aria-controls="dropdownContentId"
         :aria-expanded="isOpen.toString()"
         aria-haspopup="true"

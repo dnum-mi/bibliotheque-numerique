@@ -4,26 +4,29 @@ import type { CustomFilterWithErrors } from '@/views/demarches/demarche/dossiers
 import type { ICustomFilterWithError } from '@biblio-num/shared'
 
 export type TotalsAllowed = {
-  id: string,
-  columnLabel: string,
+  id: string
+  columnLabel: string
 }
 
-const props = withDefaults(defineProps<{
-  displays?: CustomFilterWithErrors[],
-  paginationChanged?: boolean
-  selectedDisplay?: ICustomFilterWithError | null,
-  totalsAllowed?: TotalsAllowed[]
-  operationSuccess?: boolean
-}>(), {
-  displays: () => [],
-  selectedDisplay: null,
-  totalsAllowed: () => [],
-})
+const props = withDefaults(
+  defineProps<{
+    displays?: CustomFilterWithErrors[]
+    paginationChanged?: boolean
+    selectedDisplay?: ICustomFilterWithError | null
+    totalsAllowed?: TotalsAllowed[]
+    operationSuccess?: boolean
+  }>(),
+  {
+    displays: () => [],
+    selectedDisplay: null,
+    totalsAllowed: () => [],
+  },
+)
 
 const emit = defineEmits<{
   (event: 'selectDisplay', filterId: number | null): void
-  (event: 'createDisplay', filter: { filterName?: string, totals?: string[] }): void
-  (event: 'updateDisplayName', filter: { filterName?: string, totals?: string[] }): void
+  (event: 'createDisplay', filter: { filterName?: string; totals?: string[] }): void
+  (event: 'updateDisplayName', filter: { filterName?: string; totals?: string[] }): void
   (event: 'updateDisplay'): void
   (event: 'deleteDisplay'): void
 }>()
@@ -110,9 +113,9 @@ const openDisplayModal = (modalType: FilterModalType) => {
   if (modalType === 'duplicate') {
     inputFilterName.value = `${currentDisplay.value?.name} (copie)`
   } else {
-    inputFilterName.value = modalType === 'create' ? '' : (currentDisplay.value?.name || '')
+    inputFilterName.value = modalType === 'create' ? '' : currentDisplay.value?.name || ''
   }
-  inputFilterTotals.value = modalType === 'create' ? [] : (currentDisplay.value?.totals ?? [])
+  inputFilterTotals.value = modalType === 'create' ? [] : currentDisplay.value?.totals ?? []
 }
 const saveCurrentFilter = () => {
   filterLabelGroup.value.submitFn()
@@ -156,10 +159,9 @@ const update = () => {
       />
     </DsfrButton>
 
-    <CustomTooltip
-      content="Sélectionner un affichage"
-    >
+    <CustomTooltip content="Sélectionner un affichage">
       <DsfrSelect
+        id="custom-filter-select"
         :model-value="selectedDisplay?.id"
         default-unselected-text="Aucun affichage sélectionné"
         :options="filterList"
@@ -170,6 +172,7 @@ const update = () => {
 
     <div class="fr-mx-2v fr-mt-2v flex justify-center items-center gap-2">
       <DsfrButton
+        id="create-duplicate-filter-button"
         type="submit"
         :title="selectedDisplay ? `Dupliquer l’affichage ${selectedDisplay.name}` : 'Créer un nouvel affichage personnalisé'"
         @click="openDisplayModal(selectedDisplay ? 'duplicate' : 'create')"
@@ -177,6 +180,7 @@ const update = () => {
         <VIcon :name="selectedDisplay ? 'ri-file-copy-line' : 'ri-add-line'" />
       </DsfrButton>
       <DsfrButton
+        id="update-filter-button"
         type="submit"
         :disabled="!selectedDisplay || !paginationChanged"
         title="Mettre à jour l’affichage personnalisé"
@@ -185,6 +189,7 @@ const update = () => {
         <VIcon name="ri-save-line" />
       </DsfrButton>
       <DsfrButton
+        id="rename-filter-button"
         :disabled="!selectedDisplay"
         type="submit"
         title="Renommer l’affichage ou changer la colonne du total numéraire"
@@ -193,6 +198,7 @@ const update = () => {
         <VIcon name="ri-edit-line" />
       </DsfrButton>
       <DsfrButton
+        id="delete-filter-button"
         :disabled="!selectedDisplay"
         type="submit"
         title="supprimer l’affichage personnalisé"
@@ -239,7 +245,7 @@ const update = () => {
           :options="totalsAllowedOptions"
         />
       </div>
-      <div class="flex  justify-end  gap-4">
+      <div class="flex justify-end gap-4">
         <DsfrButton
           type="button"
           label="Annuler"
@@ -260,9 +266,10 @@ const update = () => {
     </form>
     <div v-else>
       <p>
-        Cette affichage est désormais <strong>obsolète</strong>. <br>
-        Cela signifie qu'une ou plusieurs des colonnes utilisées dans cet affichage ont été supprimées par l'administrateur dans la configuration de la démarche.
-        <br>
+        Cette affichage est désormais <strong>obsolète</strong>. <br />
+        Cela signifie qu'une ou plusieurs des colonnes utilisées dans cet affichage ont été supprimées par l'administrateur dans la
+        configuration de la démarche.
+        <br />
         Veuillez le supprimer, ou le mettre à jour.
       </p>
       <DsfrButton
@@ -277,7 +284,7 @@ const update = () => {
 
 <style scoped>
 .fr-select-group:not(:last-child) {
-  margin-bottom:0 !important;
+  margin-bottom: 0 !important;
 }
 
 .fr-error-border:not(:disabled) {
