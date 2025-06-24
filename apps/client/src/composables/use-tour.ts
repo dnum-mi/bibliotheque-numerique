@@ -1,6 +1,6 @@
 import type { TourOptions, StepOptions, Tour as ShepherdTour } from 'shepherd.js'
 import Shepherd from 'shepherd.js'
-import type { Ref } from 'vue'
+import type { Ref, App } from 'vue'
 import BnTourStep from '@/components/Tours/BnTourStep.vue'
 import type { BnTourButton } from '@/components/Tours/BnTourStep.vue'
 
@@ -21,20 +21,52 @@ export interface UseTourReturn {
   resetTour: () => void
   isTourActive: Readonly<Ref<boolean>>
   isTourCompleted: Readonly<Ref<boolean>>
-  tourInstance: Readonly<Ref<ShepherdTour | null>>
+  tourInstance: Ref<ShepherdTour | null>
+}
+
+const ALLOWED_TOUR_ACTIONS = ['next', 'back', 'complete', 'cancel'] as const
+type TourAction = (typeof ALLOWED_TOUR_ACTIONS)[number]
+
+function safeLocalStorage (key: string, value?: string): string | null {
+  try {
+    if (value !== undefined) {
+      localStorage.setItem(key, value)
+      return value
+    }
+    return localStorage.getItem(key)
+  } catch {
+    return null
+  }
 }
 
 export function useTour (options: UseTourOptions): UseTourReturn {
+  if (!options.tourId || !options.steps?.length) {
+    throw new Error('useTour: tourId et steps sont requis')
+  }
+
   const { tourId, steps, shepherdOptions } = options
 
   const tourInstance = ref<ShepherdTour | null>(null)
   const isTourActive = ref(false)
-  const isTourCompleted = ref(localStorage.getItem(`tour-completed-${tourId}`) === 'true')
+  const isTourCompleted = ref(safeLocalStorage(`tour-completed-${tourId}`) === 'true')
+
+  const appInstances: App[] = []
 
   const onTourEnd = () => {
     isTourActive.value = false
     isTourCompleted.value = true
     localStorage.setItem(`tour-completed-${tourId}`, 'true')
+  }
+
+  const cleanupInstances = () => {
+    appInstances.forEach((app) => {
+      try {
+        app.unmount()
+      } catch (error) {
+        console.warn('Erreur lors du démontage de l\'instance Vue: ', error)
+      }
+    })
+    appInstances.length = 0
   }
 
   const initTour = () => {
@@ -68,7 +100,7 @@ export function useTour (options: UseTourOptions): UseTourReturn {
         text: () => {
           const container = document.createElement('div')
 
-          createApp(BnTourStep, {
+          const app = createApp(BnTourStep, {
             text,
             buttons,
             onAction: (actionName: string) => {
@@ -77,18 +109,25 @@ export function useTour (options: UseTourOptions): UseTourReturn {
                 return
               }
 
-              if (typeof (currentTour as any)[actionName] === 'function') {
-                ;(currentTour as any)[actionName]()
+              if (ALLOWED_TOUR_ACTIONS.includes(actionName as TourAction)) {
+                try {
+                  (currentTour as any)[actionName]()
+                } catch (error) {
+                  console.error(`Erreur lors de l'exécution de l'action ${actionName}: `, error)
+                }
               } else {
                 console.warn(`Action de tour inconnue: ${actionName}`)
               }
             },
-          }).mount(container)
+          })
+
+          app.mount(container)
+          appInstances.push(app)
 
           return container
         },
         buttons: [],
-      } as unknown as StepOptions
+      } as StepOptions
     })
 
     tour.addSteps(bnSteps)
@@ -96,31 +135,52 @@ export function useTour (options: UseTourOptions): UseTourReturn {
     tour.on('show', () => {
       isTourActive.value = true
     })
-    tour.on('complete', onTourEnd)
-    tour.on('cancel', onTourEnd)
+    tour.on('complete', () => {
+      cleanupInstances()
+      onTourEnd()
+    })
+    tour.on('cancel', () => {
+      cleanupInstances()
+      onTourEnd()
+    })
     tourInstance.value = tour
   }
 
   const startTour = () => {
-    if (!tourInstance.value) {
-      initTour()
-    }
+    try {
+      if (!tourInstance.value) {
+        initTour()
+      }
 
-    setTimeout(() => {
+      nextTick()
       tourInstance.value?.start()
-    }, 100)
+    } catch (error) {
+      console.error(`Erreur lors du démarrage du tour: `, error)
+    }
   }
 
   const resetTour = () => {
-    localStorage.removeItem(`tour-completed-${tourId}`)
-    isTourCompleted.value = false
+    try {
+      safeLocalStorage(`tour-completed-${tourId}`)
+      if (typeof localStorage !== 'undefined') {
+        localStorage.removeItem(`tour-completed-${tourId}`)
+      }
+      isTourCompleted.value = false
+    } catch (error) {
+      console.warn(`Erreur lors de la réinitialisation du tour: `, error)
+    }
   }
 
   onUnmounted(() => {
-    if (tourInstance.value?.isActive()) {
-      tourInstance.value.cancel()
+    try {
+      if (tourInstance.value?.isActive()) {
+        tourInstance.value.cancel()
+      }
+      cleanupInstances()
+      tourInstance.value = null
+    } catch (error) {
+      console.warn(`Erreur lors du nettoyage du tour: `, error)
     }
-    tourInstance.value = null
   })
 
   return {
@@ -128,6 +188,6 @@ export function useTour (options: UseTourOptions): UseTourReturn {
     resetTour,
     isTourActive: readonly(isTourActive),
     isTourCompleted: readonly(isTourCompleted),
-    tourInstance: readonly(tourInstance),
+    tourInstance,
   }
 }
