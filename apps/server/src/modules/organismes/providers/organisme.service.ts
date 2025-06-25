@@ -56,6 +56,9 @@ import { addYears } from 'date-fns'
 import { getCodeByRegionName } from '../utils/utils.regions'
 import { HubService } from '@/modules/hub/providers/hub.service'
 import { GetUpdateFoundationInputDto } from '../objects/dto/get-updated-foundation-input.dto'
+import { eFileStorageIn } from '../../files/objects/const/file-storage-in.enum'
+import { tFileCommon } from '../../files/objects/types/file-common.type'
+import { FileFoundationService } from '../../files/providers/file-foundation.service'
 
 @Injectable()
 export class OrganismeService extends BaseEntityService<Organisme> {
@@ -66,6 +69,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     protected readonly rnaService: RnaService,
     protected readonly hubService: HubService,
     private readonly fileService: FileService,
+    private readonly fileFoundationService: FileFoundationService,
     protected readonly dossierService: DossierService,
     @InjectQueue(QueueName.file) private readonly fileQueue: Queue,
     private readonly bnConfiguration: BnConfigurationService,
@@ -751,9 +755,9 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     return numberOrganisme
   }
 
-  async getLastUpdatedFndations(args: GetUpdateFoundationInputDto): Promise<string[]> {
-    this.logger.log('getLastUpdatedFndations')
-    const rnfIds:string[] = []
+  async getLastUpdatedFoundations(args: GetUpdateFoundationInputDto): Promise<string[]> {
+    this.logger.log('getLastUpdatedFoundations')
+    let rnfIds:string[] = []
     let scrollId:string|undefined
     let max
     let count = 0
@@ -761,7 +765,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
       const results = await this.hubService.getLastImportedFoundations(args.lastUpdatedAt, scrollId)
       scrollId = results?.scroll_id
       if (results?.fondations) {
-        rnfIds.concat(results.fondations?.map(f => f.id).filter(id => args.rnfIds.includes(id)))
+        rnfIds = rnfIds.concat(results.fondations?.map(f => f.id).filter(id => args.rnfIds.includes(id)))
         max = results.total_records
         count += results.fondations.length
       }
@@ -774,5 +778,35 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     while (scrollId)
 
     return rnfIds
+  }
+
+  async synchroniseRnfFiles(rnfId: string, rawRnf: ISiafRnfOutput): Promise<void> {
+    this.logger.verbose('synchroniseRnfFiles')
+    const organismeId = await this.findOneOrThrow({
+      where: { idRnf: rnfId },
+      select: ['id'],
+    }).then((o) => o.id)
+
+    const fileCommon: tFileCommon = {
+      sourceLabel: 'rnf',
+      storageIn: eFileStorageIn.HUB,
+      organismeId,
+      state: eState.uploaded,
+    }
+    // const dateDepot = rawRnf.updatedAt.toString()
+    if (rawRnf.status) {
+      await this.fileFoundationService.synchroniseRnfStatus(
+        rawRnf.status,
+        rawRnf.updatedAt,
+        fileCommon,
+      )
+    }
+    if (rawRnf.dissolved) {
+      await this.fileFoundationService.synchroniseRnfDissolved(
+        rawRnf.dissolved,
+        rawRnf.updatedAt,
+        fileCommon,
+      )
+    }
   }
 }

@@ -41,7 +41,9 @@ export class OrganismeProcessor {
       this.logger.verbose('computeOrganismeDDC')
       const currentYear = new Date().getFullYear()
       const middleYear = new Date(`${currentYear}-06-01`)
-      const computingYear = isAfter(new Date(), middleYear) ? currentYear : currentYear - 1
+      const computingYear = isAfter(new Date(), middleYear)
+        ? currentYear
+        : currentYear - 1
       this.logger.log('Computing year: ' + computingYear)
       const nbrMonth = await this.bnConfiguration
         .findByKeyName(eBnConfiguration.DDC_MONTH_BEFORE_MISSING)
@@ -57,7 +59,7 @@ export class OrganismeProcessor {
       job.progress(10)
       let progress = 10
       const step = 90 / orgs.length
-      const __oneMoreStep = ():void => {
+      const __oneMoreStep = (): void => {
         progress += step
         job.progress(progress)
         if (progress >= 99) {
@@ -71,7 +73,9 @@ export class OrganismeProcessor {
           return
         }
         fiscalEndDateComputingYear.setFullYear(computingYear)
-        if (differenceInMonths(new Date(), fiscalEndDateComputingYear) >= nbrMonth) {
+        if (
+          differenceInMonths(new Date(), fiscalEndDateComputingYear) >= nbrMonth
+        ) {
           this.logger.log('adding missing year to organisme with id ' + o.id)
           this.organismeService.repository
             .update(
@@ -92,91 +96,12 @@ export class OrganismeProcessor {
     })
   }
 
+  // #region synchronization RNA
   @Process(eJobName.SyncAllRnaOrganisme)
   async syncAllRnaOrganisme(job: Job<never>): Promise<void> {
     // TODO: const rnas = await this.organismeService.getAllRnaOrganisme()
     // TODO: There is no way as of this time to have the last updated rna organisme from the rna api.
     await this.als.run({ job }, async () => {})
-  }
-
-  @Process(eJobName.SyncAllRnfOrganisme)
-  async syncAllRnfOrganisme(job: Job<never>): Promise<void> {
-    await this.als.run({ job }, async () => {
-      this.logger.verbose('syncAllRnfOrganisme')
-      const rnfs = await this.organismeService.getAllRnfOrganisme()
-      const lastSyncConfig = await this.bnConfiguration.findByKeyName(
-        eBnConfiguration.LAST_FOUNDATION_SYNC_AT,
-      )
-
-      const isSyncRnfViaHub = await this.bnConfiguration.getValueByKeyName(eBnConfiguration.SYNC_RNF_VIA_HUB)
-
-      this.logger.log(
-        `Synchronising all RNF since ${lastSyncConfig.stringValue}`,
-      )
-      const query: { rnfIds: string[]; lastUpdatedAt?: string } = {
-        rnfIds: rnfs.map((r) => r.idRnf),
-      }
-      if (lastSyncConfig.stringValue) {
-        query.lastUpdatedAt = lastSyncConfig.stringValue
-      }
-
-      const dateNow = new Date().toISOString()
-      let modifiedRnfIds:string[] = []
-      if (isSyncRnfViaHub) {
-        modifiedRnfIds = await this.organismeService.getLastUpdatedFndations(query)
-      } else {
-        modifiedRnfIds = await this.rnfService.getUpdatedFoundations(query)
-      }
-      for (const rnfId of modifiedRnfIds) {
-        await this.syncQueue.add(eJobName.SyncOneRnfOrganisme, {
-          rnf: rnfId,
-        } satisfies SyncOneRnfOrganismeJobPayload)
-      }
-      await this.bnConfiguration.setConfig(
-        eBnConfiguration.LAST_FOUNDATION_SYNC_AT,
-        dateNow,
-      )
-    })
-  }
-
-  @Process(eJobName.SyncOneRnfOrganisme)
-  async syncOneRnfOrganisme(
-    job: Job<SyncOneRnfOrganismeJobPayload>,
-  ): Promise<void> {
-    await this.als.run({ job }, async () => {
-      this.logger.verbose('syncOneRnfOrganisme')
-      this.logger.debug(job.data)
-      const isSyncRnfViaHub = await this.bnConfiguration.getValueByKeyName(eBnConfiguration.SYNC_RNF_VIA_HUB)
-      let rawRnf:ISiafRnfOutput = null
-
-      if (isSyncRnfViaHub) {
-        rawRnf = await this.organismeService.getFoundationFromHub(job.data.rnf)
-      } else {
-        rawRnf = await this.rnfService.getFoundation(job.data.rnf)
-      }
-
-      if (rawRnf === null) {
-        this.logger.warn(`The foundation ${job.data.rnf} is not found. The foundation is deleting`)
-        await this.organismeService.repository.delete({ idRnf: job.data.rnf })
-        if (job.data.fieldId) {
-          await this.fieldService.updateOrThrow(job.data.fieldId, {
-            stringValue: `ERROR-${job.data.rnf}`,
-          })
-        }
-      } else {
-        if (job.data.fieldId) {
-          await this.fieldService.updateOrThrow(job.data.fieldId, {
-            stringValue: `${job.data.rnf}`,
-          })
-        }
-
-        await this.organismeService.updateOrganismeFromRnf(
-          job.data.rnf,
-          rawRnf,
-          job.data.firstTime,
-        )
-      }
-    })
   }
 
   @Process(eJobName.SyncOneRnaOrganisme)
@@ -214,4 +139,105 @@ export class OrganismeProcessor {
       job.progress(100)
     })
   }
+  // #endregion synchronization RNA
+
+  // #region synchronization RNF
+  @Process(eJobName.SyncAllRnfOrganisme)
+  async syncAllRnfOrganisme(
+    job: Job<never>,
+  ): Promise<void> {
+    await this.als.run({ job }, async () => {
+      this.logger.verbose('syncAllRnfOrganisme')
+      const rnfs = await this.organismeService.getAllRnfOrganisme()
+      const lastSyncConfig = await this.bnConfiguration.findByKeyName(
+        eBnConfiguration.LAST_FOUNDATION_SYNC_AT,
+      )
+
+      const isSyncRnfViaHub = await this.bnConfiguration.getValueByKeyName(
+        eBnConfiguration.SYNC_RNF_VIA_HUB,
+      )
+
+      this.logger.log(
+        `Synchronising all RNF since ${lastSyncConfig.stringValue}`,
+      )
+      const query: { rnfIds: string[]; lastUpdatedAt?: string } = {
+        rnfIds: rnfs.map((r) => r.idRnf),
+      }
+      if (lastSyncConfig.stringValue) {
+        query.lastUpdatedAt = lastSyncConfig.stringValue
+      }
+
+      const dateNow = new Date().toISOString()
+      let modifiedRnfIds: string[] = []
+      if (isSyncRnfViaHub) {
+        modifiedRnfIds =
+          await this.organismeService.getLastUpdatedFoundations(query)
+      } else {
+        modifiedRnfIds = await this.rnfService.getUpdatedFoundations(query)
+      }
+
+      const addJobsResults = await Promise.allSettled(modifiedRnfIds.map((rnfId) => {
+        return this.syncQueue.add(eJobName.SyncOneRnfOrganisme, {
+          rnf: rnfId,
+        } satisfies SyncOneRnfOrganismeJobPayload)
+      }))
+
+      const rejectedCount = addJobsResults.filter((result) => result.status === 'rejected')
+      this.logger.debug(`Add jobs sync organismes: ${addJobsResults}`)
+      this.logger.warn(`Failed to add ${rejectedCount} jobs to sync organismes rnf`)
+
+      await this.bnConfiguration.setConfig(
+        eBnConfiguration.LAST_FOUNDATION_SYNC_AT,
+        dateNow,
+      )
+    })
+  }
+
+  @Process(eJobName.SyncOneRnfOrganisme)
+  async syncOneRnfOrganisme(
+    job: Job<SyncOneRnfOrganismeJobPayload>,
+  ): Promise<void> {
+    await this.als.run({ job }, async () => {
+      this.logger.verbose('syncOneRnfOrganisme')
+      this.logger.debug(job.data)
+      const isSyncRnfViaHub = await this.bnConfiguration.getValueByKeyName(
+        eBnConfiguration.SYNC_RNF_VIA_HUB,
+      )
+      let rawRnf: ISiafRnfOutput = null
+
+      if (isSyncRnfViaHub) {
+        rawRnf = await this.organismeService.getFoundationFromHub(job.data.rnf)
+      } else {
+        rawRnf = await this.rnfService.getFoundation(job.data.rnf)
+      }
+
+      if (rawRnf === null) {
+        this.logger.warn(
+          `The foundation ${job.data.rnf} is not found. The foundation is deleting`,
+        )
+        await this.organismeService.repository.delete({ idRnf: job.data.rnf })
+        if (job.data.fieldId) {
+          await this.fieldService.updateOrThrow(job.data.fieldId, {
+            stringValue: `ERROR-${job.data.rnf}`,
+          })
+        }
+      } else {
+        if (job.data.fieldId) {
+          await this.fieldService.updateOrThrow(job.data.fieldId, {
+            stringValue: `${job.data.rnf}`,
+          })
+        }
+
+        await this.organismeService.updateOrganismeFromRnf(
+          job.data.rnf,
+          rawRnf,
+          job.data.firstTime,
+        )
+        if (isSyncRnfViaHub) {
+          await this.organismeService.synchroniseRnfFiles(job.data.rnf, rawRnf)
+        }
+      }
+    })
+  }
+  //#endregion synchronization RNF
 }
