@@ -35,7 +35,7 @@ import {
   formatDate,
 } from '@/modules/files/objects/const/code-to-labels-and-tag.const'
 import { UpsertRnaFileDto } from '@/modules/files/objects/dto/input/upser-rna-file.dto'
-import { dRnaCodeToLabelAndTag } from '@/modules/files/objects/const/rna-code-to-label-and-tag.const'
+import { dRnaCodeToLabelAndTag, TLabelAndTag } from '@/modules/files/objects/const/rna-code-to-label-and-tag.const'
 
 const dMimeTypeToExtensionDictionary: Record<string, FileExtensionKey> = {
   'application/pdf': eFileExtension.pdf,
@@ -99,24 +99,36 @@ export class FileService extends BaseEntityService<File> {
     }
   }
 
-  static computeLabelAndTagForRna(doc: iRnaDocument): {
-    label: string
-    tag: FileTagKey | null
-  } {
-    const prefix = doc.date_depot
-      ? formatDate(new Date(doc.date_depot))
-      : doc.annee_depot ?? 'no-date'
-    const element = dRnaCodeToLabelAndTag[doc.sous_type?.code]
-    if (!element) {
-      return {
-        tag: eFileTag.other,
-        label: `${prefix}_${doc.sous_type?.libelle ?? 'document inconnu'}`,
-      }
-    }
+  static computeLabelAndTagForOrganisme(
+    dateDepot: string | Date | undefined,
+    anneeDepot: string | undefined,
+    element: TLabelAndTag,
+  ): TLabelAndTag {
+    const prefix = dateDepot
+      ? formatDate(new Date(dateDepot))
+      : anneeDepot ?? 'no-date'
     return {
       tag: element.tag,
       label: `${prefix}_${element.label}`,
     }
+  }
+
+  static computeLabelAndTagForRna(doc: iRnaDocument): {
+    label: string
+    tag: FileTagKey | null
+  } {
+    const element = dRnaCodeToLabelAndTag[doc.sous_type?.code]
+    if (!element) {
+      return {
+        tag: eFileTag.other,
+        label: `${doc.sous_type?.libelle ?? 'document inconnu'}`,
+      }
+    }
+
+    return FileService.computeLabelAndTagForOrganisme(
+      doc.date_depot,
+      doc.annee_depot,
+      element)
   }
 
   //#endregion

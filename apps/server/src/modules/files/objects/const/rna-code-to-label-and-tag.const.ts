@@ -21,10 +21,10 @@ export const rnaFileCodes = [
 ] as const
 
 export type RnaFileCodeKey = (typeof rnaFileCodes)[number]
-
+export type TLabelAndTag = { tag: FileTagKey; label: string }
 export const dRnaCodeToLabelAndTag: Record<
   RnaFileCodeKey,
-  { tag: FileTagKey; label: string }
+  TLabelAndTag
 > = {
   STC: {
     tag: eFileTag.status,
