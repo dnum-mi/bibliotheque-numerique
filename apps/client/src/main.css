@@ -255,9 +255,8 @@ body,
   border-radius: 0;
 }
 
-/* On désactive les boutons par défaut de Shepherd, car on va utiliser DsfrButton */
-.shepherd-footer {
-  display: none !important;
+.shepherd-custom-class {
+  border: 1px solid var(--border-default-grey);
 }
 
 .shepherd-header {
@@ -265,10 +264,13 @@ body,
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  padding: 1rem 1.5rem;
   background-color: transparent;
   border-bottom: none;
   border-radius: 0%;
+}
+
+.shepherd-has-title .shepherd-content .shepherd-header {
+  padding: .5rem .75rem;
 }
 
 .shepherd-header .shepherd-title {
@@ -282,6 +284,7 @@ body,
   color: var(--text-title-grey);
   font-size: 1.25rem;
   line-height: 1.4;
+  background: transparent;
 }
 
 .shepherd-header .shepherd-cancel-icon {
@@ -289,6 +292,18 @@ body,
   padding: 0;
   background: transparent;
   border: none;
+  cursor: pointer;
+  font-size: 24px;
+  font-weight: 400;
+}
+
+.shepherd-header .shepherd-cancel-icon:hover {
+  background-color: var(--hover-tint);
+  border-radius: 4px;
+}
+
+.shepherd-arrow, .shepherd-arrow:before {
+  background-color: transparent;
 }
 
 .shepherd-text {
@@ -304,4 +319,72 @@ body,
 
 .shepherd-modal-overlay {
   background: rgba(0, 0, 0, 0.75);
+}
+
+.shepherd-footer {
+  display: flex !important;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.shepherd-footer button,
+.shepherd-footer .shepherd-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1rem;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+  font-family: 'Marianne', arial, sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.5;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-height: 2rem;
+  padding: 0.25rem 0.75rem;
+  background-color: var(--background-action-high-blue-france);
+  color: var(--text-inverted-blue-france);
+  border-color: var(--background-action-high-blue-france);
+  border-radius: 0;
+}
+
+.shepherd-footer button:hover,
+.shepherd-footer .shepherd-button:hover {
+  background-color: var(--background-action-high-blue-france-hover);
+  border-color: var(--background-action-high-blue-france-hover);
+}
+
+.shepherd-footer button:active,
+.shepherd-footer .shepherd-button:active {
+  background-color: var(--background-action-high-blue-france-active);
+  border-color: var(--background-action-high-blue-france-active);
+}
+
+.shepherd-footer button.fr-btn--tertiary,
+.shepherd-footer .shepherd-button.fr-btn--tertiary {
+  background-color: transparent;
+  color: var(--text-action-high-blue-france);
+  border-color: var(--border-action-high-blue-france);
+}
+
+.shepherd-footer button.fr-btn--tertiary:hover,
+.shepherd-footer .shepherd-button.fr-btn--tertiary:hover {
+  background-color: var(--background-action-low-blue-france-hover);
+  color: var(--text-action-high-blue-france-hover);
+  border-color: var(--border-action-high-blue-france-hover);
+}
+
+.shepherd-footer button.fr-btn--tertiary:active,
+.shepherd-footer .shepherd-button.fr-btn--tertiary:active {
+  background-color: var(--background-action-low-blue-france-active);
+  color: var(--text-action-high-blue-france-active);
+  border-color: var(--border-action-high-blue-france-active);
+}
+
+.shepherd-footer button:not(:last-child),
+.shepherd-footer .shepherd-button:not(:last-child) {
+  margin-right: 0.75rem;
 }
