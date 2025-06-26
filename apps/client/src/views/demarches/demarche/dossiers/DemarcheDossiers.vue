@@ -368,15 +368,6 @@ const quickFilterValueTranslations: Record<string, string> = {
           small
           @click="download"
         />
-        <DsfrButton
-          id="help-button"
-          label="Lancer le tutoriel"
-          icon="ri-question-mark"
-          icon-only
-          size="small"
-          primary
-          @click="startTour"
-        />
         <ActiveFiltersDropdown
           v-if="columnsDef"
           :filters="activeFilters"
@@ -385,6 +376,15 @@ const quickFilterValueTranslations: Record<string, string> = {
           :clear-all-button-label="clearAllFiltersButtonLabel"
           @request-remove-filter="handleRemoveFilter"
           @request-clear-all="customHandleClearAllFilters"
+        />
+        <DsfrButton
+          id="help-button"
+          label="Lancer le tutoriel"
+          icon="ri-question-mark"
+          icon-only
+          size="small"
+          primary
+          @click="startTour"
         />
       </div>
       <DemarcheDossiersDisplays
