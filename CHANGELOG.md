@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.31.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.30.1...v2.31.0) (2025-06-26)
+
+
+### Features
+
+* ([#1715](https://github.com/dnum-mi/bibliotheque_numerique/issues/1715)) récupérer les pièces joints en provenance de différent source ([#1800](https://github.com/dnum-mi/bibliotheque_numerique/issues/1800)) ([01ad326](https://github.com/dnum-mi/bibliotheque_numerique/commit/01ad3262fbc50bcb1ebf4794f4853eaa87166933))
+* Mettre en visibilité les filtres actifs dans les listes (Organismes, Démarches, Administrations) ([#1791](https://github.com/dnum-mi/bibliotheque_numerique/issues/1791)) ([e1095f9](https://github.com/dnum-mi/bibliotheque_numerique/commit/e1095f99cbebb2f912d8836876ad543b0d2f1235))
+
+
+### Bug Fixes
+
+* ([#1781](https://github.com/dnum-mi/bibliotheque_numerique/issues/1781)) Replace DsfrTabe by one component Tabs  ([a5ac7ad](https://github.com/dnum-mi/bibliotheque_numerique/commit/a5ac7ad129979adc9ccc933b4a037559ffb64b01))
+* delete/set repeatable jobs ([0d97031](https://github.com/dnum-mi/bibliotheque_numerique/commit/0d970313b62d2d3120ed0eeddbe9d55171428dfd))
+* enhance cell validation by trimming and case-insensitive matching against authorized list ([5a8763a](https://github.com/dnum-mi/bibliotheque_numerique/commit/5a8763a35bbeb16f5f86d5c21bd10a5f73774dab))
+* gestion des préfectures pour toutes les démarches ([#1802](https://github.com/dnum-mi/bibliotheque_numerique/issues/1802)) ([191ac27](https://github.com/dnum-mi/bibliotheque_numerique/commit/191ac274cec6d82ea79d593c9cf0bdc5492d6c11))
+
 ## [2.30.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.30.0...v2.30.1) (2025-05-26)
 
 
