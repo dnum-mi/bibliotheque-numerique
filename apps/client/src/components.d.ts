@@ -21,7 +21,6 @@ declare module 'vue' {
     BnCheckerPassword: typeof import('./components/BnCheckerPassword.vue')['default']
     BnTab: typeof import('./components/BnTabsContainer/BnTab.vue')['default']
     BnTabsContainer: typeof import('./components/BnTabsContainer/BnTabsContainer.vue')['default']
-    BnTourStep: typeof import('./components/Tours/BnTourStep.vue')['default']
     CheckRenderer: typeof import('./components/ag-grid/CheckRenderer.vue')['default']
     CprCheckRenderer: typeof import('./components/ag-grid/CprCheckRenderer.vue')['default']
     CustomDateFilter: typeof import('./components/ag-grid/custom-filters/CustomDateFilter.vue')['default']
