@@ -119,6 +119,7 @@ const openDisplayModal = (modalType: FilterModalType) => {
 }
 const saveCurrentFilter = () => {
   filterLabelGroup.value.submitFn()
+  closeFilterModal()
 }
 const resetAgGridFilters = () => {
   emit('selectDisplay', null)
