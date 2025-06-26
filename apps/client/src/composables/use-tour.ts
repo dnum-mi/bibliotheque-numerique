@@ -1,18 +1,22 @@
 import type { TourOptions, StepOptions, Tour as ShepherdTour } from 'shepherd.js'
 import Shepherd from 'shepherd.js'
-import type { Ref, App } from 'vue'
-import BnTourStep from '@/components/Tours/BnTourStep.vue'
-import type { BnTourButton } from '@/components/Tours/BnTourStep.vue'
+import type { Ref } from 'vue'
 
-export interface BnStepOptions extends Omit<StepOptions, 'buttons' | 'text'> {
-  title: string
+const ALLOWED_TOUR_ACTIONS = ['next', 'back', 'complete', 'cancel'] as const
+type TourAction = (typeof ALLOWED_TOUR_ACTIONS)[number]
+
+export interface StepButton {
   text: string
-  buttons?: BnTourButton[]
+  action: TourAction
+  secondary?: boolean
+  classes?: string
 }
+
+export interface UseStepOptions extends StepOptions {}
 
 export interface UseTourOptions {
   tourId: string
-  steps: BnStepOptions[]
+  steps: StepOptions[]
   shepherdOptions?: TourOptions
 }
 
@@ -24,9 +28,6 @@ export interface UseTourReturn {
   tourInstance: Ref<ShepherdTour | null>
 }
 
-const ALLOWED_TOUR_ACTIONS = ['next', 'back', 'complete', 'cancel'] as const
-type TourAction = (typeof ALLOWED_TOUR_ACTIONS)[number]
-
 function safeLocalStorage (key: string, value?: string): string | null {
   try {
     if (value !== undefined) {
@@ -36,6 +37,20 @@ function safeLocalStorage (key: string, value?: string): string | null {
     return localStorage.getItem(key)
   } catch {
     return null
+  }
+}
+
+export function createStepButton (customButton: StepButton) {
+  return {
+    text: customButton.text,
+    classes: customButton.secondary ? 'shepherd-button fr-btn--tertiary' : 'shepherd-button',
+    action () {
+      if (ALLOWED_TOUR_ACTIONS.includes(customButton.action)) {
+        return (this as any)[customButton.action]()
+      } else {
+        console.warn(`Action non autorisée: ${customButton.action}`)
+      }
+    },
   }
 }
 
@@ -50,100 +65,80 @@ export function useTour (options: UseTourOptions): UseTourReturn {
   const isTourActive = ref(false)
   const isTourCompleted = ref(safeLocalStorage(`tour-completed-${tourId}`) === 'true')
 
-  const appInstances: App[] = []
-
   const onTourEnd = () => {
     isTourActive.value = false
     isTourCompleted.value = true
     localStorage.setItem(`tour-completed-${tourId}`, 'true')
   }
 
-  const cleanupInstances = () => {
-    appInstances.forEach((app) => {
-      try {
-        app.unmount()
-      } catch (error) {
-        console.warn('Erreur lors du démontage de l\'instance Vue: ', error)
-      }
-    })
-    appInstances.length = 0
-  }
-
   const initTour = () => {
     if (tourInstance.value) {
       return
     }
-
-    const defaultOptions: TourOptions = {
-      useModalOverlay: true,
-      defaultStepOptions: {
-        classes: 'shepherd-custom-class',
-        scrollTo: { behavior: 'smooth', block: 'center' },
-        cancelIcon: {
-          enabled: true,
-          label: 'Fermer le tutoriel',
-        },
-      },
-    }
-
-    const finalOptions = { ...defaultOptions, ...shepherdOptions }
-
-    const tour = new Shepherd.Tour(finalOptions)
-
-    const bnSteps = steps.map((bnStep) => {
-      const { title, text, buttons = [], ...restOfStepOptions } = bnStep
-
-      return {
-        ...restOfStepOptions,
-        title,
-
-        text: () => {
-          const container = document.createElement('div')
-
-          const app = createApp(BnTourStep, {
-            text,
-            buttons,
-            onAction: (actionName: string) => {
-              const currentTour = tourInstance.value
-              if (!currentTour) {
-                return
-              }
-
-              if (ALLOWED_TOUR_ACTIONS.includes(actionName as TourAction)) {
-                try {
-                  (currentTour as any)[actionName]()
-                } catch (error) {
-                  console.error(`Erreur lors de l'exécution de l'action ${actionName}: `, error)
-                }
-              } else {
-                console.warn(`Action de tour inconnue: ${actionName}`)
-              }
+    try {
+      const defaultTourOptions: TourOptions = {
+        useModalOverlay: true,
+        defaultStepOptions: {
+          buttons: [
+            {
+              action () {
+                return this.back()
+              },
+              classes: 'shepherd-button fr-btn--tertiary',
+              text: 'Précédent',
             },
-          })
-
-          app.mount(container)
-          appInstances.push(app)
-
-          return container
+            {
+              action () {
+                return this.next()
+              },
+              classes: 'shepherd-button',
+              text: 'Suivant',
+            },
+          ],
+          classes: 'shepherd-custom-class',
+          scrollTo: { behavior: 'smooth', block: 'center' },
+          cancelIcon: {
+            enabled: true,
+            label: 'Fermer le tutoriel',
+          },
         },
-        buttons: [],
-      } as StepOptions
-    })
+      }
 
-    tour.addSteps(bnSteps)
+      const finalOptions = {
+        ...defaultTourOptions,
+        ...shepherdOptions,
+      }
 
-    tour.on('show', () => {
-      isTourActive.value = true
-    })
-    tour.on('complete', () => {
-      cleanupInstances()
-      onTourEnd()
-    })
-    tour.on('cancel', () => {
-      cleanupInstances()
-      onTourEnd()
-    })
-    tourInstance.value = tour
+      const tour = new Shepherd.Tour(finalOptions)
+
+      const validSteps = steps.filter((step) => {
+        if (!step.title && !step.text) {
+          console.warn('Step ignoré: titre et texte manquants', step)
+          return false
+        }
+        return true
+      })
+
+      if (validSteps.length === 0) {
+        throw new Error('Aucun step valide trouvé')
+      }
+
+      tour.addSteps(steps)
+
+      tour.on('show', () => {
+        isTourActive.value = true
+      })
+      tour.on('complete', () => {
+        onTourEnd()
+      })
+      tour.on('cancel', () => {
+        onTourEnd()
+      })
+      tourInstance.value = tour
+    } catch (error) {
+      console.error('Erreur lors de l\'initialisation du tour: ', error)
+      throw error
+    }
   }
 
   const startTour = () => {
@@ -173,11 +168,17 @@ export function useTour (options: UseTourOptions): UseTourReturn {
 
   onUnmounted(() => {
     try {
-      if (tourInstance.value?.isActive()) {
-        tourInstance.value.cancel()
+      if (tourInstance.value) {
+        tourInstance.value.off('show')
+        tourInstance.value.off('complete')
+        tourInstance.value.off('cancel')
+
+        if (tourInstance.value.isActive()) {
+          tourInstance.value.cancel()
+        }
+
+        tourInstance.value = null
       }
-      cleanupInstances()
-      tourInstance.value = null
     } catch (error) {
       console.warn(`Erreur lors du nettoyage du tour: `, error)
     }
