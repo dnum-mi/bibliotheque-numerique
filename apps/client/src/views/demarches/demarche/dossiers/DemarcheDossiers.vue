@@ -51,10 +51,6 @@ const { startTour } = useTour({
   steps: filterTourSteps,
 })
 
-const startTutorial = () => {
-  startTour()
-}
-
 //#region 📍------ LOCAL STORAGE ------ 📍
 const localStoragePaginationKey = computed(() => `agGrid.demarche-${route.params.demarcheId}.dossiers.pagination`)
 const localStorageGroupByKey = computed(() => `agGrid.demarche-${route.params.demarcheId}.dossiers.groupBy`)
@@ -377,9 +373,9 @@ const quickFilterValueTranslations: Record<string, string> = {
           label="Lancer le tutoriel"
           icon="ri-question-mark"
           icon-only
-          small
+          size="small"
           primary
-          @click="startTutorial"
+          @click="startTour"
         />
         <ActiveFiltersDropdown
           v-if="columnsDef"
