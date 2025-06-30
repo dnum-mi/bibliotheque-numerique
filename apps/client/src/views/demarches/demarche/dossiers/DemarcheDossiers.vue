@@ -377,28 +377,30 @@ const quickFilterValueTranslations: Record<string, string> = {
           @request-remove-filter="handleRemoveFilter"
           @request-clear-all="customHandleClearAllFilters"
         />
+      </div>
+      <div class="flex justify-center items-center">
+        <DemarcheDossiersDisplays
+          :displays="customDisplayWithErrors as ICustomFilter[]"
+          :selected-display="selectedCustomDisplay as ICustomFilter"
+          :pagination-changed="paginationChanged"
+          :totals-allowed="totalsAllowed"
+          :operation-success="customDisplayOperationSuccess"
+          @create-display="createDisplay($event)"
+          @update-display="updateDisplay()"
+          @update-display-name="updateDisplayName($event)"
+          @delete-display="deleteDisplay()"
+          @select-display="selectDisplay($event)"
+        />
         <DsfrButton
           id="help-button"
+          class="fr-mt-2v"
           label="Lancer le tutoriel"
           icon="ri-question-mark"
           icon-only
-          size="small"
           primary
           @click="startTour"
         />
       </div>
-      <DemarcheDossiersDisplays
-        :displays="customDisplayWithErrors as ICustomFilter[]"
-        :selected-display="selectedCustomDisplay as ICustomFilter"
-        :pagination-changed="paginationChanged"
-        :totals-allowed="totalsAllowed"
-        :operation-success="customDisplayOperationSuccess"
-        @create-display="createDisplay($event)"
-        @update-display="updateDisplay()"
-        @update-display-name="updateDisplayName($event)"
-        @delete-display="deleteDisplay()"
-        @select-display="selectDisplay($event)"
-      />
     </div>
     <div class="flex-grow">
       <AgGridServerSide
