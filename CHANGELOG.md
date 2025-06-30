@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.32.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.31.0...v2.32.0) (2025-06-30)
+
+
+### Features
+
+* add tour functionality with Shepherd.js integration and new BnTourStep component ([bf68b9b](https://github.com/dnum-mi/bibliotheque_numerique/commit/bf68b9b5e12adc4db1d77a5c3fc9c421dc5a0925))
+* add tutorial steps for filter functionality and integrate help button in demarche page ([71f8a29](https://github.com/dnum-mi/bibliotheque_numerique/commit/71f8a297f8276c1377df7e98da020cb3a7d69cb2))
+* enhance shepherd footer styles and button interactions ([ce84085](https://github.com/dnum-mi/bibliotheque_numerique/commit/ce8408536d613bb628062bb064b2e38ceb1b5eb1))
+* enhance useTour functionality with improved error handling and cleanup processes ([1d980e9](https://github.com/dnum-mi/bibliotheque_numerique/commit/1d980e9798123388fddeb8a4a8a4d4794898df38))
+* refactor tour step creation and update filter tutorial steps ([0b8b963](https://github.com/dnum-mi/bibliotheque_numerique/commit/0b8b9630f6b0b2d9d95985978e0c9099f40b6c7c))
+* reorganize display component and help button ([f33247c](https://github.com/dnum-mi/bibliotheque_numerique/commit/f33247c03cb118245d8f226cd69e0658656bee28))
+* reposition help button to improve user accessibility for the tutorial ([0787301](https://github.com/dnum-mi/bibliotheque_numerique/commit/07873017ea674f25e240ccb1bcb417ab1311ceb4))
+
+
+### Bug Fixes
+
+* close filter modal after saving current filter ([af04a40](https://github.com/dnum-mi/bibliotheque_numerique/commit/af04a4045d1228e8ab86e9a37d2282118a72f795))
+
 ## [2.31.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.30.1...v2.31.0) (2025-06-26)
 
 
