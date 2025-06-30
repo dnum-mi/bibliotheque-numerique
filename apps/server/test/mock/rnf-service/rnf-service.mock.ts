@@ -13,4 +13,8 @@ export const rnfServiceMock = {
           return null;
       }
     }),
+  getUpdatedFoundations: jest.fn()
+    .mockImplementation(() => {
+      return []
+    })
 };
