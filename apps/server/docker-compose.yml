@@ -20,7 +20,7 @@ services:
       - biblio-num-worker-node_modules-volume:/app/node_modules
     networks:
       - biblio-num-network
-    command: pnpm run dev:worker-in-docker
+    command: pnpm run start:worker-sync
     environment:
       POSTGRES_HOST: db
       POSTGRES_DB: biblio-num
@@ -35,6 +35,11 @@ services:
       WORKER_PORT: ${WORKER_PORT}
       WORKER_FETCH_DATA_INTERVAL: ${WORKER_FETCH_DATA_INTERVAL}
       WORKER_FETCH_DATA_ON_STARTUP: ${WORKER_FETCH_DATA_ON_STARTUP}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: "redis"
+      REDIS_MAX_RETRY_PER_REQUEST_COUNT: 5
+      REDIS_MAX_LOADING_RETRY: 20
 
   server:
     profiles:
@@ -67,6 +72,11 @@ services:
       DEBUG: 1
       SMTP_SERVER: mailhog
       SMTP_PORT: 1025
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: "redis"
+      REDIS_MAX_RETRY_PER_REQUEST_COUNT: 5
+      REDIS_MAX_LOADING_RETRY: 20
 
   db:
     profiles:
