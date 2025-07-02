@@ -1,5 +1,4 @@
 import { Column, Entity, JoinColumn, OneToMany } from 'typeorm'
-import { BaseEntity } from '@/shared/base-entity/base.entity'
 import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
 import {
   IOrganisme,
@@ -13,9 +12,10 @@ import {
 } from '@biblio-num/shared'
 import { File } from '@/modules/files/objects/entities/file.entity'
 import { ApiProperty } from '@nestjs/swagger'
+import { BaseEntitySyncState } from '@/shared/sync-state/objects/entities/base-entity-sync-state.entity'
 
 @Entity({ name: 'organismes' })
-export class Organisme extends BaseEntity implements IOrganisme {
+export class Organisme extends BaseEntitySyncState implements IOrganisme {
   @ApiProperty({
     type: String,
     enum: eOrganismeType,
