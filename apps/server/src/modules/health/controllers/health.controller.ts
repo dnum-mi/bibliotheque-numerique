@@ -30,6 +30,9 @@ export class HealthController {
     this.logger.setContext(this.constructor.name)
   }
 
+  // This endpoint is used to check the health of the server,
+  // Call by kubernetes status probe
+  // Call by supervision
   @UsualApiOperation({
     summary: "Retourne l'état de santé du serveur.",
     method: 'GET',
@@ -56,6 +59,28 @@ export class HealthController {
     ])
   }
 
+  // This endpoint is used to check the server's version and environment,
+  // Call by client
+  @UsualApiOperation({
+    summary: 'Vérifie les informations du serveur.',
+    method: 'GET',
+    minimumRole: 'aucun',
+    responseType: null,
+  })
+  @Get('info')
+  @PublicRoute()
+  info(): Promise<HealthCheckResult> {
+    this.logger.verbose('Server info check')
+    return this.health.check([
+      (): Promise<HealthIndicatorResult> =>
+        this.versionIndicator.isHealthy('version'),
+      (): Promise<HealthIndicatorResult> =>
+        this.environmentIndicator.isHealthy('environment'),
+    ])
+  }
+
+  // This endpoint is used to check the liveliness of the server,
+  // Call by kubernetes liveness probe
   @UsualApiOperation({
     summary: 'Vérifie la vivacité du serveur.',
     method: 'GET',
