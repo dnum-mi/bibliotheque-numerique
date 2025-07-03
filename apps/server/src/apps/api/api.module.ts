@@ -38,6 +38,7 @@ import { CronModule } from '@/modules/cron/cron.module'
 import { BnConfigurationModule } from '@/shared/modules/bn-configurations/bn-configuration.module'
 import siafHubConfig from '../../config/siaf-hub.config'
 import { JwtAuthGuard } from '@/modules/auth/providers/jwt-auth.guard'
+import { SyncStateModule } from '../../shared/sync-state/sync-state.module'
 
 @Module({
   imports: [
@@ -80,6 +81,7 @@ import { JwtAuthGuard } from '@/modules/auth/providers/jwt-auth.guard'
     OrganismeModule,
     InstructionTimesModule,
     BnConfigurationModule,
+    SyncStateModule,
   ],
   controllers: [],
   providers: [

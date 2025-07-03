@@ -1,3 +1,4 @@
+import { ISyncState } from "../state";
 import { IOrganisme } from "./organisme.interface";
 
 export interface IOrganismeOutputDto extends IOrganisme {
@@ -23,4 +24,5 @@ export interface IOrganismeOutputDto extends IOrganisme {
   createdAt?: Date;
   updatedAt?: Date;
   fiscalEndDateAt?: Date;
+  syncState: ISyncState;
 }
