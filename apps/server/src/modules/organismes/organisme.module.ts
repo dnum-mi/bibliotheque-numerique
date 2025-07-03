@@ -13,10 +13,12 @@ import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-nam
 import { BullModule, BullModuleOptions } from '@nestjs/bull'
 import { BnConfigurationModule } from '@/shared/modules/bn-configurations/bn-configuration.module'
 import { HubModule } from '@/modules/hub/hub.module'
+import { OrganismeSyncStateService } from './providers/organisme-sync-state.service'
+import { SyncState } from '../../shared/sync-state/objects/entities/sync-state.entity'
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Organisme]),
+    TypeOrmModule.forFeature([Organisme, SyncState]),
     forwardRef(() => DossierModule),
     BullModule.registerQueue(
       ...([
@@ -30,7 +32,7 @@ import { HubModule } from '@/modules/hub/hub.module'
     HubModule,
   ],
   controllers: [OrganismeController, OrganismeFileController],
-  providers: [OrganismeService, RnaService, RnfService],
-  exports: [OrganismeService, RnfService, RnaService],
+  providers: [OrganismeService, RnaService, RnfService, OrganismeSyncStateService],
+  exports: [OrganismeService, RnfService, RnaService, OrganismeSyncStateService],
 })
 export class OrganismeModule {}

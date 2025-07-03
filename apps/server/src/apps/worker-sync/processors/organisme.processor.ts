@@ -18,6 +18,7 @@ import { AsyncLocalStorage } from 'async_hooks'
 import { AsyncLocalStore } from '@/shared/modules/als/async-local-store.type'
 import { Inject } from '@nestjs/common'
 import { differenceInMonths, isAfter } from 'date-fns'
+import { OrganismeSyncStateService } from '../../../modules/organismes/providers/organisme-sync-state.service'
 
 @Processor(QueueName.sync)
 export class OrganismeProcessor {
@@ -28,6 +29,7 @@ export class OrganismeProcessor {
     private readonly fieldService: FieldService,
     private readonly organismeService: OrganismeService,
     private readonly bnConfiguration: BnConfigurationService,
+    private readonly syncState: OrganismeSyncStateService,
     @InjectQueue(QueueName.sync) private readonly syncQueue: Queue,
     @Inject(ALS_INSTANCE)
     private readonly als?: AsyncLocalStorage<AsyncLocalStore>,
@@ -176,9 +178,11 @@ export class OrganismeProcessor {
         modifiedRnfIds = await this.rnfService.getUpdatedFoundations(query)
       }
 
-      const addJobsResults = await Promise.allSettled(modifiedRnfIds.map((rnfId) => {
+      const addJobsResults = await Promise.allSettled(modifiedRnfIds.map(async (rnfId) => {
+        const syncStateEntity = await this.syncState.setStateQueuedByIdRnf(rnfId)
         return this.syncQueue.add(eJobName.SyncOneRnfOrganisme, {
           rnf: rnfId,
+          syncState: syncStateEntity.id,
         } satisfies SyncOneRnfOrganismeJobPayload)
       }))
 
@@ -198,44 +202,50 @@ export class OrganismeProcessor {
     job: Job<SyncOneRnfOrganismeJobPayload>,
   ): Promise<void> {
     await this.als.run({ job }, async () => {
-      this.logger.verbose('syncOneRnfOrganisme')
-      this.logger.debug(job.data)
-      const isSyncRnfViaHub = await this.bnConfiguration.getValueByKeyName(
-        eBnConfiguration.SYNC_RNF_VIA_HUB,
-      )
-      let rawRnf: ISiafRnfOutput = null
-
-      if (isSyncRnfViaHub) {
-        rawRnf = await this.organismeService.getFoundationFromHub(job.data.rnf)
-      } else {
-        rawRnf = await this.rnfService.getFoundation(job.data.rnf)
-      }
-
-      if (rawRnf === null) {
-        this.logger.warn(
-          `The foundation ${job.data.rnf} is not found. The foundation is deleting`,
+      try {
+        this.logger.verbose('syncOneRnfOrganisme')
+        this.logger.debug(job.data)
+        const isSyncRnfViaHub = await this.bnConfiguration.getValueByKeyName(
+          eBnConfiguration.SYNC_RNF_VIA_HUB,
         )
-        await this.organismeService.repository.delete({ idRnf: job.data.rnf })
-        if (job.data.fieldId) {
-          await this.fieldService.updateOrThrow(job.data.fieldId, {
-            stringValue: `ERROR-${job.data.rnf}`,
-          })
-        }
-      } else {
-        if (job.data.fieldId) {
-          await this.fieldService.updateOrThrow(job.data.fieldId, {
-            stringValue: `${job.data.rnf}`,
-          })
-        }
-
-        await this.organismeService.updateOrganismeFromRnf(
-          job.data.rnf,
-          rawRnf,
-          job.data.firstTime,
-        )
+        let rawRnf: ISiafRnfOutput = null
+        await this.syncState.setStateUploadingByIdRnf(job.data.rnf, job.data.syncState)
         if (isSyncRnfViaHub) {
-          await this.organismeService.synchroniseRnfFiles(job.data.rnf, rawRnf)
+          rawRnf = await this.organismeService.getFoundationFromHub(job.data.rnf)
+        } else {
+          rawRnf = await this.rnfService.getFoundation(job.data.rnf)
         }
+
+        if (rawRnf === null) {
+          this.logger.warn(
+            `The foundation ${job.data.rnf} is not found. The foundation is deleting`,
+          )
+          await this.organismeService.repository.delete({ idRnf: job.data.rnf })
+          if (job.data.fieldId) {
+            await this.fieldService.updateOrThrow(job.data.fieldId, {
+              stringValue: `ERROR-${job.data.rnf}`,
+            })
+          }
+        } else {
+          if (job.data.fieldId) {
+            await this.fieldService.updateOrThrow(job.data.fieldId, {
+              stringValue: `${job.data.rnf}`,
+            })
+          }
+
+          await this.organismeService.updateOrganismeFromRnf(
+            job.data.rnf,
+            rawRnf,
+            job.data.firstTime,
+          )
+          if (isSyncRnfViaHub) {
+            await this.organismeService.synchroniseRnfFiles(job.data.rnf, rawRnf)
+          }
+        }
+        await this.syncState.setStateUploadedByRnfId(job.data.rnf)
+      } catch (e) {
+        await this.syncState.setStateFailedByRnfId(job.data.rnf, e.message, job.data.syncState)
+        throw e
       }
     })
   }
