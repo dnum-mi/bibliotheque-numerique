@@ -1,6 +1,7 @@
 import { File } from '@/modules/files/objects/entities/file.entity'
 import { Demarche } from '@/modules/demarches/objects/entities/demarche.entity'
 import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
+import { SyncState } from '../../../../sync-state/objects/entities/sync-state.entity'
 
 export type SyncAllDemarcheJobPayload = {
   fromScratch: boolean
@@ -25,6 +26,7 @@ export type SyncOneOrganismeJobPayload = {
 export type SyncOneRnfOrganismeJobPayload = SyncOneOrganismeJobPayload & {
   rnf: string
   firstTime?: boolean
+  syncState?: SyncState['id'],
 }
 
 export type SyncOneRnaOrganismeJobPayload = SyncOneOrganismeJobPayload & {
