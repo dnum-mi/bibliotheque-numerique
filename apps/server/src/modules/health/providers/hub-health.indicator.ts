@@ -18,7 +18,6 @@ export class HubHealthIndicator extends HealthIndicator {
     super()
     this.logger.setContext(this.constructor.name)
     this.axios = axios.create({
-      baseURL: this.config.get('siafHub.url'),
       headers: {
         'Content-Type': 'application/json',
         'X-API-KEY': `${this.config.get('siafHub.key')}`,
