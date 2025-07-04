@@ -14,4 +14,5 @@ export default registerAs('ds', () => ({
   },
   apiUrl: process.env.DS_API_URL || 'https://demarches-simplifiees.fr/api/v2/graphql',
   apiToken: process.env.DS_API_TOKEN || 'no-token-set',
+  health: process.env.DS_API_HEALTH || false,
 }))

@@ -14,7 +14,6 @@ export class DsHealthIndicator extends HealthIndicator {
   ) {
     super()
     this.axios = axios.create({
-      baseURL: this.config.get('siafHub.url'),
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer token=${this.config.get('ds').apiToken}`,
@@ -23,12 +22,17 @@ export class DsHealthIndicator extends HealthIndicator {
   }
 
   async isHealthy(key: string): Promise<HealthIndicatorResult> {
+    if (!this.config.get('ds').health) {
+      this.logger.warn('DS API health check is not configured')
+      return this.getStatus(key, true)
+    }
+
     try {
       const query = {
         query: '{ __typename }',
       }
 
-      const proxyUrl = process.env.http_proxy
+      const proxyUrl = this.config.get('httpProxy')
       let proxy
 
       if (proxyUrl) {
