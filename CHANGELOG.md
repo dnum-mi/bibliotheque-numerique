@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.32.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.32.0...v2.32.1) (2025-07-04)
+
+
+### Bug Fixes
+
+* add ds and hub check in health ([db2b18b](https://github.com/dnum-mi/bibliotheque_numerique/commit/db2b18baa965fc833ebf7a84de217a6a83870b14))
+* add endpoint /health/info and /health/liveliness ([cfa56d5](https://github.com/dnum-mi/bibliotheque_numerique/commit/cfa56d5bdc8db11ab23e39b676238e2bd62dc22c))
+* debug woker docker for start ([e511f00](https://github.com/dnum-mi/bibliotheque_numerique/commit/e511f00e78ce1678aece974d07d4bc7c339f73ed))
+* set DS_API_HEALTH default false ([f36e2d5](https://github.com/dnum-mi/bibliotheque_numerique/commit/f36e2d5d24a9e724cf944917fdda963a5f9fa55e))
+
 ## [2.32.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.31.0...v2.32.0) (2025-06-30)
 
 
