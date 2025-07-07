@@ -77,7 +77,7 @@ import {
   usersPasswordRoute,
   getDemarcheAnonymizeRoute,
   searchOrganisme,
-  enableSiafRoute,
+  enableHubSearchRoute,
   updateRolesRoute,
   proConnectSignInRoute,
   proConnectCallbackRoute,
@@ -532,8 +532,8 @@ export const bnConfigurationsApiClient = {
     return response?.data
   },
 
-  getEnableSiaf: async () => {
-    const response = await apiClientInstance.get(enableSiafRoute)
+  getEnableHubSearch: async () => {
+    const response = await apiClientInstance.get(enableHubSearchRoute)
     return response?.data
   },
 

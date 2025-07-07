@@ -17,7 +17,7 @@ export const useConfigurationStore = defineStore('Configuration', () => {
   const demarches = ref<ISmallDemarcheOutput[]>([])
   const fetching = ref<boolean>(false)
   const fetchingBnConfigurations = ref<boolean>(false)
-  const enableSiaf = ref(false)
+  const enableHubSearch = ref(false)
 
   const loadDemarches = async () => {
     fetching.value = true
@@ -151,8 +151,8 @@ export const useConfigurationStore = defineStore('Configuration', () => {
     fetching.value = false
   }
 
-  const getEnableSiaf = async () => {
-    enableSiaf.value = await bnConfigurationsApiClient.getEnableSiaf()
+  const getEnableHubSearch = async () => {
+    enableHubSearch.value = await bnConfigurationsApiClient.getEnableHubSearch()
   }
 
   return {
@@ -161,7 +161,7 @@ export const useConfigurationStore = defineStore('Configuration', () => {
     bnConfigurations,
     fetching,
     fetchingBnConfigurations,
-    enableSiaf,
+    enableHubSearch,
     loadDemarches,
     loadBnConfigurations,
     addDemarches,
@@ -170,6 +170,6 @@ export const useConfigurationStore = defineStore('Configuration', () => {
     updateDemarche,
     updateBnConfigurations,
     softDeleteDemarche,
-    getEnableSiaf,
+    getEnableHubSearch,
   }
 })

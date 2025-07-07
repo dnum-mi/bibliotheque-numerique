@@ -53,7 +53,7 @@ const download = () => {
   return organismeStore.exportOrganismes(paginationDto.value)
 }
 
-const enableSiaf = computed(() => bnConfigStore.enableSiaf)
+const enableHubSearch = computed(() => bnConfigStore.enableHubSearch)
 const toSearch = () => {
   router.push({
     name: routeNames.SEARCH_ORGANISMES,
@@ -61,7 +61,7 @@ const toSearch = () => {
 }
 
 onMounted(async () => {
-  await bnConfigStore.getEnableSiaf()
+  await bnConfigStore.getEnableHubSearch()
 })
 
 const { activeFilters, onFiltersUpdated, handleClearAllFilters, handleRemoveFilter } = useActiveFilter(agGridComponent)
@@ -76,7 +76,7 @@ const { activeFilters, onFiltersUpdated, handleClearAllFilters, handleRemoveFilt
     <div class="flex flex-col h-full">
       <div class="flex gap-3 m-2">
         <DsfrButton
-          v-if="enableSiaf"
+          v-if="enableHubSearch"
           label="Recherche dans le référentiel (RAF)"
           icon="fr-icon-search-line"
           small

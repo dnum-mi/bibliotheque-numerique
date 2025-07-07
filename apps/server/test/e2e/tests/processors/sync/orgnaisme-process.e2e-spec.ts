@@ -81,18 +81,6 @@ describe('Synchro foundation hub', () => {
       .send({ keyName: eBnConfiguration.SYNC_RNF_VIA_HUB, stringValue: 'true', valueType: 'boolean' })
       .expect(200)
 
-    const enableSiaf:BnConfigurationOutputDto = await request(app.getHttpServer())
-      .get(`/bn-configurations/${eBnConfiguration.ENABLE_SIAF}`)
-      .set('Authorization', `Bearer ${tokens.sudo}`)
-      .expect(200)
-      .then(response => response.body)
-
-    await request(app.getHttpServer())
-      .patch(`/bn-configurations/${enableSiaf.id}`)
-      .set('Authorization', `Bearer ${tokens.sudo}`)
-      .send({ keyName: eBnConfiguration.ENABLE_SIAF, stringValue: 'true', valueType: 'boolean' })
-      .expect(200)
-
     // Re-initialization the last date of synchronization of Rnf
     const lastFondationSyncAt:BnConfigurationOutputDto = await request(app.getHttpServer())
       .get(`/bn-configurations/${eBnConfiguration.LAST_FOUNDATION_SYNC_AT}`)
