@@ -66,4 +66,4 @@ export const healthRoute = '/health/info'
 export const bnConfigurationsRoute = '/bn-configurations'
 
 export const getFileRoute = (uuid: string) => `/files/${uuid}`
-export const enableSiafRoute = `${bnConfigurationsRoute}/enable-siaf`
+export const enableHubSearchRoute = `${bnConfigurationsRoute}/enable-hub-search`

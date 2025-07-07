@@ -1,11 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { IsNull, Not, Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Organisme } from '@/modules/organismes/objects/organisme.entity'
-import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
-import { LoggerService } from '@/shared/modules/logger/logger.service'
-import { RnfService } from '@/modules/organismes/providers/rnf.service'
-import { RnaService } from '@/modules/organismes/providers/rna.service'
+import { InjectQueue } from '@nestjs/bull'
+import { Queue } from 'bull'
 
 import {
   IOrganisme,
@@ -29,6 +26,14 @@ import {
   ISiafRnfHistoryOutput,
 } from '@biblio-num/shared'
 
+import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
+import { Organisme } from '@/modules/organismes/objects/organisme.entity'
+
+import { LoggerService } from '@/shared/modules/logger/logger.service'
+
+import { RnfService } from '@/modules/organismes/providers/rnf.service'
+import { RnaService } from '@/modules/organismes/providers/rna.service'
+
 import { OrganismeFieldTypeHash } from '@/modules/organismes/objects/const/organisme-field-type-hash.const'
 import {
   SmallRnaOrganismeDto,
@@ -43,8 +48,6 @@ import { PaginatedDto } from '@/shared/pagination/paginated.dto'
 import { DossierService } from '@/modules/dossiers/providers/dossier.service'
 import { FileService } from '@/modules/files/providers/file.service'
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
-import { InjectQueue } from '@nestjs/bull'
-import { Queue } from 'bull'
 import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
 import { UploadRnaFileJobPayload } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
 import {
@@ -369,10 +372,6 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     idRna: string,
   ): Promise<ISiafRnaOutput | ISiafAssociationOutput | null> {
     this.logger.verbose('getAssocationFromHub')
-    const enableSiaf = await this.bnConfiguration.getValueByKeyName(
-      eBnConfiguration.ENABLE_SIAF,
-    )
-    if (!enableSiaf) return null
     const fromSiaf = await this.hubService.getAssociation(idRna)
     this.logger.debug({ FN: 'getAssocationFromSiaf', idRna })
     if (!fromSiaf) return null
@@ -388,14 +387,10 @@ export class OrganismeService extends BaseEntityService<Organisme> {
    * pour le hub la structure contient la clé fondations
    * TODO: A terme, bn doit-être connecter avec le hub
    */
-  async getFoundationFromHub(idRnf: string): Promise<ISiafRnfOutput | null> {
+  async getFoundationFromHub(id: string): Promise<ISiafRnfOutput | null> {
     this.logger.verbose('getFoundationFromHub')
-    const enableSiaf = await this.bnConfiguration.getValueByKeyName(
-      eBnConfiguration.ENABLE_SIAF,
-    )
-    if (!enableSiaf) return null
-    const fromSiaf = await this.hubService.getFoundation(idRnf)
-    this.logger.debug({ FN: 'getFoundationFromSiaf', idRnf, found: !!fromSiaf })
+    const fromSiaf = await this.hubService.getFoundation(id)
+    this.logger.debug({ FN: 'getFoundationFromSiaf', id, found: !!fromSiaf })
     if (!fromSiaf) return null
     if ('fondations' in fromSiaf) {
       return fromSiaf.fondations
@@ -408,10 +403,10 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     sentence: string,
   ): Promise<ISiafSearchOrganismeResponseOutput[] | null> {
     this.logger.verbose('searchOrganismes')
-    const enableSiaf = await this.bnConfiguration.getValueByKeyName(
-      eBnConfiguration.ENABLE_SIAF,
+    const enableHubSearch = await this.bnConfiguration.getValueByKeyName(
+      eBnConfiguration.ENABLE_HUB_SEARCH,
     )
-    if (!enableSiaf) return null
+    if (!enableHubSearch) return null
     return (await this.hubService.searchOrganisme(sentence))?.search_response
   }
 
@@ -549,9 +544,12 @@ export class OrganismeService extends BaseEntityService<Organisme> {
 
   async getOrganismeRnfFromAllServer(idRnf: string): Promise<IOrganismeOutput> {
     this.logger.verbose('getOrganismeRnfFromAllServer')
+    const enableHubSearch = await this.bnConfiguration.getValueByKeyName(
+      eBnConfiguration.ENABLE_HUB_SEARCH,
+    )
     const results = await Promise.allSettled([
       this.findOneOrThrow({ where: { idRnf } }),
-      this.getFoundationFromHub(idRnf),
+      enableHubSearch ? this.getFoundationFromHub(idRnf) : null,
     ])
     const bn = this._getValueFromPromiseSettle('bn', results[0])
     const siaf = this._getValueFromPromiseSettle('siaf', results[1])
@@ -708,9 +706,12 @@ export class OrganismeService extends BaseEntityService<Organisme> {
 
   async getOrganismeRnaFromAllServer(idRna: string): Promise<IOrganismeOutput> {
     this.logger.verbose('getOrganismeRnfFromAllServer')
+    const enableHubSearch = await this.bnConfiguration.getValueByKeyName(
+      eBnConfiguration.ENABLE_HUB_SEARCH,
+    )
     const results = await Promise.allSettled([
       this.findOneOrThrow({ where: { idRna } }),
-      this.getAssocationFromHub(idRna),
+      enableHubSearch ? this.getAssocationFromHub(idRna) : null,
     ])
     const bn = this._getValueFromPromiseSettle('bn', results[0])
     const siaf = this._getValueFromPromiseSettle('siaf', results[1])
@@ -755,17 +756,26 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     return numberOrganisme
   }
 
-  async getLastUpdatedFoundations(args: GetUpdateFoundationInputDto): Promise<string[]> {
+  async getLastUpdatedFoundations(
+    args: GetUpdateFoundationInputDto,
+  ): Promise<string[]> {
     this.logger.log('getLastUpdatedFoundations')
-    let rnfIds:string[] = []
-    let scrollId:string|undefined
+    let rnfIds: string[] = []
+    let scrollId: string | undefined
     let max
     let count = 0
     do {
-      const results = await this.hubService.getLastImportedFoundations(args.lastUpdatedAt, scrollId)
+      const results = await this.hubService.getLastImportedFoundations(
+        args.lastUpdatedAt,
+        scrollId,
+      )
       scrollId = results?.scroll_id
       if (results?.fondations) {
-        rnfIds = rnfIds.concat(results.fondations?.map(f => f.id).filter(id => args.rnfIds.includes(id)))
+        rnfIds = rnfIds.concat(
+          results.fondations
+            ?.map((f) => f.id)
+            .filter((id) => args.rnfIds.includes(id)),
+        )
         max = results.total_records
         count += results.fondations.length
       }
@@ -774,13 +784,15 @@ export class OrganismeService extends BaseEntityService<Organisme> {
       if (count >= max) {
         break
       }
-    }
-    while (scrollId)
+    } while (scrollId)
 
     return rnfIds
   }
 
-  async synchroniseRnfFiles(rnfId: string, rawRnf: ISiafRnfOutput): Promise<void> {
+  async synchroniseRnfFiles(
+    rnfId: string,
+    rawRnf: ISiafRnfOutput,
+  ): Promise<void> {
     this.logger.verbose('synchroniseRnfFiles')
     const organismeId = await this.findOneOrThrow({
       where: { idRnf: rnfId },

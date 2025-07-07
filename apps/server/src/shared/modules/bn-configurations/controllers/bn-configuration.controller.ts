@@ -43,7 +43,7 @@ export class BnConfigurationController {
     return this.configurationService.findAll()
   }
 
-  @Get('enable-siaf')
+  @Get('enable-hub-search')
   @UsualApiOperation({
     summary: 'siaf est-il actif?',
     method: 'GET',
@@ -51,9 +51,9 @@ export class BnConfigurationController {
     responseType: null,
   })
   @Role(Roles.instructor)
-  async getEnableSiaf(): Promise<boolean> {
-    this.logger.verbose('getEnableSiaf')
-    return (await this.configurationService.getValueByKeyName(eBnConfiguration.ENABLE_SIAF)) as boolean
+  async getEnableHubSearch(): Promise<boolean> {
+    this.logger.verbose('getEnableHubSearch')
+    return (await this.configurationService.getValueByKeyName(eBnConfiguration.ENABLE_HUB_SEARCH)) as boolean
   }
 
   @UsualApiOperation({
