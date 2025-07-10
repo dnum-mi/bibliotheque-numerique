@@ -2,8 +2,10 @@
 // ⚠️ This is a custom filter for ag-grid, DO NOT make it a <script setup> as there is a bug with ag-grid and <script setup>
 import { ref, watch } from 'vue'
 import type { Ref } from 'vue'
-import type { INumbersFilterCondition } from '@biblio-num/shared'
 import type { IFilterParams } from 'ag-grid-community'
+import type { INumbersFilterModel } from '@biblio-num/shared'
+
+type InputModel = INumbersFilterModel | { filterModel: INumbersFilterModel }
 
 export default {
   props: {
@@ -16,29 +18,41 @@ export default {
     if (!props.params.numbers?.length) {
       throw new Error('Numbers filter requires a numbers array')
     }
-    const backendFilter: Ref<INumbersFilterCondition> = ref({
+
+    const getDefaultModel = (): INumbersFilterModel => ({
       filterType: 'numbers',
       includeEmpty: true,
-      filter: props.params.numbers,
+      filter: [...props.params.numbers],
     })
 
-    watch(backendFilter, () => {
-      if (props.params.api) {
-        props.params.api.onFilterChanged()
-      }
-    }, { deep: true })
+    const backendFilter: Ref<INumbersFilterModel> = ref(getDefaultModel())
+
+    watch(
+      backendFilter,
+      () => {
+        if (props.params.api) {
+          props.params.api.onFilterChanged()
+        }
+      },
+      { deep: true },
+    )
 
     //#region AgGrid methods
     const isFilterActive = () => {
-      return backendFilter.value.includeEmpty && backendFilter.value.filter.length === props.params.numbers.length
+      const isDefault = backendFilter.value.includeEmpty && backendFilter.value.filter.length === props.params.numbers.length
+      return !isDefault
     }
 
     const getModel = () => {
-      return backendFilter.value
+      return isFilterActive() ? backendFilter.value : null
     }
 
-    const setModel = (model: Ref<INumbersFilterCondition>) => {
-      backendFilter.value = model?.value || {}
+    const setModel = (model: InputModel) => {
+      if (model) {
+        backendFilter.value = (model as { filterModel?: INumbersFilterModel }).filterModel || model as INumbersFilterModel
+      } else {
+        backendFilter.value = getDefaultModel()
+      }
     }
     //#endregion
 
