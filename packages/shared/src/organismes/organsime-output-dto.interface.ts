@@ -24,5 +24,5 @@ export interface IOrganismeOutputDto extends IOrganisme {
   createdAt?: Date;
   updatedAt?: Date;
   fiscalEndDateAt?: Date;
-  syncState: ISyncState;
+  syncState: ISyncState & { id: number};
 }
