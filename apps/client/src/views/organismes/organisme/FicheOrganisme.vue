@@ -23,6 +23,8 @@ import FicheInfoFondation from './FicheInfoFondation.vue'
 import FicheOrganismeInfo from './FicheOrganismeInfo.vue'
 import slugify from 'slugify'
 import FicheOrganismeHistorique from './historique/FicheOrganismeHistorique.vue'
+import BnRefreshSyncButton from '@/components/BnRefreshSyncButton.vue'
+import { synchroniseOneOrganisme } from '../../../api/sudo-api-client'
 
 const props = withDefaults(defineProps<{ id: string; idType: OrganismeIdType }>(), {})
 
@@ -51,15 +53,21 @@ const role = computed<IRole | undefined>(() => userStore.currentUser?.role)
 
 const isLoading = ref(false)
 
+const count = ref(0)
+const loadOrganisme = async () => {
+  await organismeStore.loadOrganisme(props.id, props.idType)
+  if (organisme.value) {
+    histories.value = await organismeStore.loadOrganismeHistory(props.id, props.idType)
+    filesSummary.value = await apiClient.getOrganismeFilesSummary(organisme.value.id)
+  }
+  count.value++
+}
+
 onMounted(async () => {
   isLoading.value = true
 
   try {
-    await organismeStore.loadOrganisme(props.id, props.idType)
-    if (organisme.value) {
-      histories.value = await organismeStore.loadOrganismeHistory(props.id, props.idType)
-      filesSummary.value = await apiClient.getOrganismeFilesSummary(organisme.value.id)
-    }
+    await loadOrganisme()
   } finally {
     isLoading.value = false
   }
@@ -85,11 +93,20 @@ const fileTabs = computed(() => {
     }
   })
 })
+
+const onRefreshSync = async () => {
+  await synchroniseOneOrganisme(organisme.value.id)
+}
 </script>
 
 <template>
-  <div v-if="isLoading">Chargement en cours, veuillez patienter...</div>
-  <div v-else-if="!(organisme || hasSiaf)">Organisme introuvable (id {{ idType }} {{ id }})</div>
+  {{ count }}
+  <div v-if="isLoading">
+    Chargement en cours, veuillez patienter...
+  </div>
+  <div v-else-if="!(organisme || hasSiaf)">
+    Organisme introuvable (id {{ idType }} {{ id }})
+  </div>
   <div
     v-if="(organisme || hasSiaf) && !isLoading"
     class="flex flex-grow gap-2 h-full"
@@ -104,13 +121,24 @@ const fileTabs = computed(() => {
         v-if="organisme"
         #title
       >
-        <OrganismeBadge
-          :type="organisme?.type"
-          class="mr-4"
-          big
-        />
-        <span class="fr-text--lead fr-text--bold">{{ organisme?.idRna || organisme?.idRnf }} - </span>
-        <span class="fr-text--lead">{{ organisme?.title }}</span>
+        <div class="flex flex-grow gap-2 justify-between">
+          <div>
+            <OrganismeBadge
+              :type="organisme?.type"
+              class="mr-4"
+              big
+            />
+            <span class="fr-text--lead fr-text--bold">{{ organisme?.idRna || organisme?.idRnf }} - </span>
+            <span class="fr-text--lead">{{ organisme?.title }}</span>
+          </div>
+          <div class="w-1/7">
+            <BnRefreshSyncButton
+              :sync-state="organisme?.syncState"
+              @refresh-sync="onRefreshSync"
+              @refresh-data="loadOrganisme()"
+            />
+          </div>
+        </div>
       </template>
       <template
         v-else
@@ -200,7 +228,9 @@ const fileTabs = computed(() => {
             aria-hidden="true"
           />
         </div>
-        <h4 class="fr-text--bold m-0">Dossiers déposés</h4>
+        <h4 class="fr-text--bold m-0">
+          Dossiers déposés
+        </h4>
       </div>
       <div class="w-full">
         <ListeDossier

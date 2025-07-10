@@ -6,6 +6,8 @@ import type {
   IOrganismeOutput,
   IOrganismeOutputDto,
   ISiafRnfHistoryOutput,
+  ISyncState,
+  IEntityWithSyncState,
 } from '@biblio-num/shared'
 
 import apiClient from '@/api/api-client'
@@ -22,6 +24,8 @@ export const useOrganismeStore = defineStore('organisme', () => {
   const organismes = ref<Partial<IOrganisme>[]>([])
   const organismeSiaf = ref<IOrganismeOutputDto | ISiafAssociationOutput | undefined>(undefined)
 
+  const syncState = ref<ISyncState | null | undefined>(undefined)
+
   const loadOrganisme = async (id: string, type: OrganismeIdType) => {
     if (!id) {
       return
@@ -32,6 +36,7 @@ export const useOrganismeStore = defineStore('organisme', () => {
     const organismeOutput: IOrganismeOutput = await apiClient[`getOrganismeBy${type}`](id)
     organisme.value = organismeOutput?.bn as IOrganisme
     organismeSiaf.value = organismeOutput?.siaf as IOrganismeOutputDto | ISiafAssociationOutput
+    syncState.value = (organisme.value as (IOrganisme & IEntityWithSyncState))?.syncState
   }
 
   const loadOrganismeHistory = async (id: string, type: OrganismeIdType): Promise<ISiafRnfHistoryOutput[]> => {
@@ -51,12 +56,14 @@ export const useOrganismeStore = defineStore('organisme', () => {
     organisme.value = undefined
     organismes.value = []
     organismeSiaf.value = undefined
+    syncState.value = null
   }
 
   return {
     $reset,
     organisme,
     organismes,
+    syncState,
     loadOrganisme,
     loadOrganismeHistory,
     loadOrganismes,
