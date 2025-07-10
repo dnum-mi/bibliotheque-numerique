@@ -91,6 +91,7 @@ import { routeNames } from '../router/route-names'
 import router from '@/router'
 import { useUserStore } from '@/stores'
 import type { RouteLocationRaw } from 'vue-router'
+import { fabricSyncStateApiClient } from './sync-state-api-client'
 
 const updatePasswordFeedback = {
   401: 'Le token est absent, veuillez fournir un token valide',
@@ -559,4 +560,5 @@ export default {
   ...customFiltersApiClient,
   ...healthApiClient,
   ...attachedFilesApiClient,
+  ...(fabricSyncStateApiClient(apiClientInstance)),
 }
