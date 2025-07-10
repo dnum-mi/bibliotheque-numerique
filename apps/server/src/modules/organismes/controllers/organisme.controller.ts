@@ -44,8 +44,8 @@ import { InjectQueue } from '@nestjs/bull'
 import { Queue } from 'bull'
 import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.decorator'
 import { Organisme } from '@/modules/organismes/objects/organisme.entity'
-import { HubService } from '@/modules/hub/providers/hub.service'
 import { SiafRnfHistoryOutputDto } from '../objects/dto/siaf-rnf-history-output.dto'
+import { OrganismeSyncStateService } from '../providers/organisme-sync-state.service'
 
 @ApiTags('Organismes')
 @Controller('organismes')
@@ -53,10 +53,10 @@ export class OrganismeController {
   constructor(
     private readonly logger: LoggerService,
     private readonly dossierService: DossierService,
-    private readonly hubService: HubService,
     private readonly organismeService: OrganismeService,
     private readonly xlsxService: XlsxService,
     @InjectQueue(QueueName.sync) private readonly syncQueue: Queue,
+    private readonly syncState: OrganismeSyncStateService,
   ) {
     this.logger.setContext(this.constructor.name)
   }
@@ -239,8 +239,10 @@ export class OrganismeController {
         rna: smallOrg.idRna,
       } as SyncOneRnaOrganismeJobPayload)
     } else if (smallOrg.idRnf) {
+      const syncStateEntity = await this.syncState.setStateQueuedByIdRnf(smallOrg.idRnf)
       await this.syncQueue.add(eJobName.SyncOneRnfOrganisme, {
         rnf: smallOrg.idRnf,
+        syncState: syncStateEntity.id,
       } as SyncOneRnfOrganismeJobPayload)
     } else {
       throw new Error('impossible de synchroniser cette organisme')

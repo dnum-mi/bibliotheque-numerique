@@ -21,7 +21,7 @@ export class OrganismeSyncStateService extends SyncStateGenericService<Organisme
 
   // #region Pour les Foundations
   async setStateQueuedByIdRnf(idRnf: string): Promise<SyncState> {
-    this.logger.verbose('Set to Queued status for rnf')
+    this.logger.verbose(`Set to Queued status for rnf ${idRnf}`)
     return await super.setStateQueued({ idRnf })
   }
 
