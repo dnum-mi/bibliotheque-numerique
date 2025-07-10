@@ -91,7 +91,7 @@ export class UserRoleController {
     }
     if (
       !isSuperiorOrSimilar(Roles.superadmin, role.label) &&
-      !isEditionAllowed(dto, tuwer)
+      !isEditionAllowed(role, dto, tuwer)
     ) {
       throw new ForbiddenException(
         'You are not allowed to perform this operation',
@@ -123,7 +123,7 @@ export class UserRoleController {
     }
     if (
       !isSuperiorOrSimilar(Roles.superadmin, role.label) &&
-      !dtos.reduce((acc, dto) => acc && isEditionAllowed(dto, tuwer), true)
+      !dtos.reduce((acc, dto) => acc && isEditionAllowed(role, dto, tuwer), true)
     ) {
       throw new ForbiddenException(
         'You are not allowed to perform this operation',

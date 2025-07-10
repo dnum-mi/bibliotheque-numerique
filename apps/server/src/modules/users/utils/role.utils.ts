@@ -7,6 +7,7 @@ import {
   Roles,
   IUser,
   OneDemarcheRoleOption,
+  IRole,
 } from '@biblio-num/shared'
 
 import { isDefined } from 'class-validator'
@@ -105,6 +106,7 @@ export const generateUserWithEditableRole = (
 }
 
 export const isEditionAllowed = (
+  roleEditor: IRole,
   roleEdit: UpdateOneRoleOptionDto,
   userWithEditableRole: UserWithEditableRole,
 ): boolean => {
@@ -118,6 +120,9 @@ export const isEditionAllowed = (
     !option.prefectureOptions.national.editable
   ) {
     return false
+  }
+  if (roleEditor.options[roleEdit.demarcheId]?.national) {
+    return true
   }
   if (isDefined(roleEdit.prefecture)) {
     if (roleEdit.prefecture.toAdd) {

@@ -2,12 +2,14 @@ import {
   Roles,
   IRole,
   Prefecture,
-  eOrganismeType, IUser,
+  eOrganismeType,
+  IUser,
 } from '@biblio-num/shared'
 import {
   generateRoleAttributionList,
   generateUserWithEditableRole,
-  isEditionAllowed, threeRoles,
+  isEditionAllowed,
+  threeRoles,
 } from '@/modules/users/utils/role.utils'
 import { SmallDemarcheOutputDto } from '@/modules/demarches/objects/dtos/small-demarche-output.dto'
 import { UserWithEditableRole } from '@/modules/users/objects/dtos/output'
@@ -34,7 +36,7 @@ const allSmallDemarches: SmallDemarcheOutputDto[] = [
     identification: null,
     title: 'Démarche 1',
     dsCreatedAt: new Date(0),
-    dsPublishedAt: new Date(0)
+    dsPublishedAt: new Date(0),
   },
   {
     id: 2,
@@ -43,7 +45,7 @@ const allSmallDemarches: SmallDemarcheOutputDto[] = [
     identification: null,
     title: 'Démarche 2',
     dsCreatedAt: new Date(0),
-    dsPublishedAt: new Date(0)
+    dsPublishedAt: new Date(0),
   },
   {
     id: 3,
@@ -52,7 +54,7 @@ const allSmallDemarches: SmallDemarcheOutputDto[] = [
     identification: null,
     title: 'Démarche 3',
     dsCreatedAt: new Date(0),
-    dsPublishedAt: new Date(0)
+    dsPublishedAt: new Date(0),
   },
   {
     id: 4,
@@ -61,7 +63,7 @@ const allSmallDemarches: SmallDemarcheOutputDto[] = [
     identification: null,
     title: 'Démarche 4',
     dsCreatedAt: new Date(0),
-    dsPublishedAt: new Date(0)
+    dsPublishedAt: new Date(0),
   },
   {
     id: 5,
@@ -70,7 +72,7 @@ const allSmallDemarches: SmallDemarcheOutputDto[] = [
     identification: null,
     title: 'Démarche 5',
     dsCreatedAt: new Date(0),
-    dsPublishedAt: new Date(0)
+    dsPublishedAt: new Date(0),
   },
 ]
 //#endregion
@@ -124,11 +126,7 @@ describe('RoleUtils', () => {
 
     it('Should return nothing editable if target is superadmin', () => {
       expect(
-        generateUserWithEditableRole(
-          superAdmin,
-          superAdmin,
-          allSmallDemarches,
-        ),
+        generateUserWithEditableRole(superAdmin, superAdmin, allSmallDemarches),
       ).toMatchObject({
         originalUser: superAdmin,
         demarcheHash: Object.fromEntries(
@@ -190,11 +188,7 @@ describe('RoleUtils', () => {
 
     it('Should return everything editable if editor is superadmin and target is admin', () => {
       expect(
-        generateUserWithEditableRole(
-          superAdmin,
-          emptyAdmin,
-          allSmallDemarches,
-        ),
+        generateUserWithEditableRole(superAdmin, emptyAdmin, allSmallDemarches),
       ).toMatchObject({
         originalUser: emptyAdmin,
         demarcheHash: Object.fromEntries(
@@ -465,7 +459,7 @@ describe('RoleUtils', () => {
         options: {
           1: {
             national: false,
-            prefectures: ["D57", 'D75'],
+            prefectures: ['D57', 'D75'],
           },
         },
       })
@@ -529,133 +523,284 @@ describe('RoleUtils', () => {
         ]),
       ),
     }
-    it('Shouldn\'t be able to edit superadmin', () => {
-      expect(isEditionAllowed(
-        {
-          demarcheId: 1,
-          checked: true,
-        } as UpdateOneRoleOptionDto,
-        {
-          originalUser: superAdmin,
-          deletable: false,
-          possibleRoles: [],
-          demarcheHash: openEditionForEmptyInstructor.demarcheHash,
+    const bobAdmin = {
+      label: Roles.admin,
+      options: {
+        1: {
+          national: false,
+          prefectures: ['D57', 'D75'],
         },
-      )).toBeFalsy()
+        3: {
+          national: false,
+          prefectures: [],
+        },
+      },
+    } as IRole
+    it("Shouldn't be able to edit superadmin", () => {
+      expect(
+        isEditionAllowed(
+          bobAdmin,
+          {
+            demarcheId: 1,
+            checked: true,
+          } as UpdateOneRoleOptionDto,
+          {
+            originalUser: superAdmin,
+            deletable: false,
+            possibleRoles: [],
+            demarcheHash: openEditionForEmptyInstructor.demarcheHash,
+          },
+        ),
+      ).toBeFalsy()
     })
-    it('Shouldn\'t be able to check', () => {
+    it("Shouldn't be able to check", () => {
       const editable = { ...openEditionForEmptyInstructor }
       editable.demarcheHash[1].editable = false
-      expect(isEditionAllowed(
-        {
-          demarcheId: 1,
-          checked: false,
-        } as UpdateOneRoleOptionDto,
-        editable,
-      )).toBeFalsy()
+      expect(
+        isEditionAllowed(
+          bobAdmin,
+          {
+            demarcheId: 1,
+            checked: false,
+          } as UpdateOneRoleOptionDto,
+          editable,
+        ),
+      ).toBeFalsy()
     })
     it('Should be able to check', () => {
       const editable = { ...openEditionForEmptyInstructor }
       editable.demarcheHash[1].editable = true
-      expect(isEditionAllowed(
-        {
-          demarcheId: 1,
-          checked: false,
-        } as UpdateOneRoleOptionDto,
-        editable,
-      )).toBeTruthy()
+      expect(
+        isEditionAllowed(
+          bobAdmin,
+          {
+            demarcheId: 1,
+            checked: false,
+          } as UpdateOneRoleOptionDto,
+          editable,
+        ),
+      ).toBeTruthy()
     })
-    it('Shouldn\'t be able to check national', () => {
+    it("Shouldn't be able to check national", () => {
       const editable = { ...openEditionForEmptyInstructor }
       editable.demarcheHash[1].prefectureOptions.national.editable = false
-      expect(isEditionAllowed(
-        {
-          demarcheId: 1,
-          national: true,
-        } as UpdateOneRoleOptionDto,
-        editable,
-      )).toBeFalsy()
+      expect(
+        isEditionAllowed(
+          bobAdmin,
+          {
+            demarcheId: 1,
+            national: true,
+          } as UpdateOneRoleOptionDto,
+          editable,
+        ),
+      ).toBeFalsy()
     })
     it('Should be able to check national', () => {
       const editable = { ...openEditionForEmptyInstructor }
       editable.demarcheHash[1].prefectureOptions.national.editable = true
-      expect(isEditionAllowed(
-        {
-          demarcheId: 1,
-          national: true,
-        } as UpdateOneRoleOptionDto,
-        editable,
-      )).toBeTruthy()
+      expect(
+        isEditionAllowed(
+          bobAdmin,
+          {
+            demarcheId: 1,
+            national: true,
+          } as UpdateOneRoleOptionDto,
+          editable,
+        ),
+      ).toBeTruthy()
     })
-    it('Shouldn\'t be able to check add pref', () => {
+    it("Shouldn't be able to check add pref", () => {
       const editable = { ...openEditionForEmptyInstructor }
       editable.demarcheHash[1].prefectureOptions.prefectures.addable = ['D57']
-      expect(isEditionAllowed(
-        {
-          demarcheId: 1,
-          prefecture: {
-            toAdd: true,
-            key: 'D75',
-          },
-        } as UpdateOneRoleOptionDto,
-        editable,
-      )).toBeFalsy()
+      expect(
+        isEditionAllowed(
+          bobAdmin,
+          {
+            demarcheId: 1,
+            prefecture: {
+              toAdd: true,
+              key: 'D75',
+            },
+          } as UpdateOneRoleOptionDto,
+          editable,
+        ),
+      ).toBeFalsy()
     })
     it('Should be able to check add pref if national', () => {
       const editable = { ...openEditionForEmptyInstructor }
       editable.demarcheHash[1].prefectureOptions.national.editable = true
-      expect(isEditionAllowed(
-        {
-          demarcheId: 1,
-          prefecture: {
-            toAdd: true,
-            key: 'D57',
-          },
-        } as UpdateOneRoleOptionDto,
-        editable,
-      )).toBeTruthy()
+      expect(
+        isEditionAllowed(
+          bobAdmin,
+          {
+            demarcheId: 1,
+            prefecture: {
+              toAdd: true,
+              key: 'D57',
+            },
+          } as UpdateOneRoleOptionDto,
+          editable,
+        ),
+      ).toBeTruthy()
     })
     it('Should be able to check add pref', () => {
       const editable = { ...openEditionForEmptyInstructor }
       editable.demarcheHash[1].prefectureOptions.prefectures.addable = ['D57']
-      expect(isEditionAllowed(
-        {
-          demarcheId: 1,
-          prefecture: {
-            toAdd: true,
-            key: 'D57',
-          },
-        } as UpdateOneRoleOptionDto,
-        editable,
-      )).toBeTruthy()
+      expect(
+        isEditionAllowed(
+          bobAdmin,
+          {
+            demarcheId: 1,
+            prefecture: {
+              toAdd: true,
+              key: 'D57',
+            },
+          } as UpdateOneRoleOptionDto,
+          editable,
+        ),
+      ).toBeTruthy()
     })
-    it('Shouldn\'t be able to check del pref', () => {
+    it("Shouldn't be able to check del pref", () => {
       const editable = { ...openEditionForEmptyInstructor }
       editable.demarcheHash[1].prefectureOptions.prefectures.deletable = ['D57']
-      expect(isEditionAllowed(
-        {
-          demarcheId: 1,
-          prefecture: {
-            toAdd: false,
-            key: 'D75',
-          },
-        } as UpdateOneRoleOptionDto,
-        editable,
-      )).toBeFalsy()
+      expect(
+        isEditionAllowed(
+          bobAdmin,
+          {
+            demarcheId: 1,
+            prefecture: {
+              toAdd: false,
+              key: 'D75',
+            },
+          } as UpdateOneRoleOptionDto,
+          editable,
+        ),
+      ).toBeFalsy()
     })
     it('Should be able to check del pref', () => {
       const editable = { ...openEditionForEmptyInstructor }
       editable.demarcheHash[1].prefectureOptions.prefectures.deletable = ['D75']
-      expect(isEditionAllowed(
-        {
-          demarcheId: 1,
-          prefecture: {
-            toAdd: false,
-            key: 'D75',
+      expect(
+        isEditionAllowed(
+          bobAdmin,
+          {
+            demarcheId: 1,
+            prefecture: {
+              toAdd: false,
+              key: 'D75',
+            },
+          } as UpdateOneRoleOptionDto,
+          editable,
+        ),
+      ).toBeTruthy()
+    })
+    it('Should return TRUE if user has national demarche', () => {
+      const editable = { ...openEditionForEmptyInstructor }
+      editable.demarcheHash[1].prefectureOptions.prefectures.addable = ['D75']
+      const bobAdmin = {
+        label: Roles.admin,
+        options: {
+          1: {
+            national: true,
+            prefectures: [],
           },
-        } as UpdateOneRoleOptionDto,
-        editable,
-      )).toBeTruthy()
+        },
+      } as IRole
+      expect(
+        isEditionAllowed(
+          bobAdmin,
+          {
+            demarcheId: 1,
+            prefecture: {
+              toAdd: true,
+              key: 'D75',
+            },
+          } as UpdateOneRoleOptionDto,
+          editable,
+        ),
+      ).toBeTruthy()
+    })
+    it('Should return TRUE if user has not national demarche and target has addable pref', () => {
+      const editable = { ...openEditionForEmptyInstructor }
+      editable.demarcheHash[1].prefectureOptions.prefectures.addable = ['D75']
+      const bobAdmin = {
+        label: Roles.admin,
+        options: {
+          1: {
+            national: false,
+            prefectures: [],
+          },
+        },
+      } as IRole
+      expect(
+        isEditionAllowed(
+          bobAdmin,
+          {
+            demarcheId: 1,
+            prefecture: {
+              toAdd: true,
+              key: 'D75',
+            },
+          } as UpdateOneRoleOptionDto,
+          editable,
+        ),
+      ).toBeTruthy()
+    })
+    it('Should return FALSE if user has not national demarche and target has not addable pref', () => {
+      const editable = { ...openEditionForEmptyInstructor }
+      editable.demarcheHash[1].prefectureOptions.prefectures.addable = []
+      const bobAdmin = {
+        label: Roles.admin,
+        options: {
+          1: {
+            national: false,
+            prefectures: [],
+          },
+        },
+      } as IRole
+      expect(
+        isEditionAllowed(
+          bobAdmin,
+          {
+            demarcheId: 1,
+            prefecture: {
+              toAdd: true,
+              key: 'D75',
+            },
+          } as UpdateOneRoleOptionDto,
+          editable,
+        ),
+      ).toBeFalsy()
+    })
+    it('Should return FALSE if user has a not national demarche and choose this demarche', () => {
+      const editable = { ...openEditionForEmptyInstructor }
+      editable.demarcheHash[1].prefectureOptions.prefectures.addable = ['D75']
+      const bobAdmin = {
+        label: Roles.admin,
+        options: {
+          1: {
+            national: true,
+            prefectures: [],
+          },
+          3: {
+            national: false,
+            prefectures: [],
+          },
+        },
+      } as IRole
+      expect(
+        isEditionAllowed(
+          bobAdmin,
+          {
+            demarcheId: 3,
+            prefecture: {
+              toAdd: true,
+              key: 'D75',
+            },
+          } as UpdateOneRoleOptionDto,
+          editable,
+        ),
+      ).toBeFalsy()
     })
   })
 
@@ -671,18 +816,20 @@ describe('RoleUtils', () => {
     })
 
     it('Should return complete array if editor is sudo', () => {
-      expect(generateRoleAttributionList(sudo, emptyAdmin))
-        .toEqual(threeRoles)
+      expect(generateRoleAttributionList(sudo, emptyAdmin)).toEqual(threeRoles)
     })
 
     it('Should return complete array if editor is superadmin', () => {
-      expect(generateRoleAttributionList(superAdmin, emptyAdmin))
-        .toEqual(threeRoles)
+      expect(generateRoleAttributionList(superAdmin, emptyAdmin)).toEqual(
+        threeRoles,
+      )
     })
 
     it('Should return admin and instructor if target is contained', () => {
-      expect(generateRoleAttributionList(emptyAdmin, emptyInstructor))
-        .toEqual([Roles.instructor, Roles.admin])
+      expect(generateRoleAttributionList(emptyAdmin, emptyInstructor)).toEqual([
+        Roles.instructor,
+        Roles.admin,
+      ])
     })
 
     it('Should return [] if target is not contained - 1', () => {
@@ -708,8 +855,7 @@ describe('RoleUtils', () => {
           },
         },
       })
-      expect(generateRoleAttributionList(alice, bob))
-        .toEqual([])
+      expect(generateRoleAttributionList(alice, bob)).toEqual([])
     })
 
     it('Should return [] if target is not contained - 2', () => {
@@ -739,8 +885,7 @@ describe('RoleUtils', () => {
           },
         },
       })
-      expect(generateRoleAttributionList(alice, bob))
-        .toEqual([])
+      expect(generateRoleAttributionList(alice, bob)).toEqual([])
     })
 
     it('Should return [] if target is not contained - 3', () => {
@@ -770,8 +915,7 @@ describe('RoleUtils', () => {
           },
         },
       })
-      expect(generateRoleAttributionList(alice, bob))
-        .toEqual([])
+      expect(generateRoleAttributionList(alice, bob)).toEqual([])
     })
 
     it('Should return [Admin, Instructor] if target is contained (complex)', () => {
@@ -809,13 +953,14 @@ describe('RoleUtils', () => {
           },
         },
       })
-      expect(generateRoleAttributionList(alice, bob))
-        .toEqual([Roles.instructor, Roles.admin])
+      expect(generateRoleAttributionList(alice, bob)).toEqual([
+        Roles.instructor,
+        Roles.admin,
+      ])
     })
 
     it('Should return all role if target is superadmin and editor is sudo', () => {
-      expect(generateRoleAttributionList(sudo, superAdmin))
-        .toEqual(threeRoles)
+      expect(generateRoleAttributionList(sudo, superAdmin)).toEqual(threeRoles)
     })
   })
 })
