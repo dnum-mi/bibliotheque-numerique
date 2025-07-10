@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.32.2](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.32.1...v2.32.2) (2025-07-10)
+
+
+### Bug Fixes
+
+* échec de suppression du filtre Exercices manquants de type CustomNumbersFilter ([c7a8ea1](https://github.com/dnum-mi/bibliotheque_numerique/commit/c7a8ea11fafa41f76ddc1d6531942b44c125738e))
+* refus d ajout d une préfecture en tant qu administrateur national([#1823](https://github.com/dnum-mi/bibliotheque_numerique/issues/1823))([#1842](https://github.com/dnum-mi/bibliotheque_numerique/issues/1842)) ([6cabe9a](https://github.com/dnum-mi/bibliotheque_numerique/commit/6cabe9aac6acb5bf5609b220058ffdd860965d31))
+
 ## [2.32.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.32.0...v2.32.1) (2025-07-04)
 
 
