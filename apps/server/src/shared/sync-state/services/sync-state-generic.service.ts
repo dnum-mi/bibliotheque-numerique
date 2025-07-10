@@ -24,6 +24,7 @@ export class SyncStateGenericService<
     syncState: SyncState,
     newSyncState: Partial<SyncState>,
   ): Promise<SyncState> {
+    this.logger.log('_setSyncState')
     syncState.state = newSyncState.state
     if (newSyncState.lastSynchronisedAt !== undefined) {
       syncState.lastSynchronisedAt = newSyncState.lastSynchronisedAt
@@ -40,6 +41,7 @@ export class SyncStateGenericService<
     newSyncState: Partial<SyncState>,
     id?: SyncState['id'],
   ): Promise<SyncState> {
+    this.logger.log('_createAndJoin')
     if (id) {
       entity.syncState = await this.findOneById(id)
     } else {
@@ -77,8 +79,8 @@ export class SyncStateGenericService<
     if (!entity?.syncState) {
       return await this._createAndJoin(entity, newSyncState)
     }
-    const syncState = this.repo.create()
-    return await this._setSyncState(syncState, newSyncState)
+    // const syncState = this.repo.create()
+    return await this._setSyncState(entity.syncState, newSyncState)
   }
 
   private async _setState(stateArg: {
