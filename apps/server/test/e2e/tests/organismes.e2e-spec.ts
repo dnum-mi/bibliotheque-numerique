@@ -8,6 +8,11 @@ import { PaginationDto } from '@/shared/pagination/pagination.dto'
 import { typeCategorieOrganisme } from '@biblio-num/shared'
 
 // those object matches fixtures
+const syncState = {
+  state: 'uploaded',
+  lastSynchronisedAt: '2023-10-04T06:38:58.000Z',
+  message: '',
+}
 const renault = {
   id: 2,
   type: 'FRUP',
@@ -31,6 +36,7 @@ const renault = {
   addressDepartmentCode: '75',
   addressRegionName: 'Île-de-France',
   addressRegionCode: '75',
+  syncState,
 }
 const bmw = {
   id: 1,
@@ -68,6 +74,8 @@ describe('Organismes (e2e)', () => {
     app = testingModule.app
     organismeService = await app.resolve(OrganismeService)
     tokens = testingModule.tokens
+    const { id } = await dataSource.getRepository(Organisme).findOneByOrFail({ idRnf: renault.idRnf })
+    renault.id = id
   })
 
   afterAll(async () => {
@@ -103,7 +111,7 @@ describe('Organismes (e2e)', () => {
 
     it('Should get an organisme', async () => {
       return request(app.getHttpServer())
-        .get('/organismes/2')
+        .get(`/organismes/${renault.id}`)
         .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(200)
         .then(({ body }) => {
@@ -181,7 +189,7 @@ describe('Organismes (e2e)', () => {
 
     it('Should give 400', async () => {
       return request(app.getHttpServer())
-        .get('/organismes/rna')
+        .get('/organismes/rnf')
         .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(400)
     })
@@ -261,9 +269,11 @@ describe('Organismes (e2e)', () => {
 
   describe('POST /organismes/list', () => {
     let numberOfOrganisme: number
-
+    let organismes: Organisme[]
     beforeAll(async () => {
       numberOfOrganisme = await organismeService.repository.count()
+      organismes = await dataSource.getRepository(Organisme).find({})
+      organismes = organismes.sort((o1, o2) => o1.id - o2.id)
     })
 
     it('Should give 401', async () => {
@@ -286,18 +296,9 @@ describe('Organismes (e2e)', () => {
         .expect(200)
         .then(({ body }) => {
           expect(body.total).toEqual(numberOfOrganisme)
-          expect(body.data).toMatchObject([
-            { title: 'Bmw' },
-            { title: 'Renault' },
-            { title: 'Peugeot' },
-            { title: 'Toyota' },
-            { title: 'Honda' },
-            { title: 'Ford' },
-            { title: 'Nissan' },
-            { title: 'Hyundai' },
-            { title: 'Chevrolet' },
-            { title: 'Subaru' },
-          ])
+          expect(body.data).toMatchObject(
+            organismes.map((o) => ({ title: o.title })),
+          )
         })
     })
 
@@ -311,18 +312,9 @@ describe('Organismes (e2e)', () => {
         .expect(200)
         .then(({ body }) => {
           expect(body.total).toEqual(numberOfOrganisme)
-          expect(body.data).toMatchObject([
-            { title: 'Bmw' },
-            { title: 'Renault' },
-            { title: 'Peugeot' },
-            { title: 'Toyota' },
-            { title: 'Honda' },
-            { title: 'Ford' },
-            { title: 'Nissan' },
-            { title: 'Hyundai' },
-            { title: 'Chevrolet' },
-            { title: 'Subaru' },
-          ])
+          expect(body.data).toMatchObject(
+            organismes.map((o) => ({ title: o.title })),
+          )
         })
     })
 
@@ -338,13 +330,9 @@ describe('Organismes (e2e)', () => {
         .expect(200)
         .then(({ body }) => {
           expect(body.total).toEqual(numberOfOrganisme)
-          expect(body.data).toMatchObject([
-            { title: 'Ford' },
-            { title: 'Nissan' },
-            { title: 'Hyundai' },
-            { title: 'Chevrolet' },
-            { title: 'Subaru' },
-          ])
+          expect(body.data).toMatchObject(
+            organismes.map((o) => ({ title: o.title })).slice(5, 10),
+          )
         })
     })
 

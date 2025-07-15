@@ -40,6 +40,7 @@ items:
     telephones: '1234567890'
     dateCreation: '2023-10-04T06:40:00.000Z'
     idRnf: 'F001'
+    syncState: "@renaultSyncState"
   Peugeot:
     id: '3'
     state: 'uploaded'
@@ -204,4 +205,5 @@ items:
     dateCreation: '2023-10-04T06:56:00.000Z'
     idRnf: 'F006'
     missingDeclarationYears: [2020, 2021, 2022, 2023, 2024]
+
 

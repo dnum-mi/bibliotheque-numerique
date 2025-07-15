@@ -150,8 +150,14 @@ describe('Synchro foundation hub', () => {
     expect(organismeFound.state).toBe(eState.uploaded)
     expect(organismeFound.type).toBe(foundationHub.foundationType)
     expect(organismeFound.title).toBe(foundationHub.title)
+    expect(organismeFound.syncState).toMatchObject({
+      state: 'uploaded',
+      message: null,
+    })
+    expect(organismeFound.syncState.lastSynchronisedAt.toDateString()).toBe(new Date().toDateString())
 
     // reset database
+    await dataSource.manager.remove(organismeFound.syncState)
     await dataSource.manager.remove(organismeFound)
   })
 })
