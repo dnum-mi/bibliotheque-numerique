@@ -16,7 +16,11 @@ import type {
   ISiafRnfHistoryOutput,
   ISiafRnfOutput,
 } from '@biblio-num/shared'
-import { dFileTabDictionary, eOrganismeType } from '@biblio-num/shared'
+import {
+  dFileTabDictionary,
+  eOrganismeType,
+  eState,
+} from '@biblio-num/shared'
 import type { ApiCall } from '@/components/ag-grid/server-side/pagination.utils'
 import FicheInfoAssociation from './FicheInfoAssociation.vue'
 import FicheInfoFondation from './FicheInfoFondation.vue'
@@ -33,6 +37,8 @@ const userStore = useUserStore()
 
 const organisme = computed(() => organismeStore.organisme as IOrganismeOutputDto)
 const organismeSiaf = computed(() => organismeStore.organismeSiaf)
+const syncState = computed(() => organismeStore.syncState)
+const dossiersCount = computed(() => organismeStore.dossiersCount)
 
 const hasSiaf = computed(() => !!organismeStore.organismeSiaf)
 const hasSiafAssociation = computed(() => {
@@ -53,15 +59,23 @@ const role = computed<IRole | undefined>(() => userStore.currentUser?.role)
 
 const isLoading = ref(false)
 
-const count = ref(0)
 const loadOrganisme = async () => {
   await organismeStore.loadOrganisme(props.id, props.idType)
   if (organisme.value) {
     histories.value = await organismeStore.loadOrganismeHistory(props.id, props.idType)
     filesSummary.value = await apiClient.getOrganismeFilesSummary(organisme.value.id)
   }
-  count.value++
 }
+
+const isSynchronising = computed(() => {
+  return (syncState.value?.state === eState.uploading || syncState.value?.state === eState.queued)
+    && organisme.value?.type === eOrganismeType.unknown
+})
+
+const isErrorSync = computed(() => {
+  return syncState.value?.state === eState.failed
+    && organisme.value?.type === eOrganismeType.unknown
+})
 
 onMounted(async () => {
   isLoading.value = true
@@ -100,7 +114,6 @@ const onRefreshSync = async () => {
 </script>
 
 <template>
-  {{ count }}
   <div v-if="isLoading">
     Chargement en cours, veuillez patienter...
   </div>
@@ -112,17 +125,16 @@ const onRefreshSync = async () => {
     class="flex flex-grow gap-2 h-full"
   >
     <LayoutFiche
-      :class="organisme?.id ? 'flex-basis-[59%]' : 'flex-basis-[99%]'"
+      :class="(organisme?.id && dossiersCount) ? 'flex-basis-[59%]' : 'flex-basis-[99%]'"
       class="overflow-auto"
       title-bg-color="var(--grey-200-850)"
       title-fg-color="var(--text-inverted-grey)"
     >
       <template
-        v-if="organisme"
         #title
       >
         <div class="flex flex-grow gap-2 justify-between">
-          <div>
+          <div v-if="organisme">
             <OrganismeBadge
               :type="organisme?.type"
               class="mr-4"
@@ -131,34 +143,34 @@ const onRefreshSync = async () => {
             <span class="fr-text--lead fr-text--bold">{{ organisme?.idRna || organisme?.idRnf }} - </span>
             <span class="fr-text--lead">{{ organisme?.title }}</span>
           </div>
+          <div v-else>
+            <OrganismeBadge
+              :type="(organismeSiaf as IOrganismeOutputDto)?.type"
+              class="mr-4"
+              big
+            />
+            <span class="fr-text--lead fr-text--bold">
+              {{ (organismeSiaf as ISiafAssociationOutput)?.identite?.id_rna || (organismeSiaf as IOrganismeOutputDto)?.idRnf }} -
+            </span>
+            <span class="fr-text--lead">{{
+              (organismeSiaf as ISiafAssociationOutput)?.identite?.nom || (organismeSiaf as IOrganismeOutputDto).title
+            }}</span>
+          </div>
           <div class="w-1/7">
             <BnRefreshSyncButton
-              :sync-state="organisme?.syncState"
+              :sync-state="syncState"
               @refresh-sync="onRefreshSync"
               @refresh-data="loadOrganisme()"
             />
           </div>
         </div>
       </template>
-      <template
-        v-else
-        #title
-      >
-        <OrganismeBadge
-          :type="(organismeSiaf as IOrganismeOutputDto)?.type"
-          class="mr-4"
-          big
-        />
-        <span class="fr-text--lead fr-text--bold">
-          {{ (organismeSiaf as ISiafAssociationOutput)?.identite?.id_rna || (organismeSiaf as IOrganismeOutputDto)?.idRnf }} -
-        </span>
-        <span class="fr-text--lead">{{
-          (organismeSiaf as ISiafAssociationOutput)?.identite?.nom || (organismeSiaf as IOrganismeOutputDto).title
-        }}</span>
-      </template>
 
       <template #content>
-        <div class="w-full h-full pl-4">
+        <div v-if="isSynchronising" class="flex justify-center">
+          <span class="fr-text--lg">Synchronisation en cours...</span>
+        </div>
+        <div v-else class="w-full h-full pl-4">
           <BnTabsContainer
             v-model="currentFicheOrganismeTab"
             :default-tab-id="defaultTabId"
@@ -218,7 +230,7 @@ const onRefreshSync = async () => {
     </LayoutFiche>
 
     <div
-      v-if="organisme?.id"
+      v-if="organisme?.id && dossiersCount"
       class="flex-basis-[40%] overflow-auto flex flex-col fr-pr-2w"
     >
       <div class="fr-p-3w flex align-center gap-3">

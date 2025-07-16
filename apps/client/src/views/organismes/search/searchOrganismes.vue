@@ -1,6 +1,10 @@
 <script lang="ts" setup>
 import { organismeTypes, EEntityTypeSearchOrganisme } from '@biblio-num/shared'
-import type { ISiafAssociationEntity, ISiafFondationEntity, ISiafSearchOrganismeResponseOutput } from '@biblio-num/shared'
+import type {
+  ISiafAssociationEntity,
+  ISiafFondationEntity,
+  ISiafSearchOrganismeResponseOutput,
+} from '@biblio-num/shared'
 import apiClient from '../../../api/api-client'
 import { routeNames } from '../../../router/route-names'
 import { EOrganismeIdType } from '../../../stores'
@@ -69,7 +73,11 @@ const rows = computed(() => {
           component: 'DsfrButton',
           label: 'Voir',
           icon: 'fr-icon-eye-line',
-          onClick: () => {
+          onClick: async () => {
+            console.log('__TEST__', idType, id)
+            if (idType === EOrganismeIdType.Rnf) {
+              await apiClient.addOneRnf(id as string)
+            }
             router.push({
               name: routeNames.FICHE_ORGANISME,
               params: { id: id as string },

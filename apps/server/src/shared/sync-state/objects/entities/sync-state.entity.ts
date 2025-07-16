@@ -15,8 +15,8 @@ export class SyncState extends BaseEntity implements ISyncState {
   @Index()
   @Column({
     type: 'timestamp',
-    nullable: false,
-    default: '2022-01-01 00:00:00',
+    nullable: true,
+    default: null,
   })
   lastSynchronisedAt: Date
 

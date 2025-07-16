@@ -54,6 +54,8 @@ export const getOrganismeHistoryByRnfRoute = (organismeRnf: string) => `${organi
 export const getAssociationRoute = (organismeRna: string) => `${organismesRoute}/association/${organismeRna}`
 export const getFoundationRoute = (organismeRnf: string) => `${organismesRoute}/fondation/${organismeRnf}`
 export const searchOrganisme = (sentence: string) => `${organismesRoute}/search/${sentence}`
+export const getAddOneRnfRoute = (id: string) => `${organismesRoute}/rnf/${id}`
+
 export const customFiltersRoute = '/custom-filters'
 export const getCustomFiltersRoute = () => customFiltersRoute
 export const getOneCustomFiltersRoute = (id: number) => `/custom-filters/${id}`

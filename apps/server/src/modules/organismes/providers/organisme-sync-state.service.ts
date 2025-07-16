@@ -30,18 +30,26 @@ export class OrganismeSyncStateService extends SyncStateGenericService<Organisme
     syncState?: SyncState['id'],
   ): Promise<SyncState> {
     this.logger.verbose('Set to uploading status for rnf')
-    return await super.setStateUploading(
-      { idRnf, id: syncState },
-      `Foundation ${idRnf} is not found`,
-    )
+    return await super.setStateUploading({
+      where: {
+        idRnf,
+        id: syncState,
+      },
+      notFoundMessage: `Foundation ${idRnf} is not found`,
+      id: syncState,
+    })
   }
 
-  async setStateUploadedByRnfId(idRnf: string): Promise<SyncState> {
+  async setStateUploadedByRnfId(
+    idRnf: string,
+    syncState?: SyncState['id'],
+  ): Promise<SyncState> {
     this.logger.verbose('Set uploaded status of rnf')
-    return await super.setStateUploaded(
-      { idRnf },
-      `Foundation ${idRnf} is not found`,
-    )
+    return await super.setStateUploaded({
+      where: { idRnf, id: syncState },
+      notFoundMessage: `Foundation ${idRnf} is not found`,
+      id: syncState,
+    })
   }
 
   async setStateFailedByRnfId(
@@ -52,9 +60,11 @@ export class OrganismeSyncStateService extends SyncStateGenericService<Organisme
     this.logger.verbose('Set failed status of rnf')
     return await super.setStateFailed(
       error,
-      { idRnf, id: syncState },
-      `Foundation ${idRnf} is not found`,
-    )
+      {
+        where: { idRnf, id: syncState },
+        notFoundMessage: `Foundation ${idRnf} is not found`,
+        id: syncState,
+      })
   }
   // #endregion Pour les Foundations
 }

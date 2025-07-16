@@ -38,6 +38,7 @@ export class DossierService extends BaseEntityService<Dossier> {
     this.logger.setContext(this.constructor.name)
   }
 
+  // #region get dossiers by organismeId
   async getOrganismeDossiers(
     organismeId: number,
   ): Promise<LeanDossierOutputDto[]> {
@@ -67,6 +68,19 @@ export class DossierService extends BaseEntityService<Dossier> {
         }))
       })
   }
+
+  async countDossiersByOrganismeId(
+    organismeId: number,
+  ): Promise<number> {
+    if (isNaN(organismeId)) {
+      throw new BadRequestException('Invalid organisme id.')
+    }
+    this.logger.verbose(`countDossiersByOrganismeId ${organismeId}`)
+    return this.repo.count({
+      where: { organisme: { id: organismeId } },
+    })
+  }
+  // #endregion get dossiers by organismeId
 
   async softDeleteDemarcheDossiers(demarcheId: number): Promise<void> {
     this.logger.verbose(`softDeleteDemarcheDossiers ${demarcheId}`)

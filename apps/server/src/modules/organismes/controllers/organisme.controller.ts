@@ -11,10 +11,11 @@ import {
   ParseIntPipe, Patch,
   Post,
   Res,
-
 } from '@nestjs/common'
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
-import { LoggerService } from '@/shared/modules/logger/logger.service'
+import { ServerResponse } from 'http'
+import { Queue } from 'bull'
+import { InjectQueue } from '@nestjs/bull'
 
 import {
   Roles,
@@ -26,27 +27,22 @@ import {
   ISiafRnfHistoryOutput,
 } from '@biblio-num/shared'
 
+import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { DossierService } from '@/modules/dossiers/providers/dossier.service'
-import { OrganismeService } from '@/modules/organismes/providers/organisme.service'
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
-import { xlsxContent } from '../../../shared/modules/xlsx/xlsx.constants'
-import { ServerResponse } from 'http'
-import { XlsxService } from '../../../shared/modules/xlsx/xlsx.service'
+import { xlsxContent } from '@/shared/modules/xlsx/xlsx.constants'
+import { XlsxService } from '@/shared/modules/xlsx/xlsx.service'
 import { PaginationDto } from '@/shared/pagination/pagination.dto'
 import { PaginatedDto } from '@/shared/pagination/paginated.dto'
 import { LeanDossierOutputDto } from '@/modules/dossiers/objects/dto/lean-dossier-output.dto'
 import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
-import {
-  SyncOneRnaOrganismeJobPayload, SyncOneRnfOrganismeJobPayload,
-} from '@/shared/modules/custom-bull/objects/const/job-payload.type'
+import { SyncOneRnaOrganismeJobPayload } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
-import { InjectQueue } from '@nestjs/bull'
-import { Queue } from 'bull'
 import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.decorator'
 import { Organisme } from '@/modules/organismes/objects/organisme.entity'
 import { SiafRnfHistoryOutputDto } from '../objects/dto/siaf-rnf-history-output.dto'
-import { OrganismeSyncStateService } from '../providers/organisme-sync-state.service'
-
+import { OrganismeSyncService } from '../providers/organisme-sync.service'
+import { OrganismeService } from '../providers/organisme.service'
 @ApiTags('Organismes')
 @Controller('organismes')
 export class OrganismeController {
@@ -56,7 +52,7 @@ export class OrganismeController {
     private readonly organismeService: OrganismeService,
     private readonly xlsxService: XlsxService,
     @InjectQueue(QueueName.sync) private readonly syncQueue: Queue,
-    private readonly syncState: OrganismeSyncStateService,
+    private readonly organismeSyncService: OrganismeSyncService,
   ) {
     this.logger.setContext(this.constructor.name)
   }
@@ -230,7 +226,7 @@ export class OrganismeController {
     responseType: null,
   })
   @Patch(':id/sync')
-  @Role(Roles.sudo)
+  @Role(Roles.instructor)
   async synchroniseOne(@Param('id') id: number): Promise<void> {
     this.logger.verbose('synchroniseOne')
     const smallOrg = await this.organismeService.findOneById(id)
@@ -239,11 +235,7 @@ export class OrganismeController {
         rna: smallOrg.idRna,
       } as SyncOneRnaOrganismeJobPayload)
     } else if (smallOrg.idRnf) {
-      const syncStateEntity = await this.syncState.setStateQueuedByIdRnf(smallOrg.idRnf)
-      await this.syncQueue.add(eJobName.SyncOneRnfOrganisme, {
-        rnf: smallOrg.idRnf,
-        syncState: syncStateEntity.id,
-      } as SyncOneRnfOrganismeJobPayload)
+      await this.organismeSyncService.addSyncOneRnf(smallOrg.idRnf)
     } else {
       throw new Error('impossible de synchroniser cette organisme')
     }
@@ -273,5 +265,18 @@ export class OrganismeController {
   async deleteOrganisme(@Param('id') id: number): Promise<string> {
     this.logger.verbose('deleteOrganisme')
     return this.organismeService.deleteOrganismeIfNotInDossiers(id)
+  }
+
+  @UsualApiOperation({
+    summary: 'Add one foundation in BN.',
+    method: 'POST',
+    minimumRole: Roles.instructor,
+    responseType: null,
+  })
+  @Post('rnf/:id')
+  @Role(Roles.instructor)
+  async addOneRnf(@Param('id') idRnf: string): Promise<void> {
+    this.logger.verbose('addSynchroniseOne')
+    await this.organismeService.addRnfWithSync(idRnf)
   }
 }

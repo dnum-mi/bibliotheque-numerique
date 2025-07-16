@@ -15,6 +15,7 @@ import { BnConfigurationModule } from '@/shared/modules/bn-configurations/bn-con
 import { HubModule } from '@/modules/hub/hub.module'
 import { OrganismeSyncStateService } from './providers/organisme-sync-state.service'
 import { SyncState } from '../../shared/sync-state/objects/entities/sync-state.entity'
+import { OrganismeSyncService } from './providers/organisme-sync.service'
 
 @Module({
   imports: [
@@ -32,7 +33,7 @@ import { SyncState } from '../../shared/sync-state/objects/entities/sync-state.e
     HubModule,
   ],
   controllers: [OrganismeController, OrganismeFileController],
-  providers: [OrganismeService, RnaService, RnfService, OrganismeSyncStateService],
-  exports: [OrganismeService, RnfService, RnaService, OrganismeSyncStateService],
+  providers: [OrganismeService, RnaService, RnfService, OrganismeSyncStateService, OrganismeSyncService],
+  exports: [OrganismeService, RnfService, RnaService, OrganismeSyncStateService, OrganismeSyncService],
 })
 export class OrganismeModule {}
