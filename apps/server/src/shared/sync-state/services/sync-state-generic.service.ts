@@ -1,14 +1,13 @@
 import { FindOneOptions, FindOptionsWhere, Repository } from 'typeorm'
-import { Injectable } from '@nestjs/common'
 
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { SyncState } from '../objects/entities/sync-state.entity'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { BaseEntitySyncState } from '../objects/entities/base-entity-sync-state.entity'
 import { eState } from '@biblio-num/shared'
+import { tArgSetSyncState } from '../arg-sync-state.type'
 
-@Injectable()
-export class SyncStateGenericService<
+export abstract class SyncStateGenericService<
   T extends BaseEntitySyncState,
 > extends BaseEntityService<SyncState> {
   constructor(
@@ -42,12 +41,17 @@ export class SyncStateGenericService<
     id?: SyncState['id'],
   ): Promise<SyncState> {
     this.logger.log('_createAndJoin')
+    let syncState: SyncState
     if (id) {
-      entity.syncState = await this.findOneById(id)
+      syncState = await this.findOneById(id)
     } else {
-      entity.syncState = this.repo.create()
+      syncState = this.repo.create()
     }
-    await this._setSyncState(entity.syncState, newSyncState)
+    await this._setSyncState(syncState, newSyncState)
+    if (!entity) {
+      return syncState
+    }
+    entity.syncState = syncState
     await this.repoParent.save(entity)
     return entity.syncState
   }
@@ -79,53 +83,38 @@ export class SyncStateGenericService<
     if (!entity?.syncState) {
       return await this._createAndJoin(entity, newSyncState)
     }
-    // const syncState = this.repo.create()
     return await this._setSyncState(entity.syncState, newSyncState)
   }
 
-  private async _setState(stateArg: {
-      state: Partial<SyncState>,
-      where?: FindOptionsWhere<T>,
-      notFoundMessage?: string,
-      id?: SyncState['id'],
-    }): Promise<SyncState> {
+  private async _setState(stateArg: { state: Partial<SyncState> } & tArgSetSyncState<T>): Promise<SyncState> {
     const { state, where, notFoundMessage, id } = stateArg
     this.logger.verbose(`Set to ${state} status`)
     const entity = await this.findOneParent(where)
     if (!entity) {
       this.logger.warn(notFoundMessage)
-      return
+      // return
     }
-    if (!entity.syncState) {
-      await this._createAndJoin(entity, state, id)
-      return
+    if (!entity?.syncState) {
+      return await this._createAndJoin(entity, state, id)
     }
-    await this._setSyncState(entity.syncState, state)
+    return await this._setSyncState(entity?.syncState, state)
   }
 
-  async setStateUploading(
-    where?: FindOptionsWhere<T>,
-    notFoundMessage?: string,
-    id?: SyncState['id'],
-  ): Promise<SyncState> {
+  async setStateUploading(args: tArgSetSyncState<T>): Promise<SyncState> {
     const state: Partial<SyncState> = {
       state: eState.uploading,
       message: '',
     }
+
     return this._setState(
       {
         state,
-        where,
-        notFoundMessage,
-        id,
+        ...args,
       },
     )
   }
 
-  async setStateUploaded(
-    where?: FindOptionsWhere<T>,
-    notFoundMessage?: string,
-  ): Promise<SyncState> {
+  async setStateUploaded(args: tArgSetSyncState<T>): Promise<SyncState> {
     const state: Partial<SyncState> = {
       state: eState.uploaded,
       lastSynchronisedAt: new Date(),
@@ -134,17 +123,14 @@ export class SyncStateGenericService<
     return this._setState(
       {
         state,
-        where,
-        notFoundMessage,
+        ...args,
       },
     )
   }
 
   async setStateFailed(
     message: string,
-    where?: FindOptionsWhere<T>,
-    notFoundMessage?: string,
-    id?: SyncState['id'],
+    args: tArgSetSyncState<T>,
   ): Promise<SyncState> {
     const state: Partial<SyncState> = {
       state: eState.failed,
@@ -153,9 +139,7 @@ export class SyncStateGenericService<
     return this._setState(
       {
         state,
-        where,
-        notFoundMessage,
-        id,
+        ...args,
       },
     )
   }

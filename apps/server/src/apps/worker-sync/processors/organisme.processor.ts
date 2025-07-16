@@ -18,7 +18,8 @@ import { AsyncLocalStorage } from 'async_hooks'
 import { AsyncLocalStore } from '@/shared/modules/als/async-local-store.type'
 import { Inject } from '@nestjs/common'
 import { differenceInMonths, isAfter } from 'date-fns'
-import { OrganismeSyncStateService } from '../../../modules/organismes/providers/organisme-sync-state.service'
+import { OrganismeSyncStateService } from '@/modules/organismes/providers/organisme-sync-state.service'
+import { OrganismeSyncService } from '@/modules/organismes/providers/organisme-sync.service'
 
 @Processor(QueueName.sync)
 export class OrganismeProcessor {
@@ -30,6 +31,7 @@ export class OrganismeProcessor {
     private readonly organismeService: OrganismeService,
     private readonly bnConfiguration: BnConfigurationService,
     private readonly syncState: OrganismeSyncStateService,
+    private readonly organismeSyncService: OrganismeSyncService,
     @InjectQueue(QueueName.sync) private readonly syncQueue: Queue,
     @Inject(ALS_INSTANCE)
     private readonly als?: AsyncLocalStorage<AsyncLocalStore>,
@@ -179,11 +181,7 @@ export class OrganismeProcessor {
       }
 
       const addJobsResults = await Promise.allSettled(modifiedRnfIds.map(async (rnfId) => {
-        const syncStateEntity = await this.syncState.setStateQueuedByIdRnf(rnfId)
-        return this.syncQueue.add(eJobName.SyncOneRnfOrganisme, {
-          rnf: rnfId,
-          syncState: syncStateEntity.id,
-        } satisfies SyncOneRnfOrganismeJobPayload)
+        return this.organismeSyncService.addSyncOneRnf(rnfId)
       }))
 
       const rejectedCount = addJobsResults.filter((result) => result.status === 'rejected')

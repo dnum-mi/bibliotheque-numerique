@@ -1,3 +1,4 @@
+import { ISyncState } from "../state/sync-state.interface";
 import { IOrganisme } from "./organisme.interface";
 import { IOrganismeOutputDto } from "./organsime-output-dto.interface";
 import { ISiafRnaOutput } from "./siaf/siaf-rna-output.interface";
@@ -12,5 +13,7 @@ export enum  typeCategorieOrganisme {
 export interface  IOrganismeOutput {
   bn: Partial<IOrganismeOutputDto | IOrganisme>,
   siaf: Partial<IOrganismeOutputDto | ISiafRnaOutput | ISiafRnfOutput>
+  syncState?: ISyncState,
+  dossiersCount?: number,
   type: typeCategorieOrganisme
 }

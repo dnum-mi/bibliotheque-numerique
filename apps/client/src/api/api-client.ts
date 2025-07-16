@@ -83,6 +83,7 @@ import {
   proConnectCallbackRoute,
   refreshTokensRoute,
   getOrganismeHistoryByRnfRoute,
+  getAddOneRnfRoute,
 } from './bn-api-routes'
 import { getUserByIdRoute, profileRoute, signInRoute, verifyAuthRoute, logoutRoute, usersRoutes } from '@/api/bn-api-routes'
 
@@ -316,6 +317,11 @@ export const organismeApiClient = {
 
   searchOrganisme: (sentence: string): Promise<ISiafSearchOrganismeResponseOutput[]> => {
     return getOrRedirectTo404(searchOrganisme(sentence))
+  },
+
+  addOneRnf: async (id: string) => {
+    const response = await apiClientInstance.post(getAddOneRnfRoute(id))
+    return response.data
   },
 }
 

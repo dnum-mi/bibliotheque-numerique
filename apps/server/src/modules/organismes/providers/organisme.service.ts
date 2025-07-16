@@ -62,6 +62,7 @@ import { GetUpdateFoundationInputDto } from '../objects/dto/get-updated-foundati
 import { eFileStorageIn } from '../../files/objects/const/file-storage-in.enum'
 import { tFileCommon } from '../../files/objects/types/file-common.type'
 import { FileFoundationService } from '../../files/providers/file-foundation.service'
+import { OrganismeSyncService } from './organisme-sync.service'
 
 @Injectable()
 export class OrganismeService extends BaseEntityService<Organisme> {
@@ -76,6 +77,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     protected readonly dossierService: DossierService,
     @InjectQueue(QueueName.file) private readonly fileQueue: Queue,
     private readonly bnConfiguration: BnConfigurationService,
+    private readonly organismeSync: OrganismeSyncService,
   ) {
     super(repo, logger, OrganismeFieldTypeHash)
     this.logger.setContext(this.constructor.name)
@@ -544,25 +546,38 @@ export class OrganismeService extends BaseEntityService<Organisme> {
 
   async getOrganismeRnfFromAllServer(idRnf: string): Promise<IOrganismeOutput> {
     this.logger.verbose('getOrganismeRnfFromAllServer')
+    // TODO: IOrganismeOutput doit contenir que bn Pour siaf complet
+    const returnedOrganisme: IOrganismeOutput = {
+      bn: null,
+      siaf: null,
+      syncState: null,
+      type: typeCategorieOrganisme.rnf,
+    }
+
+    const rnf = await this.repo.findOne({ where: { idRnf } })
+
+    if (rnf?.syncState?.state) {
+      if (rnf.syncState.state === eState.failed && rnf.type === eOrganismeType.unknown) return returnedOrganisme
+      returnedOrganisme.dossiersCount = await this.dossierService.countDossiersByOrganismeId(
+        rnf.id,
+      )
+    }
+
+    returnedOrganisme.bn = rnf && this._transformRnfToOrganismeDto(rnf)
+    return returnedOrganisme
+  }
+
+  async addRnfWithSync (idRnf: string): Promise<void> {
     const enableHubSearch = await this.bnConfiguration.getValueByKeyName(
       eBnConfiguration.ENABLE_HUB_SEARCH,
     )
-    const results = await Promise.allSettled([
-      this.findOneOrThrow({ where: { idRnf } }),
-      enableHubSearch ? this.getFoundationFromHub(idRnf) : null,
-    ])
-    const bn = this._getValueFromPromiseSettle('bn', results[0])
-    const siaf = this._getValueFromPromiseSettle('siaf', results[1])
+    if (!enableHubSearch) return
 
-    return {
-      bn: bn && this._transformRnfToOrganismeDto(bn),
-      siaf: siaf && {
-        ...this._transformSiafRnfToOrganismeDto(siaf),
-        // TODO: A faire mieux pour le cas où la fondation n'est pas enregistré dans bn
-        missingDeclarationYears: bn?.missingDeclarationYears || [],
-      },
-      type: typeCategorieOrganisme.rnf,
-    }
+    const rnf = await this.getOrCreateOrganismeIdFromRnf(idRnf)
+    if (rnf && rnf.type !== eOrganismeType.unknown) return
+
+    if (rnf.syncState?.state === eState.uploading) return
+    await this.organismeSync.addSyncOneRnf(idRnf)
   }
 
   async getOrganismeRnfHistoryFromSiaf(

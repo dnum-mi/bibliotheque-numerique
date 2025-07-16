@@ -25,6 +25,7 @@ export const useOrganismeStore = defineStore('organisme', () => {
   const organismeSiaf = ref<IOrganismeOutputDto | ISiafAssociationOutput | undefined>(undefined)
 
   const syncState = ref<ISyncState | null | undefined>(undefined)
+  const dossiersCount = ref<number | null>(null)
 
   const loadOrganisme = async (id: string, type: OrganismeIdType) => {
     if (!id) {
@@ -36,7 +37,8 @@ export const useOrganismeStore = defineStore('organisme', () => {
     const organismeOutput: IOrganismeOutput = await apiClient[`getOrganismeBy${type}`](id)
     organisme.value = organismeOutput?.bn as IOrganisme
     organismeSiaf.value = organismeOutput?.siaf as IOrganismeOutputDto | ISiafAssociationOutput
-    syncState.value = (organisme.value as (IOrganisme & IEntityWithSyncState))?.syncState
+    syncState.value = (organisme.value as (IOrganisme & IEntityWithSyncState))?.syncState || organismeOutput?.syncState
+    dossiersCount.value = organismeOutput?.dossiersCount || null
   }
 
   const loadOrganismeHistory = async (id: string, type: OrganismeIdType): Promise<ISiafRnfHistoryOutput[]> => {
@@ -64,6 +66,7 @@ export const useOrganismeStore = defineStore('organisme', () => {
     organisme,
     organismes,
     syncState,
+    dossiersCount,
     loadOrganisme,
     loadOrganismeHistory,
     loadOrganismes,
