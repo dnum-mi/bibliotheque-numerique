@@ -2,6 +2,7 @@
 import { TabsContextKey } from './injection-key'
 import type { TabInfo } from './injection-key'
 import { useTabManager } from './useTabManager'
+import { getRandomString } from '@gouvminint/vue-dsfr'
 
 const props = defineProps<{
   defaultTabId?: string
@@ -14,7 +15,11 @@ const emit = defineEmits<{
   (e: 'tabChanged', newId: string | undefined, oldId: string | undefined): void
 }>()
 
+const getRandomTabKey = () => {
+  return `tab-key-${getRandomString(5)}`
+}
 const registeredTabs = ref<Map<string, TabInfo>>(new Map())
+const tabsKey = ref(getRandomTabKey())
 let orderCounter = 0
 
 const sortedTabs = computed(() => {
@@ -65,6 +70,18 @@ const registerTab = (tab: Omit<TabInfo, 'order'>) => {
   }
 }
 
+const updateTabTitle = (id: string, title: string) => {
+  const tab = registeredTabs.value.get(id)
+  if (tab) {
+    registeredTabs.value.set(tab.id, {
+      ...tab,
+      title,
+      order: tab.order,
+    })
+    tabsKey.value = getRandomTabKey() // Force re-render of the tab list
+  }
+}
+
 const unregisterTab = (id: string) => {
   registeredTabs.value.delete(id)
   orderCounter = 0
@@ -73,7 +90,7 @@ const unregisterTab = (id: string) => {
     .forEach((t) => (t.order = orderCounter++))
 }
 
-provide(TabsContextKey, { activeTabId, registerTab, unregisterTab, isTransitionAsc })
+provide(TabsContextKey, { activeTabId, registerTab, unregisterTab, updateTabTitle, isTransitionAsc })
 
 const selectTab = (id: string) => {
   const tab = registeredTabs.value.get(id)
@@ -86,6 +103,7 @@ const selectTab = (id: string) => {
 <template>
   <div class="bn-scroll-parent bn-tabs-container fr-py-2v">
     <div
+      :key="tabsKey"
       class="bn-tabs-nav"
       role="tablist"
       aria-label="Onglets de navigation"

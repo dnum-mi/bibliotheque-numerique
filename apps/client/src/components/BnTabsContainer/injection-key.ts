@@ -10,6 +10,7 @@ export type TabContext = {
   activeTabId: WritableComputedRef<string | undefined>
   registerTab: (tab: Omit<TabInfo, 'order'>) => void
   unregisterTab: (tabId: string) => void
+  updateTabTitle: (id: string, title: string) => void
   isTransitionAsc: Readonly<Ref<boolean>>
 }
 

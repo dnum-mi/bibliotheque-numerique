@@ -12,7 +12,7 @@ const context = inject(TabsContextKey)
 if (!context) {
   throw new Error('BnTabContent doit être utilisé à l\'intérieur d\'un BnTabs')
 }
-const { activeTabId, registerTab, unregisterTab, isTransitionAsc } = context
+const { activeTabId, registerTab, unregisterTab, updateTabTitle, isTransitionAsc } = context
 
 const isActive = computed(() => activeTabId.value === tabId.value)
 
@@ -25,8 +25,9 @@ onUnmounted(() => {
 })
 
 watch(tabTitle, () => {
-  unregisterTab(tabId.value)
-  registerTab({ id: tabId.value, title: tabTitle })
+  updateTabTitle(tabId.value, tabTitle.value)
+  // unregisterTab(tabId.value)
+  // registerTab({ id: tabId.value, title: tabTitle })
 })
 
 const translateValueFrom = computed(() => (isTransitionAsc.value ? '100%' : '-100%'))
