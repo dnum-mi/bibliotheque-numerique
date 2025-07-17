@@ -28,7 +28,7 @@ export const computeLuhn = (source: string, mod = 10): number => {
   return mod - (total % mod)
 }
 
-const addLuhnToRnf = (rnfWithoutLuhn: string): string => {
+export const addLuhnToRnf = (rnfWithoutLuhn: string): string => {
   const noDash = rnfWithoutLuhn.replace(/-/g, '')
   let onlyNumbersString = ''
   for (let i = 0; i < noDash.length; i++) {
