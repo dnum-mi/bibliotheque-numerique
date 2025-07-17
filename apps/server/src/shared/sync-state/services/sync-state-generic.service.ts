@@ -103,7 +103,7 @@ export abstract class SyncStateGenericService<
   async setStateUploading(args: tArgSetSyncState<T>): Promise<SyncState> {
     const state: Partial<SyncState> = {
       state: eState.uploading,
-      message: '',
+      message: null,
     }
 
     return this._setState(

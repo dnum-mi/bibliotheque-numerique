@@ -7,7 +7,7 @@ import { faker } from '@faker-js/faker/locale/fr'
 
 import { eJobName } from '../../../../../src/shared/modules/custom-bull/objects/const/job-name.enum'
 import { eBnConfiguration, eState } from '@biblio-num/shared'
-import { waitJobsFinished } from '../../../common/jobs-utils'
+import { forceJobsFinished } from '../../../common/jobs-utils'
 
 import { Organisme } from '../../../../../src/modules/organismes/objects/organisme.entity'
 
@@ -118,7 +118,7 @@ describe('Synchro foundation hub', () => {
 
     // Run Job Synchro
     await syncQueue.add(eJobName.SyncAllRnfOrganisme)
-    await waitJobsFinished(syncQueue, [eJobName.SyncAllRnfOrganisme, eJobName.SyncOneRnfOrganisme])
+    await forceJobsFinished(syncQueue, [eJobName.SyncAllRnfOrganisme, eJobName.SyncOneRnfOrganisme])
 
     // Expect for synchro of all rnf
     expect(hubService.getLastImportedFoundations).toHaveBeenCalled()
@@ -134,7 +134,7 @@ describe('Synchro foundation hub', () => {
     expect(LastFoundationSyncAt1.stringValue).toContain(expectedNow)
 
     // Wait 2nd times to see eJobName.SyncOneRnfOrganisme
-    await waitJobsFinished(syncQueue, [eJobName.SyncAllRnfOrganisme, eJobName.SyncOneRnfOrganisme])
+    await forceJobsFinished(syncQueue, [eJobName.SyncAllRnfOrganisme, eJobName.SyncOneRnfOrganisme])
     // Expect for synchro of one rnf
     const jobs = await syncQueue.getCompleted()
     expect(jobs.map(job => job.name)).toEqual(expect.arrayContaining([eJobName.SyncOneRnfOrganisme]))
@@ -152,6 +152,7 @@ describe('Synchro foundation hub', () => {
     expect(organismeFound.title).toBe(foundationHub.title)
     expect(organismeFound.syncState).toMatchObject({
       state: 'uploaded',
+      lastSynchronisedAt: expect.any(Date),
       message: null,
     })
     expect(organismeFound.syncState.lastSynchronisedAt.toDateString()).toBe(new Date().toDateString())
