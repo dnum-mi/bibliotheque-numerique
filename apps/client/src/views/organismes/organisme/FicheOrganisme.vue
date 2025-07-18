@@ -29,6 +29,7 @@ import slugify from 'slugify'
 import FicheOrganismeHistorique from './historique/FicheOrganismeHistorique.vue'
 import BnRefreshSyncButton from '@/components/BnRefreshSyncButton.vue'
 import { synchroniseOneOrganisme } from '../../../api/sudo-api-client'
+import Spinner from '@/components/Spinner.vue'
 
 const props = withDefaults(defineProps<{ id: string; idType: OrganismeIdType }>(), {})
 
@@ -133,7 +134,7 @@ const onRefreshSync = async () => {
       <template
         #title
       >
-        <div class="flex flex-grow gap-2 justify-between">
+        <div class="flex flex-grow gap-2 justify-between items-center">
           <div v-if="organisme">
             <OrganismeBadge
               :type="organisme?.type"
@@ -167,8 +168,10 @@ const onRefreshSync = async () => {
       </template>
 
       <template #content>
-        <div v-if="isSynchronising" class="flex justify-center">
-          <span class="fr-text--lg">Synchronisation en cours...</span>
+        <Spinner v-if="isSynchronising" message="Synchronisation en cours..." />
+        <div v-else-if="isErrorSync" class="flex flex-col justify-center items-center p-10">
+          <span class="fr-text--lg">Cette {{ idType === EOrganismeIdType.Rna ? "assocation" : "fondation" }} n'a pas pu être synchroniser.</span>
+          <span class="fr-text--lg">Veuillez Contacter le support.</span>
         </div>
         <div v-else class="w-full h-full pl-4">
           <BnTabsContainer
