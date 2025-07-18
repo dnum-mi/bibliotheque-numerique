@@ -70,6 +70,7 @@ declare module 'vue' {
     RoleBadgesRenderer: typeof import('./components/Badges/role/RoleBadgesRenderer.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Spinner: typeof import('./components/Spinner.vue')['default']
     StatusBadge: typeof import('./components/Badges/status/StatusBadge.vue')['default']
     StatusBadgesRenderer: typeof import('./components/Badges/status/StatusBadgesRenderer.vue')['default']
     TableCellAction: typeof import('./components/TableCellAction.vue')['default']

@@ -40,7 +40,7 @@ onBeforeUnmount(() => {
       <div class="bn-fiche-title fr-p-3w">
         <slot name="title" />
       </div>
-      <div class="bn-fiche-sub-title fr-py-1w fr-px-3w">
+      <div v-if="$slots['sub-title']" class="bn-fiche-sub-title fr-py-1w fr-px-3w">
         <slot name="sub-title" />
       </div>
       <div class="h-full overflow-hidden">
