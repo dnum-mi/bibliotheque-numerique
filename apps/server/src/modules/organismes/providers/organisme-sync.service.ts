@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { Queue } from 'bull'
+import { JobOptions, Queue } from 'bull'
 import { InjectQueue } from '@nestjs/bull'
 
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
@@ -19,13 +19,19 @@ export class OrganismeSyncService {
     this.logger.setContext(this.constructor.name)
   }
 
-  async addSyncOneRnf(idRnf: string): Promise<SyncState> {
+  async addSyncOneRnf(idRnf: string, priority?: number): Promise<SyncState> {
     this.logger.verbose(`Add new RNF with id ${idRnf}`)
+    let opt: JobOptions
+    if (priority !== undefined) {
+      this.logger.debug('set in priority')
+      opt = { priority }
+    }
     const syncStateEntity = await this.syncState.setStateQueuedByIdRnf(idRnf)
     await this.syncQueue.add(eJobName.SyncOneRnfOrganisme, {
       rnf: idRnf,
       syncState: syncStateEntity.id,
-    } as SyncOneRnfOrganismeJobPayload)
+    } as SyncOneRnfOrganismeJobPayload,
+    opt)
     return syncStateEntity
   }
 }

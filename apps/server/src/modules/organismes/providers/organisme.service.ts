@@ -567,7 +567,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     return returnedOrganisme
   }
 
-  async addRnfWithSync (idRnf: string): Promise<void> {
+  async addRnfWithSyncPriority (idRnf: string): Promise<void> {
     const enableHubSearch = await this.bnConfiguration.getValueByKeyName(
       eBnConfiguration.ENABLE_HUB_SEARCH,
     )
@@ -577,7 +577,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     if (rnf && rnf.type !== eOrganismeType.unknown) return
 
     if (rnf.syncState?.state === eState.uploading) return
-    await this.organismeSync.addSyncOneRnf(idRnf)
+    await this.organismeSync.addSyncOneRnf(idRnf, 1)
   }
 
   async getOrganismeRnfHistoryFromSiaf(

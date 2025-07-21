@@ -122,11 +122,7 @@ export class OrganismeController {
     } else if (bn.idRnf) {
       return {
         bn,
-        siaf: await this.organismeService.getFoundationFromHub(bn.idRnf)
-          .then(siaf => siaf).catch(reason => {
-            this.logger.warn(`HUB-RNF: ${reason}`)
-            return null
-          }),
+        siaf: null,
         type: typeCategorieOrganisme.rnf,
       }
     } else {
@@ -222,7 +218,7 @@ export class OrganismeController {
   @UsualApiOperation({
     summary: 'Forcer la synchronisation d\'un organisme.',
     method: 'PATCH',
-    minimumRole: Roles.sudo,
+    minimumRole: Roles.instructor,
     responseType: null,
   })
   @Patch(':id/sync')
@@ -235,7 +231,7 @@ export class OrganismeController {
         rna: smallOrg.idRna,
       } as SyncOneRnaOrganismeJobPayload)
     } else if (smallOrg.idRnf) {
-      await this.organismeSyncService.addSyncOneRnf(smallOrg.idRnf)
+      await this.organismeSyncService.addSyncOneRnf(smallOrg.idRnf, 1)
     } else {
       throw new Error('impossible de synchroniser cette organisme')
     }
@@ -277,6 +273,6 @@ export class OrganismeController {
   @Role(Roles.instructor)
   async addOneRnf(@Param('id') idRnf: string): Promise<void> {
     this.logger.verbose('addSynchroniseOne')
-    await this.organismeService.addRnfWithSync(idRnf)
+    await this.organismeService.addRnfWithSyncPriority(idRnf)
   }
 }
