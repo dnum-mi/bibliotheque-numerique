@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.33.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.33.0...v2.33.1) (2025-07-23)
+
+
+### Bug Fixes
+
+* filtering on type and missingDeclarationYears columns ([d7903a5](https://github.com/dnum-mi/bibliotheque_numerique/commit/d7903a5a5bbce707f64449b61b1e0f6134ff0678))
+
 ## [2.33.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.32.2...v2.33.0) (2025-07-23)
 
 
