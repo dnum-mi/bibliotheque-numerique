@@ -1,9 +1,12 @@
-import { PersonRoleKey, IDissolved, IStatus, ISiafAddress } from '@biblio-num/shared'
 import {
+  PersonRoleKey,
+  IDissolved,
+  IStatus,
+  ISiafAddress,
   ISiafRnfHistoryOutput,
   ISiafRnfOutput,
   Person,
-} from '@biblio-num/shared/src/organismes/siaf/siaf-rnf-output.interface'
+} from '@biblio-num/shared'
 import { ApiProperty } from '@nestjs/swagger'
 
 class SiafRnfPersonOutputDto implements Person {
