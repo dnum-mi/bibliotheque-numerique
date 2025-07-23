@@ -13,3 +13,5 @@ export * from './organisme-output.interface'
 export * from './hub-search-organisme-output.interface'
 export * from './siaf/siaf-rna-output.interface'
 export * from './organsime-output-dto.interface'
+export * from './siaf/siaf-common-output.interface'
+

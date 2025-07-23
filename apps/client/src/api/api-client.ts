@@ -39,6 +39,7 @@ import type {
   IUpdateAnonymizedChamp,
   IOrganismeOutput,
   ISiafSearchOrganismeResponseOutput,
+  ISiafRnfHistoryOutput,
 } from '@biblio-num/shared'
 
 import {
@@ -81,6 +82,7 @@ import {
   proConnectSignInRoute,
   proConnectCallbackRoute,
   refreshTokensRoute,
+  getOrganismeHistoryByRnfRoute,
 } from './bn-api-routes'
 import { getUserByIdRoute, profileRoute, signInRoute, verifyAuthRoute, logoutRoute, usersRoutes } from '@/api/bn-api-routes'
 
@@ -292,8 +294,12 @@ export const organismeApiClient = {
     return getOrRedirectTo404(getOrganismeByRnfRoute(organismeIdRnf))
   },
 
+  getOrganismeHistoryByRnf: async (organismeIdRnf: string): Promise<ISiafRnfHistoryOutput[]> => {
+    return (await apiClientInstance.get(getOrganismeHistoryByRnfRoute(organismeIdRnf)))?.data
+  },
+
   getOrganismeFilesSummary: async (organismeId: number): Promise<Record<FileTagKey, number>> => {
-    return (await apiClientInstance.get(getOrganismeFilesSummaryRoute(organismeId))).data
+    return (await apiClientInstance.get(getOrganismeFilesSummaryRoute(organismeId)))?.data
   },
 
   getOrganismeFiles:

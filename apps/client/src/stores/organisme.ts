@@ -1,12 +1,11 @@
 import type {
   IPaginated,
   IPagination,
-
   IOrganisme,
   ISiafAssociationOutput,
-
   IOrganismeOutput,
   IOrganismeOutputDto,
+  ISiafRnfHistoryOutput,
 } from '@biblio-num/shared'
 
 import apiClient from '@/api/api-client'
@@ -35,6 +34,13 @@ export const useOrganismeStore = defineStore('organisme', () => {
     organismeSiaf.value = organismeOutput?.siaf as IOrganismeOutputDto | ISiafAssociationOutput
   }
 
+  const loadOrganismeHistory = async (id: string, type: OrganismeIdType): Promise<ISiafRnfHistoryOutput[]> => {
+    if (!id || type !== EOrganismeIdType.Rnf) {
+      return []
+    }
+    return await apiClient.getOrganismeHistoryByRnf(id)
+  }
+
   const loadOrganismes = async (dto: IPagination<IOrganisme>): Promise<IPaginated<IOrganisme>> => {
     return apiClient.getOrganismes(dto)
   }
@@ -46,11 +52,13 @@ export const useOrganismeStore = defineStore('organisme', () => {
     organismes.value = []
     organismeSiaf.value = undefined
   }
+
   return {
     $reset,
     organisme,
     organismes,
     loadOrganisme,
+    loadOrganismeHistory,
     loadOrganismes,
     exportOrganismes,
     organismeSiaf,
