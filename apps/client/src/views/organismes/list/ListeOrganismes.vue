@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { SelectionChangedEvent } from 'ag-grid-community'
 
-import type { IPagination, IOrganisme } from '@biblio-num/shared'
+import type { IPagination, IOrganisme, INumbersFilterCondition, IPaginated } from '@biblio-num/shared'
 
 import { EOrganismeIdType, useOrganismeStore } from '@/stores/organisme'
 import LayoutList from '@/components/Layout/LayoutList.vue'
@@ -11,12 +11,26 @@ import type { OrganismeIdType } from '@/stores'
 import { routeNames } from '../../../router/route-names'
 import { useConfigurationStore } from '../../../stores/configuration'
 import { useActiveFilter } from '@/components/ag-grid/active-filters/useActiveFilter'
+import { EMPTY_RESULT, isEmptySetFilter, isEmptyYearsFilter } from './utils'
 
 const organismeStore = useOrganismeStore()
 const bnConfigStore = useConfigurationStore()
 const router = useRouter()
 
-const apiCall = async (params: IPagination<IOrganisme>) => {
+const apiCall = async (params: IPagination<IOrganisme>): Promise<IPaginated<IOrganisme>> => {
+  const { filters } = params
+
+  if (filters?.missingDeclarationYears) {
+    const yearFilter = filters.missingDeclarationYears.condition1 as INumbersFilterCondition
+    if (isEmptyYearsFilter(yearFilter)) {
+      return EMPTY_RESULT
+    }
+  }
+
+  if (filters?.type && isEmptySetFilter(filters.type)) {
+    return EMPTY_RESULT
+  }
+
   return organismeStore.loadOrganismes(params)
 }
 
