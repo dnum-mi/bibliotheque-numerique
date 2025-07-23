@@ -4,7 +4,7 @@ import { dateToStringFr, getPrefecture } from '@/utils'
 
 import FicheOrganismePersons from './FicheOrganismePersons.vue'
 import TooltipAddress from './TooltipAddress.vue'
-import type { IOrganismeOutputDto } from '@biblio-num/shared/src/organismes/organsime-output-dto.interface'
+import type { IOrganismeOutputDto } from '@biblio-num/shared'
 import type { OrganismeIdType } from '@/stores'
 
 const props = defineProps<{ organisme: IOrganismeOutputDto; type: OrganismeIdType }>()
