@@ -26,6 +26,8 @@ import {
   typeCategorieOrganisme,
   Prefecture,
   ISiafAssociationOutput,
+  IOrganismeOutputDto,
+  ISiafRnfHistoryOutput,
 } from '@biblio-num/shared'
 
 import { OrganismeFieldTypeHash } from '@/modules/organismes/objects/const/organisme-field-type-hash.const'
@@ -54,7 +56,6 @@ import { BnConfigurationService } from '@/shared/modules/bn-configurations/provi
 import { addYears } from 'date-fns'
 import { getCodeByRegionName } from '../utils/utils.regions'
 import { HubService } from '@/modules/hub/providers/hub.service'
-import { IOrganismeOutputDto } from '@biblio-num/shared/src/organismes/organsime-output-dto.interface'
 
 @Injectable()
 export class OrganismeService extends BaseEntityService<Organisme> {
@@ -89,14 +90,17 @@ export class OrganismeService extends BaseEntityService<Organisme> {
   }
 
   private _formatPerson(rawPerson: IPersonRnf): IPerson {
-    const role = (rawPerson.roles && rawPerson.roles[0]) as PersonRoleKey || null
+    const role =
+      ((rawPerson.roles && rawPerson.roles[0]) as PersonRoleKey) || null
     return {
       ...rawPerson.person,
       role,
     } as IPerson
   }
 
-  private _formatPersonSIAFRNF(rawPerson: ISiafRnfOutput['persons'][number]): IPerson {
+  private _formatPersonSIAFRNF(
+    rawPerson: ISiafRnfOutput['persons'][number],
+  ): IPerson {
     return {
       ...Object.fromEntries(
         [
@@ -113,16 +117,15 @@ export class OrganismeService extends BaseEntityService<Organisme> {
           'bornPlace',
           'isFounder',
           'role',
-        ].map((field) => [
-          field,
-          rawPerson[field] || '',
-        ]),
+        ].map((field) => [field, rawPerson[field] || '']),
       ),
       address: this._formatAddressSIAFRNF(rawPerson.address),
     } as IPerson
   }
 
-  private _formatAddress(rawAddress: IRnfOutput['address']): Partial<Organisme> {
+  private _formatAddress(
+    rawAddress: IRnfOutput['address'],
+  ): Partial<Organisme> {
     return Object.fromEntries(
       [
         'label',
@@ -143,7 +146,9 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     )
   }
 
-  private _formatAddressSIAFRNF(rawAddress: ISiafRnfOutput['address'] | undefined): IAddress {
+  private _formatAddressSIAFRNF(
+    rawAddress: ISiafRnfOutput['address'] | undefined,
+  ): IAddress {
     const contextSplit = rawAddress?.gouvAddress?.context?.split(',')
     const codeDepAndRegion = {
       departmentName: '',
@@ -216,13 +221,16 @@ export class OrganismeService extends BaseEntityService<Organisme> {
       type: (raw as ISiafRnfOutput).foundationType,
       email: raw.email,
       phoneNumber: raw.phone,
-      ...this._formatAddress(this._formatAddressSIAFRNF((raw as ISiafRnfOutput).address)),
+      ...this._formatAddress(
+        this._formatAddressSIAFRNF((raw as ISiafRnfOutput).address),
+      ),
       dateDissolution: (raw as ISiafRnfOutput).dissolved.dissolvedAt,
       fiscalEndDateAt: raw.fiscalEndDateAt,
       rnfJson: raw,
-      persons: raw.persons && raw.persons.length
-        ? raw.persons.map((p) => this._formatPersonSIAFRNF(p))
-        : [],
+      persons:
+        raw.persons && raw.persons.length
+          ? raw.persons.map((p) => this._formatPersonSIAFRNF(p))
+          : [],
     }
 
     // TODO: this should not happen once all the date is on RNF
@@ -299,7 +307,12 @@ export class OrganismeService extends BaseEntityService<Organisme> {
   ): Promise<PaginatedDto<IOrganisme>> {
     this.logger.verbose('listOrganisme')
     // TODO: change uploaded to synchronised.
-    return this.paginate<IOrganisme>(dto, { state: eState.uploaded }, [], skipLimit)
+    return this.paginate<IOrganisme>(
+      dto,
+      { state: eState.uploaded },
+      [],
+      skipLimit,
+    )
   }
 
   async synchroniseRnaFiles(rnaId: string, rawRna: IRnaOutput): Promise<void> {
@@ -337,12 +350,8 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     this.logger.verbose('getAllOrganismeWithoutYear')
     return this.repo
       .createQueryBuilder('entity')
-      .where(
-        `NOT ("entity"."declarationYears" @> '${year}')`,
-      )
-      .andWhere(
-        `NOT("entity"."missingDeclarationYears" @> '${year}')`,
-      )
+      .where(`NOT ("entity"."declarationYears" @> '${year}')`)
+      .andWhere(`NOT("entity"."missingDeclarationYears" @> '${year}')`)
       .andWhere('"entity"."idRnf" IS NOT NULL')
       .getMany()
   }
@@ -351,10 +360,14 @@ export class OrganismeService extends BaseEntityService<Organisme> {
    * TODO: Pour avoir la possibilité à se connecter avec le RAF et le HUB sans la variable env pour les distinguer,
    * pour le hub la structure contient la clé associations
    * TODO: A la fin, bn doit être connecter avec le hub
-  */
-  async getAssocationFromHub(idRna: string): Promise< ISiafRnaOutput | ISiafAssociationOutput | null> {
+   */
+  async getAssocationFromHub(
+    idRna: string,
+  ): Promise<ISiafRnaOutput | ISiafAssociationOutput | null> {
     this.logger.verbose('getAssocationFromHub')
-    const enableSiaf = await this.bnConfiguration.getValueByKeyName(eBnConfiguration.ENABLE_SIAF)
+    const enableSiaf = await this.bnConfiguration.getValueByKeyName(
+      eBnConfiguration.ENABLE_SIAF,
+    )
     if (!enableSiaf) return null
     const fromSiaf = await this.hubService.getAssociation(idRna)
     this.logger.debug({ FN: 'getAssocationFromSiaf', idRna })
@@ -370,10 +383,12 @@ export class OrganismeService extends BaseEntityService<Organisme> {
    * TODO: Pour avoir la possibilité à se connecter avec le RAF et le HUB sans la variable env pour les distinguer,
    * pour le hub la structure contient la clé fondations
    * TODO: A terme, bn doit-être connecter avec le hub
-  */
+   */
   async getFoundationFromHub(idRnf: string): Promise<ISiafRnfOutput | null> {
     this.logger.verbose('getFoundationFromHub')
-    const enableSiaf = await this.bnConfiguration.getValueByKeyName(eBnConfiguration.ENABLE_SIAF)
+    const enableSiaf = await this.bnConfiguration.getValueByKeyName(
+      eBnConfiguration.ENABLE_SIAF,
+    )
     if (!enableSiaf) return null
     const fromSiaf = await this.hubService.getFoundation(idRnf)
     this.logger.debug({ FN: 'getFoundationFromSiaf', idRnf, found: !!fromSiaf })
@@ -385,14 +400,21 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     }
   }
 
-  async searchOrganismes(sentence: string): Promise<ISiafSearchOrganismeResponseOutput[] | null> {
+  async searchOrganismes(
+    sentence: string,
+  ): Promise<ISiafSearchOrganismeResponseOutput[] | null> {
     this.logger.verbose('searchOrganismes')
-    const enableSiaf = await this.bnConfiguration.getValueByKeyName(eBnConfiguration.ENABLE_SIAF)
+    const enableSiaf = await this.bnConfiguration.getValueByKeyName(
+      eBnConfiguration.ENABLE_SIAF,
+    )
     if (!enableSiaf) return null
     return (await this.hubService.searchOrganisme(sentence))?.search_response
   }
 
-  private _getValueFromPromiseSettle<T>(type:string, result: PromiseSettledResult<T>):T|null {
+  private _getValueFromPromiseSettle<T>(
+    type: string,
+    result: PromiseSettledResult<T>,
+  ): T | null {
     if (result.status === 'rejected') {
       this.logger.warn(`HUB-${type}: ${result.reason}`)
       return null
@@ -400,10 +422,10 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     return result.value
   }
 
-  private _prefectureFn (cp: string): string {
+  private _prefectureFn(cp: string): string {
     if (!cp) return ''
     let prefkey = ''
-    if ((+cp.substring(0, 3) >= 200) && (+cp.substring(0, 3) <= 201)) {
+    if (+cp.substring(0, 3) >= 200 && +cp.substring(0, 3) <= 201) {
       prefkey = 'D2A' // Corse du Sud
     } else if (+cp.substring(0, 3) >= 202 && +cp.substring(0, 3) <= 209) {
       prefkey = 'D2B' // Haute-Corse
@@ -412,25 +434,30 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     return Prefecture[prefkey as keyof typeof Prefecture] || ''
   }
 
-  private _transformRnfToOrganismeDto (organisme: Organisme): IOrganismeOutputDto {
+  private _transformRnfToOrganismeDto(
+    organisme: Organisme,
+  ): IOrganismeOutputDto {
     return {
       ...organisme,
       siege: {
-        coordinates: (organisme?.rnfJson as ISiafRnfOutput)?.address?.coordinates,
+        coordinates: (organisme?.rnfJson as ISiafRnfOutput)?.address
+          ?.coordinates,
         prefecture: this._prefectureFn(organisme?.addressPostalCode),
-        isVerified: !!(organisme?.addressType),
+        isVerified: !!organisme?.addressType,
       },
-      objectDescription: (organisme?.rnfJson as ISiafRnfOutput)?.objectDescription,
+      objectDescription: (organisme?.rnfJson as ISiafRnfOutput)
+        ?.objectDescription,
       dueDate: (organisme?.rnfJson as ISiafRnfOutput)?.dueDate,
       generalInterest: (organisme?.rnfJson as ISiafRnfOutput)?.generalInterest,
-      internationalAction: (organisme?.rnfJson as ISiafRnfOutput)?.internationalAction,
+      internationalAction: (organisme?.rnfJson as ISiafRnfOutput)
+        ?.internationalAction,
       createdAt: (organisme?.rnfJson as ISiafRnfOutput)?.createdAt,
       updatedAt: (organisme?.rnfJson as ISiafRnfOutput)?.updatedAt,
       fiscalEndDateAt: (organisme?.rnfJson as ISiafRnfOutput)?.fiscalEndDateAt,
     }
   }
 
-  private _transformToPerson (person: ISiafRnfOutput['persons'][0]): IPerson {
+  private _transformToPerson(person: ISiafRnfOutput['persons'][0]): IPerson {
     return {
       ...person,
       civility: person?.civility || '',
@@ -443,11 +470,26 @@ export class OrganismeService extends BaseEntityService<Organisme> {
       // isFounder: person?.isFounder,
       address: {
         label: person.address.dsStringValue || '',
-        type: person.address.gouvAddress?.type || person.address.dsAddress?.type || '',
-        streetAddress: person.address.gouvAddress?.street || person.address.dsAddress?.streetAddress || '',
-        streetNumber: person.address.gouvAddress?.housenumber || person.address.dsAddress?.streetNumber || '',
-        streetName: person.address.gouvAddress?.name || person.address.dsAddress?.streetName || '',
-        postalCode: person.address.gouvAddress?.postcode || person.address.dsAddress?.postalCode || '',
+        type:
+          person.address.gouvAddress?.type ||
+          person.address.dsAddress?.type ||
+          '',
+        streetAddress:
+          person.address.gouvAddress?.street ||
+          person.address.dsAddress?.streetAddress ||
+          '',
+        streetNumber:
+          person.address.gouvAddress?.housenumber ||
+          person.address.dsAddress?.streetNumber ||
+          '',
+        streetName:
+          person.address.gouvAddress?.name ||
+          person.address.dsAddress?.streetName ||
+          '',
+        postalCode:
+          person.address.gouvAddress?.postcode ||
+          person.address.dsAddress?.postalCode ||
+          '',
         departmentName: person.address.dsAddress?.departmentName || '',
         cityName: person.address.dsAddress?.cityName || '',
         cityCode: person.address.dsAddress?.cityCode || '',
@@ -459,13 +501,15 @@ export class OrganismeService extends BaseEntityService<Organisme> {
       phone: person.phone || '',
       createdAt: new Date(-1),
       updatedAt: new Date(-1),
-    // role: person.role as PersonRoleKey,
-    // entryDate: person.entryDate,
-    // exitDate: person.exitDate
+      // role: person.role as PersonRoleKey,
+      // entryDate: person.entryDate,
+      // exitDate: person.exitDate
     }
   }
 
-  private _transformSiafRnfToOrganismeDto (organisme: ISiafRnfOutput): IOrganismeOutputDto {
+  private _transformSiafRnfToOrganismeDto(
+    organisme: ISiafRnfOutput,
+  ): IOrganismeOutputDto {
     return {
       idRnf: organisme.id,
       type: organisme.foundationType,
@@ -479,9 +523,13 @@ export class OrganismeService extends BaseEntityService<Organisme> {
       addressLabel: organisme.address.dsStringValue,
       siege: {
         coordinates: organisme?.address?.coordinates,
-        prefecture: this._prefectureFn(organisme.address?.dsAddress?.postalCode ||
-          organisme.address?.dsAddress?.postalCode),
-        isVerified: !!(organisme.address?.dsAddress?.type || organisme.address?.gouvAddress),
+        prefecture: this._prefectureFn(
+          organisme.address?.dsAddress?.postalCode ||
+            organisme.address?.dsAddress?.postalCode,
+        ),
+        isVerified: !!(
+          organisme.address?.dsAddress?.type || organisme.address?.gouvAddress
+        ),
       },
       websites: organisme?.websites?.join(','),
       objectDescription: organisme?.objectDescription,
@@ -515,17 +563,28 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     }
   }
 
-  private _transformRnaToOrganismeDto (organisme: Organisme): IOrganismeOutputDto {
+  async getOrganismeRnfHistoryFromSiaf(
+    idRnf: string,
+  ): Promise<ISiafRnfHistoryOutput[]> {
+    this.logger.verbose('getOrganismeRnfHistoryFromSiaf')
+    return await this.rnfService.getFoundationsHistoryFromSiaf(idRnf)
+  }
+
+  private _transformRnaToOrganismeDto(
+    organisme: Organisme,
+  ): IOrganismeOutputDto {
     return {
       ...organisme,
       siege: {
         prefecture: this._prefectureFn(organisme?.addressPostalCode),
-        isVerified: !!(organisme?.addressType),
+        isVerified: !!organisme?.addressType,
       },
     }
   }
 
-  private _transformSiafRnaToOrganismeDto (organisme: ISiafRnaOutput): IOrganismeOutputDto {
+  private _transformSiafRnaToOrganismeDto(
+    organisme: ISiafRnaOutput,
+  ): IOrganismeOutputDto {
     const addressSiege = organisme.addresses[1]
     const addressGestion = organisme.addresses[0]
 
@@ -542,33 +601,55 @@ export class OrganismeService extends BaseEntityService<Organisme> {
       addressLabel: addressSiege?.gouvAddress?.label,
       siege: {
         coordinates: addressSiege?.coordinates,
-        prefecture: this._prefectureFn(addressSiege?.gouvAddress?.postcode || addressSiege?.dsAddress?.postalCode),
+        prefecture: this._prefectureFn(
+          addressSiege?.gouvAddress?.postcode ||
+            addressSiege?.dsAddress?.postalCode,
+        ),
         isVerified: !!(addressSiege?.gouvAddress || addressSiege?.dsAddress),
       },
       gestion: {
         addressLabel: addressGestion?.gouvAddress?.label,
         coordinates: addressGestion?.coordinates,
-        isVerified: !!(addressGestion?.gouvAddress || addressGestion?.dsAddress),
-        prefecture: this._prefectureFn(addressGestion?.gouvAddress?.postcode || addressGestion?.dsAddress?.postalCode),
+        isVerified: !!(
+          addressGestion?.gouvAddress || addressGestion?.dsAddress
+        ),
+        prefecture: this._prefectureFn(
+          addressGestion?.gouvAddress?.postcode ||
+            addressGestion?.dsAddress?.postalCode,
+        ),
       },
       websites: organisme?.websites?.join(','),
       objectDescription: organisme?.objetSocial?.description,
-      generalInterest: [...new Set(organisme?.objetSocial?.categories.flatMap(c => c.descriptions))].join(','),
+      generalInterest: [
+        ...new Set(
+          organisme?.objetSocial?.categories.flatMap((c) => c.descriptions),
+        ),
+      ].join(','),
       createdAt: organisme?.createdAt,
       updatedAt: organisme?.updatedAt,
     } as IOrganismeOutputDto
   }
 
   // TODO: A supprimer aprés la mise du hub pour les association
-  private _transformSiafHubAssociationToOrganismeDto (organisme: ISiafAssociationOutput): IOrganismeOutputDto {
-    const addressFn = (address: ISiafAssociationOutput['coordonnees']['adresse_siege']): string => {
+  private _transformSiafHubAssociationToOrganismeDto(
+    organisme: ISiafAssociationOutput,
+  ): IOrganismeOutputDto {
+    const addressFn = (
+      address: ISiafAssociationOutput['coordonnees']['adresse_siege'],
+    ): string => {
       if (!address) {
         return null
       }
-      type addressbuild = keyof ISiafAssociationOutput['coordonnees']['adresse_siege']
-      const arrayAddressBuild1: addressbuild[] = ['num_voie', 'type_voie', 'voie']
+      type addressbuild =
+        keyof ISiafAssociationOutput['coordonnees']['adresse_siege']
+      const arrayAddressBuild1: addressbuild[] = [
+        'num_voie',
+        'type_voie',
+        'voie',
+      ]
       const addressStreetAddress = address
-        ? arrayAddressBuild1.map((k) => address[k])
+        ? arrayAddressBuild1
+          .map((k) => address[k])
           .filter((address) => !!address)
           .join(' ')
         : null
@@ -581,10 +662,12 @@ export class OrganismeService extends BaseEntityService<Organisme> {
         : null
     }
 
-    const addressSiegeLabel = organisme.coordonnees?.adresse_siege?.label ||
+    const addressSiegeLabel =
+      organisme.coordonnees?.adresse_siege?.label ||
       addressFn(organisme.coordonnees?.adresse_siege)
-    const addressGestionLabel = organisme.coordonnees?.adresse_gestion?.label ||
-    addressFn(organisme.coordonnees?.adresse_gestion)
+    const addressGestionLabel =
+      organisme.coordonnees?.adresse_gestion?.label ||
+      addressFn(organisme.coordonnees?.adresse_gestion)
 
     return {
       idRna: organisme.identite.id_rna,
@@ -600,12 +683,16 @@ export class OrganismeService extends BaseEntityService<Organisme> {
       addressLabel: addressSiegeLabel,
       siege: {
         isVerified: !!organisme.coordonnees?.adresse_siege?.type_voie,
-        prefecture: this._prefectureFn(organisme.coordonnees?.adresse_siege?.cp),
+        prefecture: this._prefectureFn(
+          organisme.coordonnees?.adresse_siege?.cp,
+        ),
       },
       gestion: {
         addressLabel: addressGestionLabel,
         isVerified: !!organisme.coordonnees?.adresse_gestion?.type_voie,
-        prefecture: this._prefectureFn(organisme.coordonnees?.adresse_gestion?.cp),
+        prefecture: this._prefectureFn(
+          organisme.coordonnees?.adresse_gestion?.cp,
+        ),
       },
       websites: organisme.coordonnees.site_web,
       objectDescription: organisme.activites.objet,
@@ -635,7 +722,9 @@ export class OrganismeService extends BaseEntityService<Organisme> {
       }
     }
     if ('identite' in siaf) {
-      out.siaf = this._transformSiafHubAssociationToOrganismeDto(siaf as ISiafAssociationOutput)
+      out.siaf = this._transformSiafHubAssociationToOrganismeDto(
+        siaf as ISiafAssociationOutput,
+      )
     } else {
       out.siaf = this._transformSiafRnaToOrganismeDto(siaf as ISiafRnaOutput)
     }
@@ -644,9 +733,12 @@ export class OrganismeService extends BaseEntityService<Organisme> {
 
   async deleteOrganismeIfNotInDossiers(id: number): Promise<string> {
     this.logger.verbose('deleteOrganisme')
-    const numberOrganisme = await this.findOneOrThrow({ where: { id } })
-      .then((o) => o.idRna || o.idRnf)
-    const dossiersFound = await this.dossierService.findWithFilter({ organisme: { id } })
+    const numberOrganisme = await this.findOneOrThrow({ where: { id } }).then(
+      (o) => o.idRna || o.idRnf,
+    )
+    const dossiersFound = await this.dossierService.findWithFilter({
+      organisme: { id },
+    })
     if (dossiersFound.length > 0) {
       throw new BadRequestException('Organisme is used in dossiers')
     }

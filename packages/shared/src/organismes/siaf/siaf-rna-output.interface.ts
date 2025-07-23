@@ -73,3 +73,14 @@ export interface ISiafRnaOutput {
   //paperArchive?: string
   //letterIntroduction: string
 }
+
+export interface ISiafRnaHistoryOutput {
+  id: string;
+  associationId: string;
+  version: number;
+  association: ISiafRnaOutput;
+  createdAt: Date;
+  updatedAt: Date;
+  //TODO: Définir le type de l'event
+  event?: any
+}

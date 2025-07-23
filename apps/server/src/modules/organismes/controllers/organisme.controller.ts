@@ -22,6 +22,7 @@ import {
   IOrganismeOutput,
   typeCategorieOrganisme,
   ISiafSearchOrganismeResponseOutput,
+  ISiafRnfHistoryOutput,
 } from '@biblio-num/shared'
 
 import { DossierService } from '@/modules/dossiers/providers/dossier.service'
@@ -43,6 +44,7 @@ import { Queue } from 'bull'
 import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.decorator'
 import { Organisme } from '@/modules/organismes/objects/organisme.entity'
 import { HubService } from '@/modules/hub/providers/hub.service'
+import { SiafRnfHistoryOutputDto } from '../objects/dto/siaf-rnf-history-output.dto'
 
 @ApiTags('Organismes')
 @Controller('organismes')
@@ -177,6 +179,21 @@ export class OrganismeController {
       throw new NotFoundException(`La fondation ${idRnf} non trouvé`)
     }
     return organisme
+  }
+
+  @UsualApiOperation({
+    summary: 'Retourner l\'historique d\'un organisme à partir de son RNF.',
+    method: 'GET',
+    minimumRole: Roles.instructor,
+    isArray: true,
+    supplement: 'L\'historique est récupéré depuis SIAF.',
+    responseType: SiafRnfHistoryOutputDto,
+  })
+  @Get('rnf/:organismeIdRnf/history')
+  @Role(Roles.instructor)
+  async getSiafRnfHistory(@Param('organismeIdRnf') idRnf: string): Promise<ISiafRnfHistoryOutput[]> {
+    this.logger.verbose('getSiafRnfHistory')
+    return await this.organismeService.getOrganismeRnfHistoryFromSiaf(idRnf)
   }
 
   @ApiOperation({

@@ -6,13 +6,23 @@ import OrganismeBadge from '@/components/Badges/organisme/OrganismeBadge.vue'
 import { EOrganismeIdType, useOrganismeStore, useUserStore } from '@/stores'
 import type { OrganismeIdType } from '@/stores'
 import AttachedFileList from '@/components/ag-grid/files/AttachedFileList.vue'
-import type { IFileOutput, IPagination, IRole, FileTagKey, ISiafAssociationOutput, IOrganismeOutputDto } from '@biblio-num/shared'
+import type {
+  IFileOutput,
+  IPagination,
+  IRole,
+  FileTagKey,
+  ISiafAssociationOutput,
+  IOrganismeOutputDto,
+  ISiafRnfHistoryOutput,
+  ISiafRnfOutput,
+} from '@biblio-num/shared'
 import { dFileTabDictionary, eOrganismeType } from '@biblio-num/shared'
 import type { ApiCall } from '@/components/ag-grid/server-side/pagination.utils'
 import FicheInfoAssociation from './FicheInfoAssociation.vue'
 import FicheInfoFondation from './FicheInfoFondation.vue'
 import FicheOrganismeInfo from './FicheOrganismeInfo.vue'
 import slugify from 'slugify'
+import FicheOrganismeHistorique from './historique/FicheOrganismeHistorique.vue'
 
 const props = withDefaults(defineProps<{ id: string; idType: OrganismeIdType }>(), {})
 
@@ -34,6 +44,7 @@ const hasSiafFoundation = computed(() => {
 })
 
 const filesSummary = ref<Record<FileTagKey, number> | Record<string, never>>({})
+const histories = ref<ISiafRnfHistoryOutput[]>([])
 
 // TODO: use router to prevent user to access this page if not logged in or without the right role
 const role = computed<IRole | undefined>(() => userStore.currentUser?.role)
@@ -46,6 +57,7 @@ onMounted(async () => {
   try {
     await organismeStore.loadOrganisme(props.id, props.idType)
     if (organisme.value) {
+      histories.value = await organismeStore.loadOrganismeHistory(props.id, props.idType)
       filesSummary.value = await apiClient.getOrganismeFilesSummary(organisme.value.id)
     }
   } finally {
@@ -159,6 +171,17 @@ const fileTabs = computed(() => {
                 :fetch-attached-files="fetchAttachedFiles"
                 :tag="tabInfo.originalTag"
                 :active="currentFicheOrganismeTab === tabInfo.idTab"
+              />
+            </BnTab>
+            <BnTab
+              v-if="idType === EOrganismeIdType.Rnf"
+              id="historique"
+              title="Historique"
+            >
+              <FicheOrganismeHistorique
+                :actual="organisme.rnfJson as ISiafRnfOutput"
+                :history="histories"
+                :entity-type="idType"
               />
             </BnTab>
           </BnTabsContainer>

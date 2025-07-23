@@ -4,18 +4,10 @@ import { ePersonRole } from '@biblio-num/shared'
 import { DsfrAccordion } from '@gouvminint/vue-dsfr'
 import { dateToStringFr } from '../../../utils'
 import TooltipAddress from './TooltipAddress.vue'
+import { roleDictionary, creatorRoleKey } from '@biblio-num/shared'
 
 const props = defineProps<{ persons: IPerson[] }>()
 
-const creatorRoleKey = 'CREATOR'
-const roleDictionary = {
-  [creatorRoleKey]: 'Fondateurs',
-  [ePersonRole.MEMBER_BOARD_DIRECTOR]: 'Personne exerçant des fonctions d\'administrateur',
-  [ePersonRole.MEMBER_SUPERVIROY_BOARD]: 'Personne exerçant des fonctions de surveillance',
-  [ePersonRole.MEMBER_MANAGEMENT_BOARD]: 'Personne exerçant des fonctions de direction',
-  [ePersonRole.PERSON_IN_DIRECTOR_POSITION]: 'Personne exerçant des fonctions de direction',
-  [ePersonRole.NOT_SPECIFIED]: 'Autres',
-}
 const roleDictionaryKey = Object.keys(roleDictionary)
 type TPersonOrganisme = IPerson & { fullName: string }
 type TPersonByRole = {
