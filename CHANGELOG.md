@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.33.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.32.2...v2.33.0) (2025-07-23)
+
+
+### Features
+
+* add organisme history ([#1834](https://github.com/dnum-mi/bibliotheque_numerique/issues/1834)) ([4b5f22d](https://github.com/dnum-mi/bibliotheque_numerique/commit/4b5f22d7e39f88952d78f390e5cf48c5e8b1f0c2))
+
+
+### Bug Fixes
+
+* remove fetch font of google by unocss ([1d0cd3c](https://github.com/dnum-mi/bibliotheque_numerique/commit/1d0cd3c6f3bbe166cb0c5f08711bc252ee14bf2d))
+
 ## [2.32.2](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.32.1...v2.32.2) (2025-07-10)
 
 
