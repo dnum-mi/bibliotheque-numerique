@@ -1,5 +1,30 @@
 # Changelog
 
+## [2.34.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.33.1...v2.34.0) (2025-08-13)
+
+
+### Features
+
+* add prority job for sync organisme rnf ([0fed444](https://github.com/dnum-mi/bibliotheque_numerique/commit/0fed444d3d8808762e03682799a21c0427f216a4))
+* add refresh the synchronisation of one organisme in front ([e3331d6](https://github.com/dnum-mi/bibliotheque_numerique/commit/e3331d6f4d4a9070722ae7ff2c64f9fe1e7db457))
+* add spinner for fiche organisme ([8239985](https://github.com/dnum-mi/bibliotheque_numerique/commit/8239985ba494ee5139b3034f072f89891e81462a))
+* add table of synchronization state ([4119332](https://github.com/dnum-mi/bibliotheque_numerique/commit/41193324024a175ba2f9acc2aba041388e6eb53f))
+* add varaiable of foundation for sync hub ([af53918](https://github.com/dnum-mi/bibliotheque_numerique/commit/af539187844c4f89947f31f1259caf98eafb5422))
+* add variable configuration for synchronization with hub ([9e65e3d](https://github.com/dnum-mi/bibliotheque_numerique/commit/9e65e3d532c4a99cd4f030c37cff38947b5f3274))
+* config variable ENABLE_SIAF to ENABLE_SEARCH_HUB ([a4c9a88](https://github.com/dnum-mi/bibliotheque_numerique/commit/a4c9a8821f6efb73a61374a5c41e43622c548d68))
+* expose status of synchronization RNF ([c2511a3](https://github.com/dnum-mi/bibliotheque_numerique/commit/c2511a3d475ebcbfebd9ea65acf7f2e90526fe7f))
+* set synchrionization status for rnf ([1bbd7eb](https://github.com/dnum-mi/bibliotheque_numerique/commit/1bbd7eb8fb16296f4f11aa65ad24fb55aa77f21a))
+* synchronize foundation files with hub ([6394811](https://github.com/dnum-mi/bibliotheque_numerique/commit/63948115e865b05e28d8b6fb8a84c10dd1d6f134))
+* synchronize foundation with hub ([7c7047b](https://github.com/dnum-mi/bibliotheque_numerique/commit/7c7047b5eaec32a3447ad4477b2f5820411d598f))
+* synchronize selected fondation from search hub ([69da0e6](https://github.com/dnum-mi/bibliotheque_numerique/commit/69da0e6ba8d77b44a4cf12b7d765ea9f1b2cf257))
+
+
+### Bug Fixes
+
+* add interface for entity SyncState ([9eb425e](https://github.com/dnum-mi/bibliotheque_numerique/commit/9eb425e5a22475ff062a6e5edce7b186bb5c5f9b))
+* bug in the synchronizatiion of organisme ([8387151](https://github.com/dnum-mi/bibliotheque_numerique/commit/83871510a2ba0572faae5ee45745f8e3dcf36e1a))
+* update title of tabs without unregistry ([26f7a4f](https://github.com/dnum-mi/bibliotheque_numerique/commit/26f7a4f0179f139b509d4f21d0a9e2acdf280d57))
+
 ## [2.33.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.33.0...v2.33.1) (2025-07-23)
 
 
