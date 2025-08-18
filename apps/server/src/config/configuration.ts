@@ -22,7 +22,7 @@ export default () : TConfig => ({
   port: parseInt(process.env.PORT, 10) || 3000,
   appFrontUrl: process.env.APP_FRONT_URL || 'http://localhost:8080',
   supportFormUrl: process.env.SUPPORT_FORM_URL ||
-    'https://www.demarches-simplifiees.fr/commencer/siaf-support-technique-et-juridique-aux-prefectures',
+    'https://demarches.numerique.gouv.fr/commencer/siaf-support-technique-et-juridique-aux-prefectures',
   httpProxy: process.env.http_proxy || '',
   defaultAdmin: {
     email: process.env.DEFAULT_SUDO_EMAIL,

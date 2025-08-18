@@ -31,7 +31,7 @@ const serviceTitle = 'Bibliothèque Numérique'
 const serviceDescription = 'Rechercher une démarche, un dossier, un organisme'
 const logoText = ['Ministère', 'de l’intérieur']
 const ecosystemLinks = [
-  { label: 'Demarches-simplifiees.fr', href: 'https://www.demarches-simplifiees.fr' },
+  { label: 'Demarches.numerique.gouv.fr', href: 'https://demarches.numerique.gouv.fr' },
   { label: 'API - Répertoire National des Associations', href: 'https://entreprise.api.gouv.fr/catalogue/ministere_interieur/rna' },
   {
     label: 'Intranet DLPAJ',
