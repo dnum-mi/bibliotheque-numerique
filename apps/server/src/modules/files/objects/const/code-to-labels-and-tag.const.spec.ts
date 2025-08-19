@@ -26,7 +26,7 @@ describe('Field code to label', () => {
       {  } as TDossier,
     )
     expect(tag).toEqual(eFileTag.fe)
-    expect(label).toBe('date-inconnue_Déclaration financement étranger')
+    expect(label).toBe('date-inconnue_Déclaration FE')
   })
 
   it('Date should be date-inconnue if no date champs', () => {
@@ -61,7 +61,7 @@ describe('Field code to label', () => {
       { dateTraitement: new Date('2021-01-01') } as TDossier,
     )
     expect(tag).toEqual(eFileTag.fe)
-    expect(label).toBe('01.01.2021_Déclaration financement étranger')
+    expect(label).toBe('01.01.2021_Déclaration FE')
   })
 
   it('Code "file-initial-status" should be correct', () => {
@@ -251,7 +251,7 @@ describe('Field code to label', () => {
       ['account-year']: { numberValue: 2040 },
     } as unknown as Record<FieldCodeKey, Field>)
     expect(tag).toEqual(eFileTag.account)
-    expect(label).toBe('2040_Financements étrangers')
+    expect(label).toBe('2040_FE')
   })
 
 })

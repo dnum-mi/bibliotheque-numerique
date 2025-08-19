@@ -53,7 +53,7 @@ describe('XlsxService', () => {
   })
 
   it('should readExcelFile with data', async () => {
-    const buffer = fs.readFileSync('test/mock/excel-service/data/DeclarationFinancementsEtrangers.xlsx')
+    const buffer = fs.readFileSync('test/mock/excel-service/data/DeclarationFE.xlsx')
     const result = await service.readExcelData(buffer)
     expect(result).toMatchObject([
       [

@@ -21,5 +21,5 @@ export const dFileTabDictionary: Record<FileTagKey, string> = {
   [eFileTag.judgment]: 'Jugement',
   [eFileTag.activityReport]: 'Rapport d\'activité',
   [eFileTag.other]: 'Autre',
-  [eFileTag.fe]: 'Financement étranger',
+  [eFileTag.fe]: 'FE',
 }

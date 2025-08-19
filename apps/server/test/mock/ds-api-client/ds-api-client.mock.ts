@@ -1,11 +1,11 @@
 /* eslint-disable */
 
 import {
-  demarcheAndDossierFinancementEtrangerDataMock
-} from './data/demarche-and-dossier-financement-etranger.data.mock'
+  demarcheAndDossierFeDataMock
+} from './data/demarche-and-dossier-fe.data.mock'
 import {
-  smallDemarcheAndDossierFinancementEtrangerDataMock
-} from './data/small-demarche-and-dossier-financement-etranger.data.mock'
+  smallDemarcheAndDossierFeDataMock
+} from './data/small-demarche-and-dossier-fe.data.mock'
 import {
   demarcheWithRnfAndRnaDataMock
 } from './data/demarche-with-rnf-and-rna.data.mock'
@@ -19,9 +19,9 @@ export const dsApiClientMock = {
     .mockImplementation(async (idDemarche: number) => {
       switch (idDemarche) {
         case 29:
-          return demarcheAndDossierFinancementEtrangerDataMock;
+          return demarcheAndDossierFeDataMock;
         case 42:
-          return smallDemarcheAndDossierFinancementEtrangerDataMock();
+          return smallDemarcheAndDossierFeDataMock();
         case 101:
           return demarcheWithRnfAndRnaDataMock;
         case 102:

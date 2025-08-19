@@ -1,8 +1,8 @@
-export const demarcheFinancementEtrangerDataMock = {
+export const demarcheFeDataMock = {
   demarche: {
     id: 'UHJvY2VkdXJlLTI5',
     number: 29,
-    title: '[Qualif] Déclaration des financements étrangers',
+    title: '[Qualif] Déclaration des FE',
     description:
       "Toute association exerçant le culte (association cultuelle régie par la loi du 9 décembre 1905, association relevant seulement de la loi de 1901 et dans les départements du Bas-Rhin, du Haut-Rhin et de la Moselle, les associations inscrites de droit local à objet cultuel) doit déclarer au ministre de l’intérieur tous les financements (avantages ou ressources) qui proviennent, directement ou indirectement, de l’étranger, dès lors que leur total dépasse 15 300 euros sur l’exercice comptable. Ce dernier dispose d'un délai de deux mois pour s’y opposer, qui peut être prorogé d’une durée de 4 mois supplémentaires.\r\n\r\nLes associations cultuelles, les congrégations et dans les départements du Bas-Rhin, du Haut-Rhin et de la Moselle, les établissements publics du culte et les associations inscrites de droit local à objet cultuel doivent également déclarer au ministre de l’intérieur toute libéralité (c’est-à-dire un acte de donation fait devant notaire ou un legs figurant dans un testament) provenant directement ou indirectement de l’étranger.\r\n\r\nA savoir : même après avoir déposé votre dossier, vous pourrez le corriger tant que l'administration n'a pas validé sa complétude. Vous pourrez échanger avec le service d'instruction au sein de votre espace du dossier.",
     state: 'publiee',
@@ -183,7 +183,7 @@ export const demarcheFinancementEtrangerDataMock = {
         {
           id: 'Q2hhbXAtMTA2MA==',
           type: 'header_section',
-          label: 'Déclaration de financement étranger',
+          label: 'Déclaration de FE',
           description: '',
           required: false,
           options: null,
@@ -2443,7 +2443,7 @@ export const demarcheFinancementEtrangerDataMock = {
         {
           id: 'Q2hhbXAtMTA2MA==',
           type: 'header_section',
-          label: 'Déclaration de financement étranger',
+          label: 'Déclaration de FE',
           description: '',
           required: false,
           options: null,
@@ -4704,7 +4704,7 @@ export const demarcheFinancementEtrangerDataMock = {
           {
             id: 'Q2hhbXAtMTA2MA==',
             type: 'header_section',
-            label: 'Déclaration de financement étranger',
+            label: 'Déclaration de FE',
             description: '',
             required: false,
             options: null,
@@ -6964,7 +6964,7 @@ export const demarcheFinancementEtrangerDataMock = {
           {
             id: 'Q2hhbXAtMTA2MA==',
             type: 'header_section',
-            label: 'Déclaration de financement étranger',
+            label: 'Déclaration de FE',
             description: '',
             required: false,
             options: null,
@@ -9224,7 +9224,7 @@ export const demarcheFinancementEtrangerDataMock = {
           {
             id: 'Q2hhbXAtMTA2MA==',
             type: 'header_section',
-            label: 'Déclaration de financement étranger',
+            label: 'Déclaration de FE',
             description: '',
             required: false,
             options: null,

@@ -248,7 +248,7 @@ describe('Organismes (e2e)', () => {
           expect(body).toEqual([
             {
               demarcheId: 1,
-              demarcheTitle: 'Déclaration de financement étranger',
+              demarcheTitle: 'Déclaration de FE',
               dateDepot: null,
               id: 11,
               prefecture: 'D75',
@@ -256,7 +256,7 @@ describe('Organismes (e2e)', () => {
             },
             {
               demarcheId: 1,
-              demarcheTitle: 'Déclaration de financement étranger',
+              demarcheTitle: 'Déclaration de FE',
               dateDepot: null,
               id: 12,
               prefecture: 'D57',

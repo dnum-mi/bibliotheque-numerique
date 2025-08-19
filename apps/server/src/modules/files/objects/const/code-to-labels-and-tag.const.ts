@@ -55,7 +55,7 @@ export const dCodeToLabelsAndTag: Record<FileFieldCodeKey, TagAndLabelFactory> =
       tag: eFileTag.fe,
       labelFactory: (fh, d) => {
         const date = d.dateTraitement ? formatDate(d.dateTraitement) : noDatePlaceHolder
-        return `${date}_Déclaration financement étranger`
+        return `${date}_Déclaration FE`
       },
     },
     'file-initial-status': {
@@ -208,7 +208,7 @@ export const dCodeToLabelsAndTag: Record<FileFieldCodeKey, TagAndLabelFactory> =
         return commonFileWithYearLabelFactory(
           fh,
           eFieldCode['account-year'],
-          'Financements étrangers',
+          'FE',
         )
       },
     },

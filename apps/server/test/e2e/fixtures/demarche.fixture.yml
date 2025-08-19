@@ -3,7 +3,7 @@ items:
   demarche-financement:
     id: 1
     state: "published"
-    title: "Déclaration de financement étranger"
+    title: "Déclaration de FE"
     identification: "FE"
     types: ["ASSO","FDD"]
     mappingColumns: [
@@ -49,21 +49,21 @@ items:
   demarche-number-2:
     id: 3
     state: "published"
-    title: "Déclaration de financement étranger"
+    title: "Déclaration de FE"
     identification: "FE"
     types: ["FE","FDD"]
     dsDataJson: { number: 2}
   demarche-number-3:
     id: 4
     state: "published"
-    title: "Déclaration de financement étranger"
+    title: "Déclaration de FE"
     identification: "FE"
     types: ["ASSO"]
     dsDataJson: { number: 3 }
   demarche-update-identification:
     id: 5
     state: "published"
-    title: "[UPDATE-IDENTIFICATION] Déclaration de financement étranger"
+    title: "[UPDATE-IDENTIFICATION] Déclaration de FE"
     types: ["ASSO"]
     mappingColumns: [
       {"id":"I01", "columnLabel":"Identifiant"},
@@ -81,7 +81,7 @@ items:
   demarche-delete-identification:
     id: 6
     state: "published"
-    title: "[DELETE-IDENTIFICATION] Déclaration de financement étranger"
+    title: "[DELETE-IDENTIFICATION] Déclaration de FE"
     types: ["ASSO"]
     identification: "FE"
     mappingColumns: [
@@ -116,7 +116,7 @@ items:
   demarche-undefined-identification:
     id: 7
     state: "published"
-    title: "[UNDEFINED-IDENTIFICATION] Déclaration de financement étranger"
+    title: "[UNDEFINED-IDENTIFICATION] Déclaration de FE"
     types: ["ASSO", "FDD"]
     identification: "FE"
     mappingColumns: [
@@ -151,7 +151,7 @@ items:
   demarche-delete-soft:
     id: 8
     state: "published"
-    title: "[SOFT-DELETE] Déclaration de financement étranger"
+    title: "[SOFT-DELETE] Déclaration de FE"
     types: ["ASSO"]
     identification: "FE"
     mappingColumns: [
@@ -170,7 +170,7 @@ items:
   demarche-delay:
     id: 9
     state: "published"
-    title: "Déclaration de financement étranger avec etat delai"
+    title: "Déclaration de FE avec etat delai"
     identification: "FE"
     types: ["ASSO"]
     mappingColumns: [

@@ -1,8 +1,8 @@
-export const demarcheAndDossierFinancementEtrangerDataMock = {
+export const demarcheAndDossierFeDataMock = {
   demarche: {
     id: 'UHJvY2VkdXJlLTI5',
     number: 29,
-    title: '[Qualif] Déclaration des financements étrangers',
+    title: '[Qualif] Déclaration des FE',
     dossiers: {
       nodes: [
         {
@@ -201,7 +201,7 @@ export const demarcheAndDossierFinancementEtrangerDataMock = {
               {
                 id: 'Q2hhbXAtMTA2MA==',
                 type: 'header_section',
-                label: 'Déclaration de financement étranger',
+                label: 'Déclaration de FE',
                 description: '',
                 required: false,
                 options: null,
@@ -2436,7 +2436,7 @@ export const demarcheAndDossierFinancementEtrangerDataMock = {
             {
               id: 'Q2hhbXAtMTA2MA==',
               __typename: 'TextChamp',
-              label: 'Déclaration de financement étranger',
+              label: 'Déclaration de FE',
               stringValue: '',
             },
             {
@@ -2948,7 +2948,7 @@ export const demarcheAndDossierFinancementEtrangerDataMock = {
             {
               id: 'Q29tbWVudGFpcmUtMTc1',
               email: 'anonymous@dossier.mock',
-              body: '[Votre dossier nº 129 a bien été déposé ([Qualif] Déclaration des financements étrangers)]<br><br>',
+              body: '[Votre dossier nº 129 a bien été déposé ([Qualif] Déclaration des FE)]<br><br>',
               createdAt: '2023-06-23T16:25:24+02:00',
               attachment: null,
             },
@@ -3157,7 +3157,7 @@ export const demarcheAndDossierFinancementEtrangerDataMock = {
               {
                 id: 'Q2hhbXAtMTA2MA==',
                 type: 'header_section',
-                label: 'Déclaration de financement étranger',
+                label: 'Déclaration de FE',
                 description: '',
                 required: false,
                 options: null,
@@ -5392,7 +5392,7 @@ export const demarcheAndDossierFinancementEtrangerDataMock = {
             {
               id: 'Q2hhbXAtMTA2MA==',
               __typename: 'TextChamp',
-              label: 'Déclaration de financement étranger',
+              label: 'Déclaration de FE',
               stringValue: '',
             },
             {
@@ -6249,7 +6249,7 @@ export const demarcheAndDossierFinancementEtrangerDataMock = {
             {
               id: 'Q29tbWVudGFpcmUtMTk0',
               email: 'anonymous@dossier.mock',
-              body: '[Votre dossier nº 136 a bien été déposé ([Qualif] Déclaration des financements étrangers)]<br><br>',
+              body: '[Votre dossier nº 136 a bien été déposé ([Qualif] Déclaration des FE)]<br><br>',
               createdAt: '2023-07-11T14:14:20+02:00',
               attachment: null,
             },

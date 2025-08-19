@@ -47,7 +47,7 @@ describe('statistique', () => {
       demarche: {
         dsId: 76,
         id: 1,
-        title: 'Déclaration de financement étranger',
+        title: 'Déclaration de FE',
       },
       totals: [
         {
@@ -78,7 +78,7 @@ describe('statistique', () => {
       demarche: {
         dsId: 76,
         id: 1,
-        title: 'Déclaration de financement étranger',
+        title: 'Déclaration de FE',
       },
       totals: [
         {
@@ -113,7 +113,7 @@ describe('statistique', () => {
       demarche: {
         dsId: 76,
         id: 1,
-        title: 'Déclaration de financement étranger',
+        title: 'Déclaration de FE',
       },
       totals: [
         {

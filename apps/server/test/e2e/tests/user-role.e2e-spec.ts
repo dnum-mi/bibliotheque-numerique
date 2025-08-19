@@ -57,7 +57,7 @@ describe('users (e2e)', () => {
         demarcheHash: {
           1: {
             id: 1,
-            title: 'Déclaration de financement étranger',
+            title: 'Déclaration de FE',
             dsId: 76,
             checked: true,
             editable: true,
@@ -79,7 +79,7 @@ describe('users (e2e)', () => {
           },
           3: {
             id: 3,
-            title: 'Déclaration de financement étranger',
+            title: 'Déclaration de FE',
             dsId: 2,
             checked: false,
             editable: true,
@@ -90,7 +90,7 @@ describe('users (e2e)', () => {
           },
           4: {
             id: 4,
-            title: 'Déclaration de financement étranger',
+            title: 'Déclaration de FE',
             dsId: 3,
             checked: false,
             editable: true,
@@ -102,7 +102,7 @@ describe('users (e2e)', () => {
           5: {
             id: 5,
             title:
-              '[UPDATE-IDENTIFICATION] Déclaration de financement étranger',
+              '[UPDATE-IDENTIFICATION] Déclaration de FE',
             dsId: 4,
             checked: true,
             editable: true,
@@ -114,7 +114,7 @@ describe('users (e2e)', () => {
           6: {
             id: 6,
             title:
-              '[DELETE-IDENTIFICATION] Déclaration de financement étranger',
+              '[DELETE-IDENTIFICATION] Déclaration de FE',
             dsId: 5,
             checked: false,
             editable: true,
@@ -126,7 +126,7 @@ describe('users (e2e)', () => {
           7: {
             id: 7,
             title:
-              '[UNDEFINED-IDENTIFICATION] Déclaration de financement étranger',
+              '[UNDEFINED-IDENTIFICATION] Déclaration de FE',
             dsId: 6,
             checked: false,
             editable: true,

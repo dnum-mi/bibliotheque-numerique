@@ -755,12 +755,12 @@ describe('DossierSyncroniseExcel', () => {
   //       'Bien vouloir joindre un document listant les financements mises à disposition',
   //     stringValue: '',
   //     file: {
-  //       filename: 'DeclarationFinancementsEtrangers.xlsx',
+  //       filename: 'DeclarationFE.xlsx',
   //       contentType:
   //         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   //       checksum: 'nsscvfACf5r/WfqcvX9iUQ==',
   //       byteSizeBigInt: '149557',
-  //       url: 'test/mock/excel-service/data/DeclarationFinancementsEtrangers.xlsx',
+  //       url: 'test/mock/excel-service/data/DeclarationFE.xlsx',
   //     },
   //   }
   //   jest
