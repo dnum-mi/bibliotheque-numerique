@@ -46,14 +46,14 @@ export const smallDemarcheAndDossierWithDemandeurMoral = {
               attestationFiscaleAttachment: {
                 url: 'http://localhost:3000/files/045c9556-b7da-4839-b302-39716acec88f',
                 checksum: 'VjFmV2N6/e8TT2FKJirHRQ==',
-                filename: 'DeclarationFinancementsEtrangers.xlsx',
+                filename: 'DeclarationFE.xlsx',
                 contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                 byteSizeBigInt: '169682',
               },
               attestationSocialeAttachment: {
                 url: 'http://localhost:3000/files/045c9556-b7da-4839-b302-39716acec88f',
                 checksum: 'VjFmV2N6/e8TT2FKJirHRQ==',
-                filename: 'DeclarationFinancementsEtrangers.xlsx',
+                filename: 'DeclarationFE.xlsx',
                 contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                 byteSizeBigInt: '169682',
               },

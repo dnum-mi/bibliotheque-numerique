@@ -95,16 +95,16 @@ items:
     parent: null
     label: "Total"
     dossier: "@dossier1"
-  dossier1-declaration-financement:
+  dossier1-df:
     sourceId: "I11"
     fieldSource: champs
     dsChampType: RepetitionChamp
     type: string
     stringValue: ""
     parent: null
-    label: "Déclaration de financement"
+    label: "les financements"
     dossier: "@dossier1"
-  # region children declaration financement
+  # region children les financements
   # region row1
   dossier1-df-1-montant:
     sourceId: "I08"
@@ -113,7 +113,7 @@ items:
     type: number
     stringValue: "16400"
     numberValue: 16400
-    parent: "@dossier1-declaration-financement"
+    parent: "@dossier1-df"
     parentRowIndex: 1
     label: "Montant"
     dossier: "@dossier1"
@@ -123,7 +123,7 @@ items:
     fieldSource: champs
     type: string
     stringValue: "Qatar"
-    parent: "@dossier1-declaration-financement"
+    parent: "@dossier1-df"
     parentRowIndex: 1
     label: "Pays"
     dossier: "@dossier1"
@@ -133,7 +133,7 @@ items:
     fieldSource: champs
     type: string
     stringValue: "Qatar corporated"
-    parent: "@dossier1-declaration-financement"
+    parent: "@dossier1-df"
     parentRowIndex: 1
     label: "Organisme financeur"
     dossier: "@dossier1"
@@ -146,7 +146,7 @@ items:
     type: number
     stringValue: "16400"
     numberValue: 16400
-    parent: "@dossier1-declaration-financement"
+    parent: "@dossier1-df"
     parentRowIndex: 2
     label: "Montant"
     dossier: "@dossier1"
@@ -156,7 +156,7 @@ items:
     fieldSource: champs
     type: string
     stringValue: "Turquie"
-    parent: "@dossier1-declaration-financement"
+    parent: "@dossier1-df"
     parentRowIndex: 2
     label: "Pays"
     dossier: "@dossier1"
@@ -166,7 +166,7 @@ items:
     fieldSource: champs
     type: string
     stringValue: "Turkish Cie"
-    parent: "@dossier1-declaration-financement"
+    parent: "@dossier1-df"
     parentRowIndex: 2
     label: "Organisme financeur"
     dossier: "@dossier1"
@@ -354,16 +354,16 @@ items:
     parent: null
     label: "Total"
     dossier: "@dossier3"
-  dossier3-declaration-financement:
+  dossier3-df:
     sourceId: "I11"
     fieldSource: champs
     dsChampType: RepetitionChamp
     type: string
     stringValue: ""
     parent: null
-    label: "Déclaration de financement"
+    label: "les financements"
     dossier: "@dossier3"
-  # region children declaration financement
+  # region children les financements
   # region row1
   dossier3-df-1-montant:
     sourceId: "I08"
@@ -372,7 +372,7 @@ items:
     type: number
     stringValue: "5800"
     numberValue: 5800
-    parent: "@dossier3-declaration-financement"
+    parent: "@dossier3-df"
     parentRowIndex: 1
     label: "Montant"
     dossier: "@dossier3"
@@ -382,7 +382,7 @@ items:
     fieldSource: champs
     type: string
     stringValue: "Écosse"
-    parent: "@dossier3-declaration-financement"
+    parent: "@dossier3-df"
     parentRowIndex: 1
     label: "Pays"
     dossier: "@dossier3"
@@ -392,7 +392,7 @@ items:
     fieldSource: champs
     type: string
     stringValue: "Atréides"
-    parent: "@dossier3-declaration-financement"
+    parent: "@dossier3-df"
     parentRowIndex: 1
     label: "Organisme financeur"
     dossier: "@dossier3"
@@ -405,7 +405,7 @@ items:
     type: number
     stringValue: "12600"
     numberValue: 12600
-    parent: "@dossier3-declaration-financement"
+    parent: "@dossier3-df"
     parentRowIndex: 2
     label: "Montant"
     dossier: "@dossier3"
@@ -415,7 +415,7 @@ items:
     fieldSource: champs
     type: string
     stringValue: "USA"
-    parent: "@dossier3-declaration-financement"
+    parent: "@dossier3-df"
     parentRowIndex: 2
     label: "Pays"
     dossier: "@dossier3"
@@ -425,7 +425,7 @@ items:
     fieldSource: champs
     type: string
     stringValue: "Arkonen"
-    parent: "@dossier3-declaration-financement"
+    parent: "@dossier3-df"
     parentRowIndex: 2
     label: "Organisme financeur"
     dossier: "@dossier3"
@@ -594,16 +594,16 @@ items:
     parent: null
     label: "Total"
     dossier: "@dossier5"
-  dossier5-declaration-financement:
+  dossier5-df:
     sourceId: "I11"
     fieldSource: champs
     dsChampType: RepetitionChamp
     type: string
     stringValue: ""
     parent: null
-    label: "Déclaration de financement"
+    label: "les financements"
     dossier: "@dossier5"
-  # region children declaration financement
+  # region children les financements
   # region row1
   dossier5-df-1-montant:
     sourceId: "I08"
@@ -612,7 +612,7 @@ items:
     type: number
     stringValue: "23000"
     numberValue: 23000
-    parent: "@dossier5-declaration-financement"
+    parent: "@dossier5-df"
     parentRowIndex: 1
     label: "Montant"
     dossier: "@dossier5"
@@ -622,7 +622,7 @@ items:
     fieldSource: champs
     type: string
     stringValue: "France"
-    parent: "@dossier5-declaration-financement"
+    parent: "@dossier5-df"
     parentRowIndex: 1
     label: "Pays"
     dossier: "@dossier5"
@@ -632,7 +632,7 @@ items:
     fieldSource: champs
     type: string
     stringValue: "Pulsarr"
-    parent: "@dossier5-declaration-financement"
+    parent: "@dossier5-df"
     parentRowIndex: 1
     label: "Organisme financeur"
     dossier: "@dossier5"
@@ -645,7 +645,7 @@ items:
     type: number
     stringValue: "2500"
     numberValue: 2500
-    parent: "@dossier5-declaration-financement"
+    parent: "@dossier5-df"
     parentRowIndex: 2
     label: "Montant"
     dossier: "@dossier5"
@@ -655,7 +655,7 @@ items:
     fieldSource: champs
     type: string
     stringValue: "Qatar"
-    parent: "@dossier5-declaration-financement"
+    parent: "@dossier5-df"
     parentRowIndex: 2
     label: "Pays"
     dossier: "@dossier5"
@@ -665,7 +665,7 @@ items:
     fieldSource: champs
     type: string
     stringValue: "Babou"
-    parent: "@dossier5-declaration-financement"
+    parent: "@dossier5-df"
     parentRowIndex: 2
     label: "Organisme financeur"
     dossier: "@dossier5"
@@ -678,7 +678,7 @@ items:
     type: number
     stringValue: "6400"
     numberValue: 6400
-    parent: "@dossier5-declaration-financement"
+    parent: "@dossier5-df"
     parentRowIndex: 3
     label: "Montant"
     dossier: "@dossier5"
@@ -688,7 +688,7 @@ items:
     fieldSource: champs
     type: string
     stringValue: "USA"
-    parent: "@dossier5-declaration-financement"
+    parent: "@dossier5-df"
     parentRowIndex: 3
     label: "Pays"
     dossier: "@dossier5"
@@ -698,7 +698,7 @@ items:
     fieldSource: champs
     type: string
     stringValue: "Wallmart"
-    parent: "@dossier5-declaration-financement"
+    parent: "@dossier5-df"
     parentRowIndex: 3
     label: "Organisme financeur"
     dossier: "@dossier5"
@@ -790,16 +790,16 @@ items:
     parent: null
     label: "Total"
     dossier: "@dossier6"
-  dossier6-declaration-financement:
+  dossier6-df:
     sourceId: "I11"
     fieldSource: champs
     dsChampType: RepetitionChamp
     type: string
     stringValue: ""
     parent: null
-    label: "Déclaration de financement"
+    label: "les financements"
     dossier: "@dossier6"
-  # region children declaration financement
+  # region children les financements
   # region row1
   dossier6-df-1-montant:
     sourceId: "I08"
@@ -808,7 +808,7 @@ items:
     type: number
     stringValue: "8800"
     numberValue: 8800
-    parent: "@dossier6-declaration-financement"
+    parent: "@dossier6-df"
     parentRowIndex: 1
     label: "Montant"
     dossier: "@dossier6"
@@ -818,7 +818,7 @@ items:
     fieldSource: champs
     type: string
     stringValue: "Turquie"
-    parent: "@dossier6-declaration-financement"
+    parent: "@dossier6-df"
     parentRowIndex: 1
     label: "Pays"
     dossier: "@dossier6"
@@ -828,7 +828,7 @@ items:
     fieldSource: champs
     type: string
     stringValue: "Turkish Cie"
-    parent: "@dossier6-declaration-financement"
+    parent: "@dossier6-df"
     parentRowIndex: 1
     label: "Organisme financeur"
     dossier: "@dossier6"
@@ -930,16 +930,16 @@ items:
     parent: null
     label: "Total"
     dossier: "@dossier7"
-  dossier7-declaration-financement:
+  dossier7-df:
     sourceId: "I11"
     fieldSource: champs
     dsChampType: RepetitionChamp
     type: string
     stringValue: ""
     parent: null
-    label: "Déclaration de financement"
+    label: "les financements"
     dossier: "@dossier7"
-  # region children declaration financement
+  # region children les financements
   # region row1
   dossier7-df-1-montant:
     sourceId: "I08"
@@ -948,7 +948,7 @@ items:
     type: number
     stringValue: "2500"
     numberValue: 2500
-    parent: "@dossier7-declaration-financement"
+    parent: "@dossier7-df"
     parentRowIndex: 1
     label: "Montant"
     dossier: "@dossier7"
@@ -958,7 +958,7 @@ items:
     fieldSource: champs
     type: string
     stringValue: "Qatar"
-    parent: "@dossier7-declaration-financement"
+    parent: "@dossier7-df"
     parentRowIndex: 1
     label: "Pays"
     dossier: "@dossier7"
@@ -968,7 +968,7 @@ items:
     fieldSource: champs
     type: string
     stringValue: "Babou"
-    parent: "@dossier7-declaration-financement"
+    parent: "@dossier7-df"
     parentRowIndex: 1
     label: "Organisme financeur"
     dossier: "@dossier7"
@@ -981,7 +981,7 @@ items:
     type: number
     stringValue: "6400"
     numberValue: 6400
-    parent: "@dossier7-declaration-financement"
+    parent: "@dossier7-df"
     parentRowIndex: 2
     label: "Montant"
     dossier: "@dossier7"
@@ -991,7 +991,7 @@ items:
     fieldSource: champs
     type: string
     stringValue: "USA"
-    parent: "@dossier7-declaration-financement"
+    parent: "@dossier7-df"
     parentRowIndex: 2
     label: "Pays"
     dossier: "@dossier7"
@@ -1001,7 +1001,7 @@ items:
     fieldSource: champs
     type: string
     stringValue: "Wallmart"
-    parent: "@dossier7-declaration-financement"
+    parent: "@dossier7-df"
     parentRowIndex: 2
     label: "Organisme financeur"
     dossier: "@dossier7"
@@ -1255,16 +1255,16 @@ items:
     parent: null
     label: "Total"
     dossier: "@dossier10"
-  dossier10-declaration-financement:
+  dossier10-df:
     sourceId: "I11"
     fieldSource: champs
     dsChampType: RepetitionChamp
     type: string
     stringValue: ""
     parent: null
-    label: "Déclaration de financement"
+    label: "les financements"
     dossier: "@dossier10"
-  # region children declaration financement
+  # region children les financements
   # region row1
   dossier10-df-1-montant:
     sourceId: "I08"
@@ -1273,7 +1273,7 @@ items:
     type: number
     stringValue: "15600"
     numberValue: 15600
-    parent: "@dossier10-declaration-financement"
+    parent: "@dossier10-df"
     parentRowIndex: 1
     label: "Montant"
     dossier: "@dossier10"
@@ -1283,7 +1283,7 @@ items:
     fieldSource: champs
     type: string
     stringValue: "France"
-    parent: "@dossier10-declaration-financement"
+    parent: "@dossier10-df"
     parentRowIndex: 1
     label: "Pays"
     dossier: "@dossier10"
@@ -1293,7 +1293,7 @@ items:
     fieldSource: champs
     type: string
     stringValue: "Pulsarr"
-    parent: "@dossier10-declaration-financement"
+    parent: "@dossier10-df"
     parentRowIndex: 1
     label: "Organisme financeur"
     dossier: "@dossier10"
@@ -1306,7 +1306,7 @@ items:
     type: number
     stringValue: "23000"
     numberValue: 23000
-    parent: "@dossier10-declaration-financement"
+    parent: "@dossier10-df"
     parentRowIndex: 2
     label: "Montant"
     dossier: "@dossier10"
@@ -1316,7 +1316,7 @@ items:
     fieldSource: champs
     type: string
     stringValue: "Qatar"
-    parent: "@dossier10-declaration-financement"
+    parent: "@dossier10-df"
     parentRowIndex: 2
     label: "Pays"
     dossier: "@dossier10"
@@ -1326,7 +1326,7 @@ items:
     fieldSource: champs
     type: string
     stringValue: "Babou"
-    parent: "@dossier10-declaration-financement"
+    parent: "@dossier10-df"
     parentRowIndex: 2
     label: "Organisme financeur"
     dossier: "@dossier10"
@@ -1339,7 +1339,7 @@ items:
     type: number
     stringValue: "17400"
     numberValue: 17400
-    parent: "@dossier10-declaration-financement"
+    parent: "@dossier10-df"
     parentRowIndex: 3
     label: "Montant"
     dossier: "@dossier10"
@@ -1349,7 +1349,7 @@ items:
     fieldSource: champs
     type: string
     stringValue: "USA"
-    parent: "@dossier10-declaration-financement"
+    parent: "@dossier10-df"
     parentRowIndex: 3
     label: "Pays"
     dossier: "@dossier10"
@@ -1359,7 +1359,7 @@ items:
     fieldSource: champs
     type: string
     stringValue: "Wallmart"
-    parent: "@dossier10-declaration-financement"
+    parent: "@dossier10-df"
     parentRowIndex: 3
     label: "Organisme financeur"
     dossier: "@dossier10"
@@ -1372,7 +1372,7 @@ items:
     type: number
     stringValue: "8600"
     numberValue: 8600
-    parent: "@dossier10-declaration-financement"
+    parent: "@dossier10-df"
     parentRowIndex: 4
     label: "Montant"
     dossier: "@dossier10"
@@ -1382,7 +1382,7 @@ items:
     fieldSource: champs
     type: string
     stringValue: "Écosse"
-    parent: "@dossier10-declaration-financement"
+    parent: "@dossier10-df"
     parentRowIndex: 4
     label: "Pays"
     dossier: "@dossier10"
@@ -1392,7 +1392,7 @@ items:
     fieldSource: champs
     type: string
     stringValue: "Atréides"
-    parent: "@dossier10-declaration-financement"
+    parent: "@dossier10-df"
     parentRowIndex: 4
     label: "Organisme financeur"
     dossier: "@dossier10"
@@ -1405,7 +1405,7 @@ items:
     type: number
     stringValue: "19200"
     numberValue: 19200
-    parent: "@dossier10-declaration-financement"
+    parent: "@dossier10-df"
     parentRowIndex: 5
     label: "Montant"
     dossier: "@dossier10"
@@ -1415,7 +1415,7 @@ items:
     fieldSource: champs
     type: string
     stringValue: "Turquie"
-    parent: "@dossier10-declaration-financement"
+    parent: "@dossier10-df"
     parentRowIndex: 5
     label: "Pays"
     dossier: "@dossier10"
@@ -1425,7 +1425,7 @@ items:
     fieldSource: champs
     type: string
     stringValue: "Turkish Cie"
-    parent: "@dossier10-declaration-financement"
+    parent: "@dossier10-df"
     parentRowIndex: 5
     label: "Organisme financeur"
     dossier: "@dossier10"

@@ -81,11 +81,11 @@ const dossiersWithDates = () => {
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export const smallDemarcheAndDossierFinancementEtrangerDataMock = () => ({
+export const smallDemarcheAndDossierFeDataMock = () => ({
   demarche: {
     id: 'UHJvY2VkdXJlLTI5',
     number: 42,
-    title: 'Small Déclaration des financements étrangers',
+    title: 'Small Déclaration des FE',
     state: 'publiee',
     activeRevision: {
       id: 'UHJvY2VkdXJlUmV2aXNpb24tNTY=',

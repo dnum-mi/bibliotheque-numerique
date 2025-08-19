@@ -41,7 +41,7 @@ const fakeMappingColumnHash: MappingColumn[] = [
         formatFunctionRef: FormatFunctionRef.country,
         source: FieldSource.champs,
         columnLabel: null,
-        originalLabel: "Pays d'origine du financement",
+        originalLabel: "Pays d'origine",
       },
       {
         type: FieldType.number,
@@ -49,7 +49,7 @@ const fakeMappingColumnHash: MappingColumn[] = [
         formatFunctionRef: null,
         source: FieldSource.champs,
         columnLabel: null,
-        originalLabel: 'Montant du financement',
+        originalLabel: 'Montant',
       },
     ],
   },
@@ -372,7 +372,7 @@ describe('FieldService', () => {
         {
           id: 'useless',
           __typename: 'RepetitionChamp',
-          label: "Déclaration d'un financement d'un montant supérieur à 15 300 €",
+          label: "Déclaration d'un montant supérieur à 15 300 €",
           stringValue: '',
           champDescriptor: {
             id: 'Q2hhbXAtMTA2NQ==',
@@ -383,7 +383,7 @@ describe('FieldService', () => {
                 {
                   id: 'useless',
                   __typename: 'PaysChamp',
-                  label: "Pays d'origine du financement",
+                  label: "Pays d'origine",
                   stringValue: 'Anguilla',
                   champDescriptor: {
                     id: 'A2hhbXAtMTA2NQ==',
@@ -396,7 +396,7 @@ describe('FieldService', () => {
                 {
                   id: 'useless',
                   __typename: 'IntegerNumberChamp',
-                  label: 'Montant du financement',
+                  label: 'Montant',
                   stringValue: '1111111',
                   integerNumber: '1111111',
                   champDescriptor: {
@@ -410,7 +410,7 @@ describe('FieldService', () => {
                 {
                   id: 'useless',
                   __typename: 'PaysChamp',
-                  label: "Pays d'origine du financement",
+                  label: "Pays d'origine",
                   stringValue: 'Algeria',
                   pays: {
                     name: 'Algeria',
@@ -423,7 +423,7 @@ describe('FieldService', () => {
                 {
                   id: 'useless',
                   __typename: 'IntegerNumberChamp',
-                  label: 'Montant du financement',
+                  label: 'Montant',
                   stringValue: '10',
                   integerNumber: '10',
                   champDescriptor: {
@@ -455,7 +455,7 @@ describe('FieldService', () => {
         children: [
           {
             sourceId: 'A2hhbXAtMTA2NQ==',
-            label: "Pays d'origine du financement",
+            label: "Pays d'origine",
             formatFunctionRef: FormatFunctionRef.country,
             type: 'string',
             fieldSource: 'champs',
@@ -469,7 +469,7 @@ describe('FieldService', () => {
           },
           {
             sourceId: 'B2hhbXAtMTA2NQ==',
-            label: 'Montant du financement',
+            label: 'Montant',
             formatFunctionRef: null,
             type: 'number',
             fieldSource: 'champs',
@@ -483,7 +483,7 @@ describe('FieldService', () => {
           },
           {
             sourceId: 'A2hhbXAtMTA2NQ==',
-            label: "Pays d'origine du financement",
+            label: "Pays d'origine",
             formatFunctionRef: FormatFunctionRef.country,
             type: 'string',
             fieldSource: 'champs',
@@ -497,7 +497,7 @@ describe('FieldService', () => {
           },
           {
             sourceId: 'B2hhbXAtMTA2NQ==',
-            label: 'Montant du financement',
+            label: 'Montant',
             formatFunctionRef: null,
             type: 'number',
             fieldSource: 'champs',

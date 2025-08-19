@@ -363,7 +363,7 @@ describe('users (e2e)', () => {
                   prefectures: ['D75'],
                   demarche: {
                     id: 1,
-                    title: 'Déclaration de financement étranger',
+                    title: 'Déclaration de FE',
                     types: ['ASSO', 'FDD'],
                     dsId: 76,
                   },
@@ -374,7 +374,7 @@ describe('users (e2e)', () => {
                   demarche: {
                     id: 5,
                     title:
-                      '[UPDATE-IDENTIFICATION] Déclaration de financement étranger',
+                      '[UPDATE-IDENTIFICATION] Déclaration de FE',
                     types: ['ASSO'],
                     dsId: 4,
                   },

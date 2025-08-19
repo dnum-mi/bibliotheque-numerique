@@ -21,7 +21,7 @@
     {
       "id": 5565,
       "uuid": "447ff302-91a4-4b52-803a-6a5458fac39f",
-      "label": "NaN_Financements étrangers",
+      "label": "NaN_FE",
       "mimeType": "unknown",
       "state": "uploaded",
       "sourceLabel": "ds-champ",
