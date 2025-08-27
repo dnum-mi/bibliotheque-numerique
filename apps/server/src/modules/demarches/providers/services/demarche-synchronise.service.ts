@@ -78,9 +78,15 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
     if (!revision) {
       throw new Error('No revision found inside demarche.')
     }
+
     const originalRenameHash = Object.fromEntries(
-      originalMappingColumns.map((omc) => [omc.id, omc.columnLabel]),
+      originalMappingColumns.map((omc) => [
+        [omc.id, omc.columnLabel],
+        ...(omc.children ?? []).map((c) => [c.id, c.columnLabel]),
+      ],
+      ).flat(1),
     )
+
     const __fromDescriptorsToMappingColumn = (
       cds: ChampDescriptor[],
       source: FieldSourceKeys,
@@ -109,6 +115,16 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
       ...getFixFieldsByIdentification(identification).map((ff) => ({
         ...ff,
         columnLabel: originalRenameHash[ff.id] || ff.columnLabel,
+        ...(
+          ff.children
+            ? {
+              children: ff.children.map((c) => ({
+                ...c,
+                columnLabel: originalRenameHash[c.id] || c.columnLabel,
+              })),
+            }
+            : {}
+        ),
       })),
       ...__fromDescriptorsToMappingColumn(
         (revision.champDescriptors as ChampDescriptor[]) ?? [],
