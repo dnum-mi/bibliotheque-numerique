@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { EOrganismeIdType, type OrganismeIdType } from '@/stores'
+import { EOrganismeIdType } from '@/stores'
+import type { OrganismeIdType } from '@/stores'
 import { defineProps } from 'vue'
 
 defineProps<{
@@ -16,7 +17,9 @@ defineProps<{
       aria-hidden="true"
     />
 
-    <h3 class="text-xl font-semibold text-gray-800">Aucun historique disponible</h3>
+    <h3 class="text-xl font-semibold text-gray-800">
+      Aucun historique disponible
+    </h3>
 
     <p class="text-gray-600 mt-2 text-sm max-w-2/3">
       Cette {{ entityType === EOrganismeIdType.Rna ? 'association' : 'fondation' }} n'a pas encore de versions antérieures enregistrées. Son

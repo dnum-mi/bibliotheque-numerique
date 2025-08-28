@@ -6,7 +6,7 @@ const props = defineProps<{
   value: InstructionTimeValueKey
 }>()
 
- type dsfrType = 'success' | 'error' | 'warning' | 'info' | 'new'
+type dsfrType = 'success' | 'error' | 'warning' | 'info' | 'new'
 
 const dictionary: Record<InstructionTimeValueKey, { label: string, type: dsfrType }> = {
   [eInstructionTimeValue['1ère demande']]: { label: '1ère demande', type: 'new' },

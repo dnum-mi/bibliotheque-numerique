@@ -1,6 +1,5 @@
 import { LoggerService } from '../../src/shared/modules/logger/logger.service'
 
-/* eslint-disable */
 export const loggerServiceMock = jest.createMockFromModule<LoggerService>('../../src/shared/modules/logger/logger.service')
 loggerServiceMock.setContext = jest.fn()
 loggerServiceMock.verbose = jest.fn()

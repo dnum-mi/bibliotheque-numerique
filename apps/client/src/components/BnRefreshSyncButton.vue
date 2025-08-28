@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { eState, type ISyncState } from '@biblio-num/shared'
+import { eState } from '@biblio-num/shared'
+import type { ISyncState } from '@biblio-num/shared'
 import { dateToStringFr } from '@/utils'
 import apiClient from '@/api/api-client'
 

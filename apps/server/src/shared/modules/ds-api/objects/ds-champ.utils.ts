@@ -49,7 +49,6 @@ export const giveTypeFromDsChampType = (
   }
 }
 
-// eslint-disable-next-line dot-notation
 export const isRepetitionChamp = (champ: CustomChamp): boolean =>
   // @ts-ignore TODO: why __typename exist on Champ but not CustomChamp
   champ.__typename === DsChampType.RepetitionChamp

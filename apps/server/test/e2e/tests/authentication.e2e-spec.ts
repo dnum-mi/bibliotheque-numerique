@@ -128,8 +128,8 @@ describe('Auth (e2e)', () => {
         })
 
       expect(response.status).toBe(423)
-      expect(response.body.message).toEqual('Pour valider votre connexion, veuillez cliquer sur le lien sécurisé.Un courriel vous a été envoyé pour connecter',
-      )
+      expect(response.body.message)
+        .toEqual('Pour valider votre connexion, veuillez cliquer sur le lien sécurisé.Un courriel vous a été envoyé pour connecter')
     })
 
     it('Should return 404 on user no valid', async () => {

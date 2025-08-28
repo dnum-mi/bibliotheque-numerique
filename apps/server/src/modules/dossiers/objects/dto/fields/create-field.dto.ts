@@ -1,4 +1,3 @@
-/* eslint-disable no-use-before-define */
 import { OmitType } from '@nestjs/swagger'
 import { Field } from '../../entities/field.entity'
 

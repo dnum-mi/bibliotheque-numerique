@@ -53,8 +53,8 @@ const getUniqueIdUser = () => {
 }
 export const createRandomUser = (id?: number): IAgGridUser => ({
   id: id || getUniqueIdUser(),
-  lastname: faker.internet.userName(),
-  firstname: faker.internet.userName(),
+  lastname: faker.internet.username(),
+  firstname: faker.internet.username(),
   email: faker.internet.email(),
   job: '',
   roleLabel: noRole.label,
