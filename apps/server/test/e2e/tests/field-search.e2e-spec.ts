@@ -322,7 +322,7 @@ describe('Field search', () => {
       })
   })
 
-  it('Should only return dossier with pays=Qatar AND 10000 > financement > 20000', () => {
+  it('Should only return dossier with pays=Qa AND 10000 > montant > 20000', () => {
     return request(app.getHttpServer())
       .post('/demarches/1/fields-search')
       .send({

@@ -36,7 +36,7 @@ export const demarcheAndDossierFeDataMock = {
               {
                 id: 'Q2hhbXAtMTA0Mw==',
                 type: 'header_section',
-                label: 'Informations relatives au bénéficiaire du financement',
+                label: 'Informations relatives au bénéficiaire ',
                 description: '',
                 required: false,
                 options: null,
@@ -82,7 +82,7 @@ export const demarcheAndDossierFeDataMock = {
                 type: 'text',
                 label: "Nom de l'organisme bénéficiaire",
                 description:
-                  "Indiquer le nom de l'organisme tel qu'il figure dans les statuts, s'il s'agit d'une congrégation, le nom tel qu'il figure dans le décret de reconnaissance légale, de décret ou l'arrêté approuvant la modification statutaire ...",
+                  "Indiquer le nom de l'organisme",
                 required: true,
                 options: null,
                 champDescriptors: null,
@@ -193,7 +193,7 @@ export const demarcheAndDossierFeDataMock = {
                 type: 'checkbox',
                 label: 'Attestation',
                 description:
-                  "J'atteste sur l'honneur être missionné par l'association (la congrégation ou l'établissement public du culte) pour déclarer, conformément à la loi, ce (ou ces) financement (s) provenant directement ou indirectement de l'étranger qui lui est (sont) consenti(s) .",
+                  "J'atteste sur l'honneur xxxxxx .",
                 required: true,
                 options: null,
                 champDescriptors: null,
@@ -210,9 +210,9 @@ export const demarcheAndDossierFeDataMock = {
               {
                 id: 'Q2hhbXAtMTA2MQ==',
                 type: 'explication',
-                label: 'Informations générales sur le(s) financement(s) déclaré(s)',
+                label: 'Informations générales sur le(s) déclaré(s)',
                 description:
-                  'Vous pouvez déclarer un ou plusieurs financements. Selon que le financement reçu est supérieur ou non à 15 300 €, les informations à déclarer ne seront pas les mêmes. Les financements de plus de 15 300 € nécessitent des informations plus détaillées.',
+                  'Déclarez : infos simples ≤ 15 300 €, infos détaillées > 15 300 €.',
                 required: false,
                 options: null,
                 champDescriptors: null,
@@ -221,7 +221,7 @@ export const demarcheAndDossierFeDataMock = {
                 id: 'Q2hhbXAtMTA2Mg==',
                 type: 'yes_no',
                 label:
-                  "Souhaitez-vous déclarer un ou plusieurs financements d'un montant inférieur ou égal à 15 300€ ?",
+                  'Souhaitez-vous déclarer un ou plusieurs ≤ 15 300 € ?',
                 description: '',
                 required: true,
                 options: null,
@@ -231,7 +231,7 @@ export const demarcheAndDossierFeDataMock = {
                 id: 'Q2hhbXAtMTA2Mw==',
                 type: 'piece_justificative',
                 label:
-                  "Téléchargement d'un tableau comprenant le ou les financements d'un montant inférieur ou égal à 15 300 €",
+                  "Téléchargement d'un tableau comprenant le montant inférieur ou égal à 15 300 €",
                 description:
                   'Merci de compléter le modèle ci-joint en respectant les consignes intégrées dans ce dernier.',
                 required: true,
@@ -241,7 +241,7 @@ export const demarcheAndDossierFeDataMock = {
               {
                 id: 'Q2hhbXAtMTA2NA==',
                 type: 'yes_no',
-                label: "Souhaitez-vous déclarer un ou plusieurs financements d'un montant supérieur à 15 300€ ?",
+                label: 'Souhaitez-vous déclarer un ou plusieurs montants supérieur à 15 300€ ?',
                 description: '',
                 required: true,
                 options: null,
@@ -250,7 +250,7 @@ export const demarcheAndDossierFeDataMock = {
               {
                 id: 'Q2hhbXAtMTA2NQ==',
                 type: 'repetition',
-                label: "Déclaration d'un financement d'un montant supérieur à 15 300 €",
+                label: "Déclaration d'un montant supérieur à 15 300 €",
                 description: '',
                 required: true,
                 options: null,
@@ -258,7 +258,7 @@ export const demarcheAndDossierFeDataMock = {
                   {
                     id: 'Q2hhbXAtMTA2Ng==',
                     type: 'pays',
-                    label: "Pays d'origine du financement",
+                    label: "Pays d'origine",
                     description:
                       "Indiquer, selon le cas, l'État contributeur, l'État où est situé le siège social de la personne morale contributrice ou l'État où la personne physique contributrice a fixé sa résidence fiscale.\r\n",
                     required: true,
@@ -518,9 +518,9 @@ export const demarcheAndDossierFeDataMock = {
                   {
                     id: 'Q2hhbXAtMTA2Nw==',
                     type: 'date',
-                    label: 'Date du financement',
+                    label: 'Date',
                     description:
-                      'Indiquer la date de réception effective du financement ou, pour les projets de financement, indiquer la date prévisionnelle de réception du financement projeté.',
+                      'Date',
                     required: true,
                     options: null,
                   },
@@ -553,12 +553,12 @@ export const demarcheAndDossierFeDataMock = {
                   {
                     id: 'Q2hhbXAtMTA2OQ==',
                     type: 'drop_down_list',
-                    label: 'Ce financement a -t-il été reçu par virement bancaire?',
+                    label: 'Ce montant a -t-il été reçu par virement bancaire?',
                     description: '',
                     required: true,
                     options: [
-                      'Oui, ce financement a été reçu par virement bancaire.',
-                      "Non, ce financement n'a pas été reçu par virement bancaire.",
+                      'Oui, ce montant a été reçu par virement bancaire.',
+                      "Non, ce montant n'a pas été reçu par virement bancaire.",
                     ],
                   },
                   {
@@ -573,7 +573,7 @@ export const demarcheAndDossierFeDataMock = {
                   {
                     id: 'Q2hhbXAtMTA3MQ==',
                     type: 'integer_number',
-                    label: 'Montant du financement',
+                    label: 'Montant',
                     description:
                       "Pour les sommes d'argent, indiquez la valeur nominale de la somme donnée (somme reçue). Pour les valeurs cotées en bourse, référez-vous à la cote officielle. La valeur des biens est obligatoirement en euros (€). Attention : ne portez pas les centimes d’euros. \r\n",
                     required: true,
@@ -582,7 +582,7 @@ export const demarcheAndDossierFeDataMock = {
                   {
                     id: 'Q2hhbXAtMTA3Mg==',
                     type: 'yes_no',
-                    label: "Ce financement est une mise à disposition d'une personne ?",
+                    label: "Ce montant est une mise à disposition d'une personne ?",
                     description: '',
                     required: true,
                     options: null,
@@ -599,9 +599,9 @@ export const demarcheAndDossierFeDataMock = {
                   {
                     id: 'Q2hhbXAtMTA3NA==',
                     type: 'drop_down_list',
-                    label: "Ce financement va être (a été) reversé à d'autres associations?",
+                    label: "Ce montant va être (a été) reversé à d'autres associations?",
                     description:
-                      "En déclarant pour le compte des associations bénéficiaires ultimes les modalités de redistribution de ce financement, ces dernières sont dispensées de déclarer la part qu'elles auront reçues.",
+                      "En déclarant pour le compte des associations bénéficiaires ultimes les modalités de redistribution de ce montant, ces dernières sont dispensées de déclarer la part qu'elles auront reçues.",
                     required: true,
                     options: [
                       'Oui, je propose de déclarer pour leur compte les sommes qui leur ont été affectées. Les associations ainsi désignées sont dispensées de déclarer à nouveau les sommes ainsi reçues.',
@@ -612,9 +612,9 @@ export const demarcheAndDossierFeDataMock = {
                   {
                     id: 'Q2hhbXAtMTA3NQ==',
                     type: 'piece_justificative',
-                    label: 'document listant les associations bénéficiaires de ce financement',
+                    label: 'document listant les associations bénéficiaires de ce montant',
                     description:
-                      'Bien vouloir indiquer pour chaque association : ses nom et adresse ainsi que le montant du financement reçu (nombre entier).',
+                      'Bien vouloir indiquer pour chaque association : ses nom et adresse ainsi que le montant reçu (nombre entier).',
                     required: true,
                     options: null,
                   },
@@ -1247,7 +1247,7 @@ export const demarcheAndDossierFeDataMock = {
                   {
                     id: 'Q2hhbXAtMTA5MQ==',
                     type: 'yes_no',
-                    label: 'Un intermédaire est-il intervenu dans ce financement?',
+                    label: 'Un intermédaire est-il intervenu dans ce montant?',
                     description: '',
                     required: true,
                     options: null,
@@ -2123,18 +2123,18 @@ export const demarcheAndDossierFeDataMock = {
                   {
                     id: 'Q2hhbXAtMTEwNg==',
                     type: 'piece_justificative',
-                    label: 'Justificatif explicitant les modalités du financement déclaré',
+                    label: 'Justificatif explicitant les modalités déclaré',
                     description:
-                      "Les documents justificatifs peuvent être un acte de donation, un contrat, un testament, un écrit expliquant le montage financier, l'objet du financement...",
+                      "Les documents justificatifs peuvent être un acte de donation, un contrat, un testament, un écrit expliquant le montage financier, l'objet...",
                     required: false,
                     options: null,
                   },
                   {
                     id: 'Q2hhbXAtMTEwNw==',
                     type: 'piece_justificative',
-                    label: 'Second justificatif explicitant les modalités du financement déclaré',
+                    label: 'Second justificatif explicitant les modalités déclaré',
                     description:
-                      "Les documents justificatifs peuvent être un acte de donation, un contrat, un testament, un écrit expliquant le montage financier, l'objet du financement...",
+                      "Les documents justificatifs peuvent être un acte de donation, un contrat, un testament, un écrit expliquant le montage financier, l'objet...",
                     required: false,
                     options: null,
                   },
@@ -2235,7 +2235,7 @@ export const demarcheAndDossierFeDataMock = {
               {
                 id: 'Q2hhbXAtMTExOA==',
                 type: 'date',
-                label: "Date de l'intention d'opposition aux financements",
+                label: "Date de l'intention d'opposition",
                 description:
                   "Interrompt de délai restant, et lance un compteur de 30 jours pendant lequel l'usager doit répondre.",
                 required: false,
@@ -2267,7 +2267,7 @@ export const demarcheAndDossierFeDataMock = {
                 type: 'date',
                 label: "Date de décision d'opposition",
                 description:
-                  "Interrompt le compteur et créé un nouveau compteur de 90 jours, délai durant lequel l'usager devra justifier de la restitution du financement.",
+                  "Interrompt le compteur et créé un nouveau compteur de 90 jours, délai durant lequel l'usager devra justifier de la restitution.",
                 required: false,
                 options: null,
                 champDescriptors: null,
@@ -2275,7 +2275,7 @@ export const demarcheAndDossierFeDataMock = {
               {
                 id: 'Q2hhbXAtMTEyMg==',
                 type: 'date',
-                label: 'Date de dépôt de preuve de restitution du financement',
+                label: 'Date de dépôt de preuve de restitution',
                 description: 'Interrompt le compteur.',
                 required: false,
                 options: null,
@@ -2304,7 +2304,7 @@ export const demarcheAndDossierFeDataMock = {
             {
               id: 'Q2hhbXAtMTA0Mw==',
               __typename: 'TextChamp',
-              label: 'Informations relatives au bénéficiaire du financement',
+              label: 'Informations relatives au bénéficiaire',
               stringValue: '',
             },
             {
@@ -2442,27 +2442,27 @@ export const demarcheAndDossierFeDataMock = {
             {
               id: 'Q2hhbXAtMTA2MQ==',
               __typename: 'TextChamp',
-              label: 'Informations générales sur le(s) financement(s) déclaré(s)',
+              label: 'Informations générales sur le(s) déclaré(s)',
               stringValue: '',
             },
             {
               id: 'Q2hhbXAtMTA2Mg==',
               __typename: 'CheckboxChamp',
-              label: "Souhaitez-vous déclarer un ou plusieurs financements d'un montant inférieur ou égal à 15 300€ ?",
+              label: 'Souhaitez-vous déclarer un ou plusieurs ≤ 15 300 € ?',
               stringValue: 'false',
               checked: false,
             },
             {
               id: 'Q2hhbXAtMTA2NA==',
               __typename: 'CheckboxChamp',
-              label: "Souhaitez-vous déclarer un ou plusieurs financements d'un montant supérieur à 15 300€ ?",
+              label: 'Souhaitez-vous déclarer un ou plusieurs montants supérieur à 15 300€ ?',
               stringValue: 'true',
               checked: true,
             },
             {
               id: 'Q2hhbXAtMTA2NQ==',
               __typename: 'RepetitionChamp',
-              label: "Déclaration d'un financement d'un montant supérieur à 15 300 €",
+              label: "Déclaration d'un montant supérieur à 15 300 €",
               stringValue: '',
               rows: [
                 {
@@ -2470,13 +2470,13 @@ export const demarcheAndDossierFeDataMock = {
                     {
                       id: 'Q2hhbXAtMTA2NnwwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
                       __typename: 'TextChamp',
-                      label: "Pays d'origine du financement",
+                      label: "Pays d'origine",
                       stringValue: 'Anguilla',
                     },
                     {
                       id: 'Q2hhbXAtMTA2N3wwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
                       __typename: 'DateChamp',
-                      label: 'Date du financement',
+                      label: 'Date',
                       stringValue: '31 mai 2023',
                       date: '2023-05-31',
                     },
@@ -2491,8 +2491,8 @@ export const demarcheAndDossierFeDataMock = {
                     {
                       id: 'Q2hhbXAtMTA2OXwwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
                       __typename: 'TextChamp',
-                      label: 'Ce financement a -t-il été reçu par virement bancaire?',
-                      stringValue: 'Oui, ce financement a été reçu par virement bancaire.',
+                      label: 'Ce montant a -t-il été reçu par virement bancaire?',
+                      stringValue: 'Oui, ce montant a été reçu par virement bancaire.',
                     },
                     {
                       id: 'Q2hhbXAtMTA3MHwwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
@@ -2503,14 +2503,14 @@ export const demarcheAndDossierFeDataMock = {
                     {
                       id: 'Q2hhbXAtMTA3MXwwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
                       __typename: 'IntegerNumberChamp',
-                      label: 'Montant du financement',
+                      label: 'Montant',
                       stringValue: '1111111',
                       integerNumber: '1111111',
                     },
                     {
                       id: 'Q2hhbXAtMTA3MnwwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
                       __typename: 'CheckboxChamp',
-                      label: "Ce financement est une mise à disposition d'une personne ?",
+                      label: "Ce montant est une mise à disposition d'une personne ?",
                       stringValue: 'true',
                       checked: true,
                     },
@@ -2530,7 +2530,7 @@ export const demarcheAndDossierFeDataMock = {
                     {
                       id: 'Q2hhbXAtMTA3NHwwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
                       __typename: 'TextChamp',
-                      label: "Ce financement va être (a été) reversé à d'autres associations?",
+                      label: "Ce montant va être (a été) reversé à d'autres associations?",
                       stringValue: 'Non.',
                     },
                     {
@@ -2628,21 +2628,21 @@ export const demarcheAndDossierFeDataMock = {
                     {
                       id: 'Q2hhbXAtMTA5MXwwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
                       __typename: 'CheckboxChamp',
-                      label: 'Un intermédaire est-il intervenu dans ce financement?',
+                      label: 'Un intermédaire est-il intervenu dans ce montant?',
                       stringValue: 'false',
                       checked: false,
                     },
                     {
                       id: 'Q2hhbXAtMTEwNnwwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
                       __typename: 'PieceJustificativeChamp',
-                      label: 'Justificatif explicitant les modalités du financement déclaré',
+                      label: 'Justificatif explicitant les modalités déclaré',
                       stringValue: '',
                       file: null,
                     },
                     {
                       id: 'Q2hhbXAtMTEwN3wwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
                       __typename: 'PieceJustificativeChamp',
-                      label: 'Second justificatif explicitant les modalités du financement déclaré',
+                      label: 'Second justificatif explicitant les modalités déclaré',
                       stringValue: '',
                       file: null,
                     },
@@ -2653,13 +2653,13 @@ export const demarcheAndDossierFeDataMock = {
                 {
                   id: 'Q2hhbXAtMTA2NnwwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
                   __typename: 'TextChamp',
-                  label: "Pays d'origine du financement",
+                  label: "Pays d'origine",
                   stringValue: 'Anguilla',
                 },
                 {
                   id: 'Q2hhbXAtMTA2N3wwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
                   __typename: 'DateChamp',
-                  label: 'Date du financement',
+                  label: 'Date',
                   stringValue: '31 mai 2023',
                   date: '2023-05-31',
                 },
@@ -2674,8 +2674,8 @@ export const demarcheAndDossierFeDataMock = {
                 {
                   id: 'Q2hhbXAtMTA2OXwwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
                   __typename: 'TextChamp',
-                  label: 'Ce financement a -t-il été reçu par virement bancaire?',
-                  stringValue: 'Oui, ce financement a été reçu par virement bancaire.',
+                  label: 'Ce montant a -t-il été reçu par virement bancaire?',
+                  stringValue: 'Oui, ce montant a été reçu par virement bancaire.',
                 },
                 {
                   id: 'Q2hhbXAtMTA3MHwwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
@@ -2686,14 +2686,14 @@ export const demarcheAndDossierFeDataMock = {
                 {
                   id: 'Q2hhbXAtMTA3MXwwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
                   __typename: 'IntegerNumberChamp',
-                  label: 'Montant du financement',
+                  label: 'Montant',
                   stringValue: '1111111',
                   integerNumber: '1111111',
                 },
                 {
                   id: 'Q2hhbXAtMTA3MnwwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
                   __typename: 'CheckboxChamp',
-                  label: "Ce financement est une mise à disposition d'une personne ?",
+                  label: "Ce montant est une mise à disposition d'une personne ?",
                   stringValue: 'true',
                   checked: true,
                 },
@@ -2713,7 +2713,7 @@ export const demarcheAndDossierFeDataMock = {
                 {
                   id: 'Q2hhbXAtMTA3NHwwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
                   __typename: 'TextChamp',
-                  label: "Ce financement va être (a été) reversé à d'autres associations?",
+                  label: "Ce montant va être (a été) reversé à d'autres associations?",
                   stringValue: 'Non.',
                 },
                 {
@@ -2811,21 +2811,21 @@ export const demarcheAndDossierFeDataMock = {
                 {
                   id: 'Q2hhbXAtMTA5MXwwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
                   __typename: 'CheckboxChamp',
-                  label: 'Un intermédaire est-il intervenu dans ce financement?',
+                  label: 'Un intermédaire est-il intervenu dans ce montant?',
                   stringValue: 'false',
                   checked: false,
                 },
                 {
                   id: 'Q2hhbXAtMTEwNnwwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
                   __typename: 'PieceJustificativeChamp',
-                  label: 'Justificatif explicitant les modalités du financement déclaré',
+                  label: 'Justificatif explicitant les modalités déclaré',
                   stringValue: '',
                   file: null,
                 },
                 {
                   id: 'Q2hhbXAtMTEwN3wwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
                   __typename: 'PieceJustificativeChamp',
-                  label: 'Second justificatif explicitant les modalités du financement déclaré',
+                  label: 'Second justificatif explicitant les modalités déclaré',
                   stringValue: '',
                   file: null,
                 },
@@ -2903,7 +2903,7 @@ export const demarcheAndDossierFeDataMock = {
             {
               id: 'Q2hhbXAtMTExOA==',
               __typename: 'DateChamp',
-              label: "Date de l'intention d'opposition aux financements",
+              label: "Date de l'intention d'opposition",
               stringValue: '',
               date: null,
             },
@@ -2931,7 +2931,7 @@ export const demarcheAndDossierFeDataMock = {
             {
               id: 'Q2hhbXAtMTEyMg==',
               __typename: 'DateChamp',
-              label: 'Date de dépôt de preuve de restitution du financement',
+              label: 'Date de dépôt de preuve de restitution',
               stringValue: '',
               date: null,
             },
@@ -2992,7 +2992,7 @@ export const demarcheAndDossierFeDataMock = {
               {
                 id: 'Q2hhbXAtMTA0Mw==',
                 type: 'header_section',
-                label: 'Informations relatives au bénéficiaire du financement',
+                label: 'Informations relatives au bénéficiaire',
                 description: '',
                 required: false,
                 options: null,
@@ -3149,7 +3149,7 @@ export const demarcheAndDossierFeDataMock = {
                 type: 'checkbox',
                 label: 'Attestation',
                 description:
-                  "J'atteste sur l'honneur être missionné par l'association (la congrégation ou l'établissement public du culte) pour déclarer, conformément à la loi, ce (ou ces) financement (s) provenant directement ou indirectement de l'étranger qui lui est (sont) consenti(s) .",
+                  "J'atteste sur l'honneur ...",
                 required: true,
                 options: null,
                 champDescriptors: null,
@@ -3166,9 +3166,9 @@ export const demarcheAndDossierFeDataMock = {
               {
                 id: 'Q2hhbXAtMTA2MQ==',
                 type: 'explication',
-                label: 'Informations générales sur le(s) financement(s) déclaré(s)',
+                label: 'Informations générales sur le(s) déclaré(s)',
                 description:
-                  'Vous pouvez déclarer un ou plusieurs financements. Selon que le financement reçu est supérieur ou non à 15 300 €, les informations à déclarer ne seront pas les mêmes. Les financements de plus de 15 300 € nécessitent des informations plus détaillées.',
+                  'Déclarez : infos simples ≤ 15 300 €, infos détaillées > 15 300 €.',
                 required: false,
                 options: null,
                 champDescriptors: null,
@@ -3177,7 +3177,7 @@ export const demarcheAndDossierFeDataMock = {
                 id: 'Q2hhbXAtMTA2Mg==',
                 type: 'yes_no',
                 label:
-                  "Souhaitez-vous déclarer un ou plusieurs financements d'un montant inférieur ou égal à 15 300€ ?",
+                  'Souhaitez-vous déclarer un ou plusieurs ≤ 15 300 € ?',
                 description: '',
                 required: true,
                 options: null,
@@ -3187,7 +3187,7 @@ export const demarcheAndDossierFeDataMock = {
                 id: 'Q2hhbXAtMTA2Mw==',
                 type: 'piece_justificative',
                 label:
-                  "Téléchargement d'un tableau comprenant le ou les financements d'un montant inférieur ou égal à 15 300 €",
+                  "Téléchargement d'un tableau comprenant le ou les montants inférieur ou égal à 15 300 €",
                 description:
                   'Merci de compléter le modèle ci-joint en respectant les consignes intégrées dans ce dernier.',
                 required: true,
@@ -3197,7 +3197,7 @@ export const demarcheAndDossierFeDataMock = {
               {
                 id: 'Q2hhbXAtMTA2NA==',
                 type: 'yes_no',
-                label: "Souhaitez-vous déclarer un ou plusieurs financements d'un montant supérieur à 15 300€ ?",
+                label: 'Souhaitez-vous déclarer un ou plusieurs montants supérieur à 15 300€ ?',
                 description: '',
                 required: true,
                 options: null,
@@ -3206,7 +3206,7 @@ export const demarcheAndDossierFeDataMock = {
               {
                 id: 'Q2hhbXAtMTA2NQ==',
                 type: 'repetition',
-                label: "Déclaration d'un financement d'un montant supérieur à 15 300 €",
+                label: "Déclaration d'un montant supérieur à 15 300 €",
                 description: '',
                 required: true,
                 options: null,
@@ -3214,7 +3214,7 @@ export const demarcheAndDossierFeDataMock = {
                   {
                     id: 'Q2hhbXAtMTA2Ng==',
                     type: 'pays',
-                    label: "Pays d'origine du financement",
+                    label: "Pays d'origine",
                     description:
                       "Indiquer, selon le cas, l'État contributeur, l'État où est situé le siège social de la personne morale contributrice ou l'État où la personne physique contributrice a fixé sa résidence fiscale.\r\n",
                     required: true,
@@ -3474,9 +3474,9 @@ export const demarcheAndDossierFeDataMock = {
                   {
                     id: 'Q2hhbXAtMTA2Nw==',
                     type: 'date',
-                    label: 'Date du financement',
+                    label: 'Date',
                     description:
-                      'Indiquer la date de réception effective du financement ou, pour les projets de financement, indiquer la date prévisionnelle de réception du financement projeté.',
+                      'Date',
                     required: true,
                     options: null,
                   },
@@ -3509,12 +3509,12 @@ export const demarcheAndDossierFeDataMock = {
                   {
                     id: 'Q2hhbXAtMTA2OQ==',
                     type: 'drop_down_list',
-                    label: 'Ce financement a -t-il été reçu par virement bancaire?',
+                    label: 'Ce montant a -t-il été reçu par virement bancaire?',
                     description: '',
                     required: true,
                     options: [
-                      'Oui, ce financement a été reçu par virement bancaire.',
-                      "Non, ce financement n'a pas été reçu par virement bancaire.",
+                      'Oui, ce montant a été reçu par virement bancaire.',
+                      "Non, ce montant n'a pas été reçu par virement bancaire.",
                     ],
                   },
                   {
@@ -3529,7 +3529,7 @@ export const demarcheAndDossierFeDataMock = {
                   {
                     id: 'Q2hhbXAtMTA3MQ==',
                     type: 'integer_number',
-                    label: 'Montant du financement',
+                    label: 'Montant',
                     description:
                       "Pour les sommes d'argent, indiquez la valeur nominale de la somme donnée (somme reçue). Pour les valeurs cotées en bourse, référez-vous à la cote officielle. La valeur des biens est obligatoirement en euros (€). Attention : ne portez pas les centimes d’euros. \r\n",
                     required: true,
@@ -3538,7 +3538,7 @@ export const demarcheAndDossierFeDataMock = {
                   {
                     id: 'Q2hhbXAtMTA3Mg==',
                     type: 'yes_no',
-                    label: "Ce financement est une mise à disposition d'une personne ?",
+                    label: "Ce montant est une mise à disposition d'une personne ?",
                     description: '',
                     required: true,
                     options: null,
@@ -3555,9 +3555,9 @@ export const demarcheAndDossierFeDataMock = {
                   {
                     id: 'Q2hhbXAtMTA3NA==',
                     type: 'drop_down_list',
-                    label: "Ce financement va être (a été) reversé à d'autres associations?",
+                    label: "Ce montant va être (a été) reversé à d'autres associations?",
                     description:
-                      "En déclarant pour le compte des associations bénéficiaires ultimes les modalités de redistribution de ce financement, ces dernières sont dispensées de déclarer la part qu'elles auront reçues.",
+                      "En déclarant pour le compte des associations bénéficiaires ultimes les modalités de redistribution de ce montant, ces dernières sont dispensées de déclarer la part qu'elles auront reçues.",
                     required: true,
                     options: [
                       'Oui, je propose de déclarer pour leur compte les sommes qui leur ont été affectées. Les associations ainsi désignées sont dispensées de déclarer à nouveau les sommes ainsi reçues.',
@@ -3568,9 +3568,9 @@ export const demarcheAndDossierFeDataMock = {
                   {
                     id: 'Q2hhbXAtMTA3NQ==',
                     type: 'piece_justificative',
-                    label: 'document listant les associations bénéficiaires de ce financement',
+                    label: 'document listant les associations bénéficiaires de ce montant',
                     description:
-                      'Bien vouloir indiquer pour chaque association : ses nom et adresse ainsi que le montant du financement reçu (nombre entier).',
+                      'Bien vouloir indiquer pour chaque association : ses nom et adresse ainsi que le montant reçu (nombre entier).',
                     required: true,
                     options: null,
                   },
@@ -4203,7 +4203,7 @@ export const demarcheAndDossierFeDataMock = {
                   {
                     id: 'Q2hhbXAtMTA5MQ==',
                     type: 'yes_no',
-                    label: 'Un intermédaire est-il intervenu dans ce financement?',
+                    label: 'Un intermédaire est-il intervenu dans ce montant?',
                     description: '',
                     required: true,
                     options: null,
@@ -5079,18 +5079,18 @@ export const demarcheAndDossierFeDataMock = {
                   {
                     id: 'Q2hhbXAtMTEwNg==',
                     type: 'piece_justificative',
-                    label: 'Justificatif explicitant les modalités du financement déclaré',
+                    label: 'Justificatif explicitant les modalités déclaré',
                     description:
-                      "Les documents justificatifs peuvent être un acte de donation, un contrat, un testament, un écrit expliquant le montage financier, l'objet du financement...",
+                      "Les documents justificatifs peuvent être un acte de donation, un contrat, un testament, un écrit expliquant le montage financier, l'objet...",
                     required: false,
                     options: null,
                   },
                   {
                     id: 'Q2hhbXAtMTEwNw==',
                     type: 'piece_justificative',
-                    label: 'Second justificatif explicitant les modalités du financement déclaré',
+                    label: 'Second justificatif explicitant les modalités déclaré',
                     description:
-                      "Les documents justificatifs peuvent être un acte de donation, un contrat, un testament, un écrit expliquant le montage financier, l'objet du financement...",
+                      "Les documents justificatifs peuvent être un acte de donation, un contrat, un testament, un écrit expliquant le montage financier, l'objet...",
                     required: false,
                     options: null,
                   },
@@ -5191,7 +5191,7 @@ export const demarcheAndDossierFeDataMock = {
               {
                 id: 'Q2hhbXAtMTExOA==',
                 type: 'date',
-                label: "Date de l'intention d'opposition aux financements",
+                label: "Date de l'intention d'opposition",
                 description:
                   "Interrompt de délai restant, et lance un compteur de 30 jours pendant lequel l'usager doit répondre.",
                 required: false,
@@ -5223,7 +5223,7 @@ export const demarcheAndDossierFeDataMock = {
                 type: 'date',
                 label: "Date de décision d'opposition",
                 description:
-                  "Interrompt le compteur et créé un nouveau compteur de 90 jours, délai durant lequel l'usager devra justifier de la restitution du financement.",
+                  "Interrompt le compteur et créé un nouveau compteur de 90 jours, délai durant lequel l'usager devra justifier de la restitution.",
                 required: false,
                 options: null,
                 champDescriptors: null,
@@ -5231,7 +5231,7 @@ export const demarcheAndDossierFeDataMock = {
               {
                 id: 'Q2hhbXAtMTEyMg==',
                 type: 'date',
-                label: 'Date de dépôt de preuve de restitution du financement',
+                label: 'Date de dépôt de preuve de restitution',
                 description: 'Interrompt le compteur.',
                 required: false,
                 options: null,
@@ -5260,7 +5260,7 @@ export const demarcheAndDossierFeDataMock = {
             {
               id: 'Q2hhbXAtMTA0Mw==',
               __typename: 'TextChamp',
-              label: 'Informations relatives au bénéficiaire du financement',
+              label: 'Informations relatives au bénéficiaire',
               stringValue: '',
             },
             {
@@ -5398,27 +5398,27 @@ export const demarcheAndDossierFeDataMock = {
             {
               id: 'Q2hhbXAtMTA2MQ==',
               __typename: 'TextChamp',
-              label: 'Informations générales sur le(s) financement(s) déclaré(s)',
+              label: 'Informations générales sur le(s) déclaré(s)',
               stringValue: '',
             },
             {
               id: 'Q2hhbXAtMTA2Mg==',
               __typename: 'CheckboxChamp',
-              label: "Souhaitez-vous déclarer un ou plusieurs financements d'un montant inférieur ou égal à 15 300€ ?",
+              label: 'Souhaitez-vous déclarer un ou plusieurs ≤ 15 300 € ?',
               stringValue: 'false',
               checked: false,
             },
             {
               id: 'Q2hhbXAtMTA2NA==',
               __typename: 'CheckboxChamp',
-              label: "Souhaitez-vous déclarer un ou plusieurs financements d'un montant supérieur à 15 300€ ?",
+              label: 'Souhaitez-vous déclarer un ou plusieurs montants supérieur à 15 300€ ?',
               stringValue: 'true',
               checked: true,
             },
             {
               id: 'Q2hhbXAtMTA2NQ==',
               __typename: 'RepetitionChamp',
-              label: "Déclaration d'un financement d'un montant supérieur à 15 300 €",
+              label: "Déclaration d'un montant supérieur à 15 300 €",
               stringValue: '',
               rows: [
                 {
@@ -5426,13 +5426,13 @@ export const demarcheAndDossierFeDataMock = {
                     {
                       id: 'Q2hhbXAtMTA2NnwwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
                       __typename: 'TextChamp',
-                      label: "Pays d'origine du financement",
+                      label: "Pays d'origine",
                       stringValue: 'Anguilla',
                     },
                     {
                       id: 'Q2hhbXAtMTA2N3wwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
                       __typename: 'DateChamp',
-                      label: 'Date du financement',
+                      label: 'Date',
                       stringValue: '31 mai 2023',
                       date: '2023-05-31',
                     },
@@ -5447,8 +5447,8 @@ export const demarcheAndDossierFeDataMock = {
                     {
                       id: 'Q2hhbXAtMTA2OXwwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
                       __typename: 'TextChamp',
-                      label: 'Ce financement a -t-il été reçu par virement bancaire?',
-                      stringValue: 'Oui, ce financement a été reçu par virement bancaire.',
+                      label: 'Ce montant a -t-il été reçu par virement bancaire?',
+                      stringValue: 'Oui, ce montant a été reçu par virement bancaire.',
                     },
                     {
                       id: 'Q2hhbXAtMTA3MHwwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
@@ -5459,14 +5459,14 @@ export const demarcheAndDossierFeDataMock = {
                     {
                       id: 'Q2hhbXAtMTA3MXwwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
                       __typename: 'IntegerNumberChamp',
-                      label: 'Montant du financement',
+                      label: 'Montant',
                       stringValue: '1111111',
                       integerNumber: '1111111',
                     },
                     {
                       id: 'Q2hhbXAtMTA3MnwwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
                       __typename: 'CheckboxChamp',
-                      label: "Ce financement est une mise à disposition d'une personne ?",
+                      label: "Ce montant est une mise à disposition d'une personne ?",
                       stringValue: 'true',
                       checked: true,
                     },
@@ -5486,7 +5486,7 @@ export const demarcheAndDossierFeDataMock = {
                     {
                       id: 'Q2hhbXAtMTA3NHwwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
                       __typename: 'TextChamp',
-                      label: "Ce financement va être (a été) reversé à d'autres associations?",
+                      label: "Ce montant va être (a été) reversé à d'autres associations?",
                       stringValue: 'Non.',
                     },
                     {
@@ -5584,21 +5584,21 @@ export const demarcheAndDossierFeDataMock = {
                     {
                       id: 'Q2hhbXAtMTA5MXwwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
                       __typename: 'CheckboxChamp',
-                      label: 'Un intermédaire est-il intervenu dans ce financement?',
+                      label: 'Un intermédaire est-il intervenu dans ce montant?',
                       stringValue: 'false',
                       checked: false,
                     },
                     {
                       id: 'Q2hhbXAtMTEwNnwwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
                       __typename: 'PieceJustificativeChamp',
-                      label: 'Justificatif explicitant les modalités du financement déclaré',
+                      label: 'Justificatif explicitant les modalités déclaré',
                       stringValue: '',
                       file: null,
                     },
                     {
                       id: 'Q2hhbXAtMTEwN3wwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
                       __typename: 'PieceJustificativeChamp',
-                      label: 'Second justificatif explicitant les modalités du financement déclaré',
+                      label: 'Second justificatif explicitant les modalités déclaré',
                       stringValue: '',
                       file: null,
                     },
@@ -5609,13 +5609,13 @@ export const demarcheAndDossierFeDataMock = {
                     {
                       id: 'Q2hhbXAtMTA2NnwwMUg1MkRSNlpKUkhRUlpBUkM1UlZZMzMwSg==',
                       __typename: 'TextChamp',
-                      label: "Pays d'origine du financement",
+                      label: "Pays d'origine",
                       stringValue: 'Algérie',
                     },
                     {
                       id: 'Q2hhbXAtMTA2N3wwMUg1MkRSNlpKUkhRUlpBUkM1UlZZMzMwSg==',
                       __typename: 'DateChamp',
-                      label: 'Date du financement',
+                      label: 'Date',
                       stringValue: '12 juillet 2023',
                       date: '2023-07-12',
                     },
@@ -5630,8 +5630,8 @@ export const demarcheAndDossierFeDataMock = {
                     {
                       id: 'Q2hhbXAtMTA2OXwwMUg1MkRSNlpKUkhRUlpBUkM1UlZZMzMwSg==',
                       __typename: 'TextChamp',
-                      label: 'Ce financement a -t-il été reçu par virement bancaire?',
-                      stringValue: 'Oui, ce financement a été reçu par virement bancaire.',
+                      label: 'Ce montant a -t-il été reçu par virement bancaire?',
+                      stringValue: 'Oui, ce montant a été reçu par virement bancaire.',
                     },
                     {
                       id: 'Q2hhbXAtMTA3MHwwMUg1MkRSNlpKUkhRUlpBUkM1UlZZMzMwSg==',
@@ -5642,14 +5642,14 @@ export const demarcheAndDossierFeDataMock = {
                     {
                       id: 'Q2hhbXAtMTA3MXwwMUg1MkRSNlpKUkhRUlpBUkM1UlZZMzMwSg==',
                       __typename: 'IntegerNumberChamp',
-                      label: 'Montant du financement',
+                      label: 'Montant',
                       stringValue: '10',
                       integerNumber: '10',
                     },
                     {
                       id: 'Q2hhbXAtMTA3MnwwMUg1MkRSNlpKUkhRUlpBUkM1UlZZMzMwSg==',
                       __typename: 'CheckboxChamp',
-                      label: "Ce financement est une mise à disposition d'une personne ?",
+                      label: "Ce montant est une mise à disposition d'une personne ?",
                       stringValue: 'true',
                       checked: true,
                     },
@@ -5669,7 +5669,7 @@ export const demarcheAndDossierFeDataMock = {
                     {
                       id: 'Q2hhbXAtMTA3NHwwMUg1MkRSNlpKUkhRUlpBUkM1UlZZMzMwSg==',
                       __typename: 'TextChamp',
-                      label: "Ce financement va être (a été) reversé à d'autres associations?",
+                      label: "Ce montant va être (a été) reversé à d'autres associations?",
                       stringValue:
                         "Oui, mais je ne suis pas en mesure de déclarer les sommes affectées pour chacune d'elles. Il leur reviendra de procéder elles-même à la déclaration.",
                     },
@@ -5708,7 +5708,7 @@ export const demarcheAndDossierFeDataMock = {
                     {
                       id: 'Q2hhbXAtMTA5MXwwMUg1MkRSNlpKUkhRUlpBUkM1UlZZMzMwSg==',
                       __typename: 'CheckboxChamp',
-                      label: 'Un intermédaire est-il intervenu dans ce financement?',
+                      label: 'Un intermédaire est-il intervenu dans ce montant?',
                       stringValue: 'true',
                       checked: true,
                     },
@@ -5766,14 +5766,14 @@ export const demarcheAndDossierFeDataMock = {
                     {
                       id: 'Q2hhbXAtMTEwNnwwMUg1MkRSNlpKUkhRUlpBUkM1UlZZMzMwSg==',
                       __typename: 'PieceJustificativeChamp',
-                      label: 'Justificatif explicitant les modalités du financement déclaré',
+                      label: 'Justificatif explicitant les modalités déclaré',
                       stringValue: '',
                       file: null,
                     },
                     {
                       id: 'Q2hhbXAtMTEwN3wwMUg1MkRSNlpKUkhRUlpBUkM1UlZZMzMwSg==',
                       __typename: 'PieceJustificativeChamp',
-                      label: 'Second justificatif explicitant les modalités du financement déclaré',
+                      label: 'Second justificatif explicitant les modalités déclaré',
                       stringValue: '',
                       file: null,
                     },
@@ -5784,13 +5784,13 @@ export const demarcheAndDossierFeDataMock = {
                 {
                   id: 'Q2hhbXAtMTA2NnwwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
                   __typename: 'TextChamp',
-                  label: "Pays d'origine du financement",
+                  label: "Pays d'origine",
                   stringValue: 'Anguilla',
                 },
                 {
                   id: 'Q2hhbXAtMTA2N3wwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
                   __typename: 'DateChamp',
-                  label: 'Date du financement',
+                  label: 'Date',
                   stringValue: '31 mai 2023',
                   date: '2023-05-31',
                 },
@@ -5805,8 +5805,8 @@ export const demarcheAndDossierFeDataMock = {
                 {
                   id: 'Q2hhbXAtMTA2OXwwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
                   __typename: 'TextChamp',
-                  label: 'Ce financement a -t-il été reçu par virement bancaire?',
-                  stringValue: 'Oui, ce financement a été reçu par virement bancaire.',
+                  label: 'Ce montant a -t-il été reçu par virement bancaire?',
+                  stringValue: 'Oui, ce montant a été reçu par virement bancaire.',
                 },
                 {
                   id: 'Q2hhbXAtMTA3MHwwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
@@ -5817,14 +5817,14 @@ export const demarcheAndDossierFeDataMock = {
                 {
                   id: 'Q2hhbXAtMTA3MXwwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
                   __typename: 'IntegerNumberChamp',
-                  label: 'Montant du financement',
+                  label: 'Montant',
                   stringValue: '1111111',
                   integerNumber: '1111111',
                 },
                 {
                   id: 'Q2hhbXAtMTA3MnwwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
                   __typename: 'CheckboxChamp',
-                  label: "Ce financement est une mise à disposition d'une personne ?",
+                  label: "Ce montant est une mise à disposition d'une personne ?",
                   stringValue: 'true',
                   checked: true,
                 },
@@ -5844,7 +5844,7 @@ export const demarcheAndDossierFeDataMock = {
                 {
                   id: 'Q2hhbXAtMTA3NHwwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
                   __typename: 'TextChamp',
-                  label: "Ce financement va être (a été) reversé à d'autres associations?",
+                  label: "Ce montant va être (a été) reversé à d'autres associations?",
                   stringValue: 'Non.',
                 },
                 {
@@ -5942,34 +5942,34 @@ export const demarcheAndDossierFeDataMock = {
                 {
                   id: 'Q2hhbXAtMTA5MXwwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
                   __typename: 'CheckboxChamp',
-                  label: 'Un intermédaire est-il intervenu dans ce financement?',
+                  label: 'Un intermédaire est-il intervenu dans ce montant?',
                   stringValue: 'false',
                   checked: false,
                 },
                 {
                   id: 'Q2hhbXAtMTEwNnwwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
                   __typename: 'PieceJustificativeChamp',
-                  label: 'Justificatif explicitant les modalités du financement déclaré',
+                  label: 'Justificatif explicitant les modalités déclaré',
                   stringValue: '',
                   file: null,
                 },
                 {
                   id: 'Q2hhbXAtMTEwN3wwMUgyN1hKVDczWTFRMUIxOTMxRk45NTVWUw==',
                   __typename: 'PieceJustificativeChamp',
-                  label: 'Second justificatif explicitant les modalités du financement déclaré',
+                  label: 'Second justificatif explicitant les modalités déclaré',
                   stringValue: '',
                   file: null,
                 },
                 {
                   id: 'Q2hhbXAtMTA2NnwwMUg1MkRSNlpKUkhRUlpBUkM1UlZZMzMwSg==',
                   __typename: 'TextChamp',
-                  label: "Pays d'origine du financement",
+                  label: "Pays d'origine",
                   stringValue: 'Algérie',
                 },
                 {
                   id: 'Q2hhbXAtMTA2N3wwMUg1MkRSNlpKUkhRUlpBUkM1UlZZMzMwSg==',
                   __typename: 'DateChamp',
-                  label: 'Date du financement',
+                  label: 'Date',
                   stringValue: '12 juillet 2023',
                   date: '2023-07-12',
                 },
@@ -5984,8 +5984,8 @@ export const demarcheAndDossierFeDataMock = {
                 {
                   id: 'Q2hhbXAtMTA2OXwwMUg1MkRSNlpKUkhRUlpBUkM1UlZZMzMwSg==',
                   __typename: 'TextChamp',
-                  label: 'Ce financement a -t-il été reçu par virement bancaire?',
-                  stringValue: 'Oui, ce financement a été reçu par virement bancaire.',
+                  label: 'Ce montant a -t-il été reçu par virement bancaire?',
+                  stringValue: 'Oui, ce montant a été reçu par virement bancaire.',
                 },
                 {
                   id: 'Q2hhbXAtMTA3MHwwMUg1MkRSNlpKUkhRUlpBUkM1UlZZMzMwSg==',
@@ -5996,14 +5996,14 @@ export const demarcheAndDossierFeDataMock = {
                 {
                   id: 'Q2hhbXAtMTA3MXwwMUg1MkRSNlpKUkhRUlpBUkM1UlZZMzMwSg==',
                   __typename: 'IntegerNumberChamp',
-                  label: 'Montant du financement',
+                  label: 'Montant',
                   stringValue: '10',
                   integerNumber: '10',
                 },
                 {
                   id: 'Q2hhbXAtMTA3MnwwMUg1MkRSNlpKUkhRUlpBUkM1UlZZMzMwSg==',
                   __typename: 'CheckboxChamp',
-                  label: "Ce financement est une mise à disposition d'une personne ?",
+                  label: "Ce montant est une mise à disposition d'une personne ?",
                   stringValue: 'true',
                   checked: true,
                 },
@@ -6023,7 +6023,7 @@ export const demarcheAndDossierFeDataMock = {
                 {
                   id: 'Q2hhbXAtMTA3NHwwMUg1MkRSNlpKUkhRUlpBUkM1UlZZMzMwSg==',
                   __typename: 'TextChamp',
-                  label: "Ce financement va être (a été) reversé à d'autres associations?",
+                  label: "Ce montant va être (a été) reversé à d'autres associations?",
                   stringValue:
                     "Oui, mais je ne suis pas en mesure de déclarer les sommes affectées pour chacune d'elles. Il leur reviendra de procéder elles-même à la déclaration.",
                 },
@@ -6062,7 +6062,7 @@ export const demarcheAndDossierFeDataMock = {
                 {
                   id: 'Q2hhbXAtMTA5MXwwMUg1MkRSNlpKUkhRUlpBUkM1UlZZMzMwSg==',
                   __typename: 'CheckboxChamp',
-                  label: 'Un intermédaire est-il intervenu dans ce financement?',
+                  label: 'Un intermédaire est-il intervenu dans ce montant?',
                   stringValue: 'true',
                   checked: true,
                 },
@@ -6119,14 +6119,14 @@ export const demarcheAndDossierFeDataMock = {
                 {
                   id: 'Q2hhbXAtMTEwNnwwMUg1MkRSNlpKUkhRUlpBUkM1UlZZMzMwSg==',
                   __typename: 'PieceJustificativeChamp',
-                  label: 'Justificatif explicitant les modalités du financement déclaré',
+                  label: 'Justificatif explicitant les modalités déclaré',
                   stringValue: '',
                   file: null,
                 },
                 {
                   id: 'Q2hhbXAtMTEwN3wwMUg1MkRSNlpKUkhRUlpBUkM1UlZZMzMwSg==',
                   __typename: 'PieceJustificativeChamp',
-                  label: 'Second justificatif explicitant les modalités du financement déclaré',
+                  label: 'Second justificatif explicitant les modalités déclaré',
                   stringValue: '',
                   file: null,
                 },
@@ -6204,7 +6204,7 @@ export const demarcheAndDossierFeDataMock = {
             {
               id: 'Q2hhbXAtMTExOA==',
               __typename: 'DateChamp',
-              label: "Date de l'intention d'opposition aux financements",
+              label: "Date de l'intention d'opposition",
               stringValue: '',
               date: null,
             },
@@ -6232,7 +6232,7 @@ export const demarcheAndDossierFeDataMock = {
             {
               id: 'Q2hhbXAtMTEyMg==',
               __typename: 'DateChamp',
-              label: 'Date de dépôt de preuve de restitution du financement',
+              label: 'Date de dépôt de preuve de restitution',
               stringValue: '',
               date: null,
             },

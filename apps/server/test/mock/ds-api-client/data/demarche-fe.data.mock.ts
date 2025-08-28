@@ -4,7 +4,7 @@ export const demarcheFeDataMock = {
     number: 29,
     title: '[Qualif] Déclaration des FE',
     description:
-      "Toute association exerçant le culte (association cultuelle régie par la loi du 9 décembre 1905, association relevant seulement de la loi de 1901 et dans les départements du Bas-Rhin, du Haut-Rhin et de la Moselle, les associations inscrites de droit local à objet cultuel) doit déclarer au ministre de l’intérieur tous les financements (avantages ou ressources) qui proviennent, directement ou indirectement, de l’étranger, dès lors que leur total dépasse 15 300 euros sur l’exercice comptable. Ce dernier dispose d'un délai de deux mois pour s’y opposer, qui peut être prorogé d’une durée de 4 mois supplémentaires.\r\n\r\nLes associations cultuelles, les congrégations et dans les départements du Bas-Rhin, du Haut-Rhin et de la Moselle, les établissements publics du culte et les associations inscrites de droit local à objet cultuel doivent également déclarer au ministre de l’intérieur toute libéralité (c’est-à-dire un acte de donation fait devant notaire ou un legs figurant dans un testament) provenant directement ou indirectement de l’étranger.\r\n\r\nA savoir : même après avoir déposé votre dossier, vous pourrez le corriger tant que l'administration n'a pas validé sa complétude. Vous pourrez échanger avec le service d'instruction au sein de votre espace du dossier.",
+      'Déclaration des FE',
     state: 'publiee',
     dateCreation: '2023-05-03T15:15:01+02:00',
     dateDepublication: null,
@@ -18,7 +18,7 @@ export const demarcheFeDataMock = {
         {
           id: 'Q2hhbXAtMTA0Mw==',
           type: 'header_section',
-          label: 'Informations relatives au bénéficiaire du financement',
+          label: 'Informations relatives au bénéficiaire',
           description: '',
           required: false,
           options: null,
@@ -64,7 +64,7 @@ export const demarcheFeDataMock = {
           type: 'text',
           label: "Nom de l'organisme bénéficiaire",
           description:
-            "Indiquer le nom de l'organisme tel qu'il figure dans les statuts, s'il s'agit d'une congrégation, le nom tel qu'il figure dans le décret de reconnaissance légale, de décret ou l'arrêté approuvant la modification statutaire ...",
+            "Indiquer le nom de l'organisme",
           required: true,
           options: null,
           champDescriptors: null,
@@ -74,7 +74,7 @@ export const demarcheFeDataMock = {
           type: 'address',
           label: 'Adresse du siège social',
           description:
-            "Cette adresse sera utilisée pour les envois de courriers par l'administration en charge de l'instruction de la déclaration.",
+            'Adresse du siège social',
           required: true,
           options: null,
           champDescriptors: null,
@@ -93,7 +93,7 @@ export const demarcheFeDataMock = {
           type: 'email',
           label: 'Courriel de contact',
           description:
-            "Cette adresse sera utilisée pour les échanges avec l'administration en charge de l'instruction de la déclaration.",
+            'Courriel de contact',
           required: false,
           options: null,
           champDescriptors: null,
@@ -175,7 +175,7 @@ export const demarcheFeDataMock = {
           type: 'checkbox',
           label: 'Attestation',
           description:
-            "J'atteste sur l'honneur être missionné par l'association (la congrégation ou l'établissement public du culte) pour déclarer, conformément à la loi, ce (ou ces) financement (s) provenant directement ou indirectement de l'étranger qui lui est (sont) consenti(s) .",
+            '',
           required: true,
           options: null,
           champDescriptors: null,
@@ -192,9 +192,9 @@ export const demarcheFeDataMock = {
         {
           id: 'Q2hhbXAtMTA2MQ==',
           type: 'explication',
-          label: 'Informations générales sur le(s) financement(s) déclaré(s)',
+          label: 'Informations générales sur le(s) déclaré(s)',
           description:
-            'Vous pouvez déclarer un ou plusieurs financements. Selon que le financement reçu est supérieur ou non à 15 300 €, les informations à déclarer ne seront pas les mêmes. Les financements de plus de 15 300 € nécessitent des informations plus détaillées.',
+            'Déclarez : infos simples ≤ 15 300 €, infos détaillées > 15 300 €.',
           required: false,
           options: null,
           champDescriptors: null,
@@ -202,7 +202,7 @@ export const demarcheFeDataMock = {
         {
           id: 'Q2hhbXAtMTA2Mg==',
           type: 'yes_no',
-          label: "Souhaitez-vous déclarer un ou plusieurs financements d'un montant inférieur ou égal à 15 300€ ?",
+          label: 'Souhaitez-vous déclarer un ou plusieurs ≤ 15 300 € ?',
           description: '',
           required: true,
           options: null,
@@ -212,7 +212,7 @@ export const demarcheFeDataMock = {
           id: 'Q2hhbXAtMTA2Mw==',
           type: 'piece_justificative',
           label:
-            "Téléchargement d'un tableau comprenant le ou les financements d'un montant inférieur ou égal à 15 300 €",
+            'Téléchargement d’un tableau pour un ou plusieurs montants ≤ 15 300 €',
           description: 'Merci de compléter le modèle ci-joint en respectant les consignes intégrées dans ce dernier.',
           required: true,
           options: null,
@@ -221,7 +221,7 @@ export const demarcheFeDataMock = {
         {
           id: 'Q2hhbXAtMTA2NA==',
           type: 'yes_no',
-          label: "Souhaitez-vous déclarer un ou plusieurs financements d'un montant supérieur à 15 300€ ?",
+          label: 'Souhaitez-vous déclarer un ou plusieurs montants supérieur à 15 300€ ?',
           description: '',
           required: true,
           options: null,
@@ -230,7 +230,7 @@ export const demarcheFeDataMock = {
         {
           id: 'Q2hhbXAtMTA2NQ==',
           type: 'repetition',
-          label: "Déclaration d'un financement d'un montant supérieur à 15 300 €",
+          label: "Déclaration d'un montant supérieur à 15 300 €",
           description: '',
           required: true,
           options: null,
@@ -238,7 +238,7 @@ export const demarcheFeDataMock = {
             {
               id: 'Q2hhbXAtMTA2Ng==',
               type: 'pays',
-              label: "Pays d'origine du financement",
+              label: "Pays d'origine",
               description:
                 "Indiquer, selon le cas, l'État contributeur, l'État où est situé le siège social de la personne morale contributrice ou l'État où la personne physique contributrice a fixé sa résidence fiscale.\r\n",
               required: true,
@@ -498,9 +498,9 @@ export const demarcheFeDataMock = {
             {
               id: 'Q2hhbXAtMTA2Nw==',
               type: 'date',
-              label: 'Date du financement',
+              label: 'Date',
               description:
-                'Indiquer la date de réception effective du financement ou, pour les projets de financement, indiquer la date prévisionnelle de réception du financement projeté.',
+                'Indiquer la date de réception effective',
               required: true,
               options: null,
             },
@@ -533,12 +533,12 @@ export const demarcheFeDataMock = {
             {
               id: 'Q2hhbXAtMTA2OQ==',
               type: 'drop_down_list',
-              label: 'Ce financement a -t-il été reçu par virement bancaire?',
+              label: 'Ce montant a -t-il été reçu par virement bancaire?',
               description: '',
               required: true,
               options: [
-                'Oui, ce financement a été reçu par virement bancaire.',
-                "Non, ce financement n'a pas été reçu par virement bancaire.",
+                'Oui, ce montant a été reçu par virement bancaire.',
+                "Non, ce montant n'a pas été reçu par virement bancaire.",
               ],
             },
             {
@@ -553,7 +553,7 @@ export const demarcheFeDataMock = {
             {
               id: 'Q2hhbXAtMTA3MQ==',
               type: 'integer_number',
-              label: 'Montant du financement',
+              label: 'Montant',
               description:
                 "Pour les sommes d'argent, indiquez la valeur nominale de la somme donnée (somme reçue). Pour les valeurs cotées en bourse, référez-vous à la cote officielle. La valeur des biens est obligatoirement en euros (€). Attention : ne portez pas les centimes d’euros. \r\n",
               required: true,
@@ -562,7 +562,7 @@ export const demarcheFeDataMock = {
             {
               id: 'Q2hhbXAtMTA3Mg==',
               type: 'yes_no',
-              label: "Ce financement est une mise à disposition d'une personne ?",
+              label: "Ce montant est une mise à disposition d'une personne ?",
               description: '',
               required: true,
               options: null,
@@ -579,9 +579,9 @@ export const demarcheFeDataMock = {
             {
               id: 'Q2hhbXAtMTA3NA==',
               type: 'drop_down_list',
-              label: "Ce financement va être (a été) reversé à d'autres associations?",
+              label: "Ce montant va être (a été) reversé à d'autres associations?",
               description:
-                "En déclarant pour le compte des associations bénéficiaires ultimes les modalités de redistribution de ce financement, ces dernières sont dispensées de déclarer la part qu'elles auront reçues.",
+                "En déclarant pour le compte des associations bénéficiaires ultimes les modalités de redistribution de ce montant, ces dernières sont dispensées de déclarer la part qu'elles auront reçues.",
               required: true,
               options: [
                 'Oui, je propose de déclarer pour leur compte les sommes qui leur ont été affectées. Les associations ainsi désignées sont dispensées de déclarer à nouveau les sommes ainsi reçues.',
@@ -592,9 +592,9 @@ export const demarcheFeDataMock = {
             {
               id: 'Q2hhbXAtMTA3NQ==',
               type: 'piece_justificative',
-              label: 'document listant les associations bénéficiaires de ce financement',
+              label: 'document listant les associations bénéficiaires',
               description:
-                'Bien vouloir indiquer pour chaque association : ses nom et adresse ainsi que le montant du financement reçu (nombre entier).',
+                'Bien vouloir indiquer pour chaque association : ses nom et adresse ainsi que le montant reçu (nombre entier).',
               required: true,
               options: null,
             },
@@ -1227,7 +1227,7 @@ export const demarcheFeDataMock = {
             {
               id: 'Q2hhbXAtMTA5MQ==',
               type: 'yes_no',
-              label: 'Un intermédaire est-il intervenu dans ce financement?',
+              label: 'Un intermédaire est-il intervenu dans ce montant?',
               description: '',
               required: true,
               options: null,
@@ -2103,18 +2103,18 @@ export const demarcheFeDataMock = {
             {
               id: 'Q2hhbXAtMTEwNg==',
               type: 'piece_justificative',
-              label: 'Justificatif explicitant les modalités du financement déclaré',
+              label: 'Justificatif explicitant les modalités déclaré',
               description:
-                "Les documents justificatifs peuvent être un acte de donation, un contrat, un testament, un écrit expliquant le montage financier, l'objet du financement...",
+                "Les documents justificatifs peuvent être un acte de donation, un contrat, un testament, un écrit expliquant le montage financier, l'objet...",
               required: false,
               options: null,
             },
             {
               id: 'Q2hhbXAtMTEwNw==',
               type: 'piece_justificative',
-              label: 'Second justificatif explicitant les modalités du financement déclaré',
+              label: 'Second justificatif explicitant les modalités déclaré',
               description:
-                "Les documents justificatifs peuvent être un acte de donation, un contrat, un testament, un écrit expliquant le montage financier, l'objet du financement...",
+                "Les documents justificatifs peuvent être un acte de donation, un contrat, un testament, un écrit expliquant le montage financier, l'objet...",
               required: false,
               options: null,
             },
@@ -2215,7 +2215,7 @@ export const demarcheFeDataMock = {
         {
           id: 'Q2hhbXAtMTExOA==',
           type: 'date',
-          label: "Date de l'intention d'opposition aux financements",
+          label: "Date de l'intention d'opposition aux montants",
           description:
             "Interrompt de délai restant, et lance un compteur de 30 jours pendant lequel l'usager doit répondre.",
           required: false,
@@ -2247,7 +2247,7 @@ export const demarcheFeDataMock = {
           type: 'date',
           label: "Date de décision d'opposition",
           description:
-            "Interrompt le compteur et créé un nouveau compteur de 90 jours, délai durant lequel l'usager devra justifier de la restitution du financement.",
+            "Interrompt le compteur et créé un nouveau compteur de 90 jours, délai durant lequel l'usager devra justifier de la restitution.",
           required: false,
           options: null,
           champDescriptors: null,
@@ -2255,7 +2255,7 @@ export const demarcheFeDataMock = {
         {
           id: 'Q2hhbXAtMTEyMg==',
           type: 'date',
-          label: 'Date de dépôt de preuve de restitution du financement',
+          label: 'Date de dépôt de preuve de restitution',
           description: 'Interrompt le compteur.',
           required: false,
           options: null,
@@ -2278,7 +2278,7 @@ export const demarcheFeDataMock = {
         {
           id: 'Q2hhbXAtMTA0Mw==',
           type: 'header_section',
-          label: 'Informations relatives au bénéficiaire du financement',
+          label: 'Informations relatives au bénéficiaire',
           description: '',
           required: false,
           options: null,
@@ -2435,7 +2435,7 @@ export const demarcheFeDataMock = {
           type: 'checkbox',
           label: 'Attestation',
           description:
-            "J'atteste sur l'honneur être missionné par l'association (la congrégation ou l'établissement public du culte) pour déclarer, conformément à la loi, ce (ou ces) financement (s) provenant directement ou indirectement de l'étranger qui lui est (sont) consenti(s) .",
+            "J'atteste sur l'honneur ....",
           required: true,
           options: null,
           champDescriptors: null,
@@ -2452,9 +2452,9 @@ export const demarcheFeDataMock = {
         {
           id: 'Q2hhbXAtMTA2MQ==',
           type: 'explication',
-          label: 'Informations générales sur le(s) financement(s) déclaré(s)',
+          label: 'Informations générales sur le(s) déclaré(s)',
           description:
-            'Vous pouvez déclarer un ou plusieurs financements. Selon que le financement reçu est supérieur ou non à 15 300 €, les informations à déclarer ne seront pas les mêmes. Les financements de plus de 15 300 € nécessitent des informations plus détaillées.',
+            'Déclarez : infos simples ≤ 15 300 €, infos détaillées > 15 300 €.',
           required: false,
           options: null,
           champDescriptors: null,
@@ -2462,7 +2462,7 @@ export const demarcheFeDataMock = {
         {
           id: 'Q2hhbXAtMTA2Mg==',
           type: 'yes_no',
-          label: "Souhaitez-vous déclarer un ou plusieurs financements d'un montant inférieur ou égal à 15 300€ ?",
+          label: 'Souhaitez-vous déclarer un ou plusieurs ≤ 15 300 € ?',
           description: '',
           required: true,
           options: null,
@@ -2472,7 +2472,7 @@ export const demarcheFeDataMock = {
           id: 'Q2hhbXAtMTA2Mw==',
           type: 'piece_justificative',
           label:
-            "Téléchargement d'un tableau comprenant le ou les financements d'un montant inférieur ou égal à 15 300 €",
+            'Téléchargement d’un tableau pour un ou plusieurs montants ≤ 15 300 €',
           description: 'Merci de compléter le modèle ci-joint en respectant les consignes intégrées dans ce dernier.',
           required: true,
           options: null,
@@ -2481,7 +2481,7 @@ export const demarcheFeDataMock = {
         {
           id: 'Q2hhbXAtMTA2NA==',
           type: 'yes_no',
-          label: "Souhaitez-vous déclarer un ou plusieurs financements d'un montant supérieur à 15 300€ ?",
+          label: 'Souhaitez-vous déclarer un ou plusieurs montant supérieur à 15 300€ ?',
           description: '',
           required: true,
           options: null,
@@ -2490,7 +2490,7 @@ export const demarcheFeDataMock = {
         {
           id: 'Q2hhbXAtMTA2NQ==',
           type: 'repetition',
-          label: "Déclaration d'un financement d'un montant supérieur à 15 300 €",
+          label: "Déclaration d'un montant supérieur à 15 300 €",
           description: '',
           required: true,
           options: null,
@@ -2498,7 +2498,7 @@ export const demarcheFeDataMock = {
             {
               id: 'Q2hhbXAtMTA2Ng==',
               type: 'pays',
-              label: "Pays d'origine du financement",
+              label: "Pays d'origine",
               description:
                 "Indiquer, selon le cas, l'État contributeur, l'État où est situé le siège social de la personne morale contributrice ou l'État où la personne physique contributrice a fixé sa résidence fiscale.\r\n",
               required: true,
@@ -2758,9 +2758,9 @@ export const demarcheFeDataMock = {
             {
               id: 'Q2hhbXAtMTA2Nw==',
               type: 'date',
-              label: 'Date du financement',
+              label: 'Date',
               description:
-                'Indiquer la date de réception effective du financement ou, pour les projets de financement, indiquer la date prévisionnelle de réception du financement projeté.',
+                'Indiquer la date de réception effective ou, pour les projets, indiquer la date prévisionnelle de réception projeté.',
               required: true,
               options: null,
             },
@@ -2793,12 +2793,12 @@ export const demarcheFeDataMock = {
             {
               id: 'Q2hhbXAtMTA2OQ==',
               type: 'drop_down_list',
-              label: 'Ce financement a -t-il été reçu par virement bancaire?',
+              label: 'Ce montant a -t-il été reçu par virement bancaire?',
               description: '',
               required: true,
               options: [
-                'Oui, ce financement a été reçu par virement bancaire.',
-                "Non, ce financement n'a pas été reçu par virement bancaire.",
+                'Oui, ce montant a été reçu par virement bancaire.',
+                "Non, ce montant n'a pas été reçu par virement bancaire.",
               ],
             },
             {
@@ -2813,7 +2813,7 @@ export const demarcheFeDataMock = {
             {
               id: 'Q2hhbXAtMTA3MQ==',
               type: 'integer_number',
-              label: 'Montant du financement',
+              label: 'Montant',
               description:
                 "Pour les sommes d'argent, indiquez la valeur nominale de la somme donnée (somme reçue). Pour les valeurs cotées en bourse, référez-vous à la cote officielle. La valeur des biens est obligatoirement en euros (€). Attention : ne portez pas les centimes d’euros. \r\n",
               required: true,
@@ -2822,7 +2822,7 @@ export const demarcheFeDataMock = {
             {
               id: 'Q2hhbXAtMTA3Mg==',
               type: 'yes_no',
-              label: "Ce financement est une mise à disposition d'une personne ?",
+              label: "Ce montant est une mise à disposition d'une personne ?",
               description: '',
               required: true,
               options: null,
@@ -2839,9 +2839,9 @@ export const demarcheFeDataMock = {
             {
               id: 'Q2hhbXAtMTA3NA==',
               type: 'drop_down_list',
-              label: "Ce financement va être (a été) reversé à d'autres associations?",
+              label: "Ce montant va être (a été) reversé à d'autres associations?",
               description:
-                "En déclarant pour le compte des associations bénéficiaires ultimes les modalités de redistribution de ce financement, ces dernières sont dispensées de déclarer la part qu'elles auront reçues.",
+                "En déclarant pour le compte des associations bénéficiaires ultimes les modalités de redistribution de ce montant, ces dernières sont dispensées de déclarer la part qu'elles auront reçues.",
               required: true,
               options: [
                 'Oui, je propose de déclarer pour leur compte les sommes qui leur ont été affectées. Les associations ainsi désignées sont dispensées de déclarer à nouveau les sommes ainsi reçues.',
@@ -2852,9 +2852,9 @@ export const demarcheFeDataMock = {
             {
               id: 'Q2hhbXAtMTA3NQ==',
               type: 'piece_justificative',
-              label: 'document listant les associations bénéficiaires de ce financement',
+              label: 'document listant les associations bénéficiaires de ce montant',
               description:
-                'Bien vouloir indiquer pour chaque association : ses nom et adresse ainsi que le montant du financement reçu (nombre entier).',
+                'Bien vouloir indiquer pour chaque association : ses nom et adresse ainsi que le montant reçu (nombre entier).',
               required: true,
               options: null,
             },
@@ -3487,7 +3487,7 @@ export const demarcheFeDataMock = {
             {
               id: 'Q2hhbXAtMTA5MQ==',
               type: 'yes_no',
-              label: 'Un intermédaire est-il intervenu dans ce financement?',
+              label: 'Un intermédaire est-il intervenu dans ce montant?',
               description: '',
               required: true,
               options: null,
@@ -4363,18 +4363,18 @@ export const demarcheFeDataMock = {
             {
               id: 'Q2hhbXAtMTEwNg==',
               type: 'piece_justificative',
-              label: 'Justificatif explicitant les modalités du financement déclaré',
+              label: 'Justificatif explicitant les modalités déclaré',
               description:
-                "Les documents justificatifs peuvent être un acte de donation, un contrat, un testament, un écrit expliquant le montage financier, l'objet du financement...",
+                "Les documents justificatifs peuvent être un acte de donation, un contrat, un testament, un écrit expliquant le montage financier, l'objet...",
               required: false,
               options: null,
             },
             {
               id: 'Q2hhbXAtMTEwNw==',
               type: 'piece_justificative',
-              label: 'Second justificatif explicitant les modalités du financement déclaré',
+              label: 'Second justificatif explicitant les modalités déclaré',
               description:
-                "Les documents justificatifs peuvent être un acte de donation, un contrat, un testament, un écrit expliquant le montage financier, l'objet du financement...",
+                "Les documents justificatifs peuvent être un acte de donation, un contrat, un testament, un écrit expliquant le montage financier, l'objet...",
               required: false,
               options: null,
             },
@@ -4475,7 +4475,7 @@ export const demarcheFeDataMock = {
         {
           id: 'Q2hhbXAtMTExOA==',
           type: 'date',
-          label: "Date de l'intention d'opposition aux financements",
+          label: "Date de l'intention d'opposition",
           description:
             "Interrompt de délai restant, et lance un compteur de 30 jours pendant lequel l'usager doit répondre.",
           required: false,
@@ -4507,7 +4507,7 @@ export const demarcheFeDataMock = {
           type: 'date',
           label: "Date de décision d'opposition",
           description:
-            "Interrompt le compteur et créé un nouveau compteur de 90 jours, délai durant lequel l'usager devra justifier de la restitution du financement.",
+            "Interrompt le compteur et créé un nouveau compteur de 90 jours, délai durant lequel l'usager devra justifier de la restitution.",
           required: false,
           options: null,
           champDescriptors: null,
@@ -4515,7 +4515,7 @@ export const demarcheFeDataMock = {
         {
           id: 'Q2hhbXAtMTEyMg==',
           type: 'date',
-          label: 'Date de dépôt de preuve de restitution du financement',
+          label: 'Date de dépôt de preuve de restitution',
           description: 'Interrompt le compteur.',
           required: false,
           options: null,
@@ -4539,7 +4539,7 @@ export const demarcheFeDataMock = {
           {
             id: 'Q2hhbXAtMTA0Mw==',
             type: 'header_section',
-            label: 'Informations relatives au bénéficiaire du financement',
+            label: 'Informations relatives au bénéficiaire',
             description: '',
             required: false,
             options: null,
@@ -4696,7 +4696,7 @@ export const demarcheFeDataMock = {
             type: 'checkbox',
             label: 'Attestation',
             description:
-              "J'atteste sur l'honneur être missionné par l'association (la congrégation ou l'établissement public du culte) pour déclarer, conformément à la loi, ce (ou ces) financement (s) provenant directement ou indirectement de l'étranger qui lui est (sont) consenti(s) .",
+              "J'atteste sur l'honneur ....",
             required: true,
             options: null,
             champDescriptors: null,
@@ -4713,9 +4713,9 @@ export const demarcheFeDataMock = {
           {
             id: 'Q2hhbXAtMTA2MQ==',
             type: 'explication',
-            label: 'Informations générales sur le(s) financement(s) déclaré(s)',
+            label: 'Informations générales sur le(s) montant(s) déclaré(s)',
             description:
-              'Vous pouvez déclarer un ou plusieurs financements. Selon que le financement reçu est supérieur ou non à 15 300 €, les informations à déclarer ne seront pas les mêmes. Les financements de plus de 15 300 € nécessitent des informations plus détaillées.',
+              'Déclarez : infos simples ≤ 15 300 €, infos détaillées > 15 300 €.',
             required: false,
             options: null,
             champDescriptors: null,
@@ -4723,7 +4723,7 @@ export const demarcheFeDataMock = {
           {
             id: 'Q2hhbXAtMTA2Mg==',
             type: 'yes_no',
-            label: "Souhaitez-vous déclarer un ou plusieurs financements d'un montant inférieur ou égal à 15 300€ ?",
+            label: 'Souhaitez-vous déclarer un ou plusieurs ≤ 15 300 € ?',
             description: '',
             required: true,
             options: null,
@@ -4733,7 +4733,7 @@ export const demarcheFeDataMock = {
             id: 'Q2hhbXAtMTA2Mw==',
             type: 'piece_justificative',
             label:
-              "Téléchargement d'un tableau comprenant le ou les financements d'un montant inférieur ou égal à 15 300 €",
+              'Téléchargement d’un tableau pour un ou plusieurs montants ≤ 15 300 €',
             description: 'Merci de compléter le modèle ci-joint en respectant les consignes intégrées dans ce dernier.',
             required: true,
             options: null,
@@ -4742,7 +4742,7 @@ export const demarcheFeDataMock = {
           {
             id: 'Q2hhbXAtMTA2NA==',
             type: 'yes_no',
-            label: "Souhaitez-vous déclarer un ou plusieurs financements d'un montant supérieur à 15 300€ ?",
+            label: 'Souhaitez-vous déclarer un ou plusieurs montants supérieur à 15 300€ ?',
             description: '',
             required: true,
             options: null,
@@ -4751,7 +4751,7 @@ export const demarcheFeDataMock = {
           {
             id: 'Q2hhbXAtMTA2NQ==',
             type: 'repetition',
-            label: "Déclaration d'un financement d'un montant supérieur à 15 300 €",
+            label: "Déclaration d'un montant d'un montant supérieur à 15 300 €",
             description: '',
             required: true,
             options: null,
@@ -4759,7 +4759,7 @@ export const demarcheFeDataMock = {
               {
                 id: 'Q2hhbXAtMTA2Ng==',
                 type: 'pays',
-                label: "Pays d'origine du financement",
+                label: "Pays d'origine",
                 description:
                   "Indiquer, selon le cas, l'État contributeur, l'État où est situé le siège social de la personne morale contributrice ou l'État où la personne physique contributrice a fixé sa résidence fiscale.\r\n",
                 required: true,
@@ -5019,9 +5019,9 @@ export const demarcheFeDataMock = {
               {
                 id: 'Q2hhbXAtMTA2Nw==',
                 type: 'date',
-                label: 'Date du financement',
+                label: 'Date',
                 description:
-                  'Indiquer la date de réception effective du financement ou, pour les projets de financement, indiquer la date prévisionnelle de réception du financement projeté.',
+                  'Indiquer la date de réception effective ou, pour les projets, indiquer la date prévisionnelle de réception projeté.',
                 required: true,
                 options: null,
               },
@@ -5054,12 +5054,12 @@ export const demarcheFeDataMock = {
               {
                 id: 'Q2hhbXAtMTA2OQ==',
                 type: 'drop_down_list',
-                label: 'Ce financement a -t-il été reçu par virement bancaire?',
+                label: 'Ce montant a -t-il été reçu par virement bancaire?',
                 description: '',
                 required: true,
                 options: [
-                  'Oui, ce financement a été reçu par virement bancaire.',
-                  "Non, ce financement n'a pas été reçu par virement bancaire.",
+                  'Oui, ce montant a été reçu par virement bancaire.',
+                  "Non, ce montant n'a pas été reçu par virement bancaire.",
                 ],
               },
               {
@@ -5074,7 +5074,7 @@ export const demarcheFeDataMock = {
               {
                 id: 'Q2hhbXAtMTA3MQ==',
                 type: 'integer_number',
-                label: 'Montant du financement',
+                label: 'Montant',
                 description:
                   "Pour les sommes d'argent, indiquez la valeur nominale de la somme donnée (somme reçue). Pour les valeurs cotées en bourse, référez-vous à la cote officielle. La valeur des biens est obligatoirement en euros (€). Attention : ne portez pas les centimes d’euros. \r\n",
                 required: true,
@@ -5083,7 +5083,7 @@ export const demarcheFeDataMock = {
               {
                 id: 'Q2hhbXAtMTA3Mg==',
                 type: 'yes_no',
-                label: "Ce financement est une mise à disposition d'une personne ?",
+                label: "Ce montant est une mise à disposition d'une personne ?",
                 description: '',
                 required: true,
                 options: null,
@@ -5100,9 +5100,9 @@ export const demarcheFeDataMock = {
               {
                 id: 'Q2hhbXAtMTA3NA==',
                 type: 'drop_down_list',
-                label: "Ce financement va être (a été) reversé à d'autres associations?",
+                label: "Ce montant va être (a été) reversé à d'autres associations?",
                 description:
-                  "En déclarant pour le compte des associations bénéficiaires ultimes les modalités de redistribution de ce financement, ces dernières sont dispensées de déclarer la part qu'elles auront reçues.",
+                  "En déclarant pour le compte des associations bénéficiaires ultimes les modalités de redistribution de ce montant, ces dernières sont dispensées de déclarer la part qu'elles auront reçues.",
                 required: true,
                 options: [
                   'Oui, je propose de déclarer pour leur compte les sommes qui leur ont été affectées. Les associations ainsi désignées sont dispensées de déclarer à nouveau les sommes ainsi reçues.',
@@ -5113,9 +5113,9 @@ export const demarcheFeDataMock = {
               {
                 id: 'Q2hhbXAtMTA3NQ==',
                 type: 'piece_justificative',
-                label: 'document listant les associations bénéficiaires de ce financement',
+                label: 'document listant les associations bénéficiaires de ce montant',
                 description:
-                  'Bien vouloir indiquer pour chaque association : ses nom et adresse ainsi que le montant du financement reçu (nombre entier).',
+                  'Bien vouloir indiquer pour chaque association : ses nom et adresse ainsi que le montant reçu (nombre entier).',
                 required: true,
                 options: null,
               },
@@ -5748,7 +5748,7 @@ export const demarcheFeDataMock = {
               {
                 id: 'Q2hhbXAtMTA5MQ==',
                 type: 'yes_no',
-                label: 'Un intermédaire est-il intervenu dans ce financement?',
+                label: 'Un intermédaire est-il intervenu dans ce montant?',
                 description: '',
                 required: true,
                 options: null,
@@ -6624,18 +6624,18 @@ export const demarcheFeDataMock = {
               {
                 id: 'Q2hhbXAtMTEwNg==',
                 type: 'piece_justificative',
-                label: 'Justificatif explicitant les modalités du financement déclaré',
+                label: 'Justificatif explicitant les modalités déclaré',
                 description:
-                  "Les documents justificatifs peuvent être un acte de donation, un contrat, un testament, un écrit expliquant le montage financier, l'objet du financement...",
+                  "Les documents justificatifs peuvent être un acte de donation, un contrat, un testament, un écrit expliquant le montage financier, l'objet...",
                 required: false,
                 options: null,
               },
               {
                 id: 'Q2hhbXAtMTEwNw==',
                 type: 'piece_justificative',
-                label: 'Second justificatif explicitant les modalités du financement déclaré',
+                label: 'Second justificatif explicitant les modalités déclaré',
                 description:
-                  "Les documents justificatifs peuvent être un acte de donation, un contrat, un testament, un écrit expliquant le montage financier, l'objet du financement...",
+                  "Les documents justificatifs peuvent être un acte de donation, un contrat, un testament, un écrit expliquant le montage financier, l'objet...",
                 required: false,
                 options: null,
               },
@@ -6736,7 +6736,7 @@ export const demarcheFeDataMock = {
           {
             id: 'Q2hhbXAtMTExOA==',
             type: 'text',
-            label: "Date de l'intention d'opposition aux financements",
+            label: "Date de l'intention d'opposition",
             description:
               "Interrompt de délai restant, et lance un compteur de 30 jours pendant lequel l'usager doit répondre.",
             required: false,
@@ -6768,7 +6768,7 @@ export const demarcheFeDataMock = {
             type: 'text',
             label: "Date de décision d'opposition",
             description:
-              "Interrompt le compteur et créé un nouveau compteur de 90 jours, délai durant lequel l'usager devra justifier de la restitution du financement.",
+              "Interrompt le compteur et créé un nouveau compteur de 90 jours, délai durant lequel l'usager devra justifier de la restitution.",
             required: false,
             options: null,
             champDescriptors: null,
@@ -6776,7 +6776,7 @@ export const demarcheFeDataMock = {
           {
             id: 'Q2hhbXAtMTEyMg==',
             type: 'text',
-            label: 'Date de dépôt de preuve de restitution du financement',
+            label: 'Date de dépôt de preuve de restitution',
             description: 'Interrompt le compteur.',
             required: false,
             options: null,
@@ -6799,7 +6799,7 @@ export const demarcheFeDataMock = {
           {
             id: 'Q2hhbXAtMTA0Mw==',
             type: 'header_section',
-            label: 'Informations relatives au bénéficiaire du financement',
+            label: 'Informations relatives au bénéficiaire',
             description: '',
             required: false,
             options: null,
@@ -6956,7 +6956,7 @@ export const demarcheFeDataMock = {
             type: 'checkbox',
             label: 'Attestation',
             description:
-              "J'atteste sur l'honneur être missionné par l'association (la congrégation ou l'établissement public du culte) pour déclarer, conformément à la loi, ce (ou ces) financement (s) provenant directement ou indirectement de l'étranger qui lui est (sont) consenti(s) .",
+              "J'atteste sur l'honneur ....",
             required: true,
             options: null,
             champDescriptors: null,
@@ -6973,9 +6973,9 @@ export const demarcheFeDataMock = {
           {
             id: 'Q2hhbXAtMTA2MQ==',
             type: 'explication',
-            label: 'Informations générales sur le(s) financement(s) déclaré(s)',
+            label: 'Informations générales sur le(s) montant(s) déclaré(s)',
             description:
-              'Vous pouvez déclarer un ou plusieurs financements. Selon que le financement reçu est supérieur ou non à 15 300 €, les informations à déclarer ne seront pas les mêmes. Les financements de plus de 15 300 € nécessitent des informations plus détaillées.',
+              'Déclarez : infos simples ≤ 15 300 €, infos détaillées > 15 300 €.',
             required: false,
             options: null,
             champDescriptors: null,
@@ -6983,7 +6983,7 @@ export const demarcheFeDataMock = {
           {
             id: 'Q2hhbXAtMTA2Mg==',
             type: 'yes_no',
-            label: "Souhaitez-vous déclarer un ou plusieurs financements d'un montant inférieur ou égal à 15 300€ ?",
+            label: 'Souhaitez-vous déclarer un ou plusieurs ≤ 15 300 € ?',
             description: '',
             required: true,
             options: null,
@@ -6993,7 +6993,7 @@ export const demarcheFeDataMock = {
             id: 'Q2hhbXAtMTA2Mw==',
             type: 'piece_justificative',
             label:
-              "Téléchargement d'un tableau comprenant le ou les financements d'un montant inférieur ou égal à 15 300 €",
+              'Téléchargement d’un tableau pour un ou plusieurs montants ≤ 15 300 €',
             description: 'Merci de compléter le modèle ci-joint en respectant les consignes intégrées dans ce dernier.',
             required: true,
             options: null,
@@ -7002,7 +7002,7 @@ export const demarcheFeDataMock = {
           {
             id: 'Q2hhbXAtMTA2NA==',
             type: 'yes_no',
-            label: "Souhaitez-vous déclarer un ou plusieurs financements d'un montant supérieur à 15 300€ ?",
+            label: 'Souhaitez-vous déclarer un ou plusieurs montants supérieur à 15 300€ ?',
             description: '',
             required: true,
             options: null,
@@ -7011,7 +7011,7 @@ export const demarcheFeDataMock = {
           {
             id: 'Q2hhbXAtMTA2NQ==',
             type: 'repetition',
-            label: "Déclaration d'un financement d'un montant supérieur à 15 300 €",
+            label: "Déclaration d'un montant supérieur à 15 300 €",
             description: '',
             required: true,
             options: null,
@@ -7019,7 +7019,7 @@ export const demarcheFeDataMock = {
               {
                 id: 'Q2hhbXAtMTA2Ng==',
                 type: 'pays',
-                label: "Pays d'origine du financement",
+                label: "Pays d'origine",
                 description:
                   "Indiquer, selon le cas, l'État contributeur, l'État où est situé le siège social de la personne morale contributrice ou l'État où la personne physique contributrice a fixé sa résidence fiscale.\r\n",
                 required: true,
@@ -7279,9 +7279,9 @@ export const demarcheFeDataMock = {
               {
                 id: 'Q2hhbXAtMTA2Nw==',
                 type: 'date',
-                label: 'Date du financement',
+                label: 'Date',
                 description:
-                  'Indiquer la date de réception effective du financement ou, pour les projets de financement, indiquer la date prévisionnelle de réception du financement projeté.',
+                  'Indiquer la date de réception effective ou, pour les projets, indiquer la date prévisionnelle de réception projeté.',
                 required: true,
                 options: null,
               },
@@ -7314,12 +7314,12 @@ export const demarcheFeDataMock = {
               {
                 id: 'Q2hhbXAtMTA2OQ==',
                 type: 'drop_down_list',
-                label: 'Ce financement a -t-il été reçu par virement bancaire?',
+                label: 'Ce montant a -t-il été reçu par virement bancaire?',
                 description: '',
                 required: true,
                 options: [
-                  'Oui, ce financement a été reçu par virement bancaire.',
-                  "Non, ce financement n'a pas été reçu par virement bancaire.",
+                  'Oui, ce montant a été reçu par virement bancaire.',
+                  "Non, ce montant n'a pas été reçu par virement bancaire.",
                 ],
               },
               {
@@ -7334,7 +7334,7 @@ export const demarcheFeDataMock = {
               {
                 id: 'Q2hhbXAtMTA3MQ==',
                 type: 'integer_number',
-                label: 'Montant du financement',
+                label: 'Montant',
                 description:
                   "Pour les sommes d'argent, indiquez la valeur nominale de la somme donnée (somme reçue). Pour les valeurs cotées en bourse, référez-vous à la cote officielle. La valeur des biens est obligatoirement en euros (€). Attention : ne portez pas les centimes d’euros. \r\n",
                 required: true,
@@ -7343,7 +7343,7 @@ export const demarcheFeDataMock = {
               {
                 id: 'Q2hhbXAtMTA3Mg==',
                 type: 'yes_no',
-                label: "Ce financement est une mise à disposition d'une personne ?",
+                label: "Ce montant est une mise à disposition d'une personne ?",
                 description: '',
                 required: true,
                 options: null,
@@ -7360,9 +7360,9 @@ export const demarcheFeDataMock = {
               {
                 id: 'Q2hhbXAtMTA3NA==',
                 type: 'drop_down_list',
-                label: "Ce financement va être (a été) reversé à d'autres associations?",
+                label: "Ce montant va être (a été) reversé à d'autres associations?",
                 description:
-                  "En déclarant pour le compte des associations bénéficiaires ultimes les modalités de redistribution de ce financement, ces dernières sont dispensées de déclarer la part qu'elles auront reçues.",
+                  "En déclarant pour le compte des associations bénéficiaires ultimes les modalités de redistribution de ce montant, ces dernières sont dispensées de déclarer la part qu'elles auront reçues.",
                 required: true,
                 options: [
                   'Oui, je propose de déclarer pour leur compte les sommes qui leur ont été affectées. Les associations ainsi désignées sont dispensées de déclarer à nouveau les sommes ainsi reçues.',
@@ -7373,9 +7373,9 @@ export const demarcheFeDataMock = {
               {
                 id: 'Q2hhbXAtMTA3NQ==',
                 type: 'piece_justificative',
-                label: 'document listant les associations bénéficiaires de ce financement',
+                label: 'document listant les associations bénéficiaires de ce montant',
                 description:
-                  'Bien vouloir indiquer pour chaque association : ses nom et adresse ainsi que le montant du financement reçu (nombre entier).',
+                  'Bien vouloir indiquer pour chaque association : ses nom et adresse ainsi que le montant reçu (nombre entier).',
                 required: true,
                 options: null,
               },
@@ -8008,7 +8008,7 @@ export const demarcheFeDataMock = {
               {
                 id: 'Q2hhbXAtMTA5MQ==',
                 type: 'yes_no',
-                label: 'Un intermédaire est-il intervenu dans ce financement?',
+                label: 'Un intermédaire est-il intervenu dans ce montant?',
                 description: '',
                 required: true,
                 options: null,
@@ -8884,18 +8884,18 @@ export const demarcheFeDataMock = {
               {
                 id: 'Q2hhbXAtMTEwNg==',
                 type: 'piece_justificative',
-                label: 'Justificatif explicitant les modalités du financement déclaré',
+                label: 'Justificatif explicitant les modalités déclaré',
                 description:
-                  "Les documents justificatifs peuvent être un acte de donation, un contrat, un testament, un écrit expliquant le montage financier, l'objet du financement...",
+                  "Les documents justificatifs peuvent être un acte de donation, un contrat, un testament, un écrit expliquant le montage financier, l'objet...",
                 required: false,
                 options: null,
               },
               {
                 id: 'Q2hhbXAtMTEwNw==',
                 type: 'piece_justificative',
-                label: 'Second justificatif explicitant les modalités du financement déclaré',
+                label: 'Second justificatif explicitant les modalités déclaré',
                 description:
-                  "Les documents justificatifs peuvent être un acte de donation, un contrat, un testament, un écrit expliquant le montage financier, l'objet du financement...",
+                  "Les documents justificatifs peuvent être un acte de donation, un contrat, un testament, un écrit expliquant le montage financier, l'objet...",
                 required: false,
                 options: null,
               },
@@ -8996,7 +8996,7 @@ export const demarcheFeDataMock = {
           {
             id: 'Q2hhbXAtMTExOA==',
             type: 'date',
-            label: "Date de l'intention d'opposition aux financements",
+            label: "Date de l'intention d'opposition",
             description:
               "Interrompt de délai restant, et lance un compteur de 30 jours pendant lequel l'usager doit répondre.",
             required: false,
@@ -9028,7 +9028,7 @@ export const demarcheFeDataMock = {
             type: 'date',
             label: "Date de décision d'opposition",
             description:
-              "Interrompt le compteur et créé un nouveau compteur de 90 jours, délai durant lequel l'usager devra justifier de la restitution du financement.",
+              "Interrompt le compteur et créé un nouveau compteur de 90 jours, délai durant lequel l'usager devra justifier de la restitution.",
             required: false,
             options: null,
             champDescriptors: null,
@@ -9036,7 +9036,7 @@ export const demarcheFeDataMock = {
           {
             id: 'Q2hhbXAtMTEyMg==',
             type: 'date',
-            label: 'Date de dépôt de preuve de restitution du financement',
+            label: 'Date de dépôt de preuve de restitution',
             description: 'Interrompt le compteur.',
             required: false,
             options: null,
@@ -9059,7 +9059,7 @@ export const demarcheFeDataMock = {
           {
             id: 'Q2hhbXAtMTA0Mw==',
             type: 'header_section',
-            label: 'Informations relatives au bénéficiaire du financement',
+            label: 'Informations relatives au bénéficiaire',
             description: '',
             required: false,
             options: null,
@@ -9216,7 +9216,7 @@ export const demarcheFeDataMock = {
             type: 'checkbox',
             label: 'Attestation',
             description:
-              "J'atteste sur l'honneur être missionné par l'association (la congrégation ou l'établissement public du culte) pour déclarer, conformément à la loi, ce (ou ces) financement (s) provenant directement ou indirectement de l'étranger qui lui est (sont) consenti(s) .",
+              "J'atteste sur l'honneur ...",
             required: true,
             options: null,
             champDescriptors: null,
@@ -9233,9 +9233,9 @@ export const demarcheFeDataMock = {
           {
             id: 'Q2hhbXAtMTA2MQ==',
             type: 'explication',
-            label: 'Informations générales sur le(s) financement(s) déclaré(s)',
+            label: 'Informations générales sur le(s) montant(s) déclaré(s)',
             description:
-              'Vous pouvez déclarer un ou plusieurs financements. Selon que le financement reçu est supérieur ou non à 15 300 €, les informations à déclarer ne seront pas les mêmes. Les financements de plus de 15 300 € nécessitent des informations plus détaillées.',
+              'Déclarez : infos simples ≤ 15 300 €, infos détaillées > 15 300 €.',
             required: false,
             options: null,
             champDescriptors: null,
@@ -9243,7 +9243,7 @@ export const demarcheFeDataMock = {
           {
             id: 'Q2hhbXAtMTA2Mg==',
             type: 'yes_no',
-            label: "Souhaitez-vous déclarer un ou plusieurs financements d'un montant inférieur ou égal à 15 300€ ?",
+            label: 'Souhaitez-vous déclarer un ou plusieurs ≤ 15 300 € ?',
             description: '',
             required: true,
             options: null,
@@ -9253,7 +9253,7 @@ export const demarcheFeDataMock = {
             id: 'Q2hhbXAtMTA2Mw==',
             type: 'piece_justificative',
             label:
-              "Téléchargement d'un tableau comprenant le ou les financements d'un montant inférieur ou égal à 15 300 €",
+              'Téléchargement d’un tableau pour un ou plusieurs montants ≤ 15 300 €',
             description: 'Merci de compléter le modèle ci-joint en respectant les consignes intégrées dans ce dernier.',
             required: true,
             options: null,
@@ -9262,7 +9262,7 @@ export const demarcheFeDataMock = {
           {
             id: 'Q2hhbXAtMTA2NA==',
             type: 'yes_no',
-            label: "Souhaitez-vous déclarer un ou plusieurs financements d'un montant supérieur à 15 300€ ?",
+            label: 'Souhaitez-vous déclarer un ou plusieurs montants supérieur à 15 300€ ?',
             description: '',
             required: true,
             options: null,
@@ -9271,7 +9271,7 @@ export const demarcheFeDataMock = {
           {
             id: 'Q2hhbXAtMTA2NQ==',
             type: 'repetition',
-            label: "Déclaration d'un financement d'un montant supérieur à 15 300 €",
+            label: "Déclaration d'un montant supérieur à 15 300 €",
             description: '',
             required: true,
             options: null,
@@ -9279,7 +9279,7 @@ export const demarcheFeDataMock = {
               {
                 id: 'Q2hhbXAtMTA2Ng==',
                 type: 'pays',
-                label: "Pays d'origine du financement",
+                label: "Pays d'origine",
                 description:
                   "Indiquer, selon le cas, l'État contributeur, l'État où est situé le siège social de la personne morale contributrice ou l'État où la personne physique contributrice a fixé sa résidence fiscale.\r\n",
                 required: true,
@@ -9539,9 +9539,9 @@ export const demarcheFeDataMock = {
               {
                 id: 'Q2hhbXAtMTA2Nw==',
                 type: 'date',
-                label: 'Date du financement',
+                label: 'Date',
                 description:
-                  'Indiquer la date de réception effective du financement ou, pour les projets de financement, indiquer la date prévisionnelle de réception du financement projeté.',
+                  'Indiquer la date de réception effective ou, pour les projets, indiquer la date prévisionnelle de réception projeté.',
                 required: true,
                 options: null,
               },
@@ -9574,12 +9574,12 @@ export const demarcheFeDataMock = {
               {
                 id: 'Q2hhbXAtMTA2OQ==',
                 type: 'drop_down_list',
-                label: 'Ce financement a -t-il été reçu par virement bancaire?',
+                label: 'Ce montant a -t-il été reçu par virement bancaire?',
                 description: '',
                 required: true,
                 options: [
-                  'Oui, ce financement a été reçu par virement bancaire.',
-                  "Non, ce financement n'a pas été reçu par virement bancaire.",
+                  'Oui, ce montant a été reçu par virement bancaire.',
+                  "Non, ce montant n'a pas été reçu par virement bancaire.",
                 ],
               },
               {
@@ -9594,7 +9594,7 @@ export const demarcheFeDataMock = {
               {
                 id: 'Q2hhbXAtMTA3MQ==',
                 type: 'integer_number',
-                label: 'Montant du financement',
+                label: 'Montant',
                 description:
                   "Pour les sommes d'argent, indiquez la valeur nominale de la somme donnée (somme reçue). Pour les valeurs cotées en bourse, référez-vous à la cote officielle. La valeur des biens est obligatoirement en euros (€). Attention : ne portez pas les centimes d’euros. \r\n",
                 required: true,
@@ -9603,7 +9603,7 @@ export const demarcheFeDataMock = {
               {
                 id: 'Q2hhbXAtMTA3Mg==',
                 type: 'yes_no',
-                label: "Ce financement est une mise à disposition d'une personne ?",
+                label: "Ce montant est une mise à disposition d'une personne ?",
                 description: '',
                 required: true,
                 options: null,
@@ -9620,9 +9620,9 @@ export const demarcheFeDataMock = {
               {
                 id: 'Q2hhbXAtMTA3NA==',
                 type: 'drop_down_list',
-                label: "Ce financement va être (a été) reversé à d'autres associations?",
+                label: "Ce montant va être (a été) reversé à d'autres associations?",
                 description:
-                  "En déclarant pour le compte des associations bénéficiaires ultimes les modalités de redistribution de ce financement, ces dernières sont dispensées de déclarer la part qu'elles auront reçues.",
+                  "En déclarant pour le compte des associations bénéficiaires ultimes les modalités de redistribution de ce montant, ces dernières sont dispensées de déclarer la part qu'elles auront reçues.",
                 required: true,
                 options: [
                   'Oui, je propose de déclarer pour leur compte les sommes qui leur ont été affectées. Les associations ainsi désignées sont dispensées de déclarer à nouveau les sommes ainsi reçues.',
@@ -9633,9 +9633,9 @@ export const demarcheFeDataMock = {
               {
                 id: 'Q2hhbXAtMTA3NQ==',
                 type: 'piece_justificative',
-                label: 'document listant les associations bénéficiaires de ce financement',
+                label: 'document listant les associations bénéficiaires de ce montant',
                 description:
-                  'Bien vouloir indiquer pour chaque association : ses nom et adresse ainsi que le montant du financement reçu (nombre entier).',
+                  'Bien vouloir indiquer pour chaque association : ses nom et adresse ainsi que le montant reçu (nombre entier).',
                 required: true,
                 options: null,
               },
@@ -10268,7 +10268,7 @@ export const demarcheFeDataMock = {
               {
                 id: 'Q2hhbXAtMTA5MQ==',
                 type: 'yes_no',
-                label: 'Un intermédaire est-il intervenu dans ce financement?',
+                label: 'Un intermédaire est-il intervenu dans ce montant?',
                 description: '',
                 required: true,
                 options: null,
@@ -11144,18 +11144,18 @@ export const demarcheFeDataMock = {
               {
                 id: 'Q2hhbXAtMTEwNg==',
                 type: 'piece_justificative',
-                label: 'Justificatif explicitant les modalités du financement déclaré',
+                label: 'Justificatif explicitant les modalités déclaré',
                 description:
-                  "Les documents justificatifs peuvent être un acte de donation, un contrat, un testament, un écrit expliquant le montage financier, l'objet du financement...",
+                  "Les documents justificatifs peuvent être un acte de donation, un contrat, un testament, un écrit expliquant le montage financier, l'objet...",
                 required: false,
                 options: null,
               },
               {
                 id: 'Q2hhbXAtMTEwNw==',
                 type: 'piece_justificative',
-                label: 'Second justificatif explicitant les modalités du financement déclaré',
+                label: 'Second justificatif explicitant les modalités déclaré',
                 description:
-                  "Les documents justificatifs peuvent être un acte de donation, un contrat, un testament, un écrit expliquant le montage financier, l'objet du financement...",
+                  "Les documents justificatifs peuvent être un acte de donation, un contrat, un testament, un écrit expliquant le montage financier, l'objet...",
                 required: false,
                 options: null,
               },
@@ -11256,7 +11256,7 @@ export const demarcheFeDataMock = {
           {
             id: 'Q2hhbXAtMTExOA==',
             type: 'date',
-            label: "Date de l'intention d'opposition aux financements",
+            label: "Date de l'intention d'opposition",
             description:
               "Interrompt de délai restant, et lance un compteur de 30 jours pendant lequel l'usager doit répondre.",
             required: false,
@@ -11288,7 +11288,7 @@ export const demarcheFeDataMock = {
             type: 'date',
             label: "Date de décision d'opposition",
             description:
-              "Interrompt le compteur et créé un nouveau compteur de 90 jours, délai durant lequel l'usager devra justifier de la restitution du financement.",
+              "Interrompt le compteur et créé un nouveau compteur de 90 jours, délai durant lequel l'usager devra justifier de la restitution.",
             required: false,
             options: null,
             champDescriptors: null,
@@ -11296,7 +11296,7 @@ export const demarcheFeDataMock = {
           {
             id: 'Q2hhbXAtMTEyMg==',
             type: 'date',
-            label: 'Date de dépôt de preuve de restitution du financement',
+            label: 'Date de dépôt de preuve de restitution',
             description: 'Interrompt le compteur.',
             required: false,
             options: null,
