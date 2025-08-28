@@ -1,4 +1,3 @@
-/* eslint-disable no-use-before-define */
 import { BaseEntity } from '@/shared/base-entity/base.entity'
 import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, Unique } from 'typeorm'
 import { DsChampType, DsChampTypeKeys } from '@/shared/modules/ds-api/objects/ds-champ-type.enum'

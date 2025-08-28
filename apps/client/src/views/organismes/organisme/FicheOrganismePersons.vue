@@ -1,10 +1,9 @@
 <script lang="ts" setup>
 import type { IPerson } from '@biblio-num/shared'
-import { ePersonRole } from '@biblio-num/shared'
+import { ePersonRole, roleDictionary, creatorRoleKey } from '@biblio-num/shared'
 import { DsfrAccordion } from '@gouvminint/vue-dsfr'
 import { dateToStringFr } from '../../../utils'
 import TooltipAddress from './TooltipAddress.vue'
-import { roleDictionary, creatorRoleKey } from '@biblio-num/shared'
 
 const props = defineProps<{ persons: IPerson[] }>()
 

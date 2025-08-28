@@ -199,7 +199,7 @@ describe('get foundation to sync with hub', () => {
         title: null,
         idRna: null,
         type: 'unknown',
-        idRnf: idRnf,
+        idRnf,
         state: 'queued',
         syncState: {
           id: expect.any(Number),
@@ -240,7 +240,7 @@ describe('get foundation to sync with hub', () => {
         id: expect.any(Number),
         title: foundationHub.title,
         type: 'FRUP',
-        idRnf: idRnf,
+        idRnf,
         syncState: {
           id: expect.any(Number),
           state: 'uploaded',
@@ -342,7 +342,7 @@ describe('get foundation to sync with hub', () => {
         title: null,
         idRna: null,
         type: 'unknown',
-        idRnf: idRnf,
+        idRnf,
         state: 'queued',
         syncState: {
           id: expect.any(Number),
@@ -382,7 +382,7 @@ describe('get foundation to sync with hub', () => {
         id: expect.any(Number),
         title: foundationHub.title,
         type: 'FRUP',
-        idRnf: idRnf,
+        idRnf,
         syncState: {
           id: expect.any(Number),
           state: 'uploaded',

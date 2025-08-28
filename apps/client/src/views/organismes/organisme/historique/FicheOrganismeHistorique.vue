@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { dateToStringFr } from '@/utils'
-import { EOrganismeIdType, type OrganismeIdType } from '@/stores'
+import { EOrganismeIdType } from '@/stores'
+import type { OrganismeIdType } from '@/stores'
 import { foundationFields } from './mapping-fields/foundationFields'
 import { associationFields } from './mapping-fields/associationFields'
 import PersonListComparator from './components/PersonListComparator.vue'

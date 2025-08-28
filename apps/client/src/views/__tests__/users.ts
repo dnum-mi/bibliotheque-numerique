@@ -21,8 +21,8 @@ export const createRandomUserForm = (): ICredentialsInput => ({
 
 export const createRandomUser = (id?: number): User => ({
   id: id || getUniqueIdUser(),
-  firstName: faker.internet.userName(),
-  lastName: faker.internet.userName(),
+  firstName: faker.internet.username(),
+  lastname: faker.internet.username(),
   email: faker.internet.email(),
   prefecture: '75 - Paris',
   roles: [],
@@ -33,8 +33,8 @@ export const createRandomUsers = (count: number, ids?: number[]): User[] =>
 
 export const createRandomAdmin = (): User => ({
   id: getUniqueIdUser(),
-  firstName: faker.internet.userName(),
-  lastName: faker.internet.userName(),
+  firstName: faker.internet.username(),
+  lastname: faker.internet.username(),
   email: faker.internet.email(),
   prefecture: '75 - Paris',
   roles: [{
@@ -49,8 +49,8 @@ export const createRandomAdmin = (): User => ({
 
 // export const createRandomUserWithoutCreateRole = (): User => ({
 //   id: faker.helpers.unique(faker.datatype.number, [1000]),
-//   firstName: faker.internet.userName(),
-//   lastName: faker.internet.userName(),
+//   firstName: faker.internet.username(),
+//   lastName: faker.internet.username(),
 //   email: faker.internet.email(),
 //   roles: [{
 //     id: 1,
@@ -63,8 +63,8 @@ export const createRandomAdmin = (): User => ({
 // })
 // export const createRandomUserWithCreateRole = (): User => ({
 //   id: faker.helpers.unique(faker.datatype.number, [1000]),
-//   firstName: faker.internet.userName(),
-//   lastName: faker.internet.userName(),
+//   firstName: faker.internet.username(),
+//   lastName: faker.internet.username(),
 //   email: faker.internet.email(),
 //   roles: [{
 //     id: 1,

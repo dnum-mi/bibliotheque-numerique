@@ -17,7 +17,7 @@ const { handleSubmit } = useForm({
   validationSchema,
 })
 
-const { value: emailValue, errorMessage: emailError } = useField<string>('email')
+const { value: emailValue, errorMessage: emailError } = useField<string>('email', undefined, { initialValue: '' })
 const alertTitle = ref('')
 const alertDescription = ref('')
 const openAlert = ref(false)

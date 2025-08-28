@@ -6,7 +6,7 @@ Bibliothèque Numérique Server API
 ## Installation
 
 ```bash
-$ npm install
+npm install
 ```
 
 ## Migration
@@ -23,8 +23,8 @@ $ npm run migration:generate database/migrations/TheNameOfMyMigration
 
 ```bash
 # set environment
-$ exoprt DS_API_URL=....
-$ exoprt DS_API_TOKEN=....
+$ export DS_API_URL=....
+$ export DS_API_TOKEN=....
 # Or use .env
 cp .env-example .env
 
@@ -33,22 +33,25 @@ cp .env-example .env
 $ npm run start
 
 # watch mode
-$ npm run start:dev
+$ npm run dev
 
 # production mode
 $ npm run start:prod
 ```
+
 ### Running in container docker
+
 ```bash
 # set environment
-$ exoprt DS_API_URL=....
-$ exoprt DS_API_TOKEN=....
+$ export DS_API_URL=....
+$ export DS_API_TOKEN=....
 # Or use .env
 cp .env-example .env
 
 # up development
 $ docker compose -f docker-compose.yml -f docker-compose.dev.yml up
 ```
+
 ## Test
 
 ```bash
@@ -69,7 +72,9 @@ http://localhost:3000/swagger
 ```
 
 ## S3 minio
+
 Afin de pouvoir utiliser minio en local il faut:
+
 - démarrer le docker minio
 - aller sur le docker minio localhost:9000
 - utiliser les identifiants (qui se trouve dans le fichier docker-compose, chapitre minio)
@@ -78,4 +83,3 @@ Afin de pouvoir utiliser minio en local il faut:
 - mettre les deux clefs privée et publiques dans l'env
 - créer un bucket (du même nom que l'env)
 - redémarrer le serveur.
-

@@ -50,8 +50,8 @@ export const getDemandeurMorale = () => ({
     siretSiegeSocial: faker.string.numeric(14),
     codeEffectifEntreprise: '01',
     dateCreation: faker.date.past().toISOString(),
-    nom: faker.name.lastName(),
-    prenom: faker.name.firstName(),
+    nom: faker.person.lastName(),
+    prenom: faker.person.firstName(),
     // TODO: A completer si besoin
     attestationFiscaleAttachment: null,
     // TODO: A completer si besoin
@@ -205,13 +205,13 @@ export const generateOrganisme = (): IOrganismeOutputDto => ({
   sigle: faker.company.name(),
   siret: faker.string.numeric(14),
   siege: {
-    coordinates: [faker.address.longitude(), faker.address.latitude()],
+    coordinates: [faker.location.longitude(), faker.location.latitude()],
     prefecture: faker.location.city(),
     isVerified: faker.datatype.boolean(),
   },
   gestion: {
     addressLabel: faker.location.streetAddress(),
-    coordinates: [faker.address.longitude(), faker.address.latitude()],
+    coordinates: [faker.location.longitude(), faker.location.latitude()],
     prefecture: faker.location.city(),
     isVerified: faker.datatype.boolean(),
   },
