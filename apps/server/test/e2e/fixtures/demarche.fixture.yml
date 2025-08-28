@@ -1,6 +1,6 @@
 entity: Demarche
 items:
-  demarche-financement:
+  demarche-fe:
     id: 1
     state: "published"
     title: "Déclaration de FE"

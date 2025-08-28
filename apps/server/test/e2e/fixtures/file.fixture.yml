@@ -1,6 +1,6 @@
 entity: File
 items:
-  excel-financement:
+  excel-fe:
     id: 1
     uuid: "bfa978f1-7337-49df-ae97-40d358afe5b9"
     state: 'uploaded'

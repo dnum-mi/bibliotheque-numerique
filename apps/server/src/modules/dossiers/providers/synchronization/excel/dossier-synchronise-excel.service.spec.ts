@@ -752,7 +752,7 @@ describe('DossierSyncroniseExcel', () => {
   //     id: AMOUNT_CHAMP_ID,
   //     __typename: 'PieceJustificativeChamp',
   //     label:
-  //       'Bien vouloir joindre un document listant les financements mises à disposition',
+  //       'Bien vouloir joindre un document listant les monteants mises à disposition',
   //     stringValue: '',
   //     file: {
   //       filename: 'DeclarationFE.xlsx',

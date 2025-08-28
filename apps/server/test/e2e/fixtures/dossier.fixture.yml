@@ -2,13 +2,13 @@ entity: Dossier
 items:
   dossier{1..10}:
     id: "($current)"
-    demarche: "@demarche-financement"
+    demarche: "@demarche-fe"
     state: "accepte"
     sourceId: "($current)"
     dsDataJson: "{}"
   bmwDossier1:
     id: 11
-    demarche: "@demarche-financement"
+    demarche: "@demarche-fe"
     state: "accepte"
     sourceId: "123456"
     prefecture: "D75"
@@ -19,7 +19,7 @@ items:
     organisme: "@BMW"
   bmwDossier2:
     id: 12
-    demarche: "@demarche-financement"
+    demarche: "@demarche-fe"
     state: "accepte"
     sourceId: "123457"
     prefecture: "D57"
@@ -63,7 +63,7 @@ items:
     organisme: "@Hyundai"
   DossierWithFiles:
     id: 16
-    demarche: "@demarche-financement"
+    demarche: "@demarche-fe"
     state: "accepte"
     sourceId: "123461"
     prefecture: "D57"
