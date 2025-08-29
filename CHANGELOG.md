@@ -1,5 +1,25 @@
 # Changelog
 
+## [2.35.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.34.0...v2.35.0) (2025-08-29)
+
+
+### Features
+
+* del elk ([2819099](https://github.com/dnum-mi/bibliotheque_numerique/commit/2819099d123328d4f7d2f280ccb2a515f1c6cf39))
+
+
+### Bug Fixes
+
+* **#1865:** selected children of mappingColumns gone after sync demarche ([26aca4c](https://github.com/dnum-mi/bibliotheque_numerique/commit/26aca4c802b63dcbb8de986c2021b59e8f950073))
+* create migration to update fields.stringValue index ([7863252](https://github.com/dnum-mi/bibliotheque_numerique/commit/7863252eb3da2e3b7641a3833e0ebdb31baba9b1))
+* replace ds url with new url ([5aafd67](https://github.com/dnum-mi/bibliotheque_numerique/commit/5aafd67926732ac45c4098423b0b0c6a6caa3f0a))
+* set characters length of fields.stringValue index to 400 ([0bcc953](https://github.com/dnum-mi/bibliotheque_numerique/commit/0bcc953fa3faf7730bddcddf42e5b3ada53b7b84))
+* standardization text in code ([7a6ef11](https://github.com/dnum-mi/bibliotheque_numerique/commit/7a6ef11dd69bf425e15d228d4f20f6330ade2640))
+* standardization text in code 2 ([7a69d77](https://github.com/dnum-mi/bibliotheque_numerique/commit/7a69d77883181067ff58630594c8907ad206664b))
+* update max characters on index fields.stringValue ([9a9e7e9](https://github.com/dnum-mi/bibliotheque_numerique/commit/9a9e7e9c1c64d4bd7e64eb02d7cf6fe896567923))
+* use main for env dev ([63dffb7](https://github.com/dnum-mi/bibliotheque_numerique/commit/63dffb79fcfb1e713079ce700fa8d1595c1e19c4))
+* use main with default branch ([97efbb0](https://github.com/dnum-mi/bibliotheque_numerique/commit/97efbb0d44b66c81bfe3d8e563cc16f6b8f05b2c))
+
 ## [2.34.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.33.1...v2.34.0) (2025-08-13)
 
 
