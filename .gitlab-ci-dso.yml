@@ -1,0 +1,139 @@
+include:
+  - local: "/ci/includes/node.yml"
+  - local: "/ci/includes/rules.yml"
+  - local: "/ci/includes/docker.yml"
+  - project: $CATALOG_PATH
+    file:
+      - vault-ci.yml
+      - kaniko-ci.yml
+    ref: main
+
+default:
+  image: node:18
+  before_script:
+    - export TAG=$(grep -Eo '"version":.*?[^\\]",' package.json | awk -F'"' '{print $4}')
+
+variables:
+  DOCKERFILE: Dockerfile
+  PROJECT_NAME: bibliotheque-numerique
+  PROJECT_ORGANISATION: ministere-interieur
+  PROJECT_PATH: ${PROJECT_ORGANISATION}-${PROJECT_NAME}
+  REGISTRY_URL: "${IMAGE_REPOSITORY}"
+  CYPRESS_CACHE_FOLDER: "/tmp"
+
+stages:
+  - read-secret
+  - test-sonar-front
+  - test-sonar-back
+  - test-sonar-http-proxy
+  - docker-test
+  - docker-build-front
+  - docker-build-back
+  - docker-build-http-proxy
+
+read_secret:
+  stage: read-secret
+  extends:
+    - .vault:read_secret
+  artifacts:
+    expire_in: 30min
+
+test_front:
+  variables:
+    WORKING_DIR: apps/client
+  stage: test-sonar-front
+  allow_failure: true
+  extends:
+    - .node:sonar
+
+test_back:
+  variables:
+    WORKING_DIR: apps/server
+  stage: test-sonar-back
+  allow_failure: true
+  extends:
+    - .node:sonar
+
+test_http_proxy:
+  variables:
+    WORKING_DIR: apps/http-proxy
+  stage: test-sonar-http-proxy
+  allow_failure: true
+  extends:
+    - .node:sonar
+  rules:
+    - changes:
+        - apps/http-proxy/**/*
+        - apps/http-proxy/Dockerfile
+
+test_docker_front:
+  variables:
+    WORKING_DIR: 'apps/client'
+    IMAGE_NAME: 'bibliotheque_numerique-front'
+    DOCKERFILE: 'Dockerfile'
+  stage: docker-test
+  allow_failure: true
+  extends:
+    - .docker:test
+
+test_docker_back:
+  image: docker:stable
+  variables:
+    WORKING_DIR: 'apps/server'
+    IMAGE_NAME: 'bibliotheque_numerique-back'
+    DOCKERFILE: 'Dockerfile'
+  stage: docker-test
+  allow_failure: true
+  extends:
+    - .docker:test
+
+test_docker_http_proxy:
+  image: docker:stable
+  variables:
+    WORKING_DIR: 'apps/http-proxy'
+    IMAGE_NAME: 'http-proxy'
+    DOCKERFILE: 'Dockerfile'
+  stage: docker-test
+  allow_failure: true
+  extends:
+    - .docker:test
+  rules:
+    - changes:
+        - apps/http-proxy/**/*
+        - apps/http-proxy/Dockerfile
+
+docker_build_front:
+  variables:
+    WORKING_DIR: 'apps/client'
+    IMAGE_NAME: 'bibliotheque_numerique-front'
+    DOCKERFILE: 'Dockerfile'
+    KUBERNETES_MEMORY_LIMIT: '5Gi'
+    EXTRA_BUILD_ARGS: --registry-mirror=$REGISTRY_MIRROR
+  stage: docker-build-front
+  extends:
+    - .kaniko:simple-build-push
+
+docker_build_back:
+  variables:
+    WORKING_DIR: 'apps/server'
+    IMAGE_NAME: 'bibliotheque_numerique-back'
+    DOCKERFILE: 'Dockerfile'
+    EXTRA_BUILD_ARGS: --registry-mirror=$REGISTRY_MIRROR
+  stage: docker-build-back
+  extends:
+    - .kaniko:simple-build-push
+
+docker_build_http_proxy:
+  variables:
+    WORKING_DIR: 'apps/http-proxy'
+    IMAGE_NAME: 'http-proxy'
+    DOCKERFILE: 'Dockerfile'
+    EXTRA_BUILD_ARGS: --registry-mirror=$REGISTRY_MIRROR
+    TAG: latest
+  stage: docker-build-http-proxy
+  extends:
+    - .kaniko:simple-build-push
+  rules:
+    - changes:
+        - apps/http-proxy/**/*
+        - apps/http-proxy/Dockerfile

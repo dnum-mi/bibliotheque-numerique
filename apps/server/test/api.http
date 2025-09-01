@@ -1,0 +1,29 @@
+@{{baseUrl}} = http://localhost:8080
+
+###
+# @name login
+POST {{baseUrl}}/auth/sign-in HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "password"
+}
+
+### Créer la démarche 35
+
+POST {{baseUrl}}/demarches/create HTTP/1.1
+Content-Type: application/json
+
+{
+  "demarcheId": 35
+}
+
+### Synchroniser le dossier
+
+POST {{baseUrl}}/demarches/synchro-dossiers HTTP/1.1
+Content-Type: application/json
+
+{
+  "demarcheId": 38
+}

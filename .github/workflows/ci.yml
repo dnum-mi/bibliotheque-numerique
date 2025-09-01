@@ -1,0 +1,154 @@
+name: CI of biblio-num
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  checks:
+    name: Checks
+    runs-on: ubuntu-latest
+    outputs:
+      is_client_modified: ${{ steps.is_client.outputs.is_client_modified }}
+      is_server_modified: ${{ steps.is_server.outputs.is_server_modified }}
+      is_shared_modified: ${{ steps.is_shared.outputs.is_shared_modified }}
+    steps:
+      - name: Checks-out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Récupérer si apps/client a été modifié
+        id: is_client
+        run: |
+          if git log HEAD...origin/$GITHUB_BASE_REF --name-only --pretty=format: | sort -u | grep -E -q '^(apps/client)/'; then
+            is_client_modified="true"
+          fi
+          echo "is_client_modified=$is_client_modified" >> $GITHUB_OUTPUT
+      - name: Récupérer si packages/shared a été modifié
+        id: is_shared
+        run: |
+          if git log HEAD...origin/$GITHUB_BASE_REF --name-only --pretty=format: | sort -u | grep -E -q '^(packages/shared)/'; then
+            is_shared_modified="true"
+          fi
+          echo "is_shared_modified=$is_shared_modified" >> $GITHUB_OUTPUT
+      - name: Récupérer si apps/server a été modifié
+        id: is_server
+        run: |
+          if git log HEAD...origin/$GITHUB_BASE_REF --name-only --pretty=format: | sort -u | grep -E -q '^(apps/server)/'; then
+            is_server_modified="true"
+          fi
+          echo "is_server_modified=$is_server_modified" >> $GITHUB_OUTPUT
+      - name: Recap
+        run: |
+          echo "is_client_modified: ${{ steps.is_client.outputs.is_client_modified }}"
+          echo "is_server_modified: ${{ steps.is_server.outputs.is_server_modified }}"
+          echo "is_shared_modified: ${{ steps.is_shared.outputs.is_shared_modified }}"
+
+  client:
+    name: client - Run tests
+    needs: checks
+    if: (!github.event.pull_request.draft) && (needs.checks.outputs.is_client_modified || needs.checks.outputs.is_shared_modified)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checks-out repository
+        uses: actions/checkout@v3
+      - name: Use Node.js 22.x.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: "22"
+      - name: run test FRONT
+        run: |
+            npm i -g pnpm@9.15.4
+            pnpm i --frozen-lockfile
+            pnpm run lint:client
+            # pnpm run test:client
+      - name: run test unit
+        run: |
+          pnpm run build:shared
+          cd apps/client
+          pnpm run test:unit
+          pnpm run test:ct:ci
+          pnpm run dev:e2e:ci
+      - name: run build
+        run: |
+            pnpm run build:client
+
+  server:
+    name: server - Run tests
+    needs: checks
+    if: (!github.event.pull_request.draft) && (needs.checks.outputs.is_server_modified || needs.checks.outputs.is_shared_modified)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checks-out repository
+        uses: actions/checkout@v3
+      - name: Use Node.js 22.x.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: "22"
+      - name: run tests BACK-END
+        run: |
+            npm i -g pnpm@9.15.4
+            pnpm i --frozen-lockfile
+            pnpm run lint:server
+            pnpm run docker:ci:up
+            pnpm run test:server
+            pnpm run docker:down
+      - name: run build
+        run: |
+            pnpm run build:server
+
+  docker-client:
+    name: client - Build and Run docker image
+    needs: checks
+    if: (!github.event.pull_request.draft) && (needs.checks.outputs.is_client_modified || needs.checks.outputs.is_shared_modified)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checks-out repository
+        uses: actions/checkout@v3
+      - name: Use Node.js 22.x.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: "22"
+      - name: run build
+        run: |
+          npm i -g pnpm@9.15.4
+          pnpm run docker:build:client
+          pnpm run docker:build:client:run
+          pnpm run docker:build:client:check
+          pnpm run docker:build:client:stop
+
+  docker-server:
+    name: server - Build and Run docker image
+    needs: checks
+    if: (!github.event.pull_request.draft) && (needs.checks.outputs.is_server_modified || needs.checks.outputs.is_shared_modified)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checks-out repository
+        uses: actions/checkout@v3
+      - name: Use Node.js 22.x.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: "22"
+      - name: run build
+        run: |
+          npm i -g pnpm@9.15.4
+          pnpm run docker:build:server
+          pnpm run docker:ci:up
+          pnpm run docker:build:server:run
+          pnpm run docker:build:server:check
+          pnpm run docker:build:server:stop
+          pnpm run docker:down

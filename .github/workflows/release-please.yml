@@ -1,0 +1,50 @@
+name: Release Please
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Release Please
+        id: release
+        uses: google-github-actions/release-please-action@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          release-type: node
+          target-branch: ${{ github.ref_name }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: 'https://registry.npmjs.org'
+        if: ${{ steps.release.outputs.release_created }}
+      - name: Edit packages versions
+        if: ${{ (! steps.release.outputs.release_created) && steps.release.outputs.prs_created }}
+        run: |
+          export BRANCH=$(jq -r '.headBranchName' <<< '${{ steps.release.outputs.pr }}')
+          git fetch
+          git checkout "$BRANCH"
+          VERSION=$(jq -r .version package.json)
+          yq e -i ".version |= \"$VERSION\"" apps/server/package.json
+          yq e -i ".version |= \"$VERSION\"" apps/server/src/version.json
+          yq e -i ".version |= \"$VERSION\"" apps/client/package.json
+          yq e -i ".version |= \"$VERSION\"" packages/shared/package.json
+          git add -A
+          # Emulate the author of the existing commit (the bot).
+          git config user.email "$(git log -n 1 --format='%ae')"
+          git config user.name "$(git log -n 1 --format='%an')"
+          # Update the PR.
+          git commit --amend --no-edit
+          git push -f

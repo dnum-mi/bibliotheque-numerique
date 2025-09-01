@@ -1,0 +1,126 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "daemon": false,
+  "tasks": {
+    "@biblio-num/client#test:e2e": {
+      "cache": false,
+      "dependsOn": [
+        "^@biblio-num/client#build",
+        "^@biblio-num/server#build"
+      ],
+      "inputs": [
+        "src/**/*.tsx",
+        "src/**/*.ts"
+      ],
+      "outputs": []
+    },
+    "@biblio-num/client#test:e2e:ci": {
+      "dependsOn": [
+        "^@biblio-num/client#build",
+        "^@biblio-num/server#build"
+      ],
+      "inputs": [
+        "src/**/*.tsx",
+        "src/**/*.ts"
+      ],
+      "outputs": []
+    },
+    "@biblio-num/server#dev": {
+      "cache": false
+    },
+    "build": {
+      "dependsOn": [
+        "^@biblio-num/shared#build"
+      ],
+      "outputs": [
+        "dist/**"
+      ]
+    },
+    "clean:dist": {
+      "cache": false
+    },
+    "dev": {
+      "cache": false,
+      "dependsOn": [
+        "^@biblio-num/shared#build"
+      ],
+      "persistent": true
+    },
+    "dev:client": {
+      "cache": false,
+      "dependsOn": [
+        "^@biblio-num/shared#build"
+      ],
+      "persistent": true
+    },
+    "dev:in-docker": {
+      "cache": false
+    },
+    "dev:server": {
+      "cache": false,
+      "dependsOn": [
+        "^@biblio-num/shared#build"
+      ]
+    },
+    "dev:server-in-docker": {
+      "cache": false
+    },
+    "dev:worker-in-docker": {
+      "cache": false
+    },
+    "dws": {
+      "cache": false,
+      "dependsOn": [
+        "^@biblio-num/shared#build"
+      ]
+    },
+    "dwf": {
+      "cache": false,
+      "dependsOn": [
+        "^@biblio-num/shared#build"
+      ]
+    },
+    "generate-code": {
+      "cache": false
+    },
+    "migration:run": {
+      "cache": false
+    },
+    "lint": {},
+    "preview": {
+      "dependsOn": [
+        "^preview"
+      ],
+      "outputs": [
+        "dist/**"
+      ]
+    },
+    "start": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "dist/**"
+      ]
+    },
+    "start:prod": {
+      "cache": false
+    },
+    "start:worker-file:prod": {
+      "cache": false
+    },
+    "start:worker-sync:prod": {
+      "cache": false
+    },
+    "test": {
+      "dependsOn": [
+        "^@biblio-num/shared#build"
+      ],
+      "inputs": [
+        "src/**/*.tsx",
+        "src/**/*.ts"
+      ],
+      "outputs": []
+    }
+  }
+}

@@ -1,0 +1,271 @@
+entity: Dossier
+items:
+  dossier{1..10}:
+    id: "($current)"
+    demarche: "@demarche-fe"
+    state: "accepte"
+    sourceId: "($current)"
+    dsDataJson: "{}"
+  bmwDossier1:
+    id: 11
+    demarche: "@demarche-fe"
+    state: "accepte"
+    sourceId: "123456"
+    prefecture: "D75"
+    dsDataJson: {
+      annotations: "I can see you",
+      messages: "Big brother is watching you"
+    }
+    organisme: "@BMW"
+  bmwDossier2:
+    id: 12
+    demarche: "@demarche-fe"
+    state: "accepte"
+    sourceId: "123457"
+    prefecture: "D57"
+    dsDataJson: {
+      annotations: "I can see you",
+      messages: "Big brother is watching you"
+    }
+    organisme: "@BMW"
+  Dossier3:
+    id: 13
+    demarche: "@configurationDemarche"
+    state: "accepte"
+    sourceId: "123458"
+    prefecture: "D57"
+    dsDataJson: {
+      annotations: "I can see you",
+      messages: "Big brother is watching you"
+    }
+    organisme: "@Hyundai"
+  DossierDeleteSoft1:
+    id: 14
+    demarche: "@demarche-delete-soft"
+    state: "accepte"
+    sourceId: "123459"
+    prefecture: "D57"
+    dsDataJson: {
+      annotations: "Message",
+      messages: "Hello world"
+    }
+    organisme: "@Hyundai"
+  DossierDeleteSoft2:
+    id: 15
+    demarche: "@demarche-delete-soft"
+    state: "accepte"
+    sourceId: "123460"
+    prefecture: "D57"
+    dsDataJson: {
+      annotations: "Message",
+      messages: "Hello world"
+    }
+    organisme: "@Hyundai"
+  DossierWithFiles:
+    id: 16
+    demarche: "@demarche-fe"
+    state: "accepte"
+    sourceId: "123461"
+    prefecture: "D57"
+    dsDataJson: {
+      annotations: "Message",
+      messages: "Hello world"
+    }
+    organisme: "@Chevrolet"
+  dossier17:
+    id: 17
+    demarche: "@demarche-delay"
+    state: "accepte"
+    sourceId: "17"
+    dsDataJson: "{}"
+    organisme: "@Subaru"
+  dossier18:
+    id: 18
+    demarche: "@demarche-delay"
+    state: "accepte"
+    sourceId: "18"
+    dsDataJson: "{}"
+    organisme: "@Subaru"
+  DossierAnonymize:
+    id: 19
+    demarche: "@demarche-anonymize"
+    state: "accepte"
+    sourceId: "123462"
+    prefecture: "D57"
+    dateDepot: "2020-01-01 15:59:18.000"
+    dsDataJson: {
+      champs: [
+        {
+          "__typename": "Champ",
+          "id": "Q2hhbXAtNDE2Mjg0NQ==",
+          "label": "Nom",
+          "stringValue": "Paul",
+          "champDescriptor":
+            {
+              "id": "Q2hhbXAtNDE2Mjg0NQ==",
+              "label": "Nom",
+              "type": "text",
+              "required": "false",
+              "__typename": "TextChampDescriptor",
+              "description": "nom de famille"
+            }
+        },
+        {
+          "__typename": "Champ",
+          "id": "Q2hhbXAtNDE2Mjg0NW==",
+          "label": "Prénom",
+          "stringValue": "Jean",
+          "champDescriptor":
+            {
+              "id": "Q2hhbXAtNDE2Mjg0NW==",
+              "label": "Prénom",
+              "type": "text",
+              "required": "false",
+              "__typename": "TextChampDescriptor",
+              "description": "prénom"
+            }
+        },
+        {
+          "__typename": "Champ",
+          "id": "Q2hhbXAtNDE2Mjg0Ng==",
+          "label": "Age",
+          "stringValue": "10",
+          "champDescriptor":
+            {
+              "id": "Q2hhbXAtNDE2Mjg0Ng==",
+              "label": "Age",
+              "type": "text",
+              "required": "false",
+              "__typename": "TextChampDescriptor",
+              "description": "Age"
+            }
+        },
+        {
+          __typename: "RepetitionChamp",
+          "id": "Q2hhbXAtMjg2NjAyNw==",
+          "label": "Personnes",
+          "stringValue": "",
+          "champDescriptor":
+            {
+              "id": "Q2hhbXAtMjg2NjAyNw==",
+              "label": "Personnes",
+              "type": "repetition",
+              "required": "false",
+              __typename: "RepetitionChampDescriptor",
+              "description": "Personnes"
+            },
+          "rows": [
+            {
+              "champs": [
+                {
+                  "__typename": "Champ",
+                  "id": "Q2hhbXAtMzg2MjczN3wwMUhYWTI5WlQ1QjJZRDQ4NFFFRlFBN0VGSA==",
+                  "label": "Nom",
+                  "stringValue": "Paul",
+                  "champDescriptor":
+                    {
+                      "id": "Q2hhbXAtNDE2Mjg0NN==",
+                      "label": "Nom",
+                      "type": "text",
+                      "required": "false",
+                      "__typename": "TextChampDescriptor",
+                      "description": "nom de famille"
+                    }
+                },
+                {
+                  "__typename": "Champ",
+                  "id": "Q2hhbXAtMjg2NjAzOHwwMUhYWTI5WlQ1QjJZRDQ4NFFFRlFBN0VGSA==",
+                  "label": "Prénom",
+                  "stringValue": "Jean",
+                  "champDescriptor":
+                    {
+                      "id": "Q2hhbXAtNDE2Mjg0NM==",
+                      "label": "Prénom",
+                      "type": "text",
+                      "required": "false",
+                      "__typename": "TextChampDescriptor",
+                      "description": "prénom"
+                    }
+                },
+                {
+                  "__typename": "Champ",
+                  "id": "Q2hhbXAtMjg2NjEzOHwwMUhYWTI5WlQ1QjJZRDQ4NFFFRlFBN0VGSA==",
+                  "label": "Age",
+                  "stringValue": "10",
+                  "champDescriptor":
+                    {
+                      "id": "Q2hhbXAtNTE2Mzg0NQ==",
+                      "label": "Age",
+                      "type": "text",
+                      "required": "false",
+                      "__typename": "TextChampDescriptor",
+                      "description": "age"
+                    }
+                }
+
+              ]
+            },
+            {
+              "champs": [
+                {
+                  "__typename": "Champ",
+                  "id": "Q2hhbXAtMzg2MjczOXwwMUhYWTI5WlQ1QjJZRDQ4NFFFRlFBN0VGSA==",
+                  "label": "Nom",
+                  "stringValue": "Paul2",
+                  "champDescriptor":
+                    {
+                      "id": "Q2hhbXAtNDE2Mjg0NN==",
+                      "label": "Nom",
+                      "type": "text",
+                      "required": "false",
+                      "__typename": "TextChampDescriptor",
+                      "description": "nom de famille"
+                    }
+                },
+                {
+                  "__typename": "Champ",
+                  "id": "Q2hhbXAtMzg2Mjc0MHwwMUhYWTI5WlQ1QjJZRDQ4NFFFRlFBN0VGSA==",
+                  "label": "Prénom",
+                  "stringValue": "Jean2",
+                  "champDescriptor":
+                    {
+                      "id": "Q2hhbXAtNDE2Mjg0NM==",
+                      "label": "Prénom",
+                      "type": "text",
+                      "required": "false",
+                      "__typename": "TextChampDescriptor",
+                      "description": "prénom"
+                    }
+                },
+                {
+                  "__typename": "Champ",
+                  "id": "Q2hhbXAtMjg2NjEzOXwwMUhYWTI5WlQ1QjJZRDQ4NFFFRlFBN0VGSA==",
+                  "label": "Age",
+                  "stringValue": "11",
+                  "champDescriptor":
+                    {
+                      "id": "Q2hhbXAtNTE2Mzg0NQ==",
+                      "label": "Age",
+                      "type": "text",
+                      "required": "false",
+                      "__typename": "TextChampDescriptor",
+                      "description": "age"
+                    }
+                }
+
+              ]
+            }
+          ]
+        }
+      ],
+      demandeur: {
+        __typename: "PersonnePhysique",
+        nom: "Paul",
+        prenom: "Jean-louis",
+        civilite: "Mme"
+      },
+      annotations: "Message",
+      messages: "Hello world"
+    }
+    organisme: "@Chevrolet"
+
