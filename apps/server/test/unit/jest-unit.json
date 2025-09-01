@@ -1,0 +1,28 @@
+{
+  "rootDir": "../..",
+  "collectCoverageFrom": [
+    "<rootDir>/src/**/*.(t|j)s",
+    "!<rootDir>/src/**/*.dto.(t|j)s",
+    "!<rootDir>/src/**/*.types.(t|j)s",
+    "!<rootDir>/src/**/*.type.(t|j)s",
+    "!<rootDir>/src/**/*.interface.(t|j)s",
+    "!<rootDir>/src/**/*.enum.(t|j)s"
+  ],
+  "coverageDirectory": "coverage/coverage-unit",
+  "moduleFileExtensions": [
+    "js",
+    "json",
+    "ts"
+  ],
+  "setupFilesAfterEnv": [
+    "<rootDir>/test/unit/setup.ts"
+  ],
+  "testEnvironment": "node",
+  "moduleNameMapper": {
+    "^@/(.*)$": "<rootDir>/src/$1"
+  },
+  "testRegex": "src/.*.spec.ts$",
+  "transform": {
+    "^.+\\.ts$": "ts-jest"
+  }
+}

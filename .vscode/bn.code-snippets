@@ -1,0 +1,11 @@
+{
+  "template": {
+    "prefix": ["@chapter", "chapter", "@region", "region"],
+    "body": [
+      "//#region 📍------ $1 ------ 📍",
+      "$2",
+      "//#endregion",
+    ],
+    "description": "Create region block"
+  }
+}

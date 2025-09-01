@@ -1,0 +1,58 @@
+<%- include('header'); %>
+<div class="content">
+    <h3>
+        <strong>
+            Bonjour <%= locals.firstname %> <%= locals.lastname?.toUpperCase() %>,
+        </strong>
+    </h3>
+    <p>
+        Nous avons reçu votre demande d'inscription à l'application Bibliothèque-numérique.<br>
+        Afin de finaliser votre inscription, Veuillez cliquer sur le lien ci-dessous pour valider votre email (<%= locals.email %>)
+    </p>
+
+    <div class="button-container">
+        <div class="button-link">
+            <a class="button" href=<%= locals.link %>>Vérifier</a>
+        </div>
+    </div>
+
+    <p>
+        Ce lien est valable pendant <%= locals.duration %>.<br> Si vous n'avez pas fait de demande, aucune autre action n'est requise.
+    </p>
+</div>
+
+<style>
+  .content {
+    width: calc(100% - 40vw);
+    margin: 0 20vw;
+  }
+
+  .button-container {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .button-link:hover {
+    cursor: pointer;
+  }
+
+  .button-link {
+    width: 100px;
+    display: flex;
+    height: 40px;
+    background: rgba(0, 0, 145, 1);
+    align-items: center;
+    justify-content: space-around;
+    padding: 8px;
+  }
+
+  a.button {
+    color: white;
+    text-decoration: none;
+    text-align: center;
+  }
+
+</style>
+
+<%- include('footer'); %>

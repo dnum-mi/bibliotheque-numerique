@@ -1,0 +1,16 @@
+entity: BnConfiguration
+items:
+  configuration1:
+    id: 1
+    keyName: "FE_EXCEL_IMPORT_SHEET_NAME"
+    stringValue: "sheet1"
+    valueType: "string"
+    createdAt: "2023-06-12T06:54:45.000Z"
+    updatedAt: "2023-06-12T06:54:45.000Z"
+  configuration2:
+    id: 2
+    keyName: "FE_EXCEL_IMPORT_RANGE"
+    stringValue: "A1:Z1000"
+    valueType: "string"
+    createdAt: "2023-06-12T06:54:45.000Z"
+    updatedAt: "2023-06-12T06:54:45.000Z"

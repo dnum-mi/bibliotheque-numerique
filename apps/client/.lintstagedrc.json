@@ -1,0 +1,3 @@
+{
+  "*.{ts,js,vue,htm,html}": "pnpm run lint:staged"
+}

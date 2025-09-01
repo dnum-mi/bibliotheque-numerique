@@ -1,0 +1,39 @@
+import '@gouvminint/vue-dsfr/styles'
+import '@/main.css'
+
+import { generateDossierDS, statusDictionary } from '@/views/__tests__/dossiers'
+
+import DossierInformations from './DossierInformations.vue'
+import { dateTimeToStringFr } from '@/utils/date-to-string'
+
+describe('<DossierInformations />', () => {
+  const labelValues = [
+    'SERVICE INSTRUCTEUR',
+    'DÉPÔT',
+    'INSTRUCTION',
+    'PUBLICATION',
+    'ÉTAT',
+  ]
+
+  it('renders without props', () => {
+    cy.mount(DossierInformations)
+
+    cy.get('label').then(($label) => {
+      labelValues.forEach(labelValue =>
+        cy.wrap($label).should('contain', labelValue),
+      )
+    })
+  })
+
+  it('renders', () => {
+    const datas = generateDossierDS()
+    cy.mount(DossierInformations, { props: { datas } })
+    cy.get('label').then(($label) => {
+      cy.wrap($label).contains('SERVICE INSTRUCTEUR').next().should('contain', datas.groupeInstructeur?.label.toUpperCase())
+      cy.wrap($label).contains('DÉPÔT').next().should('contain', dateTimeToStringFr(datas.dateDepot))
+      cy.wrap($label).contains('INSTRUCTION').next().should('contain', dateTimeToStringFr(datas.datePassageEnInstruction))
+      cy.wrap($label).contains('PUBLICATION').next().should('contain', '')
+      cy.wrap($label).contains('ÉTAT').next().should('contain', datas.state ? statusDictionary[datas.state] : '')
+    })
+  })
+})

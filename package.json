@@ -1,0 +1,98 @@
+{
+  "name": "biblio-num",
+  "version": "2.35.0",
+  "description": "Projet Bibliothèque numérique",
+  "directories": {
+    "doc": "docs"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "turbo build --env-mode=loose",
+    "build:client": "turbo build --filter=@biblio-num/client --env-mode=loose",
+    "build:server": "turbo build --filter=@biblio-num/server --env-mode=loose",
+    "build:shared": "turbo build --filter=@biblio-num/shared --env-mode=loose",
+    "clean:dist": "turbo clean:dist",
+    "commitlint": "commitlint --edit",
+    "dev": "FORCE_COLOR=1 turbo dev --filter @biblio-num/client --filter @biblio-num/server",
+    "dev:all": "turbo dev",
+    "dev:client": "turbo dev --filter=@biblio-num/client",
+    "dev:server": "turbo dev --filter=@biblio-num/server",
+    "dev:dws": "turbo dws",
+    "dev:dwf": "turbo dwf",
+    "dev:server-in-docker": "turbo dev:in-docker --filter=@biblio-num/server",
+    "dev:worker-in-docker": "turbo dev:worker-in-docker --filter=@biblio-num/server",
+    "docker:build:client": "docker build -t bn-client:latest --target production -f apps/client/Dockerfile .",
+    "docker:build:client:check": "sh ci/scripts/check_http.sh 8080",
+    "docker:build:client:run": "docker run -d -p 0.0.0.0:8080:8080 --name bn-client -e AG_GRID_LICENSE_KEY=myAgGridKye bn-client:latest",
+    "docker:build:client:stop": "docker stop bn-client",
+    "docker:build:http-proxy:check": "sh ci/scripts/check_http.sh 8088",
+    "docker:build:server": "docker build -t bn-server:latest --target production -f apps/server/Dockerfile .",
+    "docker:build:server:check": "sh ci/scripts/check_http.sh 3000 health",
+    "docker:build:server:run": "docker run -d -p 0.0.0.0:3000:3000 --name bn-server --network biblio-num-network --env-file ./docker/.env-bn.local bn-server:latest",
+    "docker:build:server:stop": "docker stop bn-server",
+    "docker:ci:up": "docker compose --profile ci -f apps/server/docker-compose.yml up -d",
+    "docker:db:up": "docker compose --profile db-only -f apps/server/docker-compose.yml up -d",
+    "docker:s3:up": "docker compose --profile s3-only -f apps/server/docker-compose.yml up -d",
+    "docker:simple-dev": "docker compose --profile simple-dev -f apps/server/docker-compose.yml up -d",
+    "docker:dev": "docker compose --profile dev -f apps/server/docker-compose.yml up -d",
+    "docker:down": "docker compose -f apps/server/docker-compose.yml down",
+    "docker:elk": "docker compose -f apps/elk/docker-compose.yml up -d",
+    "docker:adminer": "docker compose --profile adminer -f apps/server/docker-compose.yml up -d",
+    "docker:pgadmin": "docker compose --profile pgadmin -f apps/server/docker-compose.yml up -d",
+    "migration:run": "turbo migration:run --filter=@biblio-num/server",
+    "lint": "turbo lint",
+    "lint:client": "turbo lint --filter=@biblio-num/client",
+    "lint:server": "turbo lint --filter=@biblio-num/server",
+    "prepare": "$CI || husky install",
+    "start:server": "turbo start:prod --no-cache --filter=@biblio-num/server --env-mode=loose",
+    "start:worker-file": "turbo start:worker-file:prod --no-cache --filter=@biblio-num/server --env-mode=loose",
+    "start:worker-sync": "turbo start:worker-sync:prod --no-cache --filter=@biblio-num/server --env-mode=loose",
+    "test": "NODE_ENV='test' run-s docker:db:up test:only",
+    "test:ci": "NODE_ENV='test' run-s docker:db:up test:only docker:down",
+    "test:client": "turbo test --filter=@biblio-num/client",
+    "test:e2e": "NODE_ENV='test' turbo test:e2e --filter=@biblio-num/client",
+    "test:e2e:ci": "NODE_ENV='test' turbo test:e2e:ci",
+    "test:only": "NODE_ENV='test' turbo test",
+    "test:server": "turbo test --filter=@biblio-num/server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dnum-mi/bibliotheque_numerique.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dnum-mi/bibliotheque_numerique/issues"
+  },
+  "homepage": "https://github.com/dnum-mi/bibliotheque_numerique#readme",
+  "devDependencies": {
+    "@commitlint/cli": "^19.6.1",
+    "@commitlint/config-conventional": "18.4.3",
+    "eslint-plugin-import": "2.31.0",
+    "eslint-plugin-n": "17.15.1",
+    "eslint-plugin-promise": "7.2.1",
+    "husky": "8.0.3"
+  },
+  "dependencies": {
+    "npm-run-all": "^4.1.5",
+    "turbo": "2.3.4"
+  },
+  "volta": {
+    "node": "22.13.1",
+    "pnpm": "9.15.4"
+  },
+  "main": "index.js",
+  "keywords": [],
+  "pnpm": {
+    "patchedDependencies": {
+      "typeorm-fixtures-cli@3.1.0": "patches/typeorm-fixtures-cli@3.1.0.patch"
+    },
+    "overrides": {
+      "esbuild@<=0.24.2": ">=0.25.0"
+    }
+  },
+  "packageManager": "pnpm@9.15.4"
+}

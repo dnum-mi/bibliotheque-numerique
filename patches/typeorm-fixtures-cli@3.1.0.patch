@@ -1,0 +1,13 @@
+diff --git a/dist/Builder.js b/dist/Builder.js
+index 9591aa24669e253d3ff636614202eb99196ad4a9..aa4f5d56d52483350705663b5293f4253161afbc 100644
+--- a/dist/Builder.js
++++ b/dist/Builder.js
+@@ -27,7 +27,7 @@ class Builder {
+         const entity = repository.create();
+         // exclude prefixes to ignore __call methods
+         return (0, class_transformer_1.plainToClassFromExist)(entity, data, {
+-            excludePrefixes: ['__'],
++            excludePrefixes: ['__call'],
+             ignoreDecorators: this.ignoreDecorators,
+         });
+     }

@@ -1,0 +1,390 @@
+@import 'shepherd.js/dist/css/shepherd.css';
+
+html,
+body,
+#app {
+  height: 100%;
+}
+
+.ag-theme-alpine {
+  --ag-selected-tab-underline-width: 2px;
+  --ag-selected-tab-underline-transition-speed: 0.5s;
+
+  --ag-side-bar-panel-width: 300px;
+}
+
+.fr-container {
+  max-width: 100%;
+}
+
+/* Style Bibliothèque Numerique */
+.bn-banner {
+  --at-apply: h-full flex items-center p-4;
+  /* Default colors */
+  --bn-bg-title-banner: var(--grey-200-850);
+  --bn-text-title-banner: var(--background-default-grey);
+
+  /* Bg and text colors */
+  background-color: var(--bn-bg-title-banner);
+  color: var(--bn-text-title-banner);
+}
+
+.bn-banner--profile {
+  --bn-bg-title-banner: var(--border-plain-green-bourgeon);
+  --bn-text-title-banner: var(--background-default-grey);
+}
+
+.bn-banner--organisme {
+  --bn-bg-title-banner: var(--artwork-background-red-marianne);
+  --bn-text-title-banner: var(--background-default-grey);
+}
+
+.bn-banner--demarche {
+  --bn-bg-title-banner: var(--artwork-minor-blue-france);
+  --bn-text-title-banner: var(--background-default-grey);
+}
+
+.bn-banner--dossier {
+  --bn-bg-title-banner: var(--artwork-minor-blue-france);
+  --bn-text-title-banner: var(--background-default-grey);
+}
+
+.bn-banner-title {
+  color: var(--background-default-grey);
+}
+
+.bn-list-admin {
+  background-color: var(--green-tilleul-verveine-sun-418-moon-817);
+  color: var(--background-default-grey);
+}
+
+.bn-fiche-space-left {
+  padding-left: 8%;
+}
+
+.bn-list-contact {
+  margin: 0.125rem;
+}
+
+.bn-fiche-title--text {
+  font-size: 1.25rem;
+}
+.bn-fiche-title--text-sm {
+  font-size: 0.825rem;
+}
+
+.bn-fiche-sub-title--label {
+  display: block;
+  color: var(--text-mention-grey);
+  font-family: 'Marianne';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 0.625rem;
+  line-height: 1.25rem;
+}
+.bn-fiche-sub-title--text {
+  font-family: 'Marianne';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+}
+
+.bn-champ--text {
+  font-family: 'Marianne';
+  font-style: normal;
+  font-weight: 300;
+  font-size: 0.8rem;
+}
+
+.bn-message--text {
+  font-family: 'Marianne';
+  font-style: normal;
+}
+.bn-message-date--text {
+  color: #666666;
+}
+.bn-message-body--text {
+  color: #161616;
+}
+
+.bn-icon--green-archipel {
+  background-color: #58c5cf;
+  border-radius: 100%;
+  color: var(--grey-1000-50);
+  width: 2rem;
+  height: 2rem;
+  display: inline-block;
+  text-align: center;
+}
+
+.bn-icon--green-archipel > span {
+  position: relative;
+  top: 0.25rem;
+}
+
+.bn-icon--blue-france-main-525 {
+  background-color: var(--blue-france-main-525);
+  border-radius: 100%;
+  color: var(--grey-1000-50);
+  width: 2rem;
+  height: 2rem;
+  display: inline-block;
+  text-align: center;
+}
+
+.bn-icon--blue-france-main-525 > span {
+  position: relative;
+  top: 0.25rem;
+}
+
+.bn-icon--pink-macaron-950-active {
+  background-color: rgb(252, 176, 162);
+  border-radius: 100%;
+  color: var(--grey-1000-50);
+  width: 2rem;
+  height: 2rem;
+  display: inline-block;
+  text-align: center;
+}
+.bn-icon--pink-macaron-950-active > span {
+  position: relative;
+  top: 0.25rem;
+}
+
+.bn-text--shadow {
+  color: var(--grey-50-1000);
+  text-shadow: #818080 0.1em 0.3em 0.34em;
+}
+
+.bn-ellipse {
+  box-sizing: border-box;
+  clip-path: ellipse(50% 50%);
+}
+.bn-ellipse-name {
+  font-family: 'Marianne';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  color: var(--grey-1000-50);
+  background: #c2b24c;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.bn-ellipse-img {
+  width: 3rem;
+  height: 3rem;
+}
+.bn-ellipse-account {
+  color: var(--grey-1000-50);
+  background: var(--blue-france-main-525);
+  border: 5px solid var(--blue-france-main-525);
+}
+.bn-ellipse-file-text {
+  color: var(--grey-1000-50);
+  background: var(--green-tilleul-verveine-sun-418-moon-817);
+  border: 5px solid var(--green-tilleul-verveine-sun-418-moon-817);
+}
+.bn-dossier-pj-box {
+  color: var(--grey-50-1000);
+  background: var(--info-950-100);
+  font-family: 'Marianne';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  padding-right: 1rem;
+}
+
+/* =============== SIZES =============== */
+.bn-scroll-parent {
+  overflow: auto !important;
+  min-height: 0 !important;
+  height: 100% !important;
+}
+
+.bn-dynamic-big-p {
+  padding: 2rem;
+}
+
+.bn-dynamic-big-pt {
+  padding-top: 2rem;
+}
+
+.bn-dynamic-small-p {
+  padding: 1rem;
+}
+
+.bn-dynamic-small-pt {
+  padding-top: 1rem;
+}
+
+@media screen and (max-height: 780px) {
+  .bn-dynamic-big-p {
+    padding: 1rem;
+  }
+
+  .bn-dynamic-big-pt {
+    padding-top: 1rem;
+  }
+
+  .bn-dynamic-small-p {
+    padding: 0;
+  }
+
+  .bn-dynamic-small-pt {
+    padding-top: 0;
+  }
+}
+
+/* Shepherd tour styles */
+.shepherd-element {
+  @extend .fr-card;
+  @extend .fr-card--no-arrow;
+
+  box-shadow: var(--lifted-shadow);
+  max-width: 450px;
+  border-radius: 0;
+}
+
+.shepherd-custom-class {
+  border: 1px solid var(--border-default-grey);
+}
+
+.shepherd-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  background-color: transparent;
+  border-bottom: none;
+  border-radius: 0%;
+}
+
+.shepherd-has-title .shepherd-content .shepherd-header {
+  padding: .5rem .75rem;
+}
+
+.shepherd-header .shepherd-title {
+  flex-grow: 1;
+  flex-shrink: 1;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  margin: 0;
+  font-family: 'Marianne', arial, sans-serif;
+  font-weight: 700;
+  color: var(--text-title-grey);
+  font-size: 1.25rem;
+  line-height: 1.4;
+  background: transparent;
+}
+
+.shepherd-header .shepherd-cancel-icon {
+  flex-shrink: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 24px;
+  font-weight: 400;
+}
+
+.shepherd-header .shepherd-cancel-icon:hover {
+  background-color: var(--hover-tint);
+  border-radius: 4px;
+}
+
+.shepherd-arrow, .shepherd-arrow:before {
+  background-color: transparent;
+}
+
+.shepherd-text {
+  font-family: 'Marianne', arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.75rem;
+  color: var(--text-default-grey);
+}
+
+.shepherd-text p {
+  margin-bottom: 1rem;
+}
+
+.shepherd-modal-overlay {
+  background: rgba(0, 0, 0, 0.75);
+}
+
+.shepherd-footer {
+  display: flex !important;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.shepherd-footer button,
+.shepherd-footer .shepherd-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1rem;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+  font-family: 'Marianne', arial, sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.5;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-height: 2rem;
+  padding: 0.25rem 0.75rem;
+  background-color: var(--background-action-high-blue-france);
+  color: var(--text-inverted-blue-france);
+  border-color: var(--background-action-high-blue-france);
+  border-radius: 0;
+}
+
+.shepherd-footer button:hover,
+.shepherd-footer .shepherd-button:hover {
+  background-color: var(--background-action-high-blue-france-hover);
+  border-color: var(--background-action-high-blue-france-hover);
+}
+
+.shepherd-footer button:active,
+.shepherd-footer .shepherd-button:active {
+  background-color: var(--background-action-high-blue-france-active);
+  border-color: var(--background-action-high-blue-france-active);
+}
+
+.shepherd-footer button.fr-btn--tertiary,
+.shepherd-footer .shepherd-button.fr-btn--tertiary {
+  background-color: transparent;
+  color: var(--text-action-high-blue-france);
+  border-color: var(--border-action-high-blue-france);
+}
+
+.shepherd-footer button.fr-btn--tertiary:hover,
+.shepherd-footer .shepherd-button.fr-btn--tertiary:hover {
+  background-color: var(--background-action-low-blue-france-hover);
+  color: var(--text-action-high-blue-france-hover);
+  border-color: var(--border-action-high-blue-france-hover);
+}
+
+.shepherd-footer button.fr-btn--tertiary:active,
+.shepherd-footer .shepherd-button.fr-btn--tertiary:active {
+  background-color: var(--background-action-low-blue-france-active);
+  color: var(--text-action-high-blue-france-active);
+  border-color: var(--border-action-high-blue-france-active);
+}
+
+.shepherd-footer button:not(:last-child),
+.shepherd-footer .shepherd-button:not(:last-child) {
+  margin-right: 0.75rem;
+}

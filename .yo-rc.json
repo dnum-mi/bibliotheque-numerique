@@ -1,0 +1,12 @@
+{
+  "generator-gitlab-ci": {
+    "typeLanguage": "node",
+    "workingDir": "package.json",
+    "artefactDir": ".",
+    "nodeInstallCommand": "npm",
+    "nodeBuildCommand": "npm run build",
+    "projectName": "bibliotheque_numerique",
+    "organisationName": "dnum-mi",
+    "nodeVersion": "16"
+  }
+}

@@ -1,0 +1,198 @@
+entity: Demarche
+items:
+  demarche-fe:
+    id: 1
+    state: "published"
+    title: "Déclaration de FE"
+    identification: "FE"
+    types: ["ASSO","FDD"]
+    mappingColumns: [
+      { "id": "I01", "columnLabel": "Identifiant", "type": "string" },
+      { "id": "I02", "columnLabel": "Moment", "type": "date" },
+      { "id": "I03", "columnLabel": "Titre", "type": "string" },
+      { "id": "I04", "columnLabel": "Consentement", "type": "string" },
+      { "id": "I05", "columnLabel": "Etat", "type": "enum" },
+      { "id": "I06", "columnLabel": "Delais", "type": "number" },
+      { "id": "I07", "columnLabel": "Excel", "type": "string" },
+      {
+        'id': "I42",
+        'children': [
+          { "id": "I08", "columnLabel": "Montant", "type": "number" },
+          { "id": "I09", "columnLabel": "Pays", "type": "string" },
+          { "id": "I10", "columnLabel": "Organismefinanceur", "type": "string" }
+        ],
+      }
+    ]
+    dsDataJson: {number: 76}
+  configurationDemarche:
+    id: 2
+    state: "published"
+    title: 'Démarche de test pour les configurations'
+    dsDataJson: {number: 77}
+    types: ["ASSO","FRUP"]
+    mappingColumns: [
+      {
+        id: '01',
+        columnLabel: null,
+        originalLabel: 'Title',
+        type: 'string',
+        formatFunctionRef: null
+      },
+      {
+        id: '02',
+        columnLabel: 'already a custom label',
+        originalLabel: 'state',
+        type: 'string',
+        formatFunctionRef: 'state'
+      }
+    ]
+  demarche-number-2:
+    id: 3
+    state: "published"
+    title: "Déclaration de FE"
+    identification: "FE"
+    types: ["FE","FDD"]
+    dsDataJson: { number: 2}
+  demarche-number-3:
+    id: 4
+    state: "published"
+    title: "Déclaration de FE"
+    identification: "FE"
+    types: ["ASSO"]
+    dsDataJson: { number: 3 }
+  demarche-update-identification:
+    id: 5
+    state: "published"
+    title: "[UPDATE-IDENTIFICATION] Déclaration de FE"
+    types: ["ASSO"]
+    mappingColumns: [
+      {"id":"I01", "columnLabel":"Identifiant"},
+      {"id":"I02", "columnLabel":"Moment"},
+      {"id":"I03", "columnLabel":"Titre"},
+      {"id":"I04", "columnLabel":"Consentement"},
+      {"id":"I05", "columnLabel":"Etat"},
+      {"id":"I06", "columnLabel":"Delais"},
+      {"id":"I07", "columnLabel":"Excel"},
+      {"id":"I08", "columnLabel":"Montant"},
+      {"id":"I09", "columnLabel":"Pays"},
+      {"id":"I10", "columnLabel":"Organismefinanceur"}
+    ]
+    dsDataJson: {number: 4}
+  demarche-delete-identification:
+    id: 6
+    state: "published"
+    title: "[DELETE-IDENTIFICATION] Déclaration de FE"
+    types: ["ASSO"]
+    identification: "FE"
+    mappingColumns: [
+    {
+        "id": "ca6b1946-efe2-448d-b9e3-645829093dc6",
+        "type": "number",
+        "source": "fix-field",
+        "columnLabel": null,
+        "originalLabel": "Temps restant",
+        "formatFunctionRef": "remaing-time"
+    },
+    {
+        "id": "ca6b1946-efe2-448d-b9e3-645829093dc5",
+        "type": "string",
+        "source": "fix-field",
+        "columnLabel": null,
+        "originalLabel": "Etat délai",
+        "formatFunctionRef": "delay-status"
+    },
+      {"id":"I01", "columnLabel":"Identifiant"},
+      {"id":"I02", "columnLabel":"Moment"},
+      {"id":"I03", "columnLabel":"Titre"},
+      {"id":"I04", "columnLabel":"Consentement"},
+      {"id":"I05", "columnLabel":"Etat"},
+      {"id":"I06", "columnLabel":"Delais"},
+      {"id":"I07", "columnLabel":"Excel"},
+      {"id":"I08", "columnLabel":"Montant"},
+      {"id":"I09", "columnLabel":"Pays"},
+      {"id":"I10", "columnLabel":"Organismefinanceur"}
+    ]
+    dsDataJson: {number: 5}
+  demarche-undefined-identification:
+    id: 7
+    state: "published"
+    title: "[UNDEFINED-IDENTIFICATION] Déclaration de FE"
+    types: ["ASSO", "FDD"]
+    identification: "FE"
+    mappingColumns: [
+    {
+        "id": "ca6b1946-efe2-448d-b9e3-645829093dc6",
+        "type": "number",
+        "source": "fix-field",
+        "columnLabel": null,
+        "originalLabel": "Temps restant",
+        "formatFunctionRef": "remaing-time"
+    },
+    {
+        "id": "ca6b1946-efe2-448d-b9e3-645829093dc5",
+        "type": "string",
+        "source": "fix-field",
+        "columnLabel": null,
+        "originalLabel": "Etat délai",
+        "formatFunctionRef": "delay-status"
+    },
+      {"id":"I01", "columnLabel":"Identifiant"},
+      {"id":"I02", "columnLabel":"Moment"},
+      {"id":"I03", "columnLabel":"Titre"},
+      {"id":"I04", "columnLabel":"Consentement"},
+      {"id":"I05", "columnLabel":"Etat"},
+      {"id":"I06", "columnLabel":"Delais"},
+      {"id":"I07", "columnLabel":"Excel"},
+      {"id":"I08", "columnLabel":"Montant"},
+      {"id":"I09", "columnLabel":"Pays"},
+      {"id":"I10", "columnLabel":"Organismefinanceur"}
+    ]
+    dsDataJson: {number: 6}
+  demarche-delete-soft:
+    id: 8
+    state: "published"
+    title: "[SOFT-DELETE] Déclaration de FE"
+    types: ["ASSO"]
+    identification: "FE"
+    mappingColumns: [
+      {"id":"I01", "columnLabel":"Identifiant"},
+      {"id":"I02", "columnLabel":"Moment"},
+      {"id":"I03", "columnLabel":"Titre"},
+      {"id":"I04", "columnLabel":"Consentement"},
+      {"id":"I05", "columnLabel":"Etat"},
+      {"id":"I06", "columnLabel":"Delais"},
+      {"id":"I07", "columnLabel":"Excel"},
+      {"id":"I08", "columnLabel":"Montant"},
+      {"id":"I09", "columnLabel":"Pays"},
+      {"id":"I10", "columnLabel":"Organismefinanceur"}
+    ]
+    dsDataJson: {number: 7}
+  demarche-delay:
+    id: 9
+    state: "published"
+    title: "Déclaration de FE avec etat delai"
+    identification: "FE"
+    types: ["ASSO"]
+    mappingColumns: [
+      { "id": "I11", "columnLabel": "Etat délai", "type": "enum" },
+    ]
+    dsDataJson: {number: 80}
+  demarche-anonymize:
+    id: 10
+    state: "published"
+    title: "Déclaration dossier anonymize"
+    mappingColumns: [
+      { "id": "I12", "columnLabel": "Anonymize", "type": "string" },
+    ]
+    dsDataJson: {number: 81}
+    nbrMonthAnonymisation: 0
+    anonymizationEvent: "DepotDate"
+    mappingAnonymized: [
+      { "id": "Q2hhbXAtNDE2Mjg0NQ==", "columnLabel": "", "originalLabel": "nom", "source": "champs" },
+      { "id": "Q2hhbXAtNDE2Mjg0NW==", "columnLabel": "", "originalLabel": "prenom", "source": "champs" },
+      { "id": "Q2hhbXAtNDE2Mjg0NN==", "columnLabel": "", "originalLabel": "nom", "source": "champs" },
+      { "id": "Q2hhbXAtNDE2Mjg0NM==", "columnLabel": "", "originalLabel": "prenom", "source": "champs" },
+    ]
+    isOnAllDossiersOfOrganisme: false
+
+
