@@ -10,7 +10,7 @@ import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { OrganismeService } from '@/modules/organismes/providers/organisme.service'
 import { RnfService } from '@/modules/organismes/providers/rnf.service'
 import { BnConfigurationService } from '@/shared/modules/bn-configurations/providers/bn-configuration.service'
-import { eBnConfiguration, ISiafRnfOutput } from '@biblio-num/shared'
+import { eBnConfiguration, IRnaOutput, ISiafRnaOutput, ISiafRnfOutput } from '@biblio-num/shared'
 import { RnaService } from '@/modules/organismes/providers/rna.service'
 import { FieldService } from '@/modules/dossiers/providers/field.service'
 import { ALS_INSTANCE } from '@/shared/modules/als/als.module'
@@ -20,6 +20,9 @@ import { Inject } from '@nestjs/common'
 import { differenceInMonths, isAfter } from 'date-fns'
 import { OrganismeSyncStateService } from '@/modules/organismes/providers/organisme-sync-state.service'
 import { OrganismeSyncService } from '@/modules/organismes/providers/organisme-sync.service'
+import { OrganismeRnaService } from '@/modules/organismes/providers/organisme-rna.service'
+import { IGetUpdateAssociationInputDto } from '@/modules/organismes/objects/dto/get-updated-association-input.dto'
+import { eFileStorageIn } from '../../../modules/files/objects/const/file-storage-in.enum'
 
 @Processor(QueueName.sync)
 export class OrganismeProcessor {
@@ -32,6 +35,7 @@ export class OrganismeProcessor {
     private readonly bnConfiguration: BnConfigurationService,
     private readonly syncState: OrganismeSyncStateService,
     private readonly organismeSyncService: OrganismeSyncService,
+    private readonly organismeRnaService: OrganismeRnaService,
     @InjectQueue(QueueName.sync) private readonly syncQueue: Queue,
     @Inject(ALS_INSTANCE)
     private readonly als?: AsyncLocalStorage<AsyncLocalStore>,
@@ -105,7 +109,47 @@ export class OrganismeProcessor {
   async syncAllRnaOrganisme(job: Job<never>): Promise<void> {
     // TODO: const rnas = await this.organismeService.getAllRnaOrganisme()
     // TODO: There is no way as of this time to have the last updated rna organisme from the rna api.
-    await this.als.run({ job }, async () => {})
+    await this.als.run({ job }, async () => {
+      this.logger.verbose('syncAllRnaOrganisme')
+
+      const isSyncRnaViaHub = await this.bnConfiguration.getValueByKeyName(
+        eBnConfiguration.SYNC_RNA_VIA_HUB,
+      )
+
+      if (!isSyncRnaViaHub) {
+        this.logger.warn('Sync hub is not actived')
+        return
+      }
+
+      const lastSyncConfig = await this.bnConfiguration.findByKeyName(
+        eBnConfiguration.LAST_ORGANISM_SYNC_AT,
+      )
+
+      const rnas = await this.organismeService.getAllRnaOrganisme()
+      const query: IGetUpdateAssociationInputDto = {
+        ids: rnas.map((r) => r.idRna),
+      }
+      if (lastSyncConfig.stringValue) {
+        query.lastUpdatedAt = lastSyncConfig.stringValue
+      }
+      const modifiedRnaIds = await this.organismeRnaService.getLastUpdated(query)
+
+      const dateNow = new Date().toISOString()
+      const addJobsResults = await Promise.allSettled(modifiedRnaIds.map(async (rnfId) => {
+        return this.organismeSyncService.addSyncOneRna(rnfId)
+      }))
+
+      const rejectedCount = addJobsResults.filter((result) => result.status === 'rejected')
+      this.logger.debug(`Add jobs sync organismes rna: ${addJobsResults}`)
+      if (rejectedCount) {
+        this.logger.warn(`Failed to add ${rejectedCount} jobs to sync organismes rna`)
+      }
+
+      await this.bnConfiguration.setConfig(
+        eBnConfiguration.LAST_ORGANISM_SYNC_AT,
+        dateNow,
+      )
+    })
   }
 
   @Process(eJobName.SyncOneRnaOrganisme)
@@ -114,33 +158,64 @@ export class OrganismeProcessor {
   ): Promise<void> {
     await this.als.run({ job }, async () => {
       this.logger.verbose('syncOneRnaOrganisme')
-      const rawRna = await this.rnaService.getAssociation(job.data.rna)
-      job.progress(50)
-      job.log('Association retrieved from rna')
-      job.log(JSON.stringify(rawRna))
-      if (rawRna === null) {
-        job.log('RnaId is null, deleting reference in database')
-        await this.organismeService.repository.delete({ idRna: job.data.rna })
-        job.progress(75)
-        if (job.data.fieldId) {
-          job.log('Putting field rna to ERROR-RNA')
-          await this.fieldService.updateOrThrow(job.data.fieldId, {
-            stringValue: `ERROR-${job.data.rna}`,
-          })
+      try {
+        const isSyncRnaViaHub = await this.bnConfiguration.getValueByKeyName(
+          eBnConfiguration.SYNC_RNA_VIA_HUB,
+        )
+
+        await this.syncState.setStateUploadingByIdRna(job.data.rna, job.data.syncState)
+        let rawRna: ISiafRnaOutput | IRnaOutput
+        if (isSyncRnaViaHub) {
+          rawRna = await this.organismeService.getAssocationFromHub(job.data.rna)
+        } else {
+          rawRna = await this.rnaService.getAssociation(job.data.rna)
         }
-      } else {
-        if (job.data.fieldId) {
-          await this.fieldService.updateOrThrow(job.data.fieldId, {
-            stringValue: `${job.data.rna}`,
-          })
+
+        job.progress(50)
+        job.log('Association retrieved from rna')
+        job.log(JSON.stringify(rawRna))
+        if (rawRna === null) {
+          job.log('RnaId is null, deleting reference in database')
+          await this.organismeService.repository.delete({ idRna: job.data.rna })
+          job.progress(75)
+          if (job.data.fieldId) {
+            job.log('Putting field rna to ERROR-RNA')
+            await this.fieldService.updateOrThrow(job.data.fieldId, {
+              stringValue: `ERROR-${job.data.rna}`,
+            })
+          }
+        } else {
+          if (job.data.fieldId) {
+            await this.fieldService.updateOrThrow(job.data.fieldId, {
+              stringValue: `${job.data.rna}`,
+            })
+          }
+          if (isSyncRnaViaHub) {
+            // Clean Data
+            await this.organismeRnaService.deleteFiles(job.data.rna, eFileStorageIn.S3)
+            // Update RNA
+            await this.organismeService.updateOrganismeRnaFromHub(rawRna as ISiafRnaOutput)
+            job.log('Updated Organisme from rna')
+            job.progress(60)
+            await this.organismeService.synchroniseRnaFilesFromHub(rawRna as ISiafRnaOutput)
+            job.log('Rna files job created')
+          } else {
+            // Clean Data
+            await this.organismeRnaService.deleteFiles(job.data.rna, eFileStorageIn.HUB)
+            // Update RNA
+            await this.organismeService.updateOrganismeFromRna(job.data.rna, rawRna as IRnaOutput)
+            job.log('Updated Organisme from rna')
+            job.progress(60)
+            await this.organismeService.synchroniseRnaFiles(job.data.rna, rawRna as IRnaOutput)
+            job.log('Rna files job created')
+          }
         }
-        await this.organismeService.updateOrganismeFromRna(job.data.rna, rawRna)
-        job.log('Updated Organisme from rna')
-        job.progress(60)
-        await this.organismeService.synchroniseRnaFiles(job.data.rna, rawRna)
-        job.log('Rna files job created')
+        job.progress(100)
+        await this.syncState.setStateUploadedByRnaId(job.data.rna)
+      } catch (e) {
+        await this.syncState.setStateFailedByRnaId(job.data.rna, e.message, job.data.syncState)
+        throw e
       }
-      job.progress(100)
     })
   }
   // #endregion synchronization RNA
@@ -185,8 +260,10 @@ export class OrganismeProcessor {
       }))
 
       const rejectedCount = addJobsResults.filter((result) => result.status === 'rejected')
-      this.logger.debug(`Add jobs sync organismes: ${addJobsResults}`)
-      this.logger.warn(`Failed to add ${rejectedCount} jobs to sync organismes rnf`)
+      this.logger.debug(`Add jobs sync organismes rnf: ${addJobsResults}`)
+      if (rejectedCount) {
+        this.logger.warn(`Failed to add ${rejectedCount} jobs to sync organismes rnf`)
+      }
 
       await this.bnConfiguration.setConfig(
         eBnConfiguration.LAST_FOUNDATION_SYNC_AT,
@@ -230,7 +307,11 @@ export class OrganismeProcessor {
               stringValue: `${job.data.rnf}`,
             })
           }
-
+          // Clean data
+          if (!isSyncRnfViaHub) {
+            await this.organismeService.deleteFilesOfRnf(job.data.rnf, eFileStorageIn.HUB)
+          }
+          // UPDATE Rnf
           await this.organismeService.updateOrganismeFromRnf(
             job.data.rnf,
             rawRnf,

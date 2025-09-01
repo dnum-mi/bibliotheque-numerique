@@ -10,7 +10,7 @@ interface IObjetSocial {
   categories: ICategoryObjectSocial[];
 }
 
-interface IRnaAdrgAddress {
+export interface IRnaAdrgAddress {
   declarant: string | null;
   complemid: string | null;
   complemgeo: string | null;
@@ -21,7 +21,7 @@ interface IRnaAdrgAddress {
   pays: string | null;
 }
 
-interface IRnaAdrsAddress {
+export interface IRnaAdrsAddress {
   complement: string | null;
   numvoie: string | null;
   repetition: string | null;
@@ -36,7 +36,7 @@ interface IRnaAddress {
   kind: string;
   address: IRnaAdrgAddress | IRnaAdrsAddress;
 }
-interface IAddressRna extends ISiafAddress {
+export interface IAddressRna extends ISiafAddress {
   rnaAddress?: IRnaAddress;
 }
 

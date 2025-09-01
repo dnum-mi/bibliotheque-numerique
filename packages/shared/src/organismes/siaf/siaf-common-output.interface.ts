@@ -1,10 +1,15 @@
-
+interface IRnaFile {
+  uploadAt: Date,
+  typePiece: string | null,
+  typeRecepisse: string | null
+}
 export interface IFile {
   id: string;
   name: string;
   checksum: string;
   byteSize: number;
   mimeType: string; //eFileMimeType;
+  rnaFile?: IRnaFile | undefined;
 }
 
 export interface IDissolved {

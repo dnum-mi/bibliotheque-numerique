@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common'
 import type {
   IDissolved,
   IFile,
+  ISiafRnaOutput,
   IStatus,
 } from '@biblio-num/shared'
 import {
@@ -21,8 +22,13 @@ import {
 } from '../objects/const/rna-code-to-label-and-tag.const'
 import { FileService } from './file.service'
 
+type tFileToRename = {
+    file: IFile,
+    dateDepot: string | Date | undefined,
+    labelAndTag: TLabelAndTag,
+}
 @Injectable()
-export class FileFoundationService extends BaseEntityService<File> {
+export class FileOrganismeHubService extends BaseEntityService<File> {
   constructor(
     protected logger: LoggerService,
     @InjectRepository(File) protected repo: Repository<File>,
@@ -105,10 +111,67 @@ export class FileFoundationService extends BaseEntityService<File> {
         this._checkAndCreateFile(
           file,
           dateDepot,
-          { tag: eFileTag.other, label: 'dissolution' },
+          { tag: eFileTag.other, label: 'Autres piéces de dissolution' },
           fileCommon,
         ),
       ))
+    }
+  }
+
+  getFilesFromRawRna(rawRna: ISiafRnaOutput):tFileToRename[] {
+    let files: tFileToRename[] = []
+    // STATUS
+    if (rawRna.status?.file) {
+      files.push({
+        labelAndTag: dRnaCodeToLabelAndTag.STC,
+        file: rawRna.status?.file,
+        dateDepot: rawRna.status?.file?.rnaFile?.uploadAt || rawRna.updatedAt,
+      })
+    }
+    // DISSOLUTION
+    if (rawRna.dissolved?.verbalProcess) {
+      files.push({
+        labelAndTag: dRnaCodeToLabelAndTag.PV,
+        file: rawRna.dissolved?.verbalProcess,
+        dateDepot: rawRna.dissolved?.verbalProcess?.rnaFile?.uploadAt || rawRna.dissolved.dissolvedAt,
+      })
+    }
+    if (rawRna.dissolved.mandatLetter) {
+      files.push({
+        labelAndTag: { tag: eFileTag.other, label: 'Lettre de mandat de dissolution' },
+        file: rawRna.dissolved?.mandatLetter,
+        dateDepot: rawRna.dissolved?.mandatLetter?.rnaFile?.uploadAt || rawRna.dissolved.dissolvedAt,
+      })
+    }
+    if (rawRna.dissolved?.otherFiles?.length) {
+      files = files.concat(rawRna.dissolved?.otherFiles.map(file => ({
+        labelAndTag: { tag: eFileTag.other, label: 'Autres piéces de dissolution' },
+        file,
+        dateDepot: file.rnaFile?.uploadAt || rawRna.dissolved.dissolvedAt,
+      })))
+    }
+    // Dirigeants
+    if (rawRna.directors.file) {
+      files.push({
+        labelAndTag: dRnaCodeToLabelAndTag.LDC,
+        file: rawRna.directors.file,
+        dateDepot: rawRna.directors.file?.rnaFile.uploadAt || rawRna.updatedAt,
+      })
+    }
+    // Autres PJs
+    if (rawRna.files?.length) {
+      files = files.concat(rawRna.files.map(file => ({
+        file,
+        labelAndTag: { tag: eFileTag.other, label: file.rnaFile?.typePiece || file.rnaFile?.typeRecepisse || 'Autre' },
+        dateDepot: file.rnaFile?.uploadAt || rawRna.updatedAt,
+      })))
+    }
+    return files
+  }
+
+  async checkAndCreateFiles(fileCommon: tFileCommon, files: tFileToRename[]): Promise<void> {
+    for (const file of files) {
+      await this._checkAndCreateFile(file.file, file.dateDepot, file.labelAndTag, fileCommon)
     }
   }
 }

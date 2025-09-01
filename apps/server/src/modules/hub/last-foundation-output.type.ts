@@ -1,9 +1,5 @@
-export interface ILastFoundationOuptut {
-  scroll_id: string,
-  total_records: number,
-  fondations: {
-      id: string,
-      updatedAt: string,
-      hubImportedAt: string
-    } []
+import { ILastOrganismeOuptut, IOrganismeOfLastImportOutput } from './last-commun-output.type'
+
+export interface ILastFoundationOuptut extends ILastOrganismeOuptut {
+  fondations: IOrganismeOfLastImportOutput []
 }

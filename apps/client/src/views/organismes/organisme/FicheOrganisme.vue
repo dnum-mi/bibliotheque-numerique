@@ -11,10 +11,10 @@ import type {
   IPagination,
   IRole,
   FileTagKey,
-  ISiafAssociationOutput,
   IOrganismeOutputDto,
   ISiafRnfHistoryOutput,
   ISiafRnfOutput,
+  ISiafRnaOutput,
 } from '@biblio-num/shared'
 import {
   dFileTabDictionary,
@@ -40,7 +40,7 @@ const organisme = computed(() => organismeStore.organisme as IOrganismeOutputDto
 const organismeSiaf = computed(() => organismeStore.organismeSiaf)
 const syncState = computed(() => organismeStore.syncState)
 const dossiersCount = computed(() => organismeStore.dossiersCount)
-
+const rnaImportedAt = computed(() => (organisme.value?.rnaJson as ISiafRnaOutput)?.rnaImportedAt)
 const hasSiaf = computed(() => !!organismeStore.organismeSiaf)
 const hasSiafAssociation = computed(() => {
   const organisme = organismeSiaf.value as IOrganismeOutputDto | undefined
@@ -151,10 +151,10 @@ const onRefreshSync = async () => {
               big
             />
             <span class="fr-text--lead fr-text--bold">
-              {{ (organismeSiaf as ISiafAssociationOutput)?.identite?.id_rna || (organismeSiaf as IOrganismeOutputDto)?.idRnf }} -
+              {{ organismeSiaf?.idRna || organismeSiaf?.idRnf }} -
             </span>
             <span class="fr-text--lead">{{
-              (organismeSiaf as ISiafAssociationOutput)?.identite?.nom || (organismeSiaf as IOrganismeOutputDto).title
+              organismeSiaf?.title
             }}</span>
           </div>
           <div class="w-1/7">
@@ -166,7 +166,9 @@ const onRefreshSync = async () => {
           </div>
         </div>
       </template>
-
+      <template v-if="rnaImportedAt" #sub-title>
+        <span class="italic">Données anti-datées de juin 2023</span>
+      </template>
       <template #content>
         <Spinner v-if="isSynchronising" message="Synchronisation en cours..." />
         <div v-else-if="isErrorSync" class="flex flex-col justify-center items-center p-10">

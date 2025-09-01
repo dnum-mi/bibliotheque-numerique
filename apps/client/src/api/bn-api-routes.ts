@@ -55,6 +55,7 @@ export const getAssociationRoute = (organismeRna: string) => `${organismesRoute}
 export const getFoundationRoute = (organismeRnf: string) => `${organismesRoute}/fondation/${organismeRnf}`
 export const searchOrganisme = (sentence: string) => `${organismesRoute}/search/${sentence}`
 export const getAddOneRnfRoute = (id: string) => `${organismesRoute}/rnf/${id}`
+export const getAddOneRnaRoute = (id: string) => `${organismesRoute}/rna/${id}`
 
 export const customFiltersRoute = '/custom-filters'
 export const getCustomFiltersRoute = () => customFiltersRoute

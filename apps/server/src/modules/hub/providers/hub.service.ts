@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common'
 import { LoggerService } from '../../../shared/modules/logger/logger.service'
 import { ConfigService } from '@nestjs/config'
 import type {
-  ISiafAssociationOutput,
   ISiafRnaOutput,
   ISiafRnfOutput,
   ISiafSearchOrganismeOutput,
@@ -10,9 +9,11 @@ import type {
 import axios, { AxiosInstance } from 'axios'
 import { Stream } from 'node:stream'
 import { ILastFoundationOuptut } from '../last-foundation-output.type'
+import { ILastOrganismeOuptut } from '../last-commun-output.type'
+import { ILastAssocationOuptut } from '../last-assocation-output.type'
 
 export interface IAssociations {
-  associations: ISiafRnaOutput | ISiafAssociationOutput
+  associations: ISiafRnaOutput
 }
 export interface IFondations {
   fondations: ISiafRnfOutput
@@ -58,6 +59,21 @@ export class HubService {
       .get(url, { responseType: 'stream' })
   }
 
+  async _getLastImport<T extends ILastOrganismeOuptut>(
+    pathStr: string,
+    lastUpdatedAt: string,
+    scrollId?: string,
+  ): Promise<T> {
+    const dateLastUpdatedAt = new Date(lastUpdatedAt)
+    if (!dateLastUpdatedAt) throw new Error(`${lastUpdatedAt} is not date format`)
+    const timeStampLastUpdatedAt = Math.trunc(dateLastUpdatedAt.getTime() / 1000)
+    let path = `${pathStr}/${timeStampLastUpdatedAt}`
+    if (scrollId) {
+      path += `?scroll_id=${scrollId}`
+    }
+    return this.axios.get(path)
+  }
+
   //#region ASSOCIATIONS
   async getAssociation(idRna: string): Promise<IAssociations | ISiafRnaOutput | null> {
     this.logger.verbose('HUB-getAssociation')
@@ -70,6 +86,16 @@ export class HubService {
     this.logger.verbose('HUB-getAssociationFile')
     return this._getFileToStream(id, uuid, ePathCompletedOrganismeByType.association)
   }
+
+  async getLastImportedAssociations(lastUpdatedAt: string, scrollId?: string):Promise<ILastAssocationOuptut> {
+    this.logger.verbose('getLastImportedFoundations')
+    return this._getLastImport<ILastAssocationOuptut>(
+      `${ePathCompletedOrganismeByType.association}/last_received_associations`,
+      lastUpdatedAt,
+      scrollId,
+    )
+  }
+
   //#endregion ASSOCIATIONS
 
   //#region FOUNDATIONS
@@ -90,14 +116,11 @@ export class HubService {
 
   async getLastImportedFoundations(lastUpdatedAt: string, scrollId?: string):Promise<ILastFoundationOuptut> {
     this.logger.verbose('getLastImportedFoundations')
-    const dateLastUpdatedAt = new Date(lastUpdatedAt)
-    if (!dateLastUpdatedAt) throw new Error(`${lastUpdatedAt} is not date format`)
-    const timeStampLastUpdatedAt = Math.trunc(dateLastUpdatedAt.getTime() / 1000)
-    let path = `${ePathCompletedOrganismeByType.foundation}/last_received_fondations/${timeStampLastUpdatedAt}`
-    if (scrollId) {
-      path += `?scroll_id=${scrollId}`
-    }
-    return this.axios.get(path)
+    return this._getLastImport<ILastFoundationOuptut>(
+      `${ePathCompletedOrganismeByType.foundation}/last_received_fondations`,
+      lastUpdatedAt,
+      scrollId,
+    )
   }
   //#endregion FOUNDATIONS
 

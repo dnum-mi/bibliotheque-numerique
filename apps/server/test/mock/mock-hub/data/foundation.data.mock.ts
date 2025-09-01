@@ -34,7 +34,6 @@ export const foundationHub: ISiafRnfOutput = {
       checksum: '2qVOGXUEJ2b89a/fsOQchQ==',
       byteSize: faker.number.int({ max: 2000000 }),
       mimeType: faker.system.mimeType(),
-      // rnaFile: {},
     },
   },
   address: {

@@ -84,6 +84,7 @@ import {
   refreshTokensRoute,
   getOrganismeHistoryByRnfRoute,
   getAddOneRnfRoute,
+  getAddOneRnaRoute,
 } from './bn-api-routes'
 import { getUserByIdRoute, profileRoute, signInRoute, verifyAuthRoute, logoutRoute, usersRoutes } from '@/api/bn-api-routes'
 
@@ -323,6 +324,11 @@ export const organismeApiClient = {
     const response = await apiClientInstance.post(getAddOneRnfRoute(id))
     return response.data
   },
+  addOneRna: async (id: string) => {
+    const response = await apiClientInstance.post(getAddOneRnaRoute(id))
+    return response.data
+  },
+
 }
 
 export const usersApiClient = {

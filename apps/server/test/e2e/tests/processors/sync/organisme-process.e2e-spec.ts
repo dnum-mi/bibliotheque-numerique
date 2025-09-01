@@ -15,9 +15,10 @@ import { HubService } from '../../../../../src/modules/hub/providers/hub.service
 import { RnfService } from '../../../../../src/modules/organismes/providers/rnf.service'
 
 import { foundationHub } from '../../../../mock/mock-hub/data/foundation.data.mock'
+import { associationHub } from '../../../../mock/mock-hub/data/association.data.mock'
 import { BnConfigurationOutputDto } from '../../../../../src/shared/modules/bn-configurations/objects/dto/bn-configuration-output.dto'
 
-describe('Synchro foundation hub', () => {
+describe('Synchro hub', () => {
   let app: INestApplication
   let syncQueue: Queue
   let tokens: Tokens
@@ -52,7 +53,7 @@ describe('Synchro foundation hub', () => {
     await dataSource.destroy()
   })
 
-  it('Should synchronize with hub when the flag ', async () => {
+  it('Should synchronize all foundations with hub when the flag ', async () => {
     await dataSource.manager.insert(Organisme, {
       state: 'uploaded',
       type: 'FE',
@@ -150,6 +151,115 @@ describe('Synchro foundation hub', () => {
     expect(organismeFound.state).toBe(eState.uploaded)
     expect(organismeFound.type).toBe(foundationHub.foundationType)
     expect(organismeFound.title).toBe(foundationHub.title)
+    expect(organismeFound.syncState).toMatchObject({
+      state: 'uploaded',
+      lastSynchronisedAt: expect.any(Date),
+      message: null,
+    })
+    expect(organismeFound.syncState.lastSynchronisedAt.toDateString()).toBe(new Date().toDateString())
+
+    // reset database
+    await dataSource.manager.remove(organismeFound.syncState)
+    await dataSource.manager.remove(organismeFound)
+  })
+
+  it('Should synchronize all associations with hub when the flag ', async () => {
+    await dataSource.manager.insert(Organisme, {
+      state: 'uploaded',
+      type: 'ASSO',
+      idRna: associationHub.id,
+      title: associationHub.title,
+    })
+
+    await syncQueue.resume()
+    // Re-initialization jobs
+    await syncQueue.getJobs(['active', 'completed']).then(async jobs => {
+      await Promise.all(jobs.map(async job => job.remove()))
+    })
+
+    await syncQueue.removeRepeatableByKey(`${eJobName.SyncAllRnfOrganisme}:.*`)
+
+    // update flags Synchro Hub of RNA
+    const SyncRnfViaHub:BnConfigurationOutputDto = await request(app.getHttpServer())
+      .get(`/bn-configurations/${eBnConfiguration.SYNC_RNA_VIA_HUB}`)
+      .set('Authorization', `Bearer ${tokens.sudo}`)
+      .expect(200)
+      .then(response => response.body)
+
+    await request(app.getHttpServer())
+      .patch(`/bn-configurations/${SyncRnfViaHub.id}`)
+      .set('Authorization', `Bearer ${tokens.sudo}`)
+      .send({ keyName: eBnConfiguration.SYNC_RNA_VIA_HUB, stringValue: 'true', valueType: 'boolean' })
+      .expect(200)
+
+    // Re-initialization the last date of synchronization of Rna
+    const lastFondationSyncAt:BnConfigurationOutputDto = await request(app.getHttpServer())
+      .get(`/bn-configurations/${eBnConfiguration.LAST_ORGANISM_SYNC_AT}`)
+      .set('Authorization', `Bearer ${tokens.sudo}`)
+      .expect(200)
+      .then(response => response.body)
+
+    expect(lastFondationSyncAt.stringValue).toContain('1970-01-01')
+
+    // Stop if there are one error
+    syncQueue.on('error', (err) => {
+      console.log(`ERROR: ${err.stack}`)
+      expect(err).toBeUndefined()
+    })
+    syncQueue.on('failed', (job, err) => {
+      console.log(`FAILED: ${job.name}`)
+      console.log(`FAILED: ${err.stack}`)
+      expect(err).toBeUndefined()
+    })
+
+    // Mock method
+    jest.spyOn(hubService, 'getLastImportedAssociations').mockResolvedValueOnce({
+      associations: [{
+        id: associationHub.id,
+        updatedAt: '2023-09-25T15:51:11.391Z',
+        hubImportedAt: '2024-09-25T15:51:11.391Z',
+      }],
+      scroll_id: faker.string.nanoid().toString(),
+      total_records: 1,
+    })
+
+    jest.spyOn(hubService, 'getAssociation').mockResolvedValue(
+      associationHub,
+    )
+
+    // Run Job Synchro
+    await syncQueue.add(eJobName.SyncAllRnaOrganisme)
+    await forceJobsFinished(syncQueue, [eJobName.SyncAllRnaOrganisme, eJobName.SyncOneRnaOrganisme])
+
+    // Expect for synchro of all rna
+    expect(hubService.getLastImportedAssociations).toHaveBeenCalled()
+
+    const LastFoundationSyncAt1 = await request(app.getHttpServer())
+      .get(`/bn-configurations/${eBnConfiguration.LAST_ORGANISM_SYNC_AT}`)
+      .set('Authorization', `Bearer ${tokens.sudo}`)
+      .expect(200)
+      .then(response => response.body)
+
+    const expectedNow = (new Date()).toISOString().split('-')[0]
+    expect(LastFoundationSyncAt1.stringValue).toContain(expectedNow)
+
+    // Wait 2nd times to see eJobName.SyncOneRnfOrganisme
+    await forceJobsFinished(syncQueue, [eJobName.SyncAllRnaOrganisme, eJobName.SyncOneRnaOrganisme])
+    // Expect for synchro of one rnf
+    const jobs = await syncQueue.getCompleted()
+    expect(jobs.map(job => job.name)).toEqual(expect.arrayContaining([eJobName.SyncOneRnaOrganisme]))
+    expect(hubService.getFoundation).toHaveBeenCalled()
+    expect(rnfService.getFoundation).not.toHaveBeenCalled()
+
+    const organismeFound = await dataSource.manager.findOne(Organisme, {
+      where: {
+        idRna: associationHub.id,
+      },
+    })
+
+    expect(organismeFound.state).toBe(eState.uploaded)
+    expect(organismeFound.type).toBe('ASSO')
+    expect(organismeFound.title).toBe(associationHub.title)
     expect(organismeFound.syncState).toMatchObject({
       state: 'uploaded',
       lastSynchronisedAt: expect.any(Date),

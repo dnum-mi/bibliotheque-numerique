@@ -9,6 +9,7 @@ import {
   StateKey,
   IPerson,
   ISiafRnfOutput,
+  ISiafRnaOutput,
 } from '@biblio-num/shared'
 import { File } from '@/modules/files/objects/entities/file.entity'
 import { ApiProperty } from '@nestjs/swagger'
@@ -125,7 +126,7 @@ export class Organisme extends BaseEntitySyncState implements IOrganisme {
     description: 'Json original reçu de RNA',
     nullable: true,
   })
-  rnaJson: IRnaOutput
+  rnaJson: IRnaOutput | ISiafRnaOutput
   //#endregion
 
   //#region RNF

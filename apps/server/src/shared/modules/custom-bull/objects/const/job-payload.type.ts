@@ -30,7 +30,8 @@ export type SyncOneRnfOrganismeJobPayload = SyncOneOrganismeJobPayload & {
 }
 
 export type SyncOneRnaOrganismeJobPayload = SyncOneOrganismeJobPayload & {
-  rna: string
+  rna: string,
+  syncState?: SyncState['id'],
 }
 
 export type UploadDsFileJobPayload = {

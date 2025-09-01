@@ -1,17 +1,16 @@
 <script lang="ts" setup>
 import { eState } from '@biblio-num/shared'
-import type { ISyncState } from '@biblio-num/shared'
 import { dateToStringFr } from '@/utils'
 import apiClient from '@/api/api-client'
+import type { TSyncState } from '../shared/types'
 
-type SyncState = (ISyncState & { id: number }) | undefined | null
 const props = defineProps<{
-  syncState: SyncState,
+  syncState: TSyncState,
 }>()
 
 const emit = defineEmits(['refresh-sync', 'refresh-data'])
 
-const state = ref<SyncState>(props.syncState)
+const state = ref<TSyncState>(props.syncState)
 const isUploading = computed(() => (props.syncState?.state === eState.uploaded || props.syncState?.state === eState.failed))
 const disabled = ref(!isUploading.value)
 
@@ -28,7 +27,7 @@ const polling = async () => {
       return
     }
     const resltut = await apiClient.getSyncStateById(state.value.id)
-    state.value = resltut as SyncState
+    state.value = resltut as TSyncState
 
     if (state.value?.state === eState.uploaded || state.value?.state === eState.failed) {
       disabled.value = false

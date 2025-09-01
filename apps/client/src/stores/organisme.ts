@@ -2,15 +2,14 @@ import type {
   IPaginated,
   IPagination,
   IOrganisme,
-  ISiafAssociationOutput,
   IOrganismeOutput,
   IOrganismeOutputDto,
   ISiafRnfHistoryOutput,
-  ISyncState,
   IEntityWithSyncState,
 } from '@biblio-num/shared'
 
 import apiClient from '@/api/api-client'
+import type { TSyncState } from '../shared/types'
 
 export type OrganismeIdType = 'Rna' | 'Rnf' | 'Id'
 export enum EOrganismeIdType {
@@ -22,9 +21,9 @@ export enum EOrganismeIdType {
 export const useOrganismeStore = defineStore('organisme', () => {
   const organisme = ref<IOrganisme | undefined>(undefined)
   const organismes = ref<Partial<IOrganisme>[]>([])
-  const organismeSiaf = ref<IOrganismeOutputDto | ISiafAssociationOutput | undefined>(undefined)
+  const organismeSiaf = ref<IOrganismeOutputDto | undefined>(undefined)
 
-  const syncState = ref<ISyncState | null | undefined>(undefined)
+  const syncState = ref<TSyncState>(undefined)
   const dossiersCount = ref<number | null>(null)
 
   const loadOrganisme = async (id: string, type: OrganismeIdType) => {
@@ -36,8 +35,8 @@ export const useOrganismeStore = defineStore('organisme', () => {
 
     const organismeOutput: IOrganismeOutput = await apiClient[`getOrganismeBy${type}`](id)
     organisme.value = organismeOutput?.bn as IOrganisme
-    organismeSiaf.value = organismeOutput?.siaf as IOrganismeOutputDto | ISiafAssociationOutput
-    syncState.value = (organisme.value as (IOrganisme & IEntityWithSyncState))?.syncState || organismeOutput?.syncState
+    organismeSiaf.value = organismeOutput?.siaf as IOrganismeOutputDto
+    syncState.value = ((organisme.value as (IOrganisme & IEntityWithSyncState))?.syncState || organismeOutput?.syncState) as TSyncState
     dossiersCount.value = organismeOutput?.dossiersCount || null
   }
 

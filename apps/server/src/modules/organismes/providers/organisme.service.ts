@@ -21,7 +21,6 @@ import {
   IOrganismeOutput,
   typeCategorieOrganisme,
   Prefecture,
-  ISiafAssociationOutput,
   IOrganismeOutputDto,
   ISiafRnfHistoryOutput,
 } from '@biblio-num/shared'
@@ -59,10 +58,11 @@ import { addYears } from 'date-fns'
 import { getCodeByRegionName } from '../utils/utils.regions'
 import { HubService } from '@/modules/hub/providers/hub.service'
 import { GetUpdateFoundationInputDto } from '../objects/dto/get-updated-foundation-input.dto'
-import { eFileStorageIn } from '../../files/objects/const/file-storage-in.enum'
+import { eFileStorageIn, FileStorageInKey } from '../../files/objects/const/file-storage-in.enum'
 import { tFileCommon } from '../../files/objects/types/file-common.type'
-import { FileFoundationService } from '../../files/providers/file-foundation.service'
+import { FileOrganismeHubService } from '../../files/providers/file-organisme-hub.service'
 import { OrganismeSyncService } from './organisme-sync.service'
+import { TransformRna } from '../utils/transform-rna'
 
 @Injectable()
 export class OrganismeService extends BaseEntityService<Organisme> {
@@ -73,7 +73,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     protected readonly rnaService: RnaService,
     protected readonly hubService: HubService,
     private readonly fileService: FileService,
-    private readonly fileFoundationService: FileFoundationService,
+    private readonly fileOrganismeHubService: FileOrganismeHubService,
     protected readonly dossierService: DossierService,
     @InjectQueue(QueueName.file) private readonly fileQueue: Queue,
     private readonly bnConfiguration: BnConfigurationService,
@@ -295,6 +295,40 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     )
   }
 
+  async updateOrganismeRnaFromHub(
+    raw: ISiafRnaOutput)
+    : Promise<void> {
+    const factoryTransformSiafRna = new TransformRna(raw)
+    const rnaToUpdate = factoryTransformSiafRna.toOrganisme()
+    const addressSiege = factoryTransformSiafRna.addressSiege
+    const rnaAddress = factoryTransformSiafRna.rnaAddressSiege
+    const gouvAddress = addressSiege?.gouvAddress
+    const dsAddress = addressSiege.dsAddress
+
+    await this.repo.update(
+      {
+        idRna: raw.id,
+      },
+      {
+        ...rnaToUpdate as Organisme,
+        state: eState.uploaded,
+        addressPostalCode: addressSiege?.gouvAddress?.postcode ||
+        addressSiege?.rnaAddress?.address.codepostal || '',
+        addressCityName: gouvAddress?.city ||
+                        dsAddress?.cityName ||
+                        rnaAddress?.libcommune ||
+                        '',
+        addressType: gouvAddress?.type || dsAddress?.type || rnaAddress?.typevoie || '',
+        addressStreetAddress: factoryTransformSiafRna.getAddressStreetAddress(),
+        addressStreetNumber: gouvAddress?.housenumber || dsAddress?.streetNumber || rnaAddress?.numvoie || '',
+        addressStreetName: gouvAddress?.street || dsAddress?.streetName || rnaAddress?.libvoie,
+        dateDissolution: raw.dissolved?.dissolvedAt,
+        declarationYears: [],
+        missingDeclarationYears: [],
+      },
+    )
+  }
+
   // TODO: cf organisme.processor
   async getAllRnaOrganisme(): Promise<SmallRnaOrganismeDto[]> {
     return this.repository.find({
@@ -372,7 +406,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
    */
   async getAssocationFromHub(
     idRna: string,
-  ): Promise<ISiafRnaOutput | ISiafAssociationOutput | null> {
+  ): Promise<ISiafRnaOutput | null> {
     this.logger.verbose('getAssocationFromHub')
     const fromSiaf = await this.hubService.getAssociation(idRna)
     this.logger.debug({ FN: 'getAssocationFromSiaf', idRna })
@@ -546,6 +580,9 @@ export class OrganismeService extends BaseEntityService<Organisme> {
 
   async getOrganismeRnfFromAllServer(idRnf: string): Promise<IOrganismeOutput> {
     this.logger.verbose('getOrganismeRnfFromAllServer')
+    // Remarque: Si ENABLE_HUB_SEARCH = true et SYNC_RNF_VIA_HUB = false
+    //   alors le fondation peut ne pas être à jours.
+    //   La donnée récupére provinedra du RAF et non du HUB
     // TODO: IOrganismeOutput doit contenir que bn Pour siaf complet
     const returnedOrganisme: IOrganismeOutput = {
       bn: null,
@@ -580,6 +617,19 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     await this.organismeSync.addSyncOneRnf(idRnf, 1)
   }
 
+  async addRnaWithSyncPriority (idRna: string): Promise<void> {
+    const enableHubSearch = await this.bnConfiguration.getValueByKeyName(
+      eBnConfiguration.ENABLE_HUB_SEARCH,
+    )
+    if (!enableHubSearch) return
+
+    const rnf = await this.getOrCreateOrganismeIdFromRna(idRna)
+    if (rnf && rnf.type !== eOrganismeType.unknown) return
+
+    if (rnf.syncState?.state === eState.uploading) return
+    await this.organismeSync.addSyncOneRna(idRna, 1)
+  }
+
   async getOrganismeRnfHistoryFromSiaf(
     idRnf: string,
   ): Promise<ISiafRnfHistoryOutput[]> {
@@ -600,27 +650,21 @@ export class OrganismeService extends BaseEntityService<Organisme> {
   }
 
   private _transformSiafRnaToOrganismeDto(
-    organisme: ISiafRnaOutput,
+    organisme: Organisme,
   ): IOrganismeOutputDto {
-    const addressSiege = organisme.addresses[1]
-    const addressGestion = organisme.addresses[0]
+    const rawJson = organisme.rnaJson as ISiafRnaOutput
+    const _factoryTransformSiafRna = new TransformRna(rawJson)
+    const addressSiege = _factoryTransformSiafRna.addressSiege
+    const addressGestion = _factoryTransformSiafRna.addressGestion
 
     return {
-      idRna: organisme.id,
-      type: eOrganismeType.ASSO,
-      siret: organisme.siret,
-      title: organisme.title,
-      email: organisme.emails.join(', '),
-      phoneNumber: organisme.phones.join(', '),
-      dateDissolution: organisme.dissolved?.dissolvedAt,
-      dateCreation: organisme.createdAt,
-      rnaJson: organisme,
-      addressLabel: addressSiege?.gouvAddress?.label,
+      ...organisme,
+      siret: rawJson.siret,
       siege: {
         coordinates: addressSiege?.coordinates,
         prefecture: this._prefectureFn(
           addressSiege?.gouvAddress?.postcode ||
-            addressSiege?.dsAddress?.postalCode,
+          addressSiege?.dsAddress?.postalCode,
         ),
         isVerified: !!(addressSiege?.gouvAddress || addressSiege?.dsAddress),
       },
@@ -635,11 +679,11 @@ export class OrganismeService extends BaseEntityService<Organisme> {
             addressGestion?.dsAddress?.postalCode,
         ),
       },
-      websites: organisme?.websites?.join(','),
-      objectDescription: organisme?.objetSocial?.description,
+      websites: rawJson?.websites?.join(','),
+      objectDescription: rawJson?.objetSocial?.description,
       generalInterest: [
         ...new Set(
-          organisme?.objetSocial?.categories.flatMap((c) => c.descriptions),
+          rawJson?.objetSocial?.categories.flatMap((c) => c.descriptions),
         ),
       ].join(','),
       createdAt: organisme?.createdAt,
@@ -647,108 +691,36 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     } as IOrganismeOutputDto
   }
 
-  // TODO: A supprimer aprés la mise du hub pour les association
-  private _transformSiafHubAssociationToOrganismeDto(
-    organisme: ISiafAssociationOutput,
-  ): IOrganismeOutputDto {
-    const addressFn = (
-      address: ISiafAssociationOutput['coordonnees']['adresse_siege'],
-    ): string => {
-      if (!address) {
-        return null
-      }
-      type addressbuild =
-        keyof ISiafAssociationOutput['coordonnees']['adresse_siege']
-      const arrayAddressBuild1: addressbuild[] = [
-        'num_voie',
-        'type_voie',
-        'voie',
-      ]
-      const addressStreetAddress = address
-        ? arrayAddressBuild1
-          .map((k) => address[k])
-          .filter((address) => !!address)
-          .join(' ')
-        : null
-      const arrayAddressBuild2: addressbuild[] = ['cp', 'commune']
-      return address
-        ? `${addressStreetAddress} ${arrayAddressBuild2
-          .map((k) => address[k])
-          .filter((address) => !!address)
-          .join(' ')}`
-        : null
-    }
-
-    const addressSiegeLabel =
-      organisme.coordonnees?.adresse_siege?.label ||
-      addressFn(organisme.coordonnees?.adresse_siege)
-    const addressGestionLabel =
-      organisme.coordonnees?.adresse_gestion?.label ||
-      addressFn(organisme.coordonnees?.adresse_gestion)
-
-    return {
-      idRna: organisme.identite.id_rna,
-      type: eOrganismeType.ASSO,
-      siret: organisme.identite.siret,
-      sigle: organisme.identite.sigle,
-      title: organisme.identite.nom,
-      email: organisme.coordonnees.courriel,
-      phoneNumber: organisme.coordonnees.telephone,
-      dateDissolution: new Date(organisme.identite.date_dissolution),
-      dateCreation: new Date(organisme.identite.date_crea),
-      rnaJson: organisme,
-      addressLabel: addressSiegeLabel,
-      siege: {
-        isVerified: !!organisme.coordonnees?.adresse_siege?.type_voie,
-        prefecture: this._prefectureFn(
-          organisme.coordonnees?.adresse_siege?.cp,
-        ),
-      },
-      gestion: {
-        addressLabel: addressGestionLabel,
-        isVerified: !!organisme.coordonnees?.adresse_gestion?.type_voie,
-        prefecture: this._prefectureFn(
-          organisme.coordonnees?.adresse_gestion?.cp,
-        ),
-      },
-      websites: organisme.coordonnees.site_web,
-      objectDescription: organisme.activites.objet,
-      generalInterest: organisme.activites.domaine,
-      createdAt: new Date(organisme?.identite?.date_crea),
-      updatedAt: new Date(organisme?.identite.date_modif_rna),
-    } as IOrganismeOutputDto
-  }
-
   async getOrganismeRnaFromAllServer(idRna: string): Promise<IOrganismeOutput> {
     this.logger.verbose('getOrganismeRnfFromAllServer')
-    const enableHubSearch = await this.bnConfiguration.getValueByKeyName(
-      eBnConfiguration.ENABLE_HUB_SEARCH,
-    )
-    const results = await Promise.allSettled([
-      this.findOneOrThrow({ where: { idRna } }),
-      enableHubSearch ? this.getAssocationFromHub(idRna) : null,
-    ])
-    const bn = this._getValueFromPromiseSettle('bn', results[0])
-    const siaf = this._getValueFromPromiseSettle('siaf', results[1])
-    const out = {
-      bn: bn && this._transformRnaToOrganismeDto(bn),
-      type: typeCategorieOrganisme.rna,
-    } as IOrganismeOutput
+    // Remarque: Si ENABLE_HUB_SEARCH = true et SYNC_RNA_VIA_HUB = false
+    //   alors l'association peut ne pas être à jours ou non trouvé.
+    //   La donnée récupére provinedra de l'api entreprise et non du HUB
 
-    if (!siaf) {
-      return {
-        ...out,
-        siaf: null,
-      }
+    const returnedOrganisme: IOrganismeOutput = {
+      bn: null,
+      siaf: null,
+      syncState: null,
+      type: typeCategorieOrganisme.rna,
     }
-    if ('identite' in siaf) {
-      out.siaf = this._transformSiafHubAssociationToOrganismeDto(
-        siaf as ISiafAssociationOutput,
-      )
+
+    const rna = await this.repo.findOne({ where: { idRna } })
+    if (!rna) return returnedOrganisme
+    returnedOrganisme.syncState = rna.syncState
+    if (!rna.rnaJson) {
+      returnedOrganisme.bn = rna
+      return returnedOrganisme
+    }
+
+    if ('rna' in rna.rnaJson) {
+      returnedOrganisme.bn = this._transformRnaToOrganismeDto(rna)
     } else {
-      out.siaf = this._transformSiafRnaToOrganismeDto(siaf as ISiafRnaOutput)
+      returnedOrganisme.bn = this._transformSiafRnaToOrganismeDto(rna)
     }
-    return out
+
+    returnedOrganisme.dossiersCount = await this.dossierService.countDossiersByOrganismeId(rna.id)
+
+    return returnedOrganisme
   }
 
   async deleteOrganismeIfNotInDossiers(id: number): Promise<string> {
@@ -822,18 +794,49 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     }
     // const dateDepot = rawRnf.updatedAt.toString()
     if (rawRnf.status) {
-      await this.fileFoundationService.synchroniseRnfStatus(
+      await this.fileOrganismeHubService.synchroniseRnfStatus(
         rawRnf.status,
         rawRnf.updatedAt,
         fileCommon,
       )
     }
     if (rawRnf.dissolved) {
-      await this.fileFoundationService.synchroniseRnfDissolved(
+      await this.fileOrganismeHubService.synchroniseRnfDissolved(
         rawRnf.dissolved,
         rawRnf.updatedAt,
         fileCommon,
       )
     }
+  }
+
+  // #region sync rna from hub
+  async synchroniseRnaFilesFromHub(rawRna: ISiafRnaOutput): Promise<void> {
+    this.logger.verbose('synchroniseRnaFilesFromHub')
+    const files = this.fileOrganismeHubService.getFilesFromRawRna(rawRna)
+    if (!files.length) {
+      this.logger.debug(`Not files for ${rawRna.id}`)
+      return
+    }
+
+    const organismeId = await this.findOneOrThrow({
+      where: { idRna: rawRna.id },
+      select: ['id'],
+    }).then((o) => o.id)
+
+    this.fileOrganismeHubService.checkAndCreateFiles({
+      sourceLabel: 'rna',
+      storageIn: eFileStorageIn.HUB,
+      organismeId,
+      state: eState.uploaded,
+    },
+    files)
+  }
+  // #endregion
+
+  async deleteFilesOfRnf(idRnf: string, storageIn: FileStorageInKey): Promise<void> {
+    const organisme = await this.repo.findOneBy({ idRnf })
+    if (!organisme) return
+
+    await this.fileService.deleteFiles({ organismeId: organisme.id, dossierId: null, storageIn })
   }
 }

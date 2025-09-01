@@ -35,8 +35,6 @@ import { XlsxService } from '@/shared/modules/xlsx/xlsx.service'
 import { PaginationDto } from '@/shared/pagination/pagination.dto'
 import { PaginatedDto } from '@/shared/pagination/paginated.dto'
 import { LeanDossierOutputDto } from '@/modules/dossiers/objects/dto/lean-dossier-output.dto'
-import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
-import { SyncOneRnaOrganismeJobPayload } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
 import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.decorator'
 import { Organisme } from '@/modules/organismes/objects/organisme.entity'
@@ -227,9 +225,7 @@ export class OrganismeController {
     this.logger.verbose('synchroniseOne')
     const smallOrg = await this.organismeService.findOneById(id)
     if (smallOrg.idRna) {
-      await this.syncQueue.add(eJobName.SyncOneRnaOrganisme, {
-        rna: smallOrg.idRna,
-      } as SyncOneRnaOrganismeJobPayload)
+      await this.organismeSyncService.addSyncOneRna(smallOrg.idRna, 1)
     } else if (smallOrg.idRnf) {
       await this.organismeSyncService.addSyncOneRnf(smallOrg.idRnf, 1)
     } else {
@@ -274,5 +270,18 @@ export class OrganismeController {
   async addOneRnf(@Param('id') idRnf: string): Promise<void> {
     this.logger.verbose('addSynchroniseOne')
     await this.organismeService.addRnfWithSyncPriority(idRnf)
+  }
+
+  @UsualApiOperation({
+    summary: 'Ajouter une association dans BN.',
+    method: 'POST',
+    minimumRole: Roles.instructor,
+    responseType: null,
+  })
+  @Post('rna/:id')
+  @Role(Roles.instructor)
+  async addOneRna(@Param('id') idRna: string): Promise<void> {
+    this.logger.verbose('addSynchroniseOne')
+    await this.organismeService.addRnaWithSyncPriority(idRna)
   }
 }

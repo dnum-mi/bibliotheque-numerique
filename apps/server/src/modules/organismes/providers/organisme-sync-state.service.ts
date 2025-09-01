@@ -67,4 +67,53 @@ export class OrganismeSyncStateService extends SyncStateGenericService<Organisme
       })
   }
   // #endregion Pour les Foundations
+
+  // #region Pour les assocaitions
+  async setStateQueuedByIdRna(idRna: string): Promise<SyncState> {
+    this.logger.verbose(`Set to Queued status for rna ${idRna}`)
+    return await super.setStateQueued({ idRna })
+  }
+
+  async setStateUploadingByIdRna(
+    idRna: string,
+    syncState?: SyncState['id'],
+  ): Promise<SyncState> {
+    this.logger.verbose('Set to uploading status for rna')
+    return await super.setStateUploading({
+      where: {
+        idRna,
+        id: syncState,
+      },
+      notFoundMessage: `Associations ${idRna} is not found`,
+      id: syncState,
+    })
+  }
+
+  async setStateUploadedByRnaId(
+    idRna: string,
+    syncState?: SyncState['id'],
+  ): Promise<SyncState> {
+    this.logger.verbose('Set uploaded status of rna')
+    return await super.setStateUploaded({
+      where: { idRna, id: syncState },
+      notFoundMessage: `Associations ${idRna} is not found`,
+      id: syncState,
+    })
+  }
+
+  async setStateFailedByRnaId(
+    idRna: string,
+    error: string,
+    syncState?: SyncState['id'],
+  ): Promise<SyncState> {
+    this.logger.verbose('Set failed status of rna')
+    return await super.setStateFailed(
+      error,
+      {
+        where: { idRna, id: syncState },
+        notFoundMessage: `Associations ${idRna} is not found`,
+        id: syncState,
+      })
+  }
+  // #endregion Pour les Associations
 }

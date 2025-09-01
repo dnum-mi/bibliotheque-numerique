@@ -62,6 +62,8 @@ describe('bn-configurations (e2e)', () => {
           createdAt: expect.any(String),
           updatedAt: expect.any(String),
         }),
+      ]))
+      expect(response.body).toEqual(expect.arrayContaining([
         expect.objectContaining({
           id: expect.any(Number),
           keyName: eBnConfiguration.FE_EXCEL_IMPORT_RANGE,

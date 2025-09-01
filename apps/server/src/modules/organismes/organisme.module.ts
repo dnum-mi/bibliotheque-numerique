@@ -16,6 +16,7 @@ import { HubModule } from '@/modules/hub/hub.module'
 import { OrganismeSyncStateService } from './providers/organisme-sync-state.service'
 import { SyncState } from '../../shared/sync-state/objects/entities/sync-state.entity'
 import { OrganismeSyncService } from './providers/organisme-sync.service'
+import { OrganismeRnaService } from './providers/organisme-rna.service'
 
 @Module({
   imports: [
@@ -33,7 +34,20 @@ import { OrganismeSyncService } from './providers/organisme-sync.service'
     HubModule,
   ],
   controllers: [OrganismeController, OrganismeFileController],
-  providers: [OrganismeService, RnaService, RnfService, OrganismeSyncStateService, OrganismeSyncService],
-  exports: [OrganismeService, RnfService, RnaService, OrganismeSyncStateService, OrganismeSyncService],
+  providers: [
+    OrganismeService,
+    RnaService,
+    RnfService,
+    OrganismeSyncStateService,
+    OrganismeSyncService,
+    OrganismeRnaService,
+  ],
+  exports: [
+    OrganismeService,
+    RnfService,
+    RnaService,
+    OrganismeSyncStateService,
+    OrganismeSyncService,
+    OrganismeRnaService],
 })
 export class OrganismeModule {}

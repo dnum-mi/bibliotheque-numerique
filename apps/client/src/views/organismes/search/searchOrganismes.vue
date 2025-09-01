@@ -74,9 +74,10 @@ const rows = computed(() => {
           label: 'Voir',
           icon: 'fr-icon-eye-line',
           onClick: async () => {
-            console.log('__TEST__', idType, id)
             if (idType === EOrganismeIdType.Rnf) {
               await apiClient.addOneRnf(id as string)
+            } else {
+              await apiClient.addOneRna(id as string)
             }
             router.push({
               name: routeNames.FICHE_ORGANISME,

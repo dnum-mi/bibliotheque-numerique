@@ -1,4 +1,4 @@
-import { In, Repository } from 'typeorm'
+import { FindOptionsWhere, In, Repository } from 'typeorm'
 import { Injectable } from '@nestjs/common'
 import { File } from '../objects/entities/file.entity'
 import type { File as TFile, Dossier as TDossier } from '@dnum-mi/ds-api-client'
@@ -36,6 +36,8 @@ import {
 } from '@/modules/files/objects/const/code-to-labels-and-tag.const'
 import { UpsertRnaFileDto } from '@/modules/files/objects/dto/input/upser-rna-file.dto'
 import { dRnaCodeToLabelAndTag, TLabelAndTag } from '@/modules/files/objects/const/rna-code-to-label-and-tag.const'
+import { eFileStorageIn, FileStorageInKey } from '../objects/const/file-storage-in.enum'
+import { S3Service } from '../../../shared/modules/s3/s3.service'
 
 const dMimeTypeToExtensionDictionary: Record<string, FileExtensionKey> = {
   'application/pdf': eFileExtension.pdf,
@@ -55,6 +57,7 @@ export class FileService extends BaseEntityService<File> {
   constructor(
     protected logger: LoggerService,
     @InjectRepository(File) protected repo: Repository<File>,
+    private readonly s3Service: S3Service,
   ) {
     super(repo, logger, FileFieldTypeHash)
     this.logger.setContext(this.constructor.name)
@@ -304,6 +307,31 @@ export class FileService extends BaseEntityService<File> {
           sourceLabel: In(sourceLabels),
         },
       })
+  }
+
+  async deleteFiles(arg: {
+    organismeId?: number | null,
+    dossierId?: number | null,
+    storageIn?: FileStorageInKey | undefined,
+  } = { organismeId: null, dossierId: null }): Promise<boolean> {
+    const { organismeId, dossierId, storageIn } = arg
+    if (
+      (organismeId === null || organismeId === undefined) &&
+      (dossierId === null || dossierId === undefined)) {
+      return false
+    }
+
+    const where: FindOptionsWhere<File> = { organismeId, dossierId }
+    if (storageIn) {
+      where.storageIn = storageIn
+    }
+    const files = await this.repo.find({ where: { organismeId, dossierId, storageIn } })
+    await Promise.all(files.map(async (file) => {
+      if (storageIn === eFileStorageIn.S3) {
+        await this.s3Service.deleteFile(file.uuid)
+      }
+      await this.repo.remove(file)
+    }))
   }
   //#endregion
 
