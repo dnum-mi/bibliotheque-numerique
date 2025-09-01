@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.36.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.35.0...v2.36.0) (2025-09-01)
+
+
+### Features
+
+* Sync rna from hub ([#1864](https://github.com/dnum-mi/bibliotheque_numerique/issues/1864)) ([f8e912f](https://github.com/dnum-mi/bibliotheque_numerique/commit/f8e912fa3ea925296820cd05b14de56141e8f969))
+
 ## [2.35.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.34.0...v2.35.0) (2025-08-29)
 
 
