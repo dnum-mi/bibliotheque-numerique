@@ -1,0 +1,21 @@
+#docker
+.dockerignore
+Dockerfile
+docker-compose*
+
+#npm
+node_modules
+dist
+
+#vscode
+.vscode
+
+#git
+# .gitignore
+.lintstagedrc.json
+
+#application
+logs
+coverage
+test
+.env

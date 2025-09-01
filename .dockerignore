@@ -1,0 +1,27 @@
+#docker
+.dockerignore
+Dockerfile
+docker-compose*
+
+#npm
+**/node_modules
+**/dist
+
+#turbo
+out
+
+#vscode
+.vscode
+
+#idea
+.idea
+
+#git
+# .gitignore
+.lintstagedrc.json
+
+#application
+logs
+coverage
+test
+.env

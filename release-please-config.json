@@ -1,0 +1,26 @@
+{
+  "include-component-in-tag": true,
+  "packages": {
+    ".": {
+      "release-type": "node",
+      "bump-minor-pre-major": false,
+      "bump-patch-for-minor-pre-major": false,
+      "draft": false,
+      "prerelease": false,
+      "include-component-in-tag": true
+    },
+    "apps/client": {
+      "release-type": "node",
+      "include-component-in-tag": true
+    },
+    "apps/server": {
+      "release-type": "node",
+      "include-component-in-tag": true
+    },
+    "packages/shared": {
+      "release-type": "node",
+      "include-component-in-tag": true
+    }
+  },
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
+}

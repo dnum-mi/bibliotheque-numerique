@@ -1,0 +1,29 @@
+{
+  "name": "@biblio-num/shared",
+  "version": "2.35.0",
+  "description": "Shared lib for BiblioNum",
+  "main": "./dist/index.cjs.js",
+  "module": "./dist/index.esm.js",
+  "types": "./types",
+  "scripts": {
+    "clean:dist": "rimraf dist types node_modules/tmp/.tsbuildinfo",
+    "dev": "nodemon --exec 'npm run build:only'",
+    "build": "run-s clean:dist build:only",
+    "build:only": "run-s build:tsup build:types",
+    "build:tsup": "tsup",
+    "build:types": "tsc --emitDeclarationOnly --declaration --outDir types"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^5.2.1",
+    "@dnum-mi/ds-api-client": "^1.7.8",
+    "@microsoft/api-extractor": "7.52.11",
+    "nodemon": "^3.0.1",
+    "npm-run-all2": "8.0.4",
+    "rimraf": "^6.0.1",
+    "tsup": "8.5.0",
+    "typescript": "5.8.3"
+  },
+  "volta": {
+    "node": "22.13.1"
+  }
+}

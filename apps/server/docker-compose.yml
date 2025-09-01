@@ -1,0 +1,240 @@
+version: '3'
+
+services:
+  worker:
+    profiles:
+      - dev
+    build:
+      target: builder
+      context: ../../
+      dockerfile: ./apps/server/Dockerfile
+    image: biblio-num/worker:dev
+    container_name: biblio-num_worker
+    depends_on:
+      - db
+    ports:
+      - 3042:${WORKER_PORT:-3042}
+      - 9230:9230
+    volumes:
+      - ../..:/app
+      - biblio-num-worker-node_modules-volume:/app/node_modules
+    networks:
+      - biblio-num-network
+    command: pnpm run start:worker-sync
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_DB: biblio-num
+      POSTGRES_USERNAME: user
+      POSTGRES_PASSWORD: password
+      DS_API_URL: ${DS_API_URL}
+      DS_API_TOKEN: ${DS_API_TOKEN}
+      FORCE_COLOR: 1
+      DEBUG: 1
+      SMTP_SERVER: mailhog
+      SMTP_PORT: 1025
+      WORKER_PORT: ${WORKER_PORT}
+      WORKER_FETCH_DATA_INTERVAL: ${WORKER_FETCH_DATA_INTERVAL}
+      WORKER_FETCH_DATA_ON_STARTUP: ${WORKER_FETCH_DATA_ON_STARTUP}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: "redis"
+      REDIS_MAX_RETRY_PER_REQUEST_COUNT: 5
+      REDIS_MAX_LOADING_RETRY: 20
+
+  server:
+    profiles:
+      - dev
+    build:
+      target: builder
+      context: ../../
+      dockerfile: ./apps/server/Dockerfile
+    image: biblio-num/server:dev
+    container_name: biblio-num_server
+    depends_on:
+      - db
+    ports:
+      - 3000:3000
+      - 9229:9229
+    volumes:
+      - ../..:/app
+      - biblio-num-server-node_modules-volume:/app/node_modules
+    networks:
+      - biblio-num-network
+    command: pnpm run dev:server-in-docker
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_DB: biblio-num
+      POSTGRES_USERNAME: user
+      POSTGRES_PASSWORD: password
+      DS_API_URL: ${DS_API_URL}
+      DS_API_TOKEN: ${DS_API_TOKEN}
+      FORCE_COLOR: 1
+      DEBUG: 1
+      SMTP_SERVER: mailhog
+      SMTP_PORT: 1025
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: "redis"
+      REDIS_MAX_RETRY_PER_REQUEST_COUNT: 5
+      REDIS_MAX_LOADING_RETRY: 20
+
+  db:
+    profiles:
+      - dev
+      - simple-dev
+      - db-only
+      - ci
+    image: postgres:14.5
+    container_name: biblio-num_db
+    restart: always
+    environment:
+      POSTGRES_DB: biblio-num
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./docker/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - type: volume
+        source: biblio-num-db-volume
+        target: /var/lib/postgresql/data
+    networks:
+      - biblio-num-network
+
+  adminer:
+    profiles:
+      - adminer
+      - dev
+    image: adminer
+    restart: always
+    ports:
+      - 8010:8080
+    environment:
+      - ADMINER_DEFAULT_SERVER=db
+      - ADMINER_DEFAULT_SYSTEM=PostgreSQL
+      - ADMINER_DESIGN=lucas-sandery
+    networks:
+      - biblio-num-network
+
+  pgadmin:
+    profiles:
+      - pgadmin
+    image: dpage/pgadmin4
+    container_name: biblio-num_dbadmin
+    depends_on:
+      - db
+    ports:
+      - 3010:80
+    volumes:
+      - type: volume
+        source: biblio-num-pgadmin-volume
+        target: /var/lib/pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    networks:
+      - biblio-num-network
+
+  mailhog:
+    profiles:
+      - dev
+      - simple-dev
+      - tests-e2e
+    container_name: mailhog
+    image: mailhog/mailhog
+    restart: always
+    ports:
+        - 1025:1025
+        - 8025:8025
+    networks:
+      - biblio-num-network
+
+  s3:
+    profiles:
+      - dev
+      - simple-dev
+      - tests-e2e
+      - s3-only
+    image: quay.io/minio/minio:RELEASE.2023-01-20T02-05-44Z
+    container_name: biblio-num_minio
+    environment:
+      MINIO_ROOT_USER: s3_biblio-num_minio # MINIO_ACCESS_KEY = MINIO_ROOT_USER
+      MINIO_ROOT_PASSWORD: s3_biblio-num_minio # MINIO_SECRET_KEY = MINIO_ROOT_PASSWORD
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - type: volume
+        source: biblio-num-s3-volume
+        target: /data
+    command: server --address ":9000" --console-address ":9001" /data
+    networks:
+      - biblio-num-network
+
+  redis:
+    profiles:
+      - dev
+      - simple-dev
+      - ci
+    image: bitnami/redis:latest
+    container_name: redis
+    environment:
+      - REDIS_PASSWORD=redis
+    ports:
+      - 6379:6379
+    networks:
+      - biblio-num-network
+
+  bullboard:
+    profiles:
+      - dev
+      - simple-dev
+    container_name: bullboard
+    image: deadly0/bull-board
+    restart: always
+    ports:
+      - 3010:3000
+    networks:
+      - biblio-num-network
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: redis
+      BULL_PREFIX: bull
+      USER_LOGIN: admin-bn
+      USER_PASSWORD: password
+    depends_on:
+      - redis
+
+  http-proxy-auth:
+    profiles:
+      - dev
+      - simple-dev
+    build:
+      context: ../../
+      dockerfile: ./apps/http-proxy/Dockerfile
+    container_name: http-proxy-auth
+    image: biblio-num/http-proxy-auth
+    restart: always
+    ports:
+      - 8888:8080
+    networks:
+      - biblio-num-network
+    environment:
+      TYPE_NGINX: basic-auth
+      BASIC_AUTH_USER_PASSWORD: 'admin-bn:$$apr1$$hjPQpN74$$S06f5oALFiHXEXFS77vjE1' # admin-bn:password, hash('password') = $apr1$hjPQpN74$S06f5oALFiHXEXFS77vjE1, replace $ with $$
+      ADMINER_PROXY_PASS: http://adminer:8080
+
+networks:
+  biblio-num-network:
+    name: biblio-num-network
+    driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1450
+
+volumes:
+  biblio-num-pgadmin-volume:
+  biblio-num-s3-volume:
+  biblio-num-db-volume:
+  biblio-num-server-node_modules-volume:
+  biblio-num-worker-node_modules-volume:

@@ -1,0 +1,184 @@
+{
+  "originalUser": {
+    "id": 1,
+    "email": "prenom.nom@example.com",
+    "lastname": "nom",
+    "firstname": "pernom",
+    "password": "password",
+    "role": {
+      "label": "admin",
+      "options": {
+        "1": {
+          "national": false,
+          "prefecture": ["75", "95"]
+        }
+      }
+    }
+  },
+  "possibleRoles": ["admin", "instuctror"],
+  "deletable": true,
+  "demarcheHash": {
+    "1": {
+      "id": 1,
+      "checked": false,
+      "editable": true,
+      "title": "Demarche 1",
+      "types": ["CULTE", "FDD"],
+      "prefectureOptions": {
+        "national": {
+          "value": false,
+          "editable": true
+        },
+        "prefectures": {
+          "value": ["75", "93"],
+          "deletable": ["75", "93"],
+          "addable": ["75", "92"]
+        }
+      }
+    },
+    "3": {
+      "id": 3,
+      "checked": true,
+      "editable": true,
+      "title": "Demarche 3",
+      "types": ["ASSO", "FDD"],
+      "prefectureOptions": {
+        "national": {
+          "value": false,
+          "editable": true
+        },
+        "prefectures": {
+          "value": ["93", "92"],
+          "deletable": ["75", "40"],
+          "addable": ["75", "93"]
+        }
+      }
+    },
+    "4": {
+      "id": 4,
+      "checked": true,
+      "editable": false,
+      "title": "Demarche 4",
+      "types": ["FE"],
+      "prefectureOptions": {
+        "national": {
+          "value": true,
+          "editable": false
+        },
+        "prefectures": {
+          "value": [],
+          "deletable": [],
+          "addable": []
+        }
+      }
+    },
+    "5": {
+      "id": 5,
+      "checked": true,
+      "editable": true,
+      "title": "Demarche 5",
+      "types": ["FE"],
+      "prefectureOptions": {
+        "national": {
+          "value": false,
+          "editable": true
+        },
+        "prefectures": {
+          "value": [],
+          "deletable": [],
+          "addable": []
+        }
+      }
+    },
+    "6": {
+      "id": 6,
+      "checked": true,
+      "editable": true,
+      "title": "Demarche 6",
+      "types": ["ASSO"],
+      "prefectureOptions": {
+        "national": {
+          "value": false,
+          "editable": false
+        },
+        "prefectures": {
+          "value": ["93", "92"],
+          "deletable": ["75", "40"],
+          "addable": ["75", "93"]
+        }
+      }
+    },
+    "7": {
+      "id": 7,
+      "checked": true,
+      "editable": true,
+      "title": "Demarche 7",
+      "types": ["FRUP"],
+      "prefectureOptions": {
+        "national": {
+          "value": true,
+          "editable": true
+        },
+        "prefectures": {
+          "value": [],
+          "deletable": [],
+          "addable": []
+        }
+      }
+    },
+    "8": {
+      "id": 8,
+      "checked": true,
+      "editable": true,
+      "title": "Demarche 8",
+      "types": ["FRUP"],
+      "prefectureOptions": {
+        "national": {
+          "value": true,
+          "editable": true
+        },
+        "prefectures": {
+          "value": [],
+          "deletable": [],
+          "addable": []
+        }
+      }
+    },
+    "9": {
+      "id": 9,
+      "checked": true,
+      "editable": true,
+      "title": "Demarche 9",
+      "types": [],
+      "prefectureOptions": {
+        "national": {
+          "value": true,
+          "editable": true
+        },
+        "prefectures": {
+          "value": ["75", "93"],
+          "deletable": ["75", "93"],
+          "addable": ["75", "93"]
+        }
+      }
+    },
+    "10": {
+      "id": 10,
+      "checked": true,
+      "editable": false,
+      "title": "Demarche 10",
+      "types": [],
+      "prefectureOptions": {
+        "national": {
+          "value": true,
+          "editable": true
+        },
+        "prefectures": {
+          "value": ["75", "93"],
+          "deletable": ["75", "93"],
+          "addable": ["75", "93"]
+        }
+      }
+    }
+  }
+}

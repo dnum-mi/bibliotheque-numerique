@@ -1,0 +1,59 @@
+{
+  "data": [
+    {
+      "id": 5563,
+      "uuid": "e0bae94a-967b-4201-9fec-8c39923677ff",
+      "label": "NaN_État financiers",
+      "mimeType": "unknown",
+      "state": "uploaded",
+      "sourceLabel": "ds-champ",
+      "tag": "account"
+    },
+    {
+      "id": 5564,
+      "uuid": "2b1e5e8d-647e-4a95-8762-8bd99b995ac5",
+      "label": "NaN_Compte d'emploi des ressources collectées auprès du public",
+      "mimeType": "unknown",
+      "state": "uploaded",
+      "sourceLabel": "ds-champ",
+      "tag": "account"
+    },
+    {
+      "id": 5565,
+      "uuid": "447ff302-91a4-4b52-803a-6a5458fac39f",
+      "label": "NaN_FE",
+      "mimeType": "unknown",
+      "state": "uploaded",
+      "sourceLabel": "ds-champ",
+      "tag": "account"
+    },
+    {
+      "id": 5566,
+      "uuid": "db97b78a-72ce-4389-a0fe-7d73281d524e",
+      "label": "NaN_État financiers certifiés",
+      "mimeType": "unknown",
+      "state": "uploaded",
+      "sourceLabel": "ds-champ",
+      "tag": "account"
+    },
+    {
+      "id": 5567,
+      "uuid": "79e10d46-7c79-4404-9d73-50b997b75a39",
+      "label": "04.03.2024_PV approbation comptes",
+      "mimeType": "unknown",
+      "state": "uploaded",
+      "sourceLabel": "ds-champ",
+      "tag": "pv"
+    },
+    {
+      "id": 5568,
+      "uuid": "7b7ede76-6cb5-4c85-8bab-9cb68da3a46f",
+      "label": "NaN_Rapport d'activité",
+      "mimeType": "unknown",
+      "state": "uploaded",
+      "sourceLabel": "ds-champ",
+      "tag": "account"
+    }
+  ],
+  "total": 6
+}

@@ -1,0 +1,75 @@
+entity: User
+items:
+  sudoUser:
+    id: 1
+    email: sudo@localhost.com
+    firstname: Cécile
+    lastname: SUDO
+    password: password
+    createdAt: "2023-06-12T06:54:45.000Z"
+    updatedAt: "2023-06-12T06:54:45.000Z"
+    role: {
+      "label": "sudo",
+      "options": [ ],
+    }
+    validated: true
+  superadminUser:
+    id: 2
+    email: superadmin@localhost.com
+    firstname: Bob
+    lastname: SUPERADMIN
+    password: password
+    createdAt: "2023-06-12T06:54:45.000Z"
+    updatedAt: "2023-06-12T06:54:45.000Z"
+    role: { label: "superadmin", options: { } }
+    validated: true
+  noRoleUser:
+    id: 3
+    email: norole@localhost.com
+    firstname: Bill
+    lastname: norole
+    password: password
+    createdAt: "2023-06-12T06:54:45.000Z"
+    updatedAt: "2023-06-12T06:54:45.000Z"
+    role: { label: null, options: { } }
+    validated: true
+  admin1User:
+    id: 4
+    email: admin1@localhost.com
+    firstname: Suzette
+    lastname: admin1
+    password: password
+    createdAt: "2023-06-12T06:54:45.000Z"
+    updatedAt: "2023-06-12T06:54:45.000Z"
+    role: { label: "admin", options: { 2: { national: false, prefectures: [ 'D75' ] } } }
+    validated: true
+  instructor1User:
+    id: 5
+    email: instructor1@localhost.com
+    firstname: Steve
+    lastname: instructor1
+    password: password
+    createdAt: "2023-06-12T06:54:45.000Z"
+    updatedAt: "2023-06-12T06:54:45.000Z"
+    role: { label: "instructor", options: { 1: { national: false, prefectures: [ 'D75' ] }, 5: { national: false, prefectures: [ 'D57' ] } } }
+    validated: true
+  testPwdUser:
+    id: 6
+    email: testpwd@localhost.com
+    firstname: Jean
+    lastname: admin
+    password: password
+    createdAt: "2023-06-12T06:54:45.000Z"
+    updatedAt: "2023-06-12T06:54:45.000Z"
+    role: { label: null, options: { } }
+    validated: true
+  testNoValidUser:
+    id: 7
+    email: test.no.valid@localhost.com
+    firstname: Titouan
+    lastname: norole
+    password: password
+    createdAt: "2023-06-12T06:54:45.000Z"
+    updatedAt: "2023-06-12T06:54:45.000Z"
+    role: { label: null, options: { } }
+    validated: false
