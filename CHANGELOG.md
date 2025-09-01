@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.0 (2025-09-01)
+
+
+### Features
+
+* 🎉 Première version publique nettoyée ([5033431](https://github.com/dnum-mi/bibliotheque-numerique/commit/503343152d7032b0a97aa421e6b8351d32420e25))
+
 ## [2.35.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.34.0...v2.35.0) (2025-08-29)
 
 
