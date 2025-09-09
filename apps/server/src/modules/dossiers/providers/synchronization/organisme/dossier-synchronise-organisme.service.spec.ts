@@ -13,6 +13,7 @@ import { CustomBullService } from '@/shared/modules/custom-bull/custom-bull.serv
 
 describe('DossierSynchroniseOrganismeService', () => {
   let service: DossierSynchroniseOrganismeService
+  let organismeService: OrganismeService
   let updateFct: Mock
 
   beforeEach(async () => {
@@ -32,7 +33,7 @@ describe('DossierSynchroniseOrganismeService', () => {
         } else if (token === OrganismeService) {
           return {
             getOrCreateOrganismeIdFromRna: jest.fn().mockResolvedValue({ id: 42 }),
-            getOrCreateOrganismeIdFromRnf: jest.fn().mockResolvedValue({ id: 42 }),
+            getOrCreateOrganismeIdFromRnf: jest.fn().mockResolvedValue({ id: 41 }),
             repository: {
               update: updateFct,
             },
@@ -65,6 +66,8 @@ describe('DossierSynchroniseOrganismeService', () => {
     service = module.get<DossierSynchroniseOrganismeService>(
       DossierSynchroniseOrganismeService,
     )
+
+    organismeService = module.get<Mock>(OrganismeService)
   })
 
   describe('synchroniseOrganismeFromFields', () => {
@@ -125,7 +128,7 @@ describe('DossierSynchroniseOrganismeService', () => {
           ],
           1,
         ),
-      ).toEqual({ id: 42 })
+      ).toEqual({ id: 41 })
     })
 
     it('should synchronise an organisme from an TextField with rnf code', async () => {
@@ -145,8 +148,41 @@ describe('DossierSynchroniseOrganismeService', () => {
           ],
           1,
         ),
-      ).toEqual({ id: 42 })
+      ).toEqual({ id: 41 })
     })
+
+    it('should synchronise many organismes', async () => {
+      expect(
+        await service.synchroniseOrganismeFromFields(
+          [
+            {
+              id: 1,
+              dsChampType: 'RnaChamp',
+              stringValue: 'some-random-rna',
+            } as Field,
+            {
+              id: 2,
+              dsChampType: 'RnfChamp',
+              stringValue: 'some-random-rna',
+            } as Field,
+            {
+              id: 3,
+              dsChampType: 'TextChamp',
+              stringValue: 'some-random-rna',
+              rawJson: {
+                champDescriptor: {
+                  description: 'blablabla#bn-rnf-field-bn# blabla./bla',
+                },
+              },
+            } as Field,
+          ],
+          1,
+        ),
+      ).toEqual({ id: 41 })
+      expect(organismeService.getOrCreateOrganismeIdFromRna).toHaveBeenCalled()
+      expect(organismeService.getOrCreateOrganismeIdFromRnf).toHaveBeenCalledTimes(2)
+    })
+
   })
 
   describe('updateDeclarationYearFromDossier', () => {

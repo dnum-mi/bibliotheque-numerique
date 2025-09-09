@@ -26,9 +26,9 @@ export class DossierSynchroniseOrganismeService {
     this.logger.setContext(this.constructor.name)
   }
 
-  private _findOrganismeField(fields: Field[]): Field {
-    this.logger.verbose('_findOrganismeField')
-    return fields.find((field: Field) => {
+  private _findOrganismeFields(fields: Field[]): Field[] {
+    this.logger.verbose('_findOrganismeFields')
+    return fields.filter((field: Field) => {
       return (
         field.stringValue.length &&
         ([DsChampType.RnaChamp, DsChampType.RnfChamp].includes(
@@ -46,9 +46,9 @@ export class DossierSynchroniseOrganismeService {
     dossierId: number,
   ): Promise<Organisme | undefined> {
     this.logger.verbose('_synchroniseOrganismes')
-    const organismeField = this._findOrganismeField(fields)
+    const organismeFields = this._findOrganismeFields(fields)
     let organisme: Organisme
-    if (!organismeField) {
+    if (!organismeFields?.length) {
       return
     }
     // TODO: Trouver un mellieux solution - queue présent même s'il n'y a pas raison
@@ -57,32 +57,33 @@ export class DossierSynchroniseOrganismeService {
     // }, {
     //   stringValue: 'QUEUE-' + organismeField.stringValue,
     // })
-
-    if (organismeField.dsChampType === DsChampType.RnaChamp) {
-      organisme = await this.organismeService.getOrCreateOrganismeIdFromRna(
-        organismeField.stringValue,
-      )
-      this.logger.debug(
-        `Adding Organisme sync for rna:  ${organismeField.stringValue} (with id: ${organisme.id})`,
-      )
-      await this.customBullService.addSyncOneRnaOrganismeJob({
-        dossierId,
-        fieldId: organismeField.id,
-        rna: organismeField.stringValue,
-      } satisfies SyncOneRnaOrganismeJobPayload)
-    } else {
-      organisme = await this.organismeService.getOrCreateOrganismeIdFromRnf(
-        organismeField.stringValue,
-      )
-      this.logger.debug(
-        `Adding Organisme sync for rnf:  ${organismeField.stringValue} (with organismeId: ${organisme.id})`,
-      )
-      await this.customBullService.addSyncOneRnfOrganismeJob({
-        dossierId,
-        fieldId: organismeField.id,
-        rnf: organismeField.stringValue,
-        firstTime: !organisme.rnfJson,
-      } satisfies SyncOneRnfOrganismeJobPayload)
+    for (const organismeField of organismeFields) {
+      if (organismeField.dsChampType === DsChampType.RnaChamp) {
+        organisme = await this.organismeService.getOrCreateOrganismeIdFromRna(
+          organismeField.stringValue,
+        )
+        this.logger.debug(
+          `Adding Organisme sync for rna:  ${organismeField.stringValue} (with id: ${organisme.id})`,
+        )
+        await this.customBullService.addSyncOneRnaOrganismeJob({
+          dossierId,
+          fieldId: organismeField.id,
+          rna: organismeField.stringValue,
+        } satisfies SyncOneRnaOrganismeJobPayload)
+      } else {
+        organisme = await this.organismeService.getOrCreateOrganismeIdFromRnf(
+          organismeField.stringValue,
+        )
+        this.logger.debug(
+          `Adding Organisme sync for rnf:  ${organismeField.stringValue} (with organismeId: ${organisme.id})`,
+        )
+        await this.customBullService.addSyncOneRnfOrganismeJob({
+          dossierId,
+          fieldId: organismeField.id,
+          rnf: organismeField.stringValue,
+          firstTime: !organisme.rnfJson,
+        } satisfies SyncOneRnfOrganismeJobPayload)
+      }
     }
 
     return organisme
