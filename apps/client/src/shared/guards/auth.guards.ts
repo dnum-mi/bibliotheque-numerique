@@ -9,11 +9,18 @@ import {
   isSuperiorOrSimilar,
 } from '@biblio-num/shared'
 
-export function isNotAuthenticatedGuard () {
+export async function isNotAuthenticatedGuard () {
   const userStore = useUserStore()
+
+  if (userStore.accessToken && !userStore.isAuthenticated) {
+    await userStore.loadMyProfile()
+  }
+
   if (userStore.isAuthenticated) {
     return '/'
   }
+
+  return true
 }
 
 export const canAccessByRoleGuard = (

@@ -1,4 +1,4 @@
-import { getRandomId } from '@gouvminint/vue-dsfr'
+import { useRandomId } from '@gouvminint/vue-dsfr'
 
 import bnApiClient from '@/api/api-client'
 import type {
@@ -26,7 +26,7 @@ export const useUserStore = defineStore('user', () => {
   const myProfile = ref<IMyProfileOutput | null>(null)
   const users = ref<Map<number, IUserOutput>>(new Map<number, IUserOutput>())
   const selectedEditableUser = ref<IUserWithEditableRole | null>(null)
-  const keySelectUser = ref<string>(getRandomId('selectedUser-selected'))
+  const keySelectUser = ref<string>(useRandomId('selectedUser-selected'))
   const isAuthenticated = computed(() => !!currentUser.value)
   const hasAdminAccess = computed(() => !!(currentUser.value?.role?.label && AdminRoles.includes(currentUser.value?.role?.label)))
   const canAccessDemarches = computed(() => !!currentUser.value?.role?.label)
@@ -38,7 +38,15 @@ export const useUserStore = defineStore('user', () => {
     myProfile.value = null
     users.value = new Map<number, IUserOutput>()
     selectedEditableUser.value = null
-    keySelectUser.value = getRandomId('selectedUser-selected')
+    keySelectUser.value = useRandomId('selectedUser-selected')
+    currentUser.value = null
+    accessToken.value = null
+  }
+
+  const loadMyProfile = async () => {
+    myProfile.value = await bnApiClient.fetchMyProfile()
+    currentUser.value = myProfile.value
+    return !!currentUser.value
   }
 
   const login = async (loginForm: ICredentialsInput) => {
@@ -47,6 +55,7 @@ export const useUserStore = defineStore('user', () => {
     if ('accessToken' in response) {
       const { accessToken: token } = response
       accessToken.value = token
+      await loadMyProfile()
     }
 
     return response
@@ -63,7 +72,6 @@ export const useUserStore = defineStore('user', () => {
   }
 
   const forceResetUser = () => {
-    currentUser.value = null
     $reset()
   }
 
@@ -73,14 +81,11 @@ export const useUserStore = defineStore('user', () => {
   }
 
   const logout = async () => {
-    forceResetUser()
-    await bnApiClient.logoutUser()
-  }
-
-  const loadMyProfile = async () => {
-    myProfile.value = await bnApiClient.fetchMyProfile()
-    currentUser.value = myProfile.value
-    return !!currentUser.value
+    try {
+      await bnApiClient.logoutUser()
+    } finally {
+      forceResetUser()
+    }
   }
 
   const changeMyProfile = async (dto: IUpdateProfile) => {
@@ -101,7 +106,7 @@ export const useUserStore = defineStore('user', () => {
       return
     }
     selectedEditableUser.value = await bnApiClient.getUserRoleById(id)
-    keySelectUser.value = getRandomId('selectedUser-selected')
+    keySelectUser.value = useRandomId('selectedUser-selected')
     selectedEditableUserLoading.value = false
     return selectedEditableUser.value
   }
@@ -182,4 +187,9 @@ export const useUserStore = defineStore('user', () => {
     updateUserRolesOption,
     refreshTokens,
   }
+}, {
+  persist: {
+    storage: localStorage,
+    paths: ['accessToken'],
+  },
 })
