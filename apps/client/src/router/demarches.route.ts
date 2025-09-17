@@ -2,6 +2,7 @@ import type { RouteRecordRaw } from 'vue-router'
 
 import { routeNames } from '@/router/route-names'
 import { Roles } from '@biblio-num/shared'
+import { IS_OPEN_SOURCE } from '@/config'
 
 export const demarchesRoutes: RouteRecordRaw = {
   path: '/demarches',
@@ -13,6 +14,7 @@ export const demarchesRoutes: RouteRecordRaw = {
       meta: {
         roleLevel: Roles.instructor,
       },
+      ...(IS_OPEN_SOURCE && { name: routeNames.DEFAULT, alias: '/' }),
     },
     {
       path: ':demarcheId/dossiers',

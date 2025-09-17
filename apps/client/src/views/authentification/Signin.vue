@@ -7,7 +7,6 @@ import type { ICredentialsInput } from '@biblio-num/shared'
 import LayoutAccueil from '@/components/Layout/LayoutAccueil.vue'
 import { useUserStore } from '@/stores'
 import ToggleInputPassword from '@/components/ToggleInputPassword.vue'
-import { routeNames } from '@/router/route-names'
 import useToaster from '@/composables/use-toaster'
 import ProConnect from '@/components/ProConnect.vue'
 
@@ -79,7 +78,7 @@ const submit = handleSubmit(async (formValue: ICredentialsInput) => {
     return
   }
 
-  router.push({ name: routeNames.DEFAULT })
+  router.push('/')
 })
 
 const { value: emailValue, errorMessage: emailError } = useField<string>('email')

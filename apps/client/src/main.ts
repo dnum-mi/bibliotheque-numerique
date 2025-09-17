@@ -18,7 +18,6 @@ import './main.css'
 import 'vue3-openlayers/vue3-openlayers.css'
 
 import OpenLayersMap from 'vue3-openlayers'
-import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
 import { LicenseManager } from 'ag-grid-enterprise'
 import 'ag-grid-community/styles/ag-grid.css'
@@ -37,16 +36,12 @@ LicenseManager.setLicenseKey(agGridLicenseKey)
 for (const collection of collections) {
   addCollection(collection)
 }
-const app = createApp(App)
-
-const pinia = createPinia()
-pinia.use(piniaPluginPersistedstate)
-
-app.use(pinia)
-app.use(OpenLayersMap)
-app.component('DsfrButton', DsfrButton)
-app.component('OrganismeBadge', OrganismeBadge)
-app.component('StatusBadge', StatusBadge)
-app.component('FileTagBadge', FileTagBadge)
-app.use(router)
-app.mount('#app')
+createApp(App)
+  .use(createPinia())
+  .use(OpenLayersMap)
+  .component('DsfrButton', DsfrButton)
+  .component('OrganismeBadge', OrganismeBadge)
+  .component('StatusBadge', StatusBadge)
+  .component('FileTagBadge', FileTagBadge)
+  .use(router)
+  .mount('#app')

@@ -4,13 +4,11 @@ import apiClient from '@/api/api-client'
 import AppToaster from '@/components/AppToaster.vue'
 import useToaster from '@/composables/use-toaster.js'
 
-import { routeNames } from '@/router/route-names'
 import type { EnvTextKeys } from '@/shared/types'
 import { defaultEnv, envTextMapping } from '@/shared/types'
-import { useUserStore } from '@/stores'
 import { logInServer } from '@/utils/log.utils'
-import { isSuperiorOrSimilar, Roles } from '@biblio-num/shared'
 import { AxiosError } from 'axios'
+import { useNavigation } from './composables/use-navigation'
 
 const version = ref('0.0.0')
 const runEnv = ref<EnvTextKeys>(defaultEnv)
@@ -31,10 +29,11 @@ const serviceTitle = 'Bibliothèque Numérique'
 const serviceDescription = 'Rechercher une démarche, un dossier, un organisme'
 const logoText = ['Ministère', 'de l’intérieur']
 const ecosystemLinks = [
-  { label: 'Demarches.numerique.gouv.fr', href: 'https://demarches.numerique.gouv.fr' },
-  { label: 'API - Répertoire National des Associations', href: 'https://entreprise.api.gouv.fr/catalogue/ministere_interieur/rna' },
+  { label: 'Demarches.numerique.gouv.fr', title: 'Démarches simplifiées', href: 'https://demarches.numerique.gouv.fr' },
+  { label: 'API - Répertoire National des Associations', title: 'API - Répertoire National des Associations', href: 'https://entreprise.api.gouv.fr/catalogue/ministere_interieur/rna' },
   {
     label: 'Intranet DLPAJ',
+    title: 'Intranet DLPAJ',
     href: 'https://intranet.dlpaj.minint.fr/index.php/associations-et-fondations/systeme-d-information-des-associations-et-fondations-siaf',
   },
   // { label: 'Répertoire National des Fondations', href: 'https://rnf.interieur.rie.gouv.fr' },
@@ -45,110 +44,7 @@ const mandatoryLinks = [
   { label: 'Gestion des cookies', to: '/cookies' },
 ]
 
-type QuickLink = {
-  label: string
-  to: { name: string } | string
-  icon?: string
-  iconAttrs?: Record<string, string>
-}
-
-const quickLinks = ref<QuickLink[]>([])
-
-const demarcheQuickLink: QuickLink = {
-  label: 'Démarches',
-  to: { name: routeNames.DEMARCHES },
-  icon: 'fr-icon-article-fill',
-  iconAttrs: { title: 'Démarches' },
-}
-
-const unauthenticatedQuickLinks: QuickLink[] = [
-  {
-    label: 'Se connecter',
-    to: { name: routeNames.SIGNIN },
-    icon: 'fr-icon-lock-line',
-    iconAttrs: { title: 'Se connecter' },
-  },
-  {
-    label: 'S’enregistrer',
-    to: { name: routeNames.SIGNUP },
-    icon: 'fr-icon-user-line',
-    iconAttrs: { title: 'S’enregistrer' },
-  },
-]
-
-const organismesQuickLink: QuickLink = {
-  label: 'Organismes',
-  to: { name: routeNames.LISTE_ORGANISMES },
-  icon: 'fr-icon-building-line',
-  iconAttrs: { title: 'Organismes' },
-}
-
-const authenticatedQuickLinksDefault: QuickLink[] = [
-  {
-    label: 'Mon profil',
-    to: { name: routeNames.PROFILE },
-    icon: 'fr-icon-profil-line',
-    iconAttrs: { title: 'Mon profil' },
-  },
-  {
-    label: 'Déconnexion',
-    to: { name: routeNames.LOGOUT },
-    icon: 'fr-icon-logout-box-r-line',
-    iconAttrs: { title: 'Déconnexion' },
-  },
-]
-
-const statisticsQuickLink: QuickLink = {
-  label: 'Statistiques',
-  to: { name: routeNames.STATISTIQUES },
-  icon: 'fr-icon-bar-chart-box-fill',
-  iconAttrs: { title: 'Statistiques' },
-}
-
-const manageRolesQuickLink = {
-  label: 'Administration',
-  to: { name: routeNames.LIST_USERS },
-  icon: 'fr-icon-user-setting-line',
-  iconAttrs: { title: 'Administration' },
-}
-
-const configurationQuickLink = {
-  label: 'Configuration',
-  to: { name: routeNames.CONFIGURATION_DEMARCHES },
-  icon: 'fr-icon-settings-5-line',
-  iconAttrs: { title: 'Configuration' },
-}
-
-const userStore = useUserStore()
-const router = useRouter()
-const route = useRoute()
-
-const minimalQuickLinks = computed(() => {
-  const role = userStore.currentUser?.role?.label
-  if (!role) {
-    return []
-  }
-  return isSuperiorOrSimilar(Roles.instructor, role)
-    ? [
-        organismesQuickLink,
-        demarcheQuickLink,
-        statisticsQuickLink,
-        ...(isSuperiorOrSimilar(Roles.admin, role) ? [manageRolesQuickLink] : []),
-        ...(isSuperiorOrSimilar(Roles.sudo, role) ? [configurationQuickLink] : []),
-      ]
-    : []
-})
-
-watch([() => userStore.isAuthenticated, route], async () => {
-  await router.isReady()
-
-  if (userStore.isAuthenticated) {
-    quickLinks.value = [...minimalQuickLinks.value, ...authenticatedQuickLinksDefault]
-  } else {
-    const isCurrentRoute = ({ to }: QuickLink) => to !== route.path && typeof to === 'object' && to?.name !== route.name
-    quickLinks.value = unauthenticatedQuickLinks.filter(isCurrentRoute)
-  }
-})
+const { quickLinks } = useNavigation()
 
 const searchQuery = ref('')
 

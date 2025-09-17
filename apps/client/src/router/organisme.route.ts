@@ -2,9 +2,10 @@ import type { RouteRecordRaw } from 'vue-router'
 
 import { routeNames } from '@/router/route-names'
 import { Roles } from '@biblio-num/shared'
+import { IS_OPEN_SOURCE } from '@/config'
 
 export const organismeRoute: RouteRecordRaw = {
-  path: '/',
+  path: '/organismes',
   meta: {
     roleLevel: Roles.instructor,
   },
@@ -16,6 +17,8 @@ export const organismeRoute: RouteRecordRaw = {
       meta: {
         roleLevel: Roles.instructor,
       },
+      ...(!IS_OPEN_SOURCE && { name: routeNames.DEFAULT, alias: '/' }),
+
     },
     {
       name: routeNames.FICHE_ORGANISME,
