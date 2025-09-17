@@ -39,7 +39,6 @@ export const useUserStore = defineStore('user', () => {
     users.value = new Map<number, IUserOutput>()
     selectedEditableUser.value = null
     keySelectUser.value = useRandomId('selectedUser-selected')
-    currentUser.value = null
     accessToken.value = null
   }
 
@@ -187,9 +186,4 @@ export const useUserStore = defineStore('user', () => {
     updateUserRolesOption,
     refreshTokens,
   }
-}, {
-  persist: {
-    storage: localStorage,
-    paths: ['accessToken'],
-  },
 })

@@ -12,8 +12,13 @@ import {
 export async function isNotAuthenticatedGuard () {
   const userStore = useUserStore()
 
-  if (userStore.accessToken && !userStore.isAuthenticated) {
-    await userStore.loadMyProfile()
+  if (!userStore.isAuthenticated) {
+    try {
+      await userStore.refreshTokens()
+      await userStore.loadMyProfile()
+    } catch {
+      return true
+    }
   }
 
   if (userStore.isAuthenticated) {

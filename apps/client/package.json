@@ -47,7 +47,6 @@
     "ol-contextmenu": "5.5.0",
     "ol-ext": "4.0.34",
     "pinia": "^3.0.1",
-    "pinia-plugin-persistedstate": "4.5.0",
     "pretty-bytes": "^6.1.1",
     "sanitize-html": "^2.14.0",
     "shepherd.js": "14.5.1",
