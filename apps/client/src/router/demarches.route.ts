@@ -14,7 +14,7 @@ export const demarchesRoutes: RouteRecordRaw = {
       meta: {
         roleLevel: Roles.instructor,
       },
-      ...(IS_OPEN_SOURCE && { name: routeNames.DEFAULT, alias: '/' }),
+      ...(IS_OPEN_SOURCE ? { name: routeNames.DEFAULT, alias: '/' } : {}),
     },
     {
       path: ':demarcheId/dossiers',

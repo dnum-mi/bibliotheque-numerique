@@ -8,7 +8,7 @@ import type { EnvTextKeys } from '@/shared/types'
 import { defaultEnv, envTextMapping } from '@/shared/types'
 import { logInServer } from '@/utils/log.utils'
 import { AxiosError } from 'axios'
-import { useNavigation } from './composables/use-navigation'
+import { useNavigation } from './composables/navigation'
 
 const version = ref('0.0.0')
 const runEnv = ref<EnvTextKeys>(defaultEnv)
