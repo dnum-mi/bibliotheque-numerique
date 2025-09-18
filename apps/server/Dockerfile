@@ -42,7 +42,7 @@ RUN pnpm run build:server
 CMD ["pnpm", "run", "dev:server-in-docker"]
 
 
-FROM bitnami/node:22.13.1 as production
+FROM docker.io/node:22.13.1 as production
 
 RUN set +o nounset && \
     npm config set proxy "$http_proxy" && \
