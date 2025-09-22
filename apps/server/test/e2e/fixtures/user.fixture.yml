@@ -73,3 +73,29 @@ items:
     updatedAt: "2023-06-12T06:54:45.000Z"
     role: { label: null, options: { } }
     validated: false
+  admin1UserManualResetPassword:
+    id: 8
+    email: adminreset1@localhost.com
+    firstname: Valerie
+    lastname: adminReset1
+    password: password
+    createdAt: "2023-06-12T06:54:45.000Z"
+    updatedAt: "2023-06-12T06:54:45.000Z"
+    role: { label: "admin", options: { 2: { national: false, prefectures: [ 'D75' ] } } }
+    validated: true
+    pendingPasswordHash: pendingpassword
+    passwordChangeRequested: true
+    passwordChangeRequestedAt: "2025-09-11T06:54:45.000Z"
+  admin2UserManualResetPassword:
+    id: 9
+    email: adminreset2@localhost.com
+    firstname: Jonh
+    lastname: adminReset2
+    password: password
+    createdAt: "2023-06-12T06:54:45.000Z"
+    updatedAt: "2023-06-12T06:54:45.000Z"
+    role: { label: "admin", options: { 2: { national: false, prefectures: [ 'D75' ] } } }
+    validated: true
+    pendingPasswordHash: pendingpassword
+    passwordChangeRequested: true
+    passwordChangeRequestedAt: "2025-09-12T06:54:45.000Z"
