@@ -81,7 +81,7 @@ export class Dossier extends BaseEntity implements IDossier {
   })
   prefecture: PrefectureKey | null
 
-  @OneToMany(() => File, (file) => file.dossier)
+  @OneToMany(() => File, (file) => file.dossier, { cascade: true })
   @JoinColumn()
   files?: File[]
 
@@ -102,7 +102,8 @@ export class Dossier extends BaseEntity implements IDossier {
 
   @Column({ type: 'timestamp', nullable: true, default: null })
   @ApiProperty({
-    description: 'La dernière date de traitement du dossier sur Démarches simplifiées.',
+    description:
+      'La dernière date de traitement du dossier sur Démarches simplifiées.',
   })
   dateTraitement: Date | null
 }

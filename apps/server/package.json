@@ -92,6 +92,7 @@
     "colors": "^1.4.0",
     "cookie-parser": "1.4.7",
     "cron": "^2.4.4",
+    "csv-parse": "6.1.0",
     "date-fns": "3.2.0",
     "dayjs": "^1.11.10",
     "dotenv": "^16.3.1",

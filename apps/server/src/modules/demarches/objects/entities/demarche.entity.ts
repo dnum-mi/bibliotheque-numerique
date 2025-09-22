@@ -36,7 +36,7 @@ export class Demarche extends BaseEntity implements IDemarcheWithOptions {
 
   @ApiProperty({
     description:
-      'Est ce que la démarche a une identification particulière. FE ou DDC.' +
+      'Est ce que la démarche a une identification particulière. FE, DDC ou MAARCH.' +
       ' Une identification particulière entraine des comportements spécifiques.',
     enum: eIdentificationDemarche,
   })

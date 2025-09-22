@@ -1,6 +1,17 @@
 import { BaseEntity } from '@/shared/base-entity/base.entity'
-import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, Unique } from 'typeorm'
-import { DsChampType, DsChampTypeKeys } from '@/shared/modules/ds-api/objects/ds-champ-type.enum'
+import {
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  Unique,
+} from 'typeorm'
+import {
+  DsChampType,
+  DsChampTypeKeys,
+} from '@/shared/modules/ds-api/objects/ds-champ-type.enum'
 import {
   FieldSource,
   FieldSourceKeys,
@@ -98,7 +109,9 @@ export class Field extends BaseEntity {
   @Column({ type: 'jsonb', default: null, nullable: true })
   rawJson: Partial<CustomChamp> | null
 
-  @ManyToOne(() => Dossier, (dossier) => dossier.fields)
+  @ManyToOne(() => Dossier, (dossier) => dossier.fields, {
+    onDelete: 'CASCADE',
+  })
   dossier?: Dossier
 
   @Column()

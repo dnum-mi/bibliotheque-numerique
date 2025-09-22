@@ -2,16 +2,25 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
   Param,
   ParseIntPipe,
   Patch,
   Post,
   Put,
+  UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import {
+  ApiBody,
+  ApiConsumes,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger'
 import { InjectQueue } from '@nestjs/bull'
+import { FileFieldsInterceptor } from '@nestjs/platform-express'
 import { Queue } from 'bull'
 import { DemarcheService } from '../providers/services/demarche.service'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
@@ -20,7 +29,6 @@ import { DemarcheSynchroniseService } from '../providers/services/demarche-synch
 import { DemarcheOutputDto } from '@/modules/demarches/objects/dtos/demarche-output.dto'
 
 import { IRole, Roles } from '@biblio-num/shared'
-
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
 import { CurrentUserRole } from '@/modules/users/providers/decorators/current-user-role.decorator'
 import { CurrentDemarcheInterceptor } from '@/modules/demarches/providers/interceptors/current-demarche.interceptor'
@@ -33,6 +41,9 @@ import { CreateDemarcheDto } from '@/modules/demarches/objects/dtos/create-demar
 import { UpdateDemarcheDto } from '@/modules/demarches/objects/dtos/update-demarche.dto'
 import { DossierService } from '@/modules/dossiers/providers/dossier.service'
 import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.decorator'
+import { DemarcheMaarchService } from '../providers/services/demarche-maarch.service'
+import { ImportFiles, ImportResult } from '../objects/constants/maarch.types'
+import { ImportMaarchDto } from '@/modules/demarches/objects/dtos/import-maarch.dto'
 
 @ApiTags('Demarches')
 @Controller('demarches')
@@ -41,6 +52,7 @@ export class DemarcheController {
     private readonly demarcheService: DemarcheService,
     private readonly demarcheSynchroniseService: DemarcheSynchroniseService,
     private readonly dossierService: DossierService,
+    private readonly demarcheMaarch: DemarcheMaarchService,
     private readonly logger: LoggerService,
     @InjectQueue(QueueName.sync) private readonly syncQueue: Queue,
   ) {
@@ -150,5 +162,68 @@ export class DemarcheController {
     this.logger.verbose(`soft delete demarche ${id}`)
     await this.dossierService.softDeleteDemarcheDossiers(id)
     await this.demarcheService.softDeleteDemarche(id)
+  }
+
+  @Post('/import/maarch')
+  @UsualApiOperation({
+    summary: 'Importe les démarches depuis Maarch.',
+    method: 'POST',
+    minimumRole: Roles.sudo,
+    responseType: Boolean,
+  })
+  @ApiResponse({ status: 201, description: 'Fichiers traités avec succès.' })
+  @ApiResponse({ status: 400, description: 'Fichiers manquants ou invalides.' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    type: ImportMaarchDto,
+    description: 'Fichiers CSV.',
+    schema: {
+      type: 'object',
+      properties: {
+        title: {
+          type: 'string',
+          description: 'Titre de la démarche',
+        },
+        demandes: {
+          type: 'string',
+          format: 'binary',
+          description: 'Le fichier CSV contenant les demandes.',
+        },
+        annotations: {
+          type: 'string',
+          format: 'binary',
+          description: 'Le fichier CSV contenant les annotations.',
+        },
+      },
+    },
+  })
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'demandes', maxCount: 1 },
+      { name: 'annotations', maxCount: 1 },
+    ]),
+  )
+  @HttpCode(201)
+  @Role(Roles.sudo)
+  async importMaarch(
+    @UploadedFiles() files: ImportFiles,
+    @Body() importData: ImportMaarchDto,
+  ): Promise<ImportResult> {
+    this.logger.verbose('importMaarch')
+    return this.demarcheMaarch.importDemarche(files, importData.title)
+  }
+
+  @Delete('/import/maarch/rollback/:demarcheId')
+  @UsualApiOperation({
+    summary: 'Annule une importation en supprimant la démarche et tous les dossiers.',
+    method: 'DELETE',
+    minimumRole: Roles.sudo,
+    responseType: null,
+  })
+  @Role(Roles.sudo)
+  async rollbackImport(
+    @Param('demarcheId', ParseIntPipe) demarcheId: number,
+  ): Promise<{ message: string; }> {
+    return this.demarcheMaarch.deleteImport(demarcheId)
   }
 }

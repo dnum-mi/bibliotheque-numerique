@@ -1,4 +1,10 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm'
 
 import { FileExtensionKey, eFileExtension, eState } from '@biblio-num/shared'
 import {
@@ -77,7 +83,9 @@ export class File extends BaseEntity {
   @Column({ nullable: true })
   dossierId?: number | null
 
-  @ManyToOne(() => Dossier, (doss) => doss.files)
+  @ManyToOne(() => Dossier, (doss) => doss.files, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'dossierId' })
   dossier: Dossier | null
 

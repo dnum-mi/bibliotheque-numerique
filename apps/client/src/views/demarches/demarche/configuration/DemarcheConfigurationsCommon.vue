@@ -11,9 +11,11 @@ const props = withDefaults(defineProps<{
   currentDemarcheConfiguration: IMappingColumn[]
   isSelectedFn: (ch: IMappingColumn) => boolean
   canChangeLabel?: boolean,
+  demarcheTitle?: string,
   selectedTitle?: string,
 }>(), {
   canChangeLabel: true,
+  demarcheTitle: 'Champs Démarche Simplifiée',
   selectedTitle: 'Champs sélectionnés pour l’affichage des colonnes',
 })
 
@@ -47,7 +49,7 @@ const getDefaultConfParts = () => ({
   champs: {
     meta: {
       id: 'champs',
-      label: 'Champs Démarche Simplifiée',
+      label: props.demarcheTitle,
     },
     data: {} as Record<string, {
       id: string
@@ -97,10 +99,10 @@ const updateDataGroup = () => {
     } else if (['annotation', 'fix-field'].includes(mappingColumn.source)) {
       confParts.value[mappingColumn.source as 'annotation' | 'fix-field']?.data.push(mappingColumn)
     }
+  }
 
-    if (!confParts.value['fix-field']?.data.length) {
-      delete confParts.value['fix-field']
-    }
+  if (!confParts.value['fix-field']?.data.length) {
+    delete confParts.value['fix-field']
   }
 }
 
@@ -158,7 +160,7 @@ const saveOneMappingColumnDebounced = useDebounceFn(saveOneMappingColumn, 300)
         :aria-selected="selectedPartId === Object.keys(confParts)[0]"
         aria-labelledby="tab-champs"
       >
-        <h5>Champs démarche simplifiée</h5>
+        <h5>{{ demarcheTitle }}</h5>
         <DsfrAccordion
           v-for="([key, section]) of Object.entries(confParts.champs.data)"
           :id="key"

@@ -14,11 +14,25 @@ import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-nam
 import { BullModule, BullModuleOptions } from '@nestjs/bull'
 import { DemarcheOptionController } from '@/modules/demarches/controllers/demarche-option.controller'
 import { CustomBullModule } from '@/shared/modules/custom-bull/custom-bull.module'
+import { Dossier } from '../dossiers/objects/entities/dossier.entity'
+import { Field } from '../dossiers/objects/entities/field.entity'
+import { Organisme } from '../organismes/objects/organisme.entity'
+import { FieldBuilderService } from './providers/services/maarch/field-builder.service'
+import { FileBuilderService } from './providers/services/maarch/file-builder.service'
+import { DossierTransformerService } from './providers/services/maarch/dossier-transformer.service'
+import { DataFormatterService } from './providers/services/maarch/data-formatter.service'
+import { CsvProcessorService } from './providers/services/maarch/csv-processor.service'
+import { DemarcheMaarchService } from './providers/services/demarche-maarch.service'
 
 @Module({
   imports: [
     forwardRef(() => DossierModule),
-    TypeOrmModule.forFeature([Demarche]),
+    TypeOrmModule.forFeature([
+      Demarche,
+      Dossier,
+      Field,
+      Organisme,
+    ]),
     BullModule.registerQueue({ name: QueueName.sync } as BullModuleOptions),
     CustomFilterModule,
     CustomBullModule,
@@ -31,7 +45,16 @@ import { CustomBullModule } from '@/shared/modules/custom-bull/custom-bull.modul
     DemarcheCustomFilterController,
     DemarcheOptionController,
   ],
-  providers: [DemarcheService, DemarcheSynchroniseService],
-  exports: [DemarcheService, DemarcheSynchroniseService],
+  providers: [
+    DemarcheService,
+    DemarcheSynchroniseService,
+    DemarcheMaarchService,
+    CsvProcessorService,
+    DataFormatterService,
+    DossierTransformerService,
+    FieldBuilderService,
+    FileBuilderService,
+  ],
+  exports: [DemarcheService, DemarcheSynchroniseService, DemarcheMaarchService],
 })
 export class DemarcheModule {}
