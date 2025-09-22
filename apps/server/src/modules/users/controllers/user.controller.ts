@@ -1,4 +1,15 @@
-import { BadRequestException, Body, Controller, HttpCode, Post, UploadedFile, UseInterceptors } from '@nestjs/common'
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Param,
+  ParseIntPipe,
+  Post,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 import { UserService } from '../providers/user.service'
 import { IUser, Roles } from '@biblio-num/shared'
@@ -20,6 +31,10 @@ import { XlsxService } from '@/shared/modules/xlsx/xlsx.service'
 import { type Express } from 'express'
 import { UserImportService } from '@/modules/users/providers/user-import.service'
 import { ExcelUser } from '@/modules/users/objects/types/excel-user.type'
+import {
+  PasswordChangeRequestsDto,
+} from '../objects/dtos/output/password-change-requests.dto'
+import { ManagePasswordRequestDto } from '../objects/dtos/input/manage-password-request.dto'
 
 @ApiTags('Users')
 @Controller('users')
@@ -45,8 +60,17 @@ export class UserController {
     this.logger.verbose('signUp')
     const user = await this.usersService.create(body)
     return Object.fromEntries(
-      ['id', 'email', 'createdAt', 'updatedAt', 'lastname', 'firstname', 'job', 'role', 'prefecture']
-        .map(key => [key, user[key]]),
+      [
+        'id',
+        'email',
+        'createdAt',
+        'updatedAt',
+        'lastname',
+        'firstname',
+        'job',
+        'role',
+        'prefecture',
+      ].map((key) => [key, user[key]]),
     ) as UserOutputDto
   }
 
@@ -71,7 +95,8 @@ export class UserController {
 
   @Post('/import')
   @UsualApiOperation({
-    summary: 'Import une liste d\'utilisateur. Fichier attendu: form data nommé users, format xlsx.',
+    summary:
+      "Import une liste d'utilisateur. Fichier attendu: form data nommé users, format xlsx.",
     method: 'POST',
     minimumRole: Roles.sudo,
     responseType: Boolean,
@@ -88,6 +113,41 @@ export class UserController {
     }
     const data = this.xlsxService.returnFirstData(file.buffer)
     this.logger.debug(data)
-    return this.userImportService.createUserFromExcelData(data as unknown as ExcelUser[])
+    return this.userImportService.createUserFromExcelData(
+      data as unknown as ExcelUser[],
+    )
+  }
+
+  @Get('/password-requests')
+  @UsualApiOperation({
+    summary: 'Retourne une liste de requêtes de changement de mot de passe.',
+    method: 'GET',
+    minimumRole: Roles.sudo,
+    isArray: true,
+    responseType: PasswordChangeRequestsDto,
+  })
+  @HttpCode(200)
+  @Role(Roles.sudo)
+  @ApiResponse({ status: 200 })
+  async listPasswordChangeRequests(): Promise<PasswordChangeRequestsDto[]> {
+    this.logger.verbose('listPasswordChangeRequests')
+    return this.usersService.listPasswordChangeRequests()
+  }
+
+  @Post('/password-requests/:userId/decision')
+  @UsualApiOperation({
+    summary: 'Approuver ou refuser une demande de changement de mot de passe.',
+    method: 'POST',
+    minimumRole: Roles.sudo,
+    responseType: Boolean,
+  })
+  @Role(Roles.sudo)
+  async managePasswordRequest(
+    @Param('userId', ParseIntPipe) userId: number,
+    @Body() dto: ManagePasswordRequestDto,
+  ): Promise<boolean> {
+    this.logger.verbose('managePasswordRequest')
+    await this.usersService.managePasswordRequest(userId, dto.action)
+    return true
   }
 }

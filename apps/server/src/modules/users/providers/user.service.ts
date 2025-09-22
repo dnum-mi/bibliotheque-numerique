@@ -1,9 +1,11 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
   OnApplicationBootstrap,
 } from '@nestjs/common'
+import * as bcrypt from 'bcrypt'
 import { User } from '../objects/user.entity'
 import { FindOneOptions, In, Not, Repository } from 'typeorm'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
@@ -18,15 +20,26 @@ import {
   IRole,
   OrganismeTypeKey,
   IUser,
+  PasswordRequestsDecisionKey,
+  ePasswordRequestsDecision,
 } from '@biblio-num/shared'
 
 import { UserFieldTypeHashConst } from '@/modules/users/objects/consts/user-field-type-hash.const'
 import { DemarcheService } from '@/modules/demarches/providers/services/demarche.service'
-import { CreateUserDto, PaginationUserDto } from '@/modules/users/objects/dtos/input'
-import { AgGridUserDto, MyProfileOutputDto, PaginatedUserDto } from '@/modules/users/objects/dtos/output'
+import {
+  CreateUserDto,
+  PaginationUserDto,
+} from '@/modules/users/objects/dtos/input'
+import {
+  AgGridUserDto,
+  MyProfileOutputDto,
+  PaginatedUserDto,
+} from '@/modules/users/objects/dtos/output'
 import { PaginatedDto } from '@/shared/pagination/paginated.dto'
 import { RefreshToken } from '../../auth/objects/refresh-token.entity'
 import { durationToString } from '@/shared/utils/bn-code.utils'
+import { RequestPasswordInputDto } from '../objects/dtos/input/request-password-input.dto'
+import { PasswordChangeRequestsDto } from '../objects/dtos/output/password-change-requests.dto'
 
 type jwtPlaylod = {
   user: string | number
@@ -94,9 +107,12 @@ export class UserService
         userInDb.password = dto.password
         await userInDb.hashPassword()
         delete dto.password
-        await this.repo.update({
-          email: dto.email,
-        }, { ...userInDb, ...dto })
+        await this.repo.update(
+          {
+            email: dto.email,
+          },
+          { ...userInDb, ...dto },
+        )
         delete userInDb.password
       }
       if (!userInDb.validated) {
@@ -139,7 +155,9 @@ export class UserService
       this.logger.warn(`Reset password: Cannot find user ${email}`)
       return
     }
-    const { appUrl, jwtForUrl, duration } = this.createJwtOnUrl({ user: userInDb.id })
+    const { appUrl, jwtForUrl, duration } = this.createJwtOnUrl({
+      user: userInDb.id,
+    })
     await this.sendMailService.resetPwd(
       email,
       userInDb.firstname,
@@ -147,6 +165,109 @@ export class UserService
       `${appUrl}/update-password/${jwtForUrl}`,
       duration,
     )
+  }
+
+  async requestManualResetPassword({
+    email,
+    password,
+  }: RequestPasswordInputDto): Promise<void> {
+    this.logger.verbose('requestManualResetPassword')
+    const user = await this.repo.findOne({
+      where: { email },
+    })
+
+    if (!user) {
+      this.logger.warn(`Cannot find user ${email}`)
+      return
+    }
+
+    user.pendingPasswordHash = await bcrypt.hash(password, 10)
+    user.passwordChangeRequested = true
+    user.passwordChangeRequestedAt = new Date()
+    user.skipHashPassword = true
+
+    await this.repo.save(user)
+    await this.deleteUserRefreshTokens(user.id)
+    await this.updateLoginAttempts(user.id, 0)
+  }
+
+  async listPasswordChangeRequests(): Promise<PasswordChangeRequestsDto[]> {
+    this.logger.verbose('listPasswordChangeRequests')
+    return await this.repo.find({
+      where: { passwordChangeRequested: true },
+      select: [
+        'id',
+        'firstname',
+        'lastname',
+        'email',
+        'prefecture',
+        'passwordChangeRequestedAt',
+      ],
+      order: {
+        passwordChangeRequestedAt: 'ASC',
+      },
+    })
+  }
+
+  async managePasswordRequest(
+    userId: number,
+    action: PasswordRequestsDecisionKey,
+  ): Promise<void> {
+    const user = await this.repo.findOne({
+      where: { id: userId },
+      select: [
+        'id',
+        'firstname',
+        'lastname',
+        'email',
+        'pendingPasswordHash',
+        'passwordChangeRequested',
+      ],
+    })
+    if (!user) {
+      this.logger.warn(`Cannot find user with ID ${userId}`)
+      throw new NotFoundException(`User with ID ${userId} not found.`)
+    }
+
+    if (!user.passwordChangeRequested) {
+      this.logger.warn(`This user with ID ${userId} does not have pending password change request.`)
+      throw new BadRequestException(
+        'This user does not have pending password change request.',
+      )
+    }
+
+    if (action === ePasswordRequestsDecision.APPROVE) {
+      user.password = user.pendingPasswordHash
+      user.validated = true
+      user.skipHashPassword = true
+    }
+
+    user.pendingPasswordHash = null
+    user.passwordChangeRequested = false
+    user.passwordChangeRequestedAt = null
+    user.skipHashPassword = true
+
+    await this.repo.save(user)
+    await this.mailToPasswordRequestDecision(user, action)
+  }
+
+  private async mailToPasswordRequestDecision (user: User, action: PasswordRequestsDecisionKey): Promise<void> {
+    const appUrl = this.configService.get('appFrontUrl')
+
+    if (action === ePasswordRequestsDecision.APPROVE) {
+      await this.sendMailService.approvePasswordResetRequest(
+        user.email,
+        user.firstname,
+        user.lastname,
+        `${appUrl}/sign_in`,
+      )
+    } else {
+      await this.sendMailService.rejectPasswordResetRequest(
+        user.email,
+        user.firstname,
+        user.lastname,
+      )
+    }
   }
 
   public createJwtOnUrl(playload: jwtPlaylod): {
@@ -163,7 +284,9 @@ export class UserService
   }
 
   public async deleteUserRefreshTokens(userId: number): Promise<void> {
-    await this.repo.manager.getRepository(RefreshToken).delete({ user: { id: userId } })
+    await this.repo.manager
+      .getRepository(RefreshToken)
+      .delete({ user: { id: userId } })
   }
 
   async updatePassword(user: User, password: string): Promise<void> {
@@ -175,7 +298,9 @@ export class UserService
   }
 
   private async mailToValidSignUp(userInDb: User): Promise<void> {
-    const { appUrl, jwtForUrl, duration } = this.createJwtOnUrl({ user: userInDb.email })
+    const { appUrl, jwtForUrl, duration } = this.createJwtOnUrl({
+      user: userInDb.email,
+    })
     await this.sendMailService.validSignUp(
       userInDb.email,
       userInDb.firstname,
@@ -186,7 +311,9 @@ export class UserService
   }
 
   private async mailToAlreadySignUp(userInDb: User): Promise<void> {
-    const { appUrl, jwtForUrl, duration } = this.createJwtOnUrl({ user: userInDb.id })
+    const { appUrl, jwtForUrl, duration } = this.createJwtOnUrl({
+      user: userInDb.id,
+    })
     await this.sendMailService.alreadySignUp(
       userInDb.email,
       userInDb.firstname,
@@ -292,10 +419,7 @@ export class UserService
         options: Object.fromEntries(
           Object.entries(user.role.options)
             .filter(([id]) => sdHash[id])
-            .map(([id, option]) => [
-              id,
-              { ...option, demarche: sdHash[id] },
-            ]),
+            .map(([id, option]) => [id, { ...option, demarche: sdHash[id] }]),
         ),
       },
     }

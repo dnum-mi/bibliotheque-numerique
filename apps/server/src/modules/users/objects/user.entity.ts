@@ -68,6 +68,26 @@ export class User extends BaseEntity {
   password: string
 
   @Column({
+    type: 'varchar',
+    nullable: true,
+    select: false,
+  })
+  pendingPasswordHash: string | null
+
+  @Column({
+    type: 'bool',
+    nullable: false,
+    default: false,
+  })
+  passwordChangeRequested: boolean
+
+  @Column({
+    type: 'timestamp with time zone',
+    nullable: true,
+  })
+  passwordChangeRequestedAt: Date | null
+
+  @Column({
     type: 'integer',
     nullable: false,
     default: 0,

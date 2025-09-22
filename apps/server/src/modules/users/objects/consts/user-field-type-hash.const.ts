@@ -15,6 +15,9 @@ export const UserFieldTypeHashConst: Record<
     | 'refreshTokens'
     | 'refreshToken'
     | 'loginAttempts'
+    | 'pendingPasswordHash'
+    | 'passwordChangeRequested'
+    | 'passwordChangeRequestedAt'
   >,
   FieldTypeKeys
 > = {

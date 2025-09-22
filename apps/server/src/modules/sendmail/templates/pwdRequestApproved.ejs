@@ -1,0 +1,60 @@
+<%- include('header'); %>
+<div class="content">
+    <h3>
+      <strong>
+          Bonjour <%= locals.firstname %> <%= locals.lastname?.toUpperCase() %>,
+      </strong>
+    </h3>
+    <p>
+        Suite à votre demande de récupération de compte, un administrateur a validé votre identité avec succès.
+    </p>
+    <p>
+      Vous pouvez dès à présent vous connecter en utilisant le nouveau mot de passe que vous aviez défini.
+    </p>
+
+    <div class="button-container">
+        <div class="button-link">
+            <a class="button" href=<%= locals.link %>>Accéder à mon compte</a>
+        </div>
+    </div>
+
+    <p>
+        Si vous n'êtes pas à l'origine de cette demande, veuillez contacter notre support immédiatement.
+    </p>
+</div>
+
+<style>
+  .content {
+    width: calc(100% - 40vw);
+    margin: 0 20vw;
+  }
+
+  .button-container {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .button-link:hover {
+    cursor: pointer;
+  }
+
+  .button-link {
+    width: 220px;
+    display: flex;
+    height: 40px;
+    background: rgba(0, 0, 145, 1);
+    align-items: center;
+    justify-content: space-around;
+  }
+
+  a.button {
+    color: white;
+    text-decoration: none;
+    text-align: center;
+    padding: 8px;
+  }
+
+</style>
+
+<%- include('footer'); %>

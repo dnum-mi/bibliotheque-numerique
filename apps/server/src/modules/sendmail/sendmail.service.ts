@@ -10,9 +10,11 @@ const tempateNames = [
   'alreadySignUp',
   'loginWithVerifyAuth',
   'resetPasswordAfterThreeAttempts',
+  'pwdRequestApproved',
+  'pwdRequestRejected',
 ] as const
 
-type templateNameKey = typeof tempateNames[number]
+type templateNameKey = (typeof tempateNames)[number]
 const eTemplateName = createEnum(tempateNames)
 
 @Injectable()
@@ -38,7 +40,12 @@ export class SendMailService {
       [eTemplateName.validSignUp]: 'Confirmer votre inscription',
       [eTemplateName.alreadySignUp]: 'Déjà inscrit',
       [eTemplateName.loginWithVerifyAuth]: 'Confirmer votre connexion',
-      [eTemplateName.resetPasswordAfterThreeAttempts]: 'Votre compte a été temporairement bloqué — Action requise',
+      [eTemplateName.resetPasswordAfterThreeAttempts]:
+        'Votre compte a été temporairement bloqué — Action requise',
+      [eTemplateName.pwdRequestApproved]:
+        'Votre mot de passe a été réinitialisé',
+      [eTemplateName.pwdRequestRejected]:
+        'Suite à votre demande de récupération de compte',
     }
     const subject = subjects[template]
     await this.mailerService.sendMail({
@@ -141,6 +148,35 @@ export class SendMailService {
       urlResetLink,
       eTemplateName.alreadySignUp,
       duration,
+    )
+  }
+
+  public async approvePasswordResetRequest(
+    email: string,
+    firstname: string,
+    lastname: string,
+    accountLink: string,
+  ): Promise<void> {
+    return this._commonSend(
+      email,
+      firstname,
+      lastname,
+      accountLink,
+      eTemplateName.pwdRequestApproved,
+    )
+  }
+
+  public async rejectPasswordResetRequest(
+    email: string,
+    firstname: string,
+    lastname: string,
+  ): Promise<void> {
+    return this._commonSend(
+      email,
+      firstname,
+      lastname,
+      '',
+      eTemplateName.pwdRequestRejected,
     )
   }
 }
