@@ -4,7 +4,10 @@ import { Field } from '../objects/entities/field.entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
-import { DateChamp, DossierWithCustomChamp as TDossier } from '@dnum-mi/ds-api-client/dist/@types/types'
+import {
+  DateChamp,
+  DossierWithCustomChamp as TDossier,
+} from '@dnum-mi/ds-api-client/dist/@types/types'
 import {
   DsChampType,
   DsChampTypeKeys,
@@ -56,7 +59,9 @@ export class FieldService extends BaseEntityService<Field> {
   ): number | null {
     const number = type === FieldType.number ? parseFloat(stringValue) : null
     if (number > SQL_INT_MAX || number < SQL_INT_MIN) {
-      this.logger.error(`Number in field is TOO BIG: ${number}. Setting -1 to not crash db.`)
+      this.logger.error(
+        `Number in field is TOO BIG: ${number}. Setting -1 to not crash db.`,
+      )
       return -1
     }
     return number && !isNaN(number) ? number : null
@@ -187,10 +192,7 @@ export class FieldService extends BaseEntityService<Field> {
             columnHashSelected.type,
             value,
           ),
-          numberValue: this._giveNumberOrNull(
-            columnHashSelected.type,
-            value,
-          ),
+          numberValue: this._giveNumberOrNull(columnHashSelected.type, value),
           dossierId,
           parentRowIndex: null,
           rawJson: null,
@@ -254,14 +256,17 @@ export class FieldService extends BaseEntityService<Field> {
     field: Pick<Field, 'sourceId' | 'dossierId'> & Partial<Field>,
   ): Promise<Field> {
     return this.repo.manager.transaction(async (transactionManager) => {
-      const query = transactionManager.createQueryBuilder(Field, 'field')
+      const query = transactionManager
+        .createQueryBuilder(Field, 'field')
         .delete()
         .from(Field)
         .where('sourceId = :sourceId', { sourceId: field.sourceId })
         .andWhere('dossierId = :dossierId', { dossierId: field.dossierId })
 
       if (field.parentRowIndex !== undefined && field.parentRowIndex !== null) {
-        query.andWhere('parentRowIndex = :parentRowIndex', { parentRowIndex: field.parentRowIndex })
+        query.andWhere('parentRowIndex = :parentRowIndex', {
+          parentRowIndex: field.parentRowIndex,
+        })
       } else {
         query.andWhere('parentRowIndex IS NULL')
       }

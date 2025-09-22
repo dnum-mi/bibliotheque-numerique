@@ -63,6 +63,7 @@ export const getOneCustomFiltersRoute = (id: number) => `/custom-filters/${id}`
 export const getOneCustomFiltersStats = (id: number) => `${getOneCustomFiltersRoute(id)}/stats`
 
 export const getDossierByIdRoute = (id: number) => `${dossierRoute}/${id}`
+export const getDossierWithFieldsByIdRoute = (id: number) => `${dossierRoute}/${id}/fields`
 
 export const healthRoute = '/health/info'
 

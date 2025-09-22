@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 import DisplayLabelsValues from '@/components/DisplayLabelsValues.vue'
+import type { Demandeur, PersonneMorale } from '@dnum-mi/ds-api-client'
 
 const props = withDefaults(
   defineProps<{
-    datas?: object
+    datas?: (Demandeur & PersonneMorale) | Record<string, never>
   }>(),
   {
     datas: () => ({}),
@@ -138,11 +139,9 @@ const labelsEntreprise = [
     text: 'Attestation Social',
     value: 'attestationSocialeAttachment',
   },
-
 ]
 
 const labelAsssociation = [
-
   {
     text: 'Date de création',
     value: 'dateCreation',
@@ -167,7 +166,6 @@ const labelAsssociation = [
     text: 'Titre',
     value: 'titre',
   },
-
 ]
 
 const address = computed(() => props.datas?.address || {})

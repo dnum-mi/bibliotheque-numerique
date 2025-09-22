@@ -1,22 +1,22 @@
 <script lang="ts" setup>
-import type { TDossier } from '@biblio-num/shared'
+import type { IDossierFieldsOutput } from '@biblio-num/shared'
 
 import { dateTimeToStringFr } from '@/utils'
 
 const props = withDefaults(
   defineProps<{
-    datas?: TDossier | Record<string, never>
+    datas?: IDossierFieldsOutput | Record<string, never>
   }>(),
   {
     datas: () => ({}),
   },
 )
 
-const prefecture = computed(() => props.datas.groupeInstructeur?.label.toUpperCase() || '')
-const depot = computed(() => dateTimeToStringFr(props.datas.dateDepot) || '')
-const instruction = computed(() => dateTimeToStringFr(props.datas.datePassageEnInstruction) || '')
+const prefecture = computed(() => props.datas.prefecture?.toUpperCase() || '')
+const depot = computed(() => dateTimeToStringFr(props.datas.dateDepot?.toString() as string) || '')
+const instruction = computed(() => dateTimeToStringFr(props.datas.datePassageEnInstruction?.toString() as string) || '')
 const publication = computed(() => '')
-const etat = computed(() => props.datas?.state || '')
+const etat = computed(() => props.datas?.state)
 </script>
 
 <template>
@@ -40,7 +40,7 @@ const etat = computed(() => props.datas?.state || '')
       </div>
       <div class="fr-col-2">
         <label class="bn-fiche-sub-title--label">ÉTAT</label>
-        <StatusBadge :status="etat" />
+        <StatusBadge :status="etat!" />
       </div>
     </div>
   </div>

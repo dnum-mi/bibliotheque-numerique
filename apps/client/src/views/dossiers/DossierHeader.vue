@@ -1,15 +1,16 @@
 <script lang="ts" setup>
-import type { IDossier, IOrganisme } from '@biblio-num/shared'
+import { eIdentificationDemarche } from '@biblio-num/shared'
+import type { IDossierFieldsOutput } from '@biblio-num/shared'
 
 import OrganismeBadge from '@/components/Badges/organisme/OrganismeBadge.vue'
 import { routeNames } from '@/router/route-names'
 import { EOrganismeIdType } from '@/stores'
 
 type DossierHeaderProps = {
-  dossier: IDossier & { organisme?: IOrganisme }
+  dossier: IDossierFieldsOutput
 }
 
-defineProps<DossierHeaderProps>()
+const { dossier } = defineProps<DossierHeaderProps>()
 
 const router = useRouter()
 const goToOrganisme = (idRna: string | null, idRnf: string | null) => {
@@ -21,27 +22,22 @@ const goToOrganisme = (idRna: string | null, idRnf: string | null) => {
     query: { idType },
   })
 }
+const isMaarch = computed(() => dossier.demarche.identification === eIdentificationDemarche.MAARCH)
 </script>
 
 <template>
-  <header
-    class="flex justify-between gap-2"
-  >
+  <header class="flex justify-between gap-2">
     <div class="flex flex-col justify-center">
       <h2
         v-if="dossier.organisme"
         class="m-0 p-0 text-lg text-[var(--text-inverted-grey)]"
       >
-        {{ dossier.organisme?.id }} -
+        {{ dossier.organisme?.idRna || dossier.organisme?.idRnf }} -
         <span class="font-normal">{{ dossier.organisme?.title }}</span>
       </h2>
-      <div
-        class="flex gap-2 text-sm"
-      >
-        <OrganismeBadge
-          :type="dossier.organisme?.type"
-        />
-        <strong class="font-bold">N°DS - {{ dossier.dsDataJson?.number }} </strong>
+      <div class="flex gap-2 text-sm">
+        <OrganismeBadge :type="dossier.organisme?.type" />
+        <strong class="font-bold">{{ isMaarch ? 'N° Courrier' : 'N° DS' }} - {{ dossier.sourceId }}</strong>
         <span>{{ dossier.demarche?.title }}</span>
       </div>
     </div>

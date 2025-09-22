@@ -1,6 +1,5 @@
 import {
   Controller,
-  ForbiddenException,
   Get,
   NotFoundException,
   Param,
@@ -11,8 +10,6 @@ import { DossierService } from '../providers/dossier.service'
 import { Dossier } from '../objects/entities/dossier.entity'
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
 import {
-  canAccessDemarche,
-  canAccessPrefectureInDemarche,
   IRole,
   Roles,
 } from '@biblio-num/shared'
@@ -24,6 +21,7 @@ import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-nam
 import { InjectQueue } from '@nestjs/bull'
 import { Queue } from 'bull'
 import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.decorator'
+import { DossierWithFieldsOutputDto } from '../objects/dto/dossier-with-fields-output.dto'
 
 @ApiTags('Dossiers')
 @Controller('dossiers')
@@ -49,36 +47,36 @@ export class DossierController {
     @Param('id') id: string,
   ): Promise<Dossier> {
     this.logger.verbose('findone')
-    const dossier = await this.dossiersService.findOneOrThrow({
-      where: { id: Number(id) },
-      relations: ['demarche', 'organisme', 'files'],
-    })
-    if (!canAccessDemarche(dossier.demarche.id, role)) {
-      throw new ForbiddenException(
-        'Vous n’avez pas accès à la démarche correspondante à ce dossier',
+    const { dossier } =
+      await this.dossiersService.getAndValidateDossierForRole(Number(id), role)
+
+    return dossier
+  }
+
+  @Get(':id/fields')
+  @UsualApiOperation({
+    summary: "Retourner les champs d'un dossier.",
+    method: 'GET',
+    minimumRole: Roles.instructor,
+    responseType: DossierWithFieldsOutputDto,
+  })
+  @Role(Roles.instructor)
+  async findFieldsFromOne(
+    @CurrentUserRole() role: IRole,
+    @Param('id') id: string,
+  ): Promise<DossierWithFieldsOutputDto> {
+    this.logger.verbose('findFieldsFromOne')
+    const { dossier, hasFullAccess } =
+      await this.dossiersService.getAndValidateDossierForRole(
+        Number(id),
+        role,
+        ['fields'],
       )
-    }
-    const fullDossier = canAccessPrefectureInDemarche(
-      dossier.prefecture,
-      role,
-      dossier.demarche.id,
-    )
-    if (!fullDossier) {
-      dossier.dsDataJson.annotations = []
-      dossier.dsDataJson.messages = []
-    }
-    const dossierWithFiles = this.dossiersService.transformValueFileOfDossier(
-      dossier,
-      dossier.files,
-    )
-    return {
-      ...dossierWithFiles,
-      dsDataJson: {
-        ...dossierWithFiles.dsDataJson,
-        annotations: fullDossier ? dossierWithFiles.dsDataJson.annotations : [],
-        messages: fullDossier ? dossierWithFiles.dsDataJson.messages : [],
-      },
-    }
+
+    const dossierResult =
+      await this.dossiersService.mapDossierToFieldsOutput(dossier, hasFullAccess)
+
+    return dossierResult
   }
 
   @Patch(':id/sync')

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { Message as DossierMessage } from '@dnum-mi/ds-api-client'
-import type { IDossier as IDossierOutput, IFileOutput, IPagination } from '@biblio-num/shared'
+import type { IDossierFieldsOutput, IFileOutput, IPagination } from '@biblio-num/shared'
 
 import { useDossierStore } from '@/stores/dossier'
 import LayoutFiche from '@/components/Layout/LayoutFiche.vue'
@@ -17,13 +17,12 @@ import type { ApiCall } from '@/components/ag-grid/server-side/pagination.utils'
 const dossierStore = useDossierStore()
 
 const isReady = ref(false) // Utiliser pour ordonner les tabs - sinon la tabulation de l'annotation est sélectionnée quand on clique sur une pièce jointe
-const dossier = computed<IDossierOutput | undefined>(() => dossierStore?.dossier)
-const dossierDS = computed<IDossierOutput['dsDataJson'] | undefined>(() => dossier.value?.dsDataJson)
-const demandeurEmail = computed<string | undefined>(() => dossier.value?.dsDataJson.usager?.email)
+const dossier = computed<IDossierFieldsOutput | undefined>(() => dossierStore?.dossier)
+const demandeurEmail = computed<string | undefined>(() => dossier.value?.demandeurEmail)
 
 const messages = computed(
   () =>
-    dossier.value?.dsDataJson.messages?.map(({ id, createdAt, body, email, attachments, attachment }: DossierMessage) => ({
+    dossier.value?.messages?.map(({ id, createdAt, body, email, attachments, attachment }: DossierMessage) => ({
       id,
       date: formatForMessageDate(new Date(createdAt)),
       email,
@@ -33,7 +32,7 @@ const messages = computed(
 )
 const hasMessages = computed(() => !!messages.value?.length && isReady.value)
 
-const annotations = computed(() => dossier.value?.dsDataJson.annotations)
+const annotations = computed(() => dossier.value?.annotations)
 const hasAnnotations = computed(() => !!annotations.value?.length && isReady.value)
 
 const nbAttachments = ref(0)
@@ -51,7 +50,7 @@ onMounted(async () => {
   const params = useRoute()?.params
   const id = Number(params.id)
   if (id) {
-    await dossierStore.getDossier(id)
+    await dossierStore.getDossierWithFields(id)
     nbAttachments.value = await apiClient.getDossierFilesSummary(id)
     isReady.value = true
   }
@@ -63,7 +62,7 @@ const attachmentsTitle = computed(() => {
   return `Pièces jointes ${showAttachments.value ? `(${nbAttachments.value})` : ''}`
 })
 const messagesTitle = computed(() => {
-  const count = dossier.value?.dsDataJson.messages?.length ?? 0
+  const count = dossier.value?.messages?.length ?? 0
   return `Messagerie ${hasMessages.value ? `(${count})` : ''}`
 })
 </script>
@@ -81,7 +80,7 @@ const messagesTitle = computed(() => {
         <DossierHeader :dossier="dossier" />
       </template>
       <template #sub-title>
-        <DossierInformations :datas="dossierDS" />
+        <DossierInformations :datas="dossier" />
       </template>
       <template #content>
         <BnTabsContainer
@@ -95,9 +94,9 @@ const messagesTitle = computed(() => {
             title="Demande"
           >
             <DossierDemande
-              v-if="dossierDS"
+              v-if="dossier"
               id="dossier-demande"
-              :datas="dossierDS"
+              :datas="dossier"
             />
           </BnTab>
           <BnTab

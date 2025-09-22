@@ -10,7 +10,7 @@ describe('Vue Dossier', () => {
   })
 
   it('PJ', () => {
-    cy.intercept({ method: 'GET', url: '/api/dossiers/1' }, dosiser).as('dossier')
+    cy.intercept({ method: 'GET', url: '/api/dossiers/1/fields' }, dosiser).as('dossier')
     cy.intercept({ method: 'POST', url: '/api/dossiers/1/files/list' }, files).as('files')
     cy.intercept({ method: 'GET', url: '/api/dossiers/1/files/summary' }, { body: files.total }).as('files-summary')
 

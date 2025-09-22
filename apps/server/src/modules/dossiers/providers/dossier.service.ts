@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common'
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { In, Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -15,6 +19,17 @@ import {
   anonymisedStringValue,
   anonymisedFileValue,
   anonymisedFileUuid,
+  IRole,
+  canAccessDemarche,
+  canAccessPrefectureInDemarche,
+  PrefectureDictionary,
+  eIdentificationDemarche,
+  IFieldList,
+  IFieldSimple,
+  FieldFileType,
+  IFieldRepetable,
+  PrefectureKey,
+  PieceJustificativeChampWithState,
 } from '@biblio-num/shared'
 
 import { Dossier } from '../objects/entities/dossier.entity'
@@ -22,10 +37,29 @@ import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { LeanDossierOutputDto } from '@/modules/dossiers/objects/dto/lean-dossier-output.dto'
 import { File } from '../../files/objects/entities/file.entity'
 import { FieldService } from '@/modules/dossiers/providers/field.service'
-import {
-  fixFieldValueFunctionsDemandeur,
-} from '@/modules/dossiers/objects/constante/fix-field-demandeur.dictionnary'
+import { fixFieldValueFunctionsDemandeur } from '@/modules/dossiers/objects/constante/fix-field-demandeur.dictionnary'
 import { MappingAnonymized } from '@/modules/demarches/objects/dtos/mapping-anonymized.dto'
+import {
+  DemarcheOutput,
+  DossierWithFieldsOutputDto,
+  OrganismeOutput,
+} from '../objects/dto/dossier-with-fields-output.dto'
+import { Field } from '../objects/entities/field.entity'
+import {
+  Demandeur,
+  PersonneMorale,
+  PersonnePhysique,
+} from '@dnum-mi/ds-api-client/dist/@types/generated-types'
+import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
+import { Demarche } from '@/modules/demarches/objects/entities/demarche.entity'
+import { Organisme } from '@/modules/organismes/objects/organisme.entity'
+
+interface DataDossierSpecificDS {
+  demandeur: PersonnePhysique | PersonneMorale | undefined
+  demandeurEmail: string | null
+  messages: Message[]
+  datePassageEnInstruction: Date | null
+}
 
 @Injectable()
 export class DossierService extends BaseEntityService<Dossier> {
@@ -69,9 +103,7 @@ export class DossierService extends BaseEntityService<Dossier> {
       })
   }
 
-  async countDossiersByOrganismeId(
-    organismeId: number,
-  ): Promise<number> {
+  async countDossiersByOrganismeId(organismeId: number): Promise<number> {
     if (isNaN(organismeId)) {
       throw new BadRequestException('Invalid organisme id.')
     }
@@ -91,7 +123,7 @@ export class DossierService extends BaseEntityService<Dossier> {
     this.logger.verbose('transformValueFileOfDossier')
     if (dossier.dsDataJson.champs && Array.isArray(dossier.dsDataJson.champs)) {
       dossier.dsDataJson.champs.forEach(
-        this.transformUrlToUuid(
+        this._transformUrlToUuid(
           files.filter((f) => f.sourceLabel === eFileDsSourceLabel['ds-champ']),
         ),
       )
@@ -101,7 +133,7 @@ export class DossierService extends BaseEntityService<Dossier> {
       Array.isArray(dossier.dsDataJson.annotations)
     ) {
       dossier.dsDataJson.annotations.forEach(
-        this.transformUrlToUuid(
+        this._transformUrlToUuid(
           files.filter(
             (f) => f.sourceLabel === eFileDsSourceLabel['ds-annotation'],
           ),
@@ -113,7 +145,7 @@ export class DossierService extends BaseEntityService<Dossier> {
       Array.isArray(dossier.dsDataJson.messages)
     ) {
       dossier.dsDataJson.messages.forEach(
-        this.transformUrlToUuidMessage(
+        this._transformUrlToUuidMessage(
           files.filter(
             (f) => f.sourceLabel === eFileDsSourceLabel['ds-message'],
           ),
@@ -129,7 +161,31 @@ export class DossierService extends BaseEntityService<Dossier> {
     return dossier
   }
 
-  private setFileUrlToUuid = (id, files, fileCh, filesCh): void => {
+  private _transformValueFileOfDossierFields(dossier: Dossier, files: File[]): Dossier {
+    this.logger.verbose('transformValueFileOfDossierFields')
+    if (dossier.fields && Array.isArray(dossier.fields)) {
+      dossier.fields.forEach((field) => {
+        if (field.type === 'file' && field.rawJson) {
+          const fileData = field.rawJson as FieldFileType
+          if (fileData.id) {
+            const fileFound = files.find((f) => String(f.sourceStringId) === String(fileData.id))
+            if (fileFound) {
+              ((field.rawJson as PieceJustificativeChampWithState).files).forEach((f2) => {
+                f2.url = fileFound.uuid ?? ''
+                f2.state = fileFound.state ?? eState.queued
+              })
+            } else {
+              field.rawJson = null
+            }
+          }
+        }
+      })
+    }
+
+    return dossier
+  }
+
+  private _setFileUrlToUuid = (id, files, fileCh, filesCh): void => {
     if (fileCh) {
       const fileFound = files.find(
         (file) =>
@@ -150,33 +206,33 @@ export class DossierService extends BaseEntityService<Dossier> {
     }
   }
 
-  private transformUrlToUuid(files: File[]) {
+  private _transformUrlToUuid(files: File[]) {
     return (ch: Champ): void => {
       if (ch.__typename === 'PieceJustificativeChamp') {
         const fileCh = (ch as PieceJustificativeChamp).file
         const filesCh = (ch as PieceJustificativeChamp).files
-        this.setFileUrlToUuid(ch.id, files, fileCh, filesCh)
+        this._setFileUrlToUuid(ch.id, files, fileCh, filesCh)
       }
       if (ch.__typename === 'RepetitionChamp') {
         if ((ch as RepetitionChamp).champs) {
           ;(ch as RepetitionChamp).champs.forEach(
-            this.transformUrlToUuid(files),
+            this._transformUrlToUuid(files),
           )
         }
         if ((ch as RepetitionChamp).rows) {
           ;(ch as RepetitionChamp).rows.forEach((row) =>
-            row.champs.forEach(this.transformUrlToUuid(files)),
+            row.champs.forEach(this._transformUrlToUuid(files)),
           )
         }
       }
     }
   }
 
-  private transformUrlToUuidMessage(files: File[]) {
+  private _transformUrlToUuidMessage(files: File[]) {
     return (m: Message): void => {
       const fileCh = m.attachment
       const filesCh = m.attachments
-      this.setFileUrlToUuid(m.id, files, fileCh, filesCh)
+      this._setFileUrlToUuid(m.id, files, fileCh, filesCh)
     }
   }
 
@@ -186,32 +242,37 @@ export class DossierService extends BaseEntityService<Dossier> {
   ): Promise<void> {
     this.logger.verbose(`anonymiseDossier ${dossier.id}`)
 
-    await this.anonymiseDemandeur(dossier)
+    await this._anonymiseDemandeur(dossier)
 
     if (mappingAnonymized.length !== 0) {
-      await this.anonymiseChampsAndAnnotations(dossier, mappingAnonymized)
+      await this._anonymiseChampsAndAnnotations(dossier, mappingAnonymized)
     }
   }
 
-  private async anonymiseDemandeur(dossier: Dossier): Promise<void> {
+  private async _anonymiseDemandeur(dossier: Dossier): Promise<void> {
     this.logger.verbose(`anonymiseDemandeur ${dossier.id}`)
     const demandeurKeys = ['nom', 'prenom', 'civilite']
 
     // Anonymise demandeur in dsDataJson
-    demandeurKeys.forEach(key => {
-      if (Object.prototype.hasOwnProperty.call(dossier.dsDataJson.demandeur, key)) {
+    demandeurKeys.forEach((key) => {
+      if (
+        Object.prototype.hasOwnProperty.call(dossier.dsDataJson.demandeur, key)
+      ) {
         dossier.dsDataJson.demandeur[key] = anonymisedStringValue
       }
     })
 
     // Anonymise demandeur in fields
-    await this.fieldService.repository.update({
-      dossierId: dossier.id,
-      sourceId: In(Object.keys(fixFieldValueFunctionsDemandeur)),
-    }, {
-      stringValue: anonymisedStringValue,
-      anonymisedAt: new Date(),
-    })
+    await this.fieldService.repository.update(
+      {
+        dossierId: dossier.id,
+        sourceId: In(Object.keys(fixFieldValueFunctionsDemandeur)),
+      },
+      {
+        stringValue: anonymisedStringValue,
+        anonymisedAt: new Date(),
+      },
+    )
 
     await this.repo.update(dossier.id, {
       anonymisedAt: new Date(),
@@ -219,18 +280,20 @@ export class DossierService extends BaseEntityService<Dossier> {
     })
   }
 
-  private async anonymiseChampsAndAnnotations(
+  private async _anonymiseChampsAndAnnotations(
     dossier: Dossier,
     mappingAnonymized: MappingAnonymized[],
   ): Promise<void> {
-    this.logger.verbose(`anonymiseDossier for champs and annotations: ${mappingAnonymized}`)
+    this.logger.verbose(
+      `anonymiseDossier for champs and annotations: ${mappingAnonymized}`,
+    )
 
     // Anonymise champs and annotations
     mappingAnonymized.forEach((mapping) => {
       if (mapping.source === 'champs') {
-        this.anonymiseChampOrAnnotation(dossier, mapping, 'champs')
+        this._anonymiseChampOrAnnotation(dossier, mapping, 'champs')
       } else if (mapping.source === 'annotation') {
-        this.anonymiseChampOrAnnotation(dossier, mapping, 'annotations')
+        this._anonymiseChampOrAnnotation(dossier, mapping, 'annotations')
       }
     })
 
@@ -240,24 +303,31 @@ export class DossierService extends BaseEntityService<Dossier> {
       sourceId: In(mappingAnonymized.map((mapping) => mapping.id)),
     })
 
-    await this.fieldService.repository.update({
-      id: In(fields.flatMap(f => f.parentId ? [f.parentId, f.id] : f.id)),
-    }, {
-      stringValue: anonymisedStringValue,
-      dateValue: null,
-      numberValue: null,
-      rawJson: null,
-      anonymisedAt: new Date(),
-    })
+    await this.fieldService.repository.update(
+      {
+        id: In(fields.flatMap((f) => (f.parentId ? [f.parentId, f.id] : f.id))),
+      },
+      {
+        stringValue: anonymisedStringValue,
+        dateValue: null,
+        numberValue: null,
+        rawJson: null,
+        anonymisedAt: new Date(),
+      },
+    )
 
     const fileIds = dossier.files
-      .filter(file => file.label === anonymisedFileValue)
-      .map(file => file.id)
+      .filter((file) => file.label === anonymisedFileValue)
+      .map((file) => file.id)
     if (fileIds.length > 0) {
-      await this.repo.manager.update(File, { id: In(fileIds) }, {
-        label: anonymisedFileValue,
-        uuid: anonymisedFileUuid,
-      })
+      await this.repo.manager.update(
+        File,
+        { id: In(fileIds) },
+        {
+          label: anonymisedFileValue,
+          uuid: anonymisedFileUuid,
+        },
+      )
     }
 
     await this.repo.update(dossier.id, {
@@ -266,34 +336,40 @@ export class DossierService extends BaseEntityService<Dossier> {
     })
   }
 
-  private anonymiseChampOrAnnotation(
+  private _anonymiseChampOrAnnotation(
     dossier: Dossier,
     mapping: MappingAnonymized,
     dsDataJsonKey: string,
   ): void {
-    this.logger.verbose(`anonymiseChampOrAnnotation for dossier: ${dossier.id}, mappingAnonymized: ${mapping}`)
+    this.logger.verbose(
+      `anonymiseChampOrAnnotation for dossier: ${dossier.id}, mappingAnonymized: ${mapping}`,
+    )
     if (dossier.dsDataJson[dsDataJsonKey]) {
       dossier.dsDataJson[dsDataJsonKey].forEach((champ) => {
-        if (champ.id === mapping.id) { // Anonymise champ
+        if (champ.id === mapping.id) {
+          // Anonymise champ
           this.logger.debug(`Anonymise champ ${champ.id}`)
           champ.stringValue = anonymisedStringValue
-          this.tryAnonymiseFile(champ, dossier.files)
-        } else if (champ.__typename === 'RepetitionChamp') { // Anonymise sub champ of repetition champ
+          this._tryAnonymiseFile(champ, dossier.files)
+        } else if (champ.__typename === 'RepetitionChamp') {
+          // Anonymise sub champ of repetition champ
           const subChampIdsAnonymise = []
           champ.rows?.forEach((row) => {
             row.champs.forEach((ch) => {
               if (ch.champDescriptor.id === mapping.id) {
-                this.logger.debug(`Anonymise sub champ of repetition champ ${champ.id}`)
+                this.logger.debug(
+                  `Anonymise sub champ of repetition champ ${champ.id}`,
+                )
                 subChampIdsAnonymise.push(ch.id)
                 ch.stringValue = anonymisedStringValue
-                this.tryAnonymiseFile(ch, dossier.files)
+                this._tryAnonymiseFile(ch, dossier.files)
               }
             })
           })
           champ.champs?.forEach((ch) => {
             if (subChampIdsAnonymise.includes(ch.id)) {
               ch.stringValue = anonymisedStringValue
-              this.tryAnonymiseFile(ch, dossier.files)
+              this._tryAnonymiseFile(ch, dossier.files)
             }
           })
         }
@@ -301,7 +377,7 @@ export class DossierService extends BaseEntityService<Dossier> {
     }
   }
 
-  private tryAnonymiseFile(champ, files): void {
+  private _tryAnonymiseFile(champ, files): void {
     if (champ.__typename === 'PieceJustificativeChamp') {
       this.logger.verbose(`tryAnonymiseFile champId: ${champ.id}`)
       champ.files.forEach((file) => {
@@ -314,6 +390,376 @@ export class DossierService extends BaseEntityService<Dossier> {
           }
         })
       })
+    }
+  }
+
+  public async getAndValidateDossierForRole(
+    id: number,
+    role: IRole,
+    relations: string[] = [],
+  ): Promise<{ dossier: Dossier; hasFullAccess: boolean }> {
+    const dossier = await this.findOneOrThrow({
+      where: { id },
+      relations: ['demarche', 'organisme', 'files', ...relations],
+    })
+
+    if (!canAccessDemarche(dossier.demarche.id, role)) {
+      throw new ForbiddenException(
+        'Vous n’avez pas accès à la démarche correspondante à ce dossier',
+      )
+    }
+
+    const hasFullAccess = canAccessPrefectureInDemarche(
+      dossier.prefecture,
+      role,
+      dossier.demarche.id,
+    )
+
+    const dossierWithFiles = this._transformValueFileOfDossierFields(
+      dossier,
+      dossier.files,
+    )
+
+    const { annotations, messages, ...restOfDsDataJson } =
+      dossierWithFiles.dsDataJson
+
+    const finalDossier = {
+      ...dossierWithFiles,
+      dsDataJson: {
+        ...restOfDsDataJson,
+        ...(hasFullAccess ? { annotations, messages } : {}),
+      },
+    }
+
+    return { dossier: finalDossier, hasFullAccess }
+  }
+
+  async mapDossierToFieldsOutput(
+    dossier: Dossier,
+    hasFullAccess: boolean,
+  ): Promise<DossierWithFieldsOutputDto> {
+    this.logger.verbose(`mapToFieldsOutput ${dossier.id}`)
+
+    const isMaarchDossier = this._isMaarchDemarche(dossier.demarche)
+
+    const reconstructedFields = await this._reconstructFieldsWithMapping(
+      dossier.demarche.mappingColumns,
+      dossier.fields,
+    )
+
+    const specificData = this._extractDataDossierSpecificDS(
+      dossier,
+      isMaarchDossier,
+    )
+
+    const baseDto = this._buildBaseDossierDto(
+      dossier,
+      reconstructedFields,
+      specificData,
+    )
+
+    return hasFullAccess ? baseDto : this._applyAccessRestrictions(baseDto)
+  }
+
+  private _isMaarchDemarche(demarche: Demarche): boolean {
+    return demarche.identification === eIdentificationDemarche.MAARCH
+  }
+
+  private _extractDataDossierSpecificDS(
+    dossier: Dossier,
+    isMaarch: boolean,
+  ): DataDossierSpecificDS {
+    if (isMaarch) {
+      return {
+        demandeur: undefined,
+        demandeurEmail: null,
+        messages: [],
+        datePassageEnInstruction: null,
+      }
+    }
+
+    return {
+      demandeur: this._extractDemandeur(
+        dossier.dsDataJson.demandeur as Demandeur & { __typename: string },
+      ),
+      demandeurEmail: dossier.dsDataJson.usager?.email ?? null,
+      messages: dossier.dsDataJson.messages ?? [],
+      datePassageEnInstruction: dossier.dsDataJson.datePassageEnInstruction,
+    }
+  }
+
+  private _extractDemandeur(
+    demandeur: Demandeur & { __typename: string },
+  ): PersonnePhysique | PersonneMorale {
+    return demandeur.__typename === 'PersonnePhysique'
+      ? (demandeur as PersonnePhysique)
+      : (demandeur as PersonneMorale)
+  }
+
+  private _buildBaseDossierDto(
+    dossier: Dossier,
+    reconstructedFields: { champs: IFieldList[]; annotations: IFieldList[] },
+    specificData: DataDossierSpecificDS,
+  ): DossierWithFieldsOutputDto {
+    return {
+      id: dossier.id,
+      organisme: this._buildOrganismeDto(dossier.organisme),
+      demarche: this._buildDemarcheDto(dossier.demarche),
+      prefecture: this._getPrefectureInfo(dossier.prefecture),
+      dateDepot: dossier.dateDepot,
+      state: dossier.state,
+      sourceId: dossier.sourceId,
+      datePassageEnInstruction: specificData.datePassageEnInstruction,
+      demandeur: specificData.demandeur,
+      champs: reconstructedFields.champs,
+      annotations: reconstructedFields.annotations,
+      files: dossier.files,
+      demandeurEmail: specificData.demandeurEmail,
+      messages: specificData.messages,
+    }
+  }
+
+  private _buildOrganismeDto(
+    organisme: Organisme | null | undefined,
+  ): OrganismeOutput {
+    return {
+      id: organisme?.id,
+      type: organisme?.type,
+      title: organisme?.title ?? undefined,
+      idRna: organisme?.idRna,
+      idRnf: organisme?.idRnf,
+    }
+  }
+
+  private _buildDemarcheDto(demarche: Demarche): DemarcheOutput {
+    return {
+      id: demarche.id,
+      title: demarche.title,
+      identification: demarche.identification,
+    }
+  }
+
+  private _getPrefectureInfo(
+    prefecture: string | null | undefined,
+  ): (typeof PrefectureDictionary)[keyof typeof PrefectureDictionary] | null {
+    return prefecture && prefecture in PrefectureDictionary
+      ? PrefectureDictionary[prefecture as PrefectureKey]
+      : null
+  }
+
+  private _applyAccessRestrictions(
+    fullDto: DossierWithFieldsOutputDto,
+  ): DossierWithFieldsOutputDto {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { annotations, messages, ...restrictedDto } = fullDto
+    return {
+      ...restrictedDto,
+      annotations: [],
+      messages: [],
+    }
+  }
+
+  private async _reconstructFieldsWithMapping(
+    mapping: MappingColumn[],
+    fields: Field[],
+  ): Promise<{ champs: IFieldList[]; annotations: IFieldList[] }> {
+    const activeMapping = mapping.filter((col) => col.source !== 'fix-field')
+    const activeFields = fields.filter(
+      (field) => field.fieldSource !== 'fix-field',
+    )
+
+    const result = {
+      champsGroups: [] as IFieldList[],
+      annotationsGroups: [] as IFieldList[],
+    }
+
+    const currentGroups = {
+      champs: null as IFieldList | null,
+      annotations: null as IFieldList | null,
+    }
+
+    const { fieldMap, childrenMap } = this._buildFieldMaps(activeFields)
+
+    for (const column of activeMapping) {
+      if (column.isHeader) {
+        this._handleHeaderColumn(column, result, currentGroups)
+        continue
+      }
+
+      const field = fieldMap.get(column.id)
+      if (!field) continue
+
+      const processedItem = this._processFieldItem(column, field, childrenMap)
+      this._addItemToGroup(column, processedItem, result, currentGroups)
+    }
+
+    return {
+      champs: result.champsGroups.filter((g) => g.items.length > 0),
+      annotations: result.annotationsGroups.filter((g) => g.items.length > 0),
+    }
+  }
+
+  private _buildFieldMaps(fields: Field[]): {
+    fieldMap: Map<string, Field>
+    childrenMap: Map<string, Field[]>
+  } {
+    const fieldMap = new Map<string, Field>()
+    const childrenMap = new Map<string, Field[]>()
+
+    for (const field of fields) {
+      if (field.parentId) {
+        const parentIdStr = String(field.parentId)
+        if (!childrenMap.has(parentIdStr)) {
+          childrenMap.set(parentIdStr, [])
+        }
+        childrenMap.get(parentIdStr)!.push(field)
+      } else {
+        fieldMap.set(field.sourceId, field)
+      }
+    }
+
+    return { fieldMap, childrenMap }
+  }
+
+  private _extractFieldValue(
+    field: Field,
+  ): string | number | boolean | Date | FieldFileType | null {
+    switch (field.type) {
+    case 'boolean':
+      return field.stringValue === 'true'
+    case 'file':
+      return field.rawJson as FieldFileType
+    default:
+      return field.stringValue
+    }
+  }
+
+  private _handleHeaderColumn(
+    column: MappingColumn,
+    result: { champsGroups: IFieldList[]; annotationsGroups: IFieldList[] },
+    currentGroups: {
+      champs: IFieldList | null
+      annotations: IFieldList | null
+    },
+  ): void {
+    const newGroup: IFieldList = {
+      id: column.id,
+      title: column.originalLabel,
+      items: [],
+    }
+
+    if (column.source === 'champs') {
+      result.champsGroups.push(newGroup)
+      currentGroups.champs = newGroup
+    } else {
+      result.annotationsGroups.push(newGroup)
+      currentGroups.annotations = newGroup
+    }
+  }
+
+  private _processFieldItem(
+    column: MappingColumn,
+    field: Field,
+    childrenMap: Map<string, Field[]>,
+  ): IFieldSimple | IFieldRepetable {
+    const baseProperties = {
+      id: column.id,
+      label: column.columnLabel || column.originalLabel,
+      description: column.originalDescription,
+      format: column.formatFunctionRef,
+    }
+
+    if (column.children && childrenMap.has(String(field.id))) {
+      const childrenFields = childrenMap.get(String(field.id))!
+      const rows = this._processChildrenRows(childrenFields, column.children)
+
+      return {
+        ...baseProperties,
+        type: 'group' as const,
+        rows,
+      }
+    }
+
+    return {
+      ...baseProperties,
+      value: this._extractFieldValue(field),
+      type: column.type,
+    }
+  }
+
+  private _processChildrenRows(
+    childrenFields: Field[],
+    childColumns: MappingColumn[],
+  ): IFieldSimple[][] {
+    const rowsByIndex = new Map<number, Field[]>()
+
+    for (const child of childrenFields) {
+      if (child.parentRowIndex !== null) {
+        if (!rowsByIndex.has(child.parentRowIndex)) {
+          rowsByIndex.set(child.parentRowIndex, [])
+        }
+        rowsByIndex.get(child.parentRowIndex)!.push(child)
+      }
+    }
+
+    return Array.from(rowsByIndex.values()).map((rowFields) =>
+      this._buildRowFromFields(rowFields, childColumns),
+    )
+  }
+
+  private _buildRowFromFields(
+    rowFields: Field[],
+    childColumns: MappingColumn[],
+  ): IFieldSimple[] {
+    return childColumns
+      .map((childColumn) => {
+        const field = rowFields.find((f) => f.sourceId === childColumn.id)
+        if (!field) return null
+
+        return {
+          id: childColumn.id,
+          label: childColumn.columnLabel || childColumn.originalLabel,
+          value: this._extractFieldValue(field),
+          type: childColumn.type,
+          format: childColumn.formatFunctionRef,
+          description: childColumn.originalDescription,
+        } as IFieldSimple
+      })
+      .filter((item): item is IFieldSimple => item !== null)
+  }
+
+  private _addItemToGroup(
+    column: MappingColumn,
+    item: IFieldSimple | IFieldRepetable,
+    result: { champsGroups: IFieldList[]; annotationsGroups: IFieldList[] },
+    currentGroups: {
+      champs: IFieldList | null
+      annotations: IFieldList | null
+    },
+  ): void {
+    const isChamps = column.source === 'champs'
+    const targetGroups = isChamps
+      ? result.champsGroups
+      : result.annotationsGroups
+    const currentGroup = isChamps
+      ? currentGroups.champs
+      : currentGroups.annotations
+
+    if (!currentGroup) {
+      const defaultGroup: IFieldList = {
+        id: isChamps ? 'default-champs' : 'default-annotations',
+        title: isChamps ? 'Informations Générales' : 'Annotations Générales',
+        items: [item],
+      }
+
+      targetGroups.push(defaultGroup)
+      if (isChamps) {
+        currentGroups.champs = defaultGroup
+      } else {
+        currentGroups.annotations = defaultGroup
+      }
+    } else {
+      currentGroup.items.push(item)
     }
   }
 }

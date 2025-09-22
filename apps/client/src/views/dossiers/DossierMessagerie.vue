@@ -5,8 +5,8 @@ import iconRoundMarianne from '@/assets/icone-ronde-marianne.png'
 import type { File } from '@dnum-mi/ds-api-client'
 
 type Message = {
-  id: number
-  date: Date
+  id: string
+  date: string
   email: string
   body: string
   attachments: File[]

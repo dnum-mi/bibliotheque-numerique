@@ -23,7 +23,7 @@ import {
   eFileTag,
   FileDsSourceLabelKey,
   eFileDsSourceLabel,
-  fileDsSourceLabels,
+  fileSourceLabels,
 } from '@biblio-num/shared'
 import { UpsertDsFileDto } from '@/modules/files/objects/dto/input/upsert-ds-file.dto'
 import { v4 } from 'uuid'
@@ -296,8 +296,8 @@ export class FileService extends BaseEntityService<File> {
   ): Promise<number> {
     this.logger.verbose('getDossierFileSummary')
     const sourceLabels = hasFullAccess
-      ? fileDsSourceLabels
-      : fileDsSourceLabels.filter((label: FileDsSourceLabelKey) =>
+      ? fileSourceLabels
+      : fileSourceLabels.filter((label: FileDsSourceLabelKey) =>
         !(eFileDsSourceLabel['ds-annotation'] === label || eFileDsSourceLabel['ds-message'] === label))
 
     return await this.repo

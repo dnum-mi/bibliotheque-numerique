@@ -40,6 +40,7 @@ import type {
   IOrganismeOutput,
   ISiafSearchOrganismeResponseOutput,
   ISiafRnfHistoryOutput,
+  IDossierFieldsOutput,
 } from '@biblio-num/shared'
 
 import {
@@ -85,6 +86,7 @@ import {
   getOrganismeHistoryByRnfRoute,
   getAddOneRnfRoute,
   getAddOneRnaRoute,
+  getDossierWithFieldsByIdRoute,
 } from './bn-api-routes'
 import { getUserByIdRoute, profileRoute, signInRoute, verifyAuthRoute, logoutRoute, usersRoutes } from '@/api/bn-api-routes'
 
@@ -466,6 +468,8 @@ export const dossiersApiClient = {
   },
 
   getDossier: async (id: number): Promise<IDossier> => getOrRedirectTo404(getDossierByIdRoute(id)),
+
+  getDossierWithFields: async (id: number): Promise<IDossierFieldsOutput> => getOrRedirectTo404(getDossierWithFieldsByIdRoute(id)),
 
   getOrganismeDossiers: async (organismeId: number): Promise<ILeanDossierOutput[]> =>
     (await apiClientInstance.get(getOrganismeDossiers(organismeId))).data,

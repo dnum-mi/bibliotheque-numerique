@@ -24,9 +24,7 @@ describe('Dossiers (e2e)', () => {
 
   describe('GET /dossiers/:id', () => {
     it('Should be 401', async () => {
-      return request(app.getHttpServer())
-        .get('/dossiers/1')
-        .expect(401)
+      return request(app.getHttpServer()).get('/dossiers/1').expect(401)
     })
 
     it('Should be 404', async () => {
@@ -51,17 +49,23 @@ describe('Dossiers (e2e)', () => {
     })
 
     it('Should retrieve complete Dossier', async () => {
-      loggerServiceMock.setContext = jest.fn().mockImplementation(() =>
-        console.log('Should retrieve complete Dossier'),
-      )
-      loggerServiceMock.error = jest.fn().mockImplementation((e) => console.log(e))
+      loggerServiceMock.setContext = jest
+        .fn()
+        .mockImplementation(() =>
+          console.log('Should retrieve complete Dossier'),
+        )
+      loggerServiceMock.error = jest
+        .fn()
+        .mockImplementation((e) => console.log(e))
       return request(app.getHttpServer())
         .get('/dossiers/11')
         .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(200)
         .then(({ body }) => {
           expect(body.dsDataJson.annotations).toEqual('I can see you')
-          expect(body.dsDataJson.messages).toEqual('Big brother is watching you')
+          expect(body.dsDataJson.messages).toEqual(
+            'Big brother is watching you',
+          )
         })
         .finally(() => {
           loggerServiceMock.setContext = jest.fn()
@@ -75,8 +79,8 @@ describe('Dossiers (e2e)', () => {
         .set('Authorization', `Bearer ${tokens.instructor}`)
         .expect(200)
         .then(({ body }) => {
-          expect(body.dsDataJson.annotations).toEqual([])
-          expect(body.dsDataJson.messages).toEqual([])
+          expect(body.dsDataJson).not.toHaveProperty('annotations')
+          expect(body.dsDataJson).not.toHaveProperty('messages')
         })
     })
   })
@@ -157,31 +161,31 @@ describe('Dossiers (e2e)', () => {
         select: ['id', 'label', 'tag'],
       })
 
-      return request(app.getHttpServer())
-        .post('/dossiers/16/files/list')
-        // instructor has no rights on pref 57 for demarche 1, and dossier with id 16 is pref 57 for demarche 1
-        .set('Authorization', `Bearer ${tokens.instructor}`)
-        .send({
-          limit: 10,
-          page: 1,
-          columns: ['id', 'label', 'tag'],
-        })
-        .expect(200)
-        .then(({ body }) => {
-          expect(body).toEqual({
-            data: expectedData,
-            total: 1,
+      return (
+        request(app.getHttpServer())
+          .post('/dossiers/16/files/list')
+          // instructor has no rights on pref 57 for demarche 1, and dossier with id 16 is pref 57 for demarche 1
+          .set('Authorization', `Bearer ${tokens.instructor}`)
+          .send({
+            limit: 10,
+            page: 1,
+            columns: ['id', 'label', 'tag'],
           })
-        })
+          .expect(200)
+          .then(({ body }) => {
+            expect(body).toEqual({
+              data: expectedData,
+              total: 1,
+            })
+          })
+      )
     })
   })
 
   describe('GET /dossiers/:id/files/summary', () => {
     const url = '/dossiers/16/files/summary'
     it('Should be 401', async () => {
-      return request(app.getHttpServer())
-        .get(url)
-        .expect(401)
+      return request(app.getHttpServer()).get(url).expect(401)
     })
 
     it('Should be 403 for no role', async () => {
@@ -202,14 +206,16 @@ describe('Dossiers (e2e)', () => {
     })
 
     it('Should return total files which are not from annotation and message', async () => {
-      return request(app.getHttpServer())
-        .get(url)
-        // instructor has no rights on pref 57 for demarche 1, and dossier with id 16 is pref 57 for demarche 1
-        .set('Authorization', `Bearer ${tokens.instructor}`)
-        .expect(200)
-        .then(({ text }) => {
-          expect(text).toEqual('1')
-        })
+      return (
+        request(app.getHttpServer())
+          .get(url)
+          // instructor has no rights on pref 57 for demarche 1, and dossier with id 16 is pref 57 for demarche 1
+          .set('Authorization', `Bearer ${tokens.instructor}`)
+          .expect(200)
+          .then(({ text }) => {
+            expect(text).toEqual('1')
+          })
+      )
     })
   })
 })

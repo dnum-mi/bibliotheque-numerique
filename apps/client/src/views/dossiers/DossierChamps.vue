@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import type { ChampWithDescriptor } from './composables/useGroupedChamps'
+import type { IFieldRepetable, IFieldSimple } from '@biblio-num/shared'
 import DossierChamp from './DossierChamp.vue'
 
 defineProps<{
-  champs?: ChampWithDescriptor[]
+  champs?: (IFieldSimple | IFieldRepetable)[]
 }>()
 </script>
 

@@ -1,15 +1,11 @@
 <script lang="ts" setup>
+import type { IFieldRepetable, IFieldSimple, FieldFileType } from '@biblio-num/shared'
 import DossierChamps from './DossierChamps.vue'
 import DownloadFile from '@/components/DownloadFile.vue'
-import type { ChampWithDescriptor } from './composables/useGroupedChamps'
 
-const props = defineProps<{
-  champ: ChampWithDescriptor
+defineProps<{
+  champ: IFieldSimple | IFieldRepetable
 }>()
-
-const champType = computed(() => {
-  return props.champ.__typename
-})
 </script>
 
 <template>
@@ -22,20 +18,18 @@ const champType = computed(() => {
       <!-- LABEL -->
       <label
         :for="champ.id"
-        v-if="champType !== 'RepetitionChamp'"
         class="bn-champ--text"
       >
         {{ champ.label }}
       </label>
       <!-- SI Piece jointe -->
-      <template v-if="champType === 'PieceJustificativeChamp'">
+      <template v-if="champ.type === 'file' && (champ.value as FieldFileType)?.files?.length">
         <div
           :id="champ.id"
           class="fr-text--bold fr-text bn-champ--text flex flex-col fr-pb-2w"
         >
-          <!-- {{ champ }} -->
           <div
-            v-for="(file, index) in champ.files"
+            v-for="(file, index) in (champ.value as FieldFileType).files"
             :key="index"
           >
             <DownloadFile :file="file" />
@@ -45,22 +39,21 @@ const champType = computed(() => {
 
       <!-- Si boolean -->
       <p
-        v-else-if="champType === 'CheckboxChamp'"
+        v-else-if="champ.type === 'boolean'"
         :id="champ.id"
         class="fr-text--bold fr-text bn-champ--text"
       >
-        {{ champ.stringValue === 'true' ? 'Oui' : 'Non' }}
+        {{ (champ as IFieldSimple).value ? 'Oui' : 'Non' }}
       </p>
 
       <!-- SI Repetable -->
-      <template v-else-if="champType === 'RepetitionChamp'">
+      <template v-else-if="champ.type === 'group'">
         <div
-          class="fr-background-alt--grey fr-p-2w fr-my-3w fr-ml-1w"
-          v-for="(row, idx) in champ.rows"
+          v-for="(row, idx) in (champ as IFieldRepetable).rows"
           :key="idx"
+          class="fr-background-alt--grey fr-p-2w fr-my-3w fr-ml-1w"
         >
-          <p class="fr-text--bold">{{ champ.label }} {{ champ.rows.length > 1 ? idx + 1 : '' }} :</p>
-          <DossierChamps :champs="row.champs" />
+          <DossierChamps :champs="row" />
         </div>
       </template>
 
@@ -70,7 +63,7 @@ const champType = computed(() => {
         :id="champ.id"
         class="fr-text--bold fr-text"
       >
-        {{ champ.stringValue }}
+        {{ (champ as IFieldSimple).value }}
       </p>
     </div>
   </div>

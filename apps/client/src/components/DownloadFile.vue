@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import type { File } from '@dnum-mi/ds-api-client'
 import { prettyByteSizeByString } from '@/utils'
 import { eState } from '@biblio-num/shared'
-import type { StateKey } from '@biblio-num/shared'
+import type { FileWithState } from '@biblio-num/shared'
 import { downloadFile } from '@/utils/downloadFile'
 
 const props = defineProps<{
-  file: File | null
+  file: FileWithState | null
 }>()
 
-const downloadable = computed(() => (props.file as File & { state: StateKey })?.state === eState.uploaded)
+const downloadable = computed(() => (props.file as FileWithState)?.state === eState.uploaded)
 
 const handleDownload = async () => {
   if (!props.file?.url) {

@@ -3,31 +3,31 @@ import { isPersonneMorale, isPersonnePhysique } from '@/utils/helperDemandeur'
 import { dateTimeToFormatedStringFr } from '@/utils/date-to-string'
 import DossierDemandeurMoral from './DossierDemandeurMoral.vue'
 import DossierDemandeurPhysique from './DossierDemandeurPhysique.vue'
-import type { Demandeur, Dossier } from '@dnum-mi/ds-api-client'
-import { useGroupedChamps } from './composables/useGroupedChamps'
-import type { ChampWithDescriptor } from './composables/useGroupedChamps'
 import DossierSection from './DossierSection.vue'
 import DossierSidemenu from './DossierSidemenu.vue'
 import DossierChamps from './DossierChamps.vue'
+import type { IDossierFieldsOutput } from '@biblio-num/shared'
+import type { PersonneMorale, PersonnePhysique } from '@dnum-mi/ds-api-client'
+import { useSections } from './composables/useSections'
 
-type PopulatedDossier = (Dossier & { demandeur: Demandeur & { __typename: string } }) | Record<string, never>
+// type PopulatedDossier = (Dossier & { demandeur: Demandeur & { __typename: string } }) | Record<string, never>
 
 const props = withDefaults(
   defineProps<{
-    datas?: PopulatedDossier
+    datas?: IDossierFieldsOutput | Record<string, never>
   }>(),
   {
     datas: () => ({}),
   },
 )
 
-const isDemandeurMorale = computed(() => isPersonneMorale(props.datas?.demandeur?.__typename))
-const isDemandeurPhysique = computed(() => isPersonnePhysique(props.datas?.demandeur?.__typename))
-const depositDate = computed(() => props.datas?.dateDepot)
+const isDemandeurMorale = computed(() => isPersonneMorale(props.datas?.demandeur?.__typename ?? ''))
+const isDemandeurPhysique = computed(() => isPersonnePhysique(props.datas?.demandeur?.__typename ?? ''))
+const depositDate = computed(() => props.datas?.dateDepot?.toString())
 const demandeur = computed(() => props.datas?.demandeur)
-const champs = computed(() => (Array.isArray(props.datas?.champs) ? (props.datas.champs as ChampWithDescriptor[]) : []))
+const champs = computed(() => (Array.isArray(props.datas?.champs) ? props.datas.champs : []))
 
-const { groupedChamps, expandedSections, toggleSection, smoothScroll, menuItems } = useGroupedChamps(() => champs.value)
+const { sections, expandedSections, toggleSection, smoothScroll, menuItems } = useSections(() => champs.value)
 </script>
 
 <template>
@@ -41,28 +41,34 @@ const { groupedChamps, expandedSections, toggleSection, smoothScroll, menuItems 
       </template>
       <div class="fr-col-12 fr-col-xl-9 py-4">
         <div class="fr-mb-4w">
-          <h2 class="fr-h6 fr-background-alt--grey fr-mb-4w fr-py-3v fr-px-2w">Date de dépôt du dossier</h2>
+          <h2 class="fr-h6 fr-background-alt--grey fr-mb-4w fr-py-3v fr-px-2w">
+            Date de dépôt du dossier
+          </h2>
           <div class="fr-px-4v">
             <p>Déposé le {{ dateTimeToFormatedStringFr(depositDate || '') }}</p>
           </div>
         </div>
 
-        <div class="fr-mb-4w">
-          <h2 class="fr-h6 fr-background-alt--grey fr-mb-4w fr-py-3v fr-px-2w">Identité du déclarant</h2>
+        <div v-if="datas.demandeur" class="fr-mb-4w">
+          <h2 class="fr-h6 fr-background-alt--grey fr-mb-4w fr-py-3v fr-px-2w">
+            Identité du déclarant
+          </h2>
           <DossierDemandeurMoral
             v-if="isDemandeurMorale"
-            :datas="demandeur"
+            :datas="demandeur as PersonneMorale"
           />
           <DossierDemandeurPhysique
             v-if="isDemandeurPhysique"
-            :datas="demandeur"
+            :datas="demandeur as PersonnePhysique"
           />
         </div>
 
         <div class="counter-start-header-section fr-mb-4w">
-          <h2 class="fr-h6 fr-background-alt--grey fr-mb-4w fr-py-3v fr-px-2w">Sections du fomulaire</h2>
+          <h2 class="fr-h6 fr-background-alt--grey fr-mb-4w fr-py-3v fr-px-2w">
+            Sections du fomulaire
+          </h2>
           <DossierSection
-            :sections="groupedChamps"
+            :sections="sections"
             :expanded-sections="expandedSections"
             :toggle-section="toggleSection"
           >
