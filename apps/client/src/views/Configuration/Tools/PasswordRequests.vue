@@ -37,11 +37,8 @@ const handleManageRequest = async ({ userId, action }: ManageRequest) => {
 
 const onConfirmDecision = async (): Promise<void> => {
   if (selectedUserId.value && selectedAction.value) {
-    try {
-      await store.manageUserPasswordRequests(selectedUserId.value, selectedAction.value)
-    } finally {
-      requests.value = requests.value!.filter((request) => request.id !== selectedUserId.value)
-    }
+    await store.manageUserPasswordRequests(selectedUserId.value, selectedAction.value)
+    requests.value = requests.value!.filter((request) => request.id !== selectedUserId.value)
   }
   isModalOpen.value = false
   selectedUserId.value = null
@@ -119,8 +116,8 @@ onMounted(() => {
     </DsfrTable>
     <ModalConfirm
       :opened="isModalOpen"
-      title="Confirmation"
-      confirm-label="Valider"
+      :title="selectedAction === ePasswordRequestsDecision.APPROVE ? 'Validation' : 'Refus'"
+      confirm-label="Confirmer"
       cancel-label="Annuler"
       @confirm="onConfirmDecision"
       @close="isModalOpen = false"

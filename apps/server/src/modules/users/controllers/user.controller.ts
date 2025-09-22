@@ -6,6 +6,7 @@ import {
   HttpCode,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   UploadedFile,
   UseInterceptors,
@@ -134,10 +135,10 @@ export class UserController {
     return this.usersService.listPasswordChangeRequests()
   }
 
-  @Post('/password-requests/:userId/decision')
+  @Patch('/password-requests/:userId/decision')
   @UsualApiOperation({
     summary: 'Approuver ou refuser une demande de changement de mot de passe.',
-    method: 'POST',
+    method: 'PATCH',
     minimumRole: Roles.sudo,
     responseType: Boolean,
   })

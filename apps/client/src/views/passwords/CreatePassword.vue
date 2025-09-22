@@ -31,7 +31,6 @@ onMounted(() => {
     email.value = emailFromQuery
   } else {
     emailMissingError.value = true
-    console.error('L\'email est manquant')
   }
 })
 
@@ -59,8 +58,7 @@ const onSubmit = handleSubmit(async (values) => {
     isRequestSubmitted.value = true
     alertTitle.value = 'Demande envoyée'
     alertDescription.value = REQUEST_MANUAL_RESET_PWD_SUCCESS
-  } catch (error) {
-    console.error('Échec de la soumission :', error)
+  } catch {
     toaster.addErrorMessage(
       'Impossible de traiter votre demande pour le moment. Veuillez réessayer plus tard.',
     )

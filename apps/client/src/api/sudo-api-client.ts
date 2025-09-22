@@ -15,7 +15,7 @@ export const listManualResetPasswordRequests = async (): Promise<IPasswordChange
 }
 
 export const managePasswordRequest = async (userId: number, action: PasswordRequestsDecisionKey) => {
-  apiClientInstance.post(routeManagePasswordRequest(userId), { action })
+  apiClientInstance.patch(routeManagePasswordRequest(userId), { action })
 }
 
 export const createDemarche = async (dto: ICreateDemarche) => {
