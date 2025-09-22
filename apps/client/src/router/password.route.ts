@@ -23,4 +23,12 @@ export const passwordRoutes: RouteRecordRaw[] = [
       skipAuth: true,
     },
   },
+  {
+    path: '/create-password',
+    name: routeNames.CREATE_PASSWORD,
+    component: () => import('@/views/passwords/CreatePassword.vue'),
+    meta: {
+      skipAuth: true,
+    },
+  },
 ]

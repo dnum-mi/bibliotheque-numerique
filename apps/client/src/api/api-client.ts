@@ -41,6 +41,7 @@ import type {
   ISiafSearchOrganismeResponseOutput,
   ISiafRnfHistoryOutput,
   IDossierFieldsOutput,
+  IRequestManualResetPassword,
 } from '@biblio-num/shared'
 
 import {
@@ -87,6 +88,8 @@ import {
   getAddOneRnfRoute,
   getAddOneRnaRoute,
   getDossierWithFieldsByIdRoute,
+  resetPasswordRoute,
+  requestManualResetPasswordRoute,
 } from './bn-api-routes'
 import { getUserByIdRoute, profileRoute, signInRoute, verifyAuthRoute, logoutRoute, usersRoutes } from '@/api/bn-api-routes'
 
@@ -409,7 +412,11 @@ export const usersApiClient = {
   },
 
   async resetPassword (resetPasswordInput: IResetPasswordInput) {
-    apiClientAuthInstance.post('/users/me/reset-password', resetPasswordInput)
+    apiClientAuthInstance.post(resetPasswordRoute, resetPasswordInput)
+  },
+
+  async requestManualResetPassword (input: IRequestManualResetPassword) {
+    apiClientAuthInstance.post(requestManualResetPasswordRoute, input)
   },
 
   async loginWithProconnect () {

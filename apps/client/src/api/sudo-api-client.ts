@@ -1,11 +1,22 @@
-import type { ICreateDemarche, IUpdateDemarche } from '@biblio-num/shared'
-import { demarchesRoute, dossierRoute, getDemarcheByIdRoute, organismesRoute } from './bn-api-routes'
+import type { ICreateDemarche, IPasswordChangeRequestsOutput, IUpdateDemarche, PasswordRequestsDecisionKey } from '@biblio-num/shared'
+import { demarchesRoute, dossierRoute, getDemarcheByIdRoute, organismesRoute, usersRoutes } from './bn-api-routes'
 import { apiClientInstance } from './api-client'
 
 const routeCreateDemarche = `${demarchesRoute}/create`
 const routeSynchroniseOneDemarche = (id: number) => `${demarchesRoute}/${id}/sync`
 const routeSynchroniseOneDossier = (id: number) => `${dossierRoute}/${id}/sync`
 const routeSynchroniseOneOrganisme = (id: number) => `${organismesRoute}/${id}/sync`
+const routeListPasswordRequests = `${usersRoutes}/password-requests`
+const routeManagePasswordRequest = (id: number) => `${routeListPasswordRequests}/${id}/decision`
+
+export const listManualResetPasswordRequests = async (): Promise<IPasswordChangeRequestsOutput[]> => {
+  const response = await apiClientInstance.get(routeListPasswordRequests)
+  return response?.data
+}
+
+export const managePasswordRequest = async (userId: number, action: PasswordRequestsDecisionKey) => {
+  apiClientInstance.post(routeManagePasswordRequest(userId), { action })
+}
 
 export const createDemarche = async (dto: ICreateDemarche) => {
   const response = await apiClientInstance.post(routeCreateDemarche, dto)

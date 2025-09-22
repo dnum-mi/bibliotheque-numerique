@@ -10,11 +10,13 @@ import type {
   IUpdateOneRoleOption,
   IUpdateProfile,
   RolesKeys,
+  PasswordRequestsDecisionKey,
 } from '@biblio-num/shared'
 
 import {
   Roles,
 } from '@biblio-num/shared'
+import { listManualResetPasswordRequests, managePasswordRequest } from '@/api/sudo-api-client'
 
 const SuperAdminRoles = [Roles.superadmin, Roles.sudo]
 
@@ -29,6 +31,7 @@ export const useUserStore = defineStore('user', () => {
   const keySelectUser = ref<string>(useRandomId('selectedUser-selected'))
   const isAuthenticated = computed(() => !!currentUser.value)
   const hasAdminAccess = computed(() => !!(currentUser.value?.role?.label && AdminRoles.includes(currentUser.value?.role?.label)))
+  const hasSudoAccess = computed(() => !!(currentUser.value?.role?.label && currentUser.value?.role?.label === Roles.sudo))
   const canAccessDemarches = computed(() => !!currentUser.value?.role?.label)
   const accessToken = ref<string | null>(null)
 
@@ -97,6 +100,20 @@ export const useUserStore = defineStore('user', () => {
       return
     }
     return bnApiClient.listUsers(dto)
+  }
+
+  const listUserPasswordRequests = async () => {
+    if (!hasSudoAccess.value) {
+      return
+    }
+    return listManualResetPasswordRequests()
+  }
+
+  const manageUserPasswordRequests = async (userId: number, action: PasswordRequestsDecisionKey) => {
+    if (!hasSudoAccess.value) {
+      return
+    }
+    await managePasswordRequest(userId, action)
   }
 
   const loadUserById = async (id: number) => {
@@ -185,5 +202,7 @@ export const useUserStore = defineStore('user', () => {
     changeMyProfile,
     updateUserRolesOption,
     refreshTokens,
+    listUserPasswordRequests,
+    manageUserPasswordRequests,
   }
 })

@@ -18,6 +18,7 @@ export const routeNames = {
   SIGNUP: 'SignUp',
   STATISTIQUES: 'Statistiques',
   UPDATE_PASSWORD: 'UpdatePassword',
+  CREATE_PASSWORD: 'CreatePassword',
   USER: 'User',
   VALIDE_MAIL: 'ValidEmail',
   ACCESSIBILITY: 'Accessibility',

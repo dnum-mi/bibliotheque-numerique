@@ -5,13 +5,17 @@ import { z } from 'zod'
 import type { IResetPasswordInput } from '@biblio-num/shared'
 
 import apiClient from '@/api/api-client'
-import { ASK_RESET_PWD_SUCCESS } from '../../messages'
+import { ASK_RESET_PWD_SUCCESS, REQUEST_MANUAL_RESET_PWD } from '../../messages'
+import { routeNames } from '@/router/route-names'
 
-const validationSchema = toTypedSchema(z.object({
-  email: z.string({ required_error: 'Veuillez saisir votre adresse courriel' })
-    .nonempty('Veuillez saisir votre adresse courriel')
-    .email('L’adresse courriel ne semble pas valide'),
-}))
+const validationSchema = toTypedSchema(
+  z.object({
+    email: z
+      .string({ required_error: 'Veuillez saisir votre adresse courriel' })
+      .nonempty('Veuillez saisir votre adresse courriel')
+      .email('L’adresse courriel ne semble pas valide'),
+  }),
+)
 
 const { handleSubmit } = useForm({
   validationSchema,
@@ -20,30 +24,22 @@ const { handleSubmit } = useForm({
 const { value: emailValue, errorMessage: emailError } = useField<string>('email', undefined, { initialValue: '' })
 const alertTitle = ref('')
 const alertDescription = ref('')
-const openAlert = ref(false)
+const isRequestSubmitted = ref(false)
 
 const onSubmit = handleSubmit(async (formValue: IResetPasswordInput) => {
   await apiClient.resetPassword(formValue)
-  openAlert.value = true
+  isRequestSubmitted.value = true
   alertDescription.value = ASK_RESET_PWD_SUCCESS
 })
-
-const closeAlert = () => {
-  openAlert.value = false
-}
 </script>
 
 <template>
   <LayoutAccueil>
     <div class="fr-container fr-m-5w">
-      <div
-        class="fr-container fr-grid-row"
-      >
+      <div class="fr-container fr-grid-row">
         <div class="fr-col-1" />
         <div class="fr-col-10">
-          <h5
-            class="mb-20  text-center  fr-text-title--blue-france"
-          >
+          <h5 class="mb-20 text-center fr-text-title--blue-france">
             Réinitialisation de votre mot de passe
           </h5>
           <form
@@ -69,21 +65,30 @@ const closeAlert = () => {
             </DsfrInputGroup>
             <div
               class="fr-m-4w"
-              style="text-align:center"
+              style="text-align: center"
             >
               <DsfrButton type="submit">
                 Envoyer
               </DsfrButton>
             </div>
           </form>
-          <DsfrAlert
-            :title="alertTitle"
-            :description="alertDescription"
-            type="info"
-            :closed="!openAlert"
-            closeable
-            @close="closeAlert()"
-          />
+          <div v-show="isRequestSubmitted">
+            <DsfrAlert
+              :title="alertTitle"
+              :description="alertDescription"
+              type="info"
+              class="mb-6"
+            />
+            <router-link to="/sign_in">
+              Retour à la page de connexion
+            </router-link>
+            <span class="fr-hr-or my-4">
+              ou
+            </span>
+            <router-link :to="{ name: routeNames.CREATE_PASSWORD, query: { email: emailValue } }">
+              {{ REQUEST_MANUAL_RESET_PWD }}
+            </router-link>
+          </div>
         </div>
       </div>
     </div>
