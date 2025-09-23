@@ -59,6 +59,42 @@ export class HealthController {
     ])
   }
 
+  // This endpoint is used to check the service ds,
+  // Call by client
+  @UsualApiOperation({
+    summary: 'Vérifie la connexion au service DS.',
+    method: 'GET',
+    minimumRole: 'aucun',
+    responseType: null,
+  })
+  @Get('ds')
+  @PublicRoute()
+  ds(): Promise<HealthCheckResult> {
+    this.logger.verbose('Server DS check')
+    return this.health.check([
+      (): Promise<HealthIndicatorResult> =>
+        this.dsHealth.isHealthy('ds'),
+    ])
+  }
+
+  // This endpoint is used to check the service siaf hub,
+  // Call by client
+  @UsualApiOperation({
+    summary: 'Vérifie la connexion au service SIAF Hub.',
+    method: 'GET',
+    minimumRole: 'aucun',
+    responseType: null,
+  })
+  @Get('hub')
+  @PublicRoute()
+  hub(): Promise<HealthCheckResult> {
+    this.logger.verbose('Server Hub check')
+    return this.health.check([
+      (): Promise<HealthIndicatorResult> =>
+        this.hubHealth.isHealthy('hub'),
+    ])
+  }
+
   // This endpoint is used to check the server's version and environment,
   // Call by client
   @UsualApiOperation({

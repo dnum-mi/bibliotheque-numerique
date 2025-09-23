@@ -357,7 +357,7 @@ export const usersApiClient = {
   ): Promise<
     | { accessToken: string; message?: string }
     | { error: AxiosError }
-    > {
+  > {
     try {
       const response = await apiClientAuthInstance.post(signInRoute, loginForm)
       return response.data
