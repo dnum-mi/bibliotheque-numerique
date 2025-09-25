@@ -18,8 +18,6 @@ const props = withDefaults(defineProps<{
   projection: 'EPSG:4326',
   zoom: 16,
   marker: true,
-  height: '250px',
-  width: '250px',
 })
 
 const view = ref<View>()
@@ -64,7 +62,7 @@ defineExpose({ resetCenter })
     ref="map"
     :load-tiles-while-animating="true"
     :load-tiles-while-interacting="true"
-    :style="{ height, width }"
+    class="h-full w-full"
   >
     <ol-view
       ref="view"

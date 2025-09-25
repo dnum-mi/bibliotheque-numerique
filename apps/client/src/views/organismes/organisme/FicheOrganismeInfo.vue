@@ -49,6 +49,8 @@ const fiscalEndDateAt = computed(() => {
     }).format(new Date(props.organisme.fiscalEndDateAt))
   )
 })
+
+const mapCardRef = useTemplateRef('mapCard')
 </script>
 
 <template>
@@ -161,24 +163,25 @@ const fiscalEndDateAt = computed(() => {
       </div>
       <div
         v-if="mapCenter && mapCenter.length"
-        class="flex-basis-[30%] flex-shrink-0 flex-grow-0 relative"
+        class="flex-basis-[30%] flex-shrink-0 flex-grow-0  inline-block"
       >
-        <MapCard
-          ref="mapCard"
-          :zoom
-          :center="mapCenter"
-          pin-marker
-          style="height: 200px; width: 250px"
-        />
-        <DsfrButton
-          type="button"
-          icon="ri-focus-3-line"
-          tertiary
-          title="Recentrer la carte"
-          class="rounded-full self-end absolute top-0 right-0"
-          icon-only
-          @click="$refs.mapCard.resetCenter(mapCenter)"
-        />
+        <div class="h-[250px] w-[250px] relative">
+          <MapCard
+            ref="mapCard"
+            :zoom
+            :center="mapCenter"
+            pin-marker
+          />
+          <DsfrButton
+            type="button"
+            icon="ri-focus-3-line"
+            tertiary
+            title="Recentrer la carte"
+            class="rounded-full self-end absolute top-0 right-0"
+            icon-only
+            @click="mapCardRef?.resetCenter()"
+          />
+        </div>
       </div>
     </div>
     <div class="p-t-6">

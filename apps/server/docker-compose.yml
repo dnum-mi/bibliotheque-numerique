@@ -161,8 +161,8 @@ services:
       MINIO_ROOT_USER: s3_biblio-num_minio # MINIO_ACCESS_KEY = MINIO_ROOT_USER
       MINIO_ROOT_PASSWORD: s3_biblio-num_minio # MINIO_SECRET_KEY = MINIO_ROOT_PASSWORD
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - "${BN_S3_PORT:-900}0:9000"
+      - "${BN_S3_PORT:-900}1:9001"
     volumes:
       - type: volume
         source: biblio-num-s3-volume
@@ -209,7 +209,7 @@ services:
   http-proxy-auth:
     profiles:
       - dev
-      - simple-dev
+      # - simple-dev
     build:
       context: ../../
       dockerfile: ./apps/http-proxy/Dockerfile

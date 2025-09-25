@@ -91,7 +91,13 @@
       "typeorm-fixtures-cli@3.1.0": "patches/typeorm-fixtures-cli@3.1.0.patch"
     },
     "overrides": {
-      "esbuild@<=0.24.2": ">=0.25.0"
+      "esbuild@<=0.24.2": ">=0.25.0",
+      "on-headers@<1.1.0": ">=1.1.0",
+      "tmp@<=0.2.3": ">=0.2.4",
+      "sha.js@<=2.4.11": ">=2.4.12",
+      "vite@>=6.0.0 <=6.3.5": ">=6.3.6",
+      "vite@>=7.1.0 <=7.1.4": ">=7.1.5",
+      "axios@<1.12.0": ">=1.12.0"
     }
   },
   "packageManager": "pnpm@9.15.4"

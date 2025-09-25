@@ -35,7 +35,7 @@ describe('Auth (e2e)', () => {
   })
 
   beforeEach(async () => {
-    await refreshTokenRepository.delete({})
+    await refreshTokenRepository.deleteAll()
   })
 
   afterAll(async () => {

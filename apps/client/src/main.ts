@@ -15,7 +15,7 @@ import collections from './icon-collections'
 import { addCollection } from '@iconify/vue'
 
 import './main.css'
-import 'vue3-openlayers/styles.css'
+import 'vue3-openlayers/vue3-openlayers.css'
 
 import OpenLayersMap from 'vue3-openlayers'
 
