@@ -4,9 +4,7 @@ import { faker } from '@faker-js/faker'
 
 import {
   eFileDsSourceLabel,
-  eState,
   FieldType,
-  fileExtensions,
 } from '@biblio-num/shared'
 import {
   Champ,
@@ -29,6 +27,12 @@ describe('dossier.service', () => {
     const repository: Repository<Dossier> = jest.createMockFromModule(
       'typeorm/repository/Repository',
     )
+    const repositoryField: Repository<Field> = jest.createMockFromModule(
+      'typeorm/repository/Repository',
+    )
+    const repositoryFile: Repository<File> = jest.createMockFromModule(
+      'typeorm/repository/Repository',
+    )
     const loggerService: LoggerService =
       jest.createMockFromModule<LoggerService>(
         '@/shared/modules/logger/logger.service',
@@ -39,7 +43,7 @@ describe('dossier.service', () => {
     loggerService.setContext = jest.fn()
     loggerService.verbose = jest.fn()
 
-    service = new DossierService(repository, fieldService, loggerService)
+    service = new DossierService(repository, repositoryFile, repositoryField, fieldService, loggerService)
   })
 
   it('Should have new value in url of files', () => {
