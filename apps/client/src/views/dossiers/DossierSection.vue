@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Section } from './composables/useGroupedChamps'
+import type { Section } from './composables/useSections'
 
 defineProps<{
   sections: Section[]

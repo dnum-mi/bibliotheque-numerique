@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { MenuItem } from './composables/useGroupedChamps'
+import type { MenuItem } from './composables/useSections'
 
 defineProps<{
   menuItems: MenuItem[]
@@ -12,22 +12,24 @@ defineProps<{
     id="summary"
     class="fr-col-12 fr-col-xl-3"
   >
-    <ul class="fr-sidemenu sticky-sidemenu fr-hidden fr-unhidden-xl">
-      <li
-        v-for="(item, index) in menuItems"
-        :key="index"
-        class="fr-sidemenu__item"
-      >
-        <a
-          :href="item.to"
-          class="fr-sidemenu__link"
-          :aria-controls="`section-content-${item.id}`"
-          @click.prevent="smoothScroll(item.id)"
+    <nav class="fr-sidemenu sticky-sidemenu fr-hidden fr-unhidden-xl" role="navigation">
+      <ul class="fr-sidemenu__list">
+        <li
+          v-for="(item, index) in menuItems"
+          :key="index"
+          class="fr-sidemenu__item"
         >
-          {{ item.text }}
-        </a>
-      </li>
-    </ul>
+          <a
+            :href="item.to"
+            class="fr-sidemenu__link"
+            :aria-controls="`section-content-${item.id}`"
+            @click.prevent="smoothScroll(item.id)"
+          >
+            {{ item.text }}
+          </a>
+        </li>
+      </ul>
+    </nav>
   </div>
 </template>
 

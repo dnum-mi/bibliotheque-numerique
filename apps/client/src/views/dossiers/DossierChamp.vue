@@ -23,17 +23,19 @@ defineProps<{
         {{ champ.label }}
       </label>
       <!-- SI Piece jointe -->
-      <template v-if="champ.type === 'file' && (champ.value as FieldFileType)?.files?.length">
+      <template v-if="champ.type === 'file'">
         <div
           :id="champ.id"
           class="fr-text--bold fr-text bn-champ--text flex flex-col fr-pb-2w"
         >
-          <div
-            v-for="(file, index) in (champ.value as FieldFileType).files"
-            :key="index"
-          >
-            <DownloadFile :file="file" />
-          </div>
+          <template v-if="champ.value">
+            <div
+              v-for="(file, index) in (champ.value as FieldFileType).files"
+              :key="index"
+            >
+              <DownloadFile :file="file" />
+            </div>
+          </template>
         </div>
       </template>
 
