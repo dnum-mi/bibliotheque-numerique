@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { In, Repository } from 'typeorm'
@@ -65,6 +66,8 @@ interface DataDossierSpecificDS {
 export class DossierService extends BaseEntityService<Dossier> {
   constructor(
     @InjectRepository(Dossier) protected readonly repo: Repository<Dossier>,
+    @InjectRepository(File) protected readonly repoFile: Repository<File>,
+    @InjectRepository(Field) protected readonly repoField: Repository<Field>,
     private readonly fieldService: FieldService,
     protected readonly logger: LoggerService,
   ) {
@@ -161,16 +164,28 @@ export class DossierService extends BaseEntityService<Dossier> {
     return dossier
   }
 
-  private _transformValueFileOfDossierFields(dossier: Dossier, files: File[]): Dossier {
+  private _transformValueFileOfDossierFields({
+    fields,
+    messages = [],
+    files,
+  }: {
+    fields: Field[]
+    messages?: Message[]
+    files: File[]
+  }): Field[] {
     this.logger.verbose('transformValueFileOfDossierFields')
-    if (dossier.fields && Array.isArray(dossier.fields)) {
-      dossier.fields.forEach((field) => {
+    if (fields.length) {
+      fields.forEach((field) => {
         if (field.type === 'file' && field.rawJson) {
           const fileData = field.rawJson as FieldFileType
           if (fileData.id) {
-            const fileFound = files.find((f) => String(f.sourceStringId) === String(fileData.id))
+            const fileFound = files.find(
+              (f) => String(f.sourceStringId) === String(fileData.id),
+            )
             if (fileFound) {
-              ((field.rawJson as PieceJustificativeChampWithState).files).forEach((f2) => {
+              ;(
+                field.rawJson as PieceJustificativeChampWithState
+              ).files.forEach((f2) => {
                 f2.url = fileFound.uuid ?? ''
                 f2.state = fileFound.state ?? eState.queued
               })
@@ -182,7 +197,32 @@ export class DossierService extends BaseEntityService<Dossier> {
       })
     }
 
-    return dossier
+    if (messages.length) {
+      messages.forEach(
+        this._transformUrlToUuidMessage(
+          files.filter(
+            (f) => f.sourceLabel === eFileDsSourceLabel['ds-message'],
+          ),
+        ),
+      )
+    }
+
+    return fields
+  }
+
+  private _transformValueFileOfMessages({ messages, files }: {messages: Message[], files: File[]}): Message[] {
+    this.logger.verbose('_transformValueFileOfMessages')
+    if (messages.length) {
+      messages.forEach(
+        this._transformUrlToUuidMessage(
+          files.filter(
+            (f) => f.sourceLabel === eFileDsSourceLabel['ds-message'],
+          ),
+        ),
+      )
+    }
+
+    return messages
   }
 
   private _setFileUrlToUuid = (id, files, fileCh, filesCh): void => {
@@ -396,12 +436,14 @@ export class DossierService extends BaseEntityService<Dossier> {
   public async getAndValidateDossierForRole(
     id: number,
     role: IRole,
-    relations: string[] = [],
-  ): Promise<{ dossier: Dossier; hasFullAccess: boolean }> {
-    const dossier = await this.findOneOrThrow({
-      where: { id },
-      relations: ['demarche', 'organisme', 'files', ...relations],
-    })
+  ): Promise<{
+    dossier: Dossier
+    hasFullAccess: boolean
+  }> {
+    const dossier = await this.buildDossier(id)
+    if (!dossier) {
+      throw new NotFoundException('Ressource introuvable')
+    }
 
     if (!canAccessDemarche(dossier.demarche.id, role)) {
       throw new ForbiddenException(
@@ -415,23 +457,58 @@ export class DossierService extends BaseEntityService<Dossier> {
       dossier.demarche.id,
     )
 
-    const dossierWithFiles = this._transformValueFileOfDossierFields(
+    return {
       dossier,
-      dossier.files,
+      hasFullAccess,
+    }
+  }
+
+  async buildDossier(
+    id: number,
+  ): Promise<Dossier> {
+    return await this.repo
+      .createQueryBuilder('dossier')
+      .leftJoinAndSelect('dossier.demarche', 'demarche')
+      .leftJoinAndSelect('dossier.organisme', 'organisme')
+      .select([
+        'dossier.id',
+        'dossier.prefecture',
+        'dossier.dateDepot',
+        'dossier.state',
+        'dossier.sourceId',
+        'dossier.dsDataJson',
+        'demarche.id',
+        'demarche.title',
+        'demarche.identification',
+        'demarche.mappingColumns',
+        'organisme.id',
+        'organisme.type',
+        'organisme.title',
+        'organisme.idRna',
+        'organisme.idRnf',
+      ])
+      .where('dossier.id = :id', { id })
+      .getOne()
+  }
+
+  async mapDossierWithFiles(dossier: Dossier, hasFullAccess: boolean): Promise<Dossier> {
+    const files = await this.repoFile.find({ where: { dossier: { id: dossier.id } } })
+    const dossierWithFiles = this.transformValueFileOfDossier(
+      dossier,
+      files,
     )
 
-    const { annotations, messages, ...restOfDsDataJson } =
-      dossierWithFiles.dsDataJson
+    const { annotations, messages, ...restOfDsDataJson } = dossierWithFiles.dsDataJson
 
     const finalDossier = {
-      ...dossierWithFiles,
+      ...dossier,
       dsDataJson: {
         ...restOfDsDataJson,
         ...(hasFullAccess ? { annotations, messages } : {}),
       },
     }
 
-    return { dossier: finalDossier, hasFullAccess }
+    return finalDossier
   }
 
   async mapDossierToFieldsOutput(
@@ -442,9 +519,27 @@ export class DossierService extends BaseEntityService<Dossier> {
 
     const isMaarchDossier = this._isMaarchDemarche(dossier.demarche)
 
+    const [fields, files] = await Promise.all([
+      await this.repoField.find({ where: { dossier: { id: dossier.id } } }),
+      await this.repoFile.find({ where: { dossier: { id: dossier.id } } }),
+    ])
+
+    const fieldsTransformed = this._transformValueFileOfDossierFields({
+      fields,
+      messages: hasFullAccess ? dossier.dsDataJson.messages : [],
+      files,
+    })
+
+    if (hasFullAccess) {
+      dossier.dsDataJson.messages = this._transformValueFileOfMessages({
+        messages: dossier.dsDataJson.messages,
+        files,
+      })
+    }
+
     const reconstructedFields = await this._reconstructFieldsWithMapping(
       dossier.demarche.mappingColumns,
-      dossier.fields,
+      fieldsTransformed,
     )
 
     const specificData = this._extractDataDossierSpecificDS(
@@ -521,13 +616,17 @@ export class DossierService extends BaseEntityService<Dossier> {
 
   private _buildOrganismeDto(
     organisme: Organisme | null | undefined,
-  ): OrganismeOutput {
+  ): OrganismeOutput | null {
+    if (!organisme) {
+      return null
+    }
+
     return {
-      id: organisme?.id,
-      type: organisme?.type,
-      title: organisme?.title ?? undefined,
-      idRna: organisme?.idRna,
-      idRnf: organisme?.idRnf,
+      id: organisme.id,
+      type: organisme.type,
+      title: organisme.title ?? undefined,
+      idRna: organisme.idRna,
+      idRnf: organisme.idRnf,
     }
   }
 
@@ -552,11 +651,7 @@ export class DossierService extends BaseEntityService<Dossier> {
   ): DossierWithFieldsOutputDto {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { annotations, messages, ...restrictedDto } = fullDto
-    return {
-      ...restrictedDto,
-      annotations: [],
-      messages: [],
-    }
+    return restrictedDto
   }
 
   private async _reconstructFieldsWithMapping(

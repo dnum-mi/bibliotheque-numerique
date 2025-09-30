@@ -9,10 +9,7 @@ import { ApiTags } from '@nestjs/swagger'
 import { DossierService } from '../providers/dossier.service'
 import { Dossier } from '../objects/entities/dossier.entity'
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
-import {
-  IRole,
-  Roles,
-} from '@biblio-num/shared'
+import { IRole, Roles } from '@biblio-num/shared'
 import { CurrentUserRole } from '@/modules/users/providers/decorators/current-user-role.decorator'
 import { LoggerService } from '../../../shared/modules/logger/logger.service'
 import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
@@ -47,10 +44,16 @@ export class DossierController {
     @Param('id') id: string,
   ): Promise<Dossier> {
     this.logger.verbose('findone')
-    const { dossier } =
-      await this.dossiersService.getAndValidateDossierForRole(Number(id), role)
+    const { dossier, hasFullAccess } = await this.dossiersService.getAndValidateDossierForRole(
+      Number(id),
+      role,
+    )
+    const dossierWithFiles = this.dossiersService.mapDossierWithFiles(
+      dossier,
+      hasFullAccess,
+    )
 
-    return dossier
+    return dossierWithFiles
   }
 
   @Get(':id/fields')
@@ -67,14 +70,11 @@ export class DossierController {
   ): Promise<DossierWithFieldsOutputDto> {
     this.logger.verbose('findFieldsFromOne')
     const { dossier, hasFullAccess } =
-      await this.dossiersService.getAndValidateDossierForRole(
-        Number(id),
-        role,
-        ['fields'],
-      )
-
-    const dossierResult =
-      await this.dossiersService.mapDossierToFieldsOutput(dossier, hasFullAccess)
+      await this.dossiersService.getAndValidateDossierForRole(Number(id), role)
+    const dossierResult = await this.dossiersService.mapDossierToFieldsOutput(
+      dossier,
+      hasFullAccess,
+    )
 
     return dossierResult
   }

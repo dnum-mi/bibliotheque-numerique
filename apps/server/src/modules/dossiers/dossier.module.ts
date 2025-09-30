@@ -7,6 +7,7 @@ import { DemarcheModule } from '../demarches/demarche.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { Dossier } from './objects/entities/dossier.entity'
 import { Field } from './objects/entities/field.entity'
+import { File } from '../files/objects/entities/file.entity'
 import { FieldService } from './providers/field.service'
 import { DossierSynchroniseService } from './providers/synchronization/dossier-synchronise.service'
 import { DossierSearchService } from './providers/search/dossier-search.service'
@@ -36,7 +37,7 @@ import { CustomBullModule } from '@/shared/modules/custom-bull/custom-bull.modul
     forwardRef(() => DemarcheModule),
     forwardRef(() => OrganismeModule),
     FileModule,
-    TypeOrmModule.forFeature([Dossier, Field]),
+    TypeOrmModule.forFeature([Dossier, Field, File]),
     BullModule.registerQueue(
       ...([
         { name: QueueName.sync },
