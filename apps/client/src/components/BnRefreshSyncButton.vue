@@ -46,12 +46,14 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => {
-  if (timeoutId) { clearTimeout(timeoutId) }
+  if (timeoutId) {
+    clearTimeout(timeoutId)
+  }
 })
 </script>
 
 <template>
-  <div v-if="state" class="flex flex-row gap-4 justify-center items-center">
+  <div v-if="state" class="flex flex-row gap-2 justify-center items-center">
     <div>
       <DsfrButton
         size="lg"
@@ -63,6 +65,6 @@ onBeforeUnmount(() => {
       />
     </div>
     <span v-if="disabled" class="fr-text--sm m-0!"> En cours d'actulisation </span>
-    <span v-else class="fr-text--sm m-0!"> Actulisé le {{ dateToStringFr(state.lastSynchronisedAt) }}</span>
+    <span v-else class="fr-text--sm m-0!"> Actualisé le {{ dateToStringFr(state.lastSynchronisedAt) }}</span>
   </div>
 </template>

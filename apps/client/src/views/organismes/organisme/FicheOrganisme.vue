@@ -157,7 +157,7 @@ const onRefreshSync = async () => {
               organismeSiaf?.title
             }}</span>
           </div>
-          <div class="w-1/7">
+          <div class="w-1/6">
             <BnRefreshSyncButton
               :sync-state="syncState"
               @refresh-sync="onRefreshSync"
