@@ -69,9 +69,7 @@ const messagesTitle = computed(() => {
 
 <template>
   <div class="flex flex-grow h-full overflow-hidden">
-    <Spinner v-if="!isReady" />
     <LayoutFiche
-      v-else
       title-bg-color="var(--blue-france-main-525)"
       title-fg-color="var(--text-inverted-grey)"
     >
