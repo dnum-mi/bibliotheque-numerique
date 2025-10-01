@@ -31,7 +31,6 @@ export const useUserStore = defineStore('user', () => {
   const keySelectUser = ref<string>(useRandomId('selectedUser-selected'))
   const isAuthenticated = computed(() => !!currentUser.value)
   const hasAdminAccess = computed(() => !!(currentUser.value?.role?.label && AdminRoles.includes(currentUser.value?.role?.label)))
-  const hasSudoAccess = computed(() => !!(currentUser.value?.role?.label && currentUser.value?.role?.label === Roles.sudo))
   const canAccessDemarches = computed(() => !!currentUser.value?.role?.label)
   const accessToken = ref<string | null>(null)
 
@@ -103,16 +102,10 @@ export const useUserStore = defineStore('user', () => {
   }
 
   const listUserPasswordRequests = async () => {
-    if (!hasSudoAccess.value) {
-      return
-    }
     return listManualResetPasswordRequests()
   }
 
   const manageUserPasswordRequests = async (userId: number, action: PasswordRequestsDecisionKey) => {
-    if (!hasSudoAccess.value) {
-      return
-    }
     await managePasswordRequest(userId, action)
   }
 

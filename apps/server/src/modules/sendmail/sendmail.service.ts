@@ -12,6 +12,7 @@ const tempateNames = [
   'resetPasswordAfterThreeAttempts',
   'pwdRequestApproved',
   'pwdRequestRejected',
+  'requestManualPasswordReset',
 ] as const
 
 type templateNameKey = (typeof tempateNames)[number]
@@ -42,6 +43,8 @@ export class SendMailService {
       [eTemplateName.loginWithVerifyAuth]: 'Confirmer votre connexion',
       [eTemplateName.resetPasswordAfterThreeAttempts]:
         'Votre compte a été temporairement bloqué — Action requise',
+      [eTemplateName.requestManualPasswordReset]:
+        'Demnande de validation de mot de passe',
       [eTemplateName.pwdRequestApproved]:
         'Votre mot de passe a été réinitialisé',
       [eTemplateName.pwdRequestRejected]:
@@ -148,6 +151,20 @@ export class SendMailService {
       urlResetLink,
       eTemplateName.alreadySignUp,
       duration,
+    )
+  }
+
+  public async requestManualPasswordReset(
+    email: string,
+    firstname: string,
+    lastname: string,
+  ): Promise<void> {
+    return this._commonSend(
+      email,
+      firstname,
+      lastname,
+      '',
+      eTemplateName.requestManualPasswordReset,
     )
   }
 

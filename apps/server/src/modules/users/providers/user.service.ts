@@ -187,6 +187,11 @@ export class UserService
 
     await this.repo.save(user)
     await this.deleteUserRefreshTokens(user.id)
+    await this.sendMailService.requestManualPasswordReset(
+      user.email,
+      user.firstname,
+      user.lastname,
+    )
   }
 
   async listPasswordChangeRequests(): Promise<PasswordChangeRequestsDto[]> {
@@ -228,7 +233,9 @@ export class UserService
     }
 
     if (!user.passwordChangeRequested) {
-      this.logger.warn(`This user with ID ${userId} does not have pending password change request.`)
+      this.logger.warn(
+        `This user with ID ${userId} does not have pending password change request.`,
+      )
       throw new BadRequestException(
         'This user does not have pending password change request.',
       )
@@ -249,7 +256,10 @@ export class UserService
     await this.mailToPasswordRequestDecision(user, action)
   }
 
-  private async mailToPasswordRequestDecision (user: User, action: PasswordRequestsDecisionKey): Promise<void> {
+  private async mailToPasswordRequestDecision(
+    user: User,
+    action: PasswordRequestsDecisionKey,
+  ): Promise<void> {
     const appUrl = this.configService.get('appFrontUrl')
 
     if (action === ePasswordRequestsDecision.APPROVE) {
