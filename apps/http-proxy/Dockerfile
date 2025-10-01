@@ -1,4 +1,4 @@
-FROM bitnami/nginx:latest
+FROM public.ecr.aws/bitnami/nginx:latest
 
 COPY apps/http-proxy/nginx/index.html /app/index.html
 COPY apps/http-proxy/nginx/rnf.conf /opt/bitnami/nginx/conf/server_blocks/rnf.conf

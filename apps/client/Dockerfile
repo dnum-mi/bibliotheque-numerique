@@ -32,7 +32,7 @@ RUN pnpm install --frozen-lockfile
 COPY --from=base /app/out/full/ .
 RUN npm run build:client
 
-FROM bitnami/nginx:latest as production
+FROM public.ecr.aws/bitnami/nginx:latest as production
 
 COPY --from=builder /app/apps/client/dist /app
 COPY --from=base /app/docker/nginx/bn-rnf.conf /opt/bitnami/nginx/conf/server_blocks/bn.conf
