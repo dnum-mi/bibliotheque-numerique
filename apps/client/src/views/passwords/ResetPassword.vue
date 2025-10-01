@@ -85,7 +85,7 @@ const onSubmit = handleSubmit(async (formValue: IResetPasswordInput) => {
             <span class="fr-hr-or my-4">
               ou
             </span>
-            <router-link :to="{ name: routeNames.CREATE_PASSWORD, query: { email: emailValue } }">
+            <router-link :to="{ name: routeNames.UPDATE_PASSWORD_TO_VALIDATE, query: { email: emailValue } }">
               {{ REQUEST_MANUAL_RESET_PWD }}
             </router-link>
           </div>

@@ -5,7 +5,6 @@ import {
   NotFoundException,
   OnApplicationBootstrap,
 } from '@nestjs/common'
-import * as bcrypt from 'bcrypt'
 import { User } from '../objects/user.entity'
 import { FindOneOptions, In, Not, Repository } from 'typeorm'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
@@ -181,14 +180,13 @@ export class UserService
       return
     }
 
-    user.pendingPasswordHash = await bcrypt.hash(password, 10)
+    user.pendingPasswordHash = await User.hash(password)
     user.passwordChangeRequested = true
     user.passwordChangeRequestedAt = new Date()
     user.skipHashPassword = true
 
     await this.repo.save(user)
     await this.deleteUserRefreshTokens(user.id)
-    await this.updateLoginAttempts(user.id, 0)
   }
 
   async listPasswordChangeRequests(): Promise<PasswordChangeRequestsDto[]> {

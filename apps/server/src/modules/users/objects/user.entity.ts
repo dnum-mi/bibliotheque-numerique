@@ -28,6 +28,12 @@ const defaultRole: IRole = {
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
+  private static readonly saltRounds = 10
+
+  static async hash(password: string): Promise<string> {
+    return bcrypt.hash(password, this.saltRounds)
+  }
+
   @Column({
     type: 'varchar',
     nullable: false,
@@ -130,7 +136,7 @@ export class User extends BaseEntity {
   @BeforeUpdate()
   async hashPassword (): Promise<void> {
     if (!this.skipHashPassword) {
-      this.password = await bcrypt.hash(this.password, 10)
+      this.password = await User.hash(this.password)
     }
   }
 
