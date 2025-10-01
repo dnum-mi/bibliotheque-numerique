@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.37.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.36.0...v2.37.0) (2025-10-01)
+
+
+### Features
+
+* add doc of projet ([dfb6eec](https://github.com/dnum-mi/bibliotheque_numerique/commit/dfb6eece9c25af853cc7057058685c1cd2a26426))
+* make the default page configurable ([f15ac2e](https://github.com/dnum-mi/bibliotheque_numerique/commit/f15ac2e8bfa2af2db62f6ee1f6a643910bca9fb4))
+
+
+### Bug Fixes
+
+* adapt auth guard to block access public pages after authenticated ([9905d27](https://github.com/dnum-mi/bibliotheque_numerique/commit/9905d27aa7a9a9e6c15a563929f2602c77a574a7))
+* add Apache2 license ([4511a09](https://github.com/dnum-mi/bibliotheque_numerique/commit/4511a090a1772e4dc588e0b16d4b264a75d1b6fc))
+* add bash of synco public repository ([7fd6180](https://github.com/dnum-mi/bibliotheque_numerique/commit/7fd6180b69ade23635e358c6ae6ebf76cf60c6f0))
+* add health/ds and health/hub ([1e6101c](https://github.com/dnum-mi/bibliotheque_numerique/commit/1e6101c18806e4ce3d23be239243a2626ff0de54))
+* correct label in button sync ([34446d6](https://github.com/dnum-mi/bibliotheque_numerique/commit/34446d6fac7272d9534d59aeeb9c56a2d923526f))
+* redirect to auth pages after authenticated ([a9fa758](https://github.com/dnum-mi/bibliotheque_numerique/commit/a9fa75867620e0d95e24f00ecb337ce3bcabef74))
+* update name file navigation composable and update use of IS_OPEN_SOURCE on routes ([fde914c](https://github.com/dnum-mi/bibliotheque_numerique/commit/fde914c27e5d534c3bd1bb52c627bfa5ef7b609b))
+* use ecr.aws/bitnami for docker ([b994ca5](https://github.com/dnum-mi/bibliotheque_numerique/commit/b994ca5fc9b60e9129b951337bde6b0821f1cd16))
+* use ecr.aws/bitnami for docker nginx ([d5da0f3](https://github.com/dnum-mi/bibliotheque_numerique/commit/d5da0f3b2f7e0fc8635db46d42b34c484b545a7d))
+
 ## [2.36.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.35.0...v2.36.0) (2025-09-01)
 
 
