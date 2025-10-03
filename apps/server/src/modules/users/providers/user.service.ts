@@ -186,7 +186,6 @@ export class UserService
     user.skipHashPassword = true
 
     await this.repo.save(user)
-    await this.deleteUserRefreshTokens(user.id)
     await this.sendMailService.requestManualPasswordReset(
       user.email,
       user.firstname,
@@ -245,6 +244,8 @@ export class UserService
       user.password = user.pendingPasswordHash
       user.validated = true
       user.skipHashPassword = true
+      await this.deleteUserRefreshTokens(user.id)
+      await this.updateLoginAttempts(user.id, 0)
     }
 
     user.pendingPasswordHash = null
