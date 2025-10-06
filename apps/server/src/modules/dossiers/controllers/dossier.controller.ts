@@ -69,8 +69,10 @@ export class DossierController {
     @Param('id') id: string,
   ): Promise<DossierWithFieldsOutputDto> {
     this.logger.verbose('findFieldsFromOne')
-    const { dossier, hasFullAccess } =
-      await this.dossiersService.getAndValidateDossierForRole(Number(id), role)
+    const { dossier, hasFullAccess } = await this.dossiersService.getAndValidateDossierForRole(
+      Number(id),
+      role,
+    )
     const dossierResult = await this.dossiersService.mapDossierToFieldsOutput(
       dossier,
       hasFullAccess,

@@ -36,7 +36,6 @@ import { CustomBullModule } from '@/shared/modules/custom-bull/custom-bull.modul
     forwardRef(() => InstructionTimesModule),
     forwardRef(() => DemarcheModule),
     forwardRef(() => OrganismeModule),
-    FileModule,
     TypeOrmModule.forFeature([Dossier, Field, File]),
     BullModule.registerQueue(
       ...([

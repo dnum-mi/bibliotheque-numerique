@@ -166,11 +166,9 @@ export class DossierService extends BaseEntityService<Dossier> {
 
   private _transformValueFileOfDossierFields({
     fields,
-    messages = [],
     files,
   }: {
     fields: Field[]
-    messages?: Message[]
     files: File[]
   }): Field[] {
     this.logger.verbose('transformValueFileOfDossierFields')
@@ -183,9 +181,7 @@ export class DossierService extends BaseEntityService<Dossier> {
               (f) => String(f.sourceStringId) === String(fileData.id),
             )
             if (fileFound) {
-              ;(
-                field.rawJson as PieceJustificativeChampWithState
-              ).files.forEach((f2) => {
+              (field.rawJson as PieceJustificativeChampWithState).files.forEach((f2) => {
                 f2.url = fileFound.uuid ?? ''
                 f2.state = fileFound.state ?? eState.queued
               })
@@ -195,16 +191,6 @@ export class DossierService extends BaseEntityService<Dossier> {
           }
         }
       })
-    }
-
-    if (messages.length) {
-      messages.forEach(
-        this._transformUrlToUuidMessage(
-          files.filter(
-            (f) => f.sourceLabel === eFileDsSourceLabel['ds-message'],
-          ),
-        ),
-      )
     }
 
     return fields
@@ -440,7 +426,7 @@ export class DossierService extends BaseEntityService<Dossier> {
     dossier: Dossier
     hasFullAccess: boolean
   }> {
-    const dossier = await this.buildDossier(id)
+    const dossier = await this.getDossier(id)
     if (!dossier) {
       throw new NotFoundException('Ressource introuvable')
     }
@@ -463,7 +449,7 @@ export class DossierService extends BaseEntityService<Dossier> {
     }
   }
 
-  async buildDossier(
+  async getDossier(
     id: number,
   ): Promise<Dossier> {
     return await this.repo
@@ -500,15 +486,13 @@ export class DossierService extends BaseEntityService<Dossier> {
 
     const { annotations, messages, ...restOfDsDataJson } = dossierWithFiles.dsDataJson
 
-    const finalDossier = {
+    return {
       ...dossier,
       dsDataJson: {
         ...restOfDsDataJson,
         ...(hasFullAccess ? { annotations, messages } : {}),
       },
     }
-
-    return finalDossier
   }
 
   async mapDossierToFieldsOutput(
@@ -526,7 +510,6 @@ export class DossierService extends BaseEntityService<Dossier> {
 
     const fieldsTransformed = this._transformValueFileOfDossierFields({
       fields,
-      messages: hasFullAccess ? dossier.dsDataJson.messages : [],
       files,
     })
 
