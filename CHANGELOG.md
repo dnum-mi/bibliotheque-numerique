@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.37.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.37.0...v2.37.1) (2025-10-07)
+
+
+### Bug Fixes
+
+* dossier.service tests ([f76a32a](https://github.com/dnum-mi/bibliotheque_numerique/commit/f76a32aceafaa7becdf8df76580b01e87fd699e9))
+* update dossier access check to include isMaarchDossier condition ([7fdd018](https://github.com/dnum-mi/bibliotheque_numerique/commit/7fdd018e99fbf0de5d82893257b8da95c967bdeb))
+* update dossier fields repository requests ([4f83965](https://github.com/dnum-mi/bibliotheque_numerique/commit/4f83965191f9c0f0e8b59ee975f2a4333554530a))
+* update dossier handling ([b97d1ca](https://github.com/dnum-mi/bibliotheque_numerique/commit/b97d1ca86aa9a72f6b9e084ec12d656afc3f836e))
+* update fiche dossier display ([340c001](https://github.com/dnum-mi/bibliotheque_numerique/commit/340c001aa89faf5ff220a8ed8991673a4246e7d2))
+
 ## [2.37.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.36.0...v2.37.0) (2025-10-01)
 
 
