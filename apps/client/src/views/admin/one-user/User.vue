@@ -21,6 +21,7 @@ import { LocalizationOptions } from './localization.enum'
 import type { LocalizationOptionsKeys } from './localization.enum'
 
 import UserRole from './UserRole.vue'
+import GeneratePasswordLinkModal from './GeneratePasswordLinkModal.vue'
 
 const props = defineProps<{ selectedEditableUser: IUserWithEditableRole }>()
 
@@ -57,12 +58,16 @@ const typeOrganismeLabel: Record<OrganismeTypeKey, string> = {
 //#endregion
 let noRefDemarcheOrTypeSelected: DemarchesRoles | DemarcheRole | DemarchesRoles[]
 const userStore = useUserStore()
+const currentUser = computed<IUserOutput | null>(() => userStore.currentUser)
 const selectedUser = computed<IUserOutput>(() => props.selectedEditableUser.originalUser)
 const demarcheHash = computed<Record<number, OneDemarcheRoleOption>>(() => props.selectedEditableUser.demarcheHash)
 const keySelectUser = computed<string>(() => userStore.keySelectUser)
 const loading = computed<boolean>(() => userStore.selectedEditableUserLoading)
 const isSuperAdmin = computed<boolean>(() => {
   return selectedUser.value.role.label === Roles.superadmin
+})
+const isCurrentUserSuperAdmin = computed<boolean>(() => {
+  return !!(currentUser.value?.role?.label && [Roles.superadmin, Roles.sudo].includes(currentUser.value.role.label))
 })
 //#region Tous les démarches
 const allDemarchesRolesChildren = computed(() => demarchesRoles.value.flatMap((dr) => dr.children).filter((children) => !!children))
@@ -339,7 +344,8 @@ const _updateGeographicalRight = async (optionLoc: { national?: boolean; prefect
   }
 
   const demarcheSelected: DemarcheRole | null = 'options' in demarcheOrTypeSelected.value ? demarcheOrTypeSelected.value : null
-  const typeSelected: DemarchesRoles | null = 'options' in demarcheOrTypeSelected.value ? null : (demarcheOrTypeSelected.value as DemarchesRoles)
+  const typeSelected: DemarchesRoles | null =
+    'options' in demarcheOrTypeSelected.value ? null : (demarcheOrTypeSelected.value as DemarchesRoles)
 
   if (demarcheSelected) {
     await userStore.updateUserOneRoleOption(
@@ -405,26 +411,32 @@ const removePrefecture = (prefecture: IOnePrefectureUpdate['key']) => {
 </script>
 
 <template>
-  <div
-    :key="keySelectUser"
-    class="flex flex-row gap-4 fr-p-2w flex-wrap bn-sub-title"
-  >
-    <div>
-      <label class="bn-fiche-sub-title--label">Courriel</label>
-      <span class="text-xl">{{ selectedUser.email }}</span>
+  <div class="flex flex-row bn-sub-title justify-between items-center fr-py-2v fr-px-4v mb-0">
+    <div
+      :key="keySelectUser"
+      class="flex flex-row gap-4 flex-wrap"
+    >
+      <div>
+        <label class="bn-fiche-sub-title--label">Courriel</label>
+        <span class="text-xl">{{ selectedUser.email }}</span>
+      </div>
+      <div v-if="!!selectedUser?.firstname || !!selectedUser?.lastname">
+        <label class="bn-fiche-sub-title--label">Nom complet</label>
+        <span class="text-xl">{{ selectedUser.firstname || '' }} {{ selectedUser.lastname || '' }}</span>
+      </div>
+      <div v-if="!!selectedUser?.prefecture">
+        <label class="bn-fiche-sub-title--label">Préfecture</label>
+        <span class="text-xl">{{ selectedUser.prefecture }}</span>
+      </div>
+      <div v-if="!!selectedUser?.job">
+        <label class="bn-fiche-sub-title--label">Fonction</label>
+        <span class="text-xl">{{ selectedUser.job }}</span>
+      </div>
     </div>
-    <div v-if="!!selectedUser?.firstname || !!selectedUser?.lastname">
-      <label class="bn-fiche-sub-title--label">Nom complet</label>
-      <span class="text-xl">{{ selectedUser.firstname || '' }} {{ selectedUser.lastname || '' }}</span>
-    </div>
-    <div v-if="!!selectedUser?.prefecture">
-      <label class="bn-fiche-sub-title--label">Préfecture</label>
-      <span class="text-xl">{{ selectedUser.prefecture }}</span>
-    </div>
-    <div v-if="!!selectedUser?.job">
-      <label class="bn-fiche-sub-title--label">Fonction</label>
-      <span class="text-xl">{{ selectedUser.job }}</span>
-    </div>
+    <GeneratePasswordLinkModal
+      v-show="isCurrentUserSuperAdmin"
+      :user-id="selectedUser.id"
+    />
   </div>
 
   <div class="fr-container relative">

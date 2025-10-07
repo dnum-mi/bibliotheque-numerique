@@ -1,5 +1,3 @@
 export const REQUIRED_FIELD_MESSAGE = 'Ce champ est requis'
 export const PASSWORD_MESSAGE = 'Le mot de passe doit contenir au moins 15 caractères, une lettre minuscule, une lettre majuscule, un chiffre, et un caractère spécial.'
 export const ASK_RESET_PWD_SUCCESS = 'Votre demande a été prise en compte. Vous recevrez un courriel pour modifier votre mot de passe.'
-export const REQUEST_MANUAL_RESET_PWD = 'Si vous n\'avez pas accès à vos emails, ou vous n\'avez pas reçu votre email. Cliquez ici pour faire valider votre compte par un mot de passe'
-export const REQUEST_MANUAL_RESET_PWD_SUCCESS = 'Votre nouveau mot de passe a été enregistré et est en attente de validation par un administrateur. Vous ne pourrez pas l\'utiliser pour vous connecter tant qu\'il n\'aura pas été approuvé.'

@@ -33,7 +33,7 @@ export const profileRoute = `${usersRoutes}/me`
 export const getUserRoleByIdRoute = (id: number) => `${getUserByIdRoute(id)}/role`
 export const updateRolesRoute = (id: number) => `${getUserRoleByIdRoute(id)}/many`
 export const resetPasswordRoute = `${profileRoute}/reset-password`
-export const requestManualResetPasswordRoute = `${resetPasswordRoute}/request-manual`
+export const generateUpdatePasswordLinkRoute = (id: number) => `${usersRoutes}/${id}/update-password-link`
 // export const updateRoleRoute = (id: number) => `${getUserByIdRoute(id)}/role`
 
 export const dossierSearch = '/dossiers-search'

@@ -5,8 +5,7 @@ import { z } from 'zod'
 import type { IResetPasswordInput } from '@biblio-num/shared'
 
 import apiClient from '@/api/api-client'
-import { ASK_RESET_PWD_SUCCESS, REQUEST_MANUAL_RESET_PWD } from '../../messages'
-import { routeNames } from '@/router/route-names'
+import { ASK_RESET_PWD_SUCCESS } from '../../messages'
 
 const validationSchema = toTypedSchema(
   z.object({
@@ -81,12 +80,6 @@ const onSubmit = handleSubmit(async (formValue: IResetPasswordInput) => {
             />
             <router-link to="/sign_in">
               Retour à la page de connexion
-            </router-link>
-            <span class="fr-hr-or my-4">
-              ou
-            </span>
-            <router-link :to="{ name: routeNames.UPDATE_PASSWORD_TO_VALIDATE, query: { email: emailValue } }">
-              {{ REQUEST_MANUAL_RESET_PWD }}
             </router-link>
           </div>
         </div>

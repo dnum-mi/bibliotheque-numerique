@@ -10,13 +10,11 @@ import type {
   IUpdateOneRoleOption,
   IUpdateProfile,
   RolesKeys,
-  PasswordRequestsDecisionKey,
 } from '@biblio-num/shared'
 
 import {
   Roles,
 } from '@biblio-num/shared'
-import { listManualResetPasswordRequests, managePasswordRequest } from '@/api/sudo-api-client'
 
 const SuperAdminRoles = [Roles.superadmin, Roles.sudo]
 
@@ -99,14 +97,6 @@ export const useUserStore = defineStore('user', () => {
       return
     }
     return bnApiClient.listUsers(dto)
-  }
-
-  const listUserPasswordRequests = async () => {
-    return listManualResetPasswordRequests()
-  }
-
-  const manageUserPasswordRequests = async (userId: number, action: PasswordRequestsDecisionKey) => {
-    await managePasswordRequest(userId, action)
   }
 
   const loadUserById = async (id: number) => {
@@ -195,7 +185,5 @@ export const useUserStore = defineStore('user', () => {
     changeMyProfile,
     updateUserRolesOption,
     refreshTokens,
-    listUserPasswordRequests,
-    manageUserPasswordRequests,
   }
 })

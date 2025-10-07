@@ -2,7 +2,6 @@
 import LayoutList from '@/components/Layout/LayoutList.vue'
 import DsSynchronization from './Tools/DsSynchronization.vue'
 import BnConfiguration from '@/views/Configuration/Tools/BnConfiguration.vue'
-import PasswordRequests from './Tools/PasswordRequests.vue'
 
 const currentConfigTab = ref<string | undefined>('synchronization')
 </script>
@@ -28,12 +27,6 @@ const currentConfigTab = ref<string | undefined>('synchronization')
         title="Configuration BN"
       >
         <BnConfiguration />
-      </BnTab>
-      <BnTab
-        id="password-requests"
-        title="Demandes de confirmation mdp"
-      >
-        <PasswordRequests />
       </BnTab>
     </BnTabsContainer>
   </LayoutList>

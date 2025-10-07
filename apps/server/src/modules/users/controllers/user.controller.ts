@@ -6,7 +6,6 @@ import {
   HttpCode,
   Param,
   ParseIntPipe,
-  Patch,
   Post,
   UploadedFile,
   UseInterceptors,
@@ -32,10 +31,7 @@ import { XlsxService } from '@/shared/modules/xlsx/xlsx.service'
 import { type Express } from 'express'
 import { UserImportService } from '@/modules/users/providers/user-import.service'
 import { ExcelUser } from '@/modules/users/objects/types/excel-user.type'
-import {
-  PasswordChangeRequestsDto,
-} from '../objects/dtos/output/password-change-requests.dto'
-import { ManagePasswordRequestDto } from '../objects/dtos/input/manage-password-request.dto'
+import { GenerateLinkPasswordDto } from '../objects/dtos/output/generate-link-password.dto'
 
 @ApiTags('Users')
 @Controller('users')
@@ -119,36 +115,18 @@ export class UserController {
     )
   }
 
-  @Get('/password-requests')
+  @Get('/:userId/update-password-link')
   @UsualApiOperation({
-    summary: 'Retourne une liste de requêtes de changement de mot de passe.',
+    summary:
+      "Génère un lien de mise à jour du mot de passe pour l'utilisateur spécifié.",
     method: 'GET',
-    minimumRole: Roles.sudo,
-    isArray: true,
-    responseType: PasswordChangeRequestsDto,
+    minimumRole: Roles.superadmin,
+    responseType: null,
   })
-  @HttpCode(200)
-  @Role(Roles.sudo)
-  @ApiResponse({ status: 200 })
-  async listPasswordChangeRequests(): Promise<PasswordChangeRequestsDto[]> {
-    this.logger.verbose('listPasswordChangeRequests')
-    return this.usersService.listPasswordChangeRequests()
-  }
-
-  @Patch('/password-requests/:userId/decision')
-  @UsualApiOperation({
-    summary: 'Approuver ou refuser une demande de changement de mot de passe.',
-    method: 'PATCH',
-    minimumRole: Roles.sudo,
-    responseType: Boolean,
-  })
-  @Role(Roles.sudo)
-  async managePasswordRequest(
+  @Role(Roles.superadmin)
+  async generateUpdatePasswordLink(
     @Param('userId', ParseIntPipe) userId: number,
-    @Body() dto: ManagePasswordRequestDto,
-  ): Promise<boolean> {
-    this.logger.verbose('managePasswordRequest')
-    await this.usersService.managePasswordRequest(userId, dto.action)
-    return true
+  ): Promise<GenerateLinkPasswordDto> {
+    return this.usersService.generateUpdatePasswordLink(userId)
   }
 }

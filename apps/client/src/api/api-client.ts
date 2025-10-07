@@ -41,7 +41,7 @@ import type {
   ISiafSearchOrganismeResponseOutput,
   ISiafRnfHistoryOutput,
   IDossierFieldsOutput,
-  IRequestManualResetPassword,
+  IGenerateUpdatePasswordLink,
 } from '@biblio-num/shared'
 
 import {
@@ -89,7 +89,7 @@ import {
   getAddOneRnaRoute,
   getDossierWithFieldsByIdRoute,
   resetPasswordRoute,
-  requestManualResetPasswordRoute,
+  generateUpdatePasswordLinkRoute,
 } from './bn-api-routes'
 import { getUserByIdRoute, profileRoute, signInRoute, verifyAuthRoute, logoutRoute, usersRoutes } from '@/api/bn-api-routes'
 
@@ -415,8 +415,9 @@ export const usersApiClient = {
     apiClientAuthInstance.post(resetPasswordRoute, resetPasswordInput)
   },
 
-  async requestManualResetPassword (input: IRequestManualResetPassword) {
-    apiClientAuthInstance.post(requestManualResetPasswordRoute, input)
+  async generateUpdatePasswordLink (id: number): Promise<IGenerateUpdatePasswordLink> {
+    const response = await apiClientInstance.get(generateUpdatePasswordLinkRoute(id))
+    return response?.data
   },
 
   async loginWithProconnect () {

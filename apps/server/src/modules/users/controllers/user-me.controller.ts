@@ -24,7 +24,6 @@ import {
 } from '@/modules/users/objects/dtos/input'
 import { UserOutputDto } from '@/modules/users/objects/dtos/output'
 import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.decorator'
-import { RequestPasswordInputDto } from '../objects/dtos/input/request-password-input.dto'
 
 @ApiTags('Users', 'Me')
 @Controller('users')
@@ -82,20 +81,6 @@ export class UserMeController {
   async resetPassword(@Body() body: ResetPasswordInputDto): Promise<boolean> {
     this.logger.verbose('resetPassword')
     await this.usersService.resetPassword(body.email)
-    return true
-  }
-
-  @Post('/me/reset-password/request-manual')
-  @UsualApiOperation({
-    summary: 'Soumettre une demande de modification de mot de passe.',
-    method: 'POST',
-    minimumRole: 'aucun',
-    responseType: null,
-  })
-  @PublicRoute()
-  async requestManualResetPassword(@Body() body: RequestPasswordInputDto): Promise<boolean> {
-    this.logger.verbose('requestManualResetPassword')
-    await this.usersService.requestManualResetPassword(body)
     return true
   }
 

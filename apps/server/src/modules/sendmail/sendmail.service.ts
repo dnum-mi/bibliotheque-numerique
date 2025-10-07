@@ -10,9 +10,6 @@ const tempateNames = [
   'alreadySignUp',
   'loginWithVerifyAuth',
   'resetPasswordAfterThreeAttempts',
-  'pwdRequestApproved',
-  'pwdRequestRejected',
-  'requestManualPasswordReset',
 ] as const
 
 type templateNameKey = (typeof tempateNames)[number]
@@ -43,12 +40,6 @@ export class SendMailService {
       [eTemplateName.loginWithVerifyAuth]: 'Confirmer votre connexion',
       [eTemplateName.resetPasswordAfterThreeAttempts]:
         'Votre compte a été temporairement bloqué — Action requise',
-      [eTemplateName.requestManualPasswordReset]:
-        'Demande de validation de mot de passe',
-      [eTemplateName.pwdRequestApproved]:
-        'Votre mot de passe a été réinitialisé',
-      [eTemplateName.pwdRequestRejected]:
-        'Suite à votre demande de récupération de compte',
     }
     const subject = subjects[template]
     await this.mailerService.sendMail({
@@ -151,49 +142,6 @@ export class SendMailService {
       urlResetLink,
       eTemplateName.alreadySignUp,
       duration,
-    )
-  }
-
-  public async requestManualPasswordReset(
-    email: string,
-    firstname: string,
-    lastname: string,
-  ): Promise<void> {
-    return this._commonSend(
-      email,
-      firstname,
-      lastname,
-      '',
-      eTemplateName.requestManualPasswordReset,
-    )
-  }
-
-  public async approvePasswordResetRequest(
-    email: string,
-    firstname: string,
-    lastname: string,
-    accountLink: string,
-  ): Promise<void> {
-    return this._commonSend(
-      email,
-      firstname,
-      lastname,
-      accountLink,
-      eTemplateName.pwdRequestApproved,
-    )
-  }
-
-  public async rejectPasswordResetRequest(
-    email: string,
-    firstname: string,
-    lastname: string,
-  ): Promise<void> {
-    return this._commonSend(
-      email,
-      firstname,
-      lastname,
-      '',
-      eTemplateName.pwdRequestRejected,
     )
   }
 }

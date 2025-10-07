@@ -23,13 +23,4 @@ export const passwordRoutes: RouteRecordRaw[] = [
       skipAuth: true,
     },
   },
-  {
-    path: '/update-password/to-validate',
-    name: routeNames.UPDATE_PASSWORD_TO_VALIDATE,
-    beforeEnter: [isNotAuthenticatedGuard],
-    component: () => import('@/views/passwords/UpdatePasswordToValidate.vue'),
-    meta: {
-      skipAuth: true,
-    },
-  },
 ]

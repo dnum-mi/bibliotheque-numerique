@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -19,8 +18,6 @@ import {
   IRole,
   OrganismeTypeKey,
   IUser,
-  PasswordRequestsDecisionKey,
-  ePasswordRequestsDecision,
 } from '@biblio-num/shared'
 
 import { UserFieldTypeHashConst } from '@/modules/users/objects/consts/user-field-type-hash.const'
@@ -37,8 +34,7 @@ import {
 import { PaginatedDto } from '@/shared/pagination/paginated.dto'
 import { RefreshToken } from '../../auth/objects/refresh-token.entity'
 import { durationToString } from '@/shared/utils/bn-code.utils'
-import { RequestPasswordInputDto } from '../objects/dtos/input/request-password-input.dto'
-import { PasswordChangeRequestsDto } from '../objects/dtos/output/password-change-requests.dto'
+import { GenerateLinkPasswordDto } from '../objects/dtos/output/generate-link-password.dto'
 
 type jwtPlaylod = {
   user: string | number
@@ -144,6 +140,27 @@ export class UserService
     })
   }
 
+  async generateUpdatePasswordLink(id: number): Promise<GenerateLinkPasswordDto> {
+    this.logger.verbose('generateUpdatePasswordLink')
+    const userInDb = await this.repo.findOne({
+      where: { id },
+      select: ['id'],
+    })
+    if (!userInDb) {
+      this.logger.warn(`User not found with ID ${id}`)
+      throw new NotFoundException('User not found')
+    }
+
+    const { appUrl, jwtForUrl, duration } = this.createJwtOnUrl({
+      user: userInDb.id,
+    })
+
+    return {
+      link: `${appUrl}/update-password/${jwtForUrl}`,
+      duration,
+    }
+  }
+
   async resetPassword(email: string): Promise<void> {
     this.logger.verbose('resetPassword')
     const userInDb = await this.repo.findOne({
@@ -164,119 +181,6 @@ export class UserService
       `${appUrl}/update-password/${jwtForUrl}`,
       duration,
     )
-  }
-
-  async requestManualResetPassword({
-    email,
-    password,
-  }: RequestPasswordInputDto): Promise<void> {
-    this.logger.verbose('requestManualResetPassword')
-    const user = await this.repo.findOne({
-      where: { email },
-    })
-
-    if (!user) {
-      this.logger.warn(`Cannot find user ${email}`)
-      return
-    }
-
-    user.pendingPasswordHash = await User.hash(password)
-    user.passwordChangeRequested = true
-    user.passwordChangeRequestedAt = new Date()
-    user.skipHashPassword = true
-
-    await this.repo.save(user)
-    await this.sendMailService.requestManualPasswordReset(
-      user.email,
-      user.firstname,
-      user.lastname,
-    )
-  }
-
-  async listPasswordChangeRequests(): Promise<PasswordChangeRequestsDto[]> {
-    this.logger.verbose('listPasswordChangeRequests')
-    return await this.repo.find({
-      where: { passwordChangeRequested: true },
-      select: [
-        'id',
-        'firstname',
-        'lastname',
-        'email',
-        'prefecture',
-        'passwordChangeRequestedAt',
-      ],
-      order: {
-        passwordChangeRequestedAt: 'ASC',
-      },
-    })
-  }
-
-  async managePasswordRequest(
-    userId: number,
-    action: PasswordRequestsDecisionKey,
-  ): Promise<void> {
-    const user = await this.repo.findOne({
-      where: { id: userId },
-      select: [
-        'id',
-        'firstname',
-        'lastname',
-        'email',
-        'pendingPasswordHash',
-        'passwordChangeRequested',
-      ],
-    })
-    if (!user) {
-      this.logger.warn(`Cannot find user with ID ${userId}`)
-      throw new NotFoundException(`User with ID ${userId} not found.`)
-    }
-
-    if (!user.passwordChangeRequested) {
-      this.logger.warn(
-        `This user with ID ${userId} does not have pending password change request.`,
-      )
-      throw new BadRequestException(
-        'This user does not have pending password change request.',
-      )
-    }
-
-    if (action === ePasswordRequestsDecision.APPROVE) {
-      user.password = user.pendingPasswordHash
-      user.validated = true
-      user.skipHashPassword = true
-      await this.deleteUserRefreshTokens(user.id)
-      await this.updateLoginAttempts(user.id, 0)
-    }
-
-    user.pendingPasswordHash = null
-    user.passwordChangeRequested = false
-    user.passwordChangeRequestedAt = null
-    user.skipHashPassword = true
-
-    await this.repo.save(user)
-    await this.mailToPasswordRequestDecision(user, action)
-  }
-
-  private async mailToPasswordRequestDecision(
-    user: User,
-    action: PasswordRequestsDecisionKey,
-  ): Promise<void> {
-    const appUrl = this.configService.get('appFrontUrl')
-
-    if (action === ePasswordRequestsDecision.APPROVE) {
-      await this.sendMailService.approvePasswordResetRequest(
-        user.email,
-        user.firstname,
-        user.lastname,
-        `${appUrl}/sign_in`,
-      )
-    } else {
-      await this.sendMailService.rejectPasswordResetRequest(
-        user.email,
-        user.firstname,
-        user.lastname,
-      )
-    }
   }
 
   public createJwtOnUrl(playload: jwtPlaylod): {
