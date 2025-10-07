@@ -513,7 +513,7 @@ export class DossierService extends BaseEntityService<Dossier> {
       files,
     })
 
-    if (hasFullAccess) {
+    if (hasFullAccess && !isMaarchDossier) {
       dossier.dsDataJson.messages = this._transformValueFileOfMessages({
         messages: dossier.dsDataJson.messages,
         files,
