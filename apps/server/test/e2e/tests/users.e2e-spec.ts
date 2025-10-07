@@ -55,15 +55,13 @@ describe('users (e2e)', () => {
         })
         .expect(200)
       expect(response.body).toBeDefined()
-      expect(response.body.total).toEqual(7)
+      expect(response.body.total).toEqual(5)
       expect(response.body.data).toMatchObject([
         { id: 3, lastname: 'norole', firstname: 'Bill' },
         { id: 4, lastname: 'admin1', firstname: 'Suzette' },
         { id: 5, lastname: 'instructor1', firstname: 'Steve' },
         { id: 6, lastname: 'admin', firstname: 'Jean' },
         { id: 7, lastname: 'norole', firstname: 'Titouan' },
-        { id: 8, lastname: 'adminReset1', firstname: 'Valerie' },
-        { id: 9, lastname: 'adminReset2', firstname: 'Jonh' },
       ])
     })
 
@@ -88,9 +86,7 @@ describe('users (e2e)', () => {
       console.log('RESPONSE =>', response.body.data)
       expect(response.body).toBeDefined()
       expect(response.body.data).toEqual([
-        { id: 8, lastname: 'adminReset1', firstname: 'Valerie' },
         { id: 4, lastname: 'admin1', firstname: 'Suzette' },
-        { id: 9, lastname: 'adminReset2', firstname: 'Jonh' },
         { id: 6, lastname: 'admin', firstname: 'Jean' },
       ])
     })
@@ -138,20 +134,6 @@ describe('users (e2e)', () => {
           firstname: 'Titouan',
           roleLabel: null,
           roleOptionsResume: '',
-        },
-        {
-          id: 8,
-          lastname: 'adminReset1',
-          firstname: 'Valerie',
-          roleLabel: 'admin',
-          roleOptionsResume: 'ASSO (1), FRUP (1)',
-        },
-        {
-          id: 9,
-          lastname: 'adminReset2',
-          firstname: 'Jonh',
-          roleLabel: 'admin',
-          roleOptionsResume: 'ASSO (1), FRUP (1)',
         },
       ])
     })
@@ -423,155 +405,6 @@ describe('users (e2e)', () => {
       })
       expect(userUpdated).toMatchObject(dataToUpdate)
       await dataSource.manager.update(User, { id }, { firstname, job })
-    })
-  })
-
-  describe('GET /users/password-requests', () => {
-    it('Should return error 401', async () => {
-      await request(app.getHttpServer()) //
-        .get('/users/password-requests')
-        .expect(401)
-    })
-
-    it('Should return 403 for instructor', async () => {
-      await request(app.getHttpServer()) //
-        .get('/users/password-requests')
-        .set('Authorization', `Bearer ${tokens.instructor}`)
-        .expect(403)
-    })
-
-    it('Should return a list of request 1', async () => {
-      await request(app.getHttpServer())
-        .get('/users/password-requests')
-        .set('Authorization', `Bearer ${tokens.sudo}`)
-        .expect(200)
-        .expect(({ body }) => {
-          expect(body).toMatchObject([
-            {
-              id: 8,
-              lastname: 'adminReset1',
-              firstname: 'Valerie',
-              email: 'adminreset1@localhost.com',
-              prefecture: '75 - Paris',
-              passwordChangeRequestedAt: '2025-09-11T06:54:45.000Z',
-            },
-            {
-              id: 9,
-              lastname: 'adminReset2',
-              firstname: 'Jonh',
-              email: 'adminreset2@localhost.com',
-              prefecture: '75 - Paris',
-              passwordChangeRequestedAt: '2025-09-12T06:54:45.000Z',
-            },
-          ])
-        })
-    })
-  })
-
-  describe('PATCH /users/password-requests/:userId/decision', () => {
-    it('Should return error 401', async () => {
-      await request(app.getHttpServer()) //
-        .patch('/users/password-requests/4/decision')
-        .expect(401)
-    })
-
-    it('Should return 403 for instructor', async () => {
-      await request(app.getHttpServer()) //
-        .patch('/users/password-requests/4/decision')
-        .set('Authorization', `Bearer ${tokens.superadmin}`)
-        .expect(403)
-    })
-
-    it('should complete the manual reset flow successfully', async () => {
-      const email = 'adminreset1@localhost.com'
-      const newPassword = 'NewPassword456!'
-      let to: string
-      let subject: string
-
-      await request(app.getHttpServer())
-        .post('/users/me/reset-password/request-manual')
-        .send({ email, password: newPassword })
-        .expect(201)
-
-      let userFound = await userService.repository.findOne({
-        where: { email },
-        select: ['password', 'pendingPasswordHash', 'passwordChangeRequested'],
-      })
-      expect(userFound.passwordChangeRequested).toEqual(true)
-      expect(userFound.pendingPasswordHash).toBeDefined()
-
-      const oldPasswordHash = userFound.password
-
-      jest
-        .spyOn(mailerService, 'sendMail')
-        .mockImplementation(
-          (sendMailOptions: ISendMailOptions): Promise<void> => {
-            expect(sendMailOptions).toBeDefined()
-            to = sendMailOptions.to as string
-            subject = sendMailOptions.subject
-            return // eslint-disable-line no-useless-return
-          },
-        )
-
-      await request(app.getHttpServer())
-        .patch('/users/password-requests/8/decision')
-        .set('Authorization', `Bearer ${tokens.sudo}`)
-        .send({ action: 'APPROVE' })
-        .expect(200)
-
-      userFound = await userService.repository.findOne({
-        where: { email },
-      })
-      expect(userFound.passwordChangeRequested).toBe(false)
-      expect(userFound.password).not.toEqual(oldPasswordHash)
-      expect(mailerService.sendMail).toHaveBeenCalled()
-      expect(to).toBe(email)
-      expect(subject).toBe('Votre mot de passe a été réinitialisé')
-    })
-
-    it('hould leave the original password unchanged after a refusal', async () => {
-      const email = 'adminreset2@localhost.com'
-      const newPassword = 'NewPassword456!'
-      let to: string
-      let subject: string
-
-      await request(app.getHttpServer())
-        .post('/users/me/reset-password/request-manual')
-        .send({ email, password: newPassword })
-        .expect(201)
-
-      const user = await userService.repository.findOne({
-        where: { email },
-        select: ['password'],
-      })
-      const oldPasswordHash = user.password
-
-      jest
-        .spyOn(mailerService, 'sendMail')
-        .mockImplementation(
-          (sendMailOptions: ISendMailOptions): Promise<void> => {
-            expect(sendMailOptions).toBeDefined()
-            to = sendMailOptions.to as string
-            subject = sendMailOptions.subject
-            return // eslint-disable-line no-useless-return
-          },
-        )
-
-      await request(app.getHttpServer())
-        .patch('/users/password-requests/9/decision')
-        .set('Authorization', `Bearer ${tokens.sudo}`)
-        .send({ action: 'REJECT' })
-        .expect(200)
-
-      const userFound = await userService.repository.findOne({
-        where: { email },
-        select: ['password', 'passwordChangeRequested'],
-      })
-      expect(userFound.passwordChangeRequested).toBe(false)
-      expect(userFound.password).toEqual(oldPasswordHash)
-      expect(mailerService.sendMail).toHaveBeenCalled()
-      expect(to).toBe(email)
-      expect(subject).toBe('Suite à votre demande de récupération de compte')
     })
   })
 })
