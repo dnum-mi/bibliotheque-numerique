@@ -44,7 +44,7 @@ export class SendMailService {
       [eTemplateName.resetPasswordAfterThreeAttempts]:
         'Votre compte a été temporairement bloqué — Action requise',
       [eTemplateName.requestManualPasswordReset]:
-        'Demnande de validation de mot de passe',
+        'Demande de validation de mot de passe',
       [eTemplateName.pwdRequestApproved]:
         'Votre mot de passe a été réinitialisé',
       [eTemplateName.pwdRequestRejected]:
