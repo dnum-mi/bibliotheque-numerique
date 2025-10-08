@@ -3,6 +3,7 @@ import apiClient from '@/api/api-client'
 
 const props = defineProps<{
   userId: number | null
+  email: string | null
 }>()
 
 type ModalState = 'confirming' | 'loading' | 'generated' | 'error'
@@ -93,7 +94,7 @@ const copyLinkToClipboard = () => {
 <template>
   <div>
     <DsfrButton
-      icon="fr-icon-lock-line"
+      icon="fr-icon-feedback-line"
       title="Générer un lien de validation de compte et mise à jour de mot de passe"
       no-outline
       tertiary
@@ -102,21 +103,21 @@ const copyLinkToClipboard = () => {
       @click="openModal"
     />
 
-    <DsfrAlert
-      v-if="error"
-      :title="error.title"
-      :description="error.description"
-      type="info"
-      class="mb-6"
-    />
-
     <DsfrModal
       :opened="modal"
       :title="modalTitle"
       @close="closeModal"
     >
       <div v-if="modalState === 'confirming'">
-        <p>Vous êtes sur le point de générer un lien de validation de compte et de mise à jour de mot de passe. Voulez-vous continuer ?</p>
+        <DsfrCallout
+          icon="ri-information-fill"
+        >
+          <p>Vous allez générer un lien unique pour permettre à l'utilisateur <strong>{{ email }}</strong> de <strong>valider son compte</strong> ou de <strong>réinitialiser son mot de passe</strong>.</p>
+          <p><strong>Attention :</strong> N'utilisez cette fonction que si l'utilisateur a formellement prouvé son identité et que l'accès à sa boîte mail est impossible. Le lien généré doit être transmis au demandeur.</p>
+        </DsfrCallout>
+        <p class="fr-mt-4v">
+          Voulez-vous continuer ?
+        </p>
         <DsfrButtonGroup
           :inline-layout-when="true"
           class="fr-mt-4w"
@@ -129,6 +130,7 @@ const copyLinkToClipboard = () => {
           <DsfrButton
             label="Annuler"
             size="sm"
+            secondary
             @click="closeModal"
           />
         </DsfrButtonGroup>
@@ -140,9 +142,12 @@ const copyLinkToClipboard = () => {
       </div>
 
       <div v-else-if="modalState === 'generated'">
-        <p>Le lien a été généré avec succès. Ce lien est unique et valable pendant {{ expirationTime }}.</p>
+        <p>
+          Le lien a été généré avec succès. Transmettez-le au demandeur.
+          Il restera valide pendant <strong>{{ expirationTime }}</strong>.
+        </p>
 
-        <DsfrInputGroup class="flex items-center">
+        <DsfrInputGroup class="fr-mt-2w">
           <DsfrInput
             v-model="generatedLink"
             type="text"
@@ -161,7 +166,7 @@ const copyLinkToClipboard = () => {
           />
           <p
             v-if="isCopied"
-            class="fr-valid-text fr-mt-2v"
+            class="fr-valid-text fr-mt-1w"
           >
             Lien copié dans le presse-papiers !
           </p>

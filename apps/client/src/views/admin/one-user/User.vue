@@ -66,6 +66,9 @@ const loading = computed<boolean>(() => userStore.selectedEditableUserLoading)
 const isSuperAdmin = computed<boolean>(() => {
   return selectedUser.value.role.label === Roles.superadmin
 })
+const isSelectedUserNoRoleAndInstructor = computed<boolean>(() => {
+  return !selectedUser.value.role.label || selectedUser.value.role.label === Roles.instructor
+})
 const isCurrentUserSuperAdmin = computed<boolean>(() => {
   return !!(currentUser.value?.role?.label && currentUser.value.role.label === Roles.sudo)
 })
@@ -433,8 +436,9 @@ const removePrefecture = (prefecture: IOnePrefectureUpdate['key']) => {
       </div>
     </div>
     <GeneratePasswordLinkModal
-      v-if="isCurrentUserSuperAdmin"
+      v-if="isCurrentUserSuperAdmin && isSelectedUserNoRoleAndInstructor"
       :user-id="selectedUser.id"
+      :email="selectedUser.email"
     />
   </div>
 
