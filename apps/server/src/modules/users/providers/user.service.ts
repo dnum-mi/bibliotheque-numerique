@@ -13,12 +13,7 @@ import { JwtService } from '@nestjs/jwt'
 import { ConfigService } from '@nestjs/config'
 import { SendMailService } from '../../sendmail/sendmail.service'
 
-import {
-  Roles,
-  IRole,
-  OrganismeTypeKey,
-  IUser,
-} from '@biblio-num/shared'
+import { Roles, IRole, OrganismeTypeKey, IUser } from '@biblio-num/shared'
 
 import { UserFieldTypeHashConst } from '@/modules/users/objects/consts/user-field-type-hash.const'
 import { DemarcheService } from '@/modules/demarches/providers/services/demarche.service'
@@ -140,20 +135,31 @@ export class UserService
     })
   }
 
-  async generateUpdatePasswordLink(id: number): Promise<GenerateLinkPasswordDto> {
+  async generateUpdatePasswordLink(
+    id: number,
+  ): Promise<GenerateLinkPasswordDto> {
     this.logger.verbose('generateUpdatePasswordLink')
     const userInDb = await this.repo.findOne({
       where: { id },
-      select: ['id'],
+      select: ['id', 'email', 'firstname', 'lastname'],
     })
     if (!userInDb) {
-      this.logger.warn(`User not found with ID ${id}`)
+      this.logger.warn('User not found')
       throw new NotFoundException('User not found')
     }
 
     const { appUrl, jwtForUrl, duration } = this.createJwtOnUrl({
-      user: userInDb.id,
+      expiresIn: this.configService.get('jwt').passwordLinkByAdminExpiresIn,
+      payload: {
+        user: userInDb.id,
+      },
     })
+
+    await this.sendMailService.generateUpdatePasswordLink(
+      userInDb.email,
+      userInDb.firstname,
+      userInDb.lastname,
+    )
 
     return {
       link: `${appUrl}/update-password/${jwtForUrl}`,
@@ -172,7 +178,10 @@ export class UserService
       return
     }
     const { appUrl, jwtForUrl, duration } = this.createJwtOnUrl({
-      user: userInDb.id,
+      expiresIn: this.configService.get('jwt').expiresIn,
+      payload: {
+        user: userInDb.id,
+      },
     })
     await this.sendMailService.resetPwd(
       email,
@@ -183,16 +192,22 @@ export class UserService
     )
   }
 
-  public createJwtOnUrl(playload: jwtPlaylod): {
+  public createJwtOnUrl({
+    expiresIn,
+    payload,
+  }: {
+    expiresIn: string
+    payload: jwtPlaylod
+  }): {
     appUrl: string
     jwtForUrl: string
     duration: string
   } {
-    const jwt = this.jwtService.sign(playload)
+    const jwt = this.jwtService.sign(payload)
     // jwt does not go natively in url. We had to transform it in base64
     const jwtForUrl = Buffer.from(jwt).toString('base64url')
     const appUrl = this.configService.get('appFrontUrl')
-    const duration = durationToString(this.configService.get('jwt').expiresIn)
+    const duration = durationToString(expiresIn)
     return { appUrl, jwtForUrl, duration }
   }
 
@@ -212,7 +227,10 @@ export class UserService
 
   private async mailToValidSignUp(userInDb: User): Promise<void> {
     const { appUrl, jwtForUrl, duration } = this.createJwtOnUrl({
-      user: userInDb.email,
+      expiresIn: this.configService.get('jwt').expiresIn,
+      payload: {
+        user: userInDb.email,
+      },
     })
     await this.sendMailService.validSignUp(
       userInDb.email,
@@ -225,7 +243,10 @@ export class UserService
 
   private async mailToAlreadySignUp(userInDb: User): Promise<void> {
     const { appUrl, jwtForUrl, duration } = this.createJwtOnUrl({
-      user: userInDb.id,
+      expiresIn: this.configService.get('jwt').expiresIn,
+      payload: {
+        user: userInDb.email,
+      },
     })
     await this.sendMailService.alreadySignUp(
       userInDb.email,

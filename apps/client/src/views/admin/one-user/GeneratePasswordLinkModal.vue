@@ -5,40 +5,70 @@ const props = defineProps<{
   userId: number | null
 }>()
 
+type ModalState = 'confirming' | 'loading' | 'generated' | 'error'
+const modalState = ref<ModalState>('confirming')
 const generatedLink = ref<string>('')
 const expirationTime = ref<string>('')
-const isLoading = ref(false)
 const error = ref<{ title: string; description: string } | null>(null)
 const isCopied = ref(false)
 const modal = ref(false)
 
-const btnIcon = computed(() => {
-  return !isLoading.value
-    ? 'fr-icon-lock-line'
-    : { name: 'ri-loader-4-line', animation: 'spin' as const }
+const modalTitle = computed(() => {
+  switch (modalState.value) {
+    case 'confirming':
+      return 'Confirmer la génération du lien'
+    case 'loading':
+      return 'Génération en cours...'
+    case 'generated':
+      return 'Lien généré avec succès'
+    case 'error':
+      return 'Erreur lors de la génération du lien'
+    default:
+      return ''
+  }
 })
 
-const generateAndShowModal = async () => {
-  isLoading.value = true
+const resetState = () => {
+  modalState.value = 'confirming'
+  generatedLink.value = ''
+  expirationTime.value = ''
+  error.value = null
   isCopied.value = false
+}
 
+const openModal = () => {
+  resetState()
+  modal.value = true
+}
+
+const closeModal = () => {
+  resetState()
+  modal.value = false
+}
+
+const generateLink = async () => {
   if (!props.userId) {
-    isLoading.value = false
+    error.value = {
+      title: 'ID utilisateur manquant',
+      description: 'L\'ID utilisateur est requis pour générer le lien.',
+    }
+    modalState.value = 'error'
     return
   }
+  modalState.value = 'loading'
+  isCopied.value = false
 
   try {
-    const response = await apiClient.generateUpdatePasswordLink(props.userId)
+    const response = await apiClient.generateUpdatePasswordLink(props.userId!)
     generatedLink.value = response.link
     expirationTime.value = response.duration
-    modal.value = true
+    modalState.value = 'generated'
   } catch {
     error.value = {
-      title: 'Erreur lors de la génération du lien',
-      description: 'Une erreur est survenue lors de la génération du lien. Veuillez réessayer plus tard.',
+      title: 'Échec de la génération',
+      description: 'Nous n\'avons pas pu générer le lien. Veuillez réessayer.',
     }
-  } finally {
-    isLoading.value = false
+    modalState.value = 'error'
   }
 }
 
@@ -55,29 +85,21 @@ const copyLinkToClipboard = () => {
       isCopied.value = false
     }, 3000)
   } catch {
-    error.value = {
-      title: 'Erreur lors de la copie',
-      description: 'Une erreur est survenue lors de la copie du lien. Veuillez copier le lien manuellement.',
-    }
+    console.error('Échec de la copie dans le presse-papiers')
   }
-}
-
-const closeModal = () => {
-  modal.value = false
-  generatedLink.value = ''
-  isCopied.value = false
 }
 </script>
 
 <template>
   <div>
     <DsfrButton
-      :icon="btnIcon"
+      icon="fr-icon-lock-line"
       title="Générer un lien de validation de compte et mise à jour de mot de passe"
       no-outline
       tertiary
       icon-only
-      @click="generateAndShowModal"
+      :disabled="!userId"
+      @click="openModal"
     />
 
     <DsfrAlert
@@ -90,41 +112,76 @@ const closeModal = () => {
 
     <DsfrModal
       :opened="modal"
-      title="Lien de validation de compte et mise à jour de mot de passe"
+      :title="modalTitle"
       @close="closeModal"
     >
-      <p>Copiez le lien ci-dessous pour le partager. Ce lien est unique et valable pendant {{ expirationTime }}.</p>
+      <div v-if="modalState === 'confirming'">
+        <p>Vous êtes sur le point de générer un lien de validation de compte et de mise à jour de mot de passe. Voulez-vous continuer ?</p>
+        <DsfrButtonGroup
+          :inline-layout-when="true"
+          class="fr-mt-4w"
+        >
+          <DsfrButton
+            label="Générer"
+            size="sm"
+            @click="generateLink"
+          />
+          <DsfrButton
+            label="Annuler"
+            size="sm"
+            @click="closeModal"
+          />
+        </DsfrButtonGroup>
+      </div>
 
-      <DsfrInputGroup class="flex items-center">
-        <DsfrInput
-          v-model="generatedLink"
-          type="text"
-          label="Lien généré"
-          :label-visible="false"
-          placeholder="Le lien apparaîtra ici"
-          readonly
+      <div v-else-if="modalState === 'loading'">
+        <p>Génération du lien en cours...</p>
+        <div class="fr-upload-group" />
+      </div>
+
+      <div v-else-if="modalState === 'generated'">
+        <p>Le lien a été généré avec succès. Ce lien est unique et valable pendant {{ expirationTime }}.</p>
+
+        <DsfrInputGroup class="flex items-center">
+          <DsfrInput
+            v-model="generatedLink"
+            type="text"
+            label="Lien généré"
+            :label-visible="false"
+            placeholder="Le lien apparaîtra ici"
+            readonly
+          />
+          <DsfrButton
+            title="Copier le lien"
+            icon="ri-file-copy-line"
+            tertiary
+            no-outline
+            icon-only
+            @click="copyLinkToClipboard"
+          />
+          <p
+            v-if="isCopied"
+            class="fr-valid-text fr-mt-2v"
+          >
+            Lien copié dans le presse-papiers !
+          </p>
+        </DsfrInputGroup>
+      </div>
+
+      <div v-else-if="modalState === 'error'">
+        <DsfrAlert
+          type="error"
+          :title="error?.title || 'Erreur'"
+          :description="error?.description || 'Une erreur est survenue.'"
+          :closeable="false"
+          class="fr-mb-2w"
         />
         <DsfrButton
-          title="Copier le lien"
-          icon="ri-file-copy-line"
-          tertiary
-          no-outline
-          icon-only
-          @click="copyLinkToClipboard"
+          label="Réessayer"
+          icon="ri-refresh-line"
+          @click="generateLink"
         />
-        <p
-          v-if="isCopied"
-          class="fr-valid-text fr-mt-2v"
-        >
-          Lien copié dans le presse-papiers !
-        </p>
-      </DsfrInputGroup>
+      </div>
     </DsfrModal>
   </div>
 </template>
-
-<style scoped>
-.fr-valid-text {
-  color: var(--text-success-colour);
-}
-</style>

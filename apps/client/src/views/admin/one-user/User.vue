@@ -67,7 +67,7 @@ const isSuperAdmin = computed<boolean>(() => {
   return selectedUser.value.role.label === Roles.superadmin
 })
 const isCurrentUserSuperAdmin = computed<boolean>(() => {
-  return !!(currentUser.value?.role?.label && [Roles.superadmin, Roles.sudo].includes(currentUser.value.role.label))
+  return !!(currentUser.value?.role?.label && currentUser.value.role.label === Roles.sudo)
 })
 //#region Tous les démarches
 const allDemarchesRolesChildren = computed(() => demarchesRoles.value.flatMap((dr) => dr.children).filter((children) => !!children))
@@ -434,7 +434,7 @@ const removePrefecture = (prefecture: IOnePrefectureUpdate['key']) => {
       </div>
     </div>
     <GeneratePasswordLinkModal
-      v-show="isCurrentUserSuperAdmin"
+      v-if="isCurrentUserSuperAdmin"
       :user-id="selectedUser.id"
     />
   </div>

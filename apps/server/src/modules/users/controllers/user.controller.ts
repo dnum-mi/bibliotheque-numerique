@@ -120,10 +120,10 @@ export class UserController {
     summary:
       "Génère un lien de mise à jour du mot de passe pour l'utilisateur spécifié.",
     method: 'GET',
-    minimumRole: Roles.superadmin,
+    minimumRole: Roles.sudo,
     responseType: null,
   })
-  @Role(Roles.superadmin)
+  @Role(Roles.sudo)
   async generateUpdatePasswordLink(
     @Param('userId', ParseIntPipe) userId: number,
   ): Promise<GenerateLinkPasswordDto> {

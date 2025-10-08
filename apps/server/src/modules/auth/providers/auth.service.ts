@@ -154,7 +154,10 @@ export class AuthService implements OnModuleInit {
     }
 
     this.logger.debug('User blocked')
-    const { appUrl, jwtForUrl, duration } = this.usersService.createJwtOnUrl({ user: user.id })
+    const { appUrl, jwtForUrl, duration } = this.usersService.createJwtOnUrl({
+      expiresIn: this.configService.get('jwt').expiresIn,
+      payload: { user: user.id },
+    })
     await this.sendMailService.resetPasswordAfterThreeAttempts(
       email,
       user.firstname,

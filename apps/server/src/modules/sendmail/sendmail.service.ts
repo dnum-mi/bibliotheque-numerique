@@ -10,6 +10,7 @@ const tempateNames = [
   'alreadySignUp',
   'loginWithVerifyAuth',
   'resetPasswordAfterThreeAttempts',
+  'generateUpdatePasswordLink',
 ] as const
 
 type templateNameKey = (typeof tempateNames)[number]
@@ -40,6 +41,8 @@ export class SendMailService {
       [eTemplateName.loginWithVerifyAuth]: 'Confirmer votre connexion',
       [eTemplateName.resetPasswordAfterThreeAttempts]:
         'Votre compte a été temporairement bloqué — Action requise',
+      [eTemplateName.generateUpdatePasswordLink]:
+        'Mettre à jour votre mot de passe ou activer votre compte',
     }
     const subject = subjects[template]
     await this.mailerService.sendMail({
@@ -142,6 +145,21 @@ export class SendMailService {
       urlResetLink,
       eTemplateName.alreadySignUp,
       duration,
+    )
+  }
+
+  public async generateUpdatePasswordLink(
+    email: string,
+    firstname: string,
+    lastname: string,
+  ): Promise<void> {
+    return this._commonSend(
+      email,
+      firstname,
+      lastname,
+      '',
+      eTemplateName.generateUpdatePasswordLink,
+      '',
     )
   }
 }
