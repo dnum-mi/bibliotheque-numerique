@@ -344,8 +344,7 @@ const _updateGeographicalRight = async (optionLoc: { national?: boolean; prefect
   }
 
   const demarcheSelected: DemarcheRole | null = 'options' in demarcheOrTypeSelected.value ? demarcheOrTypeSelected.value : null
-  const typeSelected: DemarchesRoles | null =
-    'options' in demarcheOrTypeSelected.value ? null : (demarcheOrTypeSelected.value as DemarchesRoles)
+  const typeSelected: DemarchesRoles | null = 'options' in demarcheOrTypeSelected.value ? null : (demarcheOrTypeSelected.value as DemarchesRoles)
 
   if (demarcheSelected) {
     await userStore.updateUserOneRoleOption(
