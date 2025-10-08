@@ -83,7 +83,6 @@ describe('users (e2e)', () => {
           },
         })
         .expect(200)
-      console.log('RESPONSE =>', response.body.data)
       expect(response.body).toBeDefined()
       expect(response.body.data).toEqual([
         { id: 4, lastname: 'admin1', firstname: 'Suzette' },
