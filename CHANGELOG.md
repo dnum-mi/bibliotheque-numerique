@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.38.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.37.1...v2.38.0) (2025-10-10)
+
+
+### Features
+
+* add deleteUserRefreshTokens call and reset login attempts on confirmation of request manual reset password ([dfafe3b](https://github.com/dnum-mi/bibliotheque_numerique/commit/dfafe3b2d17d2898315732389f96d60c9d6e81d5))
+* add email sending after manual reset password requested ([71daeb4](https://github.com/dnum-mi/bibliotheque_numerique/commit/71daeb4b2ebd1a5fdf1b13756fa9f681f25a1a70))
+* **client:** add validate account by sudo feature ([872d732](https://github.com/dnum-mi/bibliotheque_numerique/commit/872d732c54bdc16852a7983ee90633d3816cf8f9))
+* enhance password link generation modal with email prop and update messaging ([602d529](https://github.com/dnum-mi/bibliotheque_numerique/commit/602d5295855f22bc55092bbdfe1808e56471dc7a))
+* implement password update link generation and related modal functionality ([75cf9a5](https://github.com/dnum-mi/bibliotheque_numerique/commit/75cf9a5cd6f7c64ef9de0d4eceeea208da2a6c3c))
+* **server:** add validate account by sudo feature ([f2adec7](https://github.com/dnum-mi/bibliotheque_numerique/commit/f2adec74198439d85b7c6bc3b5269b7771852226))
+* update http verb for manage password requests ([7632ec2](https://github.com/dnum-mi/bibliotheque_numerique/commit/7632ec2880f39d1ed23c539d4cd2bf2ebba8dc6b))
+* update route name of manual request password and update user service request manual ([9c15485](https://github.com/dnum-mi/bibliotheque_numerique/commit/9c154857507f738d10b57674c03e36a0ad4970ce))
+
+
+### Bug Fixes
+
+* correct typo in password reset request email template ([3454c2b](https://github.com/dnum-mi/bibliotheque_numerique/commit/3454c2b4d6eff297dcbf499ff768103ea0980315))
+* remove console log from user list response test for cleaner output ([38f702d](https://github.com/dnum-mi/bibliotheque_numerique/commit/38f702d534cd5dc056542339543ac9de5e5eccd4))
+* remove redundant line in typeSelected assignment for clarity ([82fdc45](https://github.com/dnum-mi/bibliotheque_numerique/commit/82fdc453a6b9a5133b2e49dc8b6357d7d8afeac2))
+
 ## [2.37.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.37.0...v2.37.1) (2025-10-07)
 
 
