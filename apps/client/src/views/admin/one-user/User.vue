@@ -22,6 +22,7 @@ import type { LocalizationOptionsKeys } from './localization.enum'
 
 import UserRole from './UserRole.vue'
 import GeneratePasswordLinkModal from './GeneratePasswordLinkModal.vue'
+import { SUDO_VALIDATE_ACCOUNT } from '@/config'
 
 const props = defineProps<{ selectedEditableUser: IUserWithEditableRole }>()
 
@@ -69,8 +70,11 @@ const isSuperAdmin = computed<boolean>(() => {
 const isSelectedUserNoRoleAndInstructor = computed<boolean>(() => {
   return !selectedUser.value.role.label || selectedUser.value.role.label === Roles.instructor
 })
-const isCurrentUserSuperAdmin = computed<boolean>(() => {
+const isCurrentUserSudo = computed<boolean>(() => {
   return !!(currentUser.value?.role?.label && currentUser.value.role.label === Roles.sudo)
+})
+const sudoCanValidateAccount = computed<boolean>(() => {
+  return SUDO_VALIDATE_ACCOUNT && isCurrentUserSudo.value && isSelectedUserNoRoleAndInstructor.value
 })
 //#region Tous les démarches
 const allDemarchesRolesChildren = computed(() => demarchesRoles.value.flatMap((dr) => dr.children).filter((children) => !!children))
@@ -436,7 +440,7 @@ const removePrefecture = (prefecture: IOnePrefectureUpdate['key']) => {
       </div>
     </div>
     <GeneratePasswordLinkModal
-      v-if="isCurrentUserSuperAdmin && isSelectedUserNoRoleAndInstructor"
+      v-if="sudoCanValidateAccount"
       :user-id="selectedUser.id"
       :email="selectedUser.email"
     />

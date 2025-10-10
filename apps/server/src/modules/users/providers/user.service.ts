@@ -13,7 +13,13 @@ import { JwtService } from '@nestjs/jwt'
 import { ConfigService } from '@nestjs/config'
 import { SendMailService } from '../../sendmail/sendmail.service'
 
-import { Roles, IRole, OrganismeTypeKey, IUser } from '@biblio-num/shared'
+import {
+  Roles,
+  IRole,
+  OrganismeTypeKey,
+  IUser,
+  isSuperiorOrSimilar,
+} from '@biblio-num/shared'
 
 import { UserFieldTypeHashConst } from '@/modules/users/objects/consts/user-field-type-hash.const'
 import { DemarcheService } from '@/modules/demarches/providers/services/demarche.service'
@@ -141,11 +147,18 @@ export class UserService
     this.logger.verbose('generateUpdatePasswordLink')
     const userInDb = await this.repo.findOne({
       where: { id },
-      select: ['id', 'email', 'firstname', 'lastname'],
+      select: ['id', 'email', 'firstname', 'lastname', 'role'],
     })
     if (!userInDb) {
       this.logger.warn('User not found')
       throw new NotFoundException('User not found')
+    }
+
+    if (isSuperiorOrSimilar(Roles.admin, userInDb.role.label)) {
+      this.logger.warn('Cannot generate link for non-instructor or no-role user')
+      throw new ConflictException(
+        'Cannot generate link for non-instructor or no-role user',
+      )
     }
 
     const { appUrl, jwtForUrl, duration } = this.createJwtOnUrl({
