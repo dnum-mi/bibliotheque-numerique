@@ -112,8 +112,18 @@ const copyLinkToClipboard = () => {
         <DsfrCallout
           icon="ri-information-fill"
         >
-          <p>Vous allez générer un lien unique pour permettre à l'utilisateur <strong>{{ email }}</strong> de <strong>valider son compte</strong> ou de <strong>réinitialiser son mot de passe</strong>.</p>
-          <p><strong>Attention :</strong> N'utilisez cette fonction que si l'utilisateur a formellement prouvé son identité et que l'accès à sa boîte mail est impossible. Le lien généré doit être transmis au demandeur.</p>
+          <p>
+            Vous allez générer un lien unique permettant à l'utilisateur
+            <strong>{{ email }}</strong> de <strong>valider son compte</strong> ou de
+            <strong>réinitialiser son mot de passe</strong>.
+            Cette opération entraînera la validation automatique du compte.
+          </p>
+          <p>
+            <strong>Attention :</strong>
+            N'utilisez cette fonction que si l'utilisateur a formellement prouvé son
+            identité et que l'accès à sa boîte mail est impossible. Le lien généré
+            doit être transmis au demandeur.
+          </p>
         </DsfrCallout>
         <p class="fr-mt-4v">
           Voulez-vous continuer ?
