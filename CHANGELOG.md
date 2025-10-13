@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.39.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.38.0...v2.39.0) (2025-10-13)
+
+
+### Features
+
+* add SUDO_VALIDATE_ACCOUNT support for user validation and update related logic ([232f178](https://github.com/dnum-mi/bibliotheque_numerique/commit/232f178d08ec045e1162ec0015d862b061b42019))
+
 ## [2.38.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.37.1...v2.38.0) (2025-10-10)
 
 
