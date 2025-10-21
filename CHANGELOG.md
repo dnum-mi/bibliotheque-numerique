@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.39.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.39.0...v2.39.1) (2025-10-21)
+
+
+### Bug Fixes
+
+* download files with special characters in the file name ([#1922](https://github.com/dnum-mi/bibliotheque_numerique/issues/1922)) ([#1931](https://github.com/dnum-mi/bibliotheque_numerique/issues/1931)) ([e977765](https://github.com/dnum-mi/bibliotheque_numerique/commit/e977765f70cd8b38dc5c900b467d76a68bcf10a5))
+* **synchro:** jobs accumulation ([#1932](https://github.com/dnum-mi/bibliotheque_numerique/issues/1932)) ([17d4fcf](https://github.com/dnum-mi/bibliotheque_numerique/commit/17d4fcfa8407bd800716a1cb417c38d6cd999fe1))
+
 ## [2.39.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.38.0...v2.39.0) (2025-10-13)
 
 
