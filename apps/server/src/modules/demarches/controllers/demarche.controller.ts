@@ -34,7 +34,6 @@ import { CurrentUserRole } from '@/modules/users/providers/decorators/current-us
 import { CurrentDemarcheInterceptor } from '@/modules/demarches/providers/interceptors/current-demarche.interceptor'
 import { CurrentDemarche } from '@/modules/demarches/providers/decorators/current-demarche.decorator'
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
-import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
 import { SyncOneDemarcheJobPayload } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
 import { SmallDemarcheOutputDto } from '@/modules/demarches/objects/dtos/small-demarche-output.dto'
 import { CreateDemarcheDto } from '@/modules/demarches/objects/dtos/create-demarche.dto'
@@ -44,6 +43,7 @@ import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.de
 import { DemarcheMaarchService } from '../providers/services/demarche-maarch.service'
 import { ImportFiles, ImportResult } from '../objects/constants/maarch.types'
 import { ImportMaarchDto } from '@/modules/demarches/objects/dtos/import-maarch.dto'
+import { CustomBullService } from '@/shared/modules/custom-bull/custom-bull.service'
 
 @ApiTags('Demarches')
 @Controller('demarches')
@@ -54,6 +54,7 @@ export class DemarcheController {
     private readonly dossierService: DossierService,
     private readonly demarcheMaarch: DemarcheMaarchService,
     private readonly logger: LoggerService,
+    private readonly customBullService: CustomBullService,
     @InjectQueue(QueueName.sync) private readonly syncQueue: Queue,
   ) {
     this.logger.setContext(this.constructor.name)
@@ -123,7 +124,7 @@ export class DemarcheController {
   ): Promise<void> {
     this.logger.verbose('syncOneDemarcheFromScratch')
     this.logger.debug('Adding SyncOneDemarche job in queue')
-    await this.syncQueue.add(eJobName.SyncOneDemarche, {
+    await this.customBullService.addSyncOneDemarcheJob({
       demarcheId,
       fromScratch: true,
     } as SyncOneDemarcheJobPayload)

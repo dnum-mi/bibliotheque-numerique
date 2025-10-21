@@ -14,7 +14,12 @@ export class ContextLoggerService {
   contextLog(log: LogElkFormat): void {
     const store = this.als.getStore()
     if (store && store.job) {
-      store.job.log(`[${log.context}](${log.level}): ${log.message}`)
+      const formattedTimestamp = new Date(log.timestamp).toLocaleString('fr-FR', {
+        timeZone: 'Europe/Paris',
+        hour12: false,
+      })
+      const logMessage = `[${formattedTimestamp}] [${log.context}](${log.level}): ${log.message}`
+      store.job.log(logMessage)
     }
   }
 }

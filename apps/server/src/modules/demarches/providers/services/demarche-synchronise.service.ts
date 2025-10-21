@@ -36,7 +36,7 @@ import {
 import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
 import { InjectQueue } from '@nestjs/bull'
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
-import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
+import { CustomBullService } from '@/shared/modules/custom-bull/custom-bull.service'
 
 @Injectable()
 export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
@@ -45,6 +45,7 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
     private demarcheService: DemarcheService,
     @InjectRepository(Demarche) repo: Repository<Demarche>,
     private dsApiClient: DsApiClient,
+    private readonly customBullService: CustomBullService,
     @InjectQueue(QueueName.sync)
     private readonly syncQueue: Queue,
   ) {
@@ -60,7 +61,7 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
   ): Promise<void> {
     this.logger.verbose('_synchroniseAllDossier')
     for (const dossier of dossiers) {
-      await this.syncQueue.add(eJobName.SyncOneDossier, {
+      await this.customBullService.addSyncOneDossierJob({
         demarcheId,
         dsDossierId: dossier.number,
         fromScratch,
@@ -189,11 +190,11 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
       demarche.dsDataJson.number,
       lastSyncronisedAt,
     )
-    job?.log(`lastSyncronisedAt: ${lastSyncronisedAt}`)
+    job.log(`lastSyncronisedAt: ${lastSyncronisedAt}`)
     const raw = result.demarche
     const dossiers = raw.dossiers.nodes
     delete raw.dossiers
-    job?.log(`dossiers=${JSON.stringify(dossiers)}`)
+    job.log(`dossiers=${JSON.stringify(dossiers)}`)
     const mappingColumns = this._generateMappingColumns(
       raw,
       demarche.mappingColumns,
@@ -213,7 +214,7 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
         : {}),
     }
     await this.repo.update({ id: demarche.id }, toUpdate)
-    job?.log('demarche - updated')
+    job.log('demarche - updated')
     await this._synchroniseAllDossier(dossiers, demarche.id, fromScratch)
   }
 }

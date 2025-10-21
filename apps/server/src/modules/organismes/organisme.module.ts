@@ -17,6 +17,7 @@ import { OrganismeSyncStateService } from './providers/organisme-sync-state.serv
 import { SyncState } from '../../shared/sync-state/objects/entities/sync-state.entity'
 import { OrganismeSyncService } from './providers/organisme-sync.service'
 import { OrganismeRnaService } from './providers/organisme-rna.service'
+import { CustomBullModule } from '@/shared/modules/custom-bull/custom-bull.module'
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { OrganismeRnaService } from './providers/organisme-rna.service'
     FileModule,
     BnConfigurationModule,
     HubModule,
+    CustomBullModule,
   ],
   controllers: [OrganismeController, OrganismeFileController],
   providers: [

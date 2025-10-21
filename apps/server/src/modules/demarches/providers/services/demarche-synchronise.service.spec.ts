@@ -14,6 +14,7 @@ import { DemarcheService } from "./demarche.service"
 import { eIdentificationDemarche, IdentificationDemarcheKey, OrganismeTypeKey } from "@biblio-num/shared"
 import { MappingColumn } from "../../objects/dtos/mapping-column.dto"
 import { fixFieldsExcelChamps } from "../../../dossiers/objects/constante/fix-field-excel-champ.dictionnary"
+import { CustomBullService } from "@/shared/modules/custom-bull/custom-bull.service"
 
 const demarcheServiceMock = jest.createMockFromModule<DemarcheService>('./demarche.service')
 const repoDemarcheMock = {
@@ -23,6 +24,7 @@ const repoDemarcheMock = {
 } as any
 const dsApiClientMock = jest.createMockFromModule<DsApiClient>('@dnum-mi/ds-api-client')
 const syncQueueMock = jest.createMockFromModule<Queue>('bull')
+const customBullMock = jest.createMockFromModule<CustomBullService>('./../../../../shared/modules/custom-bull/custom-bull.service.ts')
 
 describe('Demarche sync service', () => {
   let service: DemarcheSynchroniseService
@@ -32,6 +34,7 @@ describe('Demarche sync service', () => {
       demarcheServiceMock,
       repoDemarcheMock as Repository<Demarche>,
       dsApiClientMock,
+      customBullMock,
       syncQueueMock,
     )
   })

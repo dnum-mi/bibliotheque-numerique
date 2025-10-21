@@ -12,13 +12,10 @@ import { Role } from '@/modules/users/providers/decorators/role.decorator'
 import { IRole, Roles } from '@biblio-num/shared'
 import { CurrentUserRole } from '@/modules/users/providers/decorators/current-user-role.decorator'
 import { LoggerService } from '../../../shared/modules/logger/logger.service'
-import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
 import { SyncOneDossierJobPayload } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
-import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
-import { InjectQueue } from '@nestjs/bull'
-import { Queue } from 'bull'
 import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.decorator'
 import { DossierWithFieldsOutputDto } from '../objects/dto/dossier-with-fields-output.dto'
+import { CustomBullService } from '@/shared/modules/custom-bull/custom-bull.service'
 
 @ApiTags('Dossiers')
 @Controller('dossiers')
@@ -26,7 +23,7 @@ export class DossierController {
   constructor(
     private readonly dossiersService: DossierService,
     private readonly logger: LoggerService,
-    @InjectQueue(QueueName.sync) private readonly syncQueue: Queue,
+    private readonly customBullService: CustomBullService,
   ) {
     this.logger.setContext(this.constructor.name)
   }
@@ -103,7 +100,7 @@ export class DossierController {
     if (!smallDoss) {
       throw new NotFoundException('Dossier not found')
     }
-    await this.syncQueue.add(eJobName.SyncOneDossier, {
+    await this.customBullService.addSyncOneDossierJob({
       demarcheId: smallDoss.demarche.id,
       dsDossierId: smallDoss.dsDataJson.number,
       fromScratch: true,

@@ -33,6 +33,12 @@ export class RedisService {
     return this.redisClient.get(key)
   }
 
+  async deleteKey(key: string): Promise<number> {
+    this.logger.verbose('deleteKey')
+    this.logger.debug(`key: ${key}`)
+    return this.redisClient.del(key)
+  }
+
   async initkeys(partern: string): Promise<void> {
     const keys = await this.redisClient.keys(partern)
 

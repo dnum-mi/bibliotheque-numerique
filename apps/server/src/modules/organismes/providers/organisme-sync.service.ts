@@ -3,7 +3,6 @@ import { JobOptions, Queue } from 'bull'
 import { InjectQueue } from '@nestjs/bull'
 
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
-import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
 import {
   SyncOneRnaOrganismeJobPayload,
   SyncOneRnfOrganismeJobPayload,
@@ -11,12 +10,14 @@ import {
 import { SyncState } from '@/shared/sync-state/objects/entities/sync-state.entity'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { OrganismeSyncStateService } from './organisme-sync-state.service'
+import { CustomBullService } from '@/shared/modules/custom-bull/custom-bull.service'
 
 @Injectable()
 export class OrganismeSyncService {
   constructor(
     private readonly logger: LoggerService,
     private readonly syncState: OrganismeSyncStateService,
+    private readonly customBullService: CustomBullService,
     @InjectQueue(QueueName.sync) private readonly syncQueue: Queue,
   ) {
     this.logger.setContext(this.constructor.name)
@@ -30,7 +31,7 @@ export class OrganismeSyncService {
       opt = { priority }
     }
     const syncStateEntity = await this.syncState.setStateQueuedByIdRnf(idRnf)
-    await this.syncQueue.add(eJobName.SyncOneRnfOrganisme, {
+    await this.customBullService.addSyncOneRnfOrganismeJob({
       rnf: idRnf,
       syncState: syncStateEntity.id,
     } as SyncOneRnfOrganismeJobPayload,
@@ -46,7 +47,7 @@ export class OrganismeSyncService {
       opt = { priority }
     }
     const syncStateEntity = await this.syncState.setStateQueuedByIdRna(idRna)
-    await this.syncQueue.add(eJobName.SyncOneRnaOrganisme, {
+    await this.customBullService.addSyncOneRnaOrganismeJob({
       rna: idRna,
       syncState: syncStateEntity.id,
     } as SyncOneRnaOrganismeJobPayload,

@@ -1,16 +1,21 @@
-import { InjectQueue, Process, Processor } from '@nestjs/bull'
+import { Process, Processor } from '@nestjs/bull'
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
 import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
 import {
   SyncOneRnaOrganismeJobPayload,
   SyncOneRnfOrganismeJobPayload,
 } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
-import { Job, Queue } from 'bull'
+import { Job } from 'bull'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { OrganismeService } from '@/modules/organismes/providers/organisme.service'
 import { RnfService } from '@/modules/organismes/providers/rnf.service'
 import { BnConfigurationService } from '@/shared/modules/bn-configurations/providers/bn-configuration.service'
-import { eBnConfiguration, IRnaOutput, ISiafRnaOutput, ISiafRnfOutput } from '@biblio-num/shared'
+import {
+  eBnConfiguration,
+  IRnaOutput,
+  ISiafRnaOutput,
+  ISiafRnfOutput,
+} from '@biblio-num/shared'
 import { RnaService } from '@/modules/organismes/providers/rna.service'
 import { FieldService } from '@/modules/dossiers/providers/field.service'
 import { ALS_INSTANCE } from '@/shared/modules/als/als.module'
@@ -23,11 +28,12 @@ import { OrganismeSyncService } from '@/modules/organismes/providers/organisme-s
 import { OrganismeRnaService } from '@/modules/organismes/providers/organisme-rna.service'
 import { IGetUpdateAssociationInputDto } from '@/modules/organismes/objects/dto/get-updated-association-input.dto'
 import { eFileStorageIn } from '../../../modules/files/objects/const/file-storage-in.enum'
+import { RedisService } from '@/shared/modules/redis/redis.service'
+import { CustomBaseProcessor } from '@/shared/modules/custom-bull/custom-base.processor'
 
 @Processor(QueueName.sync)
-export class OrganismeProcessor {
+export class OrganismeProcessor extends CustomBaseProcessor {
   constructor(
-    private readonly logger: LoggerService,
     private readonly rnfService: RnfService,
     private readonly rnaService: RnaService,
     private readonly fieldService: FieldService,
@@ -36,10 +42,12 @@ export class OrganismeProcessor {
     private readonly syncState: OrganismeSyncStateService,
     private readonly organismeSyncService: OrganismeSyncService,
     private readonly organismeRnaService: OrganismeRnaService,
-    @InjectQueue(QueueName.sync) private readonly syncQueue: Queue,
+    protected redisService: RedisService,
+    protected logger: LoggerService,
     @Inject(ALS_INSTANCE)
     private readonly als?: AsyncLocalStorage<AsyncLocalStore>,
   ) {
+    super(redisService, logger)
     this.logger.setContext(this.constructor.name)
   }
 
@@ -132,17 +140,24 @@ export class OrganismeProcessor {
       if (lastSyncConfig.stringValue) {
         query.lastUpdatedAt = lastSyncConfig.stringValue
       }
-      const modifiedRnaIds = await this.organismeRnaService.getLastUpdated(query)
+      const modifiedRnaIds =
+        await this.organismeRnaService.getLastUpdated(query)
 
       const dateNow = new Date().toISOString()
-      const addJobsResults = await Promise.allSettled(modifiedRnaIds.map(async (rnfId) => {
-        return this.organismeSyncService.addSyncOneRna(rnfId)
-      }))
+      const addJobsResults = await Promise.allSettled(
+        modifiedRnaIds.map(async (rnfId) => {
+          return this.organismeSyncService.addSyncOneRna(rnfId)
+        }),
+      )
 
-      const rejectedCount = addJobsResults.filter((result) => result.status === 'rejected')
+      const rejectedCount = addJobsResults.filter(
+        (result) => result.status === 'rejected',
+      )
       this.logger.debug(`Add jobs sync organismes rna: ${addJobsResults}`)
       if (rejectedCount) {
-        this.logger.warn(`Failed to add ${rejectedCount} jobs to sync organismes rna`)
+        this.logger.warn(
+          `Failed to add ${rejectedCount} jobs to sync organismes rna`,
+        )
       }
 
       await this.bnConfiguration.setConfig(
@@ -163,10 +178,15 @@ export class OrganismeProcessor {
           eBnConfiguration.SYNC_RNA_VIA_HUB,
         )
 
-        await this.syncState.setStateUploadingByIdRna(job.data.rna, job.data.syncState)
+        await this.syncState.setStateUploadingByIdRna(
+          job.data.rna,
+          job.data.syncState,
+        )
         let rawRna: ISiafRnaOutput | IRnaOutput
         if (isSyncRnaViaHub) {
-          rawRna = await this.organismeService.getAssocationFromHub(job.data.rna)
+          rawRna = await this.organismeService.getAssocationFromHub(
+            job.data.rna,
+          )
         } else {
           rawRna = await this.rnaService.getAssociation(job.data.rna)
         }
@@ -192,28 +212,48 @@ export class OrganismeProcessor {
           }
           if (isSyncRnaViaHub) {
             // Clean Data
-            await this.organismeRnaService.deleteFiles(job.data.rna, eFileStorageIn.S3)
+            await this.organismeRnaService.deleteFiles(
+              job.data.rna,
+              eFileStorageIn.S3,
+            )
             // Update RNA
-            await this.organismeService.updateOrganismeRnaFromHub(rawRna as ISiafRnaOutput)
+            await this.organismeService.updateOrganismeRnaFromHub(
+              rawRna as ISiafRnaOutput,
+            )
             job.log('Updated Organisme from rna')
             job.progress(60)
-            await this.organismeService.synchroniseRnaFilesFromHub(rawRna as ISiafRnaOutput)
+            await this.organismeService.synchroniseRnaFilesFromHub(
+              rawRna as ISiafRnaOutput,
+            )
             job.log('Rna files job created')
           } else {
             // Clean Data
-            await this.organismeRnaService.deleteFiles(job.data.rna, eFileStorageIn.HUB)
+            await this.organismeRnaService.deleteFiles(
+              job.data.rna,
+              eFileStorageIn.HUB,
+            )
             // Update RNA
-            await this.organismeService.updateOrganismeFromRna(job.data.rna, rawRna as IRnaOutput)
+            await this.organismeService.updateOrganismeFromRna(
+              job.data.rna,
+              rawRna as IRnaOutput,
+            )
             job.log('Updated Organisme from rna')
             job.progress(60)
-            await this.organismeService.synchroniseRnaFiles(job.data.rna, rawRna as IRnaOutput)
+            await this.organismeService.synchroniseRnaFiles(
+              job.data.rna,
+              rawRna as IRnaOutput,
+            )
             job.log('Rna files job created')
           }
         }
         job.progress(100)
         await this.syncState.setStateUploadedByRnaId(job.data.rna)
       } catch (e) {
-        await this.syncState.setStateFailedByRnaId(job.data.rna, e.message, job.data.syncState)
+        await this.syncState.setStateFailedByRnaId(
+          job.data.rna,
+          e.message,
+          job.data.syncState,
+        )
         throw e
       }
     })
@@ -222,9 +262,7 @@ export class OrganismeProcessor {
 
   // #region synchronization RNF
   @Process(eJobName.SyncAllRnfOrganisme)
-  async syncAllRnfOrganisme(
-    job: Job<never>,
-  ): Promise<void> {
+  async syncAllRnfOrganisme(job: Job<never>): Promise<void> {
     await this.als.run({ job }, async () => {
       this.logger.verbose('syncAllRnfOrganisme')
       const rnfs = await this.organismeService.getAllRnfOrganisme()
@@ -255,14 +293,20 @@ export class OrganismeProcessor {
         modifiedRnfIds = await this.rnfService.getUpdatedFoundations(query)
       }
 
-      const addJobsResults = await Promise.allSettled(modifiedRnfIds.map(async (rnfId) => {
-        return this.organismeSyncService.addSyncOneRnf(rnfId)
-      }))
+      const addJobsResults = await Promise.allSettled(
+        modifiedRnfIds.map(async (rnfId) => {
+          return this.organismeSyncService.addSyncOneRnf(rnfId)
+        }),
+      )
 
-      const rejectedCount = addJobsResults.filter((result) => result.status === 'rejected')
+      const rejectedCount = addJobsResults.filter(
+        (result) => result.status === 'rejected',
+      )
       this.logger.debug(`Add jobs sync organismes rnf: ${addJobsResults}`)
       if (rejectedCount) {
-        this.logger.warn(`Failed to add ${rejectedCount} jobs to sync organismes rnf`)
+        this.logger.warn(
+          `Failed to add ${rejectedCount} jobs to sync organismes rnf`,
+        )
       }
 
       await this.bnConfiguration.setConfig(
@@ -284,9 +328,14 @@ export class OrganismeProcessor {
           eBnConfiguration.SYNC_RNF_VIA_HUB,
         )
         let rawRnf: ISiafRnfOutput = null
-        await this.syncState.setStateUploadingByIdRnf(job.data.rnf, job.data.syncState)
+        await this.syncState.setStateUploadingByIdRnf(
+          job.data.rnf,
+          job.data.syncState,
+        )
         if (isSyncRnfViaHub) {
-          rawRnf = await this.organismeService.getFoundationFromHub(job.data.rnf)
+          rawRnf = await this.organismeService.getFoundationFromHub(
+            job.data.rnf,
+          )
         } else {
           rawRnf = await this.rnfService.getFoundation(job.data.rnf)
         }
@@ -309,7 +358,10 @@ export class OrganismeProcessor {
           }
           // Clean data
           if (!isSyncRnfViaHub) {
-            await this.organismeService.deleteFilesOfRnf(job.data.rnf, eFileStorageIn.HUB)
+            await this.organismeService.deleteFilesOfRnf(
+              job.data.rnf,
+              eFileStorageIn.HUB,
+            )
           }
           // UPDATE Rnf
           await this.organismeService.updateOrganismeFromRnf(
@@ -318,12 +370,19 @@ export class OrganismeProcessor {
             job.data.firstTime,
           )
           if (isSyncRnfViaHub) {
-            await this.organismeService.synchroniseRnfFiles(job.data.rnf, rawRnf)
+            await this.organismeService.synchroniseRnfFiles(
+              job.data.rnf,
+              rawRnf,
+            )
           }
         }
         await this.syncState.setStateUploadedByRnfId(job.data.rnf)
       } catch (e) {
-        await this.syncState.setStateFailedByRnfId(job.data.rnf, e.message, job.data.syncState)
+        await this.syncState.setStateFailedByRnfId(
+          job.data.rnf,
+          e.message,
+          job.data.syncState,
+        )
         throw e
       }
     })

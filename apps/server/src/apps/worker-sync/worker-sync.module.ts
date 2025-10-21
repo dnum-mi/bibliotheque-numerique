@@ -32,6 +32,7 @@ import { S3Module } from '@/shared/modules/s3/s3.module'
 import fileConfig from '../../config/file.config'
 import { WokerSyncService } from './woker-sync.service'
 import siafHubConfig from '../../config/siaf-hub.config'
+import { RedisModule } from '@/shared/modules/redis/redis.module'
 
 @Module({
   imports: [
@@ -67,6 +68,7 @@ import siafHubConfig from '../../config/siaf-hub.config'
     OrganismeModule,
     BnConfigurationModule,
     S3Module,
+    RedisModule,
   ],
   controllers: [],
   providers: [
