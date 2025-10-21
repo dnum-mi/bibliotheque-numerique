@@ -6,6 +6,7 @@ import {
   Param,
   Response,
 } from '@nestjs/common'
+import * as contentDisposition from 'content-disposition'
 import { ApiTags } from '@nestjs/swagger'
 import { FileService } from '../providers/file.service'
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
@@ -50,9 +51,11 @@ export class FileController {
       throw new BadRequestException('file is not ready yet.')
     }
     this.logger.debug(smallFile)
+
     response.setHeader(
       'Content-Disposition',
-      `attachment; filename="${FileService.buildCompleteName(smallFile)}"`,
+      contentDisposition(FileService.buildCompleteName(smallFile))
+        .replace(/\?/g, '_'), // le module content-disposition remplace les caractére interdit par '?'
     )
 
     let stream

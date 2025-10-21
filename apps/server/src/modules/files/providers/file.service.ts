@@ -71,13 +71,23 @@ export class FileService extends BaseEntityService<File> {
     )
   }
 
+  static normalizedFilename (filename: string): string {
+    console.log(filename)
+    return filename
+    // eslint-disable-next-line no-useless-escape
+      .replace(/[\/\\:\*\?"<>|]/g, '_') // non autorisés dans les noms de fichiers sous Windows
+      .replace(/[,;]/g, '_')
+  }
+
   static buildCompleteName(smallFile: SmallFileOutputDto): string {
+    const label = this.normalizedFilename(smallFile.label)
+
     if (smallFile.mimeType === eFileExtension.unknown) {
       const previousExtension = smallFile.originalLabel.match(/\.(\w+)$/)
       // TODO: handle unknown extension
-      return `${smallFile.label}.${previousExtension?.[1] ?? 'unknown'}`
+      return `${label}.${this.normalizedFilename(previousExtension?.[1] ?? 'unknown')}`
     }
-    return `${smallFile.label}.${smallFile.mimeType}`
+    return `${label}.${smallFile.mimeType}`
   }
 
   static computeLabelAndTag(
