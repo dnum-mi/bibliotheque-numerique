@@ -1,7 +1,8 @@
 import { AssoQualityKey } from './enums'
 import { ISiafAddress } from './common-output.interface'
-import { IDsEvent, IRnaEvent } from './ds-event-output.interface'
+import { IDsEvent } from './ds-event-output.interface'
 import { ISiafOrganisme } from './organisme-output.interface'
+import { IRnaEvent } from './rna-event-output.interface'
 
 export type UnionKindType = 'Union' | 'Federation'
 export type EstablishmentAcquiredType = 'gratuit' | 'onéreux'
