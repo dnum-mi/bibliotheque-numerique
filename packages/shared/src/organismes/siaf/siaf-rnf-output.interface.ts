@@ -1,3 +1,7 @@
+/**
+ * @deprecated
+ */
+
 // Traduit du schema de SIAF RNF
 import { PersonRoleKey } from '../person-role.enums'
 import { FoundationTypeKey } from './foundation-type.enum'
@@ -18,6 +22,9 @@ enum eFileMimeType {
   docx = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 }
 
+/**
+ * @deprecated
+ */
 export interface Person {
   civility: string | undefined
   lastName: string
@@ -37,6 +44,9 @@ export interface Person {
   jobPosition: string
 }
 
+/**
+ * @deprecated
+ */
 export interface ISiafRnfOutput {
   id: string
   title: string
@@ -61,6 +71,9 @@ export interface ISiafRnfOutput {
   updatedAt: Date
 }
 
+/**
+ * @deprecated
+ */
 export interface ISiafRnfHistoryOutput {
   id: string
   foundationId: string

@@ -1,15 +1,28 @@
+/**
+ * @deprecated
+ */
+
 import { ISiafAddress, IDissolved, IFile, IStatus } from "./siaf-common-output.interface";
 
+/**
+ * @deprecated
+ */
 interface ICategoryObjectSocial {
   code: string;
   descriptions: string[];
 }
 
+/**
+ * @deprecated
+ */
 interface IObjetSocial {
   description: string;
   categories: ICategoryObjectSocial[];
 }
 
+/**
+ * @deprecated
+ */
 export interface IRnaAdrgAddress {
   declarant: string | null;
   complemid: string | null;
@@ -21,6 +34,9 @@ export interface IRnaAdrgAddress {
   pays: string | null;
 }
 
+/**
+ * @deprecated
+ */
 export interface IRnaAdrsAddress {
   complement: string | null;
   numvoie: string | null;
@@ -32,23 +48,38 @@ export interface IRnaAdrsAddress {
   codepostal: string | null;
   libcommune: string | null;
 }
+/**
+ * @deprecated
+ */
 interface IRnaAddress {
   kind: string;
   address: IRnaAdrgAddress | IRnaAdrsAddress;
 }
+/**
+ * @deprecated
+ */
 export interface IAddressRna extends ISiafAddress {
   rnaAddress?: IRnaAddress;
 }
 
+/**
+ * @deprecated
+ */
 interface IDirectors {
   file: IFile | null;
 }
 
+/**
+ * @deprecated
+ */
 interface IGroupement {
   type: string;
   associations: string[];
 }
 
+/**
+ * @deprecated
+ */
 export interface ISiafRnaOutput {
   id: string;
   createdAt: Date
@@ -74,6 +105,9 @@ export interface ISiafRnaOutput {
   //letterIntroduction: string
 }
 
+/**
+ * @deprecated
+ */
 export interface ISiafRnaHistoryOutput {
   id: string;
   associationId: string;

@@ -1,8 +1,14 @@
+/**
+ * @deprecated
+ */
 interface IRnaFile {
   uploadAt: Date,
   typePiece: string | null,
   typeRecepisse: string | null
 }
+/**
+ * @deprecated
+ */
 export interface IFile {
   id: string;
   name: string;
@@ -12,12 +18,18 @@ export interface IFile {
   rnaFile?: IRnaFile | undefined;
 }
 
+/**
+ * @deprecated
+ */
 export interface IDissolved {
   dissolvedAt: Date | undefined;
   verbalProcess: IFile | undefined;
   mandatLetter: IFile | undefined;
   otherFiles: IFile[];
 }
+/**
+ * @deprecated
+ */
 interface IGouvAddress {
   label: string;
   housenumber: string | undefined;
@@ -32,6 +44,9 @@ interface IGouvAddress {
   city: string | undefined;
 }
 
+/**
+ * @deprecated
+ */
 interface IDsAddress {
   label: string;
   type: string;
@@ -47,12 +62,18 @@ interface IDsAddress {
   regionCode: string;
 }
 
+/**
+ * @deprecated
+ */
 export interface ISiafAddress {
   dsStringValue: string | undefined;
   coordinates: [number, number] | undefined;
   dsAddress?: IDsAddress
   gouvAddress: IGouvAddress | undefined;
 }
+/**
+ * @deprecated
+ */
 export interface IStatus {
   file: IFile | undefined;
 }
