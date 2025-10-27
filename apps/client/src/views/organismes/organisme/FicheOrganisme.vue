@@ -14,11 +14,7 @@ import type {
   IOrganismeOutputDto,
   // ISiafRnfHistoryOutput,
 } from '@biblio-num/shared'
-import {
-  dFileTabDictionary,
-  eOrganismeType,
-  eState,
-} from '@biblio-num/shared'
+import { dFileTabDictionary, eOrganismeType, eState } from '@biblio-num/shared'
 import type { ApiCall } from '@/components/ag-grid/server-side/pagination.utils'
 import FicheInfoAssociation from './FicheInfoAssociation.vue'
 import FicheInfoFondation from './FicheInfoFondation.vue'
@@ -70,13 +66,14 @@ const loadOrganisme = async () => {
 }
 
 const isSynchronising = computed(() => {
-  return (syncState.value?.state === eState.uploading || syncState.value?.state === eState.queued)
-    && organisme.value?.type === eOrganismeType.unknown
+  return (
+    (syncState.value?.state === eState.uploading || syncState.value?.state === eState.queued) &&
+    organisme.value?.type === eOrganismeType.unknown
+  )
 })
 
 const isErrorSync = computed(() => {
-  return syncState.value?.state === eState.failed
-    && organisme.value?.type === eOrganismeType.unknown
+  return syncState.value?.state === eState.failed && organisme.value?.type === eOrganismeType.unknown
 })
 
 onMounted(async () => {
@@ -110,18 +107,18 @@ const fileTabs = computed(() => {
   })
 })
 
+onUpdated(() => {
+  console.log(fileTabs.value)
+})
+
 const onRefreshSync = async () => {
   await synchroniseOneOrganisme(organisme.value.id)
 }
 </script>
 
 <template>
-  <div v-if="isLoading">
-    Chargement en cours, veuillez patienter...
-  </div>
-  <div v-else-if="!(organisme || hasSiaf)">
-    Organisme introuvable (id {{ idType }} {{ id }})
-  </div>
+  <div v-if="isLoading">Chargement en cours, veuillez patienter...</div>
+  <div v-else-if="!(organisme || hasSiaf)">Organisme introuvable (id {{ idType }} {{ id }})</div>
   <div
     v-if="(organisme || hasSiaf) && !isLoading"
     class="flex flex-grow gap-2 h-full"
@@ -132,9 +129,7 @@ const onRefreshSync = async () => {
       title-bg-color="var(--grey-200-850)"
       title-fg-color="var(--text-inverted-grey)"
     >
-      <template
-        #title
-      >
+      <template #title>
         <div class="flex flex-grow gap-2 justify-between items-center">
           <div v-if="organisme">
             <OrganismeBadge
@@ -151,12 +146,8 @@ const onRefreshSync = async () => {
               class="mr-4"
               big
             />
-            <span class="fr-text--lead fr-text--bold">
-              {{ organismeSiaf?.idRna || organismeSiaf?.idRnf }} -
-            </span>
-            <span class="fr-text--lead">{{
-              organismeSiaf?.title
-            }}</span>
+            <span class="fr-text--lead fr-text--bold"> {{ organismeSiaf?.idRna || organismeSiaf?.idRnf }} - </span>
+            <span class="fr-text--lead">{{ organismeSiaf?.title }}</span>
           </div>
           <div v-if="hasSiafAssociation || idType === EOrganismeIdType.Rnf" class="flex-row gap-4">
             <div class="flex gap-4">
@@ -178,16 +169,30 @@ const onRefreshSync = async () => {
           </div>
         </div>
       </template>
-      <template v-if="rnaImportedAt" #sub-title>
+      <template
+        v-if="rnaImportedAt"
+        #sub-title
+      >
         <span class="italic">Données anti-datées de juin 2023</span>
       </template>
       <template #content>
-        <Spinner v-if="isSynchronising" message="Synchronisation en cours..." />
-        <div v-else-if="isErrorSync" class="flex flex-col justify-center items-center p-10">
-          <span class="fr-text--lg">Cette {{ idType === EOrganismeIdType.Rna ? "assocation" : "fondation" }} n'a pas pu être synchroniser.</span>
+        <Spinner
+          v-if="isSynchronising"
+          message="Synchronisation en cours..."
+        />
+        <div
+          v-else-if="isErrorSync"
+          class="flex flex-col justify-center items-center p-10"
+        >
+          <span class="fr-text--lg"
+            >Cette {{ idType === EOrganismeIdType.Rna ? 'assocation' : 'fondation' }} n'a pas pu être synchroniser.</span
+          >
           <span class="fr-text--lg">Veuillez Contacter le support.</span>
         </div>
-        <div v-else class="w-full h-full pl-4">
+        <div
+          v-else
+          class="w-full h-full pl-4"
+        >
           <BnTabsContainer
             v-model="currentFicheOrganismeTab"
             :default-tab-id="defaultTabId"

@@ -1,60 +1,76 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed, watch } from 'vue'
 import type { View } from 'ol'
 import { GeoJSON } from 'ol/format'
-
-import markerIcon from '@/assets/map-marker.png'
+// 1. Importer la projection de la vue (EPSG:3857) et la transformation
+import { fromLonLat, get as getProjection } from 'ol/proj'
 
 const props = withDefaults(defineProps<{
   center?: [number, number]
-  projection?: string
   zoom?: number
-  marker?: boolean | [number, number]
+  featuresList?: any[]
   width?: string
   height?: string
   pinMarker?: boolean
 }>(), {
-  center: () => [40, 40],
-  projection: 'EPSG:4326',
+  center: () => [2.3522, 48.8566], // [lon, lat]
   zoom: 16,
-  marker: true,
+  featuresList: () => [],
+  pinMarker: true,
 })
 
 const view = ref<View>()
 const map = ref<HTMLElement>()
 
-watch(() => props.center, (newCenter) => {
+// 2. Définir nos projections
+const dataProjection = getProjection('EPSG:4326') // Nos données [lon, lat]
+const featureProjection = getProjection('EPSG:3857') // La projection de la carte
+
+// Centre transformé (inchangé, c'était correct)
+const transformedCenter = computed(() => fromLonLat(props.center))
+
+watch(transformedCenter, (newCenter) => {
   view.value?.setCenter(newCenter)
 })
 
 // #region marker
 const geoJson = new GeoJSON()
 
-const features = computed(() => [
-  props.marker === true
-    ? {
-        'type': 'Feature',
-        'properties': {},
-        'geometry': {
-          'type': 'Point',
-          'coordinates': props.center,
-        },
-      }
-    : props.marker,
-])
-
 const providerFeatureCollection = computed(() => ({
   type: 'FeatureCollection',
-  features: features.value,
+  features: props.featuresList,
 }))
 
-const geoJsonFeatures = computed(() => geoJson.readFeatures(providerFeatureCollection.value))
+// 3. TRANSFORMER LES FEATURES LORS DE LA LECTURE (LA CORRECTION CLÉ)
+const geoJsonFeatures = computed(() =>
+  geoJson.readFeatures(providerFeatureCollection.value, {
+    // Indique que nos données sont en [lon, lat]
+    dataProjection: dataProjection,
+    // Indique que la carte les veut en projection Web Mercator
+    featureProjection: featureProjection,
+  }),
+)
 // #endregion marker
 
-function resetCenter () {
-  view.value?.setCenter(props.center)
+// Fonctions de contrôle (inchangées, elles étaient correctes)
+function setCenter (coords: [number, number]) {
+  view.value?.setCenter(fromLonLat(coords))
 }
-defineExpose({ resetCenter })
+
+function setCenterAndZoom (coords: [number, number], newZoom = 17) {
+  view.value?.animate({
+    center: fromLonLat(coords),
+    zoom: newZoom,
+    duration: 500,
+  })
+}
+
+function resetCenter () {
+  view.value?.setCenter(transformedCenter.value)
+  view.value?.setZoom(props.zoom)
+}
+
+defineExpose({ resetCenter, setCenter, setCenterAndZoom })
 </script>
 
 <template>
@@ -66,9 +82,8 @@ defineExpose({ resetCenter })
   >
     <ol-view
       ref="view"
-      :center="center"
+      :center="transformedCenter"
       :zoom="zoom"
-      :projection="projection"
     />
 
     <ol-tile-layer>
@@ -78,24 +93,18 @@ defineExpose({ resetCenter })
     <ol-vector-layer>
       <ol-source-vector
         :features="geoJsonFeatures"
-        :format="geoJson"
-        :projection="projection"
       />
+
       <ol-style>
-        <ol-style-icon v-if="pinMarker" :scale="1">
-          <span class="marker">📍</span>
-        </ol-style-icon>
-        <ol-style-icon v-else :src="markerIcon" :scale="0.05" />
+        <ol-style-circle :radius="8">
+          <ol-style-fill color="rgba(227, 6, 19, 0.8)" />
+          <ol-style-stroke color="white" :width="2" />
+        </ol-style-circle>
       </ol-style>
     </ol-vector-layer>
   </ol-map>
 </template>
 
 <style scoped>
-.marker {
-  padding: 10px;
-  border-radius: 25px;
-  margin: 5px;
-  font-size: 25px;
-}
+/* (Aucun style requis pour le cercle) */
 </style>

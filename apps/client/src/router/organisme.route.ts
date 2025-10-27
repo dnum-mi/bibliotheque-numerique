@@ -18,7 +18,6 @@ export const organismeRoute: RouteRecordRaw = {
         roleLevel: Roles.instructor,
       },
       ...(!IS_OPEN_SOURCE ? { name: routeNames.DEFAULT, alias: '/' } : {}),
-
     },
     {
       name: routeNames.FICHE_ORGANISME,
@@ -30,6 +29,20 @@ export const organismeRoute: RouteRecordRaw = {
         return {
           id,
           idType,
+        }
+      },
+      meta: {
+        roleLevel: Roles.instructor,
+      },
+    },
+    {
+      name: routeNames.FICHE_ORGANISME_V2,
+      path: 'v2/:id',
+      component: () => import('@/views/organismes/organisme-v2/Organisme.vue'),
+      props: (route) => {
+        const id = route.params.id
+        return {
+          id,
         }
       },
       meta: {

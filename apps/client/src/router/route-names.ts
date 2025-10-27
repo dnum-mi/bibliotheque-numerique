@@ -6,6 +6,7 @@ export const routeNames = {
   DEMARCHE_DOSSIERS: 'DemarcheDossiers',
   DOSSIERS: 'Dossiers',
   FICHE_ORGANISME: 'FicheOrganisme',
+  FICHE_ORGANISME_V2: 'FicheOrganismeV2',
   LISTE_ORGANISMES: 'ListeOrganismes',
   SEARCH_ORGANISMES: 'SearchOrganismes',
   LIST_USERS: 'ListUsers',

@@ -2,7 +2,7 @@
 import type { OrganismeTypeKey } from '@biblio-num/shared'
 
 defineProps<{
-  type: OrganismeTypeKey
+  type: OrganismeTypeKey | string
   big?: boolean
 }>()
 </script>
