@@ -154,17 +154,15 @@ describe('DemarcheMaarchService', () => {
       expect(result).toEqual({ demarcheId: 1, countDossiers: 1 });
     })
 
-    it('should throw BadRequestException when a file is missing', async () => {
-      await expect(service.importDemarche({ demandes: mockFiles.demandes } as any, mockTitle)).rejects.toThrow(BadRequestException);
-      await expect(service.importDemarche({ annotations: mockFiles.annotations } as any, mockTitle)).rejects.toThrow(BadRequestException);
-    })
-
     it('should throw BadRequestException when no data is found in CSV files', async () => {
       mockCsvProcessor.processFiles.mockReturnValue([])
 
       await expect(
         service.importDemarche(
-          { annotations: mockFiles.annotations },
+          {
+            demandes: mockFiles.demandes,
+            annotations: mockFiles.annotations
+          },
           mockDemarche.title,
         ),
       ).rejects.toThrow(BadRequestException)

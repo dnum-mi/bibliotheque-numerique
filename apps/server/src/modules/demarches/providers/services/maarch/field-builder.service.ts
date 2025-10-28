@@ -185,7 +185,7 @@ export class FieldBuilderService {
   private _setPrefectureValue(field: Field, rawValue: unknown): void {
     const prefectureKey = rawValue as PrefectureKey
     if (prefectureKey && PrefectureDictionary[prefectureKey]) {
-      field.stringValue = PrefectureDictionary[prefectureKey]
+      field.stringValue = prefectureKey
     } else {
       field.stringValue = String(rawValue)
     }

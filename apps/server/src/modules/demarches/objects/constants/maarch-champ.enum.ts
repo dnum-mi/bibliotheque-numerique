@@ -3,8 +3,9 @@ export const maarchChampsLabel = {
   prefecture: 'prefecture',
   intituleCourrier: 'intitule_courrier',
   nomAssociation: 'nom_association',
-  adresse: 'adresse',
-  codePostal: 'code_postal',
+  numeroRue: 'numéro',
+  libelleRue: 'rue',
+  codePostal: 'codepostal',
   ville: 'ville',
   telephone: 'tél',
   etatDossier: 'etat_dossier',
@@ -20,9 +21,12 @@ export const maarchChampsLabel = {
 }
 
 export const maarchPJLabel = {
+  pj: 'pj',
   intitulePj: 'intitule_pj',
-  nomPj: 'nom_pj',
   dateCreationPj: 'date_creation_pj',
+  pathTemplate: 'path_template',
+  cheminPj: 'chemin_pj',
+  nomPj: 'nom_pj',
 }
 
 export const maarchAnnotationLabel = {

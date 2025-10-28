@@ -47,9 +47,9 @@ export class DemarcheMaarchService {
   ): Promise<ImportResult> {
     this.logger.verbose('Starting demarches import')
 
-    if (!files?.demandes || !files?.annotations) {
+    if (!files?.demandes) {
       throw new BadRequestException(
-        'Both demandes and annotations files are required.',
+        'Demandes file are required.',
       )
     }
 

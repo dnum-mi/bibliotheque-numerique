@@ -229,8 +229,7 @@ NaN;VAL;other.pdf;Other`
       const result = service.processFiles(mockFiles)
 
       expect(result).toHaveLength(1)
-      expect(result[0].pieces_jointes).toHaveLength(1)
-      expect(result[0].pieces_jointes[0]).toEqual({})
+      expect(result[0].pieces_jointes).toHaveLength(0)
     })
   })
 })

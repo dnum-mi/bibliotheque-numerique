@@ -84,10 +84,18 @@ export const fieldAssociationUnionFederation: MappingColumn = {
   source: FieldSource.champs,
 }
 
-export const fieldAdresse: MappingColumn = {
+export const fieldNumeroRue: MappingColumn = {
   id: '9098ce70-4378-2d7e-bkb9-b76fb7b67h26',
-  columnLabel: 'Adresse du siège',
-  originalLabel: maarchChampsLabel.adresse,
+  columnLabel: 'Numéro de rue',
+  originalLabel: maarchChampsLabel.numeroRue,
+  type: FieldType.string,
+  source: FieldSource.champs,
+}
+
+export const fieldNomRue: MappingColumn = {
+  id: '9098ce70-4378-2d7e-bkb9-b76fb7b67h52',
+  columnLabel: 'Nom de rue',
+  originalLabel: maarchChampsLabel.libelleRue,
   type: FieldType.string,
   source: FieldSource.champs,
 }
@@ -192,7 +200,8 @@ export const maarchFieldMappings: {
   intituleCourrier: fieldIntituleCourrier,
   nomAssociation: fieldNomAssociation,
   etatDossier: fieldEtatDossier,
-  adresse: fieldAdresse,
+  numeroRue: fieldNumeroRue,
+  libelleRue: fieldNomRue,
   codePostal: fieldCodePostal,
   ville: fieldVille,
   telephone: fieldTelephone,
@@ -231,7 +240,8 @@ export const maarchFieldMappingsArray: MappingColumn[] = [
   fieldNomAssociation,
   fieldPrefecture,
   fieldAssociationUnionFederation,
-  fieldAdresse,
+  fieldNumeroRue,
+  fieldNomRue,
   fieldCodePostal,
   fieldVille,
   fieldTelephone,

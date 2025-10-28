@@ -16,15 +16,6 @@ import { DataFormatterService } from './data-formatter.service'
 
 @Injectable()
 export class CsvProcessorService {
-  private readonly PJ_COLUMNS = [
-    'pj',
-    'intitule_pj',
-    'date_creation_pj',
-    'path_template',
-    'chemin_pj',
-    'nom_pj',
-  ]
-
   constructor(
     private readonly logger: LoggerService,
     private readonly dataFormatter: DataFormatterService,
@@ -34,7 +25,10 @@ export class CsvProcessorService {
 
   processFiles(files: ImportFiles): DemandeAggregee[] {
     const demandesFile = files.demandes[0]
-    const annotationsFile = files.annotations[0]
+    const annotationsFile =
+      files.annotations && files.annotations.length > 0
+        ? files.annotations[0]
+        : undefined
 
     this._validateFiles(demandesFile, annotationsFile)
 
@@ -50,10 +44,16 @@ export class CsvProcessorService {
       return []
     }
 
-    const annotationsData = this._parseCsv(annotationsFile.buffer)
+    let annotationsMap = new Map<number, string[]>()
+
+    if (annotationsFile) {
+      const annotationsData = this._parseCsv(annotationsFile.buffer)
+      if (annotationsData && annotationsData.length > 0) {
+        annotationsMap = this._groupAnnotations(annotationsData)
+      }
+    }
 
     const demandesMap = this._groupDemandes(finalDemandesData)
-    const annotationsMap = this._groupAnnotations(annotationsData)
 
     const mergedData = this._mergeData(demandesMap, annotationsMap)
 
@@ -61,7 +61,9 @@ export class CsvProcessorService {
   }
 
   private _extractFinalDemandes(demandes: CsvRow[]): CsvRow[] {
-    return demandes.filter((demande) => MaarchEtatsValides.has(demande.etat_dossier))
+    return demandes.filter((demande) =>
+      MaarchEtatsValides.has(demande.etat_dossier),
+    )
   }
 
   private _parseCsv(buffer: Buffer): CsvRow[] {
@@ -74,9 +76,11 @@ export class CsvProcessorService {
 
   private _validateFiles(
     demandesFile: Express.Multer.File,
-    annotationsFile: Express.Multer.File,
+    annotationsFile?: Express.Multer.File,
   ): void {
-    this._validateAnnotationsFile(annotationsFile)
+    if (annotationsFile) {
+      this._validateAnnotationsFile(annotationsFile)
+    }
     this._validateDemandesFile(demandesFile)
   }
 
@@ -119,7 +123,7 @@ export class CsvProcessorService {
           formattedRow,
           pieceJointe,
         )
-      } else {
+      } else if (pieceJointe) {
         this._addPieceJointe(demandesMap, courrierId, pieceJointe)
       }
     }
@@ -153,13 +157,17 @@ export class CsvProcessorService {
     return formatted
   }
 
-  private _extractPieceJointe(row: CsvRow): CsvRow {
+  private _extractPieceJointe(row: CsvRow): CsvRow | null {
     const pieceJointe = {}
 
-    for (const col of this.PJ_COLUMNS) {
+    for (const col of Object.values(maarchPJLabel)) {
       if (row[col] !== undefined) {
         pieceJointe[col] = row[col]
       }
+    }
+
+    if (!pieceJointe[maarchPJLabel.intitulePj]) {
+      return null
     }
 
     if (
@@ -220,17 +228,17 @@ export class CsvProcessorService {
     demandesMap: Map<number, DemandeAggregee>,
     courrierId: number,
     row: CsvRow,
-    pieceJointe: CsvRow,
+    pieceJointe: CsvRow | null,
   ): void {
     const baseDemande = { ...row }
 
-    for (const col of this.PJ_COLUMNS) {
+    for (const col of Object.values(maarchPJLabel)) {
       delete baseDemande[col]
     }
 
     const nouvelleDemande: DemandeAggregee = {
       ...baseDemande,
-      pieces_jointes: [pieceJointe],
+      pieces_jointes: pieceJointe ? [pieceJointe] : [],
       annotations: [],
     }
 

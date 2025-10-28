@@ -1,7 +1,7 @@
 import { type Express } from 'express'
 
 export interface ImportFiles {
-  demandes?: Express.Multer.File[]
+  demandes: Express.Multer.File[]
   annotations?: Express.Multer.File[]
 }
 

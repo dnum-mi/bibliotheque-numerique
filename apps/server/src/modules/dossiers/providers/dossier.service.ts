@@ -31,6 +31,7 @@ import {
   IFieldRepetable,
   PrefectureKey,
   PieceJustificativeChampWithState,
+  FormatFunctionRef,
 } from '@biblio-num/shared'
 
 import { Dossier } from '../objects/entities/dossier.entity'
@@ -702,6 +703,9 @@ export class DossierService extends BaseEntityService<Dossier> {
   private _extractFieldValue(
     field: Field,
   ): string | number | boolean | Date | FieldFileType | null {
+    if (field.formatFunctionRef === FormatFunctionRef.prefecture) {
+      return PrefectureDictionary[field.stringValue as PrefectureKey]
+    }
     switch (field.type) {
     case 'boolean':
       return field.stringValue === 'true'
