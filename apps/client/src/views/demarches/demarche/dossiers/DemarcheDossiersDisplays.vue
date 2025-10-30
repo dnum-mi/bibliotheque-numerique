@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { watch, computed, ref } from 'vue'
 import type { CustomFilterWithErrors } from '@/views/demarches/demarche/dossiers/custom-filter-with-errors.type'
-import type { ICustomFilterWithError } from '@biblio-num/shared'
 
 export type TotalsAllowed = {
   id: string
@@ -12,7 +11,7 @@ const props = withDefaults(
   defineProps<{
     displays?: CustomFilterWithErrors[]
     paginationChanged?: boolean
-    selectedDisplay?: ICustomFilterWithError | null
+    selectedDisplay?: CustomFilterWithErrors | null
     totalsAllowed?: TotalsAllowed[]
     operationSuccess?: boolean
   }>(),
@@ -128,7 +127,7 @@ const resetAgGridFilters = () => {
 const defaultOption = { text: 'Aucun affichage sélectionné', value: null }
 const filterList = computed(() => [defaultOption, ...props.displays.map(({ id, name }) => ({ text: name, value: id }))])
 
-const onSelectFilterChange = ($event: string) => {
+const onSelectFilterChange = ($event: string | number) => {
   if ($event === defaultOption.text) {
     resetAgGridFilters()
     return

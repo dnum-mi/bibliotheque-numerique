@@ -20,8 +20,8 @@ useEventListener('keydown', (event) => {
 })
 const me = useTemplateRef('me')
 useEventListener(document, 'click', (event: MouseEvent) => {
-  // console.log('closest?', event.target?.closest(me))
-  if (event.target?.closest(me).length === 0) {
+  // Vérifier si le clic est en dehors du composant
+  if (me.value && !me.value.contains(event.target as Node)) {
     emit('close')
   }
 })

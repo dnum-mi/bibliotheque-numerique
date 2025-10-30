@@ -30,6 +30,7 @@ const props = withDefaults(
     specificGridOption?: Partial<GridOptions>
     localStorageKey?: string
     rightOffset?: number
+    initialState?: IPagination<T> | null
   }>(),
   {
     paginationDto: () => ({
@@ -42,6 +43,7 @@ const props = withDefaults(
     rightOffset: 38,
     specificGridOption: () => ({}),
     localStorageKey: undefined,
+    initialState: null,
   },
 )
 
@@ -210,79 +212,92 @@ const saveToLocalStorage = (dto: IPagination<T>) => {
 }
 
 function restoreFromLocalStorage () {
-  if (!props.localStorageKey) {
+  // Priorité à initialState si fourni
+  let dto: IPagination<T> | null = null
+
+  if (props.initialState) {
+    dto = props.initialState
+  } else if (props.localStorageKey) {
+    try {
+      const saved = localStorage.getItem(props.localStorageKey)
+      if (saved) {
+        dto = JSON.parse(saved)
+      }
+    } catch (e) {
+      console.warn('Erreur de restauration depuis localStorage', e)
+    }
+  }
+
+  if (!dto) {
     return
   }
-  try {
-    const saved = localStorage.getItem(props.localStorageKey)
-    if (!saved) {
-      return
-    }
-    const dto: IPagination<T> = JSON.parse(saved)
 
-    //#region 📍------ RESTORE FILTERS ------ 📍
-    if (dto.filters) {
-      Object.entries(dto.filters).forEach(([key, value]) => {
-        const colDef = props.columnDefs.find(col => col.field === key)
-        const isSetFilter = colDef?.filter === 'agSetColumnFilter'
+  //#region 📍------ RESTORE FILTERS ------ 📍
+  if (dto.filters) {
+    Object.entries(dto.filters).forEach(([key, value]) => {
+      const colDef = props.columnDefs.find(col => col.field === key)
+      const isSetFilter = colDef?.filter === 'agSetColumnFilter'
 
-        if (isSetFilter && value.condition1?.filter) {
-          // Pour les filtres de type "set", on recrée le format PrimeVue
-          const filterValues = Array.isArray(value.condition1.filter)
-            ? value.condition1.filter.map(code => ({ name: code, code }))
-            : [{ name: value.condition1.filter, code: value.condition1.filter }]
+      if (isSetFilter && value.condition1?.filter) {
+        // Pour les filtres de type "set", on recrée le format PrimeVue
+        const filterValues = Array.isArray(value.condition1.filter)
+          ? value.condition1.filter.map(code => ({ name: code, code }))
+          : [{ name: value.condition1.filter, code: value.condition1.filter }]
 
-          filters.value[key as keyof typeof filters.value] = {
-            operator: FilterOperator.AND,
-            constraints: [{
-              value: filterValues,
-              matchMode: FilterMatchMode.IN,
-            }],
-          }
-        } else {
-          // Pour les autres filtres, format classique
-          const condition1 = value.condition1 as any
-          const condition2 = (value as any).condition2
-
-          filters.value[key as keyof typeof filters.value] = {
-            operator: FilterOperator.AND,
-            constraints: [
-              {
-                value: condition1?.filter || null,
-                matchMode: condition1?.type || FilterMatchMode.STARTS_WITH,
-              },
-              ...(condition2
-                ? [{
-                    value: condition2.filter,
-                    matchMode: condition2.type,
-                  }]
-                : []),
-            ],
-          }
+        filters.value[key as keyof typeof filters.value] = {
+          operator: FilterOperator.AND,
+          constraints: [{
+            value: filterValues,
+            matchMode: FilterMatchMode.IN,
+          }],
         }
-      })
-    }
-    //#endregion
+      } else {
+        // Pour les autres filtres, format classique
+        const condition1 = value.condition1 as any
+        const condition2 = (value as any).condition2
 
-    //#region 📍------ RESTORE SORTS ------ 📍
-    if (dto.sorts && dto.sorts.length > 0) {
-      const sortItem = dto.sorts.at(0)
-      if (sortItem) {
-        sort.value = [{
-          key: sortItem.key,
-          order: sortItem.order,
-        }]
+        filters.value[key as keyof typeof filters.value] = {
+          operator: FilterOperator.AND,
+          constraints: [
+            {
+              value: condition1?.filter || null,
+              matchMode: condition1?.type || FilterMatchMode.STARTS_WITH,
+            },
+            ...(condition2
+              ? [{
+                  value: condition2.filter,
+                  matchMode: condition2.type,
+                }]
+              : []),
+          ],
+        }
       }
-    } else {
-      sort.value = []
-    }
-    //#endregion
-
-    currentPage.value = dto.page ?? 1
-    perPage.value = dto.perPage ?? 20
-  } catch (e) {
-    console.warn('Erreur de restauration depuis localStorage', e)
+    })
   }
+  //#endregion
+
+  //#region 📍------ RESTORE SORTS ------ 📍
+  if (dto.sorts && dto.sorts.length > 0) {
+    const sortItem = dto.sorts.at(0)
+    if (sortItem) {
+      sort.value = [{
+        key: sortItem.key,
+        order: sortItem.order,
+      }]
+    }
+  } else {
+    sort.value = []
+  }
+  //#endregion
+
+  //#region 📍------ RESTORE COLUMNS ------ 📍
+  if (dto.columns && dto.columns.length > 0) {
+    selectedColumnsIds.value = dto.columns as string[]
+  }
+  //#endregion
+
+  currentPage.value = dto.page ?? 1
+  perPage.value = dto.perPage ?? 20
 }
 
 const hasInitialDataLoaded = ref(false)
@@ -419,6 +434,20 @@ function onSortChanged (sortEvent: DataTableSortEvent) {
 //#endregion
 
 watch(perPage, () => getRows(1))
+
+// Watcher pour mettre à jour paginationDto quand les colonnes sélectionnées changent
+watch(selectedColumnsIds, () => {
+  if (hasInitialDataLoaded.value) {
+    const dto: IPagination<T> = {
+      sorts: sort.value,
+      filters: Object.keys(filtersToSend.value ?? {}).length > 0 ? filtersToSend.value as Record<keyof T, IFilter> : null,
+      columns: selectedColumnsIds.value,
+      perPage: +perPage.value,
+      page: currentPage.value,
+    }
+    emit('update:paginationDto', dto)
+  }
+}, { deep: true })
 
 const paginationPages = computed(
   () => Array.from(Array(Math.ceil(totalRecords.value / perPage.value)))
@@ -681,13 +710,13 @@ defineExpose({
     </DataTable>
     <div class="side-buttons">
       <div class="relative">
-        <button type="button" @click="displayColumns = !displayColumns">
+        <button type="button" @click.stop="displayColumns = !displayColumns">
           <div class="side-button-label">
             Colonnes
           </div>
         </button>
         <DataTableColumnList
-          v-if="displayColumns"
+          v-show="displayColumns"
           v-model="selectedColumnsIds"
           class="column-list p-2 -translate-x-8 -top-4 right-0 -left-60 absolute bg-white"
           :column-defs="columnDefs"

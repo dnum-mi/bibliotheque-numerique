@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { useDebounceFn, useStorage } from '@vueuse/core'
 import type { GridOptions } from 'ag-grid-enterprise'
@@ -55,6 +55,7 @@ const { startTour } = useTour({
 
 //#region 📍------ LOCAL STORAGE ------ 📍
 const localStoragePaginationKey = computed(() => `agGrid.demarche-${route.params.demarcheId}.dossiers.pagination`)
+const localStorageDataTablePaginationKey = computed(() => `dataTable.demarche-${route.params.demarcheId}.dossiers.pagination`)
 const localStorageGroupByKey = computed(() => `agGrid.demarche-${route.params.demarcheId}.dossiers.groupBy`)
 const localStorageDisplayIdKey = computed(() => `agGrid.demarche-${route.params.demarcheId}.dossiers.currentDisplayId`)
 //#endregion
@@ -83,6 +84,11 @@ watch(groupByDossier, (value) => {
 const paginationDto = ref({} as IPagination<any>)
 
 const paginationChanged = computed(() => {
+  // Ne pas calculer si paginationDto n'est pas encore initialisé ou si on n'a pas d'affichage sélectionné
+  if (!paginationDto.value.columns || !selectedCustomDisplay.value) {
+    return false
+  }
+
   const keys = ['columns', 'filters', 'sorts']
   return !deepAlmostEqual(
     {
@@ -324,6 +330,7 @@ const download = () => {
 
 const readyToLoadAgGrid = ref<boolean>(false)
 const readyToLoadDataTable = ref<boolean>(false)
+const initialDataTableState = ref<IPagination<any> | null>(null)
 
 onMounted(async () => {
   computeColumnsDef()
@@ -337,11 +344,63 @@ onMounted(async () => {
   const displayIdKey = Number.parseInt(localStorage.getItem(localStorageDisplayIdKey.value) || '-1')
   if (displayIdKey > -1) {
     selectedCustomDisplay.value = customDisplayWithErrors.value.find((cf) => cf.id === displayIdKey) || null
+
+    // Préparer la configuration initiale pour DataTableServerSide
+    if (selectedCustomDisplay.value) {
+      groupByDossier.value = selectedCustomDisplay.value.groupByDossier
+      paginationDto.value.columns = selectedCustomDisplay.value.columns
+      paginationDto.value.sorts = selectedCustomDisplay.value.sorts || []
+      paginationDto.value.filters = selectedCustomDisplay.value.filters || null
+
+      // Pour DataTable, vérifier d'abord s'il y a des données dans son localStorage
+      const dataTableSavedData = localStorage.getItem(localStorageDataTablePaginationKey.value)
+      if (dataTableSavedData) {
+        try {
+          initialDataTableState.value = JSON.parse(dataTableSavedData)
+        } catch (e) {
+          console.warn('Erreur de lecture du localStorage DataTable', e)
+          // Fallback sur selectedCustomDisplay si erreur de parsing
+          initialDataTableState.value = {
+            page: 1,
+            perPage: 20,
+            columns: selectedCustomDisplay.value.columns,
+            sorts: selectedCustomDisplay.value.sorts || [],
+            filters: selectedCustomDisplay.value.filters || null,
+          }
+        }
+      } else {
+        // Pas de données DataTable sauvegardées, utiliser selectedCustomDisplay
+        initialDataTableState.value = {
+          page: 1,
+          perPage: 20,
+          columns: selectedCustomDisplay.value.columns,
+          sorts: selectedCustomDisplay.value.sorts || [],
+          filters: selectedCustomDisplay.value.filters || null,
+        }
+      }
+    }
+  } else {
+    // Pas de custom display, mais vérifier quand même le localStorage DataTable
+    const dataTableSavedData = localStorage.getItem(localStorageDataTablePaginationKey.value)
+    if (dataTableSavedData) {
+      try {
+        initialDataTableState.value = JSON.parse(dataTableSavedData)
+      } catch (e) {
+        console.warn('Erreur de lecture du localStorage DataTable', e)
+        initialDataTableState.value = null
+      }
+    }
   }
 
   // Marquer comme prêt seulement après avoir restauré toutes les valeurs
   readyToLoadAgGrid.value = true
   readyToLoadDataTable.value = true
+
+  // Appliquer l'état à AgGrid après que le composant soit prêt
+  if (selectedCustomDisplay.value && dataTable.value === 'ag-grid') {
+    await nextTick()
+    updateAggState()
+  }
 })
 
 const { activeFilters, onFiltersUpdated, handleRemoveFilter } = useActiveFilter('dossiers', agGridComponent)
@@ -485,7 +544,8 @@ const quickFilterValueTranslations: Record<string, string> = {
         :specific-grid-option="specificGridOptions"
         :on-selection-changed="onSelectionChanged"
         :api-call="apiCall"
-        :local-storage-key="localStoragePaginationKey"
+        :local-storage-key="localStorageDataTablePaginationKey"
+        :initial-state="initialDataTableState"
         @grid-ready="onGridReady($event)"
         @filters-updated="onFilterDataTableUpdated"
       />

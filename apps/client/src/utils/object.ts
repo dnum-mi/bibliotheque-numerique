@@ -2,7 +2,7 @@
 
 // return true if two object are deeply similar
 // will consider undefined and null as equal
-export const deepAlmostEqual = (obj1: unknown, obj2: unknown): boolean => {
+export const deepAlmostEqual = (obj1: unknown, obj2: unknown) => {
   if (obj1 === obj2) return true
   // eslint-disable-next-line eqeqeq
   if ((obj1 === null || obj2 === null) && (obj1 == obj2)) {
@@ -13,11 +13,23 @@ export const deepAlmostEqual = (obj1: unknown, obj2: unknown): boolean => {
   }
   const keys1 = Object.keys(obj1)
   const keys2 = Object.keys(obj2)
-  if (keys1.length !== keys2.length) return false
+  // Si la clé n’existe pas dans l’un des deux objets, on continue quand même
+  // car si la valeur est undefined dans l’autre, on considère que c’est ok
+  // if (keys1.length !== keys2.length) return false
   for (const key of keys1) {
-    if (!keys2.includes(key)) return false
+    if (!keys2.includes(key) && toRaw(obj1[key]) !== undefined) {
+      return false
+    }
     // @ts-expect-error Use dynamic key of unknown object
-    if (!deepAlmostEqual(obj1[key], obj2[key])) return false
+    if (!deepAlmostEqual(toRaw(obj1[key]), toRaw(obj2[key]))) {
+      return false
+    }
+  }
+  // Vérifier les clés qui existent dans obj2 mais pas dans obj1
+  for (const key of keys2) {
+    if (!keys1.includes(key) && toRaw((obj2 as any)[key]) !== undefined) {
+      return false
+    }
   }
   return true
 }
