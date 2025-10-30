@@ -27,6 +27,7 @@ const route = useRoute()
 const gridApi = ref<GridApi>()
 const agGridComponent = useTemplateRef('agGridComponent')
 const dataTableComponent = useTemplateRef('dataTableComponent')
+const dataTable = useStorage('dossiers-datatable', 'ag-grid')
 const demarche = computed<IDemarche>(() => demarcheStore.currentDemarche as IDemarche)
 const demarcheConfiguration = computed<FrontIMappingColumn[]>(() => demarcheStore.currentDemarcheFlatConfiguration)
 const demarcheConfigurationHash = computed<Record<string, IMappingColumn>>(() => demarcheStore.currentDemarcheConfigurationHash)
@@ -158,10 +159,22 @@ const resetAggState = () => {
   }
 }
 
+const resetDataTableState = () => {
+  if (dataTableComponent.value) {
+    dataTableComponent.value.clearAllFilters()
+  }
+}
+
+const updateDataTableState = () => {
+  if (dataTableComponent.value) {
+    dataTableComponent.value.updateDataTableState(paginationDto.value)
+  }
+}
+
 const updateAggState = () => {
   if (gridApi.value) {
     gridApi.value.setFilterModel(backendFilterToAggFilter(paginationDto.value.filters || {}))
-    const statesHash = Object.fromEntries(gridApi.value?.getColumnState().map((state) => [state.colId, state]))
+    const statesHash = Object.fromEntries(gridApi.value?.getColumnState()?.map((state) => [state.colId, state]))
     const sortHash = Object.fromEntries(paginationDto.value.sorts.map((sort) => [sort.key, sort]))
     gridApi.value?.applyColumnState({
       state: paginationDto.value.columns.map((c) => {
@@ -215,7 +228,11 @@ const deleteDisplay = async () => {
     try {
       await customDisplayStore.deleteCustomFilter(selectedCustomDisplay.value?.id)
       selectedCustomDisplay.value = null
-      resetAggState()
+      if (dataTable.value === 'ag-grid') {
+        resetAggState()
+      } else {
+        resetDataTableState()
+      }
       customDisplayOperationSuccess.value = true
     } catch (error) {
       import.meta.env.DEV && console.warn(error)
@@ -248,7 +265,11 @@ const updateDisplayName = async ({ filterName = '', totals = [] }: { filterName?
 const selectDisplay = async (id: number | null) => {
   if (id === null) {
     selectedCustomDisplay.value = null
-    resetAggState()
+    if (dataTable.value === 'ag-grid') {
+      resetAggState()
+    } else {
+      resetDataTableState()
+    }
     localStorage.removeItem(localStorageGroupByKey.value)
     localStorage.removeItem(localStorageDisplayIdKey.value)
     groupByDossier.value = false
@@ -263,7 +284,11 @@ const selectDisplay = async (id: number | null) => {
     paginationDto.value.columns = selectedCustomDisplay.value?.columns
     paginationDto.value.sorts = selectedCustomDisplay.value?.sorts || []
     paginationDto.value.filters = selectedCustomDisplay.value?.filters || null
-    updateAggState()
+    if (dataTable.value === 'ag-grid') {
+      updateAggState()
+    } else {
+      updateDataTableState()
+    }
     localStorage.setItem(localStorageDisplayIdKey.value, `${selectedCustomDisplay.value.id}`)
   } else {
     throw new Error('Le filtre sélectionné n’existe pas')
@@ -303,17 +328,17 @@ const readyToLoadDataTable = ref<boolean>(false)
 onMounted(async () => {
   computeColumnsDef()
   await customDisplayStore.getCustomFiltersByDemarche(demarche.value.id)
-  
+
   // Restaurer groupByDossier en premier
   if (localStorage.getItem(localStorageGroupByKey.value) === 'true') {
     groupByDossier.value = true
   }
-  
+
   const displayIdKey = Number.parseInt(localStorage.getItem(localStorageDisplayIdKey.value) || '-1')
   if (displayIdKey > -1) {
     selectedCustomDisplay.value = customDisplayWithErrors.value.find((cf) => cf.id === displayIdKey) || null
   }
-  
+
   // Marquer comme prêt seulement après avoir restauré toutes les valeurs
   readyToLoadAgGrid.value = true
   readyToLoadDataTable.value = true
@@ -326,7 +351,11 @@ const customHandleClearAllFilters = async () => {
   if (selectedCustomDisplay.value && typeof selectedCustomDisplay.value.id === 'number') {
     await selectDisplay(selectedCustomDisplay.value.id)
   } else {
-    resetAggState()
+    if (dataTable.value === 'ag-grid') {
+      resetAggState()
+    } else {
+      resetDataTableState()
+    }
     paginationDto.value.filters = null
     paginationDto.value.sorts = []
   }
@@ -346,8 +375,6 @@ const quickFilterValueTranslations: Record<string, string> = {
   SixMonths: 'depuis 6 mois',
   OneYear: 'depuis 1 an',
 }
-
-const dataTable = useStorage('dossiers-datatable', 'ag-grid')
 </script>
 
 <template>

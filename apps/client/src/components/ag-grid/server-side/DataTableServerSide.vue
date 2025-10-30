@@ -488,10 +488,83 @@ function removeFilter (colId: string): Promise<void> {
   })
 }
 
+function updateDataTableState (dto: IPagination<T>) {
+  // Appliquer les filtres
+  filters.value = getFilters()
+  if (dto.filters) {
+    Object.entries(dto.filters).forEach(([key, value]) => {
+      const colDef = props.columnDefs.find(col => col.field === key)
+      const isSetFilter = colDef?.filter === 'agSetColumnFilter'
+
+      if (isSetFilter && value.condition1?.filter) {
+        // Pour les filtres de type "set", on recrée le format PrimeVue
+        const filterValues = Array.isArray(value.condition1.filter)
+          ? value.condition1.filter.map(code => ({ name: code, code }))
+          : [{ name: value.condition1.filter, code: value.condition1.filter }]
+
+        filters.value[key as keyof typeof filters.value] = {
+          operator: FilterOperator.AND,
+          constraints: [{
+            value: filterValues,
+            matchMode: FilterMatchMode.IN,
+          }],
+        }
+      } else {
+        // Pour les autres filtres, format classique
+        const condition1 = value.condition1 as any
+        const condition2 = (value as any).condition2
+
+        filters.value[key as keyof typeof filters.value] = {
+          operator: FilterOperator.AND,
+          constraints: [
+            {
+              value: condition1?.filter || null,
+              matchMode: condition1?.type || FilterMatchMode.STARTS_WITH,
+            },
+            ...(condition2
+              ? [{
+                  value: condition2.filter,
+                  matchMode: condition2.type,
+                }]
+              : []),
+          ],
+        }
+      }
+    })
+  }
+
+  // Appliquer les tris
+  if (dto.sorts && dto.sorts.length > 0) {
+    const sortItem = dto.sorts.at(0)
+    if (sortItem) {
+      sort.value = [{
+        key: sortItem.key,
+        order: sortItem.order,
+      }]
+    }
+  } else {
+    sort.value = []
+  }
+
+  // Appliquer les colonnes visibles
+  if (dto.columns) {
+    selectedColumnsIds.value = dto.columns as string[]
+  }
+
+  // Appliquer la pagination
+  currentPage.value = dto.page ?? 1
+  perPage.value = dto.perPage ?? 20
+
+  // Notifier les changements et rafraîchir
+  notifyFilterChanged()
+  refreshTable()
+}
+
 defineExpose({
   refresh: refreshTable,
   clearAllFilters,
   removeFilter,
+  updateDataTableState,
 })
 </script>
 
