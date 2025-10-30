@@ -79,7 +79,6 @@ const perPage = ref(20)
 const isLoadingRows = ref(false)
 
 //#region 📍------ DATA ------ 📍
-restoreFromLocalStorage()
 const currentPage = ref(1)
 const rowData = ref()
 
@@ -110,6 +109,93 @@ function getFilters () {
     )
 }
 
+const notifyFilterChanged = () => {
+  const activeFilters: DisplayActiveFilter[] = []
+
+  for (const [colId, filter] of Object.entries(filters.value)) {
+    if ('value' in (filter as DataTableFilterMetaData)) {
+      const metaFilter = filter as DataTableFilterMetaData
+      if (metaFilter.value !== null && metaFilter.value !== undefined) {
+        const colDef = props.columnDefs.find(col => col.field === colId)
+        const isSetFilter = colDef?.filter === 'agSetColumnFilter'
+
+        if (isSetFilter) {
+          // Pour les filtres de type "set", on extrait juste les codes
+          const values = Array.isArray(metaFilter.value)
+            ? metaFilter.value.map(item => item.code || item)
+            : [metaFilter.value]
+
+          activeFilters.push({
+            colId,
+            filterType: 'set',
+            values,
+          } as DisplayActiveFilter)
+        } else {
+          // Pour les autres filtres, format simple
+          activeFilters.push({
+            colId,
+            filterType: 'text',
+            type: metaFilter.matchMode,
+            filter: metaFilter.value,
+            values: [],
+          } as DisplayActiveFilter)
+        }
+      }
+    } else if ('operator' in (filter as DataTableOperatorFilterMetaData)) {
+      const metaFilter = filter as DataTableOperatorFilterMetaData
+      const activeConstraints = metaFilter.constraints.filter(c => c.value !== null && c.value !== undefined)
+
+      if (activeConstraints.length > 0) {
+        const colDef = props.columnDefs.find(col => col.field === colId)
+        const isSetFilter = colDef?.filter === 'agSetColumnFilter'
+
+        if (isSetFilter && activeConstraints[0]) {
+          // Pour les filtres de type "set", format simple
+          const values = Array.isArray(activeConstraints[0].value)
+            ? activeConstraints[0].value.map(item => item.code || item)
+            : [activeConstraints[0].value]
+
+          activeFilters.push({
+            colId,
+            filterType: 'set',
+            values,
+          } as DisplayActiveFilter)
+        } else {
+          // Pour les autres filtres, on peut garder condition1/condition2 si nécessaire
+          const filterData: DisplayActiveFilter = {
+            colId,
+            filterType: 'text',
+            values: [],
+          }
+
+          if (activeConstraints.length === 1 && activeConstraints[0]) {
+            filterData.type = activeConstraints[0].matchMode
+            filterData.filter = activeConstraints[0].value
+          } else if (activeConstraints.length >= 2 && activeConstraints[0] && activeConstraints[1]) {
+            filterData.operator = metaFilter.operator as 'AND' | 'OR'
+            filterData.condition1 = {
+              type: activeConstraints[0].matchMode,
+              filter: activeConstraints[0].value,
+            }
+            filterData.condition2 = {
+              type: activeConstraints[1].matchMode,
+              filter: activeConstraints[1].value,
+            }
+          }
+
+          activeFilters.push(filterData)
+        }
+      }
+    }
+  }
+
+  emit('filtersUpdated', activeFilters)
+}
+
+watch(filters, () => {
+  notifyFilterChanged()
+}, { deep: true })
+
 //#region 📍------ LOCAL STORAGE ------ 📍
 const saveToLocalStorage = (dto: IPagination<T>) => {
   if (!props.localStorageKey) {
@@ -118,7 +204,6 @@ const saveToLocalStorage = (dto: IPagination<T>) => {
   try {
     const data = JSON.stringify(dto)
     localStorage.setItem(`${props.localStorageKey}`, data)
-    console.log('Saved sorts to localStorage', dto.sorts?.at(0)?.key, dto.sorts?.at(0)?.order)
   } catch (e) {
     console.warn('Erreur de sauvegarde dans localStorage', e)
   }
@@ -134,23 +219,46 @@ function restoreFromLocalStorage () {
       return
     }
     const dto: IPagination<T> = JSON.parse(saved)
+
     //#region 📍------ RESTORE FILTERS ------ 📍
     if (dto.filters) {
       Object.entries(dto.filters).forEach(([key, value]) => {
-        filters.value[key as keyof typeof filters.value] = {
-          operator: FilterOperator.AND,
-          constraints: [
-            {
-              value: value.condition1.filter,
-              matchMode: value.condition1.type,
-            },
-            ...(value.condition2
-              ? [{
-                  value: value.condition2.filter,
-                  matchMode: value.condition2.type,
-                }]
-              : []),
-          ],
+        const colDef = props.columnDefs.find(col => col.field === key)
+        const isSetFilter = colDef?.filter === 'agSetColumnFilter'
+
+        if (isSetFilter && value.condition1?.filter) {
+          // Pour les filtres de type "set", on recrée le format PrimeVue
+          const filterValues = Array.isArray(value.condition1.filter)
+            ? value.condition1.filter.map(code => ({ name: code, code }))
+            : [{ name: value.condition1.filter, code: value.condition1.filter }]
+
+          filters.value[key as keyof typeof filters.value] = {
+            operator: FilterOperator.AND,
+            constraints: [{
+              value: filterValues,
+              matchMode: FilterMatchMode.IN,
+            }],
+          }
+        } else {
+          // Pour les autres filtres, format classique
+          const condition1 = value.condition1 as any
+          const condition2 = (value as any).condition2
+
+          filters.value[key as keyof typeof filters.value] = {
+            operator: FilterOperator.AND,
+            constraints: [
+              {
+                value: condition1?.filter || null,
+                matchMode: condition1?.type || FilterMatchMode.STARTS_WITH,
+              },
+              ...(condition2
+                ? [{
+                    value: condition2.filter,
+                    matchMode: condition2.type,
+                  }]
+                : []),
+            ],
+          }
         }
       })
     }
@@ -177,10 +285,12 @@ function restoreFromLocalStorage () {
   }
 }
 
+const hasInitialDataLoaded = ref(false)
+
 onMounted(() => {
   filters.value = getFilters()
   restoreFromLocalStorage()
-  getRows(currentPage.value)
+  notifyFilterChanged()
 })
 //#endregion
 
@@ -259,7 +369,7 @@ const getRows = async (page: number = currentPage.value) => {
 
   const dto: IPagination<T> = {
     sorts: sort.value,
-    filters: Object.keys(filtersToSend.value).length > 0 ? filtersToSend.value as Record<keyof T, IFilter> : null,
+    filters: Object.keys(filtersToSend.value ?? {}).length > 0 ? filtersToSend.value as Record<keyof T, IFilter> : null,
     columns: selectedColumnsIds.value,
     perPage: +perPage.value,
     page,
@@ -287,8 +397,18 @@ const filteredColumnDefs = computed(() => {
 })
 
 watch(filtersToSend, () => {
-  getRows(1)
+  if (hasInitialDataLoaded.value) {
+    getRows(1)
+  }
 })
+
+// Watcher pour le premier chargement - attend que preCondition soit true ET que l'apiCall soit défini
+watch(() => [props.preCondition, props.apiCall], ([preCondition, apiCall]) => {
+  if (preCondition && apiCall && !hasInitialDataLoaded.value) {
+    hasInitialDataLoaded.value = true
+    getRows(currentPage.value)
+  }
+}, { immediate: true })
 
 function onSortChanged (sortEvent: DataTableSortEvent) {
   const { sortField, sortOrder } = sortEvent
@@ -345,8 +465,33 @@ function refreshTable () {
   getRows(currentPage.value)
 }
 
+function clearAllFilters () {
+  filters.value = getFilters()
+  getRows(1)
+  notifyFilterChanged()
+}
+
+function removeFilter (colId: string): Promise<void> {
+  return new Promise((resolve) => {
+    if (filters.value[colId]) {
+      delete filters.value[colId]
+      // Recréer les filtres pour inclure uniquement ceux qui restent
+      const newFilters: DataTableFilterMeta = {}
+      for (const [key, value] of Object.entries(filters.value)) {
+        newFilters[key] = value
+      }
+      filters.value = newFilters
+      getRows(1)
+      notifyFilterChanged()
+    }
+    resolve()
+  })
+}
+
 defineExpose({
   refresh: refreshTable,
+  clearAllFilters,
+  removeFilter,
 })
 </script>
 

@@ -25,7 +25,8 @@ const demarcheStore = useDemarcheStore()
 const router = useRouter()
 const route = useRoute()
 const gridApi = ref<GridApi>()
-const agGridComponent = ref()
+const agGridComponent = useTemplateRef('agGridComponent')
+const dataTableComponent = useTemplateRef('dataTableComponent')
 const demarche = computed<IDemarche>(() => demarcheStore.currentDemarche as IDemarche)
 const demarcheConfiguration = computed<FrontIMappingColumn[]>(() => demarcheStore.currentDemarcheFlatConfiguration)
 const demarcheConfigurationHash = computed<Record<string, IMappingColumn>>(() => demarcheStore.currentDemarcheConfigurationHash)
@@ -70,6 +71,7 @@ const apiCall = (dto: IPagination<unknown>) => {
 const toggleView = useDebounceFn((isActive: boolean) => {
   groupByDossier.value = isActive
   agGridComponent.value?.refresh()
+  dataTableComponent.value?.refresh()
 })
 
 watch(groupByDossier, (value) => {
@@ -222,7 +224,7 @@ const deleteDisplay = async () => {
   }
 }
 
-const updateDisplayName = async ({ filterName = '', totals = [] }) => {
+const updateDisplayName = async ({ filterName = '', totals = [] }: { filterName?: string; totals?: string[] }) => {
   customDisplayOperationSuccess.value = false
   if (selectedCustomDisplay.value) {
     const dto: IPatchCustomFilter = {
@@ -296,21 +298,29 @@ const download = () => {
 }
 
 const readyToLoadAgGrid = ref<boolean>(false)
+const readyToLoadDataTable = ref<boolean>(false)
 
 onMounted(async () => {
   computeColumnsDef()
   await customDisplayStore.getCustomFiltersByDemarche(demarche.value.id)
+  
+  // Restaurer groupByDossier en premier
   if (localStorage.getItem(localStorageGroupByKey.value) === 'true') {
     groupByDossier.value = true
   }
+  
   const displayIdKey = Number.parseInt(localStorage.getItem(localStorageDisplayIdKey.value) || '-1')
   if (displayIdKey > -1) {
     selectedCustomDisplay.value = customDisplayWithErrors.value.find((cf) => cf.id === displayIdKey) || null
   }
+  
+  // Marquer comme prêt seulement après avoir restauré toutes les valeurs
   readyToLoadAgGrid.value = true
+  readyToLoadDataTable.value = true
 })
 
-const { activeFilters, onFiltersUpdated, handleRemoveFilter } = useActiveFilter(agGridComponent)
+const { activeFilters, onFiltersUpdated, handleRemoveFilter } = useActiveFilter('dossiers', agGridComponent)
+const { activeFilters: dataTableActiveFilters, onFiltersUpdated: onFilterDataTableUpdated, handleRemoveFilter: handleRemoveFilterDataTable } = useActiveFilter('dossiers', dataTableComponent)
 
 const customHandleClearAllFilters = async () => {
   if (selectedCustomDisplay.value && typeof selectedCustomDisplay.value.id === 'number') {
@@ -373,12 +383,12 @@ const dataTable = useStorage('dossiers-datatable', 'ag-grid')
         </div>
         <ActiveFiltersDropdown
           v-if="columnsDef"
-          :filters="activeFilters"
+          :filters="dataTable === 'ag-grid' ? activeFilters : dataTableActiveFilters"
           :column-definitions="columnsDef"
           :quick-filter-value-translations="quickFilterValueTranslations"
           :clear-all-button-label="clearAllFiltersButtonLabel"
-          @request-remove-filter="handleRemoveFilter"
-          @request-clear-all="customHandleClearAllFilters"
+          @request-remove-filter="handleRemoveFilter($event); handleRemoveFilterDataTable($event)"
+          @request-clear-all="customHandleClearAllFilters()"
         />
         <DsfrSegmentedSet
           v-model="dataTable"
@@ -437,8 +447,8 @@ const dataTable = useStorage('dossiers-datatable', 'ag-grid')
         @filters-updated="onFiltersUpdated"
       />
       <DataTableServerSide
-        v-if="dataTable === 'primevue'"
-        ref="agGridComponent"
+        v-if="dataTable === 'primevue' && readyToLoadDataTable"
+        ref="dataTableComponent"
         v-model:pagination-dto="paginationDto"
         :right-offset="50"
         :column-defs="columnsDef"
@@ -450,7 +460,7 @@ const dataTable = useStorage('dossiers-datatable', 'ag-grid')
         :api-call="apiCall"
         :local-storage-key="localStoragePaginationKey"
         @grid-ready="onGridReady($event)"
-        @filters-updated="onFiltersUpdated"
+        @filters-updated="onFilterDataTableUpdated"
       />
     </div>
   </div>

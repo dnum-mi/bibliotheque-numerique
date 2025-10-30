@@ -89,7 +89,7 @@ const handleClickOutside = (event: MouseEvent) => {
   }
 }
 
-//#region 📍--- Help functions for formatting filter descriptions ---📍
+//#region 📍--- Helper functions for formatting filter descriptions ---📍
 /**
  * Formats a single condition object
  */
@@ -316,11 +316,11 @@ onBeforeUnmount(() => {
       >
         <div class="flex flex-col p-4 gap-4">
           <div
-            v-if="props.filters.length > 0"
+            v-if="filters.length > 0"
             class="fr-tag-list w-full"
           >
             <div
-              v-for="filterItem in props.filters"
+              v-for="filterItem of filters"
               :key="filterItem.colId"
               class="fr-tag fr-tag--sm fr-tag--dismiss"
             >

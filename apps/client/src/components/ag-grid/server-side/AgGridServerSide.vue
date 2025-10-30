@@ -107,7 +107,7 @@ const restoreFromLocalStorage = () => {
 
     gridApi.value.setFilterModel(backendFilterToAggFilter(dto.filters || {}))
 
-    const stateHash = Object.fromEntries(gridApi.value.getColumnState().map((c) => [c.colId, c]))
+    const stateHash = Object.fromEntries(gridApi.value.getColumnState()?.map((c) => [c.colId, c]) || [])
     const sortHash = Object.fromEntries(dto.sorts.map((s) => [s.key, s]))
 
     gridApi.value.applyColumnState({
