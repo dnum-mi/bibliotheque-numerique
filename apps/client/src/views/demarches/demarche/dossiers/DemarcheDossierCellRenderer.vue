@@ -119,27 +119,25 @@ const getPrefecture = (prefecture: PrefectureKey) => {
 
       <template v-else-if="ffr === 'country'">
         <!-- COUNTRY FLAG -->
-        <div class="flex items-center">
-          <p
+        <div class="amount-line">
+          <div
             :key="cellValue"
             class="round-flag fr-mr-1w"
             :style="{ backgroundImage: `url(${getFlagURL(cellValue)})` }"
           />
-          <p>{{ cellValue || "pas de pays" }}</p>
+          <div>{{ cellValue || "pas de pays" }}</div>
         </div>
       </template>
 
       <template v-else-if="ffr === 'status'">
         <!-- STATUS -->
-        <p>
-          <DsfrBadge
-            class="text-nowrap"
-            :label="giveStatusLabel(cellValue)"
-            :type="giveStatusType(cellValue)"
-            small
-            no-icon
-          />
-        </p>
+        <DsfrBadge
+          class="text-nowrap"
+          :label="giveStatusLabel(cellValue)"
+          :type="giveStatusType(cellValue)"
+          small
+          no-icon
+        />
       </template>
 
       <template v-else-if="['rnf', 'rna'].includes(ffr) && cellValue">
@@ -176,17 +174,19 @@ const getPrefecture = (prefecture: PrefectureKey) => {
 
       <template v-else>
         <!-- Default -->
-        <p
-          v-if="params.column?.type === FieldType.number"
-          class="block  text-right"
-        >
-          {{ formattedNumber(cellValue) }}
-        </p>
-        <template v-else>
-          <p class="text-nowrap overflow-hidden text-ellipsis max-w-[220px]" :title="cellValue || undefined">
-            {{ cellValue ?? '' }}
+        <div class="amount-line">
+          <p
+            v-if="params.column?.type === FieldType.number"
+            class="block  text-right"
+          >
+            {{ formattedNumber(cellValue) }}
           </p>
-        </template>
+          <template v-else>
+            <p class="text-nowrap overflow-hidden text-ellipsis max-w-[220px]" :title="cellValue || undefined">
+              {{ cellValue ?? '' }}
+            </p>
+          </template>
+        </div>
       </template>
     </div>
     <!--  date -->
@@ -204,5 +204,9 @@ p {
   border-radius: 50%;
   background-size: cover;
   background-position: center;
+}
+.amount-line {
+  --at-apply: flex items-center;
+  height: 1.75rem;
 }
 </style>

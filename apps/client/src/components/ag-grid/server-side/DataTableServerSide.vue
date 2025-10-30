@@ -776,4 +776,16 @@ defineExpose({
   display: block;
   min-width: 0;
 }
+
+:deep(.p-datatable-resizable-table > .p-datatable-tbody > tr > td) {
+  --p-datatable-body-cell-padding: 0.5rem 0.75rem;
+  vertical-align: middle;
+  & p {
+    margin-block: 0.25rem !important;
+  }
+}
+
+:deep(.p-datatable-header-cell) {
+  --p-datatable-header-cell-padding: 0.25rem 0.5rem;
+}
 </style>
