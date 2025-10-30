@@ -138,19 +138,19 @@ const { activeFilters, onFiltersUpdated, handleClearAllFilters, handleRemoveFilt
         @request-clear-all="handleClearAllFilters"
       />
     </div>
-        <DsfrSegmentedSet
-          v-model="dataTable"
-          :options="[
-            {
-              label: 'AgGrid',
-              value: 'ag-grid',
-            },
-            {
-              label: 'PrimeVue',
-              value: 'primevue',
-            },
-          ]"
-        />
+    <DsfrSegmentedSet
+      v-model="dataTable"
+      :options="[
+        {
+          label: 'Ag',
+          value: 'ag-grid',
+        },
+        {
+          label: 'Prime',
+          value: 'primevue',
+        },
+      ]"
+    />
 
     <AgGridServerSide
       v-if="dataTable === 'ag-grid'"

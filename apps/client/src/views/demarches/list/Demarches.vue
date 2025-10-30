@@ -84,11 +84,11 @@ const dataTable = ref('ag-grid')
           v-model="dataTable"
           :options="[
             {
-              label: 'AgGrid',
+              label: 'Ag',
               value: 'ag-grid',
             },
             {
-              label: 'PrimeVue',
+              label: 'Prime',
               value: 'primevue',
             },
           ]"

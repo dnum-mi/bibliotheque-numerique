@@ -341,9 +341,9 @@ const dataTable = useStorage('dossiers-datatable', 'ag-grid')
 </script>
 
 <template>
-  <div class="bn-scroll-parent flex flex-col">
+  <div class="bn-scroll-parent flex flex-col pt-2">
     <div class="flex flex-shrink-0 justify-between no-label-on-toggle items-center bn-dynamic-small-p mb-2">
-      <div class="flex gap-2">
+      <div class="flex gap-2 items-center">
         <div v-if="!hasNoRepeatableField">
           <DsfrButton
             :tertiary="groupByDossier"
@@ -363,13 +363,14 @@ const dataTable = useStorage('dossiers-datatable', 'ag-grid')
             Vue par dossier
           </DsfrButton>
         </div>
-        <DsfrButton
-          label="Télécharger"
-          icon="ri-file-download-fill"
-          class="fr-ml-5w"
-          small
-          @click="download"
-        />
+        <div>
+          <DsfrButton
+            label="Télécharger"
+            icon="ri-file-download-fill"
+            small
+            @click="download"
+          />
+        </div>
         <ActiveFiltersDropdown
           v-if="columnsDef"
           :filters="activeFilters"
@@ -383,11 +384,11 @@ const dataTable = useStorage('dossiers-datatable', 'ag-grid')
           v-model="dataTable"
           :options="[
             {
-              label: 'AgGrid',
+              label: 'Ag',
               value: 'ag-grid',
             },
             {
-              label: 'PrimeVue',
+              label: 'Prime',
               value: 'primevue',
             },
           ]"
@@ -408,7 +409,6 @@ const dataTable = useStorage('dossiers-datatable', 'ag-grid')
         />
         <DsfrButton
           id="help-button"
-          class="fr-mt-2v"
           label="Lancer le tutoriel"
           icon="ri-question-mark"
           icon-only

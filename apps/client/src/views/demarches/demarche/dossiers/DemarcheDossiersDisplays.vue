@@ -125,7 +125,7 @@ const resetAgGridFilters = () => {
   emit('selectDisplay', null)
 }
 
-const defaultOption = { text: 'Aucun filtre sélectionné', value: null }
+const defaultOption = { text: 'Aucun affichage sélectionné', value: null }
 const filterList = computed(() => [defaultOption, ...props.displays.map(({ id, name }) => ({ text: name, value: id }))])
 
 const onSelectFilterChange = ($event: string) => {
@@ -144,10 +144,10 @@ const update = () => {
 </script>
 
 <template>
-  <div class="flex justify-end items-center">
+  <div class="flex justify-end items-center fr-mx-2v ">
     <DsfrButton
       v-if="selectedDisplay?.disabledColumns?.length"
-      class="fr-mx-2v fr-mt-2v fr-error-border"
+      class="fr-mx-2v fr-error-border"
       type="submit"
       no-outline
       secondary
@@ -171,7 +171,7 @@ const update = () => {
       />
     </CustomTooltip>
 
-    <div class="fr-mx-2v fr-mt-2v flex justify-center items-center gap-2">
+    <div class="fr-mx-2v flex justify-center items-center gap-2">
       <DsfrButton
         id="create-duplicate-filter-button"
         type="submit"
@@ -300,5 +300,9 @@ const update = () => {
 
 .fr-error-bg:not(:disabled)&:hover {
   background-color: var(--border-flat-error);
+}
+
+:deep(.fr-label + .fr-select) {
+  margin-top: 0 !important;
 }
 </style>
