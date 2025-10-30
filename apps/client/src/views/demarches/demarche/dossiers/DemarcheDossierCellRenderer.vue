@@ -175,17 +175,19 @@ const getPrefecture = (prefecture: PrefectureKey) => {
       <template v-else>
         <!-- Default -->
         <div class="amount-line">
-          <p
-            v-if="params.column?.type === FieldType.number"
-            class="block  text-right"
-          >
-            {{ formattedNumber(cellValue) }}
-          </p>
-          <template v-else>
-            <p class="text-nowrap overflow-hidden text-ellipsis max-w-[220px]" :title="cellValue || undefined">
-              {{ cellValue ?? '' }}
+          <div class="w-full">
+            <p
+              v-if="params.column?.type === FieldType.number"
+              class="block  text-right"
+            >
+              {{ formattedNumber(cellValue) }}
             </p>
-          </template>
+            <template v-else>
+              <p class="text-nowrap overflow-hidden text-ellipsis max-w-[220px]" :title="cellValue || undefined">
+                {{ cellValue ?? '' }}
+              </p>
+            </template>
+          </div>
         </div>
       </template>
     </div>

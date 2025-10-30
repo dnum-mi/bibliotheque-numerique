@@ -16,6 +16,7 @@ import Column from 'primevue/column'
 import Button from 'primevue/button'
 import MultiSelect from 'primevue/multiselect'
 import DatePicker from 'primevue/datepicker'
+import { useAmountLines } from './useAmountLines'
 
 //#region 📍------ PROPS ------ 📍
 
@@ -589,6 +590,8 @@ function updateDataTableState (dto: IPagination<T>) {
   refreshTable()
 }
 
+useAmountLines()
+
 defineExpose({
   refresh: refreshTable,
   clearAllFilters,
@@ -787,5 +790,8 @@ defineExpose({
 
 :deep(.p-datatable-header-cell) {
   --p-datatable-header-cell-padding: 0.25rem 0.5rem;
+}
+:deep(.amount-line-highlighted) {
+  background-color: var(--blue-ecume-975-75);
 }
 </style>
