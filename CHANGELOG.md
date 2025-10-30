@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.40.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.39.1...v2.40.0) (2025-10-30)
+
+
+### Features
+
+* **maarch:** adapt the import script for FE file ([1a4a7e1](https://github.com/dnum-mi/bibliotheque_numerique/commit/1a4a7e18cbb7f83b6c15cdcfd5c63f206b403087))
+
 ## [2.39.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.39.0...v2.39.1) (2025-10-21)
 
 
