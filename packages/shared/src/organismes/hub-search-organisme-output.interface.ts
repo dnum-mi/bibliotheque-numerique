@@ -1,5 +1,4 @@
-import { ISiafRnaOutput } from "./siaf/siaf-rna-output.interface";
-import { ISiafRnfOutput } from "./siaf/siaf-rnf-output.interface";
+import { IAssociationOutput, IFoundationOutput } from "./siaf";
 
 export enum EEntityTypeSearchOrganisme {
   Association = "association",
@@ -9,7 +8,7 @@ export enum EEntityTypeSearchOrganisme {
 export interface ISiafSearchOrganismeResponseOutput {
   score: number;
   entity_type: EEntityTypeSearchOrganisme;
-  entity: ISiafRnaOutput | ISiafRnfOutput
+  entity: IAssociationOutput | IFoundationOutput
 }
 
 export interface ISiafSearchOrganismeOutput {

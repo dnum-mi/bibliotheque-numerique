@@ -11,7 +11,6 @@ const bnConfigurations = [
   'DDC_MONTH_BEFORE_MISSING',
   'ENABLE_HUB_SEARCH',
   'SYNC_RNA_VIA_HUB',
-  'SYNC_RNF_VIA_HUB',
 ] as const
 
 export type BnConfigurationKey = typeof bnConfigurations[number]

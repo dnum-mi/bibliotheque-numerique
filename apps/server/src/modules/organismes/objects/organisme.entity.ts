@@ -1,4 +1,5 @@
 import { Column, Entity, JoinColumn, OneToMany } from 'typeorm'
+import { ApiProperty } from '@nestjs/swagger'
 import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
 import {
   IOrganisme,
@@ -8,11 +9,10 @@ import {
   eState,
   StateKey,
   IPerson,
-  ISiafRnfOutput,
-  ISiafRnaOutput,
+  IFoundationOutput,
+  IAssociationOutput,
 } from '@biblio-num/shared'
 import { File } from '@/modules/files/objects/entities/file.entity'
-import { ApiProperty } from '@nestjs/swagger'
 import { BaseEntitySyncState } from '@/shared/sync-state/objects/entities/base-entity-sync-state.entity'
 
 @Entity({ name: 'organismes' })
@@ -126,7 +126,7 @@ export class Organisme extends BaseEntitySyncState implements IOrganisme {
     description: 'Json original reçu de RNA',
     nullable: true,
   })
-  rnaJson: IRnaOutput | ISiafRnaOutput
+  rnaJson: IRnaOutput | IAssociationOutput
   //#endregion
 
   //#region RNF
@@ -150,7 +150,7 @@ export class Organisme extends BaseEntitySyncState implements IOrganisme {
     description: 'Json original reçu de RNF',
     nullable: true,
   })
-  rnfJson: ISiafRnfOutput | null
+  rnfJson: IFoundationOutput | null
   //#endregion
 
   //#region Address

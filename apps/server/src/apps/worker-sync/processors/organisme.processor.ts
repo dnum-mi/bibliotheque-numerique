@@ -8,13 +8,12 @@ import {
 import { Job } from 'bull'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { OrganismeService } from '@/modules/organismes/providers/organisme.service'
-import { RnfService } from '@/modules/organismes/providers/rnf.service'
 import { BnConfigurationService } from '@/shared/modules/bn-configurations/providers/bn-configuration.service'
 import {
   eBnConfiguration,
   IRnaOutput,
-  ISiafRnaOutput,
-  ISiafRnfOutput,
+  IAssociationOutput,
+  IFoundationOutput,
 } from '@biblio-num/shared'
 import { RnaService } from '@/modules/organismes/providers/rna.service'
 import { FieldService } from '@/modules/dossiers/providers/field.service'
@@ -34,7 +33,6 @@ import { CustomBaseProcessor } from '@/shared/modules/custom-bull/custom-base.pr
 @Processor(QueueName.sync)
 export class OrganismeProcessor extends CustomBaseProcessor {
   constructor(
-    private readonly rnfService: RnfService,
     private readonly rnaService: RnaService,
     private readonly fieldService: FieldService,
     private readonly organismeService: OrganismeService,
@@ -182,7 +180,7 @@ export class OrganismeProcessor extends CustomBaseProcessor {
           job.data.rna,
           job.data.syncState,
         )
-        let rawRna: ISiafRnaOutput | IRnaOutput
+        let rawRna: IAssociationOutput | IRnaOutput
         if (isSyncRnaViaHub) {
           rawRna = await this.organismeService.getAssocationFromHub(
             job.data.rna,
@@ -218,12 +216,12 @@ export class OrganismeProcessor extends CustomBaseProcessor {
             )
             // Update RNA
             await this.organismeService.updateOrganismeRnaFromHub(
-              rawRna as ISiafRnaOutput,
+              rawRna as IAssociationOutput,
             )
             job.log('Updated Organisme from rna')
             job.progress(60)
             await this.organismeService.synchroniseRnaFilesFromHub(
-              rawRna as ISiafRnaOutput,
+              rawRna as IAssociationOutput,
             )
             job.log('Rna files job created')
           } else {
@@ -270,10 +268,6 @@ export class OrganismeProcessor extends CustomBaseProcessor {
         eBnConfiguration.LAST_FOUNDATION_SYNC_AT,
       )
 
-      const isSyncRnfViaHub = await this.bnConfiguration.getValueByKeyName(
-        eBnConfiguration.SYNC_RNF_VIA_HUB,
-      )
-
       this.logger.log(
         `Synchronising all RNF since ${lastSyncConfig.stringValue}`,
       )
@@ -285,13 +279,7 @@ export class OrganismeProcessor extends CustomBaseProcessor {
       }
 
       const dateNow = new Date().toISOString()
-      let modifiedRnfIds: string[] = []
-      if (isSyncRnfViaHub) {
-        modifiedRnfIds =
-          await this.organismeService.getLastUpdatedFoundations(query)
-      } else {
-        modifiedRnfIds = await this.rnfService.getUpdatedFoundations(query)
-      }
+      const modifiedRnfIds: string[] = await this.organismeService.getLastUpdatedFoundations(query)
 
       const addJobsResults = await Promise.allSettled(
         modifiedRnfIds.map(async (rnfId) => {
@@ -324,21 +312,14 @@ export class OrganismeProcessor extends CustomBaseProcessor {
       try {
         this.logger.verbose('syncOneRnfOrganisme')
         this.logger.debug(job.data)
-        const isSyncRnfViaHub = await this.bnConfiguration.getValueByKeyName(
-          eBnConfiguration.SYNC_RNF_VIA_HUB,
-        )
-        let rawRnf: ISiafRnfOutput = null
         await this.syncState.setStateUploadingByIdRnf(
           job.data.rnf,
           job.data.syncState,
         )
-        if (isSyncRnfViaHub) {
-          rawRnf = await this.organismeService.getFoundationFromHub(
-            job.data.rnf,
-          )
-        } else {
-          rawRnf = await this.rnfService.getFoundation(job.data.rnf)
-        }
+
+        const rawRnf: IFoundationOutput = await this.organismeService.getFoundationFromHub(
+          job.data.rnf,
+        )
 
         if (rawRnf === null) {
           this.logger.warn(
@@ -356,25 +337,18 @@ export class OrganismeProcessor extends CustomBaseProcessor {
               stringValue: `${job.data.rnf}`,
             })
           }
-          // Clean data
-          if (!isSyncRnfViaHub) {
-            await this.organismeService.deleteFilesOfRnf(
-              job.data.rnf,
-              eFileStorageIn.HUB,
-            )
-          }
+
           // UPDATE Rnf
           await this.organismeService.updateOrganismeFromRnf(
             job.data.rnf,
             rawRnf,
             job.data.firstTime,
           )
-          if (isSyncRnfViaHub) {
-            await this.organismeService.synchroniseRnfFiles(
-              job.data.rnf,
-              rawRnf,
-            )
-          }
+
+          await this.organismeService.synchroniseRnfFiles(
+            job.data.rnf,
+            rawRnf,
+          )
         }
         await this.syncState.setStateUploadedByRnfId(job.data.rnf)
       } catch (e) {

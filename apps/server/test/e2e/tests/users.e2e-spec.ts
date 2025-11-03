@@ -54,6 +54,7 @@ describe('users (e2e)', () => {
           columns: ['firstname', 'lastname'],
         })
         .expect(200)
+
       expect(response.body).toBeDefined()
       expect(response.body.total).toEqual(5)
       expect(response.body.data).toMatchObject([

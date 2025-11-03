@@ -6,23 +6,20 @@ import { Queue } from 'bull'
 
 import {
   IOrganisme,
-  IPerson,
-  IPersonRnf,
   IRnaOutput,
-  PersonRoleKey,
   eOrganismeType,
   eState,
   iRnaDocument,
   eBnConfiguration,
-  ISiafRnfOutput,
+  IFoundationOutput,
   IAddress,
   ISiafSearchOrganismeResponseOutput,
-  ISiafRnaOutput,
+  IAssociationOutput,
   IOrganismeOutput,
   typeCategorieOrganisme,
   Prefecture,
   IOrganismeOutputDto,
-  ISiafRnfHistoryOutput,
+  // ISiafRnfHistoryOutput,
 } from '@biblio-num/shared'
 
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
@@ -30,7 +27,6 @@ import { Organisme } from '@/modules/organismes/objects/organisme.entity'
 
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 
-import { RnfService } from '@/modules/organismes/providers/rnf.service'
 import { RnaService } from '@/modules/organismes/providers/rna.service'
 
 import { OrganismeFieldTypeHash } from '@/modules/organismes/objects/const/organisme-field-type-hash.const'
@@ -55,7 +51,6 @@ import {
 } from '@/modules/files/objects/const/rna-code-to-label-and-tag.const'
 import { BnConfigurationService } from '@/shared/modules/bn-configurations/providers/bn-configuration.service'
 import { addYears } from 'date-fns'
-import { getCodeByRegionName } from '../utils/utils.regions'
 import { HubService } from '@/modules/hub/providers/hub.service'
 import { GetUpdateFoundationInputDto } from '../objects/dto/get-updated-foundation-input.dto'
 import { eFileStorageIn, FileStorageInKey } from '../../files/objects/const/file-storage-in.enum'
@@ -63,13 +58,13 @@ import { tFileCommon } from '../../files/objects/types/file-common.type'
 import { FileOrganismeHubService } from '../../files/providers/file-organisme-hub.service'
 import { OrganismeSyncService } from './organisme-sync.service'
 import { TransformRna } from '../utils/transform-rna'
+import { getDissolvedAt } from './organisme.utils'
 
 @Injectable()
 export class OrganismeService extends BaseEntityService<Organisme> {
   constructor(
     protected logger: LoggerService,
     @InjectRepository(Organisme) repo: Repository<Organisme>,
-    protected readonly rnfService: RnfService,
     protected readonly rnaService: RnaService,
     protected readonly hubService: HubService,
     private readonly fileService: FileService,
@@ -98,40 +93,6 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     })
   }
 
-  private _formatPerson(rawPerson: IPersonRnf): IPerson {
-    const role =
-      ((rawPerson.roles && rawPerson.roles[0]) as PersonRoleKey) || null
-    return {
-      ...rawPerson.person,
-      role,
-    } as IPerson
-  }
-
-  private _formatPersonSIAFRNF(
-    rawPerson: ISiafRnfOutput['persons'][number],
-  ): IPerson {
-    return {
-      ...Object.fromEntries(
-        [
-          'createdAt',
-          'updatedAt',
-          'civility',
-          'lastName',
-          'firstName',
-          'email',
-          'phone',
-          'profession',
-          'nationality',
-          'bornAt',
-          'bornPlace',
-          'isFounder',
-          'role',
-        ].map((field) => [field, rawPerson[field] || '']),
-      ),
-      address: this._formatAddressSIAFRNF(rawPerson.address),
-    } as IPerson
-  }
-
   private _formatAddress(
     rawAddress: IAddress,
   ): Partial<Organisme> {
@@ -153,36 +114,6 @@ export class OrganismeService extends BaseEntityService<Organisme> {
         rawAddress[field] || '',
       ]),
     )
-  }
-
-  private _formatAddressSIAFRNF(
-    rawAddress: ISiafRnfOutput['address'] | undefined,
-  ): IAddress {
-    const contextSplit = rawAddress?.gouvAddress?.context?.split(',')
-    const codeDepAndRegion = {
-      departmentName: '',
-      departmentCode: '',
-      regionName: '',
-      regionCode: '',
-    }
-    if (contextSplit) {
-      codeDepAndRegion.departmentName = contextSplit[1] || ''
-      codeDepAndRegion.departmentCode = contextSplit[0] || ''
-      codeDepAndRegion.regionName = contextSplit[2] || ''
-      codeDepAndRegion.regionCode = getCodeByRegionName(contextSplit[2]) || ''
-    }
-
-    return {
-      label: rawAddress?.gouvAddress?.label || rawAddress?.dsStringValue || '',
-      postalCode: rawAddress?.gouvAddress?.postcode || '',
-      cityName: rawAddress?.gouvAddress?.city || '',
-      cityCode: rawAddress?.gouvAddress?.citycode || '',
-      type: rawAddress?.gouvAddress?.type || '',
-      streetAddress: rawAddress?.gouvAddress?.street || '',
-      streetNumber: rawAddress?.gouvAddress?.housenumber || '',
-      streetName: rawAddress?.gouvAddress?.name || '',
-      ...codeDepAndRegion,
-    }
   }
 
   async getOrCreateOrganismeIdFromRna(idRna: string): Promise<Organisme> {
@@ -217,38 +148,36 @@ export class OrganismeService extends BaseEntityService<Organisme> {
 
   async updateOrganismeFromRnf(
     idRnf: string,
-    raw: ISiafRnfOutput,
+    raw: IFoundationOutput,
     firstTime = false,
   ): Promise<void> {
     this.logger.verbose(`updateOrganismeFromRnf ${idRnf}`)
 
-    const creationDate = new Date(raw.originalCreatedAt)
+    const creationDate = new Date(raw.creationAt)
     const toUpdate: Partial<Organisme> = {
       state: eState.uploaded,
       title: raw.title,
-      dateCreation: raw.originalCreatedAt,
-      type: (raw as ISiafRnfOutput).foundationType,
+      dateCreation: creationDate,
+      // @ts-ignore -- A regarder pourquoi le type est incorrect
+      type: raw.foundationType,
       email: raw.email,
       phoneNumber: raw.phone,
       ...this._formatAddress(
-        this._formatAddressSIAFRNF((raw as ISiafRnfOutput).address),
+        raw.address.dsAddress,
       ),
-      dateDissolution: (raw as ISiafRnfOutput).dissolved.dissolvedAt,
-      fiscalEndDateAt: raw.fiscalEndDateAt,
+      dateDissolution: getDissolvedAt(raw),
+      fiscalEndDateAt: raw.fiscalEndAt,
       rnfJson: raw,
-      persons:
-        raw.persons && raw.persons.length
-          ? raw.persons.map((p) => this._formatPersonSIAFRNF(p))
-          : [],
+      persons: raw.persons,
     }
 
     // TODO: this should not happen once all the date is on RNF
     // TODO: this case is happening because we have conflict over RNF  data and BN data
     if (firstTime) {
-      toUpdate.declarationYears = raw.declarationYears
+      toUpdate.declarationYears = raw.accountDepositYears
       toUpdate.missingDeclarationYears = await this.getMissingYears(
-        creationDate,
-        raw.declarationYears,
+        raw._createdAt,
+        raw.accountDepositYears,
       )
     }
     await this.repo.update({ idRnf }, toUpdate)
@@ -296,13 +225,13 @@ export class OrganismeService extends BaseEntityService<Organisme> {
   }
 
   async updateOrganismeRnaFromHub(
-    raw: ISiafRnaOutput)
+    raw: IAssociationOutput)
     : Promise<void> {
     const factoryTransformSiafRna = new TransformRna(raw)
     const rnaToUpdate = factoryTransformSiafRna.toOrganisme()
     const addressSiege = factoryTransformSiafRna.addressSiege
     const rnaAddress = factoryTransformSiafRna.rnaAddressSiege
-    const gouvAddress = addressSiege?.gouvAddress
+    const gouvAddress = addressSiege?.rnaAddress.gouvAddress
     const dsAddress = addressSiege.dsAddress
 
     await this.repo.update(
@@ -312,17 +241,27 @@ export class OrganismeService extends BaseEntityService<Organisme> {
       {
         ...rnaToUpdate as Organisme,
         state: eState.uploaded,
-        addressPostalCode: addressSiege?.gouvAddress?.postcode ||
-        addressSiege?.rnaAddress?.address.codepostal || '',
-        addressCityName: gouvAddress?.city ||
-                        dsAddress?.cityName ||
-                        rnaAddress?.libcommune ||
-                        '',
-        addressType: gouvAddress?.type || dsAddress?.type || rnaAddress?.typevoie || '',
+        addressPostalCode: dsAddress?.postalCode ||
+          gouvAddress?.postcode ||
+          addressSiege?.rnaAddress?.address.codepostal ||
+          '',
+        addressCityName: dsAddress?.cityName ||
+          gouvAddress?.city ||
+          rnaAddress?.libcommune ||
+          '',
+        addressType: dsAddress?.type ||
+          gouvAddress?.type ||
+          rnaAddress?.typevoie ||
+          '',
         addressStreetAddress: factoryTransformSiafRna.getAddressStreetAddress(),
-        addressStreetNumber: gouvAddress?.housenumber || dsAddress?.streetNumber || rnaAddress?.numvoie || '',
-        addressStreetName: gouvAddress?.street || dsAddress?.streetName || rnaAddress?.libvoie,
-        dateDissolution: raw.dissolved?.dissolvedAt,
+        addressStreetNumber: dsAddress?.streetNumber ||
+          gouvAddress?.housenumber ||
+          rnaAddress?.numvoie ||
+          '',
+        addressStreetName: dsAddress?.streetName ||
+          gouvAddress?.street ||
+          rnaAddress?.libvoie,
+        dateDissolution: getDissolvedAt(raw),
         declarationYears: [],
         missingDeclarationYears: [],
       },
@@ -406,7 +345,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
    */
   async getAssocationFromHub(
     idRna: string,
-  ): Promise<ISiafRnaOutput | null> {
+  ): Promise<IAssociationOutput | null> {
     this.logger.verbose('getAssocationFromHub')
     const fromSiaf = await this.hubService.getAssociation(idRna)
     this.logger.debug({ FN: 'getAssocationFromSiaf', idRna })
@@ -423,7 +362,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
    * pour le hub la structure contient la clé fondations
    * TODO: A terme, bn doit-être connecter avec le hub
    */
-  async getFoundationFromHub(id: string): Promise<ISiafRnfOutput | null> {
+  async getFoundationFromHub(id: string): Promise<IFoundationOutput | null> {
     this.logger.verbose('getFoundationFromHub')
     const fromSiaf = await this.hubService.getFoundation(id)
     this.logger.debug({ FN: 'getFoundationFromSiaf', id, found: !!fromSiaf })
@@ -446,17 +385,6 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     return (await this.hubService.searchOrganisme(sentence))?.search_response
   }
 
-  private _getValueFromPromiseSettle<T>(
-    type: string,
-    result: PromiseSettledResult<T>,
-  ): T | null {
-    if (result.status === 'rejected') {
-      this.logger.warn(`HUB-${type}: ${result.reason}`)
-      return null
-    }
-    return result.value
-  }
-
   private _prefectureFn(cp: string): string {
     if (!cp) return ''
     let prefkey = ''
@@ -475,107 +403,21 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     return {
       ...organisme,
       siege: {
-        coordinates: (organisme?.rnfJson as ISiafRnfOutput)?.address
+        coordinates: (organisme?.rnfJson as IFoundationOutput)?.address
           ?.coordinates,
         prefecture: this._prefectureFn(organisme?.addressPostalCode),
         isVerified: !!organisme?.addressType,
       },
-      objectDescription: (organisme?.rnfJson as ISiafRnfOutput)
-        ?.objectDescription,
-      dueDate: (organisme?.rnfJson as ISiafRnfOutput)?.dueDate,
-      generalInterest: (organisme?.rnfJson as ISiafRnfOutput)?.generalInterest,
-      internationalAction: (organisme?.rnfJson as ISiafRnfOutput)
-        ?.internationalAction,
-      createdAt: (organisme?.rnfJson as ISiafRnfOutput)?.createdAt,
-      updatedAt: (organisme?.rnfJson as ISiafRnfOutput)?.updatedAt,
-      fiscalEndDateAt: (organisme?.rnfJson as ISiafRnfOutput)?.fiscalEndDateAt,
+      objectDescription: (organisme?.rnfJson as IFoundationOutput)
+        ?.socialObject,
+      dueDate: (organisme?.rnfJson as IFoundationOutput)?.dueDate,
+      generalInterest: (organisme?.rnfJson as IFoundationOutput)?.generalInterestDomain,
+      internationalAction: (organisme?.rnfJson as IFoundationOutput)
+        ?.hasInternationalActivity,
+      createdAt: (organisme?.rnfJson as IFoundationOutput)?._createdAt,
+      updatedAt: (organisme?.rnfJson as IFoundationOutput)?._updatedAt,
+      fiscalEndDateAt: (organisme?.rnfJson as IFoundationOutput)?.fiscalEndAt,
     }
-  }
-
-  private _transformToPerson(person: ISiafRnfOutput['persons'][0]): IPerson {
-    return {
-      ...person,
-      civility: person?.civility || '',
-      // lastName: person?.lastName,
-      // firstName: person?.firstName,
-      // profession: person?.profession,
-      // nationality: person?.nationality,
-      // bornAt: person?.bornAt,
-      bornPlace: person?.bornPlace || '',
-      // isFounder: person?.isFounder,
-      address: {
-        label: person.address.dsStringValue || '',
-        type:
-          person.address.gouvAddress?.type ||
-          person.address.dsAddress?.type ||
-          '',
-        streetAddress:
-          person.address.gouvAddress?.street ||
-          person.address.dsAddress?.streetAddress ||
-          '',
-        streetNumber:
-          person.address.gouvAddress?.housenumber ||
-          person.address.dsAddress?.streetNumber ||
-          '',
-        streetName:
-          person.address.gouvAddress?.name ||
-          person.address.dsAddress?.streetName ||
-          '',
-        postalCode:
-          person.address.gouvAddress?.postcode ||
-          person.address.dsAddress?.postalCode ||
-          '',
-        departmentName: person.address.dsAddress?.departmentName || '',
-        cityName: person.address.dsAddress?.cityName || '',
-        cityCode: person.address.dsAddress?.cityCode || '',
-        departmentCode: person.address.dsAddress?.departmentCode || '',
-        regionName: person.address.dsAddress?.regionName || '',
-        regionCode: person.address.dsAddress?.regionCode || '',
-      },
-      email: person.email || '',
-      phone: person.phone || '',
-      createdAt: new Date(-1),
-      updatedAt: new Date(-1),
-      // role: person.role as PersonRoleKey,
-      // entryDate: person.entryDate,
-      // exitDate: person.exitDate
-    }
-  }
-
-  private _transformSiafRnfToOrganismeDto(
-    organisme: ISiafRnfOutput,
-  ): IOrganismeOutputDto {
-    return {
-      idRnf: organisme.id,
-      type: organisme.foundationType,
-      title: organisme.title,
-      email: organisme.email,
-      phoneNumber: organisme.phone,
-      declarationYears: organisme.declarationYears,
-      dateDissolution: organisme.dissolved.dissolvedAt,
-      dateCreation: organisme.originalCreatedAt,
-      rnfJson: organisme,
-      addressLabel: organisme.address.dsStringValue,
-      siege: {
-        coordinates: organisme?.address?.coordinates,
-        prefecture: this._prefectureFn(
-          organisme.address?.dsAddress?.postalCode ||
-            organisme.address?.dsAddress?.postalCode,
-        ),
-        isVerified: !!(
-          organisme.address?.dsAddress?.type || organisme.address?.gouvAddress
-        ),
-      },
-      websites: organisme?.websites?.join(','),
-      objectDescription: organisme?.objectDescription,
-      dueDate: organisme.dueDate,
-      generalInterest: organisme.generalInterest,
-      internationalAction: organisme.internationalAction,
-      createdAt: organisme?.createdAt,
-      updatedAt: organisme?.updatedAt,
-      fiscalEndDateAt: organisme.fiscalEndDateAt,
-      persons: organisme.persons.map(this._transformToPerson),
-    } as IOrganismeOutputDto
   }
 
   async getOrganismeRnfFromAllServer(idRnf: string): Promise<IOrganismeOutput> {
@@ -630,11 +472,16 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     await this.organismeSync.addSyncOneRna(idRna, 1)
   }
 
+  // TODO: A refaire avec le nouveau modele
   async getOrganismeRnfHistoryFromSiaf(
+    //
     idRnf: string,
-  ): Promise<ISiafRnfHistoryOutput[]> {
+    // ): Promise<ISiafRnfHistoryOutput[]>
+  ): Promise<unknown[]> {
     this.logger.verbose('getOrganismeRnfHistoryFromSiaf')
-    return await this.rnfService.getFoundationsHistoryFromSiaf(idRnf)
+    this.logger.debug(idRnf)
+    // return await this.rnfService.getFoundationsHistoryFromSiaf(idRnf)
+    return []
   }
 
   private _transformRnaToOrganismeDto(
@@ -652,10 +499,9 @@ export class OrganismeService extends BaseEntityService<Organisme> {
   private _transformSiafRnaToOrganismeDto(
     organisme: Organisme,
   ): IOrganismeOutputDto {
-    const rawJson = organisme.rnaJson as ISiafRnaOutput
+    const rawJson = organisme.rnaJson as IAssociationOutput
     const _factoryTransformSiafRna = new TransformRna(rawJson)
     const addressSiege = _factoryTransformSiafRna.addressSiege
-    const addressGestion = _factoryTransformSiafRna.addressGestion
 
     return {
       ...organisme,
@@ -663,29 +509,15 @@ export class OrganismeService extends BaseEntityService<Organisme> {
       siege: {
         coordinates: addressSiege?.coordinates,
         prefecture: this._prefectureFn(
-          addressSiege?.gouvAddress?.postcode ||
-          addressSiege?.dsAddress?.postalCode,
+          addressSiege?.dsAddress?.postalCode ||
+          addressSiege?.rnaAddress?.gouvAddress?.postcode ||
+          addressSiege?.rnaAddress?.address.codepostal,
         ),
-        isVerified: !!(addressSiege?.gouvAddress || addressSiege?.dsAddress),
+        isVerified: !!(addressSiege?.coordinates),
       },
-      gestion: {
-        addressLabel: addressGestion?.gouvAddress?.label,
-        coordinates: addressGestion?.coordinates,
-        isVerified: !!(
-          addressGestion?.gouvAddress || addressGestion?.dsAddress
-        ),
-        prefecture: this._prefectureFn(
-          addressGestion?.gouvAddress?.postcode ||
-            addressGestion?.dsAddress?.postalCode,
-        ),
-      },
-      websites: rawJson?.websites?.join(','),
-      objectDescription: rawJson?.objetSocial?.description,
-      generalInterest: [
-        ...new Set(
-          rawJson?.objetSocial?.categories.flatMap((c) => c.descriptions),
-        ),
-      ].join(','),
+      websites: rawJson?.website,
+      objectDescription: rawJson?.socialObject,
+      generalInterest: rawJson.activityDomainDescription, // TODO: A verfier
       createdAt: organisme?.createdAt,
       updatedAt: organisme?.updatedAt,
     } as IOrganismeOutputDto
@@ -778,7 +610,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
 
   async synchroniseRnfFiles(
     rnfId: string,
-    rawRnf: ISiafRnfOutput,
+    rawRnf: IFoundationOutput,
   ): Promise<void> {
     this.logger.verbose('synchroniseRnfFiles')
     const organismeId = await this.findOneOrThrow({
@@ -792,25 +624,15 @@ export class OrganismeService extends BaseEntityService<Organisme> {
       organismeId,
       state: eState.uploaded,
     }
-    // const dateDepot = rawRnf.updatedAt.toString()
-    if (rawRnf.status) {
-      await this.fileOrganismeHubService.synchroniseRnfStatus(
-        rawRnf.status,
-        rawRnf.updatedAt,
-        fileCommon,
-      )
-    }
-    if (rawRnf.dissolved) {
-      await this.fileOrganismeHubService.synchroniseRnfDissolved(
-        rawRnf.dissolved,
-        rawRnf.updatedAt,
-        fileCommon,
-      )
-    }
+    await this.fileOrganismeHubService.synchroniseRnfFiles(
+      rawRnf.files,
+      rawRnf._updatedAt,
+      fileCommon,
+    )
   }
 
   // #region sync rna from hub
-  async synchroniseRnaFilesFromHub(rawRna: ISiafRnaOutput): Promise<void> {
+  async synchroniseRnaFilesFromHub(rawRna: IAssociationOutput): Promise<void> {
     this.logger.verbose('synchroniseRnaFilesFromHub')
     const files = this.fileOrganismeHubService.getFilesFromRawRna(rawRna)
     if (!files.length) {

@@ -1,10 +1,11 @@
 import { createEnum } from 'factories'
 
+// JobPosition dans le RAF
 export const jobPositionArray = [
-  'Membre du conseil de surveillance',
-  'Membre du directoire',
-  "Membre du conseil d'administration",
-  'Personne exerçant des fonctions de direction',
+  'Président',
+  'Trésorier',
+  'Secrétaire',
+  'Vice président',
 ] as const
 
 export type JobPositionKey = (typeof jobPositionArray)[number]

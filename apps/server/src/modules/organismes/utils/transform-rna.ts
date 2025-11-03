@@ -1,26 +1,24 @@
 import {
-  eAddressKind,
   eOrganismeType,
-  IAddressRna,
   IOrganisme,
   IRnaAdrsAddress,
-  ISiafRnaOutput,
+  ISiafAddress,
+  IAssociationOutput,
 } from '@biblio-num/shared'
+import { getDissolvedAt } from '../providers/organisme.utils'
 
 type keyofRnaAddress = (keyof IRnaAdrsAddress)
 
 export class TransformRna {
-  addressSiege: IAddressRna
-  addressGestion: IAddressRna
+  addressSiege: ISiafAddress
   rnaAddressSiege: IRnaAdrsAddress
-  organisme: ISiafRnaOutput
+  organisme: IAssociationOutput
 
   constructor(
-    organisme: ISiafRnaOutput,
+    organisme: IAssociationOutput,
   ) {
     this.organisme = organisme
-    this.addressSiege = organisme.addresses.filter(a => a.rnaAddress.kind === eAddressKind.adrs)[0]
-    this.addressGestion = organisme.addresses.filter(a => a.rnaAddress.kind === eAddressKind.adrg)[0]
+    this.addressSiege = organisme.address
     this.rnaAddressSiege = this.addressSiege?.rnaAddress?.address as IRnaAdrsAddress
   }
 
@@ -34,14 +32,15 @@ export class TransformRna {
   }
 
   getAddressStreetAddress():string | null {
-    return this.addressSiege.gouvAddress?.name ||
-    this.addressSiege.dsAddress.streetAddress ||
+    return this.addressSiege.dsAddress?.streetAddress ||
+    this.addressSiege.rnaAddress?.gouvAddress?.name ||
     this.getRnaAddressStreetAddress()
   }
 
   getAddressLabel(): string | null {
-    return this.addressSiege.gouvAddress.label ||
-      this.addressSiege.dsStringValue ||
+    return this.addressSiege.oneLine ||
+    this.addressSiege.dsAddress?.label ||
+    this.addressSiege.rnaAddress?.gouvAddress?.label ||
       this.rnaAddressSiege
       ? `${this.getRnaAddressStreetAddress()} ${(['codepostal', 'libcommune'] as keyofRnaAddress[])
         .map((k) => this.rnaAddressSiege[k])
@@ -55,10 +54,10 @@ export class TransformRna {
       idRna: this.organisme.id,
       type: eOrganismeType.ASSO,
       title: this.organisme.title,
-      email: this.organisme.emails.join(', '),
-      phoneNumber: this.organisme.phones.join(', '),
-      dateDissolution: this.organisme.dissolved?.dissolvedAt,
-      dateCreation: this.organisme.createdAt,
+      email: this.organisme.email,
+      phoneNumber: this.organisme.phone,
+      dateDissolution: getDissolvedAt(this.organisme),
+      dateCreation: this.organisme.creationAt,
       rnaJson: this.organisme,
       addressLabel: this.getAddressLabel(),
     } as IOrganisme

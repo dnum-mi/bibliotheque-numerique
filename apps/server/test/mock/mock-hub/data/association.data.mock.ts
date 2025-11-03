@@ -1,4 +1,10 @@
-import { IRnaAdrgAddress, ISiafRnaOutput } from '@biblio-num/shared'
+import {
+  assoQualityArray,
+  IAssociationOutput,
+  organismeStatusArray,
+  prefixs3Array,
+  typeFileArray,
+} from '@biblio-num/shared'
 import { fakerFR as faker } from '@faker-js/faker'
 
 const addressFn = (): {
@@ -17,31 +23,29 @@ const addressFn = (): {
 })
 const address = addressFn()
 const labelAddress = `${address.housenumber} ${address.street} ${address.postcode} ${address.city}`
-const address2 = addressFn()
-const labelAddress2 = `${address2.housenumber} ${address2.street} ${address2.postcode} ${address2.city}`
 
-export const associationHub: ISiafRnaOutput = {
+export const associationHub: IAssociationOutput = {
   id: 'W123456789',
   title: 'Association Test' + faker.company.name(),
-  titles: ['Association Test' + faker.company.name(), 'Association ' + faker.company.name()],
-  emails: [faker.internet.email()],
-  phones: [faker.phone.number()],
-  websites: [faker.internet.url()],
-  objetSocial: {
-    description: faker.lorem.paragraph(),
-    categories: [
-      {
-        code: `${faker.string.numeric(6)}`,
-        descriptions: [faker.lorem.words(3), faker.lorem.words(3)],
+  email: faker.internet.email(),
+  phone: faker.phone.number(),
+  website: faker.internet.url(),
+  address: {
+    oneLine: labelAddress,
+    coordinates: [faker.number.float({ max: 100, fractionDigits: 4 }), faker.number.float({ max: 100, fractionDigits: 4 })],
+    dsAddress: null,
+    rnaAddress: {
+      address: {
+        complement: null,
+        numvoie: address.housenumber,
+        repetition: null,
+        typevoie: 'chemin',
+        libvoie: address.street,
+        distrib: null,
+        codeinsee: faker.string.numeric(5),
+        codepostal: address.postcode,
+        libcommune: address.city,
       },
-    ],
-  },
-  nature: faker.lorem.words(3),
-  siret: faker.string.numeric(14),
-  addresses: [
-    {
-      dsStringValue: labelAddress,
-      coordinates: [faker.number.float({ max: 100, fractionDigits: 4 }), faker.number.float({ max: 100, fractionDigits: 4 })],
       gouvAddress: {
         label: labelAddress,
         id: null,
@@ -50,106 +54,63 @@ export const associationHub: ISiafRnaOutput = {
         street: `${address.street}`,
         postcode: `${address.postcode}`,
         city: `${address.city}`,
-        // cityCode: null,
-        // district: null,
+        citycode: null,
+        district: null,
         context: 'Île-de-France',
         type: 'housenumber',
-        banId: undefined,
-        citycode: undefined,
-      },
-      rnaAddress: {
-        kind: 'adrs',
-        address: {
-          complement: null,
-          numvoie: address.housenumber,
-          repetition: null,
-          typevoie: 'chemin',
-          libvoie: address.street,
-          distrib: null,
-          codeinsee: faker.string.numeric(5),
-          codepostal: address.postcode,
-          libcommune: address.city,
-        },
-      },
-    },
-    {
-      dsStringValue: labelAddress2,
-      coordinates: [faker.number.float({ max: 100, fractionDigits: 4 }), faker.number.float({ max: 100, fractionDigits: 4 })],
-      gouvAddress: {
-        label: labelAddress2,
-        id: null,
-        housenumber: address2.housenumber,
-        name: `${address2.housenumber} ${address2.street}`,
-        street: `${address2.street}`,
-        postcode: `${address2.postcode}`,
-        city: `${address2.city}`,
-        // cityCode: null,
-        // district: null,
-        context: 'Île-de-France',
-        type: 'housenumber',
-        banId: undefined,
-        citycode: undefined,
-      },
-      rnaAddress: {
-        kind: 'adrg',
-        address: {
-          achemine: address2.city,
-          codepostal: address2.postcode,
-          declarant: 'null',
-          complemid: null,
-          complemgeo: null,
-          libvoie: address2.street,
-          distrib: null,
-          pays: 'France',
-        } as IRnaAdrgAddress,
-      },
-    }],
-  rnaImportedAt: faker.date.past(),
-  status: {
-    file: {
-      id: faker.string.uuid(),
-      name: faker.system.fileName(),
-      checksum: faker.string.hexadecimal({ length: 64 }),
-      byteSize: faker.number.int({ max: 2000000 }),
-      mimeType: faker.system.mimeType(),
-      rnaFile: {
-        uploadAt: faker.date.past(),
-        typePiece: 'Statuts',
-        typeRecepisse: null,
       },
     },
   },
-  dissolved: {
-    dissolvedAt: null,
-    verbalProcess: undefined,
-    mandatLetter: undefined,
-    otherFiles: [],
-  },
-  files: [{
-    id: faker.string.uuid(),
-    name: faker.system.fileName(),
-    checksum: faker.string.hexadecimal({ length: 64 }),
-    byteSize: faker.number.int({ max: 2000000 }),
+  files: Array.from({ length: 3 }, () => ({
+    _id: faker.string.uuid(),
+    _createdAt: faker.date.past(),
+    _updatedAt: faker.date.past(),
+    originalName: faker.system.fileName(),
+    checksum: faker.string.alphanumeric({ length: 8 }),
+    byteSize: faker.number.int({ max: 2000 }),
     mimeType: faker.system.mimeType(),
-  }],
-  directors: {
-    file: {
-      id: faker.string.uuid(),
-      name: faker.system.fileName(),
-      checksum: faker.string.hexadecimal({ length: 64 }),
-      byteSize: faker.number.int({ max: 2000000 }),
-      mimeType: faker.system.mimeType(),
-      rnaFile: {
-        uploadAt: faker.date.past(),
-        typePiece: 'Liste dirigeants',
-        typeRecepisse: null,
-      },
+    name: faker.system.fileName(),
+    uploadedAt: faker.date.past(),
+    prefixS3: faker.helpers.arrayElement(prefixs3Array),
+    typeFile: faker.helpers.arrayElement(typeFileArray),
+    effectiveAt: faker.date.past(),
+    rnaFile: null,
+  })),
+  _updatedAt: faker.date.recent(),
+  _createdAt: faker.date.past(),
+  // rnaImportedAt: faker.date.past(),
+  activityDomainCode: faker.string.alpha({ length: 3 }),
+  activityDomainDescription: faker.lorem.lines({ min: 1, max: 10 }),
+  creationAt: faker.date.past(),
+  department: faker.string.numeric({ length: 2 }),
+  dueDate: faker.helpers.arrayElement([faker.date.recent(), null]),
+  status: faker.helpers.arrayElement(organismeStatusArray),
+  statusEffectiveAt: faker.date.past(),
+  siret: faker.helpers.arrayElement([faker.string.numeric({ length: 14 }), null]),
+  publicGenerosityYears: Array.from({ length: faker.number.int({ min: 0, max: 3 }) }, () => faker.number.int({ min: 1970, max: 2025 })),
+  publicSubsidyYears: Array.from({ length: faker.number.int({ min: 0, max: 3 }) }, () => faker.number.int({ min: 1970, max: 2025 })),
+  foreignFinancingYears: Array.from({ length: faker.number.int({ min: 0, max: 3 }) }, () => faker.number.int({ min: 1970, max: 2025 })),
+  quality: faker.helpers.arrayElement([
+    {
+      endedAt: faker.date.recent(),
+      startedAt: faker.date.past(),
+      type: faker.helpers.arrayElement(assoQualityArray),
     },
-  },
-  groupement: {
-    type: 'FED',
-    associations: ['W123456789', 'W987654321'],
-  },
-  updatedAt: faker.date.recent(),
-  createdAt: faker.date.past(),
+    null]),
+  socialObject: faker.lorem.lines({ min: 1, max: 10 }),
+  acquiredEstablishments: null,
+  accountDepositYears: null,
+  cededEstablishments: null,
+  events: null,
+  foundedLegalEntities: null,
+  founderLegalEntities: null,
+  fromLineage: null,
+  fiscalEndAt: null,
+  governanceLegalEntities: null,
+  hasInternationalActivity: null,
+  persons: [],
+  rnaEvents: null,
+  secondaryEstablishments: null,
+  toLineage: null,
+  union: null,
 }

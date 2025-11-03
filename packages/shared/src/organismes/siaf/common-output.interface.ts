@@ -71,19 +71,3 @@ export interface IRnaFile {
 }
 //#endregion
 
-export interface IFile {
-  _id: string
-  _createdAt: Date
-  _updatedAt: Date
-  originalName: string
-  checksum: string
-  byteSize: number
-  mimeType: string
-  name: string
-  uploadedAt: Date
-  prefixS3: PrefixS3Key
-  typeFile: TypeFileKey | null
-  effectiveAt: Date | null
-  rnaFile: IRnaFile | null
-}
-//#endregion

@@ -54,9 +54,4 @@ export const BnConfigurationDefault: Record<
     stringValue: 'false',
     type: eBnConfigurationType.boolean,
   },
-  [eBnConfiguration.SYNC_RNF_VIA_HUB]: {
-    stringValue: 'false',
-    type: eBnConfigurationType.boolean,
-  },
-
 }

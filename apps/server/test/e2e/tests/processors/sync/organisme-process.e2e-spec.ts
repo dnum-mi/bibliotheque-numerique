@@ -7,30 +7,30 @@ import { faker } from '@faker-js/faker/locale/fr'
 
 import { eJobName } from '../../../../../src/shared/modules/custom-bull/objects/const/job-name.enum'
 import { eBnConfiguration, eState } from '@biblio-num/shared'
-import { forceJobsFinished } from '../../../common/jobs-utils'
+import { forceJobsFinished, waitJobsFinished } from '../../../common/jobs-utils'
 
 import { Organisme } from '../../../../../src/modules/organismes/objects/organisme.entity'
 
 import { HubService } from '../../../../../src/modules/hub/providers/hub.service'
-import { RnfService } from '../../../../../src/modules/organismes/providers/rnf.service'
 
 import { foundationHub } from '../../../../mock/mock-hub/data/foundation.data.mock'
 import { associationHub } from '../../../../mock/mock-hub/data/association.data.mock'
 import { BnConfigurationOutputDto } from '../../../../../src/shared/modules/bn-configurations/objects/dto/bn-configuration-output.dto'
+import { RnaService } from '../../../../../src/modules/organismes/providers/rna.service'
 
 describe('Synchro hub', () => {
   let app: INestApplication
   let syncQueue: Queue
   let tokens: Tokens
   let hubService: HubService
-  let rnfService: RnfService
+  let rnaService: RnaService
 
   beforeAll(async () => {
     const testingModule = new TestingModuleFactory()
     await testingModule.init()
     app = testingModule.app
     hubService = app.get(HubService)
-    rnfService = app.get(RnfService)
+    rnaService = app.get(RnaService)
     syncQueue = testingModule.syncQueue
     tokens = testingModule.tokens
 
@@ -68,19 +68,6 @@ describe('Synchro hub', () => {
     })
 
     await syncQueue.removeRepeatableByKey(`${eJobName.SyncAllRnfOrganisme}:.*`)
-
-    // update flags Synchro Hub of RNF
-    const SyncRnfViaHub:BnConfigurationOutputDto = await request(app.getHttpServer())
-      .get(`/bn-configurations/${eBnConfiguration.SYNC_RNF_VIA_HUB}`)
-      .set('Authorization', `Bearer ${tokens.sudo}`)
-      .expect(200)
-      .then(response => response.body)
-
-    await request(app.getHttpServer())
-      .patch(`/bn-configurations/${SyncRnfViaHub.id}`)
-      .set('Authorization', `Bearer ${tokens.sudo}`)
-      .send({ keyName: eBnConfiguration.SYNC_RNF_VIA_HUB, stringValue: 'true', valueType: 'boolean' })
-      .expect(200)
 
     // Re-initialization the last date of synchronization of Rnf
     const lastFondationSyncAt:BnConfigurationOutputDto = await request(app.getHttpServer())
@@ -123,7 +110,6 @@ describe('Synchro hub', () => {
 
     // Expect for synchro of all rnf
     expect(hubService.getLastImportedFoundations).toHaveBeenCalled()
-    expect(rnfService.getUpdatedFoundations).not.toHaveBeenCalled()
 
     const LastFoundationSyncAt1 = await request(app.getHttpServer())
       .get(`/bn-configurations/${eBnConfiguration.LAST_FOUNDATION_SYNC_AT}`)
@@ -140,7 +126,6 @@ describe('Synchro hub', () => {
     const jobs = await syncQueue.getCompleted()
     expect(jobs.map(job => job.name)).toEqual(expect.arrayContaining([eJobName.SyncOneRnfOrganisme]))
     expect(hubService.getFoundation).toHaveBeenCalled()
-    expect(rnfService.getFoundation).not.toHaveBeenCalled()
 
     const organismeFound = await dataSource.manager.findOne(Organisme, {
       where: {
@@ -229,7 +214,7 @@ describe('Synchro hub', () => {
 
     // Run Job Synchro
     await syncQueue.add(eJobName.SyncAllRnaOrganisme)
-    await forceJobsFinished(syncQueue, [eJobName.SyncAllRnaOrganisme, eJobName.SyncOneRnaOrganisme])
+    await waitJobsFinished(syncQueue, [eJobName.SyncAllRnaOrganisme, eJobName.SyncOneRnaOrganisme])
 
     // Expect for synchro of all rna
     expect(hubService.getLastImportedAssociations).toHaveBeenCalled()
@@ -244,12 +229,13 @@ describe('Synchro hub', () => {
     expect(LastFoundationSyncAt1.stringValue).toContain(expectedNow)
 
     // Wait 2nd times to see eJobName.SyncOneRnfOrganisme
-    await forceJobsFinished(syncQueue, [eJobName.SyncAllRnaOrganisme, eJobName.SyncOneRnaOrganisme])
+    await waitJobsFinished(syncQueue, [eJobName.SyncAllRnaOrganisme, eJobName.SyncOneRnaOrganisme])
     // Expect for synchro of one rnf
+
     const jobs = await syncQueue.getCompleted()
     expect(jobs.map(job => job.name)).toEqual(expect.arrayContaining([eJobName.SyncOneRnaOrganisme]))
-    expect(hubService.getFoundation).toHaveBeenCalled()
-    expect(rnfService.getFoundation).not.toHaveBeenCalled()
+    expect(hubService.getAssociation).toHaveBeenCalled()
+    expect(rnaService.getAssociation).not.toHaveBeenCalled()
 
     const organismeFound = await dataSource.manager.findOne(Organisme, {
       where: {

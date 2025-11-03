@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common'
 import { LoggerService } from '../../../shared/modules/logger/logger.service'
 import { ConfigService } from '@nestjs/config'
 import type {
-  ISiafRnaOutput,
-  ISiafRnfOutput,
+  IAssociationOutput,
+  IFoundationOutput,
   ISiafSearchOrganismeOutput,
 } from '@biblio-num/shared'
 import axios, { AxiosInstance } from 'axios'
@@ -13,10 +13,10 @@ import { ILastOrganismeOuptut } from '../last-commun-output.type'
 import { ILastAssocationOuptut } from '../last-assocation-output.type'
 
 export interface IAssociations {
-  associations: ISiafRnaOutput
+  associations: IAssociationOutput
 }
 export interface IFondations {
-  fondations: ISiafRnfOutput
+  fondations: IFoundationOutput
 }
 
 const ePathCompletedOrganismeByType = {
@@ -75,7 +75,7 @@ export class HubService {
   }
 
   //#region ASSOCIATIONS
-  async getAssociation(idRna: string): Promise<IAssociations | ISiafRnaOutput | null> {
+  async getAssociation(idRna: string): Promise<IAssociations | IAssociationOutput | null> {
     this.logger.verbose('HUB-getAssociation')
     const path = `${ePathCompletedOrganismeByType.association}/${idRna}`
     return this.axios
@@ -99,13 +99,13 @@ export class HubService {
   //#endregion ASSOCIATIONS
 
   //#region FOUNDATIONS
-  async getFoundation(idRnf: string): Promise<IFondations | ISiafRnfOutput | null> {
+  async getFoundation(idRnf: string): Promise<IFondations | IFoundationOutput | null> {
     this.logger.verbose('HUB-getFondation')
     const path = `${ePathCompletedOrganismeByType.foundation}/${idRnf}`
     return this.axios
-      .get<IFondations | ISiafRnfOutput>(path)
+      .get<IFondations | IFoundationOutput>(path)
       .then(response => {
-        return response as unknown as IFondations | ISiafRnfOutput
+        return response as unknown as IFondations | IFoundationOutput
       })
   }
 

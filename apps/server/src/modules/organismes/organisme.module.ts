@@ -2,7 +2,6 @@ import { forwardRef, Module } from '@nestjs/common'
 import { OrganismeController } from '@/modules/organismes/controllers/organisme.controller'
 import { OrganismeService } from '@/modules/organismes/providers/organisme.service'
 import { RnaService } from '@/modules/organismes/providers/rna.service'
-import { RnfService } from '@/modules/organismes/providers/rnf.service'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { Organisme } from '@/modules/organismes/objects/organisme.entity'
 import { DossierModule } from '@/modules/dossiers/dossier.module'
@@ -39,14 +38,12 @@ import { CustomBullModule } from '@/shared/modules/custom-bull/custom-bull.modul
   providers: [
     OrganismeService,
     RnaService,
-    RnfService,
     OrganismeSyncStateService,
     OrganismeSyncService,
     OrganismeRnaService,
   ],
   exports: [
     OrganismeService,
-    RnfService,
     RnaService,
     OrganismeSyncStateService,
     OrganismeSyncService,
