@@ -11,7 +11,6 @@ import { InjectRepository } from '@nestjs/typeorm'
 import {
   type ChampDescriptor,
   type Demarche as TDemarche,
-  type Dossier as TDossier,
   DsApiClient,
 } from '@dnum-mi/ds-api-client'
 import { DemarcheService } from './demarche.service'
@@ -55,18 +54,42 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
 
   //#region private
   private async _synchroniseAllDossier(
-    dossiers: TDossier[],
     demarcheId: number,
+    demarcheNumber: number,
     fromScratch: boolean,
+    lastSyncAt?: Date,
   ): Promise<void> {
     this.logger.verbose('_synchroniseAllDossier')
-    for (const dossier of dossiers) {
-      await this.customBullService.addSyncOneDossierJob({
-        demarcheId,
-        dsDossierId: dossier.number,
-        fromScratch,
-      } as SyncOneDossierJobPayload)
-    }
+
+    const lastSyncronisedAt = (fromScratch || !lastSyncAt)
+      ? new Date(0)
+      : lastSyncAt
+
+    this.logger.verbose(`lastSyncronisedAt: ${lastSyncronisedAt}`)
+
+    let afterCursor: string | undefined
+    let hasNextPage: boolean = false
+    do {
+      const result = await this.dsApiClient.demarcheDossierIds(
+        demarcheNumber,
+        lastSyncronisedAt,
+        100,
+        afterCursor,
+      )
+      const dossiers = result.demarche.dossiers.nodes
+      this.logger.debug(`Sync of ${dossiers.length} dossiers of demarches ${demarcheNumber}`)
+      for (const dossier of dossiers) {
+        await this.customBullService.addSyncOneDossierJob({
+          demarcheId,
+          dsDossierId: dossier.number,
+          fromScratch,
+        } as SyncOneDossierJobPayload)
+      }
+
+      afterCursor = result.demarche.dossiers.pageInfo.endCursor
+      hasNextPage = result.demarche.dossiers.pageInfo.hasNextPage
+      this.logger.debug(`${hasNextPage ? 'Has next page ' : 'End'} Sync dossiers of demarches ${demarcheNumber}`)
+    } while (hasNextPage)
   }
 
   private _generateMappingColumns(
@@ -147,9 +170,8 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
     types: OrganismeTypeKey[] | undefined,
   ): Promise<void> {
     this.logger.verbose('createAndSynchronise')
-    const raw = await this.dsApiClient.demarcheDossierIds(dsId)
-    const dossiers = raw.demarche.dossiers.nodes
-    delete raw.demarche.dossiers
+    const raw = await this.dsApiClient.demarche(dsId)
+
     if (!raw) {
       throw new NotFoundException(`Demarche with dsId ${dsId} not found.`)
     }
@@ -173,7 +195,8 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
       dsCreatedAt: raw.demarche.dateCreation,
       dsPublishedAt: raw.demarche.datePublication,
     })
-    await this._synchroniseAllDossier(dossiers, demarche.id, true)
+    this.logger.debug('demarche - created')
+    await this._synchroniseAllDossier(demarche.id, demarche.dsDataJson.number, true)
   }
 
   public async synchroniseOneDemarche(
@@ -186,24 +209,18 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
     if (!demarche) {
       throw new NotFoundException(`Demarche with id ${demarcheId} not found.`)
     }
-    const lastSyncronisedAt = fromScratch
-      ? new Date(0)
-      : demarche.lastSynchronisedAt
-    const result = await this.dsApiClient.demarcheDossierIds(
+    const result = await this.dsApiClient.demarche(
       demarche.dsDataJson.number,
-      lastSyncronisedAt,
     )
-    job.log(`lastSyncronisedAt: ${lastSyncronisedAt}`)
     const raw = result.demarche
-    const dossiers = raw.dossiers.nodes
-    delete raw.dossiers
-    job.log(`dossiers=${JSON.stringify(dossiers)}`)
     const mappingColumns = this._generateMappingColumns(
       raw,
       demarche.mappingColumns,
       demarche.identification,
     )
+
     const toUpdate = {
+      // TODO: System à revoir, car elle représente la date de synchronisation des dossiers
       lastSynchronisedAt: new Date(),
       ...(raw.dateDerniereModification !==
         demarche.dsDataJson.dateDerniereModification || fromScratch
@@ -221,6 +238,7 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
     }
     await this.repo.update({ id: demarche.id }, toUpdate)
     job.log('demarche - updated')
-    await this._synchroniseAllDossier(dossiers, demarche.id, fromScratch)
+
+    await this._synchroniseAllDossier(demarche.id, demarche.dsDataJson.number, fromScratch, demarche.lastSynchronisedAt)
   }
 }
