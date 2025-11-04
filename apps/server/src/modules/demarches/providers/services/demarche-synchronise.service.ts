@@ -169,6 +169,9 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
       mappingColumns,
       dsDataJson: raw.demarche,
       identification,
+      dsId: raw.demarche.number,
+      dsCreatedAt: raw.demarche.dateCreation,
+      dsPublishedAt: raw.demarche.datePublication,
     })
     await this._synchroniseAllDossier(dossiers, demarche.id, true)
   }
@@ -210,6 +213,9 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
           types: demarche.types || [],
           mappingColumns,
           dsDataJson: raw,
+          dsId: raw.number,
+          dsCreatedAt: raw.dateCreation,
+          dsPublishedAt: raw.datePublication,
         }
         : {}),
     }

@@ -9,6 +9,7 @@ import { FilterDateDto } from './date.filter.dto'
 import { FilterNumberDto } from './number.filter.dto'
 import { FilterEnumDto } from './enum.filter.dto'
 import { FilterNumbersDto } from '@/shared/pagination/filters/numbers.filter.dto'
+import { FilterStringsDto } from './strings.filter.dto'
 
 export function IsValidFilter (validationOptions?: ValidationOptions) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -59,6 +60,13 @@ export function IsValidFilter (validationOptions?: ValidationOptions) {
             case 'numbers':
               if (
                 !validateSync(plainToClass(FilterNumbersDto, filter))?.length
+              ) {
+                continue
+              }
+              return false
+            case 'strings':
+              if (
+                !validateSync(plainToClass(FilterStringsDto, filter))?.length
               ) {
                 continue
               }

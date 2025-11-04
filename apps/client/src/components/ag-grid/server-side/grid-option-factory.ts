@@ -3,6 +3,7 @@ import CustomDateFilter from '@/components/ag-grid/custom-filters/CustomDateFilt
 import CustomNumbersFilter from '@/components/ag-grid/custom-filters/CustomNumbersFilter.vue'
 import { AG_GRID_LOCALE_FR } from '@ag-grid-community/locale'
 import { localeTextAgGrid } from '@/components/ag-grid/ag-grid-fr-dictionnary.ts'
+import CustomStringsFilter from '../custom-filters/CustomStringsFilter.vue'
 
 export const gridOptionFactory = (getRows: (params: IServerSideGetRowsParams) => void, pageSize: number): GridOptions => ({
   localeText: { ...AG_GRID_LOCALE_FR, ...localeTextAgGrid },
@@ -22,6 +23,7 @@ export const gridOptionFactory = (getRows: (params: IServerSideGetRowsParams) =>
   components: {
     customDateFilter: CustomDateFilter,
     customNumbersFilter: CustomNumbersFilter,
+    customStringsFilter: CustomStringsFilter,
   },
   sideBar: {
     toolPanels: [

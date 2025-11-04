@@ -1,5 +1,4 @@
 import apiClient from '@/api/api-client'
-
 import type {
   IDossierSearchOutput,
   IFieldSearchOutput,
@@ -10,6 +9,8 @@ import type {
   ISmallDemarcheOutput,
   IDemarcheOption,
   IMappingAnonymizedChamp,
+  IPaginated,
+  IPaginationSmallDemarche,
 } from '@biblio-num/shared'
 
 export type FrontIMappingColumn = IMappingColumnWithoutChildren & { isChild: boolean }
@@ -69,6 +70,10 @@ export const useDemarcheStore = defineStore('demarche', () => {
 
   const getDemarches = async () => {
     demarches.value = await apiClient.getSmallDemarches()
+  }
+
+  const loadDemarches = async (dto: IPaginationSmallDemarche): Promise<IPaginated<ISmallDemarcheOutput>> => {
+    return apiClient.listSmallDemarches(dto)
   }
 
   const searchCurrentDemarcheDossiers = async (
@@ -140,6 +145,7 @@ export const useDemarcheStore = defineStore('demarche', () => {
     currentDemarcheDossiers,
     currentDemarcheOptions,
     currentAnonymizedChamps,
+    loadDemarches,
     getDemarches,
     getCurrentDemarcheConfigurations,
     searchCurrentDemarcheDossiers,

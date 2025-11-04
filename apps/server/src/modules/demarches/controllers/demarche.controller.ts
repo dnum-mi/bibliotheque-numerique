@@ -44,6 +44,8 @@ import { DemarcheMaarchService } from '../providers/services/demarche-maarch.ser
 import { ImportFiles, ImportResult } from '../objects/constants/maarch.types'
 import { ImportMaarchDto } from '@/modules/demarches/objects/dtos/import-maarch.dto'
 import { CustomBullService } from '@/shared/modules/custom-bull/custom-bull.service'
+import { PaginatedSmallDemarcheDto } from '../objects/dtos/paginated-small-demarche.dto'
+import { PaginationDto } from '@/shared/pagination/pagination.dto'
 
 @ApiTags('Demarches')
 @Controller('demarches')
@@ -76,6 +78,25 @@ export class DemarcheController {
   ): Promise<SmallDemarcheOutputDto[]> {
     this.logger.verbose('allSmallDemarche')
     return this.demarcheService.findMultipleSmallDemarche({}, role)
+  }
+
+  @UsualApiOperation({
+    summary: 'Retourne une liste de démarches avec pagination.',
+    method: 'POST',
+    minimumRole: Roles.instructor,
+    supplement:
+      "Ne sont disponible que les démarches sur lesquelles l'utilisateur a des droits",
+    responseType: PaginatedSmallDemarcheDto,
+    isPagination: true,
+  })
+  @Post('small/list')
+  @Role(Roles.instructor)
+  async listSmallDemarches(
+    @Body() dto: PaginationDto<Demarche>,
+    @CurrentUserRole() role: IRole,
+  ): Promise<PaginatedSmallDemarcheDto> {
+    this.logger.verbose('listSmallDemarches')
+    return this.demarcheService.listSmallDemarches(dto, role)
   }
 
   @Get(':demarcheId')

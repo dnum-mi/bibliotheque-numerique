@@ -10,7 +10,7 @@ export const demarchesRoutes: RouteRecordRaw = {
     {
       path: '',
       name: routeNames.DEMARCHES,
-      component: () => import('@/views/demarches/Demarches.vue'),
+      component: () => import('@/views/demarches/list/Demarches.vue'),
       meta: {
         roleLevel: Roles.instructor,
       },

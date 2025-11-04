@@ -27,6 +27,7 @@ import {
   FilterNumbersDto,
   NumbersFilterConditionDto,
 } from '@/shared/pagination/filters/numbers.filter.dto'
+import { FilterStringsDto, StringsFilterConditionDto } from '../filters/strings.filter.dto'
 
 type filterFactory = (
   key: string,
@@ -35,7 +36,8 @@ type filterFactory = (
     | DateFilterConditionDto
     | NumberFilterConditionDto
     | EnumFilterConditionDto
-    | NumbersFilterConditionDto,
+    | NumbersFilterConditionDto
+    | StringsFilterConditionDto,
   isArray: boolean,
   prefix?: string,
 ) => string
@@ -63,6 +65,8 @@ const _isFilterConsistent = async (
           return __common(FilterDateDto, key)
         case FieldType.numbers:
           return __common(FilterNumbersDto, key)
+        case FieldType.strings:
+          return __common(FilterStringsDto, key)
         default:
           return false
         }
@@ -241,6 +245,33 @@ const _buildOneNumbersFilter = (
 }
 //#endregion
 
+//#region STRINGS FILTER
+const _buildOneStringsFilter = (
+  key: string,
+  filter: StringsFilterConditionDto,
+  isArray = false,
+  prefix?: string,
+): string => {
+  key = _adaptKeyForArray(key, isArray, prefix)
+  const validStrings = filter.filter.filter((s) => s && s.trim() !== '')
+  if (validStrings.length === 0 && !filter.includeEmpty) {
+    return ''
+  }
+
+  const stringCondition = validStrings.length
+    ? `${key} ?| array[${validStrings
+      .map((s) => `'${s.replace(/'/g, "''")}'`)
+      .join(', ')}]`
+    : ''
+
+  return `(${stringCondition}${
+    filter.includeEmpty
+      ? `${stringCondition ? ' OR ' : ''}${key} = '[]'::jsonb`
+      : ''
+  })`
+}
+//#endregion
+
 //#region ENUM FILTER
 const _buildOneEnumFilter = (
   key: string,
@@ -281,6 +312,9 @@ export const buildOneFilter = (
   case FieldType.numbers:
     filterFactory = _buildOneNumbersFilter
     break
+  case FieldType.strings:
+    filterFactory = _buildOneStringsFilter
+    break
   default:
     filterFactory = _buildOneTextFilter
   }
@@ -307,13 +341,14 @@ export const buildFilterQuery = async (
   if (!filters || !Object.keys(filters).length) {
     return ''
   } else {
-    return Object.keys(filters)
+    const query = Object.keys(filters)
       .filter((key) => !!typeHash[key])
       .map(
         (key) =>
           `(${buildOneFilter(key, filters[key], typeHash[key], isArray)})`,
       )
       .join(' AND ')
+    return query
   }
 }
 

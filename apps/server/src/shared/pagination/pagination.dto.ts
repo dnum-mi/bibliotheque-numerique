@@ -24,11 +24,13 @@ import { ColumnContainsKeyContraint } from './column-contains-key.contraint'
 import { IPagination } from '@biblio-num/shared'
 import { ApiExtraModels, ApiProperty } from '@nestjs/swagger'
 import { FilterNumbersDto } from '@/shared/pagination/filters/numbers.filter.dto'
+import { FilterStringsDto } from './filters/strings.filter.dto'
 
 @ApiExtraModels(
   FilterTextDto,
   FilterNumberDto,
   FilterNumbersDto,
+  FilterStringsDto,
   FilterDateDto,
   FilterEnumDto,
 )

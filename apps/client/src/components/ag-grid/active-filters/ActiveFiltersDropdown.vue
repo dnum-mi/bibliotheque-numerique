@@ -47,6 +47,7 @@ const filterTypeTranslations: Record<string, string> = {
   inRange: 'entre',
   set: 'contient un de',
   numbers: 'est un de',
+  strings: 'est un de',
 }
 const operatorTranslations: Record<string, string> = { AND: 'ET', OR: 'OU' }
 const noFiltersMessage = 'Aucun filtre n\'est appliqué.'
@@ -157,6 +158,12 @@ function formatNumbersFilterDescription (filter: DisplayActiveFilter): string {
   return `${filterTypeTranslations.numbers} [${displayValues}]`
 }
 
+/** Formats a strings filter */
+function formatStringsFilterDescription (filter: DisplayActiveFilter): string {
+  const displayValues = (filter.filter as number[]).map(String).join(', ')
+  return `${filterTypeTranslations.strings} [${displayValues}]`
+}
+
 /** Formats a Multi Filter */
 function formatMultiFilterDescription (filter: DisplayActiveFilter): string {
   if (!Array.isArray(filter.filterModels) || filter.filterModels.length === 0) {
@@ -210,8 +217,11 @@ function getFilterDescriptionOnly (filter: DisplayActiveFilter | null | undefine
   if (currentFilterWithCorrectColId.filterType === 'numbers' && Array.isArray(currentFilterWithCorrectColId.filter)) {
     return formatNumbersFilterDescription(currentFilterWithCorrectColId)
   }
+  if (currentFilterWithCorrectColId.filterType === 'strings' && Array.isArray(currentFilterWithCorrectColId.filter)) {
+    return formatStringsFilterDescription(currentFilterWithCorrectColId)
+  }
 
-  if (currentFilterWithCorrectColId.filterType === 'multi' && forColId) {
+  if (currentFilterWithCorrectColId.filterType === 'multi' && colIdToUse) {
     return formatMultiFilterDescription(currentFilterWithCorrectColId)
   }
   if (
@@ -242,13 +252,7 @@ const getFormattedFilterDisplay = (filter: DisplayActiveFilter): string => {
   }
   const columnName = columnLabelMap.value[filter.colId] || filter.colId
 
-  let description: string
-
-  if (filter.filterType === 'multi') {
-    description = formatMultiFilterDescription(filter)
-  } else {
-    description = getFilterDescriptionOnly(filter)
-  }
+  const description = getFilterDescriptionOnly(filter)
 
   return `${columnName} ${description}`
 }

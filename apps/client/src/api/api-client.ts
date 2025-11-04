@@ -21,7 +21,6 @@ import type {
   IPaginatedUser,
   IMyProfileOutput,
   IUpdateOneRoleOption,
-  ISmallDemarcheOutput,
   IUpdateProfile,
   IUserWithEditableRole,
   ICustomFilter,
@@ -42,6 +41,7 @@ import type {
   ISiafRnfHistoryOutput,
   IDossierFieldsOutput,
   IGenerateUpdatePasswordLink,
+  IPaginationSmallDemarche,
 } from '@biblio-num/shared'
 
 import {
@@ -90,6 +90,7 @@ import {
   getDossierWithFieldsByIdRoute,
   resetPasswordRoute,
   generateUpdatePasswordLinkRoute,
+  listSmallDemarchesRoutes,
 } from './bn-api-routes'
 import { getUserByIdRoute, profileRoute, signInRoute, verifyAuthRoute, logoutRoute, usersRoutes } from '@/api/bn-api-routes'
 
@@ -243,8 +244,14 @@ export const demarchesApiClient = {
     return response?.data
   },
 
-  getSmallDemarches: async (): Promise<ISmallDemarcheOutput[]> => {
-    return (await apiClientInstance.get(smallDemarchesRoutes)).data
+  getSmallDemarches: async () => {
+    const response = await apiClientInstance.get(smallDemarchesRoutes)
+    return response.data
+  },
+
+  listSmallDemarches: async (dto: IPaginationSmallDemarche) => {
+    const response = await apiClientInstance.post(listSmallDemarchesRoutes, dto)
+    return response.data
   },
 
   getDemarcheConfiguration: async (demarcheId: number): Promise<IMappingColumn[]> => {

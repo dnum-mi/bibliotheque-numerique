@@ -1,6 +1,7 @@
-import type { INumbersFilterCondition, IOrganisme, IPaginated } from '@biblio-num/shared'
+import type { INumbersFilterCondition, IPaginated, IStringsFilterCondition } from '@biblio-num/shared'
 
-export const EMPTY_RESULT: IPaginated<IOrganisme> = { data: [], total: 0 }
+// Objet vide respectant la structure IPaginated : { data: T[], total: number }
+export const EMPTY_RESULT: IPaginated<any> = { data: [], total: 0 }
 
 const isEmpty = (values: unknown[]): boolean => {
   if (!values?.length) {
@@ -10,7 +11,7 @@ const isEmpty = (values: unknown[]): boolean => {
   return conditionValues.length === 0
 }
 
-export const isEmptyYearsFilter = (filter: INumbersFilterCondition): boolean => {
+export const isEmptyListFilter = <T extends INumbersFilterCondition | IStringsFilterCondition>(filter: T): boolean => {
   return !filter.includeEmpty && isEmpty(filter.filter || [])
 }
 

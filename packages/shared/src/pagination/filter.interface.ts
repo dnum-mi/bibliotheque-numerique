@@ -9,16 +9,19 @@ import type {
 } from './number.filter.interface'
 import type { IEnumFilterCondition, IFilterEnum } from './enum.filter.interface'
 import { IFilterNumbers, INumbersFilterCondition } from './numbers.filter.interface'
+import { IFilterStrings, IStringsFilterCondition } from './strings.filter.interface'
 
 export type IFilter =
   | IFilterText
   | IFilterDate
   | IFilterNumber
   | IFilterNumbers
+  | IFilterStrings
   | IFilterEnum
 export type IFilterCondition =
   | ITextFilterCondition
   | INumberFilterCondition
   | INumbersFilterCondition
+  | IStringsFilterCondition
   | IEnumFilterCondition
   | IDateFilterCondition

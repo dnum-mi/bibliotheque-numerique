@@ -10,7 +10,7 @@ export interface Condition {
 }
 export interface DisplayActiveFilter {
   colId: string
-  filterType: 'text' | 'number' | 'date' | 'set' | 'multi' | 'numbers' | string
+  filterType: 'text' | 'number' | 'date' | 'set' | 'multi' | 'numbers' | 'strings' | string
   type?: string
   filter?: string | number | null | (string | number)[]
   filterTo?: string | number | null

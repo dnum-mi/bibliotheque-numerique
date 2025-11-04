@@ -2,6 +2,7 @@ export const FieldType = {
   string: 'string',
   number: 'number',
   numbers: 'numbers',
+  strings: 'strings',
   enum: 'enum',
   date: 'date',
   boolean: 'boolean',

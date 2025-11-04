@@ -112,4 +112,34 @@ export class Demarche extends BaseEntity implements IDemarcheWithOptions {
     type: 'boolean',
   })
   isOnAllDossiersOfOrganisme: boolean
+
+  @ApiProperty({
+    description: 'Numéro de la démarche (extrait de dsDataJson)',
+    nullable: true,
+  })
+  @Column({
+    type: 'integer',
+    nullable: true,
+  })
+  dsId: number | null
+
+  @ApiProperty({
+    description: 'Date de création (extrait de dsDataJson)',
+    nullable: true,
+  })
+  @Column({
+    type: 'timestamp',
+    nullable: true,
+  })
+  dsCreatedAt: Date | null
+
+  @ApiProperty({
+    description: 'Date de publication (extrait de dsDataJson)',
+    nullable: true,
+  })
+  @Column({
+    type: 'timestamp',
+    nullable: true,
+  })
+  dsPublishedAt: Date | null
 }

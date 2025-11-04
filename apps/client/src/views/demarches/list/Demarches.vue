@@ -1,58 +1,39 @@
 <script lang="ts" setup>
-import type { IDemarche, ISmallDemarcheOutput } from '@biblio-num/shared'
+import type { IPaginated, IPaginationSmallDemarche, ISmallDemarcheOutput, IStringsFilterCondition } from '@biblio-num/shared'
 
-import { dateToStringFr } from '@/utils'
 import { useDemarcheStore } from '@/stores/demarche'
 import { routeNames } from '@/router/route-names'
-import OrganismeBadgesRenderer from '@/components/Badges/organisme/OrganismeBadgesRenderer.vue'
-import BiblioNumDataTableAgGrid from '@/components/BiblioNumDataTableAgGrid.vue'
+import type BiblioNumDataTableAgGrid from '@/components/BiblioNumDataTableAgGrid.vue'
 import LayoutList from '@/components/Layout/LayoutList.vue'
 import { useUserStore } from '@/stores'
 import { useActiveFilter } from '@/components/ag-grid/active-filters/useActiveFilter'
+import type { SelectionChangedEvent } from 'ag-grid-community'
+import { demarcheColumnDefs } from './columns-def.const'
+import { EMPTY_RESULT, isEmptyListFilter, isEmptySetFilter } from '@/components/ag-grid/utils'
 
 const agGridComponent = ref<InstanceType<typeof BiblioNumDataTableAgGrid> | null>(null)
 const demarcheStore = useDemarcheStore()
 const router = useRouter()
-const headers = [
-  {
-    value: 'id',
-    type: 'hidden',
-    width: 0,
-  },
-  {
-    text: 'N° Démarche DS',
-    value: 'dsId',
-    type: 'number',
-    width: 200,
-  },
-  {
-    text: 'Types',
-    value: 'types',
-    renderer: OrganismeBadgesRenderer,
-    width: 200,
-  },
-  {
-    text: 'Libellé de la démarche',
-    value: 'title',
-    type: 'text',
-    width: 600,
-  },
-  {
-    text: 'Créé le',
-    value: 'dsCreatedAt',
-    parseFn: dateToStringFr,
-    type: 'date',
-    width: 200,
-  },
-  {
-    text: 'Publié le',
-    value: 'dsPublishedAt',
-    parseFn: dateToStringFr,
-    type: 'date',
-    width: 200,
-  },
-]
 const userStore = useUserStore()
+const paginationDto = ref()
+
+const apiCall = async (params: IPaginationSmallDemarche): Promise<IPaginated<ISmallDemarcheOutput>> => {
+  const { filters } = params
+
+  if (filters?.types) {
+    const typeFilter = filters.types.condition1 as IStringsFilterCondition
+    if (isEmptyListFilter(typeFilter)) {
+      return EMPTY_RESULT
+    }
+  }
+
+  if (filters?.types && isEmptySetFilter(filters.types)) {
+    return EMPTY_RESULT
+  }
+
+  return demarcheStore.loadDemarches(params)
+}
+
 // Avoids the error: "AG Grid: cannot get grid to draw rows when it is in the middle of drawing rows."
 const rowData = ref<ISmallDemarcheOutput[]>([])
 watch(
@@ -63,15 +44,15 @@ watch(
 )
 
 onMounted(async () => {
-  await demarcheStore.getDemarches()
+  // await demarcheStore.getDemarches()
   await userStore.loadMyProfile()
 })
 
-const selectDemarche = (row: IDemarche[]) => {
-  router.push({ name: routeNames.DEMARCHE_DOSSIERS, params: { demarcheId: row[0].id } })
+const onSelectDemarche = (event: SelectionChangedEvent) => {
+  const selection = event.api.getSelectedRows()?.[0]
+  const id = selection?.id
+  router.push({ name: routeNames.DEMARCHE_DOSSIERS, params: { demarcheId: id } })
 }
-
-const rowStyle = { cursor: 'pointer' }
 
 const { activeFilters, onFiltersUpdated, handleClearAllFilters, handleRemoveFilter } = useActiveFilter(agGridComponent)
 </script>
@@ -87,21 +68,20 @@ const { activeFilters, onFiltersUpdated, handleClearAllFilters, handleRemoveFilt
         <ActiveFiltersDropdown
           v-if="activeFilters.length > 0"
           :filters="activeFilters"
-          :column-definitions="headers"
+          :column-definitions="demarcheColumnDefs"
           @request-remove-filter="handleRemoveFilter"
           @request-clear-all="handleClearAllFilters"
         />
       </div>
-
-      <BiblioNumDataTableAgGrid
+      <AgGridServerSide
         ref="agGridComponent"
-        :headers="headers"
-        action-title="Voir les détails de la démarche"
-        :row-data="rowData"
-        floating-filter
-        row-selection="single"
-        :row-style="rowStyle"
-        @selection-changed="selectDemarche"
+        v-model:pagination-dto="paginationDto"
+        class="h-full"
+        :column-defs="demarcheColumnDefs"
+        :on-selection-changed="onSelectDemarche"
+        pre-condition
+        local-storage-key="agGrid.demarches.state"
+        :api-call="apiCall"
         @filters-updated="onFiltersUpdated"
       />
     </div>

@@ -46,7 +46,13 @@ describe('Demarches (e2e)', () => {
           const nbr = await demarcheService.repository.count()
           expect(body.length).toEqual(nbr)
           body.forEach((d) => {
-            expect(Object.keys(d)).toEqual(['id', 'title', 'types', 'dsId', 'identification'])
+            expect(Object.keys(d)).toEqual([
+              'id',
+              'title',
+              'types',
+              'dsId',
+              'identification',
+            ])
           })
         })
     })
@@ -59,6 +65,93 @@ describe('Demarches (e2e)', () => {
       expect(body).toHaveLength(2)
       expect(body[0]).toHaveProperty('id', 1)
       expect(body[1]).toHaveProperty('id', 5)
+    })
+  })
+
+  describe('POST /demarches/small/list', () => {
+    it('Should be 401', async () => {
+      return request(app.getHttpServer())
+        .post('/demarches/small/list')
+        .expect(401)
+    })
+
+    it('Should be 403', async () => {
+      return await request(app.getHttpServer())
+        .post('/demarches/small/list')
+        .set('Authorization', `Bearer ${tokens.norole}`)
+        .expect(403)
+    })
+
+    it('should return a list of demarche 1', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/demarches/small/list')
+        .set('Authorization', `Bearer ${tokens.instructor}`)
+        .send({
+          columns: ['id', 'title'],
+        })
+        .expect(201)
+
+      expect(response.body).toHaveProperty('total')
+      expect(response.body).toHaveProperty('data')
+      expect(response.body.data).toHaveLength(2)
+      expect(response.body.data[0]).toHaveProperty('id', 1)
+      expect(response.body.data[1]).toHaveProperty('id', 5)
+    })
+
+    it('should return a list of demarche with title filtering', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/demarches/small/list')
+        .set('Authorization', `Bearer ${tokens.instructor}`)
+        .send({
+          sorts: [],
+          filters: {
+            title: {
+              filterType: 'text',
+              condition1: { filter: '[UPDATE-IDENTIFICATION]', type: 'contains' },
+            },
+          },
+          columns: [
+            'id',
+            'title',
+          ],
+          perPage: 20,
+          page: 1,
+        })
+        .expect(201)
+
+      expect(response.body).toHaveProperty('total')
+      expect(response.body).toHaveProperty('data')
+      expect(response.body.data).toHaveLength(1)
+      expect(response.body.data).toEqual([
+        { id: 5, title: '[UPDATE-IDENTIFICATION] Déclaration de FE' },
+      ])
+    })
+
+    it('should return a list of demarche with title sorting', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/demarches/small/list')
+        .set('Authorization', `Bearer ${tokens.instructor}`)
+        .send({
+          sorts: [
+            { key: 'title', order: 'DESC' },
+          ],
+          filters: null,
+          columns: [
+            'id',
+            'title',
+          ],
+          perPage: 20,
+          page: 1,
+        })
+        .expect(201)
+
+      expect(response.body).toHaveProperty('total')
+      expect(response.body).toHaveProperty('data')
+      expect(response.body.data).toHaveLength(2)
+      expect(response.body.data).toEqual([
+        { id: 5, title: '[UPDATE-IDENTIFICATION] Déclaration de FE' },
+        { id: 1, title: 'Déclaration de FE' },
+      ])
     })
   })
 
@@ -126,8 +219,12 @@ describe('Demarches (e2e)', () => {
       expect(demarche1).toHaveProperty('identification', null)
       expect(demarche1.mappingColumns).toEqual(
         expect.not.arrayContaining([
-          expect.objectContaining({ id: 'ca6b1946-efe2-448d-b9e3-645829093dc5' }),
-          expect.objectContaining({ id: 'ca6b1946-efe2-448d-b9e3-645829093dc6' }),
+          expect.objectContaining({
+            id: 'ca6b1946-efe2-448d-b9e3-645829093dc5',
+          }),
+          expect.objectContaining({
+            id: 'ca6b1946-efe2-448d-b9e3-645829093dc6',
+          }),
         ]),
       )
     })
@@ -185,9 +282,11 @@ describe('Demarches (e2e)', () => {
       })
       expect(demarche1).toBeNull()
 
-      const demarche1Dossiers: Dossier[] = await dataSource.manager.getRepository(Dossier).find({
-        where: { demarcheId: demarche.id },
-      })
+      const demarche1Dossiers: Dossier[] = await dataSource.manager
+        .getRepository(Dossier)
+        .find({
+          where: { demarcheId: demarche.id },
+        })
       expect(demarche1Dossiers).toEqual([])
     })
 

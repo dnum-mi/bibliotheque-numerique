@@ -11,12 +11,17 @@ import {
   isBelowSuperAdmin,
   Roles,
   IRole,
+  IAgGridSmallDemarche,
 } from '@biblio-num/shared'
 
 import { FindManyOptions } from 'typeorm/find-options/FindManyOptions'
 import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere'
 import { SmallDemarcheOutputDto } from '@/modules/demarches/objects/dtos/small-demarche-output.dto'
 import { UpdateDemarcheDto } from '@/modules/demarches/objects/dtos/update-demarche.dto'
+import { PaginatedDto } from '@/shared/pagination/paginated.dto'
+import { DemarcheFieldTypeHash } from '../../objects/const/demarche-field-type-hash.const'
+import { PaginatedSmallDemarcheDto } from '../../objects/dtos/paginated-small-demarche.dto'
+import { PaginationDto } from '@/shared/pagination/pagination.dto'
 
 @Injectable()
 export class DemarcheService extends BaseEntityService<Demarche> {
@@ -24,7 +29,7 @@ export class DemarcheService extends BaseEntityService<Demarche> {
     protected logger: LoggerService,
     @InjectRepository(Demarche) repo: Repository<Demarche>,
   ) {
-    super(repo, logger)
+    super(repo, logger, DemarcheFieldTypeHash)
     this.logger.setContext(this.constructor.name)
   }
 
@@ -40,7 +45,31 @@ export class DemarcheService extends BaseEntityService<Demarche> {
   }
 
   async findAllSmallDemarche(): Promise<SmallDemarcheOutputDto[]> {
-    return this.findMultipleSmallDemarche({}, { label: Roles.superadmin, options: null })
+    return this.findMultipleSmallDemarche(
+      {},
+      { label: Roles.superadmin, options: null },
+    )
+  }
+
+  async listSmallDemarches(
+    paginationDto: PaginationDto<Demarche>,
+    role: IRole,
+  ): Promise<PaginatedSmallDemarcheDto> {
+    this.logger.verbose('listSmallDemarches')
+
+    let roleWhereCondition: FindOptionsWhere<Demarche> = {}
+    if (isBelowSuperAdmin(role.label)) {
+      roleWhereCondition = { id: In(Object.keys(role.options)) }
+    }
+
+    const paginatedResult: PaginatedDto<IAgGridSmallDemarche> =
+      await this.paginate(
+        paginationDto,
+        roleWhereCondition,
+        [],
+      )
+
+    return paginatedResult
   }
 
   async findMultipleSmallDemarche(
@@ -48,7 +77,10 @@ export class DemarcheService extends BaseEntityService<Demarche> {
     role: IRole,
   ): Promise<SmallDemarcheOutputDto[]> {
     return this.findMultipleDemarche(
-      { ...filter, select: ['id', 'title', 'dsDataJson', 'types', 'identification'] },
+      {
+        ...filter,
+        select: ['id', 'title', 'dsDataJson', 'types', 'identification'],
+      },
       role,
     ).then((demarches) => {
       return demarches.map((d) => ({

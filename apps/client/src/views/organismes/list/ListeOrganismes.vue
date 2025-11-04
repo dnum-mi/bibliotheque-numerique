@@ -11,7 +11,7 @@ import type { OrganismeIdType } from '@/stores'
 import { routeNames } from '../../../router/route-names'
 import { useConfigurationStore } from '../../../stores/configuration'
 import { useActiveFilter } from '@/components/ag-grid/active-filters/useActiveFilter'
-import { EMPTY_RESULT, isEmptySetFilter, isEmptyYearsFilter } from './utils'
+import { EMPTY_RESULT, isEmptyListFilter, isEmptySetFilter } from '@/components/ag-grid/utils'
 
 const organismeStore = useOrganismeStore()
 const bnConfigStore = useConfigurationStore()
@@ -22,7 +22,7 @@ const apiCall = async (params: IPagination<IOrganisme>): Promise<IPaginated<IOrg
 
   if (filters?.missingDeclarationYears) {
     const yearFilter = filters.missingDeclarationYears.condition1 as INumbersFilterCondition
-    if (isEmptyYearsFilter(yearFilter)) {
+    if (isEmptyListFilter(yearFilter)) {
       return EMPTY_RESULT
     }
   }

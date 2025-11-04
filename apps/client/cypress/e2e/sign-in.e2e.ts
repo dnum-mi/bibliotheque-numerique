@@ -9,7 +9,7 @@ import adminProfile from '../fixtures/admin-profile.json'
 
 describe('Sign in', () => {
   beforeEach(() => {
-    cy.intercept({ method: 'GET', url: '/api/demarches/small' }, []).as('demarches')
+    cy.intercept({ method: 'POST', url: '/api/demarches/small/list' }, []).as('demarches')
     cy.intercept({ method: 'POST', url: '/api/organismes/list' }, {}).as('organismes')
     cy.intercept({ method: 'GET', url: '/api/custom-filters' }, []).as('customFilters')
     cy.intercept({ method: 'GET', url: '/api/auth/proconnect' }, []).as('proconnect')

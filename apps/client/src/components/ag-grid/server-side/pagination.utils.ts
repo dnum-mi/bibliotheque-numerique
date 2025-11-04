@@ -12,6 +12,9 @@ import type {
   IFilterEnum,
   IFilterNumber,
   IFilterText,
+  INumbersFilterModel,
+  IStringsFilterModel,
+  IStringsFilterCondition,
 } from '@biblio-num/shared'
 import type {
   DateFilterModel,
@@ -56,6 +59,11 @@ const _fromAggDateFilterToBackendFilter = (filter: DateFilterModel | ICombinedSi
 
 const _fromCustomNumbersFilterToBackendFilter = (filter: INumbersFilterCondition): IFilter => ({
   filterType: 'numbers',
+  condition1: filter,
+})
+
+const _fromCustomStringsFilterToBackendFilter = (filter: IStringsFilterCondition): IFilter => ({
+  filterType: 'strings',
   condition1: filter,
 })
 
@@ -126,7 +134,11 @@ export const fromAggToBackendFilter = <T>(filterModel: Record<string, FilterMode
           break
         }
         case value.filterType === 'numbers': {
-          filters[key] = _fromCustomNumbersFilterToBackendFilter(value as IMultiFilterModel)
+          filters[key] = _fromCustomNumbersFilterToBackendFilter(value as INumbersFilterModel)
+          break
+        }
+        case value.filterType === 'strings': {
+          filters[key] = _fromCustomStringsFilterToBackendFilter(value as IStringsFilterModel)
           break
         }
         case value.filterType === 'text':

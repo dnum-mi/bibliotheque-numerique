@@ -13,6 +13,7 @@ export const getRoleByIdRoute = (roleId: number) => `/roles/${roleId}`
 
 export const demarchesRoute = '/demarches'
 export const smallDemarchesRoutes = `${demarchesRoute}/small`
+export const listSmallDemarchesRoutes = `${demarchesRoute}/small/list`
 export const getDemarcheByIdRoute = (id: number) => `${demarchesRoute}/${id}`
 export const getDemarcheConfigurationRoute = (id: number) => `${getDemarcheByIdRoute(id)}/configurations`
 export const getDemarcheOptionRoute = (id: number) => `${getDemarcheByIdRoute(id)}/options`
