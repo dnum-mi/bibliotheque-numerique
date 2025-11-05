@@ -2,9 +2,9 @@ import { IRnaFile } from "./common-output.interface"
 import { PrefixS3Key, TypeFileKey } from "./enums"
 
 export interface IFile {
-  _id: string
-  _createdAt: Date
-  _updatedAt: Date
+  id: string
+  createdAt: Date
+  updatedAt: Date
   originalName: string
   checksum: string
   byteSize: number

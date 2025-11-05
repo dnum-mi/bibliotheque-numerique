@@ -41,7 +41,7 @@ export class FileOrganismeHubService extends BaseEntityService<File> {
     labelAndTag: TLabelAndTag,
     fileCommon: tFileCommon,
   ): Promise<void> {
-    const id = file._id
+    const id = file.id
     const fileFound = await this.findWithFilter({
       uuid: id,
       organismeId: fileCommon.organismeId,

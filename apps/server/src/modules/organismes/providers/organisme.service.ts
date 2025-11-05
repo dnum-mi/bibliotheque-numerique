@@ -176,7 +176,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     if (firstTime) {
       toUpdate.declarationYears = raw.accountDepositYears
       toUpdate.missingDeclarationYears = await this.getMissingYears(
-        raw._createdAt,
+        raw.createdAt,
         raw.accountDepositYears,
       )
     }
@@ -414,8 +414,8 @@ export class OrganismeService extends BaseEntityService<Organisme> {
       generalInterest: (organisme?.rnfJson as IFoundationOutput)?.generalInterestDomain,
       internationalAction: (organisme?.rnfJson as IFoundationOutput)
         ?.hasInternationalActivity,
-      createdAt: (organisme?.rnfJson as IFoundationOutput)?._createdAt,
-      updatedAt: (organisme?.rnfJson as IFoundationOutput)?._updatedAt,
+      createdAt: (organisme?.rnfJson as IFoundationOutput)?.createdAt,
+      updatedAt: (organisme?.rnfJson as IFoundationOutput)?.updatedAt,
       fiscalEndDateAt: (organisme?.rnfJson as IFoundationOutput)?.fiscalEndAt,
     }
   }
@@ -626,7 +626,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     }
     await this.fileOrganismeHubService.synchroniseRnfFiles(
       rawRnf.files,
-      rawRnf._updatedAt,
+      rawRnf.updatedAt,
       fileCommon,
     )
   }

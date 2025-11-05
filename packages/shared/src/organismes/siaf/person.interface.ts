@@ -2,7 +2,7 @@ import { ISiafAddress } from "./common-output.interface"
 import { JobPositionKey, qualityInOrganismeKey } from "./enums"
 
 export interface IPerson {
-  _id: string
+  id: string
   lastName: string
   firstName: string
 
@@ -20,5 +20,5 @@ export interface IPerson {
   exitAt: Date | null
 
   quality: qualityInOrganismeKey | null
-  role: JobPositionKey | null
+  jobPosition: JobPositionKey | null
 }

@@ -23,7 +23,6 @@ export interface ILegalEntity {
 }
 
 export interface IPerson {
-  _id: string
   lastName: string
   firstName: string
 
@@ -46,10 +45,9 @@ export interface IPerson {
 
 export interface ISiafOrganisme {
   id: string
-  _createdAt: Date
-  _updatedAt: Date
+  createdAt: Date
+  updatedAt: Date
 
-  // publicId: string
   status: OrganismeStatusKey
   statusEffectiveAt: Date | null
 
