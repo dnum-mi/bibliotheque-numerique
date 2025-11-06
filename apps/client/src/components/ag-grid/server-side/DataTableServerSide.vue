@@ -764,6 +764,48 @@ function updateDataTableState (dto: IPagination<T>) {
   refreshTable()
 }
 
+function resetColumnOrder () {
+  // Réinitialiser l'ordre des colonnes à l'ordre par défaut
+  const defaultOrder = props.columnDefs.filter((col) => !col.hide).map((col) => col.field ?? '')
+  selectedColumnsIds.value = defaultOrder
+  columnsOrder.value = defaultOrder
+
+  // Sauvegarder immédiatement la réinitialisation
+  if (hasInitialDataLoaded.value) {
+    const dto: IPagination<T> = {
+      sorts: sort.value,
+      filters: Object.keys(filtersToSend.value ?? {}).length > 0 ? filtersToSend.value as Record<keyof T, IFilter> : null,
+      columns: selectedColumnsIds.value,
+      columnsWidth: columnsWidth.value as Record<string | keyof T, number>,
+      columnsOrder: columnsOrder.value,
+      perPage: +perPage.value,
+      page: currentPage.value,
+    }
+    emit('update:paginationDto', dto)
+    saveToLocalStorage(dto)
+  }
+}
+
+function resetColumnsWidth () {
+  // Réinitialiser toutes les largeurs de colonnes
+  columnsWidth.value = {}
+
+  // Sauvegarder immédiatement la réinitialisation
+  if (hasInitialDataLoaded.value) {
+    const dto: IPagination<T> = {
+      sorts: sort.value,
+      filters: Object.keys(filtersToSend.value ?? {}).length > 0 ? filtersToSend.value as Record<keyof T, IFilter> : null,
+      columns: selectedColumnsIds.value,
+      columnsWidth: columnsWidth.value as Record<string | keyof T, number>,
+      columnsOrder: columnsOrder.value,
+      perPage: +perPage.value,
+      page: currentPage.value,
+    }
+    emit('update:paginationDto', dto)
+    saveToLocalStorage(dto)
+  }
+}
+
 useAmountLines()
 
 defineExpose({
@@ -771,6 +813,8 @@ defineExpose({
   clearAllFilters,
   removeFilter,
   updateDataTableState,
+  resetColumnOrder,
+  resetColumnsWidth,
 })
 </script>
 
@@ -890,6 +934,28 @@ defineExpose({
     </DataTable>
     <div class="side-buttons">
       <div class="relative">
+        <div class="mb-2">
+          <button
+            type="button"
+            title="Réinitialiser les largeurs des colonnes"
+            @click.stop="resetColumnsWidth()"
+          >
+            <div class="side-button-label">
+              Largeurs
+            </div>
+          </button>
+        </div>
+        <div class="mb-2">
+          <button
+            type="button"
+            title="Réinitialiser l'ordre des colonnes"
+            @click.stop="resetColumnOrder()"
+          >
+            <div class="side-button-label">
+              Ordre
+            </div>
+          </button>
+        </div>
         <button type="button" @click.stop="displayColumns = !displayColumns">
           <div class="side-button-label">
             Colonnes
