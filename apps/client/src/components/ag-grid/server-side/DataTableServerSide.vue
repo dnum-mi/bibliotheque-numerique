@@ -91,6 +91,7 @@ const totalRecords = ref(0)
 const sort = ref<{ key: string; order: 'ASC' | 'DESC' }[]>([])
 const filters = ref<DataTableFilterMeta>(getFilters())
 const columnsWidth = ref<Record<string, number>>({})
+const columnsOrder = ref<string[]>(props.columnDefs.filter((col) => !col.hide).map((col) => col.field ?? ''))
 
 function getFilters () {
   return props.columnDefs
@@ -305,6 +306,20 @@ function restoreFromLocalStorage () {
   }
   //#endregion
 
+  //#region 📍------ RESTORE COLUMNS ORDER ------ 📍
+  if (dto.columnsOrder && dto.columnsOrder.length > 0) {
+    const availableColumns = props.columnDefs.filter(col => !col.hide).map(col => col.field ?? '')
+    const validOrder = (dto.columnsOrder as string[]).filter(colId => availableColumns.includes(colId))
+
+    // Ajouter les colonnes manquantes à la fin si elles ne sont pas dans l'ordre sauvegardé
+    const missingColumns = availableColumns.filter(col => !validOrder.includes(col))
+    const finalOrder = [...validOrder, ...missingColumns]
+
+    selectedColumnsIds.value = finalOrder
+    columnsOrder.value = finalOrder
+  }
+  //#endregion
+
   currentPage.value = dto.page ?? 1
   perPage.value = dto.perPage ?? 20
 }
@@ -396,6 +411,7 @@ const getRows = async (page: number = currentPage.value) => {
     filters: Object.keys(filtersToSend.value ?? {}).length > 0 ? filtersToSend.value as Record<keyof T, IFilter> : null,
     columns: selectedColumnsIds.value,
     columnsWidth: columnsWidth.value as Record<string | keyof T, number>,
+    columnsOrder: columnsOrder.value,
     perPage: +perPage.value,
     page,
   }
@@ -414,11 +430,37 @@ const getRows = async (page: number = currentPage.value) => {
 }
 
 const filteredColumnDefs = computed(() => {
-  return props.columnDefs.filter((col) => {
+  // Obtenir les colonnes non cachées et sélectionnées
+  const availableColumns = props.columnDefs.filter((col) => {
     const isNotHidden = !col.hide
     const isSelected = selectedColumnsIds.value.includes(col.field ?? '')
     return isNotHidden && isSelected
   })
+
+  // Si aucun ordre personnalisé n'est défini, retourner l'ordre original
+  if (columnsOrder.value.length === 0) {
+    return availableColumns
+  }
+
+  // Créer un map pour un accès rapide aux colonnes par field
+  const columnMap = new Map(availableColumns.map(col => [col.field, col]))
+
+  // Réorganiser selon l'ordre défini dans columnsOrder
+  const orderedColumns = []
+
+  // Ajouter les colonnes dans l'ordre spécifié
+  for (const fieldId of columnsOrder.value) {
+    const column = columnMap.get(fieldId)
+    if (column) {
+      orderedColumns.push(column)
+      columnMap.delete(fieldId) // Retirer pour éviter les doublons
+    }
+  }
+
+  // Ajouter les colonnes restantes qui ne sont pas dans l'ordre personnalisé
+  orderedColumns.push(...columnMap.values())
+
+  return orderedColumns
 })
 
 watch(filtersToSend, () => {
@@ -452,6 +494,8 @@ watch(selectedColumnsIds, () => {
       sorts: sort.value,
       filters: Object.keys(filtersToSend.value ?? {}).length > 0 ? filtersToSend.value as Record<keyof T, IFilter> : null,
       columns: selectedColumnsIds.value,
+      columnsWidth: columnsWidth.value as Record<string | keyof T, number>,
+      columnsOrder: columnsOrder.value,
       perPage: +perPage.value,
       page: currentPage.value,
     }
@@ -518,6 +562,45 @@ const onColResize = (event: { element: HTMLElement, delta: number }) => {
       filters: Object.keys(filtersToSend.value ?? {}).length > 0 ? filtersToSend.value as Record<keyof T, IFilter> : null,
       columns: selectedColumnsIds.value,
       columnsWidth: columnsWidth.value as Record<string | keyof T, number>,
+      columnsOrder: columnsOrder.value,
+      perPage: +perPage.value,
+      page: currentPage.value,
+    }
+    emit('update:paginationDto', dto)
+    saveToLocalStorage(dto)
+  }
+}
+
+const onColumnReorder = (event: { dragIndex: number, dropIndex: number }) => {
+  // eslint-disable-next-line no-console
+  console.log('Column reordered:', event.dragIndex, '->', event.dropIndex)
+
+  // Créer une copie de l'ordre actuel des colonnes visibles
+  const currentOrder = [...selectedColumnsIds.value]
+
+  // Déplacer la colonne de dragIndex vers dropIndex
+  const movedColumn = currentOrder.splice(event.dragIndex, 1)[0]
+  if (movedColumn) {
+    currentOrder.splice(event.dropIndex, 0, movedColumn)
+  }
+
+  // Mettre à jour l'ordre des colonnes
+  selectedColumnsIds.value = currentOrder
+  columnsOrder.value = currentOrder
+
+  // eslint-disable-next-line no-console
+  console.log('New column order:', columnsOrder.value)
+
+  // Sauvegarder immédiatement l'ordre modifié
+  if (hasInitialDataLoaded.value) {
+    // eslint-disable-next-line no-console
+    console.log('Saving column order...', columnsOrder.value)
+    const dto: IPagination<T> = {
+      sorts: sort.value,
+      filters: Object.keys(filtersToSend.value ?? {}).length > 0 ? filtersToSend.value as Record<keyof T, IFilter> : null,
+      columns: selectedColumnsIds.value,
+      columnsWidth: columnsWidth.value as Record<string | keyof T, number>,
+      columnsOrder: columnsOrder.value,
       perPage: +perPage.value,
       page: currentPage.value,
     }
@@ -659,6 +742,19 @@ function updateDataTableState (dto: IPagination<T>) {
     columnsWidth.value = dto.columnsWidth as Record<string, number>
   }
 
+  // Appliquer l'ordre des colonnes
+  if (dto.columnsOrder && dto.columnsOrder.length > 0) {
+    const availableColumns = props.columnDefs.filter(col => !col.hide).map(col => col.field ?? '')
+    const validOrder = (dto.columnsOrder as string[]).filter(colId => availableColumns.includes(colId))
+
+    // Ajouter les colonnes manquantes à la fin si elles ne sont pas dans l'ordre sauvegardé
+    const missingColumns = availableColumns.filter(col => !validOrder.includes(col))
+    const finalOrder = [...validOrder, ...missingColumns]
+
+    selectedColumnsIds.value = finalOrder
+    columnsOrder.value = finalOrder
+  }
+
   // Appliquer la pagination
   currentPage.value = dto.page ?? 1
   perPage.value = dto.perPage ?? 20
@@ -701,6 +797,7 @@ defineExpose({
       :sort-field="sort[0]?.key"
       :sort-order="sort[0]?.order === 'ASC' ? 1 : (sort[0]?.order === 'DESC' ? -1 : 0)"
       @column-resize-end="onColResize($event)"
+      @column-reorder="onColumnReorder($event)"
       @sort="onSortChanged($event)"
       @row-click="onRowClick($event)"
     >
