@@ -85,7 +85,7 @@ const isLoadingRows = ref(false)
 const currentPage = ref(1)
 const rowData = ref()
 
-const selectedColumnsIds = ref(props.columnDefs.map((col) => col.field ?? ''))
+const selectedColumnsIds = ref(props.columnDefs.filter((col) => !col.hide).map((col) => col.field ?? ''))
 
 const totalRecords = ref(0)
 
@@ -293,7 +293,9 @@ function restoreFromLocalStorage () {
 
   //#region 📍------ RESTORE COLUMNS ------ 📍
   if (dto.columns && dto.columns.length > 0) {
-    selectedColumnsIds.value = dto.columns as string[]
+    // Filtrer les colonnes pour exclure celles qui sont cachées
+    const availableColumns = props.columnDefs.filter(col => !col.hide).map(col => col.field ?? '')
+    selectedColumnsIds.value = (dto.columns as string[]).filter(colId => availableColumns.includes(colId))
   }
   //#endregion
 
@@ -406,9 +408,9 @@ const getRows = async (page: number = currentPage.value) => {
 
 const filteredColumnDefs = computed(() => {
   return props.columnDefs.filter((col) => {
-    // const isVisible = !col.hide
+    const isNotHidden = !col.hide
     const isSelected = selectedColumnsIds.value.includes(col.field ?? '')
-    return isSelected
+    return isNotHidden && isSelected
   })
 })
 
@@ -578,7 +580,9 @@ function updateDataTableState (dto: IPagination<T>) {
 
   // Appliquer les colonnes visibles
   if (dto.columns) {
-    selectedColumnsIds.value = dto.columns as string[]
+    // Filtrer les colonnes pour exclure celles qui sont cachées
+    const availableColumns = props.columnDefs.filter(col => !col.hide).map(col => col.field ?? '')
+    selectedColumnsIds.value = (dto.columns as string[]).filter(colId => availableColumns.includes(colId))
   }
 
   // Appliquer la pagination
