@@ -171,9 +171,9 @@ const resetDataTableState = () => {
   }
 }
 
-const updateDataTableState = () => {
+const updateDataTableState = (selectedDisplay?: IPagination<any>) => {
   if (dataTableComponent.value) {
-    dataTableComponent.value.updateDataTableState(paginationDto.value)
+    dataTableComponent.value.updateDataTableState(selectedDisplay ?? paginationDto.value)
   }
 }
 
@@ -396,10 +396,14 @@ onMounted(async () => {
   readyToLoadAgGrid.value = true
   readyToLoadDataTable.value = true
 
-  // Appliquer l'état à AgGrid après que le composant soit prêt
-  if (selectedCustomDisplay.value && dataTable.value === 'ag-grid') {
+  // Appliquer l'état au DataTable après que le composant soit prêt
+  if (selectedCustomDisplay.value) {
     await nextTick()
-    updateAggState()
+    if (dataTable.value === 'ag-grid') {
+      updateAggState()
+    } else {
+      updateDataTableState(selectedCustomDisplay.value as IPagination<any>)
+    }
   }
 })
 

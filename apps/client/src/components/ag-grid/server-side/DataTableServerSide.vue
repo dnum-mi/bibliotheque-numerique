@@ -755,6 +755,8 @@ function updateDataTableState (dto: IPagination<T>) {
     columnsOrder.value = finalOrder
   }
 
+  selectedColumnsIds.value = selectedColumnsIds.value.filter(colId => dto.columns.includes(colId))
+
   // Appliquer la pagination
   currentPage.value = dto.page ?? 1
   perPage.value = dto.perPage ?? 20
@@ -867,8 +869,8 @@ defineExpose({
           <template v-if="col.cellRenderer">
             <component :is="col.cellRenderer" :params="{ value: data[col.field!], ...col.cellRendererParams }" />
           </template>
-          <template v-else-if="col.valueFormatter && typeof col.valueFormatter === 'function'">
-            {{ col.valueFormatter({ value: data[col.field] }) }}
+          <template v-else-if="col.valueFormatter && typeof col.valueFormatter === 'function' && col.field">
+            {{ col.valueFormatter({ value: data[col.field] } as any) }}
           </template>
           <template v-else>
             {{ data[col.field!] }}
