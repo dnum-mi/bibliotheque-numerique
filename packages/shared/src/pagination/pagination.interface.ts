@@ -5,6 +5,8 @@ export interface IPagination<T> {
   page?: number | 1
   perPage?: number | 20
   columns: ((keyof T) | string)[]
+  columnsWidth?: Record<keyof T | string, number>
+  columnsOrder?: (keyof T | string)[]
   sorts: ISort<T>[]
   filters: Record<keyof T, IFilter> | null
 }

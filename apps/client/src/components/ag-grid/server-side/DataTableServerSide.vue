@@ -1,6 +1,6 @@
 <script lang="ts" setup generic="T extends DynamicKeys">
 import type { DataTableFilterMeta, DataTableFilterMetaData, DataTableOperatorFilterMetaData, DataTableSortEvent } from 'primevue/datatable'
-import type { GridReadyEvent, SelectionChangedEvent } from 'ag-grid-community'
+import type { GridReadyEvent } from 'ag-grid-community'
 import type { GridOptions } from 'ag-grid-enterprise'
 
 import type { DynamicKeys, IPagination, IFilter } from '@biblio-num/shared'
@@ -90,6 +90,7 @@ const totalRecords = ref(0)
 
 const sort = ref<{ key: string; order: 'ASC' | 'DESC' }[]>([])
 const filters = ref<DataTableFilterMeta>(getFilters())
+const columnsWidth = ref<Record<string, number>>({})
 
 function getFilters () {
   return props.columnDefs
@@ -298,6 +299,12 @@ function restoreFromLocalStorage () {
   }
   //#endregion
 
+  //#region 📍------ RESTORE COLUMNS WIDTH ------ 📍
+  if (dto.columnsWidth) {
+    columnsWidth.value = dto.columnsWidth as Record<string, number>
+  }
+  //#endregion
+
   currentPage.value = dto.page ?? 1
   perPage.value = dto.perPage ?? 20
 }
@@ -388,6 +395,7 @@ const getRows = async (page: number = currentPage.value) => {
     sorts: sort.value,
     filters: Object.keys(filtersToSend.value ?? {}).length > 0 ? filtersToSend.value as Record<keyof T, IFilter> : null,
     columns: selectedColumnsIds.value,
+    columnsWidth: columnsWidth.value as Record<string | keyof T, number>,
     perPage: +perPage.value,
     page,
   }
@@ -455,6 +463,68 @@ const paginationPages = computed(
   () => Array.from(Array(Math.ceil(totalRecords.value / perPage.value)))
     .map((_, i) => ({ title: (i + 1).toString(), href: `#${i + 1}`, label: (i + 1).toString() })),
 )
+
+const onColResize = (event: { element: HTMLElement, delta: number }) => {
+  // eslint-disable-next-line no-console
+  console.log('Resized a column:', event.element, event.delta)
+
+  // Identifier la colonne concernée par le redimensionnement
+  // L'élément est la cellule d'en-tête <th>, cherchons son attribut data-pc-section ou son index
+  const headerElement = event.element as HTMLTableCellElement
+  const table = headerElement.closest('table')
+  if (!table) {
+    return
+  }
+
+  // Trouver l'index de la colonne
+  const headerRow = table.querySelector('thead tr')
+  if (!headerRow) {
+    return
+  }
+
+  const headers = Array.from(headerRow.querySelectorAll('th'))
+  const columnIndex = headers.indexOf(headerElement)
+
+  if (columnIndex === -1) {
+    return
+  }
+
+  // Trouver le field correspondant à cette colonne
+  const column = filteredColumnDefs.value[columnIndex]
+  if (!column || !column.field) {
+    return
+  }
+
+  const field = column.field as string
+  const currentWidth = headerElement.offsetWidth
+
+  // eslint-disable-next-line no-console
+  console.log(`Column ${field} resized to ${currentWidth}px (delta: ${event.delta}px)`)
+
+  // Mettre à jour les largeurs de colonnes
+  // eslint-disable-next-line no-console
+  console.log('Changing column widths...', columnsWidth.value)
+  columnsWidth.value = {
+    ...columnsWidth.value,
+    [field]: currentWidth,
+  }
+
+  // Sauvegarder immédiatement les largeurs modifiées
+  if (hasInitialDataLoaded.value) {
+    // eslint-disable-next-line no-console
+    console.log('Saving column widths...', columnsWidth.value)
+    const dto: IPagination<T> = {
+      sorts: sort.value,
+      filters: Object.keys(filtersToSend.value ?? {}).length > 0 ? filtersToSend.value as Record<keyof T, IFilter> : null,
+      columns: selectedColumnsIds.value,
+      columnsWidth: columnsWidth.value as Record<string | keyof T, number>,
+      perPage: +perPage.value,
+      page: currentPage.value,
+    }
+    emit('update:paginationDto', dto)
+    saveToLocalStorage(dto)
+  }
+}
 
 //#region 📍------ SCROLL HEIGHT ------ 📍
 const scrollHeight = ref('')
@@ -584,6 +654,11 @@ function updateDataTableState (dto: IPagination<T>) {
     selectedColumnsIds.value = (dto.columns as string[]).filter(colId => availableColumns.includes(colId))
   }
 
+  // Appliquer les largeurs de colonnes
+  if (dto.columnsWidth) {
+    columnsWidth.value = dto.columnsWidth as Record<string, number>
+  }
+
   // Appliquer la pagination
   currentPage.value = dto.page ?? 1
   perPage.value = dto.perPage ?? 20
@@ -625,8 +700,9 @@ defineExpose({
       row-hover
       :sort-field="sort[0]?.key"
       :sort-order="sort[0]?.order === 'ASC' ? 1 : (sort[0]?.order === 'DESC' ? -1 : 0)"
-      @sort="onSortChanged"
-      @row-click="onRowClick"
+      @column-resize-end="onColResize($event)"
+      @sort="onSortChanged($event)"
+      @row-click="onRowClick($event)"
     >
       <template #paginatorstart>
         <Button type="button" icon="pi pi-refresh" text />
@@ -644,6 +720,7 @@ defineExpose({
         :show-filter-match-modes="col.filter !== 'agSetColumnFilter'"
         :show-filter-menu="!col.suppressHeaderMenuButton"
         :title="col.headerName"
+        :style="columnsWidth[col.field!] ? { 'width': `${columnsWidth[col.field!]}px`, 'max-width': `${columnsWidth[col.field!]}px` } : undefined"
       >
         <template #body="{ data }">
           <template v-if="col.cellRenderer">
