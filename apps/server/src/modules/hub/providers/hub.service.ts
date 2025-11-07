@@ -6,7 +6,7 @@ import type {
   IFoundationOutput,
   ISiafSearchOrganismeOutput,
 } from '@biblio-num/shared'
-import axios, { AxiosInstance } from 'axios'
+import axios, { AxiosInstance, CreateAxiosDefaults } from 'axios'
 import { Stream } from 'node:stream'
 import { ILastFoundationOuptut } from '../last-foundation-output.type'
 import { ILastOrganismeOuptut } from '../last-commun-output.type'
@@ -27,20 +27,23 @@ const ePathCompletedOrganismeByType = {
 @Injectable()
 export class HubService {
   axios: AxiosInstance
-
+  axiosFiles: AxiosInstance
+  axiosConfig: CreateAxiosDefaults
   constructor(
     protected logger: LoggerService,
     private readonly config: ConfigService,
   ) {
     this.logger.setContext(this.constructor.name)
-    this.axios = axios.create({
+
+    this.axiosConfig = {
       baseURL: this.config.get('siafHub.url'),
       headers: {
         'X-API-KEY': `${this.config.get('siafHub.key')}`,
         'Content-Type': 'application/json',
       },
-    })
-
+    }
+    this.axios = axios.create(this.axiosConfig)
+    this.axiosFiles = axios.create(this.axiosConfig)
     this.axios.interceptors.response.use(response => response.data, e => {
       const code = e.response?.status
       if (code === 404) {
@@ -55,8 +58,11 @@ export class HubService {
     this.logger.verbose('HUB-getFile')
     const url = `${pathRoot}/${id}/attachment/${uuid}`
 
-    return this.axios
-      .get(url, { responseType: 'stream' })
+    const resp = await this.axiosFiles.get(url, {
+      responseType: 'stream',
+    })
+
+    return resp.data
   }
 
   async _getLastImport<T extends ILastOrganismeOuptut>(

@@ -1,7 +1,7 @@
 import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common'
 import { HttpAdapterHost } from '@nestjs/core'
 import { LoggerService } from '../../modules/logger/logger.service'
-import { AxiosError } from 'axios'
+import { AxiosError, ResponseType } from 'axios'
 
 @Catch(AxiosError)
 export class AxiosExceptionFilter implements ExceptionFilter {
@@ -11,10 +11,12 @@ export class AxiosExceptionFilter implements ExceptionFilter {
 
   catch (exception: AxiosError, host: ArgumentsHost): void {
     const { httpAdapter } = this.httpAdapterHost
-
     const ctx = host.switchToHttp()
     this.logger.error(exception)
-    this.logger.debug(JSON.stringify(exception.response?.data))
+
+    if (exception.response?.config.responseType !== 'stream' as ResponseType) {
+      this.logger.debug(JSON.stringify(exception.response?.data))
+    }
     httpAdapter.reply(
       ctx.getResponse(),
       {
