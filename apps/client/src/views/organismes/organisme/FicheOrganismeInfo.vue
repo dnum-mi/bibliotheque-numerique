@@ -2,7 +2,6 @@
 import type { DsfrBadgeProps } from '@gouvminint/vue-dsfr'
 import { dateToStringFr, getPrefecture } from '@/utils'
 
-import FicheOrganismePersons from './FicheOrganismePersons.vue'
 import TooltipAddress from './TooltipAddress.vue'
 import type { IOrganismeOutputDto } from '@biblio-num/shared'
 import type { OrganismeIdType } from '@/stores'
@@ -140,14 +139,14 @@ const mapCardRef = useTemplateRef('mapCard')
             v-if="objectDescription"
             class="grid-col-span-4"
           >
-            <label class="bn-fiche-sub-title--label uppercase">Objet</label>
-            <span class="bn-fiche-sub-title--text max-h-20 overflow-auto whitespace-pre-wrap block">
+            <label class="bn-fiche-sub-title--label uppercase">Objet Social</label>
+            <span class="bn-fiche-sub-title--text max-h-50 overflow-auto whitespace-pre-wrap block">
               {{ objectDescription }}
             </span>
           </div>
           <div class="grid-col-span-4">
-            <label class="bn-fiche-sub-title--label uppercase">Caractère de l'activité d’intérêt général</label>
-            <span class="bn-fiche-sub-title--text max-h-20 overflow-auto whitespace-pre-wrap block">
+            <label class="bn-fiche-sub-title--label uppercase">Domaine d'intérêt général</label>
+            <span class="bn-fiche-sub-title--text max-h-50 overflow-auto whitespace-pre-wrap block">
               <template v-if="generalInterest">
                 {{ generalInterest }}
               </template>
@@ -183,12 +182,6 @@ const mapCardRef = useTemplateRef('mapCard')
           />
         </div>
       </div>
-    </div>
-    <div class="p-t-6">
-      <FicheOrganismePersons
-        v-if="organisme?.persons"
-        :persons="organisme?.persons.map((person, idx) => ({ ...organisme?.rnfJson?.persons[idx], ...person }))"
-      />
     </div>
   </div>
 </template>
