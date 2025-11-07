@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { organismeTypes, EEntityTypeSearchOrganisme } from '@biblio-num/shared'
 import type {
-  ISiafAssociationEntity,
-  ISiafFondationEntity,
+  IFoundationOutput,
+  ISiafOrganisme,
   ISiafSearchOrganismeResponseOutput,
 } from '@biblio-num/shared'
 import apiClient from '../../../api/api-client'
@@ -36,29 +36,28 @@ const rows = computed(() => {
 
     const subType
       = result.entity_type === EEntityTypeSearchOrganisme.Fondation
-        ? (result.entity as ISiafFondationEntity).foundationType || organismeTypes[5]
+        ? (result.entity as IFoundationOutput).foundationType || organismeTypes[5]
         : organismeTypes[5]
 
-    let codePostal = 'N/A'
-    let ville = 'N/A'
+    let codePostal: string | undefined | null = 'N/A'
+    let ville: string | undefined | null = 'N/A'
 
-    if (result.entity_type === 'fondation') {
-      const entity = result.entity as ISiafFondationEntity
-      const address = entity.address?.dsStringValue || ''
-      const codePostalMatch = address.match(/\b\d{5}\b/)
-      codePostal = codePostalMatch ? codePostalMatch[0] : 'N/A'
-      ville = codePostalMatch ? address.split(codePostalMatch[0])[1].trim() : 'N/A'
-    } else if (result.entity_type === 'association') {
-      const entity = result.entity as ISiafAssociationEntity
-      const addresses = entity.addresses
-
-      if (addresses.length > 0 && addresses[0].rnaAddress?.address) {
-        const rnaAddress = addresses[0].rnaAddress.address
-        codePostal = rnaAddress.codepostal || 'N/A'
-        ville = rnaAddress.achemine || 'N/A'
+    if (result.entity_type === 'fondation' || result.entity_type === 'association') {
+      const entityAddress = (result.entity as ISiafOrganisme).address
+      if (entityAddress) {
+        const dsAddress = entityAddress.dsAddress
+        const rnaAddress = entityAddress.rnaAddress?.address
+        const gouvAddress = entityAddress.rnaAddress?.gouvAddress
+        codePostal = dsAddress?.postalCode || gouvAddress?.postcode || rnaAddress?.codepostal
+        ville = dsAddress?.cityName || gouvAddress?.city || rnaAddress?.libcommune
+        if (!codePostal || !ville) {
+          const addressOneLine = entityAddress?.oneLine || ''
+          const codePostalMatch = addressOneLine.match(/\b\d{5}\b/)
+          codePostal = codePostal || (codePostalMatch ? codePostalMatch[0] : 'N/A') || 'N/A'
+          ville = ville || (codePostalMatch ? addressOneLine?.split(codePostalMatch[0])[1]?.trim() : 'N/A') || 'N/A'
+        }
       }
     }
-
     return {
       rowData: [
         id,
