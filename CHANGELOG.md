@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.41.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.40.0...v2.41.0) (2025-11-07)
+
+
+### Features
+
+* pagination de la liste des démarches ([#1935](https://github.com/dnum-mi/bibliotheque_numerique/issues/1935)) ([#1934](https://github.com/dnum-mi/bibliotheque_numerique/issues/1934)) ([eb9c960](https://github.com/dnum-mi/bibliotheque_numerique/commit/eb9c9600609d391701ce90151b702aea23f12a13))
+
+
+### Bug Fixes
+
+* sync all dossiers with pagination ([6d00e46](https://github.com/dnum-mi/bibliotheque_numerique/commit/6d00e46c8152dd66ca66168328d5359db7a084c4))
+
 ## [2.40.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.39.1...v2.40.0) (2025-10-30)
 
 
