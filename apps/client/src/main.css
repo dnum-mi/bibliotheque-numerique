@@ -73,6 +73,9 @@ body,
   font-size: 0.825rem;
 }
 
+.dark {
+  --text-mention-grey: var(--grey-900-175)
+}
 .bn-fiche-sub-title--label {
   display: block;
   color: var(--text-mention-grey);

@@ -12,9 +12,7 @@ import type {
   IRole,
   FileTagKey,
   IOrganismeOutputDto,
-  ISiafRnfHistoryOutput,
-  ISiafRnfOutput,
-  ISiafRnaOutput,
+  // ISiafRnfHistoryOutput,
 } from '@biblio-num/shared'
 import {
   dFileTabDictionary,
@@ -26,10 +24,12 @@ import FicheInfoAssociation from './FicheInfoAssociation.vue'
 import FicheInfoFondation from './FicheInfoFondation.vue'
 import FicheOrganismeInfo from './FicheOrganismeInfo.vue'
 import slugify from 'slugify'
-import FicheOrganismeHistorique from './historique/FicheOrganismeHistorique.vue'
+// import FicheOrganismeHistorique from './historique/FicheOrganismeHistorique.vue'
 import BnRefreshSyncButton from '@/components/BnRefreshSyncButton.vue'
 import { synchroniseOneOrganisme } from '../../../api/sudo-api-client'
 import Spinner from '@/components/Spinner.vue'
+import { dateToStringFr } from '@/utils'
+import FicheOrganismePersons from './FicheOrganismePersons.vue'
 
 const props = withDefaults(defineProps<{ id: string; idType: OrganismeIdType }>(), {})
 
@@ -40,7 +40,8 @@ const organisme = computed(() => organismeStore.organisme as IOrganismeOutputDto
 const organismeSiaf = computed(() => organismeStore.organismeSiaf)
 const syncState = computed(() => organismeStore.syncState)
 const dossiersCount = computed(() => organismeStore.dossiersCount)
-const rnaImportedAt = computed(() => (organisme.value?.rnaJson as ISiafRnaOutput)?.rnaImportedAt)
+// TODO: A voir si RAF retourne cette date
+const rnaImportedAt = computed(() => /* (organisme.value?.rnaJson as IAssociationOutput)?.rnaImportedAt*/'')
 const hasSiaf = computed(() => !!organismeStore.organismeSiaf)
 const hasSiafAssociation = computed(() => {
   const organisme = organismeSiaf.value as IOrganismeOutputDto | undefined
@@ -53,7 +54,7 @@ const hasSiafFoundation = computed(() => {
 })
 
 const filesSummary = ref<Record<FileTagKey, number> | Record<string, never>>({})
-const histories = ref<ISiafRnfHistoryOutput[]>([])
+// const histories = ref<ISiafRnfHistoryOutput[]>([])
 
 // TODO: use router to prevent user to access this page if not logged in or without the right role
 const role = computed<IRole | undefined>(() => userStore.currentUser?.role)
@@ -63,7 +64,7 @@ const isLoading = ref(false)
 const loadOrganisme = async () => {
   await organismeStore.loadOrganisme(props.id, props.idType)
   if (organisme.value) {
-    histories.value = await organismeStore.loadOrganismeHistory(props.id, props.idType)
+    // histories.value = await organismeStore.loadOrganismeHistory(props.id, props.idType)
     filesSummary.value = await apiClient.getOrganismeFilesSummary(organisme.value.id)
   }
 }
@@ -125,8 +126,8 @@ const onRefreshSync = async () => {
     v-if="(organisme || hasSiaf) && !isLoading"
     class="flex flex-grow gap-2 h-full"
   >
+    <!-- :class="(organisme?.id && dossiersCount) ? 'flex-basis-[59%]' : 'flex-basis-[99%]'" -->
     <LayoutFiche
-      :class="(organisme?.id && dossiersCount) ? 'flex-basis-[59%]' : 'flex-basis-[99%]'"
       class="overflow-auto"
       title-bg-color="var(--grey-200-850)"
       title-fg-color="var(--text-inverted-grey)"
@@ -157,6 +158,17 @@ const onRefreshSync = async () => {
               organismeSiaf?.title
             }}</span>
           </div>
+          <div v-if="hasSiafAssociation || idType === EOrganismeIdType.Rnf" class="flex-row gap-4">
+            <div class="flex gap-4">
+              <label class="bn-fiche-sub-title--label dark uppercase">SIRET:</label>
+              <span class="bn-fiche-sub-title--text">{{ organisme.siret }}</span>
+            </div>
+            <div class="flex gap-4">
+              <label class="bn-fiche-sub-title--label dark uppercase">état:</label>
+              <span class="bn-fiche-sub-title--text">{{ organisme.rnfJson?.state }} depuis le {{ dateToStringFr(organisme.rnfJson?.stateEffectiveAt) }}</span>
+            </div>
+          </div>
+
           <div class="w-1/6">
             <BnRefreshSyncButton
               :sync-state="syncState"
@@ -205,6 +217,18 @@ const onRefreshSync = async () => {
               />
             </BnTab>
             <BnTab
+              v-if="organisme?.persons"
+              id="Dirigeants"
+              :title="`Dirigeants (${organisme?.persons.length || 0})`"
+            >
+              <div class="w-[99%] pt-4">
+                <FicheOrganismePersons
+                  v-if="organisme?.persons"
+                  :persons="organisme?.persons.map((person, idx) => ({ ...organisme?.rnfJson?.persons[idx], ...person }))"
+                />
+              </div>
+            </BnTab>
+            <BnTab
               v-for="tabInfo in fileTabs"
               :id="tabInfo.idTab"
               :key="tabInfo.key"
@@ -218,43 +242,32 @@ const onRefreshSync = async () => {
                 :active="currentFicheOrganismeTab === tabInfo.idTab"
               />
             </BnTab>
-            <BnTab
+            <!-- <BnTab
               v-if="idType === EOrganismeIdType.Rnf"
               id="historique"
               title="Historique"
             >
               <FicheOrganismeHistorique
-                :actual="organisme.rnfJson as ISiafRnfOutput"
+                :actual="organisme.rnfJson as IFoundationOutput"
                 :history="histories"
                 :entity-type="idType"
               />
+            </BnTab> -->
+            <BnTab
+              v-if="dossiersCount"
+              id="list-dossier"
+              title="Dossiers"
+            >
+              <ListeDossier
+                :organisme-id="organisme?.id"
+                :role="role as IRole"
+              />
+              <!-- </div> -->
+              <!-- </div> -->
             </BnTab>
           </BnTabsContainer>
         </div>
       </template>
     </LayoutFiche>
-
-    <div
-      v-if="organisme?.id && dossiersCount"
-      class="flex-basis-[40%] overflow-auto flex flex-col fr-pr-2w"
-    >
-      <div class="fr-p-3w flex align-center gap-3">
-        <div class="bn-icon--green-archipel">
-          <span
-            class="fr-icon-book-2-line"
-            aria-hidden="true"
-          />
-        </div>
-        <h4 class="fr-text--bold m-0">
-          Dossiers déposés
-        </h4>
-      </div>
-      <div class="w-full">
-        <ListeDossier
-          :organisme-id="organisme?.id"
-          :role="role as IRole"
-        />
-      </div>
-    </div>
   </div>
 </template>

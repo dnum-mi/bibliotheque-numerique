@@ -4,7 +4,7 @@ import type {
   IOrganisme,
   IOrganismeOutput,
   IOrganismeOutputDto,
-  ISiafRnfHistoryOutput,
+  // ISiafRnfHistoryOutput,
   IEntityWithSyncState,
 } from '@biblio-num/shared'
 
