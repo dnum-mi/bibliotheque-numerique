@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { dateToStringFr } from '@/utils'
-import type { Person } from '@biblio-num/shared'
-import { roleDictionary } from '@biblio-num/shared'
+import type { IPerson } from '@biblio-num/shared'
 
 const props = defineProps<{
-  person: Person | null | undefined
+  person: IPerson | null | undefined
 }>()
 
 const fullName = computed(() => {
@@ -14,11 +13,11 @@ const fullName = computed(() => {
   return `${props.person.civility || ''} ${props.person.firstName} ${props.person.lastName}`
 })
 
-const role = computed(() => {
-  if (!props.person || !props.person.role) {
+const quality = computed(() => {
+  if (!props.person || !props.person.quality) {
     return ''
   }
-  return roleDictionary[props.person.role as keyof typeof roleDictionary] || props.person.role
+  return props.person.quality
 })
 </script>
 
@@ -56,25 +55,25 @@ const role = computed(() => {
         <span class="fr-text--bold fr-text--sm mb-1!">{{ person.profession }}</span>
       </div>
       <div
-        v-if="person.role"
+        v-if="person.quality"
         class="flex flex-col"
       >
         <span class="bn-fiche-sub-title--label uppercase">Rôle</span>
-        <span class="fr-text--bold fr-text--sm mb-1!">{{ role }}</span>
+        <span class="fr-text--bold fr-text--sm mb-1!">{{ quality }}</span>
       </div>
       <div
-        v-if="person.entryDate"
+        v-if="person.entryAt"
         class="flex flex-col"
       >
         <span class="bn-fiche-sub-title--label uppercase">Date d'entrée</span>
-        <span class="fr-text--bold fr-text--sm mb-1!">{{ dateToStringFr(person.entryDate) }}</span>
+        <span class="fr-text--bold fr-text--sm mb-1!">{{ dateToStringFr(person.entryAt) }}</span>
       </div>
       <div
-        v-if="person.exitDate"
+        v-if="person.exitAt"
         class="flex flex-col"
       >
         <span class="bn-fiche-sub-title--label uppercase">Date de sortie</span>
-        <span class="fr-text--bold fr-text--sm mb-1!">{{ dateToStringFr(person.exitDate) }}</span>
+        <span class="fr-text--bold fr-text--sm mb-1!">{{ dateToStringFr(person.exitAt) }}</span>
       </div>
       <div
         v-if="person.nationality"
@@ -91,11 +90,11 @@ const role = computed(() => {
         <span class="fr-text--bold fr-text--sm mb-1!">{{ dateToStringFr(person.bornAt) }} à {{ person.bornPlace || 'N/A' }}</span>
       </div>
       <div
-        v-if="person.address.dsStringValue"
+        v-if="person.address?.oneLine"
         class="flex flex-col"
       >
         <span class="bn-fiche-sub-title--label uppercase">Adresse</span>
-        <span class="fr-text--bold fr-text--sm mb-1!">{{ person.address.dsStringValue }}</span>
+        <span class="fr-text--bold fr-text--sm mb-1!">{{ person.address.oneLine }}</span>
       </div>
       <div
         v-if="person.residenceCountry"

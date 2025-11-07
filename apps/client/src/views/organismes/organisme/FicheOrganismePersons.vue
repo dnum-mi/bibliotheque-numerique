@@ -1,39 +1,44 @@
 <script lang="ts" setup>
 import type { IPerson } from '@biblio-num/shared'
-import { ePersonRole, roleDictionary, creatorRoleKey } from '@biblio-num/shared'
+import { qualityInOrganismeArray } from '@biblio-num/shared'
 import { DsfrAccordion } from '@gouvminint/vue-dsfr'
 import { dateToStringFr } from '../../../utils'
 import TooltipAddress from './TooltipAddress.vue'
 
 const props = defineProps<{ persons: IPerson[] }>()
 
-const roleDictionaryKey = Object.keys(roleDictionary)
+const Foundateurs = 'Foundateurs'
+const Autres = 'Autres'
+const roleKeys = [Foundateurs, ...qualityInOrganismeArray, Autres]
 type TPersonOrganisme = IPerson & { fullName: string }
 type TPersonByRole = {
   role: string
   persons: TPersonOrganisme[]
 }
 
-const personsByRoles = computed<TPersonByRole[]>(() =>
-  Object.entries(roleDictionary)
-    .map(([roleKey, roleValue]) => ({
-      role: roleValue,
-      persons: props.persons
-        .filter((p) =>
-          roleKey === creatorRoleKey
-            ? p.isFounder
-            : p.role === roleKey || (roleKey === ePersonRole.NOT_SPECIFIED && !(p.role && roleDictionaryKey.includes(p.role))),
-        )
-        .map((person) => ({
-          ...person,
-          fullName: `${person.firstName} ${person.lastName}`,
-          entryDate: dateToStringFr(person.entryDate),
-        })),
-    }))
-    .filter(({ persons }) => persons.length),
-)
+const personsByRoles = computed<TPersonByRole[]>(() => {
+  const recordPersons = props.persons.reduce <Record<typeof roleKeys[number], TPersonOrganisme[]>>((acc, cur) => {
+    const p = {
+      ...cur,
+      fullName: `${cur.firstName} ${cur.lastName}`,
+    }
+    if (cur.isFounder) {
+      if (!acc[Foundateurs]) { acc[Foundateurs] = [] }
+      acc[Foundateurs]?.push(p)
+    }
+    const role = roleKeys.includes(cur.quality || Autres) ? cur.quality || Autres : Autres
+    if (!acc[role]) { acc[role] = [] }
+    acc[role]?.push(p)
 
-const expandedIds = ref<string[]>(personsByRoles.value.map((_, idx) => `peson-expanded-${idx}`))
+    return acc
+  }, {})
+  return Object.entries(recordPersons).map(([r, p]) => ({
+    role: r,
+    persons: p,
+  }))
+})
+
+const expandedIds = ref<string[]>(personsByRoles.value?.map((_, idx) => `peson-expanded-${idx}`) || [])
 const onExpand = (idx: number, id: string) => {
   expandedIds.value[idx] = id
 }
@@ -64,7 +69,7 @@ const onExpand = (idx: number, id: string) => {
         <div
           v-for="(person, idx1) in personsByRole.persons"
           :key="`person-${idx1}`"
-          class="p-t-6"
+          class="p-t-6 person-row"
         >
           <div class="w-full pl-0! pr-0! text-sm">
             <div class="grid-8-cols  grid">
@@ -81,9 +86,9 @@ const onExpand = (idx: number, id: string) => {
                   Adresse
                 </div>
                 <div class="flex-1">
-                  <TooltipAddress :show="person.address && !person.address?.type" />
+                  <TooltipAddress :show="!!(person.address && !person.address?.coordinates)" />
                   <span class="fr-text--bold">
-                    {{ person.address?.label }} {{ person.residenceCountry?.toUpperCase() }}
+                    {{ person.address?.oneLine }} {{ person.residenceCountry?.toUpperCase() }}
                   </span>
                 </div>
               </div>
@@ -92,7 +97,7 @@ const onExpand = (idx: number, id: string) => {
                   Naissance
                 </div>
                 <div class="flex-1 fr-text--bold">
-                  Née le {{ dateToStringFr(person.bornAt) }} {{ person.bornPlace ?? `à ${person.bornPlace}: ''` }}
+                  Née le {{ dateToStringFr(person.bornAt) }} {{ person.bornPlace && `à ${person.bornPlace}` || '' }}
                 </div>
               </div>
 
@@ -131,7 +136,7 @@ const onExpand = (idx: number, id: string) => {
                   Date d’entrée dans l’administration
                 </div>
                 <div class="flex-1 fr-text--bold">
-                  {{ person.entryDate }}
+                  {{ dateToStringFr(person.entryAt) }}
                 </div>
               </div>
               <div class="flex-1/8 flex-col">
@@ -139,7 +144,7 @@ const onExpand = (idx: number, id: string) => {
                   Date de sortie
                 </div>
                 <div class="flex-1 fr-text--bold">
-                  {{ person.exitDate }}
+                  {{ dateToStringFr(person.exitAt) }}
                 </div>
               </div>
             </div>
@@ -166,5 +171,9 @@ h3 {
 
 .grid-8-cols__large {
   grid-column: span 3;
+}
+
+.person-row:nth-child(even) {
+ background-color: var(--grey-950-100);
 }
 </style>
