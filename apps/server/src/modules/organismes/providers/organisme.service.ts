@@ -152,8 +152,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     firstTime = false,
   ): Promise<void> {
     this.logger.verbose(`updateOrganismeFromRnf ${idRnf}`)
-
-    const creationDate = new Date(raw.creationAt)
+    const creationDate = raw.creationAt && new Date(raw.creationAt)
     const toUpdate: Partial<Organisme> = {
       state: eState.uploaded,
       title: raw.title,
@@ -417,6 +416,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
       createdAt: (organisme?.rnfJson as IFoundationOutput)?.createdAt,
       updatedAt: (organisme?.rnfJson as IFoundationOutput)?.updatedAt,
       fiscalEndDateAt: (organisme?.rnfJson as IFoundationOutput)?.fiscalEndAt,
+      siret: organisme?.rnfJson?.siret,
     }
   }
 

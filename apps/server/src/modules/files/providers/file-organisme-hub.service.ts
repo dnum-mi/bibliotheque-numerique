@@ -62,7 +62,7 @@ export class FileOrganismeHubService extends BaseEntityService<File> {
       byteSize: file.byteSize,
       checksum: file.checksum,
       mimeType: FileService.fromContentTypeToMimeType(file.mimeType),
-      originalLabel: file.name,
+      originalLabel: file.originalName,
     })
   }
 
@@ -72,17 +72,30 @@ export class FileOrganismeHubService extends BaseEntityService<File> {
     fileCommon: tFileCommon,
   ): Promise<void> {
     if (!files.length) {
+      this.logger.debug('Aucun PJs')
       return
     }
-
+    this.logger.debug(`${files.length} PJs`)
     for (const file of files) {
       const tag = getTagForType(file.typeFile)
-      await this._checkAndCreateFile(
-        file,
-        dateDepot,
-        { tag, label: file.typeFile },
-        fileCommon,
-      )
+      const fileFound = await this.findWithFilter({
+        uuid: file.id,
+        organismeId: fileCommon.organismeId,
+      })
+      if (fileFound.length) {
+        continue
+      }
+      await this.createAndSave({
+        ...fileCommon,
+        sourceStringId: file.id,
+        uuid: file.id,
+        byteSize: file.byteSize,
+        checksum: file.checksum,
+        mimeType: FileService.fromContentTypeToMimeType(file.mimeType),
+        originalLabel: file.originalName,
+        label: file.name,
+        tag,
+      })
     }
   }
 
