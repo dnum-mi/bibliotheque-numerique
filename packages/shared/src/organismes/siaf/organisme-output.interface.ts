@@ -1,6 +1,7 @@
 import { JobPositionKey, qualityInOrganismeKey, OrganismeStatusKey } from './enums'
 import { ISiafAddress } from './common-output.interface'
 import { IFile } from './file-output.interface'
+import { IPerson } from './person.interface'
 
 export type OrganismeKind = 'Foundation' | 'Association'
 export type LegalEntityType = OrganismeKind | 'Entreprise' | string
@@ -22,34 +23,13 @@ export interface ILegalEntity {
   publicId: string
 }
 
-export interface IPerson {
-  lastName: string
-  firstName: string
-
-  bornAt: Date | null
-  address: ISiafAddress | null
-  civility: string | null
-  email: string | null
-  phone: string | null
-  profession: string | null
-  nationality: string | null
-  bornPlace: string | null
-  isFounder: boolean
-  residenceCountry: string | null
-  entryAt: Date | null
-  exitAt: Date | null
-
-  quality: qualityInOrganismeKey | null
-  role: JobPositionKey | null
-}
-
 export interface ISiafOrganisme {
   id: string
   createdAt: Date
   updatedAt: Date
 
-  status: OrganismeStatusKey
-  statusEffectiveAt: Date | null
+  state: OrganismeStatusKey
+  stateEffectiveAt: Date | null
 
   siret: string | null
   creationAt: Date
