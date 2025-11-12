@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { siafV2 } from '@biblio-num/shared'
 import { dateToStringFr } from '@/utils'
+import type { IPerson } from '@biblio-num/shared'
 
-const props = defineProps<{ persons: siafV2.IPerson[] }>()
+const props = defineProps<{ persons: IPerson[] }>()
 
-const personsByRoles = computed<siafV2.IPerson[]>(() =>
+const personsByRoles = computed<IPerson[]>(() =>
   [...props.persons].sort((a, b) => {
     if (a.isFounder !== b.isFounder) {
       return Number(b.isFounder) - Number(a.isFounder)
@@ -18,7 +18,7 @@ const personsByRoles = computed<siafV2.IPerson[]>(() =>
   <div class="divide-y">
     <div
       v-for="person in personsByRoles"
-      :key="person._id"
+      :key="`${person.firstName}-${person.lastName}-${person.bornAt}`"
       class="p-4"
     >
       <div class="flex items-center justify-start gap-4 fr-mb-4w fr-background-alt--grey fr-py-3v fr-px-2w">

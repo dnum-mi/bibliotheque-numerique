@@ -1,25 +1,29 @@
 <script setup lang="ts">
-import type { siafV2 } from '@biblio-num/shared'
+import { dateToStringFr } from '@/utils'
+import type { ILegalEntity, ILineage } from '@biblio-num/shared'
 import { VIcon } from '@gouvminint/vue-dsfr'
 
-// Typage des props attendues
 interface RelationProps {
-  founderLegalEntities: siafV2.ILegalEntity[]
-  foundedLegalEntities: siafV2.ILegalEntity[]
-  governanceLegalEntities: siafV2.ILegalEntity[]
-  fromLineage: siafV2.ILineage | null
-  toLineage: siafV2.ILineage | null
-  currentOrganismeTitle: string // Le nom de l'organisme actuel (ex: "Fondation pour l'Enfance")
+  founderLegalEntities: ILegalEntity[]
+  foundedLegalEntities: ILegalEntity[]
+  governanceLegalEntities: ILegalEntity[]
+  fromLineage: ILineage | null
+  toLineage: ILineage | null
+  currentOrganismeTitle: string
 }
 
 const props = defineProps<RelationProps>()
 
-const activeAccordion = ref<number>(-1) //
+const activeAccordion = ref<number>(-1)
 
 const lineageCount = computed(() => {
   let count = 0
-  if (props.fromLineage) count += props.fromLineage.organismes.length
-  if (props.toLineage) count += props.toLineage.organismes.length
+  if (props.fromLineage) {
+    count += props.fromLineage.organismes.length
+  }
+  if (props.toLineage) {
+    count += props.toLineage.organismes.length
+  }
   return count
 })
 const structuralRelationsCount = computed(() => {
@@ -27,22 +31,11 @@ const structuralRelationsCount = computed(() => {
 })
 const foundedCount = computed(() => props.foundedLegalEntities?.length || 0)
 
-// Calcule si l'onglet est vide pour afficher un message
 const hasRelations = computed(() => {
   return lineageCount.value > 0 || structuralRelationsCount.value > 0 || foundedCount.value > 0
 })
 
-// Formatteur de date simple
-const dateToStringFr = (date: Date): string => {
-  return new Date(date).toLocaleDateString('fr-FR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  })
-}
-
-// Fonction utilitaire pour l'affichage de la filiation
-const lineageToString = (lineage: siafV2.ILineage): string => {
+const lineageToString = (lineage: ILineage): string => {
   const date = dateToStringFr(lineage.at)
   switch (lineage.type) {
     case 'Fusion':
@@ -54,11 +47,6 @@ const lineageToString = (lineage: siafV2.ILineage): string => {
     default:
       return `Événement de filiation le ${date}`
   }
-}
-
-// Fonction pour simuler un clic (à remplacer par votre router-link)
-const goToFiche = (publicId: string) => {
-  alert(`Navigation vers la fiche : ${publicId}`)
 }
 </script>
 
@@ -99,11 +87,12 @@ const goToFiche = (publicId: string) => {
               class="flex flex-row gap-2"
             >
               <DsfrCard
+                :title-link-attrs="{}"
                 :title="org.publicId"
                 :detail="org.kind"
                 description="Organisme source"
                 is-clickable
-                @click="goToFiche(org.publicId)"
+                @click="() => {}"
               />
             </div>
           </div>
@@ -118,6 +107,7 @@ const goToFiche = (publicId: string) => {
           </div>
 
           <DsfrCard
+            :title-link-attrs="{}"
             :title="currentOrganismeTitle"
             description="Structure actuelle"
             class="current-org-card"
@@ -134,6 +124,7 @@ const goToFiche = (publicId: string) => {
             </h3>
           </div>
           <DsfrCard
+            :title-link-attrs="{}"
             :title="currentOrganismeTitle"
             description="Structure dissoute"
             class="current-org-card"
@@ -155,11 +146,12 @@ const goToFiche = (publicId: string) => {
               class="fr-col-12 fr-col-md-4"
             >
               <DsfrCard
+                :title-link-attrs="{}"
                 :title="org.publicId"
                 :detail="org.kind"
                 description="Nouvelle structure"
                 is-clickable
-                @click="goToFiche(org.publicId)"
+                @click="() => {}"
               />
             </div>
           </div>
@@ -175,8 +167,8 @@ const goToFiche = (publicId: string) => {
           </h3>
         </div>
         <div
-          class="mt-6"
           v-if="!founderLegalEntities || !founderLegalEntities.length"
+          class="mt-6"
         >
           <p class="fr-text--sm">Aucun fondateur (personne morale) enregistré.</p>
         </div>
@@ -189,11 +181,12 @@ const goToFiche = (publicId: string) => {
             :key="entity.publicId"
           >
             <DsfrCard
+              :title-link-attrs="{}"
               :title="entity.publicId"
               :detail="entity.type"
               description="Entité fondatrice"
               is-clickable
-              @click="goToFiche(entity.publicId)"
+              @click="() => {}"
             />
           </div>
         </div>
@@ -204,8 +197,8 @@ const goToFiche = (publicId: string) => {
           </h3>
         </div>
         <div
-          class="mt-6"
           v-if="!governanceLegalEntities || !governanceLegalEntities.length"
+          class="mt-6"
         >
           <p class="fr-text--sm">Aucune personne morale ne participe à la gouvernance.</p>
         </div>
@@ -218,11 +211,12 @@ const goToFiche = (publicId: string) => {
             :key="entity.publicId"
           >
             <DsfrCard
+              :title-link-attrs="{}"
               :title="entity.publicId"
               :detail="entity.type"
               description="Participe à la gouvernance"
               is-clickable
-              @click="goToFiche(entity.publicId)"
+              @click="() => {}"
             />
           </div>
         </div>
@@ -243,11 +237,12 @@ const goToFiche = (publicId: string) => {
             :key="entity.publicId"
           >
             <DsfrCard
+              :title-link-attrs="{}"
               :title="entity.publicId"
               :detail="entity.type"
               description="Entité créée"
               is-clickable
-              @click="goToFiche(entity.publicId)"
+              @click="() => {}"
             />
           </div>
         </div>
@@ -280,7 +275,7 @@ const goToFiche = (publicId: string) => {
 
 .current-org-card {
   border: 2px solid var(--border-action-high-blue-france);
-  max-width: 400px; /* Limite la largeur pour le visuel */
+  max-width: 400px;
   width: 100%;
 }
 </style>

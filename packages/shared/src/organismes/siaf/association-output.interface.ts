@@ -7,19 +7,19 @@ import { IRnaEvent } from './rna-event-output.interface'
 export type UnionKindType = 'Union' | 'Federation'
 export type EstablishmentAcquiredType = 'gratuit' | 'onéreux'
 
-interface IUnion {
+export interface IUnion {
   associationPublicIds: string[]
   unionKind: UnionKindType
   since: Date
 }
 
-interface IQuality {
+export interface IQuality {
   type: AssoQualityKey
   startedAt: Date
   endedAt: Date | null
 }
 
-interface IEstablishment {
+export interface IEstablishment {
   name: string
   address: ISiafAddress
   type: string | null

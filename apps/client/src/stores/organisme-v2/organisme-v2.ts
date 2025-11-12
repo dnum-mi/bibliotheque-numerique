@@ -1,14 +1,14 @@
-import type { siafV2 } from '@biblio-num/shared'
+import type { IAssociationOutput, IFoundationOutput } from '@biblio-num/shared'
 import { mockAssociationPayload } from './mock-association'
 import { mockFoundationPayload } from './mock-foundation'
 
-const mockDatabase = new Map<string, siafV2.IAssociationOutput | siafV2.IFoundationOutput>([
-  [mockAssociationPayload.publicId, mockAssociationPayload],
-  [mockFoundationPayload.publicId, mockFoundationPayload],
+const mockDatabase = new Map<string, IAssociationOutput | IFoundationOutput>([
+  [mockAssociationPayload.id, mockAssociationPayload],
+  [mockFoundationPayload.id, mockFoundationPayload],
 ])
 
 export const useOrganismeV2Store = defineStore('organisme', () => {
-  const selectedOrganisme = ref<siafV2.IAssociationOutput | siafV2.IFoundationOutput | null>(null)
+  const selectedOrganisme = ref<IAssociationOutput | IFoundationOutput | null>(null)
   const isLoading = ref<boolean>(false)
   const error = ref<string | null>(null)
 
@@ -29,11 +29,11 @@ export const useOrganismeV2Store = defineStore('organisme', () => {
   const organismeTitle = computed(() => selectedOrganisme.value?.title || 'Organisme')
 
   const asFoundation = computed(() => {
-    return isFoundation.value ? (selectedOrganisme.value as siafV2.IFoundationOutput) : null
+    return isFoundation.value ? (selectedOrganisme.value as IFoundationOutput) : null
   })
 
   const asAssociation = computed(() => {
-    return isAssociation.value ? (selectedOrganisme.value as siafV2.IAssociationOutput) : null
+    return isAssociation.value ? (selectedOrganisme.value as IAssociationOutput) : null
   })
 
   async function fetchOrganisme (id: string) {
@@ -75,7 +75,7 @@ export const useOrganismeV2Store = defineStore('organisme', () => {
     asAssociation,
     fetchOrganisme,
     clearOrganisme,
-    mockAssociationId: mockAssociationPayload.publicId,
-    mockFoundationId: mockFoundationPayload.publicId,
+    mockAssociationId: mockAssociationPayload.id,
+    mockFoundationId: mockFoundationPayload.id,
   }
 })

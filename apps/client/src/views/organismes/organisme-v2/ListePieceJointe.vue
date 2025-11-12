@@ -1,20 +1,21 @@
 <script setup lang="ts">
-import { siafV2 } from '@biblio-num/shared'
+import { typeFileArray } from '@biblio-num/shared'
+import type { IFile, RnaTypeFileKey, RnaTypeRecepisseKey, TypeFileKey } from '@biblio-num/shared'
 
 const props = defineProps<{
-  files: siafV2.IFile[]
+  files: IFile[]
 }>()
 
 const groupedFiles = computed(() => {
-  const groups: Record<string, siafV2.IFile[]> = {}
-  siafV2.typeFileArray.forEach((cat) => {
+  const groups: Record<string, IFile[]> = {}
+  typeFileArray.forEach((cat) => {
     groups[cat] = []
   })
   groups['Autres documents'] = []
 
   props.files.forEach((file) => {
     const type = file.typeFile
-    if (type && siafV2.typeFileArray.includes(type)) {
+    if (type && typeFileArray.includes(type)) {
       groups[type]?.push(file)
     } else {
       groups['Autres documents']?.push(file)
@@ -98,8 +99,8 @@ const getFileFormat = (mimeType: string): string => {
   }
 }
 
-const getFileDetail = (file: siafV2.IFile): string => {
-  let type: siafV2.TypeFileKey | siafV2.RnaTypeFileKey | siafV2.RnaTypeRecepisseKey | 'Document' | null = file.typeFile
+const getFileDetail = (file: IFile): string => {
+  let type: TypeFileKey | RnaTypeFileKey | RnaTypeRecepisseKey | 'Document' | null = file.typeFile
   if (!type && file.rnaFile) {
     type = file.rnaFile.typePiece || file.rnaFile.typeRecepisse
   }
@@ -136,7 +137,7 @@ const getFileDetail = (file: siafV2.IFile): string => {
       >
         <div
           v-for="file in groupedFiles[categoryName]"
-          :key="file._id"
+          :key="file.id"
           class=""
         >
           <div class="file-card fr-p-2w fr-border fr-border--grey-900 fr-rounded-sm">
@@ -168,7 +169,7 @@ const getFileDetail = (file: siafV2.IFile): string => {
 .file-card {
   display: flex;
   flex-direction: column;
-  height: 100%; /* Permet aux cartes d'une même ligne d'avoir la même hauteur */
+  height: 100%;
 }
 
 .file-thumbnail {
@@ -176,20 +177,15 @@ const getFileDetail = (file: siafV2.IFile): string => {
   align-items: center;
   justify-content: center;
   width: 120px;
-  height: 120px; /* Hauteur fixe pour la zone du thumbnail */
+  height: 120px;
 }
 
 .file-thumbnail i {
-  font-size: 4rem; /* Taille de l'icône */
-  color: var(--text-action-high-blue-france); /* Couleur bleue DSFR */
+  font-size: 4rem;
+  color: var(--text-action-high-blue-france);
 }
 
-/*
-  ::v-deep est nécessaire pour surcharger les styles
-  à l'intérieur du composant DsfrFileDownload.
-*/
 .file-card :deep(.fr-download) {
-  /* On réinitialise le style du composant pour qu'il s'intègre à notre carte */
   border: none;
   box-shadow: none;
   padding: 0;
@@ -197,7 +193,6 @@ const getFileDetail = (file: siafV2.IFile): string => {
 }
 
 .file-card :deep(.fr-download__title) {
-  /* Optionnel: Gérer les titres trop longs */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

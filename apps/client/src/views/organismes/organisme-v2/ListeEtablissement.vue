@@ -1,23 +1,13 @@
 <script setup lang="ts">
-import type { siafV2 } from '@biblio-num/shared'
 import MapCard from '@/components/MapCard.vue'
-
-type EstablishmentAcquiredType = 'gratuit' | 'onéreux'
-
-interface IEstablishment {
-  name: string
-  address: siafV2.ISiafAddress
-  type: string | null
-  value: number | null
-  acquiredType: EstablishmentAcquiredType
-}
+import type { IEstablishment } from '@biblio-num/shared'
 
 const acquiredEstablishments: IEstablishment[] = [
   {
     name: 'Siège social (Donation)',
     address: {
       oneLine: '5 Rue du Parc 75014 Paris',
-      coordinates: [2.326, 48.833], // [lon, lat]
+      coordinates: [2.326, 48.833],
       rnaAddress: null,
       dsAddress: {
         cityName: 'Paris',
@@ -44,7 +34,7 @@ const acquiredEstablishments: IEstablishment[] = [
     name: 'Local Lyon Confluence',
     address: {
       oneLine: '10 Quai Antoine Riboud 69002 Lyon',
-      coordinates: [4.818, 45.744], // [lon, lat]
+      coordinates: [4.818, 45.744],
       rnaAddress: null,
       dsAddress: {
         cityName: 'Lyon',
@@ -73,7 +63,7 @@ const secondaryEstablishments: IEstablishment[] = [
     name: 'Antenne Paris 19e',
     address: {
       oneLine: '100 Avenue de Flandre 75019 Paris',
-      coordinates: [2.373, 48.889], // [lon, lat]
+      coordinates: [2.373, 48.889],
       rnaAddress: null,
       dsAddress: {
         cityName: 'Paris',
@@ -100,7 +90,7 @@ const secondaryEstablishments: IEstablishment[] = [
     name: 'Espace Jeunes Marseille',
     address: {
       oneLine: '50 Rue de la République 13002 Marseille',
-      coordinates: [5.37, 43.3], // [lon, lat]
+      coordinates: [5.37, 43.3],
       rnaAddress: null,
       dsAddress: {
         cityName: 'Marseille',
@@ -119,7 +109,7 @@ const secondaryEstablishments: IEstablishment[] = [
         streetName: 'Rue de la République',
       },
     },
-    type: "Centre d'accueil",
+    type: 'Centre d\'accueil',
     value: 200000,
     acquiredType: 'onéreux',
   },
@@ -130,7 +120,7 @@ const cededEstablishments: IEstablishment[] = [
     name: 'Ancien bureau Lille (Cédé)',
     address: {
       oneLine: '2 Place du Théâtre 59800 Lille',
-      coordinates: [3.065, 50.637], // [lon, lat]
+      coordinates: [3.065, 50.637],
       rnaAddress: null,
       dsAddress: {
         cityName: 'Lille',
@@ -160,7 +150,7 @@ const activeAccordion = ref(0)
 
 const activeEstablishments = computed(() => [...acquiredEstablishments, ...secondaryEstablishments])
 
-const initialCenter = computed(() => {
+const initialCenter = computed<[number, number]>(() => {
   return activeEstablishments.value[0]?.address.coordinates || [2.3522, 48.8566]
 })
 
@@ -172,7 +162,7 @@ const establishmentToFeature = (establishment: IEstablishment) => ({
   },
   geometry: {
     type: 'Point',
-    coordinates: establishment.address.coordinates, // [lon, lat]
+    coordinates: establishment.address.coordinates,
   },
 })
 
@@ -199,6 +189,7 @@ function focusOnEstablishment (establishment: IEstablishment) {
               :key="est.name"
             >
               <DsfrCard
+                :title-link-attrs="{}"
                 :title="est.name"
                 :detail="est.address.oneLine"
                 :description="`${est.type} (${est.acquiredType})`"
@@ -221,6 +212,7 @@ function focusOnEstablishment (establishment: IEstablishment) {
               class="fr-col-12"
             >
               <DsfrCard
+                :title-link-attrs="{}"
                 :title="est.name"
                 :detail="est.address.oneLine"
                 :description="`${est.type}`"
@@ -243,6 +235,7 @@ function focusOnEstablishment (establishment: IEstablishment) {
               class="fr-col-12"
             >
               <DsfrCard
+                :title-link-attrs="{}"
                 :title="est.name"
                 :detail="est.address.oneLine"
                 size="sm"
@@ -281,7 +274,6 @@ function focusOnEstablishment (establishment: IEstablishment) {
 </template>
 
 <style scoped>
-/* Assure que la carte prend toute la hauteur de sa colonne */
 .fr-col-md-7 {
   display: flex;
   flex-direction: column;
@@ -290,7 +282,6 @@ function focusOnEstablishment (establishment: IEstablishment) {
   flex-grow: 1;
 }
 
-/* Améliore le style de la carte cliquable */
 :deep(.fr-card) {
   cursor: pointer;
   transition: box-shadow 0.2s ease-in-out;

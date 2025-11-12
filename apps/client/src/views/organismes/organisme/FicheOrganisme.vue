@@ -67,8 +67,8 @@ const loadOrganisme = async () => {
 
 const isSynchronising = computed(() => {
   return (
-    (syncState.value?.state === eState.uploading || syncState.value?.state === eState.queued) &&
-    organisme.value?.type === eOrganismeType.unknown
+    (syncState.value?.state === eState.uploading || syncState.value?.state === eState.queued)
+    && organisme.value?.type === eOrganismeType.unknown
   )
 })
 
@@ -184,9 +184,7 @@ const onRefreshSync = async () => {
           v-else-if="isErrorSync"
           class="flex flex-col justify-center items-center p-10"
         >
-          <span class="fr-text--lg"
-            >Cette {{ idType === EOrganismeIdType.Rna ? 'assocation' : 'fondation' }} n'a pas pu être synchroniser.</span
-          >
+          <span class="fr-text--lg">Cette {{ idType === EOrganismeIdType.Rna ? 'assocation' : 'fondation' }} n'a pas pu être synchroniser.</span>
           <span class="fr-text--lg">Veuillez Contacter le support.</span>
         </div>
         <div

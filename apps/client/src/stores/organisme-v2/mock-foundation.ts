@@ -1,12 +1,12 @@
-import { siafV2 } from '@biblio-num/shared'
+import { eJobPosition, eQualityInOrganisme } from '@biblio-num/shared'
+import type { IFoundationOutput } from '@biblio-num/shared'
 
-export const mockFoundationPayload: siafV2.IFoundationOutput = {
-  _id: 'a9b8c7d6-e5f4-3210-9876-1a2b3c4d5e6f',
-  _createdAt: new Date('2018-06-01T12:00:00Z'),
-  _updatedAt: new Date('2024-04-10T09:15:00Z'),
-  publicId: 'OO1-FRUP-000123-01',
-  status: 'Active',
-  statusEffectiveAt: new Date('2024-04-10T09:15:00Z'),
+export const mockFoundationPayload: IFoundationOutput = {
+  id: 'OO1-FRUP-000123-01',
+  createdAt: new Date('2018-06-01T12:00:00Z'),
+  updatedAt: new Date('2024-04-10T09:15:00Z'),
+  state: 'Active',
+  stateEffectiveAt: new Date('2024-04-10T09:15:00Z'),
   siret: '98765432100012',
   creationAt: new Date('2018-05-20T00:00:00Z'),
   title: 'Fondation pour l\'Enfance',
@@ -38,9 +38,9 @@ export const mockFoundationPayload: siafV2.IFoundationOutput = {
   website: 'https://www.fondation-enfance.org',
   files: [
     {
-      _id: 'f3-uuid-comptes-fondation',
-      _createdAt: new Date('2024-04-10T09:15:00Z'),
-      _updatedAt: new Date('2024-04-10T09:15:00Z'),
+      id: 'f3-uuid-comptes-fondation',
+      createdAt: new Date('2024-04-10T09:15:00Z'),
+      updatedAt: new Date('2024-04-10T09:15:00Z'),
       originalName: 'comptes_annuels_2023.zip',
       checksum: 'xyz987uvw654',
       byteSize: 2500800,
@@ -62,7 +62,7 @@ export const mockFoundationPayload: siafV2.IFoundationOutput = {
   accountDepositYears: [2022, 2023],
   persons: [
     {
-      _id: 'p2-uuid-martin',
+      id: 'p2-uuid-martin',
       lastName: 'Martin',
       firstName: 'Pierre',
       bornAt: new Date('1975-11-02T00:00:00Z'),
@@ -97,11 +97,11 @@ export const mockFoundationPayload: siafV2.IFoundationOutput = {
       residenceCountry: 'France',
       entryAt: new Date('2019-01-15T00:00:00Z'),
       exitAt: null,
-      role: siafV2.eFoundationRole['Membre du conseil d\'administration'],
-      jobPosition: siafV2.eJobPosition.Président,
+      jobPosition: eJobPosition.Président,
+      quality: eQualityInOrganisme['Membre du conseil d\'administration'],
     },
     {
-      _id: 'p3-uuid-bernard',
+      id: 'p3-uuid-bernard',
       lastName: 'Bernard',
       firstName: 'Sophie',
       bornAt: new Date('1982-03-20T00:00:00Z'),
@@ -116,8 +116,9 @@ export const mockFoundationPayload: siafV2.IFoundationOutput = {
       residenceCountry: 'France',
       entryAt: new Date('2018-06-01T00:00:00Z'),
       exitAt: null,
-      role: siafV2.eFoundationRole['Membre du conseil d\'administration'],
-      jobPosition: siafV2.eJobPosition.Secrétaire,
+      jobPosition: eJobPosition.Secrétaire,
+      quality: eQualityInOrganisme['Membre du conseil d\'administration'],
+
     },
   ],
   founderLegalEntities: [

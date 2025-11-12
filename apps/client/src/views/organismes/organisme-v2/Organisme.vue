@@ -5,7 +5,7 @@ import { useOrganismeV2Store } from '@/stores/organisme-v2'
 import { storeToRefs } from 'pinia'
 import OrganismeOverview from './OrganismeOverview.vue'
 import { dateToStringFr, getPrefecture } from '@/utils'
-import type { IFoundationOutput } from '@biblio-num/shared/types/organismes/siaf-v2'
+import type { IFoundationOutput } from '@biblio-num/shared'
 import OrganismePersons from './OrganismePersons.vue'
 import ListeDossier from './ListeDossier.vue'
 import ListeEtablissement from './ListeEtablissement.vue'
@@ -46,7 +46,7 @@ onMounted(() => {
             class="mr-4"
             big
           />
-          <span class="fr-text--lead fr-text--bold">{{ selectedOrganisme.publicId }} - </span>
+          <span class="fr-text--lead fr-text--bold">{{ selectedOrganisme.id }} - </span>
           <span class="fr-text--lead">{{ selectedOrganisme.title }}</span>
         </div>
       </template>
@@ -60,7 +60,7 @@ onMounted(() => {
             <div class="flex flex-col fr-col-2">
               <label class="text-sm/6 font-medium text-gray-900">Etat de la structure</label>
               <span class="text-sm/6 text-gray-700">
-                <OrganismeBadge :type="selectedOrganisme.status" />
+                <OrganismeBadge :type="selectedOrganisme.state" />
               </span>
             </div>
             <div class="flex flex-col fr-col-2">
@@ -91,14 +91,14 @@ onMounted(() => {
             id="dossiers"
             title="Dossiers"
           >
-            <ListeDossier :organisme-id="selectedOrganisme.publicId" />
+            <ListeDossier :organisme-id="selectedOrganisme.id" />
           </BnTab>
           <BnTab
             id="relation"
             title="Relations"
           >
             <ListeRelations
-              :current-organisme-title="selectedOrganisme.publicId"
+              :current-organisme-title="selectedOrganisme.id"
               :founded-legal-entities="selectedOrganisme.foundedLegalEntities"
               :founder-legal-entities="selectedOrganisme.founderLegalEntities"
               :governance-legal-entities="selectedOrganisme.governanceLegalEntities"

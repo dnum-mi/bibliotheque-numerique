@@ -2,7 +2,6 @@
 import { ref, computed, watch } from 'vue'
 import type { View } from 'ol'
 import { GeoJSON } from 'ol/format'
-// 1. Importer la projection de la vue (EPSG:3857) et la transformation
 import { fromLonLat, get as getProjection } from 'ol/proj'
 
 const props = withDefaults(defineProps<{
@@ -13,7 +12,7 @@ const props = withDefaults(defineProps<{
   height?: string
   pinMarker?: boolean
 }>(), {
-  center: () => [2.3522, 48.8566], // [lon, lat]
+  center: () => [2.3522, 48.8566],
   zoom: 16,
   featuresList: () => [],
   pinMarker: true,
@@ -22,11 +21,9 @@ const props = withDefaults(defineProps<{
 const view = ref<View>()
 const map = ref<HTMLElement>()
 
-// 2. Définir nos projections
-const dataProjection = getProjection('EPSG:4326') // Nos données [lon, lat]
-const featureProjection = getProjection('EPSG:3857') // La projection de la carte
+const dataProjection = getProjection('EPSG:4326')!
+const featureProjection = getProjection('EPSG:3857')!
 
-// Centre transformé (inchangé, c'était correct)
 const transformedCenter = computed(() => fromLonLat(props.center))
 
 watch(transformedCenter, (newCenter) => {
@@ -41,18 +38,14 @@ const providerFeatureCollection = computed(() => ({
   features: props.featuresList,
 }))
 
-// 3. TRANSFORMER LES FEATURES LORS DE LA LECTURE (LA CORRECTION CLÉ)
 const geoJsonFeatures = computed(() =>
   geoJson.readFeatures(providerFeatureCollection.value, {
-    // Indique que nos données sont en [lon, lat]
-    dataProjection: dataProjection,
-    // Indique que la carte les veut en projection Web Mercator
-    featureProjection: featureProjection,
+    dataProjection,
+    featureProjection,
   }),
 )
 // #endregion marker
 
-// Fonctions de contrôle (inchangées, elles étaient correctes)
 function setCenter (coords: [number, number]) {
   view.value?.setCenter(fromLonLat(coords))
 }
@@ -104,7 +97,3 @@ defineExpose({ resetCenter, setCenter, setCenterAndZoom })
     </ol-vector-layer>
   </ol-map>
 </template>
-
-<style scoped>
-/* (Aucun style requis pour le cercle) */
-</style>

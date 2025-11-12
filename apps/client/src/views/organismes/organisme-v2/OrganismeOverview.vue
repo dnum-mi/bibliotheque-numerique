@@ -1,21 +1,21 @@
 <script setup lang="ts">
-import type { siafV2 } from '@biblio-num/shared'
-import { dateToStringFr, getPrefecture } from '@/utils'
+import { dateToStringFr } from '@/utils'
+import type { IAssociationOutput, IFoundationOutput } from '@biblio-num/shared'
 
 const props = withDefaults(
   defineProps<{
-    organisme: siafV2.IAssociationOutput | siafV2.IFoundationOutput
+    organisme: IAssociationOutput | IFoundationOutput
     isFoundation: boolean
   }>(),
   {},
 )
 
 const asFoundation = computed(() => {
-  return props.isFoundation ? (props.organisme as siafV2.IFoundationOutput) : null
+  return props.isFoundation ? (props.organisme as IFoundationOutput) : null
 })
 
 const asAssociation = computed(() => {
-  return !props.isFoundation ? (props.organisme as siafV2.IAssociationOutput) : null
+  return !props.isFoundation ? (props.organisme as IAssociationOutput) : null
 })
 
 const mapCenter = computed(() => props.organisme.address.coordinates)
