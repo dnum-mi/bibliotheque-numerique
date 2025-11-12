@@ -1,4 +1,4 @@
-import { JobPositionKey, qualityInOrganismeKey, OrganismeStatusKey } from './enums'
+import { OrganismeStatusKey } from './enums'
 import { ISiafAddress } from './common-output.interface'
 import { IFile } from './file-output.interface'
 import { IPerson } from './person.interface'
