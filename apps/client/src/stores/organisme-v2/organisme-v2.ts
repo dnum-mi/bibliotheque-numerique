@@ -1,11 +1,14 @@
-import type { IAssociationOutput, IFoundationOutput } from '@biblio-num/shared'
+import type { IAssociationOutput, IFoundationOutput, IOrganismeOutput } from '@biblio-num/shared'
 import { mockAssociationPayload } from './mock-association'
 import { mockFoundationPayload } from './mock-foundation'
+import apiClient from '@/api/api-client'
+import type { OrganismeIdType } from '../organisme'
 
-const mockDatabase = new Map<string, IAssociationOutput | IFoundationOutput>([
-  [mockAssociationPayload.id, mockAssociationPayload],
-  [mockFoundationPayload.id, mockFoundationPayload],
-])
+// TODO: A supprimer
+// const mockDatabase = new Map<string, IAssociationOutput | IFoundationOutput>([
+//   [mockAssociationPayload.id, mockAssociationPayload],
+//   [mockFoundationPayload.id, mockFoundationPayload],
+// ])
 
 export const useOrganismeV2Store = defineStore('organisme', () => {
   const selectedOrganisme = ref<IAssociationOutput | IFoundationOutput | null>(null)
@@ -36,18 +39,20 @@ export const useOrganismeV2Store = defineStore('organisme', () => {
     return isAssociation.value ? (selectedOrganisme.value as IAssociationOutput) : null
   })
 
-  async function fetchOrganisme (id: string) {
+  async function fetchOrganisme (id: string, type: OrganismeIdType) {
     isLoading.value = true
     error.value = null
     selectedOrganisme.value = null
 
-    console.log(`[Store] Fetching organisme with id: ${id}`)
+    // console.log(`[Store] Fetching organisme with id: ${id}`)
 
-    // Simule une latence réseau
-    await new Promise((resolve) => setTimeout(resolve, 600))
+    // // Simule une latence réseau
+    // await new Promise((resolve) => setTimeout(resolve, 600))
 
-    const data = mockDatabase.get(id)
+    // const data = mockDatabase.get(id)
+    const organismeOutput: IOrganismeOutput = await apiClient[`getOrganismeBy${type}`](id)
 
+    const data = (organismeOutput?.bn.rnfJson as IFoundationOutput) || (organismeOutput?.bn.rnaJson as IAssociationOutput) || undefined
     if (data) {
       selectedOrganisme.value = data
     } else {

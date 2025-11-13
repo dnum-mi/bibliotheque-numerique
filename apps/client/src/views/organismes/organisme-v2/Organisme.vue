@@ -11,8 +11,9 @@ import ListeDossier from './ListeDossier.vue'
 import ListeEtablissement from './ListeEtablissement.vue'
 import ListePieceJointe from './ListePieceJointe.vue'
 import ListeRelations from './ListeRelations.vue'
+import type { OrganismeIdType } from '@/stores'
 
-const props = withDefaults(defineProps<{ id: string }>(), {})
+const props = withDefaults(defineProps<{ id: string, idType: OrganismeIdType }>(), {})
 
 const organismeStore = useOrganismeV2Store()
 
@@ -23,8 +24,8 @@ const { fetchOrganisme } = organismeStore
 const defaultTabId = computed(() => 'infos')
 const currentFicheOrganismeTab = ref<string | undefined>(undefined)
 
-onMounted(() => {
-  fetchOrganisme(props.id)
+onMounted(async () => {
+  await fetchOrganisme(props.id, props.idType)
 })
 </script>
 

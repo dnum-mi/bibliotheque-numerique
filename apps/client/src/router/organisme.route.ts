@@ -41,8 +41,10 @@ export const organismeRoute: RouteRecordRaw = {
       component: () => import('@/views/organismes/organisme-v2/Organisme.vue'),
       props: (route) => {
         const id = route.params.id
+        const idType = route.query.idType || 'Id'
         return {
           id,
+          idType,
         }
       },
       meta: {
