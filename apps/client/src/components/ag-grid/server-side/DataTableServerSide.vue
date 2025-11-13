@@ -11,7 +11,7 @@ import type { DisplayActiveFilter } from '../active-filters/activeFilters.type'
 
 import { useEventListener } from '@vueuse/core'
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api'
-import { nextTick } from 'vue'
+import { nextTick, toRaw } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
@@ -78,6 +78,7 @@ const agGridFilterToDataTableDataType: Record<string, string | undefined> = {
 const displayColumns = ref(false)
 const perPage = ref(20)
 const isLoadingRows = ref(false)
+const tableKey = ref(0)
 
 //#region 📍------ DATA ------ 📍
 const currentPage = ref(1)
@@ -86,6 +87,45 @@ const rowData = ref()
 const selectedColumnsIds = ref(props.columnDefs.filter((col) => !col.hide).map((col) => col.field ?? ''))
 
 const totalRecords = ref(0)
+
+const filteredColumnDefs = computed(() => {
+  // Obtenir les colonnes non cachées et sélectionnées
+  const availableColumns = props.columnDefs.filter((col) => {
+    const isNotHidden = !col.hide
+    const isSelected = selectedColumnsIds.value.includes(col.field ?? '')
+    return isNotHidden && isSelected
+  })
+
+  // Si aucun ordre personnalisé n'est défini OU si l'ordre est vide, retourner l'ordre original
+  if (columnsOrder.value.length === 0 || !columnsOrder.value.some(fieldId => availableColumns.some(col => col.field === fieldId))) {
+    // Retourner dans l'ordre défini par props.columnDefs (ordre par défaut)
+    return props.columnDefs.filter(col => {
+      const isNotHidden = !col.hide
+      const isSelected = selectedColumnsIds.value.includes(col.field ?? '')
+      return isNotHidden && isSelected
+    })
+  }
+
+  // Créer un map pour un accès rapide aux colonnes par field
+  const columnMap = new Map(availableColumns.map(col => [col.field, col]))
+
+  // Réorganiser selon l'ordre défini dans columnsOrder
+  const orderedColumns = []
+
+  // Ajouter les colonnes dans l'ordre spécifié
+  for (const fieldId of columnsOrder.value) {
+    const column = columnMap.get(fieldId)
+    if (column) {
+      orderedColumns.push(column)
+      columnMap.delete(fieldId) // Retirer pour éviter les doublons
+    }
+  }
+
+  // Ajouter les colonnes restantes qui ne sont pas dans l'ordre personnalisé
+  orderedColumns.push(...columnMap.values())
+
+  return orderedColumns
+})
 
 const sort = ref<{ key: string; order: 'ASC' | 'DESC' }[]>([])
 const filters = ref<DataTableFilterMeta>(getFilters())
@@ -302,6 +342,7 @@ function restoreFromLocalStorage () {
   //#region 📍------ RESTORE COLUMNS WIDTH ------ 📍
   if (dto.columnsWidth) {
     columnsWidth.value = dto.columnsWidth as Record<string, number>
+    tableKey.value++
   }
   //#endregion
 
@@ -427,40 +468,6 @@ const getRows = async (page: number = currentPage.value) => {
     isLoadingRows.value = false
   }
 }
-
-const filteredColumnDefs = computed(() => {
-  // Obtenir les colonnes non cachées et sélectionnées
-  const availableColumns = props.columnDefs.filter((col) => {
-    const isNotHidden = !col.hide
-    const isSelected = selectedColumnsIds.value.includes(col.field ?? '')
-    return isNotHidden && isSelected
-  })
-
-  // Si aucun ordre personnalisé n'est défini, retourner l'ordre original
-  if (columnsOrder.value.length === 0) {
-    return availableColumns
-  }
-
-  // Créer un map pour un accès rapide aux colonnes par field
-  const columnMap = new Map(availableColumns.map(col => [col.field, col]))
-
-  // Réorganiser selon l'ordre défini dans columnsOrder
-  const orderedColumns = []
-
-  // Ajouter les colonnes dans l'ordre spécifié
-  for (const fieldId of columnsOrder.value) {
-    const column = columnMap.get(fieldId)
-    if (column) {
-      orderedColumns.push(column)
-      columnMap.delete(fieldId) // Retirer pour éviter les doublons
-    }
-  }
-
-  // Ajouter les colonnes restantes qui ne sont pas dans l'ordre personnalisé
-  orderedColumns.push(...columnMap.values())
-
-  return orderedColumns
-})
 
 watch(filtersToSend, () => {
   if (hasInitialDataLoaded.value) {
@@ -588,12 +595,12 @@ const onColumnReorder = (event: { dragIndex: number, dropIndex: number }) => {
   columnsOrder.value = currentOrder
 
   // eslint-disable-next-line no-console
-  console.log('New column order:', columnsOrder.value)
+  console.log('New column order:', toRaw(columnsOrder.value))
 
   // Sauvegarder immédiatement l'ordre modifié
   if (hasInitialDataLoaded.value) {
     // eslint-disable-next-line no-console
-    console.log('Saving column order...', columnsOrder.value)
+    console.log('Saving column order...', toRaw(columnsOrder.value))
     const dto: IPagination<T> = {
       sorts: sort.value,
       filters: Object.keys(filtersToSend.value ?? {}).length > 0 ? filtersToSend.value as Record<keyof T, IFilter> : null,
@@ -620,7 +627,7 @@ const computeScrollHeight = () => {
 onMounted(() => {
   setTimeout(() => {
     computeScrollHeight()
-  }, 200)
+  }, 250)
 })
 
 useEventListener(window, 'resize', computeScrollHeight)
@@ -768,25 +775,38 @@ function updateDataTableState (dto: IPagination<T>) {
 }
 
 function resetColumnOrder () {
-  // Réinitialiser l'ordre des colonnes à l'ordre par défaut
-  const defaultOrder = props.columnDefs.filter((col) => !col.hide).map((col) => col.field ?? '')
-  selectedColumnsIds.value = defaultOrder
-  columnsOrder.value = defaultOrder
+  // Réinitialiser l'ordre des colonnes à l'ordre par défaut, mais uniquement pour les colonnes actuellement visibles
+  const defaultOrder = props.columnDefs
+    .filter((col) => !col.hide && selectedColumnsIds.value.includes(col.field ?? ''))
+    .map((col) => col.field ?? '')
 
-  // Sauvegarder immédiatement la réinitialisation
-  if (hasInitialDataLoaded.value) {
-    const dto: IPagination<T> = {
-      sorts: sort.value,
-      filters: Object.keys(filtersToSend.value ?? {}).length > 0 ? filtersToSend.value as Record<keyof T, IFilter> : null,
-      columns: selectedColumnsIds.value,
-      columnsWidth: columnsWidth.value as Record<string | keyof T, number>,
-      columnsOrder: columnsOrder.value,
-      perPage: +perPage.value,
-      page: currentPage.value,
+  console.warn('Resetting column order to default (only visible columns):', defaultOrder)
+  console.warn('Current selectedColumnsIds:', toRaw(selectedColumnsIds.value))
+  console.warn('Current columnsOrder:', toRaw(columnsOrder.value))
+
+  selectedColumnsIds.value = [...defaultOrder]
+  columnsOrder.value = [...defaultOrder]
+  tableKey.value++
+  nextTick(() => {
+    // Validation de l'ordre réel des colonnes
+    const realOrder = filteredColumnDefs.value.map(col => col.field)
+    console.warn('Column order reset completed. New order:', toRaw(columnsOrder.value))
+    console.warn('filteredColumnDefs order:', realOrder)
+    // Sauvegarder immédiatement la réinitialisation
+    if (hasInitialDataLoaded.value) {
+      const dto: IPagination<T> = {
+        sorts: sort.value,
+        filters: Object.keys(filtersToSend.value ?? {}).length > 0 ? filtersToSend.value as Record<keyof T, IFilter> : null,
+        columns: selectedColumnsIds.value,
+        columnsWidth: columnsWidth.value as Record<string | keyof T, number>,
+        columnsOrder: columnsOrder.value,
+        perPage: +perPage.value,
+        page: currentPage.value,
+      }
+      emit('update:paginationDto', dto)
+      saveToLocalStorage(dto)
     }
-    emit('update:paginationDto', dto)
-    saveToLocalStorage(dto)
-  }
+  })
 }
 
 function resetColumnsWidth () {
@@ -839,6 +859,7 @@ defineExpose({
     :class="{ loading: isLoadingRows }"
   >
     <DataTable
+      :key="tableKey"
       v-model:filters="filters"
       class="m-w-full h-full"
       :style="{ width: `calc(100vw - ${rightOffset}px)` }"
@@ -880,7 +901,6 @@ defineExpose({
         :show-filter-match-modes="col.filter !== 'agSetColumnFilter'"
         :show-filter-menu="!col.suppressHeaderMenuButton"
         :title="col.headerName"
-        :style="columnsWidth[col.field!] ? { 'width': `${columnsWidth[col.field!]}px`, 'max-width': `${columnsWidth[col.field!]}px` } : { 'width': 'auto !important', 'max-width': '1000px !important' }"
       >
         <template #body="{ data }">
           <template v-if="col.cellRenderer">
