@@ -7,14 +7,13 @@ import { listOfVerbosePrefecture } from '@biblio-num/shared'
 
 import { dateToStringFr } from '@/utils'
 import { useUserStore } from '@/stores'
-import AgGridServerSide from '@/components/ag-grid/server-side/AgGridServerSide.vue'
 import { baseColDef } from '@/components/ag-grid/server-side/columndef-base'
 import RoleBadgesRenderer from '@/components/Badges/role/RoleBadgesRenderer.vue'
 import { useActiveFilter } from '@/components/ag-grid/active-filters/useActiveFilter'
 import YesNoEmoji from '@/components/YesNoEmoji.vue'
 import { useStorage } from '@vueuse/core'
 
-const agGridComponent = useTemplateRef('agGridComponent')
+const dataTableComponent = useTemplateRef('primeVueComponent')
 const router = useRouter()
 
 const columnDefs: BNColDef[] = [
@@ -122,7 +121,7 @@ const onSelectionChanged = (event: SelectionChangedEvent) => {
 }
 
 const dataTable = useStorage('list-users-datatable', 'ag-grid')
-const { activeFilters, onFiltersUpdated, handleClearAllFilters, handleRemoveFilter } = useActiveFilter(agGridComponent)
+const { activeFilters, onFiltersUpdated, handleClearAllFilters, handleRemoveFilter } = useActiveFilter('list-users', dataTableComponent)
 </script>
 
 <template>
@@ -152,20 +151,7 @@ const { activeFilters, onFiltersUpdated, handleClearAllFilters, handleRemoveFilt
       ]"
     />
 
-    <AgGridServerSide
-      v-if="dataTable === 'ag-grid'"
-      ref="agGridComponent"
-      class="h-full"
-      :column-defs="columnDefs"
-      pre-condition
-      :api-call="apiCall"
-      :on-selection-changed="onSelectionChanged"
-      local-storage-key="users"
-      @filters-updated="onFiltersUpdated"
-    />
-
     <DataTableServerSide
-      v-else
       ref="primeVueComponent"
       class="h-full"
       :column-defs="columnDefs"

@@ -37,7 +37,7 @@ export default {
       { deep: true },
     )
 
-    //#region AgGrid methods
+    //#region DataTable methods
     const isFilterActive = () => {
       const isDefault = backendFilter.value.includeEmpty && backendFilter.value.filter.length === props.params.strings.length
       return !isDefault

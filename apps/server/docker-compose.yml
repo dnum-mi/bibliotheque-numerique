@@ -176,7 +176,7 @@ services:
       - dev
       - simple-dev
       - ci
-    image: public.ecr.aws/bitnami/redis:latest
+    image: redis:latest
     container_name: redis
     environment:
       - REDIS_PASSWORD=redis

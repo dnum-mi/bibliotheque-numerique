@@ -1,10 +1,11 @@
 import type { IFilterDef } from 'ag-grid-community'
+import type { Component } from 'vue'
+
 import { FormatFunctionRef, instructionTimeValues } from '@biblio-num/shared'
 import type { FormatFunctionRefKeys } from '@biblio-num/shared'
 
 import { DossierState } from '@/utils'
 import StatusBadgesRenderer from '../../Badges/status/StatusBadgesRenderer.vue'
-import type { Component } from 'vue'
 import DelayStateRenderer from '../../Badges/delay-state/DelayStateRenderer.vue'
 
 const fieldTypesDict = {
@@ -68,7 +69,7 @@ export const getAgGridFilterFromFieldType = (fieldType?: keyof typeof fieldTypes
   if (fieldType === 'boolean') {
     filter.filterParams = {
       values: ['true', 'false'],
-      valueFormatter: (params) => (params.value === 'true' ? 'Oui' : 'Non'),
+      valueFormatter: (params: { value: string }) => (params.value === 'true' ? 'Oui' : 'Non'),
       suppressMiniFilter: true,
     }
 

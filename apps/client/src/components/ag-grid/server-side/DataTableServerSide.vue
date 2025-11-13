@@ -1,7 +1,5 @@
 <script lang="ts" setup generic="T extends DynamicKeys">
 import type { DataTableFilterMeta, DataTableFilterMetaData, DataTableOperatorFilterMetaData, DataTableSortEvent } from 'primevue/datatable'
-import type { GridReadyEvent } from 'ag-grid-community'
-import type { GridOptions } from 'ag-grid-enterprise'
 
 import type { DynamicKeys, IPagination, IFilter } from '@biblio-num/shared'
 import type { ApiCall } from './pagination.utils'
@@ -51,7 +49,6 @@ const props = withDefaults(
 //#region 📍------ EVENTS ------ 📍
 
 const emit = defineEmits<{
-  gridReady: [p: GridReadyEvent]
   'update:paginationDto': [p: IPagination<T>]
   filtersUpdated: [filters: DisplayActiveFilter[]]
   rowClick: [event: { data: T, column?: BNColDef, field?: string }]
@@ -553,7 +550,7 @@ const onColResize = (event: { element: HTMLElement, delta: number }) => {
 
   // Mettre à jour les largeurs de colonnes
   // eslint-disable-next-line no-console
-  console.log('Changing column widths...', columnsWidth.value)
+  console.log('Changing column widths...', toRaw(columnsWidth.value))
   columnsWidth.value = {
     ...columnsWidth.value,
     [field]: currentWidth,
@@ -562,7 +559,7 @@ const onColResize = (event: { element: HTMLElement, delta: number }) => {
   // Sauvegarder immédiatement les largeurs modifiées
   if (hasInitialDataLoaded.value) {
     // eslint-disable-next-line no-console
-    console.log('Saving column widths...', columnsWidth.value)
+    console.log('Saving column widths...', toRaw(columnsWidth.value))
     const dto: IPagination<T> = {
       sorts: sort.value,
       filters: Object.keys(filtersToSend.value ?? {}).length > 0 ? filtersToSend.value as Record<keyof T, IFilter> : null,
@@ -815,14 +812,7 @@ function resetColumnsWidth () {
   columnsWidth.value = {}
 
   // Force le re-rendu du tableau en déclarant que les données ont changé
-  nextTick(() => {
-    // Trigger reactivity to force style recalculation
-    const currentData = rowData.value
-    rowData.value = null
-    nextTick(() => {
-      rowData.value = currentData
-    })
-  })
+  tableKey.value++
 
   // Sauvegarder immédiatement la réinitialisation
   if (hasInitialDataLoaded.value) {
@@ -849,6 +839,17 @@ defineExpose({
   updateDataTableState,
   resetColumnOrder,
   resetColumnsWidth,
+})
+
+const columnWidths = computed(() =>
+  filteredColumnDefs.value.map(
+    col => columnsWidth.value[col.field!] ? `${columnsWidth.value[col.field!]}px` : undefined,
+  ),
+)
+
+watch(columnWidths, (newWidths) => {
+  // eslint-disable-next-line no-console
+  console.log('Column widths updated:', newWidths)
 })
 </script>
 

@@ -11,7 +11,7 @@ import type {
 } from '@biblio-num/shared'
 
 import DelayStateBadge from '@/components/Badges/delay-state/DelayStateBadge.vue'
-import AgGridAttachmentCell from '@/components/ag-grid/AgGridAttachmentCell.vue'
+import DataTableAttachmentCell from '@/components/ag-grid/DataTableAttachmentCell.vue'
 import { routeNames } from '@/router/route-names'
 
 const props = defineProps<{
@@ -158,7 +158,7 @@ const getPrefecture = (prefecture: PrefectureKey) => {
       <template v-else-if="ffr === 'file' && cellValue">
         <!-- File -->
         <p>
-          <AgGridAttachmentCell :params="{ value: { uuid: cellValue } }" />
+          <DataTableAttachmentCell :params="{ value: { uuid: cellValue } }" />
         </p>
       </template>
 

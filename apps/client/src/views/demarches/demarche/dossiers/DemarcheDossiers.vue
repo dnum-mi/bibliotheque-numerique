@@ -2,8 +2,7 @@
 import { ref, computed, watch, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { useDebounceFn, useStorage } from '@vueuse/core'
-import type { GridOptions } from 'ag-grid-enterprise'
-import type { ColumnMenuTab, GridApi, GridReadyEvent, SelectionChangedEvent } from 'ag-grid-community'
+import type { ColumnMenuTab, GridApi, SelectionChangedEvent } from 'ag-grid-community'
 
 import type { ICreateCustomFilter, IPagination, IPatchCustomFilter, ICustomFilter, IDemarche, IMappingColumn } from '@biblio-num/shared'
 
@@ -11,7 +10,6 @@ import type { FrontIMappingColumn } from '@/stores'
 import { useCustomFilterStore, useDemarcheStore } from '@/stores'
 import DemarcheDossierCellRenderer from '@/views/demarches/demarche/dossiers/DemarcheDossierCellRenderer.vue'
 import { deepAlmostEqual, selectKeysInObject } from '@/utils/object'
-import { backendFilterToAggFilter } from '@/components/ag-grid/server-side/pagination.utils'
 import { getAgGridFilterFromFieldType } from '@/components/ag-grid/server-side/filters.utils'
 import type { BNColDef } from '@/components/ag-grid/server-side/bn-col-def.interface'
 import DemarcheDossiersDisplays from './DemarcheDossiersDisplays.vue'
@@ -25,7 +23,6 @@ const demarcheStore = useDemarcheStore()
 const router = useRouter()
 const route = useRoute()
 const gridApi = ref<GridApi>()
-const agGridComponent = useTemplateRef('agGridComponent')
 const dataTableComponent = useTemplateRef('dataTableComponent')
 const dataTable = useStorage('dossiers-datatable', 'ag-grid')
 const demarche = computed<IDemarche>(() => demarcheStore.currentDemarche as IDemarche)
@@ -54,10 +51,9 @@ const { startTour } = useTour({
 })
 
 //#region 📍------ LOCAL STORAGE ------ 📍
-const localStoragePaginationKey = computed(() => `agGrid.demarche-${route.params.demarcheId}.dossiers.pagination`)
 const localStorageDataTablePaginationKey = computed(() => `dataTable.demarche-${route.params.demarcheId}.dossiers.pagination`)
-const localStorageGroupByKey = computed(() => `agGrid.demarche-${route.params.demarcheId}.dossiers.groupBy`)
-const localStorageDisplayIdKey = computed(() => `agGrid.demarche-${route.params.demarcheId}.dossiers.currentDisplayId`)
+const localStorageGroupByKey = computed(() => `dataTable.demarche-${route.params.demarcheId}.dossiers.groupBy`)
+const localStorageDisplayIdKey = computed(() => `dataTable.demarche-${route.params.demarcheId}.dossiers.currentDisplayId`)
 //#endregion
 
 //#region 📍------ GROUP BY DOSSIER ------ 📍
@@ -72,7 +68,6 @@ const apiCall = (dto: IPagination<unknown>) => {
 
 const toggleView = useDebounceFn((isActive: boolean) => {
   groupByDossier.value = isActive
-  agGridComponent.value?.refresh()
   dataTableComponent.value?.refresh()
 })
 
@@ -146,7 +141,7 @@ watch(demarche, async (newValue) => {
 
 watch(fetching, () => {
   if (!fetching.value) {
-    agGridComponent.value?.refresh()
+    dataTableComponent.value?.refresh()
   }
 })
 
@@ -167,33 +162,6 @@ const updateDataTableState = (selectedDisplay?: IPagination<any>) => {
   if (dataTableComponent.value) {
     dataTableComponent.value.updateDataTableState(selectedDisplay ?? paginationDto.value)
   }
-}
-
-const updateAggState = () => {
-  if (gridApi.value) {
-    gridApi.value.setFilterModel(backendFilterToAggFilter(paginationDto.value.filters || {}))
-    const statesHash = Object.fromEntries(gridApi.value?.getColumnState()?.map((state) => [state.colId, state]))
-    const sortHash = Object.fromEntries(paginationDto.value.sorts.map((sort) => [sort.key, sort]))
-    gridApi.value?.applyColumnState({
-      state: paginationDto.value.columns.map((c) => {
-        const result = {
-          ...statesHash[c],
-          hide: false,
-        }
-        if (sortHash[c]) {
-          result.sort = sortHash[c].order.toLowerCase() as 'asc' | 'desc'
-        }
-        return result
-      }),
-      applyOrder: true,
-      defaultState: { hide: true },
-    })
-    agGridComponent.value.refresh()
-  }
-}
-
-const onGridReady = (event: GridReadyEvent) => {
-  gridApi.value = event.api
 }
 
 //#region 📍------ CUSTOM DISPLAY ------ 📍
@@ -282,11 +250,7 @@ const selectDisplay = async (id: number | null) => {
     paginationDto.value.columns = selectedCustomDisplay.value?.columns
     paginationDto.value.sorts = selectedCustomDisplay.value?.sorts || []
     paginationDto.value.filters = selectedCustomDisplay.value?.filters || null
-    if (dataTable.value === 'ag-grid') {
-      updateAggState()
-    } else {
-      updateDataTableState()
-    }
+    updateDataTableState()
     localStorage.setItem(localStorageDisplayIdKey.value, `${selectedCustomDisplay.value.id}`)
   } else {
     throw new Error('Le filtre sélectionné n’existe pas')
@@ -320,7 +284,6 @@ const download = () => {
   demarcheStore.exportCurrentDemarcheDossiers(groupByDossier.value, paginationDto.value)
 }
 
-const readyToLoadAgGrid = ref<boolean>(false)
 const readyToLoadDataTable = ref<boolean>(false)
 const initialDataTableState = ref<IPagination<any> | null>(null)
 
@@ -385,7 +348,6 @@ onMounted(async () => {
   }
 
   // Marquer comme prêt seulement après avoir restauré toutes les valeurs
-  readyToLoadAgGrid.value = true
   readyToLoadDataTable.value = true
 
   // Appliquer l'état au DataTable après que le composant soit prêt
@@ -508,7 +470,6 @@ const quickFilterValueTranslations: Record<string, string> = {
         :api-call="apiCall"
         :local-storage-key="localStorageDataTablePaginationKey"
         :initial-state="initialDataTableState"
-        @grid-ready="onGridReady($event)"
         @filters-updated="onFiltersUpdated"
       />
     </div>

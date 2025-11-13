@@ -21,11 +21,6 @@ import OpenLayersMap from 'vue3-openlayers'
 import PrimeVue from 'primevue/config'
 import type { PrimeVueConfiguration } from 'primevue/config'
 
-import { LicenseManager } from 'ag-grid-enterprise'
-import 'ag-grid-community/styles/ag-grid.css'
-import 'ag-grid-community/styles/ag-theme-material.css'
-import '@/ag-grid-dsfr.css'
-
 // We use statusBadge in DsfrTable
 import StatusBadge from './components/Badges/status/StatusBadge.vue'
 import FileTagBadge from '@/components/Badges/file-tag/FileTagBadge.vue'
@@ -42,10 +37,6 @@ const isBlank = (v: unknown) =>
 
 FilterService.register('blank', (value: unknown) => isBlank(value))
 FilterService.register('notBlank', (value: unknown) => !isBlank(value))
-
-const agGridLicenseKey = '__AG_GRID_LICENSE_KEY__'
-
-LicenseManager.setLicenseKey(agGridLicenseKey)
 
 const BnPreset = definePreset(Aura, {
   primitive: {

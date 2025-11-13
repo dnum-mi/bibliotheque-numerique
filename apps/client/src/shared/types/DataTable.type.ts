@@ -25,7 +25,7 @@ export type HeaderDataTable = {
   filterParams?: ISetFilterParams
 }
 
-export const agGridFilterDict = {
+export const dataTableFilterDict = {
   DATE: 'date',
   TEXT: 'text',
   NUMBER: 'number',
@@ -34,4 +34,4 @@ export const agGridFilterDict = {
   FILE: 'file',
 } as const
 
-export type AgGridFilterKey = typeof agGridFilterDict[keyof typeof agGridFilterDict]
+export type DataTableFilterKey = typeof dataTableFilterDict[keyof typeof dataTableFilterDict]

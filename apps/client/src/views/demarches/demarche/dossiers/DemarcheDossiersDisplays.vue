@@ -120,7 +120,7 @@ const saveCurrentFilter = () => {
   filterLabelGroup.value.submitFn()
   closeFilterModal()
 }
-const resetAgGridFilters = () => {
+const resetDataTableFilters = () => {
   emit('selectDisplay', null)
 }
 
@@ -129,7 +129,7 @@ const filterList = computed(() => [defaultOption, ...props.displays.map(({ id, n
 
 const onSelectFilterChange = ($event: string | number) => {
   if ($event === defaultOption.text) {
-    resetAgGridFilters()
+    resetDataTableFilters()
     return
   }
   emit('selectDisplay', +$event)

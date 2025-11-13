@@ -33,7 +33,7 @@ export default {
       }
     })
 
-    //#region AgGrid methods
+    //#region DataTable methods
     const isFilterActive = () => {
       return selectedRange.value !== null
     }
