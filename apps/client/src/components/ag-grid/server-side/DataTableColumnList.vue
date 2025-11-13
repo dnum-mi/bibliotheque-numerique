@@ -30,6 +30,7 @@ useEventListener(document, 'click', (event: MouseEvent) => {
 <template>
   <div
     ref="me"
+    class="overflow-auto"
   >
     Liste des colonnes
 

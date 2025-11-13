@@ -80,34 +80,9 @@ const dataTable = ref('ag-grid')
           @request-remove-filter="handleRemoveFilter"
           @request-clear-all="handleClearAllFilters"
         />
-        <DsfrSegmentedSet
-          v-model="dataTable"
-          :options="[
-            {
-              label: 'Ag',
-              value: 'ag-grid',
-            },
-            {
-              label: 'Prime',
-              value: 'primevue',
-            },
-          ]"
-        />
       </div>
-      <AgGridServerSide
-        v-if="dataTable === 'ag-grid'"
-        ref="agGridComponent"
-        v-model:pagination-dto="paginationDto"
-        class="h-full"
-        :column-defs="demarcheColumnDefs"
-        :on-selection-changed="onSelectDemarche"
-        pre-condition
-        local-storage-key="agGrid.demarches.state"
-        :api-call="apiCall"
-        @filters-updated="onFiltersUpdated"
-      />
+
       <DataTableServerSide
-        v-else
         ref="primeVueComponent"
         v-model:pagination-dto="paginationDto"
         :column-defs="demarcheColumnDefs"

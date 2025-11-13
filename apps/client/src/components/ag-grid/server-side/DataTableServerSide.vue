@@ -11,6 +11,7 @@ import type { DisplayActiveFilter } from '../active-filters/activeFilters.type'
 
 import { useEventListener } from '@vueuse/core'
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api'
+import { nextTick } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
@@ -27,7 +28,6 @@ const props = withDefaults(
     apiCall: ApiCall<T>
     loading?: boolean
     preCondition?: boolean
-    specificGridOption?: Partial<GridOptions>
     localStorageKey?: string
     rightOffset?: number
     initialState?: IPagination<T> | null
@@ -41,7 +41,6 @@ const props = withDefaults(
       columns: [],
     }),
     rightOffset: 38,
-    specificGridOption: () => ({}),
     localStorageKey: undefined,
     initialState: null,
   },
@@ -611,15 +610,17 @@ const onColumnReorder = (event: { dragIndex: number, dropIndex: number }) => {
 
 //#region 📍------ SCROLL HEIGHT ------ 📍
 const scrollHeight = ref('')
-
+const dataTableRef = useTemplateRef('dataTable')
 const computeScrollHeight = () => {
   const height = window.innerHeight
-  const padding = height > 780 ? 370 : 275
-  scrollHeight.value = `${height - padding}px`
+  const top = (dataTableRef.value)?.offsetTop || 0
+  scrollHeight.value = `${height - top - 130}px`
 }
 
 onMounted(() => {
-  computeScrollHeight()
+  setTimeout(() => {
+    computeScrollHeight()
+  }, 200)
 })
 
 useEventListener(window, 'resize', computeScrollHeight)
@@ -790,7 +791,18 @@ function resetColumnOrder () {
 
 function resetColumnsWidth () {
   // Réinitialiser toutes les largeurs de colonnes
+  console.warn('Resetting all column widths to default')
   columnsWidth.value = {}
+
+  // Force le re-rendu du tableau en déclarant que les données ont changé
+  nextTick(() => {
+    // Trigger reactivity to force style recalculation
+    const currentData = rowData.value
+    rowData.value = null
+    nextTick(() => {
+      rowData.value = currentData
+    })
+  })
 
   // Sauvegarder immédiatement la réinitialisation
   if (hasInitialDataLoaded.value) {
@@ -821,9 +833,14 @@ defineExpose({
 </script>
 
 <template>
-  <div class="h-full flex justify-between relative" :class="{ loading: isLoadingRows }">
+  <div
+    ref="dataTable"
+    class="h-full flex relative"
+    :class="{ loading: isLoadingRows }"
+  >
     <DataTable
       v-model:filters="filters"
+      class="m-w-full h-full"
       :style="{ width: `calc(100vw - ${rightOffset}px)` }"
       :value="rowData"
       striped-rows
@@ -863,7 +880,7 @@ defineExpose({
         :show-filter-match-modes="col.filter !== 'agSetColumnFilter'"
         :show-filter-menu="!col.suppressHeaderMenuButton"
         :title="col.headerName"
-        :style="columnsWidth[col.field!] ? { 'width': `${columnsWidth[col.field!]}px`, 'max-width': `${columnsWidth[col.field!]}px` } : undefined"
+        :style="columnsWidth[col.field!] ? { 'width': `${columnsWidth[col.field!]}px`, 'max-width': `${columnsWidth[col.field!]}px` } : { 'width': 'auto !important', 'max-width': '1000px !important' }"
       >
         <template #body="{ data }">
           <template v-if="col.cellRenderer">
@@ -934,7 +951,7 @@ defineExpose({
         </div>
       </template>
     </DataTable>
-    <div class="side-buttons">
+    <div class="side-buttons relative">
       <div class="relative">
         <div class="mb-2">
           <button
@@ -963,14 +980,14 @@ defineExpose({
             Colonnes
           </div>
         </button>
-        <DataTableColumnList
-          v-show="displayColumns"
-          v-model="selectedColumnsIds"
-          class="column-list p-2 -translate-x-8 -top-4 right-0 -left-60 absolute bg-white"
-          :column-defs="columnDefs"
-          @close="displayColumns = false"
-        />
       </div>
+      <DataTableColumnList
+        v-show="displayColumns"
+        v-model="selectedColumnsIds"
+        class="column-list p-2 -translate-x-8 -top-2 right-0 -left-60 bottom-2 absolute bg-white"
+        :column-defs="columnDefs"
+        @close="displayColumns = false"
+      />
     </div>
   </div>
 </template>

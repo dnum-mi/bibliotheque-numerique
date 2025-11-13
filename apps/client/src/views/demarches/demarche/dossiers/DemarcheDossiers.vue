@@ -101,14 +101,6 @@ const paginationChanged = computed(() => {
 
 const fetching = computed(() => demarcheStore.fetching)
 
-const specificGridOptions: GridOptions = {
-  onDragStopped: () => {
-    if (selectedCustomDisplay.value) {
-      agGridComponent.value.refresh()
-    }
-  },
-}
-
 const columnsDef = ref<BNColDef[]>()
 
 const computeColumnsDef = () => {
@@ -399,16 +391,11 @@ onMounted(async () => {
   // Appliquer l'état au DataTable après que le composant soit prêt
   if (selectedCustomDisplay.value) {
     await nextTick()
-    if (dataTable.value === 'ag-grid') {
-      updateAggState()
-    } else {
-      updateDataTableState(selectedCustomDisplay.value as IPagination<any>)
-    }
+    updateDataTableState(selectedCustomDisplay.value as IPagination<any>)
   }
 })
 
-const { activeFilters, onFiltersUpdated, handleRemoveFilter } = useActiveFilter('dossiers', agGridComponent)
-const { activeFilters: dataTableActiveFilters, onFiltersUpdated: onFilterDataTableUpdated, handleRemoveFilter: handleRemoveFilterDataTable } = useActiveFilter('dossiers', dataTableComponent)
+const { activeFilters, onFiltersUpdated, handleRemoveFilter } = useActiveFilter('dossiers', dataTableComponent)
 
 const customHandleClearAllFilters = async () => {
   if (selectedCustomDisplay.value && typeof selectedCustomDisplay.value.id === 'number') {
@@ -473,25 +460,12 @@ const quickFilterValueTranslations: Record<string, string> = {
         </div>
         <ActiveFiltersDropdown
           v-if="columnsDef"
-          :filters="dataTable === 'ag-grid' ? activeFilters : dataTableActiveFilters"
+          :filters="activeFilters"
           :column-definitions="columnsDef"
           :quick-filter-value-translations="quickFilterValueTranslations"
           :clear-all-button-label="clearAllFiltersButtonLabel"
-          @request-remove-filter="handleRemoveFilter($event); handleRemoveFilterDataTable($event)"
+          @request-remove-filter="handleRemoveFilter($event)"
           @request-clear-all="customHandleClearAllFilters()"
-        />
-        <DsfrSegmentedSet
-          v-model="dataTable"
-          :options="[
-            {
-              label: 'Ag',
-              value: 'ag-grid',
-            },
-            {
-              label: 'Prime',
-              value: 'primevue',
-            },
-          ]"
         />
       </div>
       <div class="flex justify-center items-center">
@@ -519,25 +493,10 @@ const quickFilterValueTranslations: Record<string, string> = {
     </div>
     <div
       v-if="demarche && columnsDef"
-      class="flex-grow"
+      class="flex-grow overflow-auto"
     >
-      <AgGridServerSide
-        v-if="dataTable === 'ag-grid' && readyToLoadAgGrid"
-        ref="agGridComponent"
-        v-model:pagination-dto="paginationDto"
-        :column-defs="columnsDef"
-        :loading="fetching"
-        class="h-full"
-        :pre-condition="!!demarche"
-        :specific-grid-option="specificGridOptions"
-        :on-selection-changed="onSelectionChanged"
-        :api-call="apiCall"
-        :local-storage-key="localStoragePaginationKey"
-        @grid-ready="onGridReady($event)"
-        @filters-updated="onFiltersUpdated"
-      />
       <DataTableServerSide
-        v-if="dataTable === 'primevue' && readyToLoadDataTable"
+        v-if="readyToLoadDataTable"
         ref="dataTableComponent"
         v-model:pagination-dto="paginationDto"
         :right-offset="50"
@@ -545,13 +504,12 @@ const quickFilterValueTranslations: Record<string, string> = {
         :loading="fetching"
         class="h-full"
         :pre-condition="!!demarche"
-        :specific-grid-option="specificGridOptions"
         :on-selection-changed="onSelectionChanged"
         :api-call="apiCall"
         :local-storage-key="localStorageDataTablePaginationKey"
         :initial-state="initialDataTableState"
         @grid-ready="onGridReady($event)"
-        @filters-updated="onFilterDataTableUpdated"
+        @filters-updated="onFiltersUpdated"
       />
     </div>
   </div>
@@ -566,7 +524,7 @@ const quickFilterValueTranslations: Record<string, string> = {
   border-top: none !important;
 }
 
-:deep(.p-datatable-table-container) {
-  max-height: 342px !important;
-}
+/* :deep(.p-datatable-table-container) {
+  max-height: 330px !important;
+} */
 </style>

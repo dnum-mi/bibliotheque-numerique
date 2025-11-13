@@ -101,15 +101,15 @@ onMounted(() => {
                 {{ filter.label }}
               </p>
               <!--  TODO: find a more generic way to print pretty filter  -->
-              <v-template v-if="filter.label === 'Status'">
-                <v-template v-for="f of filter.value.split(',')">
+              <template v-if="filter.label === 'Status'">
+                <template v-for="f of filter.value.split(',')" :key="f">
                   <status-badge
                     class="mr-2"
                     :status="f.trim()"
                     :is-small="true"
                   />
-                </v-template>
-              </v-template>
+                </template>
+              </template>
               <p
                 v-if="filter.label !== 'Status'"
                 class="m-0 p-0 font-bold text-sm"
