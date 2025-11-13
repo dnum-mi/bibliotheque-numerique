@@ -40,12 +40,13 @@ export const useOrganismeStore = defineStore('organisme', () => {
     dossiersCount.value = organismeOutput?.dossiersCount || null
   }
 
-  const loadOrganismeHistory = async (id: string, type: OrganismeIdType): Promise<ISiafRnfHistoryOutput[]> => {
-    if (!id || type !== EOrganismeIdType.Rnf) {
-      return []
-    }
-    return await apiClient.getOrganismeHistoryByRnf(id)
-  }
+  // TODO: réactiver lorsque l'API sera prête
+  // const loadOrganismeHistory = async (id: string, type: OrganismeIdType): Promise<ISiafRnfHistoryOutput[]> => {
+  //   if (!id || type !== EOrganismeIdType.Rnf) {
+  //     return []
+  //   }
+  //   return await apiClient.getOrganismeHistoryByRnf(id)
+  // }
 
   const loadOrganismes = async (dto: IPagination<IOrganisme>): Promise<IPaginated<IOrganisme>> => {
     return apiClient.getOrganismes(dto)
@@ -67,7 +68,7 @@ export const useOrganismeStore = defineStore('organisme', () => {
     syncState,
     dossiersCount,
     loadOrganisme,
-    loadOrganismeHistory,
+    // loadOrganismeHistory,
     loadOrganismes,
     exportOrganismes,
     organismeSiaf,

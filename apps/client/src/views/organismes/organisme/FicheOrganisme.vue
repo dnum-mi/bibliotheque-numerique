@@ -12,12 +12,13 @@ import type {
   IRole,
   FileTagKey,
   IOrganismeOutputDto,
+  IFoundationOutput,
+  IAssociationOutput,
   // ISiafRnfHistoryOutput,
 } from '@biblio-num/shared'
 import { dFileTabDictionary, eOrganismeType, eState } from '@biblio-num/shared'
 import type { ApiCall } from '@/components/ag-grid/server-side/pagination.utils'
 import FicheInfoAssociation from './FicheInfoAssociation.vue'
-import FicheInfoFondation from './FicheInfoFondation.vue'
 import FicheOrganismeInfo from './FicheOrganismeInfo.vue'
 import slugify from 'slugify'
 // import FicheOrganismeHistorique from './historique/FicheOrganismeHistorique.vue'
@@ -26,6 +27,8 @@ import { synchroniseOneOrganisme } from '../../../api/sudo-api-client'
 import Spinner from '@/components/Spinner.vue'
 import { dateToStringFr } from '@/utils'
 import FicheOrganismePersons from './FicheOrganismePersons.vue'
+
+import OrganismeOverview from '../organisme-v2/OrganismeOverview.vue'
 
 const props = withDefaults(defineProps<{ id: string; idType: OrganismeIdType }>(), {})
 
@@ -43,11 +46,11 @@ const hasSiafAssociation = computed(() => {
   const organisme = organismeSiaf.value as IOrganismeOutputDto | undefined
   return !!(organisme && organisme.type === eOrganismeType.ASSO)
 })
-const hasSiafFoundation = computed(() => {
-  const organisme = organismeSiaf.value as IOrganismeOutputDto | undefined
-  const types = [eOrganismeType.FDD, eOrganismeType.FE, eOrganismeType.FRUP]
-  return !!(organisme && types.includes(organisme.type as (typeof types)[number]))
-})
+// const hasSiafFoundation = computed(() => {
+//   const organisme = organismeSiaf.value as IOrganismeOutputDto | undefined
+//   const types = [eOrganismeType.FDD, eOrganismeType.FE, eOrganismeType.FRUP]
+//   return !!(organisme && types.includes(organisme.type as (typeof types)[number]))
+// })
 
 const filesSummary = ref<Record<FileTagKey, number> | Record<string, never>>({})
 // const histories = ref<ISiafRnfHistoryOutput[]>([])
@@ -107,9 +110,9 @@ const fileTabs = computed(() => {
   })
 })
 
-onUpdated(() => {
-  console.log(fileTabs.value)
-})
+// onUpdated(() => {
+//   console.log(fileTabs.value)
+// })
 
 const onRefreshSync = async () => {
   await synchroniseOneOrganisme(organisme.value.id)
@@ -117,8 +120,12 @@ const onRefreshSync = async () => {
 </script>
 
 <template>
-  <div v-if="isLoading">Chargement en cours, veuillez patienter...</div>
-  <div v-else-if="!(organisme || hasSiaf)">Organisme introuvable (id {{ idType }} {{ id }})</div>
+  <div v-if="isLoading">
+    Chargement en cours, veuillez patienter...
+  </div>
+  <div v-else-if="!(organisme || hasSiaf)">
+    Organisme introuvable (id {{ idType }} {{ id }})
+  </div>
   <div
     v-if="(organisme || hasSiaf) && !isLoading"
     class="flex flex-grow gap-2 h-full"
@@ -151,8 +158,8 @@ const onRefreshSync = async () => {
           </div>
           <div v-if="hasSiafAssociation || idType === EOrganismeIdType.Rnf" class="flex-row gap-4">
             <div class="flex gap-4">
-              <label class="bn-fiche-sub-title--label dark uppercase">SIRET:</label>
-              <span class="bn-fiche-sub-title--text">{{ organisme.siret }}</span>
+              <label class="bn-fiche-sub-title--label dark uppercase">Crée le:</label>
+              <span class="bn-fiche-sub-title--text">{{ dateToStringFr(organisme.dateCreation) }}</span>
             </div>
             <div class="flex gap-4">
               <label class="bn-fiche-sub-title--label dark uppercase">état:</label>
@@ -209,9 +216,11 @@ const onRefreshSync = async () => {
               id="infos"
               title="Infos"
             >
-              <FicheInfoFondation
-                v-if="hasSiafFoundation && organismeSiaf"
-                :organisme-raf="organismeSiaf as IOrganismeOutputDto"
+              <OrganismeOverview
+                v-if="idType === 'Rnf'"
+                :organisme="(organisme.rnfJson as IFoundationOutput) || (organisme.rnaJson as IAssociationOutput)"
+                :is-foundation="idType === 'Rnf'"
+                :missing-declaration-years="organisme?.missingDeclarationYears"
               />
               <FicheOrganismeInfo
                 v-else
@@ -245,7 +254,7 @@ const onRefreshSync = async () => {
                 :active="currentFicheOrganismeTab === tabInfo.idTab"
               />
             </BnTab>
-            <!-- <BnTab
+            <!-- TODO: A refaire avec les events <BnTab
               v-if="idType === EOrganismeIdType.Rnf"
               id="historique"
               title="Historique"
