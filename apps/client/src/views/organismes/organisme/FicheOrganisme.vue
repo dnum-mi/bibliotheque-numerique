@@ -14,6 +14,9 @@ import type {
   IOrganismeOutputDto,
   IFoundationOutput,
   IAssociationOutput,
+  ILegalEntity,
+  ILineage,
+  ISiafOrganisme,
   // ISiafRnfHistoryOutput,
 } from '@biblio-num/shared'
 import { dFileTabDictionary, eOrganismeType, eState } from '@biblio-num/shared'
@@ -28,7 +31,7 @@ import Spinner from '@/components/Spinner.vue'
 import { dateToStringFr } from '@/utils'
 import FicheOrganismePersons from './FicheOrganismePersons.vue'
 
-import OrganismeOverview from '../organisme-v2/OrganismeOverview.vue'
+import OrganismeOverview from './components/OrganismeOverview.vue'
 
 const props = withDefaults(defineProps<{ id: string; idType: OrganismeIdType }>(), {})
 
@@ -46,11 +49,6 @@ const hasSiafAssociation = computed(() => {
   const organisme = organismeSiaf.value as IOrganismeOutputDto | undefined
   return !!(organisme && organisme.type === eOrganismeType.ASSO)
 })
-// const hasSiafFoundation = computed(() => {
-//   const organisme = organismeSiaf.value as IOrganismeOutputDto | undefined
-//   const types = [eOrganismeType.FDD, eOrganismeType.FE, eOrganismeType.FRUP]
-//   return !!(organisme && types.includes(organisme.type as (typeof types)[number]))
-// })
 
 const filesSummary = ref<Record<FileTagKey, number> | Record<string, never>>({})
 // const histories = ref<ISiafRnfHistoryOutput[]>([])
@@ -117,6 +115,30 @@ const fileTabs = computed(() => {
 const onRefreshSync = async () => {
   await synchroniseOneOrganisme(organisme.value.id)
 }
+type relationsType = {
+  founderLegalEntities: ILegalEntity[]
+  foundedLegalEntities: ILegalEntity[]
+  governanceLegalEntities: ILegalEntity[]
+  fromLineage: ILineage | null
+  toLineage: ILineage | null
+}
+const relations = computed<relationsType | undefined>(() => {
+  const rawJson = (organisme.value?.rnfJson || organisme.value?.rnaJson) as ISiafOrganisme
+  if ((rawJson?.founderLegalEntities === null || rawJson?.founderLegalEntities.length === 0)
+    && (rawJson?.governanceLegalEntities === null || rawJson?.governanceLegalEntities.length === 0)
+    && (rawJson?.foundedLegalEntities === null || rawJson?.foundedLegalEntities.length === 0)
+    && rawJson?.fromLineage === null
+    && rawJson?.toLineage === null) {
+    return undefined
+  }
+  return {
+    founderLegalEntities: rawJson?.founderLegalEntities || [],
+    foundedLegalEntities: rawJson?.foundedLegalEntities || [],
+    governanceLegalEntities: rawJson?.governanceLegalEntities || [],
+    fromLineage: rawJson?.fromLineage || null,
+    toLineage: rawJson?.toLineage || null,
+  }
+})
 </script>
 
 <template>
@@ -130,7 +152,6 @@ const onRefreshSync = async () => {
     v-if="(organisme || hasSiaf) && !isLoading"
     class="flex flex-grow gap-2 h-full"
   >
-    <!-- :class="(organisme?.id && dossiersCount) ? 'flex-basis-[59%]' : 'flex-basis-[99%]'" -->
     <LayoutFiche
       class="overflow-auto"
       title-bg-color="var(--grey-200-850)"
@@ -265,6 +286,21 @@ const onRefreshSync = async () => {
                 :entity-type="idType"
               />
             </BnTab> -->
+            <BnTab
+              v-if="relations"
+              id="relations"
+              title="Relations"
+            >
+              {{ relations }}
+              <ListeRelations
+                :current-organisme-title="organisme.title"
+                :founded-legal-entities="relations?.foundedLegalEntities"
+                :founder-legal-entities="relations?.founderLegalEntities"
+                :governance-legal-entities="relations?.governanceLegalEntities"
+                :from-lineage="relations?.fromLineage"
+                :to-lineage="relations?.toLineage"
+              />
+            </BnTab>
             <BnTab
               v-if="dossiersCount"
               id="list-dossier"

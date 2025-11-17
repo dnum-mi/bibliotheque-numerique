@@ -2,7 +2,7 @@
 import { dateToStringFr } from '@/utils'
 import { eTypeFile } from '@biblio-num/shared'
 import type { IAssociationOutput, IFoundationOutput } from '@biblio-num/shared'
-import FicheIdentity from '../organisme/components/FicheIdentity.vue'
+import FicheIdentity from './FicheIdentity.vue'
 import type { DsfrBadgeProps } from '@gouvminint/vue-dsfr'
 import { formatBytes, getFileDetail, getFileFormat } from '@/utils/file.utils'
 

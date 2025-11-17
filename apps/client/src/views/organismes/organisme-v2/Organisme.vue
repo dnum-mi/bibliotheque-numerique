@@ -1,9 +1,10 @@
 <script setup lang="ts">
+// TODO: A supprimer une fois la migration vers OrganismeV2 terminée
 import BnTabsContainer from '@/components/BnTabsContainer/BnTabsContainer.vue'
 import Spinner from '@/components/Spinner.vue'
 import { useOrganismeV2Store } from '@/stores/organisme-v2'
 import { storeToRefs } from 'pinia'
-import OrganismeOverview from './OrganismeOverview.vue'
+import OrganismeOverview from '../organisme/components/OrganismeOverview.vue'
 import { dateToStringFr, getPrefecture } from '@/utils'
 import type { IFoundationOutput } from '@biblio-num/shared'
 import OrganismePersons from './OrganismePersons.vue'
