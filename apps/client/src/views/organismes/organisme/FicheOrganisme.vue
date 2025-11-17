@@ -115,6 +115,7 @@ const fileTabs = computed(() => {
 const onRefreshSync = async () => {
   await synchroniseOneOrganisme(organisme.value.id)
 }
+
 type relationsType = {
   founderLegalEntities: ILegalEntity[]
   foundedLegalEntities: ILegalEntity[]

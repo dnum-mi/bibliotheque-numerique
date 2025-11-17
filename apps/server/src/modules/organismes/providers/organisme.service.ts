@@ -417,6 +417,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
       updatedAt: (organisme?.rnfJson as IFoundationOutput)?.updatedAt,
       fiscalEndDateAt: (organisme?.rnfJson as IFoundationOutput)?.fiscalEndAt,
       siret: organisme?.rnfJson?.siret,
+
     }
   }
 
@@ -434,6 +435,9 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     }
 
     const rnf = await this.repo.findOne({ where: { idRnf } })
+    if (!rnf) {
+      return returnedOrganisme
+    }
 
     if (rnf?.syncState?.state) {
       if (rnf.syncState.state === eState.failed && rnf.type === eOrganismeType.unknown) return returnedOrganisme
@@ -575,6 +579,31 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     return numberOrganisme
   }
 
+  // #region sync rna from hub
+  async synchroniseRnaFilesFromHub(rawRna: IAssociationOutput): Promise<void> {
+    this.logger.verbose('synchroniseRnaFilesFromHub')
+    const files = this.fileOrganismeHubService.getFilesFromRawRna(rawRna)
+    if (!files.length) {
+      this.logger.debug(`Not files for ${rawRna.id}`)
+      return
+    }
+
+    const organismeId = await this.findOneOrThrow({
+      where: { idRna: rawRna.id },
+      select: ['id'],
+    }).then((o) => o.id)
+
+    this.fileOrganismeHubService.checkAndCreateFiles({
+      sourceLabel: 'rna',
+      storageIn: eFileStorageIn.HUB,
+      organismeId,
+      state: eState.uploaded,
+    },
+    files)
+  }
+  // #endregion sync rna from hub
+
+  // #region sync rnf from hub
   async getLastUpdatedFoundations(
     args: GetUpdateFoundationInputDto,
   ): Promise<string[]> {
@@ -631,34 +660,11 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     )
   }
 
-  // #region sync rna from hub
-  async synchroniseRnaFilesFromHub(rawRna: IAssociationOutput): Promise<void> {
-    this.logger.verbose('synchroniseRnaFilesFromHub')
-    const files = this.fileOrganismeHubService.getFilesFromRawRna(rawRna)
-    if (!files.length) {
-      this.logger.debug(`Not files for ${rawRna.id}`)
-      return
-    }
-
-    const organismeId = await this.findOneOrThrow({
-      where: { idRna: rawRna.id },
-      select: ['id'],
-    }).then((o) => o.id)
-
-    this.fileOrganismeHubService.checkAndCreateFiles({
-      sourceLabel: 'rna',
-      storageIn: eFileStorageIn.HUB,
-      organismeId,
-      state: eState.uploaded,
-    },
-    files)
-  }
-  // #endregion
-
   async deleteFilesOfRnf(idRnf: string, storageIn: FileStorageInKey): Promise<void> {
     const organisme = await this.repo.findOneBy({ idRnf })
     if (!organisme) return
 
     await this.fileService.deleteFiles({ organismeId: organisme.id, dossierId: null, storageIn })
   }
+  // #endregion sync rnf from hub
 }

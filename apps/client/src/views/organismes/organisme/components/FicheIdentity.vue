@@ -13,13 +13,6 @@ const asFoundations = computed<IAssociationOutput | null>(() => {
   return props.isFoundation ? (props.organisme as IFoundationOutput) : null
 })
 
-// const state = computed(() => {
-//   if (props.organisme.state) {
-//     return `${props.organisme.state} depuis le ${dateToStringFr(props.organisme?.stateEffectiveAt)}`
-//   }
-//   return 'Non renseigné'
-// })
-
 // TODO: à confirmer de l'idée.
 const stateInActivityOrDissolved = computed(() => {
   if (!props.organisme.state) { return 'Non renseigné' }
@@ -59,16 +52,6 @@ const serviceInstructor = computed(() => {
           </dd>
         </div>
 
-        <!--
-      <div class="py-2 sm:grid sm:grid-cols-5">
-        <dt class="text-sm/6 font-medium text-gray-900 ">
-          État
-        </dt>
-        <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-3 sm:mt-0">
-          {{ state }}
-        </dd>
-      </div>
-      -->
         <div class="py-2 sm:grid sm:grid-cols-5">
           <dt class="text-sm/6 font-medium text-gray-900 ">
             État
@@ -104,15 +87,6 @@ const serviceInstructor = computed(() => {
             {{ organisme.department ? getPrefecture(organisme.department) : 'Non renseigné' }}
           </dd>
         </div>
-
-        <!-- <div v-if="!isFoundation" class="py-2 sm:grid sm:grid-cols-5">
-        <dt class="text-sm/6 font-medium text-gray-900">
-          Domaine d'activité
-        </dt>
-        <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-3 sm:mt-0">
-          {{ asAssociation?.activityDomainDescription || 'Non renseigné' }}
-        </dd>
-      </div> -->
 
         <div class="py-2 sm:grid sm:grid-cols-5">
           <dt class="text-sm/6 font-medium text-gray-900">
@@ -179,14 +153,6 @@ const serviceInstructor = computed(() => {
         </dt>
         <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-3 sm:mt-0">
           {{ asFoundations?.hasInternationalActivity ? 'Oui' : 'Non' }}
-        </dd>
-      </div>
-      <div class="py-2 sm:grid sm:grid-cols-5">
-        <dt class="text-sm/6 font-medium text-gray-900">
-          Date de clôture de l'exercice comptable (jour/mois)
-        </dt>
-        <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-3 sm:mt-0">
-          {{ dateToStringFr(asAssociation?.fiscalEndAt) || 'Non renseigné' }}
         </dd>
       </div>
        -->
