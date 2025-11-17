@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v3.0.0...v3.0.1) (2025-11-17)
+
+
+### Bug Fixes
+
+* fix migration to remove SYNC_RNF_VIA_HUB ([4402097](https://github.com/dnum-mi/bibliotheque_numerique/commit/440209797f79afffd73eea6ef2a49db5a6aca18c))
+
 ## [3.0.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.41.0...v3.0.0) (2025-11-17)
 
 
