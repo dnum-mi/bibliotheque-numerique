@@ -170,22 +170,6 @@ export class CsvProcessorService {
       return null
     }
 
-    if (
-      pieceJointe[maarchPJLabel.nomPj] &&
-      pieceJointe[maarchPJLabel.intitulePj]
-    ) {
-      const intituleBase = this._removeFileExtension(
-        pieceJointe[maarchPJLabel.intitulePj],
-      )
-
-      const nomPj = pieceJointe[maarchPJLabel.nomPj]
-      const extension = this._extractionFileExtension(nomPj)
-      const nomSansExtension = this._removeFileExtension(nomPj)
-
-      pieceJointe[maarchPJLabel.intitulePj] =
-        `${nomSansExtension}_${intituleBase}${extension}`.trim()
-    }
-
     return pieceJointe
   }
 

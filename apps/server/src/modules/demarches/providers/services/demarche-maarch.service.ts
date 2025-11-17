@@ -14,15 +14,14 @@ import {
   ImportFiles,
   ImportResult,
 } from '../../objects/constants/maarch.types'
-import { eIdentificationDemarche } from '@biblio-num/shared'
-import {
-  fieldNumRna,
-  maarchFieldMappingsArray,
-} from '../../objects/constants/maarch-champ.dictionary'
+import { eIdentificationDemarche, eState } from '@biblio-num/shared'
+import { maarchFieldMappingsArray } from '../../objects/constants/maarch-champ.dictionary'
 import { FileBuilderService } from './maarch/file-builder.service'
-import {
-  DossierSynchroniseOrganismeService,
-} from '@/modules/dossiers/providers/synchronization/organisme/dossier-synchronise-organisme.service'
+import { File } from '@/modules/files/objects/entities/file.entity'
+import { InjectQueue } from '@nestjs/bull'
+import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
+import { Queue } from 'bull'
+import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
 
 @Injectable()
 export class DemarcheMaarchService {
@@ -32,7 +31,7 @@ export class DemarcheMaarchService {
     private readonly csvProcessor: CsvProcessorService,
     private readonly dossierTransformer: DossierTransformerService,
     private readonly fileBuilder: FileBuilderService,
-    private readonly dossierSynchroniseOrganismeService: DossierSynchroniseOrganismeService,
+    @InjectQueue(QueueName.file) private readonly fileQueue: Queue,
   ) {
     this.logger.setContext(this.constructor.name)
   }
@@ -47,7 +46,10 @@ export class DemarcheMaarchService {
       throw new BadRequestException('Demandes file are required.')
     }
 
-    return this.dataSource.transaction(async (transactionManager) => {
+    let dossiersCreated: Dossier[] = []
+    let demarcheIdResult: number | null = null
+
+    await this.dataSource.transaction(async (transactionManager) => {
       const aggregatedData = this.csvProcessor.processFiles(files)
       if (!aggregatedData || aggregatedData.length === 0) {
         throw new BadRequestException(
@@ -57,24 +59,34 @@ export class DemarcheMaarchService {
 
       const demarche = await this._createDemarche(title, transactionManager)
 
-      const dossiers = await this._processDossiers(
+      dossiersCreated = await this._processDossiers(
         aggregatedData,
         demarche,
         transactionManager,
       )
-      if (!dossiers || dossiers.length === 0) {
+      if (!dossiersCreated || dossiersCreated.length === 0) {
         throw new BadRequestException(
           'No valid dossiers could be created from the provided data. Please verify the data format.',
         )
       }
 
-      this.logger.log(`Successfully imported ${dossiers.length} dossiers.`)
-
-      return {
-        demarcheId: demarche.id,
-        countDossiers: dossiers.length,
-      }
+      demarcheIdResult = demarche.id
+      this.logger.log(
+        `Successfully imported ${dossiersCreated.length} dossiers.`,
+      )
     })
+
+    if (dossiersCreated && dossiersCreated.length > 0) {
+      this.logger.log(
+        `Dispatching S3 sync jobs for ${dossiersCreated.length} dossiers.`,
+      )
+      await this._synchroniseFiles(dossiersCreated)
+    }
+
+    return {
+      demarcheId: demarcheIdResult!,
+      countDossiers: dossiersCreated.length,
+    }
   }
 
   async deleteImport(demarcheId: number): Promise<{ message: string }> {
@@ -83,7 +95,9 @@ export class DemarcheMaarchService {
       const repoDossier = transactionManager.getRepository(Dossier)
       const repoDemarche = transactionManager.getRepository(Demarche)
 
-      const demarche = await repoDemarche.findOne({ where: { id: demarcheId } })
+      const demarche = await repoDemarche.findOne({
+        where: { id: demarcheId },
+      })
       if (!demarche) {
         throw new NotFoundException(`Demarche ${demarcheId} not found.`)
       }
@@ -135,7 +149,7 @@ export class DemarcheMaarchService {
 
     for (const [index, dossier] of dossiers.entries()) {
       const data = aggregatedData[index]
-      await this._synchroniseOrganisme(dossier)
+
       dossier.files = this.fileBuilder.createFileEntities(data)
     }
 
@@ -144,20 +158,19 @@ export class DemarcheMaarchService {
     return dossiers
   }
 
-  private async _synchroniseOrganisme(dossier: Dossier): Promise<void> {
-    this.logger.verbose(
-      `Synchronization of the organisme for the dossier sourceId : ${dossier.id}`,
+  private async _synchroniseFiles(dossiers: Dossier[]): Promise<void> {
+    const allFilesToSync: File[] = dossiers.flatMap(
+      (dossier) => dossier.files || [],
     )
-    const rnaField = dossier.fields.find(
-      (field) => field.sourceId === fieldNumRna.id,
-    )
-    if (!rnaField || !rnaField.stringValue) {
-      this.logger.debug(`No rna field for the dossier ${dossier.id}`)
-      return
+
+    this.logger.log(`Found ${allFilesToSync.length} files to sync.`)
+
+    for (const file of allFilesToSync) {
+      if (file.state === eState.queued && file.sourcePath) {
+        await this.fileQueue.add(eJobName.UploadMaarchFile, { file })
+      }
     }
-    dossier.organismeRefs = [rnaField.stringValue]
-    await this.dossierSynchroniseOrganismeService.attachOrganismeRefToOneField(
-      rnaField,
-    )
+
+    this.logger.log(`Dispatched ${allFilesToSync.length} S3 sync jobs.`)
   }
 }

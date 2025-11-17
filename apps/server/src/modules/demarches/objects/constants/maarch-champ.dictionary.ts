@@ -154,6 +154,15 @@ export const fieldEmailDeclarant: MappingColumn = {
 
 /** ----------------------------------- */
 
+export const fieldCourrierFileIntitule: MappingColumnWithoutChildren = {
+  id: '9098ce70-4378-2d7e-bkb9-b76fb7b67h80',
+  columnLabel: 'Nom du fichier courrier',
+  originalLabel: maarchChampsLabel.nomCourrier,
+  type: FieldType.file,
+  source: FieldSource.champs,
+  formatFunctionRef: FormatFunctionRef.file,
+}
+
 export const fieldPjIntitule: MappingColumnWithoutChildren = {
   id: '9098ce70-4378-2d7e-bkb9-b76fb7b67h41',
   columnLabel: 'Intitulé de la PJ',
@@ -191,7 +200,7 @@ export const fieldAnnotations: MappingColumn = {
   ],
 }
 
-export const maarchFieldMappings: {
+/* export const maarchFieldMappings: {
   // eslint-disable-next-line no-unused-vars
   [key in keyof typeof maarchChampsLabel]: MappingColumn
 } = {
@@ -214,7 +223,7 @@ export const maarchFieldMappings: {
   dateDeclaration: fieldDateDeclaration,
   piecesJointes: fieldPiecesJointes,
   annotation: fieldAnnotations,
-}
+} */
 
 export const maarchFieldMappingsArray: MappingColumn[] = [
   {

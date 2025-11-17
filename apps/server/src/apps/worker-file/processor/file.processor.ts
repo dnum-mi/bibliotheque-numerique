@@ -4,6 +4,8 @@ import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.en
 import {
   ComputeFeExcelJobPayload, DeleteS3FilesJobPayload,
   UploadDsFileJobPayload,
+  UploadMaarchFileJobPayload,
+  UploadRnaFileJobPayload,
 } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
 import { Job, Queue } from 'bull'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
@@ -104,6 +106,85 @@ export class FileProcessor {
         } as ComputeFeExcelJobPayload)
       }
       job.progress(100)
+    })
+  }
+
+  @Process(eJobName.UploadRnaFile)
+  async uploadRnaFile(job: Job<UploadRnaFileJobPayload>): Promise<void> {
+    await this.als.run({ job }, async () => {
+      this.logger.verbose('uploadRnaFile processor')
+      await this.fileService.updateState(job.data.file.id, eState.uploading)
+      const state = await this.s3Service
+        .downloadAndUploadToS3(job.data.rnaUrl, job.data.file.uuid)
+        .then(async (byteSize) => {
+          await this.fileService.repository.update(
+            { id: job.data.file.id },
+            { byteSize },
+          )
+          this.logger.log(
+            `File ${job.data.file.uuid} uploaded to S3 (${job.data.file.label}) from RNA`,
+          )
+          return eState.uploaded
+        })
+        .catch(async (e) => {
+          this.logger.error(e)
+          return eState.failed
+        })
+      await this.fileService.updateState(job.data.file.id, state)
+    })
+  }
+
+  @Process(eJobName.UploadMaarchFile)
+  async uploadMaarchFile(job: Job<UploadMaarchFileJobPayload>): Promise<void> {
+    await this.als.run({ job }, async () => {
+      const { file } = job.data
+      this.logger.verbose(`[${file.id}] 1. Starting S3 sync for: ${file.sourcePath}`)
+
+      try {
+        await this.fileService.updateState(file.id, eState.uploading)
+        job.progress(10)
+
+        this.logger.verbose(`[${file.id}] 2. State set to uploading. Copying S3...`)
+        const s3Result = await this.s3Service.copyFromSourceBucket(
+          file.sourcePath,
+          file.uuid,
+        )
+
+        this.logger.log(`[${file.id}] 3. S3 Copy SUCCESS. Metadata received: ${JSON.stringify({
+          s3Key: s3Result.s3Key,
+          checksum: s3Result.checksum,
+          byteSize: s3Result.byteSize,
+        })}`)
+        job.progress(80)
+
+        this.logger.verbose(`[${file.id}] 4. Attempting DB update...`)
+        const updateResult = await this.fileService.repository.update({ id: file.id }, {
+          state: eState.uploaded,
+          byteSize: Number(s3Result.byteSize),
+          checksum: s3Result.checksum,
+        })
+
+        if (updateResult.affected === 0) {
+          this.logger.error(`[${file.id}] 5. CRITICAL: DB Update ran but NO ROWS were affected! Check file Id.`)
+          throw new Error(`File ${file.id} not found during update.`)
+        }
+
+        job.progress(100)
+
+        this.logger.log(`[${file.id}] 5. Sync OK (${s3Result.byteSize} bytes).`)
+      } catch (error) {
+        const isNoSuchKey = error.code === 'NoSuchKey' || error.message?.includes('NoSuchKey')
+
+        this.logger.error(`[${file.id}] Failed: ${isNoSuchKey ? 'Source file missing' : error.message}`)
+
+        if (isNoSuchKey) {
+          await this.fileService.repository.update({ id: file.id }, {
+            state: eState.failed,
+          }).catch(() => {})
+        }
+
+        throw error
+      }
     })
   }
 

@@ -46,6 +46,10 @@ export type UploadRnaFileJobPayload = {
   rnaUrl: string
 }
 
+export type UploadMaarchFileJobPayload = {
+  file: File
+}
+
 export type ComputeFeExcelJobPayload = {
   file: File
 }
@@ -73,3 +77,4 @@ export type AnyJobPayload =
   | UploadDsFileJobPayload
   | UploadRnaFileJobPayload
   | ComputeFeExcelJobPayload
+  | UploadMaarchFileJobPayload

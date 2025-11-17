@@ -18,6 +18,9 @@ export const maarchChampsLabel = {
   dateDeclaration: 'n°5datedeclaration',
   piecesJointes: 'pieces_jointes',
   annotation: 'annotations',
+  cheminCourrier: 'chemin_courrier',
+  nomCourrier: 'nom_courrier',
+  dateCreationCourrier: 'date_creation_courrier',
 }
 
 export const maarchPJLabel = {

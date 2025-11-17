@@ -65,6 +65,13 @@ export class File extends BaseEntity {
   })
   sourceStringId: string | null
 
+  @Column({
+    type: 'varchar',
+    nullable: true,
+    comment: 'Chemin source du fichier dans le S3 Maarch (ex: 2023/03/0001/055_98778990.pdf)',
+  })
+  sourcePath: string | null
+
   // we don't put enum in postgres to not run migration everytime we add a tag. It's only a string
   @Column({
     type: 'varchar',

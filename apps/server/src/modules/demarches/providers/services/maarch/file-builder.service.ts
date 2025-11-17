@@ -1,4 +1,7 @@
-import { fieldPjIntitule } from '@/modules/demarches/objects/constants/maarch-champ.dictionary'
+import {
+  fieldCourrierFileIntitule,
+  fieldPjIntitule,
+} from '@/modules/demarches/objects/constants/maarch-champ.dictionary'
 import {
   maarchChampsLabel,
   maarchPJLabel,
@@ -9,11 +12,7 @@ import {
 } from '@/modules/demarches/objects/constants/maarch.types'
 import { File } from '@/modules/files/objects/entities/file.entity'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
-import {
-  eFileTag,
-  eState,
-  FileTagKey,
-} from '@biblio-num/shared'
+import { eFileTag, eState, FileTagKey } from '@biblio-num/shared'
 import { Injectable } from '@nestjs/common'
 import { generateChecksum, extractMimeType } from './utils/file-helper'
 
@@ -41,15 +40,24 @@ export class FileBuilderService {
   }
 
   createFileEntities(data: DemandeAggregee): File[] {
+    const allFiles: File[] = []
+
     const piecesJointes = this.extractPiecesJointes(data)
 
-    if (!piecesJointes) {
-      return []
+    if (piecesJointes) {
+      const pjFiles = piecesJointes
+        .map((pj) => this._createPjFileEntity(pj))
+        .filter((file) => file !== null) as File[]
+
+      allFiles.push(...pjFiles)
     }
 
-    return piecesJointes
-      .map((pj) => this._createFileEntity(pj))
-      .filter((file) => file !== null) as File[]
+    const courrierFile = this._createCourrierFileEntity(data)
+    if (courrierFile) {
+      allFiles.push(courrierFile)
+    }
+
+    return allFiles
   }
 
   private extractPiecesJointes(data: DemandeAggregee): CsvRow[] | null {
@@ -62,22 +70,25 @@ export class FileBuilderService {
     return piecesJointes
   }
 
-  private _createFileEntity(
-    pieceJointe: CsvRow,
-  ): File | null {
+  private _createPjFileEntity(pieceJointe: CsvRow): File | null {
     if (!this._isValidPieceJointe(pieceJointe)) {
+      this.logger.debug('Aucun fichier pièce jointe attachée.')
       return null
     }
 
     const file = new File()
 
+    const filePath = pieceJointe[maarchPJLabel.cheminPj]
+    const fileName = pieceJointe[maarchPJLabel.nomPj]
+
     file.label = pieceJointe[maarchPJLabel.intitulePj] || 'unknown file'
     file.originalLabel = pieceJointe[maarchPJLabel.nomPj]
     file.sourceUploadedAt = pieceJointe[maarchPJLabel.dateCreationPj]
+    file.sourcePath = `${this._cleanPath(filePath)}/${fileName}`
     file.tag = this._determineFileTag(file.label)
     file.checksum = generateChecksum(file.label)
     file.byteSize = 0
-    file.state = eState.uploaded
+    file.state = eState.queued
     file.mimeType = extractMimeType(file.label)
     file.sourceLabel = 'rna'
     file.sourceStringId = fieldPjIntitule.id
@@ -85,8 +96,48 @@ export class FileBuilderService {
     return file
   }
 
+  private _createCourrierFileEntity(data: DemandeAggregee): File | null {
+    if (!this._isValidCourrierFile(data)) {
+      this.logger.debug('Aucun fichier courrier (HTML) attaché.')
+      return null
+    }
+
+    const file = new File()
+
+    const filePath = data[maarchChampsLabel.cheminCourrier]
+    const fileName = data[maarchChampsLabel.nomCourrier]
+
+    file.label = data[maarchChampsLabel.nomCourrier]
+    file.originalLabel = data[maarchChampsLabel.nomCourrier]
+    file.sourceUploadedAt = data[maarchChampsLabel.dateCreationCourrier]
+    file.sourcePath = `${this._cleanPath(filePath)}/${fileName}`
+    file.tag = eFileTag.other
+    file.checksum = generateChecksum(file.label)
+    file.byteSize = 0
+    file.state = eState.queued
+    file.mimeType = extractMimeType(file.label)
+    file.sourceLabel = 'rna'
+    file.sourceStringId = fieldCourrierFileIntitule.id
+
+    return file
+  }
+
   private _isValidPieceJointe(pieceJointe: CsvRow): boolean {
-    return !!pieceJointe.nom_pj
+    return (
+      !!pieceJointe[maarchPJLabel.nomPj] &&
+      !!pieceJointe[maarchPJLabel.cheminPj]
+    )
+  }
+
+  private _isValidCourrierFile(data: CsvRow): boolean {
+    return (
+      !!data[maarchChampsLabel.nomCourrier] &&
+      !!data[maarchChampsLabel.cheminCourrier]
+    )
+  }
+
+  private _cleanPath(path: string): string {
+    return path ? path.trim().replace(/\/+$/, '') : ''
   }
 
   private _determineFileTag(label: string): FileTagKey {

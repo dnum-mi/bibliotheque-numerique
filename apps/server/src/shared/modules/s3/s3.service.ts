@@ -12,10 +12,17 @@ import * as AWS from 'aws-sdk'
 import { HttpService } from '@nestjs/axios'
 import stream, { PassThrough } from 'stream'
 
+export interface S3CopyResult {
+  checksum: string
+  byteSize: number
+  s3Key: string
+}
+
 @Injectable()
 export class S3Service implements OnModuleInit {
   private s3: S3
   private bucketName: string
+  private maarchBucketName: string
 
   constructor(
     private readonly configService: ConfigService,
@@ -47,6 +54,7 @@ export class S3Service implements OnModuleInit {
       s3ForcePathStyle: true,
     })
     this.bucketName = this.configService.get('file.awsDefaultS3Bucket')!
+    this.maarchBucketName = this.configService.get('file.awsMaarchS3Bucket')!
     // TODO: for what ?
     //  this.maxFileSize = parseInt(
     //    (await this.bnConfigService.findByKeyName(
@@ -98,11 +106,41 @@ export class S3Service implements OnModuleInit {
   }
 
   public async deleteFile(uuid: string): Promise<void> {
-    await this.s3
-      .deleteObject({
-        Bucket: this.bucketName,
-        Key: uuid,
-      })
-      .promise()
+    await this.s3.deleteObject({
+      Bucket: this.bucketName,
+      Key: uuid,
+    }).promise()
+  }
+
+  public async copyFromSourceBucket(
+    sourceS3Path: string,
+    newKey: string,
+  ): Promise<S3CopyResult> {
+    this.logger.debug(
+      `Copying 's3://${this.maarchBucketName}/${sourceS3Path}' to 's3://${this.bucketName}/${newKey}'`,
+    )
+
+    const copyResult = await this.s3.copyObject({
+      Bucket: this.bucketName,
+      CopySource: `${this.maarchBucketName}/${sourceS3Path}`,
+      Key: newKey,
+    }).promise()
+
+    const headResult = await this.s3.headObject({
+      Bucket: this.bucketName,
+      Key: newKey,
+    }).promise()
+
+    if (!headResult.ContentLength || !headResult.ETag) {
+      throw new InternalServerErrorException(
+        `Failed to retrieve metadata for copied file: ${newKey}`,
+      )
+    }
+
+    return {
+      checksum: (headResult.ETag || copyResult.CopyObjectResult?.ETag || '').replace(/"/g, ''),
+      byteSize: headResult.ContentLength || 0,
+      s3Key: newKey,
+    }
   }
 }

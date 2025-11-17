@@ -31,7 +31,13 @@ import { DemarcheMaarchService } from './providers/services/demarche-maarch.serv
       Dossier,
       Field,
     ]),
-    BullModule.registerQueue({ name: QueueName.sync } as BullModuleOptions),
+    BullModule.registerQueue(
+      ...([
+        { name: QueueName.sync },
+        { name: QueueName.file },
+      ] as BullModuleOptions[]),
+    ),
+    CustomBullModule,
     CustomFilterModule,
     CustomBullModule,
     DsApiModule,
