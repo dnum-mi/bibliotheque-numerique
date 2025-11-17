@@ -1,5 +1,31 @@
 # Changelog
 
+## [3.0.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.41.0...v3.0.0) (2025-11-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* add siaf interfaces v2 ([#1945](https://github.com/dnum-mi/bibliotheque_numerique/issues/1945))
+
+### Features
+
+* adapter la synchronisation avec les nouveaux modéles ([#1946](https://github.com/dnum-mi/bibliotheque_numerique/issues/1946)) ([#1955](https://github.com/dnum-mi/bibliotheque_numerique/issues/1955)) ([534c578](https://github.com/dnum-mi/bibliotheque_numerique/commit/534c57875afd82095a69078ef2e01aecd50f529b))
+* add siaf interfaces v2 ([#1945](https://github.com/dnum-mi/bibliotheque_numerique/issues/1945)) ([fa296f0](https://github.com/dnum-mi/bibliotheque_numerique/commit/fa296f08d57ad9f5b4b594f1e6dc82cf4d589883))
+* update fiche persons for new models ([ec76f7b](https://github.com/dnum-mi/bibliotheque_numerique/commit/ec76f7b48874c4f62323435a6902b42826112da3))
+* update general design of fiche organisme ([c11bebc](https://github.com/dnum-mi/bibliotheque_numerique/commit/c11bebc58eec0d83eb4a07d8249dc9209730fcae))
+* update info organisme vue for new models ([53fb76c](https://github.com/dnum-mi/bibliotheque_numerique/commit/53fb76cdab1e3865e664100de783a9d8783d1db9))
+
+
+### Bug Fixes
+
+* add new models in index of lib/shared ([230c905](https://github.com/dnum-mi/bibliotheque_numerique/commit/230c905cf1a0c01e14880e4eb0af049706f92ce6))
+* download PJs ([514b8d4](https://github.com/dnum-mi/bibliotheque_numerique/commit/514b8d404bfe463779e2ed35a08009e037251f72))
+* move rna-event to other file ([24d2851](https://github.com/dnum-mi/bibliotheque_numerique/commit/24d2851e6149d8d4cef7625a0558d354c66a6b0c))
+* remove _ for properties begin with _ from hub ([1fc6c04](https://github.com/dnum-mi/bibliotheque_numerique/commit/1fc6c040d8b36936c1a4f59ff0bccd3d6d9ae3bb))
+* rename properties of organisme from hub ([7f206cc](https://github.com/dnum-mi/bibliotheque_numerique/commit/7f206ccc62c191b411591717b3710ff494ae36d0))
+* sync organisme from hub ([0d54aea](https://github.com/dnum-mi/bibliotheque_numerique/commit/0d54aead0c81b10b70a271782f185f7b98fedbec))
+* update address for search organisme for new models ([015377f](https://github.com/dnum-mi/bibliotheque_numerique/commit/015377f67326da69841f75f4da3c77332b685f02))
+
 ## [2.41.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v2.40.0...v2.41.0) (2025-11-07)
 
 
