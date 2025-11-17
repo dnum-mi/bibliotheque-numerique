@@ -1,69 +1,60 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref } from 'vue'
 import type { View } from 'ol'
 import { GeoJSON } from 'ol/format'
-import { fromLonLat, get as getProjection } from 'ol/proj'
+
+import markerIcon from '@/assets/map-marker.png'
 
 const props = withDefaults(defineProps<{
   center?: [number, number]
+  projection?: string
   zoom?: number
-  featuresList?: any[]
+  marker?: boolean | [number, number]
   width?: string
   height?: string
   pinMarker?: boolean
 }>(), {
-  center: () => [2.3522, 48.8566],
+  center: () => [40, 40],
+  projection: 'EPSG:4326',
   zoom: 16,
-  featuresList: () => [],
-  pinMarker: true,
+  marker: true,
 })
 
 const view = ref<View>()
 const map = ref<HTMLElement>()
 
-const dataProjection = getProjection('EPSG:4326')!
-const featureProjection = getProjection('EPSG:3857')!
-
-const transformedCenter = computed(() => fromLonLat(props.center))
-
-watch(transformedCenter, (newCenter) => {
+watch(() => props.center, (newCenter) => {
   view.value?.setCenter(newCenter)
 })
 
 // #region marker
 const geoJson = new GeoJSON()
 
+const features = computed(() => [
+  props.marker === true
+    ? {
+        'type': 'Feature',
+        'properties': {},
+        'geometry': {
+          'type': 'Point',
+          'coordinates': props.center,
+        },
+      }
+    : props.marker,
+])
+
 const providerFeatureCollection = computed(() => ({
   type: 'FeatureCollection',
-  features: props.featuresList,
+  features: features.value,
 }))
 
-const geoJsonFeatures = computed(() =>
-  geoJson.readFeatures(providerFeatureCollection.value, {
-    dataProjection,
-    featureProjection,
-  }),
-)
+const geoJsonFeatures = computed(() => geoJson.readFeatures(providerFeatureCollection.value))
 // #endregion marker
 
-function setCenter (coords: [number, number]) {
-  view.value?.setCenter(fromLonLat(coords))
-}
-
-function setCenterAndZoom (coords: [number, number], newZoom = 17) {
-  view.value?.animate({
-    center: fromLonLat(coords),
-    zoom: newZoom,
-    duration: 500,
-  })
-}
-
 function resetCenter () {
-  view.value?.setCenter(transformedCenter.value)
-  view.value?.setZoom(props.zoom)
+  view.value?.setCenter(props.center)
 }
-
-defineExpose({ resetCenter, setCenter, setCenterAndZoom })
+defineExpose({ resetCenter })
 </script>
 
 <template>
@@ -75,8 +66,9 @@ defineExpose({ resetCenter, setCenter, setCenterAndZoom })
   >
     <ol-view
       ref="view"
-      :center="transformedCenter"
+      :center="center"
       :zoom="zoom"
+      :projection="projection"
     />
 
     <ol-tile-layer>
@@ -86,14 +78,24 @@ defineExpose({ resetCenter, setCenter, setCenterAndZoom })
     <ol-vector-layer>
       <ol-source-vector
         :features="geoJsonFeatures"
+        :format="geoJson"
+        :projection="projection"
       />
-
       <ol-style>
-        <ol-style-circle :radius="8">
-          <ol-style-fill color="rgba(227, 6, 19, 0.8)" />
-          <ol-style-stroke color="white" :width="2" />
-        </ol-style-circle>
+        <ol-style-icon v-if="pinMarker" :scale="1">
+          <span class="marker">📍</span>
+        </ol-style-icon>
+        <ol-style-icon v-else :src="markerIcon" :scale="0.05" />
       </ol-style>
     </ol-vector-layer>
   </ol-map>
 </template>
+
+<style scoped>
+.marker {
+  padding: 10px;
+  border-radius: 25px;
+  margin: 5px;
+  font-size: 25px;
+}
+</style>
