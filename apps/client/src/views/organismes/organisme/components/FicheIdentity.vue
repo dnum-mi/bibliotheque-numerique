@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { baseApiUrl } from '@/api/api-client'
+import { getFileRoute } from '@/api/bn-api-routes'
+import DownloadFile from '@/components/DownloadFile.vue'
+import type { FileToDownload } from '@/components/DownloadFile.vue'
 import { dateToStringFr, getPrefecture } from '@/utils'
-import { formatBytes, getFileDetail, getFileFormat } from '@/utils/file.utils'
-import { eTypeFile } from '@biblio-num/shared'
+import { eState, eTypeFile } from '@biblio-num/shared'
 import type { IAssociationOutput, IFoundationOutput } from '@biblio-num/shared'
 
 const props = defineProps<{
@@ -25,7 +28,17 @@ const stateInActivityOrDissolved = computed(() => {
 
 // TODO: ajouter un endpoint au niveau de l'api pour recupérer le dernier status
 const lastStatus = computed(() => {
-  return props.organisme?.files?.filter((file) => file.typeFile === eTypeFile.Statuts)[0]
+  const file = props.organisme?.files?.filter((file) => file.typeFile === eTypeFile.Statuts)[0]
+  if (!file) {
+    return null
+  }
+  return {
+    ...file,
+    url: `${baseApiUrl}${getFileRoute(file?.id)}`,
+    filename: file.name,
+    byteSizeBigInt: file.byteSize,
+    state: eState.uploaded,
+  }
 })
 
 // TODO: à récuperérer depuis l'API le dernier evenement
@@ -124,38 +137,13 @@ const serviceInstructor = computed(() => {
             Dernier status:
           </dt>
           <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-3 sm:mt-0">
-            <DsfrFileDownload
+            <DownloadFile
               v-if="lastStatus"
-              :title="lastStatus.name"
-              :format="getFileFormat(lastStatus.mimeType)"
-              :size="formatBytes(lastStatus.byteSize)"
-              :detail="getFileDetail(lastStatus)"
-              href="#"
-              :download="lastStatus.originalName"
-              class="fr-mt-2v"
+              :file="lastStatus as FileToDownload"
             />
+            <span>Déposé le {{ lastStatus?.uploadedAt ? dateToStringFr(lastStatus.uploadedAt) : 'Non renseigné' }}</span>
           </dd>
         </div>
-
-        <div class="py-2 sm:grid sm:grid-cols-5">
-          <dt class="text-sm/6 font-medium text-gray-900">
-            Dernier status déposé le
-          </dt>
-          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-3 sm:mt-0">
-            {{ dateToStringFr(lastStatus?.uploadedAt) || 'Non renseigné' }}
-          </dd>
-        </div>
-
-      <!--
-      <div v-if="isFoundation" class="py-2 sm:grid sm:grid-cols-5">
-        <dt class="text-sm/6 font-medium text-gray-900">
-          A une activité internationale
-        </dt>
-        <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-3 sm:mt-0">
-          {{ asFoundations?.hasInternationalActivity ? 'Oui' : 'Non' }}
-        </dd>
-      </div>
-       -->
       </dl>
     </div>
   </div>

@@ -125,9 +125,9 @@ type relationsType = {
 }
 const relations = computed<relationsType | undefined>(() => {
   const rawJson = (organisme.value?.rnfJson || organisme.value?.rnaJson) as ISiafOrganisme
-  if ((rawJson?.founderLegalEntities === null || rawJson?.founderLegalEntities.length === 0)
-    && (rawJson?.governanceLegalEntities === null || rawJson?.governanceLegalEntities.length === 0)
-    && (rawJson?.foundedLegalEntities === null || rawJson?.foundedLegalEntities.length === 0)
+  if ((rawJson?.founderLegalEntities === null || rawJson?.founderLegalEntities?.length === 0)
+    && (rawJson?.governanceLegalEntities === null || rawJson?.governanceLegalEntities?.length === 0)
+    && (rawJson?.foundedLegalEntities === null || rawJson?.foundedLegalEntities?.length === 0)
     && rawJson?.fromLineage === null
     && rawJson?.toLineage === null) {
     return undefined
@@ -292,7 +292,6 @@ const relations = computed<relationsType | undefined>(() => {
               id="relations"
               title="Relations"
             >
-              {{ relations }}
               <ListeRelations
                 :current-organisme-title="organisme.title"
                 :founded-legal-entities="relations?.foundedLegalEntities"
