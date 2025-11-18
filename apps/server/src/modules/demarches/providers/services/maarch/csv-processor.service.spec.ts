@@ -58,8 +58,8 @@ describe('CsvProcessorService', () => {
 
     it('should process valid CSV files successfully', () => {
       const demandesContent = `courrier;etat_dossier;nom_pj;intitule_pj;date_creation_pj;tél;prefecture
-1;REJ;document.pdf;Statuts;2024-01-15;0123456789;D75
-2;VAL;rapport.doc;Rapport annuel;2024-02-20;0987654321;D92`
+1;REJ;document.pdf;Statuts.pdf;2024-01-15;0123456789;D75
+2;VAL;rapport.doc;Rapport annuel.doc;2024-02-20;0987654321;D92`
 
       const annotationsContent = `res_id;annotations_courrier
 1;Annotation pour dossier 1
@@ -78,8 +78,9 @@ describe('CsvProcessorService', () => {
         courrier: '1',
         pieces_jointes: expect.arrayContaining([
           expect.objectContaining({
+            date_creation_pj: "2024-01-15",
             nom_pj: 'document.pdf',
-            intitule_pj: 'document_Statuts.pdf',
+            intitule_pj: 'Statuts.pdf',
           }),
         ]),
         annotations: ['Annotation pour dossier 1', 'Autre annotation dossier 1'],
@@ -89,7 +90,7 @@ describe('CsvProcessorService', () => {
         pieces_jointes: expect.arrayContaining([
           expect.objectContaining({
             nom_pj: 'rapport.doc',
-            intitule_pj: 'rapport_Rapport annuel.doc',
+            intitule_pj: 'Rapport annuel.doc',
           }),
         ]),
         annotations: ['Annotation pour dossier 2'],
@@ -130,9 +131,9 @@ describe('CsvProcessorService', () => {
 
     it('should handle multiple pieces jointes for same courrier', () => {
       const demandesContent = `courrier;etat_dossier;nom_pj;intitule_pj
-1;VAL;doc1.pdf;Document 1
-1;VAL;doc2.pdf;Document 2
-1;VAL;doc3.xlsx;Tableau`
+1;VAL;doc1.pdf;Document 1.pdf
+1;VAL;doc2.pdf;Document 2.pdf
+1;VAL;doc3.xlsx;Tableau.xlsx`
 
       const annotationsContent = `res_id;annotations_courrier
 1;Annotation`
@@ -146,9 +147,9 @@ describe('CsvProcessorService', () => {
 
       expect(result).toHaveLength(1)
       expect(result[0].pieces_jointes).toHaveLength(3)
-      expect(result[0].pieces_jointes[0].intitule_pj).toBe('doc1_Document 1.pdf')
-      expect(result[0].pieces_jointes[1].intitule_pj).toBe('doc2_Document 2.pdf')
-      expect(result[0].pieces_jointes[2].intitule_pj).toBe('doc3_Tableau.xlsx')
+      expect(result[0].pieces_jointes[0].intitule_pj).toBe('Document 1.pdf')
+      expect(result[0].pieces_jointes[1].intitule_pj).toBe('Document 2.pdf')
+      expect(result[0].pieces_jointes[2].intitule_pj).toBe('Tableau.xlsx')
     })
 
     it('should format phone numbers and parse dates correctly', () => {
@@ -190,7 +191,7 @@ describe('CsvProcessorService', () => {
       const result = service.processFiles(mockFiles)
 
       expect(result[0].pieces_jointes[0].intitule_pj).toBe(
-        'document_sans_extension_Fichier important'
+        'Fichier important'
       )
     })
 

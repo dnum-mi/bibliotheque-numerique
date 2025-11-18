@@ -1,4 +1,4 @@
-import { DataSource, Repository } from 'typeorm'
+import { DataSource } from 'typeorm'
 import { DemarcheMaarchService } from './demarche-maarch.service'
 import { CsvProcessorService } from './maarch/csv-processor.service'
 import { DossierTransformerService } from './maarch/dossier-transformer.service'
@@ -14,9 +14,8 @@ import {
   maarchFieldMappingsArray,
 } from '../../objects/constants/maarch-champ.dictionary'
 import { FileBuilderService } from './maarch/file-builder.service'
-import {
-  DossierSynchroniseOrganismeService
-} from '@/modules/dossiers/providers/synchronization/organisme/dossier-synchronise-organisme.service'
+import { getQueueToken } from '@nestjs/bull'
+import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
 
 const mockCsvProcessor = {
   processFiles: jest.fn(),
@@ -60,6 +59,16 @@ const mockDossierRepo = {
   delete: jest.fn(),
 };
 
+const mockOrganismeRepo = {
+  findOne: jest.fn(),
+  create: jest.fn(),
+  save: jest.fn(),
+};
+
+const mockQueue = {
+  add: jest.fn(),
+};
+
 describe('DemarcheMaarchService', () => {
   let service: DemarcheMaarchService
 
@@ -88,9 +97,9 @@ describe('DemarcheMaarchService', () => {
           useValue: mockFileBuilderService,
         },
         {
-          provide: DossierSynchroniseOrganismeService,
-          useValue: mockDossierSynchroniseOrganismeService,
-        }
+          provide: getQueueToken(QueueName.file),
+          useValue: mockQueue,
+        },
       ],
     }).compile()
 
