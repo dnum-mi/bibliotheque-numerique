@@ -1,14 +1,21 @@
 <script setup lang="ts">
 import { prettyByteSizeByString } from '@/utils'
 import { eState } from '@biblio-num/shared'
-import type { FileWithState } from '@biblio-num/shared'
+import type { StateKey } from '@biblio-num/shared'
 import { downloadFile } from '@/utils/downloadFile'
 
+export type FileToDownload = {
+  filename: string
+  byteSizeBigInt: bigint | number | null
+  url?: string
+  state?: StateKey
+}
+
 const props = defineProps<{
-  file: FileWithState | null
+  file: FileToDownload | null
 }>()
 
-const downloadable = computed(() => (props.file as FileWithState)?.state === eState.uploaded)
+const downloadable = computed(() => (props.file as FileToDownload)?.state === eState.uploaded)
 
 const handleDownload = async () => {
   if (!props.file?.url) {
