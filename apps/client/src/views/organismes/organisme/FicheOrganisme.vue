@@ -304,7 +304,7 @@ const relations = computed<relationsType | undefined>(() => {
             <BnTab
               v-if="dossiersCount"
               id="list-dossier"
-              title="Dossiers"
+              :title="`Dossiers (${dossiersCount})`"
             >
               <ListeDossier
                 :organisme-id="organisme?.id"
