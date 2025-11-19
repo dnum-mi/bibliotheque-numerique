@@ -64,6 +64,7 @@ declare module 'vue' {
     LayoutFiche: typeof import('./components/Layout/LayoutFiche.vue')['default']
     LayoutList: typeof import('./components/Layout/LayoutList.vue')['default']
     MapCard: typeof import('./components/MapCard.vue')['default']
+    MapMarkers: typeof import('./components/MapMarkers.vue')['default']
     MimeTypeCellRenderer: typeof import('./components/ag-grid/files/MimeTypeCellRenderer.vue')['default']
     ModalConfirm: typeof import('./components/ModalConfirm.vue')['default']
     OrganismeBadge: typeof import('./components/Badges/organisme/OrganismeBadge.vue')['default']
