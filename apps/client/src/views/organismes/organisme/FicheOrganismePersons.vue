@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { IPerson } from '@biblio-num/shared'
 import { qualityInOrganismeArray } from '@biblio-num/shared'
-import { DsfrAccordion } from '@gouvminint/vue-dsfr'
+import { DsfrAccordion, registerAccordionKey } from '@gouvminint/vue-dsfr'
 import { dateToStringFr } from '../../../utils'
 import TooltipAddress from './TooltipAddress.vue'
 
@@ -38,10 +38,40 @@ const personsByRoles = computed<TPersonByRole[]>(() => {
   }))
 })
 
-const expandedIds = ref<string[]>(personsByRoles.value?.map((_, idx) => `peson-expanded-${idx}`) || [])
-const onExpand = (idx: number, id: string) => {
-  expandedIds.value[idx] = id
-}
+const accordions = ref(new Map<number, {
+  title: string,
+  expended: boolean,
+}>())
+
+const countId = ref(0)
+
+provide(registerAccordionKey, (title: Ref<string>) => {
+  const myIndex = countId.value++
+  accordions.value.set(myIndex, {
+    title: title.value,
+    expended: true,
+  })
+
+  watch(title, () => {
+    accordions.value.set(myIndex, { title: title.value, expended: true })
+  })
+
+  onUnmounted(() => {
+    accordions.value.delete(myIndex)
+  })
+
+  const isActive = computed(() => {
+    const accordion = accordions.value.get(myIndex)
+    return !!accordion?.expended
+  })
+  function expand (): void {
+    const accordion = accordions.value.get(myIndex)
+    if (accordion) {
+      accordion.expended = !accordion.expended
+    }
+  }
+  return { isActive, expand }
+})
 </script>
 
 <template>
@@ -52,8 +82,7 @@ const onExpand = (idx: number, id: string) => {
     >
       <DsfrAccordion
         :id="`peson-expanded-${idx}`"
-        :expanded-id="expandedIds[idx]"
-        @expand="onExpand(idx, $event as string)"
+        :title="personsByRole.role"
       >
         <template #title>
           <div class="fr-mr-2w bn-icon--pink-macaron-950-active">
