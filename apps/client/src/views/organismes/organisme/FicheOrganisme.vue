@@ -280,7 +280,7 @@ const establishments = computed<EstablishmentsType | undefined>(() => {
               />
             </BnTab>
             <BnTab
-              v-if="organisme?.persons"
+              v-if="organisme?.persons.length"
               id="Dirigeants"
               :title="`Dirigeants (${organisme?.persons.length || 0})`"
             >
