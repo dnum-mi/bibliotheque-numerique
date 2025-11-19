@@ -2,6 +2,8 @@
 import apiClient from '@/api/api-client'
 import LayoutFiche from '@/components/Layout/LayoutFiche.vue'
 import ListeDossier from './ListeDossier.vue'
+import ListeRelations from './ListeRelations.vue'
+import ListeEtablissement from './ListeEtablissement.vue'
 import OrganismeBadge from '@/components/Badges/organisme/OrganismeBadge.vue'
 import { EOrganismeIdType, useOrganismeStore, useUserStore } from '@/stores'
 import type { OrganismeIdType } from '@/stores'
@@ -17,6 +19,7 @@ import type {
   ILegalEntity,
   ILineage,
   ISiafOrganisme,
+  IEstablishment,
   // ISiafRnfHistoryOutput,
 } from '@biblio-num/shared'
 import { dFileTabDictionary, eOrganismeType, eState } from '@biblio-num/shared'
@@ -139,6 +142,32 @@ const relations = computed<relationsType | undefined>(() => {
     fromLineage: rawJson?.fromLineage || null,
     toLineage: rawJson?.toLineage || null,
   }
+})
+
+type EstablishmentsType = {
+  secondaryEstablishments: IEstablishment[]
+  acquiredEstablishments: IEstablishment[]
+  cededEstablishments: IEstablishment[]
+}
+const establishments = computed<EstablishmentsType | undefined>(() => {
+  const rnaJson = organisme.value?.rnaJson as IAssociationOutput | undefined
+  if (!rnaJson) {
+    return undefined
+  }
+
+  const secondary = rnaJson.secondaryEstablishments || []
+  const acquired = rnaJson.acquiredEstablishments || []
+  const ceded = rnaJson.cededEstablishments || []
+
+  const hasData = secondary.length > 0 || acquired.length > 0 || ceded.length > 0
+
+  return hasData
+    ? {
+        secondaryEstablishments: secondary,
+        acquiredEstablishments: acquired,
+        cededEstablishments: ceded,
+      }
+    : undefined
 })
 </script>
 
@@ -263,6 +292,17 @@ const relations = computed<relationsType | undefined>(() => {
               </div>
             </BnTab>
             <BnTab
+              v-if="establishments"
+              id="Etablissements"
+              title="Etablissements"
+            >
+              <ListeEtablissement
+                :secondary-establishments="establishments?.secondaryEstablishments"
+                :acquired-establishments="establishments?.acquiredEstablishments"
+                :ceded-establishments="establishments?.cededEstablishments"
+              />
+            </BnTab>
+            <BnTab
               v-for="tabInfo in fileTabs"
               :id="tabInfo.idTab"
               :key="tabInfo.key"
@@ -293,7 +333,7 @@ const relations = computed<relationsType | undefined>(() => {
               title="Relations"
             >
               <ListeRelations
-                :current-organisme-title="organisme.title"
+                :current-organisme-title="organisme.title ?? 'Sans titre'"
                 :founded-legal-entities="relations?.foundedLegalEntities"
                 :founder-legal-entities="relations?.founderLegalEntities"
                 :governance-legal-entities="relations?.governanceLegalEntities"
