@@ -31,7 +31,10 @@ export class HubHealthIndicator extends HealthIndicator {
       return this.getStatus(key, true)
     }
 
-    const url = this.config.get('siafHub.url') + this.config.get('siafHub.healthPath')
+    // Construct the health check URL by removing any version path from the base URL
+    const url =
+      this.config.get('siafHub.url').replace(/\/[^/]+$/, '') +
+      this.config.get('siafHub.healthPath')
 
     try {
       const response = await this.axios.get(url)
