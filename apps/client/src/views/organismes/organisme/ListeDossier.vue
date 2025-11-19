@@ -82,6 +82,10 @@ const updateListeDossiers = async () => {
         row.title = 'Vous n’avez pas accès à cette démarche, ce dossier est donc inaccessible'
       }
       return row
+    }).sort((a, b) => {
+      const dateA = a?.dateDepot?.getTime()
+      const dateB = b?.dateDepot?.getTime()
+      return dateB - dateA
     })
   } catch (error) {
     console.log(error)
@@ -94,6 +98,7 @@ watch(() => props.organismeId, updateListeDossiers, { immediate: true })
 
 <template>
   <DsfrTable
+    title=""
     class="fr-text fr-text--bold bn-color-table w-full"
     :headers="headers"
   >
