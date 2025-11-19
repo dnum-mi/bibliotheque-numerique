@@ -27,51 +27,51 @@ const asAssociation = computed(() => {
     </div>
     <div class="mt-6 border-t border-gray-100">
       <dl class="divide-y p-0">
-        <div v-if="!isFoundation" class="py-2 sm:grid sm:grid-cols-5">
-          <dt class="text-sm/6 font-medium text-gray-900">
+        <div v-if="!isFoundation" class="py-2 md:grid md:grid-cols-4">
+          <dt class="bn-fiche-sub-title--label uppercase">
             Domaine d'activité
           </dt>
-          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-3 sm:mt-0">
+          <dd class="bn-fiche-sub-title--text md:col-span-3">
             {{ `${asAssociation?.activityDomainCode} - ${asAssociation?.activityDomainDescription}` || 'Non renseigné' }}
           </dd>
         </div>
-        <div v-if="isFoundation" class="py-2 sm:grid sm:grid-cols-5">
-          <dt class="text-sm/6 font-medium text-gray-900">
+        <div v-if="isFoundation" class="py-2 md:grid md:grid-cols-4">
+          <dt class="bn-fiche-sub-title--label uppercase">
             Domaine d'intérêt général
           </dt>
-          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-3 sm:mt-0">
+          <dd class="bn-fiche-sub-title--text md:col-span-3">
             {{ asFoundation?.generalInterestDomain || 'Non renseigné' }}
           </dd>
         </div>
-        <div v-if="isFoundation" class="py-2 sm:grid sm:grid-cols-5">
-          <dt class="text-sm/6 font-medium text-gray-900">
+        <div v-if="isFoundation" class="py-2 md:grid md:grid-cols-4">
+          <dt class="bn-fiche-sub-title--label uppercase">
             Activité à l'international
           </dt>
-          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-3 sm:mt-0">
+          <dd class="bn-fiche-sub-title--text md:col-span-3">
             {{ asFoundation?.hasInternationalActivity ? 'OUI' : 'NON' }}
           </dd>
         </div>
-        <div class="py-2 sm:grid sm:grid-cols-5">
-          <dt class="text-sm/6 font-medium text-gray-900">
+        <div class="py-2 md:grid md:grid-cols-4">
+          <dt class="bn-fiche-sub-title--label uppercase">
             Appel à la générosité publique (années)
           </dt>
-          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-3 sm:mt-0">
+          <dd class="bn-fiche-sub-title--text md:col-span-3">
             {{ organisme.publicGenerosityYears?.join(' - ') || 'Aucune' }}
           </dd>
         </div>
-        <div class="py-2 sm:grid sm:grid-cols-5">
-          <dt class="text-sm/6 font-medium text-gray-900">
+        <div class="py-2 md:grid md:grid-cols-4">
+          <dt class="bn-fiche-sub-title--label uppercase">
             Subventions publiques (années)
           </dt>
-          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-3 sm:mt-0">
+          <dd class="bn-fiche-sub-title--text md:col-span-3">
             {{ organisme.publicSubsidyYears?.join(' - ') || 'Aucune' }}
           </dd>
         </div>
-        <div class="py-2 sm:grid sm:grid-cols-5">
-          <dt class="text-sm/6 font-medium text-gray-900">
+        <div class="py-2 md:grid md:grid-cols-4">
+          <dt class="bn-fiche-sub-title--label uppercase">
             Financements étrangers (années)
           </dt>
-          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-3 sm:mt-0">
+          <dd class="bn-fiche-sub-title--text md:col-span-3">
             {{ organisme.foreignFinancingYears?.join(' - ') || 'Aucune' }}
           </dd>
         </div>

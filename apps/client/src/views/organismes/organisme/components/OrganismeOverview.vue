@@ -21,36 +21,31 @@ const asAssociation = computed(() => {
 </script>
 
 <template>
-  <div class="py-6 px-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
-    <div class="flex flex-col gap-8">
-      <FicheIdentity
-        :organisme="organisme"
-        :is-foundation="isFoundation"
-      />
+  <div class="py-6 px-4 grid grid-cols-1 gap-6 xl:grid-cols-2">
+    <FicheIdentity
+      :organisme="organisme"
+      :is-foundation="isFoundation"
+    />
+    <FicheContact
+      :organisme="organisme"
+    />
 
-      <FicheActivity
-        :organisme="organisme"
-        :is-foundation="isFoundation"
-      />
-      <FicheCompte
-        :organisme="organisme"
-        :missing-declaration-years="missingDeclarationYears"
-      />
-    </div>
-
-    <div class="flex flex-col gap-8">
-      <FicheContact
-        :organisme="organisme"
-      />
-      <FicheAgrement
-        v-if="!isFoundation && asAssociation"
-        :association="asAssociation"
-      />
-    </div>
+    <FicheActivity
+      :organisme="organisme"
+      :is-foundation="isFoundation"
+    />
+    <FicheCompte
+      :organisme="organisme"
+      :missing-declaration-years="missingDeclarationYears"
+    />
+    <FicheAgrement
+      v-if="!isFoundation && asAssociation"
+      :association="asAssociation"
+    />
   </div>
 </template>
 
-<style scoped>
+<style>
 .divide-y > :not(:last-child) {
   border-bottom-style: solid;
   border-bottom-width: 1px;

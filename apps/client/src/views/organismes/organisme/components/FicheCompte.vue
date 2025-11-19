@@ -66,11 +66,11 @@ const lastAccounts = computed(() => {
     </div>
     <div class="mt-6 border-t border-gray-100">
       <dl class="divide-y p-0">
-        <div class="py-2 sm:grid sm:grid-cols-5">
-          <dt class="text-sm/6 font-medium text-gray-900">
+        <div class="py-2 md:grid md:grid-cols-4">
+          <dt class="bn-fiche-sub-title--label uppercase">
             Dépôts des comptes
           </dt>
-          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-3 sm:mt-0">
+          <dd class="bn-fiche-sub-title--text md:col-span-3">
             <DsfrBadge
               no-icon
               small
@@ -79,24 +79,26 @@ const lastAccounts = computed(() => {
             />
           </dd>
         </div>
-        <div class="py-2 sm:grid sm:grid-cols-5">
-          <dt class="text-sm/6 font-medium text-gray-900">
+        <div class="py-2 md:grid md:grid-cols-4">
+          <dt class="bn-fiche-sub-title--label uppercase">
             Date de clôture de l'exercice comptable (jour/mois)
           </dt>
-          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-3 sm:mt-0">
+          <dd class="bn-fiche-sub-title--text md:col-span-3">
             {{ fiscalEndDateAt }}
           </dd>
         </div>
-        <div class="py-2 sm:grid sm:grid-cols-5">
-          <dt class="text-sm/6 font-medium text-gray-900">
+        <div class="py-2 md:grid md:grid-cols-4">
+          <dt class="bn-fiche-sub-title--label uppercase">
             Dernier comptes déposés:
           </dt>
-          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-3 sm:mt-0">
+          <dd class="bn-fiche-sub-title--text md:col-span-3">
             <DownloadFile
               v-if="lastAccounts"
               :file="lastAccounts as FileToDownload"
             />
-            <span>{{ lastAccounts?.uploadedAt ? dateToStringFr(lastAccounts.uploadedAt) : 'Non renseigné' }}</span>
+            <span>
+              {{ lastAccounts?.uploadedAt ? dateToStringFr(lastAccounts.uploadedAt) : 'Non renseigné' }}
+            </span>
           </dd>
         </div>
       </dl>

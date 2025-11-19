@@ -42,36 +42,36 @@ const mapCardRef = useTemplateRef('mapCard')
             />
           </div>
         </div>
-        <div class="py-2 sm:grid sm:grid-cols-5">
-          <dt class="text-sm/6 font-medium text-gray-900">
+        <div class="py-2 md:grid md:grid-cols-4">
+          <dt class="bn-fiche-sub-title--label uppercase">
             Adresse du siège
           </dt>
-          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-3 sm:mt-0">
-            {{ organisme.address.oneLine }}
+          <dd class="bn-fiche-sub-title--text md:col-span-3">
+            {{ organisme.address.oneLine || 'Non renseigné' }}
           </dd>
         </div>
-        <div class="py-2 sm:grid sm:grid-cols-5">
-          <dt class="text-sm/6 font-medium text-gray-900">
+        <div class="py-2 md:grid md:grid-cols-4">
+          <dt class="bn-fiche-sub-title--label uppercase">
             Email
           </dt>
-          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-3 sm:mt-0">
-            {{ organisme.email }}
+          <dd class="bn-fiche-sub-title--text md:col-span-3">
+            {{ organisme.email || 'Non renseigné' }}
           </dd>
         </div>
-        <div class="py-2 sm:grid sm:grid-cols-5">
-          <dt class="text-sm/6 font-medium text-gray-900">
+        <div class="py-2 md:grid md:grid-cols-4">
+          <dt class="bn-fiche-sub-title--label uppercase">
             Téléphone
           </dt>
-          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-3 sm:mt-0">
-            {{ organisme.phone }}
+          <dd class="bn-fiche-sub-title--text md:col-span-3">
+            {{ organisme.phone || 'Non renseigné' }}
           </dd>
         </div>
-        <div class="py-2 sm:grid sm:grid-cols-5">
-          <dt class="text-sm/6 font-medium text-gray-900">
+        <div class="py-2 md:grid md:grid-cols-4">
+          <dt class="bn-fiche-sub-title--label uppercase">
             Site web
           </dt>
-          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-3 sm:mt-0">
-            {{ organisme.website }}
+          <dd class="bn-fiche-sub-title--text md:col-span-3">
+            {{ organisme.website || 'Non renseigné' }}
           </dd>
         </div>
       </dl>

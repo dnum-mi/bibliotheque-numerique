@@ -12,10 +12,6 @@ const props = defineProps<{
   isFoundation: boolean,
 }>()
 
-const asFoundations = computed<IAssociationOutput | null>(() => {
-  return props.isFoundation ? (props.organisme as IFoundationOutput) : null
-})
-
 // TODO: à confirmer de l'idée.
 const stateInActivityOrDissolved = computed(() => {
   if (!props.organisme.state) { return 'Non renseigné' }
@@ -56,92 +52,84 @@ const serviceInstructor = computed(() => {
     </div>
     <div class="mt-6 border-t border-gray-100">
       <dl class="divide-y p-0">
-        <div class="py-2 sm:grid sm:grid-cols-5">
-          <dt class="text-sm/6 font-medium text-gray-900">
+        <div class="py-2 md:grid md:grid-cols-4">
+          <dt class="bn-fiche-sub-title--label uppercase">
             SIRET du siège social
           </dt>
-          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-3 sm:mt-0">
+          <dd class="md:col-span-3 bn-fiche-sub-title--text">
             {{ organisme.siret || 'Non renseigné' }}
           </dd>
         </div>
 
-        <div class="py-2 sm:grid sm:grid-cols-5">
-          <dt class="text-sm/6 font-medium text-gray-900 ">
+        <div class="py-2 md:grid md:grid-cols-4">
+          <dt class="bn-fiche-sub-title--label uppercase">
             État
           </dt>
-          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-3 sm:mt-0">
+          <dd class="bn-fiche-sub-title--text md:col-span-3">
             {{ stateInActivityOrDissolved }}
           </dd>
         </div>
 
-        <div class="py-2 sm:grid sm:grid-cols-5">
-          <dt class="text-sm/6 font-medium text-gray-900 ">
+        <div class="py-2 md:grid md:grid-cols-4">
+          <dt class="bn-fiche-sub-title--label uppercase">
             Publiée au JOAFE
           </dt>
-          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-3 sm:mt-0">
+          <!-- TODO: A compléter -->
+          <dd class="bn-fiche-sub-title--text md:col-span-3">
             Non renseigné
           </dd>
         </div>
 
-        <div class="py-2 sm:grid sm:grid-cols-5">
-          <dt class="text-sm/6 font-medium text-gray-900 ">
+        <div class="py-2 md:grid md:grid-cols-4">
+          <dt class="bn-fiche-sub-title--label uppercase">
             Service instructeur du dossier
           </dt>
-          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-3 sm:mt-0">
+          <dd class="bn-fiche-sub-title--text md:col-span-3">
             {{ serviceInstructor }}
           </dd>
         </div>
 
-        <div class="py-2 sm:grid sm:grid-cols-5">
-          <dt class="text-sm/6 font-medium text-gray-900 ">
+        <div class="py-2 md:grid md:grid-cols-4">
+          <dt class="bn-fiche-sub-title--label uppercase">
             Préfecture
           </dt>
-          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-3 sm:mt-0">
+          <dd class="bn-fiche-sub-title--text md:col-span-3">
             {{ organisme.department ? getPrefecture(organisme.department) : 'Non renseigné' }}
           </dd>
         </div>
 
-        <div class="py-2 sm:grid sm:grid-cols-5">
-          <dt class="text-sm/6 font-medium text-gray-900">
+        <div class="py-2 md:grid md:grid-cols-4">
+          <dt class="bn-fiche-sub-title--label uppercase">
             Objet social
           </dt>
-
-          <textarea
-            class="mt-1 text-sm/6 text-gray-700 sm:col-span-3 sm:mt-0"
-            readonly
-            :value="organisme.socialObject || 'Non renseigné'"
-            rows="5"
-          />
+          <dd
+            class="bn-fiche-sub-title--text md:col-span-3 max-h-50 overflow-auto whitespace-pre-wrap block"
+          >
+            {{ organisme.socialObject || 'Non renseigné' }}
+          </dd>
         </div>
 
-        <div class="py-2 sm:grid sm:grid-cols-5">
-          <dt class="text-sm/6 font-medium text-gray-900">
+        <div class="py-2 md:grid md:grid-cols-4">
+          <dt class="bn-fiche-sub-title--label uppercase">
             Date du terme
           </dt>
-          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-3 sm:mt-0">
+          <dd class="bn-fiche-sub-title--text md:col-span-3">
             {{ dateToStringFr(organisme?.dueDate) || 'Non renseigné' }}
           </dd>
         </div>
 
-        <div class="py-2 sm:grid sm:grid-cols-5">
-          <dt class="text-sm/6 font-medium text-gray-900">
-            Date de clôture de l'exercice comptable (jour/mois)
+        <div class="py-2 md:grid md:grid-cols-4">
+          <dt class="bn-fiche-sub-title--label uppercase">
+            Dernier status déposé
           </dt>
-          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-3 sm:mt-0">
-            {{ dateToStringFr(asFoundations?.fiscalEndAt) || 'Non renseigné' }}
-          </dd>
-        </div>
-
-        <div class="py-2 sm:grid sm:grid-cols-5">
-          <dt class="text-sm/6 font-medium text-gray-900">
-            Dernier status:
-          </dt>
-          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-3 sm:mt-0">
+          <dd class="flex flex-col md:col-span-3">
             <DownloadFile
               v-if="lastStatus"
               :file="lastStatus as FileToDownload"
             />
-            <span>Déposé le {{ lastStatus?.uploadedAt ? dateToStringFr(lastStatus.uploadedAt) : 'Non renseigné' }}</span>
+            <span class="bn-fiche-sub-title--text md:col-span-3">
+              Déposé le {{ lastStatus?.uploadedAt ? dateToStringFr(lastStatus.uploadedAt) : 'Non renseigné' }}
+            </span>
           </dd>
         </div>
       </dl>
