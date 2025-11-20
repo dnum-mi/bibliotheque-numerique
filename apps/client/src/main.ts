@@ -43,6 +43,18 @@ const isBlank = (v: unknown) =>
 FilterService.register('blank', (value: unknown) => isBlank(value))
 FilterService.register('notBlank', (value: unknown) => !isBlank(value))
 
+import Aura from '@primevue/themes/aura'
+import { definePreset } from '@primevue/themes'
+import { FilterService } from '@primevue/core/api'
+
+const isBlank = (v: unknown) =>
+  v == null
+  || (typeof v === 'string' && v.trim().length === 0)
+  || (Array.isArray(v) && v.length === 0)
+
+FilterService.register('blank', (value: unknown) => isBlank(value))
+FilterService.register('notBlank', (value: unknown) => !isBlank(value))
+
 const agGridLicenseKey = '__AG_GRID_LICENSE_KEY__'
 
 LicenseManager.setLicenseKey(agGridLicenseKey)
