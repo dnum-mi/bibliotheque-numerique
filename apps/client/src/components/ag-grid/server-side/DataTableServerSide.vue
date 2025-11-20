@@ -512,9 +512,6 @@ const paginationPages = computed(
 )
 
 const onColResize = (event: { element: HTMLElement, delta: number }) => {
-  // eslint-disable-next-line no-console
-  console.log('Resized a column:', event.element, event.delta)
-
   // Identifier la colonne concernée par le redimensionnement
   // L'élément est la cellule d'en-tête <th>, cherchons son attribut data-pc-section ou son index
   const headerElement = event.element as HTMLTableCellElement
@@ -545,12 +542,8 @@ const onColResize = (event: { element: HTMLElement, delta: number }) => {
   const field = column.field as string
   const currentWidth = headerElement.offsetWidth
 
-  // eslint-disable-next-line no-console
-  console.log(`Column ${field} resized to ${currentWidth}px (delta: ${event.delta}px)`)
-
   // Mettre à jour les largeurs de colonnes
-  // eslint-disable-next-line no-console
-  console.log('Changing column widths...', toRaw(columnsWidth.value))
+
   columnsWidth.value = {
     ...columnsWidth.value,
     [field]: currentWidth,
@@ -558,8 +551,6 @@ const onColResize = (event: { element: HTMLElement, delta: number }) => {
 
   // Sauvegarder immédiatement les largeurs modifiées
   if (hasInitialDataLoaded.value) {
-    // eslint-disable-next-line no-console
-    console.log('Saving column widths...', toRaw(columnsWidth.value))
     const dto: IPagination<T> = {
       sorts: sort.value,
       filters: Object.keys(filtersToSend.value ?? {}).length > 0 ? filtersToSend.value as Record<keyof T, IFilter> : null,
@@ -575,9 +566,6 @@ const onColResize = (event: { element: HTMLElement, delta: number }) => {
 }
 
 const onColumnReorder = (event: { dragIndex: number, dropIndex: number }) => {
-  // eslint-disable-next-line no-console
-  console.log('Column reordered:', event.dragIndex, '->', event.dropIndex)
-
   // Créer une copie de l'ordre actuel des colonnes visibles
   const currentOrder = [...selectedColumnsIds.value]
 
@@ -591,13 +579,8 @@ const onColumnReorder = (event: { dragIndex: number, dropIndex: number }) => {
   selectedColumnsIds.value = currentOrder
   columnsOrder.value = currentOrder
 
-  // eslint-disable-next-line no-console
-  console.log('New column order:', toRaw(columnsOrder.value))
-
   // Sauvegarder immédiatement l'ordre modifié
   if (hasInitialDataLoaded.value) {
-    // eslint-disable-next-line no-console
-    console.log('Saving column order...', toRaw(columnsOrder.value))
     const dto: IPagination<T> = {
       sorts: sort.value,
       filters: Object.keys(filtersToSend.value ?? {}).length > 0 ? filtersToSend.value as Record<keyof T, IFilter> : null,
@@ -618,7 +601,7 @@ const dataTableRef = useTemplateRef('dataTable')
 const computeScrollHeight = () => {
   const height = window.innerHeight
   const top = (dataTableRef.value)?.offsetTop || 0
-  scrollHeight.value = `${height - top - 75}px`
+  scrollHeight.value = `${height - top - 82}px`
 }
 
 onMounted(() => {
@@ -839,17 +822,6 @@ defineExpose({
   updateDataTableState,
   resetColumnOrder,
   resetColumnsWidth,
-})
-
-const columnWidths = computed(() =>
-  filteredColumnDefs.value.map(
-    col => columnsWidth.value[col.field!] ? `${columnsWidth.value[col.field!]}px` : undefined,
-  ),
-)
-
-watch(columnWidths, (newWidths) => {
-  // eslint-disable-next-line no-console
-  console.log('Column widths updated:', newWidths)
 })
 </script>
 

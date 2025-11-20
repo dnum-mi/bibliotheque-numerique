@@ -14,7 +14,7 @@ const VerifyAuth = async () => {
     await userStore.loginWithVerifyAuth(props.token)
     router.push({ name: routeNames.DEFAULT })
   } catch (e) {
-    console.log(e)
+    console.warn(e)
     router.push({ name: routeNames.SIGNIN })
   }
 }

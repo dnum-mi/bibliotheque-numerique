@@ -47,7 +47,7 @@ watch(checked, (newValue) => {
 })
 
 const uncheck = (id: string) => {
-  console.log('uncheck', id)
+  console.warn('uncheck', id)
 }
 </script>
 

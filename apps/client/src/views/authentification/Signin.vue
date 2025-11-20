@@ -39,7 +39,7 @@ onMounted(async () => {
     proConnectUrl.value = url
   } catch {
     if (import.meta.env.DEV) {
-      console.log('Pas de ProConnect disponible')
+      console.warn('Pas de ProConnect disponible')
     }
   }
 })
