@@ -90,10 +90,6 @@ const totalRecords = ref(0)
 const sort = ref<{ key: string; order: 'ASC' | 'DESC' }[]>([])
 const filters = ref<DataTableFilterMeta>(getFilters())
 
-watch(filters, (newFilters) => {
-  console.log('Filters changed:', toRaw(newFilters))
-})
-
 function getFilters () {
   return props.columnDefs
     .filter(col => col.filterable !== false) // Ne créer des filtres que pour les colonnes filtrables
@@ -375,12 +371,13 @@ defineExpose({
       paginator
       lazy
       resizable-columns
+      reorderable-columns
+      removable-sort
+      scrollable
       column-resize-mode="expand"
       :rows="perPage"
       :rows-per-page-options="[20, 50, 100]"
-      scrollable
       :first="0"
-      removable-sort
       :scroll-height="scrollHeight"
       filter-display="menu"
       row-hover
@@ -411,7 +408,7 @@ defineExpose({
             <component :is="col.cellRenderer" :params="{ value: data[col.field!], ...col.cellRendererParams }" />
           </template>
           <template v-else-if="col.valueFormatter && typeof col.valueFormatter === 'function'">
-            {{ col.valueFormatter({ value: data[col.field!] }) }}
+            {{ col.valueFormatter({ value: data[col.field] }) }}
           </template>
           <template v-else>
             {{ data[col.field!] }}
