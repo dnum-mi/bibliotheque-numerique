@@ -23,7 +23,11 @@ export const demarcheColumnDefs: ColDef[] = [
     type: 'number',
     width: 200,
     filter: 'agNumberColumnFilter',
-
+    sortable: false,
+    suppressMenu: true,
+    filterParams: {
+      suppressMiniFilter: true,
+    },
   },
   {
     ...baseColDef,
@@ -51,6 +55,11 @@ export const demarcheColumnDefs: ColDef[] = [
     type: 'date',
     filter: 'agDateColumnFilter',
     width: 200,
+    sortable: false,
+    suppressMenu: true,
+    filterParams: {
+      suppressMiniFilter: true,
+    },
   },
   {
     ...baseColDef,
@@ -60,5 +69,10 @@ export const demarcheColumnDefs: ColDef[] = [
     type: 'date',
     filter: 'agDateColumnFilter',
     width: 200,
+    sortable: false,
+    suppressMenu: true,
+    filterParams: {
+      suppressMiniFilter: true,
+    },
   },
 ]

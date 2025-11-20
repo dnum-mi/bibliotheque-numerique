@@ -162,7 +162,6 @@ const getRows = async (params: IServerSideGetRowsParams) => {
   }
 
   const selectedColumnsIds = params.api.getAllDisplayedColumns().map((col) => col.getColId())
-  console.log('AgGrid selectedColumnsIds:', selectedColumnsIds)
 
   if (props.preCondition) {
     const dto: IPagination<T> = {

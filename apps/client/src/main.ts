@@ -43,18 +43,6 @@ const isBlank = (v: unknown) =>
 FilterService.register('blank', (value: unknown) => isBlank(value))
 FilterService.register('notBlank', (value: unknown) => !isBlank(value))
 
-import Aura from '@primevue/themes/aura'
-import { definePreset } from '@primevue/themes'
-import { FilterService } from '@primevue/core/api'
-
-const isBlank = (v: unknown) =>
-  v == null
-  || (typeof v === 'string' && v.trim().length === 0)
-  || (Array.isArray(v) && v.length === 0)
-
-FilterService.register('blank', (value: unknown) => isBlank(value))
-FilterService.register('notBlank', (value: unknown) => !isBlank(value))
-
 const agGridLicenseKey = '__AG_GRID_LICENSE_KEY__'
 
 LicenseManager.setLicenseKey(agGridLicenseKey)
@@ -104,24 +92,26 @@ createApp(App)
       date: ['dateIs', 'dateIsNot', 'dateBefore', 'dateAfter'],
     },
     locale: {
-      'startsWith': 'Commence par',
-      'contains': 'Contient',
-      'notContains': 'Ne contient pas',
-      'endsWith': 'Se termine par',
-      'equals': 'Égal à',
-      'notEquals': 'Différent de',
-      'blank': 'Vide',
-      'notBlank': 'Non vide',
-      'gt': 'Supérieur à',
-      'gte': 'Supérieur ou égal à',
-      'lt': 'Inférieur à',
-      'lte': 'Inférieur ou égal à',
-      'dateBefore': 'Avant',
-      'dateAfter': 'Après',
-      'dateIs': 'Est le',
-      'dateIsNot': 'N’est pas le',
-      'clear': 'Effacer',
-      'apply': 'Appliquer',
-    },
+      startsWith: 'Commence par',
+      contains: 'Contient',
+      notContains: 'Ne contient pas',
+      endsWith: 'Se termine par',
+      equals: 'Égal à',
+      notEquals: 'Différent de',
+      blank: 'Vide',
+      notBlank: 'Non vide',
+      gt: 'Supérieur à',
+      gte: 'Supérieur ou égal à',
+      lt: 'Inférieur à',
+      lte: 'Inférieur ou égal à',
+      dateBefore: 'Avant',
+      dateAfter: 'Après',
+      dateIs: 'Est le',
+      dateIsNot: 'N’est pas le',
+      clear: 'Effacer',
+      apply: 'Appliquer',
+      matchAll: 'Satisfaire tous',
+      matchAny: 'Satisfaire au moins un',
+    } as any,
   } satisfies PrimeVueConfiguration)
   .mount('#app')
