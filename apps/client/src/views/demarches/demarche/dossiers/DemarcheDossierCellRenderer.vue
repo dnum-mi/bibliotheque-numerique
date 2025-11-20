@@ -38,7 +38,7 @@ const FieldType = {
 const cellValues = computed(() => {
   const cellValuesAsArray = Array.isArray(props.params.value) ? props.params.value : [props.params.value]
   return cellValuesAsArray.map((cv) => {
-    if (props.params.column.type === 'date') {
+    if (props.params.column?.type === 'date') {
       cv = cv ? new Date(cv).toLocaleDateString() : ''
     }
     return cv
@@ -168,7 +168,7 @@ const getPrefecture = (prefecture: PrefectureKey) => {
       <!-- Default -->
       <template v-else>
         <span
-          v-if="params.column.type === FieldType.number"
+          v-if="params.column?.type === FieldType.number"
           class="block  text-right"
         >
           {{ formattedNumber(cellValue) }}

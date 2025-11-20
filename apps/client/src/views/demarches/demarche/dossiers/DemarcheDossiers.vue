@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { useDebounceFn } from '@vueuse/core'
+import { useDebounceFn, useStorage } from '@vueuse/core'
 import type { GridOptions } from 'ag-grid-enterprise'
 import type { ColumnMenuTab, GridApi, GridReadyEvent, SelectionChangedEvent } from 'ag-grid-community'
 
@@ -336,6 +336,8 @@ const quickFilterValueTranslations: Record<string, string> = {
   SixMonths: 'depuis 6 mois',
   OneYear: 'depuis 1 an',
 }
+
+const dataTable = useStorage('dossiers-datatable', 'ag-grid')
 </script>
 
 <template>
@@ -377,6 +379,20 @@ const quickFilterValueTranslations: Record<string, string> = {
           @request-remove-filter="handleRemoveFilter"
           @request-clear-all="customHandleClearAllFilters"
         />
+        <DsfrSegmentedSet
+          v-model="dataTable"
+          :options="[
+            {
+              label: 'AgGrid',
+              value: 'ag-grid',
+            },
+            {
+              label: 'PrimeVue',
+              value: 'primevue',
+            },
+          ]"
+        />
+
       </div>
       <div class="flex justify-center items-center">
         <DemarcheDossiersDisplays
@@ -402,9 +418,26 @@ const quickFilterValueTranslations: Record<string, string> = {
         />
       </div>
     </div>
-    <div class="flex-grow">
+    <div class="flex-grow"
+      v-if="demarche && columnsDef"
+    >
       <AgGridServerSide
-        v-if="demarche && columnsDef && readyToLoadAgGrid"
+        v-if="dataTable === 'ag-grid' && readyToLoadAgGrid"
+        ref="agGridComponent"
+        v-model:pagination-dto="paginationDto"
+        :column-defs="columnsDef"
+        :loading="fetching"
+        class="h-full"
+        :pre-condition="!!demarche"
+        :specific-grid-option="specificGridOptions"
+        :on-selection-changed="onSelectionChanged"
+        :api-call="apiCall"
+        :local-storage-key="localStoragePaginationKey"
+        @grid-ready="onGridReady($event)"
+        @filters-updated="onFiltersUpdated"
+      />
+      <DataTableServerSide
+        v-if="dataTable === 'primevue'"
         ref="agGridComponent"
         v-model:pagination-dto="paginationDto"
         :column-defs="columnsDef"
