@@ -1,18 +1,18 @@
 <script lang="ts" setup>
 import type { SelectionChangedEvent } from 'ag-grid-community'
+import type { BNColDef } from '@/components/ag-grid/server-side/bn-col-def.interface'
+import type { IPaginationUser } from '@biblio-num/shared'
 
 import { listOfVerbosePrefecture } from '@biblio-num/shared'
-import type { IPaginationUser } from '@biblio-num/shared'
 
 import { dateToStringFr } from '@/utils'
 import { useUserStore } from '@/stores'
-import type { BNColDef } from '@/components/ag-grid/server-side/bn-col-def.interface'
 import AgGridServerSide from '@/components/ag-grid/server-side/AgGridServerSide.vue'
 import { baseColDef } from '@/components/ag-grid/server-side/columndef-base'
 import RoleBadgesRenderer from '@/components/Badges/role/RoleBadgesRenderer.vue'
 import { useActiveFilter } from '@/components/ag-grid/active-filters/useActiveFilter'
 
-const agGridComponent = ref()
+const agGridComponent = useTemplateRef('agGridComponent')
 const router = useRouter()
 
 const columnDefs: BNColDef[] = [

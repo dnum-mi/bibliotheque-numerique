@@ -15,6 +15,7 @@ import { localeTextAgGrid } from './ag-grid/ag-grid-fr-dictionnary.ts'
 import AgGridMultiValueCell from './ag-grid/AgGridMultiValueCell.vue'
 import AgGridAttachmentCell from './ag-grid/AgGridAttachmentCell.vue'
 import type { DisplayActiveFilter } from './ag-grid/active-filters/activeFilters.type.ts'
+import { DsfrSegmentedSet } from '@gouvminint/vue-dsfr'
 
 const props = withDefaults(
   defineProps<{

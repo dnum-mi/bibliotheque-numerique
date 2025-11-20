@@ -343,6 +343,7 @@ function dealWithBlankAndNotBlank (filterModel: { matchMode: unknown, value: unk
       removable-sort
       :scroll-height="scrollHeight"
       filter-display="menu"
+      row-hover
       @sort="onSortChanged"
       :sort-field="sort[0]?.key"
       :sort-order="sort[0]?.order === 'ASC' ? 1 : (sort[0]?.order === 'DESC' ? -1 : 0)"

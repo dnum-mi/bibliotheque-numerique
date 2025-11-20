@@ -294,10 +294,10 @@ onBeforeUnmount(() => {
         @click="toggleDropdown"
       >
         <span
-          v-if="props.filters.length > 0"
+          v-if="filters.length > 0"
           class="fr-mr-1v"
         >
-          {{ props.filters.length }}
+          {{ filters.length }}
         </span>
         <span>{{ triggerButtonText }}</span>
         <span
@@ -340,7 +340,7 @@ onBeforeUnmount(() => {
             secondary
             @click="handleClearAllFilters"
           >
-            {{ props.clearAllButtonLabel }}
+            {{ clearAllButtonLabel }}
           </DsfrButton>
           <div
             v-if="props.filters.length === 0"

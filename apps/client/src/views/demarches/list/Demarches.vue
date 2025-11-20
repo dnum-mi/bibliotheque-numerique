@@ -10,6 +10,7 @@ import { useActiveFilter } from '@/components/ag-grid/active-filters/useActiveFi
 import type { SelectionChangedEvent } from 'ag-grid-community'
 import { demarcheColumnDefs } from './columns-def.const'
 import { EMPTY_RESULT, isEmptyListFilter, isEmptySetFilter } from '@/components/ag-grid/utils'
+import BiblioNumDataTable from '@/components/BiblioNumDataTable.vue'
 
 const agGridComponent = ref<InstanceType<typeof BiblioNumDataTableAgGrid> | null>(null)
 const demarcheStore = useDemarcheStore()
@@ -55,6 +56,7 @@ const onSelectDemarche = (event: SelectionChangedEvent) => {
 }
 
 const { activeFilters, onFiltersUpdated, handleClearAllFilters, handleRemoveFilter } = useActiveFilter(agGridComponent)
+const dataTable = ref('primevue')
 </script>
 
 <template>
@@ -72,8 +74,22 @@ const { activeFilters, onFiltersUpdated, handleClearAllFilters, handleRemoveFilt
           @request-remove-filter="handleRemoveFilter"
           @request-clear-all="handleClearAllFilters"
         />
+        <DsfrSegmentedSet
+          v-model="dataTable"
+          :options="[
+            {
+              label: 'AgGrid',
+              value: 'ag-grid',
+            },
+            {
+              label: 'PrimeVue',
+              value: 'primevue',
+            },
+          ]"
+        />
       </div>
       <AgGridServerSide
+        v-if="dataTable === 'ag-grid'"
         ref="agGridComponent"
         v-model:pagination-dto="paginationDto"
         class="h-full"
@@ -82,6 +98,18 @@ const { activeFilters, onFiltersUpdated, handleClearAllFilters, handleRemoveFilt
         pre-condition
         local-storage-key="agGrid.demarches.state"
         :api-call="apiCall"
+        @filters-updated="onFiltersUpdated"
+      />
+      <BiblioNumDataTable
+        v-if="dataTable === 'primevue'"
+        ref="agGridComponent"
+        :headers="headers"
+        action-title="Voir les détails de la démarche"
+        :row-data="rowData"
+        floating-filter
+        row-selection="single"
+        :row-style="rowStyle"
+        @selection-changed="onSelectDemarche"
         @filters-updated="onFiltersUpdated"
       />
     </div>
