@@ -392,7 +392,6 @@ const dataTable = useStorage('dossiers-datatable', 'ag-grid')
             },
           ]"
         />
-
       </div>
       <div class="flex justify-center items-center">
         <DemarcheDossiersDisplays
@@ -418,8 +417,9 @@ const dataTable = useStorage('dossiers-datatable', 'ag-grid')
         />
       </div>
     </div>
-    <div class="flex-grow"
+    <div
       v-if="demarche && columnsDef"
+      class="flex-grow"
     >
       <AgGridServerSide
         v-if="dataTable === 'ag-grid' && readyToLoadAgGrid"
@@ -439,8 +439,8 @@ const dataTable = useStorage('dossiers-datatable', 'ag-grid')
       <DataTableServerSide
         v-if="dataTable === 'primevue'"
         ref="agGridComponent"
-        :right-offset="50"
         v-model:pagination-dto="paginationDto"
+        :right-offset="50"
         :column-defs="columnsDef"
         :loading="fetching"
         class="h-full"

@@ -112,7 +112,6 @@ function getFilters () {
     )
 }
 
-
 //#region 📍------ LOCAL STORAGE ------ 📍
 const saveToLocalStorage = (dto: IPagination<T>) => {
   if (!props.localStorageKey) {
@@ -148,11 +147,13 @@ const restoreFromLocalStorage = () => {
               value: value.condition1.filter,
               matchMode: value.condition1.type,
             },
-            ...(value.condition2 ? [{
-              value: value.condition2.filter,
-              matchMode: value.condition2.type,
-            }] : [])
-          ]
+            ...(value.condition2
+              ? [{
+                  value: value.condition2.filter,
+                  matchMode: value.condition2.type,
+                }]
+              : []),
+          ],
         }
       })
     }
@@ -346,13 +347,13 @@ function dealWithBlankAndNotBlank (filterModel: { matchMode: unknown, value: unk
   }
 }
 
-function refreshTable() {
+function refreshTable () {
   getRows(currentPage.value)
 }
 
 defineExpose({
   refresh: refreshTable,
-})  
+})
 </script>
 
 <template>
@@ -372,10 +373,10 @@ defineExpose({
       :scroll-height="scrollHeight"
       filter-display="menu"
       row-hover
-      @sort="onSortChanged"
-      @row-click="onRowClick"
       :sort-field="sort[0]?.key"
       :sort-order="sort[0]?.order === 'ASC' ? 1 : (sort[0]?.order === 'DESC' ? -1 : 0)"
+      @sort="onSortChanged"
+      @row-click="onRowClick"
     >
       <template #paginatorstart>
         <Button type="button" icon="pi pi-refresh" text />

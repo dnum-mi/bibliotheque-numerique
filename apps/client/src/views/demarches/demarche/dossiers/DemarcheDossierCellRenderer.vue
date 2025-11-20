@@ -117,14 +117,14 @@ const getPrefecture = (prefecture: PrefectureKey) => {
 
       <template v-else-if="ffr === 'status'">
         <!-- STATUS -->
-         <p>
-           <DsfrBadge
-           class="text-nowrap"
-           :label="giveStatusLabel(cellValue)"
-           :type="giveStatusType(cellValue)"
-           small
-           no-icon
-           />
+        <p>
+          <DsfrBadge
+            class="text-nowrap"
+            :label="giveStatusLabel(cellValue)"
+            :type="giveStatusType(cellValue)"
+            small
+            no-icon
+          />
         </p>
       </template>
 
@@ -177,7 +177,9 @@ const getPrefecture = (prefecture: PrefectureKey) => {
           {{ formattedNumber(cellValue) }}
         </p>
         <template v-else>
-          <p class="text-nowrap overflow-hidden text-ellipsis max-w-[220px]" :title="cellValue || undefined">{{ cellValue ?? '' }}</p>
+          <p class="text-nowrap overflow-hidden text-ellipsis max-w-[220px]" :title="cellValue || undefined">
+            {{ cellValue ?? '' }}
+          </p>
         </template>
       </template>
     </div>
