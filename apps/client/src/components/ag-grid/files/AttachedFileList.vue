@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { GridReadyEvent, GridApi, GridOptions, AgGridEvent } from 'ag-grid-community'
+import type { GridReadyEvent, GridApi, GridOptions } from 'ag-grid-community'
 import type { IFileOutput, IFilter, IPagination, FileDsSourceLabelKey } from '@biblio-num/shared'
 import { fileDsSourceLabels, dFileSourceLabelDictionary, fileExtensions, states, eState, fileTags } from '@biblio-num/shared'
 import type { ApiCall } from '../server-side/pagination.utils'
@@ -10,6 +10,7 @@ import FileTagBadgeRenderer from '@/components/Badges/file-tag/FileTagBadgeRende
 import useToaster from '@/composables/use-toaster'
 import type { Message as ToasterMessage } from '@/composables/use-toaster'
 import { downloadFile } from '@/utils/downloadFile'
+import DataTableServerSide from '../server-side/DataTableServerSide.vue'
 
 const props = withDefaults(defineProps<AttachedFileListProps>(), {
   tag: undefined,
@@ -21,13 +22,13 @@ const props = withDefaults(defineProps<AttachedFileListProps>(), {
       filterParams: {
         values: states,
         suppressSelectAll: true,
-        cellRenderer: AttachedFileStateCellRenderer,
+        cellRenderer: markRaw(AttachedFileStateCellRenderer),
         cellRendererParams: {
           displayText: true,
         },
       },
       menuTabs: ['filterMenuTab'],
-      cellRenderer: AttachedFileStateCellRenderer,
+      cellRenderer: markRaw(AttachedFileStateCellRenderer),
       width: 100,
     },
     {
@@ -68,7 +69,7 @@ const props = withDefaults(defineProps<AttachedFileListProps>(), {
       filter: 'agSetColumnFilter',
       filterParams: {
         values: fileExtensions,
-        cellRenderer: MimeTypeCellRenderer,
+        cellRenderer: markRaw(MimeTypeCellRenderer),
         suppressSelectAll: true,
         cellRendererParams: {
           displayText: true,
@@ -86,7 +87,7 @@ const props = withDefaults(defineProps<AttachedFileListProps>(), {
         },
       },
       menuTabs: ['filterMenuTab'],
-      cellRenderer: MimeTypeCellRenderer,
+      cellRenderer: markRaw(MimeTypeCellRenderer),
       cellStyle: { display: 'flex', 'align-items': 'center' },
     },
   ],
@@ -122,19 +123,29 @@ const specificGridOptions: Partial<GridOptions> = {
   sideBar: null,
 }
 
-const onSelectionChanged = async (event: AgGridEvent) => {
-  const file = event.api.getSelectedRows()?.[0]
-  if (file?.state === eState.uploaded) {
+const onSelectionChanged = async ({ data: file }: {
+  data: {
+    id: number,
+    label: string,
+    mimeType: string,
+    sourceLabel: string,
+    originalLabel?: string,
+    state: string,
+    tag: string,
+    uuid: string
+  }
+}) => {
+  if (file.state === eState.uploaded) {
     await downloadFile(file.uuid)
     return
   }
 
   const message: ToasterMessage = {
-    description: `Le fichier ${file?.originalLabel} n'est pas téléchargeable`,
+    description: `Le fichier ${file.label} n'est pas téléchargeable`,
     type: 'warning',
   }
 
-  if (file?.state === eState.failed) {
+  if (file.state === eState.failed) {
     message.description = `${message.description}. La récupération du fichier a échoué.`
     message.type = 'error'
   } else {
@@ -183,15 +194,15 @@ onMounted(() => {
 </script>
 
 <template>
-  <AgGridServerSide
+  <DataTableServerSide
     v-if="active"
     v-model:pagination-dto="paginationDto"
     :column-defs="columnsDef"
     :loading="fetching"
     :pre-condition="true"
     :specific-grid-option="specificGridOptions"
-    :on-selection-changed="onSelectionChanged"
     :api-call="apiCall"
+    @row-click="onSelectionChanged($event)"
     @grid-ready="onGridReady($event)"
   />
 </template>

@@ -25,7 +25,6 @@ const props = withDefaults(
     paginationDto?: IPagination<T>
     columnDefs: BNColDef[]
     apiCall: ApiCall<T>
-    onSelectionChanged: ($event: SelectionChangedEvent) => void
     loading?: boolean
     preCondition?: boolean
     specificGridOption?: Partial<GridOptions>
