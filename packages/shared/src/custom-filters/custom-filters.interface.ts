@@ -5,7 +5,7 @@ export interface ICustomFilter {
   id: number
   name: string
   groupByDossier: boolean
-  columns: string[]
+  columns: (string | number | symbol)[]
   sorts: ISort<DynamicKeys>[] | null
   filters: Record<keyof DynamicKeys, IFilter> | null
   demarcheId: number

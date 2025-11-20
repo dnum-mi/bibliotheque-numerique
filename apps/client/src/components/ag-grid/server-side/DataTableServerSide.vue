@@ -15,6 +15,7 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
 import MultiSelect from 'primevue/multiselect'
+import DatePicker from 'primevue/datepicker'
 
 //#region 📍------ PROPS ------ 📍
 
@@ -57,24 +58,28 @@ const emit = defineEmits<{
 
 //#endregion
 
+const agGridFilterToDataTableFilter: Record<string, string> = {
+  'agTextColumnFilter': FilterMatchMode.STARTS_WITH,
+  'agNumberColumnFilter': FilterMatchMode.EQUALS,
+  'agMultiColumnFilter': FilterMatchMode.DATE_IS,
+  'agDateColumnFilter': FilterMatchMode.DATE_IS,
+  'agSetColumnFilter': FilterMatchMode.IN,
+}
+
+const agGridFilterToDataTableDataType: Record<string, string | undefined> = {
+  'agTextColumnFilter': undefined,
+  'agNumberColumnFilter': 'numeric',
+  'agMultiColumnFilter': 'date',
+  'agDateColumnFilter': 'date',
+  'agSetColumnFilter': 'set',
+}
+
 const displayColumns = ref(false)
 const perPage = ref(20)
 const isLoadingRows = ref(false)
 
-//#region 📍------ ON CLICK ------ 📍
-const filterAreOpened = ref<boolean>(false)
-
-const onKeyDown = (e: KeyboardEvent) => {
-  if (e.key === 'Escape') {
-    filterAreOpened.value = false
-  }
-}
-
-useEventListener('keydown', onKeyDown)
-
-//#endregion
-
 //#region 📍------ DATA ------ 📍
+restoreFromLocalStorage()
 const currentPage = ref(1)
 const rowData = ref()
 
@@ -85,18 +90,23 @@ const totalRecords = ref(0)
 const sort = ref<{ key: string; order: 'ASC' | 'DESC' }[]>([])
 const filters = ref<DataTableFilterMeta>(getFilters())
 
+watch(filters, (newFilters) => {
+  console.log('Filters changed:', toRaw(newFilters))
+})
+
 function getFilters () {
   return props.columnDefs
     .filter(col => col.filterable !== false) // Ne créer des filtres que pour les colonnes filtrables
     .reduce(
       (acc, col) => {
+        console.log('Creating filter for column', col.field, col.filter, col.headerName)
         return {
           ...acc,
           [col.field!]: {
             operator: FilterOperator.AND,
             constraints: [{
               value: null,
-              matchMode: col.filter === 'agSetColumnFilter' ? FilterMatchMode.IN : FilterMatchMode.STARTS_WITH,
+              matchMode: agGridFilterToDataTableFilter[col.filter || 'agTextColumnFilter'],
               ...(col.filter === 'agSetColumnFilter'
                 ? {
                     set: col.filterParams.values.map(
@@ -126,7 +136,7 @@ const saveToLocalStorage = (dto: IPagination<T>) => {
   }
 }
 
-const restoreFromLocalStorage = () => {
+function restoreFromLocalStorage () {
   if (!props.localStorageKey) {
     return
   }
@@ -136,10 +146,11 @@ const restoreFromLocalStorage = () => {
       return
     }
     const dto: IPagination<T> = JSON.parse(saved)
-    console.log('Restored sorts from localStorage', dto.sorts?.at(0)?.key, dto.sorts?.at(0)?.order)
+    console.log('Retrieved sorts from localStorage', dto.sorts?.at(0)?.key, dto.sorts?.at(0)?.order)
     //#region 📍------ RESTORE FILTERS ------ 📍
     if (dto.filters) {
       Object.entries(dto.filters).forEach(([key, value]) => {
+        console.log('Restoring filter for key', key, value)
         filters.value[key as keyof typeof filters.value] = {
           operator: FilterOperator.AND,
           constraints: [
@@ -174,15 +185,17 @@ const restoreFromLocalStorage = () => {
     }
     //#endregion
 
-    currentPage.value = dto.page
-    perPage.value = dto.perPage
+    currentPage.value = dto.page ?? 1
+    perPage.value = dto.perPage ?? 20
   } catch (e) {
     console.warn('Erreur de restauration depuis localStorage', e)
   }
 }
+
 onMounted(() => {
   filters.value = getFilters()
   restoreFromLocalStorage()
+  getRows(currentPage.value)
 })
 //#endregion
 
@@ -302,10 +315,6 @@ function onSortChanged (sortEvent: DataTableSortEvent) {
 
 watch(perPage, () => getRows(1))
 
-onMounted(() => {
-  getRows(currentPage.value)
-})
-
 const paginationPages = computed(
   () => Array.from(Array(Math.ceil(totalRecords.value / perPage.value)))
     .map((_, i) => ({ title: (i + 1).toString(), href: `#${i + 1}`, label: (i + 1).toString() })),
@@ -389,9 +398,11 @@ defineExpose({
         :key="col.field"
         :field="col.field"
         :header="col.headerName"
+        :data-type="agGridFilterToDataTableDataType[col.filter]"
         :sortable="col.sortable === false ? undefined : true"
         :show-filter-match-modes="col.filter !== 'agSetColumnFilter'"
         :show-filter-menu="!col.suppressHeaderMenuButton"
+        :title="col.headerName"
       >
         <template #body="{ data }">
           <template v-if="col.cellRenderer">
@@ -410,12 +421,16 @@ defineExpose({
               v-model="filterModel.value"
               :options="(filterModel as unknown as { set: {name: string, code: string}[] }).set"
               option-label="name" placeholder="Any"
+
               @change="filterCallback()"
             >
               <template #option="slotProps">
-                <component :is="col.cellRenderer" :params="{ value: slotProps.option.name }" />
+                <component :is="col.filterParams.cellRenderer ?? col.cellRenderer" :params="{ value: slotProps.option.name }" />
               </template>
             </MultiSelect>
+          </template>
+          <template v-else-if="col.filter === 'agMultiColumnFilter'">
+            <DatePicker v-model="filterModel.value" date-format="dd/mm/yy" placeholder="jj/mm/aaaa" />
           </template>
           <template
             v-else-if="filterModel.matchMode === 'blank' || filterModel.matchMode === 'notBlank'"

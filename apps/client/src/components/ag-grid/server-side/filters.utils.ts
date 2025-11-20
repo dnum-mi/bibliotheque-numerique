@@ -20,12 +20,12 @@ const fieldTypesDict = {
 export const filterEnumvalues: Record<FormatFunctionRefKeys, string[]> = {
   [FormatFunctionRef.status]: Object.keys(DossierState),
   [FormatFunctionRef.delayStatus]: [...instructionTimeValues, ''],
-}
+} as const
 
 export const filterCellRender: Record<FormatFunctionRefKeys, Component> = {
-  [FormatFunctionRef.status]: StatusBadgesRenderer,
-  [FormatFunctionRef.delayStatus]: DelayStateRenderer,
-}
+  [FormatFunctionRef.status]: markRaw(StatusBadgesRenderer),
+  [FormatFunctionRef.delayStatus]: markRaw(DelayStateRenderer),
+} as const
 
 // TODO: use FieldType but enum from library doesn't work in front.
 export const getAgGridFilterFromFieldType = (fieldType?: keyof typeof fieldTypesDict, formatFunctionRef?: FormatFunctionRefKeys): IFilterDef => {

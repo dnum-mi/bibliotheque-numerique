@@ -118,7 +118,7 @@ const computeColumnsDef = () => {
         ...getAgGridFilterFromFieldType(column.type, column.formatFunctionRef),
         autoHeight: true,
         menuTabs: ['filterMenuTab'] as ColumnMenuTab[],
-        cellRenderer: DemarcheDossierCellRenderer,
+        cellRenderer: markRaw(DemarcheDossierCellRenderer),
         cellRendererParams: { column },
         fieldType: column.type,
         sortable: column.formatFunctionRef !== 'file', // TODO use FormatFunctionRef.file
@@ -192,7 +192,7 @@ const updateDisplay = async () => {
     selectedCustomDisplay.value.groupByDossier = groupByDossier.value
     selectedCustomDisplay.value.columns = paginationDto.value.columns
     selectedCustomDisplay.value.sorts = paginationDto.value.sorts
-    selectedCustomDisplay.value.filters = paginationDto.value.filters || undefined
+    selectedCustomDisplay.value.filters = paginationDto.value.filters
     try {
       const dto = { ...selectedCustomDisplay.value, disabledColumns: undefined }
       dto.filters = dto.filters || null
@@ -275,7 +275,7 @@ const createDisplay = async ({ filterName = '', totals = [] }: { filterName?: st
     groupByDossier: groupByDossier.value,
     columns: paginationDto.value.columns,
     sorts: paginationDto.value.sorts,
-    filters: paginationDto.value.filters || undefined,
+    filters: paginationDto.value.filters,
   }
 
   if (totals) {

@@ -10,16 +10,23 @@ import type {
   PrefectureKey,
 } from '@biblio-num/shared'
 
-import delayStateBadge from '@/components/Badges/delay-state/DelayStateBadge.vue'
+import DelayStateBadge from '@/components/Badges/delay-state/DelayStateBadge.vue'
 import AgGridAttachmentCell from '@/components/ag-grid/AgGridAttachmentCell.vue'
 import { routeNames } from '@/router/route-names'
+import StatusBadge from '@/components/Badges/status/StatusBadge.vue'
 
 const props = defineProps<{
   params: {
     value: string
     column: {
-      type: string
+      columnLabel: string
       formatFunctionRef: FormatFunctionRefKeys
+      id: string
+      isHeader?: boolean
+      originalDescription?: string
+      originalLabel?: string
+      source: 'annotation' | 'champs' | 'fix-field'
+      type: string
     }
   }
 }>()
@@ -55,7 +62,7 @@ const type = computed(() => {
 
 const componentRenderer = computed(() => {
   if (props.params.column?.formatFunctionRef === 'delay-status') {
-    return delayStateBadge
+    return markRaw(DelayStateBadge)
   }
   return null
 })
@@ -103,7 +110,15 @@ const getPrefecture = (prefecture: PrefectureKey) => {
       v-for="(cellValue, index) in cellValues"
       :key="index"
     >
-      <template v-if="ffr === 'country'">
+      <template v-if="!!componentRenderer">
+        <!-- ComponentRenderer -->
+        <component
+          :is="componentRenderer"
+          :value="cellValue"
+        />
+      </template>
+
+      <template v-else-if="ffr === 'country'">
         <!-- COUNTRY FLAG -->
         <div class="flex items-center">
           <p
@@ -158,14 +173,6 @@ const getPrefecture = (prefecture: PrefectureKey) => {
       <template v-else-if="ffr === 'prefecture'">
         <!-- PREFECTURE -->
         <p>{{ getPrefecture(cellValue) }}</p>
-      </template>
-
-      <template v-else-if="!!componentRenderer">
-        <!-- ComponentRenderer -->
-        <component
-          :is="componentRenderer"
-          :value="cellValue"
-        />
       </template>
 
       <template v-else>

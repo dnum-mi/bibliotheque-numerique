@@ -112,6 +112,7 @@ createApp(App)
       apply: 'Appliquer',
       matchAll: 'Satisfaire tous',
       matchAny: 'Satisfaire au moins un',
+      monthNames: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
     } as any,
   } satisfies PrimeVueConfiguration)
   .mount('#app')
