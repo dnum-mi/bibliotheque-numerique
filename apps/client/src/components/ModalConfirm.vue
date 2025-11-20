@@ -1,14 +1,15 @@
-<script setup>
-import { defineProps, defineEmits } from 'vue'
+<script setup lang="ts">
+const props = defineProps<{
+  opened: boolean
+  title: string
+  confirmLabel: string
+  cancelLabel: string
+}>()
 
-const props = defineProps({
-  opened: Boolean,
-  title: String,
-  confirmLabel: String,
-  cancelLabel: String,
-})
-
-const emit = defineEmits(['confirm', 'close'])
+const emit = defineEmits<{
+  (e: 'confirm'): void
+  (e: 'close'): void
+}>()
 </script>
 
 <template>
