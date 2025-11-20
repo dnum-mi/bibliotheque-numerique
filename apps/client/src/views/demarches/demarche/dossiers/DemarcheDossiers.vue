@@ -342,7 +342,7 @@ const dataTable = useStorage('dossiers-datatable', 'ag-grid')
 
 <template>
   <div class="bn-scroll-parent flex flex-col">
-    <div class="flex flex-shrink-0 justify-between no-label-on-toggle items-center bn-dynamic-small-p">
+    <div class="flex flex-shrink-0 justify-between no-label-on-toggle items-center bn-dynamic-small-p mb-2">
       <div class="flex gap-2">
         <div v-if="!hasNoRepeatableField">
           <DsfrButton
@@ -396,8 +396,8 @@ const dataTable = useStorage('dossiers-datatable', 'ag-grid')
       </div>
       <div class="flex justify-center items-center">
         <DemarcheDossiersDisplays
-          :displays="customDisplayWithErrors as ICustomFilter[]"
-          :selected-display="selectedCustomDisplay as ICustomFilter"
+          :displays="(customDisplayWithErrors as ICustomFilter[])"
+          :selected-display="(selectedCustomDisplay as ICustomFilter)"
           :pagination-changed="paginationChanged"
           :totals-allowed="totalsAllowed"
           :operation-success="customDisplayOperationSuccess"
@@ -439,6 +439,7 @@ const dataTable = useStorage('dossiers-datatable', 'ag-grid')
       <DataTableServerSide
         v-if="dataTable === 'primevue'"
         ref="agGridComponent"
+        :right-offset="50"
         v-model:pagination-dto="paginationDto"
         :column-defs="columnsDef"
         :loading="fetching"
@@ -462,5 +463,9 @@ const dataTable = useStorage('dossiers-datatable', 'ag-grid')
 
 :deep(.ag-paging-panel) {
   border-top: none !important;
+}
+
+:deep(.p-datatable-table-container) {
+  max-height: 342px !important;
 }
 </style>

@@ -28,6 +28,7 @@ const props = withDefaults(
     preCondition?: boolean
     specificGridOption?: Partial<GridOptions>
     localStorageKey?: string
+    rightOffset?: number
   }>(),
   {
     paginationDto: () => ({
@@ -37,6 +38,7 @@ const props = withDefaults(
       filters: null,
       columns: [],
     }),
+    rightOffset: 38,
     specificGridOption: () => ({}),
     localStorageKey: undefined,
   },
@@ -184,7 +186,6 @@ onMounted(() => {
 //#endregion
 
 const filtersToSend = computed<Record<keyof typeof props.columnDefs, IFilter>>(() => {
-  console.log('filters.value', filters.value)
   const result: Record<string, IFilter> = {}
   for (const [key, filter] of Object.entries(filters.value)) {
     if ('value' in (filter as DataTableFilterMetaData)) {
@@ -344,13 +345,21 @@ function dealWithBlankAndNotBlank (filterModel: { matchMode: unknown, value: unk
     filterModel.value = filterModel.matchMode
   }
 }
+
+function refreshTable() {
+  getRows(currentPage.value)
+}
+
+defineExpose({
+  refresh: refreshTable,
+})  
 </script>
 
 <template>
   <div class="h-full flex justify-between relative" :class="{ loading: isLoadingRows }">
     <DataTable
       v-model:filters="filters"
-      :style="{ width: 'calc(100vw - 38px)' }"
+      :style="{ width: `calc(100vw - ${rightOffset}px)` }"
       :value="rowData"
       striped-rows
       paginator
@@ -385,7 +394,7 @@ function dealWithBlankAndNotBlank (filterModel: { matchMode: unknown, value: unk
       >
         <template #body="{ data }">
           <template v-if="col.cellRenderer">
-            <component :is="col.cellRenderer" :params="{ value: data[col.field!] }" />
+            <component :is="col.cellRenderer" :params="{ value: data[col.field!], ...col.cellRendererParams }" />
           </template>
           <template v-else-if="col.valueFormatter && typeof col.valueFormatter === 'function'">
             {{ col.valueFormatter({ value: data[col.field!] }) }}
@@ -490,5 +499,30 @@ function dealWithBlankAndNotBlank (filterModel: { matchMode: unknown, value: unk
 
 :deep(.p-datatable-tbody > tr) {
   cursor: pointer;
+}
+
+:deep(.p-datatable-thead > tr > th span) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px; /* Ajustez selon vos besoins */
+  min-width: 0; /* Important pour permettre le rétrécissement */
+}
+
+:deep(.p-datatable-thead > tr > th .p-column-header-content span) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  display: block; /* Force l'élément à être un bloc */
+  min-width: 0; /* Important pour permettre le rétrécissement */
+}
+
+:deep(.p-datatable-thead > tr > th .p-column-title span) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  min-width: 0;
 }
 </style>

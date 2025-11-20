@@ -102,31 +102,32 @@ const getPrefecture = (prefecture: PrefectureKey) => {
     <div
       v-for="(cellValue, index) in cellValues"
       :key="index"
-      style="display: block; background-color: transparent"
     >
-      <!-- COUNTRY FLAG -->
       <template v-if="ffr === 'country'">
+        <!-- COUNTRY FLAG -->
         <div class="flex items-center">
-          <span
+          <p
             :key="cellValue"
             class="round-flag fr-mr-1w"
             :style="{ backgroundImage: `url(${getFlagURL(cellValue)})` }"
           />
-          {{ cellValue || "pas de pays" }}
+          <p>{{ cellValue || "pas de pays" }}</p>
         </div>
       </template>
 
-      <!-- STATUS -->
       <template v-else-if="ffr === 'status'">
-        <DsfrBadge
-          :label="giveStatusLabel(cellValue)"
-          :type="giveStatusType(cellValue)"
-          small
-          no-icon
-        />
+        <!-- STATUS -->
+         <p>
+           <DsfrBadge
+           class="text-nowrap"
+           :label="giveStatusLabel(cellValue)"
+           :type="giveStatusType(cellValue)"
+           small
+           no-icon
+           />
+        </p>
       </template>
 
-      <!-- RNF & RNA -->
       <template v-else-if="['rnf', 'rna'].includes(ffr) && cellValue">
         <RouterLink
           class="no-underline"
@@ -142,39 +143,41 @@ const getPrefecture = (prefecture: PrefectureKey) => {
         </span>
       </template>
 
-      <!-- File -->
       <template v-else-if="ffr === 'file' && cellValue">
-        <AgGridAttachmentCell :params="{ value: { uuid: cellValue } }" />
+        <!-- File -->
+        <p>
+          <AgGridAttachmentCell :params="{ value: { uuid: cellValue } }" />
+        </p>
       </template>
 
-      <!-- BOOLEAN -->
       <template v-else-if="type === 'boolean'">
-        {{ cellValue === 'true' ? 'Oui' : 'Non' }}
+        <!-- BOOLEAN -->
+        <p>{{ cellValue === 'true' ? 'Oui' : 'Non' }}</p>
       </template>
 
-      <!-- BOOLEAN -->
       <template v-else-if="ffr === 'prefecture'">
-        {{ getPrefecture(cellValue) }}
+        <!-- PREFECTURE -->
+        <p>{{ getPrefecture(cellValue) }}</p>
       </template>
 
-      <!-- ComponentRenderer -->
       <template v-else-if="!!componentRenderer">
+        <!-- ComponentRenderer -->
         <component
           :is="componentRenderer"
           :value="cellValue"
         />
       </template>
 
-      <!-- Default -->
       <template v-else>
-        <span
+        <!-- Default -->
+        <p
           v-if="params.column?.type === FieldType.number"
           class="block  text-right"
         >
           {{ formattedNumber(cellValue) }}
-        </span>
+        </p>
         <template v-else>
-          {{ cellValue ?? '' }}
+          <p class="text-nowrap overflow-hidden text-ellipsis max-w-[220px]" :title="cellValue || undefined">{{ cellValue ?? '' }}</p>
         </template>
       </template>
     </div>
@@ -183,6 +186,9 @@ const getPrefecture = (prefecture: PrefectureKey) => {
 </template>
 
 <style>
+p {
+  margin-bottom: 0.5rem !important;
+}
 .round-flag {
   display: block;
   width: 25px;
