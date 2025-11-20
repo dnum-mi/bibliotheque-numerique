@@ -71,20 +71,6 @@ useEventListener('keydown', onKeyDown)
 
 //#endregion
 
-//#region 📍------ LOCAL STORAGE ------ 📍
-const saveToLocalStorage = (dto: IPagination<T>) => {
-  if (!props.localStorageKey) {
-    return
-  }
-  try {
-    const data = JSON.stringify(dto)
-    localStorage.setItem(`${props.localStorageKey}-pv`, data)
-  } catch (e) {
-    console.warn('Erreur de sauvegarde dans localStorage', e)
-  }
-}
-//#endregion
-
 //#region 📍------ DATA ------ 📍
 const currentPage = ref(1)
 const rowData = ref()
@@ -96,7 +82,9 @@ const totalRecords = ref(0)
 const sort = ref<{ key: string; order: 'ASC' | 'DESC' }[]>([])
 const filters = ref<DataTableFilterMeta>(props.columnDefs
   .reduce(
-    (acc, col) => ({
+    (acc, col) => {
+
+      return {
       ...acc,
       [col.field!]: {
         operator: FilterOperator.AND,
@@ -113,10 +101,82 @@ const filters = ref<DataTableFilterMeta>(props.columnDefs
 
         }],
       },
-    }),
+    }},
     {} as DataTableFilterMeta,
   ),
 )
+
+
+//#region 📍------ LOCAL STORAGE ------ 📍
+const saveToLocalStorage = (dto: IPagination<T>) => {
+  if (!props.localStorageKey) {
+    return
+  }
+  try {
+    const data = JSON.stringify(dto)
+    localStorage.setItem(`${props.localStorageKey}`, data)
+    console.log('Saved sorts to localStorage', dto.sorts?.at(0)?.key, dto.sorts?.at(0)?.order)
+  } catch (e) {
+    console.warn('Erreur de sauvegarde dans localStorage', e)
+  }
+}
+
+const restoreFromLocalStorage = () => {
+  if (!props.localStorageKey) {
+    return
+  }
+  try {
+    const saved = localStorage.getItem(props.localStorageKey)
+    if (!saved) {
+      return
+    }
+    const dto: IPagination<T> = JSON.parse(saved)
+    console.log('Restored sorts from localStorage', dto.sorts?.at(0)?.key, dto.sorts?.at(0)?.order)
+    //#region 📍------ RESTORE FILTERS ------ 📍
+    if (dto.filters) {
+      Object.entries(dto.filters).forEach(([key, value]) => {
+        filters.value[key as keyof typeof filters.value] = {
+          operator: FilterOperator.AND,
+          constraints: [
+            {
+              value: value.condition1.filter,
+              matchMode: value.condition1.type,
+            },
+            ...(value.condition2 ? [{
+              value: value.condition2.filter,
+              matchMode: value.condition2.type,
+            }] : [])
+          ]
+        }
+      })
+    }
+    //#endregion
+
+    //#region 📍------ RESTORE SORTS ------ 📍
+    if (dto.sorts && dto.sorts.length > 0) {
+      console.log('Restoring sorts from localStorage')
+      const sortItem = dto.sorts.at(0)
+      if (sortItem) {
+        sort.value = [{
+          key: sortItem.key,
+          order: sortItem.order,
+        }]
+      }
+    } else {
+      sort.value = []
+    }
+    //#endregion
+
+    currentPage.value = dto.page
+    perPage.value = dto.perPage
+  } catch (e) {
+    console.warn('Erreur de restauration depuis localStorage', e)
+  }
+}
+onMounted(() => {
+  restoreFromLocalStorage()
+})
+//#endregion
 
 const filtersToSend = computed<Record<keyof typeof props.columnDefs, IFilter>>(() => {
   console.log('filters.value', filters.value)
@@ -236,7 +296,7 @@ function onSortChanged (sortEvent: DataTableSortEvent) {
 watch(perPage, () => getRows(1))
 
 onMounted(() => {
-  getRows(1)
+  getRows(currentPage.value)
 })
 
 const paginationPages = computed(
@@ -284,6 +344,8 @@ function dealWithBlankAndNotBlank (filterModel: { matchMode: unknown, value: unk
       :scroll-height="scrollHeight"
       filter-display="menu"
       @sort="onSortChanged"
+      :sort-field="sort[0]?.key"
+      :sort-order="sort[0]?.order === 'ASC' ? 1 : (sort[0]?.order === 'DESC' ? -1 : 0)"
     >
       <template #paginatorstart>
         <Button type="button" icon="pi pi-refresh" text />
