@@ -169,6 +169,8 @@ const establishments = computed<EstablishmentsType | undefined>(() => {
       }
     : undefined
 })
+
+const rawJson = computed<IFoundationOutput | IAssociationOutput>(() => organisme?.value?.rnfJson as IFoundationOutput || organisme.value?.rnaJson as IAssociationOutput)
 </script>
 
 <template>
@@ -269,7 +271,7 @@ const establishments = computed<EstablishmentsType | undefined>(() => {
             >
               <OrganismeOverview
                 v-if="idType === 'Rnf'"
-                :organisme="(organisme.rnfJson as IFoundationOutput) || (organisme.rnaJson as IAssociationOutput)"
+                :organisme="rawJson"
                 :is-foundation="idType === 'Rnf'"
                 :missing-declaration-years="organisme?.missingDeclarationYears"
               />
@@ -288,6 +290,7 @@ const establishments = computed<EstablishmentsType | undefined>(() => {
                 <FicheOrganismePersons
                   v-if="organisme?.persons"
                   :persons="organisme?.persons.map((person, idx) => ({ ...organisme?.rnfJson?.persons[idx], ...person }))"
+                  :is-person-data-private="rawJson?.isPersonDataPrivate"
                 />
               </div>
             </BnTab>
@@ -358,7 +361,7 @@ const establishments = computed<EstablishmentsType | undefined>(() => {
               id="Tech"
               title="Tech"
             >
-              <pre>{{ (organisme.rnfJson || organisme.rnaJson || {}) }}</pre>
+              <pre>{{ (rawJson || {}) }}</pre>
             </BnTab>
           </BnTabsContainer>
         </div>

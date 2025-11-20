@@ -48,6 +48,7 @@ export interface ISiafOrganisme {
   hasInternationalActivity: boolean
   fiscalEndAt: Date | null
   accountDepositYears: number[]
+  isPersonDataPrivate: boolean
   persons: IPerson[]
 
   founderLegalEntities: ILegalEntity[]

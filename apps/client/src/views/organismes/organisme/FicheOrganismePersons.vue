@@ -5,7 +5,10 @@ import { DsfrAccordion, registerAccordionKey } from '@gouvminint/vue-dsfr'
 import { dateToStringFr } from '../../../utils'
 import TooltipAddress from './TooltipAddress.vue'
 
-const props = defineProps<{ persons: IPerson[] }>()
+const props = defineProps<{
+  isPersonDataPrivate: boolean
+  persons: IPerson[]
+}>()
 
 const Foundateurs = 'Foundateurs'
 const Autres = 'Autres'
@@ -75,6 +78,15 @@ provide(registerAccordionKey, (title: Ref<string>) => {
 </script>
 
 <template>
+  <div v-if="isPersonDataPrivate" class="fr-pb-2v">
+    <span class="fr-icon-warning-fill color-red-8">
+      Cette liste contiennent des données personnelles sensibles
+    </span>
+  </div>
+  <div v-else class="fr-pb-2v">
+    Il y a aucunes données personnelles sensibles
+  </div>
+
   <ul class="fr-accordions-group">
     <li
       v-for="(personsByRole, idx) in personsByRoles"
