@@ -137,20 +137,6 @@ const { activeFilters, onFiltersUpdated, handleClearAllFilters, handleRemoveFilt
         @request-clear-all="handleClearAllFilters"
       />
     </div>
-    <DsfrSegmentedSet
-      v-model="dataTable"
-      :options="[
-        {
-          label: 'Ag',
-          value: 'ag-grid',
-        },
-        {
-          label: 'Prime',
-          value: 'primevue',
-        },
-      ]"
-    />
-
     <DataTableServerSide
       ref="primeVueComponent"
       class="h-full"

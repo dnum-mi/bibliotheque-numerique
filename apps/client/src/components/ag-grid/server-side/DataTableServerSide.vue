@@ -618,7 +618,7 @@ const dataTableRef = useTemplateRef('dataTable')
 const computeScrollHeight = () => {
   const height = window.innerHeight
   const top = (dataTableRef.value)?.offsetTop || 0
-  scrollHeight.value = `${height - top - 130}px`
+  scrollHeight.value = `${height - top - 75}px`
 }
 
 onMounted(() => {
@@ -956,7 +956,7 @@ watch(columnWidths, (newWidths) => {
             :options="[20, 50, 100]"
             default-unselected-text="Résultats par page"
           />
-          <div class="mb-4 mx-4">
+          <div class="mx-4">
             <template v-if="totalRecords > 0">
               {{ perPage * (currentPage - 1) + 1 }} à {{ Math.min(currentPage * perPage, totalRecords) }} de {{ totalRecords }}
             </template>
@@ -1023,21 +1023,29 @@ watch(columnWidths, (newWidths) => {
   writing-mode: vertical-lr;
 }
 
+:deep(.fr-pagination__link) {
+  margin-bottom: 0;;
+}
+
 .loading :deep(.p-datatable-tbody) {
   filter: blur(2px);
 }
 
-:root {
-  --p-button-primary-background: #f90;
-  --p-button-primary-border: #f90;
+:deep(.p-paginator .fr-select) {
+  margin: 0;
 }
 
 :deep(.p-paginator .fr-select-group) {
   max-width: 6rem;
+  margin-bottom: 0;
 }
 
 :deep(.p-datatable-tbody > tr) {
   cursor: pointer;
+}
+
+:deep(.p-datatable, .p-datatable p, .p-datatable-filter-operator) {
+  font-size: 0.875rem !important;
 }
 
 :deep(.p-datatable-thead > tr > th span) {
@@ -1064,16 +1072,13 @@ watch(columnWidths, (newWidths) => {
 }
 
 :deep(.p-datatable-resizable-table > .p-datatable-tbody > tr > td) {
-  --p-datatable-body-cell-padding: 0.5rem 0.75rem;
   vertical-align: middle;
-  & p {
-    margin-block: 0.25rem !important;
+  & p:not(.fr-badge) {
+    margin-block: 0.125rem 0.25rem !important;
+    font-size: 0.875rem !important;
   }
 }
 
-:deep(.p-datatable-header-cell) {
-  --p-datatable-header-cell-padding: 0.25rem 0.5rem;
-}
 :deep(.amount-line-highlighted) {
   background-color: var(--blue-ecume-975-75);
 }

@@ -201,8 +201,8 @@ p {
 }
 .round-flag {
   display: block;
-  width: 25px;
-  height: 25px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   background-size: cover;
   background-position: center;

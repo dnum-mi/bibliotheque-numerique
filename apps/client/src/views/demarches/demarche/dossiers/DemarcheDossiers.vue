@@ -18,6 +18,7 @@ import type { CustomFilterWithErrors } from '@/views/demarches/demarche/dossiers
 import { useActiveFilter } from '@/components/ag-grid/active-filters/useActiveFilter'
 import { useTour } from '@/composables/use-tour'
 import { filterTourSteps } from './TutoFilterDossier'
+import Button from 'primevue/button'
 
 const demarcheStore = useDemarcheStore()
 const router = useRouter()

@@ -51,6 +51,10 @@ function increment() {
 </script>
 ```
 
+### PrimeVue
+
+Ce projet utilise de rares composants de **PrimeVue**, principalement `DataTable` et `MultiSelect`. Toujours consulter la [documentation officielle](https://primevue.org/) pour les props et événements disponibles.
+
 ---
 
 ## 🧪 Tests
