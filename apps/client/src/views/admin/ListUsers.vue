@@ -12,6 +12,7 @@ import { baseColDef } from '@/components/ag-grid/server-side/columndef-base'
 import RoleBadgesRenderer from '@/components/Badges/role/RoleBadgesRenderer.vue'
 import { useActiveFilter } from '@/components/ag-grid/active-filters/useActiveFilter'
 import YesNoEmoji from '@/components/YesNoEmoji.vue'
+import { useStorage } from '@vueuse/core'
 
 const agGridComponent = useTemplateRef('agGridComponent')
 const router = useRouter()
@@ -26,7 +27,8 @@ const columnDefs: BNColDef[] = [
     headerName: 'Ver.',
     field: 'validated',
     width: 70,
-    suppressMenu: true,
+    sortable: false,
+    suppressHeaderMenuButton: true,
     cellRenderer: YesNoEmoji,
   },
   {
@@ -70,7 +72,6 @@ const columnDefs: BNColDef[] = [
     field: 'roleLabel',
     width: 200,
     sortable: false,
-    filterable: false,
     cellRenderer: RoleBadgesRenderer,
     filter: 'agSetColumnFilter',
     filterParams: {
@@ -78,15 +79,14 @@ const columnDefs: BNColDef[] = [
       cellRenderer: RoleBadgesRenderer,
       suppressMiniFilter: true,
     },
-    suppressMenu: true,
+    suppressHeaderMenuButton: true,
   },
   {
     ...baseColDef,
     headerName: 'Options',
     field: 'roleOptionsResume',
     sortable: false,
-    filterable: false,
-    suppressMenu: true,
+    suppressHeaderMenuButton: true,
   },
   {
     ...baseColDef,
@@ -121,7 +121,7 @@ const onSelectionChanged = (event: SelectionChangedEvent) => {
   }
 }
 
-const dataTable = ref('ag-grid')
+const dataTable = useStorage('list-users-datatable', 'ag-grid')
 const { activeFilters, onFiltersUpdated, handleClearAllFilters, handleRemoveFilter } = useActiveFilter(agGridComponent)
 </script>
 

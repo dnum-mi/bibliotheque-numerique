@@ -50,6 +50,7 @@ const emit = defineEmits<{
   gridReady: [p: GridReadyEvent]
   'update:paginationDto': [p: IPagination<T>]
   filtersUpdated: [filters: DisplayActiveFilter[]]
+  rowClick: [event: { data: T, column?: BNColDef, field?: string }]
 }>()
 
 //#endregion
@@ -324,6 +325,20 @@ onMounted(() => {
 useEventListener(window, 'resize', computeScrollHeight)
 //#endregion
 
+//#region 📍------ ROW CLICK ------ 📍
+const onRowClick = (event: { data: T, originalEvent?: Event }) => {
+  // Extraire les informations de la ligne cliquée
+  const rowData = event.data
+
+  // Si nous voulons aussi des informations sur la colonne, nous pourrions les ajouter
+  // Mais PrimeVue DataTable row-click ne fournit que les données de la ligne
+  emit('rowClick', {
+    data: rowData,
+    // On pourrait ajouter d'autres métadonnées ici si nécessaire
+  })
+}
+//#endregion
+
 function dealWithBlankAndNotBlank (filterModel: { matchMode: unknown, value: unknown }) {
   if (filterModel.matchMode === 'blank' || filterModel.matchMode === 'notBlank') {
     filterModel.value = filterModel.matchMode
@@ -349,6 +364,7 @@ function dealWithBlankAndNotBlank (filterModel: { matchMode: unknown, value: unk
       filter-display="menu"
       row-hover
       @sort="onSortChanged"
+      @row-click="onRowClick"
       :sort-field="sort[0]?.key"
       :sort-order="sort[0]?.order === 'ASC' ? 1 : (sort[0]?.order === 'DESC' ? -1 : 0)"
     >
@@ -365,11 +381,14 @@ function dealWithBlankAndNotBlank (filterModel: { matchMode: unknown, value: unk
         :header="col.headerName"
         :sortable="col.sortable === false ? undefined : true"
         :show-filter-match-modes="col.filter !== 'agSetColumnFilter'"
-        :show-filter-menu="col.filterable !== false"
+        :show-filter-menu="!col.suppressHeaderMenuButton"
       >
         <template #body="{ data }">
           <template v-if="col.cellRenderer">
             <component :is="col.cellRenderer" :params="{ value: data[col.field!] }" />
+          </template>
+          <template v-else-if="col.valueFormatter && typeof col.valueFormatter === 'function'">
+            {{ col.valueFormatter({ value: data[col.field!] }) }}
           </template>
           <template v-else>
             {{ data[col.field!] }}
@@ -467,5 +486,9 @@ function dealWithBlankAndNotBlank (filterModel: { matchMode: unknown, value: unk
 
 :deep(.p-paginator .fr-select-group) {
   max-width: 6rem;
+}
+
+:deep(.p-datatable-tbody > tr) {
+  cursor: pointer;
 }
 </style>

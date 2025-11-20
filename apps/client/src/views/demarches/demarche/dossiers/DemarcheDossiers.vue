@@ -122,7 +122,7 @@ const computeColumnsDef = () => {
         cellRendererParams: { column },
         fieldType: column.type,
         sortable: column.formatFunctionRef !== 'file', // TODO use FormatFunctionRef.file
-        suppressMenu: column.formatFunctionRef === 'file', // TODO use FormatFunctionRef.file
+        suppressHeaderMenuButton: column.formatFunctionRef === 'file', // TODO use FormatFunctionRef.file
       }
     }),
   ]

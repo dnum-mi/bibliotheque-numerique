@@ -125,7 +125,7 @@ const columnDefs: ComputedRef<AgGridColumnDefs[]> = computed(() => {
             width: 100,
             sortable: false,
             filter: false,
-            suppressMenu: false,
+            suppressHeaderMenuButton: false,
           },
         ]
       : []),

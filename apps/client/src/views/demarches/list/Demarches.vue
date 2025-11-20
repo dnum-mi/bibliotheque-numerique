@@ -55,6 +55,12 @@ const onSelectDemarche = (event: SelectionChangedEvent) => {
   router.push({ name: routeNames.DEMARCHE_DOSSIERS, params: { demarcheId: id } })
 }
 
+const onRowClick = (event: { data: ISmallDemarcheOutput }) => {
+  const selection = event.data
+  const id = selection?.id
+  router.push({ name: routeNames.DEMARCHE_DOSSIERS, params: { demarcheId: id } })
+}
+
 const { activeFilters, onFiltersUpdated, handleClearAllFilters, handleRemoveFilter } = useActiveFilter(agGridComponent)
 const dataTable = ref('ag-grid')
 </script>
@@ -105,10 +111,10 @@ const dataTable = ref('ag-grid')
         ref="primeVueComponent"
         v-model:pagination-dto="paginationDto"
         :column-defs="demarcheColumnDefs"
-        :on-selection-changed="onSelectDemarche"
         pre-condition
         local-storage-key="agGrid.demarches.state"
         :api-call="apiCall"
+        @row-click="onRowClick($event)"
         @filters-updated="onFiltersUpdated"
       />
     </div>
