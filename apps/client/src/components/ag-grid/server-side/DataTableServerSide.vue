@@ -374,6 +374,8 @@ defineExpose({
       striped-rows
       paginator
       lazy
+      resizable-columns
+      column-resize-mode="expand"
       :rows="perPage"
       :rows-per-page-options="[20, 50, 100]"
       scrollable
@@ -521,7 +523,6 @@ defineExpose({
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 200px; /* Ajustez selon vos besoins */
   min-width: 0; /* Important pour permettre le rétrécissement */
 }
 
@@ -529,7 +530,6 @@ defineExpose({
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 100%;
   display: block; /* Force l'élément à être un bloc */
   min-width: 0; /* Important pour permettre le rétrécissement */
 }

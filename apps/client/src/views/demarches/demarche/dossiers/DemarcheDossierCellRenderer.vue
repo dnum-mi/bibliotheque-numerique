@@ -13,7 +13,6 @@ import type {
 import DelayStateBadge from '@/components/Badges/delay-state/DelayStateBadge.vue'
 import AgGridAttachmentCell from '@/components/ag-grid/AgGridAttachmentCell.vue'
 import { routeNames } from '@/router/route-names'
-import StatusBadge from '@/components/Badges/status/StatusBadge.vue'
 
 const props = defineProps<{
   params: {
