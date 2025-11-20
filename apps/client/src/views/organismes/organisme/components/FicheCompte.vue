@@ -79,6 +79,7 @@ const lastAccounts = computed(() => {
             />
           </dd>
         </div>
+
         <div class="py-2 md:grid md:grid-cols-4">
           <dt class="bn-fiche-sub-title--label uppercase">
             Date de clôture de l'exercice comptable (jour/mois)
@@ -89,7 +90,16 @@ const lastAccounts = computed(() => {
         </div>
         <div class="py-2 md:grid md:grid-cols-4">
           <dt class="bn-fiche-sub-title--label uppercase">
-            Dernier comptes déposés:
+            Années des dépots des comptes:
+          </dt>
+          <dd class="bn-fiche-sub-title--text md:col-span-3">
+            {{ organisme?.accountDepositYears ? organisme?.accountDepositYears?.join(' - ') || 'Aucun' : 'Non renseigné' }}
+          </dd>
+        </div>
+
+        <div class="py-2 md:grid md:grid-cols-4">
+          <dt class="bn-fiche-sub-title--label uppercase">
+            Dernier compte déposé:
           </dt>
           <dd class="bn-fiche-sub-title--text md:col-span-3">
             <DownloadFile
