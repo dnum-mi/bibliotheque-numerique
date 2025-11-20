@@ -62,7 +62,7 @@ onBeforeUnmount(() => {
 })
 
 const onClick = (event: SelectionChangedEvent) => {
-  // do not load the line if the user click outside filter to close the filter
+  // do not load the line if the user clicks outside filter to close the filter
   if (!filterAreOpened.value) {
     props.onSelectionChanged(event)
   } else {

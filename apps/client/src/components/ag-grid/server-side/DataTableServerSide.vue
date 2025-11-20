@@ -1,19 +1,20 @@
 <script lang="ts" setup generic="T extends DynamicKeys">
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
-import type { FilterChangedEvent, GridApi, GridReadyEvent, IServerSideGetRowsParams, SelectionChangedEvent } from 'ag-grid-community'
-import type { ColumnMovedEvent, GridOptions, SetFilterModel } from 'ag-grid-enterprise'
+import type { DataTableFilterMeta, DataTableFilterMetaData, DataTableOperatorFilterMetaData, DataTableSortEvent } from 'primevue/datatable'
+import type { GridReadyEvent, SelectionChangedEvent } from 'ag-grid-community'
+import type { GridOptions } from 'ag-grid-enterprise'
 
-import type { DynamicKeys, IPagination } from '@biblio-num/shared'
+import type { DynamicKeys, IPagination, IFilter } from '@biblio-num/shared'
 import type { ApiCall } from './pagination.utils'
 
-import { gridOptionFactory } from '@/components/ag-grid/server-side/grid-option-factory'
-import { fromAggToBackendFilter, fromAggToBackendSort, backendFilterToAggFilter } from '@/components/ag-grid/server-side/pagination.utils'
 import type { BNColDef } from '@/components/ag-grid/server-side/bn-col-def.interface'
-import type { FilterModel } from '@/components/ag-grid/server-side/filter-model.interface'
-import type { AgGridFilterModel, DisplayActiveFilter } from '../active-filters/activeFilters.type'
+import type { DisplayActiveFilter } from '../active-filters/activeFilters.type'
+
 import { useEventListener } from '@vueuse/core'
-import { DsfrCheckbox } from '@gouvminint/vue-dsfr'
+import { FilterMatchMode } from '@primevue/core/api'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+import Button from 'primevue/button'
+import MultiSelect from 'primevue/multiselect'
 
 //#region 📍------ PROPS ------ 📍
 
@@ -31,7 +32,7 @@ const props = withDefaults(
   {
     paginationDto: () => ({
       page: 1,
-      perPage: pageSize,
+      perPage: 20,
       sorts: [],
       filters: null,
       columns: [],
@@ -53,6 +54,10 @@ const emit = defineEmits<{
 
 //#endregion
 
+const displayColumns = ref(false)
+const perPage = ref(20)
+const isLoadingRows = ref(false)
+
 //#region 📍------ ON CLICK ------ 📍
 const filterAreOpened = ref<boolean>(false)
 
@@ -64,26 +69,6 @@ const onKeyDown = (e: KeyboardEvent) => {
 
 useEventListener('keydown', onKeyDown)
 
-const onClick = (event: SelectionChangedEvent) => {
-  // do not load the line if the user click outside filter to close the filter
-  if (!filterAreOpened.value) {
-    props.onSelectionChanged(event)
-  } else {
-    // next time we click we want to load the line
-    filterAreOpened.value = false
-  }
-}
-
-const pageSize = 20
-
-const gridApi = ref<GridApi | undefined>()
-
-const refresh = () => {
-  if (gridApi.value) {
-    setTimeout(() => gridApi.value?.refreshServerSide({ purge: true }))
-  }
-}
-
 //#endregion
 
 //#region 📍------ LOCAL STORAGE ------ 📍
@@ -93,196 +78,226 @@ const saveToLocalStorage = (dto: IPagination<T>) => {
   }
   try {
     const data = JSON.stringify(dto)
-    //    localStorage.setItem(props.localStorageKey, data)
+    localStorage.setItem(`${props.localStorageKey}-pv`, data)
   } catch (e) {
     console.warn('Erreur de sauvegarde dans localStorage', e)
-  }
-}
-
-const restoreFromLocalStorage = () => {
-  if (!props.localStorageKey || !gridApi.value) {
-    return
-  }
-  try {
-    const saved = localStorage.getItem(props.localStorageKey)
-    if (!saved) {
-      return
-    }
-    const dto: IPagination<T> = JSON.parse(saved)
-
-    gridApi.value.setFilterModel(backendFilterToAggFilter(dto.filters || {}))
-
-    const stateHash = Object.fromEntries(gridApi.value.getColumnState().map((c) => [c.colId, c]))
-    const sortHash = Object.fromEntries(dto.sorts.map((s) => [s.key, s]))
-
-    gridApi.value.applyColumnState({
-      state: dto.columns.map((c) => {
-        const result = {
-          ...stateHash[c],
-          hide: false,
-        }
-        if (sortHash[c]) {
-          result.sort = sortHash[c].order.toLowerCase() as 'asc' | 'desc'
-        }
-        return result
-      }),
-      applyOrder: true,
-      defaultState: { hide: true },
-    })
-
-    emit('update:paginationDto', dto)
-  } catch (e) {
-    console.warn('Erreur de restauration depuis localStorage', e)
   }
 }
 //#endregion
 
 //#region 📍------ DATA ------ 📍
+const currentPage = ref(1)
 const rowData = ref()
-const hasfilterEnumUnselectedAll = (filterModel: Record<string, FilterModel>) => {
-  const enumIds: (string | undefined)[] = props.columnDefs.filter((colDef) => colDef.fieldType === 'enum').map((colDef) => colDef.field)
-
-  if (!enumIds) {
-    return false
-  }
-
-  for (const emunId of enumIds) {
-    const filter = Object.entries(filterModel).find(
-      ([key, value]) => key === emunId && value.filterType === 'set' && !(value as SetFilterModel).values.length,
-    )
-    if (filter) {
-      return true
-    }
-  }
-
-  return false
-}
 
 const selectedColumnsIds = ref(props.columnDefs.map((col) => col.field ?? ''))
 
-const getRows = async (params: { fail: () => void; request: GridRequest }) => {
-  console.log('Loading rows...')
-  // if (props.loading) {
-  //   return
-  // }
+const totalRecords = ref(0)
 
-  console.log('DataTable selectedColumnsIds:', selectedColumnsIds.value)
+const sort = ref<{ key: string; order: 'ASC' | 'DESC' }[]>([])
+const filters = ref<DataTableFilterMeta>(props.columnDefs
+  .reduce(
+    (acc, col) => ({
+      ...acc,
+      [col.field!]: {
+        value: null,
+        matchMode: col.filter === 'agSetColumnFilter' ? FilterMatchMode.IN : FilterMatchMode.STARTS_WITH,
+        ...(col.filter === 'agSetColumnFilter'
+          ? {
+              set: col.filterParams.values.map(
+                (value: string) => !col.filterParams.valueFormatter ? value : { name: col.filterParams.valueFormatter({ value }), code: value },
+              ),
+            }
+          : {}),
+      },
+    }),
+    {} as DataTableFilterMeta,
+  ),
+)
+
+const filtersToSend = computed<Record<keyof typeof props.columnDefs, IFilter>>(() => {
+  const result: Record<string, IFilter> = {}
+  for (const [key, filter] of Object.entries(filters.value)) {
+    const metaFilter = filter as DataTableFilterMetaData
+    if (metaFilter.value) {
+      // @ts-expect-error TS2322
+      result[key] = {
+        filterType: Array.isArray(metaFilter.value) ? 'set' : 'text',
+        condition1: {
+          type: Array.isArray(metaFilter.value) ? undefined : metaFilter.matchMode,
+          filter: Array.isArray(metaFilter.value) ? metaFilter.value.map(({ code }) => code) : metaFilter.value,
+        },
+      }
+      continue
+    }
+    if (metaFilter.matchMode === 'blank' || metaFilter.matchMode === 'notBlank') {
+      result[key] = {
+        filterType: 'text',
+        condition1: {
+          type: metaFilter.matchMode,
+        },
+      }
+    }
+  }
+  return result as Record<keyof typeof props.columnDefs, IFilter>
+})
+
+const getRows = async (page: number = currentPage.value) => {
+  isLoadingRows.value = true
 
   const dto: IPagination<T> = {
-    sorts: fromAggToBackendSort(params.request.sortModel, selectedColumnsIds.value),
-    filters: fromAggToBackendFilter<T>(params.request.filterModel, selectedColumnsIds.value),
+    sorts: sort.value,
+    filters: Object.keys(filtersToSend.value).length > 0 ? filtersToSend.value as Record<keyof T, IFilter> : null,
     columns: selectedColumnsIds.value,
-    perPage: pageSize,
-    page: (params.request.startRow || 0) / pageSize + 1,
+    perPage: +perPage.value,
+    page,
   }
   emit('update:paginationDto', dto)
   saveToLocalStorage(dto)
 
   try {
     const response = await props.apiCall(dto)
+    currentPage.value = page
     // params.success({ rowData: response.data, rowCount: response.total })
     rowData.value = response.data
-    console.log({ rowData: response.data })
-  } catch {
-    console.log({ rowData: 'fail' })
-    params.fail()
-  }
-}
-
-const gridOptions = {
-  ...gridOptionFactory(getRows, pageSize),
-  ...props.specificGridOption,
-}
-
-const notifyFilterChanged = () => {
-  if (gridApi.value) {
-    const filterModel = gridApi.value.getFilterModel() as AgGridFilterModel
-    const filters: DisplayActiveFilter[] = []
-    for (const colId in filterModel) {
-      if (Object.prototype.hasOwnProperty.call(filterModel, colId)) {
-        filters.push({ colId, ...filterModel[colId] })
-      }
-    }
-    emit('filtersUpdated', filters)
-  }
-}
-
-const onFilterChanged = (_event: FilterChangedEvent) => {
-  notifyFilterChanged()
-}
-
-const clearAllFilters = () => {
-  if (gridApi.value) {
-    gridApi.value.setFilterModel(null)
-  }
-}
-
-const removeFilter = async (colId: string) => {
-  if (gridApi.value) {
-    const filterInstance = await gridApi.value.getColumnFilterInstance(colId)
-    if (filterInstance) {
-      filterInstance.setModel(null)
-      gridApi.value.onFilterChanged()
-    }
+    totalRecords.value = response.total
+  } finally {
+    isLoadingRows.value = false
   }
 }
 
 const filteredColumnDefs = computed(() => {
   return props.columnDefs.filter((col) => {
-    const isVisible = !col.hide
+    // const isVisible = !col.hide
     const isSelected = selectedColumnsIds.value.includes(col.field ?? '')
-    return isVisible && isSelected
+    return isSelected
   })
 })
 
-const onGridReady = (event: GridReadyEvent) => {
-  gridApi.value = event.api
-  emit('gridReady', event)
-  restoreFromLocalStorage()
-  notifyFilterChanged()
-}
+watch(filtersToSend, () => {
+  getRows(1)
+})
 
-const onColumnMoved = (event: ColumnMovedEvent) => {
-  if (event.finished) {
-    refresh()
-  }
+function onSortChanged (sortEvent: DataTableSortEvent) {
+  const { sortField, sortOrder } = sortEvent
+  const isSorted = sortField !== null && sortOrder !== null
+  sort.value = isSorted ? [{ key: sortField as string, order: sortOrder === 1 ? 'ASC' : 'DESC' }] : []
+  getRows(1)
 }
 //#endregion
 
+watch(perPage, () => getRows(1))
+
 onMounted(() => {
-  getRows({
-    fail () {
-      console.warn('Failed to load rows')
-    },
-    request: {
-      endRow: pageSize,
-      startRow: 0,
-      filterModel: {},
-      sortModel: [],
-    },
-  })
+  getRows(1)
 })
 
-defineExpose({
-  refresh,
-  clearAllFilters,
-  removeFilter,
+const paginationPages = computed(
+  () => Array.from(Array(Math.ceil(totalRecords.value / perPage.value)))
+    .map((_, i) => ({ title: (i + 1).toString(), href: `#${i + 1}`, label: (i + 1).toString() })),
+)
+
+//#region 📍------ SCROLL HEIGHT ------ 📍
+const scrollHeight = ref('')
+
+const computeScrollHeight = () => {
+  const height = window.innerHeight
+  const padding = height > 780 ? 370 : 275
+  scrollHeight.value = `${height - padding}px`
+}
+
+onMounted(() => {
+  computeScrollHeight()
 })
 
-const displayColumns = ref(false)
+useEventListener(window, 'resize', computeScrollHeight)
+//#endregion
 </script>
 
 <template>
-  <div class="h-full flex justify-between">
+  <div class="h-full flex justify-between relative" :class="{ loading: isLoadingRows }">
     <DataTable
+      v-model:filters="filters"
+      :style="{ width: 'calc(100vw - 38px)' }"
       :value="rowData"
+      striped-rows
+      paginator
+      lazy
+      :rows="perPage"
+      :rows-per-page-options="[20, 50, 100]"
+      scrollable
+      :first="0"
+      removable-sort
+      :scroll-height="scrollHeight"
+      filter-display="row"
+      @sort="onSortChanged"
     >
+      <template #paginatorstart>
+        <Button type="button" icon="pi pi-refresh" text />
+      </template>
+      <template #paginatorend>
+        <Button type="button" icon="pi pi-download" text />
+      </template>
       <Column
         v-for="col of filteredColumnDefs"
         :key="col.field"
         :field="col.field"
         :header="col.headerName"
-      />
+        sortable
+        :show-filter-match-modes="col.filter !== 'agSetColumnFilter'"
+      >
+        <template #body="{ data }">
+          <template v-if="col.cellRenderer">
+            <component :is="col.cellRenderer" :params="{ value: data[col.field!] }" />
+          </template>
+          <template v-else>
+            {{ data[col.field!] }}
+          </template>
+        </template>
+        <template #filter="{ filterModel, filterCallback }">
+          <template v-if="(filterModel as unknown as { set: {name: string, code: string}[] }).set">
+            <MultiSelect
+              v-model="filterModel.value"
+              :options="(filterModel as unknown as { set: {name: string, code: string}[] }).set"
+              option-label="name" placeholder="Any"
+            >
+              <template #option="slotProps">
+                <component :is="col.cellRenderer" :params="{ value: slotProps.option.name }" />
+              </template>
+            </MultiSelect>
+          </template>
+          <DsfrInput
+            v-else
+            v-model="filterModel.value"
+            type="text"
+            class="p-inputtext p-component p-element"
+            @key.enter="filterCallback()"
+          />
+        </template>
+      </Column>
+      <template #paginatorcontainer="">
+        <div class="flex justify-end items-center">
+          <DsfrSelect
+            v-model.number="perPage"
+            title="Résultats par page"
+            aria-label="Résultats par page"
+            :options="[20, 50, 100]"
+            default-unselected-text="Résultats par page"
+          />
+          <div class="mb-4 mx-4">
+            <template v-if="totalRecords > 0">
+              {{ perPage * (currentPage - 1) + 1 }} à {{ Math.min(currentPage * perPage, totalRecords) }} de {{ totalRecords }}
+            </template>
+            <template v-else>
+              Aucun résultat
+            </template>
+          </div>
+          <DsfrPagination
+            :current-page="currentPage - 1"
+            :pages="paginationPages"
+            @update:current-page="getRows($event + 1)"
+          />
+        </div>
+      </template>
     </DataTable>
     <div class="side-buttons">
       <div class="relative">
@@ -291,31 +306,38 @@ const displayColumns = ref(false)
             Colonnes
           </div>
         </button>
-        <div
+        <DataTableColumnList
           v-if="displayColumns"
-          class="p-2 -translate-x-8 top-0 right-0 -left-50 absolute bg-white"
-        >
-          Liste des colonnes
-
-          <ul>
-            <li v-for="col of columnDefs" :key="col.field" class="flex justify-start">
-              <DsfrCheckbox
-                v-model="selectedColumnsIds"
-                legend="Liste des colonnes à afficher"
-                name="column"
-                :value="col.field"
-                :label="col.headerName"
-              />
-            </li>
-          </ul>
-        </div>
+          v-model="selectedColumnsIds"
+          class="column-list p-2 -translate-x-8 -top-4 right-0 -left-60 absolute bg-white"
+          :column-defs="columnDefs"
+          @close="displayColumns = false"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
+.column-list {
+  z-index: 1;
+  box-shadow: -6px 0 10px 0 #5558;
+}
+
 .side-button-label {
   writing-mode: vertical-lr;
+}
+
+.loading :deep(.p-datatable-tbody) {
+  filter: blur(2px);
+}
+
+:root {
+  --p-button-primary-background: #f90;
+  --p-button-primary-border: #f90;
+}
+
+:deep(.p-paginator .fr-select-group) {
+  max-width: 6rem;
 }
 </style>

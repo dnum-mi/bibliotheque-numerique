@@ -28,7 +28,7 @@ import type {
 } from 'ag-grid-community'
 
 import type { AgGridCommon } from 'ag-grid-community/dist/types/core/interfaces/iCommon'
-import type { ISimpleFilterModel } from 'ag-grid-enterprise'
+import type { IServerSideGetRowsRequest, ISimpleFilterModel } from 'ag-grid-enterprise'
 
 export type ApiCall<T> = (params: IPagination<T>) => Promise<IPaginated<T>>
 
@@ -106,8 +106,8 @@ const _fromAggMultiFilterToBackendFilter = (filter: IMultiFilterModel): IFilter 
   }
 }
 
-export const fromAggToBackendFilter = <T>(filterModel: Record<string, FilterModel>, allowedColumnIds: string[]): Record<keyof T, IFilter> | null => {
-  const entries = Object.entries(filterModel).filter(entry => allowedColumnIds.includes(entry[0]))
+export const fromAggToBackendFilter = <T>(filterModel: IServerSideGetRowsRequest['filterModel'], allowedColumnIds: string[]): Record<keyof T, IFilter> | null => {
+  const entries = Object.entries(filterModel!).filter(entry => allowedColumnIds.includes(entry[0]))
   if (entries.length) {
     const filters: Record<string, IFilter> = {}
     entries.forEach(([key, value]) => {
