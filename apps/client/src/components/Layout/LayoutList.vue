@@ -19,9 +19,11 @@ withDefaults(defineProps<{
       :title-bg-color="titleBgColor"
       :title-icon="titleIcon"
       class="flex-shrink-0"
-    />
+    >
+      <slot name="banner" />
+    </LayoutBanner>
     <div class="flex-grow bn-scroll-parent">
-      <slot name="default" />
+      <slot />
     </div>
   </div>
 </template>

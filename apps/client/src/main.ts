@@ -18,16 +18,19 @@ import './main.css'
 import 'vue3-openlayers/vue3-openlayers.css'
 
 import OpenLayersMap from 'vue3-openlayers'
+import PrimeVue from 'primevue/config'
 
 import { LicenseManager } from 'ag-grid-enterprise'
 import 'ag-grid-community/styles/ag-grid.css'
 import 'ag-grid-community/styles/ag-theme-material.css'
 import '@/ag-grid-dsfr.css'
+import Aura from '@primeuix/themes/aura'
 
 // We use statusBadge in DsfrTable
 import StatusBadge from './components/Badges/status/StatusBadge.vue'
 import FileTagBadge from '@/components/Badges/file-tag/FileTagBadge.vue'
 import OrganismeBadge from './components/Badges/organisme/OrganismeBadge.vue'
+import { th } from 'zod/v4/locales'
 
 const agGridLicenseKey = '__AG_GRID_LICENSE_KEY__'
 
@@ -44,4 +47,9 @@ createApp(App)
   .component('StatusBadge', StatusBadge)
   .component('FileTagBadge', FileTagBadge)
   .use(router)
+  .use(PrimeVue, {
+    theme: {
+      preset: Aura,
+    },
+  })
   .mount('#app')

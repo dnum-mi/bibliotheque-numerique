@@ -26,6 +26,7 @@ withDefaults(
     <h6 class="m-0 text-color title-size">
       {{ title }}
     </h6>
+    <slot />
   </div>
 </template>
 
