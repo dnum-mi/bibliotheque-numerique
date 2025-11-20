@@ -80,31 +80,34 @@ const selectedColumnsIds = ref(props.columnDefs.map((col) => col.field ?? ''))
 const totalRecords = ref(0)
 
 const sort = ref<{ key: string; order: 'ASC' | 'DESC' }[]>([])
-const filters = ref<DataTableFilterMeta>(props.columnDefs
-  .reduce(
-    (acc, col) => {
+const filters = ref<DataTableFilterMeta>(getFilters())
 
-      return {
-      ...acc,
-      [col.field!]: {
-        operator: FilterOperator.AND,
-        constraints: [{
-          value: null,
-          matchMode: col.filter === 'agSetColumnFilter' ? FilterMatchMode.IN : FilterMatchMode.STARTS_WITH,
-          ...(col.filter === 'agSetColumnFilter'
-            ? {
-                set: col.filterParams.values.map(
-                  (value: string) => !col.filterParams.valueFormatter ? value : { name: col.filterParams.valueFormatter({ value }), code: value },
-                ),
-              }
-            : {}),
-
-        }],
+function getFilters () {
+  return props.columnDefs
+    .filter(col => col.filterable !== false) // Ne créer des filtres que pour les colonnes filtrables
+    .reduce(
+      (acc, col) => {
+        return {
+          ...acc,
+          [col.field!]: {
+            operator: FilterOperator.AND,
+            constraints: [{
+              value: null,
+              matchMode: col.filter === 'agSetColumnFilter' ? FilterMatchMode.IN : FilterMatchMode.STARTS_WITH,
+              ...(col.filter === 'agSetColumnFilter'
+                ? {
+                    set: col.filterParams.values.map(
+                      (value: string) => ({ name: col.filterParams.valueFormatter ? col.filterParams.valueFormatter({ value }) : value, code: value }),
+                    ),
+                  }
+                : {}),
+            }],
+          },
+        }
       },
-    }},
-    {} as DataTableFilterMeta,
-  ),
-)
+      {} as DataTableFilterMeta,
+    )
+}
 
 
 //#region 📍------ LOCAL STORAGE ------ 📍
@@ -174,6 +177,7 @@ const restoreFromLocalStorage = () => {
   }
 }
 onMounted(() => {
+  filters.value = getFilters()
   restoreFromLocalStorage()
 })
 //#endregion
@@ -359,8 +363,9 @@ function dealWithBlankAndNotBlank (filterModel: { matchMode: unknown, value: unk
         :key="col.field"
         :field="col.field"
         :header="col.headerName"
-        sortable
+        :sortable="col.sortable === false ? undefined : true"
         :show-filter-match-modes="col.filter !== 'agSetColumnFilter'"
+        :show-filter-menu="col.filterable !== false"
       >
         <template #body="{ data }">
           <template v-if="col.cellRenderer">

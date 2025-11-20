@@ -2,11 +2,11 @@
 import type { RowStyle } from 'ag-grid-enterprise'
 
 import { PAGINATION_PAGE_SIZE } from '@/config'
-import DataTable from 'primevue/datatable';
+import DataTable, { type DataTableFilterMeta } from 'primevue/datatable';
 import Column from 'primevue/column';
-import TableCellAction from './TableCellAction.vue';
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
 import { useRouter } from 'vue-router'
+import type { HeaderDataTable } from '@/shared/types';
 
 const props = withDefaults(
   defineProps<{
@@ -34,7 +34,21 @@ const props = withDefaults(
 
 const emit = defineEmits(['getElt', 'selectionChanged', 'filtersUpdated', 'sortUpdated'])
 
-const columnDefs: ComputedRef<AgGridColumnDefs[]> = computed(() => {
+interface PrimeVueColumnDef {
+  headerName?: string
+  field?: string
+  width?: number
+  cellRenderer?: Component | string | ((params: Record<string | symbol, unknown>) => string | undefined)
+  hide?: boolean
+  valueFormatter?: (params: { value: unknown }) => string
+  filterParams?: { values?: string[]; valueFormatter?: (params: { value: unknown }) => string }
+  filter?: string
+  floatingFilter?: boolean
+  filterable?: boolean
+  sortable?: boolean
+}
+
+const columnDefs: ComputedRef<PrimeVueColumnDef[]> = computed(() => {
   if (!props.headers.length) {
     return []
   }
@@ -56,14 +70,17 @@ const columnDefs: ComputedRef<AgGridColumnDefs[]> = computed(() => {
         ...renderer,
         ...filter,
         hide: header.hide,
-        valueFormatter: header?.valueFormatter,
-        filterParams: header?.filterParams,
+        valueFormatter: header?.valueFormatter as PrimeVueColumnDef['valueFormatter'],
+        filterParams: header?.filterParams as PrimeVueColumnDef['filterParams'],
+        filterable: header.filterable !== false, // Par défaut, les colonnes sont filtrables
+        sortable: header.sortable !== false, // Par défaut, les colonnes sont triables
       }
     })
     return filteredHeaders
 })
 
 const filters = ref<DataTableFilterMeta>(columnDefs.value
+  .filter(col => col.filterable !== false) // Ne créer des filtres que pour les colonnes filtrables
   .reduce(
     (acc, col) => {
 
@@ -74,10 +91,10 @@ const filters = ref<DataTableFilterMeta>(columnDefs.value
         constraints: [{
           value: null,
           matchMode: col.filter === 'agSetColumnFilter' ? FilterMatchMode.IN : FilterMatchMode.STARTS_WITH,
-          ...(col.filter === 'agSetColumnFilter'
+          ...(col.filter === 'agSetColumnFilter' && col.filterParams?.values
             ? {
                 set: col.filterParams.values.map(
-                  (value: string) => !col.filterParams.valueFormatter ? value : { name: col.filterParams.valueFormatter({ value }), code: value },
+                  (value: string) => !col.filterParams?.valueFormatter ? value : { name: col.filterParams.valueFormatter({ value }), code: value },
                 ),
               }
             : {}),
@@ -135,8 +152,9 @@ const rowClick = (event: { data: Record<string, string | number> }) => {
       :key="col.field"
       :field="col.field"
       :header="col.headerName"
-      sortable
+      :sortable="col.sortable !== false"
       :show-filter-match-modes="col.filter !== 'agSetColumnFilter'"
+      :show-filter-menu="col.filterable !== false"
     >
       <template #body="{ data }">
         <template v-if="col.cellRenderer">

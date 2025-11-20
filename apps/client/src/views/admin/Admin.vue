@@ -8,6 +8,6 @@ import LayoutList from '@/components/Layout/LayoutList.vue'
     title-bg-color="var(--green-tilleul-verveine-sun-418-moon-817)"
     title-icon="fr-icon-user-setting-line"
   >
-    <router-view />
+    <RouterView />
   </LayoutList>
 </template>

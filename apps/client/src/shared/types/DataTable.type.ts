@@ -16,6 +16,7 @@ export type HeaderDataTable = {
   type?: string
   width?: number
   hide?: boolean
+  filterable?: boolean
 
   parseFn?: (value: unknown) => string
   filter?: string | ((value: unknown) => boolean)

@@ -11,6 +11,7 @@ import AgGridServerSide from '@/components/ag-grid/server-side/AgGridServerSide.
 import { baseColDef } from '@/components/ag-grid/server-side/columndef-base'
 import RoleBadgesRenderer from '@/components/Badges/role/RoleBadgesRenderer.vue'
 import { useActiveFilter } from '@/components/ag-grid/active-filters/useActiveFilter'
+import YesNoEmoji from '@/components/YesNoEmoji.vue'
 
 const agGridComponent = useTemplateRef('agGridComponent')
 const router = useRouter()
@@ -26,7 +27,7 @@ const columnDefs: BNColDef[] = [
     field: 'validated',
     width: 70,
     suppressMenu: true,
-    cellRenderer: ({ value }: { value: boolean }) => (value ? '✅' : '❌'),
+    cellRenderer: YesNoEmoji,
   },
   {
     ...baseColDef,
@@ -69,6 +70,7 @@ const columnDefs: BNColDef[] = [
     field: 'roleLabel',
     width: 200,
     sortable: false,
+    filterable: false,
     cellRenderer: RoleBadgesRenderer,
     filter: 'agSetColumnFilter',
     filterParams: {
@@ -83,6 +85,7 @@ const columnDefs: BNColDef[] = [
     headerName: 'Options',
     field: 'roleOptionsResume',
     sortable: false,
+    filterable: false,
     suppressMenu: true,
   },
   {
@@ -118,6 +121,7 @@ const onSelectionChanged = (event: SelectionChangedEvent) => {
   }
 }
 
+const dataTable = ref('ag-grid')
 const { activeFilters, onFiltersUpdated, handleClearAllFilters, handleRemoveFilter } = useActiveFilter(agGridComponent)
 </script>
 
@@ -134,9 +138,35 @@ const { activeFilters, onFiltersUpdated, handleClearAllFilters, handleRemoveFilt
         @request-clear-all="handleClearAllFilters"
       />
     </div>
+        <DsfrSegmentedSet
+          v-model="dataTable"
+          :options="[
+            {
+              label: 'AgGrid',
+              value: 'ag-grid',
+            },
+            {
+              label: 'PrimeVue',
+              value: 'primevue',
+            },
+          ]"
+        />
 
     <AgGridServerSide
+      v-if="dataTable === 'ag-grid'"
       ref="agGridComponent"
+      class="h-full"
+      :column-defs="columnDefs"
+      pre-condition
+      :api-call="apiCall"
+      :on-selection-changed="onSelectionChanged"
+      local-storage-key="users"
+      @filters-updated="onFiltersUpdated"
+    />
+
+    <DataTableServerSide
+      v-else
+      ref="primeVueComponent"
       class="h-full"
       :column-defs="columnDefs"
       pre-condition

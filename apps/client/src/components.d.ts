@@ -92,5 +92,6 @@ declare module 'vue' {
     ToggleInputPassword: typeof import('./components/ToggleInputPassword.vue')['default']
     TransitionExpand: typeof import('./components/TransitionExpand.vue')['default']
     VIcon: typeof import('@gouvminint/vue-dsfr')['VIcon']
+    YesNoEmoji: typeof import('./components/YesNoEmoji.vue')['default']
   }
 }
