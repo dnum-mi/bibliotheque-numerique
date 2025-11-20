@@ -95,7 +95,6 @@ function getFilters () {
     .filter(col => col.filterable !== false) // Ne créer des filtres que pour les colonnes filtrables
     .reduce(
       (acc, col) => {
-        console.log('Creating filter for column', col.field, col.filter, col.headerName)
         return {
           ...acc,
           [col.field!]: {
@@ -103,13 +102,6 @@ function getFilters () {
             constraints: [{
               value: null,
               matchMode: agGridFilterToDataTableFilter[col.filter || 'agTextColumnFilter'],
-              ...(col.filter === 'agSetColumnFilter'
-                ? {
-                    set: col.filterParams.values.map(
-                      (value: string) => ({ name: col.filterParams.valueFormatter ? col.filterParams.valueFormatter({ value }) : value, code: value }),
-                    ),
-                  }
-                : {}),
             }],
           },
         }
@@ -142,11 +134,9 @@ function restoreFromLocalStorage () {
       return
     }
     const dto: IPagination<T> = JSON.parse(saved)
-    console.log('Retrieved sorts from localStorage', dto.sorts?.at(0)?.key, dto.sorts?.at(0)?.order)
     //#region 📍------ RESTORE FILTERS ------ 📍
     if (dto.filters) {
       Object.entries(dto.filters).forEach(([key, value]) => {
-        console.log('Restoring filter for key', key, value)
         filters.value[key as keyof typeof filters.value] = {
           operator: FilterOperator.AND,
           constraints: [
@@ -168,7 +158,6 @@ function restoreFromLocalStorage () {
 
     //#region 📍------ RESTORE SORTS ------ 📍
     if (dto.sorts && dto.sorts.length > 0) {
-      console.log('Restoring sorts from localStorage')
       const sortItem = dto.sorts.at(0)
       if (sortItem) {
         sort.value = [{
@@ -415,12 +404,14 @@ defineExpose({
           </template>
         </template>
         <template #filter="{ filterModel, filterCallback }">
-          <template v-if="(filterModel as unknown as { set: {name: string, code: string}[] }).set">
+          <template v-if="col.filter === 'agSetColumnFilter'">
             <MultiSelect
               v-model="filterModel.value"
-              :options="(filterModel as unknown as { set: {name: string, code: string}[] }).set"
-              option-label="name" placeholder="Any"
-
+              :options="col.filterParams.values.map(
+                (value: string) => ({ name: col.filterParams.valueFormatter ? col.filterParams.valueFormatter({ value }) : value, code: value }),
+              )"
+              option-label="name"
+              placeholder="Toutes les valeurs"
               @change="filterCallback()"
             >
               <template #option="slotProps">
