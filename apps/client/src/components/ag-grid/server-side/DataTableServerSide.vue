@@ -10,7 +10,7 @@ import type { BNColDef } from '@/components/ag-grid/server-side/bn-col-def.inter
 import type { DisplayActiveFilter } from '../active-filters/activeFilters.type'
 
 import { useEventListener } from '@vueuse/core'
-import { FilterMatchMode } from '@primevue/core/api'
+import { FilterMatchMode, FilterOperator } from '@primevue/core/api'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
@@ -99,15 +99,19 @@ const filters = ref<DataTableFilterMeta>(props.columnDefs
     (acc, col) => ({
       ...acc,
       [col.field!]: {
-        value: null,
-        matchMode: col.filter === 'agSetColumnFilter' ? FilterMatchMode.IN : FilterMatchMode.STARTS_WITH,
-        ...(col.filter === 'agSetColumnFilter'
-          ? {
-              set: col.filterParams.values.map(
-                (value: string) => !col.filterParams.valueFormatter ? value : { name: col.filterParams.valueFormatter({ value }), code: value },
-              ),
-            }
-          : {}),
+        operator: FilterOperator.AND,
+        constraints: [{
+          value: null,
+          matchMode: col.filter === 'agSetColumnFilter' ? FilterMatchMode.IN : FilterMatchMode.STARTS_WITH,
+          ...(col.filter === 'agSetColumnFilter'
+            ? {
+                set: col.filterParams.values.map(
+                  (value: string) => !col.filterParams.valueFormatter ? value : { name: col.filterParams.valueFormatter({ value }), code: value },
+                ),
+              }
+            : {}),
+
+        }],
       },
     }),
     {} as DataTableFilterMeta,
@@ -115,26 +119,70 @@ const filters = ref<DataTableFilterMeta>(props.columnDefs
 )
 
 const filtersToSend = computed<Record<keyof typeof props.columnDefs, IFilter>>(() => {
+  console.log('filters.value', filters.value)
   const result: Record<string, IFilter> = {}
   for (const [key, filter] of Object.entries(filters.value)) {
-    const metaFilter = filter as DataTableFilterMetaData
-    if (metaFilter.value) {
-      // @ts-expect-error TS2322
-      result[key] = {
-        filterType: Array.isArray(metaFilter.value) ? 'set' : 'text',
-        condition1: {
-          type: Array.isArray(metaFilter.value) ? undefined : metaFilter.matchMode,
-          filter: Array.isArray(metaFilter.value) ? metaFilter.value.map(({ code }) => code) : metaFilter.value,
-        },
+    if ('value' in (filter as DataTableFilterMetaData)) {
+      const metaFilter = filter as DataTableFilterMetaData
+      const isBlankOrNotBlank = metaFilter.matchMode === 'blank' || metaFilter.matchMode === 'notBlank'
+      if (isBlankOrNotBlank) {
+        metaFilter.value = metaFilter.matchMode
       }
-      continue
+      if (metaFilter.value) {
+        // @ts-expect-error TS2322
+        result[key] = {
+          filterType: Array.isArray(metaFilter.value) ? 'set' : 'text',
+          condition1: {
+            type: (Array.isArray(metaFilter.value) || isBlankOrNotBlank) ? undefined : metaFilter.matchMode,
+            filter: Array.isArray(metaFilter.value) ? metaFilter.value.map(({ code }) => code) : metaFilter.value,
+          },
+        }
+        continue
+      }
     }
-    if (metaFilter.matchMode === 'blank' || metaFilter.matchMode === 'notBlank') {
-      result[key] = {
-        filterType: 'text',
-        condition1: {
-          type: metaFilter.matchMode,
-        },
+    if ('operator' in (filter as DataTableOperatorFilterMetaData)) {
+      const metaFilter = filter as DataTableOperatorFilterMetaData
+      if (metaFilter.constraints.length === 2) {
+        const [cond1, cond2] = metaFilter.constraints
+        const isBlankOrNotBlank1 = cond1!.matchMode === 'blank' || cond1!.matchMode === 'notBlank'
+        const isBlankOrNotBlank2 = cond2!.matchMode === 'blank' || cond2!.matchMode === 'notBlank'
+        if (isBlankOrNotBlank1) {
+          metaFilter.constraints.at(0)!.value = metaFilter.constraints.at(0)!.matchMode
+        }
+        if (isBlankOrNotBlank2) {
+          metaFilter.constraints.at(1)!.value = metaFilter.constraints.at(1)!.matchMode
+        }
+        if (cond1?.value || cond2?.value) {
+          result[key] = {
+            filterType: Array.isArray(cond1!.value) ? 'set' : 'text',
+            condition1: {
+              type: (Array.isArray(cond1!.value) || isBlankOrNotBlank1) ? undefined : cond1!.matchMode,
+              filter: Array.isArray(cond1!.value) ? cond1!.value.map(({ code }) => code) : cond1!.value,
+            },
+            condition2: {
+              // @ts-expect-error TS2322 à corriger dans nos types
+              type: (Array.isArray(cond2!.value) || isBlankOrNotBlank2) ? undefined : cond2!.matchMode,
+              filter: Array.isArray(cond2!.value) ? cond2!.value.map(({ code }) => code) : cond2!.value,
+            },
+            operator: metaFilter.operator === FilterOperator.AND ? 'AND' : 'OR',
+          }
+        }
+      } else if (metaFilter.constraints.length === 1) {
+        const [cond1] = metaFilter.constraints
+        const isBlankOrNotBlank1 = cond1!.matchMode === 'blank' || cond1!.matchMode === 'notBlank'
+        if (isBlankOrNotBlank1) {
+          cond1!.value = cond1!.matchMode
+        }
+        if (cond1!.value) {
+          // @ts-expect-error TS2322
+          result[key] = {
+            filterType: Array.isArray(cond1!.value) ? 'set' : 'text',
+            condition1: {
+              type: Array.isArray(cond1!.value) ? undefined : cond1!.matchMode,
+              filter: Array.isArray(cond1!.value) ? cond1!.value.map(({ code }) => code) : cond1!.value,
+            },
+          }
+        }
       }
     }
   }
@@ -211,6 +259,12 @@ onMounted(() => {
 
 useEventListener(window, 'resize', computeScrollHeight)
 //#endregion
+
+function dealWithBlankAndNotBlank (filterModel: { matchMode: unknown, value: unknown }) {
+  if (filterModel.matchMode === 'blank' || filterModel.matchMode === 'notBlank') {
+    filterModel.value = filterModel.matchMode
+  }
+}
 </script>
 
 <template>
@@ -228,7 +282,7 @@ useEventListener(window, 'resize', computeScrollHeight)
       :first="0"
       removable-sort
       :scroll-height="scrollHeight"
-      filter-display="row"
+      filter-display="menu"
       @sort="onSortChanged"
     >
       <template #paginatorstart>
@@ -259,18 +313,24 @@ useEventListener(window, 'resize', computeScrollHeight)
               v-model="filterModel.value"
               :options="(filterModel as unknown as { set: {name: string, code: string}[] }).set"
               option-label="name" placeholder="Any"
+              @change="filterCallback()"
             >
               <template #option="slotProps">
                 <component :is="col.cellRenderer" :params="{ value: slotProps.option.name }" />
               </template>
             </MultiSelect>
           </template>
+          <template
+            v-else-if="filterModel.matchMode === 'blank' || filterModel.matchMode === 'notBlank'"
+          >
+            {{ dealWithBlankAndNotBlank(filterModel) }}
+          </template>
           <DsfrInput
             v-else
             v-model="filterModel.value"
             type="text"
             class="p-inputtext p-component p-element"
-            @key.enter="filterCallback()"
+            @update:model-value="filterCallback()"
           />
         </template>
       </Column>

@@ -98,7 +98,7 @@ createApp(App)
       'endsWith': 'Se termine par',
       'equals': 'Égal à',
       'notEquals': 'Différent de',
-      'blank': 'Vide  ',
+      'blank': 'Vide',
       'notBlank': 'Non vide',
       'gt': 'Supérieur à',
       'gte': 'Supérieur ou égal à',
