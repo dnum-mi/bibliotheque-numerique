@@ -353,6 +353,13 @@ const establishments = computed<EstablishmentsType | undefined>(() => {
               <!-- </div> -->
               <!-- </div> -->
             </BnTab>
+            <BnTab
+              v-if="role?.label === 'sudo'"
+              id="Tech"
+              title="Tech"
+            >
+              <pre>{{ (organisme.rnfJson || organisme.rnaJson || {}) }}</pre>
+            </BnTab>
           </BnTabsContainer>
         </div>
       </template>
