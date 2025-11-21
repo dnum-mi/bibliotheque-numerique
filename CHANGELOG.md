@@ -1,5 +1,31 @@
 # Changelog
 
+## [3.1.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v3.0.1...v3.1.0) (2025-11-21)
+
+
+### Features
+
+* ajout du composant MapMarkers ([2c8c360](https://github.com/dnum-mi/bibliotheque_numerique/commit/2c8c360c98ee0c477cd23d8ed0374c0bb1ba8448))
+* proposal v1 for the new fiche organisme ([1493d62](https://github.com/dnum-mi/bibliotheque_numerique/commit/1493d62d5ba53ee249b0f2b66669ec61480c1c16))
+
+
+### Bug Fixes
+
+* ajout de l'onglet pour les établissements ([30e90ad](https://github.com/dnum-mi/bibliotheque_numerique/commit/30e90ad2bb7086094d5f4edd4b86ecc294f56d16))
+* ajouter le nombre de dossiers sur l'onget dossiers ([e424046](https://github.com/dnum-mi/bibliotheque_numerique/commit/e424046f42f1a9dc9e9e47f6d99aa376aa2ac722))
+* ajouter un onglet tech pour un admin tech ([dcf1efb](https://github.com/dnum-mi/bibliotheque_numerique/commit/dcf1efbe3dad7b665ac38b95e4fbb3722cbef55e))
+* correction design de la vue nouvelle fiche organisme ([5d2b703](https://github.com/dnum-mi/bibliotheque_numerique/commit/5d2b703f99d74132fe1243b595e4f2d12adba665))
+* correction different de la nouvelle fiche organisme ([4ca22bd](https://github.com/dnum-mi/bibliotheque_numerique/commit/4ca22bdd7732fab9e75ae541be1e41e34ac5869b))
+* factorisation de la nouvelle fiche organisme ([e12504d](https://github.com/dnum-mi/bibliotheque_numerique/commit/e12504d497ed1948a7466787732122be5547a888))
+* integrer l'appel api de la nouvelle fiche organisme ([7fb2c9e](https://github.com/dnum-mi/bibliotheque_numerique/commit/7fb2c9e8cfdce39559af6475eecbf5d4b642872a))
+* integrer la nouvelle vue dans le fiche organisme ([3903fae](https://github.com/dnum-mi/bibliotheque_numerique/commit/3903faee4bc28d0095003bd514b386b9ea7e0207))
+* list des dirigeants visible au chargement de la vue ([ad6c780](https://github.com/dnum-mi/bibliotheque_numerique/commit/ad6c780f6ab71527fb49b33e54238464dfe31d30))
+* move components used by fiche organisme ([fced550](https://github.com/dnum-mi/bibliotheque_numerique/commit/fced55082b4ec8460c7f03aa849f44ca0a9d2b23))
+* ne pas afficher les dirigeants si aucun ([b1f8467](https://github.com/dnum-mi/bibliotheque_numerique/commit/b1f84674d814bdbe4ed584485c622358e8cf64b4))
+* ordonnées la liste de dossiers par la date de dépot ([57d8b70](https://github.com/dnum-mi/bibliotheque_numerique/commit/57d8b705678046e5693d432b67da6a6792be6d55))
+* retoure en arrière MapCard.vue ([936ba7c](https://github.com/dnum-mi/bibliotheque_numerique/commit/936ba7c2416187ddfe009962ae795e721536fc48))
+* update type file-to-download in DownloadFile.vue ([a4adbd3](https://github.com/dnum-mi/bibliotheque_numerique/commit/a4adbd3683d6d75a446da8dbfd3137b7e70dd9a9))
+
 ## [3.0.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v3.0.0...v3.0.1) (2025-11-17)
 
 
