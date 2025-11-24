@@ -113,4 +113,5 @@ export const associationHub: IAssociationOutput = {
   secondaryEstablishments: null,
   toLineage: null,
   union: null,
+  isPersonDataPrivate: false,
 }

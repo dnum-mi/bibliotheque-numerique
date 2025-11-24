@@ -100,21 +100,131 @@ onMounted(() => {
       v-model="activeAccordion"
     >
       <DsfrAccordion
+        id="structural"
+        :title="`Fondateurs (Personnes Morales) (${founderLegalEntities?.length})`"
+      >
+        <div
+          v-if="!founderLegalEntities?.length"
+          class="empty-text"
+        >
+          Aucun fondateur (personne morale) enregistré.
+        </div>
+
+        <div
+          v-else
+          class="cards-grid"
+        >
+          <div
+            v-for="entity in founderLegalEntities"
+            :key="entity.publicId"
+            class="card-wrapper"
+          >
+            <DsfrCard
+              :title-link-attrs="{}"
+              :class="isNavigable(entity.type) ? 'card-interactive' : 'card-static'"
+              :title="entity.publicId"
+              :detail="entity.type"
+              :description="isNavigable(entity.type) ? 'Voir la fiche' : 'Entité fondatrice'"
+              size="sm"
+              :no-arrow="true"
+              @click="goToOrganisme(entity.publicId, entity.type)"
+            />
+          </div>
+        </div>
+      </DsfrAccordion>
+
+      <DsfrAccordion
+        id="structural"
+        :title="`Participation à la gouvernance (${governanceLegalEntities?.length})`"
+      >
+        <div
+          v-if="!governanceLegalEntities?.length"
+          class="empty-text"
+        >
+          Aucune personne morale ne participe à la gouvernance.
+        </div>
+
+        <div
+          v-else
+          class="cards-grid"
+        >
+          <div
+            v-for="entity in governanceLegalEntities"
+            :key="entity.publicId"
+            class="card-wrapper"
+          >
+            <DsfrCard
+              :title-link-attrs="{}"
+              :class="isNavigable(entity.type) ? 'card-interactive' : 'card-static'"
+              :title="entity.publicId"
+              :detail="entity.type"
+              :description="isNavigable(entity.type) ? 'Voir la fiche' : 'Membre gouvernance'"
+              size="sm"
+              :no-arrow="true"
+              @click="goToOrganisme(entity.publicId, entity.type)"
+            />
+          </div>
+        </div>
+      </DsfrAccordion>
+
+      <DsfrAccordion
+        id="founded"
+        :title="`Entités créées par cet organisme (${foundedCount})`"
+      >
+        <div
+          v-if="!foundedLegalEntities?.length"
+          class="empty-text"
+        >
+          Cet organisme n'a créé aucune autre entité légale.
+        </div>
+
+        <div
+          v-else
+          class="cards-grid"
+        >
+          <div
+            v-for="entity in foundedLegalEntities"
+            :key="entity.publicId"
+            class="card-wrapper"
+          >
+            <DsfrCard
+              :title-link-attrs="{}"
+              :class="isNavigable(entity.type) ? 'card-interactive' : 'card-static'"
+              :title="entity.publicId"
+              :detail="entity.type"
+              :description="isNavigable(entity.type) ? 'Voir la fiche' : 'Entité créée'"
+              size="sm"
+              :no-arrow="true"
+              @click="goToOrganisme(entity.publicId, entity.type)"
+            />
+          </div>
+        </div>
+      </DsfrAccordion>
+
+      <DsfrAccordion
         id="lineage"
         :title="`Historique de la structure (${lineageCount})`"
       >
-        <p v-if="lineageCount === 0" class="fr-text--sm fr-mb-0 italic text-grey">
+        <p
+          v-if="lineageCount === 0"
+          class="fr-text--sm fr-mb-0 italic text-grey"
+        >
           Aucun historique de filiation connu.
         </p>
 
         <div class="lineage-container">
-          <div v-if="fromLineage" class="lineage-block">
-            <p class="section-label">
-              Organismes sources
-            </p>
+          <div
+            v-if="fromLineage"
+            class="lineage-block"
+          >
+            <p class="section-label">Organismes sources</p>
 
             <div class="cards-grid">
-              <div v-for="org in fromLineage.organismes" :key="org.publicId" class="card-wrapper">
+              <div
+                v-for="org in fromLineage.organismes"
+                :key="org.publicId"
+                class="card-wrapper"
+              >
                 <DsfrCard
                   :title-link-attrs="{}"
                   :class="isNavigable(org.kind) ? 'card-interactive' : 'card-static'"
@@ -134,7 +244,11 @@ onMounted(() => {
                 {{ lineageToString(fromLineage) }}
               </span>
               <div class="vertical-line" />
-              <VIcon name="ri-arrow-down-line" scale="1.5" class="text-grey" />
+              <VIcon
+                name="ri-arrow-down-line"
+                scale="1.5"
+                class="text-grey"
+              />
             </div>
           </div>
 
@@ -148,22 +262,31 @@ onMounted(() => {
             />
           </div>
 
-          <div v-if="toLineage" class="lineage-block">
+          <div
+            v-if="toLineage"
+            class="lineage-block"
+          >
             <div class="flow-connector">
               <div class="vertical-line" />
               <span class="fr-badge fr-badge--new fr-badge--no-icon fr-my-1w">
                 {{ lineageToString(toLineage) }}
               </span>
               <div class="vertical-line" />
-              <VIcon name="ri-arrow-down-line" scale="1.5" class="text-grey" />
+              <VIcon
+                name="ri-arrow-down-line"
+                scale="1.5"
+                class="text-grey"
+              />
             </div>
 
-            <p class="section-label">
-              A donné lieu à
-            </p>
+            <p class="section-label">A donné lieu à</p>
 
             <div class="cards-grid">
-              <div v-for="org in toLineage.organismes" :key="org.publicId" class="card-wrapper">
+              <div
+                v-for="org in toLineage.organismes"
+                :key="org.publicId"
+                class="card-wrapper"
+              >
                 <DsfrCard
                   :title-link-attrs="{}"
                   :class="isNavigable(org.kind) ? 'card-interactive' : 'card-static'"
@@ -176,81 +299,6 @@ onMounted(() => {
                 />
               </div>
             </div>
-          </div>
-        </div>
-      </DsfrAccordion>
-
-      <DsfrAccordion
-        id="structural"
-        :title="`Relations structurelles (${structuralRelationsCount})`"
-      >
-        <h3 class="section-header">
-          Fondateurs (Personnes Morales)
-        </h3>
-
-        <div v-if="!founderLegalEntities?.length" class="empty-text">
-          Aucun fondateur (personne morale) enregistré.
-        </div>
-
-        <div v-else class="cards-grid">
-          <div v-for="entity in founderLegalEntities" :key="entity.publicId" class="card-wrapper">
-            <DsfrCard
-              :title-link-attrs="{}"
-              :class="isNavigable(entity.type) ? 'card-interactive' : 'card-static'"
-              :title="entity.publicId"
-              :detail="entity.type"
-              :description="isNavigable(entity.type) ? 'Voir la fiche' : 'Entité fondatrice'"
-              size="sm"
-              :no-arrow="true"
-              @click="goToOrganisme(entity.publicId, entity.type)"
-            />
-          </div>
-        </div>
-
-        <h3 class="section-header fr-mt-4w">
-          Participation à la gouvernance
-        </h3>
-
-        <div v-if="!governanceLegalEntities?.length" class="empty-text">
-          Aucune personne morale ne participe à la gouvernance.
-        </div>
-
-        <div v-else class="cards-grid">
-          <div v-for="entity in governanceLegalEntities" :key="entity.publicId" class="card-wrapper">
-            <DsfrCard
-              :title-link-attrs="{}"
-              :class="isNavigable(entity.type) ? 'card-interactive' : 'card-static'"
-              :title="entity.publicId"
-              :detail="entity.type"
-              :description="isNavigable(entity.type) ? 'Voir la fiche' : 'Membre gouvernance'"
-              size="sm"
-              :no-arrow="true"
-              @click="goToOrganisme(entity.publicId, entity.type)"
-            />
-          </div>
-        </div>
-      </DsfrAccordion>
-
-      <DsfrAccordion
-        id="founded"
-        :title="`Entités créées par cet organisme (${foundedCount})`"
-      >
-        <div v-if="!foundedLegalEntities?.length" class="empty-text">
-          Cet organisme n'a créé aucune autre entité légale.
-        </div>
-
-        <div v-else class="cards-grid">
-          <div v-for="entity in foundedLegalEntities" :key="entity.publicId" class="card-wrapper">
-            <DsfrCard
-              :title-link-attrs="{}"
-              :class="isNavigable(entity.type) ? 'card-interactive' : 'card-static'"
-              :title="entity.publicId"
-              :detail="entity.type"
-              :description="isNavigable(entity.type) ? 'Voir la fiche' : 'Entité créée'"
-              size="sm"
-              :no-arrow="true"
-              @click="goToOrganisme(entity.publicId, entity.type)"
-            />
           </div>
         </div>
       </DsfrAccordion>

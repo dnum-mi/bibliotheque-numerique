@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import type { IDsEventItem } from '@biblio-num/shared'
-import { dateToStringFr } from '@/utils'
+import { dateToStringFr, getPrefecture } from '@/utils'
 import { routeNames } from '@/router/route-names'
 
 const props = defineProps<{
@@ -96,7 +96,7 @@ const navigateToDossier = (localId: number | null | undefined) => {
                   <div class="fr-col-12 fr-col-md-6">
                     <p class="fr-text--xs fr-mb-0 uppercase-label">Instructeur</p>
                     <p class="fr-text--sm fr-mb-1w">
-                      {{ event.dossierInstructeurGroup ?? 'N/A' }}
+                      {{ event.dossierInstructeurGroup ? getPrefecture(event.dossierInstructeurGroup) : 'N/A' }}
                     </p>
                   </div>
                   <div class="fr-col-12 fr-col-md-6">
@@ -145,7 +145,6 @@ const navigateToDossier = (localId: number | null | undefined) => {
 </template>
 
 <style scoped>
-/* Conteneur principal */
 .timeline-container {
   display: flex;
   flex-direction: column;
@@ -186,7 +185,6 @@ const navigateToDossier = (localId: number | null | undefined) => {
   border: 2px solid var(--background-default-grey);
 }
 
-/* Utils Text */
 .label-xs {
   text-transform: uppercase;
   color: var(--text-mention-grey);
@@ -208,7 +206,6 @@ const navigateToDossier = (localId: number | null | undefined) => {
   font-style: italic;
 }
 
-/* Listes compactes */
 .compact-list {
   list-style: none;
 }
@@ -217,19 +214,16 @@ const navigateToDossier = (localId: number | null | undefined) => {
   font-size: 0.9rem;
 }
 
-/* IMPORTANT : Préserve les sauts de ligne \r\n de l'objet social */
 .pre-wrap-text {
   white-space: pre-line;
   font-size: 0.85rem;
   line-height: 1.4;
 }
 
-/* Espacement entre les blocs de l'accordéon */
 .section-block {
   margin-bottom: 1rem;
 }
 
-/* Borders */
 .border-top-light {
   border-top: 1px solid var(--border-default-grey);
 }
