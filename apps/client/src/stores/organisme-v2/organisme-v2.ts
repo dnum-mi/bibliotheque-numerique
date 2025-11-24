@@ -4,12 +4,6 @@ import { mockFoundationPayload } from './mock-foundation'
 import apiClient from '@/api/api-client'
 import type { OrganismeIdType } from '../organisme'
 
-// TODO: A supprimer
-// const mockDatabase = new Map<string, IAssociationOutput | IFoundationOutput>([
-//   [mockAssociationPayload.id, mockAssociationPayload],
-//   [mockFoundationPayload.id, mockFoundationPayload],
-// ])
-
 export const useOrganismeV2Store = defineStore('organisme', () => {
   const selectedOrganisme = ref<IAssociationOutput | IFoundationOutput | null>(null)
   const isLoading = ref<boolean>(false)
@@ -44,12 +38,6 @@ export const useOrganismeV2Store = defineStore('organisme', () => {
     error.value = null
     selectedOrganisme.value = null
 
-    // console.log(`[Store] Fetching organisme with id: ${id}`)
-
-    // // Simule une latence réseau
-    // await new Promise((resolve) => setTimeout(resolve, 600))
-
-    // const data = mockDatabase.get(id)
     const organismeOutput: IOrganismeOutput = await apiClient[`getOrganismeBy${type}`](id)
 
     const data = (organismeOutput?.bn.rnfJson as IFoundationOutput) || (organismeOutput?.bn.rnaJson as IAssociationOutput) || undefined
@@ -61,6 +49,14 @@ export const useOrganismeV2Store = defineStore('organisme', () => {
     }
 
     isLoading.value = false
+  }
+
+  async function fetchOrganismeEvents (id: string, type: OrganismeIdType) {
+    if (!id || type !== 'Rnf') {
+      return
+    }
+
+    return await apiClient.getOrganismeHistoryByRnf(id)
   }
 
   function clearOrganisme () {
@@ -79,6 +75,7 @@ export const useOrganismeV2Store = defineStore('organisme', () => {
     asFoundation,
     asAssociation,
     fetchOrganisme,
+    fetchOrganismeEvents,
     clearOrganisme,
     mockAssociationId: mockAssociationPayload.id,
     mockFoundationId: mockFoundationPayload.id,

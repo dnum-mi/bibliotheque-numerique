@@ -6,6 +6,8 @@ import type {
   IOrganismeOutputDto,
   // ISiafRnfHistoryOutput,
   IEntityWithSyncState,
+  IDsEvent,
+  IFoundationOutput,
 } from '@biblio-num/shared'
 
 import apiClient from '@/api/api-client'
@@ -36,17 +38,16 @@ export const useOrganismeStore = defineStore('organisme', () => {
     const organismeOutput: IOrganismeOutput = await apiClient[`getOrganismeBy${type}`](id)
     organisme.value = organismeOutput?.bn as IOrganisme
     organismeSiaf.value = organismeOutput?.siaf as IOrganismeOutputDto
-    syncState.value = ((organisme.value as (IOrganisme & IEntityWithSyncState))?.syncState || organismeOutput?.syncState) as TSyncState
+    syncState.value = ((organisme.value as IOrganisme & IEntityWithSyncState)?.syncState || organismeOutput?.syncState) as TSyncState
     dossiersCount.value = organismeOutput?.dossiersCount || null
   }
 
-  // TODO: réactiver lorsque l'API sera prête
-  // const loadOrganismeHistory = async (id: string, type: OrganismeIdType): Promise<ISiafRnfHistoryOutput[]> => {
-  //   if (!id || type !== EOrganismeIdType.Rnf) {
-  //     return []
-  //   }
-  //   return await apiClient.getOrganismeHistoryByRnf(id)
-  // }
+  const loadOrganismeEvents = async (id: string, type: OrganismeIdType): Promise<IDsEvent<IFoundationOutput> | null> => {
+    if (!id || type !== EOrganismeIdType.Rnf) {
+      return null
+    }
+    return await apiClient.getOrganismeEventsByRnf(id)
+  }
 
   const loadOrganismes = async (dto: IPagination<IOrganisme>): Promise<IPaginated<IOrganisme>> => {
     return apiClient.getOrganismes(dto)
@@ -68,7 +69,7 @@ export const useOrganismeStore = defineStore('organisme', () => {
     syncState,
     dossiersCount,
     loadOrganisme,
-    // loadOrganismeHistory,
+    loadOrganismeEvents,
     loadOrganismes,
     exportOrganismes,
     organismeSiaf,

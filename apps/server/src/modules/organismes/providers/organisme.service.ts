@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
-import { IsNull, Not, Repository } from 'typeorm'
+import { In, IsNull, Not, Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
 import { InjectQueue } from '@nestjs/bull'
 import { Queue } from 'bull'
@@ -19,6 +19,7 @@ import {
   typeCategorieOrganisme,
   Prefecture,
   IOrganismeOutputDto,
+  IDsEvent,
   // ISiafRnfHistoryOutput,
 } from '@biblio-num/shared'
 
@@ -477,15 +478,34 @@ export class OrganismeService extends BaseEntityService<Organisme> {
   }
 
   // TODO: A refaire avec le nouveau modele
-  async getOrganismeRnfHistoryFromSiaf(
-    //
+  async getOrganismeRnfEvents(
     idRnf: string,
-    // ): Promise<ISiafRnfHistoryOutput[]>
-  ): Promise<unknown[]> {
+  ): Promise<IDsEvent<IFoundationOutput> | null> {
     this.logger.verbose('getOrganismeRnfHistoryFromSiaf')
     this.logger.debug(idRnf)
-    // return await this.rnfService.getFoundationsHistoryFromSiaf(idRnf)
-    return []
+    const hubEvents = await this.hubService.getFoundationEvents(idRnf)
+
+    if (!hubEvents || !hubEvents.events.length) {
+      return null
+    }
+
+    const dossiersIds = [...new Set(hubEvents.events.map(event => event.dossierNumber))]
+
+    const localDossiers = await this.dossierService.findWithFilter(
+      {
+        sourceId: In(dossiersIds),
+      },
+    )
+
+    const dossiersMap = new Map(localDossiers.map(d => [d.sourceId, d.id]))
+
+    return {
+      ...hubEvents,
+      events: hubEvents.events.map((event) => ({
+        ...event,
+        dossierLocalNumber: dossiersMap.get(String(event.dossierNumber)) || null,
+      })),
+    }
   }
 
   private _transformRnaToOrganismeDto(

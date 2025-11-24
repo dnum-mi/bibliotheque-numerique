@@ -18,6 +18,6 @@ export class InstructionTime extends BaseEntity {
   @Column({ nullable: true, type: 'timestamp' })
   endAt: Date
 
-  @Column({ nullable: false, default: '' })
+  @Column({ type: 'varchar', nullable: false, default: '' })
   state: EInstructionTimeStateKey
 }

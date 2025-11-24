@@ -11,6 +11,7 @@ import { Stream } from 'node:stream'
 import { ILastFoundationOuptut } from '../last-foundation-output.type'
 import { ILastOrganismeOuptut } from '../last-commun-output.type'
 import { ILastAssocationOuptut } from '../last-assocation-output.type'
+import { IDsEvent } from '@biblio-num/shared/'
 
 export interface IAssociations {
   associations: IAssociationOutput
@@ -101,7 +102,6 @@ export class HubService {
       scrollId,
     )
   }
-
   //#endregion ASSOCIATIONS
 
   //#region FOUNDATIONS
@@ -127,6 +127,14 @@ export class HubService {
       lastUpdatedAt,
       scrollId,
     )
+  }
+
+  async getFoundationEvents(idRnf: string): Promise<IDsEvent<IFoundationOutput> | null> {
+    this.logger.verbose('HUB-getFoundationEvents')
+    const path = `${ePathCompletedOrganismeByType.foundation}/${idRnf}/events`
+    return this.axios.get<IDsEvent<IFoundationOutput>>(path).then(response => {
+      return response as unknown as IDsEvent<IFoundationOutput>
+    })
   }
   //#endregion FOUNDATIONS
 

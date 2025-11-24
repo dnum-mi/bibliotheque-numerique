@@ -11,6 +11,7 @@ const props = withDefaults(
     organisme: IAssociationOutput | IFoundationOutput
     missingDeclarationYears?: number[]
     isFoundation: boolean
+    serviceInstructor?: string
   }>(),
   {},
 )
@@ -25,6 +26,7 @@ const asAssociation = computed(() => {
     <FicheIdentity
       :organisme="organisme"
       :is-foundation="isFoundation"
+      :service-instructor="serviceInstructor"
     />
     <FicheContact
       :organisme="organisme"

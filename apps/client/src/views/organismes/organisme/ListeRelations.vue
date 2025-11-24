@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { routeNames } from '@/router/route-names'
 import { dateToStringFr } from '@/utils'
 import type { ILegalEntity, ILineage } from '@biblio-num/shared'
 import { VIcon } from '@gouvminint/vue-dsfr'
@@ -13,7 +14,7 @@ interface RelationProps {
 }
 
 const props = defineProps<RelationProps>()
-
+const router = useRouter()
 const activeAccordion = ref<number>(-1)
 
 const lineageCount = computed(() => {
@@ -35,6 +36,34 @@ const hasRelations = computed(() => {
   return lineageCount.value > 0 || structuralRelationsCount.value > 0 || foundedCount.value > 0
 })
 
+const isNavigable = (rawType: string | undefined | null): boolean => {
+  if (!rawType) {
+    return false
+  }
+  const t = rawType.toLowerCase()
+  return t === 'foundation' || t === 'association'
+}
+
+const goToOrganisme = (publicId: string, rawType: string | undefined | null) => {
+  if (!publicId || !isNavigable(rawType)) {
+    return
+  }
+
+  const cleanId = publicId.split(' ')[0]
+  const typeLower = rawType!.toLowerCase()
+
+  let idType = 'Rnf'
+  if (typeLower === 'association') {
+    idType = 'Rna'
+  }
+
+  router.push({
+    name: routeNames.FICHE_ORGANISME,
+    params: { id: cleanId },
+    query: { idType, tab: 'infos' },
+  })
+}
+
 const lineageToString = (lineage: ILineage): string => {
   const date = dateToStringFr(lineage.at)
   switch (lineage.type) {
@@ -48,6 +77,16 @@ const lineageToString = (lineage: ILineage): string => {
       return `Événement de filiation le ${date}`
   }
 }
+
+onMounted(() => {
+  if (lineageCount.value > 0) {
+    activeAccordion.value = 0
+  } else if (structuralRelationsCount.value > 0) {
+    activeAccordion.value = 1
+  } else if (foundedCount.value > 0) {
+    activeAccordion.value = 2
+  }
+})
 </script>
 
 <template>
@@ -64,185 +103,153 @@ const lineageToString = (lineage: ILineage): string => {
         id="lineage"
         :title="`Historique de la structure (${lineageCount})`"
       >
-        <p
-          v-if="lineageCount === 0"
-          class="fr-text--sm fr-mb-0"
-        >
-          Aucun historique de filiation (fusion, scission...) enregistré.
+        <p v-if="lineageCount === 0" class="fr-text--sm fr-mb-0 italic text-grey">
+          Aucun historique de filiation connu.
         </p>
 
-        <div
-          v-if="fromLineage"
-          class="lineage-flow"
-        >
-          <h3
-            class="w-full flex justify-center align-center text-base/7 font-semibold text-gray-900 mb-0 fr-background-alt--grey fr-py-3v fr-px-2w"
-          >
-            Issu des organismes suivants :
-          </h3>
-          <div class="mt-6 flex gap-2">
-            <div
-              v-for="org in fromLineage.organismes"
-              :key="org.publicId"
-              class="flex flex-row gap-2"
-            >
-              <DsfrCard
-                :title-link-attrs="{}"
-                :title="org.publicId"
-                :detail="org.kind"
-                description="Organisme source"
-                is-clickable
-                @click="() => {}"
-              />
+        <div class="lineage-container">
+          <div v-if="fromLineage" class="lineage-block">
+            <p class="section-label">
+              Organismes sources
+            </p>
+
+            <div class="cards-grid">
+              <div v-for="org in fromLineage.organismes" :key="org.publicId" class="card-wrapper">
+                <DsfrCard
+                  :title-link-attrs="{}"
+                  :class="isNavigable(org.kind) ? 'card-interactive' : 'card-static'"
+                  :title="org.publicId"
+                  :detail="org.kind"
+                  :description="isNavigable(org.kind) ? 'Voir la fiche' : 'Organisme externe'"
+                  size="sm"
+                  :no-arrow="true"
+                  @click="goToOrganisme(org.publicId, org.kind)"
+                />
+              </div>
+            </div>
+
+            <div class="flow-connector">
+              <div class="vertical-line" />
+              <span class="fr-badge fr-badge--info fr-badge--no-icon fr-my-1w">
+                {{ lineageToString(fromLineage) }}
+              </span>
+              <div class="vertical-line" />
+              <VIcon name="ri-arrow-down-line" scale="1.5" class="text-grey" />
             </div>
           </div>
 
-          <div class="flow-arrow">
-            <VIcon
-              name="ri-arrow-down-line"
-              scale="2"
-              class="mr-1"
+          <div class="w-full flex justify-center my-2">
+            <DsfrCard
+              :title-link-attrs="{}"
+              :title="currentOrganismeTitle"
+              description="STRUCTURE ACTUELLE"
+              :no-arrow="true"
+              class="current-org-card"
             />
-            <span class="fr-tag fr-tag--sm">{{ lineageToString(fromLineage) }}</span>
           </div>
 
-          <DsfrCard
-            :title-link-attrs="{}"
-            :title="currentOrganismeTitle"
-            description="Structure actuelle"
-            class="current-org-card"
-          />
-        </div>
+          <div v-if="toLineage" class="lineage-block">
+            <div class="flow-connector">
+              <div class="vertical-line" />
+              <span class="fr-badge fr-badge--new fr-badge--no-icon fr-my-1w">
+                {{ lineageToString(toLineage) }}
+              </span>
+              <div class="vertical-line" />
+              <VIcon name="ri-arrow-down-line" scale="1.5" class="text-grey" />
+            </div>
 
-        <div
-          v-if="toLineage"
-          class="lineage-flow fr-mt-4v"
-        >
-          <div class="px-4 sm:px-0">
-            <h3 class="text-base/7 font-semibold text-gray-900 mb-0 fr-background-alt--grey fr-py-3v fr-px-2w">
-              A donné lieu aux organismes suivants
-            </h3>
-          </div>
-          <DsfrCard
-            :title-link-attrs="{}"
-            :title="currentOrganismeTitle"
-            description="Structure dissoute"
-            class="current-org-card"
-          />
+            <p class="section-label">
+              A donné lieu à
+            </p>
 
-          <div class="flow-arrow">
-            <VIcon
-              name="ri-arrow-down-line"
-              scale="2"
-              class="mr-1"
-            />
-            <span class="fr-tag fr-tag--sm">{{ lineageToString(toLineage) }}</span>
-          </div>
-
-          <div class="fr-grid-row fr-grid-row--gutters">
-            <div
-              v-for="org in toLineage.organismes"
-              :key="org.publicId"
-              class="fr-col-12 fr-col-md-4"
-            >
-              <DsfrCard
-                :title-link-attrs="{}"
-                :title="org.publicId"
-                :detail="org.kind"
-                description="Nouvelle structure"
-                is-clickable
-                @click="() => {}"
-              />
+            <div class="cards-grid">
+              <div v-for="org in toLineage.organismes" :key="org.publicId" class="card-wrapper">
+                <DsfrCard
+                  :title-link-attrs="{}"
+                  :class="isNavigable(org.kind) ? 'card-interactive' : 'card-static'"
+                  :title="org.publicId"
+                  :detail="org.kind"
+                  :description="isNavigable(org.kind) ? 'Voir la fiche' : 'Nouvelle structure'"
+                  size="sm"
+                  :no-arrow="true"
+                  @click="goToOrganisme(org.publicId, org.kind)"
+                />
+              </div>
             </div>
           </div>
         </div>
       </DsfrAccordion>
+
       <DsfrAccordion
         id="structural"
         :title="`Relations structurelles (${structuralRelationsCount})`"
       >
-        <div class="px-4 sm:px-0">
-          <h3 class="text-base/7 font-semibold text-gray-900 mb-0 fr-background-alt--grey fr-py-3v fr-px-2w">
-            Fondateurs (Personnes Morales)
-          </h3>
+        <h3 class="section-header">
+          Fondateurs (Personnes Morales)
+        </h3>
+
+        <div v-if="!founderLegalEntities?.length" class="empty-text">
+          Aucun fondateur (personne morale) enregistré.
         </div>
-        <div
-          v-if="!founderLegalEntities || !founderLegalEntities.length"
-          class="mt-6"
-        >
-          <p class="fr-text--sm">Aucun fondateur (personne morale) enregistré.</p>
-        </div>
-        <div
-          v-else
-          class="mt-6 flex flex-row gap-3"
-        >
-          <div
-            v-for="entity in founderLegalEntities"
-            :key="entity.publicId"
-          >
+
+        <div v-else class="cards-grid">
+          <div v-for="entity in founderLegalEntities" :key="entity.publicId" class="card-wrapper">
             <DsfrCard
               :title-link-attrs="{}"
+              :class="isNavigable(entity.type) ? 'card-interactive' : 'card-static'"
               :title="entity.publicId"
               :detail="entity.type"
-              description="Entité fondatrice"
-              is-clickable
-              @click="() => {}"
+              :description="isNavigable(entity.type) ? 'Voir la fiche' : 'Entité fondatrice'"
+              size="sm"
+              :no-arrow="true"
+              @click="goToOrganisme(entity.publicId, entity.type)"
             />
           </div>
         </div>
 
-        <div class="mt-6 px-4 sm:px-0">
-          <h3 class="text-base/7 font-semibold text-gray-900 mb-0 fr-background-alt--grey fr-py-3v fr-px-2w">
-            Participation à la gouvernance
-          </h3>
+        <h3 class="section-header fr-mt-4w">
+          Participation à la gouvernance
+        </h3>
+
+        <div v-if="!governanceLegalEntities?.length" class="empty-text">
+          Aucune personne morale ne participe à la gouvernance.
         </div>
-        <div
-          v-if="!governanceLegalEntities || !governanceLegalEntities.length"
-          class="mt-6"
-        >
-          <p class="fr-text--sm">Aucune personne morale ne participe à la gouvernance.</p>
-        </div>
-        <div
-          v-else
-          class="mt-6 flex flex-row gap-3"
-        >
-          <div
-            v-for="entity in governanceLegalEntities"
-            :key="entity.publicId"
-          >
+
+        <div v-else class="cards-grid">
+          <div v-for="entity in governanceLegalEntities" :key="entity.publicId" class="card-wrapper">
             <DsfrCard
               :title-link-attrs="{}"
+              :class="isNavigable(entity.type) ? 'card-interactive' : 'card-static'"
               :title="entity.publicId"
               :detail="entity.type"
-              description="Participe à la gouvernance"
-              is-clickable
-              @click="() => {}"
+              :description="isNavigable(entity.type) ? 'Voir la fiche' : 'Membre gouvernance'"
+              size="sm"
+              :no-arrow="true"
+              @click="goToOrganisme(entity.publicId, entity.type)"
             />
           </div>
         </div>
       </DsfrAccordion>
+
       <DsfrAccordion
         id="founded"
         :title="`Entités créées par cet organisme (${foundedCount})`"
       >
-        <div v-if="!foundedLegalEntities || !foundedLegalEntities.length">
-          <p class="fr-text--sm fr-mb-0">Cet organisme n'a créé aucune autre entité légale.</p>
+        <div v-if="!foundedLegalEntities?.length" class="empty-text">
+          Cet organisme n'a créé aucune autre entité légale.
         </div>
-        <div
-          v-else
-          class="flex gap-3"
-        >
-          <div
-            v-for="entity in foundedLegalEntities"
-            :key="entity.publicId"
-          >
+
+        <div v-else class="cards-grid">
+          <div v-for="entity in foundedLegalEntities" :key="entity.publicId" class="card-wrapper">
             <DsfrCard
               :title-link-attrs="{}"
+              :class="isNavigable(entity.type) ? 'card-interactive' : 'card-static'"
               :title="entity.publicId"
               :detail="entity.type"
-              description="Entité créée"
-              is-clickable
-              @click="() => {}"
+              :description="isNavigable(entity.type) ? 'Voir la fiche' : 'Entité créée'"
+              size="sm"
+              :no-arrow="true"
+              @click="goToOrganisme(entity.publicId, entity.type)"
             />
           </div>
         </div>
@@ -252,30 +259,119 @@ const lineageToString = (lineage: ILineage): string => {
 </template>
 
 <style scoped>
-.lineage-flow {
+.italic {
+  font-style: italic;
+}
+
+.text-grey {
+  color: var(--text-mention-grey);
+}
+
+.empty-text {
+  font-size: 0.9rem;
+  color: var(--text-mention-grey);
+  margin-bottom: 1rem;
+}
+
+.section-header {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-title-grey);
+  background-color: var(--background-alt-grey);
+  padding: 0.5rem 1rem;
+  margin-bottom: 1rem;
+  border-left: 4px solid var(--border-default-grey);
+}
+
+.section-label {
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-mention-grey);
+  text-align: center;
+  margin-bottom: 0.5rem;
+  letter-spacing: 1px;
+}
+
+.cards-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.card-wrapper {
+  flex: 1 1 300px;
+  max-width: 400px;
+  min-width: 250px;
+}
+
+.lineage-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
 }
 
-.flow-arrow {
+.lineage-block {
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 1rem 0;
-  color: var(--text-disabled-grey);
 }
 
-.flow-arrow .fr-tag {
-  margin-top: 0.5rem;
-  background-color: var(--background-alt-blue-france);
-  color: var(--text-title-blue-france);
+.flow-connector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0.5rem 0;
+}
+
+.vertical-line {
+  width: 2px;
+  height: 1.5rem;
+  background-color: var(--border-default-grey);
 }
 
 .current-org-card {
-  border: 2px solid var(--border-action-high-blue-france);
-  max-width: 400px;
+  border: 2px solid var(--background-action-high-blue-france);
+  background-color: var(--background-contrast-blue-france);
+  box-shadow: var(--shadow-raised-grey);
+  transform: scale(1.02);
+  max-width: 500px;
   width: 100%;
+  text-align: center;
+}
+
+.card-interactive {
+  cursor: pointer;
+  background-color: var(--background-default-grey);
+  transition: all 0.2s ease-in-out;
+}
+
+.card-interactive:hover {
+  background-color: var(--background-action-low-blue-france);
+  box-shadow: var(--shadow-raised-grey);
+  border-color: var(--background-action-high-blue-france);
+}
+
+.card-static {
+  cursor: default;
+  background-color: var(--background-alt-grey);
+  box-shadow: none;
+  border: 1px solid var(--border-default-grey);
+  color: var(--text-mention-grey);
+}
+
+.card-static:hover {
+  background-color: var(--background-alt-grey);
+  transform: none;
+  box-shadow: none;
+}
+
+.card-static :deep(.fr-card__detail .fr-icon-arrow-right-line),
+.card-static :deep(.fr-arrow-right-line) {
+  display: none !important;
 }
 </style>

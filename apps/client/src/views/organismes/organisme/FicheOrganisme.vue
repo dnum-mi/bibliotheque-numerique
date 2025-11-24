@@ -20,6 +20,7 @@ import type {
   ILineage,
   ISiafOrganisme,
   IEstablishment,
+  IDsEvent,
   // ISiafRnfHistoryOutput,
 } from '@biblio-num/shared'
 import { dFileTabDictionary, eOrganismeType, eState } from '@biblio-num/shared'
@@ -35,6 +36,7 @@ import { dateToStringFr } from '@/utils'
 import FicheOrganismePersons from './FicheOrganismePersons.vue'
 
 import OrganismeOverview from './components/OrganismeOverview.vue'
+import FicheEvents from './FicheEvents.vue'
 
 const props = withDefaults(defineProps<{ id: string; idType: OrganismeIdType }>(), {})
 
@@ -54,7 +56,7 @@ const hasSiafAssociation = computed(() => {
 })
 
 const filesSummary = ref<Record<FileTagKey, number> | Record<string, never>>({})
-// const histories = ref<ISiafRnfHistoryOutput[]>([])
+const dsEvents = ref<IDsEvent<IFoundationOutput> | null>(null)
 
 // TODO: use router to prevent user to access this page if not logged in or without the right role
 const role = computed<IRole | undefined>(() => userStore.currentUser?.role)
@@ -64,7 +66,7 @@ const isLoading = ref(false)
 const loadOrganisme = async () => {
   await organismeStore.loadOrganisme(props.id, props.idType)
   if (organisme.value) {
-    // histories.value = await organismeStore.loadOrganismeHistory(props.id, props.idType)
+    dsEvents.value = await organismeStore.loadOrganismeEvents(props.id, props.idType)
     filesSummary.value = await apiClient.getOrganismeFilesSummary(organisme.value.id)
   }
 }
@@ -90,6 +92,18 @@ onMounted(async () => {
   }
 })
 
+watch(() => props.id, async (newId, oldId) => {
+  if (newId && newId !== oldId) {
+    isLoading.value = true
+    dsEvents.value = null
+    filesSummary.value = {}
+
+    await loadOrganisme()
+
+    isLoading.value = false
+  }
+})
+
 const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutput>) => {
   if (organisme.value) {
     return apiClient.getOrganismeFiles(organisme.value.id)(params)
@@ -111,6 +125,20 @@ const fileTabs = computed(() => {
   })
 })
 
+const serviceInstructor = computed(() => {
+  const events = dsEvents.value?.events
+
+  if (!events || events.length === 0) {
+    return null
+  }
+
+  const sortedEvents = [...events].sort((a, b) =>
+    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+  )
+
+  return sortedEvents[0]?.dossierInstructeurGroup ?? null
+})
+
 // onUpdated(() => {
 //   console.log(fileTabs.value)
 // })
@@ -126,22 +154,35 @@ type relationsType = {
   fromLineage: ILineage | null
   toLineage: ILineage | null
 }
+
 const relations = computed<relationsType | undefined>(() => {
-  const rawJson = (organisme.value?.rnfJson || organisme.value?.rnaJson) as ISiafOrganisme
-  if ((rawJson?.founderLegalEntities === null || rawJson?.founderLegalEntities?.length === 0)
-    && (rawJson?.governanceLegalEntities === null || rawJson?.governanceLegalEntities?.length === 0)
-    && (rawJson?.foundedLegalEntities === null || rawJson?.foundedLegalEntities?.length === 0)
-    && rawJson?.fromLineage === null
-    && rawJson?.toLineage === null) {
+  const rawJson = (organisme.value?.rnfJson || organisme.value?.rnaJson) as ISiafOrganisme | undefined
+
+  if (!rawJson) {
     return undefined
   }
-  return {
-    founderLegalEntities: rawJson?.founderLegalEntities || [],
-    foundedLegalEntities: rawJson?.foundedLegalEntities || [],
-    governanceLegalEntities: rawJson?.governanceLegalEntities || [],
-    fromLineage: rawJson?.fromLineage || null,
-    toLineage: rawJson?.toLineage || null,
-  }
+
+  const founderLegalEntities = rawJson.founderLegalEntities || []
+  const foundedLegalEntities = rawJson.foundedLegalEntities || []
+  const governanceLegalEntities = rawJson.governanceLegalEntities || []
+  const fromLineage = rawJson.fromLineage || null
+  const toLineage = rawJson.toLineage || null
+
+  const hasData = founderLegalEntities.length > 0
+    || foundedLegalEntities.length > 0
+    || governanceLegalEntities.length > 0
+    || fromLineage !== null
+    || toLineage !== null
+
+  return hasData
+    ? {
+        founderLegalEntities,
+        foundedLegalEntities,
+        governanceLegalEntities,
+        fromLineage,
+        toLineage,
+      }
+    : undefined
 })
 
 type EstablishmentsType = {
@@ -274,6 +315,7 @@ const rawJson = computed<IFoundationOutput | IAssociationOutput>(() => organisme
                 :organisme="rawJson"
                 :is-foundation="idType === 'Rnf'"
                 :missing-declaration-years="organisme?.missingDeclarationYears"
+                :service-instructor="serviceInstructor!"
               />
               <FicheOrganismeInfo
                 v-else
@@ -319,17 +361,15 @@ const rawJson = computed<IFoundationOutput | IAssociationOutput>(() => organisme
                 :active="currentFicheOrganismeTab === tabInfo.idTab"
               />
             </BnTab>
-            <!-- TODO: A refaire avec les events <BnTab
-              v-if="idType === EOrganismeIdType.Rnf"
-              id="historique"
-              title="Historique"
+            <BnTab
+              v-if="dsEvents && dsEvents.events.length > 0 && idType === EOrganismeIdType.Rnf"
+              id="events"
+              :title="`Évènements (${dsEvents.events.length})`"
             >
-              <FicheOrganismeHistorique
-                :actual="organisme.rnfJson as IFoundationOutput"
-                :history="histories"
-                :entity-type="idType"
+              <FicheEvents
+                :events="dsEvents?.events"
               />
-            </BnTab> -->
+            </BnTab>
             <BnTab
               v-if="relations"
               id="relations"
@@ -353,8 +393,6 @@ const rawJson = computed<IFoundationOutput | IAssociationOutput>(() => organisme
                 :organisme-id="organisme?.id"
                 :role="role as IRole"
               />
-              <!-- </div> -->
-              <!-- </div> -->
             </BnTab>
             <BnTab
               v-if="role?.label === 'sudo'"

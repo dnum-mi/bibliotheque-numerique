@@ -6,5 +6,5 @@ export interface IFoundationOutput extends ISiafOrganisme {
     foundationType: FoundationTypeKey;
     generalInterestDomain: string;
 
-    events: IDsEvent<IFoundationOutput>[];
+    events: IDsEvent<IFoundationOutput>;
 }

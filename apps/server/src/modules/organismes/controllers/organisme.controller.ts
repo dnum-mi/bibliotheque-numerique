@@ -24,6 +24,8 @@ import {
   IOrganismeOutput,
   typeCategorieOrganisme,
   ISiafSearchOrganismeResponseOutput,
+  IDsEvent,
+  IFoundationOutput,
   // ISiafRnfHistoryOutput,
 } from '@biblio-num/shared'
 
@@ -173,22 +175,24 @@ export class OrganismeController {
   }
 
   // TODO: A refaire
-  // @UsualApiOperation({
-  //   summary: 'Retourner l\'historique d\'un organisme à partir de son RNF.',
-  //   method: 'GET',
-  //   minimumRole: Roles.instructor,
-  //   isArray: true,
-  //   supplement: 'L\'historique est récupéré depuis SIAF.',
-  //   responseType: SiafRnfHistoryOutputDto,
-  // })
-  // @Get('rnf/:organismeIdRnf/history')
-  // @Role(Roles.instructor)
-  // async getSiafRnfHistory(@Param('organismeIdRnf') idRnf: string)
-  // : Promise<unknown[]> {
-  // // : Promise<ISiafRnfHistoryOutput[]> {
-  //   this.logger.verbose('getSiafRnfHistory')
-  //   return await this.organismeService.getOrganismeRnfHistoryFromSiaf(idRnf)
-  // }
+  /* @UsualApiOperation({
+    summary: 'Retourner l\'historique d\'un organisme à partir de son RNF.',
+    method: 'GET',
+    minimumRole: Roles.instructor,
+    isArray: true,
+    supplement: 'L\'historique est récupéré depuis SIAF.',
+    responseType: Organisme,
+  }) */
+  @ApiOperation({
+    summary: 'Retourner l\'historique d\'un organisme à partir de son RNF.',
+    description: 'Retourner l\'historique d\'un organisme à partir de son RNF.',
+  })
+  @Get('rnf/:organismeIdRnf/events')
+  @Role(Roles.instructor)
+  async getSiafRnfHistory(@Param('organismeIdRnf') idRnf: string): Promise<IDsEvent<IFoundationOutput> | null> {
+    this.logger.verbose('getSiafRnfHistory')
+    return await this.organismeService.getOrganismeRnfEvents(idRnf)
+  }
 
   @ApiOperation({
     summary: 'Retourner un export excel.',

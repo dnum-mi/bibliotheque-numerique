@@ -38,5 +38,5 @@ export interface IAssociationOutput extends ISiafOrganisme {
   cededEstablishments: IEstablishment[]
 
   rnaEvents: IRnaEvent[]
-  events: IDsEvent<IAssociationOutput>[]
+  events: IDsEvent<IAssociationOutput>
 }

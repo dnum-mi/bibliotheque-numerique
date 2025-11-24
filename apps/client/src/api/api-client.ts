@@ -38,10 +38,11 @@ import type {
   IUpdateAnonymizedChamp,
   IOrganismeOutput,
   ISiafSearchOrganismeResponseOutput,
-  ISiafRnfHistoryOutput,
   IDossierFieldsOutput,
   IGenerateUpdatePasswordLink,
   IPaginationSmallDemarche,
+  IDsEvent,
+  IFoundationOutput,
 } from '@biblio-num/shared'
 
 import {
@@ -84,7 +85,7 @@ import {
   proConnectSignInRoute,
   proConnectCallbackRoute,
   refreshTokensRoute,
-  getOrganismeHistoryByRnfRoute,
+  getOrganismeEventsByRnfRoute,
   getAddOneRnfRoute,
   getAddOneRnaRoute,
   getDossierWithFieldsByIdRoute,
@@ -309,8 +310,8 @@ export const organismeApiClient = {
     return getOrRedirectTo404(getOrganismeByRnfRoute(organismeIdRnf))
   },
 
-  getOrganismeHistoryByRnf: async (organismeIdRnf: string): Promise<ISiafRnfHistoryOutput[]> => {
-    return (await apiClientInstance.get(getOrganismeHistoryByRnfRoute(organismeIdRnf)))?.data
+  getOrganismeEventsByRnf: async (organismeIdRnf: string): Promise<IDsEvent<IFoundationOutput> | null> => {
+    return (await apiClientInstance.get(getOrganismeEventsByRnfRoute(organismeIdRnf)))?.data
   },
 
   getOrganismeFilesSummary: async (organismeId: number): Promise<Record<FileTagKey, number>> => {

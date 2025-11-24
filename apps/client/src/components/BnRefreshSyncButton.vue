@@ -64,7 +64,7 @@ onBeforeUnmount(() => {
         @click="onClick()"
       />
     </div>
-    <span v-if="disabled" class="fr-text--sm m-0!"> En cours d'actulisation </span>
+    <span v-if="disabled" class="fr-text--sm m-0!"> En cours d'actualisation </span>
     <span v-else class="fr-text--sm m-0!"> Actualisé le {{ dateToStringFr(state.lastSynchronisedAt) }}</span>
   </div>
 </template>

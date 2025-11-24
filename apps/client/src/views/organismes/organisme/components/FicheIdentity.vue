@@ -10,6 +10,7 @@ import type { IAssociationOutput, IFoundationOutput } from '@biblio-num/shared'
 const props = defineProps<{
   organisme: IFoundationOutput | IAssociationOutput,
   isFoundation: boolean,
+  serviceInstructor?: string,
 }>()
 
 // TODO: à confirmer de l'idée.
@@ -35,11 +36,6 @@ const lastStatus = computed(() => {
     byteSizeBigInt: file.byteSize,
     state: eState.uploaded,
   }
-})
-
-// TODO: à récuperérer depuis l'API le dernier evenement
-const serviceInstructor = computed(() => {
-  return props.organisme?.department ? getPrefecture(props.organisme?.department) : 'Non renseigné'
 })
 </script>
 
@@ -85,7 +81,7 @@ const serviceInstructor = computed(() => {
             Service instructeur du dossier
           </dt>
           <dd class="bn-fiche-sub-title--text md:col-span-3">
-            {{ serviceInstructor }}
+            {{ serviceInstructor ? getPrefecture(serviceInstructor) : 'Non renseigné' }}
           </dd>
         </div>
 
