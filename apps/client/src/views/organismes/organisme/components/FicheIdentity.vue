@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { baseApiUrl } from '@/api/api-client'
-import { getFileRoute } from '@/api/bn-api-routes'
 import DownloadFile from '@/components/DownloadFile.vue'
 import type { FileToDownload } from '@/components/DownloadFile.vue'
 import { dateToStringFr, getPrefecture } from '@/utils'
@@ -16,11 +14,7 @@ const props = defineProps<{
 // TODO: à confirmer de l'idée.
 const stateInActivityOrDissolved = computed(() => {
   if (!props.organisme.state) { return 'Non renseigné' }
-  if (props.organisme.state && props.organisme.state === 'Dissoute') {
-    return 'Dissous'
-  }
-
-  return 'En activité'
+  return props.organisme.state
 })
 
 // TODO: ajouter un endpoint au niveau de l'api pour recupérer le dernier status
@@ -31,7 +25,7 @@ const lastStatus = computed(() => {
   }
   return {
     ...file,
-    url: `${baseApiUrl}${getFileRoute(file?.id)}`,
+    url: file?.id,
     filename: file.name,
     byteSizeBigInt: file.byteSize,
     state: eState.uploaded,
