@@ -60,6 +60,9 @@ import { FileOrganismeHubService } from '../../files/providers/file-organisme-hu
 import { OrganismeSyncService } from './organisme-sync.service'
 import { TransformRna } from '../utils/transform-rna'
 import { getDissolvedAt } from './organisme.utils'
+import { DemarcheService } from '@/modules/demarches/providers/services/demarche.service'
+import { Demarche } from '@/modules/demarches/objects/entities/demarche.entity'
+import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
 
 @Injectable()
 export class OrganismeService extends BaseEntityService<Organisme> {
@@ -71,6 +74,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     private readonly fileService: FileService,
     private readonly fileOrganismeHubService: FileOrganismeHubService,
     protected readonly dossierService: DossierService,
+    protected readonly demarcheService: DemarcheService,
     @InjectQueue(QueueName.file) private readonly fileQueue: Queue,
     private readonly bnConfiguration: BnConfigurationService,
     private readonly organismeSync: OrganismeSyncService,
@@ -485,26 +489,55 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     this.logger.debug(idRnf)
     const hubEvents = await this.hubService.getFoundationEvents(idRnf)
 
-    if (!hubEvents || !hubEvents.events.length) {
+    if (!hubEvents || !hubEvents.events || !hubEvents.events.length) {
       return null
     }
 
-    const dossiersIds = [...new Set(hubEvents.events.map(event => event.dossierNumber))]
+    const dossiersIds = [
+      ...new Set(hubEvents.events
+        .map(event => String(event.dossierNumber))
+        .filter(id => id && id !== 'NaN'),
+      ),
+    ]
+    const demarcheIds = [
+      ...new Set(
+        hubEvents.events
+          .map(event => Number(event.demarcheNumber))
+          .filter(id => !isNaN(id) && id > 0),
+      ),
+    ]
 
-    const localDossiers = await this.dossierService.findWithFilter(
-      {
-        sourceId: In(dossiersIds),
-      },
-    )
+    const [localDossiers, localDemarches] = await Promise.all([
+      dossiersIds.length > 0
+        ? this.dossierService.findWithFilter({
+          sourceId: In(dossiersIds),
+        }, {}, { id: true, sourceId: true })
+        : [] as Dossier[],
+
+      demarcheIds.length > 0
+        ? this.demarcheService.findWithFilter({
+          dsId: In(demarcheIds),
+        }, {}, { id: true, title: true, dsId: true })
+        : [] as Demarche[],
+    ])
 
     const dossiersMap = new Map(localDossiers.map(d => [d.sourceId, d.id]))
+    const demarchesMap = new Map(localDemarches.map(d => [d.dsId, { id: d.id, name: d.title }]))
 
     return {
       ...hubEvents,
-      events: hubEvents.events.map((event) => ({
-        ...event,
-        dossierLocalNumber: dossiersMap.get(String(event.dossierNumber)) || null,
-      })),
+      events: hubEvents.events.map((event) => {
+        const dossierKey = String(event.dossierNumber)
+        const demarcheKey = Number(event.demarcheNumber)
+        const localDemarcheInfo = demarchesMap.get(demarcheKey)
+
+        return {
+          ...event,
+          dossierLocalNumber: dossiersMap.get(dossierKey) || null,
+          demarcheLocalId: localDemarcheInfo?.id || null,
+          demarcheLocalName: localDemarcheInfo?.name || null,
+        }
+      }),
     }
   }
 

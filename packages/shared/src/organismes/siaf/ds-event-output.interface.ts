@@ -10,6 +10,9 @@ export interface IDsEventItem<T = IAssociationOutput | IFoundationOutput> {
   demarcheNumber: number
   dossierNumber: number
   dossierLocalNumber?: number | null
+  demarcheLocalId?: number | null;
+  demarcheLocalName?: string | null;
+  isDissolution: boolean
   acceptedAt: Date
   dossierInstructeurGroup: string | null
   organismeBefore: T | null

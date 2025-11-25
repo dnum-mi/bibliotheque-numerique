@@ -17,11 +17,13 @@ import { SyncState } from '../../shared/sync-state/objects/entities/sync-state.e
 import { OrganismeSyncService } from './providers/organisme-sync.service'
 import { OrganismeRnaService } from './providers/organisme-rna.service'
 import { CustomBullModule } from '@/shared/modules/custom-bull/custom-bull.module'
+import { DemarcheModule } from '../demarches/demarche.module'
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Organisme, SyncState]),
     forwardRef(() => DossierModule),
+    forwardRef(() => DemarcheModule),
     BullModule.registerQueue(
       ...([
         { name: QueueName.sync },

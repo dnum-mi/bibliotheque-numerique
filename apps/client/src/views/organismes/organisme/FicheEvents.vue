@@ -14,22 +14,25 @@ const sortedEvents = computed(() => {
   return [...props.events].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
 })
 
-const getBadgeType = (type: string): 'success' | 'info' | 'error' | 'new' | undefined => {
-  const t = type.toUpperCase()
+const getBadgeType = (event: IDsEventItem): 'success' | 'info' | 'error' | 'new' | undefined => {
+  if (event.isDissolution) {
+    return 'error'
+  }
+  const t = event.type.toUpperCase()
   if (t.includes('CREATION')) {
     return 'success'
   }
   if (t.includes('MODIFICATION')) {
     return 'info'
   }
-  if (t.includes('DISSOLUTION')) {
-    return 'error'
-  }
   return 'new'
 }
 
-const formatBadgeLabel = (type: string) => {
-  return type.replace(/_/g, ' ')
+const formatBadgeLabel = (event: IDsEventItem): string => {
+  if (event.isDissolution) {
+    return 'Dissolution'
+  }
+  return event.type.replace(/^ds/g, ' ')
 }
 
 const navigateToDossier = (localId: number | null | undefined) => {
@@ -46,11 +49,7 @@ const navigateToDossier = (localId: number | null | undefined) => {
 
 <template>
   <div class="fr-container--fluid fr-p-2w">
-    <div
-      v-if="sortedEvents.length === 0"
-      class="fr-alert fr-alert--info fr-mb-2w"
-    >
-      <h3 class="fr-alert__title">Aucun historique</h3>
+    <div v-if="sortedEvents.length === 0">
       <p>Aucun événement n'a été trouvé.</p>
     </div>
 
@@ -73,57 +72,88 @@ const navigateToDossier = (localId: number | null | undefined) => {
           <div class="fr-card fr-card--no-border fr-card--shadow fr-mb-3w">
             <div class="fr-card__body">
               <div class="fr-card__content">
-                <div class="fr-mb-1w text-right">
+                <div class="fr-display-flex fr-justify-content-between fr-align-items-start fr-mb-3w">
                   <DsfrBadge
-                    :type="getBadgeType(event.type)"
-                    :label="formatBadgeLabel(event.type)"
+                    :type="getBadgeType(event)"
+                    :label="formatBadgeLabel(event)"
                     small
                     no-icon
                   />
                 </div>
 
-                <h4 class="fr-card__title fr-text--md fr-mb-2w">
-                  {{ event.demarcheName || 'N/A' }}
-                </h4>
+                <div v-if="event.demarcheNumber" class="fr-card__title fr-mt-2w">
+                  <router-link
+                    v-if="event.demarcheLocalId"
+                    :to="{ name: routeNames.DEMARCHES, params: { id: event.demarcheLocalId } }"
+                    class="fr-link fr-text--lg text-title"
+                  >
+                    {{ event.demarcheLocalName }}
+                  </router-link>
+
+                  <div
+                    v-else
+                    class="fr-display-flex fr-items-center flex-wrap gap-2"
+                  >
+                    <span class="fr-text--lg fr-text--bold text-grey fr-mr-2w">
+                      {{ event.demarcheName || 'Démarche indéterminée' }}
+                    </span>
+                    <DsfrBadge
+                      label="Non importée"
+                      type="new"
+                      small
+                      no-icon
+                    />
+                  </div>
+                </div>
 
                 <div class="fr-grid-row fr-grid-row--gutters">
-                  <div class="fr-col-12 fr-col-md-6">
-                    <p class="fr-text--xs fr-mb-0 uppercase-label">N° Dossier</p>
-                    <p class="fr-text--sm fr-mb-1w font-mono">
-                      {{ event.dossierNumber ?? 'N/A' }}
+                  <div class="fr-col-12 fr-col-md-4">
+                    <p class="uppercase-label">
+                      Instructeur
                     </p>
-                  </div>
-                  <div class="fr-col-12 fr-col-md-6">
-                    <p class="fr-text--xs fr-mb-0 uppercase-label">Instructeur</p>
                     <p class="fr-text--sm fr-mb-1w">
                       {{ event.dossierInstructeurGroup ? getPrefecture(event.dossierInstructeurGroup) : 'N/A' }}
                     </p>
                   </div>
-                  <div class="fr-col-12 fr-col-md-6">
-                    <p class="fr-text--xs fr-mb-0 uppercase-label">Accepté le</p>
+
+                  <div class="fr-col-6 fr-col-md-4">
+                    <p class="uppercase-label">
+                      Accepté le
+                    </p>
                     <p class="fr-text--sm fr-mb-1w">
                       {{ dateToStringFr(event.acceptedAt) || 'N/A' }}
                     </p>
                   </div>
-                  <div class="fr-col-12 fr-col-md-6">
-                    <p class="fr-text--xs fr-mb-0 uppercase-label">JOAFE</p>
+
+                  <div class="fr-col-6 fr-col-md-4">
+                    <p class="uppercase-label">
+                      JOAFE
+                    </p>
                     <p class="fr-text--sm fr-mb-1w">
                       {{ dateToStringFr(event.publishedJOAFAt) || 'N/A' }}
                     </p>
                   </div>
                 </div>
 
-                <div class="fr-mt-2w fr-pt-2w border-top-light">
-                  <div class="flex-right items-center gap-2">
+                <div
+                  v-if="event.dossierNumber"
+                  class="flex justify-between fr-mt-2w fr-pt-2w border-top-light"
+                >
+                  <div class="dossier-identifier">
+                    <div><span class="fr-text--xs uppercase-label fr-mr-1v">Dossier :</span></div>
                     <div>
-                      <span
-                        v-if="!event.dossierLocalNumber"
-                        class="fr-text--xs text-grey italic fr-mr-2w"
-                      >
-                        Dossier non disponible
+                      <span class="fr-text--sm font-mono fr-text--bold text-dark">
+                        {{ event.dossierNumber ?? 'N/A' }}
                       </span>
                     </div>
-
+                  </div>
+                  <div class="fr-display-flex fr-items-center gap-2">
+                    <span
+                      v-if="!event.dossierLocalNumber"
+                      class="fr-text--xs text-grey italic fr-mr-2w"
+                    >
+                      Dossier non disponible
+                    </span>
                     <DsfrButton
                       :label="event.dossierLocalNumber ? 'Voir le dossier' : 'Non importé'"
                       :icon="event.dossierLocalNumber ? 'fr-icon-arrow-right-line' : undefined"
@@ -185,54 +215,46 @@ const navigateToDossier = (localId: number | null | undefined) => {
   border: 2px solid var(--background-default-grey);
 }
 
-.label-xs {
+.uppercase-label {
   text-transform: uppercase;
   color: var(--text-mention-grey);
   font-weight: 700;
   font-size: 0.7rem;
   margin-bottom: 0.25rem;
   letter-spacing: 0.5px;
+  line-height: 1;
 }
-.text-right {
-  text-align: right;
+
+.dossier-identifier {
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
 }
+
 .font-mono {
   font-family: monospace;
 }
 .text-grey {
   color: var(--text-mention-grey);
 }
+.text-dark {
+  color: var(--text-title-grey);
+}
 .italic {
   font-style: italic;
 }
 
-.compact-list {
-  list-style: none;
+.text-title {
+  color: var(--text-title-grey);
+  text-decoration: none;
+  background-image: none;
+  font-weight: 700;
 }
-.compact-list li {
-  margin-bottom: 0.25rem;
-  font-size: 0.9rem;
-}
-
-.pre-wrap-text {
-  white-space: pre-line;
-  font-size: 0.85rem;
-  line-height: 1.4;
-}
-
-.section-block {
-  margin-bottom: 1rem;
+.text-title:hover {
+  text-decoration: underline;
 }
 
 .border-top-light {
   border-top: 1px solid var(--border-default-grey);
-}
-.border-before-section {
-  border-top: 1px dashed var(--border-default-grey);
-  padding-top: 0.5rem;
-}
-.flex-right {
-  display: flex;
-  justify-content: flex-end;
 }
 </style>

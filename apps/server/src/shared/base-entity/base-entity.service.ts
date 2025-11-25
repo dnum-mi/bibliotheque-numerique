@@ -1,4 +1,4 @@
-import { DeepPartial, DeleteResult, FindOneOptions, Repository } from 'typeorm'
+import { DeepPartial, DeleteResult, FindManyOptions, FindOneOptions, FindOptionsSelect, Repository } from 'typeorm'
 import { BaseEntity } from './base.entity'
 import { LoggerService } from '../modules/logger/logger.service'
 import { FindOptionsRelations } from 'typeorm/find-options/FindOptionsRelations'
@@ -33,14 +33,18 @@ export abstract class BaseEntityService<T extends BaseEntity = BaseEntity> {
   async findWithFilter(
     filter: FindOptionsWhere<T>,
     relations?: FindOptionsRelations<T>,
+    select?: FindOptionsSelect<T>,
   ): Promise<T[]> {
     this.logger.verbose('findWithFilter')
-    const query: Record<string, any> = {}
+    const query: FindManyOptions<T> = {}
     if (relations) {
       query.relations = relations
     }
     if (filter) {
       query.where = filter
+    }
+    if (select) {
+      query.select = select
     }
     return this.repo.find(query)
   }
