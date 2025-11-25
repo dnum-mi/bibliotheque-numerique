@@ -332,6 +332,10 @@ export class OrganismeProcessor extends CustomBaseProcessor {
             })
           }
         } else {
+          // Sync Events
+          const events = await this.organismeService.getOrganismeRnfEvents(job.data.rnf)
+          rawRnf.events = events
+
           if (job.data.fieldId) {
             await this.fieldService.updateOrThrow(job.data.fieldId, {
               stringValue: `${job.data.rnf}`,

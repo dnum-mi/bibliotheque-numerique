@@ -56,8 +56,10 @@ const hasSiafAssociation = computed(() => {
 })
 
 const filesSummary = ref<Record<FileTagKey, number> | Record<string, never>>({})
-const dsEvents = ref<IDsEvent<IFoundationOutput> | null>(null)
 
+// TODO: Remettre plus tard pour le siaf final
+// const dsEvents = ref<IDsEvent<IFoundationOutput> | null>(null)
+const dsEvents = computed<IDsEvent<IFoundationOutput> | null>(() => organisme.value.rnfJson?.events || null)
 // TODO: use router to prevent user to access this page if not logged in or without the right role
 const role = computed<IRole | undefined>(() => userStore.currentUser?.role)
 
@@ -66,7 +68,8 @@ const isLoading = ref(false)
 const loadOrganisme = async () => {
   await organismeStore.loadOrganisme(props.id, props.idType)
   if (organisme.value) {
-    dsEvents.value = await organismeStore.loadOrganismeEvents(props.id, props.idType)
+    // TODO: Remettre plus tard pour le siaf final
+    // dsEvents.value = await organismeStore.loadOrganismeEvents(props.id, props.idType)
     filesSummary.value = await apiClient.getOrganismeFilesSummary(organisme.value.id)
   }
 }
@@ -95,7 +98,7 @@ onMounted(async () => {
 watch(() => props.id, async (newId, oldId) => {
   if (newId && newId !== oldId) {
     isLoading.value = true
-    dsEvents.value = null
+    // dsEvents.value = null
     filesSummary.value = {}
 
     await loadOrganisme()

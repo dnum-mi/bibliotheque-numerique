@@ -489,7 +489,7 @@ export class OrganismeService extends BaseEntityService<Organisme> {
     this.logger.debug(idRnf)
     const hubEvents = await this.hubService.getFoundationEvents(idRnf)
 
-    if (!hubEvents || !hubEvents.events || !hubEvents.events.length) {
+    if (!hubEvents?.events?.length) {
       return null
     }
 
