@@ -121,8 +121,9 @@ const fileTabs = computed(() => {
       idTab: slugify(originalName),
       titleTab: `${originalName} (${count})`,
       originalTag: tag as FileTagKey,
+      count,
     }
-  })
+  }).filter(f => f.count > 0)
 })
 
 const serviceInstructor = computed(() => {
