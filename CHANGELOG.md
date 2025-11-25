@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.1.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v3.1.0...v3.1.1) (2025-11-25)
+
+
+### Bug Fixes
+
+* add var env for refApi in stating ([83ba218](https://github.com/dnum-mi/bibliotheque_numerique/commit/83ba218bf2659bcb8a84d7cdef9a1a2047408898))
+* ajout de propriété données personnelle sensible pour les organismes ([4959924](https://github.com/dnum-mi/bibliotheque_numerique/commit/49599243a47bd4f64f3965366ab97e4052f8f3e1))
+* ajout des années de depots des comptes ([41060f7](https://github.com/dnum-mi/bibliotheque_numerique/commit/41060f729b6de017f5b20b55da99b3c9f2ce734c))
+* ajout des onglets Évènements et Relations ([f59cb5a](https://github.com/dnum-mi/bibliotheque_numerique/commit/f59cb5ab355af1cc3ca65c9214ff2b8fc81c74c6))
+* mis à jour des données de mock-hub ([5d489f8](https://github.com/dnum-mi/bibliotheque_numerique/commit/5d489f8f9a5e2d9b72391b918a19f16ba8e29ea8))
+* mise à jour onglet évènement et ajout champs isDissolution dans IDsEvent ([f56f481](https://github.com/dnum-mi/bibliotheque_numerique/commit/f56f48143be43d8520a0880784f0a6ec7d3a7f6f))
+
 ## [3.1.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v3.0.1...v3.1.0) (2025-11-21)
 
 
