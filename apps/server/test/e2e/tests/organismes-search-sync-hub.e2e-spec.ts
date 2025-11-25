@@ -16,6 +16,7 @@ import { SyncState } from '../../../src/shared/sync-state/objects/entities/sync-
 import { Organisme } from '../../../src/modules/organismes/objects/organisme.entity'
 import { addLuhnToRnf } from '../../../src/shared/utils/rnf.utils'
 import { associationHub } from '../../mock/mock-hub/data/association.data.mock'
+import { eventsMock } from '../../mock/mock-hub/data/events.data.mock'
 
 const idRna = 'W123456789'
 const urlAssociation = `/organismes/rna/${idRna}`
@@ -151,6 +152,7 @@ describe('get foundation to sync with hub', () => {
       const fondationFromHub = { ...foundationHub, id: idRnf }
 
       jest.spyOn(hubService, 'getFoundation').mockResolvedValue(fondationFromHub)
+      jest.spyOn(hubService, 'getFoundationEvents').mockResolvedValue(eventsMock(idRnf))
 
       await syncQueue.pause()
       await request(app.getHttpServer())

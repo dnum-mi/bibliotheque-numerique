@@ -17,6 +17,7 @@ import { foundationHub } from '../../../../mock/mock-hub/data/foundation.data.mo
 import { associationHub } from '../../../../mock/mock-hub/data/association.data.mock'
 import { BnConfigurationOutputDto } from '../../../../../src/shared/modules/bn-configurations/objects/dto/bn-configuration-output.dto'
 import { RnaService } from '../../../../../src/modules/organismes/providers/rna.service'
+import { eventsMock } from '../../../../mock/mock-hub/data/events.data.mock'
 
 describe('Synchro hub', () => {
   let app: INestApplication
@@ -103,7 +104,7 @@ describe('Synchro hub', () => {
     jest.spyOn(hubService, 'getFoundation').mockResolvedValue(
       foundationHub,
     )
-
+    jest.spyOn(hubService, 'getFoundationEvents').mockResolvedValue(eventsMock(foundationHub.id))
     // Run Job Synchro
     await syncQueue.add(eJobName.SyncAllRnfOrganisme)
     await forceJobsFinished(syncQueue, [eJobName.SyncAllRnfOrganisme, eJobName.SyncOneRnfOrganisme])
