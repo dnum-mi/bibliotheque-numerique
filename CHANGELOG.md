@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.1.2](https://github.com/dnum-mi/bibliotheque_numerique/compare/v3.1.1...v3.1.2) (2025-11-26)
+
+
+### Bug Fixes
+
+* état et PJs dans la page info des organismes ([4602b42](https://github.com/dnum-mi/bibliotheque_numerique/commit/4602b429e0bca61af348e49ef4a3417996359786))
+* propriétés optionnel pour l'interface events ([7e2517b](https://github.com/dnum-mi/bibliotheque_numerique/commit/7e2517b2639da29bcc6eaa217f714438aa14acb6))
+* retirer le onglets PJs vide ([008596b](https://github.com/dnum-mi/bibliotheque_numerique/commit/008596b585ad077964d51fd3a3e7c8805a5c9975))
+* synchroniser les events en même que la fondation ([4f26917](https://github.com/dnum-mi/bibliotheque_numerique/commit/4f2691723eb97d01b2dbef8bdbd2f28f83fbe238))
+
 ## [3.1.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v3.1.0...v3.1.1) (2025-11-25)
 
 
