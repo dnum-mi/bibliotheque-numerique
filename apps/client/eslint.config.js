@@ -1,7 +1,7 @@
 import antfu from '@antfu/eslint-config'
 
 export default antfu({
-  ignores: ['node_modules', '**/node_modules/**', 'dist', '**/dist/**'],
+  ignores: ['node_modules', '**/node_modules/**', 'dist', '**/dist/**', '*.md'],
 }, {
   rules: {
     'perfectionist/sort-imports': 'off',
