@@ -5,114 +5,103 @@ import { canAccessDemarche } from '@biblio-num/shared'
 import apiClient from '@/api/api-client.ts'
 import { routeNames } from '@/router/route-names.ts'
 import { getPrefecture } from '../../../utils'
+import type { HeaderDataTable } from '@/shared/types'
+import StatusBadgesRenderer from '@/components/Badges/status/StatusBadgesRenderer.vue'
+import type { RowDataType } from '@/components/BiblioNumDataTable.vue'
 
+type ILeanDossierOutputWithAuthorizeOption = ILeanDossierOutput & RowDataType
 const props = defineProps<{
   role?: IRole;
   organismeId: string;
 }>()
 
 const router = useRouter()
-
-type Column = {
-  field: string;
-  headerName: string;
-  hidden?: boolean;
-  getValue?: (value: string) => unknown;
-}
-
-const columns: Column[] = [
+const headers: HeaderDataTable[] = [
   {
-    field: 'id',
-    headerName: 'Id',
-    hidden: true,
+    value: 'id',
+    text: 'Id',
+    type: 'hidden',
+    filterable: false,
   },
   {
-    field: 'demarcheId',
-    headerName: 'Démarche',
-    hidden: true,
+    value: 'demarcheId',
+    text: 'Démarche',
+    type: 'hidden',
+    filterable: false,
   },
   {
-    field: 'demarcheTitle',
-    headerName: 'Libellé',
+    value: 'demarcheTitle',
+    text: 'Libellé',
+    filterable: false,
   },
   {
-    field: 'prefecture',
-    headerName: 'Service instructeur',
-    getValue: getPrefecture,
+    value: 'prefecture',
+    text: 'Service instructeur',
+    valueFormatter: (params: { value: string }) => getPrefecture(params.value),
+    filterable: false,
   },
   {
-    field: 'state',
-    headerName: 'État',
-    getValue: (value: string) => ({ component: 'StatusBadge', status: value }),
+    value: 'state',
+    text: 'État',
+    renderer: StatusBadgesRenderer,
+    filterable: false,
   },
   {
-    field: 'dateDepot',
-    headerName: 'Dépôt',
-    getValue: (value: string) => new Date(value).toLocaleDateString(),
+    value: 'dateDepot',
+    text: 'Dépôt',
+    valueFormatter: (params: { value: string }) => new Date(params.value).toLocaleDateString(),
+    filter: 'agMultiColumnFilter',
+    filterable: false,
   },
 ] as const
 
-const headers = columns.filter(({ hidden }) => !hidden).map(({ headerName }) => headerName)
+const rowsdata = ref<ILeanDossierOutputWithAuthorizeOption[]>([])
 
-const rows = ref<ILeanDossierOutput[]>([])
+const toaster = useToaster()
 
 const updateListeDossiers = async () => {
-  const dossiers = await apiClient.getOrganismeDossiers(props.organismeId)
-  rows.value = dossiers.map((d) => {
-    const row: unknown[] & { cursor?: string; title?: string; onClick: (event: MouseEvent) => void } = columns
-      .filter(({ hidden }) => !hidden)
-      .map(({ field, getValue }) => {
-        if (getValue) {
-          return getValue(d[field]) || '-'
-        }
-        return d[field] ?? '-'
-      })
-    if (canAccessDemarche(d.demarcheId, props.role)) {
-      row.cursor = 'pointer'
-      row.title = 'Cliquez pour accéder à ce dossier'
-      row.onClick = () => {
-        router.push({ name: routeNames.DOSSIERS, params: { id: d.id } })
+  try {
+    rowsdata.value = (await apiClient.getOrganismeDossiers(props.organismeId)).map(r => {
+      const row = r as ILeanDossierOutputWithAuthorizeOption
+      row.authorized = canAccessDemarche(row.demarcheId, props.role)
+      if (row.authorized) {
+        row.cursor = 'pointer'
+        // row.title = 'Cliquez pour accéder à ce dossier'
+      } else {
+        row.cursor = 'not-allowed'
+        // row.title = 'Vous n’avez pas les droits d\'accès à cette démarche, ce dossier est donc inaccessible'
       }
-    } else {
-      row.cursor = 'not-allowed'
-      row.title = 'Vous n’avez pas accès à cette démarche, ce dossier est donc inaccessible'
-    }
-    return row
-  }).sort((a, b) => {
-    const dateA = a?.dateDepot?.getTime()
-    const dateB = b?.dateDepot?.getTime()
-    return dateB - dateA
-  })
+
+      return row
+    }).sort((a, b) => {
+      const dateA = a?.dateDepot?.getTime()
+      const dateB = b?.dateDepot?.getTime()
+      return dateB - dateA
+    })
+  } catch (error) {
+    console.warn(error)
+    toaster.addErrorMessage({ description: 'Impossible de récupérer la liste des dossiers de cet organisme' })
+  }
 }
 
 watch(() => props.organismeId, updateListeDossiers, { immediate: true })
+
+const rowClick = (data: unknown) => {
+  const d = data as ILeanDossierOutputWithAuthorizeOption
+  if (d.authorized) {
+    router.push({ name: routeNames.DOSSIERS, params: { id: d.id } })
+    return
+  }
+  toaster.addErrorMessage({ description: 'Accés non autorisé' })
+}
 </script>
 
 <template>
-  <DsfrTable
-    title=""
+  <BiblioNumDataTable
     class="fr-text fr-text--bold bn-color-table w-full"
     :headers="headers"
-  >
-    <tr
-      v-for="(row, i) of rows"
-      :key="i"
-      tabindex="0"
-      :style="{ cursor: row.cursor ?? 'auto' }"
-      :title="row.title"
-      @click="($event) => row.onClick?.($event)"
-      @keyup.enter="($event) => row.onClick?.($event)"
-    >
-      <template
-        v-for="(cell, j) of row"
-        :key="j"
-      >
-        <DsfrTableCell
-          class="w-full"
-          :field="typeof cell === 'number' ? String(cell) : cell ?? '-'"
-          :cell-attrs="cell.attrs ?? {}"
-        />
-      </template>
-    </tr>
-  </DsfrTable>
+    :rows-data="rowsdata"
+    :pagination="false"
+    @row-click="rowClick"
+  />
 </template>
