@@ -1,22 +1,22 @@
 <script lang="ts" setup>
 import { PAGINATION_PAGE_SIZE } from '@/config'
 import DataTable from 'primevue/datatable'
-import type {
-  DataTableFilterMeta,
-} from 'primevue/datatable'
+import type { DataTableFilterMeta } from 'primevue/datatable'
 import Column from 'primevue/column'
-import {
-  FilterMatchMode,
-  FilterOperator,
-} from '@primevue/core/api'
-import { useRouter } from 'vue-router'
+import { FilterMatchMode, FilterOperator } from '@primevue/core/api'
 import type { HeaderDataTable } from '@/shared/types'
+import { dealWithBlankAndNotBlank } from './ag-grid/server-side/filters.utils'
+
+export type RowDataType = {
+  authorized: boolean
+  cursor: string
+}
 
 const props = withDefaults(
   defineProps<{
     title?: string
-    rowData?: Record<string, string | number>[]
-    actionTitle: string
+    rowsData?: RowDataType[]
+    actionTitle?: string
     headers?: HeaderDataTable[]
     pagination?: boolean
     paginationPageSize?: number
@@ -31,13 +31,13 @@ const props = withDefaults(
     headers: () => [],
     paginationPageSize: PAGINATION_PAGE_SIZE,
     rowSelection: undefined,
-    rowStyle: () => ({}),
   },
 )
 
-// TODO: A verifier
-// const emit = defineEmits(['getElt', 'selectionChanged', 'filtersUpdated', 'sortUpdated'])
-
+const emit = defineEmits<{
+  'rowClick': [data: unknown],
+  'sortUpdated': [value: unknown]
+}>()
 interface PrimeVueColumnDef {
   headerName?: string
   field?: string
@@ -61,7 +61,9 @@ const columnDefs: ComputedRef<PrimeVueColumnDef[]> = computed(() => {
   const filteredHeaders = headers
     .filter((header, idx) => (props.withAction && idx === 0) || header.type !== 'hidden')
     .map((header) => {
-      const filter = {}
+      const filter = {
+        filter: header.filter,
+      }
       const renderer = {
         cellRenderer:
           header.renderer ?? (header.parseFn ? (params: Record<string | symbol, unknown>) => header.parseFn?.(params.value) : undefined),
@@ -109,23 +111,18 @@ const filters = ref<DataTableFilterMeta>(columnDefs.value
 const sort = ref<{ key: string; order: 'ASC' | 'DESC' | 'NONE' }[]>([])
 const perPage = computed(() => props.paginationPageSize || PAGINATION_PAGE_SIZE)
 const scrollHeight = computed(() => (props.pagination ? 'calc(100vh - 300px)' : 'calc(100vh - 200px)'))
-// TODO: A verifier
 // const selectedColumnsIds = ref(columnDefs.value.map((col) => col.field ?? ''))
 
-// TODO: A verifier
-// function onSortChanged(event: { sortField: string; sortOrder: number }) {
+// function onSortChanged (event: { sortField: string; sortOrder: number }) {
 //   sort.value = []
 //   if (event.sortField && event.sortOrder) {
 //     sort.value.push({ key: event.sortField, order: event.sortOrder === 1 ? 'ASC' : 'DESC' })
 //   }
 //   emit('sortUpdated', sort.value)
 // }
-// TODO: A vérifier
-// const debug = ref('false')
 
-const router = useRouter()
 const rowClick = (event: { data: Record<string, string | number> }) => {
-  router.push({ name: 'DemarcheDossiers', params: { demarcheId: event.data.id } })
+  emit('rowClick', toRaw(event.data))
 }
 </script>
 
@@ -136,7 +133,7 @@ const rowClick = (event: { data: Record<string, string | number> }) => {
   <DataTable
     v-model:filters="filters"
     :style="{ width: 'calc(100vw - 38px)' }"
-    :value="rowData"
+    :value="rowsData"
     striped-rows
     paginator
     :rows="perPage"
@@ -146,10 +143,15 @@ const rowClick = (event: { data: Record<string, string | number> }) => {
     removable-sort
     :scroll-height="scrollHeight"
     row-hover
-    @row-click="rowClick($event)"
     filter-display="menu"
     :sort-field="sort[0]?.key"
     :sort-order="sort[0]?.order === 'ASC' ? 1 : (sort[0]?.order === 'DESC' ? -1 : 0)"
+    :row-style="(data) => {
+      return {
+        cursor: data.cursor || 'auto',
+      }
+    }"
+    @row-click="rowClick($event)"
   >
     <Column
       v-for="col of columnDefs"
@@ -164,9 +166,44 @@ const rowClick = (event: { data: Record<string, string | number> }) => {
         <template v-if="col.cellRenderer">
           <component :is="col.cellRenderer" :params="{ value: data[col.field!] }" />
         </template>
+        <template v-else-if="col.valueFormatter && typeof col.valueFormatter === 'function' && col.field">
+          {{ col.valueFormatter({ value: data[col.field] } as any) }}
+        </template>
         <template v-else>
           {{ data[col.field!] }}
         </template>
+      </template>
+      <template #filter="{ filterModel, filterCallback }">
+        <template v-if="col.filter === 'agSetColumnFilter'">
+          <MultiSelect
+            v-model="filterModel.value"
+            :options="col.filterParams?.values?.map(
+              (value: string) => ({ name: col.filterParams?.valueFormatter ? col.filterParams.valueFormatter({ value }) : value, code: value }),
+            )"
+            option-label="name"
+            placeholder="Toutes les valeurs"
+            @change="filterCallback()"
+          >
+            <template #option="slotProps">
+              <component :is="col.filterParams?.cellRenderer ?? col.cellRenderer" :params="{ value: slotProps.option.name }" />
+            </template>
+          </MultiSelect>
+        </template>
+        <template v-else-if="col.filter === 'agMultiColumnFilter'">
+          <DatePicker v-model="filterModel.value" date-format="dd/mm/yy" placeholder="jj/mm/aaaa" />
+        </template>
+        <template
+          v-else-if="filterModel.matchMode === 'blank' || filterModel.matchMode === 'notBlank'"
+        >
+          {{ dealWithBlankAndNotBlank(filterModel) }}
+        </template>
+        <DsfrInput
+          v-else
+          v-model="filterModel.value"
+          type="text"
+          class="p-inputtext p-component p-element"
+          @update:model-value="filterCallback()"
+        />
       </template>
     </Column>
   </DataTable>

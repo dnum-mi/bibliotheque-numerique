@@ -24,6 +24,7 @@ import {
   numberMatchModeToServer,
 } from './utils/datatable.const'
 import { formatDateForApi, safeNumber, getFilters } from './utils/datatable.utils'
+import { dealWithBlankAndNotBlank } from './filters.utils'
 
 // Types étendus pour inclure filterType (métadonnée custom)
 interface ExtendedDataTableOperatorFilterMetaData extends DataTableOperatorFilterMetaData {
@@ -741,12 +742,6 @@ const onRowClick = (event: { data: T; originalEvent?: Event }) => {
   })
 }
 //#endregion
-
-function dealWithBlankAndNotBlank (filterModel: { matchMode: unknown; value: unknown }) {
-  if (filterModel.matchMode === 'blank' || filterModel.matchMode === 'notBlank') {
-    filterModel.value = filterModel.matchMode
-  }
-}
 
 function refreshTable () {
   getRows(currentPage.value)

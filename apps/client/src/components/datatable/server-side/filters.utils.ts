@@ -106,3 +106,9 @@ export const getDataTableFilterFromFieldType = (fieldType?: keyof typeof fieldTy
 
   return filter
 }
+
+export function dealWithBlankAndNotBlank (filterModel: { matchMode: unknown, value: unknown }) {
+  if (filterModel.matchMode === 'blank' || filterModel.matchMode === 'notBlank') {
+    filterModel.value = filterModel.matchMode
+  }
+}
