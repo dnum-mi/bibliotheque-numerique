@@ -7,7 +7,6 @@ import type BiblioNumDataTableAgGrid from '@/components/BiblioNumDataTableAgGrid
 import LayoutList from '@/components/Layout/LayoutList.vue'
 import { useUserStore } from '@/stores'
 import { useActiveFilter } from '@/components/ag-grid/active-filters/useActiveFilter'
-import type { SelectionChangedEvent } from 'ag-grid-community'
 import { demarcheColumnDefs } from './columns-def.const'
 import { EMPTY_RESULT, isEmptyListFilter, isEmptySetFilter } from '@/components/ag-grid/utils'
 
@@ -49,12 +48,6 @@ onMounted(async () => {
   await userStore.loadMyProfile()
 })
 
-const onSelectDemarche = (event: SelectionChangedEvent) => {
-  const selection = event.api.getSelectedRows()?.[0]
-  const id = selection?.id
-  router.push({ name: routeNames.DEMARCHE_DOSSIERS, params: { demarcheId: id } })
-}
-
 const onRowClick = (event: { data: ISmallDemarcheOutput }) => {
   const selection = event.data
   const id = selection?.id
@@ -62,7 +55,6 @@ const onRowClick = (event: { data: ISmallDemarcheOutput }) => {
 }
 
 const { activeFilters, onFiltersUpdated, handleClearAllFilters, handleRemoveFilter } = useActiveFilter(agGridComponent)
-const dataTable = ref('ag-grid')
 </script>
 
 <template>
