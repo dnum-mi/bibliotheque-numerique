@@ -17,6 +17,7 @@ import { routeNames } from '@/router/route-names'
 const props = defineProps<{
   params: {
     value: string
+    row: unknown
     column: {
       columnLabel: string
       formatFunctionRef: FormatFunctionRefKeys
@@ -109,7 +110,18 @@ const getPrefecture = (prefecture: PrefectureKey) => {
       v-for="(cellValue, index) in cellValues"
       :key="index"
     >
-      <template v-if="!!componentRenderer">
+      <template v-if="params.column.id === '96151176-4624-4706-b861-722d2e53545d'">
+        <!-- ComponentRenderer -->
+        <RouterLink
+          :to=" {
+            name: 'Dossiers',
+            params: { id: params.row?.dossierId },
+          }"
+        >
+          {{ cellValue }}
+        </RouterLink>
+      </template>
+      <template v-else-if="!!componentRenderer">
         <!-- ComponentRenderer -->
         <component
           :is="componentRenderer"

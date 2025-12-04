@@ -66,7 +66,7 @@ const agGridFilterToDataTableFilter: Record<string, string> = {
 
 const agGridFilterToDataTableDataType: Record<string, string | undefined> = {
   'agTextColumnFilter': undefined,
-  'agNumberColumnFilter': 'numeric',
+  'agNumberColumnFilter': 'number',
   'agMultiColumnFilter': 'date',
   'agDateColumnFilter': 'date',
   'agSetColumnFilter': 'set',
@@ -142,6 +142,8 @@ function getFilters () {
               value: null,
               matchMode: agGridFilterToDataTableFilter[col.filter || 'agTextColumnFilter'],
             }],
+            fieldType: col.fieldType,
+            filterType: agGridFilterToDataTableDataType[col.filter || 'agTextColumnFilter'],
           },
         }
       },
@@ -288,6 +290,7 @@ function restoreFromLocalStorage () {
             value: filterValues,
             matchMode: FilterMatchMode.IN,
           }],
+          filterType: agGridFilterToDataTableDataType[colDef.filter || 'agTextColumnFilter'],
         }
       } else {
         // Pour les autres filtres, format classique
@@ -308,6 +311,7 @@ function restoreFromLocalStorage () {
                 }]
               : []),
           ],
+          filterType: agGridFilterToDataTableDataType[colDef.filter || 'agTextColumnFilter'],
         }
       }
     })
@@ -382,10 +386,10 @@ const filtersToSend = computed<Record<keyof typeof props.columnDefs, IFilter>>((
       if (metaFilter.value) {
         // @ts-expect-error TS2322
         result[key] = {
-          filterType: Array.isArray(metaFilter.value) ? 'set' : 'text',
+          filterType: Array.isArray(metaFilter.value) ? 'set' : metaFilter.filterType,
           condition1: {
             type: (Array.isArray(metaFilter.value) || isBlankOrNotBlank) ? undefined : metaFilter.matchMode,
-            filter: Array.isArray(metaFilter.value) ? metaFilter.value.map(({ code }) => code) : metaFilter.value,
+            filter: Array.isArray(metaFilter.vale) ? metaFilter.value.map(({ code }) => code) : metaFilter.value,
           },
         }
         continue
@@ -405,7 +409,7 @@ const filtersToSend = computed<Record<keyof typeof props.columnDefs, IFilter>>((
         }
         if (cond1?.value || cond2?.value) {
           result[key] = {
-            filterType: Array.isArray(cond1!.value) ? 'set' : 'text',
+            filterType: Array.isArray(cond1!.value) ? 'set' : metaFilter.filterType,
             condition1: {
               type: (Array.isArray(cond1!.value) || isBlankOrNotBlank1) ? undefined : cond1!.matchMode,
               filter: Array.isArray(cond1!.value) ? cond1!.value.map(({ code }) => code) : cond1!.value,
@@ -427,10 +431,10 @@ const filtersToSend = computed<Record<keyof typeof props.columnDefs, IFilter>>((
         if (cond1!.value) {
           // @ts-expect-error TS2322
           result[key] = {
-            filterType: Array.isArray(cond1!.value) ? 'set' : 'text',
+            filterType: Array.isArray(cond1!.value) ? 'set' : metaFilter.filterType,
             condition1: {
               type: Array.isArray(cond1!.value) ? undefined : cond1!.matchMode,
-              filter: Array.isArray(cond1!.value) ? cond1!.value.map(({ code }) => code) : cond1!.value,
+              filter: Array.isArray(cond1!.value) ? cond1!.value.map(({ code }) => code) : +cond1!.value,
             },
           }
         }
@@ -676,6 +680,7 @@ function updateDataTableState (dto: IPagination<T>) {
           : [{ name: value.condition1.filter, code: value.condition1.filter }]
 
         filters.value[key as keyof typeof filters.value] = {
+          ...(filters.value[key as keyof typeof filters.value] as DataTableOperatorFilterMetaData),
           operator: FilterOperator.AND,
           constraints: [{
             value: filterValues,
@@ -688,6 +693,7 @@ function updateDataTableState (dto: IPagination<T>) {
         const condition2 = (value as any).condition2
 
         filters.value[key as keyof typeof filters.value] = {
+          ...(filters.value[key as keyof typeof filters.value] as DataTableOperatorFilterMetaData),
           operator: FilterOperator.AND,
           constraints: [
             {
@@ -878,7 +884,7 @@ defineExpose({
       >
         <template #body="{ data }">
           <template v-if="col.cellRenderer">
-            <component :is="col.cellRenderer" :style="col.cellStyle" :params="{ value: data[col.field!], ...col.cellRendererParams }" />
+            <component :is="col.cellRenderer" :style="col.cellStyle" :params="{ row: data, value: data[col.field!], ...col.cellRendererParams }" />
           </template>
           <template v-else-if="col.valueFormatter && typeof col.valueFormatter === 'function' && col.field">
             <span :style="(col.cellStyle as unknown as string)">

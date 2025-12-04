@@ -11,6 +11,7 @@ import DelayStateRenderer from '../../Badges/delay-state/DelayStateRenderer.vue'
 const fieldTypesDict = {
   file: 'agTextColumnFilter',
   string: 'agTextColumnFilter',
+  strings: 'agTextColumnFilter',
   number: 'agNumberColumnFilter',
   numbers: 'agNumberColumnFilter',
   date: 'agMultiColumnFilter',

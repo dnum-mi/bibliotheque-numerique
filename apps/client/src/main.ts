@@ -321,7 +321,7 @@ createApp(App)
     },
     filterMatchModeOptions: {
       text: ['startsWith', 'contains', 'notContains', 'endsWith', 'equals', 'notEquals', 'blank', 'notBlank'],
-      numeric: ['equals', 'notEquals', 'lt', 'lte', 'gt', 'gte'],
+      numeric: ['equals', 'notEquals', 'lessThan', 'lessThanOrEqual', 'greaterThan', 'greaterThanOrEqual'],
       date: ['dateIs', 'dateIsNot', 'dateBefore', 'dateAfter'],
     },
     locale: {
@@ -333,10 +333,10 @@ createApp(App)
       notEquals: 'Différent de',
       blank: 'Vide',
       notBlank: 'Non vide',
-      gt: 'Supérieur à',
-      gte: 'Supérieur ou égal à',
-      lt: 'Inférieur à',
-      lte: 'Inférieur ou égal à',
+      greaterThan: 'Supérieur à',
+      greaterThanOrEqual: 'Supérieur ou égal à',
+      lessThan: 'Inférieur à',
+      lessThanOrEqual: 'Inférieur ou égal à',
       dateBefore: 'Avant',
       dateAfter: 'Après',
       dateIs: 'Est le',
