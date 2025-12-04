@@ -2,7 +2,7 @@
 import { ref, computed, watch, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { useDebounceFn, useStorage } from '@vueuse/core'
-import type { ColumnMenuTab, GridApi, SelectionChangedEvent } from 'ag-grid-community'
+import type { ColumnMenuTab, GridApi } from 'ag-grid-community'
 
 import type { ICreateCustomFilter, IPagination, IPatchCustomFilter, ICustomFilter, IDemarche, IMappingColumn } from '@biblio-num/shared'
 
@@ -18,7 +18,6 @@ import type { CustomFilterWithErrors } from '@/views/demarches/demarche/dossiers
 import { useActiveFilter } from '@/components/ag-grid/active-filters/useActiveFilter'
 import { useTour } from '@/composables/use-tour'
 import { filterTourSteps } from './TutoFilterDossier'
-import Button from 'primevue/button'
 
 const demarcheStore = useDemarcheStore()
 const router = useRouter()
@@ -125,8 +124,7 @@ const computeColumnsDef = () => {
   ]
 }
 
-const onSelectionChanged = ($event: SelectionChangedEvent) => {
-  const id = $event.api.getSelectedRows()?.[0]?.dossierId
+const onSelectionChanged = ({ data: { dossierId: id }}: { data: { dossierId: number } }) => {
   if (id) {
     router.push({
       name: 'Dossiers',
@@ -467,10 +465,10 @@ const quickFilterValueTranslations: Record<string, string> = {
         :loading="fetching"
         class="h-full"
         :pre-condition="!!demarche"
-        :on-selection-changed="onSelectionChanged"
         :api-call="apiCall"
         :local-storage-key="localStorageDataTablePaginationKey"
         :initial-state="initialDataTableState"
+        @row-click="onSelectionChanged"
         @filters-updated="onFiltersUpdated"
       />
     </div>

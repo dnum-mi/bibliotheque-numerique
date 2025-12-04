@@ -12,6 +12,9 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     ActiveFiltersDropdown: typeof import('./components/ag-grid/active-filters/ActiveFiltersDropdown.vue')['default']
+    AgGridAttachmentCell: typeof import('./components/ag-grid/AgGridAttachmentCell.vue')['default']
+    AgGridMultiValueCell: typeof import('./components/ag-grid/AgGridMultiValueCell.vue')['default']
+    AgGridServerSide: typeof import('./components/ag-grid/server-side/AgGridServerSide.vue')['default']
     AppDsfrFooter: typeof import('./components/AppDsfrFooter.vue')['default']
     AppToaster: typeof import('./components/AppToaster.vue')['default']
     AttachedFileList: typeof import('./components/ag-grid/files/AttachedFileList.vue')['default']

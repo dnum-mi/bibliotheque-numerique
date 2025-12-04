@@ -660,6 +660,7 @@ function removeFilter (colId: string): Promise<void> {
   })
 }
 
+// Met à jour l'état du tableau de données en fonction du DTO fourni
 function updateDataTableState (dto: IPagination<T>) {
   // Appliquer les filtres
   filters.value = getFilters()

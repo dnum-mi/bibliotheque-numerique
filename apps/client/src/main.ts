@@ -343,6 +343,8 @@ createApp(App)
       dateIsNot: 'N’est pas le',
       clear: 'Effacer',
       apply: 'Appliquer',
+      addRule: 'Ajouter une règle',
+      removeRule: 'Supprimer la règle',
       matchAll: 'Satisfaire tous',
       matchAny: 'Satisfaire au moins un',
       monthNames: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
