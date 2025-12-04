@@ -75,6 +75,7 @@ export default {
   <div class="flex flex-col items-left m-2">
     <DsfrCheckbox
       v-model="yearsFilter.includeEmpty"
+      :value="undefined"
       :disabled="!yearsFilter.filter.length"
       :checked="yearsFilter.includeEmpty || !yearsFilter.filter.length"
       label="Aucune"
@@ -86,6 +87,7 @@ export default {
       :key="year"
     >
       <DsfrCheckbox
+        :value="year"
         :model-value="yearsFilter.filter.includes(year)"
         :label="year.toString()"
         small

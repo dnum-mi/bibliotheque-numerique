@@ -878,13 +878,17 @@ defineExpose({
       >
         <template #body="{ data }">
           <template v-if="col.cellRenderer">
-            <component :is="col.cellRenderer" :params="{ value: data[col.field!], ...col.cellRendererParams }" />
+            <component :is="col.cellRenderer" :style="col.cellStyle" :params="{ value: data[col.field!], ...col.cellRendererParams }" />
           </template>
           <template v-else-if="col.valueFormatter && typeof col.valueFormatter === 'function' && col.field">
-            {{ col.valueFormatter({ value: data[col.field] } as any) }}
+            <span :style="(col.cellStyle as unknown as string)">
+              {{ col.valueFormatter({ value: data[col.field] } as any) }}
+            </span>
           </template>
           <template v-else>
-            {{ data[col.field!] }}
+            <span :style="(col.cellStyle as unknown as string)">
+              {{ data[col.field!] }}
+            </span>
           </template>
         </template>
         <template #filter="{ filterModel, filterCallback }">
