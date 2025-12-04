@@ -1,20 +1,26 @@
 <script lang="ts" setup>
+import type {
+  ICreateCustomFilter,
+  IPagination,
+  IPatchCustomFilter,
+  ICustomFilter,
+  IDemarche,
+  IMappingColumn,
+} from '@biblio-num/shared'
+import type { FrontIMappingColumn } from '@/stores'
+import type { BNColDef } from '@/components/ag-grid/server-side/bn-col-def.interface'
+import type { TotalsAllowed } from './DemarcheDossiersDisplays.vue'
+import type { CustomFilterWithErrors } from '@/views/demarches/demarche/dossiers/custom-filter-with-errors.type'
+
 import { ref, computed, watch, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
-import { useDebounceFn, useStorage } from '@vueuse/core'
-import type { ColumnMenuTab, GridApi } from 'ag-grid-community'
+import { useDebounceFn } from '@vueuse/core'
 
-import type { ICreateCustomFilter, IPagination, IPatchCustomFilter, ICustomFilter, IDemarche, IMappingColumn } from '@biblio-num/shared'
-
-import type { FrontIMappingColumn } from '@/stores'
 import { useCustomFilterStore, useDemarcheStore } from '@/stores'
 import DemarcheDossierCellRenderer from '@/views/demarches/demarche/dossiers/DemarcheDossierCellRenderer.vue'
 import { deepAlmostEqual, selectKeysInObject } from '@/utils/object'
 import { getAgGridFilterFromFieldType } from '@/components/ag-grid/server-side/filters.utils'
-import type { BNColDef } from '@/components/ag-grid/server-side/bn-col-def.interface'
 import DemarcheDossiersDisplays from './DemarcheDossiersDisplays.vue'
-import type { TotalsAllowed } from './DemarcheDossiersDisplays.vue'
-import type { CustomFilterWithErrors } from '@/views/demarches/demarche/dossiers/custom-filter-with-errors.type'
 import { useActiveFilter } from '@/components/ag-grid/active-filters/useActiveFilter'
 import { useTour } from '@/composables/use-tour'
 import { filterTourSteps } from './TutoFilterDossier'
@@ -22,9 +28,7 @@ import { filterTourSteps } from './TutoFilterDossier'
 const demarcheStore = useDemarcheStore()
 const router = useRouter()
 const route = useRoute()
-const gridApi = ref<GridApi>()
 const dataTableComponent = useTemplateRef('dataTableComponent')
-const dataTable = useStorage('dossiers-datatable', 'ag-grid')
 const demarche = computed<IDemarche>(() => demarcheStore.currentDemarche as IDemarche)
 const demarcheConfiguration = computed<FrontIMappingColumn[]>(() => demarcheStore.currentDemarcheFlatConfiguration)
 const demarcheConfigurationHash = computed<Record<string, IMappingColumn>>(() => demarcheStore.currentDemarcheConfigurationHash)
@@ -98,6 +102,8 @@ const fetching = computed(() => demarcheStore.fetching)
 
 const columnsDef = ref<BNColDef[]>()
 
+export type ColumnMenuTab = 'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab'
+
 const computeColumnsDef = () => {
   columnsDef.value = [
     {
@@ -144,13 +150,6 @@ watch(fetching, () => {
   }
 })
 
-const resetAggState = () => {
-  if (gridApi.value) {
-    gridApi.value.setFilterModel({})
-    gridApi.value.resetColumnState()
-  }
-}
-
 const resetDataTableState = () => {
   if (dataTableComponent.value) {
     dataTableComponent.value.clearAllFilters()
@@ -193,11 +192,7 @@ const deleteDisplay = async () => {
     try {
       await customDisplayStore.deleteCustomFilter(selectedCustomDisplay.value?.id)
       selectedCustomDisplay.value = null
-      if (dataTable.value === 'ag-grid') {
-        resetAggState()
-      } else {
-        resetDataTableState()
-      }
+      resetDataTableState()
       customDisplayOperationSuccess.value = true
     } catch (error) {
       import.meta.env.DEV && console.warn(error)
@@ -230,11 +225,7 @@ const updateDisplayName = async ({ filterName = '', totals = [] }: { filterName?
 const selectDisplay = async (id: number | null) => {
   if (id === null) {
     selectedCustomDisplay.value = null
-    if (dataTable.value === 'ag-grid') {
-      resetAggState()
-    } else {
-      resetDataTableState()
-    }
+    resetDataTableState()
     localStorage.removeItem(localStorageGroupByKey.value)
     localStorage.removeItem(localStorageDisplayIdKey.value)
     groupByDossier.value = false
@@ -264,6 +255,7 @@ const createDisplay = async ({ filterName = '', totals = [] }: { filterName?: st
     columns: paginationDto.value.columns,
     sorts: paginationDto.value.sorts,
     filters: paginationDto.value.filters,
+    totals: [],
   }
 
   if (totals) {
@@ -362,11 +354,7 @@ const customHandleClearAllFilters = async () => {
   if (selectedCustomDisplay.value && typeof selectedCustomDisplay.value.id === 'number') {
     await selectDisplay(selectedCustomDisplay.value.id)
   } else {
-    if (dataTable.value === 'ag-grid') {
-      resetAggState()
-    } else {
-      resetDataTableState()
-    }
+    resetDataTableState()
     paginationDto.value.filters = null
     paginationDto.value.sorts = []
   }

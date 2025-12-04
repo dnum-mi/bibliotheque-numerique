@@ -12,6 +12,7 @@ const fieldTypesDict = {
   file: 'agTextColumnFilter',
   string: 'agTextColumnFilter',
   number: 'agNumberColumnFilter',
+  numbers: 'agNumberColumnFilter',
   date: 'agMultiColumnFilter',
   boolean: 'agSetColumnFilter',
   enum: 'agSetColumnFilter',
