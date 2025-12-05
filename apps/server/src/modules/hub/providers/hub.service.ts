@@ -139,8 +139,9 @@ export class HubService {
   //#endregion FOUNDATIONS
 
   async searchOrganisme(sentence: string): Promise<ISiafSearchOrganismeOutput | null> {
-    this.logger.verbose('HUB-search')
-    const path = `/generic/full_text_search/${sentence}`
+    const cleanedSentence = sentence.trim()
+    this.logger.verbose(`HUB-search: ${cleanedSentence}`)
+    const path = `/generic/full_text_search/${encodeURIComponent(cleanedSentence)}`
     return this.axios
       .get(path)
   }
