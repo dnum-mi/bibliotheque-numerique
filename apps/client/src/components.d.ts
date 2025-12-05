@@ -12,9 +12,6 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     ActiveFiltersDropdown: typeof import('./components/ag-grid/active-filters/ActiveFiltersDropdown.vue')['default']
-    AgGridAttachmentCell: typeof import('./components/ag-grid/AgGridAttachmentCell.vue')['default']
-    AgGridMultiValueCell: typeof import('./components/ag-grid/AgGridMultiValueCell.vue')['default']
-    AgGridServerSide: typeof import('./components/ag-grid/server-side/AgGridServerSide.vue')['default']
     AppDsfrFooter: typeof import('./components/AppDsfrFooter.vue')['default']
     AppToaster: typeof import('./components/AppToaster.vue')['default']
     AttachedFileList: typeof import('./components/ag-grid/files/AttachedFileList.vue')['default']
@@ -48,7 +45,9 @@ declare module 'vue' {
     DsfrButton: typeof import('@gouvminint/vue-dsfr')['DsfrButton']
     DsfrButtonGroup: typeof import('@gouvminint/vue-dsfr')['DsfrButtonGroup']
     DsfrCallout: typeof import('@gouvminint/vue-dsfr')['DsfrCallout']
+    DsfrCard: typeof import('@gouvminint/vue-dsfr')['DsfrCard']
     DsfrCheckbox: typeof import('@gouvminint/vue-dsfr')['DsfrCheckbox']
+    DsfrFileDownload: typeof import('@gouvminint/vue-dsfr')['DsfrFileDownload']
     DsfrHeader: typeof import('@gouvminint/vue-dsfr')['DsfrHeader']
     DsfrInput: typeof import('@gouvminint/vue-dsfr')['DsfrInput']
     DsfrInputGroup: typeof import('@gouvminint/vue-dsfr')['DsfrInputGroup']
@@ -57,7 +56,6 @@ declare module 'vue' {
     DsfrRadioButton: typeof import('@gouvminint/vue-dsfr')['DsfrRadioButton']
     DsfrRadioButtonSet: typeof import('@gouvminint/vue-dsfr')['DsfrRadioButtonSet']
     DsfrSearchBar: typeof import('@gouvminint/vue-dsfr')['DsfrSearchBar']
-    DsfrSegmentedSet: typeof import('@gouvminint/vue-dsfr')['DsfrSegmentedSet']
     DsfrSelect: typeof import('@gouvminint/vue-dsfr')['DsfrSelect']
     DsfrTable: typeof import('@gouvminint/vue-dsfr')['DsfrTable']
     DsfrTableCell: typeof import('@gouvminint/vue-dsfr')['DsfrTableCell']
