@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.3](https://github.com/dnum-mi/bibliotheque_numerique/compare/v3.1.2...v3.1.3) (2025-12-05)
+
+
+### Bug Fixes
+
+* **recherche organisme:** ajout correction multiples requêtes envoyés et redirection directe ([#1997](https://github.com/dnum-mi/bibliotheque_numerique/issues/1997)) ([ce124e9](https://github.com/dnum-mi/bibliotheque_numerique/commit/ce124e92e4473b569940f2f8a887306fd7f30402))
+
 ## [3.1.2](https://github.com/dnum-mi/bibliotheque_numerique/compare/v3.1.1...v3.1.2) (2025-11-26)
 
 
