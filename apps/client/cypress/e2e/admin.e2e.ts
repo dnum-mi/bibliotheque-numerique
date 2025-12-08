@@ -22,7 +22,9 @@ describe('Admin', () => {
     cy.wait('@me')
     cy.wait('@listUsers')
     cy.get('h6').should('contain', 'Administration des roles')
-    cy.get('[role="row"]').should('have.length', 2 + userNumber)
+    cy.get('tbody').within(() => {
+      cy.get('[role="row"]').should('have.length', userNumber)
+    })
 
     cy.get('[role="row"]')
       .should('contain', 'administrateur')
@@ -347,7 +349,7 @@ describe('Admin', () => {
         cy.wrap($parent)
           .should('contain', '75')
           .contains('75')
-          .should('have.class', 'tag-button')
+          .should('have.class', 'fr-tag')
           .click()
 
         cy.wait('@userSelected444')
