@@ -19,6 +19,12 @@ import { useAmountLines } from './useAmountLines'
 
 //#region 📍------ PROPS ------ 📍
 
+export type DataTableClickEventType<T> = {
+  data: T,
+  column?: BNColDef,
+  field?: string
+}
+
 const props = withDefaults(
   defineProps<{
     paginationDto?: IPagination<T>
