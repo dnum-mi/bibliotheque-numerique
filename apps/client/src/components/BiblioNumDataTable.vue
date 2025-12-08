@@ -1,12 +1,16 @@
 <script lang="ts" setup>
-import type { RowStyle } from 'ag-grid-enterprise'
-
 import { PAGINATION_PAGE_SIZE } from '@/config'
-import DataTable, { type DataTableFilterMeta } from 'primevue/datatable';
-import Column from 'primevue/column';
-import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
+import DataTable from 'primevue/datatable'
+import type {
+  DataTableFilterMeta,
+} from 'primevue/datatable'
+import Column from 'primevue/column'
+import {
+  FilterMatchMode,
+  FilterOperator,
+} from '@primevue/core/api'
 import { useRouter } from 'vue-router'
-import type { HeaderDataTable } from '@/shared/types';
+import type { HeaderDataTable } from '@/shared/types'
 
 const props = withDefaults(
   defineProps<{
@@ -20,7 +24,6 @@ const props = withDefaults(
     rowSelection?: string
     floatingFilter?: boolean
     isHiddenSideBar?: boolean
-    rowStyle?: RowStyle
   }>(),
   {
     title: undefined,
@@ -32,7 +35,8 @@ const props = withDefaults(
   },
 )
 
-const emit = defineEmits(['getElt', 'selectionChanged', 'filtersUpdated', 'sortUpdated'])
+// TODO: A verifier
+// const emit = defineEmits(['getElt', 'selectionChanged', 'filtersUpdated', 'sortUpdated'])
 
 interface PrimeVueColumnDef {
   headerName?: string
@@ -76,15 +80,13 @@ const columnDefs: ComputedRef<PrimeVueColumnDef[]> = computed(() => {
         sortable: header.sortable !== false, // Par défaut, les colonnes sont triables
       }
     })
-    return filteredHeaders
+  return filteredHeaders
 })
 
 const filters = ref<DataTableFilterMeta>(columnDefs.value
   .filter(col => col.filterable !== false) // Ne créer des filtres que pour les colonnes filtrables
   .reduce(
-    (acc, col) => {
-
-      return {
+    (acc, col) => ({
       ...acc,
       [col.field!]: {
         operator: FilterOperator.AND,
@@ -98,26 +100,28 @@ const filters = ref<DataTableFilterMeta>(columnDefs.value
                 ),
               }
             : {}),
-
         }],
       },
-    }},
+    }),
     {} as DataTableFilterMeta,
   ),
 )
 const sort = ref<{ key: string; order: 'ASC' | 'DESC' | 'NONE' }[]>([])
 const perPage = computed(() => props.paginationPageSize || PAGINATION_PAGE_SIZE)
 const scrollHeight = computed(() => (props.pagination ? 'calc(100vh - 300px)' : 'calc(100vh - 200px)'))
-const selectedColumnsIds = ref(columnDefs.value.map((col) => col.field ?? ''))
+// TODO: A verifier
+// const selectedColumnsIds = ref(columnDefs.value.map((col) => col.field ?? ''))
 
-function onSortChanged(event: { sortField: string; sortOrder: number }) {
-  sort.value = []
-  if (event.sortField && event.sortOrder) {
-    sort.value.push({ key: event.sortField, order: event.sortOrder === 1 ? 'ASC' : 'DESC' })
-  }
-  emit('sortUpdated', sort.value)
-}
-const debug = ref('false')
+// TODO: A verifier
+// function onSortChanged(event: { sortField: string; sortOrder: number }) {
+//   sort.value = []
+//   if (event.sortField && event.sortOrder) {
+//     sort.value.push({ key: event.sortField, order: event.sortOrder === 1 ? 'ASC' : 'DESC' })
+//   }
+//   emit('sortUpdated', sort.value)
+// }
+// TODO: A vérifier
+// const debug = ref('false')
 
 const router = useRouter()
 const rowClick = (event: { data: Record<string, string | number> }) => {
