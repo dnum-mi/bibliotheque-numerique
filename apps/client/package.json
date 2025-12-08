@@ -33,7 +33,7 @@
     "@ag-grid-community/locale": "33.2.4",
     "@biblio-num/shared": "workspace:^",
     "@gouvfr/dsfr": "^1.14.1",
-    "@gouvminint/vue-dsfr": "^8.8.0",
+    "@gouvminint/vue-dsfr": "8.8.0",
     "@primeuix/themes": "1.2.3",
     "@primevue/core": "4.4.1",
     "@primevue/themes": "4.4.1",
