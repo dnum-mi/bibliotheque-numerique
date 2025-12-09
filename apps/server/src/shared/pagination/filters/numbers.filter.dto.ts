@@ -4,6 +4,7 @@ import {
   IsDefined,
   IsIn,
   IsNumber,
+  IsOptional,
   ValidateNested,
 } from 'class-validator'
 import { IFilterNumbers } from '@biblio-num/shared/types/pagination/numbers.filter.interface'
@@ -16,7 +17,9 @@ export class NumbersFilterConditionDto implements INumbersFilterCondition {
 
   @ApiProperty({
     description: 'Doit-on inclure les tableaux vide',
+    required: false,
   })
+  @IsOptional()
   @IsBoolean()
   includeEmpty: boolean
 

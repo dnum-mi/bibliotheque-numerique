@@ -21,6 +21,7 @@ describe('Vue Dossier', () => {
       .contains('Pièces jointes')
       .click()
     cy.wait('@files')
-    cy.get('.ag-row').should('have.length', 6)
+    cy.get('.p-row-even').should('have.length', 3)
+    cy.get('.p-row-odd').should('have.length', 3)
   })
 })
