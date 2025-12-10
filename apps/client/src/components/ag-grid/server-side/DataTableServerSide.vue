@@ -7,7 +7,7 @@ import type { ApiCall } from './pagination.utils'
 import type { BNColDef } from '@/components/ag-grid/server-side/bn-col-def.interface'
 import type { DisplayActiveFilter } from '../active-filters/activeFilters.type'
 
-import { useEventListener } from '@vueuse/core'
+import { useDebounceFn, useEventListener } from '@vueuse/core'
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api'
 import { nextTick, toRaw } from 'vue'
 import DataTable from 'primevue/datatable'
@@ -68,14 +68,50 @@ const agGridFilterToDataTableFilter: Record<string, string> = {
   'agMultiColumnFilter': FilterMatchMode.DATE_IS,
   'agDateColumnFilter': FilterMatchMode.DATE_IS,
   'agSetColumnFilter': FilterMatchMode.IN,
+  'agBooleanColumnFilter': FilterMatchMode.IN,
+  'customNumbersFilter': FilterMatchMode.EQUALS,
+  'customStringsFilter': FilterMatchMode.EQUALS,
 }
 
 const agGridFilterToDataTableDataType: Record<string, string | undefined> = {
   'agTextColumnFilter': undefined,
-  'agNumberColumnFilter': 'number',
+  'agNumberColumnFilter': 'numeric',
   'agMultiColumnFilter': 'date',
   'agDateColumnFilter': 'date',
   'agSetColumnFilter': 'set',
+  'agBooleanColumnFilter': 'set',
+  'customNumbersFilter': undefined,
+  'customStringsFilter': undefined,
+}
+
+const dateMatchModeToAgGrid: Record<string, string> = {
+  [FilterMatchMode.DATE_IS]: 'equals',
+  [FilterMatchMode.DATE_IS_NOT]: 'notEqual',
+  [FilterMatchMode.DATE_BEFORE]: 'lessThan',
+  [FilterMatchMode.DATE_AFTER]: 'greaterThan',
+}
+
+const formatDateForApi = (value: Date | string | null): string | null => {
+  if (!value) {
+    return null
+  }
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) {
+    return null
+  }
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+
+  return `${year}-${month}-${day} 00:00:00`
+}
+
+const safeNumber = (val: any): number | null => {
+  if (val === null || val === undefined || val === '') {
+    return null
+  }
+  const num = Number(val)
+  return Number.isNaN(num) ? null : num
 }
 
 const displayColumns = ref(false)
@@ -382,28 +418,147 @@ onMounted(() => {
 
 const filtersToSend = computed<Record<keyof typeof props.columnDefs, IFilter>>(() => {
   const result: Record<string, IFilter> = {}
+
   for (const [key, filter] of Object.entries(filters.value)) {
+    const colDef = props.columnDefs.find(col => col.field === key)
+    const mappedType = colDef ? agGridFilterToDataTableDataType[colDef.filter || ''] : undefined
+    const currentType = (filter as any).filterType || mappedType || 'text'
+
+    const apiType = currentType === 'numeric' ? 'number' : currentType
+
+    // Helper interne pour résoudre le nom de l'opérateur
+    const resolveOperator = (mode: string) => {
+      if (currentType === 'date') {
+        return dateMatchModeToAgGrid[mode] || 'equals'
+      }
+      if (currentType === 'numeric') {
+        return mode === FilterMatchMode.NOT_EQUALS ? 'notEqual' : mode
+      }
+      if (currentType === 'text') {
+        return mode === FilterMatchMode.NOT_EQUALS ? 'notEqual' : mode
+      }
+      return mode
+    }
+
+    // Helper interne pour résoudre la valeur
+    const resolveValue = (val: any) => {
+      if (currentType === 'date') {
+        return formatDateForApi(val)
+      }
+      if (currentType === 'numeric') {
+        return safeNumber(val)
+      }
+      return val
+    }
+
+    // =========================================================
+    // CAS 1 : Filtre Simple ('value' directe)
+    // =========================================================
     if ('value' in (filter as DataTableFilterMetaData)) {
       const metaFilter = filter as DataTableFilterMetaData
+
+      // Detection Custom Filter Simple
+      if (metaFilter.value && typeof metaFilter.value === 'object' && 'filterType' in metaFilter.value) {
+        result[key] = metaFilter.value
+        continue
+      }
+
       const isBlankOrNotBlank = metaFilter.matchMode === 'blank' || metaFilter.matchMode === 'notBlank'
       if (isBlankOrNotBlank) {
         metaFilter.value = metaFilter.matchMode
       }
-      if (metaFilter.value) {
+      if (metaFilter.value !== null && metaFilter.value !== undefined) {
+        const isArray = Array.isArray(metaFilter.value)
+
         // @ts-expect-error TS2322
         result[key] = {
-          filterType: Array.isArray(metaFilter.value) ? 'set' : metaFilter.filterType,
+          filterType: isArray ? 'set' : apiType,
           condition1: {
-            type: (Array.isArray(metaFilter.value) || isBlankOrNotBlank) ? undefined : metaFilter.matchMode,
-            filter: Array.isArray(metaFilter.vale) ? metaFilter.value.map(({ code }) => code) : metaFilter.value,
+            type: (isArray || isBlankOrNotBlank) ? undefined : resolveOperator(metaFilter.matchMode as string),
+            filter: isArray ? metaFilter.value.map(({ code }: { code: string }) => code) : resolveValue(metaFilter.value),
           },
         }
         continue
       }
     }
+
+    // =========================================================
+    // CAS 2 : Filtre avec Opérateur
+    // =========================================================
     if ('operator' in (filter as DataTableOperatorFilterMetaData)) {
       const metaFilter = filter as DataTableOperatorFilterMetaData
-      if (metaFilter.constraints.length === 2) {
+      if (!metaFilter.constraints || !Array.isArray(metaFilter.constraints)) {
+        continue
+      }
+      const constraints = metaFilter.constraints
+      const firstConstraint = constraints[0]
+
+      // 1. Custom Filter Imbriqué
+      if (firstConstraint && firstConstraint.value && typeof firstConstraint.value === 'object' && 'filterType' in firstConstraint.value) {
+        const customValue = firstConstraint.value as any
+
+        // On construit la structure imbriquée attendue par le backend
+        result[key] = {
+          filterType: customValue.filterType,
+          condition1: customValue,
+        }
+        continue
+      }
+
+      // 2. Gestion Date (Spécifique car besoin de filterTo)
+      if (firstConstraint && firstConstraint.value && currentType === 'date') {
+        result[key] = {
+          filterType: 'date',
+          condition1: {
+            type: resolveOperator(firstConstraint.matchMode as string),
+            filter: resolveValue(firstConstraint.value),
+            filterTo: null,
+          },
+        }
+        continue
+      }
+
+      constraints.forEach(c => {
+        if (c.matchMode === 'blank' || c.matchMode === 'notBlank') {
+          c.value = c.matchMode
+        }
+      })
+
+      const hasValue1 = constraints[0]?.value !== null && constraints[0]?.value !== undefined
+      const hasValue2 = constraints[1]?.value !== null && constraints[1]?.value !== undefined
+
+      if (hasValue1 || hasValue2) {
+        const isSetFilter = Array.isArray(constraints[0]!.value)
+        const finalType = isSetFilter ? 'set' : apiType
+
+        const output: any = {
+          filterType: finalType,
+          operator: metaFilter.operator === FilterOperator.AND ? 'AND' : 'OR',
+          condition1: {
+            filterType: finalType,
+            type: isSetFilter ? undefined : resolveOperator(constraints[0]!.matchMode as string),
+            filter: isSetFilter
+              ? constraints[0]!.value.map((v: any) => v.code || v)
+              : resolveValue(constraints[0]!.value),
+          },
+        }
+
+        if (hasValue2) {
+          output.condition2 = {
+            filterType: finalType,
+            type: resolveOperator(constraints[1]!.matchMode as string),
+            filter: resolveValue(constraints[1]!.value),
+          }
+        }
+
+        if (!hasValue2) {
+          delete output.operator
+        }
+
+        result[key] = output
+      }
+
+      /* if (metaFilter.constraints.length === 2) {
         const [cond1, cond2] = metaFilter.constraints
         const isBlankOrNotBlank1 = cond1!.matchMode === 'blank' || cond1!.matchMode === 'notBlank'
         const isBlankOrNotBlank2 = cond2!.matchMode === 'blank' || cond2!.matchMode === 'notBlank'
@@ -415,14 +570,15 @@ const filtersToSend = computed<Record<keyof typeof props.columnDefs, IFilter>>((
         }
         if (cond1?.value || cond2?.value) {
           result[key] = {
-            filterType: Array.isArray(cond1!.value) ? 'set' : metaFilter.filterType,
+            filterType: apiType,
             condition1: {
-              type: (Array.isArray(cond1!.value) || isBlankOrNotBlank1) ? undefined : cond1!.matchMode,
-              filter: Array.isArray(cond1!.value) ? cond1!.value.map(({ code }) => code) : cond1!.value,
+              filterType: apiType,
+              type: (Array.isArray(cond1!.value) || isBlankOrNotBlank1) ? undefined : resolveOperator(cond1!.matchMode as string),
+              filter: resolveValue(cond1!.value),
             },
             condition2: {
-              // @ts-expect-error TS2322 à corriger dans nos types
-              type: (Array.isArray(cond2!.value) || isBlankOrNotBlank2) ? undefined : cond2!.matchMode,
+              filterType: apiType,
+              type: (Array.isArray(cond2!.value) || isBlankOrNotBlank2) ? undefined : resolveOperator(cond2!.matchMode as string),
               filter: Array.isArray(cond2!.value) ? cond2!.value.map(({ code }) => code) : cond2!.value,
             },
             operator: metaFilter.operator === FilterOperator.AND ? 'AND' : 'OR',
@@ -435,16 +591,18 @@ const filtersToSend = computed<Record<keyof typeof props.columnDefs, IFilter>>((
           cond1!.value = cond1!.matchMode
         }
         if (cond1!.value) {
+          // const type = metaFilter.filterType || 'text'
+
           // @ts-expect-error TS2322
           result[key] = {
-            filterType: Array.isArray(cond1!.value) ? 'set' : metaFilter.filterType,
+            filterType: Array.isArray(cond1!.value) ? 'set' : apiType,
             condition1: {
-              type: Array.isArray(cond1!.value) ? undefined : cond1!.matchMode,
-              filter: Array.isArray(cond1!.value) ? cond1!.value.map(({ code }) => code) : +cond1!.value,
+              type: Array.isArray(cond1!.value) ? undefined : resolveOperator(cond1!.matchMode as string),
+              filter: Array.isArray(cond1!.value) ? cond1!.value.map(({ code }) => code) : (apiType === 'number' ? +cond1!.value : cond1!.value),
             },
           }
         }
-      }
+      } */
     }
   }
   return result as Record<keyof typeof props.columnDefs, IFilter>
@@ -882,9 +1040,11 @@ defineExpose({
         :key="col.field"
         :field="col.field"
         :header="col.headerName"
+        :show-filter-operator="false"
+        :show-add-button="col.filter !== 'customStringsFilter'"
         :data-type="agGridFilterToDataTableDataType[col.filter]"
         :sortable="col.sortable === false ? undefined : true"
-        :show-filter-match-modes="col.filter !== 'agSetColumnFilter'"
+        :show-filter-match-modes="!['customNumbersFilter', 'customStringsFilter', 'agBooleanColumnFilter'].includes(col.filter)"
         :show-filter-menu="!col.suppressHeaderMenuButton"
         :title="col.headerName"
       >
@@ -921,6 +1081,41 @@ defineExpose({
           </template>
           <template v-else-if="col.filter === 'agMultiColumnFilter'">
             <DatePicker v-model="filterModel.value" date-format="dd/mm/yy" placeholder="jj/mm/aaaa" />
+          </template>
+          <template v-else-if="col.filter === 'customNumbersFilter'">
+            <PrimeNumbersFilter
+              v-model="filterModel.value"
+              :filter-callback="filterCallback"
+              :params="col.filterParams"
+            />
+          </template>
+          <template v-else-if="col.filter === 'customStringsFilter'">
+            <PrimeStringListFilter
+              v-model="filterModel.value"
+              :filter-callback="filterCallback"
+              :params="col.filterParams"
+            />
+          </template>
+          <template v-else-if="col.filter === 'agDateColumnFilter'">
+            <DatePicker v-model="filterModel.value" date-format="mm/dd/yy" placeholder="mm/dd/yyyy" />
+          </template>
+          <template v-else-if="col.filter === 'agBooleanColumnFilter'">
+            <MultiSelect
+              v-model="filterModel.value"
+              :options="[
+                { name: 'Oui', code: 'true' },
+                { name: 'Non', code: 'false' },
+              ]"
+              option-label="name"
+              placeholder="Tous"
+              :max-selected-labels="1"
+              class="w-full"
+              @change="filterCallback()"
+            >
+              <template #option="slotProps">
+                <span>{{ slotProps.option.name }}</span>
+              </template>
+            </MultiSelect>
           </template>
           <template
             v-else-if="filterModel.matchMode === 'blank' || filterModel.matchMode === 'notBlank'"

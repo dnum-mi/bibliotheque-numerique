@@ -7,15 +7,16 @@ import type { FormatFunctionRefKeys } from '@biblio-num/shared'
 import { DossierState } from '@/utils'
 import StatusBadgesRenderer from '../../Badges/status/StatusBadgesRenderer.vue'
 import DelayStateRenderer from '../../Badges/delay-state/DelayStateRenderer.vue'
+import OrganismeBadgesRenderer from '@/components/Badges/organisme/OrganismeBadgesRenderer.vue'
 
 const fieldTypesDict = {
   file: 'agTextColumnFilter',
   string: 'agTextColumnFilter',
   strings: 'agTextColumnFilter',
   number: 'agNumberColumnFilter',
-  numbers: 'agNumberColumnFilter',
+  numbers: 'customNumbersFilter',
   date: 'agMultiColumnFilter',
-  boolean: 'agSetColumnFilter',
+  boolean: 'agBooleanColumnFilter',
   enum: 'agSetColumnFilter',
   default: 'agTextColumnFilter',
 } as const
@@ -28,6 +29,7 @@ export const filterEnumvalues: Record<FormatFunctionRefKeys, string[]> = {
 export const filterCellRender: Record<FormatFunctionRefKeys, Component> = {
   [FormatFunctionRef.status]: markRaw(StatusBadgesRenderer),
   [FormatFunctionRef.delayStatus]: markRaw(DelayStateRenderer),
+  [FormatFunctionRef.organisme]: markRaw(OrganismeBadgesRenderer),
 } as const
 
 // TODO: use FieldType but enum from library doesn't work in front.

@@ -36,6 +36,7 @@ export const demarcheColumnDefs: ColDef[] = [
     filter: 'customStringsFilter',
     filterParams: {
       strings: organismeTypes,
+      cellRenderer: OrganismeBadgesRenderer,
     },
     cellRenderer: OrganismeBadgesRenderer,
     width: 200,
