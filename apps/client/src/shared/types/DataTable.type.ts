@@ -11,7 +11,7 @@ export type Action = {
 export type HeaderDataTable = {
   text?: string
   action?: Action
-  value?: string
+  field?: string
   sortable?: boolean
   type?: string
   width?: number

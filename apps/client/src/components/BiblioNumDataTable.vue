@@ -1,11 +1,14 @@
 <script lang="ts" setup>
-import { PAGINATION_PAGE_SIZE } from '@/config'
-import DataTable from 'primevue/datatable'
 import type { DataTableFilterMeta } from 'primevue/datatable'
+import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
+import MultiSelect from 'primevue/multiselect'
+import DatePicker from 'primevue/datepicker'
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api'
 import type { HeaderDataTable } from '@/shared/types'
+import { PAGINATION_PAGE_SIZE } from '@/config'
 import { dealWithBlankAndNotBlank } from './ag-grid/server-side/filters.utils'
+import { agGridFilterToDataTableDataType } from './ag-grid/server-side/filters-const'
 
 export type RowDataType = {
   authorized: boolean
@@ -45,7 +48,11 @@ interface PrimeVueColumnDef {
   cellRenderer?: Component | string | ((params: Record<string | symbol, unknown>) => string | undefined)
   hide?: boolean
   valueFormatter?: (params: { value: unknown }) => string
-  filterParams?: { values?: string[]; valueFormatter?: (params: { value: unknown }) => string }
+  filterParams?: {
+    values?: string[]
+    valueFormatter?: (params: { value: unknown }) => string
+    cellRenderer?: Component | string | ((params: Record<string | symbol, unknown>) => string | undefined)
+  }
   filter?: string
   floatingFilter?: boolean
   filterable?: boolean
@@ -53,12 +60,11 @@ interface PrimeVueColumnDef {
 }
 
 const columnDefs: ComputedRef<PrimeVueColumnDef[]> = computed(() => {
-  if (!props.headers.length) {
+  if (!props.headers?.length) {
     return []
   }
-  const headers: HeaderDataTable[] = [...props.headers]
 
-  const filteredHeaders = headers
+  const filteredHeaders = props.headers
     .filter((header, idx) => (props.withAction && idx === 0) || header.type !== 'hidden')
     .map((header) => {
       const filter = {
@@ -71,7 +77,7 @@ const columnDefs: ComputedRef<PrimeVueColumnDef[]> = computed(() => {
       return {
         floatingFilter: props.floatingFilter,
         headerName: header.text || '',
-        field: header.value,
+        field: header.field,
         width: header.width || undefined,
         ...renderer,
         ...filter,
@@ -97,9 +103,7 @@ const filters = ref<DataTableFilterMeta>(columnDefs.value
           matchMode: col.filter === 'agSetColumnFilter' ? FilterMatchMode.IN : FilterMatchMode.STARTS_WITH,
           ...(col.filter === 'agSetColumnFilter' && col.filterParams?.values
             ? {
-                set: col.filterParams.values.map(
-                  (value: string) => !col.filterParams?.valueFormatter ? value : { name: col.filterParams.valueFormatter({ value }), code: value },
-                ),
+                set: col.filterParams.values,
               }
             : {}),
         }],
@@ -109,7 +113,8 @@ const filters = ref<DataTableFilterMeta>(columnDefs.value
   ),
 )
 const sort = ref<{ key: string; order: 'ASC' | 'DESC' | 'NONE' }[]>([])
-const perPage = computed(() => props.paginationPageSize || PAGINATION_PAGE_SIZE)
+// const perPage = computed(() => props.paginationPageSize || PAGINATION_PAGE_SIZE)
+const perPage = ref(props.paginationPageSize || PAGINATION_PAGE_SIZE)
 const scrollHeight = computed(() => (props.pagination ? 'calc(100vh - 300px)' : 'calc(100vh - 200px)'))
 // const selectedColumnsIds = ref(columnDefs.value.map((col) => col.field ?? ''))
 
@@ -124,6 +129,9 @@ const scrollHeight = computed(() => (props.pagination ? 'calc(100vh - 300px)' : 
 const rowClick = (event: { data: Record<string, string | number> }) => {
   emit('rowClick', toRaw(event.data))
 }
+
+const getPaginationPages = (pagesNb: number) => Array.from(Array(pagesNb))
+  .map((_, i) => ({ title: (i + 1).toString(), href: `#${i + 1}`, label: (i + 1).toString() }))
 </script>
 
 <template>
@@ -132,6 +140,7 @@ const rowClick = (event: { data: Record<string, string | number> }) => {
   </h4>
   <DataTable
     v-model:filters="filters"
+    class="m-w-full h-full"
     :style="{ width: 'calc(100vw - 38px)' }"
     :value="rowsData"
     striped-rows
@@ -158,9 +167,12 @@ const rowClick = (event: { data: Record<string, string | number> }) => {
       :key="col.field"
       :field="col.field"
       :header="col.headerName"
+      :filter-field="col.field"
+      :data-type="col.filter ? agGridFilterToDataTableDataType[col.filter] : undefined"
       :sortable="col.sortable !== false"
       :show-filter-match-modes="col.filter !== 'agSetColumnFilter'"
       :show-filter-menu="col.filterable !== false"
+      :title="col.headerName"
     >
       <template #body="{ data }">
         <template v-if="col.cellRenderer">
@@ -177,15 +189,13 @@ const rowClick = (event: { data: Record<string, string | number> }) => {
         <template v-if="col.filter === 'agSetColumnFilter'">
           <MultiSelect
             v-model="filterModel.value"
-            :options="col.filterParams?.values?.map(
-              (value: string) => ({ name: col.filterParams?.valueFormatter ? col.filterParams.valueFormatter({ value }) : value, code: value }),
-            )"
+            :options="col.filterParams?.values"
             option-label="name"
             placeholder="Toutes les valeurs"
             @change="filterCallback()"
           >
             <template #option="slotProps">
-              <component :is="col.filterParams?.cellRenderer ?? col.cellRenderer" :params="{ value: slotProps.option.name }" />
+              <component :is="col.filterParams?.cellRenderer ?? col.cellRenderer" :params="{ value: slotProps.option }" />
             </template>
           </MultiSelect>
         </template>
@@ -206,5 +216,32 @@ const rowClick = (event: { data: Record<string, string | number> }) => {
         />
       </template>
     </Column>
+    <template #paginatorcontainer="{ first, last, page, pageCount, rows, changePageCallback, totalRecords }">
+      <div class="flex justify-end items-center">
+        <DsfrSelect
+          v-model.number="perPage"
+          title="Résultats par page"
+          aria-label="Résultats par page"
+          :options="[2, 5, 10]"
+          default-unselected-text="Résultats par page"
+        />
+        <div class="mx-4">
+          <template v-if="(pageCount ?? 0) > 0">
+            {{ first }} à {{ last }} de {{ totalRecords }}
+            <p>
+              rows de DataTable: {{ rows }}
+            </p>
+          </template>
+          <template v-else>
+            Aucun résultat
+          </template>
+        </div>
+        <DsfrPagination
+          :current-page="page"
+          :pages="getPaginationPages(pageCount ?? 0)"
+          @update:current-page="changePageCallback($event)"
+        />
+      </div>
+    </template>
   </DataTable>
 </template>
