@@ -79,6 +79,7 @@ declare module 'vue' {
     PasswordHint: typeof import('./components/PasswordHint.vue')['default']
     PermissionOptionNumber: typeof import('./components/PermissionOption/PermissionOptionNumber.vue')['default']
     PrimeNumbersFilter: typeof import('./components/ag-grid/server-side/prime-custom-filters/PrimeNumbersFilter.vue')['default']
+    PrimeSetFilter: typeof import('./components/ag-grid/server-side/prime-custom-filters/PrimeSetFilter.vue')['default']
     PrimeStringListFilter: typeof import('./components/ag-grid/server-side/prime-custom-filters/PrimeStringListFilter.vue')['default']
     ProConnect: typeof import('./components/ProConnect.vue')['default']
     RoleBadge: typeof import('./components/Badges/role/RoleBadge.vue')['default']

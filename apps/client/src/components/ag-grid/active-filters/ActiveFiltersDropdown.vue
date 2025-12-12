@@ -272,6 +272,10 @@ onMounted(() => {
 onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside, true)
 })
+
+onUpdated(() => {
+  console.log('FILTERS =>', props.filters)
+})
 </script>
 
 <template>

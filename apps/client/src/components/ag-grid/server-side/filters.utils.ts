@@ -7,14 +7,13 @@ import type { FormatFunctionRefKeys } from '@biblio-num/shared'
 import { DossierState } from '@/utils'
 import StatusBadgesRenderer from '../../Badges/status/StatusBadgesRenderer.vue'
 import DelayStateRenderer from '../../Badges/delay-state/DelayStateRenderer.vue'
-import OrganismeBadgesRenderer from '@/components/Badges/organisme/OrganismeBadgesRenderer.vue'
 
 const fieldTypesDict = {
   file: 'agTextColumnFilter',
   string: 'agTextColumnFilter',
-  strings: 'agTextColumnFilter',
+  strings: 'agSetColumnFilter',
   number: 'agNumberColumnFilter',
-  numbers: 'customNumbersFilter',
+  numbers: 'agSetColumnFilter',
   date: 'agMultiColumnFilter',
   boolean: 'agBooleanColumnFilter',
   enum: 'agSetColumnFilter',
@@ -29,7 +28,6 @@ export const filterEnumvalues: Record<FormatFunctionRefKeys, string[]> = {
 export const filterCellRender: Record<FormatFunctionRefKeys, Component> = {
   [FormatFunctionRef.status]: markRaw(StatusBadgesRenderer),
   [FormatFunctionRef.delayStatus]: markRaw(DelayStateRenderer),
-  [FormatFunctionRef.organisme]: markRaw(OrganismeBadgesRenderer),
 } as const
 
 // TODO: use FieldType but enum from library doesn't work in front.
@@ -43,7 +41,6 @@ export const getAgGridFilterFromFieldType = (fieldType?: keyof typeof fieldTypes
   if (fieldType === 'enum' && filterValues) {
     filter.filterParams = {
       values: filterValues,
-      suppressMiniFilter: true,
     }
 
     if (formatFunctionRef && filterCellRender[formatFunctionRef]) {

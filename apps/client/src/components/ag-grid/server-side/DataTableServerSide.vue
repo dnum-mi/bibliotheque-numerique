@@ -7,7 +7,7 @@ import type { ApiCall } from './pagination.utils'
 import type { BNColDef } from '@/components/ag-grid/server-side/bn-col-def.interface'
 import type { DisplayActiveFilter } from '../active-filters/activeFilters.type'
 
-import { useDebounceFn, useEventListener } from '@vueuse/core'
+import { useEventListener } from '@vueuse/core'
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api'
 import { nextTick, toRaw } from 'vue'
 import DataTable from 'primevue/datatable'
@@ -62,12 +62,16 @@ const emit = defineEmits<{
 
 //#endregion
 
+onMounted(() => {
+  console.log(props.columnDefs)
+})
+
 const agGridFilterToDataTableFilter: Record<string, string> = {
   'agTextColumnFilter': FilterMatchMode.STARTS_WITH,
   'agNumberColumnFilter': FilterMatchMode.EQUALS,
   'agMultiColumnFilter': FilterMatchMode.DATE_IS,
   'agDateColumnFilter': FilterMatchMode.DATE_IS,
-  'agSetColumnFilter': FilterMatchMode.IN,
+  'agSetColumnFilter': FilterMatchMode.EQUALS,
   'agBooleanColumnFilter': FilterMatchMode.IN,
   'customNumbersFilter': FilterMatchMode.EQUALS,
   'customStringsFilter': FilterMatchMode.EQUALS,
@@ -78,7 +82,7 @@ const agGridFilterToDataTableDataType: Record<string, string | undefined> = {
   'agNumberColumnFilter': 'numeric',
   'agMultiColumnFilter': 'date',
   'agDateColumnFilter': 'date',
-  'agSetColumnFilter': 'set',
+  'agSetColumnFilter': undefined,
   'agBooleanColumnFilter': 'set',
   'customNumbersFilter': undefined,
   'customStringsFilter': undefined,
@@ -1040,11 +1044,10 @@ defineExpose({
         :key="col.field"
         :field="col.field"
         :header="col.headerName"
-        :show-filter-operator="false"
-        :show-add-button="col.filter !== 'customStringsFilter'"
         :data-type="agGridFilterToDataTableDataType[col.filter]"
         :sortable="col.sortable === false ? undefined : true"
-        :show-filter-match-modes="!['customNumbersFilter', 'customStringsFilter', 'agBooleanColumnFilter'].includes(col.filter)"
+        :show-add-button="!['agSetColumnFilter', 'agBooleanColumnFilter'].includes(col.filter)"
+        :show-filter-match-modes="!['agSetColumnFilter', 'agBooleanColumnFilter'].includes(col.filter)"
         :show-filter-menu="!col.suppressHeaderMenuButton"
         :title="col.headerName"
       >
@@ -1064,7 +1067,7 @@ defineExpose({
           </template>
         </template>
         <template #filter="{ filterModel, filterCallback }">
-          <template v-if="col.filter === 'agSetColumnFilter'">
+          <!-- <template v-if="col.filter === 'agSetColumnFilter'">
             <MultiSelect
               v-model="filterModel.value"
               :options="col.filterParams.values.map(
@@ -1078,11 +1081,22 @@ defineExpose({
                 <component :is="col.filterParams.cellRenderer ?? col.cellRenderer" :params="{ value: slotProps.option.name }" />
               </template>
             </MultiSelect>
+          </template> -->
+          <template v-if="col.filter === 'agSetColumnFilter'">
+            <PrimeSetFilter
+              v-model="filterModel.value"
+              :filter-callback="filterCallback"
+              :params="{
+                values: col.filterParams.values,
+                cellRenderer: col.filterParams.cellRenderer,
+                targetFilterType: col.filterParams.targetFilterType,
+              }"
+            />
           </template>
           <template v-else-if="col.filter === 'agMultiColumnFilter'">
             <DatePicker v-model="filterModel.value" date-format="dd/mm/yy" placeholder="jj/mm/aaaa" />
           </template>
-          <template v-else-if="col.filter === 'customNumbersFilter'">
+          <!-- <template v-else-if="col.filter === 'customNumbersFilter'">
             <PrimeNumbersFilter
               v-model="filterModel.value"
               :filter-callback="filterCallback"
@@ -1095,7 +1109,7 @@ defineExpose({
               :filter-callback="filterCallback"
               :params="col.filterParams"
             />
-          </template>
+          </template> -->
           <template v-else-if="col.filter === 'agDateColumnFilter'">
             <DatePicker v-model="filterModel.value" date-format="mm/dd/yy" placeholder="mm/dd/yyyy" />
           </template>

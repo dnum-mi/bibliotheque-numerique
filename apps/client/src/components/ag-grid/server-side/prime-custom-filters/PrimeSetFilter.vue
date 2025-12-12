@@ -1,18 +1,28 @@
 <script lang="ts" setup>
-import type { IStringsFilterModel } from '@biblio-num/shared'
+interface SetFilterModel {
+  filterType: string
+  includeEmpty: boolean
+  filter: (string | number)[]
+}
 
 const props = defineProps<{
   modelValue: unknown
   filterCallback: () => void
-  params: { strings: string[]; cellRenderer: any }
+  params: {
+    values: (string | number)[]
+    cellRenderer?: any
+    targetFilterType?: string
+  }
 }>()
 
 const emit = defineEmits(['update:modelValue'])
 
-const getDefaultModel = (): IStringsFilterModel => ({
-  filterType: 'strings',
+const filterType = props.params.targetFilterType || 'set'
+
+const getDefaultModel = (): SetFilterModel => ({
+  filterType,
   includeEmpty: true,
-  filter: [...(props.params.strings || [])],
+  filter: [...(props.params.values || [])],
 })
 
 const localFilter = computed({
@@ -24,13 +34,15 @@ const localFilter = computed({
   },
 })
 
-const updateFilter = (checked: boolean, value: string) => {
+const updateFilter = (checked: boolean, value: string | number) => {
   const currentFilter = { ...localFilter.value }
+
+  currentFilter.filterType = filterType
 
   if (checked) {
     currentFilter.filter = [...currentFilter.filter, value]
   } else {
-    currentFilter.filter = currentFilter.filter.filter((v: string) => v !== value)
+    currentFilter.filter = currentFilter.filter.filter((v: string | number) => v !== value)
   }
 
   localFilter.value = currentFilter
@@ -43,15 +55,12 @@ const toggleIncludeEmpty = (checked: boolean) => {
   localFilter.value = currentFilter
   props.filterCallback()
 }
-
-onMounted(() => {
-  console.log(props.params)
-})
 </script>
 
 <template>
-  <div class="flex flex-col items-left m-2 p-2 min-w-[150px] max-h-[300px] overflow-y-auto">
+  <div class="flex flex-col items-left m-2">
     <DsfrCheckbox
+      v-if="localFilter.filterType !== 'set'"
       v-model="localFilter.includeEmpty"
       :disabled="!localFilter.filter.length"
       :checked="localFilter.includeEmpty || !localFilter.filter.length"
@@ -62,13 +71,13 @@ onMounted(() => {
       @update:model-value="toggleIncludeEmpty($event)"
     />
     <div
-      v-for="value in params.strings"
+      v-for="value in params.values"
       :key="value"
     >
       <DsfrCheckbox
         :model-value="localFilter.filter.includes(value)"
         small
-        :name="value"
+        :name="String(value)"
         :value="value"
         @update:model-value="updateFilter($event, value)"
       >
@@ -84,6 +93,3 @@ onMounted(() => {
     </div>
   </div>
 </template>
-
-<style scoped>
-</style>

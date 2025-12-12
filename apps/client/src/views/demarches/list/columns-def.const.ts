@@ -33,10 +33,11 @@ export const demarcheColumnDefs: ColDef[] = [
     ...baseColDef,
     headerName: 'Types',
     field: 'types',
-    filter: 'customStringsFilter',
+    filter: 'agSetColumnFilter',
     filterParams: {
-      strings: organismeTypes,
+      values: organismeTypes,
       cellRenderer: OrganismeBadgesRenderer,
+      targetFilterType: 'strings',
     },
     cellRenderer: OrganismeBadgesRenderer,
     width: 200,
