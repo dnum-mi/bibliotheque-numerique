@@ -40,7 +40,6 @@
     "docker:dev": "docker compose --profile dev -f apps/server/docker-compose.yml up -d",
     "docker:ci:down": "docker compose -f apps/server/docker-compose.yml -f apps/server/docker-compose.override.ci.yml down",
     "docker:down": "docker compose -f apps/server/docker-compose.yml down",
-    "docker:elk": "docker compose -f apps/elk/docker-compose.yml up -d",
     "docker:adminer": "docker compose --profile adminer -f apps/server/docker-compose.yml up -d",
     "docker:pgadmin": "docker compose --profile pgadmin -f apps/server/docker-compose.yml up -d",
     "migration:run": "turbo migration:run --filter=@biblio-num/server",
