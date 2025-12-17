@@ -16,14 +16,26 @@ import Button from 'primevue/button'
 import MultiSelect from 'primevue/multiselect'
 import DatePicker from 'primevue/datepicker'
 import { useAmountLines } from './useAmountLines'
+import {
+  agGridFilterToDataTableDataType,
+  dateMatchModeToAgGrid,
+  agGridToPrimeVueDateMode,
+  agGridToPrimeVueNumberMode,
+  SET_FILTER_TYPES,
+  VALID_API_OPERATORS,
+  numberMatchModeToAgGrid,
+} from './primevue-utils/datatable.const'
+import { formatDateForApi, safeNumber, getFilters } from './primevue-utils/datatable.utils'
 
 //#region 📍------ PROPS ------ 📍
 
 export type DataTableClickEventType<T> = {
-  data: T,
-  column?: BNColDef,
+  data: T
+  column?: BNColDef
   field?: string
 }
+
+type SortItem = { key: string; order: 'ASC' | 'DESC' }
 
 const props = withDefaults(
   defineProps<{
@@ -57,79 +69,35 @@ const props = withDefaults(
 const emit = defineEmits<{
   'update:paginationDto': [p: IPagination<T>]
   filtersUpdated: [filters: DisplayActiveFilter[]]
-  rowClick: [event: { data: T, column?: BNColDef, field?: string }]
+  rowClick: [event: { data: T; column?: BNColDef; field?: string }]
 }>()
 
 //#endregion
 
-onMounted(() => {
-  console.log(props.columnDefs)
-})
+//#region 📍------ STATE ------ 📍
 
-const agGridFilterToDataTableFilter: Record<string, string> = {
-  'agTextColumnFilter': FilterMatchMode.STARTS_WITH,
-  'agNumberColumnFilter': FilterMatchMode.EQUALS,
-  'agMultiColumnFilter': FilterMatchMode.DATE_IS,
-  'agDateColumnFilter': FilterMatchMode.DATE_IS,
-  'agSetColumnFilter': FilterMatchMode.EQUALS,
-  'agBooleanColumnFilter': FilterMatchMode.IN,
-  'customNumbersFilter': FilterMatchMode.EQUALS,
-  'customStringsFilter': FilterMatchMode.EQUALS,
-}
-
-const agGridFilterToDataTableDataType: Record<string, string | undefined> = {
-  'agTextColumnFilter': undefined,
-  'agNumberColumnFilter': 'numeric',
-  'agMultiColumnFilter': 'date',
-  'agDateColumnFilter': 'date',
-  'agSetColumnFilter': undefined,
-  'agBooleanColumnFilter': 'set',
-  'customNumbersFilter': undefined,
-  'customStringsFilter': undefined,
-}
-
-const dateMatchModeToAgGrid: Record<string, string> = {
-  [FilterMatchMode.DATE_IS]: 'equals',
-  [FilterMatchMode.DATE_IS_NOT]: 'notEqual',
-  [FilterMatchMode.DATE_BEFORE]: 'lessThan',
-  [FilterMatchMode.DATE_AFTER]: 'greaterThan',
-}
-
-const formatDateForApi = (value: Date | string | null): string | null => {
-  if (!value) {
-    return null
-  }
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) {
-    return null
-  }
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-
-  return `${year}-${month}-${day} 00:00:00`
-}
-
-const safeNumber = (val: any): number | null => {
-  if (val === null || val === undefined || val === '') {
-    return null
-  }
-  const num = Number(val)
-  return Number.isNaN(num) ? null : num
-}
-
-const displayColumns = ref(false)
-const perPage = ref(20)
 const isLoadingRows = ref(false)
 const tableKey = ref(0)
+const displayColumns = ref(false)
 
-//#region 📍------ DATA ------ 📍
 const currentPage = ref(1)
+const perPage = ref(20)
+const totalRecords = ref(0)
 const rowData = ref()
 
 const selectedColumnsIds = ref(props.columnDefs.filter((col) => !col.hide).map((col) => col.field ?? ''))
+const columnsOrder = ref<string[]>(props.columnDefs.filter((col) => !col.hide).map((col) => col.field ?? ''))
+const columnsWidth = ref<Record<string, number>>({})
+const sort = ref<SortItem[]>([])
 
-const totalRecords = ref(0)
+const filters = ref<DataTableFilterMeta>(getFilters(props.columnDefs))
+
+const isReadyToWatch = ref(false)
+const hasInitialDataLoaded = ref(false)
+
+//#endregion
+
+//#region 📍------ DATA ------ 📍
 
 const filteredColumnDefs = computed(() => {
   // Obtenir les colonnes non cachées et sélectionnées
@@ -140,9 +108,9 @@ const filteredColumnDefs = computed(() => {
   })
 
   // Si aucun ordre personnalisé n'est défini OU si l'ordre est vide, retourner l'ordre original
-  if (columnsOrder.value.length === 0 || !columnsOrder.value.some(fieldId => availableColumns.some(col => col.field === fieldId))) {
+  if (columnsOrder.value.length === 0 || !columnsOrder.value.some((fieldId) => availableColumns.some((col) => col.field === fieldId))) {
     // Retourner dans l'ordre défini par props.columnDefs (ordre par défaut)
-    return props.columnDefs.filter(col => {
+    return props.columnDefs.filter((col) => {
       const isNotHidden = !col.hide
       const isSelected = selectedColumnsIds.value.includes(col.field ?? '')
       return isNotHidden && isSelected
@@ -150,7 +118,7 @@ const filteredColumnDefs = computed(() => {
   }
 
   // Créer un map pour un accès rapide aux colonnes par field
-  const columnMap = new Map(availableColumns.map(col => [col.field, col]))
+  const columnMap = new Map(availableColumns.map((col) => [col.field, col]))
 
   // Réorganiser selon l'ordre défini dans columnsOrder
   const orderedColumns = []
@@ -170,32 +138,7 @@ const filteredColumnDefs = computed(() => {
   return orderedColumns
 })
 
-const sort = ref<{ key: string; order: 'ASC' | 'DESC' }[]>([])
-const filters = ref<DataTableFilterMeta>(getFilters())
-const columnsWidth = ref<Record<string, number>>({})
-const columnsOrder = ref<string[]>(props.columnDefs.filter((col) => !col.hide).map((col) => col.field ?? ''))
-
-function getFilters () {
-  return props.columnDefs
-    .filter(col => col.filterable !== false) // Ne créer des filtres que pour les colonnes filtrables
-    .reduce(
-      (acc, col) => {
-        return {
-          ...acc,
-          [col.field!]: {
-            operator: FilterOperator.AND,
-            constraints: [{
-              value: null,
-              matchMode: agGridFilterToDataTableFilter[col.filter || 'agTextColumnFilter'],
-            }],
-            fieldType: col.fieldType,
-            filterType: agGridFilterToDataTableDataType[col.filter || 'agTextColumnFilter'],
-          },
-        }
-      },
-      {} as DataTableFilterMeta,
-    )
-}
+//#endregion
 
 const notifyFilterChanged = () => {
   const activeFilters: DisplayActiveFilter[] = []
@@ -204,13 +147,13 @@ const notifyFilterChanged = () => {
     if ('value' in (filter as DataTableFilterMetaData)) {
       const metaFilter = filter as DataTableFilterMetaData
       if (metaFilter.value !== null && metaFilter.value !== undefined) {
-        const colDef = props.columnDefs.find(col => col.field === colId)
-        const isSetFilter = colDef?.filter === 'agSetColumnFilter'
+        const colDef = props.columnDefs.find((col) => col.field === colId)
+        const isSetFilter = SET_FILTER_TYPES.includes(colDef?.filter || '')
 
         if (isSetFilter) {
           // Pour les filtres de type "set", on extrait juste les codes
           const values = Array.isArray(metaFilter.value)
-            ? metaFilter.value.map(item => item.code || item)
+            ? metaFilter.value.map((item) => item.code || item)
             : [metaFilter.value]
 
           activeFilters.push({
@@ -231,16 +174,16 @@ const notifyFilterChanged = () => {
       }
     } else if ('operator' in (filter as DataTableOperatorFilterMetaData)) {
       const metaFilter = filter as DataTableOperatorFilterMetaData
-      const activeConstraints = metaFilter.constraints.filter(c => c.value !== null && c.value !== undefined)
+      const activeConstraints = metaFilter.constraints.filter((c) => c.value !== null && c.value !== undefined)
 
       if (activeConstraints.length > 0) {
-        const colDef = props.columnDefs.find(col => col.field === colId)
-        const isSetFilter = colDef?.filter === 'agSetColumnFilter'
+        const colDef = props.columnDefs.find((col) => col.field === colId)
+        const isSetFilter = SET_FILTER_TYPES.includes(colDef?.filter || '')
 
         if (isSetFilter && activeConstraints[0]) {
           // Pour les filtres de type "set", format simple
           const values = Array.isArray(activeConstraints[0].value)
-            ? activeConstraints[0].value.map(item => item.code || item)
+            ? activeConstraints[0].value.map((item) => item.code || item)
             : [activeConstraints[0].value]
 
           activeFilters.push({
@@ -280,10 +223,6 @@ const notifyFilterChanged = () => {
   emit('filtersUpdated', activeFilters)
 }
 
-watch(filters, () => {
-  notifyFilterChanged()
-}, { deep: true })
-
 //#region 📍------ LOCAL STORAGE ------ 📍
 const saveToLocalStorage = (dto: IPagination<T>) => {
   if (!props.localStorageKey) {
@@ -297,70 +236,116 @@ const saveToLocalStorage = (dto: IPagination<T>) => {
   }
 }
 
-function restoreFromLocalStorage () {
-  // Priorité à initialState si fourni
-  let dto: IPagination<T> | null = null
-
-  if (props.initialState) {
-    dto = props.initialState
-  } else if (props.localStorageKey) {
-    try {
-      const saved = localStorage.getItem(props.localStorageKey)
-      if (saved) {
-        dto = JSON.parse(saved)
-      }
-    } catch (e) {
-      console.warn('Erreur de restauration depuis localStorage', e)
-    }
-  }
-
-  if (!dto) {
-    return
-  }
-
+const applyFromDto = (dto: IPagination<T>) => {
   //#region 📍------ RESTORE FILTERS ------ 📍
   if (dto.filters) {
-    Object.entries(dto.filters).forEach(([key, value]) => {
-      const colDef = props.columnDefs.find(col => col.field === key)
-      const isSetFilter = colDef?.filter === 'agSetColumnFilter'
+    const rebuiltFilters = getFilters(props.columnDefs)
 
-      if (isSetFilter && value.condition1?.filter) {
-        // Pour les filtres de type "set", on recrée le format PrimeVue
-        const filterValues = Array.isArray(value.condition1.filter)
-          ? value.condition1.filter.map(code => ({ name: code, code }))
-          : [{ name: value.condition1.filter, code: value.condition1.filter }]
+    Object.entries(dto.filters).forEach(([key, savedValue]) => {
+      const colDef = props.columnDefs.find((c) => c.field === key)
+      if (!colDef) {
+        return
+      }
 
-        filters.value[key as keyof typeof filters.value] = {
+      const filterName = colDef.filter || 'agTextColumnFilter'
+
+      // Détection précise du type
+      const mappedType = agGridFilterToDataTableDataType[filterName]
+      const isDate = mappedType === 'date'
+      const isNumber = mappedType === 'numeric'
+      const isBoolean = mappedType === 'boolean'
+      const isSet = (SET_FILTER_TYPES.includes(filterName as any) || mappedType === 'set') && !isBoolean
+
+      const primeVueType = mappedType || 'text'
+
+      const cond1 = (savedValue as any).condition1
+      const cond2 = (savedValue as any).condition2
+      const operator = (savedValue as any).operator === 'OR' ? FilterOperator.OR : FilterOperator.AND
+
+      if (isSet && cond1) {
+        let valueToRestore = null
+
+        if (typeof cond1 === 'object' && ('includeEmpty' in cond1 || 'filterType' in cond1) && !Array.isArray(cond1)) {
+          valueToRestore = cond1
+        } else if (Array.isArray(cond1.filter)) {
+          valueToRestore = {
+            filterType: 'set',
+            includeEmpty: false,
+            filter: cond1.filter,
+          }
+        } else if (cond1.filter !== undefined) {
+          valueToRestore = {
+            filterType: 'set',
+            includeEmpty: false,
+            filter: [cond1.filter],
+          }
+        }
+
+        if (valueToRestore) {
+          rebuiltFilters[key] = {
+            operator: FilterOperator.AND,
+            constraints: [{ value: valueToRestore, matchMode: FilterMatchMode.EQUALS }],
+            filterType: 'set',
+          }
+        }
+      } else if (isBoolean && cond1) {
+        let rawValues: string[] = []
+
+        if (Array.isArray(cond1.filter)) {
+          rawValues = cond1.filter.map(String)
+        } else if (cond1.filter !== undefined) {
+          rawValues = [String(cond1.filter)]
+        }
+
+        const booleanOptions = [
+          { name: 'Oui', code: 'true' },
+          { name: 'Non', code: 'false' },
+        ]
+
+        const selectedOptions = booleanOptions.filter(opt => rawValues.includes(opt.code))
+
+        rebuiltFilters[key] = {
           operator: FilterOperator.AND,
           constraints: [{
-            value: filterValues,
+            value: selectedOptions,
             matchMode: FilterMatchMode.IN,
           }],
-          filterType: agGridFilterToDataTableDataType[colDef.filter || 'agTextColumnFilter'],
+          filterType: 'boolean',
         }
-      } else {
-        // Pour les autres filtres, format classique
-        const condition1 = value.condition1 as any
-        const condition2 = (value as any).condition2
+      } else if (cond1) {
+        const restoreConstraint = (c: any) => {
+          if (!c) {
+            return null
+          }
 
-        filters.value[key as keyof typeof filters.value] = {
-          operator: FilterOperator.AND,
-          constraints: [
-            {
-              value: condition1?.filter || null,
-              matchMode: condition1?.type || FilterMatchMode.STARTS_WITH,
-            },
-            ...(condition2
-              ? [{
-                  value: condition2.filter,
-                  matchMode: condition2.type,
-                }]
-              : []),
-          ],
-          filterType: agGridFilterToDataTableDataType[colDef.filter || 'agTextColumnFilter'],
+          let val = c.filter
+          let mode = c.type
+
+          if (isDate) {
+            val = val ? new Date(val) : null
+            mode = agGridToPrimeVueDateMode[c.type] || FilterMatchMode.DATE_IS
+          } else if (isNumber) {
+            val = Number(val)
+            mode = agGridToPrimeVueNumberMode[c.type] || FilterMatchMode.EQUALS
+          }
+
+          return { value: val, matchMode: mode }
+        }
+
+        const constraint1 = restoreConstraint(cond1)
+        const constraint2 = restoreConstraint(cond2)
+
+        if (constraint1) {
+          rebuiltFilters[key] = {
+            operator,
+            constraints: [constraint1, ...(constraint2 ? [constraint2] : [])],
+            filterType: primeVueType,
+          }
         }
       }
     })
+
+    filters.value = rebuiltFilters
   }
   //#endregion
 
@@ -368,10 +353,12 @@ function restoreFromLocalStorage () {
   if (dto.sorts && dto.sorts.length > 0) {
     const sortItem = dto.sorts.at(0)
     if (sortItem) {
-      sort.value = [{
-        key: sortItem.key,
-        order: sortItem.order,
-      }]
+      sort.value = [
+        {
+          key: sortItem.key,
+          order: sortItem.order,
+        },
+      ]
     }
   } else {
     sort.value = []
@@ -381,8 +368,8 @@ function restoreFromLocalStorage () {
   //#region 📍------ RESTORE COLUMNS ------ 📍
   if (dto.columns && dto.columns.length > 0) {
     // Filtrer les colonnes pour exclure celles qui sont cachées
-    const availableColumns = props.columnDefs.filter(col => !col.hide).map(col => col.field ?? '')
-    selectedColumnsIds.value = (dto.columns as string[]).filter(colId => availableColumns.includes(colId))
+    const availableColumns = props.columnDefs.filter((col) => !col.hide).map((col) => col.field ?? '')
+    selectedColumnsIds.value = (dto.columns as string[]).filter((colId) => availableColumns.includes(colId))
   }
   //#endregion
 
@@ -395,11 +382,11 @@ function restoreFromLocalStorage () {
 
   //#region 📍------ RESTORE COLUMNS ORDER ------ 📍
   if (dto.columnsOrder && dto.columnsOrder.length > 0) {
-    const availableColumns = props.columnDefs.filter(col => !col.hide).map(col => col.field ?? '')
-    const validOrder = (dto.columnsOrder as string[]).filter(colId => availableColumns.includes(colId))
+    const availableColumns = props.columnDefs.filter((col) => !col.hide).map((col) => col.field ?? '')
+    const validOrder = (dto.columnsOrder as string[]).filter((colId) => availableColumns.includes(colId))
 
     // Ajouter les colonnes manquantes à la fin si elles ne sont pas dans l'ordre sauvegardé
-    const missingColumns = availableColumns.filter(col => !validOrder.includes(col))
+    const missingColumns = availableColumns.filter((col) => !validOrder.includes(col))
     const finalOrder = [...validOrder, ...missingColumns]
 
     selectedColumnsIds.value = finalOrder
@@ -411,32 +398,25 @@ function restoreFromLocalStorage () {
   perPage.value = dto.perPage ?? 20
 }
 
-const hasInitialDataLoaded = ref(false)
-
-onMounted(() => {
-  filters.value = getFilters()
-  restoreFromLocalStorage()
-  notifyFilterChanged()
-})
-//#endregion
-
 const filtersToSend = computed<Record<keyof typeof props.columnDefs, IFilter>>(() => {
   const result: Record<string, IFilter> = {}
 
   for (const [key, filter] of Object.entries(filters.value)) {
-    const colDef = props.columnDefs.find(col => col.field === key)
+    const colDef = props.columnDefs.find((col) => col.field === key)
     const mappedType = colDef ? agGridFilterToDataTableDataType[colDef.filter || ''] : undefined
     const currentType = (filter as any).filterType || mappedType || 'text'
 
     const apiType = currentType === 'numeric' ? 'number' : currentType
 
-    // Helper interne pour résoudre le nom de l'opérateur
     const resolveOperator = (mode: string) => {
+      if (VALID_API_OPERATORS.includes(mode)) {
+        return mode
+      }
       if (currentType === 'date') {
         return dateMatchModeToAgGrid[mode] || 'equals'
       }
       if (currentType === 'numeric') {
-        return mode === FilterMatchMode.NOT_EQUALS ? 'notEqual' : mode
+        return numberMatchModeToAgGrid[mode] || 'equals'
       }
       if (currentType === 'text') {
         return mode === FilterMatchMode.NOT_EQUALS ? 'notEqual' : mode
@@ -444,7 +424,6 @@ const filtersToSend = computed<Record<keyof typeof props.columnDefs, IFilter>>((
       return mode
     }
 
-    // Helper interne pour résoudre la valeur
     const resolveValue = (val: any) => {
       if (currentType === 'date') {
         return formatDateForApi(val)
@@ -455,13 +434,10 @@ const filtersToSend = computed<Record<keyof typeof props.columnDefs, IFilter>>((
       return val
     }
 
-    // =========================================================
-    // CAS 1 : Filtre Simple ('value' directe)
-    // =========================================================
+    // Filtre Simple ('value' directe)
     if ('value' in (filter as DataTableFilterMetaData)) {
       const metaFilter = filter as DataTableFilterMetaData
 
-      // Detection Custom Filter Simple
       if (metaFilter.value && typeof metaFilter.value === 'object' && 'filterType' in metaFilter.value) {
         result[key] = metaFilter.value
         continue
@@ -478,7 +454,7 @@ const filtersToSend = computed<Record<keyof typeof props.columnDefs, IFilter>>((
         result[key] = {
           filterType: isArray ? 'set' : apiType,
           condition1: {
-            type: (isArray || isBlankOrNotBlank) ? undefined : resolveOperator(metaFilter.matchMode as string),
+            type: isArray || isBlankOrNotBlank ? undefined : resolveOperator(metaFilter.matchMode as string),
             filter: isArray ? metaFilter.value.map(({ code }: { code: string }) => code) : resolveValue(metaFilter.value),
           },
         }
@@ -486,9 +462,7 @@ const filtersToSend = computed<Record<keyof typeof props.columnDefs, IFilter>>((
       }
     }
 
-    // =========================================================
-    // CAS 2 : Filtre avec Opérateur
-    // =========================================================
+    // Filtre avec Opérateur
     if ('operator' in (filter as DataTableOperatorFilterMetaData)) {
       const metaFilter = filter as DataTableOperatorFilterMetaData
       if (!metaFilter.constraints || !Array.isArray(metaFilter.constraints)) {
@@ -497,7 +471,6 @@ const filtersToSend = computed<Record<keyof typeof props.columnDefs, IFilter>>((
       const constraints = metaFilter.constraints
       const firstConstraint = constraints[0]
 
-      // 1. Custom Filter Imbriqué
       if (firstConstraint && firstConstraint.value && typeof firstConstraint.value === 'object' && 'filterType' in firstConstraint.value) {
         const customValue = firstConstraint.value as any
 
@@ -522,14 +495,14 @@ const filtersToSend = computed<Record<keyof typeof props.columnDefs, IFilter>>((
         continue
       }
 
-      constraints.forEach(c => {
+      constraints.forEach((c) => {
         if (c.matchMode === 'blank' || c.matchMode === 'notBlank') {
           c.value = c.matchMode
         }
       })
 
-      const hasValue1 = constraints[0]?.value !== null && constraints[0]?.value !== undefined
-      const hasValue2 = constraints[1]?.value !== null && constraints[1]?.value !== undefined
+      const hasValue1 = constraints.at(0)?.value !== null && constraints.at(0)?.value !== undefined
+      const hasValue2 = constraints.at(1)?.value !== null && constraints.at(1)?.value !== undefined
 
       if (hasValue1 || hasValue2) {
         const isSetFilter = Array.isArray(constraints[0]!.value)
@@ -541,9 +514,7 @@ const filtersToSend = computed<Record<keyof typeof props.columnDefs, IFilter>>((
           condition1: {
             filterType: finalType,
             type: isSetFilter ? undefined : resolveOperator(constraints[0]!.matchMode as string),
-            filter: isSetFilter
-              ? constraints[0]!.value.map((v: any) => v.code || v)
-              : resolveValue(constraints[0]!.value),
+            filter: isSetFilter ? constraints[0]!.value.map((v: any) => v.code || v) : resolveValue(constraints[0]!.value),
           },
         }
 
@@ -561,52 +532,6 @@ const filtersToSend = computed<Record<keyof typeof props.columnDefs, IFilter>>((
 
         result[key] = output
       }
-
-      /* if (metaFilter.constraints.length === 2) {
-        const [cond1, cond2] = metaFilter.constraints
-        const isBlankOrNotBlank1 = cond1!.matchMode === 'blank' || cond1!.matchMode === 'notBlank'
-        const isBlankOrNotBlank2 = cond2!.matchMode === 'blank' || cond2!.matchMode === 'notBlank'
-        if (isBlankOrNotBlank1) {
-          metaFilter.constraints.at(0)!.value = metaFilter.constraints.at(0)!.matchMode
-        }
-        if (isBlankOrNotBlank2) {
-          metaFilter.constraints.at(1)!.value = metaFilter.constraints.at(1)!.matchMode
-        }
-        if (cond1?.value || cond2?.value) {
-          result[key] = {
-            filterType: apiType,
-            condition1: {
-              filterType: apiType,
-              type: (Array.isArray(cond1!.value) || isBlankOrNotBlank1) ? undefined : resolveOperator(cond1!.matchMode as string),
-              filter: resolveValue(cond1!.value),
-            },
-            condition2: {
-              filterType: apiType,
-              type: (Array.isArray(cond2!.value) || isBlankOrNotBlank2) ? undefined : resolveOperator(cond2!.matchMode as string),
-              filter: Array.isArray(cond2!.value) ? cond2!.value.map(({ code }) => code) : cond2!.value,
-            },
-            operator: metaFilter.operator === FilterOperator.AND ? 'AND' : 'OR',
-          }
-        }
-      } else if (metaFilter.constraints.length === 1) {
-        const [cond1] = metaFilter.constraints
-        const isBlankOrNotBlank1 = cond1!.matchMode === 'blank' || cond1!.matchMode === 'notBlank'
-        if (isBlankOrNotBlank1) {
-          cond1!.value = cond1!.matchMode
-        }
-        if (cond1!.value) {
-          // const type = metaFilter.filterType || 'text'
-
-          // @ts-expect-error TS2322
-          result[key] = {
-            filterType: Array.isArray(cond1!.value) ? 'set' : apiType,
-            condition1: {
-              type: Array.isArray(cond1!.value) ? undefined : resolveOperator(cond1!.matchMode as string),
-              filter: Array.isArray(cond1!.value) ? cond1!.value.map(({ code }) => code) : (apiType === 'number' ? +cond1!.value : cond1!.value),
-            },
-          }
-        }
-      } */
     }
   }
   return result as Record<keyof typeof props.columnDefs, IFilter>
@@ -617,7 +542,7 @@ const getRows = async (page: number = currentPage.value) => {
 
   const dto: IPagination<T> = {
     sorts: sort.value,
-    filters: Object.keys(filtersToSend.value ?? {}).length > 0 ? filtersToSend.value as Record<keyof T, IFilter> : null,
+    filters: Object.keys(filtersToSend.value ?? {}).length > 0 ? (filtersToSend.value as Record<keyof T, IFilter>) : null,
     columns: selectedColumnsIds.value,
     columnsWidth: columnsWidth.value as Record<string | keyof T, number>,
     columnsOrder: columnsOrder.value,
@@ -638,19 +563,38 @@ const getRows = async (page: number = currentPage.value) => {
   }
 }
 
-watch(filtersToSend, () => {
+const initializeTable = async () => {
   if (hasInitialDataLoaded.value) {
-    getRows(1)
+    return
   }
-})
 
-// Watcher pour le premier chargement - attend que preCondition soit true ET que l'apiCall soit défini
-watch(() => [props.preCondition, props.apiCall], ([preCondition, apiCall]) => {
-  if (preCondition && apiCall && !hasInitialDataLoaded.value) {
-    hasInitialDataLoaded.value = true
-    getRows(currentPage.value)
+  isReadyToWatch.value = false
+
+  let startDto: IPagination<T> | null = null
+  if (props.initialState) {
+    startDto = props.initialState
+  } else if (props.localStorageKey) {
+    try {
+      const saved = localStorage.getItem(props.localStorageKey)
+      if (saved) {
+        startDto = JSON.parse(saved)
+      }
+    } catch (e) { console.warn(e) }
   }
-}, { immediate: true })
+
+  if (startDto) {
+    applyFromDto(startDto)
+  }
+
+  await nextTick()
+
+  await getRows(currentPage.value)
+
+  hasInitialDataLoaded.value = true
+
+  isReadyToWatch.value = true
+  notifyFilterChanged()
+}
 
 function onSortChanged (sortEvent: DataTableSortEvent) {
   const { sortField, sortOrder } = sortEvent
@@ -660,30 +604,15 @@ function onSortChanged (sortEvent: DataTableSortEvent) {
 }
 //#endregion
 
-watch(perPage, () => getRows(1))
-
-// Watcher pour mettre à jour paginationDto quand les colonnes sélectionnées changent
-watch(selectedColumnsIds, () => {
-  if (hasInitialDataLoaded.value) {
-    const dto: IPagination<T> = {
-      sorts: sort.value,
-      filters: Object.keys(filtersToSend.value ?? {}).length > 0 ? filtersToSend.value as Record<keyof T, IFilter> : null,
-      columns: selectedColumnsIds.value,
-      columnsWidth: columnsWidth.value as Record<string | keyof T, number>,
-      columnsOrder: columnsOrder.value,
-      perPage: +perPage.value,
-      page: currentPage.value,
-    }
-    emit('update:paginationDto', dto)
-  }
-}, { deep: true })
-
-const paginationPages = computed(
-  () => Array.from(Array(Math.ceil(totalRecords.value / perPage.value)))
-    .map((_, i) => ({ title: (i + 1).toString(), href: `#${i + 1}`, label: (i + 1).toString() })),
+const paginationPages = computed(() =>
+  Array.from(Array(Math.ceil(totalRecords.value / perPage.value))).map((_, i) => ({
+    title: (i + 1).toString(),
+    href: `#${i + 1}`,
+    label: (i + 1).toString(),
+  })),
 )
 
-const onColResize = (event: { element: HTMLElement, delta: number }) => {
+const onColResize = (event: { element: HTMLElement; delta: number }) => {
   // Identifier la colonne concernée par le redimensionnement
   // L'élément est la cellule d'en-tête <th>, cherchons son attribut data-pc-section ou son index
   const headerElement = event.element as HTMLTableCellElement
@@ -725,7 +654,7 @@ const onColResize = (event: { element: HTMLElement, delta: number }) => {
   if (hasInitialDataLoaded.value) {
     const dto: IPagination<T> = {
       sorts: sort.value,
-      filters: Object.keys(filtersToSend.value ?? {}).length > 0 ? filtersToSend.value as Record<keyof T, IFilter> : null,
+      filters: Object.keys(filtersToSend.value ?? {}).length > 0 ? (filtersToSend.value as Record<keyof T, IFilter>) : null,
       columns: selectedColumnsIds.value,
       columnsWidth: columnsWidth.value as Record<string | keyof T, number>,
       columnsOrder: columnsOrder.value,
@@ -737,7 +666,7 @@ const onColResize = (event: { element: HTMLElement, delta: number }) => {
   }
 }
 
-const onColumnReorder = (event: { dragIndex: number, dropIndex: number }) => {
+const onColumnReorder = (event: { dragIndex: number; dropIndex: number }) => {
   // Créer une copie de l'ordre actuel des colonnes visibles
   const currentOrder = [...selectedColumnsIds.value]
 
@@ -755,7 +684,7 @@ const onColumnReorder = (event: { dragIndex: number, dropIndex: number }) => {
   if (hasInitialDataLoaded.value) {
     const dto: IPagination<T> = {
       sorts: sort.value,
-      filters: Object.keys(filtersToSend.value ?? {}).length > 0 ? filtersToSend.value as Record<keyof T, IFilter> : null,
+      filters: Object.keys(filtersToSend.value ?? {}).length > 0 ? (filtersToSend.value as Record<keyof T, IFilter>) : null,
       columns: selectedColumnsIds.value,
       columnsWidth: columnsWidth.value as Record<string | keyof T, number>,
       columnsOrder: columnsOrder.value,
@@ -772,7 +701,7 @@ const scrollHeight = ref('')
 const dataTableRef = useTemplateRef('dataTable')
 const computeScrollHeight = () => {
   const height = window.innerHeight
-  const top = (dataTableRef.value)?.offsetTop || 0
+  const top = dataTableRef.value?.offsetTop || 0
   scrollHeight.value = `${height - top - 82}px`
 }
 
@@ -786,7 +715,7 @@ useEventListener(window, 'resize', computeScrollHeight)
 //#endregion
 
 //#region 📍------ ROW CLICK ------ 📍
-const onRowClick = (event: { data: T, originalEvent?: Event }) => {
+const onRowClick = (event: { data: T; originalEvent?: Event }) => {
   // Extraire les informations de la ligne cliquée
   const rowData = event.data
 
@@ -799,7 +728,7 @@ const onRowClick = (event: { data: T, originalEvent?: Event }) => {
 }
 //#endregion
 
-function dealWithBlankAndNotBlank (filterModel: { matchMode: unknown, value: unknown }) {
+function dealWithBlankAndNotBlank (filterModel: { matchMode: unknown; value: unknown }) {
   if (filterModel.matchMode === 'blank' || filterModel.matchMode === 'notBlank') {
     filterModel.value = filterModel.matchMode
   }
@@ -810,7 +739,7 @@ function refreshTable () {
 }
 
 function clearAllFilters () {
-  filters.value = getFilters()
+  filters.value = getFilters(props.columnDefs)
   getRows(1)
   notifyFilterChanged()
 }
@@ -818,13 +747,15 @@ function clearAllFilters () {
 function removeFilter (colId: string): Promise<void> {
   return new Promise((resolve) => {
     if (filters.value[colId]) {
-      delete filters.value[colId]
-      // Recréer les filtres pour inclure uniquement ceux qui restent
-      const newFilters: DataTableFilterMeta = {}
-      for (const [key, value] of Object.entries(filters.value)) {
-        newFilters[key] = value
+      // On génère un jeu de filtres vierges
+      const emptyFilters = getFilters(props.columnDefs)
+      // On remplace le filtre actuel par sa version vierge
+      // @ts-expect-error TS2322
+      filters.value = {
+        ...filters.value,
+        // On restaure la structure { operator: ..., constraints: [...] }
+        [colId]: emptyFilters[colId],
       }
-      filters.value = newFilters
       getRows(1)
       notifyFilterChanged()
     }
@@ -833,100 +764,8 @@ function removeFilter (colId: string): Promise<void> {
 }
 
 // Met à jour l'état du tableau de données en fonction du DTO fourni
-function updateDataTableState (dto: IPagination<T>) {
-  // Appliquer les filtres
-  filters.value = getFilters()
-  if (dto.filters) {
-    Object.entries(dto.filters).forEach(([key, value]) => {
-      const colDef = props.columnDefs.find(col => col.field === key)
-      const isSetFilter = colDef?.filter === 'agSetColumnFilter'
-
-      if (isSetFilter && value.condition1?.filter) {
-        // Pour les filtres de type "set", on recrée le format PrimeVue
-        const filterValues = Array.isArray(value.condition1.filter)
-          ? value.condition1.filter.map(code => ({ name: code, code }))
-          : [{ name: value.condition1.filter, code: value.condition1.filter }]
-
-        filters.value[key as keyof typeof filters.value] = {
-          ...(filters.value[key as keyof typeof filters.value] as DataTableOperatorFilterMetaData),
-          operator: FilterOperator.AND,
-          constraints: [{
-            value: filterValues,
-            matchMode: FilterMatchMode.IN,
-          }],
-        }
-      } else {
-        // Pour les autres filtres, format classique
-        const condition1 = value.condition1 as any
-        const condition2 = (value as any).condition2
-
-        filters.value[key as keyof typeof filters.value] = {
-          ...(filters.value[key as keyof typeof filters.value] as DataTableOperatorFilterMetaData),
-          operator: FilterOperator.AND,
-          constraints: [
-            {
-              value: condition1?.filter || null,
-              matchMode: condition1?.type || FilterMatchMode.STARTS_WITH,
-            },
-            ...(condition2
-              ? [{
-                  value: condition2.filter,
-                  matchMode: condition2.type,
-                }]
-              : []),
-          ],
-        }
-      }
-    })
-  }
-
-  // Appliquer les tris
-  if (dto.sorts && dto.sorts.length > 0) {
-    const sortItem = dto.sorts.at(0)
-    if (sortItem) {
-      sort.value = [{
-        key: sortItem.key,
-        order: sortItem.order,
-      }]
-    }
-  } else {
-    sort.value = []
-  }
-
-  // Appliquer les colonnes visibles
-  if (dto.columns) {
-    // Filtrer les colonnes pour exclure celles qui sont cachées
-    const availableColumns = props.columnDefs.filter(col => !col.hide).map(col => col.field ?? '')
-    selectedColumnsIds.value = (dto.columns as string[]).filter(colId => availableColumns.includes(colId))
-  }
-
-  // Appliquer les largeurs de colonnes
-  if (dto.columnsWidth) {
-    columnsWidth.value = dto.columnsWidth as Record<string, number>
-  }
-
-  // Appliquer l'ordre des colonnes
-  if (dto.columnsOrder && dto.columnsOrder.length > 0) {
-    const availableColumns = props.columnDefs.filter(col => !col.hide).map(col => col.field ?? '')
-    const validOrder = (dto.columnsOrder as string[]).filter(colId => availableColumns.includes(colId))
-
-    // Ajouter les colonnes manquantes à la fin si elles ne sont pas dans l'ordre sauvegardé
-    const missingColumns = availableColumns.filter(col => !validOrder.includes(col))
-    const finalOrder = [...validOrder, ...missingColumns]
-
-    selectedColumnsIds.value = finalOrder
-    columnsOrder.value = finalOrder
-  }
-
-  selectedColumnsIds.value = selectedColumnsIds.value.filter(colId => dto.columns.includes(colId))
-
-  // Appliquer la pagination
-  currentPage.value = dto.page ?? 1
-  perPage.value = dto.perPage ?? 20
-
-  // Notifier les changements et rafraîchir
-  notifyFilterChanged()
-  refreshTable()
+const updateDataTableState = (dto: IPagination<T>) => {
+  applyFromDto(dto)
 }
 
 function resetColumnOrder () {
@@ -944,14 +783,14 @@ function resetColumnOrder () {
   tableKey.value++
   nextTick(() => {
     // Validation de l'ordre réel des colonnes
-    const realOrder = filteredColumnDefs.value.map(col => col.field)
+    const realOrder = filteredColumnDefs.value.map((col) => col.field)
     console.warn('Column order reset completed. New order:', toRaw(columnsOrder.value))
     console.warn('filteredColumnDefs order:', realOrder)
     // Sauvegarder immédiatement la réinitialisation
     if (hasInitialDataLoaded.value) {
       const dto: IPagination<T> = {
         sorts: sort.value,
-        filters: Object.keys(filtersToSend.value ?? {}).length > 0 ? filtersToSend.value as Record<keyof T, IFilter> : null,
+        filters: Object.keys(filtersToSend.value ?? {}).length > 0 ? (filtersToSend.value as Record<keyof T, IFilter>) : null,
         columns: selectedColumnsIds.value,
         columnsWidth: columnsWidth.value as Record<string | keyof T, number>,
         columnsOrder: columnsOrder.value,
@@ -976,7 +815,7 @@ function resetColumnsWidth () {
   if (hasInitialDataLoaded.value) {
     const dto: IPagination<T> = {
       sorts: sort.value,
-      filters: Object.keys(filtersToSend.value ?? {}).length > 0 ? filtersToSend.value as Record<keyof T, IFilter> : null,
+      filters: Object.keys(filtersToSend.value ?? {}).length > 0 ? (filtersToSend.value as Record<keyof T, IFilter>) : null,
       columns: selectedColumnsIds.value,
       columnsWidth: columnsWidth.value as Record<string | keyof T, number>,
       columnsOrder: columnsOrder.value,
@@ -985,6 +824,77 @@ function resetColumnsWidth () {
     }
     emit('update:paginationDto', dto)
     saveToLocalStorage(dto)
+  }
+}
+
+watch(
+  filters,
+  () => {
+    notifyFilterChanged()
+  },
+  { deep: true },
+)
+
+watch(filtersToSend, () => {
+  if (!isReadyToWatch.value) {
+    return
+  }
+
+  if (hasInitialDataLoaded.value) {
+    getRows(1)
+  }
+})
+
+watch(perPage, () => {
+  if (!isReadyToWatch.value) {
+    return
+  }
+  getRows(1)
+})
+
+// Watcher pour mettre à jour paginationDto quand les colonnes sélectionnées changent
+watch(
+  selectedColumnsIds,
+  () => {
+    if (!isReadyToWatch.value) {
+      return
+    }
+
+    if (hasInitialDataLoaded.value) {
+      const dto: IPagination<T> = {
+        sorts: sort.value,
+        filters: Object.keys(filtersToSend.value ?? {}).length > 0 ? (filtersToSend.value as Record<keyof T, IFilter>) : null,
+        columns: selectedColumnsIds.value,
+        columnsWidth: columnsWidth.value as Record<string | keyof T, number>,
+        columnsOrder: columnsOrder.value,
+        perPage: +perPage.value,
+        page: currentPage.value,
+      }
+      emit('update:paginationDto', dto)
+    }
+  },
+  { deep: true },
+)
+
+// Watcher pour le premier chargement - attend que preCondition soit true ET que l'apiCall soit défini
+watch(
+  () => [props.preCondition, props.apiCall],
+  ([preCondition, apiCall]) => {
+    if (preCondition && apiCall) {
+      initializeTable()
+    }
+  },
+  { immediate: true },
+)
+
+const first = computed(() => (currentPage.value - 1) * perPage.value)
+const onPage = (event: { first: number, rows: number }) => {
+  if (totalRecords.value === 0 && isLoadingRows.value) {
+    return
+  }
+  const newPage = Math.floor(event.first / event.rows) + 1
+  if (currentPage.value !== newPage) {
+    currentPage.value = newPage
   }
 }
 
@@ -1022,22 +932,32 @@ defineExpose({
       column-resize-mode="expand"
       :rows="perPage"
       :rows-per-page-options="[20, 50, 100]"
-      :first="0"
+      :first="first"
+      :total-records="totalRecords"
       :scroll-height="scrollHeight"
       filter-display="menu"
       row-hover
       :sort-field="sort[0]?.key"
-      :sort-order="sort[0]?.order === 'ASC' ? 1 : (sort[0]?.order === 'DESC' ? -1 : 0)"
+      :sort-order="sort[0]?.order === 'ASC' ? 1 : sort[0]?.order === 'DESC' ? -1 : 0"
+      @page="onPage"
       @column-resize-end="onColResize($event)"
       @column-reorder="onColumnReorder($event)"
       @sort="onSortChanged($event)"
       @row-click="onRowClick($event)"
     >
       <template #paginatorstart>
-        <Button type="button" icon="pi pi-refresh" text />
+        <Button
+          type="button"
+          icon="pi pi-refresh"
+          text
+        />
       </template>
       <template #paginatorend>
-        <Button type="button" icon="pi pi-download" text />
+        <Button
+          type="button"
+          icon="pi pi-download"
+          text
+        />
       </template>
       <Column
         v-for="col of filteredColumnDefs"
@@ -1046,42 +966,31 @@ defineExpose({
         :header="col.headerName"
         :data-type="agGridFilterToDataTableDataType[col.filter]"
         :sortable="col.sortable === false ? undefined : true"
-        :show-add-button="!['agSetColumnFilter', 'agBooleanColumnFilter'].includes(col.filter)"
-        :show-filter-match-modes="!['agSetColumnFilter', 'agBooleanColumnFilter'].includes(col.filter)"
+        :show-add-button="!SET_FILTER_TYPES.includes(col.filter)"
+        :show-filter-match-modes="!SET_FILTER_TYPES.includes(col.filter)"
         :show-filter-menu="!col.suppressHeaderMenuButton"
         :title="col.headerName"
       >
         <template #body="{ data }">
           <template v-if="col.cellRenderer">
-            <component :is="col.cellRenderer" :style="col.cellStyle" :params="{ row: data, value: data[col.field!], ...col.cellRendererParams }" />
+            <component
+              :is="col.cellRenderer"
+              :style="col.cellStyle"
+              :params="{ row: data, value: data[col.field!], ...col.cellRendererParams }"
+            />
           </template>
           <template v-else-if="col.valueFormatter && typeof col.valueFormatter === 'function' && col.field">
-            <span :style="(col.cellStyle as unknown as string)">
+            <span :style="col.cellStyle as unknown as string">
               {{ col.valueFormatter({ value: data[col.field] } as any) }}
             </span>
           </template>
           <template v-else>
-            <span :style="(col.cellStyle as unknown as string)">
+            <span :style="col.cellStyle as unknown as string">
               {{ data[col.field!] }}
             </span>
           </template>
         </template>
         <template #filter="{ filterModel, filterCallback }">
-          <!-- <template v-if="col.filter === 'agSetColumnFilter'">
-            <MultiSelect
-              v-model="filterModel.value"
-              :options="col.filterParams.values.map(
-                (value: string) => ({ name: col.filterParams.valueFormatter ? col.filterParams.valueFormatter({ value }) : value, code: value }),
-              )"
-              option-label="name"
-              placeholder="Toutes les valeurs"
-              @change="filterCallback()"
-            >
-              <template #option="slotProps">
-                <component :is="col.filterParams.cellRenderer ?? col.cellRenderer" :params="{ value: slotProps.option.name }" />
-              </template>
-            </MultiSelect>
-          </template> -->
           <template v-if="col.filter === 'agSetColumnFilter'">
             <PrimeSetFilter
               v-model="filterModel.value"
@@ -1094,24 +1003,18 @@ defineExpose({
             />
           </template>
           <template v-else-if="col.filter === 'agMultiColumnFilter'">
-            <DatePicker v-model="filterModel.value" date-format="dd/mm/yy" placeholder="jj/mm/aaaa" />
-          </template>
-          <!-- <template v-else-if="col.filter === 'customNumbersFilter'">
-            <PrimeNumbersFilter
+            <DatePicker
               v-model="filterModel.value"
-              :filter-callback="filterCallback"
-              :params="col.filterParams"
+              date-format="dd/mm/yy"
+              placeholder="jj/mm/aaaa"
             />
           </template>
-          <template v-else-if="col.filter === 'customStringsFilter'">
-            <PrimeStringListFilter
-              v-model="filterModel.value"
-              :filter-callback="filterCallback"
-              :params="col.filterParams"
-            />
-          </template> -->
           <template v-else-if="col.filter === 'agDateColumnFilter'">
-            <DatePicker v-model="filterModel.value" date-format="mm/dd/yy" placeholder="mm/dd/yyyy" />
+            <DatePicker
+              v-model="filterModel.value"
+              date-format="mm/dd/yy"
+              placeholder="mm/dd/yyyy"
+            />
           </template>
           <template v-else-if="col.filter === 'agBooleanColumnFilter'">
             <MultiSelect
@@ -1131,9 +1034,7 @@ defineExpose({
               </template>
             </MultiSelect>
           </template>
-          <template
-            v-else-if="filterModel.matchMode === 'blank' || filterModel.matchMode === 'notBlank'"
-          >
+          <template v-else-if="filterModel.matchMode === 'blank' || filterModel.matchMode === 'notBlank'">
             {{ dealWithBlankAndNotBlank(filterModel) }}
           </template>
           <DsfrInput
@@ -1194,7 +1095,10 @@ defineExpose({
             </div>
           </button>
         </div>
-        <button type="button" @click.stop="displayColumns = !displayColumns">
+        <button
+          type="button"
+          @click.stop="displayColumns = !displayColumns"
+        >
           <div class="side-button-label">
             Colonnes
           </div>
@@ -1222,7 +1126,7 @@ defineExpose({
 }
 
 :deep(.fr-pagination__link) {
-  margin-bottom: 0;;
+  margin-bottom: 0;
 }
 
 .loading :deep(.p-datatable-tbody) {

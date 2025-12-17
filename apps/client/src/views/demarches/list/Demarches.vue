@@ -1,60 +1,43 @@
 <script lang="ts" setup>
-import type { IPaginated, IPaginationSmallDemarche, ISmallDemarcheOutput, IStringsFilterCondition } from '@biblio-num/shared'
+import type {
+  DynamicKeys,
+  IPaginated,
+  IPaginationSmallDemarche,
+  ISmallDemarcheOutput,
+} from '@biblio-num/shared'
 
 import { useDemarcheStore } from '@/stores/demarche'
 import { routeNames } from '@/router/route-names'
-import type BiblioNumDataTableAgGrid from '@/components/BiblioNumDataTableAgGrid.vue'
 import LayoutList from '@/components/Layout/LayoutList.vue'
 import { useUserStore } from '@/stores'
 import { useActiveFilter } from '@/components/ag-grid/active-filters/useActiveFilter'
 import { demarcheColumnDefs } from './columns-def.const'
-import { EMPTY_RESULT, isEmptyListFilter, isEmptySetFilter } from '@/components/ag-grid/utils'
+import type { BNColDef } from '@/components/ag-grid/server-side/bn-col-def.interface'
 
-const agGridComponent = ref<InstanceType<typeof BiblioNumDataTableAgGrid> | null>(null)
-const primeVueComponent = useTemplateRef('primeVueComponent')
+const dataTableComponent = useTemplateRef('dataTableComponent')
 const demarcheStore = useDemarcheStore()
 const router = useRouter()
 const userStore = useUserStore()
 const paginationDto = ref()
 
+const LOCAL_STORAGE_KEY = 'agGrid.demarches.state'
+
 const apiCall = async (params: IPaginationSmallDemarche): Promise<IPaginated<ISmallDemarcheOutput>> => {
-  const { filters } = params
-
-  if (filters?.types) {
-    const typeFilter = filters.types.condition1 as IStringsFilterCondition
-    if (isEmptyListFilter(typeFilter)) {
-      return EMPTY_RESULT
-    }
-  }
-
-  if (filters?.types && isEmptySetFilter(filters.types)) {
-    return EMPTY_RESULT
-  }
-
   return demarcheStore.loadDemarches(params)
 }
-
-// Avoids the error: "AG Grid: cannot get grid to draw rows when it is in the middle of drawing rows."
-const rowData = ref<ISmallDemarcheOutput[]>([])
-watch(
-  () => demarcheStore.demarches,
-  () => {
-    rowData.value = Array.isArray(demarcheStore.demarches) ? demarcheStore.demarches : []
-  },
-)
 
 onMounted(async () => {
   // await demarcheStore.getDemarches()
   await userStore.loadMyProfile()
 })
 
-const onRowClick = (event: { data: ISmallDemarcheOutput }) => {
+const onRowClick = (event: { data: DynamicKeys; column?: BNColDef; field?: string }) => {
   const selection = event.data
   const id = selection?.id
   router.push({ name: routeNames.DEMARCHE_DOSSIERS, params: { demarcheId: id } })
 }
 
-const { activeFilters, onFiltersUpdated, handleClearAllFilters, handleRemoveFilter } = useActiveFilter(agGridComponent)
+const { activeFilters, onFiltersUpdated, handleClearAllFilters, handleRemoveFilter } = useActiveFilter('data-table', dataTableComponent)
 </script>
 
 <template>
@@ -75,11 +58,11 @@ const { activeFilters, onFiltersUpdated, handleClearAllFilters, handleRemoveFilt
       </div>
 
       <DataTableServerSide
-        ref="primeVueComponent"
+        ref="dataTableComponent"
         v-model:pagination-dto="paginationDto"
         :column-defs="demarcheColumnDefs"
         pre-condition
-        local-storage-key="agGrid.demarches.state"
+        :local-storage-key="LOCAL_STORAGE_KEY"
         :api-call="apiCall"
         @row-click="onRowClick($event)"
         @filters-updated="onFiltersUpdated"

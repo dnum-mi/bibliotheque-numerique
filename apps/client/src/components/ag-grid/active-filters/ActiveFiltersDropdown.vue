@@ -2,6 +2,7 @@
 import { dateToStringFr } from '@/utils'
 import type { Condition, DisplayActiveFilter } from './activeFilters.type'
 import type { BNColDef } from '../server-side/bn-col-def.interface'
+import { FilterMatchMode, FilterOperator } from '@primevue/core'
 
 const props = withDefaults(
   defineProps<{
@@ -32,24 +33,43 @@ const dropdownContainerRef = ref<HTMLElement | null>(null)
 const dropdownContentId = computed(() => `dropdown-content-${props.dropdownIdSuffix}`)
 
 const filterTypeTranslations: Record<string, string> = {
-  contains: 'contient',
-  notContains: 'ne contient pas',
-  equals: 'égal à',
-  notEqual: 'différent de',
-  startsWith: 'commence par',
-  endsWith: 'finit par',
-  blank: 'est vide',
-  notBlank: 'n\'est pas vide',
-  lessThan: 'inférieur à',
-  lessThanOrEqual: 'inférieur ou égal à',
-  greaterThan: 'supérieur à',
-  greaterThanOrEqual: 'supérieur ou égal à',
-  inRange: 'entre',
-  set: 'contient un de',
-  numbers: 'est un de',
-  strings: 'est un de',
+  [FilterMatchMode.CONTAINS]: 'contient',
+  [FilterMatchMode.NOT_CONTAINS]: 'ne contient pas',
+  [FilterMatchMode.EQUALS]: 'égal à',
+  [FilterMatchMode.NOT_EQUALS]: 'différent de',
+  [FilterMatchMode.STARTS_WITH]: 'commence par',
+  [FilterMatchMode.ENDS_WITH]: 'finit par',
+  [FilterMatchMode.LESS_THAN]: 'inférieur à',
+  [FilterMatchMode.LESS_THAN_OR_EQUAL_TO]: 'inférieur ou égal à',
+  [FilterMatchMode.GREATER_THAN]: 'supérieur à',
+  [FilterMatchMode.GREATER_THAN_OR_EQUAL_TO]: 'supérieur ou égal à',
+  [FilterMatchMode.DATE_IS]: 'est le',
+  [FilterMatchMode.DATE_IS_NOT]: 'n\'est pas le',
+  [FilterMatchMode.DATE_BEFORE]: 'avant le',
+  [FilterMatchMode.DATE_AFTER]: 'après le',
+  'greaterThan': 'supérieur à',
+  'lessThan': 'inférieur à',
+  'gt': 'supérieur à',
+  'lt': 'inférieur à',
+  'gte': 'supérieur ou égal à',
+  'lte': 'inférieur ou égal à',
+  'notEqual': 'différent de',
+  'equals': 'égal à',
+  'inRange': 'entre',
+  'contains': 'contient',
+  'startsWith': 'commence par',
+  'endsWith': 'finit par',
+  'blank': 'est vide',
+  'notBlank': 'n\'est pas vide',
+  'set': 'est parmi',
+  'boolean': 'est',
 }
-const operatorTranslations: Record<string, string> = { AND: 'ET', OR: 'OU' }
+const operatorTranslations: Record<string, string> = {
+  [FilterOperator.AND]: 'ET',
+  [FilterOperator.OR]: 'OU',
+  'AND': 'ET',
+  'OR': 'OU',
+}
 const noFiltersMessage = 'Aucun filtre n\'est appliqué.'
 
 const columnLabelMap = computed<Record<string, string>>(() => {
@@ -90,82 +110,98 @@ const handleClickOutside = (event: MouseEvent) => {
 }
 
 //#region 📍--- Helper functions for formatting filter descriptions ---📍
+const formatValue = (val: any): string => {
+  if (val instanceof Date) {
+    return dateToStringFr(val)
+  }
+  if (typeof val === 'string' && !Number.isNaN(Date.parse(val)) && val.includes('-')) {
+    return dateToStringFr(new Date(val))
+  }
+  return String(val)
+}
+
 /**
  * Formats a single condition object
  */
-function formatSingleCondition (condition: Condition, parentFilterType: DisplayActiveFilter['filterType']): string {
+function formatSingleCondition (condition: any): string {
   const type = condition.type || ''
   const translatedType = filterTypeTranslations[type] || type
-  let valuePart = ''
 
-  if (parentFilterType === 'date' || condition.filterType === 'date') {
-    if (condition.type === 'inRange') {
-      const dateFrom = dateToStringFr(condition.dateFrom)
-      const dateTo = dateToStringFr(condition.dateTo)
-      valuePart = ` "${dateFrom}" et "${dateTo}"`
-    } else if (condition.dateFrom && condition.type !== 'blank' && condition.type !== 'notBlank') {
-      valuePart = ` "${dateToStringFr(condition.dateFrom)}"`
-    }
-  } else {
-    if (condition.type === 'inRange') {
-      valuePart = ` "${condition.filter}" et "${condition.filterTo}"`
-    } else if (condition.filter && condition.type !== 'blank' && condition.type !== 'notBlank') {
-      valuePart = ` "${condition.filter}"`
-    }
+  if (['blank', 'notBlank'].includes(type) || ['blank', 'notBlank'].includes(condition.matchMode)) {
+    return translatedType
   }
-  return `${translatedType}${valuePart}`
+
+  if (condition.filter !== undefined && condition.filter !== null) {
+    return `${translatedType} "${formatValue(condition.filter)}"`
+  }
+
+  return translatedType
 }
 
 /** Formats a filter with an operator (AND/OR) and two conditions (condition1, condition2) or an array of conditions */
 function formatOperatorFilterDescription (filter: DisplayActiveFilter): string {
   const conditionsToFormat: Condition[] = []
-  if (filter.condition1 && filter.condition2) {
-    conditionsToFormat.push(filter.condition1, filter.condition2)
-  } else if (Array.isArray(filter.conditions)) {
-    conditionsToFormat.push(...filter.conditions)
+  if (filter.condition1) {
+    conditionsToFormat.push(filter.condition1)
+  }
+  if (filter.condition2) {
+    conditionsToFormat.push(filter.condition2)
   }
 
-  if (conditionsToFormat.length > 0) {
-    const translatedOperator = operatorTranslations[filter.operator!] || filter.operator!
-    return conditionsToFormat.map((cond) => formatSingleCondition(cond, filter.filterType)).join(` ${translatedOperator} `)
+  if (!conditionsToFormat.length) {
+    return '[Conditions d\'opérateur non valides]'
   }
-  return '[Conditions d\'opérateur non valides]'
+
+  const translatedOperator = operatorTranslations[filter.operator!] || 'ET'
+  return conditionsToFormat
+    .map((cond) => formatSingleCondition(cond))
+    .join(` ${translatedOperator} `)
 }
 
 /** Formats a Set Filter */
 function formatSetFilterDescription (filter: DisplayActiveFilter): string {
-  let displayValues = filter.values!.map(String)
+  let rawValues = filter.values || []
+
+  if (
+    rawValues.length > 0
+    && typeof rawValues[0] === 'object'
+    && rawValues[0] !== null
+    && 'filter' in rawValues[0]
+    && Array.isArray(rawValues[0].filter)
+  ) {
+    rawValues = rawValues.flatMap((item: any) => item.filter)
+  }
+
+  let displayValues = rawValues.map(val => {
+    if (val && typeof val === 'object') {
+      if ('name' in val) {
+        return val.name
+      }
+      if ('label' in val) {
+        return val.label
+      }
+    }
+    return String(val)
+  })
+
   const translations = props.setFilterValueTranslations[filter.colId]
   if (translations) {
     displayValues = displayValues.map((val) => translations[val] || val)
   }
 
   const maxDisplayValues = 5
-  let displayText: string
+
   if (displayValues.length > maxDisplayValues) {
     const firstValues = displayValues.slice(0, maxDisplayValues).join(', ')
     const remainingCount = displayValues.length - maxDisplayValues
-    displayText = `${firstValues}, ...(${remainingCount} autres)`
-  } else {
-    displayText = displayValues.join(', ')
+    return `${filterTypeTranslations.set} [${firstValues}, ...(${remainingCount} autres)]`
   }
-  return `${filterTypeTranslations.set} [${displayText}]`
-}
 
-/** Formats a numbers filter */
-function formatNumbersFilterDescription (filter: DisplayActiveFilter): string {
-  const displayValues = (filter.filter as number[]).map(String).join(', ')
-  return `${filterTypeTranslations.numbers} [${displayValues}]`
-}
-
-/** Formats a strings filter */
-function formatStringsFilterDescription (filter: DisplayActiveFilter): string {
-  const displayValues = (filter.filter as number[]).map(String).join(', ')
-  return `${filterTypeTranslations.strings} [${displayValues}]`
+  return `${filterTypeTranslations.set} [${displayValues.join(', ')}]`
 }
 
 /** Formats a Multi Filter */
-function formatMultiFilterDescription (filter: DisplayActiveFilter): string {
+/* function formatMultiFilterDescription (filter: DisplayActiveFilter): string {
   if (!Array.isArray(filter.filterModels) || filter.filterModels.length === 0) {
     return '[Filtre multiple vide ou malformé]'
   }
@@ -191,58 +227,41 @@ function formatMultiFilterDescription (filter: DisplayActiveFilter): string {
   }
 
   return descriptions.join(` ${operatorTranslations.AND || 'ET'} `)
-}
+} */
 
 /** Formats "value-only" filters */
-function formatValueOnlyFilterDescription (filter: DisplayActiveFilter): string {
+/* function formatValueOnlyFilterDescription (filter: DisplayActiveFilter): string {
   const specificTranslation = props.quickFilterValueTranslations[filter.value as string]
   if (specificTranslation) {
     return specificTranslation
   }
   return String(filter.value)
-}
+} */
 
 /** Central Orchestrator */
-function getFilterDescriptionOnly (filter: DisplayActiveFilter | null | undefined, forColId?: string): string {
+function getFilterDescriptionOnly (filter: DisplayActiveFilter): string {
   if (!filter) {
     return '[Filtre invalide]'
   }
 
-  const colIdToUse = forColId || filter.colId
-  const currentFilterWithCorrectColId: DisplayActiveFilter = { ...filter, colId: colIdToUse }
-
-  if (currentFilterWithCorrectColId.filterType === 'set' && Array.isArray(currentFilterWithCorrectColId.values)) {
-    return formatSetFilterDescription(currentFilterWithCorrectColId)
-  }
-  if (currentFilterWithCorrectColId.filterType === 'numbers' && Array.isArray(currentFilterWithCorrectColId.filter)) {
-    return formatNumbersFilterDescription(currentFilterWithCorrectColId)
-  }
-  if (currentFilterWithCorrectColId.filterType === 'strings' && Array.isArray(currentFilterWithCorrectColId.filter)) {
-    return formatStringsFilterDescription(currentFilterWithCorrectColId)
+  if ((filter.filterType === 'set' || filter.filterType === 'boolean') && Array.isArray(filter.values)) {
+    return formatSetFilterDescription(filter)
   }
 
-  if (currentFilterWithCorrectColId.filterType === 'multi' && colIdToUse) {
-    return formatMultiFilterDescription(currentFilterWithCorrectColId)
-  }
-  if (
-    currentFilterWithCorrectColId.operator
-    && (currentFilterWithCorrectColId.condition1 || Array.isArray(currentFilterWithCorrectColId.conditions))
-  ) {
-    return formatOperatorFilterDescription(currentFilterWithCorrectColId)
-  }
-  if (currentFilterWithCorrectColId.type) {
-    return formatSingleCondition(currentFilterWithCorrectColId as unknown as Condition, currentFilterWithCorrectColId.filterType)
-  }
-  if (
-    Object.prototype.hasOwnProperty.call(currentFilterWithCorrectColId, 'value')
-    && !currentFilterWithCorrectColId.type
-    && !currentFilterWithCorrectColId.filterType
-    && !currentFilterWithCorrectColId.operator
-  ) {
-    return formatValueOnlyFilterDescription(currentFilterWithCorrectColId)
+  if (filter.operator && (filter.condition1 || filter.condition2)) {
+    return formatOperatorFilterDescription(filter)
   }
 
-  return `[Filtre ${currentFilterWithCorrectColId.filterType || 'inconnu'} non formaté]`
+  if (filter.type) {
+    return formatSingleCondition({ type: filter.type, filter: filter.filter, filterTo: (filter as any).filterTo })
+  }
+
+  if (filter.value !== undefined) {
+    const specificTranslation = props.quickFilterValueTranslations[String(filter.value)]
+    return specificTranslation || String(filter.value)
+  }
+
+  return `[Filtre ${filter.filterType || 'inconnu'}]`
 }
 
 /** Main formatting function */
@@ -271,10 +290,6 @@ onMounted(() => {
 })
 onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside, true)
-})
-
-onUpdated(() => {
-  console.log('FILTERS =>', props.filters)
 })
 </script>
 

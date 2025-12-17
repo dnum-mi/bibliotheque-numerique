@@ -12,7 +12,7 @@ import type { BNColDef } from '@/components/ag-grid/server-side/bn-col-def.inter
 import type { TotalsAllowed } from './DemarcheDossiersDisplays.vue'
 import type { CustomFilterWithErrors } from '@/views/demarches/demarche/dossiers/custom-filter-with-errors.type'
 
-import { ref, computed, watch, nextTick } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useDebounceFn } from '@vueuse/core'
 
@@ -340,12 +340,6 @@ onMounted(async () => {
 
   // Marquer comme prêt seulement après avoir restauré toutes les valeurs
   readyToLoadDataTable.value = true
-
-  // Appliquer l'état au DataTable après que le composant soit prêt
-  if (selectedCustomDisplay.value) {
-    await nextTick()
-    updateDataTableState(selectedCustomDisplay.value as IPagination<any>)
-  }
 })
 
 const { activeFilters, onFiltersUpdated, handleRemoveFilter } = useActiveFilter('dossiers', dataTableComponent)
