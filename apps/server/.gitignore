@@ -38,3 +38,5 @@ lerna-debug.log*
 
 #docker-volume
 /data
+
+docker-compose.override.yml

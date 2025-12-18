@@ -342,3 +342,5 @@ $RECYCLE.BIN/
 
 # pnpm
 .pnpm-store
+
+apps/server/docker-compose.override.yml

@@ -1,0 +1,24 @@
+version: "3"
+
+services:
+  db:
+    ports:
+      - "5433:5432"
+
+  s3:
+    ports:
+      - "9010:9000"
+      - "9011:9001"
+
+  mailhog:
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+  bullboard:
+    ports:
+      - "3010:3000"
+
+  redis:
+    ports:
+      - "6379:6379"

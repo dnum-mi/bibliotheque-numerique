@@ -18,11 +18,15 @@ import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { CurrentUser } from '@/modules/users/providers/decorators/current-user.decorator'
 import { User } from '../objects/user.entity'
 import {
+  AddRecentlyConsultedOrganismeInputDto,
   ResetPasswordInputDto,
   UpdateProfileDto,
   UpdateUserPasswordDto,
 } from '@/modules/users/objects/dtos/input'
-import { UserOutputDto } from '@/modules/users/objects/dtos/output'
+import {
+  RecentlyConsultedOrganismeOutputDto,
+  UserOutputDto,
+} from '@/modules/users/objects/dtos/output'
 import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.decorator'
 
 @ApiTags('Users', 'Me')
@@ -118,4 +122,26 @@ export class UserMeController {
     await this.usersService.updateOrThrow(user.id, dto)
     return true
   }
+
+  //#region 📍------ Recently consulted Organisme ------ 📍
+  @Get('/me/recent-organismes')
+  @Role('any')
+  async getRecentOrganismes(
+    @CurrentUser() user: User,
+  ): Promise<RecentlyConsultedOrganismeOutputDto[]> {
+    return this.usersService.getRecentOrganismes(user)
+  }
+
+  @Post('/me/recent-organismes')
+  @Role('any')
+  async markRecentOrganisme(
+    @CurrentUser() user: User,
+    @Body() dto: AddRecentlyConsultedOrganismeInputDto,
+  ): Promise<void> {
+    await this.usersService.markRecentOrganisme(
+      user,
+      dto,
+    )
+  }
+  //#endregion
 }

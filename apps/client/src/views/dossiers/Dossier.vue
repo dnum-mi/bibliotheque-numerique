@@ -13,8 +13,10 @@ import { formatForMessageDate } from '@/utils'
 import apiClient from '@/api/api-client'
 import AttachedFileList from '@/components/ag-grid/files/AttachedFileList.vue'
 import type { ApiCall } from '@/components/ag-grid/server-side/pagination.utils'
+import { useOrganismeHubStore } from '../../stores/organisme-hub'
 
 const dossierStore = useDossierStore()
+const organismeHubStore = useOrganismeHubStore()
 
 const isReady = ref(false) // Utiliser pour ordonner les tabs - sinon la tabulation de l'annotation est sélectionnée quand on clique sur une pièce jointe
 const dossier = computed<IDossierFieldsOutput | undefined>(() => dossierStore?.dossier)
@@ -45,6 +47,7 @@ const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutpu
     return apiClient.getDossierFiles(dossier.value.id)(params)
   }
 }
+const currentOrganisme = computed(() => organismeHubStore.currrentBasicOrganisme)
 
 onMounted(async () => {
   const params = useRoute()?.params
@@ -52,6 +55,16 @@ onMounted(async () => {
   if (id) {
     await dossierStore.getDossierWithFields(id)
     nbAttachments.value = await apiClient.getDossierFilesSummary(id)
+
+    if (dossierStore.dossier?.organismeRefs?.length) {
+      try {
+        await organismeHubStore.setCurrentOrganismeByRef(
+          dossierStore.dossier.organismeRefs[0],
+        )
+      } catch (error) {
+        console.warn('Dossier - onMounted - erreur lors du chargement de l\'organisme', error)
+      }
+    }
     isReady.value = true
   }
 })
@@ -77,7 +90,7 @@ const messagesTitle = computed(() => {
         v-if="dossier"
         #title
       >
-        <DossierHeader :dossier="dossier" />
+        <DossierHeader :dossier="dossier" :organisme="currentOrganisme" />
       </template>
       <template #sub-title>
         <DossierInformations :datas="dossier" />

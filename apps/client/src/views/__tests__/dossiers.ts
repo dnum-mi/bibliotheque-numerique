@@ -1,7 +1,12 @@
-import { eIdentificationDemarche } from '@biblio-num/shared'
+import {
+  eFoundationType,
+  eIdentificationDemarche,
+  EOrganismeState,
+} from '@biblio-num/shared'
 import type {
   Demandeur,
   DossierStateKeys,
+  IBasicOrganisme,
   IDossier,
   IDossierFieldsOutput,
   IFieldList,
@@ -273,6 +278,32 @@ export const generateDossier = (): IDossier & { organisme: IOrganisme } => ({
   organisme: generateOrganisme(),
 })
 
+// export const organisme = {
+//   id: faker.number.int(),
+//   title: faker.company.name(),
+//   type: getRandomOrganismeType(),
+//   idRna: `W${faker.string.numeric(9)}`,
+//   idRnf: null,
+// }
+
+export const getBasicAssociation = (): IBasicOrganisme => ({
+  id: `W${faker.string.numeric(9)}`,
+  type: 'ASSO',
+  title: faker.company.name(),
+  state: faker.helpers.enumValue(EOrganismeState),
+  city: faker.location.city(),
+  postalCode: faker.location.zipCode(),
+})
+
+export const getBasicFondation = (): IBasicOrganisme => ({
+  id: `${faker.string.numeric(3)}-${faker.string.alpha(3)}-${faker.string.numeric(5)}-${faker.string.numeric(2)}`,
+  type: faker.helpers.enumValue(eFoundationType),
+  title: faker.company.name(),
+  state: faker.helpers.enumValue(EOrganismeState),
+  city: faker.location.city(),
+  postalCode: faker.location.zipCode(),
+})
+
 export const generateDossierWithFields = (): IDossierFieldsOutput => {
   const __typename = getTypeDemandeur()
 
@@ -283,13 +314,7 @@ export const generateDossierWithFields = (): IDossierFieldsOutput => {
 
   return {
     id: Number.parseInt(faker.string.numeric({ length: { min: 2, max: 5 } })),
-    organisme: {
-      id: faker.number.int(),
-      title: faker.company.name(),
-      type: getRandomOrganismeType(),
-      idRna: `W${faker.string.numeric(9)}`,
-      idRnf: null,
-    },
+    organislmeRefs: [faker.string.numeric(5)],
     demarche: {
       id: faker.number.int(),
       title: faker.word.noun(),

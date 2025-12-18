@@ -24,6 +24,7 @@ import {
 import { UserFieldTypeHashConst } from '@/modules/users/objects/consts/user-field-type-hash.const'
 import { DemarcheService } from '@/modules/demarches/providers/services/demarche.service'
 import {
+  AddRecentlyConsultedOrganismeInputDto,
   CreateUserDto,
   PaginationUserDto,
 } from '@/modules/users/objects/dtos/input'
@@ -31,6 +32,7 @@ import {
   AgGridUserDto,
   MyProfileOutputDto,
   PaginatedUserDto,
+  RecentlyConsultedOrganismeOutputDto,
 } from '@/modules/users/objects/dtos/output'
 import { PaginatedDto } from '@/shared/pagination/paginated.dto'
 import { RefreshToken } from '../../auth/objects/refresh-token.entity'
@@ -155,7 +157,9 @@ export class UserService
     }
 
     if (isSuperiorOrSimilar(Roles.admin, userInDb.role.label)) {
-      this.logger.warn('Cannot generate link for non-instructor or no-role user')
+      this.logger.warn(
+        'Cannot generate link for non-instructor or no-role user',
+      )
       throw new ConflictException(
         'Cannot generate link for non-instructor or no-role user',
       )
@@ -371,4 +375,47 @@ export class UserService
       },
     }
   }
+
+  //#region 📍------ RECENTLY CONSULTED ORGASNISME ------ 📍
+
+  async getRecentOrganismes(
+    user: User,
+  ): Promise<RecentlyConsultedOrganismeOutputDto[]> {
+    this.logger.verbose('getRecentOrganismes')
+    const found = await this.repo.findOne({
+      where: { id: user.id },
+      select: ['id', 'recentOrganismes'],
+    })
+
+    return found?.recentOrganismes ?? []
+  }
+
+  async markRecentOrganisme(
+    user: User,
+    dto: AddRecentlyConsultedOrganismeInputDto,
+  ): Promise<void> {
+    this.logger.verbose(`markRecentOrganisme adding ${dto.id}`)
+    const found = await this.repo.findOne({
+      where: { id: user.id },
+      select: ['id', 'recentOrganismes'],
+    })
+
+    const current = (found?.recentOrganismes ??
+      []) as RecentlyConsultedOrganismeOutputDto[]
+
+    if (current[0]?.id === dto.id) {
+      this.logger.debug('Already added. Skipping')
+      return
+    }
+    const updatedArray: RecentlyConsultedOrganismeOutputDto[] = [
+      ...[{
+        ...dto,
+        consultedAt: new Date(),
+      }],
+      ...current.slice(0, 5),
+    ]
+    await this.repo.update(user.id, { recentOrganismes: updatedArray })
+  }
+
+  //#endregion
 }

@@ -1,5 +1,4 @@
 import { Demarche } from '@/modules/demarches/objects/entities/demarche.entity'
-import { Organisme } from '@/modules/organismes/objects/organisme.entity'
 import { IDossierFieldsOutput, IFieldList } from '@biblio-num/shared'
 import {
   DossierState,
@@ -9,14 +8,6 @@ import {
 } from '@dnum-mi/ds-api-client'
 import { ApiProperty, PickType } from '@nestjs/swagger'
 import { File } from '@/modules/files/objects/entities/file.entity'
-
-export class OrganismeOutput extends PickType(Organisme, [
-  'id',
-  'type',
-  'title',
-  'idRna',
-  'idRnf',
-] as const) {}
 
 export class DemarcheOutput extends PickType(Demarche, [
   'id',
@@ -29,11 +20,6 @@ export class DossierWithFieldsOutputDto implements IDossierFieldsOutput {
     description: 'Id du dossier',
   })
   id: number
-
-  @ApiProperty({
-    description: 'Organisme',
-  })
-  organisme: OrganismeOutput
 
   @ApiProperty({
     description: 'Démarche associée au dossier',
@@ -100,4 +86,6 @@ export class DossierWithFieldsOutputDto implements IDossierFieldsOutput {
     description: 'Fichiers du dossier',
   })
   files?: File[]
+
+  organismeRefs: string[]
 }

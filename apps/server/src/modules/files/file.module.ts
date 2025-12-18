@@ -6,7 +6,6 @@ import { HttpModule } from '@nestjs/axios'
 import { S3Module } from '@/shared/modules/s3/s3.module'
 import { File } from '@/modules/files/objects/entities/file.entity'
 import { HubModule } from '../hub/hub.module'
-import { FileOrganismeHubService } from './providers/file-organisme-hub.service'
 
 @Module({
   imports: [
@@ -16,7 +15,7 @@ import { FileOrganismeHubService } from './providers/file-organisme-hub.service'
     HubModule,
   ],
   controllers: [FileController],
-  providers: [FileService, FileOrganismeHubService],
-  exports: [FileService, FileOrganismeHubService],
+  providers: [FileService],
+  exports: [FileService],
 })
 export class FileModule {}

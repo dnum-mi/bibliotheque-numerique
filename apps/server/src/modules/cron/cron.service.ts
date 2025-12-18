@@ -33,20 +33,8 @@ export class CronService implements OnApplicationBootstrap {
         } as SyncAllDemarcheJobPayload,
       },
       {
-        name: eJobName.SyncAllRnfOrganisme,
-        cron: this.config.get('cron').syncAllRnfOrganisme,
-      },
-      {
-        name: eJobName.SyncAllRnaOrganisme,
-        cron: this.config.get('cron').syncAllRnaOrganisme,
-      },
-      {
         name: eJobName.ComputeTimeTracking,
         cron: this.config.get('cron').computeTimeTracking,
-      },
-      {
-        name: eJobName.ComputeOrganismeDDC,
-        cron: this.config.get('cron').computeOrganismeDDC,
       },
       {
         name: eJobName.AnonymiseAll,

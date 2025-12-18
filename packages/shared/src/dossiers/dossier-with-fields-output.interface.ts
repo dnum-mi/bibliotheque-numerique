@@ -44,7 +44,7 @@ export interface IFieldList {
 
 export interface IDossierFieldsOutput {
   id: number
-  organisme: OrganismSummary
+  organismeRefs: string[]
   demarche: DemarcheSummary
   sourceId?: string
   prefecture?: string | null

@@ -81,7 +81,7 @@ defineProps<DossierMessagerieProps>()
                 :key="j"
                 class="fr-py-1v  fr-px-2v flex  items-center  bg-[#e8edff]"
               >
-                <DownloadFile
+                <DownloadDsFile
                   :file="file"
                 />
               </div>

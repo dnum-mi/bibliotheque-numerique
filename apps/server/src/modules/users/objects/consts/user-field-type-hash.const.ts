@@ -15,6 +15,7 @@ export const UserFieldTypeHashConst: Record<
     | 'refreshTokens'
     | 'refreshToken'
     | 'loginAttempts'
+    | 'recentOrganismes'
   >,
   FieldTypeKeys
 > = {

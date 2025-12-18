@@ -1,99 +1,101 @@
-import axios, { AxiosError } from 'axios'
 import type { AxiosResponse } from 'axios'
+import axios, { AxiosError } from 'axios'
 import useToaster from '@/composables/use-toaster'
 
+import {
+  EOrganismeCategory,
+} from '@biblio-num/shared'
 import type {
+  DynamicKeys,
+  IAssociationOutput,
+  IBasicOrganisme,
+  ICreateBnConfiguration,
+  ICreateCustomFilter,
   ICreateUser,
   ICredentialsInput,
+  ICustomFilter,
+  IDemarcheOption,
+  IDossier,
+  IDossierFieldsOutput,
   IDossierSearchOutput,
   IFieldSearchOutput,
+  IFileOutput,
+  IFoundationOutput,
+  IGenerateUpdatePasswordLink,
+  ILastConsultedOrganisme,
+  ILeanDossierOutput,
+  IMappingAnonymizedChamp,
+  IMappingColumn,
+  IMyProfileOutput,
+  IPaginated,
+  IPaginatedUser,
+  IPagination,
+  IPaginationSmallDemarche,
+  IPaginationUser,
+  IPatchCustomFilter,
   IResetPasswordInput,
   ISearchDossier,
+  IUpdateAnonymizedChamp,
+  IUpdateBnConfiguration,
   IUpdateOneFieldConfiguration,
-  IUpdateUserPassword,
-  ICreateCustomFilter,
-  IPatchCustomFilter,
-  IValidateEmail,
-  IFileOutput,
-  ILeanDossierOutput,
-  IPagination,
-  IPaginationUser,
-  IPaginatedUser,
-  IMyProfileOutput,
   IUpdateOneRoleOption,
   IUpdateProfile,
+  IUpdateUserPassword,
   IUserWithEditableRole,
-  ICustomFilter,
-  IOrganisme,
-  IMappingColumn,
-  IDossier,
-  DynamicKeys,
+  IValidateEmail,
+  organismeCategoryKey,
   RolesKeys,
-  ICreateBnConfiguration,
-  IUpdateBnConfiguration,
-  IPaginated,
-  FileTagKey,
-  IDemarcheOption,
-  IMappingAnonymizedChamp,
-  IUpdateAnonymizedChamp,
-  IOrganismeOutput,
-  ISiafSearchOrganismeResponseOutput,
-  IDossierFieldsOutput,
-  IGenerateUpdatePasswordLink,
-  IPaginationSmallDemarche,
-  IDsEvent,
-  IFoundationOutput,
 } from '@biblio-num/shared'
 
 import {
+  attachedFilesRoute,
+  bnConfigurationsRoute,
   demarchesRoute,
+  enableHubSearchRoute,
+  generateUpdatePasswordLinkRoute,
+  getCustomFiltersRoute,
+  getDemarcheAnonymizeRoute,
   getDemarcheByIdRoute,
   getDemarcheConfigurationRoute,
-  getUpdateOneMappingColumnRoute,
-  getCustomFiltersRoute,
-  getOneCustomFiltersRoute,
-  getOneCustomFiltersStats,
-  smallDemarchesRoutes,
+  getDemarcheCustomFilterRoute,
+  getDemarcheOptionRoute,
+  getDossierByIdRoute,
+  getDossierFilesRoute,
+  getDossierFilesSummaryRoute,
+  getDossierFromOrganisme,
+  getDossierWithFieldsByIdRoute,
   getListDemarcheDossierRoute,
   getListDemarcheFieldRoute,
+  getOneCustomFiltersRoute,
+  getOneCustomFiltersStats,
+  getUpdateOneMappingColumnRoute,
+  getUserRoleByIdRoute,
   getXlsxDemarcheDossierRoute,
   getXlsxDemarcheFieldRoute,
-  getDemarcheCustomFilterRoute,
-  getDossierByIdRoute,
-  getOrganismeDossiers,
-  getOrganismeByIdRoute,
-  getOrganismeByRnaRoute,
-  getOrganismeByRnfRoute,
-  organismesListRoute,
-  usersListRoute,
-  bnConfigurationsRoute,
-  getUserRoleByIdRoute,
   healthRoute,
-  organismesListXlsxRoute,
-  attachedFilesRoute,
-  getOrganismeFilesSummaryRoute,
-  getOrganismeFilesRoute,
-  getDossierFilesRoute,
-  softDeleteDemarcheByIdRoute,
-  getDossierFilesSummaryRoute,
-  getDemarcheOptionRoute,
-  usersPasswordRoute,
-  getDemarcheAnonymizeRoute,
-  searchOrganisme,
-  enableHubSearchRoute,
-  updateRolesRoute,
-  proConnectSignInRoute,
-  proConnectCallbackRoute,
-  refreshTokensRoute,
-  getOrganismeEventsByRnfRoute,
-  getAddOneRnfRoute,
-  getAddOneRnaRoute,
-  getDossierWithFieldsByIdRoute,
-  resetPasswordRoute,
-  generateUpdatePasswordLinkRoute,
+  hubGetRna,
+  hubGetRnf,
+  hubSearchOrganisme,
+  lastConsultedOrganismeRoute,
   listSmallDemarchesRoutes,
+  proConnectCallbackRoute,
+  proConnectSignInRoute,
+  refreshTokensRoute,
+  resetPasswordRoute,
+  smallDemarchesRoutes,
+  softDeleteDemarcheByIdRoute,
+  updateRolesRoute,
+  usersListRoute,
+  usersPasswordRoute,
 } from './bn-api-routes'
-import { getUserByIdRoute, profileRoute, signInRoute, verifyAuthRoute, logoutRoute, usersRoutes } from '@/api/bn-api-routes'
+import {
+  getUserByIdRoute,
+  logoutRoute,
+  meRoutes,
+  signInRoute,
+  usersRoutes,
+  verifyAuthRoute,
+} from '@/api/bn-api-routes'
 
 import { ErrorvalidateEmail } from './ErrorValidEmail'
 import { routeNames } from '../router/route-names'
@@ -172,7 +174,11 @@ apiClientInstance.interceptors.response.use(
         refreshingToken = false
         pendingRequests = []
 
-        toaster.addMessage({ id: 'auth', type: 'warning', description: 'Vous n’êtes plus connecté, veuillez vous réauthentifier' })
+        toaster.addMessage({
+          id: 'auth',
+          type: 'warning',
+          description: 'Vous n’êtes plus connecté, veuillez vous réauthentifier',
+        })
         useUserStore().forceResetUser()
         const routeTo: RouteLocationRaw = { name: routeNames.SIGNIN }
         if (!router.currentRoute.value.meta.skipAuth) {
@@ -192,7 +198,8 @@ apiClientInstance.interceptors.response.use(
     }
 
     if (status === 404) {
-      toaster.addErrorMessage(error.response?.data?.message ?? 'Ressource introuvable')
+      // TODO: un 404 doit rediriger ou afficher un message d'erreur dans une recherche. Pas un toaster
+      // toaster.addErrorMessage(error.response?.data?.message ?? 'Ressource introuvable')
       throw error
     }
 
@@ -233,6 +240,10 @@ const getOrRedirectTo404 = async (route: string) => {
       router.push({ name: routeNames.Page_404 })
     }
   }
+}
+
+const getWithoutRedirectTo404 = async (route: string) => {
+  return (await apiClientInstance.get(route)).data
 }
 
 export const demarchesApiClient = {
@@ -292,58 +303,6 @@ export const demarchesApiClient = {
   },
 }
 
-export const organismeApiClient = {
-  getOrganismes: async (dto: IPagination<IOrganisme>) => {
-    const response = await apiClientInstance.post(organismesListRoute, dto)
-    return response?.data
-  },
-
-  getOrganismeById: async (organismeId: string): Promise<IOrganismeOutput> => {
-    return getOrRedirectTo404(getOrganismeByIdRoute(+organismeId))
-  },
-
-  getOrganismeByRna: async (organismeIdRna: string): Promise<IOrganismeOutput> => {
-    return getOrRedirectTo404(getOrganismeByRnaRoute(organismeIdRna))
-  },
-
-  getOrganismeByRnf: async (organismeIdRnf: string): Promise<IOrganismeOutput> => {
-    return getOrRedirectTo404(getOrganismeByRnfRoute(organismeIdRnf))
-  },
-
-  getOrganismeEventsByRnf: async (organismeIdRnf: string): Promise<IDsEvent<IFoundationOutput> | null> => {
-    return (await apiClientInstance.get(getOrganismeEventsByRnfRoute(organismeIdRnf)))?.data
-  },
-
-  getOrganismeFilesSummary: async (organismeId: number): Promise<Record<FileTagKey, number>> => {
-    return (await apiClientInstance.get(getOrganismeFilesSummaryRoute(organismeId)))?.data
-  },
-
-  getOrganismeFiles:
-    (organismeId: number) =>
-      async (params: IPagination<IFileOutput>): Promise<IPaginated<IFileOutput>> => {
-        const response = await apiClientInstance.post(getOrganismeFilesRoute(organismeId), params)
-        return response?.data
-      },
-
-  exportOrganismes: async (dto: IPagination<IOrganisme>): Promise<void> => {
-    downloadAFile(await apiClientInstance.post(organismesListXlsxRoute, dto, { responseType: 'blob' }))
-  },
-
-  searchOrganisme: (sentence: string): Promise<ISiafSearchOrganismeResponseOutput[]> => {
-    return getOrRedirectTo404(searchOrganisme(sentence))
-  },
-
-  addOneRnf: async (id: string) => {
-    const response = await apiClientInstance.post(getAddOneRnfRoute(id))
-    return response.data
-  },
-  addOneRna: async (id: string) => {
-    const response = await apiClientInstance.post(getAddOneRnaRoute(id))
-    return response.data
-  },
-
-}
-
 export const usersApiClient = {
   async createUser (userData: ICreateUser) {
     const response = await apiClientInstance.post(usersRoutes, userData)
@@ -393,7 +352,7 @@ export const usersApiClient = {
 
   async fetchMyProfile (): Promise<IMyProfileOutput | null> {
     try {
-      const response = await apiClientInstance.get(profileRoute)
+      const response = await apiClientInstance.get(meRoutes)
       return response?.data
     } catch {
       return null
@@ -401,7 +360,7 @@ export const usersApiClient = {
   },
 
   async updateMyProfile (dto: IUpdateProfile) {
-    await apiClientInstance.patch(profileRoute, dto)
+    await apiClientInstance.patch(meRoutes, dto)
   },
 
   async listUsers (dto: IPaginationUser): Promise<IPaginatedUser> {
@@ -476,6 +435,14 @@ export const usersApiClient = {
   async removeRole (id: number) {
     await apiClientInstance.delete(getUserRoleByIdRoute(id))
   },
+
+  async getLastConsultedOrganisme (): Promise<ILastConsultedOrganisme[]> {
+    return (await apiClientInstance.get(lastConsultedOrganismeRoute))?.data || []
+  },
+
+  async addConsultedOrganisme (dto: IBasicOrganisme) {
+    await apiClientInstance.post(lastConsultedOrganismeRoute, dto)
+  },
 }
 
 export const dossiersApiClient = {
@@ -487,8 +454,8 @@ export const dossiersApiClient = {
 
   getDossierWithFields: async (id: number): Promise<IDossierFieldsOutput> => getOrRedirectTo404(getDossierWithFieldsByIdRoute(id)),
 
-  getOrganismeDossiers: async (organismeId: number): Promise<ILeanDossierOutput[]> =>
-    (await apiClientInstance.get(getOrganismeDossiers(organismeId))).data,
+  getOrganismeDossiers: async (organismeId: string): Promise<ILeanDossierOutput[]> =>
+    (await apiClientInstance.get(getDossierFromOrganisme(organismeId))).data,
 
   searchDemarcheDossiers: async (demarcheId: number, dto: ISearchDossier): Promise<IDossierSearchOutput> => {
     const response = await apiClientInstance.post(getListDemarcheDossierRoute(demarcheId), dto)
@@ -584,13 +551,30 @@ export const attachedFilesApiClient = {
   },
 }
 
+export const hubApiClient = {
+  searchOrganisme: (sentence: string): Promise<IBasicOrganisme[]> => {
+    return getOrRedirectTo404(hubSearchOrganisme(sentence))
+  },
+  hubGetFile: (type: organismeCategoryKey, organismeId: string, id: string) => {
+    const correctType = type === EOrganismeCategory.association ? 'association' : 'foundation'
+    return apiClientInstance.get(`/hub/${correctType}/${organismeId}/file/${id}`, { responseType: 'blob' })
+  },
+  hubGetRna: (sentence: string): Promise<IFoundationOutput> => {
+    return getWithoutRedirectTo404(hubGetRna(sentence))
+  },
+  hubGetRnf: (sentence: string): Promise<IAssociationOutput> => {
+    return getWithoutRedirectTo404(hubGetRnf(sentence))
+  },
+}
+
+// TODO: c'est possible de découper se fichier ?!
 export default {
   ...demarchesApiClient,
-  ...organismeApiClient,
   ...usersApiClient,
   ...dossiersApiClient,
   ...customFiltersApiClient,
   ...healthApiClient,
   ...attachedFilesApiClient,
+  ...hubApiClient,
   ...(fabricSyncStateApiClient(apiClientInstance)),
 }

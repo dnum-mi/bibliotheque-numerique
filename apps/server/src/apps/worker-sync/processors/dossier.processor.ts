@@ -83,7 +83,6 @@ export class DossierProcessor extends CustomBaseProcessor {
       for (const demarche of demarches) {
         await this.syncQueue.add(eJobName.AnonymiseOneDemarche, {
           demarche,
-          demarches,
         } as AnonymiseOneDemarcheJobPayload)
         job.progress(job.progress() + oneDemarcheStep)
       }
@@ -98,7 +97,6 @@ export class DossierProcessor extends CustomBaseProcessor {
     await this.als.run({ job }, async () => {
       const demarche = job.data.demarche
       this.logger.log('anonymise one demarche: ' + demarche.id)
-      const demarches = job.data.demarches
       const limitDate = addMonths(new Date(), -demarche.nbrMonthAnonymisation)
       const whereQuery: FindManyOptions<Dossier>['where'] = {}
       switch (demarche.anonymizationEvent) {
@@ -123,7 +121,7 @@ export class DossierProcessor extends CustomBaseProcessor {
         )
         return
       }
-      let dossiers = await this.dossierService.repository.find({
+      const dossiers = await this.dossierService.repository.find({
         where: {
           anonymisedAt: null,
           demarcheId: demarche.id,
@@ -133,31 +131,11 @@ export class DossierProcessor extends CustomBaseProcessor {
         relations: ['files'],
       })
 
-      if (demarche.isOnAllDossiersOfOrganisme) {
-        const dossiersOfOrg = await this.dossierService.repository.find({
-          where: {
-            anonymisedAt: null,
-            demarcheId: In(demarches.map((d) => d.id)),
-            organisme: {
-              id: In([...new Set(dossiers.map((d) => d.organisme.id))]),
-            },
-          },
-
-          select: ['id', 'dsDataJson', 'demarcheId'],
-          relations: ['files'],
-        })
-        dossiers = dossiers.concat(dossiersOfOrg)
-      }
-
       const dossierStep = 100 / dossiers.length
       for (const dossier of dossiers) {
-        const dossierDemarche = demarches.find(
-          (d) => d.id === dossier.demarcheId,
-        )
-
         await this.syncQueue.add(eJobName.AnonymiseOneDossier, {
           dossier,
-          demarche: dossierDemarche,
+          demarche,
         } as AnonymiseOneDossierJobPayload)
 
         job.progress(job.progress() + dossierStep)

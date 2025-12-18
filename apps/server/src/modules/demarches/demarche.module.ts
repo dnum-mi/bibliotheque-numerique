@@ -16,7 +16,6 @@ import { DemarcheOptionController } from '@/modules/demarches/controllers/demarc
 import { CustomBullModule } from '@/shared/modules/custom-bull/custom-bull.module'
 import { Dossier } from '../dossiers/objects/entities/dossier.entity'
 import { Field } from '../dossiers/objects/entities/field.entity'
-import { Organisme } from '../organismes/objects/organisme.entity'
 import { FieldBuilderService } from './providers/services/maarch/field-builder.service'
 import { FileBuilderService } from './providers/services/maarch/file-builder.service'
 import { DossierTransformerService } from './providers/services/maarch/dossier-transformer.service'
@@ -31,7 +30,6 @@ import { DemarcheMaarchService } from './providers/services/demarche-maarch.serv
       Demarche,
       Dossier,
       Field,
-      Organisme,
     ]),
     BullModule.registerQueue({ name: QueueName.sync } as BullModuleOptions),
     CustomFilterModule,

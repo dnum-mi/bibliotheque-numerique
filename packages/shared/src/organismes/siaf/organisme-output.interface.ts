@@ -2,6 +2,7 @@ import { OrganismeStatusKey } from './enums'
 import { ISiafAddress } from './common-output.interface'
 import { IFile } from './file-output.interface'
 import { IPerson } from './person.interface'
+import { IRafEvent } from '../../hub/raf-event.interface'
 
 export type OrganismeKind = 'Foundation' | 'Association'
 export type LegalEntityType = OrganismeKind | 'Entreprise' | string
@@ -57,4 +58,7 @@ export interface ISiafOrganisme {
 
   fromLineage: ILineage | null
   toLineage: ILineage | null
+
+  events: IRafEvent[];
+  hub_timestamp?: Date,
 }

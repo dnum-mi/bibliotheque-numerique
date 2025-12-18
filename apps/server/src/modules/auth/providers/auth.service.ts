@@ -22,7 +22,7 @@ import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import { SendMailService } from '@/modules/sendmail/sendmail.service'
-import { AuthResponseDto } from '@/modules/users/objects/dtos/output'
+import { AuthResponseDto } from '../objects/dto'
 import {
   UserinfoResponse,
   DecodedToken,

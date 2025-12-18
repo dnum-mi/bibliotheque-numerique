@@ -29,7 +29,6 @@ import { AuthModule } from '@/modules/auth/auth.module'
 import { DsApiModule } from '@/shared/modules/ds-api/ds-api.module'
 import { CustomFilterModule } from '@/modules/custom-filters/custom-filter.module'
 import { XlsxModule } from '@/shared/modules/xlsx/xlsx.module'
-import { OrganismeModule } from '@/modules/organismes/organisme.module'
 import { APP_GUARD } from '@nestjs/core'
 import { RoleGuard } from '@/modules/users/providers/guards/role.guard'
 import { InstructionTimesModule } from '@/modules/instruction_time/instruction_times.module'
@@ -38,7 +37,7 @@ import { CronModule } from '@/modules/cron/cron.module'
 import { BnConfigurationModule } from '@/shared/modules/bn-configurations/bn-configuration.module'
 import siafHubConfig from '../../config/siaf-hub.config'
 import { JwtAuthGuard } from '@/modules/auth/providers/jwt-auth.guard'
-import { SyncStateModule } from '../../shared/sync-state/sync-state.module'
+import { SyncStateModule } from '@/shared/sync-state/sync-state.module'
 
 @Module({
   imports: [
@@ -78,7 +77,6 @@ import { SyncStateModule } from '../../shared/sync-state/sync-state.module'
     FileModule,
     HealthModule,
     CustomFilterModule,
-    OrganismeModule,
     InstructionTimesModule,
     BnConfigurationModule,
     SyncStateModule,

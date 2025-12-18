@@ -15,11 +15,12 @@ import { ApiTags } from '@nestjs/swagger'
 import { AuthService } from '../providers/auth.service'
 import { PublicRoute } from '@/modules/users/providers/decorators/public-route.decorator'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
-import { AuthResponseDto, AuthProconnectResponseDto, UserOutputDto } from '@/modules/users/objects/dtos/output'
+import { UserOutputDto } from '@/modules/users/objects/dtos/output'
 import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.decorator'
 import { ConfigService } from '@nestjs/config'
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
 import { CheckEmailTokenGuard } from '@/modules/users/providers/guards/check-email-token'
+import { AuthProconnectResponseDto, AuthResponseDto } from '@/modules/auth/objects/dto'
 
 @ApiTags('Auth')
 @Controller('auth')

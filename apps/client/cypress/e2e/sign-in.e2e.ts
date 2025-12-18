@@ -10,16 +10,17 @@ import adminProfile from '../fixtures/admin-profile.json'
 describe('Sign in', () => {
   beforeEach(() => {
     cy.intercept({ method: 'POST', url: '/api/demarches/small/list' }, []).as('demarches')
-    cy.intercept({ method: 'POST', url: '/api/organismes/list' }, {}).as('organismes')
     cy.intercept({ method: 'GET', url: '/api/custom-filters' }, []).as('customFilters')
     cy.intercept({ method: 'GET', url: '/api/auth/proconnect' }, []).as('proconnect')
     cy.intercept({ method: 'POST', url: '/api/users/list' }, []).as('fetchUsers')
     cy.intercept({ method: 'GET', url: '/api/users/me' }, { statusCode: 403 })
+    cy.intercept({ method: 'GET', url: '/api/users/me/recent-organismes' }, {}).as('recentOrganisme')
     cy.intercept('api/health', { info: { } })
   })
 
   it('should redirect user to requested page after signing in', () => {
     cy.intercept({ method: 'GET', url: '/api/users/me' }, adminLocalProfile)
+
     cy.intercept({ method: 'DELETE', url: '/api/auth/logout' }, {})
     cy.intercept({ method: 'GET', url: '/api/bn-configurations/enable-siaf' }, {})
     cy.intercept({ method: 'POST', url: '/api/auth/sign-in' }, { accessToken: 'abcd' })
@@ -35,7 +36,7 @@ describe('Sign in', () => {
     cy.get('#email').type('louis.dubois@gmail.com')
     cy.get('#password').type('A1etsn*!etisan34')
     cy.get('[type=submit]').click()
-    cy.wait('@organismes')
+    cy.wait('@recentOrganisme')
     cy.url().should('eq', `${Cypress.config().baseUrl}/`)
 
     cy.intercept({ method: 'POST', url: '/api/auth/refresh', times: 1 }, (req) => {
@@ -108,7 +109,6 @@ describe('Sign in', () => {
     cy.get('#password').type('A1etsn*!etisan34')
     cy.get('[type=submit]').click()
     cy.wait('@signIn')
-    cy.wait('@organismes')
     cy.url().should('eq', `${Cypress.config().baseUrl}/`)
     cy.intercept({ method: 'POST', url: '/api/auth/refresh', times: 1 }, (req) => {
       req.reply({ statusCode: 200, body: { accessToken: 'abcd' } })
@@ -128,8 +128,7 @@ describe('Sign in', () => {
       .should('contain', 'Organismes')
       .contains('Organismes')
       .click()
-    // cy.wait('@fetchProfile')
-    cy.wait('@organismes')
+    // cy.w@ait('@fetchProfile')
     cy.url().should('include', '/')
     //#endregion
     //#region Check Statistiques
@@ -155,8 +154,9 @@ describe('Sign in', () => {
     cy.get('#password').type('A1etsn*!etisan34')
     cy.get('[type=submit]').click()
     cy.wait('@signIn')
+    cy.wait('@recentOrganisme')
     cy.url()
-      .should('contain', `${Cypress.config().baseUrl}/sign_in`)
+      .should('contain', `${Cypress.config().baseUrl}`)
     cy.intercept({ method: 'GET', url: '/api/demarches', times: 1 }, demarches).as('demarches')
     cy.get('.fr-header')
       .should('contain', 'Démarches')

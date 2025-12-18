@@ -267,10 +267,10 @@ const update = () => {
     </form>
     <div v-else>
       <p>
-        Cette affichage est désormais <strong>obsolète</strong>. <br />
+        Cette affichage est désormais <strong>obsolète</strong>. <br>
         Cela signifie qu'une ou plusieurs des colonnes utilisées dans cet affichage ont été supprimées par l'administrateur dans la
         configuration de la démarche.
-        <br />
+        <br>
         Veuillez le supprimer, ou le mettre à jour.
       </p>
       <DsfrButton

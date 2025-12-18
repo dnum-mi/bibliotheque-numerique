@@ -71,7 +71,7 @@ items:
     checksum: 42
     byteSize: 42
     originalLabel: 'yo.txt'
-    organisme: '@Hyundai'
+    organismeRef: 'W001'
     storageIn: 'HUB'
 
   file-with-special-char:

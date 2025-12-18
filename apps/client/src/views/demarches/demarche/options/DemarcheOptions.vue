@@ -9,7 +9,6 @@ import { useField } from 'vee-validate'
 import SelectAnonymousChamps from './SelectAnonymousChamps.vue'
 
 const demarcheStore = useDemarcheStore()
-const isOnAllDossiersOfOrganisme = ref(false)
 
 const anonymizationEventSelected = ref<anonymisationEventKey | null>(null)
 const maxNbMonth = 2147483647
@@ -20,7 +19,6 @@ onMounted(async () => {
   await demarcheStore.getCurrentDemarcheOptions()
   nbrMonthAnonymisation.value = demarcheStore.currentDemarcheOptions?.nbrMonthAnonymisation ?? 0
   anonymizationEventSelected.value = demarcheStore.currentDemarcheOptions?.anonymizationEvent ?? null
-  isOnAllDossiersOfOrganisme.value = demarcheStore.currentDemarcheOptions?.isOnAllDossiersOfOrganisme ?? false
 })
 
 const saveOption = () => {
@@ -30,7 +28,6 @@ const saveOption = () => {
   demarcheStore.saveDemarcheOptions({
     nbrMonthAnonymisation: nbrMonthAnonymisation.value,
     anonymizationEvent: (anonymizationEventSelected.value as string) === 'null' ? null : anonymizationEventSelected.value,
-    isOnAllDossiersOfOrganisme: isOnAllDossiersOfOrganisme.value,
   })
 }
 const anonymizationEventList = [
@@ -102,16 +99,6 @@ const onUpdateNbMonth = async (nb: string) => {
         :error-message="nbMonthError"
         @update:model-value="onUpdateNbMonth"
       />
-
-      <div class="content-center ml-auto">
-        <DsfrCheckbox
-          v-model="isOnAllDossiersOfOrganisme"
-          label="Appliquer à tous les dossiers de l'organisme"
-          name="onAllDossierOfOrganisme"
-          :disabled="!enabledAnonymize"
-          @update:model-value="saveOption"
-        />
-      </div>
     </div>
   </div>
   <div v-if="isEnabledAnonymize">

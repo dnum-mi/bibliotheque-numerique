@@ -112,7 +112,7 @@ describe('DossierSynchroniseFileService', () => {
       [],
       dummyTDossierFactory(DossierState.Accepte) as TDossier,
       1,
-      8,
+      'SOME-FDD',
     )
     expect(fileQueueAddMock).not.toHaveBeenCalled()
   })
@@ -125,7 +125,7 @@ describe('DossierSynchroniseFileService', () => {
       fields,
       dummyTDossierFactory(DossierState.Accepte) as TDossier,
       1,
-      8,
+      'SOME-FDD',
     )
     expect(fileService.createFromDsIfNew).not.toHaveBeenCalled()
     expect(updateOrThrowMock).not.toHaveBeenCalled()
@@ -140,7 +140,7 @@ describe('DossierSynchroniseFileService', () => {
       } as unknown as Field,
     ]
     const dummyDossier = dummyTDossierFactory(DossierState.Accepte)
-    await service.synchroniseFiles(fields, dummyDossier, 1, 8)
+    await service.synchroniseFiles(fields, dummyDossier, 1, 'SOME-FDD')
     expect(fileService.createFromDsIfNew).not.toHaveBeenCalled()
     expect(updateOrThrowMock).toHaveBeenCalledTimes(0)
     expect(fileQueueAddMock).not.toHaveBeenCalled()
@@ -149,13 +149,13 @@ describe('DossierSynchroniseFileService', () => {
   it('should create file from one file field champ', async () => {
     const fields = [dummyFieldFactory('file-abrited-account')]
     const dummyDossier = dummyTDossierFactory(DossierState.Accepte)
-    await service.synchroniseFiles(fields, dummyDossier, 1, 8)
+    await service.synchroniseFiles(fields, dummyDossier, 1, 'SOME-FDD')
     const expectedFilePayload = {
       dossierId: 1,
       label: 'test-label',
       tag: 'test-tag',
       sourceStringId: 'QsuperId',
-      organismeId: 8,
+      organismeRef: 'SOME-FDD',
       sourceIndex: 0,
       sourceLabel: 'ds-champ',
       originalLabel: 'toto.png',
@@ -187,11 +187,11 @@ describe('DossierSynchroniseFileService', () => {
     ]
     const fields = [fileChamps]
     const dummyDossier = dummyTDossierFactory(DossierState.Accepte)
-    await service.synchroniseFiles(fields, dummyDossier, 1, 8)
+    await service.synchroniseFiles(fields, dummyDossier, 1, 'SOME-FDD')
     const expectedFilePayloadFactory = (index) => ({
       dossierId: 1,
       sourceStringId: 'QsuperId',
-      organismeId: 8,
+      organismeRef: 'SOME-FDD',
       label: 'test-label',
       tag: 'test-tag',
       sourceIndex: index,
@@ -237,11 +237,11 @@ describe('DossierSynchroniseFileService', () => {
       } as unknown as Field,
     ]
     const dummyDossier = dummyTDossierFactory(DossierState.Accepte)
-    await service.synchroniseFiles(fields, dummyDossier, 1, 8)
+    await service.synchroniseFiles(fields, dummyDossier, 1, 'SOME-FDD')
     const expectedFilePayloadFactory = (id) => ({
       dossierId: 1,
       sourceStringId: id,
-      organismeId: 8,
+      organismeRef: 'SOME-FDD',
       label: 'test-label',
       tag: 'test-tag',
       sourceIndex: 0,
@@ -270,16 +270,16 @@ describe('DossierSynchroniseFileService', () => {
     expect(updateOrThrowMock).toHaveBeenCalledTimes(2)
   })
 
-  it('should create file from one file field champ without organismeId', async () => {
+  it('should create file from one file field champ without organismeRef', async () => {
     const fields = [dummyFieldFactory('file-abrited-account')]
     const dummyDossier = dummyTDossierFactory(DossierState.EnConstruction)
-    await service.synchroniseFiles(fields, dummyDossier, 1, 8)
+    await service.synchroniseFiles(fields, dummyDossier, 1, 'SOME-FDD')
     const expectedFilePayload = {
       dossierId: 1,
       label: 'test-label',
       tag: 'test-tag',
       sourceStringId: 'QsuperId',
-      organismeId: undefined,
+      organismeRef: undefined,
       sourceIndex: 0,
       sourceLabel: 'ds-champ',
       originalLabel: 'toto.png',
@@ -311,11 +311,11 @@ describe('DossierSynchroniseFileService', () => {
         },
       ],
     } as TDossier
-    await service.synchroniseFiles(fields, dummyDossier, 1, 8)
+    await service.synchroniseFiles(fields, dummyDossier, 1, 'SOME-FDD')
     const expectedFilePayload = {
       dossierId: 1,
       sourceStringId: 'QsuperId',
-      organismeId: 8,
+      organismeRef: 'SOME-FDD',
       sourceIndex: 0,
       sourceLabel: 'ds-message',
       originalLabel: 'toto.png',
@@ -338,10 +338,10 @@ describe('DossierSynchroniseFileService', () => {
       ...dummyTDossierFactory(DossierState.Accepte),
       attestation: { filename: 'toto.png' },
     } as TDossier
-    await service.synchroniseFiles(fields, dummyDossier, 1, 8)
+    await service.synchroniseFiles(fields, dummyDossier, 1, 'SOME-FDD')
     const expectedFilePayload = {
       dossierId: 1,
-      organismeId: 8,
+      organismeRef: 'SOME-FDD',
       sourceLabel: 'ds-attestation',
       originalLabel: 'toto.png',
     }
@@ -362,10 +362,10 @@ describe('DossierSynchroniseFileService', () => {
       ...dummyTDossierFactory(DossierState.Accepte),
       motivationAttachment: { filename: 'toto.png' },
     } as TDossier
-    await service.synchroniseFiles(fields, dummyDossier, 1, 8)
+    await service.synchroniseFiles(fields, dummyDossier, 1, 'SOME-FDD')
     const expectedFilePayload = {
       dossierId: 1,
-      organismeId: 8,
+      organismeRef: 'SOME-FDD',
       sourceLabel: 'ds-motivation',
       originalLabel: 'toto.png',
     }

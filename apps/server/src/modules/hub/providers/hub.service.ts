@@ -1,24 +1,22 @@
-import { Injectable } from '@nestjs/common'
-import { LoggerService } from '../../../shared/modules/logger/logger.service'
+import { Injectable, NotFoundException } from '@nestjs/common'
+import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { ConfigService } from '@nestjs/config'
-import type {
+import {
   IAssociationOutput,
   IFoundationOutput,
-  ISiafSearchOrganismeOutput,
+  ISiafSearchOrganismeOneOutput,
+  IDsEvent,
+  fromAssociationToBasicOrganisme,
+  fromFoundationToBasicOrganisme,
+  organismeCategoryKey,
+  EOrganismeCategory,
 } from '@biblio-num/shared'
 import axios, { AxiosInstance, CreateAxiosDefaults } from 'axios'
 import { Stream } from 'node:stream'
 import { ILastFoundationOuptut } from '../last-foundation-output.type'
 import { ILastOrganismeOuptut } from '../last-commun-output.type'
 import { ILastAssocationOuptut } from '../last-assocation-output.type'
-import { IDsEvent } from '@biblio-num/shared/'
-
-export interface IAssociations {
-  associations: IAssociationOutput
-}
-export interface IFondations {
-  fondations: IFoundationOutput
-}
+import { IRafEvent } from '@biblio-num/shared/types/hub/raf-event.interface'
 
 const ePathCompletedOrganismeByType = {
   association: '/associations',
@@ -30,6 +28,7 @@ export class HubService {
   axios: AxiosInstance
   axiosFiles: AxiosInstance
   axiosConfig: CreateAxiosDefaults
+
   constructor(
     protected logger: LoggerService,
     private readonly config: ConfigService,
@@ -45,11 +44,11 @@ export class HubService {
     }
     this.axios = axios.create(this.axiosConfig)
     this.axiosFiles = axios.create(this.axiosConfig)
-    this.axios.interceptors.response.use(response => response.data, e => {
+    this.axios.interceptors.response.use(response => response, e => {
       const code = e.response?.status
       if (code === 404) {
-        this.logger.warn(e)
-        return null
+        this.logger.warn(e.response?.data?.detail)
+        throw new NotFoundException(e.response?.data?.detail)
       }
       throw e
     })
@@ -78,15 +77,14 @@ export class HubService {
     if (scrollId) {
       path += `?scroll_id=${scrollId}`
     }
-    return this.axios.get(path)
+    return this.axios.get<T>(path).then(r => r.data)
   }
 
   //#region ASSOCIATIONS
-  async getAssociation(idRna: string): Promise<IAssociations | IAssociationOutput | null> {
+  async getAssociation(idRna: string): Promise<IAssociationOutput | null> {
     this.logger.verbose('HUB-getAssociation')
     const path = `${ePathCompletedOrganismeByType.association}/${idRna}`
-    return this.axios
-      .get(path)
+    return this.axios.get<IAssociationOutput>(path).then(r => r.data)
   }
 
   async getAssociationFile(id: string, uuid: string): Promise<Stream> {
@@ -105,14 +103,19 @@ export class HubService {
   //#endregion ASSOCIATIONS
 
   //#region FOUNDATIONS
-  async getFoundation(idRnf: string): Promise<IFondations | IFoundationOutput | null> {
+  async getFoundation(idRnf: string): Promise<IFoundationOutput | null> {
     this.logger.verbose('HUB-getFondation')
     const path = `${ePathCompletedOrganismeByType.foundation}/${idRnf}`
-    return this.axios
-      .get<IFondations | IFoundationOutput>(path)
-      .then(response => {
-        return response as unknown as IFondations | IFoundationOutput
-      })
+    const eventPath = `${ePathCompletedOrganismeByType.foundation}/${idRnf}/events`
+    const events = await this.axios.get<{events:IRafEvent[]}>(eventPath).then(r => {
+      return r.data.events
+    })
+    return this.axios.get<IFoundationOutput>(path).then(response => {
+      return {
+        ...response.data,
+        events,
+      }
+    })
   }
 
   async getFoundationFile(id: string, uuid: string): Promise<Stream> {
@@ -133,16 +136,25 @@ export class HubService {
     this.logger.verbose('HUB-getFoundationEvents')
     const path = `${ePathCompletedOrganismeByType.foundation}/${idRnf}/events`
     return this.axios.get<IDsEvent<IFoundationOutput>>(path).then(response => {
-      return response as unknown as IDsEvent<IFoundationOutput>
+      return response.data
     })
   }
   //#endregion FOUNDATIONS
 
-  async searchOrganisme(sentence: string): Promise<ISiafSearchOrganismeOutput | null> {
+  async searchOrganisme(sentence: string): Promise<ISiafSearchOrganismeOneOutput[]> {
     const cleanedSentence = sentence.trim()
     this.logger.verbose(`HUB-search: ${cleanedSentence}`)
     const path = `/generic/full_text_search/${encodeURIComponent(cleanedSentence)}`
-    return this.axios
-      .get(path)
+    return this.axios.get(path)
+      // @ts-ignore TODO: separate type from HUB to Bibli
+      .then((r) => r?.data?.search_response
+        .map((r2: {entity: IAssociationOutput | IFoundationOutput, entity_type: organismeCategoryKey}) => {
+          if (r2.entity_type === EOrganismeCategory.association) {
+            return fromAssociationToBasicOrganisme(r2.entity as IAssociationOutput)
+          } else {
+            return fromFoundationToBasicOrganisme(r2.entity as IFoundationOutput)
+          }
+        }),
+      )
   }
 }

@@ -52,7 +52,6 @@ export type ComputeFeExcelJobPayload = {
 
 export type AnonymiseOneDemarcheJobPayload = {
   demarche: Demarche
-  demarches: Demarche[]
 }
 
 export type AnonymiseOneDossierJobPayload = {

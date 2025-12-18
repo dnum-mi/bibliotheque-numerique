@@ -30,28 +30,4 @@ export const BnConfigurationDefault: Record<
     stringValue: '5242880',
     type: eBnConfigurationType.number,
   },
-  [eBnConfiguration.LAST_ORGANISM_SYNC_AT]: {
-    stringValue: (new Date(0)).toISOString(),
-    type: eBnConfigurationType.date,
-  },
-  [eBnConfiguration.LAST_FOUNDATION_SYNC_AT]: {
-    stringValue: (new Date(0)).toISOString(),
-    type: eBnConfigurationType.date,
-  },
-  [eBnConfiguration.DDC_FIRST_CONTROL_YEAR]: {
-    stringValue: '2020',
-    type: eBnConfigurationType.number,
-  },
-  [eBnConfiguration.DDC_MONTH_BEFORE_MISSING]: {
-    stringValue: '6',
-    type: eBnConfigurationType.number,
-  },
-  [eBnConfiguration.ENABLE_HUB_SEARCH]: {
-    stringValue: 'false',
-    type: eBnConfigurationType.boolean,
-  },
-  [eBnConfiguration.SYNC_RNA_VIA_HUB]: {
-    stringValue: 'false',
-    type: eBnConfigurationType.boolean,
-  },
 }

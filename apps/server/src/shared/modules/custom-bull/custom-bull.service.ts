@@ -3,17 +3,8 @@ import {
   QueueName,
   QueueNameKeys,
 } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
-import {
-  InjectQueue,
-  OnGlobalQueueError,
-  OnGlobalQueueFailed,
-  Processor,
-} from '@nestjs/bull'
-import type {
-  Job,
-  JobOptions,
-  Queue,
-} from 'bull'
+import { InjectQueue } from '@nestjs/bull'
+import type { JobOptions, Queue } from 'bull'
 import {
   eJobName,
   JobNameKey,
@@ -22,17 +13,13 @@ import {
   AnyJobPayload,
   SyncOneDemarcheJobPayload,
   SyncOneDossierJobPayload,
-  SyncOneRnaOrganismeJobPayload,
-  SyncOneRnfOrganismeJobPayload,
 } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
 import { RedisService } from '@/shared/modules/redis/redis.service'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { ConfigService } from '@nestjs/config'
-import { getKeyIdentifier, buildRedisKey } from './utils/bull-key.utils'
+import { buildRedisKey, getKeyIdentifier } from './utils/bull-key.utils'
 
 @Injectable()
-@Processor(QueueName.file)
-@Processor(QueueName.sync)
 export class CustomBullService {
   constructor(
     private readonly logger: LoggerService,
@@ -42,25 +29,6 @@ export class CustomBullService {
     private readonly configService: ConfigService,
   ) {
     this.logger.setContext(this.constructor.name)
-  }
-
-  @OnGlobalQueueError()
-  handlerQueueError(error: Error): void {
-    this.logger.error(error)
-  }
-
-  @OnGlobalQueueFailed()
-  async handleQueueFailed(jobId: number, errorMessage: string): Promise<void> {
-    const job: Job =
-      (await this.syncQueue.getJob(jobId)) ??
-      (await this.fileQueue.getJob(jobId))
-    this.logger.error(
-      new Error(
-        `Job ${job?.name} (id:${
-          job?.id || jobId
-        }) with error: ${errorMessage}.`,
-      ),
-    )
   }
 
   private _getQueue(name: QueueNameKeys): Queue {
@@ -117,30 +85,6 @@ export class CustomBullService {
     }
   }
 
-  public async addSyncOneRnfOrganismeJob(
-    payload: SyncOneRnfOrganismeJobPayload,
-    opts?: JobOptions,
-  ): Promise<boolean> {
-    return this._addJobWithLock({
-      queueName: QueueName.sync,
-      jobName: eJobName.SyncOneRnfOrganisme,
-      payload,
-      opts,
-    })
-  }
-
-  public async addSyncOneRnaOrganismeJob(
-    payload: SyncOneRnaOrganismeJobPayload,
-    opts?: JobOptions,
-  ): Promise<boolean> {
-    return this._addJobWithLock({
-      queueName: QueueName.sync,
-      jobName: eJobName.SyncOneRnaOrganisme,
-      payload,
-      opts,
-    })
-  }
-
   public async addSyncOneDemarcheJob(
     payload: SyncOneDemarcheJobPayload,
   ): Promise<boolean> {
@@ -163,14 +107,6 @@ export class CustomBullService {
 
   public async initkeys(): Promise<void> {
     this.logger.verbose('initkeys')
-    const patternKeyRnf = buildRedisKey(
-      eJobName.SyncOneRnfOrganisme,
-      'rnf:*',
-    )
-    const patternKeyRna = buildRedisKey(
-      eJobName.SyncOneRnaOrganisme,
-      'rna:*',
-    )
     const patternKeyDossier = buildRedisKey(
       eJobName.SyncOneDossier,
       'dossier:*',
@@ -180,8 +116,6 @@ export class CustomBullService {
       'demarche:*',
     )
     await Promise.all([
-      this.redisService.initkeys(patternKeyRnf),
-      this.redisService.initkeys(patternKeyRna),
       this.redisService.initkeys(patternKeyDossier),
       this.redisService.initkeys(patternKeyDemarche),
     ])

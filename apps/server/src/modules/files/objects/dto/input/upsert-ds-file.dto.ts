@@ -7,6 +7,6 @@ export class UpsertDsFileDto {
   label?: string
   originalLabel: string
   sourceLabel: FileDsSourceLabelKey
-  organismeId?: number
+  organismeRef?: string
   dossierId: number
 }

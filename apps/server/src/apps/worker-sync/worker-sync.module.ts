@@ -26,8 +26,6 @@ import { DemarcheModule } from '@/modules/demarches/demarche.module'
 import { BnConfigurationModule } from '@/shared/modules/bn-configurations/bn-configuration.module'
 import { FeProcessor } from '@/apps/worker-sync/processors/fe.processor'
 import { InstructionTimesModule } from '@/modules/instruction_time/instruction_times.module'
-import { OrganismeModule } from '@/modules/organismes/organisme.module'
-import { OrganismeProcessor } from '@/apps/worker-sync/processors/organisme.processor'
 import { S3Module } from '@/shared/modules/s3/s3.module'
 import fileConfig from '../../config/file.config'
 import { WokerSyncService } from './woker-sync.service'
@@ -65,7 +63,6 @@ import { RedisModule } from '@/shared/modules/redis/redis.module'
     DemarcheModule,
     DossierModule,
     InstructionTimesModule,
-    OrganismeModule,
     BnConfigurationModule,
     S3Module,
     RedisModule,
@@ -75,7 +72,6 @@ import { RedisModule } from '@/shared/modules/redis/redis.module'
     DemarcheProcessor,
     DossierProcessor,
     FeProcessor,
-    OrganismeProcessor,
     WokerSyncService,
   ],
 })

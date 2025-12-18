@@ -102,7 +102,7 @@ jobs:
             pnpm run lint:server
             pnpm run docker:ci:up
             pnpm run test:server
-            pnpm run docker:down
+            pnpm run docker:ci:down
       - name: run build
         run: |
             pnpm run build:server
@@ -151,4 +151,4 @@ jobs:
           pnpm run docker:build:server:run
           pnpm run docker:build:server:check
           pnpm run docker:build:server:stop
-          pnpm run docker:down
+          pnpm run docker:ci:down

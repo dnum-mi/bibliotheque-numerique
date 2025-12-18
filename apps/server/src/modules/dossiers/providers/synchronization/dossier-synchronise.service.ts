@@ -27,7 +27,6 @@ import { Field } from '@/modules/dossiers/objects/entities/field.entity'
 import {
   DossierSynchroniseExcelService,
 } from '@/modules/dossiers/providers/synchronization/excel/dossier-synchronise-excel.service'
-import { Organisme } from '@/modules/organismes/objects/organisme.entity'
 
 @Injectable()
 export class DossierSynchroniseService extends BaseEntityService<Dossier> {
@@ -96,23 +95,6 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
     }
   }
 
-  private async _DDCSpecificity(
-    organisme: Organisme,
-    fields: Field[],
-    identification: IdentificationDemarcheKey,
-    dossier: TDossier,
-  ): Promise<void> {
-    this.logger.verbose('_DDCSpecificity')
-    if (identification === eIdentificationDemarche.DDC) {
-      this.logger.debug('This demarche is DDC')
-      await this.dossierSynchroniseOrganisme.updateDeclarationYearFromDossier(
-        dossier.state,
-        organisme,
-        fields,
-      )
-    }
-  }
-
   async synchroniseOneDossier(
     jsonDossier: TDossier,
     demarche: Demarche,
@@ -125,27 +107,20 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
       id,
       demarche.mappingColumns,
     )
-    const organisme =
-      await this.dossierSynchroniseOrganisme.synchroniseOrganismeFromFields(
-        fields,
-        id,
-      )
-    if (organisme) {
-      this.logger.log('Find an organisme: ' + organisme.id)
-      await this.repo.update({ id }, { organisme: { id: organisme.id } })
-      await this._DDCSpecificity(
-        organisme,
-        fields,
-        demarche.identification,
-        jsonDossier,
-      )
+
+    const organismeRefs = await this.dossierSynchroniseOrganisme.attachOrganismeRefsToFields(
+      fields,
+    )
+    if (organismeRefs && organismeRefs.length) {
+      await this.updateOrThrow(id, { organismeRefs })
     }
+
     await this.fileSynchroniseService.synchroniseFiles(
       fields,
       jsonDossier,
       id,
-      organisme?.id,
     )
+
     await this._FESpecificity(id, demarche.identification)
   }
 }

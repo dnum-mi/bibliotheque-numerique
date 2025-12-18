@@ -104,16 +104,6 @@ export class Demarche extends BaseEntity implements IDemarcheWithOptions {
   anonymizationEvent: anonymisationEventKey
 
   @ApiProperty({
-    description: 'Périmètre de l\'anonymisation des données sensibles.',
-    nullable: true,
-  })
-  @Column({
-    nullable: true,
-    type: 'boolean',
-  })
-  isOnAllDossiersOfOrganisme: boolean
-
-  @ApiProperty({
     description: 'Numéro de la démarche (extrait de dsDataJson)',
     nullable: true,
   })

@@ -3,8 +3,6 @@ import {
   AnyJobPayload,
   SyncOneDemarcheJobPayload,
   SyncOneDossierJobPayload,
-  SyncOneRnaOrganismeJobPayload,
-  SyncOneRnfOrganismeJobPayload,
 } from '../objects/const/job-payload.type'
 
 export function buildRedisKey(jobName: JobNameKey, key: string): string {
@@ -20,10 +18,6 @@ export function getKeyIdentifier(
     return `demarche:${(payload as SyncOneDemarcheJobPayload).demarcheId.toString()}`
   case eJobName.SyncOneDossier:
     return `dossier:${(payload as SyncOneDossierJobPayload).dsDossierId.toString()}`
-  case eJobName.SyncOneRnaOrganisme:
-    return `rna:${(payload as SyncOneRnaOrganismeJobPayload).rna.toString()}`
-  case eJobName.SyncOneRnfOrganisme:
-    return `rnf:${(payload as SyncOneRnfOrganismeJobPayload).rnf.toString()}`
   default:
     return null
   }

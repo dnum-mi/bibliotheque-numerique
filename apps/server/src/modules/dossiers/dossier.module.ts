@@ -12,7 +12,6 @@ import { FieldService } from './providers/field.service'
 import { DossierSynchroniseService } from './providers/synchronization/dossier-synchronise.service'
 import { DossierSearchService } from './providers/search/dossier-search.service'
 import { FieldSearchService } from './providers/search/field-search.service'
-import { OrganismeModule } from '@/modules/organismes/organisme.module'
 import {
   DossierSynchroniseExcelService,
 } from '@/modules/dossiers/providers/synchronization/excel/dossier-synchronise-excel.service'
@@ -28,6 +27,8 @@ import {
 } from '@/modules/dossiers/providers/synchronization/organisme/dossier-synchronise-organisme.service'
 import { DossierFileController } from '@/modules/dossiers/controllers/dossier-file.controller'
 import { CustomBullModule } from '@/shared/modules/custom-bull/custom-bull.module'
+import { DossierOrganismeController } from '@/modules/dossiers/controllers/dossier-organisme.controller'
+import { HubModule } from '@/modules/hub/hub.module'
 
 @Module({
   imports: [
@@ -35,7 +36,6 @@ import { CustomBullModule } from '@/shared/modules/custom-bull/custom-bull.modul
     XlsxModule,
     forwardRef(() => InstructionTimesModule),
     forwardRef(() => DemarcheModule),
-    forwardRef(() => OrganismeModule),
     TypeOrmModule.forFeature([Dossier, Field, File]),
     BullModule.registerQueue(
       ...([
@@ -45,8 +45,9 @@ import { CustomBullModule } from '@/shared/modules/custom-bull/custom-bull.modul
     ),
     CustomBullModule,
     BnConfigurationModule,
+    HubModule,
   ],
-  controllers: [DossierController, DossierFileController],
+  controllers: [DossierController, DossierFileController, DossierOrganismeController],
   providers: [
     DossierService,
     FieldService,
@@ -64,6 +65,7 @@ import { CustomBullModule } from '@/shared/modules/custom-bull/custom-bull.modul
     FieldSearchService,
     DossierSynchroniseExcelService,
     DossierSynchroniseService,
+    DossierSynchroniseOrganismeService,
   ],
 })
 export class DossierModule {}

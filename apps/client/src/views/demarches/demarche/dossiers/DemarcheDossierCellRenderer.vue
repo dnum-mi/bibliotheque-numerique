@@ -12,7 +12,6 @@ import type {
 
 import delayStateBadge from '@/components/Badges/delay-state/DelayStateBadge.vue'
 import AgGridAttachmentCell from '@/components/ag-grid/AgGridAttachmentCell.vue'
-import { firstUpperCase } from '@/utils/first-upper-case'
 import { routeNames } from '@/router/route-names'
 
 const props = defineProps<{
@@ -129,28 +128,18 @@ const getPrefecture = (prefecture: PrefectureKey) => {
 
       <!-- RNF & RNA -->
       <template v-else-if="['rnf', 'rna'].includes(ffr) && cellValue">
-        <template v-if="cellValue.substring(0, 5) === 'ERROR'">
-          <span
-            class="text-red-500 cursor-not-allowed"
-          >
-            ⚠️ {{ cellValue.substring(6) }}
+        <RouterLink
+          class="no-underline"
+          :to="{ name: routeNames.FICHE_ORGANISME, params: { id: cellValue.split(' ')[0] } }"
+          @click.stop
+        >
+          <span>
+            {{ cellValue.split(' | ')[0] }}
           </span>
-        </template>
-        <template v-else-if="cellValue.substring(0, 5) === 'QUEUE'">
-          <span
-            class="fr-text-label--beige-gris-galet cursor-not-allowed"
-          >
-            ⌛️{{ cellValue.substring(6) }}
-          </span>
-        </template>
-        <template v-else>
-          <RouterLink
-            :to="{ name: routeNames.FICHE_ORGANISME, params: { id: cellValue }, query: { idType: firstUpperCase(ffr) } }"
-            @click.stop
-          >
-            {{ cellValue }}
-          </RouterLink>
-        </template>
+        </RouterLink>
+        <span class="ml-1">
+          {{ cellValue.split(' | ')[1] }}
+        </span>
       </template>
 
       <!-- File -->

@@ -56,7 +56,6 @@ describe('Option ', () => {
         expect(body).toEqual({
           nbrMonthAnonymisation: null,
           anonymizationEvent: null,
-          isOnAllDossiersOfOrganisme: null,
         })
       })
   })

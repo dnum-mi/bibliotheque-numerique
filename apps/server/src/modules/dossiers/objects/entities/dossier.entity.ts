@@ -13,7 +13,6 @@ import { ApiProperty } from '@nestjs/swagger'
 import { BaseEntity } from '@/shared/base-entity/base.entity'
 import { Field } from './field.entity'
 import { Dossier as TDossier } from '@dnum-mi/ds-api-client/dist/@types/generated-types'
-import { Organisme } from '@/modules/organismes/objects/organisme.entity'
 import { IDossier, Prefecture, PrefectureKey } from '@biblio-num/shared'
 import { File } from '@/modules/files/objects/entities/file.entity'
 
@@ -60,16 +59,6 @@ export class Dossier extends BaseEntity implements IDossier {
   @Column({ type: 'jsonb', default: '{}' })
   dsDataJson: Partial<TDossier>
 
-  @ManyToOne(() => Organisme, (org) => org.dossiers, {
-    onDelete: 'SET NULL',
-  })
-  @JoinColumn({
-    name: 'organismeId',
-    referencedColumnName: 'id',
-    foreignKeyConstraintName: 'FK_organisme',
-  })
-  organisme?: Organisme | null
-
   @ApiProperty({
     description: 'Préfecture à laquelle est rattachée le dossier',
   })
@@ -106,4 +95,10 @@ export class Dossier extends BaseEntity implements IDossier {
       'La dernière date de traitement du dossier sur Démarches simplifiées.',
   })
   dateTraitement: Date | null
+
+  @ApiProperty({
+    description: 'Liste des organismes liée au dossier',
+  })
+  @Column({ type: 'varchar', array: true, nullable: true })
+  organismeRefs: string[]
 }

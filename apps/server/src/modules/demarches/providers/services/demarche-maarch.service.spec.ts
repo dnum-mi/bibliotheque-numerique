@@ -1,9 +1,7 @@
 import { DataSource, Repository } from 'typeorm'
 import { DemarcheMaarchService } from './demarche-maarch.service'
 import { CsvProcessorService } from './maarch/csv-processor.service'
-import { Organisme } from '@/modules/organismes/objects/organisme.entity'
 import { DossierTransformerService } from './maarch/dossier-transformer.service'
-import { CustomBullService } from '@/shared/modules/custom-bull/custom-bull.service'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
 import { Demarche } from '../../objects/entities/demarche.entity'
@@ -16,6 +14,9 @@ import {
   maarchFieldMappingsArray,
 } from '../../objects/constants/maarch-champ.dictionary'
 import { FileBuilderService } from './maarch/file-builder.service'
+import {
+  DossierSynchroniseOrganismeService
+} from '@/modules/dossiers/providers/synchronization/organisme/dossier-synchronise-organisme.service'
 
 const mockCsvProcessor = {
   processFiles: jest.fn(),
@@ -26,10 +27,6 @@ const mockDossierTransformer = {
   updateFilesWithOrganisme: jest.fn(),
 };
 
-const mockCustomBullService = {
-  addSyncOneRnaOrganismeJob: jest.fn(),
-};
-
 const mockFileBuilderService = {
   createFileEntities: jest.fn(),
 }
@@ -38,9 +35,12 @@ const mockEntityManager = {
   getRepository: jest.fn().mockImplementation((entity) => {
     if (entity === Demarche) return mockDemarcheRepo;
     if (entity === Dossier) return mockDossierRepo;
-    if (entity === Organisme) return mockOrganismeRepo;
   }),
 };
+
+const mockDossierSynchroniseOrganismeService = {
+  attachOrganismeRefToOneField: jest.fn().mockImplementation((field) => {})
+}
 
 const mockDataSource = {
   transaction: jest.fn().mockImplementation(async (callback) => {
@@ -60,12 +60,6 @@ const mockDossierRepo = {
   delete: jest.fn(),
 };
 
-const mockOrganismeRepo = {
-  findOne: jest.fn(),
-  create: jest.fn(),
-  save: jest.fn(),
-};
-
 describe('DemarcheMaarchService', () => {
   let service: DemarcheMaarchService
 
@@ -82,10 +76,6 @@ describe('DemarcheMaarchService', () => {
           useValue: loggerServiceMock,
         },
         {
-          provide: CustomBullService,
-          useValue: mockCustomBullService,
-        },
-        {
           provide: CsvProcessorService,
           useValue: mockCsvProcessor,
         },
@@ -96,6 +86,10 @@ describe('DemarcheMaarchService', () => {
         {
           provide: FileBuilderService,
           useValue: mockFileBuilderService,
+        },
+        {
+          provide: DossierSynchroniseOrganismeService,
+          useValue: mockDossierSynchroniseOrganismeService,
         }
       ],
     }).compile()
@@ -137,19 +131,16 @@ describe('DemarcheMaarchService', () => {
       mockDemarcheRepo.create.mockReturnValue(mockDemarche);
       mockDemarcheRepo.save.mockResolvedValue(mockDemarche);
       mockDossierTransformer.transformToEntities.mockResolvedValue([mockDossier]);
-      mockOrganismeRepo.findOne.mockResolvedValue(null);
-      mockOrganismeRepo.create.mockReturnValue({ idRna: 'W123456789' } as Organisme);
-      mockOrganismeRepo.save.mockResolvedValue({ id: 201, idRna: 'W123456789' } as Organisme);
-
       const result = await service.importDemarche(mockFiles, mockTitle)
 
       expect(mockDataSource.transaction).toHaveBeenCalledTimes(1);
       expect(mockCsvProcessor.processFiles).toHaveBeenCalledWith(mockFiles);
       expect(mockDemarcheRepo.save).toHaveBeenCalledWith(mockDemarche);
       expect(mockDossierTransformer.transformToEntities).toHaveBeenCalledWith(mockAggregatedData, mockDemarche);
-      expect(mockOrganismeRepo.findOne).toHaveBeenCalledWith({ where: { idRna: 'W123456789' } });
-      expect(mockOrganismeRepo.save).toHaveBeenCalledTimes(1); // Création de l'organisme
-      expect(mockCustomBullService.addSyncOneRnaOrganismeJob).toHaveBeenCalledTimes(1);
+      expect(mockDossierSynchroniseOrganismeService.attachOrganismeRefToOneField).toHaveBeenCalledWith({
+        "sourceId": "9098ce70-4378-2d7e-bkb9-b76fb7b67h35",
+        "stringValue": "W123456789",
+      });
       expect(mockDossierRepo.save).toHaveBeenCalledWith([mockDossier], { chunk: 100 });
       expect(result).toEqual({ demarcheId: 1, countDossiers: 1 });
     })

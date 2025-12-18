@@ -13,6 +13,7 @@ export const typeFileArray = [
   'Règlement intérieur',
   'Statuts',
   'Suspension',
+  'Autre',
 ] as const
 
 export type TypeFileKey = (typeof typeFileArray)[number]

@@ -1,7 +1,10 @@
 import type { RouteRecordRaw } from 'vue-router'
 
 import { routeNames } from '@/router/route-names'
-import { Roles } from '@biblio-num/shared'
+import {
+  EOrganismeCategory,
+  Roles,
+} from '@biblio-num/shared'
 import { IS_OPEN_SOURCE } from '@/config'
 
 export const organismeRoute: RouteRecordRaw = {
@@ -11,9 +14,9 @@ export const organismeRoute: RouteRecordRaw = {
   },
   children: [
     {
-      name: routeNames.LISTE_ORGANISMES,
+      name: routeNames.SEARCH_ORGANISMES,
       path: '',
-      component: () => import('@/views/organismes/list/ListeOrganismes.vue'),
+      component: () => import('@/views/organismes/SearchOrganisme.vue'),
       meta: {
         roleLevel: Roles.instructor,
       },
@@ -22,39 +25,13 @@ export const organismeRoute: RouteRecordRaw = {
     {
       name: routeNames.FICHE_ORGANISME,
       path: ':id',
-      component: () => import('@/views/organismes/organisme/FicheOrganisme.vue'),
+      component: () => import('@/views/organismes/FicheOrganisme.vue'),
       props: (route) => {
-        const id = route.params.id
-        const idType = route.query.idType || 'Id'
         return {
-          id,
-          idType,
+          organismeId: route.params.id,
+          organismeType: route.params.id?.toString().startsWith('W') ? EOrganismeCategory.association : EOrganismeCategory.fondation,
         }
       },
-      meta: {
-        roleLevel: Roles.instructor,
-      },
-    },
-    {
-      name: routeNames.FICHE_ORGANISME_V2,
-      path: 'v2/:id',
-      component: () => import('@/views/organismes/organisme-v2/Organisme.vue'),
-      props: (route) => {
-        const id = route.params.id
-        const idType = route.query.idType || 'Id'
-        return {
-          id,
-          idType,
-        }
-      },
-      meta: {
-        roleLevel: Roles.instructor,
-      },
-    },
-    {
-      name: routeNames.SEARCH_ORGANISMES,
-      path: 'search',
-      component: () => import('@/views/organismes/search/searchOrganismes.vue'),
       meta: {
         roleLevel: Roles.instructor,
       },

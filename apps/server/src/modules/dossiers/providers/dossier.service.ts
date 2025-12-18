@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -44,7 +43,6 @@ import { MappingAnonymized } from '@/modules/demarches/objects/dtos/mapping-anon
 import {
   DemarcheOutput,
   DossierWithFieldsOutputDto,
-  OrganismeOutput,
 } from '../objects/dto/dossier-with-fields-output.dto'
 import { Field } from '../objects/entities/field.entity'
 import {
@@ -54,7 +52,6 @@ import {
 } from '@dnum-mi/ds-api-client/dist/@types/generated-types'
 import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
 import { Demarche } from '@/modules/demarches/objects/entities/demarche.entity'
-import { Organisme } from '@/modules/organismes/objects/organisme.entity'
 
 interface DataDossierSpecificDS {
   demandeur: PersonnePhysique | PersonneMorale | undefined
@@ -76,46 +73,6 @@ export class DossierService extends BaseEntityService<Dossier> {
     this.logger.setContext(this.constructor.name)
   }
 
-  // #region get dossiers by organismeId
-  async getOrganismeDossiers(
-    organismeId: number,
-  ): Promise<LeanDossierOutputDto[]> {
-    if (isNaN(organismeId)) {
-      throw new BadRequestException('Invalid organisme id.')
-    }
-    this.logger.verbose(`getOrganismeDossiers ${organismeId}`)
-    return this.repo
-      .createQueryBuilder('d')
-      .innerJoinAndSelect(
-        'd.demarche',
-        'demarche',
-        'demarche.id = d.demarcheId',
-      )
-      .innerJoin('d.organisme', 'organisme', 'organisme.id = d.organismeId')
-      .where('organisme.id = :organismeId', { organismeId })
-      .select(['d', 'demarche.title', 'demarche.id'])
-      .getMany()
-      .then((dossiers) => {
-        return dossiers.map((dossier) => ({
-          id: dossier.id,
-          demarcheId: dossier.demarche.id,
-          demarcheTitle: dossier.demarche.title,
-          prefecture: dossier.prefecture,
-          state: dossier.state,
-          dateDepot: dossier.dateDepot,
-        }))
-      })
-  }
-
-  async countDossiersByOrganismeId(organismeId: number): Promise<number> {
-    if (isNaN(organismeId)) {
-      throw new BadRequestException('Invalid organisme id.')
-    }
-    this.logger.verbose(`countDossiersByOrganismeId ${organismeId}`)
-    return this.repo.count({
-      where: { organisme: { id: organismeId } },
-    })
-  }
   // #endregion get dossiers by organismeId
 
   async softDeleteDemarcheDossiers(demarcheId: number): Promise<void> {
@@ -456,7 +413,6 @@ export class DossierService extends BaseEntityService<Dossier> {
     return await this.repo
       .createQueryBuilder('dossier')
       .leftJoinAndSelect('dossier.demarche', 'demarche')
-      .leftJoinAndSelect('dossier.organisme', 'organisme')
       .select([
         'dossier.id',
         'dossier.prefecture',
@@ -468,11 +424,7 @@ export class DossierService extends BaseEntityService<Dossier> {
         'demarche.title',
         'demarche.identification',
         'demarche.mappingColumns',
-        'organisme.id',
-        'organisme.type',
-        'organisme.title',
-        'organisme.idRna',
-        'organisme.idRnf',
+        'dossier.organismeRefs',
       ])
       .where('dossier.id = :id', { id })
       .getOne()
@@ -582,7 +534,6 @@ export class DossierService extends BaseEntityService<Dossier> {
   ): DossierWithFieldsOutputDto {
     return {
       id: dossier.id,
-      organisme: this._buildOrganismeDto(dossier.organisme),
       demarche: this._buildDemarcheDto(dossier.demarche),
       prefecture: this._getPrefectureInfo(dossier.prefecture),
       dateDepot: dossier.dateDepot,
@@ -595,22 +546,7 @@ export class DossierService extends BaseEntityService<Dossier> {
       files: dossier.files,
       demandeurEmail: specificData.demandeurEmail,
       messages: specificData.messages,
-    }
-  }
-
-  private _buildOrganismeDto(
-    organisme: Organisme | null | undefined,
-  ): OrganismeOutput | null {
-    if (!organisme) {
-      return null
-    }
-
-    return {
-      id: organisme.id,
-      type: organisme.type,
-      title: organisme.title ?? undefined,
-      idRna: organisme.idRna,
-      idRnf: organisme.idRnf,
+      organismeRefs: dossier.organismeRefs,
     }
   }
 
@@ -843,5 +779,32 @@ export class DossierService extends BaseEntityService<Dossier> {
     } else {
       currentGroup.items.push(item)
     }
+  }
+
+  public async findDossiersByOrganismeNumber(
+    organismeNumber: string,
+  ): Promise<LeanDossierOutputDto[]> {
+    this.logger.verbose(`findDossiersByOrganismeNumber ${organismeNumber}`)
+
+    return this.repo
+      .createQueryBuilder('d')
+      .innerJoinAndSelect(
+        'd.demarche',
+        'demarche',
+        'demarche.id = d.demarcheId',
+      )
+      .where(':organismeNumber = ANY(d.organismeRefs)', { organismeNumber })
+      .select(['d', 'demarche.title', 'demarche.id'])
+      .getMany()
+      .then((dossiers) => {
+        return dossiers.map((dossier) => ({
+          id: dossier.id,
+          demarcheId: dossier.demarche.id,
+          demarcheTitle: dossier.demarche.title,
+          prefecture: dossier.prefecture,
+          state: dossier.state,
+          dateDepot: dossier.dateDepot,
+        }))
+      })
   }
 }

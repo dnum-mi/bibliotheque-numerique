@@ -34,7 +34,7 @@ export class FileController {
     summary: 'Télécharge un fichier à partir de son uuid.',
     method: 'GET',
     minimumRole: Roles.instructor,
-    responseType: null,
+    responseType: null, // TODO: typé
   })
   @Get(':uuid')
   @Role(Roles.instructor)
@@ -58,24 +58,8 @@ export class FileController {
         .replace(/\?/g, '_'), // le module content-disposition remplace les caractére interdit par '?'
     )
 
-    let stream
-    if (smallFile.storageIn === eFileStorageIn.HUB) {
-      // TODO: variable d'environnement pour le hub est false => sortir
-      if (!smallFile.organisme || !(smallFile.organisme.idRna || smallFile.organisme.idRnf)) {
-        throw new NotFoundException('Le fichier n\'est pas relié à un organisme')
-      }
-      if (smallFile.organisme.idRna) {
-        // TODO: variable d'environnement pour le hub ASSOCIATION est false => sortir
-        stream = await this.hubService.getAssociationFile(smallFile.organisme.idRna, uuid)
-      }
+    const stream = await this.s3Service.getStreamedFile(uuid)
 
-      if (smallFile.organisme.idRnf) {
-        // TODO: variable d'environnement pour le hub ASSOCIATION est false => sortir
-        stream = await this.hubService.getFoundationFile(smallFile.organisme.idRnf, uuid)
-      }
-    } else {
-      stream = await this.s3Service.getStreamedFile(uuid)
-    }
     return new Promise((resolve, reject) => {
       stream.on('error', (e) => {
         if (smallFile.storageIn === eFileStorageIn.HUB) {

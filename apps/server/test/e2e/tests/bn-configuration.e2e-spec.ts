@@ -52,7 +52,7 @@ describe('bn-configurations (e2e)', () => {
         .get('/bn-configurations')
         .set('Authorization', `Bearer ${tokens.sudo}`)
         .expect(200)
-      expect(response.body).toHaveLength(10)
+      expect(response.body).toHaveLength(4)
       expect(response.body).toEqual(expect.arrayContaining([
         expect.objectContaining({
           id: expect.any(Number),
@@ -91,66 +91,6 @@ describe('bn-configurations (e2e)', () => {
           keyName: eBnConfiguration.FILE_MAXIMUM_SIZE,
           stringValue: '5242880',
           valueType: 'number',
-        }),
-      ]))
-      expect(response.body).toEqual(expect.arrayContaining([
-        expect.objectContaining({
-          id: expect.any(Number),
-          createdAt: expect.any(String),
-          updatedAt: expect.any(String),
-          keyName: eBnConfiguration.LAST_ORGANISM_SYNC_AT,
-          stringValue: expect.any(String),
-          valueType: 'date',
-        }),
-      ]))
-      expect(response.body).toEqual(expect.arrayContaining([
-        expect.objectContaining({
-          id: expect.any(Number),
-          createdAt: expect.any(String),
-          updatedAt: expect.any(String),
-          keyName: eBnConfiguration.LAST_FOUNDATION_SYNC_AT,
-          stringValue: expect.any(String),
-          valueType: 'date',
-        }),
-      ]))
-      expect(response.body).toEqual(expect.arrayContaining([
-        expect.objectContaining({
-          createdAt: expect.any(String),
-          updatedAt: expect.any(String),
-          id: expect.any(Number),
-          keyName: eBnConfiguration.DDC_FIRST_CONTROL_YEAR,
-          stringValue: expect.any(String),
-          valueType: 'number',
-        }),
-      ]))
-      expect(response.body).toEqual(expect.arrayContaining([
-        expect.objectContaining({
-          createdAt: expect.any(String),
-          updatedAt: expect.any(String),
-          id: expect.any(Number),
-          keyName: eBnConfiguration.DDC_MONTH_BEFORE_MISSING,
-          stringValue: expect.any(String),
-          valueType: 'number',
-        }),
-      ]))
-      expect(response.body).toEqual(expect.arrayContaining([
-        expect.objectContaining({
-          createdAt: expect.any(String),
-          updatedAt: expect.any(String),
-          id: expect.any(Number),
-          keyName: eBnConfiguration.ENABLE_HUB_SEARCH,
-          stringValue: 'false',
-          valueType: 'boolean',
-        }),
-      ]))
-      expect(response.body).toEqual(expect.arrayContaining([
-        expect.objectContaining({
-          createdAt: expect.any(String),
-          updatedAt: expect.any(String),
-          id: expect.any(Number),
-          keyName: eBnConfiguration.SYNC_RNA_VIA_HUB,
-          stringValue: 'false',
-          valueType: 'boolean',
         }),
       ]))
     })

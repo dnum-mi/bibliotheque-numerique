@@ -96,6 +96,8 @@ export class LoggerService extends ConsoleLogger implements LS {
     private readonly contextLog?: ContextLoggerService,
   ) {
     super()
+    // override global setup and filter later with function
+    this.setLogLevels(['log', 'error', 'warn', 'debug', 'verbose'])
     if (this.configService.get('LOG_TO_FILE') === 'true') {
       this.fileLogger = this._createLogger(this.appName)
       this.clientFileLogger = this._createLogger('client')

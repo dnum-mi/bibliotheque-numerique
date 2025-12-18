@@ -1,27 +1,25 @@
 <script lang="ts" setup>
 import { eIdentificationDemarche } from '@biblio-num/shared'
-import type { IDossierFieldsOutput } from '@biblio-num/shared'
+import type { IBasicOrganisme, IDossierFieldsOutput } from '@biblio-num/shared'
 
-import OrganismeBadge from '@/components/Badges/organisme/OrganismeBadge.vue'
 import { routeNames } from '@/router/route-names'
-import { EOrganismeIdType } from '@/stores'
 
 type DossierHeaderProps = {
   dossier: IDossierFieldsOutput
+  organisme?: IBasicOrganisme | null
 }
 
-const { dossier } = defineProps<DossierHeaderProps>()
+const { dossier, organisme } = defineProps<DossierHeaderProps>()
 
 const router = useRouter()
-const goToOrganisme = (idRna: string | null, idRnf: string | null) => {
-  const id = idRna || idRnf
-  const idType = idRna ? EOrganismeIdType.Rna : EOrganismeIdType.Rnf
+
+const goToOrganisme = () => {
   router.push({
     name: routeNames.FICHE_ORGANISME,
-    params: { id },
-    query: { idType },
+    params: { id: organisme?.id },
   })
 }
+
 const isMaarch = computed(() => dossier.demarche.identification === eIdentificationDemarche.MAARCH)
 </script>
 
@@ -29,25 +27,25 @@ const isMaarch = computed(() => dossier.demarche.identification === eIdentificat
   <header class="flex justify-between gap-2">
     <div class="flex flex-col justify-center">
       <h2
-        v-if="dossier.organisme"
+        v-if="organisme"
         class="m-0 p-0 text-lg text-[var(--text-inverted-grey)]"
       >
-        {{ dossier.organisme?.idRna || dossier.organisme?.idRnf }} -
-        <span class="font-normal">{{ dossier.organisme?.title }}</span>
+        {{ organisme.id }} -
+        <span class="font-normal">{{ organisme.title }}</span>
       </h2>
+
       <div class="flex gap-2 text-sm">
-        <OrganismeBadge :type="dossier.organisme?.type" />
         <strong class="font-bold">{{ isMaarch ? 'N° Courrier' : 'N° DS' }} - {{ dossier.sourceId }}</strong>
         <span>{{ dossier.demarche?.title }}</span>
       </div>
     </div>
-    <div v-if="dossier.organisme">
+    <div v-if="organisme">
       <DsfrButton
         type="button"
         label="Fiche organisme"
         secondary
         class="white-bg"
-        @click="goToOrganisme(dossier.organisme.idRna, dossier.organisme.idRnf)"
+        @click="goToOrganisme()"
       />
     </div>
   </header>

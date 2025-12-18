@@ -16,7 +16,6 @@ import {
 
 import { BaseEntity } from '@/shared/base-entity/base.entity'
 import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
-import { Organisme } from '@/modules/organismes/objects/organisme.entity'
 import { eFileStorageIn, FileStorageInKey } from '../const/file-storage-in.enum'
 import { ApiProperty } from '@nestjs/swagger'
 
@@ -90,17 +89,7 @@ export class File extends BaseEntity {
   dossier: Dossier | null
 
   @Column({ nullable: true })
-  organismeId?: number | null
-
-  @ManyToOne(() => Organisme, (org) => org.files, {
-    onDelete: 'SET NULL',
-  })
-  @JoinColumn({
-    name: 'organismeId',
-    referencedColumnName: 'id',
-    foreignKeyConstraintName: 'FK_organisme',
-  })
-  organisme: Organisme | null
+  organismeRef?: string | null
 
   @Column({
     type: 'enum',

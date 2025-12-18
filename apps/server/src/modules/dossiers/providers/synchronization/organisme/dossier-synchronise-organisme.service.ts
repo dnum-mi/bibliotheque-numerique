@@ -2,26 +2,16 @@ import { Injectable } from '@nestjs/common'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { Field } from '@/modules/dossiers/objects/entities/field.entity'
 import { DsChampType } from '@/shared/modules/ds-api/objects/ds-champ-type.enum'
-import {
-  SyncOneRnaOrganismeJobPayload,
-  SyncOneRnfOrganismeJobPayload,
-} from '@/shared/modules/custom-bull/objects/const/job-payload.type'
-import { OrganismeService } from '@/modules/organismes/providers/organisme.service'
-import { DossierState } from '@dnum-mi/ds-api-client'
-import { eFieldCode } from '@/modules/dossiers/objects/constante/field-code.enum'
-import { Organisme } from '@/modules/organismes/objects/organisme.entity'
-import { pushIfMissing } from '@/shared/utils/array.utils'
-import { isNumber } from 'class-validator'
 import { FieldService } from '@/modules/dossiers/providers/field.service'
-import { CustomBullService } from '@/shared/modules/custom-bull/custom-bull.service'
+import { ISiafOrganisme } from '@biblio-num/shared'
+import { HubService } from '@/modules/hub/providers/hub.service'
 
 @Injectable()
 export class DossierSynchroniseOrganismeService {
   constructor(
     private readonly logger: LoggerService,
     private readonly fieldService: FieldService,
-    private readonly organismeService: OrganismeService,
-    private readonly customBullService: CustomBullService,
+    private readonly hubService: HubService,
   ) {
     this.logger.setContext(this.constructor.name)
   }
@@ -41,91 +31,50 @@ export class DossierSynchroniseOrganismeService {
     })
   }
 
-  public async synchroniseOrganismeFromFields(
+  public async attachOrganismeRefToOneField(organismeField: Field): Promise<void> {
+    let organisme: ISiafOrganisme | undefined
+    let typeOrganisme:string
+    try {
+      if (organismeField.dsChampType === DsChampType.RnaChamp) {
+        typeOrganisme = 'Association'
+        organisme = await this.hubService.getAssociation(organismeField.stringValue)
+      } else {
+        typeOrganisme = 'Fondation'
+        organisme = await this.hubService.getFoundation(organismeField.stringValue)
+      }
+
+      if (organisme) {
+        const newStringValue = `${organismeField.stringValue} | ${organisme?.title}`
+        this.logger.debug(newStringValue)
+        await this.fieldService.repository.update({
+          id: organismeField.id,
+        }, {
+          stringValue: newStringValue,
+        })
+      } else {
+        this.logger.warn(`Not found ${typeOrganisme}  ${organismeField.stringValue}`)
+      }
+    } catch (e) {
+      this.logger.error(`Echec récupération de cet organisme: ${organismeField.stringValue}`)
+      this.logger.error(e)
+    }
+  }
+
+  public async attachOrganismeRefsToFields(
     fields: Field[],
-    dossierId: number,
-  ): Promise<Organisme | undefined> {
+  ): Promise<string[] | undefined> {
     this.logger.verbose('_synchroniseOrganismes')
     const organismeFields = this._findOrganismeFields(fields)
-    let organisme: Organisme
     if (!organismeFields?.length) {
       return
     }
-    // TODO: Trouver un mellieux solution - queue présent même s'il n'y a pas raison
-    // await this.fieldService.repository.update({
-    //   id: organismeField.id,
-    // }, {
-    //   stringValue: 'QUEUE-' + organismeField.stringValue,
-    // })
+
+    const organismeRefs = [...new Set(organismeFields.map(field => field.stringValue))]
+
     for (const organismeField of organismeFields) {
-      if (organismeField.dsChampType === DsChampType.RnaChamp) {
-        organisme = await this.organismeService.getOrCreateOrganismeIdFromRna(
-          organismeField.stringValue,
-        )
-        this.logger.debug(
-          `Adding Organisme sync for rna:  ${organismeField.stringValue} (with id: ${organisme.id})`,
-        )
-        await this.customBullService.addSyncOneRnaOrganismeJob({
-          dossierId,
-          fieldId: organismeField.id,
-          rna: organismeField.stringValue,
-        } satisfies SyncOneRnaOrganismeJobPayload)
-      } else {
-        organisme = await this.organismeService.getOrCreateOrganismeIdFromRnf(
-          organismeField.stringValue,
-        )
-        this.logger.debug(
-          `Adding Organisme sync for rnf:  ${organismeField.stringValue} (with organismeId: ${organisme.id})`,
-        )
-        await this.customBullService.addSyncOneRnfOrganismeJob({
-          dossierId,
-          fieldId: organismeField.id,
-          rnf: organismeField.stringValue,
-          firstTime: !organisme.rnfJson,
-        } satisfies SyncOneRnfOrganismeJobPayload)
-      }
+      await this.attachOrganismeRefToOneField(organismeField)
     }
 
-    return organisme
-  }
-
-  public async updateDeclarationYearFromDossier(
-    state: DossierState,
-    organisme: Organisme,
-    fields: Field[],
-  ): Promise<void> {
-    this.logger.verbose('updateDeclarationYearFromDossier')
-    if (state !== DossierState.Accepte && state !== DossierState.Refuse) {
-      this.logger.debug(`Dossier state is ${state}. Nothing to do.`)
-      return
-    }
-    const year = fields.find((f) => f.code === eFieldCode['account-year'])
-      ?.numberValue
-    if (!isNumber(year)) {
-      this.logger.warn('No deposit year field inside the DDC dossier.')
-      return
-    }
-    if (state === DossierState.Accepte) {
-      this.logger.debug(`Adding ${year} into declarationYears.`)
-      pushIfMissing(organisme.declarationYears, year)
-      organisme.missingDeclarationYears =
-        organisme.missingDeclarationYears.filter((y) => y !== year)
-    }
-    if (state === DossierState.Refuse) {
-      this.logger.debug(`Adding ${year} into missing years.`)
-      pushIfMissing(organisme.missingDeclarationYears, year)
-      organisme.declarationYears = organisme.declarationYears.filter(
-        (y) => y !== year,
-      )
-    }
-    await this.organismeService.repository.update(
-      {
-        id: organisme.id,
-      },
-      {
-        declarationYears: organisme.declarationYears,
-        missingDeclarationYears: organisme.missingDeclarationYears,
-      },
-    )
+    return organismeRefs
   }
 }

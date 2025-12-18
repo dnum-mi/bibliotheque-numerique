@@ -13,6 +13,7 @@ items:
       "options": [ ],
     }
     validated: true
+    recentOrganismes: []
   superadminUser:
     id: 2
     email: superadmin@localhost.com
@@ -23,6 +24,7 @@ items:
     updatedAt: "2023-06-12T06:54:45.000Z"
     role: { label: "superadmin", options: { } }
     validated: true
+    recentOrganismes: []
   noRoleUser:
     id: 3
     email: norole@localhost.com
@@ -33,6 +35,7 @@ items:
     updatedAt: "2023-06-12T06:54:45.000Z"
     role: { label: null, options: { } }
     validated: true
+    recentOrganismes: []
   admin1User:
     id: 4
     email: admin1@localhost.com
@@ -43,6 +46,7 @@ items:
     updatedAt: "2023-06-12T06:54:45.000Z"
     role: { label: "admin", options: { 2: { national: false, prefectures: [ 'D75' ] } } }
     validated: true
+    recentOrganismes: []
   instructor1User:
     id: 5
     email: instructor1@localhost.com
@@ -53,6 +57,7 @@ items:
     updatedAt: "2023-06-12T06:54:45.000Z"
     role: { label: "instructor", options: { 1: { national: false, prefectures: [ 'D75' ] }, 5: { national: false, prefectures: [ 'D57' ] } } }
     validated: true
+    recentOrganismes: []
   testPwdUser:
     id: 6
     email: testpwd@localhost.com
@@ -63,6 +68,7 @@ items:
     updatedAt: "2023-06-12T06:54:45.000Z"
     role: { label: null, options: { } }
     validated: true
+    recentOrganismes: []
   testNoValidUser:
     id: 7
     email: test.no.valid@localhost.com
@@ -73,3 +79,4 @@ items:
     updatedAt: "2023-06-12T06:54:45.000Z"
     role: { label: null, options: { } }
     validated: false
+    recentOrganismes: []

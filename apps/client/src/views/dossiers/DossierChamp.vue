@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { IFieldRepetable, IFieldSimple, FieldFileType } from '@biblio-num/shared'
 import DossierChamps from './DossierChamps.vue'
-import DownloadFile from '@/components/DownloadFile.vue'
 
 defineProps<{
   champ: IFieldSimple | IFieldRepetable
@@ -33,7 +32,7 @@ defineProps<{
               v-for="(file, index) in (champ.value as FieldFileType).files"
               :key="index"
             >
-              <DownloadFile :file="file" />
+              <DownloadDsFile :file="file" />
             </div>
           </template>
         </div>

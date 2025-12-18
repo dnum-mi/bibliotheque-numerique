@@ -1,11 +1,10 @@
 import type { ICreateDemarche, IUpdateDemarche } from '@biblio-num/shared'
-import { demarchesRoute, dossierRoute, getDemarcheByIdRoute, organismesRoute } from './bn-api-routes'
+import { demarchesRoute, dossierRoute, getDemarcheByIdRoute } from './bn-api-routes'
 import { apiClientInstance } from './api-client'
 
 const routeCreateDemarche = `${demarchesRoute}/create`
 const routeSynchroniseOneDemarche = (id: number) => `${demarchesRoute}/${id}/sync`
 const routeSynchroniseOneDossier = (id: number) => `${dossierRoute}/${id}/sync`
-const routeSynchroniseOneOrganisme = (id: number) => `${organismesRoute}/${id}/sync`
 
 export const createDemarche = async (dto: ICreateDemarche) => {
   const response = await apiClientInstance.post(routeCreateDemarche, dto)
@@ -17,15 +16,6 @@ export const synchroniseOneDossier = async (id: number) => {
   return response.data
 }
 
-export const synchroniseOneOrganisme = async (id: number) => {
-  const response = await apiClientInstance.patch(routeSynchroniseOneOrganisme(id))
-  return response.data
-}
-
-export const deleteOneOrganisme = async (id: number) => {
-  const response = await apiClientInstance.delete(`${organismesRoute}/${id}`)
-  return response.data
-}
 export const putSynchronizeOneDemarche = async (demarcheId: number) => {
   const response = await apiClientInstance.put(routeSynchroniseOneDemarche(demarcheId))
   return response.data

@@ -5,10 +5,8 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { Demarche } from '../../objects/entities/demarche.entity'
-import { Organisme } from '@/modules/organismes/objects/organisme.entity'
-import { DataSource, EntityManager, Repository } from 'typeorm'
+import { DataSource, EntityManager } from 'typeorm'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
-import { CustomBullService } from '@/shared/modules/custom-bull/custom-bull.service'
 import { CsvProcessorService } from './maarch/csv-processor.service'
 import { DossierTransformerService } from './maarch/dossier-transformer.service'
 import {
@@ -16,27 +14,25 @@ import {
   ImportFiles,
   ImportResult,
 } from '../../objects/constants/maarch.types'
-import {
-  eIdentificationDemarche,
-  eOrganismeType,
-  eState,
-} from '@biblio-num/shared'
+import { eIdentificationDemarche } from '@biblio-num/shared'
 import {
   fieldNumRna,
   maarchFieldMappingsArray,
 } from '../../objects/constants/maarch-champ.dictionary'
-import { SyncOneRnaOrganismeJobPayload } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
 import { FileBuilderService } from './maarch/file-builder.service'
+import {
+  DossierSynchroniseOrganismeService,
+} from '@/modules/dossiers/providers/synchronization/organisme/dossier-synchronise-organisme.service'
 
 @Injectable()
 export class DemarcheMaarchService {
   constructor(
     private readonly dataSource: DataSource,
     private readonly logger: LoggerService,
-    private readonly customBullService: CustomBullService,
     private readonly csvProcessor: CsvProcessorService,
     private readonly dossierTransformer: DossierTransformerService,
     private readonly fileBuilder: FileBuilderService,
+    private readonly dossierSynchroniseOrganismeService: DossierSynchroniseOrganismeService,
   ) {
     this.logger.setContext(this.constructor.name)
   }
@@ -48,9 +44,7 @@ export class DemarcheMaarchService {
     this.logger.verbose('Starting demarches import')
 
     if (!files?.demandes) {
-      throw new BadRequestException(
-        'Demandes file are required.',
-      )
+      throw new BadRequestException('Demandes file are required.')
     }
 
     return this.dataSource.transaction(async (transactionManager) => {
@@ -61,10 +55,7 @@ export class DemarcheMaarchService {
         )
       }
 
-      const demarche = await this._createDemarche(
-        title,
-        transactionManager,
-      )
+      const demarche = await this._createDemarche(title, transactionManager)
 
       const dossiers = await this._processDossiers(
         aggregatedData,
@@ -77,9 +68,7 @@ export class DemarcheMaarchService {
         )
       }
 
-      this.logger.log(
-        `Successfully imported ${dossiers.length} dossiers.`,
-      )
+      this.logger.log(`Successfully imported ${dossiers.length} dossiers.`)
 
       return {
         demarcheId: demarche.id,
@@ -133,7 +122,6 @@ export class DemarcheMaarchService {
     transactionManager: EntityManager,
   ): Promise<Dossier[]> {
     const repoDossier = transactionManager.getRepository(Dossier)
-    const repoOrganisme = transactionManager.getRepository(Organisme)
 
     const dossiers = await this.dossierTransformer.transformToEntities(
       aggregatedData,
@@ -147,8 +135,7 @@ export class DemarcheMaarchService {
 
     for (const [index, dossier] of dossiers.entries()) {
       const data = aggregatedData[index]
-
-      await this._synchroniseOrganisme(dossier, repoOrganisme)
+      await this._synchroniseOrganisme(dossier)
       dossier.files = this.fileBuilder.createFileEntities(data)
     }
 
@@ -157,10 +144,7 @@ export class DemarcheMaarchService {
     return dossiers
   }
 
-  private async _synchroniseOrganisme(
-    dossier: Dossier,
-    repoOrganisme: Repository<Organisme>,
-  ): Promise<void> {
+  private async _synchroniseOrganisme(dossier: Dossier): Promise<void> {
     this.logger.verbose(
       `Synchronization of the organisme for the dossier sourceId : ${dossier.id}`,
     )
@@ -168,33 +152,12 @@ export class DemarcheMaarchService {
       (field) => field.sourceId === fieldNumRna.id,
     )
     if (!rnaField || !rnaField.stringValue) {
-      this.logger.log(`No rna field for the dossier ${dossier.id}`)
+      this.logger.debug(`No rna field for the dossier ${dossier.id}`)
       return
     }
-    const rnaValue = rnaField.stringValue
-
-    let organisme = await repoOrganisme.findOne({ where: { idRna: rnaValue } })
-    if (!organisme) {
-      this.logger.log(
-        `Organisme not found for rna ${rnaValue}, creation in progress...`,
-      )
-      organisme = await repoOrganisme.save(
-        repoOrganisme.create({
-          idRna: rnaValue,
-          type: eOrganismeType.ASSO,
-          state: eState.queued,
-        }),
-      )
-      this.logger.debug(
-        `Adding Organisme sync for rna:  ${rnaValue} (with id: ${organisme.id})`,
-      )
-      await this.customBullService.addSyncOneRnaOrganismeJob({
-        dossierId: dossier.id,
-        fieldId: rnaField.id,
-        rna: rnaValue,
-      } satisfies SyncOneRnaOrganismeJobPayload)
-    }
-
-    dossier.organisme = organisme
+    dossier.organismeRefs = [rnaField.stringValue]
+    await this.dossierSynchroniseOrganismeService.attachOrganismeRefToOneField(
+      rnaField,
+    )
   }
 }

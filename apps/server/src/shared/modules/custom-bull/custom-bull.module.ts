@@ -4,6 +4,8 @@ import { BullModule, BullModuleOptions, SharedBullAsyncConfiguration } from '@ne
 import { CustomBullService } from '@/shared/modules/custom-bull/custom-bull.service'
 import { RedisModule } from '@/shared/modules/redis/redis.module'
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
+import { SyncQueueEventService } from '@/shared/modules/custom-bull/sync-queue-event.service'
+import { FileQueueEventService } from '@/shared/modules/custom-bull/file-queue-event.service'
 
 @Module({
   imports: [
@@ -40,7 +42,7 @@ import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-nam
       ] as BullModuleOptions[]),
     ),
   ],
-  providers: [CustomBullService],
+  providers: [CustomBullService, SyncQueueEventService, FileQueueEventService],
   exports: [CustomBullService],
 })
 export class CustomBullModule {}

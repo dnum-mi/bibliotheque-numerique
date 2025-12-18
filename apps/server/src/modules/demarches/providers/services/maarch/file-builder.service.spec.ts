@@ -60,11 +60,11 @@ describe('FileBuilderService', () => {
       expect(result[0].state).toBe(eState.uploaded)
       expect(result[0].sourceLabel).toBe('rna')
       expect(result[0].sourceStringId).toBe(fieldPjIntitule.id)
-      expect(result[0].organismeId).toBeUndefined()
+      expect(result[0].organismeRef).toBeUndefined()
 
       expect(result[1].label).toBe('Rapport - Annuel 2023.docx')
       expect(result[1].mimeType).toBe(eFileExtension.docx)
-      expect(result[1].organismeId).toBeUndefined()
+      expect(result[1].organismeRef).toBeUndefined()
     })
 
     it('should handle multiple files', () => {

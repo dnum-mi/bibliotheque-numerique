@@ -8,8 +8,6 @@ import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { loggerServiceMock } from '../../mock/logger-service.mock'
 import { mailerServiceMock } from '../../mock/mailer-service.mock'
 import { MailerService } from '@nestjs-modules/mailer'
-import { RnaService } from '@/modules/organismes/providers/rna.service'
-import { rnaServiceMock } from '../../mock/rna-service/rna-service.mock'
 import { xlsxServiceMock } from '../../mock/excel-service/excel-service.mock'
 import { RolesKeys } from '@biblio-num/shared'
 import { XlsxService } from '@/shared/modules/xlsx/xlsx.service'
@@ -71,8 +69,6 @@ export class TestingModuleFactory {
       .useValue(this.mailerService)
       .overrideProvider(DsApiClient)
       .useValue(dsApiClientMock)
-      .overrideProvider(RnaService)
-      .useValue(rnaServiceMock)
       .overrideProvider(XlsxService)
       .useValue(xlsxServiceMock)
       .overrideProvider(S3Service)

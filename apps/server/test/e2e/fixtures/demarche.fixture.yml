@@ -193,6 +193,5 @@ items:
       { "id": "Q2hhbXAtNDE2Mjg0NN==", "columnLabel": "", "originalLabel": "nom", "source": "champs" },
       { "id": "Q2hhbXAtNDE2Mjg0NM==", "columnLabel": "", "originalLabel": "prenom", "source": "champs" },
     ]
-    isOnAllDossiersOfOrganisme: false
 
 

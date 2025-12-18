@@ -53,20 +53,6 @@ describe('file-storage (e2e)', () => {
     expect(response.text).toEqual('coucou super test\n')
   })
 
-  it('Should download file from hub', async () => {
-    jest.spyOn(hubService, '_getFileToStream')
-      .mockImplementation(async (id: string, uuid: string, pathRoot: string) => {
-        console.log({ id, uuid, pathRoot })
-        return mockStream('hub.txt')
-      })
-    const response = await request(app.getHttpServer())
-      .get('/files/bfa978f1-7337-49df-ae97-40d358afe5c0')
-      .set('Authorization', `Bearer ${tokens.instructor}`)
-      .expect(200)
-      .expect('Content-Disposition', 'attachment; filename="yo.doc"')
-    expect(response.text).toEqual('from hub\n')
-  })
-
   it('Should download file with special characters in the file name', async () => {
     const response = await request(app.getHttpServer())
       .get('/files/bfa978f1-7337-49df-ae97-40d358afe5b3')
@@ -77,7 +63,7 @@ describe('file-storage (e2e)', () => {
 
     // .expect('Content-Disposition', 'attachment; filename="coucou.doc\n"')
     expect(response.headers['content-disposition'])
-      // eslint-disable-next-line max-len
+
       .toContain("1.debut_éèçàâêîôû_äëÿüöù_ÉÈÇÀÂÊÎÔÛ_ÄË_ÜÖÙ!_#$%&'()_+_-.____=__@[_]^__`~{_}$£µ____fin_test1.doc")
     expect(response.text).toEqual('coucou super test\n')
   })

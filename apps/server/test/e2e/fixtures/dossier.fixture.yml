@@ -16,7 +16,7 @@ items:
       annotations: "I can see you",
       messages: "Big brother is watching you"
     }
-    organisme: "@BMW"
+    organismeRefs: ["W001"]
   bmwDossier2:
     id: 12
     demarche: "@demarche-fe"
@@ -27,7 +27,7 @@ items:
       annotations: "I can see you",
       messages: "Big brother is watching you"
     }
-    organisme: "@BMW"
+    organismeRefs: ["W001"]
   Dossier3:
     id: 13
     demarche: "@configurationDemarche"
@@ -38,7 +38,8 @@ items:
       annotations: "I can see you",
       messages: "Big brother is watching you"
     }
-    organisme: "@Hyundai"
+    organismeRefs: ["F004"]
+
   DossierDeleteSoft1:
     id: 14
     demarche: "@demarche-delete-soft"
@@ -49,7 +50,7 @@ items:
       annotations: "Message",
       messages: "Hello world"
     }
-    organisme: "@Hyundai"
+    organismeRefs: ["F004"]
   DossierDeleteSoft2:
     id: 15
     demarche: "@demarche-delete-soft"
@@ -60,7 +61,7 @@ items:
       annotations: "Message",
       messages: "Hello world"
     }
-    organisme: "@Hyundai"
+    organismeRefs: ["F004"]
   DossierWithFiles:
     id: 16
     demarche: "@demarche-fe"
@@ -71,21 +72,21 @@ items:
       annotations: "Message",
       messages: "Hello world"
     }
-    organisme: "@Chevrolet"
+    organismeRefs: ['F005']
   dossier17:
     id: 17
     demarche: "@demarche-delay"
     state: "accepte"
     sourceId: "17"
     dsDataJson: "{}"
-    organisme: "@Subaru"
+    organismeRefs: ['F006']
   dossier18:
     id: 18
     demarche: "@demarche-delay"
     state: "accepte"
     sourceId: "18"
     dsDataJson: "{}"
-    organisme: "@Subaru"
+    organismeRefs: ['F006']
   DossierAnonymize:
     id: 19
     demarche: "@demarche-anonymize"
@@ -267,5 +268,5 @@ items:
       annotations: "Message",
       messages: "Hello world"
     }
-    organisme: "@Chevrolet"
+    organismeRefs: ['F005']
 

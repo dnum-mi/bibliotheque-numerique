@@ -59,13 +59,13 @@ export class DossierSynchroniseFileService {
     fields: Field[],
     fieldCodeHash: Record<FieldCodeKey, Field>,
     dsDossier: TDossier,
-    organismeId: number,
-  ): Promise<void> {
+    organismeRef: string,
+  ): Promise<void[]> {
     this.logger.verbose('synchroniseAllChamps')
-    await Promise.all(
+    return await Promise.all(
       fields
         .filter((field) => field.type === FieldType.file)
-        .map((field: Field) => {
+        .flatMap((field: Field) => {
           const tagAndLabel = FileService.computeLabelAndTag(
             field,
             fieldCodeHash,
@@ -77,13 +77,13 @@ export class DossierSynchroniseFileService {
           const files = pjc.files?.length ? pjc.files : [pjc.file]
           return files
             ?.filter((f) => !!f)
-            .map((f: TFile, i: number) => {
+            .flatMap((f: TFile, i: number) => {
               return this._addSyncFileJob(
                 {
                   ...tagAndLabel,
                   dossierId: field.dossierId,
                   sourceStringId: pjc.id, // TODO: why not field.sourceId ?
-                  organismeId,
+                  organismeRef,
                   sourceIndex: i,
                   sourceLabel:
                     field.fieldSource === FieldSource.annotation
@@ -96,36 +96,34 @@ export class DossierSynchroniseFileService {
                 parentField?.sourceId,
               )
             })
-        })
-        .flat(),
+        }),
     )
   }
 
   private async synchroniseMessages(
     dossier: TDossier,
     dossierId: number,
-    organismeId: number,
-  ): Promise<void> {
+    organismeRef: string,
+  ): Promise<void[]> {
     this.logger.verbose('synchroniseMessages')
-    await Promise.all(
+    return await Promise.all(
       dossier.messages
         .filter((message) => message.attachments?.length)
-        .map((message) =>
+        .flatMap((message) =>
           message.attachments
-            .map((a: TFile, index: number) =>
+            .flatMap((a: TFile, index: number) =>
               this._addSyncFileJob(
                 {
                   dossierId,
                   sourceStringId: message.id,
-                  organismeId,
+                  organismeRef,
                   sourceLabel: eFileDsSourceLabel['ds-message'],
                   sourceIndex: index,
                   originalLabel: a.filename,
                 },
                 dossier.number,
               ),
-            )
-            .flat(),
+            ),
         ),
     )
   }
@@ -133,13 +131,13 @@ export class DossierSynchroniseFileService {
   private async synchroniseAttestation(
     dossier: TDossier,
     dossierId: number,
-    organismeId: number,
+    organismeRef: string,
   ): Promise<void> {
     if (dossier.attestation) {
-      await this._addSyncFileJob(
+      return await this._addSyncFileJob(
         {
           dossierId,
-          organismeId,
+          organismeRef,
           sourceLabel: eFileDsSourceLabel['ds-attestation'],
           originalLabel: dossier.attestation.filename,
         },
@@ -151,13 +149,13 @@ export class DossierSynchroniseFileService {
   private async synchroniseMotivationAttached(
     dossier: TDossier,
     dossierId: number,
-    organismeId: number,
+    organismeRef: string,
   ): Promise<void> {
     if (dossier.motivationAttachment) {
-      await this._addSyncFileJob(
+      return await this._addSyncFileJob(
         {
           dossierId,
-          organismeId,
+          organismeRef,
           sourceLabel: eFileDsSourceLabel['ds-motivation'],
           originalLabel: dossier.motivationAttachment.filename,
         },
@@ -170,11 +168,11 @@ export class DossierSynchroniseFileService {
     fields: Field[],
     dossier: TDossier,
     dossierId: number,
-    organismeId?: number,
+    organismeRef?: string,
   ): Promise<void> {
     this.logger.verbose('synchroniseFiles')
     const organismeIdForAcceptedDossier =
-      dossier.state === DossierState.Accepte ? organismeId : undefined
+      dossier.state === DossierState.Accepte ? organismeRef : undefined
     this.logger.log(
       'organismeIdForAcceptedDossier: ' + organismeIdForAcceptedDossier,
     )
@@ -204,7 +202,6 @@ export class DossierSynchroniseFileService {
         dossierId,
         organismeIdForAcceptedDossier,
       ),
-
     ])
   }
 }

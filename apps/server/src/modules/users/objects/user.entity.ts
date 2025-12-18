@@ -18,6 +18,7 @@ import {
   VerbosePrefecture,
   PrefectureDictionary,
   Prefecture,
+  ILastConsultedOrganisme,
 } from '@biblio-num/shared'
 import { ApiProperty } from '@nestjs/swagger'
 
@@ -126,4 +127,11 @@ export class User extends BaseEntity {
 
   @OneToOne(() => RefreshToken, (refreshToken) => refreshToken.user, { cascade: true })
   refreshToken: RefreshToken[]
+
+  @Column({
+    type: 'jsonb',
+    nullable: false,
+    default: () => "'[]'::jsonb",
+  })
+  recentOrganismes: ILastConsultedOrganisme[]
 }

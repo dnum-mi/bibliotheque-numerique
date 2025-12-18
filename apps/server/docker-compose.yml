@@ -12,9 +12,10 @@ services:
     container_name: biblio-num_worker
     depends_on:
       - db
-    ports:
-      - 3042:${WORKER_PORT:-3042}
-      - 9230:9230
+#    Les developpeurs devraient configurer leur propre override de port dans docker-compose.override.yml si ils souhaitent changer
+#    ports:
+#      - 3042:${WORKER_PORT:-3042}
+#      - 9230:9230
     volumes:
       - ../..:/app
       - biblio-num-worker-node_modules-volume:/app/node_modules
@@ -52,9 +53,10 @@ services:
     container_name: biblio-num_server
     depends_on:
       - db
-    ports:
-      - 3000:3000
-      - 9229:9229
+#    Les developpeurs devraient configurer leur propre override de port dans docker-compose.override.yml si ils souhaitent changer
+#    ports:
+#      - 3000:3000
+#      - 9229:9229
     volumes:
       - ../..:/app
       - biblio-num-server-node_modules-volume:/app/node_modules
@@ -86,13 +88,13 @@ services:
       - ci
     image: postgres:14.5
     container_name: biblio-num_db
-    restart: always
     environment:
       POSTGRES_DB: biblio-num
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-    ports:
-      - "5432:5432"
+#    Les developpeurs devraient configurer leur propre override de port dans docker-compose.override.yml si ils souhaitent changer
+    # ports:
+    #  - "5432:5432"
     volumes:
       - ./docker/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
       - type: volume
@@ -106,9 +108,9 @@ services:
       - adminer
       - dev
     image: adminer
-    restart: always
-    ports:
-      - 8010:8080
+#    Les developpeurs devraient configurer leur propre override de port dans docker-compose.override.yml si ils souhaitent changer
+#    ports:
+#      - 8010:8080
     environment:
       - ADMINER_DEFAULT_SERVER=db
       - ADMINER_DEFAULT_SYSTEM=PostgreSQL
@@ -123,14 +125,15 @@ services:
     container_name: biblio-num_dbadmin
     depends_on:
       - db
-    ports:
-      - 3010:80
+#    Les developpeurs devraient configurer leur propre override de port dans docker-compose.override.yml si ils souhaitent changer
+#    ports:
+#      - 3010:80
     volumes:
       - type: volume
         source: biblio-num-pgadmin-volume
         target: /var/lib/pgadmin
     environment:
-      PGADMIN_DEFAULT_EMAIL: user@gmail.com
+      PGADMIN_DEFAULT_EMAIL: admin
       PGADMIN_DEFAULT_PASSWORD: password
     networks:
       - biblio-num-network
@@ -142,10 +145,10 @@ services:
       - tests-e2e
     container_name: mailhog
     image: mailhog/mailhog
-    restart: always
-    ports:
-        - 1025:1025
-        - 8025:8025
+#    Les developpeurs devraient configurer leur propre override de port dans docker-compose.override.yml si ils souhaitent changer
+#    ports:
+#        - 1025:1025
+#        - 8025:8025
     networks:
       - biblio-num-network
 
@@ -158,11 +161,8 @@ services:
     image: quay.io/minio/minio:RELEASE.2023-01-20T02-05-44Z
     container_name: biblio-num_minio
     environment:
-      MINIO_ROOT_USER: s3_biblio-num_minio # MINIO_ACCESS_KEY = MINIO_ROOT_USER
-      MINIO_ROOT_PASSWORD: s3_biblio-num_minio # MINIO_SECRET_KEY = MINIO_ROOT_PASSWORD
-    ports:
-      - "${BN_S3_PORT:-900}0:9000"
-      - "${BN_S3_PORT:-900}1:9001"
+      MINIO_ROOT_USER: admin # MINIO_ACCESS_KEY = MINIO_ROOT_USER
+      MINIO_ROOT_PASSWORD: password # MINIO_SECRET_KEY = MINIO_ROOT_PASSWORD
     volumes:
       - type: volume
         source: biblio-num-s3-volume
@@ -180,8 +180,9 @@ services:
     container_name: redis
     environment:
       - REDIS_PASSWORD=redis
-    ports:
-      - 6379:6379
+#    Les developpeurs devraient configurer leur propre override de port dans docker-compose.override.yml si ils souhaitent changer
+#    ports:
+#      - "6379:6379"
     networks:
       - biblio-num-network
 
@@ -191,9 +192,9 @@ services:
       - simple-dev
     container_name: bullboard
     image: deadly0/bull-board
-    restart: always
-    ports:
-      - 3010:3000
+#    Les developpeurs devraient configurer leur propre override de port dans docker-compose.override.yml si ils souhaitent changer
+#    ports:
+#      - 3010:3000
     networks:
       - biblio-num-network
     environment:
@@ -201,7 +202,7 @@ services:
       REDIS_PORT: 6379
       REDIS_PASSWORD: redis
       BULL_PREFIX: bull
-      USER_LOGIN: admin-bn
+      USER_LOGIN: admin
       USER_PASSWORD: password
     depends_on:
       - redis
@@ -215,9 +216,9 @@ services:
       dockerfile: ./apps/http-proxy/Dockerfile
     container_name: http-proxy-auth
     image: biblio-num/http-proxy-auth
-    restart: always
-    ports:
-      - 8888:8080
+#    Les developpeurs devraient configurer leur propre override de port dans docker-compose.override.yml si ils souhaitent changer
+#    ports:
+#      - 8888:8080
     networks:
       - biblio-num-network
     environment:

@@ -458,7 +458,9 @@ const removePrefecture = (prefecture: IOnePrefectureUpdate['key']) => {
         </div>
       </div>
       <div class="fb-1/2 flex-grow-0 flex-shrink-0 fr-py-4v">
-        <h5 class="">Démarches</h5>
+        <h5 class="">
+          Démarches
+        </h5>
         <template v-if="isSuperAdmin">
           <p>
             En tant que Super Administrateur, cet utilisateur dispose automatiquement de tous les droits d'accès à l'ensemble des démarches
@@ -611,7 +613,9 @@ const removePrefecture = (prefecture: IOnePrefectureUpdate['key']) => {
           scale="10"
           animation="spin"
         />
-        <p class="text-white text-3xl">chargement en cours...</p>
+        <p class="text-white text-3xl">
+          chargement en cours...
+        </p>
       </div>
     </div>
   </div>
