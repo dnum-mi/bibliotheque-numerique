@@ -2,7 +2,8 @@
 import { dateToStringFr } from '@/utils'
 import type { Condition, DisplayActiveFilter } from './activeFilters.type'
 import type { BNColDef } from '../server-side/bn-col-def.interface'
-import { FilterMatchMode, FilterOperator } from '@primevue/core'
+import { FilterOperator } from '@primevue/core'
+import { ACTIVE_FILTERS_DISPLAY_LABELS } from '@/shared/constants/primevue.const'
 
 const props = withDefaults(
   defineProps<{
@@ -32,38 +33,8 @@ const isOpen = ref(false)
 const dropdownContainerRef = ref<HTMLElement | null>(null)
 const dropdownContentId = computed(() => `dropdown-content-${props.dropdownIdSuffix}`)
 
-const filterTypeTranslations: Record<string, string> = {
-  [FilterMatchMode.CONTAINS]: 'contient',
-  [FilterMatchMode.NOT_CONTAINS]: 'ne contient pas',
-  [FilterMatchMode.EQUALS]: 'égal à',
-  [FilterMatchMode.NOT_EQUALS]: 'différent de',
-  [FilterMatchMode.STARTS_WITH]: 'commence par',
-  [FilterMatchMode.ENDS_WITH]: 'finit par',
-  [FilterMatchMode.LESS_THAN]: 'inférieur à',
-  [FilterMatchMode.LESS_THAN_OR_EQUAL_TO]: 'inférieur ou égal à',
-  [FilterMatchMode.GREATER_THAN]: 'supérieur à',
-  [FilterMatchMode.GREATER_THAN_OR_EQUAL_TO]: 'supérieur ou égal à',
-  [FilterMatchMode.DATE_IS]: 'est le',
-  [FilterMatchMode.DATE_IS_NOT]: 'n\'est pas le',
-  [FilterMatchMode.DATE_BEFORE]: 'avant le',
-  [FilterMatchMode.DATE_AFTER]: 'après le',
-  'greaterThan': 'supérieur à',
-  'lessThan': 'inférieur à',
-  'gt': 'supérieur à',
-  'lt': 'inférieur à',
-  'gte': 'supérieur ou égal à',
-  'lte': 'inférieur ou égal à',
-  'notEqual': 'différent de',
-  'equals': 'égal à',
-  'inRange': 'entre',
-  'contains': 'contient',
-  'startsWith': 'commence par',
-  'endsWith': 'finit par',
-  'blank': 'est vide',
-  'notBlank': 'n\'est pas vide',
-  'set': 'est parmi',
-  'boolean': 'est',
-}
+const filterTypeTranslations = ACTIVE_FILTERS_DISPLAY_LABELS
+
 const operatorTranslations: Record<string, string> = {
   [FilterOperator.AND]: 'ET',
   [FilterOperator.OR]: 'OU',
@@ -123,11 +94,11 @@ const formatValue = (val: any): string => {
 /**
  * Formats a single condition object
  */
-function formatSingleCondition (condition: any): string {
+function formatSingleCondition (condition: Condition): string {
   const type = condition.type || ''
   const translatedType = filterTypeTranslations[type] || type
 
-  if (['blank', 'notBlank'].includes(type) || ['blank', 'notBlank'].includes(condition.matchMode)) {
+  if (['blank', 'notBlank'].includes(type) || (condition.matchMode && ['blank', 'notBlank'].includes(condition.matchMode))) {
     return translatedType
   }
 

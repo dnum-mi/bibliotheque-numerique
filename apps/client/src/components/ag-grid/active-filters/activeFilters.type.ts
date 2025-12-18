@@ -1,7 +1,7 @@
 export interface Condition {
   filterType?: string
   type?: string
-  filter?: string | number | Date | null
+  filter?: string | number | (string | number)[] | Date | null
   filterTo?: string | number | Date | null
   matchMode?: string
 }

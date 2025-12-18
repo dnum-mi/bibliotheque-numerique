@@ -1,0 +1,55 @@
+.p-datatable-tbody {
+  --p-datatable-row-hover-background: var(--blue-france-925-125);
+}
+.p-datatable {
+  --p-datatable-header-cell-selected-background: var(--blue-france-925-125);
+  --p-datatable-header-cell-selected-color: var(--blue-france-sun-113-625);
+}
+.p-paginator {
+  --p-paginator-padding: 0.25rem 0 0 0;
+}
+
+.p-datatable-table-container {
+  height: 100%;
+}
+
+.p-datatable-tbody > tr {
+  cursor: pointer;
+}
+
+.p-datatable,
+.p-datatable p,
+.p-datatable-filter-operator {
+  font-size: 0.875rem !important;
+}
+
+.p-datatable-thead > tr > th span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0; /* Important pour permettre le rétrécissement */
+}
+
+.p-datatable-thead > tr > th .p-column-header-content span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block; /* Force l'élément à être un bloc */
+  min-width: 0; /* Important pour permettre le rétrécissement */
+}
+
+.p-datatable-thead > tr > th .p-column-title span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  min-width: 0;
+}
+
+.p-datatable-resizable-table > .p-datatable-tbody > tr > td {
+  vertical-align: middle;
+  & p:not(.fr-badge) {
+    margin-block: 0.125rem 0.25rem !important;
+    font-size: 0.875rem !important;
+  }
+}

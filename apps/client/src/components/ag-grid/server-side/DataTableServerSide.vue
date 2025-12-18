@@ -1142,45 +1142,6 @@ defineExpose({
   margin-bottom: 0;
 }
 
-:deep(.p-datatable-tbody > tr) {
-  cursor: pointer;
-}
-
-:deep(.p-datatable, .p-datatable p, .p-datatable-filter-operator) {
-  font-size: 0.875rem !important;
-}
-
-:deep(.p-datatable-thead > tr > th span) {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-width: 0; /* Important pour permettre le rétrécissement */
-}
-
-:deep(.p-datatable-thead > tr > th .p-column-header-content span) {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: block; /* Force l'élément à être un bloc */
-  min-width: 0; /* Important pour permettre le rétrécissement */
-}
-
-:deep(.p-datatable-thead > tr > th .p-column-title span) {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: block;
-  min-width: 0;
-}
-
-:deep(.p-datatable-resizable-table > .p-datatable-tbody > tr > td) {
-  vertical-align: middle;
-  & p:not(.fr-badge) {
-    margin-block: 0.125rem 0.25rem !important;
-    font-size: 0.875rem !important;
-  }
-}
-
 :deep(.amount-line-highlighted) {
   background-color: var(--blue-ecume-975-75);
 }

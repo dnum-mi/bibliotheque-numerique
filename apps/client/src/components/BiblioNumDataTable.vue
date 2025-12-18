@@ -171,13 +171,3 @@ const rowClick = (event: { data: Record<string, string | number> }) => {
     </Column>
   </DataTable>
 </template>
-
-<style scoped>
-:deep(.p-datatable-tbody > tr) {
-  cursor: pointer;
-}
-
-:deep(.p-datatable-tbody) {
-  --p-datatable-row-hover-background: var(--blue-france-925-125);
-}
-</style>

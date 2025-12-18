@@ -29,6 +29,8 @@ import OrganismeBadge from './components/Badges/organisme/OrganismeBadge.vue'
 import Aura from '@primevue/themes/aura'
 import { definePreset } from '@primevue/themes'
 import { FilterService } from '@primevue/core/api'
+import { PRIMEVUE_FR_LOCALE, PRIMEVUE_MATCH_MODE_OPTIONS } from './shared/constants/primevue.const'
+import './styles/primevue-overrides.css'
 
 const isBlank = (v: unknown) =>
   v == null
@@ -319,35 +321,7 @@ createApp(App)
         darkModeSelector: 'light',
       },
     },
-    filterMatchModeOptions: {
-      text: ['startsWith', 'contains', 'notContains', 'endsWith', 'equals', 'notEquals', 'blank', 'notBlank'],
-      numeric: ['equals', 'notEquals', 'lessThan', 'lessThanOrEqual', 'greaterThan', 'greaterThanOrEqual'],
-      date: ['dateIs', 'dateIsNot', 'dateBefore', 'dateAfter'],
-    },
-    locale: {
-      startsWith: 'Commence par',
-      contains: 'Contient',
-      notContains: 'Ne contient pas',
-      endsWith: 'Se termine par',
-      equals: 'Égal à',
-      notEquals: 'Différent de',
-      blank: 'Vide',
-      notBlank: 'Non vide',
-      greaterThan: 'Supérieur à',
-      greaterThanOrEqual: 'Supérieur ou égal à',
-      lessThan: 'Inférieur à',
-      lessThanOrEqual: 'Inférieur ou égal à',
-      dateBefore: 'Avant',
-      dateAfter: 'Après',
-      dateIs: 'Est le',
-      dateIsNot: 'N’est pas le',
-      clear: 'Effacer',
-      apply: 'Appliquer',
-      addRule: 'Ajouter une règle',
-      removeRule: 'Supprimer la règle',
-      matchAll: 'Satisfaire tous',
-      matchAny: 'Satisfaire au moins un',
-      monthNames: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
-    } as any,
+    filterMatchModeOptions: PRIMEVUE_MATCH_MODE_OPTIONS,
+    locale: PRIMEVUE_FR_LOCALE,
   } satisfies PrimeVueConfiguration)
   .mount('#app')

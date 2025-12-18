@@ -465,8 +465,4 @@ const quickFilterValueTranslations: Record<string, string> = {
 :deep(.ag-paging-panel) {
   border-top: none !important;
 }
-
-/* :deep(.p-datatable-table-container) {
-  max-height: 330px !important;
-} */
 </style>

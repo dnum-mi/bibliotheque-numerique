@@ -115,20 +115,6 @@ onErrorCaptured((error: Error | AxiosError) => {
   />
 </template>
 
-<style>
-.p-datatable-tbody {
-  --p-datatable-row-hover-background: var(--blue-france-925-125);
-}
-
-.p-datatable {
-  --p-datatable-header-cell-selected-background: var(--blue-france-925-125);
-  --p-datatable-header-cell-selected-color: var(--blue-france-sun-113-625);
-}
-.p-paginator {
-  --p-paginator-padding: 0.25rem 0 0 0;
-}
-</style>
-
 <style scoped>
 #app {
   height: 100% !important;
