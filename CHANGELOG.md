@@ -1,5 +1,16 @@
 # Changelog
 
+## [4.0.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v3.1.3...v4.0.0) (2025-12-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* suppression des organismes ([#2014](https://github.com/dnum-mi/bibliotheque_numerique/issues/2014)) (#2010)
+
+### Features
+
+* suppression des organismes ([#2014](https://github.com/dnum-mi/bibliotheque_numerique/issues/2014)) ([#2010](https://github.com/dnum-mi/bibliotheque_numerique/issues/2010)) ([b52b8bc](https://github.com/dnum-mi/bibliotheque_numerique/commit/b52b8bc3a17745a11b05acee8986c20afdfb7b36))
+
 ## [3.1.3](https://github.com/dnum-mi/bibliotheque_numerique/compare/v3.1.2...v3.1.3) (2025-12-05)
 
 
