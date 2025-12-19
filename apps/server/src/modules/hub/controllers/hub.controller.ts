@@ -122,7 +122,7 @@ export class HubController {
     @Response() response,
   ): Promise<void> {
     this.logger.verbose(`downloadAssociationFile ${foundationId} : ${fileId}`)
-    const stream = await this.hubService.getAssociationFile(foundationId, fileId)
+    const stream = await this.hubService.getFoundationFile(foundationId, fileId)
     return this._returnStream(stream, response)
   }
 }
