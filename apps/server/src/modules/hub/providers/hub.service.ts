@@ -5,7 +5,6 @@ import {
   IAssociationOutput,
   IFoundationOutput,
   ISiafSearchOrganismeOneOutput,
-  IDsEvent,
   fromAssociationToBasicOrganisme,
   fromFoundationToBasicOrganisme,
   organismeCategoryKey,
@@ -13,9 +12,6 @@ import {
 } from '@biblio-num/shared'
 import axios, { AxiosInstance, CreateAxiosDefaults } from 'axios'
 import { Stream } from 'node:stream'
-import { ILastFoundationOuptut } from '../last-foundation-output.type'
-import { ILastOrganismeOuptut } from '../last-commun-output.type'
-import { ILastAssocationOuptut } from '../last-assocation-output.type'
 import { IRafEvent } from '@biblio-num/shared/types/hub/raf-event.interface'
 
 const ePathCompletedOrganismeByType = {
@@ -65,21 +61,6 @@ export class HubService {
     return resp.data
   }
 
-  async _getLastImport<T extends ILastOrganismeOuptut>(
-    pathStr: string,
-    lastUpdatedAt: string,
-    scrollId?: string,
-  ): Promise<T> {
-    const dateLastUpdatedAt = new Date(lastUpdatedAt)
-    if (!dateLastUpdatedAt) throw new Error(`${lastUpdatedAt} is not date format`)
-    const timeStampLastUpdatedAt = Math.trunc(dateLastUpdatedAt.getTime() / 1000)
-    let path = `${pathStr}/${timeStampLastUpdatedAt}`
-    if (scrollId) {
-      path += `?scroll_id=${scrollId}`
-    }
-    return this.axios.get<T>(path).then(r => r.data)
-  }
-
   //#region ASSOCIATIONS
   async getAssociation(idRna: string): Promise<IAssociationOutput | null> {
     this.logger.verbose('HUB-getAssociation')
@@ -90,15 +71,6 @@ export class HubService {
   async getAssociationFile(id: string, uuid: string): Promise<Stream> {
     this.logger.verbose('HUB-getAssociationFile')
     return this._getFileToStream(id, uuid, ePathCompletedOrganismeByType.association)
-  }
-
-  async getLastImportedAssociations(lastUpdatedAt: string, scrollId?: string):Promise<ILastAssocationOuptut> {
-    this.logger.verbose('getLastImportedFoundations')
-    return this._getLastImport<ILastAssocationOuptut>(
-      `${ePathCompletedOrganismeByType.association}/last_received_associations`,
-      lastUpdatedAt,
-      scrollId,
-    )
   }
   //#endregion ASSOCIATIONS
 
@@ -121,23 +93,6 @@ export class HubService {
   async getFoundationFile(id: string, uuid: string): Promise<Stream> {
     this.logger.verbose('HUB-getFoundationFile')
     return this._getFileToStream(id, uuid, ePathCompletedOrganismeByType.foundation)
-  }
-
-  async getLastImportedFoundations(lastUpdatedAt: string, scrollId?: string):Promise<ILastFoundationOuptut> {
-    this.logger.verbose('getLastImportedFoundations')
-    return this._getLastImport<ILastFoundationOuptut>(
-      `${ePathCompletedOrganismeByType.foundation}/last_received_fondations`,
-      lastUpdatedAt,
-      scrollId,
-    )
-  }
-
-  async getFoundationEvents(idRnf: string): Promise<IDsEvent<IFoundationOutput> | null> {
-    this.logger.verbose('HUB-getFoundationEvents')
-    const path = `${ePathCompletedOrganismeByType.foundation}/${idRnf}/events`
-    return this.axios.get<IDsEvent<IFoundationOutput>>(path).then(response => {
-      return response.data
-    })
   }
   //#endregion FOUNDATIONS
 
