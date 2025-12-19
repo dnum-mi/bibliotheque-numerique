@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v4.0.0...v4.0.1) (2025-12-19)
+
+
+### Bug Fixes
+
+* file fondation ([409f050](https://github.com/dnum-mi/bibliotheque_numerique/commit/409f05069e8858929cbb79129e0110981292fdab))
+
 ## [4.0.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v3.1.3...v4.0.0) (2025-12-18)
 
 
