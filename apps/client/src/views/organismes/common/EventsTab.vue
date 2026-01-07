@@ -16,7 +16,9 @@ const props = defineProps<{
 const router = useRouter()
 
 const sortedEvents = computed(() => {
-  return [...props.events].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+  return props.events
+    ? [...props.events].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    : []
 })
 
 const getBadgeType = (event: IDsEventItem): 'success' | 'info' | 'error' | 'new' | undefined => {
