@@ -52,9 +52,13 @@ export class HubController {
     @Param('rnaId') rna: string,
   ): Promise<IAssociationOutput> {
     this.logger.verbose('searchRna')
-    const result = this.hubService.getAssociation(rna)
+    const result = await this.hubService.getAssociation(rna)
     if (!result) {
       throw new NotFoundException(`Aucune association avec cet rna ${rna}`)
+    }
+    const events = await this.hubService.getEventsAssociation(rna)
+    if (events) {
+      result.events = await this.hubService.setLinkDemarcheAndDossier(events)
     }
     return result
   }

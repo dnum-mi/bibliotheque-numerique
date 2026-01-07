@@ -74,6 +74,13 @@ export class HubService {
     return this.axios.get<IAssociationOutput>(path).then(r => r.data)
   }
 
+  async getEventsAssociation(idRna:string): Promise<IRafEvent[] | null> {
+    const eventPath = `${ePathCompletedOrganismeByType.association}/${idRna}/events`
+    return await this.axios.get<{events:IRafEvent[]}>(eventPath).then(r => {
+      return r.data.events
+    })
+  }
+
   async getAssociationFile(id: string, uuid: string): Promise<Stream> {
     this.logger.verbose('HUB-getAssociationFile')
     return this._getFileToStream(id, uuid, ePathCompletedOrganismeByType.association)
