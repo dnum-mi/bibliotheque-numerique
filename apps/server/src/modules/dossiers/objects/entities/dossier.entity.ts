@@ -2,6 +2,7 @@ import {
   Column,
   DeleteDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
@@ -42,8 +43,9 @@ export class Dossier extends BaseEntity implements IDossier {
 
   @ApiProperty({
     description:
-      'Numéro du dossier provenant de sa source. (100% DS pour le moment)',
+    'Numéro du dossier provenant de sa source. (100% DS pour le moment)',
   })
+  @Index('IDX_SOURCE_ID')
   @Column({ nullable: false })
   sourceId: string
 
