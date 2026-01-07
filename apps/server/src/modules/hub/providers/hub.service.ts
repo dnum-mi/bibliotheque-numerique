@@ -13,6 +13,10 @@ import {
 import axios, { AxiosInstance, CreateAxiosDefaults } from 'axios'
 import { Stream } from 'node:stream'
 import { IRafEvent } from '@biblio-num/shared/types/hub/raf-event.interface'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Dossier } from '../../dossiers/objects/entities/dossier.entity'
+import { Repository } from 'typeorm'
+import { Demarche } from '../../demarches/objects/entities/demarche.entity'
 
 const ePathCompletedOrganismeByType = {
   association: '/associations',
@@ -28,6 +32,8 @@ export class HubService {
   constructor(
     protected logger: LoggerService,
     private readonly config: ConfigService,
+    @InjectRepository(Dossier) protected readonly repoDossier: Repository<Dossier>,
+    @InjectRepository(Demarche) protected readonly repoDemarche: Repository<Demarche>,
   ) {
     this.logger.setContext(this.constructor.name)
 
@@ -78,16 +84,48 @@ export class HubService {
   async getFoundation(idRnf: string): Promise<IFoundationOutput | null> {
     this.logger.verbose('HUB-getFondation')
     const path = `${ePathCompletedOrganismeByType.foundation}/${idRnf}`
-    const eventPath = `${ePathCompletedOrganismeByType.foundation}/${idRnf}/events`
-    const events = await this.axios.get<{events:IRafEvent[]}>(eventPath).then(r => {
-      return r.data.events
-    })
     return this.axios.get<IFoundationOutput>(path).then(response => {
       return {
         ...response.data,
-        events,
       }
     })
+  }
+
+  async getEventsFoundation(idRnf:string): Promise<IRafEvent[] | null> {
+    const eventPath = `${ePathCompletedOrganismeByType.foundation}/${idRnf}/events`
+    return await this.axios.get<{events:IRafEvent[]}>(eventPath).then(r => {
+      return r.data.events
+    })
+  }
+
+  async setLinkDemarcheAndDossier(events: IRafEvent[]): Promise<IRafEvent[]> {
+    return Promise.all(events.map(async event => {
+      const demarche = await this.repoDemarche.createQueryBuilder('demarche')
+        .select([
+          'demarche.id',
+          'demarche.title',
+        ])
+        .where('demarche.dsId = :id', {
+          id: event.demarcheNumber,
+        })
+        .getOne()
+
+      event.demarcheLocalId = demarche?.id
+      event.demarcheLocalName = demarche.title
+      if (demarche) {
+        const dossier = await this.repoDossier
+          .createQueryBuilder('dossier')
+          .select([
+            'dossier.id',
+            'dossier.demarcheId',
+          ])
+          .where('dossier.sourceId = :id', { id: event.dossierNumber })
+          .getOne()
+
+        event.dossierLocalNumber = dossier?.id
+      }
+      return event
+    }))
   }
 
   async getFoundationFile(id: string, uuid: string): Promise<Stream> {

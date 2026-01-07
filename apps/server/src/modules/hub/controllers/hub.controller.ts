@@ -71,9 +71,13 @@ export class HubController {
     @Param('rnfId') rnf: string,
   ): Promise<IFoundationOutput> {
     this.logger.verbose('searchRnf')
-    const result = this.hubService.getFoundation(rnf)
+    const result = await this.hubService.getFoundation(rnf)
     if (!result) {
       throw new NotFoundException(`Aucune fondation avec cet rnf ${rnf}`)
+    }
+    const events = await this.hubService.getEventsFoundation(rnf)
+    if (events) {
+      result.events = await this.hubService.setLinkDemarcheAndDossier(events)
     }
     return result
   }

@@ -120,7 +120,7 @@ const transformDataBefore = (str: string | undefined): string => {
                   >
                     <router-link
                       v-if="(event as IDsEventItem).demarcheLocalId"
-                      :to="{ name: routeNames.DEMARCHES, params: { id: (event as IDsEventItem).demarcheLocalId } }"
+                      :to="{ name: routeNames.DEMARCHE_DOSSIERS, params: { demarcheId: (event as IDsEventItem).demarcheLocalId } }"
                       class="fr-link fr-text--lg text-title"
                     >
                       {{ (event as IDsEventItem).demarcheLocalName }}
