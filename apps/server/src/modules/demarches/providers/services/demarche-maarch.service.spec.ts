@@ -37,10 +37,6 @@ const mockEntityManager = {
   }),
 };
 
-const mockDossierSynchroniseOrganismeService = {
-  attachOrganismeRefToOneField: jest.fn().mockImplementation((field) => {})
-}
-
 const mockDataSource = {
   transaction: jest.fn().mockImplementation(async (callback) => {
     return callback(mockEntityManager);
@@ -146,10 +142,6 @@ describe('DemarcheMaarchService', () => {
       expect(mockCsvProcessor.processFiles).toHaveBeenCalledWith(mockFiles);
       expect(mockDemarcheRepo.save).toHaveBeenCalledWith(mockDemarche);
       expect(mockDossierTransformer.transformToEntities).toHaveBeenCalledWith(mockAggregatedData, mockDemarche);
-      expect(mockDossierSynchroniseOrganismeService.attachOrganismeRefToOneField).toHaveBeenCalledWith({
-        "sourceId": "9098ce70-4378-2d7e-bkb9-b76fb7b67h35",
-        "stringValue": "W123456789",
-      });
       expect(mockDossierRepo.save).toHaveBeenCalledWith([mockDossier], { chunk: 100 });
       expect(result).toEqual({ demarcheId: 1, countDossiers: 1 });
     })

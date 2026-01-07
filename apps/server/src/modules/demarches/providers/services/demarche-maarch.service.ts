@@ -22,6 +22,7 @@ import { InjectQueue } from '@nestjs/bull'
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
 import { Queue } from 'bull'
 import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
+import { UploadMaarchFileJobPayload } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
 
 @Injectable()
 export class DemarcheMaarchService {
@@ -167,7 +168,11 @@ export class DemarcheMaarchService {
 
     for (const file of allFilesToSync) {
       if (file.state === eState.queued && file.sourcePath) {
-        await this.fileQueue.add(eJobName.UploadMaarchFile, { file })
+        await this.fileQueue.add(eJobName.UploadMaarchFile, {
+          file,
+          importId: file.uuid,
+          totalFiles: allFilesToSync.length,
+        } as UploadMaarchFileJobPayload)
       }
     }
 

@@ -12,12 +12,17 @@ import {
 } from '@/modules/demarches/objects/constants/maarch.types'
 import { File } from '@/modules/files/objects/entities/file.entity'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
-import { eFileTag, eState, FileTagKey } from '@biblio-num/shared'
+import { eFileExtension, eFileTag, eState, FileTagKey } from '@biblio-num/shared'
 import { Injectable } from '@nestjs/common'
 import { generateChecksum, extractMimeType } from './utils/file-helper'
+import { ConfigService } from '@nestjs/config'
+import * as path from 'node:path'
 
 @Injectable()
 export class FileBuilderService {
+  private readonly FOLDER_COURRIER = 'manual'
+  private readonly FOLDER_PJ = 'manual_attachements'
+  private readonly S3_ROOT_PATH: string
   private readonly TAG_MAPPINGS = {
     statut: eFileTag.status,
     statuts: eFileTag.status,
@@ -35,8 +40,12 @@ export class FileBuilderService {
     financement: eFileTag.fe,
   }
 
-  constructor(private readonly logger: LoggerService) {
+  constructor(
+    private readonly logger: LoggerService,
+    private readonly configService: ConfigService,
+  ) {
     this.logger.setContext(this.constructor.name)
+    this.S3_ROOT_PATH = this.configService.get('file.maarchImportRootPath')!
   }
 
   createFileEntities(data: DemandeAggregee): File[] {
@@ -80,11 +89,16 @@ export class FileBuilderService {
 
     const filePath = pieceJointe[maarchPJLabel.cheminPj]
     const fileName = pieceJointe[maarchPJLabel.nomPj]
+    const fileIntitule = pieceJointe[maarchPJLabel.intitulePj]
 
-    file.label = pieceJointe[maarchPJLabel.intitulePj] || 'unknown file'
-    file.originalLabel = pieceJointe[maarchPJLabel.nomPj]
+    file.label = fileIntitule || 'unknown file'
+    file.originalLabel = fileName
     file.sourceUploadedAt = pieceJointe[maarchPJLabel.dateCreationPj]
-    file.sourcePath = `${this._cleanPath(filePath)}/${fileName}`
+    file.sourcePath = this._buildS3Path({
+      subFolder: this.FOLDER_PJ,
+      csvPath: filePath,
+      fileName,
+    })
     file.tag = this._determineFileTag(file.label)
     file.checksum = generateChecksum(file.label)
     file.byteSize = 0
@@ -105,17 +119,22 @@ export class FileBuilderService {
     const file = new File()
 
     const filePath = data[maarchChampsLabel.cheminCourrier]
-    const fileName = data[maarchChampsLabel.nomCourrier]
+    const originalFileName = data[maarchChampsLabel.nomCourrier]
+    const pdfFileName = this._forcePdfExtension(originalFileName)
 
-    file.label = data[maarchChampsLabel.nomCourrier]
-    file.originalLabel = data[maarchChampsLabel.nomCourrier]
+    file.label = originalFileName
+    file.originalLabel = pdfFileName
     file.sourceUploadedAt = data[maarchChampsLabel.dateCreationCourrier]
-    file.sourcePath = `${this._cleanPath(filePath)}/${fileName}`
+    file.sourcePath = this._buildS3Path({
+      subFolder: this.FOLDER_COURRIER,
+      csvPath: filePath,
+      fileName: pdfFileName,
+    })
     file.tag = eFileTag.other
     file.checksum = generateChecksum(file.label)
     file.byteSize = 0
     file.state = eState.queued
-    file.mimeType = extractMimeType(file.label)
+    file.mimeType = eFileExtension.pdf
     file.sourceLabel = 'rna'
     file.sourceStringId = fieldCourrierFileIntitule.id
 
@@ -137,7 +156,7 @@ export class FileBuilderService {
   }
 
   private _cleanPath(path: string): string {
-    return path ? path.trim().replace(/\/+$/, '') : ''
+    return path ? path.trim().replace(/^\/+|\/+$/g, '').replace(/\\/g, '/') : ''
   }
 
   private _determineFileTag(label: string): FileTagKey {
@@ -154,5 +173,32 @@ export class FileBuilderService {
     }
 
     return eFileTag.other
+  }
+
+  private _buildS3Path({
+    subFolder,
+    csvPath,
+    fileName,
+  }: {
+    subFolder: string
+    csvPath: string
+    fileName: string
+  }): string {
+    const cleanCsvPath = this._cleanPath(csvPath)
+    return path.posix.join(
+      this.S3_ROOT_PATH,
+      subFolder,
+      cleanCsvPath,
+      fileName,
+    )
+  }
+
+  private _forcePdfExtension(fileName: string): string {
+    if (!fileName) return ''
+    const extension = path.extname(fileName)
+    if (extension) {
+      return fileName.replace(extension, '.pdf')
+    }
+    return `${fileName}.pdf`
   }
 }

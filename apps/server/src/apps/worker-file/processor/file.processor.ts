@@ -18,6 +18,7 @@ import { ALS_INSTANCE } from '@/shared/modules/als/als.module'
 import { AsyncLocalStorage } from 'async_hooks'
 import { AsyncLocalStore } from '@/shared/modules/als/async-local-store.type'
 import { Inject } from '@nestjs/common'
+import { RedisService } from '@/shared/modules/redis/redis.service'
 
 @Processor(QueueName.file)
 export class FileProcessor {
@@ -27,6 +28,7 @@ export class FileProcessor {
     private readonly s3Service: S3Service,
     private readonly fileService: FileService,
     private readonly fieldService: FieldService,
+    private readonly redisService: RedisService,
     @InjectQueue(QueueName.sync) private readonly syncQueue: Queue,
     @Inject(ALS_INSTANCE)
     private readonly als?: AsyncLocalStorage<AsyncLocalStore>,
@@ -136,8 +138,11 @@ export class FileProcessor {
 
   @Process(eJobName.UploadMaarchFile)
   async uploadMaarchFile(job: Job<UploadMaarchFileJobPayload>): Promise<void> {
+    const { file, importId, totalFiles } = job.data
+
+    const statsKey = `import:${importId}:stats`
+
     await this.als.run({ job }, async () => {
-      const { file } = job.data
       this.logger.verbose(`[${file.id}] 1. Starting S3 sync for: ${file.sourcePath}`)
 
       try {
@@ -172,6 +177,8 @@ export class FileProcessor {
         job.progress(100)
 
         this.logger.log(`[${file.id}] 5. Sync OK (${s3Result.byteSize} bytes).`)
+
+        await this.redisService.incrByKey(statsKey, 'success', 1)
       } catch (error) {
         const isNoSuchKey = error.code === 'NoSuchKey' || error.message?.includes('NoSuchKey')
 
@@ -183,7 +190,11 @@ export class FileProcessor {
           }).catch(() => {})
         }
 
+        await this.redisService.incrByKey(statsKey, 'failed', 1)
+
         throw error
+      } finally {
+        await this._checkBatchCompletion(job, statsKey, importId, totalFiles)
       }
     })
   }
@@ -199,5 +210,33 @@ export class FileProcessor {
         }
       }
     })
+  }
+
+  private async _checkBatchCompletion(
+    job: Job,
+    statsKey: string,
+    importId: string,
+    totalFiles: number,
+  ): Promise<void> {
+    const stats = await this.redisService.getAllByKey(statsKey)
+
+    const success = parseInt(stats.success || '0', 10)
+    const failed = parseInt(stats.failed || '0', 10)
+    const processed = success + failed
+
+    if (processed >= totalFiles) {
+      const message = `
+        🏁 ========================================
+        🎉 IMPORT ${importId} TERMINÉ
+        ✅ SUCCÈS : ${success}
+        ❌ ÉCHECS : ${failed}
+        📊 TOTAL  : ${processed}/${totalFiles}
+        ===========================================
+      `
+      this.logger.log(message)
+      job.log(message)
+
+      await this.redisService.deleteKey(statsKey)
+    }
   }
 }

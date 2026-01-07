@@ -48,6 +48,8 @@ export type UploadRnaFileJobPayload = {
 
 export type UploadMaarchFileJobPayload = {
   file: File
+  importId: string
+  totalFiles: number
 }
 
 export type ComputeFeExcelJobPayload = {

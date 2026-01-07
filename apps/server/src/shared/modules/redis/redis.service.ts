@@ -20,6 +20,12 @@ export class RedisService {
     })
   }
 
+  async incrByKey(key: string, field: string, value: number): Promise<number> {
+    this.logger.verbose('hincrby')
+    this.logger.debug(`key: ${key}, field: ${field}, value: ${value}`)
+    return this.redisClient.hincrby(key, field, value)
+  }
+
   async checkAndSet(key: string, expiryInSeconds = 3600): Promise<boolean> {
     this.logger.verbose('checkAndSet')
     this.logger.debug(`key: ${key}, expiry: ${expiryInSeconds}`)
@@ -31,6 +37,12 @@ export class RedisService {
     this.logger.verbose('getKey')
     this.logger.debug(`key: ${key}`)
     return this.redisClient.get(key)
+  }
+
+  async getAllByKey(key: string): Promise<Record<string, string>> {
+    this.logger.verbose('getAllByKey')
+    this.logger.debug(`key: ${key}`)
+    return this.redisClient.hgetall(key)
   }
 
   async deleteKey(key: string): Promise<number> {
