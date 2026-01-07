@@ -105,36 +105,6 @@ export class HubService {
     })
   }
 
-  async setLinkDemarcheAndDossier(events: IRafEvent[]): Promise<IRafEvent[]> {
-    return Promise.all(events.map(async event => {
-      const demarche = await this.repoDemarche.createQueryBuilder('demarche')
-        .select([
-          'demarche.id',
-          'demarche.title',
-        ])
-        .where('demarche.dsId = :id', {
-          id: event.demarcheNumber,
-        })
-        .getOne()
-
-      event.demarcheLocalId = demarche?.id
-      event.demarcheLocalName = demarche.title
-      if (demarche) {
-        const dossier = await this.repoDossier
-          .createQueryBuilder('dossier')
-          .select([
-            'dossier.id',
-            'dossier.demarcheId',
-          ])
-          .where('dossier.sourceId = :id', { id: event.dossierNumber })
-          .getOne()
-
-        event.dossierLocalNumber = dossier?.id
-      }
-      return event
-    }))
-  }
-
   async getFoundationFile(id: string, uuid: string): Promise<Stream> {
     this.logger.verbose('HUB-getFoundationFile')
     return this._getFileToStream(id, uuid, ePathCompletedOrganismeByType.foundation)
@@ -156,5 +126,52 @@ export class HubService {
           }
         }),
       )
+  }
+
+  async setLinkDemarcheAndDossier(events: IRafEvent[]): Promise<IRafEvent[]> {
+    this.logger.verbose('setLinkDemarcheAndDossier')
+    const demarcheNumbers = events.map(evt => evt.demarcheNumber)
+    const demarches = demarcheNumbers?.length
+      ? await this.repoDemarche.createQueryBuilder('demarche')
+        .select([
+          'demarche.id',
+          'demarche.title',
+          'demarche.dsId',
+        ])
+        .where('demarche.dsId IN (:...ids)', {
+          ids: [...new Set(demarcheNumbers)],
+        })
+        .getMany()
+      : []
+    const dossierNumbers = events.map(evt => evt.dossierNumber)
+    const dossiers = dossierNumbers?.length
+      ? await this.repoDossier
+        .createQueryBuilder('dossier')
+        .select([
+          'dossier.id',
+          'dossier.sourceId',
+        ])
+        .where('dossier.sourceId IN (:...ids)', {
+          ids: [...new Set(dossierNumbers)],
+        })
+        .getMany()
+      : []
+
+    return events.map(evt => {
+      if (evt.demarcheNumber) {
+        const demarche = demarches.find(dm => dm.dsId === evt.demarcheNumber)
+        if (demarche) {
+          evt.demarcheLocalId = demarche.id
+          evt.demarcheLocalName = demarche.title
+        }
+      }
+      if (evt.dossierNumber) {
+        const dossier = dossiers.find(d => +d.sourceId === evt.dossierNumber)
+        if (dossier) {
+          evt.dossierLocalNumber = dossier.id
+        }
+      }
+      return evt
+    })
   }
 }
