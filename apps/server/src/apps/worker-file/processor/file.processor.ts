@@ -226,11 +226,11 @@ export class FileProcessor {
 
     if (processed >= totalFiles) {
       const message = `
-        🏁 ========================================
-        🎉 IMPORT ${importId} TERMINÉ
-        ✅ SUCCÈS : ${success}
-        ❌ ÉCHECS : ${failed}
-        📊 TOTAL  : ${processed}/${totalFiles}
+        ========================================
+        IMPORT ${importId} TERMINÉ
+        SUCCÈS : ${success}
+        ÉCHECS : ${failed}
+        TOTAL  : ${processed}/${totalFiles}
         ===========================================
       `
       this.logger.log(message)
