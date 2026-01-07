@@ -1,4 +1,4 @@
-import { Column, DeleteDateColumn, Entity, JoinTable, OneToMany } from 'typeorm'
+import { Column, DeleteDateColumn, Entity, Index, JoinTable, OneToMany } from 'typeorm'
 import { Dossier } from '../../../dossiers/objects/entities/dossier.entity'
 import { BaseEntity } from '@/shared/base-entity/base.entity'
 import { Demarche as TDemarche } from '@dnum-mi/ds-api-client/dist/@types/generated-types'
@@ -107,6 +107,7 @@ export class Demarche extends BaseEntity implements IDemarcheWithOptions {
     description: 'Numéro de la démarche (extrait de dsDataJson)',
     nullable: true,
   })
+  @Index('IDX_DS_ID')
   @Column({
     type: 'integer',
     nullable: true,
@@ -117,6 +118,7 @@ export class Demarche extends BaseEntity implements IDemarcheWithOptions {
     description: 'Date de création (extrait de dsDataJson)',
     nullable: true,
   })
+  @Index('IDX_CREATE_AT')
   @Column({
     type: 'timestamp',
     nullable: true,
@@ -127,6 +129,7 @@ export class Demarche extends BaseEntity implements IDemarcheWithOptions {
     description: 'Date de publication (extrait de dsDataJson)',
     nullable: true,
   })
+  @Index('IDX_DS_PUBLISHED_AT')
   @Column({
     type: 'timestamp',
     nullable: true,
