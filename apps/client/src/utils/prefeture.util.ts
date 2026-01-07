@@ -1,7 +1,7 @@
 import { listOfVerbosePrefecture, PrefectureDictionary } from '@biblio-num/shared'
 import type { PrefectureKey } from '@biblio-num/shared'
 
-export const getPrefecture = (prefecture: PrefectureKey | string): string => {
+export const getPrefecture = (prefecture: PrefectureKey | string | null | undefined): string => {
   if (!prefecture) {
     return ''
   }

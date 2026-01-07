@@ -1,11 +1,16 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
-import type { IRnaEventOutput, IDsEventItem } from '@biblio-num/shared'
+import type {
+  IRnaEventOutput,
+  IDsEventItem,
+  RnaEventModificationDetail,
+  IRafEvent,
+} from '@biblio-num/shared'
 import { dateToStringFr, getPrefecture } from '@/utils'
 import { routeNames } from '@/router/route-names.ts'
 
 const props = defineProps<{
-  events: (IDsEventItem | IRnaEventOutput)[]
+  events: (IRafEvent | IDsEventItem | IRnaEventOutput)[]
 }>()
 
 const router = useRouter()
@@ -49,7 +54,10 @@ const navigateToDossier = (localId: number | null | undefined) => {
   })
 }
 
-const transformDataBefore = (str: string): string => {
+const transformDataBefore = (str: string | undefined): string => {
+  if (!str) {
+    return ''
+  }
   return str
     .split('||')
     .map((t) => {
@@ -88,34 +96,34 @@ const transformDataBefore = (str: string): string => {
         <div class="timeline-content">
           <div
             class="fr-card fr-card--no-border fr-card--shadow fr-mb-3w"
-            :class="event.demarcheNumber ? 'ds-card' : 'rna-card'"
+            :class="(event as IDsEventItem).demarcheNumber ? 'ds-card' : 'rna-card'"
           >
             <p class="event-type">
-              {{ event.demarcheNumber ? 'Dossier DS' : 'Évènement RNA' }}
+              {{ (event as IDsEventItem).demarcheNumber ? 'Dossier DS' : 'Évènement RNA' }}
             </p>
             <div class="fr-card__body">
               <div class="fr-card__content">
                 <div class="fr-display-flex fr-justify-content-between fr-align-items-start fr-mb-3w">
                   <DsfrBadge
-                    :type="getBadgeType(event)"
-                    :label="formatBadgeLabel(event)"
+                    :type="getBadgeType((event as IDsEventItem))"
+                    :label="formatBadgeLabel((event as IDsEventItem))"
                     small
                     no-icon
                   />
                 </div>
 
                 <!-- Ds event TODO: good type -->
-                <template v-if="event.demarcheNumber">
+                <template v-if="(event as IDsEventItem).demarcheNumber">
                   <div
-                    v-if="event.demarcheNumber"
+                    v-if="(event as IDsEventItem).demarcheNumber"
                     class="fr-card__title fr-mt-2w"
                   >
                     <router-link
-                      v-if="event.demarcheLocalId"
-                      :to="{ name: routeNames.DEMARCHES, params: { id: event.demarcheLocalId } }"
+                      v-if="(event as IDsEventItem).demarcheLocalId"
+                      :to="{ name: routeNames.DEMARCHES, params: { id: (event as IDsEventItem).demarcheLocalId } }"
                       class="fr-link fr-text--lg text-title"
                     >
-                      {{ event.demarcheLocalName }}
+                      {{ (event as IDsEventItem).demarcheLocalName }}
                     </router-link>
 
                     <div
@@ -123,7 +131,7 @@ const transformDataBefore = (str: string): string => {
                       class="fr-display-flex fr-items-center flex-wrap gap-2"
                     >
                       <span class="fr-text--lg fr-text--bold text-grey fr-mr-2w">
-                        {{ event.demarcheName || 'Démarche indéterminée' }}
+                        {{ (event as IDsEventItem).demarcheName || 'Démarche indéterminée' }}
                       </span>
                       <DsfrBadge
                         label="Non importée"
@@ -140,7 +148,7 @@ const transformDataBefore = (str: string): string => {
                         Instructeur
                       </p>
                       <p class="fr-text--sm fr-mb-1w">
-                        {{ event.dossierInstructeurGroup ? getPrefecture(event.dossierInstructeurGroup) : 'N/A' }}
+                        {{ (event as IDsEventItem).dossierInstructeurGroup ? getPrefecture((event as IDsEventItem).dossierInstructeurGroup) : 'N/A' }}
                       </p>
                     </div>
 
@@ -149,7 +157,7 @@ const transformDataBefore = (str: string): string => {
                         Accepté le
                       </p>
                       <p class="fr-text--sm fr-mb-1w">
-                        {{ dateToStringFr(event.acceptedAt) || 'N/A' }}
+                        {{ dateToStringFr((event as IDsEventItem).acceptedAt) || 'N/A' }}
                       </p>
                     </div>
 
@@ -158,38 +166,38 @@ const transformDataBefore = (str: string): string => {
                         JOAFE
                       </p>
                       <p class="fr-text--sm fr-mb-1w">
-                        {{ dateToStringFr(event.publishedJOAFAt) || 'N/A' }}
+                        {{ dateToStringFr((event as IDsEventItem).publishedJOAFAt) || 'N/A' }}
                       </p>
                     </div>
                   </div>
 
                   <div
-                    v-if="event.dossierNumber"
+                    v-if="(event as IDsEventItem).dossierNumber"
                     class="flex justify-between fr-mt-2w fr-pt-2w border-top-light"
                   >
                     <div class="dossier-identifier">
                       <div><span class="fr-text--xs uppercase-label fr-mr-1v">Dossier :</span></div>
                       <div>
                         <span class="fr-text--sm font-mono fr-text--bold text-dark">
-                          {{ event.dossierNumber ?? 'N/A' }}
+                          {{ (event as IDsEventItem).dossierNumber ?? 'N/A' }}
                         </span>
                       </div>
                     </div>
                     <div class="fr-display-flex fr-items-center gap-2">
                       <span
-                        v-if="!event.dossierLocalNumber"
+                        v-if="!(event as IDsEventItem).dossierLocalNumber"
                         class="fr-text--xs text-grey italic fr-mr-2w"
                       >
                         Dossier non disponible
                       </span>
                       <DsfrButton
-                        :label="event.dossierLocalNumber ? 'Voir le dossier' : 'Non importé'"
-                        :icon="event.dossierLocalNumber ? 'fr-icon-arrow-right-line' : undefined"
+                        :label="(event as IDsEventItem).dossierLocalNumber ? 'Voir le dossier' : 'Non importé'"
+                        :icon="(event as IDsEventItem).dossierLocalNumber ? 'fr-icon-arrow-right-line' : undefined"
                         icon-right
                         secondary
                         size="sm"
-                        :disabled="!event.dossierLocalNumber"
-                        @click="navigateToDossier(event.dossierLocalNumber)"
+                        :disabled="!(event as IDsEventItem).dossierLocalNumber"
+                        @click="navigateToDossier((event as IDsEventItem).dossierLocalNumber)"
                       />
                     </div>
                   </div>
@@ -202,24 +210,24 @@ const transformDataBefore = (str: string): string => {
                         Date de publication au JOAFF
                       </p>
                       <p class="fr-text--sm fr-mb-1w">
-                        {{ dateToStringFr(event.joPublishedAt) }}
+                        {{ dateToStringFr((event as IRnaEventOutput).joPublishedAt) }}
                       </p>
                     </div>
 
                     <div
-                      v-if="event.dissolutionType"
+                      v-if="(event as IRnaEventOutput).dissolutionType"
                       class="fr-col-6 fr-col-md-4"
                     >
                       <p class="uppercase-label">
                         Type de dissolution
                       </p>
                       <p class="fr-text--sm fr-mb-1w">
-                        {{ event.dissolutionType }}
+                        {{ (event as IRnaEventOutput).dissolutionType }}
                       </p>
                     </div>
 
                     <div
-                      v-if="event.modificationDetails"
+                      v-if="(event as IRnaEventOutput).modificationDetails"
                       class="fr-col-6 fr-col-md-4"
                     >
                       <p class="uppercase-label">
@@ -227,11 +235,13 @@ const transformDataBefore = (str: string): string => {
                       </p>
                       <div class="flex flex-col">
                         <template
-                          v-for="(m, index) in event.modificationDetails"
+                          v-for="(m, index) in (event as IRnaEventOutput).modificationDetails"
                           :key="index"
                         >
                           <div class="flex items-center">
-                            <CustomTooltip :content="transformDataBefore(m.valueBefore)">
+                            <CustomTooltip
+                              :content="transformDataBefore((m as RnaEventModificationDetail)?.valueBefore)"
+                            >
                               <p class="m-0">
                                 {{ m.type }}
                               </p>
