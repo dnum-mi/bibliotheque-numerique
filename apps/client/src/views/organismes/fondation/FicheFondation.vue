@@ -22,6 +22,7 @@ const banner = computed<tInfoBanner>(() => ({
   creationAt: props.foundation.creationAt,
   stateEffectiveAt: props.foundation.stateEffectiveAt,
   hub_timestamp: props.foundation.hub_timestamp,
+  typeOrg: props.foundation.foundationType,
 }))
 
 const currentTab = ref<string | undefined>(undefined)

@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { EOrganismeCategory } from '@biblio-num/shared'
+import {
+  EOrganismeCategory,
+  eOrganismeType,
+} from '@biblio-num/shared'
 import type { IAssociationOutput } from '@biblio-num/shared'
 import LayoutFiche from '@/components/Layout/LayoutFiche.vue'
 import FicheAssociationInfoTab from '@/views/organismes/association/info-tab/FicheAssociationInfoTab.vue'
@@ -17,6 +20,7 @@ const banner = computed<tInfoBanner>(() => ({
   creationAt: props.association.creationAt,
   stateEffectiveAt: props.association.stateEffectiveAt,
   hub_timestamp: props.association.hub_timestamp,
+  typeOrg: eOrganismeType.ASSO,
 }))
 
 const currentTab = ref<string | undefined>(undefined)

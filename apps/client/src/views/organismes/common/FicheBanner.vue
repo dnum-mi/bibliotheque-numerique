@@ -1,5 +1,8 @@
 <script lang='ts' setup=''>
-import type { OrganismeStatusKey } from '@biblio-num/shared'
+import type {
+  OrganismeStatusKey,
+  OrganismeTypeKey,
+} from '@biblio-num/shared'
 import { dateToStringFr } from '@/utils'
 
 export type tInfoBanner = {
@@ -9,6 +12,7 @@ export type tInfoBanner = {
   stateEffectiveAt: Date | null,
   hub_timestamp?: Date,
   creationAt: Date,
+  typeOrg: OrganismeTypeKey | string,
 }
 
 defineProps<{
@@ -20,7 +24,7 @@ defineProps<{
   <div class="flex flex-grow gap-2 justify-between items-center">
     <div class="flex">
       <OrganismeBadge
-        type="ASSO"
+        :type="banner.typeOrg"
         class="mr-4"
         big
       />
