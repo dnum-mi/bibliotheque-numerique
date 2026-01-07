@@ -55,12 +55,6 @@ const mockDossierRepo = {
   delete: jest.fn(),
 };
 
-const mockOrganismeRepo = {
-  findOne: jest.fn(),
-  create: jest.fn(),
-  save: jest.fn(),
-};
-
 const mockQueue = {
   add: jest.fn(),
 };

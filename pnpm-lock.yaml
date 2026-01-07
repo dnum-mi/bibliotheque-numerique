@@ -61,7 +61,7 @@ importers:
         version: 1.14.3
       '@gouvminint/vue-dsfr':
         specifier: ^8.8.0
-        version: 8.13.1(@iconify/vue@4.3.0(vue@3.5.26(typescript@5.8.3)))(vue-router@4.6.4(vue@3.5.26(typescript@5.8.3)))(vue@3.5.26(typescript@5.8.3))
+        version: 8.8.0(@iconify/vue@4.3.0(vue@3.5.26(typescript@5.8.3)))(vue-router@4.6.4(vue@3.5.26(typescript@5.8.3)))(vue@3.5.26(typescript@5.8.3))
       '@vee-validate/zod':
         specifier: ^4.12.6
         version: 4.15.1(vue@3.5.26(typescript@5.8.3))(zod@4.3.5)
@@ -2112,13 +2112,17 @@ packages:
   '@floating-ui/utils@0.2.10':
     resolution: {integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==}
 
+  '@gouvfr/dsfr@1.13.2':
+    resolution: {integrity: sha512-4Q9ggFFzwD/KFr37sJO1hFH9PcqlZ7F3jMiFJXnBLJfkH1+s28vnQp/oXoY8TosWsLMSjdhNCrxvrUdm5XzBlg==}
+    engines: {node: '>=18.16.1'}
+
   '@gouvfr/dsfr@1.14.3':
     resolution: {integrity: sha512-UTplClQLp635J4vRHx/rJ7SKEi+bepc1FisvzTS8efQGQ3Gm8LttZf11NJ+4XhEMYLbCf8TBvFFwWBZ9ztRFkg==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0}
 
-  '@gouvminint/vue-dsfr@8.13.1':
-    resolution: {integrity: sha512-BejnuRuFrEfVbl+hUweOk8k5lUhFRCNf4OPR7qTKLHSvvbAZehCvciBpu92GYrv9nuVW61AtPgbqjY/9CqGCNQ==}
-    engines: {node: '>=22.0.0', pnpm: '>=10.0.0'}
+  '@gouvminint/vue-dsfr@8.8.0':
+    resolution: {integrity: sha512-WMc8KE8NClyzl6sUqoufcjLq3kmLkdhtBiJ0dlk2pJlV2knDGKT5fCyhLtSGf8azDNemi9iCYTl3OvnhPGLoVw==}
+    engines: {node: '>=20.x.x', npm: '>=10.x.x'}
     hasBin: true
     peerDependencies:
       '@iconify/vue': ^4.2.0
@@ -12738,11 +12742,13 @@ snapshots:
 
   '@floating-ui/utils@0.2.10': {}
 
+  '@gouvfr/dsfr@1.13.2': {}
+
   '@gouvfr/dsfr@1.14.3': {}
 
-  '@gouvminint/vue-dsfr@8.13.1(@iconify/vue@4.3.0(vue@3.5.26(typescript@5.8.3)))(vue-router@4.6.4(vue@3.5.26(typescript@5.8.3)))(vue@3.5.26(typescript@5.8.3))':
+  '@gouvminint/vue-dsfr@8.8.0(@iconify/vue@4.3.0(vue@3.5.26(typescript@5.8.3)))(vue-router@4.6.4(vue@3.5.26(typescript@5.8.3)))(vue@3.5.26(typescript@5.8.3))':
     dependencies:
-      '@gouvfr/dsfr': 1.14.3
+      '@gouvfr/dsfr': 1.13.2
       '@iconify/vue': 4.3.0(vue@3.5.26(typescript@5.8.3))
       focus-trap: 7.7.1
       focus-trap-vue: 4.1.0(focus-trap@7.7.1)(vue@3.5.26(typescript@5.8.3))

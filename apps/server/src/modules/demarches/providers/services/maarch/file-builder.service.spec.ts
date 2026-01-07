@@ -6,10 +6,14 @@ import { File } from '@/modules/files/objects/entities/file.entity'
 import { eFileExtension, eFileTag, eState } from '@biblio-num/shared'
 import { fieldCourrierFileIntitule, fieldPjIntitule } from '@/modules/demarches/objects/constants/maarch-champ.dictionary'
 import { createHash } from 'crypto'
+import { ConfigService } from '@nestjs/config'
 
 describe('FileBuilderService', () => {
   let service: FileBuilderService
   let logger: LoggerService
+  let configService: ConfigService
+
+  const MOCK_ROOT_PATH = 'import-maarch-pj'
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -19,11 +23,23 @@ describe('FileBuilderService', () => {
           provide: LoggerService,
           useValue: loggerServiceMock,
         },
+        {
+          provide: ConfigService,
+          useValue: {
+            get: jest.fn((key: string) => {
+              if (key === 'file.maarchImportRootPath') {
+                return MOCK_ROOT_PATH
+              }
+              return null
+            }),
+          },
+        }
       ],
     }).compile()
 
     service = module.get<FileBuilderService>(FileBuilderService)
     logger = module.get<LoggerService>(LoggerService)
+    configService = module.get<ConfigService>(ConfigService)
   })
 
   afterEach(() => {
@@ -61,14 +77,18 @@ describe('FileBuilderService', () => {
       expect(file1.sourceUploadedAt).toEqual(new Date('2024-01-15'))
       expect(file1.mimeType).toBe(eFileExtension.pdf)
       expect(file1.state).toBe(eState.queued)
-      expect(file1.sourcePath).toBe('2024/01/folder/document.pdf')
+      expect(file1.sourcePath).toBe(
+        `${MOCK_ROOT_PATH}/manual_attachements/2024/01/folder/document.pdf`
+      )
       expect(file1.sourceLabel).toBe('rna')
       expect(file1.sourceStringId).toBe(fieldPjIntitule.id)
 
       const file2 = result[1]
       expect(file2.label).toBe('Rapport - Annuel 2023.docx')
       expect(file2.mimeType).toBe(eFileExtension.docx)
-      expect(file2.sourcePath).toBe('2024/02/folder/rapport.docx')
+      expect(file2.sourcePath).toBe(
+        `${MOCK_ROOT_PATH}/manual_attachements/2024/02/folder/rapport.docx`
+      )
     })
 
     it('should create a file entity for the courrier HTML', () => {
@@ -87,8 +107,10 @@ describe('FileBuilderService', () => {
       const courrier = result[0]
 
       expect(courrier).toBeInstanceOf(File)
-      expect(courrier.originalLabel).toBe('courrier_123.html')
-      expect(courrier.sourcePath).toBe('2024/03/courriers/courrier_123.html')
+      expect(courrier.originalLabel).toBe('courrier_123.pdf')
+      expect(courrier.sourcePath).toBe(
+        `${MOCK_ROOT_PATH}/manual/2024/03/courriers/courrier_123.pdf`
+      )
       expect(courrier.sourceStringId).toBe(fieldCourrierFileIntitule.id)
       expect(courrier.state).toBe(eState.queued)
       expect(courrier.sourceUploadedAt).toEqual(new Date('2024-03-10'))
@@ -111,8 +133,13 @@ describe('FileBuilderService', () => {
       const result = service.createFileEntities(data)
 
       expect(result).toHaveLength(2)
-      expect(result.find(f => f.originalLabel === 'pj1.pdf')).toBeDefined()
-      expect(result.find(f => f.originalLabel === 'courrier.html')).toBeDefined()
+      const pj = result.find(f => f.originalLabel === 'pj1.pdf')
+      expect(pj).toBeDefined()
+      expect(pj?.sourcePath).toContain('/manual_attachements/')
+
+      const courrier = result.find(f => f.originalLabel === 'courrier.pdf')
+      expect(courrier).toBeDefined()
+      expect(courrier?.sourcePath).toContain('/manual/')
     })
 
     it('should skip files without nom_pj OR chemin_pj', () => {
@@ -230,7 +257,9 @@ describe('FileBuilderService', () => {
       expect(file.checksum).toBeDefined()
       expect(file.byteSize).toBe(0)
       expect(file.state).toBe(eState.queued)
-      expect(file.sourcePath).toBe('path/test.pdf')
+      expect(file.sourcePath).toBe(
+        `${MOCK_ROOT_PATH}/manual_attachements/path/test.pdf`
+      )
     })
 
     it('should handle empty array of pieces jointes and no courrier', () => {

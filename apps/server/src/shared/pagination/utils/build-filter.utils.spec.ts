@@ -26,8 +26,8 @@ describe('Build filter', () => {
       ).rejects.toThrow('Your filter does not match the schema.')
     })
 
-    it('Should not accept filter', () => {
-      expect(() =>
+    it('Should not accept filter', async () => {
+      await expect(() =>
         buildFilterQuery(
           {
             I09: {
@@ -43,8 +43,8 @@ describe('Build filter', () => {
       ).rejects.toThrow('Your filter does not match the schema.')
     })
 
-    it('Should not accept filter', () => {
-      expect(() =>
+    it('Should not accept filter', async () => {
+      await expect(() =>
         buildFilterQuery(
           {
             I09: {
@@ -60,8 +60,8 @@ describe('Build filter', () => {
       ).rejects.toThrow('Your filter does not match the schema.')
     })
 
-    it('Should not accept filter', () => {
-      expect(() =>
+    it('Should not accept filter', async () => {
+      await expect(() =>
         buildFilterQuery(
           {
             I09: {
@@ -80,8 +80,8 @@ describe('Build filter', () => {
 
   describe('Text filters', () => {
     describe('Normal text filters', () => {
-      it('Should build filter for "contains"', () => {
-        expect(
+      it('Should build filter for "contains"', async () => {
+        await expect(
           buildFilterQuery(
             {
               I09: {
@@ -97,8 +97,8 @@ describe('Build filter', () => {
         ).resolves.toEqual('(("I09" ILIKE \'%to%\'))')
       })
 
-      it('Should build filter for "notContains"', () => {
-        expect(
+      it('Should build filter for "notContains"', async () => {
+        await expect(
           buildFilterQuery(
             {
               I09: {
@@ -114,8 +114,8 @@ describe('Build filter', () => {
         ).resolves.toEqual('(("I09" NOT ILIKE \'%to%\'))')
       })
 
-      it('Should build filter for "startsWith"', () => {
-        expect(
+      it('Should build filter for "startsWith"', async () => {
+        await expect(
           buildFilterQuery(
             {
               I09: {
@@ -131,8 +131,8 @@ describe('Build filter', () => {
         ).resolves.toEqual('(("I09" ILIKE \'to%\'))')
       })
 
-      it('Should build filter for "endsWith"', () => {
-        expect(
+      it('Should build filter for "endsWith"', async () => {
+        await expect(
           buildFilterQuery(
             {
               I09: {
@@ -148,8 +148,8 @@ describe('Build filter', () => {
         ).resolves.toEqual('(("I09" ILIKE \'%to\'))')
       })
 
-      it('Should build filter for "blank"', () => {
-        expect(
+      it('Should build filter for "blank"', async () => {
+        await expect(
           buildFilterQuery(
             {
               I09: {
@@ -165,8 +165,8 @@ describe('Build filter', () => {
         ).resolves.toEqual('(("I09" IS NULL OR "I09" = \'\'))')
       })
 
-      it('Should build filter for "notBlank"', () => {
-        expect(
+      it('Should build filter for "notBlank"', async () => {
+        await expect(
           buildFilterQuery(
             {
               I09: {
@@ -182,8 +182,8 @@ describe('Build filter', () => {
         ).resolves.toEqual('(("I09" IS NOT NULL OR "I09" != \'\'))')
       })
 
-      it('Should build filter for "notEqual"', () => {
-        expect(
+      it('Should build filter for "notEqual"', async () => {
+        await expect(
           buildFilterQuery(
             {
               I09: {
@@ -201,8 +201,8 @@ describe('Build filter', () => {
     })
 
     describe('Array text filters', () => {
-      it('Should build filter for "contains"', () => {
-        expect(
+      it('Should build filter for "contains"', async () => {
+        await expect(
           buildFilterQuery(
             {
               I09: {
@@ -221,8 +221,8 @@ describe('Build filter', () => {
         )
       })
 
-      it('Should build filter for "notContains"', () => {
-        expect(
+      it('Should build filter for "notContains"', async () => {
+        await expect(
           buildFilterQuery(
             {
               I09: {
@@ -241,8 +241,8 @@ describe('Build filter', () => {
         )
       })
 
-      it('Should build filter for "startsWith"', () => {
-        expect(
+      it('Should build filter for "startsWith"', async () => {
+        await expect(
           buildFilterQuery(
             {
               I09: {
@@ -261,8 +261,8 @@ describe('Build filter', () => {
         )
       })
 
-      it('Should build filter for "endsWith"', () => {
-        expect(
+      it('Should build filter for "endsWith"', async () => {
+        await expect(
           buildFilterQuery(
             {
               I09: {
@@ -281,8 +281,8 @@ describe('Build filter', () => {
         )
       })
 
-      it('Should build filter for "blank"', () => {
-        expect(
+      it('Should build filter for "blank"', async () => {
+        await expect(
           buildFilterQuery(
             {
               I09: {
@@ -301,8 +301,8 @@ describe('Build filter', () => {
         )
       })
 
-      it('Should build filter for "notBlank"', () => {
-        expect(
+      it('Should build filter for "notBlank"', async () => {
+        await expect(
           buildFilterQuery(
             {
               I09: {
@@ -321,8 +321,8 @@ describe('Build filter', () => {
         )
       })
 
-      it('Should build filter for "notEqual"', () => {
-        expect(
+      it('Should build filter for "notEqual"', async () => {
+        await expect(
           buildFilterQuery(
             {
               I09: {
@@ -344,8 +344,8 @@ describe('Build filter', () => {
   })
 
   describe('Enum filters', () => {
-    it('Should build filter for normal field', () => {
-      expect(
+    it('Should build filter for normal field', async () => {
+      await expect(
         buildFilterQuery(
           {
             I09: {
@@ -358,8 +358,7 @@ describe('Build filter', () => {
           { I09: 'enum' },
         ),
       ).resolves.toEqual("((\"I09\" IN ('toto','tata')))")
-      expect(
-        expect(
+        await expect(
           buildFilterQuery(
             {
               I09: {
@@ -372,10 +371,9 @@ describe('Build filter', () => {
             { I09: 'enum' },
           ),
         ).rejects.toThrow('Empty string is not a correct enum value.')
-      )
     })
-    it('Should build filter for array field', () => {
-      expect(
+    it('Should build filter for array field', async () => {
+      await expect(
         buildFilterQuery(
           {
             I09: {
@@ -396,8 +394,8 @@ describe('Build filter', () => {
 
   describe('Date filters', () => {
     describe('Normal date filters', () => {
-      it('Should build filter for date equals condition', () => {
-        expect(
+      it('Should build filter for date equals condition', async () => {
+        await expect(
           buildFilterQuery(
             {
               dateField: {
@@ -413,8 +411,8 @@ describe('Build filter', () => {
         ).resolves.toEqual('((DATE("dateField") = \'2023-01-01\'))')
       })
 
-      it('Should build filter for date notEqual condition', () => {
-        expect(
+      it('Should build filter for date notEqual condition', async () => {
+        await expect(
           buildFilterQuery(
             {
               dateField: {
@@ -430,8 +428,8 @@ describe('Build filter', () => {
         ).resolves.toEqual('((DATE("dateField") != \'2023-01-01\'))')
       })
 
-      it('Should build filter for date less than condition', () => {
-        expect(
+      it('Should build filter for date less than condition', async () => {
+        await expect(
           buildFilterQuery(
             {
               dateField: {
@@ -447,8 +445,8 @@ describe('Build filter', () => {
         ).resolves.toEqual('((DATE("dateField") < \'2023-01-01\'))')
       })
 
-      it('Should build filter for date notEqual condition', () => {
-        expect(
+      it('Should build filter for date notEqual condition', async () => {
+        await expect(
           buildFilterQuery(
             {
               dateField: {
@@ -464,9 +462,9 @@ describe('Build filter', () => {
         ).resolves.toEqual('((DATE("dateField") > \'2023-01-01\'))')
       })
 
-      it('Should build filter for date since condition', () => {
+      it('Should build filter for date since condition', async () => {
         const oneYearBeforeNow = dayjs().subtract(1, 'year').format()
-        expect(
+        await expect(
           buildFilterQuery(
             {
               dateField: {
@@ -483,8 +481,8 @@ describe('Build filter', () => {
       })
     })
     describe('Array date filters', () => {
-      it('Should build filter for date equals condition', () => {
-        expect(
+      it('Should build filter for date equals condition', async () => {
+        await expect(
           buildFilterQuery(
             {
               dateField: {
@@ -503,8 +501,8 @@ describe('Build filter', () => {
         )
       })
 
-      it('Should build filter for date notEqual condition', () => {
-        expect(
+      it('Should build filter for date notEqual condition', async () => {
+        await expect(
           buildFilterQuery(
             {
               dateField: {
@@ -523,8 +521,8 @@ describe('Build filter', () => {
         )
       })
 
-      it('Should build filter for date less than condition', () => {
-        expect(
+      it('Should build filter for date less than condition', async () => {
+        await expect(
           buildFilterQuery(
             {
               dateField: {
@@ -543,8 +541,8 @@ describe('Build filter', () => {
         )
       })
 
-      it('Should build filter for date notEqual condition', () => {
-        expect(
+      it('Should build filter for date notEqual condition', async () => {
+        await expect(
           buildFilterQuery(
             {
               dateField: {
@@ -567,8 +565,8 @@ describe('Build filter', () => {
 
   describe('Number filters', () => {
     describe('Normal number filters', () => {
-      it('Should build filter for number equals condition', () => {
-        expect(
+      it('Should build filter for number equals condition', async () => {
+        await expect(
           buildFilterQuery(
             {
               numberField: {
@@ -584,8 +582,8 @@ describe('Build filter', () => {
         ).resolves.toEqual('(("numberField" = 10))')
       })
 
-      it('Should build filter for number notEqual condition', () => {
-        expect(
+      it('Should build filter for number notEqual condition', async () => {
+        await expect(
           buildFilterQuery(
             {
               numberField: {
@@ -601,8 +599,8 @@ describe('Build filter', () => {
         ).resolves.toEqual('(("numberField" != 10))')
       })
 
-      it('Should build filter for number lessThan condition', () => {
-        expect(
+      it('Should build filter for number lessThan condition', async () => {
+        await expect(
           buildFilterQuery(
             {
               numberField: {
@@ -618,8 +616,8 @@ describe('Build filter', () => {
         ).resolves.toEqual('(("numberField" < 5))')
       })
 
-      it('Should build filter for number lessThanOrEqual condition', () => {
-        expect(
+      it('Should build filter for number lessThanOrEqual condition', async () => {
+        await expect(
           buildFilterQuery(
             {
               numberField: {
@@ -635,8 +633,8 @@ describe('Build filter', () => {
         ).resolves.toEqual('(("numberField" <= 5))')
       })
 
-      it('Should build filter for number greaterThan condition', () => {
-        expect(
+      it('Should build filter for number greaterThan condition', async () => {
+        await expect(
           buildFilterQuery(
             {
               numberField: {
@@ -652,8 +650,8 @@ describe('Build filter', () => {
         ).resolves.toEqual('(("numberField" > 7))')
       })
 
-      it('Should build filter for number greaterThanOrEqual condition', () => {
-        expect(
+      it('Should build filter for number greaterThanOrEqual condition', async () => {
+        await expect(
           buildFilterQuery(
             {
               numberField: {
@@ -669,8 +667,8 @@ describe('Build filter', () => {
         ).resolves.toEqual('(("numberField" >= 8))')
       })
 
-      it('Should build filter for number blank condition', () => {
-        expect(
+      it('Should build filter for number blank condition', async () => {
+        await expect(
           buildFilterQuery(
             {
               numberField: {
@@ -685,8 +683,8 @@ describe('Build filter', () => {
         ).resolves.toEqual('(("numberField" IS NULL))')
       })
 
-      it('Should build filter for number notBlank condition', () => {
-        expect(
+      it('Should build filter for number notBlank condition', async () => {
+        await expect(
           buildFilterQuery(
             {
               numberField: {
@@ -703,8 +701,8 @@ describe('Build filter', () => {
     })
 
     describe('Array number filters', () => {
-      it('Should build filter for number equals condition', () => {
-        expect(
+      it('Should build filter for number equals condition', async () => {
+        await expect(
           buildFilterQuery(
             {
               numberField: {
@@ -723,8 +721,8 @@ describe('Build filter', () => {
         )
       })
 
-      it('Should build filter for number notEqual condition', () => {
-        expect(
+      it('Should build filter for number notEqual condition', async () => {
+        await expect(
           buildFilterQuery(
             {
               numberField: {
@@ -743,8 +741,8 @@ describe('Build filter', () => {
         )
       })
 
-      it('Should build filter for number lessThan condition', () => {
-        expect(
+      it('Should build filter for number lessThan condition', async () => {
+        await expect(
           buildFilterQuery(
             {
               numberField: {
@@ -763,8 +761,8 @@ describe('Build filter', () => {
         )
       })
 
-      it('Should build filter for number lessThanOrEqual condition', () => {
-        expect(
+      it('Should build filter for number lessThanOrEqual condition', async () => {
+        await expect(
           buildFilterQuery(
             {
               numberField: {
@@ -783,8 +781,8 @@ describe('Build filter', () => {
         )
       })
 
-      it('Should build filter for number greaterThan condition', () => {
-        expect(
+      it('Should build filter for number greaterThan condition', async () => {
+        await expect(
           buildFilterQuery(
             {
               numberField: {
@@ -803,8 +801,8 @@ describe('Build filter', () => {
         )
       })
 
-      it('Should build filter for number greaterThanOrEqual condition', () => {
-        expect(
+      it('Should build filter for number greaterThanOrEqual condition', async () => {
+        await expect(
           buildFilterQuery(
             {
               numberField: {
@@ -823,8 +821,8 @@ describe('Build filter', () => {
         )
       })
 
-      it('Should build filter for number blank condition', () => {
-        expect(
+      it('Should build filter for number blank condition', async () => {
+        await expect(
           buildFilterQuery(
             {
               numberField: {
@@ -840,8 +838,8 @@ describe('Build filter', () => {
         ).resolves.toEqual('((EXISTS (SELECT 1 FROM UNNEST("numberField") AS item WHERE item IS NULL)))')
       })
 
-      it('Should build filter for number notBlank condition', () => {
-        expect(
+      it('Should build filter for number notBlank condition', async () => {
+        await expect(
           buildFilterQuery(
             {
               numberField: {
@@ -861,13 +859,14 @@ describe('Build filter', () => {
 
   describe('Numbers filters', () => {
     describe('Normal numbers filters', () => {
-      it('Should build filter for numbers with one number', () => {
-        expect(
+      it('Should build filter for numbers with one number', async () => {
+        await expect(
           buildFilterQuery(
             {
               numberField: {
                 filterType: 'numbers',
                 condition1: {
+                  includeEmpty: false,
                   filter: [10],
                 },
               } as FilterNumbersDto,
@@ -877,13 +876,14 @@ describe('Build filter', () => {
         ).resolves.toEqual('(("numberField" @> \'10\'))')
       })
 
-      it('Should build filter for numbers with two number', () => {
-        expect(
+      it('Should build filter for numbers with two number', async () => {
+        await expect(
           buildFilterQuery(
             {
               numberField: {
                 filterType: 'numbers',
                 condition1: {
+                  includeEmpty: false,
                   filter: [10, 20],
                 },
               } as FilterNumbersDto,
@@ -893,8 +893,8 @@ describe('Build filter', () => {
         ).resolves.toEqual('(("numberField" @> \'10\' OR "numberField" @> \'20\'))')
       })
 
-      it('Should build filter for numbers for empty', () => {
-        expect(
+      it('Should build filter for numbers for empty', async () => {
+        await expect(
           buildFilterQuery(
             {
               numberField: {
@@ -910,8 +910,8 @@ describe('Build filter', () => {
         ).resolves.toEqual('(("numberField" = \'[]\'))')
       })
 
-      it('Should build filter for numbers for empty and numbers', () => {
-        expect(
+      it('Should build filter for numbers for empty and numbers', async () => {
+        await expect(
           buildFilterQuery(
             {
               numberField: {
@@ -932,8 +932,8 @@ describe('Build filter', () => {
   })
 
   describe('Combined filters', () => {
-    it('Should build filter for two conditions using "AND" operator', () => {
-      expect(
+    it('Should build filter for two conditions using "AND" operator', async () => {
+      await expect(
         buildFilterQuery(
           {
             I09: {
@@ -956,8 +956,8 @@ describe('Build filter', () => {
       )
     })
 
-    it('Should build filter for two conditions using "OR" operator', () => {
-      expect(
+    it('Should build filter for two conditions using "OR" operator', async () => {
+      await expect(
         buildFilterQuery(
           {
             I09: {
@@ -978,8 +978,8 @@ describe('Build filter', () => {
       ).resolves.toEqual('(("I09" ILIKE \'to%\') OR ("I09" ILIKE \'%ti\'))')
     })
 
-    it('Should build filter for multiple fields using "AND" operator', () => {
-      expect(
+    it('Should build filter for multiple fields using "AND" operator', async () => {
+      await expect(
         buildFilterQuery(
           {
             I09: {
