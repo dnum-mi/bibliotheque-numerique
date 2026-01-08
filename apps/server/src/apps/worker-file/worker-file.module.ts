@@ -21,7 +21,6 @@ import { FileModule } from '@/modules/files/file.module'
 import { DossierModule } from '@/modules/dossiers/dossier.module'
 import instructionTimeMappingConfig from '@/config/instructionTimeMapping.config'
 import siafHubConfig from '../../config/siaf-hub.config'
-import { RedisModule } from '@/shared/modules/redis/redis.module'
 
 @Module({
   imports: [
@@ -52,7 +51,6 @@ import { RedisModule } from '@/shared/modules/redis/redis.module'
     DsApiModule,
     S3Module,
     DossierModule,
-    RedisModule,
   ],
   controllers: [
   ],

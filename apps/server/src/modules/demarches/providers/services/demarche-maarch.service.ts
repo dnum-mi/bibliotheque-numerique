@@ -170,8 +170,6 @@ export class DemarcheMaarchService {
       if (file.state === eState.queued && file.sourcePath) {
         await this.fileQueue.add(eJobName.UploadMaarchFile, {
           file,
-          importId: file.uuid,
-          totalFiles: allFilesToSync.length,
         } as UploadMaarchFileJobPayload)
       }
     }
