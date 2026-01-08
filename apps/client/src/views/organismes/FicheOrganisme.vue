@@ -10,6 +10,7 @@ import FicheFondation from '@/views/organismes/fondation/FicheFondation.vue'
 import FicheAssociation from '@/views/organismes/association/FicheAssociation.vue'
 import apiClient from '@/api/api-client'
 import { useOrganismeHubStore } from '@/stores/organisme-hub.ts'
+import useToaster from '../../composables/use-toaster'
 
 const props = defineProps<{
   organismeId: string
@@ -44,6 +45,9 @@ const association = computed<IAssociationOutput | null>(() => {
   return organisme.value as IAssociationOutput
 })
 
+const errorMessage = computed(() =>
+  `Impossible de charger la fiche pour cet organisme (${props.organismeId}).`,
+)
 const loadIfNeeded = async () => {
   if (organisme.value) {
     return
@@ -51,19 +55,24 @@ const loadIfNeeded = async () => {
 
   isLoading.value = true
   hasError.value = false
-
-  if (props.organismeType === EOrganismeCategory.fondation) {
-    const fondation = await apiClient.hubGetRnf(props.organismeId)
-    if (!fondation) {
-      hasError.value = true
+  try {
+    if (props.organismeType === EOrganismeCategory.fondation) {
+      const fondation = await apiClient.hubGetRnf(props.organismeId)
+      if (!fondation) {
+        hasError.value = true
+      }
+      organismeHubStore.setOrganisme(fondation, EOrganismeCategory.fondation)
+    } else {
+      const asso = await apiClient.hubGetRna(props.organismeId)
+      if (!asso) {
+        hasError.value = true
+      }
+      organismeHubStore.setOrganisme(asso, EOrganismeCategory.association)
     }
-    organismeHubStore.setOrganisme(fondation, EOrganismeCategory.fondation)
-  } else {
-    const asso = await apiClient.hubGetRna(props.organismeId)
-    if (!asso) {
-      hasError.value = true
-    }
-    organismeHubStore.setOrganisme(asso, EOrganismeCategory.association)
+  } catch (e) {
+    console.warn(e)
+    useToaster().addErrorMessage(errorMessage.value)
+    hasError.value = true
   }
 
   isLoading.value = false
@@ -90,7 +99,7 @@ onMounted(() => {
       class="fr-my-4w py-8 text-center"
     >
       <p class="fr-text--md">
-        Impossible de charger la fiche pour cet organisme.
+        {{ errorMessage }}
       </p>
     </div>
 
