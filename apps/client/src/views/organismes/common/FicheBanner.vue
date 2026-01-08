@@ -74,8 +74,4 @@ span.FE {
 span.FRUP {
   color: var(--green-tilleul-verveine-975-75);
 }
-
-.Dissoute {
-  color: red;
-}
 </style>

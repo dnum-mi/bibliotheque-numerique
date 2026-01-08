@@ -391,3 +391,7 @@ body,
 .shepherd-footer .shepherd-button:not(:last-child) {
   margin-right: 0.75rem;
 }
+
+.Dissoute {
+  color: red;
+}

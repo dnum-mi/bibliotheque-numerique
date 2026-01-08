@@ -2,7 +2,7 @@
 import type { IAssociationOutput } from '@biblio-num/shared'
 import { EOrganismeCategory } from '@biblio-num/shared'
 
-import { getPrefecture } from '@/utils'
+import { getDepartmentCodeFromCodeInsee, getPrefecture } from '@/utils'
 import type { tInfoIdentity } from '../../common/info-tab/InfoSectionIdentity.vue'
 import InfoSectionIdentity from '../../common/info-tab/InfoSectionIdentity.vue'
 import type { tInfoContact } from '../../common/info-tab/InfoSectionContact.vue'
@@ -29,11 +29,14 @@ const identity = computed<tInfoIdentity>(() => ({
   state: props.association.state,
   serviceInstructeur: serviceInstructeur.value || 'Pas de service instructeur',
   socialObject: props.association.socialObject,
-  department: props.association.department,
+  department: props.association.department
+    || props.association.address.dsAddress?.departmentCode
+    || getDepartmentCodeFromCodeInsee(props.association.address.rnaAddress?.rnaAddress?.codeinsee),
   dueDate: props.association.dueDate,
   files: props.association.files,
   id: props.association.id,
   type: EOrganismeCategory.association,
+  events: props.association.events,
 }))
 
 const contact = computed<tInfoContact>(() => ({

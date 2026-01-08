@@ -30,7 +30,7 @@ export interface IGouvAddress {
 }
 
 export interface IRnaAddress {
-  address: IRnaAdrsAddress
+  rnaAddress: IRnaAdrsAddress
   gouvAddress: IGouvAddress
 }
 //#endregion

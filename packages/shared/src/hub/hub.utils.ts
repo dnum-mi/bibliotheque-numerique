@@ -16,10 +16,10 @@ export const fromAssociationToBasicOrganisme = (source: IAssociationOutput): IBa
   state: source.state as organismeStateArrayKey,
   title: source.title,
   city: source.address?.dsAddress?.cityName
-    || source.address?.rnaAddress?.address?.libcommune
+    || source.address?.rnaAddress?.rnaAddress?.libcommune
     || "",
   postalCode: source.address?.dsAddress?.postalCode
-    || source.address?.rnaAddress?.address?.codepostal
+    || source.address?.rnaAddress?.rnaAddress?.codepostal
     || "",
   type: "ASSO",
 })

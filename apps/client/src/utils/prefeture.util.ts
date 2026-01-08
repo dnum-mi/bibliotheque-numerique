@@ -16,3 +16,13 @@ export const getPrefecture = (prefecture: PrefectureKey | string | null | undefi
   }
   return prefecture
 }
+
+export const getDepartmentCodeFromCodeInsee = (codeinsee: string | null | undefined): string => {
+  if (!codeinsee) {
+    return ''
+  }
+  if (codeinsee.startsWith('97') || codeinsee.startsWith('98')) {
+    return codeinsee.substring(0, 3)
+  }
+  return codeinsee.substring(0, 2)
+}

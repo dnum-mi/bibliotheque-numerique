@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { dateToStringFr, getPrefecture } from '@/utils'
 import type {
+  IDsEventItem,
   IFile,
+  IRafEvent,
+  IRnaEventOutput,
   OrganismeStatusKey,
   organismeCategoryKey,
 } from '@biblio-num/shared'
@@ -17,6 +20,7 @@ export type tInfoIdentity = {
   files: IFile[]
   id: string,
   type: organismeCategoryKey,
+  events: (IRafEvent | IDsEventItem | IRnaEventOutput)[],
 }
 
 const props = defineProps<{
@@ -35,6 +39,16 @@ const lastStatus = computed(() => {
     return null
   }
   return file
+})
+
+const lastJoPublishedAt = computed(() => {
+  const lastEvent = props.identity?.events?.filter(e => !!e.joPublishedAt)
+    .sort((a, b) => {
+      const aDate = new Date(a.joPublishedAt)
+      const bDate = new Date(b.joPublishedAt)
+      return bDate.getTime() - aDate.getTime()
+    })[0]
+  return lastEvent?.joPublishedAt
 })
 </script>
 
@@ -60,7 +74,10 @@ const lastStatus = computed(() => {
           <dt class="bn-fiche-sub-title--label uppercase">
             État
           </dt>
-          <dd class="bn-fiche-sub-title--text md:col-span-3">
+          <dd
+            class="bn-fiche-sub-title--text md:col-span-3"
+            :class="identity.state"
+          >
             {{ identity.state }}
           </dd>
         </div>
@@ -70,8 +87,10 @@ const lastStatus = computed(() => {
             Publiée au JOAFE
           </dt>
           <!-- TODO: A compléter -->
-          <dd class="bn-fiche-sub-title--text md:col-span-3">
-            Non renseigné
+          <dd
+            class="bn-fiche-sub-title--text md:col-span-3"
+          >
+            {{ dateToStringFr(lastJoPublishedAt) || 'Non renseigné' }}
           </dd>
         </div>
 
