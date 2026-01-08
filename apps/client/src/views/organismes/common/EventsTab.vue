@@ -168,7 +168,7 @@ const transformDataBefore = (str: string | undefined): string => {
                         JOAFE
                       </p>
                       <p class="fr-text--sm fr-mb-1w">
-                        {{ dateToStringFr((event as IDsEventItem).publishedJOAFAt) || 'N/A' }}
+                        {{ dateToStringFr((event as IDsEventItem).joPublishedAt) || 'N/A' }}
                       </p>
                     </div>
                   </div>

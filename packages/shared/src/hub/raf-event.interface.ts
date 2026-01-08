@@ -2,7 +2,7 @@ export interface IRafEvent {
   id: string
   type: string
   createdAt: Date
-  publishedJOAFAt: Date | null
+  joPublishedAt: Date | null
   demarcheName: string
   demarcheNumber?: number
   dossierNumber?: number

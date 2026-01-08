@@ -12,7 +12,7 @@ export const eventsMock = (id): IDsEvent<IFoundationOutput> => ({
       dossierNumber: faker.number.int({ min: 0, max: 10 }),
       isDissolution: faker.datatype.boolean(),
       demarcheNumber: faker.number.int({ min: 0, max: 10 }),
-      publishedJOAFAt: null,
+      joPublishedAt: null,
       dossierInstructeurGroup: faker.lorem.words({ min: 1, max: 5 }),
     },
   ],
