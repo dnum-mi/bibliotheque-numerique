@@ -9,7 +9,7 @@ import { FindOneOptions, In, Not, Repository } from 'typeorm'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { InjectRepository } from '@nestjs/typeorm'
-import { JwtService } from '@nestjs/jwt'
+import { JwtService, JwtSignOptions } from '@nestjs/jwt'
 import { ConfigService } from '@nestjs/config'
 import { SendMailService } from '../../sendmail/sendmail.service'
 
@@ -220,7 +220,7 @@ export class UserService
     jwtForUrl: string
     duration: string
   } {
-    const jwt = this.jwtService.sign(payload)
+    const jwt = this.jwtService.sign(payload, { expiresIn } as JwtSignOptions)
     // jwt does not go natively in url. We had to transform it in base64
     const jwtForUrl = Buffer.from(jwt).toString('base64url')
     const appUrl = this.configService.get('appFrontUrl')
