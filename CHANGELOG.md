@@ -1,5 +1,17 @@
 # Changelog
 
+## [4.1.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v4.0.1...v4.1.0) (2026-01-09)
+
+
+### Features
+
+* **maarch:** implement Maarch files pj upload functionality and enhance S3 integration ([b6c4397](https://github.com/dnum-mi/bibliotheque_numerique/commit/b6c4397f731b6925d75d943d1f9d74d58ddd9101))
+
+
+### Bug Fixes
+
+* appliquer l'option expiresIn lors de la signature du jwt token ([cbc7c6a](https://github.com/dnum-mi/bibliotheque_numerique/commit/cbc7c6a09819d01e1bd8aea69856a59b575debfb))
+
 ## [4.0.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v4.0.0...v4.0.1) (2025-12-19)
 
 
