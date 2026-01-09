@@ -54,18 +54,19 @@ const useToaster = (defaultTimeout = 10000) => {
     message.timeout ??= defaultTimeout
     messages.push({ ...message, description: `${message.description}` })
     timeouts[message.id] = window.setTimeout(() => removeMessage(message.id as string), message.timeout)
+    return message.id
   }
 
   function addSuccessMessage (message: Message | string) {
     const msg = typeof message === 'string' ? { description: message } : message
-    addMessage({
+    return addMessage({
       ...msg,
       type: 'success',
     })
   }
   function addErrorMessage (message: Message | string) {
     const msg = typeof message === 'string' ? { description: message } : message
-    addMessage({
+    return addMessage({
       ...msg,
       type: 'error',
     })

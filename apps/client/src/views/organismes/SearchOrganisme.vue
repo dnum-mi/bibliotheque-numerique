@@ -1,28 +1,28 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import {
-  EOrganismeCategory,
-} from '@biblio-num/shared'
 import type {
   IBasicOrganisme,
   ILastConsultedOrganisme,
-  organismeCategoryKey,
 } from '@biblio-num/shared'
 import apiClient from '@/api/api-client.ts'
 import useToaster from '@/composables/use-toaster.ts'
 import { routeNames } from '@/router/route-names.ts'
-import { useOrganismeHubStore } from '@/stores/organisme-hub.ts'
 
 const toaster = useToaster()
 const router = useRouter()
-const organismeHubStore = useOrganismeHubStore()
 
 // DsfrTable is ($*&#% and won't take all of width. So we force title to be "too big" with spaces, so that the table take entire available width.
 const LOTS_OF_SPACE = '\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0'
 
 //#region 📍------ État général ------ 📍
-const headers = ['Numéro RNA / RNF', 'Type', 'Titre', 'État', 'Code postal - Ville']
+const headers = [
+  'Numéro RNA / RNF',
+  'Type',
+  'Titre',
+  'État',
+  'Code postal - Ville',
+]
 
 const searchMode = ref<'fulltext' | 'id'>('id')
 
@@ -101,14 +101,14 @@ const onIdSearch = async () => {
       toaster.addErrorMessage('Merci de compléter tous les champs du numéro RNF.')
       return
     }
-    await navigateToDetails(fullRnf.value, EOrganismeCategory.fondation)
+    await navigateToDetails(fullRnf.value)
   } else {
     const id = rnaId.value.trim()
     if (!id) {
       toaster.addErrorMessage('Merci de saisir un numéro RNA.')
       return
     }
-    await navigateToDetails(id, EOrganismeCategory.association)
+    await navigateToDetails(id)
   }
 }
 //#endregion
@@ -196,38 +196,14 @@ const setModeId = () => {
 //#endregion
 
 //#region 📍------ Navigation fiche organisme ------ 📍
-const navigateToDetails = async (id: string, entityType: organismeCategoryKey) => {
-  const isFondation = entityType === EOrganismeCategory.fondation
-
+const navigateToDetails = async (id: string) => {
   isLoading.value = true
-  hasIdError.value = false
-  idErrorValue.value = ''
 
-  try {
-    const organisme = isFondation
-      ? await apiClient.hubGetRnf(id)
-      : await apiClient.hubGetRna(id)
-
-    if (!organisme) {
-      throw new Error('Not found')
-    }
-
-    organismeHubStore.setOrganisme(
-      organisme,
-      isFondation ? EOrganismeCategory.fondation : EOrganismeCategory.association,
-    )
-
-    await router.push({
-      name: routeNames.FICHE_ORGANISME,
-      params: { id },
-    })
-  } catch {
-    hasIdError.value = true
-    idErrorValue.value = id
-    toaster.addErrorMessage('Impossible de trouver cet organisme.')
-  } finally {
-    isLoading.value = false
-  }
+  await router.push({
+    name: routeNames.FICHE_ORGANISME,
+    params: { id },
+  })
+  isLoading.value = false
 }
 //#endregion
 
@@ -279,7 +255,7 @@ const rows = computed(() => {
     return {
       rowAttrs: {
         class: 'bn-search-row',
-        onClick: () => navigateToDetails(result.id, result.type === 'ASSO' ? EOrganismeCategory.association : EOrganismeCategory.fondation),
+        onClick: () => navigateToDetails(result.id),
       },
       // on laisse le DSFR gérer le rendu, mais la ligne entière sera cliquable côté template
       rowData: [

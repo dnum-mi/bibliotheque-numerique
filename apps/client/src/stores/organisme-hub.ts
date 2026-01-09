@@ -38,26 +38,30 @@ export const useOrganismeHubStore = defineStore('organismeHub', () => {
     return null
   }
 
-  const setCurrentAssociationByRef = async (organismeRef: string) => {
-    const organisme = await apiClient.hubGetRna(organismeRef).then()
-    if (organisme) {
-      currentOrganisme.value = organisme
-      currentType.value = EOrganismeCategory.association
+  const setCurrentAssociationByRef = async (organismeRef: string): Promise<boolean> => {
+    const organisme = await apiClient.hubGetRna(organismeRef)
+    if (!organisme) {
+      return false
     }
+    currentOrganisme.value = organisme
+    currentType.value = EOrganismeCategory.association
+    return true
   }
 
-  const setCurrentFondationByRef = async (organismeRef: string) => {
-    const organisme = await apiClient.hubGetRnf(organismeRef).then()
-    if (organisme) {
-      currentOrganisme.value = organisme
-      currentType.value = EOrganismeCategory.association
+  const setCurrentFondationByRef = async (organismeRef: string): Promise<boolean> => {
+    const organisme = await apiClient.hubGetRnf(organismeRef)
+    if (!organisme) {
+      return false
     }
+    currentOrganisme.value = organisme
+    currentType.value = EOrganismeCategory.association
+    return true
   }
 
-  const setCurrentOrganismeByRef = async (organismeRef: string) => {
+  const setCurrentOrganismeByRef = async (organismeRef: string): Promise<boolean> => {
     const type = getTypeOrganismeFromRef(organismeRef)
     if (!type) {
-      return
+      return false
     }
     return type === EOrganismeCategory.association
       ? setCurrentAssociationByRef(organismeRef)
