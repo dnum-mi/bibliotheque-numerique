@@ -5,7 +5,6 @@ import {
   ComputeFeExcelJobPayload, DeleteS3FilesJobPayload,
   UploadDsFileJobPayload,
   UploadMaarchFileJobPayload,
-  UploadRnaFileJobPayload,
 } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
 import { Job, Queue } from 'bull'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
@@ -106,31 +105,6 @@ export class FileProcessor {
         } as ComputeFeExcelJobPayload)
       }
       job.progress(100)
-    })
-  }
-
-  @Process(eJobName.UploadRnaFile)
-  async uploadRnaFile(job: Job<UploadRnaFileJobPayload>): Promise<void> {
-    await this.als.run({ job }, async () => {
-      this.logger.verbose('uploadRnaFile processor')
-      await this.fileService.updateState(job.data.file.id, eState.uploading)
-      const state = await this.s3Service
-        .downloadAndUploadToS3(job.data.rnaUrl, job.data.file.uuid)
-        .then(async (byteSize) => {
-          await this.fileService.repository.update(
-            { id: job.data.file.id },
-            { byteSize },
-          )
-          this.logger.log(
-            `File ${job.data.file.uuid} uploaded to S3 (${job.data.file.label}) from RNA`,
-          )
-          return eState.uploaded
-        })
-        .catch(async (e) => {
-          this.logger.error(e)
-          return eState.failed
-        })
-      await this.fileService.updateState(job.data.file.id, state)
     })
   }
 

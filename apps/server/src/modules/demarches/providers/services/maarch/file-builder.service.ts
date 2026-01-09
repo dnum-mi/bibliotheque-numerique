@@ -20,8 +20,8 @@ import * as path from 'node:path'
 
 @Injectable()
 export class FileBuilderService {
-  private readonly FOLDER_COURRIER = 'manual'
-  private readonly FOLDER_PJ = 'manual_attachements'
+  private readonly FOLDER_COURRIER: string
+  private readonly FOLDER_PJ: string
   private readonly S3_ROOT_PATH: string
   private readonly TAG_MAPPINGS = {
     statut: eFileTag.status,
@@ -45,7 +45,9 @@ export class FileBuilderService {
     private readonly configService: ConfigService,
   ) {
     this.logger.setContext(this.constructor.name)
-    this.S3_ROOT_PATH = this.configService.get('file.maarchImportRootPath')!
+    this.S3_ROOT_PATH = this.configService.get('file.maarchImportRootPath')
+    this.FOLDER_COURRIER = this.configService.get('file.maarchImportFolderCourrier')
+    this.FOLDER_PJ = this.configService.get('file.maarchImportFolderPieceJointe')
   }
 
   createFileEntities(data: DemandeAggregee): File[] {

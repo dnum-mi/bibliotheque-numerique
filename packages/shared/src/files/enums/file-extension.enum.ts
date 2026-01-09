@@ -10,7 +10,6 @@ export const fileExtensions = [
   'xls',
   'doc',
   'docx',
-  'html',
 ] as const
 
 export type FileExtensionKey = (typeof fileExtensions)[number]

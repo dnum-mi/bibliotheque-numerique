@@ -28,7 +28,6 @@ import {
   NumbersFilterConditionDto,
 } from '@/shared/pagination/filters/numbers.filter.dto'
 import { FilterStringsDto, StringsFilterConditionDto } from '../filters/strings.filter.dto'
-import { plainToInstance } from 'class-transformer'
 
 type filterFactory = (
   key: string,
@@ -48,38 +47,32 @@ const _isFilterConsistent = async (
   typeHash: Record<string, FieldTypeKeys>,
 ): Promise<boolean> => {
   const __common = async (Dto, key: string): Promise<boolean> => {
-    const obj = plainToInstance(Dto, filters[key]) as object
-    const errors = await validate(obj)
-    return errors.length === 0
+    const obj = Object.assign(new Dto(), filters[key])
+    return validate(obj).then((errors) => !errors.length)
   }
-  if (!filters || Object.keys(filters).length === 0) {
-    return true
-  }
-
-  const results = await Promise.all(
-    Object.keys(filters).map(async (key) => {
-      const type = typeHash[key]
-      switch (type) {
-      case FieldType.string:
-        return __common(FilterTextDto, key)
-      case FieldType.number:
-        return __common(FilterNumberDto, key)
-      case FieldType.boolean:
-      case FieldType.enum:
-        return __common(FilterEnumDto, key)
-      case FieldType.date:
-        return __common(FilterDateDto, key)
-      case FieldType.numbers:
-        return __common(FilterNumbersDto, key)
-      case FieldType.strings:
-        return __common(FilterStringsDto, key)
-      default:
-        return false
-      }
-    }),
-  )
-
-  return results.every((isValid) => isValid === true)
+  return filters
+    ? Promise.all(
+      Object.keys(filters).map(async (key) => {
+        switch (typeHash[key]) {
+        case FieldType.string:
+          return __common(FilterTextDto, key)
+        case FieldType.number:
+          return __common(FilterNumberDto, key)
+        case FieldType.boolean:
+        case FieldType.enum:
+          return __common(FilterEnumDto, key)
+        case FieldType.date:
+          return __common(FilterDateDto, key)
+        case FieldType.numbers:
+          return __common(FilterNumbersDto, key)
+        case FieldType.strings:
+          return __common(FilterStringsDto, key)
+        default:
+          return false
+        }
+      }),
+    ).then((tab) => tab.reduce((a, b) => a && b))
+    : true
 }
 
 const _manualFilterValueEscapingMechanism = (str: string): string => {

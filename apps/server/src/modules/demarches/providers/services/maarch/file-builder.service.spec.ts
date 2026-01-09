@@ -14,6 +14,8 @@ describe('FileBuilderService', () => {
   let configService: ConfigService
 
   const MOCK_ROOT_PATH = 'import-maarch-pj'
+  const MOCK_COURRIER_PATH = 'manual'
+  const MOCK_PJ_PATH = 'manual_attachements'
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -27,10 +29,16 @@ describe('FileBuilderService', () => {
           provide: ConfigService,
           useValue: {
             get: jest.fn((key: string) => {
-              if (key === 'file.maarchImportRootPath') {
-                return MOCK_ROOT_PATH
+              switch (key) {
+                case 'file.maarchImportFolderPieceJointe':
+                  return MOCK_PJ_PATH
+                case 'file.maarchImportFolderCourrier':
+                  return MOCK_COURRIER_PATH
+                case 'file.maarchImportRootPath':
+                  return MOCK_ROOT_PATH
+                default:
+                  return null
               }
-              return null
             }),
           },
         }

@@ -41,7 +41,6 @@ export const extractMimeType = (label: string): FileExtensionKey => {
     docx: eFileExtension.docx,
     xls: eFileExtension.xls,
     xlsx: eFileExtension.xlsx,
-    html: eFileExtension.html,
   }
 
   return extensionMap[extensionWithoutDot] || eFileExtension.unknown
