@@ -2,7 +2,6 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import {
-  addLuhnToRnf,
   EOrganismeCategory,
 } from '@biblio-num/shared'
 import type {
@@ -55,10 +54,10 @@ const rnfLuhnDirty = ref(false)
 const rnaId = ref('W')
 
 // refs pour auto-focus
-const rnfDeptRef = ref<HTMLInputElement | null>(null)
-const rnfTypeSelectRef = ref<HTMLSelectElement | null>(null)
-const rnfNumberRef = ref<HTMLInputElement | null>(null)
-const rnfLuhnRef = ref<HTMLInputElement | null>(null)
+const rnfDeptRef = useTemplateRef('rnfDeptRef')
+const rnfTypeSelectRef = useTemplateRef('rnfTypeSelectRef')
+const rnfNumberRef = useTemplateRef('rnfNumberRef')
+const rnfLuhnRef = useTemplateRef('rnfLuhnRef')
 
 // RNF complet (affichage + utilisation)
 const fullRnf = computed(() => {
@@ -66,19 +65,6 @@ const fullRnf = computed(() => {
     return ''
   }
   const base = `${rnfDept.value}-${rnfType.value}-${rnfNumber.value}`
-
-  // si l'utilisateur n'a pas touché le Luhn, on recalcule à partir de la base
-  if (!rnfLuhnDirty.value || !rnfLuhn.value) {
-    try {
-      const withLuhn = addLuhnToRnf(base)
-      const luhnPart = withLuhn.split('-').pop() ?? ''
-      // TODO: A modifier
-      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-      rnfLuhn.value = luhnPart
-    } catch {
-      // si erreur de calcul, on ne fait rien
-    }
-  }
 
   return rnfLuhn.value ? `${base}-${rnfLuhn.value}` : base
 })
