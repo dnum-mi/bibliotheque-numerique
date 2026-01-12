@@ -259,7 +259,7 @@ describe('InstructionTimesService', () => {
         expect.objectContaining({
             sourceId: fixFieldInstructionTimeDelay.id,
             dossierId: 1,
-            numberValue: 0,
+            numberValue: "0",
             label: fixFieldInstructionTimeDelay.originalLabel,
             type: fixFieldInstructionTimeDelay.type,
             fieldSource: fixFieldInstructionTimeDelay.source,
@@ -1055,7 +1055,7 @@ describe('InstructionTimesService', () => {
     expect(results[fixFieldInstructionTimeDelay.id]).toMatchObject({
       sourceId: fixFieldInstructionTimeDelay.id,
       dossierId: dataInstructionTime.dossier.id,
-      numberValue: 60,
+      numberValue: "60",
       label: fixFieldInstructionTimeDelay.originalLabel,
       type: fixFieldInstructionTimeDelay.type,
       fieldSource: fixFieldInstructionTimeDelay.source,
@@ -1133,7 +1133,7 @@ describe('InstructionTimesService', () => {
     expect(results[fixFieldInstructionTimeDelay.id]).toMatchObject({
       sourceId: fixFieldInstructionTimeDelay.id,
       dossierId: dataInstructionTime.dossier.id,
-      numberValue: 20,
+      numberValue: '20',
       label: fixFieldInstructionTimeDelay.originalLabel,
       type: fixFieldInstructionTimeDelay.type,
       fieldSource: fixFieldInstructionTimeDelay.source,
@@ -1174,7 +1174,7 @@ describe('InstructionTimesService', () => {
     expect(results[fixFieldInstructionTimeDelay.id]).toMatchObject({
       sourceId: fixFieldInstructionTimeDelay.id,
       dossierId: dataInstructionTime.dossier.id,
-      numberValue: 20,
+      numberValue: '20',
       label: fixFieldInstructionTimeDelay.originalLabel,
       type: fixFieldInstructionTimeDelay.type,
       fieldSource: fixFieldInstructionTimeDelay.source,
@@ -1215,7 +1215,7 @@ describe('InstructionTimesService', () => {
     expect(results[fixFieldInstructionTimeDelay.id]).toMatchObject({
       sourceId: fixFieldInstructionTimeDelay.id,
       dossierId: dataInstructionTime.dossier.id,
-      numberValue: 0,
+      numberValue: "0",
       label: fixFieldInstructionTimeDelay.originalLabel,
       type: fixFieldInstructionTimeDelay.type,
       fieldSource: fixFieldInstructionTimeDelay.source,

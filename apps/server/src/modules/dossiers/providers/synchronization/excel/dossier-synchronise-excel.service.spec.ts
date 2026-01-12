@@ -23,6 +23,7 @@ import { XlsxService } from '@/shared/modules/xlsx/xlsx.service'
 import { FormatFunctionRef, eBnConfiguration } from '@biblio-num/shared'
 import { BnConfigurationService } from '@/shared/modules/bn-configurations/providers/bn-configuration.service'
 
+
 const AMOUNT_CHAMP_ID = 'Q2hhbXAtNTg='
 
 const fakeExcelDateFundingNumber = 45288
@@ -32,11 +33,13 @@ const fakeExcelNativeContry = 'AUTRICHE'
 const fakeExcelNatureFunding = 'RP'
 const fakeExcelCharacterFunding = 'D'
 const fakeExcelPaymentMethod = 'CB'
-const fakeExcelAmount = 1000
+const fakeExcelAmount = "1000"
 
-const fakeChampTotalAmount = 9800
-const fakeExcelTotalAmount = fakeExcelAmount * 2
-const fakeDossierTotalAmount = fakeChampTotalAmount + fakeExcelTotalAmount
+const fakeChampTotalAmount = "9800"
+const fakeExcelTotalAmount = Number(fakeExcelAmount) * 2;
+const fakeDossierTotalAmount = Number(fakeChampTotalAmount) + fakeExcelTotalAmount;
+
+
 
 const fakeExcelData = [
   [
@@ -431,7 +434,7 @@ const expectedAmountFixFieldsDates = [
     fieldSource: fixFieldDossierTotalAmount.source,
     stringValue: fakeDossierTotalAmount.toString(),
     dateValue: null,
-    numberValue: fakeDossierTotalAmount,
+    numberValue: fakeDossierTotalAmount.toFixed(2).toString(),
     dsChampType: null,
     dossierId: 42,
     parentRowIndex: null,
@@ -445,9 +448,9 @@ const expectedAmountFixFieldsDates = [
     formatFunctionRef: null,
     type: fixFieldChampsTotalAmount.type,
     fieldSource: fixFieldChampsTotalAmount.source,
-    stringValue: fakeChampTotalAmount.toString(),
+    stringValue: fakeChampTotalAmount,
     dateValue: null,
-    numberValue: fakeChampTotalAmount,
+    numberValue: Number(fakeChampTotalAmount).toFixed(2).toString(),
     dsChampType: null,
     dossierId: 42,
     parentRowIndex: null,
@@ -463,7 +466,7 @@ const expectedAmountFixFieldsDates = [
     fieldSource: fixFieldExcelTotalAmount.source,
     stringValue: fakeExcelTotalAmount.toString(),
     dateValue: null,
-    numberValue: fakeExcelTotalAmount,
+    numberValue: fakeExcelTotalAmount.toFixed(2).toString(),
     dsChampType: null,
     dossierId: 42,
     parentRowIndex: null,
@@ -480,9 +483,9 @@ const expectedAmountWithoutExcelFixFieldsDates = [
     formatFunctionRef: null,
     type: fixFieldDossierTotalAmount.type,
     fieldSource: fixFieldDossierTotalAmount.source,
-    stringValue: fakeChampTotalAmount.toString(),
+    stringValue: fakeChampTotalAmount,
     dateValue: null,
-    numberValue: fakeChampTotalAmount,
+    numberValue: Number(fakeChampTotalAmount).toFixed(2).toString(),
     dsChampType: null,
     dossierId: 42,
     parentRowIndex: null,
@@ -496,9 +499,9 @@ const expectedAmountWithoutExcelFixFieldsDates = [
     formatFunctionRef: null,
     type: fixFieldChampsTotalAmount.type,
     fieldSource: fixFieldChampsTotalAmount.source,
-    stringValue: fakeChampTotalAmount.toString(),
+    stringValue: fakeChampTotalAmount,
     dateValue: null,
-    numberValue: fakeChampTotalAmount,
+    numberValue: Number(fakeChampTotalAmount).toFixed(2).toString(),
     dsChampType: null,
     dossierId: 42,
     parentRowIndex: null,
@@ -514,7 +517,7 @@ const expectedAmountWithoutExcelFixFieldsDates = [
     fieldSource: fixFieldExcelTotalAmount.source,
     stringValue: '0',
     dateValue: null,
-    numberValue: 0,
+    numberValue: "0.00",
     dsChampType: null,
     dossierId: 42,
     parentRowIndex: null,
@@ -533,7 +536,7 @@ const expectedAmountWithoutChampsFixFieldsDates = [
     fieldSource: fixFieldDossierTotalAmount.source,
     stringValue: fakeExcelTotalAmount.toString(),
     dateValue: null,
-    numberValue: fakeExcelTotalAmount,
+    numberValue: fakeExcelTotalAmount.toFixed(2).toString(),
     dsChampType: null,
     dossierId: 42,
     parentRowIndex: null,
@@ -549,7 +552,7 @@ const expectedAmountWithoutChampsFixFieldsDates = [
     fieldSource: fixFieldChampsTotalAmount.source,
     stringValue: '0',
     dateValue: null,
-    numberValue: 0,
+    numberValue: '0.00',
     dsChampType: null,
     dossierId: 42,
     parentRowIndex: null,
@@ -565,7 +568,7 @@ const expectedAmountWithoutChampsFixFieldsDates = [
     fieldSource: fixFieldExcelTotalAmount.source,
     stringValue: fakeExcelTotalAmount.toString(),
     dateValue: null,
-    numberValue: fakeExcelTotalAmount,
+    numberValue: fakeExcelTotalAmount.toFixed(2).toString(),
     dsChampType: null,
     dossierId: 42,
     parentRowIndex: null,
@@ -773,7 +776,7 @@ describe('DossierSyncroniseExcel', () => {
   it('Should create total amount fields', async () => {
     jest
       .spyOn(service, '_sumAmountFields')
-      .mockResolvedValue({ sum: fakeChampTotalAmount })
+      .mockResolvedValue({ sum: parseFloat(fakeChampTotalAmount) })
     const fields = await service.createFieldsAmounts(
       42,
       expectedExcelFixFieldsDates as unknown as Field,
@@ -784,7 +787,7 @@ describe('DossierSyncroniseExcel', () => {
   it('Should create total amount without excel fields', async () => {
     jest
       .spyOn(service, '_sumAmountFields')
-      .mockResolvedValue({ sum: fakeChampTotalAmount })
+      .mockResolvedValue({ sum: parseFloat(fakeChampTotalAmount) })
     const result = await service.createFieldsAmounts(42, null)
     expect(result).toMatchObject(expectedAmountWithoutExcelFixFieldsDates)
   })

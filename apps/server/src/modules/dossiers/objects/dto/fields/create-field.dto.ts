@@ -8,6 +8,10 @@ export class CreateFieldDto extends OmitType(Field, [
   'updatedAt',
   'children',
   'parentId',
+  'numberValue',
 ] as const) {
   children?: CreateFieldDto[] | null
+
+  // Redéfinition explicite en number
+  numberValue?: number | null
 }

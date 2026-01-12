@@ -44,9 +44,16 @@ const commonFileWithYearLabelFactory = (
 ): string => {
   let year: number
   if (eFieldCode[dateCode] && fh[dateCode]) {
-    year = fh[dateCode].numberValue ?? parseInt(fh[dateCode].stringValue)
+    if (
+      fh[dateCode].numberValue !== null &&
+      fh[dateCode].numberValue !== undefined
+    ) {
+      year = parseInt(fh[dateCode].numberValue, 10)
+    } else {
+      year = parseInt(fh[dateCode].stringValue, 10)
+    }
   }
-  return `${year || noDatePlaceHolder}_${suffix}`
+  return `${year ?? noDatePlaceHolder}_${suffix}`
 }
 
 export const dCodeToLabelsAndTag: Record<FileFieldCodeKey, TagAndLabelFactory> =
@@ -61,14 +68,18 @@ export const dCodeToLabelsAndTag: Record<FileFieldCodeKey, TagAndLabelFactory> =
     'file-initial-status': {
       tag: eFileTag.status,
       labelFactory: (fh, d) => {
-        const date = d.dateTraitement ? formatDate(d.dateTraitement) : noDatePlaceHolder
+        const date = d.dateTraitement
+          ? formatDate(d.dateTraitement)
+          : noDatePlaceHolder
         return `${date}_Statuts initiaux`
       },
     },
     'file-extended-status': {
       tag: eFileTag.status,
       labelFactory: (fh, d) => {
-        const date = d.dateTraitement ? formatDate(d.dateTraitement) : noDatePlaceHolder
+        const date = d.dateTraitement
+          ? formatDate(d.dateTraitement)
+          : noDatePlaceHolder
         return `${date}_Statuts prorogés`
       },
     },
@@ -138,7 +149,7 @@ export const dCodeToLabelsAndTag: Record<FileFieldCodeKey, TagAndLabelFactory> =
         return commonFileWithYearLabelFactory(
           fh,
           eFieldCode['account-year'],
-          'Compte d\'emploi des ressources collectées auprès du public',
+          "Compte d'emploi des ressources collectées auprès du public",
         )
       },
     },
@@ -168,7 +179,7 @@ export const dCodeToLabelsAndTag: Record<FileFieldCodeKey, TagAndLabelFactory> =
         return commonFileWithYearLabelFactory(
           fh,
           eFieldCode['account-year'],
-          'Rapport d\'activité',
+          "Rapport d'activité",
         )
       },
     },

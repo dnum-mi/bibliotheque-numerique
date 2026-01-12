@@ -141,7 +141,7 @@ export class InstructionTimesService extends BaseEntityService<InstructionTime> 
         this.fieldService.deleteAndSave({
           sourceId: fixFieldInstructionTimeDelay.id,
           dossierId: dossier.id,
-          numberValue: value,
+          numberValue: value?.toString() ?? null,
           label: fixFieldInstructionTimeDelay.originalLabel,
           type: fixFieldInstructionTimeDelay.type,
           fieldSource: fixFieldInstructionTimeDelay.source,

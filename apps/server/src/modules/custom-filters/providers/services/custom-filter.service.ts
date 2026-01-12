@@ -32,12 +32,23 @@ export class CustomFilterService extends BaseEntityService<CustomFilter> {
     result: DossierSearchOutputDto | FieldSearchOutputDto,
   ): ITotal[] {
     const __add = (a: number, b: number): number => a + b
+
+    const __toNumber = (val: unknown): number => {
+      if (val === null || val === undefined) return 0
+      if (typeof val === 'number') return val
+      if (typeof val === 'string') {
+        const parsed = parseFloat(val)
+        return isNaN(parsed) ? 0 : parsed
+      }
+      return 0
+    }
+
     return [
       {
         label: customFilter.groupByDossier
           ? 'Total des dossiers'
           : 'Total des champs',
-        total: result.total,
+        total: __toNumber(result.total),
       },
     ].concat(
       customFilter.totals?.map((totalKey) => ({
@@ -45,7 +56,7 @@ export class CustomFilterService extends BaseEntityService<CustomFilter> {
         total: result.data
           .map((element) => {
             const number = element?.[totalKey] || 0
-            return number instanceof Array ? number.reduce(__add, 0) : number
+            return number instanceof Array ? number.map(__toNumber).reduce(__add, 0) : __toNumber(number)
           })
           .reduce(__add, 0),
       })) || [],

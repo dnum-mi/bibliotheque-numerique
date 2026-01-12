@@ -63,7 +63,7 @@ describe('FieldBuilderService', () => {
       const result = service.createSimpleField(mapping, data)
 
       expect(result?.type).toBe(FieldType.number)
-      expect(result?.numberValue).toBe(42.5)
+      expect(result?.numberValue).toBe('42.5')
       expect(result?.stringValue).toBe('42.5')
     })
 
@@ -133,7 +133,7 @@ describe('FieldBuilderService', () => {
       const result = service.createSimpleField(mapping, data)
 
       expect(result).not.toBeNull()
-      expect(result?.numberValue).toBe(0)
+      expect(result?.numberValue).toBe('0')
       expect(result?.stringValue).toBe('0')
     })
 
@@ -196,14 +196,14 @@ describe('FieldBuilderService', () => {
       )
       expect(firstRowChildren).toHaveLength(2)
       expect(firstRowChildren[0].stringValue).toBe('doc1.pdf')
-      expect(firstRowChildren[1].numberValue).toBe(1024)
+      expect(firstRowChildren[1].numberValue).toBe('1024')
 
       const secondRowChildren = result!.filter(
         (f) => f.parentRowIndex === 1 && f.parent,
       )
       expect(secondRowChildren).toHaveLength(2)
       expect(secondRowChildren[0].stringValue).toBe('doc2.pdf')
-      expect(secondRowChildren[1].numberValue).toBe(2048)
+      expect(secondRowChildren[1].numberValue).toBe('2048')
     })
 
     it('should return null for empty array', () => {

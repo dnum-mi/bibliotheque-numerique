@@ -56,17 +56,27 @@ export class DossierSynchroniseExcelService extends BaseEntityService<Field> {
     this.logger.setContext(this.constructor.name)
   }
 
+  private _dtoToFieldDtoWithDecimalNumberValue(dto: CreateFieldDto): Field {
+    const field = new Field()
+    return Object.assign(field, {
+      ...dto,
+      numberValue: dto.numberValue != null
+        ? dto.numberValue.toFixed(2)
+        : null,
+    })
+  }
+
   //#region PRIVATE
   async createField(file: File): Promise<Field> {
     this.logger.verbose('createField')
     const field: CreateFieldDto = await this._createFieldFromExcelFile(file)
     if (!field) return null
-    return this.repo.save(field)
+
+    const entity = this._dtoToFieldDtoWithDecimalNumberValue(field)
+    return this.repo.save(entity)
   }
 
-  private async _createFieldFromExcelFile(
-    file: File,
-  ): Promise<CreateFieldDto> {
+  private async _createFieldFromExcelFile(file: File): Promise<CreateFieldDto> {
     this.logger.verbose('_createFieldsFromExcelFile')
 
     const excelData: ExcelData =
@@ -235,9 +245,7 @@ export class DossierSynchroniseExcelService extends BaseEntityService<Field> {
       (value) => value.toLowerCase() === cellValue.toLowerCase(),
     )
     if (!matchedValue) {
-      this.logger.warn(
-        `Cell value "${cellValue}" is not valid`,
-      )
+      this.logger.warn(`Cell value "${cellValue}" is not valid`)
       return null
     }
     return matchedValue
@@ -296,7 +304,9 @@ export class DossierSynchroniseExcelService extends BaseEntityService<Field> {
 
       if (!force) return [] // No need to update amount field, amount field already created by Excel file
 
-      this.logger.verbose('Force update total amount fields created by _FESpecificity()')
+      this.logger.verbose(
+        'Force update total amount fields created by _FESpecificity()',
+      )
       await this.repo.remove(totalAmountFields)
     }
     return this.createFieldsAmounts(dossierId, excelFixField)
@@ -322,7 +332,11 @@ export class DossierSynchroniseExcelService extends BaseEntityService<Field> {
     if (!fields) return null
 
     this.logger.debug(fields)
-    return this.repo.save(fields)
+
+    const entitiesToSave = fields.map((dto) =>
+      this._dtoToFieldDtoWithDecimalNumberValue(dto),
+    )
+    return this.repo.save(entitiesToSave)
   }
 
   async _findTotalAmountFields(dossierId: number): Promise<Field[]> {
@@ -341,7 +355,7 @@ export class DossierSynchroniseExcelService extends BaseEntityService<Field> {
 
   async _sumAmountFields(dossierId: number): Promise<{ sum: number }> {
     this.logger.verbose('_sumAmountFields')
-    return await this.repo
+    const result = await this.repo
       .createQueryBuilder('field')
       .select('SUM(field.numberValue)', 'sum')
       .where('field.dossierId = :dossierId', { dossierId })
@@ -353,20 +367,35 @@ export class DossierSynchroniseExcelService extends BaseEntityService<Field> {
       })
       .andWhere('field.code = :code', {
         code: (
-          await this.bnConfigurationService.findByKeyName(eBnConfiguration.FE_AMOUNT_CHAMP_TAG)
+          await this.bnConfigurationService.findByKeyName(
+            eBnConfiguration.FE_AMOUNT_CHAMP_TAG,
+          )
         ).stringValue,
       })
       .andWhere('field.numberValue IS NOT NULL')
       .getRawOne()
+
+    let sumValue = 0
+    if (result && result.sum) {
+      sumValue = parseFloat(result.sum)
+    }
+
+    return { sum: sumValue }
   }
 
   private _sumAmountExcelFields(excelFixField: Field): number {
     this.logger.verbose('_sumAmountExcelFields')
 
     if (!excelFixField?.children?.length) return 0
+
     return excelFixField.children.reduce((acc, curr) => {
       if (curr.sourceId === fixFieldsExcelAmount.id) {
-        return acc + curr.numberValue
+        const num =
+          curr.numberValue != null
+            ? parseFloat(curr.numberValue)
+            : 0
+
+        return acc + (isNaN(num) ? 0 : num)
       } else {
         return acc
       }

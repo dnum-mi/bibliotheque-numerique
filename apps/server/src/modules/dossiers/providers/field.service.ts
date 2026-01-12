@@ -31,10 +31,6 @@ export type TDossierWithPrefecture = Partial<TDossier> & {
   prefecture?: PrefectureKey
 }
 
-// Définition des limites des types SQL
-const SQL_INT_MIN = -2147483648
-const SQL_INT_MAX = 2147483647
-
 @Injectable()
 export class FieldService extends BaseEntityService<Field> {
   constructor(
@@ -55,16 +51,27 @@ export class FieldService extends BaseEntityService<Field> {
 
   private _giveNumberOrNull(
     type: FieldTypeKeys,
-    stringValue: string,
+    stringValue: string | null | undefined,
   ): number | null {
-    const number = type === FieldType.number ? parseFloat(stringValue) : null
-    if (number > SQL_INT_MAX || number < SQL_INT_MIN) {
-      this.logger.error(
-        `Number in field is TOO BIG: ${number}. Setting -1 to not crash db.`,
-      )
-      return -1
+    if (type !== FieldType.number) {
+      return null
     }
-    return number && !isNaN(number) ? number : null
+
+    if (
+      stringValue === null ||
+      stringValue === undefined ||
+      stringValue.trim() === ''
+    ) {
+      return null
+    }
+
+    const parsed = parseFloat(stringValue)
+    if (isNaN(parsed)) {
+      this.logger.warn(`Unable to parse the value as a number. Value received: ${stringValue}`)
+      return null
+    }
+
+    return parsed
   }
 
   static giveDateOrNull(type: FieldTypeKeys, stringValue: string): Date | null {
@@ -248,7 +255,18 @@ export class FieldService extends BaseEntityService<Field> {
 
     return this.repo.manager.transaction(async (transactionManager) => {
       await transactionManager.delete(Field, { dossierId })
-      return transactionManager.save(Field, fields)
+
+      const fieldToSave = fields.map((fieldDto) => {
+        const field = new Field()
+
+        return Object.assign(field, {
+          ...fieldDto,
+          numberValue: fieldDto.numberValue != null
+            ? fieldDto.numberValue.toFixed(2)
+            : null,
+        })
+      })
+      return transactionManager.save(Field, fieldToSave)
     })
   }
 

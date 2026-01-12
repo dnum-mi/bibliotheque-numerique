@@ -204,7 +204,7 @@ export class FieldBuilderService {
       const numValue = parseFloat(String(rawValue))
 
       if (!isNaN(numValue)) {
-        field.numberValue = numValue
+        field.numberValue = String(numValue)
         field.stringValue = String(rawValue)
       } else {
         field.stringValue = String(rawValue)

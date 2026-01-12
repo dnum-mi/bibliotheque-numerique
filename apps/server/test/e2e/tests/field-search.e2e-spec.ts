@@ -174,7 +174,7 @@ describe('Field search', () => {
             I01: 'W00000005',
             I02: dayjs('2023-06-01').toISOString(),
             I03: 'Captain Fantastic',
-            I08: 23000,
+            I08: '23000.00',
             I09: 'France',
           },
           {
@@ -182,7 +182,7 @@ describe('Field search', () => {
             I01: 'W00000005',
             I02: dayjs('2023-06-01').toISOString(),
             I03: 'Captain Fantastic',
-            I08: 2500,
+            I08: '2500.00',
             I09: 'Qatar',
           },
           {
@@ -190,7 +190,7 @@ describe('Field search', () => {
             I01: 'W00000005',
             I02: dayjs('2023-06-01').toISOString(),
             I03: 'Captain Fantastic',
-            I08: 6400,
+            I08: '6400.00',
             I09: 'USA',
           },
           {
@@ -198,7 +198,7 @@ describe('Field search', () => {
             I01: 'W00000006',
             I02: dayjs('2023-06-02').toISOString(),
             I03: "Ender's game",
-            I08: 8800,
+            I08: '8800.00',
             I09: 'Turquie',
           },
         ])
@@ -225,7 +225,7 @@ describe('Field search', () => {
             I01: 'W00000005',
             I02: dayjs('2023-06-01').toISOString(),
             I03: 'Captain Fantastic',
-            I08: 23000,
+            I08: '23000.00',
             I09: 'France',
           },
           {
@@ -233,7 +233,7 @@ describe('Field search', () => {
             I01: 'W00000005',
             I02: dayjs('2023-06-01').toISOString(),
             I03: 'Captain Fantastic',
-            I08: 2500,
+            I08: '2500.00',
             I09: 'Qatar',
           },
           {
@@ -241,7 +241,7 @@ describe('Field search', () => {
             I01: 'W00000003',
             I02: dayjs('2023-06-04').toISOString(),
             I03: 'Dune',
-            I08: 12600,
+            I08: '12600.00',
             I09: 'USA',
           },
           {
@@ -249,7 +249,7 @@ describe('Field search', () => {
             I01: 'W00000003',
             I02: dayjs('2023-06-04').toISOString(),
             I03: 'Dune',
-            I08: 5800,
+            I08: '5800.00',
             I09: 'Écosse',
           },
           {
@@ -257,7 +257,7 @@ describe('Field search', () => {
             I01: 'W00000006',
             I02: dayjs('2023-06-02').toISOString(),
             I03: "Ender's game",
-            I08: 8800,
+            I08: '8800.00',
             I09: 'Turquie',
           },
         ])
@@ -290,7 +290,7 @@ describe('Field search', () => {
               I01: 'W00000001',
               I02: dayjs('2023-06-01').toISOString(),
               I03: 'Avenger',
-              I08: 16400,
+              I08: '16400.00',
               I09: 'Qatar',
             },
             {
@@ -298,7 +298,7 @@ describe('Field search', () => {
               I01: 'W00000005',
               I02: dayjs('2023-06-01').toISOString(),
               I03: 'Captain Fantastic',
-              I08: 2500,
+              I08: '2500.00',
               I09: 'Qatar',
             },
             {
@@ -306,7 +306,7 @@ describe('Field search', () => {
               I01: 'W00000007',
               I02: dayjs('2023-06-04').toISOString(),
               I03: 'Barbie',
-              I08: 2500,
+              I08: '2500.00',
               I09: 'Qatar',
             },
             {
@@ -314,7 +314,7 @@ describe('Field search', () => {
               I01: 'W00000010',
               I02: dayjs('2023-06-06').toISOString(),
               I03: 'Premier Contact',
-              I08: 23000,
+              I08: '23000.00',
               I09: 'Qatar',
             },
           ],
@@ -360,7 +360,7 @@ describe('Field search', () => {
               I01: 'W00000001',
               I02: dayjs('2023-06-01').toISOString(),
               I03: 'Avenger',
-              I08: 16400,
+              I08: '16400.00',
               I09: 'Qatar',
             },
           ],

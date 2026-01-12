@@ -80,9 +80,12 @@ export class Field extends BaseEntity {
 
   @Index()
   @Column({
+    type: 'numeric',
+    precision: 10,
+    scale: 2,
     nullable: true,
   })
-  numberValue: number | null
+  numberValue: string | null
 
   @ManyToOne(() => Field, (field) => field.children)
   parent?: Field | null
