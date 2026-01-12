@@ -11,7 +11,6 @@ import FicheAssociation from '@/views/organismes/association/FicheAssociation.vu
 import apiClient from '@/api/api-client'
 import { useOrganismeHubStore } from '@/stores/organisme-hub.ts'
 import useToaster from '../../composables/use-toaster'
-import { routeNames } from '../../router/route-names'
 
 const props = defineProps<{
   organismeId: string
@@ -82,13 +81,6 @@ const loadIfNeeded = async () => {
 onMounted(() => {
   void loadIfNeeded()
 })
-const router = useRouter()
-const goToOrganisme = () => {
-  router.push({
-    name: routeNames.FICHE_ORGANISME,
-    params: { id: 'W022000940' },
-  })
-}
 </script>
 
 <template>
@@ -112,14 +104,6 @@ const goToOrganisme = () => {
     </div>
 
     <template v-else>
-      <DsfrButton
-        type="button"
-        label="Fiche organisme"
-        secondary
-        class="white-bg"
-        @click="goToOrganisme()"
-      />
-
       <FicheFondation
         v-if="fondation"
         :foundation="fondation"
