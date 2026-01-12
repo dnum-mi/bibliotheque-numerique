@@ -32,8 +32,10 @@ jobs:
         if: ${{ steps.release.outputs.release_created }}
       - name: Edit packages versions
         if: ${{ (! steps.release.outputs.release_created) && steps.release.outputs.prs_created }}
+        env:
+          RELEASE_PR: ${{ steps.release.outputs.pr }}
         run: |
-          export BRANCH=$(jq -r '.headBranchName' <<< '${{ steps.release.outputs.pr }}')
+          export BRANCH=$(echo "$RELEASE_PR" | jq -r '.headBranchName')
           git fetch
           git checkout "$BRANCH"
           VERSION=$(jq -r .version package.json)
