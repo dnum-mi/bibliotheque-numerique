@@ -1,5 +1,25 @@
 # Changelog
 
+## [4.1.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v4.1.0...v4.1.1) (2026-01-12)
+
+
+### Bug Fixes
+
+* ajout des index à la table demarche ([23a608b](https://github.com/dnum-mi/bibliotheque_numerique/commit/23a608b12dc0bf7f73bece07f16636600d9ea241))
+* ajout un index à la table dossier ([bf1cc5f](https://github.com/dnum-mi/bibliotheque_numerique/commit/bf1cc5f2573ed4f8f82dfb0c6978b45f611266fe))
+* ajouter un message erreur pour un organisme inexistant ([8da8971](https://github.com/dnum-mi/bibliotheque_numerique/commit/8da8971af97ba15c64235dca554387ab79d2e20a))
+* badge de type organisme dans le banniere du fiche organisme ([85535b1](https://github.com/dnum-mi/bibliotheque_numerique/commit/85535b1a2fee0ca3cf9f924ec2aa2a76b5309ff9))
+* correction le lien demarche et dossier dans l'historique fondation ([5c34fa6](https://github.com/dnum-mi/bibliotheque_numerique/commit/5c34fa6d20318413eed0aabf1096dc94cafa1d0d))
+* message en français si aucun events ([3231c7f](https://github.com/dnum-mi/bibliotheque_numerique/commit/3231c7fb01ad338407d4bbd7fc789fef092eae61))
+* migration et gestion du champ numberValue vers un type numérique ([3a89665](https://github.com/dnum-mi/bibliotheque_numerique/commit/3a896653632f27b7091fbea5b7ed622cc7546789))
+* mise jours des élements pour la fiche association ([ae169d2](https://github.com/dnum-mi/bibliotheque_numerique/commit/ae169d29ee32c4223785099a1b911cec0436320c))
+* ne pas afficher la fiche organisme si API retourne une erreur ([fc1d967](https://github.com/dnum-mi/bibliotheque_numerique/commit/fc1d96738fbbb40900d330edd33fcfcbf61d1d9e))
+* ne pas completer numéro rnf lors de la saisie dans la recherche ([20bdab6](https://github.com/dnum-mi/bibliotheque_numerique/commit/20bdab6f6b72a3dca721d2f1f60b712e4308fe85))
+* obtenir le events des associations ([f832c5d](https://github.com/dnum-mi/bibliotheque_numerique/commit/f832c5d2d222ae25f7f0e68980ab287f5d200c94))
+* optimisation des liens des events et les dossiers ([16b7bda](https://github.com/dnum-mi/bibliotheque_numerique/commit/16b7bda124f3471fa78eec43b69da95689a53e95))
+* renommer la propriete publication JO ([c96b4e9](https://github.com/dnum-mi/bibliotheque_numerique/commit/c96b4e9a989d053c8b881191be7629a09835d612))
+* supprimer un bouton inutile ([00d6ff9](https://github.com/dnum-mi/bibliotheque_numerique/commit/00d6ff96cebf398604ddb249ec903c53993cc2f3))
+
 ## [4.1.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v4.0.1...v4.1.0) (2026-01-09)
 
 
