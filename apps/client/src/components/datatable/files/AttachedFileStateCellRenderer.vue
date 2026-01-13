@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { getIconPropsFromFileState } from '@/components/ag-grid/files/file.utils'
+import { getIconPropsFromFileState } from '@/components/datatable/files/file.utils'
 import type { StateKey } from '@biblio-num/shared'
 
 const props = defineProps<{

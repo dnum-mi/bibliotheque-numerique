@@ -29,7 +29,7 @@ import {
   PaginationUserDto,
 } from '@/modules/users/objects/dtos/input'
 import {
-  AgGridUserDto,
+  DataTableUserDto,
   MyProfileOutputDto,
   PaginatedUserDto,
   RecentlyConsultedOrganismeOutputDto,
@@ -316,7 +316,7 @@ export class UserService
       id: Not(currentUser.id),
     }
     const paginated: PaginatedDto<
-      AgGridUserDto & {
+      DataTableUserDto & {
         role: IRole
       }
     > = await this.paginate(dto, specificConditions, [

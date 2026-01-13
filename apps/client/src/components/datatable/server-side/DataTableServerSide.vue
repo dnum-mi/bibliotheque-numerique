@@ -1,10 +1,8 @@
 <script lang="ts" setup generic="T extends DynamicKeys">
 import type { DataTableFilterMeta, DataTableFilterMetaData, DataTableOperatorFilterMetaData, DataTableSortEvent } from 'primevue/datatable'
-
 import type { DynamicKeys, IPagination, IFilter } from '@biblio-num/shared'
-import type { ApiCall } from './pagination.utils'
-
-import type { BNColDef } from '@/components/ag-grid/server-side/bn-col-def.interface'
+import type { ApiCall } from './filters.utils'
+import type { BNColDef } from '@/components/datatable/server-side/bn-col-def.interface'
 import type { DisplayActiveFilter } from '../active-filters/activeFilters.type'
 
 import { useEventListener } from '@vueuse/core'
@@ -17,24 +15,22 @@ import MultiSelect from 'primevue/multiselect'
 import DatePicker from 'primevue/datepicker'
 import { useAmountLines } from './useAmountLines'
 import {
-  agGridFilterToDataTableDataType,
-  dateMatchModeToAgGrid,
-  agGridToPrimeVueDateMode,
-  agGridToPrimeVueNumberMode,
+  serverFilterToDataTableDataType,
+  dateMatchModeToServer,
+  serverToPrimeVueDateMode,
+  serverToPrimeVueNumberMode,
   SET_FILTER_TYPES,
   VALID_API_OPERATORS,
-  numberMatchModeToAgGrid,
-} from './primevue-utils/datatable.const'
-import { formatDateForApi, safeNumber, getFilters } from './primevue-utils/datatable.utils'
+  numberMatchModeToServer,
+} from './utils/datatable.const'
+import { formatDateForApi, safeNumber, getFilters } from './utils/datatable.utils'
 
-//#region 📍------ PROPS ------ 📍
-
-export type DataTableClickEventType<T> = {
-  data: T
-  column?: BNColDef
-  field?: string
+// Types étendus pour inclure filterType (métadonnée custom)
+interface ExtendedDataTableOperatorFilterMetaData extends DataTableOperatorFilterMetaData {
+  filterType?: string
 }
 
+//#region 📍------ PROPS ------ 📍
 type SortItem = { key: string; order: 'ASC' | 'DESC' }
 
 const props = withDefaults(
@@ -148,7 +144,8 @@ const notifyFilterChanged = () => {
       const metaFilter = filter as DataTableFilterMetaData
       if (metaFilter.value !== null && metaFilter.value !== undefined) {
         const colDef = props.columnDefs.find((col) => col.field === colId)
-        const isSetFilter = SET_FILTER_TYPES.includes(colDef?.filter || '')
+        const filterType = typeof colDef?.filter === 'string' ? colDef.filter : ''
+        const isSetFilter = SET_FILTER_TYPES.includes(filterType as any)
 
         if (isSetFilter) {
           // Pour les filtres de type "set", on extrait juste les codes
@@ -178,7 +175,8 @@ const notifyFilterChanged = () => {
 
       if (activeConstraints.length > 0) {
         const colDef = props.columnDefs.find((col) => col.field === colId)
-        const isSetFilter = SET_FILTER_TYPES.includes(colDef?.filter || '')
+        const filterType = typeof colDef?.filter === 'string' ? colDef.filter : ''
+        const isSetFilter = SET_FILTER_TYPES.includes(filterType as any)
 
         if (isSetFilter && activeConstraints[0]) {
           // Pour les filtres de type "set", format simple
@@ -247,10 +245,10 @@ const applyFromDto = (dto: IPagination<T>) => {
         return
       }
 
-      const filterName = colDef.filter || 'agTextColumnFilter'
+      const filterName = typeof colDef.filter === 'string' ? colDef.filter : 'agTextColumnFilter'
 
       // Détection précise du type
-      const mappedType = agGridFilterToDataTableDataType[filterName]
+      const mappedType = serverFilterToDataTableDataType[filterName]
       const isDate = mappedType === 'date'
       const isNumber = mappedType === 'numeric'
       const isBoolean = mappedType === 'boolean'
@@ -286,7 +284,7 @@ const applyFromDto = (dto: IPagination<T>) => {
             operator: FilterOperator.AND,
             constraints: [{ value: valueToRestore, matchMode: FilterMatchMode.EQUALS }],
             filterType: 'set',
-          }
+          } as ExtendedDataTableOperatorFilterMetaData
         }
       } else if (isBoolean && cond1) {
         let rawValues: string[] = []
@@ -311,7 +309,7 @@ const applyFromDto = (dto: IPagination<T>) => {
             matchMode: FilterMatchMode.IN,
           }],
           filterType: 'boolean',
-        }
+        } as ExtendedDataTableOperatorFilterMetaData
       } else if (cond1) {
         const restoreConstraint = (c: any) => {
           if (!c) {
@@ -323,10 +321,10 @@ const applyFromDto = (dto: IPagination<T>) => {
 
           if (isDate) {
             val = val ? new Date(val) : null
-            mode = agGridToPrimeVueDateMode[c.type] || FilterMatchMode.DATE_IS
+            mode = serverToPrimeVueDateMode[c.type] || FilterMatchMode.DATE_IS
           } else if (isNumber) {
             val = Number(val)
-            mode = agGridToPrimeVueNumberMode[c.type] || FilterMatchMode.EQUALS
+            mode = serverToPrimeVueNumberMode[c.type] || FilterMatchMode.EQUALS
           }
 
           return { value: val, matchMode: mode }
@@ -340,7 +338,7 @@ const applyFromDto = (dto: IPagination<T>) => {
             operator,
             constraints: [constraint1, ...(constraint2 ? [constraint2] : [])],
             filterType: primeVueType,
-          }
+          } as ExtendedDataTableOperatorFilterMetaData
         }
       }
     })
@@ -403,7 +401,8 @@ const filtersToSend = computed<Record<keyof typeof props.columnDefs, IFilter>>((
 
   for (const [key, filter] of Object.entries(filters.value)) {
     const colDef = props.columnDefs.find((col) => col.field === key)
-    const mappedType = colDef ? agGridFilterToDataTableDataType[colDef.filter || ''] : undefined
+    const filterType = typeof colDef?.filter === 'string' ? colDef.filter : ''
+    const mappedType = colDef ? serverFilterToDataTableDataType[filterType] : undefined
     const currentType = (filter as any).filterType || mappedType || 'text'
 
     const apiType = currentType === 'numeric' ? 'number' : currentType
@@ -413,10 +412,10 @@ const filtersToSend = computed<Record<keyof typeof props.columnDefs, IFilter>>((
         return mode
       }
       if (currentType === 'date') {
-        return dateMatchModeToAgGrid[mode] || 'equals'
+        return dateMatchModeToServer[mode] || 'equals'
       }
       if (currentType === 'numeric') {
-        return numberMatchModeToAgGrid[mode] || 'equals'
+        return numberMatchModeToServer[mode] || 'equals'
       }
       if (currentType === 'text') {
         return mode === FilterMatchMode.NOT_EQUALS ? 'notEqual' : mode
@@ -898,6 +897,28 @@ const onPage = (event: { first: number, rows: number }) => {
   }
 }
 
+//#region 📍------ TEMPLATE HELPERS ------ 📍
+/**
+ * Retourne le type de données pour PrimeVue DataTable
+ */
+function getColumnDataType (col: BNColDef): string | undefined {
+  if (typeof col.filter === 'string') {
+    return serverFilterToDataTableDataType[col.filter]
+  }
+  return undefined
+}
+
+/**
+ * Détermine si les contrôles de filtre (bouton add et match modes) doivent être affichés
+ */
+function shouldShowFilterControls (col: BNColDef): boolean {
+  if (typeof col.filter === 'string') {
+    return !SET_FILTER_TYPES.includes(col.filter as any)
+  }
+  return true
+}
+//#endregion
+
 useAmountLines()
 
 defineExpose({
@@ -964,10 +985,10 @@ defineExpose({
         :key="col.field"
         :field="col.field"
         :header="col.headerName"
-        :data-type="agGridFilterToDataTableDataType[col.filter]"
+        :data-type="getColumnDataType(col)"
         :sortable="col.sortable === false ? undefined : true"
-        :show-add-button="!SET_FILTER_TYPES.includes(col.filter)"
-        :show-filter-match-modes="!SET_FILTER_TYPES.includes(col.filter)"
+        :show-add-button="shouldShowFilterControls(col)"
+        :show-filter-match-modes="shouldShowFilterControls(col)"
         :show-filter-menu="!col.suppressHeaderMenuButton"
         :title="col.headerName"
       >
@@ -996,9 +1017,9 @@ defineExpose({
               v-model="filterModel.value"
               :filter-callback="filterCallback"
               :params="{
-                values: col.filterParams.values,
-                cellRenderer: col.filterParams.cellRenderer,
-                targetFilterType: col.filterParams.targetFilterType,
+                values: col.filterParams?.values,
+                cellRenderer: col.filterParams?.cellRenderer,
+                targetFilterType: col.filterParams?.targetFilterType,
               }"
             />
           </template>

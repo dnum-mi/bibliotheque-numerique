@@ -11,7 +11,7 @@ import {
   isBelowSuperAdmin,
   Roles,
   IRole,
-  IAgGridSmallDemarche,
+  IDataTableSmallDemarche,
 } from '@biblio-num/shared'
 
 import { FindManyOptions } from 'typeorm/find-options/FindManyOptions'
@@ -62,7 +62,7 @@ export class DemarcheService extends BaseEntityService<Demarche> {
       roleWhereCondition = { id: In(Object.keys(role.options)) }
     }
 
-    const paginatedResult: PaginatedDto<IAgGridSmallDemarche> =
+    const paginatedResult: PaginatedDto<IDataTableSmallDemarche> =
       await this.paginate(
         paginationDto,
         roleWhereCondition,

@@ -8,7 +8,7 @@ import type {
   IMappingColumn,
 } from '@biblio-num/shared'
 import type { FrontIMappingColumn } from '@/stores'
-import type { BNColDef } from '@/components/ag-grid/server-side/bn-col-def.interface'
+import type { BNColDef } from '@/components/datatable/server-side/bn-col-def.interface'
 import type { TotalsAllowed } from './DemarcheDossiersDisplays.vue'
 import type { CustomFilterWithErrors } from '@/views/demarches/demarche/dossiers/custom-filter-with-errors.type'
 
@@ -19,9 +19,9 @@ import { useDebounceFn } from '@vueuse/core'
 import { useCustomFilterStore, useDemarcheStore } from '@/stores'
 import DemarcheDossierCellRenderer from '@/views/demarches/demarche/dossiers/DemarcheDossierCellRenderer.vue'
 import { deepAlmostEqual, selectKeysInObject } from '@/utils/object'
-import { getAgGridFilterFromFieldType } from '@/components/ag-grid/server-side/filters.utils'
+import { getDataTableFilterFromFieldType } from '@/components/datatable/server-side/filters.utils'
 import DemarcheDossiersDisplays from './DemarcheDossiersDisplays.vue'
-import { useActiveFilter } from '@/components/ag-grid/active-filters/useActiveFilter'
+import { useActiveFilter } from '@/components/datatable/active-filters/useActiveFilter'
 import { useTour } from '@/composables/use-tour'
 import { filterTourSteps } from './TutoFilterDossier'
 
@@ -117,7 +117,7 @@ const computeColumnsDef = () => {
       return {
         headerName: column.columnLabel,
         field: column.id,
-        ...getAgGridFilterFromFieldType(column.type, column.formatFunctionRef),
+        ...getDataTableFilterFromFieldType(column.type, column.formatFunctionRef),
         autoHeight: true,
         menuTabs: ['filterMenuTab'] as ColumnMenuTab[],
         cellRenderer: markRaw(DemarcheDossierCellRenderer),

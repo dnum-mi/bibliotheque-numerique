@@ -1,17 +1,17 @@
 <script lang="ts" setup>
-import type { BNColDef } from '@/components/ag-grid/server-side/bn-col-def.interface'
-import type { IAgGridUser, IPaginationUser } from '@biblio-num/shared'
+import type { BNColDef } from '@/components/datatable/server-side/bn-col-def.interface'
+import type { IDataTableUser, IPaginationUser } from '@biblio-num/shared'
 
 import { listOfVerbosePrefecture } from '@biblio-num/shared'
 
 import { dateToStringFr } from '@/utils'
 import { useUserStore } from '@/stores'
-import { baseColDef } from '@/components/ag-grid/server-side/columndef-base'
+import { baseColDef } from '@/components/datatable/server-side/columndef-base'
 import RoleBadgesRenderer from '@/components/Badges/role/RoleBadgesRenderer.vue'
-import { useActiveFilter } from '@/components/ag-grid/active-filters/useActiveFilter'
+import { useActiveFilter } from '@/components/datatable/active-filters/useActiveFilter'
 import YesNoEmoji from '@/components/YesNoEmoji.vue'
-import type { DataTableClickEventType } from '@/components/ag-grid/server-side/DataTableServerSide.vue'
-import DataTableServerSide from '@/components/ag-grid/server-side/DataTableServerSide.vue'
+import type { DataTableClickEventType } from '@/components/datatable/server-side/DataTableServerSide.vue'
+import DataTableServerSide from '@/components/datatable/server-side/DataTableServerSide.vue'
 
 const dataTableComponent = useTemplateRef('primeVueComponent')
 const router = useRouter()
@@ -110,7 +110,7 @@ const apiCall = async (params: IPaginationUser) => {
   return store.listUsers(params)
 }
 
-const onSelectionChanged = (event: DataTableClickEventType<IAgGridUser>) => {
+const onSelectionChanged = (event: DataTableClickEventType<IDataTableUser>) => {
   const id = event.data.id
   if (id) {
     router.push({

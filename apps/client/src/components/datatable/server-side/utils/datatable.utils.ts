@@ -1,6 +1,6 @@
 import { FilterOperator } from '@primevue/core/api'
-import { agGridFilterToDataTableFilter, agGridFilterToDataTableDataType } from './datatable.const'
-import type { BNColDef } from '@/components/ag-grid/server-side/bn-col-def.interface'
+import { serverFilterToDataTableFilter, serverFilterToDataTableDataType } from './datatable.const'
+import type { BNColDef } from '@/components/datatable/server-side/bn-col-def.interface'
 import type { DataTableFilterMeta } from 'primevue/datatable'
 
 export const formatDateForApi = (value: Date | string | null): string | null => {
@@ -31,6 +31,7 @@ export const getFilters = (columnDefs: BNColDef[]): DataTableFilterMeta => {
   return columnDefs
     .filter((col) => col.filterable !== false)
     .reduce((acc, col) => {
+      const filterType = typeof col.filter === 'string' ? col.filter : 'agTextColumnFilter'
       return {
         ...acc,
         [col.field!]: {
@@ -38,11 +39,11 @@ export const getFilters = (columnDefs: BNColDef[]): DataTableFilterMeta => {
           constraints: [
             {
               value: null,
-              matchMode: agGridFilterToDataTableFilter[col.filter || 'agTextColumnFilter'],
+              matchMode: serverFilterToDataTableFilter[filterType],
             },
           ],
           fieldType: col.fieldType,
-          filterType: agGridFilterToDataTableDataType[col.filter || 'agTextColumnFilter'],
+          filterType: serverFilterToDataTableDataType[filterType],
         },
       }
     }, {} as DataTableFilterMeta)

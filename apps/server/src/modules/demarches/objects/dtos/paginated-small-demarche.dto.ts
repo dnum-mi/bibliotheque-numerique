@@ -1,9 +1,9 @@
 import { PaginatedDto } from '@/shared/pagination/paginated.dto'
 import {
-  IAgGridSmallDemarche,
+  IDataTableSmallDemarche,
   IPaginatedSmallDemarche,
 } from '@biblio-num/shared'
 
 export class PaginatedSmallDemarcheDto
-  extends PaginatedDto<IAgGridSmallDemarche>
+  extends PaginatedDto<IDataTableSmallDemarche>
   implements IPaginatedSmallDemarche {}

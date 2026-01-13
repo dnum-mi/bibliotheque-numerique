@@ -1,8 +1,7 @@
 <script lang="ts" setup>
-import type { GridReadyEvent, GridApi, GridOptions } from 'ag-grid-community'
 import type { IFileOutput, IFilter, IPagination, FileDsSourceLabelKey } from '@biblio-num/shared'
 import { fileDsSourceLabels, dFileSourceLabelDictionary, fileExtensions, states, eState, fileTags } from '@biblio-num/shared'
-import type { ApiCall } from '../server-side/pagination.utils'
+import type { ApiCall } from '../server-side/filters.utils'
 import type { BNColDef } from '../server-side/bn-col-def.interface'
 import MimeTypeCellRenderer from './MimeTypeCellRenderer.vue'
 import AttachedFileStateCellRenderer from './AttachedFileStateCellRenderer.vue'
@@ -94,7 +93,6 @@ const props = withDefaults(defineProps<AttachedFileListProps>(), {
 })
 
 const emit = defineEmits<{
-  'gridReady': [event: GridReadyEvent],
   'filesFetched': [],
 }>()
 
@@ -108,20 +106,9 @@ type AttachedFileListProps = {
 
 const toaster = useToaster()
 const columnsDef = ref<BNColDef[]>(props.columnsDef)
-const gridApi = ref<GridApi>()
-
-const onGridReady = (event: GridReadyEvent) => {
-  gridApi.value = event.api
-  emit('gridReady', event)
-}
 
 const paginationDto = ref()
 const fetching = ref(false)
-
-const specificGridOptions: Partial<GridOptions> = {
-  suppressMovableColumns: true,
-  sideBar: null,
-}
 
 const onSelectionChanged = async ({ data: file }: {
   data: {
@@ -200,9 +187,7 @@ onMounted(() => {
     :column-defs="columnsDef"
     :loading="fetching"
     :pre-condition="true"
-    :specific-grid-option="specificGridOptions"
     :api-call="apiCall"
     @row-click="onSelectionChanged($event)"
-    @grid-ready="onGridReady($event)"
   />
 </template>

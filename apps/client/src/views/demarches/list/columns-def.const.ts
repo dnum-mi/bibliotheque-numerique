@@ -1,15 +1,15 @@
-import type { ColDef } from 'ag-grid-community'
+import type { BNColDef } from '@/components/datatable/server-side/bn-col-def.interface'
 import { dateToStringFr } from '@/utils'
 import OrganismeBadgesRenderer from '@/components/Badges/organisme/OrganismeBadgesRenderer.vue'
 import { organismeTypes } from '@biblio-num/shared'
 
-const baseColDef: ColDef = {
+const baseColDef: BNColDef = {
   filter: 'agTextColumnFilter',
   menuTabs: ['filterMenuTab'],
   autoHeight: true,
 }
 
-export const demarcheColumnDefs: ColDef[] = [
+export const demarcheColumnDefs: BNColDef[] = [
   {
     ...baseColDef,
     headerName: 'id',

@@ -1,12 +1,23 @@
-import type { IFilterDef } from 'ag-grid-community'
 import type { Component } from 'vue'
-
 import { FormatFunctionRef, instructionTimeValues } from '@biblio-num/shared'
-import type { FormatFunctionRefKeys } from '@biblio-num/shared'
-
+import type { FormatFunctionRefKeys, IPaginated, IPagination } from '@biblio-num/shared'
 import { DossierState } from '@/utils'
 import StatusBadgesRenderer from '../../Badges/status/StatusBadgesRenderer.vue'
 import DelayStateRenderer from '../../Badges/delay-state/DelayStateRenderer.vue'
+
+export type ApiCall<T> = (params: IPagination<T>) => Promise<IPaginated<T>>
+
+/**
+ * Définition de filtre
+ */
+export interface IFilterDef {
+  filter: string | boolean
+  filterParams?: {
+    values?: string[] | string
+    cellRenderer?: Component | any
+    [key: string]: any
+  }
+}
 
 const fieldTypesDict = {
   file: 'agTextColumnFilter',
@@ -31,7 +42,7 @@ export const filterCellRender: Record<FormatFunctionRefKeys, Component> = {
 } as const
 
 // TODO: use FieldType but enum from library doesn't work in front.
-export const getAgGridFilterFromFieldType = (fieldType?: keyof typeof fieldTypesDict, formatFunctionRef?: FormatFunctionRefKeys): IFilterDef => {
+export const getDataTableFilterFromFieldType = (fieldType?: keyof typeof fieldTypesDict, formatFunctionRef?: FormatFunctionRefKeys): IFilterDef => {
   const filter: IFilterDef = {
     filter: (fieldType && fieldTypesDict[fieldType]) || fieldTypesDict.default,
   }

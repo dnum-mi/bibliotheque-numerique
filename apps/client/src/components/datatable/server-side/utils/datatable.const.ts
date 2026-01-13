@@ -22,20 +22,18 @@ export const VALID_API_OPERATORS = [
 
 //#region 📍------ MAPPINGS ------ 📍
 
-// Init: AgGrid Config -> PrimeVue Filter Mode
-export const agGridFilterToDataTableFilter: Record<string, string> = {
+// Init: Server Config -> PrimeVue Filter Mode
+export const serverFilterToDataTableFilter: Record<string, string> = {
   agTextColumnFilter: FilterMatchMode.CONTAINS,
   agNumberColumnFilter: FilterMatchMode.EQUALS,
   agMultiColumnFilter: FilterMatchMode.DATE_IS,
   agDateColumnFilter: FilterMatchMode.DATE_IS,
   agSetColumnFilter: FilterMatchMode.EQUALS,
   agBooleanColumnFilter: FilterMatchMode.IN,
-  customNumbersFilter: FilterMatchMode.EQUALS,
-  customStringsFilter: FilterMatchMode.EQUALS,
 }
 
-// Type Detection: AgGrid Filter -> PrimeVue DataType
-export const agGridFilterToDataTableDataType: Record<string, string | undefined> = {
+// Type Detection: Server Filter -> PrimeVue DataType
+export const serverFilterToDataTableDataType: Record<string, string | undefined> = {
   agTextColumnFilter: undefined,
   agNumberColumnFilter: 'numeric',
   agMultiColumnFilter: 'date',
@@ -44,15 +42,15 @@ export const agGridFilterToDataTableDataType: Record<string, string | undefined>
   agBooleanColumnFilter: 'boolean',
 }
 
-// API Output: PrimeVue -> AgGrid Operators
-export const dateMatchModeToAgGrid: Record<string, string> = {
+// API Output: PrimeVue -> Server Operators
+export const dateMatchModeToServer: Record<string, string> = {
   [FilterMatchMode.DATE_IS]: 'equals',
   [FilterMatchMode.DATE_IS_NOT]: 'notEqual',
   [FilterMatchMode.DATE_BEFORE]: 'lessThan',
   [FilterMatchMode.DATE_AFTER]: 'greaterThan',
 }
 
-export const numberMatchModeToAgGrid: Record<string, string> = {
+export const numberMatchModeToServer: Record<string, string> = {
   [FilterMatchMode.EQUALS]: 'equals',
   [FilterMatchMode.NOT_EQUALS]: 'notEqual',
   [FilterMatchMode.GREATER_THAN]: 'greaterThan',
@@ -61,8 +59,8 @@ export const numberMatchModeToAgGrid: Record<string, string> = {
   [FilterMatchMode.LESS_THAN_OR_EQUAL_TO]: 'lessThanOrEqual',
 }
 
-// Restore Input: AgGrid -> PrimeVue Operators
-export const agGridToPrimeVueDateMode: Record<string, string> = {
+// Restore Input: Server -> PrimeVue Operators
+export const serverToPrimeVueDateMode: Record<string, string> = {
   equals: FilterMatchMode.DATE_IS,
   notEqual: FilterMatchMode.DATE_IS_NOT,
   greaterThan: FilterMatchMode.DATE_AFTER,
@@ -71,7 +69,7 @@ export const agGridToPrimeVueDateMode: Record<string, string> = {
   lt: FilterMatchMode.DATE_BEFORE,
 }
 
-export const agGridToPrimeVueNumberMode: Record<string, string> = {
+export const serverToPrimeVueNumberMode: Record<string, string> = {
   equals: FilterMatchMode.EQUALS,
   notEqual: FilterMatchMode.NOT_EQUALS,
   greaterThan: FilterMatchMode.GREATER_THAN,

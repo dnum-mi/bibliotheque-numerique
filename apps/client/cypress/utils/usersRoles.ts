@@ -1,5 +1,5 @@
 import type {
-  IAgGridUser,
+  IDataTableUser,
   IPaginated,
 
   IRole,
@@ -51,7 +51,7 @@ const getIdUsers = () => {
 const getUniqueIdUser = () => {
   return getIdUsers().shift()
 }
-export const createRandomUser = (id?: number): IAgGridUser => ({
+export const createRandomUser = (id?: number): IDataTableUser => ({
   id: id || getUniqueIdUser(),
   lastname: faker.internet.username(),
   firstname: faker.internet.username(),
@@ -76,12 +76,12 @@ const instructeurUsersFn = () => Array.from({ length: faker.number.int({ min: 1,
   }))
 
 export const getPaginatedUsers = () => {
-  const usersRoles: Partial<IAgGridUser>[] = [
+  const usersRoles: Partial<IDataTableUser>[] = [
     ...Array.from({ length: faker.number.int({ min: 1, max: 5 }) }, createRandomUser),
     ...adminUsersFn(),
     ...instructeurUsersFn(),
   ]
-  const result: IPaginated<IAgGridUser> = {
+  const result: IPaginated<IDataTableUser> = {
     total: usersRoles.length,
     data: usersRoles,
   }

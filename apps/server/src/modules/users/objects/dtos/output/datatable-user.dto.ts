@@ -1,6 +1,6 @@
-import { IAgGridUser, VerbosePrefecture, RolesKeys } from '@biblio-num/shared'
+import { IDataTableUser, VerbosePrefecture, RolesKeys } from '@biblio-num/shared'
 
-export class AgGridUserDto implements IAgGridUser {
+export class DataTableUserDto implements IDataTableUser {
   id: number
   firstname: string
   lastname: string

@@ -11,9 +11,9 @@ import DossierHeader from './DossierHeader.vue'
 import DossierMessagerie from './DossierMessagerie.vue'
 import { formatForMessageDate } from '@/utils'
 import apiClient from '@/api/api-client'
-import AttachedFileList from '@/components/ag-grid/files/AttachedFileList.vue'
-import type { ApiCall } from '@/components/ag-grid/server-side/pagination.utils'
-import { useOrganismeHubStore } from '../../stores/organisme-hub'
+import AttachedFileList from '@/components/datatable/files/AttachedFileList.vue'
+import type { ApiCall } from '@/components/datatable/server-side/filters.utils'
+import { useOrganismeHubStore } from '@/stores/organisme-hub'
 
 const dossierStore = useDossierStore()
 const organismeHubStore = useOrganismeHubStore()

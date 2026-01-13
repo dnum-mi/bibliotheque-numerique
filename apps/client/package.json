@@ -30,7 +30,6 @@
     "typecheck": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false"
   },
   "dependencies": {
-    "@ag-grid-community/locale": "33.2.4",
     "@biblio-num/shared": "workspace:^",
     "@gouvfr/dsfr": "^1.14.1",
     "@gouvminint/vue-dsfr": "8.8.0",
@@ -40,8 +39,6 @@
     "@vee-validate/zod": "^4.12.6",
     "@vue-leaflet/vue-leaflet": "0.10.1",
     "@vueuse/core": "^14.0.0",
-    "ag-grid-community": "^31.3.4",
-    "ag-grid-vue3": "^31.3.4",
     "axios": "^1.11.0",
     "leaflet": "1.9.4",
     "lucide-vue-next": "0.561.0",

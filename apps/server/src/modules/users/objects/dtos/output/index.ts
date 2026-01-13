@@ -1,4 +1,4 @@
-export * from './ag-grid-user.dto'
+export * from './datatable-user.dto'
 export * from './user-with-editable-role.dto'
 export * from './user-output.dto'
 export * from './paginated-user.dto'

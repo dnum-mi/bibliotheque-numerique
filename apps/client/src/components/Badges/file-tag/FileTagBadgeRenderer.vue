@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { ICellRendererParams } from 'ag-grid-community'
+import type { ICellRendererParams } from '@/components/datatable/server-side/data-table-types'
 
 const props = defineProps<{ params: ICellRendererParams }>()
 

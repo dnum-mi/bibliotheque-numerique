@@ -11,7 +11,7 @@ import type {
 } from '@biblio-num/shared'
 
 import DelayStateBadge from '@/components/Badges/delay-state/DelayStateBadge.vue'
-import DataTableAttachmentCell from '@/components/ag-grid/DataTableAttachmentCell.vue'
+import DataTableAttachmentCell from '@/components/datatable/DataTableAttachmentCell.vue'
 import { routeNames } from '@/router/route-names'
 
 const props = defineProps<{

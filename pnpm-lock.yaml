@@ -46,9 +46,6 @@ importers:
 
   apps/client:
     dependencies:
-      '@ag-grid-community/locale':
-        specifier: 33.2.4
-        version: 33.2.4
       '@biblio-num/shared':
         specifier: workspace:^
         version: link:../../packages/shared
@@ -76,12 +73,6 @@ importers:
       '@vueuse/core':
         specifier: ^14.0.0
         version: 14.1.0(vue@3.5.13(typescript@5.8.3))
-      ag-grid-community:
-        specifier: ^31.3.4
-        version: 31.3.4
-      ag-grid-vue3:
-        specifier: ^31.3.4
-        version: 31.3.4(typescript@5.8.3)
       axios:
         specifier: ^1.11.0
         version: 1.13.2(debug@4.4.1)
@@ -569,9 +560,6 @@ packages:
 
   '@adobe/css-tools@4.4.2':
     resolution: {integrity: sha512-baYZExFpsdkBNuvGKTKWCwKH57HRZLVtycZS05WTQNVOiXVSeAki3nU35zlRbToeMW8aHlJfyS+1C4BOv27q0A==}
-
-  '@ag-grid-community/locale@33.2.4':
-    resolution: {integrity: sha512-/ii7oqgq5S0RhOEKkjy4J0MNey2HD1mYq1KcNOYMy/Z/U2tIYB7fxvbT+Z+WPvGOX7Qa5RRAlEHefZjF1DDN6A==}
 
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
@@ -4616,12 +4604,6 @@ packages:
     resolution: {integrity: sha512-NZyJarBfL7nWwIq+FDL6Zp/yHEhePMNnnJ0y3qfieCrmNvYct8uvtiV41UvlSe6apAfk0fY1FbWx+NwfmpvtTg==}
     engines: {node: '>=0.4.0'}
     hasBin: true
-
-  ag-grid-community@31.3.4:
-    resolution: {integrity: sha512-jOxQO86C6eLnk1GdP24HB6aqaouFzMWizgfUwNY5MnetiWzz9ZaAmOGSnW/XBvdjXvC5Fpk3gSbvVKKQ7h9kBw==}
-
-  ag-grid-vue3@31.3.4:
-    resolution: {integrity: sha512-MFsWKeWBuzexc3hkOtDsZw4xkXfVT6B267DcUmZGy92otgGfd/I8qMKhGr1qnUnel9Jy5OKeBS+jQusfmO2/SA==}
 
   agent-base@6.0.2:
     resolution: {integrity: sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==}
@@ -11289,8 +11271,6 @@ snapshots:
 
   '@adobe/css-tools@4.4.2': {}
 
-  '@ag-grid-community/locale@33.2.4': {}
-
   '@ampproject/remapping@2.3.0':
     dependencies:
       '@jridgewell/gen-mapping': 0.3.8
@@ -16569,15 +16549,6 @@ snapshots:
   acorn@8.14.1: {}
 
   acorn@8.15.0: {}
-
-  ag-grid-community@31.3.4: {}
-
-  ag-grid-vue3@31.3.4(typescript@5.8.3):
-    dependencies:
-      ag-grid-community: 31.3.4
-      vue: 3.5.13(typescript@5.8.3)
-    transitivePeerDependencies:
-      - typescript
 
   agent-base@6.0.2:
     dependencies:

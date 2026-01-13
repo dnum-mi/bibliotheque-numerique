@@ -1,7 +1,7 @@
 import type { RolesKeys } from '../roles'
 import { VerbosePrefecture } from '../prefectures'
 
-export interface IAgGridUser {
+export interface IDataTableUser {
   id: number
   firstname: string
   lastname: string

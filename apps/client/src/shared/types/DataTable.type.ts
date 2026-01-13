@@ -1,4 +1,4 @@
-import type { ISetFilterParams, ValueFormatterFunc, ValueFormatterParams } from 'ag-grid-community'
+import type { ISetFilterParams, ValueFormatterFunc, ValueFormatterParams } from '@/components/datatable/server-side/data-table-types'
 import type { Component } from 'vue'
 
 export type TIconFunction = (data: unknown) => string

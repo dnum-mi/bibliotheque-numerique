@@ -1,4 +1,4 @@
 import type { IPaginated } from '../pagination'
-import type { IAgGridUser } from './ag-grid-user.interface'
+import type { IDataTableUser } from './datatable-user.interface'
 
-export interface IPaginatedUser extends IPaginated<IAgGridUser> {}
+export interface IPaginatedUser extends IPaginated<IDataTableUser> {}

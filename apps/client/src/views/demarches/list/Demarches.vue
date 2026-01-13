@@ -10,9 +10,9 @@ import { useDemarcheStore } from '@/stores/demarche'
 import { routeNames } from '@/router/route-names'
 import LayoutList from '@/components/Layout/LayoutList.vue'
 import { useUserStore } from '@/stores'
-import { useActiveFilter } from '@/components/ag-grid/active-filters/useActiveFilter'
+import { useActiveFilter } from '@/components/datatable/active-filters/useActiveFilter'
 import { demarcheColumnDefs } from './columns-def.const'
-import type { BNColDef } from '@/components/ag-grid/server-side/bn-col-def.interface'
+import type { BNColDef } from '@/components/datatable/server-side/bn-col-def.interface'
 
 const dataTableComponent = useTemplateRef('dataTableComponent')
 const demarcheStore = useDemarcheStore()
@@ -20,7 +20,7 @@ const router = useRouter()
 const userStore = useUserStore()
 const paginationDto = ref()
 
-const LOCAL_STORAGE_KEY = 'agGrid.demarches.state'
+const LOCAL_STORAGE_KEY = 'datatable.demarches.state'
 
 const apiCall = async (params: IPaginationSmallDemarche): Promise<IPaginated<ISmallDemarcheOutput>> => {
   return demarcheStore.loadDemarches(params)

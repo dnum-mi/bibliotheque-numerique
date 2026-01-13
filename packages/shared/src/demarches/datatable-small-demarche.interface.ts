@@ -1,6 +1,6 @@
 import { IdentificationDemarcheKey } from "./identification-demarches"
 
-export interface IAgGridSmallDemarche {
+export interface IDataTableSmallDemarche {
   id: number
   types: string[]
   dsId: number

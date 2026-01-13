@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { FileExtensionKey } from '@biblio-num/shared'
-import { getIconNameFromMimeType } from '@/components/ag-grid/files/file.utils'
+import { getIconNameFromMimeType } from '@/components/datatable/files/file.utils'
 
 const props = defineProps<{
   params: {
