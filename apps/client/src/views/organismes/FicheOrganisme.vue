@@ -84,7 +84,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
+  <div class="h-full">
     <div
       v-if="isLoading"
       class="fr-my-4w py-8 text-center"

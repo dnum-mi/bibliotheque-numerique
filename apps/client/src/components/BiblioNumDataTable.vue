@@ -21,7 +21,6 @@ const props = withDefaults(
     rowsData?: RowDataType[]
     actionTitle?: string
     headers?: HeaderDataTable[]
-    pagination?: boolean
     paginationPageSize?: number
     withAction?: boolean
     rowSelection?: string
@@ -112,19 +111,12 @@ const filters = ref<DataTableFilterMeta>(columnDefs.value
     {} as DataTableFilterMeta,
   ),
 )
+const paginatorContainerRef = useTemplateRef('paginatorContainerRef')
 const sort = ref<{ key: string; order: 'ASC' | 'DESC' | 'NONE' }[]>([])
-// const perPage = computed(() => props.paginationPageSize || PAGINATION_PAGE_SIZE)
 const perPage = ref(props.paginationPageSize || PAGINATION_PAGE_SIZE)
-const scrollHeight = computed(() => (props.pagination ? 'calc(100vh - 300px)' : 'calc(100vh - 200px)'))
-// const selectedColumnsIds = ref(columnDefs.value.map((col) => col.field ?? ''))
-
-// function onSortChanged (event: { sortField: string; sortOrder: number }) {
-//   sort.value = []
-//   if (event.sortField && event.sortOrder) {
-//     sort.value.push({ key: event.sortField, order: event.sortOrder === 1 ? 'ASC' : 'DESC' })
-//   }
-//   emit('sortUpdated', sort.value)
-// }
+const scrollHeight = computed(() => {
+  return `calc(100% - ${paginatorContainerRef.value?.parentElement?.offsetHeight || 4}px)`
+})
 
 const rowClick = (event: { data: Record<string, string | number> }) => {
   emit('rowClick', toRaw(event.data))
@@ -135,13 +127,9 @@ const getPaginationPages = (pagesNb: number) => Array.from(Array(pagesNb))
 </script>
 
 <template>
-  <h4 v-if="title">
-    {{ title }}
-  </h4>
   <DataTable
     v-model:filters="filters"
     class="m-w-full h-full"
-    :style="{ width: 'calc(100vw - 38px)' }"
     :value="rowsData"
     striped-rows
     paginator
@@ -216,21 +204,24 @@ const getPaginationPages = (pagesNb: number) => Array.from(Array(pagesNb))
         />
       </template>
     </Column>
-    <template #paginatorcontainer="{ first, last, page, pageCount, rows, changePageCallback, totalRecords }">
-      <div class="flex justify-end items-center">
+    <template
+      #paginatorcontainer="{ first, last, page, pageCount, changePageCallback, totalRecords }"
+    >
+      <div
+        v-if="pageCount && pageCount > 1"
+        ref="paginatorContainerRef"
+        class="flex justify-end items-center"
+      >
         <DsfrSelect
           v-model.number="perPage"
           title="Résultats par page"
           aria-label="Résultats par page"
-          :options="[2, 5, 10]"
+          :options="[10, 20, 50, 100]"
           default-unselected-text="Résultats par page"
         />
-        <div class="mx-4">
+        <div class="mx-4 mb-4">
           <template v-if="(pageCount ?? 0) > 0">
             {{ first }} à {{ last }} de {{ totalRecords }}
-            <p>
-              rows de DataTable: {{ rows }}
-            </p>
           </template>
           <template v-else>
             Aucun résultat

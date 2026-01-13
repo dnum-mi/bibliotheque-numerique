@@ -30,7 +30,7 @@ const currentTab = ref<string | undefined>(undefined)
 
 <template>
   <LayoutFiche
-    class="overflow-auto"
+    class="overflow-auto h-full"
     title-bg-color="var(--grey-200-850)"
     title-fg-color="var(--text-inverted-grey)"
   >
