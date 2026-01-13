@@ -18,10 +18,10 @@ useEventListener('keydown', (event) => {
     emit('close')
   }
 })
-const me = useTemplateRef('me')
+const columnListRef = useTemplateRef('columnListRef')
 useEventListener(document, 'click', (event: MouseEvent) => {
   // Vérifier si le clic est en dehors du composant
-  if (me.value && !me.value.contains(event.target as Node)) {
+  if (columnListRef.value && !columnListRef.value.contains(event.target as Node)) {
     emit('close')
   }
 })
@@ -29,7 +29,7 @@ useEventListener(document, 'click', (event: MouseEvent) => {
 
 <template>
   <div
-    ref="me"
+    ref="columnListRef"
     class="overflow-auto"
   >
     Liste des colonnes

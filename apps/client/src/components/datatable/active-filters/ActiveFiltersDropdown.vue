@@ -171,44 +171,6 @@ function formatSetFilterDescription (filter: DisplayActiveFilter): string {
   return `${filterTypeTranslations.set} [${displayValues.join(', ')}]`
 }
 
-/** Formats a Multi Filter */
-/* function formatMultiFilterDescription (filter: DisplayActiveFilter): string {
-  if (!Array.isArray(filter.filterModels) || filter.filterModels.length === 0) {
-    return '[Filtre multiple vide ou malformé]'
-  }
-
-  const descriptions: string[] = []
-  for (const subModel of filter.filterModels) {
-    if (subModel) {
-      const subDescription = getFilterDescriptionOnly(subModel as DisplayActiveFilter, filter.colId)
-
-      if (
-        subDescription
-        && !subDescription.startsWith('[Filtre invalide]')
-        && !subDescription.startsWith('[Filtre multiple')
-        && !subDescription.startsWith('[Condition')
-      ) {
-        descriptions.push(subDescription)
-      }
-    }
-  }
-
-  if (descriptions.length === 0) {
-    return '[Filtre multiple avec conditions non actives ou malformées]'
-  }
-
-  return descriptions.join(` ${operatorTranslations.AND || 'ET'} `)
-} */
-
-/** Formats "value-only" filters */
-/* function formatValueOnlyFilterDescription (filter: DisplayActiveFilter): string {
-  const specificTranslation = props.quickFilterValueTranslations[filter.value as string]
-  if (specificTranslation) {
-    return specificTranslation
-  }
-  return String(filter.value)
-} */
-
 /** Central Orchestrator */
 function getFilterDescriptionOnly (filter: DisplayActiveFilter): string {
   if (!filter) {

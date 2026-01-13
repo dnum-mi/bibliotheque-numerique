@@ -29,12 +29,12 @@ const serviceTitle = 'Bibliothèque Numérique'
 const serviceDescription = 'Rechercher une démarche, un dossier, un organisme'
 const logoText = ['Ministère', 'de l’intérieur']
 const ecosystemLinks = [
-  { label: 'Demarches.numerique.gouv.fr', href: 'https://demarches.numerique.gouv.fr', title: 'Démarches, ouvre une nouvelle fenêtre' },
-  { label: 'API - Répertoire National des Associations', href: 'https://entreprise.api.gouv.fr/catalogue/ministere_interieur/rna', title: 'Référentiel des associations, ouvre une nouvelle fenêtre' },
+  { label: 'Demarches.numerique.gouv.fr', title: 'Démarches simplifiées', href: 'https://demarches.numerique.gouv.fr' },
+  { label: 'API - Répertoire National des Associations', title: 'API - Répertoire National des Associations', href: 'https://entreprise.api.gouv.fr/catalogue/ministere_interieur/rna' },
   {
     label: 'Intranet DLPAJ',
+    title: 'Intranet DLPAJ',
     href: 'https://intranet.dlpaj.minint.fr/index.php/associations-et-fondations/systeme-d-information-des-associations-et-fondations-siaf',
-    title: 'Intranet DLPAJ, ouvre une nouvelle fenêtre',
   },
   // { label: 'Répertoire National des Fondations', href: 'https://rnf.interieur.rie.gouv.fr' },
   // { label: 'Cloud π Native', href: 'https://cloud-pi-native.fr/' },
@@ -82,10 +82,10 @@ onErrorCaptured((error: Error | AxiosError) => {
   <div class="flex flex-col h-full w-full">
     <DsfrHeader
       v-model="searchQuery"
-      :service-title
-      :logo-text
-      :quick-links
-      :service-description
+      :service-title="serviceTitle"
+      :logo-text="logoText"
+      :quick-links="quickLinks"
+      :service-description="serviceDescription"
     />
 
     <main class="flex flex-col grow w-full h-full min-h-0 overflow-auto">
@@ -94,10 +94,10 @@ onErrorCaptured((error: Error | AxiosError) => {
 
     <AppDsfrFooter
       a11y-compliance="partiellement conforme"
-      :mandatory-links
+      :mandatory-links="mandatoryLinks"
       :class="envStyle"
-      :logo-text
-      :ecosystem-links
+      :logo-text="logoText"
+      :ecosystem-links="ecosystemLinks"
       licence-text=""
     >
       <template #description>
