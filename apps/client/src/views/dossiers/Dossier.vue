@@ -58,6 +58,7 @@ onMounted(async () => {
 
     if (dossierStore.dossier?.organismeRefs?.length) {
       try {
+        organismeHubStore.clear()
         await organismeHubStore.setCurrentOrganismeByRef(
           dossierStore.dossier.organismeRefs[0],
         )

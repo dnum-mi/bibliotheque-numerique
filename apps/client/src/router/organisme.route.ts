@@ -15,6 +15,7 @@ const beforeEnter = async (to: RouteLocationNormalized, from: RouteLocationNorma
   const messageId = toaster.addSuccessMessage(`Chargement la fiche pour cet organisme (${id}) est en cours`)
   const organismeStore = useOrganismeHubStore()
   let isOk = false
+  organismeStore.clear()
   try {
     isOk = await organismeStore.setCurrentOrganismeByRef(to.params.id as string)
   } catch (e) {
