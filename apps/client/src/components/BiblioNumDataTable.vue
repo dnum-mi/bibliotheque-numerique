@@ -8,7 +8,7 @@ import { FilterMatchMode, FilterOperator } from '@primevue/core/api'
 import type { HeaderDataTable } from '@/shared/types'
 import { PAGINATION_PAGE_SIZE } from '@/config'
 import { dealWithBlankAndNotBlank } from './ag-grid/server-side/filters.utils'
-import { agGridFilterToDataTableDataType } from './ag-grid/server-side/filters-const'
+import { agGridFilterToDataTableDataType } from './ag-grid/server-side/primevue-utils/datatable.const'
 
 export type RowDataType = {
   authorized: boolean
