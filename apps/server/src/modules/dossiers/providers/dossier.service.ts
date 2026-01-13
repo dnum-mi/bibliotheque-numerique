@@ -139,7 +139,7 @@ export class DossierService extends BaseEntityService<Dossier> {
               (f) => String(f.sourceStringId) === String(fileData.id),
             )
             if (fileFound) {
-              (field.rawJson as PieceJustificativeChampWithState).files.forEach((f2) => {
+              (field.rawJson as PieceJustificativeChampWithState).files?.forEach((f2) => {
                 f2.url = fileFound.uuid ?? ''
                 f2.state = fileFound.state ?? eState.queued
               })
