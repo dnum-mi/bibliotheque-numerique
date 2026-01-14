@@ -10,8 +10,11 @@ import type { tInfoBanner } from '@/views/organismes/common/FicheBanner.vue'
 import FicheBanner from '@/views/organismes/common/FicheBanner.vue'
 import FileTab from '@/views/organismes/common/file-tab/FileTab.vue'
 import EventsTab from '@/views/organismes/common/EventsTab.vue'
+import { useUserStore } from '../../../stores'
 
 const props = defineProps<{ association: IAssociationOutput }>()
+
+const { currentUser } = useUserStore()
 
 const banner = computed<tInfoBanner>(() => ({
   id: props.association.id,
@@ -70,6 +73,16 @@ const currentTab = ref<string | undefined>(undefined)
             title="Historique"
           >
             <EventsTab :events="association.events" />
+          </BnTab>
+
+          <BnTab
+            id="dossiers"
+            title="Dossier DS"
+          >
+            <DossierTab
+              :role="currentUser?.role"
+              :organisme-id="association.id"
+            />
           </BnTab>
         </BnTabsContainer>
       </div>
