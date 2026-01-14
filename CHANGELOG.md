@@ -1,5 +1,71 @@
 # Changelog
 
+## [5.0.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v4.1.1...v5.0.0) (2026-01-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* Merge primevue (#1913 from dnum-mi/feat/primevue-datatable)
+
+### Features
+
+* ✨ handle filterable and sortable columns in DataTable components ([c15b300](https://github.com/dnum-mi/bibliotheque_numerique/commit/c15b30040f885f4fa63b982c9e051d5e37dad24b))
+* ✨ permet à DataTableServerSide de mieux gérer les filtres ([751acf9](https://github.com/dnum-mi/bibliotheque_numerique/commit/751acf98789f6ffb20bc30edb95286a2028b1879))
+* ✨ permet d’afficher plus de lignes dans DataTableServerSide ([c0883de](https://github.com/dnum-mi/bibliotheque_numerique/commit/c0883debca5a7a6e093da52e5539d809542cfe06))
+* ✨ permet l’écriture des affichages personnalisés dans DataTableServerSide ([1ba7715](https://github.com/dnum-mi/bibliotheque_numerique/commit/1ba7715f7b312e600c2b053aa7d4623ce8881e27))
+* ✨ permet la lecture des affichages personnalisés avec DataTable ([7351882](https://github.com/dnum-mi/bibliotheque_numerique/commit/7351882b17b2ad3565d2bc1a238c2af20c33da60))
+* ✨ permet le clic sur une ligne de la liste des démarches ([f4e4c2a](https://github.com/dnum-mi/bibliotheque_numerique/commit/f4e4c2a47d7edab3f93247a0c44a939efba95be5))
+* ✨ permet le redimensionnement des colonnes dans DataTableServerSide.vue ([b580061](https://github.com/dnum-mi/bibliotheque_numerique/commit/b580061becb4d7c04a453524237fe316e6a5669f))
+* ✨ permet le réordonnancement des colonnes dans DataTableServerSide.vue ([d22d9ae](https://github.com/dnum-mi/bibliotheque_numerique/commit/d22d9ae45a3433df5f7b432933134ff8a255d6e7))
+* ✨ prend en charge les filtres avec multiselect ([662d47b](https://github.com/dnum-mi/bibliotheque_numerique/commit/662d47bf31af80d0b240cc560b4efef85fc11e64))
+* ✨ prend en compte cellStyle de la colonne dans DataTableServerSide ([e791317](https://github.com/dnum-mi/bibliotheque_numerique/commit/e791317fdaed0a34ee177fffd0d207a6e9797430))
+* ✨ surligne les sous-lignes sous le curseur dans DataTableServerSide.vue ([899b1d7](https://github.com/dnum-mi/bibliotheque_numerique/commit/899b1d71fe75dd20ceb147a849807ba1f686973b))
+* 💄 améliore la présentation des cellules dans DataTableServerSide ([659182e](https://github.com/dnum-mi/bibliotheque_numerique/commit/659182e73530bed751f9d2b6344d5e0c7360271b))
+* add custom number and string filters for primevue and update related components ([f22e1d8](https://github.com/dnum-mi/bibliotheque_numerique/commit/f22e1d8626cba3f59d282ac33b8988d9b36ab2e0))
+* **AttachedFileList:** ✨ utilise DataTableServerSide pour lister les fichiers attachés ([ff3a59b](https://github.com/dnum-mi/bibliotheque_numerique/commit/ff3a59b90356c3aef48e798a27ade6a09321ebb2))
+* **datatable:** add row click functionality and improve column filtering ([2957e29](https://github.com/dnum-mi/bibliotheque_numerique/commit/2957e2976769503dbab58c1890d3728ae6b3f883))
+* **DataTableServerSide:** ✨ ajoute des fonctions de réinitialisation des personnalisations ([1096fa1](https://github.com/dnum-mi/bibliotheque_numerique/commit/1096fa1a555412f8c09697af17a62c7256265640))
+* **DataTableServerSide:** ✨ ajoute la persistance de l'ordre des colonnes ([d663521](https://github.com/dnum-mi/bibliotheque_numerique/commit/d663521d9fdba6ad781e44eb5ffeb7b91547858f))
+* **DataTableServerSide:** ✨ ajoute la persistance des largeurs de colonnes ([0554556](https://github.com/dnum-mi/bibliotheque_numerique/commit/0554556d911e06539210af8832d676bd5c18b8ce))
+* **DataTableServerSide:** ✨ sauve et restaure les préférences de tableau dans localStorage ([4ca3014](https://github.com/dnum-mi/bibliotheque_numerique/commit/4ca301484c24f6faee2a410f19cd7f1c660d8747))
+* **DataTableServerSide:** ajoute la fonctionnalité de tableau de données côté serveur avec PrimeVue ([917b1b2](https://github.com/dnum-mi/bibliotheque_numerique/commit/917b1b2f82fd84d93bbad608cc69f4574fc743ba))
+* **DataTableServerSide:** gère les colonnes cachées ([15ceb45](https://github.com/dnum-mi/bibliotheque_numerique/commit/15ceb452e44c950ef029d7a15b4bb727f9bbf936))
+* implémenter PrimeSetFilter pour combiner tous filtres de type enum ([58c45d9](https://github.com/dnum-mi/bibliotheque_numerique/commit/58c45d98298319cd5ef63d38591ce25ce39fd185))
+* **list de dossiers dans fiche organisme:** mise à jours les composants datatable client side ([79eaf54](https://github.com/dnum-mi/bibliotheque_numerique/commit/79eaf544b5adef08cb05bf478a08e429fc1ebc15))
+* **list de dossiers dans fiche organisme:** rentre triable les colonnes de la liste de dossiers ([a861818](https://github.com/dnum-mi/bibliotheque_numerique/commit/a86181824360f5804008ad803a2fd58e8cf543c5))
+* Merge primevue ([#1913](https://github.com/dnum-mi/bibliotheque_numerique/issues/1913) from dnum-mi/feat/primevue-datatable) ([e119f5a](https://github.com/dnum-mi/bibliotheque_numerique/commit/e119f5ab80a89ceefba2beeab67cf0d5b3b81646))
+
+
+### Bug Fixes
+
+* 🐛 corrige le clic sur un dossier ([7a1dc9f](https://github.com/dnum-mi/bibliotheque_numerique/commit/7a1dc9fed1e642ef2331c90ba9e78486106c4f5c))
+* 🐛 corrige warning important de vue ([1ec8de8](https://github.com/dnum-mi/bibliotheque_numerique/commit/1ec8de818ac37deb88e3bfae6ed78080bc2ad9ba))
+* 🐛 gère correctement les filtres de type "set" ([5e8ecff](https://github.com/dnum-mi/bibliotheque_numerique/commit/5e8ecffa9133e63b4a14585a3acf7d51b76e269f))
+* 💄 corrige certains bugs d'affichage ([4430ba3](https://github.com/dnum-mi/bibliotheque_numerique/commit/4430ba38f56aa990d50ca6775a856180eb68e9df))
+* active les filtres et tri de toutes les colonnes la liste des démarches ([f1d41ff](https://github.com/dnum-mi/bibliotheque_numerique/commit/f1d41ff3473fd819c4f18fb77482efc879ea0977))
+* ajout liste dossiers pour les associations ([c3656d1](https://github.com/dnum-mi/bibliotheque_numerique/commit/c3656d10981f0de9dc28fb9589be1d9169148680))
+* clear currentOrganisme dans le store ([3306f64](https://github.com/dnum-mi/bibliotheque_numerique/commit/3306f649194124450709877b96554f6540fafe60))
+* **client/datatable:** force DataTable re-render on column order reset using dynamic key ([0da86a8](https://github.com/dnum-mi/bibliotheque_numerique/commit/0da86a85af90412a7aab9eb17d89b167c592030c))
+* correctio du clique sur la ligne d'utilisateur sue la page admin ([3380d51](https://github.com/dnum-mi/bibliotheque_numerique/commit/3380d512def252b2c6c59fb091f2fd9fba80d080))
+* correction aprés cherry-pick ([32c6cea](https://github.com/dnum-mi/bibliotheque_numerique/commit/32c6cea830bf2807d3c72e9bcd0d7e12c9716487))
+* correction des erreurs indiqués par le lint ([e4d8f99](https://github.com/dnum-mi/bibliotheque_numerique/commit/e4d8f9965de9d6dc0acd40aac4adddd159053009))
+* correction recuperation propriété d'une valeur undefined ([82fa2ca](https://github.com/dnum-mi/bibliotheque_numerique/commit/82fa2ca249c57224cae483dcd723d37771292698))
+* **DataTableServerSide:** 🐛 correction de la fonction resetColumnsWidth() ([7491ee7](https://github.com/dnum-mi/bibliotheque_numerique/commit/7491ee7cccc58e23362ad3aaa8841021072d89a0))
+* **DataTableServerSide:** 🐛 correction du mécanisme "Displays" pour la limitation des colonnes API ([983ebe7](https://github.com/dnum-mi/bibliotheque_numerique/commit/983ebe79c782dd41fef65a457aea07247a662e16))
+* double scroll ([17611c4](https://github.com/dnum-mi/bibliotheque_numerique/commit/17611c467c643c13403e727553d94160ee9aa7ac))
+* exclure le ficher .md du linter ([a22abb8](https://github.com/dnum-mi/bibliotheque_numerique/commit/a22abb81ee66edaf8c33d66eda2496d3b6934acb))
+* export le type dans event d'une fonction click ([6392a7c](https://github.com/dnum-mi/bibliotheque_numerique/commit/6392a7c3f84360c1259d3443f95c947affddddbd))
+* mise à jour de la logique de validation des filtres et ajustement des cas de tests ([42ffbf4](https://github.com/dnum-mi/bibliotheque_numerique/commit/42ffbf44edc74328d8c5684cc132f07165a09cba))
+* mise à jour de le gestion des filtres, de la pagination et de la restauration d'état depuis local storage ([4343c2f](https://github.com/dnum-mi/bibliotheque_numerique/commit/4343c2f304d72028ea5760f31edf323f9b847903))
+* mise à jour de package.json et pnpm-lock.json pour linux ([40d9b65](https://github.com/dnum-mi/bibliotheque_numerique/commit/40d9b6515454e19fb83b19ced85bc29fea5f0c29))
+* mise à jours fichiers auto-générer ([f54b1cb](https://github.com/dnum-mi/bibliotheque_numerique/commit/f54b1cbeb9854d136747610ba744d92a306f4aef))
+* mise à jours liste des dossiers en integrant datatable client-side ([71ac78f](https://github.com/dnum-mi/bibliotheque_numerique/commit/71ac78fc44e3ef0082a38826826f2826d93d9e59))
+* optimiser le calcul de la hauteur de défilement et de redimensionnement avec rebond du datatable ([f6d3560](https://github.com/dnum-mi/bibliotheque_numerique/commit/f6d35603ff44ce65ae8396fcc7e7c7b541508a0d))
+* position du composant pagination dans la fiche organisme ([2be251a](https://github.com/dnum-mi/bibliotheque_numerique/commit/2be251a94838c867b990793e27a958001f9213f2))
+* renommage du dossier ag-grid en datatable ([310fe86](https://github.com/dnum-mi/bibliotheque_numerique/commit/310fe8641c1af841d0a83f606126ee1b5d6f2cf2))
+* retirer package.json du linter ([bcb1a59](https://github.com/dnum-mi/bibliotheque_numerique/commit/bcb1a59bd64ac0b7b2a3c2606338b5c1fadf365d))
+* update datatable client-side ([ce08e38](https://github.com/dnum-mi/bibliotheque_numerique/commit/ce08e38f19ffedabe7f140e748771ed27afe19ea))
+
 ## [4.1.2](https://github.com/dnum-mi/bibliotheque_numerique/compare/v4.1.1...v4.1.2) (2026-01-14)
 
 
