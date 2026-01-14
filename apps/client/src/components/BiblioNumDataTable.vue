@@ -7,8 +7,8 @@ import DatePicker from 'primevue/datepicker'
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api'
 import type { HeaderDataTable } from '@/shared/types'
 import { PAGINATION_PAGE_SIZE } from '@/config'
-import { dealWithBlankAndNotBlank } from './ag-grid/server-side/filters.utils'
-import { agGridFilterToDataTableDataType } from './ag-grid/server-side/primevue-utils/datatable.const'
+import { dealWithBlankAndNotBlank } from './datatable/server-side/filters.utils'
+import { serverFilterToDataTableDataType } from './datatable/server-side/utils/datatable.const'
 
 export type RowDataType = {
   authorized: boolean
@@ -156,7 +156,7 @@ const getPaginationPages = (pagesNb: number) => Array.from(Array(pagesNb))
       :field="col.field"
       :header="col.headerName"
       :filter-field="col.field"
-      :data-type="col.filter ? agGridFilterToDataTableDataType[col.filter] : undefined"
+      :data-type="col.filter ? serverFilterToDataTableDataType[col.filter] : undefined"
       :sortable="col.sortable !== false"
       :show-filter-match-modes="col.filter !== 'agSetColumnFilter'"
       :show-filter-menu="col.filterable !== false"
