@@ -956,7 +956,7 @@ defineExpose({
       :key="tableKey"
       v-model:filters="filters"
       class="m-w-full h-full"
-      :style="{ width: `calc(100vw - ${rightOffset}px)` }"
+      :style="{ width: `calc(100% - ${rightOffset}px)` }"
       :value="rowData"
       striped-rows
       paginator
