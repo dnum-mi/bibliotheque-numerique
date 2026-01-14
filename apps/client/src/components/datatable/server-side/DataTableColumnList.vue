@@ -37,9 +37,11 @@ useEventListener(document, 'click', (event: MouseEvent) => {
     <ul>
       <li v-for="col of columnDefs" :key="col.field" class="flex justify-start">
         <DsfrCheckbox
+          v-if="!col.hide"
           v-model="selected"
           legend="Liste des colonnes à afficher"
           name="column"
+          small
           :value="col.field"
           :label="col.headerName"
         />

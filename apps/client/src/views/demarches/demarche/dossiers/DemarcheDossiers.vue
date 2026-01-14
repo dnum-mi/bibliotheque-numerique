@@ -107,7 +107,7 @@ export type ColumnMenuTab = 'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab
 const computeColumnsDef = () => {
   columnsDef.value = [
     {
-      headerName: 'N° dossier',
+      headerName: 'Internal ID',
       field: 'dossierId',
       hide: true,
       filter: 'agNumberColumnFilter',
