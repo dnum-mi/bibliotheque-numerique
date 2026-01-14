@@ -5,7 +5,7 @@ import type { ApiCall } from './filters.utils'
 import type { BNColDef } from '@/components/datatable/server-side/bn-col-def.interface'
 import type { DisplayActiveFilter } from '../active-filters/activeFilters.type'
 
-import { useEventListener } from '@vueuse/core'
+import { useDebounceFn, useEventListener } from '@vueuse/core'
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api'
 import { nextTick, toRaw } from 'vue'
 import DataTable from 'primevue/datatable'
@@ -696,21 +696,36 @@ const onColumnReorder = (event: { dragIndex: number; dropIndex: number }) => {
 }
 
 //#region 📍------ SCROLL HEIGHT ------ 📍
-const scrollHeight = ref('')
+const scrollHeight = ref('flex')
 const dataTableRef = useTemplateRef('dataTable')
+
 const computeScrollHeight = () => {
+  if (!dataTableRef.value) {
+    return
+  }
+
   const height = window.innerHeight
-  const top = dataTableRef.value?.offsetTop || 0
-  scrollHeight.value = `${height - top - 82}px`
+  const top = dataTableRef.value.getBoundingClientRect().top + window.scrollY
+  const offsetBottom = 82
+
+  const newHeight = `${height - top - offsetBottom}px`
+
+  if (scrollHeight.value !== newHeight) {
+    scrollHeight.value = newHeight
+  }
 }
 
+const debouncedCompute = useDebounceFn(computeScrollHeight, 100)
+
 onMounted(() => {
-  setTimeout(() => {
-    computeScrollHeight()
-  }, 250)
+  computeScrollHeight()
 })
 
-useEventListener(window, 'resize', computeScrollHeight)
+useEventListener(window, 'resize', debouncedCompute)
+
+onUpdated(() => {
+  computeScrollHeight()
+})
 //#endregion
 
 //#region 📍------ ROW CLICK ------ 📍
