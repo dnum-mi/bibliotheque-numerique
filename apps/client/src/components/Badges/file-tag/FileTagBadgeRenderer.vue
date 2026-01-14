@@ -12,6 +12,8 @@ const filterSelectAll = computed(() => {
 </script>
 
 <template>
-  <span v-if="filterSelectAll">{{ props.params.value }}</span>
-  <FileTagBadge :tag="tag" />
+  <div class="flex items-center" :title="props.params.value">
+    <span v-if="filterSelectAll">{{ props.params.value }}</span>
+    <FileTagBadge :tag="tag" />
+  </div>
 </template>

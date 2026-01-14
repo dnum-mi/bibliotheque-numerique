@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import type { Component } from 'vue'
+
 interface SetFilterModel {
   filterType: string
   includeEmpty: boolean
@@ -10,7 +12,8 @@ const props = defineProps<{
   filterCallback: () => void
   params: {
     values: (string | number)[]
-    cellRenderer?: any
+    cellRenderer?: Component | ((params: unknown) => string)
+    cellRendererParams?: Record<string, unknown>
     targetFilterType?: string
   }
 }>()
@@ -117,6 +120,27 @@ const toggleIncludeEmpty = (checked: boolean) => {
   localFilter.value = currentFilter
   props.filterCallback()
 }
+
+const isComponentRenderer = computed(() => {
+  const renderer = props.params.cellRenderer
+  return renderer && typeof renderer !== 'function'
+})
+
+const getRendererParams = (value: string | number) => {
+  const extraParams = props.params.cellRendererParams || {}
+  return {
+    value,
+    ...extraParams,
+  }
+}
+
+const getFormattedValue = (value: string | number) => {
+  if (typeof props.params.cellRenderer === 'function') {
+    const renderer = props.params.cellRenderer as (params: unknown) => string
+    return renderer({ value })
+  }
+  return value
+}
 </script>
 
 <template>
@@ -171,10 +195,10 @@ const toggleIncludeEmpty = (checked: boolean) => {
           <template #label>
             <component
               :is="params.cellRenderer"
-              v-if="params.cellRenderer"
-              :params="{ value }"
+              v-if="isComponentRenderer"
+              :params="getRendererParams(value)"
             />
-            <span v-else>{{ value }}</span>
+            <span v-else>{{ getFormattedValue(value) }}</span>
           </template>
         </DsfrCheckbox>
       </div>

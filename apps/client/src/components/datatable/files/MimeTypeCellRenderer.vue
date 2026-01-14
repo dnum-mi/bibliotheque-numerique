@@ -6,21 +6,24 @@ const props = defineProps<{
   params: {
     value: FileExtensionKey
     displayText?: boolean
-    dict: Record<FileExtensionKey, string>
+    dict?: Record<FileExtensionKey, string>
   }
 }>()
 
 const iconName = computed(() => getIconNameFromMimeType(props.params.value))
+const label = computed(() => props.params.dict?.[props.params.value] ?? props.params.value)
 </script>
 
 <template>
-  <div class="flex  items-center">
+  <div
+    class="flex items-center"
+    :title="label"
+  >
     <VIcon
       :name="iconName"
       scale="1.5"
-      :title="props.params.value"
       class="mr-1"
     />
-    {{ params.displayText ? params.dict[params.value] : '' }}
+    {{ params.displayText ? label : '' }}
   </div>
 </template>

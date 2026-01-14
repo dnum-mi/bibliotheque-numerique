@@ -1029,6 +1029,7 @@ defineExpose({
               :params="{
                 values: col.filterParams?.values,
                 cellRenderer: col.filterParams?.cellRenderer,
+                cellRendererParams: col.filterParams?.cellRendererParams,
                 targetFilterType: col.filterParams?.targetFilterType,
               }"
             />

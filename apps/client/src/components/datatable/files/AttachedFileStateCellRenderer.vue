@@ -9,16 +9,24 @@ const props = defineProps<{
   }
 }>()
 
-const iconProps = computed(() => getIconPropsFromFileState(props.params.value))
-const title = computed(() => (props.params.displayText && iconProps.value?.title) || '')
+const rawIconProps = computed(() => getIconPropsFromFileState(props.params.value))
+const iconProps = computed(() => {
+  if (!rawIconProps.value) {
+    return null
+  }
+  const { title, ...rest } = rawIconProps.value
+  return rest
+})
+const title = computed(() => rawIconProps.value?.title || '')
+const label = computed(() => (props.params.displayText && title.value) || '')
 </script>
 
 <template>
-  <span class="fr-text--sm">
+  <div class="flex items-center" :title="title">
     <VIcon
       v-if="iconProps?.name"
       v-bind="iconProps"
     />
-    {{ title }}
-  </span>
+    <span>{{ label }}</span>
+  </div>
 </template>
