@@ -6,7 +6,6 @@ import useToaster from '@/composables/use-toaster.js'
 
 import type { EnvTextKeys } from '@/shared/types'
 import { defaultEnv, envTextMapping } from '@/shared/types'
-import { logInServer } from '@/utils/log.utils'
 import { AxiosError } from 'axios'
 import { useNavigation } from './composables/navigation'
 
@@ -49,9 +48,6 @@ const { quickLinks } = useNavigation()
 const searchQuery = ref('')
 
 onErrorCaptured((error: Error | AxiosError) => {
-  if (import.meta.env.PROD) {
-    logInServer(error.stack, 'error')
-  }
   if (error instanceof AxiosError) {
     if (error?.response && error?.response?.status) {
       const status = error.response.status
