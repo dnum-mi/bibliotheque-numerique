@@ -1,5 +1,15 @@
 # Changelog
 
+## [4.1.2](https://github.com/dnum-mi/bibliotheque_numerique/compare/v4.1.1...v4.1.2) (2026-01-14)
+
+
+### Bug Fixes
+
+* ajout liste dossiers pour les associations ([602fcb0](https://github.com/dnum-mi/bibliotheque_numerique/commit/602fcb00ede40902bf413f7412cd8e195d42cb9d))
+* clear currentOrganisme dans le store ([07a4f91](https://github.com/dnum-mi/bibliotheque_numerique/commit/07a4f91abd3928c087ce91d98dc76fd82a843b84))
+* correction recuperation propriété d'une valeur undefined ([ac3f2f6](https://github.com/dnum-mi/bibliotheque_numerique/commit/ac3f2f69e9469b5cae2f93af8ed7d14fbe3ec374))
+* retirer le bouton fiche organisme pour un fiche dossier sans organisme ([ee6bbec](https://github.com/dnum-mi/bibliotheque_numerique/commit/ee6bbec72bef2f0eb84af0998935c1bdc35d5666))
+
 ## [4.1.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v4.1.0...v4.1.1) (2026-01-12)
 
 
