@@ -55,10 +55,9 @@ onMounted(async () => {
   if (id) {
     await dossierStore.getDossierWithFields(id)
     nbAttachments.value = await apiClient.getDossierFilesSummary(id)
-
+    organismeHubStore.clear()
     if (dossierStore.dossier?.organismeRefs?.length) {
       try {
-        organismeHubStore.clear()
         await organismeHubStore.setCurrentOrganismeByRef(
           dossierStore.dossier.organismeRefs[0],
         )
