@@ -20,7 +20,7 @@ const props = defineProps<{
 }>()
 
 const router = useRouter()
-const headers: HeaderDataTable[] = [
+const headers: (HeaderDataTable & { transformerToDatatable?: (value: string) => string })[] = [
   {
     field: 'id',
     text: 'Id',
@@ -41,7 +41,7 @@ const headers: HeaderDataTable[] = [
   {
     field: 'prefecture',
     text: 'Service instructeur',
-    valueFormatter: (params: { value: string }) => getPrefecture(params.value),
+    transformerToDatatable: getPrefecture,
     filterable: true,
   },
   {
@@ -73,7 +73,19 @@ const updateListeDossiers = async () => {
   try {
     rowsdata.value = (await apiClient.getOrganismeDossiers(props.organismeId)).map(r => {
       const row = r as ILeanDossierOutputWithAuthorizeOption
-      row.authorized = canAccessDemarche(row.demarcheId, props.role)
+      headers.forEach(h => {
+        if (h.transformerToDatatable) {
+          const val = row[h.field as keyof ILeanDossierOutput]
+          if (typeof val === 'string') {
+            (row as unknown as Record<string, unknown>)[h.field as keyof ILeanDossierOutput] = h.transformerToDatatable(val)
+          }
+        }
+      })
+      if (props.role) {
+        row.authorized = canAccessDemarche(row.demarcheId, props.role)
+      } else {
+        row.authorized = false
+      }
       if (row.authorized) {
         row.cursor = 'pointer'
         // row.title = 'Cliquez pour accéder à ce dossier'
