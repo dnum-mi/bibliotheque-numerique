@@ -111,15 +111,7 @@ const getPrefecture = (prefecture: PrefectureKey) => {
       :key="index"
     >
       <template v-if="params.column.id === '96151176-4624-4706-b861-722d2e53545d'">
-        <!-- ComponentRenderer -->
-        <RouterLink
-          :to=" {
-            name: 'Dossiers',
-            params: { id: params.row?.dossierId },
-          }"
-        >
-          {{ cellValue }}
-        </RouterLink>
+        {{ cellValue }}
       </template>
       <template v-else-if="!!componentRenderer">
         <!-- ComponentRenderer -->
