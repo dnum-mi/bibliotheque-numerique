@@ -11,7 +11,7 @@ import {
 } from '../../../utils'
 import type { HeaderDataTable } from '@/shared/types'
 import StatusBadgesRenderer from '@/components/Badges/status/StatusBadgesRenderer.vue'
-import type { RowDataType } from '@/components/BiblioNumDataTable.vue'
+import type { RowDataType } from '@/components/datatable/client-side/BiblioNumDataTable.vue'
 
 type ILeanDossierOutputWithAuthorizeOption = ILeanDossierOutput & RowDataType
 const props = defineProps<{
