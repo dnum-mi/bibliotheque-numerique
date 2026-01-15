@@ -1044,8 +1044,8 @@ defineExpose({
           <template v-else-if="col.filter === 'agDateColumnFilter'">
             <DatePicker
               v-model="filterModel.value"
-              date-format="mm/dd/yy"
-              placeholder="mm/dd/yyyy"
+              date-format="dd/mm/yy"
+              placeholder="jj/mm/aaaa"
             />
           </template>
           <template v-else-if="col.filter === 'agBooleanColumnFilter'">
