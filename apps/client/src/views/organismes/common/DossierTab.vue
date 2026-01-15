@@ -11,7 +11,7 @@ import {
 } from '../../../utils'
 import type { HeaderDataTable } from '@/shared/types'
 import StatusBadgesRenderer from '@/components/Badges/status/StatusBadgesRenderer.vue'
-import type { RowDataType } from '@/components/datatable/client-side/BiblioNumDataTable.vue'
+import type { RowDataType } from '@/components/datatable/client-side/DataTableClientSide.vue'
 
 type ILeanDossierOutputWithAuthorizeOption = ILeanDossierOutput & RowDataType
 const props = defineProps<{
@@ -120,7 +120,7 @@ const rowClick = (data: unknown) => {
 </script>
 
 <template>
-  <BiblioNumDataTable
+  <DataTableClientSide
     :headers="headers"
     :rows-data="rowsdata"
     :pagination="false"

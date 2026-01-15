@@ -7,8 +7,8 @@ import DatePicker from 'primevue/datepicker'
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api'
 import type { HeaderDataTable } from '@/shared/types'
 import { PAGINATION_PAGE_SIZE } from '@/config'
-import { dealWithBlankAndNotBlank } from './datatable/server-side/filters.utils'
-import { serverFilterToDataTableDataType } from './datatable/server-side/utils/datatable.const'
+import { dealWithBlankAndNotBlank } from '../server-side/filters.utils'
+import { serverFilterToDataTableDataType } from '../server-side/utils/datatable.const'
 
 export type RowDataType = {
   authorized: boolean
