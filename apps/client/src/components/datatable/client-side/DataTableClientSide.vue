@@ -2,7 +2,6 @@
 import type { DataTableFilterMeta } from 'primevue/datatable'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import MultiSelect from 'primevue/multiselect'
 import DatePicker from 'primevue/datepicker'
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api'
 import type { HeaderDataTable } from '@/shared/types'
@@ -50,7 +49,8 @@ interface PrimeVueColumnDef {
   filterParams?: {
     values?: string[]
     valueFormatter?: (params: { value: unknown }) => string
-    cellRenderer?: Component | string | ((params: Record<string | symbol, unknown>) => string | undefined)
+    cellRenderer?: Component // | string | ((params: Record<string | symbol, unknown>) => string | undefined)
+    cellRendererParams?: Record<string, unknown>
   }
   filter?: string
   floatingFilter?: boolean
@@ -175,17 +175,26 @@ const getPaginationPages = (pagesNb: number) => Array.from(Array(pagesNb))
       </template>
       <template #filter="{ filterModel, filterCallback }">
         <template v-if="col.filter === 'agSetColumnFilter'">
-          <MultiSelect
-            v-model="filterModel.value"
-            :options="col.filterParams?.values"
-            option-label="name"
-            placeholder="Toutes les valeurs"
-            @change="filterCallback()"
-          >
-            <template #option="slotProps">
-              <component :is="col.filterParams?.cellRenderer ?? col.cellRenderer" :params="{ value: slotProps.option }" />
-            </template>
-          </MultiSelect>
+          <!-- TODO: A refaire pour qu'il soit plus générique -->
+          <PrimeSetFilter
+            :model-value="{
+              filterType: 'set',
+              includeEmpty: false,
+              filter: filterModel.value || col.filterParams?.values,
+            }"
+            :params="{
+              values: col.filterParams?.values,
+              valueFormatter: col.filterParams?.valueFormatter,
+              cellRenderer: col.filterParams?.cellRenderer,
+              cellRendererParams: col.filterParams?.cellRendererParams,
+            }"
+            :filter-callback="filterCallback"
+            @update:model-value="($event) => {
+              console.log({ setFilterValue: $event, filterModel: filterModel.value })
+              filterModel.value = $event.filter
+              filterCallback()
+            }"
+          />
         </template>
         <template v-else-if="col.filter === 'agMultiColumnFilter'">
           <DatePicker v-model="filterModel.value" date-format="dd/mm/yy" placeholder="jj/mm/aaaa" />

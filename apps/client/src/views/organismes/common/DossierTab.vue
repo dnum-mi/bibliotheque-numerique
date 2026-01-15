@@ -1,17 +1,18 @@
 <script lang="ts" setup>
 import type { ILeanDossierOutput, IRole } from '@biblio-num/shared'
-import { canAccessDemarche } from '@biblio-num/shared'
+import { canAccessDemarche, FieldType, FormatFunctionRef } from '@biblio-num/shared'
 
 import apiClient from '@/api/api-client'
 import useToaster from '@/composables/use-toaster'
 import { routeNames } from '@/router/route-names'
 import {
-  DossierState,
   getPrefecture,
 } from '../../../utils'
 import type { HeaderDataTable } from '@/shared/types'
 import StatusBadgesRenderer from '@/components/Badges/status/StatusBadgesRenderer.vue'
 import type { RowDataType } from '@/components/datatable/client-side/DataTableClientSide.vue'
+import { getDataTableFilterFromFieldType } from '../../../components/datatable/server-side/filters.utils'
+import type { ISetFilterParams } from '../../../components/datatable/server-side/data-table-types'
 
 type ILeanDossierOutputWithAuthorizeOption = ILeanDossierOutput & RowDataType
 const props = defineProps<{
@@ -49,11 +50,10 @@ const headers: (HeaderDataTable & { transformerToDatatable?: (value: string) => 
     text: 'État',
     renderer: StatusBadgesRenderer,
     filterable: true,
-    filterParams: {
-      cellRenderer: StatusBadgesRenderer,
-      values: Object.keys(DossierState),
-      suppressMiniFilter: true,
-    },
+    ...(getDataTableFilterFromFieldType(FieldType.enum, FormatFunctionRef.status) as {
+      filter: string;
+      filterParams: ISetFilterParams;
+    }),
     filter: 'agSetColumnFilter',
   },
   {
