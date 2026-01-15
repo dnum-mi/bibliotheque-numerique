@@ -4,6 +4,7 @@ import type {
   IPaginated,
   IPaginationSmallDemarche,
   ISmallDemarcheOutput,
+  IStringsFilterCondition,
 } from '@biblio-num/shared'
 
 import { useDemarcheStore } from '@/stores/demarche'
@@ -13,6 +14,7 @@ import { useUserStore } from '@/stores'
 import { useActiveFilter } from '@/components/datatable/active-filters/useActiveFilter'
 import { demarcheColumnDefs } from './columns-def.const'
 import type { BNColDef } from '@/components/datatable/server-side/bn-col-def.interface'
+import { EMPTY_RESULT, isEmptyListFilter, isEmptySetFilter } from '../../../components/datatable/utils'
 
 const dataTableComponent = useTemplateRef('dataTableComponent')
 const demarcheStore = useDemarcheStore()
@@ -23,6 +25,18 @@ const paginationDto = ref()
 const LOCAL_STORAGE_KEY = 'datatable.demarches.state'
 
 const apiCall = async (params: IPaginationSmallDemarche): Promise<IPaginated<ISmallDemarcheOutput>> => {
+  const { filters } = params
+
+  if (filters?.types) {
+    const typeFilter = filters.types.condition1 as IStringsFilterCondition
+    if (isEmptyListFilter(typeFilter)) {
+      return EMPTY_RESULT
+    }
+  }
+
+  if (filters?.types && isEmptySetFilter(filters.types)) {
+    return EMPTY_RESULT
+  }
   return demarcheStore.loadDemarches(params)
 }
 
