@@ -167,7 +167,7 @@ const getFormattedValue = (value: string | number) => {
       />
 
       <DsfrCheckbox
-        v-if="localFilter.filterType !== 'set'"
+        v-if="!['set', 'boolean'].includes(localFilter.filterType)"
         v-model="localFilter.includeEmpty"
         :disabled="!localFilter.filter.length"
         :checked="localFilter.includeEmpty || !localFilter.filter.length"

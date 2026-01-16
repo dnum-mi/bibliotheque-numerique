@@ -25,6 +25,7 @@ import {
 } from './utils/datatable.const'
 import { formatDateForApi, safeNumber, getFilters } from './utils/datatable.utils'
 import { dealWithBlankAndNotBlank } from './filters.utils'
+import type { FilterModel, SetFilterModel } from './filter-model.interface'
 
 // Types étendus pour inclure filterType (métadonnée custom)
 interface ExtendedDataTableOperatorFilterMetaData extends DataTableOperatorFilterMetaData {
@@ -537,8 +538,36 @@ const filtersToSend = computed<Record<keyof typeof props.columnDefs, IFilter>>((
   return result as Record<keyof typeof props.columnDefs, IFilter>
 })
 
+const hasfilterEnumUnselectedAll = (filterModel: Record<keyof BNColDef[], IFilter>) => {
+  const enumIds: (string | undefined)[] = props.columnDefs.filter((colDef) => ['enum', 'boolean'].includes(colDef.fieldType as string)).map((colDef) => colDef.field)
+
+  if (!enumIds) {
+    return false
+  }
+
+  for (const emunId of enumIds) {
+    const filter = Object.entries(filterModel).find(
+      ([key, value]) => key === emunId && value.filterType === 'set' && !value.condition1.filter.length,
+    )
+    if (filter) {
+      return true
+    }
+  }
+
+  return false
+}
+
 const getRows = async (page: number = currentPage.value) => {
   isLoadingRows.value = true
+
+  const hasFilterEnumEmpty = hasfilterEnumUnselectedAll(filtersToSend.value)
+  if (hasFilterEnumEmpty) {
+    currentPage.value = 1
+    // params.success({ rowData: response.data, rowCount: response.total })
+    rowData.value = []
+    totalRecords.value = 0
+    return
+  }
 
   const dto: IPagination<T> = {
     sorts: sort.value,
@@ -1049,22 +1078,14 @@ defineExpose({
             />
           </template>
           <template v-else-if="col.filter === 'agBooleanColumnFilter'">
-            <MultiSelect
+            <PrimeSetFilter
               v-model="filterModel.value"
-              :options="[
-                { name: 'Oui', code: 'true' },
-                { name: 'Non', code: 'false' },
-              ]"
-              option-label="name"
-              placeholder="Tous"
-              :max-selected-labels="1"
-              class="w-full"
-              @change="filterCallback()"
-            >
-              <template #option="slotProps">
-                <span>{{ slotProps.option.name }}</span>
-              </template>
-            </MultiSelect>
+              :filter-callback="filterCallback"
+              :params="{
+                values: col.filterParams?.values,
+                cellRenderer: col.filterParams?.valueFormatter,
+              }"
+            />
           </template>
           <template v-else-if="filterModel.matchMode === 'blank' || filterModel.matchMode === 'notBlank'">
             {{ dealWithBlankAndNotBlank(filterModel) }}

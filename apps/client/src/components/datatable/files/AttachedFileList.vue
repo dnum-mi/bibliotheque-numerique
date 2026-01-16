@@ -22,6 +22,8 @@ type AttachedFileListProps = {
 const props = withDefaults(defineProps<AttachedFileListProps>(), {
   tag: undefined,
   columnsDef: undefined,
+  active: true,
+  withTabTag: false,
 })
 
 const emit = defineEmits<{
