@@ -11,7 +11,6 @@ import { nextTick, toRaw } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
-import MultiSelect from 'primevue/multiselect'
 import DatePicker from 'primevue/datepicker'
 import { useAmountLines } from './useAmountLines'
 import {
@@ -25,7 +24,6 @@ import {
 } from './utils/datatable.const'
 import { formatDateForApi, safeNumber, getFilters } from './utils/datatable.utils'
 import { dealWithBlankAndNotBlank } from './filters.utils'
-import type { FilterModel, SetFilterModel } from './filter-model.interface'
 
 // Types étendus pour inclure filterType (métadonnée custom)
 interface ExtendedDataTableOperatorFilterMetaData extends DataTableOperatorFilterMetaData {
@@ -563,7 +561,6 @@ const getRows = async (page: number = currentPage.value) => {
   const hasFilterEnumEmpty = hasfilterEnumUnselectedAll(filtersToSend.value)
   if (hasFilterEnumEmpty) {
     currentPage.value = 1
-    // params.success({ rowData: response.data, rowCount: response.total })
     rowData.value = []
     totalRecords.value = 0
     return
