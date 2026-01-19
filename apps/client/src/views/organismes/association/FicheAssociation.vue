@@ -11,6 +11,7 @@ import FicheBanner from '@/views/organismes/common/FicheBanner.vue'
 import FileTab from '@/views/organismes/common/file-tab/FileTab.vue'
 import EventsTab from '@/views/organismes/common/EventsTab.vue'
 import { useUserStore } from '../../../stores'
+import DossierTab from '@/views/organismes/common/DossierTab.vue'
 
 const props = defineProps<{ association: IAssociationOutput }>()
 
