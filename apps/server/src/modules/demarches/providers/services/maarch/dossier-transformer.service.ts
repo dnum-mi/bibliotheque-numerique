@@ -47,6 +47,9 @@ export class DossierTransformerService {
     )
     dossier.files = this.fileBuilder.createFileEntities(data)
     dossier.fields = this._createAllFields(data)
+    if (data[maarchChampsLabel.numRna]) {
+      dossier.organismeRefs = [data[maarchChampsLabel.numRna].toString().trim()]
+    }
 
     return dossier
   }
