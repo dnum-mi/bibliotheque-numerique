@@ -1174,6 +1174,7 @@ defineExpose({
         v-show="displayColumns"
         v-model="selectedColumnIds"
         class="table-column-list-container"
+        :style="{ right: `${rightOffset}px` }"
         :column-defs="columnDefsForList"
         @close="displayColumns = false"
       />
@@ -1182,26 +1183,27 @@ defineExpose({
 </template>
 
 <style scoped>
-.border-shadow {
-
+.side-buttons {
+  position: absolute;
+  right: 0;
+  top: 45px;
+  bottom: 45px;
 }
 
+/* ton panel */
 .table-column-list-container {
   z-index: 1;
   border-left: 4px solid #f0f0f0;
   background: white;
   position: absolute;
-  top:0;
-  right:35px;
+  top: 0;
+  right: unset;
   width: 300px;
-  max-height: 100%;
-  padding: 20px;
-}
+  bottom: 0;
+  max-height: none;
 
-.side-buttons {
-  position: absolute;
-  right: 0;
-  top: 45px;
+  padding: 20px;
+  overflow: auto;
 }
 
 .side-button-label {

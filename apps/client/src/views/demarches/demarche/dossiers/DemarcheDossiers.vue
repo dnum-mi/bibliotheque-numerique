@@ -533,7 +533,6 @@ const quickFilterValueTranslations: Record<string, string> = {
         v-if="readyToLoadDataTable"
         ref="dataTableComponent"
         v-model:pagination-dto="paginationDto"
-        :right-offset="50"
         :column-defs="columnsDef"
         :loading="fetching"
         class="h-full"
