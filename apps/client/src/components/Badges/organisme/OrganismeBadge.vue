@@ -1,4 +1,4 @@
-<script lang='ts' setup>
+<script lang="ts" setup>
 import type { OrganismeTypeKey } from '@biblio-num/shared'
 
 defineProps<{
@@ -9,7 +9,7 @@ defineProps<{
 
 <template>
   <DsfrBadge
-    :class="`custom-${type?.toLowerCase() ?? ''}`"
+    :class="`custom-${type?.toLowerCase() ?? ''} m-0!`"
     :label="type"
     :small="!big"
     type="success"
@@ -36,5 +36,11 @@ defineProps<{
 .custom-frup {
   --text-default-success: #66673d;
   --background-contrast-success: var(--green-tilleul-verveine-975-75);
+}
+
+:deep(.fr-badge) {
+  padding: 0;
+  margin: 0;
+  background-color: red !important;
 }
 </style>

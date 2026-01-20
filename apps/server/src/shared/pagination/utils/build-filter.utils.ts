@@ -287,13 +287,13 @@ const _buildOneEnumFilter = (
   prefix?: string,
 ): string => {
   key = _adaptKeyForArray(key, isArray, prefix)
-  const values = filter.filter
+  const valueAsString = filter.filter
     .map((s) => `'${_manualFilterValueEscapingMechanism(s)}'`)
     .join(',')
-  if (values === '\'\'') {
+  if (valueAsString === '\'\'') {
     throw new BadRequestException('Empty string is not a correct enum value.')
   }
-  return `(${key} IN (${values})${isArray ? ')' : ''})`
+  return `(${key} IN (${valueAsString.length ? valueAsString : "''"})${isArray ? ')' : ''})`
 }
 //#endregion
 

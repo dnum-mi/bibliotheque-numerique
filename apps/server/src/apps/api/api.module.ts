@@ -27,7 +27,7 @@ import { typeormFactoryLoader } from '@/shared/utils/typeorm-factory-loader'
 import { HealthModule } from '@/modules/health/health.module'
 import { AuthModule } from '@/modules/auth/auth.module'
 import { DsApiModule } from '@/shared/modules/ds-api/ds-api.module'
-import { CustomFilterModule } from '@/modules/custom-filters/custom-filter.module'
+import { ViewModule } from '@/modules/views/view.module'
 import { XlsxModule } from '@/shared/modules/xlsx/xlsx.module'
 import { APP_GUARD } from '@nestjs/core'
 import { RoleGuard } from '@/modules/users/providers/guards/role.guard'
@@ -76,7 +76,7 @@ import { SyncStateModule } from '@/shared/sync-state/sync-state.module'
     UserModule,
     FileModule,
     HealthModule,
-    CustomFilterModule,
+    ViewModule,
     InstructionTimesModule,
     BnConfigurationModule,
     SyncStateModule,

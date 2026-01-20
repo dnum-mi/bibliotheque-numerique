@@ -11,7 +11,7 @@ import {
   anonymisationEventKey,
   eAnonymisationEvent,
 } from '@biblio-num/shared'
-import { CustomFilter } from '../../../custom-filters/objects/entities/custom-filter.entity'
+import { View } from '@/modules/views/objects/entities/view.entity'
 import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
 import { MappingAnonymized } from '@/modules/demarches/objects/dtos/mapping-anonymized.dto'
 import { ApiProperty } from '@nestjs/swagger'
@@ -74,9 +74,9 @@ export class Demarche extends BaseEntity implements IDemarcheWithOptions {
   @Column({ type: 'jsonb', default: '{}' })
   dsDataJson: Partial<TDemarche>
 
-  @OneToMany(() => CustomFilter, (customFilter) => customFilter.demarche)
+  @OneToMany(() => View, (view) => view.demarche)
   @JoinTable()
-  customFilters?: CustomFilter[]
+  views?: View[]
 
   @DeleteDateColumn()
   deletedDate: Date | null

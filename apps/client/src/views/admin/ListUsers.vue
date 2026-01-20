@@ -133,7 +133,7 @@ const { activeFilters, onFiltersUpdated, handleClearAllFilters, handleRemoveFilt
         :filters="activeFilters"
         :column-definitions="columnDefs"
         @request-remove-filter="handleRemoveFilter"
-        @request-clear-all="handleClearAllFilters"
+        @request-remove-all="handleClearAllFilters"
       />
     </div>
     <DataTableServerSide

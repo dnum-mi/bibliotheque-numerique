@@ -1,6 +1,6 @@
 import type { IRole } from '../roles'
-import type { ICustomFilter } from '../custom-filters'
 import { VerbosePrefecture } from '../prefectures'
+import { IView } from 'views'
 
 export interface IUser {
   id: number
@@ -11,7 +11,7 @@ export interface IUser {
   password: string
   role: IRole
   validated: boolean
-  customFilters?: ICustomFilter[]
+  views?: IView[]
   updatedAt: Date
   createdAt: Date
   prefecture: VerbosePrefecture

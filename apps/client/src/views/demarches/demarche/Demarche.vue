@@ -86,3 +86,7 @@ const handleTabChanged = (newTabId?: string) => {
     </BnTabsContainer>
   </LayoutList>
 </template>
+
+<style>
+
+</style>

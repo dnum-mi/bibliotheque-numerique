@@ -1,29 +1,29 @@
 <script lang="ts" setup>
 import type {
-  ICreateCustomFilter,
+  ICreateView,
   IPagination,
-  IPatchCustomFilter,
-  ICustomFilter,
+  IPatchView,
+  IView,
   IDemarche,
   IMappingColumn,
 } from '@biblio-num/shared'
 import type { FrontIMappingColumn } from '@/stores'
 import type { BNColDef } from '@/components/datatable/server-side/bn-col-def.interface'
-import type { TotalsAllowed } from './DemarcheDossiersDisplays.vue'
-import type { CustomFilterWithErrors } from '@/views/demarches/demarche/dossiers/custom-filter-with-errors.type'
+import type { TotalsAllowed } from './DemarcheDossiersViews.vue'
+import type { ViewWithErrors } from '@/views/demarches/demarche/dossiers/view-with-errors.type'
 
 import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useDebounceFn } from '@vueuse/core'
 
-import { useCustomFilterStore, useDemarcheStore } from '@/stores'
+import { useViewStore, useDemarcheStore } from '@/stores'
 import DemarcheDossierCellRenderer from '@/views/demarches/demarche/dossiers/DemarcheDossierCellRenderer.vue'
-import { deepAlmostEqual, selectKeysInObject } from '@/utils/object'
+import { deepAlmostEqual } from '@/utils/object'
 import { getDataTableFilterFromFieldType } from '@/components/datatable/server-side/filters.utils'
-import DemarcheDossiersDisplays from './DemarcheDossiersDisplays.vue'
 import { useActiveFilter } from '@/components/datatable/active-filters/useActiveFilter'
 import { useTour } from '@/composables/use-tour'
-import { filterTourSteps } from './TutoFilterDossier'
+import { filterTourSteps } from './TutoViewDossier.ts'
+import DemarcheDossiersViews from '@/views/demarches/demarche/dossiers/DemarcheDossiersViews.vue'
 
 const demarcheStore = useDemarcheStore()
 const router = useRouter()
@@ -32,17 +32,17 @@ const dataTableComponent = useTemplateRef('dataTableComponent')
 const demarche = computed<IDemarche>(() => demarcheStore.currentDemarche as IDemarche)
 const demarcheConfiguration = computed<FrontIMappingColumn[]>(() => demarcheStore.currentDemarcheFlatConfiguration)
 const demarcheConfigurationHash = computed<Record<string, IMappingColumn>>(() => demarcheStore.currentDemarcheConfigurationHash)
-const customDisplayStore = useCustomFilterStore()
-const customDisplay = computed<ICustomFilter[]>(() => customDisplayStore.customFilters as ICustomFilter[])
-const customDisplayWithErrors = computed<CustomFilterWithErrors[]>(() =>
-  (customDisplay.value || []).map((cf) => ({
+const viewStore = useViewStore()
+const view = computed<IView[]>(() => viewStore.views as IView[])
+const viewWithErrors = computed<ViewWithErrors[]>(() =>
+  (view.value || []).map((cf) => ({
     ...cf,
     disabledColumns: Object.keys(cf.filters || {})
       .concat(Array.isArray(cf.sorts) ? cf.sorts.map((s) => s.key) : [])
       .filter((key) => !demarcheConfigurationHash.value[key]),
   })),
 )
-const selectedCustomDisplay = ref<ICustomFilter | null>(null)
+const selectedView = ref<IView | null>(null)
 const totalsAllowed = computed<TotalsAllowed[] | undefined>(() =>
   demarcheConfiguration.value
     .filter((mapping) => mapping.type === 'number' && mapping.id !== '96151176-4624-4706-b861-722d2e53545d')
@@ -50,14 +50,19 @@ const totalsAllowed = computed<TotalsAllowed[] | undefined>(() =>
 )
 
 const { startTour } = useTour({
-  tourId: 'dossier-display-filter-tour', // Clé unique pour ce tour
+  tourId: 'dossier-view-filter-tour', // Clé unique pour ce tour
   steps: filterTourSteps,
 })
 
 //#region 📍------ LOCAL STORAGE ------ 📍
-const localStorageDataTablePaginationKey = computed(() => `dataTable.demarche-${route.params.demarcheId}.dossiers.pagination`)
+const localStorageDataTablePaginationKey = computed(() => {
+  const demarcheId = route.params.demarcheId
+  const viewId = selectedView.value?.id ?? 'none'
+  return `dataTable.demarche-${demarcheId}.dossiers.view-${viewId}.pagination`
+})
+const lastSelectedViewId = ref<number | null>(null)
 const localStorageGroupByKey = computed(() => `dataTable.demarche-${route.params.demarcheId}.dossiers.groupBy`)
-const localStorageDisplayIdKey = computed(() => `dataTable.demarche-${route.params.demarcheId}.dossiers.currentDisplayId`)
+const localStorageViewIdKey = computed(() => `dataTable.demarche-${route.params.demarcheId}.dossiers.currentViewId`)
 //#endregion
 
 //#region 📍------ GROUP BY DOSSIER ------ 📍
@@ -84,18 +89,26 @@ const paginationDto = ref({} as IPagination<any>)
 
 const paginationChanged = computed(() => {
   // Ne pas calculer si paginationDto n'est pas encore initialisé ou si on n'a pas d'affichage sélectionné
-  if (!paginationDto.value.columns || !selectedCustomDisplay.value) {
+  if (!paginationDto.value.columns || !selectedView.value) {
     return false
   }
+  const current = {
+    columns: cloneColumns(paginationDto.value.columns),
+    sorts: cloneSorts(paginationDto.value.sorts),
+    filters: cloneFilters(paginationDto.value.filters),
+    columnWidthById: cloneColumnWidthById(paginationDto.value.columnWidthById),
+    groupByDossier: groupByDossier.value,
+  }
 
-  const keys = ['columns', 'filters', 'sorts']
-  return !deepAlmostEqual(
-    {
-      ...selectKeysInObject(paginationDto.value, keys),
-      groupByDossier: groupByDossier.value,
-    },
-    selectKeysInObject(selectedCustomDisplay.value || {}, [...keys, 'groupByDossier']),
-  )
+  const saved = {
+    columns: cloneColumns(selectedView.value.columns),
+    sorts: cloneSorts(selectedView.value.sorts),
+    filters: cloneFilters(selectedView.value.filters),
+    columnWidthById: cloneColumnWidthById((selectedView.value as any).columnWidthById),
+    groupByDossier: !!(selectedView.value as any).groupByDossier,
+  }
+
+  return !deepAlmostEqual(current, saved)
 })
 
 const fetching = computed(() => demarcheStore.fetching)
@@ -141,7 +154,7 @@ const onSelectionChanged = ({ data: { dossierId: id }}: { data: { dossierId: num
 
 watch(demarche, async (newValue) => {
   computeColumnsDef()
-  await customDisplayStore.getCustomFiltersByDemarche(newValue.id)
+  await viewStore.getViewsByDemarche(newValue.id)
 })
 
 watch(fetching, () => {
@@ -156,28 +169,50 @@ const resetDataTableState = () => {
   }
 }
 
-const updateDataTableState = (selectedDisplay?: IPagination<any>) => {
+const updateDataTableState = (selectedView?: IPagination<any>) => {
   if (dataTableComponent.value) {
-    dataTableComponent.value.updateDataTableState(selectedDisplay ?? paginationDto.value)
+    dataTableComponent.value.updateDataTableState(selectedView ?? paginationDto.value)
   }
 }
 
-//#region 📍------ CUSTOM DISPLAY ------ 📍
-const customDisplayOperationSuccess = ref(true)
+//#region 📍------ CUSTOM VIEW ------ 📍
+const cloneSorts = (sorts: any): any[] => {
+  if (!Array.isArray(sorts)) { return [] }
+  return sorts.map((s) => ({ ...s }))
+}
 
-const updateDisplay = async () => {
-  customDisplayOperationSuccess.value = false
-  if (selectedCustomDisplay.value) {
-    selectedCustomDisplay.value.groupByDossier = groupByDossier.value
-    selectedCustomDisplay.value.columns = paginationDto.value.columns
-    selectedCustomDisplay.value.sorts = paginationDto.value.sorts
-    selectedCustomDisplay.value.filters = paginationDto.value.filters
+const cloneFilters = (filters: any): any => {
+  if (!filters) { return null }
+  try {
+    return JSON.parse(JSON.stringify(filters))
+  } catch {
+    return null
+  }
+}
+
+const cloneColumns = (columns: any): string[] => {
+  return Array.isArray(columns) ? [...columns] : []
+}
+
+const cloneColumnWidthById = (map: any): Record<string, number> => {
+  return map && typeof map === 'object' ? { ...map } : {}
+}
+const customViewOperationSuccess = ref(true)
+
+const updateView = async () => {
+  customViewOperationSuccess.value = false
+  if (selectedView.value) {
+    selectedView.value.groupByDossier = groupByDossier.value
+    selectedView.value.columns = cloneColumns(paginationDto.value.columns)
+    selectedView.value.sorts = cloneSorts(paginationDto.value.sorts)
+    selectedView.value.filters = cloneFilters(paginationDto.value.filters)
+    selectedView.value.columnWidthById = cloneColumnWidthById(paginationDto.value.columnWidthById)
     try {
-      const dto = { ...selectedCustomDisplay.value, disabledColumns: undefined }
+      const dto = { ...selectedView.value, disabledColumns: undefined }
       dto.filters = dto.filters || null
-      await customDisplayStore.updateCustomFilter(selectedCustomDisplay.value.id, dto)
-      selectedCustomDisplay.value = customDisplayWithErrors.value.find((cf) => cf.id === selectedCustomDisplay.value?.id) || null
-      customDisplayOperationSuccess.value = true
+      await viewStore.updateView(selectedView.value.id, dto)
+      selectedView.value = viewWithErrors.value.find((cf) => cf.id === selectedView.value?.id) || null
+      customViewOperationSuccess.value = true
     } catch (error) {
       import.meta.env.DEV && console.warn(error)
     }
@@ -186,75 +221,139 @@ const updateDisplay = async () => {
   }
 }
 
-const deleteDisplay = async () => {
-  customDisplayOperationSuccess.value = false
-  if (selectedCustomDisplay.value) {
+const deleteView = async () => {
+  customViewOperationSuccess.value = false
+  if (selectedView.value) {
     try {
-      await customDisplayStore.deleteCustomFilter(selectedCustomDisplay.value?.id)
-      selectedCustomDisplay.value = null
+      await viewStore.deleteView(selectedView.value?.id)
+      selectedView.value = null
       resetDataTableState()
-      customDisplayOperationSuccess.value = true
+      customViewOperationSuccess.value = true
     } catch (error) {
       import.meta.env.DEV && console.warn(error)
     }
-    await customDisplayStore.getCustomFiltersByDemarche(demarche.value.id)
+    await viewStore.getViewsByDemarche(demarche.value.id)
   }
 }
 
-const updateDisplayName = async ({ filterName = '', totals = [] }: { filterName?: string; totals?: string[] }) => {
-  customDisplayOperationSuccess.value = false
-  if (selectedCustomDisplay.value) {
-    const dto: IPatchCustomFilter = {
-      name: filterName,
+const updateViewName = async ({ viewName = '', totals = [] }: { viewName?: string; totals?: string[] }) => {
+  customViewOperationSuccess.value = false
+  if (selectedView.value) {
+    const dto: IPatchView = {
+      name: viewName,
     }
     if (totals) {
       dto.totals = totals.filter((tt) => tt !== 'Aucun total')
     }
     dto.columns = paginationDto.value.columns
     try {
-      await customDisplayStore.updateCustomFilter(selectedCustomDisplay.value.id, dto)
-      selectedCustomDisplay.value.name = filterName
-      selectedCustomDisplay.value.totals = dto.totals ?? null
-      customDisplayOperationSuccess.value = false
+      await viewStore.updateView(selectedView.value.id, dto)
+      selectedView.value.name = viewName
+      selectedView.value.totals = dto.totals ?? null
+      customViewOperationSuccess.value = false
     } catch (error) {
       import.meta.env.DEV && console.warn(error)
     }
   }
 }
 
-const selectDisplay = async (id: number | null) => {
+const selectView = async (id: number | null) => {
+  const demarcheId = route.params.demarcheId
+  const previousViewId = selectedView.value?.id ?? null
+  const prevKey = previousViewId === null
+    ? `dataTable.demarche-${demarcheId}.dossiers.view-none.pagination`
+    : `dataTable.demarche-${demarcheId}.dossiers.view-${previousViewId}.pagination`
+
+  // On démonte le DataTable d'abord pour l'empêcher de ré-écrire dans le storage
+  readyToLoadDataTable.value = false
+  await nextTick()
+
+  // Si on quitte une vue vers une autre (ou vers "none") sans sauvegarde, on jette son storage
+  if (previousViewId !== null && previousViewId !== id) {
+    localStorage.removeItem(prevKey)
+  }
+
   if (id === null) {
-    selectedCustomDisplay.value = null
-    resetDataTableState()
-    localStorage.removeItem(localStorageGroupByKey.value)
-    localStorage.removeItem(localStorageDisplayIdKey.value)
-    groupByDossier.value = false
+    selectedView.value = null
+    localStorage.removeItem(localStorageViewIdKey.value)
+    groupByDossier.value = hasNoRepeatableField.value
+
+    initialDataTableState.value = readDataTableStateFromLocalStorage() // view-none
+    readyToLoadDataTable.value = true
     return
   }
-  if (customDisplayStore.customFilters.length === 0) {
-    await customDisplayStore.getCustomFiltersByDemarche(demarche.value.id)
+  if (viewStore.views.length === 0) {
+    await viewStore.getViewsByDemarche(demarche.value.id)
   }
-  selectedCustomDisplay.value = customDisplayWithErrors.value.find((cf) => cf.id === id) || null
-  if (selectedCustomDisplay.value) {
-    groupByDossier.value = selectedCustomDisplay.value?.groupByDossier
-    paginationDto.value.columns = selectedCustomDisplay.value?.columns
-    paginationDto.value.sorts = selectedCustomDisplay.value?.sorts || []
-    paginationDto.value.filters = selectedCustomDisplay.value?.filters || null
-    updateDataTableState()
-    localStorage.setItem(localStorageDisplayIdKey.value, `${selectedCustomDisplay.value.id}`)
+  selectedView.value = viewWithErrors.value.find((cf) => cf.id === id) || null
+  if (selectedView.value) {
+    groupByDossier.value = selectedView.value.groupByDossier
+    paginationDto.value.columns = cloneColumns(selectedView.value.columns)
+    paginationDto.value.sorts = cloneSorts(selectedView.value.sorts)
+    paginationDto.value.filters = cloneFilters(selectedView.value.filters)
+    paginationDto.value.columnWidthById = cloneColumnWidthById((selectedView.value as any).columnWidthById)
+
+    localStorage.setItem(localStorageViewIdKey.value, `${selectedView.value.id}`)
+
+    // on recharge un état initial depuis le localStorage de cette vue si présent, sinon fallback vue
+    const savedTableState = readDataTableStateFromLocalStorage()
+    initialDataTableState.value = savedTableState ?? {
+      page: 1,
+      perPage: 20,
+      columns: paginationDto.value.columns,
+      sorts: paginationDto.value.sorts,
+      filters: paginationDto.value.filters,
+      columnWidthById: paginationDto.value.columnWidthById,
+    }
+
+    // Forcer le DataTable à remonter avec la nouvelle clé
+    readyToLoadDataTable.value = false
+    await nextTick()
+    readyToLoadDataTable.value = true
   } else {
-    throw new Error('Le filtre sélectionné n’existe pas')
+    throw new Error('La vue sélectionnée n’existe pas')
   }
 }
 
-const createDisplay = async ({ filterName = '', totals = [] }: { filterName?: string; totals?: string[] }) => {
-  customDisplayOperationSuccess.value = false
-  const createCustomFilterDto: ICreateCustomFilter = {
-    name: filterName,
-    groupByDossier: groupByDossier.value,
+const resetCurrentViewFromBackend = async (id: number) => {
+  const backendView = viewWithErrors.value.find(v => v.id === id)
+  if (!backendView) {
+    return
+  }
+
+  selectedView.value = backendView
+  groupByDossier.value = backendView.groupByDossier
+
+  // écraser l'état courant par backend
+  paginationDto.value.columns = cloneColumns(selectedView.value.columns)
+  paginationDto.value.sorts = cloneSorts(selectedView.value.sorts)
+  paginationDto.value.filters = cloneFilters(selectedView.value.filters)
+  paginationDto.value.columnWidthById = cloneColumnWidthById((selectedView.value as any).columnWidthById)
+
+  // écraser le brouillon localStorage de CETTE vue
+  localStorage.setItem(localStorageDataTablePaginationKey.value, JSON.stringify({
+    page: 1,
+    perPage: 20,
     columns: paginationDto.value.columns,
     sorts: paginationDto.value.sorts,
     filters: paginationDto.value.filters,
+    columnWidthById: paginationDto.value.columnWidthById,
+  }))
+
+  // 4) forcer DataTable à se re-synchroniser
+  updateDataTableState()
+  dataTableComponent.value?.refresh()
+}
+
+const createView = async ({ viewName = '', totals = [] }: { viewName?: string; totals?: string[] }) => {
+  customViewOperationSuccess.value = false
+  const createCustomFilterDto: ICreateView = {
+    name: viewName,
+    groupByDossier: groupByDossier.value,
+    columns: cloneColumns(paginationDto.value.columns),
+    columnWidthById: cloneColumnWidthById(paginationDto.value.columnWidthById),
+    sorts: cloneSorts(paginationDto.value.sorts),
+    filters: cloneFilters(paginationDto.value.filters),
     totals: [],
   }
 
@@ -262,9 +361,9 @@ const createDisplay = async ({ filterName = '', totals = [] }: { filterName?: st
     createCustomFilterDto.totals = totals.filter((tt) => tt !== 'Aucun total')
   }
   try {
-    const filterId = await customDisplayStore.createCustomFilter(createCustomFilterDto, demarche.value.id)
-    selectDisplay(filterId)
-    customDisplayOperationSuccess.value = true
+    const filterId = await viewStore.createView(createCustomFilterDto, demarche.value.id)
+    selectView(filterId)
+    customViewOperationSuccess.value = true
   } catch (error) {
     import.meta.env.DEV && console.warn(error)
   }
@@ -278,85 +377,76 @@ const download = () => {
 const readyToLoadDataTable = ref<boolean>(false)
 const initialDataTableState = ref<IPagination<any> | null>(null)
 
+const readDataTableStateFromLocalStorage = (): IPagination<any> | null => {
+  const raw = localStorage.getItem(localStorageDataTablePaginationKey.value)
+  if (!raw) {
+    return null
+  }
+  try {
+    return JSON.parse(raw)
+  } catch (e) {
+    console.warn('Erreur de lecture du localStorage DataTable', e)
+    return null
+  }
+}
+
 onMounted(async () => {
   computeColumnsDef()
-  await customDisplayStore.getCustomFiltersByDemarche(demarche.value.id)
+  await viewStore.getViewsByDemarche(demarche.value.id)
 
-  // Restaurer groupByDossier en premier
-  if (localStorage.getItem(localStorageGroupByKey.value) === 'true') {
-    groupByDossier.value = true
+  // 1) Vue sélectionnée au dernier passage
+  const savedViewId = Number.parseInt(localStorage.getItem(localStorageViewIdKey.value) || '-1')
+  if (savedViewId > -1) {
+    selectedView.value = viewWithErrors.value.find((v) => v.id === savedViewId) || null
+  } else {
+    selectedView.value = null
   }
 
-  const displayIdKey = Number.parseInt(localStorage.getItem(localStorageDisplayIdKey.value) || '-1')
-  if (displayIdKey > -1) {
-    selectedCustomDisplay.value = customDisplayWithErrors.value.find((cf) => cf.id === displayIdKey) || null
+  // 2) groupBy : si une vue existe on prend la valeur de la vue, sinon on prend le localStorage global, sinon défaut
+  if (selectedView.value) {
+    groupByDossier.value = selectedView.value.groupByDossier
+  } else if (localStorage.getItem(localStorageGroupByKey.value) === 'true') {
+    groupByDossier.value = true
+  } else {
+    groupByDossier.value = hasNoRepeatableField.value
+  }
 
-    // Préparer la configuration initiale pour DataTableServerSide
-    if (selectedCustomDisplay.value) {
-      groupByDossier.value = selectedCustomDisplay.value.groupByDossier
-      paginationDto.value.columns = selectedCustomDisplay.value.columns
-      paginationDto.value.sorts = selectedCustomDisplay.value.sorts || []
-      paginationDto.value.filters = selectedCustomDisplay.value.filters || null
+  // 3) Préparer un état initial "source de vérité"
+  // Priorité : localStorage de la vue courante (view-xx ou view-none) ; sinon fallback sur la vue ; sinon null
+  const savedTableState = readDataTableStateFromLocalStorage()
 
-      // Pour DataTable, vérifier d'abord s'il y a des données dans son localStorage
-      const dataTableSavedData = localStorage.getItem(localStorageDataTablePaginationKey.value)
-      if (dataTableSavedData) {
-        try {
-          initialDataTableState.value = JSON.parse(dataTableSavedData)
-        } catch (e) {
-          console.warn('Erreur de lecture du localStorage DataTable', e)
-          // Fallback sur selectedCustomDisplay si erreur de parsing
-          initialDataTableState.value = {
-            page: 1,
-            perPage: 20,
-            columns: selectedCustomDisplay.value.columns,
-            sorts: selectedCustomDisplay.value.sorts || [],
-            filters: selectedCustomDisplay.value.filters || null,
-          }
-        }
-      } else {
-        // Pas de données DataTable sauvegardées, utiliser selectedCustomDisplay
-        initialDataTableState.value = {
-          page: 1,
-          perPage: 20,
-          columns: selectedCustomDisplay.value.columns,
-          sorts: selectedCustomDisplay.value.sorts || [],
-          filters: selectedCustomDisplay.value.filters || null,
-        }
-      }
+  if (savedTableState) {
+    initialDataTableState.value = savedTableState
+  } else if (selectedView.value) {
+    initialDataTableState.value = {
+      page: 1,
+      perPage: 20,
+      columns: selectedView.value.columns ?? [],
+      sorts: selectedView.value.sorts ?? [],
+      filters: selectedView.value.filters ?? null,
+      columnWidthById: selectedView.value.columnWidthById ?? {},
     }
   } else {
-    // Pas de custom display, mais vérifier quand même le localStorage DataTable
-    const dataTableSavedData = localStorage.getItem(localStorageDataTablePaginationKey.value)
-    if (dataTableSavedData) {
-      try {
-        initialDataTableState.value = JSON.parse(dataTableSavedData)
-      } catch (e) {
-        console.warn('Erreur de lecture du localStorage DataTable', e)
-        initialDataTableState.value = null
-      }
-    }
+    initialDataTableState.value = null
   }
 
-  // Marquer comme prêt seulement après avoir restauré toutes les valeurs
+  // 4) S'assurer que paginationDto a déjà les champs attendus (utile pour les actions hors datatable)
+  if (selectedView.value) {
+    paginationDto.value.columns = selectedView.value.columns ?? []
+    paginationDto.value.sorts = selectedView.value.sorts ?? []
+    paginationDto.value.filters = selectedView.value.filters ?? null
+    paginationDto.value.columnWidthById = selectedView.value.columnWidthById ?? {}
+  }
+
   readyToLoadDataTable.value = true
 })
 
 const { activeFilters, onFiltersUpdated, handleRemoveFilter } = useActiveFilter('dossiers', dataTableComponent)
 
 const customHandleClearAllFilters = async () => {
-  if (selectedCustomDisplay.value && typeof selectedCustomDisplay.value.id === 'number') {
-    await selectDisplay(selectedCustomDisplay.value.id)
-  } else {
-    resetDataTableState()
-    paginationDto.value.filters = null
-    paginationDto.value.sorts = []
-  }
+  resetDataTableState()
+  paginationDto.value.filters = null
 }
-
-const clearAllFiltersButtonLabel = computed(() => {
-  return selectedCustomDisplay.value ? 'Réinitialiser les filtres' : 'Tout supprimer'
-})
 
 const quickFilterValueTranslations: Record<string, string> = {
   TwentyFourHours: 'depuis 24 heures',
@@ -380,7 +470,7 @@ const quickFilterValueTranslations: Record<string, string> = {
             :class="{ 'opacity-70': groupByDossier }"
             @click="toggleView(false)"
           >
-            Vue par champ
+            Vue champ
             <VIcon :name="!groupByDossier ? 'ri-checkbox-circle-fill' : 'ri-checkbox-blank-circle-line'" />
           </DsfrButton>
           <DsfrButton
@@ -390,7 +480,7 @@ const quickFilterValueTranslations: Record<string, string> = {
             @click="toggleView(true)"
           >
             <VIcon :name="groupByDossier ? 'ri-checkbox-circle-fill' : 'ri-checkbox-blank-circle-line'" />
-            Vue par dossier
+            Vue dossier
           </DsfrButton>
         </div>
         <div>
@@ -406,23 +496,24 @@ const quickFilterValueTranslations: Record<string, string> = {
           :filters="activeFilters"
           :column-definitions="columnsDef"
           :quick-filter-value-translations="quickFilterValueTranslations"
-          :clear-all-button-label="clearAllFiltersButtonLabel"
+          clear-all-button-label="Supprimer tous les filtres"
           @request-remove-filter="handleRemoveFilter($event)"
-          @request-clear-all="customHandleClearAllFilters()"
+          @request-remove-all="customHandleClearAllFilters()"
         />
       </div>
       <div class="flex justify-center items-center">
-        <DemarcheDossiersDisplays
-          :displays="(customDisplayWithErrors as ICustomFilter[])"
-          :selected-display="(selectedCustomDisplay as ICustomFilter)"
+        <DemarcheDossiersViews
+          :views="viewWithErrors"
+          :selected-view="(selectedView as IView)"
           :pagination-changed="paginationChanged"
           :totals-allowed="totalsAllowed"
-          :operation-success="customDisplayOperationSuccess"
-          @create-display="createDisplay($event)"
-          @update-display="updateDisplay()"
-          @update-display-name="updateDisplayName($event)"
-          @delete-display="deleteDisplay()"
-          @select-display="selectDisplay($event)"
+          :operation-success="customViewOperationSuccess"
+          @create-view="createView($event)"
+          @update-view="updateView()"
+          @update-view-name="updateViewName($event)"
+          @delete-view="deleteView()"
+          @select-view="selectView($event)"
+          @reselect-view="resetCurrentViewFromBackend($event)"
         />
         <DsfrButton
           id="help-button"

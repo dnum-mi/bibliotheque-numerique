@@ -22,7 +22,7 @@ export const getListDemarcheDossierRoute = (demarcheId: number) => `${getDemarch
 export const getListDemarcheFieldRoute = (demarcheId: number) => `${getDemarcheByIdRoute(demarcheId)}/fields-search`
 export const getXlsxDemarcheDossierRoute = (demarcheId: number) => `${getListDemarcheDossierRoute(demarcheId)}/export/xlsx`
 export const getXlsxDemarcheFieldRoute = (demarcheId: number) => `${getListDemarcheFieldRoute(demarcheId)}/export/xlsx`
-export const getDemarcheCustomFilterRoute = (demarcheId: number) => `${demarchesRoute}/${demarcheId}/custom-filters`
+export const getDemarcheViewRoute = (demarcheId: number) => `${demarchesRoute}/${demarcheId}/views`
 export const softDeleteDemarcheByIdRoute = (demarcheId: number) => `${getDemarcheByIdRoute(demarcheId)}/soft-delete`
 export const getDemarcheAnonymizeRoute = (id: number) => `${getDemarcheOptionRoute(id)}/field/anonymized`
 
@@ -51,10 +51,10 @@ export const getDossierFilesRoute = (dossierId: number) => `${dossierRoute}/${do
 export const getDossierFilesSummaryRoute = (dossierId: number) => `${dossierRoute}/${dossierId}/files/summary`
 
 export const getDossierFromOrganisme = (organismeId: string) => `${dossierRoute}/organismes/${organismeId}`
-export const customFiltersRoute = '/custom-filters'
-export const getCustomFiltersRoute = () => customFiltersRoute
-export const getOneCustomFiltersRoute = (id: number) => `/custom-filters/${id}`
-export const getOneCustomFiltersStats = (id: number) => `${getOneCustomFiltersRoute(id)}/stats`
+export const viewsRoute = '/views'
+export const getViewsRoute = () => viewsRoute
+export const getOneViewRoute = (id: number) => `/views/${id}`
+export const getOneViewStats = (id: number) => `${getOneViewRoute(id)}/stats`
 
 export const getDossierByIdRoute = (id: number) => `${dossierRoute}/${id}`
 export const getDossierWithFieldsByIdRoute = (id: number) => `${dossierRoute}/${id}/fields`

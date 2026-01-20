@@ -1,6 +1,6 @@
 export * from './bn-configurations'
 export * from './common'
-export * from './custom-filters'
+export * from './views'
 export * from './demarches'
 export * from './dossiers'
 export * from './files'

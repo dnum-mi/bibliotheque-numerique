@@ -7,11 +7,13 @@ import type { DisplayActiveFilter } from '../active-filters/activeFilters.type'
 
 import { useDebounceFn, useEventListener } from '@vueuse/core'
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api'
-import { nextTick, toRaw } from 'vue'
+import { computed, nextTick, onMounted, onUpdated, ref, watch } from 'vue'
+
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
 import DatePicker from 'primevue/datepicker'
+
 import { useAmountLines } from './useAmountLines'
 import {
   serverFilterToDataTableDataType,
@@ -25,14 +27,24 @@ import {
 import { formatDateForApi, safeNumber, getFilters } from './utils/datatable.utils'
 import { dealWithBlankAndNotBlank } from './filters.utils'
 
+/*
+  - colomOrder ne sert à rien ?? utiliser column. Et pour re-ordre, utiliser columnDef order
+      - re-faire migration avec les bon nom et sans colonne order ?
+  - faire tout marcher sur le composant simple, sans local storage
+  - faire marcher le local storage
+  - aller sur la page liste dossier avec les afficage personnalisé
+  - affichage personnalisée: local-storage par affichage
+  - test avec resize et re-order
+  - mettre la bar a droite correctement
+  - entouré le composant un peu proprement
+ */
+
 // Types étendus pour inclure filterType (métadonnée custom)
 interface ExtendedDataTableOperatorFilterMetaData extends DataTableOperatorFilterMetaData {
   filterType?: string
 }
 
-//#region 📍------ PROPS ------ 📍
-type SortItem = { key: string; order: 'ASC' | 'DESC' }
-
+//#region 📍------ Props & Emits------ 📍
 const props = withDefaults(
   defineProps<{
     paginationDto?: IPagination<T>
@@ -58,344 +70,133 @@ const props = withDefaults(
   },
 )
 
-//#endregion
-
-//#region 📍------ EVENTS ------ 📍
-
 const emit = defineEmits<{
   'update:paginationDto': [p: IPagination<T>]
   filtersUpdated: [filters: DisplayActiveFilter[]]
   rowClick: [event: { data: T; column?: BNColDef; field?: string }]
 }>()
-
 //#endregion
 
-//#region 📍------ STATE ------ 📍
+//#region 📍------ Constantes ------ 📍
+const DEFAULT_PER_PAGE = 20
+const ROWS_PER_PAGE_OPTIONS = [20, 50, 100]
+const OFFSET_BOTTOM_PX = 82
+const DEFAULT_COL_WIDTH = 180
+//#endregion
 
+//#region 📍------ State: Data & Pagination ------ 📍
 const isLoadingRows = ref(false)
-const tableKey = ref(0)
-const displayColumns = ref(false)
-
-const currentPage = ref(1)
-const perPage = ref(20)
-const totalRecords = ref(0)
-const rowData = ref()
-
-const selectedColumnsIds = ref(props.columnDefs.filter((col) => !col.hide).map((col) => col.field ?? ''))
-const columnsOrder = ref<string[]>(props.columnDefs.filter((col) => !col.hide).map((col) => col.field ?? ''))
-const columnsWidth = ref<Record<string, number>>({})
-const sort = ref<SortItem[]>([])
-
-const filters = ref<DataTableFilterMeta>(getFilters(props.columnDefs))
-
 const isReadyToWatch = ref(false)
 const hasInitialDataLoaded = ref(false)
 
+const tableKey = ref(0)
+const currentPage = ref(1)
+const perPage = ref(DEFAULT_PER_PAGE)
+const totalRecords = ref(0)
+const rowData = ref<T[] | undefined>(undefined)
 //#endregion
 
-//#region 📍------ DATA ------ 📍
+//#region 📍------ State: Columns (selection/order/width) ------ 📍
+const displayColumns = ref(false)
 
-const filteredColumnDefs = computed(() => {
-  // Obtenir les colonnes non cachées et sélectionnées
-  const availableColumns = props.columnDefs.filter((col) => {
-    const isNotHidden = !col.hide
-    const isSelected = selectedColumnsIds.value.includes(col.field ?? '')
-    return isNotHidden && isSelected
-  })
+const selectedColumnIds = ref<string[]>(props.columnDefs.filter((c) => !c.hide && c.field).map((c) => c.field!))
 
-  // Si aucun ordre personnalisé n'est défini OU si l'ordre est vide, retourner l'ordre original
-  if (columnsOrder.value.length === 0 || !columnsOrder.value.some((fieldId) => availableColumns.some((col) => col.field === fieldId))) {
-    // Retourner dans l'ordre défini par props.columnDefs (ordre par défaut)
-    return props.columnDefs.filter((col) => {
-      const isNotHidden = !col.hide
-      const isSelected = selectedColumnsIds.value.includes(col.field ?? '')
-      return isNotHidden && isSelected
-    })
-  }
+const columnWidthById = ref<Record<string, number>>({})
+//#endregion
 
-  // Créer un map pour un accès rapide aux colonnes par field
-  const columnMap = new Map(availableColumns.map((col) => [col.field, col]))
+//#region 📍------ State: Filters & Sort ------ 📍
+type SortItem = { key: string; order: 'ASC' | 'DESC' }
+const sort = ref<SortItem[]>([])
+const filters = ref<DataTableFilterMeta>(getFilters(props.columnDefs))
+//#endregion
 
-  // Réorganiser selon l'ordre défini dans columnsOrder
-  const orderedColumns = []
+//#region 📍------ State: Scroll ------ 📍
+const scrollHeight = ref('flex')
+const dataTableRef = useTemplateRef('dataTable')
+//#endregion
 
-  // Ajouter les colonnes dans l'ordre spécifié
-  for (const fieldId of columnsOrder.value) {
-    const column = columnMap.get(fieldId)
-    if (column) {
-      orderedColumns.push(column)
-      columnMap.delete(fieldId) // Retirer pour éviter les doublons
+//#region 📍------ Helpers pure ------ 📍
+// Retourne uniquement les ids de colonnes "disponibles" (non hide + field défini).
+const getAvailableColumnIds = (): string[] => props.columnDefs.filter((c) => !c.hide && c.field).map((c) => c.field!)
+
+/**
+ * Utilitaire de tri des définitions de colonnes par une liste d’ids.
+ * - ignore les ids inconnus
+ * - garde les colonnes non mentionnées à la fin
+ */
+function orderColumnDefs (defs: BNColDef[], orderIds: string[]): BNColDef[] {
+  const byId = new Map(defs.filter((d) => d.field).map((d) => [d.field!, d]))
+  const ordered: BNColDef[] = []
+
+  for (const id of orderIds) {
+    const def = byId.get(id)
+    if (!def) {
+      continue
     }
+    ordered.push(def)
+    byId.delete(id)
   }
 
-  // Ajouter les colonnes restantes qui ne sont pas dans l'ordre personnalisé
-  orderedColumns.push(...columnMap.values())
+  ordered.push(...byId.values())
+  return ordered
+}
 
-  return orderedColumns
+function getColumnDataType (col: BNColDef): string | undefined {
+  if (typeof col.filter === 'string') {
+    return serverFilterToDataTableDataType[col.filter]
+  }
+  return undefined
+}
+
+function shouldShowFilterControls (col: BNColDef): boolean {
+  if (typeof col.filter === 'string') {
+    return !SET_FILTER_TYPES.includes(col.filter as any)
+  }
+  return true
+}
+
+//#endregion
+
+//#region 📍------ Computed: Pagination UI ------ 📍
+const paginationPages = computed(() =>
+  Array.from(Array(Math.ceil(totalRecords.value / perPage.value))).map((_, i) => ({
+    title: (i + 1).toString(),
+    href: `#${i + 1}`,
+    label: (i + 1).toString(),
+  })),
+)
+
+const first = computed(() => (currentPage.value - 1) * perPage.value)
+//#endregion
+
+//#region 📍------ Computed: Column defs ------ 📍
+const visibleColumnDefs = computed(() => props.columnDefs.filter((c) => !c.hide && c.field))
+
+const selectedVisibleColumnDefs = computed(() => {
+  const selected = new Set(selectedColumnIds.value)
+  return visibleColumnDefs.value.filter((c) => selected.has(c.field!))
 })
 
+// Colonnes du tableaux
+const filteredColumnDefs = computed(() => orderColumnDefs(selectedVisibleColumnDefs.value, selectedColumnIds.value))
+
+// Colonne de la liste de droite
+const columnDefsForList = computed(() => {
+  const selectedSet = new Set(selectedColumnIds.value)
+
+  const selectedDefs = orderColumnDefs(
+    visibleColumnDefs.value.filter((c) => selectedSet.has(c.field!)),
+    selectedColumnIds.value,
+  )
+
+  const notSelectedDefs = visibleColumnDefs.value.filter((c) => !selectedSet.has(c.field!))
+
+  return [...selectedDefs, ...notSelectedDefs]
+})
 //#endregion
 
-const notifyFilterChanged = () => {
-  const activeFilters: DisplayActiveFilter[] = []
-
-  for (const [colId, filter] of Object.entries(filters.value)) {
-    if ('value' in (filter as DataTableFilterMetaData)) {
-      const metaFilter = filter as DataTableFilterMetaData
-      if (metaFilter.value !== null && metaFilter.value !== undefined) {
-        const colDef = props.columnDefs.find((col) => col.field === colId)
-        const filterType = typeof colDef?.filter === 'string' ? colDef.filter : ''
-        const isSetFilter = SET_FILTER_TYPES.includes(filterType as any)
-
-        if (isSetFilter) {
-          // Pour les filtres de type "set", on extrait juste les codes
-          const values = Array.isArray(metaFilter.value)
-            ? metaFilter.value.map((item) => item.code || item)
-            : [metaFilter.value]
-
-          activeFilters.push({
-            colId,
-            filterType: 'set',
-            values,
-          } as DisplayActiveFilter)
-        } else {
-          // Pour les autres filtres, format simple
-          activeFilters.push({
-            colId,
-            filterType: 'text',
-            type: metaFilter.matchMode,
-            filter: metaFilter.value,
-            values: [],
-          } as DisplayActiveFilter)
-        }
-      }
-    } else if ('operator' in (filter as DataTableOperatorFilterMetaData)) {
-      const metaFilter = filter as DataTableOperatorFilterMetaData
-      const activeConstraints = metaFilter.constraints.filter((c) => c.value !== null && c.value !== undefined)
-
-      if (activeConstraints.length > 0) {
-        const colDef = props.columnDefs.find((col) => col.field === colId)
-        const filterType = typeof colDef?.filter === 'string' ? colDef.filter : ''
-        const isSetFilter = SET_FILTER_TYPES.includes(filterType as any)
-
-        if (isSetFilter && activeConstraints[0]) {
-          // Pour les filtres de type "set", format simple
-          const values = Array.isArray(activeConstraints[0].value)
-            ? activeConstraints[0].value.map((item) => item.code || item)
-            : [activeConstraints[0].value]
-
-          activeFilters.push({
-            colId,
-            filterType: 'set',
-            values,
-          } as DisplayActiveFilter)
-        } else {
-          // Pour les autres filtres, on peut garder condition1/condition2 si nécessaire
-          const filterData: DisplayActiveFilter = {
-            colId,
-            filterType: 'text',
-            values: [],
-          }
-
-          if (activeConstraints.length === 1 && activeConstraints[0]) {
-            filterData.type = activeConstraints[0].matchMode
-            filterData.filter = activeConstraints[0].value
-          } else if (activeConstraints.length >= 2 && activeConstraints[0] && activeConstraints[1]) {
-            filterData.operator = metaFilter.operator as 'AND' | 'OR'
-            filterData.condition1 = {
-              type: activeConstraints[0].matchMode,
-              filter: activeConstraints[0].value,
-            }
-            filterData.condition2 = {
-              type: activeConstraints[1].matchMode,
-              filter: activeConstraints[1].value,
-            }
-          }
-
-          activeFilters.push(filterData)
-        }
-      }
-    }
-  }
-
-  emit('filtersUpdated', activeFilters)
-}
-
-//#region 📍------ LOCAL STORAGE ------ 📍
-const saveToLocalStorage = (dto: IPagination<T>) => {
-  if (!props.localStorageKey) {
-    return
-  }
-  try {
-    const data = JSON.stringify(dto)
-    localStorage.setItem(`${props.localStorageKey}`, data)
-  } catch (e) {
-    console.warn('Erreur de sauvegarde dans localStorage', e)
-  }
-}
-
-const applyFromDto = (dto: IPagination<T>) => {
-  //#region 📍------ RESTORE FILTERS ------ 📍
-  if (dto.filters) {
-    const rebuiltFilters = getFilters(props.columnDefs)
-
-    Object.entries(dto.filters).forEach(([key, savedValue]) => {
-      const colDef = props.columnDefs.find((c) => c.field === key)
-      if (!colDef) {
-        return
-      }
-
-      const filterName = typeof colDef.filter === 'string' ? colDef.filter : 'agTextColumnFilter'
-
-      // Détection précise du type
-      const mappedType = serverFilterToDataTableDataType[filterName]
-      const isDate = mappedType === 'date'
-      const isNumber = mappedType === 'numeric'
-      const isBoolean = mappedType === 'boolean'
-      const isSet = (SET_FILTER_TYPES.includes(filterName as any) || mappedType === 'set') && !isBoolean
-
-      const primeVueType = mappedType || 'text'
-
-      const cond1 = (savedValue as any).condition1
-      const cond2 = (savedValue as any).condition2
-      const operator = (savedValue as any).operator === 'OR' ? FilterOperator.OR : FilterOperator.AND
-
-      if (isSet && cond1) {
-        let valueToRestore = null
-
-        if (typeof cond1 === 'object' && ('includeEmpty' in cond1 || 'filterType' in cond1) && !Array.isArray(cond1)) {
-          valueToRestore = cond1
-        } else if (Array.isArray(cond1.filter)) {
-          valueToRestore = {
-            filterType: 'set',
-            includeEmpty: false,
-            filter: cond1.filter,
-          }
-        } else if (cond1.filter !== undefined) {
-          valueToRestore = {
-            filterType: 'set',
-            includeEmpty: false,
-            filter: [cond1.filter],
-          }
-        }
-
-        if (valueToRestore) {
-          rebuiltFilters[key] = {
-            operator: FilterOperator.AND,
-            constraints: [{ value: valueToRestore, matchMode: FilterMatchMode.EQUALS }],
-            filterType: 'set',
-          } as ExtendedDataTableOperatorFilterMetaData
-        }
-      } else if (isBoolean && cond1) {
-        let rawValues: string[] = []
-
-        if (Array.isArray(cond1.filter)) {
-          rawValues = cond1.filter.map(String)
-        } else if (cond1.filter !== undefined) {
-          rawValues = [String(cond1.filter)]
-        }
-
-        const booleanOptions = [
-          { name: 'Oui', code: 'true' },
-          { name: 'Non', code: 'false' },
-        ]
-
-        const selectedOptions = booleanOptions.filter(opt => rawValues.includes(opt.code))
-
-        rebuiltFilters[key] = {
-          operator: FilterOperator.AND,
-          constraints: [{
-            value: selectedOptions,
-            matchMode: FilterMatchMode.IN,
-          }],
-          filterType: 'boolean',
-        } as ExtendedDataTableOperatorFilterMetaData
-      } else if (cond1) {
-        const restoreConstraint = (c: any) => {
-          if (!c) {
-            return null
-          }
-
-          let val = c.filter
-          let mode = c.type
-
-          if (isDate) {
-            val = val ? new Date(val) : null
-            mode = serverToPrimeVueDateMode[c.type] || FilterMatchMode.DATE_IS
-          } else if (isNumber) {
-            val = Number(val)
-            mode = serverToPrimeVueNumberMode[c.type] || FilterMatchMode.EQUALS
-          }
-
-          return { value: val, matchMode: mode }
-        }
-
-        const constraint1 = restoreConstraint(cond1)
-        const constraint2 = restoreConstraint(cond2)
-
-        if (constraint1) {
-          rebuiltFilters[key] = {
-            operator,
-            constraints: [constraint1, ...(constraint2 ? [constraint2] : [])],
-            filterType: primeVueType,
-          } as ExtendedDataTableOperatorFilterMetaData
-        }
-      }
-    })
-
-    filters.value = rebuiltFilters
-  }
-  //#endregion
-
-  //#region 📍------ RESTORE SORTS ------ 📍
-  if (dto.sorts && dto.sorts.length > 0) {
-    const sortItem = dto.sorts.at(0)
-    if (sortItem) {
-      sort.value = [
-        {
-          key: sortItem.key,
-          order: sortItem.order,
-        },
-      ]
-    }
-  } else {
-    sort.value = []
-  }
-  //#endregion
-
-  //#region 📍------ RESTORE COLUMNS ------ 📍
-  if (dto.columns && dto.columns.length > 0) {
-    // Filtrer les colonnes pour exclure celles qui sont cachées
-    const availableColumns = props.columnDefs.filter((col) => !col.hide).map((col) => col.field ?? '')
-    selectedColumnsIds.value = (dto.columns as string[]).filter((colId) => availableColumns.includes(colId))
-  }
-  //#endregion
-
-  //#region 📍------ RESTORE COLUMNS WIDTH ------ 📍
-  if (dto.columnsWidth) {
-    columnsWidth.value = dto.columnsWidth as Record<string, number>
-    tableKey.value++
-  }
-  //#endregion
-
-  //#region 📍------ RESTORE COLUMNS ORDER ------ 📍
-  if (dto.columnsOrder && dto.columnsOrder.length > 0) {
-    const availableColumns = props.columnDefs.filter((col) => !col.hide).map((col) => col.field ?? '')
-    const validOrder = (dto.columnsOrder as string[]).filter((colId) => availableColumns.includes(colId))
-
-    // Ajouter les colonnes manquantes à la fin si elles ne sont pas dans l'ordre sauvegardé
-    const missingColumns = availableColumns.filter((col) => !validOrder.includes(col))
-    const finalOrder = [...validOrder, ...missingColumns]
-
-    selectedColumnsIds.value = finalOrder
-    columnsOrder.value = finalOrder
-  }
-  //#endregion
-
-  currentPage.value = dto.page ?? 1
-  perPage.value = dto.perPage ?? 20
-}
-
+//#region 📍------ Computed: filtersToSend ------ 📍
+// filtersToSend is the filter from PrimeView in an old AgGrid format so that backend understands
 const filtersToSend = computed<Record<keyof typeof props.columnDefs, IFilter>>(() => {
   const result: Record<string, IFilter> = {}
 
@@ -472,8 +273,6 @@ const filtersToSend = computed<Record<keyof typeof props.columnDefs, IFilter>>((
 
       if (firstConstraint && firstConstraint.value && typeof firstConstraint.value === 'object' && 'filterType' in firstConstraint.value) {
         const customValue = firstConstraint.value as any
-
-        // On construit la structure imbriquée attendue par le backend
         result[key] = {
           filterType: customValue.filterType,
           condition1: customValue,
@@ -481,7 +280,7 @@ const filtersToSend = computed<Record<keyof typeof props.columnDefs, IFilter>>((
         continue
       }
 
-      // 2. Gestion Date (Spécifique car besoin de filterTo)
+      // Gestion Date (besoin filterTo)
       if (firstConstraint && firstConstraint.value && currentType === 'date') {
         result[key] = {
           filterType: 'date',
@@ -533,55 +332,39 @@ const filtersToSend = computed<Record<keyof typeof props.columnDefs, IFilter>>((
       }
     }
   }
+
   return result as Record<keyof typeof props.columnDefs, IFilter>
 })
+//#endregion
 
-const hasfilterEnumUnselectedAll = (filterModel: Record<keyof BNColDef[], IFilter>) => {
-  const enumIds: (string | undefined)[] = props.columnDefs.filter((colDef) => ['enum', 'boolean'].includes(colDef.fieldType as string)).map((colDef) => colDef.field)
+//#region 📍------ DTO & Persistance ------ 📍
+// single point of entry to build dto
+const buildDto = (page: number): IPagination<T> => ({
+  sorts: sort.value,
+  filters: Object.keys(filtersToSend.value ?? {}).length > 0 ? (filtersToSend.value as any) : null,
+  columns: selectedColumnIds.value,
+  columnWidthById: columnWidthById.value as any,
+  perPage: +perPage.value,
+  page,
+})
 
-  if (!enumIds) {
-    return false
-  }
-
-  for (const emunId of enumIds) {
-    const filter = Object.entries(filterModel).find(
-      ([key, value]) => key === emunId && value.filterType === 'set' && !value.condition1.filter.length,
-    )
-    if (filter) {
-      return true
-    }
-  }
-
-  return false
-}
-
-const getRows = async (page: number = currentPage.value) => {
-  isLoadingRows.value = true
-
-  const hasFilterEnumEmpty = hasfilterEnumUnselectedAll(filtersToSend.value)
-  if (hasFilterEnumEmpty) {
-    currentPage.value = 1
-    rowData.value = []
-    totalRecords.value = 0
-    return
-  }
-
-  const dto: IPagination<T> = {
-    sorts: sort.value,
-    filters: Object.keys(filtersToSend.value ?? {}).length > 0 ? (filtersToSend.value as Record<keyof T, IFilter>) : null,
-    columns: selectedColumnsIds.value,
-    columnsWidth: columnsWidth.value as Record<string | keyof T, number>,
-    columnsOrder: columnsOrder.value,
-    perPage: +perPage.value,
-    page,
-  }
+// emit and save to local storage
+const persistDto = (page: number = currentPage.value): IPagination<T> => {
+  const dto = buildDto(page)
   emit('update:paginationDto', dto)
   saveToLocalStorage(dto)
+  return dto
+}
+//#endregion
+
+//#region 📍------ API: fetch + refresh ------ 📍
+const getRows = async (page: number = currentPage.value) => {
+  isLoadingRows.value = true
+  const dto = persistDto(page)
 
   try {
     const response = await props.apiCall(dto)
     currentPage.value = page
-    // params.success({ rowData: response.data, rowCount: response.total })
     rowData.value = response.data
     totalRecords.value = response.total
   } finally {
@@ -589,6 +372,456 @@ const getRows = async (page: number = currentPage.value) => {
   }
 }
 
+const saveChanges = () => {
+  if (!hasInitialDataLoaded.value) {
+    return
+  }
+  persistDto(currentPage.value)
+}
+
+function refreshTable () {
+  getRows(currentPage.value)
+}
+
+//#endregion
+
+//#region 📍------ Columns: order ------ 📍
+const onColumnReorder = (event: { dragIndex: number; dropIndex: number }) => {
+  const cur = [...selectedColumnIds.value]
+
+  const moved = cur.splice(event.dragIndex, 1)[0]
+  if (!moved) {
+    return
+  }
+
+  cur.splice(event.dropIndex, 0, moved)
+  selectedColumnIds.value = cur
+
+  saveChanges()
+  nextTick(() => {
+    snapshotMissingColumnWidths()
+    applyColumnWidthsToColgroup()
+  })
+}
+
+function resetColumnOrder () {
+  const defaultOrder = props.columnDefs
+    .filter((col) => !col.hide && selectedColumnIds.value.includes(col.field ?? ''))
+    .map((col) => col.field ?? '')
+    .filter(Boolean)
+
+  selectedColumnIds.value = [...defaultOrder]
+
+  tableKey.value++
+
+  nextTick(() => {
+    saveChanges()
+    applyColumnWidthsToColgroup()
+  })
+}
+
+//#endregion
+
+//#region 📍------ Columns: width ------ 📍
+const onColResize = (event: { element: HTMLElement; delta: number }) => {
+  const headerElement = event.element as HTMLTableCellElement
+  const table = headerElement.closest('table')
+  if (!table) {
+    return
+  }
+
+  const headerRow = table.querySelector('thead tr')
+  if (!headerRow) {
+    return
+  }
+
+  const headers = Array.from(headerRow.querySelectorAll('th'))
+  const columnIndex = headers.indexOf(headerElement)
+  if (columnIndex === -1) {
+    return
+  }
+
+  const column = filteredColumnDefs.value[columnIndex]
+  if (!column?.field) {
+    return
+  }
+
+  const field = column.field
+  const currentWidth = headerElement.offsetWidth
+
+  columnWidthById.value = {
+    ...columnWidthById.value,
+    [field]: currentWidth,
+  }
+
+  saveChanges()
+}
+
+const snapshotMissingColumnWidths = () => {
+  const root = dataTableRef.value as HTMLElement | null
+  if (!root) {
+    return
+  }
+
+  const table = root.querySelector('table') as HTMLTableElement | null
+  if (!table) {
+    return
+  }
+
+  const headerRow = table.querySelector('thead tr')
+  if (!headerRow) {
+    return
+  }
+
+  const ths = Array.from(headerRow.querySelectorAll('th')) as HTMLTableCellElement[]
+  const visibleCols = filteredColumnDefs.value
+  if (!ths.length || !visibleCols.length) {
+    return
+  }
+
+  const next = { ...columnWidthById.value }
+  let changed = false
+
+  for (let i = 0; i < visibleCols.length; i++) {
+    const field = visibleCols[i]?.field
+    const th = ths[i]
+    if (!field || !th) {
+      continue
+    }
+
+    if (next[field] == null) {
+      const w = th.offsetWidth
+
+      // Ne snapshot pas des tailles “squeezées” (42px etc.)
+      if (w && w >= DEFAULT_COL_WIDTH) {
+        next[field] = w
+        changed = true
+      }
+    }
+  }
+
+  if (changed) {
+    columnWidthById.value = next
+  }
+}
+
+const applyColumnWidthsToColgroup = () => {
+  const root = dataTableRef.value as HTMLElement | null
+  if (!root) {
+    return
+  }
+
+  const tables = root.querySelectorAll('table')
+
+  tables.forEach((table) => {
+    const cols = Array.from(table.querySelectorAll('colgroup col')) as HTMLTableColElement[]
+    if (!cols.length) {
+      return
+    }
+
+    const visibleCols = filteredColumnDefs.value
+
+    cols.forEach((colEl, i) => {
+      const def = visibleCols[i]
+      const field = def?.field
+      if (!field) {
+        return
+      }
+
+      const w = columnWidthById.value[field]
+
+      colEl.style.removeProperty('width')
+      colEl.style.removeProperty('min-width')
+      colEl.style.removeProperty('max-width')
+
+      if (w && w > 0) {
+        colEl.style.width = `${w}px`
+        colEl.style.minWidth = `${w}px`
+      }
+    })
+  })
+}
+
+function resetColumnsWidth () {
+  columnWidthById.value = {}
+  tableKey.value++
+  saveChanges()
+}
+//#endregion
+
+//#region 📍------ Filters ------ 📍
+const notifyFilterChanged = () => {
+  const activeFilters: DisplayActiveFilter[] = []
+
+  for (const [colId, filter] of Object.entries(filters.value)) {
+    if ('value' in (filter as DataTableFilterMetaData)) {
+      const metaFilter = filter as DataTableFilterMetaData
+      if (metaFilter.value !== null && metaFilter.value !== undefined) {
+        const colDef = props.columnDefs.find((col) => col.field === colId)
+        const filterType = typeof colDef?.filter === 'string' ? colDef.filter : ''
+        const isSetFilter = SET_FILTER_TYPES.includes(filterType as any)
+
+        if (isSetFilter) {
+          const values = Array.isArray(metaFilter.value) ? metaFilter.value.map((item) => item.code || item) : [metaFilter.value]
+          activeFilters.push({ colId, filterType: 'set', values } as DisplayActiveFilter)
+        } else {
+          activeFilters.push({
+            colId,
+            filterType: 'text',
+            type: metaFilter.matchMode,
+            filter: metaFilter.value,
+            values: [],
+          } as DisplayActiveFilter)
+        }
+      }
+    } else if ('operator' in (filter as DataTableOperatorFilterMetaData)) {
+      const metaFilter = filter as DataTableOperatorFilterMetaData
+      const activeConstraints = metaFilter.constraints.filter((c) => c.value !== null && c.value !== undefined)
+
+      if (activeConstraints.length > 0) {
+        const colDef = props.columnDefs.find((col) => col.field === colId)
+        const filterType = typeof colDef?.filter === 'string' ? colDef.filter : ''
+        const isSetFilter = SET_FILTER_TYPES.includes(filterType as any)
+
+        if (isSetFilter && activeConstraints[0]) {
+          const values = Array.isArray(activeConstraints[0].value)
+            ? activeConstraints[0].value.map((item) => item.code || item)
+            : [activeConstraints[0].value]
+
+          activeFilters.push({ colId, filterType: 'set', values } as DisplayActiveFilter)
+        } else {
+          const filterData: DisplayActiveFilter = { colId, filterType: 'text', values: [] }
+
+          if (activeConstraints.length === 1 && activeConstraints[0]) {
+            filterData.type = activeConstraints[0].matchMode
+            filterData.filter = activeConstraints[0].value
+          } else if (activeConstraints.length >= 2 && activeConstraints[0] && activeConstraints[1]) {
+            filterData.operator = metaFilter.operator as 'AND' | 'OR'
+            filterData.condition1 = { type: activeConstraints[0].matchMode, filter: activeConstraints[0].value }
+            filterData.condition2 = { type: activeConstraints[1].matchMode, filter: activeConstraints[1].value }
+          }
+
+          activeFilters.push(filterData)
+        }
+      }
+    }
+  }
+
+  emit('filtersUpdated', activeFilters)
+}
+
+async function clearAllFilters () {
+  // coupe les watchers pour éviter double getRows / double persist
+  isReadyToWatch.value = false
+
+  filters.value = getFilters(props.columnDefs)
+  tableKey.value++
+
+  await nextTick()
+
+  // un seul fetch + une seule persistance
+  await getRows(1)
+
+  isReadyToWatch.value = true
+  notifyFilterChanged()
+}
+
+async function removeFilter (colId: string): Promise<void> {
+  if (!filters.value[colId]) {
+    return
+  }
+
+  isReadyToWatch.value = false
+
+  const emptyFilters = getFilters(props.columnDefs)
+  // @ts-expect-error TS2322
+  filters.value = { ...filters.value, [colId]: emptyFilters[colId] }
+
+  await nextTick()
+  await getRows(1)
+
+  isReadyToWatch.value = true
+  notifyFilterChanged()
+}
+
+//#endregion
+
+//#region 📍------ Sort ------ 📍
+function onSortChanged (sortEvent: DataTableSortEvent) {
+  const { sortField, sortOrder } = sortEvent
+  const isSorted = sortField !== null && sortOrder !== null
+  sort.value = isSorted ? [{ key: sortField as string, order: sortOrder === 1 ? 'ASC' : 'DESC' }] : []
+  getRows(1)
+}
+
+//#endregion
+
+//#region 📍------ Storage ------ 📍
+const saveToLocalStorage = (dto: IPagination<T>) => {
+  if (!props.localStorageKey) {
+    return
+  }
+  try {
+    localStorage.setItem(`${props.localStorageKey}`, JSON.stringify(dto))
+  } catch (e) {
+    console.warn('Erreur de sauvegarde dans localStorage', e)
+  }
+}
+
+const _restoreFilterFromDto = (dto: IPagination<T>) => {
+  if (dto.filters) {
+    const rebuiltFilters = getFilters(props.columnDefs)
+
+    Object.entries(dto.filters).forEach(([key, savedValue]) => {
+      const colDef = props.columnDefs.find((c) => c.field === key)
+      if (!colDef) {
+        return
+      }
+
+      const filterName = typeof colDef.filter === 'string' ? colDef.filter : 'agTextColumnFilter'
+
+      const mappedType = serverFilterToDataTableDataType[filterName]
+      const isDate = mappedType === 'date'
+      const isNumber = mappedType === 'numeric'
+      const isBoolean = mappedType === 'boolean'
+      const isSet = (SET_FILTER_TYPES.includes(filterName as any) || mappedType === 'set') && !isBoolean
+
+      const primeVueType = mappedType || 'text'
+
+      const cond1 = (savedValue as any).condition1
+      const cond2 = (savedValue as any).condition2
+      const operator = (savedValue as any).operator === 'OR' ? FilterOperator.OR : FilterOperator.AND
+
+      if (isSet && cond1) {
+        let valueToRestore = null
+
+        if (typeof cond1 === 'object' && ('includeEmpty' in cond1 || 'filterType' in cond1) && !Array.isArray(cond1)) {
+          valueToRestore = cond1
+        } else if (Array.isArray(cond1.filter)) {
+          valueToRestore = { filterType: 'set', includeEmpty: false, filter: cond1.filter }
+        } else if (cond1.filter !== undefined) {
+          valueToRestore = { filterType: 'set', includeEmpty: false, filter: [cond1.filter] }
+        }
+
+        if (valueToRestore) {
+          rebuiltFilters[key] = {
+            operator: FilterOperator.AND,
+            constraints: [{ value: valueToRestore, matchMode: FilterMatchMode.EQUALS }],
+            filterType: 'set',
+          } as ExtendedDataTableOperatorFilterMetaData
+        }
+      } else if (isBoolean && cond1) {
+        let rawValues: string[] = []
+
+        if (Array.isArray(cond1.filter)) {
+          rawValues = cond1.filter.map(String)
+        } else if (cond1.filter !== undefined) {
+          rawValues = [String(cond1.filter)]
+        }
+
+        const booleanOptions = [
+          { name: 'Oui', code: 'true' },
+          { name: 'Non', code: 'false' },
+        ]
+        const selectedOptions = booleanOptions.filter((opt) => rawValues.includes(opt.code))
+
+        rebuiltFilters[key] = {
+          operator: FilterOperator.AND,
+          constraints: [{ value: selectedOptions, matchMode: FilterMatchMode.IN }],
+          filterType: 'boolean',
+        } as ExtendedDataTableOperatorFilterMetaData
+      } else if (cond1) {
+        const restoreConstraint = (c: any) => {
+          if (!c) {
+            return null
+          }
+
+          let val = c.filter
+          let mode = c.type
+
+          if (isDate) {
+            val = val ? new Date(val) : null
+            mode = serverToPrimeVueDateMode[c.type] || FilterMatchMode.DATE_IS
+          } else if (isNumber) {
+            val = Number(val)
+            mode = serverToPrimeVueNumberMode[c.type] || FilterMatchMode.EQUALS
+          }
+
+          return { value: val, matchMode: mode }
+        }
+
+        const constraint1 = restoreConstraint(cond1)
+        const constraint2 = restoreConstraint(cond2)
+
+        if (constraint1) {
+          rebuiltFilters[key] = {
+            operator,
+            constraints: [constraint1, ...(constraint2 ? [constraint2] : [])],
+            filterType: primeVueType,
+          } as ExtendedDataTableOperatorFilterMetaData
+        }
+      }
+    })
+
+    filters.value = rebuiltFilters
+  }
+}
+
+const _restoreSortFromDto = (dto: IPagination<T>) => {
+  if (dto.sorts && dto.sorts.length > 0) {
+    const sortItem = dto.sorts.at(0)
+    if (sortItem) {
+      sort.value = [{ key: sortItem.key, order: sortItem.order }]
+    }
+  } else {
+    sort.value = []
+  }
+}
+
+// restore column and their order
+const _restoreColumnFromDto = (dto: IPagination<T>) => {
+  const available = getAvailableColumnIds()
+
+  if (dto.columns) {
+    // dto.columns = sélection + ordre
+    const valid = (dto.columns as string[]).filter((id) => available.includes(id))
+
+    // si jamais c'est vide (corrompu ou vieux dto), fallback sur défaut
+    selectedColumnIds.value = valid.length > 0 ? valid : available
+    return
+  }
+
+  // pas de dto.columns -> comportement par défaut (tout sélectionné)
+  selectedColumnIds.value = available
+}
+
+const _restoreColumnWidthFromDto = (dto: IPagination<T>) => {
+  if (!dto.columnWidthById) {
+    return
+  }
+  columnWidthById.value = dto.columnWidthById as Record<string, number>
+  tableKey.value++
+  nextTick(() => {
+    snapshotMissingColumnWidths()
+    applyColumnWidthsToColgroup()
+  })
+}
+
+const _restorePaginationFromDto = (dto: IPagination<T>) => {
+  currentPage.value = dto.page ?? 1
+  perPage.value = dto.perPage ?? DEFAULT_PER_PAGE
+}
+
+const restoreFromDto = (dto: IPagination<T>) => {
+  _restoreFilterFromDto(dto)
+  _restoreSortFromDto(dto)
+  _restoreColumnFromDto(dto)
+  _restoreColumnWidthFromDto(dto)
+  _restorePaginationFromDto(dto)
+}
+//#endregion
+
+//#region 📍------ Init / Lifecycle ------ 📍
 const initializeTable = async () => {
   if (hasInitialDataLoaded.value) {
     return
@@ -602,129 +835,26 @@ const initializeTable = async () => {
   } else if (props.localStorageKey) {
     try {
       const saved = localStorage.getItem(props.localStorageKey)
-      if (saved) {
-        startDto = JSON.parse(saved)
-      }
-    } catch (e) { console.warn(e) }
+      if (saved) { startDto = JSON.parse(saved) }
+    } catch (e) {
+      console.warn(e)
+    }
   }
 
   if (startDto) {
-    applyFromDto(startDto)
+    restoreFromDto(startDto)
   }
 
   await nextTick()
+  snapshotMissingColumnWidths()
+  applyColumnWidthsToColgroup()
 
   await getRows(currentPage.value)
 
   hasInitialDataLoaded.value = true
-
   isReadyToWatch.value = true
   notifyFilterChanged()
 }
-
-function onSortChanged (sortEvent: DataTableSortEvent) {
-  const { sortField, sortOrder } = sortEvent
-  const isSorted = sortField !== null && sortOrder !== null
-  sort.value = isSorted ? [{ key: sortField as string, order: sortOrder === 1 ? 'ASC' : 'DESC' }] : []
-  getRows(1)
-}
-//#endregion
-
-const paginationPages = computed(() =>
-  Array.from(Array(Math.ceil(totalRecords.value / perPage.value))).map((_, i) => ({
-    title: (i + 1).toString(),
-    href: `#${i + 1}`,
-    label: (i + 1).toString(),
-  })),
-)
-
-const onColResize = (event: { element: HTMLElement; delta: number }) => {
-  // Identifier la colonne concernée par le redimensionnement
-  // L'élément est la cellule d'en-tête <th>, cherchons son attribut data-pc-section ou son index
-  const headerElement = event.element as HTMLTableCellElement
-  const table = headerElement.closest('table')
-  if (!table) {
-    return
-  }
-
-  // Trouver l'index de la colonne
-  const headerRow = table.querySelector('thead tr')
-  if (!headerRow) {
-    return
-  }
-
-  const headers = Array.from(headerRow.querySelectorAll('th'))
-  const columnIndex = headers.indexOf(headerElement)
-
-  if (columnIndex === -1) {
-    return
-  }
-
-  // Trouver le field correspondant à cette colonne
-  const column = filteredColumnDefs.value[columnIndex]
-  if (!column || !column.field) {
-    return
-  }
-
-  const field = column.field as string
-  const currentWidth = headerElement.offsetWidth
-
-  // Mettre à jour les largeurs de colonnes
-
-  columnsWidth.value = {
-    ...columnsWidth.value,
-    [field]: currentWidth,
-  }
-
-  // Sauvegarder immédiatement les largeurs modifiées
-  if (hasInitialDataLoaded.value) {
-    const dto: IPagination<T> = {
-      sorts: sort.value,
-      filters: Object.keys(filtersToSend.value ?? {}).length > 0 ? (filtersToSend.value as Record<keyof T, IFilter>) : null,
-      columns: selectedColumnsIds.value,
-      columnsWidth: columnsWidth.value as Record<string | keyof T, number>,
-      columnsOrder: columnsOrder.value,
-      perPage: +perPage.value,
-      page: currentPage.value,
-    }
-    emit('update:paginationDto', dto)
-    saveToLocalStorage(dto)
-  }
-}
-
-const onColumnReorder = (event: { dragIndex: number; dropIndex: number }) => {
-  // Créer une copie de l'ordre actuel des colonnes visibles
-  const currentOrder = [...selectedColumnsIds.value]
-
-  // Déplacer la colonne de dragIndex vers dropIndex
-  const movedColumn = currentOrder.splice(event.dragIndex, 1)[0]
-  if (movedColumn) {
-    currentOrder.splice(event.dropIndex, 0, movedColumn)
-  }
-
-  // Mettre à jour l'ordre des colonnes
-  selectedColumnsIds.value = currentOrder
-  columnsOrder.value = currentOrder
-
-  // Sauvegarder immédiatement l'ordre modifié
-  if (hasInitialDataLoaded.value) {
-    const dto: IPagination<T> = {
-      sorts: sort.value,
-      filters: Object.keys(filtersToSend.value ?? {}).length > 0 ? (filtersToSend.value as Record<keyof T, IFilter>) : null,
-      columns: selectedColumnsIds.value,
-      columnsWidth: columnsWidth.value as Record<string | keyof T, number>,
-      columnsOrder: columnsOrder.value,
-      perPage: +perPage.value,
-      page: currentPage.value,
-    }
-    emit('update:paginationDto', dto)
-    saveToLocalStorage(dto)
-  }
-}
-
-//#region 📍------ SCROLL HEIGHT ------ 📍
-const scrollHeight = ref('flex')
-const dataTableRef = useTemplateRef('dataTable')
 
 const computeScrollHeight = () => {
   if (!dataTableRef.value) {
@@ -733,10 +863,8 @@ const computeScrollHeight = () => {
 
   const height = window.innerHeight
   const top = dataTableRef.value.getBoundingClientRect().top + window.scrollY
-  const offsetBottom = 82
 
-  const newHeight = `${height - top - offsetBottom}px`
-
+  const newHeight = `${height - top - OFFSET_BOTTOM_PX}px`
   if (scrollHeight.value !== newHeight) {
     scrollHeight.value = newHeight
   }
@@ -744,174 +872,63 @@ const computeScrollHeight = () => {
 
 const debouncedCompute = useDebounceFn(computeScrollHeight, 100)
 
-onMounted(() => {
-  computeScrollHeight()
-})
-
+onMounted(() => computeScrollHeight())
 useEventListener(window, 'resize', debouncedCompute)
+onUpdated(() => computeScrollHeight())
 
-onUpdated(() => {
-  computeScrollHeight()
-})
+useAmountLines()
 //#endregion
 
-//#region 📍------ ROW CLICK ------ 📍
+//#region 📍------ Click events ------ 📍
 const onRowClick = (event: { data: T; originalEvent?: Event }) => {
-  // Extraire les informations de la ligne cliquée
-  const rowData = event.data
+  emit('rowClick', { data: event.data })
+}
 
-  // Si nous voulons aussi des informations sur la colonne, nous pourrions les ajouter
-  // Mais PrimeVue DataTable row-click ne fournit que les données de la ligne
-  emit('rowClick', {
-    data: rowData,
-    // On pourrait ajouter d'autres métadonnées ici si nécessaire
-  })
+const onPage = (event: { first: number; rows: number }) => {
+  if (totalRecords.value === 0 && isLoadingRows.value) { return }
+  const newPage = Math.floor(event.first / event.rows) + 1
+  if (currentPage.value !== newPage) { currentPage.value = newPage }
+}
+
+const updateDataTableState = (dto: IPagination<T>) => {
+  restoreFromDto(dto)
 }
 //#endregion
 
-function refreshTable () {
-  getRows(currentPage.value)
-}
-
-function clearAllFilters () {
-  filters.value = getFilters(props.columnDefs)
-  getRows(1)
-  notifyFilterChanged()
-}
-
-function removeFilter (colId: string): Promise<void> {
-  return new Promise((resolve) => {
-    if (filters.value[colId]) {
-      // On génère un jeu de filtres vierges
-      const emptyFilters = getFilters(props.columnDefs)
-      // On remplace le filtre actuel par sa version vierge
-      // @ts-expect-error TS2322
-      filters.value = {
-        ...filters.value,
-        // On restaure la structure { operator: ..., constraints: [...] }
-        [colId]: emptyFilters[colId],
-      }
-      getRows(1)
-      notifyFilterChanged()
-    }
-    resolve()
-  })
-}
-
-// Met à jour l'état du tableau de données en fonction du DTO fourni
-const updateDataTableState = (dto: IPagination<T>) => {
-  applyFromDto(dto)
-}
-
-function resetColumnOrder () {
-  // Réinitialiser l'ordre des colonnes à l'ordre par défaut, mais uniquement pour les colonnes actuellement visibles
-  const defaultOrder = props.columnDefs
-    .filter((col) => !col.hide && selectedColumnsIds.value.includes(col.field ?? ''))
-    .map((col) => col.field ?? '')
-
-  console.warn('Resetting column order to default (only visible columns):', defaultOrder)
-  console.warn('Current selectedColumnsIds:', toRaw(selectedColumnsIds.value))
-  console.warn('Current columnsOrder:', toRaw(columnsOrder.value))
-
-  selectedColumnsIds.value = [...defaultOrder]
-  columnsOrder.value = [...defaultOrder]
-  tableKey.value++
-  nextTick(() => {
-    // Validation de l'ordre réel des colonnes
-    const realOrder = filteredColumnDefs.value.map((col) => col.field)
-    console.warn('Column order reset completed. New order:', toRaw(columnsOrder.value))
-    console.warn('filteredColumnDefs order:', realOrder)
-    // Sauvegarder immédiatement la réinitialisation
-    if (hasInitialDataLoaded.value) {
-      const dto: IPagination<T> = {
-        sorts: sort.value,
-        filters: Object.keys(filtersToSend.value ?? {}).length > 0 ? (filtersToSend.value as Record<keyof T, IFilter>) : null,
-        columns: selectedColumnsIds.value,
-        columnsWidth: columnsWidth.value as Record<string | keyof T, number>,
-        columnsOrder: columnsOrder.value,
-        perPage: +perPage.value,
-        page: currentPage.value,
-      }
-      emit('update:paginationDto', dto)
-      saveToLocalStorage(dto)
-    }
-  })
-}
-
-function resetColumnsWidth () {
-  // Réinitialiser toutes les largeurs de colonnes
-  console.warn('Resetting all column widths to default')
-  columnsWidth.value = {}
-
-  // Force le re-rendu du tableau en déclarant que les données ont changé
-  tableKey.value++
-
-  // Sauvegarder immédiatement la réinitialisation
-  if (hasInitialDataLoaded.value) {
-    const dto: IPagination<T> = {
-      sorts: sort.value,
-      filters: Object.keys(filtersToSend.value ?? {}).length > 0 ? (filtersToSend.value as Record<keyof T, IFilter>) : null,
-      columns: selectedColumnsIds.value,
-      columnsWidth: columnsWidth.value as Record<string | keyof T, number>,
-      columnsOrder: columnsOrder.value,
-      perPage: +perPage.value,
-      page: currentPage.value,
-    }
-    emit('update:paginationDto', dto)
-    saveToLocalStorage(dto)
-  }
-}
-
+//#region 📍------ Watchers ------ 📍
 watch(
-  filters,
-  () => {
-    notifyFilterChanged()
-  },
-  { deep: true },
-)
-
-watch(filtersToSend, () => {
-  if (!isReadyToWatch.value) {
-    return
-  }
-
-  if (hasInitialDataLoaded.value) {
-    getRows(1)
-  }
-})
-
-watch(perPage, () => {
-  if (!isReadyToWatch.value) {
-    return
-  }
-  getRows(1)
-})
-
-// Watcher pour mettre à jour paginationDto quand les colonnes sélectionnées changent
-watch(
-  selectedColumnsIds,
-  () => {
+  selectedColumnIds,
+  (newSelectedIds, previousSelectedIds) => {
     if (!isReadyToWatch.value) {
       return
     }
+    const available = getAvailableColumnIds()
+    const cleaned = newSelectedIds.filter((id) => available.includes(id))
+
+    if (cleaned.length !== newSelectedIds.length) {
+      selectedColumnIds.value = cleaned
+      return
+    }
+    // find deleted column id to remove its eventual filter or sort property
+    if (previousSelectedIds.length > newSelectedIds.length) {
+      const deletedId = previousSelectedIds.find(a => !newSelectedIds.includes(a))
+      if (deletedId) {
+        removeFilter(deletedId)
+        sort.value = sort.value.filter(s => s.key !== deletedId)
+      }
+    }
+
+    // PrimeVue recrée colgroup quand les colonnes changent
+    nextTick(() => applyColumnWidthsToColgroup())
 
     if (hasInitialDataLoaded.value) {
-      const dto: IPagination<T> = {
-        sorts: sort.value,
-        filters: Object.keys(filtersToSend.value ?? {}).length > 0 ? (filtersToSend.value as Record<keyof T, IFilter>) : null,
-        columns: selectedColumnsIds.value,
-        columnsWidth: columnsWidth.value as Record<string | keyof T, number>,
-        columnsOrder: columnsOrder.value,
-        perPage: +perPage.value,
-        page: currentPage.value,
-      }
-      emit('update:paginationDto', dto)
+      saveChanges()
+      getRows(1)
     }
   },
   { deep: true },
 )
 
-// Watcher pour le premier chargement - attend que preCondition soit true ET que l'apiCall soit défini
 watch(
   () => [props.preCondition, props.apiCall],
   ([preCondition, apiCall]) => {
@@ -922,41 +939,34 @@ watch(
   { immediate: true },
 )
 
-const first = computed(() => (currentPage.value - 1) * perPage.value)
-const onPage = (event: { first: number, rows: number }) => {
-  if (totalRecords.value === 0 && isLoadingRows.value) {
-    return
-  }
-  const newPage = Math.floor(event.first / event.rows) + 1
-  if (currentPage.value !== newPage) {
-    currentPage.value = newPage
-  }
-}
+watch(
+  filters,
+  () => {
+    if (!isReadyToWatch.value) {
+      return
+    }
+    notifyFilterChanged()
+  },
+  { deep: true },
+)
 
-//#region 📍------ TEMPLATE HELPERS ------ 📍
-/**
- * Retourne le type de données pour PrimeVue DataTable
- */
-function getColumnDataType (col: BNColDef): string | undefined {
-  if (typeof col.filter === 'string') {
-    return serverFilterToDataTableDataType[col.filter]
-  }
-  return undefined
-}
+watch(
+  filtersToSend,
+  () => {
+    if (!isReadyToWatch.value) {
+      return
+    }
 
-/**
- * Détermine si les contrôles de filtre (bouton add et match modes) doivent être affichés
- */
-function shouldShowFilterControls (col: BNColDef): boolean {
-  if (typeof col.filter === 'string') {
-    return !SET_FILTER_TYPES.includes(col.filter as any)
-  }
-  return true
-}
+    // On repasse page 1 dès qu’un filtre change
+    currentPage.value = 1
+    saveChanges()
+    getRows(1)
+  },
+  { deep: true },
+)
 //#endregion
 
-useAmountLines()
-
+//#region 📍------ Expose ------ 📍
 defineExpose({
   refresh: refreshTable,
   clearAllFilters,
@@ -965,12 +975,13 @@ defineExpose({
   resetColumnOrder,
   resetColumnsWidth,
 })
+//#endregion
 </script>
 
 <template>
   <div
     ref="dataTable"
-    class="h-full flex relative"
+    class="h-full flex relative border-shadow"
     :class="{ loading: isLoadingRows }"
   >
     <DataTable
@@ -988,10 +999,11 @@ defineExpose({
       scrollable
       column-resize-mode="expand"
       :rows="perPage"
-      :rows-per-page-options="[20, 50, 100]"
+      :rows-per-page-options="ROWS_PER_PAGE_OPTIONS"
       :first="first"
       :total-records="totalRecords"
       :scroll-height="scrollHeight"
+      scroll-width="max-content"
       filter-display="menu"
       row-hover
       :sort-field="sort[0]?.key"
@@ -1026,6 +1038,9 @@ defineExpose({
         :show-add-button="shouldShowFilterControls(col)"
         :show-filter-match-modes="shouldShowFilterControls(col)"
         :show-filter-menu="!col.suppressHeaderMenuButton"
+        :header-style="col.field ? {
+          width: columnWidthById[col.field] ? `${columnWidthById[col.field]}px` : `${DEFAULT_COL_WIDTH}px`,
+        } : undefined"
         :title="col.headerName"
       >
         <template #body="{ data }">
@@ -1107,7 +1122,8 @@ defineExpose({
           />
           <div class="mx-4">
             <template v-if="totalRecords > 0">
-              {{ perPage * (currentPage - 1) + 1 }} à {{ Math.min(currentPage * perPage, totalRecords) }} de {{ totalRecords }}
+              {{ perPage * (currentPage - 1) + 1 }} à {{ Math.min(currentPage * perPage, totalRecords) }} de
+              {{ totalRecords }}
             </template>
             <template v-else>
               Aucun résultat
@@ -1121,44 +1137,44 @@ defineExpose({
         </div>
       </template>
     </DataTable>
-    <div class="side-buttons relative">
+    <div class="side-buttons">
       <div class="relative">
-        <div class="mb-2">
-          <button
-            type="button"
-            title="Réinitialiser les largeurs des colonnes"
-            @click.stop="resetColumnsWidth()"
-          >
-            <div class="side-button-label">
-              Largeurs
-            </div>
-          </button>
-        </div>
-        <div class="mb-2">
-          <button
-            type="button"
-            title="Réinitialiser l'ordre des colonnes"
-            @click.stop="resetColumnOrder()"
-          >
-            <div class="side-button-label">
-              Ordre
-            </div>
-          </button>
-        </div>
+        <!--        <div class="mb-2"> -->
+        <!--          <button -->
+        <!--            type="button" -->
+        <!--            title="Réinitialiser les largeurs des colonnes" -->
+        <!--            @click.stop="resetColumnsWidth()" -->
+        <!--          > -->
+        <!--            <div class="side-button-label"> -->
+        <!--              Largeurs -->
+        <!--            </div> -->
+        <!--          </button> -->
+        <!--        </div> -->
+        <!--        <div class="mb-2"> -->
+        <!--          <button -->
+        <!--            type="button" -->
+        <!--            title="Réinitialiser l'ordre des colonnes" -->
+        <!--            @click.stop="resetColumnOrder()" -->
+        <!--          > -->
+        <!--            <div class="side-button-label"> -->
+        <!--              Ordre -->
+        <!--            </div> -->
+        <!--          </button> -->
+        <!--        </div> -->
         <button
           type="button"
           @click.stop="displayColumns = !displayColumns"
         >
           <div class="side-button-label">
-            Colonnes
+            Sélection des Colonnes
           </div>
         </button>
       </div>
       <DataTableColumnList
         v-show="displayColumns"
-        v-model="selectedColumnsIds"
-        class="column-list p-2 -translate-x-8 -top-2 right-0 -left-60 bottom-2 absolute bg-white"
-        :column-defs="columnDefs"
+        v-model="selectedColumnIds"
+        class="table-column-list-container"
+        :column-defs="columnDefsForList"
         @close="displayColumns = false"
       />
     </div>
@@ -1166,13 +1182,31 @@ defineExpose({
 </template>
 
 <style scoped>
-.column-list {
+.border-shadow {
+
+}
+
+.table-column-list-container {
   z-index: 1;
-  box-shadow: -6px 0 10px 0 #5558;
+  border-left: 4px solid #f0f0f0;
+  background: white;
+  position: absolute;
+  top:0;
+  right:35px;
+  width: 300px;
+  max-height: 100%;
+  padding: 20px;
+}
+
+.side-buttons {
+  position: absolute;
+  right: 0;
+  top: 45px;
 }
 
 .side-button-label {
   writing-mode: vertical-lr;
+  height: 300px;
 }
 
 :deep(.fr-pagination__link) {
@@ -1194,5 +1228,9 @@ defineExpose({
 
 :deep(.amount-line-highlighted) {
   background-color: var(--blue-ecume-975-75);
+}
+
+:deep(.p-datatable-table) {
+  table-layout: fixed;
 }
 </style>

@@ -24,7 +24,7 @@ const props = withDefaults(
 
 const emit = defineEmits<{
   (e: 'requestRemoveFilter', colId: string): void
-  (e: 'requestClearAll'): void
+  (e: 'requestRemoveAll'): void
   (e: 'dropdownOpened'): void
   (e: 'dropdownClosed'): void
 }>()
@@ -213,8 +213,8 @@ const getFormattedFilterDisplay = (filter: DisplayActiveFilter): string => {
 const handleRemoveFilter = (colId: string) => {
   emit('requestRemoveFilter', colId)
 }
-const handleClearAllFilters = () => {
-  emit('requestClearAll')
+const handleRemoveAllFilters = () => {
+  emit('requestRemoveAll')
   closeDropdown()
 }
 
@@ -290,7 +290,7 @@ onBeforeUnmount(() => {
             v-if="props.filters.length > 0"
             size="small"
             secondary
-            @click="handleClearAllFilters"
+            @click="handleRemoveAllFilters"
           >
             {{ clearAllButtonLabel }}
           </DsfrButton>

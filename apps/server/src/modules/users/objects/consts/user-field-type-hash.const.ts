@@ -10,7 +10,7 @@ export const UserFieldTypeHashConst: Record<
     | 'password'
     | 'validated'
     | 'hashPassword'
-    | 'customFilters'
+    | 'views'
     | 'removeSkipHashPasswordReference'
     | 'refreshTokens'
     | 'refreshToken'

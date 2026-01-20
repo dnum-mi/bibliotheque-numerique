@@ -7,8 +7,8 @@ import { Demarche } from './objects/entities/demarche.entity'
 import { DemarcheSynchroniseService } from './providers/services/demarche-synchronise.service'
 import { DemarcheConfigurationController } from './controllers/demarche-configuration.controller'
 import { DemarcheDossierController } from './controllers/demarche-dossier.controller'
-import { CustomFilterModule } from '@/modules/custom-filters/custom-filter.module'
-import { DemarcheCustomFilterController } from '@/modules/demarches/controllers/demarche-custom-filter.controller'
+import { ViewModule } from '@/modules/views/view.module'
+import { DemarcheViewController } from '@/modules/demarches/controllers/demarche-view.controller'
 import { DsApiModule } from '@/shared/modules/ds-api/ds-api.module'
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
 import { BullModule, BullModuleOptions } from '@nestjs/bull'
@@ -38,7 +38,7 @@ import { DemarcheMaarchService } from './providers/services/demarche-maarch.serv
       ] as BullModuleOptions[]),
     ),
     CustomBullModule,
-    CustomFilterModule,
+    ViewModule,
     CustomBullModule,
     DsApiModule,
   ],
@@ -46,7 +46,7 @@ import { DemarcheMaarchService } from './providers/services/demarche-maarch.serv
     DemarcheController,
     DemarcheDossierController,
     DemarcheConfigurationController,
-    DemarcheCustomFilterController,
+    DemarcheViewController,
     DemarcheOptionController,
   ],
   providers: [

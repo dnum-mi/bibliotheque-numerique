@@ -6,7 +6,7 @@ import {
   TextFilterConditions,
 } from '@biblio-num/shared'
 import { DateFilterConditionDto, FilterDto } from '@/shared/pagination/filters'
-import { FiltersInCustomFilter } from '@/modules/custom-filters/objects/entities/custom-filter.entity'
+import { FiltersInView } from '@/modules/views/objects/entities/view.entity'
 
 export const dictionaryHumanReadableOperatorsNumber = {
   [NumberFilterConditions.Equals]: 'Égal à:',
@@ -78,7 +78,7 @@ export const humanReadableFilter = (filter: FilterDto): string => {
 }
 
 export const fromCustomFilterToHumanReadableFilter = (
-  ffc: FiltersInCustomFilter,
+  ffc: FiltersInView,
   mch: Record<string, string>,
 ): IUserFriendlyFilter[] => {
   return ffc

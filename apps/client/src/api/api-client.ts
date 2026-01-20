@@ -10,10 +10,8 @@ import type {
   IAssociationOutput,
   IBasicOrganisme,
   ICreateBnConfiguration,
-  ICreateCustomFilter,
   ICreateUser,
   ICredentialsInput,
-  ICustomFilter,
   IDemarcheOption,
   IDossier,
   IDossierFieldsOutput,
@@ -32,7 +30,6 @@ import type {
   IPagination,
   IPaginationSmallDemarche,
   IPaginationUser,
-  IPatchCustomFilter,
   IResetPasswordInput,
   ISearchDossier,
   IUpdateAnonymizedChamp,
@@ -53,12 +50,11 @@ import {
   demarchesRoute,
   enableHubSearchRoute,
   generateUpdatePasswordLinkRoute,
-  getCustomFiltersRoute,
   getDemarcheAnonymizeRoute,
   getDemarcheByIdRoute,
   getDemarcheConfigurationRoute,
-  getDemarcheCustomFilterRoute,
   getDemarcheOptionRoute,
+  getDemarcheViewRoute,
   getDossierByIdRoute,
   getDossierFilesRoute,
   getDossierFilesSummaryRoute,
@@ -66,10 +62,11 @@ import {
   getDossierWithFieldsByIdRoute,
   getListDemarcheDossierRoute,
   getListDemarcheFieldRoute,
-  getOneCustomFiltersRoute,
-  getOneCustomFiltersStats,
+  getOneViewRoute,
+  getOneViewStats,
   getUpdateOneMappingColumnRoute,
   getUserRoleByIdRoute,
+  getViewsRoute,
   getXlsxDemarcheDossierRoute,
   getXlsxDemarcheFieldRoute,
   healthRoute,
@@ -478,33 +475,33 @@ export const dossiersApiClient = {
   },
 }
 
-export const customFiltersApiClient = {
-  getCustomFilters: async (): Promise<ICustomFilter[]> => {
-    const response = await apiClientInstance.get(getCustomFiltersRoute())
+export const viewsApiClient = {
+  getViews: async (): Promise<ICustomFilter[]> => {
+    const response = await apiClientInstance.get(getViewsRoute())
     return response?.data
   },
 
-  getCustomFiltersByDemarche: async (demarcheId: number): Promise<ICustomFilter[]> => {
-    const response = await apiClientInstance.get(getDemarcheCustomFilterRoute(demarcheId))
+  getViewByDemarche: async (demarcheId: number): Promise<ICustomFilter[]> => {
+    const response = await apiClientInstance.get(getDemarcheViewRoute(demarcheId))
     return response?.data
   },
 
-  createOneCustomFilter: async (dto: ICreateCustomFilter, demarcheId: number) => {
-    const response = await apiClientInstance.post(getDemarcheCustomFilterRoute(demarcheId), dto)
+  createOneView: async (dto: ICreateCustomFilter, demarcheId: number) => {
+    const response = await apiClientInstance.post(getDemarcheViewRoute(demarcheId), dto)
     return response?.data
   },
 
-  updateOneCustomFilter: async (id: number, dto: IPatchCustomFilter) => {
-    const response = await apiClientInstance.patch(getOneCustomFiltersRoute(id), dto)
+  updateOneView: async (id: number, dto: IPatchCustomFilter) => {
+    const response = await apiClientInstance.patch(getOneViewRoute(id), dto)
     return response?.data
   },
 
-  deleteOneCustomFilter: async (id: number) => {
-    const response = await apiClientInstance.delete(getOneCustomFiltersRoute(id))
+  deleteOneView: async (id: number) => {
+    const response = await apiClientInstance.delete(getOneViewRoute(id))
     return response?.data
   },
-  getCustomFilterStats: async (id: number) => {
-    const response = await apiClientInstance.get(getOneCustomFiltersStats(id))
+  getViewStats: async (id: number) => {
+    const response = await apiClientInstance.get(getOneViewStats(id))
     return response?.data
   },
 }
@@ -572,7 +569,7 @@ export default {
   ...demarchesApiClient,
   ...usersApiClient,
   ...dossiersApiClient,
-  ...customFiltersApiClient,
+  ...viewsApiClient,
   ...healthApiClient,
   ...attachedFilesApiClient,
   ...hubApiClient,

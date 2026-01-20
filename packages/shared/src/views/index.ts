@@ -1,0 +1,5 @@
+export * from './view.interface'
+export * from './patch-view.interface'
+export * from './view-stats.interface'
+export * from './create-view.interface'
+export * from './small-view-dto.interface'

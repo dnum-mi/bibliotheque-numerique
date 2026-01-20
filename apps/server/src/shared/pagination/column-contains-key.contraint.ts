@@ -4,10 +4,10 @@ import {
   ValidationArguments,
 } from 'class-validator'
 import { SortDto } from './sort.dto'
-import { CreateCustomFilterDto } from '@/modules/custom-filters/objects/dtos/create-custom-filter.dto'
+import { CreateViewDto } from '@/modules/views/objects/dtos/create-view.dto'
 
 // reduceExistInColumn
-const reic = (array: string[] | undefined, o: CreateCustomFilterDto):boolean => {
+const reic = (array: string[] | undefined, o: CreateViewDto):boolean => {
   return (array || []).reduce(
     (acc, curr) => acc && o.columns.includes(curr),
     true,
@@ -17,8 +17,8 @@ const reic = (array: string[] | undefined, o: CreateCustomFilterDto):boolean => 
 @ValidatorConstraint({ async: false })
 export class ColumnContainsKeyContraint implements ValidatorConstraintInterface {
   validate (useless: unknown, args: ValidationArguments):boolean {
-    const o: CreateCustomFilterDto = args.object as CreateCustomFilterDto
-    const propertyName = args.property as keyof CreateCustomFilterDto
+    const o: CreateViewDto = args.object as CreateViewDto
+    const propertyName = args.property as keyof CreateViewDto
     let array: string[] = []
     if (propertyName === 'sorts') {
       array = o.sorts?.map((s: SortDto<unknown>) => s.key)

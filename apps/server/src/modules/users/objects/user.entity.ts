@@ -11,7 +11,7 @@ import {
 import * as bcrypt from 'bcrypt'
 import { BaseEntity } from '@/shared/base-entity/base.entity'
 import { RefreshToken } from '../../auth/objects/refresh-token.entity'
-import { CustomFilter } from '@/modules/custom-filters/objects/entities/custom-filter.entity'
+import { View } from '@/modules/views/objects/entities/view.entity'
 import {
   IRole,
   listOfVerbosePrefecture,
@@ -121,9 +121,9 @@ export class User extends BaseEntity {
     }
   }
 
-  @OneToMany(() => CustomFilter, (customFilter) => customFilter.user)
+  @OneToMany(() => View, (view) => view.user)
   @JoinTable()
-  customFilters?: CustomFilter[]
+  views?: View[]
 
   @OneToOne(() => RefreshToken, (refreshToken) => refreshToken.user, { cascade: true })
   refreshToken: RefreshToken[]
