@@ -46,9 +46,13 @@ export class DossierTransformerService {
       data[maarchChampsLabel.prefecture],
     )
     dossier.files = this.fileBuilder.createFileEntities(data)
+    // Viens d'un fichier CSV, on normalise le numéro RNA
+    if (data[maarchChampsLabel.numRna]) {
+      data[maarchChampsLabel.numRna] = data[maarchChampsLabel.numRna].toString().trim().toUpperCase()
+    }
     dossier.fields = this._createAllFields(data)
     if (data[maarchChampsLabel.numRna]) {
-      dossier.organismeRefs = [data[maarchChampsLabel.numRna].toString().trim()]
+      dossier.organismeRefs = [data[maarchChampsLabel.numRna]]
     }
 
     return dossier

@@ -267,11 +267,11 @@ export class DemarcheController {
       this.logger.warn(`No dossiers found for demarche ${demarcheId}`)
       throw new NotFoundException(`Pas de dossiers trouvés pour cette démarche ${demarcheId}`)
     }
-    await Promise.all(dossiers.map(dossier =>
-      this.customBullService.addSyncFixOrganismeOfOneDossierJob({
+    await Promise.all(dossiers.map(dossier => {
+      return this.customBullService.addSyncFixOrganismeOfOneDossierJob({
         dossierId: dossier.id,
-      }),
-    ))
+      })
+    }))
 
     return {
       message: `La correction des organismes des ${
