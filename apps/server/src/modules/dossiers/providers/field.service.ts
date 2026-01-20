@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { Field } from '../objects/entities/field.entity'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
+import { In, Repository } from 'typeorm'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import {
   DateChamp,
@@ -302,5 +302,17 @@ export class FieldService extends BaseEntityService<Field> {
     default:
       return f.stringValue
     }
+  }
+
+  findFieldOrganismeWithoutTitleByDossierId(dossierId: number): Promise<Field[] | null> {
+    return this.repo.find({
+      where: {
+        dossierId,
+        formatFunctionRef: In([
+          FormatFunctionRef.rna,
+          FormatFunctionRef.rnf,
+        ]),
+      },
+    })
   }
 }

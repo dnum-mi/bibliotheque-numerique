@@ -123,4 +123,22 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
 
     await this._FESpecificity(id, demarche.identification)
   }
+
+  async addTitleOrganismeInFieldsByIDossier(dossierId: number): Promise<void> {
+    this.logger.verbose('setTitleOrganismeInFields')
+    const fields = await this.fieldService.findFieldOrganismeWithoutTitleByDossierId(
+      dossierId,
+    )
+    if (!fields?.length) {
+      this.logger.log('No organisme fields to update')
+      return
+    }
+    const fieldsToUpdate = fields.filter(field => field.stringValue.length > 0 && !field.stringValue.includes(' | '))
+    await Promise.allSettled(fieldsToUpdate
+      .map(async (field) => {
+        await this.dossierSynchroniseOrganisme.attachOrganismeRefToOneField(field)
+      }))
+
+    this.logger.log(`Updated ${fieldsToUpdate.length}/${fields.length} organisme fields.`)
+  }
 }

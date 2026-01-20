@@ -5,6 +5,7 @@ import {
   Delete,
   Get,
   HttpCode,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
@@ -247,5 +248,35 @@ export class DemarcheController {
     @Param('demarcheId', ParseIntPipe) demarcheId: number,
   ): Promise<{ message: string; }> {
     return this.demarcheMaarch.deleteImport(demarcheId)
+  }
+
+  @Patch(':demarcheId/fix-organismes')
+  @UsualApiOperation({
+    summary: "Force la correction des organismes d'une démarche.",
+    method: 'PATCH',
+    minimumRole: Roles.sudo,
+    responseType: null,
+  })
+  @Role(Roles.sudo)
+  async fixOrganismesInDemarche(
+    @Param('demarcheId', ParseIntPipe) demarcheId: number,
+  ): Promise<{ message: string; }> {
+    this.logger.verbose('fixOrganismesInDemarche')
+    const dossiers = await this.dossierService.findWithFilter({ demarcheId }, undefined, { id: true })
+    if (!dossiers || dossiers.length === 0) {
+      this.logger.warn(`No dossiers found for demarche ${demarcheId}`)
+      throw new NotFoundException(`Pas de dossiers trouvés pour cette démarche ${demarcheId}`)
+    }
+    await Promise.all(dossiers.map(dossier =>
+      this.customBullService.addSyncFixOrganismeOfOneDossierJob({
+        dossierId: dossier.id,
+      }),
+    ))
+
+    return {
+      message: `La correction des organismes des ${
+        dossiers.length} dossiers de la démarche ${
+        demarcheId} a été planifiée.`,
+    }
   }
 }

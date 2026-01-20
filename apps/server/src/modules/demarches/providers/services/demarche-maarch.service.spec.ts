@@ -16,6 +16,7 @@ import {
 import { FileBuilderService } from './maarch/file-builder.service'
 import { getQueueToken } from '@nestjs/bull'
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
+import { CustomBullService } from '../../../../shared/modules/custom-bull/custom-bull.service'
 
 const mockCsvProcessor = {
   processFiles: jest.fn(),
@@ -90,6 +91,12 @@ describe('DemarcheMaarchService', () => {
           provide: getQueueToken(QueueName.file),
           useValue: mockQueue,
         },
+        {
+          provide: CustomBullService,
+          useValue: {
+            addSyncFixOrganismeOfOneDossierJob: jest.fn(),
+          }
+        }
       ],
     }).compile()
 

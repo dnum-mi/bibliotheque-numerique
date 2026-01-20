@@ -4,6 +4,7 @@ import { apiClientInstance } from './api-client'
 
 const routeCreateDemarche = `${demarchesRoute}/create`
 const routeSynchroniseOneDemarche = (id: number) => `${demarchesRoute}/${id}/sync`
+const routeFixOrganismes = (id: number) => `${demarchesRoute}/${id}/fix-organismes`
 const routeSynchroniseOneDossier = (id: number) => `${dossierRoute}/${id}/sync`
 
 export const createDemarche = async (dto: ICreateDemarche) => {
@@ -28,5 +29,10 @@ export const patchDemarche = async (id: number, dto: IUpdateDemarche) => {
 
 export const getWorkersLogs = async () => {
   const response = await apiClientInstance.get('/job-log')
+  return response.data
+}
+
+export const patchToFixOrganismeByDemarche = async (demarcheId: number) => {
+  const response = await apiClientInstance.patch(routeFixOrganismes(demarcheId))
   return response.data
 }

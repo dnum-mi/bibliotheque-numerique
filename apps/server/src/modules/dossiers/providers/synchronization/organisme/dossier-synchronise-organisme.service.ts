@@ -35,7 +35,7 @@ export class DossierSynchroniseOrganismeService {
     let organisme: ISiafOrganisme | undefined
     let typeOrganisme:string
     try {
-      if (organismeField.dsChampType === DsChampType.RnaChamp) {
+      if (organismeField.dsChampType === DsChampType.RnaChamp || organismeField.formatFunctionRef === 'rna') {
         typeOrganisme = 'Association'
         organisme = await this.hubService.getAssociation(organismeField.stringValue)
       } else {

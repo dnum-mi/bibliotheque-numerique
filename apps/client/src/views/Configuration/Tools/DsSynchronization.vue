@@ -70,6 +70,10 @@ const onClickSynchronise = async (demarcheId: number) => {
   await configurationStore.synchronizeOneDemarche(demarcheId)
 }
 
+const onClickFixOrganisme = async (demarcheId: number) => {
+  await configurationStore.fixOrganismes(demarcheId)
+}
+
 const onClickUpdateDemarche = async () => {
   await configurationStore.updateDemarche(demarcheId.value, identificationValue.value, types.value)
 }
@@ -181,6 +185,9 @@ onMounted(async () => {
         <th>Identification</th>
         <th>Synchronisation forcée</th>
         <th>Supprimer</th>
+        <th>
+          Mise à jour dans les dossiers
+        </th>
       </thead>
       <tbody>
         <tr
@@ -206,6 +213,13 @@ onMounted(async () => {
               label="Supprimer"
               secondary
               @click="onClickSoftDeleteDemarche(demarche.id)"
+            />
+          </td>
+          <td>
+            <DsfrButton
+              label="Ajouter le titre des organismes"
+              secondary
+              @click="onClickFixOrganisme(demarche.id)"
             />
           </td>
         </tr>

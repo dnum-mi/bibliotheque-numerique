@@ -120,4 +120,11 @@ export class CustomBullService {
       this.redisService.initkeys(patternKeyDemarche),
     ])
   }
+
+  public async addSyncFixOrganismeOfOneDossierJob(payload: { dossierId: number }): Promise<void> {
+    await this.syncQueue.add(
+      eJobName.FixOrganismeDossier,
+      payload,
+    )
+  }
 }

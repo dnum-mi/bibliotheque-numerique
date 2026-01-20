@@ -23,6 +23,7 @@ import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-nam
 import { Queue } from 'bull'
 import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
 import { UploadMaarchFileJobPayload } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
+import { CustomBullService } from '../../../../shared/modules/custom-bull/custom-bull.service'
 
 @Injectable()
 export class DemarcheMaarchService {
@@ -33,6 +34,7 @@ export class DemarcheMaarchService {
     private readonly dossierTransformer: DossierTransformerService,
     private readonly fileBuilder: FileBuilderService,
     @InjectQueue(QueueName.file) private readonly fileQueue: Queue,
+    private readonly customBullService: CustomBullService,
   ) {
     this.logger.setContext(this.constructor.name)
   }
@@ -81,7 +83,17 @@ export class DemarcheMaarchService {
       this.logger.log(
         `Dispatching S3 sync jobs for ${dossiersCreated.length} dossiers.`,
       )
-      await this._synchroniseFiles(dossiersCreated)
+      const pFiles = this._synchroniseFiles(dossiersCreated)
+      const pFixOrganismes = dossiersCreated.map((dossier) =>
+        this.customBullService.addSyncFixOrganismeOfOneDossierJob({
+          dossierId: dossier.id,
+        }),
+      )
+
+      await Promise.allSettled([
+        pFiles,
+        pFixOrganismes,
+      ].flat())
     }
 
     return {
@@ -154,9 +166,7 @@ export class DemarcheMaarchService {
       dossier.files = this.fileBuilder.createFileEntities(data)
     }
 
-    await repoDossier.save(dossiers, { chunk: 100 })
-
-    return dossiers
+    return repoDossier.save(dossiers, { chunk: 100 })
   }
 
   private async _synchroniseFiles(dossiers: Dossier[]): Promise<void> {

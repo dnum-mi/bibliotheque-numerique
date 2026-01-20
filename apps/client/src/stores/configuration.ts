@@ -10,7 +10,7 @@ import type {
   OrganismeTypeKey,
 } from '@biblio-num/shared'
 
-import { createDemarche, patchDemarche, putSynchronizeOneDemarche } from '../api/sudo-api-client'
+import { createDemarche, patchDemarche, patchToFixOrganismeByDemarche, putSynchronizeOneDemarche } from '../api/sudo-api-client'
 
 export const useConfigurationStore = defineStore('Configuration', () => {
   const bnConfigurations = ref<IBnConfigurationOutput[]>([])
@@ -155,6 +155,18 @@ export const useConfigurationStore = defineStore('Configuration', () => {
     enableHubSearch.value = await bnConfigurationsApiClient.getEnableHubSearch()
   }
 
+  const fixOrganismes = async (demarcheId: number | null) => {
+    if (!demarcheId) {
+      throw new Error('id non saisi')
+    }
+    fetching.value = true
+    try {
+      await patchToFixOrganismeByDemarche(demarcheId)
+    } finally {
+      fetching.value = false
+    }
+  }
+
   return {
     $reset,
     demarches,
@@ -171,5 +183,6 @@ export const useConfigurationStore = defineStore('Configuration', () => {
     updateBnConfigurations,
     softDeleteDemarche,
     getEnableHubSearch,
+    fixOrganismes,
   }
 })

@@ -161,4 +161,16 @@ export class DossierProcessor extends CustomBaseProcessor {
       job.progress(100)
     })
   }
+
+  @Process(eJobName.FixOrganismeDossier)
+  async fixOrganismeDossiers(
+    job: Job<{ dossierId: number }>,
+  ): Promise<void> {
+    await this.als.run({ job }, async () => {
+      this.logger.log(
+        `fixOrganismeDossiers for dossier: ${job.data.dossierId}`,
+      )
+      await this.dossierSynchroniseService.addTitleOrganismeInFieldsByIDossier(job.data.dossierId)
+    })
+  }
 }
