@@ -494,7 +494,7 @@ const quickFilterValueTranslations: Record<string, string> = {
             :class="{ 'opacity-70': groupByDossier }"
             @click="toggleView(false)"
           >
-            Vue champ
+            Mode champ
             <VIcon :name="!groupByDossier ? 'ri-checkbox-circle-fill' : 'ri-checkbox-blank-circle-line'" />
           </DsfrButton>
           <DsfrButton
@@ -504,7 +504,7 @@ const quickFilterValueTranslations: Record<string, string> = {
             @click="toggleView(true)"
           >
             <VIcon :name="groupByDossier ? 'ri-checkbox-circle-fill' : 'ri-checkbox-blank-circle-line'" />
-            Vue dossier
+            Mode dossier
           </DsfrButton>
         </div>
         <div>

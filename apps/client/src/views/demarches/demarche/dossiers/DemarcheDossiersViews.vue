@@ -365,6 +365,7 @@ const deleteCurrentView = () => {
 
               <button
                 v-if="opt.value !== null"
+                :id="`view-edit-${opt.value}`"
                 type="button"
                 class="bn-view-dropdown__edit"
                 title="Modifier la vue"
@@ -400,6 +401,7 @@ const deleteCurrentView = () => {
   >
     <form
       v-if="viewModalType !== 'warning'"
+      id="view-modal-form"
       class="bn-view-form"
       @submit.prevent="saveCurrentFilter()"
     >
@@ -450,7 +452,7 @@ const deleteCurrentView = () => {
           </div>
         </div>
 
-        <div class="bn-view-section">
+        <div id="view-modal-totals" class="bn-view-section">
           <div class="bn-view-section__title">
             Totaux
           </div>
