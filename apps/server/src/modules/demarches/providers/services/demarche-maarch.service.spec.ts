@@ -52,7 +52,7 @@ const mockDemarcheRepo = {
 };
 
 const mockDossierRepo = {
-  save: jest.fn(),
+  save: jest.fn().mockImplementation(async (dossiers) => dossiers),
   delete: jest.fn(),
 };
 
