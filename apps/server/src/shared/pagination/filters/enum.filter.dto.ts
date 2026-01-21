@@ -5,7 +5,7 @@ import { IEnumFilterCondition, IFilterEnum } from '@biblio-num/shared'
 export class EnumFilterConditionDto implements IEnumFilterCondition {
   type?: undefined
 
-  // @ArrayNotEmpty()
+  @ArrayNotEmpty()
   @IsDefined()
   filter: string[]
 }

@@ -56,11 +56,10 @@ export class DemarcheDossierController {
   async searchDossier(
     @Body() dto: SearchDossierDto,
     @CurrentDemarche() demarche: Demarche,
-  ) {
+  ): Promise<DossierSearchOutputDto> {
     this.logger.verbose('searchDossier')
-    // setTimeout(() => {
+
     return this.dossierSearchService.search(demarche, dto)
-    // }, 10000)
   }
 
   @HttpCode(200)

@@ -293,7 +293,7 @@ const _buildOneEnumFilter = (
   if (valueAsString === '\'\'') {
     throw new BadRequestException('Empty string is not a correct enum value.')
   }
-  return `(${key} IN (${valueAsString.length ? valueAsString : "''"})${isArray ? ')' : ''})`
+  return `(${key} IN (${valueAsString})${isArray ? ')' : ''})`
 }
 //#endregion
 

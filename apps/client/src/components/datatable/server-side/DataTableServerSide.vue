@@ -146,13 +146,28 @@ function shouldShowFilterControls (col: BNColDef): boolean {
 //#endregion
 
 //#region 📍------ Computed: Pagination UI ------ 📍
-const paginationPages = computed(() =>
-  Array.from(Array(Math.ceil(totalRecords.value / perPage.value))).map((_, i) => ({
-    title: (i + 1).toString(),
+const paginationPages = computed(() => {
+  const total = Number(totalRecords.value)
+  const rows = Number(perPage.value)
+
+  if (!Number.isFinite(total) || total <= 0) {
+    return []
+  }
+  if (!Number.isFinite(rows) || rows <= 0) {
+    return []
+  }
+
+  const pageCount = Math.ceil(total / rows)
+  if (!Number.isFinite(pageCount) || pageCount <= 0) {
+    return []
+  }
+
+  return Array.from({ length: pageCount }, (_, i) => ({
+    title: String(i + 1),
     href: `#${i + 1}`,
-    label: (i + 1).toString(),
-  })),
-)
+    label: String(i + 1),
+  }))
+})
 
 const first = computed(() => (currentPage.value - 1) * perPage.value)
 //#endregion
@@ -346,17 +361,72 @@ const persistDto = (page: number = currentPage.value): IPagination<T> => {
 //#endregion
 
 //#region 📍------ API: fetch + refresh ------ 📍
-const getRows = async (page: number = currentPage.value) => {
-  isLoadingRows.value = true
+type LoadMode = 'initial' | 'light'
+
+const getRows = async (
+  page: number = currentPage.value,
+  mode?: LoadMode,
+) => {
+  // Si un filtre set/enum est vide => 0 résultat => PAS d'API
+  if (shouldReturnEmptyResult(filtersToSend.value as any)) {
+    // on met l'UI en cohérence
+    rowData.value = []
+    totalRecords.value = 0
+    currentPage.value = 1
+
+    // stop loaders si besoin
+    stopStoryboardTimer?.()
+    finishLoadingStoryboardStop?.()
+    if (typeof stopLightLoading === 'function') {
+      await stopLightLoading()
+    }
+    isLoadingRows.value = false
+    return
+  }
+
+  const effectiveMode: LoadMode
+    = mode ?? (rowData.value == null ? 'initial' : 'light')
+
+  if (effectiveMode === 'initial') {
+    isLoadingRows.value = true
+    startLoadingStoryboard()
+  } else {
+    startLightLoading()
+  }
+
   const dto = persistDto(page)
 
   try {
     const response = await props.apiCall(dto)
+    const data = Array.isArray(response?.data) ? response.data : []
+    const total = Number(response?.total)
+
+    rowData.value = data as T[]
+    totalRecords.value = Number.isFinite(total) && total >= 0 ? total : data.length
     currentPage.value = page
-    rowData.value = response.data
-    totalRecords.value = response.total
+
+    if (effectiveMode === 'initial') {
+      const elapsed = Date.now() - loadingStartedAt
+      if (elapsed < TARGET_MS) {
+        await finishLoadingStoryboardFast()
+      } else {
+        finishLoadingStoryboardStop()
+      }
+    }
+  } catch (_) {
+    rowData.value = []
+    totalRecords.value = 0
+    currentPage.value = 1
+
+    if (effectiveMode === 'initial') {
+      await finishLoadingStoryboardFast()
+    }
   } finally {
-    isLoadingRows.value = false
+    if (effectiveMode === 'initial') {
+      isLoadingRows.value = false
+    } else {
+      await stopLightLoading()
+    }
   }
 }
 
@@ -633,6 +703,28 @@ async function removeFilter (colId: string): Promise<void> {
   notifyFilterChanged()
 }
 
+function shouldReturnEmptyResult (filters: Record<string, any> | null | undefined): boolean {
+  if (!filters) {
+    return false
+  }
+
+  for (const f of Object.values(filters)) {
+    const c1 = (f as any)?.condition1 ?? f
+    if (!c1) {
+      continue
+    }
+    if (c1.filterType && Array.isArray(c1.filter)) {
+      const includeEmpty = !!c1.includeEmpty
+
+      // "tout décoché" + on n'inclut pas les vides => ça ne peut matcher rien
+      if (c1.filter.length === 0 && !includeEmpty) {
+        return true
+      }
+    }
+  }
+
+  return false
+}
 //#endregion
 
 //#region 📍------ Sort ------ 📍
@@ -840,7 +932,7 @@ const initializeTable = async () => {
   snapshotMissingColumnWidths()
   applyColumnWidthsToColgroup()
 
-  await getRows(currentPage.value)
+  await getRows(currentPage.value, 'initial')
 
   hasInitialDataLoaded.value = true
   isReadyToWatch.value = true
@@ -971,10 +1063,131 @@ watch(
     // On repasse page 1 dès qu’un filtre change
     currentPage.value = 1
     saveChanges()
+
     getRows(1)
   },
   { deep: true },
 )
+//#endregion
+
+//#region 📍------ User Friendly Chargement ------ 📍
+type Step = { key: string; title: string; short: string }
+
+const steps: Step[] = [
+  { key: 'cols', title: 'Sélection des colonnes', short: 'Colonnes' },
+  { key: 'filters', title: 'Application des filtres', short: 'Filtres' },
+  { key: 'sort', title: 'Ordonnancement des données', short: 'Tri' },
+  { key: 'totals', title: 'Calcul des totaux', short: 'Totaux' },
+  { key: 'render', title: 'Présentation finale', short: 'Affichage' },
+]
+
+// on fixe à 5 seconde le temps du logo par default.
+const TARGET_MS = 5000
+const stepIndex = ref(0)
+const currentStep = computed(() => steps[stepIndex.value] ?? steps.at(-1)!)
+const isFinalizing = ref(false)
+
+// progress 0..100
+const progress = ref(0)
+
+let loadingStartedAt = 0
+let timer: number | null = null
+
+function stopStoryboardTimer () {
+  if (timer) {
+    window.clearInterval(timer)
+    timer = null
+  }
+}
+
+function startLoadingStoryboard () {
+  loadingStartedAt = Date.now()
+  stepIndex.value = 0
+  progress.value = 0
+  isFinalizing.value = false
+
+  stopStoryboardTimer()
+
+  timer = window.setInterval(() => {
+    const elapsed = Date.now() - loadingStartedAt
+
+    const raw = Math.floor((elapsed / TARGET_MS) * steps.length)
+    stepIndex.value = Math.min(raw, steps.length - 1)
+
+    // 0..92 tant que pas terminé pour ne pas frustrer
+    const p = Math.min(92, Math.floor((elapsed / TARGET_MS) * 100))
+    progress.value = Math.max(progress.value, p)
+
+    if (elapsed > TARGET_MS) {
+      isFinalizing.value = true
+      // petit “respire” en final : 92..98 en boucle lente
+      progress.value = Math.min(98, progress.value + 1)
+    }
+  }, 80)
+}
+
+async function finishLoadingStoryboardFast () {
+  stopStoryboardTimer()
+  isFinalizing.value = false
+
+  // accélère les dernières étapes pour finir le log, pour un effet de performance
+  while (stepIndex.value < steps.length - 1) {
+    stepIndex.value++
+    progress.value = Math.min(99, progress.value + 10)
+    await new Promise((r) => setTimeout(r, 70))
+  }
+
+  progress.value = 100
+  await new Promise((r) => setTimeout(r, 140))
+}
+
+//#region 📍------ Petit chargement ------ 📍
+const isRefreshing = ref(false)
+
+const LIGHT_DELAY_MS = 220
+const LIGHT_MIN_SHOW_MS = 300
+
+let lightDelayTimer: number | null = null
+let lightShownAt = 0
+
+function finishLoadingStoryboardStop () {
+  if (timer) {
+    window.clearInterval(timer)
+    timer = null
+  }
+  progress.value = 100
+  isFinalizing.value = false
+}
+
+function startLightLoading () {
+  // anti flicker
+  if (lightDelayTimer) {
+    window.clearTimeout(lightDelayTimer)
+  }
+  lightDelayTimer = window.setTimeout(() => {
+    isRefreshing.value = true
+    lightShownAt = Date.now()
+  }, LIGHT_DELAY_MS)
+}
+
+async function stopLightLoading () {
+  if (lightDelayTimer) {
+    window.clearTimeout(lightDelayTimer)
+    lightDelayTimer = null
+  }
+  if (!isRefreshing.value) {
+    return
+  }
+
+  const elapsed = Date.now() - lightShownAt
+  const remaining = Math.max(0, LIGHT_MIN_SHOW_MS - elapsed)
+  if (remaining) {
+    await new Promise(r => setTimeout(r, remaining))
+  }
+
+  isRefreshing.value = false
+}
+//#endregion
 //#endregion
 
 //#region 📍------ Expose ------ 📍
@@ -995,6 +1208,10 @@ defineExpose({
     class="h-full flex relative border-shadow"
     :class="{ loading: isLoadingRows }"
   >
+    <div v-if="isRefreshing" class="bn-refresh">
+      <span class="bn-refresh__dot" aria-hidden="true" />
+      Mise à jour…
+    </div>
     <DataTable
       :key="tableKey"
       v-model:filters="filters"
@@ -1012,6 +1229,7 @@ defineExpose({
       :rows="perPage"
       :rows-per-page-options="ROWS_PER_PAGE_OPTIONS"
       :first="first"
+      :loading="isLoadingRows"
       :total-records="totalRecords"
       :scroll-height="scrollHeight"
       scroll-width="max-content"
@@ -1025,6 +1243,16 @@ defineExpose({
       @sort="onSortChanged($event)"
       @row-click="onRowClick($event)"
     >
+      <template #loadingicon>
+        <div class="bn-loadwrap">
+          <div class="bn-logo" :style="{ '--p': `${progress}%` }" aria-hidden="true" />
+
+          <div class="bn-loadtext">
+            <strong>{{ currentStep.title }}</strong>
+            <span v-if="isFinalizing" class="bn-dots">…</span>
+          </div>
+        </div>
+      </template>
       <template #paginatorstart>
         <Button
           type="button"
@@ -1250,5 +1478,104 @@ defineExpose({
 
 :deep(.p-datatable-table) {
   table-layout: fixed;
+}
+
+/* ========= chargement loading data table ========== */
+:deep(.p-datatable) {
+  position: relative;
+}
+
+:deep(.p-datatable-mask) {
+  background: rgba(255, 255, 255, 0.45) !important;
+
+  /* on écrase toute contrainte PrimeVue */
+  height: auto !important;
+  max-height: none !important;
+
+  inset: 46px 0 50px 0 !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+:deep(.p-datatable-loading-icon),
+:deep(.p-datatable-loading-overlay .p-icon) {
+  display: none !important;
+}
+
+.bn-loadwrap{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  align-items:center;
+  justify-content:center;
+  padding:16px 18px;
+  background:rgba(255,255,255,.9);
+  border:1px solid var(--grey-925-125);
+  border-radius:12px;
+  box-shadow:0 8px 24px rgba(0,0,0,.08);
+}
+
+.bn-logo{
+  width:54px;
+  height:54px;
+  border-radius:50%;
+  background: conic-gradient(
+    var(--blue-france-sun-113-625) var(--p),
+    #e5e7eb 0
+  );
+  display:grid;
+  place-items:center;
+}
+
+.bn-logo::after{
+  content:"";
+  width:42px;height:42px;border-radius:50%;
+  background:white;
+  border:1px solid var(--grey-925-125);
+}
+
+.bn-loadtext{
+  font-size:14px;
+  color:var(--grey-200-850);
+  text-align:center;
+}
+
+.bn-dots{
+  display:inline-block;
+  animation: bnDots 1.2s steps(4,end) infinite;
+}
+@keyframes bnDots{
+  0%{opacity:.2}
+  50%{opacity:1}
+  100%{opacity:.2}
+}
+
+.bn-refresh{
+  position:absolute;
+  top:54px;             /* ajuste */
+  right: calc(var(--rightOffset, 38px) + 12px);
+  z-index: 5;
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.9);
+  border: 1px solid var(--grey-925-125);
+  box-shadow: 0 6px 18px rgba(0,0,0,.08);
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.bn-refresh__dot{
+  width:10px;height:10px;border-radius:50%;
+  background: var(--blue-france-sun-113-625);
+  opacity:.7;
+  animation: bnPulse 1s ease-in-out infinite;
+}
+@keyframes bnPulse{
+  0%,100%{ transform:scale(.85); opacity:.5 }
+  50%{ transform:scale(1.05); opacity:.9 }
 }
 </style>
