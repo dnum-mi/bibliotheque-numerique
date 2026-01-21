@@ -116,7 +116,7 @@ function onDragOverRow (targetField: string, e: DragEvent) {
   }
 }
 
-function onDragLeaveRow (targetField: string, e: DragEvent) {
+function onDragLeaveRow (targetField: string) {
   // Si on quitte la row actuellement target, on enlève l’indicateur
   if (dropTargetId.value === targetField) {
     dropTargetId.value = null
