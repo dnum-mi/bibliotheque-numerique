@@ -110,9 +110,19 @@ const getPrefecture = (prefecture: PrefectureKey) => {
       v-for="(cellValue, index) in cellValues"
       :key="index"
     >
+      <!-- DOSSIER ID -->
       <template v-if="params.column.id === '96151176-4624-4706-b861-722d2e53545d'">
-        {{ cellValue }}
+        <!-- TODO: ici on charge avec l'id SQL en cliquant sur l'ID DS. Il faudrait pouvoir charger avec un id DS -->
+        <RouterLink
+          :to=" {
+            name: 'Dossiers',
+            params: { id: params.row?.dossierId },
+          }"
+        >
+          {{ formattedNumber(cellValue) }}
+        </RouterLink>
       </template>
+
       <template v-else-if="!!componentRenderer">
         <!-- ComponentRenderer -->
         <component
