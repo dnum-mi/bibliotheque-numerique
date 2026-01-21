@@ -27,18 +27,6 @@ import {
 import { formatDateForApi, safeNumber, getFilters } from './utils/datatable.utils'
 import { dealWithBlankAndNotBlank } from './filters.utils'
 
-/*
-  - colomOrder ne sert à rien ?? utiliser column. Et pour re-ordre, utiliser columnDef order
-      - re-faire migration avec les bon nom et sans colonne order ?
-  - faire tout marcher sur le composant simple, sans local storage
-  - faire marcher le local storage
-  - aller sur la page liste dossier avec les afficage personnalisé
-  - affichage personnalisée: local-storage par affichage
-  - test avec resize et re-order
-  - mettre la bar a droite correctement
-  - entouré le composant un peu proprement
- */
-
 // Types étendus pour inclure filterType (métadonnée custom)
 interface ExtendedDataTableOperatorFilterMetaData extends DataTableOperatorFilterMetaData {
   filterType?: string
@@ -547,6 +535,7 @@ function resetColumnsWidth () {
   tableKey.value++
   saveChanges()
 }
+
 //#endregion
 
 //#region 📍------ Filters ------ 📍
@@ -835,7 +824,9 @@ const initializeTable = async () => {
   } else if (props.localStorageKey) {
     try {
       const saved = localStorage.getItem(props.localStorageKey)
-      if (saved) { startDto = JSON.parse(saved) }
+      if (saved) {
+        startDto = JSON.parse(saved)
+      }
     } catch (e) {
       console.warn(e)
     }
@@ -885,9 +876,13 @@ const onRowClick = (event: { data: T; originalEvent?: Event }) => {
 }
 
 const onPage = (event: { first: number; rows: number }) => {
-  if (totalRecords.value === 0 && isLoadingRows.value) { return }
+  if (totalRecords.value === 0 && isLoadingRows.value) {
+    return
+  }
   const newPage = Math.floor(event.first / event.rows) + 1
-  if (currentPage.value !== newPage) { currentPage.value = newPage }
+  if (currentPage.value !== newPage) {
+    currentPage.value = newPage
+  }
 }
 
 const updateDataTableState = (dto: IPagination<T>) => {
@@ -902,6 +897,7 @@ watch(
     if (!isReadyToWatch.value) {
       return
     }
+
     const available = getAvailableColumnIds()
     const cleaned = newSelectedIds.filter((id) => available.includes(id))
 
@@ -909,21 +905,36 @@ watch(
       selectedColumnIds.value = cleaned
       return
     }
+
+    // --- Détecter "reorder only" : même set, même taille, ordre différent
+    const sameLength = previousSelectedIds.length === cleaned.length
+    const sameSet
+      = sameLength && previousSelectedIds.every((id) => cleaned.includes(id)) && cleaned.every((id) => previousSelectedIds.includes(id))
+    const orderChanged = sameSet && previousSelectedIds.some((id, i) => cleaned[i] !== id)
+
     // find deleted column id to remove its eventual filter or sort property
-    if (previousSelectedIds.length > newSelectedIds.length) {
-      const deletedId = previousSelectedIds.find(a => !newSelectedIds.includes(a))
+    if (previousSelectedIds.length > cleaned.length) {
+      const deletedId = previousSelectedIds.find((a) => !cleaned.includes(a))
       if (deletedId) {
         removeFilter(deletedId)
-        sort.value = sort.value.filter(s => s.key !== deletedId)
+        sort.value = sort.value.filter((s) => s.key !== deletedId)
       }
     }
 
-    // PrimeVue recrée colgroup quand les colonnes changent
+    // PrimeVue ne ré-applique pas toujours l’ordre des Column -> remount DataTable
+    if (orderChanged) {
+      tableKey.value++
+    }
+
     nextTick(() => applyColumnWidthsToColgroup())
 
     if (hasInitialDataLoaded.value) {
       saveChanges()
-      getRows(1)
+
+      // Reorder pur : pas besoin de refetch
+      if (!orderChanged) {
+        getRows(1)
+      }
     }
   },
   { deep: true },
@@ -1038,9 +1049,13 @@ defineExpose({
         :show-add-button="shouldShowFilterControls(col)"
         :show-filter-match-modes="shouldShowFilterControls(col)"
         :show-filter-menu="!col.suppressHeaderMenuButton"
-        :header-style="col.field ? {
-          width: columnWidthById[col.field] ? `${columnWidthById[col.field]}px` : `${DEFAULT_COL_WIDTH}px`,
-        } : undefined"
+        :header-style="
+          col.field
+            ? {
+              width: columnWidthById[col.field] ? `${columnWidthById[col.field]}px` : `${DEFAULT_COL_WIDTH}px`,
+            }
+            : undefined
+        "
         :title="col.headerName"
       >
         <template #body="{ data }">
