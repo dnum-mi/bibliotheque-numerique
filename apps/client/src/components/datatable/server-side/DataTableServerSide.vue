@@ -1144,7 +1144,7 @@ async function finishLoadingStoryboardFast () {
   while (stepIndex.value < steps.length - 1) {
     stepIndex.value++
     progress.value = Math.min(99, progress.value + 10)
-    await new Promise((r) => setTimeout(r, 70))
+    await new Promise((r) => setTimeout(r, 10))
   }
 
   progress.value = 100
