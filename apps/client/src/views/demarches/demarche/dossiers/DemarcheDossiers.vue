@@ -1,12 +1,5 @@
 <script lang="ts" setup>
-import type {
-  ICreateView,
-  IPagination,
-  IPatchView,
-  IView,
-  IDemarche,
-  IMappingColumn,
-} from '@biblio-num/shared'
+import type { ICreateView, IPagination, IPatchView, IView, IDemarche, IMappingColumn } from '@biblio-num/shared'
 import type { FrontIMappingColumn } from '@/stores'
 import type { BNColDef } from '@/components/datatable/server-side/bn-col-def.interface'
 import type { TotalsAllowed } from './DemarcheDossiersViews.vue'
@@ -60,7 +53,6 @@ const localStorageDataTablePaginationKey = computed(() => {
   const viewId = selectedView.value?.id ?? 'none'
   return `dataTable.demarche-${demarcheId}.dossiers.view-${viewId}.pagination`
 })
-const lastSelectedViewId = ref<number | null>(null)
 const localStorageGroupByKey = computed(() => `dataTable.demarche-${route.params.demarcheId}.dossiers.groupBy`)
 const localStorageViewIdKey = computed(() => `dataTable.demarche-${route.params.demarcheId}.dossiers.currentViewId`)
 //#endregion
@@ -143,7 +135,7 @@ const computeColumnsDef = () => {
   ]
 }
 
-const onSelectionChanged = ({ data: { dossierId: id }}: { data: { dossierId: number } }) => {
+const onSelectionChanged = ({ data: { dossierId: id } }: { data: { dossierId: number } }) => {
   if (id) {
     router.push({
       name: 'Dossiers',
@@ -177,12 +169,16 @@ const updateDataTableState = (selectedView?: IPagination<any>) => {
 
 //#region 📍------ CUSTOM VIEW ------ 📍
 const cloneSorts = (sorts: any): any[] => {
-  if (!Array.isArray(sorts)) { return [] }
+  if (!Array.isArray(sorts)) {
+    return []
+  }
   return sorts.map((s) => ({ ...s }))
 }
 
 const cloneFilters = (filters: any): any => {
-  if (!filters) { return null }
+  if (!filters) {
+    return null
+  }
   try {
     return JSON.parse(JSON.stringify(filters))
   } catch {
@@ -199,7 +195,7 @@ const cloneColumnWidthById = (map: any): Record<string, number> => {
 }
 const customViewOperationSuccess = ref(true)
 
-const updateView = async () => {
+const saveView = async () => {
   customViewOperationSuccess.value = false
   if (selectedView.value) {
     selectedView.value.groupByDossier = groupByDossier.value
@@ -236,33 +232,34 @@ const deleteView = async () => {
   }
 }
 
-const updateViewName = async ({ viewName = '', totals = [] }: { viewName?: string; totals?: string[] }) => {
+const updateView = async ({ viewId, viewName = '', totals = [] }: { viewId: number, viewName?: string; totals?: string[] }) => {
   customViewOperationSuccess.value = false
-  if (selectedView.value) {
-    const dto: IPatchView = {
-      name: viewName,
-    }
-    if (totals) {
-      dto.totals = totals.filter((tt) => tt !== 'Aucun total')
-    }
-    dto.columns = paginationDto.value.columns
-    try {
-      await viewStore.updateView(selectedView.value.id, dto)
+  const dto: IPatchView = {
+    name: viewName,
+  }
+  if (totals) {
+    dto.totals = totals.filter((tt) => tt !== 'Aucun total')
+  }
+
+  try {
+    await viewStore.updateView(viewId, dto)
+    if (selectedView.value && selectedView.value?.id === viewId) {
       selectedView.value.name = viewName
       selectedView.value.totals = dto.totals ?? null
-      customViewOperationSuccess.value = false
-    } catch (error) {
-      import.meta.env.DEV && console.warn(error)
     }
+    customViewOperationSuccess.value = true
+  } catch (error) {
+    import.meta.env.DEV && console.warn(error)
   }
 }
 
 const selectView = async (id: number | null) => {
   const demarcheId = route.params.demarcheId
   const previousViewId = selectedView.value?.id ?? null
-  const prevKey = previousViewId === null
-    ? `dataTable.demarche-${demarcheId}.dossiers.view-none.pagination`
-    : `dataTable.demarche-${demarcheId}.dossiers.view-${previousViewId}.pagination`
+  const prevKey
+    = previousViewId === null
+      ? `dataTable.demarche-${demarcheId}.dossiers.view-none.pagination`
+      : `dataTable.demarche-${demarcheId}.dossiers.view-${previousViewId}.pagination`
 
   // On démonte le DataTable d'abord pour l'empêcher de ré-écrire dans le storage
   readyToLoadDataTable.value = false
@@ -316,7 +313,7 @@ const selectView = async (id: number | null) => {
 }
 
 const resetCurrentViewFromBackend = async (id: number) => {
-  const backendView = viewWithErrors.value.find(v => v.id === id)
+  const backendView = viewWithErrors.value.find((v) => v.id === id)
   if (!backendView) {
     return
   }
@@ -331,38 +328,65 @@ const resetCurrentViewFromBackend = async (id: number) => {
   paginationDto.value.columnWidthById = cloneColumnWidthById((selectedView.value as any).columnWidthById)
 
   // écraser le brouillon localStorage de CETTE vue
-  localStorage.setItem(localStorageDataTablePaginationKey.value, JSON.stringify({
-    page: 1,
-    perPage: 20,
-    columns: paginationDto.value.columns,
-    sorts: paginationDto.value.sorts,
-    filters: paginationDto.value.filters,
-    columnWidthById: paginationDto.value.columnWidthById,
-  }))
+  localStorage.setItem(
+    localStorageDataTablePaginationKey.value,
+    JSON.stringify({
+      page: 1,
+      perPage: 20,
+      columns: paginationDto.value.columns,
+      sorts: paginationDto.value.sorts,
+      filters: paginationDto.value.filters,
+      columnWidthById: paginationDto.value.columnWidthById,
+    }),
+  )
 
   // 4) forcer DataTable à se re-synchroniser
   updateDataTableState()
   dataTableComponent.value?.refresh()
 }
 
-const createView = async ({ viewName = '', totals = [] }: { viewName?: string; totals?: string[] }) => {
+const createView = async ({
+  viewName = '',
+  totals = [],
+  baseViewId = null,
+}: {
+  viewName?: string
+  totals?: string[]
+  baseViewId?: number | null
+}) => {
   customViewOperationSuccess.value = false
+
+  const base = baseViewId != null ? viewWithErrors.value.find((v) => v.id === baseViewId) ?? null : null
+
+  const dtoSource = base
+    ? {
+        groupByDossier: !!(base as any).groupByDossier,
+        columns: cloneColumns(base.columns),
+        columnWidthById: cloneColumnWidthById((base as any).columnWidthById),
+        sorts: cloneSorts(base.sorts),
+        filters: cloneFilters(base.filters),
+      }
+    : {
+        groupByDossier: groupByDossier.value,
+        columns: cloneColumns(paginationDto.value.columns),
+        columnWidthById: cloneColumnWidthById(paginationDto.value.columnWidthById),
+        sorts: cloneSorts(paginationDto.value.sorts),
+        filters: cloneFilters(paginationDto.value.filters),
+      }
+
   const createCustomFilterDto: ICreateView = {
     name: viewName,
-    groupByDossier: groupByDossier.value,
-    columns: cloneColumns(paginationDto.value.columns),
-    columnWidthById: cloneColumnWidthById(paginationDto.value.columnWidthById),
-    sorts: cloneSorts(paginationDto.value.sorts),
-    filters: cloneFilters(paginationDto.value.filters),
-    totals: [],
+    groupByDossier: dtoSource.groupByDossier,
+    columns: dtoSource.columns,
+    columnWidthById: dtoSource.columnWidthById,
+    sorts: dtoSource.sorts,
+    filters: dtoSource.filters,
+    totals: totals.filter((tt) => tt !== 'Aucun total'),
   }
 
-  if (totals) {
-    createCustomFilterDto.totals = totals.filter((tt) => tt !== 'Aucun total')
-  }
   try {
     const filterId = await viewStore.createView(createCustomFilterDto, demarche.value.id)
-    selectView(filterId)
+    await selectView(filterId)
     customViewOperationSuccess.value = true
   } catch (error) {
     import.meta.env.DEV && console.warn(error)
@@ -504,23 +528,23 @@ const quickFilterValueTranslations: Record<string, string> = {
       <div class="flex justify-center items-center">
         <DemarcheDossiersViews
           :views="viewWithErrors"
-          :selected-view="(selectedView as IView)"
+          :selected-view="selectedView as IView"
           :pagination-changed="paginationChanged"
           :totals-allowed="totalsAllowed"
           :operation-success="customViewOperationSuccess"
           @create-view="createView($event)"
-          @update-view="updateView()"
-          @update-view-name="updateViewName($event)"
+          @save-view="saveView()"
+          @update-view="updateView($event)"
           @delete-view="deleteView()"
           @select-view="selectView($event)"
           @reselect-view="resetCurrentViewFromBackend($event)"
         />
         <DsfrButton
           id="help-button"
-          label="Lancer le tutoriel"
+          label="Comment fonctionne les vues"
           icon="ri-question-mark"
           icon-only
-          primary
+          secondary
           @click="startTour"
         />
       </div>

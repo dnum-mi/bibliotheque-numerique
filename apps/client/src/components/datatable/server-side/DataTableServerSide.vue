@@ -1139,6 +1139,7 @@ defineExpose({
     </DataTable>
     <div class="side-buttons">
       <div class="relative">
+        <!--  TODO: Fonctionnalité de re-ordonnage et de re-taillage des colonnes. En attente du métier -->
         <!--        <div class="mb-2"> -->
         <!--          <button -->
         <!--            type="button" -->

@@ -9,7 +9,7 @@ import { CreateViewDto } from '@/modules/views/objects/dtos/create-view.dto'
 // reduceExistInColumn
 const reic = (array: string[] | undefined, o: CreateViewDto):boolean => {
   return (array || []).reduce(
-    (acc, curr) => acc && o.columns.includes(curr),
+    (acc, curr) => acc && o.columns?.includes(curr),
     true,
   )
 }

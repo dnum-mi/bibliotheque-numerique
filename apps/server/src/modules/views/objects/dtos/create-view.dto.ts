@@ -34,6 +34,7 @@ export class CreateViewDto
   @IsOptional()
   @ValidateIf((o) => o.totals !== null)
   @IsArray()
+  @ValidateIf((o) => Array.isArray(o.columns) && o.columns.length > 0 && Array.isArray(o.totals))
   @Validate(ColumnContainsKeyContraint, ['totals'])
   @IsString({ each: true })
   totals: string[] | null
