@@ -414,16 +414,34 @@ const readDataTableStateFromLocalStorage = (): IPagination<any> | null => {
   }
 }
 
+const parseQueryNumber = (raw: unknown): number | null => {
+  const v = Array.isArray(raw) ? raw[0] : raw
+  const n = Number.parseInt(String(v ?? ''), 10)
+  return Number.isFinite(n) && n > 0 ? n : null
+}
+
+const getViewIdFromQuery = (): number | null => {
+  return parseQueryNumber(route.query.viewId)
+}
+
 onMounted(async () => {
   computeColumnsDef()
   await viewStore.getViewsByDemarche(demarche.value.id)
 
-  // 1) Vue sélectionnée au dernier passage
-  const savedViewId = Number.parseInt(localStorage.getItem(localStorageViewIdKey.value) || '-1')
-  if (savedViewId > -1) {
-    selectedView.value = viewWithErrors.value.find((v) => v.id === savedViewId) || null
+  // 1) Vue demandée par URL (prioritaire), sinon dernière vue en localStorage
+  const queryViewId = getViewIdFromQuery()
+
+  if (queryViewId) {
+    selectedView.value = viewWithErrors.value.find((v) => v.id === queryViewId) || null
+
+    // si l’id est invalide, on retombe sur le storage
+    if (!selectedView.value) {
+      const savedViewId = Number.parseInt(localStorage.getItem(localStorageViewIdKey.value) || '-1')
+      selectedView.value = savedViewId > -1 ? (viewWithErrors.value.find((v) => v.id === savedViewId) || null) : null
+    }
   } else {
-    selectedView.value = null
+    const savedViewId = Number.parseInt(localStorage.getItem(localStorageViewIdKey.value) || '-1')
+    selectedView.value = savedViewId > -1 ? (viewWithErrors.value.find((v) => v.id === savedViewId) || null) : null
   }
 
   // 2) groupBy : si une vue existe on prend la valeur de la vue, sinon on prend le localStorage global, sinon défaut
