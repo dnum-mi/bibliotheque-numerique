@@ -432,13 +432,7 @@ onMounted(async () => {
   const queryViewId = getViewIdFromQuery()
 
   if (queryViewId) {
-    selectedView.value = viewWithErrors.value.find((v) => v.id === queryViewId) || null
-
-    // si l’id est invalide, on retombe sur le storage
-    if (!selectedView.value) {
-      const savedViewId = Number.parseInt(localStorage.getItem(localStorageViewIdKey.value) || '-1')
-      selectedView.value = savedViewId > -1 ? (viewWithErrors.value.find((v) => v.id === savedViewId) || null) : null
-    }
+    await resetCurrentViewFromBackend(queryViewId)
   } else {
     const savedViewId = Number.parseInt(localStorage.getItem(localStorageViewIdKey.value) || '-1')
     selectedView.value = savedViewId > -1 ? (viewWithErrors.value.find((v) => v.id === savedViewId) || null) : null
