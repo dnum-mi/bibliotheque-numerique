@@ -21,7 +21,7 @@ describe('statistique', () => {
 
   it('Should return nb dossiers', async () => {
     const { body } = await request(app.getHttpServer())
-      .get('/custom-filters/4/stats')
+      .get('/views/4/stats')
       .set('Authorization', `Bearer ${token}`)
       .expect(200)
 
@@ -42,7 +42,7 @@ describe('statistique', () => {
           },
         ],
         id: 4,
-        name: 'My custom filter for stats',
+        name: 'My view for stats',
       },
       demarche: {
         dsId: 76,
@@ -60,7 +60,7 @@ describe('statistique', () => {
 
   it('Should return nb champs and montant', async () => {
     const { body } = await request(app.getHttpServer())
-      .get('/custom-filters/5/stats')
+      .get('/views/5/stats')
       .set('Authorization', `Bearer ${token}`)
       .expect(200)
 
@@ -95,7 +95,7 @@ describe('statistique', () => {
 
   it('Should return nb dossiers and montant', async () => {
     const { body } = await request(app.getHttpServer())
-      .get('/custom-filters/6/stats')
+      .get('/views/6/stats')
       .set('Authorization', `Bearer ${token}`)
       .expect(200)
 

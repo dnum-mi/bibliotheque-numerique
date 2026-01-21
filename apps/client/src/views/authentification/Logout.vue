@@ -2,7 +2,8 @@
 import type { Pinia, Store } from 'pinia'
 
 import useToaster from '@/composables/use-toaster.js'
-import { useUserStore, useCustomFilterStore } from '@/stores'
+import { useUserStore, useViewStore,
+} from '@/stores'
 
 import { routeNames } from '@/router/route-names'
 
@@ -15,7 +16,8 @@ interface ExtendedPinia extends Pinia {
 }
 
 onMounted(async () => {
-  useCustomFilterStore().$reset()
+  useViewStore
+  ().$reset()
   try {
     await userStore.logout()
     const activePinia = getActivePinia() as ExtendedPinia

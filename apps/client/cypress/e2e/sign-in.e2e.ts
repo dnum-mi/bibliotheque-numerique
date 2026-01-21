@@ -10,7 +10,7 @@ import adminProfile from '../fixtures/admin-profile.json'
 describe('Sign in', () => {
   beforeEach(() => {
     cy.intercept({ method: 'POST', url: '/api/demarches/small/list' }, []).as('demarches')
-    cy.intercept({ method: 'GET', url: '/api/custom-filters' }, []).as('customFilters')
+    cy.intercept({ method: 'GET', url: '/api/views' }, []).as('customFilters')
     cy.intercept({ method: 'GET', url: '/api/auth/proconnect' }, []).as('proconnect')
     cy.intercept({ method: 'POST', url: '/api/users/list' }, []).as('fetchUsers')
     cy.intercept({ method: 'GET', url: '/api/users/me' }, { statusCode: 403 })
@@ -26,7 +26,7 @@ describe('Sign in', () => {
     cy.intercept({ method: 'POST', url: '/api/auth/sign-in' }, { accessToken: 'abcd' })
     cy.intercept({ method: 'GET', url: '/api/demarches/small' }, demarches).as('demarches')
     cy.intercept({ method: 'GET', url: '/api/demarches/3' }, demarche).as('demarche')
-    cy.intercept({ method: 'GET', url: '/api/custom-filters' }, customFilters).as('customFilters')
+    cy.intercept({ method: 'GET', url: '/api/views' }, customFilters).as('customFilters')
     cy.intercept({ method: 'POST', url: '/api/demarches/3/fields-search' }, fieldsSearch).as('fieldsSearch')
     cy.intercept({ method: 'POST', url: '/api/auth/refresh', times: 1 }, (req) => {
       req.reply({ statusCode: 401, body: { message: 'Unauthorized' } })
@@ -52,7 +52,7 @@ describe('Sign in', () => {
     cy.wait('@getMyProfile')
     cy.url().should('include', '/sign_in?redirect=/demarches/3/dossiers')
 
-    cy.intercept({ method: 'GET', url: '/api/demarches/3/custom-filters' }, [])
+    cy.intercept({ method: 'GET', url: '/api/demarches/3/views' }, [])
     cy.get('#email').type('louis.dubois@gmail.com')
     cy.get('#password').type('A1etsn*!etisan34')
     cy.get('[type=submit]').click()

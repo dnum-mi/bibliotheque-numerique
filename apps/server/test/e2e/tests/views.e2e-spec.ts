@@ -5,7 +5,6 @@ import { Tokens, TestingModuleFactory } from '../common/testing-module.factory'
 import { ViewService } from '@/modules/views/providers/services/view.service'
 import { View } from '@/modules/views/objects/entities/view.entity'
 import { Demarche } from '@/modules/demarches/objects/entities/demarche.entity'
-import { filter } from 'rxjs'
 
 describe('Views (e2e)', () => {
   let app: INestApplication

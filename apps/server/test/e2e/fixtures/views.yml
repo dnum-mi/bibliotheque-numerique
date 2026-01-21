@@ -1,8 +1,8 @@
-entity: CustomFilter
+entity: View
 items:
   aRandomFilter:
     id: 1
-    name: My custom filter
+    name: My view
     sorts: [ { "key": "I01", "order": 'ASC' },{ "key": 'I02', "order": 'DESC' } ]
     filters: { "I01": { filterType: "text", operator: "AND",condition1: { type: "contains", filter: "toto" },condition2: { type: "contains", filter: "tata" } } }
     columns: [ 'I01','I02','I03','I08','I09' ]
@@ -10,13 +10,13 @@ items:
     demarcheId: 1
   anotherRandomFilter:
     id: 2
-    name: Another custom filter
+    name: Another view
     columns: [ 'I01','I02' ]
     user: "@testPwdUser"
     demarcheId: 1
   aRandomFilter2:
     id: 3
-    name: My custom filter 2
+    name: My view 2
     sorts: [ { "key": "I01", "order": 'ASC' },{ "key": 'I02', "order": 'DESC' } ]
     filters: { "I01": { filterType: "text", operator: "AND",condition1: { type: "contains", filter: "toto" },condition2: { type: "contains", filter: "tata" } } }
     columns: [ 'I01','I02','I03','I08','I09' ]
@@ -24,7 +24,7 @@ items:
     demarcheId: 5
   customForStats:
     id: 4
-    name: My custom filter for stats
+    name: My view for stats
     sorts: [ { "key": "I01", "order": 'ASC' },{ "key": 'I02', "order": 'DESC' } ]
     filters: { "I10": { filterType: "text", condition1: { type: "contains", filter: "babo" } }, "I02": { filterType: "date", condition1: { type: "greaterThan", filter: "2023-06-03" } },"I08": { "condition1": { "type": "greaterThan","filter": 0 },"filterType": "number" } }
     columns: [ 'I01','I02','I03','I08','I09' ]
