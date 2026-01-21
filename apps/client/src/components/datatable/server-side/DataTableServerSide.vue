@@ -407,13 +407,16 @@ const getRows = async (
 
     if (effectiveMode === 'initial') {
       const elapsed = Date.now() - loadingStartedAt
-      if (elapsed < TARGET_MS) {
+      if (stepIndex.value === 1) {
+        isLoadingRows.value = false
+      } else if (elapsed < TARGET_MS) {
         await finishLoadingStoryboardFast()
       } else {
         finishLoadingStoryboardStop()
       }
     }
-  } catch (_) {
+  } catch (error) {
+    console.warn(error)
     rowData.value = []
     totalRecords.value = 0
     currentPage.value = 1
@@ -438,7 +441,7 @@ const saveChanges = () => {
 }
 
 function refreshTable () {
-  getRows(currentPage.value)
+  getRows(currentPage.value, 'initial')
 }
 
 //#endregion
@@ -679,7 +682,7 @@ async function clearAllFilters () {
   await nextTick()
 
   // un seul fetch + une seule persistance
-  await getRows(1)
+  await getRows(1, 'initial')
 
   isReadyToWatch.value = true
   notifyFilterChanged()
@@ -697,7 +700,7 @@ async function removeFilter (colId: string): Promise<void> {
   filters.value = { ...filters.value, [colId]: emptyFilters[colId] }
 
   await nextTick()
-  await getRows(1)
+  await getRows(1, 'initial')
 
   isReadyToWatch.value = true
   notifyFilterChanged()
@@ -732,7 +735,7 @@ function onSortChanged (sortEvent: DataTableSortEvent) {
   const { sortField, sortOrder } = sortEvent
   const isSorted = sortField !== null && sortOrder !== null
   sort.value = isSorted ? [{ key: sortField as string, order: sortOrder === 1 ? 'ASC' : 'DESC' }] : []
-  getRows(1)
+  getRows(1, 'initial')
 }
 
 //#endregion
@@ -1025,7 +1028,7 @@ watch(
 
       // Reorder pur : pas besoin de refetch
       if (!orderChanged) {
-        getRows(1)
+        getRows(1, 'initial')
       }
     }
   },
@@ -1064,10 +1067,17 @@ watch(
     currentPage.value = 1
     saveChanges()
 
-    getRows(1)
+    getRows(1, 'initial')
   },
   { deep: true },
 )
+
+watch(perPage, () => {
+  if (!isReadyToWatch.value) {
+    return
+  }
+  getRows(1, 'initial')
+})
 //#endregion
 
 //#region 📍------ User Friendly Chargement ------ 📍
@@ -1208,10 +1218,6 @@ defineExpose({
     class="h-full flex relative border-shadow"
     :class="{ loading: isLoadingRows }"
   >
-    <div v-if="isRefreshing" class="bn-refresh">
-      <span class="bn-refresh__dot" aria-hidden="true" />
-      Mise à jour…
-    </div>
     <DataTable
       :key="tableKey"
       v-model:filters="filters"
@@ -1229,7 +1235,7 @@ defineExpose({
       :rows="perPage"
       :rows-per-page-options="ROWS_PER_PAGE_OPTIONS"
       :first="first"
-      :loading="isLoadingRows"
+      :loading="isLoadingRows || loading"
       :total-records="totalRecords"
       :scroll-height="scrollHeight"
       scroll-width="max-content"
@@ -1375,7 +1381,7 @@ defineExpose({
           <DsfrPagination
             :current-page="currentPage - 1"
             :pages="paginationPages"
-            @update:current-page="getRows($event + 1)"
+            @update:current-page="getRows($event + 1, 'initial')"
           />
         </div>
       </template>
