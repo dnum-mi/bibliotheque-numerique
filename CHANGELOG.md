@@ -1,5 +1,15 @@
 # Changelog
 
+## [5.1.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.1.0...v5.1.1) (2026-01-22)
+
+
+### Bug Fixes
+
+* afficher list dossier dans la fiche association ([ada7ad2](https://github.com/dnum-mi/bibliotheque_numerique/commit/ada7ad22aaddee7480fa5b6b05162ffe124c1dd9))
+* ajout dans orgnismeRef dans le dossier lors de l'import MAARCH ([47c212d](https://github.com/dnum-mi/bibliotheque_numerique/commit/47c212db7a54c0566688ea471f5dc6a5251be043))
+* correcion de titre organisme dans les dossiers Maarch ([11b5de4](https://github.com/dnum-mi/bibliotheque_numerique/commit/11b5de46dba9d7c20831efcd977ce6ebb63a0e7c))
+* mettre en majuscule le numéro de l'organisme dans maarch ([1b83c08](https://github.com/dnum-mi/bibliotheque_numerique/commit/1b83c083913cc636c223c1f9af57be3e1e9b2cc9))
+
 ## [5.1.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.0.0...v5.1.0) (2026-01-22)
 
 
