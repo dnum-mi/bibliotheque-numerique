@@ -222,6 +222,18 @@ const _buildOneNumberFilter = (
   if (filter.type === NumberFilterConditions.Empty || filter.type === NumberFilterConditions.NotEmpty) {
     return `(${key} IS ${filter.type === NumberFilterConditions.NotEmpty ? 'NOT ' : ''}NULL${isArray ? ')' : ''})`
   }
+
+  if (filter.filter === 0) {
+    const varName = isArray ? 'item' : key
+
+    if (filter.type === NumberFilterConditions.Equals) {
+      return `(${key} IS NULL OR ${varName} = 0${isArray ? ')' : ''})`
+    }
+    if (filter.type === NumberFilterConditions.NotEqual) {
+      return `(${key} IS NOT NULL AND ${varName} != 0${isArray ? ')' : ''})`
+    }
+  }
+
   const numberSqlOperator = numberSqlOperators[filter.type]
   if (!numberSqlOperator) {
     throw new BadRequestException(
