@@ -23,7 +23,6 @@ import {
 } from '@/modules/users/objects/dtos/input'
 import {
   PaginatedUserDto,
-  UserOutputDto,
 } from '@/modules/users/objects/dtos/output'
 import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.decorator'
 import { FileInterceptor } from '@nestjs/platform-express'
@@ -32,6 +31,7 @@ import { type Express } from 'express'
 import { UserImportService } from '@/modules/users/providers/user-import.service'
 import { ExcelUser } from '@/modules/users/objects/types/excel-user.type'
 import { GenerateLinkPasswordDto } from '../objects/dtos/output/generate-link-password.dto'
+import { SignUpOutputDto } from '../objects/dtos/output/signup-output.dto'
 
 @ApiTags('Users')
 @Controller('users')
@@ -50,25 +50,15 @@ export class UserController {
     summary: 'Créer un utilisateur.',
     method: 'POST',
     minimumRole: 'aucun',
-    responseType: UserOutputDto,
+    responseType: SignUpOutputDto,
   })
   @PublicRoute()
-  async signUp(@Body() body: CreateUserDto): Promise<UserOutputDto> {
+  async signUp(@Body() body: CreateUserDto): Promise<SignUpOutputDto> {
     this.logger.verbose('signUp')
-    const user = await this.usersService.create(body)
-    return Object.fromEntries(
-      [
-        'id',
-        'email',
-        'createdAt',
-        'updatedAt',
-        'lastname',
-        'firstname',
-        'job',
-        'role',
-        'prefecture',
-      ].map((key) => [key, user[key]]),
-    ) as UserOutputDto
+    await this.usersService.create(body)
+    return {
+      success: true,
+    }
   }
 
   @Post('/list')

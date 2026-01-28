@@ -295,7 +295,7 @@ describe('users (e2e)', () => {
           password: 'ThisIs1ValidPassword#',
         })
         .expect(201)
-      expect(response.body).toMatchObject(fakeUser)
+      expect(response.body).toMatchObject({ success: true })
       await userService.repository.delete({ email: fakeUser.email })
     })
 

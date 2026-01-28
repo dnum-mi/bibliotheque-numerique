@@ -94,7 +94,7 @@ export class UserService
     })
   }
 
-  async create(dto: CreateUserDto): Promise<User> {
+  async create(dto: CreateUserDto): Promise<void> {
     this.logger.verbose('create')
     const userInDb = await this.findByEmail(
       dto.email,
@@ -118,15 +118,12 @@ export class UserService
       } else {
         await this.mailToAlreadySignUp(userInDb)
       }
-
-      return userInDb
+      return
     }
 
     const user = await this.createAndSave(dto)
 
     await this.mailToValidSignUp(user)
-
-    return user
   }
 
   async updateLoginAttempts(userId: number, attempts: number): Promise<void> {
