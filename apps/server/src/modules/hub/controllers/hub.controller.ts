@@ -57,9 +57,8 @@ export class HubController {
       throw new NotFoundException(`Aucune association avec cet rna ${rna}`)
     }
     const events = await this.hubService.getEventsAssociation(rna)
-    if (events) {
-      result.events = await this.hubService.setLinkDemarcheAndDossier(events)
-    }
+    result.events = await this.hubService.setLinkDemarcheAndDossier(events)
+
     return result
   }
 
@@ -80,9 +79,8 @@ export class HubController {
       throw new NotFoundException(`Aucune fondation avec cet rnf ${rnf}`)
     }
     const events = await this.hubService.getEventsFoundation(rnf)
-    if (events) {
-      result.events = await this.hubService.setLinkDemarcheAndDossier(events)
-    }
+    result.events = await this.hubService.setLinkDemarcheAndDossier(events)
+
     return result
   }
 

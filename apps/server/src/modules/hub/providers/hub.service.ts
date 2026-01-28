@@ -10,7 +10,7 @@ import {
   organismeCategoryKey,
   EOrganismeCategory,
 } from '@biblio-num/shared'
-import axios, { AxiosInstance, CreateAxiosDefaults } from 'axios'
+import axios, { AxiosInstance, CreateAxiosDefaults, HttpStatusCode } from 'axios'
 import { Stream } from 'node:stream'
 import { IRafEvent } from '@biblio-num/shared/types/hub/raf-event.interface'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -74,10 +74,16 @@ export class HubService {
     return this.axios.get<IAssociationOutput>(path).then(r => r.data)
   }
 
-  async getEventsAssociation(idRna:string): Promise<IRafEvent[] | null> {
+  async getEventsAssociation(idRna:string): Promise<IRafEvent[]> {
     const eventPath = `${ePathCompletedOrganismeByType.association}/${idRna}/events`
     return await this.axios.get<{events:IRafEvent[]}>(eventPath).then(r => {
       return r.data.events
+    }).catch(error => {
+      if (error.response?.statusCode === HttpStatusCode.NotFound) {
+        this.logger.warn(`Aucun événement trouvé pour l'association ${idRna}`)
+        return []
+      }
+      throw error
     })
   }
 
@@ -98,10 +104,16 @@ export class HubService {
     })
   }
 
-  async getEventsFoundation(idRnf:string): Promise<IRafEvent[] | null> {
+  async getEventsFoundation(idRnf:string): Promise<IRafEvent[]> {
     const eventPath = `${ePathCompletedOrganismeByType.foundation}/${idRnf}/events`
     return await this.axios.get<{events:IRafEvent[]}>(eventPath).then(r => {
       return r.data.events
+    }).catch(error => {
+      if (error.response?.statusCode === HttpStatusCode.NotFound) {
+        this.logger.warn(`Aucun événement trouvé pour la fondation ${idRnf}`)
+        return []
+      }
+      throw error
     })
   }
 
