@@ -24,7 +24,11 @@ const dateLabel = computed(() => {
 })
 
 async function onDownload () {
-  await downloadHubFile(props.organismeType, props.organismeId, props.file.id)
+  await downloadHubFile({
+    organismeType: props.organismeType,
+    organismeId: props.organismeId,
+    file: props.file,
+  })
 }
 </script>
 

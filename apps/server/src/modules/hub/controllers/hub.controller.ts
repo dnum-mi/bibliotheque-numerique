@@ -11,7 +11,7 @@ import {
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { Role } from '@/modules/users/providers/decorators/role.decorator'
 import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.decorator'
-import { HubService } from '@/modules/hub/providers/hub.service'
+import { HubService, IHubFileResponse } from '@/modules/hub/providers/hub.service'
 import { Stream } from 'stream'
 
 @ApiTags('HUB')
@@ -84,6 +84,17 @@ export class HubController {
     return result
   }
 
+  private async _handleDownloadFile({ data, headers }: IHubFileResponse, response): Promise<void> {
+    const headersToCopy = ['content-type', 'content-disposition', 'content-length']
+    headersToCopy.forEach((header) => {
+      if (headers[header]) {
+        response.set(header, headers[header])
+      }
+    })
+
+    return this._returnStream(data, response)
+  }
+
   private _returnStream(stream: Stream, response): Promise<void> {
     return new Promise((resolve, reject) => {
       stream.on('error', (e) => {
@@ -110,8 +121,9 @@ export class HubController {
     @Response() response,
   ): Promise<void> {
     this.logger.verbose(`downloadAssociationFile ${associationId} : ${fileId}`)
-    const stream = await this.hubService.getAssociationFile(associationId, fileId)
-    return this._returnStream(stream, response)
+    const fileResponse = await this.hubService.getAssociationFile(associationId, fileId)
+
+    return this._handleDownloadFile(fileResponse, response)
   }
 
   @UsualApiOperation({
@@ -128,7 +140,8 @@ export class HubController {
     @Response() response,
   ): Promise<void> {
     this.logger.verbose(`downloadAssociationFile ${foundationId} : ${fileId}`)
-    const stream = await this.hubService.getFoundationFile(foundationId, fileId)
-    return this._returnStream(stream, response)
+    const fileResponse = await this.hubService.getFoundationFile(foundationId, fileId)
+
+    return this._handleDownloadFile(fileResponse, response)
   }
 }

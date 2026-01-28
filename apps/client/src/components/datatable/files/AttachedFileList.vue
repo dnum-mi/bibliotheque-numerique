@@ -147,7 +147,7 @@ const onSelectionChanged = async ({ data: file }: {
   }
 }) => {
   if (file.state === eState.uploaded) {
-    await downloadFile(file.uuid)
+    await downloadFile(file.uuid, file.label, file.mimeType)
     return
   }
 

@@ -10,7 +10,7 @@ import {
   organismeCategoryKey,
   EOrganismeCategory,
 } from '@biblio-num/shared'
-import axios, { AxiosInstance, CreateAxiosDefaults, HttpStatusCode } from 'axios'
+import axios, { AxiosInstance, CreateAxiosDefaults, HttpStatusCode, RawAxiosResponseHeaders } from 'axios'
 import { Stream } from 'node:stream'
 import { IRafEvent } from '@biblio-num/shared/types/hub/raf-event.interface'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -22,6 +22,11 @@ const ePathCompletedOrganismeByType = {
   association: '/associations',
   foundation: '/fondations',
 } as const
+
+export interface IHubFileResponse {
+  data: Stream;
+  headers: RawAxiosResponseHeaders;
+}
 
 @Injectable()
 export class HubService {
@@ -56,15 +61,26 @@ export class HubService {
     })
   }
 
-  async _getFileToStream(id: string, uuid: string, pathRoot: string): Promise<Stream> {
+  async _getFileToStream(id: string, uuid: string, pathRoot: string): Promise<IHubFileResponse> {
     this.logger.verbose('HUB-getFile')
     const url = `${pathRoot}/${id}/attachment/${uuid}`
 
-    const resp = await this.axiosFiles.get(url, {
-      responseType: 'stream',
-    })
+    try {
+      const resp = await this.axiosFiles.get(url, {
+        responseType: 'stream',
+      })
 
-    return resp.data
+      return {
+        data: resp.data,
+        headers: resp.headers,
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === HttpStatusCode.NotFound) {
+        this.logger.warn(`HUB-getFile: Fichier introuvable pour l'UUID ${uuid}`)
+        throw new NotFoundException('Le fichier demandé est introuvable.')
+      }
+      throw error
+    }
   }
 
   //#region ASSOCIATIONS
@@ -87,7 +103,7 @@ export class HubService {
     })
   }
 
-  async getAssociationFile(id: string, uuid: string): Promise<Stream> {
+  async getAssociationFile(id: string, uuid: string): Promise<IHubFileResponse> {
     this.logger.verbose('HUB-getAssociationFile')
     return this._getFileToStream(id, uuid, ePathCompletedOrganismeByType.association)
   }
@@ -117,7 +133,7 @@ export class HubService {
     })
   }
 
-  async getFoundationFile(id: string, uuid: string): Promise<Stream> {
+  async getFoundationFile(id: string, uuid: string): Promise<IHubFileResponse> {
     this.logger.verbose('HUB-getFoundationFile')
     return this._getFileToStream(id, uuid, ePathCompletedOrganismeByType.foundation)
   }
