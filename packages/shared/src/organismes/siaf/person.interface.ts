@@ -1,5 +1,6 @@
 import { ISiafAddress } from "./common-output.interface"
 import { JobPositionKey, qualityInOrganismeKey } from "./enums"
+import { ILegalEntity, LegalEntityType } from "./legal-entity.interface"
 
 export interface IPerson {
   id: string
@@ -21,4 +22,6 @@ export interface IPerson {
 
   quality: qualityInOrganismeKey | null
   jobPosition: JobPositionKey | null
+
+  legalEntity?: ILegalEntity | null
 }

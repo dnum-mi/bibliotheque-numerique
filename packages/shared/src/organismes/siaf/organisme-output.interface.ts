@@ -3,9 +3,8 @@ import { ISiafAddress } from './common-output.interface'
 import { IFile } from './file-output.interface'
 import { IPerson } from './person.interface'
 import { IRafEvent } from '../../hub/raf-event.interface'
+import { OrganismeKind } from './enums/organimse-kind.enum'
 
-export type OrganismeKind = 'Foundation' | 'Association'
-export type LegalEntityType = OrganismeKind | 'Entreprise' | string
 export type LineageKind = 'Fusion' | 'Scission' | 'Transformation'
 
 export interface IOrganismeRef {
@@ -17,11 +16,6 @@ export interface ILineage {
   organismes: IOrganismeRef[]
   type: LineageKind
   at: Date
-}
-
-export interface ILegalEntity {
-  type: LegalEntityType
-  publicId: string
 }
 
 export interface ISiafOrganisme {
@@ -51,10 +45,6 @@ export interface ISiafOrganisme {
   accountDepositYears: number[]
   isPersonDataPrivate: boolean
   persons: IPerson[]
-
-  founderLegalEntities: ILegalEntity[]
-  foundedLegalEntities: ILegalEntity[]
-  governanceLegalEntities: ILegalEntity[]
 
   fromLineage: ILineage | null
   toLineage: ILineage | null
