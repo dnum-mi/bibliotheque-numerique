@@ -6,5 +6,10 @@
   "role": {
     "label": "sudo",
     "options": {}
-  }
+  },
+  "recentOrganismes": [
+    {
+      "id": "000-XXX-00000-00"
+    }
+  ]
 }

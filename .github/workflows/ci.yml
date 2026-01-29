@@ -71,6 +71,8 @@ jobs:
             pnpm run lint:client
             # pnpm run test:client
       - name: run test unit
+        env:
+          DBUS_SESSION_BUS_ADDRESS: /dev/null
         run: |
           pnpm run build:shared
           cd apps/client

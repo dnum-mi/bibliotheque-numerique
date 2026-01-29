@@ -15,7 +15,10 @@ describe('Sign in', () => {
     cy.intercept({ method: 'POST', url: '/api/users/list' }, []).as('fetchUsers')
     cy.intercept({ method: 'GET', url: '/api/users/me' }, { statusCode: 403 })
     cy.intercept({ method: 'GET', url: '/api/users/me/recent-organismes' }, {}).as('recentOrganisme')
-    cy.intercept('api/health', { info: { } })
+    cy.intercept('api/health/info', { info: {
+      version: { version: '0.0' },
+      environment: { environment: 'test' },
+    } }).as('health')
   })
 
   it('should redirect user to requested page after signing in', () => {

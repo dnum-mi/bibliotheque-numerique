@@ -6,7 +6,10 @@ describe('Admin', () => {
     cy.fixture('admin-profile').then((user) => {
       cy.intercept('api/users/me', user).as('me')
     })
-    cy.intercept('api//health', { info: { } })
+    cy.intercept('api/health/info', { info: {
+      version: { version: '0.0' },
+      environment: { environment: 'test' },
+    } }).as('health')
   })
 
   it('list users', () => {
