@@ -213,6 +213,52 @@ const typeSensible = computed<'warning' | 'info'>(() => {
               </div>
             </div>
           </div>
+
+          <div v-if="person.legalEntity" class="w-full pl-0! pr-0! text-sm legal-entity">
+            <div class="grid-8-cols grid">
+              <div class="grid-8-cols__medium flex-col">
+                <div class="flex-1 m-0! fr-text--xs fr-text--light">
+                  Type de la structure représenté
+                </div>
+                <div class="flex-1 fr-text--bold">
+                  {{ person.legalEntity?.type || '' }}
+                </div>
+              </div>
+
+              <div class="grid-8-cols__medium flex-col">
+                <div class="flex-1 m-0! fr-text--xs fr-text--light">
+                  Raison Social de la structure représenté
+                </div>
+                <div class="flex-1 fr-text--bold">
+                  {{ person.legalEntity?.name }}
+                </div>
+              </div>
+              <div class="grid-8-cols__medium flex-col">
+                <div class="flex-1 m-0! fr-text--xs fr-text--light">
+                  Numéro {{ `${person.legalEntity?.type === 'Fondation' ? 'RNF' : person.legalEntity?.type === 'Association' ? "RNA" : ''}` }} de la structure représenté
+                </div>
+                <div class="flex-1 fr-text--bold">
+                  {{ person.legalEntity?.publicId || '' }}
+                </div>
+              </div>
+              <div class="grid-8-cols__medium flex-col">
+                <div class="flex-1 m-0! fr-text--xs fr-text--light">
+                  Adresse de la structure
+                </div>
+                <div class="flex-1 fr-text--bold">
+                  {{ person.legalEntity?.address?.oneLine || '' }}
+                </div>
+              </div>
+              <div class="grid-8-cols__medium flex-col">
+                <div class="flex-1 m-0! fr-text--xs fr-text--light">
+                  Pays de la structure
+                </div>
+                <div class="flex-1 fr-text--bold">
+                  {{ person.legalEntity?.address?.dsAddress?.countryName || person.legalEntity?.country }}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </DsfrAccordion>
     </li>
@@ -240,5 +286,14 @@ h3 {
 
 .person-row:nth-child(even) {
   background-color: var(--grey-950-100);
+}
+
+.legal-entity {
+  border-top: 1px solid var(--dsfr-border-default-grey, #ddd);
+  padding-top: 1rem;
+}
+
+.person-row:nth-child(even) .legal-entity {
+  border-top-color: #fff;
 }
 </style>
