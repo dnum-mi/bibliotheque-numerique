@@ -60,10 +60,10 @@ jobs:
     steps:
       - name: Checks-out repository
         uses: actions/checkout@v3
-      - name: Use Node.js 22.x.x
+      - name: Use Node.js 24.x.x
         uses: actions/setup-node@v3
         with:
-          node-version: "22"
+          node-version: "24"
       - name: run test FRONT
         run: |
             npm i -g pnpm@9.15.4
@@ -93,10 +93,10 @@ jobs:
     steps:
       - name: Checks-out repository
         uses: actions/checkout@v3
-      - name: Use Node.js 22.x.x
+      - name: Use Node.js 24.x.x
         uses: actions/setup-node@v3
         with:
-          node-version: "22"
+          node-version: "24"
       - name: run tests BACK-END
         run: |
             npm i -g pnpm@9.15.4
@@ -119,10 +119,10 @@ jobs:
     steps:
       - name: Checks-out repository
         uses: actions/checkout@v3
-      - name: Use Node.js 22.x.x
+      - name: Use Node.js 24.x.x
         uses: actions/setup-node@v3
         with:
-          node-version: "22"
+          node-version: "24"
       - name: run build
         run: |
           npm i -g pnpm@9.15.4
@@ -141,10 +141,10 @@ jobs:
     steps:
       - name: Checks-out repository
         uses: actions/checkout@v3
-      - name: Use Node.js 22.x.x
+      - name: Use Node.js 24.x.x
         uses: actions/setup-node@v3
         with:
-          node-version: "22"
+          node-version: "24"
       - name: run build
         run: |
           npm i -g pnpm@9.15.4
