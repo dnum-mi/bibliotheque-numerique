@@ -197,7 +197,7 @@ const getPrefecture = (prefecture: PrefectureKey) => {
               {{ formattedNumber(cellValue) }}
             </p>
             <template v-else>
-              <p class="text-nowrap overflow-hidden text-ellipsis max-w-[220px]" :title="cellValue || undefined">
+              <p class="text-nowrap overflow-hidden text-ellipsis max-w-full" :title="cellValue || undefined">
                 {{ cellValue ?? '' }}
               </p>
             </template>
