@@ -17,6 +17,7 @@ import { Inject } from '@nestjs/common'
 import { RedisService } from '@/shared/modules/redis/redis.service'
 import { CustomBullService } from '@/shared/modules/custom-bull/custom-bull.service'
 import { CustomBaseProcessor } from '@/shared/modules/custom-bull/custom-base.processor'
+import { IsNull, Not } from 'typeorm'
 
 @Processor(QueueName.sync)
 export class DemarcheProcessor extends CustomBaseProcessor {
@@ -40,6 +41,9 @@ export class DemarcheProcessor extends CustomBaseProcessor {
       this.logger.verbose('sync all demarche')
       const demarcheIds = (
         await this.demarcheService.repository.find({
+          where: {
+            dsId: Not(IsNull()),
+          },
           select: ['id'],
         })
       ).map((d) => d.id)
