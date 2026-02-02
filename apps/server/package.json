@@ -167,7 +167,8 @@
     "vitest": "^3.2.3"
   },
   "volta": {
-    "node": "22.13.1"
+    "node": "24.13.0",
+    "pnpm": "11.6.2"
   },
   "main": "index.js",
   "directories": {

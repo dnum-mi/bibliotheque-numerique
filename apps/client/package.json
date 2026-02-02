@@ -98,8 +98,8 @@
     "workbox-window": "^7.3.0"
   },
   "volta": {
-    "node": "22.13.1",
-    "npm": "8.19.4"
+    "node": "24.13.0",
+    "pnpm": "11.6.2"
   },
   "msw": {
     "workerDirectory": [
