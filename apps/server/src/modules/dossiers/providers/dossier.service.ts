@@ -29,7 +29,6 @@ import {
   FieldFileType,
   IFieldRepetable,
   PrefectureKey,
-  PieceJustificativeChampWithState,
   FormatFunctionRef,
 } from '@biblio-num/shared'
 
@@ -130,26 +129,35 @@ export class DossierService extends BaseEntityService<Dossier> {
     files: File[]
   }): Field[] {
     this.logger.verbose('transformValueFileOfDossierFields')
-    if (fields.length) {
-      fields.forEach((field) => {
-        if (field.type === 'file' && field.rawJson) {
-          const fileData = field.rawJson as FieldFileType
-          if (fileData.id) {
+
+    if (!fields.length) {
+      return fields
+    }
+
+    fields.forEach((field) => {
+      if (field.type === 'file' && field.rawJson) {
+        const fileData = field.rawJson as FieldFileType
+        const fileUuid = field.stringValue
+        if (fileData.id && fileData.files && Array.isArray(fileData.files)) {
+          fileData.files.forEach((subFile) => {
             const fileFound = files.find(
-              (f) => String(f.sourceStringId) === String(fileData.id),
+              (f) => String(f.uuid) === String(fileUuid),
             )
+
             if (fileFound) {
-              (field.rawJson as PieceJustificativeChampWithState).files?.forEach((f2) => {
-                f2.url = fileFound.uuid ?? ''
-                f2.state = fileFound.state ?? eState.queued
-              })
+              subFile.filename = fileFound.label || fileFound.originalLabel
+              subFile.url = fileFound.uuid ?? ''
+              subFile.state = fileFound.state ?? eState.queued
+              subFile.byteSizeBigInt = fileFound.byteSize
+                ? String(fileFound.byteSize)
+                : '0'
             } else {
               field.rawJson = null
             }
-          }
+          })
         }
-      })
-    }
+      }
+    })
 
     return fields
   }

@@ -6,12 +6,13 @@ export const fileDsSourceLabels = [
   'ds-demandeur',
   'ds-attestation',
   'ds-champ',
-  'ds-motivation'
+  'ds-motivation',
 ] as const
 
 export const fileSourceLabels = [
   'rnf',
   'rna',
+  'maarch',
   ...fileDsSourceLabels,
 ] as const
 
@@ -23,6 +24,7 @@ export const eFileSourceLabel = createEnum(fileSourceLabels)
 export const eFileDsSourceLabel = createEnum(fileDsSourceLabels)
 
 export const dFileSourceLabelDictionary: Record<FileSourceLabelKey, string> = {
+  [eFileSourceLabel.maarch]: 'Maarch',
   [eFileSourceLabel.rnf]: 'RNF',
   [eFileSourceLabel.rna]: 'RNA',
   [eFileSourceLabel['ds-annotation']]: 'Annotation DS',

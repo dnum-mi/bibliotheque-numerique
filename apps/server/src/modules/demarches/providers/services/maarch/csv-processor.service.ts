@@ -173,30 +173,6 @@ export class CsvProcessorService {
     return pieceJointe
   }
 
-  private _extractionFileExtension(filename: string): string {
-    if (!filename) {
-      return ''
-    }
-
-    const lastDotIndex = filename.lastIndexOf('.')
-    if (lastDotIndex === -1 || lastDotIndex === filename.length - 1) {
-      return ''
-    }
-
-    return filename.substring(lastDotIndex)
-  }
-
-  private _removeFileExtension(filename: string): string {
-    if (!filename) return ''
-
-    const lastDotIndex = filename.lastIndexOf('.')
-    if (lastDotIndex === -1) {
-      return filename
-    }
-
-    return filename.substring(0, lastDotIndex)
-  }
-
   private _addPieceJointe(
     demandesMap: Map<number, DemandeAggregee>,
     courrierId: number,

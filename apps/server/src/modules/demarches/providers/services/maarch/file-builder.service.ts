@@ -12,11 +12,12 @@ import {
 } from '@/modules/demarches/objects/constants/maarch.types'
 import { File } from '@/modules/files/objects/entities/file.entity'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
-import { eFileExtension, eFileTag, eState, FileTagKey } from '@biblio-num/shared'
+import { eFileExtension, eFileSourceLabel, eFileTag, eState, FileTagKey } from '@biblio-num/shared'
 import { Injectable } from '@nestjs/common'
 import { generateChecksum, extractMimeType } from './utils/file-helper'
 import { ConfigService } from '@nestjs/config'
 import * as path from 'node:path'
+import { v4 as uuidv4 } from 'uuid'
 
 @Injectable()
 export class FileBuilderService {
@@ -27,7 +28,7 @@ export class FileBuilderService {
     statut: eFileTag.status,
     statuts: eFileTag.status,
     'compte annuel': eFileTag.account,
-    'comptes annuels': eFileTag.account,
+    'comptes annuel': eFileTag.account,
     pv: eFileTag.pv,
     'procès verbal': eFileTag.pv,
     'proces verbal': eFileTag.pv,
@@ -35,8 +36,11 @@ export class FileBuilderService {
     rapport: eFileTag.activityReport,
     cr: eFileTag.activityReport,
     'compte rendu': eFileTag.activityReport,
-    'comptes resultats': eFileTag.activityReport,
+    'compte resultat': eFileTag.activityReport,
+    'comptes resultat': eFileTag.activityReport,
     'compte de résultat': eFileTag.activityReport,
+    'comptes de résultat': eFileTag.activityReport,
+    'extrait de compte': eFileTag.activityReport,
     financement: eFileTag.fe,
   }
 
@@ -92,8 +96,10 @@ export class FileBuilderService {
     const filePath = pieceJointe[maarchPJLabel.cheminPj]
     const fileName = pieceJointe[maarchPJLabel.nomPj]
     const fileIntitule = pieceJointe[maarchPJLabel.intitulePj]
+    const mimeType = extractMimeType(fileName)
 
-    file.label = fileIntitule || 'unknown file'
+    file.uuid = uuidv4()
+    file.label = fileIntitule ? this._forceExtension(fileIntitule, mimeType) : fileName
     file.originalLabel = fileName
     file.sourceUploadedAt = pieceJointe[maarchPJLabel.dateCreationPj]
     file.sourcePath = this._buildS3Path({
@@ -102,11 +108,11 @@ export class FileBuilderService {
       fileName,
     })
     file.tag = this._determineFileTag(file.label)
-    file.checksum = generateChecksum(file.label)
+    file.checksum = generateChecksum(fileName)
     file.byteSize = 0
     file.state = eState.queued
-    file.mimeType = extractMimeType(file.label)
-    file.sourceLabel = 'rna'
+    file.mimeType = extractMimeType(fileName)
+    file.sourceLabel = eFileSourceLabel.maarch
     file.sourceStringId = fieldPjIntitule.id
 
     return file
@@ -122,9 +128,10 @@ export class FileBuilderService {
 
     const filePath = data[maarchChampsLabel.cheminCourrier]
     const originalFileName = data[maarchChampsLabel.nomCourrier]
-    const pdfFileName = this._forcePdfExtension(originalFileName)
+    const pdfFileName = this._forceExtension(originalFileName, eFileExtension.pdf)
 
-    file.label = originalFileName
+    file.uuid = uuidv4()
+    file.label = pdfFileName
     file.originalLabel = pdfFileName
     file.sourceUploadedAt = data[maarchChampsLabel.dateCreationCourrier]
     file.sourcePath = this._buildS3Path({
@@ -137,7 +144,7 @@ export class FileBuilderService {
     file.byteSize = 0
     file.state = eState.queued
     file.mimeType = eFileExtension.pdf
-    file.sourceLabel = 'rna'
+    file.sourceLabel = eFileSourceLabel.maarch
     file.sourceStringId = fieldCourrierFileIntitule.id
 
     return file
@@ -195,12 +202,13 @@ export class FileBuilderService {
     )
   }
 
-  private _forcePdfExtension(fileName: string): string {
+  private _forceExtension(fileName: string, fileExtension: string): string {
+    const ext = `.${fileExtension}`
     if (!fileName) return ''
     const extension = path.extname(fileName)
     if (extension) {
-      return fileName.replace(extension, '.pdf')
+      return fileName.replace(extension, ext)
     }
-    return `${fileName}.pdf`
+    return `${fileName}${ext}`
   }
 }

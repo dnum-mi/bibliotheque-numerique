@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -86,6 +87,7 @@ export class File extends BaseEntity {
   @Column({ type: 'timestamp', nullable: true })
   sourceUploadedAt: Date | null
 
+  @Index('IDX_FILE_DOSSIERID')
   @Column({ nullable: true })
   dossierId?: number | null
 

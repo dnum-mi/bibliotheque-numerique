@@ -16,7 +16,6 @@ import {
 } from '../../objects/constants/maarch.types'
 import { eIdentificationDemarche, eState } from '@biblio-num/shared'
 import { maarchFieldMappingsArray } from '../../objects/constants/maarch-champ.dictionary'
-import { FileBuilderService } from './maarch/file-builder.service'
 import { File } from '@/modules/files/objects/entities/file.entity'
 import { InjectQueue } from '@nestjs/bull'
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
@@ -32,7 +31,6 @@ export class DemarcheMaarchService {
     private readonly logger: LoggerService,
     private readonly csvProcessor: CsvProcessorService,
     private readonly dossierTransformer: DossierTransformerService,
-    private readonly fileBuilder: FileBuilderService,
     @InjectQueue(QueueName.file) private readonly fileQueue: Queue,
     private readonly customBullService: CustomBullService,
   ) {
@@ -108,11 +106,12 @@ export class DemarcheMaarchService {
       const repoDossier = transactionManager.getRepository(Dossier)
       const repoDemarche = transactionManager.getRepository(Demarche)
 
-      const demarche = await repoDemarche.findOne({
-        where: { id: demarcheId },
-      })
+      const demarche = await repoDemarche.createQueryBuilder('demarche')
+        .where('demarche.id = :demarcheId', { demarcheId })
+        .andWhere('demarche.identification = :identification', { identification: eIdentificationDemarche.MAARCH })
+        .getOne()
       if (!demarche) {
-        throw new NotFoundException(`Demarche ${demarcheId} not found.`)
+        throw new NotFoundException(`Demarche maarch ${demarcheId} not found.`)
       }
 
       const dossiersDeleted = await repoDossier.delete({ demarcheId })
@@ -158,12 +157,6 @@ export class DemarcheMaarchService {
     if (!dossiers || dossiers.length === 0) {
       this.logger.warn('No dossiers could be created from the provided data.')
       return []
-    }
-
-    for (const [index, dossier] of dossiers.entries()) {
-      const data = aggregatedData[index]
-
-      dossier.files = this.fileBuilder.createFileEntities(data)
     }
 
     return repoDossier.save(dossiers, { chunk: 100 })

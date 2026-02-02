@@ -44,11 +44,18 @@ const mockDataSource = {
   }),
 };
 
+const mockQueryBuilder = {
+  where: jest.fn().mockReturnThis(),
+  andWhere: jest.fn().mockReturnThis(),
+  getOne: jest.fn(),
+};
+
 const mockDemarcheRepo = {
   create: jest.fn(),
   save: jest.fn(),
   findOne: jest.fn(),
   delete: jest.fn(),
+  createQueryBuilder: jest.fn(() => mockQueryBuilder),
 };
 
 const mockDossierRepo = {
@@ -177,20 +184,21 @@ describe('DemarcheMaarchService', () => {
     const demarcheId = 1
 
     it('should successfully delete a demarche and its dossiers', async () => {
-      mockDemarcheRepo.findOne.mockResolvedValue({ id: demarcheId } as Demarche);
+      mockQueryBuilder.getOne.mockResolvedValue({ id: demarcheId } as Demarche);
       mockDossierRepo.delete.mockResolvedValue({ affected: 5 });
 
       const result = await service.deleteImport(demarcheId)
 
       expect(mockDataSource.transaction).toHaveBeenCalledTimes(1);
-      expect(mockDemarcheRepo.findOne).toHaveBeenCalledWith({ where: { id: demarcheId } });
+      expect(mockDemarcheRepo.createQueryBuilder).toHaveBeenCalledWith('demarche');
+      expect(mockQueryBuilder.where).toHaveBeenCalledWith('demarche.id = :demarcheId', { demarcheId });
       expect(mockDossierRepo.delete).toHaveBeenCalledWith({ demarcheId });
       expect(mockDemarcheRepo.delete).toHaveBeenCalledWith(demarcheId);
       expect(result.message).toContain('Rollback successful!');
     })
 
     it('should throw NotFoundException if the demarche does not exist', async () => {
-      mockDemarcheRepo.findOne.mockResolvedValue(null);
+      mockQueryBuilder.getOne.mockResolvedValue(null);
 
       await expect(service.deleteImport(999)).rejects.toThrow(
         NotFoundException,

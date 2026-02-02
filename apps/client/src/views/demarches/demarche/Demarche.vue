@@ -38,7 +38,7 @@ const handleTabChanged = (newTabId?: string) => {
 <template>
   <LayoutList
     v-if="demarche"
-    :title="`${demarche.title} - N°${demarche.dsDataJson?.number || ''}`"
+    :title="`${demarche.title} ${demarche.dsDataJson?.number ? `- N°${demarche.dsDataJson?.number}` : ''}`"
     title-bg-color="var(--artwork-minor-blue-france)"
     title-icon=""
   >

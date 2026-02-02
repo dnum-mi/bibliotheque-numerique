@@ -19,6 +19,7 @@ export class FieldBuilderService {
   createSimpleField(
     mapping: MappingColumn,
     data: DemandeAggregee,
+    fileUuidMap: Map<string, string>,
   ): Field | null {
     const rawValue = data[mapping.originalLabel]
 
@@ -27,7 +28,13 @@ export class FieldBuilderService {
     }
 
     const field = this._initializeField(mapping)
-    this._setFieldValue(field, mapping, rawValue)
+    if (this._isFileField(mapping)) {
+      const filename = data[mapping.originalLabel]
+      const uuid = fileUuidMap.get(filename)
+      this._configureFileField(field, filename, uuid)
+    } else {
+      this._setFieldValue(field, mapping, rawValue)
+    }
 
     return field
   }
@@ -35,6 +42,7 @@ export class FieldBuilderService {
   createRepeatableFields(
     parentMapping: MappingColumn,
     data: DemandeAggregee,
+    fileUuidMap: Map<string, string>,
   ): Field[] | null {
     const rawValueArray = data[parentMapping.originalLabel] as CsvRow[]
 
@@ -47,6 +55,7 @@ export class FieldBuilderService {
       parentField,
       parentMapping,
       rawValueArray,
+      fileUuidMap,
     )
 
     return [parentField, ...childFields]
@@ -61,6 +70,7 @@ export class FieldBuilderService {
     field.dsChampType = DsChampType.TextChamp
     field.fieldSource = mapping.source
     field.formatFunctionRef = mapping.formatFunctionRef || null
+    field.stringValue = ''
 
     return field
   }
@@ -74,10 +84,37 @@ export class FieldBuilderService {
     return field
   }
 
+  private _configureFileField(field: Field, label: string, uuid?: string): void {
+    field.type = FieldType.file
+    field.dsChampType = DsChampType.PieceJustificativeChamp
+
+    const valueToSave = uuid || ''
+
+    const fileData = createFileRawValue({
+      nom: label,
+    })
+
+    if (uuid) {
+      fileData.url = uuid
+    }
+
+    const pieceJustificativeChamp = {
+      __typename: 'PieceJustificativeChamp',
+      id: valueToSave || field.sourceId || `pj_${Date.now()}`,
+      label,
+      stringValue: valueToSave,
+      files: [fileData],
+    }
+
+    field.rawJson = pieceJustificativeChamp
+    field.stringValue = valueToSave
+  }
+
   private _createChildFields(
     parentField: Field,
     parentMapping: MappingColumn,
     rawValueArray: CsvRow[],
+    fileUuidMap: Map<string, string>,
   ): Field[] {
     const childFields: Field[] = []
 
@@ -88,6 +125,7 @@ export class FieldBuilderService {
           item,
           parentField,
           rowIndex,
+          fileUuidMap,
         )
 
         if (childField) {
@@ -104,6 +142,7 @@ export class FieldBuilderService {
     data: CsvRow,
     parentField: Field,
     rowIndex: number,
+    fileUuidMap: Map<string, string>,
   ): Field | null {
     let childValue: unknown
 
@@ -124,7 +163,7 @@ export class FieldBuilderService {
     field.parentRowIndex = rowIndex
 
     if (this._isFileField(mapping)) {
-      this._setPieceJustificativeValue(field, data)
+      this._setPieceJustificativeValue(field, data, fileUuidMap)
     } else {
       this._setFieldValue(field, mapping, childValue)
     }
@@ -162,24 +201,15 @@ export class FieldBuilderService {
     }
   }
 
-  private _setPieceJustificativeValue(field: Field, data: CsvRow): void {
-    field.type = FieldType.file
-    field.dsChampType = DsChampType.PieceJustificativeChamp
+  private _setPieceJustificativeValue(field: Field, data: CsvRow, fileUuidMap: Map<string, string>): void {
+    const filename = data[maarchPJLabel.nomPj]
 
-    const fileData = createFileRawValue({
-      nom: data[maarchPJLabel.intitulePj],
-    })
-
-    const pieceJustificativeChamp = {
-      __typename: 'PieceJustificativeChamp',
-      id: field.sourceId || `pj_${Date.now()}`,
-      label: data.intitule_pj || data.nom_pj || 'Pièce jointe',
-      stringValue: data.intitule_pj || data.nom_pj,
-      files: [fileData],
+    const uuid = filename ? fileUuidMap.get(filename) : null
+    if (!uuid) {
+      console.warn(`[FieldBuilder] UUID not found for file: "${filename}". Available keys:`, [...fileUuidMap.keys()])
     }
 
-    field.rawJson = pieceJustificativeChamp
-    field.stringValue = data.intitule_pj || data.nom_pj || 'Pièce jointe'
+    this._configureFileField(field, filename, uuid)
   }
 
   private _setPrefectureValue(field: Field, rawValue: unknown): void {
@@ -193,9 +223,7 @@ export class FieldBuilderService {
 
   private _isFileField(mapping: MappingColumn): boolean {
     return (
-      mapping.type === FieldType.file ||
-      mapping.originalLabel?.toLowerCase().includes('intitule_pj') ||
-      mapping.columnLabel?.toLowerCase().includes('intitulé')
+      mapping.type === FieldType.file
     )
   }
 

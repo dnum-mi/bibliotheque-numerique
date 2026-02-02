@@ -8,7 +8,7 @@ export default registerAs('file', () => ({
   awsMaarchS3Bucket: process.env.AWS_MAARCH_S3_BUCKET || 'maarch-pj',
   maarchImportRootPath: process.env.MAARCH_IMPORT_ROOT_PATH || 'import-maarch-pj',
   maarchImportFolderCourrier: process.env.MAARCH_IMPORT_FOLDER_COURRIER || 'manual',
-  maarchImportFolderPieceJointe: process.env.MAARCH_IMPORT_FOLDER_PIECE_JOINTE || 'manual_attachements',
+  maarchImportFolderPieceJointe: process.env.MAARCH_IMPORT_FOLDER_PIECE_JOINTE || 'manual_attachments',
   awsDefaultS3Url: process.env.AWS_DEFAULT_S3_URL,
   awsS3Region: process.env.AWS_S3_REGION,
   localStorageDir: process.env.FILE_STORAGE_LOCAL_DIR || './data/files',

@@ -5,9 +5,11 @@ import { FieldSource, FieldType } from '@biblio-num/shared'
 import { Field } from '@/modules/dossiers/objects/entities/field.entity'
 import { DsChampType } from '@/shared/modules/ds-api/objects/ds-champ-type.enum'
 import { DemandeAggregee } from '@/modules/demarches/objects/constants/maarch.types'
+import { maarchPJLabel } from '@/modules/demarches/objects/constants/maarch-champ.enum'
 
 describe('FieldBuilderService', () => {
   let service: FieldBuilderService
+  const emptyMap = new Map<string, string>()
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -36,7 +38,7 @@ describe('FieldBuilderService', () => {
     it('should create a simple string field', () => {
       const data = dataDemande('test value')
 
-      const result = service.createSimpleField(baseMappingColumn, data)
+      const result = service.createSimpleField(baseMappingColumn, data, emptyMap)
 
       expect(result).toBeInstanceOf(Field)
       expect(result?.label).toBe('Field Label')
@@ -51,7 +53,7 @@ describe('FieldBuilderService', () => {
       const mapping = { ...baseMappingColumn, columnLabel: undefined }
       const data = dataDemande('test')
 
-      const result = service.createSimpleField(mapping, data)
+      const result = service.createSimpleField(mapping, data, emptyMap)
 
       expect(result?.label).toBe('original_field')
     })
@@ -60,7 +62,7 @@ describe('FieldBuilderService', () => {
       const mapping = { ...baseMappingColumn, type: FieldType.number }
       const data = dataDemande('42.5')
 
-      const result = service.createSimpleField(mapping, data)
+      const result = service.createSimpleField(mapping, data, emptyMap)
 
       expect(result?.type).toBe(FieldType.number)
       expect(result?.numberValue).toBe('42.5')
@@ -72,7 +74,7 @@ describe('FieldBuilderService', () => {
       const mapping = { ...baseMappingColumn, type: FieldType.date }
       const data = dataDemande(testDate)
 
-      const result = service.createSimpleField(mapping, data)
+      const result = service.createSimpleField(mapping, data, emptyMap)
 
       expect(result?.type).toBe(FieldType.date)
       expect(result?.dateValue).toEqual(testDate)
@@ -83,7 +85,7 @@ describe('FieldBuilderService', () => {
       const mapping = { ...baseMappingColumn, type: FieldType.boolean }
       const data = dataDemande(true)
 
-      const result = service.createSimpleField(mapping, data)
+      const result = service.createSimpleField(mapping, data, emptyMap)
 
       expect(result?.type).toBe(FieldType.boolean)
       expect(result?.stringValue).toBe('true')
@@ -91,7 +93,7 @@ describe('FieldBuilderService', () => {
 
     it('should return null for null values', () => {
       const data = dataDemande(null)
-      const result = service.createSimpleField(baseMappingColumn, data)
+      const result = service.createSimpleField(baseMappingColumn, data, emptyMap)
 
       expect(result).toBeNull()
     })
@@ -102,7 +104,7 @@ describe('FieldBuilderService', () => {
         pieces_jointes: [],
         annotations: [],
       }
-      const result = service.createSimpleField(baseMappingColumn, data)
+      const result = service.createSimpleField(baseMappingColumn, data, emptyMap)
 
       expect(result).toBeNull()
     })
@@ -111,7 +113,7 @@ describe('FieldBuilderService', () => {
       const mapping = { ...baseMappingColumn, type: FieldType.date }
       const data = dataDemande('invalid-date')
 
-      const result = service.createSimpleField(mapping, data)
+      const result = service.createSimpleField(mapping, data, emptyMap)
 
       expect(result?.stringValue).toBe('invalid-date')
     })
@@ -120,7 +122,7 @@ describe('FieldBuilderService', () => {
       const mapping = { ...baseMappingColumn, type: FieldType.number }
       const data = dataDemande('not-a-number')
 
-      const result = service.createSimpleField(mapping, data)
+      const result = service.createSimpleField(mapping, data, emptyMap)
 
       expect(result?.numberValue).toBeUndefined()
       expect(result?.stringValue).toBe('not-a-number')
@@ -130,7 +132,7 @@ describe('FieldBuilderService', () => {
       const mapping = { ...baseMappingColumn, type: FieldType.number }
       const data = dataDemande(0)
 
-      const result = service.createSimpleField(mapping, data)
+      const result = service.createSimpleField(mapping, data, emptyMap)
 
       expect(result).not.toBeNull()
       expect(result?.numberValue).toBe('0')
@@ -139,10 +141,41 @@ describe('FieldBuilderService', () => {
 
     it('should handle empty string for string fields', () => {
       const data = dataDemande('')
-      const result = service.createSimpleField(baseMappingColumn, data)
+      const result = service.createSimpleField(baseMappingColumn, data, emptyMap)
 
       expect(result).not.toBeNull()
       expect(result?.stringValue).toBe('')
+    })
+
+    it('should inject UUID into stringValue for a simple file field', () => {
+      const uuid = '123e4567-e89b-12d3-a456-426614174000'
+      const filename = 'courrier.pdf'
+
+      const fileMapping: MappingColumn = {
+        ...baseMappingColumn,
+        type: FieldType.file,
+      }
+
+      const data = dataDemande(filename)
+
+      const uuidMap = new Map<string, string>()
+      uuidMap.set(filename, uuid)
+
+      const result = service.createSimpleField(fileMapping, data, uuidMap)
+
+      expect(result?.type).toBe(FieldType.file)
+      expect(result?.dsChampType).toBe(DsChampType.PieceJustificativeChamp)
+      expect(result?.stringValue).toBe(uuid)
+    })
+
+    it('should fallback to filename if UUID is missing in Map for file field', () => {
+      const filename = 'unknown.pdf'
+      const fileMapping: MappingColumn = { ...baseMappingColumn, type: FieldType.file }
+      const data = dataDemande(filename)
+
+      const result = service.createSimpleField(fileMapping, data, emptyMap)
+
+      expect(result?.stringValue).toBe("")
     })
   })
 
@@ -180,7 +213,7 @@ describe('FieldBuilderService', () => {
         annotations: []
       }
 
-      const result = service.createRepeatableFields(parentMapping, data)
+      const result = service.createRepeatableFields(parentMapping, data, emptyMap)
 
       expect(result).not.toBeNull()
       expect(result).toHaveLength(5)
@@ -208,7 +241,7 @@ describe('FieldBuilderService', () => {
 
     it('should return null for empty array', () => {
       const data = { pieces_jointes: [], annotations: [] }
-      const result = service.createRepeatableFields(parentMapping, data)
+      const result = service.createRepeatableFields(parentMapping, data, emptyMap)
 
       expect(result).toBeNull()
     })
@@ -222,7 +255,7 @@ describe('FieldBuilderService', () => {
         annotations: []
       }
 
-      const result = service.createRepeatableFields(parentMapping, data)
+      const result = service.createRepeatableFields(parentMapping, data, emptyMap)
 
       expect(result).not.toBeNull()
       expect(result).toHaveLength(3)
@@ -247,7 +280,7 @@ describe('FieldBuilderService', () => {
         annotations: []
       }
 
-      const result = service.createRepeatableFields(mappingWithDate, data)
+      const result = service.createRepeatableFields(mappingWithDate, data, emptyMap)
 
       expect(result).not.toBeNull()
       expect(result).toHaveLength(2)
@@ -264,7 +297,7 @@ describe('FieldBuilderService', () => {
         annotations: [],
       }
 
-      const result = service.createRepeatableFields(mappingNoChildren, data)
+      const result = service.createRepeatableFields(mappingNoChildren, data, emptyMap)
 
       expect(result).not.toBeNull()
       expect(result).toHaveLength(1)
@@ -276,7 +309,7 @@ describe('FieldBuilderService', () => {
         annotations: [],
       }
 
-      const result = service.createRepeatableFields(parentMapping, data)
+      const result = service.createRepeatableFields(parentMapping, data, emptyMap)
 
       const parentField = result![0]
       const childFields = result!.slice(1)
@@ -305,7 +338,7 @@ describe('FieldBuilderService', () => {
         annotations: []
       }
 
-      const result = service.createRepeatableFields(mappingWithBoolean, data)
+      const result = service.createRepeatableFields(mappingWithBoolean, data, emptyMap)
 
       expect(result).not.toBeNull()
       expect(result).toHaveLength(3)
@@ -347,7 +380,7 @@ describe('FieldBuilderService', () => {
         annotations: []
       }
 
-      const result = service.createRepeatableFields(complexMapping, data)
+      const result = service.createRepeatableFields(complexMapping, data, emptyMap)
 
       expect(result).not.toBeNull()
       expect(result).toHaveLength(9)
@@ -359,6 +392,42 @@ describe('FieldBuilderService', () => {
         expect(child.parent).toBe(parentField)
         expect([0, 1]).toContain(child.parentRowIndex)
       })
+    })
+
+    it('should inject UUID for child FILE fields (PJs)', () => {
+      const pjUuid = 'uuid-pj-999'
+      const pjName = '90_99999.pdf'
+
+      const mappingWithFileChild: MappingColumn = {
+        ...parentMapping,
+        children: [
+          {
+            id: 'child-pj',
+            originalLabel: maarchPJLabel.nomPj,
+            type: FieldType.file,
+            source: FieldSource.champs,
+          },
+        ],
+      }
+
+      const data = {
+        pieces_jointes: [
+          { [maarchPJLabel.nomPj]: pjName },
+        ],
+        annotations: []
+      }
+
+      const uuidMap = new Map<string, string>()
+      uuidMap.set(pjName, pjUuid)
+
+      const result = service.createRepeatableFields(mappingWithFileChild, data, uuidMap)
+
+      expect(result).not.toBeNull()
+      expect(result).toHaveLength(2)
+
+      const childField = result![1]
+      expect(childField.type).toBe(FieldType.file)
+      expect(childField.stringValue).toBe(pjUuid)
     })
   })
 })

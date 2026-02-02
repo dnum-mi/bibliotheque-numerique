@@ -200,31 +200,6 @@ export const fieldAnnotations: MappingColumn = {
   ],
 }
 
-/* export const maarchFieldMappings: {
-  // eslint-disable-next-line no-unused-vars
-  [key in keyof typeof maarchChampsLabel]: MappingColumn
-} = {
-  courrier: fieldCourrier,
-  prefecture: fieldPrefecture,
-  intituleCourrier: fieldIntituleCourrier,
-  nomAssociation: fieldNomAssociation,
-  etatDossier: fieldEtatDossier,
-  numeroRue: fieldNumeroRue,
-  libelleRue: fieldNomRue,
-  codePostal: fieldCodePostal,
-  ville: fieldVille,
-  telephone: fieldTelephone,
-  emailAssociation: fieldEmailDeclarant,
-  numRna: fieldNumRna,
-  numEt: fieldNomDeclarant,
-  associationUnionFederation: fieldAssociationUnionFederation,
-  informationDeclarant: fieldPrenomDeclarant,
-  numPublication: fieldNumPublication,
-  dateDeclaration: fieldDateDeclaration,
-  piecesJointes: fieldPiecesJointes,
-  annotation: fieldAnnotations,
-} */
-
 export const maarchFieldMappingsArray: MappingColumn[] = [
   {
     id: '9098ce70-4378-2d7e-bkb9-b76fb7b67h46',

@@ -27,7 +27,7 @@ defineProps<{
           :id="champ.id"
           class="fr-text--bold fr-text bn-champ--text flex flex-col fr-pb-2w"
         >
-          <template v-if="(champ.value as FieldFileType)?.files.length">
+          <template v-if="(champ.value as FieldFileType)?.files?.length">
             <div
               v-for="(file, index) in (champ.value as FieldFileType).files"
               :key="index"

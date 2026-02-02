@@ -236,7 +236,7 @@ export class DemarcheController {
     return this.demarcheMaarch.importDemarche(files, importData.title)
   }
 
-  @Delete('/import/maarch/rollback/:demarcheId')
+  @Delete('/import/maarch/:demarcheId')
   @UsualApiOperation({
     summary: 'Annule une importation en supprimant la démarche et tous les dossiers.',
     method: 'DELETE',

@@ -88,7 +88,7 @@ describe('FileBuilderService', () => {
       expect(file1.sourcePath).toBe(
         `${MOCK_ROOT_PATH}/manual_attachements/2024/01/folder/document.pdf`
       )
-      expect(file1.sourceLabel).toBe('rna')
+      expect(file1.sourceLabel).toBe('maarch')
       expect(file1.sourceStringId).toBe(fieldPjIntitule.id)
 
       const file2 = result[1]
@@ -183,7 +183,7 @@ describe('FileBuilderService', () => {
     })
 
     it('should generate checksum based on label', () => {
-      const label = 'Test Document.pdf'
+      const label = 'test.pdf'
       const hash = createHash('sha256')
       const expectedChecksum = hash.update(label).digest('hex')
 
@@ -192,7 +192,7 @@ describe('FileBuilderService', () => {
           {
             nom_pj: 'test.pdf',
             chemin_pj: 'path',
-            intitule_pj: label,
+            intitule_pj: 'Test Document.pdf',
           },
         ],
         annotations: [],
@@ -201,23 +201,6 @@ describe('FileBuilderService', () => {
       const result = service.createFileEntities(data)
 
       expect(result[0].checksum).toBe(expectedChecksum)
-    })
-
-    it('should handle missing intitule_pj with default label', () => {
-      const data = {
-        pieces_jointes: [
-          {
-            nom_pj: 'document.pdf',
-            chemin_pj: 'path',
-            intitule_pj: null,
-          },
-        ],
-        annotations: [],
-      }
-
-      const result = service.createFileEntities(data)
-
-      expect(result[0].label).toBe('unknown file')
     })
 
     it('should determine correct file tags', () => {

@@ -46,11 +46,19 @@ export class DossierTransformerService {
       data[maarchChampsLabel.prefecture],
     )
     dossier.files = this.fileBuilder.createFileEntities(data)
+
+    const fileUuidMap = new Map<string, string>()
+    dossier.files.forEach((file) => {
+      if (file.originalLabel) {
+        fileUuidMap.set(file.originalLabel, file.uuid)
+      }
+    })
+
     // Viens d'un fichier CSV, on normalise le numéro RNA
     if (data[maarchChampsLabel.numRna]) {
       data[maarchChampsLabel.numRna] = data[maarchChampsLabel.numRna].toString().trim().toUpperCase()
     }
-    dossier.fields = this._createAllFields(data)
+    dossier.fields = this._createAllFields(data, fileUuidMap)
     if (data[maarchChampsLabel.numRna]) {
       dossier.organismeRefs = [data[maarchChampsLabel.numRna]]
     }
@@ -58,11 +66,11 @@ export class DossierTransformerService {
     return dossier
   }
 
-  private _createAllFields(data: DemandeAggregee): Field[] {
+  private _createAllFields(data: DemandeAggregee, fileUuidMap: Map<string, string>): Field[] {
     const allFields: Field[] = []
 
     for (const mapping of maarchFieldMappingsArray) {
-      const fields = this._processMapping(mapping, data)
+      const fields = this._processMapping(mapping, data, fileUuidMap)
       if (fields && fields.length > 0) {
         allFields.push(...fields)
       }
@@ -71,12 +79,16 @@ export class DossierTransformerService {
     return allFields
   }
 
-  private _processMapping(mapping: MappingColumn, data: DemandeAggregee): Field[] | null {
+  private _processMapping(
+    mapping: MappingColumn,
+    data: DemandeAggregee,
+    fileUuidMap: Map<string, string>,
+  ): Field[] | null {
     if (this._isRepeatableField(mapping)) {
-      return this.fieldBuilder.createRepeatableFields(mapping, data)
+      return this.fieldBuilder.createRepeatableFields(mapping, data, fileUuidMap)
     }
 
-    const field = this.fieldBuilder.createSimpleField(mapping, data)
+    const field = this.fieldBuilder.createSimpleField(mapping, data, fileUuidMap)
     return field ? [field] : null
   }
 

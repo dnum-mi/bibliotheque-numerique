@@ -90,6 +90,7 @@ export class Field extends BaseEntity {
   @ManyToOne(() => Field, (field) => field.children)
   parent?: Field | null
 
+  @Index('IDX_FIELDS_PARENTID')
   @Column({ nullable: true })
   parentId: number | null
 
@@ -117,6 +118,7 @@ export class Field extends BaseEntity {
   })
   dossier?: Dossier
 
+  @Index('IDX_FIELDS_DOSSIERID')
   @Column()
   dossierId: number
 

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { IFileOutput, IFilter, IPagination, FileDsSourceLabelKey } from '@biblio-num/shared'
-import { fileDsSourceLabels, dFileSourceLabelDictionary, fileExtensions, states, eState, fileTags } from '@biblio-num/shared'
+import { dFileSourceLabelDictionary, fileExtensions, states, eState, fileTags, fileSourceLabels } from '@biblio-num/shared'
 import type { ApiCall } from '../server-side/filters.utils'
 import type { BNColDef } from '../server-side/bn-col-def.interface'
 import MimeTypeCellRenderer from './MimeTypeCellRenderer.vue'
@@ -59,7 +59,7 @@ const defaultColumnsDef: BNColDef[] = [
     field: 'sourceLabel',
     filter: 'agSetColumnFilter',
     filterParams: {
-      values: fileDsSourceLabels,
+      values: fileSourceLabels,
       cellRenderer: (params: { value: FileDsSourceLabelKey }) => dFileSourceLabelDictionary[params.value] ?? 'Tout',
     },
     valueFormatter: (params: { value: FileDsSourceLabelKey }) => dFileSourceLabelDictionary[params.value],
