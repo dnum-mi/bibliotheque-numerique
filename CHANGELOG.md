@@ -1,5 +1,19 @@
 # Changelog
 
+## [5.1.2](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.1.1...v5.1.2) (2026-02-03)
+
+
+### Bug Fixes
+
+* **Ajout personne morale:** ajout des personnes morales au FRONT ([9222fd6](https://github.com/dnum-mi/bibliotheque_numerique/commit/9222fd6b7352730f4df9614233b972977d6ced80))
+* **Ajout personne morale:** ajout des personnes morales dans les models ([c5a5581](https://github.com/dnum-mi/bibliotheque_numerique/commit/c5a55813630f1b50502dac7b55a5dfa0dadad464))
+* echec de récupération d'un organisme quand il y a 404 sur la récupération des évenements ([#2091](https://github.com/dnum-mi/bibliotheque_numerique/issues/2091)) ([0511c27](https://github.com/dnum-mi/bibliotheque_numerique/commit/0511c27590938922be443ff693a7c10c712e5f20))
+* empecher de retourner des données de l'utilisateur lors de l'inscription ([#2095](https://github.com/dnum-mi/bibliotheque_numerique/issues/2095)) ([cbe37b8](https://github.com/dnum-mi/bibliotheque_numerique/commit/cbe37b8a3f2350d4c856c7555ce813068f02cebb))
+* les long texts fini par ... suivant la taille de la cellule ([104efb7](https://github.com/dnum-mi/bibliotheque_numerique/commit/104efb754c271b2f31b2256245c8635ad6a9ac39))
+* **maarch:** correction du mapping des PJ pour la fiche des dossiers et optimisation des index  ([#2074](https://github.com/dnum-mi/bibliotheque_numerique/issues/2074)) ([6a78052](https://github.com/dnum-mi/bibliotheque_numerique/commit/6a78052eeec341a1339390b1a6dc0a5488e6e8c2))
+* mettre le nom de fichier et l'extension lors du téléchargement de fichier ([#2092](https://github.com/dnum-mi/bibliotheque_numerique/issues/2092)) ([d46a6fb](https://github.com/dnum-mi/bibliotheque_numerique/commit/d46a6fb73c1ad6570a2e6f3f1d03f15fa3a15d6c))
+* ne pas synchroniser les démarches avec identifiant de DS manquant ([474e376](https://github.com/dnum-mi/bibliotheque_numerique/commit/474e3760be2f2dfb04465f42a7fe285c7f5cde02))
+
 ## [5.1.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.1.0...v5.1.1) (2026-01-22)
 
 
