@@ -6,16 +6,10 @@ Ce document décrit le mécanisme de synchronisation au sein de la Bibliothèque
 
 La Bibliothèque Numérique ne possède pas de mécanisme d'écriture propre. Hormis quelques fonctionnalités très spécifiques, l'ensemble des données avec lesquelles elle travaille provient de sources externes. La Bibliothèque a pour but de ranger, de classer, de lire, et de paginer, mais **pas** d'écrire. C'est pourquoi, le mécanisme de synchronisation avec les sources externes représente un très gros chapitre du code et nécessite sa propre documentation.
 
-Il existe trois sources de données principales (à date de la version 2.11.x) :
-- **RNA** : permet d'ajouter des données des organismes associatifs.
-- **RNF** : permet d'ajouter des données des organismes de fondation.
-- **DS ou Démarche Simplifiée** : permet d'ajouter les données de démarches et des dossiers associés.
+La source de données principales (à date de la version 5.x.x) :
+- **DN ou Démarche Numérique** : permet d'ajouter les données de démarches et des dossiers associés.
 
-## RNA & RNF
-
-Les fichiers et les informations principales des organismes proviennent du RNA et du RNF. Le RNF est présent dans ce dépôt et a été développé par la même équipe qui a développé la Bibliothèque Numérique. Le RNA est une API externe qui nous retourne des informations sur les associations à partir d'un numéro RNA ainsi que des fichiers. Dans un futur proche, une nouvelle version du RNA sera développée et permettra de relier ces deux API.
-
-## Démarche Simplifiée
+## Démarche Numérique (DN)
 
 **90%** des données de la Bibliothèque Numérique proviennent de Démarche Simplifiée. DS est une API GraphQL, et non RESTful. La structure des données des démarches et des dossiers est dynamique et modifiable par ses utilisateurs, ce qui rend impossible pour BN de connaître la structure d'une démarche particulière à l'avance.
 
@@ -37,4 +31,4 @@ Afin de pouvoir paginer de manière complexe plusieurs centaines de dossiers, no
 
 ### Code
 
-En plus de pouvoir paginer de manière complexe, nous avons besoin de pouvoir déclencher des actions spécifiques en fonction de certains champs. Pour cela, nous avons créé un système de codes. La documentation spécifique à ce système est disponible dans le dossier `code`.
+En plus de pouvoir paginer de manière complexe, nous avons besoin de pouvoir déclencher des actions spécifiques en fonction de certains champs. Pour cela, nous avons créé un système de codes. La documentation spécifique à ce système est disponible dans le dossier '[code](./code)'.
