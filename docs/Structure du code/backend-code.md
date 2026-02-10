@@ -12,7 +12,7 @@ L'application est développée avec **NestJS** et s'efforce de respecter les con
 - **Redis et redis-client** : Utilisés pour les files d'attente et les tâches planifiées (cron jobs).
 - **AWS-SDK** : Employé pour le service de stockage de fichiers (S3).
 - **XLSX** : Librairie pour lire et écrire des fichiers XLSX.
-- **ds-api-client** : Utilisé pour communiquer avec l'API de Démarche Simplifiée (voir la documentation du dossier de synchronisation pour plus d'informations).
+- **ds-api-client** : Utilisé pour communiquer avec l'API de [Démarche Numérique](https://demarche.numerique.gouv.fr) (voir la documentation du dossier de synchronisation pour plus d'informations).
 - **Jest** : Utilisé pour les tests unitaires et d'intégration.
 - **Supertest** : Employé pour les tests e2e et d'intégration.
 
@@ -101,5 +101,3 @@ Le dossier `shared` regroupe l'ensemble du code réutilisé dans les autres modu
 - **Dossier `pipe`** : Regroupe l'ensemble des pipes de l'application pour gérer la validation et le filtrage.
 - **Dossier `types`** : Contient les types partagés dans l'application.
 - **Dossier `utils`** : Contient les fonctions utilitaires partagées dans l'application.
-
-

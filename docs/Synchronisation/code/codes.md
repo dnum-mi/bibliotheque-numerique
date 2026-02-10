@@ -1,12 +1,12 @@
 # À Propos
 
-Ce document détaille le mécanisme conçu pour identifier et récupérer des données spécifiques dans les champs de **Démarche Simplifiée (DS)**, permettant ainsi de déclencher des comportements spécifiques au sein de la **Bibliothèque Numérique**.
+Ce document détaille le mécanisme conçu pour identifier et récupérer des données spécifiques dans les champs de **[Démarche Numérique](https://demarche.numerique.gouv.fr)**, permettant ainsi de déclencher des comportements spécifiques au sein de la **Bibliothèque Numérique**.
 
 # Fonctionnement
 
 ## Présentation Simplifiée
 
-Dans le contexte de **Démarche Simplifiée**, chaque champ est représenté par un objet nommé `ChampDescriptor`. Chaque `ChampDescriptor` inclut une description. Nous sollicitons nos utilisateurs professionnels, les clients finaux de l'application, pour intégrer des codes spécifiques dans les descriptions de certains champs. Ces codes sont par la suite utilisés dans le code source pour activer des fonctionnalités particulières. Une capture d'écran nommée `ds-champ-descriptor.png` illustre l'interface d'édition d'un champ de Démarche Simplifiée, mettant en évidence l'utilisation d'un code dans le champ de description.
+Dans le contexte de **[Démarche Numérique](https://demarche.numerique.gouv.fr)**, chaque champ est représenté par un objet nommé `ChampDescriptor`. Chaque `ChampDescriptor` inclut une description. Nous sollicitons nos utilisateurs professionnels, les clients finaux de l'application, pour intégrer des codes spécifiques dans les descriptions de certains champs. Ces codes sont par la suite utilisés dans le code source pour activer des fonctionnalités particulières. Une capture d'écran nommée `ds-champ-descriptor.png` illustre l'interface d'édition d'un champ de [Démarche Numérique](https://demarche.numerique.gouv.fr), mettant en évidence l'utilisation d'un code dans le champ de description.
 
 > **Note:** Le code est inséré sous forme de commentaire HTML, le rendant ainsi invisible aux utilisateurs finaux de DS.
 

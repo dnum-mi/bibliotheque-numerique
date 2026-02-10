@@ -7,11 +7,11 @@ Ce document décrit le mécanisme de synchronisation au sein de la Bibliothèque
 La Bibliothèque Numérique ne possède pas de mécanisme d'écriture propre. Hormis quelques fonctionnalités très spécifiques, l'ensemble des données avec lesquelles elle travaille provient de sources externes. La Bibliothèque a pour but de ranger, de classer, de lire, et de paginer, mais **pas** d'écrire. C'est pourquoi, le mécanisme de synchronisation avec les sources externes représente un très gros chapitre du code et nécessite sa propre documentation.
 
 La source de données principales (à date de la version 5.x.x) :
-- **DN ou Démarche Numérique** : permet d'ajouter les données de démarches et des dossiers associés.
+- **[Démarche Numérique](https://demarche.numerique.gouv.fr)** : permet d'ajouter les données de démarches et des dossiers associés.
 
-## Démarche Numérique (DN)
+## [Démarche Numérique](https://demarche.numerique.gouv.fr)
 
-**90%** des données de la Bibliothèque Numérique proviennent de Démarche Simplifiée. DS est une API GraphQL, et non RESTful. La structure des données des démarches et des dossiers est dynamique et modifiable par ses utilisateurs, ce qui rend impossible pour BN de connaître la structure d'une démarche particulière à l'avance.
+**90%** des données de la Bibliothèque Numérique proviennent de [Démarche Numérique](https://demarche.numerique.gouv.fr). [Démarche Numérique](https://demarche.numerique.gouv.fr) possède un API GraphQL, et non RESTful. La structure des données des démarches et des dossiers est dynamique et modifiable par ses utilisateurs, ce qui rend impossible pour BN de connaître la structure d'une démarche particulière à l'avance.
 
 Pour pallier à ce problème, plusieurs solutions ont été développées :
 
