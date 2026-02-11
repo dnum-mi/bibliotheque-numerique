@@ -137,7 +137,7 @@ const expectClassicalFixFields = (status?: string) => [
   {
     sourceId: '9863ce70-6378-4d7e-aca9-b81fb7b97c10',
     label: 'Service instructeur',
-    type: 'string',
+    type: 'enum',
     fieldSource: 'fix-field',
     formatFunctionRef: FormatFunctionRef.prefecture,
     stringValue: '',

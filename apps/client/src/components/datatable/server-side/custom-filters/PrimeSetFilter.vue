@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { Component } from 'vue'
+import type { ISetFilterParams } from '../data-table-types'
 
 interface SetFilterModel {
   filterType: string
@@ -15,6 +16,7 @@ const props = defineProps<{
     cellRenderer?: Component | ((params: unknown) => string)
     cellRendererParams?: Record<string, unknown>
     targetFilterType?: string
+    valueFormatter?: ISetFilterParams['valueFormatter']
   }
 }>()
 
@@ -57,9 +59,14 @@ const filteredValues = computed(() => {
   }
 
   const query = normalize(searchQuery.value)
-
   return uniqueValues.value.filter(
-    (val) => normalize(String(val)).includes(query),
+    (val) => {
+      let value = String(val)
+      if (props.params.valueFormatter) {
+        value = props.params.valueFormatter({ value: String(val) })
+      }
+      return normalize(value).includes(query)
+    },
   )
 })
 
@@ -139,6 +146,10 @@ const getFormattedValue = (value: string | number) => {
     const renderer = props.params.cellRenderer as (params: unknown) => string
     return renderer({ value })
   }
+  if (props.params.valueFormatter) {
+    return props.params.valueFormatter({ value })
+  }
+
   return value
 }
 </script>

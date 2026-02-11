@@ -1,9 +1,10 @@
 import type { Component } from 'vue'
-import { FormatFunctionRef, instructionTimeValues } from '@biblio-num/shared'
-import type { FormatFunctionRefKeys, IPaginated, IPagination } from '@biblio-num/shared'
+import { FormatFunctionRef, instructionTimeValues, listOfPrefectureKeys, PrefectureDictionary } from '@biblio-num/shared'
+import type { DossierStateKeys, FormatFunctionRefKeys, IPaginated, IPagination, PrefectureKey } from '@biblio-num/shared'
 import { DossierState } from '@/utils'
 import StatusBadgesRenderer from '../../Badges/status/StatusBadgesRenderer.vue'
 import DelayStateRenderer from '../../Badges/delay-state/DelayStateRenderer.vue'
+import type { ISetFilterParams } from './data-table-types'
 
 export type ApiCall<T> = (params: IPagination<T>) => Promise<IPaginated<T>>
 
@@ -34,11 +35,17 @@ const fieldTypesDict = {
 export const filterEnumvalues: Record<FormatFunctionRefKeys, string[]> = {
   [FormatFunctionRef.status]: Object.keys(DossierState),
   [FormatFunctionRef.delayStatus]: [...instructionTimeValues, ''],
+  [FormatFunctionRef.prefecture]: listOfPrefectureKeys,
 } as const
 
 export const filterCellRender: Record<FormatFunctionRefKeys, Component> = {
   [FormatFunctionRef.status]: markRaw(StatusBadgesRenderer),
   [FormatFunctionRef.delayStatus]: markRaw(DelayStateRenderer),
+} as const
+
+export const filterValueFormatter: Record<FormatFunctionRefKeys, ISetFilterParams['valueFormatter']> = {
+  [FormatFunctionRef.status]: (params: { value: DossierStateKeys }) => DossierState[params.value].label || '',
+  [FormatFunctionRef.prefecture]: (params: { value: PrefectureKey }) => PrefectureDictionary[params.value] || '',
 } as const
 
 // TODO: use FieldType but enum from library doesn't work in front.
@@ -54,8 +61,15 @@ export const getDataTableFilterFromFieldType = (fieldType?: keyof typeof fieldTy
       values: filterValues,
     }
 
-    if (formatFunctionRef && filterCellRender[formatFunctionRef]) {
+    if (!formatFunctionRef) {
+      return filter
+    }
+
+    if (filterCellRender[formatFunctionRef]) {
       filter.filterParams.cellRenderer = filterCellRender[formatFunctionRef]
+    }
+    if (filterValueFormatter[formatFunctionRef]) {
+      filter.filterParams.valueFormatter = filterValueFormatter[formatFunctionRef]
     }
     return filter
   }

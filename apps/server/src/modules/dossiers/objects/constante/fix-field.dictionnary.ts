@@ -36,7 +36,7 @@ export const fixFields: MappingColumn[] = [
     id: '9863ce70-6378-4d7e-aca9-b81fb7b97c10',
     columnLabel: 'Service instructeur',
     originalLabel: 'Service instructeur',
-    type: FieldType.string,
+    type: FieldType.enum,
     source: FieldSource.fixField,
     formatFunctionRef: FormatFunctionRef.prefecture,
   },
