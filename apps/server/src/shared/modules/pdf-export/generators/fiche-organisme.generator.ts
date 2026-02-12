@@ -28,7 +28,7 @@ const getTypeOrganisme = (id: string): organismeCategoryKey | null => {
   }
   if (id[0] === 'W') {
     return EOrganismeCategory.association
-  } else if (/\d{3}-\w{3,4}-\d{5}-\d{2}/.test(id)) {
+  } else if (/\d{3}-\w{2,4}-\d{5}-\d{2}/.test(id)) {
     return EOrganismeCategory.fondation
   }
   return null
