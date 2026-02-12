@@ -41,7 +41,7 @@ import { CreateDemarcheDto } from '@/modules/demarches/objects/dtos/create-demar
 import { UpdateDemarcheDto } from '@/modules/demarches/objects/dtos/update-demarche.dto'
 import { DossierService } from '@/modules/dossiers/providers/dossier.service'
 import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.decorator'
-import { DemarcheMaarchService } from '../providers/services/demarche-maarch.service'
+import { DemarcheMaarchService } from '../providers/services/maarch/demarche-maarch.service'
 import { ImportFiles, ImportResult } from '../objects/constants/maarch.types'
 import { ImportMaarchDto } from '@/modules/demarches/objects/dtos/import-maarch.dto'
 import { CustomBullService } from '@/shared/modules/custom-bull/custom-bull.service'

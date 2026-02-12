@@ -4,25 +4,25 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common'
-import { Demarche } from '../../objects/entities/demarche.entity'
+import { Demarche } from '../../../objects/entities/demarche.entity'
 import { DataSource, EntityManager } from 'typeorm'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
-import { CsvProcessorService } from './maarch/csv-processor.service'
-import { DossierTransformerService } from './maarch/dossier-transformer.service'
+import { CsvProcessorService } from './csv-processor.service'
+import { DossierTransformerService } from './dossier-transformer.service'
 import {
   DemandeAggregee,
   ImportFiles,
   ImportResult,
-} from '../../objects/constants/maarch.types'
+} from '../../../objects/constants/maarch.types'
 import { eIdentificationDemarche, eState } from '@biblio-num/shared'
-import { maarchFieldMappingsArray } from '../../objects/constants/maarch-champ.dictionary'
+import { maarchFieldMappingsArray } from '../../../objects/constants/maarch-champ.dictionary'
 import { File } from '@/modules/files/objects/entities/file.entity'
 import { InjectQueue } from '@nestjs/bull'
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
 import { Queue } from 'bull'
 import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
 import { UploadMaarchFileJobPayload } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
-import { CustomBullService } from '../../../../shared/modules/custom-bull/custom-bull.service'
+import { CustomBullService } from '../../../../../shared/modules/custom-bull/custom-bull.service'
 
 @Injectable()
 export class DemarcheMaarchService {

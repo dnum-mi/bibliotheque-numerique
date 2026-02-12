@@ -21,7 +21,7 @@ import { FileBuilderService } from './providers/services/maarch/file-builder.ser
 import { DossierTransformerService } from './providers/services/maarch/dossier-transformer.service'
 import { DataFormatterService } from './providers/services/maarch/data-formatter.service'
 import { CsvProcessorService } from './providers/services/maarch/csv-processor.service'
-import { DemarcheMaarchService } from './providers/services/demarche-maarch.service'
+import { DemarcheMaarchService } from './providers/services/maarch/demarche-maarch.service'
 
 @Module({
   imports: [

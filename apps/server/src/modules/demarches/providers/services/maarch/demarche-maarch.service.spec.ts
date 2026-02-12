@@ -1,22 +1,22 @@
 import { DataSource } from 'typeorm'
 import { DemarcheMaarchService } from './demarche-maarch.service'
-import { CsvProcessorService } from './maarch/csv-processor.service'
-import { DossierTransformerService } from './maarch/dossier-transformer.service'
+import { CsvProcessorService } from './csv-processor.service'
+import { DossierTransformerService } from './dossier-transformer.service'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
-import { Demarche } from '../../objects/entities/demarche.entity'
+import { Demarche } from '../../../objects/entities/demarche.entity'
 import { Test, TestingModule } from '@nestjs/testing'
-import { loggerServiceMock } from '../../../../../test/mock/logger-service.mock'
+import { loggerServiceMock } from '../../../../../../test/mock/logger-service.mock'
 import { eIdentificationDemarche } from '@biblio-num/shared'
 import { BadRequestException, NotFoundException } from '@nestjs/common'
 import {
   fieldNumRna,
   maarchFieldMappingsArray,
-} from '../../objects/constants/maarch-champ.dictionary'
-import { FileBuilderService } from './maarch/file-builder.service'
+} from '../../../objects/constants/maarch-champ.dictionary'
+import { FileBuilderService } from './file-builder.service'
 import { getQueueToken } from '@nestjs/bull'
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
-import { CustomBullService } from '../../../../shared/modules/custom-bull/custom-bull.service'
+import { CustomBullService } from '../../../../../shared/modules/custom-bull/custom-bull.service'
 
 const mockCsvProcessor = {
   processFiles: jest.fn(),
