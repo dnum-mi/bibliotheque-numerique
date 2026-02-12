@@ -6,10 +6,16 @@ import { ProjectionSearchService } from './services/projection-search/projection
 import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { Demarche } from '@/modules/demarches/objects/entities/demarche.entity'
+import { DemarcheModule } from '@/modules/demarches/demarche.module'
+import { ProjectionController } from '@/modules/projection/controllers/projection.controller'
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Dossier, Demarche]),
+    DemarcheModule,
+  ],
+  controllers: [
+    ProjectionController,
   ],
   providers: [
     ProjectionManagerService,

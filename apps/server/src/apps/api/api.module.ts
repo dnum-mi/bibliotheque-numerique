@@ -38,6 +38,7 @@ import { BnConfigurationModule } from '@/shared/modules/bn-configurations/bn-con
 import siafHubConfig from '../../config/siaf-hub.config'
 import { JwtAuthGuard } from '@/modules/auth/providers/jwt-auth.guard'
 import { SyncStateModule } from '@/shared/sync-state/sync-state.module'
+import { ProjectionModule } from '@/modules/projection/projection.module'
 
 @Module({
   imports: [
@@ -80,6 +81,7 @@ import { SyncStateModule } from '@/shared/sync-state/sync-state.module'
     InstructionTimesModule,
     BnConfigurationModule,
     SyncStateModule,
+    ProjectionModule,
   ],
   controllers: [],
   providers: [

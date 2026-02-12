@@ -112,6 +112,7 @@ export class DossierSearchService extends BaseEntityService<Dossier> {
       ${buildSortQuery(dto.sorts)}
       ${complete ? '' : buildPaginationQuery(dto.page || 1, dto.perPage || 5)}
     `
+
     const result = await this.repo.query(query)
     if (!result?.[0]) {
       return { total: 0, data: [] }
@@ -119,6 +120,7 @@ export class DossierSearchService extends BaseEntityService<Dossier> {
     const withoutChildrenIds: string[] = demarche.mappingColumns
       .filter((c: MappingColumn) => !c.children?.length)
       .map((c) => c.id)
+
     return {
       total: parseInt(result[0].total),
       data: result.map((r) => {

@@ -133,6 +133,8 @@ export class FieldSearchService extends BaseEntityService<Field> {
       ${complete ? '' : buildPaginationQuery(dto.page || 1, dto.perPage || 5)}
     `
 
+    console.log(query)
+
     const result = await this.repo.query(query)
 
     if (!result[0]) {
