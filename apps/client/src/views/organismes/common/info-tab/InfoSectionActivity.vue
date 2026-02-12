@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import InfoRow from '@/views/organismes/components/InfoRow.vue'
+
 export type tInfoActivity = {
+  socialObject: string | null
+  activityDomaiDescription?: string | null
+  generalInterestDomain?: string | null
   hasInternationalActivity: boolean
-  publicGenerosityYears: number[],
-  publicSubsidyYears: number[],
-  foreignFinancingYears: number[]
 }
 
 defineProps<{
@@ -12,47 +14,23 @@ defineProps<{
 </script>
 
 <template>
-  <div>
-    <div class="px-4 sm:px-0">
-      <h3 class="text-base/7 font-semibold text-gray-900 mb-0 fr-background-alt--grey fr-py-3v fr-px-2w">
-        Activité
-      </h3>
+  <section>
+    <h2 class="fr-h4">
+      Activité
+    </h2>
+    <div class="fr-background-alt--grey fr-p-2w">
+      <InfoRow label="Objet social">
+        <TextWithReadMore :text="activity.socialObject" title="Objet social" />
+      </InfoRow>
+      <InfoRow v-if="activity.activityDomaiDescription" label="Domaine d'activité">
+        {{ activity.activityDomaiDescription || "-" }}
+      </InfoRow>
+      <InfoRow v-if="activity.generalInterestDomain" label="Domaine d'intérêt général">
+        {{ activity.generalInterestDomain || "-" }}
+      </InfoRow>
+      <InfoRow label="Activité à l'international">
+        {{ activity.hasInternationalActivity ? 'Oui' : 'Non' }}
+      </InfoRow>
     </div>
-    <div class="mt-6 border-t border-gray-100">
-      <dl class="divide-y p-0">
-        <div class="py-2 md:grid md:grid-cols-4">
-          <dt class="bn-fiche-sub-title--label uppercase">
-            Activité à l'international
-          </dt>
-          <dd class="bn-fiche-sub-title--text md:col-span-3">
-            {{ activity.hasInternationalActivity ? 'OUI' : 'NON' }}
-          </dd>
-        </div>
-        <div class="py-2 md:grid md:grid-cols-4">
-          <dt class="bn-fiche-sub-title--label uppercase">
-            Appel à la générosité publique (années)
-          </dt>
-          <dd class="bn-fiche-sub-title--text md:col-span-3">
-            {{ activity.publicGenerosityYears?.join(' - ') || 'Aucune' }}
-          </dd>
-        </div>
-        <div class="py-2 md:grid md:grid-cols-4">
-          <dt class="bn-fiche-sub-title--label uppercase">
-            Subventions publiques (années)
-          </dt>
-          <dd class="bn-fiche-sub-title--text md:col-span-3">
-            {{ activity.publicSubsidyYears?.join(' - ') || 'Aucune' }}
-          </dd>
-        </div>
-        <div class="py-2 md:grid md:grid-cols-4">
-          <dt class="bn-fiche-sub-title--label uppercase">
-            Financements étrangers (années)
-          </dt>
-          <dd class="bn-fiche-sub-title--text md:col-span-3">
-            {{ activity.foreignFinancingYears?.join(' - ') || 'Aucune' }}
-          </dd>
-        </div>
-      </dl>
-    </div>
-  </div>
+  </section>
 </template>

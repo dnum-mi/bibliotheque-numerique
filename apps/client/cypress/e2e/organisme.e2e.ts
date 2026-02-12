@@ -31,6 +31,6 @@ describe('Vue Organisme', () => {
     cy.wait(10000)
     // cy.wait('@postRecentOrganisme')
 
-    cy.get('.bn-fiche-title').should('contain', '000-XXX-00000-00')
+    cy.get('.banner-height').should('contain', '000-XXX-00000-00')
   })
 })

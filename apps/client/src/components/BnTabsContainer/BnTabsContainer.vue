@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { TabsContextKey } from './injection-key'
-import type { TabInfo } from './injection-key'
+import type { RegisterTabPayload, TabInfo } from './injection-key'
 import { useTabManager } from './useTabManager'
 import { getRandomString } from '@gouvminint/vue-dsfr'
 
@@ -60,11 +60,12 @@ watch(
   { immediate: true },
 )
 
-const registerTab = (tab: Omit<TabInfo, 'order'>) => {
+const registerTab = (tab: RegisterTabPayload) => {
   if (!registeredTabs.value.has(tab.id)) {
     registeredTabs.value.set(tab.id, {
-      ...tab,
-      title: typeof tab.title === 'object' && 'value' in tab.title ? tab.title.value : tab.title,
+      id: tab.id,
+      title: unref(tab.title),
+      icon: tab.icon,
       order: orderCounter++,
     })
   }
@@ -82,6 +83,13 @@ const updateTabTitle = (id: string, title: string) => {
   }
 }
 
+const updateTabIcon = (id: string, icon: VNode[] | undefined) => {
+  const tab = registeredTabs.value.get(id)
+  if (tab) {
+    registeredTabs.value.set(id, { ...tab, icon })
+  }
+}
+
 const unregisterTab = (id: string) => {
   registeredTabs.value.delete(id)
   orderCounter = 0
@@ -90,7 +98,7 @@ const unregisterTab = (id: string) => {
     .forEach((t) => (t.order = orderCounter++))
 }
 
-provide(TabsContextKey, { activeTabId, registerTab, unregisterTab, updateTabTitle, isTransitionAsc })
+provide(TabsContextKey, { activeTabId, registerTab, unregisterTab, updateTabTitle, updateTabIcon, isTransitionAsc })
 
 const selectTab = (id: string) => {
   const tab = registeredTabs.value.get(id)
@@ -101,7 +109,7 @@ const selectTab = (id: string) => {
 </script>
 
 <template>
-  <div class="bn-scroll-parent bn-tabs-container fr-py-2v">
+  <div class="bn-scroll-parent bn-tabs-container">
     <div
       :key="tabsKey"
       class="bn-tabs-nav"
@@ -114,12 +122,21 @@ const selectTab = (id: string) => {
         :key="tab.id"
         role="tab"
         type="button"
+        class="bn-tab-btn"
         :class="{ active: tab.id === activeTabId }"
         :aria-selected="tab.id === activeTabId"
         :aria-controls="`tab-panel-${tab.id}`"
         :tabindex="tab.id === activeTabId ? 0 : -1"
         @click="selectTab(tab.id)"
       >
+        <span v-if="tab.icon" class="bn-tab-icon">
+          <component
+            :is="vnode"
+            v-for="(vnode, index) in tab.icon"
+            :key="index"
+            class="fr-icon--sm"
+          />
+        </span>
         {{ tab.title }}
       </button>
     </div>
@@ -197,7 +214,25 @@ const selectTab = (id: string) => {
   color: var(--border-active-blue-france);
   border-inline: 1px solid var(--border-default-grey);
   border-bottom: 1px solid white !important;
-  border-top: 2px solid var(--border-active-blue-france);
+  border-top: 3px solid var(--border-active-blue-france);
+}
+
+.bn-tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.bn-tab-btn.active {
+  color: var(--text-active-blue-france);
+  border-bottom-color: var(--border-active-blue-france);
+}
+.bn-tab-icon {
+  display: inline-flex;
+  fill: currentColor;
+}
+.bn-tab-icon :deep(svg) {
+  width: 1rem;
+  height: 1rem;
 }
 
 .bn-tabs-content {
@@ -206,5 +241,6 @@ const selectTab = (id: string) => {
   overflow-y: auto;
   padding-inline: 0.5rem;
   border-top: 1px solid var(--border-default-grey);
+  background: white;
 }
 </style>

@@ -562,6 +562,10 @@ export const hubApiClient = {
   hubGetRnf: (sentence: string): Promise<IAssociationOutput> => {
     return getWithoutRedirectTo404(hubGetRnf(sentence))
   },
+  hubExportOrganisme: (type: organismeCategoryKey, organismeId: string) => {
+    const correctType = type === EOrganismeCategory.association ? 'association' : 'foundation'
+    return apiClientInstance.get(`/hub/${correctType}/${organismeId}/export-pdf`, { responseType: 'blob' })
+  },
 }
 
 // TODO: c'est possible de découper se fichier ?!

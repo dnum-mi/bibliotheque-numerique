@@ -1,5 +1,13 @@
+import { getExtensionFromMimeType } from '@biblio-num/shared'
 import type { IFile, RnaTypeFileKey, RnaTypeRecepisseKey, TypeFileKey } from '@biblio-num/shared'
 import { dateToStringFr } from './date-to-string'
+import type { AxiosResponse } from 'axios'
+
+export interface NormalizedFile {
+  blob: Blob
+  filename: string
+  mimeType: string
+}
 
 export const getFileFormat = (mimeType: string): string => {
   switch (mimeType) {
@@ -42,4 +50,49 @@ export const getFileDetail = (file: IFile): string => {
 
   const date = file.effectiveAt ? dateToStringFr(file.effectiveAt) : null
   return date ? `${type} - ${date}` : type
+}
+
+export const extractFilename = (contentDisposition: string | undefined, fallbackName: string): string => {
+  if (!contentDisposition) {
+    return fallbackName
+  }
+
+  const filenameMatch = contentDisposition?.match(/filename="(.+)"/)
+  if (filenameMatch?.[1]) {
+    return filenameMatch[1]
+  }
+
+  return fallbackName
+}
+
+export const ensureExtension = (filename: string, mimeType?: string): string => {
+  if (/\.[a-z0-9]{2,5}$/i.test(filename) || !mimeType) {
+    return filename
+  }
+
+  const extension = getExtensionFromMimeType(mimeType)
+
+  return extension ? `${filename}.${extension}` : filename
+}
+
+export const normalizeFileResponse = (
+  response: AxiosResponse,
+  fallbackName: string,
+  fallbackMimeType: string = 'application/octet-stream',
+): NormalizedFile => {
+  const headers = response.headers ?? {}
+
+  const mimeType: string = headers['content-type'] || fallbackMimeType
+  const contentDisposition: string | undefined = headers['content-disposition']
+
+  let filename = extractFilename(contentDisposition, fallbackName)
+  filename = ensureExtension(filename, mimeType)
+
+  const blob = new Blob([response.data], { type: mimeType })
+
+  return {
+    blob,
+    filename,
+    mimeType,
+  }
 }

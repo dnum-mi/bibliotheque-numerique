@@ -6,18 +6,23 @@ const props = defineProps<{
   title: string
 }>()
 
+const slots = useSlots()
 const { id: tabId, title: tabTitle } = toRefs(props)
 
 const context = inject(TabsContextKey)
 if (!context) {
   throw new Error('BnTabContent doit être utilisé à l\'intérieur d\'un BnTabs')
 }
-const { activeTabId, registerTab, unregisterTab, updateTabTitle, isTransitionAsc } = context
+const { activeTabId, registerTab, unregisterTab, updateTabTitle, updateTabIcon, isTransitionAsc } = context
 
 const isActive = computed(() => activeTabId.value === tabId.value)
 
 onMounted(() => {
-  registerTab({ id: tabId.value, title: tabTitle })
+  registerTab({
+    id: tabId.value,
+    title: tabTitle,
+    icon: slots.icon?.(),
+  })
 })
 
 onUnmounted(() => {
@@ -26,8 +31,10 @@ onUnmounted(() => {
 
 watch(tabTitle, () => {
   updateTabTitle(tabId.value, tabTitle.value)
-  // unregisterTab(tabId.value)
-  // registerTab({ id: tabId.value, title: tabTitle })
+})
+
+watch(() => slots.icon?.(), (newIcon) => {
+  updateTabIcon(tabId.value, newIcon)
 })
 
 const translateValueFrom = computed(() => (isTransitionAsc.value ? '100%' : '-100%'))
@@ -56,7 +63,6 @@ const translateValueTo = computed(() => (isTransitionAsc.value ? '-100%' : '100%
 <style scoped>
 .bn-tab-panel {
   height: 100%;
-  overflow: auto;
 }
 
 .slide-fade-enter-active,

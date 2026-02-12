@@ -1,5 +1,19 @@
 <script setup lang="ts">
-import type { IEstablishment } from '@biblio-num/shared/dist'
+import type { IEstablishment } from '@biblio-num/shared'
+import { formatCurrency } from '@/utils/french-number'
+import { useRandomId } from '@gouvminint/vue-dsfr'
+import type { HeaderDataTable } from '@/shared/types/DataTable.type'
+import EstablishmentStatusBadge from '@/components/Badges/establishment/EstablishmentStatusBadge.vue'
+import type { RowDataType } from '@/components/datatable/client-side/DataTableClientSide.vue'
+import { pluralize } from '@/utils/pluralize'
+import TableTagInfo from '@/components/TableTagInfo.vue'
+import { eEstablishmentStatus, establishmentStatusArray } from '@/shared/types/Establishment.type'
+import type { EstablishmentStatusKey } from '@/shared/types/Establishment.type'
+
+interface IEstablishmentViewModel extends IEstablishment {
+  status: EstablishmentStatusKey
+  formattedValue: string
+}
 
 interface EstablishmentsProps {
   acquiredEstablishments: IEstablishment[]
@@ -9,218 +23,104 @@ interface EstablishmentsProps {
 
 const props = defineProps<EstablishmentsProps>()
 
-const activeAccordion = ref<number>(0)
-const selectedEstablishment = ref<IEstablishment | null>(null)
+const allEstablishments = computed<(IEstablishmentViewModel & RowDataType)[]>(() => {
+  const normalize = (list: IEstablishment[], status: EstablishmentStatusKey) =>
+    list.map(e => {
+      const id = useRandomId(e.name)
+      return {
+        ...e,
+        id,
+        status,
+        formattedValue: formatCurrency(Number(e.value)) || '-',
+        authorized: true,
+        cursor: id,
+      }
+    })
 
-const allEstablishments = computed(() => [
-  ...props.acquiredEstablishments,
-  ...props.secondaryEstablishments,
-  ...props.cededEstablishments,
-])
+  return [
+    ...normalize(props.acquiredEstablishments, eEstablishmentStatus.ACQUIS),
+    ...normalize(props.secondaryEstablishments, eEstablishmentStatus.SECONDAIRE),
+    ...normalize(props.cededEstablishments, eEstablishmentStatus.CÉDÉ),
+  ]
+})
 
-const getCoordinates = (est: IEstablishment) => {
-  return est.address.coordinates
-}
+const stats = computed<{ label: string }[] | null>(() => {
+  const c1 = props.acquiredEstablishments.length
+  const c2 = props.secondaryEstablishments.length
+  const c3 = props.cededEstablishments.length
 
-const getColor = (est: IEstablishment): string => {
-  if (props.acquiredEstablishments.includes(est)) {
-    return '#000091'
+  if (c1 === 0 && c2 === 0 && c3 === 0) {
+    return null
   }
-  if (props.secondaryEstablishments.includes(est)) {
-    return '#E1000F'
-  }
-  if (props.cededEstablishments.includes(est)) {
-    return '#666666'
-  }
 
-  return '#161616'
-}
+  return [
+    { label: pluralize({ count: c1, singular: 'Bien acquis', plural: 'Biens acquis' }) },
+    { label: pluralize({ count: c2, singular: 'Bien secondaire', plural: 'Biens secondaires' }) },
+    { label: pluralize({ count: c3, singular: 'Bien cédé', plural: 'Biens cédés' }) },
+  ]
+})
 
-const handleListClick = (est: IEstablishment) => {
-  selectedEstablishment.value = est
-}
+const headers: HeaderDataTable[] = [
+  {
+    field: 'status',
+    text: 'Statut',
+    width: 150,
+    renderer: markRaw(EstablishmentStatusBadge),
+    filterable: true,
+    filter: 'agSetColumnFilter',
+    filterParams: {
+      values: [...establishmentStatusArray],
+      cellRenderer: markRaw(EstablishmentStatusBadge),
+    },
+  },
+  { field: 'name', text: 'Nom' },
+  {
+    field: 'address',
+    text: 'Adresse',
+    valueFormatter: (params: any) => params.value?.oneLine || '-',
+  },
+  {
+    field: 'type',
+    text: 'Type de bien',
+    width: 150,
+    renderer: markRaw(TableTagInfo),
+  },
+  {
+    field: 'value',
+    text: 'Valeur',
+    valueFormatter: (params: any) => params.value ? formatCurrency(Number(params.value)) : '-',
+  },
+]
 
-const handleMapSelect = (est: IEstablishment) => {
-  selectedEstablishment.value = est
-
-  if (props.acquiredEstablishments.includes(est)) {
-    activeAccordion.value = 0
-  } else if (props.secondaryEstablishments.includes(est)) {
-    activeAccordion.value = 1
-  } else if (props.cededEstablishments.includes(est)) {
-    activeAccordion.value = 2
-  }
-}
-
-const handleMapReset = () => {
-  selectedEstablishment.value = null
-}
+const title = computed(() => pluralize({
+  count: allEstablishments.value.length,
+  singular: 'établissement',
+  plural: 'établissements',
+}))
 </script>
 
 <template>
-  <div class="establishment-layout-container">
-    <div class="fr-grid-row fr-grid-row--gutters h-full">
-      <div class="fr-col-12 fr-col-md-4 list-column">
-        <div class="scrollable-content">
-          <DsfrAccordionsGroup v-model="activeAccordion">
-            <DsfrAccordion
-              id="acquis"
-              :title="`Établissements acquis (${acquiredEstablishments.length})`"
-            >
-              <div class="flex flex-col gap-4">
-                <div v-if="acquiredEstablishments.length === 0" class="fr-text--sm fr-mb-2v">
-                  Aucun établissement acquis.
-                </div>
-                <div
-                  v-for="(est, index) in acquiredEstablishments"
-                  :key="`acquis-${index}`"
-                  class="fr-mb-2v"
-                >
-                  <DsfrCard
-                    :title="est.name"
-                    :detail="est.address.oneLine"
-                    :description="`${est.type || 'Type inconnu'} (${est.acquiredType})`"
-                    :title-link-attrs="{}"
-                    is-clickable
-                    size="sm"
-                    :class="{ 'selected-card': selectedEstablishment === est }"
-                    @click="handleListClick(est)"
-                  />
-                </div>
-              </div>
-            </DsfrAccordion>
+  <div class="fr-container fr-py-4w">
+    <div v-if="allEstablishments.length === 0">
+      <p>Aucun établissement n'a été trouvé.</p>
+    </div>
 
-            <DsfrAccordion
-              id="secondaires"
-              :title="`Établissements secondaires (${secondaryEstablishments.length})`"
-            >
-              <div class="fr-grid-row fr-grid-row--gutters">
-                <div v-if="secondaryEstablishments.length === 0" class="fr-col-12 fr-text--sm">
-                  Aucun établissement secondaire.
-                </div>
-                <div
-                  v-for="(est, index) in secondaryEstablishments"
-                  :key="`sec-${index}`"
-                  class="fr-col-12"
-                >
-                  <DsfrCard
-                    :title="est.name"
-                    :detail="est.address.oneLine"
-                    :description="est.type || 'Type inconnu'"
-                    :title-link-attrs="{}"
-                    is-clickable
-                    size="sm"
-                    :class="{ 'selected-card': selectedEstablishment === est }"
-                    @click="handleListClick(est)"
-                  />
-                </div>
-              </div>
-            </DsfrAccordion>
-
-            <DsfrAccordion
-              id="cedes"
-              :title="`Établissements cédés (${cededEstablishments.length})`"
-            >
-              <div class="fr-grid-row fr-grid-row--gutters">
-                <div v-if="cededEstablishments.length === 0" class="fr-col-12 fr-text--sm">
-                  Aucun établissement cédé.
-                </div>
-                <div
-                  v-for="(est, index) in cededEstablishments"
-                  :key="`ced-${index}`"
-                  class="fr-col-12"
-                >
-                  <DsfrCard
-                    :title="est.name"
-                    :detail="est.address.oneLine"
-                    :description="est.type || 'Type inconnu'"
-                    :title-link-attrs="{}"
-                    size="sm"
-                    is-clickable
-                    :class="{ 'selected-card': selectedEstablishment === est }"
-                    @click="handleListClick(est)"
-                  />
-                </div>
-              </div>
-            </DsfrAccordion>
-          </DsfrAccordionsGroup>
-        </div>
-      </div>
-
-      <div
-        class="fr-col-12 fr-col-md-8 map-column"
-      >
-        <div class="map-wrapper">
-          <MapMarkers
-            :items="allEstablishments"
-            :center-on="selectedEstablishment"
-            :get-coordinates="getCoordinates"
-            :get-color="getColor"
-            @select="handleMapSelect"
-            @reset="handleMapReset"
-          />
-        </div>
-      </div>
+    <div v-else>
+      <h2 class="fr-h4">
+        {{ title }}
+      </h2>
+      <ul v-if="stats">
+        <li v-for="stat in stats" :key="stat.label">
+          {{ stat.label }}
+        </li>
+      </ul>
+      <DataTableClientSide
+        :rows-data="allEstablishments"
+        :headers="headers"
+        data-key="id"
+      />
     </div>
   </div>
 </template>
 
-<style scoped>
-.establishment-layout-container {
-  height: calc(100vh - 310px);
-  width: 100%;
-  overflow: hidden;
-}
-
-@media (max-height: 780px) {
-  .establishment-layout-container {
-    height: calc(100vh - 260px);
-  }
-}
-
-.h-full {
-  height: 100%;
-  margin: 0 !important;
-  width: 100% !important;
-}
-
-.list-column {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.scrollable-content {
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-
-.map-column {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.map-wrapper {
-  flex: 1;
-  min-height: 0;
-  border-radius: 8px;
-  overflow: hidden;
-  position: relative;
-}
-
-:deep(.selected-card) {
-  border: 2px solid var(--blue-france-main-525);
-  background-color: var(--background-alt-blue-france);
-}
-
-:deep(.fr-card) {
-  cursor: pointer;
-  transition: box-shadow 0.2s ease-in-out, background-color 0.2s;
-}
-
-:deep(.fr-card:hover) {
-  box-shadow: var(--shadow-2);
-}
-</style>
+<style scoped></style>

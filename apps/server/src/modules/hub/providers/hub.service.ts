@@ -17,6 +17,9 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Dossier } from '../../dossiers/objects/entities/dossier.entity'
 import { Repository } from 'typeorm'
 import { Demarche } from '../../demarches/objects/entities/demarche.entity'
+import { PdfExportService } from '@/shared/modules/pdf-export/pdf-export.service'
+import { OrganismeFicheGenerator } from '@/shared/modules/pdf-export/generators/fiche-organisme.generator'
+import { HttpHeaders } from '@/shared/constants/http-headers.constants'
 
 const ePathCompletedOrganismeByType = {
   association: '/associations',
@@ -39,6 +42,7 @@ export class HubService {
     private readonly config: ConfigService,
     @InjectRepository(Dossier) protected readonly repoDossier: Repository<Dossier>,
     @InjectRepository(Demarche) protected readonly repoDemarche: Repository<Demarche>,
+    private readonly pdfExportService: PdfExportService,
   ) {
     this.logger.setContext(this.constructor.name)
 
@@ -201,5 +205,27 @@ export class HubService {
       }
       return evt
     })
+  }
+
+  async exportOrganisme(organisme: IFoundationOutput | IAssociationOutput): Promise<IHubFileResponse> {
+    this.logger.verbose('HUB-exportFoundation')
+
+    const stream = await this.pdfExportService.createPdf(
+      OrganismeFicheGenerator,
+      organisme,
+    )
+
+    const filename = `Organisme_${organisme.id}.pdf`
+    const headers = {
+      [HttpHeaders.CONTENT_TYPE]: 'application/pdf',
+      [HttpHeaders.CONTENT_DISPOSITION]: `attachment; filename="${filename}"`,
+      [HttpHeaders.TRANSFER_ENCODING]: 'chunked',
+      [HttpHeaders.CACHE_CONTROL]: 'no-cache, no-store, must-revalidate',
+    }
+
+    return {
+      data: stream,
+      headers,
+    }
   }
 }

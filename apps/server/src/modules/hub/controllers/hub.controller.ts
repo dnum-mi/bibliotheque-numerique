@@ -13,6 +13,7 @@ import { Role } from '@/modules/users/providers/decorators/role.decorator'
 import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.decorator'
 import { HubService, IHubFileResponse } from '@/modules/hub/providers/hub.service'
 import { Stream } from 'stream'
+import { HttpHeaders } from '@/shared/constants/http-headers.constants'
 
 @ApiTags('HUB')
 @Controller('hub')
@@ -85,7 +86,13 @@ export class HubController {
   }
 
   private async _handleDownloadFile({ data, headers }: IHubFileResponse, response): Promise<void> {
-    const headersToCopy = ['content-type', 'content-disposition', 'content-length']
+    const headersToCopy = [
+      HttpHeaders.CONTENT_TYPE,
+      HttpHeaders.CONTENT_DISPOSITION,
+      HttpHeaders.CONTENT_LENGTH,
+      HttpHeaders.CACHE_CONTROL,
+      HttpHeaders.TRANSFER_ENCODING,
+    ]
     headersToCopy.forEach((header) => {
       if (headers[header]) {
         response.set(header, headers[header])
@@ -144,4 +151,58 @@ export class HubController {
 
     return this._handleDownloadFile(fileResponse, response)
   }
+
+   @UsualApiOperation({
+     summary: 'Exporter l\'association à partir de son id.',
+     method: 'GET',
+     minimumRole: Roles.instructor,
+     responseType: null,
+   })
+  @Get('/association/:associationId/export-pdf')
+  @Role(Roles.instructor)
+  async exportAssociation(
+    @Param('associationId') associationId: string,
+    @Response() response,
+  ): Promise<void> {
+    const association = await this.hubService.getAssociation(associationId)
+    if (!association) {
+      throw new NotFoundException(`Aucune association avec cet rna ${associationId}`)
+    }
+    const events = await this.hubService.getEventsFoundation(associationId)
+    association.events = await this.hubService.setLinkDemarcheAndDossier(events)
+
+    const exportResult = await this.hubService.exportOrganisme(
+      association,
+    )
+
+    return this._handleDownloadFile(exportResult, response)
+  }
+
+  @UsualApiOperation({
+    summary: 'Exporter la fondation à partir de son id.',
+    method: 'GET',
+    minimumRole: Roles.instructor,
+    responseType: null,
+  })
+  @Get('/foundation/:foundationId/export-pdf')
+  @Role(Roles.instructor)
+   async exportFoundation(
+    @Param('foundationId') foundationId: string,
+    @Response() response,
+   ): Promise<void> {
+     const fondation = await this.hubService.getFoundation(foundationId)
+     if (!fondation) {
+       throw new NotFoundException(`Aucune fondation avec cet rnf ${foundationId}`)
+     }
+     const events = await this.hubService.getEventsFoundation(foundationId)
+     fondation.events = await this.hubService.setLinkDemarcheAndDossier(events)
+
+     const exportResult = await this.hubService.exportOrganisme(
+       fondation,
+     )
+
+     console.log(exportResult)
+
+     return this._handleDownloadFile(exportResult, response)
+   }
 }

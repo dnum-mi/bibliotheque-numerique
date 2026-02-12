@@ -1,72 +1,83 @@
 <script setup lang="ts">
 import { EOrganismeCategory } from '@biblio-num/shared'
 import type { IFoundationOutput } from '@biblio-num/shared'
-import LayoutFiche from '@/components/Layout/LayoutFiche.vue'
 import FicheFoundationInfoTab from '@/views/organismes/fondation/FicheFoundationInfoTab.vue'
-import BeTab from '../common/BeTab.vue'
-import FileTab from '@/views/organismes/common/file-tab/FileTab.vue'
 import EventsTab from '@/views/organismes/common/EventsTab.vue'
-import type { tInfoBanner } from '@/views/organismes/common/FicheBanner.vue'
-import FicheBanner from '@/views/organismes/common/FicheBanner.vue'
+import FicheSidebar from '@/views/organismes/components/FicheSidebar.vue'
+import type { tInfoSidebar } from '@/views/organismes/components/FicheSidebar.vue'
 import DossierTab from '@/views/organismes/common/DossierTab.vue'
 import { useUserStore } from '@/stores'
+import FileTab from '../common/file-tab/FileTab.vue'
+import DirigeantTab from '../common/member-tab/MemberTab.vue'
+import { getServiceInstructeurFromEvents } from '@/utils'
 
 const props = defineProps<{ foundation: IFoundationOutput }>()
 
 const { currentUser } = useUserStore()
 
-const banner = computed<tInfoBanner>(() => ({
+const serviceInstructeur = computed(() =>
+  getServiceInstructeurFromEvents(props.foundation.events?.[0]?.dossierInstructeurGroup),
+)
+
+const sidebar = computed<tInfoSidebar>(() => ({
   id: props.foundation.id,
-  title: props.foundation.title,
+  organismeType: EOrganismeCategory.fondation,
   state: props.foundation.state,
   creationAt: props.foundation.creationAt,
   stateEffectiveAt: props.foundation.stateEffectiveAt,
-  hub_timestamp: props.foundation.hub_timestamp,
   typeOrg: props.foundation.foundationType,
+  prefecture: serviceInstructeur.value,
 }))
 
 const currentTab = ref<string | undefined>(undefined)
 </script>
 
 <template>
-  <LayoutFiche
-    class="overflow-auto h-full"
-    title-bg-color="var(--grey-200-850)"
-    title-fg-color="var(--text-inverted-grey)"
+  <LayoutOrganisme
+    :title="`${foundation.id} - ${foundation.title}`"
   >
-    <!--  BANNER  -->
-    <template #title>
-      <FicheBanner :banner />
+    <!--  ASIDE  -->
+    <template #sidebar>
+      <FicheSidebar :sidebar="sidebar" />
     </template>
 
     <!--  CONTENT  -->
     <template #content>
-      <div class="w-full h-full pl-4">
+      <div class="w-full h-full">
         <BnTabsContainer
           v-model="currentTab"
           default-tab-id="info"
         >
           <!--  INFO  -->
           <BnTab
-            id="INFO"
-            title="Infos"
+            id="description"
+            title="Description"
           >
+            <template #icon>
+              <span class="fr-icon-profil-fill" aria-hidden="true" />
+            </template>
             <FicheFoundationInfoTab :foundation="foundation" />
           </BnTab>
 
           <!--  BE  -->
           <BnTab
-            id="BE"
-            title="Bénéficiaires effectifs"
+            id="members"
+            title="Dirigeants"
           >
-            <BeTab :persons="foundation.persons" :is-person-data-private="foundation.isPersonDataPrivate" />
+            <template #icon>
+              <span class="fr-icon-team-fill" aria-hidden="true" />
+            </template>
+            <DirigeantTab :persons="foundation.persons" :is-person-data-private="foundation.isPersonDataPrivate" />
           </BnTab>
 
           <!--  Files  -->
           <BnTab
-            id="FILES"
+            id="files"
             title="Pièces jointes"
           >
+            <template #icon>
+              <span class="fr-icon-file-text-fill" aria-hidden="true" />
+            </template>
             <FileTab
               :organisme-type="EOrganismeCategory.fondation"
               :files="foundation.files"
@@ -79,6 +90,9 @@ const currentTab = ref<string | undefined>(undefined)
             id="events"
             title="Historique"
           >
+            <template #icon>
+              <span class="fr-icon-survey-fill" aria-hidden="true" />
+            </template>
             <EventsTab
               :events="foundation.events"
             />
@@ -88,6 +102,9 @@ const currentTab = ref<string | undefined>(undefined)
             id="dossiers"
             title="Dossier DS"
           >
+            <template #icon>
+              <span class="fr-icon-folder-2-fill" aria-hidden="true" />
+            </template>
             <DossierTab
               :role="currentUser?.role"
               :organisme-id="foundation.id"
@@ -96,7 +113,7 @@ const currentTab = ref<string | undefined>(undefined)
         </BnTabsContainer>
       </div>
     </template>
-  </LayoutFiche>
+  </LayoutOrganisme>
 </template>
 
 <style scoped>

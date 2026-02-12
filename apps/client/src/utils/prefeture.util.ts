@@ -26,3 +26,11 @@ export const getDepartmentCodeFromCodeInsee = (codeinsee: string | null | undefi
   }
   return codeinsee.substring(0, 2)
 }
+
+export const getServiceInstructeurFromEvents = (instructeurGroup: string | null | undefined) => {
+  if (!instructeurGroup) {
+    return ''
+  }
+
+  return getPrefecture(instructeurGroup)
+}

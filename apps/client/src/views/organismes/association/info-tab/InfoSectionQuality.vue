@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { dateToStringFr } from '@/utils'
 import type { IAssociationOutput } from '@biblio-num/shared'
+import InfoRow from '@/views/organismes/components/InfoRow.vue'
 
 defineProps<{
   association: IAssociationOutput,
@@ -8,39 +9,20 @@ defineProps<{
 </script>
 
 <template>
-  <div>
-    <div class="px-4 sm:px-0">
-      <h3 class="text-base/7 font-semibold text-gray-900 mb-0 fr-background-alt--grey fr-py-3v fr-px-2w">
-        Qualité
-      </h3>
+  <section>
+    <h2 class="fr-h4">
+      Agrément
+    </h2>
+    <div class="fr-background-alt--grey fr-p-2w">
+      <InfoRow label="Type d'agrément">
+        {{ association.quality?.type || "-" }}
+      </InfoRow>
+      <InfoRow label="Date de début">
+        {{ association.quality?.startedAt ? dateToStringFr(association.quality?.startedAt) : "-" }}
+      </InfoRow>
+      <InfoRow label="Date de fin">
+        {{ association.quality?.endedAt ? dateToStringFr(association.quality?.endedAt) : "-" }}
+      </InfoRow>
     </div>
-    <div class="mt-6 border-t border-gray-100">
-      <dl class="divide-y p-0">
-        <div class="py-2 md:grid md:grid-cols-4">
-          <dt class="bn-fiche-sub-title--label uppercase">
-            Type
-          </dt>
-          <dd class="bn-fiche-sub-title--text md:col-span-3">
-            {{ association.quality?.type }}
-          </dd>
-        </div>
-        <div class="py-2 md:grid md:grid-cols-4">
-          <dt class="bn-fiche-sub-title--label uppercase">
-            Date de début
-          </dt>
-          <dd class="bn-fiche-sub-title--text md:col-span-3">
-            {{ dateToStringFr(association.quality?.startedAt) }}
-          </dd>
-        </div>
-        <div class="py-2 md:grid md:grid-cols-4">
-          <dt class="bn-fiche-sub-title--label uppercase">
-            Date de fin
-          </dt>
-          <dd class="bn-fiche-sub-title--text md:col-span-3">
-            {{ dateToStringFr(association.quality?.endedAt) }}
-          </dd>
-        </div>
-      </dl>
-    </div>
-  </div>
+  </section>
 </template>

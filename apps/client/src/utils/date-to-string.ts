@@ -28,6 +28,14 @@ export const dateTimeToFormatedStringFr = (value: string | number): string => {
   return `${partMap.day} ${partMap.month} ${partMap.year} ${partMap.hour}:${partMap.minute}`
 }
 
+export const dateToFormatLongDateStringFr = (date: Date | string): string => {
+  return new Date(date).toLocaleDateString('fr-FR', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  })
+}
+
 export const getDateFormatter
   = (locale: string = LOCALE_FOR_DATE_TIME, options: Intl.DateTimeFormatOptions = { dateStyle: 'long', timeStyle: 'medium' }) =>
     (date: Date) => {

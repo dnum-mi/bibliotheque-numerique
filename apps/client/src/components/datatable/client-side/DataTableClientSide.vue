@@ -7,7 +7,7 @@ import { FilterMatchMode, FilterOperator } from '@primevue/core/api'
 import type { HeaderDataTable } from '@/shared/types'
 import { PAGINATION_PAGE_SIZE } from '@/config'
 import { dealWithBlankAndNotBlank } from '../server-side/filters.utils'
-import { serverFilterToDataTableDataType } from '../server-side/utils/datatable.const'
+import { serverFilterToDataTableDataType, SET_FILTER_TYPES } from '../server-side/utils/datatable.const'
 
 export type RowDataType = {
   authorized: boolean
@@ -25,6 +25,10 @@ const props = withDefaults(
     rowSelection?: string
     floatingFilter?: boolean
     isHiddenSideBar?: boolean
+    selectable?: boolean
+    selectionMode?: 'single' | 'multiple'
+    dataKey?: string
+    context?: unknown
   }>(),
   {
     title: undefined,
@@ -32,12 +36,17 @@ const props = withDefaults(
     headers: () => [],
     paginationPageSize: PAGINATION_PAGE_SIZE,
     rowSelection: undefined,
+    selectable: false,
+    selectionMode: 'multiple',
+    dataKey: 'id',
+    context: undefined,
   },
 )
 
 const emit = defineEmits<{
   'rowClick': [data: unknown],
   'sortUpdated': [value: unknown]
+  'selectionChange': [value: RowDataType[]]
 }>()
 interface PrimeVueColumnDef {
   headerName?: string
@@ -93,30 +102,68 @@ const columnDefs: ComputedRef<PrimeVueColumnDef[]> = computed(() => {
 const filters = ref<DataTableFilterMeta>(columnDefs.value
   .filter(col => col.filterable !== false) // Ne créer des filtres que pour les colonnes filtrables
   .reduce(
-    (acc, col) => ({
-      ...acc,
-      [col.field!]: {
-        operator: FilterOperator.AND,
-        constraints: [{
-          value: null,
-          matchMode: col.filter === 'agSetColumnFilter' ? FilterMatchMode.IN : FilterMatchMode.STARTS_WITH,
-          ...(col.filter === 'agSetColumnFilter' && col.filterParams?.values
-            ? {
-                set: col.filterParams.values,
-              }
-            : {}),
-        }],
-      },
-    }),
+    (acc, col) => {
+      let matchMode = FilterMatchMode.CONTAINS
+      if (col.filter === 'agMultiColumnFilter') {
+        matchMode = FilterMatchMode.DATE_IS
+      } else if (col.filter === 'agSetColumnFilter') {
+        matchMode = FilterMatchMode.IN
+      }
+      return {
+        ...acc,
+        [col.field!]: {
+          operator: FilterOperator.AND,
+          constraints: [{
+            value: null,
+            matchMode,
+            ...(col.filter === 'agSetColumnFilter' && col.filterParams?.values
+              ? {
+                  set: col.filterParams.values,
+                }
+              : {}),
+          }],
+        },
+      }
+    },
     {} as DataTableFilterMeta,
   ),
 )
+
+const processedRows = computed(() => {
+  if (!props.rowsData) {
+    return []
+  }
+
+  return props.rowsData.map((row) => {
+    const newRow = { ...row } as Record<string, any>
+
+    columnDefs.value.forEach((col) => {
+      // Si la colonne est configurée comme une date
+      if (col.filter === 'agMultiColumnFilter' && col.field) {
+        const val = (row as Record<string, any>)[col.field]
+        if (val && typeof val === 'string') {
+          const dateObj = new Date(val)
+          newRow[col.field] = Number.isNaN(dateObj.getTime()) ? val : dateObj
+        }
+      }
+    })
+    return newRow as RowDataType
+  })
+})
+
+const selectedRows = ref<RowDataType[]>([])
 const paginatorContainerRef = useTemplateRef('paginatorContainerRef')
 const sort = ref<{ key: string; order: 'ASC' | 'DESC' | 'NONE' }[]>([])
 const perPage = ref(props.paginationPageSize || PAGINATION_PAGE_SIZE)
 const scrollHeight = computed(() => {
   return `calc(100% - ${paginatorContainerRef.value?.parentElement?.offsetHeight || 4}px)`
 })
+function shouldShowFilterControls (col: PrimeVueColumnDef): boolean {
+  if (typeof col.filter === 'string') {
+    return !SET_FILTER_TYPES.includes(col.filter as any)
+  }
+  return true
+}
 
 const rowClick = (event: { data: Record<string, string | number> }) => {
   emit('rowClick', toRaw(event.data))
@@ -124,13 +171,20 @@ const rowClick = (event: { data: Record<string, string | number> }) => {
 
 const getPaginationPages = (pagesNb: number) => Array.from(Array(pagesNb))
   .map((_, i) => ({ title: (i + 1).toString(), href: `#${i + 1}`, label: (i + 1).toString() }))
+
+watch(selectedRows, (newValue) => {
+  emit('selectionChange', toRaw(newValue))
+})
 </script>
 
 <template>
   <DataTable
+    v-model:selection="selectedRows"
     v-model:filters="filters"
+    :selection-mode="selectable ? selectionMode : undefined"
+    :data-key="dataKey"
     class="m-w-full h-full"
-    :value="rowsData"
+    :value="processedRows"
     striped-rows
     paginator
     :rows="perPage"
@@ -151,6 +205,11 @@ const getPaginationPages = (pagesNb: number) => Array.from(Array(pagesNb))
     @row-click="rowClick($event)"
   >
     <Column
+      v-if="selectable"
+      selection-mode="multiple"
+      header-style="width: 3rem"
+    />
+    <Column
       v-for="col of columnDefs"
       :key="col.field"
       :field="col.field"
@@ -158,13 +217,21 @@ const getPaginationPages = (pagesNb: number) => Array.from(Array(pagesNb))
       :filter-field="col.field"
       :data-type="col.filter ? serverFilterToDataTableDataType[col.filter] : undefined"
       :sortable="col.sortable !== false"
-      :show-filter-match-modes="col.filter !== 'agSetColumnFilter'"
+      :show-add-button="shouldShowFilterControls(col)"
+      :show-filter-match-modes="shouldShowFilterControls(col)"
       :show-filter-menu="col.filterable !== false"
       :title="col.headerName"
     >
       <template #body="{ data }">
         <template v-if="col.cellRenderer">
-          <component :is="col.cellRenderer" :params="{ value: data[col.field!] }" />
+          <component
+            :is="col.cellRenderer"
+            :params="{
+              value: data[col.field!],
+              data,
+              context,
+            }"
+          />
         </template>
         <template v-else-if="col.valueFormatter && typeof col.valueFormatter === 'function' && col.field">
           {{ col.valueFormatter({ value: data[col.field] } as any) }}
@@ -197,7 +264,13 @@ const getPaginationPages = (pagesNb: number) => Array.from(Array(pagesNb))
           />
         </template>
         <template v-else-if="col.filter === 'agMultiColumnFilter'">
-          <DatePicker v-model="filterModel.value" date-format="dd/mm/yy" placeholder="jj/mm/aaaa" />
+          <DatePicker
+            v-model="filterModel.value"
+            date-format="dd/mm/yy"
+            placeholder="jj/mm/aaaa"
+            @date-select="filterCallback()"
+            @clear="filterCallback()"
+          />
         </template>
         <template
           v-else-if="filterModel.matchMode === 'blank' || filterModel.matchMode === 'notBlank'"
