@@ -28,6 +28,7 @@ import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.d
 import { DossierSearchOutputDto } from '@/modules/dossiers/objects/dto/dossier-search-output.dto'
 import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.decorator'
 import { PaginatedDto } from '@/shared/pagination/paginated.dto'
+import { ProjectionSearchService } from '@/modules/projection/services/projection-search/projection-search.service'
 
 @ApiTags('Demarches', 'Dossiers')
 @UseInterceptors(CurrentDemarcheInterceptor)
@@ -37,6 +38,7 @@ export class DemarcheDossierController {
     private readonly logger: LoggerService,
     private dossierSearchService: DossierSearchService,
     private fieldSearchService: FieldSearchService,
+    private projectionSearchService: ProjectionSearchService,
     private xlsxService: XlsxService,
   ) {
     this.logger.setContext(this.constructor.name)
@@ -82,6 +84,28 @@ export class DemarcheDossierController {
   ): Promise<FieldSearchOutputDto> {
     this.logger.verbose('searchDossier')
     return this.fieldSearchService.search(demarche, dto)
+  }
+
+  @HttpCode(200)
+  @ApiResponse({ status: 200 })
+  @Post('/fields-search-v2')
+  @UsualApiOperation({
+    summary: 'Lister les dossiers par champs de la démarche.',
+    supplement:
+      'Pour comprendre la différence entre cette route et dossier-search,' +
+      ' voir la documentation sur la pagination.',
+    method: 'POST',
+    minimumRole: Roles.instructor,
+    responseType: PaginatedDto,
+    isPagination: true,
+  })
+  @Role(Roles.instructor)
+  async searchFieldsV2(
+    @Body() dto: SearchDossierDto,
+    @CurrentDemarche() demarche: Demarche,
+  ): Promise<FieldSearchOutputDto> {
+    this.logger.verbose('searchDossier')
+    return this.projectionSearchService.searchField(demarche, dto)
   }
 
   private _fromDataToXlsx = (

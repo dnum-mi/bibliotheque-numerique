@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { forwardRef, Module } from '@nestjs/common'
 import { ProjectionManagerService } from './services/projection-manager/projection-manager.service'
 import { DossierProjectionService } from './services/dossier-projection/dossier-projection.service'
 import { FieldProjectionService } from './services/field-projection/field-projection.service'
@@ -12,7 +12,7 @@ import { ProjectionController } from '@/modules/projection/controllers/projectio
 @Module({
   imports: [
     TypeOrmModule.forFeature([Dossier, Demarche]),
-    DemarcheModule,
+    forwardRef(() => DemarcheModule),
   ],
   controllers: [
     ProjectionController,

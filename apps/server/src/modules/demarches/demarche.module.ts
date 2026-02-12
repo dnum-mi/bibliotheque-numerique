@@ -22,6 +22,7 @@ import { DossierTransformerService } from './providers/services/maarch/dossier-t
 import { DataFormatterService } from './providers/services/maarch/data-formatter.service'
 import { CsvProcessorService } from './providers/services/maarch/csv-processor.service'
 import { DemarcheMaarchService } from './providers/services/maarch/demarche-maarch.service'
+import { ProjectionModule } from '@/modules/projection/projection.module'
 
 @Module({
   imports: [
@@ -41,6 +42,8 @@ import { DemarcheMaarchService } from './providers/services/maarch/demarche-maar
     ViewModule,
     CustomBullModule,
     DsApiModule,
+    // TODO: mette les route de projection dans projection module et enlever la dépendance circulaire
+    forwardRef(() => ProjectionModule),
   ],
   controllers: [
     DemarcheController,

@@ -19,7 +19,10 @@ export const getDemarcheConfigurationRoute = (id: number) => `${getDemarcheByIdR
 export const getDemarcheOptionRoute = (id: number) => `${getDemarcheByIdRoute(id)}/options`
 export const getUpdateOneMappingColumnRoute = (demarcheId: number, fieldId: string) => `${getDemarcheConfigurationRoute(demarcheId)}/${fieldId}`
 export const getListDemarcheDossierRoute = (demarcheId: number) => `${getDemarcheByIdRoute(demarcheId)}/dossiers-search`
-export const getListDemarcheFieldRoute = (demarcheId: number) => `${getDemarcheByIdRoute(demarcheId)}/fields-search`
+
+// export const getListDemarcheFieldRoute = (demarcheId: number) => `${getDemarcheByIdRoute(demarcheId)}/fields-search`
+export const getListDemarcheFieldRoute = (demarcheId: number) => `${getDemarcheByIdRoute(demarcheId)}/fields-search-v2`
+
 export const getXlsxDemarcheDossierRoute = (demarcheId: number) => `${getListDemarcheDossierRoute(demarcheId)}/export/xlsx`
 export const getXlsxDemarcheFieldRoute = (demarcheId: number) => `${getListDemarcheFieldRoute(demarcheId)}/export/xlsx`
 export const getDemarcheViewRoute = (demarcheId: number) => `${demarchesRoute}/${demarcheId}/views`
@@ -44,7 +47,10 @@ export const generateUpdatePasswordLinkRoute = (id: number) => `${usersRoutes}/$
 //#endregion
 
 export const dossierSearch = '/dossiers-search'
-export const fieldsSearch = '/fields-search'
+
+// export const fieldsSearch = '/fields-search'
+export const fieldsSearch = '/fields-search-v2'
+
 export const dossierRoute = '/dossiers'
 export const attachedFilesRoute = '/files/list'
 export const getDossierFilesRoute = (dossierId: number) => `${dossierRoute}/${dossierId}${attachedFilesRoute}`
