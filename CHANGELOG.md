@@ -1,5 +1,13 @@
 # Changelog
 
+## [5.2.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.2.0...v5.2.1) (2026-02-12)
+
+
+### Bug Fixes
+
+* correction de l'identification type d'organisme ([5cb275c](https://github.com/dnum-mi/bibliotheque_numerique/commit/5cb275c3865deef7b06782a75b1d13cb721fd81b))
+* correction de la mise en forme du long texte dans fiche organisme ([#2122](https://github.com/dnum-mi/bibliotheque_numerique/issues/2122)) ([cb412bf](https://github.com/dnum-mi/bibliotheque_numerique/commit/cb412bf5e5ea9d92a587891b888716eb1d921bd2))
+
 ## [5.2.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.1.2...v5.2.0) (2026-02-12)
 
 
