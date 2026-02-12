@@ -27,7 +27,7 @@ const truncatedText = computed(() => {
 
 <template>
   <div>
-    <span class="text-content">
+    <span class="break-normal">
       {{ truncatedText }}
       <button v-if="hasLongText" class="fr-link fr-link--sm fr-text--nowrap" @click.stop="isOpen = true">
         Voir plus
@@ -35,15 +35,9 @@ const truncatedText = computed(() => {
     </span>
 
     <DsfrModal :opened="isOpen" :title="title" @close="isOpen = false">
-      <p class="fr-text--md">
+      <p class="fr-text--md whitespace-pre-wrap">
         {{ text }}
       </p>
     </DsfrModal>
   </div>
 </template>
-
-<style scoped>
-.text-content {
-  word-break: break-word;
-}
-</style>

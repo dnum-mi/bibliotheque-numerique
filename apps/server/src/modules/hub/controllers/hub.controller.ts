@@ -200,9 +200,6 @@ export class HubController {
      const exportResult = await this.hubService.exportOrganisme(
        fondation,
      )
-
-     console.log(exportResult)
-
      return this._handleDownloadFile(exportResult, response)
    }
 }

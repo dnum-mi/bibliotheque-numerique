@@ -34,6 +34,19 @@ const getTypeOrganisme = (id: string): organismeCategoryKey | null => {
   return null
 }
 
+function normalizePdfText(text: unknown): string {
+  if (!text) {
+    return '-'
+  }
+
+  return String(text)
+    .replace(/\r\n|\r/g, '\n')
+    .replace(/\t/g, ' ')
+    .replace(/^[ \t]+|[ \t]+$/gm, '')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+}
+
 export const OrganismeFicheGenerator: IPdfGenerator<IOrganisme> = async (doc, data) => {
   const organismeType = getTypeOrganisme(data.id)
   drawHeader(doc, data, organismeType)
@@ -139,7 +152,7 @@ function drawSectionGrid(doc: typeof PDFDocument, fieldsToDisplay: ISectionGrid[
   doc.fontSize(10)
 
   fieldsToDisplay.forEach(field => {
-    const textValue = String(field.value || '-')
+    const textValue = normalizePdfText(field.value)
     const textHeight = doc.heightOfString(textValue, { width: valueWidth })
     const rowHeight = Math.max(lineHeight, textHeight)
 
