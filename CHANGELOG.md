@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.2.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.1.2...v5.2.0) (2026-02-12)
+
+
+### Features
+
+* refonte fiche organisme ([#2110](https://github.com/dnum-mi/bibliotheque_numerique/issues/2110))([#1885](https://github.com/dnum-mi/bibliotheque_numerique/issues/1885)) ([cb856ac](https://github.com/dnum-mi/bibliotheque_numerique/commit/cb856acbd04008db1b2d61a75bfdbbb300e4deb1))
+
 ## [5.1.2](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.1.1...v5.1.2) (2026-02-03)
 
 
