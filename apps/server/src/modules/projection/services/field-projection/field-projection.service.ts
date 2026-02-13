@@ -88,10 +88,10 @@ export class FieldProjectionService {
 
       CREATE TABLE "${tableName}"
       (
-        dossier_id           bigint  NOT NULL,
-        projection_row_index integer NOT NULL,
+        dossierId           bigint  NOT NULL,
+        projectionRowIndex integer NOT NULL,
         ${columnDefinitions},
-        PRIMARY KEY (dossier_id, projection_row_index)
+        PRIMARY KEY (dossierId, projectionRowIndex)
       );
     `
 
@@ -191,18 +191,18 @@ export class FieldProjectionService {
               ROW_NUMBER() OVER (
                 PARTITION BY "dossierId"
                 ORDER BY "dossierId"
-              ) AS projection_row_index
+              ) AS projectionRowIndex
             FROM combinedCTE
           )
 
         INSERT INTO "${tableName}" (
-          dossier_id,
-          projection_row_index,
+          dossierId,
+          projectionRowIndex,
           ${fieldsId.map(id => `"${id}"`).join(',')}
         )
         SELECT
           "dossierId",
-          projection_row_index,
+          projectionRowIndex,
           ${fieldsId.map(id => `"${id}"`).join(',')}
         FROM numbered
     `
@@ -210,14 +210,64 @@ export class FieldProjectionService {
     await this.dataSource.query(query)
   }
 
-  //#endregion
+  async upsertOneDossier(
+    demarche: Demarche,
+    dossierId: number,
+  ): Promise<void> {
+    this.logger.verbose(
+      `upsertOneDossier projection ${demarche.title} - dossier ${dossierId}`,
+    )
 
-  //#region 📍------ UPSERT SINGLE DOSSIER ------ 📍
+    const tableName = FieldProjectionService.buildTableName(demarche.id)
 
-  async upsertOneDossier(demarche: Demarche, dossier: Dossier): Promise<void> {
-    // TODO
-    throw new Error('rebuild not implemented')
+    const flatColumns = this._flattenMappingColumns(demarche.mappingColumns)
+    const fieldsId = flatColumns.map((c) => c.id)
+
+    if (!fieldsId.length) return
+
+    const typeHash = fromMappingColumnArrayToTypeHash(
+      demarche.mappingColumns,
+    )
+
+    // On supprime les anciennes lignes de projection du dossier
+    await this.dataSource.query(
+      `DELETE FROM "${tableName}" WHERE "dossierId" = $1`,
+      [dossierId],
+    )
+
+    // query d'injection pour ce dossier
+    const query = `
+        WITH
+          ${this._buildRepeatedCTE(demarche.id, fieldsId)},
+          ${this._buildNonRepeatedCTE(demarche.id, fieldsId)},
+          ${this._buildCombinedCTE(fieldsId, typeHash)},
+          numbered AS (
+            SELECT
+              *,
+              ROW_NUMBER() OVER (
+                PARTITION BY "dossierId"
+              ) AS projectionRowIndex
+            FROM combinedCTE
+          )
+
+        INSERT INTO "${tableName}" (
+          dossierId,
+          projectionRowIndex,
+          ${fieldsId.map((id) => `"${id}"`).join(',')}
+        )
+        SELECT
+          "dossierId",
+          projectionRowIndex,
+          ${fieldsId.map((id) => `"${id}"`).join(',')}
+        FROM numbered
+        WHERE "dossierId" = $1
+    `
+
+    await this.dataSource.query(query, [dossierId])
+
+    this.logger.log(
+      `Projection upserted for dossier ${dossierId}`,
+    )
   }
-
   //#endregion
 }

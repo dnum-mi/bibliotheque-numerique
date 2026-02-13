@@ -29,6 +29,7 @@ import { DossierFileController } from '@/modules/dossiers/controllers/dossier-fi
 import { CustomBullModule } from '@/shared/modules/custom-bull/custom-bull.module'
 import { DossierOrganismeController } from '@/modules/dossiers/controllers/dossier-organisme.controller'
 import { HubModule } from '@/modules/hub/hub.module'
+import { ProjectionModule } from '@/modules/projection/projection.module'
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { HubModule } from '@/modules/hub/hub.module'
     CustomBullModule,
     BnConfigurationModule,
     HubModule,
+    ProjectionModule,
   ],
   controllers: [DossierController, DossierFileController, DossierOrganismeController],
   providers: [

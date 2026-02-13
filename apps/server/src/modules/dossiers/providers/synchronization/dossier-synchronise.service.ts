@@ -27,6 +27,7 @@ import { Field } from '@/modules/dossiers/objects/entities/field.entity'
 import {
   DossierSynchroniseExcelService,
 } from '@/modules/dossiers/providers/synchronization/excel/dossier-synchronise-excel.service'
+import { ProjectionManagerService } from '@/modules/projection/services/projection-manager/projection-manager.service'
 
 @Injectable()
 export class DossierSynchroniseService extends BaseEntityService<Dossier> {
@@ -38,6 +39,7 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
     private readonly dossierSynchroniseOrganisme: DossierSynchroniseOrganismeService,
     private readonly instructionTimeService: InstructionTimesService,
     private readonly dossierSynchroniseExcelService: DossierSynchroniseExcelService,
+    private readonly projectionManager: ProjectionManagerService,
   ) {
     super(repo, logger)
     this.logger.setContext(this.constructor.name)
@@ -122,6 +124,7 @@ export class DossierSynchroniseService extends BaseEntityService<Dossier> {
     )
 
     await this._FESpecificity(id, demarche.identification)
+    await this.projectionManager.upsertDossierInProjections(demarche, id)
   }
 
   async addTitleOrganismeInFieldsByIDossier(dossierId: number): Promise<void> {

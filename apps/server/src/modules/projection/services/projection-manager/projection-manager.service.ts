@@ -2,30 +2,31 @@ import { Injectable } from '@nestjs/common'
 import { DossierProjectionService } from '@/modules/projection/services/dossier-projection/dossier-projection.service'
 import { FieldProjectionService } from '@/modules/projection/services/field-projection/field-projection.service'
 import { Demarche } from '@/modules/demarches/objects/entities/demarche.entity'
-import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
+import { LoggerService } from '@/shared/modules/logger/logger.service'
 
 @Injectable()
 export class ProjectionManagerService {
   constructor(
+    private readonly logger: LoggerService,
     private readonly dossierProjection: DossierProjectionService,
     private readonly fieldProjection: FieldProjectionService,
-  ) {}
-
-  async ensureProjectionTables(demarche: Demarche): Promise<void> {
-    // TODO
-    throw new Error('ensureProjectionTables not implemented')
+  ) {
+    this.logger.setContext(this.constructor.name)
   }
 
   async rebuildProjectionTables(demarche: Demarche): Promise<void> {
-    // TODO
-    throw new Error('rebuildProjection not implemented')
+    // TODO:
+    // await this.dossierProjection.rebuild(demarche)
+    await this.fieldProjection.rebuild(demarche)
   }
 
-  async upsertDossierProjection(
+  async upsertDossierInProjections(
     demarche: Demarche,
-    dossier: Dossier,
+    dossierId: number,
   ): Promise<void> {
+    this.logger.verbose('upsertDossierProjection')
+    await this.fieldProjection.upsertOneDossier(demarche, dossierId)
     // TODO
-    throw new Error('upsertDossierProjection not implemented')
+    // await this.dossierProjection.upsertOneDossier(demarche, dossier)
   }
 }
