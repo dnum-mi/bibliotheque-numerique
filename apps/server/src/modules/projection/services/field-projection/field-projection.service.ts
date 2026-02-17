@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common'
 import { Demarche } from '@/modules/demarches/objects/entities/demarche.entity'
-import { FieldType, FieldTypeKeys } from '@biblio-num/shared'
+import { FieldTypeKeys } from '@biblio-num/shared'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { DataSource } from 'typeorm'
 import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
 import { fromMappingColumnArrayToTypeHash } from '@/modules/demarches/utils/demarche.utils'
 import { deduceFieldToQueryFromType } from '@/shared/pagination/utils/common-search.utils'
 import { ProjectionManagerService } from '@/modules/projection/services/projection-manager/projection-manager.service'
+import { mapFieldTypeToSql } from '@/modules/projection/utils/projection-utils'
 
 type tProjectionCol = {
   id: string
@@ -20,24 +21,7 @@ export class FieldProjectionService {
     private readonly dataSource: DataSource,
   ) {}
 
-  //#region 📍------ CREATE TABLE ------ 📍
-  private _mapFieldTypeToSql(type: FieldTypeKeys): string {
-    switch (type) {
-    case FieldType.string:
-    case FieldType.enum:
-    case FieldType.boolean:
-    case FieldType.file:
-      return 'text'
-    case FieldType.number:
-    case FieldType.numbers:
-      return 'numeric'
-    case FieldType.date:
-      return 'timestamp'
-    default:
-      throw new Error(`Unsupported field type: ${type}`)
-    }
-  }
-
+  //#region 📍------ Create table ------ 📍
   private _flattenMappingColumns(cols: MappingColumn[]): tProjectionCol[] {
     this.logger.verbose(`_flattenMappingColumns (${cols.length} columns)`)
     const result: tProjectionCol[] = []
@@ -52,7 +36,7 @@ export class FieldProjectionService {
         } else {
           result.push({
             id: col.id,
-            type: this._mapFieldTypeToSql(col.type),
+            type: mapFieldTypeToSql(col.type),
           })
         }
       }
@@ -93,10 +77,9 @@ export class FieldProjectionService {
 
     await this.dataSource.query(query)
   }
-
   //#endregion
 
-  //#region 📍------ FILL TABLE ------ 📍
+  //#region 📍------ Legacy search field pre-request ------ 📍
   private _buildCommonRepeatedCTE(
     demarcheId: number,
     fieldsId: string[],
@@ -164,6 +147,7 @@ export class FieldProjectionService {
       )
     `
   }
+  //#endregion
 
   async rebuild(demarche: Demarche): Promise<void> {
     this.logger.verbose(`rebuild projection ${demarche.title}`)
@@ -172,7 +156,7 @@ export class FieldProjectionService {
     const tableName = ProjectionManagerService.buildFieldTableName(demarche.id)
     const flatColumns = this._flattenMappingColumns(demarche.mappingColumns)
 
-    const fieldsId = flatColumns.map(c => c.id)
+    const fieldsId = flatColumns.map((c) => c.id)
 
     const typeHash = fromMappingColumnArrayToTypeHash(demarche.mappingColumns)
 
@@ -194,22 +178,19 @@ export class FieldProjectionService {
         INSERT INTO "${tableName}" (
           dossierId,
           projectionRowIndex,
-          ${fieldsId.map(id => `"${id}"`).join(',')}
+          ${fieldsId.map((id) => `"${id}"`).join(',')}
         )
         SELECT
           "dossierId",
           projectionRowIndex,
-          ${fieldsId.map(id => `"${id}"`).join(',')}
+          ${fieldsId.map((id) => `"${id}"`).join(',')}
         FROM numbered
     `
 
     await this.dataSource.query(query)
   }
 
-  async upsertOneDossier(
-    demarche: Demarche,
-    dossierId: number,
-  ): Promise<void> {
+  async upsertOneDossier(demarche: Demarche, dossierId: number): Promise<void> {
     this.logger.verbose(
       `upsertOneDossier projection ${demarche.title} - dossier ${dossierId}`,
     )
@@ -221,9 +202,7 @@ export class FieldProjectionService {
 
     if (!fieldsId.length) return
 
-    const typeHash = fromMappingColumnArrayToTypeHash(
-      demarche.mappingColumns,
-    )
+    const typeHash = fromMappingColumnArrayToTypeHash(demarche.mappingColumns)
 
     // On supprime les anciennes lignes de projection du dossier
     await this.dataSource.query(
@@ -261,9 +240,6 @@ export class FieldProjectionService {
 
     await this.dataSource.query(query, [dossierId])
 
-    this.logger.log(
-      `Projection upserted for dossier ${dossierId}`,
-    )
+    this.logger.log(`Projection upserted for dossier ${dossierId}`)
   }
-  //#endregion
 }

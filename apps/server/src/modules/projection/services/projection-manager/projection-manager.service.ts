@@ -45,6 +45,7 @@ export class ProjectionManagerService {
     }
   }
 
+  // ensure all demarche have their projection table already
   async onModuleInit(): Promise<void> {
     this.logger.log('onModuleInit: Ensuring projection tables exist')
     const demarches = await this.demarcheRepository.find()
@@ -61,7 +62,6 @@ export class ProjectionManagerService {
   ): Promise<void> {
     this.logger.verbose('upsertDossierProjection')
     await this.fieldProjection.upsertOneDossier(demarche, dossierId)
-    // TODO
-    // await this.dossierProjection.upsertOneDossier(demarche, dossier)
+    await this.dossierProjection.upsertOneDossier(demarche, dossierId)
   }
 }
