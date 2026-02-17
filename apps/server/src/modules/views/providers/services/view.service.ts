@@ -3,15 +3,14 @@ import { Repository } from 'typeorm'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { InjectRepository } from '@nestjs/typeorm'
-import { DossierSearchService } from '../../../dossiers/providers/search/dossier-search.service'
 import { fromMappingColumnArrayToLabelHash } from '../../../demarches/utils/demarche.utils'
-import { FieldSearchService } from '@/modules/dossiers/providers/search/field-search.service'
 import { ITotal } from '@biblio-num/shared'
 import { DossierSearchOutputDto } from '@/modules/dossiers/objects/dto/dossier-search-output.dto'
 import { FieldSearchOutputDto } from '@/modules/dossiers/objects/dto/fields/field-search-output.dto'
 import { fromCustomFilterToHumanReadableFilter } from '@/shared/pagination/utils/search-dictionnaries.const'
 import { ViewStatsOutputDto } from '@/modules/views/objects/dtos/view-stats-output.dto'
 import { View } from '@/modules/views/objects/entities/view.entity'
+import { ProjectionSearchService } from '@/modules/projection/services/projection-search/projection-search.service'
 
 @Injectable()
 export class ViewService extends BaseEntityService<View> {
@@ -19,8 +18,7 @@ export class ViewService extends BaseEntityService<View> {
     protected logger: LoggerService,
     @InjectRepository(View)
     protected readonly repo: Repository<View>,
-    private readonly dossierSearchService: DossierSearchService,
-    private readonly fieldSearchService: FieldSearchService,
+    protected readonly projectionSearch: ProjectionSearchService,
   ) {
     super(repo, logger)
     this.logger.setContext(this.constructor.name)
@@ -85,13 +83,13 @@ export class ViewService extends BaseEntityService<View> {
 
     let result: DossierSearchOutputDto | FieldSearchOutputDto
     if (view.groupByDossier) {
-      result = await this.dossierSearchService.search(
+      result = await this.projectionSearch.searchDossier(
         view.demarche,
         view,
         true,
       )
     } else {
-      result = await this.fieldSearchService.search(
+      result = await this.projectionSearch.searchField(
         view.demarche,
         view,
         true,

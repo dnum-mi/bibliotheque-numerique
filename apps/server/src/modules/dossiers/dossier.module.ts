@@ -10,8 +10,6 @@ import { Field } from './objects/entities/field.entity'
 import { File } from '../files/objects/entities/file.entity'
 import { FieldService } from './providers/field.service'
 import { DossierSynchroniseService } from './providers/synchronization/dossier-synchronise.service'
-import { DossierSearchService } from './providers/search/dossier-search.service'
-import { FieldSearchService } from './providers/search/field-search.service'
 import {
   DossierSynchroniseExcelService,
 } from '@/modules/dossiers/providers/synchronization/excel/dossier-synchronise-excel.service'
@@ -53,8 +51,6 @@ import { ProjectionModule } from '@/modules/projection/projection.module'
   providers: [
     DossierService,
     FieldService,
-    DossierSearchService,
-    FieldSearchService,
     DossierSynchroniseService,
     DossierSynchroniseFileService,
     DossierSynchroniseExcelService,
@@ -63,8 +59,6 @@ import { ProjectionModule } from '@/modules/projection/projection.module'
   exports: [
     DossierService,
     FieldService,
-    DossierSearchService,
-    FieldSearchService,
     DossierSynchroniseExcelService,
     DossierSynchroniseService,
     DossierSynchroniseOrganismeService,
