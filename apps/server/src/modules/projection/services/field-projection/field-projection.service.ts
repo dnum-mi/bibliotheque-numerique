@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common'
-import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
 import { Demarche } from '@/modules/demarches/objects/entities/demarche.entity'
 import { FieldType, FieldTypeKeys } from '@biblio-num/shared'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
@@ -7,6 +6,7 @@ import { DataSource } from 'typeorm'
 import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
 import { fromMappingColumnArrayToTypeHash } from '@/modules/demarches/utils/demarche.utils'
 import { deduceFieldToQueryFromType } from '@/shared/pagination/utils/common-search.utils'
+import { ProjectionManagerService } from '@/modules/projection/services/projection-manager/projection-manager.service'
 
 type tProjectionCol = {
   id: string
@@ -15,10 +15,6 @@ type tProjectionCol = {
 
 @Injectable()
 export class FieldProjectionService {
-  static buildTableName(demarcheId: number): string {
-    return `projection-fields-${demarcheId}`
-  }
-
   constructor(
     private logger: LoggerService,
     private readonly dataSource: DataSource,
@@ -69,7 +65,7 @@ export class FieldProjectionService {
 
   async createTable(demarche: Demarche): Promise<void> {
     this.logger.verbose(`createTable ${demarche.title}`)
-    const tableName = FieldProjectionService.buildTableName(demarche.id)
+    const tableName = ProjectionManagerService.buildFieldTableName(demarche.id)
 
     const flatColumns: tProjectionCol[] = this._flattenMappingColumns(
       demarche.mappingColumns,
@@ -173,7 +169,7 @@ export class FieldProjectionService {
     this.logger.verbose(`rebuild projection ${demarche.title}`)
     await this.createTable(demarche)
 
-    const tableName = FieldProjectionService.buildTableName(demarche.id)
+    const tableName = ProjectionManagerService.buildFieldTableName(demarche.id)
     const flatColumns = this._flattenMappingColumns(demarche.mappingColumns)
 
     const fieldsId = flatColumns.map(c => c.id)
@@ -218,7 +214,7 @@ export class FieldProjectionService {
       `upsertOneDossier projection ${demarche.title} - dossier ${dossierId}`,
     )
 
-    const tableName = FieldProjectionService.buildTableName(demarche.id)
+    const tableName = ProjectionManagerService.buildFieldTableName(demarche.id)
 
     const flatColumns = this._flattenMappingColumns(demarche.mappingColumns)
     const fieldsId = flatColumns.map((c) => c.id)

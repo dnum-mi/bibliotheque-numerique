@@ -14,9 +14,10 @@ export class DossierProjectionService {
     throw new Error('dropTable not implemented')
   }
 
-  async rebuild(demarcheId: number): Promise<void> {
+  async rebuild(demarche: Demarche): Promise<void> {
+
     // TODO
-    throw new Error('rebuild not implemented')
+    // throw new Error('rebuild not implemented')
   }
 
   async upsertOneDossier(
