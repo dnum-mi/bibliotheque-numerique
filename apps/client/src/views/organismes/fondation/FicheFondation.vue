@@ -67,7 +67,7 @@ const currentTab = ref<string | undefined>(undefined)
             <template #icon>
               <span class="fr-icon-team-fill" aria-hidden="true" />
             </template>
-            <DirigeantTab :persons="foundation.persons" :is-person-data-private="foundation.isPersonDataPrivate" />
+            <DirigeantTab :persons="foundation.persons" />
           </BnTab>
 
           <!--  Files  -->

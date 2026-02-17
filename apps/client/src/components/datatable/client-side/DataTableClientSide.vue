@@ -286,6 +286,11 @@ watch(selectedRows, (newValue) => {
         />
       </template>
     </Column>
+    <template #empty>
+      <div class="flex justify-center items-center py-8 text-gray-500">
+        Aucune donnée disponible.
+      </div>
+    </template>
     <template
       #paginatorcontainer="{ first, last, page, pageCount, changePageCallback, totalRecords }"
     >

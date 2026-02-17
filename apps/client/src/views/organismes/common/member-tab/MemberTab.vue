@@ -5,7 +5,6 @@ import MembersCardView from './MembersCardView.vue'
 import { pluralize } from '@/utils/pluralize'
 
 defineProps<{
-  isPersonDataPrivate: boolean
   persons: IPerson[]
 }>()
 

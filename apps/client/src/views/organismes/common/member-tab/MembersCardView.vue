@@ -80,7 +80,9 @@ const entryExitDateTimelineItems = (person: IPerson) => {
         <InfoRow label="Dates (entrée / sortie)">
           <HorizontalTimeline :items="entryExitDateTimelineItems(person)">
             <template #empty>
-              Aucune publication
+              <span>
+                -
+              </span>
             </template>
           </HorizontalTimeline>
         </InfoRow>
@@ -97,28 +99,42 @@ const entryExitDateTimelineItems = (person: IPerson) => {
               </p>
               <template v-if="person.legalEntity.publicId">
                 <!-- TODO: A compléter une fois disponible -->
-                <!-- <InfoRow label="Nom de la personne morale">{{ person.legalEntity.name }}</InfoRow>
-                <InfoRow label="Numéro d'identifiant">{{ person.legalEntity.siren }}</InfoRow> -->
-                <InfoRow label="Type de personne morale">
-                  {{ person.legalEntity.type }}
+                <InfoRow label="Nom de la personne morale">
+                  {{ person.legalEntity.name || '-' }}
                 </InfoRow>
-                <!-- <InfoRow label="Forme juridique">{{ person.legalEntity.legalForm }}</InfoRow>
-                <InfoRow label="Libellé NAF">{{ person.legalEntity.nafLabel }}</InfoRow>
-                <InfoRow label="Adresse du siège">{{ person.legalEntity.address?.oneLine }}</InfoRow> -->
+                <InfoRow label="Numéro d'identifiant">
+                  {{ person.legalEntity.publicId || '-' }}
+                </InfoRow>
+                <InfoRow label="Type de personne morale">
+                  {{ person.legalEntity.type || '-' }}
+                </InfoRow>
+                <InfoRow label="Adresse du siège">
+                  {{ person.legalEntity.address?.oneLine || '-' }}
+                </InfoRow>
+                <InfoRow label="Pays">
+                  {{ person.legalEntity.country || '-' }}
+                </InfoRow>
               </template>
 
               <template v-else>
-                <!-- <InfoRow label="Dénomination">{{ person.legalEntity.name }}</InfoRow> -->
-                <InfoRow label="Type de personne morale">
-                  {{ person.legalEntity.type }}
+                <InfoRow label="Dénomination">
+                  {{ person.legalEntity.name || '-' }}
                 </InfoRow>
-                <!-- <InfoRow label="Adresse du siège">{{ person.legalEntity.address?.oneLine }}</InfoRow> -->
+                <InfoRow label="Type de personne morale">
+                  {{ person.legalEntity.type || '-' }}
+                </InfoRow>
+                <InfoRow label="Adresse du siège">
+                  {{ person.legalEntity.address?.oneLine || '-' }}
+                </InfoRow>
+                <InfoRow label="Pays">
+                  {{ person.legalEntity.country || '-' }}
+                </InfoRow>
               </template>
             </div>
           </template>
           <div class="subinfo-bg px-4 py-2">
             <p class="fr-text--sm fr-mb-1w subinfo-title">
-              Identité du déclarant
+              Identité de la personne
             </p>
             <InfoRow label="Date et lieu de naissance">
               <template v-if="person.bornAt || person.bornPlace">

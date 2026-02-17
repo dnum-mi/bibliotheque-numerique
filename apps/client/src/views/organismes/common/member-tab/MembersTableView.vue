@@ -20,6 +20,8 @@ const props = defineProps<{
   persons: IPersonExtended[]
 }>()
 
+const dateNow = new Date()
+
 const baseHeaders: HeaderDataTable[] = [
   { field: 'id', text: 'Id', type: 'hidden' },
   { field: 'isFounder', text: 'Statut', renderer: markRaw(PersonStatutBadge) },
@@ -74,29 +76,38 @@ const rowsData = computed<IPersonWithAuthorizeOption[]>(() => {
 
 const currentPeople = computed(() =>
   rowsData.value
-    .filter(person => !person.exitAt)
+    .filter(person => {
+      if (!person.exitAt) {
+        return true
+      }
+
+      return new Date(person.exitAt) > dateNow
+    })
     .sort((a, b) => getJobPositionWeight(a.jobPosition) - getJobPositionWeight(b.jobPosition)),
 )
 
 const formerPeople = computed(() =>
   rowsData.value
-    .filter(person => !!person.exitAt)
+    .filter(person => {
+      if (!person.exitAt) {
+        return false
+      }
+
+      return new Date(person.exitAt) <= dateNow
+    })
     .sort((a, b) => new Date(b.exitAt!).getTime() - new Date(a.exitAt!).getTime()),
 )
 
-const createHeaders = (data: IPersonWithAuthorizeOption[], isHistory: boolean) => {
+const createHeaders = (data: IPersonWithAuthorizeOption[]) => {
   let h = [...baseHeaders]
-  if (!isHistory) {
-    h = h.filter(col => col.field !== 'exitAt')
-  }
   if (!hasLegalEntity(data)) {
     h = h.filter(col => col.field !== 'legalEntity')
   }
   return h
 }
 
-const currentHeaders = computed(() => createHeaders(currentPeople.value, false))
-const formerHeaders = computed(() => createHeaders(formerPeople.value, true))
+const currentHeaders = computed(() => createHeaders(currentPeople.value))
+const formerHeaders = computed(() => createHeaders(formerPeople.value))
 </script>
 
 <template>
@@ -113,7 +124,7 @@ const formerHeaders = computed(() => createHeaders(formerPeople.value, true))
       />
     </section>
 
-    <section v-if="formerPeople.length">
+    <section>
       <h1 class="fr-h4">
         Liste synthétique historique
       </h1>
