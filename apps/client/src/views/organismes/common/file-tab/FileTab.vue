@@ -2,7 +2,7 @@
 import { typeFileArray } from '@biblio-num/shared'
 import type { IFile, organismeCategoryKey } from '@biblio-num/shared'
 import { dateToStringFr } from '@/utils/date-to-string'
-import { fetchHubFileBlobForPreview } from '@/utils/downloadFile'
+import { fetchHubFileBlobForPreview, downloadHubMultipleFiles } from '@/utils/downloadFile'
 import type { HeaderDataTable } from '@/shared/types'
 import type { RowDataType } from '@/components/datatable/client-side/DataTableClientSide.vue'
 import { DsfrButton } from '@gouvminint/vue-dsfr'
@@ -22,6 +22,7 @@ const props = defineProps<{
 const isPreviewOpen = ref(false)
 const previewLoading = ref(false)
 const fileData = ref<{ name: string; url: string; extension: string } | null>(null)
+const isDownloading = ref(false)
 
 const headers: HeaderDataTable[] = [
   { field: 'id', text: 'ID', type: 'hidden' },
@@ -84,7 +85,22 @@ const handleSelection = (items: any[]) => {
 }
 
 const handleDownloadSelected = async () => {
-  console.warn('À implémenter')
+  if (isDownloading.value) {
+    return
+  }
+  try {
+    isDownloading.value = true
+    const fileIds = selectedFiles.value.map(({ id }) => id)
+    await downloadHubMultipleFiles({
+      organismeType: props.organismeType || 'association',
+      organismeId: props.organismeId || '',
+      fileIds,
+    })
+  } catch (error) {
+    console.error('Erreur lors du téléchargement :', error)
+  } finally {
+    isDownloading.value = false
+  }
 }
 
 const handleViewFile = async (file: IFile) => {
@@ -139,11 +155,11 @@ const closeViewer = () => {
         {{ selectedFilesDisplay }}
       </p>
       <DsfrButton
-        icon="fr-icon-download-line"
-        label="Télécharger les pièces"
+        :icon="isDownloading ? { name: 'ri-refresh-line', animation: 'spin' } : 'fr-icon-download-line'"
+        :label="isDownloading ? 'Téléchargement...' : 'Télécharger les pièces'"
         tertiary
         size="sm"
-        :disabled="!selectedFiles.length"
+        :disabled="!selectedFiles.length || isDownloading"
         @click="handleDownloadSelected"
       />
     </div>

@@ -1,4 +1,4 @@
-import { Controller, Get, NotFoundException, Param, Response } from '@nestjs/common'
+import { Body, Controller, Get, NotFoundException, Param, Post, Response } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
 import {
@@ -14,6 +14,7 @@ import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.de
 import { HubService, IHubFileResponse } from '@/modules/hub/providers/hub.service'
 import { Stream } from 'stream'
 import { HttpHeaders } from '@/shared/constants/http-headers.constants'
+import { DownloadMultipleFilesDto } from '../objects/dto/input/download-multiple-files.dto'
 
 @ApiTags('HUB')
 @Controller('hub')
@@ -134,6 +135,25 @@ export class HubController {
   }
 
   @UsualApiOperation({
+    summary: 'Télécharge une archive ZIP contenant plusieurs fichiers d\'une association.',
+    method: 'POST',
+    minimumRole: Roles.instructor,
+    responseType: null,
+  })
+  @Post('/association/:associationId/files')
+  @Role(Roles.instructor)
+  async downloadAssociationMultipleFiles(
+    @Param('associationId') associationId: string,
+    @Body() dto: DownloadMultipleFilesDto,
+    @Response() response,
+  ): Promise<void> {
+    this.logger.verbose(`downloadAssociationMultipleFiles ${associationId}`)
+    const filesResponse = await this.hubService.getAssociationMultipleFiles(associationId, dto.fileIds)
+
+    return this._handleDownloadFile(filesResponse, response)
+  }
+
+  @UsualApiOperation({
     summary: 'Télécharge un fichier d\'une fondation à partir de son id.',
     method: 'GET',
     minimumRole: Roles.instructor,
@@ -150,6 +170,25 @@ export class HubController {
     const fileResponse = await this.hubService.getFoundationFile(foundationId, fileId)
 
     return this._handleDownloadFile(fileResponse, response)
+  }
+
+  @UsualApiOperation({
+    summary: 'Télécharge une archive ZIP contenant plusieurs fichiers d\'une fondation.',
+    method: 'POST',
+    minimumRole: Roles.instructor,
+    responseType: null,
+  })
+  @Post('/foundation/:foundationId/files')
+  @Role(Roles.instructor)
+  async downloadFoundationMultipleFiles(
+    @Param('foundationId') foundationId: string,
+    @Body() dto: DownloadMultipleFilesDto,
+    @Response() response,
+  ): Promise<void> {
+    this.logger.verbose(`downloadAssociationMultipleFiles ${foundationId}`)
+    const filesResponse = await this.hubService.getFoundationMultipleFiles(foundationId, dto.fileIds)
+
+    return this._handleDownloadFile(filesResponse, response)
   }
 
    @UsualApiOperation({

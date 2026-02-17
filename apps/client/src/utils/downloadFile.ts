@@ -10,6 +10,12 @@ export interface IDownloadFileParams {
   file: IFile
 }
 
+export interface IDownloadMultipeFilesParams {
+  organismeType: organismeCategoryKey
+  organismeId: string
+  fileIds: string[]
+}
+
 const toaster = useToaster()
 
 const _triggerDownload = (blob: Blob, filename: string) => {
@@ -62,6 +68,19 @@ export const downloadHubFile = async ({ organismeType, organismeId, file }: IDow
     console.error(error)
     toaster.addMessage({
       description: 'Le fichier n\'est pas téléchargeable',
+      type: 'error',
+    })
+  }
+}
+
+export const downloadHubMultipleFiles = async ({ organismeType, organismeId, fileIds }: IDownloadMultipeFilesParams) => {
+  try {
+    const response = await hubApiClient.hubGetMultipleFiles(organismeType, organismeId, fileIds)
+    return _commonDownloadFile(response, organismeId, '.zip')
+  } catch (error) {
+    console.error(error)
+    toaster.addMessage({
+      description: 'Impossible de télécharger les fichiers',
       type: 'error',
     })
   }

@@ -87,6 +87,30 @@ export class HubService {
     }
   }
 
+  async _getMultipleFilesToStream(id: string, uuids: string[], pathRoot: string): Promise<IHubFileResponse> {
+    this.logger.verbose('HUB-getMultipleFilesToStream')
+    const url = `${pathRoot}/${id}/attachments`
+
+    try {
+      const resp = await this.axiosFiles.post(
+        url,
+        [...uuids],
+        { responseType: 'stream' },
+      )
+
+      return {
+        data: resp.data,
+        headers: resp.headers,
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === HttpStatusCode.NotFound) {
+        this.logger.warn('HUB-getMultipleFilesToStream: Fichiers introuvables')
+        throw new NotFoundException('Les fichiers demandés sont introuvables.')
+      }
+      throw error
+    }
+  }
+
   //#region ASSOCIATIONS
   async getAssociation(idRna: string): Promise<IAssociationOutput | null> {
     this.logger.verbose('HUB-getAssociation')
@@ -110,6 +134,11 @@ export class HubService {
   async getAssociationFile(id: string, uuid: string): Promise<IHubFileResponse> {
     this.logger.verbose('HUB-getAssociationFile')
     return this._getFileToStream(id, uuid, ePathCompletedOrganismeByType.association)
+  }
+
+  async getAssociationMultipleFiles(id: string, uuids: string[]): Promise<IHubFileResponse> {
+    this.logger.verbose('HUB-getAssociationMultipleFiles')
+    return this._getMultipleFilesToStream(id, uuids, ePathCompletedOrganismeByType.association)
   }
   //#endregion ASSOCIATIONS
 
@@ -140,6 +169,11 @@ export class HubService {
   async getFoundationFile(id: string, uuid: string): Promise<IHubFileResponse> {
     this.logger.verbose('HUB-getFoundationFile')
     return this._getFileToStream(id, uuid, ePathCompletedOrganismeByType.foundation)
+  }
+
+  async getFoundationMultipleFiles(id: string, uuids: string[]): Promise<IHubFileResponse> {
+    this.logger.verbose('HUB-getFoundationMultipleFiles')
+    return this._getMultipleFilesToStream(id, uuids, ePathCompletedOrganismeByType.foundation)
   }
   //#endregion FOUNDATIONS
 

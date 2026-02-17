@@ -556,6 +556,14 @@ export const hubApiClient = {
     const correctType = type === EOrganismeCategory.association ? 'association' : 'foundation'
     return apiClientInstance.get(`/hub/${correctType}/${organismeId}/file/${id}`, { responseType: 'blob' })
   },
+  hubGetMultipleFiles: (type: organismeCategoryKey, organismeId: string, fileIds: string[]) => {
+    const correctType = type === EOrganismeCategory.association ? 'association' : 'foundation'
+    return apiClientInstance.post(
+      `/hub/${correctType}/${organismeId}/files`,
+      { fileIds },
+      { responseType: 'blob' },
+    )
+  },
   hubGetRna: (sentence: string): Promise<IFoundationOutput> => {
     return getWithoutRedirectTo404(hubGetRna(sentence))
   },
