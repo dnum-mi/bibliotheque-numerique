@@ -36,6 +36,7 @@ import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.d
 import { InjectQueue } from '@nestjs/bull'
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
 import { CustomBullService } from '@/shared/modules/custom-bull/custom-bull.service'
+import { ProjectionManagerService } from '@/modules/projection/services/projection-manager/projection-manager.service'
 
 @Injectable()
 export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
@@ -47,6 +48,7 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
     private readonly customBullService: CustomBullService,
     @InjectQueue(QueueName.sync)
     private readonly syncQueue: Queue,
+    private readonly projectionManagerService: ProjectionManagerService,
   ) {
     super(repo, logger)
     this.logger.setContext(this.constructor.name)
@@ -196,6 +198,7 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
       dsPublishedAt: raw.demarche.datePublication,
     })
     this.logger.debug('demarche - created')
+    await this.projectionManagerService.buildTablesForOneDemarche(demarche)
     await this._synchroniseAllDossier(demarche.id, demarche.dsDataJson.number, true)
   }
 
@@ -237,8 +240,8 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
         : {}),
     }
     await this.repo.update({ id: demarche.id }, toUpdate)
+    await this.projectionManagerService.buildTablesForOneDemarche(demarche)
     job.log('demarche - updated')
-
     await this._synchroniseAllDossier(demarche.id, demarche.dsDataJson.number, fromScratch, demarche.lastSynchronisedAt)
   }
 }

@@ -32,7 +32,7 @@ export class ProjectionManagerService {
       .then(a => !!a?.[0].exists)
   }
 
-  private async _buildTablesForOneDemarche(demarche: Demarche): Promise<void> {
+  public async buildTablesForOneDemarche(demarche: Demarche): Promise<void> {
     const fieldTableName = ProjectionManagerService.buildFieldTableName(demarche.id)
     const dossierTableName = ProjectionManagerService.buildDossierTableName(demarche.id)
     if (!(await this._doesTableExists(fieldTableName))) {
@@ -50,7 +50,7 @@ export class ProjectionManagerService {
     this.logger.log('onModuleInit: Ensuring projection tables exist')
     const demarches = await this.demarcheRepository.find()
     for (const demarche of demarches) {
-      await this._buildTablesForOneDemarche(demarche)
+      await this.buildTablesForOneDemarche(demarche)
     }
 
     this.logger.log('✅ Projection tables are all presents')
