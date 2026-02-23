@@ -35,7 +35,7 @@ const unauthenticatedQuickLinks: QuickLink[] = [
 
 const organismesQuickLink: QuickLink = {
   label: 'Organismes',
-  to: { name: routeNames.LISTE_ORGANISMES },
+  to: { name: routeNames.SEARCH_ORGANISMES },
   icon: 'fr-icon-building-line',
   iconAttrs: { title: 'Organismes' },
 }
