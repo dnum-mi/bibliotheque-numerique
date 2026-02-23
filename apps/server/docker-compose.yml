@@ -1,6 +1,21 @@
-version: '3.9'
 
 services:
+  http-proxy:
+    profiles:
+      - dev
+    build:
+      context: ../../
+      dockerfile: ./apps/http-proxy/Dockerfile
+    container_name: http-proxy
+    image: biblio-num/http-proxy
+    platform: linux/amd64
+    ports:
+      - "${HTTP_PROXY_PORT:-8088}:8088"
+    networks:
+      - biblio-num-network
+    environment:
+      TYPE_NGINX: bn
+
   client:
     profiles:
       - dev
@@ -11,45 +26,49 @@ services:
     image: biblio-num/client:dev
     container_name: biblio-num_client
     ports:
-      - 8080:8080
+      - "${CLIENT_PORT:-8080}:8080"
     networks:
       - biblio-num-network
-    command: pnpm --filter @biblio-num/client run dev:client-in-docker
+    command: pnpm --filter @biblio-num/client run dev #:client-in-docker
+    env_file: # À injecter les variables dans le container au runtime.
+      - .env.docker
 
   server:
     profiles:
       - dev
     build:
-      target: builder
+      target: production
       context: ../../
       dockerfile: ./apps/server/Dockerfile
     image: biblio-num/server:dev
+    platform: linux/amd64
     container_name: biblio-num_server
     depends_on:
       - db
     ports:
-      - 3000:3000
+      - "${PORT:-3000}:3000"
     networks:
       - biblio-num-network
-    command: pnpm run dev:server-in-docker
-    env_file:
+    env_file: # À injecter les variables dans le container au runtime.
       - .env.docker
+
 
   worker-sync:
     profiles:
       - dev
     build:
-      target: builder
+      target: production
       context: ../../
       dockerfile: ./apps/server/Dockerfile
     image: biblio-num/worker-sync:dev
+    platform: linux/amd64
     container_name: biblio-num_worker_sync
     depends_on:
       - db
     networks:
       - biblio-num-network
     command: pnpm run start:worker-sync
-    env_file:
+    env_file: # À injecter les variables dans le container au runtime.
       - .env.docker
 
   worker-file:
@@ -60,14 +79,16 @@ services:
       context: ../../
       dockerfile: ./apps/server/Dockerfile
     image: biblio-num/worker-file:dev
+    platform: linux/amd64
     container_name: biblio-num_worker_file
     depends_on:
       - db
     networks:
       - biblio-num-network
     command: pnpm run start:worker-file
-    env_file:
+    env_file: # À injecter les variables dans le container au runtime.
       - .env.docker
+
   db:
     profiles:
       - dev
@@ -80,9 +101,8 @@ services:
       POSTGRES_DB: biblio-num
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-#    Les developpeurs devraient configurer leur propre override de port dans docker-compose.override.yml si ils souhaitent changer
-    # ports:
-    #  - "5432:5432"
+    ports:
+      - "${POSTGRES_EXT_PORT:-5432}:5432"
     volumes:
       - ./docker/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
       - type: volume
@@ -96,9 +116,8 @@ services:
       - adminer
       - dev
     image: adminer
-#    Les developpeurs devraient configurer leur propre override de port dans docker-compose.override.yml si ils souhaitent changer
-#    ports:
-#      - 8010:8080
+    ports:
+      - "${ADMINER_PORT:-8010}:8080"
     environment:
       - ADMINER_DEFAULT_SERVER=db
       - ADMINER_DEFAULT_SYSTEM=PostgreSQL
@@ -113,9 +132,8 @@ services:
     container_name: biblio-num_dbadmin
     depends_on:
       - db
-#    Les developpeurs devraient configurer leur propre override de port dans docker-compose.override.yml si ils souhaitent changer
-#    ports:
-#      - 3010:80
+    ports:
+      - "${PGADMIN_PORT:-3020}:80"
     volumes:
       - type: volume
         source: biblio-num-pgadmin-volume
@@ -133,10 +151,9 @@ services:
       - tests-e2e
     container_name: mailhog
     image: mailhog/mailhog
-#    Les developpeurs devraient configurer leur propre override de port dans docker-compose.override.yml si ils souhaitent changer
-#    ports:
-#        - 1025:1025
-#        - 8025:8025
+    ports:
+      - "${SMTP_PORT:-1025}:1025"
+      - "${MAILHOG_WEB_PORT:-8025}:8025"
     networks:
       - biblio-num-network
 
@@ -156,8 +173,40 @@ services:
         source: biblio-num-s3-volume
         target: /data
     command: server --address ":9000" --console-address ":9001" /data
+    ports:
+      - "${MINIO_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
     networks:
       - biblio-num-network
+
+  s3-init:
+    profiles:
+      - dev
+      - simple-dev
+      - tests-e2e
+      - s3-only
+    image: minio/mc:RELEASE.2024-01-13T08-44-48Z
+    depends_on:
+      - s3
+    networks:
+      - biblio-num-network
+    entrypoint: >
+      /bin/sh -c "
+      until mc alias set local http://s3:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD; do
+        echo 'waiting for minio...'; sleep 2;
+      done;
+      mc mb -p local/$$MINIO_DEFAULT_BUCKET || true;
+      mc admin user add local $$ACCESS_KEY_ID$$SECRET_ACCESS_KEY || true;
+      mc admin policy attach local readwrite --user $$ACCESS_KEY_ID;
+      echo 'MinIO init done';
+      "
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-admin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-password}
+      MINIO_DEFAULT_BUCKET: ${MINIO_DEFAULT_BUCKET:-super-bucket}
+      MINIO_APP_ACCESS_KEY: ${ACCESS_KEY_ID:-bn-access}
+      MINIO_APP_SECRET_KEY: ${SECRET_ACCESS_KEY:-bn-secret-please-change}
+
 
   redis:
     profiles:
@@ -170,9 +219,8 @@ services:
     platform: linux/amd64
     environment:
       - REDIS_PASSWORD=redis
-#    Les developpeurs devraient configurer leur propre override de port dans docker-compose.override.yml si ils souhaitent changer
-#    ports:
-#      - "6379:6379"
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
     networks:
       - biblio-num-network
 
@@ -182,9 +230,8 @@ services:
       - simple-dev
     container_name: bullboard
     image: deadly0/bull-board
-#    Les developpeurs devraient configurer leur propre override de port dans docker-compose.override.yml si ils souhaitent changer
-#    ports:
-#      - 3010:3000
+    ports:
+      - "${BULLBOARD_PORT:-3010}:3000"
     networks:
       - biblio-num-network
     environment:
@@ -206,9 +253,9 @@ services:
       dockerfile: ./apps/http-proxy/Dockerfile
     container_name: http-proxy-auth
     image: biblio-num/http-proxy-auth
-#    Les developpeurs devraient configurer leur propre override de port dans docker-compose.override.yml si ils souhaitent changer
-#    ports:
-#      - 8888:8080
+    platform: linux/amd64
+    ports:
+      - "${HTTP_PROXY_AUTH_PORT:-8888}:8080"
     networks:
       - biblio-num-network
     environment:

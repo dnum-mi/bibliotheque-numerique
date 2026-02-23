@@ -30,7 +30,7 @@ RUN npm run build:client
 FROM public.ecr.aws/bitnami/nginx:latest as production
 
 COPY --from=builder /app/apps/client/dist /app
-COPY --from=copy-source /app/docker/nginx/bn-rnf.conf /opt/bitnami/nginx/conf/server_blocks/bn.conf
+COPY --from=copy-source /app/docker/nginx/bn.conf /opt/bitnami/nginx/conf/server_blocks/bn.conf
 COPY --from=copy-source /app/apps/client/entrypoint.sh /entrypoint.sh
 
 USER root

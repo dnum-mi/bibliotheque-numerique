@@ -20,6 +20,7 @@ Dans tous les modes d'installation, il est nécessaire d'avoir les outils suivan
 
 - [Nodejs](https://nodejs.org/en/download/) *- environnement d'exécution javascript/typescript*
 - [Pnpm](https://pnpm.io/installation) *- gestionnaire de paquets et workspaces pour javascript*
+- [turbo](https://turbo.build/repo/docs) *- Outil de monorepo*
 
 #### 2. Les APIs externes pour les tests
 
@@ -28,36 +29,35 @@ Dans tous les modes d'installation, il est nécessaire d'avoir les outils suivan
 
 ### Lancer les applications
 
-#### Architecture
+#### 1. Architecture
 
 Les outils et les services sont lancé sous forme de conteneurs Docker
 
-##### Les services utilisés
+* ##### Les services utilisés
 
-- [Postgres](https://www.postgresql.org/) *- Le systeme de base de données relationnel*
-- [Redis](https://redis.io/) *- Pour le systeme de Queue*
-- [Minio](https://min.io/) *- Pour le systeme de stockage de fichiers S3*
-- [mailhog](https://github.com/mailhog/MailHog) *- un faux server SMTP pour récuper les e-mails*
+  - [Postgres](https://www.postgresql.org/) *- Le systeme de base de données relationnel*
+  - [Redis](https://redis.io/) *- Pour le systeme de Queue*
+  - [Minio](https://min.io/) *- Pour le systeme de stockage de fichiers S3*
+  - [mailhog](https://github.com/mailhog/MailHog) *- un faux server SMTP pour récuper les e-mails*
 
-##### Les outils d'administration
+* ##### Les outils d'administration
 
-- [pgAdmin](https://www.pgadmin.org/) *- Outil d'administration de base données*
-- [Adminer](https://www.adminer.org/) *- Outil d'administration de base données léger*
-- [bull-board](https://github.com/felixmosh/bull-board) *- Outil de suivi de jobs et queues*
+  - [pgAdmin](https://www.pgadmin.org/) *- Outil d'administration de base données*
+  - [Adminer](https://www.adminer.org/) *- Outil d'administration de base données léger*
+  - [bull-board](https://github.com/felixmosh/bull-board) *- Outil de suivi de jobs et queues*
 
-#### Lancer en mode simple avec les conteneurs Docker
+#### 2. Lancer en mode simple avec les conteneurs Docker
 
 ```bash
 # cloner le projet
-git clone  https://github.com/dnum-mi/bibliotheque-numerique.git
+git clone https://github.com/dnum-mi/bibliotheque-numerique.git
 
 cd bibliotheque_numerique
 
 bin/start.sh
-
 ```
 
-#### Lancer en mode développement
+#### 3. Lancer en mode développement
 
 La page [DEVELOPMENT](docs/Developpement/development.md) explique comment lancer la Bibliothèque Numérique en mode développement.
 
