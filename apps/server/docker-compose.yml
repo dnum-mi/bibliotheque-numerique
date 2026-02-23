@@ -2,11 +2,11 @@
 services:
   bn-http-proxy:
     profiles:
-      - dev
+      - prod
     build:
       context: ../../
       dockerfile: ./apps/http-proxy/Dockerfile
-    container_name: http-proxy
+    container_name: biblio-num_http-proxy
     depends_on:
       - client
       - server
@@ -21,7 +21,7 @@ services:
 
   client:
     profiles:
-      - dev
+      - prod
     build:
       target: builder
       context: ../../
@@ -38,7 +38,7 @@ services:
 
   server:
     profiles:
-      - dev
+      - prod
     build:
       target: production
       context: ../../
@@ -58,7 +58,7 @@ services:
 
   worker-sync:
     profiles:
-      - dev
+      - prod
     build:
       target: production
       context: ../../
@@ -76,7 +76,7 @@ services:
 
   worker-file:
     profiles:
-      - dev
+      - prod
     build:
       target: builder
       context: ../../
@@ -94,7 +94,7 @@ services:
 
   db:
     profiles:
-      - dev
+      - prod
       - simple-dev
       - db-only
       - ci
@@ -117,7 +117,7 @@ services:
   adminer:
     profiles:
       - adminer
-      - dev
+      - prod
     image: adminer
     ports:
       - "${DC_ADMINER_PORT:-8010}:8080"
@@ -149,7 +149,7 @@ services:
 
   mailhog:
     profiles:
-      - dev
+      - prod
       - simple-dev
       - tests-e2e
     container_name: mailhog
@@ -162,7 +162,7 @@ services:
 
   s3:
     profiles:
-      - dev
+      - prod
       - simple-dev
       - tests-e2e
       - s3-only
@@ -184,7 +184,7 @@ services:
 
   s3-init:
     profiles:
-      - dev
+      - prod
       - simple-dev
       - tests-e2e
       - s3-only
@@ -213,7 +213,7 @@ services:
 
   redis:
     profiles:
-      - dev
+      - prod
       - simple-dev
       - ci
     image: public.ecr.aws/bitnami/redis:latest
@@ -229,7 +229,7 @@ services:
 
   bullboard:
     profiles:
-      - dev
+      - prod
       - simple-dev
     container_name: bullboard
     image: deadly0/bull-board
@@ -249,8 +249,7 @@ services:
 
   http-proxy-auth:
     profiles:
-      - dev
-      # - simple-dev
+      - prod
     build:
       context: ../../
       dockerfile: ./apps/http-proxy/Dockerfile

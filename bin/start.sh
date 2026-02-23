@@ -56,8 +56,8 @@ echo "✅ Prérequis OK"
 
 # Lancement des services
 echo "📦 Lancement des services..."
-docker compose --env-file "$ENV_FILE" --profile dev -f apps/server/docker-compose.yml -p bn build --no-cache server
-docker compose --env-file "$ENV_FILE" --profile dev -f apps/server/docker-compose.yml -p bn up -d
+docker compose --env-file "$ENV_FILE" --profile prod -f apps/server/docker-compose.yml -p bn build --no-cache server
+docker compose --env-file "$ENV_FILE" --profile prod -f apps/server/docker-compose.yml -p bn up -d
 
 echo ""
 echo "🎉 Bibliothèque Numérique est lancée !"

@@ -37,7 +37,7 @@
     "docker:db:up": "docker compose --env-file apps/server/.env --profile db-only -f apps/server/docker-compose.yml up -d",
     "docker:s3:up": "docker compose --env-file apps/server/.env --profile s3-only -f apps/server/docker-compose.yml up -d",
     "docker:simple-dev": "docker compose --env-file apps/server/.env --profile simple-dev -f apps/server/docker-compose.yml up -d",
-    "docker:dev": "docker compose --env-file apps/server/.env --profile dev -f apps/server/docker-compose.yml up -d",
+    "docker:prod": "docker compose --env-file apps/server/.env --profile prod -f apps/server/docker-compose.yml up -d",
     "docker:ci:down": "docker compose --env-file apps/server/.env.docker -f apps/server/docker-compose.yml down",
     "docker:down": "docker compose -f apps/server/docker-compose.yml down",
     "docker:adminer": "docker compose --env-file apps/server/.env --profile adminer -f apps/server/docker-compose.yml up -d",
