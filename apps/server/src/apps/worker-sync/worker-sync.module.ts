@@ -31,6 +31,7 @@ import fileConfig from '../../config/file.config'
 import { WokerSyncService } from './woker-sync.service'
 import siafHubConfig from '../../config/siaf-hub.config'
 import { RedisModule } from '@/shared/modules/redis/redis.module'
+import { ProjectionModule } from '@/modules/projection/projection.module'
 
 @Module({
   imports: [
@@ -66,6 +67,7 @@ import { RedisModule } from '@/shared/modules/redis/redis.module'
     BnConfigurationModule,
     S3Module,
     RedisModule,
+    ProjectionModule,
   ],
   controllers: [],
   providers: [

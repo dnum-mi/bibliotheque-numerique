@@ -222,11 +222,13 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
       demarche.identification,
     )
 
+    const isInNeedToBeUpdated = raw.dateDerniereModification !== demarche.dsDataJson.dateDerniereModification ||
+      fromScratch
+
     const toUpdate = {
       // TODO: System à revoir, car elle représente la date de synchronisation des dossiers
       lastSynchronisedAt: new Date(),
-      ...(raw.dateDerniereModification !==
-        demarche.dsDataJson.dateDerniereModification || fromScratch
+      ...(isInNeedToBeUpdated
         ? {
           title: raw.title,
           state: raw.state,
@@ -240,7 +242,9 @@ export class DemarcheSynchroniseService extends BaseEntityService<Demarche> {
         : {}),
     }
     await this.repo.update({ id: demarche.id }, toUpdate)
-    await this.projectionManagerService.buildTablesForOneDemarche(demarche)
+    if (isInNeedToBeUpdated) {
+      await this.projectionManagerService.buildTablesForOneDemarche(demarche, true)
+    }
     job.log('demarche - updated')
     await this._synchroniseAllDossier(demarche.id, demarche.dsDataJson.number, fromScratch, demarche.lastSynchronisedAt)
   }

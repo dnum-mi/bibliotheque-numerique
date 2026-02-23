@@ -32,14 +32,15 @@ export class ProjectionManagerService {
       .then(a => !!a?.[0].exists)
   }
 
-  public async buildTablesForOneDemarche(demarche: Demarche): Promise<void> {
+  public async buildTablesForOneDemarche(demarche: Demarche, force = false): Promise<void> {
+    this.logger.verbose('buildTablesForOneDemarche')
     const fieldTableName = ProjectionManagerService.buildFieldTableName(demarche.id)
     const dossierTableName = ProjectionManagerService.buildDossierTableName(demarche.id)
-    if (!(await this._doesTableExists(fieldTableName))) {
+    if (!(await this._doesTableExists(fieldTableName)) || force) {
       this.logger.log(`Building field projection table (${demarche.title})`)
       await this.fieldProjection.rebuild(demarche)
     }
-    if (!(await this._doesTableExists(dossierTableName))) {
+    if (!(await this._doesTableExists(dossierTableName)) || force) {
       this.logger.log(`Building dossier projection table (${demarche.title})`)
       await this.dossierProjection.rebuild(demarche)
     }

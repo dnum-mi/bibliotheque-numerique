@@ -8,7 +8,7 @@ import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.en
 import {
   AnonymiseOneDemarcheJobPayload,
   AnonymiseOneDossierJobPayload,
-  DeleteS3FilesJobPayload,
+  DeleteS3FilesJobPayload, RebuildProjectionTablesPayload,
   SyncOneDossierJobPayload,
 } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
 import { Job, Queue } from 'bull'
@@ -100,26 +100,26 @@ export class DossierProcessor extends CustomBaseProcessor {
       const limitDate = addMonths(new Date(), -demarche.nbrMonthAnonymisation)
       const whereQuery: FindManyOptions<Dossier>['where'] = {}
       switch (demarche.anonymizationEvent) {
-      case eAnonymisationEvent.DepotDate:
-        whereQuery.dateDepot = LessThan(limitDate)
-        break
-      case eAnonymisationEvent.AcceptedDate:
-        whereQuery.dateTraitement = LessThan(limitDate)
-        whereQuery.state = DossierState.Accepte
-        break
-      case eAnonymisationEvent.DecisionDate:
-        whereQuery.dateTraitement = LessThan(limitDate)
-        whereQuery.state = In([
-          DossierState.Accepte,
-          DossierState.Refuse,
-          DossierState.SansSuite,
-        ])
-        break
-      default:
-        this.logger.warn(
-          `unknown event (${demarche.anonymizationEvent}) to anonymise demarche ${demarche.dsDataJson.number}`,
-        )
-        return
+        case eAnonymisationEvent.DepotDate:
+          whereQuery.dateDepot = LessThan(limitDate)
+          break
+        case eAnonymisationEvent.AcceptedDate:
+          whereQuery.dateTraitement = LessThan(limitDate)
+          whereQuery.state = DossierState.Accepte
+          break
+        case eAnonymisationEvent.DecisionDate:
+          whereQuery.dateTraitement = LessThan(limitDate)
+          whereQuery.state = In([
+            DossierState.Accepte,
+            DossierState.Refuse,
+            DossierState.SansSuite,
+          ])
+          break
+        default:
+          this.logger.warn(
+            `unknown event (${demarche.anonymizationEvent}) to anonymise demarche ${demarche.dsDataJson.number}`,
+          )
+          return
       }
       const dossiers = await this.dossierService.repository.find({
         where: {
@@ -136,10 +136,17 @@ export class DossierProcessor extends CustomBaseProcessor {
         await this.syncQueue.add(eJobName.AnonymiseOneDossier, {
           dossier,
           demarche,
+          priority: 1,
         } as AnonymiseOneDossierJobPayload)
 
         job.progress(job.progress() + dossierStep)
       }
+
+      await this.syncQueue.add(eJobName.RebuildProjectionTables, {
+        demarche: job.data.demarche,
+        priority: 100, // we want to be sure it happens AFTER all dossier have been anonymised
+      } as RebuildProjectionTablesPayload)
+
       job.progress(100)
     })
   }

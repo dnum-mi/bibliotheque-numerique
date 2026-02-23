@@ -48,9 +48,15 @@ export class ProjectionSearchService {
       ? ''
       : buildPaginationQuery(dto.page || 1, dto.perPage || 20)
 
+    const selectedColumnsSql = dto.columns.length
+      ? dto.columns.map((c) => `"${c}"`).join(',')
+      : '*'
+
     const query = `
-      SELECT *,
-             COUNT(*) OVER() AS total
+      SELECT
+        "dossierId",
+        ${selectedColumnsSql},
+        COUNT(*) OVER() AS total
       FROM "${tableName}"
       ${filterSql}
       ${sortSql}

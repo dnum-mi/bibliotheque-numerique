@@ -69,10 +69,10 @@ export class FieldProjectionService {
 
       CREATE TABLE "${tableName}"
       (
-        dossierId           bigint  NOT NULL,
+        "dossierId"           bigint  NOT NULL,
         projectionRowIndex integer NOT NULL,
         ${columnDefinitions},
-        PRIMARY KEY (dossierId, projectionRowIndex)
+        PRIMARY KEY ("dossierId", projectionRowIndex)
       );
     `
 
@@ -176,7 +176,7 @@ export class FieldProjectionService {
             FROM combinedCTE
           )
         INSERT INTO "${tableName}" (
-          dossierId,
+          "dossierId",
           projectionRowIndex,
           ${fieldsId.map((id) => `"${id}"`).join(',')}
         )

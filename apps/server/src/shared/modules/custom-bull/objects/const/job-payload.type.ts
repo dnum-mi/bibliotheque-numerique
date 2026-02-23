@@ -67,6 +67,10 @@ export type DeleteS3FilesJobPayload = {
   files: File[]
 }
 
+export type RebuildProjectionTablesPayload = {
+  demarche: Demarche
+}
+
 export type AnyJobPayload =
   | SyncAllDemarcheJobPayload
   | SyncOneDemarcheJobPayload
@@ -78,3 +82,4 @@ export type AnyJobPayload =
   | UploadRnaFileJobPayload
   | ComputeFeExcelJobPayload
   | UploadMaarchFileJobPayload
+  | RebuildProjectionTablesPayload

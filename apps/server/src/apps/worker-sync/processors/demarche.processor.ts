@@ -3,6 +3,7 @@ import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-nam
 import { DemarcheService } from '@/modules/demarches/providers/services/demarche.service'
 import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
 import {
+  RebuildProjectionTablesPayload,
   SyncAllDemarcheJobPayload,
   SyncOneDemarcheJobPayload,
 } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
@@ -18,6 +19,7 @@ import { RedisService } from '@/shared/modules/redis/redis.service'
 import { CustomBullService } from '@/shared/modules/custom-bull/custom-bull.service'
 import { CustomBaseProcessor } from '@/shared/modules/custom-bull/custom-base.processor'
 import { IsNull, Not } from 'typeorm'
+import { ProjectionManagerService } from '@/modules/projection/services/projection-manager/projection-manager.service'
 
 @Processor(QueueName.sync)
 export class DemarcheProcessor extends CustomBaseProcessor {
@@ -28,6 +30,7 @@ export class DemarcheProcessor extends CustomBaseProcessor {
     private readonly customBullService: CustomBullService,
     protected redisService: RedisService,
     protected logger: LoggerService,
+    private readonly projectionManager: ProjectionManagerService,
     @Inject(ALS_INSTANCE)
     private readonly als?: AsyncLocalStorage<AsyncLocalStore>,
   ) {
@@ -67,6 +70,14 @@ export class DemarcheProcessor extends CustomBaseProcessor {
         job.data.fromScratch,
         job,
       )
+    })
+  }
+
+  @Process(eJobName.RebuildProjectionTables)
+  async rebuildProjectionManager(job: Job<RebuildProjectionTablesPayload>): Promise<void> {
+    await this.als.run({ job }, async () => {
+      this.logger.verbose('rebuild projection tables')
+      await this.projectionManager.buildTablesForOneDemarche(job.data.demarche, true)
     })
   }
 }
