@@ -53,6 +53,9 @@ items:
     identification: "FE"
     types: ["FE","FDD"]
     dsDataJson: { number: 2}
+    mappingColumns: [
+      { "id": "I-useless", "columnLabel": "Useless", "type": "string" },
+    ]
   demarche-number-3:
     id: 4
     state: "published"
@@ -60,22 +63,25 @@ items:
     identification: "FE"
     types: ["ASSO"]
     dsDataJson: { number: 3 }
+    mappingColumns: [
+      { "id": "I-useless", "columnLabel": "Useless", "type": "string" },
+    ]
   demarche-update-identification:
     id: 5
     state: "published"
     title: "[UPDATE-IDENTIFICATION] Déclaration de FE"
     types: ["ASSO"]
     mappingColumns: [
-      {"id":"I01", "columnLabel":"Identifiant"},
-      {"id":"I02", "columnLabel":"Moment"},
-      {"id":"I03", "columnLabel":"Titre"},
-      {"id":"I04", "columnLabel":"Consentement"},
-      {"id":"I05", "columnLabel":"Etat"},
-      {"id":"I06", "columnLabel":"Delais"},
-      {"id":"I07", "columnLabel":"Excel"},
-      {"id":"I08", "columnLabel":"Montant"},
-      {"id":"I09", "columnLabel":"Pays"},
-      {"id":"I10", "columnLabel":"Organismefinanceur"}
+      {"id":"I01", "columnLabel":"Identifiant", "type": "string"},
+      {"id":"I02", "columnLabel":"Moment", "type": "string"},
+      {"id":"I03", "columnLabel":"Titre", "type": "string"},
+      {"id":"I04", "columnLabel":"Consentement", "type": "string"},
+      {"id":"I05", "columnLabel":"Etat", "type": "string"},
+      {"id":"I06", "columnLabel":"Delais", "type": "string"},
+      {"id":"I07", "columnLabel":"Excel", "type": "number"},
+      {"id":"I08", "columnLabel":"Montant", "type": "number"},
+      {"id":"I09", "columnLabel":"Pays", "type": "string"},
+      {"id":"I10", "columnLabel":"Organismefinanceur", "type": "string"}
     ]
     dsDataJson: {number: 4}
   demarche-delete-identification:
@@ -101,16 +107,16 @@ items:
         "originalLabel": "Etat délai",
         "formatFunctionRef": "delay-status"
     },
-      {"id":"I01", "columnLabel":"Identifiant"},
-      {"id":"I02", "columnLabel":"Moment"},
-      {"id":"I03", "columnLabel":"Titre"},
-      {"id":"I04", "columnLabel":"Consentement"},
-      {"id":"I05", "columnLabel":"Etat"},
-      {"id":"I06", "columnLabel":"Delais"},
-      {"id":"I07", "columnLabel":"Excel"},
-      {"id":"I08", "columnLabel":"Montant"},
-      {"id":"I09", "columnLabel":"Pays"},
-      {"id":"I10", "columnLabel":"Organismefinanceur"}
+      {"id":"I01", "columnLabel":"Identifiant", "type": "string"},
+      {"id":"I02", "columnLabel":"Moment", "type": "string"},
+      {"id":"I03", "columnLabel":"Titre", "type": "string"},
+      {"id":"I04", "columnLabel":"Consentement", "type": "string"},
+      {"id":"I05", "columnLabel":"Etat", "type": "string"},
+      {"id":"I06", "columnLabel":"Delais", "type": "string"},
+      {"id":"I07", "columnLabel":"Excel", "type": "number"},
+      {"id":"I08", "columnLabel":"Montant", "type": "number"},
+      {"id":"I09", "columnLabel":"Pays", "type": "string"},
+      {"id":"I10", "columnLabel":"Organismefinanceur", "type": "string"}
     ]
     dsDataJson: {number: 5}
   demarche-undefined-identification:
@@ -136,16 +142,16 @@ items:
         "originalLabel": "Etat délai",
         "formatFunctionRef": "delay-status"
     },
-      {"id":"I01", "columnLabel":"Identifiant"},
-      {"id":"I02", "columnLabel":"Moment"},
-      {"id":"I03", "columnLabel":"Titre"},
-      {"id":"I04", "columnLabel":"Consentement"},
-      {"id":"I05", "columnLabel":"Etat"},
-      {"id":"I06", "columnLabel":"Delais"},
-      {"id":"I07", "columnLabel":"Excel"},
-      {"id":"I08", "columnLabel":"Montant"},
-      {"id":"I09", "columnLabel":"Pays"},
-      {"id":"I10", "columnLabel":"Organismefinanceur"}
+      {"id":"I01", "columnLabel":"Identifiant", "type": "string"},
+      {"id":"I02", "columnLabel":"Moment", "type": "string"},
+      {"id":"I03", "columnLabel":"Titre", "type": "string"},
+      {"id":"I04", "columnLabel":"Consentement", "type": "string"},
+      {"id":"I05", "columnLabel":"Etat", "type": "string"},
+      {"id":"I06", "columnLabel":"Delais", "type": "string"},
+      {"id":"I07", "columnLabel":"Excel", "type": "number"},
+      {"id":"I08", "columnLabel":"Montant", "type": "number"},
+      {"id":"I09", "columnLabel":"Pays", "type": "string"},
+      {"id":"I10", "columnLabel":"Organismefinanceur", "type": "string"}
     ]
     dsDataJson: {number: 6}
   demarche-delete-soft:
@@ -155,16 +161,16 @@ items:
     types: ["ASSO"]
     identification: "FE"
     mappingColumns: [
-      {"id":"I01", "columnLabel":"Identifiant"},
-      {"id":"I02", "columnLabel":"Moment"},
-      {"id":"I03", "columnLabel":"Titre"},
-      {"id":"I04", "columnLabel":"Consentement"},
-      {"id":"I05", "columnLabel":"Etat"},
-      {"id":"I06", "columnLabel":"Delais"},
-      {"id":"I07", "columnLabel":"Excel"},
-      {"id":"I08", "columnLabel":"Montant"},
-      {"id":"I09", "columnLabel":"Pays"},
-      {"id":"I10", "columnLabel":"Organismefinanceur"}
+      {"id":"I01", "columnLabel":"Identifiant", "type": "string"},
+      {"id":"I02", "columnLabel":"Moment", "type": "string"},
+      {"id":"I03", "columnLabel":"Titre", "type": "string"},
+      {"id":"I04", "columnLabel":"Consentement", "type": "string"},
+      {"id":"I05", "columnLabel":"Etat", "type": "string"},
+      {"id":"I06", "columnLabel":"Delais", "type": "string"},
+      {"id":"I07", "columnLabel":"Excel", "type": "number"},
+      {"id":"I08", "columnLabel":"Montant", "type": "number"},
+      {"id":"I09", "columnLabel":"Pays", "type": "string"},
+      {"id":"I10", "columnLabel":"Organismefinanceur", "type": "string"}
     ]
     dsDataJson: {number: 7}
   demarche-delay:
@@ -188,10 +194,10 @@ items:
     nbrMonthAnonymisation: 0
     anonymizationEvent: "DepotDate"
     mappingAnonymized: [
-      { "id": "Q2hhbXAtNDE2Mjg0NQ==", "columnLabel": "", "originalLabel": "nom", "source": "champs" },
-      { "id": "Q2hhbXAtNDE2Mjg0NW==", "columnLabel": "", "originalLabel": "prenom", "source": "champs" },
-      { "id": "Q2hhbXAtNDE2Mjg0NN==", "columnLabel": "", "originalLabel": "nom", "source": "champs" },
-      { "id": "Q2hhbXAtNDE2Mjg0NM==", "columnLabel": "", "originalLabel": "prenom", "source": "champs" },
+      { "id": "Q2hhbXAtNDE2Mjg0NQ==", "columnLabel": "", "originalLabel": "nom", "source": "champs", type: "string" },
+      { "id": "Q2hhbXAtNDE2Mjg0NW==", "columnLabel": "", "originalLabel": "prenom", "source": "champs", type: "string" },
+      { "id": "Q2hhbXAtNDE2Mjg0NN==", "columnLabel": "", "originalLabel": "nom", "source": "champs", type: "string" },
+      { "id": "Q2hhbXAtNDE2Mjg0NM==", "columnLabel": "", "originalLabel": "prenom", "source": "champs", type: "string" },
     ]
 
 

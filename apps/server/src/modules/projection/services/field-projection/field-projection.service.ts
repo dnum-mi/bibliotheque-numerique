@@ -56,6 +56,7 @@ export class FieldProjectionService {
     )
 
     if (!flatColumns?.length) {
+      console.log(demarche)
       throw new Error('No valid mapping columns found')
     }
 
@@ -174,7 +175,6 @@ export class FieldProjectionService {
               ) AS projectionRowIndex
             FROM combinedCTE
           )
-
         INSERT INTO "${tableName}" (
           dossierId,
           projectionRowIndex,
@@ -186,6 +186,8 @@ export class FieldProjectionService {
           ${fieldsId.map((id) => `"${id}"`).join(',')}
         FROM numbered
     `
+
+    this.logger.debug(query)
 
     await this.dataSource.query(query)
   }
