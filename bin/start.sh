@@ -69,23 +69,22 @@ print_link () {
   printf '\033]8;;%s\033\\%s\033]8;;\033\\\n' "$url" "$label"
 }
 
+print_link "http://localhost:${DC_BN_HTTP_PROXY_PORT}" \
+  "BN Web      → http://localhost:${DC_BN_HTTP_PROXY_PORT} (La partie frontend de BN, utilisée par les utilisateurs finaux)"
 
-print_link "http://localhost:${HTTP_PROXY_PORT}" \
-  "BN Web      → http://localhost:${HTTP_PROXY_PORT} (La partie frontend de BN, utilisée par les utilisateurs finaux)"
+print_link "http://localhost:${DC_API_PORT}/health/info" \
+  "BN API      → http://localhost:${DC_API_PORT}/health/info (La partie API de BN, utilisée par le frontend et les intégrations)"
 
-print_link "http://localhost:${PORT}" \
-  "BN API      → http://localhost:${PORT} (La partie API de BN, utilisée par le frontend et les intégrations)"
+print_link "http://localhost:${DC_MINIO_CONSOLE_PORT}" \
+  "MinIO Web   → http://localhost:${DC_MINIO_CONSOLE_PORT} (La console de gestion de MinIO, le service de S3)"
 
-print_link "http://localhost:${MINIO_CONSOLE_PORT}" \
-  "MinIO Web   → http://localhost:${MINIO_CONSOLE_PORT} (La console de gestion de MinIO, le service de S3)"
+print_link "http://localhost:${DC_ADMINER_PORT}" \
+  "Adminer     → http://localhost:${DC_ADMINER_PORT} (La console de gestion de la base de données)"
 
-print_link "http://localhost:${ADMINER_PORT}" \
-  "Adminer     → http://localhost:${ADMINER_PORT} (La console de gestion de la base de données)"
+print_link "http://localhost:${DC_MAILHOG_WEB_PORT}" \
+  "MailHog Web → http://localhost:${DC_MAILHOG_WEB_PORT} (La console de gestion de MailHog, le service de capture des emails envoyés par l'application)"
 
-print_link "http://localhost:${MAILHOG_WEB_PORT}" \
-  "MailHog Web → http://localhost:${MAILHOG_WEB_PORT} (La console de gestion de MailHog, le service de capture des emails envoyés par l'application)"
-
-print_link "http://localhost:${BULLBOARD_PORT}" \
-  "Bull Board  → http://localhost:${BULLBOARD_PORT} (La console de gestion de Bull, le service de gestion des tâches en arrière-plan)"
+print_link "http://localhost:${DC_BULLBOARD_PORT}" \
+  "Bull Board  → http://localhost:${DC_BULLBOARD_PORT} (La console de gestion de Bull, le service de gestion des tâches en arrière-plan)"
 
 echo ""

@@ -13,7 +13,7 @@ services:
     image: biblio-num/http-proxy
     platform: linux/amd64
     ports:
-      - "${HTTP_PROXY_PORT:-8088}:8088"
+      - "${DC_BN_HTTP_PROXY_PORT:-8088}:8088"
     networks:
       - biblio-num-network
     environment:
@@ -29,7 +29,7 @@ services:
     image: biblio-num/client:dev
     container_name: biblio-num_client
     ports:
-      - "${CLIENT_PORT:-8080}:8080"
+      - "${DC_CLIENT_PORT:-8080}:8080"
     networks:
       - biblio-num-network
     command: pnpm --filter @biblio-num/client run dev #:client-in-docker
@@ -49,7 +49,7 @@ services:
     depends_on:
       - db
     ports:
-      - "${PORT:-3000}:3000"
+      - "${DC_API_PORT:-3000}:3000"
     networks:
       - biblio-num-network
     env_file: # À injecter les variables dans le container au runtime.
@@ -105,7 +105,7 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
     ports:
-      - "${POSTGRES_EXT_PORT:-5432}:5432"
+      - "${DC_POSTGRES_PORT:-5432}:5432"
     volumes:
       - ./docker/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
       - type: volume
@@ -120,7 +120,7 @@ services:
       - dev
     image: adminer
     ports:
-      - "${ADMINER_PORT:-8010}:8080"
+      - "${DC_ADMINER_PORT:-8010}:8080"
     environment:
       - ADMINER_DEFAULT_SERVER=db
       - ADMINER_DEFAULT_SYSTEM=PostgreSQL
@@ -136,7 +136,7 @@ services:
     depends_on:
       - db
     ports:
-      - "${PGADMIN_PORT:-3020}:80"
+      - "${DC_PGADMIN_PORT:-3020}:80"
     volumes:
       - type: volume
         source: biblio-num-pgadmin-volume
@@ -156,7 +156,7 @@ services:
     image: mailhog/mailhog
     ports:
       - "${SMTP_PORT:-1025}:1025"
-      - "${MAILHOG_WEB_PORT:-8025}:8025"
+      - "${DC_MAILHOG_WEB_PORT:-8025}:8025"
     networks:
       - biblio-num-network
 
@@ -177,8 +177,8 @@ services:
         target: /data
     command: server --address ":9000" --console-address ":9001" /data
     ports:
-      - "${MINIO_PORT:-9000}:9000"
-      - "${MINIO_CONSOLE_PORT:-9001}:9001"
+      - "${DC_MINIO_PORT:-9000}:9000"
+      - "${DC_MINIO_CONSOLE_PORT:-9001}:9001"
     networks:
       - biblio-num-network
 
@@ -234,7 +234,7 @@ services:
     container_name: bullboard
     image: deadly0/bull-board
     ports:
-      - "${BULLBOARD_PORT:-3010}:3000"
+      - "${DC_BULLBOARD_PORT:-3010}:3000"
     networks:
       - biblio-num-network
     environment:
@@ -258,7 +258,7 @@ services:
     image: biblio-num/http-proxy-auth
     platform: linux/amd64
     ports:
-      - "${HTTP_PROXY_AUTH_PORT:-8888}:8080"
+      - "${DC_HTTP_PROXY_AUTH_PORT:-8888}:8080"
     networks:
       - biblio-num-network
     environment:
