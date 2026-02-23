@@ -8,6 +8,9 @@ echo "🚀 Démarrage de Bibliothèque Numérique"
 command -v docker >/dev/null 2>&1 || { echo "❌ Docker non installé"; exit 1; }
 command -v docker-compose >/dev/null 2>&1 || { echo "❌ Docker Compose non installé"; exit 1; }
 
+# ENV_FILE peut être
+# soit .env (pour le développement local) par défaut
+# soit .env.docker (pour une utilisation simple avec Docker Compose, sans avoir à créer un .env local)
 ENV_FILE="apps/server/.env"
 [ -f "$ENV_FILE" ] || ENV_FILE="apps/server/.env.docker"
 # Vérifier que le fichier existe
@@ -59,10 +62,30 @@ docker compose --env-file "$ENV_FILE" --profile dev -f apps/server/docker-compos
 echo ""
 echo "🎉 Bibliothèque Numérique est lancée !"
 echo ""
-echo "BN Web      → http://localhost:${HTTP_PROXY_PORT} (La partie frontend de BN, utilisée par les utilisateurs finaux)"
-echo "BN API      → http://localhost:${PORT} (La partie API de BN, utilisée par le frontend et les intégrations)"
-echo "MinIO Web   → http://localhost:${MINIO_CONSOLE_PORT} (La console de gestion de MinIO, le service de S3)"
-echo "Adminer     → http://localhost:${ADMINER_PORT} (La console de gestion de la base de données)"
-echo "MailHog Web → http://localhost:${MAILHOG_WEB_PORT} (La console de gestion de MailHog, le service de capture des emails envoyés par l'application)"
-echo "Bull Board  → http://localhost:${BULLBOARD_PORT} (La console de gestion de Bull, le service de gestion des tâches en arrière-plan)"
+
+print_link () {
+  local url="$1"
+  local label="$2"
+  printf '\033]8;;%s\033\\%s\033]8;;\033\\\n' "$url" "$label"
+}
+
+
+print_link "http://localhost:${HTTP_PROXY_PORT}" \
+  "BN Web      → http://localhost:${HTTP_PROXY_PORT} (La partie frontend de BN, utilisée par les utilisateurs finaux)"
+
+print_link "http://localhost:${PORT}" \
+  "BN API      → http://localhost:${PORT} (La partie API de BN, utilisée par le frontend et les intégrations)"
+
+print_link "http://localhost:${MINIO_CONSOLE_PORT}" \
+  "MinIO Web   → http://localhost:${MINIO_CONSOLE_PORT} (La console de gestion de MinIO, le service de S3)"
+
+print_link "http://localhost:${ADMINER_PORT}" \
+  "Adminer     → http://localhost:${ADMINER_PORT} (La console de gestion de la base de données)"
+
+print_link "http://localhost:${MAILHOG_WEB_PORT}" \
+  "MailHog Web → http://localhost:${MAILHOG_WEB_PORT} (La console de gestion de MailHog, le service de capture des emails envoyés par l'application)"
+
+print_link "http://localhost:${BULLBOARD_PORT}" \
+  "Bull Board  → http://localhost:${BULLBOARD_PORT} (La console de gestion de Bull, le service de gestion des tâches en arrière-plan)"
+
 echo ""

@@ -1,12 +1,15 @@
 
 services:
-  http-proxy:
+  bn-http-proxy:
     profiles:
       - dev
     build:
       context: ../../
       dockerfile: ./apps/http-proxy/Dockerfile
     container_name: http-proxy
+    depends_on:
+      - client
+      - server
     image: biblio-num/http-proxy
     platform: linux/amd64
     ports:
