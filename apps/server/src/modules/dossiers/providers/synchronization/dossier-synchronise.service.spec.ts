@@ -8,7 +8,7 @@ describe('dossoier-synchronise.service', () => {
   logger.verbose = jest.fn()
   logger.debug = jest.fn()
   it('get prefecture from string with 3 charaters in the departement', ()=>{
-      const service  = new DossierSynchroniseService(undefined, logger, undefined, undefined, undefined, undefined,undefined)
+      const service  = new DossierSynchroniseService(undefined, logger, undefined, undefined, undefined, undefined,undefined, undefined)
       const result = service['_findPrefecture']({
           groupeInstructeur: {
             label :'975 - Saint-Pierre-et-Miquelon'
@@ -18,7 +18,7 @@ describe('dossoier-synchronise.service', () => {
   })
 
   it('get prefecture from string wit character –', ()=>{
-    const service  = new DossierSynchroniseService(undefined, logger, undefined, undefined, undefined, undefined,undefined)
+    const service  = new DossierSynchroniseService(undefined, logger, undefined, undefined, undefined, undefined,undefined, undefined)
     const result = service['_findPrefecture']({
         groupeInstructeur: {
           label :'06 – Alpes-Maritimes'
@@ -28,7 +28,7 @@ describe('dossoier-synchronise.service', () => {
   })
 
   it('get prefecture from string empty', ()=>{
-    const service  = new DossierSynchroniseService(undefined, logger, undefined, undefined, undefined, undefined,undefined)
+    const service  = new DossierSynchroniseService(undefined, logger, undefined, undefined, undefined, undefined,undefined, undefined)
     const result = service['_findPrefecture']({
         groupeInstructeur: {
           label :''
@@ -38,7 +38,7 @@ describe('dossoier-synchronise.service', () => {
   })
 
   it('get prefecture from string corse department', ()=>{
-    const service  = new DossierSynchroniseService(undefined, logger, undefined, undefined, undefined, undefined,undefined)
+    const service  = new DossierSynchroniseService(undefined, logger, undefined, undefined, undefined, undefined,undefined, undefined)
     const result = service['_findPrefecture']({
         groupeInstructeur: {
           label :'2A - Corse du Sud'

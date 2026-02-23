@@ -22,7 +22,7 @@ describe('bn-configurations (e2e)', () => {
   })
 
   describe('GET /bn-configurations', () => {
-    it.only('Should return error 401', async () => {
+    it('Should return error 401', async () => {
       await request(app.getHttpServer()).get('/bn-configurations').expect(401)
     })
 

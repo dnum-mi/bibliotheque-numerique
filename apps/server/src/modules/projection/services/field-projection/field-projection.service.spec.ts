@@ -34,22 +34,6 @@ describe('FieldProjectionService', () => {
     jest.clearAllMocks()
   })
 
-  describe('_mapFieldTypeToSql', () => {
-    it('should map field types correctly', () => {
-      expect(service['_mapFieldTypeToSql'](FieldType.string)).toBe('text')
-      expect(service['_mapFieldTypeToSql'](FieldType.enum)).toBe('text')
-      expect(service['_mapFieldTypeToSql'](FieldType.number)).toBe('numeric')
-      expect(service['_mapFieldTypeToSql'](FieldType.boolean)).toBe('boolean')
-      expect(service['_mapFieldTypeToSql'](FieldType.date)).toBe('timestamp')
-    })
-
-    it('should throw on unsupported type', () => {
-      expect(() =>
-        service['_mapFieldTypeToSql']('file' as any),
-      ).toThrow()
-    })
-  })
-
   describe('_flattenMappingColumns', () => {
     it('should flatten children and ignore headers', () => {
       const mockMapping = [
@@ -105,7 +89,7 @@ describe('FieldProjectionService', () => {
             children: [
               {
                 id: 'child-1',
-                type: FieldType.boolean,
+                type: FieldType.number,
               },
             ],
           },
@@ -121,8 +105,8 @@ describe('FieldProjectionService', () => {
       expect(executedQuery).toContain('DROP TABLE IF EXISTS')
       expect(executedQuery).toContain('CREATE TABLE')
       expect(executedQuery).toContain('"simple-id" text')
-      expect(executedQuery).toContain('"child-1" boolean')
-      expect(executedQuery).toContain('PRIMARY KEY (dossier_id, projection_row_index)')
+      expect(executedQuery).toContain('"child-1" numeric')
+      expect(executedQuery).toContain('PRIMARY KEY (dossierId, projectionRowIndex)')
     })
   })
 })

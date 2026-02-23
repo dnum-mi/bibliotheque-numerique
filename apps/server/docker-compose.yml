@@ -178,6 +178,7 @@ services:
       - ci
     image: public.ecr.aws/bitnami/redis:latest
     container_name: redis
+    platform: linux/amd64
     environment:
       - REDIS_PASSWORD=redis
 #    Les developpeurs devraient configurer leur propre override de port dans docker-compose.override.yml si ils souhaitent changer

@@ -36,6 +36,7 @@ describe('Demarche sync service', () => {
       dsApiClientMock,
       customBullMock,
       syncQueueMock,
+      undefined
     )
   })
 
