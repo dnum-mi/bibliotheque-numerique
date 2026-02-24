@@ -10,27 +10,27 @@ Dans cette solution est incorporé un système de référence des fondations et 
 
 ### Prérequis
 
-#### 1. Les outils à installer
-
-Dans tous les modes d'installation, il est nécessaire d'avoir les outils suivants installés sur votre machine:
+#### 1. Outils nécessaires (tous modes)
 
 - [Docker](https://docs.docker.com/get-docker/) *- moteur d'exécution de conteneur*
 
-##### En mode développement uniquement, il est nécessaire d'avoir les outils suivants installés sur votre machine:
+#### 2. Outils supplémentaires (mode développement uniquement)
 
 - [Nodejs](https://nodejs.org/en/download/) *- environnement d'exécution javascript/typescript*
 - [Pnpm](https://pnpm.io/installation) *- gestionnaire de paquets et workspaces pour javascript*
 - [turbo](https://turbo.build/repo/docs) *- Outil de monorepo*
 
-#### 2. Les APIs et services externes utilisés
+#### 3. Services externes requis
 
-- Avoir un jeton d'authentification pour l'api [Démarche-Numérique](https://doc.demarches-simplifiees.fr/api-graphql/jeton-dauthentification)
+- Un jeton d'authentification pour l'API [Démarche-Numérique](https://doc.demarches-simplifiees.fr/api-graphql/jeton-dauthentification)
 
 ### Lancer les applications
 
 #### 1. Architecture
 
-Les outils et les services sont lancé sous forme de conteneurs Docker
+L’application fonctionne entièrement via conteneurs Docker.
+
+📄 Voir [Architecture de l’application](docs/Architecture.md)
 
 * ##### Les services utilisés
 
@@ -45,7 +45,7 @@ Les outils et les services sont lancé sous forme de conteneurs Docker
   - [Adminer](https://www.adminer.org/) *- Outil d'administration de base données léger*
   - [bull-board](https://github.com/felixmosh/bull-board) *- Outil de suivi de jobs et queues*
 
-#### 2. Lancer en mode simple avec les conteneurs Docker
+#### 2. Lancer en mode simple (Docker)
 
 ```bash
 git clone https://github.com/dnum-mi/bibliotheque-numerique.git
@@ -53,13 +53,14 @@ git clone https://github.com/dnum-mi/bibliotheque-numerique.git
 cd bibliotheque_numerique
 
 bin/start.sh
+# Suivre les instructions pour configurer le jeton d'API de Démarche Numérique dans la variable d'environnement DS_API_TOKEN
 ```
 
 Naviguez ensuite vers [http://localhost:8088](http://localhost:8088) pour accéder à l'application.
 
-Un compte administrateur est créé par défaut avec les identifiants suivants:
-- Email: `admin@localhost.com`
-- Mot de passe: `Password2OpenBN!`
+Compte administrateur par défaut :
+- **Email**: `admin@localhost.com`
+- **Mot de passe**: `Password2OpenBN!`
 
 
 #### 3. Lancer en mode développement
