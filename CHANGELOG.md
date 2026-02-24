@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.4.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.3.0...v5.4.0) (2026-02-24)
+
+
+### Features
+
+* [2114-P16]: Do not use on Module init ([17d41b1](https://github.com/dnum-mi/bibliotheque_numerique/commit/17d41b1cca146ba126ec621ac837f49e83b7b3b8))
+
 ## [5.3.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.2.1...v5.3.0) (2026-02-24)
 
 
