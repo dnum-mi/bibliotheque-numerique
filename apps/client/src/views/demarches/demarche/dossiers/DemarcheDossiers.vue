@@ -61,7 +61,8 @@ const localStorageViewIdKey = computed(() => `dataTable.demarche-${route.params.
 const hasNoRepeatableField = computed(() => {
   return !demarcheStore.currentDemarche?.mappingColumns.some((m) => 'children' in m)
 })
-const groupByDossier = ref(hasNoRepeatableField.value)
+
+const groupByDossier = ref<boolean>(hasNoRepeatableField.value)
 
 const apiCall = (dto: IPagination<unknown>) => {
   return demarcheStore.searchCurrentDemarcheDossiers(groupByDossier.value, dto)
@@ -438,10 +439,8 @@ onMounted(async () => {
     selectedView.value = savedViewId > -1 ? (viewWithErrors.value.find((v) => v.id === savedViewId) || null) : null
   }
 
-  // 2) groupBy : si une vue existe on prend la valeur de la vue, sinon on prend le localStorage global, sinon défaut
-  if (selectedView.value) {
-    groupByDossier.value = selectedView.value.groupByDossier
-  } else if (localStorage.getItem(localStorageGroupByKey.value) === 'true') {
+  // 2) groupByL on prend le localStorage, sinon défaut
+  if (localStorage.getItem(localStorageGroupByKey.value) === 'true') {
     groupByDossier.value = true
   } else {
     groupByDossier.value = hasNoRepeatableField.value
