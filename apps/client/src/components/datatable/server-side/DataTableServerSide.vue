@@ -397,6 +397,7 @@ const getRows = async (
   const dto = persistDto(page)
 
   try {
+    delete dto.columnWidthById
     const response = await props.apiCall(dto)
     const data = Array.isArray(response?.data) ? response.data : []
     const total = Number(response?.total)
