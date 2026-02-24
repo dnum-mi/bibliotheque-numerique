@@ -6,7 +6,7 @@ echo "🚀 Démarrage de Bibliothèque Numérique"
 
 # Vérifications des prérequis
 command -v docker >/dev/null 2>&1 || { echo "❌ Docker non installé"; exit 1; }
-command -v docker-compose >/dev/null 2>&1 || { echo "❌ Docker Compose non installé"; exit 1; }
+command -v docker compose >/dev/null 2>&1 || { echo "❌ Docker Compose non installé"; exit 1; }
 
 # ENV_FILE peut être
 # soit .env (pour le développement local) par défaut
@@ -56,7 +56,7 @@ echo "✅ Prérequis OK"
 
 # Lancement des services
 echo "📦 Lancement des services..."
-docker compose --env-file "$ENV_FILE" --profile prod -f apps/server/docker-compose.yml -p bn build --no-cache server
+docker compose --env-file "$ENV_FILE" --profile prod -f apps/server/docker-compose.yml -p bn build --no-cache
 docker compose --env-file "$ENV_FILE" --profile prod -f apps/server/docker-compose.yml -p bn up -d
 
 echo ""

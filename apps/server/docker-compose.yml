@@ -23,16 +23,16 @@ services:
     profiles:
       - prod
     build:
-      target: builder
+      target: production
       context: ../../
       dockerfile: ./apps/client/Dockerfile
     image: biblio-num/client:dev
+    platform: linux/amd64
     container_name: biblio-num_client
     ports:
       - "${DC_CLIENT_PORT:-8080}:8080"
     networks:
       - biblio-num-network
-    command: pnpm --filter @biblio-num/client run dev #:client-in-docker
     env_file: # À injecter les variables dans le container au runtime.
       - .env.docker
 
@@ -78,7 +78,7 @@ services:
     profiles:
       - prod
     build:
-      target: builder
+      target: production
       context: ../../
       dockerfile: ./apps/server/Dockerfile
     image: biblio-num/worker-file:dev
@@ -219,7 +219,6 @@ services:
     image: public.ecr.aws/bitnami/redis:latest
     platform: linux/amd64
     container_name: redis
-    platform: linux/amd64
     environment:
       - REDIS_PASSWORD=redis
     ports:
