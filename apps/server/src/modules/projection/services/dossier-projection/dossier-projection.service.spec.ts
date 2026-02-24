@@ -64,7 +64,7 @@ describe('DossierProjectionService', () => {
       const executedQuery = (mockDataSource.query as jest.Mock).mock.calls[0][0]
       expect(executedQuery).toContain('DROP TABLE IF EXISTS')
       expect(executedQuery).toContain('CREATE TABLE')
-      expect(executedQuery).toContain('"dossierId" bigint PRIMARY KEY')
+      expect(executedQuery).toContain('"dossierId" integer PRIMARY KEY')
       expect(executedQuery).toContain('"simple-id" text[]')
       expect(executedQuery).toContain('"child-1" numeric[]')
     })
