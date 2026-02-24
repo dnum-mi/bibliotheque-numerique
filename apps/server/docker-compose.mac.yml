@@ -177,7 +177,7 @@ services:
       - simple-dev
       - ci
     image: redis:8
-    command: [ "redis-server", "--requirepass", "password" ]
+    command: [ "redis-server", "--requirepass", "redis" ]
 #    Les developpeurs devraient configurer leur propre override de port dans docker-compose.override.yml si ils souhaitent changer
 #    ports:
 #      - "6379:6379"

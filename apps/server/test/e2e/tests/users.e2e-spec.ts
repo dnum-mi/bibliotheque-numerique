@@ -52,6 +52,7 @@ describe('users (e2e)', () => {
         .set('Authorization', `Bearer ${tokens.superadmin}`)
         .send({
           columns: ['firstname', 'lastname'],
+          perPage: 5,
         })
         .expect(200)
 

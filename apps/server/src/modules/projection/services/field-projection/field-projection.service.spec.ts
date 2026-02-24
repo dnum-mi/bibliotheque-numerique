@@ -34,45 +34,6 @@ describe('FieldProjectionService', () => {
     jest.clearAllMocks()
   })
 
-  describe('_flattenMappingColumns', () => {
-    it('should flatten children and ignore headers', () => {
-      const mockMapping = [
-        {
-          id: 'header-id',
-          type: FieldType.string,
-          isHeader: true,
-        },
-        {
-          id: 'simple-id',
-          type: FieldType.enum,
-          isHeader: false,
-        },
-        {
-          id: 'parent-id',
-          type: FieldType.string,
-          children: [
-            {
-              id: 'child-1',
-              type: FieldType.string,
-            },
-            {
-              id: 'child-2',
-              type: FieldType.number,
-            },
-          ],
-        },
-      ] as any
-
-      const result = service['_flattenMappingColumns'](mockMapping)
-
-      expect(result).toEqual([
-        { id: 'simple-id', type: 'text' },
-        { id: 'child-1', type: 'text' },
-        { id: 'child-2', type: 'numeric' },
-      ])
-    })
-  })
-
   describe('createTable', () => {
     it('should generate correct SQL for table creation', async () => {
       const demarche = {

@@ -24,7 +24,7 @@ export class DossierProjectionService {
     tableName = tableName || ProjectionManagerService.buildDossierTableName(demarche.id)
 
     const typeHash = fromMappingColumnArrayToTypeHash(
-      demarche.mappingColumns,
+      demarche.mappingColumns.filter(c => !c.isHeader),
     )
 
     const columnDefinitions = Object.entries(typeHash)
@@ -38,7 +38,7 @@ export class DossierProjectionService {
         DROP TABLE IF EXISTS "${tableName}";
 
         CREATE TABLE "${tableName}" (
-          "dossierId" bigint PRIMARY KEY,
+          "dossierId" integer PRIMARY KEY,
           ${columnDefinitions}
         );
     `
@@ -101,7 +101,7 @@ export class DossierProjectionService {
         DROP TABLE IF EXISTS "${backupTableName}";
     `)
 
-    await this.createTable(demarche)
+    await this.createTable(demarche, tempTableName)
 
     const typeHash = fromMappingColumnArrayToTypeHash(
       demarche.mappingColumns,

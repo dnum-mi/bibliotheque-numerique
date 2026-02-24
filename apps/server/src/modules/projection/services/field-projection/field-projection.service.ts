@@ -22,46 +22,19 @@ export class FieldProjectionService {
   ) {}
 
   //#region 📍------ Create table ------ 📍
-  private _flattenMappingColumns(cols: MappingColumn[]): tProjectionCol[] {
-    this.logger.verbose(`_flattenMappingColumns (${cols.length} columns)`)
-    const result: tProjectionCol[] = []
-
-    const traverse = (columns: MappingColumn[]): void => {
-      for (const col of columns) {
-        if (col.isHeader) continue
-        if (!col.type) continue
-
-        if (col.children?.length) {
-          traverse(col.children)
-        } else {
-          result.push({
-            id: col.id,
-            type: mapFieldTypeToSql(col.type),
-          })
-        }
-      }
-    }
-
-    traverse(cols)
-
-    return result
-  }
-
   async createTable(demarche: Demarche, tableName?: string): Promise<void> {
     this.logger.verbose(`createTable ${demarche.title}`)
     tableName = tableName || ProjectionManagerService.buildFieldTableName(demarche.id)
 
-    const flatColumns: tProjectionCol[] = this._flattenMappingColumns(
-      demarche.mappingColumns,
+    const typeHash = fromMappingColumnArrayToTypeHash(
+      demarche.mappingColumns.filter(c => !c.isHeader),
     )
 
-    if (!flatColumns?.length) {
-      console.log(demarche)
-      throw new Error('No valid mapping columns found')
-    }
-
-    const columnDefinitions: string = flatColumns
-      .map((col: tProjectionCol) => `"${col.id}" ${col.type}`)
+    const columnDefinitions = Object.entries(typeHash)
+      .map(([id, type]) => {
+        const sqlType = mapFieldTypeToSql(type)
+        return `"${id}" ${sqlType}`
+      })
       .join(',\n')
 
     const query = `
@@ -69,12 +42,14 @@ export class FieldProjectionService {
 
       CREATE TABLE "${tableName}"
       (
-        "dossierId"           bigint  NOT NULL,
+        "dossierId"           integer NOT NULL,
         projectionRowIndex integer NOT NULL,
         ${columnDefinitions},
         PRIMARY KEY ("dossierId", projectionRowIndex)
       );
     `
+
+    this.logger.debug(query)
 
     await this.dataSource.query(query)
   }
@@ -168,11 +143,11 @@ export class FieldProjectionService {
     // new table under temp name
     await this.createTable(demarche, tempTableName)
 
-    const flatColumns = this._flattenMappingColumns(demarche.mappingColumns)
-    const fieldsId = flatColumns.map((c) => c.id)
     const typeHash = fromMappingColumnArrayToTypeHash(
-      demarche.mappingColumns,
+      demarche.mappingColumns.filter(c => !c.isHeader),
     )
+
+    const fieldsId = Object.keys(typeHash)
 
     // original query from field search
     const buildQuery = `
@@ -225,12 +200,13 @@ export class FieldProjectionService {
 
     const tableName = ProjectionManagerService.buildFieldTableName(demarche.id)
 
-    const flatColumns = this._flattenMappingColumns(demarche.mappingColumns)
-    const fieldsId = flatColumns.map((c) => c.id)
+    const typeHash = fromMappingColumnArrayToTypeHash(
+      demarche.mappingColumns.filter(c => !c.isHeader),
+    )
+
+    const fieldsId = Object.keys(typeHash)
 
     if (!fieldsId.length) return
-
-    const typeHash = fromMappingColumnArrayToTypeHash(demarche.mappingColumns)
 
     // On supprime les anciennes lignes de projection du dossier
     await this.dataSource.query(
