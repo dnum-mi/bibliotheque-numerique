@@ -47,8 +47,8 @@ export class ProjectionManagerService {
   }
 
   // ensure all demarche have their projection table already
-  async onModuleInit(): Promise<void> {
-    this.logger.log('onModuleInit: Ensuring projection tables exist')
+  async InitFirsTime(): Promise<void> {
+    this.logger.log('InitFirsTime: Ensuring projection tables exist')
     const demarches = await this.demarcheRepository.find()
     for (const demarche of demarches) {
       await this.buildTablesForOneDemarche(demarche)
