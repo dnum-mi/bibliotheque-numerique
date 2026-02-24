@@ -98,7 +98,6 @@ const entryExitDateTimelineItems = (person: IPerson) => {
                 Informations sur la personne morale
               </p>
               <template v-if="person.legalEntity.publicId">
-                <!-- TODO: A compléter une fois disponible -->
                 <InfoRow label="Nom de la personne morale">
                   {{ person.legalEntity.name || '-' }}
                 </InfoRow>
@@ -137,12 +136,7 @@ const entryExitDateTimelineItems = (person: IPerson) => {
               Identité de la personne
             </p>
             <InfoRow label="Date et lieu de naissance">
-              <template v-if="person.bornAt || person.bornPlace">
-                {{ getBirthLabel(person) }}
-              </template>
-              <template v-else>
-                -
-              </template>
+              {{ getBirthLabel(person) }}
             </InfoRow>
             <InfoRow label="Nationalité">
               {{ person.nationality || '-' }}

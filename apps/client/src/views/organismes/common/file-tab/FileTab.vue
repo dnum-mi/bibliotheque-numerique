@@ -2,7 +2,10 @@
 import { typeFileArray } from '@biblio-num/shared'
 import type { IFile, organismeCategoryKey } from '@biblio-num/shared'
 import { dateToStringFr } from '@/utils/date-to-string'
-import { fetchHubFileBlobForPreview, downloadHubMultipleFiles } from '@/utils/downloadFile'
+import {
+  fetchHubFileBlobForPreview,
+  downloadHubMultipleFiles,
+} from '@/utils/downloadFile'
 import type { HeaderDataTable } from '@/shared/types'
 import type { RowDataType } from '@/components/datatable/client-side/DataTableClientSide.vue'
 import { DsfrButton } from '@gouvminint/vue-dsfr'
@@ -88,19 +91,14 @@ const handleDownloadSelected = async () => {
   if (isDownloading.value) {
     return
   }
-  try {
-    isDownloading.value = true
-    const fileIds = selectedFiles.value.map(({ id }) => id)
-    await downloadHubMultipleFiles({
-      organismeType: props.organismeType || 'association',
-      organismeId: props.organismeId || '',
-      fileIds,
-    })
-  } catch (error) {
-    console.error('Erreur lors du téléchargement :', error)
-  } finally {
-    isDownloading.value = false
-  }
+  isDownloading.value = true
+  const fileIds = selectedFiles.value.map(({ id }) => id)
+  await downloadHubMultipleFiles({
+    organismeType: props.organismeType,
+    organismeId: props.organismeId,
+    fileIds,
+  })
+  isDownloading.value = false
 }
 
 const handleViewFile = async (file: IFile) => {

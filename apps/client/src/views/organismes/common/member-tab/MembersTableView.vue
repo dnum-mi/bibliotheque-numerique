@@ -20,8 +20,6 @@ const props = defineProps<{
   persons: IPersonExtended[]
 }>()
 
-const dateNow = new Date()
-
 const baseHeaders: HeaderDataTable[] = [
   { field: 'id', text: 'Id', type: 'hidden' },
   { field: 'isFounder', text: 'Statut', renderer: markRaw(PersonStatutBadge) },
@@ -74,8 +72,9 @@ const rowsData = computed<IPersonWithAuthorizeOption[]>(() => {
   ))
 })
 
-const currentPeople = computed(() =>
-  rowsData.value
+const currentPeople = computed(() => {
+  const dateNow = new Date()
+  return rowsData.value
     .filter(person => {
       if (!person.exitAt) {
         return true
@@ -83,11 +82,13 @@ const currentPeople = computed(() =>
 
       return new Date(person.exitAt) > dateNow
     })
-    .sort((a, b) => getJobPositionWeight(a.jobPosition) - getJobPositionWeight(b.jobPosition)),
+    .sort((a, b) => getJobPositionWeight(a.jobPosition) - getJobPositionWeight(b.jobPosition))
+},
 )
 
-const formerPeople = computed(() =>
-  rowsData.value
+const formerPeople = computed(() => {
+  const dateNow = new Date()
+  return rowsData.value
     .filter(person => {
       if (!person.exitAt) {
         return false
@@ -95,7 +96,8 @@ const formerPeople = computed(() =>
 
       return new Date(person.exitAt) <= dateNow
     })
-    .sort((a, b) => new Date(b.exitAt!).getTime() - new Date(a.exitAt!).getTime()),
+    .sort((a, b) => new Date(b.exitAt!).getTime() - new Date(a.exitAt!).getTime())
+},
 )
 
 const createHeaders = (data: IPersonWithAuthorizeOption[]) => {

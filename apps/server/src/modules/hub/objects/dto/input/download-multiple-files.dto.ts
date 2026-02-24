@@ -1,7 +1,12 @@
+import { IDownloadMultipeFilesInput } from '@biblio-num/shared'
 import { ApiProperty } from '@nestjs/swagger'
-import { IsArray, IsNotEmpty, IsUUID } from 'class-validator'
+import {
+  IsArray,
+  IsNotEmpty,
+  IsUUID,
+} from 'class-validator'
 
-export class DownloadMultipleFilesDto {
+export class DownloadMultipleFilesDto implements IDownloadMultipeFilesInput {
   @ApiProperty({
     description: 'Liste des UUIDs des fichiers à télécharger',
     isArray: true,

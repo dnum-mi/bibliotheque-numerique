@@ -75,7 +75,7 @@ export class HubController {
   async searchRnf(
     @Param('rnfId') rnf: string,
   ): Promise<IFoundationOutput> {
-    this.logger.verbose('searchRnf')
+    this.logger.verbose(`searchRnf ${rnf}`)
     const result = await this.hubService.getFoundation(rnf)
     if (!result) {
       throw new NotFoundException(`Aucune fondation avec cet rnf ${rnf}`)

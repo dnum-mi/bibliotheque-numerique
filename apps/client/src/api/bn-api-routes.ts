@@ -1,3 +1,6 @@
+import { EOrganismeCategory } from '@biblio-num/shared'
+import type { organismeCategoryKey } from '@biblio-num/shared'
+
 export const authRoute = '/auth'
 export const logoutRoute = `${authRoute}/logout`
 export const verifyAuthRoute = `${authRoute}/verify-auth`
@@ -73,4 +76,6 @@ export const hubRoute = `/hub`
 export const hubSearchOrganisme = (sentence: string) => `${hubRoute}/search/${sentence}`
 export const hubGetRna = (id: string) => `${hubRoute}/rna/${id}`
 export const hubGetRnf = (id: string) => `${hubRoute}/rnf/${id}`
+export const hubPathRouteByTypeOrganisme = (organismeType: organismeCategoryKey, id: string) =>
+  `${hubRoute}/${organismeType === EOrganismeCategory.association ? 'association' : 'foundation'}/${id}`
 //#endregion

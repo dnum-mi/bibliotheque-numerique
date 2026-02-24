@@ -2,9 +2,6 @@ import type { AxiosResponse } from 'axios'
 import axios, { AxiosError } from 'axios'
 import useToaster from '@/composables/use-toaster'
 
-import {
-  EOrganismeCategory,
-} from '@biblio-num/shared'
 import type {
   DynamicKeys,
   IAssociationOutput,
@@ -16,6 +13,7 @@ import type {
   IDossier,
   IDossierFieldsOutput,
   IDossierSearchOutput,
+  IDownloadMultipeFilesInput,
   IFieldSearchOutput,
   IFileOutput,
   IFoundationOutput,
@@ -72,6 +70,7 @@ import {
   healthRoute,
   hubGetRna,
   hubGetRnf,
+  hubPathRouteByTypeOrganisme,
   hubSearchOrganisme,
   lastConsultedOrganismeRoute,
   listSmallDemarchesRoutes,
@@ -553,14 +552,12 @@ export const hubApiClient = {
     return getOrRedirectTo404(hubSearchOrganisme(sentence))
   },
   hubGetFile: (type: organismeCategoryKey, organismeId: string, id: string) => {
-    const correctType = type === EOrganismeCategory.association ? 'association' : 'foundation'
-    return apiClientInstance.get(`/hub/${correctType}/${organismeId}/file/${id}`, { responseType: 'blob' })
+    return apiClientInstance.get(`${hubPathRouteByTypeOrganisme(type, organismeId)}/file/${id}`, { responseType: 'blob' })
   },
-  hubGetMultipleFiles: (type: organismeCategoryKey, organismeId: string, fileIds: string[]) => {
-    const correctType = type === EOrganismeCategory.association ? 'association' : 'foundation'
+  hubGetMultipleFiles: (type: organismeCategoryKey, organismeId: string, fileIds: IDownloadMultipeFilesInput['fileIds']) => {
     return apiClientInstance.post(
-      `/hub/${correctType}/${organismeId}/files`,
-      { fileIds },
+      `${hubPathRouteByTypeOrganisme(type, organismeId)}/files`,
+      { fileIds } as IDownloadMultipeFilesInput,
       { responseType: 'blob' },
     )
   },
@@ -571,8 +568,7 @@ export const hubApiClient = {
     return getWithoutRedirectTo404(hubGetRnf(sentence))
   },
   hubExportOrganisme: (type: organismeCategoryKey, organismeId: string) => {
-    const correctType = type === EOrganismeCategory.association ? 'association' : 'foundation'
-    return apiClientInstance.get(`/hub/${correctType}/${organismeId}/export-pdf`, { responseType: 'blob' })
+    return apiClientInstance.get(`${hubPathRouteByTypeOrganisme(type, organismeId)}/export-pdf`, { responseType: 'blob' })
   },
 }
 
