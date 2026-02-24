@@ -1,7 +1,8 @@
 import { File } from '@/modules/files/objects/entities/file.entity'
-import { Demarche } from '@/modules/demarches/objects/entities/demarche.entity'
-import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
-import { SyncState } from '../../../../sync-state/objects/entities/sync-state.entity'
+import { SyncState } from '@/shared/sync-state/objects/entities/sync-state.entity'
+import {
+  DemarcheAnonymisedInformationPayloadDto,
+} from '@/modules/demarches/objects/dtos/demarch-anonymised-information-payload.dto'
 
 export type SyncAllDemarcheJobPayload = {
   fromScratch: boolean
@@ -55,20 +56,20 @@ export type ComputeFeExcelJobPayload = {
 }
 
 export type AnonymiseOneDemarcheJobPayload = {
-  demarche: Demarche
+  demarche: DemarcheAnonymisedInformationPayloadDto
 }
 
 export type AnonymiseOneDossierJobPayload = {
-  dossier: Dossier
-  demarche: Demarche
+  dossierId: number
+  demarche: DemarcheAnonymisedInformationPayloadDto
 }
 
 export type DeleteS3FilesJobPayload = {
-  files: File[]
+  fileUuids: string[]
 }
 
 export type RebuildProjectionTablesPayload = {
-  demarche: Demarche
+  demarcheId: number
 }
 
 export type AnyJobPayload =

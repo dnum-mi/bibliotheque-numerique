@@ -41,18 +41,18 @@ export class FileProcessor {
     this.logger.debug(payload)
     let files: TFile[]
     switch (payload.file.sourceLabel) {
-    case eFileSourceLabel['ds-attestation']:
-      files = await this.dsApiService.dossierAttestation(payload.dsDossierId)
-      break
-    case eFileSourceLabel['ds-motivation']:
-      files = await this.dsApiService.dossierMotivationAttachment(payload.dsDossierId)
-      break
-    default:
-      files = await this.dsApiService.dossierFile(
-        payload.dsDossierId,
-        payload.file.sourceStringId,
-        payload.parentSourceId,
-      )
+      case eFileSourceLabel['ds-attestation']:
+        files = await this.dsApiService.dossierAttestation(payload.dsDossierId)
+        break
+      case eFileSourceLabel['ds-motivation']:
+        files = await this.dsApiService.dossierMotivationAttachment(payload.dsDossierId)
+        break
+      default:
+        files = await this.dsApiService.dossierFile(
+          payload.dsDossierId,
+          payload.file.sourceStringId,
+          payload.parentSourceId,
+        )
     }
     job.log(`nombre de fichiers trouvés: ${files?.length}`)
     job.log(`nom des fichiers trouvés: ${files?.map((f) => f.filename)}`)
@@ -167,11 +167,9 @@ export class FileProcessor {
   async deleteS3Files(job: Job<DeleteS3FilesJobPayload>): Promise<void> {
     await this.als.run({ job }, async () => {
       this.logger.log('delete s3 files')
-      for (const file of job.data.files) {
-        if (file.label === anonymisedFileValue) {
-          this.logger.debug(`Anonymised file ${file.uuid} to delete`)
-          await this.s3Service.deleteFile(file.uuid)
-        }
+      for (const uuid of job.data.fileUuids) {
+        this.logger.debug(`Anonymised file ${uuid} to delete`)
+        await this.s3Service.deleteFile(uuid)
       }
     })
   }

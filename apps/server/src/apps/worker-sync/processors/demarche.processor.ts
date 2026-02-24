@@ -77,7 +77,8 @@ export class DemarcheProcessor extends CustomBaseProcessor {
   async rebuildProjectionManager(job: Job<RebuildProjectionTablesPayload>): Promise<void> {
     await this.als.run({ job }, async () => {
       this.logger.verbose('rebuild projection tables')
-      await this.projectionManager.buildTablesForOneDemarche(job.data.demarche, true)
+      const demarche = await this.demarcheService.findOneById(job.data.demarcheId)
+      await this.projectionManager.buildTablesForOneDemarche(demarche, true)
     })
   }
 }

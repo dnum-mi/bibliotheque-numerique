@@ -23,10 +23,14 @@ import { Inject } from '@nestjs/common'
 import { DossierService } from '@/modules/dossiers/providers/dossier.service'
 import { FindManyOptions, In, IsNull, LessThan, Not } from 'typeorm'
 import { addMonths } from 'date-fns'
-import { eAnonymisationEvent } from '@biblio-num/shared'
+import { anonymisedFileValue, eAnonymisationEvent } from '@biblio-num/shared'
 import { Dossier } from '../../../modules/dossiers/objects/entities/dossier.entity'
 import { RedisService } from '@/shared/modules/redis/redis.service'
 import { CustomBaseProcessor } from '@/shared/modules/custom-bull/custom-base.processor'
+import {
+  DemarcheAnonymisedInformationPayloadDto,
+  demarcheAnonymisedInformationPayloadDtoKeys,
+} from '@/modules/demarches/objects/dtos/demarch-anonymised-information-payload.dto'
 
 @Processor(QueueName.sync)
 export class DossierProcessor extends CustomBaseProcessor {
@@ -65,11 +69,25 @@ export class DossierProcessor extends CustomBaseProcessor {
     })
   }
 
+  @Process(eJobName.FixOrganismeDossier)
+  async fixOrganismeDossiers(
+    job: Job<{ dossierId: number }>,
+  ): Promise<void> {
+    await this.als.run({ job }, async () => {
+      this.logger.log(
+        `fixOrganismeDossiers for dossier: ${job.data.dossierId}`,
+      )
+      await this.dossierSynchroniseService.addTitleOrganismeInFieldsByIDossier(job.data.dossierId)
+    })
+  }
+
+  //#region 📍------ ANONYMISED ------ 📍
   @Process(eJobName.AnonymiseAll)
   async anonymiseAll(job: Job<never>): Promise<void> {
     await this.als.run({ job }, async () => {
       this.logger.log('anonymise all')
-      const demarches = await this.demarcheService.repository.find({
+      const demarches: DemarcheAnonymisedInformationPayloadDto[] = await this.demarcheService.repository.find({
+        select: demarcheAnonymisedInformationPayloadDtoKeys,
         where: {
           nbrMonthAnonymisation: Not(IsNull()),
           anonymizationEvent: Not(IsNull()),
@@ -117,24 +135,23 @@ export class DossierProcessor extends CustomBaseProcessor {
           break
         default:
           this.logger.warn(
-            `unknown event (${demarche.anonymizationEvent}) to anonymise demarche ${demarche.dsDataJson.number}`,
+            `unknown event (${demarche.anonymizationEvent}) to anonymise demarche ${demarche.dsId}`,
           )
           return
       }
-      const dossiers = await this.dossierService.repository.find({
+      const dossierIds: {id: number}[] = await this.dossierService.repository.find({
         where: {
           anonymisedAt: null,
           demarcheId: demarche.id,
           ...whereQuery,
         },
-        select: ['id', 'dsDataJson', 'demarcheId'],
-        relations: ['files'],
+        select: ['id'],
       })
 
-      const dossierStep = 100 / dossiers.length
-      for (const dossier of dossiers) {
+      const dossierStep = 100 / dossierIds.length
+      for (const dossier of dossierIds) {
         await this.syncQueue.add(eJobName.AnonymiseOneDossier, {
-          dossier,
+          dossierId: dossier.id,
           demarche,
           priority: 1,
         } as AnonymiseOneDossierJobPayload)
@@ -143,7 +160,7 @@ export class DossierProcessor extends CustomBaseProcessor {
       }
 
       await this.syncQueue.add(eJobName.RebuildProjectionTables, {
-        demarche: job.data.demarche,
+        demarcheId: demarche.id,
         priority: 100, // we want to be sure it happens AFTER all dossier have been anonymised
       } as RebuildProjectionTablesPayload)
 
@@ -156,28 +173,24 @@ export class DossierProcessor extends CustomBaseProcessor {
     job: Job<AnonymiseOneDossierJobPayload>,
   ): Promise<void> {
     await this.als.run({ job }, async () => {
-      this.logger.log('anonymise one dossier: ' + job.data.dossier.id)
+      this.logger.log('anonymise one dossier: ' + job.data.dossierId)
+      const dossier = await this.dossierService.findOneById(job.data.dossierId, { files: true })
       await this.dossierService.anonymiseDossier(
-        job.data.dossier,
+        dossier,
         job.data.demarche.mappingAnonymized,
       )
       job.progress(50)
-      await this.fileQueue.add(eJobName.DeleteS3Files, {
-        files: job.data.dossier.files,
-      } as DeleteS3FilesJobPayload)
+      const fileUuids: string[] = dossier.files
+        .filter(f => f.label === anonymisedFileValue)
+        .map(f => f.uuid)
+      if (fileUuids.length) {
+        await this.fileQueue.add(eJobName.DeleteS3Files, {
+          fileUuids,
+        } as DeleteS3FilesJobPayload)
+      }
       job.progress(100)
     })
   }
 
-  @Process(eJobName.FixOrganismeDossier)
-  async fixOrganismeDossiers(
-    job: Job<{ dossierId: number }>,
-  ): Promise<void> {
-    await this.als.run({ job }, async () => {
-      this.logger.log(
-        `fixOrganismeDossiers for dossier: ${job.data.dossierId}`,
-      )
-      await this.dossierSynchroniseService.addTitleOrganismeInFieldsByIDossier(job.data.dossierId)
-    })
-  }
+  //#endregion
 }
