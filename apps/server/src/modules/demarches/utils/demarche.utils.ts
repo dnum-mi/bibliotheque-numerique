@@ -4,6 +4,7 @@ import { MappingAnonymizedWithoutChildren } from '@/modules/demarches/objects/dt
 
 export type MappingColumnToHash<T> = Record<string, T>
 
+// apply transformer to each column and flatten children
 const fromMappingColumnArrayToHashFactory =
   <T>(transformFn: (column: MappingColumn) => T) =>
     (mappingColumns: MappingColumn[]): MappingColumnToHash<T> => {
@@ -24,12 +25,15 @@ const prop =
     (x: MappingColumn): MappingColumn[P] =>
       x[p] || x[p2]
 
+// call factory with identity to have full hash
 export const fromMappingColumnArrayToHash =
   fromMappingColumnArrayToHashFactory(identity)
 
+// call factory with prop(type) to retrieve hash of types
 export const fromMappingColumnArrayToTypeHash =
   fromMappingColumnArrayToHashFactory<FieldTypeKeys>(prop('type'))
 
+// call factory with prop(labels) to have list of labels
 export const fromMappingColumnArrayToLabelHash =
   fromMappingColumnArrayToHashFactory<string>(
     prop('columnLabel', 'originalLabel'),
@@ -41,4 +45,9 @@ export function findField(mappingColumns: MappingColumn[], fieldId: string)
     .map((m) => [m, ...(m.children ?? [])])
     .flat(1)
     .find((f) => f.id === fieldId)
+}
+
+// use common code to flatten and retrieve list of column without headers
+export const flattenWithoutHeader = (mcs: MappingColumn[]): MappingColumn[] => {
+  return Object.values(fromMappingColumnArrayToHash(mcs)).filter(c => !c.isHeader)
 }

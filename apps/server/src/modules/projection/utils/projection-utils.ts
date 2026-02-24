@@ -1,13 +1,5 @@
 import { FieldType, FieldTypeKeys } from '@biblio-num/shared'
 
-export const getDossierTableName = (demarcheId: number): string => {
-  return `listing_dossier_${demarcheId}`
-}
-
-export const getFieldTableName = (demarcheId: number): string => {
-  return `listing_field_${demarcheId}`
-}
-
 export const mapFieldTypeToSql = (type: FieldTypeKeys): string => {
   switch (type) {
     case FieldType.string:

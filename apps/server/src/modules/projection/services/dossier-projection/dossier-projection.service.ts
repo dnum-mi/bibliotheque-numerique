@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common'
 import { Demarche } from '@/modules/demarches/objects/entities/demarche.entity'
 import { ProjectionManagerService } from '@/modules/projection/services/projection-manager/projection-manager.service'
-import { fromMappingColumnArrayToTypeHash } from '@/modules/demarches/utils/demarche.utils'
+import {
+  flattenWithoutHeader,
+} from '@/modules/demarches/utils/demarche.utils'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { mapFieldTypeToSql } from '@/modules/projection/utils/projection-utils'
 import { DataSource } from 'typeorm'
 import { deduceFieldToQueryFromType } from '@/shared/pagination/utils/common-search.utils'
 import { FieldTypeKeys } from '@biblio-num/shared'
+import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
 
 @Injectable()
 export class DossierProjectionService {
@@ -23,14 +26,10 @@ export class DossierProjectionService {
 
     tableName = tableName || ProjectionManagerService.buildDossierTableName(demarche.id)
 
-    const typeHash = fromMappingColumnArrayToTypeHash(
-      demarche.mappingColumns.filter(c => !c.isHeader),
-    )
-
-    const columnDefinitions = Object.entries(typeHash)
-      .map(([id, type]) => {
-        const sqlType = mapFieldTypeToSql(type)
-        return `"${id}" ${sqlType}[]`
+    const columnDefinitions = flattenWithoutHeader(demarche.mappingColumns)
+      .map((c) => {
+        const sqlType = mapFieldTypeToSql(c.type)
+        return `"${c.id}" ${sqlType}[]`
       })
       .join(',\n')
 
@@ -64,13 +63,12 @@ export class DossierProjectionService {
   // where every field is its stringValue (or number or date) in a column of its label.
   private _buildAggregatedCTE(
     demarcheId: number,
-    typeHash: Record<string, FieldTypeKeys>,
+    mappingColumns: MappingColumn[],
   ): string {
     this.logger.verbose('_buildAggregatedCTE')
-    const fieldsId = Object.keys(typeHash)
 
-    const select = fieldsId
-      .map((id: string) => `${this._buildArrayAggregateFromOneFieldId(id, typeHash[id])} as "${id}"`)
+    const select = mappingColumns
+      .map((c) => `${this._buildArrayAggregateFromOneFieldId(c.id, c.type)} as "${c.id}"`)
       .join(',')
 
     return `
@@ -89,8 +87,7 @@ export class DossierProjectionService {
 
   async rebuild(demarche: Demarche): Promise<void> {
     this.logger.verbose(`rebuild dossier projection ${demarche.title}`)
-    const baseTableName =
-      ProjectionManagerService.buildDossierTableName(demarche.id)
+    const baseTableName = ProjectionManagerService.buildDossierTableName(demarche.id)
 
     const tempTableName = `${baseTableName}__tmp`
     const backupTableName = `${baseTableName}__old`
@@ -103,13 +100,9 @@ export class DossierProjectionService {
 
     await this.createTable(demarche, tempTableName)
 
-    const typeHash = fromMappingColumnArrayToTypeHash(
-      demarche.mappingColumns,
-    )
+    const fields = flattenWithoutHeader(demarche.mappingColumns)
 
-    const fieldsId = Object.keys(typeHash)
-
-    if (!fieldsId.length) {
+    if (!fields.length) {
       this.logger.warn('No mapping columns found')
       return
     }
@@ -117,15 +110,15 @@ export class DossierProjectionService {
     // original query from old dossier search query
     const query = `
       WITH
-        ${this._buildAggregatedCTE(demarche.id, typeHash)}
+        ${this._buildAggregatedCTE(demarche.id, fields)}
 
       INSERT INTO "${tempTableName}" (
         "dossierId",
-        ${fieldsId.map((id) => `"${id}"`).join(',')}
+        ${fields.map((c) => `"${c.id}"`).join(',')}
       )
       SELECT
         "dossierId",
-        ${fieldsId.map((id) => `"${id}"`).join(',')}
+        ${fields.map((c) => `"${c.id}"`).join(',')}
       FROM aggregatedCTE
     `
 
@@ -159,16 +152,10 @@ export class DossierProjectionService {
       `upsertOneDossier dossier projection ${demarche.title} - dossier ${dossierId}`,
     )
 
-    const tableName =
-      ProjectionManagerService.buildDossierTableName(demarche.id)
+    const tableName = ProjectionManagerService.buildDossierTableName(demarche.id)
+    const columns = flattenWithoutHeader(demarche.mappingColumns)
 
-    const typeHash = fromMappingColumnArrayToTypeHash(
-      demarche.mappingColumns,
-    )
-
-    const fieldsId = Object.keys(typeHash)
-
-    if (!fieldsId.length) {
+    if (!columns.length) {
       this.logger.warn('No mapping columns found')
       return
     }
@@ -179,8 +166,8 @@ export class DossierProjectionService {
       aggregatedCTE AS (
         SELECT
           d.id as "dossierId",
-          ${fieldsId.map((id: string) => `
-            ${this._buildArrayAggregateFromOneFieldId(id, typeHash[id])} as "${id}"
+          ${columns.map((c: MappingColumn) => `
+            ${this._buildArrayAggregateFromOneFieldId(c.id, c.type)} as "${c.id}"
           `).join(',')}
         FROM dossiers d
         JOIN fields f ON d.id = f."dossierId"
@@ -195,11 +182,11 @@ export class DossierProjectionService {
         ${aggregatedCTE}
       INSERT INTO "${tableName}" (
         "dossierId",
-        ${fieldsId.map((id) => `"${id}"`).join(',')}
+        ${columns.map((c) => `"${c.id}"`).join(',')}
       )
       SELECT
         "dossierId",
-        ${fieldsId.map((id) => `"${id}"`).join(',')}
+        ${columns.map((c) => `"${c.id}"`).join(',')}
       FROM aggregatedCTE
     `
 

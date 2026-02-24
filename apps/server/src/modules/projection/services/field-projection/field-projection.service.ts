@@ -1,18 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import { Demarche } from '@/modules/demarches/objects/entities/demarche.entity'
-import { FieldTypeKeys } from '@biblio-num/shared'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { DataSource } from 'typeorm'
-import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
-import { fromMappingColumnArrayToTypeHash } from '@/modules/demarches/utils/demarche.utils'
+import { flattenWithoutHeader } from '@/modules/demarches/utils/demarche.utils'
 import { deduceFieldToQueryFromType } from '@/shared/pagination/utils/common-search.utils'
 import { ProjectionManagerService } from '@/modules/projection/services/projection-manager/projection-manager.service'
 import { mapFieldTypeToSql } from '@/modules/projection/utils/projection-utils'
-
-type tProjectionCol = {
-  id: string
-  type: string
-}
+import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
 
 @Injectable()
 export class FieldProjectionService {
@@ -26,14 +20,10 @@ export class FieldProjectionService {
     this.logger.verbose(`createTable ${demarche.title}`)
     tableName = tableName || ProjectionManagerService.buildFieldTableName(demarche.id)
 
-    const typeHash = fromMappingColumnArrayToTypeHash(
-      demarche.mappingColumns.filter(c => !c.isHeader),
-    )
-
-    const columnDefinitions = Object.entries(typeHash)
-      .map(([id, type]) => {
-        const sqlType = mapFieldTypeToSql(type)
-        return `"${id}" ${sqlType}`
+    const columnDefinitions = flattenWithoutHeader(demarche.mappingColumns)
+      .map((c) => {
+        const sqlType = mapFieldTypeToSql(c.type)
+        return `"${c.id}" ${sqlType}`
       })
       .join(',\n')
 
@@ -97,22 +87,21 @@ export class FieldProjectionService {
   }
 
   private _buildCombinedCTE(
-    fieldsId: string[],
-    typeHash: Record<string, FieldTypeKeys>,
+    columns: MappingColumn[],
   ): string {
     this.logger.verbose('_buildRepeatedCTE')
     return `
       combinedCTE AS (
         SELECT
             n."dossierId",
-            ${fieldsId
-    .map((id: string) => {
-      const field = deduceFieldToQueryFromType(typeHash[id])
+            ${columns
+    .map((c: MappingColumn) => {
+      const field = deduceFieldToQueryFromType(c.type)
       return `
         MAX(COALESCE(
-          CASE WHEN n."sourceId" = '${id}' THEN n."${field}" END,
-          CASE WHEN r."sourceId" = '${id}' THEN r."${field}" END)
-        ) AS "${id}"
+          CASE WHEN n."sourceId" = '${c.id}' THEN n."${field}" END,
+          CASE WHEN r."sourceId" = '${c.id}' THEN r."${field}" END)
+        ) AS "${c.id}"
       `
     })
     .filter((a) => !!a)
@@ -128,8 +117,7 @@ export class FieldProjectionService {
   async rebuild(demarche: Demarche): Promise<void> {
     this.logger.verbose(`rebuild projection ${demarche.title}`)
 
-    const baseTableName =
-      ProjectionManagerService.buildFieldTableName(demarche.id)
+    const baseTableName = ProjectionManagerService.buildFieldTableName(demarche.id)
 
     const tempTableName = `${baseTableName}__tmp`
     const backupTableName = `${baseTableName}__old`
@@ -143,18 +131,15 @@ export class FieldProjectionService {
     // new table under temp name
     await this.createTable(demarche, tempTableName)
 
-    const typeHash = fromMappingColumnArrayToTypeHash(
-      demarche.mappingColumns.filter(c => !c.isHeader),
-    )
-
-    const fieldsId = Object.keys(typeHash)
+    const columns = flattenWithoutHeader(demarche.mappingColumns)
+    const columnIds = columns.map(c => c.id)
 
     // original query from field search
     const buildQuery = `
       WITH
-        ${this._buildRepeatedCTE(demarche.id, fieldsId)},
-        ${this._buildNonRepeatedCTE(demarche.id, fieldsId)},
-        ${this._buildCombinedCTE(fieldsId, typeHash)},
+        ${this._buildRepeatedCTE(demarche.id, columnIds)},
+        ${this._buildNonRepeatedCTE(demarche.id, columnIds)},
+        ${this._buildCombinedCTE(columns)},
         numbered AS (
           SELECT *,
                  ROW_NUMBER() OVER (
@@ -166,12 +151,12 @@ export class FieldProjectionService {
       INSERT INTO "${tempTableName}" (
         "dossierId",
         projectionRowIndex,
-        ${fieldsId.map((id) => `"${id}"`).join(',')}
+        ${columnIds.map((id) => `"${id}"`).join(',')}
       )
       SELECT
         "dossierId",
         projectionRowIndex,
-        ${fieldsId.map((id) => `"${id}"`).join(',')}
+        ${columnIds.map((id) => `"${id}"`).join(',')}
       FROM numbered
     `
 
@@ -200,13 +185,10 @@ export class FieldProjectionService {
 
     const tableName = ProjectionManagerService.buildFieldTableName(demarche.id)
 
-    const typeHash = fromMappingColumnArrayToTypeHash(
-      demarche.mappingColumns.filter(c => !c.isHeader),
-    )
+    const columns = flattenWithoutHeader(demarche.mappingColumns)
+    const columnIds = columns.map(c => c.id)
 
-    const fieldsId = Object.keys(typeHash)
-
-    if (!fieldsId.length) return
+    if (!columns.length) return
 
     // On supprime les anciennes lignes de projection du dossier
     await this.dataSource.query(
@@ -217,9 +199,9 @@ export class FieldProjectionService {
     // query d'injection pour ce dossier
     const query = `
         WITH
-          ${this._buildRepeatedCTE(demarche.id, fieldsId)},
-          ${this._buildNonRepeatedCTE(demarche.id, fieldsId)},
-          ${this._buildCombinedCTE(fieldsId, typeHash)},
+          ${this._buildRepeatedCTE(demarche.id, columnIds)},
+          ${this._buildNonRepeatedCTE(demarche.id, columnIds)},
+          ${this._buildCombinedCTE(columns)},
           numbered AS (
             SELECT
               *,
@@ -232,12 +214,12 @@ export class FieldProjectionService {
         INSERT INTO "${tableName}" (
           dossierId,
           projectionRowIndex,
-          ${fieldsId.map((id) => `"${id}"`).join(',')}
+          ${columnIds.map((id) => `"${id}"`).join(',')}
         )
         SELECT
           "dossierId",
           projectionRowIndex,
-          ${fieldsId.map((id) => `"${id}"`).join(',')}
+          ${columnIds.map((id) => `"${id}"`).join(',')}
         FROM numbered
         WHERE "dossierId" = $1
     `
