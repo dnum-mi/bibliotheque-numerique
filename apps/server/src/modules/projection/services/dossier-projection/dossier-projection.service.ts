@@ -18,10 +18,10 @@ export class DossierProjectionService {
   }
 
   //#region 📍------ Create table ------ 📍
-  async createTable(demarche: Demarche): Promise<void> {
+  async createTable(demarche: Demarche, tableName?: string): Promise<void> {
     this.logger.verbose(`createTable dossier pojection for ${demarche.title}`)
 
-    const tableName = ProjectionManagerService.buildDossierTableName(demarche.id)
+    tableName = tableName || ProjectionManagerService.buildDossierTableName(demarche.id)
 
     const typeHash = fromMappingColumnArrayToTypeHash(
       demarche.mappingColumns,
@@ -89,7 +89,18 @@ export class DossierProjectionService {
 
   async rebuild(demarche: Demarche): Promise<void> {
     this.logger.verbose(`rebuild dossier projection ${demarche.title}`)
-    const tableName = ProjectionManagerService.buildDossierTableName(demarche.id)
+    const baseTableName =
+      ProjectionManagerService.buildDossierTableName(demarche.id)
+
+    const tempTableName = `${baseTableName}__tmp`
+    const backupTableName = `${baseTableName}__old`
+
+    // clean possible old remaining
+    await this.dataSource.query(`
+        DROP TABLE IF EXISTS "${tempTableName}";
+        DROP TABLE IF EXISTS "${backupTableName}";
+    `)
+
     await this.createTable(demarche)
 
     const typeHash = fromMappingColumnArrayToTypeHash(
@@ -103,11 +114,12 @@ export class DossierProjectionService {
       return
     }
 
+    // original query from old dossier search query
     const query = `
       WITH
         ${this._buildAggregatedCTE(demarche.id, typeHash)}
 
-      INSERT INTO "${tableName}" (
+      INSERT INTO "${tempTableName}" (
         "dossierId",
         ${fieldsId.map((id) => `"${id}"`).join(',')}
       )
@@ -118,6 +130,21 @@ export class DossierProjectionService {
     `
 
     await this.dataSource.query(query)
+
+    // Swap atomique
+    await this.dataSource.query(`
+      BEGIN;
+
+      ALTER TABLE IF EXISTS "${baseTableName}"
+        RENAME TO "${backupTableName}";
+
+      ALTER TABLE "${tempTableName}"
+        RENAME TO "${baseTableName}";
+
+      DROP TABLE IF EXISTS "${backupTableName}";
+
+      COMMIT;
+    `)
 
     this.logger.log(
       `Dossier projection rebuilt for demarche ${demarche.id}`,

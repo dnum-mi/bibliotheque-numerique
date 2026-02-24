@@ -106,7 +106,7 @@ describe('FieldProjectionService', () => {
       expect(executedQuery).toContain('CREATE TABLE')
       expect(executedQuery).toContain('"simple-id" text')
       expect(executedQuery).toContain('"child-1" numeric')
-      expect(executedQuery).toContain('PRIMARY KEY (dossierId, projectionRowIndex)')
+      expect(executedQuery).toContain('PRIMARY KEY (\"dossierId\", projectionRowIndex)')
     })
   })
 })

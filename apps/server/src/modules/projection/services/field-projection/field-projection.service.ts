@@ -47,9 +47,9 @@ export class FieldProjectionService {
     return result
   }
 
-  async createTable(demarche: Demarche): Promise<void> {
+  async createTable(demarche: Demarche, tableName?: string): Promise<void> {
     this.logger.verbose(`createTable ${demarche.title}`)
-    const tableName = ProjectionManagerService.buildFieldTableName(demarche.id)
+    tableName = tableName || ProjectionManagerService.buildFieldTableName(demarche.id)
 
     const flatColumns: tProjectionCol[] = this._flattenMappingColumns(
       demarche.mappingColumns,
@@ -152,44 +152,70 @@ export class FieldProjectionService {
 
   async rebuild(demarche: Demarche): Promise<void> {
     this.logger.verbose(`rebuild projection ${demarche.title}`)
-    await this.createTable(demarche)
 
-    const tableName = ProjectionManagerService.buildFieldTableName(demarche.id)
+    const baseTableName =
+      ProjectionManagerService.buildFieldTableName(demarche.id)
+
+    const tempTableName = `${baseTableName}__tmp`
+    const backupTableName = `${baseTableName}__old`
+
+    // clean possible old remaining
+    await this.dataSource.query(`
+        DROP TABLE IF EXISTS "${tempTableName}";
+        DROP TABLE IF EXISTS "${backupTableName}";
+    `)
+
+    // new table under temp name
+    await this.createTable(demarche, tempTableName)
+
     const flatColumns = this._flattenMappingColumns(demarche.mappingColumns)
-
     const fieldsId = flatColumns.map((c) => c.id)
+    const typeHash = fromMappingColumnArrayToTypeHash(
+      demarche.mappingColumns,
+    )
 
-    const typeHash = fromMappingColumnArrayToTypeHash(demarche.mappingColumns)
-
-    const query = `
-        WITH
-          ${this._buildRepeatedCTE(demarche.id, fieldsId)},
-          ${this._buildNonRepeatedCTE(demarche.id, fieldsId)},
-          ${this._buildCombinedCTE(fieldsId, typeHash)},
-          numbered AS (
-            SELECT
-              *,
-              ROW_NUMBER() OVER (
-                PARTITION BY "dossierId"
-                ORDER BY "dossierId"
-              ) AS projectionRowIndex
-            FROM combinedCTE
-          )
-        INSERT INTO "${tableName}" (
-          "dossierId",
-          projectionRowIndex,
-          ${fieldsId.map((id) => `"${id}"`).join(',')}
+    // original query from field search
+    const buildQuery = `
+      WITH
+        ${this._buildRepeatedCTE(demarche.id, fieldsId)},
+        ${this._buildNonRepeatedCTE(demarche.id, fieldsId)},
+        ${this._buildCombinedCTE(fieldsId, typeHash)},
+        numbered AS (
+          SELECT *,
+                 ROW_NUMBER() OVER (
+                   PARTITION BY "dossierId"
+                   ORDER BY "dossierId"
+                 ) AS projectionRowIndex
+          FROM combinedCTE
         )
-        SELECT
-          "dossierId",
-          projectionRowIndex,
-          ${fieldsId.map((id) => `"${id}"`).join(',')}
-        FROM numbered
+      INSERT INTO "${tempTableName}" (
+        "dossierId",
+        projectionRowIndex,
+        ${fieldsId.map((id) => `"${id}"`).join(',')}
+      )
+      SELECT
+        "dossierId",
+        projectionRowIndex,
+        ${fieldsId.map((id) => `"${id}"`).join(',')}
+      FROM numbered
     `
 
-    this.logger.debug(query)
+    await this.dataSource.query(buildQuery)
 
-    await this.dataSource.query(query)
+    // Swap atomique
+    await this.dataSource.query(`
+      BEGIN;
+      ALTER TABLE IF EXISTS "${baseTableName}"
+        RENAME TO "${backupTableName}";
+
+      ALTER TABLE "${tempTableName}"
+        RENAME TO "${baseTableName}";
+
+      DROP TABLE IF EXISTS "${backupTableName}";
+      COMMIT;
+    `)
+
+    this.logger.log(`Projection rebuilt safely for demarche ${demarche.id}`)
   }
 
   async upsertOneDossier(demarche: Demarche, dossierId: number): Promise<void> {
