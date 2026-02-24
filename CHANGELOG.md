@@ -1,5 +1,36 @@
 # Changelog
 
+## [5.3.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.2.1...v5.3.0) (2026-02-24)
+
+
+### Features
+
+* [2114-P1]: Projection module et son squelette ([c0505be](https://github.com/dnum-mi/bibliotheque_numerique/commit/c0505be19057156cea9db83dfa2fe4f2f167cb3c))
+* [2114-P10]:correcting unit tests ([3b9f640](https://github.com/dnum-mi/bibliotheque_numerique/commit/3b9f640d851c598f651218bd4d34b7bbaa3a44fd))
+* [2114-P11]: rebuild projection table on anonymised ([603f93a](https://github.com/dnum-mi/bibliotheque_numerique/commit/603f93a95371965e99a76b1b8480f0a49e843136))
+* [2114-P12]: make anonymised job lighter ([5c531a5](https://github.com/dnum-mi/bibliotheque_numerique/commit/5c531a5b3a0c9a18c08b8eb967630fcb68f15c2c))
+* [2114-P13]: rebuild tables in temp tables ([8a8ad91](https://github.com/dnum-mi/bibliotheque_numerique/commit/8a8ad91d1b2f90cd83ae46c01875e340324cf1a6))
+* [2114-P14]: correctings e2e tests ([fdb6501](https://github.com/dnum-mi/bibliotheque_numerique/commit/fdb65019ab4518ea96e55cdb38fcb62d8a31e7b8))
+* [2114-P15]: factoring mapping column operations ([0083fe1](https://github.com/dnum-mi/bibliotheque_numerique/commit/0083fe1aca7e09de1267ea3c181e02059ea87114))
+* [2114-P2]: Projection creation table for fields ([c0a9ff2](https://github.com/dnum-mi/bibliotheque_numerique/commit/c0a9ff2e7f9cb6cc81ddc4b58069b3a6deadbd0f))
+* [2114-P3]: search fields use projection ([d226149](https://github.com/dnum-mi/bibliotheque_numerique/commit/d226149336c57a24809ff2357910284fc3100f07))
+* [2114-P4]: adding dossier to projection ([e6f7167](https://github.com/dnum-mi/bibliotheque_numerique/commit/e6f7167e29f5fef59f9056a552c84d9008aa974e))
+* [2114-P5]: building table on module init ([4d65db3](https://github.com/dnum-mi/bibliotheque_numerique/commit/4d65db3af27f6d409546f7adc43756ab9d14c86a))
+* [2114-P6]: dossier project ([02d40a1](https://github.com/dnum-mi/bibliotheque_numerique/commit/02d40a18ba9685742329a0ab6a8af8466fea9bd2))
+* [2114-P7]: link demarche synchronisation ([dbcfd89](https://github.com/dnum-mi/bibliotheque_numerique/commit/dbcfd89f8eae2053a593a330dc3c9b2accf9fbf8))
+* [2114-P8]: dossier-search replaced ([0906f7a](https://github.com/dnum-mi/bibliotheque_numerique/commit/0906f7a67441d7728078be5a684e0022f8cb6665))
+* [2114-P9]: suppression de l'ancien code ([f3bba17](https://github.com/dnum-mi/bibliotheque_numerique/commit/f3bba174967fdde17ba0b98771f0445d5eadce51))
+
+
+### Bug Fixes
+
+* dont send width to api on research ([168a9f3](https://github.com/dnum-mi/bibliotheque_numerique/commit/168a9f32b49eecd1b72e240b281e36d5b2dbd636))
+* eslint ([767ba53](https://github.com/dnum-mi/bibliotheque_numerique/commit/767ba5377bc3320e0af2b21b11fc8410f87126f2))
+* migration pour modifier le type de champs service intructeur des mappingColumns ([6de76bb](https://github.com/dnum-mi/bibliotheque_numerique/commit/6de76bbaeea11555938217d520af80bab17d7a91))
+* recherche par label dans filtre de enum pour corriger le filtre de service instructeur ([9171ef2](https://github.com/dnum-mi/bibliotheque_numerique/commit/9171ef214fa64916f285732ac0f5303af05b0ab0))
+* store mode group view ([4b87782](https://github.com/dnum-mi/bibliotheque_numerique/commit/4b87782d346d9ec6adc9234f716f46da488fef5b))
+* tests ([f0ea671](https://github.com/dnum-mi/bibliotheque_numerique/commit/f0ea671c797bfe0ac4cdf719605cb38f7b01edfe))
+
 ## [5.2.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.2.0...v5.2.1) (2026-02-12)
 
 
