@@ -1,3 +1,18 @@
+# Cette image est utilisée pour les étapes de build des autres services (server, worker-sync, worker-file)
+# afin d'éviter de dupliquer les étapes de build communes (installation des dépendances, etc.) et ainsi accélérer le temps de build global.
+x-server-image: &server_image
+  image: biblio-num/server-runtime:prod
+  build:
+    target: production
+    context: ../../
+    dockerfile: ./apps/server/Dockerfile
+  platform: linux/amd64
+  networks:
+    - biblio-num-network
+  depends_on:
+    - db
+  env_file:
+    - .env.docker
 
 services:
   bn-http-proxy:
@@ -26,7 +41,7 @@ services:
       target: production
       context: ../../
       dockerfile: ./apps/client/Dockerfile
-    image: biblio-num/client:dev
+    image: biblio-num/client:prod
     platform: linux/amd64
     container_name: biblio-num_client
     ports:
@@ -39,58 +54,24 @@ services:
   server:
     profiles:
       - prod
-    build:
-      target: production
-      context: ../../
-      dockerfile: ./apps/server/Dockerfile
-    image: biblio-num/server:dev
-    platform: linux/amd64
+    <<: *server_image
     container_name: biblio-num_server
-    depends_on:
-      - db
     ports:
       - "${DC_API_PORT:-3000}:3000"
-    networks:
-      - biblio-num-network
-    env_file: # À injecter les variables dans le container au runtime.
-      - .env.docker
-
 
   worker-sync:
     profiles:
       - prod
-    build:
-      target: production
-      context: ../../
-      dockerfile: ./apps/server/Dockerfile
-    image: biblio-num/worker-sync:dev
-    platform: linux/amd64
+    <<: *server_image
     container_name: biblio-num_worker_sync
-    depends_on:
-      - db
-    networks:
-      - biblio-num-network
     command: pnpm run start:worker-sync
-    env_file: # À injecter les variables dans le container au runtime.
-      - .env.docker
 
   worker-file:
     profiles:
       - prod
-    build:
-      target: production
-      context: ../../
-      dockerfile: ./apps/server/Dockerfile
-    image: biblio-num/worker-file:dev
-    platform: linux/amd64
+    <<: *server_image
     container_name: biblio-num_worker_file
-    depends_on:
-      - db
-    networks:
-      - biblio-num-network
     command: pnpm run start:worker-file
-    env_file: # À injecter les variables dans le container au runtime.
-      - .env.docker
 
   db:
     profiles:

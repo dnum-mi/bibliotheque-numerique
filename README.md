@@ -59,7 +59,7 @@ Naviguez ensuite vers [http://localhost:8088](http://localhost:8088) pour accéd
 
 Un compte administrateur est créé par défaut avec les identifiants suivants:
 - Email: `admin@localhost.com`
-- Mot de passe: `password`
+- Mot de passe: `Password2OpenBN!`
 
 
 #### 3. Lancer en mode développement
