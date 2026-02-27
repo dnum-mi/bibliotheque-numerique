@@ -58,6 +58,12 @@ defineProps<{
         </div>
       </template>
 
+      <p
+        v-else-if="champ.format === 'rnf' || champ.format === 'rna'"
+        class="fr-text--bold fr-text"
+      >
+        {{ ((champ as IFieldSimple).value as string)?.split('|')[0] ?? '' }}
+      </p>
       <!-- Par défault -->
       <p
         v-else
