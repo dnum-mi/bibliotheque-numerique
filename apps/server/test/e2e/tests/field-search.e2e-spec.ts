@@ -13,6 +13,10 @@ describe('Field search', () => {
     await testingModule.init()
     app = testingModule.app
     tokens = testingModule.tokens
+
+    await request(app.getHttpServer())
+      .post('/projections/init')
+      .set('Authorization', `Bearer ${tokens.sudo}`)
   })
 
   afterAll(async () => {

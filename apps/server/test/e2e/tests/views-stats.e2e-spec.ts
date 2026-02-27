@@ -12,6 +12,9 @@ describe('statistique', () => {
     await testingModule.init()
     app = testingModule.app
     token = testingModule.tokens.instructor
+    await request(app.getHttpServer())
+      .post('/projections/init')
+      .set('Authorization', `Bearer ${testingModule.tokens.sudo}`)
   })
 
   afterAll(async () => {
