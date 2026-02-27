@@ -138,6 +138,9 @@ const entryExitDateTimelineItems = (person: IPerson) => {
             <InfoRow label="Date et lieu de naissance">
               {{ getBirthLabel(person) }}
             </InfoRow>
+            <InfoRow label="Qualité de déclarant">
+              {{ person.quality || '-' }}
+            </InfoRow>
             <InfoRow label="Nationalité">
               {{ person.nationality || '-' }}
             </InfoRow>
