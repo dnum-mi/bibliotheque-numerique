@@ -9,7 +9,7 @@ import '@gouvfr/dsfr/dist/utility/utility.main.min.css'
 import '@gouvminint/vue-dsfr/styles'
 
 import '@gouvfr/dsfr/dist/scheme/scheme.min.css'
-import { DsfrButton } from '@gouvminint/vue-dsfr'
+import { DsfrAccordion, DsfrButton } from '@gouvminint/vue-dsfr'
 
 import collections from './icon-collections'
 import { addCollection } from '@iconify/vue'
@@ -310,6 +310,7 @@ createApp(App)
   .use(createPinia())
   .use(OpenLayersMap)
   .component('DsfrButton', DsfrButton)
+  .component('DsfrAccordion', DsfrAccordion)
   .component('OrganismeBadge', OrganismeBadge)
   .component('StatusBadge', StatusBadge)
   .component('FileTagBadge', FileTagBadge)

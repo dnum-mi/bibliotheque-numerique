@@ -2,10 +2,32 @@
 import { computed, ref, onMounted, watch } from 'vue'
 import { useDebounceFn, useLocalStorage } from '@vueuse/core'
 
+import { FieldSource } from '@biblio-num/shared'
 import type { IMappingColumn } from '@biblio-num/shared'
 
 import DemarcheConfigurationSelectableItem from './DemarcheConfigurationSelectableItem.vue'
 import DemarcheConfigurationSelectedItem from './DemarcheConfigurationSelectedItem.vue'
+
+interface IMeta {
+  id: string,
+  label: string,
+}
+type IData = Record<string, {
+  id: string,
+  label: string,
+  children?: IMappingColumn[]
+}>
+
+interface IMappingColumnConfPart {
+  meta: IMeta,
+  data: IData
+}
+
+export interface IConfParts {
+  [FieldSource.champs]: IMappingColumnConfPart,
+  [FieldSource.annotation]: IMappingColumnConfPart,
+  [FieldSource.fixField]?: IMappingColumnConfPart
+}
 
 const props = withDefaults(defineProps<{
   currentDemarcheConfiguration: IMappingColumn[]
@@ -25,28 +47,8 @@ const emit = defineEmits<{
 
 const demarcheConfiguration = computed<IMappingColumn[]>(() => props.currentDemarcheConfiguration)
 
-interface IMeta {
-  id: string,
-  label: string,
-}
-interface IMappingColumnConfPart {
-  meta: IMeta,
-  data: IMappingColumn[]
-}
-interface IConfParts {
-  champs: {
-    meta: IMeta,
-    data: Record<string, {
-      id: string
-      label: string
-      children?: IMappingColumn[]
-    }>
-  },
-  annotation: IMappingColumnConfPart,
-  'fix-field'?: IMappingColumnConfPart
-}
-const getDefaultConfParts = () => ({
-  champs: {
+const getDefaultConfParts = (): IConfParts => ({
+  [FieldSource.champs]: {
     meta: {
       id: 'champs',
       label: props.demarcheTitle,
@@ -57,52 +59,64 @@ const getDefaultConfParts = () => ({
       children?: IMappingColumn[]
     }>,
   },
-  annotation: {
+  [FieldSource.annotation]: {
     meta: {
       id: 'annotation',
       label: 'Annotations privées',
     },
-    data: [] as IMappingColumn[],
+    data: {} as Record<string, {
+      id: string
+      label: string
+      children?: IMappingColumn[]
+    }>,
   },
-  'fix-field': {
+  [FieldSource.fixField]: {
     meta: {
       id: 'fix-field',
       label: 'Données BN',
     },
-    data: [] as IMappingColumn[],
+    data: {} as Record<string, {
+      id: string
+      label: string
+      children?: IMappingColumn[]
+    }>,
   },
 })
 
 const confParts = ref<IConfParts>(getDefaultConfParts())
-
+const idNoSection = 'no-section'
 const updateDataGroup = () => {
-  let groupId = 'no-section'
+  confParts.value = Object.fromEntries(
+    Object.entries(getDefaultConfParts()).map(([key, confPartDefault]) => {
+      if (!confPartDefault) {
+        return [key, undefined]
+      }
+      let groupId = idNoSection
 
-  confParts.value = getDefaultConfParts()
-  const acc = confParts.value.champs.data
-  for (const mappingColumn of demarcheConfiguration.value) {
-    if (mappingColumn.source === 'champs') {
-      groupId = mappingColumn.isHeader ? mappingColumn.id : groupId
-      if (!acc[groupId]) {
-        acc[groupId] = {
-          id: groupId,
-          label: mappingColumn.isHeader ? (mappingColumn.columnLabel || mappingColumn.originalLabel) : 'Sans en-tête',
-          children: [],
+      const data = demarcheConfiguration.value.filter(mappingColumn => mappingColumn.source === key).reduce((acc, mappingColumn) => {
+        groupId = mappingColumn.isHeader ? mappingColumn.id : groupId
+        if (!acc[groupId]) {
+          acc[groupId] = {
+            id: groupId,
+            label: mappingColumn.isHeader ? (mappingColumn.columnLabel || mappingColumn.originalLabel) : 'Sans en-tête',
+            children: [],
+          }
         }
-      }
 
-      if (!mappingColumn.isHeader) {
-        acc[groupId].children?.push(mappingColumn)
-      }
+        if (!mappingColumn.isHeader) {
+          acc[groupId]?.children?.push(mappingColumn)
+        }
+        return acc
+      }, confPartDefault.data)
 
-      // confParts.value[mappingColumn.source as 'champs'].data.push(mappingColumn)
-    } else if (['annotation', 'fix-field'].includes(mappingColumn.source)) {
-      confParts.value[mappingColumn.source as 'annotation' | 'fix-field']?.data.push(mappingColumn)
-    }
-  }
+      return [key, { ...confPartDefault, data }]
+    }),
+  )
 
-  if (!confParts.value['fix-field']?.data.length) {
-    delete confParts.value['fix-field']
+  const fixFieldPart = confParts.value[FieldSource.fixField]?.data
+  if (!!fixFieldPart
+    && Object.values(fixFieldPart).some(group => group.children?.length === 0)) {
+    delete confParts.value[FieldSource.fixField]
   }
 }
 
@@ -151,153 +165,66 @@ const saveOneMappingColumnDebounced = useDebounceFn(saveOneMappingColumn, 300)
           />
         </div>
       </header>
+
       <section
-        id="content-champs"
+        v-for="([key, confPartValue]) of Object.entries(confParts)"
+        :id="`content-${key}`"
+        :key="key"
         tabindex="0"
         class="tabpane"
-        :class="{ active: selectedPartId === Object.keys(confParts)[0] }"
+        :class="{ active: selectedPartId === key }"
         role="tabpanel"
-        :aria-selected="selectedPartId === Object.keys(confParts)[0]"
+        :aria-selected="selectedPartId === key"
         aria-labelledby="tab-champs"
       >
-        <h5>{{ demarcheTitle }}</h5>
-        <DsfrAccordion
-          v-for="([key, section]) of Object.entries(confParts.champs.data)"
-          :id="key"
-          :key="key"
-          :expanded-id="cdsExpandedId"
-          :title="section.label"
-          @expand="cdsExpandedId = $event"
+        <h5>{{ confPartValue?.meta.label || '' }}</h5>
+        <template
+          v-for="([keySection, section]) of confPartValue ? Object.entries(confPartValue.data) : []"
+          :key="keySection"
         >
-          <ul class="list-none">
-            <li
-              v-for="champ of section.children"
-              :key="champ.id"
-              class="flex  items-center  justify-between  p-2"
-            >
-              <template v-if="champ.children?.length">
-                <div>
-                  <h6 class="fr-text--md">
-                    {{ champ.originalLabel }}
-                  </h6>
-                  <ul class="list-none">
-                    <li
-                      v-for="child of champ.children"
-                      :key="child.id"
-                      class="flex  items-center  justify-between  p-2"
-                    >
-                      <DemarcheConfigurationSelectableItem
-                        :champ="child"
-                        :is-selected-fn="isSelectedFn"
-                        @toggle-check="saveOneMappingColumn(child.id, $event ? child.originalLabel : null)"
-                      />
-                    </li>
-                  </ul>
-                </div>
-              </template>
-              <template v-else>
-                <DemarcheConfigurationSelectableItem
-                  :champ="champ"
-                  :is-selected-fn="isSelectedFn"
-                  @toggle-check="saveOneMappingColumn(champ.id, $event ? champ.originalLabel : null)"
-                />
-              </template>
-            </li>
-          </ul>
-        </DsfrAccordion>
-      </section>
-      <section
-        id="content-annotations"
-        tabindex="0"
-        class="tabpane"
-        :class="{ active: selectedPartId === Object.keys(confParts)[1] }"
-        role="tabpanel"
-        :aria-selected="selectedPartId === Object.keys(confParts)[1]"
-        aria-labelledby="tab-annotations"
-      >
-        <h5>Annotations privées</h5>
-        <ul class="list-none">
-          <li
-            v-for="champ of confParts.annotation.data"
-            :key="champ.id"
-            class="flex  items-center  justify-between  p-2"
+          <component
+            :is="section.id !== idNoSection ? 'DsfrAccordion' : 'div'"
+            :expanded-id="cdsExpandedId"
+            :title="section.label"
+            @expand="cdsExpandedId = $event"
           >
-            <template v-if="champ.children?.length">
-              <div>
-                <h6 class="fr-text--md">
-                  {{ champ.originalLabel }}
-                </h6>
-                <ul class="list-none">
-                  <li
-                    v-for="child of champ.children"
-                    :key="child.id"
-                    class="flex  items-center  justify-between  p-2"
-                  >
-                    <DemarcheConfigurationSelectableItem
-                      :champ="child"
-                      :is-selected-fn="isSelectedFn"
-                      @toggle-check="saveOneMappingColumn(child.id, $event ? child.originalLabel : null)"
-                    />
-                  </li>
-                </ul>
-              </div>
-            </template>
-            <template v-else>
-              <DemarcheConfigurationSelectableItem
-                :champ="champ"
-                :is-selected-fn="isSelectedFn"
-                @toggle-check="saveOneMappingColumn(champ.id, $event ? champ.originalLabel : null)"
-              />
-            </template>
-          </li>
-        </ul>
-      </section>
-      <section
-        v-if="confParts['fix-field']"
-        id="content-fix-field"
-        tabindex="0"
-        class="tabpane"
-        :class="{ active: selectedPartId === Object.keys(confParts)[2] }"
-        role="tabpanel"
-        :aria-selected="selectedPartId === Object.keys(confParts)[2]"
-        aria-labelledby="tab-fix-field"
-      >
-        <h5>Données BN</h5>
-        <ul class="list-none">
-          <li
-            v-for="champ of confParts['fix-field'].data"
-            :key="champ.id"
-            class="flex  items-center  justify-between  p-2"
-          >
-            <template v-if="champ.children?.length">
-              <div>
-                <h6 class="fr-text--md">
-                  {{ champ.originalLabel }}
-                </h6>
-                <ul class="list-none">
-                  <li
-                    v-for="child of champ.children"
-                    :key="child.id"
-                    class="flex  items-center  justify-between  p-2"
-                  >
-                    <DemarcheConfigurationSelectableItem
-                      :champ="child"
-                      :is-selected-fn="isSelectedFn"
-                      @toggle-check="saveOneMappingColumn(child.id, $event ? child.originalLabel : null)"
-                    />
-                  </li>
-                </ul>
-              </div>
-            </template>
-            <template v-else>
-              <DemarcheConfigurationSelectableItem
-                :champ="champ"
-                :is-selected-fn="isSelectedFn"
-                @toggle-check="saveOneMappingColumn(champ.id, $event ? champ.originalLabel : null)"
-              />
-            </template>
-          </li>
-        </ul>
+            <ul class="list-none">
+              <li
+                v-for="champ of section.children"
+                :key="champ.id"
+                class="flex  items-center  justify-between  p-2"
+              >
+                <template v-if="champ.children?.length">
+                  <div>
+                    <h6 class="fr-text--md">
+                      {{ champ.originalLabel }}
+                    </h6>
+                    <ul class="list-none">
+                      <li
+                        v-for="child of champ.children"
+                        :key="child.id"
+                        class="flex  items-center  justify-between  p-2"
+                      >
+                        <DemarcheConfigurationSelectableItem
+                          :champ="child"
+                          :is-selected-fn="isSelectedFn"
+                          @toggle-check="saveOneMappingColumn(child.id, $event ? child.originalLabel : null)"
+                        />
+                      </li>
+                    </ul>
+                  </div>
+                </template>
+                <template v-else>
+                  <DemarcheConfigurationSelectableItem
+                    :champ="champ"
+                    :is-selected-fn="isSelectedFn"
+                    @toggle-check="saveOneMappingColumn(champ.id, $event ? champ.originalLabel : null)"
+                  />
+                </template>
+              </li>
+            </ul>
+          </component>
+        </template>
       </section>
     </div>
     <div class="flex-basis-[50%]  p-t-6  bg-[var(--grey-975-75)]">
