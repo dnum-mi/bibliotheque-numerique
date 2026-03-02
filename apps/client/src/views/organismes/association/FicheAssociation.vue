@@ -14,6 +14,7 @@ import FileTab from '../common/file-tab/FileTab.vue'
 import { getServiceInstructeurFromEvents } from '@/utils'
 import EtablissementTab from '../common/EtablissementTab.vue'
 import DirigeantTab from '../common/member-tab/MemberTab.vue'
+import DossierListTabs from '../common/DossierListTabs.vue'
 
 const props = defineProps<{ association: IAssociationOutput }>()
 
@@ -127,6 +128,21 @@ const currentTab = ref<string | undefined>(undefined)
             <DossierTab
               :role="currentUser?.role"
               :organisme-id="association.id"
+            />
+          </BnTab>
+
+          <!-- Liste des dossiers -->
+          <BnTab
+            id="liste-des-dossiers"
+            title="Liste des dossiers"
+          >
+            <template #icon>
+              <span class="fr-icon-folder-2-fill" aria-hidden="true" />
+            </template>
+            <DossierListTabs
+              :role="currentUser?.role"
+              :organisme-id="association.id"
+              :organisme-type="EOrganismeCategory.association"
             />
           </BnTab>
         </BnTabsContainer>

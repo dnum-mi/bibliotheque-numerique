@@ -10,6 +10,7 @@ import { useUserStore } from '@/stores'
 import FileTab from '../common/file-tab/FileTab.vue'
 import DirigeantTab from '../common/member-tab/MemberTab.vue'
 import { getServiceInstructeurFromEvents } from '@/utils'
+import DossierListTabs from '../common/DossierListTabs.vue'
 
 const props = defineProps<{ foundation: IFoundationOutput }>()
 
@@ -109,6 +110,21 @@ const currentTab = ref<string | undefined>(undefined)
             <DossierTab
               :role="currentUser?.role"
               :organisme-id="foundation.id"
+            />
+          </BnTab>
+
+          <!-- Liste des dossiers -->
+          <BnTab
+            id="liste-des-dossiers"
+            title="Liste des dossiers"
+          >
+            <template #icon>
+              <span class="fr-icon-folder-2-fill" aria-hidden="true" />
+            </template>
+            <DossierListTabs
+              :role="currentUser?.role"
+              :organisme-id="foundation.id"
+              :organisme-type="EOrganismeCategory.fondation"
             />
           </BnTab>
         </BnTabsContainer>

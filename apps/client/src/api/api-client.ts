@@ -24,6 +24,7 @@ import type {
   IMappingAnonymizedChamp,
   IMappingColumn,
   IMyProfileOutput,
+  IOrganismeDossier,
   IPaginated,
   IPaginatedUser,
   IPagination,
@@ -75,6 +76,7 @@ import {
   hubGetRna,
   hubGetRnf,
   hubPathRouteByTypeOrganisme,
+  hubListDossiers,
   hubSearchOrganisme,
   lastConsultedOrganismeRoute,
   listSmallDemarchesRoutes,
@@ -575,6 +577,9 @@ export const hubApiClient = {
   },
   hubExportOrganisme: (type: organismeCategoryKey, organismeId: string) => {
     return apiClientInstance.get(`${hubPathRouteByTypeOrganisme(type, organismeId)}/export-pdf`, { responseType: 'blob' })
+  },
+  hubListDossiers: (type: organismeCategoryKey, organismeId: string): Promise<IOrganismeDossier[]> => {
+    return getWithoutRedirectTo404(hubListDossiers(organismeId, type))
   },
 }
 

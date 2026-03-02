@@ -78,4 +78,8 @@ export const hubGetRna = (id: string) => `${hubRoute}/rna/${id}`
 export const hubGetRnf = (id: string) => `${hubRoute}/rnf/${id}`
 export const hubPathRouteByTypeOrganisme = (organismeType: organismeCategoryKey, id: string) =>
   `${hubRoute}/${organismeType === EOrganismeCategory.association ? 'association' : 'foundation'}/${id}`
+export const hubListDossiers = (id: string, type: organismeCategoryKey) => {
+  const correctType = type === EOrganismeCategory.association ? 'association' : 'foundation'
+  return `/hub/${correctType}/${id}/dossiers`
+}
 //#endregion
