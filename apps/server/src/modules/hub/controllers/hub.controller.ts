@@ -4,6 +4,7 @@ import { ApiTags } from '@nestjs/swagger'
 import {
   IAssociationOutput,
   IFoundationOutput,
+  IOrganismeDossier,
   ISiafSearchOrganismeOneOutput,
   Roles,
 } from '@biblio-num/shared'
@@ -243,4 +244,44 @@ export class HubController {
      )
      return this._handleDownloadFile(exportResult, response)
    }
+
+  @UsualApiOperation({
+    summary: 'Recupérer liste des dossiers de l\'association.',
+    method: 'GET',
+    minimumRole: Roles.instructor,
+    isArray: true,
+    responseType: Object,
+  })
+  @Get('/association/:associationId/dossiers')
+  @Role(Roles.instructor)
+  async getAssociationDossiers(
+    @Param('associationId') associationId: string,
+  ): Promise<IOrganismeDossier[]> {
+    const association = await this.hubService.getAssociation(associationId)
+    if (!association) {
+      throw new NotFoundException(`Aucune association avec cet rna ${associationId}`)
+    }
+
+    return this.hubService.getAssociationDossiers(associationId)
+  }
+
+  @UsualApiOperation({
+    summary: 'Recupérer liste des dossiers de la fondation.',
+    method: 'GET',
+    minimumRole: Roles.instructor,
+    isArray: true,
+    responseType: Object,
+  })
+  @Get('/foundation/:foundationId/dossiers')
+  @Role(Roles.instructor)
+  async getFoundationDossiers(
+    @Param('foundationId') foundationId: string,
+  ): Promise<IOrganismeDossier[]> {
+    const association = await this.hubService.getFoundation(foundationId)
+    if (!association) {
+      throw new NotFoundException(`Aucune fondation avec cet rnf ${foundationId}`)
+    }
+
+    return this.hubService.getFoundationDossiers(foundationId)
+  }
 }

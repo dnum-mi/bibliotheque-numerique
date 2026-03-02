@@ -10,6 +10,7 @@ import {
   organismeCategoryKey,
   EOrganismeCategory,
   ISearchHubInput,
+  IOrganismeDossier,
 } from '@biblio-num/shared'
 import axios, { AxiosInstance, CreateAxiosDefaults, HttpStatusCode, RawAxiosResponseHeaders } from 'axios'
 import { Stream } from 'node:stream'
@@ -270,5 +271,121 @@ export class HubService {
       data: stream,
       headers,
     }
+  }
+
+  async getAssociationDossiers(idRna: string): Promise<IOrganismeDossier[]> {
+    return this._mergeDossiers(idRna, 'Association')
+  }
+
+  async getFoundationDossiers(idRnf: string): Promise<IOrganismeDossier[]> {
+    return this._mergeDossiers(idRnf, 'Foundation')
+  }
+
+  private async _mergeDossiers(idRef: string, type: 'Association' | 'Foundation'): Promise<IOrganismeDossier[]> {
+    const [eventsRows, dsRows] = await Promise.all([
+      this._fetchAndMapEvents(idRef, type),
+      this._fetchAndMapDsDossiers(idRef),
+    ])
+
+    const dsById = new Map<number, IOrganismeDossier>()
+    for (const dossier of dsRows) {
+      if (dossier.id != null) {
+        dsById.set(dossier.id, dossier)
+      }
+    }
+
+    const merged: IOrganismeDossier[] = []
+
+    for (const event of eventsRows) {
+      const id = event.id
+
+      if (id == null) {
+        merged.push(event)
+        continue
+      }
+
+      const dsMatch = dsById.get(id)
+
+      if (!dsMatch) {
+        merged.push(event)
+        continue
+      }
+
+      merged.push(dsMatch)
+
+      if (!this._areDossiersEquivalent(event, dsMatch)) {
+        merged.push(event)
+      }
+
+      dsById.delete(id)
+    }
+
+    merged.push(...dsById.values())
+
+    return merged.sort((a, b) => {
+      const timeA = a.dateDepot ? new Date(a.dateDepot).getTime() : 0
+      const timeB = b.dateDepot ? new Date(b.dateDepot).getTime() : 0
+      return timeB - timeA
+    })
+  }
+
+  private async _fetchAndMapEvents(idRef: string, type: 'Association' | 'Foundation'): Promise<IOrganismeDossier[]> {
+    const rawEvents = type === 'Association'
+      ? await this.getEventsAssociation(idRef)
+      : await this.getEventsFoundation(idRef)
+
+    const enrichedEvents = await this.setLinkDemarcheAndDossier(rawEvents)
+
+    return enrichedEvents.map(evt => ({
+      id: evt.dossierLocalNumber ?? evt.dossierNumber,
+      demarche: evt.demarcheLocalName ?? evt.demarcheName,
+      statut: evt.dsTraitementEvent,
+      isClickable: !!evt.dossierLocalNumber,
+      source: evt.type,
+      repere: null,
+      dateDepot: evt.createdAt ? new Date(evt.createdAt).toISOString() : null,
+      dateDecision: null,
+      datePublication: null,
+    }))
+  }
+
+  private async _fetchAndMapDsDossiers(idRef: string): Promise<IOrganismeDossier[]> {
+    const dossiers = await this.repoDossier
+      .createQueryBuilder('d')
+      .innerJoin('d.demarche', 'demarche')
+      .where(':idRef = ANY(d."organismeRefs")', { idRef })
+      .select([
+        'd.id',
+        'd.state',
+        'd.dateDepot',
+        'demarche.title',
+      ])
+      .getMany()
+
+    return dossiers.map(d => ({
+      id: d.id,
+      demarche: d.demarche.title,
+      statut: d.state,
+      dateDepot: d.dateDepot ? new Date(d.dateDepot).toISOString() : null,
+      isClickable: true,
+      source: 'ds',
+      repere: null,
+      dateDecision: null,
+      datePublication: null,
+    }))
+  }
+
+  private _areDossiersEquivalent(a: IOrganismeDossier, b: IOrganismeDossier): boolean {
+    return (
+      a.demarche === b.demarche &&
+      a.statut === b.statut &&
+      this._compareDates(a.dateDepot, b.dateDepot)
+    )
+  }
+
+  private _compareDates(d1: string | null, d2: string | null): boolean {
+    if (!d1 && !d2) return true
+    if (!d1 || !d2) return false
+    return new Date(d1).getTime() === new Date(d2).getTime()
   }
 }
