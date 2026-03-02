@@ -651,12 +651,12 @@ export class DossierService extends BaseEntityService<Dossier> {
       return PrefectureDictionary[field.stringValue as PrefectureKey]
     }
     switch (field.type) {
-    case 'boolean':
-      return field.stringValue === 'true'
-    case 'file':
-      return field.rawJson as FieldFileType
-    default:
-      return field.stringValue
+      case 'boolean':
+        return field.stringValue === 'true'
+      case 'file':
+        return field.rawJson as FieldFileType
+      default:
+        return field.stringValue
     }
   }
 
@@ -690,7 +690,7 @@ export class DossierService extends BaseEntityService<Dossier> {
   ): IFieldSimple | IFieldRepetable {
     const baseProperties = {
       id: column.id,
-      label: column.columnLabel || column.originalLabel,
+      label: column.originalLabel || column.columnLabel || '',
       description: column.originalDescription,
       format: column.formatFunctionRef,
     }
