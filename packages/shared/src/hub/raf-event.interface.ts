@@ -1,6 +1,8 @@
 export interface IRafEvent {
   id: string
   type: string
+  action?: string | null
+  isCorrection: boolean
   createdAt: Date
   joPublishedAt: Date | null
   demarcheName: string
@@ -11,6 +13,8 @@ export interface IRafEvent {
   demarcheLocalName?: string | null;
   isDissolution?: boolean
   acceptedAt?: Date
+  dsTraitementEventAt?: Date | null
+  dsTraitementEvent?: string | null
   dossierInstructeurGroup?: string | null
   organismeBefore?: object
 }
