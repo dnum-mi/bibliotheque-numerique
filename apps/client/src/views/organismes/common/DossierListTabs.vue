@@ -26,14 +26,18 @@ const headers: HeaderDataTable[] = [
   {
     field: 'source',
     text: 'Source',
-    renderer: markRaw(StatusBadgesRenderer),
+    valueFormatter: (params: { value: string | null }) => {
+      if (!params.value) {
+        return ''
+      }
+      return params.value.toUpperCase()
+    },
     filterable: true,
     ...(getDataTableFilterFromFieldType(FieldType.enum, FormatFunctionRef.status) as {
       filter: string;
       filterParams: ISetFilterParams;
     }),
     filter: 'agSetColumnFilter',
-    width: 150,
   },
   {
     field: 'demarche',
@@ -58,7 +62,6 @@ const headers: HeaderDataTable[] = [
       : '',
     filter: 'agMultiColumnFilter',
     filterable: true,
-    width: 150,
   },
   {
     field: 'dateDecision',
@@ -68,7 +71,6 @@ const headers: HeaderDataTable[] = [
       : '',
     filter: 'agMultiColumnFilter',
     filterable: true,
-    width: 150,
   },
   {
     field: 'datePublication',
@@ -78,7 +80,6 @@ const headers: HeaderDataTable[] = [
       : '',
     filter: 'agMultiColumnFilter',
     filterable: true,
-    width: 150,
   },
 ]
 
@@ -91,16 +92,8 @@ const updateListeDossiers = async () => {
     const dossiers = await apiClient.hubListDossiers(props.organismeType, props.organismeId)
     rowsdata.value = dossiers.map((r) => {
       const row = r as IAuthorizeOrganismeDossier
-      if (props.role) {
-        row.authorized = canAccessDemarche(Number(row.id), props.role)
-      } else {
-        row.authorized = false
-      }
-      if (row.authorized) {
-        row.cursor = 'pointer'
-      } else {
-        row.cursor = 'not-allowed'
-      }
+      row.authorized = row.isClickable && props.role ? canAccessDemarche(Number(row.id), props.role) : false
+      row.cursor = row.authorized ? 'pointer' : 'not-allowed'
       row.dateDepot = row.dateDepot ? new Date(row.dateDepot).toISOString() : null
       return row
     })
