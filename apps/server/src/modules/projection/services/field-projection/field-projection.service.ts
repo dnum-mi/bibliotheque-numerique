@@ -212,7 +212,7 @@ export class FieldProjectionService {
           )
 
         INSERT INTO "${tableName}" (
-          dossierId,
+          "dossierId",
           projectionRowIndex,
           ${columnIds.map((id) => `"${id}"`).join(',')}
         )
