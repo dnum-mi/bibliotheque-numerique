@@ -395,3 +395,7 @@ body,
 .Dissoute {
   color: red;
 }
+
+.bn-text--color-warning {
+  color: var(--text-default-warning);
+}

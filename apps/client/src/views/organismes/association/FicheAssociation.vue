@@ -32,6 +32,7 @@ const sidebar = computed<tInfoSidebar>(() => ({
   hub_timestamp: props.association.hub_timestamp,
   typeOrg: eOrganismeType.ASSO,
   prefecture: serviceInstructeur.value,
+  isPersonDataPrivate: props.association.isPersonDataPrivate,
 }))
 
 const currentTab = ref<string | undefined>(undefined)

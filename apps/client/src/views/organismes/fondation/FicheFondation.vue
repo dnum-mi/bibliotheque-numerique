@@ -27,6 +27,7 @@ const sidebar = computed<tInfoSidebar>(() => ({
   stateEffectiveAt: props.foundation.stateEffectiveAt,
   typeOrg: props.foundation.foundationType,
   prefecture: serviceInstructeur.value,
+  isPersonDataPrivate: props.foundation.isPersonDataPrivate,
 }))
 
 const currentTab = ref<string | undefined>(undefined)

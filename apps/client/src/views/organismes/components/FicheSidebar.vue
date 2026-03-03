@@ -16,6 +16,7 @@ export type tInfoSidebar = {
   creationAt: Date,
   typeOrg: OrganismeTypeKey | string,
   prefecture: string,
+  isPersonDataPrivate: boolean | null,
 }
 
 const props = defineProps<{
@@ -41,6 +42,13 @@ const onDownload = async () => {
     isDownloading.value = false
   }
 }
+
+const labelSensitivData = computed(() => {
+  if (!props.sidebar.isPersonDataPrivate) {
+    return ''
+  }
+  return `Cette fiche contient des données personnelles sensibles.`
+})
 </script>
 
 <template>
@@ -85,5 +93,11 @@ const onDownload = async () => {
       :disabled="isDownloading"
       @click="onDownload"
     />
+    <p
+      v-if="sidebar.isPersonDataPrivate"
+      class="fr-text--xs fr-text--bold fr-mb-1v uppercase bn-text--color-warning"
+    >
+      {{ labelSensitivData }}
+    </p>
   </div>
 </template>
