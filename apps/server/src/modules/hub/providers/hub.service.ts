@@ -13,6 +13,7 @@ import {
   IOrganismeDossier,
   OrganismeKind,
   eOrganismeKind,
+  eOrganismeDossierSource,
 } from '@biblio-num/shared'
 import axios, { AxiosInstance, CreateAxiosDefaults, HttpStatusCode, RawAxiosResponseHeaders } from 'axios'
 import { Stream } from 'node:stream'
@@ -25,6 +26,11 @@ import { PdfExportService } from '@/shared/modules/pdf-export/pdf-export.service
 import { OrganismeFicheGenerator } from '@/shared/modules/pdf-export/generators/fiche-organisme.generator'
 import { HttpHeaders } from '@/shared/constants/http-headers.constants'
 import { SearchInputDto } from '../objects/dto/input/search-input.dto'
+import {
+  areOrganismeDossiersEquivalent,
+  normalizeSource, normalizeStatut,
+  sortByDateDepotDesc,
+} from '../utils/organisme-dossier.utils'
 
 const ePathCompletedOrganismeByType = {
   association: '/associations',
@@ -289,25 +295,22 @@ export class HubService {
       this._fetchAndMapDsDossiers(idRef),
     ])
 
-    const dsById = new Map<number, IOrganismeDossier>()
-    for (const dossier of dsRows) {
-      if (dossier.id != null) {
-        dsById.set(dossier.id, dossier)
-      }
-    }
+    const dsById = new Map(
+      dsRows
+        .filter(d => d.id != null)
+        .map(d => [d.id!, d]),
+    )
 
     const merged: IOrganismeDossier[] = []
 
     for (const event of eventsRows) {
-      const id = event.id
-
+      const { id } = event
       if (id == null) {
         merged.push(event)
         continue
       }
 
       const dsMatch = dsById.get(id)
-
       if (!dsMatch) {
         merged.push(event)
         continue
@@ -315,7 +318,7 @@ export class HubService {
 
       merged.push(dsMatch)
 
-      if (!this._areDossiersEquivalent(event, dsMatch)) {
+      if (!areOrganismeDossiersEquivalent(event, dsMatch)) {
         merged.push(event)
       }
 
@@ -324,11 +327,7 @@ export class HubService {
 
     merged.push(...dsById.values())
 
-    return merged.sort((a, b) => {
-      const timeA = a.dateDepot ? new Date(a.dateDepot).getTime() : 0
-      const timeB = b.dateDepot ? new Date(b.dateDepot).getTime() : 0
-      return timeB - timeA
-    })
+    return sortByDateDepotDesc(merged)
   }
 
   private async _fetchAndMapEvents(idRef: string, type: OrganismeKind): Promise<IOrganismeDossier[]> {
@@ -341,9 +340,9 @@ export class HubService {
     return enrichedEvents.map(evt => ({
       id: evt.dossierLocalNumber ?? evt.dossierNumber,
       demarche: evt.demarcheLocalName ?? evt.demarcheName,
-      statut: evt.dsTraitementEvent,
+      statut: normalizeStatut(evt.dsTraitementEvent),
       isClickable: !!evt.dossierLocalNumber,
-      source: evt.type,
+      source: normalizeSource(evt.type),
       repere: null,
       dateDepot: evt.createdAt ?? null,
       dateDecision: null,
@@ -370,24 +369,10 @@ export class HubService {
       statut: d.state,
       dateDepot: d.dateDepot ?? null,
       isClickable: true,
-      source: 'ds',
+      source: eOrganismeDossierSource.ds,
       repere: null,
       dateDecision: null,
       datePublication: null,
     }))
-  }
-
-  private _areDossiersEquivalent(a: IOrganismeDossier, b: IOrganismeDossier): boolean {
-    return (
-      a.demarche === b.demarche &&
-      a.statut === b.statut &&
-      this._compareDates(a.dateDepot, b.dateDepot)
-    )
-  }
-
-  private _compareDates(d1: Date | null, d2: Date | null): boolean {
-    if (!d1 && !d2) return true
-    if (!d1 || !d2) return false
-    return d1.getTime() === d2.getTime()
   }
 }

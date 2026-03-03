@@ -4,7 +4,6 @@ import { getDataTableFilterFromFieldType } from '@/components/datatable/server-s
 import { FieldType, FormatFunctionRef } from '@biblio-num/shared'
 import type { ISetFilterParams } from '@/components/datatable/server-side/data-table-types'
 import { dateToStringFr } from '@/utils'
-import { styledCell } from '@/components/datatable/styled-cell.utils'
 
 const makeDateColumn = ({ field, text }: Pick<HeaderDataTable, 'field' | 'text'>): HeaderDataTable => ({
   field,
@@ -23,10 +22,7 @@ export const dossierListHeaders: HeaderDataTable[] = [
   {
     field: 'source',
     text: 'Source',
-    ...styledCell({
-      class: 'font-bold',
-      transform: (v) => v.toUpperCase(),
-    }),
+    valueFormatter: (params: { value: string }) => params.value.toUpperCase(),
     filterable: true,
   },
   {
