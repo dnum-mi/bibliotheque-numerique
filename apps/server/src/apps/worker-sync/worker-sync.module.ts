@@ -28,10 +28,11 @@ import { FeProcessor } from '@/apps/worker-sync/processors/fe.processor'
 import { InstructionTimesModule } from '@/modules/instruction_time/instruction_times.module'
 import { S3Module } from '@/shared/modules/s3/s3.module'
 import fileConfig from '../../config/file.config'
-import { WokerSyncService } from './woker-sync.service'
-import siafHubConfig from '../../config/siaf-hub.config'
+import hubConfig from '../../config/hub.config'
 import { RedisModule } from '@/shared/modules/redis/redis.module'
 import { ProjectionModule } from '@/modules/projection/projection.module'
+import { WORKER_SYNC_DEPENDENCY_POLICY } from '@/apps/worker-sync/worker-sync-dependencies-policy.const'
+import { HealthModule } from '@/modules/health/health.module'
 
 @Module({
   imports: [
@@ -48,7 +49,7 @@ import { ProjectionModule } from '@/modules/projection/projection.module'
         rnaConfig,
         rnfConfig,
         fileConfig,
-        siafHubConfig,
+        hubConfig,
       ],
     } as ConfigModuleOptions),
     LoggerModule.forRoot('worker-sync'),
@@ -68,13 +69,13 @@ import { ProjectionModule } from '@/modules/projection/projection.module'
     S3Module,
     RedisModule,
     ProjectionModule,
+    HealthModule.register(WORKER_SYNC_DEPENDENCY_POLICY),
   ],
   controllers: [],
   providers: [
     DemarcheProcessor,
     DossierProcessor,
     FeProcessor,
-    WokerSyncService,
   ],
 })
 export class WorkerSyncModule {}

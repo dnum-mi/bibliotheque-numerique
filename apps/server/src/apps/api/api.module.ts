@@ -24,7 +24,6 @@ import { LoggerModule } from '@/shared/modules/logger/logger.module'
 import { UserModule } from '@/modules/users/user.module'
 import { FileModule } from '@/modules/files/file.module'
 import { typeormFactoryLoader } from '@/shared/utils/typeorm-factory-loader'
-import { HealthModule } from '@/modules/health/health.module'
 import { AuthModule } from '@/modules/auth/auth.module'
 import { DsApiModule } from '@/shared/modules/ds-api/ds-api.module'
 import { ViewModule } from '@/modules/views/view.module'
@@ -35,10 +34,12 @@ import { InstructionTimesModule } from '@/modules/instruction_time/instruction_t
 import { CustomBullModule } from '@/shared/modules/custom-bull/custom-bull.module'
 import { CronModule } from '@/modules/cron/cron.module'
 import { BnConfigurationModule } from '@/shared/modules/bn-configurations/bn-configuration.module'
-import siafHubConfig from '../../config/siaf-hub.config'
+import hubConfig from '../../config/hub.config'
 import { JwtAuthGuard } from '@/modules/auth/providers/jwt-auth.guard'
 import { SyncStateModule } from '@/shared/sync-state/sync-state.module'
 import { ProjectionModule } from '@/modules/projection/projection.module'
+import { HealthModule } from '@/modules/health/health.module'
+import { API_DEPENDENCY_POLICY } from '@/apps/api/api-dependencies-policy.const'
 
 @Module({
   imports: [
@@ -55,7 +56,7 @@ import { ProjectionModule } from '@/modules/projection/projection.module'
         jwtConfig,
         rnaConfig,
         rnfConfig,
-        siafHubConfig,
+        hubConfig,
         sudoUserConfig,
         instructionTimeMappingConfig,
         redisConfig,
@@ -76,7 +77,7 @@ import { ProjectionModule } from '@/modules/projection/projection.module'
     AuthModule,
     UserModule,
     FileModule,
-    HealthModule,
+    HealthModule.register(API_DEPENDENCY_POLICY),
     ViewModule,
     InstructionTimesModule,
     BnConfigurationModule,

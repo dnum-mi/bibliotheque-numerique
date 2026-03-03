@@ -20,9 +20,17 @@ export interface S3CopyResult {
 
 @Injectable()
 export class S3Service implements OnModuleInit {
-  private s3: S3
-  private bucketName: string
+  private _s3: S3
+  private _bucketName: string
   private maarchBucketName: string
+
+  get s3(): S3 {
+    return this._s3
+  }
+
+  get bucketName(): string {
+    return this._bucketName
+  }
 
   constructor(
     private readonly configService: ConfigService,
@@ -46,14 +54,14 @@ export class S3Service implements OnModuleInit {
   }
 
   private async _init(): Promise<void> {
-    this.s3 = new AWS.S3({
+    this._s3 = new AWS.S3({
       accessKeyId: this.configService.get('file.accessKeyId'),
       secretAccessKey: this.configService.get('file.secretAccessKey'),
       endpoint: this.configService.get('file.awsDefaultS3Url'),
       region: this.configService.get('file.awsS3Region'),
       s3ForcePathStyle: true,
     })
-    this.bucketName = this.configService.get('file.awsDefaultS3Bucket')!
+    this._bucketName = this.configService.get('file.awsDefaultS3Bucket')!
     this.maarchBucketName = this.configService.get('file.awsMaarchS3Bucket')!
     // TODO: for what ?
     //  this.maxFileSize = parseInt(
@@ -64,9 +72,9 @@ export class S3Service implements OnModuleInit {
   }
 
   public getStreamedFile(uuid: string): stream.Readable {
-    return this.s3
+    return this._s3
       .getObject({
-        Bucket: this.bucketName,
+        Bucket: this._bucketName,
         Key: uuid,
       })
       .createReadStream()
@@ -97,8 +105,8 @@ export class S3Service implements OnModuleInit {
     })
     const passThrough = new PassThrough()
     stream.data.pipe(passThrough)
-    await this.s3.upload({
-      Bucket: this.bucketName,
+    await this._s3.upload({
+      Bucket: this._bucketName,
       Key: uuid,
       Body: passThrough,
     }).promise()
@@ -106,8 +114,8 @@ export class S3Service implements OnModuleInit {
   }
 
   public async deleteFile(uuid: string): Promise<void> {
-    await this.s3.deleteObject({
-      Bucket: this.bucketName,
+    await this._s3.deleteObject({
+      Bucket: this._bucketName,
       Key: uuid,
     }).promise()
   }
@@ -117,17 +125,17 @@ export class S3Service implements OnModuleInit {
     newKey: string,
   ): Promise<S3CopyResult> {
     this.logger.debug(
-      `Copying 's3://${this.maarchBucketName}/${sourceS3Path}' to 's3://${this.bucketName}/${newKey}'`,
+      `Copying 's3://${this.maarchBucketName}/${sourceS3Path}' to 's3://${this._bucketName}/${newKey}'`,
     )
 
-    const copyResult = await this.s3.copyObject({
-      Bucket: this.bucketName,
+    const copyResult = await this._s3.copyObject({
+      Bucket: this._bucketName,
       CopySource: `${this.maarchBucketName}/${sourceS3Path}`,
       Key: newKey,
     }).promise()
 
-    const headResult = await this.s3.headObject({
-      Bucket: this.bucketName,
+    const headResult = await this._s3.headObject({
+      Bucket: this._bucketName,
       Key: newKey,
     }).promise()
 

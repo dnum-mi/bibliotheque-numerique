@@ -47,9 +47,9 @@ export class HubService {
     this.logger.setContext(this.constructor.name)
 
     this.axiosConfig = {
-      baseURL: this.config.get('siafHub.url'),
+      baseURL: this.config.get('hub.url'),
       headers: {
-        'X-API-KEY': `${this.config.get('siafHub.key')}`,
+        'X-API-KEY': `${this.config.get('hub.key')}`,
         'Content-Type': 'application/json',
       },
     }

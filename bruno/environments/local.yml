@@ -1,0 +1,16 @@
+name: local
+variables:
+  - name: HOST
+    value: http://localhost
+  - name: API-PORT
+    value: "3000"
+  - name: WORKER-SYNC-PORT
+    value: "3042"
+  - name: WORKER-FILE-PORT
+    value: "3043"
+  - name: API-URL
+    value: "{{HOST}}:{{API-PORT}}"
+  - name: WS-URL
+    value: "{{HOST}}:{{WORKER-SYNC-PORT}}"
+  - name: WF-URL
+    value: "{{HOST}}:{{WORKER-FILE-PORT}}"

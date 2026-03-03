@@ -63,14 +63,9 @@ export class CustomBullService {
     const redisKey = buildRedisKey(jobName, key)
     const ttlSeconds = this.configService.get('bull').resyncMinutes * 60
 
-    const lockAquired = await this.redisService.checkAndSet(
-      redisKey,
-      ttlSeconds,
-    )
-    if (!lockAquired) {
-      this.logger.log(
-        `A job for key ${key} is already in progress. Adding canceled.`,
-      )
+    const lockAcquired = await this.redisService.checkAndSet(redisKey, ttlSeconds)
+    if (!lockAcquired) {
+      this.logger.log(`A job for key ${key} is already in progress. Adding canceled.`)
       return false
     }
 
@@ -103,22 +98,6 @@ export class CustomBullService {
       jobName: eJobName.SyncOneDossier,
       payload,
     })
-  }
-
-  public async initkeys(): Promise<void> {
-    this.logger.verbose('initkeys')
-    const patternKeyDossier = buildRedisKey(
-      eJobName.SyncOneDossier,
-      'dossier:*',
-    )
-    const patternKeyDemarche = buildRedisKey(
-      eJobName.SyncOneDemarche,
-      'demarche:*',
-    )
-    await Promise.all([
-      this.redisService.initkeys(patternKeyDossier),
-      this.redisService.initkeys(patternKeyDemarche),
-    ])
   }
 
   public async addSyncFixOrganismeOfOneDossierJob(payload: { dossierId: number }): Promise<void> {

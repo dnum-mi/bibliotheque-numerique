@@ -20,7 +20,9 @@ import { FileProcessor } from '@/apps/worker-file/processor/file.processor'
 import { FileModule } from '@/modules/files/file.module'
 import { DossierModule } from '@/modules/dossiers/dossier.module'
 import instructionTimeMappingConfig from '@/config/instructionTimeMapping.config'
-import siafHubConfig from '../../config/siaf-hub.config'
+import hubConfig from '../../config/hub.config'
+import { WORKER_FILE_DEPENDENCY_POLICY } from '@/apps/worker-file/worker-file-dependencies-policy.const'
+import { HealthModule } from '@/modules/health/health.module'
 
 @Module({
   imports: [
@@ -35,7 +37,7 @@ import siafHubConfig from '../../config/siaf-hub.config'
         bullConfig,
         fileConfig,
         instructionTimeMappingConfig,
-        siafHubConfig,
+        hubConfig,
       ],
     } as ConfigModuleOptions),
     LoggerModule.forRoot('worker-file'),
@@ -51,6 +53,7 @@ import siafHubConfig from '../../config/siaf-hub.config'
     DsApiModule,
     S3Module,
     DossierModule,
+    HealthModule.register(WORKER_FILE_DEPENDENCY_POLICY),
   ],
   controllers: [
   ],

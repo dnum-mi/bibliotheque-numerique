@@ -7,4 +7,5 @@ export default registerAs('bull', () => ({
   retryDelay: parseInt(process.env.BULL_JOB_RETRY_DELAY) || 10000,
   resyncMinutes: parseInt(process.env.BULL_JOB_MINUTES_BEFORE_RE_SYNC) || 1440,
   retryExponentiel: process.env.BULL_JOB_RETRY_DELAY_TYPE === 'exponentiel',
+  jobTimeout: parseInt(process.env.BULL_JOB_TIMEOUT) || 1200000, // 20 minutes
 }))

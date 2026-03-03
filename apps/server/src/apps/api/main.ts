@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core'
 import { ConfigService } from '@nestjs/config'
 import { ApiModule } from './api.module'
 import { configMain } from '../../config-main'
+import { LoggerService } from '@/shared/modules/logger/logger.service'
 
 async function bootstrap (): Promise<void> {
   const app = await NestFactory.create(ApiModule, {
@@ -21,6 +22,11 @@ async function bootstrap (): Promise<void> {
   }
   await configMain(app)
   const configService = app.get(ConfigService)
-  await app.listen(configService.get('port'))
+  const loggerService = await app.resolve(LoggerService)
+  const port = configService.get('port')
+  app.listen(port)
+    .then(() => {
+      loggerService.log(`🚀 Server started on ${port}`)
+    })
 }
 bootstrap()

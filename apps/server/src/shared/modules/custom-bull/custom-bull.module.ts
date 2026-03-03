@@ -6,25 +6,30 @@ import { RedisModule } from '@/shared/modules/redis/redis.module'
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
 import { SyncQueueEventService } from '@/shared/modules/custom-bull/sync-queue-event.service'
 import { FileQueueEventService } from '@/shared/modules/custom-bull/file-queue-event.service'
+import { RedisService } from '@/shared/modules/redis/redis.service'
+import Redis from 'ioredis'
 
 @Module({
   imports: [
     RedisModule,
     BullModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        redis: {
-          host: configService.get('redis').host,
-          database: configService.get('redis').index,
-          password: configService.get('redis').password,
-          port: configService.get('redis').port,
-          maxRetriesPerRequest: configService.get('redis.maxRetriesPerRequest'),
-          maxLoadingRetryTime: configService.get('redis.maxLoadingRetryTime'),
+      imports: [ConfigModule, RedisModule],
+      inject: [ConfigService, RedisService],
+      useFactory: async (configService: ConfigService, redisService: RedisService) => ({
+        createClient: (type: 'client' | 'subscriber' | 'bclient'): Redis => {
+          const client = redisService.redisClient
+
+          // Bull veut 3 connexions → on duplique la connexion
+          if (type === 'client') {
+            return client
+          }
+          return client.duplicate()
         },
         defaultJobOptions: {
           removeOnComplete: configService.get('bull').removeOnComplete,
           removeOnFail: configService.get('bull').removeOnFail,
           attempts: configService.get('bull').retryAttempts,
+          timeout: 300_000, // 5 minutes
           backoff: {
             type: configService.get('bull').retryExponentiel
               ? 'exponential'
@@ -33,7 +38,6 @@ import { FileQueueEventService } from '@/shared/modules/custom-bull/file-queue-e
           },
         },
       }),
-      inject: [ConfigService],
     } as SharedBullAsyncConfiguration),
     BullModule.registerQueue(
       ...([
@@ -43,6 +47,6 @@ import { FileQueueEventService } from '@/shared/modules/custom-bull/file-queue-e
     ),
   ],
   providers: [CustomBullService, SyncQueueEventService, FileQueueEventService],
-  exports: [CustomBullService],
+  exports: [CustomBullService, BullModule],
 })
 export class CustomBullModule {}
