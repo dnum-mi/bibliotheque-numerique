@@ -87,6 +87,7 @@ declare module 'vue' {
     Spinner: typeof import('./components/Spinner.vue')['default']
     StatusBadge: typeof import('./components/Badges/status/StatusBadge.vue')['default']
     StatusBadgesRenderer: typeof import('./components/Badges/status/StatusBadgesRenderer.vue')['default']
+    StyledCellRenderer: typeof import('./components/datatable/styled-cell-renderer/StyledCellRenderer.vuetyledCellRenderer.vue')['default']
     TableCellAction: typeof import('./components/TableCellAction.vue')['default']
     TableTagInfo: typeof import('./components/TableTagInfo.vue')['default']
     TextWithReadMore: typeof import('./components/TextWithReadMore.vue')['default']

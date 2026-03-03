@@ -11,6 +11,8 @@ import {
   EOrganismeCategory,
   ISearchHubInput,
   IOrganismeDossier,
+  OrganismeKind,
+  eOrganismeKind,
 } from '@biblio-num/shared'
 import axios, { AxiosInstance, CreateAxiosDefaults, HttpStatusCode, RawAxiosResponseHeaders } from 'axios'
 import { Stream } from 'node:stream'
@@ -274,14 +276,14 @@ export class HubService {
   }
 
   async getAssociationDossiers(idRna: string): Promise<IOrganismeDossier[]> {
-    return this._mergeDossiers(idRna, 'Association')
+    return this._mergeDossiers(idRna, eOrganismeKind.Association)
   }
 
   async getFoundationDossiers(idRnf: string): Promise<IOrganismeDossier[]> {
-    return this._mergeDossiers(idRnf, 'Foundation')
+    return this._mergeDossiers(idRnf, eOrganismeKind.Foundation)
   }
 
-  private async _mergeDossiers(idRef: string, type: 'Association' | 'Foundation'): Promise<IOrganismeDossier[]> {
+  private async _mergeDossiers(idRef: string, type: OrganismeKind): Promise<IOrganismeDossier[]> {
     const [eventsRows, dsRows] = await Promise.all([
       this._fetchAndMapEvents(idRef, type),
       this._fetchAndMapDsDossiers(idRef),
@@ -329,8 +331,8 @@ export class HubService {
     })
   }
 
-  private async _fetchAndMapEvents(idRef: string, type: 'Association' | 'Foundation'): Promise<IOrganismeDossier[]> {
-    const rawEvents = type === 'Association'
+  private async _fetchAndMapEvents(idRef: string, type: OrganismeKind): Promise<IOrganismeDossier[]> {
+    const rawEvents = type === eOrganismeKind.Association
       ? await this.getEventsAssociation(idRef)
       : await this.getEventsFoundation(idRef)
 
@@ -343,7 +345,7 @@ export class HubService {
       isClickable: !!evt.dossierLocalNumber,
       source: evt.type,
       repere: null,
-      dateDepot: evt.createdAt ? new Date(evt.createdAt).toISOString() : null,
+      dateDepot: evt.createdAt ?? null,
       dateDecision: null,
       datePublication: null,
     }))
@@ -366,7 +368,7 @@ export class HubService {
       id: d.id,
       demarche: d.demarche.title,
       statut: d.state,
-      dateDepot: d.dateDepot ? new Date(d.dateDepot).toISOString() : null,
+      dateDepot: d.dateDepot ?? null,
       isClickable: true,
       source: 'ds',
       repere: null,
@@ -383,9 +385,9 @@ export class HubService {
     )
   }
 
-  private _compareDates(d1: string | null, d2: string | null): boolean {
+  private _compareDates(d1: Date | null, d2: Date | null): boolean {
     if (!d1 && !d2) return true
     if (!d1 || !d2) return false
-    return new Date(d1).getTime() === new Date(d2).getTime()
+    return d1.getTime() === d2.getTime()
   }
 }

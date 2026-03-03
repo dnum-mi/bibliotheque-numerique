@@ -4,8 +4,8 @@ export interface IOrganismeDossier {
   demarche: string
   statut: string | null
   repere: string | null
-  dateDepot: string | null
-  dateDecision: string | null
-  datePublication: string | null
+  dateDepot: Date | null
+  dateDecision: Date | null
+  datePublication: Date | null
   isClickable: boolean
 }
