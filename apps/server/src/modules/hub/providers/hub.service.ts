@@ -13,7 +13,7 @@ import {
   IOrganismeDossier,
   OrganismeKind,
   eOrganismeKind,
-  eOrganismeDossierSource,
+  eDossierSource,
 } from '@biblio-num/shared'
 import axios, { AxiosInstance, CreateAxiosDefaults, HttpStatusCode, RawAxiosResponseHeaders } from 'axios'
 import { Stream } from 'node:stream'
@@ -31,6 +31,7 @@ import {
   normalizeSource, normalizeStatut,
   sortByDateDepotDesc,
 } from '../utils/organisme-dossier.utils'
+import { DossierService } from '@/modules/dossiers/providers/dossier.service'
 
 const ePathCompletedOrganismeByType = {
   association: '/associations',
@@ -54,6 +55,7 @@ export class HubService {
     @InjectRepository(Dossier) protected readonly repoDossier: Repository<Dossier>,
     @InjectRepository(Demarche) protected readonly repoDemarche: Repository<Demarche>,
     private readonly pdfExportService: PdfExportService,
+    private readonly dossierService: DossierService,
   ) {
     this.logger.setContext(this.constructor.name)
 
@@ -338,38 +340,26 @@ export class HubService {
     const enrichedEvents = await this.setLinkDemarcheAndDossier(rawEvents)
 
     return enrichedEvents.map(evt => ({
-      id: evt.dossierLocalNumber ?? evt.dossierNumber,
+      id: evt.dossierLocalNumber ?? null,
       demarche: evt.demarcheLocalName ?? evt.demarcheName,
       statut: normalizeStatut(evt.dsTraitementEvent),
-      isClickable: !!evt.dossierLocalNumber,
       source: normalizeSource(evt.type),
       repere: null,
-      dateDepot: evt.createdAt ?? null,
+      dateDepot: null,
       dateDecision: null,
       datePublication: null,
     }))
   }
 
   private async _fetchAndMapDsDossiers(idRef: string): Promise<IOrganismeDossier[]> {
-    const dossiers = await this.repoDossier
-      .createQueryBuilder('d')
-      .innerJoin('d.demarche', 'demarche')
-      .where(':idRef = ANY(d."organismeRefs")', { idRef })
-      .select([
-        'd.id',
-        'd.state',
-        'd.dateDepot',
-        'demarche.title',
-      ])
-      .getMany()
+    const dossiers = await this.dossierService.findDossiersByOrganismeNumber(idRef)
 
     return dossiers.map(d => ({
       id: d.id,
-      demarche: d.demarche.title,
+      demarche: d.demarcheTitle,
       statut: d.state,
       dateDepot: d.dateDepot ?? null,
-      isClickable: true,
-      source: eOrganismeDossierSource.ds,
+      source: eDossierSource.ds,
       repere: null,
       dateDecision: null,
       datePublication: null,

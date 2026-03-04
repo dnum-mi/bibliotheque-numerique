@@ -4,16 +4,17 @@ import type { RowDataType } from '@/components/datatable/client-side/DataTableCl
 import useToaster from '@/composables/use-toaster'
 import { routeNames } from '@/router/route-names'
 import { canAccessDemarche } from '@biblio-num/shared'
-import type { IOrganismeDossier, IRole, organismeCategoryKey } from '@biblio-num/shared'
+import type { IOrganismeDossier, organismeCategoryKey } from '@biblio-num/shared'
 import { dossierListHeaders } from './table-headers.const'
+import { useUserStore } from '@/stores'
 
 type IAuthorizeOrganismeDossier = IOrganismeDossier & RowDataType
 const props = defineProps<{
-  role?: IRole;
   organismeId: string;
   organismeType: organismeCategoryKey;
 }>()
 
+const { currentUser } = useUserStore()
 const router = useRouter()
 const toaster = useToaster()
 const rowsdata = ref<IAuthorizeOrganismeDossier[]>([])
@@ -23,7 +24,7 @@ const updateListeDossiers = async () => {
     const dossiers = await apiClient.hubListDossiers(props.organismeType, props.organismeId)
     rowsdata.value = dossiers.map((r) => {
       const row = r as IAuthorizeOrganismeDossier
-      row.authorized = row.isClickable && props.role ? canAccessDemarche(Number(row.id), props.role) : false
+      row.authorized = row.id && currentUser?.role ? canAccessDemarche(Number(row.id), currentUser?.role) : false
       row.cursor = row.authorized ? 'pointer' : 'not-allowed'
       return row
     })
@@ -37,7 +38,7 @@ watch(() => props.organismeId, updateListeDossiers, { immediate: true })
 
 const rowClick = (data: unknown) => {
   const d = data as IAuthorizeOrganismeDossier
-  if (d.isClickable) {
+  if (d.id) {
     if (d.authorized) {
       router.push({ name: routeNames.DOSSIERS, params: { id: d.id } })
       return
@@ -52,7 +53,6 @@ const rowClick = (data: unknown) => {
     <DataTableClientSide
       :headers="dossierListHeaders"
       :rows-data="rowsdata"
-      data-key="id"
       :pagination-page-size="20"
       @row-click="rowClick"
     />

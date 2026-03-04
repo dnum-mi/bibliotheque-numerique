@@ -1,8 +1,18 @@
-import { IOrganismeDossier, eOrganismeDossierSource, TOrganismeDossierSource } from '@biblio-num/shared'
+import { IOrganismeDossier, eDossierSource, DossierSourceKey } from '@biblio-num/shared'
 import { DossierState } from '@dnum-mi/ds-api-client'
 
+// TODO: mettre à jour ds-api-client et corriger cette fonction
 const eventStatutMapping: Record<string, string> = {
+  accepte_automatiquement: DossierState.Accepte,
+  classe_sans_suite: DossierState.SansSuite,
+  depose: DossierState.EnConstruction,
+  depose_correction_instructeur: DossierState.EnConstruction,
+  depose_correction_usager: DossierState.EnConstruction,
+  repasse_en_construction: DossierState.EnConstruction,
   passe_en_instruction: DossierState.EnInstruction,
+  passe_en_instruction_automatiquement: DossierState.EnInstruction,
+  repasse_en_instruction: DossierState.EnInstruction,
+  refuse_automatiquement: DossierState.Refuse,
 }
 
 export const normalizeStatut = (statut: string | null | undefined): string | null => {
@@ -12,12 +22,12 @@ export const normalizeStatut = (statut: string | null | undefined): string | nul
   return eventStatutMapping[statut] ?? statut
 }
 
-const eventSourceMapping: Record<string, TOrganismeDossierSource> = {
-  ds: eOrganismeDossierSource.ds,
-  rna: eOrganismeDossierSource.rna,
+const eventSourceMapping: Record<string, DossierSourceKey> = {
+  ds: eDossierSource.ds,
+  rna: eDossierSource.rna,
 }
 
-export const normalizeSource = (source: string | null | undefined): TOrganismeDossierSource | null => {
+export const normalizeSource = (source: string | null | undefined): DossierSourceKey | null => {
   if (!source) {
     return null
   }

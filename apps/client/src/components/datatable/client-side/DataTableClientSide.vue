@@ -38,7 +38,7 @@ const props = withDefaults(
     rowSelection: undefined,
     selectable: false,
     selectionMode: 'multiple',
-    dataKey: 'id',
+    dataKey: undefined,
     context: undefined,
   },
 )
@@ -269,6 +269,15 @@ watch(selectedRows, (newValue) => {
           />
         </template>
         <template v-else-if="col.filter === 'agMultiColumnFilter'">
+          <DatePicker
+            v-model="filterModel.value"
+            date-format="dd/mm/yy"
+            placeholder="jj/mm/aaaa"
+            @date-select="filterCallback()"
+            @clear="filterCallback()"
+          />
+        </template>
+        <template v-else-if="col.filter === 'agDateColumnFilter'">
           <DatePicker
             v-model="filterModel.value"
             date-format="dd/mm/yy"

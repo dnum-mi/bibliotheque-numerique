@@ -76,10 +76,10 @@ export const hubRoute = `/hub`
 export const hubSearchOrganisme = `${hubRoute}/search`
 export const hubGetRna = (id: string) => `${hubRoute}/rna/${id}`
 export const hubGetRnf = (id: string) => `${hubRoute}/rnf/${id}`
+export const getOrganismePathRoute = (type: organismeCategoryKey) => type === EOrganismeCategory.association ? 'association' : 'foundation'
 export const hubPathRouteByTypeOrganisme = (organismeType: organismeCategoryKey, id: string) =>
-  `${hubRoute}/${organismeType === EOrganismeCategory.association ? 'association' : 'foundation'}/${id}`
+  `${hubRoute}/${getOrganismePathRoute(organismeType)}/${id}`
 export const hubListDossiers = (id: string, type: organismeCategoryKey) => {
-  const correctType = type === EOrganismeCategory.association ? 'association' : 'foundation'
-  return `/hub/${correctType}/${id}/dossiers`
+  return `${hubPathRouteByTypeOrganisme(type, id)}/dossiers`
 }
 //#endregion

@@ -9,7 +9,7 @@ const makeDateColumn = ({ field, text }: Pick<HeaderDataTable, 'field' | 'text'>
   field,
   text,
   valueFormatter: (params: { value: Date }) => dateToStringFr(params.value),
-  filter: 'agMultiColumnFilter',
+  filter: 'agDateColumnFilter',
   filterable: true,
 })
 
@@ -28,6 +28,7 @@ export const dossierListHeaders: HeaderDataTable[] = [
   {
     field: 'demarche',
     text: 'Demarche',
+    filterable: true,
   },
   {
     field: 'statut',

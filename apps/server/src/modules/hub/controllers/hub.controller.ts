@@ -4,7 +4,6 @@ import { ApiTags } from '@nestjs/swagger'
 import {
   IAssociationOutput,
   IFoundationOutput,
-  IOrganismeDossier,
   ISiafSearchOrganismeOneOutput,
   Roles,
 } from '@biblio-num/shared'
@@ -17,6 +16,7 @@ import { Stream } from 'stream'
 import { HttpHeaders } from '@/shared/constants/http-headers.constants'
 import { DownloadMultipleFilesDto } from '../objects/dto/input/download-multiple-files.dto'
 import { SearchInputDto } from '../objects/dto/input/search-input.dto'
+import { OrganismeDossierDto } from '../objects/dto/output/organisme-dossier.dto'
 
 @ApiTags('HUB')
 @Controller('hub')
@@ -250,18 +250,13 @@ export class HubController {
     method: 'GET',
     minimumRole: Roles.instructor,
     isArray: true,
-    responseType: Object,
+    responseType: OrganismeDossierDto,
   })
   @Get('/association/:associationId/dossiers')
   @Role(Roles.instructor)
   async getAssociationDossiers(
     @Param('associationId') associationId: string,
-  ): Promise<IOrganismeDossier[]> {
-    const association = await this.hubService.getAssociation(associationId)
-    if (!association) {
-      throw new NotFoundException(`Aucune association avec cet rna ${associationId}`)
-    }
-
+  ): Promise<OrganismeDossierDto[]> {
     return this.hubService.getAssociationDossiers(associationId)
   }
 
@@ -270,18 +265,13 @@ export class HubController {
     method: 'GET',
     minimumRole: Roles.instructor,
     isArray: true,
-    responseType: Object,
+    responseType: OrganismeDossierDto,
   })
   @Get('/foundation/:foundationId/dossiers')
   @Role(Roles.instructor)
   async getFoundationDossiers(
     @Param('foundationId') foundationId: string,
-  ): Promise<IOrganismeDossier[]> {
-    const association = await this.hubService.getFoundation(foundationId)
-    if (!association) {
-      throw new NotFoundException(`Aucune fondation avec cet rnf ${foundationId}`)
-    }
-
+  ): Promise<OrganismeDossierDto[]> {
     return this.hubService.getFoundationDossiers(foundationId)
   }
 }

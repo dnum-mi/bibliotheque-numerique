@@ -5,9 +5,6 @@ import {
 } from '@biblio-num/shared'
 import type { IAssociationOutput } from '@biblio-num/shared'
 import FicheAssociationInfoTab from '@/views/organismes/association/info-tab/FicheAssociationInfoTab.vue'
-import EventsTab from '@/views/organismes/common/EventsTab.vue'
-import { useUserStore } from '@/stores'
-import DossierTab from '@/views/organismes/common/DossierTab.vue'
 import FicheSidebar from '@/views/organismes/components/FicheSidebar.vue'
 import type { tInfoSidebar } from '@/views/organismes/components/FicheSidebar.vue'
 import FileTab from '../common/file-tab/FileTab.vue'
@@ -17,8 +14,6 @@ import DirigeantTab from '../common/member-tab/MemberTab.vue'
 import DossierListTab from '../common/dossier-list-tab/DossierListTab.vue'
 
 const props = defineProps<{ association: IAssociationOutput }>()
-
-const { currentUser } = useUserStore()
 
 const serviceInstructeur = computed(() =>
   getServiceInstructeurFromEvents(props.association.events?.[0]?.dossierInstructeurGroup),
@@ -107,30 +102,6 @@ const currentTab = ref<string | undefined>(undefined)
             />
           </BnTab>
 
-          <!-- Historique -->
-          <BnTab
-            id="events"
-            title="Historique"
-          >
-            <template #icon>
-              <span class="fr-icon-survey-fill" aria-hidden="true" />
-            </template>
-            <EventsTab :events="association.events" />
-          </BnTab>
-
-          <BnTab
-            id="dossiers"
-            title="Dossier DS"
-          >
-            <template #icon>
-              <span class="fr-icon-folder-2-fill" aria-hidden="true" />
-            </template>
-            <DossierTab
-              :role="currentUser?.role"
-              :organisme-id="association.id"
-            />
-          </BnTab>
-
           <!-- Liste des dossiers -->
           <BnTab
             id="liste-des-dossiers"
@@ -140,7 +111,6 @@ const currentTab = ref<string | undefined>(undefined)
               <span class="fr-icon-folder-2-fill" aria-hidden="true" />
             </template>
             <DossierListTab
-              :role="currentUser?.role"
               :organisme-id="association.id"
               :organisme-type="EOrganismeCategory.association"
             />
