@@ -33,6 +33,7 @@ const activity = computed<tInfoActivity>(() => ({
 const compte = computed<tInfoCompte>(() => ({
   files: props.association.files,
   creationAt: props.association.creationAt,
+  dueDate: props.association.dueDate,
   fiscalEndDateAt: props.association.fiscalEndAt,
   accountDepositYears: props.association.accountDepositYears,
   publicGenerosityYears: props.association.publicGenerosityYears,

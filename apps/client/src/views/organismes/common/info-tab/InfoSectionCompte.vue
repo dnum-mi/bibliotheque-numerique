@@ -2,9 +2,11 @@
 import type { organismeCategoryKey, IFile } from '@biblio-num/shared'
 import { eTypeFile } from '@biblio-num/shared'
 import InfoRow from '@/views/organismes/components/InfoRow.vue'
+import { dateToStringFr } from '@/utils'
 
 export type tInfoCompte = {
   files: IFile[]
+  dueDate: Date | null
   creationAt: Date
   fiscalEndDateAt: Date | null
   accountDepositYears: number[]
@@ -41,6 +43,12 @@ const fiscalEndDate = computed(() => {
       }).format(new Date(props.compte.fiscalEndDateAt))
     : '-'
 })
+
+const dueDate = computed(() => {
+  return props.compte.dueDate
+    ? dateToStringFr(props.compte.dueDate)
+    : 'Illimitée'
+})
 </script>
 
 <template>
@@ -49,6 +57,9 @@ const fiscalEndDate = computed(() => {
       Vie économique
     </h2>
     <div class="fr-background-alt--grey fr-p-2w">
+      <InfoRow label="Date du terme">
+        {{ dueDate }}
+      </InfoRow>
       <InfoRow label="Dépôts des comptes">
         {{ compte.accountDepositYears?.join(' - ') || "-" }}
       </InfoRow>

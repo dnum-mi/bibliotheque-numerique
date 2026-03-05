@@ -33,6 +33,7 @@ const activity = computed<tInfoActivity>(() => ({
 const compte = computed<tInfoCompte>(() => ({
   files: props.foundation.files,
   fiscalEndDateAt: props.foundation.fiscalEndAt,
+  dueDate: props.foundation.dueDate,
   creationAt: props.foundation.creationAt,
   accountDepositYears: props.foundation.accountDepositYears,
   publicGenerosityYears: props.foundation.publicGenerosityYears,
