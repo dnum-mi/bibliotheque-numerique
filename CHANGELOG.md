@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.5.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.5.0...v5.5.1) (2026-03-05)
+
+
+### Bug Fixes
+
+* set PROJECT_NAME to bn ([1968251](https://github.com/dnum-mi/bibliotheque_numerique/commit/1968251d89ec9f1a472463349aa42eb75c381cbd))
+
 ## [5.5.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.4.0...v5.5.0) (2026-03-05)
 
 
