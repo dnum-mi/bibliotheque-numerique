@@ -28,8 +28,8 @@ jobs:
           token: ${{ secrets.DSO_BIBLIO_NUME_DEPLOY_TOKEN }}
           owner: dnum-mi
           repo: dso-bibliotheque-numerique-deploy
-          branch: dev
-          path: base/deployment.yaml
+          branch: new-main
+          path: helm/values-scaleway-dev.yaml
       - name: Send a sync request to DSO api
         run: |
           curl -X POST --fail -F token=${{ secrets.GITLAB_DEPLOY_TRIGGER_TOKEN }} -F ref=${{vars.BRANCH_SYNC}} -F "variables[GIT_BRANCH_DEPLOY]=dev" -F variables[PROJECT_NAME]=bn-deploy ${{vars.DEPLOY_URL_MIRROR}}

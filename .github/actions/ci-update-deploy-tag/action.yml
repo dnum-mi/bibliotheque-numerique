@@ -44,8 +44,9 @@ runs:
       working-directory: ${{ inputs.repo }}
       shell: bash
       run: |
-        sed -i "s|biblionum/bibliotheque_numerique-front:.*$|biblionum/bibliotheque_numerique-front:${{ steps.get_version.outputs.version }}|" ${{ inputs.path }}
-        sed -i "s|biblionum/bibliotheque_numerique-back:.*$|biblionum/bibliotheque_numerique-back:${{ steps.get_version.outputs.version }}|" ${{ inputs.path }}
+        VERSION="${{ steps.get_version.outputs.version }}"
+        sed -i '/bnBack:/,/image:/{/tag:/s/tag: .*/tag: '"$VERSION"'/}' ${{ inputs.path }}
+        sed -i '/bnClient:/,/image:/{/tag:/s/tag: .*/tag: '"$VERSION"'/}' ${{ inputs.path }}
 
     - name: Commit changes
       working-directory: ${{ inputs.repo }}
