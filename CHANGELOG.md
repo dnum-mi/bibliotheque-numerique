@@ -1,5 +1,38 @@
 # Changelog
 
+## [5.5.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.4.0...v5.5.0) (2026-03-05)
+
+
+### Features
+
+* add start.sh for run all BN pod ([5fbd9b6](https://github.com/dnum-mi/bibliotheque_numerique/commit/5fbd9b61eaccaa0b5d68eb9f33b46e183698b42b))
+* create start.sh for run BN, and update README ([2bb2f15](https://github.com/dnum-mi/bibliotheque_numerique/commit/2bb2f15b458200989091ef8b6a046d8f49297129))
+* implémenter le téléchargement de plusieurs fichiers pour les organismes ([92351ad](https://github.com/dnum-mi/bibliotheque_numerique/commit/92351ad25a0a8c40ee67a1940641d6fbf97c9e12))
+
+
+### Bug Fixes
+
+* :bug: :recycle: correction et factorisation de code pour la paramatrage d'affichage ([9b4274f](https://github.com/dnum-mi/bibliotheque_numerique/commit/9b4274f86a7d0f43ba6f7a8e103eaeea6388fb43))
+* :bug: ajout le flag données sensible ([#2187](https://github.com/dnum-mi/bibliotheque_numerique/issues/2187)) ([dcc7a0f](https://github.com/dnum-mi/bibliotheque_numerique/commit/dcc7a0ff4810416191278d853d258ab8f17bb25e))
+* add stop.sh ([d28009d](https://github.com/dnum-mi/bibliotheque_numerique/commit/d28009d234d3cf107881f5794668db27bc83c15e))
+* afficher le titre du original du champs dans la fiche dossier ([6fb1d95](https://github.com/dnum-mi/bibliotheque_numerique/commit/6fb1d95464960d106f9817b88ed34eba9b86d094))
+* ajout info date du terme sur la fiche organisme ([#2205](https://github.com/dnum-mi/bibliotheque_numerique/issues/2205)) ([01ff5e5](https://github.com/dnum-mi/bibliotheque_numerique/commit/01ff5e527162e4375416c99b18a65a2989fb77f7))
+* ajoute de qualité déclarant ([#2185](https://github.com/dnum-mi/bibliotheque_numerique/issues/2185)) ([bcf0251](https://github.com/dnum-mi/bibliotheque_numerique/commit/bcf02513c013b0d62543636feed81f582c0283f1))
+* correction suit à la revue de code [#2126](https://github.com/dnum-mi/bibliotheque_numerique/issues/2126) ([6ac647e](https://github.com/dnum-mi/bibliotheque_numerique/commit/6ac647ebd54f153cc004301173f9bdd1dafebc36))
+* create server_image for server and wokers, reset default password ([a9177b1](https://github.com/dnum-mi/bibliotheque_numerique/commit/a9177b1ead748d137473fdb349b12a5c1cb204ec))
+* del old routeName no use ([fdc4317](https://github.com/dnum-mi/bibliotheque_numerique/commit/fdc4317fee8cf0192b15db946cbf5c78eb41072f))
+* dossierId with quote because sql sucks ([36c1335](https://github.com/dnum-mi/bibliotheque_numerique/commit/36c13356c2d81d5860d84b59186acee9682b5922))
+* README with mode docker and mode dev ([d9ef3a6](https://github.com/dnum-mi/bibliotheque_numerique/commit/d9ef3a6bf7b17accd88c260d1895d63097769b23))
+* refacto README.md ([6685e7a](https://github.com/dnum-mi/bibliotheque_numerique/commit/6685e7aa2dba274f3679d9dc1a34f69da40a4265))
+* rename var env for port of docker compose ([3a6ccef](https://github.com/dnum-mi/bibliotheque_numerique/commit/3a6ccef65c4997186919dba074c655f7f41ce3fa))
+* rendre visibles les deux tables de l'onglet dirigeant et ranger par date de sortie ([75e325c](https://github.com/dnum-mi/bibliotheque_numerique/commit/75e325ccecd337e1ddf7c3b1782ea2e7ea863527))
+* retirer le titre de organisme du numéro ([#2189](https://github.com/dnum-mi/bibliotheque_numerique/issues/2189)) ([47b4e8d](https://github.com/dnum-mi/bibliotheque_numerique/commit/47b4e8d1d42096f49bf1d00ec2e86c64d1c326d6))
+* set profile to prod ([75aa0f3](https://github.com/dnum-mi/bibliotheque_numerique/commit/75aa0f3a81e1dc7e4d86ec9a0e5632703c5caf47))
+* set tags with helm ([f7ea87e](https://github.com/dnum-mi/bibliotheque_numerique/commit/f7ea87e2a92e0880d03f3c266b4896c83b54892e))
+* set tags with helm ([18640fa](https://github.com/dnum-mi/bibliotheque_numerique/commit/18640fab709b8633dda1e64d2d225741aede87ab))
+* update README for start.sh ([aa3dc43](https://github.com/dnum-mi/bibliotheque_numerique/commit/aa3dc437e2cd5835d7fa4e6081626148db986f98))
+* use client production target ([bce16a8](https://github.com/dnum-mi/bibliotheque_numerique/commit/bce16a89423eae5d7e60842744f66a0e386b7de0))
+
 ## [5.4.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.3.0...v5.4.0) (2026-02-24)
 
 
