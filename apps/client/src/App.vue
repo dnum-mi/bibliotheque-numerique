@@ -1,25 +1,29 @@
 <script setup lang="ts">
-import apiClient from '@/api/api-client'
-
 import AppToaster from '@/components/AppToaster.vue'
 import useToaster from '@/composables/use-toaster.js'
 
-import type { EnvTextKeys } from '@/shared/types'
-import { defaultEnv, envTextMapping } from '@/shared/types'
 import { AxiosError } from 'axios'
 import { useNavigation } from './composables/navigation'
+import { useHealthStore } from '@/stores/health.ts'
+import { defaultEnv, envTextMapping } from '@biblio-num/shared'
+import type { EnvTextKeys } from '@biblio-num/shared'
 
-const version = ref('0.0.0')
+const version = ref('-loading')
 const runEnv = ref<EnvTextKeys>(defaultEnv)
 const toaster = useToaster()
+const healthStore = useHealthStore()
 
 onMounted(async () => {
   try {
-    const healthJson = await apiClient.getHealth()
-    version.value = healthJson.info?.version.version
-    runEnv.value = healthJson.info?.environment.environment
+    await healthStore.getHealth()
+    healthStore.startPolling()
+
+    version.value = healthStore.health.info?.version
+    runEnv.value = healthStore.health.info?.environment
   } catch {
-    toaster.addErrorMessage({ description: 'une erreur est survenue à la déconnexion' })
+    toaster.addErrorMessage({
+      description: 'Impossible de récupérer l’état du serveur',
+    })
   }
 })
 
@@ -78,11 +82,16 @@ onErrorCaptured((error: Error | AxiosError) => {
   <div class="flex flex-col h-full w-full">
     <DsfrHeader
       v-model="searchQuery"
+      class="relative"
       :service-title="serviceTitle"
       :logo-text="logoText"
       :quick-links="quickLinks"
       :service-description="serviceDescription"
-    />
+    >
+      <template #before-quick-links>
+        <HealthIndicator />
+      </template>
+    </DsfrHeader>
 
     <main class="flex flex-col grow w-full h-full min-h-0 overflow-auto">
       <router-view />

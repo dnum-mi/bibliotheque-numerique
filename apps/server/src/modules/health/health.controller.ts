@@ -11,6 +11,7 @@ import { DsDependency } from '@/modules/health/infrastructure/dependencies/ds.de
 import { HubDependency } from '@/modules/health/infrastructure/dependencies/hub.dependency'
 import { S3Dependency } from '@/modules/health/infrastructure/dependencies/s3.dependency'
 import * as versionJson from '../../version.json'
+import { EnvTextKeys, iHealthOutput } from '@biblio-num/shared'
 
 @ApiTags('Health')
 @Controller('health')
@@ -34,8 +35,7 @@ export class HealthController {
   })
   @Get()
   @PublicRoute()
-  // TODO: typé le retour dans la lib et partager avec le front
-  async readiness(): Promise<unknown> {
+  async readiness(): Promise<iHealthOutput> {
     this.logger.verbose('Health check')
 
     const results = await Promise.all([
@@ -55,13 +55,13 @@ export class HealthController {
 
     return {
       status,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date(),
       dependencies,
       info: {
         version: versionJson.version,
-        environment: this.config.get('runEnv'),
+        environment: this.config.get('runEnv') as EnvTextKeys,
       },
-    }
+    } as iHealthOutput
   }
 
   @UsualApiOperation({
@@ -70,9 +70,9 @@ export class HealthController {
     minimumRole: 'aucun',
     responseType: null,
   })
-  @Get('liveliness')
+  @Get('liveness')
   @PublicRoute()
-  liveliness(): string {
+  liveness(): string {
     this.logger.verbose('Liveliness check')
     return 'OK'
   }

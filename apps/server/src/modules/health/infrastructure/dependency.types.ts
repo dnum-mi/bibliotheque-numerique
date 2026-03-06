@@ -1,6 +1,4 @@
-export type DependencyName = 'redis' | 'ds' | 'hub' | 's3'
-
-export type DependencyStatus = 'up' | 'down'
+import type { DependencyName, DependencyStatus } from '@biblio-num/shared'
 
 export interface DependencyCheckResult {
   name: DependencyName

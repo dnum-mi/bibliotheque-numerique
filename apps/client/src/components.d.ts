@@ -62,6 +62,7 @@ declare module 'vue' {
     FileTagBadge: typeof import('./components/Badges/file-tag/FileTagBadge.vue')['default']
     FileTagBadgeRenderer: typeof import('./components/Badges/file-tag/FileTagBadgeRenderer.vue')['default']
     FileTypeBadge: typeof import('./components/Badges/file-tag/FileTypeBadge.vue')['default']
+    HealthIndicator: typeof import('./components/HealthIndicator/HealthIndicator.vue')['default']
     HorizontalTimeline: typeof import('./components/HorizontalTimeline.vue')['default']
     InfoContact: typeof import('./components/InfoContact.vue')['default']
     LayoutAccueil: typeof import('./components/Layout/LayoutAccueil.vue')['default']
