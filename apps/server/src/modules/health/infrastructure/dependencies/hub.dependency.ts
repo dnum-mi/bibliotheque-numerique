@@ -19,7 +19,6 @@ export class HubDependency implements DependencyChecker {
   ) {
     this.logger.setContext(this.constructor.name)
     this.axios = axios.create({
-      baseURL: this.config.get('hub').url,
       headers: {
         'X-API-KEY': `${this.config.get('hub').key}`,
         'Content-Type': 'application/json',

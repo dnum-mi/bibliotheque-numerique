@@ -40,6 +40,7 @@ export class S3Dependency implements DependencyChecker {
         },
       }
     } catch (error) {
+      this.logger.debug(error)
       this.logger.warn(`S3 dependency error: ${error?.code}`)
 
       return {
