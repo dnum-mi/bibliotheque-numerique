@@ -18,8 +18,8 @@ describe('Dossiers (e2e)', () => {
   })
 
   afterAll(async () => {
-    await app.close()
     await dataSource.destroy()
+    await app.close()
   })
 
   describe('GET /dossiers/:id', () => {

@@ -37,8 +37,8 @@ describe('Dossier sync processors', () => {
 
   afterAll(async () => {
     await syncQueue.resume()
-    await app.close()
     await dataSource.destroy()
+    await app.close()
   })
 
   it('Anonymise', async () => {

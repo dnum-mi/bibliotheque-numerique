@@ -20,8 +20,8 @@ describe('Dossier listing', () => {
   })
 
   afterAll(async () => {
-    await app.close()
     await dataSource.destroy()
+    await app.close()
   })
 
   it('Should return 401 if not connected', async () => {

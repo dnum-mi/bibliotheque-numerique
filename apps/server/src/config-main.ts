@@ -13,6 +13,7 @@ import { LoggingInterceptor } from '@/shared/modules/logger/logging.interceptor'
 import { EntityNotFoundErrorFilter } from '@/shared/exceptions/filters/entity-not-found-error.filter'
 import * as cookieParser from 'cookie-parser'
 import { JWTExceptionFilter } from './shared/exceptions/filters/jwt-exception.filter'
+import { EventEmitter } from 'events'
 
 export const configMain = async (app: INestApplication, configService?: ConfigService): Promise<void> => {
   const loggerService = await app.resolve<LoggerService>(LoggerService)
@@ -58,4 +59,5 @@ export const configMain = async (app: INestApplication, configService?: ConfigSe
   }
   app.use(passport.initialize())
   app.use(cookieParser())
+  EventEmitter.defaultMaxListeners = 20
 }

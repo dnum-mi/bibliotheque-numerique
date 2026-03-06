@@ -22,8 +22,8 @@ describe('Demarche sync processors', () => {
   afterAll(async () => {
     // TODO: Impact on redis dev which is on pause
     await syncQueue.resume()
-    await app.close()
     await dataSource.destroy()
+    await app.close()
   })
 
   it('Only sudo can call synchronisation', () => {

@@ -39,8 +39,8 @@ describe('Auth (e2e)', () => {
   })
 
   afterAll(async () => {
-    await app.close()
     await dataSource.destroy()
+    await app.close()
   })
 
   describe('POST /auth/sign-in', () => {

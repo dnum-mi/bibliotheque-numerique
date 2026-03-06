@@ -18,8 +18,8 @@ describe('statistique', () => {
   })
 
   afterAll(async () => {
-    await app.close()
     await dataSource.destroy()
+    await app.close()
   })
 
   it('Should return nb dossiers', async () => {

@@ -21,8 +21,8 @@ describe('Demarches (e2e)', () => {
   })
 
   afterAll(async () => {
-    await app.close()
     await dataSource.destroy()
+    await app.close()
   })
 
   describe('GET /demarches/small', () => {
