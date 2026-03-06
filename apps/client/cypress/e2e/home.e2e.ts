@@ -1,7 +1,7 @@
 describe('Home', () => {
   beforeEach(() => {
     cy.intercept({ method: 'GET', url: '/api/users/me' }, {})
-    cy.intercept('api/health/info', { info: {
+    cy.intercept('api/health', { info: {
       version: { version: '0.0' },
       environment: { environment: 'test' },
     } }).as('health')
