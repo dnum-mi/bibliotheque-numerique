@@ -19,7 +19,7 @@
     "dev:worker-sync": "nest start --entryFile src/apps/worker-sync/main.js --debug 0.0.0.0:9230 --watch",
     "dev:worker-sync-in-docker": "run-s dev:worker-sync",
     "docker:build": "docker compose -f docker-compose.yml build server",
-    "docker:ci:up": "docker compose --profile ci -f docker-compose.yml up -d",
+    "docker:ci:up": "docker compose --profile ci -f docker-compose.yml up -d; docker compose wait;",
     "docker:db:up": "docker compose --profile db-only -f docker-compose.yml up -d",
     "docker:prod": "docker compose --profile prod -f docker-compose.yml up -d",
     "docker:down": "docker compose -f apps/server/docker-compose.yml down",

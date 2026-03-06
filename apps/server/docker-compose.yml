@@ -85,6 +85,11 @@ services:
       POSTGRES_DB: biblio-num
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U user" ]
+      interval: 2s
+      timeout: 2s
+      retries: 10
     ports:
       - "${DC_POSTGRES_PORT:-5432}:5432"
     volumes:
