@@ -86,7 +86,7 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U user" ]
+      test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB" ]
       interval: 2s
       timeout: 2s
       retries: 10
@@ -184,17 +184,19 @@ services:
       until mc alias set local http://s3:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD; do
         echo 'waiting for minio...'; sleep 2;
       done;
-      mc mb -p local/$$MINIO_DEFAULT_BUCKET || true;
-      mc admin user add local $$ACCESS_KEY_ID$$SECRET_ACCESS_KEY || true;
+      mc mb -p local/$$AWS_DEFAULT_S3_BUCKET || true;
+      echo 'Bucket $$AWS_DEFAULT_S3_BUCKET created or already exists';
+      mc admin user add local $$ACCESS_KEY_ID $$SECRET_ACCESS_KEY || true;
+      echo 'User $$ACCESS_KEY_ID created or already exists';
       mc admin policy attach local readwrite --user $$ACCESS_KEY_ID;
       echo 'MinIO init done';
       "
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-admin}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-password}
-      MINIO_DEFAULT_BUCKET: ${MINIO_DEFAULT_BUCKET:-super-bucket}
-      MINIO_APP_ACCESS_KEY: ${ACCESS_KEY_ID:-bn-access}
-      MINIO_APP_SECRET_KEY: ${SECRET_ACCESS_KEY:-bn-secret-please-change}
+      AWS_DEFAULT_S3_BUCKET: ${AWS_DEFAULT_S3_BUCKET:-super-bucket}
+      ACCESS_KEY_ID: ${ACCESS_KEY_ID:-bn-access}
+      SECRET_ACCESS_KEY: ${SECRET_ACCESS_KEY:-bn-secret-please-change}
 
 
   redis:
@@ -229,6 +231,7 @@ services:
       BULL_PREFIX: bull
       USER_LOGIN: admin
       USER_PASSWORD: password
+      REDIS_DB: "${REDIS_INDEX:-0}"
     depends_on:
       - redis
 
