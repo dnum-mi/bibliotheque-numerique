@@ -1,0 +1,17 @@
+info:
+  name: Initiation Projection
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{API-URL}}/projections/init"
+  auth:
+    type: bearer
+    token: "{{access-token}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

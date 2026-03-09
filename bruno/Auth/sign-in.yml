@@ -1,0 +1,33 @@
+info:
+  name: sign-in
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{API-URL}}/auth/sign-in"
+  body:
+    type: json
+    data: |
+      {
+        "email": {{email.admin}},
+        "password": {{pwd.admin}}
+      }
+  auth: inherit
+
+runtime:
+  actions:
+    - type: set-variable
+      phase: after-response
+      selector:
+        expression: res.body.accessToken
+        method: jsonq
+      variable:
+        name: access-token
+        scope: runtime
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
