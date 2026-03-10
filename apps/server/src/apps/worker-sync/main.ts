@@ -6,10 +6,11 @@ import { DependencySupervisorService } from '@/modules/health/infrastructure/dep
 
 async function bootstrap (): Promise<void> {
   const app = await NestFactory.create(WorkerSyncModule)
+  await app.init()
   app.useLogger(await app.resolve(LoggerService))
   const configService = app.get(ConfigService)
   const loggerService = await app.resolve(LoggerService)
-  const supervisor = await app.resolve(DependencySupervisorService)
+  const supervisor = app.get(DependencySupervisorService)
   await supervisor.waitUntilReady()
   const port = configService.get('workerSyncPort')
   app.listen(port)
