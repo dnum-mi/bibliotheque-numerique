@@ -1,5 +1,22 @@
 # Changelog
 
+## [5.6.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.5.1...v5.6.0) (2026-03-10)
+
+
+### Features
+
+* dependencies management ([ae6bc40](https://github.com/dnum-mi/bibliotheque_numerique/commit/ae6bc405d17cd3cd7449917e8fe7eb9ac6ee992a))
+* inform client of down services ([14d3bc3](https://github.com/dnum-mi/bibliotheque_numerique/commit/14d3bc3c80437064f1c7a983eb57bcc7b4d66615))
+
+
+### Bug Fixes
+
+* e2e front ([d6b6ced](https://github.com/dnum-mi/bibliotheque_numerique/commit/d6b6ced07ac50dc1510e63fe174f5e17251cb5f9))
+* health route for hub ([de1d58b](https://github.com/dnum-mi/bibliotheque_numerique/commit/de1d58bce70f5c669017fa508004d0c6df31fd9f))
+* in DC set default MINIO_ROOT_USER with var env ([b6bb3ef](https://github.com/dnum-mi/bibliotheque_numerique/commit/b6bb3ef51e2f41b0f2cd3e82be8f1c715f8d1ce2))
+* wait app to initialize before checking dependencies ([07e5f0f](https://github.com/dnum-mi/bibliotheque_numerique/commit/07e5f0f6aba67268472ac10149dc8a3b73a2b402))
+* waiting for postgre to start docker before test ([76d6969](https://github.com/dnum-mi/bibliotheque_numerique/commit/76d6969ad0ab6431f76f3bbe9de641d33ccf2428))
+
 ## [5.5.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.5.0...v5.5.1) (2026-03-05)
 
 
