@@ -27,7 +27,6 @@ import { OrganismeFicheGenerator } from '@/shared/modules/pdf-export/generators/
 import { HttpHeaders } from '@/shared/constants/http-headers.constants'
 import { SearchInputDto } from '../objects/dto/input/search-input.dto'
 import {
-  areOrganismeDossiersEquivalent,
   normalizeSource, normalizeStatut,
   sortByDateDepotDesc,
 } from '../utils/organisme-dossier.utils'
@@ -292,42 +291,67 @@ export class HubService {
   }
 
   private async _mergeDossiers(idRef: string, type: OrganismeKind): Promise<IOrganismeDossier[]> {
-    const [eventsRows, dsRows] = await Promise.all([
+    const [eventsRows, bnRows] = await Promise.all([
       this._fetchAndMapEvents(idRef, type),
       this._fetchAndMapDsDossiers(idRef),
     ])
 
-    const dsById = new Map(
-      dsRows
+    const bnDossierById = new Map(
+      bnRows
         .filter(d => d.id != null)
         .map(d => [d.id!, d]),
     )
 
     const merged: IOrganismeDossier[] = []
 
+    const eventsByDossierId = new Map<number, IOrganismeDossier[]>()
+
     for (const event of eventsRows) {
-      const { id } = event
-      if (id == null) {
+      if (event.id == null) {
         merged.push(event)
         continue
       }
-
-      const dsMatch = dsById.get(id)
-      if (!dsMatch) {
-        merged.push(event)
-        continue
+      if (!eventsByDossierId.has(event.id)) {
+        eventsByDossierId.set(event.id, [])
       }
-
-      merged.push(dsMatch)
-
-      if (!areOrganismeDossiersEquivalent(event, dsMatch)) {
-        merged.push(event)
-      }
-
-      dsById.delete(id)
+      eventsByDossierId.get(event.id)!.push(event)
     }
 
-    merged.push(...dsById.values())
+    for (const [dossierId, eventsGroup] of eventsByDossierId.entries()) {
+      const bnDossier = bnDossierById.get(dossierId)
+
+      if (!bnDossier) {
+        this.logger.warn(`Dossier BN introuvable pour les events liés au dossier: ${dossierId}.`)
+
+        eventsGroup.forEach(evt => {
+          evt.statut = null
+          evt.datePublication = null
+          evt.dateDepot = null
+          evt.dateDecision = null
+          merged.push(evt)
+        })
+        continue
+      }
+
+      eventsGroup.forEach((evt, index) => {
+        const isLastLine = index === eventsGroup.length - 1
+
+        if (isLastLine) {
+          evt.statut = bnDossier.statut
+          evt.dateDecision = bnDossier.dateDecision
+        } else {
+          evt.isCorrection = true
+          evt.statut = null
+          evt.dateDecision = null
+        }
+
+        merged.push(evt)
+      })
+
+      bnDossierById.delete(dossierId)
+    }
+
+    merged.push(...bnDossierById.values())
 
     return sortByDateDepotDesc(merged)
   }
@@ -341,6 +365,8 @@ export class HubService {
 
     return enrichedEvents.map(evt => ({
       id: evt.dossierLocalNumber ?? null,
+      dossierNumber: evt.dossierNumber ?? null,
+      isCorrection: evt.isCorrection ?? false,
       demarche: evt.demarcheLocalName ?? evt.demarcheName,
       statut: normalizeStatut(evt.dsTraitementEvent),
       source: normalizeSource(evt.type),
@@ -357,11 +383,13 @@ export class HubService {
     return dossiers.map(d => ({
       id: d.id,
       demarche: d.demarcheTitle,
+      dossierNumber: d.sourceId ? Number(d.sourceId) : null,
+      isCorrection: null,
       statut: d.state,
       dateDepot: d.dateDepot ?? null,
       source: eDossierSource.ds,
       repere: null,
-      dateDecision: null,
+      dateDecision: d.dateTraitement,
       datePublication: null,
     }))
   }

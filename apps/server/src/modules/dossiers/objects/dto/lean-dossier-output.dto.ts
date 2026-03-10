@@ -6,10 +6,12 @@ import { DossierState } from '@dnum-mi/ds-api-client'
 export class LeanDossierOutputDto
   extends PickType(Dossier, [
     'id',
+    'sourceId',
     'demarcheId',
     'state',
     'dateDepot',
     'prefecture',
+    'dateTraitement',
   ])
   implements ILeanDossierOutput {
   @ApiProperty({

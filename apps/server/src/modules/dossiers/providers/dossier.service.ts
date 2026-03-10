@@ -807,11 +807,13 @@ export class DossierService extends BaseEntityService<Dossier> {
       .then((dossiers) => {
         return dossiers.map((dossier) => ({
           id: dossier.id,
+          sourceId: dossier.sourceId,
           demarcheId: dossier.demarche.id,
           demarcheTitle: dossier.demarche.title,
           prefecture: dossier.prefecture,
           state: dossier.state,
           dateDepot: dossier.dateDepot,
+          dateTraitement: dossier.dateTraitement,
         }))
       })
   }

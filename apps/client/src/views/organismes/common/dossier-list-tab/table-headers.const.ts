@@ -20,6 +20,11 @@ export const dossierListHeaders: HeaderDataTable[] = [
     type: 'hidden',
   },
   {
+    field: 'dossierNumber',
+    text: 'Numéro de dossier',
+    filterable: true,
+  },
+  {
     field: 'source',
     text: 'Source',
     valueFormatter: (params: { value: string }) => params.value.toUpperCase(),
@@ -27,7 +32,7 @@ export const dossierListHeaders: HeaderDataTable[] = [
   },
   {
     field: 'demarche',
-    text: 'Demarche',
+    text: 'Démarche',
     filterable: true,
   },
   {
@@ -41,7 +46,18 @@ export const dossierListHeaders: HeaderDataTable[] = [
     }),
     filter: 'agSetColumnFilter',
   },
+  {
+    field: 'isCorrection',
+    text: 'A été modifié',
+    filterable: true,
+    valueFormatter: (params: { value: boolean }) => (params.value ? 'Oui' : 'Non'),
+    filter: 'agSetColumnFilter',
+    filterParams: {
+      values: ['Oui', 'Non'],
+    } as ISetFilterParams,
+  },
   makeDateColumn({ field: 'dateDepot', text: 'Date de dépôt' }),
   makeDateColumn({ field: 'dateDecision', text: 'Date de décision' }),
   makeDateColumn({ field: 'datePublication', text: 'Date de publication' }),
+
 ]

@@ -18,6 +18,21 @@ export class OrganismeDossierDto implements IOrganismeDossier {
   })
   source: DossierSourceKey | null
 
+  @ApiPropertyOptional({
+    description: 'Numéro de dossier',
+    example: 20230001,
+    type: Number,
+    nullable: true,
+  })
+  dossierNumber: number | null
+
+  @ApiProperty({
+    description: 'Indique si le dossier est une correction d’un dossier déjà existant',
+    example: false,
+    type: Boolean,
+  })
+  isCorrection: boolean
+
   @ApiProperty({
     description: 'Nom de la démarche associée au dossier',
     example: "Dépôt annuel des comptes et du rapport d'activité des fonds de dotation (national)",
