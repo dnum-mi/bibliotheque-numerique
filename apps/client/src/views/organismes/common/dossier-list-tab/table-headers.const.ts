@@ -34,6 +34,7 @@ export const dossierListHeaders: HeaderDataTable[] = [
     field: 'demarche',
     text: 'Démarche',
     filterable: true,
+    width: 500,
   },
   {
     field: 'statut',
@@ -45,6 +46,7 @@ export const dossierListHeaders: HeaderDataTable[] = [
       filterParams: ISetFilterParams
     }),
     filter: 'agSetColumnFilter',
+    width: 200,
   },
   {
     field: 'isCorrection',

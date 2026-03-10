@@ -226,6 +226,7 @@ watch(selectedRows, (newValue) => {
       :show-filter-match-modes="shouldShowFilterControls(col)"
       :show-filter-menu="col.filterable !== false"
       :title="col.headerName"
+      :style="{ width: col.width ? `${col.width}px` : 'auto', minWidth: col.width ? `${col.width}px` : '100px' }"
     >
       <template #body="{ data }">
         <template v-if="col.cellRenderer">
