@@ -155,8 +155,8 @@ services:
     image: quay.io/minio/minio:RELEASE.2023-01-20T02-05-44Z
     container_name: biblio-num_minio
     environment:
-      MINIO_ROOT_USER: admin # MINIO_ACCESS_KEY = MINIO_ROOT_USER
-      MINIO_ROOT_PASSWORD: password # MINIO_SECRET_KEY = MINIO_ROOT_PASSWORD
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-admin} # MINIO_ACCESS_KEY = MINIO_ROOT_USER
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-password} # MINIO_SECRET_KEY = MINIO_ROOT_PASSWORD
     volumes:
       - type: volume
         source: biblio-num-s3-volume
