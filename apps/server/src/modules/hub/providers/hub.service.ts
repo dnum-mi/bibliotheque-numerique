@@ -384,7 +384,7 @@ export class HubService {
       id: d.id,
       demarche: d.demarcheTitle,
       dossierNumber: d.sourceId ? Number(d.sourceId) : null,
-      isCorrection: null,
+      isCorrection: false,
       statut: d.state,
       dateDepot: d.dateDepot ?? null,
       source: eDossierSource.ds,

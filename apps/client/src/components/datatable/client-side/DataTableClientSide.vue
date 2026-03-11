@@ -3,6 +3,7 @@ import type { DataTableFilterMeta } from 'primevue/datatable'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import DatePicker from 'primevue/datepicker'
+import Dropdown from 'primevue/dropdown'
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api'
 import type { HeaderDataTable } from '@/shared/types'
 import { PAGINATION_PAGE_SIZE } from '@/config'
@@ -67,6 +68,12 @@ interface PrimeVueColumnDef {
   sortable?: boolean
 }
 
+const booleanOptions = [
+  { label: 'Tous', value: null },
+  { label: 'Oui', value: true },
+  { label: 'Non', value: false },
+]
+
 const columnDefs: ComputedRef<PrimeVueColumnDef[]> = computed(() => {
   if (!props.headers?.length) {
     return []
@@ -108,6 +115,8 @@ const filters = ref<DataTableFilterMeta>(columnDefs.value
         matchMode = FilterMatchMode.DATE_IS
       } else if (col.filter === 'agSetColumnFilter') {
         matchMode = FilterMatchMode.IN
+      } else if (col.filter === 'agBooleanColumnFilter') {
+        matchMode = FilterMatchMode.EQUALS
       }
       return {
         ...acc,
@@ -224,6 +233,7 @@ watch(selectedRows, (newValue) => {
       :sortable="col.sortable !== false"
       :show-add-button="shouldShowFilterControls(col)"
       :show-filter-match-modes="shouldShowFilterControls(col)"
+      :show-filter-operator="shouldShowFilterControls(col)"
       :show-filter-menu="col.filterable !== false"
       :title="col.headerName"
       :style="{ width: col.width ? `${col.width}px` : 'auto', minWidth: col.width ? `${col.width}px` : '100px' }"
@@ -256,7 +266,7 @@ watch(selectedRows, (newValue) => {
               filter: filterModel.value || col.filterParams?.values,
             }"
             :params="{
-              values: col.filterParams?.values,
+              values: col.filterParams?.values!,
               valueFormatter: col.filterParams?.valueFormatter,
               cellRenderer: col.filterParams?.cellRenderer,
               cellRendererParams: col.filterParams?.cellRendererParams,
@@ -267,6 +277,16 @@ watch(selectedRows, (newValue) => {
               filterModel.value = $event.filter
               filterCallback()
             }"
+          />
+        </template>
+        <template v-else-if="col.filter === 'agBooleanColumnFilter'">
+          <Dropdown
+            v-model="filterModel.value"
+            :options="booleanOptions"
+            option-label="label"
+            option-value="value"
+            placeholder="Tous"
+            @change="filterCallback()"
           />
         </template>
         <template v-else-if="col.filter === 'agMultiColumnFilter'">
