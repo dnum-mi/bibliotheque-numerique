@@ -38,7 +38,7 @@ export class LoggerService extends ConsoleLogger implements LS {
     } else if (message instanceof Error) {
       return message.stack || message.message
     } else {
-      // ⚠️ No indentation so graphana can digest it
+      // ⚠️ one line json with no indentation so graphana can digest it
       return JSON.stringify(message)
     }
   }
@@ -85,7 +85,8 @@ export class LoggerService extends ConsoleLogger implements LS {
     if (this.configService.get('isFriendlyLog')) {
       super[logFunctionKey](messageString)
     } else {
-      console.log(logObject)
+      // ⚠️ one line json with no indentation so graphana can digest it
+      console.log(JSON.stringify(logObject))
     }
   }
 
