@@ -14,7 +14,9 @@ variables:
     value: "{{HOST}}:{{WORKER-SYNC-PORT}}"
   - name: WF-URL
     value: "{{HOST}}:{{WORKER-FILE-PORT}}"
-  - secret: true
-    name: email.admin
-  - secret: true
-    name: pwd.admin
+  - name: email.admin
+    value: '"admin@localhost.com"'
+  - name: pwd.admin
+    value: '"password"'
+  - name: access-token
+    value: '"you-need-to-login-first"'

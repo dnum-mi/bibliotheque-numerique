@@ -1,7 +1,7 @@
 info:
   name: sign-in
   type: http
-  seq: 3
+  seq: 1
 
 http:
   method: POST
@@ -13,7 +13,6 @@ http:
         "email": {{email.admin}},
         "password": {{pwd.admin}}
       }
-  auth: inherit
 
 runtime:
   actions:
