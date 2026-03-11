@@ -4,6 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing'
 import { CurrentDemarcheInterceptor } from './current-demarche.interceptor'
 import { Demarche } from '../../objects/entities/demarche.entity'
 import { of } from 'rxjs'
+import { ALS_INSTANCE } from '@/shared/modules/als/als.module'
 
 describe('CurrentDemarcheInterceptor', () => {
   let interceptor: CurrentDemarcheInterceptor
@@ -20,6 +21,12 @@ describe('CurrentDemarcheInterceptor', () => {
           provide: DemarcheService,
           useValue: {
             findOneById: jest.fn(),
+          },
+        },
+        {
+          provide: ALS_INSTANCE,
+          useValue: {
+            getStore: jest.fn(),
           },
         },
       ],

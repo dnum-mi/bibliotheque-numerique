@@ -14,7 +14,6 @@ export type TConfig = {
     email: string;
     roleName: string;
   };
-  createMissingMandatoryConfigurations: boolean;
   workerFilePort: number;
   workerSyncPort: number;
 };
@@ -52,8 +51,5 @@ export default (): TConfig => {
       email: process.env.DEFAULT_SUDO_EMAIL,
       roleName: 'admin',
     },
-
-    createMissingMandatoryConfigurations:
-      process.env.CREATE_MISSING_MANDATORY_CONFIGURATIONS === 'true',
   }
 }

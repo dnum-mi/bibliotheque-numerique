@@ -23,11 +23,7 @@ export class BnConfigurationService extends BaseEntityService<BnConfiguration> i
 
   async onApplicationBootstrap(): Promise<void> {
     this.logger.verbose('onApplicationBootstrap in bn-configuration.service')
-    if (this.configService.get('createMissingMandatoryConfigurations')) {
-      await this.createMissingMandatoryData()
-    } else {
-      this.logger.log('Skipping create of missing mandatory data.')
-    }
+    await this.createMissingMandatoryData()
   }
 
   async findByKeyName(keyName: BnConfigurationKey): Promise<BnConfiguration | null> {
@@ -69,11 +65,11 @@ export class BnConfigurationService extends BaseEntityService<BnConfiguration> i
   async getValueByKeyName(keyName: BnConfigurationKey): Promise< string| boolean | number | Date | object | null> {
     const bnConf = await this.findByKeyName(keyName)
     switch (bnConf.valueType) {
-    case 'string': return bnConf.stringValue
-    case 'boolean': return bnConf.stringValue === 'true'
-    case 'date': return new Date(bnConf.stringValue)
-    case 'number' : return Number(bnConf.stringValue)
-    default: return bnConf.stringValue
+      case 'string': return bnConf.stringValue
+      case 'boolean': return bnConf.stringValue === 'true'
+      case 'date': return new Date(bnConf.stringValue)
+      case 'number' : return Number(bnConf.stringValue)
+      default: return bnConf.stringValue
     }
   }
 }
