@@ -46,6 +46,7 @@ import { API_DEPENDENCY_POLICY } from '@/apps/api/api-dependencies-policy.const'
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
+      override: true,
       load: [
         configuration,
         fileConfig,

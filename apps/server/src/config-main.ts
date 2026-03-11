@@ -59,5 +59,14 @@ export const configMain = async (app: INestApplication, configService?: ConfigSe
   }
   app.use(passport.initialize())
   app.use(cookieParser())
+  loggerService.log({
+    message: '⚙️ == Runtime environment == ⚙️',
+    rawNodeEnv: process.env.NODE_ENV,
+    runEnv: configService.get('runEnv'),
+    env: configService.get('env'),
+    isDev: configService.get('isDev'),
+    isTest: configService.get('isTest'),
+    isProd: configService.get('isProd'),
+  })
   EventEmitter.defaultMaxListeners = 20
 }
