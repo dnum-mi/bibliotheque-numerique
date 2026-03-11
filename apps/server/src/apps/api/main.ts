@@ -7,6 +7,7 @@ import { LoggerService } from '@/shared/modules/logger/logger.service'
 async function bootstrap (): Promise<void> {
   const app = await NestFactory.create(ApiModule, {
     cors: true,
+    logger: false,
   })
 
   if (process.env.NODE_ENV !== 'production') {
@@ -26,7 +27,7 @@ async function bootstrap (): Promise<void> {
   const port = configService.get('port')
   app.listen(port)
     .then(() => {
-      loggerService.log(`🚀 Server started on ${port}`)
+      loggerService.log(`🚀 API SERVER started on ${port}`)
     })
 }
 bootstrap()

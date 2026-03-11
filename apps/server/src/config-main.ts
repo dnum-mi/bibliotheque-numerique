@@ -14,6 +14,7 @@ import { EntityNotFoundErrorFilter } from '@/shared/exceptions/filters/entity-no
 import * as cookieParser from 'cookie-parser'
 import { JWTExceptionFilter } from './shared/exceptions/filters/jwt-exception.filter'
 import { EventEmitter } from 'events'
+import { ALS_INSTANCE } from '@/shared/modules/als/als.module'
 
 export const configMain = async (app: INestApplication, configService?: ConfigService): Promise<void> => {
   const loggerService = await app.resolve<LoggerService>(LoggerService)
@@ -52,21 +53,21 @@ export const configMain = async (app: INestApplication, configService?: ConfigSe
     new EntityNotFoundErrorFilter(httpAdapterHost, entityNotFoundErrorLogger),
   )
   app.useGlobalPipes(new CustomValidationPipe())
-  if (!configService.get('isTest') && !configService.get('isDev')) {
+  if (configService.get('isProd')) {
     const globalRequestLoggerService = new LoggerService(configService, appNameToken)
     globalRequestLoggerService.setContext('GlobalRequestInterceptor')
-    app.useGlobalInterceptors(new LoggingInterceptor(globalRequestLoggerService))
+    const asyncLocalStorage = app.get(ALS_INSTANCE)
+    app.useGlobalInterceptors(new LoggingInterceptor(globalRequestLoggerService, asyncLocalStorage))
   }
   app.use(passport.initialize())
   app.use(cookieParser())
-  loggerService.log({
-    message: '⚙️ == Runtime environment == ⚙️',
-    rawNodeEnv: process.env.NODE_ENV,
-    runEnv: configService.get('runEnv'),
-    env: configService.get('env'),
-    isDev: configService.get('isDev'),
-    isTest: configService.get('isTest'),
-    isProd: configService.get('isProd'),
-  })
+  loggerService.debug(`
+  ⚙️ == Runtime environment == ⚙️'
+    rawNodeEnv: ${process.env.NODE_ENV}
+    runEnv: ${configService.get('runEnv')}
+    env: ${configService.get('env')}
+    isDev: ${configService.get('isDev')}
+    isTest: ${configService.get('isTest')}
+    isProd: ${configService.get('isProd')}`)
   EventEmitter.defaultMaxListeners = 20
 }

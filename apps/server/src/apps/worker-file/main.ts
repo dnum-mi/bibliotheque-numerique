@@ -5,7 +5,9 @@ import { ConfigService } from '@nestjs/config'
 import { DependencySupervisorService } from '@/modules/health/infrastructure/dependency-supervisor.service'
 
 async function bootstrap (): Promise<void> {
-  const app = await NestFactory.create(WorkerFileModule)
+  const app = await NestFactory.create(WorkerFileModule, {
+    logger: false,
+  })
   await app.init()
   app.useLogger(await app.resolve(LoggerService))
   const configService = app.get(ConfigService)
@@ -15,7 +17,7 @@ async function bootstrap (): Promise<void> {
   const port = configService.get('workerFilePort')
   app.listen(port)
     .then(() => {
-      loggerService.log(`🚀 Server started on ${port}`)
+      loggerService.log(`🚀 WORKER FILE started on ${port}`)
     })
 }
 

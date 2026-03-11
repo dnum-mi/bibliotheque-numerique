@@ -4,7 +4,7 @@ import { LoggerService as LS } from '@nestjs/common/services/logger.service'
 import { APP_NAME_TOKEN } from '@/shared/modules/logger/logger.const'
 import * as Winston from 'winston'
 import * as DailyRotateFile from 'winston-daily-rotate-file'
-import { LogElkFormat } from '@/shared/modules/logger/log-elk-format.interface'
+import { iLogPayload } from '@/shared/modules/logger/log-payload.interface'
 import { ContextLoggerService } from '@/shared/modules/logger/context-logger.service'
 
 @Injectable()
@@ -35,61 +35,112 @@ export class LoggerService extends ConsoleLogger implements LS {
   private _stringifyMessage(message: unknown): string {
     if (typeof message === 'string') {
       return message
-    } else if (message instanceof Error) {
-      return message.stack || message.message
-    } else {
-      // ⚠️ one line json with no indentation so graphana can digest it
-      return JSON.stringify(message)
     }
+
+    if (message instanceof Error) {
+      return message.stack ?? message.message
+    }
+
+    return JSON.stringify(message)
   }
 
-  private _logToFile(
-    logElk: LogElkFormat,
-    transporter: 'client' | 'default',
-  ): void {
-    const level = logElk.level === 'log' ? 'info' : logElk.level
-    const logger =
-      transporter === 'client' ? this.clientFileLogger : this.fileLogger
-    if (logger) {
-      logger.log({ ...logElk, level })
-    }
-  }
-
-  private _commonLogFunction(
+  // Transform input message into a structured log payload
+  private _buildLogObject(
     message: string | object | Error,
-    logFunctionKey: 'log' | 'warn' | 'debug' | 'error' | 'verbose',
-  ): void {
-    const messageString = this._stringifyMessage(message)
-    const logObject: LogElkFormat = {
+    level: 'log' | 'warn' | 'debug' | 'error' | 'verbose',
+  ): iLogPayload {
+    const logObject: iLogPayload = {
       application: this.appName,
-      level: logFunctionKey,
+      level,
       context: this.context,
       timestamp: new Date().toISOString(),
       message: '',
     }
 
-    if (typeof message === 'object') {
-      logObject.payload = message
-    } else {
-      logObject.message = message
+    if (message instanceof Error) {
+      logObject.message = message.message
+
+      logObject.payload = {
+        name: message.name,
+        message: message.message,
+        stack: message.stack,
+      }
+
+      return logObject
     }
 
+    if (typeof message === 'string') {
+      logObject.message = message
+      return logObject
+    }
+
+    logObject.payload = message
+
+    if ('message' in message && typeof message.message === 'string') {
+      logObject.message = message.message
+    }
+
+    return logObject
+  }
+
+  private _logToFile(
+    payload: iLogPayload,
+    transporter: 'client' | 'default',
+  ): void {
+    const level = payload.level === 'log' ? 'info' : payload.level
+
+    const logger =
+      transporter === 'client' ? this.clientFileLogger : this.fileLogger
+
+    if (logger) {
+      logger.log({ ...payload, level })
+    }
+  }
+
+  private _shouldIgnoreNestLog(message: string): boolean {
+    return (
+      message.startsWith('Mapped {') ||
+      message.endsWith(' route') ||
+      message.endsWith('}:') ||
+      message.includes('Controller {/')
+    )
+  }
+
+  private _commonLogFunction(
+    message: string | object | Error,
+    level: 'log' | 'warn' | 'debug' | 'error' | 'verbose',
+  ): void {
+    if (typeof message === 'string' && this._shouldIgnoreNestLog(message)) {
+      return
+    }
+
+    const messageString = this._stringifyMessage(message)
+
+    let logObject = this._buildLogObject(message, level)
+
+    // extend with ALS context
+    if (this.contextLog) {
+      logObject = this.contextLog.extendLogObjectWithStoreValues(logObject)
+    }
+
+    // file logging
     if (this.configService.get('LOG_TO_FILE') === 'true') {
       this._logToFile(logObject, 'default')
     }
 
+    // bull / async context logging
     if (this.contextLog) {
       this.contextLog.contextLog(logObject)
     }
 
+    // stdout
     if (this.configService.get('isFriendlyLog')) {
-      super[logFunctionKey](messageString)
-    } else {
-      // ⚠️ one line json with no indentation so graphana can digest it
-      console.log(JSON.stringify(logObject))
+      super[level](messageString)
+      return
     }
-  }
 
+    console.log(JSON.stringify(logObject))
+  }
   //#endregion
 
   constructor(
@@ -98,8 +149,9 @@ export class LoggerService extends ConsoleLogger implements LS {
     private readonly contextLog?: ContextLoggerService,
   ) {
     super()
-    // override global setup and filter later with function
+
     this.setLogLevels(['log', 'error', 'warn', 'debug', 'verbose'])
+
     if (this.configService.get('LOG_TO_FILE') === 'true') {
       this.fileLogger = this._createLogger(this.appName)
       this.clientFileLogger = this._createLogger('client')

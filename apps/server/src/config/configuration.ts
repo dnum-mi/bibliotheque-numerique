@@ -20,7 +20,7 @@ export type TConfig = {
 };
 
 export default (): TConfig => {
-  const env = process.env.NODE_ENV?.trim() || 'local'
+  const env = process.env.NODE_ENV?.trim()
   const runEnv = process.env.RUN_ENV?.trim() || 'local'
   const isDev = runEnv === 'local'
   const isTest = ['test', 'test-unit', 'test-e2e'].includes(env)
