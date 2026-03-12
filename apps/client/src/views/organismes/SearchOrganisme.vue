@@ -2,16 +2,22 @@
 import { computed, onMounted, ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import {
-  foundationTypeWithoutUnknown,
   isRnfLuhnValid,
+  foundationTypeWithoutUnknown,
 } from '@biblio-num/shared'
 
-import type { IBasicOrganisme, ILastConsultedOrganisme } from '@biblio-num/shared'
+import type {
+  IBasicOrganisme,
+  ILastConsultedOrganisme,
+  ISearchHubInput,
+} from '@biblio-num/shared'
+
 import apiClient from '@/api/api-client.ts'
 import useToaster from '@/composables/use-toaster.ts'
 import { routeNames } from '@/router/route-names.ts'
 import { vMaska } from 'maska/vue'
 import type { MaskInputOptions, MaskaDetail } from 'maska'
+import SearchOrganismeInput from './search/SearchOrganismeInput.vue'
 
 const toaster = useToaster()
 const router = useRouter()
@@ -30,7 +36,6 @@ const headers = [
 
 const searchMode = ref<'fulltext' | 'id'>('id')
 
-const inputSearch = ref('')
 const results = ref<IBasicOrganisme[]>([])
 const recentResults = ref<ILastConsultedOrganisme[]>([])
 
@@ -85,8 +90,8 @@ const loadRecent = async () => {
   }
 }
 
-const onSearchFullText = async () => {
-  const query = inputSearch.value.trim()
+const onSearchFullText = async (searchInput: ISearchHubInput) => {
+  const query = searchInput
   if (!query) {
     return
   }
@@ -97,7 +102,6 @@ const onSearchFullText = async () => {
 
   try {
     const response = await apiClient.searchOrganisme(query)
-
     results.value = response
     hasSearched.value = true
   } catch {
@@ -109,9 +113,11 @@ const onSearchFullText = async () => {
   }
 }
 
+const searchTextInput = useTemplateRef('search-text')
+
 // reset quand champ plein texte vidé
 const resetFullTextSearch = () => {
-  inputSearch.value = ''
+  searchTextInput.value?.reset()
   results.value = []
   hasSearched.value = false
 }
@@ -121,11 +127,6 @@ const resetFullTextAndRecents = () => {
   void loadRecent()
 }
 
-const handleInputChange = (value: string | number | undefined) => {
-  if (!value || (typeof value === 'string' && value.trim() === '')) {
-    resetFullTextAndRecents()
-  }
-}
 //#endregion
 
 //#region 📍------ Reset ID & modes ------ 📍
@@ -286,19 +287,11 @@ onMounted(async () => {
         v-if="searchMode === 'fulltext'"
         class="bn-id-section"
       >
-        <p class="fr-text--sm fr-mb-2w text-grey-700">
-          Rechercher un titre, une description, un bénéficiaire effectif ou une adresse à travers cette recherche plein texte.
-        </p>
-
-        <form @submit.prevent="onSearchFullText">
-          <DsfrSearchBar
-            v-model="inputSearch"
-            label="Rechercher un numéro, un titre, une description..."
-            :disabled="isLoading"
-            @update:model-value="handleInputChange"
-            @search="onSearchFullText"
-          />
-        </form>
+        <SearchOrganismeInput
+          ref="search-text"
+          :is-loading="isLoading"
+          @search="onSearchFullText"
+        />
       </section>
 
       <!-- MODE 2 : IDENTIFIANT -->

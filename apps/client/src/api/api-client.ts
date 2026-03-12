@@ -30,6 +30,7 @@ import type {
   IPaginationUser,
   IResetPasswordInput,
   ISearchDossier,
+  ISearchHubInput,
   IUpdateAnonymizedChamp,
   IUpdateBnConfiguration,
   IUpdateOneFieldConfiguration,
@@ -548,8 +549,10 @@ export const attachedFilesApiClient = {
 }
 
 export const hubApiClient = {
-  searchOrganisme: (sentence: string): Promise<IBasicOrganisme[]> => {
-    return getOrRedirectTo404(hubSearchOrganisme(sentence))
+  searchOrganisme: (searchInput: ISearchHubInput): Promise<IBasicOrganisme[]> => {
+    return apiClientInstance.post(hubSearchOrganisme, searchInput).then(response => {
+      return response.data
+    })
   },
   hubGetFile: (type: organismeCategoryKey, organismeId: string, id: string) => {
     return apiClientInstance.get(`${hubPathRouteByTypeOrganisme(type, organismeId)}/file/${id}`, { responseType: 'blob' })

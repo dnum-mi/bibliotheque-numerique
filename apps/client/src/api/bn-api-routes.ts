@@ -73,7 +73,7 @@ export const enableHubSearchRoute = `${bnConfigurationsRoute}/enable-hub-search`
 
 //#region 📍------ HUB ------ 📍
 export const hubRoute = `/hub`
-export const hubSearchOrganisme = (sentence: string) => `${hubRoute}/search/${sentence}`
+export const hubSearchOrganisme = `${hubRoute}/search`
 export const hubGetRna = (id: string) => `${hubRoute}/rna/${id}`
 export const hubGetRnf = (id: string) => `${hubRoute}/rnf/${id}`
 export const hubPathRouteByTypeOrganisme = (organismeType: organismeCategoryKey, id: string) =>
