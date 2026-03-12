@@ -45,11 +45,11 @@ export class ContextLoggerService {
       const u = store.user
       context.userId = u?.id
       context.userDescription = u
-        ? `${u.lastname.toUpperCase()} ${u.firstname.toUpperCase()} @${u.role.label} -- ${u.email} | id:${u.id}`
+        ? `${u.lastname.toUpperCase()} ${u.firstname.toUpperCase()} @${u.role?.label} -- ${u.email} | id:${u.id}`
         : undefined
-      context.demarcheDescription = d ? `dnId:${d.dsDataJson.number} | ${d.title} | sqlId:${d.id}` : undefined
+      context.demarcheDescription = d ? `dnId:${d.dsDataJson?.number} | ${d.title} | sqlId:${d.id}` : undefined
       context.dossierDescription = doss
-        ? `dnId:${doss.dsDataJson.number} | sqlId:${doss.id} | demarcheId:${doss.demarche.id} | state:${d.state}`
+        ? `dnId:${doss.dsDataJson?.number} | sqlId:${doss.id} | demarcheId:${doss.demarche?.id} | state:${d.state}`
         : undefined
     }
     return {
