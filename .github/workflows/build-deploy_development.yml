@@ -32,4 +32,4 @@ jobs:
           path: helm/values-scaleway-dev.yaml
       - name: Send a sync request to DSO api
         run: |
-          curl -X POST --fail -F token=${{ secrets.GITLAB_DEPLOY_TRIGGER_TOKEN }} -F ref=${{vars.BRANCH_SYNC}} -F "variables[GIT_BRANCH_DEPLOY]=dev" -F variables[PROJECT_NAME]=bn-deploy ${{vars.DEPLOY_URL_MIRROR}}
+          curl -X POST --fail -F token=${{ secrets.GITLAB_DEPLOY_TRIGGER_TOKEN }} -F ref=${{vars.BRANCH_SYNC}} -F "variables[GIT_BRANCH_DEPLOY]=new-main" -F variables[PROJECT_NAME]=bn-deploy ${{vars.DEPLOY_URL_MIRROR}}
