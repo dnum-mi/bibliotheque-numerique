@@ -1,5 +1,13 @@
 # Changelog
 
+## [5.7.2](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.7.1...v5.7.2) (2026-03-12)
+
+
+### Bug Fixes
+
+* do NOT use turbo to run in prod ([b2e3b5e](https://github.com/dnum-mi/bibliotheque_numerique/commit/b2e3b5ebd83004e6ea46b2873950dc41c984a408))
+* undefined properties in logs ([581ac60](https://github.com/dnum-mi/bibliotheque_numerique/commit/581ac6098a2be666701efc804924bf303cb89e87))
+
 ## [5.7.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.7.0...v5.7.1) (2026-03-12)
 
 
