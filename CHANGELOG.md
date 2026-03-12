@@ -1,5 +1,19 @@
 # Changelog
 
+## [5.7.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.6.0...v5.7.0) (2026-03-12)
+
+
+### Features
+
+* setting some data in interceptor ALS for logs ([65780df](https://github.com/dnum-mi/bibliotheque_numerique/commit/65780df5e6c6819c881e06db80898d9a5c9783e9))
+
+
+### Bug Fixes
+
+* better intercepter ([b2b2c17](https://github.com/dnum-mi/bibliotheque_numerique/commit/b2b2c17cef11fe6a575e0b02c5700c08cf13d583))
+* deleting useless env variable ([f91b346](https://github.com/dnum-mi/bibliotheque_numerique/commit/f91b3467dbfeccbffef05d57596ed9f7b43b17ca))
+* json log one-liner ([f5ca5f0](https://github.com/dnum-mi/bibliotheque_numerique/commit/f5ca5f0fae054669661f708eb3f1c3b7fd7c4fd4))
+
 ## [5.6.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.5.1...v5.6.0) (2026-03-10)
 
 
