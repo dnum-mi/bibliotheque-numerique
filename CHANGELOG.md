@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.7.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.7.0...v5.7.1) (2026-03-12)
+
+
+### Bug Fixes
+
+* **deployment:** update branch to dev plateform ([46dc957](https://github.com/dnum-mi/bibliotheque_numerique/commit/46dc957d6c7a28573f3ad7c1522284f608d15c4d))
+
 ## [5.7.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.6.0...v5.7.0) (2026-03-12)
 
 
