@@ -15,6 +15,7 @@ import { HubService, IHubFileResponse } from '@/modules/hub/providers/hub.servic
 import { Stream } from 'stream'
 import { HttpHeaders } from '@/shared/constants/http-headers.constants'
 import { DownloadMultipleFilesDto } from '../objects/dto/input/download-multiple-files.dto'
+import { SearchInputDto } from '../objects/dto/input/search-input.dto'
 
 @ApiTags('HUB')
 @Controller('hub')
@@ -28,18 +29,19 @@ export class HubController {
 
   @UsualApiOperation({
     summary: 'Recherche plein text d\'un organisme dans le hub.',
-    method: 'GET',
+    method: 'POST',
     minimumRole: Roles.instructor,
     responseType: Object, // ISiafSearchOrganismeOneOutput
     isArray: true,
   })
-  @Get('search/:sentence')
+  @Post('search')
   @Role(Roles.instructor)
   async searchOrganisme(
-    @Param('sentence') sentence: string,
+    @Body() searchInput: SearchInputDto,
   ): Promise<ISiafSearchOrganismeOneOutput[]> {
     this.logger.verbose('searchOrganisme')
-    return this.hubService.searchOrganisme(sentence)
+    this.logger.debug(searchInput)
+    return this.hubService.searchOrganisme(searchInput)
   }
 
   @UsualApiOperation({

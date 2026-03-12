@@ -9,6 +9,7 @@ import {
   fromFoundationToBasicOrganisme,
   organismeCategoryKey,
   EOrganismeCategory,
+  OrganismeTypeToSearchKey,
 } from '@biblio-num/shared'
 import axios, { AxiosInstance, CreateAxiosDefaults, HttpStatusCode, RawAxiosResponseHeaders } from 'axios'
 import { Stream } from 'node:stream'
@@ -20,6 +21,7 @@ import { Demarche } from '../../demarches/objects/entities/demarche.entity'
 import { PdfExportService } from '@/shared/modules/pdf-export/pdf-export.service'
 import { OrganismeFicheGenerator } from '@/shared/modules/pdf-export/generators/fiche-organisme.generator'
 import { HttpHeaders } from '@/shared/constants/http-headers.constants'
+import { SearchInputDto } from '../objects/dto/input/search-input.dto'
 
 const ePathCompletedOrganismeByType = {
   association: '/associations',
@@ -177,11 +179,26 @@ export class HubService {
   }
   //#endregion FOUNDATIONS
 
-  async searchOrganisme(sentence: string): Promise<ISiafSearchOrganismeOneOutput[]> {
-    const cleanedSentence = sentence.trim()
+  // #region SEARCH
+  async searchOrganisme(searchInput: SearchInputDto): Promise<ISiafSearchOrganismeOneOutput[]> {
+    const cleanedSentence = searchInput.sentence?.trim()
     this.logger.verbose(`HUB-search: ${cleanedSentence}`)
-    const path = `/generic/full_text_search/${encodeURIComponent(cleanedSentence)}`
-    return this.axios.get(path)
+    const path = '/generic/full_text_search'
+
+    return await this.axios.post(path, {
+      sentence: cleanedSentence,
+      size: searchInput.size,
+      entity_type: searchInput.entityType,
+    } as {
+      sentence: string,
+      size?: number,
+      entity_type?: OrganismeTypeToSearchKey | null,
+      conditions?: {
+        field: string,
+        operator: string,
+        in_values: unknown | null,
+        single_value: unknown | null,
+  }})
       // @ts-ignore TODO: separate type from HUB to Bibli
       .then((r) => r?.data?.search_response
         .map((r2: {entity: IAssociationOutput | IFoundationOutput, entity_type: organismeCategoryKey}) => {
@@ -194,6 +211,7 @@ export class HubService {
       )
   }
 
+  // #endregion SEARCH
   async setLinkDemarcheAndDossier(events: IRafEvent[]): Promise<IRafEvent[]> {
     this.logger.verbose('setLinkDemarcheAndDossier')
     const demarcheNumbers = events.map(evt => evt.demarcheNumber)
