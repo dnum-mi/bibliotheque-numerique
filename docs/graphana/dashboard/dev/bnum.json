@@ -19,6 +19,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
+  "id": 15,
   "links": [],
   "panels": [
     {
@@ -362,7 +363,7 @@
             "uid": "loki-hprod-dff7x7yoh1yi2y65y7gi3uwvp"
           },
           "editorMode": "code",
-          "expr": "{container=\"dso-bn-back\"}\n| json\n| context!=\"LoggingInterceptor\"\n| level=\"error\" \n| line_format \"❌ [{{.context}}]  --   {{.payload_stack}}\"",
+          "expr": "{container=\"dso-bn-back\"}\n| json\n| context!=\"LoggingInterceptor\"\n| level=\"error\" \n| line_format \"❌ {{if .payload_stack}}[{{.context}}] -- {{.payload_stack}}{{else}}{{.message}}{{end}}\"",
           "maxLines": 5000,
           "queryType": "range",
           "refId": "Query"
@@ -385,5 +386,6 @@
   "timezone": "browser",
   "title": "Bibliothèque Numérique cockpit",
   "uid": "dff4awuduzw8wc",
+  "version": 27,
   "weekStart": ""
 }

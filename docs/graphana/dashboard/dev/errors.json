@@ -18,6 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
+  "id": 16,
   "links": [],
   "panels": [
     {
@@ -49,7 +50,7 @@
             "uid": "loki-hprod-dff7x7yoh1yi2y65y7gi3uwvp"
           },
           "editorMode": "code",
-          "expr": "{container=\"dso-bn-back\"}\n| json\n| context!=\"LoggingInterceptor\"\n| level=\"error\" \n| line_format \"❌ [{{.context}}]  --   {{.payload_stack}}\"",
+          "expr": "{container=\"dso-bn-back\"}\n| json\n| context!=\"LoggingInterceptor\"\n| level=\"error\" \n| line_format \"❌ {{if .payload_stack}}[{{.context}}] -- {{.payload_stack}}{{else}}{{.message}}{{end}}\"",
           "queryType": "range",
           "refId": "A"
         }
@@ -86,7 +87,7 @@
             "uid": "loki-hprod-dff7x7yoh1yi2y65y7gi3uwvp"
           },
           "editorMode": "code",
-          "expr": "{container=\"dso-bn-worker-sync\"}\n| json\n| context!=\"LoggingInterceptor\"\n| level=\"error\" \n| line_format \"❌ [{{.context}}]  --   {{.payload_stack}}\"",
+          "expr": "{container=\"dso-bn-worker-sync\"}\n| json\n| context!=\"LoggingInterceptor\"\n| level=\"error\" \n| line_format \"❌ {{if .payload_stack}}[{{.context}}] -- {{.payload_stack}}{{else}}{{.message}}{{end}}\"",
           "queryType": "range",
           "refId": "A"
         }
@@ -123,7 +124,7 @@
             "uid": "loki-hprod-dff7x7yoh1yi2y65y7gi3uwvp"
           },
           "editorMode": "code",
-          "expr": "{container=\"dso-bn-worker-sync\"}\n| json\n| context!=\"LoggingInterceptor\"\n| level=\"error\" \n| line_format \"❌ [{{.context}}]  --   {{.payload_stack}}\"",
+          "expr": "{container=\"dso-bn-worker-sync\"}\n| json\n| context!=\"LoggingInterceptor\"\n| level=\"error\" \n| line_format \"❌ {{if .payload_stack}}[{{.context}}] -- {{.payload_stack}}{{else}}{{.message}}{{end}}\"",
           "queryType": "range",
           "refId": "A"
         }
@@ -145,5 +146,6 @@
   "timezone": "browser",
   "title": "All ERRORS",
   "uid": "cfft0hbejqd4wb",
+  "version": 4,
   "weekStart": ""
 }
