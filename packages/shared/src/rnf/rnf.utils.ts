@@ -37,3 +37,8 @@ export const addLuhnToRnf = (rnfWithoutLuhn: string): string => {
   const luhn = computeLuhn(onlyNumbersString)
   return `${rnfWithoutLuhn}-${padZero(luhn, LUHN_ALGORITHM_KEY_SIZE)}`
 }
+
+export const isRnfLuhnValid = (rnf: string): boolean => {
+  const rnfWithoutLuhn = rnf.slice(0, -LUHN_ALGORITHM_KEY_SIZE - 1)
+  return rnf === addLuhnToRnf(rnfWithoutLuhn)
+}

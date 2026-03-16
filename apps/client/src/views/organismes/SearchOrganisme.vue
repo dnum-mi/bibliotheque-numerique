@@ -1,13 +1,17 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-import type {
-  IBasicOrganisme,
-  ILastConsultedOrganisme,
+import {
+  foundationTypeWithoutUnknown,
+  isRnfLuhnValid,
 } from '@biblio-num/shared'
+
+import type { IBasicOrganisme, ILastConsultedOrganisme } from '@biblio-num/shared'
 import apiClient from '@/api/api-client.ts'
 import useToaster from '@/composables/use-toaster.ts'
 import { routeNames } from '@/router/route-names.ts'
+import { vMaska } from 'maska/vue'
+import type { MaskInputOptions, MaskaDetail } from 'maska'
 
 const toaster = useToaster()
 const router = useRouter()
@@ -41,59 +45,18 @@ const idErrorValue = ref<string>('')
 //#region 📍------ Recherche par identifiant ------ 📍
 const idSearchType = ref<'rnf' | 'rna'>('rnf')
 
-// RNF : 075-FRUP-12345-42
-const rnfDept = ref('')
-const rnfType = ref<'FRUP' | 'FDD' | 'FE' | ''>('')
-const rnfNumber = ref('')
-const rnfLuhn = ref('')
-
-// pour éviter d’écraser ce que tape l’utilisateur dans le Luhn
-const rnfLuhnDirty = ref(false)
-
 // RNA : un champ simple, avec W obligatoire
 const rnaId = ref('W')
 
 // refs pour auto-focus
-const rnfDeptRef = useTemplateRef('rnfDeptRef')
-const rnfTypeSelectRef = useTemplateRef('rnfTypeSelectRef')
-const rnfNumberRef = useTemplateRef('rnfNumberRef')
-const rnfLuhnRef = useTemplateRef('rnfLuhnRef')
-
 // RNF complet (affichage + utilisation)
 const fullRnf = computed(() => {
-  if (!rnfDept.value || !rnfType.value || !rnfNumber.value) {
+  if (inputRnfError.value) {
     return ''
   }
-  const base = `${rnfDept.value}-${rnfType.value}-${rnfNumber.value}`
 
-  return rnfLuhn.value ? `${base}-${rnfLuhn.value}` : base
+  return rnfId.value
 })
-
-const onRnfPaste = (event: ClipboardEvent) => {
-  const text = event.clipboardData?.getData('text')?.trim() ?? ''
-  if (!text) { return }
-
-  // On accepte : 092-FDD-00109-05, 092FDD00109-05, 092FDD00109 05
-  const normalized = text.replace(/\s+/g, '')
-  const match = normalized.match(
-    /^(\d{3})-?(FRUP|FDD|FE)-?(\d{1,6})-?(\d{2})$/i,
-  )
-  if (!match) {
-    return
-  }
-
-  event.preventDefault()
-
-  const [, dept, type, num, luhn] = match
-  rnfDept.value = dept || ''
-  rnfType.value = type?.toUpperCase() as 'FRUP' | 'FDD' | 'FE'
-  rnfNumber.value = num || ''
-  rnfLuhn.value = luhn || ''
-  rnfLuhnDirty.value = true // on ne recalcule plus par-dessus un RNF "copié collé"
-
-  // focus sur la clé
-  rnfLuhnRef.value?.focus()
-}
 
 const onIdSearch = async () => {
   if (idSearchType.value === 'rnf') {
@@ -169,12 +132,8 @@ const handleInputChange = (value: string | number | undefined) => {
 const resetIdSearch = () => {
   hasIdError.value = false
   idErrorValue.value = ''
-  rnfDept.value = ''
-  rnfType.value = ''
-  rnfNumber.value = ''
-  rnfLuhn.value = ''
-  rnfLuhnDirty.value = false
   rnaId.value = 'W'
+  rnfId.value = ''
 }
 
 const resetAll = () => {
@@ -220,28 +179,43 @@ const onRnaInput = () => {
 //#endregion
 
 //#region 📍------ Auto-tab RNF ------ 📍
-const onDeptInput = () => {
-  if (rnfDept.value.length >= 3) {
-    rnfTypeSelectRef.value?.focus()
+const rnfId = ref('') // champ caché pour v-model et validation globale du RNF
+const isInputRnfInvalid = computed(() => !!rnfId.value && !isRnfLuhnValid(rnfId.value))
+const inputRnfError = computed(() => {
+  if (isInputRnfInvalid.value) {
+    return 'Le numéro RNF saisi est invalide.'
   }
-}
-
-// pour le type, on laisse l'utilisateur cliquer / taber
-
-const onNumberInput = () => {
-  if (rnfNumber.value.length >= 5) {
-    // on recalcule le Luhn automatiquement
-    rnfLuhnDirty.value = false
-    if (fullRnf.value) {
-      rnfLuhnRef.value?.focus()
+  return ''
+})
+const maskOptions = reactive<MaskInputOptions>({
+  preProcess: (value: string) => {
+    const upper = value.toUpperCase()
+    return upper
+  },
+  onMaska (detail: MaskaDetail) {
+    if (detail.completed) {
+      rnfId.value = detail.masked
+    } else {
+      rnfId.value = ''
     }
-  }
-}
+  },
+  mask: (value: string): string => {
+    const upper = value.toUpperCase()
+    for (const type of foundationTypeWithoutUnknown) {
+      if (upper.includes(type)) {
+        return `###-${type}-#####-##`
+      }
+    }
+    return '###-@@@@-#####-##'
+  },
+  tokens: {
+    '#': { pattern: /\d/ },
+    '@': { pattern: /[A-Z]/ },
+  },
+  eager: true,
+  uppercase: true,
 
-const onLuhnInput = () => {
-  rnfLuhnDirty.value = true
-}
-//#endregion
+})//#endregion
 
 //#region 📍------ Table : résultats ou récents ------ 📍
 const sourceList = computed(() => (hasSearched.value ? results.value : recentResults.value))
@@ -363,87 +337,33 @@ onMounted(async () => {
         <!-- Saisie RNF -->
         <div
           v-if="idSearchType === 'rnf'"
-          class="bn-rnf-grid fr-mb-2w"
+          class="fr-mb-2w"
         >
-          <div>
-            <label class="fr-label">
-              Département
-              <span class="fr-hint-text">ex : 075, 057</span>
-            </label>
-            <input
-              ref="rnfDeptRef"
-              v-model="rnfDept"
-              maxlength="3"
-              class="fr-input"
-              inputmode="numeric"
-              @input="onDeptInput"
-              @paste="onRnfPaste"
-            >
-          </div>
-
-          <div>
-            <label class="fr-label">
-              Type
-              <span class="fr-hint-text">FRUP, FDD, FE</span>
-            </label>
-            <select
-              ref="rnfTypeSelectRef"
-              v-model="rnfType"
-              class="fr-input"
-            >
-              <option value="">
-                Sélectionner
-              </option>
-              <option value="FRUP">
-                FRUP
-              </option>
-              <option value="FDD">
-                FDD
-              </option>
-              <option value="FE">
-                FE
-              </option>
-            </select>
-          </div>
-
-          <div>
-            <label class="fr-label">
-              Numéro
-              <span class="fr-hint-text">5 chiffres</span>
-            </label>
-            <input
-              ref="rnfNumberRef"
-              v-model="rnfNumber"
-              maxlength="5"
-              class="fr-input"
-              inputmode="numeric"
-              @input="onNumberInput"
-            >
-          </div>
-
-          <div>
-            <label class="fr-label flex items-center gap-1">
-              <div class="flex gap-2 items-center">
-                Clé (Luhn)
-                <DsfrTooltip
-                  content="Le luhn est généré automatiquement à partir du numéro. Si le Luhn ne correspond pas, vous avez probablement fait une erreur dans la copie du numéro."
-                  on-hover
-                >
-                  <span class="fr-icon-information-line fr-icon--sm color-blue-france" />
-                </DsfrTooltip>
-              </div>
-              <span class="fr-hint-text">Automatique & modifiable</span>
-            </label>
-
-            <input
-              ref="rnfLuhnRef"
-              v-model="rnfLuhn"
-              maxlength="2"
-              class="fr-input"
-              inputmode="numeric"
-              @input="onLuhnInput"
-            >
-          </div>
+          <label
+            for="id-input-rnf"
+            class="fr-label"
+          >
+            Numéro RNF
+          </label>
+          <input
+            id="id-input-rnf"
+            v-maska="maskOptions"
+            class="fr-input"
+            placeholder="ex : 075-FRUP-12345-42"
+            :aria-invalid="isInputRnfInvalid"
+            :aria-errormessage="isInputRnfInvalid ? 'id-input-rnf-error-message' : ''"
+            :aria-describedby="isInputRnfInvalid ? 'id-input-rnf-error-message' : ''"
+            required
+            aria-required="true"
+          >
+          <p
+            v-if="isInputRnfInvalid"
+            id="id-input-rnf-error-message"
+            class="fr-text--sm fr-error-text"
+            role="alert"
+          >
+            {{ inputRnfError }}
+          </p>
         </div>
 
         <!-- Saisie RNA -->
@@ -458,6 +378,7 @@ onMounted(async () => {
           <input
             v-model="rnaId"
             class="fr-input"
+            placeholder="ex : W123456789"
             @input="onRnaInput"
           >
         </div>

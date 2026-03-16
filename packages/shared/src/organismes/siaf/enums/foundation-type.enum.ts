@@ -1,13 +1,16 @@
 import { createEnum } from "factories"
 
-export const foundationType = [
-  'unknown',
+export const foundationTypeWithoutUnknown = [
   'FDD',
   'FE',
   'FRUP',
   'SCI',
   'PART',
   'UNI'
+]
+export const foundationType = [
+  'unknown',
+  ...foundationTypeWithoutUnknown
 ] as const
 
 export type FoundationTypeKey = (typeof foundationType)[number]
