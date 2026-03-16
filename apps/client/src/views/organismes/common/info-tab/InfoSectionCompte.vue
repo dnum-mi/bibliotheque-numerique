@@ -3,13 +3,16 @@ import type { organismeCategoryKey, IFile } from '@biblio-num/shared'
 import { eTypeFile } from '@biblio-num/shared'
 import InfoRow from '@/views/organismes/components/InfoRow.vue'
 import { dateToStringFr } from '@/utils'
+import type { DsfrBadgeProps } from '@gouvminint/vue-dsfr'
 
 export type tInfoCompte = {
   files: IFile[]
   dueDate: Date | null
   creationAt: Date
   fiscalEndDateAt: Date | null
-  accountDepositYears: number[]
+  depositAccountYears: number[]
+  missingAccountYears: number[]
+  isAccountLate: boolean
   publicGenerosityYears: number[],
   publicSubsidyYears: number[],
   foreignFinancingYears: number[]
@@ -49,6 +52,21 @@ const dueDate = computed(() => {
     ? dateToStringFr(props.compte.dueDate)
     : 'Illimitée'
 })
+
+const stateOfFilingOfAccounts = computed<{
+  label: string
+  type: DsfrBadgeProps['type']
+}>(() =>
+  !props.compte.isAccountLate
+    ? {
+        label: 'HORS DELAI',
+        type: 'error',
+      }
+    : {
+        label: 'OK',
+        type: 'info',
+      },
+)
 </script>
 
 <template>
@@ -60,8 +78,19 @@ const dueDate = computed(() => {
       <InfoRow label="Date du terme">
         {{ dueDate }}
       </InfoRow>
-      <InfoRow label="Dépôts des comptes">
-        {{ compte.accountDepositYears?.join(' - ') || "-" }}
+      <InfoRow label="Dépôts de comptes">
+        {{ compte.depositAccountYears?.join(' - ') || "-" }}
+      </InfoRow>
+      <InfoRow label="État du dépôt de comptes">
+        <DsfrBadge
+          no-icon
+          small
+          :label="stateOfFilingOfAccounts.label"
+          :type="stateOfFilingOfAccounts.type"
+        />
+      </InfoRow>
+      <InfoRow v-if="compte.isAccountLate" label="Années non déclarées">
+        {{ compte.missingAccountYears?.join(' - ') || "-" }}
       </InfoRow>
       <InfoRow label="Date de clôture de l'exercice comptable (jour/mois)">
         {{ fiscalEndDate }}

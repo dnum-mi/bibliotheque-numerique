@@ -82,7 +82,7 @@ export const OrganismeFicheGenerator: IPdfGenerator<IOrganisme> = async (doc, da
   ensureSpace(doc, 80)
   drawSectionTitle(doc, 'VIE ÉCONOMIQUE')
   drawSectionGrid(doc, [
-    { label: 'Dépôt des comptes :', value: data.accountDepositYears?.join(', ') },
+    { label: 'Dépôt des comptes :', value: data.depositAccountYears?.join(', ') },
     { label: 'Date de clôture de l\'exercice comptable :', value: formatDate(data.fiscalEndAt) },
     { label: 'Appel à la générosité publique :', value: data.publicGenerosityYears?.join(', ') },
     { label: 'Financements étrangers :', value: data.foreignFinancingYears?.join(', ') },
