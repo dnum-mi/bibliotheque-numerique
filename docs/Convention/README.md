@@ -35,10 +35,26 @@ Règles :
 - la description doit être **courte et claire**
 
 
-kebabcase: salade-tomate-oignong
-camel case: saladeTomateOignon
-snake case: salade_tomate_oignon
-//TODO: ajouter la regle parenthese pour plusieur chapitre d'une meme feat
+### Big FEATURE
+
+Lorsqu'une fonctionnalité est importante, elle doit être découpée en plusieurs commits logiques.
+
+Format recommandé (conventional commits avec scope) :
+- feat(mapper): création des modèles
+- feat(mapper): mise à jour des services
+- feat(mapper): correction des tests unitaires
+
+Règles :
+
+- utiliser le même **scope** pour regrouper une feature
+- le scope correspond au module ou à la fonctionnalité (`mapper`, `auth`, `user`, etc.)
+- chaque commit doit représenter une étape logique
+- éviter les commits trop larges
+
+Important :
+
+- tous les commits `feat(...)` seront regroupés dans la même section du changelog
+- le scope permet d’identifier rapidement la partie concernée
 
 ---
 
@@ -222,6 +238,19 @@ Cela permet d'identifier immédiatement les fonctions internes à une classe.
 
 ---
 
+### Erreurs
+
+Il est préférable de rédiger les erreurs en français.
+Exemple:
+```javascript
+const e = throw new Error(`Impossible de trouver la démarcher avec cet id: ${demarcheId}`)
+```
+
+### Taille des fichiers
+
+Quand un fichier dépasse 1000 lignes, il commence à y avoir un problème. Un fichier idéal est inférieur à 500 lignes.
+Les function de plus de 100 lignes sont aussi un problème.
+
 ### Mutation des objets
 
 Javascript manipule les objets par référence. Une mutation peut donc produire des effets de bord difficiles à détecter.
@@ -312,7 +341,28 @@ Ce chapitre décrit les conventions utilisées dans les projets NestJS de l'équ
 
 L'objectif est d'avoir une architecture cohérente, lisible et facilement navigable dans tous les modules.
 
-//TODO: architecture de repertoire (#shared)
+---
+
+### Arborescence
+
+Le projet est organisé en trois grandes parties :
+
+- `apps/` : contient les applications exécutables (API, workers)
+  - `api/` : application principale HTTP
+  - `worker-file/`, `worker-sync/` : workers contenant les processors
+
+- `modules/` : contient les modules métiers réutilisables dans les différentes apps
+
+- `shared/` : contient les éléments transverses non liés à un domaine métier :
+  - logger
+  - pipes
+  - exceptions
+  - types communs
+  - modules partagés
+
+Règle :
+
+Le code métier doit toujours être dans `modules/`, jamais dans `apps/`.
 
 ---
 
@@ -491,8 +541,6 @@ Chaque fonction importante doit commencer par un log :
 this.logger.verbose('nomDeLaFonction')
 ```
 
-//TODO: on peut automatiser ça?
-
 Cela permet :
 
 - de suivre facilement l'exécution du code
@@ -559,8 +607,6 @@ Règles :
 ---
 
 ### Organisation des vues
-
-//TODO: les class créé dans bn devrait être bn-my-class
 
 Les vues doivent respecter la hiérarchie des routes et être organisées dans :
 
@@ -714,6 +760,25 @@ Tous les espacements, tailles de police et dimensions doivent utiliser ces varia
 
 Les valeurs arbitraires dans les composants doivent être évitées.
 
+### Convention de nommage CSS
+
+Les classes CSS personnalisées doivent être préfixées pour éviter les collisions et améliorer la lisibilité.
+Règles :
+- toutes les classes custom doivent commencer par `bn-`
+- éviter les noms génériques (`container`, `box`, `wrapper`)
+- privilégier des noms liés au métier ou au composant
+
+Convention :
+- bn-nom-du-composant
+- bn-nom-du-composant__element
+- bn-nom-du-composant–modifier
+
+Exemples :
+```css
+.bn-table {}
+.bn-table__header {}
+.bn-table–compact {}
+```
 ---
 
 ### Responsive
@@ -781,13 +846,22 @@ Règles principales :
 - toutes les images doivent avoir un attribut `alt`
 - les formulaires doivent utiliser correctement `label` et `for`
 
+### Outils d'accessibilité
+
+L'utilisation d'un outil d'audit d'accessibilité est fortement recommandée.
+
+Outil conseillé :
+
+- **WAVE (Web Accessibility Evaluation Tool)**
+
+Règles :
+
+- vérifier les pages principales avec WAVE
+- corriger les erreurs critiques (contrastes, labels, alt, structure)
+- utiliser cet outil lors des développements de nouvelles pages
+
+Objectif :
+
+Garantir un niveau minimum d'accessibilité sans complexifier le développement.
+
 ---
-
-//TODO: conseillé wave => addon accessibilité
-
-
-//TODO: combien de ces règles peut-on ajouter dans notre eslint
-
-// fichier de mille ligne
-
-//TODO: les erreurs doivent être en français
