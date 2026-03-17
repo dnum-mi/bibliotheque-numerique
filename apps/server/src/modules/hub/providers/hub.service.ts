@@ -9,7 +9,7 @@ import {
   fromFoundationToBasicOrganisme,
   organismeCategoryKey,
   EOrganismeCategory,
-  OrganismeTypeToSearchKey,
+  ISearchHubInput,
 } from '@biblio-num/shared'
 import axios, { AxiosInstance, CreateAxiosDefaults, HttpStatusCode, RawAxiosResponseHeaders } from 'axios'
 import { Stream } from 'node:stream'
@@ -189,16 +189,7 @@ export class HubService {
       sentence: cleanedSentence,
       size: searchInput.size,
       entity_type: searchInput.entityType,
-    } as {
-      sentence: string,
-      size?: number,
-      entity_type?: OrganismeTypeToSearchKey | null,
-      conditions?: {
-        field: string,
-        operator: string,
-        in_values: unknown | null,
-        single_value: unknown | null,
-  }})
+    } as ISearchHubInput)
       // @ts-ignore TODO: separate type from HUB to Bibli
       .then((r) => r?.data?.search_response
         .map((r2: {entity: IAssociationOutput | IFoundationOutput, entity_type: organismeCategoryKey}) => {
