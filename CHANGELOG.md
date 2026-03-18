@@ -1,5 +1,15 @@
 # Changelog
 
+## [5.7.3](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.7.2...v5.7.3) (2026-03-18)
+
+
+### Bug Fixes
+
+* :lipstick: mise à jour UI du champs de recherche des fondations par identifiant ([#2208](https://github.com/dnum-mi/bibliotheque_numerique/issues/2208)) ([6a1321a](https://github.com/dnum-mi/bibliotheque_numerique/commit/6a1321a6030bd84a2a8817fc3ae3e815ce435db9))
+* correcting volontary error on context-logger ([3ddb2e3](https://github.com/dnum-mi/bibliotheque_numerique/commit/3ddb2e3962bae5cd87d6429fe097604376ccb79c))
+* label error if not from payload ([1cbf6fd](https://github.com/dnum-mi/bibliotheque_numerique/commit/1cbf6fda8c243a1e6613b7d5807d3658dce29f80))
+* mis à jour de @dnum-mi/ds-api-client vers la version 1.9.2 ([#2253](https://github.com/dnum-mi/bibliotheque_numerique/issues/2253)) ([a917256](https://github.com/dnum-mi/bibliotheque_numerique/commit/a9172561e021d5850a4b95619ec6f68e04d3e99c))
+
 ## [5.7.2](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.7.1...v5.7.2) (2026-03-12)
 
 
