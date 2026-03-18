@@ -138,8 +138,8 @@ importers:
         specifier: ^6.0.2
         version: 6.0.2(cypress@15.2.0)(vue@3.5.13(typescript@5.8.3))
       '@dnum-mi/ds-api-client':
-        specifier: ^1.8.0
-        version: 1.8.0
+        specifier: ^1.9.2
+        version: 1.9.2
       '@faker-js/faker':
         specifier: ^10.0.0
         version: 10.0.0
@@ -249,8 +249,8 @@ importers:
         specifier: workspace:^
         version: link:../../packages/shared
       '@dnum-mi/ds-api-client':
-        specifier: ^1.9.1
-        version: 1.9.1
+        specifier: ^1.9.2
+        version: 1.9.2
       '@nestjs-modules/mailer':
         specifier: ^2.0.2
         version: 2.0.2(@nestjs/common@11.0.6(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13)(rxjs@7.8.1))(@nestjs/core@11.0.6)(nodemailer@8.0.1)
@@ -544,8 +544,8 @@ importers:
         specifier: ^5.2.1
         version: 5.2.1(@vue/compiler-sfc@3.5.13)(eslint@9.39.2(jiti@2.6.1))(typescript@5.8.3)(vitest@4.0.8(@types/debug@4.1.12)(@types/node@22.19.1)(jiti@2.6.1)(jsdom@26.1.0)(msw@2.10.5(@types/node@22.19.1)(typescript@5.8.3))(sass@1.81.0)(terser@5.39.0)(yaml@2.8.2))
       '@dnum-mi/ds-api-client':
-        specifier: ^1.7.8
-        version: 1.8.0
+        specifier: ^1.9.2
+        version: 1.9.2
       '@microsoft/api-extractor':
         specifier: 7.52.11
         version: 7.52.11(@types/node@22.19.1)
@@ -1815,12 +1815,8 @@ packages:
   '@dabh/diagnostics@2.0.3':
     resolution: {integrity: sha512-hrlQOIi7hAfzsMqlGSFyVucrx38O+j6wiGOf//H2ecvIEqYN4ADBSS2iLMh5UFyDunCNniUIPk/q3riFv45xRA==}
 
-  '@dnum-mi/ds-api-client@1.8.0':
-    resolution: {integrity: sha512-SnoINC3ZOAegfQe2ZoNx2DQJQPRNchYuXQ1uNGWQx29v2mGltnDxvHqr0hjdQQbNaRqEkM7F8GNzFSUPtgZYjg==}
-    engines: {node: '>=16.0.0', npm: '>=7.10.0'}
-
-  '@dnum-mi/ds-api-client@1.9.1':
-    resolution: {integrity: sha512-HckFVqKIakyejty7T1iEsixf3JE2gP5lFHK0DqX+KV8Mxbam/6m7GQ2Mu31qlQhmEtanSYqgsTn/IEGe6OHPZg==}
+  '@dnum-mi/ds-api-client@1.9.2':
+    resolution: {integrity: sha512-Tej/XkmRSXkpR50UWjko2evn7hfwa2p6JdycHp85jmMGjVUOQk8lr7ZPfzalSpds0HrVv+GtyV5Ntmy8rFbDeg==}
     engines: {node: '>=16.0.0', npm: '>=7.10.0'}
 
   '@es-joy/jsdoccomment@0.50.2':
@@ -13161,16 +13157,7 @@ snapshots:
       enabled: 2.0.0
       kuler: 2.0.0
 
-  '@dnum-mi/ds-api-client@1.8.0':
-    dependencies:
-      graphql: 16.10.0
-      graphql-request: 6.1.0(graphql@16.10.0)
-      https-proxy-agent: 7.0.1
-    transitivePeerDependencies:
-      - encoding
-      - supports-color
-
-  '@dnum-mi/ds-api-client@1.9.1':
+  '@dnum-mi/ds-api-client@1.9.2':
     dependencies:
       graphql: 16.12.0
       graphql-request: 6.1.0(graphql@16.12.0)
@@ -13399,10 +13386,6 @@ snapshots:
       focus-trap-vue: 4.1.0(focus-trap@7.8.0)(vue@3.5.13(typescript@5.8.3))
       vue: 3.5.13(typescript@5.8.3)
       vue-router: 4.5.0(vue@3.5.13(typescript@5.8.3))
-
-  '@graphql-typed-document-node/core@3.2.0(graphql@16.10.0)':
-    dependencies:
-      graphql: 16.10.0
 
   '@graphql-typed-document-node/core@3.2.0(graphql@16.12.0)':
     dependencies:
@@ -19133,14 +19116,6 @@ snapshots:
 
   graphemer@1.4.0: {}
 
-  graphql-request@6.1.0(graphql@16.10.0):
-    dependencies:
-      '@graphql-typed-document-node/core': 3.2.0(graphql@16.10.0)
-      cross-fetch: 3.2.0
-      graphql: 16.10.0
-    transitivePeerDependencies:
-      - encoding
-
   graphql-request@6.1.0(graphql@16.12.0):
     dependencies:
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.12.0)
@@ -19305,7 +19280,7 @@ snapshots:
   https-proxy-agent@7.0.1:
     dependencies:
       agent-base: 7.1.3
-      debug: 4.4.0(supports-color@8.1.1)
+      debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
 

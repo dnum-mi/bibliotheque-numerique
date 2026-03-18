@@ -10,9 +10,10 @@ import {
 import { IFilterNumbers } from '@biblio-num/shared/types/pagination/numbers.filter.interface'
 import { INumbersFilterCondition } from '@biblio-num/shared'
 import { Type } from 'class-transformer'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger'
 
 export class NumbersFilterConditionDto implements INumbersFilterCondition {
+  @ApiHideProperty()
   type: undefined
 
   @ApiProperty({
@@ -47,6 +48,9 @@ export class FilterNumbersDto implements IFilterNumbers {
   @Type(() => NumbersFilterConditionDto)
   condition1: NumbersFilterConditionDto
 
+  @ApiHideProperty()
   operator: undefined
+
+  @ApiHideProperty()
   condition2: undefined
 }

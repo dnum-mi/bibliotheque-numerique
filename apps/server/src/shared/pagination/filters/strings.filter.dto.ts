@@ -8,9 +8,10 @@ import {
 } from 'class-validator'
 import { IFilterStrings, IStringsFilterCondition } from '@biblio-num/shared'
 import { Type } from 'class-transformer'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger'
 
 export class StringsFilterConditionDto implements IStringsFilterCondition {
+  @ApiHideProperty()
   type: undefined
 
   @ApiProperty({
@@ -43,6 +44,9 @@ export class FilterStringsDto implements IFilterStrings {
   @Type(() => StringsFilterConditionDto)
   condition1: StringsFilterConditionDto
 
+  @ApiHideProperty()
   operator: undefined
+
+  @ApiHideProperty()
   condition2: undefined
 }

@@ -1,8 +1,10 @@
 import { ArrayNotEmpty, IsDefined, IsIn, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
 import { IEnumFilterCondition, IFilterEnum } from '@biblio-num/shared'
+import { ApiHideProperty } from '@nestjs/swagger'
 
 export class EnumFilterConditionDto implements IEnumFilterCondition {
+  @ApiHideProperty()
   type?: undefined
 
   @ArrayNotEmpty()
@@ -19,6 +21,9 @@ export class FilterEnumDto implements IFilterEnum {
   @Type(() => EnumFilterConditionDto)
   condition1: EnumFilterConditionDto
 
+  @ApiHideProperty()
   condition2?: undefined
+
+  @ApiHideProperty()
   operator?: undefined
 }
