@@ -1,0 +1,391 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Tous les logs concernant bibliothèque numérique.",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 15,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki-hprod-1wmxeo62jpu10k01q567nwz2j"
+      },
+      "description": "All log without http log",
+      "gridPos": {
+        "h": 33,
+        "w": 9,
+        "x": 0,
+        "y": 0
+      },
+      "id": 4,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": true,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "pluginVersion": "10.4.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki-hprod-1wmxeo62jpu10k01q567nwz2j"
+          },
+          "editorMode": "code",
+          "expr": "{container=\"dso-bn-back\"}\n| json\n| line_format \"{{if eq .level \\\"error\\\"}}❌{{end}}{{if eq .level \\\"warn\\\"}}⚠️{{end}}{{if eq .level \\\"debug\\\"}}🟣{{end}}{{if eq .level \\\"verbose\\\"}}🔵{{end}}{{if eq .level \\\"log\\\"}}🟢{{end}} [{{.context}}] {{.message}}\"",
+          "maxLines": 5000,
+          "queryType": "range",
+          "refId": "Query"
+        }
+      ],
+      "title": "📋 ALL BN LOGS",
+      "type": "logs"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki-hprod-1wmxeo62jpu10k01q567nwz2j"
+      },
+      "description": "All log without http log",
+      "gridPos": {
+        "h": 14,
+        "w": 15,
+        "x": 9,
+        "y": 0
+      },
+      "id": 3,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": true,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "pluginVersion": "10.4.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki-hprod-1wmxeo62jpu10k01q567nwz2j"
+          },
+          "editorMode": "code",
+          "expr": "{container=\"dso-bn-back\"}\n| json\n| context=\"LoggingInterceptor\"\n| payload_url!=\"/health\"\n| payload_url!=\"/health/liveness\"\n| line_format \"{{if eq .level \\\"error\\\"}}❌{{end}}{{if eq .level \\\"warn\\\"}}⚠️{{end}}{{if eq .level \\\"debug\\\"}}🟣{{end}}{{if eq .level \\\"verbose\\\"}}🔵{{end}}{{if eq .level \\\"log\\\"}}🟢{{end}} [{{.payload_method}}]: {{.payload_url}} ({{.payload_user_email}})\"",
+          "maxLines": 5000,
+          "queryType": "range",
+          "refId": "Query"
+        }
+      ],
+      "title": "📋 ALL HTTP LOGS (without health)",
+      "type": "logs"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki-hprod-1wmxeo62jpu10k01q567nwz2j"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 9,
+        "y": 14
+      },
+      "id": 5,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.4.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki-hprod-1wmxeo62jpu10k01q567nwz2j"
+          },
+          "editorMode": "code",
+          "expr": "count(\n  sum by (payload_user_email)(\n    count_over_time(\n      {container=\"dso-bn-back\"}\n      | json\n      | context=\"LoggingInterceptor\"\n      | payload_user != \"Anonymous\"\n    [$__range])\n  )\n)",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Nombre user différents",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki-hprod-1wmxeo62jpu10k01q567nwz2j"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 5
+              },
+              {
+                "color": "dark-red",
+                "value": 10
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 13,
+        "y": 14
+      },
+      "id": 6,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.4.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki-hprod-1wmxeo62jpu10k01q567nwz2j"
+          },
+          "editorMode": "code",
+          "expr": "sum(\n  count_over_time(\n    {container=\"dso-bn-back\"}\n    | json\n    | level=\"error\"\n  [$__range])\n)",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Nombre d'erreurs",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki-hprod-1wmxeo62jpu10k01q567nwz2j"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": true,
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 4,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "purple",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 13,
+        "w": 15,
+        "x": 9,
+        "y": 20
+      },
+      "id": 7,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki-hprod-1wmxeo62jpu10k01q567nwz2j"
+          },
+          "editorMode": "code",
+          "expr": "sum(\n  count_over_time(\n    {container=\"dso-bn-back\"}\n    | json\n    | context=\"LoggingInterceptor\"\n    | payload_url != \"/health\"\n    | payload_url != \"/health/liveness\"\n    | payload_userAgent !~ \"kube-probe\"\n  [$__range])\n)",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Nombre de requête (sans /health)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki-hprod-1wmxeo62jpu10k01q567nwz2j"
+      },
+      "description": "All log without http log",
+      "gridPos": {
+        "h": 16,
+        "w": 24,
+        "x": 0,
+        "y": 33
+      },
+      "id": 8,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": true,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "pluginVersion": "10.4.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki-hprod-1wmxeo62jpu10k01q567nwz2j"
+          },
+          "editorMode": "code",
+          "expr": "{container=\"dso-bn-back\"}\n| json\n| context!=\"LoggingInterceptor\"\n| level=\"error\" \n| line_format \"❌ {{if .payload_stack}}[{{.context}}] -- {{.payload_stack}}{{else}}{{.message}}{{end}}\"",
+          "maxLines": 5000,
+          "queryType": "range",
+          "refId": "Query"
+        }
+      ],
+      "title": "‼️ ALL ERRORS",
+      "type": "logs"
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Bibliothèque Numérique cockpit",
+  "uid": "dff4awuduzw8wc",
+  "version": 27,
+  "weekStart": ""
+}

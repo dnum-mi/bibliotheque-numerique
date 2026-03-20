@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 16,
+  "id": 10,
   "links": [],
   "panels": [
     {
@@ -124,12 +124,12 @@
             "uid": "loki-hprod-dff7x7yoh1yi2y65y7gi3uwvp"
           },
           "editorMode": "code",
-          "expr": "{container=\"dso-bn-worker-sync\"}\n| json\n| context!=\"LoggingInterceptor\"\n| level=\"error\" \n| line_format \"❌ {{if .payload_stack}}[{{.context}}] -- {{.payload_stack}}{{else}}{{.message}}{{end}}\"",
+          "expr": "{container=\"dso-bn-worker-file\"}\n| json\n| context!=\"LoggingInterceptor\"\n| level=\"error\" \n| line_format \"❌ {{if .payload_stack}}[{{.context}}] -- {{.payload_stack}}{{else}}{{.message}}{{end}}\"",
           "queryType": "range",
           "refId": "A"
         }
       ],
-      "title": "WORKER SYNC",
+      "title": "WORKER FILE",
       "type": "logs"
     }
   ],
@@ -146,6 +146,6 @@
   "timezone": "browser",
   "title": "All ERRORS",
   "uid": "cfft0hbejqd4wb",
-  "version": 4,
+  "version": 2,
   "weekStart": ""
 }
