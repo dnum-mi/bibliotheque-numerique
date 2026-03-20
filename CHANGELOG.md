@@ -1,5 +1,15 @@
 # Changelog
 
+## [5.8.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.7.3...v5.8.0) (2026-03-20)
+
+
+### Features
+
+* **mise a jours end-point de recherche organisme:** :recycle: refacto du formulaire de la recherche ([567a627](https://github.com/dnum-mi/bibliotheque_numerique/commit/567a627c14ce92ace008992cd81716550d305eed))
+* **mise a jours end-point de recherche organisme:** ajout de dto pour search organimse ([0ccd469](https://github.com/dnum-mi/bibliotheque_numerique/commit/0ccd469d60dc6fd3654bb1ccd783de708d79929f))
+* **mise a jours end-point de recherche organisme:** mise à jours du back ([dcc17ec](https://github.com/dnum-mi/bibliotheque_numerique/commit/dcc17ece8415d748979da7e0c1fbf11df29c9379))
+* **mise a jours end-point de recherche organisme:** mise à jours du formulaire ([b939dde](https://github.com/dnum-mi/bibliotheque_numerique/commit/b939dded04dd7f08bfd9b3cf6a242bdb9d7f88d6))
+
 ## [5.7.3](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.7.2...v5.7.3) (2026-03-18)
 
 
