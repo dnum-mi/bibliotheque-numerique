@@ -9,7 +9,7 @@ import { User } from '../../users/objects/user.entity'
 
 @Entity({ name: 'refresh_tokens' })
 export class RefreshToken {
-  @Column({ type: 'varchar', nullable: false, unique: true, primary: true })
+  @Column({ type: 'varchar', nullable: false, primary: true })
   refreshToken: string
 
   @Column({ type: 'boolean', default: false })
