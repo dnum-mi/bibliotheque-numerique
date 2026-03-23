@@ -79,12 +79,13 @@ services:
       - simple-dev
       - db-only
       - ci
-    image: postgres:14.5
+    image: postgres:18.3 #Attention la version mineur de la prod n'est pas fixer
     container_name: biblio-num_db
     environment:
       POSTGRES_DB: biblio-num
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
+      PGDATA: /var/lib/postgresql/data
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB" ]
       interval: 2s
