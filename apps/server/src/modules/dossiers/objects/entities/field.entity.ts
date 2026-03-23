@@ -66,7 +66,10 @@ export class Field extends BaseEntity {
   })
   sourceId: string
 
-  @Index()
+  @Index('IDX_fields_stringValue_prefix', {
+    // Tyeporm ne peut pas gérer (left("stringValue", 2000)) et éviter détruit l'index par une migration
+    synchronize: false,
+  })
   @Column({
     nullable: false,
   })
