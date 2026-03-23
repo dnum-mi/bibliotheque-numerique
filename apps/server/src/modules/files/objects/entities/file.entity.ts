@@ -69,7 +69,8 @@ export class File extends BaseEntity {
   @Column({
     type: 'varchar',
     nullable: true,
-    comment: 'Chemin source du fichier dans le S3 Maarch (ex: 2023/03/0001/055_98778990.pdf)',
+    // TODO: A vérifier l'utilité de commenter dans la base de donnée
+    // comment: 'Chemin source du fichier dans le S3 Maarch (ex: 2023/03/0001/055_98778990.pdf)',
   })
   sourcePath: string | null
 
