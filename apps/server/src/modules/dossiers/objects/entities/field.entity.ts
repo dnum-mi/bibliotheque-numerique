@@ -81,7 +81,7 @@ export class Field extends BaseEntity {
   @Index()
   @Column({
     type: 'numeric',
-    precision: 10,
+    precision: 22,
     scale: 2,
     nullable: true,
   })
