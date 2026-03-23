@@ -49,61 +49,69 @@ const getEvent = () => ({
   'demarcheNumber': faker.number.int({ min: 0, max: 100000 }),
   'dossierNumber.': faker.number.int({ min: 0, max: 100000 }),
   'isDissolution': false,
-  'dossierInstructeurGroup': `${faker.string.numeric({ length: { min: 0, max: 99 } })} - ${faker.lorem.word()}`,
+  'dossierInstructeurGroup': `${faker.string.numeric({ length: { min: 1, max: 3 } })} - ${faker.location.state()}`,
   'organismeBefore': {},
 })
 
 const getFondationNumber = () => `${faker.string.numeric(3)}-${faker.string.alpha(3)}-${faker.string.numeric(5)}-${faker.string.numeric(2)}`
 const getAssoiciationNumber = () => `W${faker.string.numeric(9)}`
-const getSiretNumber = () => faker.number.int(14)
+const getSiretNumber = () => faker.string.numeric(14)
+export const getLegalEntityTypeFondtion = () => ({
+  type: 'Fondation',
+  publicId: getFondationNumber(),
+  address: getAddress(),
+  country: 'France',
+  name: faker.company.name,
+})
+export const getLegalEntityTypeAssociation = () => ({
+  type: 'Association',
+  publicId: getAssoiciationNumber(),
+  address: getAddress(),
+  country: 'France',
+  name: faker.company.name(),
+})
+export const getLegalEntityTypeEntreprise = () => ({
+  type: 'Entreprise',
+  publicId: getSiretNumber(),
+  address: getAddress(),
+  country: 'France',
+  name: faker.company.name(),
+})
+export const getLegalEntityTypeAutre = () => ({
+  type: 'Autre',
+  publicId: '',
+  address: getAddress(),
+  country: 'France',
+  name: faker.company.name(),
+})
 const getLegalEntity = () => {
   return faker.helpers.arrayElement([
-    {
-      type: 'Fondation',
-      publicId: getFondationNumber(),
-      address: getAddress(),
-      country: 'France',
-      name: faker.company.name,
-    },
-    {
-      type: 'Association',
-      publicId: getAssoiciationNumber(),
-      address: getAddress(),
-      country: 'France',
-      name: faker.company.name(),
-    },
-    {
-      type: 'Entreprise',
-      publicId: getSiretNumber(),
-      address: getAddress(),
-      country: 'France',
-      name: faker.company.name(),
-    },
-    {
-      type: 'Autre',
-      publicId: getFondationNumber(),
-      address: getAddress(),
-      country: 'France',
-      name: faker.company.name(),
-    },
-
+    getLegalEntityTypeFondtion(),
+    getLegalEntityTypeAssociation(),
+    getLegalEntityTypeEntreprise(),
+    getLegalEntityTypeAutre(),
     null,
   ])
 }
-export const getFoundation = () => ({
+export const getFoundation = (args: {
+  nbPerson: {
+    min: number | undefined,
+    max: number | undefined,
+  } | undefined
+}) => ({
   'hub_timestamp': faker.date.past().toISOString(),
   'createdAt': faker.date.past().toISOString(),
   'updatedAt': faker.date.past().toISOString(),
   'id': getFondationNumber(),
   'state': 'Active',
   'stateEffectiveAt': faker.date.past().toISOString(),
-  'siret': faker.number.int(14),
+  'siret': getSiretNumber(),
   'title': faker.company.name(),
   'email': faker.internet.email(),
   'phone': faker.phone.number(),
   'website': faker.internet.url(),
   'foundationType': faker.string.alpha(3),
-  'department': faker.string.numeric({ length: { min: 0, max: 99 } }),
+  'department': faker.string.numeric({ length: { min: 0, max: 3 } }),
   'creationAt': faker.date.past(),
   'address': getAddress(),
   'socialObject': faker.company.catchPhraseDescriptor(),
@@ -113,7 +121,7 @@ export const getFoundation = () => ({
   'foreignFinancingYears': [],
   'accountDepositYears': [],
   'persons': Array.from(
-    { length: faker.number.int({ min: 0, max: 10 }) },
+    { length: faker.number.int({ min: args?.nbPerson?.min ?? 0, max: args?.nbPerson?.max ?? 10 }) },
     () => ({
       'civility': null,
       'lastName': faker.person.lastName(),
