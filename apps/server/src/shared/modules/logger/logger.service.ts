@@ -1,4 +1,4 @@
-import { ConsoleLogger, Inject, Injectable } from '@nestjs/common'
+import { ConsoleLogger, Inject, Injectable, Scope } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { LoggerService as LS } from '@nestjs/common/services/logger.service'
 import { APP_NAME_TOKEN } from '@/shared/modules/logger/logger.const'
@@ -7,7 +7,7 @@ import * as DailyRotateFile from 'winston-daily-rotate-file'
 import { iLogPayload } from '@/shared/modules/logger/log-payload.interface'
 import { ContextLoggerService } from '@/shared/modules/logger/context-logger.service'
 
-@Injectable()
+@Injectable({ scope: Scope.TRANSIENT })
 export class LoggerService extends ConsoleLogger implements LS {
   private fileLogger: Winston.Logger
   private clientFileLogger: Winston.Logger
@@ -61,9 +61,9 @@ export class LoggerService extends ConsoleLogger implements LS {
       logObject.message = message.message
 
       logObject.payload = {
-        name: message.name,
-        message: message.message,
-        stack: message.stack,
+        errorName: message.name,
+        errorMessage: message.message,
+        payload_stack: message.stack,
       }
 
       return logObject
@@ -74,10 +74,30 @@ export class LoggerService extends ConsoleLogger implements LS {
       return logObject
     }
 
-    logObject.payload = message
+    const obj = message as Record<string, unknown>
 
-    if ('message' in message && typeof message.message === 'string') {
-      logObject.message = message.message
+    logObject.payload = obj
+
+    // message principal
+    if (typeof obj.message === 'string') {
+      logObject.message = obj.message
+    }
+
+    // Extraction intelligente d'erreur imbriquée
+    const possibleError =
+      obj.error instanceof Error
+        ? obj.error
+        : obj.exception instanceof Error
+          ? obj.exception
+          : null
+
+    if (possibleError) {
+      logObject.payload = {
+        ...obj,
+        errorName: possibleError.name,
+        errorMessage: possibleError.message,
+        payload_stack: possibleError.stack,
+      }
     }
 
     return logObject
@@ -186,5 +206,11 @@ export class LoggerService extends ConsoleLogger implements LS {
     if (this.configService.get('log.verbose')) {
       this._commonLogFunction(message, 'verbose')
     }
+  }
+
+  createChild(context: string): LoggerService {
+    const child = Object.create(this) as LoggerService
+    child.setContext(context)
+    return child
   }
 }

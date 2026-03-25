@@ -8,7 +8,6 @@ import { AllExceptionsFilter } from './shared/exceptions/filters/all-exception.f
 import { AxiosExceptionFilter } from './shared/exceptions/filters/axios-exception.filter'
 import { CustomValidationPipe } from '@/shared/pipe/custom-validation.pipe'
 import { CustomValidationExceptionFilter } from '@/shared/exceptions/filters/custom-validation-exception.filter'
-import { APP_NAME_TOKEN } from '@/shared/modules/logger/logger.const'
 import { LoggingInterceptor } from '@/shared/modules/logger/logging.interceptor'
 import { EntityNotFoundErrorFilter } from '@/shared/exceptions/filters/entity-not-found-error.filter'
 import * as cookieParser from 'cookie-parser'
@@ -16,58 +15,50 @@ import { JWTExceptionFilter } from './shared/exceptions/filters/jwt-exception.fi
 import { EventEmitter } from 'events'
 import { ALS_INSTANCE } from '@/shared/modules/als/als.module'
 
-export const configMain = async (app: INestApplication, configService?: ConfigService): Promise<void> => {
-  const loggerService = await app.resolve<LoggerService>(LoggerService)
-  const appNameToken = app.get(APP_NAME_TOKEN)
+export const configMain = async (
+  app: INestApplication,
+  configService?: ConfigService,
+): Promise<void> => {
   configService = configService ?? app.get(ConfigService)
-  loggerService.setContext('Nestjs-main')
-  app.useLogger(loggerService)
   const httpAdapterHost = app.get(HttpAdapterHost)
-  let exceptionFilterLogger: LoggerService = loggerService
-  let queryFailedFilterLogger: LoggerService = loggerService
-  let axiosFailedErrorLogger: LoggerService = loggerService
-  let customValidationErrorLogger: LoggerService = loggerService
-  let entityNotFoundErrorLogger: LoggerService = loggerService
-  let jwtFailedErrorLogger: LoggerService = loggerService
-  if (!configService.get('isTest')) {
-    exceptionFilterLogger = new LoggerService(configService, appNameToken)
-    exceptionFilterLogger.setContext('AllExceptionsFilter')
-    queryFailedFilterLogger = new LoggerService(configService, appNameToken)
-    queryFailedFilterLogger.setContext('QueryFailedFilter')
-    axiosFailedErrorLogger = new LoggerService(configService, appNameToken)
-    axiosFailedErrorLogger.setContext('AxiosExceptionFilter')
-    customValidationErrorLogger = new LoggerService(configService, appNameToken)
-    customValidationErrorLogger.setContext('CustomValidationExceptionFilter')
-    entityNotFoundErrorLogger = new LoggerService(configService, appNameToken)
-    entityNotFoundErrorLogger.setContext('EntityNotFoundErrorFilter')
-    jwtFailedErrorLogger = new LoggerService(configService, appNameToken)
-    jwtFailedErrorLogger.setContext('JWTExceptionFilter')
-  }
-  // order is important here, from most generic to most specific
+
+  const logger = await app.resolve(LoggerService)
+  logger.setContext('Nestjs-main')
+  app.useLogger(logger)
+
+  const child = (ctx: string): LoggerService => logger.createChild(ctx)
+
   app.useGlobalFilters(
-    new AllExceptionsFilter(httpAdapterHost, exceptionFilterLogger),
-    new QueryFailedFilter(httpAdapterHost, queryFailedFilterLogger),
-    new AxiosExceptionFilter(httpAdapterHost, axiosFailedErrorLogger),
-    new JWTExceptionFilter(httpAdapterHost, jwtFailedErrorLogger),
-    new CustomValidationExceptionFilter(httpAdapterHost, customValidationErrorLogger),
-    new EntityNotFoundErrorFilter(httpAdapterHost, entityNotFoundErrorLogger),
+    new AllExceptionsFilter(httpAdapterHost, child('AllExceptionsFilter')),
+    new QueryFailedFilter(httpAdapterHost, child('QueryFailedFilter')),
+    new AxiosExceptionFilter(httpAdapterHost, child('AxiosExceptionFilter')),
+    new JWTExceptionFilter(httpAdapterHost, child('JWTExceptionFilter')),
+    new CustomValidationExceptionFilter(httpAdapterHost, child('CustomValidationExceptionFilter')),
+    new EntityNotFoundErrorFilter(httpAdapterHost, child('EntityNotFoundErrorFilter')),
   )
+
   app.useGlobalPipes(new CustomValidationPipe())
+
   if (configService.get('isProd')) {
-    const globalRequestLoggerService = new LoggerService(configService, appNameToken)
-    globalRequestLoggerService.setContext('GlobalRequestInterceptor')
     const asyncLocalStorage = app.get(ALS_INSTANCE)
-    app.useGlobalInterceptors(new LoggingInterceptor(globalRequestLoggerService, asyncLocalStorage))
+
+    app.useGlobalInterceptors(
+      new LoggingInterceptor(child('LoggingInterceptor'), asyncLocalStorage),
+    )
   }
+
   app.use(passport.initialize())
   app.use(cookieParser())
-  loggerService.debug(`
-  ⚙️ == Runtime environment == ⚙️'
-    rawNodeEnv: ${process.env.NODE_ENV}
-    runEnv: ${configService.get('runEnv')}
-    env: ${configService.get('env')}
-    isDev: ${configService.get('isDev')}
-    isTest: ${configService.get('isTest')}
-    isProd: ${configService.get('isProd')}`)
+
+  logger.debug(`
+      ⚙️ == Runtime environment == ⚙️
+      rawNodeEnv: ${process.env.NODE_ENV}
+      runEnv: ${configService.get('runEnv')}
+      env: ${configService.get('env')}
+      isDev: ${configService.get('isDev')}
+      isTest: ${configService.get('isTest')}
+      isProd: ${configService.get('isProd')}
+  `)
+
   EventEmitter.defaultMaxListeners = 20
 }

@@ -2,16 +2,13 @@ import { DemarcheService } from '../services/demarche.service'
 import {
   CallHandler,
   ExecutionContext,
-  ForbiddenException, Inject,
+  ForbiddenException,
   Injectable,
   NestInterceptor,
   NotFoundException,
 } from '@nestjs/common'
 import { from, Observable, switchMap } from 'rxjs'
 import { IRole, isBelowSuperAdmin } from '@biblio-num/shared'
-import { ALS_INSTANCE } from '@/shared/modules/als/als.module'
-import { AsyncLocalStorage } from 'async_hooks'
-import { AsyncLocalStore } from '@/shared/modules/als/async-local-store.type'
 
 const no404 = (): void => {
   throw new NotFoundException('La démarche est introuvable')
@@ -23,9 +20,7 @@ const no403 = (): void => {
 @Injectable()
 export class CurrentDemarcheInterceptor implements NestInterceptor {
   constructor (
-    private service: DemarcheService,
-    @Inject(ALS_INSTANCE)
-    private readonly als: AsyncLocalStorage<AsyncLocalStore>) {}
+    private service: DemarcheService) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<void> {
     const id = parseInt(
@@ -47,10 +42,6 @@ export class CurrentDemarcheInterceptor implements NestInterceptor {
           no403()
         }
         context.switchToHttp().getRequest().demarche = demarche
-        const store = this.als.getStore()
-        if (store) {
-          store.demarche = demarche
-        }
         return next.handle()
       }),
     )

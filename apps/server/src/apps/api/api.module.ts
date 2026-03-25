@@ -1,4 +1,4 @@
-import { Logger, Module } from '@nestjs/common'
+import { Logger, MiddlewareConsumer, Module } from '@nestjs/common'
 import { ConfigModule, ConfigModuleOptions } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
 
@@ -40,6 +40,7 @@ import { SyncStateModule } from '@/shared/sync-state/sync-state.module'
 import { ProjectionModule } from '@/modules/projection/projection.module'
 import { HealthModule } from '@/modules/health/health.module'
 import { API_DEPENDENCY_POLICY } from '@/apps/api/api-dependencies-policy.const'
+import { AlsMiddleware } from '@/shared/modules/als/als.middleware'
 
 @Module({
   imports: [
@@ -98,4 +99,8 @@ import { API_DEPENDENCY_POLICY } from '@/apps/api/api-dependencies-policy.const'
     },
   ],
 })
-export class ApiModule {}
+export class ApiModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(AlsMiddleware).forRoutes('*')
+  }
+}
