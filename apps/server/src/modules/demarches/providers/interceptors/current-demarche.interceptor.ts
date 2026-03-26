@@ -19,8 +19,7 @@ const no403 = (): void => {
 
 @Injectable()
 export class CurrentDemarcheInterceptor implements NestInterceptor {
-  constructor (
-    private service: DemarcheService) {}
+  constructor (private service: DemarcheService) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<void> {
     const id = parseInt(
