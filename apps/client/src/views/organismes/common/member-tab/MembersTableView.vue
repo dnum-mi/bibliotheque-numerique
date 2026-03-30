@@ -113,13 +113,10 @@ const formerHeaders = computed(() => createHeaders(formerPeople.value))
 </script>
 
 <template>
-  <div class="flex flex-col gap-y-6">
+  <div class="flex flex-col gap-y-8">
     <section v-if="currentPeople.length">
-      <h1 class="fr-h4">
-        Liste synthétique actuelle
-      </h1>
-
       <DataTableClientSide
+        title="Liste synthétique actuelle"
         :headers="currentHeaders"
         :rows-data="currentPeople"
         :pagination-page-size="20"
@@ -127,11 +124,8 @@ const formerHeaders = computed(() => createHeaders(formerPeople.value))
     </section>
 
     <section>
-      <h1 class="fr-h4">
-        Liste synthétique historique
-      </h1>
-
       <DataTableClientSide
+        title="Liste synthétique historique"
         :headers="formerHeaders"
         :rows-data="formerPeople"
         :pagination-page-size="20"

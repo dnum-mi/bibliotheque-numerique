@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import apiClient from '@/api/api-client'
 import { routeNames } from '@/router/route-names'
+import type { HeaderDataTable } from '@/shared/types/DataTable.type'
+import { organismeStatusArray, organismeTypes } from '@biblio-num/shared'
 import type { IBasicOrganisme, ILastConsultedOrganisme } from '@biblio-num/shared'
+import OrganismeBadgesRenderer from '@/components/Badges/organisme/OrganismeBadgesRenderer.vue'
+import type { RowDataType } from '@/components/datatable/client-side/DataTableClientSide.vue'
+import OrganismeStatusBadgeRenderer from '@/components/Badges/organisme/OrganismeStatusBadgeRenderer.vue'
+
+type ISourceListType = (IBasicOrganisme | ILastConsultedOrganisme) & RowDataType & { postalCodeCity?: string }
 
 const props = defineProps({
-  // isLoading: {
-  //   type: Boolean,
-  //   required: true,
-  // },
   hasError: {
     type: Boolean,
     required: true,
@@ -27,54 +30,62 @@ const isLoading = defineModel<boolean>()
 
 const router = useRouter()
 
-// DsfrTable is ($*&#% and won't take all of width. So we force title to be "too big" with spaces, so that the table take entire available width.
-const LOTS_OF_SPACE = '\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0'
-
-//#region 📍------ État général ------ 📍
-const headers = [
-  'Numéro RNA / RNF',
-  'Type',
-  'Titre',
-  'État',
-  'Code postal - Ville',
+const header: HeaderDataTable[] = [
+  {
+    field: 'id',
+    text: 'Numéro RNA / RNF',
+  },
+  {
+    field: 'type',
+    text: 'Type',
+    renderer: markRaw(OrganismeBadgesRenderer),
+    filter: 'agSetColumnFilter',
+    filterParams: {
+      values: [...organismeTypes],
+      cellRenderer: OrganismeBadgesRenderer,
+      targetFilterType: 'strings',
+    },
+  },
+  {
+    field: 'title',
+    text: 'Titre',
+  },
+  {
+    field: 'state',
+    text: 'État',
+    renderer: markRaw(OrganismeStatusBadgeRenderer),
+    filter: 'agSetColumnFilter',
+    filterParams: {
+      values: [...organismeStatusArray],
+      cellRenderer: OrganismeStatusBadgeRenderer,
+      targetFilterType: 'strings',
+    },
+  },
+  {
+    field: 'postalCodeCity',
+    text: 'Code postal - Ville',
+  },
 ]
 
 const recentResults = ref<ILastConsultedOrganisme[]>([])
-// const results = ref<IBasicOrganisme[]>([])
 const titleTable = computed(() => props.hasSearched ? 'Résultats de la recherche' : 'Derniers organismes consultés')
-const sourceList = computed(() => (props.hasSearched ? props.results : recentResults.value))
-const rows = computed(() => {
-  if (!sourceList.value?.length) {
-    return []
-  }
+const rows = computed<ISourceListType[]>(() => {
+  const baseData = (props.hasSearched ? props.results : recentResults.value) as ISourceListType[]
 
-  return sourceList.value.map((result: IBasicOrganisme) => {
-    return {
-      rowAttrs: {
-        class: 'bn-search-row',
-        onClick: () => navigateToDetails(result.id),
-      },
-      // on laisse le DSFR gérer le rendu, mais la ligne entière sera cliquable côté template
-      rowData: [
-        result.id,
-        {
-          component: 'OrganismeBadge',
-          type: result.type,
-        },
-        result.title + LOTS_OF_SPACE,
-        result.state,
-        `${result.postalCode} - ${result.city}`,
-      ],
-    }
-  })
+  return baseData.map((row) => ({
+    ...row,
+    cursor: 'pointer',
+    postalCodeCity: `${row.postalCode} - ${row.city}`,
+  }))
 })
 
-const navigateToDetails = async (id: string) => {
+const rowClick = async (data: unknown) => {
   isLoading.value = true
+  const d = data as ISourceListType
 
   await router.push({
     name: routeNames.FICHE_ORGANISME,
-    params: { id },
+    params: { id: d.id },
   })
   isLoading.value = false
 }
@@ -132,10 +143,11 @@ onMounted(async () => {
     <template v-else>
       <div v-if="rows.length" class="bn-table-wrap">
         <slot name="section-before-table" />
-        <DsfrTable
+        <DataTableClientSide
           :title="titleTable"
-          :headers="headers"
-          :rows="rows"
+          :rows-data="rows"
+          :headers="header"
+          @row-click="rowClick"
         />
       </div>
     </template>

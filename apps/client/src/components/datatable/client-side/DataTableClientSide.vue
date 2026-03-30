@@ -204,6 +204,11 @@ watch(selectedRows, (newValue) => {
     }"
     @row-click="rowClick($event)"
   >
+    <template v-if="title" #header>
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <span class="text-2xl font-bold">{{ title }}</span>
+      </div>
+    </template>
     <Column
       v-if="selectable"
       selection-mode="multiple"

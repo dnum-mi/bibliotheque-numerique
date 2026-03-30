@@ -1,3 +1,7 @@
+.p-datatable-header {
+  padding: 0 !important;
+}
+
 .p-datatable-tbody {
   --p-datatable-row-hover-background: var(--blue-france-925-125);
 }
