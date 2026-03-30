@@ -30,7 +30,7 @@ export class S3Dependency implements DependencyChecker {
         }
       }
 
-      await s3.headBucket({ Bucket: bucket }).promise()
+      await this.s3Service.checkBucketAccess()
 
       return {
         name: this.name,

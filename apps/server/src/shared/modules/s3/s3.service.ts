@@ -5,12 +5,21 @@ import {
   NotFoundException,
   OnModuleInit,
 } from '@nestjs/common'
-import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { ConfigService } from '@nestjs/config'
-import { S3 } from 'aws-sdk/clients/browser_default'
-import * as AWS from 'aws-sdk'
 import { HttpService } from '@nestjs/axios'
-import stream, { PassThrough } from 'stream'
+import stream from 'stream'
+import {
+  CopyObjectCommand,
+  DeleteObjectCommand,
+  GetObjectCommand,
+  HeadBucketCommand,
+  HeadObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3'
+
+import { Upload } from '@aws-sdk/lib-storage'
+
+import { LoggerService } from '@/shared/modules/logger/logger.service'
 
 export interface S3CopyResult {
   checksum: string
@@ -20,11 +29,11 @@ export interface S3CopyResult {
 
 @Injectable()
 export class S3Service implements OnModuleInit {
-  private _s3: S3
+  private _s3: S3Client
   private _bucketName: string
   private maarchBucketName: string
 
-  get s3(): S3 {
+  get s3(): S3Client {
     return this._s3
   }
 
@@ -54,12 +63,16 @@ export class S3Service implements OnModuleInit {
   }
 
   private async _init(): Promise<void> {
-    this._s3 = new AWS.S3({
-      accessKeyId: this.configService.get('file.accessKeyId'),
-      secretAccessKey: this.configService.get('file.secretAccessKey'),
+    this._s3 = new S3Client({
+      credentials: {
+        accessKeyId: this.configService.get('file.accessKeyId'),
+        secretAccessKey: this.configService.get('file.secretAccessKey'),
+      },
       endpoint: this.configService.get('file.awsDefaultS3Url'),
       region: this.configService.get('file.awsS3Region'),
-      s3ForcePathStyle: true,
+      forcePathStyle: true,
+      requestChecksumCalculation: 'WHEN_REQUIRED',
+      responseChecksumValidation: 'WHEN_REQUIRED',
     })
     this._bucketName = this.configService.get('file.awsDefaultS3Bucket')!
     this.maarchBucketName = this.configService.get('file.awsMaarchS3Bucket')!
@@ -71,18 +84,30 @@ export class S3Service implements OnModuleInit {
     //  )
   }
 
-  public getStreamedFile(uuid: string): stream.Readable {
-    return this._s3
-      .getObject({
+  public async checkBucketAccess(): Promise<void> {
+    await this._s3.send(
+      new HeadBucketCommand({
         Bucket: this._bucketName,
-        Key: uuid,
-      })
-      .createReadStream()
+      }),
+    )
   }
 
-  public getCompleteFile(uuid: string): Promise<Buffer> {
+  public async getStreamedFile(uuid: string): Promise<stream.Readable> {
+    this.logger.verbose(`Getting file stream for uuid: ${uuid}`)
+
+    const resultS3 = await this._s3.send(
+      new GetObjectCommand({
+        Bucket: this._bucketName,
+        Key: uuid,
+      }),
+    )
+
+    return resultS3.Body as stream.Readable
+  }
+
+  public async getCompleteFile(uuid: string): Promise<Buffer> {
+    const stream = await this.getStreamedFile(uuid)
     return new Promise((resolve, reject) => {
-      const stream = this.getStreamedFile(uuid)
       const chunks: never[] = []
       stream.on('data', (chunk) => chunks.push(chunk as never))
       stream.on('end', () => resolve(Buffer.concat(chunks)))
@@ -92,32 +117,32 @@ export class S3Service implements OnModuleInit {
     })
   }
 
-  public async downloadAndUploadToS3(url: string, uuid: string): Promise<number> {
+  public async downloadAndUploadToS3(url: string, uuid: string): Promise<void> {
     this.logger.verbose('downloadAndUploadToS3')
     const stream = await this.httpService.axiosRef({
       url,
       method: 'GET',
       responseType: 'stream',
     })
-    let byteSize = 0
-    stream.data.on('data', (chunk) => {
-      byteSize += chunk.length
+    const uploadS3 = new Upload({
+      client: this._s3,
+      params: {
+        Bucket: this._bucketName,
+        Key: uuid,
+        Body: stream.data,
+      },
+      queueSize: 2,
+      partSize: 8 * 1024 * 1024,
     })
-    const passThrough = new PassThrough()
-    stream.data.pipe(passThrough)
-    await this._s3.upload({
-      Bucket: this._bucketName,
-      Key: uuid,
-      Body: passThrough,
-    }).promise()
-    return byteSize
+    await uploadS3.done()
   }
 
   public async deleteFile(uuid: string): Promise<void> {
-    await this._s3.deleteObject({
+    const deleteObjectCommand = new DeleteObjectCommand({
       Bucket: this._bucketName,
       Key: uuid,
-    }).promise()
+    })
+    await this._s3.send(deleteObjectCommand)
   }
 
   public async copyFromSourceBucket(
@@ -128,17 +153,21 @@ export class S3Service implements OnModuleInit {
       `Copying 's3://${this.maarchBucketName}/${sourceS3Path}' to 's3://${this._bucketName}/${newKey}'`,
     )
 
-    const copyResult = await this._s3.copyObject({
-      Bucket: this._bucketName,
-      CopySource: `${this.maarchBucketName}/${sourceS3Path}`,
-      Key: newKey,
-    }).promise()
+    const copyResult = await this._s3.send(
+      new CopyObjectCommand({
+        Bucket: this._bucketName,
+        CopySource: `${this.maarchBucketName}/${sourceS3Path}`,
+        Key: newKey,
+      }),
+    )
 
-    const headResult = await this._s3.headObject({
-      Bucket: this._bucketName,
-      Key: newKey,
-    }).promise()
-
+    // TODO: Pourquoi?
+    const headResult = await this._s3.send(
+      new HeadObjectCommand({
+        Bucket: this._bucketName,
+        Key: newKey,
+      }),
+    )
     if (!headResult.ContentLength || !headResult.ETag) {
       throw new InternalServerErrorException(
         `Failed to retrieve metadata for copied file: ${newKey}`,

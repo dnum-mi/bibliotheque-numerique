@@ -69,6 +69,10 @@
     "vite": "vite"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1019.0",
+    "@aws-sdk/lib-storage": "^3.1019.0",
+    "@smithy/smithy-client": "^4.12.8",
+    "@smithy/types": "^4.12.8",
     "@biblio-num/shared": "workspace:^",
     "@dnum-mi/ds-api-client": "^1.9.2",
     "@nestjs-modules/mailer": "^2.0.2",
@@ -85,7 +89,6 @@
     "@nestjs/swagger": "^11.0.3",
     "@nestjs/terminus": "^11.0.0",
     "@nestjs/typeorm": "^11.0.0",
-    "aws-sdk": "^2.1478.0",
     "axios": "^1.11.0",
     "bcrypt": "^5.1.1",
     "bull": "^4.16.5",
