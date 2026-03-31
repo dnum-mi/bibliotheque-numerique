@@ -145,7 +145,7 @@ export class DossierService extends BaseEntityService<Dossier> {
             )
 
             if (fileFound) {
-              subFile.filename = fileFound.label || fileFound.originalLabel
+              subFile.filename = fileFound.originalLabel || fileFound.label
               subFile.url = fileFound.uuid ?? ''
               subFile.state = fileFound.state ?? eState.queued
               subFile.byteSizeBigInt = fileFound.byteSize
