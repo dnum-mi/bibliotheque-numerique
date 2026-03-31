@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common'
 import { MailerModule, MailerOptions } from '@nestjs-modules/mailer'
 import { ConfigModule, ConfigService } from '@nestjs/config'
-import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter'
 
 import { SendMailService } from './sendmail.service'
 import { NodeEnvs } from '../../shared/types/node-env.enum'
+import { EjsAdapter } from '@nestjs-modules/mailer/adapters/ejs.adapter'
 
 interface SmtpConfig {
   host: string
