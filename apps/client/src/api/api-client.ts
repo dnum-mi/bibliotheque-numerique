@@ -8,6 +8,7 @@ import type {
   IBasicOrganisme,
   ICreateBnConfiguration,
   ICreateUser,
+  ICreateView,
   ICredentialsInput,
   IDemarcheOption,
   IDossier,
@@ -28,6 +29,7 @@ import type {
   IPagination,
   IPaginationSmallDemarche,
   IPaginationUser,
+  IPatchView,
   IResetPasswordInput,
   ISearchDossier,
   ISearchHubInput,
@@ -39,6 +41,7 @@ import type {
   IUpdateUserPassword,
   IUserWithEditableRole,
   IValidateEmail,
+  IView,
   organismeCategoryKey,
   RolesKeys,
 } from '@biblio-num/shared'
@@ -476,22 +479,22 @@ export const dossiersApiClient = {
 }
 
 export const viewsApiClient = {
-  getViews: async (): Promise<ICustomFilter[]> => {
+  getViews: async (): Promise<IView[]> => {
     const response = await apiClientInstance.get(getViewsRoute())
     return response?.data
   },
 
-  getViewByDemarche: async (demarcheId: number): Promise<ICustomFilter[]> => {
+  getViewByDemarche: async (demarcheId: number): Promise<IView[]> => {
     const response = await apiClientInstance.get(getDemarcheViewRoute(demarcheId))
     return response?.data
   },
 
-  createOneView: async (dto: ICreateCustomFilter, demarcheId: number) => {
+  createOneView: async (dto: ICreateView, demarcheId: number) => {
     const response = await apiClientInstance.post(getDemarcheViewRoute(demarcheId), dto)
     return response?.data
   },
 
-  updateOneView: async (id: number, dto: IPatchCustomFilter) => {
+  updateOneView: async (id: number, dto: IPatchView) => {
     const response = await apiClientInstance.patch(getOneViewRoute(id), dto)
     return response?.data
   },
