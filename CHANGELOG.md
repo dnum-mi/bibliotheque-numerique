@@ -1,5 +1,13 @@
 # Changelog
 
+## [5.9.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.9.0...v5.9.1) (2026-04-01)
+
+
+### Bug Fixes
+
+* corrige le module ejsAdatater non trouver ([38d4fd3](https://github.com/dnum-mi/bibliotheque_numerique/commit/38d4fd396640e0b9eebe98db0c0c22c07e646307))
+* mise à jours de aws-s3 client ([e5a9275](https://github.com/dnum-mi/bibliotheque_numerique/commit/e5a92757c8a6607d451c661a3e18f34bda47c357))
+
 ## [5.9.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.8.1...v5.9.0) (2026-04-01)
 
 
