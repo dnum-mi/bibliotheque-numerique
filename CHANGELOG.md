@@ -1,5 +1,23 @@
 # Changelog
 
+## [5.9.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.8.1...v5.9.0) (2026-04-01)
+
+
+### Features
+
+* ajout les filtres booléens dans datatable client side et mettre à jour les paramètres de filtrage dans liste des dossiers ([410728b](https://github.com/dnum-mi/bibliotheque_numerique/commit/410728b0448a765b40fd506bba2362e6fdd23d01))
+* ajouter des largeurs personnalisées pour les colonnes dans la liste des dossiers ([becef5b](https://github.com/dnum-mi/bibliotheque_numerique/commit/becef5b31752cd36b2e7fd9925f0ce6eff875486))
+* correction après revue de code ([33d5703](https://github.com/dnum-mi/bibliotheque_numerique/commit/33d5703e33e8af30672763909928b4232cdb2ce8))
+* mis à jour du formatage des valeurs de la colonne source et simplification de la logique d'autorisation dans la liste des dossiers. ([c2fa03d](https://github.com/dnum-mi/bibliotheque_numerique/commit/c2fa03d11fc81091422f0a352049fa3ad6d6a04e))
+* mis à jour du fusion des events et dossier Bn et ajout des colonnes pour dossierNumber et isCorrection ([e0c583b](https://github.com/dnum-mi/bibliotheque_numerique/commit/e0c583b66bfe8cfaf8111177f0d0bdca3b6af793))
+* normaliser la source et le statut dans le traitement des dossiers d'organismes ([2cbdbf5](https://github.com/dnum-mi/bibliotheque_numerique/commit/2cbdbf59ef3c938c7d442642116038da43c85d43))
+* refactoriser les composants de la liste des dossiers ([fe83441](https://github.com/dnum-mi/bibliotheque_numerique/commit/fe83441fd9215301439160f0ddae921225e8b05f))
+
+
+### Bug Fixes
+
+* correction lié au renommage de CustomFilter vers Views ([9fe4224](https://github.com/dnum-mi/bibliotheque_numerique/commit/9fe42240efec787bda91b0884ce8d31b03cb94a7))
+
 ## [5.8.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.8.0...v5.8.1) (2026-04-01)
 
 
