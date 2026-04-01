@@ -1,4 +1,7 @@
-import { forwardRef, Module } from '@nestjs/common'
+import {
+  forwardRef,
+  Module,
+} from '@nestjs/common'
 import { HubService } from './providers/hub.service'
 import { HubController } from '@/modules/hub/controllers/hub.controller'
 import { Demarche } from '../demarches/objects/entities/demarche.entity'

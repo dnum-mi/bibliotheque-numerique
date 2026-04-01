@@ -16,7 +16,6 @@ import { isUUID } from 'class-validator'
 import { Roles, eState } from '@biblio-num/shared'
 import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.decorator'
 import { eFileStorageIn } from '../objects/const/file-storage-in.enum'
-import { HubService } from '@/modules/hub/providers/hub.service'
 
 @ApiTags('Files')
 @Controller('files')
@@ -25,7 +24,6 @@ export class FileController {
     private readonly logger: LoggerService,
     private readonly s3Service: S3Service,
     private readonly filesService: FileService,
-    private readonly hubService: HubService,
   ) {
     this.logger.setContext(this.constructor.name)
   }

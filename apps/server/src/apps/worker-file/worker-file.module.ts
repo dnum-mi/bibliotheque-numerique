@@ -55,8 +55,6 @@ import { HealthModule } from '@/modules/health/health.module'
     DossierModule,
     HealthModule.register(WORKER_FILE_DEPENDENCY_POLICY),
   ],
-  controllers: [
-  ],
   providers: [
     FileProcessor,
   ],

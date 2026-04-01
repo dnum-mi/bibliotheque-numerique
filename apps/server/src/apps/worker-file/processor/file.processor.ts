@@ -9,7 +9,7 @@ import {
 import { Job, Queue } from 'bull'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { DsApiClient, File as TFile } from '@dnum-mi/ds-api-client'
-import { eFileSourceLabel, eState, eFileTag, anonymisedFileValue } from '@biblio-num/shared'
+import { eFileSourceLabel, eState, eFileTag } from '@biblio-num/shared'
 import { S3Service } from '@/shared/modules/s3/s3.service'
 import { FileService } from '@/modules/files/providers/file.service'
 import { FieldService } from '@/modules/dossiers/providers/field.service'
