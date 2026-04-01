@@ -1,5 +1,21 @@
 # Changelog
 
+## [5.8.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.8.0...v5.8.1) (2026-04-01)
+
+
+### Bug Fixes
+
+* ajout du service instructeur 99 dans la liste des préfecture ([130507f](https://github.com/dnum-mi/bibliotheque_numerique/commit/130507f0209afd9ea509bd7c9b89a1d1f76f14fe))
+* **dossier:** afficher originalLabel plutot que label pour les fichiers joints ([5b0eb17](https://github.com/dnum-mi/bibliotheque_numerique/commit/5b0eb17bccb773876c0adc027d09551c04cb1ccb))
+* fixer la précision de numberValue à 22 a cause des bigInt ([7409a7e](https://github.com/dnum-mi/bibliotheque_numerique/commit/7409a7eb530af88e78dbed3d322f79cb3175b46d))
+* le clé primaire sont obligatoire unique ([888aa98](https://github.com/dnum-mi/bibliotheque_numerique/commit/888aa981f4d8e9ce3644cb4fb545608dcae4be99))
+* mettre à null le columnLabel de en-tête dans les mappingColumns ([65be747](https://github.com/dnum-mi/bibliotheque_numerique/commit/65be747ae6b7156fc684632f1f6b1f52a9bc56e7))
+* migration associé au renommage custom-filter ver views ([8be11c1](https://github.com/dnum-mi/bibliotheque_numerique/commit/8be11c17e9b6334978bfb8a12b8c27b4419b117f))
+* migration pour le type strings de enum FieldType ([b9d2fdc](https://github.com/dnum-mi/bibliotheque_numerique/commit/b9d2fdc77295bb567b58077a28cbad1bd80ffa31))
+* **organisme:** ajout de la la liste des années non déclarées et de l'état du dépot de comptes ([9f531da](https://github.com/dnum-mi/bibliotheque_numerique/commit/9f531da3177a0d200e29ea1d450c0f1abe0dcfa0))
+* pour éviter de générer une migration problématique ([512475b](https://github.com/dnum-mi/bibliotheque_numerique/commit/512475b16c8b2c7a1cca47a0fe244da6563705ee))
+* retirer le commentaire dans la base de données ([f79cb47](https://github.com/dnum-mi/bibliotheque_numerique/commit/f79cb477ac46ba6d2e3ac69332661fa8bbaae4e0))
+
 ## [5.8.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.7.3...v5.8.0) (2026-03-20)
 
 
