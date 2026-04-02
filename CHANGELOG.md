@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.9.2](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.9.1...v5.9.2) (2026-04-02)
+
+
+### Bug Fixes
+
+* corrige le bloquage du lancement de sync-file ([1c02b55](https://github.com/dnum-mi/bibliotheque_numerique/commit/1c02b55198cf57d2749800872d6f775b24382751))
+
 ## [5.9.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.9.0...v5.9.1) (2026-04-01)
 
 
