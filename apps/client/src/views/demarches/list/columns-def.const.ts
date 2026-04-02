@@ -1,7 +1,7 @@
 import type { BNColDef } from '@/components/datatable/server-side/bn-col-def.interface'
 import { dateToStringFr } from '@/utils'
 import OrganismeBadgesRenderer from '@/components/Badges/organisme/OrganismeBadgesRenderer.vue'
-import { organismeTypes } from '@biblio-num/shared'
+import { activeOrganismeTypes } from '@biblio-num/shared'
 
 const baseColDef: BNColDef = {
   filter: 'agTextColumnFilter',
@@ -30,7 +30,7 @@ export const demarcheColumnDefs: BNColDef[] = [
     field: 'types',
     filter: 'agSetColumnFilter',
     filterParams: {
-      values: organismeTypes,
+      values: activeOrganismeTypes,
       cellRenderer: OrganismeBadgesRenderer,
       targetFilterType: 'strings',
     },

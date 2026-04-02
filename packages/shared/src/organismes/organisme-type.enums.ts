@@ -11,6 +11,12 @@ export type OrganismeTypeKey = (typeof organismeTypes)[number]
 
 export const eOrganismeType = createEnum(organismeTypes)
 
+export const activeOrganismeTypes: OrganismeTypeKey[] = [
+  eOrganismeType.ASSO,
+  eOrganismeType.FDD,
+  eOrganismeType.FE,
+  eOrganismeType.FRUP,
+]
 
 export const dOrganismeTypeDictionary: Record<OrganismeTypeKey, string> = {
   [eOrganismeType.ASSO]: 'ASSO',
