@@ -57,7 +57,7 @@ const stateOfFilingOfAccounts = computed<{
   label: string
   type: DsfrBadgeProps['type']
 }>(() =>
-  !props.compte.isAccountLate
+  props.compte.isAccountLate
     ? {
         label: 'HORS DELAI',
         type: 'error',
