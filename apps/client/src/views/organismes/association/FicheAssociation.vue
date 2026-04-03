@@ -10,7 +10,7 @@ import type { tInfoSidebar } from '@/views/organismes/components/FicheSidebar.vu
 import FileTab from '../common/file-tab/FileTab.vue'
 import { getServiceInstructeurFromEvents } from '@/utils'
 import EtablissementTab from '../common/EtablissementTab.vue'
-import DirigeantTab from '../common/member-tab/MemberTab.vue'
+import MembersTab from '../common/member-tab/MembersTab.vue'
 import DossierListTab from '../common/dossier-list-tab/DossierListTab.vue'
 
 const props = defineProps<{ association: IAssociationOutput }>()
@@ -69,7 +69,7 @@ const currentTab = ref<string | undefined>(undefined)
             <template #icon>
               <span class="fr-icon-team-fill" aria-hidden="true" />
             </template>
-            <DirigeantTab :persons="association.persons" />
+            <MembersTab :persons="association.persons" />
           </BnTab>
 
           <!--  Files  -->

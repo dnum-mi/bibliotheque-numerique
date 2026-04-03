@@ -1,28 +1,33 @@
 <script setup lang="ts">
 import { getJobPositionWeight, jobPositionArray } from '@biblio-num/shared'
-import type { ILegalEntity, IPerson } from '@biblio-num/shared'
+import type { ILegalEntity } from '@biblio-num/shared'
 import { dateToStringFr } from '@/utils/date-to-string'
 import { firstUpperCase } from '@/utils/first-upper-case'
 import DataTableClientSide from '@/components/datatable/client-side/DataTableClientSide.vue'
-import type { RowDataType } from '@/components/datatable/client-side/DataTableClientSide.vue'
 import type { HeaderDataTable } from '@/shared/types'
-import PersonStatutBadge from './PersonStatutBadge.vue'
 import PersonExitBadge from './PersonExitBadge.vue'
 import { getRepresentativeLabel, hasLegalEntity } from './legal-entity.utils'
-
-export type IPersonWithAuthorizeOption = IPerson & RowDataType
-
-export interface IPersonExtended extends IPerson {
-  fullName?: string
-}
+import type { IPersonTableRow, IPersonView } from './members.type'
+import PersonIsFounderBadge from './PersonIsFounderBadge.vue'
 
 const props = defineProps<{
-  persons: IPersonExtended[]
+  activePersons: IPersonView[]
+  formerPersons: IPersonView[]
 }>()
 
 const baseHeaders: HeaderDataTable[] = [
   { field: 'id', text: 'Id', type: 'hidden' },
-  { field: 'isFounder', text: 'Statut', renderer: markRaw(PersonStatutBadge) },
+  {
+    field: 'isFounder',
+    text: 'Fondateur',
+    renderer: markRaw(PersonIsFounderBadge),
+    filterable: true,
+    filter: 'agBooleanColumnFilter',
+    filterParams: {
+      values: ['true', 'false'],
+      valueFormatter: (params: { value: string }) => (params.value === 'true' ? 'Oui' : 'Non'),
+    },
+  },
   { field: 'fullName', text: 'Nom Prénom' },
   {
     field: 'jobPosition',
@@ -52,7 +57,7 @@ const baseHeaders: HeaderDataTable[] = [
   {
     field: '_raw',
     text: 'Représentant',
-    valueFormatter: (params: { value: IPersonExtended }) => getRepresentativeLabel(params.value),
+    valueFormatter: (params: { value: IPersonTableRow }) => getRepresentativeLabel(params.value),
   },
   {
     field: 'legalEntity',
@@ -61,46 +66,26 @@ const baseHeaders: HeaderDataTable[] = [
   },
 ]
 
-const rowsData = computed<IPersonWithAuthorizeOption[]>(() => {
-  return (props.persons || []).map((person) => ({
+const mapForTable = (persons: IPersonView[]): IPersonTableRow[] => {
+  return persons.map(person => ({
     ...person,
     fullName: `${person.lastName.toUpperCase()} ${firstUpperCase(person.firstName)}`,
     _raw: person,
     authorized: true,
     cursor: person.id,
-  }
-  ))
+  }))
+}
+
+const activeRows = computed(() => {
+  return mapForTable(props.activePersons)
+    .sort((a, b) => getJobPositionWeight(a.jobPosition) - getJobPositionWeight(b.jobPosition))
 })
 
-const currentPeople = computed(() => {
-  const dateNow = new Date()
-  return rowsData.value
-    .filter(person => {
-      if (!person.exitAt) {
-        return true
-      }
+const formerRows = computed(() => {
+  return mapForTable(props.formerPersons)
+})
 
-      return new Date(person.exitAt) > dateNow
-    })
-    .sort((a, b) => getJobPositionWeight(a.jobPosition) - getJobPositionWeight(b.jobPosition))
-},
-)
-
-const formerPeople = computed(() => {
-  const dateNow = new Date()
-  return rowsData.value
-    .filter(person => {
-      if (!person.exitAt) {
-        return false
-      }
-
-      return new Date(person.exitAt) <= dateNow
-    })
-    .sort((a, b) => new Date(b.exitAt!).getTime() - new Date(a.exitAt!).getTime())
-},
-)
-
-const createHeaders = (data: IPersonWithAuthorizeOption[]) => {
+const createHeaders = (data: IPersonTableRow[]) => {
   let h = [...baseHeaders]
   if (!hasLegalEntity(data)) {
     h = h.filter(col => col.field !== 'legalEntity')
@@ -108,17 +93,17 @@ const createHeaders = (data: IPersonWithAuthorizeOption[]) => {
   return h
 }
 
-const currentHeaders = computed(() => createHeaders(currentPeople.value))
-const formerHeaders = computed(() => createHeaders(formerPeople.value))
+const currentHeaders = computed(() => createHeaders(activeRows.value))
+const formerHeaders = computed(() => createHeaders(formerRows.value))
 </script>
 
 <template>
   <div class="flex flex-col gap-y-8">
-    <section v-if="currentPeople.length">
+    <section v-if="activeRows.length">
       <DataTableClientSide
         title="Liste synthétique actuelle"
         :headers="currentHeaders"
-        :rows-data="currentPeople"
+        :rows-data="activeRows"
         :pagination-page-size="20"
       />
     </section>
@@ -127,7 +112,7 @@ const formerHeaders = computed(() => createHeaders(formerPeople.value))
       <DataTableClientSide
         title="Liste synthétique historique"
         :headers="formerHeaders"
-        :rows-data="formerPeople"
+        :rows-data="formerRows"
         :pagination-page-size="20"
       />
     </section>

@@ -5,7 +5,7 @@ import FicheFoundationInfoTab from '@/views/organismes/fondation/FicheFoundation
 import FicheSidebar from '@/views/organismes/components/FicheSidebar.vue'
 import type { tInfoSidebar } from '@/views/organismes/components/FicheSidebar.vue'
 import FileTab from '../common/file-tab/FileTab.vue'
-import DirigeantTab from '../common/member-tab/MemberTab.vue'
+import MembersTab from '../common/member-tab/MembersTab.vue'
 import { getServiceInstructeurFromEvents } from '@/utils'
 import DossierListTab from '../common/dossier-list-tab/DossierListTab.vue'
 
@@ -64,7 +64,7 @@ const currentTab = ref<string | undefined>(undefined)
             <template #icon>
               <span class="fr-icon-team-fill" aria-hidden="true" />
             </template>
-            <DirigeantTab :persons="foundation.persons" />
+            <MembersTab :persons="foundation.persons" />
           </BnTab>
 
           <!--  Files  -->

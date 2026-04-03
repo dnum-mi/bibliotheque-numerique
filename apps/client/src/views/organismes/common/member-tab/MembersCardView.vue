@@ -1,21 +1,21 @@
 <script setup lang="ts">
-import type { IPerson } from '@biblio-num/shared'
 import { dateToStringFr } from '@/utils/date-to-string'
 import { getRepresentativeLabel, isSelfRepresented } from './legal-entity.utils'
 import InfoRow from '@/views/organismes/components/InfoRow.vue'
+import type { IPersonView } from './members.type'
 
 defineProps<{
-  persons: IPerson[]
+  persons: IPersonView[]
 }>()
 
-const getJobDisplay = (person: IPerson) => {
+const getJobDisplay = (person: IPersonView) => {
   if (person.quality?.toLowerCase().includes('directeur')) {
     return person.quality
   }
   return person.jobPosition || '-'
 }
 
-const getBirthLabel = (person: IPerson): string => {
+const getBirthLabel = (person: IPersonView): string => {
   const { bornAt, bornPlace } = person
   if (!bornAt && !bornPlace) {
     return '-'
@@ -32,7 +32,7 @@ const getBirthLabel = (person: IPerson): string => {
   return parts.join(' ')
 }
 
-const entryExitDateTimelineItems = (person: IPerson) => {
+const entryExitDateTimelineItems = (person: IPersonView) => {
   const items = []
 
   if (person.entryAt) {
@@ -68,6 +68,12 @@ const entryExitDateTimelineItems = (person: IPerson) => {
           v-if="person.isFounder"
           label="FONDATEUR"
           type="new"
+          no-icon
+        />
+        <DsfrBadge
+          v-if="person.isExited"
+          label="Membre sorti"
+          type="error"
           no-icon
         />
       </div>
