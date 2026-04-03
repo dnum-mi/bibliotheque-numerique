@@ -42,8 +42,8 @@ export interface ISiafOrganisme {
   dueDate: Date | null
   hasInternationalActivity: boolean
   fiscalEndAt: Date | null
-  depositAccountYears: number[]
-  missingAccountYears: number[]
+  accountDepositYears: number[]
+  accountMissingYears: number[]
   isAccountLate: boolean
   isPersonDataPrivate: boolean
   persons: IPerson[]

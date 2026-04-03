@@ -93,6 +93,7 @@ const getLegalEntity = () => {
     null,
   ])
 }
+const accountYears = () => Array.from({ length: faker.number.int({ min: 0, max: 5 }) }, () => faker.number.int({ min: 2000, max: 2026 }))
 export const getFoundation = (args: {
   nbPerson: {
     min: number | undefined,
@@ -119,7 +120,9 @@ export const getFoundation = (args: {
   'publicGenerosityYears': [],
   'publicSubsidyYears': [],
   'foreignFinancingYears': [],
-  'accountDepositYears': [],
+  'accountDepositYears': accountYears(),
+  'accountMissingYears': accountYears(),
+  'isAccountLate': faker.datatype.boolean(),
   'persons': Array.from(
     { length: faker.number.int({ min: args?.nbPerson?.min ?? 0, max: args?.nbPerson?.max ?? 10 }) },
     () => ({

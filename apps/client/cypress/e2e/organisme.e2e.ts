@@ -77,4 +77,41 @@ describe('Vue Organisme', () => {
     cy.get('#tab-panel-members')
       .should('contain', foundation.persons[3].legalEntity.name)
   })
+
+  it('should find account information', () => {
+    const foundation = getFoundation()
+    foundation.id = '000-XXX-00000-00'
+    commonIntercept(foundation)
+    cy.visit('http://localhost:5050/organismes/000-XXX-00000-00?tab=description')
+    cy.wait('@me')
+    cy.wait('@health')
+    cy.wait('@getHubFoundation')
+
+    // Verify account years
+    const cyAccountDeposits = cy.get('span')
+      .should('contain', 'Dépôts de comptes')
+      .contains('Dépôts de comptes')
+      .parent()
+      .parent()
+    foundation.accountDepositYears.forEach(year => {
+      cyAccountDeposits.should('contain', year)
+    })
+    if (foundation.isAccountLate) {
+      const cyAccountMissing = cy.get('span')
+        .should('contain', 'Années non déclarées')
+        .contains('Années non déclarées')
+        .parent()
+        .parent()
+
+      foundation.accountMissingYears.forEach(year => {
+        cyAccountMissing.should('contain', year)
+      })
+    }
+    cy.get('span')
+      .should('contain', 'État du dépôt de comptes')
+      .contains('État du dépôt de comptes')
+      .parent()
+      .parent()
+      .should('contain', foundation.isAccountLate ? 'HORS DELAI' : 'OK')
+  })
 })

@@ -53,7 +53,6 @@ declare module 'vue' {
     DsfrTable: typeof import('@gouvminint/vue-dsfr')['DsfrTable']
     DsfrTag: typeof import('@gouvminint/vue-dsfr')['DsfrTag']
     DsfrTags: typeof import('@gouvminint/vue-dsfr')['DsfrTags']
-    DsfrTooltip: typeof import('@gouvminint/vue-dsfr')['DsfrTooltip']
     DsfrWarningButton: typeof import('./components/dsfr-extends/DsfrWarningButton.vue')['default']
     EstablishmentStatusBadge: typeof import('./components/Badges/establishment/EstablishmentStatusBadge.vue')['default']
     FilePreviewModal: typeof import('./components/FilePreviewModal.vue')['default']

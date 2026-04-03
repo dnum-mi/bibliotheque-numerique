@@ -10,8 +10,8 @@ export type tInfoCompte = {
   dueDate: Date | null
   creationAt: Date
   fiscalEndDateAt: Date | null
-  depositAccountYears: number[]
-  missingAccountYears: number[]
+  accountMissingYears: number[]
+  accountDepositYears: number[]
   isAccountLate: boolean
   publicGenerosityYears: number[],
   publicSubsidyYears: number[],
@@ -79,7 +79,7 @@ const stateOfFilingOfAccounts = computed<{
         {{ dueDate }}
       </InfoRow>
       <InfoRow label="Dépôts de comptes">
-        {{ compte.depositAccountYears?.join(' - ') || "-" }}
+        {{ compte.accountDepositYears?.join(' - ') || "-" }}
       </InfoRow>
       <InfoRow label="État du dépôt de comptes">
         <DsfrBadge
@@ -90,7 +90,7 @@ const stateOfFilingOfAccounts = computed<{
         />
       </InfoRow>
       <InfoRow v-if="compte.isAccountLate" label="Années non déclarées">
-        {{ compte.missingAccountYears?.join(' - ') || "-" }}
+        {{ compte.accountMissingYears?.join(' - ') || "-" }}
       </InfoRow>
       <InfoRow label="Date de clôture de l'exercice comptable (jour/mois)">
         {{ fiscalEndDate }}
