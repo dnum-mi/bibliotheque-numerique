@@ -64,12 +64,23 @@ export class FileService extends BaseEntityService<File> {
   }
 
   static buildCompleteName(smallFile: SmallFileOutputDto): string {
-    const label = this.normalizedFilename(smallFile.label)
+    const filename = smallFile.originalLabel
+    const lastDotIndex = filename.lastIndexOf('.')
+
+    let basename = filename
+    let originalExt = ''
+
+    if (lastDotIndex > 0) {
+      basename = filename.substring(0, lastDotIndex)
+      originalExt = filename.substring(lastDotIndex + 1)
+    }
+
+    const label = this.normalizedFilename(basename)
 
     if (smallFile.mimeType === eFileExtension.unknown) {
-      const previousExtension = smallFile.originalLabel.match(/\.(\w+)$/)
+      const previousExtension = originalExt ? this.normalizedFilename(originalExt) : 'unknown'
       // TODO: handle unknown extension
-      return `${label}.${this.normalizedFilename(previousExtension?.[1] ?? 'unknown')}`
+      return `${label}.${previousExtension}`
     }
     return `${label}.${smallFile.mimeType}`
   }
