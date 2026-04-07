@@ -82,10 +82,10 @@ items:
     sourceStringId: 'useless-id'
     tag: 'some-tag'
     mimeType: 'doc'
-    label: "1.debut_éèçàâêîôûŷäëÿüöù_ÉÈÇÀÂÊÎÔÛŶÄËŸÜÖÙ!\"#$%&'()*+,-./:;<=>?@[\\]^_\\`~{|}$£µ\t\n\r_fin_test1"
+    originalLabel: "1.debut_éèçàâêîôûŷäëÿüöù_ÉÈÇÀÂÊÎÔÛŶÄËŸÜÖÙ!\"#$%&'()*+,-./:;<=>?@[\\]^_\\`~{|}$£µ\t\n\r_fin_test1"
     checksum: 42
     byteSize: 42
-    originalLabel: " les_-_caractéres_pouvant_posé_probléme.doc\n"
+    label: " les_-_caractéres_pouvant_posé_probléme.doc\n"
     storageIn: 'S3'
 
   file-with-special-char-2:
@@ -96,9 +96,9 @@ items:
     sourceStringId: 'useless-id'
     tag: 'some-tag'
     mimeType: 'doc'
-    label: "2.debut_«»‘’“”‹›„‟…–—•·§¶©®™°µ¿¡‰†‡€$£¥₩₣₺₹¢¹²³¼½¾±×÷=¬|¦_‰∞√∑∆∏∂∫≈≠≤≥→←↑↓↔↕↩↪↵☀☁☂❄★☆✓✔✗✘♠♣♥♦♫♪☻☺_fin_test2"
+    originalLabel: "2.debut_«»‘’“”‹›„‟…–—•·§¶©®™°µ¿¡‰†‡€$£¥₩₣₺₹¢¹²³¼½¾±×÷=¬|¦_‰∞√∑∆∏∂∫≈≠≤≥→←↑↓↔↕↩↪↵☀☁☂❄★☆✓✔✗✘♠♣♥♦♫♪☻☺_fin_test2"
     checksum: 42
     byteSize: 42
-    originalLabel: " les_-_caractéres_pouvant_posé_probléme.doc\n"
+    label: " les_-_caractéres_pouvant_posé_probléme.doc\n"
     storageIn: 'S3'
 
