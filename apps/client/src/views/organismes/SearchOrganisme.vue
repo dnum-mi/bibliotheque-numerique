@@ -51,7 +51,9 @@ const setModeId = () => {
       />
 
       <!-- MODE 2 : IDENTIFIANT -->
-      <SearchOrganismeById v-else />
+      <SearchOrganismeById
+        v-else
+      />
     </div>
   </LayoutList>
 </template>

@@ -4,13 +4,18 @@ import type { IBasicOrganisme, OrganismeTypeToSearchKey } from '@biblio-num/shar
 import SubLayoutSearch from './SubLayoutSearch.vue'
 import apiClient from '@/api/api-client'
 import useToaster from '@/composables/use-toaster'
+import { IS_ASSOCIATIONS_ENABLED } from '@/config'
 
 const toaster = useToaster()
+
+const defaultTypeOrganisme = IS_ASSOCIATIONS_ENABLED
+  ? [eOrganismeTypeToSearch.associations, eOrganismeTypeToSearch.fondations]
+  : [eOrganismeTypeToSearch.fondations]
 
 const resetFullTextAndRecents = () => {
   inputSearch.value = ''
   inputSize.value = 20
-  typeOrganisme.value = [eOrganismeTypeToSearch.associations, eOrganismeTypeToSearch.fondations]
+  typeOrganisme.value = [...defaultTypeOrganisme]
   hasError.value = false
   hasSearched.value = false
 }
@@ -26,24 +31,28 @@ const hasError = ref<boolean>(false)
 const results = ref<IBasicOrganisme[]>([])
 const hasSearched = ref<boolean>(false)
 // #region Gestion des types d'organisme
-const typeOrganismeOptions = [
-  {
-    label: 'Associations',
-    id: eOrganismeTypeToSearch.associations,
-    value: eOrganismeTypeToSearch.associations,
-    hint: `Recherche uniquement les ${eOrganismeTypeToSearch.associations}`,
-    name: eOrganismeTypeToSearch.associations,
-  },
-  {
-    label: 'Fondations',
-    id: eOrganismeTypeToSearch.fondations,
-    value: eOrganismeTypeToSearch.fondations,
-    hint: `Rechercher uniquement les ${eOrganismeTypeToSearch.fondations}`,
-    name: eOrganismeTypeToSearch.fondations,
-  },
-]
+const typeOrganismeOptions = computed(() => {
+  const options = []
+  if (IS_ASSOCIATIONS_ENABLED) {
+    options.push({
+      label: 'Associations',
+      id: eOrganismeTypeToSearch.associations,
+      value: eOrganismeTypeToSearch.associations,
+      hint: `Recherche uniquement les ${eOrganismeTypeToSearch.associations}`,
+      name: eOrganismeTypeToSearch.associations,
+    })
+  }
+  return options
+    .concat({
+      label: 'Fondations',
+      id: eOrganismeTypeToSearch.fondations,
+      value: eOrganismeTypeToSearch.fondations,
+      hint: `Rechercher uniquement les ${eOrganismeTypeToSearch.fondations}`,
+      name: eOrganismeTypeToSearch.fondations,
+    })
+})
 
-const typeOrganisme = ref<OrganismeTypeToSearchKey[]>([eOrganismeTypeToSearch.associations, eOrganismeTypeToSearch.fondations])
+const typeOrganisme = ref<OrganismeTypeToSearchKey[]>([...defaultTypeOrganisme])
 const errTypeOrganisme = ref<string>('')
 const handleTypeOrganisme = (value: OrganismeTypeToSearchKey[]) => {
   if (!value.length) {
@@ -60,10 +69,17 @@ const handleTypeOrganisme = (value: OrganismeTypeToSearchKey[]) => {
 const onSearchFullText = async () => {
   let entityType
 
-  if (typeOrganisme.value.length === 1) {
-    entityType = typeOrganisme.value[0]
-  } else if (typeOrganisme.value.length === 2 && typeOrganisme.value.every(t => organismeTypeToSeachArray.includes(t))) {
-    entityType = eOrganismeTypeToSearch.all
+  if (!IS_ASSOCIATIONS_ENABLED) {
+    entityType = eOrganismeTypeToSearch.fondations
+  } else {
+    if (typeOrganisme.value.length === 1) {
+      entityType = typeOrganisme.value[0]
+    } else if (
+      typeOrganisme.value.length === 2
+      && typeOrganisme.value.every(t => organismeTypeToSeachArray.includes(t))
+    ) {
+      entityType = eOrganismeTypeToSearch.all
+    }
   }
 
   const query = {
@@ -71,6 +87,7 @@ const onSearchFullText = async () => {
     entityType,
     size: Number(inputSize.value),
   }
+
   if (!query) {
     return
   }
@@ -100,11 +117,14 @@ const onSearchFullText = async () => {
   <SubLayoutSearch :is-loading="isLoading" :has-error="hasError" :results="results" :has-searched="hasSearched">
     <template #section-search>
       <p class="fr-text--sm fr-mb-2w text-grey-700">
-        Rechercher un titre, une description, un bénéficiaire effectif ou une adresse à travers cette recherche plein texte.
+        Rechercher un titre, une description, un bénéficiaire effectif ou une adresse à travers cette recherche plein texte <template v-if="!isRnaSearchEnabled">
+          sur les fondations
+        </template>.
       </p>
 
       <form @submit.prevent="onSearchFullText">
         <DsfrCheckboxSet
+          v-if="IS_ASSOCIATIONS_ENABLED"
           :model-value="typeOrganisme"
           legend="Type d'organisme recherché:"
           name="TypeOrganisme"

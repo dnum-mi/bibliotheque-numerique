@@ -12,6 +12,7 @@ import apiClient from '@/api/api-client'
 import { useOrganismeHubStore } from '@/stores/organisme-hub.ts'
 import useToaster from '../../composables/use-toaster'
 import { usePageTitle } from '@/composables/use-page-title'
+import { IS_ASSOCIATIONS_ENABLED } from '@/config'
 
 const props = defineProps<{
   organismeId: string
@@ -19,6 +20,9 @@ const props = defineProps<{
 }>()
 
 const organismeHubStore = useOrganismeHubStore()
+
+const router = useRouter()
+const toaster = useToaster()
 
 const isLoading = ref(false)
 const hasError = ref(false)
@@ -40,23 +44,34 @@ const fondation = computed<IFoundationOutput | null>(() => {
 })
 
 const association = computed<IAssociationOutput | null>(() => {
-  if (!organisme.value || props.organismeType !== EOrganismeCategory.association) {
+  if (!IS_ASSOCIATIONS_ENABLED || props.organismeType !== EOrganismeCategory.association || !organisme.value) {
     return null
   }
   return organisme.value as IAssociationOutput
 })
 
-const errorMessage = computed(() =>
-  `Impossible de charger la fiche pour cet organisme (${props.organismeId}).`,
-)
-const loadIfNeeded = async () => {
-  if (organisme.value) {
-    return
+const errorMessage = computed(() => {
+  if (!IS_ASSOCIATIONS_ENABLED && props.organismeType === EOrganismeCategory.association) {
+    return 'La consultation des associations n\'est pas disponible pour le moment.'
   }
+  return `Impossible de charger la fiche pour cet organisme (${props.organismeId}).`
+})
 
+const loadIfNeeded = async () => {
   isLoading.value = true
   hasError.value = false
+
   try {
+    if (!IS_ASSOCIATIONS_ENABLED && props.organismeType === EOrganismeCategory.association) {
+      toaster.addErrorMessage(errorMessage.value)
+      await router.replace({ path: '/organismes' })
+      return
+    }
+
+    if (organisme.value) {
+      return
+    }
+
     if (props.organismeType === EOrganismeCategory.fondation) {
       const fondation = await apiClient.hubGetRnf(props.organismeId)
       if (!fondation) {
@@ -71,12 +86,12 @@ const loadIfNeeded = async () => {
       organismeHubStore.setOrganisme(asso, EOrganismeCategory.association)
     }
   } catch (e) {
-    console.warn(e)
-    useToaster().addErrorMessage(errorMessage.value)
+    console.error('❌ [DEBUG] ERREUR CAPTURÉE DANS LE CATCH :', e)
+    toaster.addErrorMessage(errorMessage.value)
     hasError.value = true
+  } finally {
+    isLoading.value = false
   }
-
-  isLoading.value = false
 }
 
 onMounted(() => {

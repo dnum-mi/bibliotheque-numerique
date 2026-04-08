@@ -13,6 +13,7 @@ import type {
 import DelayStateBadge from '@/components/Badges/delay-state/DelayStateBadge.vue'
 import DataTableAttachmentCell from '@/components/datatable/DataTableAttachmentCell.vue'
 import { routeNames } from '@/router/route-names'
+import { IS_ASSOCIATIONS_ENABLED } from '@/config'
 
 const props = defineProps<{
   params: {
@@ -67,6 +68,16 @@ const componentRenderer = computed(() => {
   return null
 })
 //#endregion
+
+const canLinkToOrganisme = (currentFfr: string, value: string) => {
+  const id = value?.split(' ')[0] || ''
+  const isRna = currentFfr === 'rna' || id.startsWith('W')
+  if (isRna && !IS_ASSOCIATIONS_ENABLED) {
+    return false
+  }
+
+  return true
+}
 
 //#region STATUS
 type DsfrType = 'success' | 'error' | 'warning' | 'info' | 'new' | 'purple-glycine'
@@ -156,6 +167,7 @@ const getPrefecture = (prefecture: PrefectureKey) => {
 
       <template v-else-if="['rnf', 'rna'].includes(ffr) && cellValue">
         <RouterLink
+          v-if="canLinkToOrganisme(ffr, cellValue)"
           class="no-underline"
           :to="{ name: routeNames.FICHE_ORGANISME, params: { id: cellValue.split(' ')[0] } }"
           @click.stop
@@ -164,6 +176,13 @@ const getPrefecture = (prefecture: PrefectureKey) => {
             {{ cellValue.split(' | ')[0] }}
           </span>
         </RouterLink>
+        <span
+          v-else
+          class="font-semibold"
+          title="La consultation de cette fiche est momentanément indisponible"
+        >
+          {{ cellValue.split(' | ')[0] }}
+        </span>
         <span class="ml-1">
           {{ cellValue.split(' | ')[1] }}
         </span>

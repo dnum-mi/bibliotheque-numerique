@@ -10,6 +10,7 @@ import {
 import useToaster from '@/composables/use-toaster'
 import SubLayoutSearch from './SubLayoutSearch.vue'
 import { routeNames } from '@/router/route-names'
+import { IS_ASSOCIATIONS_ENABLED } from '@/config'
 
 const isLoading = ref(false)
 
@@ -108,19 +109,25 @@ const navigateToDetails = async (id: string) => {
   })
   isLoading.value = false
 }
+
+const caption = computed(() => {
+  if (IS_ASSOCIATIONS_ENABLED) {
+    return `Rechercher directement un organisme par son identifiant RNF ou RNA. \nPour les RNF, la saisie est guidée (département, type de fondation, numéro, clé de contrôle).`
+  }
+  return `Rechercher directement une fondation par son identifiant RNF. \nLa saisie est guidée (département, type de fondation, numéro, clé de contrôle).`
+})
 </script>>
 
 <template>
   <SubLayoutSearch :is-loading="isLoading" :has-error="false">
     <template #section-search>
-      <p class="fr-text--sm fr-mb-2w text-grey-700">
-        Rechercher directement un organisme par son identifiant RNF ou RNA.
-        <br>Pour les RNF, la saisie est guidée (département, type de fondation, numéro, clé de contrôle).
+      <p class="fr-text--sm fr-mb-2w text-grey-700 bn-caption-text">
+        {{ caption }}
       </p>
 
       <form @submit.prevent="onIdSearch">
         <!-- Choix RNF / RNA -->
-        <div class="flex flex-wrap items-center gap-3 fr-mb-3w">
+        <div v-if="IS_ASSOCIATIONS_ENABLED" class="flex flex-wrap items-center gap-3 fr-mb-3w">
           <p class="fr-text--sm text-grey-700 fr-mb-0 flex items-center">
             <strong>Type d’identifiant</strong> :
           </p>
@@ -176,7 +183,7 @@ const navigateToDetails = async (id: string) => {
 
         <!-- Saisie RNA -->
         <div
-          v-else
+          v-else-if="IS_ASSOCIATIONS_ENABLED && idSearchType === 'rna'"
           class="fr-mb-3w max-w-xs"
         >
           <label class="fr-label">
@@ -227,5 +234,9 @@ const navigateToDetails = async (id: string) => {
   background-color: var(--background-action-low-blue-france);
   border-color: var(--border-action-high-blue-france);
   color: var(--text-title-blue-france);
+}
+
+.bn-caption-text {
+  white-space: pre-line;
 }
 </style>

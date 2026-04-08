@@ -4,6 +4,7 @@ import type { IBasicOrganisme, IDossierFieldsOutput } from '@biblio-num/shared'
 
 import { routeNames } from '@/router/route-names'
 import { usePageTitle } from '@/composables/use-page-title'
+import { IS_ASSOCIATIONS_ENABLED } from '@/config'
 
 type DossierHeaderProps = {
   dossier: IDossierFieldsOutput
@@ -14,7 +15,31 @@ const { dossier, organisme } = defineProps<DossierHeaderProps>()
 
 const router = useRouter()
 
+const isAssociation = computed(() => {
+  return organisme?.id?.startsWith('W') ?? false
+})
+
+const canViewOrganisme = computed(() => {
+  if (!organisme) {
+    return false
+  }
+  if (isAssociation.value && !IS_ASSOCIATIONS_ENABLED) {
+    return false
+  }
+
+  return true
+})
+const buttonTitle = computed(() => {
+  if (!canViewOrganisme.value) {
+    return 'La consultation de cette association n\'est pas disponible pour le moment.'
+  }
+  return 'Voir la fiche de cet organisme'
+})
+
 const goToOrganisme = () => {
+  if (!canViewOrganisme.value) {
+    return
+  }
   router.push({
     name: routeNames.FICHE_ORGANISME,
     params: { id: organisme?.id },
@@ -57,6 +82,8 @@ usePageTitle(pageTitle)
         label="Fiche organisme"
         secondary
         class="white-bg"
+        :disabled="!canViewOrganisme"
+        :title="buttonTitle"
         @click="goToOrganisme()"
       />
     </div>

@@ -5,15 +5,26 @@ import {
   EOrganismeCategory,
   Roles,
 } from '@biblio-num/shared'
-import { IS_OPEN_SOURCE } from '@/config'
+import { IS_ASSOCIATIONS_ENABLED, IS_OPEN_SOURCE } from '@/config'
 import { useOrganismeHubStore } from '../stores/organisme-hub'
 import useToaster from '../composables/use-toaster'
 
+const isAssociation = (param?: string | string[]) => {
+  const id = Array.isArray(param) ? param[0] : param
+  return id ? id.startsWith('W') : false
+}
 const beforeEnter = async (to: RouteLocationNormalized, from: RouteLocationNormalizedLoaded, next: NavigationGuardNext) => {
   const toaster = useToaster()
   const id = to.params.id as string
+
+  if (isAssociation(id) && !IS_ASSOCIATIONS_ENABLED) {
+    toaster.addErrorMessage('La consultation des associations n\'est pas disponible pour le moment.')
+    return next({ path: '/organismes', replace: true })
+  }
+
   const messageId = toaster.addSuccessMessage(`Chargement la fiche pour cet organisme (${id}) est en cours`)
   const organismeStore = useOrganismeHubStore()
+
   let isOk = false
   organismeStore.clear()
   try {
@@ -56,7 +67,7 @@ export const organismeRoute: RouteRecordRaw = {
       props: (route) => {
         return {
           organismeId: route.params.id,
-          organismeType: route.params.id?.toString().startsWith('W') ? EOrganismeCategory.association : EOrganismeCategory.fondation,
+          organismeType: isAssociation(route.params.id?.toString()) ? EOrganismeCategory.association : EOrganismeCategory.fondation,
         }
       },
       meta: {
