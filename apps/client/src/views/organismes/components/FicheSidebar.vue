@@ -15,7 +15,7 @@ export type tInfoSidebar = {
   stateEffectiveAt: Date | null,
   creationAt: Date,
   typeOrg: OrganismeTypeKey | string,
-  prefecture: string,
+  serviceInstructeur: string,
   isPersonDataPrivate: boolean | null,
 }
 
@@ -78,10 +78,10 @@ const labelSensitivData = computed(() => {
 
     <div>
       <p class="fr-text--xs fr-text--bold fr-mb-1v uppercase">
-        Préfecture
+        Service instructeur
       </p>
       <p class="fr-text--sm fr-mb-0">
-        {{ sidebar.prefecture || '-' }}
+        {{ sidebar.serviceInstructeur || '-' }}
       </p>
     </div>
 

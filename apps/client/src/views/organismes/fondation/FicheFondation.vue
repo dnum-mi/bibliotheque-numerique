@@ -22,7 +22,7 @@ const sidebar = computed<tInfoSidebar>(() => ({
   creationAt: props.foundation.creationAt,
   stateEffectiveAt: props.foundation.stateEffectiveAt,
   typeOrg: props.foundation.foundationType,
-  prefecture: serviceInstructeur.value,
+  serviceInstructeur: serviceInstructeur.value,
   isPersonDataPrivate: props.foundation.isPersonDataPrivate,
 }))
 

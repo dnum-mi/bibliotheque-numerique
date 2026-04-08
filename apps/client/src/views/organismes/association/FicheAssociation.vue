@@ -26,8 +26,8 @@ const sidebar = computed<tInfoSidebar>(() => ({
   creationAt: props.association.creationAt,
   stateEffectiveAt: props.association.stateEffectiveAt,
   hub_timestamp: props.association.hub_timestamp,
-  typeOrg: eOrganismeType.ASSO,
-  prefecture: serviceInstructeur.value,
+  typeOrg: eOrganismeType.ASSO as string,
+  serviceInstructeur: serviceInstructeur.value,
   isPersonDataPrivate: props.association.isPersonDataPrivate,
 }))
 
