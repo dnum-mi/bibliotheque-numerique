@@ -8,6 +8,7 @@ export const configurationRoute: RouteRecordRaw = {
   path: '/configuration',
   component: () => import('@/views/Configuration/MainConfiguration.vue'),
   meta: {
+    title: 'Configuration des démarches',
     roleLevel: Roles.sudo,
   },
 }

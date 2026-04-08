@@ -102,7 +102,7 @@ const onUpdateNbMonth = async (nb: string) => {
     </div>
   </div>
   <div v-if="isEnabledAnonymize">
-    <hr>
+    <hr role="presentation">
 
     <SelectAnonymousChamps />
   </div>

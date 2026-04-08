@@ -6,4 +6,7 @@ export const profileRoute: RouteRecordRaw = {
   name: routeNames.PROFILE,
   path: '/profile',
   component: () => import('@/views/profile/Profile.vue'),
+  meta: {
+    title: 'Mon profil',
+  },
 }

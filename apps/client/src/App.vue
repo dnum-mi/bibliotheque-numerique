@@ -76,11 +76,21 @@ onErrorCaptured((error: Error | AxiosError) => {
   }
   return false
 })
+
+const links = [
+  { id: 'main-content', text: 'Aller au contenu' },
+  { id: 'navigation', text: 'Aller à la navigation' },
+]
 </script>
 
 <template>
   <div class="flex flex-col h-full w-full">
+    <DsfrSkipLinks
+      :links="links"
+    />
+
     <DsfrHeader
+      id="navigation"
       v-model="searchQuery"
       class="relative"
       :service-title="serviceTitle"
@@ -93,7 +103,7 @@ onErrorCaptured((error: Error | AxiosError) => {
       </template>
     </DsfrHeader>
 
-    <main class="flex flex-col grow w-full h-full min-h-0 overflow-auto">
+    <main id="main-content" role="main" class="flex flex-col grow w-full h-full min-h-0 overflow-auto">
       <router-view />
     </main>
 

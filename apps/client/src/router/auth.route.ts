@@ -10,6 +10,7 @@ export const authRoutes: RouteRecordRaw[] = [
     beforeEnter: [isNotAuthenticatedGuard],
     component: () => import('@/views/authentification/ProConnectCallback.vue'),
     meta: {
+      title: 'Connexion avec ProConnect',
       skipAuth: true,
     },
   },
@@ -19,6 +20,7 @@ export const authRoutes: RouteRecordRaw[] = [
     component: () => import('@/views/authentification/VerifyAuth.vue'),
     props: true,
     meta: {
+      title: 'Vérification de l\'authentification',
       skipAuth: true,
     },
   },
@@ -28,6 +30,7 @@ export const authRoutes: RouteRecordRaw[] = [
     beforeEnter: [isNotAuthenticatedGuard],
     component: () => import('@/views/authentification/Signin.vue'),
     meta: {
+      title: 'Connexion',
       skipAuth: true,
     },
   },
@@ -37,6 +40,7 @@ export const authRoutes: RouteRecordRaw[] = [
     beforeEnter: [isNotAuthenticatedGuard],
     component: () => import('@/views/authentification/Signup.vue'),
     meta: {
+      title: 'Inscription',
       skipAuth: true,
     },
   },
@@ -44,6 +48,9 @@ export const authRoutes: RouteRecordRaw[] = [
     name: routeNames.LOGOUT,
     path: '/logout',
     component: () => import('@/views/authentification/Logout.vue'),
+    meta: {
+      title: 'Déconnexion',
+    },
   },
   {
     path: '/valid-email/:token',
@@ -52,6 +59,7 @@ export const authRoutes: RouteRecordRaw[] = [
     props: true,
     meta: {
       skipAuth: true,
+      title: 'Validation de l\'adresse e-mail',
     },
   },
 ]

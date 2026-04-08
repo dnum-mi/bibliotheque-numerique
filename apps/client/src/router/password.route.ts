@@ -11,6 +11,7 @@ export const passwordRoutes: RouteRecordRaw[] = [
     component: () => import('@/views/passwords/UpdatePassword.vue'),
     props: true,
     meta: {
+      title: 'Mise à jour du mot de passe',
       skipAuth: true,
     },
   },
@@ -20,6 +21,7 @@ export const passwordRoutes: RouteRecordRaw[] = [
     beforeEnter: [isNotAuthenticatedGuard],
     component: () => import('@/views/passwords/ResetPassword.vue'),
     meta: {
+      title: 'Réinitialisation du mot de passe',
       skipAuth: true,
     },
   },

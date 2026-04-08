@@ -11,6 +11,7 @@ import FicheAssociation from '@/views/organismes/association/FicheAssociation.vu
 import apiClient from '@/api/api-client'
 import { useOrganismeHubStore } from '@/stores/organisme-hub.ts'
 import useToaster from '../../composables/use-toaster'
+import { usePageTitle } from '@/composables/use-page-title'
 
 const props = defineProps<{
   organismeId: string
@@ -81,6 +82,23 @@ const loadIfNeeded = async () => {
 onMounted(() => {
   void loadIfNeeded()
 })
+
+const pageTitle = computed(() => {
+  let rawTitle = 'Fiche organisme'
+
+  if (isLoading.value) {
+    rawTitle = 'Chargement de la fiche...'
+  } else if (hasError.value) {
+    rawTitle = 'Erreur de chargement'
+  } else if (organisme.value) {
+    const orgaTitle = organisme.value.title || 'Organisme'
+    rawTitle = `${orgaTitle} (${organisme.value.id})`
+  }
+
+  return rawTitle
+})
+
+usePageTitle(pageTitle)
 </script>
 
 <template>

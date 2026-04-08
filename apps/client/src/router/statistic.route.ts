@@ -8,6 +8,7 @@ export const statisticRoute: RouteRecordRaw = {
   path: '/statistiques',
   component: () => import('@/views/statistics/Statistics.vue'),
   meta: {
+    title: 'Statistiques',
     roleLevel: Roles.instructor,
   },
 }

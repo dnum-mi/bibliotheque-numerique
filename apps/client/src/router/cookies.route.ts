@@ -7,6 +7,7 @@ export const cookiesRoute: RouteRecordRaw = {
   path: '/cookies',
   component: () => import('@/views/Cookies.vue'),
   meta: {
+    title: 'Cookies',
     skipAuth: true,
   },
 }

@@ -106,6 +106,32 @@ const selectTab = (id: string) => {
     activeTabId.value = id
   }
 }
+
+const handleKeydown = (event: KeyboardEvent, currentId: string) => {
+  if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') {
+    return
+  }
+
+  event.preventDefault()
+
+  const currentIndex = sortedTabs.value.findIndex(t => t.id === currentId)
+  let nextIndex = 0
+
+  if (event.key === 'ArrowRight') {
+    nextIndex = currentIndex === sortedTabs.value.length - 1 ? 0 : currentIndex + 1
+  } else if (event.key === 'ArrowLeft') {
+    nextIndex = currentIndex === 0 ? sortedTabs.value.length - 1 : currentIndex - 1
+  }
+
+  const nextTabId = sortedTabs.value[nextIndex]?.id
+
+  nextTick(() => {
+    const nextButton = document.getElementById(`tab-button-${nextTabId}`)
+    if (nextButton) {
+      nextButton.focus()
+    }
+  })
+}
 </script>
 
 <template>
@@ -128,6 +154,7 @@ const selectTab = (id: string) => {
         :aria-controls="`tab-panel-${tab.id}`"
         :tabindex="tab.id === activeTabId ? 0 : -1"
         @click="selectTab(tab.id)"
+        @keydown="handleKeydown($event, tab.id)"
       >
         <span v-if="tab.icon" class="bn-tab-icon">
           <component

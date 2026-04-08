@@ -16,11 +16,17 @@ export const adminRoute = {
       name: routeNames.LIST_USERS,
       path: '',
       component: () => import('@/views/admin/ListUsers.vue'),
+      meta: {
+        title: 'Administration des roles',
+      },
     },
     {
       name: routeNames.USER,
       path: 'user/:id',
       component: () => import('@/views/admin/one-user/User.vue'),
+      meta: {
+        title: 'Édition des droits',
+      },
       beforeEnter: async (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
         try {
           await useUserStore().loadUserById(Number.parseInt(to.params.id as string))

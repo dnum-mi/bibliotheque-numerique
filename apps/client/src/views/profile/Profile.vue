@@ -105,7 +105,7 @@ const updateProfile = async (field: Field, newText: string) => {
         <!-- Information utilisateur -->
         <div class="flex-1">
           <h4>Mes informations de connexion</h4>
-          <hr>
+          <hr role="presentation">
           <!-- EACH FIELDS -->
           <div
             v-for="field in fields"
@@ -129,7 +129,7 @@ const updateProfile = async (field: Field, newText: string) => {
                 {{ printField(field) }}
               </div>
             </div>
-            <hr class="fr-mt-1v">
+            <hr role="presentation" class="fr-mt-1v">
           </div>
           <!-- CHANGE PASSWORD -->
           <div class="flex flex-col one-col-height">
@@ -158,7 +158,7 @@ const updateProfile = async (field: Field, newText: string) => {
         <!-- Role de l'utilisateur -->
         <div class="flex-1">
           <h4>Mon role</h4>
-          <hr>
+          <hr role="presentation">
           <div class="flex flex-col one-col-height">
             <RoleBadge
               class="mb-5"
@@ -171,7 +171,7 @@ const updateProfile = async (field: Field, newText: string) => {
               <span> Contacter votre administrateur.</span>
             </div>
           </div>
-          <hr class="fr-mt-1v">
+          <hr role="presentation" class="fr-mt-1v">
           <div
             v-for="option in user?.role?.options"
             :key="option.demarche?.id"
@@ -193,7 +193,7 @@ const updateProfile = async (field: Field, newText: string) => {
                 {{ option.prefectures.map(p => p.substring(1)).join(", ") }}
               </div>
             </div>
-            <hr class="fr-mt-1v">
+            <hr role="presentation" class="fr-mt-1v">
           </div>
         </div>
       </div>

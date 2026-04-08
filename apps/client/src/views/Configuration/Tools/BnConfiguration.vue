@@ -117,7 +117,7 @@ const onSelected = (bnConfig: IBnConfigurationOutput) => {
       </div>
     </div>
 
-    <hr class="fr-mt-2w fr-mb-3w">
+    <hr role="presentation" class="fr-mt-2w fr-mb-3w">
 
     <div class="flex justify-between items-center">
       <div class="flex flex-row gap-2">
@@ -155,7 +155,7 @@ const onSelected = (bnConfig: IBnConfigurationOutput) => {
       />
     </div>
 
-    <hr class="fr-mt-1w fr-mb-3w">
+    <hr role="presentation" class="fr-mt-1w fr-mb-3w">
 
     <DsfrTable
       class="w-full text-center"

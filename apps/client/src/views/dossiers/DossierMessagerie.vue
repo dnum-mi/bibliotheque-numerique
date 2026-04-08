@@ -88,7 +88,7 @@ defineProps<DossierMessagerieProps>()
             </footer>
           </div>
         </div>
-        <hr class="fr-my-2w">
+        <hr role="presentation" class="fr-my-2w">
       </article>
     </div>
   </section>

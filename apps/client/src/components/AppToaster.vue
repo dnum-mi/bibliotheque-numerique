@@ -17,6 +17,8 @@ const close = (id: string) => emit('close-message', id)
       name="list"
       tag="div"
       class="toasters"
+      aria-live="polite"
+      aria-atomic="false"
     >
       <template
         v-for="message in messages"

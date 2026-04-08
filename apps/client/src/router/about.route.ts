@@ -6,4 +6,7 @@ export const aboutRoute: RouteRecordRaw = {
   name: routeNames.ABOUT,
   path: '/a-propos',
   component: () => import('@/views/AboutUs.vue'),
+  meta: {
+    title: 'À propos',
+  },
 }

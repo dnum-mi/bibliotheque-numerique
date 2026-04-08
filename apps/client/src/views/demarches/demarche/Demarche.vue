@@ -9,6 +9,7 @@ import DemarcheConfigurations from '@/views/demarches/demarche/configuration/Dem
 import DemarcheDossiers from '@/views/demarches/demarche/dossiers/DemarcheDossiers.vue'
 import DemarcheOptions from '@/views/demarches/demarche/options/DemarcheOptions.vue'
 import { getRandomString } from '@gouvminint/vue-dsfr'
+import { usePageTitle } from '@/composables/use-page-title'
 
 const props = defineProps<{ demarcheId: string; customDisplayId?: string }>()
 
@@ -33,12 +34,22 @@ const handleTabChanged = (newTabId?: string) => {
     demarcheDossiersKey.value = `demarche-dossiers-${getRandomString(5)}`
   }
 }
+
+const demarcheTitle = computed(() => {
+  if (!demarche.value) {
+    return ''
+  }
+  const number = demarche.value.dsDataJson?.number
+  return `${demarche.value.title} ${number ? `- N°${number}` : ''}`
+})
+
+usePageTitle(demarcheTitle)
 </script>
 
 <template>
   <LayoutList
     v-if="demarche"
-    :title="`${demarche.title} ${demarche.dsDataJson?.number ? `- N°${demarche.dsDataJson?.number}` : ''}`"
+    :title="demarcheTitle"
     title-bg-color="var(--artwork-minor-blue-france)"
     title-icon=""
   >

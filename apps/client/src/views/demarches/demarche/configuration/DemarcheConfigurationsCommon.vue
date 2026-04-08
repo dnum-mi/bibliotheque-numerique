@@ -231,7 +231,7 @@ const saveOneMappingColumnDebounced = useDebounceFn(saveOneMappingColumn, 300)
       <h4 class="fr-container">
         {{ selectedTitle }}
       </h4>
-      <hr>
+      <hr role="presentation">
       <div class="fr-container">
         <div
           v-for="([key, group]) of Object.entries(confParts)"

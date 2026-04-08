@@ -23,6 +23,7 @@ import type { LocalizationOptionsKeys } from './localization.enum'
 import UserRole from './UserRole.vue'
 import GeneratePasswordLinkModal from './GeneratePasswordLinkModal.vue'
 import { SUDO_VALIDATE_ACCOUNT } from '@/config'
+import { usePageTitle } from '@/composables/use-page-title'
 
 const props = defineProps<{ selectedEditableUser: IUserWithEditableRole }>()
 
@@ -344,6 +345,24 @@ const geographicalRights = computed<GeographicalRights | null>(() => {
       } as GeographicalRights,
     )
 })
+
+const pageTitle = computed(() => {
+  if (loading.value && !selectedUser.value?.email) {
+    return 'Chargement de l\'utilisateur...'
+  }
+
+  if (selectedUser.value?.firstname || selectedUser.value?.lastname) {
+    const fullName = `${selectedUser.value.firstname || ''} ${selectedUser.value.lastname || ''}`.trim()
+    return `Droits de ${fullName}`
+  }
+  if (selectedUser.value?.email) {
+    return `Droits de ${selectedUser.value.email}`
+  }
+
+  return 'Édition des droits utilisateur'
+})
+
+usePageTitle(pageTitle)
 
 const _updateGeographicalRight = async (optionLoc: { national?: boolean; prefecture?: IOnePrefectureUpdate }) => {
   if (!demarcheOrTypeSelected.value) {

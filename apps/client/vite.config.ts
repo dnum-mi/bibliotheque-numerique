@@ -23,7 +23,20 @@ const proxyTargetUrl = process.env.PROXY_TARGET_URL || 'http://localhost:3000'
 export default defineConfig({
   plugins: [
     vue(),
-    svgLoader(),
+    svgLoader({
+      svgoConfig: {
+        plugins: [
+          {
+            name: 'preset-default',
+            params: {
+              overrides: {
+                removeTitle: false,
+              },
+            },
+          },
+        ],
+      },
+    }),
     UnoCSS(),
     CommonJS(),
     AutoImport({

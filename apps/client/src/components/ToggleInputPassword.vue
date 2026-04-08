@@ -1,5 +1,5 @@
 <script setup lang="ts">
-withDefaults(defineProps<{
+const props = withDefaults(defineProps<{
   modelValue?: string
   passwordError?: string
   label?: string
@@ -18,6 +18,7 @@ defineEmits<{
 const tmpType = ref('password')
 const tmpTitle = computed(() => (tmpType.value === 'password' ? 'Afficher le mot de passe' : 'Masquer le mot de passe'))
 const eyeIcon = computed(() => (tmpType.value === 'password' ? 'fr-icon-eye-fill' : 'fr-icon-eye-off-fill'))
+const descriptionId = computed(() => props.passwordError ? 'password-error' : undefined)
 
 const togglePassword = () => {
   tmpType.value = tmpType.value === 'password' ? 'text' : 'password'
@@ -28,6 +29,7 @@ const togglePassword = () => {
   <DsfrInputGroup
     :is-valid="passwordError"
     :error-message="passwordError"
+    :description-id="descriptionId"
   >
     <div class="relative">
       <DsfrInput
@@ -38,6 +40,8 @@ const togglePassword = () => {
         label-visible
         placeholder="xxxxxx"
         required
+        :aria-invalid="!!passwordError"
+        :description-id="descriptionId"
         @update:model-value="$emit('update:modelValue', $event)"
       >
         <template #required-tip>
@@ -46,7 +50,7 @@ const togglePassword = () => {
       </DsfrInput>
       <button
         type="button"
-        class="btn  absolute  right-2  bottom-0  transform  translate-y-[-30%]"
+        class="btn absolute right-2 bottom-0 transform translate-y-[-30%]"
         @click.prevent="togglePassword"
       >
         <span

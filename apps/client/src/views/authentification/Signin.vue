@@ -151,11 +151,9 @@ const { value: passwordValue, errorMessage: passwordError } = useField<string>('
               </div>
             </div>
           </form>
-          <div v-if="proConnectUrl" class="separator">
-            <hr>
-            <span class="separator-or">ou</span>
-            <hr>
-          </div>
+          <p v-if="proConnectUrl" class="separator-or">
+            ou
+          </p>
           <div class="flex justify-center">
             <ProConnect
               v-if="proConnectUrl"
@@ -170,26 +168,35 @@ const { value: passwordValue, errorMessage: passwordError } = useField<string>('
 </template>
 
 <style scoped>
-.separator {
+.separator-or {
+  font-size: .875rem;
+  line-height: 1.5rem;
+  text-transform: uppercase;
+  font-weight: 700;
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
-  margin: 1rem 0;
-  margin-bottom: 0px;
-  gap: 0.5rem;
-
+  flex-wrap: nowrap;
+  color: #767676;
 }
 
-.separator hr {
-  flex: 1;
-  margin: 0;
-  border: 0;
-  border-top: 1px solid #ccc;
+.separator-or::before, .separator-or::after {
+  content: "";
+  display: inline-flex;
+  height: 1px;
+  width: 100%;
+  background-color: var(--border-default-grey);
+  --idle: transparent;
+  --hover: var(--border-default-grey-hover);
+  --active: var(--border-default-grey-active);
 }
 
-.separator-or {
-  margin-bottom: 16px;
-  font-weight: bold;
-  color: #999;
+.separator-or::before {
+  margin-right: .75rem;
+}
+
+.separator-or::after {
+  margin-left: .75rem;
 }
 </style>

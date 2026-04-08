@@ -6,6 +6,10 @@ body,
   height: 100%;
 }
 
+:root {
+  --blue-france-main-bn: #4E4ED8;
+}
+
 .ag-theme-alpine {
   --ag-selected-tab-underline-width: 2px;
   --ag-selected-tab-underline-transition-speed: 0.5s;

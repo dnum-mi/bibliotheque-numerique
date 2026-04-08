@@ -44,6 +44,7 @@ export const organismeRoute: RouteRecordRaw = {
       path: '',
       component: () => import('@/views/organismes/SearchOrganisme.vue'),
       meta: {
+        title: 'Recherche d\'organismes',
         roleLevel: Roles.instructor,
       },
       ...(!IS_OPEN_SOURCE ? { name: routeNames.DEFAULT, alias: '/' } : {}),
@@ -59,6 +60,7 @@ export const organismeRoute: RouteRecordRaw = {
         }
       },
       meta: {
+        title: 'Fiche organisme',
         roleLevel: Roles.instructor,
       },
       beforeEnter,

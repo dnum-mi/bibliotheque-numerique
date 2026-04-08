@@ -3,6 +3,7 @@ import { eIdentificationDemarche } from '@biblio-num/shared'
 import type { IBasicOrganisme, IDossierFieldsOutput } from '@biblio-num/shared'
 
 import { routeNames } from '@/router/route-names'
+import { usePageTitle } from '@/composables/use-page-title'
 
 type DossierHeaderProps = {
   dossier: IDossierFieldsOutput
@@ -21,6 +22,17 @@ const goToOrganisme = () => {
 }
 
 const isMaarch = computed(() => dossier.demarche.identification === eIdentificationDemarche.MAARCH)
+
+const dossierNumber = computed(() => {
+  if (!dossier) {
+    return ''
+  }
+  return `${isMaarch.value ? 'N° Courrier' : 'N° DS'} - ${dossier.sourceId}`
+})
+
+const pageTitle = computed(() => `${dossierNumber.value} ${dossier.demarche?.title}`)
+
+usePageTitle(pageTitle)
 </script>
 
 <template>
@@ -35,7 +47,7 @@ const isMaarch = computed(() => dossier.demarche.identification === eIdentificat
       </h2>
 
       <div class="flex gap-2 text-sm">
-        <strong class="font-bold">{{ isMaarch ? 'N° Courrier' : 'N° DS' }} - {{ dossier.sourceId }}</strong>
+        <strong class="font-bold">{{ dossierNumber }}</strong>
         <span>{{ dossier.demarche?.title }}</span>
       </div>
     </div>

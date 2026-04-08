@@ -7,6 +7,7 @@ export const accessibilityRoute: RouteRecordRaw = {
   path: '/accessibility',
   component: () => import('@/views/Accessibility.vue'),
   meta: {
+    title: 'Accessibilité',
     skipAuth: true,
   },
 }

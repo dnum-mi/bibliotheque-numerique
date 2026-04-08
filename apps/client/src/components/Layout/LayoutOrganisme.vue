@@ -22,9 +22,9 @@ withDefaults(defineProps<{
         <slot name="sidebar" />
       </aside>
 
-      <main class="flex h-full w-full fr-col-9 fr-col-xl-10 fr-mb-2w">
+      <div class="flex h-full w-full fr-col-9 fr-col-xl-10 fr-mb-2w">
         <slot name="content" />
-      </main>
+      </div>
     </div>
   </div>
 </template>

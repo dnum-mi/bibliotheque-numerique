@@ -83,7 +83,7 @@ const messagesTitle = computed(() => {
 <template>
   <div class="flex flex-grow h-full overflow-hidden">
     <LayoutFiche
-      title-bg-color="var(--blue-france-main-525)"
+      title-bg-color="var(--blue-france-main-bn)"
       title-fg-color="var(--text-inverted-grey)"
     >
       <template

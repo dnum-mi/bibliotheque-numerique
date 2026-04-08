@@ -12,6 +12,7 @@ export const demarchesRoutes: RouteRecordRaw = {
       name: routeNames.DEMARCHES,
       component: () => import('@/views/demarches/list/Demarches.vue'),
       meta: {
+        title: 'Démarches',
         roleLevel: Roles.instructor,
       },
       ...(IS_OPEN_SOURCE ? { name: routeNames.DEFAULT, alias: '/' } : {}),
@@ -25,6 +26,7 @@ export const demarchesRoutes: RouteRecordRaw = {
         customDisplayId: route.query.customDisplayId,
       }),
       meta: {
+        title: 'Démarche - Dossiers',
         roleLevel: Roles.instructor,
         needsDemarchesId: true,
       },
