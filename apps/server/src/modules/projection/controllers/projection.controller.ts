@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Post,
 } from '@nestjs/common'
@@ -7,6 +8,7 @@ import { Role } from '@/modules/users/providers/decorators/role.decorator'
 import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.decorator'
 import { Roles } from '@biblio-num/shared'
 import { ProjectionManagerService } from '@/modules/projection/services/projection-manager/projection-manager.service'
+import { ProjectionInitInputDto } from '../objects/dtos/projection-init-input.dto'
 
 @Controller('projections')
 export class ProjectionController {
@@ -25,8 +27,10 @@ export class ProjectionController {
     minimumRole: Roles.sudo,
     responseType: null,
   })
-  async initProjection(): Promise<void> {
+  async initProjection(
+    @Body() dto: ProjectionInitInputDto,
+  ): Promise<void> {
     this.logger.verbose('===> Init projections !!')
-    await this.projectionManager.InitFirsTime()
+    await this.projectionManager.InitFirsTime(!!dto.force)
   }
 }
