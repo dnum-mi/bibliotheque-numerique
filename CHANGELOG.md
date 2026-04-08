@@ -1,5 +1,16 @@
 # Changelog
 
+## [5.9.3](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.9.2...v5.9.3) (2026-04-08)
+
+
+### Bug Fixes
+
+* **Correction Accessibilitée:** partie 1 ([#2210](https://github.com/dnum-mi/bibliotheque_numerique/issues/2210)) ([2f93fd0](https://github.com/dnum-mi/bibliotheque_numerique/commit/2f93fd0a62ed03722506dd0b806f97de4a082c37))
+* hors delais ([b19d9bd](https://github.com/dnum-mi/bibliotheque_numerique/commit/b19d9bd4d7454105123010de8c877ea5696603e9))
+* masquer les types inutilisés sur les filtres de la liste démarches ([bf3fadf](https://github.com/dnum-mi/bibliotheque_numerique/commit/bf3fadf18064eeb32905d1095477ab0c28cd74aa))
+* **members:** refonte de l'affichage de l'onglet dirigeants ([#2313](https://github.com/dnum-mi/bibliotheque_numerique/issues/2313)) ([d467a8e](https://github.com/dnum-mi/bibliotheque_numerique/commit/d467a8eaeb65ba94907b977aa08fb52e87c54a92))
+* renommer les propriétés des dépôts comptes ([179da77](https://github.com/dnum-mi/bibliotheque_numerique/commit/179da779a8dd83ef016f7c5a68d25b3104b12712))
+
 ## [5.9.2](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.9.1...v5.9.2) (2026-04-02)
 
 
