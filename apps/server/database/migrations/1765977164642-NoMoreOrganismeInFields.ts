@@ -33,7 +33,7 @@ export class NoMoreOrganismeInFields1765977164642 implements MigrationInterface 
               WHEN f."formatFunctionRef" = 'rna'
                 THEN substring(f."stringValue" FROM '(W[0-9][0-9A-Z]{2}[0-9]{6})')
               WHEN f."formatFunctionRef" = 'rnf'
-                THEN substring(f."stringValue" FROM '([0-9]{3}-[A-Z]{3,4}-[0-9]{5}-[0-9]{2})')
+                THEN substring(f."stringValue" FROM '([0-9]{3}-[A-Z]{2,4}-[0-9]{5}-[0-9]{2})')
               ELSE NULL
               END AS "orgRef"
           FROM "fields" f
