@@ -9,10 +9,10 @@ import { IS_ASSOCIATIONS_ENABLED, IS_OPEN_SOURCE } from '@/config'
 import { useOrganismeHubStore } from '../stores/organisme-hub'
 import useToaster from '../composables/use-toaster'
 
-const isAssociation = (param?: string | string[]) => {
-  const id = Array.isArray(param) ? param[0] : param
-  return id ? id.startsWith('W') : false
+const isAssociation = (param?: string) => {
+  return param ? param.startsWith('W') : false
 }
+
 const beforeEnter = async (to: RouteLocationNormalized, from: RouteLocationNormalizedLoaded, next: NavigationGuardNext) => {
   const toaster = useToaster()
   const id = to.params.id as string
