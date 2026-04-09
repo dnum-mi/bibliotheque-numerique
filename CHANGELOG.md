@@ -1,5 +1,14 @@
 # Changelog
 
+## [5.9.4](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.9.3...v5.9.4) (2026-04-09)
+
+
+### Bug Fixes
+
+* correction regex incorrection pour la migration de field des organismes ([df8b1ea](https://github.com/dnum-mi/bibliotheque_numerique/commit/df8b1ea561986caa0a930aafdc8ee9dbf2e26f77))
+* endppoint pour reconstruire les projections ([1a835c3](https://github.com/dnum-mi/bibliotheque_numerique/commit/1a835c317362035a2ce14a4e17f8badff48a382c))
+* migration pour supprimer le mot 'ERROR-' dans les fields des organsimes ([e0ac842](https://github.com/dnum-mi/bibliotheque_numerique/commit/e0ac8429a01e38b10dab1d6e83975431e8e9c618))
+
 ## [5.9.3](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.9.2...v5.9.3) (2026-04-08)
 
 
