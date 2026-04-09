@@ -1,6 +1,7 @@
 import {
   maarchChampsLabel,
   MaarchEtatsValides,
+  maarchExtraFields,
   maarchPJLabel,
 } from '@/modules/demarches/objects/constants/maarch-champ.enum'
 import {
@@ -29,8 +30,11 @@ export class CsvProcessorService {
       files.annotations && files.annotations.length > 0
         ? files.annotations[0]
         : undefined
+    const accusesReceptionFile = files.accusesReception && files.accusesReception.length > 0
+      ? files.accusesReception[0]
+      : undefined
 
-    this._validateFiles(demandesFile, annotationsFile)
+    this._validateFiles(demandesFile, annotationsFile, accusesReceptionFile)
 
     const demandesData = this._parseCsv(demandesFile.buffer)
     if (!demandesData || demandesData.length === 0) {
@@ -45,6 +49,7 @@ export class CsvProcessorService {
     }
 
     let annotationsMap = new Map<number, string[]>()
+    let accusesReceptionMap = new Map<number, CsvRow[]>()
 
     if (annotationsFile) {
       const annotationsData = this._parseCsv(annotationsFile.buffer)
@@ -53,9 +58,16 @@ export class CsvProcessorService {
       }
     }
 
+    if (accusesReceptionFile) {
+      const accusesReceptionData = this._parseCsv(accusesReceptionFile.buffer)
+      if (accusesReceptionData && accusesReceptionData.length > 0) {
+        accusesReceptionMap = this._groupAccusesReception(accusesReceptionData)
+      }
+    }
+
     const demandesMap = this._groupDemandes(finalDemandesData)
 
-    const mergedData = this._mergeData(demandesMap, annotationsMap)
+    const mergedData = this._mergeData(demandesMap, annotationsMap, accusesReceptionMap)
 
     return mergedData
   }
@@ -71,15 +83,20 @@ export class CsvProcessorService {
       columns: true,
       delimiter: ';',
       skip_empty_lines: true,
+      bom: true,
     })
   }
 
   private _validateFiles(
     demandesFile: Express.Multer.File,
     annotationsFile?: Express.Multer.File,
+    accusesReceptionFile?: Express.Multer.File,
   ): void {
     if (annotationsFile) {
       this._validateAnnotationsFile(annotationsFile)
+    }
+    if (accusesReceptionFile) {
+      this._validateAccusesReceptionFile(accusesReceptionFile)
     }
     this._validateDemandesFile(demandesFile)
   }
@@ -92,6 +109,15 @@ export class CsvProcessorService {
       throw new BadRequestException(
         'Annotations file must contain a "res_id" column.',
       )
+    }
+  }
+
+  private _validateAccusesReceptionFile(file: Express.Multer.File): void {
+    const content = file.buffer.toString('utf-8')
+    const header = content.split('\n')[0]
+
+    if (!header.includes('res_id') || !header.includes('filename')) {
+      throw new BadRequestException('Accuses Reception file must contain "res_id" and "filename".')
     }
   }
 
@@ -200,6 +226,7 @@ export class CsvProcessorService {
       ...baseDemande,
       pieces_jointes: pieceJointe ? [pieceJointe] : [],
       annotations: [],
+      accuses_reception: [],
     }
 
     demandesMap.set(courrierId, nouvelleDemande)
@@ -222,17 +249,32 @@ export class CsvProcessorService {
     return annotationsMap
   }
 
+  private _groupAccusesReception(accusesReception: CsvRow[]): Map<number, CsvRow[]> {
+    const accusesReceptionMap = new Map<number, CsvRow[]>()
+
+    for (const accuse of accusesReception) {
+      const resId = parseInt(accuse.res_id, 10)
+      if (isNaN(resId)) continue
+
+      if (!accusesReceptionMap.has(resId)) {
+        accusesReceptionMap.set(resId, [])
+      }
+
+      accusesReceptionMap.get(resId).push(accuse)
+    }
+
+    return accusesReceptionMap
+  }
+
   private _mergeData(
     demandesMap: Map<number, DemandeAggregee>,
     annotationsMap: Map<number, string[]>,
+    accusesReceptionMap: Map<number, CsvRow[]>,
   ): DemandeAggregee[] {
-    annotationsMap.forEach((annotationsList, resId) => {
-      const demande = demandesMap.get(resId)
-      if (demande) {
-        demande[maarchChampsLabel.annotation] = annotationsList
-      }
+    demandesMap.forEach((demande, resId) => {
+      demande[maarchChampsLabel.annotation] = annotationsMap.get(resId) || []
+      demande[maarchExtraFields.accusesReception] = accusesReceptionMap.get(resId) || []
     })
-
     return Array.from(demandesMap.values())
   }
 }

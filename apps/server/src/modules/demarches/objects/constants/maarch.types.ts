@@ -3,6 +3,7 @@ import { type Express } from 'express'
 export interface ImportFiles {
   demandes: Express.Multer.File[]
   annotations?: Express.Multer.File[]
+  accusesReception?: Express.Multer.File[]
 }
 
 export interface ImportResult {
@@ -18,6 +19,7 @@ export type CsvRow = {
 export interface DemandeAggregee extends CsvRow {
   pieces_jointes: CsvRow[]
   annotations: string[]
+  accuses_reception: CsvRow[]
 }
 
 export interface CsvParseOptions {

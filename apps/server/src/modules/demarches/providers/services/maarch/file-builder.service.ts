@@ -3,7 +3,9 @@ import {
   fieldPjIntitule,
 } from '@/modules/demarches/objects/constants/maarch-champ.dictionary'
 import {
+  maarchAccuseLabel,
   maarchChampsLabel,
+  maarchExtraFields,
   maarchPJLabel,
 } from '@/modules/demarches/objects/constants/maarch-champ.enum'
 import {
@@ -23,6 +25,7 @@ import { v4 as uuidv4 } from 'uuid'
 export class FileBuilderService {
   private readonly FOLDER_COURRIER: string
   private readonly FOLDER_PJ: string
+  private readonly FOLDER_ACCUSE_RECEPTION: string
   private readonly S3_ROOT_PATH: string
   private readonly TAG_MAPPINGS = {
     statut: eFileTag.status,
@@ -52,19 +55,28 @@ export class FileBuilderService {
     this.S3_ROOT_PATH = this.configService.get('file.maarchImportRootPath')
     this.FOLDER_COURRIER = this.configService.get('file.maarchImportFolderCourrier')
     this.FOLDER_PJ = this.configService.get('file.maarchImportFolderPieceJointe')
+    this.FOLDER_ACCUSE_RECEPTION = this.configService.get('file.maarchImportFolderAccuseReception')
   }
 
   createFileEntities(data: DemandeAggregee): File[] {
     const allFiles: File[] = []
 
-    const piecesJointes = this.extractPiecesJointes(data)
-
+    const piecesJointes = this._extractPiecesJointes(data)
     if (piecesJointes) {
       const pjFiles = piecesJointes
         .map((pj) => this._createPjFileEntity(pj))
         .filter((file) => file !== null) as File[]
 
       allFiles.push(...pjFiles)
+    }
+
+    const accusesReception = this._extractAccusesReception(data)
+    if (accusesReception) {
+      const accusesReceptionFiles = accusesReception
+        .map((accuse) => this._createAccuseReceptionFileEntity(accuse))
+        .filter((file) => file !== null) as File[]
+
+      allFiles.push(...accusesReceptionFiles)
     }
 
     const courrierFile = this._createCourrierFileEntity(data)
@@ -75,7 +87,7 @@ export class FileBuilderService {
     return allFiles
   }
 
-  private extractPiecesJointes(data: DemandeAggregee): CsvRow[] | null {
+  private _extractPiecesJointes(data: DemandeAggregee): CsvRow[] | null {
     const piecesJointes = data[maarchChampsLabel.piecesJointes] as CsvRow[]
 
     if (!Array.isArray(piecesJointes)) {
@@ -83,6 +95,15 @@ export class FileBuilderService {
     }
 
     return piecesJointes
+  }
+
+  private _extractAccusesReception(data: DemandeAggregee): CsvRow[] | null {
+    const accusesReceptionFiles = data[maarchExtraFields.accusesReception] as CsvRow[]
+    if (!Array.isArray(accusesReceptionFiles)) {
+      return null
+    }
+
+    return accusesReceptionFiles
   }
 
   private _createPjFileEntity(pieceJointe: CsvRow): File | null {
@@ -150,6 +171,39 @@ export class FileBuilderService {
     return file
   }
 
+  private _createAccuseReceptionFileEntity(accuse: CsvRow): File | null {
+    if (!this._isValidAccuseReception(accuse)) {
+      this.logger.debug('Aucun fichier accusé de réception attaché.')
+      return null
+    }
+
+    const file = new File()
+    const filePath = accuse[maarchAccuseLabel.path]
+    const originalFileName = accuse[maarchAccuseLabel.filename]
+    const pdfFileName = this._forceExtension(originalFileName, eFileExtension.pdf)
+
+    file.uuid = uuidv4()
+    file.label = pdfFileName
+    file.originalLabel = pdfFileName
+    file.sourceUploadedAt = accuse[maarchAccuseLabel.sendDate]
+      ? new Date(accuse[maarchAccuseLabel.sendDate])
+      : new Date()
+    file.sourcePath = this._buildS3Path({
+      subFolder: this.FOLDER_ACCUSE_RECEPTION,
+      csvPath: filePath,
+      fileName: pdfFileName,
+    })
+    file.tag = eFileTag.other
+    file.checksum = generateChecksum(file.label)
+    file.byteSize = 0
+    file.state = eState.queued
+    file.mimeType = eFileExtension.pdf
+    file.sourceLabel = eFileSourceLabel.maarch
+    file.sourceStringId = fieldPjIntitule.id
+
+    return file
+  }
+
   private _isValidPieceJointe(pieceJointe: CsvRow): boolean {
     return (
       !!pieceJointe[maarchPJLabel.nomPj] &&
@@ -161,6 +215,13 @@ export class FileBuilderService {
     return (
       !!data[maarchChampsLabel.nomCourrier] &&
       !!data[maarchChampsLabel.cheminCourrier]
+    )
+  }
+
+  private _isValidAccuseReception(accuse: CsvRow): boolean {
+    return (
+      !!accuse[maarchAccuseLabel.filename] &&
+      !!accuse[maarchAccuseLabel.path]
     )
   }
 

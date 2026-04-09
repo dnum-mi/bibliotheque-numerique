@@ -32,8 +32,20 @@ export const maarchPJLabel = {
   nomPj: 'nom_pj',
 }
 
+export const maarchAccuseLabel = {
+  resId: 'res_id',
+  sendDate: 'send_date',
+  docserverId: 'docserver_id',
+  path: 'path',
+  filename: 'filename',
+} as const
+
 export const maarchAnnotationLabel = {
   annotationText: 'annotation_text',
+}
+
+export const maarchExtraFields = {
+  accusesReception: 'accuses_reception',
 }
 
 export const maarchEtatsArray = ['REJ', 'VAL', 'SSUITE'] as const

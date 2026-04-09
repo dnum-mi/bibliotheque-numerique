@@ -217,6 +217,11 @@ export class DemarcheController {
           format: 'binary',
           description: 'Le fichier CSV contenant les annotations.',
         },
+        accusesReception: {
+          type: 'string',
+          format: 'binary',
+          description: 'Le fichier CSV contenant les accusés de réception.',
+        },
       },
     },
   })
@@ -224,6 +229,7 @@ export class DemarcheController {
     FileFieldsInterceptor([
       { name: 'demandes', maxCount: 1 },
       { name: 'annotations', maxCount: 1 },
+      { name: 'accusesReception', maxCount: 1 },
     ]),
   )
   @HttpCode(201)
