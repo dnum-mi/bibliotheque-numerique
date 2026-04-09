@@ -33,6 +33,7 @@ describe('FieldBuilderService', () => {
       original_field: value,
       pieces_jointes: [],
       annotations: [],
+      accuses_reception: []
     })
 
     it('should create a simple string field', () => {
@@ -103,6 +104,7 @@ describe('FieldBuilderService', () => {
         different_field: 'value',
         pieces_jointes: [],
         annotations: [],
+        accuses_reception: []
       }
       const result = service.createSimpleField(baseMappingColumn, data, emptyMap)
 
@@ -205,12 +207,13 @@ describe('FieldBuilderService', () => {
     }
 
     it('should create parent and child fields', () => {
-      const data = {
+      const data: DemandeAggregee = {
         pieces_jointes: [
           { nom_fichier: 'doc1.pdf', taille: 1024 },
           { nom_fichier: 'doc2.pdf', taille: 2048 },
         ],
-        annotations: []
+        annotations: [],
+        accuses_reception: []
       }
 
       const result = service.createRepeatableFields(parentMapping, data, emptyMap)
@@ -240,7 +243,7 @@ describe('FieldBuilderService', () => {
     })
 
     it('should return null for empty array', () => {
-      const data = { pieces_jointes: [], annotations: [] }
+      const data: DemandeAggregee = { pieces_jointes: [], annotations: [], accuses_reception: [] }
       const result = service.createRepeatableFields(parentMapping, data, emptyMap)
 
       expect(result).toBeNull()
@@ -252,7 +255,8 @@ describe('FieldBuilderService', () => {
           { nom_fichier: 'doc1.pdf', taille: null },
           { nom_fichier: null, taille: 2048 },
         ],
-        annotations: []
+        annotations: [],
+        accuses_reception: []
       }
 
       const result = service.createRepeatableFields(parentMapping, data, emptyMap)
@@ -275,9 +279,10 @@ describe('FieldBuilderService', () => {
       }
 
       const testDate = new Date('2024-01-15')
-      const data = {
+      const data: DemandeAggregee = {
         pieces_jointes: [{ date_creation: testDate }],
-        annotations: []
+        annotations: [],
+        accuses_reception: []
       }
 
       const result = service.createRepeatableFields(mappingWithDate, data, emptyMap)
@@ -292,9 +297,10 @@ describe('FieldBuilderService', () => {
 
     it('should handle missing child mappings', () => {
       const mappingNoChildren = { ...parentMapping, children: undefined }
-      const data = {
+      const data: DemandeAggregee = {
         pieces_jointes: [{ nom_fichier: 'test.pdf' }],
         annotations: [],
+        accuses_reception: []
       }
 
       const result = service.createRepeatableFields(mappingNoChildren, data, emptyMap)
@@ -304,9 +310,10 @@ describe('FieldBuilderService', () => {
     })
 
     it('should set correct parent relationships', () => {
-      const data = {
+      const data: DemandeAggregee = {
         pieces_jointes: [{ nom_fichier: 'doc.pdf', taille: 1024 }],
         annotations: [],
+        accuses_reception: []
       }
 
       const result = service.createRepeatableFields(parentMapping, data, emptyMap)
@@ -333,9 +340,10 @@ describe('FieldBuilderService', () => {
         ],
       }
 
-      const data = {
+      const data: DemandeAggregee = {
         pieces_jointes: [{ is_validated: true }, { is_validated: false }],
-        annotations: []
+        annotations: [],
+        accuses_reception: []
       }
 
       const result = service.createRepeatableFields(mappingWithBoolean, data, emptyMap)
@@ -361,7 +369,7 @@ describe('FieldBuilderService', () => {
         ],
       }
 
-      const data = {
+      const data: DemandeAggregee = {
         complex_data: [
           {
             field1: 'value1',
@@ -377,7 +385,8 @@ describe('FieldBuilderService', () => {
           },
         ],
         pieces_jointes: [],
-        annotations: []
+        annotations: [],
+        accuses_reception: []
       }
 
       const result = service.createRepeatableFields(complexMapping, data, emptyMap)
@@ -414,7 +423,8 @@ describe('FieldBuilderService', () => {
         pieces_jointes: [
           { [maarchPJLabel.nomPj]: pjName },
         ],
-        annotations: []
+        annotations: [],
+        accuses_reception: []
       }
 
       const uuidMap = new Map<string, string>()
@@ -428,6 +438,36 @@ describe('FieldBuilderService', () => {
       const childField = result![1]
       expect(childField.type).toBe(FieldType.file)
       expect(childField.stringValue).toBe(pjUuid)
+    })
+
+    it('should handle repeatable fields for Accusés de Réception', () => {
+      const mappingAccuses: MappingColumn = {
+        id: 'accuse-parent',
+        originalLabel: 'accuses_reception',
+        columnLabel: 'Accusés',
+        type: FieldType.string,
+        source: FieldSource.champs,
+        children: [{
+          id: 'accuse-file',
+          originalLabel: 'filename',
+          type: FieldType.file,
+          source: FieldSource.champs,
+        }],
+      }
+
+      const data: DemandeAggregee = {
+        pieces_jointes: [],
+        annotations: [],
+        accuses_reception: [
+          { filename: 'accuse1.html', path: 'path1' },
+          { filename: 'accuse2.html', path: 'path2' }
+        ]
+      }
+
+      const result = service.createRepeatableFields(mappingAccuses, data, emptyMap)
+
+      expect(result).toHaveLength(3)
+      expect(result![1].parent).toBe(result![0])
     })
   })
 })

@@ -7,6 +7,7 @@ import { eFileExtension, eFileTag, eState } from '@biblio-num/shared'
 import { fieldCourrierFileIntitule, fieldPjIntitule } from '@/modules/demarches/objects/constants/maarch-champ.dictionary'
 import { createHash } from 'crypto'
 import { ConfigService } from '@nestjs/config'
+import { DemandeAggregee } from '@/modules/demarches/objects/constants/maarch.types'
 
 describe('FileBuilderService', () => {
   let service: FileBuilderService
@@ -16,6 +17,7 @@ describe('FileBuilderService', () => {
   const MOCK_ROOT_PATH = 'import-maarch-pj'
   const MOCK_COURRIER_PATH = 'manual'
   const MOCK_PJ_PATH = 'manual_attachements'
+  const MOCK_ACCUSE_FOLDER = 'ACKNOWLEDGEMENT_RECEIPTS'
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -36,6 +38,8 @@ describe('FileBuilderService', () => {
                   return MOCK_COURRIER_PATH
                 case 'file.maarchImportRootPath':
                   return MOCK_ROOT_PATH
+                case 'file.maarchImportFolderAccuseReception':
+                  return MOCK_ACCUSE_FOLDER
                 default:
                   return null
               }
@@ -56,7 +60,7 @@ describe('FileBuilderService', () => {
 
   describe('createFileEntities', () => {
     it('should create file entities from valid pieces jointes data', () => {
-      const data = {
+      const data: DemandeAggregee = {
         pieces_jointes: [
           {
             nom_pj: 'document.pdf',
@@ -72,6 +76,7 @@ describe('FileBuilderService', () => {
           },
         ],
         annotations: [],
+        accuses_reception: [],
       }
 
       const result = service.createFileEntities(data)
@@ -100,13 +105,14 @@ describe('FileBuilderService', () => {
     })
 
     it('should create a file entity for the courrier HTML', () => {
-      const data = {
+      const data: DemandeAggregee = {
         pieces_jointes: [],
         annotations: [],
         date_creation_courrier: new Date('2024-03-10'),
         nom_courrier: 'courrier_123.html',
         chemin_courrier: '2024/03/courriers',
         'n°5datedeclaration': new Date('2024-03-10'),
+        accuses_reception: [],
       }
 
       const result = service.createFileEntities(data)
@@ -125,7 +131,7 @@ describe('FileBuilderService', () => {
     })
 
     it('should combine pieces jointes and courrier', () => {
-      const data = {
+      const data: DemandeAggregee = {
         pieces_jointes: [
           {
             nom_pj: 'pj1.pdf',
@@ -136,6 +142,7 @@ describe('FileBuilderService', () => {
         nom_courrier: 'courrier.html',
         chemin_courrier: 'path/courrier',
         annotations: [],
+        accuses_reception: [],
       }
 
       const result = service.createFileEntities(data)
@@ -151,7 +158,7 @@ describe('FileBuilderService', () => {
     })
 
     it('should skip files without nom_pj OR chemin_pj', () => {
-      const data = {
+      const data: DemandeAggregee = {
         pieces_jointes: [
           {
             nom_pj: 'valid.pdf',
@@ -174,6 +181,7 @@ describe('FileBuilderService', () => {
           },
         ],
         annotations: [],
+        accuses_reception: [],
       }
 
       const result = service.createFileEntities(data)
@@ -187,7 +195,7 @@ describe('FileBuilderService', () => {
       const hash = createHash('sha256')
       const expectedChecksum = hash.update(label).digest('hex')
 
-      const data = {
+      const data: DemandeAggregee = {
         pieces_jointes: [
           {
             nom_pj: 'test.pdf',
@@ -196,6 +204,7 @@ describe('FileBuilderService', () => {
           },
         ],
         annotations: [],
+        accuses_reception: [],
       }
 
       const result = service.createFileEntities(data)
@@ -213,7 +222,7 @@ describe('FileBuilderService', () => {
       ]
 
       testCases.forEach(({ intitule, expectedTag }) => {
-        const data = {
+        const data: DemandeAggregee = {
           pieces_jointes: [
             {
               nom_pj: 'test.pdf',
@@ -222,6 +231,7 @@ describe('FileBuilderService', () => {
             },
           ],
           annotations: [],
+          accuses_reception: [],
         }
 
         const result = service.createFileEntities(data)
@@ -230,7 +240,7 @@ describe('FileBuilderService', () => {
     })
 
     it('should set correct metadata for all files (state queued)', () => {
-      const data = {
+      const data: DemandeAggregee = {
         pieces_jointes: [
           {
             nom_pj: 'test.pdf',
@@ -240,6 +250,7 @@ describe('FileBuilderService', () => {
           },
         ],
         annotations: [],
+        accuses_reception: [],
       }
 
       const result = service.createFileEntities(data)
@@ -254,14 +265,43 @@ describe('FileBuilderService', () => {
     })
 
     it('should handle empty array of pieces jointes and no courrier', () => {
-      const data = {
+      const data: DemandeAggregee = {
         pieces_jointes: [],
         annotations: [],
+        accuses_reception: [],
       }
 
       const result = service.createFileEntities(data)
 
       expect(result).toEqual([])
+    })
+
+    it('should create file entities for accuses_reception', () => {
+      const sendDate = new Date('2021-12-01T16:42:24')
+      const data: DemandeAggregee = {
+        pieces_jointes: [],
+        annotations: [],
+        accuses_reception: [
+          {
+            res_id: '6',
+            send_date: sendDate,
+            docserver_id: MOCK_ACCUSE_FOLDER,
+            path: '2021/12/0001/',
+            filename: '0001_391259465.html'
+          }
+        ]
+      }
+
+      const result = service.createFileEntities(data)
+
+      expect(result).toHaveLength(1)
+      const accuse = result[0]
+
+      expect(accuse.originalLabel).toBe('0001_391259465.pdf')
+      expect(accuse.label).toContain('0001_391259465.pdf')
+      expect(accuse.sourcePath).toBe(`${MOCK_ROOT_PATH}/${MOCK_ACCUSE_FOLDER}/2021/12/0001/0001_391259465.pdf`)
+      expect(accuse.state).toBe(eState.queued)
+      expect(accuse.sourceUploadedAt).toEqual(sendDate)
     })
   })
 })

@@ -11,6 +11,7 @@ import { Field } from '@/modules/dossiers/objects/entities/field.entity'
 import { File } from '@/modules/files/objects/entities/file.entity'
 import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
 import { DossierState } from '@dnum-mi/ds-api-client'
+import { DemandeAggregee } from '@/modules/demarches/objects/constants/maarch.types'
 
 describe('DossierTransformerService', () => {
   let service: DossierTransformerService
@@ -78,12 +79,14 @@ describe('DossierTransformerService', () => {
         [maarchChampsLabel.prefecture]: 'D75',
         pieces_jointes: [],
         annotations: [],
+        accuses_reception: [],
       },
       {
         [maarchChampsLabel.etatDossier]: DossierState.SansSuite,
         [maarchChampsLabel.prefecture]: 'D92',
         pieces_jointes: [],
         annotations: [],
+        accuses_reception: [],
       },
     ]
 
@@ -170,6 +173,7 @@ describe('DossierTransformerService', () => {
           [maarchChampsLabel.prefecture]: null,
           pieces_jointes: [],
           annotations: [],
+          accuses_reception: [],
         },
       ]
 
@@ -213,6 +217,7 @@ describe('DossierTransformerService', () => {
           ],
           annotations: ['Note 1', 'Note 2', 'Note 3'],
           customField: 'customValue',
+          accuses_reception: []
         },
       ]
 
@@ -236,6 +241,55 @@ describe('DossierTransformerService', () => {
 
       expect(result[0]).toBeDefined()
       expect(mockFieldBuilder.createRepeatableFields).toHaveBeenCalled()
+    })
+
+    it('should correctly pass accuses_reception to fileBuilder', async () => {
+      const dataWithAccuses: DemandeAggregee[] = [{
+        ...mockAggregatedData[0],
+        accuses_reception: [{ filename: 'accuse.html', res_id: '123' }]
+      }]
+
+      await service.transformToEntities(dataWithAccuses, mockDemarche)
+
+      expect(mockFileBuilder.createFileEntities).toHaveBeenCalledWith(dataWithAccuses[0])
+    })
+
+    it('should handle dossiers with multiple files (PJ + Accusés)', async () => {
+      const mockFilePJ = Object.assign(new File(), { originalLabel: 'pj.pdf', uuid: 'u1' })
+      const mockFileAccuse = Object.assign(new File(), { originalLabel: 'accuse.html', uuid: 'u2' })
+
+      mockFileBuilder.createFileEntities.mockReturnValue([mockFilePJ, mockFileAccuse])
+
+      const result = await service.transformToEntities(
+        [mockAggregatedData[0]],
+        mockDemarche,
+      )
+
+      expect(result[0].files).toHaveLength(2)
+      expect(mockFieldBuilder.createSimpleField).toHaveBeenCalled()
+    })
+
+    it('should handle null prefecture and empty extras', async () => {
+      mockDataFormatter.getPrefectureKey.mockReturnValue(null)
+
+      const dataWithEmptyExtras: DemandeAggregee[] = [
+        {
+          [maarchChampsLabel.prefecture]: null,
+          [maarchChampsLabel.etatDossier]: DossierState.Accepte,
+          [maarchChampsLabel.courrier]: '1',
+          pieces_jointes: [],
+          annotations: [],
+          accuses_reception: [],
+        },
+      ]
+
+      const result = await service.transformToEntities(
+        dataWithEmptyExtras,
+        mockDemarche,
+      )
+
+      expect(result[0].prefecture).toBeNull()
+      expect(result[0].files).toBeDefined()
     })
   })
 })
