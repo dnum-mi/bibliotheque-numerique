@@ -109,7 +109,7 @@ describe('CsvProcessorService', () => {
       }
 
       expect(() => service.processFiles(mockFiles)).toThrow(
-        new BadRequestException('Annotations file must contain a "res_id" column.')
+        new BadRequestException('Annotations file is missing required columns: res_id.')
       )
     })
 
@@ -125,7 +125,7 @@ describe('CsvProcessorService', () => {
       }
 
       expect(() => service.processFiles(mockFiles)).toThrow(
-        new BadRequestException('Demandes file must contain a "courrier" column.')
+        new BadRequestException('Demandes file is missing required columns: courrier.')
       )
     })
 

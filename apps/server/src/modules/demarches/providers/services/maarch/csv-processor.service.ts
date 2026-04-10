@@ -17,6 +17,12 @@ import { DataFormatterService } from './data-formatter.service'
 
 @Injectable()
 export class CsvProcessorService {
+  private readonly fileSchemas: Record<string, { columns: string[], label: string }> = {
+    demandes: { columns: ['courrier'], label: 'Demandes' },
+    annotations: { columns: ['res_id', 'annotations_courrier'], label: 'Annotations' },
+    accusesReception: { columns: ['res_id', 'filename'], label: 'Accusés de réception' },
+  }
+
   constructor(
     private readonly logger: LoggerService,
     private readonly dataFormatter: DataFormatterService,
@@ -54,14 +60,17 @@ export class CsvProcessorService {
     if (annotationsFile) {
       const annotationsData = this._parseCsv(annotationsFile.buffer)
       if (annotationsData && annotationsData.length > 0) {
-        annotationsMap = this._groupAnnotations(annotationsData)
+        annotationsMap = this._groupByResId(
+          annotationsData,
+          (a) => a.annotations_courrier,
+        )
       }
     }
 
     if (accusesReceptionFile) {
       const accusesReceptionData = this._parseCsv(accusesReceptionFile.buffer)
       if (accusesReceptionData && accusesReceptionData.length > 0) {
-        accusesReceptionMap = this._groupAccusesReception(accusesReceptionData)
+        accusesReceptionMap = this._groupByResId(accusesReceptionData)
       }
     }
 
@@ -93,41 +102,38 @@ export class CsvProcessorService {
     accusesReceptionFile?: Express.Multer.File,
   ): void {
     if (annotationsFile) {
-      this._validateAnnotationsFile(annotationsFile)
-    }
-    if (accusesReceptionFile) {
-      this._validateAccusesReceptionFile(accusesReceptionFile)
-    }
-    this._validateDemandesFile(demandesFile)
-  }
-
-  private _validateAnnotationsFile(file: Express.Multer.File): void {
-    const content = file.buffer.toString('utf-8')
-    const header = content.split('\n')[0]
-
-    if (!header.includes('res_id')) {
-      throw new BadRequestException(
-        'Annotations file must contain a "res_id" column.',
+      this._validateFileHeaders(
+        annotationsFile,
+        this.fileSchemas.annotations.columns,
+        this.fileSchemas.annotations.label,
       )
     }
-  }
-
-  private _validateAccusesReceptionFile(file: Express.Multer.File): void {
-    const content = file.buffer.toString('utf-8')
-    const header = content.split('\n')[0]
-
-    if (!header.includes('res_id') || !header.includes('filename')) {
-      throw new BadRequestException('Accuses Reception file must contain "res_id" and "filename".')
+    if (accusesReceptionFile) {
+      this._validateFileHeaders(
+        accusesReceptionFile,
+        this.fileSchemas.accusesReception.columns,
+        this.fileSchemas.accusesReception.label,
+      )
     }
+    this._validateFileHeaders(
+      demandesFile,
+      this.fileSchemas.demandes.columns,
+      this.fileSchemas.demandes.label,
+    )
   }
 
-  private _validateDemandesFile(file: Express.Multer.File): void {
-    const content = file.buffer.toString('utf-8')
-    const header = content.split('\n')[0]
+  private _validateFileHeaders(
+    file: Express.Multer.File,
+    requiredColumns: string[],
+    contextName: string,
+  ): void {
+    const header = file.buffer.toString('utf-8').split('\n')[0]
 
-    if (!header.includes('courrier')) {
+    const missingColumns = requiredColumns.filter(col => !header.includes(col))
+
+    if (missingColumns.length > 0) {
       throw new BadRequestException(
-        'Demandes file must contain a "courrier" column.',
+        `${contextName} file is missing required columns: ${missingColumns.join(', ')}.`,
       )
     }
   }
@@ -232,38 +238,25 @@ export class CsvProcessorService {
     demandesMap.set(courrierId, nouvelleDemande)
   }
 
-  private _groupAnnotations(annotations: CsvRow[]): Map<number, string[]> {
-    const annotationsMap = new Map<number, string[]>()
+  private _groupByResId<T, R = T>(
+    data: T[],
+  valueSelector: (item: T) => R = (item) => item as unknown as R,
+  ): Map<number, R[]> {
+    const map = new Map<number, R[]>()
 
-    for (const annotation of annotations) {
-      const resId = parseInt(annotation.res_id, 10)
+    for (const item of data) {
+      const resId = parseInt((item as unknown as { res_id: string }).res_id, 10)
+
       if (isNaN(resId)) continue
 
-      if (!annotationsMap.has(resId)) {
-        annotationsMap.set(resId, [])
+      if (!map.has(resId)) {
+        map.set(resId, [])
       }
 
-      annotationsMap.get(resId).push(annotation.annotations_courrier)
+    map.get(resId)!.push(valueSelector(item))
     }
 
-    return annotationsMap
-  }
-
-  private _groupAccusesReception(accusesReception: CsvRow[]): Map<number, CsvRow[]> {
-    const accusesReceptionMap = new Map<number, CsvRow[]>()
-
-    for (const accuse of accusesReception) {
-      const resId = parseInt(accuse.res_id, 10)
-      if (isNaN(resId)) continue
-
-      if (!accusesReceptionMap.has(resId)) {
-        accusesReceptionMap.set(resId, [])
-      }
-
-      accusesReceptionMap.get(resId).push(accuse)
-    }
-
-    return accusesReceptionMap
+    return map
   }
 
   private _mergeData(

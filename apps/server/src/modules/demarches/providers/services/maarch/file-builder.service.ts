@@ -61,7 +61,7 @@ export class FileBuilderService {
   createFileEntities(data: DemandeAggregee): File[] {
     const allFiles: File[] = []
 
-    const piecesJointes = this._extractPiecesJointes(data)
+    const piecesJointes = this._extractCsvRows(data, maarchChampsLabel.piecesJointes)
     if (piecesJointes) {
       const pjFiles = piecesJointes
         .map((pj) => this._createPjFileEntity(pj))
@@ -70,7 +70,7 @@ export class FileBuilderService {
       allFiles.push(...pjFiles)
     }
 
-    const accusesReception = this._extractAccusesReception(data)
+    const accusesReception = this._extractCsvRows(data, maarchExtraFields.accusesReception)
     if (accusesReception) {
       const accusesReceptionFiles = accusesReception
         .map((accuse) => this._createAccuseReceptionFileEntity(accuse))
@@ -87,27 +87,17 @@ export class FileBuilderService {
     return allFiles
   }
 
-  private _extractPiecesJointes(data: DemandeAggregee): CsvRow[] | null {
-    const piecesJointes = data[maarchChampsLabel.piecesJointes] as CsvRow[]
+  private _extractCsvRows(
+    data: DemandeAggregee,
+    fieldKey: keyof DemandeAggregee,
+  ): CsvRow[] | null {
+    const value = data[fieldKey]
 
-    if (!Array.isArray(piecesJointes)) {
-      return null
-    }
-
-    return piecesJointes
-  }
-
-  private _extractAccusesReception(data: DemandeAggregee): CsvRow[] | null {
-    const accusesReceptionFiles = data[maarchExtraFields.accusesReception] as CsvRow[]
-    if (!Array.isArray(accusesReceptionFiles)) {
-      return null
-    }
-
-    return accusesReceptionFiles
+    return Array.isArray(value) ? (value as CsvRow[]) : null
   }
 
   private _createPjFileEntity(pieceJointe: CsvRow): File | null {
-    if (!this._isValidPieceJointe(pieceJointe)) {
+    if (!this._hasRequiredFields(pieceJointe, [maarchPJLabel.nomPj, maarchPJLabel.cheminPj])) {
       this.logger.debug('Aucun fichier pièce jointe attachée.')
       return null
     }
@@ -140,7 +130,7 @@ export class FileBuilderService {
   }
 
   private _createCourrierFileEntity(data: DemandeAggregee): File | null {
-    if (!this._isValidCourrierFile(data)) {
+    if (!this._hasRequiredFields(data, [maarchChampsLabel.nomCourrier, maarchChampsLabel.cheminCourrier])) {
       this.logger.debug('Aucun fichier courrier (HTML) attaché.')
       return null
     }
@@ -172,7 +162,7 @@ export class FileBuilderService {
   }
 
   private _createAccuseReceptionFileEntity(accuse: CsvRow): File | null {
-    if (!this._isValidAccuseReception(accuse)) {
+    if (!this._hasRequiredFields(accuse, [maarchAccuseLabel.filename, maarchAccuseLabel.path])) {
       this.logger.debug('Aucun fichier accusé de réception attaché.')
       return null
     }
@@ -204,25 +194,11 @@ export class FileBuilderService {
     return file
   }
 
-  private _isValidPieceJointe(pieceJointe: CsvRow): boolean {
-    return (
-      !!pieceJointe[maarchPJLabel.nomPj] &&
-      !!pieceJointe[maarchPJLabel.cheminPj]
-    )
-  }
-
-  private _isValidCourrierFile(data: CsvRow): boolean {
-    return (
-      !!data[maarchChampsLabel.nomCourrier] &&
-      !!data[maarchChampsLabel.cheminCourrier]
-    )
-  }
-
-  private _isValidAccuseReception(accuse: CsvRow): boolean {
-    return (
-      !!accuse[maarchAccuseLabel.filename] &&
-      !!accuse[maarchAccuseLabel.path]
-    )
+  private _hasRequiredFields(
+    data: CsvRow,
+    keys: string[],
+  ): boolean {
+    return keys.every(key => !!data[key])
   }
 
   private _cleanPath(path: string): string {
