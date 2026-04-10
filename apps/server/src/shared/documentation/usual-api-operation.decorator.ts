@@ -2,6 +2,7 @@ import { applyDecorators, Type } from '@nestjs/common'
 import {
   ApiBadRequestResponse,
   ApiConflictResponse,
+  ApiConsumes,
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiInternalServerErrorResponse,
@@ -22,6 +23,7 @@ interface iUsualApiOperation {
   isArray?: boolean
   isPagination?: boolean
   supplement?: string
+  consumesFiles?: boolean
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -43,6 +45,11 @@ export function UsualApiOperation(...options: iUsualApiOperation[]) {
           "La requête n'a pas été correctement formatée. Vérifiez les paramètres.",
       }),
     )
+    if (options[0].consumesFiles) {
+      elements.push(
+        ApiConsumes('multipart/form-data'),
+      )
+    }
   } else if (options[0].method === 'GET') {
     elements.push(
       ApiOkResponse({

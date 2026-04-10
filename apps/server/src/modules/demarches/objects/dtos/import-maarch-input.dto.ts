@@ -3,7 +3,7 @@ import { Demarche } from '@/modules/demarches/objects/entities/demarche.entity'
 import { IsOptional } from 'class-validator'
 import type { Express } from 'express'
 
-export class ImportMaarchDto extends PickType(Demarche, ['title'] as const) {
+export class ImportMaarchInputDto extends PickType(Demarche, ['title'] as const) {
   @ApiProperty({
     type: 'string',
     format: 'binary',
