@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { FieldBuilderService } from './field-builder.service'
-import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
 import { FieldSource, FieldType } from '@biblio-num/shared'
 import { Field } from '@/modules/dossiers/objects/entities/field.entity'
 import { DsChampType } from '@/shared/modules/ds-api/objects/ds-champ-type.enum'
 import { DemandeAggregee } from '@/modules/demarches/objects/constants/maarch.types'
 import { maarchPJLabel } from '@/modules/demarches/objects/constants/maarch-champ.enum'
+import { ExtendedMappingColumn, ExtendedMappingColumnWithoutChildren } from '@/modules/demarches/objects/constants/maarch-champ.dictionary'
 
 describe('FieldBuilderService', () => {
   let service: FieldBuilderService
@@ -20,10 +20,11 @@ describe('FieldBuilderService', () => {
   })
 
   describe('createSimpleField', () => {
-    const baseMappingColumn: MappingColumn = {
+    const baseMappingColumn: ExtendedMappingColumn = {
       id: 'field-1',
-      originalLabel: 'original_field',
+      originalLabel: 'Field Label',
       columnLabel: 'Field Label',
+      csvColumnLabel: 'original_field',
       type: FieldType.string,
       formatFunctionRef: 'format_func',
       source: FieldSource.champs,
@@ -153,7 +154,7 @@ describe('FieldBuilderService', () => {
       const uuid = '123e4567-e89b-12d3-a456-426614174000'
       const filename = 'courrier.pdf'
 
-      const fileMapping: MappingColumn = {
+      const fileMapping: ExtendedMappingColumn = {
         ...baseMappingColumn,
         type: FieldType.file,
       }
@@ -172,7 +173,7 @@ describe('FieldBuilderService', () => {
 
     it('should fallback to filename if UUID is missing in Map for file field', () => {
       const filename = 'unknown.pdf'
-      const fileMapping: MappingColumn = { ...baseMappingColumn, type: FieldType.file }
+      const fileMapping: ExtendedMappingColumn = { ...baseMappingColumn, type: FieldType.file }
       const data = dataDemande(filename)
 
       const result = service.createSimpleField(fileMapping, data, emptyMap)
@@ -182,24 +183,27 @@ describe('FieldBuilderService', () => {
   })
 
   describe('createRepeatableFields', () => {
-    const parentMapping: MappingColumn = {
+    const parentMapping: ExtendedMappingColumn = {
       id: 'parent-field',
-      originalLabel: 'pieces_jointes',
+      originalLabel: 'Pièces Jointes',
       columnLabel: 'Pièces Jointes',
+      csvColumnLabel: 'pieces_jointes',
       type: FieldType.string,
       source: FieldSource.champs,
       children: [
         {
           id: 'child-1',
-          originalLabel: 'nom_fichier',
+          originalLabel: 'Nom du fichier',
           columnLabel: 'Nom du fichier',
+          csvColumnLabel: 'nom_fichier',
           type: FieldType.string,
           source: FieldSource.champs,
         },
         {
           id: 'child-2',
-          originalLabel: 'taille',
+          originalLabel: 'Taille',
           columnLabel: 'Taille',
+          csvColumnLabel: 'taille',
           type: FieldType.number,
           source: FieldSource.champs,
         },
@@ -266,12 +270,13 @@ describe('FieldBuilderService', () => {
     })
 
     it('should handle date fields in children', () => {
-      const mappingWithDate: MappingColumn = {
+      const mappingWithDate: ExtendedMappingColumn = {
         ...parentMapping,
         children: [
           {
             id: 'child-date',
-            originalLabel: 'date_creation',
+            originalLabel: 'Date de création',
+            csvColumnLabel: 'date_creation',
             type: FieldType.date,
             source: FieldSource.champs,
           },
@@ -328,12 +333,13 @@ describe('FieldBuilderService', () => {
     })
 
     it('should handle boolean fields in children', () => {
-      const mappingWithBoolean: MappingColumn = {
+      const mappingWithBoolean: ExtendedMappingColumn = {
         ...parentMapping,
         children: [
           {
             id: 'child-bool',
-            originalLabel: 'is_validated',
+            originalLabel: 'Validé',
+            csvColumnLabel: 'is_validated',
             type: FieldType.boolean,
             source: FieldSource.champs
           },
@@ -356,16 +362,17 @@ describe('FieldBuilderService', () => {
     })
 
     it('should handle complex nested data', () => {
-      const complexMapping: MappingColumn = {
+      const complexMapping: ExtendedMappingColumn = {
         id: 'complex-parent',
-        originalLabel: 'complex_data',
+        originalLabel: 'Données complexes',
+        csvColumnLabel: 'complex_data',
         type: FieldType.string,
         source: FieldSource.champs,
         children: [
-          { id: 'c1', originalLabel: 'field1', type: FieldType.string, source: FieldSource.champs },
-          { id: 'c2', originalLabel: 'field2', type: FieldType.number, source: FieldSource.champs },
-          { id: 'c3', originalLabel: 'field3', type: FieldType.date, source: FieldSource.champs },
-          { id: 'c4', originalLabel: 'field4', type: FieldType.boolean, source: FieldSource.champs },
+          { id: 'c1', originalLabel: 'Field 1', csvColumnLabel: 'field1', type: FieldType.string, source: FieldSource.champs },
+          { id: 'c2', originalLabel: 'Field 2', csvColumnLabel: 'field2', type: FieldType.number, source: FieldSource.champs },
+          { id: 'c3', originalLabel: 'Field 3', csvColumnLabel: 'field3', type: FieldType.date, source: FieldSource.champs },
+          { id: 'c4', originalLabel: 'Field 4', csvColumnLabel: 'field4', type: FieldType.boolean, source: FieldSource.champs },
         ],
       }
 
@@ -407,12 +414,13 @@ describe('FieldBuilderService', () => {
       const pjUuid = 'uuid-pj-999'
       const pjName = '90_99999.pdf'
 
-      const mappingWithFileChild: MappingColumn = {
+      const mappingWithFileChild: ExtendedMappingColumn = {
         ...parentMapping,
         children: [
           {
             id: 'child-pj',
-            originalLabel: maarchPJLabel.nomPj,
+            originalLabel: 'Pièce Justificative',
+            csvColumnLabel: maarchPJLabel.nomPj,
             type: FieldType.file,
             source: FieldSource.champs,
           },
@@ -441,15 +449,17 @@ describe('FieldBuilderService', () => {
     })
 
     it('should handle repeatable fields for Accusés de Réception', () => {
-      const mappingAccuses: MappingColumn = {
+      const mappingAccuses: ExtendedMappingColumn = {
         id: 'accuse-parent',
-        originalLabel: 'accuses_reception',
+        originalLabel: 'Accusés de Réception',
         columnLabel: 'Accusés',
+        csvColumnLabel: 'accuses_reception',
         type: FieldType.string,
         source: FieldSource.champs,
         children: [{
           id: 'accuse-file',
           originalLabel: 'filename',
+          csvColumnLabel: 'filename',
           type: FieldType.file,
           source: FieldSource.champs,
         }],

@@ -9,8 +9,10 @@ import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
 import { DossierState } from '@dnum-mi/ds-api-client'
 import { maarchChampsLabel } from '@/modules/demarches/objects/constants/maarch-champ.enum'
 import { Field } from '@/modules/dossiers/objects/entities/field.entity'
-import { maarchFieldMappingsArray } from '@/modules/demarches/objects/constants/maarch-champ.dictionary'
-import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
+import {
+  ExtendedMappingColumn,
+  maarchFieldMappingsArray,
+} from '@/modules/demarches/objects/constants/maarch-champ.dictionary'
 
 @Injectable()
 export class DossierTransformerService {
@@ -80,7 +82,7 @@ export class DossierTransformerService {
   }
 
   private _processMapping(
-    mapping: MappingColumn,
+    mapping: ExtendedMappingColumn,
     data: DemandeAggregee,
     fileUuidMap: Map<string, string>,
   ): Field[] | null {
@@ -92,7 +94,7 @@ export class DossierTransformerService {
     return field ? [field] : null
   }
 
-  private _isRepeatableField(mapping: MappingColumn): boolean {
+  private _isRepeatableField(mapping: ExtendedMappingColumn): boolean {
     return mapping.children && mapping.children.length > 0
   }
 }

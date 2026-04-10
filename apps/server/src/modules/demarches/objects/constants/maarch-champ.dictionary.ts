@@ -1,46 +1,56 @@
 import { FieldSource, FieldType, FormatFunctionRef } from '@biblio-num/shared'
 import {
   MappingColumn,
-  MappingColumnWithoutChildren,
 } from '../dtos/mapping-column.dto'
 import { maarchAnnotationLabel, maarchChampsLabel, maarchPJLabel } from './maarch-champ.enum'
 
+export interface ExtendedMappingColumn extends MappingColumn {
+  csvColumnLabel?: string
+  children?: ExtendedMappingColumnWithoutChildren[]
+}
+export type ExtendedMappingColumnWithoutChildren = Omit<ExtendedMappingColumn, 'children'>
+
 /** Informations du courrier */
 
-export const fieldCourrier: MappingColumn = {
+export const fieldCourrier: ExtendedMappingColumn = {
   id: '9098ce70-4378-2d7e-bkb9-b76fb7b67h20',
   columnLabel: 'Numéro du courrier',
-  originalLabel: maarchChampsLabel.courrier,
+  originalLabel: 'Numéro du courrier',
+  csvColumnLabel: maarchChampsLabel.courrier,
   type: FieldType.number,
   source: FieldSource.fixField,
 }
-export const fieldIntituleCourrier: MappingColumn = {
+export const fieldIntituleCourrier: ExtendedMappingColumn = {
   id: '9098ce70-4378-2d7e-bkb9-b76fb7b67h22',
   columnLabel: 'Intitulé du courrier',
-  originalLabel: maarchChampsLabel.intituleCourrier,
+  originalLabel: 'Intitulé du courrier',
+  csvColumnLabel: maarchChampsLabel.intituleCourrier,
   type: FieldType.string,
   source: FieldSource.champs,
 }
-export const fieldDateDeclaration: MappingColumn = {
+export const fieldDateDeclaration: ExtendedMappingColumn = {
   id: '9098ce70-4378-2d7e-bkb9-b76fb7b67h39',
   columnLabel: 'Date de déclaration',
-  originalLabel: maarchChampsLabel.dateDeclaration,
+  originalLabel: 'Date de déclaration',
+  csvColumnLabel: maarchChampsLabel.dateDeclaration,
   type: FieldType.date,
   source: FieldSource.fixField,
 }
 
-export const fieldNumPublication: MappingColumn = {
+export const fieldNumPublication: ExtendedMappingColumn = {
   id: '9098ce70-4378-2d7e-bkb9-b76fb7b67h38',
   columnLabel: 'Numéro de publication',
-  originalLabel: maarchChampsLabel.numPublication,
+  originalLabel: 'Numéro de publication',
+  csvColumnLabel: maarchChampsLabel.numPublication,
   type: FieldType.string,
   source: FieldSource.champs,
 }
 
-export const fieldEtatDossier: MappingColumn = {
+export const fieldEtatDossier: ExtendedMappingColumn = {
   id: '9098ce70-4378-2d7e-bkb9-b76fb7b67h49',
   columnLabel: 'État du dossier',
-  originalLabel: maarchChampsLabel.etatDossier,
+  originalLabel: 'État du dossier',
+  csvColumnLabel: maarchChampsLabel.etatDossier,
   type: FieldType.enum,
   source: FieldSource.fixField,
   formatFunctionRef: FormatFunctionRef.status,
@@ -50,76 +60,85 @@ export const fieldEtatDossier: MappingColumn = {
 
 /** Informations de l'association */
 
-export const fieldNumRna: MappingColumn = {
+export const fieldNumRna: ExtendedMappingColumn = {
   id: '9098ce70-4378-2d7e-bkb9-b76fb7b67h35',
   columnLabel: 'Numéro RNA',
-  originalLabel: maarchChampsLabel.numRna,
+  originalLabel: 'Numéro RNA',
+  csvColumnLabel: maarchChampsLabel.numRna,
   type: FieldType.string,
   source: FieldSource.champs,
   formatFunctionRef: FormatFunctionRef.rna,
 }
 
-export const fieldNomAssociation: MappingColumn = {
+export const fieldNomAssociation: ExtendedMappingColumn = {
   id: '9098ce70-4378-2d7e-bkb9-b76fb7b67h25',
   columnLabel: "Titre complet de l'association",
-  originalLabel: maarchChampsLabel.nomAssociation,
+  originalLabel: "Titre complet de l'association",
+  csvColumnLabel: maarchChampsLabel.nomAssociation,
   type: FieldType.string,
   source: FieldSource.champs,
 }
 
-export const fieldPrefecture: MappingColumn = {
+export const fieldPrefecture: ExtendedMappingColumn = {
   id: '9098ce70-4378-2d7e-bkb9-b76fb7b67h21',
   columnLabel: 'Préfecture de rattachement',
-  originalLabel: maarchChampsLabel.prefecture,
+  originalLabel: 'Préfecture de rattachement',
+  csvColumnLabel: maarchChampsLabel.prefecture,
   type: FieldType.string,
   source: FieldSource.champs,
   formatFunctionRef: FormatFunctionRef.prefecture,
 }
 
-export const fieldAssociationUnionFederation: MappingColumn = {
+export const fieldAssociationUnionFederation: ExtendedMappingColumn = {
   id: '9098ce70-4378-2d7e-bkb9-b76fb7b67h40',
   columnLabel: "L'association est-elle une union/fédération d'association cultuelle ?",
-  originalLabel: maarchChampsLabel.associationUnionFederation,
+  originalLabel: "L'association est-elle une union/fédération d'association cultuelle ?",
+  csvColumnLabel: maarchChampsLabel.associationUnionFederation,
   type: FieldType.boolean,
   source: FieldSource.champs,
 }
 
-export const fieldNumeroRue: MappingColumn = {
+export const fieldNumeroRue: ExtendedMappingColumn = {
   id: '9098ce70-4378-2d7e-bkb9-b76fb7b67h26',
   columnLabel: 'Numéro de rue',
-  originalLabel: maarchChampsLabel.numeroRue,
+  originalLabel: 'Numéro de rue',
+  csvColumnLabel: maarchChampsLabel.numeroRue,
   type: FieldType.string,
   source: FieldSource.champs,
 }
 
-export const fieldNomRue: MappingColumn = {
+export const fieldNomRue: ExtendedMappingColumn = {
   id: '9098ce70-4378-2d7e-bkb9-b76fb7b67h52',
   columnLabel: 'Nom de rue',
-  originalLabel: maarchChampsLabel.libelleRue,
+  originalLabel: 'Nom de rue',
+  csvColumnLabel: maarchChampsLabel.libelleRue,
   type: FieldType.string,
   source: FieldSource.champs,
 }
 
-export const fieldCodePostal: MappingColumn = {
+export const fieldCodePostal: ExtendedMappingColumn = {
   id: '9098ce70-4378-2d7e-bkb9-b76fb7b67h50',
   columnLabel: 'Code postal',
-  originalLabel: maarchChampsLabel.codePostal,
+  originalLabel: 'Code postal',
+  csvColumnLabel: maarchChampsLabel.codePostal,
   type: FieldType.string,
   source: FieldSource.champs,
 }
 
-export const fieldVille: MappingColumn = {
+export const fieldVille: ExtendedMappingColumn = {
   id: '9098ce70-4378-2d7e-bkb9-b76fb7b67h51',
   columnLabel: 'Ville',
-  originalLabel: maarchChampsLabel.ville,
+  originalLabel: 'Ville',
+  csvColumnLabel: maarchChampsLabel.ville,
   type: FieldType.string,
   source: FieldSource.champs,
 }
 
-export const fieldTelephone: MappingColumn = {
+export const fieldTelephone: ExtendedMappingColumn = {
   id: '9098ce70-4378-2d7e-bkb9-b76fb7b67h27',
   columnLabel: 'Téléphone',
-  originalLabel: maarchChampsLabel.telephone,
+  originalLabel: 'Téléphone',
+  csvColumnLabel: maarchChampsLabel.telephone,
   type: FieldType.string,
   source: FieldSource.champs,
 }
@@ -128,71 +147,79 @@ export const fieldTelephone: MappingColumn = {
 
 /** Informations de l'association */
 
-export const fieldNomDeclarant: MappingColumn = {
+export const fieldNomDeclarant: ExtendedMappingColumn = {
   id: '9098ce70-4378-2d7e-bkb9-b76fb7b67h36',
   columnLabel: 'Nom',
-  originalLabel: maarchChampsLabel.numEt,
+  originalLabel: 'Nom',
+  csvColumnLabel: maarchChampsLabel.numEt,
   type: FieldType.string,
   source: FieldSource.champs,
 }
 
-export const fieldPrenomDeclarant: MappingColumn = {
+export const fieldPrenomDeclarant: ExtendedMappingColumn = {
   id: '9098ce70-4378-2d7e-bkb9-b76fb7b67h37',
   columnLabel: 'Prénom',
-  originalLabel: maarchChampsLabel.informationDeclarant,
+  originalLabel: 'Prénom',
+  csvColumnLabel: maarchChampsLabel.informationDeclarant,
   type: FieldType.string,
   source: FieldSource.champs,
 }
 
-export const fieldEmailDeclarant: MappingColumn = {
+export const fieldEmailDeclarant: ExtendedMappingColumn = {
   id: '9098ce70-4378-2d7e-bkb9-b76fb7b67h28',
   columnLabel: 'Email de contact',
-  originalLabel: maarchChampsLabel.emailAssociation,
+  originalLabel: 'Email de contact',
+  csvColumnLabel: maarchChampsLabel.emailAssociation,
   type: FieldType.string,
   source: FieldSource.champs,
 }
 
 /** ----------------------------------- */
 
-export const fieldCourrierFileIntitule: MappingColumnWithoutChildren = {
+export const fieldCourrierFileIntitule: ExtendedMappingColumnWithoutChildren = {
   id: '9098ce70-4378-2d7e-bkb9-b76fb7b67h80',
   columnLabel: 'Nom du fichier courrier',
-  originalLabel: maarchChampsLabel.nomCourrier,
+  originalLabel: 'Nom du fichier courrier',
+  csvColumnLabel: maarchChampsLabel.nomCourrier,
   type: FieldType.file,
   source: FieldSource.champs,
   formatFunctionRef: FormatFunctionRef.file,
 }
 
-export const fieldPjIntitule: MappingColumnWithoutChildren = {
+export const fieldPjIntitule: ExtendedMappingColumnWithoutChildren = {
   id: '9098ce70-4378-2d7e-bkb9-b76fb7b67h41',
   columnLabel: 'Intitulé de la PJ',
-  originalLabel: maarchPJLabel.intitulePj,
+  originalLabel: 'Intitulé de la PJ',
+  csvColumnLabel: maarchPJLabel.intitulePj,
   type: FieldType.file,
   source: FieldSource.champs,
   formatFunctionRef: FormatFunctionRef.file,
 }
 
-export const fieldPiecesJointes: MappingColumn = {
+export const fieldPiecesJointes: ExtendedMappingColumn = {
   id: '9098ce70-4378-2d7e-bkb9-b76fb7b67h44',
   columnLabel: 'Pièces jointes',
-  originalLabel: maarchChampsLabel.piecesJointes,
+  originalLabel: 'Pièces jointes',
+  csvColumnLabel: maarchChampsLabel.piecesJointes,
   type: FieldType.string,
   source: FieldSource.champs,
   children: [fieldPjIntitule],
 }
 
-export const fieldAnnotationText: MappingColumnWithoutChildren = {
+export const fieldAnnotationText: ExtendedMappingColumnWithoutChildren = {
   id: '9098ce70-4378-2d7e-bkb9-b76fb7b67h42',
   columnLabel: 'Annotation',
-  originalLabel: maarchAnnotationLabel.annotationText,
+  originalLabel: 'Annotation',
+  csvColumnLabel: maarchAnnotationLabel.annotationText,
   type: FieldType.string,
   source: FieldSource.champs,
 }
 
-export const fieldAnnotations: MappingColumn = {
+export const fieldAnnotations: ExtendedMappingColumn = {
   id: '9098ce70-4378-2d7e-bkb9-b76fb7b67h45',
   columnLabel: 'Annotations du courrier',
-  originalLabel: maarchChampsLabel.annotation,
+  originalLabel: 'Annotations du courrier',
+  csvColumnLabel: maarchChampsLabel.annotation,
   type: FieldType.string,
   source: FieldSource.annotation,
   children: [
@@ -200,7 +227,7 @@ export const fieldAnnotations: MappingColumn = {
   ],
 }
 
-export const maarchFieldMappingsArray: MappingColumn[] = [
+export const maarchFieldMappingsArray: ExtendedMappingColumn[] = [
   {
     id: '9098ce70-4378-2d7e-bkb9-b76fb7b67h46',
     originalLabel: 'Informations relatives au courrier',

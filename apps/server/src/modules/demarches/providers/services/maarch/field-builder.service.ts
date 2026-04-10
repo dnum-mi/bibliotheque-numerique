@@ -3,7 +3,6 @@ import {
   CsvRow,
   DemandeAggregee,
 } from '@/modules/demarches/objects/constants/maarch.types'
-import { MappingColumn } from '@/modules/demarches/objects/dtos/mapping-column.dto'
 import { Field } from '@/modules/dossiers/objects/entities/field.entity'
 import { DsChampType } from '@/shared/modules/ds-api/objects/ds-champ-type.enum'
 import {
@@ -13,15 +12,16 @@ import {
 } from '@biblio-num/shared'
 import { Injectable } from '@nestjs/common'
 import { createFileRawValue } from './utils/file-helper'
+import { ExtendedMappingColumn } from '@/modules/demarches/objects/constants/maarch-champ.dictionary'
 
 @Injectable()
 export class FieldBuilderService {
   createSimpleField(
-    mapping: MappingColumn,
+    mapping: ExtendedMappingColumn,
     data: DemandeAggregee,
     fileUuidMap: Map<string, string>,
   ): Field | null {
-    const rawValue = data[mapping.originalLabel]
+    const rawValue = data[mapping.csvColumnLabel]
 
     if (this._isNullOrUndefined(rawValue)) {
       return null
@@ -29,7 +29,7 @@ export class FieldBuilderService {
 
     const field = this._initializeField(mapping)
     if (this._isFileField(mapping)) {
-      const filename = data[mapping.originalLabel]
+      const filename = data[mapping.csvColumnLabel]
       const uuid = fileUuidMap.get(filename)
       this._configureFileField(field, filename, uuid)
     } else {
@@ -40,11 +40,11 @@ export class FieldBuilderService {
   }
 
   createRepeatableFields(
-    parentMapping: MappingColumn,
+    parentMapping: ExtendedMappingColumn,
     data: DemandeAggregee,
     fileUuidMap: Map<string, string>,
   ): Field[] | null {
-    const rawValueArray = data[parentMapping.originalLabel] as CsvRow[]
+    const rawValueArray = data[parentMapping.csvColumnLabel] as CsvRow[]
 
     if (!this._isValidArray(rawValueArray) || rawValueArray.length === 0) {
       return null
@@ -61,10 +61,10 @@ export class FieldBuilderService {
     return [parentField, ...childFields]
   }
 
-  private _initializeField(mapping: MappingColumn): Field {
+  private _initializeField(mapping: ExtendedMappingColumn): Field {
     const field = new Field()
 
-    field.label = mapping.columnLabel || mapping.originalLabel
+    field.label = mapping.columnLabel || mapping.csvColumnLabel
     field.sourceId = mapping.id
     field.type = mapping.type
     field.dsChampType = DsChampType.TextChamp
@@ -75,10 +75,10 @@ export class FieldBuilderService {
     return field
   }
 
-  private _createParentField(mapping: MappingColumn): Field {
+  private _createParentField(mapping: ExtendedMappingColumn): Field {
     const field = this._initializeField(mapping)
 
-    field.stringValue = mapping.columnLabel || mapping.originalLabel
+    field.stringValue = mapping.columnLabel || mapping.csvColumnLabel
     field.dsChampType = DsChampType.RepetitionChamp
 
     return field
@@ -112,7 +112,7 @@ export class FieldBuilderService {
 
   private _createChildFields(
     parentField: Field,
-    parentMapping: MappingColumn,
+    parentMapping: ExtendedMappingColumn,
     rawValueArray: CsvRow[],
     fileUuidMap: Map<string, string>,
   ): Field[] {
@@ -138,7 +138,7 @@ export class FieldBuilderService {
   }
 
   private _createChildField(
-    mapping: MappingColumn,
+    mapping: ExtendedMappingColumn,
     data: CsvRow,
     parentField: Field,
     rowIndex: number,
@@ -149,7 +149,7 @@ export class FieldBuilderService {
     if (typeof data === 'string') {
       childValue = data
     } else if (typeof data === 'object' && data !== null) {
-      childValue = data[mapping.originalLabel]
+      childValue = data[mapping.csvColumnLabel]
     }
 
     if (this._isNullOrUndefined(childValue)) {
@@ -173,7 +173,7 @@ export class FieldBuilderService {
 
   private _setFieldValue(
     field: Field,
-    mapping: MappingColumn,
+    mapping: ExtendedMappingColumn,
     rawValue: unknown,
   ): void {
     if (this._isPrefectureField(mapping)) {
@@ -221,7 +221,7 @@ export class FieldBuilderService {
     }
   }
 
-  private _isFileField(mapping: MappingColumn): boolean {
+  private _isFileField(mapping: ExtendedMappingColumn): boolean {
     return (
       mapping.type === FieldType.file
     )
@@ -270,12 +270,12 @@ export class FieldBuilderService {
     }
   }
 
-  private _isPrefectureField(mapping: MappingColumn): boolean {
+  private _isPrefectureField(mapping: ExtendedMappingColumn): boolean {
     const prefectureLabels = [
       maarchChampsLabel.prefecture,
     ]
     return prefectureLabels.some(
-      (label) => mapping.originalLabel?.toLowerCase().includes(label),
+      (label) => mapping.csvColumnLabel?.toLowerCase().includes(label),
     )
   }
 
