@@ -82,7 +82,7 @@ items:
     sourceStringId: 'useless-id'
     tag: 'some-tag'
     mimeType: 'doc'
-    originalLabel: "1.debut_éèçàâêîôûŷäëÿüöù_ÉÈÇÀÂÊÎÔÛŶÄËŸÜÖÙ!\"#$%&'()*+,-./:;<=>?@[\\]^_\\`~{|}$£µ\t\n\r_fin_test1"
+    originalLabel: "1.debut_éèçàâêîôûŷäëÿüöù_ÉÈÇÀÂÊÎÔÛŶÄËŸÜÖÙ!\"#$%&'()*+,-./:;<=>?@[\\]^_\\`~{|}$£µ\t\n\r_fin_test1.doc"
     checksum: 42
     byteSize: 42
     label: " les_-_caractéres_pouvant_posé_probléme.doc\n"
@@ -96,7 +96,7 @@ items:
     sourceStringId: 'useless-id'
     tag: 'some-tag'
     mimeType: 'doc'
-    originalLabel: "2.debut_«»‘’“”‹›„‟…–—•·§¶©®™°µ¿¡‰†‡€$£¥₩₣₺₹¢¹²³¼½¾±×÷=¬|¦_‰∞√∑∆∏∂∫≈≠≤≥→←↑↓↔↕↩↪↵☀☁☂❄★☆✓✔✗✘♠♣♥♦♫♪☻☺_fin_test2"
+    originalLabel: "2.debut_«»‘’“”‹›„‟…–—•·§¶©®™°µ¿¡‰†‡€$£¥₩₣₺₹¢¹²³¼½¾±×÷=¬|¦_‰∞√∑∆∏∂∫≈≠≤≥→←↑↓↔↕↩↪↵☀☁☂❄★☆✓✔✗✘♠♣♥♦♫♪☻☺_fin_test2.doc"
     checksum: 42
     byteSize: 42
     label: " les_-_caractéres_pouvant_posé_probléme.doc\n"
