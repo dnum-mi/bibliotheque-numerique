@@ -57,10 +57,11 @@ const maskOptions = reactive<MaskInputOptions>({
         return `###-${type}-#####-##`
       }
     }
-    return '###-@@@@-#####-##'
+    return '##$-@@@@-#####-##'
   },
   tokens: {
     '#': { pattern: /\d/ },
+    '$': { pattern: /[0-9AB]/ },
     '@': { pattern: /[A-Z]/ },
   },
   eager: true,
