@@ -14,6 +14,7 @@ import DelayStateBadge from '@/components/Badges/delay-state/DelayStateBadge.vue
 import DataTableAttachmentCell from '@/components/datatable/DataTableAttachmentCell.vue'
 import { routeNames } from '@/router/route-names'
 import { IS_ASSOCIATIONS_ENABLED } from '@/config'
+import { isAssociation } from '../../../../utils/organisme.util'
 
 const props = defineProps<{
   params: {
@@ -71,7 +72,7 @@ const componentRenderer = computed(() => {
 
 const canLinkToOrganisme = (currentFfr: string, value: string) => {
   const id = value?.split(' ')[0] || ''
-  const isRna = currentFfr === 'rna' || id.startsWith('W')
+  const isRna = currentFfr === 'rna' || isAssociation(id)
   if (isRna && !IS_ASSOCIATIONS_ENABLED) {
     return false
   }

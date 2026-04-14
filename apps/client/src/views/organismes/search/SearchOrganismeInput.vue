@@ -31,26 +31,26 @@ const hasError = ref<boolean>(false)
 const results = ref<IBasicOrganisme[]>([])
 const hasSearched = ref<boolean>(false)
 // #region Gestion des types d'organisme
-const typeOrganismeOptions = computed(() => {
-  const options = []
-  if (IS_ASSOCIATIONS_ENABLED) {
-    options.push({
-      label: 'Associations',
-      id: eOrganismeTypeToSearch.associations,
-      value: eOrganismeTypeToSearch.associations,
-      hint: `Recherche uniquement les ${eOrganismeTypeToSearch.associations}`,
-      name: eOrganismeTypeToSearch.associations,
-    })
-  }
-  return options
-    .concat({
-      label: 'Fondations',
-      id: eOrganismeTypeToSearch.fondations,
-      value: eOrganismeTypeToSearch.fondations,
-      hint: `Rechercher uniquement les ${eOrganismeTypeToSearch.fondations}`,
-      name: eOrganismeTypeToSearch.fondations,
-    })
-})
+const typeOrganismeOptions = [
+  ...(
+    IS_ASSOCIATIONS_ENABLED
+      ? [{
+          label: 'Associations',
+          id: eOrganismeTypeToSearch.associations,
+          value: eOrganismeTypeToSearch.associations,
+          hint: `Recherche uniquement les ${eOrganismeTypeToSearch.associations}`,
+          name: eOrganismeTypeToSearch.associations,
+        }]
+      : []
+  ),
+  {
+    label: 'Fondations',
+    id: eOrganismeTypeToSearch.fondations,
+    value: eOrganismeTypeToSearch.fondations,
+    hint: `Rechercher uniquement les ${eOrganismeTypeToSearch.fondations}`,
+    name: eOrganismeTypeToSearch.fondations,
+  },
+]
 
 const typeOrganisme = ref<OrganismeTypeToSearchKey[]>([...defaultTypeOrganisme])
 const errTypeOrganisme = ref<string>('')
@@ -69,17 +69,13 @@ const handleTypeOrganisme = (value: OrganismeTypeToSearchKey[]) => {
 const onSearchFullText = async () => {
   let entityType
 
-  if (!IS_ASSOCIATIONS_ENABLED) {
-    entityType = eOrganismeTypeToSearch.fondations
-  } else {
-    if (typeOrganisme.value.length === 1) {
-      entityType = typeOrganisme.value[0]
-    } else if (
-      typeOrganisme.value.length === 2
-      && typeOrganisme.value.every(t => organismeTypeToSeachArray.includes(t))
-    ) {
-      entityType = eOrganismeTypeToSearch.all
-    }
+  if (typeOrganisme.value.length === 1) {
+    entityType = typeOrganisme.value[0]
+  } else if (
+    typeOrganisme.value.length === 2
+    && typeOrganisme.value.every(t => organismeTypeToSeachArray.includes(t))
+  ) {
+    entityType = eOrganismeTypeToSearch.all
   }
 
   const query = {
