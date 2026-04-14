@@ -1,5 +1,15 @@
 # Changelog
 
+## [5.9.5](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.9.4...v5.9.5) (2026-04-14)
+
+
+### Bug Fixes
+
+* correction de données lié au service instructeur ([655df5e](https://github.com/dnum-mi/bibliotheque_numerique/commit/655df5e0007620420ea2bf0d602def3c0228770a))
+* **pj des dossiers:** télécharger pj avec le nom original ([418da5b](https://github.com/dnum-mi/bibliotheque_numerique/commit/418da5b97729323976c4226433f0ae336bb3050a))
+* recherche fondation de corse ([19ab8ea](https://github.com/dnum-mi/bibliotheque_numerique/commit/19ab8eaf1f43240c85d1cb86631b5d467b85f547))
+* renommer 'Préfecture' en 'Service instructeur' dans la fiche organisme ([90f201b](https://github.com/dnum-mi/bibliotheque_numerique/commit/90f201b374027c9e85755118035562beb25a9240))
+
 ## [5.9.4](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.9.3...v5.9.4) (2026-04-09)
 
 
