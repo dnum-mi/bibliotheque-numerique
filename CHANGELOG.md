@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.9.6](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.9.5...v5.9.6) (2026-04-14)
+
+
+### Bug Fixes
+
+* corrige la completude de numéro pour la corse ([692fc30](https://github.com/dnum-mi/bibliotheque_numerique/commit/692fc3057b0231085b0ccd27322dd3fb3771405d))
+
 ## [5.9.5](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.9.4...v5.9.5) (2026-04-14)
 
 
