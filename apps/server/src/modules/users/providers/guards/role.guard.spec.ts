@@ -58,7 +58,7 @@ describe('RoleGuard', () => {
 
     it('Should throw an error if no role is defined for a route', () => {
       jest.spyOn(reflector, 'get').mockReturnValueOnce(undefined)
-      expect(() => guard.canActivate(context)).toThrowError()
+      expect(() => guard.canActivate(context)).toThrow()
     })
 
     it('Should throw an UnauthorizedException if user is not connected', () => {

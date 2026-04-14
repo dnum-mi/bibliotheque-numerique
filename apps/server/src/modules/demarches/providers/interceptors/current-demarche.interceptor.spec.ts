@@ -50,7 +50,7 @@ describe('CurrentDemarcheInterceptor', () => {
         executionContext,
         next,
       ),
-    ).toThrowError('La démarche est introuvable')
+    ).toThrow('La démarche est introuvable')
   })
 
   it('Should throw a NotFoundException if demarcheId does not exist', () => {
@@ -65,7 +65,7 @@ describe('CurrentDemarcheInterceptor', () => {
         executionContext,
         next,
       ).toPromise(),
-    ).rejects.toThrowError('La démarche est introuvable')
+    ).rejects.toThrow('La démarche est introuvable')
   })
 
   it('Should give demarche for superadmin', () => {
@@ -174,7 +174,7 @@ describe('CurrentDemarcheInterceptor', () => {
         executionContext,
         next,
       ).toPromise(),
-    ).rejects.toThrowError('You are not allowed to access this demarche.')
+    ).rejects.toThrow('You are not allowed to access this demarche.')
   })
 
   it('Should throw for instructor without option', () => {
@@ -197,6 +197,6 @@ describe('CurrentDemarcheInterceptor', () => {
         executionContext,
         next,
       ).toPromise(),
-    ).rejects.toThrowError('You are not allowed to access this demarche.')
+    ).rejects.toThrow('You are not allowed to access this demarche.')
   })
 })

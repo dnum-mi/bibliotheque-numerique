@@ -160,7 +160,7 @@ describe('users (e2e)', () => {
         .send({
           email,
         })
-      expect(mailerService.sendMail).toBeCalled()
+      expect(mailerService.sendMail).toHaveBeenCalled()
       expect(to).toBe(email)
       expect(subject).toBe('Modifier son mot de passe')
     })
@@ -171,7 +171,7 @@ describe('users (e2e)', () => {
         .send({
           email: 'nouser@test.com',
         })
-      expect(mailerService.sendMail).not.toBeCalled()
+      expect(mailerService.sendMail).not.toHaveBeenCalled()
     })
   })
 
@@ -324,7 +324,7 @@ describe('users (e2e)', () => {
         })
         .expect(201)
 
-      expect(mailerService.sendMail).toBeCalled()
+      expect(mailerService.sendMail).toHaveBeenCalled()
       expect(to).toBe(email)
       expect(subject).toBe('Déjà inscrit')
     })

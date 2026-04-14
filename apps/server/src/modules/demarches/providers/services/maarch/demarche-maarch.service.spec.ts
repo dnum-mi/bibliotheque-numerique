@@ -17,6 +17,7 @@ import { FileBuilderService } from './file-builder.service'
 import { getQueueToken } from '@nestjs/bull'
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
 import { CustomBullService } from '../../../../../shared/modules/custom-bull/custom-bull.service'
+import type { Express } from 'express'
 
 const mockCsvProcessor = {
   processFiles: jest.fn(),

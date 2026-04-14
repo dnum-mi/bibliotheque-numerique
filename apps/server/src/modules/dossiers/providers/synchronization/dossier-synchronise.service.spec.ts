@@ -3,7 +3,7 @@ import { DossierSynchroniseService } from "./dossier-synchronise.service"
 import { DossierWithCustomChamp as TDossier } from '@dnum-mi/ds-api-client'
 describe('dossoier-synchronise.service', () => {
 
-  const logger = jest.genMockFromModule<LoggerService>("../../../../shared/modules/logger/logger.service")
+  const logger = jest.createMockFromModule<LoggerService>("../../../../shared/modules/logger/logger.service")
   logger.setContext = jest.fn()
   logger.verbose = jest.fn()
   logger.debug = jest.fn()

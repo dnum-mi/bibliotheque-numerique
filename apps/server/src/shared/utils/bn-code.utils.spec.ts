@@ -21,7 +21,7 @@ describe('Bn code utils', () => {
       const key = '123'
       expect(() => {
         fromStringToBnChampCode(key)
-      }).toThrowError(
+      }).toThrow(
         'The key is not valid to be converted to a BN code',
       )
     })
@@ -30,7 +30,7 @@ describe('Bn code utils', () => {
       const key = ''
       expect(() => {
         fromStringToBnChampCode(key)
-      }).toThrowError(
+      }).toThrow(
         'The key is not valid to be converted to a BN code',
       )
     })

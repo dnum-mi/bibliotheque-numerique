@@ -231,7 +231,7 @@ describe('InstructionTimesService', () => {
       fakeInstrunctionTime.map((d) => d.dossier.id),
     )
 
-    expect(mockUpsert).toBeCalledTimes(fakeInstrunctionTime.length * 2)
+    expect(mockUpsert).toHaveBeenCalledTimes(fakeInstrunctionTime.length * 2)
     expect(results).toMatchObject(
       expect.arrayContaining([
         expect.objectContaining({
@@ -1050,7 +1050,7 @@ describe('InstructionTimesService', () => {
 
     await service.instructionTimeCalculation([dataInstructionTime.dossier.id])
 
-    expect(mockUpsert).toBeCalledTimes(2)
+    expect(mockUpsert).toHaveBeenCalledTimes(2)
 
     expect(results[fixFieldInstructionTimeDelay.id]).toMatchObject({
       sourceId: fixFieldInstructionTimeDelay.id,
@@ -1089,7 +1089,7 @@ describe('InstructionTimesService', () => {
     fieldService.deleteAndSave = mockUpsert
     await service.instructionTimeCalculation([dataInstructionTime.dossier.id])
 
-    expect(mockUpsert).toBeCalledTimes(2)
+    expect(mockUpsert).toHaveBeenCalledTimes(2)
 
     expect(results[fixFieldInstructionTimeStatus.id]).toMatchObject({
       sourceId: fixFieldInstructionTimeStatus.id,
@@ -1128,7 +1128,7 @@ describe('InstructionTimesService', () => {
       dataInstructionTime.dossier.id,
     ])
 
-    expect(mockUpsert).toBeCalledTimes(2)
+    expect(mockUpsert).toHaveBeenCalledTimes(2)
 
     expect(results[fixFieldInstructionTimeDelay.id]).toMatchObject({
       sourceId: fixFieldInstructionTimeDelay.id,
@@ -1169,7 +1169,7 @@ describe('InstructionTimesService', () => {
 
     await service.instructionTimeCalculation([dataInstructionTime.dossier.id])
 
-    expect(mockUpsert).toBeCalledTimes(2)
+    expect(mockUpsert).toHaveBeenCalledTimes(2)
 
     expect(results[fixFieldInstructionTimeDelay.id]).toMatchObject({
       sourceId: fixFieldInstructionTimeDelay.id,
@@ -1210,7 +1210,7 @@ describe('InstructionTimesService', () => {
     fieldService.deleteAndSave = mockUpsert
 
     await service.instructionTimeCalculation([dataInstructionTime.dossier.id])
-    expect(fieldService.deleteAndSave).toBeCalledTimes(2)
+    expect(fieldService.deleteAndSave).toHaveBeenCalledTimes(2)
 
     expect(results[fixFieldInstructionTimeDelay.id]).toMatchObject({
       sourceId: fixFieldInstructionTimeDelay.id,
