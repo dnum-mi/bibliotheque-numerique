@@ -54,7 +54,7 @@ const maskOptions = reactive<MaskInputOptions>({
     const upper = value.toUpperCase()
     for (const type of foundationTypeWithoutUnknown) {
       if (upper.includes(type)) {
-        return `###-${type}-#####-##`
+        return `##$-${type}-#####-##`
       }
     }
     return '##$-@@@@-#####-##'
