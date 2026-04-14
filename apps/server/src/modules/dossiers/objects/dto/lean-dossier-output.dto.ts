@@ -19,6 +19,11 @@ export class LeanDossierOutputDto
   })
   demarcheTitle: string
 
+  @ApiProperty({
+    description: 'numéro de la démarche rattachée au dossier',
+  })
+  demarcheNumber: number
+
   prefecture: PrefectureKey
   state: DossierState
   dateDepot: Date

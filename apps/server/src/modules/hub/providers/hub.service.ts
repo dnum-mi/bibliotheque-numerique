@@ -31,6 +31,7 @@ import {
   sortByDateDepotDesc,
 } from '../utils/organisme-dossier.utils'
 import { DossierService } from '@/modules/dossiers/providers/dossier.service'
+import { DossierState } from '@dnum-mi/ds-api-client'
 
 const ePathCompletedOrganismeByType = {
   association: '/associations',
@@ -40,6 +41,10 @@ const ePathCompletedOrganismeByType = {
 export interface IHubFileResponse {
   data: Stream;
   headers: RawAxiosResponseHeaders;
+}
+
+interface IRafEventExtended extends IRafEvent {
+  dateDepot?: Date | null
 }
 
 @Injectable()
@@ -213,7 +218,7 @@ export class HubService {
   }
 
   // #endregion SEARCH
-  async setLinkDemarcheAndDossier(events: IRafEvent[]): Promise<IRafEvent[]> {
+  async setLinkDemarcheAndDossier(events: IRafEvent[]): Promise<IRafEventExtended[]> {
     this.logger.verbose('setLinkDemarcheAndDossier')
     const demarcheNumbers = events.map(evt => evt.demarcheNumber)
     const demarches = demarcheNumbers?.length
@@ -235,6 +240,7 @@ export class HubService {
         .select([
           'dossier.id',
           'dossier.sourceId',
+          'dossier.dateDepot',
         ])
         .where('dossier.sourceId IN (:...ids)', {
           ids: [...new Set(dossierNumbers)],
@@ -242,7 +248,7 @@ export class HubService {
         .getMany()
       : []
 
-    return events.map(evt => {
+    return (events as IRafEventExtended[]).map(evt => {
       if (evt.demarcheNumber) {
         const demarche = demarches.find(dm => dm.dsId === evt.demarcheNumber)
         if (demarche) {
@@ -254,6 +260,7 @@ export class HubService {
         const dossier = dossiers.find(d => +d.sourceId === evt.dossierNumber)
         if (dossier) {
           evt.dossierLocalNumber = dossier.id
+          evt.dateDepot = dossier.dateDepot
         }
       }
       return evt
@@ -302,58 +309,37 @@ export class HubService {
         .map(d => [d.id!, d]),
     )
 
-    const merged: IOrganismeDossier[] = []
-
-    const eventsByDossierId = new Map<number, IOrganismeDossier[]>()
-
-    for (const event of eventsRows) {
-      if (event.id == null) {
-        merged.push(event)
-        continue
+    const lastDossiersFound = new Set<number>()
+    const merged: IOrganismeDossier[] = eventsRows.map(evt => {
+      if (evt.id == null) {
+        return evt
       }
-      if (!eventsByDossierId.has(event.id)) {
-        eventsByDossierId.set(event.id, [])
-      }
-      eventsByDossierId.get(event.id)!.push(event)
-    }
-
-    for (const [dossierId, eventsGroup] of eventsByDossierId.entries()) {
-      const bnDossier = bnDossierById.get(dossierId)
-
-      if (!bnDossier) {
-        this.logger.warn(`Dossier BN introuvable pour les events liés au dossier: ${dossierId}.`)
-
-        eventsGroup.forEach(evt => {
-          evt.statut = null
-          evt.datePublication = null
-          evt.dateDepot = null
-          evt.dateDecision = null
-          merged.push(evt)
-        })
-        continue
-      }
-
-      eventsGroup.forEach((evt, index) => {
-        const isLastLine = index === eventsGroup.length - 1
-
-        if (isLastLine) {
-          evt.statut = bnDossier.statut
+      const bnDossier = bnDossierById.get(evt.id)!
+      if (bnDossier && bnDossier.statut === evt.statut &&
+        bnDossier.dateDecision?.getTime() === evt.dateDecision?.getTime()) {
+        lastDossiersFound.add(bnDossier.id!)
+      } else if (
+        [
+          DossierState.EnInstruction,
+          'passe_en_instruction',
+          'passe_en_instruction_automatiquement',
+          'repasse_en_instruction',
+        ].includes(evt.statut)
+      ) {
+        evt.statut = DossierState.Accepte
+        if (bnDossier && !lastDossiersFound.has(bnDossier.id!)) {
           evt.dateDecision = bnDossier.dateDecision
-        } else {
-          evt.isCorrection = true
-          evt.statut = null
-          evt.dateDecision = null
+          lastDossiersFound.add(bnDossier.id!)
         }
+      }
+      return {
+        ...evt,
+        dateDepot: evt.dateDepot ?? (bnDossier ? bnDossier.dateDepot : null),
+      }
+    })
 
-        merged.push(evt)
-      })
-
-      bnDossierById.delete(dossierId)
-    }
-
-    merged.push(...bnDossierById.values())
-
-    return sortByDateDepotDesc(merged)
+    lastDossiersFound.forEach(id => bnDossierById.delete(id))
+    return sortByDateDepotDesc(merged.concat([...bnDossierById.values()]))
   }
 
   private async _fetchAndMapEvents(idRef: string, type: OrganismeKind): Promise<IOrganismeDossier[]> {
@@ -363,17 +349,30 @@ export class HubService {
 
     const enrichedEvents = await this.setLinkDemarcheAndDossier(rawEvents)
 
+    const messageDossiersNotFound = enrichedEvents.filter(evt => !evt.dossierLocalNumber && evt.dossierNumber)
+      .map(evt => `dossier ${evt.dossierNumber} of demarche(${evt.demarcheName})`)
+      .join(' , ')
+    if (messageDossiersNotFound) {
+      this.logger.warn(`Dossiers Not Found in BN: ${
+        enrichedEvents.filter(evt => !evt.dossierLocalNumber && evt.dossierNumber)
+          .map(evt => `dossier ${evt.dossierNumber} of demarche(${evt.demarcheName})`)
+          .join(' , ')
+      }`)
+    }
+
     return enrichedEvents.map(evt => ({
       id: evt.dossierLocalNumber ?? null,
       dossierNumber: evt.dossierNumber ?? null,
       isCorrection: evt.isCorrection ?? false,
+      demarcheNumber: evt.demarcheNumber ?? null,
       demarche: evt.demarcheLocalName ?? evt.demarcheName,
       statut: normalizeStatut(evt.dsTraitementEvent),
       source: normalizeSource(evt.type),
       repere: null,
-      dateDepot: null,
-      dateDecision: null,
+      dateDepot: evt.dateDepot ?? null,
+      dateDecision: evt.dsTraitementEventAt ? new Date(evt.dsTraitementEventAt) : null,
       datePublication: null,
+      createdAt: evt.createdAt,
     }))
   }
 
@@ -382,6 +381,7 @@ export class HubService {
 
     return dossiers.map(d => ({
       id: d.id,
+      demarcheNumber: d.demarcheNumber,
       demarche: d.demarcheTitle,
       dossierNumber: d.sourceId ? Number(d.sourceId) : null,
       isCorrection: false,

@@ -806,6 +806,7 @@ export class DossierService extends BaseEntityService<Dossier> {
           id: dossier.id,
           sourceId: dossier.sourceId,
           demarcheId: dossier.demarche.id,
+          demarcheNumber: dossier.demarche.dsId,
           demarcheTitle: dossier.demarche.title,
           prefecture: dossier.prefecture,
           state: dossier.state,
