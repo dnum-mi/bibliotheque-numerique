@@ -46,7 +46,7 @@ export class LoggerService extends ConsoleLogger implements LS {
 
   // Transform input message into a structured log payload
   private _buildLogObject(
-    message: string | object | Error,
+    message: string | object | Error | undefined,
     level: 'log' | 'warn' | 'debug' | 'error' | 'verbose',
   ): iLogPayload {
     const logObject: iLogPayload = {
@@ -55,6 +55,16 @@ export class LoggerService extends ConsoleLogger implements LS {
       context: this.context,
       timestamp: new Date().toISOString(),
       message: '',
+    }
+
+    if (message === null) {
+      message = 'null'
+      logObject.message = 'null'
+    }
+
+    if (message === undefined) {
+      message = 'undefined'
+      logObject.message = 'undefined'
     }
 
     if (message instanceof Error) {
@@ -85,7 +95,7 @@ export class LoggerService extends ConsoleLogger implements LS {
 
     // Extraction intelligente d'erreur imbriquée
     const possibleError =
-      obj.error instanceof Error
+      obj?.error instanceof Error
         ? obj.error
         : obj.exception instanceof Error
           ? obj.exception
@@ -118,7 +128,7 @@ export class LoggerService extends ConsoleLogger implements LS {
   }
 
   private _shouldIgnoreNestLog(message: string): boolean {
-    return (
+    return message && (
       message.startsWith('Mapped {') ||
       message.endsWith(' route') ||
       message.endsWith('}:') ||
