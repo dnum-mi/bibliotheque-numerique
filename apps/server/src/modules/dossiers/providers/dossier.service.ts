@@ -137,22 +137,19 @@ export class DossierService extends BaseEntityService<Dossier> {
     fields.forEach((field) => {
       if (field.type === 'file' && field.rawJson) {
         const fileData = field.rawJson as FieldFileType
-        const fileUuid = field.stringValue
         if (fileData.id && fileData.files && Array.isArray(fileData.files)) {
-          fileData.files.forEach((subFile) => {
-            const fileFound = files.find(
-              (f) => String(f.uuid) === String(fileUuid),
-            )
-
+          fileData.files.forEach((subFile, index) => {
+            const fileFound = files.find(f => f.sourceStringId === field.sourceId && f.sourceIndex === index)
             if (fileFound) {
               subFile.filename = fileFound.originalLabel || fileFound.label
-              subFile.url = fileFound.uuid ?? ''
-              subFile.state = fileFound.state ?? eState.queued
+              subFile.url = fileFound.uuid
+              subFile.state = fileFound.state
               subFile.byteSizeBigInt = fileFound.byteSize
                 ? String(fileFound.byteSize)
                 : '0'
             } else {
-              field.rawJson = null
+              subFile.state = eState.failed
+              subFile.url = ''
             }
           })
         }
@@ -187,10 +184,10 @@ export class DossierService extends BaseEntityService<Dossier> {
       fileCh.state = fileFound?.state ?? eState.queued
     }
     if (filesCh) {
-      filesCh.forEach((fileCh1) => {
+      filesCh.forEach((fileCh1, index) => {
         const fileFound = files.find(
           (file) =>
-            file.sourceStringId === id && file.checksum === fileCh1.checksum,
+            file.sourceStringId === id && file.checksum === fileCh1.checksum && file.sourceIndex === index,
         )
         fileCh1.url = fileFound?.uuid ?? ''
         fileCh1.state = fileFound?.state ?? eState.queued
