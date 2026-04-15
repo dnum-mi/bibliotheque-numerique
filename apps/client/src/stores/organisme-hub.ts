@@ -32,7 +32,7 @@ export const useOrganismeHubStore = defineStore('organismeHub', () => {
     }
     if (organismeRef[0] === 'W') {
       return EOrganismeCategory.association
-    } else if (/\d{3}-\w{2,4}-\d{5}-\d{2}/.test(organismeRef)) {
+    } else if (/\d{2}[\dAB]-\w{2,4}-\d{5}-\d{2}/.test(organismeRef)) {
       return EOrganismeCategory.fondation
     }
     return null
@@ -54,7 +54,7 @@ export const useOrganismeHubStore = defineStore('organismeHub', () => {
       return false
     }
     currentOrganisme.value = organisme
-    currentType.value = EOrganismeCategory.association
+    currentType.value = EOrganismeCategory.fondation
     return true
   }
 
