@@ -30,6 +30,7 @@ const props = withDefaults(
     selectionMode?: 'single' | 'multiple'
     dataKey?: string
     context?: unknown
+    pagination?: boolean
   }>(),
   {
     title: undefined,
@@ -41,6 +42,7 @@ const props = withDefaults(
     selectionMode: 'multiple',
     dataKey: undefined,
     context: undefined,
+    pagination: true,
   },
 )
 
@@ -195,7 +197,7 @@ watch(selectedRows, (newValue) => {
     class="m-w-full h-full"
     :value="processedRows"
     striped-rows
-    paginator
+    :paginator="pagination"
     :rows="perPage"
     :rows-per-page-options="[20, 50, 100]"
     scrollable
