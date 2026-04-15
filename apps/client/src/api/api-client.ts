@@ -105,6 +105,7 @@ import router from '@/router'
 import { useUserStore } from '@/stores'
 import type { RouteLocationRaw } from 'vue-router'
 import { fabricSyncStateApiClient } from './sync-state-api-client'
+import { IS_ASSOCIATIONS_ENABLED } from '../config'
 
 const updatePasswordFeedback = {
   401: 'Le token est absent, veuillez fournir un token valide',
@@ -569,10 +570,14 @@ export const hubApiClient = {
       { responseType: 'blob' },
     )
   },
-  hubGetRna: (sentence: string): Promise<IFoundationOutput> => {
+  hubGetRna: (sentence: string): Promise<IAssociationOutput> => {
+    if (!IS_ASSOCIATIONS_ENABLED) {
+      throw new Error('La fonctionnalité de recherche d’associations est désactivée')
+    }
+
     return getWithoutRedirectTo404(hubGetRna(sentence))
   },
-  hubGetRnf: (sentence: string): Promise<IAssociationOutput> => {
+  hubGetRnf: (sentence: string): Promise<IFoundationOutput> => {
     return getWithoutRedirectTo404(hubGetRnf(sentence))
   },
   hubExportOrganisme: (type: organismeCategoryKey, organismeId: string) => {
