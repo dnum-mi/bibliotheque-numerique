@@ -376,4 +376,52 @@ describe('dossier.service', () => {
       expect(groupItem.rows[1][1].value).toBe('20')
     })
   })
+
+  it('Should get uuid files for one champs with many files', () => {
+    const filesMock: File[] = [
+      {
+        sourceIndex: 0,
+        sourceLabel: eFileDsSourceLabel['ds-champ'],
+        originalLabel: faker.system.fileName(),
+        sourceStringId: 'champ1',
+        uuid: faker.string.uuid(),
+      } as File,
+      {
+        sourceIndex: 1,
+        sourceLabel: eFileDsSourceLabel['ds-champ'],
+        sourceStringId: 'champ1',
+        uuid: faker.string.uuid(),
+        originalLabel: faker.system.fileName(),
+      } as File,
+    ]
+
+    const fieldMock: Partial<Field> = {
+      label: faker.string.alphanumeric(),
+      type: FieldType.file,
+      sourceId: 'champ1',
+      rawJson: {
+        id: 'champ1',
+        files: [
+          {
+              "url": faker.internet.url(),
+              "checksum": faker.string.alpha(),
+              "filename": faker.system.fileName(),
+              "contentType": "application/pdf",
+              "byteSizeBigInt": faker.number.int({ min: 1000, max: 1000000 }).toString(),
+          },
+          {
+              "url": faker.internet.url(),
+              "checksum": faker.string.alpha(),
+              "filename": faker.system.fileName(),
+              "contentType": "application/pdf",
+              "byteSizeBigInt": faker.number.int({ min: 1000, max: 1000000 }).toString(),
+          },
+        ],
+      } as Partial<CustomChamp>,
+    }
+
+    const results = service["_transformValueFileOfDossierFields"]({ fields: [ fieldMock ] , files: filesMock})
+    expect(results[0].rawJson["files"][0].url).toBe(filesMock[0].uuid)
+    expect(results[0].rawJson["files"][1].url).toBe(filesMock[1].uuid)
+  })
 })
