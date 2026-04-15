@@ -57,12 +57,17 @@ onMounted(async () => {
     nbAttachments.value = await apiClient.getDossierFilesSummary(id)
     organismeHubStore.clear()
     if (dossierStore.dossier?.organismeRefs?.length) {
-      try {
-        await organismeHubStore.setCurrentOrganismeByRef(
-          dossierStore.dossier.organismeRefs[0],
-        )
-      } catch (error) {
-        console.warn('Dossier - onMounted - erreur lors du chargement de l\'organisme', error)
+      for (const organismeRef of dossierStore.dossier.organismeRefs) {
+        try {
+          const result = await organismeHubStore.setCurrentOrganismeByRef(
+            organismeRef,
+          )
+          if (result) {
+            break
+          }
+        } catch (error) {
+          console.warn('Dossier - onMounted - erreur lors du chargement de l\'organisme', error)
+        }
       }
     }
     isReady.value = true
