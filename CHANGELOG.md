@@ -1,5 +1,27 @@
 # Changelog
 
+## [5.10.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.9.6...v5.10.0) (2026-04-15)
+
+
+### Features
+
+* **désactiver les associations:** ajouter le config IS_ASSOCIATIONS_ENABLED ([d5cf68d](https://github.com/dnum-mi/bibliotheque_numerique/commit/d5cf68df6b9b88a19e0c67e862bc8ef2c70fd9fa))
+* permettre la recherche et l'affichage conditionnel des associations en fonction de la configuration ([15bac91](https://github.com/dnum-mi/bibliotheque_numerique/commit/15bac9114009cd56b0f3f85e94af1e923f393f8e))
+
+
+### Bug Fixes
+
+* affiche au moins un  button fiche organisme valide ([6678f1d](https://github.com/dnum-mi/bibliotheque_numerique/commit/6678f1dcf3ab387f46759c82a226c05b89f8bf97))
+* désactivation de tri, filtre de results de la recherche des organismes ([87c6fa0](https://github.com/dnum-mi/bibliotheque_numerique/commit/87c6fa04ef8d5d49f568422a92f25b7cd6b219aa))
+* désactiver dans les associations dans api-client front ([456d8b6](https://github.com/dnum-mi/bibliotheque_numerique/commit/456d8b63f30b67ae206904002858f843a57d6511))
+* **désactiver les associations:** factorisation et fixer la constant pour cacher les associations ([c8b03c6](https://github.com/dnum-mi/bibliotheque_numerique/commit/c8b03c6cce18a0a2be60af0170225e0017490692))
+* **list dossiers de la fiche organsime:** fusion des events et la liste de dossiers de BN ([cdb3cbd](https://github.com/dnum-mi/bibliotheque_numerique/commit/cdb3cbdbfb2edfc03d3b7e9d79924003eed48a61))
+* list Pj pour un champs dans le fiche dossier ([182a7bf](https://github.com/dnum-mi/bibliotheque_numerique/commit/182a7bf814f5efeca9236dc86d0ce5152649e609))
+* log de undefined object ([2e51d80](https://github.com/dnum-mi/bibliotheque_numerique/commit/2e51d8064f5fa72b2717404d160451f0c40edaf4))
+* logger un undefined ne doit pas crasher ([7552e7a](https://github.com/dnum-mi/bibliotheque_numerique/commit/7552e7a1a601cd7e97ae2f62d1b8e3bd041b1fa8))
+* open fiche organisme corse ([8a0a5b2](https://github.com/dnum-mi/bibliotheque_numerique/commit/8a0a5b25efc5c36f4e6f8f6f4ec09997f76d0e1d))
+* parametre activation de pagination de datatable ([07706ac](https://github.com/dnum-mi/bibliotheque_numerique/commit/07706ac0ed11ef442afe4ab71478fdf5457a822d))
+
 ## [5.9.6](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.9.5...v5.9.6) (2026-04-14)
 
 
