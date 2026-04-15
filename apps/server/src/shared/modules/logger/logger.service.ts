@@ -79,8 +79,8 @@ export class LoggerService extends ConsoleLogger implements LS {
     logObject.payload = obj
 
     // message principal
-    if (typeof obj.message === 'string') {
-      logObject.message = obj.message
+    if (typeof obj?.message === 'string') {
+      logObject.message = obj?.message || 'log of object undefined'
     }
 
     // Extraction intelligente d'erreur imbriquée
