@@ -9,14 +9,14 @@ const toaster = useToaster()
 
 const resetFullTextAndRecents = () => {
   inputSearch.value = ''
-  inputSize.value = 5
+  inputSize.value = 20
   typeOrganisme.value = [eOrganismeTypeToSearch.associations, eOrganismeTypeToSearch.fondations]
   hasError.value = false
   hasSearched.value = false
 }
 
 const inputSearch = ref('')
-const inputSize = ref<number>(5)
+const inputSize = ref<number>(20)
 const handleInputChange = (value: string) => {
   inputSearch.value = value.trim()
 }
@@ -56,12 +56,6 @@ const handleTypeOrganisme = (value: OrganismeTypeToSearchKey[]) => {
 }
 // #endregion Gestion des types d'organisme
 
-const onChangeNbResulst = (playload: number) => {
-  if (playload < 1) {
-    inputSize.value = 1
-  }
-  onSearchFullText()
-}
 // # region Search organismes
 const onSearchFullText = async () => {
   let entityType
@@ -157,20 +151,6 @@ const onSearchFullText = async () => {
           no-outline
           icon="fr-icon-close-circle-line"
           @click="resetFullTextAndRecents"
-        />
-      </div>
-    </template>
-    <template v-if="hasSearched" #section-before-table>
-      <div class="flex flex-row gap-2 items-center fr-mb-4w ">
-        <DsfrInput
-          v-model="inputSize"
-          label-class="whitespace-nowrap"
-          wrapper-class="min-w-[4em] w-10%"
-          type="number"
-          label="Nombre d'organismes attendus par type :"
-          label-visible
-          :placeholder="5"
-          @update:model-value="onChangeNbResulst"
         />
       </div>
     </template>

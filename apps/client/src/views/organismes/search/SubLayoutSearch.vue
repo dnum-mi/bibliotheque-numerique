@@ -34,6 +34,8 @@ const header: HeaderDataTable[] = [
   {
     field: 'id',
     text: 'Numéro RNA / RNF',
+    sortable: false,
+    filterable: false,
   },
   {
     field: 'type',
@@ -45,10 +47,14 @@ const header: HeaderDataTable[] = [
       cellRenderer: OrganismeBadgesRenderer,
       targetFilterType: 'strings',
     },
+    sortable: false,
+    filterable: false,
   },
   {
     field: 'title',
     text: 'Titre',
+    sortable: false,
+    filterable: false,
   },
   {
     field: 'state',
@@ -60,10 +66,14 @@ const header: HeaderDataTable[] = [
       cellRenderer: OrganismeStatusBadgeRenderer,
       targetFilterType: 'strings',
     },
+    sortable: false,
+    filterable: false,
   },
   {
     field: 'postalCodeCity',
     text: 'Code postal - Ville',
+    sortable: false,
+    filterable: false,
   },
 ]
 
@@ -147,6 +157,7 @@ onMounted(async () => {
           :title="titleTable"
           :rows-data="rows"
           :headers="header"
+          :pagination="false"
           @row-click="rowClick"
         />
       </div>
