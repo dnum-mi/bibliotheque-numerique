@@ -48,6 +48,7 @@ const riIconNames = [
   'links-line',
   'lock-line',
   'logout-box-r-line',
+  'question-mark',
   'pencil-line',
   'refresh-line',
   'save-line',
