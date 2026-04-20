@@ -91,9 +91,16 @@
       "typeorm-fixtures-cli@3.1.0": "patches/typeorm-fixtures-cli@3.1.0.patch"
     },
     "overrides": {
-      "nodemailer@<7.0.7": ">=7.0.7",
-      "glob@>=10.2.0 <10.5.0": ">=10.5.0",
-      "nodemailer@<=7.0.10": ">=7.0.11"
+      "serialize-javascript@<=7.0.2": ">=7.0.3",
+      "underscore@<=1.13.7": ">=1.13.8",
+      "file-type@>=13.0.0 <21.3.1": ">=21.3.1",
+      "file-type@>=20.0.0 <=21.3.1": ">=21.3.2",
+      "nodemailer@<8.0.4": ">=8.0.4",
+      "path-to-regexp@>=8.0.0 <8.4.0": ">=8.4.0",
+      "serialize-javascript@<7.0.5": ">=7.0.5",
+      "lodash@>=4.0.0 <=4.17.23": ">=4.18.0",
+      "lodash@<=4.17.23": ">=4.18.0",
+      "nodemailer@<=8.0.4": ">=8.0.5"
     }
   },
   "packageManager": "pnpm@9.15.4"
