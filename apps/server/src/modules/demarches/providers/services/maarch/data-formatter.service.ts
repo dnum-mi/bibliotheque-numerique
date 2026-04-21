@@ -1,4 +1,4 @@
-import { MaarchEtatType } from '@/modules/demarches/objects/constants/maarch-champ.enum'
+import { MaarchEtatType } from '@/modules/demarches/objects/const/maarch-champ.enum'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { Prefecture, PrefectureDictionary, PrefectureKey } from '@biblio-num/shared'
 import { DossierState } from '@dnum-mi/ds-api-client'

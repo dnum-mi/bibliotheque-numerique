@@ -1,8 +1,12 @@
-import { maarchChampsLabel, maarchPJLabel } from '@/modules/demarches/objects/constants/maarch-champ.enum'
+import {
+  maarchChampsLabel,
+  maarchPJLabel,
+} from '@/modules/demarches/objects/const/maarch-champ.enum'
 import {
   CsvRow,
   DemandeAggregee,
-} from '@/modules/demarches/objects/constants/maarch.types'
+  ExtendedMappingColumn,
+} from '@/modules/demarches/objects/const/maarch.types'
 import { Field } from '@/modules/dossiers/objects/entities/field.entity'
 import { DsChampType } from '@/shared/modules/ds-api/objects/ds-champ-type.enum'
 import {
@@ -12,7 +16,6 @@ import {
 } from '@biblio-num/shared'
 import { Injectable } from '@nestjs/common'
 import { createFileRawValue } from './utils/file-helper'
-import { ExtendedMappingColumn } from '@/modules/demarches/objects/constants/maarch-champ.dictionary'
 
 @Injectable()
 export class FieldBuilderService {
@@ -21,7 +24,11 @@ export class FieldBuilderService {
     data: DemandeAggregee,
     fileUuidMap: Map<string, string>,
   ): Field | null {
-    const rawValue = data[mapping.csvColumnLabel]
+    if (!mapping.csvColumnLabel) {
+      return null
+    }
+
+    const rawValue = this._getRawValue(data, mapping)
 
     if (this._isNullOrUndefined(rawValue)) {
       return null
@@ -44,7 +51,11 @@ export class FieldBuilderService {
     data: DemandeAggregee,
     fileUuidMap: Map<string, string>,
   ): Field[] | null {
-    const rawValueArray = data[parentMapping.csvColumnLabel] as CsvRow[]
+    if (!parentMapping.csvColumnLabel) {
+      return null
+    }
+
+    const rawValueArray = this._getRawValue(data, parentMapping) as CsvRow[]
 
     if (!this._isValidArray(rawValueArray) || rawValueArray.length === 0) {
       return null
@@ -59,6 +70,15 @@ export class FieldBuilderService {
     )
 
     return [parentField, ...childFields]
+  }
+
+  private _getRawValue(data: CsvRow | DemandeAggregee, mapping: ExtendedMappingColumn): unknown {
+    const key = mapping.csvColumnLabel
+    if (!key) {
+      throw Error(`Mapping error: csvColumnLabel is missing for field ${mapping.id}`)
+    }
+
+    return data[key]
   }
 
   private _initializeField(mapping: ExtendedMappingColumn): Field {
@@ -182,26 +202,30 @@ export class FieldBuilderService {
     }
 
     switch (mapping.type) {
-    case FieldType.number:
-      this._setNumberValue(field, rawValue)
-      break
+      case FieldType.number:
+        this._setNumberValue(field, rawValue)
+        break
 
-    case FieldType.date:
-      this._setDateValue(field, rawValue)
-      break
+      case FieldType.date:
+        this._setDateValue(field, rawValue)
+        break
 
-    case FieldType.boolean:
-      this._setBooleanValue(field, rawValue)
-      break
+      case FieldType.boolean:
+        this._setBooleanValue(field, rawValue)
+        break
 
-    case FieldType.string:
-    default:
-      this._setStringValue(field, rawValue)
-      break
+      case FieldType.string:
+      default:
+        this._setStringValue(field, rawValue)
+        break
     }
   }
 
-  private _setPieceJustificativeValue(field: Field, data: CsvRow, fileUuidMap: Map<string, string>): void {
+  private _setPieceJustificativeValue(
+    field: Field,
+    data: CsvRow,
+    fileUuidMap: Map<string, string>,
+  ): void {
     const filename = data[maarchPJLabel.nomPj]
 
     const uuid = filename ? fileUuidMap.get(filename) : null

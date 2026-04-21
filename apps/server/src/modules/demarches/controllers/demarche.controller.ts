@@ -34,7 +34,7 @@ import { UpdateDemarcheDto } from '@/modules/demarches/objects/dtos/update-demar
 import { DossierService } from '@/modules/dossiers/providers/dossier.service'
 import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.decorator'
 import { DemarcheMaarchService } from '../providers/services/maarch/demarche-maarch.service'
-import { ImportFiles } from '../objects/constants/maarch.types'
+import { ImportFiles } from '../objects/const/maarch.types'
 import { ImportMaarchInputDto } from '@/modules/demarches/objects/dtos/import-maarch-input.dto'
 import { CustomBullService } from '@/shared/modules/custom-bull/custom-bull.service'
 import { PaginatedSmallDemarcheDto } from '../objects/dtos/paginated-small-demarche.dto'

@@ -66,9 +66,14 @@ describe('CsvProcessorService', () => {
 1;Autre annotation dossier 1
 2;Annotation pour dossier 2`
 
+      const accusesReceptionContent = `res_id;filename;path;send_date
+1;accuse1.pdf;/path/to/accuse1.pdf;2024-01-16
+2;accuse2.pdf;/path/to/accuse2.pdf;2024-02-21`
+
       const mockFiles = {
         demandes: [createMockFile(demandesContent)],
         annotations: [createMockFile(annotationsContent)],
+        accusesReception: [createMockFile(accusesReceptionContent)],
       }
 
       const result = service.processFiles(mockFiles)
@@ -97,7 +102,7 @@ describe('CsvProcessorService', () => {
       })
     })
 
-    it('should throw BadRequestException when res_id column is missing', () => {
+    it('should throw BadRequestException when res_id column is missing in annotations file', () => {
       const demandesContent = `courrier;etat_dossier;nom
 1;VAL,test`
       const annotationsContent = `wrong_column;annotations_courrier
@@ -110,6 +115,26 @@ describe('CsvProcessorService', () => {
 
       expect(() => service.processFiles(mockFiles)).toThrow(
         new BadRequestException('Annotations file is missing required columns: res_id.')
+      )
+    })
+
+
+    it('should throw BadRequestException when res_id column is missing in accusesReception file', () => {
+      const demandesContent = `courrier;etat_dossier;nom
+1;VAL,test`
+      const annotationsContent = `res_id;annotations_courrier
+1;Annotation`
+      const accusesReceptionContent = `wrong_column;filename;path;send_date
+1;accuse1.pdf;/path/to/accuse1.pdf;2024-01-16`
+
+      const mockFiles = {
+        demandes: [createMockFile(demandesContent)],
+        annotations: [createMockFile(annotationsContent)],
+        accusesReception: [createMockFile(accusesReceptionContent)],
+      }
+
+      expect(() => service.processFiles(mockFiles)).toThrow(
+        new BadRequestException('Accusés de réception file is missing required columns: res_id.')
       )
     })
 
@@ -138,9 +163,13 @@ describe('CsvProcessorService', () => {
       const annotationsContent = `res_id;annotations_courrier
 1;Annotation`
 
+      const accusesReceptionContent = `res_id;filename;path;send_date
+1;accuse.pdf;/path/to/accuse.pdf;2024-01-16`
+
       const mockFiles = {
         demandes: [createMockFile(demandesContent)],
         annotations: [createMockFile(annotationsContent)],
+        accusesReception: [createMockFile(accusesReceptionContent)],
       }
 
       const result = service.processFiles(mockFiles)
@@ -150,6 +179,7 @@ describe('CsvProcessorService', () => {
       expect(result[0].pieces_jointes[0].intitule_pj).toBe('Document 1.pdf')
       expect(result[0].pieces_jointes[1].intitule_pj).toBe('Document 2.pdf')
       expect(result[0].pieces_jointes[2].intitule_pj).toBe('Tableau.xlsx')
+      expect(result[0].accuses_reception[0].filename).toBe('accuse.pdf')
     })
 
     it('should format phone numbers and parse dates correctly', () => {
@@ -183,9 +213,13 @@ describe('CsvProcessorService', () => {
       const annotationsContent = `res_id;annotations_courrier
 1;Note`
 
+      const accusesReceptionContent = `res_id;filename;path;send_date
+1;accuse_sans_extension;/path/to/accuse;2024-01-16`
+
       const mockFiles = {
         demandes: [createMockFile(demandesContent)],
         annotations: [createMockFile(annotationsContent)],
+        accusesReception: [createMockFile(accusesReceptionContent)],
       }
 
       const result = service.processFiles(mockFiles)
@@ -204,9 +238,13 @@ NaN;VAL;other.pdf;Other`
       const annotationsContent = `res_id;annotations_courrier
 1;Annotation`
 
+      const accusesReceptionContent = `res_id;filename;path;send_date
+1;accuse.pdf;/path/to/accuse.pdf;2024-01-16`
+
       const mockFiles = {
         demandes: [createMockFile(demandesContent)],
         annotations: [createMockFile(annotationsContent)],
+        accusesReception: [createMockFile(accusesReceptionContent)],
       }
 
       const result = service.processFiles(mockFiles)

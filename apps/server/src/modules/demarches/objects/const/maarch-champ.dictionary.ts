@@ -1,14 +1,6 @@
 import { FieldSource, FieldType, FormatFunctionRef } from '@biblio-num/shared'
-import {
-  MappingColumn,
-} from '../dtos/mapping-column.dto'
-import { maarchAnnotationLabel, maarchChampsLabel, maarchPJLabel } from './maarch-champ.enum'
-
-export interface ExtendedMappingColumn extends MappingColumn {
-  csvColumnLabel?: string
-  children?: ExtendedMappingColumnWithoutChildren[]
-}
-export type ExtendedMappingColumnWithoutChildren = Omit<ExtendedMappingColumn, 'children'>
+import { maarchAccuseLabel, maarchAnnotationLabel, maarchChampsLabel, maarchPJLabel } from './maarch-champ.enum'
+import { ExtendedMappingColumn, ExtendedMappingColumnWithoutChildren } from './maarch.types'
 
 /** Informations du courrier */
 
@@ -184,6 +176,26 @@ export const fieldCourrierFileIntitule: ExtendedMappingColumnWithoutChildren = {
   type: FieldType.file,
   source: FieldSource.champs,
   formatFunctionRef: FormatFunctionRef.file,
+}
+
+export const fieldAccuseReceptionIntitule: ExtendedMappingColumnWithoutChildren = {
+  id: '9098ce70-4378-2d7e-bkb9-b76fb7b67h91',
+  columnLabel: 'Accusé de réception',
+  originalLabel: 'Accusé de réception',
+  csvColumnLabel: maarchAccuseLabel.filename,
+  type: FieldType.file,
+  source: FieldSource.champs,
+  formatFunctionRef: FormatFunctionRef.file,
+}
+
+export const fieldAccusesReception: ExtendedMappingColumn = {
+  id: '9098ce70-4378-2d7e-bkb9-b76fb7b67h90',
+  columnLabel: 'Accusés de réception',
+  originalLabel: 'Accusés de réception',
+  csvColumnLabel: maarchChampsLabel.accusesReception,
+  type: FieldType.file,
+  source: FieldSource.champs,
+  children: [fieldAccuseReceptionIntitule],
 }
 
 export const fieldPjIntitule: ExtendedMappingColumnWithoutChildren = {

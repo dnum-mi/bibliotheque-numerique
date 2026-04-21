@@ -12,7 +12,7 @@ import { BadRequestException, NotFoundException } from '@nestjs/common'
 import {
   fieldNumRna,
   maarchFieldMappingsArray,
-} from '../../../objects/constants/maarch-champ.dictionary'
+} from '../../../objects/const/maarch-champ.dictionary'
 import { FileBuilderService } from './file-builder.service'
 import { getQueueToken } from '@nestjs/bull'
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'

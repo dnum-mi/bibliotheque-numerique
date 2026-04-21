@@ -1,4 +1,4 @@
-import { FileRawValue } from '@/modules/demarches/objects/constants/maarch.types'
+import { FileRawValue } from '@/modules/demarches/objects/const/maarch.types'
 import { eFileExtension, FileExtensionKey } from '@biblio-num/shared'
 import { createHash } from 'crypto'
 

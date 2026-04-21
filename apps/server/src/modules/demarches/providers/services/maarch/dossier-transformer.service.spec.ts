@@ -6,12 +6,12 @@ import { FileBuilderService } from './file-builder.service'
 import { Test, TestingModule } from '@nestjs/testing'
 import { loggerServiceMock } from '../../../../../../test/mock/logger-service.mock'
 import { Demarche } from '@/modules/demarches/objects/entities/demarche.entity'
-import { maarchChampsLabel } from '@/modules/demarches/objects/constants/maarch-champ.enum'
+import { maarchChampsLabel } from '@/modules/demarches/objects/const/maarch-champ.enum'
 import { Field } from '@/modules/dossiers/objects/entities/field.entity'
 import { File } from '@/modules/files/objects/entities/file.entity'
 import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
 import { DossierState } from '@dnum-mi/ds-api-client'
-import { DemandeAggregee } from '@/modules/demarches/objects/constants/maarch.types'
+import { DemandeAggregee } from '@/modules/demarches/objects/const/maarch.types'
 
 describe('DossierTransformerService', () => {
   let service: DossierTransformerService

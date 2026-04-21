@@ -3,16 +3,13 @@ import { Injectable } from '@nestjs/common'
 import { DataFormatterService } from './data-formatter.service'
 import { FieldBuilderService } from './field-builder.service'
 import { FileBuilderService } from './file-builder.service'
-import { DemandeAggregee } from '@/modules/demarches/objects/constants/maarch.types'
+import { DemandeAggregee, ExtendedMappingColumn } from '@/modules/demarches/objects/const/maarch.types'
 import { Demarche } from '@/modules/demarches/objects/entities/demarche.entity'
 import { Dossier } from '@/modules/dossiers/objects/entities/dossier.entity'
 import { DossierState } from '@dnum-mi/ds-api-client'
-import { maarchChampsLabel } from '@/modules/demarches/objects/constants/maarch-champ.enum'
+import { maarchChampsLabel } from '@/modules/demarches/objects/const/maarch-champ.enum'
 import { Field } from '@/modules/dossiers/objects/entities/field.entity'
-import {
-  ExtendedMappingColumn,
-  maarchFieldMappingsArray,
-} from '@/modules/demarches/objects/constants/maarch-champ.dictionary'
+import { maarchFieldMappingsArray } from '@/modules/demarches/objects/const/maarch-champ.dictionary'
 
 @Injectable()
 export class DossierTransformerService {
@@ -51,8 +48,8 @@ export class DossierTransformerService {
 
     const fileUuidMap = new Map<string, string>()
     dossier.files.forEach((file) => {
-      if (file.originalLabel) {
-        fileUuidMap.set(file.originalLabel, file.uuid)
+      if (file.label) {
+        fileUuidMap.set(file.label, file.uuid)
       }
     })
 

@@ -3,9 +3,8 @@ import { FieldBuilderService } from './field-builder.service'
 import { FieldSource, FieldType } from '@biblio-num/shared'
 import { Field } from '@/modules/dossiers/objects/entities/field.entity'
 import { DsChampType } from '@/shared/modules/ds-api/objects/ds-champ-type.enum'
-import { DemandeAggregee } from '@/modules/demarches/objects/constants/maarch.types'
-import { maarchPJLabel } from '@/modules/demarches/objects/constants/maarch-champ.enum'
-import { ExtendedMappingColumn, ExtendedMappingColumnWithoutChildren } from '@/modules/demarches/objects/constants/maarch-champ.dictionary'
+import { DemandeAggregee, ExtendedMappingColumn } from '@/modules/demarches/objects/const/maarch.types'
+import { maarchPJLabel } from '@/modules/demarches/objects/const/maarch-champ.enum'
 
 describe('FieldBuilderService', () => {
   let service: FieldBuilderService

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { ImportResult } from '../constants/maarch.types'
+import { ImportResult } from '../const/maarch.types'
 
 export class ImportMaarchOutputDto implements ImportResult {
   @ApiProperty({

@@ -3,12 +3,12 @@ import {
   MaarchEtatsValides,
   maarchExtraFields,
   maarchPJLabel,
-} from '@/modules/demarches/objects/constants/maarch-champ.enum'
+} from '@/modules/demarches/objects/const/maarch-champ.enum'
 import {
   CsvRow,
   DemandeAggregee,
   ImportFiles,
-} from '@/modules/demarches/objects/constants/maarch.types'
+} from '@/modules/demarches/objects/const/maarch.types'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { parse } from 'csv-parse/sync'
@@ -20,7 +20,7 @@ export class CsvProcessorService {
   private readonly fileSchemas: Record<string, { columns: string[], label: string }> = {
     demandes: { columns: ['courrier'], label: 'Demandes' },
     annotations: { columns: ['res_id', 'annotations_courrier'], label: 'Annotations' },
-    accusesReception: { columns: ['res_id', 'filename'], label: 'Accusés de réception' },
+    accusesReception: { columns: ['res_id', 'filename', 'path', 'send_date'], label: 'Accusés de réception' },
   }
 
   constructor(
@@ -240,9 +240,11 @@ export class CsvProcessorService {
 
   private _groupByResId<T, R = T>(
     data: T[],
-  valueSelector: (item: T) => R = (item) => item as unknown as R,
+    valueSelector?: (item: T) => R,
   ): Map<number, R[]> {
     const map = new Map<number, R[]>()
+
+    const selector = valueSelector ?? ((item: T): R => item as unknown as R)
 
     for (const item of data) {
       const resId = parseInt((item as unknown as { res_id: string }).res_id, 10)
@@ -253,7 +255,7 @@ export class CsvProcessorService {
         map.set(resId, [])
       }
 
-    map.get(resId)!.push(valueSelector(item))
+      map.get(resId)!.push(selector(item))
     }
 
     return map

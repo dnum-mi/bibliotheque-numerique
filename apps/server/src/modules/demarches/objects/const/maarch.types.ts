@@ -1,4 +1,5 @@
 import { type Express } from 'express'
+import { MappingColumn } from '../dtos/mapping-column.dto'
 
 export interface ImportFiles {
   demandes: Express.Multer.File[]
@@ -40,3 +41,10 @@ export interface FileRawValue {
   filename: string
   url: string
 }
+
+export interface ExtendedMappingColumn extends MappingColumn {
+  csvColumnLabel?: string
+  children?: ExtendedMappingColumnWithoutChildren[]
+}
+
+export type ExtendedMappingColumnWithoutChildren = Omit<ExtendedMappingColumn, 'children'>

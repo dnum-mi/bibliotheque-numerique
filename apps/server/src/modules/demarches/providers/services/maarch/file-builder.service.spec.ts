@@ -4,10 +4,10 @@ import { Test, TestingModule } from '@nestjs/testing'
 import { loggerServiceMock } from '../../../../../../test/mock/logger-service.mock'
 import { File } from '@/modules/files/objects/entities/file.entity'
 import { eFileExtension, eFileTag, eState } from '@biblio-num/shared'
-import { fieldCourrierFileIntitule, fieldPjIntitule } from '@/modules/demarches/objects/constants/maarch-champ.dictionary'
+import { fieldCourrierFileIntitule, fieldPjIntitule } from '@/modules/demarches/objects/const/maarch-champ.dictionary'
 import { createHash } from 'crypto'
 import { ConfigService } from '@nestjs/config'
-import { DemandeAggregee } from '@/modules/demarches/objects/constants/maarch.types'
+import { DemandeAggregee } from '@/modules/demarches/objects/const/maarch.types'
 
 describe('FileBuilderService', () => {
   let service: FileBuilderService
@@ -17,7 +17,6 @@ describe('FileBuilderService', () => {
   const MOCK_ROOT_PATH = 'import-maarch-pj'
   const MOCK_COURRIER_PATH = 'manual'
   const MOCK_PJ_PATH = 'manual_attachements'
-  const MOCK_ACCUSE_FOLDER = 'ACKNOWLEDGEMENT_RECEIPTS'
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -38,8 +37,6 @@ describe('FileBuilderService', () => {
                   return MOCK_COURRIER_PATH
                 case 'file.maarchImportRootPath':
                   return MOCK_ROOT_PATH
-                case 'file.maarchImportFolderAccuseReception':
-                  return MOCK_ACCUSE_FOLDER
                 default:
                   return null
               }
@@ -85,8 +82,8 @@ describe('FileBuilderService', () => {
 
       const file1 = result[0]
       expect(file1).toBeInstanceOf(File)
-      expect(file1.label).toBe('Document - Statuts.pdf')
-      expect(file1.originalLabel).toBe('document.pdf')
+      expect(file1.label).toBe('document.pdf')
+      expect(file1.originalLabel).toBe('Document - Statuts.pdf')
       expect(file1.sourceUploadedAt).toEqual(new Date('2024-01-15'))
       expect(file1.mimeType).toBe(eFileExtension.pdf)
       expect(file1.state).toBe(eState.queued)
@@ -97,7 +94,7 @@ describe('FileBuilderService', () => {
       expect(file1.sourceStringId).toBe(fieldPjIntitule.id)
 
       const file2 = result[1]
-      expect(file2.label).toBe('Rapport - Annuel 2023.docx')
+      expect(file2.label).toBe('rapport.docx')
       expect(file2.mimeType).toBe(eFileExtension.docx)
       expect(file2.sourcePath).toBe(
         `${MOCK_ROOT_PATH}/manual_attachements/2024/02/folder/rapport.docx`
@@ -148,7 +145,7 @@ describe('FileBuilderService', () => {
       const result = service.createFileEntities(data)
 
       expect(result).toHaveLength(2)
-      const pj = result.find(f => f.originalLabel === 'pj1.pdf')
+      const pj = result.find(f => f.originalLabel === 'PJ 1.pdf')
       expect(pj).toBeDefined()
       expect(pj?.sourcePath).toContain('/manual_attachements/')
 
@@ -187,7 +184,7 @@ describe('FileBuilderService', () => {
       const result = service.createFileEntities(data)
 
       expect(result).toHaveLength(1)
-      expect(result[0].originalLabel).toBe('valid.pdf')
+      expect(result[0].originalLabel).toBe('Valid Document.pdf')
     })
 
     it('should generate checksum based on label', () => {
@@ -285,7 +282,7 @@ describe('FileBuilderService', () => {
           {
             res_id: '6',
             send_date: sendDate,
-            docserver_id: MOCK_ACCUSE_FOLDER,
+            docserver_id: MOCK_PJ_PATH,
             path: '2021/12/0001/',
             filename: '0001_391259465.html'
           }
@@ -299,7 +296,7 @@ describe('FileBuilderService', () => {
 
       expect(accuse.originalLabel).toBe('0001_391259465.pdf')
       expect(accuse.label).toContain('0001_391259465.pdf')
-      expect(accuse.sourcePath).toBe(`${MOCK_ROOT_PATH}/${MOCK_ACCUSE_FOLDER}/2021/12/0001/0001_391259465.pdf`)
+      expect(accuse.sourcePath).toBe(`${MOCK_ROOT_PATH}/${MOCK_PJ_PATH}/2021/12/0001/0001_391259465.pdf`)
       expect(accuse.state).toBe(eState.queued)
       expect(accuse.sourceUploadedAt).toEqual(sendDate)
     })

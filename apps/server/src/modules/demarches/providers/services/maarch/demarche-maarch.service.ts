@@ -13,16 +13,16 @@ import {
   DemandeAggregee,
   ImportFiles,
   ImportResult,
-} from '../../../objects/constants/maarch.types'
+} from '../../../objects/const/maarch.types'
 import { eIdentificationDemarche, eState } from '@biblio-num/shared'
-import { maarchFieldMappingsArray } from '../../../objects/constants/maarch-champ.dictionary'
+import { maarchFieldMappingsArray } from '../../../objects/const/maarch-champ.dictionary'
 import { File } from '@/modules/files/objects/entities/file.entity'
 import { InjectQueue } from '@nestjs/bull'
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
 import { Queue } from 'bull'
 import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
 import { UploadMaarchFileJobPayload } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
-import { CustomBullService } from '../../../../../shared/modules/custom-bull/custom-bull.service'
+import { CustomBullService } from '@/shared/modules/custom-bull/custom-bull.service'
 
 @Injectable()
 export class DemarcheMaarchService {
