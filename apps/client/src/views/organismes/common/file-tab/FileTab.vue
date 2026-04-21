@@ -8,11 +8,11 @@ import {
 } from '@/utils/downloadFile'
 import type { HeaderDataTable } from '@/shared/types'
 import type { RowDataType } from '@/components/datatable/client-side/DataTableClientSide.vue'
-import { DsfrButton } from '@gouvminint/vue-dsfr'
 import FileActionsCell from './FileActionsCell.vue'
 import { pluralize } from '@/utils/pluralize'
 import FileViewerModal from '@/components/FilePreviewModal.vue'
 import TableTagInfo from '@/components/TableTagInfo.vue'
+import DownloadButton from '@/components/DownloadButton.vue'
 
 type IFileWithAuthorizeOption = IFile & RowDataType
 
@@ -25,7 +25,6 @@ const props = defineProps<{
 const isPreviewOpen = ref(false)
 const previewLoading = ref(false)
 const fileData = ref<{ name: string; url: string; extension: string } | null>(null)
-const isDownloading = ref(false)
 
 const headers: HeaderDataTable[] = [
   { field: 'id', text: 'ID', type: 'hidden' },
@@ -88,17 +87,12 @@ const handleSelection = (items: any[]) => {
 }
 
 const handleDownloadSelected = async () => {
-  if (isDownloading.value) {
-    return
-  }
-  isDownloading.value = true
   const fileIds = selectedFiles.value.map(({ id }) => id)
   await downloadHubMultipleFiles({
     organismeType: props.organismeType,
     organismeId: props.organismeId,
     fileIds,
   })
-  isDownloading.value = false
 }
 
 const handleViewFile = async (file: IFile) => {
@@ -152,13 +146,10 @@ const closeViewer = () => {
       <p v-else class="fr-text--sm fr-mb-0">
         {{ selectedFilesDisplay }}
       </p>
-      <DsfrButton
-        :icon="isDownloading ? { name: 'ri-refresh-line', animation: 'spin' } : 'fr-icon-download-line'"
-        :label="isDownloading ? 'Téléchargement...' : 'Télécharger les pièces'"
-        tertiary
-        size="sm"
-        :disabled="!selectedFiles.length || isDownloading"
-        @click="handleDownloadSelected"
+      <DownloadButton
+        label="Télécharger les pièces"
+        :disabled="!selectedFiles.length"
+        @download="handleDownloadSelected"
       />
     </div>
 

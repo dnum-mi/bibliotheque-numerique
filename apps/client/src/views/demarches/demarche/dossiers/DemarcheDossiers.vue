@@ -17,6 +17,7 @@ import { useActiveFilter } from '@/components/datatable/active-filters/useActive
 import { useTour } from '@/composables/use-tour'
 import { filterTourSteps } from './TutoViewDossier.ts'
 import DemarcheDossiersViews from '@/views/demarches/demarche/dossiers/DemarcheDossiersViews.vue'
+import DownloadButton from '@/components/DownloadButton.vue'
 
 const demarcheStore = useDemarcheStore()
 const router = useRouter()
@@ -395,8 +396,8 @@ const createView = async ({
 }
 //#endregion
 
-const download = () => {
-  demarcheStore.exportCurrentDemarcheDossiers(groupByDossier.value, paginationDto.value)
+const download = async () => {
+  return demarcheStore.exportCurrentDemarcheDossiers(groupByDossier.value, paginationDto.value)
 }
 
 const readyToLoadDataTable = ref<boolean>(false)
@@ -518,14 +519,11 @@ const quickFilterValueTranslations: Record<string, string> = {
             Mode dossier
           </DsfrButton>
         </div>
-        <div>
-          <DsfrButton
-            label="Télécharger"
-            icon="ri-file-download-fill"
-            small
-            @click="download"
-          />
-        </div>
+        <DownloadButton
+          size="md"
+          :tertiary="false"
+          @download="download"
+        />
         <ActiveFiltersDropdown
           v-if="columnsDef"
           :filters="activeFilters"
