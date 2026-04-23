@@ -144,4 +144,16 @@ export class UserMeController {
     )
   }
   //#endregion
+
+  @Patch('/me/accept-terms')
+  @Role('any')
+  async acceptTerms(
+    @CurrentUser() user: User,
+  ): Promise<boolean> {
+    await this.usersService.updateOrThrow(user.id, {
+      termsAcceptedAt: new Date(),
+    })
+
+    return true
+  }
 }
