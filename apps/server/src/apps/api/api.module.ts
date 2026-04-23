@@ -46,6 +46,7 @@ import {
 import { AlsMiddleware } from '@/shared/modules/als/als.middleware'
 import { AppContextModule } from '@/apps/app-context.module'
 import { API } from '@/apps/apps.const'
+import { TermsOfUseGuard } from '@/modules/users/providers/guards/termsOfUse.guard'
 
 @Module({
   imports: [
@@ -99,6 +100,10 @@ import { API } from '@/apps/apps.const'
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: TermsOfUseGuard,
     },
     {
       provide: APP_GUARD,
