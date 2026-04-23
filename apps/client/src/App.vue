@@ -7,6 +7,7 @@ import { useNavigation } from './composables/navigation'
 import { useHealthStore } from '@/stores/health'
 import { defaultEnv, envTextMapping } from '@biblio-num/shared'
 import type { EnvTextKeys } from '@biblio-num/shared'
+import { routeNames } from './router/route-names'
 
 const version = ref('-loading')
 const runEnv = ref<EnvTextKeys>(defaultEnv)
@@ -57,8 +58,14 @@ const searchQuery = ref('')
 
 onErrorCaptured((error: Error | AxiosError) => {
   if (error instanceof AxiosError) {
-    if (error?.response && error?.response?.status) {
-      const status = error.response.status
+    const status = error.response?.status
+    const errorData = error.response?.data as any
+
+    if (status === 403 && errorData?.code === 'CGU_NOT_ACCEPTED') {
+      return false
+    }
+
+    if (status) {
       const errorMessages = {
         400: 'Requête invalide. Veuillez vérifier vos données.',
         401: 'Vous n’êtes plus connecté. Veuillez vous connecter pour accéder à cette ressource.',
@@ -92,6 +99,7 @@ const links = [
     <DsfrSkipLinks :links="links" />
 
     <DsfrHeader
+      v-if="$route.name !== routeNames.TERMS_OF_USE"
       id="navigation"
       v-model="searchQuery"
       class="relative"
@@ -114,6 +122,7 @@ const links = [
     </main>
 
     <AppDsfrFooter
+      v-if="$route.name !== routeNames.TERMS_OF_USE"
       a11y-compliance="partiellement conforme"
       :mandatory-links="mandatoryLinks"
       :class="envStyle"

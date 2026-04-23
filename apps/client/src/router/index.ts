@@ -22,6 +22,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import type { RouterOptions } from 'vue-router'
 import { useConfigurationStore } from '@/stores/configuration'
 import useToaster from '@/composables/use-toaster'
+import { termsOfUseRoute } from './terms-of-use.route'
 
 const MAIN_TITLE = 'Bibliothèque Numérique'
 
@@ -40,6 +41,7 @@ const routes: RouterOptions['routes'] = [
   configurationRoute,
   accessibilityRoute,
   cookiesRoute,
+  termsOfUseRoute,
   {
     path: '/:pathMatch(.*)*',
     name: routeNames.Page_404,
@@ -61,10 +63,18 @@ router.beforeEach(async (to) => {
   const configStore = useConfigurationStore()
   const toaster = useToaster()
 
+  if (to.name === routeNames.TERMS_OF_USE) {
+    return true
+  }
+
   if (to.name === routeNames.PROFILE || (!to.meta.skipAuth && !userStore.isAuthenticated)) {
     const isOk: boolean = await userStore.loadMyProfile()
     if (!isOk) {
       return false
+    }
+
+    if (userStore.currentUser && !userStore.currentUser.termsAcceptedAt) {
+      return { name: routeNames.TERMS_OF_USE }
     }
   }
 

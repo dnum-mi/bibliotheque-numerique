@@ -38,6 +38,7 @@ export const meRoutes = `${usersRoutes}/me`
 export const usersPasswordRoute = `${meRoutes}/update-password`
 export const resetPasswordRoute = `${meRoutes}/reset-password`
 export const lastConsultedOrganismeRoute = `${meRoutes}/recent-organismes`
+export const acceptTermsRoute = `${meRoutes}/accept-terms`
 //#endregion
 
 export const usersListRoute = `${usersRoutes}/list`

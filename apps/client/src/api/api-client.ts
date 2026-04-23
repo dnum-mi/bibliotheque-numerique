@@ -2,6 +2,10 @@ import type { AxiosResponse } from 'axios'
 import axios, { AxiosError } from 'axios'
 import useToaster from '@/composables/use-toaster'
 
+import {
+  userErroCodes,
+
+} from '@biblio-num/shared'
 import type {
   DynamicKeys,
   IAssociationOutput,
@@ -89,6 +93,7 @@ import {
   usersListRoute,
   usersPasswordRoute,
   bnConfigurationsClientRoute,
+  acceptTermsRoute,
 } from './bn-api-routes'
 import {
   getUserByIdRoute,
@@ -192,6 +197,12 @@ apiClientInstance.interceptors.response.use(
     }
 
     if (status === 403) {
+      const errorData = error.response?.data as any
+      if (errorData?.data?.code === userErroCodes.CGU_NOT_ACCEPTED) {
+        router.push({ name: routeNames.TERMS_OF_USE })
+        return null
+      }
+
       toaster.addMessage({ type: 'warning', description: 'Vous n’avez pas les droits de faire cette opération' })
       useUserStore().logout()
       const routeTo: RouteLocationRaw = { name: routeNames.SIGNIN }
@@ -445,6 +456,9 @@ export const usersApiClient = {
 
   async addConsultedOrganisme (dto: IBasicOrganisme) {
     await apiClientInstance.post(lastConsultedOrganismeRoute, dto)
+  },
+  async acceptTerms () {
+    await apiClientInstance.patch(acceptTermsRoute)
   },
 }
 
