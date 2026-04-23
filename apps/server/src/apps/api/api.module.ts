@@ -46,7 +46,7 @@ import {
 import { AlsMiddleware } from '@/shared/modules/als/als.middleware'
 import { AppContextModule } from '@/apps/app-context.module'
 import { API } from '@/apps/apps.const'
-import { TermsOfUseGuard } from '@/modules/users/providers/guards/termsOfUse.guard'
+import { TermsOfUseGuard } from '@/modules/users/providers/guards/terms-of-use.guard'
 
 @Module({
   imports: [

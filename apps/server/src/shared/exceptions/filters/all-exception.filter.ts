@@ -17,34 +17,36 @@ export class AllExceptionsFilter implements ExceptionFilter {
     let httpStatus: HttpStatus =
       exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR
     let message = 'no message.'
-    const data = {}
+    let data = {}
 
     switch (true) {
-    case !exception:
-      this.logger.error(new Error('AllException filter caught something that is not defined'))
-      break
-    case exception instanceof DsApiError:
-      this.logger.warn((exception as DsApiError).message)
-      httpStatus = 424
-      message = (exception as DsApiError).message
-      this.logger.debug((exception as DsApiError).graphQlResponse as string)
-      break
-    case exception instanceof HttpException && httpStatus !== HttpStatus.INTERNAL_SERVER_ERROR:
-      const e = exception as HttpException
-      message = e.message
-      this.logger.warn(e.message)
-      this.logger.debug(e)
-      break
-    default:
-      message = 'Erreur serveur, l’administrateur a été prévenu'
-      this.logger.error(exception as Error)
-      this.logger.debug((exception as Error).stack)
+      case !exception:
+        this.logger.error(new Error('AllException filter caught something that is not defined'))
+        break
+      case exception instanceof DsApiError:
+        this.logger.warn((exception as DsApiError).message)
+        httpStatus = 424
+        message = (exception as DsApiError).message
+        this.logger.debug((exception as DsApiError).graphQlResponse as string)
+        break
+      case exception instanceof HttpException && httpStatus !== HttpStatus.INTERNAL_SERVER_ERROR:
+        const e = exception as HttpException
+        message = e.message
+        const res = e.getResponse()
+        data = typeof res === 'object' ? res : { message: res }
+        this.logger.warn(e.message)
+        this.logger.debug(e)
+        break
+      default:
+        message = 'Erreur serveur, l’administrateur a été prévenu'
+        this.logger.error(exception as Error)
+        this.logger.debug((exception as Error).stack)
     }
 
     const responseBody = {
       statusCode: httpStatus,
       message,
-      data,
+      ...(typeof data === 'object' ? data : { details: data }),
       path: httpAdapter.getRequestUrl(ctx.getRequest()) as string,
     }
 

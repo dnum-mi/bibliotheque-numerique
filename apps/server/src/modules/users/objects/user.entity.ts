@@ -4,6 +4,7 @@ import {
   BeforeUpdate,
   Column,
   Entity,
+  Index,
   JoinTable,
   OneToMany,
   OneToOne,
@@ -135,6 +136,7 @@ export class User extends BaseEntity {
   })
   recentOrganismes: ILastConsultedOrganisme[]
 
+  @Index()
   @Column({
     type: 'timestamptz',
     nullable: true,

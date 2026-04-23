@@ -198,7 +198,7 @@ apiClientInstance.interceptors.response.use(
 
     if (status === 403) {
       const errorData = error.response?.data as any
-      if (errorData?.data?.code === userErroCodes.CGU_NOT_ACCEPTED) {
+      if (errorData?.code === userErroCodes.CGU_NOT_ACCEPTED) {
         router.push({ name: routeNames.TERMS_OF_USE })
         return null
       }
