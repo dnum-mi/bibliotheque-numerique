@@ -15,4 +15,5 @@ export interface IUser {
   updatedAt: Date
   createdAt: Date
   prefecture: VerbosePrefecture
+  termsAcceptedAt: Date
 }

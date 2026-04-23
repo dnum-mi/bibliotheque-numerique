@@ -6,4 +6,5 @@ export interface IUserOutput extends Omit<ICreateUser, 'password'> {
   updatedAt: Date
   createdAt: Date
   role: IRole
+  termsAcceptedAt: Date
 }

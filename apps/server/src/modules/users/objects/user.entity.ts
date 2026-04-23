@@ -134,4 +134,11 @@ export class User extends BaseEntity {
     default: [],
   })
   recentOrganismes: ILastConsultedOrganisme[]
+
+  @Column({
+    type: 'timestamptz',
+    nullable: true,
+    default: null,
+  })
+  termsAcceptedAt: Date | null
 }

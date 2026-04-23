@@ -22,4 +22,9 @@ export class UserOutputDto extends OmitType(CreateUserDto, ['password']) impleme
     description: 'Role de l\'utilisateur',
   })
   role: IRole
+
+  @ApiProperty({
+    description: 'Date d\'acceptation de la charte d\'utilisation',
+  })
+  termsAcceptedAt: Date
 }
