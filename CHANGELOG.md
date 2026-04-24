@@ -1,5 +1,13 @@
 # Changelog
 
+## [5.10.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.10.0...v5.10.1) (2026-04-24)
+
+
+### Bug Fixes
+
+* ([#2366](https://github.com/dnum-mi/bibliotheque_numerique/issues/2366)) :recycle: refactoriser le bouton téléchargement et appliquer au list des dossiers ([9cf2783](https://github.com/dnum-mi/bibliotheque_numerique/commit/9cf278380cec8cdc9fa93137ff1c487139144097))
+* afficher les icons dans un réseau fermé ([f431cf9](https://github.com/dnum-mi/bibliotheque_numerique/commit/f431cf9cbeecbd4c05d32ef465b119730f5b1489))
+
 ## [5.10.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.9.6...v5.10.0) (2026-04-15)
 
 
