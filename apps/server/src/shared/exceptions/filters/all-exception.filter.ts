@@ -33,7 +33,9 @@ export class AllExceptionsFilter implements ExceptionFilter {
         const e = exception as HttpException
         message = e.message
         const res = e.getResponse()
-        data = typeof res === 'object' ? res : { message: res }
+        data = typeof res === 'object' && res !== null
+          ? { ...res }
+          : { details: res }
         this.logger.warn(e.message)
         this.logger.debug(e)
         break
@@ -46,7 +48,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const responseBody = {
       statusCode: httpStatus,
       message,
-      ...(typeof data === 'object' ? data : { details: data }),
+      data: Object.keys(data).length > 0 ? data : undefined,
       path: httpAdapter.getRequestUrl(ctx.getRequest()) as string,
     }
 

@@ -4,7 +4,6 @@ import useToaster from '@/composables/use-toaster'
 
 import {
   userErroCodes,
-
 } from '@biblio-num/shared'
 import type {
   DynamicKeys,
@@ -94,8 +93,6 @@ import {
   usersPasswordRoute,
   bnConfigurationsClientRoute,
   acceptTermsRoute,
-} from './bn-api-routes'
-import {
   getUserByIdRoute,
   logoutRoute,
   meRoutes,

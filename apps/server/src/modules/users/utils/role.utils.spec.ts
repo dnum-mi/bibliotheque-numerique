@@ -92,6 +92,7 @@ const dumbUserFromRole = (role: IRole): IUser => ({
   createdAt: new Date(),
   prefecture: '75 - Paris',
   role,
+  termsAcceptedAt: new Date("2026-04-24T08:15:48.375Z")
 })
 
 const sudo: IUser = dumbUserFromRole({

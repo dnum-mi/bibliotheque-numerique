@@ -35,7 +35,8 @@ describe("role.service", ()=> {
             '7': { national: false, prefectures: [] },
             '8': { national: false, prefectures: [] }
           }
-        }
+        },
+        termsAcceptedAt: new Date("2026-04-24T08:15:48.375Z")
       },
       possibleRoles: [ 'superadmin', 'admin', 'instructor' ],
       deletable: true,

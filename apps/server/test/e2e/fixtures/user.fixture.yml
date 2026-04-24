@@ -14,6 +14,7 @@ items:
     }
     validated: true
     recentOrganismes: []
+    termsAcceptedAt: "2026-04-24T06:54:45.000Z"
   superadminUser:
     id: 2
     email: superadmin@localhost.com
@@ -25,6 +26,7 @@ items:
     role: { label: "superadmin", options: { } }
     validated: true
     recentOrganismes: []
+    termsAcceptedAt: "2026-04-24T06:54:45.000Z"
   noRoleUser:
     id: 3
     email: norole@localhost.com
@@ -36,6 +38,7 @@ items:
     role: { label: null, options: { } }
     validated: true
     recentOrganismes: []
+    termsAcceptedAt: "2026-04-24T06:54:45.000Z"
   admin1User:
     id: 4
     email: admin1@localhost.com
@@ -47,6 +50,7 @@ items:
     role: { label: "admin", options: { 2: { national: false, prefectures: [ 'D75' ] } } }
     validated: true
     recentOrganismes: []
+    termsAcceptedAt: "2026-04-24T06:54:45.000Z"
   instructor1User:
     id: 5
     email: instructor1@localhost.com
@@ -58,6 +62,7 @@ items:
     role: { label: "instructor", options: { 1: { national: false, prefectures: [ 'D75' ] }, 5: { national: false, prefectures: [ 'D57' ] } } }
     validated: true
     recentOrganismes: []
+    termsAcceptedAt: "2026-04-24T06:54:45.000Z"
   testPwdUser:
     id: 6
     email: testpwd@localhost.com
@@ -69,6 +74,7 @@ items:
     role: { label: null, options: { } }
     validated: true
     recentOrganismes: []
+    termsAcceptedAt: "2026-04-24T06:54:45.000Z"
   testNoValidUser:
     id: 7
     email: test.no.valid@localhost.com
@@ -80,3 +86,4 @@ items:
     role: { label: null, options: { } }
     validated: false
     recentOrganismes: []
+    termsAcceptedAt: "2026-04-24T06:54:45.000Z"

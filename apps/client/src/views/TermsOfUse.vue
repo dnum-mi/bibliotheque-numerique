@@ -4,18 +4,16 @@ import { useRouter } from 'vue-router'
 import { routeNames } from '@/router/route-names'
 import { usersApiClient } from '@/api/api-client'
 import { useUserStore } from '@/stores'
+import useToaster from '@/composables/use-toaster'
 
 const router = useRouter()
+const toaster = useToaster()
 const userStore = useUserStore()
 
 const hasAccepted = ref(false)
 const loading = ref(false)
 
 const isAlreadyAccepted = computed(() => userStore.currentUser?.termsAcceptedAt)
-const formattedDate = computed(() => {
-  const date = userStore.currentUser?.termsAcceptedAt
-  return date ? new Date(date).toLocaleDateString() : ''
-})
 
 const handleValidation = async () => {
   if (!hasAccepted.value) {
@@ -27,8 +25,8 @@ const handleValidation = async () => {
     await usersApiClient.acceptTerms()
 
     router.push({ name: routeNames.DEFAULT })
-  } catch (error) {
-    console.error('Erreur lors de l\'acceptation de la charte:', error)
+  } catch {
+    toaster.addErrorMessage({ description: 'Erreur lors de l\'acceptation de la charte' })
   } finally {
     loading.value = false
   }
@@ -98,28 +96,23 @@ const handleValidation = async () => {
           />
         </section>
 
-        <div class="bn-sticky-bottom fr-p-6v fr-background-alt--blue-france rounded-t-lg">
-          <template v-if="!isAlreadyAccepted">
-            <div class="fr-mb-5v">
-              <DsfrCheckbox
-                id="accept-terms" v-model="hasAccepted" :value="hasAccepted" name="accept-terms"
-                label="Je reconnais avoir lu et accepté la Charte de bonne utilisation du Système d'Information Bibliothèque Numérique."
-                :disabled="loading"
-              />
-            </div>
+        <div v-if="!isAlreadyAccepted" class="bn-sticky-bottom fr-p-6v fr-background-alt--blue-france rounded-t-lg">
+          <div class="fr-mb-5v">
+            <DsfrCheckbox
+              id="accept-terms" v-model="hasAccepted" :value="hasAccepted" name="accept-terms"
+              label="Je reconnais avoir lu et accepté la Charte de bonne utilisation du Système d'Information Bibliothèque Numérique."
+              :disabled="loading"
+            />
+          </div>
 
-            <div class="flex justify-center items-center">
-              <DsfrButton
-                :label="loading ? 'Confirmation en cours...' : 'Confirmer'" primary
-                :disabled="!hasAccepted || loading" @click="handleValidation"
-              />
-            </div>
-          </template>
-          <template v-else>
-            <p>
-              ✅ Vous avez déjà accepté cette charte le {{ formattedDate }}.
-            </p>
-          </template>
+          <div class="flex justify-center items-center">
+            <DsfrButton
+              :label="loading ? 'Confirmation en cours...' : 'Confirmer'"
+              primary
+              :disabled="!hasAccepted || loading"
+              @click="handleValidation"
+            />
+          </div>
         </div>
       </div>
     </div>

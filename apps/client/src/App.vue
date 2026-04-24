@@ -129,7 +129,7 @@ const links = [
     <DsfrNotice
       v-if="showTermsNotice"
     >
-      Certaines fonctionnalités sont désactivées car vous n'avez pas encore accepté la charte d'utilisation.
+      La consultation des données nécessite l'acceptation de la charte de bonne utilisation.
       <router-link :to="{ name: routeNames.TERMS_OF_USE }" class="fr-link fr-ml-2w">
         Consulter et signer la charte
       </router-link>

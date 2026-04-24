@@ -59,6 +59,7 @@ export const createRandomUser = (id?: number): IDataTableUser => ({
   job: '',
   roleLabel: noRole.label,
   roleOptionsResume: 'FDD(2), FE(5)',
+  termsAcceptedAt: '2026-04-24T12:07:51.170Z',
 })
 
 const adminUsersFn = () => Array.from({ length: faker.number.int({ min: 1, max: 3 }) }, createRandomUser)

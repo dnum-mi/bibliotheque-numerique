@@ -136,7 +136,7 @@ export class User extends BaseEntity {
   })
   recentOrganismes: ILastConsultedOrganisme[]
 
-  @Index()
+  @Index('IDX_USERS_TERMS_ACCEPTED_AT')
   @Column({
     type: 'timestamptz',
     nullable: true,
