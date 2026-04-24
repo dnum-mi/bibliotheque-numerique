@@ -198,6 +198,23 @@ describe('Build filter', () => {
           ),
         ).resolves.toEqual('(("I09" != \'toto\'))')
       })
+
+      it('Should escape multiple single quotes using replaceAll', async () => {
+        await expect(
+          buildFilterQuery(
+            {
+              I09: {
+                filterType: 'text',
+                condition1: {
+                  type: 'contains',
+                  filter: "L'œuvre de l'étudiant : L'Avenir",
+                },
+              },
+            },
+            { I09: 'string' },
+          ),
+        ).resolves.toEqual("((\"I09\" ILIKE '%L''œuvre de l''étudiant : L''Avenir%'))")
+      })
     })
 
     describe('Array text filters', () => {
@@ -340,6 +357,26 @@ describe('Build filter', () => {
           '((EXISTS (SELECT 1 FROM UNNEST("I09") AS item WHERE item != \'toto\')))',
         )
       })
+
+      it('Should escape multiple single quotes in array context', async () => {
+        await expect(
+          buildFilterQuery(
+            {
+              I09: {
+                filterType: 'text',
+                condition1: {
+                  type: 'contains',
+                  filter: "L\'œuvre de l\'étudiant : L\'Avenir",
+                },
+              },
+            },
+            { I09: 'string' },
+            true,
+          ),
+        ).resolves.toEqual(
+          "((EXISTS (SELECT 1 FROM UNNEST(\"I09\") AS item WHERE item ILIKE '%L''œuvre de l''étudiant : L''Avenir%')))",
+        )
+      })
     })
   })
 
@@ -389,6 +426,22 @@ describe('Build filter', () => {
       ).resolves.toEqual(
         '((EXISTS (SELECT 1 FROM UNNEST("I09") AS item WHERE item IN (\'toto\'))))',
       )
+    })
+
+    it('Should escape multiple single quotes in enum values', async () => {
+      await expect(
+        buildFilterQuery(
+          {
+            I09: {
+              filterType: 'set',
+              condition1: {
+                filter: ["l'avenir", "l'étudiant"],
+              },
+            },
+          },
+          { I09: 'enum' },
+        ),
+      ).resolves.toEqual("((\"I09\" IN ('l''avenir','l''étudiant')))")
     })
   })
 

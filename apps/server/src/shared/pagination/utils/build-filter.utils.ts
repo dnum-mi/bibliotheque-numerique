@@ -279,7 +279,7 @@ const _buildOneStringsFilter = (
 
   const stringCondition = validStrings.length
     ? `${key} ?| array[${validStrings
-      .map((s) => `'${s.replace(/'/g, "''")}'`)
+      .map((s) => `'${_manualFilterValueEscapingMechanism(s)}'`)
       .join(', ')}]`
     : ''
 

@@ -374,7 +374,7 @@ describe('users (e2e)', () => {
                   prefectures: ['D57'],
                   demarche: {
                     id: 5,
-                    title: '[UPDATE-IDENTIFICATION] Déclaration de FE',
+                    title: '[UPDATE-IDENTIFICATION] L\'œuvre de l\'étudiant : L\'Avenir',
                     types: ['ASSO'],
                     dsId: 4,
                   },

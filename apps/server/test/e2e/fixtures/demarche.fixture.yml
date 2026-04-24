@@ -69,7 +69,7 @@ items:
   demarche-update-identification:
     id: 5
     state: "published"
-    title: "[UPDATE-IDENTIFICATION] Déclaration de FE"
+    title: "[UPDATE-IDENTIFICATION] L'œuvre de l'étudiant : L'Avenir"
     types: ["ASSO"]
     mappingColumns: [
       {"id":"I01", "columnLabel":"Identifiant", "type": "string"},
@@ -199,5 +199,3 @@ items:
       { "id": "Q2hhbXAtNDE2Mjg0NN==", "columnLabel": "", "originalLabel": "nom", "source": "champs", type: "string" },
       { "id": "Q2hhbXAtNDE2Mjg0NM==", "columnLabel": "", "originalLabel": "prenom", "source": "champs", type: "string" },
     ]
-
-

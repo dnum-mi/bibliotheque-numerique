@@ -123,7 +123,36 @@ describe('Demarches (e2e)', () => {
       expect(response.body).toHaveProperty('data')
       expect(response.body.data).toHaveLength(1)
       expect(response.body.data).toEqual([
-        { id: 5, title: '[UPDATE-IDENTIFICATION] Déclaration de FE' },
+        { id: 5, title: '[UPDATE-IDENTIFICATION] L\'œuvre de l\'étudiant : L\'Avenir' },
+      ])
+    })
+
+    it('should return a list of demarche with special characters in title', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/demarches/small/list')
+        .set('Authorization', `Bearer ${tokens.instructor}`)
+        .send({
+          sorts: [],
+          filters: {
+            title: {
+              filterType: 'text',
+              condition1: {
+                filter: 'L\'œuvre de l\'étudiant : L\'Avenir',
+                type: 'contains',
+              },
+            },
+          },
+          columns: ['id', 'title'],
+          perPage: 20,
+          page: 1,
+        })
+        .expect(201)
+
+      expect(response.body).toHaveProperty('total')
+      expect(response.body).toHaveProperty('data')
+      expect(response.body.data).toHaveLength(1)
+      expect(response.body.data).toEqual([
+        { id: 5, title: '[UPDATE-IDENTIFICATION] L\'œuvre de l\'étudiant : L\'Avenir' },
       ])
     })
 
@@ -149,7 +178,7 @@ describe('Demarches (e2e)', () => {
       expect(response.body).toHaveProperty('data')
       expect(response.body.data).toHaveLength(2)
       expect(response.body.data).toEqual([
-        { id: 5, title: '[UPDATE-IDENTIFICATION] Déclaration de FE' },
+        { id: 5, title: '[UPDATE-IDENTIFICATION] L\'œuvre de l\'étudiant : L\'Avenir' },
         { id: 1, title: 'Déclaration de FE' },
       ])
     })

@@ -102,7 +102,7 @@ describe('users (e2e)', () => {
           5: {
             id: 5,
             title:
-              '[UPDATE-IDENTIFICATION] Déclaration de FE',
+              '[UPDATE-IDENTIFICATION] L\'œuvre de l\'étudiant : L\'Avenir',
             dsId: 4,
             checked: true,
             editable: true,
