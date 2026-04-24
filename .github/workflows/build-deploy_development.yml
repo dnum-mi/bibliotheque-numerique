@@ -8,7 +8,7 @@ on:
 jobs:
   mirror:
     name: Sync repo for build image
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.RUNNER  || 'ubuntu-latest' }}
     steps:
       - name: Checks-out repository
         uses: actions/checkout@v3
@@ -18,7 +18,7 @@ jobs:
 
   integration-deploy:
     name: Sync repo for deploy to development
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.RUNNER  || 'ubuntu-latest' }}
     steps:
       - name: Checks-out repository
         uses: actions/checkout@v3
