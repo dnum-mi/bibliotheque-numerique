@@ -13,7 +13,7 @@ on:
 jobs:
   checks:
     name: Checks
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.RUNNER  || 'ubuntu-latest' }}
     outputs:
       is_client_modified: ${{ steps.is_client.outputs.is_client_modified }}
       is_server_modified: ${{ steps.is_server.outputs.is_server_modified }}
@@ -54,7 +54,7 @@ jobs:
     name: client - Run tests
     needs: checks
     if: (!github.event.pull_request.draft) && (needs.checks.outputs.is_client_modified || needs.checks.outputs.is_shared_modified)
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.RUNNER  || 'ubuntu-latest' }}
     timeout-minutes: 10
 
     steps:
@@ -70,6 +70,19 @@ jobs:
             pnpm i --frozen-lockfile
             pnpm run lint:client
             # pnpm run test:client
+      - name: install modules for self-hosted for cypress
+        if: vars.RUNNER != 'ubuntu-latest'
+        run: |
+          sudo apt update
+          sudo apt install -y libgtk-3-0t64 libgbm-dev libnotify-dev libnss3 libxss1 libasound2t64 libxtst6 xauth xvfb
+      - name: install modules for self-hosted for chrome
+        if: vars.RUNNER != 'ubuntu-latest'
+        run: |
+          sudo apt install -y wget
+          wget -qO- https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+          sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+          sudo apt update
+          sudo apt install -y google-chrome-stable
       - name: run test unit
         env:
           DBUS_SESSION_BUS_ADDRESS: /dev/null
@@ -87,7 +100,7 @@ jobs:
     name: server - Run tests
     needs: checks
     if: (!github.event.pull_request.draft) && (needs.checks.outputs.is_server_modified || needs.checks.outputs.is_shared_modified)
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.RUNNER  || 'ubuntu-latest' }}
     timeout-minutes: 15
 
     steps:
@@ -111,9 +124,9 @@ jobs:
 
   docker-client:
     name: client - Build and Run docker image
-    needs: checks
+    needs: client
     if: (!github.event.pull_request.draft) && (needs.checks.outputs.is_client_modified || needs.checks.outputs.is_shared_modified)
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.RUNNER  || 'ubuntu-latest' }}
     timeout-minutes: 10
 
     steps:
@@ -133,9 +146,9 @@ jobs:
 
   docker-server:
     name: server - Build and Run docker image
-    needs: checks
+    needs: server
     if: (!github.event.pull_request.draft) && (needs.checks.outputs.is_server_modified || needs.checks.outputs.is_shared_modified)
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.RUNNER || 'ubuntu-latest' }}
     timeout-minutes: 10
 
     steps:
