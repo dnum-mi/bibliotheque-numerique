@@ -98,8 +98,10 @@ export function useNavigation () {
       return unauthenticatedLinks.filter((link) => typeof link?.to === 'object' && link.to.name !== route.name)
     }
 
-    const role = userStore.currentUser?.role?.label
-    if (!role) {
+    const user = userStore.currentUser
+    const role = user?.role?.label
+    const isTermAccepted = user?.termsAcceptedAt
+    if (!role || (role !== Roles.sudo && !isTermAccepted)) {
       return authenticatedQuickLinksDefault
     }
 

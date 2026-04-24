@@ -3,11 +3,19 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { routeNames } from '@/router/route-names'
 import { usersApiClient } from '@/api/api-client'
+import { useUserStore } from '@/stores'
 
 const router = useRouter()
+const userStore = useUserStore()
 
 const hasAccepted = ref(false)
 const loading = ref(false)
+
+const isAlreadyAccepted = computed(() => userStore.currentUser?.termsAcceptedAt)
+const formattedDate = computed(() => {
+  const date = userStore.currentUser?.termsAcceptedAt
+  return date ? new Date(date).toLocaleDateString() : ''
+})
 
 const handleValidation = async () => {
   if (!hasAccepted.value) {
@@ -28,22 +36,14 @@ const handleValidation = async () => {
 </script>
 
 <template>
-  <div class="flex justify-center items-center">
-    <div class="bn-terms-card">
-      <header class="flex items-center gap-x-8 fr-p-6v bn-border-bottom-grey">
-        <DsfrLogo small logo-text="Ministère de l'intérieur" />
-        <div class="">
-          <h1 class="fr-h4 fr-m-0">
-            Charte de bonne utilisation
-          </h1>
-          <p class="fr-mt-1v">
-            Bibliothèque Numérique
-          </p>
-        </div>
-      </header>
+  <div class="fr-container">
+    <div class="fr-my-7w fr-mb-md-10w fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-grid-row--center">
+      <div class="fr-py-0 fr-col-12 fr-col-md-6">
+        <h1 class="fr-h1 fr-mb-2v">
+          Charte de bonne utilisation
+        </h1>
 
-      <section class="fr-p-6v overflow-y-auto flex-grow">
-        <div class="charter-content">
+        <section class="fr-py-6v flex flex-col flex-grow relative">
           <h2 class="fr-h3">
             Préambule
           </h2>
@@ -96,39 +96,40 @@ const handleValidation = async () => {
             content="En se connectant à la Bibliothèque Numérique, l'utilisateur reconnaît avoir pris connaissance de la présente
             charte et s'engage à la respecter."
           />
-        </div>
-      </section>
+        </section>
 
-      <footer class="fr-p-6v fr-background-alt--blue-france rounded-t-lg">
-        <div class="fr-mb-5v">
-          <DsfrCheckbox
-            id="accept-cgu" v-model="hasAccepted" value="true" name="checkbox-simple"
-            label="Je reconnais avoir lu et accepté la Charte de bonne utilisation du Système d'Information Bibliothèque Numérique."
-            :disabled="loading"
-          />
-        </div>
+        <div class="bn-sticky-bottom fr-p-6v fr-background-alt--blue-france rounded-t-lg">
+          <template v-if="!isAlreadyAccepted">
+            <div class="fr-mb-5v">
+              <DsfrCheckbox
+                id="accept-terms" v-model="hasAccepted" :value="hasAccepted" name="accept-terms"
+                label="Je reconnais avoir lu et accepté la Charte de bonne utilisation du Système d'Information Bibliothèque Numérique."
+                :disabled="loading"
+              />
+            </div>
 
-        <div class="flex justify-center">
-          <DsfrButton
-            :label="loading ? 'Validation en cours...' : 'Valider et accéder au service'" primary
-            :disabled="!hasAccepted || loading" @click="handleValidation"
-          />
+            <div class="flex justify-center items-center">
+              <DsfrButton
+                :label="loading ? 'Confirmation en cours...' : 'Confirmer'" primary
+                :disabled="!hasAccepted || loading" @click="handleValidation"
+              />
+            </div>
+          </template>
+          <template v-else>
+            <p>
+              ✅ Vous avez déjà accepté cette charte le {{ formattedDate }}.
+            </p>
+          </template>
         </div>
-      </footer>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.bn-terms-card {
-  max-width: 700px;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  max-height: 100vh;
-}
-
-.bn-border-bottom-grey {
-  border-bottom: 1px solid #eee;
+.bn-sticky-bottom {
+  z-index: 10;
+  position: sticky;
+  bottom: 0;
 }
 </style>

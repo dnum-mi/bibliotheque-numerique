@@ -5,14 +5,27 @@ import useToaster from '@/composables/use-toaster.js'
 import { AxiosError } from 'axios'
 import { useNavigation } from './composables/navigation'
 import { useHealthStore } from '@/stores/health'
-import { defaultEnv, envTextMapping } from '@biblio-num/shared'
+import {
+  defaultEnv,
+  envTextMapping,
+  Roles,
+  userErroCodes,
+} from '@biblio-num/shared'
 import type { EnvTextKeys } from '@biblio-num/shared'
+import { useUserStore } from './stores'
 import { routeNames } from './router/route-names'
 
 const version = ref('-loading')
 const runEnv = ref<EnvTextKeys>(defaultEnv)
 const toaster = useToaster()
 const healthStore = useHealthStore()
+const userStore = useUserStore()
+
+const showTermsNotice = computed(() =>
+  userStore.isAuthenticated
+  && userStore.currentUser?.role?.label !== Roles.sudo
+  && !userStore.currentUser?.termsAcceptedAt,
+)
 
 onMounted(async () => {
   try {
@@ -50,6 +63,7 @@ const ecosystemLinks = [
 const mandatoryLinks = [
   { label: 'Accessibilité : non conforme', to: '/accessibility' },
   { label: 'Gestion des cookies', to: '/cookies' },
+  { label: 'Conditions générales', to: '/terms-of-use' },
 ]
 
 const { quickLinks } = useNavigation()
@@ -61,7 +75,7 @@ onErrorCaptured((error: Error | AxiosError) => {
     const status = error.response?.status
     const errorData = error.response?.data as any
 
-    if (status === 403 && errorData?.code === 'CGU_NOT_ACCEPTED') {
+    if (status === 403 && errorData?.code === userErroCodes.CGU_NOT_ACCEPTED) {
       return false
     }
 
@@ -99,7 +113,6 @@ const links = [
     <DsfrSkipLinks :links="links" />
 
     <DsfrHeader
-      v-if="$route.name !== routeNames.TERMS_OF_USE"
       id="navigation"
       v-model="searchQuery"
       class="relative"
@@ -113,6 +126,15 @@ const links = [
       </template>
     </DsfrHeader>
 
+    <DsfrNotice
+      v-if="showTermsNotice"
+    >
+      Certaines fonctionnalités sont désactivées car vous n'avez pas encore accepté la charte d'utilisation.
+      <router-link :to="{ name: routeNames.TERMS_OF_USE }" class="fr-link fr-ml-2w">
+        Consulter et signer la charte
+      </router-link>
+    </DsfrNotice>
+
     <main
       id="main-content"
       role="main"
@@ -122,7 +144,6 @@ const links = [
     </main>
 
     <AppDsfrFooter
-      v-if="$route.name !== routeNames.TERMS_OF_USE"
       a11y-compliance="partiellement conforme"
       :mandatory-links="mandatoryLinks"
       :class="envStyle"

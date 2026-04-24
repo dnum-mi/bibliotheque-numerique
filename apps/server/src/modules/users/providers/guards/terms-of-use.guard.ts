@@ -9,7 +9,7 @@ import {
 import { Reflector } from '@nestjs/core'
 import { Observable } from 'rxjs'
 import { User } from '../../objects/user.entity'
-import { userErroCodes } from '@biblio-num/shared'
+import { Roles, userErroCodes } from '@biblio-num/shared'
 
 @Injectable()
 export class TermsOfUseGuard implements CanActivate {
@@ -36,13 +36,21 @@ export class TermsOfUseGuard implements CanActivate {
     }>()
     const user = request.user
 
-    if (!user || user.termsAcceptedAt || request.url.includes('accept-terms')) {
+    const allowedPaths = ['/users/me', '/auth/logout', '/users/me/accept-terms']
+    const isAllowedPaths = allowedPaths.some(path => request.url.includes(path))
+    const isSudo = user.role?.label === Roles.sudo
+
+    if (!user || isSudo || isAllowedPaths) {
       return true
     }
 
-    this.logger.warn(`User ${user.email} blocked: CGU not accepted.`)
-    throw new ForbiddenException({
-      code: userErroCodes.CGU_NOT_ACCEPTED,
-    })
+    if (!user.termsAcceptedAt) {
+      this.logger.warn(`User ${user.email} blocked: CGU not accepted.`)
+      throw new ForbiddenException({
+        code: userErroCodes.CGU_NOT_ACCEPTED,
+      })
+    }
+
+    return true
   }
 }

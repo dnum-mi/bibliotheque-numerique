@@ -5,6 +5,7 @@ import {
 } from '@/shared/guards'
 
 import { routeNames } from './route-names'
+import { Roles } from '@biblio-num/shared'
 import type { RolesKeys } from '@biblio-num/shared'
 import { demarchesRoutes } from '@/router/demarches.route'
 import { aboutRoute } from '@/router/about.route'
@@ -19,9 +20,9 @@ import { accessibilityRoute } from '@/router/accessibility.route'
 import { cookiesRoute } from '@/router/cookies.route'
 import { configurationRoute } from './configuration.route'
 import { createRouter, createWebHistory } from 'vue-router'
-import type { RouterOptions } from 'vue-router'
 import { useConfigurationStore } from '@/stores/configuration'
 import useToaster from '@/composables/use-toaster'
+import type { RouteRecordNameGeneric, RouterOptions } from 'vue-router'
 import { termsOfUseRoute } from './terms-of-use.route'
 
 const MAIN_TITLE = 'Bibliothèque Numérique'
@@ -63,18 +64,26 @@ router.beforeEach(async (to) => {
   const configStore = useConfigurationStore()
   const toaster = useToaster()
 
-  if (to.name === routeNames.TERMS_OF_USE) {
-    return true
-  }
-
   if (to.name === routeNames.PROFILE || (!to.meta.skipAuth && !userStore.isAuthenticated)) {
     const isOk: boolean = await userStore.loadMyProfile()
     if (!isOk) {
       return false
     }
+  }
 
-    if (userStore.currentUser && !userStore.currentUser.termsAcceptedAt) {
-      return { name: routeNames.TERMS_OF_USE }
+  const user = userStore.currentUser
+  const isSudo = user?.role?.label === Roles.sudo
+  const hasTermsSigned = !!user?.termsAcceptedAt
+
+  if (userStore.isAuthenticated && !isSudo && !hasTermsSigned) {
+    const restrictedAllowedRoutes: Partial<RouteRecordNameGeneric>[] = [
+      routeNames.PROFILE,
+      routeNames.TERMS_OF_USE,
+      routeNames.LOGOUT,
+    ]
+
+    if (!restrictedAllowedRoutes.includes(to.name) && !to.meta.skipAuth) {
+      return { name: routeNames.PROFILE }
     }
   }
 
@@ -86,7 +95,7 @@ router.beforeEach(async (to) => {
     }
   }
 
-  const role = userStore.currentUser?.role
+  const role = user?.role
   if (
     canAccessByRoleGuard(
       to.meta?.roleLevel as RolesKeys | undefined,
@@ -98,6 +107,7 @@ router.beforeEach(async (to) => {
       role,
     )
   ) { return true }
+
   return { name: routeNames.PROFILE }
 })
 
