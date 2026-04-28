@@ -1,3 +1,38 @@
+.p-datatable {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  --p-datatable-header-cell-selected-background: var(--blue-france-925-125);
+  --p-datatable-header-cell-selected-color: var(--blue-france-sun-113-625);
+}
+
+.p-datatable-table-container {
+  flex-grow: 1;
+  overflow: auto !important;
+  width: 100%;
+}
+
+.p-datatable-table {
+  min-width: 100%;
+  table-layout: fixed;
+}
+
+.p-datatable-table-container::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+  display: block;
+}
+
+.p-datatable-table-container::-webkit-scrollbar-thumb {
+  background: #b5b5b5;
+  border-radius: 10px;
+  border: 2px solid #f1f1f1;
+}
+
+.p-datatable-table-container::-webkit-scrollbar-thumb:hover {
+  background: #888;
+}
+
 .p-datatable-header {
   padding: 0 !important;
 }
@@ -5,10 +40,7 @@
 .p-datatable-tbody {
   --p-datatable-row-hover-background: var(--blue-france-925-125);
 }
-.p-datatable {
-  --p-datatable-header-cell-selected-background: var(--blue-france-925-125);
-  --p-datatable-header-cell-selected-color: var(--blue-france-sun-113-625);
-}
+
 .p-paginator {
   --p-paginator-padding: 0.25rem 0 0 0;
 }

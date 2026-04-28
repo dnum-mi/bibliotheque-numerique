@@ -1216,7 +1216,7 @@ defineExpose({
 <template>
   <div
     ref="dataTable"
-    class="h-full flex relative border-shadow"
+    class="table-wrapper border-shadow"
     :class="{ loading: isLoadingRows }"
   >
     <DataTable
@@ -1435,6 +1435,15 @@ defineExpose({
 </template>
 
 <style scoped>
+.table-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
 .side-buttons {
   position: absolute;
   right: 0;
