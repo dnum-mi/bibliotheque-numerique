@@ -1,5 +1,13 @@
 # Changelog
 
+## [5.10.2](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.10.1...v5.10.2) (2026-04-30)
+
+
+### Bug Fixes
+
+* beaucoup de log pour AxiosError sur les dependencies ([0f4fe15](https://github.com/dnum-mi/bibliotheque_numerique/commit/0f4fe15a6cf4b78ffa0cbf8e5c85fb20ecc3f920))
+* mis à jour des styles de DataTable pour rendre visible les barres de défilement ([#2370](https://github.com/dnum-mi/bibliotheque_numerique/issues/2370)) ([ea9a852](https://github.com/dnum-mi/bibliotheque_numerique/commit/ea9a8522f47dae86cb1a41680e5b630490cb8a58))
+
 ## [5.10.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.10.0...v5.10.1) (2026-04-24)
 
 
