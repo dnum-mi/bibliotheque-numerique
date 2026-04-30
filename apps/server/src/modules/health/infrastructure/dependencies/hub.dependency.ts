@@ -60,7 +60,7 @@ export class HubDependency implements DependencyChecker {
       }
     } catch (error) {
       this.logger.warn(`Hub dependency error: ${error.message}`)
-
+      this.logger.axiosDebug(error)
       return {
         name: this.name,
         status: 'down',

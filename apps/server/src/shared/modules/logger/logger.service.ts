@@ -6,6 +6,7 @@ import * as Winston from 'winston'
 import * as DailyRotateFile from 'winston-daily-rotate-file'
 import { iLogPayload } from '@/shared/modules/logger/log-payload.interface'
 import { ContextLoggerService } from '@/shared/modules/logger/context-logger.service'
+import axios from 'axios'
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class LoggerService extends ConsoleLogger implements LS {
@@ -222,5 +223,43 @@ export class LoggerService extends ConsoleLogger implements LS {
     const child = Object.create(this) as LoggerService
     child.setContext(context)
     return child
+  }
+
+  axiosDebug(error: Error): void {
+    if (axios.isAxiosError(error)) {
+      this.debug({
+        message: 'HUB Dependency full debug',
+        request: {
+          url: error.config?.url,
+          method: error.config?.method,
+          baseURL: error.config?.baseURL,
+          headers: error.config?.headers,
+          data: error.config?.data,
+          rawHeaders: error.request?.res?.rawHeaders,
+        },
+        response: {
+          status: error.response?.status,
+          statusText: error.response?.statusText,
+          headers: error.response?.headers,
+          data: error.response?.data,
+          config: error.response?.config,
+        },
+        network: {
+          host: error.request?.host,
+          protocol: error.request?.protocol,
+          path: error.request?.path,
+          reusedSocket: error.request?.reusedSocket,
+        },
+        socket: {
+          remoteAddress: error.request?.socket?.remoteAddress,
+          remotePort: error.request?.socket?.remotePort,
+          localAddress: error.request?.socket?.localAddress,
+          localPort: error.request?.socket?.localPort,
+        },
+        dns: {
+          hostname: error.request?.host,
+        },
+      })
+    }
   }
 }

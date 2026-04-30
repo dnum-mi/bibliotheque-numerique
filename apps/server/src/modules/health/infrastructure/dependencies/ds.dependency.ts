@@ -90,7 +90,7 @@ export class DsDependency implements DependencyChecker {
       const code = error?.response?.status
 
       this.logger.warn(`DS dependency error: ${code ?? error.message}`)
-
+      this.logger.axiosDebug(error)
       return {
         name: this.name,
         status: 'down',
