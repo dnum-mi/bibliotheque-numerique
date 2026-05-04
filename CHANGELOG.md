@@ -1,5 +1,18 @@
 # Changelog
 
+## [5.11.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.10.2...v5.11.0) (2026-05-04)
+
+
+### Features
+
+* **maarch:** ajout de la prise en charge des fichiers 'accusés de réception' dans le processus d'importation ([48ee194](https://github.com/dnum-mi/bibliotheque_numerique/commit/48ee1945f116d471c46dd1c368aba064d86e7401))
+* **maarch:** refonte du mappage des colonnes pour utiliser ExtendedMappingColumn avec prise en charge de csvColumnLabel ([1b4e0e2](https://github.com/dnum-mi/bibliotheque_numerique/commit/1b4e0e271b125d33b9bf1a103e289ecf663d15b3))
+
+
+### Bug Fixes
+
+* **maarch:** réorganisation des constantes et correction des retours pr ([563c7ce](https://github.com/dnum-mi/bibliotheque_numerique/commit/563c7ce50c028ae393291fdfeef60748fbc0a76f))
+
 ## [5.10.2](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.10.1...v5.10.2) (2026-04-30)
 
 
