@@ -8,10 +8,10 @@ import type { FormatFunctionRefKeys, PrefectureKey } from '@biblio-num/shared'
 import DelayStateBadge from '@/components/Badges/delay-state/DelayStateBadge.vue'
 import DataTableAttachmentCell from '@/components/datatable/DataTableAttachmentCell.vue'
 import { routeNames } from '@/router/route-names'
-import { IS_ASSOCIATIONS_ENABLED } from '@/config'
-import { isAssociation } from '@/utils/organisme.util.ts'
 import { dossierStatusDictionary } from '@/shared/dictionaries'
 import type { DossierStatusBadgeTypeType } from '@/shared/types/DossierStatusBadgeType.type.ts'
+import { isAssociation } from '@/utils/organisme.util'
+import { useConfiguration } from '@/composables/use-configuration'
 
 const props = defineProps<{
   params: {
@@ -39,6 +39,8 @@ const FieldType = {
   boolean: 'boolean',
   file: 'file',
 } as const
+
+const { isAssociationsEnabled } = useConfiguration()
 
 //#region all cell
 const cellValues = computed(() => {
@@ -70,7 +72,7 @@ const componentRenderer = computed(() => {
 const canLinkToOrganisme = (currentFfr: string, value: string) => {
   const id = value?.split(' ')[0] || ''
   const isRna = currentFfr === 'rna' || isAssociation(id)
-  if (isRna && !IS_ASSOCIATIONS_ENABLED) {
+  if (isRna && !isAssociationsEnabled.value) {
     return false
   }
 

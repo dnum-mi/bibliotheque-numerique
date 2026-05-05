@@ -51,7 +51,6 @@ import {
   attachedFilesRoute,
   bnConfigurationsRoute,
   demarchesRoute,
-  enableHubSearchRoute,
   generateUpdatePasswordLinkRoute,
   getDemarcheAnonymizeRoute,
   getDemarcheByIdRoute,
@@ -105,7 +104,6 @@ import router from '@/router'
 import { useUserStore } from '@/stores'
 import type { RouteLocationRaw } from 'vue-router'
 import { fabricSyncStateApiClient } from './sync-state-api-client'
-import { IS_ASSOCIATIONS_ENABLED } from '../config'
 
 const updatePasswordFeedback = {
   401: 'Le token est absent, veuillez fournir un token valide',
@@ -535,12 +533,6 @@ export const bnConfigurationsApiClient = {
     const response = await apiClientInstance.patch(`${bnConfigurationsRoute}/${id}`, dto)
     return response?.data
   },
-
-  getEnableHubSearch: async () => {
-    const response = await apiClientInstance.get(enableHubSearchRoute)
-    return response?.data
-  },
-
 }
 
 export const attachedFilesApiClient = {
@@ -572,10 +564,6 @@ export const hubApiClient = {
     )
   },
   hubGetRna: (sentence: string): Promise<IAssociationOutput> => {
-    if (!IS_ASSOCIATIONS_ENABLED) {
-      throw new Error('La fonctionnalité de recherche d’associations est désactivée')
-    }
-
     return getWithoutRedirectTo404(hubGetRna(sentence))
   },
   hubGetRnf: (sentence: string): Promise<IFoundationOutput> => {

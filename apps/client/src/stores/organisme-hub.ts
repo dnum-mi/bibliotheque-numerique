@@ -11,10 +11,12 @@ import type {
   organismeCategoryKey,
 } from '@biblio-num/shared'
 import apiClient from '@/api/api-client.ts'
+import { useConfigurationStore } from './configuration'
 
 type TOrganisme = IFoundationOutput | IAssociationOutput
 
 export const useOrganismeHubStore = defineStore('organismeHub', () => {
+  const configStore = useConfigurationStore()
   const currentOrganisme = ref<TOrganisme | null>(null)
   const currentType = ref<organismeCategoryKey | null>(null)
   const currrentBasicOrganisme = computed<IBasicOrganisme | null>(() => {
@@ -39,6 +41,9 @@ export const useOrganismeHubStore = defineStore('organismeHub', () => {
   }
 
   const setCurrentAssociationByRef = async (organismeRef: string): Promise<boolean> => {
+    if (!configStore.isAssociationsEnabled) {
+      throw new Error('La fonctionnalité de recherche d’associations est désactivée.')
+    }
     const organisme = await apiClient.hubGetRna(organismeRef)
     if (!organisme) {
       return false

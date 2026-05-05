@@ -12,7 +12,7 @@ import apiClient from '@/api/api-client'
 import { useOrganismeHubStore } from '@/stores/organisme-hub.ts'
 import useToaster from '../../composables/use-toaster'
 import { usePageTitle } from '@/composables/use-page-title'
-import { IS_ASSOCIATIONS_ENABLED } from '@/config'
+import { useConfiguration } from '@/composables/use-configuration'
 
 const props = defineProps<{
   organismeId: string
@@ -20,6 +20,7 @@ const props = defineProps<{
 }>()
 
 const organismeHubStore = useOrganismeHubStore()
+const { isAssociationsEnabled } = useConfiguration()
 
 const router = useRouter()
 const toaster = useToaster()
@@ -44,14 +45,14 @@ const fondation = computed<IFoundationOutput | null>(() => {
 })
 
 const association = computed<IAssociationOutput | null>(() => {
-  if (!IS_ASSOCIATIONS_ENABLED || props.organismeType !== EOrganismeCategory.association || !organisme.value) {
+  if (!isAssociationsEnabled.value || props.organismeType !== EOrganismeCategory.association || !organisme.value) {
     return null
   }
   return organisme.value as IAssociationOutput
 })
 
 const errorMessage = computed(() => {
-  if (!IS_ASSOCIATIONS_ENABLED && props.organismeType === EOrganismeCategory.association) {
+  if (!isAssociationsEnabled.value && props.organismeType === EOrganismeCategory.association) {
     return 'La consultation des associations n\'est pas disponible pour le moment.'
   }
   return `Impossible de charger la fiche pour cet organisme (${props.organismeId}).`
@@ -62,7 +63,7 @@ const loadIfNeeded = async () => {
   hasError.value = false
 
   try {
-    if (!IS_ASSOCIATIONS_ENABLED && props.organismeType === EOrganismeCategory.association) {
+    if (!isAssociationsEnabled.value && props.organismeType === EOrganismeCategory.association) {
       toaster.addErrorMessage(errorMessage.value)
       await router.replace({ path: '/organismes' })
       return

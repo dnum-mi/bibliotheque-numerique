@@ -10,12 +10,13 @@ import {
 import useToaster from '@/composables/use-toaster'
 import SubLayoutSearch from './SubLayoutSearch.vue'
 import { routeNames } from '@/router/route-names'
-import { IS_ASSOCIATIONS_ENABLED } from '@/config'
+import { useConfiguration } from '@/composables/use-configuration'
 
 const isLoading = ref(false)
 
 const router = useRouter()
 const toaster = useToaster()
+const { isAssociationsEnabled } = useConfiguration()
 
 const rnaId = ref('W')
 
@@ -112,7 +113,7 @@ const navigateToDetails = async (id: string) => {
 }
 
 const caption = computed(() => {
-  if (IS_ASSOCIATIONS_ENABLED) {
+  if (isAssociationsEnabled.value) {
     return `Rechercher directement un organisme par son identifiant RNF ou RNA. \nPour les RNF, la saisie est guidée (département, type de fondation, numéro, clé de contrôle).`
   }
   return `Rechercher directement une fondation par son identifiant RNF. \nLa saisie est guidée (département, type de fondation, numéro, clé de contrôle).`
@@ -128,7 +129,7 @@ const caption = computed(() => {
 
       <form @submit.prevent="onIdSearch">
         <!-- Choix RNF / RNA -->
-        <div v-if="IS_ASSOCIATIONS_ENABLED" class="flex flex-wrap items-center gap-3 fr-mb-3w">
+        <div v-if="isAssociationsEnabled" class="flex flex-wrap items-center gap-3 fr-mb-3w">
           <p class="fr-text--sm text-grey-700 fr-mb-0 flex items-center">
             <strong>Type d’identifiant</strong> :
           </p>
@@ -184,7 +185,7 @@ const caption = computed(() => {
 
         <!-- Saisie RNA -->
         <div
-          v-else-if="IS_ASSOCIATIONS_ENABLED && idSearchType === 'rna'"
+          v-else-if="isAssociationsEnabled && idSearchType === 'rna'"
           class="fr-mb-3w max-w-xs"
         >
           <label class="fr-label">

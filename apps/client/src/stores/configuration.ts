@@ -15,9 +15,21 @@ import { createDemarche, patchDemarche, patchToFixOrganismeByDemarche, putSynchr
 export const useConfigurationStore = defineStore('Configuration', () => {
   const bnConfigurations = ref<IBnConfigurationOutput[]>([])
   const demarches = ref<ISmallDemarcheOutput[]>([])
+
   const fetching = ref<boolean>(false)
   const fetchingBnConfigurations = ref<boolean>(false)
-  const enableHubSearch = ref(false)
+  const configLoaded = ref<boolean>(false)
+
+  const configMap = computed(() => {
+    return bnConfigurations.value.reduce((acc, config) => {
+      acc[config.keyName] = config.stringValue
+      return acc
+    }, {} as Record<string, string>)
+  })
+
+  const isAssociationsEnabled = computed(() => {
+    return configMap.value.IS_ASSOCIATIONS_ENABLED === 'true'
+  })
 
   const loadDemarches = async () => {
     fetching.value = true
@@ -33,20 +45,21 @@ export const useConfigurationStore = defineStore('Configuration', () => {
     fetchingBnConfigurations.value = true
     try {
       bnConfigurations.value = await bnConfigurationsApiClient.getBnConfigurations()
+      configLoaded.value = true
+      return bnConfigurations.value
     } finally {
       fetchingBnConfigurations.value = false
     }
-    return bnConfigurations.value
   }
 
   const addDemarches = async (idDs: number | null, identification?: IdentificationDemarcheKey | null, types?: OrganismeTypeKey[]) => {
     if (!idDs) {
       throw new Error('id DS non saisi')
     }
-    // @ts-ignore TODO: corriger le type
-    const dto: ICreateDemarche = {
+    const dto = {
       idDs,
-    }
+    } as ICreateDemarche
+
     if (identification) {
       dto.identification = identification
     }
@@ -72,13 +85,12 @@ export const useConfigurationStore = defineStore('Configuration', () => {
     if (!valueType) {
       throw new Error('Type de valeur non saisi')
     }
-    const dto: ICreateBnConfiguration = {
-      // @ts-ignore TODO: corriger le type
+    const dto = {
       keyName,
       stringValue,
       // @ts-ignore TODO: corriger le type
       valueType,
-    }
+    } as ICreateBnConfiguration
     fetchingBnConfigurations.value = true
     try {
       await bnConfigurationsApiClient.createBnConfiguration(dto)
@@ -125,13 +137,12 @@ export const useConfigurationStore = defineStore('Configuration', () => {
     if (id === undefined) {
       throw new Error('id non saisi')
     }
-    const dto: IUpdateBnConfiguration = {
-      // @ts-ignore TODO: corriger le type
+    const dto = {
       keyName,
       stringValue,
       // @ts-ignore TODO: corriger le type
       valueType,
-    }
+    } as IUpdateBnConfiguration
     fetchingBnConfigurations.value = true
     try {
       await bnConfigurationsApiClient.updateBnConfiguration(id, dto)
@@ -154,10 +165,9 @@ export const useConfigurationStore = defineStore('Configuration', () => {
   const $reset = () => {
     demarches.value = []
     fetching.value = false
-  }
-
-  const getEnableHubSearch = async () => {
-    enableHubSearch.value = await bnConfigurationsApiClient.getEnableHubSearch()
+    bnConfigurations.value = []
+    fetchingBnConfigurations.value = false
+    configLoaded.value = false
   }
 
   const fixOrganismes = async (demarcheId: number | null) => {
@@ -178,7 +188,9 @@ export const useConfigurationStore = defineStore('Configuration', () => {
     bnConfigurations,
     fetching,
     fetchingBnConfigurations,
-    enableHubSearch,
+    configLoaded,
+    configMap,
+    isAssociationsEnabled,
     loadDemarches,
     loadBnConfigurations,
     addDemarches,
@@ -187,7 +199,6 @@ export const useConfigurationStore = defineStore('Configuration', () => {
     updateDemarche,
     updateBnConfigurations,
     softDeleteDemarche,
-    getEnableHubSearch,
     fixOrganismes,
   }
 })

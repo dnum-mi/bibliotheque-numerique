@@ -5,16 +5,18 @@ import {
   EOrganismeCategory,
   Roles,
 } from '@biblio-num/shared'
-import { IS_ASSOCIATIONS_ENABLED, IS_OPEN_SOURCE } from '@/config'
+import { IS_OPEN_SOURCE } from '@/config'
 import { useOrganismeHubStore } from '../stores/organisme-hub'
 import useToaster from '../composables/use-toaster'
 import { isAssociation } from '@/utils/organisme.util'
+import { useConfigurationStore } from '@/stores/configuration'
 
 const beforeEnter = async (to: RouteLocationNormalized, from: RouteLocationNormalizedLoaded, next: NavigationGuardNext) => {
   const toaster = useToaster()
+  const configStore = useConfigurationStore()
   const id = to.params.id as string
 
-  if (isAssociation(id) && !IS_ASSOCIATIONS_ENABLED) {
+  if (isAssociation(id) && !configStore.isAssociationsEnabled) {
     toaster.addErrorMessage('La consultation des associations n\'est pas disponible pour le moment.')
     return next({ path: '/organismes', replace: true })
   }

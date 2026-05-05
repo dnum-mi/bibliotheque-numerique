@@ -20,6 +20,8 @@ import { cookiesRoute } from '@/router/cookies.route'
 import { configurationRoute } from './configuration.route'
 import { createRouter, createWebHistory } from 'vue-router'
 import type { RouterOptions } from 'vue-router'
+import { useConfigurationStore } from '@/stores/configuration'
+import useToaster from '@/composables/use-toaster'
 
 const MAIN_TITLE = 'Bibliothèque Numérique'
 
@@ -56,10 +58,21 @@ router.beforeEach(async (to) => {
   document.title = `${specificTitle}${MAIN_TITLE}`
 
   const userStore = useUserStore()
+  const configStore = useConfigurationStore()
+  const toaster = useToaster()
+
   if (to.name === routeNames.PROFILE || (!to.meta.skipAuth && !userStore.isAuthenticated)) {
     const isOk: boolean = await userStore.loadMyProfile()
     if (!isOk) {
       return false
+    }
+  }
+
+  if (userStore.isAuthenticated && !configStore.configLoaded) {
+    try {
+      await configStore.loadBnConfigurations()
+    } catch {
+      toaster.addErrorMessage({ description: 'Impossible de charger les configurations' })
     }
   }
 

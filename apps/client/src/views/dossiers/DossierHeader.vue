@@ -4,8 +4,8 @@ import type { IBasicOrganisme, IDossierFieldsOutput } from '@biblio-num/shared'
 
 import { routeNames } from '@/router/route-names'
 import { usePageTitle } from '@/composables/use-page-title'
-import { IS_ASSOCIATIONS_ENABLED } from '@/config'
 import { isAssociation } from '../../utils/organisme.util'
+import { useConfiguration } from '@/composables/use-configuration'
 
 type DossierHeaderProps = {
   dossier: IDossierFieldsOutput
@@ -15,12 +15,13 @@ type DossierHeaderProps = {
 const { dossier, organisme } = defineProps<DossierHeaderProps>()
 
 const router = useRouter()
+const { isAssociationsEnabled } = useConfiguration()
 
 const canViewOrganisme = computed(() => {
   if (!organisme) {
     return false
   }
-  if (isAssociation(organisme?.id) && !IS_ASSOCIATIONS_ENABLED) {
+  if (isAssociation(organisme?.id) && !isAssociationsEnabled.value) {
     return false
   }
 

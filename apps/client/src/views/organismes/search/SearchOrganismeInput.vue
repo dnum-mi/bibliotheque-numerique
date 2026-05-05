@@ -4,11 +4,12 @@ import type { IBasicOrganisme, OrganismeTypeToSearchKey } from '@biblio-num/shar
 import SubLayoutSearch from './SubLayoutSearch.vue'
 import apiClient from '@/api/api-client'
 import useToaster from '@/composables/use-toaster'
-import { IS_ASSOCIATIONS_ENABLED } from '@/config'
+import { useConfiguration } from '@/composables/use-configuration'
 
 const toaster = useToaster()
+const { isAssociationsEnabled } = useConfiguration()
 
-const defaultTypeOrganisme = IS_ASSOCIATIONS_ENABLED
+const defaultTypeOrganisme = isAssociationsEnabled.value
   ? [eOrganismeTypeToSearch.associations, eOrganismeTypeToSearch.fondations]
   : [eOrganismeTypeToSearch.fondations]
 
@@ -32,17 +33,16 @@ const results = ref<IBasicOrganisme[]>([])
 const hasSearched = ref<boolean>(false)
 // #region Gestion des types d'organisme
 const typeOrganismeOptions = [
-  ...(IS_ASSOCIATIONS_ENABLED
-    ? [
-        {
+  ...(
+    isAssociationsEnabled.value
+      ? [{
           label: 'Associations',
           id: eOrganismeTypeToSearch.associations,
           value: eOrganismeTypeToSearch.associations,
           hint: `Recherche uniquement les ${eOrganismeTypeToSearch.associations}`,
           name: eOrganismeTypeToSearch.associations,
-        },
-      ]
-    : []),
+        }]
+      : []),
   {
     label: 'Fondations',
     id: eOrganismeTypeToSearch.fondations,
@@ -104,6 +104,9 @@ const onSearchFullText = async () => {
   }
 }
 // #endregion Search organismes
+const descriptionSectionSearch = computed(() => {
+  return `Rechercher un titre, une description, un bénéficiaire effectif ou une adresse à travers cette recherche plein texte sur ${isAssociationsEnabled.value ? 'les associations et' : ''} les fondations.`
+})
 </script>
 
 <template>
@@ -115,16 +118,12 @@ const onSearchFullText = async () => {
   >
     <template #section-search>
       <p class="fr-text--sm fr-mb-2w text-grey-700">
-        Rechercher un titre, une description, un bénéficiaire effectif ou une adresse à travers cette recherche plein texte
-        <!-- @vue-ignore TODO: corriger le type -->
-        <template v-if="!isRnaSearchEnabled">
-          sur les fondations
-        </template>.
+        {{ descriptionSectionSearch }}
       </p>
 
       <form @submit.prevent="onSearchFullText">
         <DsfrCheckboxSet
-          v-if="IS_ASSOCIATIONS_ENABLED"
+          v-if="isAssociationsEnabled"
           :model-value="typeOrganisme"
           legend="Type d'organisme recherché:"
           name="TypeOrganisme"

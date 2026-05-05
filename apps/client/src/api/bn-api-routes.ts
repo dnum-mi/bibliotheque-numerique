@@ -69,7 +69,6 @@ export const healthRoute = '/health'
 export const bnConfigurationsRoute = '/bn-configurations'
 
 export const getFileRoute = (uuid: string) => `/files/${uuid}`
-export const enableHubSearchRoute = `${bnConfigurationsRoute}/enable-hub-search`
 
 //#region 📍------ HUB ------ 📍
 export const hubRoute = `/hub`
