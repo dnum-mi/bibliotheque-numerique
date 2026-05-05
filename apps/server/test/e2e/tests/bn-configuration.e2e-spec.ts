@@ -52,7 +52,7 @@ describe('bn-configurations (e2e)', () => {
         .get('/bn-configurations')
         .set('Authorization', `Bearer ${tokens.sudo}`)
         .expect(200)
-      expect(response.body).toHaveLength(4)
+      expect(response.body).toHaveLength(5)
       expect(response.body).toEqual(expect.arrayContaining([
         expect.objectContaining({
           id: expect.any(Number),
@@ -91,6 +91,16 @@ describe('bn-configurations (e2e)', () => {
           keyName: eBnConfiguration.FILE_MAXIMUM_SIZE,
           stringValue: '5242880',
           valueType: 'number',
+        }),
+      ]))
+      expect(response.body).toEqual(expect.arrayContaining([
+        expect.objectContaining({
+          id: expect.any(Number),
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String),
+          keyName: eBnConfiguration.IS_ASSOCIATIONS_ENABLED,
+          stringValue: 'false',
+          valueType: 'boolean',
         }),
       ]))
     })
