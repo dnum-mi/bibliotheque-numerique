@@ -5,6 +5,7 @@ const bnConfigurations = [
   'FE_EXCEL_IMPORT_RANGE',
   'FE_AMOUNT_CHAMP_TAG',
   'FILE_MAXIMUM_SIZE',
+  'IS_ASSOCIATIONS_ENABLED',
 ] as const
 
 export type BnConfigurationKey = typeof bnConfigurations[number]

@@ -30,4 +30,8 @@ export const BnConfigurationDefault: Record<
     stringValue: '5242880',
     type: eBnConfigurationType.number,
   },
+  [eBnConfiguration.IS_ASSOCIATIONS_ENABLED]: {
+    stringValue: 'false',
+    type: eBnConfigurationType.boolean,
+  },
 }
