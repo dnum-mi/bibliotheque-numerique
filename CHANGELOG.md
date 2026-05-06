@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.11.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.11.0...v5.11.1) (2026-05-06)
+
+
+### Bug Fixes
+
+* switch deploy to main ([7f584be](https://github.com/dnum-mi/bibliotheque_numerique/commit/7f584be6ba6fdaea2964b62f89ac36ae4e4d0f04))
+
 ## [5.11.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.10.2...v5.11.0) (2026-05-04)
 
 
