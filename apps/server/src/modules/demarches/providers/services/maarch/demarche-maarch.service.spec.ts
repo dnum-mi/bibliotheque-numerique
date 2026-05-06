@@ -18,6 +18,8 @@ import { getQueueToken } from '@nestjs/bull'
 import { QueueName } from '@/shared/modules/custom-bull/objects/const/queues-name.enum'
 import { CustomBullService } from '../../../../../shared/modules/custom-bull/custom-bull.service'
 import type { Express } from 'express'
+import { ProjectionManagerService } from '@/modules/projection/services/projection-manager/projection-manager.service'
+import { View } from '@/modules/views/objects/entities/view.entity'
 
 const mockCsvProcessor = {
   processFiles: jest.fn(),
@@ -36,6 +38,8 @@ const mockEntityManager = {
   getRepository: jest.fn().mockImplementation((entity) => {
     if (entity === Demarche) return mockDemarcheRepo;
     if (entity === Dossier) return mockDossierRepo;
+    if (entity === View) return mockViewRepo;
+    return null;
   }),
 };
 
@@ -63,6 +67,14 @@ const mockDossierRepo = {
   save: jest.fn().mockImplementation(async (dossiers) => dossiers),
   delete: jest.fn(),
 };
+
+const mockViewRepo = {
+  delete: jest.fn(),
+};
+
+const mockProjectionManager = {
+  dropTablesForOneDemarche: jest.fn(),
+}
 
 const mockQueue = {
   add: jest.fn(),
@@ -94,6 +106,10 @@ describe('DemarcheMaarchService', () => {
         {
           provide: FileBuilderService,
           useValue: mockFileBuilderService,
+        },
+        {
+          provide: ProjectionManagerService,
+          useValue: mockProjectionManager,
         },
         {
           provide: getQueueToken(QueueName.file),
@@ -187,6 +203,7 @@ describe('DemarcheMaarchService', () => {
     it('should successfully delete a demarche and its dossiers', async () => {
       mockQueryBuilder.getOne.mockResolvedValue({ id: demarcheId } as Demarche);
       mockDossierRepo.delete.mockResolvedValue({ affected: 5 });
+      mockViewRepo.delete.mockResolvedValue({ affected: 3 });
 
       const result = await service.deleteImport(demarcheId)
 
