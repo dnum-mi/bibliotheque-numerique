@@ -23,6 +23,8 @@ import { Queue } from 'bull'
 import { eJobName } from '@/shared/modules/custom-bull/objects/const/job-name.enum'
 import { UploadMaarchFileJobPayload } from '@/shared/modules/custom-bull/objects/const/job-payload.type'
 import { CustomBullService } from '@/shared/modules/custom-bull/custom-bull.service'
+import { View } from '@/modules/views/objects/entities/view.entity'
+import { ProjectionManagerService } from '@/modules/projection/services/projection-manager/projection-manager.service'
 
 @Injectable()
 export class DemarcheMaarchService {
@@ -31,6 +33,7 @@ export class DemarcheMaarchService {
     private readonly logger: LoggerService,
     private readonly csvProcessor: CsvProcessorService,
     private readonly dossierTransformer: DossierTransformerService,
+    private readonly projectionManager: ProjectionManagerService,
     @InjectQueue(QueueName.file) private readonly fileQueue: Queue,
     private readonly customBullService: CustomBullService,
   ) {
@@ -105,6 +108,7 @@ export class DemarcheMaarchService {
     await this.dataSource.transaction(async (transactionManager) => {
       const repoDossier = transactionManager.getRepository(Dossier)
       const repoDemarche = transactionManager.getRepository(Demarche)
+      const repoView = transactionManager.getRepository(View)
 
       const demarche = await repoDemarche.createQueryBuilder('demarche')
         .where('demarche.id = :demarcheId', { demarcheId })
@@ -114,8 +118,15 @@ export class DemarcheMaarchService {
         throw new NotFoundException(`Demarche maarch ${demarcheId} not found.`)
       }
 
+      await this.projectionManager.dropTablesForOneDemarche(demarcheId)
+      this.logger.log(`Projection tables dropped for demarche ${demarcheId}.`)
+
+      const viewDeleted = await repoView.delete({ demarcheId })
+      this.logger.log(`${viewDeleted.affected} views deleted.`)
+
       const dossiersDeleted = await repoDossier.delete({ demarcheId })
       this.logger.log(`${dossiersDeleted.affected} dossiers deleted.`)
+
       await repoDemarche.delete(demarcheId)
       this.logger.log(`Demarche ${demarcheId} deleted.`)
     })

@@ -65,4 +65,20 @@ export class ProjectionManagerService {
     await this.fieldProjection.upsertOneDossier(demarche, dossierId)
     await this.dossierProjection.upsertOneDossier(demarche, dossierId)
   }
+
+  async dropTablesForOneDemarche(demarcheId: number): Promise<void> {
+    this.logger.warn(`Dropping projection tables for demarche ${demarcheId}`)
+
+    const fieldTableName = ProjectionManagerService.buildFieldTableName(demarcheId)
+    const dossierTableName = ProjectionManagerService.buildDossierTableName(demarcheId)
+
+    const query = `
+      DROP TABLE IF EXISTS "${fieldTableName}" CASCADE;
+      DROP TABLE IF EXISTS "${dossierTableName}" CASCADE;
+    `
+
+    await this.dataSource.query(query)
+
+    this.logger.log(`Projection tables for demarche ${demarcheId} dropped.`)
+  }
 }
