@@ -1,9 +1,9 @@
-import { Repository } from 'typeorm'
+import { In, Repository } from 'typeorm'
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { InjectRepository } from '@nestjs/typeorm'
 
-import { BnConfigurationKey } from '@biblio-num/shared'
+import { BnConfigurationKey, eBnConfiguration } from '@biblio-num/shared'
 
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
@@ -71,5 +71,18 @@ export class BnConfigurationService extends BaseEntityService<BnConfiguration> i
       case 'number' : return Number(bnConf.stringValue)
       default: return bnConf.stringValue
     }
+  }
+
+  async getClientConfigurations(): Promise<BnConfiguration[]> {
+    this.logger.verbose('getClientConfigurations')
+    const clientConfigurations = [
+      eBnConfiguration.IS_ASSOCIATIONS_ENABLED,
+      eBnConfiguration.FILE_MAXIMUM_SIZE,
+    ]
+    return this.repo.find({
+      where: {
+        keyName: In(clientConfigurations),
+      },
+    })
   }
 }

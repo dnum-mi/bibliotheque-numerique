@@ -68,9 +68,9 @@ router.beforeEach(async (to) => {
     }
   }
 
-  if (userStore.isAuthenticated && !configStore.configLoaded) {
+  if (userStore.isAuthenticated && !configStore.configClientLoaded) {
     try {
-      await configStore.loadBnConfigurations()
+      await configStore.loadClientConfigurations()
     } catch {
       toaster.addErrorMessage({ description: 'Impossible de charger les configurations' })
     }

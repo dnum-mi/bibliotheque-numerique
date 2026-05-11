@@ -1,5 +1,6 @@
 import { bnConfigurationsApiClient, demarchesApiClient } from '../api/api-client'
 import type {
+  BnConfigurationKey,
   IBnConfigurationOutput,
   ICreateBnConfiguration,
   ICreateDemarche,
@@ -10,26 +11,32 @@ import type {
   OrganismeTypeKey,
 } from '@biblio-num/shared'
 
-import { createDemarche, patchDemarche, patchToFixOrganismeByDemarche, putSynchronizeOneDemarche } from '../api/sudo-api-client'
+import {
+  createDemarche,
+  patchDemarche,
+  patchToFixOrganismeByDemarche,
+  putSynchronizeOneDemarche,
+} from '../api/sudo-api-client'
 
 export const useConfigurationStore = defineStore('Configuration', () => {
   const bnConfigurations = ref<IBnConfigurationOutput[]>([])
+  const clientConfigurations = ref<IBnConfigurationOutput[]>([])
   const demarches = ref<ISmallDemarcheOutput[]>([])
 
   const fetching = ref<boolean>(false)
-  const fetchingBnConfigurations = ref<boolean>(false)
-  const configLoaded = ref<boolean>(false)
+  const fetchingConfigurations = ref({
+    bn: false,
+    client: false,
+  })
+  const configClientLoaded = ref<boolean>(false)
 
   const configMap = computed(() => {
-    return bnConfigurations.value.reduce((acc, config) => {
-      acc[config.keyName] = config.stringValue
-      return acc
-    }, {} as Record<string, string>)
+    return new Map(clientConfigurations.value.map((config) => [config.keyName, config.stringValue]))
   })
 
-  const isAssociationsEnabled = computed(() => {
-    return configMap.value.IS_ASSOCIATIONS_ENABLED === 'true'
-  })
+  const getConfig = (key: BnConfigurationKey) => configMap.value.get(key)
+
+  const isAssociationsEnabled = computed(() => getConfig('IS_ASSOCIATIONS_ENABLED') === 'true')
 
   const loadDemarches = async () => {
     fetching.value = true
@@ -42,13 +49,22 @@ export const useConfigurationStore = defineStore('Configuration', () => {
   }
 
   const loadBnConfigurations = async () => {
-    fetchingBnConfigurations.value = true
+    fetchingConfigurations.value.bn = true
     try {
       bnConfigurations.value = await bnConfigurationsApiClient.getBnConfigurations()
-      configLoaded.value = true
-      return bnConfigurations.value
     } finally {
-      fetchingBnConfigurations.value = false
+      fetchingConfigurations.value.bn = false
+    }
+  }
+
+  const loadClientConfigurations = async () => {
+    fetchingConfigurations.value.client = true
+    try {
+      const configurations = await bnConfigurationsApiClient.getBnConfigurationsClient()
+      clientConfigurations.value = configurations
+      configClientLoaded.value = true
+    } finally {
+      fetchingConfigurations.value.client = false
     }
   }
 
@@ -91,12 +107,12 @@ export const useConfigurationStore = defineStore('Configuration', () => {
       // @ts-ignore TODO: corriger le type
       valueType,
     } as ICreateBnConfiguration
-    fetchingBnConfigurations.value = true
+    fetchingConfigurations.value.bn = true
     try {
       await bnConfigurationsApiClient.createBnConfiguration(dto)
       await loadBnConfigurations()
     } finally {
-      fetchingBnConfigurations.value = false
+      fetchingConfigurations.value.bn = false
     }
   }
 
@@ -143,12 +159,15 @@ export const useConfigurationStore = defineStore('Configuration', () => {
       // @ts-ignore TODO: corriger le type
       valueType,
     } as IUpdateBnConfiguration
-    fetchingBnConfigurations.value = true
+    fetchingConfigurations.value.bn = true
     try {
       await bnConfigurationsApiClient.updateBnConfiguration(id, dto)
-      await loadBnConfigurations()
+      await Promise.all([
+        loadBnConfigurations(),
+        loadClientConfigurations(),
+      ])
     } finally {
-      fetchingBnConfigurations.value = false
+      fetchingConfigurations.value.bn = false
     }
   }
 
@@ -166,8 +185,9 @@ export const useConfigurationStore = defineStore('Configuration', () => {
     demarches.value = []
     fetching.value = false
     bnConfigurations.value = []
-    fetchingBnConfigurations.value = false
-    configLoaded.value = false
+    clientConfigurations.value = []
+    fetchingConfigurations.value = { bn: false, client: false }
+    configClientLoaded.value = false
   }
 
   const fixOrganismes = async (demarcheId: number | null) => {
@@ -186,13 +206,16 @@ export const useConfigurationStore = defineStore('Configuration', () => {
     $reset,
     demarches,
     bnConfigurations,
+    clientConfigurations,
     fetching,
-    fetchingBnConfigurations,
-    configLoaded,
+    fetchingConfigurations,
+    configClientLoaded,
     configMap,
     isAssociationsEnabled,
+    getConfig,
     loadDemarches,
     loadBnConfigurations,
+    loadClientConfigurations,
     addDemarches,
     addBnConfigurations,
     synchronizeOneDemarche,

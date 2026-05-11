@@ -88,6 +88,7 @@ import {
   updateRolesRoute,
   usersListRoute,
   usersPasswordRoute,
+  bnConfigurationsClientRoute,
 } from './bn-api-routes'
 import {
   getUserByIdRoute,
@@ -521,6 +522,11 @@ export const healthApiClient = {
 export const bnConfigurationsApiClient = {
   getBnConfigurations: async () => {
     const response = await apiClientInstance.get(bnConfigurationsRoute)
+    return response?.data
+  },
+
+  getBnConfigurationsClient: async () => {
+    const response = await apiClientInstance.get(bnConfigurationsClientRoute)
     return response?.data
   },
 

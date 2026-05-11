@@ -43,6 +43,20 @@ export class BnConfigurationController {
     return this.configurationService.findAll()
   }
 
+  @Get('/client')
+  @UsualApiOperation({
+    summary: 'Retourne les configurations de Bibliothéque Numérique pour le client.',
+    method: 'GET',
+    minimumRole: Roles.instructor,
+    responseType: BnConfigurationOutputDto,
+    isArray: true,
+  })
+  @Role(Roles.instructor)
+  async getClientConfigurations(): Promise<BnConfigurationOutputDto[]> {
+    this.logger.verbose('getClientConfigurations')
+    return this.configurationService.getClientConfigurations()
+  }
+
   @UsualApiOperation({
     summary: 'Retourne une configuration.',
     method: 'GET',

@@ -22,7 +22,7 @@ const stringValue = ref<string>('')
 const valueTypeString = ref('')
 
 const bnConfigurations = computed<IBnConfigurationOutput[]>(() => configurationStore.bnConfigurations)
-const loading = computed<boolean>(() => configurationStore.fetchingBnConfigurations)
+const loading = computed<boolean>(() => configurationStore.fetchingConfigurations.bn)
 
 const inputId = ref<number | undefined>()
 
