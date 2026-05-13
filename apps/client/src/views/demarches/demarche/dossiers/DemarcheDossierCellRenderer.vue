@@ -81,14 +81,6 @@ const canLinkToOrganisme = (currentFfr: string, value: string) => {
 }
 
 //#region STATUS
-type DsfrType = 'success' | 'error' | 'warning' | 'info' | 'new' | 'purple-glycine'
-const statusDictionary: Record<string, { label: string; type: DsfrType }> = {
-  accepte: { label: 'Accepté', type: 'success' },
-  en_construction: { label: 'En construction', type: 'purple-glycine' },
-  en_instruction: { label: 'En instruction', type: 'new' },
-  refuse: { label: 'Refusé', type: 'error' },
-  sans_suite: { label: 'sans_suite', type: 'warning' },
-}
 const giveStatusLabel = (status: string): string => {
   return statusDictionary[status]?.label || status
 }
