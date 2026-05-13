@@ -45,7 +45,7 @@ const localizationOptions = computed(() => [
 ])
 
 const localizationOption = computed<LocalizationOptionsKeys | undefined>(() => {
-  return props.geographicalRights.national.value ? localizationOptions.value[0].value : localizationOptions.value[1].value
+  return props.geographicalRights.national.value ? localizationOptions.value[0]?.value : localizationOptions.value[1]?.value
 })
 const disabledAddPrefectures = computed<boolean>(() => {
   return props.geographicalRights.national.value

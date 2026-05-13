@@ -10,6 +10,7 @@ import { baseColDef } from '@/components/datatable/server-side/columndef-base'
 import RoleBadgesRenderer from '@/components/Badges/role/RoleBadgesRenderer.vue'
 import { useActiveFilter } from '@/components/datatable/active-filters/useActiveFilter'
 import YesNoEmoji from '@/components/YesNoEmoji.vue'
+// @ts-ignore TODO: corriger le type
 import type { DataTableClickEventType } from '@/components/datatable/server-side/DataTableServerSide.vue'
 import DataTableServerSide from '@/components/datatable/server-side/DataTableServerSide.vue'
 
@@ -136,6 +137,7 @@ const { activeFilters, onFiltersUpdated, handleClearAllFilters, handleRemoveFilt
         @request-remove-all="handleClearAllFilters"
       />
     </div>
+    <!-- @vue-ignore TODO: corriger le type -->
     <DataTableServerSide
       ref="primeVueComponent"
       class="h-full"
