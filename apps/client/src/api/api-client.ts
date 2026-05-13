@@ -225,6 +225,7 @@ apiClientInstance.interceptors.request.use(
 )
 
 const downloadAFile = (response: AxiosResponse) => {
+  // @ts-ignore TODO: corriger le type
   const blob = new Blob([response.data], { type: response.headers['content-type'] })
   const link = document.createElement('a')
   link.href = window.URL.createObjectURL(blob)
