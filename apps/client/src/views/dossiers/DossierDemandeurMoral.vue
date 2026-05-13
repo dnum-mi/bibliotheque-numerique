@@ -175,6 +175,7 @@ const association = computed(() => props.datas?.association || {})
 
 <template>
   <div class="fr-px-4v">
+    <!-- @vue-ignore TODO: corriger le type -->
     <DisplayLabelsValues
       :title="title"
       prefix-id="dossier-demandeur"
@@ -183,6 +184,7 @@ const association = computed(() => props.datas?.association || {})
       class="fr-pb-3v"
     />
     <h4>Adresse:</h4>
+    <!-- @vue-ignore TODO: corriger le type -->
     <DisplayLabelsValues
       :title="title"
       prefix-id="dossier-demandeur"
