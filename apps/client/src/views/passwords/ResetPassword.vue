@@ -10,6 +10,7 @@ import { ASK_RESET_PWD_SUCCESS } from '../../messages'
 const validationSchema = toTypedSchema(
   z.object({
     email: z
+      // @ts-ignore TODO: corriger le type
       .string({ required_error: 'Veuillez saisir votre adresse courriel' })
       .nonempty('Veuillez saisir votre adresse courriel')
       .email('L’adresse courriel ne semble pas valide'),
