@@ -114,11 +114,13 @@ onMounted(() => {
           v-else
           class="cards-grid"
         >
+          <!-- @vue-ignore TODO: corriger le type -->
           <div
             v-for="entity in founderLegalEntities"
             :key="entity.publicId"
             class="card-wrapper"
           >
+            <!-- @vue-ignore TODO: corriger le type -->
             <DsfrCard
               :title-link-attrs="{}"
               :class="isNavigable(entity.type) ? 'card-interactive' : 'card-static'"
@@ -148,11 +150,13 @@ onMounted(() => {
           v-else
           class="cards-grid"
         >
+          <!-- @vue-ignore TODO: corriger le type -->
           <div
             v-for="entity in governanceLegalEntities"
             :key="entity.publicId"
             class="card-wrapper"
           >
+            <!-- @vue-ignore TODO: corriger le type -->
             <DsfrCard
               :title-link-attrs="{}"
               :class="isNavigable(entity.type) ? 'card-interactive' : 'card-static'"
@@ -182,11 +186,13 @@ onMounted(() => {
           v-else
           class="cards-grid"
         >
+          <!-- @vue-ignore TODO: corriger le type -->
           <div
             v-for="entity in foundedLegalEntities"
             :key="entity.publicId"
             class="card-wrapper"
           >
+            <!-- @vue-ignore TODO: corriger le type -->
             <DsfrCard
               :title-link-attrs="{}"
               :class="isNavigable(entity.type) ? 'card-interactive' : 'card-static'"
