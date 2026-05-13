@@ -1,3 +1,4 @@
+// @ts-ignore TODO: corriger le type
 import type { IPersonExtended, IPersonWithAuthorizeOption } from './MembersTableView.vue'
 
 export const isSelfRepresented = (row: IPersonExtended): boolean => {
