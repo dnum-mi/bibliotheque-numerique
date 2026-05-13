@@ -19,7 +19,7 @@ const onChange = (id: number, value: string) => {
   emit(
     'updateOption',
     props.optionName,
-    props.multiple ? options.value.map((v) => Number.parseInt(v)) : Number.parseInt(options.value[0]),
+    props.multiple ? options.value.map((v) => Number.parseInt(v)) : Number.parseInt(options.value[0] ?? ''),
   )
 }
 </script>
