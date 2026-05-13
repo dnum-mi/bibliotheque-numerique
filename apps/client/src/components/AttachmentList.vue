@@ -1,11 +1,14 @@
 <script lang="ts" setup>
 import type { File } from '@dnum-mi/ds-api-client'
 
-import { getIconNameFromFilename } from '@biblio-num/shared'
-
 defineProps<{
   files: Array<File>
 }>()
+
+// @ts-ignore TODO: Impossible de trouver getIconNameFromFilename dans la lib, comme c'était avant ?
+function getIconNameFromFilename (str: string) {
+  return `ri-cancel-${str}`
+}
 </script>
 
 <template>
@@ -27,9 +30,7 @@ defineProps<{
 
           {{ file.filename }}
         </a>
-        <span class="font-italic  text-[var(--grey-425-625)]  text-sm">
-          {{ (file.byteSizeBigInt / 1024).toFixed(1) }} ko
-        </span>
+        <span class="font-italic text-[var(--grey-425-625)] text-sm"> {{ (file.byteSizeBigInt / 1024).toFixed(1) }} ko </span>
       </li>
     </ol>
   </div>
