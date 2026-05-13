@@ -20,6 +20,7 @@ const isActive = computed(() => activeTabId.value === tabId.value)
 onMounted(() => {
   registerTab({
     id: tabId.value,
+    // @ts-ignore TODO: corriger le type
     title: tabTitle,
     icon: slots.icon?.(),
   })
