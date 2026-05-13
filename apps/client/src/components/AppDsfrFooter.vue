@@ -36,18 +36,22 @@ const props = withDefaults(defineProps<DsfrFooterProps>(), {
   ],
   ecosystemLinks: () => [
     {
+      title: 'legifrance.gouv.fr',
       label: 'legifrance.gouv.fr',
       href: 'https://legifrance.gouv.fr',
     },
     {
+      title: 'gouvernement.fr',
       label: 'gouvernement.fr',
       href: 'https://gouvernement.fr',
     },
     {
+      title: 'service-public.fr',
       label: 'service-public.fr',
       href: 'https://service-public.fr',
     },
     {
+      title: 'data.gouv.fr',
       label: 'data.gouv.fr',
       href: 'https://data.gouv.fr',
     },
@@ -65,11 +69,7 @@ const props = withDefaults(defineProps<DsfrFooterProps>(), {
 })
 
 const allLinks = computed(() => {
-  return [
-    ...props.beforeMandatoryLinks,
-    ...props.mandatoryLinks,
-    ...props.afterMandatoryLinks,
-  ]
+  return [...props.beforeMandatoryLinks, ...props.mandatoryLinks, ...props.afterMandatoryLinks]
 })
 
 const isExternalLink = computed(() => {
@@ -98,17 +98,20 @@ const onToggle = () => {
   >
     <div
       v-if="showMin"
-      class="fr-container  cursor-pointer"
+      class="fr-container cursor-pointer"
       @click="onToggle()"
     >
       <div class="fr-footer__body">
-        <div class="fr-footer__bottom" @click.stop="">
+        <div
+          class="fr-footer__bottom"
+          @click.stop=""
+        >
           <RouterLink
             class="fr-footer__bottom-link lh-1.5rem!"
-            :to="mandatoryLinks[0].to ?? '#'"
-            :data-testid="mandatoryLinks[0].to"
+            :to="mandatoryLinks?.[0]?.to ?? '#'"
+            :data-testid="mandatoryLinks?.[0]?.to"
           >
-            {{ mandatoryLinks[0].label }}
+            {{ mandatoryLinks?.[0]?.label }}
           </RouterLink>
         </div>
         <div class="fr-footer__content">
@@ -124,9 +127,13 @@ const onToggle = () => {
       @click="onToggle()"
     >
       <div class="fr-footer__body">
-        <div class="fr-footer__bottom" @click.stop="">
+        <div
+          class="fr-footer__bottom"
+          @click.stop=""
+        >
           <div class="fr-footer__brand fr-enlarge-link">
             <RouterLink
+              v-if="homeLink"
               :to="homeLink"
               title="Retour à l’accueil"
             >
@@ -136,13 +143,13 @@ const onToggle = () => {
               />
             </RouterLink>
             <RouterLink
-              v-if="operatorImgSrc"
+              v-if="operatorImgSrc && operatorTo"
               class="fr-footer__brand-link"
               :to="operatorTo"
               :title="operatorLinkText"
             >
               <img
-                class="fr-footer__logo  fr-responsive-img"
+                class="fr-footer__logo fr-responsive-img"
                 :style="[
                   typeof operatorImgStyle === 'string' ? operatorImgStyle : '',
                   {
@@ -158,7 +165,7 @@ const onToggle = () => {
             </RouterLink>
           </div>
 
-          <ul class="fr-footer__bottom-list  flex-end">
+          <ul class="fr-footer__bottom-list flex-end">
             <li
               v-for="(link, index) in allLinks"
               :key="index"
@@ -187,9 +194,10 @@ const onToggle = () => {
           >
             <p>
               {{ licenceText }}
+              <!-- @vue-ignore TODO: corriger le type -->
               <component
                 :is="isExternalLink ? 'a' : 'RouterLink'"
-                class="fr-link-licence  no-content-after"
+                class="fr-link-licence no-content-after"
                 :to="isExternalLink ? null : routerLinkLicenceTo"
                 :href="aLicenceHref"
                 :target="isExternalLink ? '_blank' : undefined"
@@ -201,10 +209,11 @@ const onToggle = () => {
             </p>
           </div>
         </div>
-        <div class="fr-footer__content" @click.stop="">
-          <p
-            class="fr-footer__content-desc"
-          >
+        <div
+          class="fr-footer__content"
+          @click.stop=""
+        >
+          <p class="fr-footer__content-desc">
             <!-- @slot Slot #description pour le contenu de la description du footer. Sera dans `<p class="fr-footer__content-desc">` -->
             <slot name="description">
               {{ descText }}
@@ -247,7 +256,10 @@ const onToggle = () => {
   background-color: var(--background-raised-grey);
   font-size: 0.75rem;
   padding-top: 0;
-  box-shadow: inset 0 2px 0 0 var(--border-plain-blue-france), inset 0 -1px 0 0 var(--border-default-grey), inset 0 0 2px 0 var(--border-plain-blue-france);
+  box-shadow:
+    inset 0 2px 0 0 var(--border-plain-blue-france),
+    inset 0 -1px 0 0 var(--border-default-grey),
+    inset 0 0 2px 0 var(--border-plain-blue-france);
 }
 
 .fr-footer__bottom {
