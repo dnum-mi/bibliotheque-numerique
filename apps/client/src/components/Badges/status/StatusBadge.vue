@@ -15,6 +15,7 @@ const statusType = computed(() => {
 </script>
 
 <template>
+  <!-- @vue-ignore TODO: corriger le type -->
   <DsfrBadge
     :label="statusLabel"
     :type="statusType"
