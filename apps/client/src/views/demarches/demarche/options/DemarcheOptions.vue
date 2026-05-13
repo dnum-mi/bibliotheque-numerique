@@ -51,6 +51,7 @@ const anonymizationEventList = [
 
 const isEnabledAnonymize = computed(() => (!!demarcheStore.currentDemarcheOptions?.anonymizationEvent && !!demarcheStore.currentDemarcheOptions?.nbrMonthAnonymisation))
 const enabledAnonymize = computed(() => (anonymisationEvents.includes(anonymizationEventSelected.value as unknown as anonymisationEventKey)))
+// @ts-ignore TODO: corriger le type
 const onUpdateAnonymizationEvent = async (event) => {
   if (anonymisationEvents.includes(event)) {
     if (!nbrMonthAnonymisation.value) {
