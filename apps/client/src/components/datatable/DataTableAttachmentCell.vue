@@ -13,7 +13,7 @@ const handleDownload = async () => {
   if (!fileUuid.value) {
     return
   }
-  await downloadFile(fileUuid.value)
+  await downloadFile(fileUuid.value, 'unknown', 'unknown')
 }
 </script>
 
