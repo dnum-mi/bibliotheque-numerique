@@ -2,19 +2,16 @@
 import { computed } from 'vue'
 import slugify from 'slugify'
 
-import {
-  PrefectureDictionary,
-} from '@biblio-num/shared'
-import type {
-  FormatFunctionRefKeys,
-  PrefectureKey,
-} from '@biblio-num/shared'
+import { PrefectureDictionary } from '@biblio-num/shared'
+import type { FormatFunctionRefKeys, PrefectureKey } from '@biblio-num/shared'
 
 import DelayStateBadge from '@/components/Badges/delay-state/DelayStateBadge.vue'
 import DataTableAttachmentCell from '@/components/datatable/DataTableAttachmentCell.vue'
 import { routeNames } from '@/router/route-names'
 import { IS_ASSOCIATIONS_ENABLED } from '@/config'
-import { isAssociation } from '../../../../utils/organisme.util'
+import { isAssociation } from '@/utils/organisme.util.ts'
+import { dossierStatusDictionary } from '@/shared/dictionaries'
+import type { DossierStatusBadgeTypeType } from '@/shared/types/DossierStatusBadgeType.type.ts'
 
 const props = defineProps<{
   params: {
@@ -82,10 +79,12 @@ const canLinkToOrganisme = (currentFfr: string, value: string) => {
 
 //#region STATUS
 const giveStatusLabel = (status: string): string => {
-  return statusDictionary[status]?.label || status
+  // @ts-ignore TODO: corriger le type
+  return dossierStatusDictionary[status]?.label || status
 }
-const giveStatusType = (status: string): DsfrType => {
-  return statusDictionary[status]?.type || 'info'
+const giveStatusType = (status: string): DossierStatusBadgeTypeType => {
+  // @ts-ignore TODO: corriger le type
+  return dossierStatusDictionary[status]?.type || 'info'
 }
 //#endregion
 
@@ -117,8 +116,9 @@ const getPrefecture = (prefecture: PrefectureKey) => {
       <!-- DOSSIER ID -->
       <template v-if="params.column.id === '96151176-4624-4706-b861-722d2e53545d'">
         <!-- TODO: ici on charge avec l'id SQL en cliquant sur l'ID DS. Il faudrait pouvoir charger avec un id DS -->
+        <!-- @vue-ignore TODO: corriger le type -->
         <RouterLink
-          :to=" {
+          :to="{
             name: 'Dossiers',
             params: { id: params.row?.dossierId },
           }"
@@ -143,12 +143,13 @@ const getPrefecture = (prefecture: PrefectureKey) => {
             class="round-flag fr-mr-1w"
             :style="{ backgroundImage: `url(${getFlagURL(cellValue)})` }"
           />
-          <div>{{ cellValue || "pas de pays" }}</div>
+          <div>{{ cellValue || 'pas de pays' }}</div>
         </div>
       </template>
 
       <template v-else-if="ffr === 'status'">
         <!-- STATUS -->
+        <!-- @vue-ignore TODO: corriger le type -->
         <DsfrBadge
           class="text-nowrap"
           :label="giveStatusLabel(cellValue)"
@@ -204,12 +205,15 @@ const getPrefecture = (prefecture: PrefectureKey) => {
           <div class="w-full">
             <p
               v-if="params.column?.type === FieldType.number"
-              class="block  text-right"
+              class="block text-right"
             >
               {{ formattedNumber(cellValue) }}
             </p>
             <template v-else>
-              <p class="text-nowrap overflow-hidden text-ellipsis max-w-full" :title="cellValue || undefined">
+              <p
+                class="text-nowrap overflow-hidden text-ellipsis max-w-full"
+                :title="cellValue || undefined"
+              >
                 {{ cellValue ?? '' }}
               </p>
             </template>
