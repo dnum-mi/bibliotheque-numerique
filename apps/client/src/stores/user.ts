@@ -155,7 +155,7 @@ export const useUserStore = defineStore('user', () => {
   }
 
   const CanConfigureDemarche = (demarcheId: number) =>
-    SuperAdminRoles.includes(currentUser.value?.role?.label)
+    SuperAdminRoles.includes(currentUser.value?.role?.label ?? '')
     || (currentUser.value?.role?.label === Roles.admin && currentUser.value?.role?.options[demarcheId]?.national)
 
   return {
