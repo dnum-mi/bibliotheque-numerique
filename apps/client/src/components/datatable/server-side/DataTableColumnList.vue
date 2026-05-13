@@ -194,6 +194,7 @@ useEventListener(document, 'click', (event: MouseEvent) => {
         v-for="col of columnDefs"
         :key="col.field"
       >
+        <!-- @vue-ignore TODO: corriger le type -->
         <li
           v-if="!col.hide && col.field"
           class="flex items-center gap-2 py-1 bn-colrow"
