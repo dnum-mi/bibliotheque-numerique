@@ -21,7 +21,7 @@ const handleDownload = async () => {
   if (!props.file?.url) {
     return
   }
-  await downloadFile(props.file.url)
+  await downloadFile(props.file.url, 'unknown', 'unknown')
 }
 </script>
 

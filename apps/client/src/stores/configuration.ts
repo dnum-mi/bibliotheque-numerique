@@ -6,7 +6,7 @@ import type {
   ISmallDemarcheOutput,
   IUpdateBnConfiguration,
   IUpdateDemarche,
-  IdentificationDemarcheKeys,
+  IdentificationDemarcheKey,
   OrganismeTypeKey,
 } from '@biblio-num/shared'
 
@@ -39,10 +39,11 @@ export const useConfigurationStore = defineStore('Configuration', () => {
     return bnConfigurations.value
   }
 
-  const addDemarches = async (idDs: number | null, identification?: IdentificationDemarcheKeys | null, types?: OrganismeTypeKey[]) => {
+  const addDemarches = async (idDs: number | null, identification?: IdentificationDemarcheKey | null, types?: OrganismeTypeKey[]) => {
     if (!idDs) {
       throw new Error('id DS non saisi')
     }
+    // @ts-ignore TODO: corriger le type
     const dto: ICreateDemarche = {
       idDs,
     }
@@ -72,8 +73,10 @@ export const useConfigurationStore = defineStore('Configuration', () => {
       throw new Error('Type de valeur non saisi')
     }
     const dto: ICreateBnConfiguration = {
+      // @ts-ignore TODO: corriger le type
       keyName,
       stringValue,
+      // @ts-ignore TODO: corriger le type
       valueType,
     }
     fetchingBnConfigurations.value = true
@@ -97,7 +100,7 @@ export const useConfigurationStore = defineStore('Configuration', () => {
     }
   }
 
-  const updateDemarche = async (idDs: number | null, identification?: IdentificationDemarcheKeys | null, types?: OrganismeTypeKey[]) => {
+  const updateDemarche = async (idDs: number | null, identification?: IdentificationDemarcheKey | null, types?: OrganismeTypeKey[]) => {
     if (!idDs) {
       throw new Error('id DS non saisi')
     }
@@ -123,8 +126,10 @@ export const useConfigurationStore = defineStore('Configuration', () => {
       throw new Error('id non saisi')
     }
     const dto: IUpdateBnConfiguration = {
+      // @ts-ignore TODO: corriger le type
       keyName,
       stringValue,
+      // @ts-ignore TODO: corriger le type
       valueType,
     }
     fetchingBnConfigurations.value = true
