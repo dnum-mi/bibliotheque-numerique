@@ -19,18 +19,18 @@ const dossierStore = useDossierStore()
 const organismeHubStore = useOrganismeHubStore()
 
 const isReady = ref(false) // Utiliser pour ordonner les tabs - sinon la tabulation de l'annotation est sélectionnée quand on clique sur une pièce jointe
+// @ts-ignore TODO: corriger le type
 const dossier = computed<IDossierFieldsOutput | undefined>(() => dossierStore?.dossier)
 const demandeurEmail = computed<string | undefined>(() => dossier.value?.demandeurEmail)
 
-const messages = computed(
-  () =>
-    dossier.value?.messages?.map(({ id, createdAt, body, email, attachments, attachment }: DossierMessage) => ({
-      id,
-      date: formatForMessageDate(new Date(createdAt)),
-      email,
-      body,
-      attachments: [...(attachments ?? []), ...(attachment ? [attachment] : [])],
-    })),
+const messages = computed(() =>
+  dossier.value?.messages?.map(({ id, createdAt, body, email, attachments, attachment }: DossierMessage) => ({
+    id,
+    date: formatForMessageDate(new Date(createdAt)),
+    email,
+    body,
+    attachments: [...(attachments ?? []), ...(attachment ? [attachment] : [])],
+  })),
 )
 const hasMessages = computed(() => !!messages.value?.length && isReady.value)
 
@@ -42,6 +42,7 @@ const hasAttachments = computed(() => !!nbAttachments.value)
 const showMessages = computed(() => hasMessages.value && !!dossier.value)
 const showAttachments = computed(() => hasAttachments.value && !!dossier.value)
 
+// @ts-ignore TODO: corriger le type
 const fetchAttachedFiles: ApiCall<IFileOutput> = (params: IPagination<IFileOutput>) => {
   if (dossier.value) {
     return apiClient.getDossierFiles(dossier.value.id)(params)
@@ -56,12 +57,12 @@ onMounted(async () => {
     await dossierStore.getDossierWithFields(id)
     nbAttachments.value = await apiClient.getDossierFilesSummary(id)
     organismeHubStore.clear()
+    // @ts-ignore TODO: corriger le type
     if (dossierStore.dossier?.organismeRefs?.length) {
+      // @ts-ignore TODO: corriger le type
       for (const organismeRef of dossierStore.dossier.organismeRefs) {
         try {
-          const result = await organismeHubStore.setCurrentOrganismeByRef(
-            organismeRef,
-          )
+          const result = await organismeHubStore.setCurrentOrganismeByRef(organismeRef)
           if (result) {
             break
           }
@@ -95,7 +96,10 @@ const messagesTitle = computed(() => {
         v-if="dossier"
         #title
       >
-        <DossierHeader :dossier="dossier" :organisme="currentOrganisme" />
+        <DossierHeader
+          :dossier="dossier"
+          :organisme="currentOrganisme"
+        />
       </template>
       <template #sub-title>
         <DossierInformations :datas="dossier" />
