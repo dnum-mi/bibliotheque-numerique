@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+// @ts-ignore TODO: corriger le type
 import type { Demandeur, PersonnePhysique } from '@biblio-num/shared'
 
 import { dateToStringFr } from '@/utils'
