@@ -32,17 +32,17 @@ const results = ref<IBasicOrganisme[]>([])
 const hasSearched = ref<boolean>(false)
 // #region Gestion des types d'organisme
 const typeOrganismeOptions = [
-  ...(
-    IS_ASSOCIATIONS_ENABLED
-      ? [{
+  ...(IS_ASSOCIATIONS_ENABLED
+    ? [
+        {
           label: 'Associations',
           id: eOrganismeTypeToSearch.associations,
           value: eOrganismeTypeToSearch.associations,
           hint: `Recherche uniquement les ${eOrganismeTypeToSearch.associations}`,
           name: eOrganismeTypeToSearch.associations,
-        }]
-      : []
-  ),
+        },
+      ]
+    : []),
   {
     label: 'Fondations',
     id: eOrganismeTypeToSearch.fondations,
@@ -71,10 +71,7 @@ const onSearchFullText = async () => {
 
   if (typeOrganisme.value.length === 1) {
     entityType = typeOrganisme.value[0]
-  } else if (
-    typeOrganisme.value.length === 2
-    && typeOrganisme.value.every(t => organismeTypeToSeachArray.includes(t))
-  ) {
+  } else if (typeOrganisme.value.length === 2 && typeOrganisme.value.every((t) => organismeTypeToSeachArray.includes(t))) {
     entityType = eOrganismeTypeToSearch.all
   }
 
@@ -110,10 +107,17 @@ const onSearchFullText = async () => {
 </script>
 
 <template>
-  <SubLayoutSearch :is-loading="isLoading" :has-error="hasError" :results="results" :has-searched="hasSearched">
+  <SubLayoutSearch
+    :is-loading="isLoading"
+    :has-error="hasError"
+    :results="results"
+    :has-searched="hasSearched"
+  >
     <template #section-search>
       <p class="fr-text--sm fr-mb-2w text-grey-700">
-        Rechercher un titre, une description, un bénéficiaire effectif ou une adresse à travers cette recherche plein texte <template v-if="!isRnaSearchEnabled">
+        Rechercher un titre, une description, un bénéficiaire effectif ou une adresse à travers cette recherche plein texte
+        <!-- @vue-ignore TODO: corriger le type -->
+        <template v-if="!isRnaSearchEnabled">
           sur les fondations
         </template>.
       </p>
