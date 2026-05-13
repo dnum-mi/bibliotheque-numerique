@@ -76,6 +76,7 @@ const booleanOptions = [
   { label: 'Non', value: false },
 ]
 
+// @ts-ignore TODO: corriger le type
 const columnDefs: ComputedRef<PrimeVueColumnDef[]> = computed(() => {
   if (!props.headers?.length) {
     return []
