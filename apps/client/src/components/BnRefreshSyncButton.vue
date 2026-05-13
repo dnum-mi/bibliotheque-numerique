@@ -20,6 +20,7 @@ const onClick = async () => {
   await polling()
 }
 
+// @ts-ignore TODO: corriger le type
 let timeoutId: NodeJS.Timeout
 const polling = async () => {
   timeoutId = setTimeout(async () => {
