@@ -9,40 +9,46 @@ import DemarcheConfigurationSelectableItem from './DemarcheConfigurationSelectab
 import DemarcheConfigurationSelectedItem from './DemarcheConfigurationSelectedItem.vue'
 
 interface IMeta {
-  id: string,
-  label: string,
+  id: string
+  label: string
 }
-type IData = Record<string, {
-  id: string,
-  label: string,
-  children?: IMappingColumn[]
-}>
+type IData = Record<
+  string,
+  {
+    id: string
+    label: string
+    children?: IMappingColumn[]
+  }
+>
 
 interface IMappingColumnConfPart {
-  meta: IMeta,
+  meta: IMeta
   data: IData
 }
 
 export interface IConfParts {
-  [FieldSource.champs]: IMappingColumnConfPart,
-  [FieldSource.annotation]: IMappingColumnConfPart,
+  [FieldSource.champs]: IMappingColumnConfPart
+  [FieldSource.annotation]: IMappingColumnConfPart
   [FieldSource.fixField]?: IMappingColumnConfPart
 }
 
-const props = withDefaults(defineProps<{
-  currentDemarcheConfiguration: IMappingColumn[]
-  isSelectedFn: (ch: IMappingColumn) => boolean
-  canChangeLabel?: boolean,
-  demarcheTitle?: string,
-  selectedTitle?: string,
-}>(), {
-  canChangeLabel: true,
-  demarcheTitle: 'Champs Démarche Simplifiée',
-  selectedTitle: 'Champs sélectionnés pour l’affichage des colonnes',
-})
+const props = withDefaults(
+  defineProps<{
+    currentDemarcheConfiguration: IMappingColumn[]
+    isSelectedFn: (ch: IMappingColumn) => boolean
+    canChangeLabel?: boolean
+    demarcheTitle?: string
+    selectedTitle?: string
+  }>(),
+  {
+    canChangeLabel: true,
+    demarcheTitle: 'Champs Démarche Simplifiée',
+    selectedTitle: 'Champs sélectionnés pour l’affichage des colonnes',
+  },
+)
 
 const emit = defineEmits<{
-  'save-one': [{ id: string, label: string | null }]
+  'save-one': [{ id: string; label: string | null }]
 }>()
 
 const demarcheConfiguration = computed<IMappingColumn[]>(() => props.currentDemarcheConfiguration)
@@ -53,33 +59,42 @@ const getDefaultConfParts = (): IConfParts => ({
       id: 'champs',
       label: props.demarcheTitle,
     },
-    data: {} as Record<string, {
-      id: string
-      label: string
-      children?: IMappingColumn[]
-    }>,
+    data: {} as Record<
+      string,
+      {
+        id: string
+        label: string
+        children?: IMappingColumn[]
+      }
+    >,
   },
   [FieldSource.annotation]: {
     meta: {
       id: 'annotation',
       label: 'Annotations privées',
     },
-    data: {} as Record<string, {
-      id: string
-      label: string
-      children?: IMappingColumn[]
-    }>,
+    data: {} as Record<
+      string,
+      {
+        id: string
+        label: string
+        children?: IMappingColumn[]
+      }
+    >,
   },
   [FieldSource.fixField]: {
     meta: {
       id: 'fix-field',
       label: 'Données BN',
     },
-    data: {} as Record<string, {
-      id: string
-      label: string
-      children?: IMappingColumn[]
-    }>,
+    data: {} as Record<
+      string,
+      {
+        id: string
+        label: string
+        children?: IMappingColumn[]
+      }
+    >,
   },
 })
 
@@ -93,29 +108,30 @@ const updateDataGroup = () => {
       }
       let groupId = idNoSection
 
-      const data = demarcheConfiguration.value.filter(mappingColumn => mappingColumn.source === key).reduce((acc, mappingColumn) => {
-        groupId = mappingColumn.isHeader ? mappingColumn.id : groupId
-        if (!acc[groupId]) {
-          acc[groupId] = {
-            id: groupId,
-            label: mappingColumn.isHeader ? (mappingColumn.columnLabel || mappingColumn.originalLabel) : 'Sans en-tête',
-            children: [],
+      const data = demarcheConfiguration.value
+        .filter((mappingColumn) => mappingColumn.source === key)
+        .reduce((acc, mappingColumn) => {
+          groupId = mappingColumn.isHeader ? mappingColumn.id : groupId
+          if (!acc[groupId]) {
+            acc[groupId] = {
+              id: groupId,
+              label: mappingColumn.isHeader ? mappingColumn.columnLabel || mappingColumn.originalLabel : 'Sans en-tête',
+              children: [],
+            }
           }
-        }
 
-        if (!mappingColumn.isHeader) {
-          acc[groupId]?.children?.push(mappingColumn)
-        }
-        return acc
-      }, confPartDefault.data)
+          if (!mappingColumn.isHeader) {
+            acc[groupId]?.children?.push(mappingColumn)
+          }
+          return acc
+        }, confPartDefault.data)
 
       return [key, { ...confPartDefault, data }]
     }),
   )
 
   const fixFieldPart = confParts.value[FieldSource.fixField]?.data
-  if (!!fixFieldPart
-    && Object.values(fixFieldPart).some(group => group.children?.length === 0)) {
+  if (!!fixFieldPart && Object.values(fixFieldPart).some((group) => group.children?.length === 0)) {
     delete confParts.value[FieldSource.fixField]
   }
 }
@@ -129,11 +145,22 @@ watch(demarcheConfiguration, () => {
 
 const selectedPartId = useLocalStorage('dem-conf-ds-part', Object.keys(confParts.value)[0])
 
-const buttons = computed(() => Object.entries(confParts.value).map(([_, { meta: { label, id } }]) => ({
-  label,
-  value: id,
-  secondary: id !== selectedPartId.value,
-})))
+// @ts-ignore TODO: corriger le type
+const buttons = computed(() =>
+  Object.entries(confParts.value).map(
+    ([
+      _,
+      {
+        // @ts-ignore TODO: corriger le type
+        meta: { label, id },
+      },
+    ]) => ({
+      label,
+      value: id,
+      secondary: id !== selectedPartId.value,
+    }),
+  ),
+)
 
 const cdsExpandedId = ref<string | undefined>('cds-1')
 
@@ -145,20 +172,18 @@ const saveOneMappingColumnDebounced = useDebounceFn(saveOneMappingColumn, 300)
 
 <template>
   <div class="flex fr-pl-2w">
-    <div class="flex-basis-[50%]  flex-shrink-0  pt-6  pr-8  border-r-2  border-r-[var(--grey-925-125)]  border-r-solid">
+    <div class="flex-basis-[50%] flex-shrink-0 pt-6 pr-8 border-r-2 border-r-[var(--grey-925-125)] border-r-solid">
       <header>
-        <h4>
-          Champs à sélectionner
-        </h4>
+        <h4>Champs à sélectionner</h4>
         <div
-          class="flex  mb-4  w-[100%]  no-wrap  min-w-[400px]"
+          class="flex mb-4 w-[100%] no-wrap min-w-[400px]"
           role="tablist"
         >
           <DsfrButton
             v-for="button in buttons"
             :key="button.value"
             role="tab"
-            class="button-text-xs  flex-grow  justify-center"
+            class="button-text-xs flex-grow justify-center"
             v-bind="button"
             :aria-controls="`content-${button.value}`"
             @click="selectedPartId = button.value"
@@ -167,7 +192,7 @@ const saveOneMappingColumnDebounced = useDebounceFn(saveOneMappingColumn, 300)
       </header>
 
       <section
-        v-for="([key, confPartValue]) of Object.entries(confParts)"
+        v-for="[key, confPartValue] of Object.entries(confParts)"
         :id="`content-${key}`"
         :key="key"
         tabindex="0"
@@ -179,7 +204,7 @@ const saveOneMappingColumnDebounced = useDebounceFn(saveOneMappingColumn, 300)
       >
         <h5>{{ confPartValue?.meta.label || '' }}</h5>
         <template
-          v-for="([keySection, section]) of confPartValue ? Object.entries(confPartValue.data) : []"
+          v-for="[keySection, section] of confPartValue ? Object.entries(confPartValue.data) : []"
           :key="keySection"
         >
           <component
@@ -192,7 +217,7 @@ const saveOneMappingColumnDebounced = useDebounceFn(saveOneMappingColumn, 300)
               <li
                 v-for="champ of section.children"
                 :key="champ.id"
-                class="flex  items-center  justify-between  p-2"
+                class="flex items-center justify-between p-2"
               >
                 <template v-if="champ.children?.length">
                   <div>
@@ -203,7 +228,7 @@ const saveOneMappingColumnDebounced = useDebounceFn(saveOneMappingColumn, 300)
                       <li
                         v-for="child of champ.children"
                         :key="child.id"
-                        class="flex  items-center  justify-between  p-2"
+                        class="flex items-center justify-between p-2"
                       >
                         <DemarcheConfigurationSelectableItem
                           :champ="child"
@@ -227,26 +252,28 @@ const saveOneMappingColumnDebounced = useDebounceFn(saveOneMappingColumn, 300)
         </template>
       </section>
     </div>
-    <div class="flex-basis-[50%]  p-t-6  bg-[var(--grey-975-75)]">
+    <div class="flex-basis-[50%] p-t-6 bg-[var(--grey-975-75)]">
       <h4 class="fr-container">
         {{ selectedTitle }}
       </h4>
       <hr role="presentation">
       <div class="fr-container">
         <div
-          v-for="([key, group]) of Object.entries(confParts)"
+          v-for="[key, group] of Object.entries(confParts)"
           :key="key"
           class="fr-mb-4w"
         >
-          <h5 class="fr-ml-2w  fr-mb-1v  text-[var(--blue-france-sun-113-625)]  fr-text--md">
-            {{ group.meta.label }}
+          <h5 class="fr-ml-2w fr-mb-1v text-[var(--blue-france-sun-113-625)] fr-text--md">
+            {{ group?.meta.label }}
           </h5>
-          <template
-            v-if="Array.isArray(group.data)"
-          >
+          <template v-if="Array.isArray(group?.data)">
             <VIcon
-              v-if="!group.data?.some(champ => isSelectedFn(champ) || (champ.children?.length && champ.children.some(chp => isSelectedFn(champ))))"
-              class="fr-ml-6w  fr-mt-1w"
+              v-if="
+                !group.data?.some(
+                  (champ) => isSelectedFn(champ) || (champ.children?.length && champ.children.some(() => isSelectedFn(champ))),
+                )
+              "
+              class="fr-ml-6w fr-mt-1w"
               name="ri-subtract-line"
               label="Aucun champ sélectionné dans cette partie"
             />
@@ -256,8 +283,8 @@ const saveOneMappingColumnDebounced = useDebounceFn(saveOneMappingColumn, 300)
               :key="champ.id"
             >
               <div
-                v-if="isSelectedFn(champ) || (champ.children?.length && champ.children.some(chp => isSelectedFn(chp)))"
-                class="fr-pl-6w  fr-my-2w  flex  justify-between  items-center"
+                v-if="isSelectedFn(champ) || (champ.children?.length && champ.children.some((chp: IMappingColumn) => isSelectedFn(chp)))"
+                class="fr-pl-6w fr-my-2w flex justify-between items-center"
               >
                 <div v-if="champ.children?.length">
                   <h6 class="fr-text--md">
@@ -268,9 +295,10 @@ const saveOneMappingColumnDebounced = useDebounceFn(saveOneMappingColumn, 300)
                     v-for="childChamp of champ.children"
                     :key="childChamp.id"
                   >
+                    <!-- @vue-ignore TODO: corriger le type -->
                     <DemarcheConfigurationSelectedItem
                       v-if="isSelectedFn(childChamp)"
-                      class="fr-my-2w  fr-ml-2w"
+                      class="fr-my-2w fr-ml-2w"
                       :champ="childChamp"
                       :can-change-label="canChangeLabel"
                       @remove="saveOneMappingColumn(childChamp.id, null)"
@@ -278,6 +306,7 @@ const saveOneMappingColumnDebounced = useDebounceFn(saveOneMappingColumn, 300)
                     />
                   </template>
                 </div>
+                <!-- @vue-ignore TODO: corriger le type -->
                 <DemarcheConfigurationSelectedItem
                   v-else
                   :champ="champ"
@@ -290,16 +319,20 @@ const saveOneMappingColumnDebounced = useDebounceFn(saveOneMappingColumn, 300)
           </template>
           <template v-else>
             <div
-              v-for="(child, childKey) in group.data"
+              v-for="(child, childKey) in group?.data"
               :key="childKey"
             >
-              <h6 class="fr-ml-4w  fr-mt-2w  fr-mb-0  text-[var(--blue-france-sun-113-625)]  fr-text--md  font-400">
+              <h6 class="fr-ml-4w fr-mt-2w fr-mb-0 text-[var(--blue-france-sun-113-625)] fr-text--md font-400">
                 {{ child.label }}
               </h6>
 
               <VIcon
-                v-if="!child.children?.some(champ => champ.columnLabel || (champ.children?.length && champ.children.some(chp => chp.columnLabel)))"
-                class="fr-ml-6w  fr-mt-1w"
+                v-if="
+                  !child.children?.some(
+                    (champ) => champ.columnLabel || (champ.children?.length && champ.children.some((chp) => chp.columnLabel)),
+                  )
+                "
+                class="fr-ml-6w fr-mt-1w"
                 name="ri-subtract-line"
                 label="Aucun champ sélectionné dans cette partie"
               />
@@ -309,8 +342,8 @@ const saveOneMappingColumnDebounced = useDebounceFn(saveOneMappingColumn, 300)
                 :key="champ.id"
               >
                 <div
-                  v-if="isSelectedFn(champ) || (champ.children?.length && champ.children.some(chp => isSelectedFn(chp)))"
-                  class="fr-pl-6w  fr-my-2w  flex  justify-between  items-center"
+                  v-if="isSelectedFn(champ) || (champ.children?.length && champ.children.some((chp) => isSelectedFn(chp)))"
+                  class="fr-pl-6w fr-my-2w flex justify-between items-center"
                 >
                   <div v-if="champ.children?.length">
                     <h6 class="fr-text--md">
@@ -320,9 +353,10 @@ const saveOneMappingColumnDebounced = useDebounceFn(saveOneMappingColumn, 300)
                       v-for="childChamp of champ.children"
                       :key="childChamp.id"
                     >
+                      <!-- @vue-ignore TODO: corriger le type -->
                       <DemarcheConfigurationSelectedItem
                         v-if="isSelectedFn(childChamp)"
-                        class="fr-my-2w  fr-ml-2w"
+                        class="fr-my-2w fr-ml-2w"
                         :champ="childChamp"
                         :can-change-label="canChangeLabel"
                         @remove="saveOneMappingColumn(childChamp.id, null)"
@@ -330,6 +364,7 @@ const saveOneMappingColumnDebounced = useDebounceFn(saveOneMappingColumn, 300)
                       />
                     </template>
                   </div>
+                  <!-- @vue-ignore TODO: corriger le type -->
                   <DemarcheConfigurationSelectedItem
                     v-else
                     :champ="champ"
