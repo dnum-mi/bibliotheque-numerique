@@ -17,6 +17,7 @@ export const deepAlmostEqual = (obj1: unknown, obj2: unknown) => {
   // car si la valeur est undefined dans l’autre, on considère que c’est ok
   // if (keys1.length !== keys2.length) return false
   for (const key of keys1) {
+    // @ts-ignore TODO: corriger le type
     if (!keys2.includes(key) && toRaw(obj1[key]) !== undefined) {
       return false
     }

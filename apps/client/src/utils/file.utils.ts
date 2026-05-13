@@ -82,7 +82,7 @@ export const normalizeFileResponse = (
 ): NormalizedFile => {
   const headers = response.headers ?? {}
 
-  const mimeType: string = headers['content-type'] || fallbackMimeType
+  const mimeType: string = headers['content-type']?.toString() || fallbackMimeType
   const contentDisposition: string | undefined = headers['content-disposition']
 
   let filename = extractFilename(contentDisposition, fallbackName)

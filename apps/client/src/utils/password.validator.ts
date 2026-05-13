@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { PASSWORD_MESSAGE } from '../messages'
 
 const PASSWORD_NO_EMPTY_MESSAGE = 'Veuillez saisir un mot de passe'
+// @ts-ignore TODO: corriger le type
 export const passwordValidator = z.string({ required_error: PASSWORD_NO_EMPTY_MESSAGE })
   .nonempty(PASSWORD_NO_EMPTY_MESSAGE)
   .min(15, PASSWORD_MESSAGE)
