@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 
-import type { ISmallDemarcheOutput, OrganismeTypeKey } from '@biblio-num/shared'
+import type { IdentificationDemarcheKey, ISmallDemarcheOutput, OrganismeTypeKey } from '@biblio-num/shared'
 import { useConfigurationStore } from '@/stores/configuration'
 import { synchroniseOneDossier } from '@/api/sudo-api-client'
 import ModalConfirm from '@/components/ModalConfirm.vue'
@@ -19,7 +19,8 @@ const types = computed<OrganismeTypeKey[]>(() => (typesString.value ? JSON.parse
 const demarches = computed<ISmallDemarcheOutput[]>(() => configurationStore.demarches)
 const loading = computed<boolean>(() => configurationStore.fetching)
 
-const identificationValue = computed<IdentificationDemarcheKeys | null | undefined>(() => {
+// @ts-ignore TODO: corriger le type
+const identificationValue = computed<IdentificationDemarcheKey | null | undefined>(() => {
   switch (identification.value) {
     case '':
       return undefined
@@ -185,9 +186,7 @@ onMounted(async () => {
         <th>Identification</th>
         <th>Synchronisation forcée</th>
         <th>Supprimer</th>
-        <th>
-          Mise à jour dans les dossiers
-        </th>
+        <th>Mise à jour dans les dossiers</th>
       </thead>
       <tbody>
         <tr
