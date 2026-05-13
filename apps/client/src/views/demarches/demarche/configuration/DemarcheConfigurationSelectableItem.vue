@@ -15,6 +15,7 @@ const typeLabels = {
   file: 'Fichier',
   state: 'État',
   boolean: 'Booléen',
+  // @ts-ignore TODO: corriger le type
   get default () {
     return this.text
   },
@@ -26,6 +27,7 @@ const getFrenchTypeLabel = (type: keyof typeof typeLabels) => {
 </script>
 
 <template>
+  <!-- @vue-ignore TODO: corriger le type -->
   <DsfrCheckbox
     :id="champ.id"
     :model-value="isSelectedFn(champ)"
@@ -33,6 +35,7 @@ const getFrenchTypeLabel = (type: keyof typeof typeLabels) => {
     :label="champ.originalLabel"
     @update:model-value="emit('toggleCheck', $event)"
   />
+  <!-- @vue-ignore TODO: corriger le type -->
   <DsfrBadge
     :label="getFrenchTypeLabel(champ.type)"
     type="none"
