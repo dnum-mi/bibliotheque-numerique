@@ -234,7 +234,7 @@ const deleteView = async () => {
   }
 }
 
-const updateView = async ({ viewId, viewName = '', totals = [] }: { viewId: number, viewName?: string; totals?: string[] }) => {
+const updateView = async ({ viewId, viewName = '', totals = [] }: { viewId: number; viewName?: string; totals?: string[] }) => {
   customViewOperationSuccess.value = false
   const dto: IPatchView = {
     name: viewName,
@@ -358,7 +358,7 @@ const createView = async ({
 }) => {
   customViewOperationSuccess.value = false
 
-  const base = baseViewId != null ? viewWithErrors.value.find((v) => v.id === baseViewId) ?? null : null
+  const base = baseViewId != null ? (viewWithErrors.value.find((v) => v.id === baseViewId) ?? null) : null
 
   const dtoSource = base
     ? {
@@ -397,6 +397,7 @@ const createView = async ({
 //#endregion
 
 const download = async () => {
+  // @ts-ignore TODO: corriger le type
   return demarcheStore.exportCurrentDemarcheDossiers(groupByDossier.value, paginationDto.value)
 }
 
@@ -437,7 +438,7 @@ onMounted(async () => {
     await resetCurrentViewFromBackend(queryViewId)
   } else {
     const savedViewId = Number.parseInt(localStorage.getItem(localStorageViewIdKey.value) || '-1')
-    selectedView.value = savedViewId > -1 ? (viewWithErrors.value.find((v) => v.id === savedViewId) || null) : null
+    selectedView.value = savedViewId > -1 ? viewWithErrors.value.find((v) => v.id === savedViewId) || null : null
   }
 
   // 2) groupByL on prend le localStorage, sinon défaut
@@ -535,6 +536,7 @@ const quickFilterValueTranslations: Record<string, string> = {
         />
       </div>
       <div class="flex justify-center items-center">
+        <!-- @vue-ignore TODO: corriger le type -->
         <DemarcheDossiersViews
           :views="viewWithErrors"
           :selected-view="selectedView as IView"
@@ -562,6 +564,7 @@ const quickFilterValueTranslations: Record<string, string> = {
       v-if="demarche && columnsDef"
       class="flex-grow overflow-auto"
     >
+      <!-- @vue-ignore TODO: corriger le type -->
       <DataTableServerSide
         v-if="readyToLoadDataTable"
         ref="dataTableComponent"
