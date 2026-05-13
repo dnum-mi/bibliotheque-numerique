@@ -2,17 +2,17 @@
   "extends": "@vue/tsconfig/tsconfig.dom.json",
   "compilerOptions": {
     "composite": true,
-
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
-
     "lib": ["ES2022", "DOM"],
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     },
     "types": ["vitest/globals"],
-    "noEmit": false
+    "noEmit": false,
+    "strict": true,
+    "noImplicitAny": true,
   },
   "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
-  "exclude": ["@nestjs/websockets/socket-module"]
+  "exclude": ["@nestjs/websockets/socket-module", "src/**/*.cy.ts", "cypress/**/*"]
 }

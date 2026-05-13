@@ -15,6 +15,7 @@ import {
   vueDsfrAutoimportPreset,
   vueDsfrComponentResolver,
 } from '@gouvminint/vue-dsfr/meta'
+import checker from 'vite-plugin-checker'
 
 const isCypress = process.env.CYPRESS === 'true'
 const proxyTargetUrl = process.env.PROXY_TARGET_URL || 'http://localhost:3000'
@@ -23,6 +24,11 @@ const proxyTargetUrl = process.env.PROXY_TARGET_URL || 'http://localhost:3000'
 export default defineConfig({
   plugins: [
     vue(),
+    checker({
+      vueTsc: {
+        tsconfigPath: 'tsconfig.app.json',
+      },
+    }),
     svgLoader({
       svgoConfig: {
         plugins: [
@@ -40,18 +46,8 @@ export default defineConfig({
     UnoCSS(),
     CommonJS(),
     AutoImport({
-      include: [
-        /\.[tj]sx?$/,
-        /\.vue$/,
-        /\.vue\?vue/,
-      ],
-      imports: [
-        'vue',
-        'vue-router',
-        'pinia',
-        ...(isCypress ? [] : ['vitest']),
-        vueDsfrAutoimportPreset,
-      ] as Options['imports'],
+      include: [/\.[tj]sx?$/, /\.vue$/, /\.vue\?vue/],
+      imports: ['vue', 'vue-router', 'pinia', ...(isCypress ? [] : ['vitest']), vueDsfrAutoimportPreset] as Options['imports'],
       vueTemplate: true,
       dts: './src/auto-imports.d.ts',
       eslintrc: {
@@ -66,9 +62,7 @@ export default defineConfig({
       // allow auto import and register components
       include: [/\.vue$/, /\.vue\?vue/],
       dts: './src/components.d.ts',
-      resolvers: [
-        vueDsfrComponentResolver,
-      ],
+      resolvers: [vueDsfrComponentResolver],
     }),
   ],
   base: process.env.BASE_URL || '/',
@@ -79,7 +73,7 @@ export default defineConfig({
       '/api': {
         target: proxyTargetUrl,
         changeOrigin: true,
-        rewrite: path => path.replace(/^\/api/, ''),
+        rewrite: (path) => path.replace(/^\/api/, ''),
       },
     },
   },
@@ -94,8 +88,6 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     testTimeout: 2000,
-    setupFiles: [
-      './vitest-setup.ts',
-    ],
+    setupFiles: ['./vitest-setup.ts'],
   },
 })
