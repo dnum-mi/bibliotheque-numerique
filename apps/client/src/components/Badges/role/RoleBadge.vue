@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import type { RolesKeys } from '@biblio-num/shared/dist/src/index'
+import type { RolesKeys } from '@biblio-num/shared'
 
-withDefaults(defineProps<{ role?: RolesKeys, small?: boolean }>(), {
+withDefaults(defineProps<{ role?: RolesKeys; small?: boolean }>(), {
   role: 'norole',
   small: true,
 })
@@ -16,6 +16,7 @@ const dictionary: Record<RolesKeys | 'norole', string> = {
 </script>
 
 <template>
+  <!-- @vue-ignore TODO: corriger le type -->
   <DsfrBadge
     :class="`custom-${(role || 'norole')?.toLowerCase()}`"
     :label="dictionary[role || 'norole']"
@@ -28,14 +29,15 @@ const dictionary: Record<RolesKeys | 'norole', string> = {
 <style>
 .custom-sudo {
   --text-default-info: white;
-  --background-contrast-info: #C94444B5;
+  --background-contrast-info: #c94444b5;
 }
 .custom-superadmin {
   --text-default-info: white;
-  --background-contrast-info: #C94444B5;
+  --background-contrast-info: #c94444b5;
 }
 
-.custom-admin {}
+.custom-admin {
+}
 
 .custom-norole {
   --text-default-info: var(--text-disabled-grey);
