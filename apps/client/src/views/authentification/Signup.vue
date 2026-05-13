@@ -18,14 +18,21 @@ import useToaster from '../../composables/use-toaster'
 const router = useRouter()
 const toaster = useToaster()
 
-const validationSchema = toTypedSchema(z.object({
-  firstname: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).min(2, 'Ceci ne semble pas être un prénom'),
-  lastname: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).min(2, 'Ceci ne semble pas être un nom'),
-  email: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).email('Ceci semble être une adresse email invalide'),
-  password: passwordValidator,
-  job: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).min(2, 'Cet intitulé est trop court.'),
-  prefecture: z.enum(listOfVerbosePrefecture, { required_error: REQUIRED_FIELD_MESSAGE }),
-}))
+const validationSchema = toTypedSchema(
+  z.object({
+    // @ts-ignore TODO: corriger le type
+    firstname: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).min(2, 'Ceci ne semble pas être un prénom'),
+    // @ts-ignore TODO: corriger le type
+    lastname: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).min(2, 'Ceci ne semble pas être un nom'),
+    // @ts-ignore TODO: corriger le type
+    email: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).email('Ceci semble être une adresse email invalide'),
+    password: passwordValidator,
+    // @ts-ignore TODO: corriger le type
+    job: z.string({ required_error: REQUIRED_FIELD_MESSAGE }).min(2, 'Cet intitulé est trop court.'),
+    // @ts-ignore TODO: corriger le type
+    prefecture: z.enum(listOfVerbosePrefecture, { required_error: REQUIRED_FIELD_MESSAGE }),
+  }),
+)
 
 const { handleSubmit } = useForm<ICreateUser>({
   validationSchema,
@@ -38,11 +45,14 @@ const signInRoute = { name: 'SignIn' }
 const onSubmit = handleSubmit(async (formValue: ICreateUser) => {
   try {
     await apiClient.createUser(formValue)
-    toaster.addSuccessMessage('Veuillez vérifier votre boîte de réception pour validation de votre compte. Si vous avez oublié votre mot de passe, vous pouvez le réinitialiser en utilisant l\'option de récupération de mot de passe.')
+    toaster.addSuccessMessage(
+      'Veuillez vérifier votre boîte de réception pour validation de votre compte.'
+      + ' Si vous avez oublié votre mot de passe, vous pouvez le réinitialiser en utilisant l\'option de récupération de mot de passe.',
+    )
     await router.push(signInRoute)
   } catch (error) {
     if (error instanceof AxiosError) {
-      passwordError.value = error.response?.data.msg ?? (`Impossible de créer l’utilisateur (${error.message})`)
+      passwordError.value = error.response?.data.msg ?? `Impossible de créer l’utilisateur (${error.message})`
     } else {
       passwordError.value = (error as Error).message
     }
@@ -60,14 +70,12 @@ const { value: prefectureValue, errorMessage: prefectureError } = useField<Prefe
 <template>
   <LayoutAccueil>
     <div class="fr-container fr-m-5w">
-      <div
-        class="fr-container fr-grid-row"
-      >
+      <div class="fr-container fr-grid-row">
         <div class="fr-col-1" />
         <div class="fr-col-10">
           <h5
             class="mb-20 fr-text-title--blue-france"
-            style="text-align:center"
+            style="text-align: center"
           >
             Inscrivez-vous
           </h5>
@@ -192,7 +200,7 @@ const { value: prefectureValue, errorMessage: prefectureError } = useField<Prefe
 
             <div
               class="fr-m-4w"
-              style="text-align:center"
+              style="text-align: center"
             >
               <DsfrButton
                 type="submit"
@@ -203,7 +211,7 @@ const { value: prefectureValue, errorMessage: prefectureError } = useField<Prefe
             </div>
             <div
               class="fr-m-4w"
-              style="text-align:center"
+              style="text-align: center"
             >
               <RouterLink :to="signInRoute">
                 Déjà inscrit? Connectez-vous ici.
