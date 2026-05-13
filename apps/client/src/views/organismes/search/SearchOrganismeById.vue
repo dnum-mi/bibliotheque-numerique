@@ -66,6 +66,7 @@ const maskOptions = reactive<MaskInputOptions>({
     '@': { pattern: /[A-Z]/ },
   },
   eager: true,
+  // @ts-ignore TODO: corriger le type
   uppercase: true,
 
 })
