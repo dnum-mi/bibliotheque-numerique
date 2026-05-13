@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { IMyProfileOutput, IResetPasswordInput } from '@biblio-num/shared'
 import { listOfVerbosePrefecture } from '@biblio-num/shared'
+// @ts-ignore TODO: corriger le type
 import type { DsfrAlertType } from '@gouvminint/vue-dsfr/types/components/DsfrAlert/DsfrAlert.vue'
 
 import LayoutBanner from '@/components/Layout/LayoutBanner.vue'
@@ -15,11 +16,11 @@ const store = useUserStore()
 const user = computed<IMyProfileOutput | null>(() => store.myProfile)
 
 type Field = {
-  title: string;
-  userKey: keyof IMyProfileOutput;
-  enum?: string[];
-  parseFct?: (v: string) => string;
-  editable?: boolean;
+  title: string
+  userKey: keyof IMyProfileOutput
+  enum?: string[]
+  parseFct?: (v: string) => string
+  editable?: boolean
 }
 
 const fields = reactive<Field[]>([
@@ -100,7 +101,7 @@ const updateProfile = async (field: Field, newText: string) => {
       title-bg-color="var(--border-plain-green-bourgeon)"
       title-icon="fr-icon-profil-line"
     />
-    <div class="flex  fr-pb-4w">
+    <div class="flex fr-pb-4w">
       <div class="max-width-container fr-mt-md-20v flex flex-row gap-20">
         <!-- Information utilisateur -->
         <div class="flex-1">
@@ -129,7 +130,10 @@ const updateProfile = async (field: Field, newText: string) => {
                 {{ printField(field) }}
               </div>
             </div>
-            <hr role="presentation" class="fr-mt-1v">
+            <hr
+              role="presentation"
+              class="fr-mt-1v"
+            >
           </div>
           <!-- CHANGE PASSWORD -->
           <div class="flex flex-col one-col-height">
@@ -151,7 +155,11 @@ const updateProfile = async (field: Field, newText: string) => {
               :type="alertType"
               :closed="!openAlert"
               closeable
-              @close="() => { openAlert = false }"
+              @close="
+                () => {
+                  openAlert = false
+                }
+              "
             />
           </div>
         </div>
@@ -160,18 +168,25 @@ const updateProfile = async (field: Field, newText: string) => {
           <h4>Mon role</h4>
           <hr role="presentation">
           <div class="flex flex-col one-col-height">
+            <!-- @vue-ignore TODO: corriger le type -->
             <RoleBadge
               class="mb-5"
               :role="user?.role?.label"
               :small="false"
             />
 
-            <div v-if="!user?.role?.label" class="fr-callout p-4!">
+            <div
+              v-if="!user?.role?.label"
+              class="fr-callout p-4!"
+            >
               <span class="block">Vous n'avez pas de rôle ?</span>
               <span> Contacter votre administrateur.</span>
             </div>
           </div>
-          <hr role="presentation" class="fr-mt-1v">
+          <hr
+            role="presentation"
+            class="fr-mt-1v"
+          >
           <div
             v-for="option in user?.role?.options"
             :key="option.demarche?.id"
@@ -190,10 +205,13 @@ const updateProfile = async (field: Field, newText: string) => {
                 v-else
                 class="flex-1"
               >
-                {{ option.prefectures.map(p => p.substring(1)).join(", ") }}
+                {{ option.prefectures.map((p) => p.substring(1)).join(', ') }}
               </div>
             </div>
-            <hr role="presentation" class="fr-mt-1v">
+            <hr
+              role="presentation"
+              class="fr-mt-1v"
+            >
           </div>
         </div>
       </div>
