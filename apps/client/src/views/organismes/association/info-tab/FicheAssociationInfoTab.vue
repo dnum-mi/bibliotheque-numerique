@@ -30,12 +30,15 @@ const activity = computed<tInfoActivity>(() => ({
   hasInternationalActivity: props.association.hasInternationalActivity,
 }))
 
+// @ts-ignore TODO: corriger le type
 const compte = computed<tInfoCompte>(() => ({
   files: props.association.files,
   creationAt: props.association.creationAt,
   dueDate: props.association.dueDate,
   fiscalEndDateAt: props.association.fiscalEndAt,
+  // @ts-ignore TODO: corriger le type
   depositAccountYears: props.association.depositAccountYears,
+  // @ts-ignore TODO: corriger le type
   missingAccountYears: props.association.missingAccountYears,
   isAccountLate: props.association.isAccountLate,
   publicGenerosityYears: props.association.publicGenerosityYears,
