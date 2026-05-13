@@ -24,7 +24,7 @@ onMounted(async () => {
   await viewStore.getViews()
 })
 
-type DisplaysByDemarche = Record<number, { id: number; label: string, displays: { id: number; label: string }[] }>
+type DisplaysByDemarche = Record<number, { id: number; label: string; displays: { id: number; label: string }[] }>
 const demarcheStore = useDemarcheStore()
 const displaysByDemarche = ref<DisplaysByDemarche>({})
 const updateDemarcheList = () => {
@@ -44,9 +44,7 @@ const selectedDemarches = useStorage<string[]>('selected-dem-stat', [])
 const selectedCustomFilters = computed(() => selectedDemarches.value.map((id) => displaysByDemarche.value[+id]?.displays ?? []).flat())
 
 const updateSelectedDemarches = ($event: string, demarcheId: string): void => {
-  selectedDemarches.value = $event
-    ? [...selectedDemarches.value, demarcheId]
-    : selectedDemarches.value.filter((id) => id !== demarcheId)
+  selectedDemarches.value = $event ? [...selectedDemarches.value, demarcheId] : selectedDemarches.value.filter((id) => id !== demarcheId)
 }
 
 let statHeaderEl: HTMLElement, mainEl: HTMLElement, bannerEl: HTMLElement
@@ -76,9 +74,7 @@ onUnmounted(() => {
         Vous n’avez pas encore créé de vue personnalisée.
       </p>
 
-      <em class="fr-text--md">
-        (Une "tuile" par vue personnalisée pourra être affichée ici avec ses statistiques)
-      </em>
+      <em class="fr-text--md"> (Une "tuile" par vue personnalisée pourra être affichée ici avec ses statistiques) </em>
     </div>
   </div>
   <div
@@ -90,6 +86,7 @@ onUnmounted(() => {
         <p class="statistics-header__title">
           Charger les statistiques des démarches suivantes&nbsp;:
         </p>
+        <!-- @vue-ignore TODO: corriger le type -->
         <DsfrCheckbox
           v-for="(displaysInDemarche, demarcheId) in displaysByDemarche"
           :key="demarcheId"
@@ -107,6 +104,7 @@ onUnmounted(() => {
           v-for="view of selectedCustomFilters"
           :key="view.id"
         >
+          <!-- @vue-ignore TODO: corriger le type -->
           <StatisticCard
             :data-stat-id="view.id"
             :view-id="view.id"
