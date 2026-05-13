@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { organismeDictionary, eOrganismeType, listOfPrefectureKeys, Roles } from '@biblio-num/shared'
 import type {
   OneDemarcheRoleOption,
   IOnePrefectureUpdate,
@@ -8,8 +9,6 @@ import type {
   OrganismeTypeKey,
   IUpdateOneRoleOption,
 } from '@biblio-num/shared'
-
-import { eOrganismeType, listOfPrefectureKeys, Roles } from '@biblio-num/shared'
 
 import { useUserStore } from '@/stores'
 import { useRandomId } from '@gouvminint/vue-dsfr'
@@ -50,13 +49,6 @@ type DemarchesRoles = {
 }
 type GeographicalRights = IPrefectureOptions & { enabled?: boolean }
 
-const typeOrganismeLabel: Record<OrganismeTypeKey, string> = {
-  [eOrganismeType.ASSO]: 'Associations',
-  [eOrganismeType.FDD]: 'Fonds de dotation (FDD)',
-  [eOrganismeType.FE]: 'Fondations d’entreprises (FE)',
-  [eOrganismeType.FRUP]: 'Fondations reconnues d’utilité publique (FRUP)',
-  [eOrganismeType.unknown]: 'Type d’organisme inconnu',
-}
 //#endregion
 let noRefDemarcheOrTypeSelected: DemarchesRoles | DemarcheRole | DemarchesRoles[]
 const userStore = useUserStore()
@@ -110,6 +102,7 @@ const organismeTypes = computed(() => [
   ),
 ])
 
+// @ts-ignore TODO: corriger le type
 const demarchesRoles = computed<DemarchesRoles[]>(() => {
   return organismeTypes.value
     .map((type) => {
@@ -126,11 +119,12 @@ const demarchesRoles = computed<DemarchesRoles[]>(() => {
       }
       const children = Object.values(demarcheHash.value || {})
         .concat(
+          // @ts-ignore TODO: corriger le type
           Object.values(demarcheHash.value || {})
             .filter((demarcheOption) => demarcheOption.types.length === 0)
             .map((dOpts) => ({ ...dOpts, types: [eOrganismeType.unknown] })),
         )
-        .filter((demarcheOption) => demarcheOption.types.includes(type))
+        .filter((demarcheOption) => type && demarcheOption.types.includes(type))
         .filter((d) => d.editable)
         .map((d): DemarcheRole => {
           localization.national.value &&= d.prefectureOptions.national.value
@@ -138,6 +132,7 @@ const demarchesRoles = computed<DemarchesRoles[]>(() => {
 
           let newClass: string | null | undefined = null
           if ((noRefDemarcheOrTypeSelected as DemarcheRole)?.options?.id === d.id) {
+            // @ts-ignore TODO: corriger le type
             newClass = noRefDemarcheOrTypeSelected?.attrs.class
           }
 
@@ -160,11 +155,12 @@ const demarchesRoles = computed<DemarchesRoles[]>(() => {
 
       let newClass: string | null | undefined = null
       if ((noRefDemarcheOrTypeSelected as DemarchesRoles)?.name === type) {
+        // @ts-ignore TODO: corriger le type
         newClass = noRefDemarcheOrTypeSelected?.attrs.class
       }
 
       return {
-        label: typeOrganismeLabel[type] || typeOrganismeLabel[eOrganismeType.unknown],
+        label: type ? organismeDictionary[type] : 'Type d\'organisme inconnu',
         name: type,
         value,
         key: useRandomId(type),
@@ -284,6 +280,7 @@ const checkAllDemarches = async (checked: boolean) => {
 //#endregion
 
 //#region view localization
+// @ts-ignore TODO: corriger le type
 const geographicalRights = computed<GeographicalRights | null>(() => {
   if (!demarcheOrTypeSelected.value) {
     return null
@@ -294,8 +291,8 @@ const geographicalRights = computed<GeographicalRights | null>(() => {
       return null
     }
     return {
-      ...demarcheHash.value[id].prefectureOptions,
-      enabled: demarcheHash.value[id].checked,
+      ...demarcheHash.value[id]?.prefectureOptions,
+      enabled: demarcheHash.value[id]?.checked,
     }
   }
 
@@ -370,7 +367,8 @@ const _updateGeographicalRight = async (optionLoc: { national?: boolean; prefect
   }
 
   const demarcheSelected: DemarcheRole | null = 'options' in demarcheOrTypeSelected.value ? demarcheOrTypeSelected.value : null
-  const typeSelected: DemarchesRoles | null = 'options' in demarcheOrTypeSelected.value ? null : (demarcheOrTypeSelected.value as DemarchesRoles)
+  const typeSelected: DemarchesRoles | null
+    = 'options' in demarcheOrTypeSelected.value ? null : (demarcheOrTypeSelected.value as DemarchesRoles)
 
   if (demarcheSelected) {
     await userStore.updateUserOneRoleOption(
@@ -391,7 +389,7 @@ const _updateGeographicalRight = async (optionLoc: { national?: boolean; prefect
       false,
     )
     await userStore.loadUserById(selectedUser.value?.id)
-  } else if (Array.isArray(demarcheOrTypeSelected.value) && demarcheOrTypeSelected.value[0].label) {
+  } else if (Array.isArray(demarcheOrTypeSelected.value) && demarcheOrTypeSelected.value[0]?.label) {
     const childrenChecked = demarcheOrTypeSelected.value
       .flatMap((dr) => dr.children)
       .filter((child) => !!child)
@@ -494,7 +492,9 @@ const removePrefecture = (prefecture: IOnePrefectureUpdate['key']) => {
               :class="selectedAllDemarchesAttr"
               @click="onClickAllDemarches"
             >
+              <!-- @vue-ignore TODO: corriger le type -->
               <DsfrCheckbox
+                id=""
                 label=""
                 class="fr-pr-2v"
                 :disabled="isAllDemarches ? 'disabled' : false"
@@ -516,6 +516,7 @@ const removePrefecture = (prefecture: IOnePrefectureUpdate['key']) => {
                 :class="dr.attrs?.class"
                 @click="onClickDemarches(dr)"
               >
+                <!-- @vue-ignore TODO: corriger le type -->
                 <DsfrCheckbox
                   class="fr-px-2v flex-auto"
                   :name="dr.name"
@@ -553,6 +554,7 @@ const removePrefecture = (prefecture: IOnePrefectureUpdate['key']) => {
                     class="flex no-flex-grow-for-checkboxes"
                     @click="onClickDemarches(d)"
                   >
+                    <!-- @vue-ignore TODO: corriger le type -->
                     <DsfrCheckbox
                       :key="dr.key"
                       label=""
@@ -604,6 +606,7 @@ const removePrefecture = (prefecture: IOnePrefectureUpdate['key']) => {
             </span>
           </h5>
           <div class="fr-pl-4v overflow-y-auto max-h-md">
+            <!-- @vue-ignore TODO: corriger le type -->
             <UserGeographicalRights
               v-if="!!(geographicalRights && geographicalRights.enabled)"
               :key="keySelectUser"

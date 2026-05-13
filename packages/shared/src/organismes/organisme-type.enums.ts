@@ -18,6 +18,14 @@ export const activeOrganismeTypes: OrganismeTypeKey[] = [
   eOrganismeType.FRUP,
 ]
 
+export const organismeDictionary: Record<OrganismeTypeKey, string> = {
+  [eOrganismeType.ASSO]: 'Associations',
+  [eOrganismeType.FDD]: 'Fonds de dotation (FDD)',
+  [eOrganismeType.FE]: 'Fondations d’entreprises (FE)',
+  [eOrganismeType.FRUP]: 'Fondations reconnues d’utilité publique (FRUP)',
+  [eOrganismeType.unknown]: 'Type d’organisme inconnu',
+}
+
 export const dOrganismeTypeDictionary: Record<OrganismeTypeKey, string> = {
   [eOrganismeType.ASSO]: 'ASSO',
   [eOrganismeType.FDD]: 'FDD',
