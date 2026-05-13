@@ -1,9 +1,9 @@
-import type { IDossierFieldsOutput, IDossierOutput } from '@biblio-num/shared'
+import type { IDossierFieldsOutput, IDossier } from '@biblio-num/shared'
 
 import apiClient from '@/api/api-client'
 
 export const useDossierStore = defineStore('dossier', () => {
-  const dossier = ref<IDossierOutput | IDossierFieldsOutput>()
+  const dossier = ref<IDossier | IDossierFieldsOutput>()
   const getDossier = async (idDossier: number) => {
     if (!idDossier) {
       return
