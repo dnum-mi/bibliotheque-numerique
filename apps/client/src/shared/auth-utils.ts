@@ -7,6 +7,6 @@ export const getSignInRouteWithRedirect = () => ({
 })
 
 export const returnToSignIn = () => {
-  useUserStore().resetUser()
+  useUserStore().forceResetUser()
   router.push(getSignInRouteWithRedirect())
 }
