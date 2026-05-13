@@ -14,5 +14,5 @@
     "noImplicitAny": true,
   },
   "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
-  "exclude": ["@nestjs/websockets/socket-module", "src/**/*.cy.ts", "cypress/**/*"]
+  "exclude": ["@nestjs/websockets/socket-module", "src/**/*.cy.ts", "src/views/__tests__/*.ts", "cypress/**/*"]
 }
