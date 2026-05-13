@@ -93,13 +93,18 @@ onMounted(() => {
       <div class="bn-stat-content">
         <div class="bn-stat-filters">
           <ul class="bn-stat-list">
-            <li v-for="filter of card?.view.filters" :key="filter.label" class="bn-stat-item">
+            <li
+              v-for="filter of card?.view.filters"
+              :key="filter.label"
+              class="bn-stat-item"
+            >
               <p class="bn-stat-k">
                 {{ filter.label }}
               </p>
 
               <template v-if="filter.label === 'Status'">
                 <div class="bn-stat-chips">
+                  <!-- @vue-ignore TODO: corriger le type -->
                   <status-badge
                     v-for="f of filter.value.split(',')"
                     :key="f"
@@ -109,7 +114,10 @@ onMounted(() => {
                 </div>
               </template>
 
-              <p v-else class="bn-stat-v">
+              <p
+                v-else
+                class="bn-stat-v"
+              >
                 {{ filter.value }}
               </p>
             </li>
@@ -118,7 +126,11 @@ onMounted(() => {
 
         <div class="bn-stat-totals">
           <ul class="bn-stat-list">
-            <li v-for="total of card?.totals" :key="total.label" class="bn-stat-item">
+            <li
+              v-for="total of card?.totals"
+              :key="total.label"
+              class="bn-stat-item"
+            >
               <p class="bn-stat-k">
                 {{ total.label }}
               </p>
@@ -176,7 +188,7 @@ onMounted(() => {
 .bn-stat-k {
   margin: 0;
   font-size: 11px;
-  letter-spacing: .02em;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
   color: #6b7280; /* gray-500 */
   font-weight: 700;
