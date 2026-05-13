@@ -7,6 +7,7 @@ const healthStore = useHealthStore()
 const degradedServicesDescription = computed(() =>
   Object.entries(healthStore.health.dependencies)
     .filter(([, v]) => v.status === 'down')
+    // @ts-ignore TODO: corriger le type
     .map(([k]) => healthDependenciesDictionary[k]),
 )
 
