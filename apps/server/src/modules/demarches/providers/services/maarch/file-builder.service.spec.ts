@@ -17,6 +17,7 @@ describe('FileBuilderService', () => {
   const MOCK_ROOT_PATH = 'import-maarch-pj'
   const MOCK_COURRIER_PATH = 'manual'
   const MOCK_PJ_PATH = 'manual_attachements'
+  const MOCK_ACCUSE_RECEPTION_PATH = 'acknowledgement_receipts'
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -296,7 +297,10 @@ describe('FileBuilderService', () => {
 
       expect(accuse.originalLabel).toBe('0001_391259465.pdf')
       expect(accuse.label).toContain('0001_391259465.pdf')
-      expect(accuse.sourcePath).toBe(`${MOCK_ROOT_PATH}/${MOCK_PJ_PATH}/2021/12/0001/0001_391259465.pdf`)
+      expect(accuse.sourcePath).toBe(
+        `${MOCK_ROOT_PATH}/${MOCK_ACCUSE_RECEPTION_PATH}/2021/12/0001/0001_391259465.pdf`,
+      )
+
       expect(accuse.state).toBe(eState.queued)
       expect(accuse.sourceUploadedAt).toEqual(sendDate)
     })

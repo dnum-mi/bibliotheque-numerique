@@ -26,6 +26,7 @@ import { v4 as uuidv4 } from 'uuid'
 export class FileBuilderService {
   private readonly FOLDER_COURRIER: string
   private readonly FOLDER_PJ: string
+  private readonly FOLDER_ACCUSE_RECEPTION: string
   private readonly S3_ROOT_PATH: string
   private readonly TAG_MAPPINGS = {
     statut: eFileTag.status,
@@ -53,8 +54,15 @@ export class FileBuilderService {
   ) {
     this.logger.setContext(this.constructor.name)
     this.S3_ROOT_PATH = this.configService.get('file.maarchImportRootPath')
-    this.FOLDER_COURRIER = this.configService.get('file.maarchImportFolderCourrier')
-    this.FOLDER_PJ = this.configService.get('file.maarchImportFolderPieceJointe')
+    this.FOLDER_COURRIER = this.configService.get(
+      'file.maarchImportFolderCourrier',
+    )
+    this.FOLDER_PJ = this.configService.get(
+      'file.maarchImportFolderPieceJointe',
+    )
+    this.FOLDER_ACCUSE_RECEPTION = this.configService.get(
+      'file.maarchImportFolderAccuseReception',
+    )
   }
 
   createFileEntities(data: DemandeAggregee): File[] {
@@ -179,7 +187,7 @@ export class FileBuilderService {
       ? new Date(accuse[maarchAccuseLabel.sendDate])
       : new Date()
     file.sourcePath = this._buildS3Path({
-      subFolder: this.FOLDER_PJ,
+      subFolder: this.FOLDER_ACCUSE_RECEPTION,
       csvPath: filePath,
       fileName: pdfFileName,
     })
