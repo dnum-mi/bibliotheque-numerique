@@ -36,6 +36,8 @@ describe('FileBuilderService', () => {
                   return MOCK_PJ_PATH
                 case 'file.maarchImportFolderCourrier':
                   return MOCK_COURRIER_PATH
+                case 'file.maarchImportFolderAccuseReception':
+                  return MOCK_ACCUSE_RECEPTION_PATH
                 case 'file.maarchImportRootPath':
                   return MOCK_ROOT_PATH
                 default:
@@ -283,11 +285,11 @@ describe('FileBuilderService', () => {
           {
             res_id: '6',
             send_date: sendDate,
-            docserver_id: MOCK_PJ_PATH,
+            docserver_id: MOCK_ACCUSE_RECEPTION_PATH,
             path: '2021/12/0001/',
-            filename: '0001_391259465.html'
-          }
-        ]
+            filename: '0001_391259465.html',
+          },
+        ],
       }
 
       const result = service.createFileEntities(data)
@@ -300,7 +302,6 @@ describe('FileBuilderService', () => {
       expect(accuse.sourcePath).toBe(
         `${MOCK_ROOT_PATH}/${MOCK_ACCUSE_RECEPTION_PATH}/2021/12/0001/0001_391259465.pdf`,
       )
-
       expect(accuse.state).toBe(eState.queued)
       expect(accuse.sourceUploadedAt).toEqual(sendDate)
     })
