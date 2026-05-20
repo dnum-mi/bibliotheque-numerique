@@ -1,5 +1,13 @@
 # Changelog
 
+## [5.11.2](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.11.1...v5.11.2) (2026-05-20)
+
+
+### Bug Fixes
+
+* set maarch ar file path ([7ae899b](https://github.com/dnum-mi/bibliotheque_numerique/commit/7ae899b398a9d323ec144b8ee6384ddf7564b704))
+* set maarch ar path path ([69d20ed](https://github.com/dnum-mi/bibliotheque_numerique/commit/69d20ed7eea66515787eecb6625bd8a8f28b6180))
+
 ## [5.11.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.11.0...v5.11.1) (2026-05-06)
 
 
