@@ -3,13 +3,13 @@ import type { IRole, IRoleOption, RolesKeys } from '../roles'
 import type { IUserOutput } from './user-output.interface'
 import { PrefectureKey } from '../prefectures'
 
-interface IFrontFriendlyRoleOption extends IRoleOption {
+export interface IFrontFriendlyRoleOption extends IRoleOption {
   national: boolean
   prefectures: PrefectureKey[]
   demarche: ISmallDemarcheOutput
 }
 
-interface IFrontFriendlyRoleOutput extends IRole {
+export interface IFrontFriendlyRoleOutput extends IRole {
   label: RolesKeys | null
   options: Record<number, IFrontFriendlyRoleOption>
 }
