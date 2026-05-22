@@ -9,10 +9,11 @@
       "@/*": ["./src/*"]
     },
     "types": ["vitest/globals"],
+    "allowImportingTsExtensions": false,
     "strict": true,
     "noImplicitAny": true,
     "noEmit": false
   },
   "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
-  "exclude": ["@nestjs/websockets/socket-module", "src/**/*.cy.ts", "src/views/__tests__/*.ts", "cypress/**/*"]
+  "exclude": ["src/**/*.cy.ts", "src/views/__tests__/*.ts", "cypress/**/*"]
 }
