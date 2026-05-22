@@ -5,7 +5,7 @@ import { healthDependenciesDictionary } from '@/components/HealthIndicator/healt
 const healthStore = useHealthStore()
 
 const degradedServicesDescription = computed(() =>
-  Object.entries(healthStore.health.dependencies)
+  Object.entries(healthStore.health.dependenciesHash)
     .filter(([, v]) => v.status === 'down')
     // @ts-ignore TODO: corriger le type
     .map(([k]) => healthDependenciesDictionary[k]),

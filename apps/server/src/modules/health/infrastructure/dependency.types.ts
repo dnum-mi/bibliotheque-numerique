@@ -1,21 +1,7 @@
-import type { DependencyName, DependencyStatus } from '@biblio-num/shared'
-
-export interface DependencyCheckResult {
-  name: DependencyName
-  status: DependencyStatus
-
-  /**
-   * Court et lisible : "Redis not ready", "DS timeout", etc.
-   * Destiné aux logs et aux retours health.
-   */
-  message?: string
-
-  /**
-   * Infos additionnelles (latence, endpoint, compteurs, etc.)
-   * Doit rester "safe" à exposer (pas de secrets).
-   */
-  details?: Record<string, unknown>
-}
+import type {
+  DependencyName,
+  iDependencyCheckResult,
+} from '@biblio-num/shared'
 
 /**
  * Contrat commun pour une dépendance.
@@ -23,9 +9,9 @@ export interface DependencyCheckResult {
  * - isReady() : optionnel, si on peut lire un état local (ex: redisClient.status)
  */
 export interface DependencyChecker {
-  readonly name: DependencyName
-  check(): Promise<DependencyCheckResult>
-  isReady?(): boolean
+  readonly name: DependencyName;
+  check(): Promise<iDependencyCheckResult>;
+  isReady?(): boolean;
 }
 
 /**

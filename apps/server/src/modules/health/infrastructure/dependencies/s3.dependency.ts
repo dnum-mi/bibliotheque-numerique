@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import {
   DependencyChecker,
-  DependencyCheckResult,
 } from '../dependency.types'
 import { S3Service } from '@/shared/modules/s3/s3.service'
+import { iDependencyCheckResult } from '@biblio-num/shared'
 
 @Injectable()
 export class S3Dependency implements DependencyChecker {
@@ -17,7 +17,7 @@ export class S3Dependency implements DependencyChecker {
     this.logger.setContext(this.constructor.name)
   }
 
-  async check(): Promise<DependencyCheckResult> {
+  async check(): Promise<iDependencyCheckResult> {
     try {
       const s3 = this.s3Service.s3
       const bucket = this.s3Service.bucketName

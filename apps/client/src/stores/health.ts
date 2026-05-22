@@ -3,9 +3,10 @@ import apiClient from '@/api/api-client'
 
 export const useHealthStore = defineStore('health', () => {
   const health = ref<iHealthOutput>({
-    status: 'ok',
+    status: 'up',
     timestamp: new Date(),
-    dependencies: {},
+    // @ts-ignore ignore default object
+    dependenciesHash: {},
     info: {
       version: 'loading',
       environment: 'production',
@@ -30,7 +31,7 @@ export const useHealthStore = defineStore('health', () => {
     }, 60_000) // 1 minute
   }
 
-  const isDegraded = computed(() => health.value.status !== 'ok')
+  const isDegraded = computed(() => health.value.status !== 'up')
 
   return {
     health,

@@ -4,8 +4,8 @@ import { ConfigService } from '@nestjs/config'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import {
   DependencyChecker,
-  DependencyCheckResult,
 } from '../dependency.types'
+import { iDependencyCheckResult } from '@biblio-num/shared'
 
 @Injectable()
 export class DsDependency implements DependencyChecker {
@@ -14,9 +14,9 @@ export class DsDependency implements DependencyChecker {
   private readonly axios: AxiosInstance
   private readonly url: string
   private readonly proxy?: {
-    host: string
-    port: number
-    protocol: string
+    host: string;
+    port: number;
+    protocol: string;
   }
 
   constructor(
@@ -48,7 +48,7 @@ export class DsDependency implements DependencyChecker {
     }
   }
 
-  async check(): Promise<DependencyCheckResult> {
+  async check(): Promise<iDependencyCheckResult> {
     try {
       if (!this.url) {
         return {
@@ -62,11 +62,9 @@ export class DsDependency implements DependencyChecker {
         query: '{ __typename }',
       }
 
-      const response = await this.axios.post(
-        this.url,
-        query,
-        { proxy: this.proxy },
-      )
+      const response = await this.axios.post(this.url, query, {
+        proxy: this.proxy,
+      })
 
       if (response.status === 200) {
         return {

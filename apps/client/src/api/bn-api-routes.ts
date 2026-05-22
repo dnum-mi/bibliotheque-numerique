@@ -64,7 +64,7 @@ export const getOneViewStats = (id: number) => `${getOneViewRoute(id)}/stats`
 export const getDossierByIdRoute = (id: number) => `${dossierRoute}/${id}`
 export const getDossierWithFieldsByIdRoute = (id: number) => `${dossierRoute}/${id}/fields`
 
-export const healthRoute = '/health'
+export const healthRoute = '/health/last'
 
 export const bnConfigurationsRoute = '/bn-configurations'
 export const bnConfigurationsClientRoute = `${bnConfigurationsRoute}/client`

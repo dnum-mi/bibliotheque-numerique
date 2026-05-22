@@ -9,18 +9,19 @@ import { RedisModule } from '@/shared/modules/redis/redis.module'
 import { S3Module } from '@/shared/modules/s3/s3.module'
 import { DependencyPolicy } from '@/modules/health/infrastructure/dependency.types'
 import { HEALTH_DEPENDENCY_POLICY } from '@/modules/health/infrastructure/dependency.symbols'
+import { HealthService } from './providers/health.service'
+import { TypeOrmModule } from '@nestjs/typeorm'
+import { HealthSnapshot } from '@/modules/health/objects/health-snapshot.entity'
 
 @Module({})
 export class HealthModule {
   static register(policy: DependencyPolicy): DynamicModule {
     return {
       module: HealthModule,
-      imports: [
-        RedisModule,
-        S3Module,
-      ],
+      imports: [RedisModule, S3Module, TypeOrmModule.forFeature([HealthSnapshot])],
       controllers: [HealthController],
       providers: [
+        HealthService,
         RedisDependency,
         DsDependency,
         HubDependency,
@@ -31,9 +32,7 @@ export class HealthModule {
           useValue: policy,
         },
       ],
-      exports: [
-        DependencySupervisorService,
-      ],
+      exports: [DependencySupervisorService],
     }
   }
 }

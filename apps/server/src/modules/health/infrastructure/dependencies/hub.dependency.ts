@@ -4,8 +4,8 @@ import { ConfigService } from '@nestjs/config'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import {
   DependencyChecker,
-  DependencyCheckResult,
 } from '../dependency.types'
+import { iDependencyCheckResult } from '@biblio-num/shared'
 
 @Injectable()
 export class HubDependency implements DependencyChecker {
@@ -27,7 +27,7 @@ export class HubDependency implements DependencyChecker {
     })
   }
 
-  async check(): Promise<DependencyCheckResult> {
+  async check(): Promise<iDependencyCheckResult> {
     try {
       const url = this.config.get('hub').healthPath
       if (!url) {

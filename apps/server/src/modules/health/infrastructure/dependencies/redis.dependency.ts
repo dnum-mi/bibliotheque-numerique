@@ -3,8 +3,8 @@ import { RedisService } from '@/shared/modules/redis/redis.service'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import {
   DependencyChecker,
-  DependencyCheckResult,
 } from '../dependency.types'
+import { iDependencyCheckResult } from '@biblio-num/shared'
 
 @Injectable()
 export class RedisDependency implements DependencyChecker {
@@ -21,7 +21,7 @@ export class RedisDependency implements DependencyChecker {
     return this.redisService.redisClient?.status === 'ready'
   }
 
-  async check(): Promise<DependencyCheckResult> {
+  async check(): Promise<iDependencyCheckResult> {
     try {
       const status = this.redisService.redisClient?.status
 
