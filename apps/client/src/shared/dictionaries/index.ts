@@ -1,1 +1,1 @@
-export * from './dossier-status.dictionary.ts'
+export * from './dossier-status.dictionary'

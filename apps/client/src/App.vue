@@ -4,7 +4,7 @@ import useToaster from '@/composables/use-toaster.js'
 
 import { AxiosError } from 'axios'
 import { useNavigation } from './composables/navigation'
-import { useHealthStore } from '@/stores/health.ts'
+import { useHealthStore } from '@/stores/health'
 import { defaultEnv, envTextMapping } from '@biblio-num/shared'
 import type { EnvTextKeys } from '@biblio-num/shared'
 

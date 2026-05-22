@@ -9,7 +9,7 @@ import type {
 import FicheFondation from '@/views/organismes/fondation/FicheFondation.vue'
 import FicheAssociation from '@/views/organismes/association/FicheAssociation.vue'
 import apiClient from '@/api/api-client'
-import { useOrganismeHubStore } from '@/stores/organisme-hub.ts'
+import { useOrganismeHubStore } from '@/stores/organisme-hub'
 import useToaster from '../../composables/use-toaster'
 import { usePageTitle } from '@/composables/use-page-title'
 import { useConfiguration } from '@/composables/use-configuration'

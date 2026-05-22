@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { routeNames } from '@/router/route-names.ts'
+import { routeNames } from '@/router/route-names'
 import { dateToStringFr } from '@/utils'
 import type { ILegalEntity, ILineage } from '@biblio-num/shared'
 import { VIcon } from '@gouvminint/vue-dsfr'

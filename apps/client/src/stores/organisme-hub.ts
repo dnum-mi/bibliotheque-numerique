@@ -10,7 +10,8 @@ import type {
   IFoundationOutput,
   organismeCategoryKey,
 } from '@biblio-num/shared'
-import apiClient from '@/api/api-client.ts'
+import apiClient from '@/api/api-client'
+
 import { useConfigurationStore } from './configuration'
 
 type TOrganisme = IFoundationOutput | IAssociationOutput

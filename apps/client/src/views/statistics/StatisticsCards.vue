@@ -3,7 +3,7 @@ import { useStorage } from '@vueuse/core'
 
 import type { IView } from '@biblio-num/shared'
 
-import { useViewStore } from '@/stores/views.ts'
+import { useViewStore } from '@/stores/views'
 import StatisticCard from './StatisticsCard.vue'
 import { useDemarcheStore } from '@/stores'
 

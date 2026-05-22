@@ -1,4 +1,7 @@
 import { bnConfigurationsApiClient, demarchesApiClient } from '../api/api-client'
+import {
+  eBnConfiguration,
+} from '@biblio-num/shared'
 import type {
   BnConfigurationKey,
   IBnConfigurationOutput,
@@ -36,7 +39,7 @@ export const useConfigurationStore = defineStore('Configuration', () => {
 
   const getConfig = (key: BnConfigurationKey) => configMap.value.get(key)
 
-  const isAssociationsEnabled = computed(() => getConfig('IS_ASSOCIATIONS_ENABLED') === 'true')
+  const isAssociationsEnabled = computed(() => getConfig(eBnConfiguration.IS_ASSOCIATIONS_ENABLED) === 'true')
 
   const loadDemarches = async () => {
     fetching.value = true
@@ -104,7 +107,6 @@ export const useConfigurationStore = defineStore('Configuration', () => {
     const dto = {
       keyName,
       stringValue,
-      // @ts-ignore TODO: corriger le type
       valueType,
     } as ICreateBnConfiguration
     fetchingConfigurations.value.bn = true

@@ -15,7 +15,7 @@ import { deepAlmostEqual } from '@/utils/object'
 import { getDataTableFilterFromFieldType } from '@/components/datatable/server-side/filters.utils'
 import { useActiveFilter } from '@/components/datatable/active-filters/useActiveFilter'
 import { useTour } from '@/composables/use-tour'
-import { filterTourSteps } from './TutoViewDossier.ts'
+import { filterTourSteps } from './TutoViewDossier'
 import DemarcheDossiersViews from '@/views/demarches/demarche/dossiers/DemarcheDossiersViews.vue'
 import DownloadButton from '@/components/DownloadButton.vue'
 

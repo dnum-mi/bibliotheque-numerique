@@ -1,5 +1,5 @@
 import type { iHealthOutput } from '@biblio-num/shared'
-import apiClient from '@/api/api-client.ts'
+import apiClient from '@/api/api-client'
 
 export const useHealthStore = defineStore('health', () => {
   const health = ref<iHealthOutput>({

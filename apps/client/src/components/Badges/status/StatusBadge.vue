@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { dossierStatusDictionary } from '@/shared/dictionaries/dossier-status.dictionary.ts'
+import { dossierStatusDictionary } from '@/shared/dictionaries/dossier-status.dictionary'
 import type { DossierStateKeys } from '@biblio-num/shared'
 
 const props = defineProps<{
