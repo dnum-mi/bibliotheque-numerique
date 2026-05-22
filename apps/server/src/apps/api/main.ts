@@ -7,7 +7,7 @@ import { LoggerService } from '@/shared/modules/logger/logger.service'
 async function bootstrap (): Promise<void> {
   const app = await NestFactory.create(ApiModule, {
     cors: true,
-    logger: false,
+    logger: ['warn', 'error', 'fatal'],
   })
 
   if (process.env.NODE_ENV !== 'production') {

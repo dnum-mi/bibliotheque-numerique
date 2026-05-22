@@ -70,9 +70,8 @@ export class HealthService extends BaseEntityService<HealthSnapshot> {
 
   async lastHealthSnapshot(): Promise<iHealthOutput | null> {
     const last = await this.repo.findOne({
-      order: {
-        createdAt: 'DESC',
-      },
+      where: {},
+      order: { createdAt: -1 },
     })
 
     if (!last) {

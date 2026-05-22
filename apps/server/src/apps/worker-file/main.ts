@@ -6,7 +6,7 @@ import { DependencySupervisorService } from '@/modules/health/infrastructure/dep
 
 async function bootstrap (): Promise<void> {
   const app = await NestFactory.create(WorkerFileModule, {
-    logger: false,
+    logger: ['warn', 'error', 'fatal'],
   })
   await app.init()
   app.useLogger(await app.resolve(LoggerService))
