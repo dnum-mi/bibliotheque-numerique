@@ -15,6 +15,7 @@ describe('Vue Organisme', () => {
       version: { version: '0.0' },
       environment: { environment: 'test' },
     } }).as('health')
+    cy.intercept('GET', 'api/bn-configurations/client', [])
 
     cy.intercept('/api/dossiers/organismes/*', {
 

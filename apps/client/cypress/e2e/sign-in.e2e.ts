@@ -19,6 +19,11 @@ describe('Sign in', () => {
       version: { version: '0.0' },
       environment: { environment: 'test' },
     } }).as('health')
+    // default intercept to avoid unexpected API calls during tests, can be overridden in specific tests
+    cy.intercept('GET', 'api/bn-configurations/client', [])
+    cy.intercept('POST', 'api/auth/refresh', { 'statusCode': 401, 'message': 'Not authorized' })
+    cy.intercept('DELETE', 'api/auth/logout', {})
+    cy.intercept('GET', 'api/demarches/small', [])
   })
 
   it('should redirect user to requested page after signing in', () => {
