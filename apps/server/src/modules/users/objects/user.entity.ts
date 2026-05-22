@@ -131,7 +131,7 @@ export class User extends BaseEntity {
   @Column({
     type: 'jsonb',
     nullable: false,
-    default: () => "'[]'::jsonb",
+    default: [],
   })
   recentOrganismes: ILastConsultedOrganisme[]
 }
