@@ -1,5 +1,15 @@
 # Changelog
 
+## [5.11.3](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.11.2...v5.11.3) (2026-05-22)
+
+
+### Bug Fixes
+
+* correction lié rebase et revue de code ([d710a11](https://github.com/dnum-mi/bibliotheque_numerique/commit/d710a1101f41593644536d0c68b7d523fa547dd1))
+* export interface for pinia ([e738a51](https://github.com/dnum-mi/bibliotheque_numerique/commit/e738a512f64413c12178024fdf0af727f709cd69))
+* **maarch:** ajouter la suppression des tables de projection et des view associées dans la méthode deleteImport ([febce74](https://github.com/dnum-mi/bibliotheque_numerique/commit/febce749d2fbe877443bccee7110a0a4049fd313))
+* mis à jour de la fonction du mécanisme d'échappement pour utiliser replaceAll qui améliore la gestion des guillemets simples ([c55a14f](https://github.com/dnum-mi/bibliotheque_numerique/commit/c55a14fe191e2d7d3fc87e4a56e74beeda18700a))
+
 ## [5.11.2](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.11.1...v5.11.2) (2026-05-20)
 
 
