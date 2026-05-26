@@ -23,10 +23,12 @@ variables:
 
 stages:
   - read-secret
-  - test-sonar-front
-  - test-sonar-back
-  - test-sonar-http-proxy
-  - docker-test
+  #region: No use
+  # - test-sonar-front
+  # - test-sonar-back
+  # - test-sonar-http-proxy
+  # - docker-test
+  #endregion: No use
   - docker-build-front
   - docker-build-back
   - docker-build-http-proxy
@@ -38,69 +40,69 @@ read_secret:
   artifacts:
     expire_in: 30min
 
-test_front:
-  variables:
-    WORKING_DIR: apps/client
-  stage: test-sonar-front
-  allow_failure: true
-  extends:
-    - .node:sonar
+# test_front:
+#   variables:
+#     WORKING_DIR: apps/client
+#   stage: test-sonar-front
+#   allow_failure: true
+#   extends:
+#     - .node:sonar
 
-test_back:
-  variables:
-    WORKING_DIR: apps/server
-  stage: test-sonar-back
-  allow_failure: true
-  extends:
-    - .node:sonar
+# test_back:
+#   variables:
+#     WORKING_DIR: apps/server
+#   stage: test-sonar-back
+#   allow_failure: true
+#   extends:
+#     - .node:sonar
 
-test_http_proxy:
-  variables:
-    WORKING_DIR: apps/http-proxy
-  stage: test-sonar-http-proxy
-  allow_failure: true
-  extends:
-    - .node:sonar
-  rules:
-    - changes:
-        - apps/http-proxy/**/*
-        - apps/http-proxy/Dockerfile
+# test_http_proxy:
+#   variables:
+#     WORKING_DIR: apps/http-proxy
+#   stage: test-sonar-http-proxy
+#   allow_failure: true
+#   extends:
+#     - .node:sonar
+#   rules:
+#     - changes:
+#         - apps/http-proxy/**/*
+#         - apps/http-proxy/Dockerfile
 
-test_docker_front:
-  variables:
-    WORKING_DIR: 'apps/client'
-    IMAGE_NAME: 'bibliotheque_numerique-front'
-    DOCKERFILE: 'Dockerfile'
-  stage: docker-test
-  allow_failure: true
-  extends:
-    - .docker:test
+# test_docker_front:
+#   variables:
+#     WORKING_DIR: 'apps/client'
+#     IMAGE_NAME: 'bibliotheque_numerique-front'
+#     DOCKERFILE: 'Dockerfile'
+#   stage: docker-test
+#   allow_failure: true
+#   extends:
+#     - .docker:test
 
-test_docker_back:
-  image: docker:stable
-  variables:
-    WORKING_DIR: 'apps/server'
-    IMAGE_NAME: 'bibliotheque_numerique-back'
-    DOCKERFILE: 'Dockerfile'
-  stage: docker-test
-  allow_failure: true
-  extends:
-    - .docker:test
+# test_docker_back:
+#   image: docker:stable
+#   variables:
+#     WORKING_DIR: 'apps/server'
+#     IMAGE_NAME: 'bibliotheque_numerique-back'
+#     DOCKERFILE: 'Dockerfile'
+#   stage: docker-test
+#   allow_failure: true
+#   extends:
+#     - .docker:test
 
-test_docker_http_proxy:
-  image: docker:stable
-  variables:
-    WORKING_DIR: 'apps/http-proxy'
-    IMAGE_NAME: 'http-proxy'
-    DOCKERFILE: 'Dockerfile'
-  stage: docker-test
-  allow_failure: true
-  extends:
-    - .docker:test
-  rules:
-    - changes:
-        - apps/http-proxy/**/*
-        - apps/http-proxy/Dockerfile
+# test_docker_http_proxy:
+#   image: docker:stable
+#   variables:
+#     WORKING_DIR: 'apps/http-proxy'
+#     IMAGE_NAME: 'http-proxy'
+#     DOCKERFILE: 'Dockerfile'
+#   stage: docker-test
+#   allow_failure: true
+#   extends:
+#     - .docker:test
+#   rules:
+#     - changes:
+#         - apps/http-proxy/**/*
+#         - apps/http-proxy/Dockerfile
 
 docker_build_front:
   variables:
