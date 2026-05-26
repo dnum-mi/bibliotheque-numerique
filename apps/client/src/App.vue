@@ -33,7 +33,11 @@ const serviceDescription = 'Rechercher une démarche, un dossier, un organisme'
 const logoText = ['Ministère', 'de l’intérieur']
 const ecosystemLinks = [
   { label: 'Demarches.numerique.gouv.fr', title: 'Démarches simplifiées', href: 'https://demarches.numerique.gouv.fr' },
-  { label: 'API - Répertoire National des Associations', title: 'API - Répertoire National des Associations', href: 'https://entreprise.api.gouv.fr/catalogue/ministere_interieur/rna' },
+  {
+    label: 'API - Répertoire National des Associations',
+    title: 'API - Répertoire National des Associations',
+    href: 'https://entreprise.api.gouv.fr/catalogue/ministere_interieur/rna',
+  },
   {
     label: 'Intranet DLPAJ',
     title: 'Intranet DLPAJ',
@@ -85,9 +89,7 @@ const links = [
 
 <template>
   <div class="flex flex-col h-full w-full">
-    <DsfrSkipLinks
-      :links="links"
-    />
+    <DsfrSkipLinks :links="links" />
 
     <DsfrHeader
       id="navigation"
@@ -103,7 +105,11 @@ const links = [
       </template>
     </DsfrHeader>
 
-    <main id="main-content" role="main" class="flex flex-col grow w-full h-full min-h-0 overflow-auto">
+    <main
+      id="main-content"
+      role="main"
+      class="flex flex-col grow w-full h-full min-h-0 overflow-auto"
+    >
       <router-view />
     </main>
 

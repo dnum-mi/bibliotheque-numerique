@@ -34,7 +34,9 @@ onBeforeUnmount(() => {
 })
 
 function handleClickOutside (event: MouseEvent) {
-  if (!container.value) { return }
+  if (!container.value) {
+    return
+  }
   if (!container.value.contains(event.target as Node)) {
     close()
   }
@@ -45,15 +47,16 @@ function handleClickOutside (event: MouseEvent) {
   <div
     v-if="isDegraded"
     ref="container"
-    class="relative"
+    class="relative health-indicator-root"
   >
     <!-- Bouton icône -->
     <button
-      class="fr-btn fr-btn--tertiary-no-outline fr-icon-warning-fill red"
+      class="fr-btn fr-btn--tertiary-no-outline fr-icon-warning-fill red m-0 p-0"
       aria-label="État du service"
       aria-haspopup="true"
       :aria-expanded="showDegraded"
       aria-controls="health-menu"
+      size="small"
       @click="toggle"
     />
 
@@ -86,6 +89,15 @@ function handleClickOutside (event: MouseEvent) {
 </template>
 
 <style scoped>
+@media screen and (max-height: 780px) {
+}
+
+.health-indicator-root {
+  position: relative;
+  height: 4px;
+  margin-top: -4px;
+}
+
 .relative {
   position: relative;
 }
