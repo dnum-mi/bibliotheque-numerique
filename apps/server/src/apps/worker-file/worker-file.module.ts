@@ -21,11 +21,16 @@ import { FileModule } from '@/modules/files/file.module'
 import { DossierModule } from '@/modules/dossiers/dossier.module'
 import instructionTimeMappingConfig from '@/config/instructionTimeMapping.config'
 import hubConfig from '../../config/hub.config'
-import { WORKER_FILE_DEPENDENCY_POLICY } from '@/apps/worker-file/worker-file-dependencies-policy.const'
+import {
+  WORKER_FILE_DEPENDENCY_POLICY,
+} from '@/apps/worker-file/worker-file-dependencies-policy.const'
 import { HealthModule } from '@/modules/health/health.module'
+import { APP_NAME_SYMBOL, WORKER_FILE } from '@/apps/apps.const'
+import { AppContextModule } from '@/apps/app-context.module'
 
 @Module({
   imports: [
+    AppContextModule.register(WORKER_FILE, WORKER_FILE_DEPENDENCY_POLICY),
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
@@ -40,7 +45,7 @@ import { HealthModule } from '@/modules/health/health.module'
         hubConfig,
       ],
     } as ConfigModuleOptions),
-    LoggerModule.forRoot('worker-file'),
+    LoggerModule,
     TypeOrmModule.forRootAsync(typeormFactoryLoader),
     CustomBullModule,
     BullModule.registerQueue(
@@ -53,10 +58,14 @@ import { HealthModule } from '@/modules/health/health.module'
     DsApiModule,
     S3Module,
     DossierModule,
-    HealthModule.register(WORKER_FILE_DEPENDENCY_POLICY),
+    HealthModule,
   ],
   providers: [
     FileProcessor,
+    {
+      provide: APP_NAME_SYMBOL,
+      useValue: WORKER_FILE,
+    },
   ],
 })
 export class WorkerFileModule {}

@@ -39,11 +39,16 @@ import { JwtAuthGuard } from '@/modules/auth/providers/jwt-auth.guard'
 import { SyncStateModule } from '@/shared/sync-state/sync-state.module'
 import { ProjectionModule } from '@/modules/projection/projection.module'
 import { HealthModule } from '@/modules/health/health.module'
-import { API_DEPENDENCY_POLICY } from '@/apps/api/api-dependencies-policy.const'
+import {
+  API_DEPENDENCY_POLICY,
+} from '@/apps/api/api-dependencies-policy.const'
 import { AlsMiddleware } from '@/shared/modules/als/als.middleware'
+import { AppContextModule } from '@/apps/app-context.module'
+import { API } from '@/apps/apps.const'
 
 @Module({
   imports: [
+    AppContextModule.register(API, API_DEPENDENCY_POLICY),
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
@@ -70,7 +75,7 @@ import { AlsMiddleware } from '@/shared/modules/als/als.middleware'
     TypeOrmModule.forRootAsync(typeormFactoryLoader),
     CustomBullModule,
     CronModule,
-    LoggerModule.forRoot('api'),
+    LoggerModule,
     DsApiModule,
     XlsxModule,
     UserModule,
@@ -79,7 +84,7 @@ import { AlsMiddleware } from '@/shared/modules/als/als.middleware'
     AuthModule,
     UserModule,
     FileModule,
-    HealthModule.register(API_DEPENDENCY_POLICY),
+    HealthModule,
     ViewModule,
     InstructionTimesModule,
     BnConfigurationModule,

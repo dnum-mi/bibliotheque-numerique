@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { WorkerFileModule } from './worker-file.module'
 import { ConfigService } from '@nestjs/config'
-import { DependencySupervisorService } from '@/modules/health/infrastructure/dependency-supervisor.service'
+import { DependencySupervisorService } from '@/modules/health/providers/dependency-supervisor.service'
 
 async function bootstrap (): Promise<void> {
   const app = await NestFactory.create(WorkerFileModule, {

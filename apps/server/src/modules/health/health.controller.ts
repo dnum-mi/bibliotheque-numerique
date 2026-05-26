@@ -1,6 +1,5 @@
 import { Controller, Get } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
-
 import { PublicRoute } from '@/modules/users/providers/decorators/public-route.decorator'
 import { LoggerService } from '@/shared/modules/logger/logger.service'
 import { UsualApiOperation } from '@/shared/documentation/usual-api-operation.decorator'

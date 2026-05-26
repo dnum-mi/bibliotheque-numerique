@@ -24,9 +24,7 @@ export class DsDependency implements DependencyChecker {
     private readonly logger: LoggerService,
   ) {
     this.logger.setContext(this.constructor.name)
-
     this.url = this.config.get('ds').apiUrl
-
     this.axios = axios.create({
       timeout: 3000,
       headers: {
@@ -34,12 +32,9 @@ export class DsDependency implements DependencyChecker {
         Authorization: `Bearer token=${this.config.get('ds').apiToken}`,
       },
     })
-
     const proxyUrl = this.config.get('httpProxy')
-
     if (proxyUrl) {
       const { hostname, port, protocol } = new URL(proxyUrl)
-
       this.proxy = {
         host: hostname,
         port: parseInt(port, 10),
@@ -57,11 +52,9 @@ export class DsDependency implements DependencyChecker {
           message: 'DS API URL not configured',
         }
       }
-
       const query = {
         query: '{ __typename }',
       }
-
       const response = await this.axios.post(this.url, query, {
         proxy: this.proxy,
       })
@@ -86,7 +79,6 @@ export class DsDependency implements DependencyChecker {
       }
     } catch (error) {
       const code = error?.response?.status
-
       this.logger.warn(`DS dependency error: ${code ?? error.message}`)
       this.logger.axiosDebug(error)
       return {

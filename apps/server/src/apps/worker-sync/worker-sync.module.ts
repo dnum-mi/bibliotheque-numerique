@@ -31,11 +31,16 @@ import fileConfig from '../../config/file.config'
 import hubConfig from '../../config/hub.config'
 import { RedisModule } from '@/shared/modules/redis/redis.module'
 import { ProjectionModule } from '@/modules/projection/projection.module'
-import { WORKER_SYNC_DEPENDENCY_POLICY } from '@/apps/worker-sync/worker-sync-dependencies-policy.const'
+import {
+  WORKER_SYNC_DEPENDENCY_POLICY,
+} from '@/apps/worker-sync/worker-sync-dependencies-policy.const'
 import { HealthModule } from '@/modules/health/health.module'
+import { APP_NAME_SYMBOL, WORKER_SYNC } from '@/apps/apps.const'
+import { AppContextModule } from '@/apps/app-context.module'
 
 @Module({
   imports: [
+    AppContextModule.register(WORKER_SYNC, WORKER_SYNC_DEPENDENCY_POLICY),
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
@@ -52,7 +57,7 @@ import { HealthModule } from '@/modules/health/health.module'
         hubConfig,
       ],
     } as ConfigModuleOptions),
-    LoggerModule.forRoot('worker-sync'),
+    LoggerModule,
     TypeOrmModule.forRootAsync(typeormFactoryLoader),
     CustomBullModule,
     DsApiModule,
@@ -69,13 +74,17 @@ import { HealthModule } from '@/modules/health/health.module'
     S3Module,
     RedisModule,
     ProjectionModule,
-    HealthModule.register(WORKER_SYNC_DEPENDENCY_POLICY),
+    HealthModule,
   ],
   controllers: [],
   providers: [
     DemarcheProcessor,
     DossierProcessor,
     FeProcessor,
+    {
+      provide: APP_NAME_SYMBOL,
+      useValue: WORKER_SYNC,
+    },
   ],
 })
 export class WorkerSyncModule {}

@@ -20,4 +20,10 @@ export class HealthSnapshot extends BaseEntity {
     default: {},
   })
   dependenciesHash: Record<DependencyName, iDependencyCheckResult>
+
+  @Column({
+    type: 'varchar',
+    nullable: false,
+  })
+  appName: string
 }

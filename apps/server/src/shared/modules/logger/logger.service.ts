@@ -1,12 +1,12 @@
 import { ConsoleLogger, Inject, Injectable, Scope } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { LoggerService as LS } from '@nestjs/common/services/logger.service'
-import { APP_NAME_TOKEN } from '@/shared/modules/logger/logger.const'
 import * as Winston from 'winston'
 import * as DailyRotateFile from 'winston-daily-rotate-file'
 import { iLogPayload } from '@/shared/modules/logger/log-payload.interface'
 import { ContextLoggerService } from '@/shared/modules/logger/context-logger.service'
 import axios from 'axios'
+import { APP_NAME_SYMBOL } from '@/apps/apps.const'
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class LoggerService extends ConsoleLogger implements LS {
@@ -176,7 +176,7 @@ export class LoggerService extends ConsoleLogger implements LS {
 
   constructor(
     private readonly configService: ConfigService,
-    @Inject(APP_NAME_TOKEN) private readonly appName: string,
+    @Inject(APP_NAME_SYMBOL) private readonly appName: string,
     private readonly contextLog?: ContextLoggerService,
   ) {
     super()

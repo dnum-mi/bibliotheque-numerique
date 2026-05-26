@@ -1,55 +1,43 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { ConfigService } from '@nestjs/config'
 import { Repository } from 'typeorm'
-
 import { LoggerService } from '@/shared/modules/logger/logger.service'
-
-import { RedisDependency } from '@/modules/health/infrastructure/dependencies/redis.dependency'
-import { DsDependency } from '@/modules/health/infrastructure/dependencies/ds.dependency'
-import { HubDependency } from '@/modules/health/infrastructure/dependencies/hub.dependency'
-import { S3Dependency } from '@/modules/health/infrastructure/dependencies/s3.dependency'
 import { HealthSnapshot } from '../objects/health-snapshot.entity'
 import * as versionJson from '../../../version.json'
-
-import {
-  DependencyName,
-  EnvTextKeys,
-  iDependencyCheckResult,
-  iHealthOutput,
-} from '@biblio-num/shared'
+import { EnvTextKeys, iHealthOutput } from '@biblio-num/shared'
 import { BaseEntityService } from '@/shared/base-entity/base-entity.service'
+import { DependencyCheckService } from '@/modules/health/providers/depency-check.service'
+import { APP_NAME_SYMBOL } from '@/apps/apps.const'
 
 @Injectable()
 export class HealthService extends BaseEntityService<HealthSnapshot> {
   constructor(
     protected readonly logger: LoggerService,
     private readonly config: ConfigService,
-    private readonly redis: RedisDependency,
-    private readonly ds: DsDependency,
-    private readonly hub: HubDependency,
-    private readonly s3: S3Dependency,
+    @Inject(APP_NAME_SYMBOL) private readonly appName: string,
+    private readonly checker: DependencyCheckService,
     @InjectRepository(HealthSnapshot)
     protected readonly repo: Repository<HealthSnapshot>,
   ) {
     super(repo, logger)
+
     this.logger.setContext(this.constructor.name)
   }
 
   async readiness(): Promise<iHealthOutput> {
     this.logger.verbose('readiness')
-    const results = await Promise.all([
-      this.redis.check(),
-      this.ds.check(),
-      this.hub.check(),
-      this.s3.check(),
-    ])
-    const dependenciesHash = Object.fromEntries(
-      results.map((r) => [r.name as DependencyName, r]),
-    ) as Record<DependencyName, iDependencyCheckResult>
-    const isEverythingOk = results.every((r) => r.status === 'up')
 
-    await this.createAndSave({ isEverythingOk, dependenciesHash })
+    const dependenciesHash = await this.checker.checkAll()
+    const isEverythingOk = Object.values(dependenciesHash).every(
+      (r) => r.status === 'up',
+    )
+
+    await this.createAndSave({
+      isEverythingOk,
+      dependenciesHash,
+      appName: this.appName,
+    })
 
     if (isEverythingOk) {
       this.logger.log('All services are online and well ✅')
@@ -71,7 +59,9 @@ export class HealthService extends BaseEntityService<HealthSnapshot> {
   async lastHealthSnapshot(): Promise<iHealthOutput | null> {
     const last = await this.repo.findOne({
       where: {},
-      order: { createdAt: -1 },
+      order: {
+        createdAt: 'DESC',
+      },
     })
 
     if (!last) {
