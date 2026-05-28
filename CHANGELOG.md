@@ -1,5 +1,21 @@
 # Changelog
 
+## [5.12.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.11.3...v5.12.0) (2026-05-28)
+
+
+### Features
+
+* save health check in DB to optimise perfs ([dc065ec](https://github.com/dnum-mi/bibliotheque_numerique/commit/dc065ecc3204757a0e839d8f41d0e1ad16bfddc2))
+
+
+### Bug Fixes
+
+* correct error on migration ([3a90131](https://github.com/dnum-mi/bibliotheque_numerique/commit/3a901313a0d12f7c7a74279cb7574777aca299fe))
+* doc contribution ([d47ae97](https://github.com/dnum-mi/bibliotheque_numerique/commit/d47ae97b3182240bc66996c019b8a3fe476faecf))
+* logo warning design ([#2386](https://github.com/dnum-mi/bibliotheque_numerique/issues/2386)) ([951e07b](https://github.com/dnum-mi/bibliotheque_numerique/commit/951e07bff39681b3ebb0be42abc793904eeb8196))
+* re-activate nestjs logging for errors ([af22965](https://github.com/dnum-mi/bibliotheque_numerique/commit/af2296540789026e1f5527df5801cdbdb59a19a2))
+* verifie tous les api tous les 10s ([37c149c](https://github.com/dnum-mi/bibliotheque_numerique/commit/37c149ca52acb944d3d604a6fffdb704c5d703f8))
+
 ## [5.11.3](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.11.2...v5.11.3) (2026-05-22)
 
 
