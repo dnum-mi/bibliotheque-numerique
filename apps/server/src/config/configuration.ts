@@ -16,6 +16,7 @@ export type TConfig = {
   };
   workerFilePort: number;
   workerSyncPort: number;
+  intervalHealthCheck: number;
 };
 
 export default (): TConfig => {
@@ -51,5 +52,7 @@ export default (): TConfig => {
       email: process.env.DEFAULT_SUDO_EMAIL,
       roleName: 'admin',
     },
+
+    intervalHealthCheck: parseInt(process.env.INTERVAL_HEALTH_CHECK, 10) || 10,
   }
 }

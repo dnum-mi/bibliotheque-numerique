@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigModuleOptions } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { BullModule, BullModuleOptions } from '@nestjs/bull'
+import { ScheduleModule } from '@nestjs/schedule'
 
 import configuration from '../../config/configuration'
 import loggerConfig from '../../config/logger.config'
@@ -59,6 +60,7 @@ import { AppContextModule } from '@/apps/app-context.module'
     } as ConfigModuleOptions),
     LoggerModule,
     TypeOrmModule.forRootAsync(typeormFactoryLoader),
+    ScheduleModule.forRoot(),
     CustomBullModule,
     DsApiModule,
     BullModule.registerQueue(

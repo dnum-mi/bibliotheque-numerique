@@ -11,6 +11,7 @@ import { HealthService } from './providers/health.service'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { HealthSnapshot } from '@/modules/health/objects/health-snapshot.entity'
 import { DependencyCheckService } from '@/modules/health/providers/depency-check.service'
+import { HealthCronService } from './providers/health-cron.service'
 
 @Module({
   imports: [RedisModule, S3Module, TypeOrmModule.forFeature([HealthSnapshot])],
@@ -23,6 +24,7 @@ import { DependencyCheckService } from '@/modules/health/providers/depency-check
     S3Dependency,
     DependencySupervisorService,
     DependencyCheckService,
+    HealthCronService,
   ],
   exports: [DependencySupervisorService],
 })

@@ -1,6 +1,7 @@
 import { Logger, MiddlewareConsumer, Module } from '@nestjs/common'
 import { ConfigModule, ConfigModuleOptions } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
+import { ScheduleModule } from '@nestjs/schedule'
 
 import configuration from '../../config/configuration'
 import fileConfig from '../../config/file.config'
@@ -73,6 +74,7 @@ import { API } from '@/apps/apps.const'
       ],
     } as ConfigModuleOptions),
     TypeOrmModule.forRootAsync(typeormFactoryLoader),
+    ScheduleModule.forRoot(),
     CustomBullModule,
     CronModule,
     LoggerModule,
