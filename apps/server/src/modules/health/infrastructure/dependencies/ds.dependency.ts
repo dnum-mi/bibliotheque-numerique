@@ -25,8 +25,9 @@ export class DsDependency implements DependencyChecker {
   ) {
     this.logger.setContext(this.constructor.name)
     this.url = this.config.get('ds').apiUrl
+    const timeout = this.config.get('DsTimeout')
     this.axios = axios.create({
-      timeout: 3000,
+      timeout: timeout * 1000,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer token=${this.config.get('ds').apiToken}`,

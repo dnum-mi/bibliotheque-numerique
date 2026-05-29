@@ -18,12 +18,14 @@ export class HubDependency implements DependencyChecker {
     private readonly logger: LoggerService,
   ) {
     this.logger.setContext(this.constructor.name)
+    const timeout = this.config.get('HubTimeout')
+
     this.axios = axios.create({
       headers: {
         'X-API-KEY': `${this.config.get('hub').key}`,
         'Content-Type': 'application/json',
       },
-      timeout: 3000,
+      timeout: timeout * 1000,
     })
   }
 

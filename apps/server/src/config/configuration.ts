@@ -17,6 +17,8 @@ export type TConfig = {
   workerFilePort: number;
   workerSyncPort: number;
   intervalHealthCheck: number;
+  DsTimeout: number;
+  HubTimeout: number;
 };
 
 export default (): TConfig => {
@@ -54,5 +56,7 @@ export default (): TConfig => {
     },
 
     intervalHealthCheck: parseInt(process.env.INTERVAL_HEALTH_CHECK, 10) || 10,
+    DsTimeout: parseInt(process.env.DS_TIMEOUT, 10) || 3,
+    HubTimeout: parseInt(process.env.HUB_TIMEOUT, 10) || 3,
   }
 }
