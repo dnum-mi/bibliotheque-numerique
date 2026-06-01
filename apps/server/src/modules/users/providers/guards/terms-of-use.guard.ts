@@ -36,7 +36,7 @@ export class TermsOfUseGuard implements CanActivate {
     }>()
     const user = request.user
 
-    const allowedPaths = ['/users/me', '/auth/logout', '/users/me/accept-terms']
+    const allowedPaths = ['/users/me', '/auth/logout', '/users/me/accept-terms', 'bn-configurations/client']
     const isAllowedPaths = allowedPaths.some(path => request.url.includes(path))
     const isSudo = user.role?.label === Roles.sudo
 
