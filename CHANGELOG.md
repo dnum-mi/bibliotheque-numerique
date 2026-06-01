@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.12.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.12.0...v5.12.1) (2026-06-01)
+
+
+### Bug Fixes
+
+* variabiliser les timeout du health ([e02a2ca](https://github.com/dnum-mi/bibliotheque_numerique/commit/e02a2ca484636fc6f6985138efbf9da12465bc60))
+
 ## [5.12.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.11.3...v5.12.0) (2026-05-28)
 
 
