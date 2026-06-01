@@ -13,6 +13,7 @@ const userStore = useUserStore()
 const hasAccepted = ref(false)
 const loading = ref(false)
 
+const isAuthenticated = computed(() => userStore.isAuthenticated)
 const isAlreadyAccepted = computed(() => userStore.currentUser?.termsAcceptedAt)
 
 const handleValidation = async () => {
@@ -96,7 +97,7 @@ const handleValidation = async () => {
           />
         </section>
 
-        <div v-if="!isAlreadyAccepted" class="bn-sticky-bottom fr-p-6v fr-background-alt--blue-france rounded-t-lg">
+        <div v-if="isAuthenticated && !isAlreadyAccepted" class="bn-sticky-bottom fr-p-6v fr-background-alt--blue-france rounded-t-lg">
           <div class="fr-mb-5v">
             <DsfrCheckbox
               id="accept-terms" v-model="hasAccepted" :value="hasAccepted" name="accept-terms"

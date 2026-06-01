@@ -8,5 +8,6 @@ export const termsOfUseRoute: RouteRecordRaw = {
   component: () => import('@/views/TermsOfUse.vue'),
   meta: {
     title: 'Conditions Générales d\'utilisation',
+    skipAuth: true,
   },
 }

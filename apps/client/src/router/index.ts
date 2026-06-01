@@ -82,7 +82,7 @@ router.beforeEach(async (to) => {
       routeNames.LOGOUT,
     ]
 
-    if (!restrictedAllowedRoutes.includes(to.name) && !to.meta.skipAuth) {
+    if (!restrictedAllowedRoutes.includes(to.name)) {
       return { name: routeNames.PROFILE }
     }
   }
