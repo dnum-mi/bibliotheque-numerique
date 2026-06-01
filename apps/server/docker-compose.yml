@@ -205,7 +205,7 @@ services:
       - prod
       - simple-dev
       - ci
-    image: public.ecr.aws/bitnami/redis:latest
+    image: docker.io/redis:8.2.1
     platform: linux/amd64
     container_name: redis
     environment:
