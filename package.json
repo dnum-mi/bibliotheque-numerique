@@ -30,7 +30,7 @@
     "docker:build:client:stop": "docker stop bn-client",
     "docker:build:http-proxy:check": "sh ci/scripts/check_http.sh 8088",
     "docker:build:server": "docker build -t bn-server:latest --target production -f apps/server/Dockerfile .",
-    "docker:build:server:check": "sh ci/scripts/check_http.sh 3000 health",
+    "docker:build:server:check": "sh ci/scripts/check_http.sh 3000 health/liveness",
     "docker:build:server:run": "docker run -d -p 0.0.0.0:3000:3000 --name bn-server --network biblio-num-network --env-file ./docker/.env-bn.local bn-server:latest",
     "docker:build:server:stop": "docker stop bn-server",
     "docker:ci:up": "docker compose --env-file apps/server/.env.docker --profile ci -f apps/server/docker-compose.yml up -d",
