@@ -27,7 +27,7 @@ RUN pnpm install --frozen-lockfile
 COPY --from=copy-source /app/out/full/ .
 RUN npm run build:client
 
-FROM public.ecr.aws/bitnami/nginx:latest AS production
+FROM docker.io/nginx:1.27.2 AS production
 
 COPY --from=builder /app/apps/client/dist /app
 COPY --from=copy-source /app/docker/nginx/bn.conf /opt/bitnami/nginx/conf/server_blocks/bn.conf

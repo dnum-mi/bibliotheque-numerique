@@ -36,7 +36,7 @@ RUN pnpm run build:server
 CMD ["pnpm", "run", "dev:server-in-docker"]
 
 
-FROM public.ecr.aws/bitnami/node:24.13.0 AS production
+FROM docker.io/node:24.13.0-slim AS production
 
 RUN set +o nounset && \
     npm config set proxy "$http_proxy" && \
