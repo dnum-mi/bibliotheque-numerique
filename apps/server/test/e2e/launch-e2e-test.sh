@@ -1,6 +1,7 @@
 #!/bin/sh
 
 export NODE_ENV='test-e2e'
+# export NODE_OPTIONS=--trace-warnings
 
 # This script is used to launch the e2e tests.
 clear

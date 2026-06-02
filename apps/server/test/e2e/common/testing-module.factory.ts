@@ -20,6 +20,9 @@ import {
 import { Queue } from 'bull'
 import { WorkerSyncModule } from '@/apps/worker-sync/worker-sync.module'
 import { WorkerFileModule } from '@/apps/worker-file/worker-file.module'
+import { EventEmitter } from 'events'
+
+EventEmitter.defaultMaxListeners = 20
 
 export type Tokens = Record<RolesKeys | 'norole', string>
 
