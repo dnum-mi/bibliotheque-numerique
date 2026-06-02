@@ -27,13 +27,10 @@ RUN pnpm install --frozen-lockfile
 COPY --from=copy-source /app/out/full/ .
 RUN npm run build:client
 
-FROM docker.io/nginx:1.27.2 AS production
+FROM nginxinc/nginx-unprivileged:1.27.2 AS production
 
 COPY --from=builder /app/apps/client/dist /app
-COPY --from=copy-source /app/docker/nginx/bn.conf /opt/bitnami/nginx/conf/server_blocks/bn.conf
+COPY --from=copy-source /app/docker/nginx/bn.conf /etc/nginx/conf.d/bn.conf
 COPY --from=copy-source /app/apps/client/entrypoint.sh /entrypoint.sh
-
-USER root
-RUN chmod 774 /app/assets
 
 ENTRYPOINT ["/entrypoint.sh"]
