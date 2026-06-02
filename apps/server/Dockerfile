@@ -64,5 +64,6 @@ COPY --from=builder /app/turbo.json .
 COPY --from=builder /app/packages ./packages
 COPY --from=builder /app/apps ./apps
 
+USER node
 WORKDIR /app/apps/server/
 CMD ["npm", "run", "start:prod"]
