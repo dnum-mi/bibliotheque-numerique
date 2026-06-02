@@ -37,4 +37,3 @@ USER root
 RUN chmod 774 /app/assets
 
 ENTRYPOINT ["/entrypoint.sh"]
-USER 1001

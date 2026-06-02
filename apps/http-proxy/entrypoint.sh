@@ -10,4 +10,4 @@ elif [ "$TYPE_NGINX" = "basic-auth" ]; then
   sed -i 's#${ADMINER_PROXY_PASS}#'$ADMINER_PROXY_PASS'#g' /opt/bitnami/nginx/conf/server_blocks/basic-auth.conf
 fi
 
-/opt/bitnami/scripts/nginx/run.sh
+exec nginx -g "daemon off;"
