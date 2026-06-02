@@ -2,6 +2,7 @@
 import type { DataTableFilterMeta } from 'primevue/datatable'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
+import type { ColumnFilterModelType } from 'primevue/column'
 import DatePicker from 'primevue/datepicker'
 import Dropdown from 'primevue/dropdown'
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api'
@@ -275,7 +276,7 @@ watch(selectedRows, (newValue) => {
               cellRendererParams: col.filterParams?.cellRendererParams,
             }"
             :filter-callback="filterCallback"
-            @update:model-value="($event) => {
+            @update:model-value="($event: { filter: ColumnFilterModelType }) => {
               console.log({ setFilterValue: $event, filterModel: filterModel.value })
               filterModel.value = $event.filter
               filterCallback()
