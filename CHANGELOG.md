@@ -1,5 +1,22 @@
 # Changelog
 
+## [5.13.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.12.1...v5.13.0) (2026-06-03)
+
+
+### Features
+
+* erc.aws not existe, so change to office image ([e2181a6](https://github.com/dnum-mi/bibliotheque_numerique/commit/e2181a6ffdfbe74b63f9faa0a66cba9a96492c5b))
+
+
+### Bug Fixes
+
+* mise a jours du dockerfile client ([0f8ce48](https://github.com/dnum-mi/bibliotheque_numerique/commit/0f8ce4864999c04312c7c8f681dd2ecff3037139))
+* mise jours pour le proxy local ([222062f](https://github.com/dnum-mi/bibliotheque_numerique/commit/222062f4eed26ff1da0f4ee9c8c9ed2ec610b4db))
+* nginx office image, use root ([abbbef6](https://github.com/dnum-mi/bibliotheque_numerique/commit/abbbef670dd1e68b31b98c8ab64e4157a5d56391))
+* type manquant dans la vue ([30907f2](https://github.com/dnum-mi/bibliotheque_numerique/commit/30907f260c123ab35920700209b64e29b603a533))
+* utilisateur node pour le containeur du server ([45947d5](https://github.com/dnum-mi/bibliotheque_numerique/commit/45947d541ed7df6d3d699ade8be23093575d2c44))
+* verifier le run du server par liveness dans le CI ([abceedc](https://github.com/dnum-mi/bibliotheque_numerique/commit/abceedcd13a2aa5ffdc2b8d5576eb80578d1568c))
+
 ## [5.12.1](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.12.0...v5.12.1) (2026-06-01)
 
 
