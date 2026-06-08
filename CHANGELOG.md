@@ -1,5 +1,26 @@
 # Changelog
 
+## [5.14.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.13.0...v5.14.0) (2026-06-08)
+
+
+### Features
+
+* ajout de bn-configurations/client aux chemins autorisés dans TermsOfUseGuard ([887ff18](https://github.com/dnum-mi/bibliotheque_numerique/commit/887ff180759896d9b18c5b11068f5876bd68db9e))
+* ajout de l'endpoint acceptTerms pour gérer l'acceptation de la charte d'utilisation ([38fed92](https://github.com/dnum-mi/bibliotheque_numerique/commit/38fed9210e739f6e562474f197a898bc09077925))
+* ajout de la page des conditions générales d'utilisation ([df35a99](https://github.com/dnum-mi/bibliotheque_numerique/commit/df35a997efbdb1a569393f8ada01c1a9d2ee87ed))
+* ajout de TermsOfUseGuard pour la validation de l'acceptation de la charte d'utilisation ([93b7706](https://github.com/dnum-mi/bibliotheque_numerique/commit/93b7706478332048599a84bbb1f58e6d6a0e6522))
+* ajout du champ termsAcceptedAt au modèle utilisateur et aux DTO associés ([4ccc5fc](https://github.com/dnum-mi/bibliotheque_numerique/commit/4ccc5fc08be2a6936e3890999b2216c538c6236b))
+* mis à jour du TermsOfUseGuard et améliorer la gestion des erreurs lors de l'acceptation des CGU ([c7c1f7e](https://github.com/dnum-mi/bibliotheque_numerique/commit/c7c1f7ec046d196fd8581aa3d2e7dcce337f6ff6))
+* mise à jour du flow d'acceptation de la charte d'utilisation ([194908e](https://github.com/dnum-mi/bibliotheque_numerique/commit/194908e92d812cd3afa553f146b8b56df5a995ec))
+* rendre la page CGU consultable en publique ([10a819c](https://github.com/dnum-mi/bibliotheque_numerique/commit/10a819c10981a6c4dbf298812f4d61ace3f8df18))
+
+
+### Bug Fixes
+
+* build client with option VITE_APP_OPEN_SOURCE ([8faf802](https://github.com/dnum-mi/bibliotheque_numerique/commit/8faf802a777b3fb6f79b8c375f072b06f66b907c))
+* set default VITE_APP_OPEN_SOURCE to false ([1ed0a52](https://github.com/dnum-mi/bibliotheque_numerique/commit/1ed0a52867ef6b898139b0a4c0b3f584e33036d2))
+* use good command for start worker ([cbf5545](https://github.com/dnum-mi/bibliotheque_numerique/commit/cbf5545b524145a51801a94b2c35b4ec2a53191b))
+
 ## [5.13.0](https://github.com/dnum-mi/bibliotheque_numerique/compare/v5.12.1...v5.13.0) (2026-06-03)
 
 

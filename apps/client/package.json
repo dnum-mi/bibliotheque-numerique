@@ -1,7 +1,7 @@
 {
   "name": "@biblio-num/client",
   "type": "module",
-  "version": "5.13.0",
+  "version": "5.14.0",
   "scripts": {
     "build": "pnpm typecheck && vite build",
     "dev": "vite",
