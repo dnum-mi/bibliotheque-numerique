@@ -39,6 +39,8 @@ services:
       target: production
       context: ../../
       dockerfile: ./apps/client/Dockerfile
+      args:
+        - VITE_APP_OPEN_SOURCE=${VITE_APP_OPEN_SOURCE}
     image: biblio-num/client:prod
     platform: linux/amd64
     container_name: biblio-num_client
@@ -94,7 +96,7 @@ services:
     volumes:
       - ./docker/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
       - type: volume
-        source: biblio-num-db-volume
+        source: biblio-num-db-volume-1
         target: /var/lib/postgresql/data
     networks:
       - biblio-num-network
@@ -244,6 +246,6 @@ networks:
 volumes:
   biblio-num-pgadmin-volume:
   biblio-num-s3-volume:
-  biblio-num-db-volume:
+  biblio-num-db-volume-1:
   biblio-num-server-node_modules-volume:
   biblio-num-worker-node_modules-volume:

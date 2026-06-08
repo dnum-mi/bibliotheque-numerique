@@ -25,6 +25,11 @@ COPY --from=copy-source /app/out/json/ .
 COPY --from=copy-source /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 RUN pnpm install --frozen-lockfile
 COPY --from=copy-source /app/out/full/ .
+
+# Set environment variables for the build
+ARG VITE_APP_OPEN_SOURCE
+ENV VITE_APP_OPEN_SOURCE=$VITE_APP_OPEN_SOURCE
+
 RUN npm run build:client
 
 FROM nginxinc/nginx-unprivileged:1.27.2 AS production
