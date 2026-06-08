@@ -64,14 +64,14 @@ services:
       - prod
     <<: *server_image
     container_name: biblio-num_worker_sync
-    command: pnpm run start:worker-sync
+    command: pnpm run start:worker-sync:prod
 
   worker-file:
     profiles:
       - prod
     <<: *server_image
     container_name: biblio-num_worker_file
-    command: pnpm run start:worker-file
+    command: pnpm run start:worker-file:prod
 
   db:
     profiles:
