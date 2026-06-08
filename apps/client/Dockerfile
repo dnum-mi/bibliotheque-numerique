@@ -27,7 +27,7 @@ RUN pnpm install --frozen-lockfile
 COPY --from=copy-source /app/out/full/ .
 
 # Set environment variables for the build
-ARG VITE_APP_OPEN_SOURCE
+ARG VITE_APP_OPEN_SOURCE=false
 ENV VITE_APP_OPEN_SOURCE=$VITE_APP_OPEN_SOURCE
 
 RUN npm run build:client
